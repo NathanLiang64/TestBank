@@ -1,23 +1,71 @@
-import logo from './logo.svg';
-import './App.css';
+import "reset-css";
+import "./App.scss";
+
+import FEIBField from "components/FEIBField/FEIBField";
+import FEIBButton from "components/FEIBButton/FEIBButton";
+import FEIBInput from "components/FEIBInput/FEIBInput";
+
+import { useState } from "react";
+import FEIBSelect from "components/FEIBSelect/FEIBSelect";
 
 function App() {
+  const animalsList = [
+    {
+      id: 0,
+      value: 0,
+      label: "Dog",
+    },
+    {
+      id: 1,
+      value: 1,
+      label: "Tiger",
+    },
+    {
+      id: 2,
+      value: 2,
+      label: "Bear",
+    },
+  ];
+
+  const [animal, setAnimal] = useState("Cat");
+
+  const buttonEvent = (data) => {
+    alert("Button clicked! " + data);
+  };
+
+  const handleInputEvent = (event) => {
+    setAnimal(event.target.value)
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <FEIBField>
+        <FEIBInput
+          type="text"
+          label="This is a input field"
+          id="content"
+          name="content"
+          value={animal}
+          placeholder="write something here"
+          event={handleInputEvent}
+        />
+      </FEIBField>
+      <FEIBField>
+        <FEIBSelect
+          label="Animal select"
+          id="animal"
+          name="animal"
+          options={animalsList}
+        />
+      </FEIBField>
+      <FEIBField>
+        <FEIBButton event={buttonEvent.bind(null, "To be or not to be.")}>
+          確認
+        </FEIBButton>
+      </FEIBField>
+      <div>
+        { animal }
+      </div>
     </div>
   );
 }
