@@ -1,11 +1,9 @@
-import './FEIBButton.scss'
+import './FEIBButton.scss';
 
-const FEIBButton = ({children, event}) => {
-  return (
-    <div className="FEIBButton">
-      <button onClick={event}>{ children }</button>
-    </div>
-  )
-}
+const FEIBButton = ({ children, event }) => (
+  <div className="FEIBButton">
+    <button type="button" onClick={event}>{ children }</button>
+  </div>
+);
 
-export default FEIBButton
+export default FEIBButton;

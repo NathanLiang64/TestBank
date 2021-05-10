@@ -1,11 +1,9 @@
-import './FEIBField.scss'
+import './FEIBField.scss';
 
-const FEIBField = ({ children }) => {
-  return (
-    <div className="FEIBField">
-      {children}
-    </div>
-  )
-}
+const FEIBField = ({ children }) => (
+  <div className="FEIBField">
+    {children}
+  </div>
+);
 
-export default FEIBField
+export default FEIBField;
