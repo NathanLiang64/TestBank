@@ -6,9 +6,6 @@ import theme from 'themes/theme';
 /* Components */
 import App from './App';
 
-/* Testing */
-import reportWebVitals from './reportWebVitals';
-
 ReactDOM.render(
   <ThemeProvider theme={theme}>
     <App />
@@ -16,5 +13,3 @@ ReactDOM.render(
   </ThemeProvider>,
   document.getElementById('root'),
 );
-
-reportWebVitals();

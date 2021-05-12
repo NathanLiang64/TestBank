@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { MenuItem as MaterialOption } from '@material-ui/core';
 
-const Option = styled(MaterialOption)`
+const FEIBOption = styled(MaterialOption)`
 `;
 
-export default Option;
+export default FEIBOption;

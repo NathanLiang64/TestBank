@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import defaultButton from './_defaultElements/defaultButton';
+import FEIBdefaultButton from './_defaultElements/FEIBdefaultButton';
 /*
-* ==================== BorderButton 可用選項 ====================
-* ======= BorderButton 之基礎樣式繼承於 defaultButton 元件 ========
+* ==================== FEIBBorderButton 可用選項 ====================
+* ===== FEIBBorderButton 之基礎樣式繼承於 FEIBdefaultButton 元件 ======
 * 1. $fontSize -> 字級大小
 *    直接填寫數字，例如：1.6，若未傳值預設為 1.4
 * 2. $color -> 文字顏色
@@ -13,7 +13,7 @@ import defaultButton from './_defaultElements/defaultButton';
 *    直接填寫數字，例如：12，若未傳值預設為 100%
 * */
 
-const BorderButton = styled(defaultButton)`
+const FEIBBorderButton = styled(FEIBdefaultButton)`
   border: .1rem solid ${({ $borderColor }) => $borderColor || 'inherit'};
   background: transparent;
   
@@ -39,4 +39,4 @@ const BorderButton = styled(defaultButton)`
   }
 `;
 
-export default BorderButton;
+export default FEIBBorderButton;

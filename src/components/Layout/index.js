@@ -1,9 +1,9 @@
 import { Route, Switch } from 'react-router-dom';
 // import { useSelector } from 'react-redux';
-import routes from 'routes';
+import routes from 'route';
 
 /* Components */
-// import Login from 'screens/Login';
+// import Login from 'pages/Login';
 
 /* eslint-disable arrow-body-style */
 const Layout = () => {

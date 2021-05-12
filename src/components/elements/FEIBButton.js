@@ -1,9 +1,9 @@
 import styled from 'styled-components';
-import defaultButton from './_defaultElements/defaultButton';
+import FEIBdefaultButton from './_defaultElements/FEIBdefaultButton';
 
 /*
-* ==================== Button 可用選項 ====================
-* ======= Button 之基礎樣式繼承於 defaultButton 元件 ========
+* ==================== FEIBButton 可用選項 ====================
+* ===== FEIBButton 之基礎樣式繼承於 FEIBdefaultButton 元件 ======
 * 1. $fontSize -> 字級大小
 *    直接填寫數字，例如：1.6，若未傳值預設為 1.4
 * 2. $color -> 文字顏色
@@ -17,7 +17,7 @@ import defaultButton from './_defaultElements/defaultButton';
 *    直接填寫數字，例如：12，若未傳值預設為 100%
 * */
 
-const Button = styled(defaultButton)`
+const FEIBButton = styled(FEIBdefaultButton)`
   background: ${({ $bgColor }) => $bgColor || 'transparent'};
   
   &:hover {
@@ -25,4 +25,4 @@ const Button = styled(defaultButton)`
   }
 `;
 
-export default Button;
+export default FEIBButton;

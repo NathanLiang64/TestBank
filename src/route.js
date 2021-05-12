@@ -1,6 +1,6 @@
 /* Components */
-import Login from 'screens/Login';
-import Test from 'screens/Test';
+import Login from 'pages/Login';
+import Test from 'pages/Test';
 
 const routes = [
   { path: '/', exact: true, component: Login },

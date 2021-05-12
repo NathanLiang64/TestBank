@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { FormControl as MaterialFormControl } from '@material-ui/core';
 
-const InputAnimationWrapper = styled(MaterialFormControl)`
+const FEIBInputAnimationWrapper = styled(MaterialFormControl)`
   width: 100%;
 
   .MuiFormLabel-root {
@@ -12,4 +12,4 @@ const InputAnimationWrapper = styled(MaterialFormControl)`
   }
 `;
 
-export default InputAnimationWrapper;
+export default FEIBInputAnimationWrapper;

@@ -3,7 +3,6 @@ import { Provider } from 'react-redux';
 
 /* Components */
 import Layout from 'components/Layout';
-// import Test from 'screens/Test';
 
 /* Store */
 import store from './stores';

@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { reducers as loginReducer } from 'screens/Login/stores';
+import { reducers as loginReducer } from 'pages/Login/stores';
 
 const reducer = combineReducers({
   login: loginReducer,

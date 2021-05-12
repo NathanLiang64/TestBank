@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const defaultButton = styled.button`
+const FEIBdefaultButton = styled.button`
   min-width: 12rem;
   min-height: 3.6rem;
   border-radius: .8rem;
@@ -11,4 +11,4 @@ const defaultButton = styled.button`
   cursor: pointer;
 `;
 
-export default defaultButton;
+export default FEIBdefaultButton;
