@@ -9,12 +9,6 @@ import {
   InputAdornment as MaterialInputAdornment,
 } from '@material-ui/core';
 
-/* ========== Style Module Components ========== */
-const PageWrapper = styled.div`
-  padding: ${({ $fullWidth }) => ($fullWidth ? '0' : '0 1.6rem')};
-  height: 100%;
-`;
-
 /* ========== Replace material-ui styles ========== */
 const FormControl = styled(MaterialFormControl)`
   width: 100%;
@@ -84,7 +78,6 @@ const InputAdornment = styled(MaterialInputAdornment)`
 
 export {
   // eslint-disable-next-line import/prefer-default-export
-  PageWrapper,
   FormControl,
   FormControlLabel,
   InputLabel,

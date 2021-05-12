@@ -10,7 +10,7 @@ import FEIBdefaultButton from './_defaultElements/FEIBdefaultButton';
 *    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)
 * 3. $bgColor -> 背景顏色
 *    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)
-* 4. $hoverBgColor -> 游標懸停在物件時的背景顏色
+* 4. $pressedBgColor -> 游標懸停在物件時的背景顏色
 *    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)
 *    若已填寫 $bgColor 則直接繼承 $bgColor 色碼，也允許額外設定不同的色碼給此屬性
 * 5. $width -> 按鈕寬度
@@ -21,7 +21,7 @@ const FEIBButton = styled(FEIBdefaultButton)`
   background: ${({ $bgColor }) => $bgColor || 'transparent'};
   
   &:hover {
-    background: ${({ $bgColor, $hoverBgColor }) => $hoverBgColor || $bgColor || 'inherit'};
+    background: ${({ $bgColor, $pressedBgColor }) => $pressedBgColor || $bgColor || 'inherit'};
   }
 `;
 

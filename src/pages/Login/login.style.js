@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { PageWrapper } from 'themes/styleModules';
+import Layout from 'components/Layout';
 
-const LoginWrapper = styled(PageWrapper)`
+const LoginWrapper = styled(Layout)`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -103,7 +103,4 @@ const LoginWrapper = styled(PageWrapper)`
   }
 `;
 
-export {
-  // eslint-disable-next-line import/prefer-default-export
-  LoginWrapper,
-};
+export default LoginWrapper;

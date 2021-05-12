@@ -76,7 +76,7 @@ const Test = () => {
             // $fontSize={1.6}
             $color={theme.colors.basic.white}
             $bgColor={theme.colors.primary.brand}
-            $hoverBgColor={theme.colors.primary.dark}
+            $pressedBgColor={theme.colors.primary.dark}
           >
             確認
           </FEIBButton>

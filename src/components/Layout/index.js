@@ -1,47 +1,15 @@
-import { Route, Switch } from 'react-router-dom';
-// import { useSelector } from 'react-redux';
-import routes from 'route';
+import styled from 'styled-components';
 
-/* Components */
-// import Login from 'pages/Login';
+/*
+* ==================== Layout 組件說明 ====================
+* 此組件便為每個頁面的基礎布局，未來可能會有更多樣式
+* ================ ConfirmButtons 可傳參數 ================
+* 1. fullScreen -> 滿版布局
+* */
 
-/* eslint-disable arrow-body-style */
-const Layout = () => {
-  // const userInfo = useSelector(({ login }) => login.userInfo);
-
-  // return (
-  //   !userInfo
-  //     ? <Login />
-  //     : (
-  //       <>
-  //         <main>
-  //           <Switch>
-  //             {
-  //               routes.map((route) => {
-  //                 const { path, exact, component } = route;
-  //                 return <Route key={path} path={path} exact={exact} component={component} />;
-  //               })
-  //             }
-  //           </Switch>
-  //         </main>
-  //       </>
-  //     )
-  // );
-
-  return (
-    <>
-      <main>
-        <Switch>
-          {
-            routes.map((route) => {
-              const { path, exact, component } = route;
-              return <Route key={path} path={path} exact={exact} component={component} />;
-            })
-          }
-        </Switch>
-      </main>
-    </>
-  );
-};
+const Layout = styled.main`
+  ${({ fullScreen }) => (fullScreen ? null : 'padding: 1.6rem')};
+  height: 100%;
+`;
 
 export default Layout;

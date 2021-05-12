@@ -9,7 +9,7 @@ import {
 } from '@material-ui/icons';
 
 /* Styles */
-import { LoginWrapper } from './login.style';
+import LoginWrapper from './login.style';
 
 const Login = () => {
   const userInfo = useSelector(({ login }) => login.userInfo);
@@ -35,7 +35,7 @@ const Login = () => {
     userInfo
       ? <Redirect to="/account" />
       : (
-        <LoginWrapper $fullWidth>
+        <LoginWrapper fullScreen>
           <form>
             <div className="title">
               <h3>Hello !</h3>

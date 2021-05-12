@@ -1,8 +1,6 @@
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
-
-/* Components */
-import Layout from 'components/Layout';
+import routes from 'route';
 
 /* Store */
 import store from './stores';
@@ -10,7 +8,14 @@ import store from './stores';
 const App = () => (
   <Provider store={store}>
     <BrowserRouter>
-      <Layout />
+      <Switch>
+        {
+          routes.map((route) => {
+            const { path, exact, component } = route;
+            return <Route key={path} path={path} exact={exact} component={component} />;
+          })
+        }
+      </Switch>
     </BrowserRouter>
   </Provider>
 );
