@@ -17,14 +17,20 @@
 
 ## 已完成
 - 元件封裝
-  - Input
-  - InputLabel
-  - InputAnimationWrapper
-  - Select
-  - Option
-  - Button
-  - BorderButton
-- 其它 (待接續填寫)
+  - FEIBInput
+  - FEIBInputLabel
+  - FEIBInputAnimationWrapper
+  - FEIBSelect
+  - FEIBOption
+  - FEIBButton
+  - FEIBBorderButton
+  - FEIBTextarea
+
+
+- 組件封裝
+  - ConfirmButtons
+  - Dialog
+  - Layout
 
 ---
 
@@ -97,7 +103,7 @@ App2_WebView
 |   |
 |   |-- App.js
 |   |-- index.js
-|   |-- route.js  (路由設定文件)
+|   |-- routes.js  (路由設定文件)
 |
 |-- .env  (產品上線時的環境設定文件)
 |-- .env.development  (開發模式時的環境設定文件)

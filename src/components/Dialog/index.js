@@ -1,16 +1,16 @@
 import {
-  Dialog as MaterialDialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
 } from '@material-ui/core';
+import DialogWrapper from './dialog.style';
 
 /*
 * ==================== Dialog 組件說明 ====================
 * Dialog 組件封裝了 Material UI 的彈窗組件
 * ==================== Dialog 可傳參數 ====================
-* 1. title -> 顯示於彈窗標題
+* 1. title -> 顯示於彈窗標題之文字，預設為 "系統訊息"
 * 2. content -> 顯示於彈窗內文
 * 3. action -> 顯示於彈窗底部，放置觸發事件的按鈕
 * 4. isOpen -> 根據此布林值判斷彈窗是否開啟 (true 開啟、false 關閉)
@@ -24,24 +24,24 @@ const Dialog = ({
   isOpen,
   onClose,
 }) => (
-  <MaterialDialog
+  <DialogWrapper
     open={isOpen}
     onClose={onClose}
     aria-labelledby="alert-dialog-title"
     aria-describedby="alert-dialog-description"
   >
-    <DialogTitle id="alert-dialog-title">
-      {title}
+    <DialogTitle id="alert-dialog-title" className="title">
+      {title || '系統訊息'}
     </DialogTitle>
     <DialogContent>
       <DialogContentText id="alert-dialog-description">
         {content}
       </DialogContentText>
     </DialogContent>
-    <DialogActions>
+    <DialogActions className="alignCenter">
       {action}
     </DialogActions>
-  </MaterialDialog>
+  </DialogWrapper>
 );
 
 // <Dialog
