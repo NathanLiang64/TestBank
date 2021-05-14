@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
+import Alert from 'components/Alert';
 
 /* Elements */
 import { FEIBInput, FEIBInputLabel, FEIBButton } from 'components/elements';
@@ -16,6 +17,7 @@ const ReissueDebitCard = () => {
   const actionText = useSelector(({ reissueDebitCard }) => reissueDebitCard.actionText);
   const dialogContent = useSelector(({ reissueDebitCard }) => reissueDebitCard.dialogContent);
   const [openDialog, setOpenDialog] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
 
   const dispatch = useDispatch();
   // const handleChangeInput = (event) => {
@@ -23,6 +25,12 @@ const ReissueDebitCard = () => {
   // };
   const handleToggleDialog = (boolean) => {
     setOpenDialog(boolean);
+  };
+
+  const handleClickMainButton = () => {
+    // 點擊確定申請後關閉彈窗並顯示成功申請
+    handleToggleDialog(false);
+    setShowAlert(true);
   };
 
   /*
@@ -56,6 +64,8 @@ const ReissueDebitCard = () => {
 
   return (
     <ReissueDebitCardWrapper>
+      {showAlert && <Alert state="success">{`已完成${actionText}申請`}</Alert>}
+
       <div>
         <FEIBInputLabel $color={theme.colors.primary.dark}>帳號</FEIBInputLabel>
         <FEIBInput
@@ -96,7 +106,7 @@ const ReissueDebitCard = () => {
         content={dialogContent}
         action={(
           <ConfirmButtons
-            mainButtonOnClick={() => handleToggleDialog(false)}
+            mainButtonOnClick={handleClickMainButton}
             subButtonOnClick={() => handleToggleDialog(false)}
           />
         )}

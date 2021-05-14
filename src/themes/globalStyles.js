@@ -62,6 +62,8 @@ const GlobalStyles = createGlobalStyle`
     font-size: 1.6rem;
     font-family: ${({ theme }) => theme.font};
     line-height: 1.43;
+    color: ${({ theme }) => theme.colors.text.dark};
+    background: ${({ theme }) => theme.colors.background.lighter};
   }
   
   #root {
