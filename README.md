@@ -146,3 +146,22 @@ App2_WebView
 - `SS_Adrian` - 聖森前端開發人員 Adrian
 
 ---
+
+## 功能模組(Function_code) 資料夾命名規則
+pages 資料夾底下為功能模組(Function_code)，資料夾命名方式依照1.0的功能模組下去命名。
+如果今天 相同 Function_code 增加一個版本則以 {Function_code}_v2。
+
+{Function_code}/
+|-- stores/  (個別頁面內的 redux 狀態管理)
+|   |   |-- actions.js (改變狀態動作)
+|   |   |-- index.js  (該 stores 入口文件)
+|   |   |-- reducers.js 
+|   |   |-- types.js (定義常數)
+|   |-- ### 個別頁面內的 redux 相關方法放置此處 ###
+|   |-- xxxxx_2.js  (頁面數量2)
+|   |-- xxxxx_3.js  (頁面數量3)
+|   |-- xxxxx_4.js  (頁面數量4)
+|   |-- index.js  (該頁面入口文件)
+|   |-- {Function_code}.style.js  (該頁面樣式文件)
+
+---
