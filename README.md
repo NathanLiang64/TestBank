@@ -1,6 +1,7 @@
 # APP2_WebView
 
 - [項目規劃 | Miro](https://miro.com/app/board/o9J_laeZLto=/)
+- [執行計畫 - 五月執行計畫 | Google Sheets](https://docs.google.com/spreadsheets/d/1cTYmOp07_f6_CwY3X05aFmljbC-mBkLQIU-WAJni-f0/edit#gid=288572326)
 - [系統分析書 | Axure](https://wi87pn.axshare.com/)
 - API | Swagger UI
 - 設計稿 | Figma
@@ -10,8 +11,9 @@
 ## 進行中
 - 元件封裝 - 唯物 & 聖森
 - 無卡提款 - 唯物
-- 金融卡掛失補發 - 聖森
-- 登入頁 - 聖森
+- 常用帳號列表 (AccountMaintenance) - 聖森
+- 登入頁 (Login) - 聖森
+- 加解密 - 聖森
 
 ---
 
@@ -31,6 +33,11 @@
   - ConfirmButtons
   - Dialog
   - Layout
+  - Alert
+
+
+- 頁面
+  - 金融卡掛失補發 (ReissueDebitCard) - 聖森
 
 ---
 
