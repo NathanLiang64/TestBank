@@ -11,7 +11,7 @@
 ## 進行中
 - 元件封裝 - 唯物 & 聖森
 - 無卡提款 - 唯物
-- 常用帳號列表 (AccountMaintenance) - 聖森
+- 常用帳號列表 (AccountMaintenance) - 聖森 (暫不需實作)
 - 登入頁 (Login) - 聖森
 - 加解密 - 聖森
 
