@@ -1,6 +1,7 @@
 # APP2_WebView
 
 - [項目規劃 | Miro](https://miro.com/app/board/o9J_laeZLto=/)
+- [執行計畫 - 五月執行計畫 | Google Sheets](https://docs.google.com/spreadsheets/d/1cTYmOp07_f6_CwY3X05aFmljbC-mBkLQIU-WAJni-f0/edit#gid=288572326)
 - [系統分析書 | Axure](https://wi87pn.axshare.com/)
 - API | Swagger UI
 - 設計稿 | Figma
@@ -10,21 +11,33 @@
 ## 進行中
 - 元件封裝 - 唯物 & 聖森
 - 無卡提款 - 唯物
-- 金融卡掛失補發 - 聖森
-- 登入頁 - 聖森
+- 常用帳號列表 (AccountMaintenance) - 聖森
+- 登入頁 (Login) - 聖森
+- 加解密 - 聖森
 
 ---
 
 ## 已完成
 - 元件封裝
-  - Input
-  - InputLabel
-  - InputAnimationWrapper
-  - Select
-  - Option
-  - Button
-  - BorderButton
-- 其它 (待接續填寫)
+  - FEIBInput
+  - FEIBInputLabel
+  - FEIBInputAnimationWrapper
+  - FEIBSelect
+  - FEIBOption
+  - FEIBButton
+  - FEIBBorderButton
+  - FEIBTextarea
+
+
+- 組件封裝
+  - ConfirmButtons
+  - Dialog
+  - Layout
+  - Alert
+
+
+- 頁面
+  - 金融卡掛失補發 (ReissueDebitCard) - 聖森
 
 ---
 
@@ -97,7 +110,7 @@ App2_WebView
 |   |
 |   |-- App.js
 |   |-- index.js
-|   |-- route.js  (路由設定文件)
+|   |-- routes.js  (路由設定文件)
 |
 |-- .env  (產品上線時的環境設定文件)
 |-- .env.development  (開發模式時的環境設定文件)
@@ -138,5 +151,24 @@ App2_WebView
 - `vjinc` - (待填)
 - `SS_master` - 聖森主分支
 - `SS_Adrian` - 聖森前端開發人員 Adrian
+
+---
+
+## 功能模組(Function_code) 資料夾命名規則
+pages 資料夾底下為功能模組(Function_code)，資料夾命名方式依照1.0的功能模組下去命名。
+如果今天 相同 Function_code 增加一個版本則以 {Function_code}_v2。
+
+{Function_code}/
+|-- stores/  (個別頁面內的 redux 狀態管理)
+|   |   |-- actions.js (改變狀態動作)
+|   |   |-- index.js  (該 stores 入口文件)
+|   |   |-- reducers.js 
+|   |   |-- types.js (定義常數)
+|   |-- ### 個別頁面內的 redux 相關方法放置此處 ###
+|   |-- xxxxx_2.js  (頁面數量2)
+|   |-- xxxxx_3.js  (頁面數量3)
+|   |-- xxxxx_4.js  (頁面數量4)
+|   |-- index.js  (該頁面入口文件)
+|   |-- {Function_code}.style.js  (該頁面樣式文件)
 
 ---

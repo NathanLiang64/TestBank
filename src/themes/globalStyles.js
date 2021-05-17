@@ -62,6 +62,8 @@ const GlobalStyles = createGlobalStyle`
     font-size: 1.6rem;
     font-family: ${({ theme }) => theme.font};
     line-height: 1.43;
+    color: ${({ theme }) => theme.colors.text.dark};
+    background: ${({ theme }) => theme.colors.background.lighter};
   }
   
   #root {
@@ -88,6 +90,12 @@ const GlobalStyles = createGlobalStyle`
   
   .textLink {
     color: ${({ theme }) => theme.colors.text.link};
+  }
+  
+  h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+  a, em, i {
+    line-height: 1.6;
+    color: ${({ theme }) => theme.colors.text.dark};
   }
 `;
 

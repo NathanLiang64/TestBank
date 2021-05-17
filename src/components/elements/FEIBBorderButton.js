@@ -10,7 +10,9 @@ import FEIBdefaultButton from './_defaultElements/FEIBdefaultButton';
 * 3. $borderColor -> 邊框顏色
 *    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)
 * 5. $width -> 按鈕寬度
-*    直接填寫數字，例如：12，若未傳值預設為 100%
+*    直接填寫數字，例如：12，若未傳值預設為 100%，最小限制 4.8
+* 6. $height -> 按鈕高度
+*    直接填寫數字，例如：4，若未傳值預設為 3.6，最小限制 3.2
 * */
 
 const FEIBBorderButton = styled(FEIBdefaultButton)`

@@ -29,6 +29,7 @@ const theme = {
     background: {
       primary: '#AC8DE8',
       light: '#E9EBEE',
+      lighter: '#F8F8F8',
       mask: 'rgba(130, 93, 199, .6)',
     },
     state: {
