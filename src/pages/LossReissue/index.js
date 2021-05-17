@@ -10,9 +10,9 @@ import LossReissueWrapper from './lossReissue.style';
 import { setActionText, setDialogContent } from './stores/actions';
 
 const LossReissue = () => {
-  const cardValues = useSelector(({ reissueDebitCard }) => reissueDebitCard.cardValues);
-  const actionText = useSelector(({ reissueDebitCard }) => reissueDebitCard.actionText);
-  const dialogContent = useSelector(({ reissueDebitCard }) => reissueDebitCard.dialogContent);
+  const cardValues = useSelector(({ lossReissue }) => lossReissue.cardValues);
+  const actionText = useSelector(({ lossReissue }) => lossReissue.actionText);
+  const dialogContent = useSelector(({ lossReissue }) => lossReissue.dialogContent);
   const [openDialog, setOpenDialog] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
