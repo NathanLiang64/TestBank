@@ -1,15 +1,17 @@
 import { useState } from 'react';
+import { useHistory } from 'react-router';
 
 /* Elements */
 import theme from 'themes/theme';
 import {
-  FEIBInputAnimationWrapper, FEIBInput, FEIBInputLabel, FEIBBorderButton,
+  FEIBInputAnimationWrapper, FEIBInput, FEIBInputLabel, FEIBButton,
 } from 'components/elements';
 
 /* Styles */
 import CardLessATMWrapper from './cardLessATM.style';
 
 const CardLessWithDrawChgPwd = () => {
+  const history = useHistory();
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
 
@@ -19,6 +21,10 @@ const CardLessWithDrawChgPwd = () => {
 
   const handlePasswordConfirmChange = (event) => {
     setPasswordConfirm(event.target.value);
+  };
+
+  const toStep1 = () => {
+    history.push('/cardLessATM/cardLessATM1');
   };
 
   return (
@@ -44,7 +50,14 @@ const CardLessWithDrawChgPwd = () => {
         />
       </FEIBInputAnimationWrapper>
       <div className="tip">注意事項</div>
-      <FEIBBorderButton>確定送出</FEIBBorderButton>
+      <FEIBButton
+        $color={theme.colors.basic.white}
+        $bgColor={theme.colors.primary.brand}
+        $pressedBgColor={theme.colors.primary.dark}
+        onClick={toStep1}
+      >
+        確定送出
+      </FEIBButton>
     </CardLessATMWrapper>
   );
 };

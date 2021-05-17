@@ -3,10 +3,11 @@ import { useHistory } from 'react-router';
 /* Elements */
 // import theme from 'themes/theme';
 import {
-  FEIBBorderButton,
+  FEIBButton,
 } from 'components/elements';
 
 /* Styles */
+import theme from 'themes/theme';
 import CardLessATMWrapper from './cardLessATM.style';
 
 const CardLessATM2 = () => {
@@ -26,8 +27,22 @@ const CardLessATM2 = () => {
           提款金額 NT $ 10,000
         </h1>
       </div>
+      <div className="tip">
+        免費跨提次數
+        <span> 6 </span>
+        次 / 免費跨轉次數
+        <span> 6 </span>
+        次
+      </div>
       <div className="tip">注意事項</div>
-      <FEIBBorderButton onClick={withdrawalConfirm}>確認提款</FEIBBorderButton>
+      <FEIBButton
+        $color={theme.colors.basic.white}
+        $bgColor={theme.colors.primary.brand}
+        $pressedBgColor={theme.colors.primary.dark}
+        onClick={withdrawalConfirm}
+      >
+        確認提款
+      </FEIBButton>
     </CardLessATMWrapper>
   );
 };

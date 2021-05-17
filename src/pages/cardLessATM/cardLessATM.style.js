@@ -4,12 +4,18 @@ import Layout from 'components/Layout';
 const CardLessATM = styled(Layout)`
 .tip {
   text-align: center;
-  margin: 1rem 0;
+  margin: 1.8rem 0;
+  font-size: 1.6rem;
+  font-weight: bold;
+  span {
+    font-size: 2rem;
+    color: ${({ theme }) => theme.colors.primary.brand};
+  }
 }
 .account-info {
   text-align: center;
   padding: 1rem;
-  background: ${({ theme }) => theme.colors.primary.light};
+  background: ${({ theme }) => theme.colors.primary.dark};
   margin-bottom: 1rem;
   h1 {
     font-size: 2rem;
@@ -30,9 +36,39 @@ const CardLessATM = styled(Layout)`
   }
 }
 .withdrawal-info {
-  margin: 1rem 0;
+  margin: 1.8rem 0;
   span {
     color: red;
+  }
+}
+.result-table {
+  table {
+    border-left: 1px solid ${({ theme }) => theme.colors.border.light};
+    border-top: 1px solid ${({ theme }) => theme.colors.border.light};
+    border-right: 1px solid ${({ theme }) => theme.colors.border.light};
+    width: 100%;
+    tr {
+      border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
+      td {
+        padding: .8rem;
+        &:first-child {
+          font-weight: bold;
+          text-align: center;
+          width: 30%;
+          border-right: 1px solid ${({ theme }) => theme.colors.border.light};
+        }
+      }
+    }
+  }
+  &.withdraw {
+    table {
+      tr {
+        td:last-child {
+          font-weight: bold;
+          color: ${({ theme }) => theme.colors.primary.dark};
+        }
+      }
+    }
   }
 }
 `;
