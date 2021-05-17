@@ -58,15 +58,17 @@ const Input = styled(MaterialInput)`
 `;
 
 const Checkbox = styled(MaterialCheckbox)`
-  &.MuiButtonBase-root,
-  &.MuiCheckbox-colorSecondary.Mui-checked {
-    color: ${({ theme }) => theme.colors.basic.white};
+  //&.MuiButtonBase-root,
+  // &.MuiCheckbox-colorSecondary.Mui-checked {
+  // }
+  &.MuiCheckbox-root {
+     color: ${({ theme }) => theme.colors.basic.white};
   }
 `;
 
 const IconButton = styled(MaterialIconButton)`
   
-  &.MuiButtonBase-root {
+  &.MuiIconButton-root {
     color: ${({ theme }) => theme.colors.basic.white};
     opacity: .6;
   }

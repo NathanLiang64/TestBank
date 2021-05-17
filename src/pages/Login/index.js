@@ -1,29 +1,37 @@
-import { useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
-  FormControl, FormControlLabel, InputLabel, Input, Checkbox, IconButton, InputAdornment,
-} from 'themes/styleModules';
-import {
-  Visibility, VisibilityOff, RadioButtonChecked, RadioButtonUnchecked, ArrowForwardRounded,
+  Visibility,
+  VisibilityOff,
+  ArrowForwardRounded,
+  RadioButtonUnchecked,
+  RadioButtonChecked,
 } from '@material-ui/icons';
-
-/* Styles */
+import {
+  FEIBInput,
+  FEIBInputLabel,
+  FEIBInputAnimationWrapper,
+  FEIBLinkButton,
+  FEIBIconButton,
+  FEIBCheckbox,
+  FEIBCheckboxLabel,
+} from 'components/elements';
+import theme from 'themes/theme';
 import LoginWrapper from './login.style';
+import { setLoginFormValues } from './stores/actions';
 
 const Login = () => {
   const userInfo = useSelector(({ login }) => login.userInfo);
-  const [values, setValues] = useState({
-    id: '',
-    userId: '',
-    password: '',
-    showPassword: false,
-  });
-  const handleChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
+  const loginFormValues = useSelector(({ login }) => login.loginFormValues);
+
+  const dispatch = useDispatch();
+  const handleChangeInput = (event) => {
+    dispatch(setLoginFormValues({ ...loginFormValues, [event.target.name]: event.target.value }));
   };
   const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword });
+    dispatch(
+      setLoginFormValues({ ...loginFormValues, showPassword: !loginFormValues.showPassword }),
+    );
   };
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
@@ -42,53 +50,86 @@ const Login = () => {
               <p>To be Friendlier & Smarter</p>
             </div>
 
-            <div className="formItems">
-              <div className="formItem">
-                <FormControl>
-                  <InputLabel htmlFor="id">身分證字號 / 手機號碼</InputLabel>
-                  <Input id="id" />
-                </FormControl>
-              </div>
-              <div className="formItem">
-                <FormControl>
-                  <InputLabel htmlFor="userId">使用者代號</InputLabel>
-                  <Input id="userId" />
-                </FormControl>
-              </div>
-              <div className="formItem">
-                <FormControl>
-                  <InputLabel htmlFor="password">密碼</InputLabel>
-                  <Input
-                    id="password"
-                    type={values.showPassword ? 'text' : 'password'}
-                    value={values.password}
-                    onChange={handleChange('password')}
-                    endAdornment={(
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
-                        >
-                          {values.showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    )}
+            <div className="formItems" style={{ width: '100%' }}>
+              <div style={{ width: '100%' }}>
+                <FEIBInputAnimationWrapper>
+                  <FEIBInputLabel
+                    htmlFor="id"
+                    $color={theme.colors.basic.white}
+                  >
+                    身分證字號 / 手機號碼
+                  </FEIBInputLabel>
+                  <FEIBInput
+                    id="id"
+                    name="id"
+                    value={loginFormValues.id}
+                    $color={theme.colors.basic.white}
+                    $borderColor={theme.colors.basic.white}
+                    onChange={handleChangeInput}
                   />
-                </FormControl>
+                </FEIBInputAnimationWrapper>
               </div>
-              <div className="formItem">
-                <FormControlLabel
-                  control={(
-                    <Checkbox
-                      icon={<RadioButtonUnchecked />}
-                      checkedIcon={<RadioButtonChecked />}
-                      name="remember"
-                    />
-                  )}
-                  label="記住我的身分"
-                />
+
+              <div style={{ width: '100%' }}>
+                <FEIBInputAnimationWrapper>
+                  <FEIBInputLabel
+                    htmlFor="userId"
+                    $color={theme.colors.basic.white}
+                  >
+                    使用者代號
+                  </FEIBInputLabel>
+                  <FEIBInput
+                    id="userId"
+                    name="userId"
+                    value={loginFormValues.userId}
+                    $color={theme.colors.basic.white}
+                    $borderColor={theme.colors.basic.white}
+                    onChange={handleChangeInput}
+                  />
+                </FEIBInputAnimationWrapper>
+              </div>
+
+              <div style={{ width: '100%' }}>
+                <FEIBInputAnimationWrapper>
+                  <FEIBInputLabel htmlFor="password" $color={theme.colors.basic.white}>密碼</FEIBInputLabel>
+                  <FEIBInput
+                    id="password"
+                    name="password"
+                    value={loginFormValues.password}
+                    type={loginFormValues.showPassword ? 'text' : 'password'}
+                    onChange={handleChangeInput}
+                    endAdornment={(
+                      <FEIBIconButton
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        $iconColor={theme.colors.basic.white}
+                      >
+                        {loginFormValues.showPassword ? <VisibilityOff /> : <Visibility />}
+                      </FEIBIconButton>
+                    )}
+                    $color={theme.colors.basic.white}
+                    $borderColor={theme.colors.basic.white}
+                  />
+                </FEIBInputAnimationWrapper>
+              </div>
+
+              <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+                <div>
+                  <FEIBCheckboxLabel
+                    control={(
+                      <FEIBCheckbox
+                        color="default"
+                        $iconColor={theme.colors.basic.white}
+                        icon={<RadioButtonUnchecked />}
+                        checkedIcon={<RadioButtonChecked />}
+                      />
+                    )}
+                    label="記住我的身分"
+                    $color={theme.colors.basic.white}
+                  />
+                </div>
                 <div className="forgot">
-                  <span>忘記使用者代號或密碼</span>
+                  <FEIBLinkButton $color={theme.colors.basic.white}>忘記使用者代號或密碼</FEIBLinkButton>
                 </div>
               </div>
             </div>

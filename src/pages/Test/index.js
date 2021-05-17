@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 /* Elements */
 import {
@@ -10,6 +10,8 @@ import {
   FEIBButton,
   FEIBBorderButton,
 } from 'components/elements';
+
+import getJwtKey from 'utilities/DoGetToken';
 
 /* Global themes */
 import theme from 'themes/theme';
@@ -27,6 +29,10 @@ const Test = () => {
   const handleChangeInput = (event) => {
     setInputValues({ ...inputValues, [event.target.name]: event.target.value });
   };
+
+  useEffect(() => {
+    getJwtKey();
+  }, []);
 
   return (
     <TestWrapper>

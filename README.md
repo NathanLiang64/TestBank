@@ -11,33 +11,39 @@
 ## 進行中
 - 元件封裝 - 唯物 & 聖森
 - 無卡提款 - 唯物
-- 常用帳號列表 (AccountMaintenance) - 聖森 (暫不需實作)
+- Header 導航欄 - 聖森
 - 登入頁 (Login) - 聖森
-- 加解密 - 聖森
+- 常用帳號列表 (AccountMaintenance) - 聖森 (暫不需實作)
 
 ---
 
 ## 已完成
+- 功能
+  - 金融卡掛失補發 (LossReissue) - 聖森
+  - 加解密 - 聖森
+  
+
 - 元件封裝
-  - FEIBInput
-  - FEIBInputLabel
-  - FEIBInputAnimationWrapper
-  - FEIBSelect
-  - FEIBOption
-  - FEIBButton
-  - FEIBBorderButton
-  - FEIBTextarea
+  - FEIBInput - 聖森
+  - FEIBInputLabel - 聖森
+  - FEIBInputAnimationWrapper - 聖森
+  - FEIBSelect - 聖森
+  - FEIBOption - 聖森
+  - FEIBButton - 聖森
+  - FEIBIconButton - 聖森
+  - FEIBLinkButton - 聖森
+  - FEIBBorderButton - 聖森
+  - FEIBTextarea - 唯物
+  - FEIBCheckbox - 聖森
+  - FEIBCheckboxLabel - 聖森
 
 
 - 組件封裝
-  - ConfirmButtons
-  - Dialog
-  - Layout
-  - Alert
-
-
-- 頁面
-  - 金融卡掛失補發 (ReissueDebitCard) - 聖森
+  - ConfirmButtons - 聖森
+  - Dialog - 聖森
+  - Layout - 聖森
+  - Alert - 聖森
+  - NoticeArea - 聖森
 
 ---
 
