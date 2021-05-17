@@ -7,9 +7,9 @@ import {
 } from 'components/elements';
 
 /* Styles */
-import CardlessWithdrawalWrapper from './cardlessWithdrawal.style';
+import CardLessATMWrapper from './cardLessATM.style';
 
-const ChangePassword = () => {
+const CardLessWithDrawChgPwd = () => {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
 
@@ -22,7 +22,7 @@ const ChangePassword = () => {
   };
 
   return (
-    <CardlessWithdrawalWrapper>
+    <CardLessATMWrapper>
       <FEIBInputAnimationWrapper>
         <FEIBInputLabel $color={theme.colors.primary.dark}>提款密碼設定</FEIBInputLabel>
         <FEIBInput
@@ -45,8 +45,8 @@ const ChangePassword = () => {
       </FEIBInputAnimationWrapper>
       <div className="tip">注意事項</div>
       <FEIBBorderButton>確定送出</FEIBBorderButton>
-    </CardlessWithdrawalWrapper>
+    </CardLessATMWrapper>
   );
 };
 
-export default ChangePassword;
+export default CardLessWithDrawChgPwd;

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Layout from 'components/Layout';
 
-const CardlessWithdrawal = styled(Layout)`
+const CardLessATM = styled(Layout)`
 .tip {
   text-align: center;
   margin: 1rem 0;
@@ -18,15 +18,23 @@ const CardlessWithdrawal = styled(Layout)`
   }
 }
 .money-buttons-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between
+  // grid-template-columns: repeat(3, 1fr);
 }
 .withdrawal-btn-container {
-  // padding: 1rem;
+  margin-bottom: 1rem;
   .withdrawal-btn {
-    min-width: unset;
+    width: 10rem;
+  }
+}
+.withdrawal-info {
+  margin: 1rem 0;
+  span {
+    color: red;
   }
 }
 `;
 
-export default CardlessWithdrawal;
+export default CardLessATM;

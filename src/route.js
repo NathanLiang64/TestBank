@@ -2,22 +2,22 @@
 import Login from 'pages/Login';
 import Test from 'pages/Test';
 import ReissueDebitCard from 'pages/ReissueDebitCard';
-import CardlessWithdrawal from 'pages/CardlessWithdrawal';
-import Step1 from 'pages/CardlessWithdrawal/step_1';
-import Step2 from 'pages/CardlessWithdrawal/step_2';
-import Step3 from 'pages/CardlessWithdrawal/step_3';
-import ChangePassword from 'pages/CardlessWithdrawal/changePassword';
+import CardLessATM from 'pages/cardLessATM';
+import CardLessATM1 from 'pages/cardLessATM/cardLessATM_1';
+import CardLessATM2 from 'pages/cardLessATM/cardLessATM_2';
+import CardLessATM3 from 'pages/cardLessATM/cardLessATM_3';
+import CardLessWithDrawChgPwd from 'pages/cardLessATM/cardLessWithDrawChgPwd';
 import AccountMaintenance from './pages/AccountMaintenance';
 
 const routes = [
   { path: '/', exact: true, component: Login },
   { path: '/test', exact: false, component: Test },
   { path: '/reissueDebitCard', exact: false, component: ReissueDebitCard },
-  { path: '/cardlessWithdrawal', exact: true, component: CardlessWithdrawal },
-  { path: '/cardlessWithdrawal/step1', exact: false, component: Step1 },
-  { path: '/cardlessWithdrawal/step2', exact: false, component: Step2 },
-  { path: '/cardlessWithdrawal/step3', exact: false, component: Step3 },
-  { path: '/cardlessWithdrawal/changePassword', exact: false, component: ChangePassword },
+  { path: '/cardLessATM', exact: true, component: CardLessATM },
+  { path: '/cardLessATM/cardLessATM1', exact: false, component: CardLessATM1 },
+  { path: '/cardLessATM/cardLessATM2', exact: false, component: CardLessATM2 },
+  { path: '/cardLessATM/cardLessATM3', exact: false, component: CardLessATM3 },
+  { path: '/cardLessATM/cardLessWithDrawChgPwd', exact: false, component: CardLessWithDrawChgPwd },
   { path: '/accountMaintenance', exact: false, component: AccountMaintenance },
 ];
 

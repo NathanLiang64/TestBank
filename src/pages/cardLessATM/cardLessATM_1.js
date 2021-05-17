@@ -8,9 +8,9 @@ import {
 } from 'components/elements';
 
 /* Styles */
-import CardlessWithdrawalWrapper from './cardlessWithdrawal.style';
+import CardLessATMWrapper from './cardLessATM.style';
 
-const Step1 = () => {
+const CardLessATM1 = () => {
   const history = useHistory();
 
   const amountArr = [1000, 2000, 3000, 5000, 10000, 20000];
@@ -26,15 +26,15 @@ const Step1 = () => {
   };
 
   const toStep2 = () => {
-    history.push('/cardlessWithdrawal/step2');
+    history.push('/cardLessATM/cardLessATM2');
   };
 
   const toChangePassword = () => {
-    history.push('/cardlessWithdrawal/changePassword');
+    history.push('/cardLessATM/cardLessWithDrawChgPwd');
   };
 
   return (
-    <CardlessWithdrawalWrapper>
+    <CardLessATMWrapper>
       <div className="account-info">
         <h1>
           活儲帳戶 04304099001568
@@ -66,8 +66,8 @@ const Step1 = () => {
       <div className="tip" onClick={toChangePassword} aria-hidden="true">我要變更無卡提款密碼</div>
       <div className="tip">注意事項</div>
       <FEIBBorderButton onClick={toStep2}>下一步</FEIBBorderButton>
-    </CardlessWithdrawalWrapper>
+    </CardLessATMWrapper>
   );
 };
 
-export default Step1;
+export default CardLessATM1;

@@ -10,9 +10,9 @@ import { FormControlLabel, Checkbox } from 'themes/styleModules';
 import { RadioButtonChecked, RadioButtonUnchecked } from '@material-ui/icons';
 
 /* Styles */
-import CardlessWithdrawalWrapper from './cardlessWithdrawal.style';
+import CardLessATMWrapper from './cardLessATM.style';
 
-const CardlessWithdrawal = () => {
+const CardLessATM = () => {
   const history = useHistory();
 
   const [step, setStep] = useState(0);
@@ -29,7 +29,7 @@ const CardlessWithdrawal = () => {
   };
 
   const toStep1 = () => {
-    history.push('/cardlessWithdrawal/step1');
+    history.push('/cardLessATM/cardLessATM1');
   };
 
   const renderPage = () => {
@@ -96,10 +96,10 @@ const CardlessWithdrawal = () => {
     );
   };
   return (
-    <CardlessWithdrawalWrapper>
+    <CardLessATMWrapper>
       { renderPage() }
-    </CardlessWithdrawalWrapper>
+    </CardLessATMWrapper>
   );
 };
 
-export default CardlessWithdrawal;
+export default CardLessATM;

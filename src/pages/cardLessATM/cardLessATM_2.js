@@ -7,17 +7,17 @@ import {
 } from 'components/elements';
 
 /* Styles */
-import CardlessWithdrawalWrapper from './cardlessWithdrawal.style';
+import CardLessATMWrapper from './cardLessATM.style';
 
-const Step2 = () => {
+const CardLessATM2 = () => {
   const history = useHistory();
 
   const withdrawalConfirm = () => {
-    history.push('/cardlessWithdrawal/step3');
+    history.push('/cardLessATM/cardLessATM3');
   };
 
   return (
-    <CardlessWithdrawalWrapper>
+    <CardLessATMWrapper>
       <div className="account-info">
         <h1>
           活儲帳戶 04304099001568
@@ -28,8 +28,8 @@ const Step2 = () => {
       </div>
       <div className="tip">注意事項</div>
       <FEIBBorderButton onClick={withdrawalConfirm}>確認提款</FEIBBorderButton>
-    </CardlessWithdrawalWrapper>
+    </CardLessATMWrapper>
   );
 };
 
-export default Step2;
+export default CardLessATM2;
