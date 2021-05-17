@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import Header from 'components/Header';
 import routes from 'route';
 
 /* Store */
@@ -7,6 +8,7 @@ import store from './stores';
 
 const App = () => (
   <Provider store={store}>
+    <Header />
     <BrowserRouter>
       <Switch>
         {

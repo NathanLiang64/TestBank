@@ -21,7 +21,7 @@ const LoginWrapper = styled(Layout)`
     justify-content: flex-end;
     align-items: center;
     padding-bottom: 2vh;
-    height: 28vh;
+    height: 20vh;
     background: ${({ theme }) => theme.colors.primary.light};
 
     h3, p {
