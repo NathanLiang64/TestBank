@@ -9,3 +9,8 @@ export const setErrorMessage = (message) => ({
   type: types.SET_ERROR_MESSAGE,
   payload: message,
 });
+
+export const setLoginFormValues = (object) => ({
+  type: types.SET_LOGIN_FORM_VALUES,
+  payload: object,
+});

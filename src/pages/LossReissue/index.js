@@ -3,16 +3,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
 import Alert from 'components/Alert';
-
-/* Elements */
+import NoticeArea from 'components/NoticeArea';
 import { FEIBInput, FEIBInputLabel, FEIBButton } from 'components/elements';
-
-/* Styles */
 import theme from 'themes/theme';
-import ReissueDebitCardWrapper from './reissueDebitCard.style';
+import LossReissueWrapper from './lossReissue.style';
 import { setActionText, setDialogContent } from './stores/actions';
 
-const ReissueDebitCard = () => {
+const LossReissue = () => {
   const cardValues = useSelector(({ reissueDebitCard }) => reissueDebitCard.cardValues);
   const actionText = useSelector(({ reissueDebitCard }) => reissueDebitCard.actionText);
   const dialogContent = useSelector(({ reissueDebitCard }) => reissueDebitCard.dialogContent);
@@ -63,7 +60,7 @@ const ReissueDebitCard = () => {
   const checkCardState = (state) => (state !== '新申請' && state !== '已銷戶') && renderButton(state);
 
   return (
-    <ReissueDebitCardWrapper>
+    <LossReissueWrapper>
       {showAlert && <Alert state="success">{`已完成${actionText}申請`}</Alert>}
 
       <div>
@@ -92,13 +89,10 @@ const ReissueDebitCard = () => {
 
       { checkCardState(cardValues.state) }
 
-      <div className="noticeArea">
-        <h3 className="noticeTitle">注意事項</h3>
-        <div className="noticeContent">
-          <p>( 注意事項文案相關內容，應由 API 回傳 )</p>
-          <p>由於本介面空間較大，建議可直接將注意事項顯示出來。由於本屆面空間較大，建議可直接將注意事項顯示出來。由於本屆面空間較大，建議可直接將注意事項顯示出來。</p>
-        </div>
-      </div>
+      <NoticeArea>
+        <p>( 注意事項文案相關內容，應由 API 回傳 )</p>
+        <p>由於本介面空間較大，建議可直接將注意事項顯示出來。由於本屆面空間較大，建議可直接將注意事項顯示出來。由於本屆面空間較大，建議可直接將注意事項顯示出來。</p>
+      </NoticeArea>
 
       <Dialog
         isOpen={openDialog}
@@ -111,8 +105,8 @@ const ReissueDebitCard = () => {
           />
         )}
       />
-    </ReissueDebitCardWrapper>
+    </LossReissueWrapper>
   );
 };
 
-export default ReissueDebitCard;
+export default LossReissue;

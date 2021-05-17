@@ -6,6 +6,15 @@ const LoginWrapper = styled(Layout)`
   flex-direction: column;
   align-items: center;
   
+  .MuiIconButton-root,
+  .MuiFormControlLabel-label {
+    opacity: .6;
+  }
+  
+  .Mui-checked {
+    opacity: 1;
+  }
+  
   .title {
     display: flex;
     flex-direction: column;
@@ -60,8 +69,8 @@ const LoginWrapper = styled(Layout)`
         border: 0;
         font-size: 2.4rem;
         font-weight: bold;
-        color: ${({ theme }) => theme.colors.primary.dark};
-        background: transparent;
+        // color: ${({ theme }) => theme.colors.primary.dark};
+        //background: transparent;
       }
       .MuiSvgIcon-root {
         margin-left: .4rem;
@@ -88,13 +97,10 @@ const LoginWrapper = styled(Layout)`
   }
   
   .forgot {
-    span {
-      font-size: 1.4rem;
-      font-weight: 300;
-      line-height: 2;
-      color: ${({ theme }) => theme.colors.basic.white};
+    display: flex;
+    
+    button {
       opacity: .6;
-      transition: ${({ theme }) => theme.transition};
       
       &:hover {
         opacity: 1;

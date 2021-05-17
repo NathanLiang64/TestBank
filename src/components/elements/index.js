@@ -5,7 +5,11 @@ import FEIBSelect from './FEIBSelect';
 import FEIBOption from './FEIBOption';
 import FEIBButton from './FEIBButton';
 import FEIBBorderButton from './FEIBBorderButton';
+import FEIBLinkButton from './FEIBLinkButton';
+import FEIBIconButton from './FEIBIconButton';
 import FEIBTextarea from './FEIBTextarea';
+import FEIBCheckbox from './FEIBCheckbox';
+import FEIBCheckboxLabel from './FEIBCheckboxLabel';
 
 /*
 * elements 入口文件，元件統一由此匯出
@@ -19,5 +23,9 @@ export {
   FEIBOption,
   FEIBButton,
   FEIBBorderButton,
+  FEIBLinkButton,
+  FEIBIconButton,
   FEIBTextarea,
+  FEIBCheckbox,
+  FEIBCheckboxLabel,
 };
