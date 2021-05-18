@@ -16,12 +16,16 @@ const NoticeAreaWrapper = styled.div`
   div {
     margin: .8rem 0;
     padding: 1.2rem;
-    width: 100%;
     border: .1rem solid ${({ theme }) => theme.colors.border.lighter};
-    font-size: 1.4rem;
+    width: 100%;
+    font-size: 1.3rem;
     text-align: ${({ $textAlign }) => $textAlign || 'center'};
     max-height: calc(32rem - .8rem);
     overflow: auto;
+    
+    p {
+      margin-bottom: .8rem;
+    }
   }
 `;
 

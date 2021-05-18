@@ -1,0 +1,16 @@
+{
+  "login": {
+    "title": "登入"
+  },
+  "users": [
+    {
+      "username": "Test Name"
+    }
+  ],
+  "creditCard": [
+    {
+      "cardNo": "04304099001568",
+      "cardBalance": 168000
+    }
+  ]
+}

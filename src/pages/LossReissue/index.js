@@ -1,3 +1,4 @@
+import { useHistory } from 'react-router';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Dialog from 'components/Dialog';
@@ -16,10 +17,8 @@ const LossReissue = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
+  const { push } = useHistory();
   const dispatch = useDispatch();
-  // const handleChangeInput = (event) => {
-  //   dispatch(setCardValues({ ...cardValues, [event.target.name]: event.target.value }));
-  // };
   const handleToggleDialog = (boolean) => {
     setOpenDialog(boolean);
   };
@@ -28,6 +27,7 @@ const LossReissue = () => {
     // 點擊確定申請後關閉彈窗並顯示成功申請
     handleToggleDialog(false);
     setShowAlert(true);
+    push('/lossReissue2');
   };
 
   /*
@@ -90,8 +90,10 @@ const LossReissue = () => {
       { checkCardState(cardValues.state) }
 
       <NoticeArea>
-        <p>( 注意事項文案相關內容，應由 API 回傳 )</p>
-        <p>由於本介面空間較大，建議可直接將注意事項顯示出來。由於本屆面空間較大，建議可直接將注意事項顯示出來。由於本屆面空間較大，建議可直接將注意事項顯示出來。</p>
+        <p>1. Bankee存款帳戶申請補發Bankee金融卡，手續費新臺幣(以下同)100元及郵寄掛號費50元將由Bankee存款帳戶中自動扣除(前述Bankee存款帳戶泛指持有「Bankee數位存款帳戶」或「Bankee一般帳戶」者，以下簡稱本存戶)。</p>
+        <p>2. 本存戶向遠東國際商業銀行辦理金融卡申請/異動申請，除金融卡註銷外，嗣後往來仍悉遵「遠東國際商業銀行金融卡服務約定事項」有關業務規定辦理。</p>
+        <p>3. 於各項異動手續辦理妥前，所有使用本存戶Bankee金融卡之交易或申請人為不實之申請，而致蒙受損害時，其一切損害及責任概由本存戶負責。</p>
+        <p>4. 本存戶於申請此服務時，業已審閱並充分了解全部內容，並完全同意後才使用各項服務及申請憑證。</p>
       </NoticeArea>
 
       <Dialog

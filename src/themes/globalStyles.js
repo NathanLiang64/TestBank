@@ -80,6 +80,27 @@ const GlobalStyles = createGlobalStyle`
     outline: 0;
   }
 
+  table {
+    border: .1rem solid ${({ theme }) => theme.colors.primary.lightest};
+    width: 100%;
+    font-size: 1.5rem;
+    background: white;
+
+    tr {
+      border-bottom: .1rem solid ${({ theme }) => theme.colors.border.lighter};
+
+      td {
+        border-right: .1rem solid ${({ theme }) => theme.colors.border.lighter};
+        padding: .8rem;
+
+        &:first-child {
+          font-weight: bold;
+          color: ${({ theme }) => theme.colors.primary.dark};
+        }
+      }
+    }
+  }
+
   .formItem {
     display: flex;
     justify-content: space-between;

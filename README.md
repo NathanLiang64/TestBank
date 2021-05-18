@@ -13,6 +13,7 @@
 - 無卡提款 - 唯物
 - Header 導航欄 - 聖森
 - 登入頁 (Login) - 聖森
+- 信用卡繳費 (BillPay) - 聖森
 - 常用帳號列表 (AccountMaintenance) - 聖森 (暫不需實作)
 
 ---
@@ -50,6 +51,8 @@
 ## 目錄結構說明
 ```
 App2_WebView
+|-- __json_server_mock__  (mock api)
+|   |-- db.json
 |
 |-- public/
 |   |-- favicon.ico
@@ -157,6 +160,7 @@ App2_WebView
 - `vjinc` - 唯物主分支
 - `SS_master` - 聖森主分支
 - `SS_Adrian` - 聖森前端開發人員 Adrian
+- `SS_Archie` - 聖森前端開發人員 Archie
 - `vjinc_Benny` - 唯物前端開發人員 Benny
 
 ---
