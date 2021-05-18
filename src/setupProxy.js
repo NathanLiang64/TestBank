@@ -9,6 +9,10 @@ module.exports = function (app) {
     target: baseURL,
     changeOrigin: true,
   }));
+  app.use(createProxyMiddleware('/api', {
+    target: baseURL,
+    changeOrigin: true,
+  }));
   app.use(createProxyMiddleware('/aplfx', {
     target: baseURL,
     changeOrigin: true,

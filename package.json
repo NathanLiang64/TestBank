@@ -31,7 +31,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server": "json-server __json_server_mock__/db.json --watch --port 3005"
+    "server": "json-server __json_server_mock__/db.json --routes __json_server_mock__/routes.json --watch --port 3005"
   },
   "browserslist": {
     "production": [
