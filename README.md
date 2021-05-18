@@ -11,7 +11,6 @@
 ## 進行中
 - 元件封裝 - 唯物 & 聖森
 - 無卡提款 - 唯物
-- Header 導航欄 - 聖森
 - 登入頁 (Login) - 聖森
 - 信用卡繳費 (BillPay) - 聖森
 - 常用帳號列表 (AccountMaintenance) - 聖森 (暫不需實作)
@@ -45,6 +44,7 @@
   - Layout - 聖森
   - Alert - 聖森
   - NoticeArea - 聖森
+  - Header - 聖森
 
 ---
 

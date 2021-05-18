@@ -1,6 +1,7 @@
 import { useHistory } from 'react-router';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import useCheckLocation from 'hooks/useCheckLocation';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
 import Alert from 'components/Alert';
@@ -58,6 +59,8 @@ const LossReissue = () => {
 
   // 卡片狀態為 " 新申請 " 或 " 已銷戶 " 時不應出現按鈕
   const checkCardState = (state) => (state !== '新申請' && state !== '已銷戶') && renderButton(state);
+
+  useCheckLocation();
 
   return (
     <LossReissueWrapper>
