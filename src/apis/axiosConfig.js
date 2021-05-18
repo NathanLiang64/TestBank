@@ -64,4 +64,11 @@ instance.interceptors.response.use(
   },
 );
 
-export default instance;
+const userAxios = () => {
+  if (process.env.NODE_ENV === 'production') {
+    return instance;
+  }
+  return axios;
+};
+
+export default userAxios();
