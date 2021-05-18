@@ -19,7 +19,9 @@ const NoticeAreaWrapper = styled.div`
     width: 100%;
     border: .1rem solid ${({ theme }) => theme.colors.border.lighter};
     font-size: 1.4rem;
-    text-align: center;
+    text-align: ${({ $textAlign }) => $textAlign || 'center'};
+    max-height: calc(32rem - .8rem);
+    overflow: auto;
   }
 `;
 
