@@ -12,7 +12,7 @@ const Header = () => {
     <FEIBIconButton
       className={className}
       $fontSize={2.4}
-      $iconColor={theme.colors.primary.brand}
+      $iconColor={theme.colors.text.dark}
     >
       {icon}
     </FEIBIconButton>

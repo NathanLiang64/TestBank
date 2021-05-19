@@ -26,11 +26,13 @@ const theme = {
     border: {
       light: '#777777',
       lighter: '#D7DCE2',
+      lightest: '#F3F3F3',
     },
     background: {
-      primary: '#AC8DE8',
       light: '#E9EBEE',
-      lighter: '#F8F8F8',
+      lighter: '#F5F5F5',
+      star: '#FFD466',
+      point: '#E60E0E',
       mask: 'rgba(130, 93, 199, .6)',
     },
     state: {
