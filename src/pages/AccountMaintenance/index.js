@@ -1,3 +1,4 @@
+import { useCheckLocation, usePageInfo } from 'hooks';
 import { FEIBButton, FEIBBorderButton } from 'components/elements';
 import theme from 'themes/theme';
 import AccountMaintenanceWrapper from './accountMaintenance.style';
@@ -40,6 +41,9 @@ const AccountMaintenance = () => {
       account: '04300499006456',
     },
   ];
+
+  useCheckLocation();
+  usePageInfo('/api/accountMaintenance');
 
   const renderCards = (list) => (
     list.map((item) => {
