@@ -43,7 +43,7 @@ const Login = () => {
 
   return (
     userInfo
-      ? <Redirect to="/account" />
+      ? <Redirect to="/shortcut" />
       : (
         <LoginWrapper fullScreen>
           <form>
@@ -145,7 +145,12 @@ const Login = () => {
               </div>
               <div className="signup">
                 <span>還沒有帳號嗎？</span>
-                <span className="textLink">Sign up!</span>
+                <FEIBLinkButton
+                  className="boldLink"
+                  $color={theme.colors.text.link}
+                >
+                  Sign up!
+                </FEIBLinkButton>
               </div>
             </div>
           </form>

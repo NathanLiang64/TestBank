@@ -85,7 +85,7 @@ const LoginWrapper = styled(Layout)`
       font-size: 1.4rem;
       color: ${({ theme }) => theme.colors.text.light};
 
-      .textLink {
+      .boldLink {
         font-weight: bold;
       }
     }

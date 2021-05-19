@@ -14,6 +14,11 @@
     "title": "常用帳號管理",
     "route": "/accountMaintenance"
   },
+  "depositPlus": {
+    "name": "DepositPlus",
+    "title": "優惠定額明細",
+    "route": "/depositPlus"
+  },
   "billPay":
     {
       "feib": true,

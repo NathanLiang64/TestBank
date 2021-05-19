@@ -14,7 +14,9 @@ import FEIBdefaultButton from './_defaultElements/FEIBdefaultButton';
 const FEIBLinkButton = styled(FEIBdefaultButton).attrs({
   type: 'button',
 })`
+  min-width: unset;
   min-height: unset;
+  width: auto;
   height: unset;
   border: 0;
   color: ${({ $color }) => $color || 'inherit'};
