@@ -1,5 +1,6 @@
 import { Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { useCheckLocation, usePageInfo } from 'hooks';
 import {
   Visibility,
   VisibilityOff,
@@ -36,8 +37,9 @@ const Login = () => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-  // const handleChangeRemember = (event) => {
-  // };
+
+  useCheckLocation();
+  usePageInfo('/api/login');
 
   return (
     userInfo
