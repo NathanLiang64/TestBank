@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router';
+import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
 import theme from 'themes/theme';
@@ -43,9 +44,13 @@ const CardLessATM1 = () => {
     arr.splice(-3, 0, ',');
     return arr.join('');
   };
+
+  useCheckLocation();
+  usePageInfo('/api/cardLessATM');
+
   return (
     <CardLessATMWrapper>
-      <div className="account-info">
+      <div className="accountInfo">
         <h1>
           活儲帳戶 04304099001568
         </h1>
@@ -71,10 +76,10 @@ const CardLessATM1 = () => {
           onChange={handleWithdrawalAmountInputChange}
         />
       </FEIBInputAnimationWrapper>
-      <div className="money-buttons-container">
+      <div className="amountButtonsContainer">
         {
           amountArr.map((item) => (
-            <div key={item} className="withdrawal-btn-container">
+            <div key={item} className="withdrawalBtnContainer">
               <FEIBButton
                 $color={theme.colors.basic.white}
                 $bgColor={theme.colors.primary.brand}

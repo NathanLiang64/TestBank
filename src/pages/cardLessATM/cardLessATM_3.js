@@ -45,7 +45,7 @@ const CardLessATM3 = () => {
 
   return (
     <CardLessATMWrapper>
-      <div className="account-info">
+      <div className="accountInfo">
         <h1>
           設定提款成功
         </h1>
@@ -58,7 +58,7 @@ const CardLessATM3 = () => {
         <h1>您已完成無卡提款交易</h1>
         <h1>到任何一個 ATM 提領您的現金吧！</h1>
       </div>
-      <div className="result-table withdraw">
+      <div className="resultTable withdraw">
         <table>
           <tbody>
             <tr>
@@ -76,12 +76,12 @@ const CardLessATM3 = () => {
           </tbody>
         </table>
       </div>
-      <div className="withdrawal-info">
+      <div className="withdrawalInfo">
         請您於
         <span> 2021/05/27 16:18:54 </span>
         前至本行或他行有提供無卡提款功能之ATM完成提款！
       </div>
-      <div className="result-table">
+      <div className="resultTable">
         <table>
           <tbody>
             <tr>

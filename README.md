@@ -39,6 +39,7 @@
   - FEIBCheckboxLabel - 聖森
   - FEIBRadio - 聖森
   - FEIBRadioLabel - 聖森
+  - FEIBSwitch - 唯物
 
 
 - 組件封裝

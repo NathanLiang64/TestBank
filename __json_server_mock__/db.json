@@ -31,5 +31,26 @@
       "ccToTrcvAmtd": 6658,
       "ccMinImPayd": 1750
     }
+  },
+  "users": [
+    {
+      "username": "Test Name"
+    }
+  ],
+  "creditCard": [
+    {
+      "cardNo": "04304099001568",
+      "cardBalance": 168000
+    }
+  ],
+  "cardLessATM": {
+    "name": "CardLessATM",
+    "title": "無卡提款",
+    "route": "/cardLessATM"
+  },
+  "noticeSetting": {
+    "name": "NoticeSetting",
+    "title": "訊息通知設定",
+    "route": "/noticeSetting"
   }
 }

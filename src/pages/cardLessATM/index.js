@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router';
+import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
 import {
@@ -41,7 +42,7 @@ const CardLessATM = () => {
   const renderPage = () => {
     if (step === 0) {
       return (
-        <div>
+        <div className="noticeTopFixed">
           {/* <FEIBInputLabel $color={theme.colors.primary.brand}>無卡提款約定事項</FEIBInputLabel> */}
           <NoticeArea title="無卡提款約定事項" textAlign="left">
             <p>
@@ -309,6 +310,10 @@ const CardLessATM = () => {
       </div>
     );
   };
+
+  useCheckLocation();
+  usePageInfo('/api/cardLessATM');
+
   return <CardLessATMWrapper>{renderPage()}</CardLessATMWrapper>;
 };
 

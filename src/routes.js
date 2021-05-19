@@ -1,16 +1,17 @@
 /* Components */
 import Login from 'pages/Login';
 import Test from 'pages/Test';
-import CardLessATM from 'pages/cardLessATM';
-import CardLessATM1 from 'pages/cardLessATM/cardLessATM_1';
-import CardLessATM2 from 'pages/cardLessATM/cardLessATM_2';
-import CardLessATM3 from 'pages/cardLessATM/cardLessATM_3';
-import CardLessWithDrawChgPwd from 'pages/cardLessATM/cardLessWithDrawChgPwd';
+import CardLessATM from 'pages/CardLessATM';
+import CardLessATM1 from 'pages/CardLessATM/cardLessATM_1';
+import CardLessATM2 from 'pages/CardLessATM/cardLessATM_2';
+import CardLessATM3 from 'pages/CardLessATM/cardLessATM_3';
+import CardLessWithDrawChgPwd from 'pages/CardLessATM/cardLessWithDrawChgPwd';
 import LossReissue from 'pages/LossReissue';
 import LossReissue2 from 'pages/LossReissue/lossReissue_2';
 import AccountMaintenance from 'pages/AccountMaintenance';
 import BillPay from 'pages/BillPay';
 import DepositPlus from 'pages/DepositPlus';
+import NoticeSetting from 'pages/NoticeSetting';
 
 const routes = [
   { path: '/', exact: true, component: Login },
@@ -25,6 +26,8 @@ const routes = [
   { path: '/accountMaintenance', exact: false, component: AccountMaintenance },
   { path: '/billPay', exact: true, component: BillPay },
   { path: '/depositPlus', exact: true, component: DepositPlus },
+  { path: '/noticeSetting', exact: true, component: NoticeSetting },
+
 ];
 
 export default routes;
