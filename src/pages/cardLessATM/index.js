@@ -1,9 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useHistory } from 'react-router';
-import { useDispatch } from 'react-redux';
-import useCheckLocation from 'hooks/useCheckLocation';
-import userAxios from 'apis/axiosConfig';
-import { setTitle } from 'components/Header/stores/actions';
+import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
 import {
@@ -23,7 +20,6 @@ import theme from 'themes/theme';
 import CardLessATMWrapper from './cardLessATM.style';
 
 const CardLessATM = () => {
-  const dispatch = useDispatch();
   const history = useHistory();
 
   const [step, setStep] = useState(0);
@@ -316,13 +312,7 @@ const CardLessATM = () => {
   };
 
   useCheckLocation();
-
-  useEffect(() => {
-    userAxios.get('/api/cardLessATM').then((res) => {
-      const { title } = res.data;
-      dispatch(setTitle(title));
-    });
-  }, []);
+  usePageInfo('/api/cardLessATM');
 
   return <CardLessATMWrapper>{renderPage()}</CardLessATMWrapper>;
 };

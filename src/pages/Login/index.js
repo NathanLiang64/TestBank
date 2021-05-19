@@ -1,8 +1,6 @@
-import { useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import useCheckLocation from 'hooks/useCheckLocation';
-import userAxios from 'apis/axiosConfig';
+import { useCheckLocation, usePageInfo } from 'hooks';
 import {
   Visibility,
   VisibilityOff,
@@ -20,7 +18,6 @@ import {
   FEIBCheckboxLabel,
 } from 'components/elements';
 import theme from 'themes/theme';
-import { setTitle } from 'components/Header/stores/actions';
 import LoginWrapper from './login.style';
 import { setLoginFormValues } from './stores/actions';
 
@@ -42,13 +39,7 @@ const Login = () => {
   };
 
   useCheckLocation();
-  // 測試，取得該頁面標題
-  useEffect(() => {
-    userAxios.get('/api/login').then((res) => {
-      const { title } = res.data;
-      dispatch(setTitle(title));
-    });
-  }, []);
+  usePageInfo('/api/login');
 
   return (
     userInfo

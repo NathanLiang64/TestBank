@@ -1,6 +1,18 @@
 {
   "login": {
-    "title": "登入"
+    "name": "Login",
+    "title": "登入",
+    "route": "/"
+  },
+  "lossReissue": {
+    "name": "LossReissue",
+    "title": "金融卡掛失/補發",
+    "route": "/lossReissue"
+  },
+  "accountMaintenance": {
+    "name": "AccountMaintenance",
+    "title": "常用帳號管理",
+    "route": "/accountMaintenance"
   },
   "users": [
     {
