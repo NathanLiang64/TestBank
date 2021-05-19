@@ -1,5 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
+import { useDispatch } from 'react-redux';
+import useCheckLocation from 'hooks/useCheckLocation';
+import userAxios from 'apis/axiosConfig';
+import { setTitle } from 'components/Header/stores/actions';
 
 /* Elements */
 import theme from 'themes/theme';
@@ -11,6 +15,7 @@ import {
 import CardLessATMWrapper from './cardLessATM.style';
 
 const CardLessATM1 = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
 
   const amountArr = [1000, 2000, 3000, 5000, 10000, 20000];
@@ -43,9 +48,19 @@ const CardLessATM1 = () => {
     arr.splice(-3, 0, ',');
     return arr.join('');
   };
+
+  useCheckLocation();
+
+  useEffect(() => {
+    userAxios.get('/api/cardLessATM').then((res) => {
+      const { title } = res.data;
+      dispatch(setTitle(title));
+    });
+  }, []);
+
   return (
     <CardLessATMWrapper>
-      <div className="account-info">
+      <div className="accountInfo">
         <h1>
           活儲帳戶 04304099001568
         </h1>
@@ -71,10 +86,10 @@ const CardLessATM1 = () => {
           onChange={handleWithdrawalAmountInputChange}
         />
       </FEIBInputAnimationWrapper>
-      <div className="money-buttons-container">
+      <div className="amountButtonsContainer">
         {
           amountArr.map((item) => (
-            <div key={item} className="withdrawal-btn-container">
+            <div key={item} className="withdrawalBtnContainer">
               <FEIBButton
                 $color={theme.colors.basic.white}
                 $bgColor={theme.colors.primary.brand}

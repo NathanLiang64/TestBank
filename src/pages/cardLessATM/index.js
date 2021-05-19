@@ -1,5 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
+import { useDispatch } from 'react-redux';
+import useCheckLocation from 'hooks/useCheckLocation';
+import userAxios from 'apis/axiosConfig';
+import { setTitle } from 'components/Header/stores/actions';
 
 /* Elements */
 import {
@@ -19,6 +23,7 @@ import theme from 'themes/theme';
 import CardLessATMWrapper from './cardLessATM.style';
 
 const CardLessATM = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
 
   const [step, setStep] = useState(0);
@@ -41,7 +46,7 @@ const CardLessATM = () => {
   const renderPage = () => {
     if (step === 0) {
       return (
-        <div>
+        <div className="noticeTopFixed">
           {/* <FEIBInputLabel $color={theme.colors.primary.brand}>無卡提款約定事項</FEIBInputLabel> */}
           <NoticeArea title="無卡提款約定事項" textAlign="left">
             <p>
@@ -309,6 +314,16 @@ const CardLessATM = () => {
       </div>
     );
   };
+
+  useCheckLocation();
+
+  useEffect(() => {
+    userAxios.get('/api/cardLessATM').then((res) => {
+      const { title } = res.data;
+      dispatch(setTitle(title));
+    });
+  }, []);
+
   return <CardLessATMWrapper>{renderPage()}</CardLessATMWrapper>;
 };
 

@@ -19,7 +19,7 @@ const CardLessATM2 = () => {
 
   return (
     <CardLessATMWrapper>
-      <div className="account-info">
+      <div className="accountInfo">
         <h1>
           活儲帳戶 04304099001568
         </h1>

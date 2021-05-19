@@ -12,5 +12,8 @@
       "cardNo": "04304099001568",
       "cardBalance": 168000
     }
-  ]
+  ],
+  "cardLessATM": {
+    "title": "無卡提款"
+  }
 }
