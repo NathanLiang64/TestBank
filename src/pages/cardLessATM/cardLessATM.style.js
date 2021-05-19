@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Layout from 'components/Layout';
 
-const CardLessATM = styled(Layout)`
+const CardLessATMWrapper = styled(Layout)`
 .noticeTopFixed {
   transform: translateY(-2.4rem);
 }
@@ -68,4 +68,4 @@ const CardLessATM = styled(Layout)`
 }
 `;
 
-export default CardLessATM;
+export default CardLessATMWrapper;

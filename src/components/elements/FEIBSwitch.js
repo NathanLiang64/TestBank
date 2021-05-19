@@ -9,7 +9,7 @@ import theme from 'themes/theme';
 * */
 const FEIBSwitch = styled(MaterialSwitch)`
   .MuiSwitch-switchBase {
-    color: #bdbdbd;
+    // color: #bdbdbd;
     &.Mui-checked {
       .MuiSwitch-thumb{
         background-color: ${({ $color }) => $color || theme.colors.primary.brand};

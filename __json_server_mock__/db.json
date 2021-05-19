@@ -26,7 +26,9 @@
     }
   ],
   "cardLessATM": {
-    "title": "無卡提款"
+    "name": "CardLessATM",
+    "title": "無卡提款",
+    "route": "/cardLessATM"
   },
   "billPay":
     {
@@ -36,5 +38,10 @@
       "trnBalance": 168000,
       "ccToTrcvAmtd": 6658,
       "ccMinImPayd": 1750
-    }
+    },
+  "noticeSetting": {
+    "name": "NoticeSetting",
+    "title": "訊息通知設定",
+    "route": "/noticeSetting"
+  }
 }
