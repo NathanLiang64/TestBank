@@ -71,7 +71,7 @@ const Test = () => {
             // $focusBorderColor={theme.colors.state.danger}
             // $bottomSpace={false}
           >
-            <FEIBOption value="aaa">AAA</FEIBOption>
+            <FEIBOption value="請選擇">請選擇</FEIBOption>
             <FEIBOption value="bbb">BBB</FEIBOption>
           </FEIBSelect>
         </div>
