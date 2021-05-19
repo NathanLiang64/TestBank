@@ -15,7 +15,7 @@
   ],
   "billPay":
     {
-      "feib": true,
+      "feib": false,
       "hasHbCard": true,
       "trnAcct": "04304099001568",
       "trnBalance": 168000,
