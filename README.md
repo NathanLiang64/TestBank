@@ -36,6 +36,7 @@
   - FEIBTextarea - 唯物
   - FEIBCheckbox - 聖森
   - FEIBCheckboxLabel - 聖森
+  - FEIBSwitch - 唯物
 
 
 - 組件封裝
