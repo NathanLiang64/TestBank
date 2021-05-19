@@ -8,6 +8,7 @@ import styled from 'styled-components';
 * */
 
 const Layout = styled.main`
+  margin-top: 4.8rem;
   ${({ fullScreen }) => (fullScreen ? null : 'padding: 2.4rem 1.6rem')};
   height: 100%;
 `;

@@ -1,8 +1,12 @@
 import styled from 'styled-components';
 
 const HeaderWrapper = styled.header`
-  height: 5.6rem;
-  box-shadow: 0 .2rem .4rem rgba(0, 0, 0, .04);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4.8rem;
+  background: ${({ theme }) => theme.colors.basic.white};
   
   .goBack,
   .goHome,
