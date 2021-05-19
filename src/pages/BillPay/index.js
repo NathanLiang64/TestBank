@@ -12,17 +12,20 @@ import { RadioGroup, FormControlLabel, Radio } from '@material-ui/core';
 import theme from 'themes/theme';
 
 /* Api */
-import { init } from 'apis/billPayApi';
+import { billPayApi } from 'apis/';
 import { RadioButtonChecked, RadioButtonUnchecked } from '@material-ui/icons';
+import { useCheckLocation, usePageInfo } from '../../hooks';
 
 const BillPay = () => {
+  const { init } = billPayApi;
   const [initData, setinitData] = useState(null);
   useEffect(async () => {
     const data = await init();
-    setinitData(data);
-    console.log(initData);
+    setinitData(data.initData);
   }, []);
 
+  useCheckLocation();
+  usePageInfo('/api/billPay');
   const cardPage = () => (
     <div>
       <p>

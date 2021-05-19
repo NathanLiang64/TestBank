@@ -16,11 +16,17 @@
   },
   "billPay":
     {
-      "feib": false,
-      "hasHbCard": true,
-      "trnAcct": "04304099001568",
-      "trnBalance": 168000,
-      "ccToTrcvAmtd": 6658,
-      "ccMinImPayd": 1750
+      "name": "billPay",
+      "title": "信用卡繳費",
+      "route": "/billPay",
+      "initData": {
+        "feib": false,
+        "hasHbCard": true,
+        "trnAcct": "04304099001568",
+        "trnBalance": 168000,
+        "ccToTrcvAmtd": 6658,
+        "ccMinImPayd": 1750
+      }
+
     }
 }
