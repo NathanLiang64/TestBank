@@ -58,7 +58,7 @@ const GlobalStyles = createGlobalStyle`
   }
   
   body {
-    height: 100%;
+    height: calc(100% - 4.8rem);
     font-size: 1.6rem;
     font-family: ${({ theme }) => theme.font};
     line-height: 1.43;

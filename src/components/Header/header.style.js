@@ -7,6 +7,7 @@ const HeaderWrapper = styled.header`
   width: 100%;
   height: 4.8rem;
   background: ${({ theme }) => theme.colors.basic.white};
+  z-index: 1000;
   
   .goBack,
   .goHome,
