@@ -15,25 +15,14 @@ const App = () => (
       <BrowserRouter>
         <Switch>
           {
-                        routes.map((route) => {
-                          const { path, exact, component } = route;
-                          return <Route key={path} path={path} exact={exact} component={component} />;
-                        })
-                    }
+            routes.map((route) => {
+              const { path, exact, component } = route;
+              return <Route key={path} path={path} exact={exact} component={component} />;
+            })
+          }
         </Switch>
       </BrowserRouter>
     </PersistGate>
-    <Header />
-    <BrowserRouter>
-      <Switch>
-        {
-                    routes.map((route) => {
-                      const { path, exact, component } = route;
-                      return <Route key={path} path={path} exact={exact} component={component} />;
-                    })
-                }
-      </Switch>
-    </BrowserRouter>
   </Provider>
 );
 
