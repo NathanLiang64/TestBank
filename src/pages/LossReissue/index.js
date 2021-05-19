@@ -45,12 +45,7 @@ const LossReissue = () => {
     }
     return (
       <div>
-        <FEIBButton
-          $color={theme.colors.basic.white}
-          $bgColor={theme.colors.primary.brand}
-          $pressedBgColor={theme.colors.primary.dark}
-          onClick={() => handleToggleDialog(true)}
-        >
+        <FEIBButton onClick={() => handleToggleDialog(true)}>
           { `${actionText}申請` }
         </FEIBButton>
       </div>

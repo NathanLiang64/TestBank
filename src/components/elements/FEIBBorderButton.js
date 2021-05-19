@@ -6,7 +6,7 @@ import FEIBdefaultButton from './_defaultElements/FEIBdefaultButton';
 * 1. $fontSize -> 字級大小
 *    直接填寫數字，例如：1.6，若未傳值預設為 1.4
 * 2. $color -> 文字顏色
-*    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)
+*    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)，預設為深主色
 * 3. $borderColor -> 邊框顏色
 *    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)
 * 5. $width -> 按鈕寬度
@@ -16,7 +16,8 @@ import FEIBdefaultButton from './_defaultElements/FEIBdefaultButton';
 * */
 
 const FEIBBorderButton = styled(FEIBdefaultButton)`
-  border: .1rem solid ${({ $borderColor }) => $borderColor || 'inherit'};
+  border: .1rem solid ${({ theme, $borderColor }) => $borderColor || theme.colors.primary.brand};
+  color: ${({ theme, $color }) => $color || theme.colors.primary.dark};
   background: transparent;
   
   &:before {

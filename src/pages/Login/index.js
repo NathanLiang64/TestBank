@@ -106,7 +106,7 @@ const Login = () => {
                         onMouseDown={handleMouseDownPassword}
                         $iconColor={theme.colors.basic.white}
                       >
-                        {loginFormValues.showPassword ? <VisibilityOff /> : <Visibility />}
+                        {loginFormValues.showPassword ? <Visibility /> : <VisibilityOff />}
                       </FEIBIconButton>
                     )}
                     $color={theme.colors.basic.white}

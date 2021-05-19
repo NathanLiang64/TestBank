@@ -10,6 +10,8 @@ import FEIBIconButton from './FEIBIconButton';
 import FEIBTextarea from './FEIBTextarea';
 import FEIBCheckbox from './FEIBCheckbox';
 import FEIBCheckboxLabel from './FEIBCheckboxLabel';
+import FEIBRadio from './FEIBRadio';
+import FEIBRadioLabel from './FEIBRadioLabel';
 
 /*
 * elements 入口文件，元件統一由此匯出
@@ -28,4 +30,6 @@ export {
   FEIBTextarea,
   FEIBCheckbox,
   FEIBCheckboxLabel,
+  FEIBRadio,
+  FEIBRadioLabel,
 };

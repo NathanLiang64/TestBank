@@ -17,7 +17,8 @@ import { Input as MaterialInput } from '@material-ui/core';
 * */
 
 const FEIBInput = styled(MaterialInput)`
-  margin-bottom: ${({ $bottomSpace }) => ($bottomSpace === false && '0') || '1.6rem'};
+  margin-top: .4rem;
+  margin-bottom: ${({ $bottomSpace }) => ($bottomSpace === false && '0') || '2rem'};
   width: 100%;
 
   .MuiInput-input {

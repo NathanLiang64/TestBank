@@ -7,9 +7,9 @@ import FEIBdefaultButton from './_defaultElements/FEIBdefaultButton';
 * 1. $fontSize -> 字級大小
 *    直接填寫數字，例如：1.6，若未傳值預設為 1.4
 * 2. $color -> 文字顏色
-*    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)
+*    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)，預設為白色
 * 3. $bgColor -> 背景顏色
-*    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)
+*    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)，預設為淺主色
 * 4. $pressedBgColor -> 游標懸停在物件時的背景顏色
 *    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)
 *    若已填寫 $bgColor 則直接繼承 $bgColor 色碼，也允許額外設定不同的色碼給此屬性
@@ -20,10 +20,10 @@ import FEIBdefaultButton from './_defaultElements/FEIBdefaultButton';
 * */
 
 const FEIBButton = styled(FEIBdefaultButton)`
-  background: ${({ $bgColor }) => $bgColor || 'transparent'};
+  background: ${({ theme, $bgColor }) => $bgColor || theme.colors.primary.light};
   
   &:hover {
-    background: ${({ $bgColor, $pressedBgColor }) => $pressedBgColor || $bgColor || 'inherit'};
+    background: ${({ theme, $bgColor, $pressedBgColor }) => $pressedBgColor || $bgColor || theme.colors.primary.light};
   }
 `;
 

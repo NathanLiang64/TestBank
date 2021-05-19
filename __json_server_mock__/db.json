@@ -19,19 +19,17 @@
     "title": "優惠定額明細",
     "route": "/depositPlus"
   },
-  "billPay":
-    {
-      "name": "billPay",
-      "title": "信用卡繳費",
-      "route": "/billPay",
-      "initData": {
-        "feib": false,
-        "hasHbCard": true,
-        "trnAcct": "04304099001568",
-        "trnBalance": 168000,
-        "ccToTrcvAmtd": 6658,
-        "ccMinImPayd": 1750
-      }
-
+  "billPay":{
+    "name": "billPay",
+    "title": "信用卡繳費",
+    "route": "/billPay",
+    "initData": {
+      "feib": false,
+      "hasHbCard": true,
+      "trnAcct": "043-040-99001568",
+      "trnBalance": 168000,
+      "ccToTrcvAmtd": 6658,
+      "ccMinImPayd": 1750
     }
+  }
 }

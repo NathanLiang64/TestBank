@@ -6,6 +6,7 @@ const LoginWrapper = styled(Layout)`
   flex-direction: column;
   align-items: center;
   
+  .MuiFormLabel-root,
   .MuiIconButton-root,
   .MuiFormControlLabel-label {
     opacity: .6;

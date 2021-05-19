@@ -33,11 +33,15 @@ const theme = {
       lighter: '#F5F5F5',
       star: '#FFD466',
       point: '#E60E0E',
+      cancel: '#D8E0ED',
       mask: 'rgba(130, 93, 199, .6)',
     },
     state: {
       success: '#46D4A7',
       danger: '#E88D8D',
+    },
+    card: {
+      purple: '#D8CAFB',
     },
   },
   filters: {

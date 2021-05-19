@@ -1,158 +1,146 @@
 import { useEffect, useState } from 'react';
-/* Elements */
+import DebitCard from 'components/DebitCard';
 import {
-  FEIBButton, FEIBCheckbox, FEIBCheckboxLabel,
-  FEIBInput, FEIBInputAnimationWrapper, FEIBInputLabel,
-  FEIBOption,
-  FEIBSelect,
+  FEIBButton, FEIBBorderButton,
+  FEIBCheckbox, FEIBCheckboxLabel,
+  FEIBRadio, FEIBRadioLabel,
+  FEIBInput, FEIBInputLabel,
+  FEIBOption, FEIBSelect,
 } from 'components/elements';
-import { RadioGroup, FormControlLabel, Radio } from '@material-ui/core';
+import { RadioGroup } from '@material-ui/core';
+
+/* Api */
+import { billPayApi } from 'apis';
+import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Styles */
 import theme from 'themes/theme';
-
-/* Api */
-import { billPayApi } from 'apis/';
-import { RadioButtonChecked, RadioButtonUnchecked } from '@material-ui/icons';
-import { useCheckLocation, usePageInfo } from '../../hooks';
+import BillPayWrapper from './billPay.style';
 
 const BillPay = () => {
   const { init } = billPayApi;
   const [initData, setinitData] = useState(null);
+
+  useCheckLocation();
+  usePageInfo('/api/billPay');
+
   useEffect(async () => {
     const data = await init();
     setinitData(data.initData);
   }, []);
 
-  useCheckLocation();
-  usePageInfo('/api/billPay');
-  const cardPage = () => (
-    <div>
-      <p>
-        存款卡
-        {initData.trnAcct}
-      </p>
-      <p>
-        可用餘額 NT $
-        {initData.trnBalance}
-      </p>
-    </div>
+  const renderCardArea = () => (
+    <DebitCard
+      cardName="存款卡"
+      account={initData.trnAcct}
+      balance={initData.trnBalance}
+    />
   );
 
-  const formPage = () => (
-    <div style={{ marginBottom: '2.4rem' }}>
-      <h2>請選擇繳費金額</h2>
-      <FEIBButton
-        $color={theme.colors.primary.brand}
-        $bgColor={theme.colors.basic.white}
-        $pressedBgColor={theme.colors.primary.dark}
-        $borderColor={theme.colors.primary.brand}
-      >
-        申請分期
-      </FEIBButton>
-      <RadioGroup aria-label="gender" name="gender1">
-        <FormControlLabel value="1" control={<Radio />} label={`繳全額  NT $ ${initData.ccToTrcvAmtd}`} />
-        <FormControlLabel value="2" control={<Radio />} label={`繳全額  NT $ ${initData.ccMinImPayd}`} />
-        <FormControlLabel value="3" control={<Radio />} label="自訂金額" />
+  const renderFormArea = () => (
+    <section>
+      <div className="formAreaTitle">
+        <h2>請選擇繳費金額</h2>
+        <FEIBBorderButton className="customSize">
+          申請分期
+        </FEIBBorderButton>
+      </div>
+      <RadioGroup aria-label="繳費金額" name="payAmount" defaultValue="1">
+        <FEIBRadioLabel value="1" control={<FEIBRadio color="default" />} label={`繳全額  NT $ ${initData.ccToTrcvAmtd}`} />
+        <FEIBRadioLabel value="2" control={<FEIBRadio color="default" />} label={`繳全額  NT $ ${initData.ccMinImPayd}`} />
+        <div>
+          <FEIBRadioLabel value="3" control={<FEIBRadio color="default" />} label="自訂金額" />
+          <span className="smallFontSize">$</span>
+          <FEIBInput
+            className="customStyles"
+            type="number"
+            $color={theme.colors.text.dark}
+            $borderColor={theme.colors.text.dark}
+          />
+        </div>
       </RadioGroup>
-      <FEIBInput
-        type="number"
-        $color={theme.colors.primary.dark}
-        $borderColor={theme.colors.primary.brand}
-      />
-    </div>
+    </section>
   );
 
-  const otherCCPage = () => (
-    <div>
+  const renderOtherCCArea = () => (
+    <section>
       <h2>請選擇繳費帳戶</h2>
       <FEIBInputLabel
         htmlFor="otherBankCode"
-        $color={theme.colors.basic.black}
+        $color={theme.colors.text.light}
       >
         請選擇轉出行庫
       </FEIBInputLabel>
       <FEIBSelect
-        defaultValue="請選擇"
+        defaultValue="aaa"
         id="otherBankCode"
         name="otherBankCode"
         $color={theme.colors.primary.dark}
         $borderColor={theme.colors.primary.brand}
       >
-        <FEIBOption value="請選擇">請選擇</FEIBOption>
-        <FEIBOption value="bbb">BBB</FEIBOption>
+        <FEIBOption value="aaa">AAA 行庫</FEIBOption>
+        <FEIBOption value="bbb">BBB 行庫</FEIBOption>
       </FEIBSelect>
-      <div style={{ width: '100%' }}>
-        <FEIBInputAnimationWrapper>
-          <FEIBInputLabel
-            htmlFor="otherTrnAcct"
-            $color={theme.colors.basic.black}
-          >
-            請輸入轉出帳號
-          </FEIBInputLabel>
-          <FEIBInput
-            id="otherTrnAcct"
-            name="otherTrnAcct"
-            $color={theme.colors.basic.black}
-            $borderColor={theme.colors.basic.black}
-          />
-        </FEIBInputAnimationWrapper>
+      <div>
+        <FEIBInputLabel
+          htmlFor="otherTrnAcct"
+          $color={theme.colors.text.light}
+        >
+          請輸入轉出帳號
+        </FEIBInputLabel>
+        <FEIBInput
+          id="otherTrnAcct"
+          name="otherTrnAcct"
+          placeholder="請輸入轉出帳號"
+          className="customBottomSpace"
+          $color={theme.colors.primary.dark}
+          $borderColor={theme.colors.primary.brand}
+        />
       </div>
-      <div style={{ marginBottom: '2.4rem' }}>
+      <div>
         <FEIBCheckboxLabel
           control={(
             <FEIBCheckbox
+              className="customPadding"
               color="default"
-              $iconColor={theme.colors.primary.brand}
-              icon={<RadioButtonUnchecked />}
-              checkedIcon={<RadioButtonChecked />}
+              $iconColor={theme.colors.text.light}
             />
-                    )}
+          )}
           label="當轉帳交易成功，發送簡訊通知至您的信箱"
-          $color={theme.colors.primary.brand}
+          $color={theme.colors.text.light}
         />
-      </div>
-      <div style={{ width: '100%' }}>
         <FEIBInput
           id="e-mail"
           name="e-mail"
-          placeholder="e-mail"
-          $color={theme.colors.basic.black}
-          $borderColor={theme.colors.basic.black}
+          placeholder="請輸入E-mail"
+          className="customTopSpace"
+          $color={theme.colors.primary.dark}
+          $borderColor={theme.colors.primary.brand}
+          $bottomSpace={false}
         />
       </div>
-    </div>
-
+    </section>
   );
 
-  const buttonPage = () => (
-    <div>
+  const renderButtons = () => (
+    <div className="buttons">
       <FEIBButton
-        $color={theme.colors.primary.brand}
-        $bgColor={theme.colors.basic.white}
-        $pressedBgColor={theme.colors.primary.dark}
-        $borderColor={theme.colors.primary.brand}
+        $color={theme.colors.text.dark}
+        $bgColor={theme.colors.background.cancel}
       >
         下一步
       </FEIBButton>
-      <FEIBButton
-        $color={theme.colors.primary.brand}
-        $bgColor={theme.colors.basic.white}
-        $pressedBgColor={theme.colors.primary.dark}
-        $borderColor={theme.colors.primary.brand}
-      >
-        超商條碼繳費
-      </FEIBButton>
+      <FEIBButton>超商條碼繳費</FEIBButton>
     </div>
   );
 
   const renderPage = () => (
-    <>
-      {initData && initData.feib ? cardPage() : null}
-      {initData && formPage()}
-      {initData && !initData.feib ? otherCCPage() : null}
-      {initData && buttonPage()}
-    </>
+    <BillPayWrapper>
+      {initData && initData.feib ? renderCardArea() : null}
+      {initData && renderFormArea()}
+      {initData && !initData.feib ? renderOtherCCArea() : null}
+      {initData && renderButtons()}
+    </BillPayWrapper>
 
   );
 

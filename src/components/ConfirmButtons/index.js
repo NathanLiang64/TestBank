@@ -1,5 +1,5 @@
 /* Elements */
-import { FEIBButton, FEIBBorderButton } from 'components/elements';
+import { FEIBButton } from 'components/elements';
 
 /* Styles */
 import theme from 'themes/theme';
@@ -23,17 +23,14 @@ const ConfirmButtons = ({
   subButtonOnClick,
 }) => (
   <ConfirmButtonsWrapper>
-    <FEIBBorderButton
-      $borderColor={theme.colors.primary.brand}
-      $color={theme.colors.primary.dark}
+    <FEIBButton
+      $bgColor={theme.colors.background.cancel}
+      $color={theme.colors.text.dark}
       onClick={subButtonOnClick}
     >
       {subButtonValue || '取消'}
-    </FEIBBorderButton>
+    </FEIBButton>
     <FEIBButton
-      $bgColor={theme.colors.primary.brand}
-      $pressedBgColor={theme.colors.primary.dark}
-      $color={theme.colors.basic.white}
       onClick={mainButtonOnClick}
     >
       {mainButtonValue || '確定'}
