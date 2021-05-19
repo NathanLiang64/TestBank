@@ -8,7 +8,8 @@ import CardLessATM3 from 'pages/cardLessATM/cardLessATM_3';
 import CardLessWithDrawChgPwd from 'pages/cardLessATM/cardLessWithDrawChgPwd';
 import LossReissue from 'pages/LossReissue';
 import LossReissue2 from 'pages/LossReissue/lossReissue_2';
-import AccountMaintenance from './pages/AccountMaintenance';
+import AccountMaintenance from 'pages/AccountMaintenance';
+import BillPay from 'pages/BillPay';
 
 const routes = [
   { path: '/', exact: true, component: Login },
@@ -21,6 +22,8 @@ const routes = [
   { path: '/lossReissue', exact: false, component: LossReissue },
   { path: '/lossReissue2', exact: false, component: LossReissue2 },
   { path: '/accountMaintenance', exact: false, component: AccountMaintenance },
+  { path: '/billPay', exact: true, component: BillPay },
+
 ];
 
 export default routes;

@@ -12,5 +12,14 @@
       "cardNo": "04304099001568",
       "cardBalance": 168000
     }
-  ]
+  ],
+  "billPay":
+    {
+      "feib": true,
+      "hasHbCard": true,
+      "trnAcct": "04304099001568",
+      "trnBalance": 168000,
+      "ccToTrcvAmtd": 6658,
+      "ccMinImPayd": 1750
+    }
 }

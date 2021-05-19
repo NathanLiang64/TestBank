@@ -53,6 +53,7 @@
 App2_WebView
 |-- __json_server_mock__  (mock api)
 |   |-- db.json
+|   |-- routes.json(
 |
 |-- public/
 |   |-- favicon.ico
