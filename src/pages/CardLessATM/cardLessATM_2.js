@@ -13,7 +13,7 @@ const CardLessATM2 = () => {
   const history = useHistory();
 
   const withdrawalConfirm = () => {
-    history.push('/CardLessATM/cardLessATM3');
+    history.push('/cardLessATM3');
   };
 
   return (

@@ -56,7 +56,7 @@ const NoticeSetting = () => {
       setOpenDialog(true);
       return;
     }
-    history.push('/noticeSetting/noticeSetting2');
+    history.push('/noticeSetting2');
   };
 
   useCheckLocation();
