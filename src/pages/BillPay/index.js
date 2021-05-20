@@ -9,16 +9,23 @@ import {
 } from 'components/elements';
 import { RadioGroup } from '@material-ui/core';
 
-/* Api */
+/* function */
 import { billPayApi } from 'apis';
 import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Styles */
 import theme from 'themes/theme';
+import { useHistory } from 'react-router';
+import { useDispatch } from 'react-redux';
+import { actions } from './stores';
 import BillPayWrapper from './billPay.style';
 
+const { setPayType } = actions;
+const { init } = billPayApi;
+
 const BillPay = () => {
-  const { init } = billPayApi;
+  const history = useHistory();
+  const dispatch = useDispatch();
   const [initData, setinitData] = useState(null);
 
   useCheckLocation();
@@ -28,6 +35,19 @@ const BillPay = () => {
     const data = await init();
     setinitData(data.initData);
   }, []);
+
+  const doAction = () => {
+    if (initData.feib) {
+      dispatch(setPayType(1));
+    } else {
+      dispatch(setPayType(2));
+    }
+    history.push('/billPay/billPay1');
+  };
+  const goConvenienceStores = () => {
+    dispatch(setPayType(3));
+    history.push('/billPay/billPay1');
+  };
 
   const renderCardArea = () => (
     <DebitCard
@@ -127,10 +147,11 @@ const BillPay = () => {
       <FEIBButton
         $color={theme.colors.text.dark}
         $bgColor={theme.colors.background.cancel}
+        onClick={doAction}
       >
         下一步
       </FEIBButton>
-      <FEIBButton>超商條碼繳費</FEIBButton>
+      <FEIBButton onClick={goConvenienceStores}>超商條碼繳費</FEIBButton>
     </div>
   );
 

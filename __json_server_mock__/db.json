@@ -24,7 +24,7 @@
     "title": "信用卡繳費",
     "route": "/billPay",
     "initData": {
-      "feib": true,
+      "feib": false,
       "hasHbCard": true,
       "trnAcct": "043-040-99001568",
       "trnBalance": 168000,
