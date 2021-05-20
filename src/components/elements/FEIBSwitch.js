@@ -12,11 +12,11 @@ const FEIBSwitch = styled(MaterialSwitch)`
     // color: #bdbdbd;
     &.Mui-checked {
       .MuiSwitch-thumb{
-        background-color: ${({ $color }) => $color || theme.colors.primary.brand};
+        background-color: ${({ $color }) => $color || theme.colors.primary.light};
       }
     }
     &.Mui-checked + .MuiSwitch-track {
-      background-color: ${({ $color }) => $color || theme.colors.primary.brand};
+      background-color: ${({ $color }) => $color || theme.colors.primary.light};
     }
   }  
 `;

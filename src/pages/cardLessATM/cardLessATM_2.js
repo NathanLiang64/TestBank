@@ -1,13 +1,12 @@
 import { useHistory } from 'react-router';
 
 /* Elements */
-// import theme from 'themes/theme';
 import {
   FEIBButton,
 } from 'components/elements';
 
 /* Styles */
-import theme from 'themes/theme';
+// import theme from 'themes/theme';
 import CardLessATMWrapper from './cardLessATM.style';
 
 const CardLessATM2 = () => {
@@ -36,9 +35,6 @@ const CardLessATM2 = () => {
       </div>
       <div className="tip">注意事項</div>
       <FEIBButton
-        $color={theme.colors.basic.white}
-        $bgColor={theme.colors.primary.brand}
-        $pressedBgColor={theme.colors.primary.dark}
         onClick={withdrawalConfirm}
       >
         確認提款
