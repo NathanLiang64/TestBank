@@ -24,7 +24,7 @@ const CardLessWithDrawChgPwd = () => {
   };
 
   const toStep1 = () => {
-    history.push('/cardLessATM/cardLessATM1');
+    history.push('/CardLessATM/cardLessATM1');
   };
 
   return (

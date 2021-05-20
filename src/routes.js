@@ -16,6 +16,7 @@ import NicknameSetting from 'pages/NicknameSetting';
 import NoticeSetting from 'pages/NoticeSetting';
 import NoticeSetting1 from 'pages/NoticeSetting/noticeSetting_1';
 import NoticeSetting2 from 'pages/NoticeSetting/noticeSetting_2';
+import PatternLockSetting from 'pages/PatternLockSetting';
 
 const routes = [
   { path: '/', exact: true, component: Login },
@@ -34,8 +35,8 @@ const routes = [
   { path: '/noticeSetting', exact: true, component: NoticeSetting },
   { path: '/noticeSetting/noticeSetting1', exact: false, component: NoticeSetting1 },
   { path: '/noticeSetting/noticeSetting2', exact: false, component: NoticeSetting2 },
-  { path: '/nicknameSetting', exact: true, component: NicknameSetting },
-
+  { path: '/nicknameSetting', exact: false, component: NicknameSetting },
+  { path: '/patternLockSetting', exact: false, component: PatternLockSetting },
 ];
 
 export default routes;

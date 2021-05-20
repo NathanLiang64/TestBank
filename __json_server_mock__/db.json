@@ -57,5 +57,10 @@
     "name": "NicknameSetting",
     "title": "暱稱設定",
     "route": "/nicknameSetting"
+  },
+  "patternLockSetting": {
+    "name": "PatternLockSetting",
+    "title": "圖形密碼登入設定",
+    "route": "/patternLockSetting"
   }
 }

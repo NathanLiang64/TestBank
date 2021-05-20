@@ -36,7 +36,7 @@ const CardLessATM = () => {
   };
 
   const toStep1 = () => {
-    history.push('/cardLessATM/cardLessATM1');
+    history.push('/CardLessATM/cardLessATM1');
   };
 
   const renderPage = () => {
@@ -305,7 +305,7 @@ const CardLessATM = () => {
   };
 
   useCheckLocation();
-  usePageInfo('/api/cardLessATM');
+  usePageInfo('/api/CardLessATM');
 
   return <CardLessATMWrapper>{renderPage()}</CardLessATMWrapper>;
 };

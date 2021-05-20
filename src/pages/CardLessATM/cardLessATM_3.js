@@ -113,7 +113,7 @@ const CardLessATM3 = () => {
           <FEIBButton
             onClick={() => {
               handleToggleDialog(false);
-              history.push('/cardLessATM/cardLessATM1');
+              history.push('/CardLessATM/cardLessATM1');
             }}
           >
             確定

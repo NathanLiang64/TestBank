@@ -32,11 +32,11 @@ const CardLessATM1 = () => {
   };
 
   const toStep2 = () => {
-    history.push('/cardLessATM/cardLessATM2');
+    history.push('/CardLessATM/cardLessATM2');
   };
 
   const toChangePassword = () => {
-    history.push('/cardLessATM/cardLessWithDrawChgPwd');
+    history.push('/CardLessATM/cardLessWithDrawChgPwd');
   };
 
   const toCurrncy = (num) => {
@@ -46,7 +46,7 @@ const CardLessATM1 = () => {
   };
 
   useCheckLocation();
-  usePageInfo('/api/cardLessATM');
+  usePageInfo('/api/CardLessATM');
 
   return (
     <CardLessATMWrapper>
