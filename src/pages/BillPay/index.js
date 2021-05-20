@@ -47,7 +47,7 @@ const BillPay = () => {
       </div>
       <RadioGroup aria-label="繳費金額" name="payAmount" defaultValue="1">
         <FEIBRadioLabel value="1" control={<FEIBRadio color="default" />} label={`繳全額  NT $ ${initData.ccToTrcvAmtd}`} />
-        <FEIBRadioLabel value="2" control={<FEIBRadio color="default" />} label={`繳全額  NT $ ${initData.ccMinImPayd}`} />
+        <FEIBRadioLabel value="2" control={<FEIBRadio color="default" />} label={`繳最低  NT $ ${initData.ccMinImPayd}`} />
         <div>
           <FEIBRadioLabel value="3" control={<FEIBRadio color="default" />} label="自訂金額" />
           <span className="smallFontSize">$</span>
