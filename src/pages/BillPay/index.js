@@ -34,6 +34,7 @@ const BillPay = () => {
       cardName="存款卡"
       account={initData.trnAcct}
       balance={initData.trnBalance}
+      hideIcon
     />
   );
 
