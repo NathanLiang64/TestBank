@@ -36,7 +36,7 @@ const CardLessATM = () => {
   };
 
   const toStep1 = () => {
-    history.push('/cardLessATM/cardLessATM1');
+    history.push('/cardLessATM1');
   };
 
   const renderPage = () => {

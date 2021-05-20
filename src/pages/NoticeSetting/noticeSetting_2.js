@@ -11,7 +11,7 @@ const noticeSetting2 = () => {
   const history = useHistory();
 
   const toSettingPage = () => {
-    history.push('/noticeSetting/noticeSetting1');
+    history.push('/noticeSetting1');
   };
 
   return (
