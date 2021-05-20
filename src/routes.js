@@ -12,6 +12,7 @@ import AccountMaintenance from 'pages/AccountMaintenance';
 import BillPay from 'pages/BillPay';
 import DepositPlus from 'pages/DepositPlus';
 import NoticeSetting from 'pages/NoticeSetting';
+import NicknameSetting from 'pages/NicknameSetting';
 
 const routes = [
   { path: '/', exact: true, component: Login },
@@ -27,7 +28,7 @@ const routes = [
   { path: '/billPay', exact: true, component: BillPay },
   { path: '/depositPlus', exact: true, component: DepositPlus },
   { path: '/noticeSetting', exact: true, component: NoticeSetting },
-
+  { path: '/nicknameSetting', exact: true, component: NicknameSetting },
 ];
 
 export default routes;

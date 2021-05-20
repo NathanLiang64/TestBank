@@ -52,5 +52,10 @@
     "name": "NoticeSetting",
     "title": "訊息通知設定",
     "route": "/noticeSetting"
+  },
+  "nicknameSetting": {
+    "name": "NicknameSetting",
+    "title": "暱稱設定",
+    "route": "/nicknameSetting"
   }
 }
