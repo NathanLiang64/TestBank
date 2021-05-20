@@ -2,6 +2,10 @@ import styled from 'styled-components';
 import { Dialog as MaterialDialog } from '@material-ui/core';
 
 const DialogWrapper = styled(MaterialDialog)`
+  
+  .MuiPaper-root {
+    width: 100%;
+  }
 
   .MuiDialogActions-root {
     padding-left: 2.4rem;

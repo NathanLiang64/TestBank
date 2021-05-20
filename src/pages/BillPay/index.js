@@ -87,12 +87,7 @@ const BillPay = () => {
   const renderOtherCCArea = () => (
     <section>
       <h2>請選擇繳費帳戶</h2>
-      <FEIBInputLabel
-        htmlFor="otherBankCode"
-        $color={theme.colors.text.light}
-      >
-        請選擇轉出行庫
-      </FEIBInputLabel>
+      <FEIBInputLabel htmlFor="otherBankCode">請選擇轉出行庫</FEIBInputLabel>
       <FEIBSelect
         defaultValue="aaa"
         id="otherBankCode"
@@ -104,12 +99,7 @@ const BillPay = () => {
         <FEIBOption value="bbb">BBB 行庫</FEIBOption>
       </FEIBSelect>
       <div>
-        <FEIBInputLabel
-          htmlFor="otherTrnAcct"
-          $color={theme.colors.text.light}
-        >
-          請輸入轉出帳號
-        </FEIBInputLabel>
+        <FEIBInputLabel htmlFor="otherTrnAcct">請輸入轉出帳號</FEIBInputLabel>
         <FEIBInput
           id="otherTrnAcct"
           name="otherTrnAcct"
@@ -129,7 +119,6 @@ const BillPay = () => {
             />
           )}
           label="當轉帳交易成功，發送簡訊通知至您的信箱"
-          $color={theme.colors.text.light}
         />
         <FEIBInput
           id="e-mail"

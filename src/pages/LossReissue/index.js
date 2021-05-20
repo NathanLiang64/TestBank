@@ -63,7 +63,7 @@ const LossReissue = () => {
       {showAlert && <Alert state="success">{`已完成${actionText}申請`}</Alert>}
 
       <div>
-        <FEIBInputLabel $color={theme.colors.primary.dark}>帳號</FEIBInputLabel>
+        <FEIBInputLabel>帳號</FEIBInputLabel>
         <FEIBInput
           name="account"
           value={cardValues.account}
@@ -75,7 +75,7 @@ const LossReissue = () => {
       </div>
 
       <div>
-        <FEIBInputLabel $color={theme.colors.primary.dark}>金融卡狀態</FEIBInputLabel>
+        <FEIBInputLabel>金融卡狀態</FEIBInputLabel>
         <FEIBInput
           name="state"
           value={cardValues.state}

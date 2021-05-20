@@ -44,12 +44,7 @@ const BillPay = () => {
   const renderFormArea = () => (
     <section>
       <div>
-        <FEIBInputLabel
-          htmlFor="password"
-          $color={theme.colors.text.light}
-        >
-          網銀密碼
-        </FEIBInputLabel>
+        <FEIBInputLabel htmlFor="password">網銀密碼</FEIBInputLabel>
         <FEIBInput
           id="password"
           name="password"

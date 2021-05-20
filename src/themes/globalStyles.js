@@ -78,6 +78,8 @@ const GlobalStyles = createGlobalStyle`
   button {
     border: 0;
     outline: 0;
+    color: inherit;
+    background: transparent;
   }
 
   table {

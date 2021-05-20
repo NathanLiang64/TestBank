@@ -14,7 +14,7 @@ const NicknameSetting = () => {
     <NicknameSettingWrapper>
       <form>
         <div>
-          <FEIBInputLabel $color={theme.colors.primary.brand}>暱稱</FEIBInputLabel>
+          <FEIBInputLabel>暱稱</FEIBInputLabel>
           <FEIBInput
             type="currentNickname"
             name="currentNickname"
