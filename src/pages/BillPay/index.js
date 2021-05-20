@@ -12,13 +12,14 @@ import { RadioGroup } from '@material-ui/core';
 /* function */
 import { billPayApi } from 'apis';
 import { useCheckLocation, usePageInfo } from 'hooks';
+import { useHistory } from 'react-router';
+import { useDispatch } from 'react-redux';
 
 /* Styles */
 import theme from 'themes/theme';
-import { useHistory } from 'react-router';
-import { useDispatch } from 'react-redux';
-import { actions } from './stores';
 import BillPayWrapper from './billPay.style';
+
+import { actions } from './stores';
 
 const { setPayType } = actions;
 const { init } = billPayApi;
@@ -42,11 +43,11 @@ const BillPay = () => {
     } else {
       dispatch(setPayType(2));
     }
-    history.push('/billPay/billPay1');
+    history.push('/billPay1');
   };
   const goConvenienceStores = () => {
     dispatch(setPayType(3));
-    history.push('/billPay/billPay1');
+    history.push('/billPay1');
   };
 
   const renderCardArea = () => (
