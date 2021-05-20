@@ -51,9 +51,6 @@ const CardLessWithDrawChgPwd = () => {
       </FEIBInputAnimationWrapper>
       <div className="tip">注意事項</div>
       <FEIBButton
-        $color={theme.colors.basic.white}
-        $bgColor={theme.colors.primary.brand}
-        $pressedBgColor={theme.colors.primary.dark}
         onClick={toStep1}
       >
         確定送出

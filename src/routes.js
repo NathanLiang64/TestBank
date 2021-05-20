@@ -12,6 +12,8 @@ import AccountMaintenance from 'pages/AccountMaintenance';
 import BillPay from 'pages/BillPay';
 import DepositPlus from 'pages/DepositPlus';
 import NoticeSetting from 'pages/NoticeSetting';
+import NoticeSetting1 from 'pages/NoticeSetting/noticeSetting_1';
+import NoticeSetting2 from 'pages/NoticeSetting/noticeSetting_2';
 
 const routes = [
   { path: '/', exact: true, component: Login },
@@ -27,6 +29,8 @@ const routes = [
   { path: '/billPay', exact: true, component: BillPay },
   { path: '/depositPlus', exact: true, component: DepositPlus },
   { path: '/noticeSetting', exact: true, component: NoticeSetting },
+  { path: '/noticeSetting/noticeSetting1', exact: false, component: NoticeSetting1 },
+  { path: '/noticeSetting/noticeSetting2', exact: false, component: NoticeSetting2 },
 
 ];
 

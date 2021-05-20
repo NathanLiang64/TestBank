@@ -81,9 +81,6 @@ const CardLessATM1 = () => {
           amountArr.map((item) => (
             <div key={item} className="withdrawalBtnContainer">
               <FEIBButton
-                $color={theme.colors.basic.white}
-                $bgColor={theme.colors.primary.brand}
-                $pressedBgColor={theme.colors.primary.dark}
                 className="withdrawal-btn"
                 onClick={() => setAmount(item)}
               >
@@ -108,9 +105,6 @@ const CardLessATM1 = () => {
       <div className="tip" onClick={toChangePassword} aria-hidden="true">我要變更無卡提款密碼</div>
       <div className="tip">注意事項</div>
       <FEIBButton
-        $color={theme.colors.basic.white}
-        $bgColor={theme.colors.primary.brand}
-        $pressedBgColor={theme.colors.primary.dark}
         onClick={toStep2}
       >
         下一步

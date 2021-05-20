@@ -50,7 +50,6 @@ const CardLessATM = () => {
               無卡提款服務」。立約人同意經由貴行行動銀行 APP 或 Bankee APP 執行ATM
               無卡提款交易，且遵守下列條款：
             </p>
-            <br />
             <p>
               1. ATM 無卡提款：
             </p>
@@ -247,9 +246,6 @@ const CardLessATM = () => {
             />
           </div>
           <FEIBButton
-            $color={theme.colors.basic.white}
-            $bgColor={theme.colors.primary.brand}
-            $pressedBgColor={theme.colors.primary.dark}
             onClick={() => handleStep(1)}
           >
             啟用
@@ -300,9 +296,6 @@ const CardLessATM = () => {
         </FEIBInputAnimationWrapper>
         <div className="tip">注意事項</div>
         <FEIBButton
-          $color={theme.colors.basic.white}
-          $bgColor={theme.colors.primary.brand}
-          $pressedBgColor={theme.colors.primary.dark}
           onClick={toStep1}
         >
           確定送出

@@ -9,7 +9,7 @@ import {
 import Dialog from 'components/Dialog';
 
 /* Styles */
-import theme from 'themes/theme';
+// import theme from 'themes/theme';
 import CardLessATMWrapper from './cardLessATM.style';
 
 const CardLessATM3 = () => {
@@ -101,9 +101,6 @@ const CardLessATM3 = () => {
       </div>
       <div className="tip">注意事項</div>
       <FEIBButton
-        $color={theme.colors.basic.white}
-        $bgColor={theme.colors.primary.brand}
-        $pressedBgColor={theme.colors.primary.dark}
         onClick={cancleWithdrawal}
       >
         取消交易
@@ -114,9 +111,6 @@ const CardLessATM3 = () => {
         content={dialogContent}
         action={(
           <FEIBButton
-            $color={theme.colors.basic.white}
-            $bgColor={theme.colors.primary.brand}
-            $pressedBgColor={theme.colors.primary.dark}
             onClick={() => {
               handleToggleDialog(false);
               history.push('/cardLessATM/cardLessATM1');
