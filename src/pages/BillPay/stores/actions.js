@@ -5,7 +5,7 @@ export const setPayType = (data) => ({
   data,
 });
 
-export const setPayAmont = (data) => ({
-  type: types.SET_PAY_TYPE,
+export const setSendType = (data) => ({
+  type: types.SET_SEND_TYPE,
   data,
 });

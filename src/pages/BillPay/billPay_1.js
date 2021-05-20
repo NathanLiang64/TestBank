@@ -3,6 +3,8 @@ import {
   FEIBButton,
   FEIBInput, FEIBInputLabel,
 } from 'components/elements';
+import { useHistory } from 'react-router';
+import { useSelector, useDispatch } from 'react-redux';
 
 /* Api */
 import { useCheckLocation, usePageInfo } from 'hooks';
@@ -12,19 +14,23 @@ import Family from 'assets/images/Family.jpg';
 
 /* Styles */
 import theme from 'themes/theme';
-import { useHistory } from 'react-router';
-import { useSelector } from 'react-redux';
 import BillPayWrapper from './billPay.style';
+
+import { actions } from './stores';
+
+const { setSendType } = actions;
 
 const BillPay = () => {
   const billPayData = useSelector(((state) => state.billPay));
   const history = useHistory();
+  const dispatch = useDispatch();
 
   useCheckLocation();
   usePageInfo('/api/billPay');
 
   const doAction = () => {
-    history.push('/billPay/billPay1');
+    dispatch(setSendType(false));
+    history.push('/billPay2');
   };
 
   const renderCardArea = () => (
@@ -62,15 +68,15 @@ const BillPay = () => {
         <tbody>
           <tr>
             <td>轉出帳號</td>
-            <td />
+            <td>00300466006458</td>
           </tr>
           <tr>
             <td>繳款卡號</td>
             <td>本人卡款</td>
           </tr>
           <tr>
-            <td>繳款金額</td>
-            <td />
+            <td>繳費金額</td>
+            <td>NTD 500</td>
           </tr>
         </tbody>
       </table>

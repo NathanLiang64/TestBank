@@ -11,6 +11,7 @@ import LossReissue2 from 'pages/LossReissue/lossReissue_2';
 import AccountMaintenance from 'pages/AccountMaintenance';
 import BillPay from 'pages/BillPay';
 import BillPay1 from 'pages/BillPay/billPay_1';
+import BillPay2 from 'pages/BillPay/billPay_2';
 import DepositPlus from 'pages/DepositPlus';
 import NoticeSetting from 'pages/NoticeSetting';
 import NicknameSetting from 'pages/NicknameSetting';
@@ -27,7 +28,8 @@ const routes = [
   { path: '/lossReissue2', exact: false, component: LossReissue2 },
   { path: '/accountMaintenance', exact: false, component: AccountMaintenance },
   { path: '/billPay', exact: true, component: BillPay },
-  { path: '/billPay/billPay1', exact: false, component: BillPay1 },
+  { path: '/billPay1', exact: false, component: BillPay1 },
+  { path: '/billPay2', exact: false, component: BillPay2 },
   { path: '/depositPlus', exact: true, component: DepositPlus },
   { path: '/noticeSetting', exact: true, component: NoticeSetting },
   { path: '/nicknameSetting', exact: true, component: NicknameSetting },
