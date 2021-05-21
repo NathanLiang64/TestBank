@@ -40,6 +40,8 @@
   - FEIBRadio - 聖森
   - FEIBRadioLabel - 聖森
   - FEIBSwitch - 唯物
+  - FEIBSwitchLabel - 唯物
+  - FEIBCollapse - 唯物
 
 
 - 組件封裝
