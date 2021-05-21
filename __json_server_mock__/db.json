@@ -72,7 +72,8 @@
     "title": "圖形密碼登入設定",
     "route": "/patternLockSetting",
     "initData": {
-      "switchCheck": false
+      "isFirstSetting": true,
+      "isActive": false
     }
   },
   "notice": {

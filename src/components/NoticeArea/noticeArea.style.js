@@ -27,6 +27,14 @@ const NoticeAreaWrapper = styled.div`
       margin-bottom: .8rem;
     }
   }
+
+  .textColorPrimary {
+    color: ${({ theme }) => theme.colors.primary.dark};
+  }
+
+  .textColorPoint {
+    color: ${({ theme }) => theme.colors.text.point};
+  }
 `;
 
 export default NoticeAreaWrapper;
