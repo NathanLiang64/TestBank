@@ -3,12 +3,13 @@ import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
-import theme from 'themes/theme';
 import {
   FEIBInputAnimationWrapper, FEIBInput, FEIBInputLabel, FEIBButton,
 } from 'components/elements';
+import DebitCard from 'components/DebitCard';
 
 /* Styles */
+import theme from 'themes/theme';
 import CardLessATMWrapper from './cardLessATM.style';
 
 const CardLessATM1 = () => {
@@ -50,14 +51,11 @@ const CardLessATM1 = () => {
 
   return (
     <CardLessATMWrapper>
-      <div className="accountInfo">
-        <h1>
-          活儲帳戶 04304099001568
-        </h1>
-        <h1>
-          可用餘額 NT $ 168,000
-        </h1>
-      </div>
+      <DebitCard
+        cardName="存款卡"
+        account="04304099001568"
+        balance="168,000"
+      />
       <div className="tip">
         免費跨提次數
         <span> 6 </span>
@@ -66,7 +64,7 @@ const CardLessATM1 = () => {
         次
       </div>
       <FEIBInputAnimationWrapper>
-        <FEIBInputLabel $color={theme.colors.primary.dark}>您想提領多少錢呢?</FEIBInputLabel>
+        <FEIBInputLabel>您想提領多少錢呢?</FEIBInputLabel>
         <FEIBInput
           type="text"
           inputMode="numeric"
@@ -93,7 +91,7 @@ const CardLessATM1 = () => {
         }
       </div>
       <FEIBInputAnimationWrapper>
-        <FEIBInputLabel $color={theme.colors.primary.dark}>網銀密碼</FEIBInputLabel>
+        <FEIBInputLabel>網銀密碼</FEIBInputLabel>
         <FEIBInput
           type="password"
           $color={theme.colors.primary.dark}

@@ -4,11 +4,10 @@ import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
 import {
-  FEIBSwitch, FEIBIconButton, FEIBInputLabel, FEIBInput, FEIBButton,
+  FEIBSwitch, FEIBIconButton, FEIBInputLabel, FEIBInput, FEIBButton, FEIBSwitchLabel, FEIBCollapse,
 } from 'components/elements';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
-import { Collapse, FormControlLabel } from '@material-ui/core';
 import { ExpandMoreOutlined, ErrorOutline } from '@material-ui/icons';
 
 /* Styles */
@@ -134,7 +133,7 @@ const NoticeSetting1 = () => {
   const renderIconButton = (show) => (show ? <ExpandMoreOutlined style={{ fontSize: '3rem', color: 'white' }} /> : <ExpandMoreOutlined style={{ fontSize: '3rem', color: theme.colors.primary.light }} />);
 
   const renderNoticeSwitches = (switchItem, index, noticeType) => (
-    <FormControlLabel
+    <FEIBSwitchLabel
       key={switchItem.label}
       control={
         (
@@ -151,7 +150,6 @@ const NoticeSetting1 = () => {
         )
       }
       label={switchItem.label}
-      labelPlacement="start"
     />
   );
 
@@ -179,9 +177,9 @@ const NoticeSetting1 = () => {
   usePageInfo('/api/noticeSetting');
 
   return (
-    <NoticeSettingWrapper>
+    <NoticeSettingWrapper fullScreen>
       <div className="noticeContainer all">
-        <FormControlLabel
+        <FEIBSwitchLabel
           control={
             (
               <FEIBSwitch
@@ -216,34 +214,36 @@ const NoticeSetting1 = () => {
                 {renderIconButton(noticeData[noticeItem].on)}
               </FEIBIconButton>
             </div>
-            <Collapse in={noticeData[noticeItem].on}>
+            <FEIBCollapse in={noticeData[noticeItem].on}>
               {
                 noticeData[noticeItem].data.map((switchItem, index) => (
                   renderNoticeSwitches(switchItem, index, noticeItem)
                 ))
               }
-            </Collapse>
+            </FEIBCollapse>
           </div>
         ))
       }
-      <FEIBInputLabel $color={theme.colors.primary.brand} style={{ marginTop: '2rem' }}>網銀密碼</FEIBInputLabel>
-      <FEIBInput
-        type="password"
-        name="password"
-        value={password}
-        $color={theme.colors.primary.dark}
-        $borderColor={theme.colors.primary.brand}
-        onChange={handlePasswordChange}
-      />
-      <div className="tip">
-        <span>
-          注意事項
-        </span>
-        <ErrorOutline />
+      <div style={{ padding: '0 1.6rem 2.4rem' }}>
+        <FEIBInputLabel $color={theme.colors.primary.brand} style={{ marginTop: '2rem' }}>網銀密碼</FEIBInputLabel>
+        <FEIBInput
+          type="password"
+          name="password"
+          value={password}
+          $color={theme.colors.primary.dark}
+          $borderColor={theme.colors.primary.brand}
+          onChange={handlePasswordChange}
+        />
+        <div className="tip">
+          <span>
+            注意事項
+          </span>
+          <ErrorOutline />
+        </div>
+        <FEIBButton onClick={handleSaveNoticeSetting}>
+          確定送出
+        </FEIBButton>
       </div>
-      <FEIBButton onClick={handleSaveNoticeSetting}>
-        確定送出
-      </FEIBButton>
       <Dialog
         isOpen={openDialog}
         onClose={() => {

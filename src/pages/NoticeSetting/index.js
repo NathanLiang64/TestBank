@@ -10,11 +10,10 @@ import {
   FEIBButton,
   FEIBCheckboxLabel,
   FEIBCheckbox,
+  FEIBSwitchLabel,
 } from 'components/elements';
 import Dialog from 'components/Dialog';
 import NoticeArea from 'components/NoticeArea';
-import { FormControlLabel } from '@material-ui/core';
-import { RadioButtonChecked, RadioButtonUnchecked } from '@material-ui/icons';
 
 /* Styles */
 import theme from 'themes/theme';
@@ -64,8 +63,8 @@ const NoticeSetting = () => {
 
   return (
     <NoticeSettingWrapper>
-      <div className="noticeContainer all">
-        <FormControlLabel
+      <div className="noticeContainer all full">
+        <FEIBSwitchLabel
           control={
             (
               <FEIBSwitch
@@ -77,7 +76,6 @@ const NoticeSetting = () => {
             )
           }
           label="訊息通知啟用"
-          labelPlacement="start"
         />
       </div>
       <NoticeArea title="訊息通知使用條款" textAlign="left">
@@ -102,8 +100,6 @@ const NoticeSetting = () => {
           <FEIBCheckbox
             color="default"
             $iconColor={theme.colors.primary.brand}
-            icon={<RadioButtonUnchecked />}
-            checkedIcon={<RadioButtonChecked />}
             onChange={handleCheckBoxChange}
             checked={agree}
           />
