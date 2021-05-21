@@ -1,21 +1,13 @@
 import styled from 'styled-components';
-import { FormControlLabel as MaterailFormControlLabel } from '@material-ui/core';
-
-const FEIBSwitchLabel = ({ control, label }) => (
-  <FEIBSwitchFormControlLabel
-    control={control}
-    label={label}
-    labelPlacement="start"
-  />
-);
+import { FormControlLabel as MaterialFormControlLabel } from '@material-ui/core';
 
 /*
-* ==================== FEIBＳSwitchLabel 可用選項 ====================
-* 1. $color -> 文字顏色
-*    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)，預設為淺藍灰色
+* ==================== FEIBSwitchLabel 可用選項 ====================
 * */
-
-const FEIBSwitchFormControlLabel = styled(MaterailFormControlLabel)`
+const FEIBSwitchLabel = styled(MaterialFormControlLabel).attrs({
+  labelPlacement: 'start',
+})`
+  color: ${({ theme, $color }) => $color || theme.colors.text.light};
   &.MuiFormControlLabel-root {
     height: 45px;
     display: flex;

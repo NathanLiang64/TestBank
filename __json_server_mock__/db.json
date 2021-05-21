@@ -62,5 +62,10 @@
     "name": "PatternLockSetting",
     "title": "圖形密碼登入設定",
     "route": "/patternLockSetting"
+  },
+  "notice": {
+    "name": "Notice",
+    "title": "訊息通知",
+    "route": "/notice"
   }
 }
