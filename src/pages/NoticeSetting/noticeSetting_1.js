@@ -19,7 +19,7 @@ const NoticeSetting1 = () => {
   const noticeTypeArray = ['deposit', 'creditCard', 'loan', 'tradeSafity', 'socialFeedback'];
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogContent, setDialogContent] = useState('是否將通知關閉');
-  const [handleClickMainButton, setHandleClickMainButton] = useState(() => () => { console.log('test'); });
+  const [handleClickMainButton, setHandleClickMainButton] = useState(() => () => { });
   const [toggleAll, setToggleAll] = useState(false);
   const [noticeData, setNoticeData] = useState({
     deposit: {
@@ -153,16 +153,6 @@ const NoticeSetting1 = () => {
     />
   );
 
-  // const [dialogButton, setDialogButton] = useState((
-  //   <ConfirmButtons
-  //     mainButtonOnClick={() => {
-  //       handleClickMainButton();
-  //       handleToggleDialog(false);
-  //     }}
-  //     subButtonOnClick={() => handleToggleDialog(false)}
-  //   />
-  // ));
-
   const handleSaveNoticeSetting = () => {
     setButtonType(true);
     if (!password) {
@@ -203,17 +193,19 @@ const NoticeSetting1 = () => {
       </div>
       {
         noticeTypeArray.map((noticeItem) => (
-          <div key={noticeItem} className="noticeContainer">
-            <div className={noticeData[noticeItem].on ? 'sectionLabel on' : 'sectionLabel'}>
+          <div
+            key={noticeItem}
+            className="noticeContainer"
+          >
+            <button type="button" className={noticeData[noticeItem].on ? 'sectionLabel on' : 'sectionLabel'} onClick={() => handleCollapseChange(noticeItem)}>
               <span>{noticeData[noticeItem].label}</span>
               <FEIBIconButton
                 $fontSize={2.4}
                 $iconColor={theme.colors.primary.brand}
-                onClick={() => handleCollapseChange(noticeItem)}
               >
                 {renderIconButton(noticeData[noticeItem].on)}
               </FEIBIconButton>
-            </div>
+            </button>
             <FEIBCollapse in={noticeData[noticeItem].on}>
               {
                 noticeData[noticeItem].data.map((switchItem, index) => (
