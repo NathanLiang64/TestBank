@@ -63,7 +63,7 @@ const NoticeSetting = () => {
 
   return (
     <NoticeSettingWrapper>
-      <div className="noticeContainer all full">
+      <div className="noticeContainer all">
         <FEIBSwitchLabel
           control={
             (
@@ -76,6 +76,7 @@ const NoticeSetting = () => {
             )
           }
           label="訊息通知啟用"
+          $hasBorder
         />
       </div>
       <NoticeArea title="訊息通知使用條款" textAlign="left">
@@ -116,7 +117,10 @@ const NoticeSetting = () => {
         $borderColor={theme.colors.primary.brand}
         onChange={handlePasswordChange}
       />
-      <FEIBButton onClick={activateNotice}>
+      <FEIBButton
+        disabled={!agree}
+        onClick={activateNotice}
+      >
         儲存變更
       </FEIBButton>
       <Dialog

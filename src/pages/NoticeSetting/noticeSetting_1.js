@@ -188,7 +188,7 @@ const NoticeSetting1 = () => {
             )
           }
           label="全部通知開啟/關閉"
-          labelPlacement="start"
+          $hasBorder
         />
       </div>
       {
@@ -232,7 +232,9 @@ const NoticeSetting1 = () => {
           </span>
           <ErrorOutline />
         </div>
-        <FEIBButton onClick={handleSaveNoticeSetting}>
+        <FEIBButton
+          onClick={handleSaveNoticeSetting}
+        >
           確定送出
         </FEIBButton>
       </div>
@@ -244,7 +246,9 @@ const NoticeSetting1 = () => {
         content={dialogContent}
         action={
           buttonType ? (
-            <FEIBButton onClick={() => handleToggleDialog(false)}>
+            <FEIBButton
+              onClick={() => handleToggleDialog(false)}
+            >
               確定
             </FEIBButton>
           ) : (
