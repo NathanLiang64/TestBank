@@ -4,7 +4,7 @@ import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
 import {
-  FEIBSwitch, FEIBIconButton, FEIBInputLabel, FEIBInput, FEIBButton, FEIBSwitchLabel, FEIBCollapse,
+  FEIBSwitch, FEIBInputLabel, FEIBInput, FEIBButton, FEIBSwitchLabel, FEIBCollapse,
 } from 'components/elements';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
@@ -167,7 +167,7 @@ const NoticeSetting1 = () => {
   usePageInfo('/api/noticeSetting');
 
   return (
-    <NoticeSettingWrapper fullScreen>
+    <NoticeSettingWrapper className="settingPage" fullScreen>
       <div className="noticeContainer all">
         <FEIBSwitchLabel
           control={
@@ -197,14 +197,15 @@ const NoticeSetting1 = () => {
             key={noticeItem}
             className="noticeContainer"
           >
-            <button type="button" className={noticeData[noticeItem].on ? 'sectionLabel on' : 'sectionLabel'} onClick={() => handleCollapseChange(noticeItem)}>
+            <button
+              type="button"
+              className={noticeData[noticeItem].on ? 'sectionLabel on' : 'sectionLabel'}
+              onClick={() => {
+                handleCollapseChange(noticeItem);
+              }}
+            >
               <span>{noticeData[noticeItem].label}</span>
-              <FEIBIconButton
-                $fontSize={2.4}
-                $iconColor={theme.colors.primary.brand}
-              >
-                {renderIconButton(noticeData[noticeItem].on)}
-              </FEIBIconButton>
+              { renderIconButton(noticeData[noticeItem].on) }
             </button>
             <FEIBCollapse in={noticeData[noticeItem].on}>
               {

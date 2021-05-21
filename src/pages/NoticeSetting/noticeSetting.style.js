@@ -47,6 +47,11 @@ const NoticeSettingWrapper = styled(Layout)`
       margin-right: 0.2rem;
     }
   }
+  &.settingPage {
+    .MuiFormControlLabel-root {
+      left: -1.6rem;
+    }
+  }
 `;
 
 export default NoticeSettingWrapper;
