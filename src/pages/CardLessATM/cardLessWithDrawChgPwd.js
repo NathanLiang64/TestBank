@@ -30,7 +30,7 @@ const CardLessWithDrawChgPwd = () => {
   return (
     <CardLessATMWrapper>
       <FEIBInputAnimationWrapper>
-        <FEIBInputLabel $color={theme.colors.primary.dark}>提款密碼設定</FEIBInputLabel>
+        <FEIBInputLabel>提款密碼設定</FEIBInputLabel>
         <FEIBInput
           type="password"
           $color={theme.colors.primary.dark}
@@ -40,7 +40,7 @@ const CardLessWithDrawChgPwd = () => {
         />
       </FEIBInputAnimationWrapper>
       <FEIBInputAnimationWrapper>
-        <FEIBInputLabel $color={theme.colors.primary.dark}>確認提款密碼</FEIBInputLabel>
+        <FEIBInputLabel>確認提款密碼</FEIBInputLabel>
         <FEIBInput
           type="password"
           $color={theme.colors.primary.dark}

@@ -18,7 +18,7 @@ const CardLessATMWrapper = styled(Layout)`
 .accountInfo {
   text-align: center;
   padding: 1rem;
-  background: ${({ theme }) => theme.colors.primary.dark};
+  background: ${({ theme }) => theme.colors.primary.light};
   margin-bottom: 1rem;
   h1 {
     font-size: 2rem;
@@ -41,7 +41,7 @@ const CardLessATMWrapper = styled(Layout)`
 .withdrawalInfo {
   margin: 1.8rem 0;
   span {
-    color: red;
+    color: ${({ theme }) => theme.colors.text.point};
   }
 }
 .resultTable {

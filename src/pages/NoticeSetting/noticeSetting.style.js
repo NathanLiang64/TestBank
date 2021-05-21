@@ -4,13 +4,14 @@ import theme from 'themes/theme';
 
 const NoticeSettingWrapper = styled(Layout)`
   .noticeContainer {
-    transform: translateX(-1.6rem);
-    width: 100vw;
     border-top: 1px solid ${theme.colors.border.lighter};
     &.all {
-      border-top: 1px solid ${theme.colors.border.lighter};
       border-bottom: 1px solid ${theme.colors.border.lighter};
       margin-bottom: 2rem;
+    }
+    &.full {
+      transform: translateX(-1.6rem);
+      width: 100vw;
     }
     &:nth-child(6) {
       border-bottom: 1px solid ${theme.colors.border.lighter};
@@ -36,17 +37,7 @@ const NoticeSettingWrapper = styled(Layout)`
       padding: 0px;
     }
   }
-  .MuiFormControlLabel-label {
-    font-size: 100%;
-  }
-  .MuiFormControlLabel-labelPlacementStart {
-    height: 45px;
-    margin-left: 0px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 1.6rem;
-  }
+  
   .MuiCollapse-container {
     width: 100%;
   }

@@ -13,7 +13,7 @@ import {
 } from 'components/elements';
 import NoticeArea from 'components/NoticeArea';
 // import { FormControlLabel, Checkbox } from 'themes/styleModules';
-import { RadioButtonChecked, RadioButtonUnchecked } from '@material-ui/icons';
+// import { RadioButtonChecked, RadioButtonUnchecked } from '@material-ui/icons';
 
 /* Styles */
 import theme from 'themes/theme';
@@ -235,9 +235,9 @@ const CardLessATM = () => {
               control={(
                 <FEIBCheckbox
                   color="default"
-                  $iconColor={theme.colors.primary.brand}
-                  icon={<RadioButtonUnchecked />}
-                  checkedIcon={<RadioButtonChecked />}
+                  // $iconColor={theme.colors.primary.brand}
+                  // icon={<RadioButtonUnchecked />}
+                  // checkedIcon={<RadioButtonChecked />}
                   onChange={handleCheckBoxChange}
                 />
               )}
@@ -256,7 +256,7 @@ const CardLessATM = () => {
     return (
       <div>
         <FEIBInputAnimationWrapper>
-          <FEIBInputLabel $color={theme.colors.primary.dark}>
+          <FEIBInputLabel>
             提款密碼設定
           </FEIBInputLabel>
           <FEIBInput
@@ -266,7 +266,7 @@ const CardLessATM = () => {
           />
         </FEIBInputAnimationWrapper>
         <FEIBInputAnimationWrapper>
-          <FEIBInputLabel $color={theme.colors.primary.dark}>
+          <FEIBInputLabel>
             確認提款密碼
           </FEIBInputLabel>
           <FEIBInput
@@ -276,7 +276,7 @@ const CardLessATM = () => {
           />
         </FEIBInputAnimationWrapper>
         <FEIBInputAnimationWrapper>
-          <FEIBInputLabel $color={theme.colors.primary.dark}>
+          <FEIBInputLabel>
             請輸入開通驗證碼
           </FEIBInputLabel>
           <FEIBInput
@@ -285,7 +285,7 @@ const CardLessATM = () => {
           />
         </FEIBInputAnimationWrapper>
         <FEIBInputAnimationWrapper>
-          <FEIBInputLabel $color={theme.colors.primary.dark}>
+          <FEIBInputLabel>
             請輸入網銀密碼
           </FEIBInputLabel>
           <FEIBInput

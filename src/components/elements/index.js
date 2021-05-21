@@ -13,6 +13,8 @@ import FEIBCheckboxLabel from './FEIBCheckboxLabel';
 import FEIBRadio from './FEIBRadio';
 import FEIBRadioLabel from './FEIBRadioLabel';
 import FEIBSwitch from './FEIBSwitch';
+import FEIBSwitchLabel from './FEIBSwitchLabel';
+import FEIBCollapse from './FEIBCollapse';
 
 /*
 * elements 入口文件，元件統一由此匯出
@@ -34,4 +36,6 @@ export {
   FEIBRadio,
   FEIBRadioLabel,
   FEIBSwitch,
+  FEIBSwitchLabel,
+  FEIBCollapse,
 };
