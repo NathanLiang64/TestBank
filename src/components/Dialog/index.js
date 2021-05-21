@@ -32,7 +32,7 @@ const Dialog = ({
     <DialogTitle id="alert-dialog-title" className="title">
       {title || '系統訊息'}
     </DialogTitle>
-    <DialogContent>
+    <DialogContent className="content">
       {content}
     </DialogContent>
     <DialogActions className="alignCenter">

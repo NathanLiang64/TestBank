@@ -9,6 +9,10 @@ const LossReissueWrapper = styled(Layout)`
       text-align: left;
     }
   }
+  
+  .point {
+    color: ${({ theme }) => theme.colors.text.point};
+  }
 `;
 
 export default LossReissueWrapper;

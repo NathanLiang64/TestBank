@@ -19,9 +19,21 @@ const DialogWrapper = styled(MaterialDialog)`
     }
   }
   
+  .content {
+    font-size: 1.5rem;
+  }
+  
   .alignCenter {
     justify-content: center;
     padding-bottom: 1.6rem;
+  }
+  
+  .textColorPrimary {
+    color: ${({ theme }) => theme.colors.primary.dark};
+  } 
+  
+  .textColorPoint {
+    color: ${({ theme }) => theme.colors.text.point};
   }
 `;
 

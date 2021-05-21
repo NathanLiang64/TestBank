@@ -1,30 +1,39 @@
 import * as types from './types';
 
 const initState = {
-  cardValues: {
-    account: '04300499001728',
-    state: '已掛失',
-  },
+  account: '',
+  state: '',
   actionText: '',
-  dialogContent: '',
+  address: '',
+  isResultSuccess: true,
 };
 
 const reducers = (state = initState, action) => {
   switch (action.type) {
-    case types.SET_CARD_VALUES:
+    case types.SET_ACCOUNT:
       return {
         ...state,
-        cardValues: action.payload,
+        account: action.payload,
+      };
+    case types.SET_CARD_STATE:
+      return {
+        ...state,
+        state: action.payload,
       };
     case types.SET_ACTION_TEXT:
       return {
         ...state,
         actionText: action.payload,
       };
-    case types.SET_DIALOG_CONTENT:
+    case types.SET_USER_ADDRESS:
       return {
         ...state,
-        dialogContent: action.payload,
+        address: action.payload,
+      };
+    case types.SET_IS_RESULT_SUCCESS:
+      return {
+        ...state,
+        isResultSuccess: action.payload,
       };
     default:
       return state;

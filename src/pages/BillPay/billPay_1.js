@@ -39,7 +39,7 @@ const BillPay = () => {
   const handleClickShowResult = () => {
     // 點擊按鈕後彈窗顯示繳費結果
     handleToggleDialog(true);
-    dispatch(setSendType(true));
+    dispatch(setSendType(false));
     setShowAlert(true);
   };
 

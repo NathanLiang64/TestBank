@@ -7,7 +7,16 @@
   "lossReissue": {
     "name": "LossReissue",
     "title": "金融卡掛失/補發",
-    "route": "/lossReissue"
+    "route": "/lossReissue",
+    "initData": {
+      "publicExponent": "",
+      "modulus": "",
+      "fastLogin": false,
+      "customId": "",
+      "accountNo": "04300499001728",
+      "cardStatus": "已啟用",
+      "userAddress": "台北市信義區信義路4段5號6樓"
+    }
   },
   "accountMaintenance": {
     "name": "AccountMaintenance",

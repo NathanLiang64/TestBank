@@ -8,9 +8,7 @@ const BillPay2 = () => {
   const billPayData = useSelector(((state) => state.billPay));
 
   const renderAlert = () => (
-    <h2>
-      {billPayData.sendType ? <Alert state="success">交易成功</Alert> : <Alert state="error">交易失敗</Alert> }
-    </h2>
+    billPayData.sendType ? <Alert state="success">交易成功</Alert> : <Alert state="error">交易失敗</Alert>
   );
 
   const renderNoticeArea = () => (
