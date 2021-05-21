@@ -61,6 +61,14 @@
   "patternLockSetting": {
     "name": "PatternLockSetting",
     "title": "圖形密碼登入設定",
-    "route": "/patternLockSetting"
+    "route": "/patternLockSetting",
+    "initData": {
+      "switchCheck": false,
+      "hasHbCard": true,
+      "trnAcct": "043-040-99001568",
+      "trnBalance": 168000,
+      "ccToTrcvAmtd": 6658,
+      "ccMinImPayd": 1750
+    }
   }
 }
