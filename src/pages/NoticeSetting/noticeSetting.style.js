@@ -18,13 +18,15 @@ const NoticeSettingWrapper = styled(Layout)`
     }
   }
   .sectionLabel {
-    box-sizing: border-box;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
     height: 45px;
+    line-height: 45px;
     padding: 0 1.6rem;
     transition: all .3s ease;
+    font-size: 100%;
     span {
       display: flex;
       align-items: center;

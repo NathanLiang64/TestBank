@@ -74,5 +74,10 @@
     "initData": {
       "switchCheck": false
     }
+  },
+  "notice": {
+    "name": "Notice",
+    "title": "訊息通知",
+    "route": "/notice"
   }
 }
