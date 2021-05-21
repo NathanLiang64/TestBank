@@ -109,7 +109,7 @@ const BillPay = () => {
 
   const renderTable3Area = () => (
     <section>
-      <h2>請選擇繳費金額</h2>
+      <h2>您設定的繳費結果</h2>
       <table>
         <tbody>
           <tr>
