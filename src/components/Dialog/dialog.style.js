@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { Dialog as MaterialDialog } from '@material-ui/core';
 
 const DialogWrapper = styled(MaterialDialog)`
+  font-size: 1.5rem;
   
   .MuiPaper-root {
     width: 100%;

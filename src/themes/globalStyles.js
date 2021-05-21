@@ -80,6 +80,20 @@ const GlobalStyles = createGlobalStyle`
     outline: 0;
     color: inherit;
     background: transparent;
+    
+    &:disabled {
+      &:after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: block;
+        border-radius: inherit;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, .6);
+      }
+    }
   }
   
   img {
