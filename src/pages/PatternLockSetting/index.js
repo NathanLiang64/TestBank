@@ -1,12 +1,13 @@
 // import { useState } from 'react';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import {
-  FEIBButton, FEIBCheckbox, FEIBCheckboxLabel, FEIBSwitch,
+  FEIBButton, FEIBCheckbox, FEIBCheckboxLabel, FEIBInput, FEIBInputLabel, FEIBSwitch,
 } from 'components/elements';
 import { useEffect, useState } from 'react';
 import { patternLockSettingApi } from 'apis';
 import PatternLockSettingWrapper from './patternLockSetting.style';
 import NoticeArea from '../../components/NoticeArea';
+import theme from '../../themes/theme';
 
 const { init } = patternLockSettingApi;
 const PatternLockSetting = () => {
@@ -58,6 +59,17 @@ const PatternLockSetting = () => {
                   )}
             label="本人以閱讀並同意上述[圖形密碼登入]使用條款"
             labelPlacement="start"
+          />
+        </div>
+        <div>
+          <FEIBInputLabel htmlFor="password">網銀密碼</FEIBInputLabel>
+          <FEIBInput
+            id="password"
+            name="password"
+            placeholder="請輸入您的網銀密碼"
+            className="customBottomSpace"
+            $color={theme.colors.primary.dark}
+            $borderColor={theme.colors.primary.brand}
           />
         </div>
         <FEIBButton disabled={!checkBoxCheck}>儲存變更</FEIBButton>
