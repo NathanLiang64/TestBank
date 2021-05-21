@@ -5,7 +5,7 @@ const NoticeAreaWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   max-height: 32rem;
-  margin: 2.4rem 0;
+  margin: ${({ $noSpace }) => ($noSpace ? '0' : '2.4rem 0')};
   overflow-y: scroll;
   
   h3 {

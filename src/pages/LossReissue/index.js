@@ -20,6 +20,7 @@ const LossReissue = () => {
 
   const { push } = useHistory();
   const dispatch = useDispatch();
+
   const handleToggleDialog = (boolean) => {
     setOpenDialog(boolean);
   };

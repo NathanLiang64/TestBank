@@ -18,6 +18,12 @@ const BillPayWrapper = styled(Layout)`
     }
   }
   
+  .tip {
+    margin: 1.8rem 0;
+    text-align: center;
+    font-weight: bold;
+  }
+  
   .smallFontSize {
     display: inline-block;
     margin-right: .4rem;

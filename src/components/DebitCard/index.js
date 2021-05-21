@@ -51,7 +51,7 @@ const DebitCard = ({
         <p className="account">{account}</p>
       </div>
       <div className="cardBalance">
-        { !hideIcon && renderIconButton() }
+        { !hideIcon && renderIconButton }
         <h3 className="balance">
           {showBalance ? `$${toCurrency(balance)}` : '＊＊＊＊＊'}
         </h3>

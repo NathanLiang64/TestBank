@@ -1,120 +1,87 @@
-import {
-  FEIBButton,
-} from 'components/elements';
-
-/* Api */
-import { useCheckLocation, usePageInfo } from 'hooks';
-
 /* Styles */
-import theme from 'themes/theme';
-import { useHistory } from 'react-router';
 import { useSelector } from 'react-redux';
+import Alert from 'components/Alert';
+import NoticeArea from 'components/NoticeArea';
 import BillPayWrapper from './billPay.style';
-import Alert from '../../components/Alert';
-import NoticeArea from '../../components/NoticeArea';
 
-const BillPay = () => {
+const BillPay2 = () => {
   const billPayData = useSelector(((state) => state.billPay));
-  const history = useHistory();
-
-  useCheckLocation();
-  usePageInfo('/api/billPay');
-
-  const doAction = () => {
-    history.push('/billPay');
-  };
 
   const renderAlert = () => (
     <h2>
-      {billPayData.sendType ? <Alert state="success">交易成功!!</Alert> : <Alert state="error">交易失敗!!</Alert> }
+      {billPayData.sendType ? <Alert state="success">交易成功</Alert> : <Alert state="error">交易失敗</Alert> }
     </h2>
   );
 
   const renderNoticeArea = () => (
     <div>
-      <NoticeArea title=" " textAlign="left">
+      <NoticeArea title=" " textAlign="left" noSpace>
         <p>交易失敗相關文案(應由API回傳)</p>
       </NoticeArea>
     </div>
   );
 
   const renderTable1Area = () => (
-    <section>
-      <table>
-        <tbody>
-          <tr>
-            <td>轉出帳號</td>
-            <td>00300466006458</td>
-          </tr>
-          <tr>
-            <td>繳款卡號</td>
-            <td>本人卡款</td>
-          </tr>
-          <tr>
-            <td>繳費金額</td>
-            <td>NTD 500</td>
-          </tr>
-          <tr>
-            <td>轉出帳號餘額</td>
-            <td>NTD 8,500</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+    <table>
+      <tbody>
+        <tr>
+          <td>轉出帳號</td>
+          <td>00300466006458</td>
+        </tr>
+        <tr>
+          <td>繳款卡號</td>
+          <td>本人卡款</td>
+        </tr>
+        <tr>
+          <td>繳費金額</td>
+          <td>NTD 500</td>
+        </tr>
+        <tr>
+          <td>轉出帳號餘額</td>
+          <td>NTD 8,500</td>
+        </tr>
+      </tbody>
+    </table>
   );
 
   const renderTable2Area = () => (
-    <section>
-      <table>
-        <tbody>
-          <tr>
-            <td>交易種類</td>
-            <td>以活期存款帳戶繳交信用卡</td>
-          </tr>
-          <tr>
-            <td>交易序號</td>
-            <td>0000004</td>
-          </tr>
-          <tr>
-            <td>身分證字號</td>
-            <td>Z2XXXXX006</td>
-          </tr>
-          <tr>
-            <td>信用卡號</td>
-            <td>3564-XXXX-XXXX-4650</td>
-          </tr>
-          <tr>
-            <td>轉出銀行代號</td>
-            <td>805-遠端銀行</td>
-          </tr>
-          <tr>
-            <td>轉出銀行帳號</td>
-            <td>00200300021548</td>
-          </tr>
-          <tr>
-            <td>繳費金額</td>
-            <td>NTD 4,865</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+    <table>
+      <tbody>
+        <tr>
+          <td>交易種類</td>
+          <td>以活期存款帳戶繳交信用卡</td>
+        </tr>
+        <tr>
+          <td>交易序號</td>
+          <td>0000004</td>
+        </tr>
+        <tr>
+          <td>身分證字號</td>
+          <td>Z2XXXXX006</td>
+        </tr>
+        <tr>
+          <td>信用卡號</td>
+          <td>3564-XXXX-XXXX-4650</td>
+        </tr>
+        <tr>
+          <td>轉出銀行代號</td>
+          <td>805-遠端銀行</td>
+        </tr>
+        <tr>
+          <td>轉出銀行帳號</td>
+          <td>00200300021548</td>
+        </tr>
+        <tr>
+          <td>繳費金額</td>
+          <td>NTD 4,865</td>
+        </tr>
+      </tbody>
+    </table>
   );
 
-  const collapse = () => (
-    <div className="tip">注意事項</div>
-  );
-
-  const renderButtons = () => (
-    <div className="buttons">
-      <FEIBButton
-        $color={theme.colors.text.dark}
-        $bgColor={theme.colors.background.cancel}
-        onClick={() => doAction()}
-      >
-        繼續繳費
-      </FEIBButton>
-    </div>
-  );
+  // const collapse = () => (
+  //   <div className="tip">注意事項</div>
+  // );
 
   const pageControll = () => {
     switch (billPayData.payType) {
@@ -124,8 +91,7 @@ const BillPay = () => {
             {renderAlert()}
             {billPayData.sendType && renderTable2Area()}
             {!billPayData.sendType && renderNoticeArea()}
-            {collapse()}
-            {renderButtons()}
+            {/* {collapse()} */}
           </>
         );
       default:
@@ -134,16 +100,14 @@ const BillPay = () => {
             {renderAlert()}
             {billPayData.sendType && renderTable1Area()}
             {!billPayData.sendType && renderNoticeArea()}
-            {renderButtons()}
           </>
         );
     }
   };
 
   const renderPage = () => (
-    <BillPayWrapper>
+    <BillPayWrapper inDialog>
       {pageControll()}
-
     </BillPayWrapper>
 
   );
@@ -151,4 +115,4 @@ const BillPay = () => {
   return renderPage();
 };
 
-export default BillPay;
+export default BillPay2;

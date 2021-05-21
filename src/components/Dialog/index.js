@@ -1,7 +1,6 @@
 import {
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
 } from '@material-ui/core';
 import DialogWrapper from './dialog.style';
@@ -34,36 +33,12 @@ const Dialog = ({
       {title || '系統訊息'}
     </DialogTitle>
     <DialogContent>
-      <DialogContentText id="alert-dialog-description">
-        {content}
-      </DialogContentText>
+      {content}
     </DialogContent>
     <DialogActions className="alignCenter">
       {action}
     </DialogActions>
   </DialogWrapper>
 );
-
-// <Dialog
-//   open={open}
-//   onClose={handleClose}
-//   aria-labelledby="alert-dialog-title"
-//   aria-describedby="alert-dialog-description"
-// >
-//   <DialogTitle id="alert-dialog-title">系統訊息</DialogTitle>
-//   <DialogContent>
-//     <DialogContentText id="alert-dialog-description">
-//       是否確定掛失申請
-//     </DialogContentText>
-//   </DialogContent>
-//   <DialogActions>
-//     <ConfirmButtons
-//       mainButtonValue="掛失"
-//       mainButtonOnClick={handleClose}
-//       subButtonValue="取消"
-//       subButtonOnClick={handleClose}
-//     />
-//   </DialogActions>
-// </Dialog>
 
 export default Dialog;

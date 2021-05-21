@@ -29,14 +29,6 @@ const BillPay = () => {
   const dispatch = useDispatch();
   const [initData, setinitData] = useState(null);
 
-  useCheckLocation();
-  usePageInfo('/api/billPay');
-
-  useEffect(async () => {
-    const data = await init();
-    setinitData(data.initData);
-  }, []);
-
   const doAction = () => {
     if (initData.feib) {
       dispatch(setPayType(1));
@@ -45,10 +37,19 @@ const BillPay = () => {
     }
     history.push('/billPay1');
   };
+
   const goConvenienceStores = () => {
     dispatch(setPayType(3));
     history.push('/billPay1');
   };
+
+  useCheckLocation();
+  usePageInfo('/api/billPay');
+
+  useEffect(async () => {
+    const data = await init();
+    setinitData(data.initData);
+  }, []);
 
   const renderCardArea = () => (
     <DebitCard

@@ -1,10 +1,12 @@
+import { useState } from 'react';
+import { useHistory } from 'react-router';
+import { useSelector, useDispatch } from 'react-redux';
 import DebitCard from 'components/DebitCard';
+import Dialog from 'components/Dialog';
 import {
   FEIBButton,
   FEIBInput, FEIBInputLabel,
 } from 'components/elements';
-import { useHistory } from 'react-router';
-import { useSelector, useDispatch } from 'react-redux';
 
 /* Api */
 import { useCheckLocation, usePageInfo } from 'hooks';
@@ -14,24 +16,42 @@ import Family from 'assets/images/Family.jpg';
 
 /* Styles */
 import theme from 'themes/theme';
+import BillPay2 from './billPay_2';
 import BillPayWrapper from './billPay.style';
 
 import { actions } from './stores';
 
 const { setSendType } = actions;
 
+/* eslint-disable */
 const BillPay = () => {
+  const [openDialog, setOpenDialog] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+
   const billPayData = useSelector(((state) => state.billPay));
-  const history = useHistory();
+  const { push } = useHistory();
   const dispatch = useDispatch();
+
+  const handleToggleDialog = (boolean) => {
+    setOpenDialog(boolean);
+  };
+
+  const handleClickShowResult = () => {
+    // 點擊按鈕後彈窗顯示繳費結果
+    handleToggleDialog(true);
+    dispatch(setSendType(true));
+    setShowAlert(true);
+  };
+
+  const handleClickDialogButton = () => {
+    // 點擊確定申請後關閉彈窗並顯示成功申請
+    handleToggleDialog(false);
+    setShowAlert(false);
+    push('/billPay');
+  };
 
   useCheckLocation();
   usePageInfo('/api/billPay');
-
-  const doAction = () => {
-    dispatch(setSendType(false));
-    history.push('/billPay2');
-  };
 
   const renderCardArea = () => (
     <DebitCard
@@ -142,12 +162,12 @@ const BillPay = () => {
     <div className="tip">注意事項</div>
   );
 
-  const renderButtons = () => (
-    <div className="buttons">
+  const renderNextStepButton = () => (
+    <div>
       <FEIBButton
         $color={theme.colors.text.dark}
         $bgColor={theme.colors.background.cancel}
-        onClick={() => doAction()}
+        onClick={() => handleClickShowResult()}
       >
         下一步
       </FEIBButton>
@@ -162,7 +182,7 @@ const BillPay = () => {
             {renderTable2Area()}
             {renderFormArea()}
             {collapse()}
-            {renderButtons()}
+            {renderNextStepButton()}
           </>
         );
       case 3:
@@ -179,7 +199,7 @@ const BillPay = () => {
             {renderCardArea()}
             {renderTable1Area()}
             {renderFormArea()}
-            {renderButtons()}
+            {renderNextStepButton()}
           </>
         );
     }
@@ -188,9 +208,13 @@ const BillPay = () => {
   const renderPage = () => (
     <BillPayWrapper>
       {pageControll()}
-
+      <Dialog
+        isOpen={openDialog}
+        onClose={() => handleToggleDialog(false)}
+        content={<BillPay2 />}
+        action={<FEIBButton onClick={handleClickDialogButton}>確定</FEIBButton>}
+      />
     </BillPayWrapper>
-
   );
 
   return renderPage();

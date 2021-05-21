@@ -81,11 +81,15 @@ const GlobalStyles = createGlobalStyle`
     color: inherit;
     background: transparent;
   }
+  
+  img {
+    width: 100%;
+  }
 
   table {
     border: .1rem solid ${({ theme }) => theme.colors.primary.lightest};
     width: 100%;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     background: white;
 
     tr {
