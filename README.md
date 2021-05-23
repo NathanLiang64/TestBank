@@ -42,6 +42,10 @@
   - FEIBSwitch - 唯物
   - FEIBSwitchLabel - 唯物
   - FEIBCollapse - 唯物
+  - FEIBTabContext - 唯物
+  - FEIBTabList - 唯物
+  - FEIBTab - 唯物
+  - FEIBTabPanel - 唯物
 
 
 - 組件封裝
