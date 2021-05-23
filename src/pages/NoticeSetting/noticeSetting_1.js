@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
@@ -9,17 +8,17 @@ import {
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
 import { ExpandMoreOutlined, ErrorOutline } from '@material-ui/icons';
+import Alert from 'components/Alert';
 
 /* Styles */
 import theme from 'themes/theme';
 import NoticeSettingWrapper from './noticeSetting.style';
 
 const NoticeSetting1 = () => {
-  const history = useHistory();
   const noticeTypeArray = ['deposit', 'creditCard', 'loan', 'tradeSafity', 'socialFeedback'];
   const [openDialog, setOpenDialog] = useState(false);
+  const [openResultDialog, setOpenResultDialog] = useState(false);
   const [dialogContent, setDialogContent] = useState('是否將通知關閉');
-  const [handleClickMainButton, setHandleClickMainButton] = useState(() => () => { });
   const [toggleAll, setToggleAll] = useState(false);
   const [noticeData, setNoticeData] = useState({
     deposit: {
@@ -98,7 +97,6 @@ const NoticeSetting1 = () => {
     },
   });
   const [password, setPassword] = useState('');
-  const [buttonType, setButtonType] = useState(true);
 
   const handleToggleDialog = (bool) => {
     setOpenDialog(bool);
@@ -139,11 +137,7 @@ const NoticeSetting1 = () => {
         (
           <FEIBSwitch
             onChange={() => {
-              setButtonType(false);
-              const onOffText = switchItem.on ? '關閉' : '開啟';
-              setDialogContent(`是否將${switchItem.label}${onOffText}？`);
-              setHandleClickMainButton(() => () => handleSwitchChange(switchItem, index, noticeType));
-              setOpenDialog(true);
+              handleSwitchChange(switchItem, index, noticeType);
             }}
             checked={switchItem.on}
           />
@@ -154,13 +148,7 @@ const NoticeSetting1 = () => {
   );
 
   const handleSaveNoticeSetting = () => {
-    setButtonType(true);
-    if (!password) {
-      setDialogContent('請輸入網銀密碼');
-      setOpenDialog(true);
-      return;
-    }
-    history.push('/noticeSetting2');
+    setOpenResultDialog(true);
   };
 
   useCheckLocation();
@@ -176,11 +164,6 @@ const NoticeSetting1 = () => {
                 onChange={() => {
                   const onOffText = toggleAll ? '關閉' : '開啟';
                   setDialogContent(`是否將所有通知${onOffText}？`);
-                  setButtonType(false);
-                  setHandleClickMainButton(() => () => {
-                    handleAllSwitchsChange(!toggleAll);
-                    setToggleAll(!toggleAll);
-                  });
                   setOpenDialog(true);
                 }}
                 checked={toggleAll}
@@ -234,11 +217,13 @@ const NoticeSetting1 = () => {
           <ErrorOutline />
         </div>
         <FEIBButton
+          disabled={!password}
           onClick={handleSaveNoticeSetting}
         >
           確定送出
         </FEIBButton>
       </div>
+      {/* 確定起用或關閉全部 */}
       <Dialog
         isOpen={openDialog}
         onClose={() => {
@@ -246,23 +231,40 @@ const NoticeSetting1 = () => {
         }}
         content={dialogContent}
         action={
-          buttonType ? (
-            <FEIBButton
-              onClick={() => handleToggleDialog(false)}
-            >
-              確定
-            </FEIBButton>
-          ) : (
+          (
             <ConfirmButtons
               mainButtonOnClick={() => {
-                handleClickMainButton();
+                handleAllSwitchsChange(!toggleAll);
+                setToggleAll(!toggleAll);
                 handleToggleDialog(false);
               }}
               subButtonOnClick={() => handleToggleDialog(false)}
             />
           )
-          // dialogButton
         }
+      />
+      {/* 設定成功 */}
+      <Dialog
+        isOpen={openResultDialog}
+        onClose={() => setOpenResultDialog(false)}
+        content={(
+          <>
+            <Alert state="success">設定成功</Alert>
+            <div>
+              <p>您的訊息通知設定已經更新囉！</p>
+            </div>
+          </>
+        )}
+        action={(
+          <FEIBButton
+            onClick={() => {
+              setOpenResultDialog(false);
+              setPassword('');
+            }}
+          >
+            確定
+          </FEIBButton>
+        )}
       />
     </NoticeSettingWrapper>
   );

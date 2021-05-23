@@ -12,8 +12,10 @@ import {
   FEIBCheckbox,
   FEIBSwitchLabel,
 } from 'components/elements';
+import ConfirmButtons from 'components/ConfirmButtons';
 import Dialog from 'components/Dialog';
 import NoticeArea from 'components/NoticeArea';
+import Alert from 'components/Alert';
 
 /* Styles */
 import theme from 'themes/theme';
@@ -21,15 +23,11 @@ import NoticeSettingWrapper from './noticeSetting.style';
 
 const NoticeSetting = () => {
   const history = useHistory();
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [openResultDialog, setOpenResultDialog] = useState(false);
   const [activeNotice, setActiveNotice] = useState(false);
-  const [dialogContent, setDialogContent] = useState('');
   const [password, setPassword] = useState('');
   const [agree, setAgree] = useState(false);
-
-  const handleToggleDialog = (bool) => {
-    setOpenDialog(bool);
-  };
 
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
@@ -40,22 +38,8 @@ const NoticeSetting = () => {
   };
 
   const activateNotice = () => {
-    if (!activeNotice) {
-      setDialogContent('請啟用訊息通知');
-      setOpenDialog(true);
-      return;
-    }
-    if (!agree) {
-      setDialogContent('請閱讀並同意訊息通知使用條款');
-      setOpenDialog(true);
-      return;
-    }
-    if (!password) {
-      setDialogContent('請輸入網銀密碼');
-      setOpenDialog(true);
-      return;
-    }
-    history.push('/noticeSetting2');
+    setOpenResultDialog(false);
+    history.push('/noticeSetting1');
   };
 
   useCheckLocation();
@@ -114,19 +98,39 @@ const NoticeSetting = () => {
         onChange={handlePasswordChange}
       />
       <FEIBButton
-        disabled={!agree}
-        onClick={activateNotice}
+        disabled={!activeNotice || !agree || !password}
+        onClick={() => setOpenConfirmDialog(true)}
       >
         儲存變更
       </FEIBButton>
       <Dialog
-        isOpen={openDialog}
-        onClose={() => handleToggleDialog(false)}
-        content={dialogContent}
+        isOpen={openConfirmDialog}
+        onClose={() => setOpenConfirmDialog(false)}
+        content="您確定要啟用訊息通知設定嗎？"
         action={(
-          <FEIBButton onClick={() => handleToggleDialog(false)}>
-            確定
-          </FEIBButton>
+          <ConfirmButtons
+            mainButtonOnClick={() => {
+              setOpenResultDialog(true);
+              setOpenConfirmDialog(false);
+            }}
+            subButtonOnClick={() => setOpenConfirmDialog(false)}
+          />
+        )}
+      />
+      <Dialog
+        isOpen={openResultDialog}
+        onClose={() => activateNotice()}
+        content={(
+          <>
+            <Alert state="success">設定成功</Alert>
+            <div>
+              <p>您的訊息通知設定已經啟用囉！</p>
+              <p>點擊確定後進入訊息通知設定頁</p>
+            </div>
+          </>
+        )}
+        action={(
+          <FEIBButton onClick={() => activateNotice()}>確定</FEIBButton>
         )}
       />
     </NoticeSettingWrapper>
