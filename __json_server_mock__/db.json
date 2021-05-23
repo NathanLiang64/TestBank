@@ -76,6 +76,11 @@
       "isActive": false
     }
   },
+  "fingerPrintLockSetting": {
+    "name": "FingerPrintLockSetting",
+    "title": "生物辨識登入設定",
+    "route": "/fingerPrintLockSetting"
+  },
   "notice": {
     "name": "Notice",
     "title": "訊息通知",

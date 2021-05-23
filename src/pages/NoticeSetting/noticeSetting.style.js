@@ -52,6 +52,9 @@ const NoticeSettingWrapper = styled(Layout)`
       left: -1.6rem;
     }
   }
+  .customNoticeArea {
+    margin-bottom: 0;
+  }
 `;
 
 export default NoticeSettingWrapper;

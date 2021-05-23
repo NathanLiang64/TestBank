@@ -20,6 +20,7 @@ import NoticeSetting2 from 'pages/NoticeSetting/noticeSetting_2';
 import PatternLockSetting from 'pages/PatternLockSetting';
 import Notice from 'pages/Notice';
 import Notice1 from 'pages/Notice/notice_1';
+import FingerPrintLockSetting from 'pages/FingerPrintLockSetting';
 
 const routes = [
   { path: '/', exact: true, component: Login },
@@ -43,6 +44,7 @@ const routes = [
   { path: '/patternLockSetting', exact: false, component: PatternLockSetting },
   { path: '/notice', exact: false, component: Notice },
   { path: '/notice1', exact: false, component: Notice1 },
+  { path: '/fingerPrintLockSetting', exact: false, component: FingerPrintLockSetting },
 ];
 
 export default routes;
