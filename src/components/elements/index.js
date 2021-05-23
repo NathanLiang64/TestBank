@@ -15,6 +15,10 @@ import FEIBRadioLabel from './FEIBRadioLabel';
 import FEIBSwitch from './FEIBSwitch';
 import FEIBSwitchLabel from './FEIBSwitchLabel';
 import FEIBCollapse from './FEIBCollapse';
+import FEIBTab from './FEIBTab';
+import FEIBTabPanel from './FEIBTabPanel';
+import FEIBTabContext from './FEIBTabContext';
+import FEIBTabList from './FEIBTabList';
 
 /*
 * elements 入口文件，元件統一由此匯出
@@ -38,4 +42,8 @@ export {
   FEIBSwitch,
   FEIBSwitchLabel,
   FEIBCollapse,
+  FEIBTab,
+  FEIBTabPanel,
+  FEIBTabContext,
+  FEIBTabList,
 };
