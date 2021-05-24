@@ -12,10 +12,7 @@ import {
   FEIBCheckbox,
   FEIBSwitchLabel,
 } from 'components/elements';
-import ConfirmButtons from 'components/ConfirmButtons';
-import Dialog from 'components/Dialog';
 import NoticeArea from 'components/NoticeArea';
-import Alert from 'components/Alert';
 
 /* Styles */
 import theme from 'themes/theme';
@@ -23,8 +20,6 @@ import NoticeSettingWrapper from './noticeSetting.style';
 
 const NoticeSetting = () => {
   const history = useHistory();
-  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
-  const [openResultDialog, setOpenResultDialog] = useState(false);
   const [activeNotice, setActiveNotice] = useState(false);
   const [password, setPassword] = useState('');
   const [agree, setAgree] = useState(false);
@@ -38,7 +33,6 @@ const NoticeSetting = () => {
   };
 
   const activateNotice = () => {
-    setOpenResultDialog(false);
     history.push('/noticeSetting1');
   };
 
@@ -99,40 +93,10 @@ const NoticeSetting = () => {
       />
       <FEIBButton
         disabled={!activeNotice || !agree || !password}
-        onClick={() => setOpenConfirmDialog(true)}
+        onClick={activateNotice}
       >
-        儲存變更
+        確定
       </FEIBButton>
-      <Dialog
-        isOpen={openConfirmDialog}
-        onClose={() => setOpenConfirmDialog(false)}
-        content="您確定要啟用訊息通知設定嗎？"
-        action={(
-          <ConfirmButtons
-            mainButtonOnClick={() => {
-              setOpenResultDialog(true);
-              setOpenConfirmDialog(false);
-            }}
-            subButtonOnClick={() => setOpenConfirmDialog(false)}
-          />
-        )}
-      />
-      <Dialog
-        isOpen={openResultDialog}
-        onClose={() => activateNotice()}
-        content={(
-          <>
-            <Alert state="success">設定成功</Alert>
-            <div>
-              <p>您的訊息通知設定已經啟用囉！</p>
-              <p>點擊確定後進入訊息通知設定頁</p>
-            </div>
-          </>
-        )}
-        action={(
-          <FEIBButton onClick={() => activateNotice()}>確定</FEIBButton>
-        )}
-      />
     </NoticeSettingWrapper>
   );
 };
