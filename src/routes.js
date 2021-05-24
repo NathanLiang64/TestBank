@@ -21,6 +21,7 @@ import Notice from 'pages/Notice';
 import Notice1 from 'pages/Notice/notice_1';
 import FingerPrintLockSetting from 'pages/FingerPrintLockSetting';
 import ChangeUserName from 'pages/ChangeUserName';
+import PwdModify from 'pages/PwdModify';
 
 const routes = [
   { path: '/', exact: true, component: Login },
@@ -45,6 +46,7 @@ const routes = [
   { path: '/notice1', exact: false, component: Notice1 },
   { path: '/fingerPrintLockSetting', exact: false, component: FingerPrintLockSetting },
   { path: '/changeUserName', exact: false, component: ChangeUserName },
+  { path: '/pwdModify', exact: false, component: PwdModify },
 ];
 
 export default routes;

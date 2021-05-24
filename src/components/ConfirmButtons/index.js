@@ -14,6 +14,7 @@ import ConfirmButtonsWrapper from './confirmButtons.style';
 * 2. mainButtonOnClick -> 主要按鈕點擊後觸發的事件
 * 3. subButtonValue -> 次要按鈕的顯示文字，預設為 "取消"
 * 4. subButtonOnClick -> 次要按鈕點擊後觸發的事件
+* 5. mainButtonDisabled -> 主要按鈕的 disabled 狀態，預設 false
 * */
 
 const ConfirmButtons = ({
@@ -21,6 +22,7 @@ const ConfirmButtons = ({
   mainButtonOnClick,
   subButtonValue,
   subButtonOnClick,
+  mainButtonDisabled,
 }) => (
   <ConfirmButtonsWrapper>
     <FEIBButton
@@ -31,6 +33,7 @@ const ConfirmButtons = ({
       {subButtonValue || '取消'}
     </FEIBButton>
     <FEIBButton
+      disabled={mainButtonDisabled || false}
       onClick={mainButtonOnClick}
     >
       {mainButtonValue || '確定'}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useHistory } from 'react-router';
+// import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
@@ -15,7 +15,7 @@ import theme from 'themes/theme';
 import ChangeUserNameWrapper from './changeUserName.style';
 
 const ChangeUserName = () => {
-  const history = useHistory();
+  // const history = useHistory();
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showResultDialog, setShowResultDialog] = useState(false);
   const [form, setForm] = useState({
@@ -38,7 +38,6 @@ const ChangeUserName = () => {
 
   const handleResultButton = () => {
     setShowResultDialog(false);
-    history.push('/');
   };
 
   const ConfirmDialog = () => (
@@ -65,9 +64,6 @@ const ChangeUserName = () => {
           <p>
             您的使用者代號已變更成功囉！
           </p>
-          <p>
-            點擊確定後重新登入！
-          </p>
         </>
       )}
       action={(
@@ -83,12 +79,12 @@ const ChangeUserName = () => {
 
   return (
     <ChangeUserNameWrapper>
-      <FEIBInputLabel>使用者代號</FEIBInputLabel>
+      <FEIBInputLabel>您的使用者代號</FEIBInputLabel>
       <FEIBInput
         type="text"
         name="userName"
         value={form.userName}
-        placeholder="請輸入使用者代號"
+        placeholder="請輸入6~20位英數字，英文字區分大小寫"
         $color={theme.colors.primary.dark}
         $borderColor={theme.colors.primary.brand}
         onChange={handleFormChange}
@@ -98,27 +94,27 @@ const ChangeUserName = () => {
         type="text"
         name="newUserName"
         value={form.newUserName}
-        placeholder="請輸入有區分大小寫的 8~20 位英數字"
+        placeholder="請輸入6~20位英數字，英文字區分大小寫"
         $color={theme.colors.primary.dark}
         $borderColor={theme.colors.primary.brand}
         onChange={handleFormChange}
       />
-      <FEIBInputLabel>再次輸入新的使用者代號</FEIBInputLabel>
+      <FEIBInputLabel>請確認新的使用者代號</FEIBInputLabel>
       <FEIBInput
         type="text"
         name="newUserNameCheck"
         value={form.newUserNameCheck}
-        placeholder="請輸入有區分大小寫的 8~20 位英數字"
+        placeholder="請再輸入一次新的使用者代號"
         $color={theme.colors.primary.dark}
         $borderColor={theme.colors.primary.brand}
         onChange={handleFormChange}
       />
-      <FEIBInputLabel>網銀密碼</FEIBInputLabel>
+      <FEIBInputLabel>請輸入網銀密碼</FEIBInputLabel>
       <FEIBInput
         type="password"
         name="password"
         value={form.password}
-        placeholder="請輸入網銀密碼"
+        placeholder="請輸入有區分大小寫的8~20位英數字網銀密碼"
         $color={theme.colors.primary.dark}
         $borderColor={theme.colors.primary.brand}
         onChange={handleFormChange}

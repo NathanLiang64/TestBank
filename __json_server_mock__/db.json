@@ -88,7 +88,12 @@
   },
   "changeUserName": {
     "name": "ChangeUserName",
-    "title": "變更使用者代號",
+    "title": "使用者代號變更",
     "route": "/changeUserName"
+  },
+  "pwdModify": {
+    "name": "PwdModify",
+    "title": "網銀密碼變更",
+    "route": "/pwdModify"
   }
 }
