@@ -9,6 +9,11 @@ import { FormControlLabel as MaterialRadioLabel } from '@material-ui/core';
 
 const FEIBRadioLabel = styled(MaterialRadioLabel)`
   color: ${({ theme, $color }) => $color || theme.colors.text.light};
+
+  .MuiTypography-body1 {
+    // Label font size
+    font-size: 1.4rem;
+  }
 `;
 
 export default FEIBRadioLabel;

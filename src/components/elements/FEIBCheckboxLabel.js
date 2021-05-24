@@ -9,6 +9,11 @@ import { FormControlLabel as MaterialCheckboxLabel } from '@material-ui/core';
 
 const FEIBCheckboxLabel = styled(MaterialCheckboxLabel)`
   color: ${({ theme, $color }) => $color || theme.colors.text.light};
+
+  .MuiTypography-body1 {
+    // Label font size
+    font-size: 1.4rem;
+  }
 `;
 
 export default FEIBCheckboxLabel;

@@ -93,7 +93,6 @@ const BillPay = () => {
         defaultValue="aaa"
         id="otherBankCode"
         name="otherBankCode"
-        $color={theme.colors.primary.dark}
         $borderColor={theme.colors.primary.brand}
       >
         <FEIBOption value="aaa">AAA 行庫</FEIBOption>

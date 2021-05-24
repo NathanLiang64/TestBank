@@ -40,6 +40,7 @@ const PatternLockSetting = () => {
 
   const handleClickSaveChange = () => {
     // 開啟確認彈窗進行變更確認操作
+
     setShowConfirmDialog(true);
   };
 
@@ -47,9 +48,13 @@ const PatternLockSetting = () => {
     // 關閉當前的確認彈窗
     setShowConfirmDialog(false);
     // call api 決定變更結果
-    dispatch(setIsResultSuccess(true));
-    // 開啟顯示結果的彈窗
-    setShowResultDialog(true);
+    // eslint-disable-next-line no-restricted-globals
+    const result = confirm('原生畫面');
+    if (result) {
+      dispatch(setIsResultSuccess(true));
+      // 開啟顯示結果的彈窗
+      setShowResultDialog(true);
+    }
   };
 
   const handleClickResultMainButton = () => {
