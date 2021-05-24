@@ -9,7 +9,9 @@ import { IconButton as MaterialIconButton } from '@material-ui/core';
 *    直接填寫數字，例如：2.4，若未傳值預設為 Material-UI 預設值 1.5
 * */
 
-const FEIBIconButton = styled(MaterialIconButton)`
+const FEIBIconButton = styled(MaterialIconButton).attrs({
+  type: 'button',
+})`
   
   &.MuiIconButton-root {
     color: ${({ $iconColor }) => $iconColor || 'inherit'};
