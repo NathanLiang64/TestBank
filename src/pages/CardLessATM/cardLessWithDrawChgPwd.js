@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { useHistory } from 'react-router';
 
 /* Elements */
-import theme from 'themes/theme';
 import {
   FEIBInputAnimationWrapper, FEIBInput, FEIBInputLabel, FEIBButton,
 } from 'components/elements';
 
 /* Styles */
+import theme from 'themes/theme';
 import CardLessATMWrapper from './cardLessATM.style';
 
 const CardLessWithDrawChgPwd = () => {

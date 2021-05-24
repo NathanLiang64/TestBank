@@ -85,5 +85,10 @@
     "name": "Notice",
     "title": "訊息通知",
     "route": "/notice"
+  },
+  "changeUserName": {
+    "name": "ChangeUserName",
+    "title": "變更使用者代號",
+    "route": "/changeUserName"
   }
 }

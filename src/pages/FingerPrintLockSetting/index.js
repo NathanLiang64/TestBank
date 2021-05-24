@@ -19,7 +19,7 @@ import Alert from 'components/Alert';
 
 /* Styles */
 import theme from 'themes/theme';
-import FingerPrintWrapper from './fingerPrint.style';
+import FingerPrintLockSettingWrapper from './fingerPrintLockSetting.style';
 
 const FingerPrint = () => {
   // const history = useHistory();
@@ -103,7 +103,7 @@ const FingerPrint = () => {
   usePageInfo('/api/fingerPrintLockSetting');
 
   return (
-    <FingerPrintWrapper>
+    <FingerPrintLockSettingWrapper>
       <FEIBSwitchLabel
         control={(
           <FEIBSwitch
@@ -159,13 +159,13 @@ const FingerPrint = () => {
         onChange={handlePasswordChange}
       />
       <FEIBButton
-        disabled={!agree}
+        disabled={!agree || !password || !isActive}
         onClick={handleSaveChange}
       >
         儲存變更
       </FEIBButton>
       { showResultDialog ? <ResultDialog /> : <ConfirmDialog /> }
-    </FingerPrintWrapper>
+    </FingerPrintLockSettingWrapper>
   );
 };
 
