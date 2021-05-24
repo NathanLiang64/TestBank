@@ -6,7 +6,7 @@ import { Select as MaterialSelect } from '@material-ui/core';
 * 1. $fontSize -> 字級大小
 *    直接填寫數字，例如：1.6，若未傳值預設為 1.4
 * 2. $color -> 文字顏色
-*    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)
+*    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)，預設為主色
 * 3. $borderColor -> 邊框顏色
 *    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)
 * 4. $focusBorderColor -> 游標點擊後聚焦在物件時的邊框顏色
@@ -24,7 +24,7 @@ const FEIBSelect = styled(MaterialSelect)`
   .MuiSelect-select {
     display: inline-flex;
     align-items: center;
-    color: ${({ $color }) => $color || 'inherit'};
+    color: ${({ theme, $color }) => $color || theme.colors.primary.brand};
     font-size: ${({ $fontSize }) => ($fontSize && `${$fontSize}rem`) || '1.4rem'};
   }
   

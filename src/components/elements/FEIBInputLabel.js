@@ -10,7 +10,12 @@ import { InputLabel as MaterialInputLabel } from '@material-ui/core';
 const FEIBInputLabel = styled(MaterialInputLabel)`
   color: ${({ theme, $color }) => `${$color || theme.colors.text.light} !important`};
   //opacity: .6;
-
+  
+  &.MuiFormLabel-root {
+    // Label font size
+    font-size: 1.4rem;
+  }
+  
   &.MuiFormLabel-filled,
   &.Mui-focused {
     opacity: 1;
