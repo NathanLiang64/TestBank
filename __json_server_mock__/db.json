@@ -85,5 +85,15 @@
     "name": "Notice",
     "title": "訊息通知",
     "route": "/notice"
+  },
+  "changeUserName": {
+    "name": "ChangeUserName",
+    "title": "使用者代號變更",
+    "route": "/changeUserName"
+  },
+  "pwdModify": {
+    "name": "PwdModify",
+    "title": "網銀密碼變更",
+    "route": "/pwdModify"
   }
 }
