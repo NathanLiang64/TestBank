@@ -69,6 +69,10 @@ const GlobalStyles = createGlobalStyle`
     height: 100%;
   }
   
+  main {
+    overflow-x: hidden;
+  }
+  
   input,
   textarea,
   select {
