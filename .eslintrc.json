@@ -26,6 +26,8 @@
     "react/react-in-jsx-scope": "off",
     "import/no-unresolved": "off",
     "linebreak-style": ["off", "windows"],
-    "max-len": "off"
+    "max-len": "off",
+    "react/jsx-props-no-spreading": "off",
+    "import/prefer-default-export": "off"
   }
 }

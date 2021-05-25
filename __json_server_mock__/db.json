@@ -72,8 +72,7 @@
     "title": "圖形密碼登入設定",
     "route": "/patternLockSetting",
     "initData": {
-      "isFirstSetting": true,
-      "isActive": false
+      "isActive":false
     }
   },
   "fingerPrintLockSetting": {
