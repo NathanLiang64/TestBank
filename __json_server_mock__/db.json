@@ -25,7 +25,7 @@
   },
   "depositOverview": {
     "name": "DepositOverview",
-    "title": "存款卡",
+    "title": "帳戶",
     "route": "/depositOverview"
   },
   "depositPlus": {

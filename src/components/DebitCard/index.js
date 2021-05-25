@@ -6,6 +6,7 @@ import {
 } from '@material-ui/icons';
 import { FEIBIconButton } from 'components/elements';
 import theme from 'themes/theme';
+import { toCurrency } from 'utilities/Generator';
 import DebitCardWrapper from './debitCard.style';
 
 /*
@@ -43,13 +44,6 @@ const DebitCard = ({
     setCopyAccount(true);
     // 1.5 秒後將 copyAccount 的值重置
     setTimeout(() => setCopyAccount(false), 1500);
-  };
-
-  // 將餘額加上千分位符號顯示
-  const toCurrency = (number) => {
-    const parts = number.toString().split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    return parts.join('.');
   };
 
   // 判斷卡片類型是否為 original

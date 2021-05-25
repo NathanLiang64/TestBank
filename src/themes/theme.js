@@ -32,6 +32,7 @@ const theme = {
     background: {
       light: '#E9EBEE',
       lighter: '#F5F5F5',
+      lightest: '#FBFAF9',
       star: '#FFD466',
       point: '#E60E0E',
       cancel: '#D8E0ED',
