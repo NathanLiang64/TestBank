@@ -14,6 +14,7 @@ import theme from 'themes/theme';
 import PatternLockSettingWrapper from './patternLockSetting.style';
 import PatternLockSetting2 from './patternLockSetting_2';
 import { setIsActive, setIsResultSuccess, setType } from './stores/actions';
+import e2ee from '../../utilities/E2ee';
 
 const { init } = patternLockSettingApi;
 const PatternLockSetting = () => {
@@ -48,7 +49,7 @@ const PatternLockSetting = () => {
     } else {
       setDisabled(true);
     }
-  }, [checkBoxCheck, watch('password')]);
+  }, [checkBoxCheck, watch('password'), isActive]);
 
   const switchChange = () => {
     setisActive(!isActive);
@@ -73,7 +74,8 @@ const PatternLockSetting = () => {
     // 回到個人化資料設定主頁
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    data.password = await e2ee(data.password);
     console.log(data);
     /**
        *
