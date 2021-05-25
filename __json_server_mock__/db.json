@@ -23,6 +23,11 @@
     "title": "常用帳號管理",
     "route": "/accountMaintenance"
   },
+  "depositOverview": {
+    "name": "DepositOverview",
+    "title": "存款卡",
+    "route": "/depositOverview"
+  },
   "depositPlus": {
     "name": "DepositPlus",
     "title": "優惠定額明細",

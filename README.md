@@ -11,14 +11,16 @@
 ## 進行中
 - 元件封裝 - 唯物 & 聖森
 - 無卡提款 - 唯物
-- 信用卡繳費 (BillPay) - 聖森
-- 存款優惠利率查詢 (DepositPlus) - 聖森
+- 存款卡首頁 (DepositOverview) - 聖森
+- 存款優惠利率額度 (DepositPlus) - 聖森
 - 常用帳號列表 (AccountMaintenance) - 聖森 (暫不需實作)
 
 ---
 
 ## 已完成
 - 功能
+  - 圖形密碼登入設定 (PatternLockSetting) - 聖森
+  - 信用卡繳費 (BillPay) - 聖森
   - 金融卡掛失補發 (LossReissue) - 聖森
   - 加解密 - 聖森
   - 登入頁 (Login) - 聖森

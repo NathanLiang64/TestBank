@@ -7,11 +7,10 @@ import CardLessATM2 from 'pages/CardLessATM/cardLessATM_2';
 import CardLessATM3 from 'pages/CardLessATM/cardLessATM_3';
 import CardLessWithDrawChgPwd from 'pages/CardLessATM/cardLessWithDrawChgPwd';
 import LossReissue from 'pages/LossReissue';
-import LossReissue2 from 'pages/LossReissue/lossReissue_2';
 import AccountMaintenance from 'pages/AccountMaintenance';
 import BillPay from 'pages/BillPay';
 import BillPay1 from 'pages/BillPay/billPay_1';
-import BillPay2 from 'pages/BillPay/billPay_2';
+import DepositOverview from 'pages/DepositOverview';
 import DepositPlus from 'pages/DepositPlus';
 import NicknameSetting from 'pages/NicknameSetting';
 import NoticeSetting from 'pages/NoticeSetting';
@@ -32,12 +31,11 @@ const routes = [
   { path: '/cardLessATM3', exact: false, component: CardLessATM3 },
   { path: '/cardLessWithDrawChgPwd', exact: false, component: CardLessWithDrawChgPwd },
   { path: '/lossReissue', exact: false, component: LossReissue },
-  { path: '/lossReissue2', exact: false, component: LossReissue2 },
   { path: '/accountMaintenance', exact: false, component: AccountMaintenance },
   { path: '/billPay', exact: true, component: BillPay },
   { path: '/billPay1', exact: false, component: BillPay1 },
-  { path: '/billPay2', exact: false, component: BillPay2 },
-  { path: '/depositPlus', exact: true, component: DepositPlus },
+  { path: '/depositOverview', exact: false, component: DepositOverview },
+  { path: '/depositPlus', exact: false, component: DepositPlus },
   { path: '/noticeSetting', exact: true, component: NoticeSetting },
   { path: '/noticeSetting1', exact: false, component: NoticeSetting1 },
   { path: '/nicknameSetting', exact: false, component: NicknameSetting },
