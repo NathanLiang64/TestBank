@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import {
   Visibility, VisibilityOff, FileCopyOutlined, MoreVert,
+  Euro, LibraryAdd, SystemUpdate, Edit, PlaylistAdd,
 } from '@material-ui/icons';
+import BottomDrawer from 'components/BottomDrawer';
 import { FEIBIconButton } from 'components/elements';
 import theme from 'themes/theme';
 import { toCurrency } from 'utilities/Generator';
@@ -36,6 +38,7 @@ const DebitCard = ({
 }) => {
   const [showBalance, setShowBalance] = useState(true);
   const [copyAccount, setCopyAccount] = useState(false);
+  const [openDrawer, setOpenDrawer] = useState(false);
 
   const handleClickShowBalance = () => {
     setShowBalance(!showBalance);
@@ -79,7 +82,7 @@ const DebitCard = ({
   // 渲染卡片右上角的 "更多" 圖標
   const renderMoreIconButton = () => (
     <div className="moreIconButton">
-      <FEIBIconButton $fontSize={2}>
+      <FEIBIconButton $fontSize={2} onClick={() => setOpenDrawer(true)}>
         <MoreVert />
       </FEIBIconButton>
     </div>
@@ -89,6 +92,13 @@ const DebitCard = ({
   const mockFunctionList = [
     { title: '轉帳', path: '/', other: null },
     { title: '無卡提款', path: '/cardLessATM', other: null },
+  ];
+  const mockMoreList = [
+    { title: '換匯', path: '/', icon: <Euro /> },
+    { title: '設為速查帳戶', path: '/cardLessATM', icon: <PlaylistAdd /> },
+    { title: '增加子帳戶', path: '/cardLessATM', icon: <LibraryAdd /> },
+    { title: '存摺封面下載', path: '/cardLessATM', icon: <SystemUpdate /> },
+    { title: '編輯帳戶別名', path: '/cardLessATM', icon: <Edit /> },
   ];
 
   // render 功能列表
@@ -100,6 +110,28 @@ const DebitCard = ({
         </li>
       )) }
     </ul>
+  );
+
+  const renderMoreList = (list) => (
+    <ul className="moreList">
+      { list.map((item) => (
+        <li key={item.title}>
+          <Link to={item.path}>
+            {item.icon}
+            {item.title}
+          </Link>
+        </li>
+      )) }
+    </ul>
+  );
+
+  const renderBottomDrawer = () => (
+    <BottomDrawer
+      className="debitCardDrawer"
+      isOpen={openDrawer}
+      onClose={() => setOpenDrawer(!openDrawer)}
+      content={renderMoreList(mockMoreList)}
+    />
   );
 
   return (
@@ -123,6 +155,7 @@ const DebitCard = ({
       {/* TODO: 測試完成後把 'mockFunctionList' 移除 */}
       { originalType() && renderFunctionList(functionList || mockFunctionList) }
       { originalType() && renderMoreIconButton() }
+      { renderBottomDrawer() }
     </DebitCardWrapper>
   );
 };

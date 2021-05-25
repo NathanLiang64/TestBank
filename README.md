@@ -9,11 +9,11 @@
 ---
 
 ## 進行中
-- 元件封裝 - 唯物 & 聖森
 - 無卡提款 - 唯物
 - 存款卡首頁 (DepositOverview) - 聖森
 - 存款優惠利率額度 (DepositPlus) - 聖森
 - 常用帳號列表 (AccountMaintenance) - 聖森 (暫不需實作)
+- 元件封裝 - 唯物 & 聖森
 
 ---
 
@@ -53,11 +53,13 @@
 - 組件封裝
   - ConfirmButtons - 聖森
   - Dialog - 聖森
+  - BottomDrawer - 聖森
   - Layout - 聖森
   - Alert - 聖森
   - NoticeArea - 聖森
   - Header - 聖森
   - DebitCard - 聖森
+  - DetailCard - 聖森
 
 ---
 

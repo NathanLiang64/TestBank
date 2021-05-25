@@ -142,6 +142,11 @@ const GlobalStyles = createGlobalStyle`
     margin-bottom: 1.6rem;
     width: 100%;
   }
+
+  .MuiBackdrop-root {
+    background: ${({ theme }) => theme.colors.background.mask} !important;
+    backdrop-filter: ${({ theme }) => `blur(${theme.filters.blur})`};
+  }
 `;
 
 export default GlobalStyles;
