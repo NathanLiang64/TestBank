@@ -6,7 +6,7 @@ const NoticeAreaWrapper = styled.div`
   align-items: center;
   max-height: 32rem;
   margin: ${({ $noSpace }) => ($noSpace ? '0' : '2.4rem 0')};
-  overflow-y: scroll;
+  overflow-y: auto;
   
   h3 {
     font-size: 1.6rem;

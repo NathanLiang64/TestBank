@@ -69,6 +69,10 @@ const GlobalStyles = createGlobalStyle`
     height: 100%;
   }
   
+  a {
+    text-decoration: none;
+  }
+  
   input,
   textarea,
   select {

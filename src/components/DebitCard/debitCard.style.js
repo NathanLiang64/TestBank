@@ -6,6 +6,14 @@ const DebitCardWrapper = styled.div`
   border-radius: .8rem;
   background: ${({ theme }) => theme.colors.card.purple};
 
+  .backgroundImage {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 56%;
+    transform: translateY(-50%);
+  }
+
   .cardTitle {
     
     .cardName {
@@ -62,8 +70,7 @@ const DebitCardWrapper = styled.div`
     align-items: baseline;
     
     &.grow {
-      margin-top: .8rem;
-      margin-bottom: 1.2rem;
+      margin-bottom: .4rem;
     }
 
     .balance {
@@ -105,7 +112,6 @@ const DebitCardWrapper = styled.div`
       }
       
       a {
-        text-decoration: none;
         color: ${({ theme }) => theme.colors.text.darkGray};
       }
     }

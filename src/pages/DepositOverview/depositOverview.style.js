@@ -6,6 +6,10 @@ import { ArrowBack, ArrowForward } from '@material-ui/icons';
 const DepositOverviewWrapper = styled(Layout)`
    background: ${({ theme }) => theme.colors.background.lightest};
   
+  .debitCard {
+    margin-bottom: 1.6rem;
+  }
+  
   .infoPanel {
     display: flex;
     justify-content: space-between;
@@ -28,7 +32,24 @@ const DepositOverviewWrapper = styled(Layout)`
   }
   
   .transactionDetail {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
     margin: 1.6rem 0;
+
+    .moreButton {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: .4rem;
+      font-size: 1.4rem;
+      font-weight: bold;
+      
+      .MuiSvgIcon-root {
+        margin-left: .2rem;
+        font-size: 1.4rem;
+      }
+    }
   }
 `;
 

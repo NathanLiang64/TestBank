@@ -1,4 +1,4 @@
-// import Avatar from 'assets/images/logo.jpg';
+import { MonetizationOn, ArrowBack, ArrowForward } from '@material-ui/icons';
 import { toCurrency } from 'utilities/Generator';
 import DetailCardWrapper from './detailCard.style';
 
@@ -6,9 +6,9 @@ import DetailCardWrapper from './detailCard.style';
 * ==================== DetailCard 組件說明 ====================
 * 交易明細卡片組件
 * ==================== DetailCard 可傳參數 ====================
-* 1. avatar -> 頭像
+* 1. avatar -> 頭像圖片，沒傳值會有預設樣式
 * 2. type -> 交易類型，接受 "spend" 或 "income" 兩個字串值
-*    "spend" 表支出，"income" 表收入，預設不傳為 "spend" 類型
+*    "spend" 表支出，"income" 表收入
 * 3. title -> 明細標題
 * 4. date -> 交易日期
 * 5. sender -> 交易對象
@@ -24,21 +24,42 @@ const DetailCard = ({
   sender,
   amount,
   balance,
-}) => (
-  <DetailCardWrapper>
-    <div className="avatar">
-      <img src={avatar} alt="avatar" />
-      <div className={`type ${type || 'spend'}`} />
+}) => {
+  const renderAvatar = () => (
+    avatar
+      ? <img src={avatar} alt="avatar" />
+      : (
+        <div className="defaultAvatar">
+          <MonetizationOn />
+        </div>
+      )
+  );
+
+  const renderTypeIcon = () => (
+    <div className={`type ${type}`}>
+      { type === 'spend' ? <ArrowBack /> : <ArrowForward /> }
     </div>
-    <div className="description">
-      <h4>{title}</h4>
-      <p>{`${date} | ${sender}`}</p>
-    </div>
-    <div className="amount">
-      <h4>{`$${toCurrency(amount)}`}</h4>
-      <p>{`$${toCurrency(balance)}`}</p>
-    </div>
-  </DetailCardWrapper>
-);
+  );
+
+  return (
+    <DetailCardWrapper>
+      <div className="avatar">
+        { renderAvatar() }
+        { renderTypeIcon() }
+      </div>
+      <div className="description">
+        <h4>{title}</h4>
+        <p>{`${date} | ${sender}`}</p>
+      </div>
+      <div className="amount">
+        <h4>
+          { type === 'spend' && '- ' }
+          {`$${toCurrency(amount)}`}
+        </h4>
+        <p>{`$${toCurrency(balance)}`}</p>
+      </div>
+    </DetailCardWrapper>
+  );
+};
 
 export default DetailCard;

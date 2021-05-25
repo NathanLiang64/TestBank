@@ -7,6 +7,7 @@ import {
 import { FEIBIconButton } from 'components/elements';
 import theme from 'themes/theme';
 import { toCurrency } from 'utilities/Generator';
+import DebitCardBackground from 'assets/images/debitCardBackground.png';
 import DebitCardWrapper from './debitCard.style';
 
 /*
@@ -102,7 +103,8 @@ const DebitCard = ({
   );
 
   return (
-    <DebitCardWrapper>
+    <DebitCardWrapper className="debitCard">
+      <img src={DebitCardBackground} alt="background" className="backgroundImage" />
       <div className="cardTitle">
         <h2 className="cardName">{cardName}</h2>
         <div className="accountInfo">

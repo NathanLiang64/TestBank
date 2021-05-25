@@ -12,7 +12,7 @@ const Layout = styled.main`
   ${({ inDialog }) => (inDialog ? null : 'margin-top: 4.8rem')};
   ${({ inDialog, fullScreen }) => ((inDialog || fullScreen) ? null : 'padding: 2.4rem 1.6rem')};
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
 `;
 
 export default Layout;
