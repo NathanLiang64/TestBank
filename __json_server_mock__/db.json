@@ -95,5 +95,10 @@
     "name": "PwdModify",
     "title": "網銀密碼變更",
     "route": "/pwdModify"
+  },
+  "smsOTPactivate": {
+    "name": "SMSOTPactivate",
+    "title": "簡訊 OTP 設定",
+    "route": "/smsOTPactivate"
   }
 }
