@@ -69,8 +69,8 @@ const GlobalStyles = createGlobalStyle`
     height: 100%;
   }
   
-  a {
-    text-decoration: none;
+  main {
+    overflow-x: hidden;
   }
   
   input,
@@ -124,6 +124,16 @@ const GlobalStyles = createGlobalStyle`
       }
     }
   }
+  
+  h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+  a, em, i {
+    line-height: 1.6;
+    color: ${({ theme }) => theme.colors.text.dark};
+  }
+
+  a {
+    text-decoration: none;
+  }
 
   .formItem {
     display: flex;
@@ -131,12 +141,6 @@ const GlobalStyles = createGlobalStyle`
     align-items: center;
     margin-bottom: 1.6rem;
     width: 100%;
-  }
-  
-  h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-  a, em, i {
-    line-height: 1.6;
-    color: ${({ theme }) => theme.colors.text.dark};
   }
 `;
 

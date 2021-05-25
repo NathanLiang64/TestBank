@@ -1,27 +1,28 @@
 import * as types from './types';
 
 const initState = {
-  isFirstSetting: false,
   isActive: false,
   isResultSuccess: true,
+  type: 1,
 };
 
 const reducers = (state = initState, action) => {
-  switch (action.type) {
-    case types.SET_IS_FIRST_SETTING:
-      return {
-        ...state,
-        isFirstSetting: action.payload,
-      };
+  const { type, payload } = action;
+  switch (type) {
     case types.SET_IS_ACTIVE:
       return {
         ...state,
-        isActive: action.payload,
+        isActive: payload,
       };
     case types.SET_IS_RESULT_SUCCESS:
       return {
         ...state,
-        isResultSuccess: action.payload,
+        isResultSuccess: payload,
+      };
+    case types.SET_TYPE:
+      return {
+        ...state,
+        type: payload,
       };
     default:
       return state;
