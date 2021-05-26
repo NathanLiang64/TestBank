@@ -23,6 +23,9 @@ import ChangeUserName from 'pages/ChangeUserName';
 import PwdModify from 'pages/PwdModify';
 import SMSOTPactivate from 'pages/SMSOTPactivate';
 import QRCodeTransfer from 'pages/QRCodeTransfer';
+import Adjustment from 'pages/Adjustment';
+import Adjustment1 from 'pages/Adjustment/adjustment_1';
+import Adjustment2 from 'pages/Adjustment/adjustment_2';
 
 const routes = [
   { path: '/', exact: true, component: Login },
@@ -49,6 +52,9 @@ const routes = [
   { path: '/pwdModify', exact: false, component: PwdModify },
   { path: '/smsOTPactivate', exact: false, component: SMSOTPactivate },
   { path: '/QRCodeTransfer', exact: false, component: QRCodeTransfer },
+  { path: '/adjustment', exact: false, component: Adjustment },
+  { path: '/adjustment1', exact: false, component: Adjustment1 },
+  { path: '/adjustment2', exact: false, component: Adjustment2 },
 ];
 
 export default routes;
