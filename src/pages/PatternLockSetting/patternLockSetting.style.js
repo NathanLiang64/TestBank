@@ -7,8 +7,8 @@ const PatternLockSettingWrapper = styled(Layout)`
     margin-bottom: 0;
   }
   
-  .agreeArea {
-    margin-bottom: 2rem;
+  .passwordArea {
+    margin-top: 2rem;
   }
 `;
 

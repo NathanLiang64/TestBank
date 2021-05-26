@@ -136,7 +136,7 @@ const PatternLockSetting = () => {
           checked={isActive}
           onChange={switchChange}
         />
-          )}
+      )}
       label="圖形密碼登入啟用"
       $hasBorder
     />
@@ -157,21 +157,21 @@ const PatternLockSetting = () => {
   );
 
   const CheckArea = () => (
-    <div className="agreeArea">
+    <div>
       <FEIBCheckboxLabel
         control={(
           <FEIBCheckbox
             onChange={checkBoxChange}
             color="default"
           />
-            )}
+        )}
         label="本人以閱讀並同意上述[圖形密碼登入]使用條款"
       />
     </div>
   );
 
   const PassWordArea = () => (
-    <div>
+    <div className="passwordArea">
       <FEIBInputLabel htmlFor="password">網銀密碼</FEIBInputLabel>
       <Controller
         name="password"
@@ -195,25 +195,19 @@ const PatternLockSetting = () => {
   const ButtonArea = () => (
     <div>
       {
-            (differentState || patternLockSettingData.isActive === false) && (
-            <FEIBButton
-              disabled={isDisabled}
-              type="submit"
-            >
-              儲存變更
-            </FEIBButton>
-            )
-}
+        (differentState || patternLockSettingData.isActive === false) && (
+        <FEIBButton disabled={isDisabled} type="submit">
+          儲存變更
+        </FEIBButton>
+        )
+      }
       {
-            (patternLockSettingData.isActive === true && !differentState) && (
-            <FEIBButton
-              disabled={isDisabled}
-              type="submit"
-            >
-              變更圖形密碼
-            </FEIBButton>
-            )
-}
+        (patternLockSettingData.isActive === true && !differentState) && (
+        <FEIBButton disabled={isDisabled} type="submit">
+          變更圖形密碼
+        </FEIBButton>
+        )
+      }
     </div>
 
   );
