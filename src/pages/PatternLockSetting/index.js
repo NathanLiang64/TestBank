@@ -71,6 +71,7 @@ const PatternLockSetting = () => {
   const handleClickResultMainButton = () => {
     // 關閉顯示結果的彈窗
     setShowResultDialog(false);
+    location.reload();
     // 回到個人化資料設定主頁
   };
 
