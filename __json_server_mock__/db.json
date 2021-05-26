@@ -109,5 +109,10 @@
     "name": "SMSOTPactivate",
     "title": "簡訊 OTP 設定",
     "route": "/smsOTPactivate"
+  },
+  "adjustment": {
+    "name": "Adjustment",
+    "title": "信用卡額度臨調",
+    "route": "/adjustment"
   }
 }
