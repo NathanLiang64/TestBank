@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import {
+  useEffect, useState,
+} from 'react';
 import DebitCard from 'components/DebitCard';
 import {
   FEIBButton, FEIBBorderButton,
@@ -20,6 +22,7 @@ import theme from 'themes/theme';
 import BillPayWrapper from './billPay.style';
 
 import { actions } from './stores';
+import useClientRect from '../../hooks/useClientRect';
 
 const { setPayType } = actions;
 const { init } = billPayApi;
@@ -28,6 +31,11 @@ const BillPay = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const [initData, setinitData] = useState(null);
+  const [rect, ref] = useClientRect();
+
+  useEffect(() => {
+    if (rect !== null) console.log(rect.height);
+  }, [rect]);
 
   const doAction = () => {
     if (initData.feib) {
@@ -86,7 +94,7 @@ const BillPay = () => {
   );
 
   const renderOtherCCArea = () => (
-    <section>
+    <section ref={ref}>
       <h2>請選擇繳費帳戶</h2>
       <FEIBInputLabel htmlFor="otherBankCode">請選擇轉出行庫</FEIBInputLabel>
       <FEIBSelect
