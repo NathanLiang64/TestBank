@@ -76,7 +76,6 @@ const PatternLockSetting = () => {
 
   const onSubmit = async (data) => {
     data.password = await e2ee(data.password);
-    console.log(data);
     /**
        *
        * @type {number}
