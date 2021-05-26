@@ -1,10 +1,14 @@
 import styled from 'styled-components';
 import Layout from 'components/Layout';
-// eslint-disable-next-line no-unused-vars
-import { ArrowBack, ArrowForward } from '@material-ui/icons';
 
 const DepositOverviewWrapper = styled(Layout)`
    background: ${({ theme }) => theme.colors.background.lightest};
+  
+  .measuredHeight {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
   
   .debitCard {
     margin-bottom: 1.6rem;
@@ -25,6 +29,9 @@ const DepositOverviewWrapper = styled(Layout)`
       }
       
       p {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         font-size: 1.8rem;
         color: ${({ theme }) => theme.colors.primary.light};
       }
@@ -35,6 +42,7 @@ const DepositOverviewWrapper = styled(Layout)`
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    flex-grow: 1;
     margin: 1.6rem 0;
 
     .moreButton {

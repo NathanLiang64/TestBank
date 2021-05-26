@@ -1,4 +1,4 @@
-import userAxios from './axiosConfig';
+import userAxios from 'apis/axiosConfig';
 
 export const doGetInitData = (apiUrl) => (
   userAxios.get(apiUrl)

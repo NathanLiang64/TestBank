@@ -1,6 +1,4 @@
-import {
-  useEffect, useState,
-} from 'react';
+import { useEffect, useState } from 'react';
 import DebitCard from 'components/DebitCard';
 import {
   FEIBButton, FEIBBorderButton,
@@ -22,7 +20,6 @@ import theme from 'themes/theme';
 import BillPayWrapper from './billPay.style';
 
 import { actions } from './stores';
-import useClientRect from '../../hooks/useClientRect';
 
 const { setPayType } = actions;
 const { init } = billPayApi;
@@ -30,12 +27,13 @@ const { init } = billPayApi;
 const BillPay = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const [initData, setinitData] = useState(null);
-  const [rect, ref] = useClientRect();
+  const [initData, setInitData] = useState(null);
 
-  useEffect(() => {
-    if (rect !== null) console.log(rect.height);
-  }, [rect]);
+  // 測試：取得元素高度
+  // const [rect, ref] = useClientRect();
+  // useEffect(() => {
+  //   if (rect !== null) console.log(rect.height);
+  // }, [rect]);
 
   const doAction = () => {
     if (initData.feib) {
@@ -56,45 +54,51 @@ const BillPay = () => {
 
   useEffect(async () => {
     const data = await init();
-    setinitData(data.initData);
+    setInitData(data.initData);
   }, []);
 
-  const renderCardArea = () => (
-    <DebitCard
-      cardName="存款卡"
-      account={initData.trnAcct}
-      balance={initData.trnBalance}
-      hideIcon
-    />
-  );
+  const renderCardArea = () => {
+    const { trnAcct, trnBalance } = initData;
+    return (
+      <DebitCard
+        cardName="存款卡"
+        account={trnAcct}
+        balance={trnBalance}
+        hideIcon
+      />
+    );
+  };
 
-  const renderFormArea = () => (
-    <section>
-      <div className="formAreaTitle">
-        <h2>請選擇繳費金額</h2>
-        <FEIBBorderButton className="customSize">
-          申請分期
-        </FEIBBorderButton>
-      </div>
-      <RadioGroup aria-label="繳費金額" name="payAmount" defaultValue="1">
-        <FEIBRadioLabel value="1" control={<FEIBRadio color="default" />} label={`繳全額  NT $ ${initData.ccToTrcvAmtd}`} />
-        <FEIBRadioLabel value="2" control={<FEIBRadio color="default" />} label={`繳最低  NT $ ${initData.ccMinImPayd}`} />
-        <div>
-          <FEIBRadioLabel value="3" control={<FEIBRadio color="default" />} label="自訂金額" />
-          <span className="smallFontSize">$</span>
-          <FEIBInput
-            className="customStyles"
-            type="number"
-            $color={theme.colors.text.dark}
-            $borderColor={theme.colors.text.dark}
-          />
+  const renderFormArea = () => {
+    const { ccToTrcvAmtd, ccMinImPayd } = initData;
+    return (
+      <section>
+        <div className="formAreaTitle">
+          <h2>請選擇繳費金額</h2>
+          <FEIBBorderButton className="customSize">
+            申請分期
+          </FEIBBorderButton>
         </div>
-      </RadioGroup>
-    </section>
-  );
+        <RadioGroup aria-label="繳費金額" name="payAmount" defaultValue="1">
+          <FEIBRadioLabel value="1" control={<FEIBRadio color="default" />} label={`繳全額  NT $ ${ccToTrcvAmtd}`} />
+          <FEIBRadioLabel value="2" control={<FEIBRadio color="default" />} label={`繳最低  NT $ ${ccMinImPayd}`} />
+          <div>
+            <FEIBRadioLabel value="3" control={<FEIBRadio color="default" />} label="自訂金額" />
+            <span className="smallFontSize">$</span>
+            <FEIBInput
+              className="customStyles"
+              type="number"
+              $color={theme.colors.text.dark}
+              $borderColor={theme.colors.text.dark}
+            />
+          </div>
+        </RadioGroup>
+      </section>
+    );
+  };
 
   const renderOtherCCArea = () => (
-    <section ref={ref}>
+    <section>
       <h2>請選擇繳費帳戶</h2>
       <FEIBInputLabel htmlFor="otherBankCode">請選擇轉出行庫</FEIBInputLabel>
       <FEIBSelect
@@ -161,7 +165,6 @@ const BillPay = () => {
       {initData && !initData.feib ? renderOtherCCArea() : null}
       {initData && renderButtons()}
     </BillPayWrapper>
-
   );
 
   return renderPage();
