@@ -10,8 +10,8 @@
 
 ## 進行中
 - 無卡提款 - 唯物
-- 存款卡首頁 (DepositOverview) - 聖森
-- 存款優惠利率額度 (DepositPlus) - 聖森
+- QRCode 轉帳 (QRCodeTransfer) - 聖森
+- 存款優惠利率額度 (DepositPlus) - 聖森 (待提供設計稿)
 - 常用帳號列表 (AccountMaintenance) - 聖森 (暫不需實作)
 - 元件封裝 - 唯物 & 聖森
 
@@ -19,10 +19,12 @@
 
 ## 已完成
 - 功能
+  - E2EE 加密 - 聖森
+  - 存款卡首頁 (DepositOverview) - 聖森
   - 圖形密碼登入設定 (PatternLockSetting) - 聖森
   - 信用卡繳費 (BillPay) - 聖森
   - 金融卡掛失補發 (LossReissue) - 聖森
-  - 加解密 - 聖森
+  - JWE & JWT 加密 - 聖森
   - 登入頁 (Login) - 聖森
   
 

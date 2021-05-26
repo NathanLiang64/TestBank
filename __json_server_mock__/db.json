@@ -241,5 +241,10 @@
     "name": "SMSOTPactivate",
     "title": "簡訊 OTP 設定",
     "route": "/smsOTPactivate"
+  },
+  "QRCodeTransfer": {
+    "name": "QRCodeTransfer",
+    "title": "QRCode 轉帳",
+    "route": "/QRCodeTransfer"
   }
 }
