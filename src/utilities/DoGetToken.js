@@ -4,6 +4,7 @@ import JWEUtil from './JWEUtil';
 import CipherUtil from './CipherUtil';
 
 const getKey = async () => {
+  localStorage.clear();
   let privateKey;
   let publicKey;
   let jwtToken;
@@ -31,14 +32,19 @@ const getKey = async () => {
   localStorage.setItem('jwtToken', jwtToken);
   localStorage.setItem('iv', ivToken);
   localStorage.setItem('aesKey', aesTokenKey);
-  userAxios.interceptors.request.use(
-    (config) => {
-      const jwt = localStorage.getItem('jwtToken');
-      // eslint-disable-next-line no-param-reassign
-      config.headers.authorization = `Bearer ${jwt}`;
-      return config;
-    },
-  );
+  // userAxios.interceptors.request.use(
+  //   (config) => {
+  //     const jwt = localStorage.getItem('jwtToken');
+  //     // eslint-disable-next-line no-param-reassign
+  //     config.headers.authorization = `Bearer ${jwt}`;
+  //     const aeskey = localStorage.getItem('aesKey');
+  //     const ivkey = localStorage.getItem('iv');
+  //     // 加密
+  //     const encrypt = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(config.data));
+  //     config.data = encrypt;
+  //     return config;
+  //   },
+  // );
 };
 
 export default getKey;
