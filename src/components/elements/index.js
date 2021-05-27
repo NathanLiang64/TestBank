@@ -20,7 +20,6 @@ import FEIBTabPanel from './FEIBTabPanel';
 import FEIBTabContext from './FEIBTabContext';
 import FEIBTabList from './FEIBTabList';
 import FEIBDatePicker from './FEIBDatePicker';
-import FEIBPickersProvider from './FEIBPickersProvider';
 
 /*
 * elements 入口文件，元件統一由此匯出
@@ -49,5 +48,4 @@ export {
   FEIBTabContext,
   FEIBTabList,
   FEIBDatePicker,
-  FEIBPickersProvider,
 };

@@ -45,7 +45,7 @@ const materialTheme = createMuiTheme({
   },
 });
 
-const FEIBPickersProvider = ({ children }) => (
+const PickersProvider = ({ children }) => (
   <MuiPickersUtilsProvider utils={DateFnsUtils} locale={zhTW}>
     <ThemeProvider theme={materialTheme}>
       { children }
@@ -53,4 +53,4 @@ const FEIBPickersProvider = ({ children }) => (
   </MuiPickersUtilsProvider>
 );
 
-export default FEIBPickersProvider;
+export default PickersProvider;
