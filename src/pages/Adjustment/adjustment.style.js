@@ -2,21 +2,6 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const AdjustmentWrapper = styled(Layout)`
-  .creditCard {
-    padding: 1rem;
-    background: ${({ theme }) => theme.colors.primary.lightest};
-    position: relative;
-    border-radius: 8px;
-    min-height: 10rem;
-    margin:bottom: 1rem;
-    .amount {
-      position: absolute;
-      font-size: 2.5rem;
-      right: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-  }
   .currentAmount {
     margin: 1rem 0;
     font-weight: bold;

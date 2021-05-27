@@ -12,6 +12,7 @@ import {
   FEIBButton,
 } from 'components/elements';
 import PickersProvider from 'components/DatePickerProvider';
+import DebitCard from 'components/DebitCard';
 
 /* Styles */
 import theme from 'themes/theme';
@@ -21,7 +22,7 @@ const Adjustment = () => {
   const history = useHistory();
   const creditCardData = {
     number: '****-****-****-0000',
-    amount: '$120,030',
+    amount: '120,030',
     currentAmount: '10,000',
   };
   const [amount, setAmount] = useState('');
@@ -59,13 +60,12 @@ const Adjustment = () => {
 
   return (
     <AdjustmentWrapper>
-      <div className="creditCard">
-        <div className="numberContainer">
-          <div>信用卡</div>
-          <div>{creditCardData.number}</div>
-        </div>
-        <div className="amount">{creditCardData.amount}</div>
-      </div>
+      <DebitCard
+        cardName="信用卡"
+        account={creditCardData.number}
+        balance={creditCardData.amount}
+        hideIcon
+      />
       <div className="currentAmount">
         目前額度：
         {creditCardData.currentAmount}
