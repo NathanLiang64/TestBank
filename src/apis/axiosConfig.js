@@ -1,4 +1,5 @@
 import axios from 'axios';
+import JWTUtil from '../utilities/JWTUtil';
 
 // Request failed with status code
 const errorHandle = (status, message) => {
@@ -28,22 +29,41 @@ const instance = axios.create({
   baseURL: process.env.REACT_APP_URL,
 });
 
-// request interceptors
-instance.interceptors.request.use(
+const userAxios = () => {
+  if (process.env.NODE_ENV === 'production') {
+    return instance;
+  }
+  return axios;
+};
+
+userAxios().interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('jwtKey');
-    if (token) {
-      // eslint-disable-next-line no-param-reassign
-      config.headers.authorization = `Bearer ${token}`;
+    const jwt = localStorage.getItem('jwtToken');
+    if (jwt) {
+      config.headers.authorization = `Bearer ${jwt}`;
+      const aeskey = localStorage.getItem('aesKey');
+      const ivkey = localStorage.getItem('iv');
+      // 加密
+      const encrypt = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(config.data));
+      config.data = encrypt;
     }
     return config;
   },
   (error) => Promise.reject(error),
 );
 
-// response interceptors
-instance.interceptors.response.use(
-  (response) => response,
+userAxios().interceptors.response.use(
+  (response) => {
+    const jwt = localStorage.getItem('jwtToken');
+    if (jwt) {
+      const aeskey = localStorage.getItem('aesKey');
+      const ivkey = localStorage.getItem('iv');
+      // 加密
+      const encrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
+      response = encrypt;
+    }
+    return response;
+  },
   // eslint-disable-next-line consistent-return
   (error) => {
     const { response } = error;
@@ -62,13 +82,7 @@ instance.interceptors.response.use(
       return Promise.reject(error);
     }
   },
-);
 
-const userAxios = () => {
-  if (process.env.NODE_ENV === 'production') {
-    return instance;
-  }
-  return axios;
-};
+);
 
 export default userAxios();

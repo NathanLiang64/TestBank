@@ -3,6 +3,7 @@ import * as billPayApi from './billPayApi';
 import * as patternLockSettingApi from './patternLockSettingApi';
 import * as lossReissueApi from './lossReissueApi';
 import * as depositOverviewApi from './depositOverviewApi';
+import * as loginApi from './loginApi';
 
 export {
   headerApi,
@@ -10,4 +11,5 @@ export {
   patternLockSettingApi,
   lossReissueApi,
   depositOverviewApi,
+  loginApi,
 };
