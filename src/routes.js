@@ -26,6 +26,7 @@ import QRCodeTransfer from 'pages/QRCodeTransfer';
 import Adjustment from 'pages/Adjustment';
 import Adjustment1 from 'pages/Adjustment/adjustment_1';
 import Adjustment2 from 'pages/Adjustment/adjustment_2';
+import ProjectJ from 'pages/ProjectJ';
 
 const routes = [
   { path: '/', exact: true, component: Login },
@@ -55,6 +56,7 @@ const routes = [
   { path: '/adjustment', exact: false, component: Adjustment },
   { path: '/adjustment1', exact: false, component: Adjustment1 },
   { path: '/adjustment2', exact: false, component: Adjustment2 },
+  { path: '/projectJ', exact: false, component: ProjectJ },
 ];
 
 export default routes;
