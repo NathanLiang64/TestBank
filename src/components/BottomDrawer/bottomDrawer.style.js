@@ -32,7 +32,9 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
         align-items: center;
         padding: 1.6rem;
       }
-      .MuiSvgIcon-root {
+      
+      .MuiSvgIcon-root,
+      .MuiIcon-root {
         margin-right: 1.2rem;
         font-size: 2rem;
       }

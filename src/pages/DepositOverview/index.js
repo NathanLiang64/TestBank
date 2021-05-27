@@ -75,6 +75,8 @@ const DepositOverview = () => {
       cardName,
       cardAccount,
       cardBalance,
+      functionList,
+      moreList,
     } = info;
     return (
       <DebitCard
@@ -83,6 +85,8 @@ const DepositOverview = () => {
         cardName={cardName}
         account={cardAccount}
         balance={cardBalance}
+        functionList={functionList}
+        moreList={moreList}
       />
     );
   };

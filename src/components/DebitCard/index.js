@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { Icon } from '@material-ui/core';
 import {
   Visibility, VisibilityOff, FileCopyOutlined, MoreVert,
   Euro, LibraryAdd, SystemUpdate, Edit, PlaylistAdd,
@@ -18,13 +19,14 @@ import DebitCardWrapper from './debitCard.style';
 * ==================== DebitCard 可傳參數 ====================
 * 1. type -> 卡片類型，決定卡片顯示簡易內容或完整內容
 *    預設不傳為顯示簡易內容，傳入 "original" 字串會顯示完整內容
-* 2. branch -> 分行名稱，type 為 original 的卡片 (完整內容) 才需要傳入
+* 2. branch -> 分行名稱，組件 type 為 original 的卡片 (完整內容) 才需要傳入
 * 3. cardName -> 卡片名稱
 * 4. account -> 卡片帳號
 * 5. balance -> 卡片餘額，輸入純數字即可，顯示時會自動加上貨幣符號及千分位逗點
 * 6. hideIcon -> 此組件預設會在餘額前顯示眼睛圖示的 Icon Button
 *    點擊 Icon 後可隱藏餘額，倘若不需要此功能請在組件加上 hideIcon 屬性
-* 7. functionList -> 卡片功能清單，型別為陣列，type 為 original 的卡片 (完整內容) 才需要傳入
+* 7. functionList -> 卡片功能清單，型別為陣列，組件 type 為 original 的卡片 (完整內容) 才需要傳入
+* 8. moreList -> 點擊更多圖標後彈出的更多功能清單，型別為陣列，組件 type 為 original 的卡片 (完整內容) 才需要傳入
 * */
 
 const DebitCard = ({
@@ -35,6 +37,7 @@ const DebitCard = ({
   balance,
   hideIcon,
   functionList,
+  moreList,
 }) => {
   const [showBalance, setShowBalance] = useState(true);
   const [copyAccount, setCopyAccount] = useState(false);
@@ -89,10 +92,12 @@ const DebitCard = ({
   );
 
   // 目前無 api，暫用假資料
+  // eslint-disable-next-line no-unused-vars
   const mockFunctionList = [
     { title: '轉帳', path: '/', other: null },
     { title: '無卡提款', path: '/cardLessATM', other: null },
   ];
+  // eslint-disable-next-line no-unused-vars
   const mockMoreList = [
     { title: '換匯', path: '/', icon: <Euro /> },
     { title: '設為速查帳戶', path: '/cardLessATM', icon: <PlaylistAdd /> },
@@ -112,12 +117,13 @@ const DebitCard = ({
     </ul>
   );
 
+  // render 點擊更多圖標後的功能列表
   const renderMoreList = (list) => (
     <ul className="moreList">
       { list.map((item) => (
         <li key={item.title}>
           <Link to={item.path}>
-            {item.icon}
+            <Icon>{item.icon}</Icon>
             {item.title}
           </Link>
         </li>
@@ -125,12 +131,12 @@ const DebitCard = ({
     </ul>
   );
 
-  const renderBottomDrawer = () => (
+  const renderBottomDrawer = (list) => (
     <BottomDrawer
       className="debitCardDrawer"
       isOpen={openDrawer}
       onClose={() => setOpenDrawer(!openDrawer)}
-      content={renderMoreList(mockMoreList)}
+      content={renderMoreList(list)}
     />
   );
 
@@ -140,8 +146,7 @@ const DebitCard = ({
       <div className="cardTitle">
         <h2 className="cardName">{cardName}</h2>
         <div className="accountInfo">
-          {/* TODO: 測試完成後把 '信義分行' 移除 */}
-          { originalType() && <p className="branch">{branch || '信義分行'}</p> }
+          { originalType() && <p className="branch">{branch}</p> }
           <p className="account">{account}</p>
           { renderCopyIconButton() }
         </div>
@@ -152,10 +157,9 @@ const DebitCard = ({
           {showBalance ? `$${toCurrency(balance)}` : '＊＊＊＊＊'}
         </h3>
       </div>
-      {/* TODO: 測試完成後把 'mockFunctionList' 移除 */}
-      { originalType() && renderFunctionList(functionList || mockFunctionList) }
+      { originalType() && renderFunctionList(functionList) }
       { originalType() && renderMoreIconButton() }
-      { renderBottomDrawer() }
+      { originalType() && renderBottomDrawer(moreList) }
     </DebitCardWrapper>
   );
 };
