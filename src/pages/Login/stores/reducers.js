@@ -3,9 +3,6 @@ import * as types from './types';
 const initState = {
   userInfo: null,
   loginFormValues: {
-    id: '',
-    userId: '',
-    password: '',
     showPassword: false,
   },
   errorMessage: '',
