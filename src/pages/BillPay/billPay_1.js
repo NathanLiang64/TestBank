@@ -1,31 +1,19 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
+import { useCheckLocation, usePageInfo, useBarcodeGenerator } from 'hooks';
 import DebitCard from 'components/DebitCard';
 import Dialog from 'components/Dialog';
-import {
-  FEIBButton,
-  FEIBInput, FEIBInputLabel,
-} from 'components/elements';
-
-/* Api */
-import { useCheckLocation, usePageInfo } from 'hooks';
-
-/* img */
-import Family from 'assets/images/Family.jpg';
-
-/* Styles */
+import { FEIBButton, FEIBInput, FEIBInputLabel } from 'components/elements';
+import FamilyMartImage from 'assets/images/familyMartLogo.png';
 import theme from 'themes/theme';
 import BillPay2 from './billPay_2';
 import BillPayWrapper from './billPay.style';
+import { setSendType } from './stores/actions';
 
-import { actions } from './stores';
-
-const { setSendType } = actions;
-
-/* eslint-disable */
 const BillPay = () => {
   const [openDialog, setOpenDialog] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [showAlert, setShowAlert] = useState(false);
 
   const billPayData = useSelector(((state) => state.billPay));
@@ -145,16 +133,14 @@ const BillPay = () => {
     </section>
   );
 
-  const renderImage = () => (
-    <section>
-      {/* 超商logo */}
-      <img src={Family} alt="Family" />
-      {/* 條碼1 */}
-      <img src={Family} alt="Family" />
-      {/* 條碼2 */}
-      <img src={Family} alt="Family" />
-      {/* 條碼3 */}
-      <img src={Family} alt="Family" />
+  const renderBarcodes = () => (
+    <section className="barcodeArea">
+      <div className="place">
+        <img src={FamilyMartImage} alt="FamilyMartImage" />
+      </div>
+      { useBarcodeGenerator('5566778AG2') }
+      { useBarcodeGenerator('998855465566771123') }
+      { useBarcodeGenerator('70558X000003851') }
     </section>
   );
 
@@ -189,7 +175,7 @@ const BillPay = () => {
         return (
           <>
             {renderTable3Area()}
-            {renderImage()}
+            {renderBarcodes()}
             {collapse()}
           </>
         );
