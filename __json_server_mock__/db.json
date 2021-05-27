@@ -251,5 +251,10 @@
     "name": "Adjustment",
     "title": "信用卡額度臨調",
     "route": "/adjustment"
+  },
+  "projectJ": {
+    "name": "ProjectJ",
+    "title": "遠傳join智慧借貸平台",
+    "route": "/projectJ"
   }
 }
