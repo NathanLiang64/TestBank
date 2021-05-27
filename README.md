@@ -9,7 +9,10 @@
 ---
 
 ## 進行中
-- 無卡提款 - 唯物
+- Join 智慧信貸 - 唯物
+- 貸款應繳查詢 - 唯物
+- 貸款繳息紀錄查詢 - 唯物
+- 生物辨識登入設定（流程調整）- 唯物
 - QRCode 轉帳 (QRCodeTransfer) - 聖森
 - 存款優惠利率額度 (DepositPlus) - 聖森 (待提供設計稿)
 - 常用帳號列表 (AccountMaintenance) - 聖森 (暫不需實作)
@@ -26,6 +29,13 @@
   - 金融卡掛失補發 (LossReissue) - 聖森
   - JWE & JWT 加密 - 聖森
   - 登入頁 (Login) - 聖森
+  - 無卡提款 - 唯物
+  - 訊息通知 - 唯物
+  - 訊息通知設定 - 唯物
+  - 使用者代號變更 - 唯物
+  - 網銀密碼變更 - 唯物
+  - 定期密碼變更 - 唯物
+  - 額度臨調 - 唯物
   
 
 - 元件封裝
@@ -50,6 +60,7 @@
   - FEIBTabList - 唯物
   - FEIBTab - 唯物
   - FEIBTabPanel - 唯物
+  - FEIBDatePicker - 唯物
 
 
 - 組件封裝
@@ -62,6 +73,7 @@
   - Header - 聖森
   - DebitCard - 聖森
   - DetailCard - 聖森
+  - PickerProviders - 唯物
 
 ---
 

@@ -11,7 +11,7 @@ import {
   FEIBDatePicker,
   FEIBButton,
 } from 'components/elements';
-import FEIBPickersProvider from 'components/DatePickerProvider';
+import PickersProvider from 'components/DatePickerProvider';
 
 /* Styles */
 import theme from 'themes/theme';
@@ -139,13 +139,11 @@ const Adjustment = () => {
       <div className="inputContainer">
         <FEIBInputLabel>申請期間</FEIBInputLabel>
         <div className="datePickerContainer">
-          <FEIBPickersProvider>
+          <PickersProvider>
             <FEIBDatePicker value={startDate} onChange={handleStartDate} />
-          </FEIBPickersProvider>
-          <span>-</span>
-          <FEIBPickersProvider>
+            <span>-</span>
             <FEIBDatePicker value={endDate} onChange={handleEndDate} />
-          </FEIBPickersProvider>
+          </PickersProvider>
         </div>
       </div>
       <FEIBButton
