@@ -32,7 +32,19 @@ const BillPayWrapper = styled(Layout)`
 
   section {
     margin-bottom: 2.4rem;
+
+    &.barcodeArea {
+      padding: 2.4rem;
+    }
     
+    .place {
+      margin-bottom: 2.4rem;
+    }
+    
+    .barcode {
+      width: 100%;
+    }
+
     h2 {
       margin-bottom: 1.6rem;
       font-weight: bold;
