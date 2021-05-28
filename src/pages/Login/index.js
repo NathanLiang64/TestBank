@@ -1,33 +1,29 @@
 /* eslint-disable radix,no-restricted-globals */
 import { Redirect } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 // import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
+import { userLogin } from 'apis/loginApi';
 import {
-  Visibility,
-  VisibilityOff,
   ArrowForwardRounded,
   RadioButtonUnchecked,
   RadioButtonChecked,
 } from '@material-ui/icons';
+import PasswordInput from 'components/PasswordInput';
 import {
   FEIBInput,
   FEIBInputLabel,
-  FEIBInputAnimationWrapper,
   FEIBLinkButton,
-  FEIBIconButton,
   FEIBCheckbox,
   FEIBCheckboxLabel,
 } from 'components/elements';
+import e2ee from 'utilities/E2ee';
+import getJwtKey from 'utilities/DoGetToken';
 import theme from 'themes/theme';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import LoginWrapper from './login.style';
-import { setLoginFormValues } from './stores/actions';
-import e2ee from '../../utilities/E2ee';
-import { userLogin } from '../../apis/loginApi';
-import getJwtKey from '../../utilities/DoGetToken';
 
 const checkID = (id) => {
   const tab = 'ABCDEFGHJKLMNPQRSTUVXYWZIO';
@@ -75,20 +71,7 @@ const Login = () => {
     getJwtKey();
   }, []);
   const userInfo = useSelector(({ login }) => login.userInfo);
-  const loginFormValues = useSelector(({ login }) => login.loginFormValues);
 
-  const dispatch = useDispatch();
-  // const handleChangeInput = (event) => {
-  //   dispatch(setLoginFormValues({ ...loginFormValues, [event.target.name]: event.target.value }));
-  // };
-  const handleClickShowPassword = () => {
-    dispatch(
-      setLoginFormValues({ ...loginFormValues, showPassword: !loginFormValues.showPassword }),
-    );
-  };
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
   const upperId = (e) => {
     setValue('identity', e.target.value.toUpperCase());
   };
@@ -117,87 +100,63 @@ const Login = () => {
 
             <div className="formItems" style={{ width: '100%' }}>
               <div style={{ width: '100%' }}>
-                <FEIBInputAnimationWrapper>
-                  <FEIBInputLabel
-                    htmlFor="identity"
-                    $color={theme.colors.basic.white}
-                  >
-                    身分證字號
-                  </FEIBInputLabel>
-                  <Controller
-                    name="identity"
-                    control={control}
-                    defaultValue=""
-                    render={({ field }) => (
-                      <FEIBInput
-                        {...field}
-                        id="identity"
-                        name="identity"
-                        $color={theme.colors.basic.white}
-                        $borderColor={theme.colors.basic.white}
-                        onBlur={(e) => upperId(e)}
-                      />
-                    )}
-                  />
-                </FEIBInputAnimationWrapper>
+                <FEIBInputLabel
+                  htmlFor="identity"
+                  $color={theme.colors.basic.white}
+                >
+                  身分證字號
+                </FEIBInputLabel>
+                <Controller
+                  name="identity"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <FEIBInput
+                      {...field}
+                      id="identity"
+                      name="identity"
+                      $color={theme.colors.basic.white}
+                      $borderColor={theme.colors.basic.white}
+                      onBlur={(e) => upperId(e)}
+                    />
+                  )}
+                />
                 <p>{errors.identity?.message}</p>
               </div>
 
               <div style={{ width: '100%' }}>
-                <FEIBInputAnimationWrapper>
-                  <FEIBInputLabel
-                    htmlFor="account"
-                    $color={theme.colors.basic.white}
-                  >
-                    使用者代號
-                  </FEIBInputLabel>
-                  <Controller
-                    name="account"
-                    control={control}
-                    defaultValue=""
-                    render={({ field }) => (
-                      <FEIBInput
-                        {...field}
-                        id="account"
-                        name="account"
-                        $color={theme.colors.basic.white}
-                        $borderColor={theme.colors.basic.white}
-                      />
-                    )}
-                  />
-                </FEIBInputAnimationWrapper>
+                <FEIBInputLabel
+                  htmlFor="account"
+                  $color={theme.colors.basic.white}
+                >
+                  使用者代號
+                </FEIBInputLabel>
+                <Controller
+                  name="account"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <FEIBInput
+                      {...field}
+                      id="account"
+                      name="account"
+                      $color={theme.colors.basic.white}
+                      $borderColor={theme.colors.basic.white}
+                    />
+                  )}
+                />
                 <p>{errors.account?.message}</p>
               </div>
 
               <div style={{ width: '100%' }}>
-                <FEIBInputAnimationWrapper>
-                  <FEIBInputLabel htmlFor="password" $color={theme.colors.basic.white}>密碼</FEIBInputLabel>
-                  <Controller
-                    name="password"
-                    control={control}
-                    defaultValue=""
-                    render={({ field }) => (
-                      <FEIBInput
-                        {...field}
-                        id="password"
-                        name="password"
-                        type={loginFormValues.showPassword ? 'text' : 'password'}
-                        endAdornment={(
-                          <FEIBIconButton
-                            onClick={handleClickShowPassword}
-                            onMouseDown={handleMouseDownPassword}
-                            $iconColor={theme.colors.basic.white}
-                          >
-                            {loginFormValues.showPassword ? <Visibility /> : <VisibilityOff />}
-                          </FEIBIconButton>
-                        )}
-                        $color={theme.colors.basic.white}
-                        $borderColor={theme.colors.basic.white}
-                      />
-                    )}
-                  />
-
-                </FEIBInputAnimationWrapper>
+                <PasswordInput
+                  label="密碼"
+                  id="password"
+                  control={control}
+                  color={theme.colors.basic.white}
+                  borderColor={theme.colors.basic.white}
+                  placeholder=" "
+                />
                 <p>{errors.password?.message}</p>
               </div>
 
