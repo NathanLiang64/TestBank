@@ -1,11 +1,13 @@
 import styled from 'styled-components';
-import { DatePicker as MaterialDatePicker } from '@material-ui/pickers';
+import TodayIcon from '@material-ui/icons/Today';
+import { KeyboardDatePicker as MaterialDatePicker } from '@material-ui/pickers';
 import theme from 'themes/theme';
 
 const FEIBDatePicker = styled(MaterialDatePicker).attrs({
   format: 'yyyy/MM/dd',
   okLabel: '確定',
   cancelLabel: '取消',
+  keyboardIcon: <TodayIcon style={{ color: theme.colors.primary.dark }} fontSize="large" />,
 })`
   .MuiInputBase-root {
     font-size: 1.4rem;
