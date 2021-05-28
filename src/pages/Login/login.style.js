@@ -12,6 +12,10 @@ const LoginWrapper = styled(Layout)`
     opacity: .6;
   }
   
+  .MuiIconButton-root {
+    color: ${({ theme }) => theme.colors.basic.white};
+  }
+  
   .Mui-checked {
     opacity: 1;
   }

@@ -81,9 +81,8 @@ const BillPay = () => {
               id="password"
               name="password"
               type="password"
+              className="customBottomSpace"
               placeholder="請輸入您的網銀密碼"
-              $color={theme.colors.primary.dark}
-              $borderColor={theme.colors.primary.brand}
             />
           )}
         />

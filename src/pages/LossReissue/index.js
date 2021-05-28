@@ -6,7 +6,6 @@ import Dialog from 'components/Dialog';
 import NoticeArea from 'components/NoticeArea';
 import ConfirmButtons from 'components/ConfirmButtons';
 import { FEIBInput, FEIBInputLabel, FEIBButton } from 'components/elements';
-import theme from 'themes/theme';
 import LossReissueWrapper from './lossReissue.style';
 import LossReissue2 from './lossReissue_2';
 import {
@@ -135,25 +134,12 @@ const LossReissue = () => {
     <LossReissueWrapper>
       <div>
         <FEIBInputLabel>帳號</FEIBInputLabel>
-        <FEIBInput
-          name="account"
-          value={account}
-          disabled
-          $color={theme.colors.primary.dark}
-          $borderColor={theme.colors.primary.brand}
-        />
+        <FEIBInput name="account" value={account} disabled />
       </div>
 
       <div>
         <FEIBInputLabel>金融卡狀態</FEIBInputLabel>
-        <FEIBInput
-          name="state"
-          value={state}
-          disabled
-          $color={theme.colors.primary.dark}
-          $borderColor={theme.colors.primary.brand}
-          $bottomSpace={false}
-        />
+        <FEIBInput name="state" value={state} $bottomSpace={false} disabled />
       </div>
 
       <NoticeArea textAlign="left" space="both">
