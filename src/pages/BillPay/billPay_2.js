@@ -1,22 +1,19 @@
 /* Styles */
 import { useSelector } from 'react-redux';
 import Alert from 'components/Alert';
-import NoticeArea from 'components/NoticeArea';
 import BillPayWrapper from './billPay.style';
 
 const BillPay2 = () => {
   const billPayData = useSelector(((state) => state.billPay));
 
   const renderAlert = () => (
-    billPayData.sendType ? <Alert state="success">交易成功</Alert> : <Alert state="error">交易失敗</Alert>
+    billPayData.sendType
+      ? <Alert state="success">交易成功</Alert>
+      : <Alert state="error">交易失敗</Alert>
   );
 
-  const renderNoticeArea = () => (
-    <div>
-      <NoticeArea title=" " textAlign="left" noSpace>
-        <p>交易失敗相關文案(應由API回傳)</p>
-      </NoticeArea>
-    </div>
+  const renderResultText = () => (
+    <p>交易失敗相關文案(應由API回傳)</p>
   );
 
   const renderTable1Area = () => (
@@ -88,7 +85,7 @@ const BillPay2 = () => {
           <>
             {renderAlert()}
             {billPayData.sendType && renderTable2Area()}
-            {!billPayData.sendType && renderNoticeArea()}
+            {!billPayData.sendType && renderResultText()}
             {/* {collapse()} */}
           </>
         );
@@ -97,7 +94,7 @@ const BillPay2 = () => {
           <>
             {renderAlert()}
             {billPayData.sendType && renderTable1Area()}
-            {!billPayData.sendType && renderNoticeArea()}
+            {!billPayData.sendType && renderResultText()}
           </>
         );
     }

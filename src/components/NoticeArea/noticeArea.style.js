@@ -1,11 +1,24 @@
 import styled from 'styled-components';
 
+const handleSpaceType = (position) => {
+  switch (position) {
+    case 'top':
+      return '2.4rem 0 0 0';
+    case 'bottom':
+      return '0 0 2.4rem 0';
+    case 'both':
+      return '2.4rem 0';
+    default:
+      return '0';
+  }
+};
+
 const NoticeAreaWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   max-height: 32rem;
-  margin: ${({ $noSpace }) => ($noSpace ? '0' : '2.4rem 0')};
+  margin: ${({ $space }) => handleSpaceType($space)};
   overflow-y: auto;
   
   h3 {

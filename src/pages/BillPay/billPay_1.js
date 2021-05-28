@@ -46,6 +46,7 @@ const BillPay = () => {
       cardName="存款卡"
       account="043-040-99001568"
       balance="168,000"
+      hideIcon
     />
   );
 
