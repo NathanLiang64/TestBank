@@ -282,5 +282,10 @@
     "name": "LoanInquiry",
     "title": "貸款應繳本息查詢",
     "route": "/loanInquiry"
+  },
+  "loanInterest": {
+    "name": "LoanInterest",
+    "title": "貸款繳息紀錄查詢",
+    "route": "/loanInterest"
   }
 }
