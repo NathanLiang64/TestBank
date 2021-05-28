@@ -7,16 +7,32 @@ import Dialog from 'components/Dialog';
 import { FEIBButton, FEIBInput, FEIBInputLabel } from 'components/elements';
 import FamilyMartImage from 'assets/images/familyMartLogo.png';
 import theme from 'themes/theme';
+import { Controller, useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import BillPay2 from './billPay_2';
 import BillPayWrapper from './billPay.style';
 import { setSendType } from './stores/actions';
+import e2ee from '../../utilities/E2ee';
 
 const BillPay = () => {
+  /**
+   *- 資料驗證
+   */
+  const schema = yup.object().shape({
+    password: yup.string().required('請輸入您的網銀密碼').min(8, '您輸入的網銀密碼長度有誤，請重新輸入。').max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+  });
+  const { control, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+  });
+
   const [openDialog, setOpenDialog] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [showAlert, setShowAlert] = useState(false);
 
-  const billPayData = useSelector(((state) => state.billPay));
+  const billPayData = useSelector(((state) => state.billPay.payData));
+  const initData = useSelector(((state) => state.billPay.initData));
+
   const { push } = useHistory();
   const dispatch = useDispatch();
 
@@ -24,10 +40,11 @@ const BillPay = () => {
     setOpenDialog(boolean);
   };
 
-  const handleClickShowResult = () => {
+  const onSubmit = async (data) => {
+    data.password = await e2ee(data.password);
     // 點擊按鈕後彈窗顯示繳費結果
     handleToggleDialog(true);
-    dispatch(setSendType(false));
+    dispatch(setSendType(true));
     setShowAlert(true);
   };
 
@@ -44,8 +61,8 @@ const BillPay = () => {
   const renderCardArea = () => (
     <DebitCard
       cardName="存款卡"
-      account="043-040-99001568"
-      balance="168,000"
+      account={initData.trnAcct}
+      balance={initData.trnBalance}
       hideIcon
     />
   );
@@ -54,14 +71,23 @@ const BillPay = () => {
     <section>
       <div>
         <FEIBInputLabel htmlFor="password">網銀密碼</FEIBInputLabel>
-        <FEIBInput
-          id="password"
+        <Controller
           name="password"
-          placeholder="請輸入您的網銀密碼"
-          className="customBottomSpace"
-          $color={theme.colors.primary.dark}
-          $borderColor={theme.colors.primary.brand}
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <FEIBInput
+              {...field}
+              id="password"
+              name="password"
+              type="password"
+              placeholder="請輸入您的網銀密碼"
+              $color={theme.colors.primary.dark}
+              $borderColor={theme.colors.primary.brand}
+            />
+          )}
         />
+        <p>{errors.password?.message}</p>
       </div>
     </section>
   );
@@ -72,7 +98,7 @@ const BillPay = () => {
         <tbody>
           <tr>
             <td>轉出帳號</td>
-            <td>00300466006458</td>
+            <td>{initData.trnAcct}</td>
           </tr>
           <tr>
             <td>繳款卡號</td>
@@ -80,7 +106,11 @@ const BillPay = () => {
           </tr>
           <tr>
             <td>繳費金額</td>
-            <td>NTD 500</td>
+            <td>
+              NTD
+              {' '}
+              {billPayData.payAmount}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -93,23 +123,35 @@ const BillPay = () => {
         <tbody>
           <tr>
             <td>本期應繳金額</td>
-            <td>NTD 22,567</td>
+            <td>
+              NTD
+              {' '}
+              {initData.ccToTrcvAmtd}
+            </td>
           </tr>
           <tr>
             <td>本期最低應繳金額</td>
-            <td>NTD 4,865</td>
+            <td>
+              NTD
+              {' '}
+              {initData.ccMinImPayd}
+            </td>
           </tr>
           <tr>
             <td>轉出銀行代號</td>
-            <td>805</td>
+            <td>{billPayData.otherBankCode}</td>
           </tr>
           <tr>
             <td>轉出銀行帳號</td>
-            <td>00200300021585</td>
+            <td>{billPayData.otherTrnAcct}</td>
           </tr>
           <tr>
             <td>繳費金額</td>
-            <td>NTD 4,865</td>
+            <td>
+              NTD
+              {' '}
+              {billPayData.payAmount}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -127,7 +169,7 @@ const BillPay = () => {
           </tr>
           <tr>
             <td>繳費金額</td>
-            <td>3,800(自訂繳費金額)</td>
+            <td>{billPayData.payAmount}</td>
           </tr>
         </tbody>
       </table>
@@ -154,7 +196,7 @@ const BillPay = () => {
       <FEIBButton
         $color={theme.colors.text.dark}
         $bgColor={theme.colors.background.cancel}
-        onClick={() => handleClickShowResult()}
+        type="submit"
       >
         下一步
       </FEIBButton>
@@ -194,7 +236,9 @@ const BillPay = () => {
 
   const renderPage = () => (
     <BillPayWrapper>
-      {pageControll()}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {pageControll()}
+      </form>
       <Dialog
         isOpen={openDialog}
         onClose={() => handleToggleDialog(false)}
