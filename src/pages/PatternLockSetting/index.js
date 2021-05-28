@@ -11,6 +11,8 @@ import {
   FEIBButton, FEIBCheckbox, FEIBCheckboxLabel, FEIBInput, FEIBInputLabel, FEIBSwitch, FEIBSwitchLabel,
 } from 'components/elements';
 import theme from 'themes/theme';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import PatternLockSettingWrapper from './patternLockSetting.style';
 import PatternLockSetting2 from './patternLockSetting_2';
 import { setIsActive, setIsResultSuccess, setType } from './stores/actions';
@@ -18,6 +20,17 @@ import e2ee from '../../utilities/E2ee';
 
 const { init } = patternLockSettingApi;
 const PatternLockSetting = () => {
+  /**
+   *- 資料驗證
+   */
+  const schema = yup.object().shape({
+    password: yup.string().required('請輸入您的網銀密碼').min(8, '您輸入的網銀密碼長度有誤，請重新輸入。').max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+  });
+  const {
+    control, handleSubmit, watch, formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
   const patternLockSettingData = useSelector(({ patternLockSetting }) => patternLockSetting);
   const [checkBoxCheck, setcheckBoxCheck] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -26,7 +39,6 @@ const PatternLockSetting = () => {
   const [isActive, setisActive] = useState(patternLockSettingData.isActive);
   const differentState = isActive !== patternLockSettingData.isActive;
 
-  const { control, handleSubmit, watch } = useForm();
   const dispatch = useDispatch();
 
   useCheckLocation();
@@ -191,7 +203,7 @@ const PatternLockSetting = () => {
           />
         )}
       />
-
+      <p>{errors.password?.message}</p>
     </div>
   );
   const ButtonArea = () => (
