@@ -277,5 +277,15 @@
     "name": "ProjectJ",
     "title": "遠傳join智慧借貸平台",
     "route": "/projectJ"
+  },
+  "loanInquiry": {
+    "name": "LoanInquiry",
+    "title": "貸款應繳本息查詢",
+    "route": "/loanInquiry"
+  },
+  "loanInterest": {
+    "name": "LoanInterest",
+    "title": "貸款繳息紀錄查詢",
+    "route": "/loanInterest"
   }
 }

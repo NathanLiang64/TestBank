@@ -39,10 +39,11 @@ const ProjectJ = () => {
 
   const SavePersonalDialog = () => (
     <Dialog
+      title="遠東國際商業銀行履行個人資料保護法告知義務內容"
       isOpen={showSavePersonalDailog}
       onClose={() => setShowSavePersonalDailog(false)}
       content={(
-        <NoticeArea title="遠東國際商業銀行履行個人資料保護法告知義務內容" textAlign="justify">
+        <NoticeArea title=" " textAlign="justify">
           <PersonalSaveContent />
         </NoticeArea>
       )}
