@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -6,6 +7,7 @@ import SwiperCore, { Pagination } from 'swiper/core';
 import QRCode from 'qrcode.react';
 import { FileCopyOutlined, Share } from '@material-ui/icons';
 import Loading from 'components/Loading';
+import BottomDrawer from 'components/BottomDrawer';
 import { FEIBButton, FEIBIconButton } from 'components/elements';
 import { shakeShakeApi } from 'apis';
 import theme from 'themes/theme';
@@ -17,11 +19,13 @@ import { setCards, setCardInfo } from './stores/actions';
 SwiperCore.use([Pagination]);
 
 const ShakeShake = () => {
+  const [openQRCodeDrawer, setQRCodeOpenDrawer] = useState(false);
   const [copyAccount, setCopyAccount] = useState(false);
 
   const cards = useSelector(({ depositOverview }) => depositOverview.cards);
   const cardInfo = useSelector(({ depositOverview }) => depositOverview.cardInfo);
 
+  const { push } = useHistory();
   const dispatch = useDispatch();
   const { doGetInitData } = shakeShakeApi;
 
@@ -38,7 +42,8 @@ const ShakeShake = () => {
   };
 
   const handleClickTransferButton = () => {
-    // 此處應跳頁至轉帳頁，功能可行性待確認
+    setQRCodeOpenDrawer(false);
+    push('/QRCodeTransfer');
   };
 
   const renderCopyIconButton = (value) => (
@@ -117,8 +122,23 @@ const ShakeShake = () => {
     </div>
   );
 
-  // 取得所有存款卡的初始資料
+  const drawerContent = () => (
+    <>
+      <div className="title">
+        <h3>QRCode 收款</h3>
+      </div>
+      { cardInfo && renderAccountInfo(cardInfo) }
+      { (cards && cardInfo) ? renderCodeArea(cards) : renderLoading() }
+      <div className="buttonArea">
+        <FEIBButton onClick={handleClickTransferButton}>登入後轉帳</FEIBButton>
+      </div>
+    </>
+  );
+
   useEffect(async () => {
+    setQRCodeOpenDrawer(true);
+
+    // 取得所有存款卡的初始資料
     const response = await doGetInitData('/api/shakeShake');
     if (response.initData) {
       const { debitCards } = response.initData;
@@ -132,16 +152,12 @@ const ShakeShake = () => {
   }, [cards]);
 
   return (
-    <>
-      <div className="title">
-        <h3>QRCode 收款</h3>
-      </div>
-      { cardInfo && renderAccountInfo(cardInfo) }
-      { (cards && cardInfo) ? renderCodeArea(cards) : renderLoading() }
-      <div className="buttonArea">
-        <FEIBButton onClick={handleClickTransferButton}>登入後轉帳</FEIBButton>
-      </div>
-    </>
+    <BottomDrawer
+      className="QRCodeDrawer"
+      isOpen={openQRCodeDrawer}
+      onClose={() => setQRCodeOpenDrawer(false)}
+      content={drawerContent()}
+    />
   );
 };
 
