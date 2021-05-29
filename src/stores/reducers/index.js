@@ -5,6 +5,7 @@ import { reducers as lossReissueReducer } from 'pages/LossReissue/stores';
 import { reducers as billPayReducer } from 'pages/BillPay/stores';
 import { reducers as patternLockSettingReducer } from 'pages/PatternLockSetting/stores';
 import { reducers as depositOverviewReducer } from 'pages/DepositOverview/stores';
+import { reducers as shakeShakeReducer } from 'pages/ShakeShake/stores';
 
 const reducer = combineReducers({
   header: headerReducer,
@@ -13,6 +14,7 @@ const reducer = combineReducers({
   billPay: billPayReducer,
   patternLockSetting: patternLockSettingReducer,
   depositOverview: depositOverviewReducer,
+  shakeShake: shakeShakeReducer,
 });
 
 export default reducer;

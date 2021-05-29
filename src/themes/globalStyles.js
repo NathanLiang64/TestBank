@@ -147,6 +147,19 @@ const GlobalStyles = createGlobalStyle`
     background: ${({ theme }) => theme.colors.background.mask} !important;
     backdrop-filter: ${({ theme }) => `blur(${theme.filters.blur})`};
   }
+
+  .swiper-pagination-bullet {
+    width: .6rem;
+    height: .6rem;
+    background: ${({ theme }) => theme.colors.text.light};
+    transition: all .2s;
+
+    &-active {
+      width: .8rem;
+      height: .8rem;
+      transform: translateY(.15rem);
+    }
+  }
 `;
 
 export default GlobalStyles;

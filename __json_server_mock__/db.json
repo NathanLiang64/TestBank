@@ -287,5 +287,35 @@
     "name": "LoanInterest",
     "title": "貸款繳息紀錄查詢",
     "route": "/loanInterest"
+  },
+  "shakeShake": {
+    "initData": {
+      "debitCards": [
+        {
+          "id": 1,
+          "cardBranch": "信義分行",
+          "cardName": "保時捷車友會 - 子帳號",
+          "cardAccount": "043-004-99001234"
+        },
+        {
+          "id": 2,
+          "cardBranch": "大安分行",
+          "cardName": "存款卡",
+          "cardAccount": "043-007-88005678"
+        },
+        {
+          "id": 3,
+          "cardBranch": "南港分行",
+          "cardName": "外幣帳戶",
+          "cardAccount": "043-009-33004823"
+        },
+        {
+          "id": 4,
+          "cardBranch": "新店分行",
+          "cardName": "交割帳戶",
+          "cardAccount": "043-014-42284209"
+        }
+      ]
+    }
   }
 }

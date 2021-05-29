@@ -13,7 +13,6 @@ const theme = {
     },
     basic: {
       white: '#FFF',
-      black: '#000',
     },
     text: {
       darker: '#022B5A',
