@@ -9,9 +9,10 @@ import styled from 'styled-components';
 * */
 
 const Layout = styled.main`
-  ${({ inDialog }) => (inDialog ? null : 'margin-top: 4.8rem')};
+  ${({ inDialog }) => (inDialog ? null : 'margin-top: 4.4rem')};
   ${({ inDialog, fullScreen }) => ((inDialog || fullScreen) ? null : 'padding: 2.4rem 1.6rem')};
   height: 100%;
+  overflow-x: hidden;
   overflow-y: auto;
 `;
 

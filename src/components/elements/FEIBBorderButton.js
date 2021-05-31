@@ -16,8 +16,8 @@ import FEIBdefaultButton from './_defaultElements/FEIBdefaultButton';
 * */
 
 const FEIBBorderButton = styled(FEIBdefaultButton)`
-  border: .1rem solid ${({ theme, $borderColor }) => $borderColor || theme.colors.primary.brand};
-  color: ${({ theme, $color }) => $color || theme.colors.primary.dark};
+  border: .1rem solid ${({ theme, $borderColor }) => $borderColor || theme.colors.primary.light};
+  color: ${({ theme, $color }) => $color || theme.colors.primary.light};
   background: transparent;
   
   &:before {

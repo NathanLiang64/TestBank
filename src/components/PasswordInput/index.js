@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
-import { FEIBInput, FEIBInputLabel } from 'components/elements';
+import { FEIBInput, FEIBInputLabel, FEIBErrorMessage } from 'components/elements';
 
 /*
 * ==================== PasswordInput 組件說明 ====================
@@ -16,6 +16,7 @@ import { FEIBInput, FEIBInputLabel } from 'components/elements';
 * 5. onBlur -> 該 input 的 onBlur 事件
 * 6. color -> 該 input 的文字顏色，若不傳預設為主色
 * 7. borderColor -> 該 input 的 border 顏色，若不傳預設為主色
+* 8. errorMessage -> 驗證後的錯誤訊息
 * */
 
 const PasswordInput = ({
@@ -26,6 +27,7 @@ const PasswordInput = ({
   onBlur,
   color,
   borderColor,
+  errorMessage,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -33,26 +35,30 @@ const PasswordInput = ({
     setShowPassword(!showPassword);
   };
 
-  const renderControllerWithInput = (controlId, controlProps, inputPlaceholder, inputColor, inputBorderColor, inputOnBlur) => (
-    <Controller
-      name={controlId}
-      control={controlProps}
-      defaultValue=""
-      render={({ field }) => (
-        <FEIBInput
-          {...field}
-          id={controlId}
-          name={controlId}
-          placeholder={inputPlaceholder || '請輸入網銀密碼'}
-          type={showPassword ? 'text' : 'password'}
-          onBlur={inputOnBlur}
-          $color={inputColor}
-          $borderColor={inputBorderColor}
-          $icon={showPassword ? <Visibility /> : <VisibilityOff />}
-          $iconOnClick={handleClickShowPassword}
-        />
-      )}
-    />
+  const renderControllerWithInput = (controlId, controlProps, inputPlaceholder, inputColor, inputBorderColor, inputOnBlur, inputErrorMessage) => (
+    <>
+      <Controller
+        name={controlId}
+        control={controlProps}
+        defaultValue=""
+        render={({ field }) => (
+          <FEIBInput
+            {...field}
+            id={controlId}
+            name={controlId}
+            placeholder={inputPlaceholder || '請輸入網銀密碼'}
+            type={showPassword ? 'text' : 'password'}
+            onBlur={inputOnBlur}
+            error={!!inputErrorMessage}
+            $color={inputColor}
+            $borderColor={inputBorderColor}
+            $icon={showPassword ? <Visibility /> : <VisibilityOff />}
+            $iconOnClick={handleClickShowPassword}
+          />
+        )}
+      />
+      <FEIBErrorMessage>{inputErrorMessage}</FEIBErrorMessage>
+    </>
   );
 
   const renderInput = (inputId, inputPlaceholder, inputColor, inputBorderColor, inputOnBlur) => (
@@ -79,7 +85,7 @@ const PasswordInput = ({
       </FEIBInputLabel>
       {
         control
-          ? renderControllerWithInput(id, control, placeholder, color, borderColor, onBlur)
+          ? renderControllerWithInput(id, control, placeholder, color, borderColor, onBlur, errorMessage)
           : renderInput(id, placeholder, color, borderColor, onBlur)
       }
     </>

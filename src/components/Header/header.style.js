@@ -5,7 +5,7 @@ const HeaderWrapper = styled.header`
   top: 0;
   left: 0;
   width: 100%;
-  height: 4.8rem;
+  height: 4.4rem;
   background: ${({ theme }) => theme.colors.basic.white};
   z-index: 1000;
   
@@ -20,7 +20,7 @@ const HeaderWrapper = styled.header`
   h2 {
     left: 50%;
     font-size: 1.8rem;
-    font-weight: bold;
+    font-weight: 300;
     letter-spacing: .04rem;
     color: ${({ theme }) => theme.colors.text.dark};
     transform: translate(-50%, -50%);

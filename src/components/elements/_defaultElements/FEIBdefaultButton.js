@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 const FEIBdefaultButton = styled.button`
   min-width: 4.8rem;
-  min-height: 4.4rem;
+  min-height: 4.8rem;
   border-radius: 2.4rem;
   width: ${({ $width }) => ($width && `${$width}rem`) || '100%'};
   height: ${({ $height }) => ($height && `${$height}rem`) || '3.6rem'};

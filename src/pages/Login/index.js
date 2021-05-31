@@ -11,11 +11,8 @@ import {
 } from '@material-ui/icons';
 import PasswordInput from 'components/PasswordInput';
 import {
-  FEIBInput,
-  FEIBInputLabel,
-  FEIBLinkButton,
-  FEIBCheckbox,
-  FEIBCheckboxLabel,
+  FEIBInput, FEIBInputLabel, FEIBErrorMessage,
+  FEIBLinkButton, FEIBCheckbox, FEIBCheckboxLabel,
 } from 'components/elements';
 import e2ee from 'utilities/E2ee';
 import getJwtKey from 'utilities/DoGetToken';
@@ -121,7 +118,7 @@ const Login = () => {
                     />
                   )}
                 />
-                <p>{errors.identity?.message}</p>
+                <FEIBErrorMessage>{errors.identity?.message}</FEIBErrorMessage>
               </div>
 
               <div style={{ width: '100%' }}>
@@ -145,7 +142,7 @@ const Login = () => {
                     />
                   )}
                 />
-                <p>{errors.account?.message}</p>
+                <FEIBErrorMessage>{errors.account?.message}</FEIBErrorMessage>
               </div>
 
               <div style={{ width: '100%' }}>
@@ -156,8 +153,8 @@ const Login = () => {
                   color={theme.colors.basic.white}
                   borderColor={theme.colors.basic.white}
                   placeholder=" "
+                  errorMessage={errors.password?.message}
                 />
-                <p>{errors.password?.message}</p>
               </div>
 
               <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
@@ -165,7 +162,6 @@ const Login = () => {
                   <FEIBCheckboxLabel
                     control={(
                       <FEIBCheckbox
-                        color="default"
                         $iconColor={theme.colors.basic.white}
                         icon={<RadioButtonUnchecked />}
                         checkedIcon={<RadioButtonChecked />}
