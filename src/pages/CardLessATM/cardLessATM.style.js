@@ -2,9 +2,6 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const CardLessATMWrapper = styled(Layout)`
-.noticeTopFixed {
-  transform: translateY(-2.4rem);
-}
 .tip {
   text-align: center;
   margin: 1.8rem 0;
@@ -13,17 +10,6 @@ const CardLessATMWrapper = styled(Layout)`
   span {
     font-size: 2rem;
     color: ${({ theme }) => theme.colors.primary.brand};
-  }
-}
-.accountInfo {
-  text-align: center;
-  padding: 1rem;
-  background: ${({ theme }) => theme.colors.primary.light};
-  margin-bottom: 1rem;
-  h1 {
-    font-size: 2rem;
-    margin: 1rem 0;
-    color: ${({ theme }) => theme.colors.basic.white};
   }
 }
 .amountButtonsContainer {

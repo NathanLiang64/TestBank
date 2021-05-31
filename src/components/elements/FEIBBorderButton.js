@@ -27,7 +27,7 @@ const FEIBBorderButton = styled(FEIBdefaultButton)`
     top: 0;
     left: 0;
     border: .1rem solid ${({ $borderColor }) => $borderColor};
-    border-radius: .8rem;
+    border-radius: 2.4rem;
     width: calc(100% - .1rem);
     height: calc(100% - .1rem);
     background: ${({ $borderColor }) => $borderColor};
@@ -36,6 +36,9 @@ const FEIBBorderButton = styled(FEIBdefaultButton)`
   }
   
   &:hover {
+    background: ${({ theme, $borderColor }) => $borderColor || theme.colors.primary.brand};
+    color: ${({ theme }) => theme.colors.basic.white};
+    // color: ${({ theme, $color }) => $color || theme.colors.basic.white};
     &:before {
       opacity: .16;
     }

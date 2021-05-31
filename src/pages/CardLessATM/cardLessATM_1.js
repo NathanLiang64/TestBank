@@ -4,12 +4,13 @@ import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
 import {
-  FEIBInputAnimationWrapper, FEIBInput, FEIBInputLabel, FEIBButton,
+  FEIBInputAnimationWrapper, FEIBInput, FEIBInputLabel, FEIBButton, FEIBBorderButton,
 } from 'components/elements';
 import DebitCard from 'components/DebitCard';
+import PasswordInput from 'components/PasswordInput';
 
 /* Styles */
-import theme from 'themes/theme';
+// import theme from 'themes/theme';
 import CardLessATMWrapper from './cardLessATM.style';
 
 const CardLessATM1 = () => {
@@ -68,8 +69,8 @@ const CardLessATM1 = () => {
         <FEIBInput
           type="text"
           inputMode="numeric"
-          $color={theme.colors.primary.dark}
-          $borderColor={theme.colors.primary.brand}
+          // $color={theme.colors.primary.dark}
+          // $borderColor={theme.colors.primary.brand}
           value={withdrawalAmount}
           onChange={handleWithdrawalAmountInputChange}
         />
@@ -78,24 +79,21 @@ const CardLessATM1 = () => {
         {
           amountArr.map((item) => (
             <div key={item} className="withdrawalBtnContainer">
-              <FEIBButton
+              <FEIBBorderButton
                 className="withdrawal-btn"
                 onClick={() => setAmount(item)}
               >
                 {
                   toCurrncy(item)
                 }
-              </FEIBButton>
+              </FEIBBorderButton>
             </div>
           ))
         }
       </div>
       <FEIBInputAnimationWrapper>
-        <FEIBInputLabel>網銀密碼</FEIBInputLabel>
-        <FEIBInput
-          type="password"
-          $color={theme.colors.primary.dark}
-          $borderColor={theme.colors.primary.brand}
+        <PasswordInput
+          label="網銀密碼"
           value={bankPassword}
           onChange={handleBankPasswordInputChange}
         />
