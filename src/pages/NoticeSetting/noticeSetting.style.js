@@ -3,6 +3,11 @@ import Layout from 'components/Layout';
 import theme from 'themes/theme';
 
 const NoticeSettingWrapper = styled(Layout)`
+  .agreeLabel {
+    p {
+      font-size: 1rem;
+    }
+  }
   .noticeContainer {
     &.all {
       margin-bottom: 2rem;

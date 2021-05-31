@@ -8,7 +8,7 @@ const ProjectJWrapper = styled(Layout)`
   }
   .agreeLabel {
     p {
-      color: ${theme.colors.text.lightBlue};
+      color: ${theme.colors.text.light};
       font-size: 1rem;
     }
   }
@@ -28,7 +28,7 @@ const ProjectJWrapper = styled(Layout)`
   .alertContainer {
     p {
       font-size: 1rem;
-      color: ${theme.colors.text.lightBlue};
+      color: ${theme.colors.text.light};
     }
   }
 `;

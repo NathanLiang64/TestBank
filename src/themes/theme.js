@@ -23,7 +23,6 @@ const theme = {
       placeholder: '#C2CEDC',
       link: '#3EC4EE',
       point: '#E60E0E',
-      lightBlue: '#6F89B2',
     },
     border: {
       light: '#77869E',
