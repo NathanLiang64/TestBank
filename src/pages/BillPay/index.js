@@ -5,7 +5,7 @@ import {
   FEIBCheckbox, FEIBCheckboxLabel,
   FEIBRadio, FEIBRadioLabel,
   FEIBInput, FEIBInputLabel,
-  FEIBOption, FEIBSelect,
+  FEIBOption, FEIBSelect, FEIBErrorMessage,
 } from 'components/elements';
 import { RadioGroup } from '@material-ui/core';
 
@@ -165,9 +165,9 @@ const BillPay = () => {
               name="payMoney"
               defaultValue="1"
             >
-              <FEIBRadioLabel value="1" control={<FEIBRadio color="default" />} label={`繳全額  NT $ ${ccToTrcvAmtd}`} />
-              <FEIBRadioLabel value="2" control={<FEIBRadio color="default" />} label={`繳最低  NT $ ${ccMinImPayd}`} />
-              <FEIBRadioLabel value="3" control={<FEIBRadio color="default" />} label="自訂金額" />
+              <FEIBRadioLabel value="1" control={<FEIBRadio />} label={`繳全額 NT$${ccToTrcvAmtd}`} />
+              <FEIBRadioLabel value="2" control={<FEIBRadio />} label={`繳最低 NT$${ccMinImPayd}`} />
+              <FEIBRadioLabel value="3" control={<FEIBRadio />} label="自訂金額" />
             </RadioGroup>
           )}
         />
@@ -185,13 +185,11 @@ const BillPay = () => {
                 name="payAmount"
                 type="text"
                 onBlur={() => moneyreplace()}
-                $color={theme.colors.text.dark}
-                $borderColor={theme.colors.text.dark}
               />
             </div>
           )}
         />
-        <p>{errors.payAmount?.message}</p>
+        <FEIBErrorMessage>{errors.payAmount?.message}</FEIBErrorMessage>
       </section>
     );
   };
@@ -199,25 +197,26 @@ const BillPay = () => {
   const renderOtherCCArea = () => (
     <section>
       <h2>請選擇繳費帳戶</h2>
-      <FEIBInputLabel htmlFor="otherBankCode">請選擇轉出行庫</FEIBInputLabel>
-      <Controller
-        name="otherBankCode"
-        control={control}
-        defaultValue=" "
-        render={({ field }) => (
-          <FEIBSelect
-            {...field}
-            id="otherBankCode"
-            name="otherBankCode"
-            $borderColor={theme.colors.primary.brand}
-          >
-            <FEIBOption value=" ">請選擇</FEIBOption>
-            <FEIBOption value="aaa">AAA 行庫</FEIBOption>
-            <FEIBOption value="bbb">BBB 行庫</FEIBOption>
-          </FEIBSelect>
-        )}
-      />
-      <p>{errors.otherBankCode?.message}</p>
+      <div>
+        <FEIBInputLabel htmlFor="otherBankCode">請選擇轉出行庫</FEIBInputLabel>
+        <Controller
+          name="otherBankCode"
+          control={control}
+          defaultValue="aaa"
+          render={({ field }) => (
+            <FEIBSelect
+              {...field}
+              id="otherBankCode"
+              name="otherBankCode"
+            >
+              <FEIBOption value="aaa">AAA行庫</FEIBOption>
+              <FEIBOption value="bbb">BBB行庫</FEIBOption>
+            </FEIBSelect>
+          )}
+        />
+        <FEIBErrorMessage>{errors.otherBankCode?.message}</FEIBErrorMessage>
+      </div>
+
       <div>
         <FEIBInputLabel htmlFor="otherTrnAcct">請輸入轉出帳號</FEIBInputLabel>
         <Controller
@@ -231,14 +230,13 @@ const BillPay = () => {
               name="otherTrnAcct"
               placeholder="請輸入轉出帳號"
               type="number"
-              $color={theme.colors.primary.dark}
-              $borderColor={theme.colors.primary.brand}
+              error={!!errors.otherTrnAcct}
             />
           )}
         />
-        <p>{errors.otherTrnAcct?.message}</p>
-
+        <FEIBErrorMessage>{errors.otherTrnAcct?.message}</FEIBErrorMessage>
       </div>
+
       <div>
         <Controller
           name="sendEmail"
@@ -250,8 +248,6 @@ const BillPay = () => {
                 <FEIBCheckbox
                   {...field}
                   className="customPadding"
-                  color="default"
-                  $iconColor={theme.colors.text.light}
                 />
               )}
               label="當轉帳交易成功，發送簡訊通知至您的信箱"
@@ -269,13 +265,10 @@ const BillPay = () => {
               name="email"
               placeholder="請輸入E-mail"
               className="customTopSpace"
-              $color={theme.colors.primary.dark}
-              $borderColor={theme.colors.primary.brand}
-              $bottomSpace={false}
             />
           )}
         />
-        <p>{errors.email?.message}</p>
+        <FEIBErrorMessage>{errors.email?.message}</FEIBErrorMessage>
       </div>
     </section>
   );

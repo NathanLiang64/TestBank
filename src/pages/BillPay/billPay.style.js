@@ -27,7 +27,8 @@ const BillPayWrapper = styled(Layout)`
   .smallFontSize {
     display: inline-block;
     margin-right: .4rem;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
+    color: ${({ theme }) => theme.colors.text.dark};
   }
 
   section {
@@ -62,7 +63,7 @@ const BillPayWrapper = styled(Layout)`
     
     .customStyles {
       margin: 0;
-      width: 10rem;
+      width: 12rem;
       
       .MuiInputBase-input {
         padding: .4rem 0;
@@ -76,6 +77,7 @@ const BillPayWrapper = styled(Layout)`
     .customPadding {
       padding-top: .4rem;
       padding-bottom: .4rem;
+      padding-right: .4rem;
     }
     
     .customTopSpace {

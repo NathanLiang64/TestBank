@@ -17,7 +17,7 @@ const FEIBSwitchLabel = styled(MaterialFormControlLabel).attrs({
   padding: 0 .8rem 0 1.6rem;
   border-bottom: ${({ theme, $hasBorder }) => ($hasBorder ? `.1rem solid ${theme.colors.border.lighter}` : '0')};
   width: 100vw;
-  color: ${({ theme, $color }) => $color || theme.colors.text.light};
+  color: ${({ theme, $color }) => $color || theme.colors.text.dark};
   background: ${({ $bgColor }) => $bgColor || 'transparent'};
   
   &:first-child {

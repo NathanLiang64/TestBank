@@ -60,7 +60,7 @@ const DebitCard = ({
   const renderEyeIconButton = () => (
     <FEIBIconButton
       $fontSize={1.6}
-      $iconColor={theme.colors.text.dark}
+      $iconColor={theme.colors.text.darkGray}
       onClick={handleClickShowBalance}
     >
       {showBalance ? <Visibility /> : <VisibilityOff />}
@@ -74,7 +74,10 @@ const DebitCard = ({
         text={account}
         onCopy={handleClickCopyAccount}
       >
-        <FEIBIconButton $fontSize={1.6}>
+        <FEIBIconButton
+          $iconColor={theme.colors.text.lightGray}
+          $fontSize={1.6}
+        >
           <FileCopyOutlined />
         </FEIBIconButton>
       </CopyToClipboard>
@@ -85,7 +88,11 @@ const DebitCard = ({
   // 渲染卡片右上角的 "更多" 圖標
   const renderMoreIconButton = () => (
     <div className="moreIconButton">
-      <FEIBIconButton $fontSize={2} onClick={() => setOpenDrawer(true)}>
+      <FEIBIconButton
+        $iconColor={theme.colors.text.lightGray}
+        $fontSize={2}
+        onClick={() => setOpenDrawer(true)}
+      >
         <MoreVert />
       </FEIBIconButton>
     </div>

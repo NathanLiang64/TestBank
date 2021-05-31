@@ -8,7 +8,7 @@ import { InputLabel as MaterialInputLabel } from '@material-ui/core';
 * */
 
 const FEIBInputLabel = styled(MaterialInputLabel)`
-  color: ${({ theme, $color }) => `${$color || theme.colors.text.light} !important`};
+  color: ${({ theme, $color }) => `${$color || theme.colors.text.dark} !important`};
   //opacity: .6;
   
   &.MuiFormLabel-root {
