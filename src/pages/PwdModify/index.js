@@ -4,18 +4,19 @@ import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
 import {
-  FEIBInput, FEIBInputLabel, FEIBButton,
+  FEIBButton,
 } from 'components/elements';
+import PasswordInput from 'components/PasswordInput';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
 import Alert from 'components/Alert';
 
 /* Styles */
-import theme from 'themes/theme';
+// import theme from 'themes/theme';
 import PwdModifyWrapper from './pwdModify.style';
 
 const PwdModify = () => {
-  const forceModify = true;
+  const forceModify = false;
   const [form, setForm] = useState({
     password: '',
     newPassword: '',
@@ -101,34 +102,28 @@ const PwdModify = () => {
 
   return (
     <PwdModifyWrapper>
-      <FEIBInputLabel>您的網銀密碼</FEIBInputLabel>
-      <FEIBInput
-        type="password"
+      <PasswordInput
+        label="您的網銀密碼"
+        id="password"
         name="password"
         value={form.password}
         placeholder="請輸入有區分大小寫的8~20位英數字網銀密碼"
-        $color={theme.colors.primary.dark}
-        $borderColor={theme.colors.primary.brand}
         onChange={handleFormChange}
       />
-      <FEIBInputLabel>新的網銀密碼</FEIBInputLabel>
-      <FEIBInput
-        type="password"
+      <PasswordInput
+        label="新的網銀密碼"
+        id="newPassword"
         name="newPassword"
         value={form.newPassword}
         placeholder="請輸入有區分大小寫的8~20位英數字網銀密碼"
-        $color={theme.colors.primary.dark}
-        $borderColor={theme.colors.primary.brand}
         onChange={handleFormChange}
       />
-      <FEIBInputLabel>請確認新的網銀密碼</FEIBInputLabel>
-      <FEIBInput
-        type="password"
+      <PasswordInput
+        label="請確認新的網銀密碼"
+        id="newPasswordCheck"
         name="newPasswordCheck"
         value={form.newPasswordCheck}
         placeholder="請輸入有區分大小寫的8~20位英數字網銀密碼"
-        $color={theme.colors.primary.dark}
-        $borderColor={theme.colors.primary.brand}
         onChange={handleFormChange}
       />
       {
