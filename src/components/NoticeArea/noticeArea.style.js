@@ -22,22 +22,25 @@ const NoticeAreaWrapper = styled.div`
   overflow-y: auto;
   
   h3 {
-    font-size: 1.6rem;
-    font-weight: bold;
+    font-size: 1.4rem;
   }
 
   div {
+    max-height: calc(32rem - .8rem);
     margin: .8rem 0;
     padding: 1.2rem;
     border: .1rem solid ${({ theme }) => theme.colors.border.lighter};
+    border-radius: .4rem;
     width: 100%;
     font-size: 1.3rem;
+    font-weight: 300;
     text-align: ${({ $textAlign }) => $textAlign || 'center'};
-    max-height: calc(32rem - .8rem);
+    color: ${({ theme }) => theme.colors.text.light};
     overflow: auto;
     
     p {
       margin-bottom: .8rem;
+      color: ${({ theme }) => theme.colors.text.light};
     }
   }
 

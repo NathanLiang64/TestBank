@@ -22,7 +22,6 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
     // for DebitCard more list
     li {
       border-bottom: .1rem solid ${({ theme }) => theme.colors.border.lightest};
-      font-weight: bold;
       
       &:first-child {
         border-top: .1rem solid ${({ theme }) => theme.colors.border.lightest};
@@ -31,7 +30,9 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
       a {
         display: flex;
         align-items: center;
-        padding: 1.6rem;
+        padding: 2rem;
+        font-size: 2rem;
+        letter-spacing: .1rem;
       }
       
       .MuiSvgIcon-root,

@@ -20,11 +20,11 @@ const DepositOverviewWrapper = styled(Layout)`
     padding: 0 .8rem;
     
     .panelItem {
-      font-weight: bold;
       text-align: center;
+      letter-spacing: .1rem;
       
       h3 {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
         color: ${({ theme }) => theme.colors.text.lightGray};
       }
       
@@ -32,7 +32,7 @@ const DepositOverviewWrapper = styled(Layout)`
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 1.8rem;
+        font-size: 2rem;
         color: ${({ theme }) => theme.colors.primary.light};
       }
     }
@@ -51,7 +51,7 @@ const DepositOverviewWrapper = styled(Layout)`
       align-items: center;
       margin-top: .4rem;
       font-size: 1.4rem;
-      font-weight: bold;
+      letter-spacing: .1rem;
       
       .MuiSvgIcon-root {
         margin-left: .2rem;

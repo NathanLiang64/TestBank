@@ -6,7 +6,7 @@
   },
   "lossReissue": {
     "name": "LossReissue",
-    "title": "金融卡掛失/補發",
+    "title": "金融卡掛失補發",
     "route": "/lossReissue",
     "initData": {
       "publicExponent": "",

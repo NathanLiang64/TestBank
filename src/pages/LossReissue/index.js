@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import * as yup from 'yup';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { lossReissueApi } from 'apis';
 import Dialog from 'components/Dialog';
 import NoticeArea from 'components/NoticeArea';
 import ConfirmButtons from 'components/ConfirmButtons';
+import PasswordInput from 'components/PasswordInput';
 import { FEIBInput, FEIBInputLabel, FEIBButton } from 'components/elements';
 import LossReissueWrapper from './lossReissue.style';
 import LossReissue2 from './lossReissue_2';
@@ -13,6 +17,18 @@ import {
 } from './stores/actions';
 
 const LossReissue = () => {
+  /**
+   *- 資料驗證
+   */
+  const schema = yup.object().shape({
+    password: yup.string().required('請輸入您的網銀密碼').min(8, '您輸入的網銀密碼長度有誤，請重新輸入。').max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+  });
+  const {
+    control, formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
   const account = useSelector(({ lossReissue }) => lossReissue.account);
   const state = useSelector(({ lossReissue }) => lossReissue.state);
   const actionText = useSelector(({ lossReissue }) => lossReissue.actionText);
@@ -73,6 +89,14 @@ const LossReissue = () => {
     }
     return (
       <div>
+        <div className="passwordArea">
+          <PasswordInput
+            id="password"
+            control={control}
+            errorMessage={errors.password?.message}
+          />
+        </div>
+
         <FEIBButton onClick={() => handleToggleDialog(true)}>
           { `${actionText}申請` }
         </FEIBButton>
@@ -134,12 +158,12 @@ const LossReissue = () => {
     <LossReissueWrapper>
       <div>
         <FEIBInputLabel>帳號</FEIBInputLabel>
-        <FEIBInput name="account" value={account} disabled />
+        <FEIBInput name="account" value={account} $space="bottom" disabled />
       </div>
 
       <div>
         <FEIBInputLabel>金融卡狀態</FEIBInputLabel>
-        <FEIBInput name="state" value={state} $bottomSpace={false} disabled />
+        <FEIBInput name="state" value={state} disabled />
       </div>
 
       <NoticeArea textAlign="left" space="both">

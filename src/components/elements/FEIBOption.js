@@ -4,11 +4,14 @@ import { MenuItem as MaterialOption } from '@material-ui/core';
 const FEIBOption = styled(MaterialOption)`
   
   &.MuiMenuItem-root {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     color: ${({ theme }) => theme.colors.text.lightGray};
     
     &.Mui-selected {
-      color: ${({ theme }) => theme.colors.primary.brand};
+      color: ${({ theme }) => theme.colors.primary.light};
+    }
+    &.Mui-disabled {
+      color: ${({ theme }) => theme.colors.border.light};
     }
   }
 `;

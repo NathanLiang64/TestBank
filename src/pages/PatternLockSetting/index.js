@@ -1,22 +1,22 @@
 /* eslint-disable no-case-declarations,no-restricted-globals */
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { patternLockSettingApi } from 'apis';
 import Dialog from 'components/Dialog';
 import NoticeArea from 'components/NoticeArea';
 import ConfirmButtons from 'components/ConfirmButtons';
+import PasswordInput from 'components/PasswordInput';
 import {
-  FEIBButton, FEIBCheckbox, FEIBCheckboxLabel, FEIBInput, FEIBInputLabel, FEIBSwitch, FEIBSwitchLabel,
+  FEIBButton, FEIBCheckbox, FEIBCheckboxLabel, FEIBSwitch, FEIBSwitchLabel,
 } from 'components/elements';
-import theme from 'themes/theme';
+import e2ee from 'utilities/E2ee';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import PatternLockSettingWrapper from './patternLockSetting.style';
 import PatternLockSetting2 from './patternLockSetting_2';
 import { setIsActive, setIsResultSuccess, setType } from './stores/actions';
-import e2ee from '../../utilities/E2ee';
 
 const { init } = patternLockSettingApi;
 const PatternLockSetting = () => {
@@ -155,8 +155,9 @@ const PatternLockSetting = () => {
       $hasBorder
     />
   );
+
   const TextArea = () => (
-    <NoticeArea title="圖形密碼登入使用條款" textAlign="left" className="customBottomSpace">
+    <NoticeArea title="圖形密碼登入使用條款" textAlign="left" space="top">
       <p>
         1. 本人同意與遠東商銀約定以本手機做為登入遠東商銀行動銀行APP時身分認證之用。爾後欲取消約定時，將由本人登入後至
         <span className="textColorPrimary">服務設定➝圖形密碼登入設定/變更/取消</span>
@@ -173,39 +174,22 @@ const PatternLockSetting = () => {
   const CheckArea = () => (
     <div>
       <FEIBCheckboxLabel
-        control={(
-          <FEIBCheckbox
-            onChange={checkBoxChange}
-            color="default"
-          />
-        )}
-        label="本人以閱讀並同意上述[圖形密碼登入]使用條款"
+        control={(<FEIBCheckbox onChange={checkBoxChange} />)}
+        label="本人已閱讀並同意上述圖形密碼登入使用條款"
       />
     </div>
   );
 
   const PassWordArea = () => (
     <div className="passwordArea">
-      <FEIBInputLabel htmlFor="password">網銀密碼</FEIBInputLabel>
-      <Controller
-        name="password"
+      <PasswordInput
+        id="password"
         control={control}
-        defaultValue=""
-        render={({ field }) => (
-          <FEIBInput
-            {...field}
-            id="password"
-            name="password"
-            type="password"
-            placeholder="請輸入您的網銀密碼"
-            $color={theme.colors.primary.dark}
-            $borderColor={theme.colors.primary.brand}
-          />
-        )}
+        errorMessage={errors.password?.message}
       />
-      <p>{errors.password?.message}</p>
     </div>
   );
+
   const ButtonArea = () => (
     <div>
       {

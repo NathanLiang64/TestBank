@@ -8,11 +8,11 @@ const DetailCardWrapper = styled.div`
   border-radius: .8rem;
   width: 100%;
   background: ${({ theme }) => theme.colors.basic.white};
-  box-shadow: 0 .2rem .8rem rgba(0, 0, 0, .08);
+  box-shadow: 0 .4rem 1rem rgba(0, 0, 0, .12);
   
   .defaultAvatar,
   .avatar {
-    margin-right: 1.2rem;
+    margin-right: .8rem;
     width: 4rem;
     height: 4rem;
   }
@@ -66,14 +66,17 @@ const DetailCardWrapper = styled.div`
 
   .description,
   .amount {
-
+    
     h4 {
-      font-size: 1.5rem;
-      font-weight: bold;
+      margin-top: .2rem;
+      margin-bottom: -.2rem;
+      letter-spacing: .1rem;
     }
 
     p {
+      margin-bottom: .2rem;
       font-size: 1.2rem;
+      letter-spacing: .05rem;
       color: ${({ theme }) => theme.colors.text.light};
     }
   }
@@ -82,6 +85,10 @@ const DetailCardWrapper = styled.div`
     text-align: right;
     position: absolute;
     right: 1.2rem;
+    
+    h4 {
+      font-weight: 500;
+    }
   }
 `;
 
