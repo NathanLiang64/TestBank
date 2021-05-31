@@ -110,7 +110,6 @@ const GlobalStyles = createGlobalStyle`
         padding: .8rem;
 
         &:first-child {
-          font-weight: bold;
           color: ${({ theme }) => theme.colors.primary.dark};
         }
       }

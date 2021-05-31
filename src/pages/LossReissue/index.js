@@ -10,12 +10,12 @@ import NoticeArea from 'components/NoticeArea';
 import ConfirmButtons from 'components/ConfirmButtons';
 import PasswordInput from 'components/PasswordInput';
 import { FEIBInput, FEIBInputLabel, FEIBButton } from 'components/elements';
-import LossReissueWrapper from './lossReissue.style';
+import e2ee from 'utilities/E2ee';
 import LossReissue2 from './lossReissue_2';
+import LossReissueWrapper from './lossReissue.style';
 import {
   setActionText, setAccount, setCardState, setUserAddress, setIsResultSuccess,
 } from './stores/actions';
-import e2ee from '../../utilities/E2ee';
 
 const LossReissue = () => {
   /**
@@ -25,7 +25,7 @@ const LossReissue = () => {
     password: yup.string().required('請輸入您的網銀密碼').min(8, '您輸入的網銀密碼長度有誤，請重新輸入。').max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
   });
   const {
-    handleSubmit, control, formState: { errors },
+    handleSubmit, control, watch, formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -36,7 +36,9 @@ const LossReissue = () => {
   const address = useSelector(({ lossReissue }) => lossReissue.address);
   const [openDialog, setOpenDialog] = useState(false);
   const [showResultDialog, setShowResultDialog] = useState(false);
-  const [password, setpassword] = useState('');
+  // eslint-disable-next-line no-unused-vars
+  const [password, setPassword] = useState('');
+  const [buttonDisabled, setButtonDisabled] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [showAlert, setShowAlert] = useState(false);
 
@@ -60,13 +62,12 @@ const LossReissue = () => {
 
   const onSubmit = async (data) => {
     data.password = await e2ee(data.password);
-    setpassword(data.password);
+    setPassword(data.password);
     setOpenDialog(true);
   };
 
   // 點擊確定後顯示申請結果
   const handleClickMainButton = () => {
-    console.log(password);
     // 開啟顯示結果的彈窗
     setShowResultDialog(true);
     // call api 決定顯示申請成功失敗結果
@@ -102,7 +103,7 @@ const LossReissue = () => {
           />
         </div>
 
-        <FEIBButton type="submit">
+        <FEIBButton type="submit" disabled={buttonDisabled}>
           { `${actionText}申請` }
         </FEIBButton>
       </div>
@@ -158,6 +159,15 @@ const LossReissue = () => {
 
   useCheckLocation();
   usePageInfo('/api/lossReissue');
+
+  useEffect(() => {
+    const userPassword = watch('password');
+    if (userPassword.length >= 1) {
+      setButtonDisabled(false);
+    } else {
+      setButtonDisabled(true);
+    }
+  }, [watch('password')]);
 
   return (
     <LossReissueWrapper>
