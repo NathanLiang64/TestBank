@@ -36,7 +36,7 @@ const FEIBBorderButton = styled(FEIBdefaultButton)`
   }
   
   &:hover {
-    background: ${({ theme, $borderColor }) => $borderColor || theme.colors.primary.brand};
+    background: ${({ theme, $borderColor }) => $borderColor || theme.colors.primary.light};
     color: ${({ theme }) => theme.colors.basic.white};
     // color: ${({ theme, $color }) => $color || theme.colors.basic.white};
     &:before {

@@ -1,11 +1,16 @@
 import * as types from './types';
 
-export const setCards = (array) => ({
-  type: types.SET_CARDS,
+export const setIsShake = (boolean) => ({
+  type: types.SET_IS_SHAKE,
+  payload: boolean,
+});
+
+export const setUserCards = (array) => ({
+  type: types.SET_USER_CARDS,
   payload: array,
 });
 
-export const setCardInfo = (object) => ({
-  type: types.SET_CARD_INFO,
+export const setUserCardInfo = (object) => ({
+  type: types.SET_USER_CARD_INFO,
   payload: object,
 });

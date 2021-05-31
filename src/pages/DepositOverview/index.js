@@ -148,7 +148,7 @@ const DepositOverview = () => {
   }, [cardInfo]);
 
   return (
-    <DepositOverviewWrapper>
+    <DepositOverviewWrapper small>
       <div className="measuredHeight">
         { cardInfo && renderDebitCard(cardInfo) }
         {

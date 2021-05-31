@@ -13,26 +13,26 @@ import { shakeShakeApi } from 'apis';
 import theme from 'themes/theme';
 import 'swiper/swiper.min.css';
 import 'swiper/components/pagination/pagination.min.css';
-import { setCards, setCardInfo } from './stores/actions';
+import { setIsShake, setUserCards, setUserCardInfo } from './stores/actions';
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
 
 const ShakeShake = () => {
-  const [openQRCodeDrawer, setQRCodeOpenDrawer] = useState(false);
   const [copyAccount, setCopyAccount] = useState(false);
 
-  const cards = useSelector(({ depositOverview }) => depositOverview.cards);
-  const cardInfo = useSelector(({ depositOverview }) => depositOverview.cardInfo);
+  const isShake = useSelector(({ shakeShake }) => shakeShake.isShake);
+  const userCards = useSelector(({ shakeShake }) => shakeShake.userCards);
+  const userCardInfo = useSelector(({ shakeShake }) => shakeShake.userCardInfo);
 
   const { push } = useHistory();
   const dispatch = useDispatch();
-  const { doGetInitData } = shakeShakeApi;
+  const { doGetShakeInitData } = shakeShakeApi;
 
-  const selectedCard = (id, allCards) => {
+  const selectedUserCard = (id, allCards) => {
     const filteredCard = allCards.find((card) => card.id === id);
     // 將篩選後的卡片資訊存進 redux
-    dispatch(setCardInfo(filteredCard));
+    dispatch(setUserCardInfo(filteredCard));
   };
 
   const handleClickCopyAccount = () => {
@@ -42,7 +42,7 @@ const ShakeShake = () => {
   };
 
   const handleClickTransferButton = () => {
-    setQRCodeOpenDrawer(false);
+    dispatch(setIsShake(false));
     push('/QRCodeTransfer');
   };
 
@@ -108,7 +108,7 @@ const ShakeShake = () => {
       <Swiper
         pagination
         className="mySwiper"
-        onSlideChange={(swiper) => selectedCard(swiper.activeIndex + 1, cards)}
+        onSlideChange={(swiper) => selectedUserCard(swiper.activeIndex + 1, userCards)}
       >
         { renderSlides(data) }
       </Swiper>
@@ -124,11 +124,8 @@ const ShakeShake = () => {
 
   const drawerContent = () => (
     <>
-      <div className="title">
-        <h3>QRCode 收款</h3>
-      </div>
-      { cardInfo && renderAccountInfo(cardInfo) }
-      { (cards && cardInfo) ? renderCodeArea(cards) : renderLoading() }
+      { userCardInfo && renderAccountInfo(userCardInfo) }
+      { (userCards && userCardInfo) ? renderCodeArea(userCards) : renderLoading() }
       <div className="buttonArea">
         <FEIBButton onClick={handleClickTransferButton}>登入後轉帳</FEIBButton>
       </div>
@@ -136,26 +133,25 @@ const ShakeShake = () => {
   );
 
   useEffect(async () => {
-    setQRCodeOpenDrawer(true);
-
     // 取得所有存款卡的初始資料
-    const response = await doGetInitData('/api/shakeShake');
-    if (response.initData) {
-      const { debitCards } = response.initData;
-      dispatch(setCards(debitCards));
+    const qrCodeResponse = await doGetShakeInitData('/api/shakeShake');
+    if (qrCodeResponse.initData) {
+      const { debitCards } = qrCodeResponse.initData;
+      dispatch(setUserCards(debitCards));
     }
   }, []);
 
   // 根據用戶選擇的卡片，將該卡片資料儲存至 redux，預設顯示 id 為 1 的卡片
   useEffect(() => {
-    selectedCard(1, cards);
-  }, [cards]);
+    selectedUserCard(1, userCards);
+  }, [userCards]);
 
   return (
     <BottomDrawer
+      title="QRCode 收款"
       className="QRCodeDrawer"
-      isOpen={openQRCodeDrawer}
-      onClose={() => setQRCodeOpenDrawer(false)}
+      isOpen={isShake}
+      onClose={() => dispatch(setIsShake(false))}
       content={drawerContent()}
     />
   );
