@@ -15,6 +15,7 @@ import LossReissue2 from './lossReissue_2';
 import {
   setActionText, setAccount, setCardState, setUserAddress, setIsResultSuccess,
 } from './stores/actions';
+import e2ee from '../../utilities/E2ee';
 
 const LossReissue = () => {
   /**
@@ -24,7 +25,7 @@ const LossReissue = () => {
     password: yup.string().required('請輸入您的網銀密碼').min(8, '您輸入的網銀密碼長度有誤，請重新輸入。').max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
   });
   const {
-    control, formState: { errors },
+    handleSubmit, control, formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -35,6 +36,7 @@ const LossReissue = () => {
   const address = useSelector(({ lossReissue }) => lossReissue.address);
   const [openDialog, setOpenDialog] = useState(false);
   const [showResultDialog, setShowResultDialog] = useState(false);
+  const [password, setpassword] = useState('');
   // eslint-disable-next-line no-unused-vars
   const [showAlert, setShowAlert] = useState(false);
 
@@ -56,12 +58,15 @@ const LossReissue = () => {
     }
   }, []);
 
-  const handleToggleDialog = (boolean) => {
-    setOpenDialog(boolean);
+  const onSubmit = async (data) => {
+    data.password = await e2ee(data.password);
+    setpassword(data.password);
+    setOpenDialog(true);
   };
 
   // 點擊確定後顯示申請結果
   const handleClickMainButton = () => {
+    console.log(password);
     // 開啟顯示結果的彈窗
     setShowResultDialog(true);
     // call api 決定顯示申請成功失敗結果
@@ -73,7 +78,7 @@ const LossReissue = () => {
   const handleClickResultMainButton = () => {
     setShowResultDialog(false);
     setShowAlert(false);
-    handleToggleDialog(false);
+    setOpenDialog(false);
   };
 
   /*
@@ -97,7 +102,7 @@ const LossReissue = () => {
           />
         </div>
 
-        <FEIBButton onClick={() => handleToggleDialog(true)}>
+        <FEIBButton type="submit">
           { `${actionText}申請` }
         </FEIBButton>
       </div>
@@ -107,12 +112,12 @@ const LossReissue = () => {
   const ConfirmDialog = () => (
     <Dialog
       isOpen={openDialog}
-      onClose={() => handleToggleDialog(false)}
+      onClose={() => setOpenDialog(false)}
       content={<DialogContent />}
       action={(
         <ConfirmButtons
           mainButtonOnClick={handleClickMainButton}
-          subButtonOnClick={() => handleToggleDialog(false)}
+          subButtonOnClick={() => setOpenDialog(false)}
         />
       )}
     />
@@ -121,7 +126,7 @@ const LossReissue = () => {
   const ResultDialog = () => (
     <Dialog
       isOpen={openDialog}
-      onClose={() => handleToggleDialog(false)}
+      onClose={() => setOpenDialog(false)}
       content={<LossReissue2 />}
       action={(
         <FEIBButton onClick={handleClickResultMainButton}>確定</FEIBButton>
@@ -172,10 +177,11 @@ const LossReissue = () => {
         <p>3. 於各項異動手續辦理妥前，所有使用本存戶Bankee金融卡之交易或申請人為不實之申請，而致蒙受損害時，其一切損害及責任概由本存戶負責。</p>
         <p>4. 本存戶於申請此服務時，業已審閱並充分了解全部內容，並完全同意後才使用各項服務及申請憑證。</p>
       </NoticeArea>
-
-      { checkCardState(state) }
-
+      <form onSubmit={handleSubmit(onSubmit)}>
+        { checkCardState(state) }
+      </form>
       { showResultDialog ? <ResultDialog /> : <ConfirmDialog /> }
+
     </LossReissueWrapper>
   );
 };
