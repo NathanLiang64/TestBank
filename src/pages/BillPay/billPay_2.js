@@ -79,7 +79,7 @@ const BillPay2 = () => {
   // );
 
   const pageControll = () => {
-    switch (billPayData.payType) {
+    switch (billPayData.payData.payType) {
       case 2:
         return (
           <>
