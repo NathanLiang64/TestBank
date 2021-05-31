@@ -106,48 +106,51 @@ const ProjectJ = () => {
 
   return (
     <ProjectJWrapper>
-      <p>
-        資金出借助人，還能獲取收益！
-      </p>
-      <p>
-        歡迎加入 join 會員，您可以自由選擇投資金額，線上自動撮合成功後，投資金額將出借給借款人，之後每月回收本金及獲取收益，為自己加薪就是這麼容易！
-      </p>
-      <NoticeArea title="快速申請join會員" textAlign="justify">
-        <p>我同意將我留存在 Bankee 的個人資料（如下項目）用以註冊遠傳 join 平台會員，勾選下方☐處＋點選「快速申請」，省時又便利！</p>
-        <ul>
-          <li>・姓名</li>
-          <li>・行動電話</li>
-          <li>・身分證字號</li>
-          <li>・出生年月日</li>
-          <li>・電子郵件email</li>
-          <li>・戶籍地址</li>
-          <li>・現居/通訊地址</li>
-        </ul>
+      <div className="projectDescription">
+        <p>
+          資金出借助人，還能獲取收益！
+        </p>
+        <p>
+          歡迎加入 join 會員，您可以自由選擇投資金額，線上自動撮合成功後，投資金額將出借給借款人，之後每月回收本金及獲取收益，為自己加薪就是這麼容易！
+        </p>
+      </div>
+      <NoticeArea title="快速申請join會員" textAlign="justify" space="top">
+        <div className="dealContent">
+          <p>我同意將我留存在 Bankee 的個人資料（如下項目）用以註冊遠傳 join 平台會員，勾選下方☐處＋點選「快速申請」，省時又便利！</p>
+          <ul>
+            <li>・姓名</li>
+            <li>・行動電話</li>
+            <li>・身分證字號</li>
+            <li>・出生年月日</li>
+            <li>・電子郵件email</li>
+            <li>・戶籍地址</li>
+            <li>・現居/通訊地址</li>
+          </ul>
+        </div>
       </NoticeArea>
       <div className="checkBoxContainer">
         <FEIBCheckboxLabel
           control={(
             <FEIBCheckbox
               color="default"
-              // $iconColor={theme.colors.primary.brand}
-              // icon={<RadioButtonUnchecked />}
-              // checkedIcon={<RadioButtonChecked />}
               checked={agree}
               onChange={handleCheckBoxChange}
             />
           )}
           label={(
-            <p>
-              本人已詳閱
-              <button
-                type="button"
-                className="personalSaveLink"
-                onClick={() => setShowSavePersonalDailog(true)}
-              >
-                [個人資料保護法告知事項]
-              </button>
-              ，並同意提供上述資料予 join 進行會員申請。
-            </p>
+            <div className="agreeLabel">
+              <p>
+                本人已詳閱
+                <button
+                  type="button"
+                  className="personalSaveLink"
+                  onClick={() => setShowSavePersonalDailog(true)}
+                >
+                  [個人資料保護法告知事項]
+                </button>
+                ，並同意提供上述資料予 join 進行會員申請。
+              </p>
+            </div>
           )}
           $color={theme.colors.primary.brand}
         />

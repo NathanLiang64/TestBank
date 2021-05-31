@@ -3,17 +3,43 @@ import Layout from 'components/Layout';
 import theme from 'themes/theme';
 
 const ProjectJWrapper = styled(Layout)`
+  .projectDescription {
+    color: #042C5C;
+    font-size: 1rem;
+  }
+  .dealContent {
+    color: ${theme.colors.text.lightBlue};
+    font-size: 1rem;
+    border: none;
+    margin: 0;
+    padding: 0;
+    p {
+      color: ${theme.colors.text.lightBlue};
+    }
+  }
+  .agreeLabel {
+    p {
+      color: ${theme.colors.text.lightBlue};
+      font-size: 1rem;
+    }
+  }
   text-align: justify;
   .personalSaveLink {
     font-weight: bold;
     text-decoration: underline;
   }
   .checkBoxContainer {
-    transform: translateY(-2.4rem);
+    .MuiFormControlLabel-root {
+      align-items: flex-start;
+      .MuiButtonBase-root {
+        padding-top: 4px;
+      }
+    }
   }
   .alertContainer {
     p {
-      color: ${theme.colors.text.point}
+      font-size: 1rem;
+      color: ${theme.colors.text.lightBlue};
     }
   }
 `;
