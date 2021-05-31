@@ -30,8 +30,12 @@ import ProjectJ from 'pages/ProjectJ';
 import LoanInquiry from 'pages/LoanInquiry';
 import LoanInterest from 'pages/LoanInterest';
 
+/* 測試用目錄頁 */
+import Nav from 'pages/Nav';
+
 const routes = [
-  { path: '/', exact: true, component: Login },
+  { path: '/', exact: true, component: Nav },
+  { path: '/login', exact: false, component: Login },
   { path: '/test', exact: false, component: Test },
   { path: '/cardLessATM', exact: true, component: CardLessATM },
   { path: '/cardLessATM1', exact: false, component: CardLessATM1 },
