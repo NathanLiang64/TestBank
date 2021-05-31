@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-
 import { useCheckLocation, usePageInfo } from 'hooks';
+import * as yup from 'yup';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 /* Elements */
 import {
@@ -9,7 +11,9 @@ import {
   FEIBInput,
   FEIBInputLabel,
   FEIBButton,
+  FEIBErrorMessage,
 } from 'components/elements';
+import PasswordInput from 'components/PasswordInput';
 import NoticeArea from 'components/NoticeArea';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
@@ -20,6 +24,25 @@ import theme from 'themes/theme';
 import SMSOTPactivateWrapper from './smsOTPactivate.style';
 
 const SMSOTPactivate = () => {
+  /**
+   *- 資料驗證
+   */
+  const schema = yup.object().shape({
+    OTPPassword: yup
+      .string()
+      .required('請輸入您的開通密碼'),
+    password: yup
+      .string()
+      .required('請輸入您的網銀密碼')
+      .min(8, '您輸入的網銀密碼長度有誤，請重新輸入。')
+      .max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+  });
+  const {
+    handleSubmit, control, formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
   // 0: 密碼未逾期, 1: 密碼逾期、註銷、其他非正常狀態, 2: 已開通
   const status = 2;
   const initActive = true;
@@ -34,13 +57,14 @@ const SMSOTPactivate = () => {
     setIsActive(!isActive);
   };
 
-  const handleButtonClick = () => {
-    setShowConfirmDialog(true);
-  };
-
   const updateOTPActiveType = () => {
     setShowConfirmDialog(false);
     setShowResultDialog(true);
+  };
+
+  const onSubmit = (data) => {
+    console.log(data);
+    setShowConfirmDialog(true);
   };
 
   const ResultContent = (result) => {
@@ -117,48 +141,54 @@ const SMSOTPactivate = () => {
           $hasBorder
         />
       </div>
-      <FEIBInputLabel>簡訊 OTP 號碼</FEIBInputLabel>
-      <FEIBInput
-        id="phone"
-        name="phone"
-        type="text"
-        inputMode="numeric"
-        value="0905556556"
-        disabled
-        $color={theme.colors.primary.dark}
-        $borderColor={theme.colors.primary.brand}
-      />
-      <FEIBInputLabel>開通密碼</FEIBInputLabel>
-      <FEIBInput
-        id="OTPPassword"
-        name="OTPPassword"
-        type="password"
-        placeholder="請輸入您的開通密碼"
-        disabled={status === 1}
-        $color={theme.colors.primary.dark}
-        $borderColor={theme.colors.primary.brand}
-      />
-      <FEIBInputLabel>網銀密碼</FEIBInputLabel>
-      <FEIBInput
-        id="feibPassword"
-        name="feibPassword"
-        type="password"
-        placeholder="請輸入您的網銀密碼"
-        disabled={status === 1}
-        $color={theme.colors.primary.dark}
-        $borderColor={theme.colors.primary.brand}
-      />
-      <NoticeArea title=" " textAlign="left">
-        {noticeTip}
-      </NoticeArea>
-      <FEIBButton
-        disabled={status === 1}
-        onClick={handleButtonClick}
-      >
-        {
-          status === 2 ? '取消 OTP 綁定' : '立即開通'
-        }
-      </FEIBButton>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <FEIBInputLabel htmlFor="phone">簡訊 OTP 號碼</FEIBInputLabel>
+        <FEIBInput
+          id="phone"
+          name="phone"
+          type="text"
+          inputMode="numeric"
+          value="0905556556"
+          disabled
+          $space="bottom"
+        />
+        <FEIBInputLabel htmlFor="OTPPassword">開通密碼</FEIBInputLabel>
+        <Controller
+          name="OTPPassword"
+          defaultValue=""
+          control={control}
+          render={({ field }) => (
+            <FEIBInput
+              {...field}
+              type="text"
+              id="OTPPassword"
+              name="OTPPassword"
+              placeholder="請輸入您的開通密碼"
+              error={!!errors.OTPPassword}
+            />
+          )}
+        />
+        <FEIBErrorMessage>{errors.OTPPassword?.message}</FEIBErrorMessage>
+        <PasswordInput
+          label="網銀密碼"
+          id="password"
+          name="password"
+          control={control}
+          placeholder="請輸入您的網銀密碼"
+          errorMessage={errors.password?.message}
+        />
+        <NoticeArea title=" " textAlign="left" space="both">
+          {noticeTip}
+        </NoticeArea>
+        <FEIBButton
+          type="submit"
+          disabled={status === 1}
+        >
+          {
+            status === 2 ? '取消 OTP 綁定' : '立即開通'
+          }
+        </FEIBButton>
+      </form>
       <ConfirmDialog />
       <ResultDialog />
     </SMSOTPactivateWrapper>

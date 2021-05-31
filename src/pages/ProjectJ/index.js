@@ -115,18 +115,16 @@ const ProjectJ = () => {
         </p>
       </div>
       <NoticeArea title="快速申請join會員" textAlign="justify" space="top">
-        <div className="dealContent">
-          <p>我同意將我留存在 Bankee 的個人資料（如下項目）用以註冊遠傳 join 平台會員，勾選下方☐處＋點選「快速申請」，省時又便利！</p>
-          <ul>
-            <li>・姓名</li>
-            <li>・行動電話</li>
-            <li>・身分證字號</li>
-            <li>・出生年月日</li>
-            <li>・電子郵件email</li>
-            <li>・戶籍地址</li>
-            <li>・現居/通訊地址</li>
-          </ul>
-        </div>
+        <p>我同意將我留存在 Bankee 的個人資料（如下項目）用以註冊遠傳 join 平台會員，勾選下方☐處＋點選「快速申請」，省時又便利！</p>
+        <ul>
+          <li>・姓名</li>
+          <li>・行動電話</li>
+          <li>・身分證字號</li>
+          <li>・出生年月日</li>
+          <li>・電子郵件email</li>
+          <li>・戶籍地址</li>
+          <li>・現居/通訊地址</li>
+        </ul>
       </NoticeArea>
       <div className="checkBoxContainer">
         <FEIBCheckboxLabel

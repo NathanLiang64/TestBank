@@ -4,18 +4,7 @@ import theme from 'themes/theme';
 
 const ProjectJWrapper = styled(Layout)`
   .projectDescription {
-    color: #042C5C;
     font-size: 1rem;
-  }
-  .dealContent {
-    color: ${theme.colors.text.lightBlue};
-    font-size: 1rem;
-    border: none;
-    margin: 0;
-    padding: 0;
-    p {
-      color: ${theme.colors.text.lightBlue};
-    }
   }
   .agreeLabel {
     p {
