@@ -1,4 +1,3 @@
-export const SET_CARDS = 'set_cards';
-export const SET_CARD_INFO = 'set_card_info';
-export const SET_INTEREST_PANEL_TITLE = 'set_interest_panel_title';
-export const SET_INTEREST_PANEL_CONTENT = 'set_interest_panel_content';
+export const SET_IS_SHAKE = 'set_is_shake';
+export const SET_USER_CARDS = 'set_user_cards';
+export const SET_USER_CARD_INFO = 'set_user_card_info';

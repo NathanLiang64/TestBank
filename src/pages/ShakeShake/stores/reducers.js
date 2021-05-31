@@ -1,21 +1,27 @@
 import * as types from './types';
 
 const initState = {
-  cards: [],
-  cardInfo: null,
+  isShake: false,
+  userCards: [],
+  userCardInfo: null,
 };
 
 const reducers = (state = initState, action) => {
   switch (action.type) {
-    case types.SET_CARDS:
+    case types.SET_IS_SHAKE:
       return {
         ...state,
-        cards: action.payload,
+        isShake: action.payload,
       };
-    case types.SET_CARD_INFO:
+    case types.SET_USER_CARDS:
       return {
         ...state,
-        cardInfo: action.payload,
+        userCards: action.payload,
+      };
+    case types.SET_USER_CARD_INFO:
+      return {
+        ...state,
+        userCardInfo: action.payload,
       };
     default:
       return state;

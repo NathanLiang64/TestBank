@@ -4,17 +4,25 @@ import { Drawer as MaterialDrawer } from '@material-ui/core';
 const DrawerWrapper = styled(MaterialDrawer).attrs({
   anchor: 'bottom',
 })`
-
   .MuiDrawer-paperAnchorBottom {
     border-top-left-radius: 2.4rem;
     border-top-right-radius: 2.4rem;
     overflow-x: hidden;
   }
   
-  .closeButton {
+  .drawerTitle {
     display: flex;
-    justify-content: flex-end;
-    padding: .4rem;
+    justify-content: center;
+    padding: .8rem;
+    font-size: 2rem;
+    font-weight: 500;
+    height: 4.6rem;
+  }
+  
+  .closeButton {
+    position: absolute;
+    top: 0;
+    right: 0;
   }
   
   .content {
@@ -47,16 +55,7 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
     .content {
       padding: 0 2.4rem;
       text-align: center;
-      font-weight: bold;
-      
-      .title {
-        position: absolute;
-        top: -5rem;
-        left: 50%;
-        padding-top: .8rem;
-        font-size: 2rem;
-        transform: translateX(-50%);
-      }
+      font-weight: 500;
       
       .cardName {
         color: ${({ theme }) => theme.colors.primary.light};

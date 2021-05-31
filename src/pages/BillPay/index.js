@@ -134,7 +134,7 @@ const BillPay = () => {
       <section>
         <div className="formAreaTitle">
           <h2>請選擇繳費金額</h2>
-          <FEIBBorderButton className="customSize">
+          <FEIBBorderButton className="customSize" type="button">
             申請分期
           </FEIBBorderButton>
         </div>
@@ -287,7 +287,7 @@ const BillPay = () => {
   );
 
   const renderPage = () => (
-    <BillPayWrapper>
+    <BillPayWrapper small={initData && initData.feib}>
       <form onSubmit={handleSubmit(onSubmit)}>
         {initData && initData.feib ? renderCardArea() : null}
         {initData && renderFormArea()}

@@ -1,7 +1,7 @@
 /* eslint-disable radix,no-restricted-globals */
 import { Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-// import { useCheckLocation, usePageInfo } from 'hooks';
+import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { userLogin } from 'apis/loginApi';
 import {
@@ -81,8 +81,8 @@ const Login = () => {
     localStorage.setItem('jwtToken', response);
   };
 
-  // useCheckLocation();
-  // usePageInfo('/api/login');
+  useCheckLocation();
+  usePageInfo('/api/login');
 
   return (
     userInfo
