@@ -1,12 +1,13 @@
 import { useState } from 'react';
 // import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
+import * as yup from 'yup';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 /* Elements */
 import {
   FEIBSwitch,
-  FEIBInputLabel,
-  FEIBInput,
   FEIBButton,
   FEIBCheckboxLabel,
   FEIBCheckbox,
@@ -16,16 +17,32 @@ import Dialog from 'components/Dialog';
 import NoticeArea from 'components/NoticeArea';
 import ConfirmButtons from 'components/ConfirmButtons';
 import Alert from 'components/Alert';
+import PasswordInput from 'components/PasswordInput';
 
 /* Styles */
-import theme from 'themes/theme';
+// import theme from 'themes/theme';
 import FingerPrintLockSettingWrapper from './fingerPrintLockSetting.style';
 
 const FingerPrint = () => {
+  /**
+   *- 資料驗證
+   */
+  const schema = yup.object().shape({
+    password: yup
+      .string()
+      .required('請輸入網銀密碼')
+      .min(8, '您輸入的網銀密碼長度有誤，請重新輸入。')
+      .max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+  });
+  const {
+    handleSubmit, watch, control, formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
   // const history = useHistory();
   const [isActive, setIsActive] = useState(false);
   const [agree, setAgree] = useState(false);
-  const [password, setPassword] = useState('');
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showResultDialog, setShowResultDialog] = useState(false);
 
@@ -35,10 +52,6 @@ const FingerPrint = () => {
 
   const handleCheckBoxChange = () => {
     setAgree((prev) => !prev);
-  };
-
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
   };
 
   const handleSaveChange = () => {
@@ -52,6 +65,12 @@ const FingerPrint = () => {
 
   const handleClickResultMainButton = () => {
     setShowResultDialog(false);
+  };
+
+  const onSubmit = (data) => {
+    // eslint-disable-next-line no-console
+    console.log(data);
+    handleSaveChange();
   };
 
   const ConfirmDialog = () => (
@@ -114,7 +133,7 @@ const FingerPrint = () => {
         label="生物辨識登入啟用"
         $hasBorder
       />
-      <NoticeArea title="指紋/臉部辨識登入使用條款" textAlign="left" className="customNoticeArea">
+      <NoticeArea title="指紋/臉部辨識登入使用條款" textAlign="left" space="top">
         <p>
           1. 本人同意與遠東商銀約定以本手機做為登入遠東商銀行動銀行APP時身分認證之用。爾後欲取消約定時，將由本人登入後至
           <span className="textColorPrimary">服務設定 ➝ 指紋/臉部辨識登入設定/取消</span>
@@ -137,33 +156,33 @@ const FingerPrint = () => {
         <p>8. 本功能只提供本人之一台手機中設定，如於本人之其他手機中設定，則原手機設定將自動解除。</p>
         <p>9. 手機重置或重新安裝APP時，需要重新設定本功能</p>
       </NoticeArea>
-      <FEIBCheckboxLabel
-        control={(
-          <FEIBCheckbox
-            color="default"
-            $iconColor={theme.colors.primary.brand}
-            onChange={handleCheckBoxChange}
-            checked={agree}
-          />
-        )}
-        label="本人已閱讀並同意上述[指紋/臉部辨識登入]使用條款"
-      />
-      <FEIBInputLabel style={{ marginTop: '2rem' }}>網銀密碼</FEIBInputLabel>
-      <FEIBInput
-        type="password"
-        name="password"
-        value={password}
-        placeholder="請輸入您的網銀密碼"
-        $color={theme.colors.primary.dark}
-        $borderColor={theme.colors.primary.brand}
-        onChange={handlePasswordChange}
-      />
-      <FEIBButton
-        disabled={!agree || !password || !isActive}
-        onClick={handleSaveChange}
-      >
-        儲存變更
-      </FEIBButton>
+      <div className="checkBoxContainer">
+        <FEIBCheckboxLabel
+          control={(
+            <FEIBCheckbox
+              onChange={handleCheckBoxChange}
+              checked={agree}
+            />
+          )}
+          label="本人已閱讀並同意上述[指紋/臉部辨識登入]使用條款"
+        />
+      </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <PasswordInput
+          label="網銀密碼"
+          id="password"
+          name="password"
+          control={control}
+          placeholder="請輸入您的網銀密碼"
+          errorMessage={errors.password?.message}
+        />
+        <FEIBButton
+          type="submit"
+          disabled={!agree || !watch('password')}
+        >
+          儲存變更
+        </FEIBButton>
+      </form>
       { showResultDialog ? <ResultDialog /> : <ConfirmDialog /> }
     </FingerPrintLockSettingWrapper>
   );

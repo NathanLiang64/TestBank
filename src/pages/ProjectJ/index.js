@@ -130,7 +130,6 @@ const ProjectJ = () => {
         <FEIBCheckboxLabel
           control={(
             <FEIBCheckbox
-              color="default"
               checked={agree}
               onChange={handleCheckBoxChange}
             />

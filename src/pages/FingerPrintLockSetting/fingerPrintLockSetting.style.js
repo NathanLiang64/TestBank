@@ -3,8 +3,14 @@ import Layout from 'components/Layout';
 // import theme from 'themes/theme';
 
 const FingerPrintLockSettingWrapper = styled(Layout)`
-  .customNoticeArea {
-    margin-bottom: 0;
+  .checkBoxContainer {
+    margin-bottom: 1rem;
+    .MuiFormControlLabel-root {
+      align-items: flex-start;
+      .MuiButtonBase-root {
+        padding-top: 4px;
+      }
+    }
   }
 `;
 
