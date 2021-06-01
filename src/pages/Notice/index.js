@@ -10,7 +10,8 @@ import {
   FEIBTabPanel,
   FEIBBorderButton,
 } from 'components/elements';
-import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
+// import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import ConfirmButtons from 'components/ConfirmButtons';
 import Dialog from 'components/Dialog';
 
@@ -155,7 +156,7 @@ const Notice = () => {
   const renderNoticeList = (data) => (
     <button type="button" key={data.noticeID} className="noticeCard" onClick={() => toNoticeContentPage(data)}>
       <div className="alertIcon">
-        <NotificationsActiveIcon style={{ fontSize: '3rem', opacity: data.readed ? '0' : '1' }} />
+        <FiberManualRecordIcon style={{ fontSize: '1rem', opacity: data.readed ? '0' : '1' }} />
       </div>
       <div className="right">
         <div className="content">{data.content}</div>
@@ -174,7 +175,7 @@ const Notice = () => {
   }, [dummyNoticeList]);
 
   return (
-    <NoticeWrapper>
+    <NoticeWrapper small>
       <FEIBTabContext value={value}>
         <FEIBTabList onChange={handleTabChange}>
           <FEIBTab label="個人帳務" value="0" />

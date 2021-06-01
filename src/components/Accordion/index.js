@@ -17,7 +17,7 @@ import AccordionWrapper from './accordion.style';
 const Accordion = ({
   className, title, space, children,
 }) => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
     setOpen(!open);

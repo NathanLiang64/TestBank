@@ -18,12 +18,12 @@ const AccordionWrapper = styled.div`
   margin: ${({ $space }) => handleSpaceType($space)};
   background: #F3F5FC;
   border-radius: 4px;
-  font-size: 1.5rem;
   button {
     padding: 0 3px 0 12px;
     text-align: left;
     width: 100%;
-    font-size: 1.5rem;
+    height: 48px;
+    font-size: 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -35,6 +35,9 @@ const AccordionWrapper = styled.div`
   }
   .content {
     padding: 0 12px 12px;
+    max-height: 32rem;
+    font-size: 14px;
+    overflow: auto;
     * {
       color: ${theme.colors.text.light};
     }
@@ -44,7 +47,6 @@ const AccordionWrapper = styled.div`
       background: #fff;
       margin-bottom: 12px;
     }
-
   }
 `;
 
