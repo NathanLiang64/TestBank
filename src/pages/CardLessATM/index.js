@@ -1,24 +1,52 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
+import * as yup from 'yup';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 /* Elements */
 import {
   FEIBButton,
-  FEIBInputAnimationWrapper,
   FEIBCheckboxLabel,
   FEIBCheckbox,
 } from 'components/elements';
 import PasswordInput from 'components/PasswordInput';
 import NoticeArea from 'components/NoticeArea';
+import Accordion from 'components/Accordion';
 
 /* Styles */
-import theme from 'themes/theme';
+// import theme from 'themes/theme';
 import CardLessATMWrapper from './cardLessATM.style';
 
 import DealContent from './dealContent';
 
 const CardLessATM = () => {
+  /**
+   *- 資料驗證
+   */
+  const schema = yup.object().shape({
+    withdrawPassword: yup
+      .string()
+      .required('請輸入提款密碼'),
+    withdrawPasswordCheck: yup
+      .string()
+      .required('請再輸入一次提款密碼'),
+    otpCode: yup
+      .string()
+      .required('請輸入開通驗證碼'),
+    password: yup
+      .string()
+      .required('請輸入網銀密碼')
+      .min(8, '您輸入的網銀密碼長度有誤，請重新輸入。')
+      .max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+  });
+  const {
+    handleSubmit, control, formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
   const history = useHistory();
 
   const [step, setStep] = useState(0);
@@ -38,6 +66,12 @@ const CardLessATM = () => {
     history.push('/cardLessATM1');
   };
 
+  const onSubmit = (data) => {
+    // eslint-disable-next-line no-console
+    console.log(data);
+    toStep1();
+  };
+
   const renderPage = () => {
     if (step === 0) {
       return (
@@ -45,16 +79,16 @@ const CardLessATM = () => {
           <NoticeArea title="無卡提款約定事項" textAlign="left">
             <DealContent />
           </NoticeArea>
-          <FEIBCheckboxLabel
-            control={(
-              <FEIBCheckbox
-                color="default"
-                onChange={handleCheckBoxChange}
-              />
-            )}
-            label="我已詳閱並遵守無卡體款約定事項"
-            $color={theme.colors.primary.brand}
-          />
+          <div className="checkBoxContainer">
+            <FEIBCheckboxLabel
+              control={(
+                <FEIBCheckbox
+                  onChange={handleCheckBoxChange}
+                />
+              )}
+              label="我已詳閱並遵守無卡體款約定事項"
+            />
+          </div>
           <FEIBButton
             disabled={!agree}
             onClick={() => handleStep(1)}
@@ -65,38 +99,48 @@ const CardLessATM = () => {
       );
     }
     return (
-      <div>
-        <FEIBInputAnimationWrapper>
-          <PasswordInput
-            label="提款密碼"
-            placeholder="請輸入提款密碼"
-          />
-        </FEIBInputAnimationWrapper>
-        <FEIBInputAnimationWrapper>
-          <PasswordInput
-            label="確認提款密碼"
-            placeholder="請再輸入一次提款密碼"
-          />
-        </FEIBInputAnimationWrapper>
-        <FEIBInputAnimationWrapper>
-          <PasswordInput
-            label="開通驗證碼"
-            placeholder="請輸入開通驗證碼"
-          />
-        </FEIBInputAnimationWrapper>
-        <FEIBInputAnimationWrapper>
-          <PasswordInput
-            label="網銀密碼"
-            placeholder="請輸入網銀密碼"
-          />
-        </FEIBInputAnimationWrapper>
-        <div className="tip">注意事項</div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <PasswordInput
+          label="提款密碼"
+          id="withdrawPassword"
+          name="withdrawPassword"
+          placeholder="請輸入提款密碼"
+          control={control}
+          errorMessage={errors.withdrawPassword?.message}
+        />
+        <PasswordInput
+          label="確認提款密碼"
+          id="withdrawPasswordCheck"
+          name="withdrawPasswordCheck"
+          placeholder="請再輸入一次提款密碼"
+          control={control}
+          errorMessage={errors.withdrawPasswordCheck?.message}
+        />
+        <PasswordInput
+          label="開通驗證碼"
+          id="otpCode"
+          name="otpCode"
+          placeholder="請輸入開通驗證碼"
+          control={control}
+          errorMessage={errors.otpCode?.message}
+        />
+        <PasswordInput
+          label="網銀密碼"
+          id="password"
+          name="password"
+          placeholder="請輸入網銀密碼"
+          control={control}
+          errorMessage={errors.password?.message}
+        />
+        <Accordion space="both">
+          一些注意事項
+        </Accordion>
         <FEIBButton
-          onClick={toStep1}
+          type="submit"
         >
           確定送出
         </FEIBButton>
-      </div>
+      </form>
     );
   };
 

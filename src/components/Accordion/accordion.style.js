@@ -38,6 +38,7 @@ const AccordionWrapper = styled.div`
     max-height: 32rem;
     font-size: 14px;
     overflow: auto;
+    color: ${theme.colors.text.light};
     * {
       color: ${theme.colors.text.light};
     }
