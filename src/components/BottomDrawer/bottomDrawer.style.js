@@ -5,8 +5,8 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
   anchor: 'bottom',
 })`
   .MuiDrawer-paperAnchorBottom {
-    border-top-left-radius: 2.4rem;
-    border-top-right-radius: 2.4rem;
+    border-top-left-radius: 3rem;
+    border-top-right-radius: 3rem;
     overflow-x: hidden;
   }
   

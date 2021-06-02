@@ -8,7 +8,7 @@ const DetailCardWrapper = styled.div`
   border-radius: .8rem;
   width: 100%;
   background: ${({ theme }) => theme.colors.basic.white};
-  box-shadow: 0 .4rem 1rem rgba(0, 0, 0, .12);
+  box-shadow: ${({ $noShadow }) => ($noShadow ? '0' : '0 .4rem 1rem rgba(0, 0, 0, .12);')};
   
   .defaultAvatar,
   .avatar {

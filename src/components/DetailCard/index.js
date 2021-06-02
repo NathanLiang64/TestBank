@@ -14,6 +14,7 @@ import DetailCardWrapper from './detailCard.style';
 * 5. sender -> 交易對象
 * 6. amount -> 交易金額
 * 7. balance -> 交易後所剩餘額
+* 8. noShadow -> 卡片不帶陰影樣式
 * */
 
 const DetailCard = ({
@@ -24,6 +25,7 @@ const DetailCard = ({
   sender,
   amount,
   balance,
+  noShadow,
 }) => {
   const renderAvatar = () => (
     avatar
@@ -42,7 +44,7 @@ const DetailCard = ({
   );
 
   return (
-    <DetailCardWrapper>
+    <DetailCardWrapper $noShadow={noShadow}>
       <div className="avatar">
         { renderAvatar() }
         { renderTypeIcon() }
