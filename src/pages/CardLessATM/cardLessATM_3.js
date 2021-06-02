@@ -7,6 +7,8 @@ import {
   FEIBButton,
 } from 'components/elements';
 import Dialog from 'components/Dialog';
+import Accordion from 'components/Accordion';
+import CheckCircleOutlineRoundedIcon from '@material-ui/icons/CheckCircleOutlineRounded';
 
 /* Styles */
 // import theme from 'themes/theme';
@@ -46,13 +48,16 @@ const CardLessATM3 = () => {
 
   return (
     <CardLessATMWrapper>
-      <div className="accountInfo">
-        <h1>
+      <div className="amountInfo">
+        <h1 className="label">
           設定提款成功
         </h1>
-        <h1>
+        <CheckCircleOutlineRoundedIcon />
+        <h1 className="label">
           剩餘提款時間&nbsp;
-          { formatCountSec(countSec) }
+          <span className="countDown">
+            { formatCountSec(countSec) }
+          </span>
         </h1>
       </div>
       <div className="tip">
@@ -100,7 +105,9 @@ const CardLessATM3 = () => {
           </tbody>
         </table>
       </div>
-      <div className="tip">注意事項</div>
+      <Accordion space="both">
+        一些注意事項
+      </Accordion>
       <FEIBButton
         onClick={cancleWithdrawal}
       >

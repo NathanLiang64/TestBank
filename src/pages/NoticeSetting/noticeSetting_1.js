@@ -237,12 +237,6 @@ const NoticeSetting1 = () => {
             placeholder="請輸入網銀密碼8~20位英數字"
             errorMessage={errors.password?.message}
           />
-          {/* <div className="tip">
-            <span>
-              注意事項
-            </span>
-            <ErrorOutline />
-          </div> */}
           <Accordion space="bottom">
             <p>一些注意事項</p>
           </Accordion>

@@ -4,6 +4,8 @@ import { useHistory } from 'react-router';
 import {
   FEIBButton,
 } from 'components/elements';
+import DebitCard from 'components/DebitCard';
+import Accordion from 'components/Accordion';
 
 /* Styles */
 // import theme from 'themes/theme';
@@ -18,22 +20,25 @@ const CardLessATM2 = () => {
 
   return (
     <CardLessATMWrapper>
-      <div className="accountInfo">
-        <h1>
-          活儲帳戶 04304099001568
-        </h1>
-        <h1>
-          提款金額 NT $ 10,000
-        </h1>
-      </div>
-      <div className="tip">
+      <DebitCard
+        cardName="存款卡"
+        account="04304099001568"
+        balance="168,000"
+      />
+      <div className="withdrawTimesInfo tip">
         免費跨提次數
         <span> 6 </span>
         次 / 免費跨轉次數
         <span> 6 </span>
         次
       </div>
-      <div className="tip">注意事項</div>
+      <div className="amountInfo">
+        <div className="label">提款金額</div>
+        <div className="amount">NT $10,000</div>
+      </div>
+      <Accordion space="both">
+        一些注意事項
+      </Accordion>
       <FEIBButton
         onClick={withdrawalConfirm}
       >
