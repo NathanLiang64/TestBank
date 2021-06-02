@@ -32,6 +32,7 @@ const theme = {
     background: {
       light: '#E9EBEE',
       lighter: '#F5F5F5',
+      lighterBlue: '#F3F5FC',
       lightest: '#FFFEFD',
       star: '#FFD466',
       point: '#E60E0E',

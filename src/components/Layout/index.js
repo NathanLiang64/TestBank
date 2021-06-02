@@ -12,7 +12,7 @@ import styled from 'styled-components';
 
 const Layout = styled.main`
   ${({ inDialog }) => (inDialog ? null : 'margin-top: 4.4rem')};
-  ${({ inDialog, fullScreen }) => ((inDialog || fullScreen) ? null : 'padding: 2.4rem 1.6rem')};
+  ${({ inDialog, fullScreen }) => ((inDialog || fullScreen) ? null : 'padding: 2.4rem 1.6rem 0 1.6rem')};
   padding-top: ${({ small }) => small && '.8rem'};
   height: 100%;
   overflow-x: hidden;
