@@ -11,6 +11,7 @@ import AccountMaintenance from 'pages/AccountMaintenance';
 import BillPay from 'pages/BillPay';
 import BillPay1 from 'pages/BillPay/billPay_1';
 import DepositOverview from 'pages/DepositOverview';
+import DepositInquiry from 'pages/DepositInquiry';
 import DepositPlus from 'pages/DepositPlus';
 import NicknameSetting from 'pages/NicknameSetting';
 import NoticeSetting from 'pages/NoticeSetting';
@@ -47,6 +48,7 @@ const routes = [
   { path: '/billPay', exact: true, component: BillPay },
   { path: '/billPay1', exact: false, component: BillPay1 },
   { path: '/depositOverview', exact: false, component: DepositOverview },
+  { path: '/depositInquiry', exact: false, component: DepositInquiry },
   { path: '/depositPlus', exact: false, component: DepositPlus },
   { path: '/noticeSetting', exact: true, component: NoticeSetting },
   { path: '/noticeSetting1', exact: false, component: NoticeSetting1 },

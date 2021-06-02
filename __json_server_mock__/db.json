@@ -181,6 +181,11 @@
       ]
     }
   },
+  "depositInquiry": {
+    "name": "DepositInquiry",
+    "title": "交易明細",
+    "route": "/depositInquiry"
+  },
   "depositPlus": {
     "name": "DepositPlus",
     "title": "優惠定額明細",

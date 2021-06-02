@@ -8,6 +8,7 @@ import { useCheckLocation, usePageInfo, useBarcodeGenerator } from 'hooks';
 import DebitCard from 'components/DebitCard';
 import Dialog from 'components/Dialog';
 import PasswordInput from 'components/PasswordInput';
+import Accordion from 'components/Accordion';
 import { FEIBButton } from 'components/elements';
 import FamilyMartImage from 'assets/images/familyMartLogo.png';
 import theme from 'themes/theme';
@@ -176,7 +177,9 @@ const BillPay = () => {
   );
 
   const collapse = () => (
-    <div className="tip">注意事項</div>
+    <Accordion space="bottom">
+      <p>注意事項內文</p>
+    </Accordion>
   );
 
   const renderNextStepButton = () => (
