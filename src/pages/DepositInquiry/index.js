@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { SearchRounded, CancelRounded, GetAppRounded } from '@material-ui/icons';
+import DepositSearchCondition from 'pages/DepositSearchCondition';
 import DebitCard from 'components/DebitCard';
 import DetailCard from 'components/DetailCard';
+import BottomDrawer from 'components/BottomDrawer';
 import {
   FEIBIconButton, FEIBTabContext, FEIBTabList, FEIBTab,
 } from 'components/elements';
@@ -11,11 +13,16 @@ import theme from 'themes/theme';
 import DepositInquiryWrapper from './depositInquiry.style';
 
 const DepositInquiry = () => {
+  const [openInquiryDrawer, setOpenInquiryDrawer] = useState(false);
   const [tabId, setTabId] = useState('12');
   const cardInfo = useSelector(({ depositOverview }) => depositOverview.cardInfo);
 
   const handleChangeTabList = (event, id) => {
     setTabId(id);
+  };
+
+  const handleClickSearchButton = () => {
+    setOpenInquiryDrawer(true);
   };
 
   const renderCardArea = (card) => {
@@ -31,7 +38,7 @@ const DepositInquiry = () => {
 
   const renderSearchBarArea = () => (
     <div className="searchBar">
-      <FEIBIconButton $fontSize={2.8}>
+      <FEIBIconButton $fontSize={2.8} onClick={handleClickSearchButton}>
         <SearchRounded />
       </FEIBIconButton>
       <p>2020/07/22 ~ 2020/09/22</p>
@@ -49,8 +56,8 @@ const DepositInquiry = () => {
 
   const renderTabs = () => (
     <div className="tabsArea">
-      <FEIBTabContext value={tabId} className="iAmeContext">
-        <FEIBTabList onChange={handleChangeTabList} $size="small" className="iAmList">
+      <FEIBTabContext value={tabId}>
+        <FEIBTabList onChange={handleChangeTabList} $size="small">
           <FEIBTab label="12月" value="12" />
           <FEIBTab label="11月" value="11" />
           <FEIBTab label="10月" value="10" />
@@ -101,6 +108,17 @@ const DepositInquiry = () => {
     })
   );
 
+  const renderBottomDrawer = (element) => (
+    <BottomDrawer
+      title="明細搜尋"
+      titleColor={theme.colors.primary.dark}
+      className="debitInquiryDrawer"
+      isOpen={openInquiryDrawer}
+      onClose={() => setOpenInquiryDrawer(false)}
+      content={element}
+    />
+  );
+
   useCheckLocation();
   usePageInfo('/api/depositInquiry');
 
@@ -114,6 +132,7 @@ const DepositInquiry = () => {
           { cardInfo && renderDetailCardList(cardInfo.detailList) }
         </div>
       </div>
+      { renderBottomDrawer(<DepositSearchCondition />) }
     </DepositInquiryWrapper>
   );
 };
