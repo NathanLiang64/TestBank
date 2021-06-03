@@ -15,29 +15,46 @@ const AdjustmentWrapper = styled(Layout)`
       font-size: 100%;
     }
     textarea {
-      padding-top: 0.2rem;
-    }
-    &.hide {
-      display: none;
+      line-height: 1.6rem;
     }
     .datePickerContainer {
       display: flex;
       justify-content: space-between;
+      span {
+        margin: 0 1rem;
+      }
     }
-  }
-  .customArea, .addCertification {
-    transform: translateY(-2.4rem);
   }
   .addCertification {
     display: flex;
     align-items: center;
+    margin-bottom: 1rem;
     span {
       margin-left: 0.5rem;
     }
   }
+  .countDownCard {
+    width: 100vw;
+    background: #F3F5FC;
+    padding: 1.2rem 1.6rem;
+    transform: translateX(-1.6rem);
+    margin-bottom: 2.4rem;
+    position: relative;
+    .countDownLabel {
+      color: ${({ theme }) => theme.colors.text.darkGray};
+    }
+    .countDownInfo {
+      display: flex;
+      justify-content: space-between;
+      .getNewOTP {
+        width: 15rem;
+        min-height: 2rem;
+      }
+    }
+  }
   .countSec {
-    font-size: 5rem;
-    font-weight: bold;
+    font-size: 3rem;
+    color: #F47A66;
   }
 `;
 
