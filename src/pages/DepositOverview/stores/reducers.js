@@ -3,6 +3,8 @@ import * as types from './types';
 const initState = {
   cards: [],
   cardInfo: null,
+  transactionDetailAreaHeight: 0,
+  computedCardList: null,
   interestPanelTitle: '優惠利率',
   interestPanelContent: '',
 };
@@ -18,6 +20,16 @@ const reducers = (state = initState, action) => {
       return {
         ...state,
         cardInfo: action.payload,
+      };
+    case types.SET_DETAIL_AREA_HEIGHT:
+      return {
+        ...state,
+        transactionDetailAreaHeight: action.payload,
+      };
+    case types.SET_COMPUTED_CARD_LIST:
+      return {
+        ...state,
+        computedCardList: action.payload,
       };
     case types.SET_INTEREST_PANEL_TITLE:
       return {

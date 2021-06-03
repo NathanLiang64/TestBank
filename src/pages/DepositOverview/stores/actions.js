@@ -10,6 +10,16 @@ export const setCardInfo = (object) => ({
   payload: object,
 });
 
+export const setDetailAreaHeight = (number) => ({
+  type: types.SET_DETAIL_AREA_HEIGHT,
+  payload: number,
+});
+
+export const setComputedCardList = (array) => ({
+  type: types.SET_COMPUTED_CARD_LIST,
+  payload: array,
+});
+
 export const setInterestPanelTitle = (value) => ({
   type: types.SET_INTEREST_PANEL_TITLE,
   payload: value,
