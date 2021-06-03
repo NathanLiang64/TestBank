@@ -13,7 +13,7 @@
 - 貸款應繳查詢 - 唯物
 - 貸款繳息紀錄查詢 - 唯物
 - 生物辨識登入設定（流程調整）- 唯物
-- QRCode 轉帳 (QRCodeTransfer) - 聖森
+- 交易明細 (DepositInquiry) - 聖森
 - 存款優惠利率額度 (DepositPlus) - 聖森 (待提供設計稿)
 - 常用帳號列表 (AccountMaintenance) - 聖森 (暫不需實作)
 - 元件封裝 - 唯物 & 聖森
@@ -22,6 +22,8 @@
 
 ## 已完成
 - 功能
+  - 搖一搖 QRCode 收款 (ShakeShake) - 聖森
+  - QRCode 轉帳 (QRCodeTransfer) - 聖森
   - E2EE 加密 - 聖森
   - 存款卡首頁 (DepositOverview) - 聖森
   - 圖形密碼登入設定 (PatternLockSetting) - 聖森
@@ -65,6 +67,8 @@
 
 
 - 組件封裝
+  - Loading - 聖森
+  - PasswordInput - 聖森
   - ConfirmButtons - 聖森
   - Dialog - 聖森
   - BottomDrawer - 聖森
@@ -75,6 +79,7 @@
   - DebitCard - 聖森
   - DetailCard - 聖森
   - PickerProviders - 唯物
+  - Accordion - 唯物
 
 ---
 

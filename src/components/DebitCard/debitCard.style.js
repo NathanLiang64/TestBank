@@ -18,14 +18,14 @@ const DebitCardWrapper = styled.div`
     
     .cardName {
       font-size: 1.8rem;
-      color: ${({ theme }) => theme.colors.text.darkGray};
+      color: ${({ theme }) => theme.colors.text.lightGray};
     }
     
     .accountInfo {
       display: flex;
       align-items: center;
       margin-top: -.8rem;
-      color: ${({ theme }) => theme.colors.text.darkGray};
+      color: ${({ theme }) => theme.colors.text.lightGray};
 
       .MuiIconButton-root {
         margin-left: -.4rem;
@@ -51,7 +51,7 @@ const DebitCardWrapper = styled.div`
       
       p {
         font-size: 1.5rem;
-        color: ${({ theme }) => theme.colors.text.darkGray};
+        color: ${({ theme }) => theme.colors.text.lightGray};
       }
       
       .branch {
@@ -59,7 +59,7 @@ const DebitCardWrapper = styled.div`
       }
       
       .account {
-        font-weight: bold;
+        font-weight: 500;
       }
     }
   }
@@ -75,7 +75,9 @@ const DebitCardWrapper = styled.div`
 
     .balance {
       font-size: 2.8rem;
-      font-weight: bold;
+      font-weight: 500;
+      letter-spacing: .05rem;
+      color: ${({ theme }) => theme.colors.text.darkGray};
     }
   }
   
@@ -91,6 +93,8 @@ const DebitCardWrapper = styled.div`
     
     li {
       padding: .4rem 1.2rem;
+      font-weight: 300;
+      letter-spacing: .1rem;
       
       &:after {
         content: '';
@@ -99,8 +103,9 @@ const DebitCardWrapper = styled.div`
         right: 0;
         width: .1rem;
         height: 1.6rem;
-        background: ${({ theme }) => theme.colors.border.light};
+        background: ${({ theme }) => theme.colors.text.lightGray};
         transform: translateY(-50%);
+        opacity: .3;
       }
       
       &:last-child {
@@ -112,7 +117,7 @@ const DebitCardWrapper = styled.div`
       }
       
       a {
-        color: ${({ theme }) => theme.colors.text.darkGray};
+        color: ${({ theme }) => theme.colors.text.lightGray};
       }
     }
   }

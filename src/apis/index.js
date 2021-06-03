@@ -4,6 +4,7 @@ import * as patternLockSettingApi from './patternLockSettingApi';
 import * as lossReissueApi from './lossReissueApi';
 import * as depositOverviewApi from './depositOverviewApi';
 import * as loginApi from './loginApi';
+import * as shakeShakeApi from './shakeShakeApi';
 
 export {
   headerApi,
@@ -12,4 +13,5 @@ export {
   lossReissueApi,
   depositOverviewApi,
   loginApi,
+  shakeShakeApi,
 };

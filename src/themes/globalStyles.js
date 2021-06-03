@@ -50,6 +50,8 @@ const GlobalStyles = createGlobalStyle`
   * {
     position: relative;
     box-sizing: border-box;
+    font-family: ${({ theme }) => theme.font} !important;
+    letter-spacing: .1rem !important;
   }
   
   html {
@@ -58,7 +60,7 @@ const GlobalStyles = createGlobalStyle`
   }
   
   body {
-    height: calc(100% - 4.8rem);
+    height: calc(100% - 4.4rem);
     font-size: 1.6rem;
     font-family: ${({ theme }) => theme.font};
     line-height: 1.43;
@@ -67,16 +69,6 @@ const GlobalStyles = createGlobalStyle`
   
   #root {
     height: 100%;
-  }
-  
-  main {
-    overflow-x: hidden;
-  }
-  
-  input,
-  textarea,
-  select {
-    font-family: ${({ theme }) => theme.font};
   }
   
   button {
@@ -118,7 +110,6 @@ const GlobalStyles = createGlobalStyle`
         padding: .8rem;
 
         &:first-child {
-          font-weight: bold;
           color: ${({ theme }) => theme.colors.primary.dark};
         }
       }
@@ -127,7 +118,7 @@ const GlobalStyles = createGlobalStyle`
   
   h1, h2, h3, h4, h5, h6, p, blockquote, pre,
   a, em, i {
-    line-height: 1.6;
+    line-height: 1.5;
     color: ${({ theme }) => theme.colors.text.dark};
   }
 
@@ -143,9 +134,26 @@ const GlobalStyles = createGlobalStyle`
     width: 100%;
   }
 
+  .material-icons {
+    font-family: 'Material Icons', sans-serif !important;
+  }
+  
   .MuiBackdrop-root {
     background: ${({ theme }) => theme.colors.background.mask} !important;
     backdrop-filter: ${({ theme }) => `blur(${theme.filters.blur})`};
+  }
+
+  .swiper-pagination-bullet {
+    width: .6rem;
+    height: .6rem;
+    background: ${({ theme }) => theme.colors.text.light};
+    transition: all .2s;
+
+    &-active {
+      width: .8rem;
+      height: .8rem;
+      transform: translateY(.15rem);
+    }
   }
 `;
 

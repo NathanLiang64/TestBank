@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useCheckLocation, usePageInfo } from 'hooks';
@@ -7,16 +7,24 @@ import DebitCard from 'components/DebitCard';
 import DetailCard from 'components/DetailCard';
 import { depositOverviewApi } from 'apis';
 import {
-  setCards, setCardInfo, setInterestPanelTitle, setInterestPanelContent,
+  setCards,
+  setCardInfo,
+  setDetailAreaHeight,
+  setInterestPanelTitle,
+  setInterestPanelContent,
+  setComputedCardList,
 } from './stores/actions';
 import DepositOverviewWrapper from './depositOverview.style';
 
 const DepositOverview = () => {
   const cards = useSelector(({ depositOverview }) => depositOverview.cards);
   const cardInfo = useSelector(({ depositOverview }) => depositOverview.cardInfo);
+  const transactionDetailAreaHeight = useSelector(({ depositOverview }) => depositOverview.transactionDetailAreaHeight);
+  const computedCardList = useSelector(({ depositOverview }) => depositOverview.computedCardList);
   const interestPanelTitle = useSelector(({ depositOverview }) => depositOverview.interestPanelTitle);
   const interestPanelContent = useSelector(({ depositOverview }) => depositOverview.interestPanelContent);
 
+  const ref = useRef();
   const dispatch = useDispatch();
   const { push } = useHistory();
   const { doGetInitData } = depositOverviewApi;
@@ -42,6 +50,7 @@ const DepositOverview = () => {
     }
   };
 
+  // TODO: 根據剩餘高度計算要顯示的卡片數量
   const renderDetailCardList = (list) => (
     list.map((card) => {
       const {
@@ -147,17 +156,37 @@ const DepositOverview = () => {
     }
   }, [cardInfo]);
 
+  // 計算 transactionDetail DOM 高度
+  useEffect(() => {
+    window.setTimeout(() => {
+      const { offsetHeight } = ref.current;
+      dispatch(setDetailAreaHeight(offsetHeight));
+    }, 500);
+  }, [ref]);
+
+  // 計算裝置可容納的交易明細卡片數量
+  useEffect(() => {
+    if (cardInfo) {
+      const computedCount = Math.floor((transactionDetailAreaHeight - 32) / 80);
+      const list = [];
+      for (let i = 0; i < computedCount; i++) {
+        list.push(cardInfo.detailList[i]);
+      }
+      dispatch(setComputedCardList(list));
+    }
+  }, [cardInfo, transactionDetailAreaHeight]);
+
   return (
-    <DepositOverviewWrapper>
+    <DepositOverviewWrapper small>
       <div className="measuredHeight">
         { cardInfo && renderDebitCard(cardInfo) }
         {
           (cardInfo && interestPanelTitle && interestPanelContent)
           && renderInfoPanel(cardInfo, interestPanelTitle, interestPanelContent)
         }
-        <div className="transactionDetail">
-          { cardInfo && renderDetailCardList(cardInfo.detailList) }
-          <Link className="moreButton" to="/">
+        <div className="transactionDetail" ref={ref}>
+          { computedCardList && renderDetailCardList(computedCardList) }
+          <Link className="moreButton" to="/depositInquiry">
             更多明細
             <ArrowForwardIos />
           </Link>

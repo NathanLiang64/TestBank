@@ -1,32 +1,45 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
+import * as yup from 'yup';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 /* Elements */
 import {
   FEIBSwitch,
-  FEIBInputLabel,
-  FEIBInput,
   FEIBButton,
   FEIBCheckboxLabel,
   FEIBCheckbox,
   FEIBSwitchLabel,
 } from 'components/elements';
 import NoticeArea from 'components/NoticeArea';
+import PasswordInput from 'components/PasswordInput';
 
 /* Styles */
-import theme from 'themes/theme';
+// import theme from 'themes/theme';
 import NoticeSettingWrapper from './noticeSetting.style';
 
 const NoticeSetting = () => {
+  /**
+   *- 資料驗證
+   */
+  const schema = yup.object().shape({
+    password: yup
+      .string()
+      .required('請輸入網銀密碼')
+      .min(8, '您輸入的網銀密碼長度有誤，請重新輸入。')
+      .max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+  });
+  const {
+    handleSubmit, watch, control, formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
   const history = useHistory();
   const [activeNotice, setActiveNotice] = useState(false);
-  const [password, setPassword] = useState('');
   const [agree, setAgree] = useState(false);
-
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
 
   const handleCheckBoxChange = (event) => {
     setAgree(event.target.checked);
@@ -34,6 +47,12 @@ const NoticeSetting = () => {
 
   const activateNotice = () => {
     history.push('/noticeSetting1');
+  };
+
+  const onSubmit = (data) => {
+    // eslint-disable-next-line no-console
+    console.log(data);
+    activateNotice();
   };
 
   useCheckLocation();
@@ -70,33 +89,37 @@ const NoticeSetting = () => {
           功能中進行設定。
         </p>
       </NoticeArea>
-      <FEIBCheckboxLabel
-        control={(
-          <FEIBCheckbox
-            color="default"
-            $iconColor={theme.colors.primary.brand}
-            onChange={handleCheckBoxChange}
-            checked={agree}
-          />
-        )}
-        label="本人已閱讀並同意上述[訊息通知]使用條款"
-      />
-      <FEIBInputLabel style={{ marginTop: '2rem' }}>網銀密碼</FEIBInputLabel>
-      <FEIBInput
-        type="password"
-        name="password"
-        value={password}
-        placeholder="請輸入您的網銀密碼"
-        $color={theme.colors.primary.dark}
-        $borderColor={theme.colors.primary.brand}
-        onChange={handlePasswordChange}
-      />
-      <FEIBButton
-        disabled={!activeNotice || !agree || !password}
-        onClick={activateNotice}
-      >
-        確定
-      </FEIBButton>
+      <div style={{ marginBottom: '1rem' }}>
+        <FEIBCheckboxLabel
+          control={(
+            <FEIBCheckbox
+              onChange={handleCheckBoxChange}
+              checked={agree}
+            />
+          )}
+          label={(
+            <div className="agreeLabel">
+              <p>本人已閱讀並同意上述[訊息通知]使用條款</p>
+            </div>
+          )}
+        />
+      </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <PasswordInput
+          label="網銀密碼"
+          id="password"
+          name="password"
+          control={control}
+          placeholder="請輸入網銀密碼"
+          errorMessage={errors.password?.message}
+        />
+        <FEIBButton
+          type="submit"
+          disabled={!activeNotice || !agree || !watch('password')}
+        >
+          確定
+        </FEIBButton>
+      </form>
     </NoticeSettingWrapper>
   );
 };

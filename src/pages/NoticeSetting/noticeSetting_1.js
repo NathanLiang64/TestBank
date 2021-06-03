@@ -1,20 +1,41 @@
 import { useState } from 'react';
 import { useCheckLocation, usePageInfo } from 'hooks';
+import * as yup from 'yup';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 /* Elements */
 import {
-  FEIBSwitch, FEIBInputLabel, FEIBInput, FEIBButton, FEIBSwitchLabel, FEIBCollapse,
+  FEIBSwitch, FEIBButton, FEIBSwitchLabel, FEIBCollapse,
 } from 'components/elements';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
-import { ExpandMoreOutlined, ErrorOutline } from '@material-ui/icons';
+import { ExpandMoreOutlined } from '@material-ui/icons';
 import Alert from 'components/Alert';
+import PasswordInput from 'components/PasswordInput';
+import Accordion from 'components/Accordion';
 
 /* Styles */
 import theme from 'themes/theme';
 import NoticeSettingWrapper from './noticeSetting.style';
 
 const NoticeSetting1 = () => {
+  /**
+   *- 資料驗證
+   */
+  const schema = yup.object().shape({
+    password: yup
+      .string()
+      .required('請輸入網銀密碼')
+      .min(8, '您輸入的網銀密碼長度有誤，請重新輸入。')
+      .max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+  });
+  const {
+    handleSubmit, watch, control, formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
   const noticeTypeArray = ['deposit', 'creditCard', 'loan', 'tradeSafity', 'socialFeedback'];
   const [openDialog, setOpenDialog] = useState(false);
   const [openResultDialog, setOpenResultDialog] = useState(false);
@@ -96,7 +117,13 @@ const NoticeSetting1 = () => {
       ],
     },
   });
-  const [password, setPassword] = useState('');
+  // const [password, setPassword] = useState('');
+
+  const onSubmit = (data) => {
+    // eslint-disable-next-line no-console
+    console.log(data);
+    setOpenResultDialog(true);
+  };
 
   const handleToggleDialog = (bool) => {
     setOpenDialog(bool);
@@ -124,9 +151,9 @@ const NoticeSetting1 = () => {
     });
   };
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
+  // const handlePasswordChange = (event) => {
+  //   setPassword(event.target.value);
+  // };
 
   const renderIconButton = (show) => (show ? <ExpandMoreOutlined style={{ fontSize: '3rem', color: 'white' }} /> : <ExpandMoreOutlined style={{ fontSize: '3rem', color: theme.colors.primary.light }} />);
 
@@ -147,9 +174,9 @@ const NoticeSetting1 = () => {
     />
   );
 
-  const handleSaveNoticeSetting = () => {
-    setOpenResultDialog(true);
-  };
+  // const handleSaveNoticeSetting = () => {
+  //   setOpenResultDialog(true);
+  // };
 
   useCheckLocation();
   usePageInfo('/api/noticeSetting');
@@ -200,29 +227,27 @@ const NoticeSetting1 = () => {
           </div>
         ))
       }
-      <div style={{ padding: '0 1.6rem 2.4rem' }}>
-        <FEIBInputLabel $color={theme.colors.primary.brand} style={{ marginTop: '2rem' }}>網銀密碼</FEIBInputLabel>
-        <FEIBInput
-          type="password"
-          name="password"
-          value={password}
-          $color={theme.colors.primary.dark}
-          $borderColor={theme.colors.primary.brand}
-          onChange={handlePasswordChange}
-        />
-        <div className="tip">
-          <span>
-            注意事項
-          </span>
-          <ErrorOutline />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div style={{ padding: '0 1.6rem 2.4rem', marginTop: '1rem' }}>
+          <PasswordInput
+            label="網銀密碼"
+            id="password"
+            name="password"
+            control={control}
+            placeholder="請輸入網銀密碼8~20位英數字"
+            errorMessage={errors.password?.message}
+          />
+          <Accordion space="bottom">
+            <p>一些注意事項</p>
+          </Accordion>
+          <FEIBButton
+            type="submit"
+            disabled={!watch('password')}
+          >
+            確定送出
+          </FEIBButton>
         </div>
-        <FEIBButton
-          disabled={!password}
-          onClick={handleSaveNoticeSetting}
-        >
-          確定送出
-        </FEIBButton>
-      </div>
+      </form>
       {/* 確定起用或關閉全部 */}
       <Dialog
         isOpen={openDialog}
@@ -259,7 +284,6 @@ const NoticeSetting1 = () => {
           <FEIBButton
             onClick={() => {
               setOpenResultDialog(false);
-              setPassword('');
             }}
           >
             確定

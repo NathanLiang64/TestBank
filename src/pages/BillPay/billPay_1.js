@@ -1,19 +1,21 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
+import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useCheckLocation, usePageInfo, useBarcodeGenerator } from 'hooks';
 import DebitCard from 'components/DebitCard';
 import Dialog from 'components/Dialog';
-import { FEIBButton, FEIBInput, FEIBInputLabel } from 'components/elements';
+import PasswordInput from 'components/PasswordInput';
+import Accordion from 'components/Accordion';
+import { FEIBButton } from 'components/elements';
 import FamilyMartImage from 'assets/images/familyMartLogo.png';
 import theme from 'themes/theme';
-import { Controller, useForm } from 'react-hook-form';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
+import e2ee from 'utilities/E2ee';
 import BillPay2 from './billPay_2';
 import BillPayWrapper from './billPay.style';
 import { setSendType } from './stores/actions';
-import e2ee from '../../utilities/E2ee';
 
 const BillPay = () => {
   /**
@@ -70,23 +72,11 @@ const BillPay = () => {
   const renderFormArea = () => (
     <section>
       <div>
-        <FEIBInputLabel htmlFor="password">網銀密碼</FEIBInputLabel>
-        <Controller
-          name="password"
+        <PasswordInput
+          id="password"
           control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <FEIBInput
-              {...field}
-              id="password"
-              name="password"
-              type="password"
-              className="customBottomSpace"
-              placeholder="請輸入您的網銀密碼"
-            />
-          )}
+          errorMessage={errors.password?.message}
         />
-        <p>{errors.password?.message}</p>
       </div>
     </section>
   );
@@ -187,7 +177,9 @@ const BillPay = () => {
   );
 
   const collapse = () => (
-    <div className="tip">注意事項</div>
+    <Accordion space="bottom">
+      <p>注意事項內文</p>
+    </Accordion>
   );
 
   const renderNextStepButton = () => (

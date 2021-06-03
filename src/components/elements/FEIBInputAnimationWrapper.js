@@ -10,6 +10,7 @@ const FEIBInputAnimationWrapper = styled(MaterialFormControl)`
 
   .MuiFormLabel-root {
     font-size: 1.4rem;
+    color: ${({ theme }) => theme.colors.text.dark};
 
     &.Mui-focused,
     &.MuiFormLabel-filled {

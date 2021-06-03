@@ -27,6 +27,10 @@ const QRCodeTransfer = () => {
     setTimeout(() => setCopyAccount(false), 1500);
   };
 
+  const handleClickSelectPictrue = () => {
+    window.alert('開啟手機相簿');
+  };
+
   // 渲染卡片帳號右側的 "複製" 圖標
   const renderCopyIconButton = () => (
     <div className="copyIconButtonArea">
@@ -103,7 +107,7 @@ const QRCodeTransfer = () => {
               <div className="mask" />
               <div className="mask" />
             </div>
-            <div className="albumArea">
+            <div className="albumArea" onClick={handleClickSelectPictrue}>
               <div className="lastPhoto">
                 <img src="https://images.unsplash.com/photo-1622069313264-ae43213afe69?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="" />
               </div>
@@ -112,10 +116,10 @@ const QRCodeTransfer = () => {
           <div className="infoArea">
             <p>
               請對方至
-              <span>QRCode 轉帳 ➝ 收款</span>
+              <span>QRCode轉帳➝收款</span>
               打開條碼
             </p>
-            <p>再由此處掃描 QRCode 就能轉帳囉</p>
+            <p>再由此處掃描QRCode就能轉帳囉</p>
           </div>
         </FEIBTabPanel>
       </FEIBTabContext>

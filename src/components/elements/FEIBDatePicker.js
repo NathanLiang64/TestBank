@@ -4,6 +4,8 @@ import { KeyboardDatePicker as MaterialDatePicker } from '@material-ui/pickers';
 import theme from 'themes/theme';
 
 const FEIBDatePicker = styled(MaterialDatePicker).attrs({
+  invalidDateMessage: '日期格式錯誤',
+  disableFuture: true,
   format: 'yyyy/MM/dd',
   okLabel: '確定',
   cancelLabel: '取消',
@@ -12,7 +14,7 @@ const FEIBDatePicker = styled(MaterialDatePicker).attrs({
   .MuiInputBase-root {
     font-size: 1.4rem;
     margin-top: .4rem;
-    margin-bottom: ${({ $bottomSpace }) => ($bottomSpace === false && '0') || '2rem'};
+    // margin-bottom: ${({ $bottomSpace }) => ($bottomSpace === false && '0') || '2rem'};
     font-size: ${({ $fontSize }) => ($fontSize && `${$fontSize}rem`) || '1.4rem'};
     color: ${({ $color }) => $color || theme.colors.primary.dark};
     &.MuiInput-underline {
@@ -24,6 +26,9 @@ const FEIBDatePicker = styled(MaterialDatePicker).attrs({
       &:after {
         border-color: ${({ $borderColor, $focusBorderColor }) => $focusBorderColor || $borderColor || 'inherit'};
       }
+    }
+    .MuiIconButton-root {
+      padding: 0;
     }
   }
 `;

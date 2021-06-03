@@ -1,24 +1,44 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import * as yup from 'yup';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { lossReissueApi } from 'apis';
 import Dialog from 'components/Dialog';
 import NoticeArea from 'components/NoticeArea';
 import ConfirmButtons from 'components/ConfirmButtons';
+import PasswordInput from 'components/PasswordInput';
 import { FEIBInput, FEIBInputLabel, FEIBButton } from 'components/elements';
-import LossReissueWrapper from './lossReissue.style';
+import e2ee from 'utilities/E2ee';
 import LossReissue2 from './lossReissue_2';
+import LossReissueWrapper from './lossReissue.style';
 import {
   setActionText, setAccount, setCardState, setUserAddress, setIsResultSuccess,
 } from './stores/actions';
 
 const LossReissue = () => {
+  /**
+   *- 資料驗證
+   */
+  const schema = yup.object().shape({
+    password: yup.string().required('請輸入您的網銀密碼').min(8, '您輸入的網銀密碼長度有誤，請重新輸入。').max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+  });
+  const {
+    handleSubmit, control, watch, formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
   const account = useSelector(({ lossReissue }) => lossReissue.account);
   const state = useSelector(({ lossReissue }) => lossReissue.state);
   const actionText = useSelector(({ lossReissue }) => lossReissue.actionText);
   const address = useSelector(({ lossReissue }) => lossReissue.address);
   const [openDialog, setOpenDialog] = useState(false);
   const [showResultDialog, setShowResultDialog] = useState(false);
+  // eslint-disable-next-line no-unused-vars
+  const [password, setPassword] = useState('');
+  const [buttonDisabled, setButtonDisabled] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [showAlert, setShowAlert] = useState(false);
 
@@ -40,8 +60,10 @@ const LossReissue = () => {
     }
   }, []);
 
-  const handleToggleDialog = (boolean) => {
-    setOpenDialog(boolean);
+  const onSubmit = async (data) => {
+    data.password = await e2ee(data.password);
+    setPassword(data.password);
+    setOpenDialog(true);
   };
 
   // 點擊確定後顯示申請結果
@@ -57,7 +79,7 @@ const LossReissue = () => {
   const handleClickResultMainButton = () => {
     setShowResultDialog(false);
     setShowAlert(false);
-    handleToggleDialog(false);
+    setOpenDialog(false);
   };
 
   /*
@@ -73,7 +95,15 @@ const LossReissue = () => {
     }
     return (
       <div>
-        <FEIBButton onClick={() => handleToggleDialog(true)}>
+        <div className="passwordArea">
+          <PasswordInput
+            id="password"
+            control={control}
+            errorMessage={errors.password?.message}
+          />
+        </div>
+
+        <FEIBButton type="submit" disabled={buttonDisabled}>
           { `${actionText}申請` }
         </FEIBButton>
       </div>
@@ -83,12 +113,12 @@ const LossReissue = () => {
   const ConfirmDialog = () => (
     <Dialog
       isOpen={openDialog}
-      onClose={() => handleToggleDialog(false)}
+      onClose={() => setOpenDialog(false)}
       content={<DialogContent />}
       action={(
         <ConfirmButtons
           mainButtonOnClick={handleClickMainButton}
-          subButtonOnClick={() => handleToggleDialog(false)}
+          subButtonOnClick={() => setOpenDialog(false)}
         />
       )}
     />
@@ -97,7 +127,7 @@ const LossReissue = () => {
   const ResultDialog = () => (
     <Dialog
       isOpen={openDialog}
-      onClose={() => handleToggleDialog(false)}
+      onClose={() => setOpenDialog(false)}
       content={<LossReissue2 />}
       action={(
         <FEIBButton onClick={handleClickResultMainButton}>確定</FEIBButton>
@@ -130,16 +160,25 @@ const LossReissue = () => {
   useCheckLocation();
   usePageInfo('/api/lossReissue');
 
+  useEffect(() => {
+    const userPassword = watch('password');
+    if (userPassword.length >= 1) {
+      setButtonDisabled(false);
+    } else {
+      setButtonDisabled(true);
+    }
+  }, [watch('password')]);
+
   return (
     <LossReissueWrapper>
       <div>
         <FEIBInputLabel>帳號</FEIBInputLabel>
-        <FEIBInput name="account" value={account} disabled />
+        <FEIBInput name="account" value={account} $space="bottom" disabled />
       </div>
 
       <div>
         <FEIBInputLabel>金融卡狀態</FEIBInputLabel>
-        <FEIBInput name="state" value={state} $bottomSpace={false} disabled />
+        <FEIBInput name="state" value={state} disabled />
       </div>
 
       <NoticeArea textAlign="left" space="both">
@@ -148,10 +187,11 @@ const LossReissue = () => {
         <p>3. 於各項異動手續辦理妥前，所有使用本存戶Bankee金融卡之交易或申請人為不實之申請，而致蒙受損害時，其一切損害及責任概由本存戶負責。</p>
         <p>4. 本存戶於申請此服務時，業已審閱並充分了解全部內容，並完全同意後才使用各項服務及申請憑證。</p>
       </NoticeArea>
-
-      { checkCardState(state) }
-
+      <form onSubmit={handleSubmit(onSubmit)}>
+        { checkCardState(state) }
+      </form>
       { showResultDialog ? <ResultDialog /> : <ConfirmDialog /> }
+
     </LossReissueWrapper>
   );
 };

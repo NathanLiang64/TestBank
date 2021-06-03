@@ -3,18 +3,24 @@ import Layout from 'components/Layout';
 import theme from 'themes/theme';
 
 const LoanInterestWrapper = styled(Layout)`
-  .datePickerContainer {
+  .selectContainer {
     display: flex;
     justify-content: space-between;
     .picker {
-      width: 50%;
       &:first-child {
         margin-right: calc(1rem + 5px);
+        width: 60%;
       }
       &:last-child {
         margin-left: calc(1rem + 5px);
+        width: 40%;
       }
     }
+  }
+  .datePickerContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
     .MuiFormControl-root {
       width: 50%;
       &:first-child {
@@ -26,8 +32,9 @@ const LoanInterestWrapper = styled(Layout)`
     }
   }
   .point {
-    color: ${theme.colors.text.point};
-    transform: translateY(-1rem);
+    color: ${theme.colors.text.light};
+    margin-bottom: 2rem;
+    font-size: 1rem;
   }
   .resultTable {
     margin-top: 2.4rem;

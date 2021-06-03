@@ -1,31 +1,49 @@
 import styled from 'styled-components';
 import { Select as MaterialSelect } from '@material-ui/core';
 
+const handleSpaceType = (position) => {
+  switch (position) {
+    case 'top':
+      return '2rem 0 0 0';
+    case 'bottom':
+      return '0 0 2rem 0';
+    case 'both':
+      return '2rem 0';
+    default:
+      return '0';
+  }
+};
+
 /*
 * ==================== FEIBSelect 可用選項 ====================
 * 1. $fontSize -> 字級大小
-*    直接填寫數字，例如：1.6，若未傳值預設為 1.4
+*    直接填寫數字，例如：1.6，若未傳值預設為 1.6
 * 2. $color -> 文字顏色
 *    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)，預設為主色
 * 3. $borderColor -> 邊框顏色
-*    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)
+*    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)，預設為淺灰色
 * 4. $focusBorderColor -> 游標點擊後聚焦在物件時的邊框顏色
-*    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)
+*    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)，預設為淺主色
 *    若已填寫 $borderColor 則直接繼承 $borderColor 色碼，也允許額外設定不同的色碼給此屬性
-* * 5. $bottomSpace -> 物件底部留白空間
-*    預設為會預留固定高度，若不需要底部留白空間可將此屬性設置為 false
+* * 5. $space -> 元件上下留白空間
+*    預設無 margin，可傳入 "top"、"bottom"、"both" 字串來產生固定高度的 margin
 * */
 
 const FEIBSelect = styled(MaterialSelect)`
-  min-height: 3.6rem;
-  margin-bottom: ${({ $bottomSpace }) => ($bottomSpace === false && '0') || '1.6rem'};
+  height: 4rem;
+  margin: ${({ $space }) => handleSpaceType($space)};
   width: 100%;
   
   .MuiSelect-select {
     display: inline-flex;
     align-items: center;
-    color: ${({ theme, $color }) => $color || theme.colors.primary.brand};
-    font-size: ${({ $fontSize }) => ($fontSize && `${$fontSize}rem`) || '1.4rem'};
+    color: ${({ theme, $color }) => $color || theme.colors.primary.light};
+  }
+  
+  .MuiInputBase-input {
+    padding-top: .8rem;
+    padding-bottom: .8rem;
+    font-size: ${({ $fontSize }) => ($fontSize && `${$fontSize}rem`) || '1.6rem'};
   }
   
   .MuiSelect-icon {
@@ -36,11 +54,11 @@ const FEIBSelect = styled(MaterialSelect)`
   &.MuiInput-underline {
     &:before,
     &:hover:not(.Mui-disabled):before {
-      border-color: ${({ $borderColor }) => $borderColor || 'inherit'};
+      border-color: ${({ theme, $borderColor }) => $borderColor || theme.colors.border.light};
       opacity: .6;
     }
     &:after {
-      border-color: ${({ $borderColor, $focusBorderColor }) => $focusBorderColor || $borderColor || 'inherit'};
+      border-color: ${({ theme, $borderColor, $focusBorderColor }) => $focusBorderColor || $borderColor || theme.colors.primary.light};
     }
   }
 `;

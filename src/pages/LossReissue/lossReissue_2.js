@@ -7,13 +7,9 @@ const LossReissue2 = () => {
   const actionText = useSelector(({ lossReissue }) => lossReissue.actionText);
   const isResultSuccess = useSelector(({ lossReissue }) => lossReissue.isResultSuccess);
 
-  return (
-    <LossReissueWrapper inDialog>
-      {
-        isResultSuccess
-          ? <Alert state="success">{`已完成${actionText}申請`}</Alert>
-          : <Alert>{`${actionText}申請失敗，請重新申請`}</Alert>
-      }
+  const renderSuccessResult = () => (
+    <>
+      <Alert state="success">{`已完成${actionText}申請`}</Alert>
       <table>
         <tbody>
           <tr>
@@ -26,6 +22,19 @@ const LossReissue2 = () => {
           </tr>
         </tbody>
       </table>
+    </>
+  );
+
+  const renderFailResult = () => (
+    <>
+      <Alert>{`${actionText}申請失敗，請重新申請`}</Alert>
+      <p>申請失敗原因，應由 api 回傳</p>
+    </>
+  );
+
+  return (
+    <LossReissueWrapper inDialog>
+      { isResultSuccess ? renderSuccessResult() : renderFailResult() }
     </LossReissueWrapper>
   );
 };

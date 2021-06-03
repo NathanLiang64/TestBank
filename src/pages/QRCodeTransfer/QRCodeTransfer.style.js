@@ -50,14 +50,13 @@ const QRCodeTransferWrapper = styled(Layout)`
     text-align: center;
     
     p {
+      margin-bottom: .4rem;
       color: ${({ theme }) => theme.colors.text.light};
     }
     
     h3 {
       display: inline-block;
-      margin-bottom: .4rem;
       font-size: 1.8rem;
-      font-weight: bold;
       letter-spacing: .04rem;
       color: ${({ theme }) => theme.colors.primary.light};
     }

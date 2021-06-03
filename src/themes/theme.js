@@ -1,5 +1,5 @@
 const theme = {
-  font: '"Noto Sans TC", "Microsoft JhengHei", "微軟正黑體", sans-serif',
+  font: '"Prompt", "Noto Sans TC", "Microsoft JhengHei", "微軟正黑體", sans-serif',
   colors: {
     primary: {
       brand: '#825DC7',
@@ -13,26 +13,27 @@ const theme = {
     },
     basic: {
       white: '#FFF',
-      black: '#000',
     },
     text: {
       darker: '#022B5A',
-      dark: '#2C496D',
-      light: '#718AB2',
-      darkGray: '#656462',
-      lightGray: '#787675',
+      dark: '#042C5C',
+      light: '#6F89B2',
+      darkGray: '#505050',
+      lightGray: '#656462',
+      placeholder: '#C2CEDC',
       link: '#3EC4EE',
       point: '#E60E0E',
     },
     border: {
-      light: '#777777',
+      light: '#77869E',
       lighter: '#D7DCE2',
       lightest: '#F3F3F3',
     },
     background: {
       light: '#E9EBEE',
       lighter: '#F5F5F5',
-      lightest: '#FBFAF9',
+      lighterBlue: '#F3F5FC',
+      lightest: '#FFFEFD',
       star: '#FFD466',
       point: '#E60E0E',
       cancel: '#D8E0ED',
@@ -40,7 +41,7 @@ const theme = {
     },
     state: {
       success: '#46D4A7',
-      danger: '#E88D8D',
+      danger: '#FF5F5F',
     },
     card: {
       purple: '#D8CAFB',

@@ -1,21 +1,53 @@
 import { useState } from 'react';
 // import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
+import * as yup from 'yup';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 /* Elements */
 import {
-  FEIBInput, FEIBInputLabel, FEIBButton,
+  FEIBButton,
 } from 'components/elements';
+import PasswordInput from 'components/PasswordInput';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
 import Alert from 'components/Alert';
+import e2ee from '../../utilities/E2ee';
 
 /* Styles */
-import theme from 'themes/theme';
+// import theme from 'themes/theme';
 import PwdModifyWrapper from './pwdModify.style';
 
 const PwdModify = () => {
-  const forceModify = true;
+  /**
+   *- 資料驗證
+   */
+  const schema = yup.object().shape({
+    password: yup
+      .string()
+      .required('請輸入您的網銀密碼')
+      .min(8, '您輸入的網銀密碼長度有誤，請重新輸入。')
+      .max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+    newPassword: yup
+      .string()
+      .required('請輸入新的網銀密碼')
+      .min(8, '您輸入的網銀密碼長度有誤，請重新輸入。')
+      .max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+    newPasswordCheck: yup
+      .string()
+      .required('請再輸入一次新網銀密碼')
+      .min(8, '您輸入的網銀密碼長度有誤，請重新輸入。')
+      .max(20, '您輸入的網銀密碼長度有誤，請重新輸入。')
+      .oneOf([yup.ref('newPassword'), null], '必須與新網銀密碼相同'),
+  });
+  const {
+    handleSubmit, control, formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  const forceModify = false;
   const [form, setForm] = useState({
     password: '',
     newPassword: '',
@@ -25,11 +57,11 @@ const PwdModify = () => {
   const [showResultDialog, setShowResultDialog] = useState(false);
   const [showWarningDialog, setShowWarningDialog] = useState(false);
 
-  const handleFormChange = ({ target }) => {
-    const formObject = { ...form };
-    formObject[target.name] = target.value;
-    setForm({ ...formObject });
-  };
+  // const handleFormChange = ({ target }) => {
+  //   const formObject = { ...form };
+  //   formObject[target.name] = target.value;
+  //   setForm({ ...formObject });
+  // };
 
   const handlePasswordModify = () => {
     setShowConfirmDialog(false);
@@ -38,6 +70,15 @@ const PwdModify = () => {
 
   const handleResultButton = () => {
     setShowResultDialog(false);
+  };
+
+  const onSubmit = async (data) => {
+    data.password = await e2ee(data.password);
+    data.newPassword = await e2ee(data.newPassword);
+    setForm({ ...data });
+    setShowConfirmDialog(true);
+    // setpassword(data.password);
+    // setOpenDialog(true);
   };
 
   const WarningDialog = () => (
@@ -101,64 +142,56 @@ const PwdModify = () => {
 
   return (
     <PwdModifyWrapper>
-      <FEIBInputLabel>您的網銀密碼</FEIBInputLabel>
-      <FEIBInput
-        type="password"
-        name="password"
-        value={form.password}
-        placeholder="請輸入有區分大小寫的8~20位英數字網銀密碼"
-        $color={theme.colors.primary.dark}
-        $borderColor={theme.colors.primary.brand}
-        onChange={handleFormChange}
-      />
-      <FEIBInputLabel>新的網銀密碼</FEIBInputLabel>
-      <FEIBInput
-        type="password"
-        name="newPassword"
-        value={form.newPassword}
-        placeholder="請輸入有區分大小寫的8~20位英數字網銀密碼"
-        $color={theme.colors.primary.dark}
-        $borderColor={theme.colors.primary.brand}
-        onChange={handleFormChange}
-      />
-      <FEIBInputLabel>請確認新的網銀密碼</FEIBInputLabel>
-      <FEIBInput
-        type="password"
-        name="newPasswordCheck"
-        value={form.newPasswordCheck}
-        placeholder="請輸入有區分大小寫的8~20位英數字網銀密碼"
-        $color={theme.colors.primary.dark}
-        $borderColor={theme.colors.primary.brand}
-        onChange={handleFormChange}
-      />
-      {
-        forceModify ? (
-          <ConfirmButtons
-            subButtonValue="維持不變"
-            mainButtonValue="儲存變更"
-            mainButtonDisabled={
-              !form.password
-              || !form.newPassword
-              || !form.newPasswordCheck
-              || (form.newPassword !== form.newPasswordCheck)
-            }
-            mainButtonOnClick={() => setShowConfirmDialog(true)}
-            subButtonOnClick={() => setShowWarningDialog(true)}
-          />
-        ) : (
-          <FEIBButton
-            disabled={
-              !form.password
-              || !form.newPassword
-              || !form.newPasswordCheck
-              || (form.newPassword !== form.newPasswordCheck)
-            }
-            onClick={() => setShowConfirmDialog(true)}
-          >
-            儲存變更
-          </FEIBButton>
-        )
-      }
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <PasswordInput
+          label="您的網銀密碼"
+          id="password"
+          name="password"
+          control={control}
+          placeholder="請輸入有區分大小寫的8~20位英數字"
+          errorMessage={errors.password?.message}
+        />
+        <PasswordInput
+          label="新的網銀密碼"
+          id="newPassword"
+          name="newPassword"
+          control={control}
+          placeholder="請輸入有區分大小寫的8~20位英數字"
+          errorMessage={errors.newPassword?.message}
+        />
+        <PasswordInput
+          label="請確認新的網銀密碼"
+          id="newPasswordCheck"
+          name="newPasswordCheck"
+          control={control}
+          placeholder="請輸入有區分大小寫的8~20位英數字"
+          errorMessage={errors.newPasswordCheck?.message}
+        />
+        {
+          forceModify ? (
+            <ConfirmButtons
+              subButtonValue="維持不變"
+              mainButtonValue="儲存變更"
+              // mainButtonDisabled={
+              //   !form.password
+              //   || !form.newPassword
+              //   || !form.newPasswordCheck
+              //   || (form.newPassword !== form.newPasswordCheck)
+              // }
+              subButtonOnClick={(event) => {
+                event.preventDefault();
+                setShowWarningDialog(true);
+              }}
+            />
+          ) : (
+            <FEIBButton
+              type="submit"
+            >
+              儲存變更
+            </FEIBButton>
+          )
+        }
+      </form>
       <WarningDialog />
       <ConfirmDialog />
       <ResultDialog />

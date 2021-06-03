@@ -3,6 +3,11 @@ import Layout from 'components/Layout';
 import theme from 'themes/theme';
 
 const NoticeSettingWrapper = styled(Layout)`
+  .agreeLabel {
+    p {
+      font-size: 1rem;
+    }
+  }
   .noticeContainer {
     &.all {
       margin-bottom: 2rem;
@@ -34,18 +39,8 @@ const NoticeSettingWrapper = styled(Layout)`
       padding: 0px;
     }
   }
-  
   .MuiCollapse-container {
     width: 100%;
-  }
-  .tip {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 2rem 0 1rem;
-    span {
-      margin-right: 0.2rem;
-    }
   }
   &.settingPage {
     .MuiFormControlLabel-root {

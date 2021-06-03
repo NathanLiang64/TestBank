@@ -3,17 +3,32 @@ import Layout from 'components/Layout';
 import theme from 'themes/theme';
 
 const ProjectJWrapper = styled(Layout)`
+  .projectDescription {
+    font-size: 1rem;
+  }
+  .agreeLabel {
+    p {
+      color: ${theme.colors.text.light};
+      font-size: 1rem;
+    }
+  }
   text-align: justify;
   .personalSaveLink {
     font-weight: bold;
     text-decoration: underline;
   }
   .checkBoxContainer {
-    transform: translateY(-2.4rem);
+    .MuiFormControlLabel-root {
+      align-items: flex-start;
+      .MuiButtonBase-root {
+        padding-top: 4px;
+      }
+    }
   }
   .alertContainer {
     p {
-      color: ${theme.colors.text.point}
+      font-size: 1rem;
+      color: ${theme.colors.text.light};
     }
   }
 `;
