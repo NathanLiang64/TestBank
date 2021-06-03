@@ -26,7 +26,6 @@ import SMSOTPactivate from 'pages/SMSOTPactivate';
 import QRCodeTransfer from 'pages/QRCodeTransfer';
 import Adjustment from 'pages/Adjustment';
 import Adjustment1 from 'pages/Adjustment/adjustment_1';
-import Adjustment2 from 'pages/Adjustment/adjustment_2';
 import ProjectJ from 'pages/ProjectJ';
 import LoanInquiry from 'pages/LoanInquiry';
 import LoanInterest from 'pages/LoanInterest';
@@ -63,7 +62,6 @@ const routes = [
   { path: '/QRCodeTransfer', exact: false, component: QRCodeTransfer },
   { path: '/adjustment', exact: false, component: Adjustment },
   { path: '/adjustment1', exact: false, component: Adjustment1 },
-  { path: '/adjustment2', exact: false, component: Adjustment2 },
   { path: '/projectJ', exact: false, component: ProjectJ },
   { path: '/loanInquiry', exact: false, component: LoanInquiry },
   { path: '/loanInterest', exact: false, component: LoanInterest },

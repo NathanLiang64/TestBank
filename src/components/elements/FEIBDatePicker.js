@@ -25,6 +25,9 @@ const FEIBDatePicker = styled(MaterialDatePicker).attrs({
         border-color: ${({ $borderColor, $focusBorderColor }) => $focusBorderColor || $borderColor || 'inherit'};
       }
     }
+    .MuiIconButton-root {
+      padding: 0;
+    }
   }
 `;
 
