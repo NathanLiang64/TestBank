@@ -362,5 +362,10 @@
         }
       ]
     }
+  },
+  "basicInformation": {
+    "name": "BasicInformation",
+    "title": "基本資料變更",
+    "route": "/basicInformation"
   }
 }

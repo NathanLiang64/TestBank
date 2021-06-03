@@ -29,6 +29,7 @@ import Adjustment1 from 'pages/Adjustment/adjustment_1';
 import ProjectJ from 'pages/ProjectJ';
 import LoanInquiry from 'pages/LoanInquiry';
 import LoanInterest from 'pages/LoanInterest';
+import BasicInformation from 'pages/BasicInformation';
 
 /* 測試用目錄頁 */
 import Nav from 'pages/Nav';
@@ -65,6 +66,7 @@ const routes = [
   { path: '/projectJ', exact: false, component: ProjectJ },
   { path: '/loanInquiry', exact: false, component: LoanInquiry },
   { path: '/loanInterest', exact: false, component: LoanInterest },
+  { path: '/basicInformation', exact: false, component: BasicInformation },
 ];
 
 export default routes;
