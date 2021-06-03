@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { useCheckLocation, usePageInfo } from 'hooks';
+import * as yup from 'yup';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 /* Elements */
 import {
@@ -7,22 +10,35 @@ import {
   FEIBSelect,
   FEIBOption,
   FEIBButton,
+  FEIBErrorMessage,
 } from 'components/elements';
-import NoticeArea from 'components/NoticeArea';
+import Accordion from 'components/Accordion';
 
 /* Styles */
-import theme from 'themes/theme';
+// import theme from 'themes/theme';
 import LoanInquiryWrapper from './loanInquiry.style';
 
 const LoanInquiry = () => {
-  const [account, setAccount] = useState('');
+  /**
+   *- 資料驗證
+   */
+  const schema = yup.object().shape({
+    account: yup
+      .string()
+      .required('請選擇貸款帳號'),
+  });
+  const {
+    handleSubmit, control, formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  // const [account, setAccount] = useState('');
   const [showTable, setShowTable] = useState(false);
 
-  const handleAccountChange = (event) => {
-    setAccount(event.target.value);
-  };
-
-  const handleSearchClick = () => {
+  const onSubmit = (data) => {
+    // eslint-disable-next-line no-console
+    console.log(data);
     setShowTable(true);
   };
 
@@ -86,33 +102,46 @@ const LoanInquiry = () => {
 
   return (
     <LoanInquiryWrapper>
-      <FEIBInputLabel>貸款帳號</FEIBInputLabel>
-      <FEIBSelect
-        value={account}
-        $borderColor={theme.colors.primary.brand}
-        onChange={handleAccountChange}
-      >
-        <FEIBOption value="0000113253642323">0000113253642323</FEIBOption>
-        <FEIBOption value="0000113253642324">0000113253642324</FEIBOption>
-        <FEIBOption value="0000113253642325">0000113253642325</FEIBOption>
-      </FEIBSelect>
-      <FEIBButton
-        disabled={!account}
-        onClick={handleSearchClick}
-      >
-        查詢
-      </FEIBButton>
-      { showTable ? <ResultTable /> : '' }
-      <NoticeArea textAlign="justify">
-        <ol>
-          <li>
-            <p>查詢日期若已逾繳款日，【違約金+逾期息】欄位為估算逾期一個月之金額供參考，實際扣款金額仍依本行電腦系統為準。</p>
-          </li>
-          <li>
-            <p>如欲查詢已逾期戶之貸款資料，請與本行客戶服務中心聯繫(02-80731166)。」</p>
-          </li>
-        </ol>
-      </NoticeArea>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <FEIBInputLabel>貸款帳號</FEIBInputLabel>
+        <Controller
+          name="account"
+          defaultValue=""
+          control={control}
+          placeholder="請選擇貸款帳號"
+          render={({ field }) => (
+            <FEIBSelect
+              {...field}
+              id="account"
+              name="account"
+              placeholder="請選擇貸款帳號"
+              error={!!errors.account}
+            >
+              <FEIBOption value="0000113253642323">0000113253642323</FEIBOption>
+              <FEIBOption value="0000113253642324">0000113253642324</FEIBOption>
+              <FEIBOption value="0000113253642325">0000113253642325</FEIBOption>
+            </FEIBSelect>
+          )}
+        />
+        <FEIBErrorMessage>{errors.account?.message}</FEIBErrorMessage>
+        <Accordion space="bottom">
+          <ol>
+            <li>
+              <p>查詢日期若已逾繳款日，【違約金+逾期息】欄位為估算逾期一個月之金額供參考，實際扣款金額仍依本行電腦系統為準。</p>
+            </li>
+            <br />
+            <li>
+              <p>如欲查詢已逾期戶之貸款資料，請與本行客戶服務中心聯繫(02-80731166)。」</p>
+            </li>
+          </ol>
+        </Accordion>
+        <FEIBButton
+          type="submit"
+        >
+          查詢
+        </FEIBButton>
+      </form>
+      { showTable && <ResultTable /> }
     </LoanInquiryWrapper>
   );
 };

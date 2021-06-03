@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { useCheckLocation, usePageInfo } from 'hooks';
+import * as yup from 'yup';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 /* Elements */
 import {
@@ -8,27 +11,44 @@ import {
   FEIBSelect,
   FEIBOption,
   FEIBDatePicker,
+  FEIBErrorMessage,
 } from 'components/elements';
 import PickersProvider from 'components/DatePickerProvider';
 
 /* Styles */
-import theme from 'themes/theme';
+// import theme from 'themes/theme';
 import LoanInterestWrapper from './loanInterest.style';
 
 const LoanInterest = () => {
-  const [account, setAccount] = useState('0');
-  const [subAccount, setSubAccount] = useState('0');
+  /**
+   *- 資料驗證
+   */
+  const schema = yup.object().shape({
+    account: yup
+      .string()
+      .required('請選擇貸款帳號'),
+    subAccount: yup
+      .string()
+      .required('請選擇貸款分號'),
+  });
+  const {
+    handleSubmit, control, formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+  // const [account, setAccount] = useState('0');
+  // const [subAccount, setSubAccount] = useState('0');
   const [showTable, setShowTable] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
-  const handleAccountChange = (event) => {
-    setAccount(event.target.value);
-  };
+  // const handleAccountChange = (event) => {
+  //   setAccount(event.target.value);
+  // };
 
-  const handleSubAccountChange = (event) => {
-    setSubAccount(event.target.value);
-  };
+  // const handleSubAccountChange = (event) => {
+  //   setSubAccount(event.target.value);
+  // };
 
   const handleStartDate = (date) => {
     setStartDate(date);
@@ -38,7 +58,13 @@ const LoanInterest = () => {
     setEndDate(date);
   };
 
-  const handleSearchClick = () => {
+  // const handleSearchClick = () => {
+  //   setShowTable(true);
+  // };
+
+  const onSubmit = (data) => {
+    // eslint-disable-next-line no-console
+    console.log(data);
     setShowTable(true);
   };
 
@@ -90,48 +116,71 @@ const LoanInterest = () => {
 
   return (
     <LoanInterestWrapper>
-      <FEIBInputLabel>貸款帳號</FEIBInputLabel>
-      <div className="datePickerContainer">
-        <div className="picker">
-          <FEIBSelect
-            value={account}
-            $borderColor={theme.colors.primary.brand}
-            onChange={handleAccountChange}
-          >
-            <FEIBOption value="0">請選擇貸款帳號</FEIBOption>
-            <FEIBOption value="0000113253642323">0000113253642323</FEIBOption>
-            <FEIBOption value="0000113253642324">0000113253642324</FEIBOption>
-            <FEIBOption value="0000113253642325">0000113253642325</FEIBOption>
-          </FEIBSelect>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <FEIBInputLabel>貸款帳號</FEIBInputLabel>
+        <div className="selectContainer">
+          <div className="picker">
+            <Controller
+              name="account"
+              defaultValue=""
+              control={control}
+              placeholder="請選擇貸款帳號"
+              render={({ field }) => (
+                <FEIBSelect
+                  {...field}
+                  id="account"
+                  name="account"
+                  placeholder="請選擇貸款帳號"
+                  error={!!errors.account}
+                >
+                  <FEIBOption value="" disabled>請選擇貸款帳號</FEIBOption>
+                  <FEIBOption value="0000113253642323">0000113253642323</FEIBOption>
+                  <FEIBOption value="0000113253642324">0000113253642324</FEIBOption>
+                  <FEIBOption value="0000113253642325">0000113253642325</FEIBOption>
+                </FEIBSelect>
+              )}
+            />
+            <FEIBErrorMessage>{errors.account?.message}</FEIBErrorMessage>
+          </div>
+          <div className="picker">
+            <Controller
+              name="subAccount"
+              defaultValue=""
+              control={control}
+              placeholder="請選擇貸款分號"
+              render={({ field }) => (
+                <FEIBSelect
+                  {...field}
+                  id="subAccount"
+                  name="subAccount"
+                  placeholder="請選擇貸款分號"
+                  error={!!errors.account}
+                >
+                  <FEIBOption value="" disabled>請選擇貸款分號</FEIBOption>
+                  <FEIBOption value="001">001</FEIBOption>
+                  <FEIBOption value="002">002</FEIBOption>
+                  <FEIBOption value="003">003</FEIBOption>
+                </FEIBSelect>
+              )}
+            />
+            <FEIBErrorMessage>{errors.subAccount?.message}</FEIBErrorMessage>
+          </div>
         </div>
-        <div className="picker">
-          <FEIBSelect
-            value={subAccount}
-            $borderColor={theme.colors.primary.brand}
-            onChange={handleSubAccountChange}
-          >
-            <FEIBOption value="0">請選擇貸款分號</FEIBOption>
-            <FEIBOption value="001">001</FEIBOption>
-            <FEIBOption value="002">002</FEIBOption>
-            <FEIBOption value="003">003</FEIBOption>
-          </FEIBSelect>
+        <FEIBInputLabel>繳息期間</FEIBInputLabel>
+        <div className="datePickerContainer">
+          <PickersProvider>
+            <FEIBDatePicker value={startDate} onChange={handleStartDate} />
+            <span>-</span>
+            <FEIBDatePicker value={endDate} onChange={handleEndDate} />
+          </PickersProvider>
         </div>
-      </div>
-      <FEIBInputLabel>繳息期間</FEIBInputLabel>
-      <div className="datePickerContainer">
-        <PickersProvider>
-          <FEIBDatePicker value={startDate} onChange={handleStartDate} />
-          <span>-</span>
-          <FEIBDatePicker value={endDate} onChange={handleEndDate} />
-        </PickersProvider>
-      </div>
-      <p className="point">*可查詢三年內繳款紀錄，查詢區間最多一年</p>
-      <FEIBButton
-        disabled={account === '0' || subAccount === '0'}
-        onClick={handleSearchClick}
-      >
-        查詢
-      </FEIBButton>
+        <p className="point">*可查詢三年內繳款紀錄，查詢區間最多一年</p>
+        <FEIBButton
+          type="submit"
+        >
+          查詢
+        </FEIBButton>
+      </form>
       { showTable ? <ResultTable /> : '' }
     </LoanInterestWrapper>
   );

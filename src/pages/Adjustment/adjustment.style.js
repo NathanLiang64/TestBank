@@ -20,6 +20,7 @@ const AdjustmentWrapper = styled(Layout)`
     .datePickerContainer {
       display: flex;
       justify-content: space-between;
+      margin-bottom: 2rem;
       span {
         margin: 0 1rem;
       }
