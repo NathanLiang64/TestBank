@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router';
 import * as yup from 'yup';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 /* Elements */
 import {
-  FEIBInput, FEIBInputLabel, FEIBButton, FEIBErrorMessage,
+  FEIBButton,
 } from 'components/elements';
+import PasswordInput from 'components/PasswordInput';
 import Accordion from 'components/Accordion';
 import Dialog from 'components/Dialog';
 import Alert from 'components/Alert';
@@ -21,16 +22,25 @@ const CardLessWithDrawChgPwd = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
+    oldPassword: yup
+      .string()
+      .required('請輸入舊無卡提款密碼')
+      .min(4, '提款密碼須為 4-12 位數字')
+      .max(12, '提款密碼須為 4-12 位數字')
+      .matches(/^[0-9]*$/, '提款密碼僅能使用數字'),
     password: yup
       .string()
       .required('請輸入新無卡提款密碼')
-      .min(8, '您輸入的無卡提款密碼長度有誤，請重新輸入。')
-      .max(20, '您輸入的無卡提款密碼長度有誤，請重新輸入。'),
+      .min(4, '新提款密碼須為 4-12 位數字')
+      .max(12, '新提款密碼須為 4-12 位數字')
+      .matches(/^[0-9]*$/, '提款密碼僅能使用數字'),
     passwordConfirm: yup
       .string()
       .required('請再輸入一次新無卡提款密碼')
-      .min(8, '您輸入的無卡提款密碼長度有誤，請重新輸入。')
-      .max(20, '您輸入的無卡提款密碼長度有誤，請重新輸入。'),
+      .min(4, '新提款密碼須為 4-12 位數字')
+      .max(12, '新提款密碼須為 4-12 位數字')
+      .matches(/^[0-9]*$/, '提款密碼僅能使用數字')
+      .oneOf([yup.ref('password'), null], '兩次輸入的新提款密碼必須相同'),
   });
   const {
     handleSubmit, control, formState: { errors },
@@ -80,42 +90,35 @@ const CardLessWithDrawChgPwd = () => {
   return (
     <CardLessATMWrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <FEIBInputLabel>新提款密碼設定</FEIBInputLabel>
-        <Controller
+        <PasswordInput
+          label="舊提款密碼"
+          id="oldPassword"
+          name="oldPassword"
+          placeholder="請輸入舊提款密碼"
+          inputMode="numric"
+          control={control}
+          errorMessage={errors.oldPassword?.message}
+        />
+        <PasswordInput
+          label="新提款密碼"
+          id="password"
           name="password"
-          defaultValue=""
+          placeholder="請輸入舊提款密碼"
           control={control}
-          render={({ field }) => (
-            <FEIBInput
-              {...field}
-              type="password"
-              id="password"
-              name="password"
-              placeholder="請輸入新無卡提款密碼"
-              error={!!errors.password}
-            />
-          )}
+          errorMessage={errors.password?.message}
         />
-        <FEIBErrorMessage>{errors.password?.message}</FEIBErrorMessage>
-        <FEIBInputLabel>確認新提款密碼</FEIBInputLabel>
-        <Controller
+        <PasswordInput
+          label="確認新提款密碼"
+          id="passwordConfirm"
           name="passwordConfirm"
-          defaultValue=""
+          placeholder="請再輸入一次新提款密碼"
           control={control}
-          render={({ field }) => (
-            <FEIBInput
-              {...field}
-              type="password"
-              id="passwordConfirm"
-              name="passwordConfirm"
-              placeholder="請輸入新無卡提款密碼"
-              error={!!errors.passwordConfirm}
-            />
-          )}
+          errorMessage={errors.passwordConfirm?.message}
         />
-        <FEIBErrorMessage>{errors.passwordConfirm?.message}</FEIBErrorMessage>
         <Accordion space="both">
-          一些注意事項
+          <ul>
+            <li>提醒您應注意密碼之設置及使用，不宜使用與您個人資料有關或具連續性、重複性或規則性之號碼為密碼，且不得將上開交易驗證資訊以任何方式使第三人知悉獲得以知悉，以確保交易安全。</li>
+          </ul>
         </Accordion>
         <FEIBButton
           type="submit"

@@ -28,10 +28,17 @@ const CardLessATM = () => {
   const schema = yup.object().shape({
     withdrawPassword: yup
       .string()
-      .required('請輸入提款密碼'),
+      .required('請輸入提款密碼')
+      .min(4, '提款密碼須為 4-12 位數字')
+      .max(12, '提款密碼須為 4-12 位數字')
+      .matches(/^[0-9]*$/, '提款密碼僅能使用數字'),
     withdrawPasswordCheck: yup
       .string()
-      .required('請再輸入一次提款密碼'),
+      .required('請再輸入一次提款密碼')
+      .min(4, '提款密碼須為 4-12 位數字')
+      .max(12, '提款密碼須為 4-12 位數字')
+      .matches(/^[0-9]*$/, '提款密碼僅能使用數字')
+      .oneOf([yup.ref('withdrawPassword'), null], '兩次輸入的提款密碼必須相同'),
     otpCode: yup
       .string()
       .required('請輸入開通驗證碼'),
@@ -133,7 +140,13 @@ const CardLessATM = () => {
           errorMessage={errors.password?.message}
         />
         <Accordion space="both">
-          一些注意事項
+          <ul>
+            <li>本交易限時15分鐘內有效，請於交易有效時間內，至本行提供無卡提款功能之ATM完成提款。若逾時請重新申請。(實際交易有效時間以本行系統時間為準)。</li>
+            <br />
+            <li>提醒您，ATM提款時請務必確認您的存款餘額是否足夠，避免提款失敗。 </li>
+            <br />
+            <li>無卡提款密碼連續錯誤3次，即鎖住服務，須重新申請服務。</li>
+          </ul>
         </Accordion>
         <FEIBButton
           type="submit"

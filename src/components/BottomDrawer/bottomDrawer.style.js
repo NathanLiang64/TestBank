@@ -13,16 +13,19 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
   .drawerTitle {
     display: flex;
     justify-content: center;
-    padding: .8rem;
-    font-size: 2rem;
+    padding: 1.2rem;
     font-weight: 500;
-    height: 4.6rem;
+    
+    .title {
+      font-size: 2rem;
+      color: ${({ theme, $color }) => $color || theme.colors.text.dark};
+    }
   }
   
   .closeButton {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: .6rem;
+    right: .8rem;
   }
   
   .content {

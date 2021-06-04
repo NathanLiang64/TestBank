@@ -106,7 +106,13 @@ const CardLessATM3 = () => {
         </table>
       </div>
       <Accordion space="both">
-        一些注意事項
+        <ul>
+          <li>本交易限時15分鐘內有效，請於交易有效時間內，至本行提供無卡提款功能之ATM完成提款。若逾時請重新申請。(實際交易有效時間以本行系統時間為準)。</li>
+          <br />
+          <li>提醒您，ATM提款時請務必確認您的存款餘額是否足夠，避免提款失敗。 </li>
+          <br />
+          <li>無卡提款密碼連續錯誤3次，即鎖住服務，須重新申請服務。</li>
+        </ul>
       </Accordion>
       <FEIBButton
         onClick={cancleWithdrawal}
