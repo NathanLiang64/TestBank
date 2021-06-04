@@ -94,7 +94,7 @@ const BasicInformation = () => {
             <FEIBInput
               {...field}
               type="text"
-              inputMode="numeric"
+              inputmode="tel"
               id="phone"
               name="phone"
               placeholder="請輸入行動電話"
@@ -112,7 +112,7 @@ const BasicInformation = () => {
             <FEIBInput
               {...field}
               type="text"
-              inputMode="email"
+              inputmode="email"
               id="email"
               name="email"
               placeholder="請輸入電子信箱"
