@@ -13,6 +13,7 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
   .drawerTitle {
     display: flex;
     justify-content: center;
+    min-height: 4.8rem;
     padding: 1.2rem;
     font-weight: 500;
     
@@ -38,7 +39,7 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
         border-top: .1rem solid ${({ theme }) => theme.colors.border.lightest};
       }
       
-      a {
+      a, p {
         display: flex;
         align-items: center;
         padding: 2rem;
