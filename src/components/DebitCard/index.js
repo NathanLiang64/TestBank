@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Icon } from '@material-ui/core';
 import {
-  Visibility, VisibilityOff, FileCopyOutlined, MoreVert,
-  Euro, LibraryAdd, SystemUpdate, Edit, PlaylistAdd,
+  Visibility, VisibilityOff, FileCopyOutlined, MoreVert, SystemUpdate, Edit,
 } from '@material-ui/icons';
 import BottomDrawer from 'components/BottomDrawer';
 import { FEIBIconButton } from 'components/elements';
@@ -98,21 +97,6 @@ const DebitCard = ({
     </div>
   );
 
-  // 目前無 api，暫用假資料
-  // eslint-disable-next-line no-unused-vars
-  const mockFunctionList = [
-    { title: '轉帳', path: '/', other: null },
-    { title: '無卡提款', path: '/cardLessATM', other: null },
-  ];
-  // eslint-disable-next-line no-unused-vars
-  const mockMoreList = [
-    { title: '換匯', path: '/', icon: <Euro /> },
-    { title: '設為速查帳戶', path: '/cardLessATM', icon: <PlaylistAdd /> },
-    { title: '增加子帳戶', path: '/cardLessATM', icon: <LibraryAdd /> },
-    { title: '存摺封面下載', path: '/cardLessATM', icon: <SystemUpdate /> },
-    { title: '編輯帳戶別名', path: '/cardLessATM', icon: <Edit /> },
-  ];
-
   // render 功能列表
   const renderFunctionList = (list) => (
     <ul className="functionList">
@@ -127,14 +111,27 @@ const DebitCard = ({
   // render 點擊更多圖標後的功能列表
   const renderMoreList = (list) => (
     <ul className="moreList">
-      { list.map((item) => (
+      {list.map((item) => (
         <li key={item.title}>
           <Link to={item.path}>
             <Icon>{item.icon}</Icon>
             {item.title}
           </Link>
         </li>
-      )) }
+      ))}
+      {/* 下方為功能列表內的固定功能 */}
+      <li>
+        <p>
+          <SystemUpdate />
+          存摺封面下載
+        </p>
+      </li>
+      <li>
+        <p>
+          <Edit />
+          編輯帳戶別名
+        </p>
+      </li>
     </ul>
   );
 

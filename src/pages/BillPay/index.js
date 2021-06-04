@@ -20,6 +20,7 @@ import theme from 'themes/theme';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { payAmountValidation, bankCodeValidation, transferAccountValidation } from 'utilities/validation';
 import BillPayWrapper from './billPay.style';
 
 import { actions } from './stores';
@@ -27,7 +28,7 @@ import { actions } from './stores';
 const { init } = billPayApi;
 const { setInitData, setPayData } = actions;
 
-const notZero = (value) => (parseFloat(value) > parseFloat('0'));
+// const notZero = (value) => (parseFloat(value) > parseFloat('0'));
 
 const BillPay = () => {
   /**
@@ -39,20 +40,17 @@ const BillPay = () => {
     payAmount: yup.number()
       .when('payMoney', {
         is: 3,
-        then: yup.number('輸入金額欄位格式有誤，請重新檢查。')
-          .required('輸入金額欄位尚未填寫，請重新檢查。')
-          .test('payAmount-notzero', '輸入金額欄位格式有誤，請重新檢查。', (value) => notZero(value)),
+        ...payAmountValidation,
       }),
     otherBankCode: yup.string()
       .when('payType', {
         is: 2,
-        then: yup.string().test('otherBankCode-notspace', '轉出行庫尚未選取，請重新檢查。', (value) => value !== ' '),
+        ...bankCodeValidation,
       }),
     otherTrnAcct: yup.string()
       .when('payType', {
         is: 2,
-        then: yup.string('輸入轉出帳號尚未填寫，請重新檢查。')
-          .required('輸入轉出帳號尚未填寫，請重新檢查。').max(16, '輸入轉出帳號格式有誤，請重新檢查。'),
+        ...transferAccountValidation,
       }),
     sendEmail: yup.boolean(),
     email: yup.string()
