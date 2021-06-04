@@ -27,7 +27,8 @@ const BasicInformation = () => {
   const schema = yup.object().shape({
     phone: yup
       .string()
-      .required('請輸入行動電話'),
+      .required('請輸入行動電話')
+      .matches(/^09[0-9]{8}$/, '行動電話格式不符'),
     email: yup
       .string()
       .required('請輸入電子信箱')
@@ -94,7 +95,7 @@ const BasicInformation = () => {
             <FEIBInput
               {...field}
               type="text"
-              inputmode="tel"
+              inputMode="tel"
               id="phone"
               name="phone"
               placeholder="請輸入行動電話"
@@ -112,7 +113,7 @@ const BasicInformation = () => {
             <FEIBInput
               {...field}
               type="text"
-              inputmode="email"
+              inputMode="email"
               id="email"
               name="email"
               placeholder="請輸入電子信箱"
