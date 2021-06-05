@@ -111,7 +111,7 @@ const CardLessATM = () => {
           label="提款密碼"
           id="withdrawPassword"
           name="withdrawPassword"
-          placeholder="請輸入提款密碼"
+          placeholder="請輸入提款密碼(4-12位數字)"
           control={control}
           errorMessage={errors.withdrawPassword?.message}
         />
@@ -119,7 +119,7 @@ const CardLessATM = () => {
           label="確認提款密碼"
           id="withdrawPasswordCheck"
           name="withdrawPasswordCheck"
-          placeholder="請再輸入一次提款密碼"
+          placeholder="請再輸入一次提款密碼(4-12位數字)"
           control={control}
           errorMessage={errors.withdrawPasswordCheck?.message}
         />
@@ -135,7 +135,6 @@ const CardLessATM = () => {
           label="網銀密碼"
           id="password"
           name="password"
-          placeholder="請輸入網銀密碼"
           control={control}
           errorMessage={errors.password?.message}
         />
