@@ -15,21 +15,21 @@ import AccordionWrapper from './accordion.style';
 * */
 
 const Accordion = ({
-  className, title, space, children,
+  className, title, space, children, open,
 }) => {
-  const [open, setOpen] = useState(false);
+  const [show, setShow] = useState(open);
 
   const handleOpen = () => {
-    setOpen(!open);
+    setShow(!show);
   };
 
   return (
     <AccordionWrapper className={className} $space={space}>
-      <button type="button" className={open ? 'open' : ''} onClick={handleOpen}>
+      <button type="button" className={show ? 'open' : ''} onClick={handleOpen}>
         <h3>{title || '注意事項'}</h3>
         <ExpandMoreOutlined style={{ fontSize: '3.8rem', color: '#AC8CE8' }} />
       </button>
-      <FEIBCollapse in={open}>
+      <FEIBCollapse in={show}>
         <div className="content">
           <div className="line" />
           {children}
