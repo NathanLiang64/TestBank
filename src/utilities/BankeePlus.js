@@ -3,5 +3,5 @@ export function goToFunc(funcName, jsonParams = null) {
 }
 
 export function closeFunc(jsonParams = null) {
-  window.bankeeplus.closefun(jsonParams);
+  window.bankeeplus.closefunc(jsonParams);
 }
