@@ -12,6 +12,7 @@ import AccordionWrapper from './accordion.style';
 * 2. title -> 可傳入標題，若不傳入預設為 "注意事項"
 * 3. space -> 此組件預設無 margin，可傳入 "top"、"bottom"、"both" 字串來產生固定高度的 margin
 * 4. children -> 顯示文字，不須設置 children 屬性，直接在標籤內部填寫文字
+* 5. open -> 傳入 open 參數則預設開啟狀態
 * */
 
 const Accordion = ({
