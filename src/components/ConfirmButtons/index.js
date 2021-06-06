@@ -29,6 +29,7 @@ const ConfirmButtons = ({
       $bgColor={theme.colors.background.cancel}
       $color={theme.colors.text.dark}
       onClick={subButtonOnClick}
+      type="button"
     >
       {subButtonValue || '取消'}
     </FEIBButton>

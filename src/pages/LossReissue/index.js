@@ -6,7 +6,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { lossReissueApi } from 'apis';
 import Dialog from 'components/Dialog';
-import NoticeArea from 'components/NoticeArea';
+import Accordion from 'components/Accordion';
+// import NoticeArea from 'components/NoticeArea';
 import ConfirmButtons from 'components/ConfirmButtons';
 import PasswordInput from 'components/PasswordInput';
 import { FEIBInput, FEIBInputLabel, FEIBButton } from 'components/elements';
@@ -72,7 +73,7 @@ const LossReissue = () => {
     setShowResultDialog(true);
     // call api 決定顯示申請成功失敗結果
     setShowAlert(true);
-    dispatch(setIsResultSuccess(true));
+    dispatch(setIsResultSuccess(false));
   };
 
   // 點擊結果彈窗內的確定按鈕後關閉彈窗
@@ -94,21 +95,21 @@ const LossReissue = () => {
       dispatch(setUserAddress('台北市信義區信義路4段5號6樓'));
     }
     return (
-      <div>
-        <div className="passwordArea">
-          <PasswordInput
-            id="password"
-            control={control}
-            errorMessage={errors.password?.message}
-          />
-        </div>
-
-        <FEIBButton type="submit" disabled={buttonDisabled}>
-          { `${actionText}申請` }
-        </FEIBButton>
-      </div>
+      <FEIBButton type="submit" disabled={buttonDisabled}>
+        { `${actionText}申請` }
+      </FEIBButton>
     );
   };
+
+  const renderPasswordInput = () => (
+    <div className="passwordArea">
+      <PasswordInput
+        id="password"
+        control={control}
+        errorMessage={errors.password?.message}
+      />
+    </div>
+  );
 
   const ConfirmDialog = () => (
     <Dialog
@@ -155,7 +156,7 @@ const LossReissue = () => {
   };
 
   // 卡片狀態為 " 新申請 " 或 " 已銷戶 " 時不應出現按鈕
-  const checkCardState = (cardState) => (cardState !== '新申請' && cardState !== '已銷戶') && renderButton(cardState);
+  const checkCardState = (cardState) => (cardState !== '新申請' && cardState !== '已銷戶');
 
   useCheckLocation();
   usePageInfo('/api/lossReissue');
@@ -178,17 +179,18 @@ const LossReissue = () => {
 
       <div>
         <FEIBInputLabel>金融卡狀態</FEIBInputLabel>
-        <FEIBInput name="state" value={state} disabled />
+        <FEIBInput name="state" value={state} $space="bottom" disabled />
       </div>
 
-      <NoticeArea textAlign="left" space="both">
-        <p>1. Bankee存款帳戶申請補發Bankee金融卡，手續費新臺幣(以下同)100元及郵寄掛號費50元將由Bankee存款帳戶中自動扣除(前述Bankee存款帳戶泛指持有「Bankee數位存款帳戶」或「Bankee一般帳戶」者，以下簡稱本存戶)。</p>
-        <p>2. 本存戶向遠東國際商業銀行辦理金融卡申請/異動申請，除金融卡註銷外，嗣後往來仍悉遵「遠東國際商業銀行金融卡服務約定事項」有關業務規定辦理。</p>
-        <p>3. 於各項異動手續辦理妥前，所有使用本存戶Bankee金融卡之交易或申請人為不實之申請，而致蒙受損害時，其一切損害及責任概由本存戶負責。</p>
-        <p>4. 本存戶於申請此服務時，業已審閱並充分了解全部內容，並完全同意後才使用各項服務及申請憑證。</p>
-      </NoticeArea>
       <form onSubmit={handleSubmit(onSubmit)}>
-        { checkCardState(state) }
+        { checkCardState(state) && renderPasswordInput() }
+        <Accordion space={checkCardState(state) && 'both'} open>
+          <p>1. Bankee存款帳戶申請補發Bankee金融卡，手續費新臺幣(以下同)100元及郵寄掛號費50元將由Bankee存款帳戶中自動扣除(前述Bankee存款帳戶泛指持有「Bankee數位存款帳戶」或「Bankee一般帳戶」者，以下簡稱本存戶)。</p>
+          <p>2. 本存戶向遠東國際商業銀行辦理金融卡申請/異動申請，除金融卡註銷外，嗣後往來仍悉遵「遠東國際商業銀行金融卡服務約定事項」有關業務規定辦理。</p>
+          <p>3. 於各項異動手續辦理妥前，所有使用本存戶Bankee金融卡之交易或申請人為不實之申請，而致蒙受損害時，其一切損害及責任概由本存戶負責。</p>
+          <p>4. 本存戶於申請此服務時，業已審閱並充分了解全部內容，並完全同意後才使用各項服務及申請憑證。</p>
+        </Accordion>
+        { checkCardState(state) && renderButton(state) }
       </form>
       { showResultDialog ? <ResultDialog /> : <ConfirmDialog /> }
 
