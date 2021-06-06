@@ -124,6 +124,36 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
       }
     }
   }
+
+  &.debitInquiryDrawer {
+
+    .calendarArea {
+      margin-bottom: 3.4rem;
+    }
+    
+    .dateArea {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1.6rem;
+      border-radius: 1rem;
+      height: 8rem;
+      background: ${({ theme }) => theme.colors.background.lighterBlue};
+      
+      p {
+        font-size: 1.8rem;
+        color: ${({ theme }) => theme.colors.primary.brand};
+      }
+    }
+    
+    .keywordArea {
+      margin-bottom: 3.4rem;
+
+      .defaultKeywords {
+        margin-top: 1.6rem;
+      }
+    }
+  }
 `;
 
 export default DrawerWrapper;

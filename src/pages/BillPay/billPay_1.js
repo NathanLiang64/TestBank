@@ -176,7 +176,7 @@ const BillPay = () => {
     </section>
   );
 
-  const collapse = () => (
+  const renderCollapse = () => (
     <Accordion space="bottom">
       <p>注意事項內文</p>
     </Accordion>
@@ -201,7 +201,7 @@ const BillPay = () => {
           <>
             {renderTable2Area()}
             {renderFormArea()}
-            {collapse()}
+            {renderCollapse()}
             {renderNextStepButton()}
           </>
         );
@@ -210,7 +210,7 @@ const BillPay = () => {
           <>
             {renderTable3Area()}
             {renderBarcodes()}
-            {collapse()}
+            {renderCollapse()}
           </>
         );
       default:

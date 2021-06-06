@@ -1,28 +1,33 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { SearchRounded, CancelRounded, GetAppRounded } from '@material-ui/icons';
 import DepositSearchCondition from 'pages/DepositSearchCondition';
 import DebitCard from 'components/DebitCard';
 import DetailCard from 'components/DetailCard';
 import BottomDrawer from 'components/BottomDrawer';
+import CheckboxButton from 'components/CheckboxButton';
 import {
   FEIBIconButton, FEIBTabContext, FEIBTabList, FEIBTab,
 } from 'components/elements';
 import theme from 'themes/theme';
 import DepositInquiryWrapper from './depositInquiry.style';
+import { setOpenInquiryDrawer, setDateRange } from './stores/actions';
 
 const DepositInquiry = () => {
-  const [openInquiryDrawer, setOpenInquiryDrawer] = useState(false);
   const [tabId, setTabId] = useState('12');
   const cardInfo = useSelector(({ depositOverview }) => depositOverview.cardInfo);
+  const openInquiryDrawer = useSelector(({ depositInquiry }) => depositInquiry.openInquiryDrawer);
+  const dateRange = useSelector(({ depositInquiry }) => depositInquiry.dateRange);
+  const selectedKeywords = useSelector(({ depositInquiry }) => depositInquiry.selectedKeywords);
 
+  const dispatch = useDispatch();
   const handleChangeTabList = (event, id) => {
     setTabId(id);
   };
 
   const handleClickSearchButton = () => {
-    setOpenInquiryDrawer(true);
+    dispatch(setOpenInquiryDrawer(true));
   };
 
   const renderCardArea = (card) => {
@@ -36,18 +41,35 @@ const DepositInquiry = () => {
     );
   };
 
+  const renderSearchBarText = (date, keywords) => (
+    date ? (
+      <>
+        <p>{date}</p>
+        <FEIBIconButton
+          $fontSize={2}
+          $iconColor={theme.colors.primary.light}
+          onClick={() => dispatch(setDateRange(''))}
+        >
+          <CancelRounded />
+        </FEIBIconButton>
+      </>
+    ) : (
+      keywords && (
+        <div className="selectedKeywords">
+          { keywords.map((keyword) => (
+            <CheckboxButton key={keyword} label={keyword} unclickable />
+          )) }
+        </div>
+      )
+    )
+  );
+
   const renderSearchBarArea = () => (
     <div className="searchBar">
       <FEIBIconButton $fontSize={2.8} onClick={handleClickSearchButton}>
         <SearchRounded />
       </FEIBIconButton>
-      <p>2020/07/22 ~ 2020/09/22</p>
-      <FEIBIconButton
-        $fontSize={2}
-        $iconColor={theme.colors.primary.light}
-      >
-        <CancelRounded />
-      </FEIBIconButton>
+      { renderSearchBarText(dateRange, selectedKeywords) }
       <FEIBIconButton $fontSize={2.8} className="customPosition">
         <GetAppRounded />
       </FEIBIconButton>
@@ -114,7 +136,7 @@ const DepositInquiry = () => {
       titleColor={theme.colors.primary.dark}
       className="debitInquiryDrawer"
       isOpen={openInquiryDrawer}
-      onClose={() => setOpenInquiryDrawer(false)}
+      onClose={() => dispatch(setOpenInquiryDrawer(false))}
       content={element}
     />
   );
