@@ -1,7 +1,12 @@
-export function goToFunc(funcName, jsonParams = null) {
+function goToFunc(funcName, jsonParams = null) {
   window.bankeeplus.gotofunc(funcName, jsonParams);
 }
 
-export function closeFunc(jsonParams = null) {
+function closeFunc(jsonParams = null) {
   window.bankeeplus.closefunc(jsonParams);
 }
+
+export {
+  goToFunc,
+  closeFunc,
+};
