@@ -66,16 +66,16 @@ const RegularPwdModify = () => {
   const handlePasswordModify = () => {
     setShowConfirmDialog(false);
     setShowResultDialog(true);
-    closeFunc();
   };
 
   const handleWarnConfirm = () => {
     setShowWarningDialog(false);
-    // closeFunc();
+    closeFunc('home');
   };
 
   const handleResultButton = () => {
     setShowResultDialog(false);
+    closeFunc('home');
   };
 
   const onSubmit = async (data) => {
@@ -94,7 +94,7 @@ const RegularPwdModify = () => {
       content={(
         <>
           <p>您確定不要變更網銀密碼嗎？</p>
-          <p>久未更新網銀密碼可能會有...風險</p>
+          <p>久未更新網銀密碼可能會有安全性風險</p>
         </>
       )}
       action={(
@@ -170,6 +170,7 @@ const RegularPwdModify = () => {
           control={control}
           errorMessage={errors.newPasswordCheck?.message}
         />
+        <p className="point">*每六個月請進行密碼以及個資更新以確保帳號安全</p>
         <ConfirmButtons
           subButtonValue="維持不變"
           mainButtonValue="儲存變更"
