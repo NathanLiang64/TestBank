@@ -22,6 +22,7 @@ import Notice1 from 'pages/Notice/notice_1';
 import FingerPrintLockSetting from 'pages/FingerPrintLockSetting';
 import ChangeUserName from 'pages/ChangeUserName';
 import PwdModify from 'pages/PwdModify';
+import RegularPwdModify from 'pages/RegularPwdModify';
 import SMSOTPactivate from 'pages/SMSOTPactivate';
 import QRCodeTransfer from 'pages/QRCodeTransfer';
 import Adjustment from 'pages/Adjustment';
@@ -59,6 +60,7 @@ const routes = [
   { path: '/fingerPrintLockSetting', exact: false, component: FingerPrintLockSetting },
   { path: '/changeUserName', exact: false, component: ChangeUserName },
   { path: '/pwdModify', exact: false, component: PwdModify },
+  { path: '/regularPwdModify', exact: false, component: RegularPwdModify },
   { path: '/smsOTPactivate', exact: false, component: SMSOTPactivate },
   { path: '/QRCodeTransfer', exact: false, component: QRCodeTransfer },
   { path: '/adjustment', exact: false, component: Adjustment },
