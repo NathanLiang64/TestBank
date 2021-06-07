@@ -1,3 +1,4 @@
+/* eslint-disable radix,no-restricted-globals */
 import * as yup from 'yup';
 
 /* =========== 錯誤訊息 =========== */
@@ -11,6 +12,15 @@ const errorMessage = {
   wrongFormatOfAccount: '輸入轉出帳號格式有誤，請重新檢查。',
   wrongEmail: '電子信箱格式有誤，請重新檢查。',
   emailRequried: '電子信箱尚未填寫，請重新檢查。',
+  passwordRequried: '請輸入您的網銀密碼',
+  worngInputPassword: '密碼需包含英文與數字',
+  worngLengthPassword: '您輸入的網銀密碼長度有誤，請重新輸入。',
+  cannotsamePassword: '「密碼」同一個字母或數字不可超過4次',
+  cannotexceedPassword: '「密碼」連續字母或數字不可超過4位',
+  identityRequried: '身分證字號尚未輸入，請確認，謝謝。',
+  worngIdentity: '輸入錯誤，請重新填寫，謝謝。',
+  accountRequried: '使用者代號尚未輸入，請確認，謝謝。',
+  worngLengthAccount: '您輸入的使用者代號長度有誤，請重新輸入，謝謝。',
 };
 
 /* =========== 驗證規則 =========== */
@@ -20,6 +30,30 @@ const errorMessage = {
  * @returns {boolean}
  */
 const payAmountValidationNotZero = (value) => (parseFloat(value) > parseFloat('0'));
+/**
+ *-驗證身分證格式
+ * @param id
+ * @returns {boolean}
+ */
+const checkID = (id) => {
+  const tab = 'ABCDEFGHJKLMNPQRSTUVXYWZIO';
+  const A1 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3];
+  const A2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5];
+  const Mx = [9, 8, 7, 6, 5, 4, 3, 2, 1, 1];
+
+  if (id.length !== 10) return false;
+  let i = tab.indexOf(id.charAt(0));
+  if (i === -1) return false;
+  let sum = A1[i] + A2[i] * 9;
+
+  for (i = 1; i < 10; i += 1) {
+    const v = parseInt(id.charAt(i));
+    if (isNaN(v)) return false;
+    sum += v * Mx[i];
+  }
+  if (sum % 10 !== 0) return false;
+  return true;
+};
 /**
  * 檢核字串是否有重複的英文或數字
  * 初始值為超過4次就擋，例如：a11a11a1 (X) bb1bb1b1(X) a11a11aaA (O) bb1bb111(O)
@@ -124,23 +158,32 @@ const validateTextContinuous = (password) => {
  */
 // 密碼驗證
 const passwordValidation = {
-  password: yup.string().matches(/^(?=.*[a-zA-Z]+)(?=.*[0-9]+)[a-zA-Z0-9]+$/, '密碼需包含英文與數字')
-    .required('請輸入您的網銀密碼').min(8, '您輸入的網銀密碼長度有誤，請重新輸入。')
-    .max(20, '您輸入的網銀密碼長度有誤，請重新輸入。')
+  password: yup.string().matches(/^(?=.*[a-zA-Z]+)(?=.*[0-9]+)[a-zA-Z0-9]+$/, errorMessage.worngInputPassword)
+    .required(errorMessage.passwordRequried).min(8, errorMessage.worngLengthPassword)
+    .max(20, errorMessage.worngLengthPassword)
     .test(
       'check-password-text-repeat',
-      '「密碼」同一個字母或數字不可超過4次',
+      errorMessage.cannotsamePassword,
       (value) => validateTextRepeat(value),
     )
     .test(
       'check-password-text-continuous',
-      '「密碼」連續字母或數字不可超過4位',
+      errorMessage.cannotexceedPassword,
       (value) => validateTextContinuous(value),
     ),
-  // 密碼相同驗證
-  passwordDoubleCheck: yup.string()
-    .oneOf([yup.ref('password'), null], '密碼必須相同')
-    .required('必填'),
+};
+// 身分證
+const identityValidation = {
+  identity: yup.string().required(errorMessage.identityRequried)
+    .test(
+      'check-custID',
+      errorMessage.worngIdentity,
+      (value) => checkID(value),
+    ),
+};
+const accountValidation = {
+  account: yup.string().required(errorMessage.accountRequried)
+    .min(6, errorMessage.worngLengthAccount).max(20, errorMessage.worngLengthAccount),
 };
 /**
  *- 信用卡繳款驗證
@@ -182,6 +225,8 @@ const emailValidation = {
 };
 
 export {
+  identityValidation,
+  accountValidation,
   passwordValidation,
   payAmountValidation,
   bankCodeValidation,

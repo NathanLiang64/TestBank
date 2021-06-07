@@ -17,13 +17,14 @@ import LossReissueWrapper from './lossReissue.style';
 import {
   setActionText, setAccount, setCardState, setUserAddress, setIsResultSuccess,
 } from './stores/actions';
+import { passwordValidation } from '../../utilities/validation';
 
 const LossReissue = () => {
   /**
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    password: yup.string().required('請輸入您的網銀密碼').min(8, '您輸入的網銀密碼長度有誤，請重新輸入。').max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+    ...passwordValidation,
   });
   const {
     handleSubmit, control, watch, formState: { errors },
