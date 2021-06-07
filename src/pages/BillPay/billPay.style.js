@@ -63,7 +63,7 @@ const BillPayWrapper = styled(Layout)`
     
     .customStyles {
       margin: 0;
-      width: 12rem;
+      width: calc(100% - 2rem);
       
       .MuiInputBase-input {
         padding: .4rem 0;
