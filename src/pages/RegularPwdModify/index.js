@@ -4,7 +4,7 @@ import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// import { closeFunc } from 'utilities/BankeePlus';
+import { closeFunc } from 'utilities/BankeePlus';
 
 /* Elements */
 import {
@@ -18,9 +18,9 @@ import e2ee from '../../utilities/E2ee';
 
 /* Styles */
 // import theme from 'themes/theme';
-import PwdModifyWrapper from './pwdModify.style';
+import RegularPwdModifyWrapper from './regularPwdModify.style';
 
-const PwdModify = () => {
+const RegularPwdModify = () => {
   /**
    *- 資料驗證
    */
@@ -55,6 +55,7 @@ const PwdModify = () => {
   });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showResultDialog, setShowResultDialog] = useState(false);
+  const [showWarningDialog, setShowWarningDialog] = useState(false);
 
   // const handleFormChange = ({ target }) => {
   //   const formObject = { ...form };
@@ -65,6 +66,11 @@ const PwdModify = () => {
   const handlePasswordModify = () => {
     setShowConfirmDialog(false);
     setShowResultDialog(true);
+    closeFunc();
+  };
+
+  const handleWarnConfirm = () => {
+    setShowWarningDialog(false);
     // closeFunc();
   };
 
@@ -77,7 +83,28 @@ const PwdModify = () => {
     data.newPassword = await e2ee(data.newPassword);
     setForm({ ...data });
     setShowConfirmDialog(true);
+    // setpassword(data.password);
+    // setOpenDialog(true);
   };
+
+  const WarningDialog = () => (
+    <Dialog
+      isOpen={showWarningDialog}
+      onClose={() => setShowWarningDialog(false)}
+      content={(
+        <>
+          <p>您確定不要變更網銀密碼嗎？</p>
+          <p>久未更新網銀密碼可能會有...風險</p>
+        </>
+      )}
+      action={(
+        <ConfirmButtons
+          mainButtonOnClick={handleWarnConfirm}
+          subButtonOnClick={() => setShowWarningDialog(false)}
+        />
+      )}
+    />
+  );
 
   const ConfirmDialog = () => (
     <Dialog
@@ -117,10 +144,10 @@ const PwdModify = () => {
   );
 
   useCheckLocation();
-  usePageInfo('/api/pwdModify');
+  usePageInfo('/api/regularPwdModify');
 
   return (
-    <PwdModifyWrapper>
+    <RegularPwdModifyWrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
         <PasswordInput
           label="您的網銀密碼"
@@ -143,16 +170,20 @@ const PwdModify = () => {
           control={control}
           errorMessage={errors.newPasswordCheck?.message}
         />
-        <FEIBButton
-          type="submit"
-        >
-          儲存變更
-        </FEIBButton>
+        <ConfirmButtons
+          subButtonValue="維持不變"
+          mainButtonValue="儲存變更"
+          subButtonOnClick={(event) => {
+            event.preventDefault();
+            setShowWarningDialog(true);
+          }}
+        />
       </form>
+      <WarningDialog />
       <ConfirmDialog />
       <ResultDialog />
-    </PwdModifyWrapper>
+    </RegularPwdModifyWrapper>
   );
 };
 
-export default PwdModify;
+export default RegularPwdModify;

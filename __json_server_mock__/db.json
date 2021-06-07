@@ -296,6 +296,11 @@
     "title": "網銀密碼變更",
     "route": "/pwdModify"
   },
+  "regularPwdModify": {
+    "name": "RegularPwdModify",
+    "title": "定期網銀密碼變更",
+    "route": "/regularPwdModify"
+  },
   "getE2EEFLAG": {
     "e2ee_flag":"Y",
     "exponent":"8C9B",
