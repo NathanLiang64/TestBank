@@ -1,5 +1,10 @@
 import * as types from './types';
 
+export const setCurrentMonthDetailList = (array) => ({
+  type: types.SET_CURRENT_MONTH_DETAIL_LIST,
+  payload: array,
+});
+
 export const setOpenInquiryDrawer = (boolean) => ({
   type: types.SET_OPEN_INQUIRY_DRAWER,
   payload: boolean,
