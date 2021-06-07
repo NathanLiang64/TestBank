@@ -3,7 +3,7 @@ import styled from 'styled-components';
 const CheckboxButtonWrapper = styled.div`
   display: inline-block;
   margin-right: .8rem;
-  margin-bottom: 1.6rem;
+  margin-bottom: ${({ $unclickable }) => ($unclickable ? '0' : '1.6rem')};
   cursor: pointer;
 
   input[type=checkbox] {
@@ -13,22 +13,25 @@ const CheckboxButtonWrapper = styled.div`
       display: inline-flex;
       justify-content: center;
       align-items: center;
-      padding-left: 16px;
-      padding-right: 16px;
-      border: 1px solid #825DC7;
-      border-radius: 14px;
-      height: 25px;
-      font-size: 14px;
+      padding-top: .3rem;
+      padding-left: 1.6rem;
+      padding-right: 1.6rem;
+      border: .1rem solid #825DC7;
+      border-radius: 1.4rem;
+      height: 2.5rem;
+      font-size: 1.4rem;
       color: #825DC7;
       background: white;
       user-select: none;
     }
 
-    &:checked + span {
-      color: white;
-      background: #AC8DE8;
-      border-color: #AC8DE8;
-    }
+    ${({ $unclickable }) => !$unclickable && (`
+      &:checked + span {
+        color: white;
+        background: #AC8DE8;
+        border-color: #AC8DE8;
+      }
+    `)};
   }
 `;
 

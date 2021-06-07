@@ -46,7 +46,7 @@ const PasswordInput = ({
             {...field}
             id={controlId}
             name={controlId}
-            placeholder={inputPlaceholder || '請輸入網銀密碼'}
+            placeholder={inputPlaceholder || '請輸入網銀密碼(8-20位英數字)'}
             type={showPassword ? 'text' : 'password'}
             onBlur={inputOnBlur}
             error={!!inputErrorMessage}
@@ -65,7 +65,7 @@ const PasswordInput = ({
     <FEIBInput
       id={inputId}
       name={inputId}
-      placeholder={inputPlaceholder || '請輸入網銀密碼'}
+      placeholder={inputPlaceholder || '請輸入網銀密碼(8-20位英數字)'}
       type={showPassword ? 'text' : 'password'}
       onBlur={inputOnBlur}
       $color={inputColor}
