@@ -4,6 +4,7 @@ import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { closeFunc } from 'utilities/BankeePlus';
 
 /* Elements */
 import {
@@ -47,7 +48,7 @@ const PwdModify = () => {
     resolver: yupResolver(schema),
   });
 
-  const forceModify = false;
+  const forceModify = true;
   const [form, setForm] = useState({
     password: '',
     newPassword: '',
@@ -66,6 +67,12 @@ const PwdModify = () => {
   const handlePasswordModify = () => {
     setShowConfirmDialog(false);
     setShowResultDialog(true);
+    closeFunc();
+  };
+
+  const handleWarnConfirm = () => {
+    setShowWarningDialog(false);
+    // closeFunc();
   };
 
   const handleResultButton = () => {
@@ -93,7 +100,7 @@ const PwdModify = () => {
       )}
       action={(
         <ConfirmButtons
-          mainButtonOnClick={() => setShowWarningDialog(false)}
+          mainButtonOnClick={handleWarnConfirm}
           subButtonOnClick={() => setShowWarningDialog(false)}
         />
       )}
@@ -148,7 +155,6 @@ const PwdModify = () => {
           id="password"
           name="password"
           control={control}
-          placeholder="請輸入有區分大小寫的8~20位英數字"
           errorMessage={errors.password?.message}
         />
         <PasswordInput
@@ -156,7 +162,6 @@ const PwdModify = () => {
           id="newPassword"
           name="newPassword"
           control={control}
-          placeholder="請輸入有區分大小寫的8~20位英數字"
           errorMessage={errors.newPassword?.message}
         />
         <PasswordInput
@@ -164,7 +169,6 @@ const PwdModify = () => {
           id="newPasswordCheck"
           name="newPasswordCheck"
           control={control}
-          placeholder="請輸入有區分大小寫的8~20位英數字"
           errorMessage={errors.newPasswordCheck?.message}
         />
         {

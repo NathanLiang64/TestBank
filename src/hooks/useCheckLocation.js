@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { setIsHomePage } from 'components/Header/stores/actions';
 
 const useCheckLocation = () => {
-  const { pathname, state } = useLocation();
+  const { pathname } = useLocation();
   const dispatch = useDispatch();
   const checkCurrentLocation = (path) => {
     if (path === '/') {
@@ -13,9 +13,9 @@ const useCheckLocation = () => {
       dispatch(setIsHomePage(false));
     }
     if (path === '/pwdModify') {
-      if (state) {
-        dispatch(setIsHomePage(true));
-      }
+      // if (state) {
+      dispatch(setIsHomePage(true));
+      // }
     }
   };
   useEffect(() => checkCurrentLocation(pathname), []);
