@@ -13,6 +13,9 @@ import { FEIBButton } from 'components/elements';
 import FamilyMartImage from 'assets/images/familyMartLogo.png';
 import theme from 'themes/theme';
 import e2ee from 'utilities/E2ee';
+import {
+  passwordValidation,
+} from 'utilities/validation';
 import BillPay2 from './billPay_2';
 import BillPayWrapper from './billPay.style';
 import { setSendType } from './stores/actions';
@@ -22,7 +25,7 @@ const BillPay = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    password: yup.string().required('請輸入您的網銀密碼').min(8, '您輸入的網銀密碼長度有誤，請重新輸入。').max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+    ...passwordValidation,
   });
   const { control, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),

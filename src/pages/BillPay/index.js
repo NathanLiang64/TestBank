@@ -20,7 +20,12 @@ import theme from 'themes/theme';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { payAmountValidation, bankCodeValidation, transferAccountValidation } from 'utilities/validation';
+import {
+  payAmountValidation,
+  bankCodeValidation,
+  transferAccountValidation,
+  emailValidation,
+} from 'utilities/validation';
 import BillPayWrapper from './billPay.style';
 
 import { actions } from './stores';
@@ -37,27 +42,11 @@ const BillPay = () => {
   const schema = yup.object().shape({
     payType: yup.number(),
     payMoney: yup.number(),
-    payAmount: yup.number()
-      .when('payMoney', {
-        is: 3,
-        ...payAmountValidation,
-      }),
-    otherBankCode: yup.string()
-      .when('payType', {
-        is: 2,
-        ...bankCodeValidation,
-      }),
-    otherTrnAcct: yup.string()
-      .when('payType', {
-        is: 2,
-        ...transferAccountValidation,
-      }),
     sendEmail: yup.boolean(),
-    email: yup.string()
-      .when('sendEmail', {
-        is: true,
-        then: yup.string().email('電子信箱格式有誤，請重新檢查。').required('電子信箱尚未填寫，請重新檢查。'),
-      }),
+    ...payAmountValidation,
+    ...bankCodeValidation,
+    ...transferAccountValidation,
+    ...emailValidation,
   });
   const {
     control, handleSubmit, watch, setValue, trigger, formState: { errors },
@@ -182,6 +171,7 @@ const BillPay = () => {
                 id="payAmount"
                 name="payAmount"
                 type="text"
+                error={!!errors.payAmount}
                 onBlur={() => moneyreplace()}
               />
             </div>
@@ -263,6 +253,7 @@ const BillPay = () => {
               name="email"
               placeholder="請輸入E-mail"
               className="customTopSpace"
+              error={!!errors.email}
             />
           )}
         />
