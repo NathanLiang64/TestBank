@@ -148,21 +148,15 @@ const DepositOverview = () => {
     selectedCard(1, cards);
   }, [cards]);
 
-  // 取得所選卡片資料後，將優惠利率數字存進 redux
+  // 取得所選卡片資料後，將優惠利率數字存進 redux，計算 transactionDetail DOM 高度
   useEffect(() => {
     if (cardInfo) {
       const { interestRate } = cardInfo;
+      const { offsetHeight } = ref.current;
       dispatch(setInterestPanelContent(`${interestRate}%`));
+      dispatch(setDetailAreaHeight(offsetHeight));
     }
   }, [cardInfo]);
-
-  // 計算 transactionDetail DOM 高度
-  useEffect(() => {
-    window.setTimeout(() => {
-      const { offsetHeight } = ref.current;
-      dispatch(setDetailAreaHeight(offsetHeight));
-    }, 500);
-  }, [ref]);
 
   // 計算裝置可容納的交易明細卡片數量
   useEffect(() => {
