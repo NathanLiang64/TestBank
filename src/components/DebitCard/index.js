@@ -55,6 +55,7 @@ const DebitCard = ({
   const handleClickDownloadBankbook = () => {
     setOpenDrawer(false);
     // TODO: 存摺封面下載
+    window.location.href = 'http://114.32.27.40:8080/test/downloadPDF';
   };
 
   // 判斷卡片類型是否為 original
