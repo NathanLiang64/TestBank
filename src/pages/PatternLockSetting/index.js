@@ -17,6 +17,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import PatternLockSettingWrapper from './patternLockSetting.style';
 import PatternLockSetting2 from './patternLockSetting_2';
 import { setIsActive, setIsResultSuccess, setType } from './stores/actions';
+import { passwordValidation } from '../../utilities/validation';
 
 const { init } = patternLockSettingApi;
 const PatternLockSetting = () => {
@@ -24,7 +25,7 @@ const PatternLockSetting = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    password: yup.string().required('請輸入您的網銀密碼').min(8, '您輸入的網銀密碼長度有誤，請重新輸入。').max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+    ...passwordValidation,
   });
   const {
     control, handleSubmit, watch, formState: { errors },

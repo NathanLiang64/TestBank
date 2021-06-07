@@ -21,43 +21,16 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import LoginWrapper from './login.style';
-
-const checkID = (id) => {
-  const tab = 'ABCDEFGHJKLMNPQRSTUVXYWZIO';
-  const A1 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3];
-  const A2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5];
-  const Mx = [9, 8, 7, 6, 5, 4, 3, 2, 1, 1];
-
-  if (id.length !== 10) return false;
-  let i = tab.indexOf(id.charAt(0));
-  if (i === -1) return false;
-  let sum = A1[i] + A2[i] * 9;
-
-  for (i = 1; i < 10; i += 1) {
-    const v = parseInt(id.charAt(i));
-    if (isNaN(v)) return false;
-    sum += v * Mx[i];
-  }
-  if (sum % 10 !== 0) return false;
-  return true;
-};
+import { accountValidation, identityValidation, passwordValidation } from '../../utilities/validation';
 
 const Login = () => {
   /**
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    // 身分證
-    identity: yup.string().required('身分證字號尚未輸入，請確認，謝謝。')
-      .test(
-        'check-custID',
-        '輸入錯誤，請重新填寫，謝謝。',
-        (value) => checkID(value),
-      ),
-    account: yup.string().required('使用者代號尚未輸入，請確認，謝謝。')
-      .min(6, '您輸入的使用者代號長度有誤，請重新輸入，謝謝。').max(20, '您輸入的使用者代號長度有誤，請重新輸入，謝謝。'),
-    password: yup.string().required('密碼尚未輸入，請確認，謝謝。')
-      .min(8, '您輸入的密碼長度有誤，請重新輸入，謝謝。').max(20, '您輸入的密碼長度有誤，請重新輸入，謝謝。'),
+    ...identityValidation,
+    ...accountValidation,
+    ...passwordValidation,
   });
   const {
     control, handleSubmit, setValue, formState: { errors },
