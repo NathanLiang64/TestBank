@@ -94,7 +94,7 @@ const CardLessWithDrawChgPwd = () => {
           label="舊提款密碼"
           id="oldPassword"
           name="oldPassword"
-          placeholder="請輸入舊提款密碼"
+          placeholder="請輸入舊提款密碼(4-12位數字)"
           inputMode="numric"
           control={control}
           errorMessage={errors.oldPassword?.message}
@@ -103,7 +103,7 @@ const CardLessWithDrawChgPwd = () => {
           label="新提款密碼"
           id="password"
           name="password"
-          placeholder="請輸入舊提款密碼"
+          placeholder="請輸入新提款密碼(4-12位數字)"
           control={control}
           errorMessage={errors.password?.message}
         />
@@ -111,7 +111,7 @@ const CardLessWithDrawChgPwd = () => {
           label="確認新提款密碼"
           id="passwordConfirm"
           name="passwordConfirm"
-          placeholder="請再輸入一次新提款密碼"
+          placeholder="請再輸入一次新提款密碼(4-12位數字)"
           control={control}
           errorMessage={errors.passwordConfirm?.message}
         />

@@ -12,24 +12,25 @@ import AccordionWrapper from './accordion.style';
 * 2. title -> 可傳入標題，若不傳入預設為 "注意事項"
 * 3. space -> 此組件預設無 margin，可傳入 "top"、"bottom"、"both" 字串來產生固定高度的 margin
 * 4. children -> 顯示文字，不須設置 children 屬性，直接在標籤內部填寫文字
+* 5. open -> 傳入 open 參數則預設開啟狀態
 * */
 
 const Accordion = ({
-  className, title, space, children,
+  className, title, space, children, open,
 }) => {
-  const [open, setOpen] = useState(false);
+  const [show, setShow] = useState(open);
 
   const handleOpen = () => {
-    setOpen(!open);
+    setShow(!show);
   };
 
   return (
     <AccordionWrapper className={className} $space={space}>
-      <button type="button" className={open ? 'open' : ''} onClick={handleOpen}>
+      <button type="button" className={show ? 'open' : ''} onClick={handleOpen}>
         <h3>{title || '注意事項'}</h3>
         <ExpandMoreOutlined style={{ fontSize: '3.8rem', color: '#AC8CE8' }} />
       </button>
-      <FEIBCollapse in={open}>
+      <FEIBCollapse in={show}>
         <div className="content">
           <div className="line" />
           {children}

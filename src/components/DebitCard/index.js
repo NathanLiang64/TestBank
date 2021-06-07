@@ -52,6 +52,11 @@ const DebitCard = ({
     setTimeout(() => setCopyAccount(false), 1500);
   };
 
+  const handleClickDownloadBankbook = () => {
+    setOpenDrawer(false);
+    // TODO: 存摺封面下載
+  };
+
   // 判斷卡片類型是否為 original
   const originalType = () => type === 'original';
 
@@ -120,7 +125,7 @@ const DebitCard = ({
         </li>
       ))}
       {/* 下方為功能列表內的固定功能 */}
-      <li>
+      <li onClick={handleClickDownloadBankbook}>
         <p>
           <SystemUpdate />
           存摺封面下載

@@ -39,6 +39,11 @@ const DepositInquiryWrapper = styled(Layout)`
       font-size: 1.4rem;
       color: ${({ theme }) => theme.colors.primary.light};
     }
+
+    .selectedKeywords {
+      display: flex;
+      align-items: center;
+    }
   }
   
   .tabsArea {

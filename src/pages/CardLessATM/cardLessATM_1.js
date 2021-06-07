@@ -123,7 +123,6 @@ const CardLessATM1 = () => {
           label="網銀密碼"
           id="password"
           name="password"
-          placeholder="請輸入網銀密碼"
           control={control}
           errorMessage={errors.password?.message}
         />
