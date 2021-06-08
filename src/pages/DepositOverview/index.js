@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useCheckLocation, usePageInfo } from 'hooks';
-import { ArrowForwardIos } from '@material-ui/icons';
+import { ArrowForwardIos, SyncAltRounded } from '@material-ui/icons';
 import DebitCard from 'components/DebitCard';
 import DetailCard from 'components/DetailCard';
 import { depositOverviewApi } from 'apis';
@@ -116,8 +116,11 @@ const DepositOverview = () => {
             {interbankTransfer}
           </p>
         </div>
-        <div className="panelItem" onClick={handleClickInterestRatePanel}>
-          <h3>{title}</h3>
+        <div className="panelItem customPosition" onClick={handleClickInterestRatePanel}>
+          <h3>
+            {title}
+            <SyncAltRounded />
+          </h3>
           <p>{content}</p>
         </div>
         <div className="panelItem" onClick={handleClickInterestRateLimit}>

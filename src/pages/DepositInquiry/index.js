@@ -161,12 +161,15 @@ const DepositInquiry = () => {
     />
   );
 
-  // 取得所有存款卡的初始資料
   useEffect(async () => {
+    // 清空查詢條件
+    dispatch(setDateRange(''));
+    dispatch(setSelectedKeywords([]));
+
+    // 取得所有存款卡的初始資料
     const response = await doGetInitData('/api/depositInquiry');
     if (response.initData) {
       const { detailList12 } = response.initData;
-
       dispatch(setCurrentMonthDetailList(detailList12));
     }
   }, []);
