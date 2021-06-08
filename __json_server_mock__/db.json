@@ -616,5 +616,30 @@
     "name": "BasicInformation",
     "title": "基本資料變更",
     "route": "/basicInformation"
+  },
+  "qAndA": {
+    "name": "QandA",
+    "title": "Q & A",
+    "route": "/qAndA",
+    "initData": {
+      "tabs": [
+        {
+          "key": 0,
+          "tabLabel": "會員申請"
+        },
+        {
+          "key": 1,
+          "tabLabel": "存款/信用卡"
+        },
+        {
+          "key": 2,
+          "tabLabel": "社群帳本"
+        },
+        {
+          "key": 3,
+          "tabLabel": "社群圈"
+        }
+      ]
+    }
   }
 }
