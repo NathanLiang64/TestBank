@@ -1,10 +1,12 @@
 # APP2_WebView
 
-- [項目規劃 | Miro](https://miro.com/app/board/o9J_laeZLto=/)
-- [執行計畫 - 五月執行計畫 | Google Sheets](https://docs.google.com/spreadsheets/d/1cTYmOp07_f6_CwY3X05aFmljbC-mBkLQIU-WAJni-f0/edit#gid=288572326)
-- [系統分析書 | Axure](https://wi87pn.axshare.com/)
+- [瑞芙 Wireframe | Axure](https://l3tcqo.axshare.com/)
+- [瑞芙設計稿 | Figma](https://www.figma.com/file/yYzbR9ID5ATqhXKxt8BTqq/FEIB_Bankee_Mockup)
+- [Bankee 1.0 流程圖 | Miro](https://miro.com/app/board/o9J_laeZLto=/)
+- [Bankee 2.0 實作截圖 | Figma](https://www.figma.com/file/h8VdRsH31JdcLTWqVKJo5p/)
+- [項目流程 | Xmind](https://www.xmind.net/m/DRppwg/)
+- [系統分析書 Wireframe | Axure](https://wi87pn.axshare.com/)
 - API | Swagger UI
-- 設計稿 | Figma
 
 ---
 
@@ -14,6 +16,7 @@
 - 貸款繳息紀錄查詢 - 唯物
 - 生物辨識登入設定（流程調整）- 唯物
 - 交易明細 (DepositInquiry) - 聖森
+- 明細搜尋 (DepositSearchCondition) - 聖森
 - 存款優惠利率額度 (DepositPlus) - 聖森 (待提供設計稿)
 - 常用帳號列表 (AccountMaintenance) - 聖森 (暫不需實作)
 - 元件封裝 - 唯物 & 聖森
@@ -75,6 +78,7 @@
   - Layout - 聖森
   - Alert - 聖森
   - NoticeArea - 聖森
+  - InfoArea - 聖森
   - Header - 聖森
   - DebitCard - 聖森
   - DetailCard - 聖森

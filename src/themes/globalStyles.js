@@ -156,6 +156,14 @@ const GlobalStyles = createGlobalStyle`
     }
   }
   
+  .textColorPrimary {
+    color: ${({ theme }) => theme.colors.primary.dark} !important;
+  }
+
+  .textColorPoint {
+    color: ${({ theme }) => theme.colors.text.point} !important;
+  }
+  
   /* calendar styles */
   .e-range-header {
     background: ${({ theme }) => theme.colors.primary.brand};

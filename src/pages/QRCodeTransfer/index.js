@@ -3,6 +3,7 @@ import QRCode from 'qrcode.react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FileCopyOutlined, ArrowForwardIosRounded } from '@material-ui/icons';
 import { useCheckLocation, usePageInfo } from 'hooks';
+import InfoArea from 'components/InfoArea';
 import {
   FEIBTab,
   FEIBTabContext,
@@ -113,14 +114,14 @@ const QRCodeTransfer = () => {
               </div>
             </div>
           </div>
-          <div className="infoArea">
+          <InfoArea space="top">
             <p>
               請對方至
-              <span>QRCode轉帳➝收款</span>
+              <span className="textColorPrimary">QRCode轉帳➝收款</span>
               打開條碼
             </p>
             <p>再由此處掃描QRCode就能轉帳囉</p>
-          </div>
+          </InfoArea>
         </FEIBTabPanel>
       </FEIBTabContext>
       {/* <p>1. 掃描或分享 QRCode 就能轉帳囉</p> */}
