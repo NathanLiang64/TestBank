@@ -4,13 +4,16 @@ import Layout from 'components/Layout';
 const DepositInquiryWrapper = styled(Layout)`
   display: flex;
   flex-direction: column;
+  height: 100%;
   background: ${({ theme }) => theme.colors.background.lighterBlue};
-  overflow: hidden;
+  //overflow: hidden;
   
   .measuredHeight {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    flex-grow: 1;
+    //height: 100%;
+    height: calc(100% - 18.5rem);
   }
 
   .debitCard {
@@ -26,7 +29,7 @@ const DepositInquiryWrapper = styled(Layout)`
   }
   
   .transactionDetail {
-    padding: 0 .4rem 13.3rem .4rem;
+    padding: 0 .4rem;
     overflow-y: auto;
   }
 

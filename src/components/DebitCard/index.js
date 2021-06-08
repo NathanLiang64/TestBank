@@ -135,7 +135,7 @@ const DebitCard = ({
       <li>
         <p>
           <Edit />
-          編輯帳戶別名
+          帳戶名稱編輯
         </p>
       </li>
     </ul>

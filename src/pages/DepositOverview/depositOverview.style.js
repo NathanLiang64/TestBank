@@ -26,6 +26,13 @@ const DepositOverviewWrapper = styled(Layout)`
       h3 {
         font-size: 1.4rem;
         color: ${({ theme }) => theme.colors.text.lightGray};
+        
+        // sync icon
+        .MuiSvgIcon-root {
+          top: .3rem;
+          font-size: 1.8rem;
+          color: ${({ theme }) => theme.colors.primary.light};
+        }
       }
       
       p {
@@ -34,6 +41,10 @@ const DepositOverviewWrapper = styled(Layout)`
         align-items: center;
         font-size: 2rem;
         color: ${({ theme }) => theme.colors.primary.light};
+      }
+      
+      &.customPosition {
+        margin-top: -.3rem;
       }
     }
   }

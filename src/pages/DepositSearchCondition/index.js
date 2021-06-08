@@ -1,4 +1,4 @@
-/* eslint-disable */
+import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
 import { DateRangePickerComponent } from '@syncfusion/ej2-react-calendars';
@@ -7,10 +7,11 @@ import ConfirmButtons from 'components/ConfirmButtons';
 import {
   FEIBTabContext, FEIBTabList, FEIBTab, FEIBInputLabel, FEIBInput,
 } from 'components/elements';
-import { useState } from 'react';
+import { dateFormatter } from 'utilities/Generator';
 import DepositSearchConditionWrapper from './depositSearchCondition.style';
 import { setOpenInquiryDrawer, setDateRange, setSelectedKeywords } from '../DepositInquiry/stores/actions';
 
+/* eslint-disable */
 const DepositSearchCondition = () => {
   const [tabId, setTabId] = useState('0');
   const keywords = useSelector(({ depositInquiry }) => depositInquiry.keywords);
@@ -20,17 +21,26 @@ const DepositSearchCondition = () => {
 
   const dispatch = useDispatch();
 
+  // 將日期範圍儲存至 redux
+  const saveDateRange = (dateRangeArray) => {
+    const startDate = dateFormatter(new Date(dateRangeArray[0]));
+    const endDate = dateFormatter(new Date(dateRangeArray[1]));
+    dispatch(setDateRange(`${startDate} ~ ${endDate}`));
+  };
+
+  // 控制 Tabs 頁籤
   const handleChangeTabList = (event, id) => {
     setTabId(id);
   };
 
-  // eslint-disable-next-line no-unused-vars
+  // 點擊查詢按鈕後傳送資料
   const handleClickSearchButton = async (data) => {
+    const { dateRange, date } = data;
+
+    // 關閉底部抽屜
     dispatch(setOpenInquiryDrawer(false));
 
     // TODO: send data
-    const { dateRange } = data;
-    console.log(data);
 
     const selectedKeywords = [];
     const selectedKeywordsTitle = [];
@@ -50,10 +60,8 @@ const DepositSearchCondition = () => {
     });
     dispatch(setSelectedKeywords(selectedKeywordsTitle));
 
-    // 從 data 中取得選取的日期範圍
-    const startDate = `${dateRange[0].getFullYear()}/${dateRange[0].getMonth() + 1}/${dateRange[0].getDate()}`;
-    const endDate = `${dateRange[1].getFullYear()}/${dateRange[1].getMonth() + 1}/${dateRange[1].getDate()}`;
-    dispatch(setDateRange(`${startDate} ~ ${endDate}`));
+    // 從 data 中取得日期範圍並將其儲存至 redux
+    dateRange ? saveDateRange(dateRange) : saveDateRange(date);
   };
 
   const renderCalendar = () => (
@@ -78,11 +86,39 @@ const DepositSearchCondition = () => {
     </div>
   );
 
-  const renderDate = () => (
-    <div className="dateArea">
-      <p>2021/07/22 ~ 2021/09/22</p>
-    </div>
-  );
+  const computedStartDate = (date) => {
+    switch (tabId) {
+      case '1':
+        // 計算 6 個月前的日期
+        date.setMonth(date.getMonth() - 6);
+        return date;
+      case '2':
+        // 計算 1 年前的日期
+        date.setFullYear(date.getFullYear() - 1);
+        return date;
+      case '3':
+        // 計算 2 年前的日期
+        date.setFullYear(date.getFullYear() - 2);
+        return date;
+      case '4':
+        // 計算 3 年前的日期
+        date.setFullYear(date.getFullYear() - 3);
+        return date;
+    }
+  };
+
+  const renderDate = () => {
+    const today = new Date();
+    let startDate = computedStartDate(new Date());
+
+    return (
+      <div className="dateArea">
+        <p>{ dateFormatter(startDate) } ~ { dateFormatter(today) }</p>
+        <input type="text" { ...register('date.0') } value={startDate} />
+        <input type="text" { ...register('date.1') } value={today} />
+      </div>
+    );
+  };
 
   const renderTabs = () => (
     <FEIBTabContext value={tabId}>
