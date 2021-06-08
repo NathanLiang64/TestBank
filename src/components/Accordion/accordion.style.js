@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import theme from 'themes/theme';
 
 const handleSpaceType = (position) => {
   switch (position) {
@@ -16,17 +15,19 @@ const handleSpaceType = (position) => {
 
 const AccordionWrapper = styled.div`
   margin: ${({ $space }) => handleSpaceType($space)};
-  background: #F3F5FC;
-  border-radius: 4px;
+  border-radius: .4rem;
+  background: ${({ theme }) => theme.colors.background.lighterBlue};
+
   button {
-    padding: 0 3px 0 12px;
-    text-align: left;
-    width: 100%;
-    height: 48px;
-    font-size: 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0 .3rem 0 1.2rem;
+    width: 100%;
+    height: 4.8rem;
+    font-size: 1.6rem;
+    text-align: left;
+
     &.open {
       .MuiSvgIcon-root {
         transform: rotate(180deg);
@@ -34,19 +35,21 @@ const AccordionWrapper = styled.div`
     }
   }
   .content {
-    padding: 0 12px 12px;
+    padding: 0 1.2rem 1.2rem;
     max-height: 32rem;
-    font-size: 14px;
+    font-size: 1.4rem;
+    color: ${({ theme }) => theme.colors.text.light};
     overflow: auto;
-    color: ${theme.colors.text.light};
+
     * {
-      color: ${theme.colors.text.light};
+      color: ${({ theme }) => theme.colors.text.light};
     }
+
     .line {
+      margin-bottom: 1.2rem;
       width: 100%;
-      height: 1px;
-      background: #fff;
-      margin-bottom: 12px;
+      height: .1rem;
+      background: ${({ theme }) => theme.colors.basic.white};
     }
   }
 `;

@@ -14,6 +14,7 @@ import {
   FEIBErrorMessage,
 } from 'components/elements';
 import PickersProvider from 'components/DatePickerProvider';
+import InfoArea from 'components/InfoArea';
 
 /* Styles */
 // import theme from 'themes/theme';
@@ -174,7 +175,7 @@ const LoanInterest = () => {
             <FEIBDatePicker value={endDate} onChange={handleEndDate} />
           </PickersProvider>
         </div>
-        <p className="point">*可查詢三年內繳款紀錄，查詢區間最多一年</p>
+        <InfoArea>*可查詢三年內繳款紀錄，查詢區間最多一年</InfoArea>
         <FEIBButton
           type="submit"
         >

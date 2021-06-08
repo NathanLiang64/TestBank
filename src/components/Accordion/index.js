@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { FEIBCollapse } from 'components/elements';
 import { ExpandMoreOutlined } from '@material-ui/icons';
-
 import AccordionWrapper from './accordion.style';
 
 /*

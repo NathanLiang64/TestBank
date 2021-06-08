@@ -14,7 +14,8 @@ import {
   FEIBErrorMessage,
 } from 'components/elements';
 import PasswordInput from 'components/PasswordInput';
-import NoticeArea from 'components/NoticeArea';
+// import NoticeArea from 'components/NoticeArea';
+import InfoArea from 'components/InfoArea';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
 import Alert from 'components/Alert';
@@ -177,9 +178,9 @@ const SMSOTPactivate = () => {
           placeholder="請輸入您的網銀密碼"
           errorMessage={errors.password?.message}
         />
-        <NoticeArea title=" " textAlign="left" space="both">
+        <InfoArea space="both">
           {noticeTip}
-        </NoticeArea>
+        </InfoArea>
         <FEIBButton
           type="submit"
           disabled={status === 1}

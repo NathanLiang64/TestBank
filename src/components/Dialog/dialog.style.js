@@ -28,14 +28,6 @@ const DialogWrapper = styled(MaterialDialog)`
     justify-content: center;
     padding-bottom: 1.6rem;
   }
-  
-  .textColorPrimary {
-    color: ${({ theme }) => theme.colors.primary.dark};
-  } 
-  
-  .textColorPoint {
-    color: ${({ theme }) => theme.colors.text.point};
-  }
 `;
 
 export default DialogWrapper;

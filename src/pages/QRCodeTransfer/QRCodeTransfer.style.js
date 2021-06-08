@@ -156,21 +156,6 @@ const QRCodeTransferWrapper = styled(Layout)`
       overflow: hidden;
     }
   }
-  
-  .infoArea {
-    margin-top: 2.4rem;
-    border-radius: .8rem;
-    padding: 1.6rem;
-    font-size: 1.5rem;
-    text-align: center;
-    background: ${({ theme }) => theme.colors.background.lighter};
-    
-    span {
-      display: inline-block;
-      padding: 0 .4rem;
-      color: ${({ theme }) => theme.colors.primary.brand};
-    }
-  }
 `;
 
 export default QRCodeTransferWrapper;

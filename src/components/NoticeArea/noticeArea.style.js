@@ -32,24 +32,20 @@ const NoticeAreaWrapper = styled.div`
     border: .1rem solid ${({ theme }) => theme.colors.border.lighter};
     border-radius: .4rem;
     width: 100%;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     font-weight: 300;
     text-align: ${({ $textAlign }) => $textAlign || 'center'};
     color: ${({ theme }) => theme.colors.text.light};
     overflow: auto;
     
+    * {
+      color: ${({ theme }) => theme.colors.text.light};
+    }
+    
     p {
       margin-bottom: .8rem;
       color: ${({ theme }) => theme.colors.text.light};
     }
-  }
-
-  .textColorPrimary {
-    color: ${({ theme }) => theme.colors.primary.dark};
-  }
-
-  .textColorPoint {
-    color: ${({ theme }) => theme.colors.text.point};
   }
 `;
 
