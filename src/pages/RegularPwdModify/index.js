@@ -14,6 +14,7 @@ import PasswordInput from 'components/PasswordInput';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
 import Alert from 'components/Alert';
+import InfoArea from 'components/InfoArea';
 import e2ee from '../../utilities/E2ee';
 
 /* Styles */
@@ -170,7 +171,9 @@ const RegularPwdModify = () => {
           control={control}
           errorMessage={errors.newPasswordCheck?.message}
         />
-        <p className="point">*每六個月請進行密碼以及個資更新以確保帳號安全</p>
+        <InfoArea space="both">
+          *每六個月請進行密碼以及個資更新以確保帳號安全
+        </InfoArea>
         <ConfirmButtons
           subButtonValue="維持不變"
           mainButtonValue="儲存變更"

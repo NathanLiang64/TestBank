@@ -8,7 +8,7 @@ const FingerPrintLockSettingWrapper = styled(Layout)`
     .MuiFormControlLabel-root {
       align-items: flex-start;
       .MuiButtonBase-root {
-        padding-top: 4px;
+        padding-top: 2px;
       }
     }
   }

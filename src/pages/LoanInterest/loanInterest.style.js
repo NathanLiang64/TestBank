@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Layout from 'components/Layout';
-import theme from 'themes/theme';
+// import theme from 'themes/theme';
 
 const LoanInterestWrapper = styled(Layout)`
   .selectContainer {
@@ -31,10 +31,9 @@ const LoanInterestWrapper = styled(Layout)`
       }
     }
   }
-  .point {
-    color: ${theme.colors.text.light};
+  .infoArea {
     margin-bottom: 2rem;
-    font-size: 1rem;
+    text-align: left;
   }
   .resultTable {
     margin-top: 2.4rem;

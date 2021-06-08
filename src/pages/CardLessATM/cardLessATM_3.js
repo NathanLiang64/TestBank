@@ -2,33 +2,19 @@ import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 
 /* Elements */
-// import theme from 'themes/theme';
 import {
   FEIBButton,
 } from 'components/elements';
-import Dialog from 'components/Dialog';
 import Accordion from 'components/Accordion';
 import CheckCircleOutlineRoundedIcon from '@material-ui/icons/CheckCircleOutlineRounded';
 
 /* Styles */
-// import theme from 'themes/theme';
-// import theme from 'themes/theme';
 import CardLessATMWrapper from './cardLessATM.style';
 
 const CardLessATM3 = () => {
   const history = useHistory();
 
   const [countSec, setCountSec] = useState(15 * 60);
-  const [openDialog, setOpenDialog] = useState(false);
-  const dialogContent = '您已取消本次交易';
-
-  const cancleWithdrawal = () => {
-    setOpenDialog(true);
-  };
-
-  const handleToggleDialog = () => {
-    setOpenDialog(false);
-  };
 
   const formatCountSec = (count) => {
     const min = Math.floor(count / 60);
@@ -115,25 +101,12 @@ const CardLessATM3 = () => {
         </ul>
       </Accordion>
       <FEIBButton
-        onClick={cancleWithdrawal}
+        onClick={() => {
+          history.push('cardLessATM1');
+        }}
       >
-        取消交易
+        確認
       </FEIBButton>
-      <Dialog
-        isOpen={openDialog}
-        onClose={() => handleToggleDialog(false)}
-        content={dialogContent}
-        action={(
-          <FEIBButton
-            onClick={() => {
-              handleToggleDialog(false);
-              history.push('/cardLessATM1');
-            }}
-          >
-            確定
-          </FEIBButton>
-        )}
-      />
     </CardLessATMWrapper>
   );
 };
