@@ -12,7 +12,7 @@ const useCheckLocation = () => {
     } else {
       dispatch(setIsHomePage(false));
     }
-    if (path === '/regularPwdModify') {
+    if (path === '/regularPwdModify' || path === '/open') {
       // if (state) {
       dispatch(setIsHomePage(true));
       // }
