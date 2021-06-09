@@ -31,6 +31,7 @@ import ProjectJ from 'pages/ProjectJ';
 import LoanInquiry from 'pages/LoanInquiry';
 import LoanInterest from 'pages/LoanInterest';
 import BasicInformation from 'pages/BasicInformation';
+import QandA from 'pages/QandA';
 
 /* 測試用目錄頁 */
 import Nav from 'pages/Nav';
@@ -69,6 +70,7 @@ const routes = [
   { path: '/loanInquiry', exact: false, component: LoanInquiry },
   { path: '/loanInterest', exact: false, component: LoanInterest },
   { path: '/basicInformation', exact: false, component: BasicInformation },
+  { path: '/qAndA', exact: false, component: QandA },
 ];
 
 export default routes;
