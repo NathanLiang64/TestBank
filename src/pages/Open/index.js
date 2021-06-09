@@ -32,7 +32,7 @@ const Open = () => {
         />
       </div>
       <InfoArea>
-        同意開通除了可以使用Bankee App 外，亦可同步使用遠銀行動銀行服務
+        同意開通除了可以使用 Bankee App 外，亦可同步使用遠銀行動銀行服務
       </InfoArea>
     </OpenWrapper>
   );
