@@ -110,7 +110,6 @@ const NoticeSetting = () => {
           id="password"
           name="password"
           control={control}
-          placeholder="請輸入網銀密碼"
           errorMessage={errors.password?.message}
         />
         <FEIBButton

@@ -32,6 +32,7 @@ import LoanInquiry from 'pages/LoanInquiry';
 import LoanInterest from 'pages/LoanInterest';
 import BasicInformation from 'pages/BasicInformation';
 import QandA from 'pages/QandA';
+import Open from 'pages/Open';
 
 /* 測試用目錄頁 */
 import Nav from 'pages/Nav';
@@ -71,6 +72,7 @@ const routes = [
   { path: '/loanInterest', exact: false, component: LoanInterest },
   { path: '/basicInformation', exact: false, component: BasicInformation },
   { path: '/qAndA', exact: false, component: QandA },
+  { path: '/open', exact: false, component: Open },
 ];
 
 export default routes;

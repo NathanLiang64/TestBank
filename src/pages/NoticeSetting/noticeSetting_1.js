@@ -234,7 +234,6 @@ const NoticeSetting1 = () => {
             id="password"
             name="password"
             control={control}
-            placeholder="請輸入網銀密碼8~20位英數字"
             errorMessage={errors.password?.message}
           />
           <Accordion space="bottom">

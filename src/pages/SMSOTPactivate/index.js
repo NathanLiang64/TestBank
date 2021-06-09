@@ -175,7 +175,6 @@ const SMSOTPactivate = () => {
           id="password"
           name="password"
           control={control}
-          placeholder="請輸入您的網銀密碼"
           errorMessage={errors.password?.message}
         />
         <InfoArea space="both">
