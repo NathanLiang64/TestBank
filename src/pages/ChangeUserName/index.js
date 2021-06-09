@@ -178,7 +178,6 @@ const ChangeUserName = () => {
           id="password"
           name="password"
           control={control}
-          placeholder="請輸入有區分大小寫的8~20位英數字"
           errorMessage={errors.password?.message}
         />
         <FEIBButton

@@ -1014,5 +1014,10 @@
         }
       ]
     }
+  },
+  "open": {
+    "name": "Open",
+    "title": "開通 APP",
+    "route": "/open"
   }
 }
