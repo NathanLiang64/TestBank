@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FEIBCollapse } from 'components/elements';
-import { ExpandMoreOutlined } from '@material-ui/icons';
+import AddRoundedIcon from '@material-ui/icons/AddRounded';
+import RemoveRoundedIcon from '@material-ui/icons/RemoveRounded';
 import AccordionWrapper from './accordion.style';
 
 /*
@@ -25,9 +26,13 @@ const Accordion = ({
 
   return (
     <AccordionWrapper className={className} $space={space}>
-      <button type="button" className={show ? 'open' : ''} onClick={handleOpen}>
+      <button type="button" onClick={handleOpen}>
         <h3>{title || '注意事項'}</h3>
-        <ExpandMoreOutlined style={{ fontSize: '3.8rem', color: '#AC8CE8' }} />
+        {
+          show
+            ? <RemoveRoundedIcon style={{ fontSize: '3rem', color: '#AC8CE8' }} />
+            : <AddRoundedIcon style={{ fontSize: '3rem', color: '#AC8CE8' }} />
+        }
       </button>
       <FEIBCollapse in={show}>
         <div className="content">
