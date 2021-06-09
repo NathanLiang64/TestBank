@@ -28,12 +28,6 @@ const AccordionWrapper = styled.div`
     font-size: 1.6rem;
     text-align: left;
 
-    &.open {
-      .MuiSvgIcon-root {
-        transform: rotate(180deg);
-      }
-    }
-
     h3 {
       padding: 1.2rem 0;
     }
