@@ -296,6 +296,11 @@ const GlobalStyles = createGlobalStyle`
     font-family: 'Material Icons', sans-serif;
     font-size: 2.4rem;
   }
+  
+  // test
+  .scrollSpyActive {
+    background: red;
+  }
 `;
 
 export default GlobalStyles;

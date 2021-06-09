@@ -1,7 +1,7 @@
 import * as types from './types';
 
 const initState = {
-  currentMonthDetailList: null,
+  detailList: null,
   openInquiryDrawer: false,
   dateRange: '',
   keywords: [
@@ -17,10 +17,10 @@ const initState = {
 
 const reducers = (state = initState, action) => {
   switch (action.type) {
-    case types.SET_CURRENT_MONTH_DETAIL_LIST:
+    case types.SET_DETAIL_LIST:
       return {
         ...state,
-        currentMonthDetailList: action.payload,
+        detailList: action.payload,
       };
     case types.SET_OPEN_INQUIRY_DRAWER:
       return {
