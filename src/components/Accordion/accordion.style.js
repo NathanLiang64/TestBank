@@ -24,7 +24,7 @@ const AccordionWrapper = styled.div`
     align-items: center;
     padding: 0 .3rem 0 1.2rem;
     width: 100%;
-    height: 4.8rem;
+    min-height: 4.8rem;
     font-size: 1.6rem;
     text-align: left;
 
@@ -32,6 +32,10 @@ const AccordionWrapper = styled.div`
       .MuiSvgIcon-root {
         transform: rotate(180deg);
       }
+    }
+
+    h3 {
+      padding: 1.2rem 0;
     }
   }
   .content {
