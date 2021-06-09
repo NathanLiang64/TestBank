@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { useForm } from 'react-hook-form';
 import { Icon } from '@material-ui/core';
 import {
   Visibility, VisibilityOff, FileCopyOutlined, MoreVert, SystemUpdate, Edit,
 } from '@material-ui/icons';
 import BottomDrawer from 'components/BottomDrawer';
-import { FEIBIconButton } from 'components/elements';
+import Dialog from 'components/Dialog';
+import ConfirmButtons from 'components/ConfirmButtons';
+import { FEIBIconButton, FEIBInputLabel, FEIBInput } from 'components/elements';
 import theme from 'themes/theme';
 import { toCurrency } from 'utilities/Generator';
 import DebitCardBackground from 'assets/images/debitCardBackground.png';
@@ -41,6 +44,9 @@ const DebitCard = ({
   const [showBalance, setShowBalance] = useState(true);
   const [copyAccount, setCopyAccount] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const { register, handleSubmit } = useForm();
 
   const handleClickShowBalance = () => {
     setShowBalance(!showBalance);
@@ -56,6 +62,17 @@ const DebitCard = ({
     setOpenDrawer(false);
     // TODO: 存摺封面下載
     window.location.href = 'http://114.32.27.40:8080/test/downloadPDF';
+  };
+
+  const handleClickEditCardName = () => {
+    setOpenDrawer(false);
+    setOpenDialog(true);
+  };
+
+  const handleClickSubmitCardName = (data) => {
+    setOpenDialog(false);
+    // TODO: send data
+    console.log(data);
   };
 
   // 判斷卡片類型是否為 original
@@ -132,7 +149,7 @@ const DebitCard = ({
           存摺封面下載
         </p>
       </li>
-      <li>
+      <li onClick={handleClickEditCardName}>
         <p>
           <Edit />
           帳戶名稱編輯
@@ -147,6 +164,28 @@ const DebitCard = ({
       isOpen={openDrawer}
       onClose={() => setOpenDrawer(!openDrawer)}
       content={renderMoreList(list)}
+    />
+  );
+
+  const renderEditCardNameDialog = (name, cardAccount) => (
+    <Dialog
+      title="帳戶名稱編輯"
+      isOpen={openDialog}
+      onClose={() => setOpenDialog(false)}
+      content={(
+        <>
+          <FEIBInputLabel>卡號</FEIBInputLabel>
+          <FEIBInput value={cardAccount} $space="bottom" readOnly {...register('cardAccount')} />
+          <FEIBInputLabel>帳戶名稱</FEIBInputLabel>
+          <FEIBInput defaultValue={name} autoFocus {...register('cardName')} />
+        </>
+      )}
+      action={(
+        <ConfirmButtons
+          mainButtonOnClick={handleSubmit(handleClickSubmitCardName)}
+          subButtonOnClick={() => setOpenDialog(false)}
+        />
+      )}
     />
   );
 
@@ -170,6 +209,7 @@ const DebitCard = ({
       { originalType() && renderFunctionList(functionList) }
       { originalType() && renderMoreIconButton() }
       { originalType() && renderBottomDrawer(moreList) }
+      { originalType() && renderEditCardNameDialog(cardName, account) }
     </DebitCardWrapper>
   );
 };

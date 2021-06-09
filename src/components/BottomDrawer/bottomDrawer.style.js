@@ -125,7 +125,7 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
     }
   }
 
-  &.debitInquiryDrawer {
+  &.debitInquirySearchDrawer {
 
     .calendarArea {
       margin-bottom: 3.4rem;

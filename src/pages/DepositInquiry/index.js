@@ -1,6 +1,8 @@
+/* eslint-disable */
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useCheckLocation, usePageInfo } from 'hooks';
+import Scrollspy from 'react-scrollspy';
 import { SearchRounded, CancelRounded, GetAppRounded } from '@material-ui/icons';
 import { depositInquiryApi } from 'apis';
 import DepositSearchCondition from 'pages/DepositSearchCondition';
@@ -14,36 +16,57 @@ import {
 import theme from 'themes/theme';
 import DepositInquiryWrapper from './depositInquiry.style';
 import {
-  setCurrentMonthDetailList, setOpenInquiryDrawer, setDateRange, setSelectedKeywords,
+  setDetailList, setOpenInquiryDrawer, setDateRange, setSelectedKeywords,
 } from './stores/actions';
 
 const DepositInquiry = () => {
-  const [tabId, setTabId] = useState('12');
+  const [tabId, setTabId] = useState('detailList12');
+  const [openDownloadDrawer, setOpenDownloadDrawer] = useState(false);
   const cardInfo = useSelector(({ depositOverview }) => depositOverview.cardInfo);
-  const currentMonthDetailList = useSelector(({ depositInquiry }) => depositInquiry.currentMonthDetailList);
+  const detailList = useSelector(({ depositInquiry }) => depositInquiry.detailList);
   const openInquiryDrawer = useSelector(({ depositInquiry }) => depositInquiry.openInquiryDrawer);
   const dateRange = useSelector(({ depositInquiry }) => depositInquiry.dateRange);
   const selectedKeywords = useSelector(({ depositInquiry }) => depositInquiry.selectedKeywords);
-
   const { doGetInitData } = depositInquiryApi;
-
   const dispatch = useDispatch();
+
   const handleChangeTabList = (event, id) => {
+    console.info('tab id: ', id);
     setTabId(id);
+  };
+
+  const handleScrollChangeContent = (element) => {
+    console.info('scroll spy element id: ', element.id);
+    setTabId(element.id);
   };
 
   const handleClickSearchButton = () => {
     dispatch(setOpenInquiryDrawer(true));
   };
 
-  const handleClickMonthTabs = async () => {
-    const response = await doGetInitData('/api/depositInquiry');
-    if (response.initData) {
-      const { detailList11 } = response.initData;
-      dispatch(setCurrentMonthDetailList(detailList11));
+  const handleClickDownloadButton = () => {
+    setOpenDownloadDrawer(true);
+  };
+
+  const handleClickDownloadDetails = (format) => {
+    setOpenDownloadDrawer(false);
+    if (format === 'pdf') {
+      // TODO: 交易明細下載 (Pdf 格式)
+      // window.location.href = 'url';
+    } else {
+      // TODO: 交易明細下載 (Excel 格式)
+      // window.location.href = 'url';
     }
-    const target = document.getElementById('11');
-    target.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleClickMonthTabs = async (month) => {
+    const response = await doGetInitData('/api/depositInquiry');
+    if (response[month]) {
+      const lastKey = Object.keys(response[month])[Object.keys(response[month]).length - 1];
+      dispatch(setDetailList(response[month]));
+      const target = document.getElementById(lastKey);
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const renderCardArea = (card) => {
@@ -89,75 +112,104 @@ const DepositInquiry = () => {
         <SearchRounded />
       </FEIBIconButton>
       { renderSearchBarText(dateRange, selectedKeywords) }
-      <FEIBIconButton $fontSize={2.8} className="customPosition">
+      <FEIBIconButton $fontSize={2.8} className="customPosition" onClick={handleClickDownloadButton}>
         <GetAppRounded />
       </FEIBIconButton>
     </div>
   );
 
+  // TODO: 捲動時 tabs 切換
   const renderTabs = () => (
     <div className="tabsArea">
-      <FEIBTabContext value={tabId}>
-        <FEIBTabList onChange={handleChangeTabList} $size="small">
-          <FEIBTab label="12月" value="12" />
-          <FEIBTab label="11月" value="11" onClick={handleClickMonthTabs} />
-          <FEIBTab label="10月" value="10" />
-          <FEIBTab label="09月" value="9" />
-          <FEIBTab label="08月" value="8" />
-          <FEIBTab label="07月" value="7" />
-          <FEIBTab label="06月" value="6" />
-          <FEIBTab label="05月" value="5" />
-          <FEIBTab label="04月" value="4" />
-          <FEIBTab label="03月" value="3" />
-        </FEIBTabList>
-        {/* <FEIBTabPanel value="12"> */}
-        {/*  <div>Content</div> */}
-        {/* </FEIBTabPanel> */}
+      <Scrollspy
+        items={["detailList12", "detailList11", "detailList10", "detailList09", "detailList08", "detailList07", "detailList06", "detailList05", "detailList04", "detailList03"]}
+        currentClassName="scrollSpyActive"
+        componentTag="div"
+        className="scrollSpy"
+        // offset={-240}
+        rootEl="section"
+        onUpdate={handleScrollChangeContent}
+      >
+        <FEIBTabContext value={tabId}>
+          <FEIBTabList onChange={handleChangeTabList} $size="small">
+            <FEIBTab label="12月" value="detailList12" href="#detailList12" />
+            <FEIBTab label="11月" value="detailList11" href="#detailList11" onClick={() => handleClickMonthTabs('month11')} />
+            <FEIBTab label="10月" value="detailList10" href="#detailList10" onClick={() => handleClickMonthTabs('month10')} />
+            <FEIBTab label="09月" value="detailList09" href="#detailList09" />
+            <FEIBTab label="08月" value="detailList08" href="#detailList08" />
+            <FEIBTab label="07月" value="detailList07" href="#detailList07" />
+            <FEIBTab label="06月" value="detailList06" href="#detailList06" />
+            <FEIBTab label="05月" value="detailList05" href="#detailList05" />
+            <FEIBTab label="04月" value="detailList04" href="#detailList04" />
+            <FEIBTab label="03月" value="detailList03" href="#detailList03" />
+          </FEIBTabList>
+          {/* <FEIBTabPanel value="12"> */}
+          {/*  <div>Content</div> */}
+          {/* </FEIBTabPanel> */}
 
-        {/* <FEIBTabPanel value="11"> */}
-        {/*  <div>Content 1</div> */}
-        {/* </FEIBTabPanel> */}
-      </FEIBTabContext>
+          {/* <FEIBTabPanel value="11"> */}
+          {/*  <div>Content 1</div> */}
+          {/* </FEIBTabPanel> */}
+        </FEIBTabContext>
+      </Scrollspy>
     </div>
   );
 
   const renderDetailCardList = (list) => (
-    list.map((card) => {
-      const {
-        id,
-        avatar,
-        title,
-        type,
-        date,
-        sender,
-        amount,
-        balance,
-      } = card;
-      return (
-        <DetailCard
-          id={date.substr(0, 2)}
-          key={id}
-          avatar={avatar}
-          title={title}
-          type={type}
-          date={date}
-          sender={sender}
-          amount={amount}
-          balance={balance}
-          noShadow
-        />
-      );
-    })
+    Object.keys(list).map((month) => (
+      <section key={month} id={month}>
+        { list[month].map((card) => {
+          const {
+            id,
+            avatar,
+            title,
+            type,
+            date,
+            sender,
+            amount,
+            balance,
+          } = card;
+          return (
+            <DetailCard
+              id={date.substr(0, 2)}
+              key={id}
+              avatar={avatar}
+              title={title}
+              type={type}
+              date={date}
+              sender={sender}
+              amount={amount}
+              balance={balance}
+              noShadow
+            />
+          );
+        }) }
+      </section>
+    ))
   );
 
-  const renderBottomDrawer = (element) => (
+  const renderSearchDrawer = (element) => (
     <BottomDrawer
       title="明細搜尋"
       titleColor={theme.colors.primary.dark}
-      className="debitInquiryDrawer"
+      className="debitInquirySearchDrawer"
       isOpen={openInquiryDrawer}
       onClose={() => dispatch(setOpenInquiryDrawer(false))}
       content={element}
+    />
+  );
+
+  const renderDownloadDrawer = () => (
+    <BottomDrawer
+      className="debitInquiryDownloadDrawer"
+      isOpen={openDownloadDrawer}
+      onClose={() => setOpenDownloadDrawer(false)}
+      content={(
+        <ul>
+          <li onClick={() => handleClickDownloadDetails('pdf')}><p>下載 PDF</p></li>
+          <li onClick={() => handleClickDownloadDetails('excel')}><p>下載 EXCEL</p></li>
+        </ul>
+      )}
     />
   );
 
@@ -169,8 +221,7 @@ const DepositInquiry = () => {
     // 取得所有存款卡的初始資料
     const response = await doGetInitData('/api/depositInquiry');
     if (response.initData) {
-      const { detailList12 } = response.initData;
-      dispatch(setCurrentMonthDetailList(detailList12));
+      dispatch(setDetailList(response.initData));
     }
   }, []);
 
@@ -184,10 +235,11 @@ const DepositInquiry = () => {
         { renderSearchBarArea() }
         { renderTabs() }
         <div className="transactionDetail">
-          { currentMonthDetailList && renderDetailCardList(currentMonthDetailList) }
+          { detailList && renderDetailCardList(detailList) }
         </div>
       </div>
-      { renderBottomDrawer(<DepositSearchCondition />) }
+      { renderDownloadDrawer() }
+      { renderSearchDrawer(<DepositSearchCondition />) }
     </DepositInquiryWrapper>
   );
 };

@@ -1,35 +1,48 @@
 /* eslint-disable radix,no-restricted-globals */
 import * as yup from 'yup';
 
-/* =========== 錯誤訊息 =========== */
+/* ====================== 錯誤訊息 ====================== */
 const errorMessage = {
-  includeEnglishAndNumber: '密碼需包含英文與數字',
+  // 密碼
+  passwordRequired: '請輸入您的網銀密碼',
+  passwordIncludeEnglishAndNumber: '密碼需包含英文與數字',
   passwordCannotBeTheSameAsId: '「密碼」不可與「身分證號碼」相同',
+  passwordWrongLength: '您輸入的網銀密碼長度有誤，請重新輸入。',
+  passwordCannotSameCharacter: '「密碼」同一個字母或數字不可超過4次',
+  passwordCannotConsecutive: '「密碼」連續字母或數字不可超過4位',
+
+  // 身份證字號
+  identityRequired: '身分證字號尚未輸入，請確認，謝謝。',
+  identityWrongFormat: '輸入錯誤，請重新填寫，謝謝。',
+
+  // 使用者代號
+  userAccountRequired: '使用者代號尚未輸入，請確認，謝謝。',
+  userAccountWrongLength: '您輸入的使用者代號長度有誤，請重新輸入，謝謝。',
+
+  // Email 信箱
+  emailWrongFormat: '電子信箱格式有誤，請重新檢查。',
+  emailRequired: '電子信箱尚未填寫，請重新檢查。',
+
+  // 金額
   moneyRequired: '輸入金額欄位尚未填寫，請重新檢查。',
-  wrongFormatOfMoney: '輸入金額欄位格式有誤，請重新檢查。',
+  moneyWrongFormat: '輸入金額欄位格式有誤，請重新檢查。',
+
+  // 轉出行庫
   bankCodeRequired: '轉出行庫尚未選取，請重新檢查。',
+
+  // 轉入帳號
   transferAccountRequired: '輸入轉出帳號尚未填寫，請重新檢查。',
-  wrongFormatOfAccount: '輸入轉出帳號格式有誤，請重新檢查。',
-  wrongEmail: '電子信箱格式有誤，請重新檢查。',
-  emailRequried: '電子信箱尚未填寫，請重新檢查。',
-  passwordRequried: '請輸入您的網銀密碼',
-  worngInputPassword: '密碼需包含英文與數字',
-  worngLengthPassword: '您輸入的網銀密碼長度有誤，請重新輸入。',
-  cannotsamePassword: '「密碼」同一個字母或數字不可超過4次',
-  cannotexceedPassword: '「密碼」連續字母或數字不可超過4位',
-  identityRequried: '身分證字號尚未輸入，請確認，謝謝。',
-  worngIdentity: '輸入錯誤，請重新填寫，謝謝。',
-  accountRequried: '使用者代號尚未輸入，請確認，謝謝。',
-  worngLengthAccount: '您輸入的使用者代號長度有誤，請重新輸入，謝謝。',
+  transferAccountWrongFormat: '輸入轉出帳號格式有誤，請重新檢查。',
 };
 
-/* =========== 驗證規則 =========== */
+/* ====================== 驗證規則 ====================== */
 /**
  *- 驗證不為0
  * @param value
  * @returns {boolean}
  */
 const payAmountValidationNotZero = (value) => (parseFloat(value) > parseFloat('0'));
+
 /**
  *-驗證身分證格式
  * @param id
@@ -54,6 +67,7 @@ const checkID = (id) => {
   if (sum % 10 !== 0) return false;
   return true;
 };
+
 /**
  * 檢核字串是否有重複的英文或數字
  * 初始值為超過4次就擋，例如：a11a11a1 (X) bb1bb1b1(X) a11a11aaA (O) bb1bb111(O)
@@ -79,6 +93,7 @@ const validateTextRepeat = (value) => {
   }
   return true;
 };
+
 /**
  * 檢核字串是否有連續順序的字串
  * 初始值為超過4次就擋，例如：12345 (X) 1234(O) ABCDE (X) ABCDA(O)
@@ -152,39 +167,42 @@ const validateTextContinuous = (password) => {
   }
   return !isRepeat;
 };
+
 /* =========== 頁面驗證項目 =========== */
 /**
  *- 共通驗證
  */
 // 密碼驗證
 const passwordValidation = {
-  password: yup.string().matches(/^(?=.*[a-zA-Z]+)(?=.*[0-9]+)[a-zA-Z0-9]+$/, errorMessage.worngInputPassword)
-    .required(errorMessage.passwordRequried).min(8, errorMessage.worngLengthPassword)
-    .max(20, errorMessage.worngLengthPassword)
+  password: yup.string().matches(/^(?=.*[a-zA-Z]+)(?=.*[0-9]+)[a-zA-Z0-9]+$/, errorMessage.passwordIncludeEnglishAndNumber)
+    .required(errorMessage.passwordRequired).min(8, errorMessage.passwordWrongLength)
+    .max(20, errorMessage.passwordWrongLength)
     .test(
       'check-password-text-repeat',
-      errorMessage.cannotsamePassword,
+      errorMessage.passwordCannotSameCharacter,
       (value) => validateTextRepeat(value),
     )
     .test(
       'check-password-text-continuous',
-      errorMessage.cannotexceedPassword,
+      errorMessage.passwordCannotConsecutive,
       (value) => validateTextContinuous(value),
     ),
 };
+
 // 身分證
 const identityValidation = {
-  identity: yup.string().required(errorMessage.identityRequried)
+  identity: yup.string().required(errorMessage.identityRequired)
     .test(
       'check-custID',
-      errorMessage.worngIdentity,
+      errorMessage.identityWrongFormat,
       (value) => checkID(value),
     ),
 };
 const accountValidation = {
-  account: yup.string().required(errorMessage.accountRequried)
-    .min(6, errorMessage.worngLengthAccount).max(20, errorMessage.worngLengthAccount),
+  account: yup.string().required(errorMessage.userAccountRequired)
+    .min(6, errorMessage.userAccountWrongLength).max(20, errorMessage.userAccountWrongLength),
 };
+
 /**
  *- 信用卡繳款驗證
  */
@@ -193,11 +211,12 @@ const payAmountValidation = {
   payAmount: yup.number()
     .when('payMoney', {
       is: 3,
-      then: yup.number(errorMessage.wrongFormatOfMoney)
+      then: yup.number(errorMessage.moneyWrongFormat)
         .required(errorMessage.moneyRequired)
-        .test('payAmount-notzero', errorMessage.wrongFormatOfMoney, (value) => payAmountValidationNotZero(value)),
+        .test('payAmount-notzero', errorMessage.moneyWrongFormat, (value) => payAmountValidationNotZero(value)),
     }),
 };
+
 // 轉出帳號行庫驗證
 const bankCodeValidation = {
   otherBankCode: yup.string()
@@ -206,21 +225,23 @@ const bankCodeValidation = {
       then: yup.string().test('otherBankCode-notspace', errorMessage.bankCodeRequired, (value) => value !== ' '),
     }),
 };
+
 // 轉出帳號驗證
 const transferAccountValidation = {
   otherTrnAcct: yup.string()
     .when('payType', {
       is: 2,
       then: yup.string(errorMessage.transferAccountRequired)
-        .required(errorMessage.transferAccountRequired).max(16, errorMessage.wrongFormatOfAccount),
+        .required(errorMessage.transferAccountRequired).max(16, errorMessage.transferAccountWrongFormat),
     }),
 };
-// email驗證
+
+// Email 驗證
 const emailValidation = {
   email: yup.string()
     .when('sendEmail', {
       is: true,
-      then: yup.string().email(errorMessage.wrongEmail).required(errorMessage.emailRequried),
+      then: yup.string().email(errorMessage.emailWrongFormat).required(errorMessage.emailRequired),
     }),
 };
 
