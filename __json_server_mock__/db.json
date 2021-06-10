@@ -1019,5 +1019,10 @@
     "name": "Open",
     "title": "開通 APP",
     "route": "/open"
+  },
+  "deduct": {
+    "name": "Deduct",
+    "title": "自動扣繳申請/查詢",
+    "route": "/deduct"
   }
 }
