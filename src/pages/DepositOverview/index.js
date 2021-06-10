@@ -50,7 +50,7 @@ const DepositOverview = () => {
     }
   };
 
-  // TODO: 根據剩餘高度計算要顯示的卡片數量
+  // 根據剩餘高度計算要顯示的卡片數量
   const renderDetailCardList = (list) => (
     list.map((card) => {
       const {
