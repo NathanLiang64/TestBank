@@ -55,10 +55,11 @@ const FEIBSelect = styled(MaterialSelect)`
     &:before,
     &:hover:not(.Mui-disabled):before {
       border-color: ${({ theme, $borderColor }) => $borderColor || theme.colors.border.light};
-      opacity: .6;
+      //opacity: .6;
     }
     &:after {
-      border-color: ${({ theme, $borderColor, $focusBorderColor }) => $focusBorderColor || $borderColor || theme.colors.primary.light};
+      border-width: .1rem;
+      border-color: ${({ theme, $borderColor, $focusBorderColor }) => $focusBorderColor || $borderColor || theme.colors.border.light};
     }
   }
 `;
