@@ -33,6 +33,10 @@ import LoanInterest from 'pages/LoanInterest';
 import BasicInformation from 'pages/BasicInformation';
 import QandA from 'pages/QandA';
 import Open from 'pages/Open';
+import Deduct from 'pages/Deduct';
+import Deduct1 from 'pages/Deduct/deduct1';
+import Deduct2 from 'pages/Deduct/deduct2';
+import Deduct3 from 'pages/Deduct/deduct3';
 
 /* 測試用目錄頁 */
 import Nav from 'pages/Nav';
@@ -73,6 +77,10 @@ const routes = [
   { path: '/basicInformation', exact: false, component: BasicInformation },
   { path: '/qAndA', exact: false, component: QandA },
   { path: '/open', exact: false, component: Open },
+  { path: '/deduct', exact: false, component: Deduct },
+  { path: '/deduct1', exact: false, component: Deduct1 },
+  { path: '/deduct2', exact: false, component: Deduct2 },
+  { path: '/deduct3', exact: false, component: Deduct3 },
 ];
 
 export default routes;
