@@ -1,17 +1,16 @@
-/* eslint-disable */
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useCheckLocation, usePageInfo } from 'hooks';
-import Scrollspy from 'react-scrollspy';
 import { SearchRounded, CancelRounded, GetAppRounded } from '@material-ui/icons';
 import { depositInquiryApi } from 'apis';
 import DepositSearchCondition from 'pages/DepositSearchCondition';
 import DebitCard from 'components/DebitCard';
 import DetailCard from 'components/DetailCard';
+import Dialog from 'components/Dialog';
 import BottomDrawer from 'components/BottomDrawer';
 import CheckboxButton from 'components/CheckboxButton';
 import {
-  FEIBIconButton, FEIBTabContext, FEIBTabList, FEIBTab,
+  FEIBIconButton, FEIBTabContext, FEIBTabList, FEIBTab, FEIBButton,
 } from 'components/elements';
 import theme from 'themes/theme';
 import DepositInquiryWrapper from './depositInquiry.style';
@@ -20,8 +19,10 @@ import {
 } from './stores/actions';
 
 const DepositInquiry = () => {
+  const transactionDetailRef = useRef();
   const [tabId, setTabId] = useState('detailList12');
   const [openDownloadDrawer, setOpenDownloadDrawer] = useState(false);
+  const [openDetailDialog, setOpenDetailDialog] = useState(false);
   const cardInfo = useSelector(({ depositOverview }) => depositOverview.cardInfo);
   const detailList = useSelector(({ depositInquiry }) => depositInquiry.detailList);
   const openInquiryDrawer = useSelector(({ depositInquiry }) => depositInquiry.openInquiryDrawer);
@@ -30,14 +31,16 @@ const DepositInquiry = () => {
   const { doGetInitData } = depositInquiryApi;
   const dispatch = useDispatch();
 
-  const handleChangeTabList = (event, id) => {
-    console.info('tab id: ', id);
-    setTabId(id);
+  const handleClickDetailCard = () => {
+    setOpenDetailDialog(true);
   };
 
-  const handleScrollChangeContent = (element) => {
-    console.info('scroll spy element id: ', element.id);
-    setTabId(element.id);
+  const handleClickDialogMainButton = () => {
+    setOpenDetailDialog(false);
+  };
+
+  const handleChangeTabList = (event, id) => {
+    setTabId(id);
   };
 
   const handleClickSearchButton = () => {
@@ -59,11 +62,39 @@ const DepositInquiry = () => {
     }
   };
 
+  // TODO: 捲動時 tab 切換錯誤待修正
+  const scrollSpy = () => {
+    transactionDetailRef.current.addEventListener('scroll', () => {
+      // const children = Array.from(transactionDetailRef.current.children);
+      // for (let i = 0; i < children.length; i++) {
+      //   console.log(children[i]);
+      // }
+      const detailList11 = document.getElementById('detailList11');
+      const detailList10 = document.getElementById('detailList10');
+      // const detailList09 = document.getElementById('detailList09');
+      if (detailList11 && detailList11.getBoundingClientRect().top > 284) {
+        setTabId('detailList12');
+      } else if (detailList10 && detailList10.getBoundingClientRect().top > 284) {
+        setTabId('detailList11');
+      } else {
+        setTabId('detailList10');
+      }
+    });
+  };
+
   const handleClickMonthTabs = async (month) => {
     const response = await doGetInitData('/api/depositInquiry');
     if (response[month]) {
       const lastKey = Object.keys(response[month])[Object.keys(response[month]).length - 1];
       dispatch(setDetailList(response[month]));
+
+      // const children = Array.from(transactionDetailRef.current.children);
+      // console.log(children);
+
+      scrollSpy();
+
+      // const monthNumber = month.substr(month.length - 2, 2);
+      // setTabId(`detailList${monthNumber}`);
       const target = document.getElementById(lastKey);
       target.scrollIntoView({ behavior: 'smooth' });
     }
@@ -118,40 +149,30 @@ const DepositInquiry = () => {
     </div>
   );
 
-  // TODO: 捲動時 tabs 切換
+  // 捲動時 tabs 切換
   const renderTabs = () => (
     <div className="tabsArea">
-      <Scrollspy
-        items={["detailList12", "detailList11", "detailList10", "detailList09", "detailList08", "detailList07", "detailList06", "detailList05", "detailList04", "detailList03"]}
-        currentClassName="scrollSpyActive"
-        componentTag="div"
-        className="scrollSpy"
-        // offset={-240}
-        rootEl="section"
-        onUpdate={handleScrollChangeContent}
-      >
-        <FEIBTabContext value={tabId}>
-          <FEIBTabList onChange={handleChangeTabList} $size="small">
-            <FEIBTab label="12月" value="detailList12" href="#detailList12" />
-            <FEIBTab label="11月" value="detailList11" href="#detailList11" onClick={() => handleClickMonthTabs('month11')} />
-            <FEIBTab label="10月" value="detailList10" href="#detailList10" onClick={() => handleClickMonthTabs('month10')} />
-            <FEIBTab label="09月" value="detailList09" href="#detailList09" />
-            <FEIBTab label="08月" value="detailList08" href="#detailList08" />
-            <FEIBTab label="07月" value="detailList07" href="#detailList07" />
-            <FEIBTab label="06月" value="detailList06" href="#detailList06" />
-            <FEIBTab label="05月" value="detailList05" href="#detailList05" />
-            <FEIBTab label="04月" value="detailList04" href="#detailList04" />
-            <FEIBTab label="03月" value="detailList03" href="#detailList03" />
-          </FEIBTabList>
-          {/* <FEIBTabPanel value="12"> */}
-          {/*  <div>Content</div> */}
-          {/* </FEIBTabPanel> */}
+      <FEIBTabContext value={tabId}>
+        <FEIBTabList onChange={handleChangeTabList} $size="small">
+          <FEIBTab label="12月" value="detailList12" href="#detailList12" />
+          <FEIBTab label="11月" value="detailList11" href="#detailList11" onClick={() => handleClickMonthTabs('month11')} />
+          <FEIBTab label="10月" value="detailList10" href="#detailList10" onClick={() => handleClickMonthTabs('month10')} />
+          <FEIBTab label="09月" value="detailList09" href="#detailList09" />
+          <FEIBTab label="08月" value="detailList08" href="#detailList08" />
+          <FEIBTab label="07月" value="detailList07" href="#detailList07" />
+          <FEIBTab label="06月" value="detailList06" href="#detailList06" />
+          <FEIBTab label="05月" value="detailList05" href="#detailList05" />
+          <FEIBTab label="04月" value="detailList04" href="#detailList04" />
+          <FEIBTab label="03月" value="detailList03" href="#detailList03" />
+        </FEIBTabList>
+        {/* <FEIBTabPanel value="12"> */}
+        {/*  <div>Content</div> */}
+        {/* </FEIBTabPanel> */}
 
-          {/* <FEIBTabPanel value="11"> */}
-          {/*  <div>Content 1</div> */}
-          {/* </FEIBTabPanel> */}
-        </FEIBTabContext>
-      </Scrollspy>
+        {/* <FEIBTabPanel value="11"> */}
+        {/*  <div>Content 1</div> */}
+        {/* </FEIBTabPanel> */}
+      </FEIBTabContext>
     </div>
   );
 
@@ -181,6 +202,7 @@ const DepositInquiry = () => {
               amount={amount}
               balance={balance}
               noShadow
+              onClick={handleClickDetailCard}
             />
           );
         }) }
@@ -213,7 +235,17 @@ const DepositInquiry = () => {
     />
   );
 
-  useEffect(async () => {
+  // TODO: 交易明細內容傳值
+  const renderDetailDialog = () => (
+    <Dialog
+      isOpen={openDetailDialog}
+      onClose={() => setOpenDetailDialog(false)}
+      content={<p>交易明細內容</p>}
+      action={<FEIBButton onClick={handleClickDialogMainButton}>確定</FEIBButton>}
+    />
+  );
+
+  const init = async () => {
     // 清空查詢條件
     dispatch(setDateRange(''));
     dispatch(setSelectedKeywords([]));
@@ -223,7 +255,21 @@ const DepositInquiry = () => {
     if (response.initData) {
       dispatch(setDetailList(response.initData));
     }
-  }, []);
+  };
+
+  // useEffect(async () => {
+  //   // 清空查詢條件
+  //   dispatch(setDateRange(''));
+  //   dispatch(setSelectedKeywords([]));
+  //
+  //   // 取得所有存款卡的初始資料
+  //   const response = await doGetInitData('/api/depositInquiry');
+  //   if (response.initData) {
+  //     dispatch(setDetailList(response.initData));
+  //   }
+  // }, []);
+
+  useEffect(init, [transactionDetailRef]);
 
   useCheckLocation();
   usePageInfo('/api/depositInquiry');
@@ -234,10 +280,11 @@ const DepositInquiry = () => {
       <div className="inquiryArea measuredHeight">
         { renderSearchBarArea() }
         { renderTabs() }
-        <div className="transactionDetail">
+        <div className="transactionDetail" ref={transactionDetailRef}>
           { detailList && renderDetailCardList(detailList) }
         </div>
       </div>
+      { renderDetailDialog() }
       { renderDownloadDrawer() }
       { renderSearchDrawer(<DepositSearchCondition />) }
     </DepositInquiryWrapper>
