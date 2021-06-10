@@ -43,6 +43,9 @@ const Nav = () => {
       <Accordion title="其它功能" space="bottom">
         <Link to="/nicknameSetting">暱稱設定</Link>
         <Link to="/login">登入頁（JWE&JWT&E2EE）</Link>
+        <Link to="/qAndA">Q＆A</Link>
+        <Link to="/open">開通APP</Link>
+        <Link to="/deduct">自動扣繳申請/查詢</Link>
       </Accordion>
     </NavWrapper>
   );
