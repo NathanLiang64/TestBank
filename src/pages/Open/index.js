@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { useCheckLocation, usePageInfo } from 'hooks';
-import { closeFunc } from 'utilities/BankeePlus';
+import { closeFunc, goToFunc } from 'utilities/BankeePlus';
 
 /* Elements */
 import { FEIBCheckbox, FEIBCheckboxLabel } from 'components/elements';
@@ -11,11 +12,12 @@ import BankeeLogo from 'assets/images/logo_02.png';
 import OpenWrapper from './open.style';
 
 const Open = () => {
+  const [agree, setAgree] = useState(false);
   const confirmClick = () => {
-    closeFunc('regularPwdModify');
+    goToFunc('regularPwdModify');
   };
   const cancleClick = () => {
-    closeFunc('login');
+    closeFunc('back');
   };
   useCheckLocation();
   usePageInfo('/api/open');
@@ -29,6 +31,7 @@ const Open = () => {
         control={(
           <FEIBCheckbox
             className="customPadding"
+            onChange={() => setAgree(!agree)}
           />
         )}
         label="同意開通行動銀行服務"
@@ -37,6 +40,7 @@ const Open = () => {
         <ConfirmButtons
           mainButtonOnClick={confirmClick}
           subButtonOnClick={cancleClick}
+          mainButtonDisabled={!agree}
         />
       </div>
       <InfoArea>
