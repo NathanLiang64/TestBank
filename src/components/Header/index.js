@@ -14,6 +14,9 @@ const Header = () => {
     if (className === 'goHome') {
       closeFunc('home');
     }
+    if (className === 'goBack') {
+      closeFunc('back');
+    }
   };
 
   const renderIconButton = (className, icon) => (
