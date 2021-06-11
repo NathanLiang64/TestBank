@@ -62,39 +62,58 @@ const DepositInquiry = () => {
     }
   };
 
-  // TODO: 捲動時 tab 切換錯誤待修正
   const scrollSpy = () => {
     transactionDetailRef.current.addEventListener('scroll', () => {
-      // const children = Array.from(transactionDetailRef.current.children);
-      // for (let i = 0; i < children.length; i++) {
-      //   console.log(children[i]);
-      // }
-      const detailList11 = document.getElementById('detailList11');
-      const detailList10 = document.getElementById('detailList10');
-      // const detailList09 = document.getElementById('detailList09');
-      if (detailList11 && detailList11.getBoundingClientRect().top > 284) {
-        setTabId('detailList12');
-      } else if (detailList10 && detailList10.getBoundingClientRect().top > 284) {
-        setTabId('detailList11');
+      const children = Array.from(transactionDetailRef.current.children);
+      const childrenLength = children.length;
+      if ((childrenLength > 1) && children[1].getBoundingClientRect().top > 283) {
+        setTabId(children[0].id);
+      } else if ((childrenLength > 2) && children[2].getBoundingClientRect().top > 283) {
+        setTabId(children[1].id);
+      } else if ((childrenLength > 3) && children[3].getBoundingClientRect().top > 283) {
+        setTabId(children[2].id);
+      } else if ((childrenLength > 4) && children[4].getBoundingClientRect().top > 283) {
+        setTabId(children[3].id);
+      } else if ((childrenLength > 5) && children[5].getBoundingClientRect().top > 283) {
+        setTabId(children[4].id);
+      } else if ((childrenLength > 6) && children[6].getBoundingClientRect().top > 283) {
+        setTabId(children[5].id);
+      } else if ((childrenLength > 7) && children[7].getBoundingClientRect().top > 283) {
+        setTabId(children[6].id);
+      } else if ((childrenLength > 8) && children[8].getBoundingClientRect().top > 283) {
+        setTabId(children[7].id);
+      } else if ((childrenLength > 9) && children[9].getBoundingClientRect().top > 283) {
+        setTabId(children[8].id);
+      } else if ((childrenLength > 10) && children[10].getBoundingClientRect().top > 283) {
+        setTabId(children[9].id);
+      } else if ((childrenLength > 11) && children[11].getBoundingClientRect().top > 283) {
+        setTabId(children[10].id);
       } else {
-        setTabId('detailList10');
+        setTabId(children[children.length - 1].id);
       }
+
+      // const detailList11 = document.getElementById('detailList11');
+      // const detailList10 = document.getElementById('detailList10');
+      // // const detailList09 = document.getElementById('detailList09');
+      // if (detailList11 && detailList11.getBoundingClientRect().top > 284) {
+      //   setTabId('detailList12');
+      // } else if (detailList10 && detailList10.getBoundingClientRect().top > 284) {
+      //   setTabId('detailList11');
+      // } else {
+      //   setTabId('detailList10');
+      // }
     });
   };
 
   const handleClickMonthTabs = async (month) => {
+    const monthNumber = month.substr(month.length - 2, 2);
+    setTabId(`detailList${monthNumber}`);
     const response = await doGetInitData('/api/depositInquiry');
     if (response[month]) {
       const lastKey = Object.keys(response[month])[Object.keys(response[month]).length - 1];
       dispatch(setDetailList(response[month]));
-
-      // const children = Array.from(transactionDetailRef.current.children);
-      // console.log(children);
-
+      // const target = document.getElementById(`detailList${monthNumber}`);
       scrollSpy();
-
-      // const monthNumber = month.substr(month.length - 2, 2);
-      // setTabId(`detailList${monthNumber}`);
       const target = document.getElementById(lastKey);
       target.scrollIntoView({ behavior: 'smooth' });
     }
@@ -154,24 +173,17 @@ const DepositInquiry = () => {
     <div className="tabsArea">
       <FEIBTabContext value={tabId}>
         <FEIBTabList onChange={handleChangeTabList} $size="small">
-          <FEIBTab label="12月" value="detailList12" href="#detailList12" />
+          <FEIBTab label="12月" value="detailList12" href="#detailList12" onClick={() => handleClickMonthTabs('month12')} />
           <FEIBTab label="11月" value="detailList11" href="#detailList11" onClick={() => handleClickMonthTabs('month11')} />
           <FEIBTab label="10月" value="detailList10" href="#detailList10" onClick={() => handleClickMonthTabs('month10')} />
-          <FEIBTab label="09月" value="detailList09" href="#detailList09" />
-          <FEIBTab label="08月" value="detailList08" href="#detailList08" />
-          <FEIBTab label="07月" value="detailList07" href="#detailList07" />
-          <FEIBTab label="06月" value="detailList06" href="#detailList06" />
-          <FEIBTab label="05月" value="detailList05" href="#detailList05" />
-          <FEIBTab label="04月" value="detailList04" href="#detailList04" />
-          <FEIBTab label="03月" value="detailList03" href="#detailList03" />
+          <FEIBTab label="09月" value="detailList09" href="#detailList09" onClick={() => handleClickMonthTabs('month09')} />
+          <FEIBTab label="08月" value="detailList08" href="#detailList08" onClick={() => handleClickMonthTabs('month08')} />
+          <FEIBTab label="07月" value="detailList07" href="#detailList07" onClick={() => handleClickMonthTabs('month07')} />
+          <FEIBTab label="06月" value="detailList06" href="#detailList06" onClick={() => handleClickMonthTabs('month06')} />
+          <FEIBTab label="05月" value="detailList05" href="#detailList05" onClick={() => handleClickMonthTabs('month05')} />
+          <FEIBTab label="04月" value="detailList04" href="#detailList04" onClick={() => handleClickMonthTabs('month04')} />
+          <FEIBTab label="03月" value="detailList03" href="#detailList03" onClick={() => handleClickMonthTabs('month03')} />
         </FEIBTabList>
-        {/* <FEIBTabPanel value="12"> */}
-        {/*  <div>Content</div> */}
-        {/* </FEIBTabPanel> */}
-
-        {/* <FEIBTabPanel value="11"> */}
-        {/*  <div>Content 1</div> */}
-        {/* </FEIBTabPanel> */}
       </FEIBTabContext>
     </div>
   );

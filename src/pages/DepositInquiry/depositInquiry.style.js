@@ -4,7 +4,6 @@ import Layout from 'components/Layout';
 const DepositInquiryWrapper = styled(Layout)`
   display: flex;
   flex-direction: column;
-  height: 100%;
   background: ${({ theme }) => theme.colors.background.lighterBlue};
   //overflow: hidden;
   
