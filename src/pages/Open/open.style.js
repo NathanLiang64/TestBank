@@ -10,6 +10,13 @@ const OpenWrapper = styled(Layout)`
     width: 100%;
     margin: 3rem 0;
   }
+  .logoContainer {
+    width: 100%;
+    margin-bottom: 3rem;
+    img {
+      width: 100%;
+    }
+  }
 `;
 
 export default OpenWrapper;
