@@ -11,8 +11,11 @@ import BankeeLogo from 'assets/images/logo_02.png';
 import OpenWrapper from './open.style';
 
 const Open = () => {
-  const toHome = () => {
-    closeFunc('home');
+  const confirmClick = () => {
+    closeFunc('regularPwdModify');
+  };
+  const cancleClick = () => {
+    closeFunc('login');
   };
   useCheckLocation();
   usePageInfo('/api/open');
@@ -32,7 +35,8 @@ const Open = () => {
       />
       <div className="btns-container">
         <ConfirmButtons
-          mainButtonOnClick={toHome}
+          mainButtonOnClick={confirmClick}
+          subButtonOnClick={cancleClick}
         />
       </div>
       <InfoArea>
