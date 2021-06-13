@@ -779,6 +779,782 @@
           "balance": 154560221
         }
       ]
+    },
+    "month06": {
+      "detailList12": [
+        {
+          "id": "12-1",
+          "avatar": null,
+          "title": "12月的伙食費",
+          "type": "income",
+          "date": "12/08",
+          "sender": "Amanda Wilkins",
+          "amount": 1200,
+          "balance": 212489283
+        },
+        {
+          "id": "12-2",
+          "avatar": null,
+          "title": "跨行轉入",
+          "type": "income",
+          "date": "12/08",
+          "sender": "345-17282981",
+          "amount": 2650,
+          "balance": 212489874
+        },
+        {
+          "id": "12-3",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "12/05",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "12-4",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "12/04",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "12-5",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "12/01",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        },
+        {
+          "id": "12-6",
+          "avatar": null,
+          "title": "跨行轉入",
+          "type": "income",
+          "date": "12/01",
+          "sender": "345-17282981",
+          "amount": 2650,
+          "balance": 212489874
+        }
+      ],
+      "detailList11": [
+        {
+          "id": "11-1",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "11/29",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "11-2",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "11/20",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "11-3",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "11/19",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        },
+        {
+          "id": "11-4",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "11/17",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "11-5",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "11/15",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "11-6",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "11/15",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        },
+        {
+          "id": "11-7",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "11/12",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "11-8",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "11/11",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "11-9",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "11/10",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        },
+        {
+          "id": "11-10",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "11/08",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "11-11",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "11/05",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "11-12",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "11/04",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        }
+      ],
+      "detailList10": [
+        {
+          "id": "10-1",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "10/29",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "10-2",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "10/20",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "10-3",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "10/19",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        },
+        {
+          "id": "10-4",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "10/17",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "10-5",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "10/15",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "10-6",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "10/15",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        },
+        {
+          "id": "10-7",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "10/12",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "10-8",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "10/11",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "10-9",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "10/10",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        },
+        {
+          "id": "10-10",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "10/08",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "10-11",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "10/05",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "10-12",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "10/04",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        }
+      ],
+      "detailList09": [
+        {
+          "id": "09-1",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "09/29",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "09-2",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "09/20",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "09-3",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "09/19",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        },
+        {
+          "id": "09-4",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "09/17",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "09-5",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "09/15",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "09-6",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "09/15",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        },
+        {
+          "id": "09-7",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "09/12",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "09-8",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "09/11",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "09-9",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "09/10",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        },
+        {
+          "id": "09-10",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "09/08",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "09-11",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "09/05",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "09-12",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "09/04",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        }
+      ],
+      "detailList08": [
+        {
+          "id": "08-1",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "08/29",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "08-2",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "08/20",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "08-3",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "08/19",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        },
+        {
+          "id": "08-4",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "08/17",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "08-5",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "08/15",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "08-6",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "08/15",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        },
+        {
+          "id": "08-7",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "08/12",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "08-8",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "08/11",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "08-9",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "08/10",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        },
+        {
+          "id": "08-10",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "08/08",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        }
+      ],
+      "detailList07": [
+        {
+          "id": "07-1",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "07/29",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "07-2",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "07/20",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "07-3",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "07/19",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        },
+        {
+          "id": "07-4",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "07/17",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "07-5",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "07/15",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "07-6",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "07/15",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        },
+        {
+          "id": "07-7",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "07/12",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "07-8",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "07/11",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "07-9",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "07/10",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        },
+        {
+          "id": "07-10",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "07/08",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "07-11",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "07/05",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "07-12",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "07/04",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        }
+      ],
+      "detailList06": [
+        {
+          "id": "06-1",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "06/29",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "06-2",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "06/20",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "06-3",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "06/19",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        },
+        {
+          "id": "06-4",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "06/17",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "06-5",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "06/15",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "06-6",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "06/15",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        },
+        {
+          "id": "06-7",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "06/12",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "06-8",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "06/11",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "06-9",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "06/10",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        },
+        {
+          "id": "06-10",
+          "avatar": null,
+          "title": "自行轉出",
+          "type": "spend",
+          "date": "06/08",
+          "sender": "345-17282981",
+          "amount": 1345,
+          "balance": 154563832
+        },
+        {
+          "id": "06-11",
+          "avatar": null,
+          "title": "日式壽司",
+          "type": "spend",
+          "date": "06/05",
+          "sender": "043-23924824",
+          "amount": 1200,
+          "balance": 154561422
+        },
+        {
+          "id": "06-12",
+          "avatar": null,
+          "title": "業績獎金",
+          "type": "income",
+          "date": "06/04",
+          "sender": "國易股份有限公司",
+          "amount": 200000,
+          "balance": 154560221
+        }
+      ]
     }
   },
   "depositPlus": {
