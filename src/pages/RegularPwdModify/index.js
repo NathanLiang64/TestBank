@@ -4,7 +4,7 @@ import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { closeFunc } from 'utilities/BankeePlus';
+import { goToFunc } from 'utilities/BankeePlus';
 
 /* Elements */
 import {
@@ -71,12 +71,12 @@ const RegularPwdModify = () => {
 
   const handleWarnConfirm = () => {
     setShowWarningDialog(false);
-    closeFunc('home');
+    goToFunc('home');
   };
 
   const handleResultButton = () => {
     setShowResultDialog(false);
-    closeFunc('home');
+    goToFunc('home');
   };
 
   const onSubmit = async (data) => {

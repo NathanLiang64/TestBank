@@ -32,7 +32,7 @@ const QandA = () => {
   };
 
   const renderTabs = () => (
-    <FEIBTabList onChange={handleTabChange}>
+    <FEIBTabList onChange={handleTabChange} $size="small" $type="fixed">
       {
         tabs.map((item) => (
           <FEIBTab key={item.key} label={item.tabLabel} value={item.key.toString()} />
