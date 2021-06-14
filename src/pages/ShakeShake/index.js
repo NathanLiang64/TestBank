@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -8,7 +7,7 @@ import QRCode from 'qrcode.react';
 import { FileCopyOutlined, Share } from '@material-ui/icons';
 import Loading from 'components/Loading';
 import BottomDrawer from 'components/BottomDrawer';
-import { FEIBButton, FEIBIconButton } from 'components/elements';
+import { FEIBIconButton } from 'components/elements';
 import { shakeShakeApi } from 'apis';
 import theme from 'themes/theme';
 import 'swiper/swiper.min.css';
@@ -25,7 +24,6 @@ const ShakeShake = () => {
   const userCards = useSelector(({ shakeShake }) => shakeShake.userCards);
   const userCardInfo = useSelector(({ shakeShake }) => shakeShake.userCardInfo);
 
-  const { push } = useHistory();
   const dispatch = useDispatch();
   const { doGetShakeInitData } = shakeShakeApi;
 
@@ -41,10 +39,10 @@ const ShakeShake = () => {
     setTimeout(() => setCopyAccount(false), 1500);
   };
 
-  const handleClickTransferButton = () => {
-    dispatch(setIsShake(false));
-    push('/QRCodeTransfer');
-  };
+  // const handleClickTransferButton = () => {
+  //   dispatch(setIsShake(false));
+  //   push('/QRCodeTransfer');
+  // };
 
   const renderCopyIconButton = (value) => (
     <div className="copyIconButton">
@@ -54,7 +52,7 @@ const ShakeShake = () => {
       >
         <FEIBIconButton
           $fontSize={1.6}
-          $iconColor={theme.colors.state.success}
+          $iconColor={theme.colors.text.lightGray}
         >
           <FileCopyOutlined />
         </FEIBIconButton>
@@ -64,12 +62,12 @@ const ShakeShake = () => {
   );
 
   const renderAccountInfo = (info) => {
-    const { cardName, cardAccount } = info;
+    const { bankName, cardName, cardAccount } = info;
     return (
       <>
         <p className="cardName">{cardName}</p>
         <div className="accountInfo">
-          <p className="account">{cardAccount}</p>
+          <p className="account">{`${bankName} ${cardAccount}`}</p>
           { renderCopyIconButton(cardAccount) }
         </div>
       </>
@@ -82,20 +80,21 @@ const ShakeShake = () => {
       return (
         <SwiperSlide key={id}>
           <div className="customSpace">
-            <div>
-              <QRCode
-                value={`http://${cardAccount}.con`}
-                renderAs="svg"
-                size={200}
-                fgColor={theme.colors.text.dark}
-              />
+            <QRCode
+              value={`http://${cardAccount}.con`}
+              renderAs="svg"
+              size={200}
+              fgColor={theme.colors.text.dark}
+            />
+            <div className="shareButtonArea">
               <FEIBIconButton
                 className="shareIconButton"
                 $fontSize={1.8}
-                $iconColor={theme.colors.state.success}
+                $iconColor={theme.colors.text.dark}
               >
                 <Share />
               </FEIBIconButton>
+              <p>分享QR CODE</p>
             </div>
           </div>
         </SwiperSlide>
@@ -126,9 +125,9 @@ const ShakeShake = () => {
     <>
       { userCardInfo && renderAccountInfo(userCardInfo) }
       { (userCards && userCardInfo) ? renderCodeArea(userCards) : renderLoading() }
-      <div className="buttonArea">
-        <FEIBButton onClick={handleClickTransferButton}>登入後轉帳</FEIBButton>
-      </div>
+      {/* <div className="buttonArea"> */}
+      {/*  <FEIBButton onClick={handleClickTransferButton}>登入後轉帳</FEIBButton> */}
+      {/* </div> */}
     </>
   );
 

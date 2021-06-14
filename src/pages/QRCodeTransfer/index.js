@@ -53,9 +53,9 @@ const QRCodeTransfer = () => {
   return (
     <QRCodeTransferWrapper>
       <FEIBTabContext value={tabId}>
-        <FEIBTabList onChange={handleChangeTabList}>
-          <FEIBTab label="收款" value="0" />
-          <FEIBTab label="轉帳" value="1" />
+        <FEIBTabList $size="small" $type="fixed" onChange={handleChangeTabList}>
+          <FEIBTab label="要錢" value="0" />
+          <FEIBTab label="給錢" value="1" />
         </FEIBTabList>
 
         <FEIBTabPanel value="0">

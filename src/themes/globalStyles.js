@@ -146,13 +146,15 @@ const GlobalStyles = createGlobalStyle`
   .swiper-pagination-bullet {
     width: .6rem;
     height: .6rem;
-    background: ${({ theme }) => theme.colors.text.light};
+    background: #CCC;  // TODO: 該色票未新增至全域變數，待確認
+    opacity: 1;
     transition: all .2s;
 
     &-active {
-      width: .8rem;
-      height: .8rem;
-      transform: translateY(.15rem);
+      background: ${({ theme }) => theme.colors.primary.light};
+    //  width: .8rem;
+    //  height: .8rem;
+    //  transform: translateY(.15rem);
     }
   }
   

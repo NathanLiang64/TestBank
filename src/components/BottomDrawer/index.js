@@ -8,7 +8,6 @@ import DrawerWrapper from './bottomDrawer.style';
 * BottomDrawer 組件封裝了 Material UI 的抽屜組件
 * ==================== BottomDrawer 可傳參數 ====================
 * 1. title -> 標題文字
-* 2. titleColor -> 標題文字顏色，預設不傳為深藍色
 * 2. className -> class 名稱
 * 3. isOpen -> 根據此布林值判斷抽屜是否彈出 (true 開啟、false 關閉)
 * 4. onClose -> 點擊抽屜背景遮罩時所觸發的事件 (通常點擊遮罩要關閉抽屜，建議傳入觸發抽屜關閉的事件)
@@ -17,7 +16,6 @@ import DrawerWrapper from './bottomDrawer.style';
 
 const BottomDrawer = ({
   title,
-  titleColor,
   className,
   isOpen,
   onClose,
@@ -27,7 +25,6 @@ const BottomDrawer = ({
     className={className}
     open={isOpen}
     onClose={onClose}
-    $color={titleColor}
   >
     <div className="drawerTitle">
       <h3 className="title">{title}</h3>
