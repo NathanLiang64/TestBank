@@ -4,10 +4,14 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Pagination } from 'swiper/core';
 import QRCode from 'qrcode.react';
-import { FileCopyOutlined, Share } from '@material-ui/icons';
+import { ArrowForwardIosRounded, FileCopyOutlined, Share } from '@material-ui/icons';
+import ScanPhoto from 'assets/images/scanningQRCode.png';
 import Loading from 'components/Loading';
 import BottomDrawer from 'components/BottomDrawer';
-import { FEIBIconButton } from 'components/elements';
+import {
+  // eslint-disable-next-line no-unused-vars
+  FEIBIconButton, FEIBTabContext, FEIBTab, FEIBTabList, FEIBTabPanel,
+} from 'components/elements';
 import { shakeShakeApi } from 'apis';
 import theme from 'themes/theme';
 import 'swiper/swiper.min.css';
@@ -18,6 +22,7 @@ import { setIsShake, setUserCards, setUserCardInfo } from './stores/actions';
 SwiperCore.use([Pagination]);
 
 const ShakeShake = () => {
+  const [tabId, setTabId] = useState('0');
   const [copyAccount, setCopyAccount] = useState(false);
 
   const isShake = useSelector(({ shakeShake }) => shakeShake.isShake);
@@ -43,6 +48,10 @@ const ShakeShake = () => {
   //   dispatch(setIsShake(false));
   //   push('/QRCodeTransfer');
   // };
+
+  const handleChangeTabList = (event, id) => {
+    setTabId(id);
+  };
 
   const renderCopyIconButton = (value) => (
     <div className="copyIconButton">
@@ -121,13 +130,41 @@ const ShakeShake = () => {
     </div>
   );
 
+  // TODO: 判斷是否已登入，若未登入則不可轉帳
   const drawerContent = () => (
     <>
-      { userCardInfo && renderAccountInfo(userCardInfo) }
-      { (userCards && userCardInfo) ? renderCodeArea(userCards) : renderLoading() }
-      {/* <div className="buttonArea"> */}
-      {/*  <FEIBButton onClick={handleClickTransferButton}>登入後轉帳</FEIBButton> */}
-      {/* </div> */}
+      <FEIBTabContext value={tabId}>
+        <FEIBTabList $size="small" $type="fixed" onChange={handleChangeTabList}>
+          <FEIBTab label="要錢" value="0" />
+          <FEIBTab label="給錢" value="1" />
+        </FEIBTabList>
+        <FEIBTabPanel value="0">
+          { userCardInfo && renderAccountInfo(userCardInfo) }
+          { (userCards && userCardInfo) ? renderCodeArea(userCards) : renderLoading() }
+        </FEIBTabPanel>
+        <FEIBTabPanel value="1">
+          <p>掃描收款人的 QR code，進行轉帳。</p>
+          <div className="scanArea">
+            <img src={ScanPhoto} style={{ width: 'auto', height: '100%' }} alt="" />
+            <div className="maskArea">
+              <div className="mask" />
+              <div className="mask" />
+              <div className="mask" />
+              <div className="mask" />
+              <div className="mask empty">
+                <ArrowForwardIosRounded className="topLeft" />
+                <ArrowForwardIosRounded className="topRight" />
+                <ArrowForwardIosRounded className="bottomLeft" />
+                <ArrowForwardIosRounded className="bottomRight" />
+              </div>
+              <div className="mask" />
+              <div className="mask" />
+              <div className="mask" />
+              <div className="mask" />
+            </div>
+          </div>
+        </FEIBTabPanel>
+      </FEIBTabContext>
     </>
   );
 

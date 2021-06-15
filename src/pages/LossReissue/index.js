@@ -74,7 +74,7 @@ const LossReissue = () => {
     setShowResultDialog(true);
     // call api 決定顯示申請成功失敗結果
     setShowAlert(true);
-    dispatch(setIsResultSuccess(false));
+    dispatch(setIsResultSuccess(true));
   };
 
   // 點擊結果彈窗內的確定按鈕後關閉彈窗
