@@ -15,11 +15,11 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
     justify-content: center;
     min-height: 4.8rem;
     padding: 1.2rem;
-    font-weight: 500;
     
     .title {
-      font-size: 2rem;
-      color: ${({ theme, $color }) => $color || theme.colors.text.dark};
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: ${({ theme }) => theme.colors.primary.dark};
     }
   }
   
@@ -57,27 +57,28 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
   
   &.QRCodeDrawer {
     .content {
-      padding: 0 2.4rem;
+      padding: .8rem 2.4rem;
       text-align: center;
-      font-weight: 500;
       
       .cardName {
-        color: ${({ theme }) => theme.colors.primary.light};
+        font-size: 2rem;
+        color: ${({ theme }) => theme.colors.primary.dark};
       }
       
       .accountInfo {
         display: flex;
         justify-content: center;
         align-items: center;
+        padding-left: 1.6rem;  // 視覺對齊
         color: ${({ theme }) => theme.colors.text.darkGray};
 
         .account {
-          font-size: 1.5rem;
-          color: ${({ theme }) => theme.colors.text.lightGray};
+          font-size: 1.4rem;
+          color: ${({ theme }) => theme.colors.text.light};
         }
         
         .MuiIconButton-root {
-          margin-left: -.4rem;
+          margin-left: -.8rem;
         }
 
         .copiedMessage {
@@ -100,16 +101,20 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
       }
       
       .codeArea {
-        margin: 1.6rem 0;
+        margin: .8rem 0 1.6rem 0;
 
         .customSpace {
           padding-bottom: 4rem;
         }
         
         .shareIconButton {
-          position: absolute;
-          right: 0;
-          bottom: -.4rem;
+          margin-right: -.4rem;
+        }
+        
+        .shareButtonArea {
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
       }
       
