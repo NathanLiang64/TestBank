@@ -50,6 +50,10 @@ const DepositInquiryWrapper = styled(Layout)`
   
   .tabsArea {
     padding: 0 1.6rem;
+    
+    .tabList {
+      margin-bottom: 1.6rem;
+    }
   }
   
   .customPosition {

@@ -1,11 +1,11 @@
 const theme = {
-  font: '"Prompt", "Noto Sans TC", "Microsoft JhengHei", "微軟正黑體", sans-serif',
+  font: '-apple-system, "Prompt", "Noto Sans TC", "Microsoft JhengHei", "微軟正黑體", sans-serif',
   colors: {
     primary: {
       brand: '#825DC7',
       dark: '#5D2FB3',
       light: '#AC8DE8',
-      lightest: '#EADFF9',
+      lightest: '#F7F2FF',
     },
     secondary: {
       brand: '#93DA49',

@@ -172,7 +172,7 @@ const DepositInquiry = () => {
   const renderTabs = () => (
     <div className="tabsArea">
       <FEIBTabContext value={tabId}>
-        <FEIBTabList onChange={handleChangeTabList} $size="small">
+        <FEIBTabList onChange={handleChangeTabList} $size="small" className="tabList">
           <FEIBTab label="12月" value="detailList12" href="#detailList12" onClick={() => handleClickMonthTabs('month12')} />
           <FEIBTab label="11月" value="detailList11" href="#detailList11" onClick={() => handleClickMonthTabs('month11')} />
           <FEIBTab label="10月" value="detailList10" href="#detailList10" onClick={() => handleClickMonthTabs('month10')} />

@@ -1800,5 +1800,10 @@
     "name": "Deduct",
     "title": "自動扣繳申請/查詢",
     "route": "/deduct"
+  },
+  "exchange": {
+    "name": "Exchange",
+    "title": "外幣換匯",
+    "route": "/exchange"
   }
 }

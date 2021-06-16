@@ -12,7 +12,7 @@ import { TabList as MaterialTabList } from '@material-ui/lab';
 const FEIBTabList = styled(MaterialTabList).attrs({
   variant: 'scrollable',
 })`
-  margin-bottom: 1.6rem;
+  margin-bottom: 2.4rem;
 
   .MuiTabs-indicator {
     background-color: ${({ theme }) => theme.colors.primary.dark};

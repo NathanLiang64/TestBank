@@ -97,7 +97,7 @@ const GlobalStyles = createGlobalStyle`
   }
 
   table {
-    border: .1rem solid ${({ theme }) => theme.colors.primary.lightest};
+    border: .1rem solid ${({ theme }) => theme.colors.border.lighter};
     width: 100%;
     font-size: 1.4rem;
     background: white;
@@ -291,6 +291,17 @@ const GlobalStyles = createGlobalStyle`
       color: ${({ theme }) => theme.colors.text.placeholder};
       opacity: 1;
     }
+  }
+
+  .e-daterangepicker .e-calendar .e-header .e-date-icon-prev::before {
+    content: '\\e5cb';
+    font-family: 'Material Icons', sans-serif !important;
+  }
+
+
+  .e-daterangepicker .e-calendar .e-header .e-date-icon-next::before {
+    content: '\\e5cc';
+    font-family: 'Material Icons', sans-serif !important;
   }
   
   .e-input-group-icon.e-range-icon::before, *.e-control-wrapper .e-input-group-icon.e-range-icon::before {
