@@ -56,7 +56,9 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
       }
     }
   }
-  
+
+
+  // 搖一搖 QR Code
   &.QRCodeDrawer {
     .content {
       padding-left: 2.4rem;
@@ -190,6 +192,7 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
     }
   }
 
+  // 交易明細搜尋
   &.debitInquirySearchDrawer {
 
     .calendarArea {

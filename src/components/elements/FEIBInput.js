@@ -30,13 +30,21 @@ const handleSpaceType = (position) => {
 *    預設無 margin，可傳入 "top"、"bottom"、"both" 字串來產生固定高度的 margin
 * 6. $icon -> 圖標
 *    可傳入需要的圖標，顏色為淺主色，不可變更
-* 7. $iconOnClick -> 點擊圖標的事件
+* 7. $iconFontSize -> 圖標字級大小
+*    直接填寫數字，例如：2.4，若未傳值預設為 Material-UI 預設值 1.5
+* 8. $iconOnClick -> 點擊圖標的事件
 *    可傳入點擊事件，若不傳事件則僅有不會觸發動作的圖標
 * */
 
-const FEIBInput = styled(MaterialInput).attrs(({ theme, $icon, $iconOnClick }) => $icon && ({
+const FEIBInput = styled(MaterialInput).attrs(({
+  theme, $icon, $iconOnClick, $iconFontSize,
+}) => $icon && ({
   endAdornment: (
-    <FEIBIconButton onClick={$iconOnClick} $iconColor={theme.colors.primary.light}>
+    <FEIBIconButton
+      onClick={$iconOnClick}
+      $iconColor={theme.colors.primary.light}
+      $fontSize={$iconFontSize}
+    >
       {$icon}
     </FEIBIconButton>
   ),
