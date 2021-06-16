@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+/* eslint-disable */
 import { useForm, Controller } from 'react-hook-form';
 import { DateRangePickerComponent } from '@syncfusion/ej2-react-calendars';
+import DateRangePicker from 'components/DateRangePicker';
 import CheckboxButton from 'components/CheckboxButton';
 import ConfirmButtons from 'components/ConfirmButtons';
 import {
@@ -67,22 +69,25 @@ const DepositSearchCondition = () => {
   const renderCalendar = () => (
     <div className="calendarArea">
       <FEIBInputLabel>自訂搜尋日期區間</FEIBInputLabel>
-      <Controller
-        control={control}
-        name="dateRange"
-        render={({ field}) => (
-          <DateRangePickerComponent
-            cssClass="calendar"
-            openOnFocus
-            format="yyyy/MM/dd"
-            // change={(data) => console.log(data)}
-            placeholder="請選擇"
-            startDate={startValue}
-            endDate={endValue}
-            { ...field }
-          />
-        )}
-      />
+      <DateRangePicker />
+      {/*<Controller*/}
+      {/*  control={control}*/}
+      {/*  name="dateRange"*/}
+      {/*  render={({ field}) => (*/}
+      {/*    <DateRangePickerComponent*/}
+      {/*      cssClass="calendar"*/}
+      {/*      openOnFocus*/}
+      {/*      start="Year"*/}
+      {/*      // depth="Year"*/}
+      {/*      format="yyyy/MM/dd"*/}
+      {/*      // change={(data) => console.log(data)}*/}
+      {/*      placeholder="請選擇"*/}
+      {/*      startDate={startValue}*/}
+      {/*      endDate={endValue}*/}
+      {/*      { ...field }*/}
+      {/*    />*/}
+      {/*  )}*/}
+      {/*/>*/}
     </div>
   );
 

@@ -267,6 +267,15 @@ const DepositInquiry = () => {
     if (response.initData) {
       dispatch(setDetailList(response.initData));
     }
+
+    // TODO: 待解決，此作法將導致連續發送 api 請求
+    // transactionDetailRef.addEventListener('scroll', (event) => {
+    //   if (event.target.scrollTop < 2000) {
+    //     console.log('拿前 50 筆資料');
+    //   } else if ((event.target.scrollHeight - event.target.scrollTop) < 2000 ) {
+    //     console.log('拿後 50 筆資料');
+    //   }
+    // });
   };
 
   // useEffect(async () => {
