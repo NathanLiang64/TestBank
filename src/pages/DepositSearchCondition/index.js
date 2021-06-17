@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-/* eslint-disable */
-import { useForm, Controller } from 'react-hook-form';
-import { DateRangePickerComponent } from '@syncfusion/ej2-react-calendars';
+import { useForm } from 'react-hook-form';
 import DateRangePicker from 'components/DateRangePicker';
 import CheckboxButton from 'components/CheckboxButton';
 import ConfirmButtons from 'components/ConfirmButtons';
@@ -14,20 +12,43 @@ import DepositSearchConditionWrapper from './depositSearchCondition.style';
 import { setOpenInquiryDrawer, setDateRange, setSelectedKeywords } from '../DepositInquiry/stores/actions';
 
 /* eslint-disable */
+// TODO: 若已選的關鍵字未清空，點擊 search icon 應代入原先已選的關鍵字
 const DepositSearchCondition = () => {
-  const [tabId, setTabId] = useState('0');
   const keywords = useSelector(({ depositInquiry }) => depositInquiry.keywords);
-  const startValue = new Date('');
-  const endValue = new Date('');
-  const { register, handleSubmit, control } = useForm();
+  const dateRange = useSelector(({ depositInquiry }) => depositInquiry.dateRange);
+  const [tabId, setTabId] = useState('0');
+  const [tempDateRange, setTempDateRange] = useState([]);
+  const { register, handleSubmit } = useForm();
 
   const dispatch = useDispatch();
 
-  // 將日期範圍儲存至 redux
-  const saveDateRange = (dateRangeArray) => {
-    const startDate = dateFormatter(new Date(dateRangeArray[0]));
-    const endDate = dateFormatter(new Date(dateRangeArray[1]));
-    dispatch(setDateRange(`${startDate} ~ ${endDate}`));
+  const handleClickApplyDateRange = (rangeData) => {
+    setTempDateRange(rangeData);
+  };
+
+  // 將選擇的關鍵字儲存至 redux
+  const saveSelectedKeywords = (keywordData) => {
+    const selected = [];
+    const selectedKeywords = [];
+
+    // 從 data 中將已選取的關鍵字存放至 selected
+    for (let keyword in keywordData) {
+      if (keywordData[keyword]) {
+        selected.push(keyword);
+      }
+    }
+
+    // 將 selected 內的關鍵字名稱比對所有關鍵字，得出對應的中文名稱
+    selected.forEach((selectedKeyword) => {
+      keywords.find((keyword) => {
+        if (keyword.name === selectedKeyword) {
+          selectedKeywords.push(keyword);
+        }
+      });
+    });
+
+    // 將已選取的關鍵字資料儲存至 redux
+    dispatch(setSelectedKeywords(selectedKeywords));
   };
 
   // 控制 Tabs 頁籤
@@ -37,57 +58,24 @@ const DepositSearchCondition = () => {
 
   // 點擊查詢按鈕後傳送資料
   const handleClickSearchButton = async (data) => {
-    const { dateRange, date } = data;
-
     // 關閉底部抽屜
     dispatch(setOpenInquiryDrawer(false));
 
+    // 若有選擇日期，則將日期範圍儲存至 redux
+    tempDateRange.length > 0 && dispatch(setDateRange(tempDateRange));
+
+    // 判斷是否有選擇關鍵字，並且將 data (關鍵字) 儲存至 redux
+    saveSelectedKeywords(data);
+
     // TODO: send data
-
-    const selectedKeywords = [];
-    const selectedKeywordsTitle = [];
-    // 從 data 中將已選取的關鍵字存放至 selectedKeywords
-    for (let keyword in data) {
-      if (data[keyword]) {
-        selectedKeywords.push(keyword);
-      }
-    }
-    // 將已選取的關鍵字名稱比對所有關鍵字，得出對應的中文名稱
-    selectedKeywords.forEach((selectedKeyword) => {
-      keywords.find((keyword) => {
-        if (keyword.name === selectedKeyword) {
-          selectedKeywordsTitle.push(keyword.title);
-        }
-      });
-    });
-    dispatch(setSelectedKeywords(selectedKeywordsTitle));
-
-    // 從 data 中取得日期範圍並將其儲存至 redux
-    dateRange ? saveDateRange(dateRange) : saveDateRange(date);
+    data.dateRange = tempDateRange;
+    // 送資料
   };
 
   const renderCalendar = () => (
     <div className="calendarArea">
       <FEIBInputLabel>自訂搜尋日期區間</FEIBInputLabel>
-      <DateRangePicker />
-      {/*<Controller*/}
-      {/*  control={control}*/}
-      {/*  name="dateRange"*/}
-      {/*  render={({ field}) => (*/}
-      {/*    <DateRangePickerComponent*/}
-      {/*      cssClass="calendar"*/}
-      {/*      openOnFocus*/}
-      {/*      start="Year"*/}
-      {/*      // depth="Year"*/}
-      {/*      format="yyyy/MM/dd"*/}
-      {/*      // change={(data) => console.log(data)}*/}
-      {/*      placeholder="請選擇"*/}
-      {/*      startDate={startValue}*/}
-      {/*      endDate={endValue}*/}
-      {/*      { ...field }*/}
-      {/*    />*/}
-      {/*  )}*/}
-      {/*/>*/}
+      <DateRangePicker date={dateRange} onClick={handleClickApplyDateRange} />
     </div>
   );
 

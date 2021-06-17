@@ -3,7 +3,7 @@ import * as types from './types';
 const initState = {
   detailList: null,
   openInquiryDrawer: false,
-  dateRange: '',
+  dateRange: [],
   keywords: [
     { title: '繳卡款', name: 'keywordBill' },
     { title: '轉出', name: 'keywordTransfer' },
