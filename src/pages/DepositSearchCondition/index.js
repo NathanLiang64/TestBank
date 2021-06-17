@@ -74,7 +74,6 @@ const DepositSearchCondition = () => {
 
   const renderCalendar = () => (
     <div className="calendarArea">
-      <FEIBInputLabel>自訂搜尋日期區間</FEIBInputLabel>
       <DateRangePicker date={dateRange} onClick={handleClickApplyDateRange} />
     </div>
   );
