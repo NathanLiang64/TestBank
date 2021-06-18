@@ -2,9 +2,10 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const ExchangeWrapper = styled(Layout)`
+  table {
+    margin-bottom: 2rem;
+  }
   section {
-    margin-bottom: 2.4rem;
-
     &.barcodeArea {
       padding: 2.4rem;
     }

@@ -38,6 +38,7 @@ import Deduct1 from 'pages/Deduct/deduct1';
 import Deduct2 from 'pages/Deduct/deduct2';
 import Deduct3 from 'pages/Deduct/deduct3';
 import Exchange from 'pages/Exchange';
+import Exchange1 from 'pages/Exchange/exchange_1';
 
 /* 測試用目錄頁 */
 import Nav from 'pages/Nav';
@@ -83,6 +84,7 @@ const routes = [
   { path: '/deduct2', exact: false, component: Deduct2 },
   { path: '/deduct3', exact: false, component: Deduct3 },
   { path: '/exchange', exact: false, component: Exchange },
+  { path: '/exchange1', exact: false, component: Exchange1 },
 ];
 
 export default routes;
