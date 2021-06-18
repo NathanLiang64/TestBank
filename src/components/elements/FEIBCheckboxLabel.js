@@ -12,12 +12,17 @@ const FEIBCheckboxLabel = styled(MaterialCheckboxLabel)`
 
   // Label font size
   .MuiTypography-body1 {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
+  }
+
+  // Label position
+  .MuiFormControlLabel-label {
+    left: -.3rem;
   }
   
   // Icon font size
   .MuiSvgIcon-root {
-    font-size: 1.8rem;
+    font-size: 2.4rem;
   }
 `;
 

@@ -8,7 +8,7 @@ const FEIBOption = styled(MaterialOption)`
     color: ${({ theme }) => theme.colors.text.lightGray};
     
     &.Mui-selected {
-      color: ${({ theme }) => theme.colors.primary.light};
+      color: ${({ theme }) => theme.colors.primary.dark};
     }
     &.Mui-disabled {
       color: ${({ theme }) => theme.colors.border.light};

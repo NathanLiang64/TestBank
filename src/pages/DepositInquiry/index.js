@@ -17,6 +17,7 @@ import DepositInquiryWrapper from './depositInquiry.style';
 import {
   setDetailList, setOpenInquiryDrawer, setDateRange, setSelectedKeywords,
 } from './stores/actions';
+import { dateFormatter } from '../../utilities/Generator';
 
 const DepositInquiry = () => {
   const transactionDetailRef = useRef();
@@ -131,29 +132,31 @@ const DepositInquiry = () => {
   };
 
   const renderSearchBarText = (date, keywords) => (
-    date ? (
-      <>
-        <p>{date}</p>
-        <FEIBIconButton
-          $fontSize={2}
-          $iconColor={theme.colors.primary.light}
-          onClick={() => {
-            dispatch(setDateRange(''));
-            dispatch(setSelectedKeywords([]));
-          }}
-        >
-          <CancelRounded />
-        </FEIBIconButton>
-      </>
-    ) : (
-      keywords && (
-        <div className="selectedKeywords">
-          { keywords.map((keyword) => (
-            <CheckboxButton key={keyword} label={keyword} unclickable />
-          )) }
-        </div>
-      )
-    )
+    <>
+      {
+        date.length > 0 ? (
+          <p>{`${dateFormatter(new Date(dateRange[0]))} ~ ${dateFormatter(new Date(dateRange[1]))}`}</p>
+        ) : (
+          keywords.length > 0 && (
+            <div className="selectedKeywords">
+              {keywords.map((keyword) => (
+                <CheckboxButton key={keyword.name} label={keyword.title} unclickable />
+              ))}
+            </div>
+          )
+        )
+      }
+      <FEIBIconButton
+        $fontSize={2}
+        $iconColor={theme.colors.primary.light}
+        onClick={() => {
+          dispatch(setDateRange([]));
+          dispatch(setSelectedKeywords([]));
+        }}
+      >
+        <CancelRounded />
+      </FEIBIconButton>
+    </>
   );
 
   const renderSearchBarArea = () => (
@@ -161,7 +164,7 @@ const DepositInquiry = () => {
       <FEIBIconButton $fontSize={2.8} onClick={handleClickSearchButton}>
         <SearchRounded />
       </FEIBIconButton>
-      { renderSearchBarText(dateRange, selectedKeywords) }
+      { (dateRange.length > 0 || selectedKeywords.length > 0) && renderSearchBarText(dateRange, selectedKeywords) }
       <FEIBIconButton $fontSize={2.8} className="customPosition" onClick={handleClickDownloadButton}>
         <GetAppRounded />
       </FEIBIconButton>
@@ -259,7 +262,7 @@ const DepositInquiry = () => {
 
   const init = async () => {
     // 清空查詢條件
-    dispatch(setDateRange(''));
+    dispatch(setDateRange([]));
     dispatch(setSelectedKeywords([]));
 
     // 取得所有存款卡的初始資料
@@ -267,19 +270,16 @@ const DepositInquiry = () => {
     if (response.initData) {
       dispatch(setDetailList(response.initData));
     }
-  };
 
-  // useEffect(async () => {
-  //   // 清空查詢條件
-  //   dispatch(setDateRange(''));
-  //   dispatch(setSelectedKeywords([]));
-  //
-  //   // 取得所有存款卡的初始資料
-  //   const response = await doGetInitData('/api/depositInquiry');
-  //   if (response.initData) {
-  //     dispatch(setDetailList(response.initData));
-  //   }
-  // }, []);
+    // TODO: 待解決，此作法將導致連續發送 api 請求
+    // transactionDetailRef.addEventListener('scroll', (event) => {
+    //   if (event.target.scrollTop < 2000) {
+    //     console.log('拿前 50 筆資料');
+    //   } else if ((event.target.scrollHeight - event.target.scrollTop) < 2000 ) {
+    //     console.log('拿後 50 筆資料');
+    //   }
+    // });
+  };
 
   useEffect(init, [transactionDetailRef]);
 
