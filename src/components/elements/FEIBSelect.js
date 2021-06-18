@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Select as MaterialSelect } from '@material-ui/core';
+import { KeyboardArrowDownRounded } from '@material-ui/icons';
 
 const handleSpaceType = (position) => {
   switch (position) {
@@ -29,7 +30,9 @@ const handleSpaceType = (position) => {
 *    預設無 margin，可傳入 "top"、"bottom"、"both" 字串來產生固定高度的 margin
 * */
 
-const FEIBSelect = styled(MaterialSelect)`
+const FEIBSelect = styled(MaterialSelect).attrs({
+  IconComponent: () => <KeyboardArrowDownRounded />,
+})`
   height: 4rem;
   margin: ${({ $space }) => handleSpaceType($space)};
   width: 100%;
@@ -37,7 +40,7 @@ const FEIBSelect = styled(MaterialSelect)`
   .MuiSelect-select {
     display: inline-flex;
     align-items: center;
-    color: ${({ theme, $color }) => $color || theme.colors.primary.light};
+    color: ${({ theme, $color }) => $color || theme.colors.primary.dark};
   }
   
   .MuiInputBase-input {
@@ -49,6 +52,11 @@ const FEIBSelect = styled(MaterialSelect)`
   .MuiSelect-icon {
     top: 50%;
     transform: translateY(-50%);
+  }
+
+  .MuiSvgIcon-root {
+    font-size: 3.6rem;
+    color: ${({ theme }) => theme.colors.primary.light};
   }
   
   &.MuiInput-underline {

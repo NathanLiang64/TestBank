@@ -52,6 +52,7 @@ const BillPayWrapper = styled(Layout)`
     }
     
     .customSize {
+      top: -.3rem;
       min-height: unset;
       padding-left: 1.2rem;
       padding-right: 1.2rem;
@@ -75,9 +76,9 @@ const BillPayWrapper = styled(Layout)`
     }
     
     .customPadding {
-      padding-top: .4rem;
-      padding-bottom: .4rem;
-      padding-right: .4rem;
+      //padding-top: .4rem;
+      //padding-bottom: .4rem;
+      //padding-right: .4rem;
     }
     
     .customTopSpace {

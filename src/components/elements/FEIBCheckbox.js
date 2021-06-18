@@ -12,6 +12,10 @@ const FEIBCheckbox = styled(MaterialCheckbox).attrs({
 })`
   &.MuiCheckbox-root {
     color: ${({ theme, $iconColor }) => $iconColor || theme.colors.text.dark};
+
+    &.Mui-checked {
+      color: ${({ theme, $iconColor }) => $iconColor || theme.colors.primary.dark};
+    }
   }
 `;
 
