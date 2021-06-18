@@ -12,6 +12,10 @@ const FEIBRadio = styled(MaterialRadio).attrs({
 })`
   &.MuiRadio-root {
     color: ${({ theme, $iconColor }) => $iconColor || theme.colors.text.dark};
+    
+    &.Mui-checked {
+      color: ${({ theme, $iconColor }) => $iconColor || theme.colors.primary.dark};
+    }
   }
 `;
 
