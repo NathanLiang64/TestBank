@@ -42,7 +42,7 @@ const DepositInquiryWrapper = styled(Layout)`
       color: ${({ theme }) => theme.colors.primary.light};
     }
 
-    .selectedKeywords {
+    .searchCondition {
       display: flex;
       align-items: center;
     }

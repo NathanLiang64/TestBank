@@ -13,11 +13,11 @@ import {
   FEIBIconButton, FEIBTabContext, FEIBTabList, FEIBTab, FEIBButton,
 } from 'components/elements';
 import theme from 'themes/theme';
+import { dateFormatter } from 'utilities/Generator';
 import DepositInquiryWrapper from './depositInquiry.style';
 import {
-  setDetailList, setOpenInquiryDrawer, setDateRange, setSelectedKeywords,
+  setDetailList, setOpenInquiryDrawer, setDateRange, setKeywords, setCustomKeyword, setDisplayKeywords,
 } from './stores/actions';
-import { dateFormatter } from '../../utilities/Generator';
 
 const DepositInquiry = () => {
   const transactionDetailRef = useRef();
@@ -28,30 +28,21 @@ const DepositInquiry = () => {
   const detailList = useSelector(({ depositInquiry }) => depositInquiry.detailList);
   const openInquiryDrawer = useSelector(({ depositInquiry }) => depositInquiry.openInquiryDrawer);
   const dateRange = useSelector(({ depositInquiry }) => depositInquiry.dateRange);
-  const selectedKeywords = useSelector(({ depositInquiry }) => depositInquiry.selectedKeywords);
+  const keywords = useSelector(({ depositInquiry }) => depositInquiry.keywords);
+  const displayKeywords = useSelector(({ depositInquiry }) => depositInquiry.displayKeywords);
   const { doGetInitData } = depositInquiryApi;
   const dispatch = useDispatch();
-
-  const handleClickDetailCard = () => {
-    setOpenDetailDialog(true);
-  };
-
-  const handleClickDialogMainButton = () => {
-    setOpenDetailDialog(false);
-  };
 
   const handleChangeTabList = (event, id) => {
     setTabId(id);
   };
 
+  // 點擊查詢條件篩選 icon (放大鏡)
   const handleClickSearchButton = () => {
     dispatch(setOpenInquiryDrawer(true));
   };
 
-  const handleClickDownloadButton = () => {
-    setOpenDownloadDrawer(true);
-  };
-
+  // 點擊下載交易明細 icon
   const handleClickDownloadDetails = (format) => {
     setOpenDownloadDrawer(false);
     if (format === 'pdf') {
@@ -61,6 +52,22 @@ const DepositInquiry = () => {
       // TODO: 交易明細下載 (Excel 格式)
       // window.location.href = 'url';
     }
+  };
+
+  // 點擊清空條件 icon
+  const handleClickClearCondition = () => {
+    // 儲存目前的已選關鍵字陣列至 tempSelectedKeywords
+    const tempKeywords = Array.from(keywords);
+    // 將 tempKeywords 內所有的關鍵字改為未選取
+    tempKeywords.forEach((keyword) => {
+      keyword.selected = false;
+    });
+    // 清空日期範圍條件
+    dispatch(setDateRange([]));
+    // 清空已選關鍵字條件 (將所 tempSelectedKeywords 取代掉現有的 selectedKeywords)
+    dispatch(setKeywords(tempKeywords));
+    dispatch(setCustomKeyword(''));
+    dispatch(setDisplayKeywords([]));
   };
 
   const scrollSpy = () => {
@@ -131,31 +138,39 @@ const DepositInquiry = () => {
     );
   };
 
-  const renderSearchBarText = (date, keywords) => (
+  const renderSearchBarText = (date, selected) => (
     <>
-      {
-        date.length > 0 ? (
-          <p>{`${dateFormatter(new Date(dateRange[0]))} ~ ${dateFormatter(new Date(dateRange[1]))}`}</p>
-        ) : (
-          keywords.length > 0 && (
-            <div className="selectedKeywords">
-              {keywords.map((keyword) => (
-                <CheckboxButton key={keyword.name} label={keyword.title} unclickable />
-              ))}
-            </div>
+      <div className="searchCondition">
+        {
+          date.length > 0 ? (
+            <>
+              <p>{`${dateFormatter(new Date(dateRange[0]))} ~ ${dateFormatter(new Date(dateRange[1]))}`}</p>
+              <FEIBIconButton
+                $fontSize={2}
+                $iconColor={theme.colors.primary.light}
+                onClick={handleClickClearCondition}
+              >
+                <CancelRounded />
+              </FEIBIconButton>
+            </>
+          ) : (
+            <>
+              {
+                selected.map((keyword) => (
+                  keyword.selected && <CheckboxButton key={keyword.name} label={keyword.title} unclickable />
+                ))
+              }
+              <FEIBIconButton
+                $fontSize={2}
+                $iconColor={theme.colors.primary.light}
+                onClick={handleClickClearCondition}
+              >
+                <CancelRounded />
+              </FEIBIconButton>
+            </>
           )
-        )
-      }
-      <FEIBIconButton
-        $fontSize={2}
-        $iconColor={theme.colors.primary.light}
-        onClick={() => {
-          dispatch(setDateRange([]));
-          dispatch(setSelectedKeywords([]));
-        }}
-      >
-        <CancelRounded />
-      </FEIBIconButton>
+        }
+      </div>
     </>
   );
 
@@ -164,8 +179,8 @@ const DepositInquiry = () => {
       <FEIBIconButton $fontSize={2.8} onClick={handleClickSearchButton}>
         <SearchRounded />
       </FEIBIconButton>
-      { (dateRange.length > 0 || selectedKeywords.length > 0) && renderSearchBarText(dateRange, selectedKeywords) }
-      <FEIBIconButton $fontSize={2.8} className="customPosition" onClick={handleClickDownloadButton}>
+      { (dateRange.length > 0 || displayKeywords.length > 0) && renderSearchBarText(dateRange, displayKeywords) }
+      <FEIBIconButton $fontSize={2.8} className="customPosition" onClick={() => setOpenDownloadDrawer(true)}>
         <GetAppRounded />
       </FEIBIconButton>
     </div>
@@ -194,33 +209,21 @@ const DepositInquiry = () => {
   const renderDetailCardList = (list) => (
     Object.keys(list).map((month) => (
       <section key={month} id={month}>
-        { list[month].map((card) => {
-          const {
-            id,
-            avatar,
-            title,
-            type,
-            date,
-            sender,
-            amount,
-            balance,
-          } = card;
-          return (
-            <DetailCard
-              id={date.substr(0, 2)}
-              key={id}
-              avatar={avatar}
-              title={title}
-              type={type}
-              date={date}
-              sender={sender}
-              amount={amount}
-              balance={balance}
-              noShadow
-              onClick={handleClickDetailCard}
-            />
-          );
-        }) }
+        { list[month].map((card) => (
+          <DetailCard
+            id={card.date.substr(0, 2)}
+            key={card.id}
+            avatar={card.avatar}
+            title={card.title}
+            type={card.type}
+            date={card.date}
+            sender={card.sender}
+            amount={card.amount}
+            balance={card.balance}
+            noShadow
+            onClick={() => setOpenDetailDialog(true)}
+          />
+        )) }
       </section>
     ))
   );
@@ -256,14 +259,25 @@ const DepositInquiry = () => {
       isOpen={openDetailDialog}
       onClose={() => setOpenDetailDialog(false)}
       content={<p>交易明細內容</p>}
-      action={<FEIBButton onClick={handleClickDialogMainButton}>確定</FEIBButton>}
+      action={<FEIBButton onClick={() => setOpenDetailDialog(false)}>確定</FEIBButton>}
     />
   );
 
   const init = async () => {
+    const initKeywords = [
+      { title: '繳卡款', name: 'keywordBill', selected: false },
+      { title: '轉出', name: 'keywordTransfer', selected: false },
+      { title: '轉入', name: 'keywordDepositAccount', selected: false },
+      { title: '利息', name: 'keywordInterest', selected: false },
+      { title: '付款儲值', name: 'keywordSpend', selected: false },
+      { title: '薪轉', name: 'keywordSalary', selected: false },
+    ];
+
     // 清空查詢條件
     dispatch(setDateRange([]));
-    dispatch(setSelectedKeywords([]));
+    dispatch(setCustomKeyword(''));
+    dispatch(setKeywords(initKeywords));
+    dispatch(setDisplayKeywords([]));
 
     // 取得所有存款卡的初始資料
     const response = await doGetInitData('/api/depositInquiry');
