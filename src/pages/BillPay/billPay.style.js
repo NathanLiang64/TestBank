@@ -54,6 +54,7 @@ const BillPayWrapper = styled(Layout)`
     .customSize {
       top: -.3rem;
       min-height: unset;
+      margin-left: 0;
       padding-left: 1.2rem;
       padding-right: 1.2rem;
       padding-bottom: .1rem;

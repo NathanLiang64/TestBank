@@ -37,7 +37,7 @@ const ExchangeWrapper = styled(Layout)`
       .secondData {
         display: flex;
         height: 7.5rem;
-        padding-top: 1.7rem;
+        padding: 1.7rem 1.2rem 0;
         font-size: 1.6rem;
         justify-content: space-between;
         border-bottom: 1px dashed ${({ theme }) => theme.colors.text.light};
@@ -50,6 +50,9 @@ const ExchangeWrapper = styled(Layout)`
       }
     }
     .exchangeAccordion {
+      .secondData {
+        padding: 1.7rem 0 0;
+      }
       .secondData:last-child {
         border-bottom: 0;
       }
@@ -89,8 +92,29 @@ const ExchangeWrapper = styled(Layout)`
       position: absolute;
       color: ${({ theme }) => theme.colors.text.dark};
       text-align: left;
-      transform: translateY(calc(-100% - 3px));
+      transform: translateY(calc(-100% - 1.6rem));
     }
+  }
+  .exchangeTypeLabel {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .outTypeRadioLabel {
+    .MuiFormControlLabel-label {
+      font-size: 1.4rem;
+    }
+  }
+  .agreeLabel {
+    display: flex;
+    justify-content: center;
+  }
+  .submitBtn {
+    padding-top: 1.2rem;
+  }
+  .confirmBtns {
+    padding-top: 1.2rem;
+    padding-bottom: .8rem;
   }
 `;
 

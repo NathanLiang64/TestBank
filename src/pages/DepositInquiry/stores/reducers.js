@@ -4,15 +4,9 @@ const initState = {
   detailList: null,
   openInquiryDrawer: false,
   dateRange: [],
-  keywords: [
-    { title: '繳卡款', name: 'keywordBill' },
-    { title: '轉出', name: 'keywordTransfer' },
-    { title: '轉入', name: 'keywordDepositAccount' },
-    { title: '利息', name: 'keywordInterest' },
-    { title: '付款儲值', name: 'keywordSpend' },
-    { title: '薪轉', name: 'keywordSalary' },
-  ],
-  selectedKeywords: [],
+  keywords: [],
+  customKeyword: '',
+  displayKeywords: [],
 };
 
 const reducers = (state = initState, action) => {
@@ -32,10 +26,20 @@ const reducers = (state = initState, action) => {
         ...state,
         dateRange: action.payload,
       };
-    case types.SET_SELECTED_KEYWORDS:
+    case types.SET_KEYWORDS:
       return {
         ...state,
-        selectedKeywords: action.payload,
+        keywords: action.payload,
+      };
+    case types.SET_CUSTOM_KEYWORD:
+      return {
+        ...state,
+        customKeyword: action.payload,
+      };
+    case types.SET_DISPLAY_KEYWORDS:
+      return {
+        ...state,
+        displayKeywords: action.payload,
       };
     default:
       return state;

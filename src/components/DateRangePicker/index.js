@@ -15,7 +15,7 @@ import DateRangePickerWrapper from './dateRangePicker.style';
 * 2. date -> 時間範圍，型別為陣列
 *    陣列內第一個值為起始日，第二個值為結束日 -> date = [startDate, endDate]
 *    若有需動態保留的時間範圍可代入，若無則預設為當日
-* 2. onClick -> 點擊事件
+* 3. onClick -> 點擊事件
 *    日期範圍選擇完畢後，點擊面板右下方 "確定" 後所觸發的事件，可直接在外部傳入一個 function
 *    該 function 可以接收一個任意參數，透過該參數將可取得所選的日期範圍
 * */
