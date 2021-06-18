@@ -1805,5 +1805,12 @@
     "name": "Exchange",
     "title": "外幣換匯",
     "route": "/exchange"
+  },
+  "exchange1": {
+    "title": "外幣換匯確認"
+  }
+  ,
+  "exchange2": {
+    "title": "外幣換匯成功"
   }
 }

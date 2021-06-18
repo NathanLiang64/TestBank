@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
@@ -19,6 +20,7 @@ import ExchangeTable from './exchangeTable';
 import ExchangeWrapper from './exchange.style';
 
 const Exchange = () => {
+  const history = useHistory();
   /**
    *- 資料驗證
    */
@@ -87,6 +89,7 @@ const Exchange = () => {
   const onSubmit = (data) => {
     // eslint-disable-next-line no-console
     console.log(data);
+    history.push('exchange1');
   };
 
   useCheckLocation();
@@ -100,7 +103,7 @@ const Exchange = () => {
   }, []);
 
   return (
-    <ExchangeWrapper>
+    <ExchangeWrapper style={{ padding: '2.4rem 1.6rem 2.4rem 1.6rem' }}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <section>
           <FEIBInputLabel style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
@@ -265,6 +268,24 @@ const Exchange = () => {
               </RadioGroup>
             )}
           />
+          <FEIBInputLabel>附註</FEIBInputLabel>
+          <Controller
+            name="memo"
+            defaultValue=""
+            control={control}
+            render={({ balanceField }) => (
+              <FEIBInput
+                {...balanceField}
+                type="text"
+                inputMode="numeric"
+                id="memo"
+                name="memo"
+                placeholder="請輸入附註"
+                error={!!errors.memo}
+              />
+            )}
+          />
+          <FEIBErrorMessage>{errors.memo?.message}</FEIBErrorMessage>
           <NoticeArea title=" " textAlign="left">
             以本行牌告匯率或網銀優惠匯率為成交匯率（預約交易係依據交易日上午09:30最近一盤牌告/網銀優惠匯率為成交匯率）。營業時間以外辦理外匯交易結匯金額併入次營業日累積結匯金額；為網銀優惠將視市場波動清況，適時暫時取消優惠。
           </NoticeArea>
