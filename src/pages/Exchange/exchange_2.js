@@ -1,55 +1,28 @@
-import { useState } from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 
-import * as yup from 'yup';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-
 /* Elements */
-import { FEIBButton } from 'components/elements';
-import PasswordInput from 'components/PasswordInput';
 import Accordion from 'components/Accordion';
 import ConfirmButtons from 'components/ConfirmButtons';
-import BottomDrawer from 'components/BottomDrawer';
 
 /* Styles */
+import doneCheck from 'assets/images/doneCheck.png';
 import ExchangeWrapper from './exchange.style';
 
 const Exchange1 = () => {
   const history = useHistory();
-  /**
-   *- 資料驗證
-   */
-  const schema = yup.object().shape({
-    password: yup
-      .string()
-      .required('請輸入網銀密碼'),
-  });
-  const {
-    handleSubmit, control, formState: { errors },
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
 
-  const [drawerOpen, setDrawerOpen] = useState(false);
-
-  const handleNextStep = () => {
-    setDrawerOpen(true);
-  };
-
-  const onSubmit = (data) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
-    history.push('/exchange2');
+  const toTradeDetailPage = () => {
+    history.push('depositInquiry');
   };
 
   useCheckLocation();
-  usePageInfo('/api/exchange1');
+  usePageInfo('/api/exchange2');
 
   return (
-    <ExchangeWrapper className="confirmPage">
+    <ExchangeWrapper className="finishPage">
       <div className="infoSection">
+        <img className="checkImg" src={doneCheck} alt="" />
         <div className="label">轉出金額與轉入帳號</div>
         <div className="firstData">NTD$2806.00</div>
         <div className="firstData">USD$100.00</div>
@@ -89,29 +62,12 @@ const Exchange1 = () => {
           </div>
         </Accordion>
         <ConfirmButtons
-          mainButtonOnClick={handleNextStep}
+          mainButtonValue="查詢交易明細"
+          subButtonValue="繼續換匯"
+          mainButtonOnClick={toTradeDetailPage}
           subButtonOnClick={() => history.push('/exchange')}
         />
       </div>
-      <BottomDrawer
-        title="輸入網銀密碼"
-        isOpen={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        content={(
-          <ExchangeWrapper style={{ marginTop: '0' }}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <PasswordInput
-                label="網銀密碼"
-                id="password"
-                name="password"
-                control={control}
-                errorMessage={errors.password?.message}
-              />
-              <FEIBButton type="submit" style={{ marginTop: '1.6rem' }}>送出</FEIBButton>
-            </form>
-          </ExchangeWrapper>
-        )}
-      />
     </ExchangeWrapper>
   );
 };

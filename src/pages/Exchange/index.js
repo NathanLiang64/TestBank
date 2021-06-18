@@ -103,7 +103,7 @@ const Exchange = () => {
   }, []);
 
   return (
-    <ExchangeWrapper>
+    <ExchangeWrapper style={{ padding: '2.4rem 1.6rem 2.4rem 1.6rem' }}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <section>
           <FEIBInputLabel style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
