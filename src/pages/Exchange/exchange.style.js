@@ -57,7 +57,8 @@ const ExchangeWrapper = styled(Layout)`
   }
   .formAreaTitle {
     display: flex;
-    
+    justify-content: space-between;
+
     h2 {
       margin-right: 1.6rem;
       margin-bottom: .8rem;
@@ -71,6 +72,14 @@ const ExchangeWrapper = styled(Layout)`
     margin-bottom: 1rem;
     &:first-child {
       color: ${({ theme }) => theme.colors.text.point};
+    }
+  }
+  .MuiFormHelperText-root.Mui-error {
+    &.balance {
+      position: absolute;
+      color: ${({ theme }) => theme.colors.text.dark};
+      text-align: left;
+      transform: translateY(calc(-100% - 3px));
     }
   }
 `;
