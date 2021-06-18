@@ -64,23 +64,6 @@ const ExchangeWrapper = styled(Layout)`
     margin-bottom: 2rem;
   }
   section {
-    &.barcodeArea {
-      padding: 2.4rem;
-    }
-    
-    .place {
-      margin-bottom: 2.4rem;
-    }
-    
-    .barcode {
-      width: 100%;
-    }
-
-    h2 {
-      margin-bottom: 1.6rem;
-      font-weight: bold;
-    }
-    
     .customSize {
       min-height: unset;
       padding-left: 1.2rem;
@@ -89,38 +72,6 @@ const ExchangeWrapper = styled(Layout)`
       width: unset;
       height: 2.8rem;
       font-size: 1.4rem;
-    }
-    
-    .customStyles {
-      margin: 0;
-      width: calc(100% - 2rem);
-      
-      .MuiInputBase-input {
-        padding: .4rem 0;
-      }
-    }
-    
-    .customBottomSpace {
-      margin-bottom: 1.6rem;
-    }
-    
-    .customPadding {
-      padding-top: .4rem;
-      padding-bottom: .4rem;
-      padding-right: .4rem;
-    }
-    
-    .customTopSpace {
-      margin-top: 0;
-    }
-  }
-  .formAreaTitle {
-    display: flex;
-    justify-content: space-between;
-
-    h2 {
-      margin-right: 1.6rem;
-      margin-bottom: .8rem;
     }
   }
   ol {

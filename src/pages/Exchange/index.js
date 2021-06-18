@@ -108,7 +108,7 @@ const Exchange = () => {
         <section>
           <FEIBInputLabel style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
             換匯種類
-            <FEIBBorderButton className="customSize" type="button" onClick={handleTableToggle}>
+            <FEIBBorderButton className="customSize" type="button" onClick={handleTableToggle} style={{ margin: '0' }}>
               外匯匯率查詢
             </FEIBBorderButton>
           </FEIBInputLabel>

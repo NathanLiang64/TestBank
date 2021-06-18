@@ -1,7 +1,7 @@
 const ExchangeTable = () => (
   <>
     <section>
-      <div className="formAreaTitle">
+      <div>
         <h2>查詢時間：2022/6/17 18:52:00</h2>
       </div>
     </section>
@@ -27,7 +27,7 @@ const ExchangeTable = () => (
       </tbody>
     </table>
     <section>
-      <div className="formAreaTitle">
+      <div>
         <h2>本匯率僅供參考，實際匯率以與本行交易時之匯率為準</h2>
       </div>
     </section>
