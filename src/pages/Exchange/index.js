@@ -106,8 +106,10 @@ const Exchange = () => {
     <ExchangeWrapper style={{ padding: '2.4rem 1.6rem 2.4rem 1.6rem' }}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <section>
-          <FEIBInputLabel style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-            換匯種類
+          <FEIBInputLabel className="exchangeTypeLabel">
+            <span>
+              換匯種類
+            </span>
             <FEIBBorderButton className="customSize" type="button" onClick={handleTableToggle} style={{ margin: '0' }}>
               外匯匯率查詢
             </FEIBBorderButton>
@@ -123,14 +125,13 @@ const Exchange = () => {
                 id="exchangeType"
                 name="exchangeType"
                 defaultValue="1"
-                style={{ flexDirection: 'row' }}
+                style={{ flexDirection: 'row', marginBottom: '.6rem' }}
               >
                 <FEIBRadioLabel value="1" control={<FEIBRadio />} label="台幣轉外幣" />
                 <FEIBRadioLabel value="2" control={<FEIBRadio />} label="外幣轉台幣" />
               </RadioGroup>
             )}
           />
-          <br />
           <FEIBInputLabel>轉出帳號</FEIBInputLabel>
           <Controller
             name="outAccount"
@@ -225,7 +226,7 @@ const Exchange = () => {
                 name="outType"
                 defaultValue="1"
               >
-                <FEIBRadioLabel value="1" control={<FEIBRadio />} label={`希望轉出${watch('exchangeType') === '1' ? '新台幣' : ''}`} />
+                <FEIBRadioLabel className="outTypeRadioLabel" value="1" control={<FEIBRadio />} label={`希望轉出${watch('exchangeType') === '1' ? '新台幣' : ''}`} />
                 <Controller
                   name="outBalance"
                   defaultValue=""
@@ -245,7 +246,7 @@ const Exchange = () => {
                   )}
                 />
                 <FEIBErrorMessage>{errors.outBalance?.message}</FEIBErrorMessage>
-                <FEIBRadioLabel value="2" control={<FEIBRadio />} label={`希望轉入${watch('exchangeType') === '2' ? '新台幣' : ''}`} />
+                <FEIBRadioLabel className="outTypeRadioLabel" value="2" control={<FEIBRadio />} label={`希望轉入${watch('exchangeType') === '2' ? '新台幣' : ''}`} />
                 <Controller
                   name="inBalance"
                   defaultValue=""
@@ -290,6 +291,7 @@ const Exchange = () => {
             以本行牌告匯率或網銀優惠匯率為成交匯率（預約交易係依據交易日上午09:30最近一盤牌告/網銀優惠匯率為成交匯率）。營業時間以外辦理外匯交易結匯金額併入次營業日累積結匯金額；為網銀優惠將視市場波動清況，適時暫時取消優惠。
           </NoticeArea>
           <FEIBCheckboxLabel
+            className="agreeLabel"
             control={(
               <FEIBCheckbox
                 onChange={handleCheckBoxChange}
@@ -301,12 +303,14 @@ const Exchange = () => {
           <Accordion space="both">
             <ExchangeNotice />
           </Accordion>
-          <FEIBButton
-            type="submit"
-            disabled={!agree}
-          >
-            確認
-          </FEIBButton>
+          <div className="submitBtn">
+            <FEIBButton
+              type="submit"
+              disabled={!agree}
+            >
+              確認
+            </FEIBButton>
+          </div>
         </section>
       </form>
       <ExchangeTableDialog />

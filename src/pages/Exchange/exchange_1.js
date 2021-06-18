@@ -74,10 +74,6 @@ const Exchange1 = () => {
           <div className="left">匯款性質分類</div>
           <div className="right">外匯互換兌入</div>
         </div>
-        <div className="secondData">
-          <div className="left">備註</div>
-          <div className="right">美金儲蓄</div>
-        </div>
         <Accordion className="exchangeAccordion" title="詳細交易" space="both" open>
           <div className="secondData">
             <div className="left">帳戶餘額</div>
@@ -88,10 +84,12 @@ const Exchange1 = () => {
             <div className="right">美金儲蓄</div>
           </div>
         </Accordion>
-        <ConfirmButtons
-          mainButtonOnClick={handleNextStep}
-          subButtonOnClick={() => history.push('/exchange')}
-        />
+        <div className="confirmBtns">
+          <ConfirmButtons
+            mainButtonOnClick={handleNextStep}
+            subButtonOnClick={() => history.push('/exchange')}
+          />
+        </div>
       </div>
       <BottomDrawer
         title="輸入網銀密碼"

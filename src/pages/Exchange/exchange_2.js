@@ -61,12 +61,14 @@ const Exchange1 = () => {
             <div className="right">美金儲蓄</div>
           </div>
         </Accordion>
-        <ConfirmButtons
-          mainButtonValue="查詢交易明細"
-          subButtonValue="繼續換匯"
-          mainButtonOnClick={toTradeDetailPage}
-          subButtonOnClick={() => history.push('/exchange')}
-        />
+        <div className="confirmBtns">
+          <ConfirmButtons
+            mainButtonValue="查詢交易明細"
+            subButtonValue="繼續換匯"
+            mainButtonOnClick={toTradeDetailPage}
+            subButtonOnClick={() => history.push('/exchange')}
+          />
+        </div>
       </div>
     </ExchangeWrapper>
   );

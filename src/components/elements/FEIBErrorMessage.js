@@ -6,7 +6,7 @@ const FEIBErrorMessage = styled(MaterialErrorMessage).attrs({
 })`
   &.Mui-error {
     height: 1.8rem;
-    margin-bottom: .2rem;
+    margin-bottom: 1.3rem;
     text-align: right;
     font-size: 1.2rem;
     color: ${({ theme }) => theme.colors.state.danger};
