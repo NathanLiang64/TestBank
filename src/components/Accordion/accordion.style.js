@@ -22,7 +22,7 @@ const AccordionWrapper = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 .3rem 0 1.2rem;
+    padding: 0 .6rem 0 1.2rem;
     width: 100%;
     min-height: 4.8rem;
     font-size: 1.6rem;
