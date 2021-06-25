@@ -1606,7 +1606,7 @@
     "title": "圖形密碼登入設定",
     "route": "/patternLockSetting",
     "initData": {
-      "isActive":false
+      "isActive": false
     }
   },
   "fingerPrintLockSetting": {

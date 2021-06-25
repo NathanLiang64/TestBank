@@ -49,7 +49,7 @@ const BillPay = () => {
     data.password = await e2ee(data.password);
     // 點擊按鈕後彈窗顯示繳費結果
     handleToggleDialog(true);
-    dispatch(setSendType(true));
+    dispatch(setSendType(false));
     setShowAlert(true);
   };
 
@@ -180,7 +180,7 @@ const BillPay = () => {
   );
 
   const renderCollapse = () => (
-    <Accordion space="bottom">
+    <Accordion className="accordion">
       <p>注意事項內文</p>
     </Accordion>
   );

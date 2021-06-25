@@ -3,7 +3,17 @@ import Layout from 'components/Layout';
 
 const BillPayWrapper = styled(Layout)`
   
+  .debitCard {
+    margin-bottom: .8rem;
+  }
+  
+  .accordion {
+    margin-bottom: 4rem;
+  }
+  
   .buttons {
+    margin-top: .6rem;
+    margin-bottom: 4rem;
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-column-gap: 1.6rem;
@@ -35,7 +45,7 @@ const BillPayWrapper = styled(Layout)`
     margin-bottom: 2.4rem;
 
     &.barcodeArea {
-      padding: 2.4rem;
+      padding: 2rem 2.4rem 0;
     }
     
     .place {
@@ -64,11 +74,12 @@ const BillPayWrapper = styled(Layout)`
     }
     
     .customStyles {
-      margin: 0;
-      width: calc(100% - 2rem);
+      font-size: 1.6rem;
+      //margin: 0;
+      //width: calc(100% - 2rem);
       
       .MuiInputBase-input {
-        padding: .4rem 0;
+        padding-left: .8rem;
       }
     }
     
