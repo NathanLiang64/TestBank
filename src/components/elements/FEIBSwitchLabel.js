@@ -25,10 +25,10 @@ const FEIBSwitchLabel = styled(MaterialFormControlLabel).attrs({
   }
   
   &.MuiFormControlLabel-root {
-    height: 45px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 4.6rem;
 
     .MuiFormControlLabel-label {
       font-size: 100%;

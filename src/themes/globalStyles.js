@@ -165,6 +165,10 @@ const GlobalStyles = createGlobalStyle`
   .textColorPoint {
     color: ${({ theme }) => theme.colors.text.point} !important;
   }
+
+  .btn-fix {
+    padding: 1.2rem 0 2.4rem;
+  }
 `;
 
 export default GlobalStyles;

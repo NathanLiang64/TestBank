@@ -171,7 +171,7 @@ const RegularPwdModify = () => {
           control={control}
           errorMessage={errors.newPasswordCheck?.message}
         />
-        <InfoArea space="both">
+        <InfoArea space="bottom">
           *每六個月請進行密碼以及個資更新以確保帳號安全
         </InfoArea>
         <ConfirmButtons

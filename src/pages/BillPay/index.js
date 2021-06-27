@@ -163,18 +163,16 @@ const BillPay = () => {
           control={control}
           defaultValue="0"
           render={({ field }) => (
-            <div>
-              <span className="smallFontSize">$</span>
-              <FEIBInput
-                {...field}
-                className="customStyles"
-                id="payAmount"
-                name="payAmount"
-                type="text"
-                error={!!errors.payAmount}
-                onBlur={() => moneyreplace()}
-              />
-            </div>
+            <FEIBInput
+              {...field}
+              className="customStyles"
+              id="payAmount"
+              name="payAmount"
+              type="text"
+              startAdornment="NT$"
+              error={!!errors.payAmount}
+              onBlur={() => moneyreplace()}
+            />
           )}
         />
         <FEIBErrorMessage>{errors.payAmount?.message}</FEIBErrorMessage>

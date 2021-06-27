@@ -19,7 +19,7 @@ import {
 } from '../DepositInquiry/stores/actions';
 
 // TODO: 若已選的關鍵字未清空，點擊 search icon 應代入原先已選的關鍵字
-const DepositSearchCondition = () => {
+const DepositSearchCondition = ({ initKeywords }) => {
   const keywords = useSelector(({ depositInquiry }) => depositInquiry.keywords);
   const customKeyword = useSelector(({ depositInquiry }) => depositInquiry.customKeyword);
   const dateRange = useSelector(({ depositInquiry }) => depositInquiry.dateRange);
@@ -48,6 +48,14 @@ const DepositSearchCondition = () => {
     dispatch(setKeywords(tempKeywords));
   };
 
+  const handleClickCancelButton = () => {
+    dispatch(setOpenInquiryDrawer(false));
+    // 清空查詢條件
+    dispatch(setDateRange([]));
+    dispatch(setCustomKeyword(''));
+    dispatch(setKeywords(initKeywords));
+  };
+
   // 點擊查詢按鈕後傳送資料
   const handleClickSearchButton = async (data) => {
     const { keywordCustom } = data;
@@ -55,7 +63,15 @@ const DepositSearchCondition = () => {
     dispatch(setOpenInquiryDrawer(false));
 
     // 若有選擇日期，則將日期範圍儲存至 redux
-    tempDateRange.length > 0 && dispatch(setDateRange(tempDateRange));
+    if (tempDateRange.length > 0) {
+      dispatch(setDateRange(tempDateRange));
+    } else {
+      // 若無選擇日期，預設儲存三年範圍
+      const today = new Date();
+      const threeYearsAgo = new Date();
+      threeYearsAgo.setFullYear(threeYearsAgo.getFullYear() - 3);
+      dispatch(setDateRange([threeYearsAgo, today]));
+    }
 
     // 拷貝一份當前的 keywords 陣列
     const tempKeywordsString = JSON.stringify(keywords);
@@ -169,7 +185,7 @@ const DepositSearchCondition = () => {
         <ConfirmButtons
           mainButtonValue="查詢"
           subButtonValue="取消"
-          subButtonOnClick={() => dispatch(setOpenInquiryDrawer(false))}
+          subButtonOnClick={handleClickCancelButton}
         />
       </form>
     </DepositSearchConditionWrapper>

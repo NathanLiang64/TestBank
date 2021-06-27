@@ -177,6 +177,7 @@ const PatternLockSetting = () => {
       <FEIBCheckboxLabel
         control={(<FEIBCheckbox onChange={checkBoxChange} />)}
         label="本人已閱讀並同意上述圖形密碼登入使用條款"
+        className="customSpace"
       />
     </div>
   );

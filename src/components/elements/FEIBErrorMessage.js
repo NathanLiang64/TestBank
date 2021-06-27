@@ -4,12 +4,16 @@ import { FormHelperText as MaterialErrorMessage } from '@material-ui/core';
 const FEIBErrorMessage = styled(MaterialErrorMessage).attrs({
   error: true,
 })`
-  &.Mui-error {
+  &.MuiFormHelperText-root {
+    margin-top: .2rem;
+    margin-bottom: 1.4rem;
     height: 1.8rem;
-    margin-bottom: 1.3rem;
     text-align: right;
     font-size: 1.2rem;
-    color: ${({ theme }) => theme.colors.state.danger};
+
+    &.Mui-error {
+      color: ${({ theme }) => theme.colors.state.danger};
+    }
   }
 `;
 
