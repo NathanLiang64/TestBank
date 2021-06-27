@@ -45,11 +45,13 @@ const CardLessATM2 = () => {
           <li>無卡提款密碼連續錯誤3次，即鎖住服務，須重新申請服務。</li>
         </ul>
       </Accordion>
-      <FEIBButton
-        onClick={withdrawalConfirm}
-      >
-        確認提款
-      </FEIBButton>
+      <div className="btn-fix">
+        <FEIBButton
+          onClick={withdrawalConfirm}
+        >
+          確認提款
+        </FEIBButton>
+      </div>
     </CardLessATMWrapper>
   );
 };
