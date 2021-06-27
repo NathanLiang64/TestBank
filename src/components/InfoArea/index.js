@@ -15,6 +15,7 @@ const InfoArea = ({ className, space, children }) => (
     $space={space}
   >
     { children }
+    <div className="polygon" />
   </InfoAreaWrapper>
 );
 
