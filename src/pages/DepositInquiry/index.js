@@ -193,6 +193,27 @@ const DepositInquiry = () => {
     </div>
   );
 
+  // eslint-disable-next-line no-unused-vars
+  const testDetailCardList = (list) => (
+    list.map((card) => (
+      <DetailCard
+        id={card.date.substr(0, 2)}
+        key={card.id}
+        index={card.index}
+        avatar={card.avatar}
+        title={card.title}
+        type={card.type}
+        date={card.date}
+        sender={card.sender}
+        amount={card.amount}
+        balance={card.balance}
+        noShadow
+        onClick={() => setOpenDetailDialog(true)}
+      />
+    ))
+  );
+
+  // eslint-disable-next-line no-unused-vars
   const renderDetailCardList = (list) => (
     Object.keys(list).map((month) => (
       <section key={month} id={month}>
@@ -250,6 +271,11 @@ const DepositInquiry = () => {
     />
   );
 
+  /* eslint-disable */
+  // -------------------------- test -------------------------- //
+  const [scrollTop, setScrollTop] = useState(0);
+  const [called, setCalled] = useState(false);
+
   const init = async () => {
     // 清空查詢條件
     dispatch(setDateRange([]));
@@ -263,7 +289,7 @@ const DepositInquiry = () => {
       dispatch(setDetailList(response.initData));
     }
 
-    // TODO: 待解決，此作法將導致連續發送 api 請求
+    // TODO: 待解決，此作法將導致連續發送 api 請求，安裝 react-visibility-sensor 測試
     // transactionDetailRef.addEventListener('scroll', (event) => {
     //   if (event.target.scrollTop < 2000) {
     //     console.log('拿前 50 筆資料');
@@ -271,6 +297,14 @@ const DepositInquiry = () => {
     //     console.log('拿後 50 筆資料');
     //   }
     // });
+
+    /* ===================== test ===================== */
+    const callApi = async () => {
+      const response = await response('/api/depositInquiry');
+      if (response.initData) {
+        console.log(response.initData);
+      }
+    };
   };
 
   useEffect(init, [transactionDetailRef]);
@@ -285,7 +319,8 @@ const DepositInquiry = () => {
         { renderSearchBarArea() }
         { renderTabs() }
         <div className="transactionDetail" ref={transactionDetailRef}>
-          { detailList && renderDetailCardList(detailList) }
+          {/*{ detailList && renderDetailCardList(detailList) }*/}
+          { detailList && testDetailCardList(detailList) }
         </div>
       </div>
       { renderDetailDialog() }

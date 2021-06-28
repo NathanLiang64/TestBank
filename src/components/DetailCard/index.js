@@ -21,6 +21,7 @@ import DetailCardWrapper from './detailCard.style';
 
 const DetailCard = ({
   id,
+  index,
   avatar,
   type,
   title,
@@ -48,7 +49,7 @@ const DetailCard = ({
   );
 
   return (
-    <DetailCardWrapper $noShadow={noShadow} id={id} onClick={onClick}>
+    <DetailCardWrapper data-index={index} $noShadow={noShadow} id={id} onClick={onClick}>
       <div className="avatar">
         { renderAvatar() }
         { renderTypeIcon() }
