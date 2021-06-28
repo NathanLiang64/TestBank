@@ -9,14 +9,16 @@ import Dialog from 'components/Dialog';
 import Accordion from 'components/Accordion';
 import ConfirmButtons from 'components/ConfirmButtons';
 import PasswordInput from 'components/PasswordInput';
-import { FEIBInput, FEIBInputLabel, FEIBButton } from 'components/elements';
+import {
+  FEIBInput, FEIBInputLabel, FEIBButton, FEIBErrorMessage,
+} from 'components/elements';
 import e2ee from 'utilities/E2ee';
+import { passwordValidation } from 'utilities/validation';
 import LossReissue2 from './lossReissue_2';
 import LossReissueWrapper from './lossReissue.style';
 import {
   setActionText, setAccount, setCardState, setUserAddress, setIsResultSuccess,
 } from './stores/actions';
-import { passwordValidation } from '../../utilities/validation';
 
 const LossReissue = () => {
   /**
@@ -174,12 +176,14 @@ const LossReissue = () => {
     <LossReissueWrapper>
       <div>
         <FEIBInputLabel>帳號</FEIBInputLabel>
-        <FEIBInput name="account" value={account} $space="bottom" disabled />
+        <FEIBInput name="account" value={account} disabled />
+        <FEIBErrorMessage />
       </div>
 
       <div>
         <FEIBInputLabel>金融卡狀態</FEIBInputLabel>
-        <FEIBInput name="state" value={state} $space="bottom" disabled />
+        <FEIBInput name="state" value={state} disabled />
+        <FEIBErrorMessage />
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
