@@ -92,7 +92,7 @@ const ShakeShake = () => {
             <QRCode
               value={`http://${cardAccount}.con`}
               renderAs="svg"
-              size={200}
+              size={172}
               fgColor={theme.colors.text.dark}
             />
             <div className="shareButtonArea">
@@ -184,7 +184,7 @@ const ShakeShake = () => {
 
   return (
     <BottomDrawer
-      title="QRCode 收款"
+      title="QRCode 轉帳"
       className="QRCodeDrawer"
       isOpen={isShake}
       onClose={() => dispatch(setIsShake(false))}

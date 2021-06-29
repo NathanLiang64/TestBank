@@ -31,8 +31,6 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
   }
   
   .content {
-    padding-bottom: 4rem;
-    
     // for DebitCard more list
     li {
       border-bottom: .1rem solid ${({ theme }) => theme.colors.border.lightest};
@@ -63,6 +61,7 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
     .content {
       padding-left: 2.4rem;
       padding-right: 2.4rem;
+      padding-bottom: 4rem;
       text-align: center;
       
       .cardName {
