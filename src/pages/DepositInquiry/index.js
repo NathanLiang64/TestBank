@@ -1,5 +1,7 @@
+/* eslint-disable */
 import { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import VisibilitySensor from 'react-visibility-sensor';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { SearchRounded, CancelRounded, GetAppRounded } from '@material-ui/icons';
 import { depositInquiryApi } from 'apis';
@@ -24,6 +26,10 @@ const DepositInquiry = () => {
   const [tabId, setTabId] = useState('detailList12');
   const [openDownloadDrawer, setOpenDownloadDrawer] = useState(false);
   const [openDetailDialog, setOpenDetailDialog] = useState(false);
+  const [isPending, setIsPending] = useState(false);
+  const [viewerChild, setViewerChild] = useState([]);
+  const [inViewChild, setInViewChild] = useState([]);
+
   const cardInfo = useSelector(({ depositOverview }) => depositOverview.cardInfo);
   const detailList = useSelector(({ depositInquiry }) => depositInquiry.detailList);
   const openInquiryDrawer = useSelector(({ depositInquiry }) => depositInquiry.openInquiryDrawer);
@@ -136,6 +142,47 @@ const DepositInquiry = () => {
     }
   };
 
+
+  /* ===================== test ===================== */
+  const callApi = async () => {
+    const response = await doGetInitData('/api/depositInquiry');
+    if (response.initData) {
+      console.log(response.initData);
+      setIsPending(() => {
+        console.log('資料回來了，關閉 isPending');
+        return false;
+      });
+    }
+  };
+
+  const visibilitySensorOnChange = (isVisible) => {
+    if (transactionDetailRef.current) {
+      setViewerChild(Array.from(transactionDetailRef.current['children']));
+      const inViewChildren = viewerChild.filter((item) => item.dataset.inview === "y");
+      setInViewChild((prev) => {
+        if (prev.length > 0 && inViewChildren.length > 0) {
+          if (prev[0].dataset.index < inViewChildren[0].dataset.index) {
+            // console.log("往下捲動");
+            const prevLastIndex = parseInt(prev[prev.length - 1].dataset.index, 10);
+            const viewerChildLastIndex = parseInt(viewerChild[viewerChild.length - 1].dataset.index, 10);
+            console.info("prev's last index", prevLastIndex);
+            console.info("total's last index", viewerChildLastIndex);
+            if (viewerChildLastIndex - prevLastIndex < 5 && viewerChildLastIndex - prevLastIndex > 0) {
+              if (!isPending) {
+                console.log(`剩餘數量少於 5 張卡片，call api 獲取從索引第 ${viewerChildLastIndex + 1} 到第 ${viewerChildLastIndex + 21} 張`);
+                setIsPending(true);
+                callApi();
+              }
+            }
+          } else if (prev[0].dataset.index > inViewChildren[0].dataset.index) {
+            console.log("往上捲動");
+          }
+        }
+        return inViewChildren;
+      });
+    }
+  };
+
   const renderCardArea = (card) => {
     const { cardName, cardAccount, cardBalance } = card;
     return (
@@ -196,20 +243,28 @@ const DepositInquiry = () => {
   // eslint-disable-next-line no-unused-vars
   const testDetailCardList = (list) => (
     list.map((card) => (
-      <DetailCard
-        id={card.date.substr(0, 2)}
+      <VisibilitySensor
         key={card.id}
-        index={card.index}
-        avatar={card.avatar}
-        title={card.title}
-        type={card.type}
-        date={card.date}
-        sender={card.sender}
-        amount={card.amount}
-        balance={card.balance}
-        noShadow
-        onClick={() => setOpenDetailDialog(true)}
-      />
+        onChange={visibilitySensorOnChange}
+        containment={transactionDetailRef.current}
+      >
+        {({ isVisible }) => (
+          <DetailCard
+            id={card.date.substr(0, 2)}
+            index={card.index}
+            inView={isVisible ? 'y' : 'n'}
+            avatar={card.avatar}
+            title={card.title}
+            type={card.type}
+            date={card.date}
+            sender={card.sender}
+            amount={card.amount}
+            balance={card.balance}
+            noShadow
+            onClick={() => setOpenDetailDialog(true)}
+          />
+        )}
+      </VisibilitySensor>
     ))
   );
 
@@ -297,14 +352,6 @@ const DepositInquiry = () => {
     //     console.log('拿後 50 筆資料');
     //   }
     // });
-
-    /* ===================== test ===================== */
-    const callApi = async () => {
-      const response = await response('/api/depositInquiry');
-      if (response.initData) {
-        console.log(response.initData);
-      }
-    };
   };
 
   useEffect(init, [transactionDetailRef]);
