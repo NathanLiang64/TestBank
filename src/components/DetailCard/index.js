@@ -9,16 +9,16 @@ import DetailCardWrapper from './detailCard.style';
 * 1. id -> Html DOM 元素 id
 * 2. index -> HTML data-index 參數，放置後端撈回的卡片索引值
 * 3. inView -> HTML data-inview 參數，顯示卡片是否在畫面可視範圍
-* 2. avatar -> 頭像圖片，沒傳值會有預設樣式
-* 3. type -> 交易類型，接受 "spend" 或 "income" 兩個字串值
+* 4. avatar -> 頭像圖片，沒傳值會有預設樣式
+* 5. type -> 交易類型，接受 "spend" 或 "income" 兩個字串值
 *    "spend" 表支出，"income" 表收入
-* 4. title -> 明細標題
-* 5. date -> 交易日期
-* 6. sender -> 交易對象
-* 7. amount -> 交易金額
-* 8. balance -> 交易後所剩餘額
-* 9. noShadow -> 卡片不帶陰影樣式
-* 10. onClick -> 點擊事件
+* 6. title -> 明細標題
+* 7. date -> 交易日期
+* 8. sender -> 交易對象
+* 9. amount -> 交易金額
+* 10. balance -> 交易後所剩餘額
+* 11. noShadow -> 卡片不帶陰影樣式
+* 12. onClick -> 點擊事件
 * */
 
 const DetailCard = ({
