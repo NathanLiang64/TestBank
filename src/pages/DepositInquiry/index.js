@@ -7,11 +7,9 @@ import { depositInquiryApi } from 'apis';
 import DepositSearchCondition from 'pages/DepositSearchCondition';
 import DebitCard from 'components/DebitCard';
 import DetailCard from 'components/DetailCard';
-import Dialog from 'components/Dialog';
 import BottomDrawer from 'components/BottomDrawer';
-// import CheckboxButton from 'components/CheckboxButton';
 import {
-  FEIBIconButton, FEIBTabContext, FEIBTabList, FEIBTab, FEIBButton,
+  FEIBIconButton, FEIBTabContext, FEIBTabList, FEIBTab,
 } from 'components/elements';
 import theme from 'themes/theme';
 import { dateFormatter } from 'utilities/Generator';
@@ -24,7 +22,6 @@ const DepositInquiry = () => {
   const transactionDetailRef = useRef();
   const [tabId, setTabId] = useState('');
   const [openDownloadDrawer, setOpenDownloadDrawer] = useState(false);
-  const [openDetailDialog, setOpenDetailDialog] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const [viewerChildren, setViewerChildren] = useState([]);
   // eslint-disable-next-line no-unused-vars
@@ -79,7 +76,7 @@ const DepositInquiry = () => {
     });
     // 清空日期範圍條件
     dispatch(setDateRange([]));
-    // 清空已選關鍵字條件 (將所 tempSelectedKeywords 取代掉現有的 selectedKeywords)
+    // 清空已選關鍵字條件 (將 tempSelectedKeywords 取代掉現有的 selectedKeywords)
     dispatch(setKeywords(tempKeywords));
     dispatch(setCustomKeyword(''));
     // dispatch(setDisplayKeywords([]));
@@ -196,7 +193,6 @@ const DepositInquiry = () => {
     <div className="tabsArea">
       <FEIBTabContext value={tabId}>
         <FEIBTabList onChange={handleChangeTabList} $size="small" className="tabList">
-          {/* <FEIBTab label="12月" value="detailList12" href="#detailList12" onClick={() => handleClickMonthTabs('month12')} /> */}
           <FEIBTab label="12月" value="12" href="#12" onClick={handleClickMonthTabs} />
           <FEIBTab label="11月" value="11" href="#11" onClick={handleClickMonthTabs} />
           <FEIBTab label="10月" value="10" href="#10" onClick={handleClickMonthTabs} />
@@ -233,35 +229,12 @@ const DepositInquiry = () => {
             amount={card.amount}
             balance={card.balance}
             noShadow
-            onClick={() => setOpenDetailDialog(true)}
+            // onClick={() => setOpenDetailDialog(true)}
           />
         )}
       </VisibilitySensor>
     ))
   );
-
-  // 舊方法 -> 暫不刪除
-  // const renderDetailCardList = (list) => (
-  //   Object.keys(list).map((month) => (
-  //     <section key={month} id={month}>
-  //       { list[month].map((card) => (
-  //         <DetailCard
-  //           id={card.date.substr(0, 2)}
-  //           key={card.id}
-  //           avatar={card.avatar}
-  //           title={card.title}
-  //           type={card.type}
-  //           date={card.date}
-  //           sender={card.sender}
-  //           amount={card.amount}
-  //           balance={card.balance}
-  //           noShadow
-  //           onClick={() => setOpenDetailDialog(true)}
-  //         />
-  //       )) }
-  //     </section>
-  //   ))
-  // );
 
   const renderSearchDrawer = (element) => (
     <BottomDrawer
@@ -285,16 +258,6 @@ const DepositInquiry = () => {
           <li onClick={() => handleClickDownloadDetails('excel')}><p>下載 EXCEL</p></li>
         </ul>
       )}
-    />
-  );
-
-  // TODO: 交易明細內容傳值
-  const renderDetailDialog = () => (
-    <Dialog
-      isOpen={openDetailDialog}
-      onClose={() => setOpenDetailDialog(false)}
-      content={<p>交易明細內容</p>}
-      action={<FEIBButton onClick={() => setOpenDetailDialog(false)}>確定</FEIBButton>}
     />
   );
 
@@ -327,7 +290,7 @@ const DepositInquiry = () => {
           { detailList && renderDetailCardList(detailList) }
         </div>
       </div>
-      { renderDetailDialog() }
+      {/* { renderDetailDialog() } */}
       { renderDownloadDrawer() }
       { renderSearchDrawer(<DepositSearchCondition initKeywords={initKeywords} />) }
     </DepositInquiryWrapper>

@@ -1,4 +1,8 @@
+import { useState } from 'react';
 import { MonetizationOn, ArrowBack, ArrowForward } from '@material-ui/icons';
+import Dialog from 'components/Dialog';
+import InformationList from 'components/InformationList';
+import { FEIBButton } from 'components/elements';
 import { toCurrency } from 'utilities/Generator';
 import DetailCardWrapper from './detailCard.style';
 
@@ -33,8 +37,9 @@ const DetailCard = ({
   amount,
   balance,
   noShadow,
-  onClick,
 }) => {
+  const [openDetailDialog, setOpenDetailDialog] = useState(false);
+
   const renderAvatar = () => (
     avatar
       ? <img src={avatar} alt="avatar" />
@@ -51,24 +56,57 @@ const DetailCard = ({
     </div>
   );
 
+  // TODO: 確認明細欄位是否齊全
+  const renderDetailDialogContent = () => (
+    <>
+      <InformationList
+        title={type === 'spend' ? '轉出' : '轉入'}
+        content={`${type === 'spend' ? '- ' : ''}$${toCurrency(amount)}`}
+      />
+      <InformationList title="交易時間" content={date} />
+      <InformationList title="帳務日期" content={date} />
+      <InformationList title="帳號" content="04300299001234" />
+      <InformationList title="備註" />
+    </>
+  );
+
+  const renderDetailDialog = () => (
+    <Dialog
+      title={title || '交易明細'}
+      isOpen={openDetailDialog}
+      onClose={() => setOpenDetailDialog(false)}
+      content={renderDetailDialogContent()}
+      action={<FEIBButton onClick={() => setOpenDetailDialog(false)}>關閉</FEIBButton>}
+    />
+  );
+
   return (
-    <DetailCardWrapper data-index={index} data-inview={inView} $noShadow={noShadow} id={id} onClick={onClick}>
-      <div className="avatar">
-        { renderAvatar() }
-        { renderTypeIcon() }
-      </div>
-      <div className="description">
-        <h4>{title}</h4>
-        <p>{`${date} | ${sender}`}</p>
-      </div>
-      <div className="amount">
-        <h4>
-          { type === 'spend' && '- ' }
-          {`$${toCurrency(amount)}`}
-        </h4>
-        <p>{`$${toCurrency(balance)}`}</p>
-      </div>
-    </DetailCardWrapper>
+    <>
+      <DetailCardWrapper
+        data-index={index}
+        data-inview={inView}
+        $noShadow={noShadow}
+        id={id}
+        onClick={() => setOpenDetailDialog(true)}
+      >
+        <div className="avatar">
+          { renderAvatar() }
+          { renderTypeIcon() }
+        </div>
+        <div className="description">
+          <h4>{title}</h4>
+          <p>{`${date} | ${sender}`}</p>
+        </div>
+        <div className="amount">
+          <h4>
+            { type === 'spend' && '- ' }
+            {`$${toCurrency(amount)}`}
+          </h4>
+          <p>{`$${toCurrency(balance)}`}</p>
+        </div>
+      </DetailCardWrapper>
+      { renderDetailDialog() }
+    </>
   );
 };
 
