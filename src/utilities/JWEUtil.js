@@ -92,6 +92,7 @@ class JWEUtil {
       };
     } catch (error) {
       // Exception
+      // eslint-disable-next-line no-console
       console.log(error);
     }
   }
@@ -117,6 +118,7 @@ class JWEUtil {
       return request; // String
     } catch (error) {
       // Exception
+      // eslint-disable-next-line no-console
       console.log(error);
     }
   }

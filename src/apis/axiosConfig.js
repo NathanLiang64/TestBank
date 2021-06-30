@@ -6,10 +6,12 @@ const errorHandle = (status, message) => {
   switch (status) {
     // 400: 未認證，或可能是帳號或密碼錯誤
     case 400:
+      // eslint-disable-next-line no-console
       console.error(message);
       break;
     // 401: 登入失敗，可能是帳號或密碼錯誤
     case 401:
+      // eslint-disable-next-line no-console
       console.error('連線逾時，請重新登入');
       setTimeout(() => {
         // 跳轉至登入頁
@@ -20,7 +22,8 @@ const errorHandle = (status, message) => {
       // 其它錯誤
 
     default:
-      console.log(`未攔截到的錯誤：${message}`);
+      // eslint-disable-next-line no-console
+      console.error(`未攔截到的錯誤：${message}`);
   }
 };
 
@@ -76,6 +79,7 @@ userAxios().interceptors.response.use(
     // 成功發出 request 但沒收到 response
     if (!window.navigator.onLine) {
       // 如果是網路連線問題
+      // eslint-disable-next-line no-console
       console.error('網路異常，請重新連線後再重新整理頁面');
     } else {
       // 其它問題，例如跨域或程式問題

@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import VisibilitySensor from 'react-visibility-sensor';
@@ -27,8 +26,9 @@ const DepositInquiry = () => {
   const [openDownloadDrawer, setOpenDownloadDrawer] = useState(false);
   const [openDetailDialog, setOpenDetailDialog] = useState(false);
   const [isPending, setIsPending] = useState(false);
-  const [viewerChild, setViewerChild] = useState([]);
-  const [inViewChild, setInViewChild] = useState([]);
+  const [viewerChildren, setViewerChildren] = useState([]);
+  // eslint-disable-next-line no-unused-vars
+  const [inViewChildren, setInViewChildren] = useState([]);
 
   const cardInfo = useSelector(({ depositOverview }) => depositOverview.cardInfo);
   const detailList = useSelector(({ depositInquiry }) => depositInquiry.detailList);
@@ -87,20 +87,18 @@ const DepositInquiry = () => {
 
   const handleClickMonthTabs = async (event) => {
     // 從點擊的 Tab 連結取得 TabId
-    const tabId = event.currentTarget.href.split('#').pop();
+    const tab = event.currentTarget.href.split('#').pop();
     const response = await doGetInitData('/api/depositInquiry');
-    if (response.november) {
-      dispatch(setDetailList(response.november));
-      const target = Array.from(transactionDetailRef.current['children']).find((child) => child.id === tabId);
+    if (response[tab]) {
+      dispatch(setDetailList(response[tab]));
+      const target = Array.from(transactionDetailRef.current.children).find((child) => child.id === tab);
       target.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
-
-  /* ===================== test ===================== */
   const getNewDetailData = async (scrollDirection) => {
-    const newDetailList = [];
     const response = await doGetInitData('/api/depositInquiry');
+    const newDetailList = [];
     if (response.nextCall) {
       if (scrollDirection === 'up') {
         newDetailList.push(...response.nextCall, ...detailList);
@@ -108,52 +106,50 @@ const DepositInquiry = () => {
         newDetailList.push(...detailList, ...response.nextCall);
       }
       dispatch(setDetailList(newDetailList));
-      setIsPending(() => {
-        console.log('資料回來了，關閉 isPending');
-        return false;
-      });
+      // 資料取回後
+      setIsPending(false);
     }
   };
 
-  const visibilitySensorOnChange = (isVisible) => {
+  const visibilitySensorOnChange = () => {
     if (transactionDetailRef.current) {
-      setViewerChild(Array.from(transactionDetailRef.current['children']));
-      const inViewChildren = viewerChild.filter((item) => item.dataset.inview === "y");
-      setInViewChild((prev) => {
-        if (prev.length > 0 && inViewChildren.length > 0) {
-          setTabId(inViewChildren[0].id);
-
+      setViewerChildren(Array.from(transactionDetailRef.current.children));
+      const inViewList = viewerChildren.filter((item) => item.dataset.inview === 'y');
+      setInViewChildren((prev) => {
+        if (prev.length > 0 && inViewList.length > 0) {
+          setTabId(inViewList[0].id);
           /* ============ 判斷使用者往上捲動或往下捲動 ========== */
           // 往下捲動
-          if (prev[0].dataset.index < inViewChildren[0].dataset.index) {
+          if (prev[0].dataset.index < inViewList[0].dataset.index) {
             const prevLastIndex = parseInt(prev[prev.length - 1].dataset.index, 10);
-            const viewerChildLastIndex = parseInt(viewerChild[viewerChild.length - 1].dataset.index, 10);
-            // console.info("prev's last index", prevLastIndex);
-            // console.info("total's last index", viewerChildLastIndex);
-            if (viewerChildLastIndex - prevLastIndex < 5 && viewerChildLastIndex - prevLastIndex > 0) {
+            const viewerChildrenLastIndex = parseInt(viewerChildren[viewerChildren.length - 1].dataset.index, 10);
+            // console.info('prevLastIndex: ', prevLastIndex);
+            // console.info('totalLastIndex: ', viewerChildrenLastIndex);
+            if (viewerChildrenLastIndex - prevLastIndex < 5 && viewerChildrenLastIndex - prevLastIndex > 0) {
               if (!isPending) {
-                // console.log(`下方剩餘數量少於 5 張卡片，call api 獲取從索引第 ${viewerChildLastIndex + 1} 到第 ${viewerChildLastIndex + 21} 張`);
+                // console.log(`下方剩餘數量少於 5 張卡片，call api 獲取從索引第 ${viewerChildrenLastIndex + 1} 到第 ${viewerChildrenLastIndex + 21} 張`);
                 setIsPending(true);
                 getNewDetailData('down');
               }
             }
           //  往上捲動
-          } else if (prev[0].dataset.index > inViewChildren[0].dataset.index) {
+          } else if (prev[0].dataset.index > inViewList[0].dataset.index) {
             const prevFirstIndex = parseInt(prev[0].dataset.index, 10);
-            const viewerChildFirstIndex = parseInt(viewerChild[0].dataset.index, 10);
-            // 往上捲動
-            console.info('prevFirstIndex: ', prevFirstIndex);
-            console.info('viewerChildFirstIndex: ', viewerChildFirstIndex);
-            if (prevFirstIndex - viewerChildFirstIndex < 5 && prevFirstIndex - viewerChildFirstIndex > 0) {
+            const viewerChildrenFirstIndex = parseInt(viewerChildren[0].dataset.index, 10);
+            // console.info('prevFirstIndex: ', prevFirstIndex);
+            // console.info('totalFirstIndex: ', viewerChildrenFirstIndex);
+            // 如果列表內的卡片數量至頂部剩餘數量少於 5 張
+            if (prevFirstIndex - viewerChildrenFirstIndex < 5 && prevFirstIndex - viewerChildrenFirstIndex > 0) {
+              // 避免條件符合連續 call api
               if (!isPending) {
-                // console.log(`上方剩餘數量少於 5 張卡片，call api 獲取從索引第 ${viewerChildFirstIndex - 1} 到第 ${viewerChildFirstIndex - 21} 張`);
+                // console.log(`獲取從索引第 ${viewerChildrenFirstIndex - 1} 到第 ${viewerChildrenFirstIndex - 21} 張`);
                 setIsPending(true);
                 getNewDetailData('up');
               }
             }
           }
         }
-        return inViewChildren;
+        return inViewList;
       });
     }
   };
