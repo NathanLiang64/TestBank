@@ -112,6 +112,7 @@ const PatternLockSetting = () => {
         setShowConfirmDialog(true);
         break;
       default:
+        // eslint-disable-next-line no-alert
         const result = confirm('原生畫面');
         if (result) {
           setShowConfirmDialog(true);

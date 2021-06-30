@@ -69,10 +69,10 @@ const DebitCard = ({
     setOpenDialog(true);
   };
 
+  // eslint-disable-next-line no-unused-vars
   const handleClickSubmitCardName = (data) => {
     setOpenDialog(false);
     // TODO: send data
-    console.log(data);
   };
 
   // 判斷卡片類型是否為 original

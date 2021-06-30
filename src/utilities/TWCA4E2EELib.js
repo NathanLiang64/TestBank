@@ -42,6 +42,7 @@ module.exports = {
         ret = TWCA_E2EE_ENCRYPT_ERROR;
         break;
       }
+      // eslint-disable-next-line no-constant-condition
     } while (false);
     return ret;
   },

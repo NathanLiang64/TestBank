@@ -28,7 +28,8 @@ const QRCodeTransfer = () => {
     setTimeout(() => setCopyAccount(false), 1500);
   };
 
-  const handleClickSelectPictrue = () => {
+  const handleClickSelectPicture = () => {
+    // eslint-disable-next-line no-alert
     window.alert('開啟手機相簿');
   };
 
@@ -108,7 +109,7 @@ const QRCodeTransfer = () => {
               <div className="mask" />
               <div className="mask" />
             </div>
-            <div className="albumArea" onClick={handleClickSelectPictrue}>
+            <div className="albumArea" onClick={handleClickSelectPicture}>
               <div className="lastPhoto">
                 <img src="https://images.unsplash.com/photo-1622069313264-ae43213afe69?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="" />
               </div>
