@@ -42,6 +42,18 @@ const AccordionWrapper = styled.div`
     * {
       color: ${({ theme }) => theme.colors.text.light};
     }
+    
+    ol {
+      padding-left: 2.4rem;
+
+      li {
+        list-style-type: decimal;
+      }
+    }
+    
+    li {
+      margin-bottom: 1.2rem;
+    }
 
     .line {
       margin-bottom: 1.2rem;

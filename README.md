@@ -87,6 +87,8 @@
   - DetailCard - 聖森
   - DateRangePicker - 聖森
   - InformationList - 聖森
+  - Avatar - 聖森
+  - MemberAccountCard - 聖森
   - PickerProviders - 唯物
   - Accordion - 唯物
 
