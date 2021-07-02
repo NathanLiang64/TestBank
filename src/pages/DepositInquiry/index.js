@@ -32,7 +32,6 @@ const DepositInquiry = () => {
   const openInquiryDrawer = useSelector(({ depositInquiry }) => depositInquiry.openInquiryDrawer);
   const dateRange = useSelector(({ depositInquiry }) => depositInquiry.dateRange);
   const keywords = useSelector(({ depositInquiry }) => depositInquiry.keywords);
-  // const displayKeywords = useSelector(({ depositInquiry }) => depositInquiry.displayKeywords);
   const { doGetInitData } = depositInquiryApi;
   const dispatch = useDispatch();
 

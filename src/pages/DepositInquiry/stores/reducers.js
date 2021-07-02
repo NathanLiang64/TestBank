@@ -6,7 +6,6 @@ const initState = {
   dateRange: [],
   keywords: [],
   customKeyword: '',
-  displayKeywords: [],
 };
 
 const reducers = (state = initState, action) => {
@@ -35,11 +34,6 @@ const reducers = (state = initState, action) => {
       return {
         ...state,
         customKeyword: action.payload,
-      };
-    case types.SET_DISPLAY_KEYWORDS:
-      return {
-        ...state,
-        displayKeywords: action.payload,
       };
     default:
       return state;

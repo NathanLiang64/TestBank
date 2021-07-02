@@ -17,6 +17,7 @@ import theme from 'themes/theme';
 import 'swiper/swiper.min.css';
 import 'swiper/components/pagination/pagination.min.css';
 import { setIsShake, setUserCards, setUserCardInfo } from './stores/actions';
+import ShakeShakeWrapper from './shakeShake.style';
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
@@ -130,44 +131,6 @@ const ShakeShake = () => {
     </div>
   );
 
-  // TODO: 判斷是否已登入，若未登入則不可轉帳
-  const drawerContent = () => (
-    <>
-      <FEIBTabContext value={tabId}>
-        <FEIBTabList $size="small" $type="fixed" onChange={handleChangeTabList}>
-          <FEIBTab label="要錢" value="0" />
-          <FEIBTab label="給錢" value="1" />
-        </FEIBTabList>
-        <FEIBTabPanel value="0">
-          { userCardInfo && renderAccountInfo(userCardInfo) }
-          { (userCards && userCardInfo) ? renderCodeArea(userCards) : renderLoading() }
-        </FEIBTabPanel>
-        <FEIBTabPanel value="1">
-          <p>掃描收款人的 QR code，進行轉帳。</p>
-          <div className="scanArea">
-            <img src={ScanPhoto} style={{ width: 'auto', height: '100%' }} alt="" />
-            <div className="maskArea">
-              <div className="mask" />
-              <div className="mask" />
-              <div className="mask" />
-              <div className="mask" />
-              <div className="mask empty">
-                <ArrowForwardIosRounded className="topLeft" />
-                <ArrowForwardIosRounded className="topRight" />
-                <ArrowForwardIosRounded className="bottomLeft" />
-                <ArrowForwardIosRounded className="bottomRight" />
-              </div>
-              <div className="mask" />
-              <div className="mask" />
-              <div className="mask" />
-              <div className="mask" />
-            </div>
-          </div>
-        </FEIBTabPanel>
-      </FEIBTabContext>
-    </>
-  );
-
   useEffect(async () => {
     // 取得所有存款卡的初始資料
     const qrCodeResponse = await doGetShakeInitData('/api/shakeShake');
@@ -182,13 +145,48 @@ const ShakeShake = () => {
     selectedUserCard(1, userCards);
   }, [userCards]);
 
+  // TODO: 判斷是否已登入，若未登入則不可轉帳
   return (
     <BottomDrawer
       title="QRCode 轉帳"
-      className="QRCodeDrawer"
       isOpen={isShake}
       onClose={() => dispatch(setIsShake(false))}
-      content={drawerContent()}
+      content={(
+        <ShakeShakeWrapper>
+          <FEIBTabContext value={tabId}>
+            <FEIBTabList $size="small" $type="fixed" onChange={handleChangeTabList}>
+              <FEIBTab label="要錢" value="0" />
+              <FEIBTab label="給錢" value="1" />
+            </FEIBTabList>
+            <FEIBTabPanel value="0">
+              { userCardInfo && renderAccountInfo(userCardInfo) }
+              { (userCards && userCardInfo) ? renderCodeArea(userCards) : renderLoading() }
+            </FEIBTabPanel>
+            <FEIBTabPanel value="1">
+              <p>掃描收款人的 QR code，進行轉帳。</p>
+              <div className="scanArea">
+                <img src={ScanPhoto} style={{ width: 'auto', height: '100%' }} alt="" />
+                <div className="maskArea">
+                  <div className="mask" />
+                  <div className="mask" />
+                  <div className="mask" />
+                  <div className="mask" />
+                  <div className="mask empty">
+                    <ArrowForwardIosRounded className="topLeft" />
+                    <ArrowForwardIosRounded className="topRight" />
+                    <ArrowForwardIosRounded className="bottomLeft" />
+                    <ArrowForwardIosRounded className="bottomRight" />
+                  </div>
+                  <div className="mask" />
+                  <div className="mask" />
+                  <div className="mask" />
+                  <div className="mask" />
+                </div>
+              </div>
+            </FEIBTabPanel>
+          </FEIBTabContext>
+        </ShakeShakeWrapper>
+      )}
     />
   );
 };

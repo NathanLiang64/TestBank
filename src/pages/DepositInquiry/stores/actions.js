@@ -24,8 +24,3 @@ export const setCustomKeyword = (value) => ({
   type: types.SET_CUSTOM_KEYWORD,
   payload: value,
 });
-
-export const setDisplayKeywords = (array) => ({
-  type: types.SET_DISPLAY_KEYWORDS,
-  payload: array,
-});

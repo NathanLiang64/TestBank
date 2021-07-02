@@ -24,7 +24,7 @@ export const numberToChinese = (number) => {
     return '(非數字)';
   }
   const chineseNumber = ('零壹貳參肆伍陸柒捌玖').split('');
-  const amountSmallUnit = ['', '拾', '佰', '仟'];
+  const amountSmallUnit = ['', '拾', '佰', '千'];
   const amountBigUnit = ['', '萬', '億', '兆', '京', '垓', '秭', '穰', '溝', '澗', '正', '載'];
   const arabicNumeralsSplitSplit = [];
   const arabicNumeralsSplitSplitCount = parseInt(number.length / 4, 10);
