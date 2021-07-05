@@ -15,6 +15,11 @@ export const setDateRange = (value) => ({
   payload: value,
 });
 
+export const setTempDateRange = (value) => ({
+  type: types.SET_TEMP_DATE_RANGE,
+  payload: value,
+});
+
 export const setKeywords = (array) => ({
   type: types.SET_KEYWORDS,
   payload: array,

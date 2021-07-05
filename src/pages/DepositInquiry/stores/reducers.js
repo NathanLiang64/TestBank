@@ -4,6 +4,7 @@ const initState = {
   detailList: null,
   openInquiryDrawer: false,
   dateRange: [],
+  tempDateRange: [],
   keywords: [],
   customKeyword: '',
 };
@@ -24,6 +25,11 @@ const reducers = (state = initState, action) => {
       return {
         ...state,
         dateRange: action.payload,
+      };
+    case types.SET_TEMP_DATE_RANGE:
+      return {
+        ...state,
+        tempDateRange: action.payload,
       };
     case types.SET_KEYWORDS:
       return {
