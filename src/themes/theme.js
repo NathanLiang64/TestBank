@@ -6,6 +6,7 @@ const theme = {
       dark: '#5D2FB3',
       light: '#AC8DE8',
       lightest: '#F7F2FF',
+      gradient: 'linear-gradient(0deg, rgba(96, 50, 181, 1) 0%, rgba(213, 190, 255, 1) 100%)',
     },
     secondary: {
       brand: '#93DA49',

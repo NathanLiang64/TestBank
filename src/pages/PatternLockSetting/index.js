@@ -42,28 +42,6 @@ const PatternLockSetting = () => {
 
   const dispatch = useDispatch();
 
-  useCheckLocation();
-  usePageInfo('/api/patternLockSetting');
-
-  useEffect(async () => {
-    const data = await init();
-    // 儲存api的值到redux中
-    dispatch(setIsActive(data.initData.isActive));
-    // 儲存api的值到頁面的state中
-    setisActive(data.initData.isActive);
-  }, []);
-
-  useEffect(() => {
-    const password = watch('password');
-    if (checkBoxCheck && password !== '' && differentState) {
-      setDisabled(false);
-    } else if (password !== '' && patternLockSettingData.isActive) {
-      setDisabled(false);
-    } else {
-      setDisabled(true);
-    }
-  }, [checkBoxCheck, watch('password'), isActive]);
-
   const switchChange = () => {
     setisActive(!isActive);
   };
@@ -212,6 +190,28 @@ const PatternLockSetting = () => {
     </div>
 
   );
+
+  useEffect(async () => {
+    const data = await init();
+    // 儲存api的值到redux中
+    dispatch(setIsActive(data.initData.isActive));
+    // 儲存api的值到頁面的state中
+    setisActive(data.initData.isActive);
+  }, []);
+
+  useEffect(() => {
+    const password = watch('password');
+    if (checkBoxCheck && password !== '' && differentState) {
+      setDisabled(false);
+    } else if (password !== '' && patternLockSettingData.isActive) {
+      setDisabled(false);
+    } else {
+      setDisabled(true);
+    }
+  }, [checkBoxCheck, watch('password'), isActive]);
+
+  useCheckLocation();
+  usePageInfo('/api/patternLockSetting');
 
   return (
     <PatternLockSettingWrapper>

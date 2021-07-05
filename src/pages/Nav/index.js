@@ -46,6 +46,7 @@ const Nav = () => {
         <Link to="/qAndA">Q＆A</Link>
         <Link to="/open">開通APP</Link>
         <Link to="/deduct">自動扣繳申請/查詢</Link>
+        <Link to="/transfer">轉帳</Link>
       </Accordion>
     </NavWrapper>
   );

@@ -14,6 +14,7 @@
 - 生物辨識登入設定（流程調整）- 唯物
 - 交易明細 (DepositInquiry) - 聖森
 - 明細搜尋 (DepositSearchCondition) - 聖森
+- 轉帳 (Transfer) - 聖森
 - 存款優惠利率額度 (DepositPlus) - 聖森 (待提供設計稿)
 - 常用帳號列表 (AccountMaintenance) - 聖森 (暫不需實作)
 - 元件封裝 - 唯物 & 聖森
@@ -86,6 +87,8 @@
   - DetailCard - 聖森
   - DateRangePicker - 聖森
   - InformationList - 聖森
+  - Avatar - 聖森
+  - MemberAccountCard - 聖森
   - PickerProviders - 唯物
   - Accordion - 唯物
 

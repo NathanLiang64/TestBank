@@ -4,9 +4,9 @@ const initState = {
   detailList: null,
   openInquiryDrawer: false,
   dateRange: [],
+  tempDateRange: [],
   keywords: [],
   customKeyword: '',
-  displayKeywords: [],
 };
 
 const reducers = (state = initState, action) => {
@@ -26,6 +26,11 @@ const reducers = (state = initState, action) => {
         ...state,
         dateRange: action.payload,
       };
+    case types.SET_TEMP_DATE_RANGE:
+      return {
+        ...state,
+        tempDateRange: action.payload,
+      };
     case types.SET_KEYWORDS:
       return {
         ...state,
@@ -35,11 +40,6 @@ const reducers = (state = initState, action) => {
       return {
         ...state,
         customKeyword: action.payload,
-      };
-    case types.SET_DISPLAY_KEYWORDS:
-      return {
-        ...state,
-        displayKeywords: action.payload,
       };
     default:
       return state;

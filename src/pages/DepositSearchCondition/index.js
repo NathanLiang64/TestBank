@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import DateRangePicker from 'components/DateRangePicker';
@@ -13,9 +13,9 @@ import DepositSearchConditionWrapper from './depositSearchCondition.style';
 import {
   setOpenInquiryDrawer,
   setDateRange,
+  setTempDateRange,
   setKeywords,
   setCustomKeyword,
-  setDisplayKeywords,
 } from '../DepositInquiry/stores/actions';
 
 // TODO: 若已選的關鍵字未清空，點擊 search icon 應代入原先已選的關鍵字
@@ -23,15 +23,10 @@ const DepositSearchCondition = ({ initKeywords }) => {
   const keywords = useSelector(({ depositInquiry }) => depositInquiry.keywords);
   const customKeyword = useSelector(({ depositInquiry }) => depositInquiry.customKeyword);
   const dateRange = useSelector(({ depositInquiry }) => depositInquiry.dateRange);
+  const tempDateRange = useSelector(({ depositInquiry }) => depositInquiry.tempDateRange);
   const [tabId, setTabId] = useState('0');
-  const [tempDateRange, setTempDateRange] = useState([]);
-  const { register, handleSubmit } = useForm();
-
+  const { register, unregister, handleSubmit } = useForm();
   const dispatch = useDispatch();
-
-  const handleClickApplyDateRange = (rangeData) => {
-    setTempDateRange(rangeData);
-  };
 
   // 控制 Tabs 頁籤
   const handleChangeTabList = (event, id) => {
@@ -52,52 +47,64 @@ const DepositSearchCondition = ({ initKeywords }) => {
     dispatch(setOpenInquiryDrawer(false));
     // 清空查詢條件
     dispatch(setDateRange([]));
+    dispatch(setTempDateRange([]));
     dispatch(setCustomKeyword(''));
     dispatch(setKeywords(initKeywords));
   };
 
   // 點擊查詢按鈕後傳送資料
   const handleClickSearchButton = async (data) => {
-    const { keywordCustom } = data;
+    if (data.dateRange) {
+      // 若 data.dateRange 屬性，代表使用者送出表單時是由 autoDateArea 區塊自動推斷範圍
+      // 而 autoDateArea 區塊的日期範圍因為是 input value 傳進來，所以會是字串格格式，需另外轉成日期格式
+      dispatch(setDateRange([new Date(data.dateRange[0]), new Date(data.dateRange[1])]));
+    } else {
+      // 若沒有 data.dateRange 屬性，代表沒有選擇日期，或是使用者是由 dateRangePickerArea 區塊的日期選擇器所選擇的
+      if (tempDateRange.length) {
+        // 若 tempDateRange 有值，代表是由 dateRangePicker 選擇日期
+        // 範圍會暫存在 tempDateRange 內，故此處要加入 data.dateRange 後端才收得到
+        dispatch(setDateRange(tempDateRange));
+        data.dateRange = tempDateRange;
+      } else {
+        // 若 tempDateRange 沒有值，代表沒有選擇日期，預設儲存三年範圍，此處要加入 data.dateRange 後端才收得到
+        const today = new Date();
+        const threeYearsAgo = new Date();
+        threeYearsAgo.setFullYear(threeYearsAgo.getFullYear() - 3);
+        dispatch(setDateRange([threeYearsAgo, today]));
+        data.dateRange = [threeYearsAgo, today];
+      }
+    }
+
+    // 清空暫時存放的日期範圍
+    dispatch(setTempDateRange([]));
+
     // 關閉底部抽屜
     dispatch(setOpenInquiryDrawer(false));
 
-    // 若有選擇日期，則將日期範圍儲存至 redux
-    if (tempDateRange.length > 0) {
-      dispatch(setDateRange(tempDateRange));
+    if (customKeyword) {
+      if (data.keywordCustom === undefined) {
+        data.keywordCustom = customKeyword;
+      }
     } else {
-      // 若無選擇日期，預設儲存三年範圍
-      const today = new Date();
-      const threeYearsAgo = new Date();
-      threeYearsAgo.setFullYear(threeYearsAgo.getFullYear() - 3);
-      dispatch(setDateRange([threeYearsAgo, today]));
+      if (!data.keywordCustom) {
+        data.keywordCustom = '';
+      }
     }
-
-    // 拷貝一份當前的 keywords 陣列
-    const tempKeywordsString = JSON.stringify(keywords);
-    const tempKeywords = JSON.parse(tempKeywordsString);
-
-    // 將自訂關鍵字添加至 tempKeywords 陣列
-    tempKeywords.push({
-      title: keywordCustom || '無自訂關鍵字',
-      name: 'keywordCustom',
-      selected: keywordCustom.length > 0,
-    });
-    // 將自訂關鍵字內容存至 redux
-    dispatch(setCustomKeyword(keywordCustom));
-
-    // 若未選取任何關鍵字，則 dispatch 空陣列至 displayKeywords，有選擇則 dispatch 拷貝後的 keywords 陣列
-    const nonSelected = tempKeywords.every((item) => item.selected === false);
-    nonSelected ? dispatch(setDisplayKeywords([])) : dispatch(setDisplayKeywords(tempKeywords));
+    dispatch(setCustomKeyword(data.keywordCustom));
 
     // TODO: send data
-    data.dateRange = tempDateRange;
     // 送資料
   };
 
-  const renderCalendar = () => (
-    <div className="calendarArea">
-      <DateRangePicker date={dateRange} onClick={handleClickApplyDateRange} />
+  const handleClickDateRangePicker = (range) => {
+    dispatch(setTempDateRange(range));
+    // 一旦使用改變自訂日期範圍，就取消 autoDateArea 的 input 註冊，避免兩邊重複取值
+    unregister('dateRange');
+  };
+
+  const renderDataRangePicker = () => (
+    <div className="dateRangePickerArea">
+      <DateRangePicker date={dateRange} onClick={handleClickDateRangePicker} />
     </div>
   );
 
@@ -122,15 +129,15 @@ const DepositSearchCondition = ({ initKeywords }) => {
     }
   };
 
-  const renderDate = () => {
+  const renderAutoDate = () => {
     const today = new Date();
-    let startDate = computedStartDate(new Date());
+    const startDate = computedStartDate(new Date());
 
     return (
-      <div className="dateArea">
+      <div className="autoDateArea">
         <p>{ dateFormatter(startDate) } ~ { dateFormatter(today) }</p>
-        <input type="text" { ...register('date.0') } value={startDate} />
-        <input type="text" { ...register('date.1') } value={today} />
+        <input type="text" { ...register('dateRange.0') } value={startDate} />
+        <input type="text" { ...register('dateRange.1') } value={today} />
       </div>
     );
   };
@@ -144,7 +151,7 @@ const DepositSearchCondition = ({ initKeywords }) => {
         <FEIBTab label="近兩年" value="3" />
         <FEIBTab label="近三年" value="4" />
       </FEIBTabList>
-      { tabId === '0' ? renderCalendar() : renderDate() }
+      { tabId === '0' ? renderDataRangePicker() : renderAutoDate() }
     </FEIBTabContext>
   );
 
@@ -152,17 +159,15 @@ const DepositSearchCondition = ({ initKeywords }) => {
     <div className="keywordArea">
       <FEIBInputLabel>加入關鍵字，更快搜尋到您要的明細！</FEIBInputLabel>
       <div className="defaultKeywords">
-        {
-          keywords.map((keyword) => (
-            <CheckboxButton
-              key={keyword.name}
-              label={keyword.title}
-              register={{ ...register(keyword.name) }}
-              onChange={handleChangeKeywords}
-              checked={keyword.selected}
-            />
-          ))
-        }
+        { keywords.map((keyword) => (
+          <CheckboxButton
+            key={keyword.name}
+            label={keyword.title}
+            register={{ ...register(keyword.name) }}
+            onChange={handleChangeKeywords}
+            checked={keyword.selected}
+          />
+        )) }
       </div>
       <div className="customKeywords">
         <FEIBInputLabel>自訂關鍵字</FEIBInputLabel>
@@ -170,12 +175,18 @@ const DepositSearchCondition = ({ initKeywords }) => {
           name="keywordCustom"
           placeholder="請輸入，最多可輸入16個字元"
           defaultValue={customKeyword}
-          autoFocus
           {...register('keywordCustom', { maxLength: 16 })}
         />
       </div>
     </div>
   );
+
+  useEffect(() => {
+    // 如果 dateRange 有值，表示上一次查詢紀錄有日期，重新開啟搜尋面板時需自動代入
+    if (dateRange.length > 0) {
+      dispatch(setTempDateRange(dateRange));
+    }
+  }, []);
 
   return (
     <DepositSearchConditionWrapper>
