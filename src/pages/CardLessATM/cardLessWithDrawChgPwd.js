@@ -123,7 +123,7 @@ const CardLessWithDrawChgPwd = () => {
         <FEIBButton
           type="submit"
         >
-          確定送出
+          確認
         </FEIBButton>
       </form>
       <ResultDialog />

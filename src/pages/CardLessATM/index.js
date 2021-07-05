@@ -149,7 +149,7 @@ const CardLessATM = () => {
           <FEIBButton
             type="submit"
           >
-            確定送出
+            確認
           </FEIBButton>
         </div>
       </form>

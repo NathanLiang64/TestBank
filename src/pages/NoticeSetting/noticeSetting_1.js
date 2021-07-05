@@ -243,7 +243,7 @@ const NoticeSetting1 = () => {
             type="submit"
             disabled={!watch('password')}
           >
-            確定送出
+            確認
           </FEIBButton>
         </div>
       </form>
