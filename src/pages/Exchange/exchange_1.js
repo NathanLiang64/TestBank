@@ -96,7 +96,7 @@ const Exchange1 = () => {
         isOpen={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         content={(
-          <ExchangeWrapper style={{ marginTop: '0' }}>
+          <ExchangeWrapper style={{ marginTop: '0', padding: '0 1.6rem 4rem' }}>
             <form onSubmit={handleSubmit(onSubmit)}>
               <PasswordInput
                 label="網銀密碼"

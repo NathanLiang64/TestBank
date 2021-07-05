@@ -96,7 +96,7 @@ const OTPValidate = () => {
   );
 
   return (
-    <AdjustmentWrapper style={{ marginTop: '0' }}>
+    <AdjustmentWrapper style={{ marginTop: '0', padding: '0 1.6rem 4rem' }}>
       <div className="countDownCard">
         <div className="countDownLabel">時間倒數</div>
         <div className="countDownInfo">
