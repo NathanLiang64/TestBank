@@ -22,25 +22,25 @@ const CardLessWithDrawChgPwd = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    oldPassword: yup
+    withdrawPwdConfirm: yup
       .string()
       .required('請輸入舊無卡提款密碼')
       .min(4, '提款密碼須為 4-12 位數字')
       .max(12, '提款密碼須為 4-12 位數字')
       .matches(/^[0-9]*$/, '提款密碼僅能使用數字'),
-    password: yup
+    newWithdrawPwd: yup
       .string()
       .required('請輸入新無卡提款密碼')
       .min(4, '新提款密碼須為 4-12 位數字')
       .max(12, '新提款密碼須為 4-12 位數字')
       .matches(/^[0-9]*$/, '提款密碼僅能使用數字'),
-    passwordConfirm: yup
+    newWithdrawPwdConfirm: yup
       .string()
       .required('請再輸入一次新無卡提款密碼')
       .min(4, '新提款密碼須為 4-12 位數字')
       .max(12, '新提款密碼須為 4-12 位數字')
       .matches(/^[0-9]*$/, '提款密碼僅能使用數字')
-      .oneOf([yup.ref('password'), null], '兩次輸入的新提款密碼必須相同'),
+      .oneOf([yup.ref('newWithdrawPwd'), null], '兩次輸入的新提款密碼必須相同'),
   });
   const {
     handleSubmit, control, formState: { errors },
@@ -92,28 +92,28 @@ const CardLessWithDrawChgPwd = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <PasswordInput
           label="舊提款密碼"
-          id="oldPassword"
-          name="oldPassword"
+          id="withdrawPwdConfirm"
+          name="withdrawPwdConfirm"
           placeholder="請輸入舊提款密碼(4-12位數字)"
           inputMode="numric"
           control={control}
-          errorMessage={errors.oldPassword?.message}
+          errorMessage={errors.withdrawPwdConfirm?.message}
         />
         <PasswordInput
           label="新提款密碼"
-          id="password"
-          name="password"
+          id="newWithdrawPwd"
+          name="newWithdrawPwd"
           placeholder="請輸入新提款密碼(4-12位數字)"
           control={control}
-          errorMessage={errors.password?.message}
+          errorMessage={errors.newWithdrawPwd?.message}
         />
         <PasswordInput
           label="確認新提款密碼"
-          id="passwordConfirm"
-          name="passwordConfirm"
+          id="newWithdrawPwdConfirm"
+          name="newWithdrawPwdConfirm"
           placeholder="請再輸入一次新提款密碼(4-12位數字)"
           control={control}
-          errorMessage={errors.passwordConfirm?.message}
+          errorMessage={errors.newWithdrawPwdConfirm?.message}
         />
         <Accordion space="both">
           <ul>
@@ -123,7 +123,7 @@ const CardLessWithDrawChgPwd = () => {
         <FEIBButton
           type="submit"
         >
-          確定送出
+          確認
         </FEIBButton>
       </form>
       <ResultDialog />

@@ -15,6 +15,7 @@ import {
 import Dialog from 'components/Dialog';
 import Alert from 'components/Alert';
 import PasswordInput from 'components/PasswordInput';
+import { passwordValidation } from 'utilities/validation';
 
 /* Styles */
 import theme from 'themes/theme';
@@ -52,9 +53,7 @@ const OTPValidate = () => {
     otpCode: yup
       .string()
       .required('請輸入 OTP 驗證碼'),
-    password: yup
-      .string()
-      .required('請輸入網銀密碼'),
+    ...passwordValidation,
   });
   const {
     handleSubmit, control, formState: { errors },
@@ -96,7 +95,7 @@ const OTPValidate = () => {
   );
 
   return (
-    <AdjustmentWrapper style={{ marginTop: '0' }}>
+    <AdjustmentWrapper style={{ marginTop: '0', padding: '0 1.6rem 4rem' }}>
       <div className="countDownCard">
         <div className="countDownLabel">時間倒數</div>
         <div className="countDownInfo">

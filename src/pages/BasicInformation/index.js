@@ -16,7 +16,7 @@ import {
 import Dialog from 'components/Dialog';
 import Alert from 'components/Alert';
 import PasswordInput from 'components/PasswordInput';
-
+import { passwordValidation } from 'utilities/validation';
 /* Styles */
 import BasicInformationWrapper from './basicInformation.style';
 
@@ -33,9 +33,7 @@ const BasicInformation = () => {
       .string()
       .required('請輸入電子信箱')
       .email('電子信箱格式不符'),
-    password: yup
-      .string()
-      .required('請輸入網銀密碼'),
+    ...passwordValidation,
     city: yup
       .string()
       .required('請選擇縣市'),

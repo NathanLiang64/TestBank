@@ -12,6 +12,7 @@ import PasswordInput from 'components/PasswordInput';
 import Accordion from 'components/Accordion';
 import ConfirmButtons from 'components/ConfirmButtons';
 import BottomDrawer from 'components/BottomDrawer';
+import { passwordValidation } from 'utilities/validation';
 
 /* Styles */
 import ExchangeWrapper from './exchange.style';
@@ -22,9 +23,7 @@ const Exchange1 = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    password: yup
-      .string()
-      .required('請輸入網銀密碼'),
+    ...passwordValidation,
   });
   const {
     handleSubmit, control, formState: { errors },
@@ -96,7 +95,7 @@ const Exchange1 = () => {
         isOpen={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         content={(
-          <ExchangeWrapper style={{ marginTop: '0' }}>
+          <ExchangeWrapper style={{ marginTop: '0', padding: '0 1.6rem 4rem' }}>
             <form onSubmit={handleSubmit(onSubmit)}>
               <PasswordInput
                 label="網銀密碼"
@@ -105,7 +104,7 @@ const Exchange1 = () => {
                 control={control}
                 errorMessage={errors.password?.message}
               />
-              <FEIBButton type="submit" style={{ marginTop: '1.6rem' }}>送出</FEIBButton>
+              <FEIBButton type="submit" style={{ marginTop: '1.6rem' }}>確認</FEIBButton>
             </form>
           </ExchangeWrapper>
         )}

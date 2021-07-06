@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 /* Elements */
@@ -10,10 +10,14 @@ import {
   FEIBButton,
   FEIBCheckboxLabel,
   FEIBCheckbox,
+  FEIBInputLabel,
+  FEIBInput,
+  FEIBErrorMessage,
 } from 'components/elements';
 import PasswordInput from 'components/PasswordInput';
 import NoticeArea from 'components/NoticeArea';
 import Accordion from 'components/Accordion';
+import { passwordValidation } from 'utilities/validation';
 
 /* Styles */
 // import theme from 'themes/theme';
@@ -42,11 +46,7 @@ const CardLessATM = () => {
     otpCode: yup
       .string()
       .required('請輸入開通驗證碼'),
-    password: yup
-      .string()
-      .required('請輸入網銀密碼')
-      .min(8, '您輸入的網銀密碼長度有誤，請重新輸入。')
-      .max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+    ...passwordValidation,
   });
   const {
     handleSubmit, control, formState: { errors },
@@ -123,14 +123,23 @@ const CardLessATM = () => {
           control={control}
           errorMessage={errors.withdrawPasswordCheck?.message}
         />
-        <PasswordInput
-          label="開通驗證碼"
-          id="otpCode"
+        <FEIBInputLabel htmlFor="OTPPassword">開通驗證碼</FEIBInputLabel>
+        <Controller
           name="otpCode"
-          placeholder="請輸入開通驗證碼"
+          defaultValue=""
           control={control}
-          errorMessage={errors.otpCode?.message}
+          render={({ field }) => (
+            <FEIBInput
+              {...field}
+              type="text"
+              id="otpCode"
+              name="otpCode"
+              placeholder="請輸入開通驗證碼"
+              error={!!errors.otpCode?.message}
+            />
+          )}
         />
+        <FEIBErrorMessage>{errors.otpCode?.message}</FEIBErrorMessage>
         <PasswordInput
           label="網銀密碼"
           id="password"
@@ -141,9 +150,7 @@ const CardLessATM = () => {
         <Accordion space="both">
           <ul>
             <li>本交易限時15分鐘內有效，請於交易有效時間內，至本行提供無卡提款功能之ATM完成提款。若逾時請重新申請。(實際交易有效時間以本行系統時間為準)。</li>
-            <br />
             <li>提醒您，ATM提款時請務必確認您的存款餘額是否足夠，避免提款失敗。 </li>
-            <br />
             <li>無卡提款密碼連續錯誤3次，即鎖住服務，須重新申請服務。</li>
           </ul>
         </Accordion>
@@ -151,7 +158,7 @@ const CardLessATM = () => {
           <FEIBButton
             type="submit"
           >
-            確定送出
+            確認
           </FEIBButton>
         </div>
       </form>

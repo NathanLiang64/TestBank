@@ -19,6 +19,7 @@ import InfoArea from 'components/InfoArea';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
 import Alert from 'components/Alert';
+import { passwordValidation } from 'utilities/validation';
 
 /* Styles */
 import theme from 'themes/theme';
@@ -32,11 +33,7 @@ const SMSOTPactivate = () => {
     OTPPassword: yup
       .string()
       .required('請輸入您的開通密碼'),
-    password: yup
-      .string()
-      .required('請輸入您的網銀密碼')
-      .min(8, '您輸入的網銀密碼長度有誤，請重新輸入。')
-      .max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+    ...passwordValidation,
   });
   const {
     handleSubmit, control, formState: { errors },

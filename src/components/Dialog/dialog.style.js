@@ -14,6 +14,7 @@ const DialogWrapper = styled(MaterialDialog)`
   }
   
   .title {
+    text-align: center;
     .MuiTypography-h6 {
       font-size: 1.6rem;
       font-weight: bold;

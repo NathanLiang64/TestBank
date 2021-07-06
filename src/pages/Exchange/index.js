@@ -151,9 +151,7 @@ const Exchange = () => {
             )}
           />
           <FEIBErrorMessage>{errors.outAccount?.message}</FEIBErrorMessage>
-          {
-            watch('exchangeType') === '1' && <FEIBErrorMessage className="balance">可用餘額</FEIBErrorMessage>
-          }
+          <FEIBErrorMessage className="balance">可用餘額</FEIBErrorMessage>
           <FEIBInputLabel>轉帳幣別</FEIBInputLabel>
           <Controller
             name="currency"
@@ -173,9 +171,6 @@ const Exchange = () => {
             )}
           />
           <FEIBErrorMessage>{errors.currency?.message}</FEIBErrorMessage>
-          {
-            watch('exchangeType') === '2' && <FEIBErrorMessage className="balance">可用餘額</FEIBErrorMessage>
-          }
           <FEIBInputLabel>轉入帳號</FEIBInputLabel>
           <Controller
             name="inAccount"
