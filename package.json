@@ -37,6 +37,7 @@
     "reset-css": "^5.0.1",
     "styled-components": "^5.3.0",
     "swiper": "^6.6.2",
+    "taiwan-bank-data": "^1.6.32021630",
     "web-vitals": "^1.1.2",
     "yup": "^0.32.9"
   },

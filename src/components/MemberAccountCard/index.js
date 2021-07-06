@@ -4,7 +4,10 @@ import {
 } from '@material-ui/icons';
 import Avatar from 'components/Avatar';
 import BottomDrawer from 'components/BottomDrawer';
-import { FEIBIconButton } from 'components/elements';
+import BankCodeInput from 'components/BankCodeInput';
+import {
+  FEIBErrorMessage, FEIBIconButton, FEIBInput, FEIBInputLabel,
+} from 'components/elements';
 import theme from 'themes/theme';
 import MemberAccountCardWrapper, { MemberDrawerContentWrapper } from './memberAccountCard.style';
 
@@ -33,6 +36,7 @@ const MemberAccountCard = ({
 }) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [actionText, setActionText] = useState('');
+  const [renderContent, setRenderContent] = useState('default');
   const [moreAction, setMoreAction] = useState({
     isMoreActionOpen: false,
     startX: 0,
@@ -45,60 +49,14 @@ const MemberAccountCard = ({
 
   const handleClickAddMemberButton = () => {
     setActionText('新增');
+    setRenderContent('addFrequentlyUsedAccount');
   };
 
   const handleClickCloseDrawer = () => {
     setOpenDrawer(false);
     setActionText('');
+    setRenderContent('default');
   };
-
-  const renderMemberDrawerContent = () => (
-    <MemberDrawerContentWrapper>
-      <div className="addMemberButtonArea" onClick={handleClickAddMemberButton}>
-        <div className="addMemberButtonIcon">
-          <AddRounded />
-        </div>
-        <span className="addMemberButtonText">新增常用帳號</span>
-      </div>
-      <div className="members">
-        <MemberAccountCard
-          listType
-          name="Robert Fox"
-          branchName="遠東商銀"
-          branchCode="805"
-          account="043000990000"
-        />
-        <MemberAccountCard
-          listType
-          name="Jermey123"
-          branchName="遠東商銀"
-          branchCode="805"
-          account="043000990000"
-        />
-      </div>
-    </MemberDrawerContentWrapper>
-  );
-
-  const renderChangeMemberButton = () => (
-    <div className="changeMemberButton" onClick={handleClickSwitchMemberDrawer}>
-      <FEIBIconButton $iconColor={theme.colors.primary.light} $fontSize={2.4}>
-        <AccountCircleRounded />
-      </FEIBIconButton>
-    </div>
-  );
-
-  const renderMoreActionMenu = () => (
-    <div className={`moreActionMenu ${moreAction.isMoreActionOpen ? 'show' : ''}`}>
-      <button type="button">
-        <CreateRounded />
-        <span>編輯</span>
-      </button>
-      <button type="button">
-        <DeleteRounded />
-        <span>刪除</span>
-      </button>
-    </div>
-  );
 
   const handleTouchStart = (event) => {
     const touch = event.targetTouches[0];
@@ -124,6 +82,83 @@ const MemberAccountCard = ({
     }
   };
 
+  // 預設的會員帳號頁面 (常用轉帳、約定轉帳)
+  const defaultMemberAccountContent = () => (
+    <>
+      <div className="addMemberButtonArea" onClick={handleClickAddMemberButton}>
+        <div className="addMemberButtonIcon">
+          <AddRounded />
+        </div>
+        <span className="addMemberButtonText">新增常用帳號</span>
+      </div>
+      <div className="members">
+        <MemberAccountCard
+          listType
+          name="Robert Fox"
+          branchName="遠東商銀"
+          branchCode="805"
+          account="043000990000"
+        />
+        <MemberAccountCard
+          listType
+          name="Jermey123"
+          branchName="遠東商銀"
+          branchCode="805"
+          account="043000990000"
+        />
+      </div>
+    </>
+  );
+
+  // 新增常用帳號頁面
+  const addFrequentlyUsedAccountContent = () => (
+    <>
+      <div>
+        <BankCodeInput />
+      </div>
+      <div>
+        <FEIBInputLabel>帳號</FEIBInputLabel>
+        <FEIBInput type="number" placeholder="請輸入" />
+        <FEIBErrorMessage>請輸入銀行帳號</FEIBErrorMessage>
+      </div>
+    </>
+  );
+
+  // 變更選取的會員按鈕
+  const renderChangeMemberButton = () => (
+    <div className="changeMemberButton" onClick={handleClickSwitchMemberDrawer}>
+      <FEIBIconButton $iconColor={theme.colors.primary.light} $fontSize={2.4}>
+        <AccountCircleRounded />
+      </FEIBIconButton>
+    </div>
+  );
+
+  // 更多選項 (編輯、刪除)
+  const renderMoreActionMenu = () => (
+    <div className={`moreActionMenu ${moreAction.isMoreActionOpen ? 'show' : ''}`}>
+      <button type="button">
+        <CreateRounded />
+        <span>編輯</span>
+      </button>
+      <button type="button">
+        <DeleteRounded />
+        <span>刪除</span>
+      </button>
+    </div>
+  );
+
+  // 由 renderController 控制要顯示哪個頁面
+  const renderController = (content) => {
+    switch (content) {
+      case 'default':
+        return defaultMemberAccountContent();
+      case 'addFrequentlyUsedAccount':
+        return addFrequentlyUsedAccountContent();
+      default:
+        return defaultMemberAccountContent();
+    }
+  };
+
   return (
     <>
       <MemberAccountCardWrapper
@@ -143,7 +178,11 @@ const MemberAccountCard = ({
         title={`${actionText}常用帳號`}
         isOpen={openDrawer}
         onClose={handleClickCloseDrawer}
-        content={renderMemberDrawerContent()}
+        content={(
+          <MemberDrawerContentWrapper>
+            { renderController(renderContent) }
+          </MemberDrawerContentWrapper>
+        )}
       />
     </>
   );
