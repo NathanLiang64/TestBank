@@ -15,6 +15,7 @@ import {
 } from 'components/elements';
 import NoticeArea from 'components/NoticeArea';
 import PasswordInput from 'components/PasswordInput';
+import { passwordValidation } from 'utilities/validation';
 
 /* Styles */
 // import theme from 'themes/theme';
@@ -25,11 +26,7 @@ const NoticeSetting = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    password: yup
-      .string()
-      .required('請輸入網銀密碼')
-      .min(8, '您輸入的網銀密碼長度有誤，請重新輸入。')
-      .max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+    ...passwordValidation,
   });
   const {
     handleSubmit, watch, control, formState: { errors },

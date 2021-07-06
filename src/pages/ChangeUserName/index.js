@@ -13,6 +13,7 @@ import PasswordInput from 'components/PasswordInput';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
 import Alert from 'components/Alert';
+import { passwordValidation } from 'utilities/validation';
 
 /* Styles */
 // import theme from 'themes/theme';
@@ -39,11 +40,7 @@ const ChangeUserName = () => {
       .min(6, '您輸入的新使用者代號長度有誤，請重新輸入。')
       .max(20, '您輸入的新使用者代號長度有誤，請重新輸入。')
       .oneOf([yup.ref('newUserName'), null], '必須與新使用者代號相同'),
-    password: yup
-      .string()
-      .required('請輸入網銀密碼')
-      .min(8, '您輸入的網銀密碼長度有誤，請重新輸入。')
-      .max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+    ...passwordValidation,
   });
   const {
     handleSubmit, control, formState: { errors },
@@ -77,7 +74,6 @@ const ChangeUserName = () => {
   };
 
   const onSubmit = (data) => {
-    console.log(data);
     setForm({ ...data });
     setShowConfirmDialog(true);
   };

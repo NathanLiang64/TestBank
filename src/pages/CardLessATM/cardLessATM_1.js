@@ -13,6 +13,7 @@ import DebitCard from 'components/DebitCard';
 import PasswordInput from 'components/PasswordInput';
 import Accordion from 'components/Accordion';
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
+import { passwordValidation } from 'utilities/validation';
 
 /* Styles */
 // import theme from 'themes/theme';
@@ -26,11 +27,7 @@ const CardLessATM1 = () => {
     withdrawAmount: yup
       .string()
       .required('請輸入提款金額'),
-    password: yup
-      .string()
-      .required('請輸入網銀密碼')
-      .min(8, '您輸入的網銀密碼長度有誤，請重新輸入。')
-      .max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+    ...passwordValidation,
   });
   const {
     handleSubmit, control, formState: { errors }, setValue, clearErrors,
@@ -135,9 +132,7 @@ const CardLessATM1 = () => {
         <Accordion space="both">
           <ul>
             <li>本交易限時15分鐘內有效，請於交易有效時間內，至本行提供無卡提款功能之ATM完成提款。若逾時請重新申請。(實際交易有效時間以本行系統時間為準)。</li>
-            <br />
             <li>提醒您，ATM提款時請務必確認您的存款餘額是否足夠，避免提款失敗。 </li>
-            <br />
             <li>無卡提款密碼連續錯誤3次，即鎖住服務，須重新申請服務。</li>
           </ul>
         </Accordion>

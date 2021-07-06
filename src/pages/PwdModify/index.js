@@ -14,7 +14,8 @@ import PasswordInput from 'components/PasswordInput';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
 import Alert from 'components/Alert';
-import e2ee from '../../utilities/E2ee';
+import e2ee from 'utilities/E2ee';
+import { passwordValidation } from 'utilities/validation';
 
 /* Styles */
 // import theme from 'themes/theme';
@@ -25,21 +26,11 @@ const PwdModify = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    password: yup
-      .string()
-      .required('請輸入您的網銀密碼')
-      .min(8, '您輸入的網銀密碼長度有誤，請重新輸入。')
-      .max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
-    newPassword: yup
-      .string()
-      .required('請輸入新的網銀密碼')
-      .min(8, '您輸入的網銀密碼長度有誤，請重新輸入。')
-      .max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+    ...passwordValidation,
+    newPassword: passwordValidation.password,
     newPasswordCheck: yup
       .string()
       .required('請再輸入一次新網銀密碼')
-      .min(8, '您輸入的網銀密碼長度有誤，請重新輸入。')
-      .max(20, '您輸入的網銀密碼長度有誤，請重新輸入。')
       .oneOf([yup.ref('newPassword'), null], '必須與新網銀密碼相同'),
   });
   const {
