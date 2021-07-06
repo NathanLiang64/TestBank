@@ -13,6 +13,7 @@ import DebitCard from 'components/DebitCard';
 import PasswordInput from 'components/PasswordInput';
 import Accordion from 'components/Accordion';
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
+import { passwordValidation } from 'utilities/validation';
 
 /* Styles */
 // import theme from 'themes/theme';
@@ -26,11 +27,7 @@ const CardLessATM1 = () => {
     withdrawAmount: yup
       .string()
       .required('請輸入提款金額'),
-    password: yup
-      .string()
-      .required('請輸入網銀密碼')
-      .min(8, '您輸入的網銀密碼長度有誤，請重新輸入。')
-      .max(20, '您輸入的網銀密碼長度有誤，請重新輸入。'),
+    ...passwordValidation,
   });
   const {
     handleSubmit, control, formState: { errors }, setValue, clearErrors,
