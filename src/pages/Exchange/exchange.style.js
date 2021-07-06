@@ -34,27 +34,15 @@ const ExchangeWrapper = styled(Layout)`
         font-size: 14px;
         color: ${({ theme }) => theme.colors.text.dark};
       }
-      .secondData {
-        display: flex;
-        height: 7.5rem;
-        padding: 1.7rem 1.2rem 0;
-        font-size: 1.6rem;
-        justify-content: space-between;
-        border-bottom: 1px dashed ${({ theme }) => theme.colors.text.light};
-        .left {
-          color: #666;
-        }
-        .right {
-          color: ${({ theme }) => theme.colors.text.dark};
-        }
-      }
     }
     .exchangeAccordion {
-      .secondData {
-        padding: 1.7rem 0 0;
-      }
-      .secondData:last-child {
-        border-bottom: 0;
+      .content {
+        > div {
+          .content {
+            color: ${({ theme }) => theme.colors.text.dark};
+            padding: 0 0 1.2rem;
+          }
+        }
       }
     }
   }

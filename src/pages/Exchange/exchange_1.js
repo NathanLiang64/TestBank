@@ -12,6 +12,7 @@ import PasswordInput from 'components/PasswordInput';
 import Accordion from 'components/Accordion';
 import ConfirmButtons from 'components/ConfirmButtons';
 import BottomDrawer from 'components/BottomDrawer';
+import InformationList from 'components/InformationList';
 import { passwordValidation } from 'utilities/validation';
 
 /* Styles */
@@ -57,31 +58,13 @@ const Exchange1 = () => {
         <div className="exchangeRate">換匯匯率 28.0520</div>
       </div>
       <div className="infoSection">
-        <div className="secondData">
-          <div className="left">轉出帳號</div>
-          <div className="right">00200401715213</div>
-        </div>
-        <div className="secondData">
-          <div className="left">換匯種類</div>
-          <div className="right">台幣轉外幣</div>
-        </div>
-        <div className="secondData">
-          <div className="left">轉換外幣幣別</div>
-          <div className="right">美金 USD</div>
-        </div>
-        <div className="secondData">
-          <div className="left">匯款性質分類</div>
-          <div className="right">外匯互換兌入</div>
-        </div>
+        <InformationList title="轉出帳號" content="00200401715213" />
+        <InformationList title="換匯種類" content="台幣轉外幣" />
+        <InformationList title="轉換外幣幣別" content="美金 USD" />
+        <InformationList title="匯款性質分類" content="外匯互換兌入" />
         <Accordion className="exchangeAccordion" title="詳細交易" space="both" open>
-          <div className="secondData">
-            <div className="left">帳戶餘額</div>
-            <div className="right">NTD$92.397</div>
-          </div>
-          <div className="secondData">
-            <div className="left">備註</div>
-            <div className="right">美金儲蓄</div>
-          </div>
+          <InformationList title="帳戶餘額" content="NTD$92.397" />
+          <InformationList title="備註" content="美金儲蓄" />
         </Accordion>
         <div className="confirmBtns">
           <ConfirmButtons
