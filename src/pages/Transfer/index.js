@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { RadioGroup } from '@material-ui/core';
-import { FormatListBulletedRounded } from '@material-ui/icons';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import DebitCard from 'components/DebitCard';
 import Accordion from 'components/Accordion';
+import BankCodeInput from 'components/BankCodeInput';
 import MemberAccountCard from 'components/MemberAccountCard';
 import {
   FEIBTabContext, FEIBTabList, FEIBTab, FEIBTabPanel,
@@ -35,9 +35,8 @@ const Transfer = () => {
     });
   };
 
-  const handleClickTransferButton = (data) => {
-    console.log(data);
-  };
+  // eslint-disable-next-line no-unused-vars
+  const handleClickTransferButton = (data) => {};
 
   const renderDebitCard = (info) => {
     const {
@@ -65,15 +64,7 @@ const Transfer = () => {
     <>
       <FEIBTabPanel value="0">
         <div>
-          <FEIBInputLabel>銀行代碼</FEIBInputLabel>
-          <FEIBInput
-            type="number"
-            placeholder="請輸入"
-            $icon={<FormatListBulletedRounded />}
-            $iconFontSize={2.4}
-            $iconOnClick={() => {}}
-          />
-          <FEIBErrorMessage>請選擇銀行代碼</FEIBErrorMessage>
+          <BankCodeInput />
         </div>
         <div>
           <FEIBInputLabel>帳號</FEIBInputLabel>
