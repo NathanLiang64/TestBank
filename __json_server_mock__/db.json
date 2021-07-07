@@ -41,7 +41,7 @@
           "interestRate": 2.6,
           "interestRateLimit": "5萬",
           "functionList": [
-            { "title": "轉帳", "path": "/", "icon": null },
+            { "title": "轉帳", "path": "/transfer", "icon": null },
             { "title": "無卡提款", "path": "/cardLessATM", "icon": null }
           ],
           "moreList": [
@@ -153,7 +153,7 @@
           "interestRate": 3.6,
           "interestRateLimit": "6萬",
           "functionList": [
-            { "title": "轉帳", "path": "/", "icon": null },
+            { "title": "轉帳", "path": "/transfer", "icon": null },
             { "title": "無卡提款", "path": "/cardLessATM", "icon": null }
           ],
           "moreList": [

@@ -17,25 +17,25 @@ import MemberAccountCardWrapper, { MemberDrawerContentWrapper } from './memberAc
 * ==================== MemberAccountCard 可傳參數 ====================
 * 1. listType -> 列表卡片型態
 *    列表卡片擁有列表的樣式，可滑動顯示編輯卡片，且沒有右側 icon
-* 2. name -> 會員名稱
-* 3. avatarSrc -> 會員頭像的圖片路徑
-* 4. branchCode -> 銀行代碼
-* 5. branchName -> 銀行名稱
-* 6. account -> 會員帳號
-* 7. onClick -> 點擊事件
+* 2. transferType -> 轉帳型態 (常用或預約)
+* 3. name -> 會員名稱
+* 4. avatarSrc -> 會員頭像的圖片路徑
+* 5. branchCode -> 銀行代碼
+* 6. branchName -> 銀行名稱
+* 7. account -> 會員帳號
 * */
 
 const MemberAccountCard = ({
   listType,
+  transferType,
   name,
   avatarSrc,
   branchCode,
   branchName,
   account,
-  // onClick,
 }) => {
   const [openDrawer, setOpenDrawer] = useState(false);
-  const [actionText, setActionText] = useState('');
+  const [drawerTitle, setDrawerTitle] = useState(`${transferType}轉帳`);
   const [renderContent, setRenderContent] = useState('default');
   const [moreAction, setMoreAction] = useState({
     isMoreActionOpen: false,
@@ -48,13 +48,13 @@ const MemberAccountCard = ({
   };
 
   const handleClickAddMemberButton = () => {
-    setActionText('新增');
+    setDrawerTitle(`新增${transferType}帳號`);
     setRenderContent('addFrequentlyUsedAccount');
   };
 
   const handleClickCloseDrawer = () => {
     setOpenDrawer(false);
-    setActionText('');
+    setDrawerTitle(`${transferType}轉帳`);
     setRenderContent('default');
   };
 
@@ -82,18 +82,23 @@ const MemberAccountCard = ({
     }
   };
 
-  // 預設的會員帳號頁面 (常用轉帳、約定轉帳)
+  // 預設的會員帳號頁面 (常用轉帳、約定轉帳)，常用帳號才有新增按鈕
   const defaultMemberAccountContent = () => (
     <>
-      <div className="addMemberButtonArea" onClick={handleClickAddMemberButton}>
-        <div className="addMemberButtonIcon">
-          <AddRounded />
-        </div>
-        <span className="addMemberButtonText">新增常用帳號</span>
-      </div>
+      {
+        transferType === '常用' && (
+          <div className="addMemberButtonArea" onClick={handleClickAddMemberButton}>
+            <div className="addMemberButtonIcon">
+              <AddRounded />
+            </div>
+            <span className="addMemberButtonText">{`新增${transferType}帳號`}</span>
+          </div>
+        )
+      }
       <div className="members">
         <MemberAccountCard
           listType
+          transferType={transferType}
           name="Robert Fox"
           branchName="遠東商銀"
           branchCode="805"
@@ -101,6 +106,7 @@ const MemberAccountCard = ({
         />
         <MemberAccountCard
           listType
+          transferType={transferType}
           name="Jermey123"
           branchName="遠東商銀"
           branchCode="805"
@@ -133,17 +139,21 @@ const MemberAccountCard = ({
     </div>
   );
 
-  // 更多選項 (編輯、刪除)
+  // 更多選項 (編輯、刪除)，常用帳號才有刪除選項
   const renderMoreActionMenu = () => (
     <div className={`moreActionMenu ${moreAction.isMoreActionOpen ? 'show' : ''}`}>
-      <button type="button">
+      <button type="button" className="edit">
         <CreateRounded />
         <span>編輯</span>
       </button>
-      <button type="button">
-        <DeleteRounded />
-        <span>刪除</span>
-      </button>
+      {
+        transferType === '常用' && (
+          <button type="button" className="remove">
+            <DeleteRounded />
+            <span>刪除</span>
+          </button>
+        )
+      }
     </div>
   );
 
@@ -151,7 +161,7 @@ const MemberAccountCard = ({
   const renderController = (content) => {
     switch (content) {
       case 'default':
-        return defaultMemberAccountContent();
+        return defaultMemberAccountContent(transferType);
       case 'addFrequentlyUsedAccount':
         return addFrequentlyUsedAccountContent();
       default:
@@ -175,7 +185,7 @@ const MemberAccountCard = ({
         { listType ? renderMoreActionMenu() : renderChangeMemberButton() }
       </MemberAccountCardWrapper>
       <BottomDrawer
-        title={`${actionText}常用帳號`}
+        title={drawerTitle}
         isOpen={openDrawer}
         onClose={handleClickCloseDrawer}
         content={(

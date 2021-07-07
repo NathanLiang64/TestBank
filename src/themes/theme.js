@@ -1,5 +1,5 @@
 const theme = {
-  font: '-apple-system, "Prompt", "Noto Sans TC", "Microsoft JhengHei", "微軟正黑體", sans-serif',
+  font: '-apple-system, "Mulish", "Noto Sans TC", "Microsoft JhengHei", "微軟正黑體", sans-serif',
   colors: {
     primary: {
       brand: '#825DC7',
@@ -21,12 +21,12 @@ const theme = {
       light: '#6F89B2',
       darkGray: '#505050',
       lightGray: '#656462',
-      placeholder: '#C2CEDC',
+      placeholder: '#CCC',
       link: '#3EC4EE',
       point: '#E60E0E',
     },
     border: {
-      light: '#77869E',
+      light: '#999',
       lighter: '#D7DCE2',
       lightest: '#F3F3F3',
     },

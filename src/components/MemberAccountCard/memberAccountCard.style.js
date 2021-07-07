@@ -21,9 +21,11 @@ const MemberAccountCardWrapper = styled.div`
   
   .memberInfo {
     margin-left: 1.2rem;
+
     h3 {
-      font-size: 1.6rem;
-      font-weight: 500;
+      font-size: 1.8rem;
+      font-weight: 700;
+      line-height: 1.8;
     }
 
     p {
@@ -91,10 +93,10 @@ const MemberDrawerContentWrapper = styled.div`
       align-items: center;
       width: 6.8rem;
       
-      &:first-child {
+      &.edit {
         background: ${({ theme }) => theme.colors.primary.light};
       }
-      &:last-child {
+      &.remove {
         background: ${({ theme }) => theme.colors.state.danger};
       }
       
