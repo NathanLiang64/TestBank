@@ -10,11 +10,10 @@ import {
   FEIBInputLabel,
   FEIBSelect,
   FEIBOption,
-  FEIBDatePicker,
   FEIBErrorMessage,
 } from 'components/elements';
-import PickersProvider from 'components/DatePickerProvider';
 import InfoArea from 'components/InfoArea';
+import DateRangePicker from 'components/DateRangePicker';
 
 /* Styles */
 // import theme from 'themes/theme';
@@ -37,31 +36,14 @@ const LoanInterest = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-  // const [account, setAccount] = useState('0');
-  // const [subAccount, setSubAccount] = useState('0');
   const [showTable, setShowTable] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
-  // const handleAccountChange = (event) => {
-  //   setAccount(event.target.value);
-  // };
-
-  // const handleSubAccountChange = (event) => {
-  //   setSubAccount(event.target.value);
-  // };
-
-  const handleStartDate = (date) => {
-    setStartDate(date);
+  const handleClickDateRangePicker = (range) => {
+    setStartDate(range[0]);
+    setEndDate(range[1]);
   };
-
-  const handleEndDate = (date) => {
-    setEndDate(date);
-  };
-
-  // const handleSearchClick = () => {
-  //   setShowTable(true);
-  // };
 
   const onSubmit = (data) => {
     // eslint-disable-next-line no-console
@@ -167,13 +149,8 @@ const LoanInterest = () => {
             <FEIBErrorMessage>{errors.subAccount?.message}</FEIBErrorMessage>
           </div>
         </div>
-        <FEIBInputLabel>繳息期間</FEIBInputLabel>
         <div className="datePickerContainer">
-          <PickersProvider>
-            <FEIBDatePicker value={startDate} onChange={handleStartDate} />
-            <span>-</span>
-            <FEIBDatePicker value={endDate} onChange={handleEndDate} />
-          </PickersProvider>
+          <DateRangePicker date={[startDate, endDate]} label="繳息期間" onClick={handleClickDateRangePicker} />
         </div>
         <InfoArea>*可查詢三年內繳款紀錄，查詢區間最多一年</InfoArea>
         <FEIBButton

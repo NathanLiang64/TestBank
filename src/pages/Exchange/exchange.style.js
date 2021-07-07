@@ -93,10 +93,6 @@ const ExchangeWrapper = styled(Layout)`
       font-size: 1.4rem;
     }
   }
-  .agreeLabel {
-    display: flex;
-    justify-content: center;
-  }
   .submitBtn {
     padding-top: 1.2rem;
   }
