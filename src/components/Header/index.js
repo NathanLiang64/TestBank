@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 import { ArrowBack, Home } from '@material-ui/icons';
 import { FEIBIconButton } from 'components/elements';
 import { closeFunc } from 'utilities/BankeePlus';
@@ -7,6 +8,7 @@ import theme from 'themes/theme';
 import HeaderWrapper from './header.style';
 
 const Header = () => {
+  const history = useHistory();
   const title = useSelector(({ header }) => header.title);
   const isHomePage = useSelector(({ header }) => header.isHomePage);
 
@@ -15,7 +17,11 @@ const Header = () => {
       closeFunc('home');
     }
     if (className === 'goBack') {
-      closeFunc('back');
+      if (history.length <= 1) {
+        closeFunc('back');
+      } else {
+        history.goBack();
+      }
     }
   };
 
