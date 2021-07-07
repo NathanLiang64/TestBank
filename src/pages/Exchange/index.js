@@ -286,7 +286,6 @@ const Exchange = () => {
             以本行牌告匯率或網銀優惠匯率為成交匯率（預約交易係依據交易日上午09:30最近一盤牌告/網銀優惠匯率為成交匯率）。營業時間以外辦理外匯交易結匯金額併入次營業日累積結匯金額；為網銀優惠將視市場波動清況，適時暫時取消優惠。
           </NoticeArea>
           <FEIBCheckboxLabel
-            className="agreeLabel"
             control={(
               <FEIBCheckbox
                 onChange={handleCheckBoxChange}

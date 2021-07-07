@@ -27,7 +27,12 @@ const Adjustment1 = () => {
         <AddCircleOutlineOutlined style={{ fontSize: '2rem' }} />
         <span>增加財力證明</span>
       </div>
-      <FEIBButton onClick={handleNextStep}>下一步</FEIBButton>
+      <FEIBButton
+        className="fixBtnMargin"
+        onClick={handleNextStep}
+      >
+        下一步
+      </FEIBButton>
       <BottomDrawer
         title="OTP 驗證碼已寄出"
         isOpen={drawerOpen}

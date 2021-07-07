@@ -57,6 +57,9 @@ const AdjustmentWrapper = styled(Layout)`
     font-size: 3rem;
     color: #F47A66;
   }
+  .fixBtnMargin {
+    margin-top: 3.4rem;
+  }
 `;
 
 export default AdjustmentWrapper;

@@ -93,7 +93,7 @@ const CardLessATM = () => {
                   onChange={handleCheckBoxChange}
                 />
               )}
-              label="我已詳閱並遵守無卡體款約定事項"
+              label="我已詳閱並遵守無卡提款約定事項"
             />
           </div>
           <FEIBButton

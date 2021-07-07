@@ -18,18 +18,7 @@ const LoanInterestWrapper = styled(Layout)`
     }
   }
   .datePickerContainer {
-    display: flex;
-    justify-content: space-between;
     margin-bottom: 2rem;
-    .MuiFormControl-root {
-      width: 50%;
-      &:first-child {
-        margin-right: 1rem;
-      }
-      &:last-child {
-        margin-left: 1rem;
-      }
-    }
   }
   .infoArea {
     margin-bottom: 2rem;
