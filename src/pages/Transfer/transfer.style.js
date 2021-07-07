@@ -24,6 +24,7 @@ const TransferWrapper = styled(Layout)`
   .notice {
     margin-bottom: 2rem;
     font-size: 1.4rem;
+    font-weight: 300;
   }
   
   .transferType {

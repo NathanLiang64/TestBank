@@ -53,6 +53,7 @@ const PasswordInput = ({
             $color={inputColor}
             $borderColor={inputBorderColor}
             $icon={showPassword ? <Visibility /> : <VisibilityOff />}
+            $iconFontSize={2}
             $iconOnClick={handleClickShowPassword}
           />
         )}
@@ -71,6 +72,7 @@ const PasswordInput = ({
       $color={inputColor}
       $borderColor={inputBorderColor}
       $icon={showPassword ? <Visibility /> : <VisibilityOff />}
+      $iconFontSize={2}
       $iconOnClick={handleClickShowPassword}
     />
   );

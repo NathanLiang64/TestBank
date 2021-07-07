@@ -24,7 +24,8 @@ const AvatarWrapper = styled.div`
     background: ${({ theme }) => theme.colors.background.lighterBlue};
 
     span {
-      font-size: ${({ $small }) => ($small ? '2.4rem' : '4rem')};
+      font-size: ${({ $small }) => ($small ? '2rem' : '3.6rem')};
+      font-weight: 700;
       color: ${({ theme }) => theme.colors.primary.light};
     }
 
