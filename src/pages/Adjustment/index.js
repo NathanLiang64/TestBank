@@ -11,12 +11,11 @@ import {
   FEIBInput,
   FEIBSelect,
   FEIBOption,
-  FEIBDatePicker,
   FEIBButton,
   FEIBErrorMessage,
 } from 'components/elements';
-import PickersProvider from 'components/DatePickerProvider';
 import DebitCard from 'components/DebitCard';
+import DateRangePicker from 'components/DateRangePicker';
 
 /* Styles */
 // import theme from 'themes/theme';
@@ -63,25 +62,12 @@ const Adjustment = () => {
     amount: '120,030',
     currentAmount: '10,000',
   };
-  // const [applyType, setApplyType] = useState('0');
-  // const [useLocation, setUseLocation] = useState('0');
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
-  // const handleApplyTypeChange = (event) => {
-  //   setApplyType(event.target.value);
-  // };
-
-  // const handleUseLocationChange = (event) => {
-  //   setUseLocation(event.target.value);
-  // };
-
-  const handleStartDate = (date) => {
-    setStartDate(date);
-  };
-
-  const handleEndDate = (date) => {
-    setEndDate(date);
+  const handleClickDateRangePicker = (range) => {
+    setStartDate(range[0]);
+    setEndDate(range[1]);
   };
 
   const applyAdjustment = () => {
@@ -235,16 +221,10 @@ const Adjustment = () => {
           )
         }
         <div className="inputContainer">
-          <FEIBInputLabel>申請期間</FEIBInputLabel>
-          <div className="datePickerContainer">
-            <PickersProvider>
-              <FEIBDatePicker value={startDate} onChange={handleStartDate} />
-              <span>-</span>
-              <FEIBDatePicker value={endDate} onChange={handleEndDate} />
-            </PickersProvider>
-          </div>
+          <DateRangePicker date={[startDate, endDate]} label="申請期間" onClick={handleClickDateRangePicker} />
         </div>
         <FEIBButton
+          className="fixBtnMargin"
           type="submit"
         >
           立即申請

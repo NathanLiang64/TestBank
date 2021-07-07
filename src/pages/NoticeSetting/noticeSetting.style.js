@@ -3,11 +3,6 @@ import Layout from 'components/Layout';
 import theme from 'themes/theme';
 
 const NoticeSettingWrapper = styled(Layout)`
-  .agreeLabel {
-    p {
-      font-size: 1rem;
-    }
-  }
   .noticeContainer {
     &.all {
       margin-bottom: 2rem;
@@ -48,7 +43,13 @@ const NoticeSettingWrapper = styled(Layout)`
     }
   }
   .customNoticeArea {
-    margin-bottom: 0;
+    ol {
+      padding-left: 2.4rem;
+      li {
+        list-style-type: decimal;
+        margin-bottom: 1rem;
+      }
+    }
   }
 `;
 

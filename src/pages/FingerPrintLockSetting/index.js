@@ -153,7 +153,7 @@ const FingerPrint = () => {
         <p>8. 本功能只提供本人之一台手機中設定，如於本人之其他手機中設定，則原手機設定將自動解除。</p>
         <p>9. 手機重置或重新安裝APP時，需要重新設定本功能</p>
       </NoticeArea>
-      <div className="checkBoxContainer">
+      <div>
         <FEIBCheckboxLabel
           control={(
             <FEIBCheckbox
@@ -164,7 +164,7 @@ const FingerPrint = () => {
           label="本人已閱讀並同意上述[指紋/臉部辨識登入]使用條款"
         />
       </div>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} style={{ marginTop: '2rem' }}>
         <PasswordInput
           label="網銀密碼"
           id="password"
