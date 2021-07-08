@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import SwiperCore, { Pagination } from 'swiper/core';
 import { RadioGroup } from '@material-ui/core';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import DebitCard from 'components/DebitCard';
@@ -14,6 +16,9 @@ import {
 } from 'components/elements';
 import { numberToChinese } from 'utilities/Generator';
 import TransferWrapper from './transfer.style';
+
+/* Swiper modules */
+SwiperCore.use([Pagination]);
 
 const Transfer = () => {
   const {
@@ -36,6 +41,9 @@ const Transfer = () => {
   };
 
   // eslint-disable-next-line no-unused-vars
+  const handleChangeSlide = (swiper) => {};
+
+  // eslint-disable-next-line no-unused-vars
   const handleClickTransferButton = (data) => {};
 
   const renderDebitCard = (info) => {
@@ -48,15 +56,41 @@ const Transfer = () => {
       moreList,
     } = info;
     return (
-      <DebitCard
-        type="original"
-        branch={cardBranch}
-        cardName={cardName}
-        account={cardAccount}
-        balance={cardBalance}
-        functionList={functionList}
-        moreList={moreList}
-      />
+      <>
+        <SwiperSlide>
+          <DebitCard
+            type="original"
+            branch={cardBranch}
+            cardName={cardName}
+            account={cardAccount}
+            balance={cardBalance}
+            functionList={functionList}
+            moreList={moreList}
+          />
+        </SwiperSlide>
+        <SwiperSlide>
+          <DebitCard
+            type="original"
+            branch={cardBranch}
+            cardName={cardName}
+            account={cardAccount}
+            balance={cardBalance}
+            functionList={functionList}
+            moreList={moreList}
+          />
+        </SwiperSlide>
+        <SwiperSlide>
+          <DebitCard
+            type="original"
+            branch={cardBranch}
+            cardName={cardName}
+            account={cardAccount}
+            balance={cardBalance}
+            functionList={functionList}
+            moreList={moreList}
+          />
+        </SwiperSlide>
+      </>
     );
   };
 
@@ -112,7 +146,17 @@ const Transfer = () => {
 
   return (
     <TransferWrapper>
-      { cardInfo && renderDebitCard(cardInfo) }
+      <div className="userCardArea">
+        <Swiper
+          slidesPerView={1.14}
+          spaceBetween={8}
+          centeredSlides
+          pagination
+          onSlideChange={handleChangeSlide}
+        >
+          { cardInfo && renderDebitCard(cardInfo) }
+        </Swiper>
+      </div>
       <div className="transferServicesArea">
         <FEIBTabContext value={tabId}>
           <FEIBTabList onChange={handleChangeTabList} $type="fixed" $size="small" className="tabList">
