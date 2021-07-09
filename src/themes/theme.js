@@ -20,7 +20,7 @@ const theme = {
       dark: '#042C5C',
       light: '#6F89B2',
       darkGray: '#505050',
-      lightGray: '#656462',
+      lightGray: '#666',
       placeholder: '#CCC',
       link: '#3EC4EE',
       point: '#E60E0E',

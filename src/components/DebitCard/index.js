@@ -8,8 +8,9 @@ import {
 } from '@material-ui/icons';
 import BottomDrawer from 'components/BottomDrawer';
 import Dialog from 'components/Dialog';
-import ConfirmButtons from 'components/ConfirmButtons';
-import { FEIBIconButton, FEIBInputLabel, FEIBInput } from 'components/elements';
+import {
+  FEIBIconButton, FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBButton,
+} from 'components/elements';
 import theme from 'themes/theme';
 import { toCurrency } from 'utilities/Generator';
 import DebitCardBackground from 'assets/images/debitCardBackground.png';
@@ -167,24 +168,20 @@ const DebitCard = ({
     />
   );
 
-  const renderEditCardNameDialog = (name, cardAccount) => (
+  const renderEditCardNameDialog = (name) => (
     <Dialog
       title="帳戶名稱編輯"
       isOpen={openDialog}
       onClose={() => setOpenDialog(false)}
       content={(
         <>
-          <FEIBInputLabel>卡號</FEIBInputLabel>
-          <FEIBInput value={cardAccount} $space="bottom" readOnly {...register('cardAccount')} />
-          <FEIBInputLabel>帳戶名稱</FEIBInputLabel>
+          <FEIBInputLabel>新的帳戶名稱</FEIBInputLabel>
           <FEIBInput defaultValue={name} autoFocus {...register('cardName')} />
+          <FEIBErrorMessage $noSpacing />
         </>
       )}
       action={(
-        <ConfirmButtons
-          mainButtonOnClick={handleSubmit(handleClickSubmitCardName)}
-          subButtonOnClick={() => setOpenDialog(false)}
-        />
+        <FEIBButton onClick={handleSubmit(handleClickSubmitCardName)}>確認</FEIBButton>
       )}
     />
   );
@@ -209,7 +206,7 @@ const DebitCard = ({
       { originalType() && renderFunctionList(functionList) }
       { originalType() && renderMoreIconButton() }
       { originalType() && renderBottomDrawer(moreList) }
-      { originalType() && renderEditCardNameDialog(cardName, account) }
+      { originalType() && renderEditCardNameDialog(cardName) }
     </DebitCardWrapper>
   );
 };

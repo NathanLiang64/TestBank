@@ -92,4 +92,25 @@ const DetailCardWrapper = styled.div`
   }
 `;
 
+const DetailDialogContentWrapper = styled.div`
+  margin-bottom: 2.4rem;
+
+  .mainBlock {
+    margin-bottom: 1.6rem;
+    flex-direction: column;
+  }
+
+  .mainBlockTitle {
+    font-size: 1.4rem;
+    color: ${({ theme }) => theme.colors.text.lightGray};
+  }
+
+  .mainBlockAmount {
+    font-size: 3rem;
+    font-weight: 500;
+    color: ${({ theme }) => theme.colors.primary.dark};
+  }
+`;
+
 export default DetailCardWrapper;
+export { DetailDialogContentWrapper };

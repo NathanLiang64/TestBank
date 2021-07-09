@@ -169,6 +169,15 @@ const GlobalStyles = createGlobalStyle`
   .btn-fix {
     padding: 1.2rem 0 2.4rem;
   }
+
+  .mainBlock {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1rem;
+    padding: 1.6rem 1.2rem;
+    background: ${({ theme }) => theme.colors.background.lighterBlue};
+  }
 `;
 
 export default GlobalStyles;
