@@ -7,12 +7,6 @@ const DeductWrapper = styled(Layout)`
   }
   .checkBoxContainer {
     margin-bottom: 1rem;
-    .MuiFormControlLabel-root {
-      align-items: flex-start;
-      .MuiButtonBase-root {
-        padding-top: 2px;
-      }
-    }
   }
   .inputContainer {
     margin-bottom: 2rem;

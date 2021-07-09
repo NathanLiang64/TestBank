@@ -9,7 +9,6 @@ import ScanPhoto from 'assets/images/scanningQRCode.png';
 import Loading from 'components/Loading';
 import BottomDrawer from 'components/BottomDrawer';
 import {
-  // eslint-disable-next-line no-unused-vars
   FEIBIconButton, FEIBTabContext, FEIBTab, FEIBTabList, FEIBTabPanel,
 } from 'components/elements';
 import { shakeShakeApi } from 'apis';
@@ -116,7 +115,6 @@ const ShakeShake = () => {
     <div className="codeArea">
       <Swiper
         pagination
-        className="mySwiper"
         onSlideChange={(swiper) => selectedUserCard(swiper.activeIndex + 1, userCards)}
       >
         { renderSlides(data) }

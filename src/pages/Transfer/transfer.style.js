@@ -4,6 +4,7 @@ import Layout from 'components/Layout';
 const TransferWrapper = styled(Layout)`
   display: flex;
   flex-direction: column;
+  padding-top: 1.6rem;
   background: ${({ theme }) => theme.colors.background.lighterBlue};
   
   .transferServicesArea {
@@ -16,6 +17,19 @@ const TransferWrapper = styled(Layout)`
     background: ${({ theme }) => theme.colors.basic.white};
   }
   
+  .userCardArea {
+    left: -1.6rem;
+    width: 100vw;
+    
+    .swiper-container {
+      padding-bottom: 1.6rem;
+    }
+    
+    .swiper-pagination {
+      left: -.8rem;
+    }
+  }
+  
   .memberAccountCardArea {
     margin-top: .8rem;
     margin-bottom: 2.4rem;
@@ -24,6 +38,7 @@ const TransferWrapper = styled(Layout)`
   .notice {
     margin-bottom: 2rem;
     font-size: 1.4rem;
+    font-weight: 300;
   }
   
   .transferType {

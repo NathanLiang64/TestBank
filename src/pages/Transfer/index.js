@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import SwiperCore, { Pagination } from 'swiper/core';
 import { RadioGroup } from '@material-ui/core';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import DebitCard from 'components/DebitCard';
@@ -15,12 +17,15 @@ import {
 import { numberToChinese } from 'utilities/Generator';
 import TransferWrapper from './transfer.style';
 
+/* Swiper modules */
+SwiperCore.use([Pagination]);
+
 const Transfer = () => {
   const {
     handleSubmit, formState: { errors },
   } = useForm();
 
-  const [tabId, setTabId] = useState('0');
+  const [tabId, setTabId] = useState('transfer');
   const [amount, setAmount] = useState({ number: '0', chinese: '(零元)' });
   const cardInfo = useSelector(({ depositOverview }) => depositOverview.cardInfo);
 
@@ -36,6 +41,9 @@ const Transfer = () => {
   };
 
   // eslint-disable-next-line no-unused-vars
+  const handleChangeSlide = (swiper) => {};
+
+  // eslint-disable-next-line no-unused-vars
   const handleClickTransferButton = (data) => {};
 
   const renderDebitCard = (info) => {
@@ -48,21 +56,47 @@ const Transfer = () => {
       moreList,
     } = info;
     return (
-      <DebitCard
-        type="original"
-        branch={cardBranch}
-        cardName={cardName}
-        account={cardAccount}
-        balance={cardBalance}
-        functionList={functionList}
-        moreList={moreList}
-      />
+      <>
+        <SwiperSlide>
+          <DebitCard
+            type="original"
+            branch={cardBranch}
+            cardName={cardName}
+            account={cardAccount}
+            balance={cardBalance}
+            functionList={functionList}
+            moreList={moreList}
+          />
+        </SwiperSlide>
+        <SwiperSlide>
+          <DebitCard
+            type="original"
+            branch={cardBranch}
+            cardName={cardName}
+            account={cardAccount}
+            balance={cardBalance}
+            functionList={functionList}
+            moreList={moreList}
+          />
+        </SwiperSlide>
+        <SwiperSlide>
+          <DebitCard
+            type="original"
+            branch={cardBranch}
+            cardName={cardName}
+            account={cardAccount}
+            balance={cardBalance}
+            functionList={functionList}
+            moreList={moreList}
+          />
+        </SwiperSlide>
+      </>
     );
   };
 
   const renderTabPanels = () => (
     <>
-      <FEIBTabPanel value="0">
+      <FEIBTabPanel value="transfer">
         <div>
           <BankCodeInput />
         </div>
@@ -73,23 +107,35 @@ const Transfer = () => {
         </div>
       </FEIBTabPanel>
 
-      <FEIBTabPanel value="1">
+      <FEIBTabPanel value="frequentlyUsed">
         <FEIBInputLabel>轉入帳號</FEIBInputLabel>
         <div className="memberAccountCardArea">
           <MemberAccountCard
+            transferType="常用"
             name="Robert Fox"
             branchName="遠東商銀"
             branchCode="805"
             account="043000990000"
-            avatarSrc="https://images.unsplash.com/photo-1528341866330-07e6d1752ec2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=801&q=80"
+            avatarSrc="https://images.unsplash.com/photo-1591605555749-d25cfd47e981?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
           />
         </div>
       </FEIBTabPanel>
 
-      <FEIBTabPanel value="2">
-        <p>約定轉帳</p>
+      <FEIBTabPanel value="designated">
+        <FEIBInputLabel>轉入帳號</FEIBInputLabel>
+        <div className="memberAccountCardArea">
+          <MemberAccountCard
+            transferType="約定"
+            name="Catherine Smith"
+            branchName="遠東商銀"
+            branchCode="805"
+            account="043000990000"
+            avatarSrc="https:images.unsplash.com/photo-1528341866330-07e6d1752ec2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=801&q=80"
+          />
+        </div>
       </FEIBTabPanel>
-      <FEIBTabPanel value="3">
+
+      <FEIBTabPanel value="accountBook">
         <p>社群轉帳</p>
       </FEIBTabPanel>
     </>
@@ -100,14 +146,24 @@ const Transfer = () => {
 
   return (
     <TransferWrapper>
-      { cardInfo && renderDebitCard(cardInfo) }
+      <div className="userCardArea">
+        <Swiper
+          slidesPerView={1.14}
+          spaceBetween={8}
+          centeredSlides
+          pagination
+          onSlideChange={handleChangeSlide}
+        >
+          { cardInfo && renderDebitCard(cardInfo) }
+        </Swiper>
+      </div>
       <div className="transferServicesArea">
         <FEIBTabContext value={tabId}>
           <FEIBTabList onChange={handleChangeTabList} $type="fixed" $size="small" className="tabList">
-            <FEIBTab label="一般轉帳" value="0" />
-            <FEIBTab label="常用轉帳" value="1" />
-            <FEIBTab label="約定轉帳" value="2" />
-            <FEIBTab label="社群轉帳" value="3" />
+            <FEIBTab label="一般轉帳" value="transfer" />
+            <FEIBTab label="常用轉帳" value="frequentlyUsed" />
+            <FEIBTab label="約定轉帳" value="designated" />
+            <FEIBTab label="社群轉帳" value="accountBook" />
           </FEIBTabList>
           <form onSubmit={handleSubmit(handleClickTransferButton)}>
             { renderTabPanels() }
