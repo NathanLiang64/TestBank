@@ -14,7 +14,6 @@ const FEIBInputLabel = styled(MaterialInputLabel)`
   &.MuiFormLabel-root {
     // Label font size
     font-size: 1.4rem;
-    font-weight: 300;
   }
   
   &.MuiFormLabel-filled,

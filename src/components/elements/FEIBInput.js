@@ -60,7 +60,6 @@ const FEIBInput = styled(MaterialInput).attrs(({
     color: ${({ theme, $color }) => $color || theme.colors.primary.dark};
     
     &::placeholder {
-      font-weight: 300;
       color: ${({ theme }) => theme.colors.text.placeholder};
       opacity: 1;
     }

@@ -1,8 +1,7 @@
-import {
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from '@material-ui/core';
+import { DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
+import { CloseRounded } from '@material-ui/icons';
+import { FEIBIconButton } from 'components/elements';
+import theme from 'themes/theme';
 import DialogWrapper from './dialog.style';
 
 /*
@@ -29,15 +28,25 @@ const Dialog = ({
     aria-labelledby="alert-dialog-title"
     aria-describedby="alert-dialog-description"
   >
-    <DialogTitle id="alert-dialog-title" className="title">
+    <DialogTitle id="alert-dialog-title">
       {title || '系統訊息'}
     </DialogTitle>
-    <DialogContent className="content">
+    <DialogContent>
       {content}
     </DialogContent>
-    <DialogActions className="alignCenter">
-      {action}
-    </DialogActions>
+    {action && (
+      <DialogActions>
+        {action}
+      </DialogActions>
+    )}
+    <FEIBIconButton
+      className="closeIconButton"
+      $fontSize={2.2}
+      $iconColor={theme.colors.text.lightGray}
+      onClick={onClose}
+    >
+      <CloseRounded />
+    </FEIBIconButton>
   </DialogWrapper>
 );
 
