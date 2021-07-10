@@ -19,7 +19,7 @@ function goToFunc(funcName, jsonParams = null) {
 
 function closeFunc(jsonParams = null) {
   if (device.ios) {
-    const msg = JSON.parse('{"data":"' + jsonParams + '"}');
+    const msg = JSON.parse('{"name":"closefunc"}');
     // eslint-disable-next-line no-undef
     webkit.messageHandlers.bankeeplus.postMessage(msg);
     return;

@@ -3,31 +3,38 @@ import { Dialog as MaterialDialog } from '@material-ui/core';
 
 const DialogWrapper = styled(MaterialDialog)`
   font-size: 1.5rem;
-  
+
   .MuiPaper-root {
+    margin: 2.4rem;
+    border-radius: .8rem;
     width: 100%;
   }
 
-  .MuiDialogActions-root {
-    padding-left: 2.4rem;
-    padding-right: 2.4rem;
-  }
-  
-  .title {
+  .MuiDialogTitle-root {
+    padding: 4rem 2.4rem 2rem 2.4rem;
     text-align: center;
+
     .MuiTypography-h6 {
-      font-size: 1.6rem;
-      font-weight: bold;
+      font-size: 2rem;
+      font-weight: 500;
     }
   }
   
-  .content {
+  .MuiDialogContent-root {
+    padding-top: 0;
+    padding-bottom: 0rem;
     font-size: 1.5rem;
   }
-  
-  .alignCenter {
+
+  .MuiDialogActions-root {
     justify-content: center;
-    padding-bottom: 1.6rem;
+    padding: 2.4rem;
+  }
+  
+  .closeIconButton {
+    position: absolute;
+    top: .8rem;
+    right: .8rem;
   }
 `;
 

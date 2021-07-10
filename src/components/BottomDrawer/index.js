@@ -1,4 +1,4 @@
-import { Close } from '@material-ui/icons';
+import { CloseRounded } from '@material-ui/icons';
 import { FEIBIconButton } from 'components/elements';
 import theme from 'themes/theme';
 import DrawerWrapper from './bottomDrawer.style';
@@ -34,7 +34,7 @@ const BottomDrawer = ({
         $iconColor={theme.colors.text.lightGray}
         onClick={onClose}
       >
-        <Close />
+        <CloseRounded />
       </FEIBIconButton>
     </div>
     <div className="content">

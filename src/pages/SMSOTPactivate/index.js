@@ -22,7 +22,7 @@ import Alert from 'components/Alert';
 import { passwordValidation } from 'utilities/validation';
 
 /* Styles */
-import theme from 'themes/theme';
+// import theme from 'themes/theme';
 import SMSOTPactivateWrapper from './smsOTPactivate.style';
 
 const SMSOTPactivate = () => {
@@ -36,26 +36,33 @@ const SMSOTPactivate = () => {
     ...passwordValidation,
   });
   const {
-    handleSubmit, control, formState: { errors },
+    // eslint-disable-next-line no-unused-vars
+    handleSubmit, control, formState: { errors }, setValue,
   } = useForm({
     resolver: yupResolver(schema),
   });
 
   // 0: 密碼未逾期, 1: 密碼逾期、註銷、其他非正常狀態, 2: 已開通
-  const status = 2;
+  // eslint-disable-next-line no-unused-vars
+  const [status, setStatus] = useState(2);
   const initActive = true;
-  const [noticeTip, setNoticeTip] = useState('');
   const [isActive, setIsActive] = useState(false);
   const [showResultDialog, setShowResultDialog] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-
-  const getStatus = () => status;
 
   const handleIsActiveChange = () => {
     setIsActive(!isActive);
   };
 
+  const changeStatus = () => {
+    const newStatus = status === 0 ? 2 : 0;
+    setStatus(newStatus);
+    setValue('OTPPassword', '');
+    setValue('password', '');
+  };
+
   const updateOTPActiveType = () => {
+    changeStatus();
     setShowConfirmDialog(false);
     setShowResultDialog(true);
   };
@@ -112,15 +119,6 @@ const SMSOTPactivate = () => {
   usePageInfo('/api/smsOTPactivate');
 
   useEffect(() => {
-    if (getStatus() === 0 && !initActive) {
-      setNoticeTip(<p>完成簡訊 OTP 服務開通，即可立即使用 Bankee APP 執行非約定轉帳交易</p>);
-    }
-    if (getStatus() === 1 && !initActive) {
-      setNoticeTip(<p style={{ color: theme.colors.text.point }}>親愛的客戶您好：您申請「簡訊 OTP 服務」已***，......</p>);
-    }
-    if (getStatus() === 2 && initActive) {
-      setNoticeTip(<p>提醒您：本服務取消後，將無法使用 Bankee APP 執行非約定轉帳交易，如未來欲使用該服務，請親至各分行或以晶片金融卡於本行 ATM(WebATM) 重新申請本服務，謝謝。</p>);
-    }
     setIsActive(initActive);
   }, []);
 
@@ -141,15 +139,23 @@ const SMSOTPactivate = () => {
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FEIBInputLabel htmlFor="phone">簡訊 OTP 號碼</FEIBInputLabel>
-        <FEIBInput
-          id="phone"
+        <Controller
           name="phone"
-          type="text"
-          inputMode="numeric"
-          value="0905556556"
-          disabled
-          $space="bottom"
+          defaultValue=""
+          control={control}
+          render={({ field }) => (
+            <FEIBInput
+              {...field}
+              id="phone"
+              name="phone"
+              type="text"
+              inputMode="numeric"
+              value="0905556556"
+              disabled
+            />
+          )}
         />
+        <FEIBErrorMessage />
         <FEIBInputLabel htmlFor="OTPPassword">開通密碼</FEIBInputLabel>
         <Controller
           name="OTPPassword"
@@ -175,11 +181,17 @@ const SMSOTPactivate = () => {
           errorMessage={errors.password?.message}
         />
         <InfoArea space="both">
-          {noticeTip}
+          {
+            status === 0 ? (<p>完成簡訊 OTP 服務開通，即可立即使用 Bankee APP 執行非約定轉帳交易</p>)
+              : (<p>提醒您：本服務取消後，將無法使用 Bankee APP 執行非約定轉帳交易，如未來欲使用該服務，請親至各分行或以晶片金融卡於本行 ATM(WebATM) 重新申請本服務，謝謝。</p>)
+            // if (getStatus() === 1 && !initActive) {
+            //   setNoticeTip(<p style={{ color: theme.colors.text.point }}>親愛的客戶您好：您申請「簡訊 OTP 服務」已***，......</p>);
+            // }
+          }
         </InfoArea>
         <FEIBButton
           type="submit"
-          disabled={status === 1}
+          disabled={(status === 0 && !isActive) || (status === 2 && isActive)}
         >
           {
             status === 2 ? '取消 OTP 綁定' : '立即開通'

@@ -2,9 +2,8 @@ import { useState } from 'react';
 import { MonetizationOn, ArrowBack, ArrowForward } from '@material-ui/icons';
 import Dialog from 'components/Dialog';
 import InformationList from 'components/InformationList';
-import { FEIBButton } from 'components/elements';
 import { toCurrency } from 'utilities/Generator';
-import DetailCardWrapper from './detailCard.style';
+import DetailCardWrapper, { DetailDialogContentWrapper } from './detailCard.style';
 
 /*
 * ==================== DetailCard 組件說明 ====================
@@ -56,27 +55,23 @@ const DetailCard = ({
     </div>
   );
 
-  // TODO: 確認明細欄位是否齊全
-  const renderDetailDialogContent = () => (
-    <>
-      <InformationList
-        title={type === 'spend' ? '轉出' : '轉入'}
-        content={`${type === 'spend' ? '- ' : ''}$${toCurrency(amount)}`}
-      />
-      <InformationList title="交易時間" content={date} />
-      <InformationList title="帳務日期" content={date} />
-      <InformationList title="帳號" content="04300299001234" />
-      <InformationList title="備註" />
-    </>
-  );
-
   const renderDetailDialog = () => (
     <Dialog
-      title={title || '交易明細'}
+      title={type === 'spend' ? '跨行轉出' : '跨行轉入'}
       isOpen={openDetailDialog}
       onClose={() => setOpenDetailDialog(false)}
-      content={renderDetailDialogContent()}
-      action={<FEIBButton onClick={() => setOpenDetailDialog(false)}>關閉</FEIBButton>}
+      content={(
+        // TODO: 確認明細欄位是否齊全
+        <DetailDialogContentWrapper>
+          <div className="mainBlock">
+            <p className="mainBlockTitle">{title}</p>
+            <p className="mainBlockAmount">{`${type === 'spend' ? '- ' : ''}$${toCurrency(amount)}`}</p>
+          </div>
+          <InformationList title="交易時間" content={`2021/${date} 14:50`} />
+          <InformationList title="帳務日期" content={date} />
+          <InformationList title="帳號" content="04300299001234" />
+        </DetailDialogContentWrapper>
+      )}
     />
   );
 
