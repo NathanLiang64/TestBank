@@ -29,6 +29,7 @@ const DepositInquiryWrapper = styled(Layout)`
   
   .transactionDetail {
     padding: 0 .4rem;
+    height: 100%;
     overflow-y: auto;
   }
 

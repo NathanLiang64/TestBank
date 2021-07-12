@@ -24,24 +24,6 @@ const ShakeShakeWrapper = styled.div`
     .MuiIconButton-root {
       margin-left: -.8rem;
     }
-
-    .copiedMessage {
-      position: absolute;
-      top: 50%;
-      right: -112%;
-      padding: .2rem .4rem;
-      font-size: 1.2rem;
-      border-radius: .4rem;
-      background: ${({ theme }) => theme.colors.background.mask};
-      color: ${({ theme }) => theme.colors.basic.white};
-      transform: translateY(-50%);
-      transition: all .2s;
-      opacity: 0;
-
-      &.showMessage {
-        opacity: 1;
-      }
-    }
   }
 
   .codeArea {
@@ -59,6 +41,7 @@ const ShakeShakeWrapper = styled.div`
       display: flex;
       justify-content: center;
       align-items: center;
+      left: -.8rem;
     }
   }
 
