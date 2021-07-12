@@ -4016,5 +4016,10 @@
     "name": "Transfer",
     "title": "轉帳",
     "route": "/transfer"
+  },
+  "profile": {
+    "name": "Profile",
+    "title": "個人化設定",
+    "route": "/profile"
   }
 }
