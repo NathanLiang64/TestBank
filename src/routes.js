@@ -41,6 +41,7 @@ import Exchange from 'pages/Exchange';
 import Exchange1 from 'pages/Exchange/exchange_1';
 import Exchange2 from 'pages/Exchange/exchange_2';
 import Transfer from 'pages/Transfer';
+import Profile from 'pages/Profile';
 
 /* 開發用目錄頁 */
 import Nav from 'pages/Nav';
@@ -89,6 +90,7 @@ const routes = [
   { path: '/exchange1', exact: false, component: Exchange1 },
   { path: '/exchange2', exact: false, component: Exchange2 },
   { path: '/transfer', exact: false, component: Transfer },
+  { path: '/profile', exact: false, component: Profile },
 ];
 
 export default routes;
