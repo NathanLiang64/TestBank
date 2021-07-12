@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Pagination } from 'swiper/core';
 import QRCode from 'qrcode.react';
-import { ArrowForwardIosRounded, FileCopyOutlined, Share } from '@material-ui/icons';
+import { ArrowForwardIosRounded, Share } from '@material-ui/icons';
 import ScanPhoto from 'assets/images/scanningQRCode.png';
-import Loading from 'components/Loading';
 import BottomDrawer from 'components/BottomDrawer';
+import CopyTextIconButton from 'components/CopyTextIconButton';
+import Loading from 'components/Loading';
 import {
   FEIBIconButton, FEIBTabContext, FEIBTab, FEIBTabList, FEIBTabPanel,
 } from 'components/elements';
@@ -23,8 +23,6 @@ SwiperCore.use([Pagination]);
 
 const ShakeShake = () => {
   const [tabId, setTabId] = useState('0');
-  const [copyAccount, setCopyAccount] = useState(false);
-
   const isShake = useSelector(({ shakeShake }) => shakeShake.isShake);
   const userCards = useSelector(({ shakeShake }) => shakeShake.userCards);
   const userCardInfo = useSelector(({ shakeShake }) => shakeShake.userCardInfo);
@@ -38,12 +36,6 @@ const ShakeShake = () => {
     dispatch(setUserCardInfo(filteredCard));
   };
 
-  const handleClickCopyAccount = () => {
-    setCopyAccount(true);
-    // 1.5 秒後將 copyAccount 的值重置
-    setTimeout(() => setCopyAccount(false), 1500);
-  };
-
   // const handleClickTransferButton = () => {
   //   dispatch(setIsShake(false));
   //   push('/QRCodeTransfer');
@@ -53,23 +45,6 @@ const ShakeShake = () => {
     setTabId(id);
   };
 
-  const renderCopyIconButton = (value) => (
-    <div className="copyIconButton">
-      <CopyToClipboard
-        text={value}
-        onCopy={handleClickCopyAccount}
-      >
-        <FEIBIconButton
-          $fontSize={1.6}
-          $iconColor={theme.colors.text.lightGray}
-        >
-          <FileCopyOutlined />
-        </FEIBIconButton>
-      </CopyToClipboard>
-      <span className={`copiedMessage ${copyAccount && 'showMessage'}`}>已複製</span>
-    </div>
-  );
-
   const renderAccountInfo = (info) => {
     const { bankName, cardName, cardAccount } = info;
     return (
@@ -77,7 +52,7 @@ const ShakeShake = () => {
         <p className="cardName">{cardName}</p>
         <div className="accountInfo">
           <p className="account">{`${bankName} ${cardAccount}`}</p>
-          { renderCopyIconButton(cardAccount) }
+          <CopyTextIconButton copyText={cardAccount} />
         </div>
       </>
     );

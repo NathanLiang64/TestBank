@@ -5,6 +5,7 @@ import { useCheckLocation, usePageInfo } from 'hooks';
 import { SearchRounded, CancelRounded, GetAppRounded } from '@material-ui/icons';
 import { depositInquiryApi } from 'apis';
 import DepositSearchCondition from 'pages/DepositSearchCondition';
+import EmptyData from 'components/EmptyData';
 import DebitCard from 'components/DebitCard';
 import DetailCard from 'components/DetailCard';
 import BottomDrawer from 'components/BottomDrawer';
@@ -78,7 +79,6 @@ const DepositInquiry = () => {
     // 清空已選關鍵字條件 (將 tempSelectedKeywords 取代掉現有的 selectedKeywords)
     dispatch(setKeywords(tempKeywords));
     dispatch(setCustomKeyword(''));
-    // dispatch(setDisplayKeywords([]));
   };
 
   const handleClickMonthTabs = async (event) => {
@@ -207,7 +207,6 @@ const DepositInquiry = () => {
     </div>
   );
 
-  // eslint-disable-next-line no-unused-vars
   const renderDetailCardList = (list) => (
     list.map((card) => (
       <VisibilitySensor
@@ -286,10 +285,9 @@ const DepositInquiry = () => {
         { renderSearchBarArea() }
         { tabId && renderTabs() }
         <div className="transactionDetail" ref={transactionDetailRef}>
-          { detailList && renderDetailCardList(detailList) }
+          { detailList.length ? renderDetailCardList(detailList) : <EmptyData /> }
         </div>
       </div>
-      {/* { renderDetailDialog() } */}
       { renderDownloadDrawer() }
       { renderSearchDrawer(<DepositSearchCondition initKeywords={initKeywords} />) }
     </DepositInquiryWrapper>
