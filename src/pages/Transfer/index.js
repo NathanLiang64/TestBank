@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Pagination } from 'swiper/core';
 import { RadioGroup } from '@material-ui/core';
@@ -15,18 +17,29 @@ import {
   FEIBRadioLabel, FEIBRadio, FEIBButton,
 } from 'components/elements';
 import { numberToChinese } from 'utilities/Generator';
+import { bankCodeValidation, receivingAccountValidation } from 'utilities/validation';
 import TransferWrapper from './transfer.style';
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
 
 const Transfer = () => {
+  const schema = yup.object().shape({
+    ...bankCodeValidation,
+    ...receivingAccountValidation,
+    transferAmount: yup.string()
+      .required('請輸入轉帳金額')
+      .max(7, '轉出金額不可大於百萬')
+      .test('test', '金額不可為 0', (value) => !(parseInt(value, 10) <= 0)),
+  });
   const {
-    handleSubmit, formState: { errors },
-  } = useForm();
+    control, handleSubmit, formState: { errors }, setValue, trigger,
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
   const [tabId, setTabId] = useState('transfer');
-  const [amount, setAmount] = useState({ number: '0', chinese: '(零元)' });
+  const [amount, setAmount] = useState({ number: '', chinese: '' });
   const cardInfo = useSelector(({ depositOverview }) => depositOverview.cardInfo);
 
   const handleChangeTabList = (event, id) => {
@@ -34,9 +47,11 @@ const Transfer = () => {
   };
 
   const handleChangeAmount = (event) => {
-    setAmount({
-      number: event.target.value.replace(/\b(0+)/gi, ''),
-      chinese: numberToChinese(event.target.value.replace(/\b(0+)/gi, '')),
+    setAmount(() => {
+      const newAmount = event.target.value;
+      setValue('transferAmount', newAmount);
+      trigger('transferAmount');
+      return ({ number: newAmount, chinese: numberToChinese(newAmount) });
     });
   };
 
@@ -44,7 +59,9 @@ const Transfer = () => {
   const handleChangeSlide = (swiper) => {};
 
   // eslint-disable-next-line no-unused-vars
-  const handleClickTransferButton = (data) => {};
+  const handleClickTransferButton = (data) => {
+    // console.log(data);
+  };
 
   const renderDebitCard = (info) => {
     const {
@@ -98,12 +115,32 @@ const Transfer = () => {
     <>
       <FEIBTabPanel value="transfer">
         <div>
-          <BankCodeInput />
+          <BankCodeInput
+            id="bankCode"
+            setValue={setValue}
+            trigger={trigger}
+            control={control}
+            errorMessage={errors.bankCode?.message}
+          />
         </div>
         <div>
-          <FEIBInputLabel>帳號</FEIBInputLabel>
-          <FEIBInput type="number" placeholder="請輸入" />
-          <FEIBErrorMessage>請輸入銀行帳號</FEIBErrorMessage>
+          <FEIBInputLabel htmlFor="receivingAccount">轉入帳號</FEIBInputLabel>
+          <Controller
+            name="receivingAccount"
+            defaultValue=""
+            control={control}
+            render={({ field }) => (
+              <FEIBInput
+                {...field}
+                id="receivingAccount"
+                type="number"
+                name="receivingAccount"
+                placeholder="請輸入"
+                error={!!errors.receivingAccount}
+              />
+            )}
+          />
+          <FEIBErrorMessage>{errors.receivingAccount?.message}</FEIBErrorMessage>
         </div>
       </FEIBTabPanel>
 
@@ -168,22 +205,33 @@ const Transfer = () => {
           <form onSubmit={handleSubmit(handleClickTransferButton)}>
             { renderTabPanels() }
             <div className="customSpace">
-              <FEIBInputLabel>金額</FEIBInputLabel>
-              <FEIBInput
-                className="customStyles"
-                type="text"
-                value={amount.number}
-                placeholder="0"
-                maxLength="7"
-                startAdornment={<span className={`adornment ${amount.number === '' && 'empty'}`}>$</span>}
-                endAdornment={(
-                  <span className={`adornment chinese ${amount.number === '' && 'empty'}`}>
-                    {amount.number ? amount.chinese : '(零元)'}
-                  </span>
+              <FEIBInputLabel htmlFor="transferAmount">金額</FEIBInputLabel>
+              <Controller
+                name="transferAmount"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <FEIBInput
+                    {...field}
+                    className="customStyles"
+                    id="transferAmount"
+                    name="transferAmount"
+                    type="number"
+                    value={amount.number}
+                    placeholder="0"
+                    startAdornment={<span className={`adornment ${amount.number === '' && 'empty'}`}>$</span>}
+                    endAdornment={(
+                      <span className={`adornment chinese ${amount.number === '' && 'empty'}`}>
+                        {amount.number ? amount.chinese : '(零元)'}
+                      </span>
+                    )}
+                    onChange={handleChangeAmount}
+                    onClick={(event) => event.currentTarget.children[1].focus()}
+                    error={!!errors.transferAmount}
+                  />
                 )}
-                onChange={handleChangeAmount}
               />
-              <FEIBErrorMessage>{errors.payAmount?.message}</FEIBErrorMessage>
+              <FEIBErrorMessage>{errors.transferAmount?.message}</FEIBErrorMessage>
             </div>
             <p className="notice">單筆/當日/當月非約定轉帳剩餘額度: 10,000/20,000/40,000</p>
             <div className="transferType">

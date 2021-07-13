@@ -179,7 +179,6 @@ const DepositInquiry = () => {
       <FEIBIconButton $fontSize={2.8} onClick={handleClickSearchButton}>
         <SearchRounded />
       </FEIBIconButton>
-      {/* { (dateRange.length > 0 || displayKeywords.length > 0) && renderSearchBarText(dateRange, displayKeywords) } */}
       { (dateRange.length > 0) && renderSearchBarText(dateRange) }
       <FEIBIconButton $fontSize={2.8} className="customPosition" onClick={() => setOpenDownloadDrawer(true)}>
         <GetAppRounded />
@@ -227,7 +226,6 @@ const DepositInquiry = () => {
             amount={card.amount}
             balance={card.balance}
             noShadow
-            // onClick={() => setOpenDetailDialog(true)}
           />
         )}
       </VisibilitySensor>
@@ -264,7 +262,6 @@ const DepositInquiry = () => {
     dispatch(setDateRange([]));
     dispatch(setCustomKeyword(''));
     dispatch(setKeywords(initKeywords));
-    // dispatch(setDisplayKeywords([]));
 
     // 取得所有存款卡的初始資料
     const response = await doGetInitData('/api/depositInquiry');

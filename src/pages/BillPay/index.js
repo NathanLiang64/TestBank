@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import DebitCard from 'components/DebitCard';
+import BankCodeInput from 'components/BankCodeInput';
 import {
   FEIBButton, FEIBBorderButton,
   FEIBCheckbox, FEIBCheckboxLabel,
   FEIBRadio, FEIBRadioLabel,
-  FEIBInput, FEIBInputLabel,
-  FEIBOption, FEIBSelect, FEIBErrorMessage,
+  FEIBInput, FEIBInputLabel, FEIBErrorMessage,
 } from 'components/elements';
 import { RadioGroup } from '@material-ui/core';
 
@@ -22,7 +22,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
   payAmountValidation,
-  bankCodeValidation,
+  billPayBankCodeValidation,
   transferAccountValidation,
   emailValidation,
 } from 'utilities/validation';
@@ -44,7 +44,7 @@ const BillPay = () => {
     payMoney: yup.number(),
     sendEmail: yup.boolean(),
     ...payAmountValidation,
-    ...bankCodeValidation,
+    ...billPayBankCodeValidation,
     ...transferAccountValidation,
     ...emailValidation,
   });
@@ -169,7 +169,7 @@ const BillPay = () => {
               id="payAmount"
               name="payAmount"
               type="text"
-              startAdornment="NT$"
+              startAdornment="$"
               error={!!errors.payAmount}
               onBlur={() => moneyreplace()}
             />
@@ -184,27 +184,34 @@ const BillPay = () => {
     <section>
       <h2>請選擇繳費帳戶</h2>
       <div>
-        <FEIBInputLabel htmlFor="otherBankCode">請選擇轉出行庫</FEIBInputLabel>
-        <Controller
-          name="otherBankCode"
+        <BankCodeInput
+          id="otherBankCode"
+          setValue={setValue}
+          trigger={trigger}
           control={control}
-          defaultValue="aaa"
-          render={({ field }) => (
-            <FEIBSelect
-              {...field}
-              id="otherBankCode"
-              name="otherBankCode"
-            >
-              <FEIBOption value="aaa">AAA行庫</FEIBOption>
-              <FEIBOption value="bbb">BBB行庫</FEIBOption>
-            </FEIBSelect>
-          )}
+          errorMessage={errors.otherBankCode?.message}
         />
-        <FEIBErrorMessage>{errors.otherBankCode?.message}</FEIBErrorMessage>
+        {/* <FEIBInputLabel htmlFor="otherBankCode">請選擇轉出行庫</FEIBInputLabel> */}
+        {/* <Controller */}
+        {/*  name="otherBankCode" */}
+        {/*  control={control} */}
+        {/*  defaultValue="aaa" */}
+        {/*  render={({ field }) => ( */}
+        {/*    <FEIBSelect */}
+        {/*      {...field} */}
+        {/*      id="otherBankCode" */}
+        {/*      name="otherBankCode" */}
+        {/*    > */}
+        {/*      <FEIBOption value="aaa">AAA行庫</FEIBOption> */}
+        {/*      <FEIBOption value="bbb">BBB行庫</FEIBOption> */}
+        {/*    </FEIBSelect> */}
+        {/*  )} */}
+        {/* /> */}
+        {/* <FEIBErrorMessage>{errors.otherBankCode?.message}</FEIBErrorMessage> */}
       </div>
 
       <div>
-        <FEIBInputLabel htmlFor="otherTrnAcct">請輸入轉出帳號</FEIBInputLabel>
+        <FEIBInputLabel htmlFor="otherTrnAcct">轉出帳號</FEIBInputLabel>
         <Controller
           name="otherTrnAcct"
           control={control}
@@ -214,7 +221,7 @@ const BillPay = () => {
               {...field}
               id="otherTrnAcct"
               name="otherTrnAcct"
-              placeholder="請輸入轉出帳號"
+              placeholder="請輸入"
               type="number"
               error={!!errors.otherTrnAcct}
             />
