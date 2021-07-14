@@ -4031,5 +4031,10 @@
     "name": "FinancialDepartments",
     "title": "金融百貨",
     "route": "/financialDepartments"
+  },
+  "network": {
+    "name": "Network",
+    "title": "社群圈",
+    "route": "/network"
   }
 }
