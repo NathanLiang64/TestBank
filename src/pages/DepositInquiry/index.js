@@ -5,6 +5,7 @@ import { useCheckLocation, usePageInfo } from 'hooks';
 import { SearchRounded, CancelRounded, GetAppRounded } from '@material-ui/icons';
 import { depositInquiryApi } from 'apis';
 import DepositSearchCondition from 'pages/DepositSearchCondition';
+import EmptyData from 'components/EmptyData';
 import DebitCard from 'components/DebitCard';
 import DetailCard from 'components/DetailCard';
 import BottomDrawer from 'components/BottomDrawer';
@@ -78,7 +79,6 @@ const DepositInquiry = () => {
     // 清空已選關鍵字條件 (將 tempSelectedKeywords 取代掉現有的 selectedKeywords)
     dispatch(setKeywords(tempKeywords));
     dispatch(setCustomKeyword(''));
-    // dispatch(setDisplayKeywords([]));
   };
 
   const handleClickMonthTabs = async (event) => {
@@ -179,7 +179,6 @@ const DepositInquiry = () => {
       <FEIBIconButton $fontSize={2.8} onClick={handleClickSearchButton}>
         <SearchRounded />
       </FEIBIconButton>
-      {/* { (dateRange.length > 0 || displayKeywords.length > 0) && renderSearchBarText(dateRange, displayKeywords) } */}
       { (dateRange.length > 0) && renderSearchBarText(dateRange) }
       <FEIBIconButton $fontSize={2.8} className="customPosition" onClick={() => setOpenDownloadDrawer(true)}>
         <GetAppRounded />
@@ -207,7 +206,6 @@ const DepositInquiry = () => {
     </div>
   );
 
-  // eslint-disable-next-line no-unused-vars
   const renderDetailCardList = (list) => (
     list.map((card) => (
       <VisibilitySensor
@@ -228,7 +226,6 @@ const DepositInquiry = () => {
             amount={card.amount}
             balance={card.balance}
             noShadow
-            // onClick={() => setOpenDetailDialog(true)}
           />
         )}
       </VisibilitySensor>
@@ -265,7 +262,6 @@ const DepositInquiry = () => {
     dispatch(setDateRange([]));
     dispatch(setCustomKeyword(''));
     dispatch(setKeywords(initKeywords));
-    // dispatch(setDisplayKeywords([]));
 
     // 取得所有存款卡的初始資料
     const response = await doGetInitData('/api/depositInquiry');
@@ -286,10 +282,9 @@ const DepositInquiry = () => {
         { renderSearchBarArea() }
         { tabId && renderTabs() }
         <div className="transactionDetail" ref={transactionDetailRef}>
-          { detailList && renderDetailCardList(detailList) }
+          { detailList.length ? renderDetailCardList(detailList) : <EmptyData /> }
         </div>
       </div>
-      {/* { renderDetailDialog() } */}
       { renderDownloadDrawer() }
       { renderSearchDrawer(<DepositSearchCondition initKeywords={initKeywords} />) }
     </DepositInquiryWrapper>

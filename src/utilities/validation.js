@@ -30,9 +30,13 @@ const errorMessage = {
   // 轉出行庫
   bankCodeRequired: '轉出行庫尚未選取，請重新檢查。',
 
-  // 轉入帳號
+  // 轉出帳號
   transferAccountRequired: '輸入轉出帳號尚未填寫，請重新檢查。',
   transferAccountWrongFormat: '輸入轉出帳號格式有誤，請重新檢查。',
+
+  // 轉入帳號
+  receivingAccountRequired: '請輸入轉入帳號',
+  receivingAccountWrongFormat: '轉入帳號格式有誤，請重新檢查。',
 };
 
 /* ====================== 驗證規則 ====================== */
@@ -198,9 +202,22 @@ const identityValidation = {
       (value) => checkID(value),
     ),
 };
+
+// 使用者代號
 const accountValidation = {
   account: yup.string().required(errorMessage.userAccountRequired)
     .min(6, errorMessage.userAccountWrongLength).max(20, errorMessage.userAccountWrongLength),
+};
+
+// 轉入帳號
+const receivingAccountValidation = {
+  receivingAccount: yup.string().required(errorMessage.receivingAccountRequired)
+    .min(10, errorMessage.receivingAccountWrongFormat).max(16, errorMessage.receivingAccountWrongFormat),
+};
+
+// 銀行代碼
+const bankCodeValidation = {
+  bankCode: yup.string().required(errorMessage.bankCodeRequired),
 };
 
 /**
@@ -218,11 +235,12 @@ const payAmountValidation = {
 };
 
 // 轉出帳號行庫驗證
-const bankCodeValidation = {
+const billPayBankCodeValidation = {
   otherBankCode: yup.string()
     .when('payType', {
       is: 2,
-      then: yup.string().test('otherBankCode-notspace', errorMessage.bankCodeRequired, (value) => value !== ' '),
+      then: yup.string().required(errorMessage.bankCodeRequired),
+      // then: yup.string().test('otherBankCode-notspace', errorMessage.bankCodeRequired, (value) => value !== ' '),
     }),
 };
 
@@ -250,7 +268,9 @@ export {
   accountValidation,
   passwordValidation,
   payAmountValidation,
-  bankCodeValidation,
+  billPayBankCodeValidation,
   transferAccountValidation,
   emailValidation,
+  receivingAccountValidation,
+  bankCodeValidation,
 };

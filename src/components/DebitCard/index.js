@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useForm } from 'react-hook-form';
 import { Icon } from '@material-ui/core';
 import {
-  Visibility, VisibilityOff, FileCopyOutlined, MoreVert, SystemUpdate, Edit,
+  Visibility, VisibilityOff, MoreVert, SystemUpdate, Edit,
 } from '@material-ui/icons';
 import BottomDrawer from 'components/BottomDrawer';
 import Dialog from 'components/Dialog';
+import CopyTextIconButton from 'components/CopyTextIconButton';
 import {
   FEIBIconButton, FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBButton,
 } from 'components/elements';
@@ -43,7 +43,6 @@ const DebitCard = ({
   moreList,
 }) => {
   const [showBalance, setShowBalance] = useState(true);
-  const [copyAccount, setCopyAccount] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -51,12 +50,6 @@ const DebitCard = ({
 
   const handleClickShowBalance = () => {
     setShowBalance(!showBalance);
-  };
-
-  const handleClickCopyAccount = () => {
-    setCopyAccount(true);
-    // 1.5 秒後將 copyAccount 的值重置
-    setTimeout(() => setCopyAccount(false), 1500);
   };
 
   const handleClickDownloadBankbook = () => {
@@ -88,24 +81,6 @@ const DebitCard = ({
     >
       {showBalance ? <Visibility /> : <VisibilityOff />}
     </FEIBIconButton>
-  );
-
-  // 渲染卡片帳號右側的 "複製" 圖標
-  const renderCopyIconButton = () => (
-    <div>
-      <CopyToClipboard
-        text={account}
-        onCopy={handleClickCopyAccount}
-      >
-        <FEIBIconButton
-          $iconColor={theme.colors.text.lightGray}
-          $fontSize={1.6}
-        >
-          <FileCopyOutlined />
-        </FEIBIconButton>
-      </CopyToClipboard>
-      <span className={`copiedMessage ${copyAccount && 'showMessage'}`}>已複製</span>
-    </div>
   );
 
   // 渲染卡片右上角的 "更多" 圖標
@@ -194,7 +169,7 @@ const DebitCard = ({
         <div className="accountInfo">
           { originalType() && <p className="branch">{branch}</p> }
           <p className="account">{account}</p>
-          { renderCopyIconButton() }
+          <CopyTextIconButton copyText={account} />
         </div>
       </div>
       <div className={`cardBalance ${originalType() && 'grow'}`}>

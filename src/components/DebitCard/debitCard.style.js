@@ -31,25 +31,8 @@ const DebitCardWrapper = styled.div`
         margin-left: -.4rem;
       }
       
-      .copiedMessage {
-        position: absolute;
-        top: 50%;
-        right: -112%;
-        padding: .2rem .4rem;
-        font-size: 1.2rem;
-        border-radius: .4rem;
-        background: ${({ theme }) => theme.colors.background.mask};
-        color: ${({ theme }) => theme.colors.basic.white};
-        transform: translateY(-50%);
-        transition: all .2s;
-        opacity: 0;
-        
-        &.showMessage {
-          opacity: 1;
-        }
-      }
-      
-      p {
+      .branch,
+      .account {
         font-size: 1.5rem;
         color: ${({ theme }) => theme.colors.text.lightGray};
       }
