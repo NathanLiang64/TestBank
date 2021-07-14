@@ -4021,5 +4021,10 @@
     "name": "Profile",
     "title": "個人化設定",
     "route": "/profile"
+  },
+  "more": {
+    "name": "More",
+    "title": "更多",
+    "route": "/more"
   }
 }
