@@ -46,6 +46,7 @@ const MoreWrapper = styled(Layout)`
         svg {
           margin: 0 auto .8rem;
         }
+
         span {
           text-align: center
         }
