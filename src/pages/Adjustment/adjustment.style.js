@@ -36,7 +36,7 @@ const AdjustmentWrapper = styled(Layout)`
   }
   .countDownCard {
     width: 100vw;
-    background: #F3F5FC;
+    background: ${({ theme }) => theme.colors.background.lighterBlue};
     padding: 1.2rem 1.6rem;
     transform: translateX(-1.6rem);
     margin-bottom: 2.4rem;

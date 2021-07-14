@@ -59,7 +59,7 @@ const CardLessATMWrapper = styled(Layout)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #F3F5FC;
+  background: ${({ theme }) => theme.colors.background.lighterBlue};
   border-radius: .8rem;
   svg {
     font-size: 5rem;
