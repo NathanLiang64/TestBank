@@ -13,7 +13,7 @@ import { RadioGroup } from '@material-ui/core';
 import { billPayApi } from 'apis';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { useHistory } from 'react-router';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 /* Styles */
 import theme from 'themes/theme';
@@ -55,6 +55,8 @@ const BillPay = () => {
     reValidateMode: 'onBlur',
   });
 
+  const billPayInitData = useSelector(({ billPay }) => billPay.initData);
+
   const history = useHistory();
   const dispatch = useDispatch();
   const [initData, saveInitData] = useState(null);
@@ -66,10 +68,15 @@ const BillPay = () => {
     const data = await init();
     saveInitData(data.initData);
     dispatch(setInitData(data.initData));
-    if (data.initData.feib) {
-      setValue('payType', 1);
-    } else { setValue('payType', 2); }
   }, []);
+
+  useEffect(() => {
+    if (billPayInitData.feib) {
+      setValue('payType', 1);
+    } else {
+      setValue('payType', 2);
+    }
+  }, [billPayInitData]);
 
   useEffect(() => {
     if (watch('payMoney') !== '3') {
@@ -90,6 +97,7 @@ const BillPay = () => {
   };
 
   const onSubmit = (data) => {
+    console.log(data);
     if (data.payMoney === 1) {
       data.payAmount = initData.ccToTrcvAmtd;
     }

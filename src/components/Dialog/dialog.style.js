@@ -5,7 +5,6 @@ const DialogWrapper = styled(MaterialDialog)`
   font-size: 1.5rem;
 
   .MuiPaper-root {
-    margin: 2.4rem;
     border-radius: .8rem;
     width: 100%;
   }

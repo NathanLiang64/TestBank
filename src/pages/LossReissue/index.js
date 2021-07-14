@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
@@ -14,7 +15,6 @@ import {
 } from 'components/elements';
 import e2ee from 'utilities/E2ee';
 import { passwordValidation } from 'utilities/validation';
-import LossReissue2 from './lossReissue_2';
 import LossReissueWrapper from './lossReissue.style';
 import {
   setActionText, setAccount, setCardState, setUserAddress, setIsResultSuccess,
@@ -37,52 +37,27 @@ const LossReissue = () => {
   const state = useSelector(({ lossReissue }) => lossReissue.state);
   const actionText = useSelector(({ lossReissue }) => lossReissue.actionText);
   const address = useSelector(({ lossReissue }) => lossReissue.address);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [showResultDialog, setShowResultDialog] = useState(false);
+  const [openConfirmDialog, setConfirmOpenDialog] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [password, setPassword] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  // eslint-disable-next-line no-unused-vars
-  const [showAlert, setShowAlert] = useState(false);
 
+  const { push } = useHistory();
   const dispatch = useDispatch();
   const { doGetInitData } = lossReissueApi;
 
-  useEffect(async () => {
-    const response = await doGetInitData('/api/lossReissue');
-    if (response.initData) {
-      const {
-      // fastLogin,
-        accountNo,
-        cardStatus,
-        userAddress,
-      } = response.initData;
-      dispatch(setAccount(accountNo));
-      dispatch(setCardState(cardStatus));
-      dispatch(setUserAddress(userAddress));
-    }
-  }, []);
-
-  const onSubmit = async (data) => {
+  const handleClickSubmitButton = async (data) => {
     data.password = await e2ee(data.password);
     setPassword(data.password);
-    setOpenDialog(true);
+    setConfirmOpenDialog(true);
   };
 
   // 點擊確定後顯示申請結果
   const handleClickMainButton = () => {
-    // 開啟顯示結果的彈窗
-    setShowResultDialog(true);
     // call api 決定顯示申請成功失敗結果
-    setShowAlert(true);
-    dispatch(setIsResultSuccess(true));
-  };
-
-  // 點擊結果彈窗內的確定按鈕後關閉彈窗
-  const handleClickResultMainButton = () => {
-    setShowResultDialog(false);
-    setShowAlert(false);
-    setOpenDialog(false);
+    dispatch(setIsResultSuccess(false));
+    // 導頁至結果頁
+    push('/lossReissue2');
   };
 
   /*
@@ -113,27 +88,16 @@ const LossReissue = () => {
     </div>
   );
 
-  const ConfirmDialog = () => (
+  const renderConfirmDialog = () => (
     <Dialog
-      isOpen={openDialog}
-      onClose={() => setOpenDialog(false)}
+      isOpen={openConfirmDialog}
+      onClose={() => setConfirmOpenDialog(false)}
       content={<DialogContent />}
       action={(
         <ConfirmButtons
           mainButtonOnClick={handleClickMainButton}
-          subButtonOnClick={() => setOpenDialog(false)}
+          subButtonOnClick={() => setConfirmOpenDialog(false)}
         />
-      )}
-    />
-  );
-
-  const ResultDialog = () => (
-    <Dialog
-      isOpen={openDialog}
-      onClose={() => setOpenDialog(false)}
-      content={<LossReissue2 />}
-      action={(
-        <FEIBButton onClick={handleClickResultMainButton}>確定</FEIBButton>
       )}
     />
   );
@@ -163,6 +127,21 @@ const LossReissue = () => {
   useCheckLocation();
   usePageInfo('/api/lossReissue');
 
+  useEffect(async () => {
+    const response = await doGetInitData('/api/lossReissue');
+    if (response.initData) {
+      const {
+        // fastLogin,
+        accountNo,
+        cardStatus,
+        userAddress,
+      } = response.initData;
+      dispatch(setAccount(accountNo));
+      dispatch(setCardState(cardStatus));
+      dispatch(setUserAddress(userAddress));
+    }
+  }, []);
+
   useEffect(() => {
     const userPassword = watch('password');
     if (userPassword.length >= 1) {
@@ -186,7 +165,7 @@ const LossReissue = () => {
         <FEIBErrorMessage />
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(handleClickSubmitButton)}>
         { checkCardState(state) && renderPasswordInput() }
         <Accordion space={checkCardState(state) && 'top'} open>
           <ol>
@@ -198,8 +177,7 @@ const LossReissue = () => {
         </Accordion>
         { checkCardState(state) && renderButton(state) }
       </form>
-      { showResultDialog ? <ResultDialog /> : <ConfirmDialog /> }
-
+      { openConfirmDialog && renderConfirmDialog() }
     </LossReissueWrapper>
   );
 };

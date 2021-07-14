@@ -1,5 +1,6 @@
 const theme = {
-  font: '-apple-system, "Mulish", "Noto Sans TC", "Microsoft JhengHei", "微軟正黑體", sans-serif',
+  // font: '-apple-system, "Mulish", "Noto Sans TC", "Microsoft JhengHei", "微軟正黑體", sans-serif',
+  font: '-apple-system, "Roboto", "Noto Sans TC", sans-serif',
   colors: {
     primary: {
       brand: '#825DC7',
@@ -43,6 +44,7 @@ const theme = {
     state: {
       success: '#46D4A7',
       danger: '#FF5F5F',
+      error: '#DA4949',
     },
     card: {
       purple: '#D8CAFB',
