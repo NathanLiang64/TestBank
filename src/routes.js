@@ -44,6 +44,7 @@ import Transfer from 'pages/Transfer';
 import Profile from 'pages/Profile';
 import More from 'pages/More';
 import FinancialDepartments from 'pages/FinancialDepartments';
+import Network from 'pages/Network';
 
 /* 開發用目錄頁 */
 import Nav from 'pages/Nav';
@@ -95,6 +96,7 @@ const routes = [
   { path: '/profile', exact: false, component: Profile },
   { path: '/more', exact: false, component: More },
   { path: '/financialDepartments', exact: false, component: FinancialDepartments },
+  { path: '/network', exact: false, component: Network },
 ];
 
 export default routes;
