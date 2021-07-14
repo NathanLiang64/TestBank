@@ -7,6 +7,7 @@ import CardLessATM2 from 'pages/CardLessATM/cardLessATM_2';
 import CardLessATM3 from 'pages/CardLessATM/cardLessATM_3';
 import CardLessWithDrawChgPwd from 'pages/CardLessATM/cardLessWithDrawChgPwd';
 import LossReissue from 'pages/LossReissue';
+import LossReissue2 from 'pages/LossReissue/lossReissue_2';
 import AccountMaintenance from 'pages/AccountMaintenance';
 import BillPay from 'pages/BillPay';
 import BillPay1 from 'pages/BillPay/billPay_1';
@@ -44,6 +45,7 @@ import Transfer from 'pages/Transfer';
 import Profile from 'pages/Profile';
 import More from 'pages/More';
 import FinancialDepartments from 'pages/FinancialDepartments';
+import Network from 'pages/Network';
 
 /* 開發用目錄頁 */
 import Nav from 'pages/Nav';
@@ -58,6 +60,7 @@ const routes = [
   { path: '/cardLessATM3', exact: false, component: CardLessATM3 },
   { path: '/cardLessWithDrawChgPwd', exact: false, component: CardLessWithDrawChgPwd },
   { path: '/lossReissue', exact: false, component: LossReissue },
+  { path: '/lossReissue2', exact: false, component: LossReissue2 },
   { path: '/accountMaintenance', exact: false, component: AccountMaintenance },
   { path: '/billPay', exact: true, component: BillPay },
   { path: '/billPay1', exact: false, component: BillPay1 },
@@ -95,6 +98,7 @@ const routes = [
   { path: '/profile', exact: false, component: Profile },
   { path: '/more', exact: false, component: More },
   { path: '/financialDepartments', exact: false, component: FinancialDepartments },
+  { path: '/network', exact: false, component: Network },
 ];
 
 export default routes;

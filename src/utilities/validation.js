@@ -240,7 +240,7 @@ const billPayBankCodeValidation = {
     .when('payType', {
       is: 2,
       then: yup.string().required(errorMessage.bankCodeRequired),
-      // then: yup.string().test('otherBankCode-notspace', errorMessage.bankCodeRequired, (value) => value !== ' '),
+      // then: yup.string().test('otherBankCode-notspace', errorMessage.bankCodeRequired, (value) => value !== ''),
     }),
 };
 

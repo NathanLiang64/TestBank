@@ -7,7 +7,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 /* Elements */
 import {
-  // eslint-disable-next-line no-unused-vars
   FEIBInput, FEIBInputLabel, FEIBButton, FEIBErrorMessage,
 } from 'components/elements';
 import Dialog from 'components/Dialog';
@@ -34,7 +33,6 @@ const Profile = () => {
   });
   const history = useHistory();
 
-  // eslint-disable-next-line no-unused-vars
   const [userName, setUserName] = useState('Joyce Hong');
   const [showChangeUserNameDialog, setShowChangeUserNameDialog] = useState(false);
 
