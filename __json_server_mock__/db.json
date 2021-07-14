@@ -4026,5 +4026,10 @@
     "name": "More",
     "title": "更多",
     "route": "/more"
+  },
+  "financialDepartments": {
+    "name": "FinancialDepartments",
+    "title": "金融百貨",
+    "route": "/financialDepartments"
   }
 }
