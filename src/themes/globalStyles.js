@@ -158,6 +158,14 @@ const GlobalStyles = createGlobalStyle`
     }
   }
   
+  .MuiPickersModal-dialogRoot {
+    border: .8rem;
+  }
+  
+  .MuiPickersCalendarHeader-switchHeader {
+    
+  }
+  
   .textColorPrimary {
     color: ${({ theme }) => theme.colors.primary.dark} !important;
   }

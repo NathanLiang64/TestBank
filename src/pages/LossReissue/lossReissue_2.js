@@ -1,6 +1,8 @@
+import { useHistory } from 'react-router';
 import { useSelector } from 'react-redux';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import InformationList from 'components/InformationList';
+import { FEIBButton } from 'components/elements';
 import SuccessImage from 'assets/images/stateSuccess.svg';
 import ErrorImage from 'assets/images/stateError.svg';
 import { LossReissueResultWrapper } from './lossReissue.style';
@@ -9,6 +11,7 @@ const LossReissue2 = () => {
   const state = useSelector(({ lossReissue }) => lossReissue.state);
   const actionText = useSelector(({ lossReissue }) => lossReissue.actionText);
   const isResultSuccess = useSelector(({ lossReissue }) => lossReissue.isResultSuccess);
+  const { push } = useHistory();
 
   const renderSuccessResult = () => (
     <>
@@ -46,6 +49,7 @@ const LossReissue2 = () => {
         }
       </div>
       { isResultSuccess ? renderSuccessResult() : renderFailResult() }
+      <FEIBButton onClick={() => push('/')}>確認</FEIBButton>
     </LossReissueResultWrapper>
   );
 };

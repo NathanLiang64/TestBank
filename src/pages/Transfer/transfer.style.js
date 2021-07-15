@@ -95,6 +95,49 @@ const TransferWrapper = styled(Layout)`
       }
     }
   }
+  
+  .reserveOption {
+    .datePickerLabel {
+      margin-top: 1.8rem;
+      margin-bottom: 1.8rem;
+      top: 1.8rem;
+    }
+    
+    .MuiFormControl-root {
+      width: 100%;
+    }
+    
+    .MuiInputLabel-root {
+      color: transparent;
+    }
+    
+    .MuiInputBase-input {
+      font-size: 1.6rem;
+    }
+
+    .MuiFormControl-marginNormal {
+      width: 100%;
+    }
+    
+    .MuiInput-underline {
+      opacity: 1;
+      
+      &:before,
+      &:hover:not(.Mui-disabled):before {
+        border-color: ${({ theme, $borderColor }) => $borderColor || theme.colors.border.light};
+        opacity: 1;
+      }
+      &:after {
+        border-width: .1rem;
+        border-color: ${({ theme, $borderColor, $focusBorderColor }) => $focusBorderColor || $borderColor || theme.colors.border.light};
+      }
+
+      &.Mui-error:after {
+        border-width: .1rem;
+        border-color: ${({ theme }) => theme.colors.state.danger};
+      }
+    }
+  }
 `;
 
 export default TransferWrapper;

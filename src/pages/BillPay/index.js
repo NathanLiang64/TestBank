@@ -85,7 +85,7 @@ const BillPay = () => {
     }
   }, [watch('payMoney')]);
 
-  const moneyreplace = () => {
+  const moneyReplace = () => {
     const payAmount = watch('payAmount');
     if (payAmount !== '0') {
       setValue('payAmount', payAmount.replace(/\b(0+)/gi, ''));
@@ -97,7 +97,6 @@ const BillPay = () => {
   };
 
   const onSubmit = (data) => {
-    console.log(data);
     if (data.payMoney === 1) {
       data.payAmount = initData.ccToTrcvAmtd;
     }
@@ -179,7 +178,7 @@ const BillPay = () => {
               type="text"
               startAdornment="$"
               error={!!errors.payAmount}
-              onBlur={() => moneyreplace()}
+              onBlur={moneyReplace}
             />
           )}
         />
