@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -11,10 +11,11 @@ import DebitCard from 'components/DebitCard';
 import Accordion from 'components/Accordion';
 import BankCodeInput from 'components/BankCodeInput';
 import MemberAccountCard from 'components/MemberAccountCard';
+import DatePickerProvider from 'components/DatePickerProvider';
 import {
   FEIBTabContext, FEIBTabList, FEIBTab, FEIBTabPanel,
-  FEIBInputLabel, FEIBInput, FEIBErrorMessage,
-  FEIBRadioLabel, FEIBRadio, FEIBButton,
+  FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBDatePicker,
+  FEIBRadioLabel, FEIBRadio, FEIBButton, FEIBSelect, FEIBOption,
 } from 'components/elements';
 import { numberToChinese } from 'utilities/Generator';
 import { bankCodeValidation, receivingAccountValidation } from 'utilities/validation';
@@ -33,13 +34,15 @@ const Transfer = () => {
       .test('test', '金額不可為 0', (value) => !(parseInt(value, 10) <= 0)),
   });
   const {
-    control, handleSubmit, formState: { errors }, setValue, trigger,
+    control, handleSubmit, formState: { errors }, setValue, trigger, watch,
   } = useForm({
     resolver: yupResolver(schema),
   });
 
   const [tabId, setTabId] = useState('transfer');
   const [amount, setAmount] = useState({ number: '', chinese: '' });
+  const [showReserveOption, setShowReserveOption] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const cardInfo = useSelector(({ depositOverview }) => depositOverview.cardInfo);
 
   const handleChangeTabList = (event, id) => {
@@ -178,8 +181,48 @@ const Transfer = () => {
     </>
   );
 
+  const renderReserveOption = () => (
+    <div className="reserveOption">
+      <FEIBInputLabel htmlFor="transactionNumber">交易次數</FEIBInputLabel>
+      <Controller
+        name="transactionNumber"
+        control={control}
+        defaultValue="once"
+        render={({ field }) => (
+          <FEIBSelect
+            {...field}
+            id="transactionNumber"
+            name="transactionNumber"
+          >
+            <FEIBOption value="once">一次</FEIBOption>
+            <FEIBOption value="many">多次</FEIBOption>
+          </FEIBSelect>
+        )}
+      />
+      <FEIBInputLabel className="datePickerLabel">交易時間</FEIBInputLabel>
+      <DatePickerProvider>
+        <FEIBDatePicker
+          label="交易時間"
+          format="MM/dd/yyyy"
+          value={selectedDate}
+          disablePast
+          onChange={(date) => setSelectedDate(date)}
+        />
+      </DatePickerProvider>
+      <FEIBErrorMessage>{errors.transactionNumber?.message}</FEIBErrorMessage>
+    </div>
+  );
+
   useCheckLocation();
   usePageInfo('/api/transfer');
+
+  useEffect(() => {
+    if (watch('transferType') === 'reserve') {
+      setShowReserveOption(true);
+    } else {
+      setShowReserveOption(false);
+    }
+  }, [watch('transferType')]);
 
   return (
     <TransferWrapper>
@@ -236,26 +279,37 @@ const Transfer = () => {
             <p className="notice">單筆/當日/當月非約定轉帳剩餘額度: 10,000/20,000/40,000</p>
             <div className="transferType">
               <FEIBInputLabel>轉帳類型</FEIBInputLabel>
-              <RadioGroup
-                row
-                aria-label="轉帳類型"
-                id="transferType"
+              <Controller
                 name="transferType"
+                control={control}
                 defaultValue="now"
-              >
-                <FEIBRadioLabel value="now" className="customWidth" control={<FEIBRadio />} label="立即" />
-                <FEIBRadioLabel value="reserve" control={<FEIBRadio />} label="預約" />
-              </RadioGroup>
+                render={({ field }) => (
+                  <RadioGroup
+                    {...field}
+                    row
+                    aria-label="轉帳類型"
+                    id="transferType"
+                    name="transferType"
+                    defaultValue="now"
+                  >
+                    <FEIBRadioLabel value="now" className="customWidth" control={<FEIBRadio />} label="立即" />
+                    <FEIBRadioLabel value="reserve" control={<FEIBRadio />} label="預約" />
+                  </RadioGroup>
+                )}
+              />
             </div>
+            { showReserveOption && renderReserveOption() }
             <div>
               <FEIBInputLabel>備註</FEIBInputLabel>
-              <FEIBInput type="text" placeholder="請輸入" />
-              <FEIBErrorMessage>錯誤訊息</FEIBErrorMessage>
-            </div>
-            <div>
-              <FEIBInputLabel>通知 Email</FEIBInputLabel>
-              <FEIBInput type="text" placeholder="請輸入" />
-              <FEIBErrorMessage>Email 錯誤訊息</FEIBErrorMessage>
+              <Controller
+                name="remark"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <FEIBInput {...field} type="text" placeholder="請輸入" />
+                )}
+              />
+              <FEIBErrorMessage />
             </div>
             <Accordion space="both">
               <ul>

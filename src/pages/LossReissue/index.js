@@ -55,7 +55,7 @@ const LossReissue = () => {
   // 點擊確定後顯示申請結果
   const handleClickMainButton = () => {
     // call api 決定顯示申請成功失敗結果
-    dispatch(setIsResultSuccess(false));
+    dispatch(setIsResultSuccess(true));
     // 導頁至結果頁
     push('/lossReissue2');
   };

@@ -5,14 +5,12 @@ import theme from 'themes/theme';
 
 const FEIBDatePicker = styled(MaterialDatePicker).attrs({
   invalidDateMessage: '日期格式錯誤',
-  disableFuture: true,
   format: 'yyyy/MM/dd',
   okLabel: '確定',
   cancelLabel: '取消',
   keyboardIcon: <TodayIcon style={{ color: theme.colors.primary.dark }} fontSize="large" />,
 })`
   .MuiInputBase-root {
-    font-size: 1.4rem;
     margin-top: .4rem;
     // margin-bottom: ${({ $bottomSpace }) => ($bottomSpace === false && '0') || '2rem'};
     font-size: ${({ $fontSize }) => ($fontSize && `${$fontSize}rem`) || '1.4rem'};
@@ -30,6 +28,10 @@ const FEIBDatePicker = styled(MaterialDatePicker).attrs({
     .MuiIconButton-root {
       padding: 0;
     }
+  }
+  
+  .MuiPickersToolbar-toolbar {
+    background: red !important;
   }
 `;
 

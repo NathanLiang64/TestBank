@@ -48,7 +48,7 @@ const LossReissueResultWrapper = styled(Layout)`
   }
 
   .accountArea {
-    margin: 2.4rem 1.6rem;
+    margin: 2.4rem 1.6rem 3.2rem 1.6rem;
     text-align: center;
 
     .bank,
