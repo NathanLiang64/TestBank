@@ -31,15 +31,31 @@ const materialTheme = createMuiTheme({
     },
     MuiPickersDay: {
       daySelected: {
-        backgroundColor: theme.colors.primary.brand,
+        backgroundColor: theme.colors.primary.light,
         '&:hover': {
-          backgroundColor: theme.colors.primary.brand,
+          backgroundColor: theme.colors.primary.light,
         },
       },
     },
     MuiButton: {
       textPrimary: {
         color: theme.colors.primary.brand,
+        fontSize: '1.4rem',
+      },
+    },
+    MuiTypography: {
+      body1: {
+        fontSize: '1.4rem',
+        color: '#3e484f',
+      },
+      body2: {
+        fontSize: '1.2rem',
+      },
+      caption: {
+        fontSize: '1.4rem',
+      },
+      subtitle1: {
+        fontSize: '1.4rem',
       },
     },
   },

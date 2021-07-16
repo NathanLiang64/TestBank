@@ -53,6 +53,7 @@ const BankCodeInput = ({
             $iconOnClick={() => setOpenBankCodeList(true)}
             readOnly
             error={!!errorMessage}
+            onClick={() => setOpenBankCodeList(true)}
           />
         )}
       />
