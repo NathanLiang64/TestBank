@@ -42,6 +42,7 @@ const Transfer = () => {
   const [tabId, setTabId] = useState('transfer');
   const [amount, setAmount] = useState({ number: '', chinese: '' });
   const [showReserveOption, setShowReserveOption] = useState(false);
+  const [showReserveMoreOption, setShowReserveMoreOption] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const cardInfo = useSelector(({ depositOverview }) => depositOverview.cardInfo);
 
@@ -63,7 +64,7 @@ const Transfer = () => {
 
   // eslint-disable-next-line no-unused-vars
   const handleClickTransferButton = (data) => {
-    // console.log(data);
+    console.log(data);
   };
 
   const renderDebitCard = (info) => {
@@ -181,6 +182,50 @@ const Transfer = () => {
     </>
   );
 
+  const renderReserveMoreOption = () => (
+    <div className="reserveMoreOption">
+      <div>
+        <FEIBInputLabel htmlFor="transactionFrequency">交易頻率</FEIBInputLabel>
+        <Controller
+          name="transactionFrequency"
+          control={control}
+          defaultValue="weekly"
+          render={({ field }) => (
+            <FEIBSelect
+              {...field}
+              id="transactionFrequency"
+              name="transactionFrequency"
+            >
+              <FEIBOption value="weekly">每周</FEIBOption>
+              <FEIBOption value="monthly">每月</FEIBOption>
+            </FEIBSelect>
+          )}
+        />
+        <FEIBErrorMessage />
+      </div>
+      <div>
+        <FEIBInputLabel htmlFor="transactionCycle">交易週期</FEIBInputLabel>
+        <Controller
+          name="transactionCycle"
+          control={control}
+          defaultValue="1"
+          render={({ field }) => (
+            <FEIBSelect
+              {...field}
+              id="transactionCycle"
+              name="transactionCycle"
+            >
+              <FEIBOption value="1">1</FEIBOption>
+              <FEIBOption value="2">2</FEIBOption>
+              <FEIBOption value="3">3</FEIBOption>
+            </FEIBSelect>
+          )}
+        />
+        <FEIBErrorMessage />
+      </div>
+    </div>
+  );
+
   const renderReserveOption = () => (
     <div className="reserveOption">
       <FEIBInputLabel htmlFor="transactionNumber">交易次數</FEIBInputLabel>
@@ -200,16 +245,30 @@ const Transfer = () => {
         )}
       />
       <FEIBInputLabel className="datePickerLabel">交易時間</FEIBInputLabel>
-      <DatePickerProvider>
-        <FEIBDatePicker
-          label="交易時間"
-          format="MM/dd/yyyy"
-          value={selectedDate}
-          disablePast
-          onChange={(date) => setSelectedDate(date)}
-        />
-      </DatePickerProvider>
-      <FEIBErrorMessage>{errors.transactionNumber?.message}</FEIBErrorMessage>
+      <Controller
+        name="transactionDate"
+        control={control}
+        defaultValue={selectedDate}
+        render={({ field }) => (
+          <DatePickerProvider>
+            <FEIBDatePicker
+              {...field}
+              id="transactionDate"
+              name="transactionDate"
+              label="交易時間"
+              format="MM/dd/yyyy"
+              value={selectedDate}
+              disablePast
+              onChange={(date) => {
+                setValue('transactionDate', date);
+                setSelectedDate(date);
+              }}
+            />
+          </DatePickerProvider>
+        )}
+      />
+      <FEIBErrorMessage>{errors.transactionDate?.message}</FEIBErrorMessage>
+      { showReserveMoreOption && renderReserveMoreOption() }
     </div>
   );
 
@@ -223,6 +282,14 @@ const Transfer = () => {
       setShowReserveOption(false);
     }
   }, [watch('transferType')]);
+
+  useEffect(() => {
+    if (watch('transactionNumber') === 'many') {
+      setShowReserveMoreOption(true);
+    } else {
+      setShowReserveMoreOption(false);
+    }
+  }, [watch('transactionNumber')]);
 
   return (
     <TransferWrapper>
