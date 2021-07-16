@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
@@ -13,14 +13,13 @@ import {
   FEIBButton,
   FEIBErrorMessage,
 } from 'components/elements';
-import Dialog from 'components/Dialog';
-import Alert from 'components/Alert';
 import PasswordInput from 'components/PasswordInput';
 import { passwordValidation } from 'utilities/validation';
 /* Styles */
 import BasicInformationWrapper from './basicInformation.style';
 
 const BasicInformation = () => {
+  const history = useHistory();
   /**
    *- 資料驗證
    */
@@ -50,32 +49,10 @@ const BasicInformation = () => {
     resolver: yupResolver(schema),
   });
 
-  const [showResultDialog, setShowResultDialog] = useState(false);
-
-  const ResultDialog = () => (
-    <Dialog
-      isOpen={showResultDialog}
-      onClose={() => setShowResultDialog(false)}
-      content={(
-        <>
-          <Alert state="success">變更成功</Alert>
-          <p>
-            您已成功變更基本資料！
-          </p>
-        </>
-      )}
-      action={(
-        <FEIBButton onClick={() => setShowResultDialog(false)}>
-          確定
-        </FEIBButton>
-      )}
-    />
-  );
-
   const onSubmit = (data) => {
     // eslint-disable-next-line no-console
     console.log(data);
-    setShowResultDialog(true);
+    history.push('/basicInformation1');
   };
 
   useCheckLocation();
@@ -193,7 +170,6 @@ const BasicInformation = () => {
           儲存變更
         </FEIBButton>
       </form>
-      <ResultDialog />
     </BasicInformationWrapper>
   );
 };

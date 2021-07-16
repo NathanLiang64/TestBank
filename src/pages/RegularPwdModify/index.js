@@ -1,5 +1,5 @@
 import { useState } from 'react';
-// import { useHistory } from 'react-router';
+import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
@@ -7,13 +7,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { goToFunc } from 'utilities/BankeePlus';
 
 /* Elements */
-import {
-  FEIBButton,
-} from 'components/elements';
 import PasswordInput from 'components/PasswordInput';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
-import Alert from 'components/Alert';
 import InfoArea from 'components/InfoArea';
 import { passwordValidation } from 'utilities/validation';
 import e2ee from 'utilities/E2ee';
@@ -23,6 +19,7 @@ import e2ee from 'utilities/E2ee';
 import RegularPwdModifyWrapper from './regularPwdModify.style';
 
 const RegularPwdModify = () => {
+  const history = useHistory();
   /**
    *- 資料驗證
    */
@@ -46,7 +43,6 @@ const RegularPwdModify = () => {
     newPasswordCheck: '',
   });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [showResultDialog, setShowResultDialog] = useState(false);
   const [showWarningDialog, setShowWarningDialog] = useState(false);
 
   // const handleFormChange = ({ target }) => {
@@ -57,16 +53,11 @@ const RegularPwdModify = () => {
 
   const handlePasswordModify = () => {
     setShowConfirmDialog(false);
-    setShowResultDialog(true);
+    history.push('/regularPwdModify1');
   };
 
   const handleWarnConfirm = () => {
     setShowWarningDialog(false);
-    goToFunc('home');
-  };
-
-  const handleResultButton = () => {
-    setShowResultDialog(false);
     goToFunc('home');
   };
 
@@ -75,8 +66,6 @@ const RegularPwdModify = () => {
     data.newPassword = await e2ee(data.newPassword);
     setForm({ ...data });
     setShowConfirmDialog(true);
-    // setpassword(data.password);
-    // setOpenDialog(true);
   };
 
   const WarningDialog = () => (
@@ -108,29 +97,6 @@ const RegularPwdModify = () => {
           mainButtonOnClick={handlePasswordModify}
           subButtonOnClick={() => setShowConfirmDialog(false)}
         />
-      )}
-    />
-  );
-
-  const ResultDialog = () => (
-    <Dialog
-      isOpen={showResultDialog}
-      onClose={() => setShowResultDialog(false)}
-      content={(
-        <>
-          <Alert state="success">變更成功</Alert>
-          <p>
-            您的網銀密碼已變更成功囉！
-          </p>
-          <p>
-            下次請使用新設定之密碼進行登入，謝謝。
-          </p>
-        </>
-      )}
-      action={(
-        <FEIBButton onClick={handleResultButton}>
-          確定
-        </FEIBButton>
       )}
     />
   );
@@ -176,7 +142,6 @@ const RegularPwdModify = () => {
       </form>
       <WarningDialog />
       <ConfirmDialog />
-      <ResultDialog />
     </RegularPwdModifyWrapper>
   );
 };
