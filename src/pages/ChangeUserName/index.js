@@ -1,5 +1,5 @@
 import { useState } from 'react';
-// import { useHistory } from 'react-router';
+import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
@@ -12,7 +12,6 @@ import {
 import PasswordInput from 'components/PasswordInput';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
-import Alert from 'components/Alert';
 import { passwordValidation } from 'utilities/validation';
 
 /* Styles */
@@ -20,6 +19,7 @@ import { passwordValidation } from 'utilities/validation';
 import ChangeUserNameWrapper from './changeUserName.style';
 
 const ChangeUserName = () => {
+  const history = useHistory();
   /**
    *- 資料驗證
    */
@@ -50,7 +50,6 @@ const ChangeUserName = () => {
 
   // const history = useHistory();
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [showResultDialog, setShowResultDialog] = useState(false);
   const [form, setForm] = useState({
     userName: '',
     newUserName: '',
@@ -58,19 +57,9 @@ const ChangeUserName = () => {
     password: '',
   });
 
-  // const handleFormChange = ({ target }) => {
-  //   const formObject = { ...form };
-  //   formObject[target.name] = target.value;
-  //   setForm({ ...formObject });
-  // };
-
   const handleChangeUserName = () => {
     setShowConfirmDialog(false);
-    setShowResultDialog(true);
-  };
-
-  const handleResultButton = () => {
-    setShowResultDialog(false);
+    history.push('/changeUserName1');
   };
 
   const onSubmit = (data) => {
@@ -88,26 +77,6 @@ const ChangeUserName = () => {
           mainButtonOnClick={handleChangeUserName}
           subButtonOnClick={() => setShowConfirmDialog(false)}
         />
-      )}
-    />
-  );
-
-  const ResultDialog = () => (
-    <Dialog
-      isOpen={showResultDialog}
-      onClose={() => setShowResultDialog(false)}
-      content={(
-        <>
-          <Alert state="success">變更成功</Alert>
-          <p>
-            您的使用者代號已變更成功囉！
-          </p>
-        </>
-      )}
-      action={(
-        <FEIBButton onClick={handleResultButton}>
-          確定
-        </FEIBButton>
       )}
     />
   );
@@ -183,7 +152,6 @@ const ChangeUserName = () => {
         </FEIBButton>
       </form>
       <ConfirmDialog />
-      <ResultDialog />
     </ChangeUserNameWrapper>
   );
 };

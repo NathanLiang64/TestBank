@@ -22,8 +22,11 @@ import Notice from 'pages/Notice';
 import Notice1 from 'pages/Notice/notice_1';
 import FingerPrintLockSetting from 'pages/FingerPrintLockSetting';
 import ChangeUserName from 'pages/ChangeUserName';
+import ChangeUserName1 from 'pages/ChangeUserName/changeUserName_1';
 import PwdModify from 'pages/PwdModify';
+import PwdModify1 from 'pages/PwdModify/pwdModify_1';
 import RegularPwdModify from 'pages/RegularPwdModify';
+import RegularPwdModify1 from 'pages/RegularPwdModify/regularPwdModify_1';
 import SMSOTPactivate from 'pages/SMSOTPactivate';
 import QRCodeTransfer from 'pages/QRCodeTransfer';
 import Adjustment from 'pages/Adjustment';
@@ -32,6 +35,7 @@ import ProjectJ from 'pages/ProjectJ';
 import LoanInquiry from 'pages/LoanInquiry';
 import LoanInterest from 'pages/LoanInterest';
 import BasicInformation from 'pages/BasicInformation';
+import BasicInformation1 from 'pages//BasicInformation/basicInformation_1';
 import QandA from 'pages/QandA';
 import Open from 'pages/Open';
 import Deduct from 'pages/Deduct';
@@ -75,8 +79,11 @@ const routes = [
   { path: '/notice1', exact: false, component: Notice1 },
   { path: '/fingerPrintLockSetting', exact: false, component: FingerPrintLockSetting },
   { path: '/changeUserName', exact: false, component: ChangeUserName },
+  { path: '/changeUserName1', exact: false, component: ChangeUserName1 },
   { path: '/pwdModify', exact: false, component: PwdModify },
+  { path: '/pwdModify1', exact: false, component: PwdModify1 },
   { path: '/regularPwdModify', exact: false, component: RegularPwdModify },
+  { path: '/regularPwdModify1', exact: false, component: RegularPwdModify1 },
   { path: '/smsOTPactivate', exact: false, component: SMSOTPactivate },
   { path: '/QRCodeTransfer', exact: false, component: QRCodeTransfer },
   { path: '/adjustment', exact: false, component: Adjustment },
@@ -85,6 +92,7 @@ const routes = [
   { path: '/loanInquiry', exact: false, component: LoanInquiry },
   { path: '/loanInterest', exact: false, component: LoanInterest },
   { path: '/basicInformation', exact: false, component: BasicInformation },
+  { path: '/basicInformation1', exact: false, component: BasicInformation1 },
   { path: '/qAndA', exact: false, component: QandA },
   { path: '/open', exact: false, component: Open },
   { path: '/deduct', exact: false, component: Deduct },
