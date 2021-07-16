@@ -13,6 +13,7 @@ import {
   FEIBErrorMessage,
 } from 'components/elements';
 import Accordion from 'components/Accordion';
+import InformationList from 'components/InformationList';
 
 /* Styles */
 // import theme from 'themes/theme';
@@ -43,58 +44,20 @@ const LoanInquiry = () => {
   };
 
   const ResultTable = () => (
-    <table className="resultTable">
-      <tbody>
-        <tr>
-          <td>貸款種類</td>
-          <td>房貸</td>
-        </tr>
-        <tr>
-          <td>貸款分號</td>
-          <td>0000000001</td>
-        </tr>
-        <tr>
-          <td>計息本金</td>
-          <td>$1,272,963</td>
-        </tr>
-        <tr>
-          <td>計息期間</td>
-          <td>110/03/18 ~ 110/04/18</td>
-        </tr>
-        <tr>
-          <td>利率％</td>
-          <td>1.05000</td>
-        </tr>
-        <tr>
-          <td>攤還本金</td>
-          <td>$14,089</td>
-        </tr>
-        <tr>
-          <td>利息</td>
-          <td>$1,114</td>
-        </tr>
-        <tr>
-          <td>逾期息</td>
-          <td>$0</td>
-        </tr>
-        <tr>
-          <td>違約金</td>
-          <td>$0</td>
-        </tr>
-        <tr>
-          <td>應繳金額合計</td>
-          <td>$15,203</td>
-        </tr>
-        <tr>
-          <td>應繳款日</td>
-          <td>110/04/18</td>
-        </tr>
-        <tr>
-          <td>應繳本息</td>
-          <td>$15,203</td>
-        </tr>
-      </tbody>
-    </table>
+    <>
+      <InformationList title="貸款種類" content="房貸" />
+      <InformationList title="貸款分號" content="0000000001" />
+      <InformationList title="計息本金" content="$1,272,963" />
+      <InformationList title="計息期間" content="110/03/18 ~ 110/04/18" />
+      <InformationList title="利率％" content="1.05000" />
+      <InformationList title="攤還本金" content="$14,089" />
+      <InformationList title="利息" content="$1,114" />
+      <InformationList title="逾期息" content="$0" />
+      <InformationList title="違約金" content="$0" />
+      <InformationList title="應繳金額合計" content="$15,203" />
+      <InformationList title="應繳款日" content="110/04/18" />
+      <InformationList title="應繳本息" content="$15,203" />
+    </>
   );
 
   useCheckLocation();

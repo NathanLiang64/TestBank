@@ -14,6 +14,7 @@ import {
 } from 'components/elements';
 import InfoArea from 'components/InfoArea';
 import DateRangePicker from 'components/DateRangePicker';
+import InformationList from 'components/InformationList';
 
 /* Styles */
 // import theme from 'themes/theme';
@@ -52,46 +53,17 @@ const LoanInterest = () => {
   };
 
   const ResultTable = () => (
-    <table className="resultTable">
-      <tbody>
-        <tr>
-          <td>交易日</td>
-          <td>110/03/18</td>
-        </tr>
-        <tr>
-          <td>交易種類</td>
-          <td>還本付息</td>
-        </tr>
-        <tr>
-          <td>攤還本金</td>
-          <td>$14,077</td>
-        </tr>
-        <tr>
-          <td>利息</td>
-          <td>$1,126</td>
-        </tr>
-        <tr>
-          <td>逾期息</td>
-          <td>$0</td>
-        </tr>
-        <tr>
-          <td>違約金</td>
-          <td>$0</td>
-        </tr>
-        <tr>
-          <td>利率</td>
-          <td>1.050%</td>
-        </tr>
-        <tr>
-          <td>應繳金額</td>
-          <td>$15,203</td>
-        </tr>
-        <tr>
-          <td>本金金額</td>
-          <td>$1,272,963</td>
-        </tr>
-      </tbody>
-    </table>
+    <>
+      <InformationList title="交易日" content="110/03/18" />
+      <InformationList title="交易種類" content="還本付息" />
+      <InformationList title="攤還本金" content="$14,077" />
+      <InformationList title="利息" content="$1,126" />
+      <InformationList title="逾期息" content="$0" />
+      <InformationList title="違約金" content="$0" />
+      <InformationList title="利率" content="1.050%" />
+      <InformationList title="應繳金額" content="$15,203" />
+      <InformationList title="本金金額" content="$1,272,963" />
+    </>
   );
 
   useCheckLocation();
@@ -152,7 +124,7 @@ const LoanInterest = () => {
         <div className="datePickerContainer">
           <DateRangePicker date={[startDate, endDate]} label="繳息期間" onClick={handleClickDateRangePicker} />
         </div>
-        <InfoArea>*可查詢三年內繳款紀錄，查詢區間最多一年</InfoArea>
+        <InfoArea>可查詢三年內繳款紀錄，查詢區間最多一年</InfoArea>
         <FEIBButton
           type="submit"
         >

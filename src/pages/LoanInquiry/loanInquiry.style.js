@@ -11,6 +11,10 @@ const LoanInquiryWrapper = styled(Layout)`
   li {
     list-style-type: decimal
   }
+
+  form {
+    margin-bottom: 1rem;
+  }
 `;
 
 export default LoanInquiryWrapper;

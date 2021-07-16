@@ -24,8 +24,8 @@ const LoanInterestWrapper = styled(Layout)`
     margin-bottom: 2rem;
     text-align: left;
   }
-  .resultTable {
-    margin-top: 2.4rem;
+  form {
+    margin-bottom: 1rem;
   }
 `;
 
