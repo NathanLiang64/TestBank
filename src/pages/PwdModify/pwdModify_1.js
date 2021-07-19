@@ -13,7 +13,7 @@ import PwdModifyWrapper from './pwdModify.style';
 
 const PwdModify1 = () => {
   const history = useHistory();
-  const isSuccess = false;
+  const isSuccess = true;
 
   const toProfile = () => {
     history.push('/profile');
