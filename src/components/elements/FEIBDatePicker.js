@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import TodayIcon from '@material-ui/icons/Today';
+import { EventNoteRounded } from '@material-ui/icons';
 import { KeyboardDatePicker as MaterialDatePicker } from '@material-ui/pickers';
 import theme from 'themes/theme';
 
@@ -8,13 +8,14 @@ const FEIBDatePicker = styled(MaterialDatePicker).attrs({
   format: 'yyyy/MM/dd',
   okLabel: '確定',
   cancelLabel: '取消',
-  keyboardIcon: <TodayIcon style={{ color: theme.colors.primary.dark }} fontSize="large" />,
+  keyboardIcon: <EventNoteRounded style={{ color: theme.colors.primary.light }} />,
 })`
   .MuiInputBase-root {
     margin-top: .4rem;
     // margin-bottom: ${({ $bottomSpace }) => ($bottomSpace === false && '0') || '2rem'};
     font-size: ${({ $fontSize }) => ($fontSize && `${$fontSize}rem`) || '1.4rem'};
     color: ${({ $color }) => $color || theme.colors.primary.dark};
+
     &.MuiInput-underline {
       &:before,
       &:hover:not(.Mui-disabled):before {
@@ -25,9 +26,19 @@ const FEIBDatePicker = styled(MaterialDatePicker).attrs({
         border-color: ${({ $borderColor, $focusBorderColor }) => $focusBorderColor || $borderColor || 'inherit'};
       }
     }
-    .MuiIconButton-root {
-      padding: 0;
-    }
+  }
+  
+  .MuiInputBase-input {
+    padding-top: .6rem;
+    padding-bottom: 1rem;
+  }
+  
+  .MuiIconButton-root {
+    padding-right: .8rem;
+  }
+
+  .MuiSvgIcon-root {
+    font-size: 2.5rem;
   }
   
   .MuiPickersToolbar-toolbar {

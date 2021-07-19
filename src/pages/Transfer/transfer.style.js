@@ -138,6 +138,19 @@ const TransferWrapper = styled(Layout)`
       }
     }
   }
+  
+  .reserveMoreOption {
+    display: flex;
+    
+    > div {
+      margin-right: 1.6rem;
+      width: 100%;
+      
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
 `;
 
 export default TransferWrapper;

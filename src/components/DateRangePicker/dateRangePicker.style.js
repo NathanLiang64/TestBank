@@ -31,6 +31,10 @@ const DateRangePickerWrapper = styled.div`
     z-index: 20;
   }
   
+  .MuiIconButton-root {
+    padding-right: .8rem;
+  }
+
   .buttons {
     display: flex;
     justify-content: flex-end;

@@ -29,7 +29,7 @@ const BasicInformationWrapper = styled(Layout)`
       font-size: 2.4rem;
       text-align: center;
       font-weight: 500;
-      margin-bottom: 4.2rem;
+      margin-bottom: 2.4rem;
 
       &.success {
         color: ${({ theme }) => theme.colors.secondary.brand};
