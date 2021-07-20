@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router';
+import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -86,6 +87,9 @@ const CardLessWithDrawChgPwd = () => {
       )}
     />
   );
+
+  useCheckLocation();
+  usePageInfo('/api/cardLessWithDrawChgPwd');
 
   return (
     <CardLessATMWrapper>

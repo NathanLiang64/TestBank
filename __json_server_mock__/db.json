@@ -3791,6 +3791,11 @@
     "title": "無卡提款",
     "route": "/cardLessATM"
   },
+  "cardLessWithDrawChgPwd": {
+    "name": "CardLessWithDrawChgPwd",
+    "title": "變更無卡提款密碼",
+    "route": "/cardLessWithDrawChgPwd"
+  },
   "noticeSetting": {
     "name": "NoticeSetting",
     "title": "訊息通知設定",
@@ -4036,5 +4041,15 @@
     "name": "Network",
     "title": "社群圈",
     "route": "/network"
+  },
+  "securitiesSwapAccounts": {
+    "name": "SecuritiesSwapAccounts",
+    "title": "帳戶",
+    "route": "/securitiesSwapAccounts"
+  },
+  "foreignCurrencyAccounts": {
+    "name": "ForeignCurrencyAccounts",
+    "title": "帳戶",
+    "route": "/foreignCurrencyAccounts"
   }
 }

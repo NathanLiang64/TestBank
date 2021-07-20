@@ -50,6 +50,8 @@ import Profile from 'pages/Profile';
 import More from 'pages/More';
 import FinancialDepartments from 'pages/FinancialDepartments';
 import Network from 'pages/Network';
+import SecuritiesSwapAccounts from 'pages/SecuritiesSwapAccounts';
+import ForeignCurrencyAccounts from 'pages/ForeignCurrencyAccounts';
 
 /* 開發用目錄頁 */
 import Nav from 'pages/Nav';
@@ -107,6 +109,8 @@ const routes = [
   { path: '/more', exact: false, component: More },
   { path: '/financialDepartments', exact: false, component: FinancialDepartments },
   { path: '/network', exact: false, component: Network },
+  { path: '/securitiesSwapAccounts', exact: false, component: SecuritiesSwapAccounts },
+  { path: '/foreignCurrencyAccounts', exact: false, component: ForeignCurrencyAccounts },
 ];
 
 export default routes;

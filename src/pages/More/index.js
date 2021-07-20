@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
@@ -12,12 +13,19 @@ import TabPageList from './tabPageList';
 import Icons from './iconList';
 
 const More = () => {
+  const history = useHistory();
   const tabTypeList = ['service', 'apply', 'withdrawal', 'invest', 'creditCard', 'loan', 'helper', 'community'];
   const [value, setValue] = useState('service');
   const [contentArray, setContentArray] = useState([]);
 
-  const renderIcon = (type) => TabPageList[type].list.map((item) => (
-    <div key={item.value} className="iconButton">
+  const toPage = (route) => {
+    if (route) {
+      history.push(route);
+    }
+  };
+
+  const renderIconButton = (type) => TabPageList[type].list.map((item) => (
+    <div key={item.value} className="iconButton" onClick={() => toPage(item.route)}>
       <svg width="40" height="40">
         <image xlinkHref={Icons[type + item.value]} width="40" height="40" />
       </svg>
@@ -33,7 +41,7 @@ const More = () => {
         { TabPageList[item].mainLabel }
       </div>
       <div className="content">
-        { renderIcon(item) }
+        { renderIconButton(item) }
       </div>
     </div>
   ));
