@@ -4041,5 +4041,15 @@
     "name": "Network",
     "title": "社群圈",
     "route": "/network"
+  },
+  "securitiesSwapAccounts": {
+    "name": "SecuritiesSwapAccounts",
+    "title": "帳戶",
+    "route": "/securitiesSwapAccounts"
+  },
+  "foreignCurrencyAccounts": {
+    "name": "ForeignCurrencyAccounts",
+    "title": "帳戶",
+    "route": "/foreignCurrencyAccounts"
   }
 }

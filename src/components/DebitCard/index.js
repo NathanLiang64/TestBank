@@ -41,6 +41,9 @@ const DebitCard = ({
   hideIcon,
   functionList,
   moreList,
+  moreDefault = true,
+  dollorSign = '$',
+  $style = { background: '' },
 }) => {
   const [showBalance, setShowBalance] = useState(true);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -119,18 +122,24 @@ const DebitCard = ({
         </li>
       ))}
       {/* 下方為功能列表內的固定功能 */}
-      <li onClick={handleClickDownloadBankbook}>
-        <p>
-          <SystemUpdate />
-          存摺封面下載
-        </p>
-      </li>
-      <li onClick={handleClickEditCardName}>
-        <p>
-          <Edit />
-          帳戶名稱編輯
-        </p>
-      </li>
+      {
+        moreDefault && (
+          <>
+            <li onClick={handleClickDownloadBankbook}>
+              <p>
+                <SystemUpdate />
+                存摺封面下載
+              </p>
+            </li>
+            <li onClick={handleClickEditCardName}>
+              <p>
+                <Edit />
+                帳戶名稱編輯
+              </p>
+            </li>
+          </>
+        )
+      }
     </ul>
   );
 
@@ -162,7 +171,7 @@ const DebitCard = ({
   );
 
   return (
-    <DebitCardWrapper className="debitCard">
+    <DebitCardWrapper className="debitCard" $style={$style}>
       <img src={DebitCardBackground} alt="background" className="backgroundImage" />
       <div className="cardTitle">
         <h2 className="cardName">{cardName}</h2>
@@ -175,7 +184,7 @@ const DebitCard = ({
       <div className={`cardBalance ${originalType() && 'grow'}`}>
         { !hideIcon && renderEyeIconButton() }
         <h3 className="balance">
-          {showBalance ? `$${toCurrency(balance)}` : '＊＊＊＊＊'}
+          {showBalance ? `${dollorSign}${toCurrency(balance)}` : '＊＊＊＊＊'}
         </h3>
       </div>
       { originalType() && renderFunctionList(functionList) }

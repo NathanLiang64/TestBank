@@ -4,7 +4,7 @@ const DebitCardWrapper = styled.div`
   margin-bottom: 2rem;
   padding: 1.2rem;
   border-radius: .8rem;
-  background: ${({ theme }) => theme.colors.card.purple};
+  background: ${({ theme, $style }) => $style.background || theme.colors.card.purple};
 
   .backgroundImage {
     position: absolute;
