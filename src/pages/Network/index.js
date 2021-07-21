@@ -19,7 +19,7 @@ import NetworkWrapper from './network.style';
 
 const Network = () => {
   const [textareaLength, setTextareaLength] = useState(0);
-  const [nickName, setNickName] = useState('Joyce Hong');
+  const [nickName, setNickName] = useState('Joyce Horng');
   const [shareContent, setShareContent] = useState('點擊「成為Bankee會員」申辦Bankee數位存晚帳戶，想活存利率2.6%！');
   const [showEditNickNameDialog, setShowEditNickNameDialog] = useState(false);
   const [showEditShareContentDialog, setShowEditShareContentDialog] = useState(false);

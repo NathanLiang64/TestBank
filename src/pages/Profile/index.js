@@ -33,7 +33,7 @@ const Profile = () => {
   });
   const history = useHistory();
 
-  const [userName, setUserName] = useState('Joyce Hong');
+  const [userName, setUserName] = useState('Joyce Horng');
   const [showChangeUserNameDialog, setShowChangeUserNameDialog] = useState(false);
 
   const showEditUserNameDialog = () => {
