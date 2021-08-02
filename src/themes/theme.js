@@ -48,8 +48,12 @@ const theme = {
     },
     card: {
       purple: '#D8CAFB',
-      lightYellow: '#F6EFC5',
-      lightGreen: '#D7EAF5',
+      pink: '#FDE3EC',
+      yellow: '#F6EFC5',
+      blue: '#D7EAF5',
+      orange: '#FFE8DE',
+      green: '#EDFFDD',
+      lightPurple: '#FCEDFF',
     },
   },
   filters: {

@@ -6,6 +6,7 @@ import * as depositOverviewApi from './depositOverviewApi';
 import * as depositInquiryApi from './depositInquiryApi';
 import * as loginApi from './loginApi';
 import * as shakeShakeApi from './shakeShakeApi';
+import * as transferApi from './transferApi';
 
 export {
   headerApi,
@@ -16,4 +17,5 @@ export {
   depositInquiryApi,
   loginApi,
   shakeShakeApi,
+  transferApi,
 };
