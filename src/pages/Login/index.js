@@ -22,6 +22,9 @@ import { Controller, useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import LoginWrapper from './login.style';
 import { accountValidation, identityValidation, passwordValidation } from '../../utilities/validation';
+import CipherUtil from '../../utilities/CipherUtil';
+import userAxios from '../../apis/axiosConfig';
+import JWEUtil from '../../utilities/JWEUtil';
 
 const Login = () => {
   /**
@@ -45,12 +48,37 @@ const Login = () => {
   const upperId = (e) => {
     setValue('identity', e.target.value.toUpperCase());
   };
+  const iv = CipherUtil.generateIV();
+  const aesKey = CipherUtil.generateAES();
+  const getPublicAndPrivate = CipherUtil.generateRSA();
+  const txnId = 'WEBCTLff7fd095-2cd0-4418-94cb-023256911c06';
+  const channelCode = 'HHB_A';
+  const appVersion = '1.0.15';
+  const txSeq = '20210802155847';
 
   const onSubmit = async (data) => {
-    data.identity = data.identity.toUpperCase();
-    data.account = await e2ee(data.account);
-    data.password = await e2ee(data.password);
-    const response = await userLogin(data);
+    const ServerPublicKey = await userAxios.post('/auth/getPublicKey'); // 取得公鑰
+    const jweRq = {
+      publicKey: getPublicAndPrivate.publicKey.replace(/(\r\n\t|\r\n|\n|\r\t)/gm, '').replace('-----BEGIN PUBLIC KEY-----', '').replace('-----END PUBLIC KEY-----', ''),
+      iv,
+      aesKey,
+      txnId,
+      channelCode,
+      appVersion,
+      txSeq,
+      custId: data.identity.toUpperCase(),
+      username: await e2ee(data.account),
+      password: await e2ee(data.password),
+    };
+    console.log('jweRq', jweRq);
+    // data.identity = data.identity.toUpperCase();
+    // data.account = await e2ee(data.account);
+    // data.password = await e2ee(data.password);
+    // const response = await userLogin(data);
+
+    const getJWTToken = JWEUtil.encryptJWEMessage(ServerPublicKey.data.data.result, JSON.stringify(jweRq));
+    const response = await userLogin(getJWTToken);
+    console.log('jwtToken', response);
     localStorage.setItem('jwtToken', response);
   };
 
