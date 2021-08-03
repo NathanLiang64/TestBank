@@ -1,4 +1,13 @@
 import styled from 'styled-components';
+import { Dialog } from '@material-ui/core';
+
+const SnackModalDialogWrapper = styled(Dialog)`
+
+  .MuiBackdrop-root {
+    background: transparent !important;
+    backdrop-filter: unset;
+  }
+`;
 
 const SnackModalWrapper = styled.div`
   position: fixed;
@@ -36,3 +45,4 @@ const SnackModalWrapper = styled.div`
 `;
 
 export default SnackModalWrapper;
+export { SnackModalDialogWrapper };

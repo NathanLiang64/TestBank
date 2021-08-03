@@ -40,10 +40,12 @@ const DebitCard = ({
   balance,
   hideIcon,
   functionList,
+  transferLimit,
+  transferRemaining,
   moreList,
   moreDefault = true,
-  dollorSign = '$',
-  $style = { background: '' },
+  dollarSign = '$',
+  color,
 }) => {
   const [showBalance, setShowBalance] = useState(true);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -110,6 +112,16 @@ const DebitCard = ({
     </ul>
   );
 
+  const renderTransferLimit = (total, current) => (
+    <p className="transferLimit">
+      跨轉優惠:
+      {total}
+      次/剩餘
+      {current}
+      次
+    </p>
+  );
+
   // render 點擊更多圖標後的功能列表
   const renderMoreList = (list) => (
     <ul className="moreList">
@@ -171,7 +183,7 @@ const DebitCard = ({
   );
 
   return (
-    <DebitCardWrapper className="debitCard" $style={$style}>
+    <DebitCardWrapper className="debitCard" $cardColor={color}>
       <img src={DebitCardBackground} alt="background" className="backgroundImage" />
       <div className="cardTitle">
         <h2 className="cardName">{cardName}</h2>
@@ -184,10 +196,10 @@ const DebitCard = ({
       <div className={`cardBalance ${originalType() && 'grow'}`}>
         { !hideIcon && renderEyeIconButton() }
         <h3 className="balance">
-          {showBalance ? `${dollorSign}${toCurrency(balance)}` : '＊＊＊＊＊'}
+          {showBalance ? `${dollarSign}${toCurrency(balance)}` : '＊＊＊＊＊'}
         </h3>
       </div>
-      { originalType() && renderFunctionList(functionList) }
+      { (originalType() && (functionList && renderFunctionList(functionList))) || (transferLimit && transferRemaining && renderTransferLimit(transferLimit, transferRemaining)) }
       { originalType() && renderMoreIconButton() }
       { originalType() && renderBottomDrawer(moreList) }
       { originalType() && renderEditCardNameDialog(cardName) }

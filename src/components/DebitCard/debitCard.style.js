@@ -4,7 +4,7 @@ const DebitCardWrapper = styled.div`
   margin-bottom: 2rem;
   padding: 1.2rem;
   border-radius: .8rem;
-  background: ${({ theme, $style }) => $style.background || theme.colors.card.purple};
+  background: ${({ theme, $cardColor }) => theme.colors.card[$cardColor]};
 
   .backgroundImage {
     position: absolute;
@@ -62,6 +62,13 @@ const DebitCardWrapper = styled.div`
       letter-spacing: .05rem;
       color: ${({ theme }) => theme.colors.text.darkGray};
     }
+  }
+
+  .transferLimit {
+    padding-top: .4rem;
+    padding-bottom: .2rem;
+    font-size: 1.5rem;
+    color: ${({ theme }) => theme.colors.text.lightGray};
   }
   
   .moreIconButton {

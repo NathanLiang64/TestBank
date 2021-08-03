@@ -1,4 +1,5 @@
-import SnackModalWrapper from './snackModal.style';
+import { DialogContent, DialogTitle } from '@material-ui/core';
+import SnackModalWrapper, { SnackModalDialogWrapper } from './snackModal.style';
 
 /*
 * =================== SnackModal 組件說明 ====================
@@ -9,12 +10,17 @@ import SnackModalWrapper from './snackModal.style';
 * */
 
 const SnackModal = ({ icon, text }) => (
-  <SnackModalWrapper>
-    {icon}
-    <p className="displayMessage">
-      {text}
-    </p>
-  </SnackModalWrapper>
+  <SnackModalDialogWrapper open>
+    <DialogTitle>test</DialogTitle>
+    <DialogContent>
+      <SnackModalWrapper>
+        {icon}
+        <p className="displayMessage">
+          {text}
+        </p>
+      </SnackModalWrapper>
+    </DialogContent>
+  </SnackModalDialogWrapper>
 );
 
 export default SnackModal;

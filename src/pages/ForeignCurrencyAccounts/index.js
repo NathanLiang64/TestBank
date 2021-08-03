@@ -7,7 +7,6 @@ import DebitCard from 'components/DebitCard';
 import DetailCard from 'components/DetailCard';
 
 /* Styles */
-import theme from 'themes/theme';
 import ForeignCurrencyAccountsWrapper from './foreignCurrencyAccounts.style';
 
 const ForeignCurrencyAccounts = () => {
@@ -112,10 +111,8 @@ const ForeignCurrencyAccounts = () => {
             functionList={functionList}
             moreList={moreList}
             moreDefault={false}
-            dollorSign="£"
-            $style={{
-              background: theme.colors.card.lightGreen,
-            }}
+            dollarSign="£"
+            color="blue"
           />
         </SwiperSlide>
         <SwiperSlide>
@@ -128,10 +125,8 @@ const ForeignCurrencyAccounts = () => {
             functionList={functionList}
             moreList={moreList}
             moreDefault={false}
-            dollorSign="£"
-            $style={{
-              background: theme.colors.card.lightGreen,
-            }}
+            dollarSign="£"
+            color="blue"
           />
         </SwiperSlide>
         <SwiperSlide>
@@ -144,10 +139,8 @@ const ForeignCurrencyAccounts = () => {
             functionList={functionList}
             moreList={moreList}
             moreDefault={false}
-            dollorSign="£"
-            $style={{
-              background: theme.colors.card.lightGreen,
-            }}
+            dollarSign="£"
+            color="blue"
           />
         </SwiperSlide>
       </>
