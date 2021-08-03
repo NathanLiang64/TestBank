@@ -22,8 +22,8 @@ const CopyTextIconButton = ({
 
   const handleClickCopyAccount = () => {
     setIsCopied(true);
-    // 1.5 秒後將 isCopied 的值重置
-    setTimeout(() => setIsCopied(false), 1500);
+    // 1 秒後將 isCopied 的值重置
+    setTimeout(() => setIsCopied(false), 1000);
   };
   return (
     <CopyTextIconButtonWrapper>

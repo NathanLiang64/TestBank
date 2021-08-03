@@ -7,7 +7,6 @@ import DebitCard from 'components/DebitCard';
 import DetailCard from 'components/DetailCard';
 
 /* Styles */
-import theme from 'themes/theme';
 import SecuritiesSwapAccountsWrapper from './securitiesSwapAccounts.style';
 
 const SecuritiesSwapAccounts = () => {
@@ -111,9 +110,7 @@ const SecuritiesSwapAccounts = () => {
             functionList={functionList}
             moreList={moreList}
             moreDefault={false}
-            $style={{
-              background: theme.colors.card.lightYellow,
-            }}
+            color="yellow"
           />
         </SwiperSlide>
         <SwiperSlide>
@@ -126,9 +123,7 @@ const SecuritiesSwapAccounts = () => {
             functionList={functionList}
             moreList={moreList}
             moreDefault={false}
-            $style={{
-              background: theme.colors.card.lightYellow,
-            }}
+            color="yellow"
           />
         </SwiperSlide>
         <SwiperSlide>
@@ -141,9 +136,7 @@ const SecuritiesSwapAccounts = () => {
             functionList={functionList}
             moreList={moreList}
             moreDefault={false}
-            $style={{
-              background: theme.colors.card.lightYellow,
-            }}
+            color="yellow"
           />
         </SwiperSlide>
       </>

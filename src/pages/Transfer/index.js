@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -17,8 +17,10 @@ import {
   FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBDatePicker,
   FEIBRadioLabel, FEIBRadio, FEIBButton, FEIBSelect, FEIBOption,
 } from 'components/elements';
+import { doGetInitData } from 'apis/transferApi';
 import { numberToChinese } from 'utilities/Generator';
 import { bankCodeValidation, receivingAccountValidation } from 'utilities/validation';
+import { setCards } from './stores/actions';
 import TransferWrapper from './transfer.style';
 
 /* Swiper modules */
@@ -44,7 +46,8 @@ const Transfer = () => {
   const [showReserveOption, setShowReserveOption] = useState(false);
   const [showReserveMoreOption, setShowReserveMoreOption] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const cardInfo = useSelector(({ depositOverview }) => depositOverview.cardInfo);
+  const cards = useSelector(({ transfer }) => transfer.cards);
+  const dispatch = useDispatch();
 
   const handleChangeTabList = (event, id) => {
     setTabId(id);
@@ -64,56 +67,38 @@ const Transfer = () => {
 
   // eslint-disable-next-line no-unused-vars
   const handleClickTransferButton = (data) => {
-    console.log(data);
+    // console.log(data);
   };
 
-  const renderDebitCard = (info) => {
-    const {
-      cardBranch,
-      cardName,
-      cardAccount,
-      cardBalance,
-      functionList,
-      moreList,
-    } = info;
-    return (
-      <>
-        <SwiperSlide>
+  const renderCards = (debitCards) => (
+    debitCards.map((card) => {
+      const {
+        cardBranch,
+        cardName,
+        cardAccount,
+        cardBalance,
+        cardColor,
+        moreList,
+        interbankTransferLimit,
+        interbankTransferRemaining,
+      } = card;
+      return (
+        <SwiperSlide key={cardAccount}>
           <DebitCard
             type="original"
             branch={cardBranch}
             cardName={cardName}
             account={cardAccount}
             balance={cardBalance}
-            functionList={functionList}
+            color={cardColor}
+            transferLimit={interbankTransferLimit}
+            transferRemaining={interbankTransferRemaining}
             moreList={moreList}
           />
         </SwiperSlide>
-        <SwiperSlide>
-          <DebitCard
-            type="original"
-            branch={cardBranch}
-            cardName={cardName}
-            account={cardAccount}
-            balance={cardBalance}
-            functionList={functionList}
-            moreList={moreList}
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <DebitCard
-            type="original"
-            branch={cardBranch}
-            cardName={cardName}
-            account={cardAccount}
-            balance={cardBalance}
-            functionList={functionList}
-            moreList={moreList}
-          />
-        </SwiperSlide>
-      </>
-    );
-  };
+      );
+    })
+  );
 
   const renderTabPanels = () => (
     <>
@@ -275,6 +260,17 @@ const Transfer = () => {
   useCheckLocation();
   usePageInfo('/api/transfer');
 
+  // 取得所有存款卡的初始資料
+  useEffect(async () => {
+    const response = await doGetInitData('/api/transfer');
+    if (response.initData) dispatch(setCards(response.initData.cards));
+  }, []);
+
+  // 根據用戶選擇的卡片，將該卡片資料儲存至 redux
+  // useEffect(() => {
+  //   selectedCard(1, cards);
+  // }, [cards]);
+
   useEffect(() => {
     if (watch('transferType') === 'reserve') {
       setShowReserveOption(true);
@@ -301,7 +297,7 @@ const Transfer = () => {
           pagination
           onSlideChange={handleChangeSlide}
         >
-          { cardInfo && renderDebitCard(cardInfo) }
+          { cards.length > 0 && renderCards(cards) }
         </Swiper>
       </div>
       <div className="transferServicesArea">
