@@ -80,6 +80,9 @@ const Login = () => {
     const response = await userLogin(getJWTToken);
     console.log('jwtToken', response);
     localStorage.setItem('jwtToken', response);
+    if (response.data.message === 'Success!!' && response.data.code === '0000') {
+      alert('登入成功');
+    }
   };
 
   useCheckLocation();
