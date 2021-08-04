@@ -18,7 +18,6 @@ import {
   setCustomKeyword,
 } from '../DepositInquiry/stores/actions';
 
-// TODO: 若已選的關鍵字未清空，點擊 search icon 應代入原先已選的關鍵字
 const DepositSearchCondition = ({ initKeywords }) => {
   const keywords = useSelector(({ depositInquiry }) => depositInquiry.keywords);
   const customKeyword = useSelector(({ depositInquiry }) => depositInquiry.customKeyword);
@@ -92,7 +91,6 @@ const DepositSearchCondition = ({ initKeywords }) => {
     }
     dispatch(setCustomKeyword(data.keywordCustom));
 
-    // TODO: send data
     // 送資料
   };
 
