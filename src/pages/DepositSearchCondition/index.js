@@ -2,20 +2,21 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
+import { depositInquiryApi } from 'apis';
 import DateRangePicker from 'components/DateRangePicker';
 import CheckboxButton from 'components/CheckboxButton';
 import ConfirmButtons from 'components/ConfirmButtons';
 import {
   FEIBTabContext, FEIBTabList, FEIBTab, FEIBInputLabel, FEIBInput,
 } from 'components/elements';
-import { dateFormatter } from 'utilities/Generator';
+import { dateFormatter, stringDateCodeFormatter } from 'utilities/Generator';
 import DepositSearchConditionWrapper from './depositSearchCondition.style';
 import {
   setOpenInquiryDrawer,
   setDateRange,
   setTempDateRange,
   setKeywords,
-  setCustomKeyword,
+  setCustomKeyword, setDetailList,
 } from '../DepositInquiry/stores/actions';
 
 const DepositSearchCondition = ({ initKeywords }) => {
@@ -25,6 +26,7 @@ const DepositSearchCondition = ({ initKeywords }) => {
   const tempDateRange = useSelector(({ depositInquiry }) => depositInquiry.tempDateRange);
   const [tabId, setTabId] = useState('0');
   const { register, unregister, handleSubmit } = useForm();
+  const { getOnlineData } = depositInquiryApi;
   const dispatch = useDispatch();
 
   // 控制 Tabs 頁籤
@@ -63,14 +65,14 @@ const DepositSearchCondition = ({ initKeywords }) => {
         // 若 tempDateRange 有值，代表是由 dateRangePicker 選擇日期
         // 範圍會暫存在 tempDateRange 內，故此處要加入 data.dateRange 後端才收得到
         dispatch(setDateRange(tempDateRange));
-        data.dateRange = tempDateRange;
+        data.dateRange = [stringDateCodeFormatter(tempDateRange[0]), stringDateCodeFormatter(tempDateRange[1])];
       } else {
         // 若 tempDateRange 沒有值，代表沒有選擇日期，預設儲存三年範圍，此處要加入 data.dateRange 後端才收得到
         const today = new Date();
         const threeYearsAgo = new Date();
         threeYearsAgo.setFullYear(threeYearsAgo.getFullYear() - 3);
         dispatch(setDateRange([threeYearsAgo, today]));
-        data.dateRange = [threeYearsAgo, today];
+        data.dateRange = [stringDateCodeFormatter(threeYearsAgo), stringDateCodeFormatter(today)];
       }
     }
 
@@ -92,6 +94,13 @@ const DepositSearchCondition = ({ initKeywords }) => {
     dispatch(setCustomKeyword(data.keywordCustom));
 
     // 送資料
+    // console.info('data', data);
+    // console.log(tempDateRange);
+    // TODO: api 回傳資料有誤，代入日期無效
+    const onlineResponse = await getOnlineData(`https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=04300499312641&beginDT=${data.dateRange[0]}endDT=${data.dateRange[1]}`);
+    if (onlineResponse) {
+      // console.log(onlineResponse);
+    }
   };
 
   const handleClickDateRangePicker = (range) => {
