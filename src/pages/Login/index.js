@@ -70,7 +70,7 @@ const Login = () => {
       username: await e2ee(data.account),
       password: await e2ee(data.password),
     };
-    console.log('jweRq', jweRq);
+    // console.log('jweRq', jweRq);
     // data.identity = data.identity.toUpperCase();
     // data.account = await e2ee(data.account);
     // data.password = await e2ee(data.password);
@@ -78,10 +78,10 @@ const Login = () => {
 
     const getJWTToken = JWEUtil.encryptJWEMessage(ServerPublicKey.data.data.result, JSON.stringify(jweRq));
     const response = await userLogin(getJWTToken);
-    console.log('jwtToken', response);
+    // console.log('jwtToken', response);
     localStorage.setItem('jwtToken', response);
     if (response.data.message === 'Success!!' && response.data.code === '0000') {
-      alert('登入成功');
+      // alert('登入成功');
     }
   };
 

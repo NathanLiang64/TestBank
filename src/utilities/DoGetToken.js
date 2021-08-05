@@ -23,6 +23,8 @@ const getKey = async () => {
     iv,
     aesKey,
   };
+  // const getJWTToken = JWEUtil.encryptJWEMessage(ServerPublicKey.data.result.publicKey, JSON.stringify(message));
+  // const getMyJWT = await userAxios.post('/auth/authenticate', getJWTToken);
   const getJWTToken = JWEUtil.encryptJWEMessage(ServerPublicKey.data.result.publicKey, JSON.stringify(message));
   const getMyJWT = await userAxios.post('/auth/authenticate', getJWTToken);
   const deCode = JSON.parse(JWEUtil.decryptJWEMessage(getPublicAndPrivate.privateKey, getMyJWT.data));
