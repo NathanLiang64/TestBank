@@ -22,6 +22,7 @@ import {
 const DepositInquiry = () => {
   const transactionDetailRef = useRef();
   const [tabId, setTabId] = useState('');
+  // TODO: tab 改存在 redux，搜尋頁也會用到
   const [tabList, setTabList] = useState([]);
   const [openDownloadDrawer, setOpenDownloadDrawer] = useState(false);
   const [isPending, setIsPending] = useState(false);
@@ -38,13 +39,21 @@ const DepositInquiry = () => {
   const { getOnlineData } = depositInquiryApi;
   const dispatch = useDispatch();
 
+  // const initKeywords = [
+  //   { title: '繳卡款', name: 'keywordBill', selected: false },
+  //   { title: '轉出', name: 'keywordTransfer', selected: false },
+  //   { title: '轉入', name: 'keywordDepositAccount', selected: false },
+  //   { title: '利息', name: 'keywordInterest', selected: false },
+  //   { title: '付款儲值', name: 'keywordSpend', selected: false },
+  //   { title: '薪轉', name: 'keywordSalary', selected: false },
+  // ];
   const initKeywords = [
-    { title: '繳卡款', name: 'keywordBill', selected: false },
-    { title: '轉出', name: 'keywordTransfer', selected: false },
-    { title: '轉入', name: 'keywordDepositAccount', selected: false },
-    { title: '利息', name: 'keywordInterest', selected: false },
-    { title: '付款儲值', name: 'keywordSpend', selected: false },
-    { title: '薪轉', name: 'keywordSalary', selected: false },
+    { title: '跨轉', name: 'tranTP1', selected: false },
+    { title: 'ATM', name: 'tranTP2', selected: false },
+    { title: '存款息', name: 'tranTP3', selected: false },
+    { title: '薪轉', name: 'tranTP4', selected: false },
+    { title: '付款儲存', name: 'tranTP5', selected: false },
+    { title: '自動扣繳', name: 'tranTP6', selected: false },
   ];
 
   const handleChangeTabList = (event, id) => {

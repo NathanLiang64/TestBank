@@ -59,6 +59,10 @@ const DepositSearchCondition = ({ initKeywords }) => {
       // 若 data.dateRange 屬性，代表使用者送出表單時是由 autoDateArea 區塊自動推斷範圍
       // 而 autoDateArea 區塊的日期範圍因為是 input value 傳進來，所以會是字串格格式，需另外轉成日期格式
       dispatch(setDateRange([new Date(data.dateRange[0]), new Date(data.dateRange[1])]));
+      data.dateRange = [
+        stringDateCodeFormatter(new Date(data.dateRange[0])),
+        stringDateCodeFormatter(new Date(data.dateRange[1])),
+      ];
     } else {
       // 若沒有 data.dateRange 屬性，代表沒有選擇日期，或是使用者是由 dateRangePickerArea 區塊的日期選擇器所選擇的
       if (tempDateRange.length) {
@@ -94,11 +98,24 @@ const DepositSearchCondition = ({ initKeywords }) => {
     dispatch(setCustomKeyword(data.keywordCustom));
 
     // 送資料
-    // console.info('data', data);
-    // console.log(tempDateRange);
-    // TODO: api 回傳資料有誤，代入日期無效
-    const onlineResponse = await getOnlineData(`https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=04300499312641&beginDT=${data.dateRange[0]}endDT=${data.dateRange[1]}`);
+
+    // 選取關鍵字條件
+    // 1 跨轉, 2 ATM, 3 存款息, 4 薪轉, 5 付款儲存, 6自動扣繳
+    const tranTPList = [];
+    keywords.forEach((item) => {
+      if (item.selected) tranTPList.push(item.name[item.name.length - 1]);
+    });
+
+    const account = '04300499312641';
+    const tranTP = tranTPList.join();
+    const custom = data.keywordCustom;
+    const apiUrl = `https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=${account}&beginDT=${data.dateRange[0]}&endDT=${data.dateRange[1]}&tranTP=${tranTP}&textSH=${custom}`;
+    // console.log(apiUrl);
+    // console.log(data);
+    const onlineResponse = await getOnlineData(apiUrl);
     if (onlineResponse) {
+      const { acctDetails } = onlineResponse;
+      dispatch(setDetailList(acctDetails));
       // console.log(onlineResponse);
     }
   };
