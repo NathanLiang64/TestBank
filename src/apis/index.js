@@ -7,6 +7,7 @@ import * as depositInquiryApi from './depositInquiryApi';
 import * as loginApi from './loginApi';
 import * as shakeShakeApi from './shakeShakeApi';
 import * as transferApi from './transferApi';
+import * as cardLessATMApi from './cardLessATMApi';
 
 export {
   headerApi,
@@ -18,4 +19,5 @@ export {
   loginApi,
   shakeShakeApi,
   transferApi,
+  cardLessATMApi,
 };

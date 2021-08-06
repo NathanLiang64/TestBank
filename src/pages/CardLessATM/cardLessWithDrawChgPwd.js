@@ -4,6 +4,7 @@ import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { cardLessATMApi } from 'apis';
 
 /* Elements */
 import {
@@ -58,9 +59,15 @@ const CardLessWithDrawChgPwd = () => {
   };
 
   const onSubmit = (data) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
-    setShowResultDialog(true);
+    const param = {
+      newWithdrawPwd: data.newWithdrawPwd,
+    };
+    cardLessATMApi.changeCardlessPwd(param)
+      .then((response) => {
+        if (response.code === 0) {
+          setShowResultDialog(true);
+        }
+      });
   };
 
   const handleResultButton = () => {
@@ -108,6 +115,7 @@ const CardLessWithDrawChgPwd = () => {
           id="newWithdrawPwd"
           name="newWithdrawPwd"
           placeholder="請輸入新提款密碼(4-12位數字)"
+          inputMode="numric"
           control={control}
           errorMessage={errors.newWithdrawPwd?.message}
         />
@@ -116,6 +124,7 @@ const CardLessWithDrawChgPwd = () => {
           id="newWithdrawPwdConfirm"
           name="newWithdrawPwdConfirm"
           placeholder="請再輸入一次新提款密碼(4-12位數字)"
+          inputMode="numric"
           control={control}
           errorMessage={errors.newWithdrawPwdConfirm?.message}
         />
