@@ -93,7 +93,7 @@ const CardLessATM1 = () => {
       ...data,
     };
     // 是否使用快速登入
-    const quickLogin = true;
+    const quickLogin = false;
     if (quickLogin) {
       setDrawerOpen(true);
     } else {

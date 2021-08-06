@@ -68,15 +68,39 @@ const CardLessATM = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [step, setStep] = useState(0);
 
-  const handleStep = (s) => {
-    setStep(s);
-  };
-
   const toWithdrawPage = () => {
     history.push('/cardLessATM1');
   };
 
-  const onSubmit = (data) => {
+  const cardLessActive = async (callbackFnc) => {
+    const activeResponse = await cardLessATMApi.cardLessWithdrawActive();
+    const { activeResultCode } = activeResponse.data;
+    if (activeResultCode === 0) {
+      callbackFnc();
+    }
+  };
+
+  const agreeContract = async (s) => {
+    setStep(s);
+  };
+
+  const changePwdHandler = async (param) => {
+    // 檢查是否新網站申請
+    const newSiteRegistResponse = await cardLessATMApi.checkNewSiteRegist();
+    const { newSiteRegist } = newSiteRegistResponse.data;
+    if (newSiteRegist) {
+      cardLessATMApi.changeCardlessPwd(param)
+        .then((response) => {
+          if (response.code === 0) {
+            cardLessActive(() => toWithdrawPage());
+          }
+        });
+    } else {
+      cardLessActive(() => toWithdrawPage());
+    }
+  };
+
+  const onSubmit = async (data) => {
     const param = {
       newWithdrawPwd: data.withdrawPassword,
     };
@@ -85,13 +109,7 @@ const CardLessATM = () => {
     if (quickLogin) {
       setDrawerOpen(true);
     } else {
-      cardLessATMApi.changeCardlessPwd(param)
-        .then((response) => {
-          if (response.code === 0) {
-            // setShowResultDialog(true);
-            toWithdrawPage();
-          }
-        });
+      changePwdHandler(param);
     }
   };
 
@@ -100,13 +118,7 @@ const CardLessATM = () => {
       newWithdrawPwd: getValues().withdrawPassword,
       pwd: data.password,
     };
-    cardLessATMApi.changeCardlessPwd(param)
-      .then((response) => {
-        if (response.code === 0) {
-          // setShowResultDialog(true);
-          toWithdrawPage();
-        }
-      });
+    changePwdHandler(param);
   };
 
   const renderPage = () => {
@@ -116,21 +128,8 @@ const CardLessATM = () => {
           <Accordion title="無卡提款約定事項" space="bottom" open>
             <DealContent />
           </Accordion>
-          {/* <NoticeArea title="無卡提款約定事項" textAlign="left">
-            <DealContent />
-          </NoticeArea> */}
-          {/* <div className="checkBoxContainer">
-            <FEIBCheckboxLabel
-              control={(
-                <FEIBCheckbox
-                  onChange={handleCheckBoxChange}
-                />
-              )}
-              label="我已詳閱並遵守無卡提款約定事項"
-            />
-          </div> */}
           <FEIBButton
-            onClick={() => handleStep(1)}
+            onClick={() => agreeContract(1)}
           >
             同意條款並繼續
           </FEIBButton>
