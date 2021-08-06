@@ -3789,7 +3789,7 @@
   "cardLessATM": {
     "name": "CardLessATM",
     "title": "無卡提款",
-    "route": "/cardLessATM",
+    "route": "/cardLessATM"
   },
   "getCardStatus": {
     "code": 0,
