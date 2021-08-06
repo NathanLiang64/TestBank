@@ -3790,14 +3790,46 @@
     "name": "CardLessATM",
     "title": "無卡提款",
     "route": "/cardLessATM",
+  },
+  "getCardStatus": {
+    "code": 0,
     "data": {
-      "cardStatus": 4,
-      "statusCode": 1,
+      "cardStatus": 4
+    }
+  },
+  "getStatusCode": {
+    "code": 0,
+    "data": {
+      "statusCode": 1
+    }
+  },
+  "getCardInfo": {
+    "code": 0,
+    "data": {
       "cardInfo": {
         "account": "043-040-99001568",
         "balance": 168000,
         "discountTimes": 3
       }
+    }
+  },
+  "cardLessWithdrawApply": {
+    "code": 0
+  },
+  "changeCardlessPwd": {
+    "code": 0
+  },
+  "checkNewSiteRegist": {
+    "code": 0,
+    "data": {
+      "newSiteRegist": true
+    }
+  },
+  "cardLessWithdrawActive": {
+    "code": 0,
+    "data": {
+      "newSiteRegist": true,
+      "activeResultCode": 0
     }
   },
   "cardLessWithDrawChgPwd": {
