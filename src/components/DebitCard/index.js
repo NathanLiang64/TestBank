@@ -29,7 +29,12 @@ import DebitCardWrapper from './debitCard.style';
 * 6. hideIcon -> 此組件預設會在餘額前顯示眼睛圖示的 Icon Button
 *    點擊 Icon 後可隱藏餘額，倘若不需要此功能請在組件加上 hideIcon 屬性
 * 7. functionList -> 卡片功能清單，型別為陣列，組件 type 為 original 的卡片 (完整內容) 才需要傳入
-* 8. moreList -> 點擊更多圖標後彈出的更多功能清單，型別為陣列，組件 type 為 original 的卡片 (完整內容) 才需要傳入
+* 8. transferLimit -> 轉帳優惠總次數
+* 9. transferRemaining -> 轉帳優惠剩餘次數
+* 10.moreList -> 點擊更多圖標後彈出的更多功能清單，型別為陣列，組件 type 為 original 的卡片 (完整內容) 才需要傳入
+* 11.moreDefault -> 是否顯示更多功能清單，預設為顯示
+* 12.dollarSign -> 貨幣符號，預設為 '$'
+* 13.color -> 卡片顏色，預設紫色
 * */
 
 const DebitCard = ({
@@ -45,7 +50,7 @@ const DebitCard = ({
   moreList,
   moreDefault = true,
   dollarSign = '$',
-  color,
+  color = 'purple',
 }) => {
   const [showBalance, setShowBalance] = useState(true);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -60,7 +65,7 @@ const DebitCard = ({
   const handleClickDownloadBankbook = () => {
     setOpenDrawer(false);
     // 存摺封面下載
-    window.location.href = 'http://114.32.27.40:8080/test/downloadPDF';
+    // window.location.href = 'http://114.32.27.40:8080/test/downloadPDF';
   };
 
   const handleClickEditCardName = () => {
@@ -71,7 +76,7 @@ const DebitCard = ({
   // eslint-disable-next-line no-unused-vars
   const handleClickSubmitCardName = (data) => {
     setOpenDialog(false);
-    // TODO: send data
+    // send data
   };
 
   // 判斷卡片類型是否為 original

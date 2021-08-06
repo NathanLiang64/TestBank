@@ -2,23 +2,23 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
+import { depositInquiryApi } from 'apis';
 import DateRangePicker from 'components/DateRangePicker';
 import CheckboxButton from 'components/CheckboxButton';
 import ConfirmButtons from 'components/ConfirmButtons';
 import {
   FEIBTabContext, FEIBTabList, FEIBTab, FEIBInputLabel, FEIBInput,
 } from 'components/elements';
-import { dateFormatter } from 'utilities/Generator';
+import { dateFormatter, stringDateCodeFormatter } from 'utilities/Generator';
 import DepositSearchConditionWrapper from './depositSearchCondition.style';
 import {
   setOpenInquiryDrawer,
   setDateRange,
   setTempDateRange,
   setKeywords,
-  setCustomKeyword,
+  setCustomKeyword, setDetailList,
 } from '../DepositInquiry/stores/actions';
 
-// TODO: 若已選的關鍵字未清空，點擊 search icon 應代入原先已選的關鍵字
 const DepositSearchCondition = ({ initKeywords }) => {
   const keywords = useSelector(({ depositInquiry }) => depositInquiry.keywords);
   const customKeyword = useSelector(({ depositInquiry }) => depositInquiry.customKeyword);
@@ -26,6 +26,7 @@ const DepositSearchCondition = ({ initKeywords }) => {
   const tempDateRange = useSelector(({ depositInquiry }) => depositInquiry.tempDateRange);
   const [tabId, setTabId] = useState('0');
   const { register, unregister, handleSubmit } = useForm();
+  const { getOnlineData } = depositInquiryApi;
   const dispatch = useDispatch();
 
   // 控制 Tabs 頁籤
@@ -58,20 +59,24 @@ const DepositSearchCondition = ({ initKeywords }) => {
       // 若 data.dateRange 屬性，代表使用者送出表單時是由 autoDateArea 區塊自動推斷範圍
       // 而 autoDateArea 區塊的日期範圍因為是 input value 傳進來，所以會是字串格格式，需另外轉成日期格式
       dispatch(setDateRange([new Date(data.dateRange[0]), new Date(data.dateRange[1])]));
+      data.dateRange = [
+        stringDateCodeFormatter(new Date(data.dateRange[0])),
+        stringDateCodeFormatter(new Date(data.dateRange[1])),
+      ];
     } else {
       // 若沒有 data.dateRange 屬性，代表沒有選擇日期，或是使用者是由 dateRangePickerArea 區塊的日期選擇器所選擇的
       if (tempDateRange.length) {
         // 若 tempDateRange 有值，代表是由 dateRangePicker 選擇日期
         // 範圍會暫存在 tempDateRange 內，故此處要加入 data.dateRange 後端才收得到
         dispatch(setDateRange(tempDateRange));
-        data.dateRange = tempDateRange;
+        data.dateRange = [stringDateCodeFormatter(tempDateRange[0]), stringDateCodeFormatter(tempDateRange[1])];
       } else {
         // 若 tempDateRange 沒有值，代表沒有選擇日期，預設儲存三年範圍，此處要加入 data.dateRange 後端才收得到
         const today = new Date();
         const threeYearsAgo = new Date();
         threeYearsAgo.setFullYear(threeYearsAgo.getFullYear() - 3);
         dispatch(setDateRange([threeYearsAgo, today]));
-        data.dateRange = [threeYearsAgo, today];
+        data.dateRange = [stringDateCodeFormatter(threeYearsAgo), stringDateCodeFormatter(today)];
       }
     }
 
@@ -92,8 +97,27 @@ const DepositSearchCondition = ({ initKeywords }) => {
     }
     dispatch(setCustomKeyword(data.keywordCustom));
 
-    // TODO: send data
     // 送資料
+
+    // 選取關鍵字條件
+    // 1 跨轉, 2 ATM, 3 存款息, 4 薪轉, 5 付款儲存, 6自動扣繳
+    const tranTPList = [];
+    keywords.forEach((item) => {
+      if (item.selected) tranTPList.push(item.name[item.name.length - 1]);
+    });
+
+    const account = '04300499312641';
+    const tranTP = tranTPList.join();
+    const custom = data.keywordCustom;
+    const apiUrl = `https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=${account}&beginDT=${data.dateRange[0]}&endDT=${data.dateRange[1]}&tranTP=${tranTP}&textSH=${custom}`;
+    // console.log(apiUrl);
+    // console.log(data);
+    const onlineResponse = await getOnlineData(apiUrl);
+    if (onlineResponse) {
+      const { acctDetails } = onlineResponse;
+      dispatch(setDetailList(acctDetails));
+      // console.log(onlineResponse);
+    }
   };
 
   const handleClickDateRangePicker = (range) => {

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { MonetizationOn, ArrowBack, ArrowForward } from '@material-ui/icons';
 import Dialog from 'components/Dialog';
 import InformationList from 'components/InformationList';
-import { toCurrency } from 'utilities/Generator';
+import { toCurrency, stringDateFormatter } from 'utilities/Generator';
 import DetailCardWrapper, { DetailDialogContentWrapper } from './detailCard.style';
 
 /*
@@ -33,11 +33,14 @@ const DetailCard = ({
   title,
   date,
   sender,
+  dollarSign,
   amount,
   balance,
   noShadow,
 }) => {
   const [openDetailDialog, setOpenDetailDialog] = useState(false);
+  amount = toCurrency(amount);
+  date = stringDateFormatter(date);
 
   const renderAvatar = () => (
     avatar
@@ -50,24 +53,25 @@ const DetailCard = ({
   );
 
   const renderTypeIcon = () => (
-    <div className={`type ${type}`}>
-      { type === 'spend' ? <ArrowBack /> : <ArrowForward /> }
+    <div className={`type ${type === 'c' ? 'spend' : 'income'}`}>
+      { type === 'd' ? <ArrowBack /> : <ArrowForward /> }
     </div>
   );
 
   const renderDetailDialog = () => (
     <Dialog
-      title={type === 'spend' ? '跨行轉出' : '跨行轉入'}
+      title={type === 'c' ? '轉出' : '轉入'}
       isOpen={openDetailDialog}
       onClose={() => setOpenDetailDialog(false)}
       content={(
-        // TODO: 確認明細欄位是否齊全
         <DetailDialogContentWrapper>
           <div className="mainBlock">
             <p className="mainBlockTitle">{title}</p>
-            <p className="mainBlockAmount">{`${type === 'spend' ? '- ' : ''}$${toCurrency(amount)}`}</p>
+            <p className="mainBlockAmount">
+              {`${type === 'c' ? '- ' : ''}${dollarSign !== 'TWD' ? dollarSign : ''}$${amount}`}
+            </p>
           </div>
-          <InformationList title="交易時間" content={`2021/${date} 14:50`} />
+          <InformationList title="交易時間" content={`${date} 14:50`} />
           <InformationList title="帳務日期" content={date} />
           <InformationList title="帳號" content="04300299001234" />
         </DetailDialogContentWrapper>
@@ -90,14 +94,17 @@ const DetailCard = ({
         </div>
         <div className="description">
           <h4>{title}</h4>
-          <p>{`${date} | ${sender}`}</p>
+          <p>
+            {date}
+            {sender ? `| ${sender}` : ''}
+          </p>
         </div>
         <div className="amount">
           <h4>
-            { type === 'spend' && '- ' }
-            {`$${toCurrency(amount)}`}
+            { type === 'c' && '- ' }
+            {`${dollarSign !== 'TWD' ? dollarSign : ''}$${amount}`}
           </h4>
-          <p>{`$${toCurrency(balance)}`}</p>
+          <p>{`${dollarSign !== 'TWD' ? dollarSign : ''}$${toCurrency(balance)}`}</p>
         </div>
       </DetailCardWrapper>
       { renderDetailDialog() }

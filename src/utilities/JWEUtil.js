@@ -75,20 +75,35 @@ class JWEUtil {
       const cipherText = CipherUtil.encryptAES(enc, iv, message);
       const tag = this.getTag(aesKey, message);
 
+      // return {
+      //   tag,
+      //   ciphertext: cipherText,
+      //   protected: 'eyJlbmMiOiJBMTI4Q0JDLUhTMjU2In0=',
+      //   iv,
+      //   recipients: [
+      //     {
+      //       header: {
+      //         alg: 'RSA-OAEP-256',
+      //       },
+      //       encrypted_key: encryptedKey,
+      //     },
+      //   ],
+      //   unprotected: null,
+      // };
       return {
-        tag,
-        ciphertext: cipherText,
-        protected: 'eyJlbmMiOiJBMTI4Q0JDLUhTMjU2In0=',
-        iv,
-        recipients: [
+        _tag: tag,
+        _ciphertext: cipherText,
+        _protected: 'eyJlbmMiOiJBMTI4Q0JDLUhTMjU2In0=',
+        _iv: iv,
+        _recipients: [
           {
-            header: {
+            _header: {
               alg: 'RSA-OAEP-256',
             },
-            encrypted_key: encryptedKey,
+            _encrypted_key: encryptedKey,
           },
         ],
-        unprotected: null,
+        _unprotected: null,
       };
     } catch (error) {
       // Exception

@@ -118,7 +118,7 @@ const ShakeShake = () => {
     selectedUserCard(1, userCards);
   }, [userCards]);
 
-  // TODO: 判斷是否已登入，若未登入則不可轉帳
+  // 判斷是否已登入，若未登入則不可轉帳
   return (
     <BottomDrawer
       title="QRCode 轉帳"

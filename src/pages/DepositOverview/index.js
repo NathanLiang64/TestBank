@@ -71,6 +71,7 @@ const DepositOverview = () => {
           type={type}
           date={date}
           sender={sender}
+          dollarSign="TWD"
           amount={amount}
           balance={balance}
         />

@@ -17,6 +17,22 @@ export const dateFormatter = (date) => {
   return `${year}/${month}/${day}`;
 };
 
+// 將日期格式轉為 YYYYMMDD 字串
+export const stringDateCodeFormatter = (date) => {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${year}${month}${day}`;
+};
+
+// 將日期格式由 YYYYMMDD 字串轉為 YYYY/MM/DD 字串
+export const stringDateFormatter = (stringDate) => {
+  const dateArray = stringDate.split('');
+  dateArray.splice(4, 0, '/');
+  dateArray.splice(7, 0, '/');
+  return dateArray.join('');
+};
+
 // 將拉阿伯數字轉換為中文大寫
 /* eslint-disable eqeqeq */
 export const numberToChinese = (number) => {
