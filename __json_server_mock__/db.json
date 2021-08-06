@@ -3789,7 +3789,16 @@
   "cardLessATM": {
     "name": "CardLessATM",
     "title": "無卡提款",
-    "route": "/cardLessATM"
+    "route": "/cardLessATM",
+    "data": {
+      "cardStatus": 4,
+      "statusCode": 1,
+      "cardInfo": {
+        "account": "043-040-99001568",
+        "balance": 168000,
+        "discountTimes": 3
+      }
+    }
   },
   "cardLessWithDrawChgPwd": {
     "name": "CardLessWithDrawChgPwd",

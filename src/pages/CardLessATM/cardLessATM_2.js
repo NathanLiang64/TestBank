@@ -24,6 +24,7 @@ const CardLessATM2 = () => {
         cardName="存款卡"
         account="04304099001568"
         balance="168,000"
+        color="purple"
       />
       <div className="withdrawTimesInfo tip">
         免費跨提次數

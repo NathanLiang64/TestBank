@@ -101,6 +101,25 @@ const CardLessATMWrapper = styled(Layout)`
     }
   }
 }
+#withdrawAmount {
+  text-align: center;
+}
+.addMinusIcons {
+  transform: translateY(calc(-100% - 0.8rem));
+  width: 100%;
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  color: ${({ theme }) => theme.colors.primary.light};
+  svg {
+    font-size: 2rem;
+  }
+}
+.limit-label {
+  transform: translateY(-100%);
+  height: 1.8rem;
+  line-height: 1.8rem;
+}
 `;
 
 export default CardLessATMWrapper;
