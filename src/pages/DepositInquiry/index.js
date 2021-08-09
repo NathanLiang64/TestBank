@@ -13,7 +13,7 @@ import {
   FEIBIconButton, FEIBTabContext, FEIBTabList, FEIBTab,
 } from 'components/elements';
 import theme from 'themes/theme';
-import { dateFormatter } from 'utilities/Generator';
+import { dateFormatter, stringDateCodeFormatter } from 'utilities/Generator';
 import DepositInquiryWrapper from './depositInquiry.style';
 import {
   setDetailList, setOpenInquiryDrawer, setDateRange, setKeywords, setCustomKeyword,
@@ -22,7 +22,6 @@ import {
 const DepositInquiry = () => {
   const transactionDetailRef = useRef();
   const [tabId, setTabId] = useState('');
-  // TODO: tab 改存在 redux，搜尋頁也會用到
   const [tabList, setTabList] = useState([]);
   const [openDownloadDrawer, setOpenDownloadDrawer] = useState(false);
   const [isPending, setIsPending] = useState(false);
@@ -35,6 +34,7 @@ const DepositInquiry = () => {
   const openInquiryDrawer = useSelector(({ depositInquiry }) => depositInquiry.openInquiryDrawer);
   const dateRange = useSelector(({ depositInquiry }) => depositInquiry.dateRange);
   const keywords = useSelector(({ depositInquiry }) => depositInquiry.keywords);
+  const customKeyword = useSelector(({ depositInquiry }) => depositInquiry.customKeyword);
   // const { doGetInitData } = depositInquiryApi;
   const { getOnlineData } = depositInquiryApi;
   const dispatch = useDispatch();
@@ -103,18 +103,31 @@ const DepositInquiry = () => {
   //   }
   // };
   const handleClickOnlineMonthTabs = async (event) => {
-    const testApiUrl = 'https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=04300490004059';
-    // 從點擊的 Tab 連結取得 TabId
-    const month = event.currentTarget.href.split('#').pop();
+    // 代入條件 1.帳號, 2.日期起訖範圍, 3.月份, 4.分類, 5.關鍵字
+    const account = '04300499312641';
+    const beginDT = dateRange[0] ? stringDateCodeFormatter(dateRange[0]) : '';
+    const endDT = dateRange[1] ? stringDateCodeFormatter(dateRange[1]) : '';
+    const month = event.currentTarget.getAttribute('data-month'); // 從點擊的 Tab 連結取得 TabId
+    const custom = customKeyword;
+    const tranTPList = [];
+    keywords.forEach((item) => {
+      if (item.selected) tranTPList.push(item.name[item.name.length - 1]);
+    });
+    const tranTP = tranTPList.join();
+
+    const testApiUrl = `https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=${account}&beginDT=${beginDT}&endDT=${endDT}&tranTP=${tranTP}&textSH=${custom}&dataMonth=${month}`;
+    // console.log(testApiUrl);
     const response = await getOnlineData(`${testApiUrl}&dataMonth=${month}`);
     if (response) {
-      const { acctDetails } = response;
+      const { acctDetails, monthly } = response;
       // console.info('response', response);
       dispatch(setDetailList(acctDetails));
-      const target = Array.from(transactionDetailRef.current.children).find((child) => child.id === month);
-      // console.info('target', target);
-      target.scrollIntoView({ behavior: 'smooth' });
+      setTabList(monthly.reverse());
     }
+    const target = Array.from(transactionDetailRef.current.children).find((child) => child.id === month);
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+    // console.info('target', target);
+    setTabId(month);
   };
 
   // const getNewDetailData = async (scrollDirection) => {
@@ -139,9 +152,9 @@ const DepositInquiry = () => {
       response = await getOnlineData(`${apiUrl}-1`);
       newDetailList.push(...response.acctDetails, ...detailList);
       dispatch(setDetailList(newDetailList));
-      // 避免資料更新時跳至最頂部，當資料回來時跳轉至舊資料的第一筆位置
-      const target = Array.from(transactionDetailRef.current.children).find((child) => child.getAttribute('data-index') === (startIndex + 1).toString());
-      target.scrollIntoView();
+      // TODO: 避免資料更新時跳至最頂部，當資料回來時跳轉至舊資料的第一筆位置，目前作法有 bug，待修改
+      // const target = Array.from(transactionDetailRef.current.children).find((child) => child.getAttribute('data-index') === (startIndex + 1).toString());
+      // target.scrollIntoView();
     } else if (scrollDirection === 'down') {
       response = await getOnlineData(`${apiUrl}1`);
       newDetailList.push(...detailList, ...response.acctDetails);
@@ -262,7 +275,8 @@ const DepositInquiry = () => {
               key={month}
               label={`${month.substr(4, 2)}月`}
               value={month}
-              href={`#${month}`}
+              data-month={month}
+              // href={`#${month}`}
               onClick={handleClickOnlineMonthTabs}
             />
           )) }
@@ -306,13 +320,17 @@ const DepositInquiry = () => {
         {({ isVisible }) => (
           <DetailCard
             id={card.txnDate.substr(0, 6)}
-            // id={card.index}
             index={card.index}
             inView={isVisible ? 'y' : 'n'}
             avatar={card.avatar}
             title={card.description}
             type={card.cdType}
             date={card.txnDate}
+            time={card.txnTime}
+            bizDate={card.bizDate}
+            targetBank={card.targetBank}
+            targetAccount={card.targetAcct}
+            targetMember={card.targetMbrID}
             sender={card.targetMbrID || card.targetAcct}
             dollarSign={card.currency}
             amount={card.amount}
@@ -367,6 +385,7 @@ const DepositInquiry = () => {
       setTabList(monthly.reverse());
       setTabId(acctDetails[0].txnDate.substr(0, 6));
       dispatch(setDetailList(acctDetails));
+      // console.log(onlineResponse);
     }
   };
 
@@ -385,7 +404,7 @@ const DepositInquiry = () => {
         </div>
       </div>
       { renderDownloadDrawer() }
-      { renderSearchDrawer(<DepositSearchCondition initKeywords={initKeywords} />) }
+      { renderSearchDrawer(<DepositSearchCondition initKeywords={initKeywords} setTabList={setTabList} />) }
     </DepositInquiryWrapper>
   );
 };
