@@ -19,7 +19,7 @@ import {
   setCustomKeyword, setDetailList,
 } from '../DepositInquiry/stores/actions';
 
-const DepositSearchCondition = ({ initKeywords }) => {
+const DepositSearchCondition = ({ initKeywords, setTabList }) => {
   const keywords = useSelector(({ depositInquiry }) => depositInquiry.keywords);
   const customKeyword = useSelector(({ depositInquiry }) => depositInquiry.customKeyword);
   const dateRange = useSelector(({ depositInquiry }) => depositInquiry.dateRange);
@@ -87,13 +87,9 @@ const DepositSearchCondition = ({ initKeywords }) => {
     dispatch(setOpenInquiryDrawer(false));
 
     if (customKeyword) {
-      if (data.keywordCustom === undefined) {
-        data.keywordCustom = customKeyword;
-      }
+      if (data.keywordCustom === undefined) data.keywordCustom = customKeyword;
     } else {
-      if (!data.keywordCustom) {
-        data.keywordCustom = '';
-      }
+      if (!data.keywordCustom) data.keywordCustom = '';
     }
     dispatch(setCustomKeyword(data.keywordCustom));
 
@@ -114,8 +110,9 @@ const DepositSearchCondition = ({ initKeywords }) => {
     // console.log(data);
     const onlineResponse = await getOnlineData(apiUrl);
     if (onlineResponse) {
-      const { acctDetails } = onlineResponse;
+      const { acctDetails, monthly } = onlineResponse;
       dispatch(setDetailList(acctDetails));
+      setTabList(monthly.reverse());
       // console.log(onlineResponse);
     }
   };
