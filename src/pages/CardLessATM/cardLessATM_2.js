@@ -89,7 +89,7 @@ const CardLessATM2 = ({ location }) => {
         </Accordion>
         <FEIBButton
           onClick={() => {
-            history.push('cardLessATM1');
+            history.push('/more');
           }}
         >
           確認

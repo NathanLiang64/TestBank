@@ -3801,18 +3801,16 @@
   "getStatusCode": {
     "code": 0,
     "data": {
-      "statusCode": 1,
+      "statusCode": 2,
       "message": "檢查無卡提款狀態回傳訊息"
     }
   },
   "getCardInfo": {
     "code": 0,
     "data": {
-      "cardInfo": {
-        "account": "043-040-99001568",
-        "balance": 168000,
-        "discountTimes": 3
-      }
+      "account": "043-040-99001568",
+      "balance": 168000,
+      "discountTimes": 3
     }
   },
   "cardLessWithdrawApply": {
@@ -3831,20 +3829,21 @@
     "code": 0,
     "data": {
       "result": true,
-      "message": "無卡提款申請成功"
+      "message": "無卡提款密碼變更成功"
     }
   },
   "checkNewSiteRegist": {
     "code": 0,
     "data": {
-      "newSiteRegist": true
+      "newSiteRegist": true,
+      "message": "檢查是否新網站註冊"
     }
   },
   "cardLessWithdrawActive": {
     "code": 0,
     "data": {
-      "newSiteRegist": true,
-      "activeResultCode": 0
+      "activeResultCode": 0,
+      "message": "無卡提款啟用成功"
     }
   },
   "checkUDIDAndQuickLogin": {

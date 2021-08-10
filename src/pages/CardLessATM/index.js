@@ -134,6 +134,7 @@ const CardLessATM = () => {
     const checkUDIDAndQuickLoginResponse = await cardLessATMApi.checkUDIDAndQuickLogin();
     // eslint-disable-next-line no-shadow
     const { quickLogin, checkUDID, message } = checkUDIDAndQuickLoginResponse.data;
+    console.log('檢查UDID與快速登入');
     if (checkUDID) {
       setQuickLogin(quickLogin);
     } else {
@@ -144,52 +145,6 @@ const CardLessATM = () => {
       });
     }
     return checkUDID;
-  };
-
-  const getStatusCode = async () => {
-    // 檢查晶片狀態；“01”=新申請 “02”=尚未開卡 “04”=已啟用 “05”=已掛失 “06”=已註銷 “07”=已銷戶 “08”=臨時掛失中 “09”=申請中
-    const statusCodeResponse = await cardLessATMApi.getStatusCode();
-    const { statusCode, message } = statusCodeResponse.data;
-    if (statusCode === 2) {
-      // eslint-disable-next-line no-console
-      console.log('無卡提款已開通');
-      checkUDIDAndQuickLogin().then((res) => {
-        if (res) {
-          toWithdrawPage();
-        }
-      });
-    }
-    if (statusCode !== 2) {
-      if (statusCode === 1) {
-        // eslint-disable-next-line no-console
-        console.log('無卡提款已申請未開通');
-        checkUDIDAndQuickLogin();
-      } else {
-        handleDialogOpen(message);
-      }
-    }
-  };
-
-  const getCardStatus = async () => {
-    // 檢查晶片狀態；“01”=新申請 “02”=尚未開卡 “04”=已啟用 “05”=已掛失 “06”=已註銷 “07”=已銷戶 “08”=臨時掛失中 “09”=申請中
-    const cardStatusResponse = await cardLessATMApi.getCardStatus();
-    const { cardStatus, message } = cardStatusResponse.data;
-    if (cardStatus === 4) {
-      // eslint-disable-next-line no-console
-      console.log('無卡提款已啟用');
-      getStatusCode();
-    }
-    if (cardStatus !== 4) {
-      if (cardStatus === 1) {
-        handleDialogOpen('晶片卡申請中');
-      }
-      if (cardStatus === 2) {
-        console.log('轉導到晶片卡開卡頁');
-      }
-      if (cardStatus !== 1 || cardStatus !== 2) {
-        handleDialogOpen(message);
-      }
-    }
   };
 
   const renderPage = () => (
@@ -290,7 +245,7 @@ const CardLessATM = () => {
   usePageInfo('/api/cardLessATM');
 
   useEffect(async () => {
-    getCardStatus();
+    checkUDIDAndQuickLogin();
   }, []);
 
   return (
