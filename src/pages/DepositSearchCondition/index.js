@@ -19,38 +19,28 @@ import {
   setCustomKeyword, setDetailList,
 } from '../DepositInquiry/stores/actions';
 
-const DepositSearchCondition = ({ initKeywords, setTabList }) => {
+const DepositSearchCondition = ({ init, requestConditions, setTabList, setTabId }) => {
   const keywords = useSelector(({ depositInquiry }) => depositInquiry.keywords);
   const customKeyword = useSelector(({ depositInquiry }) => depositInquiry.customKeyword);
   const dateRange = useSelector(({ depositInquiry }) => depositInquiry.dateRange);
   const tempDateRange = useSelector(({ depositInquiry }) => depositInquiry.tempDateRange);
-  const [tabId, setTabId] = useState('0');
+  const [autoDateTabId, setAutoDateTabId] = useState('0');
   const { register, unregister, handleSubmit } = useForm();
-  const { getOnlineData } = depositInquiryApi;
+  const { getDetailsData } = depositInquiryApi;
   const dispatch = useDispatch();
-
-  // 控制 Tabs 頁籤
-  const handleChangeTabList = (event, id) => {
-    setTabId(id);
-  };
 
   const handleChangeKeywords = (event) => {
     const tempKeywords = Array.from(keywords);
     tempKeywords.find((item) => {
-      if (event.target.name === item.name) {
-        item.selected = event.target.checked;
-      }
+      if (event.target.name === item.name) item.selected = event.target.checked;
     });
     dispatch(setKeywords(tempKeywords));
   };
 
+  // 點擊取消按鈕
   const handleClickCancelButton = () => {
     dispatch(setOpenInquiryDrawer(false));
-    // 清空查詢條件
-    dispatch(setDateRange([]));
-    dispatch(setTempDateRange([]));
-    dispatch(setCustomKeyword(''));
-    dispatch(setKeywords(initKeywords));
+    init();
   };
 
   // 點擊查詢按鈕後傳送資料
@@ -71,12 +61,8 @@ const DepositSearchCondition = ({ initKeywords, setTabList }) => {
         dispatch(setDateRange(tempDateRange));
         data.dateRange = [stringDateCodeFormatter(tempDateRange[0]), stringDateCodeFormatter(tempDateRange[1])];
       } else {
-        // 若 tempDateRange 沒有值，代表沒有選擇日期，預設儲存三年範圍，此處要加入 data.dateRange 後端才收得到
-        const today = new Date();
-        const threeYearsAgo = new Date();
-        threeYearsAgo.setFullYear(threeYearsAgo.getFullYear() - 3);
-        dispatch(setDateRange([threeYearsAgo, today]));
-        data.dateRange = [stringDateCodeFormatter(threeYearsAgo), stringDateCodeFormatter(today)];
+        // 若 tempDateRange 沒有值，代表沒有選擇日期，預設儲存查詢半年範圍內 (資料庫會判斷)，此處代空字串即可
+        data.dateRange = ['', ''];
       }
     }
 
@@ -86,34 +72,25 @@ const DepositSearchCondition = ({ initKeywords, setTabList }) => {
     // 關閉底部抽屜
     dispatch(setOpenInquiryDrawer(false));
 
-    if (customKeyword) {
-      if (data.keywordCustom === undefined) data.keywordCustom = customKeyword;
-    } else {
-      if (!data.keywordCustom) data.keywordCustom = '';
-    }
+    // 如果 redux 內的關鍵字有值，送出的關鍵字卻是空的，則關鍵字應代入 redux 內關鍵字的值
+    if (customKeyword && (data.keywordCustom === undefined)) data.keywordCustom = customKeyword;
+    // 如果 redux 內的關鍵字和送出的關鍵字都是空的，則關鍵字應為空字串值
+    if (!customKeyword && !data.keywordCustom) data.keywordCustom = '';
     dispatch(setCustomKeyword(data.keywordCustom));
 
-    // 送資料
-
-    // 選取關鍵字條件
-    // 1 跨轉, 2 ATM, 3 存款息, 4 薪轉, 5 付款儲存, 6自動扣繳
-    const tranTPList = [];
-    keywords.forEach((item) => {
-      if (item.selected) tranTPList.push(item.name[item.name.length - 1]);
-    });
-
-    const account = '04300499312641';
-    const tranTP = tranTPList.join();
+    // 查詢代入條件：1.帳號, 2.日期起訖範圍, 3.類別, 4.自訂關鍵字
+    const { baseUrl, account, tranTP } = requestConditions();
+    const beginDT = data.dateRange[0];
+    const endDT = data.dateRange[1];
     const custom = data.keywordCustom;
-    const apiUrl = `https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=${account}&beginDT=${data.dateRange[0]}&endDT=${data.dateRange[1]}&tranTP=${tranTP}&textSH=${custom}`;
-    // console.log(apiUrl);
-    // console.log(data);
-    const onlineResponse = await getOnlineData(apiUrl);
-    if (onlineResponse) {
-      const { acctDetails, monthly } = onlineResponse;
+
+    const apiUrl = `${baseUrl}?actno=${account}&beginDT=${beginDT}&endDT=${endDT}&tranTP=${tranTP}&textSH=${custom}`;
+    const response = await getDetailsData(apiUrl);
+    if (response) {
+      const { acctDetails, monthly } = response;
       dispatch(setDetailList(acctDetails));
-      setTabList(monthly.reverse());
-      // console.log(onlineResponse);
+      setTabList(monthly.length ? monthly.reverse() : []);
+      setTabId(acctDetails.length ? acctDetails[0].txnDate.substr(0, 6) : '');
     }
   };
 
@@ -130,7 +107,7 @@ const DepositSearchCondition = ({ initKeywords, setTabList }) => {
   );
 
   const computedStartDate = (date) => {
-    switch (tabId) {
+    switch (autoDateTabId) {
       case '1':
         // 計算 6 個月前的日期
         date.setMonth(date.getMonth() - 6);
@@ -164,15 +141,15 @@ const DepositSearchCondition = ({ initKeywords, setTabList }) => {
   };
 
   const renderTabs = () => (
-    <FEIBTabContext value={tabId}>
-      <FEIBTabList onChange={handleChangeTabList} $size="small" $type="fixed">
+    <FEIBTabContext value={autoDateTabId}>
+      <FEIBTabList onChange={(event, id) => setAutoDateTabId(id)} $size="small" $type="fixed">
         <FEIBTab label="自訂" value="0" />
         <FEIBTab label="近六個月" value="1" />
         <FEIBTab label="近一年" value="2" />
         <FEIBTab label="近兩年" value="3" />
         <FEIBTab label="近三年" value="4" />
       </FEIBTabList>
-      { tabId === '0' ? renderDataRangePicker() : renderAutoDate() }
+      { autoDateTabId === '0' ? renderDataRangePicker() : renderAutoDate() }
     </FEIBTabContext>
   );
 
@@ -204,9 +181,7 @@ const DepositSearchCondition = ({ initKeywords, setTabList }) => {
 
   useEffect(() => {
     // 如果 dateRange 有值，表示上一次查詢紀錄有日期，重新開啟搜尋面板時需自動代入
-    if (dateRange.length > 0) {
-      dispatch(setTempDateRange(dateRange));
-    }
+    if (dateRange.length > 0) dispatch(setTempDateRange(dateRange));
   }, []);
 
   return (
