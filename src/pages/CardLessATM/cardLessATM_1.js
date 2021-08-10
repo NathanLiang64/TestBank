@@ -90,7 +90,7 @@ const CardLessATM1 = () => {
 
   const getCardInfo = async () => {
     const cardInfoResponse = await cardLessATMApi.getCardInfo();
-    const { cardInfo } = cardInfoResponse.data;
+    const cardInfo = cardInfoResponse.data;
     setCardInformation({ ...cardInfo });
   };
 

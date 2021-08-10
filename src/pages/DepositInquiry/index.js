@@ -16,7 +16,12 @@ import theme from 'themes/theme';
 import { dateFormatter, stringDateCodeFormatter } from 'utilities/Generator';
 import DepositInquiryWrapper from './depositInquiry.style';
 import {
-  setDetailList, setOpenInquiryDrawer, setDateRange, setKeywords, setCustomKeyword,
+  setDetailList,
+  setOpenInquiryDrawer,
+  setDateRange,
+  setKeywords,
+  setCustomKeyword,
+  setTempDateRange,
 } from './stores/actions';
 
 const DepositInquiry = () => {
@@ -35,18 +40,9 @@ const DepositInquiry = () => {
   const dateRange = useSelector(({ depositInquiry }) => depositInquiry.dateRange);
   const keywords = useSelector(({ depositInquiry }) => depositInquiry.keywords);
   const customKeyword = useSelector(({ depositInquiry }) => depositInquiry.customKeyword);
-  // const { doGetInitData } = depositInquiryApi;
-  const { getOnlineData } = depositInquiryApi;
+  const { getDetailsData } = depositInquiryApi;
   const dispatch = useDispatch();
 
-  // const initKeywords = [
-  //   { title: '繳卡款', name: 'keywordBill', selected: false },
-  //   { title: '轉出', name: 'keywordTransfer', selected: false },
-  //   { title: '轉入', name: 'keywordDepositAccount', selected: false },
-  //   { title: '利息', name: 'keywordInterest', selected: false },
-  //   { title: '付款儲值', name: 'keywordSpend', selected: false },
-  //   { title: '薪轉', name: 'keywordSalary', selected: false },
-  // ];
   const initKeywords = [
     { title: '跨轉', name: 'tranTP1', selected: false },
     { title: 'ATM', name: 'tranTP2', selected: false },
@@ -56,154 +52,132 @@ const DepositInquiry = () => {
     { title: '自動扣繳', name: 'tranTP6', selected: false },
   ];
 
-  const handleChangeTabList = (event, id) => {
-    setTabId(id);
-  };
-
-  // 點擊查詢條件篩選 icon (放大鏡)
-  const handleClickSearchButton = () => {
-    dispatch(setOpenInquiryDrawer(true));
-  };
-
-  // 點擊下載交易明細 icon
+  // 點擊下載交易明細
   const handleClickDownloadDetails = (format) => {
     setOpenDownloadDrawer(false);
     if (format === 'pdf') {
-      // 交易明細下載 (Pdf 格式)
-      // window.location.href = 'url';
-    } else {
-      // 交易明細下載 (Excel 格式)
-      // window.location.href = 'url';
+      // window.location.href = 'url';  // 交易明細下載 (Pdf 格式)
+    } else if (format === 'excel') {
+      // window.location.href = 'url';  // 交易明細下載 (Excel 格式)
     }
   };
 
-  // 點擊清空條件 icon
-  const handleClickClearCondition = () => {
-    // 儲存目前的已選關鍵字陣列至 tempSelectedKeywords
-    const tempKeywords = Array.from(keywords);
-    // 將 tempKeywords 內所有的關鍵字改為未選取
-    tempKeywords.forEach((keyword) => {
-      keyword.selected = false;
-    });
-    // 清空日期範圍條件
-    dispatch(setDateRange([]));
-    // 清空已選關鍵字條件 (將 tempSelectedKeywords 取代掉現有的 selectedKeywords)
-    dispatch(setKeywords(tempKeywords));
-    dispatch(setCustomKeyword(''));
-  };
-
-  // const handleClickMonthTabs = async (event) => {
-  //   // 從點擊的 Tab 連結取得 TabId
-  //   const tab = event.currentTarget.href.split('#').pop();
-  //   const response = await doGetInitData('/api/depositInquiry');
-  //   if (response[tab]) {
-  //     dispatch(setDetailList(response[tab]));
-  //     const target = Array.from(transactionDetailRef.current.children).find((child) => child.id === tab);
-  //     target.scrollIntoView({ behavior: 'smooth' });
-  //   }
-  // };
-  const handleClickOnlineMonthTabs = async (event) => {
-    // 代入條件 1.帳號, 2.日期起訖範圍, 3.月份, 4.分類, 5.關鍵字
-    const account = '04300499312641';
-    const beginDT = dateRange[0] ? stringDateCodeFormatter(dateRange[0]) : '';
-    const endDT = dateRange[1] ? stringDateCodeFormatter(dateRange[1]) : '';
-    const month = event.currentTarget.getAttribute('data-month'); // 從點擊的 Tab 連結取得 TabId
-    const custom = customKeyword;
+  // 獲取交易明細時需代入的參數條件
+  const requestConditions = () => {
+    // tranTP 為類別條件，1 ~ 6 參數分別為：1 跨轉, 2 ATM, 3 存款息, 4 薪轉, 5 付款儲存, 6 自動扣繳
     const tranTPList = [];
     keywords.forEach((item) => {
       if (item.selected) tranTPList.push(item.name[item.name.length - 1]);
     });
-    const tranTP = tranTPList.join();
+    return {
+      baseUrl: 'https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx',
+      account: '04300499312641',
+      beginDT: dateRange[0] ? stringDateCodeFormatter(dateRange[0]) : '',
+      endDT: dateRange[1] ? stringDateCodeFormatter(dateRange[1]) : '',
+      tranTP: tranTPList.join(),
+      custom: customKeyword,
+    };
+  };
 
-    const testApiUrl = `https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=${account}&beginDT=${beginDT}&endDT=${endDT}&tranTP=${tranTP}&textSH=${custom}&dataMonth=${month}`;
-    // console.log(testApiUrl);
-    const response = await getOnlineData(`${testApiUrl}&dataMonth=${month}`);
+  const init = async () => {
+    // 清空查詢條件
+    dispatch(setDateRange([]));
+    dispatch(setTempDateRange([]));
+    dispatch(setCustomKeyword(''));
+    dispatch(setKeywords(initKeywords));
+
+    // 取得所有存款卡的初始資料
+    const { baseUrl, account } = requestConditions();
+    const response = await getDetailsData(`${baseUrl}?actno=${account}`);
+    if (response) {
+      const { monthly, acctDetails } = response;
+      setTabList(monthly.length ? monthly.reverse() : []);
+      setTabId(acctDetails.length ? acctDetails[0].txnDate.substr(0, 6) : '');
+      dispatch(setDetailList(acctDetails));
+
+      // 畫面跳轉至畫面第一筆資料
+      const target = transactionDetailRef.current.children[0];
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // 點擊月份頁籤，代入條件：1.帳號, 2.日期起訖範圍, 3.類別, 4.自訂關鍵字, 5.月份
+  const handleClickMonthTab = async (event) => {
+    const {
+      baseUrl, account, beginDT, endDT, tranTP, custom,
+    } = requestConditions();
+    // 由點擊的月份頁籤 (Tab) 取得月份條件
+    const month = event.currentTarget.getAttribute('data-month');
+
+    const apiUrl = `${baseUrl}?actno=${account}&beginDT=${beginDT}&endDT=${endDT}&tranTP=${tranTP}&textSH=${custom}&dataMonth=${month}`;
+    const response = await getDetailsData(`${apiUrl}&dataMonth=${month}`);
     if (response) {
       const { acctDetails, monthly } = response;
-      // console.info('response', response);
       dispatch(setDetailList(acctDetails));
       setTabList(monthly.reverse());
     }
+
+    // 畫面跳轉至該月份第一筆資料
     const target = Array.from(transactionDetailRef.current.children).find((child) => child.id === month);
     if (target) target.scrollIntoView({ behavior: 'smooth' });
-    // console.info('target', target);
     setTabId(month);
   };
 
-  // const getNewDetailData = async (scrollDirection) => {
-  //   const response = await doGetInitData('/api/depositInquiry');
-  //   const newDetailList = [];
-  //   if (response.nextCall) {
-  //     if (scrollDirection === 'up') {
-  //       newDetailList.push(...response.nextCall, ...detailList);
-  //     } else if (scrollDirection === 'down') {
-  //       newDetailList.push(...detailList, ...response.nextCall);
-  //     }
-  //     dispatch(setDetailList(newDetailList));
-  //     // 資料取回後
-  //     setIsPending(false);
-  //   }
-  // };
-  const getNewOnlineDetailData = async (scrollDirection, startIndex) => {
+  // 滾動畫面後獲取新的交易明細，代入條件：1.帳號, 2.日期起訖範圍, 3.類別, 4.自訂關鍵字, 5.起始索引值, 6.方向
+  const getMoreDetailsData = async (scrollDirection, startIndex) => {
+    const {
+      baseUrl, account, beginDT, endDT, tranTP, custom,
+    } = requestConditions();
+    const direct = scrollDirection === 'up' ? '-1' : '1';
     const newDetailList = [];
-    let response = null;
-    const apiUrl = `https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTxNext?actno=04300499312641&startIndex=${startIndex}&direct=`;
-    if (scrollDirection === 'up') {
-      response = await getOnlineData(`${apiUrl}-1`);
-      newDetailList.push(...response.acctDetails, ...detailList);
-      dispatch(setDetailList(newDetailList));
-      // TODO: 避免資料更新時跳至最頂部，當資料回來時跳轉至舊資料的第一筆位置，目前作法有 bug，待修改
-      // const target = Array.from(transactionDetailRef.current.children).find((child) => child.getAttribute('data-index') === (startIndex + 1).toString());
-      // target.scrollIntoView();
-    } else if (scrollDirection === 'down') {
-      response = await getOnlineData(`${apiUrl}1`);
-      newDetailList.push(...detailList, ...response.acctDetails);
+
+    const apiUrl = `${baseUrl}?actno=${account}&beginDT=${beginDT}&endDT=${endDT}&tranTP=${tranTP}&textSH=${custom}&startIndex=${startIndex}&direct=${direct}`;
+    const response = await getDetailsData(apiUrl);
+    if (response) {
+      if (scrollDirection === 'up') {
+        newDetailList.push(...response.acctDetails, ...detailList);
+        // TODO: 資料更新後是否會跳至最頂部，待測試
+        // const target = Array.from(transactionDetailRef.current.children).find((child) => child.getAttribute('data-index') === (startIndex + 1).toString());
+        // target.scrollIntoView();
+      } else if (scrollDirection === 'down') {
+        newDetailList.push(...detailList, ...response.acctDetails);
+      }
       dispatch(setDetailList(newDetailList));
     }
+    // 資料取回後，解除 isPending 狀態
     setIsPending(false);
   };
 
-  // 捲動畫面至剩餘 13 筆時正向或反向撈取資料
+  // 確認是否正在處理資料請求，唯有未在處理請求時才能再次獲取資料
+  const checkIsPending = (scrollDirection, startIndex) => {
+    if (!isPending) {
+      // 一旦進行資料請求，開啟 isPending 狀態，避免條件符合連續 call api
+      setIsPending(true);
+      getMoreDetailsData(scrollDirection, startIndex);
+    }
+  };
+
+  // 判斷畫面捲動方向，當頂/底部的交易明細剩餘 25 筆時正/反向撈取資料
   const visibilitySensorOnChange = () => {
     if (transactionDetailRef.current) {
       setViewerChildren(Array.from(transactionDetailRef.current.children));
       const inViewList = viewerChildren.filter((item) => item.dataset.inview === 'y');
       setInViewChildren((prev) => {
         if (prev.length > 0 && inViewList.length > 0) {
+          // 捲動畫面時，根據當前畫面上的第一筆明細動態切換月份標籤
           setTabId(inViewList[0].id);
-          /* ============ 判斷使用者往上捲動或往下捲動 ========== */
-          // 往下捲動
+          // 當畫面往下捲動
           if (prev[0].dataset.index < inViewList[0].dataset.index) {
             const prevLastIndex = parseInt(prev[prev.length - 1].dataset.index, 10);
-            const viewerChildrenLastIndex = parseInt(viewerChildren[viewerChildren.length - 1].dataset.index, 10);
-            // console.info('prevLastIndex: ', prevLastIndex);
-            // console.info('totalLastIndex: ', viewerChildrenLastIndex);
-            if (viewerChildrenLastIndex - prevLastIndex < 13) {
-              if (!isPending) {
-                // console.log(`下方剩餘數量少於 13 張卡片，call api 獲取從索引第 ${viewerChildrenLastIndex + 1} 到第 ${viewerChildrenLastIndex + 21} 張`);
-                setIsPending(true);
-                // getNewDetailData('down');
-                // console.log('正向 start index: ', viewerChildrenLastIndex + 1);
-                getNewOnlineDetailData('down', viewerChildrenLastIndex + 1);
-              }
-            }
-          //  往上捲動
+            const viewerLastIndex = parseInt(viewerChildren[viewerChildren.length - 1].dataset.index, 10);
+            // 底部明細剩餘數量少於 25 張時，由畫面上最後一筆明細索引值 + 1 (viewerLastIndex + 1) 正向獲取接續 50 筆 (50 由資料庫訂定)
+            if (viewerLastIndex - prevLastIndex < 25) checkIsPending('down', viewerLastIndex + 1);
+          // 當畫面往上捲動
           } else if (prev[0].dataset.index > inViewList[0].dataset.index) {
             const prevFirstIndex = parseInt(prev[0].dataset.index, 10);
-            const viewerChildrenFirstIndex = parseInt(viewerChildren[0].dataset.index, 10);
-            // console.info('prevFirstIndex: ', prevFirstIndex);
-            // console.info('totalFirstIndex: ', viewerChildrenFirstIndex);
-            // 如果列表內的卡片數量至頂部剩餘數量少於 13 張
-            if (prevFirstIndex - viewerChildrenFirstIndex < 13) {
-              // 避免條件符合連續 call api
-              if (!isPending) {
-                // console.log(`獲取從索引第 ${viewerChildrenFirstIndex - 1} 到第 ${viewerChildrenFirstIndex - 21} 張`);
-                setIsPending(true);
-                // getNewDetailData('up');
-                // console.log('反向 start index: ', viewerChildrenFirstIndex - 1);
-                getNewOnlineDetailData('up', viewerChildrenFirstIndex - 1);
-              }
-            }
+            const viewerFirstIndex = parseInt(viewerChildren[0].dataset.index, 10);
+            // 頂部明細剩餘數量少於 25 張時，由畫面上第一筆明細索引值 - 1 (viewerFirstIndex - 1) 反向獲取接續 50 筆 (50 由資料庫訂定)
+            if (prevFirstIndex - viewerFirstIndex < 25) checkIsPending('up', viewerFirstIndex - 1);
           }
         }
         return inViewList;
@@ -211,25 +185,18 @@ const DepositInquiry = () => {
     }
   };
 
-  const renderCardArea = (card) => {
-    const { cardName, cardAccount, cardBalance } = card;
-    return (
-      <DebitCard
-        cardName={cardName}
-        account={cardAccount}
-        balance={cardBalance}
-      />
-    );
-  };
+  const renderCardArea = (card) => (
+    <DebitCard
+      cardName={card.cardName}
+      account={card.cardAccount}
+      balance={card.cardBalance}
+    />
+  );
 
   const renderSearchBarText = (date) => (
     <div className="searchCondition">
       <p>{`${dateFormatter(new Date(date[0]))} ~ ${dateFormatter(new Date(date[1]))}`}</p>
-      <FEIBIconButton
-        $fontSize={2}
-        $iconColor={theme.colors.primary.light}
-        onClick={handleClickClearCondition}
-      >
+      <FEIBIconButton $fontSize={2} $iconColor={theme.colors.primary.light} onClick={init}>
         <CancelRounded />
       </FEIBIconButton>
     </div>
@@ -237,7 +204,7 @@ const DepositInquiry = () => {
 
   const renderSearchBarArea = () => (
     <div className="searchBar">
-      <FEIBIconButton $fontSize={2.8} onClick={handleClickSearchButton}>
+      <FEIBIconButton $fontSize={2.8} onClick={() => dispatch(setOpenInquiryDrawer(true))}>
         <SearchRounded />
       </FEIBIconButton>
       { (dateRange.length > 0) && renderSearchBarText(dateRange) }
@@ -247,37 +214,17 @@ const DepositInquiry = () => {
     </div>
   );
 
-  // 捲動時 tabs 切換
-  // const renderTabs = () => (
-  //   <div className="tabsArea">
-  //     <FEIBTabContext value={tabId}>
-  //       <FEIBTabList onChange={handleChangeTabList} $size="small" className="tabList">
-  //         <FEIBTab label="12月" value="12" href="#12" onClick={handleClickMonthTabs} />
-  //         <FEIBTab label="11月" value="11" href="#11" onClick={handleClickMonthTabs} />
-  //         <FEIBTab label="10月" value="10" href="#10" onClick={handleClickMonthTabs} />
-  //         <FEIBTab label="09月" value="09" href="#09" onClick={handleClickMonthTabs} />
-  //         <FEIBTab label="08月" value="08" href="#08" onClick={handleClickMonthTabs} />
-  //         <FEIBTab label="07月" value="07" href="#07" onClick={handleClickMonthTabs} />
-  //         <FEIBTab label="06月" value="06" href="#06" onClick={handleClickMonthTabs} />
-  //         <FEIBTab label="05月" value="05" href="#05" onClick={handleClickMonthTabs} />
-  //         <FEIBTab label="04月" value="04" href="#04" onClick={handleClickMonthTabs} />
-  //         <FEIBTab label="03月" value="03" href="#03" onClick={handleClickMonthTabs} />
-  //       </FEIBTabList>
-  //     </FEIBTabContext>
-  //   </div>
-  // );
-  const renderOnlineTabs = (monthly) => (
+  const renderMonthTabs = (monthly) => (
     <div className="tabsArea">
       <FEIBTabContext value={tabId}>
-        <FEIBTabList onChange={handleChangeTabList} $size="small" className="tabList">
+        <FEIBTabList onChange={(event, id) => setTabId(id)} $size="small" className="tabList">
           { monthly.map((month) => (
             <FEIBTab
               key={month}
               label={`${month.substr(4, 2)}月`}
               value={month}
               data-month={month}
-              // href={`#${month}`}
-              onClick={handleClickOnlineMonthTabs}
+              onClick={handleClickMonthTab}
             />
           )) }
         </FEIBTabList>
@@ -285,32 +232,7 @@ const DepositInquiry = () => {
     </div>
   );
 
-  // const renderDetailCardList = (list) => (
-  //   list.map((card) => (
-  //     <VisibilitySensor
-  //       key={card.id}
-  //       onChange={visibilitySensorOnChange}
-  //       containment={transactionDetailRef.current}
-  //     >
-  //       {({ isVisible }) => (
-  //         <DetailCard
-  //           id={card.date.substr(0, 2)}
-  //           index={card.index}
-  //           inView={isVisible ? 'y' : 'n'}
-  //           avatar={card.avatar}
-  //           title={card.title}
-  //           type={card.type}
-  //           date={card.date}
-  //           sender={card.sender}
-  //           amount={card.amount}
-  //           balance={card.balance}
-  //           noShadow
-  //         />
-  //       )}
-  //     </VisibilitySensor>
-  //   ))
-  // );
-  const renderOnlineDetailCardList = (list) => (
+  const renderDetailCardList = (list) => (
     list.map((card) => (
       <VisibilitySensor
         key={card.index}
@@ -331,7 +253,6 @@ const DepositInquiry = () => {
             targetBank={card.targetBank}
             targetAccount={card.targetAcct}
             targetMember={card.targetMbrID}
-            sender={card.targetMbrID || card.targetAcct}
             dollarSign={card.currency}
             amount={card.amount}
             balance={card.balance}
@@ -367,28 +288,6 @@ const DepositInquiry = () => {
     />
   );
 
-  const init = async () => {
-    // 清空查詢條件
-    dispatch(setDateRange([]));
-    dispatch(setCustomKeyword(''));
-    dispatch(setKeywords(initKeywords));
-
-    // 取得所有存款卡的初始資料
-    // const response = await doGetInitData('/api/depositInquiry');
-    const onlineResponse = await getOnlineData('https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=04300490004059');
-    // if (response.initData) {
-    //   setTabId(response.initData[0].id.substr(0, 2));
-    //   dispatch(setDetailList(response.initData));
-    // }
-    if (onlineResponse) {
-      const { monthly, acctDetails } = onlineResponse;
-      setTabList(monthly.reverse());
-      setTabId(acctDetails[0].txnDate.substr(0, 6));
-      dispatch(setDetailList(acctDetails));
-      // console.log(onlineResponse);
-    }
-  };
-
   useEffect(init, [transactionDetailRef]);
   useCheckLocation();
   usePageInfo('/api/depositInquiry');
@@ -398,13 +297,20 @@ const DepositInquiry = () => {
       { cardInfo && renderCardArea(cardInfo) }
       <div className="inquiryArea measuredHeight">
         { renderSearchBarArea() }
-        { tabId && tabList && renderOnlineTabs(tabList) }
+        { tabList.length ? renderMonthTabs(tabList) : null }
         <div className="transactionDetail" ref={transactionDetailRef}>
-          { detailList?.length > 0 ? renderOnlineDetailCardList(detailList) : <EmptyData /> }
+          { detailList?.length > 0 ? renderDetailCardList(detailList) : <EmptyData /> }
         </div>
       </div>
       { renderDownloadDrawer() }
-      { renderSearchDrawer(<DepositSearchCondition initKeywords={initKeywords} setTabList={setTabList} />) }
+      { renderSearchDrawer(
+        <DepositSearchCondition
+          init={init}
+          requestConditions={requestConditions}
+          setTabList={setTabList}
+          setTabId={setTabId}
+        />,
+      ) }
     </DepositInquiryWrapper>
   );
 };
