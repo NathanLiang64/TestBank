@@ -7,7 +7,7 @@ export const doGetInitData = (apiUrl) => (
     .catch((error) => error.response)
 );
 
-export const getOnlineData = (apiUrl) => (
+export const getDetailsData = (apiUrl) => (
   axios.get(apiUrl)
     .then((response) => response.data)
     .catch((error) => error.response)

@@ -27,7 +27,7 @@ const DepositOverview = () => {
   const ref = useRef();
   const dispatch = useDispatch();
   const { push } = useHistory();
-  const { doGetInitData } = depositOverviewApi;
+  const { doGetInitData, getDetailsData } = depositOverviewApi;
 
   const selectedCard = (id, allCards) => {
     const filteredCard = allCards.find((card) => card.id === id);
@@ -50,33 +50,24 @@ const DepositOverview = () => {
     }
   };
 
-  // 根據剩餘高度計算要顯示的卡片數量
   const renderDetailCardList = (list) => (
-    list.map((card) => {
-      const {
-        id,
-        avatar,
-        title,
-        type,
-        date,
-        sender,
-        amount,
-        balance,
-      } = card;
-      return (
-        <DetailCard
-          key={id}
-          avatar={avatar}
-          title={title}
-          type={type}
-          date={date}
-          sender={sender}
-          dollarSign="TWD"
-          amount={amount}
-          balance={balance}
-        />
-      );
-    })
+    list.map((card) => (
+      <DetailCard
+        key={card.index}
+        avatar={card.avatar}
+        title={card.description}
+        type={card.cdType}
+        date={card.txnDate}
+        time={card.txnTime}
+        bizDate={card.bizDate}
+        targetBank={card.targetBank}
+        targetAccount={card.targetAcct}
+        targetMember={card.targetMbrID}
+        dollarSign={card.currency}
+        amount={card.amount}
+        balance={card.balance}
+      />
+    ))
   );
 
   const renderDebitCard = (info) => {
@@ -163,14 +154,19 @@ const DepositOverview = () => {
   }, [cardInfo]);
 
   // 計算裝置可容納的交易明細卡片數量
-  useEffect(() => {
+  useEffect(async () => {
     if (cardInfo) {
+      // 根據剩餘高度計算要顯示的卡片數量
       const computedCount = Math.floor((transactionDetailAreaHeight - 32) / 80);
-      const list = [];
-      for (let i = 0; i < computedCount; i++) {
-        list.push(cardInfo.detailList[i]);
+      const detailsResponse = await getDetailsData('https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=04300499312641');
+      if (detailsResponse) {
+        const list = [];
+        const { acctDetails } = detailsResponse;
+        for (let i = 0; i < computedCount; i++) {
+          list.push(acctDetails[i]);
+        }
+        dispatch(setComputedCardList(list));
       }
-      dispatch(setComputedCardList(list));
     }
   }, [cardInfo, transactionDetailAreaHeight]);
 
