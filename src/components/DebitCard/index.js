@@ -45,6 +45,7 @@ const DebitCard = ({
   balance,
   hideIcon,
   functionList,
+  transferTitle = '跨轉優惠',
   transferLimit,
   transferRemaining,
   moreList,
@@ -119,7 +120,8 @@ const DebitCard = ({
 
   const renderTransferLimit = (total, current) => (
     <p className="transferLimit">
-      跨轉優惠:
+      {transferTitle}
+      :
       {total}
       次/剩餘
       {current}
