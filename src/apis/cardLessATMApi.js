@@ -62,3 +62,12 @@ export const cardLessWithdrawActive = async () => {
     .catch((err) => err);
   return response.data;
 };
+
+// 檢查UDID與快速登入
+export const checkUDIDAndQuickLogin = async () => {
+  const response = await userAxios
+    .get('/api/checkUDIDAndQuickLogin')
+    .then((data) => data)
+    .catch((err) => err);
+  return response.data;
+};

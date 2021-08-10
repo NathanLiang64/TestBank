@@ -33,6 +33,13 @@ export const stringDateFormatter = (stringDate) => {
   return dateArray.join('');
 };
 
+// 將時間格式轉為 HH:DD 字串
+export const timeFormatter = (time) => {
+  const hour = time.getHours().toString().padStart(2, '0');
+  const minute = time.getMinutes().toString().padStart(2, '0');
+  return `${hour}:${minute}`;
+};
+
 // 將拉阿伯數字轉換為中文大寫
 /* eslint-disable eqeqeq */
 export const numberToChinese = (number) => {

@@ -3794,13 +3794,15 @@
   "getCardStatus": {
     "code": 0,
     "data": {
-      "cardStatus": 4
+      "cardStatus": 4,
+      "message": "檢查晶片卡狀態回傳訊息"
     }
   },
   "getStatusCode": {
     "code": 0,
     "data": {
-      "statusCode": 1
+      "statusCode": 1,
+      "message": "檢查無卡提款狀態回傳訊息"
     }
   },
   "getCardInfo": {
@@ -3814,10 +3816,23 @@
     }
   },
   "cardLessWithdrawApply": {
-    "code": 0
+    "code": 0,
+    "data": {
+      "result": 0,
+      "message": "無卡提款申請成功",
+      "bankNo": 805,
+      "withdrawalNo": "071 034 5835",
+      "startDateTime": "2021/05/27 16:03:54",
+      "endDateTime": "2021/05/27 16:18:54",
+      "amount": 15000
+    }
   },
   "changeCardlessPwd": {
-    "code": 0
+    "code": 0,
+    "data": {
+      "result": true,
+      "message": "無卡提款申請成功"
+    }
   },
   "checkNewSiteRegist": {
     "code": 0,
@@ -3830,6 +3845,14 @@
     "data": {
       "newSiteRegist": true,
       "activeResultCode": 0
+    }
+  },
+  "checkUDIDAndQuickLogin": {
+    "code": 0,
+    "data": {
+      "checkUDID": true,
+      "quickLogin": true,
+      "message": "檢查UDID與快速登入回傳訊息"
     }
   },
   "cardLessWithDrawChgPwd": {

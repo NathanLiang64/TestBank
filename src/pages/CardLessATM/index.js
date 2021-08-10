@@ -5,24 +5,22 @@ import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { cardLessATMApi } from 'apis';
+import { closeFunc } from 'utilities/BankeePlus';
 
 /* Elements */
 import {
   FEIBButton,
-  // FEIBCheckboxLabel,
-  // FEIBCheckbox,
   FEIBInputLabel,
   FEIBInput,
   FEIBErrorMessage,
 } from 'components/elements';
+import Dialog from 'components/Dialog';
 import PasswordInput from 'components/PasswordInput';
-// import NoticeArea from 'components/NoticeArea';
 import Accordion from 'components/Accordion';
 import BottomDrawer from 'components/BottomDrawer';
 import { passwordValidation } from 'utilities/validation';
 
 /* Styles */
-// import theme from 'themes/theme';
 import CardLessATMWrapper from './cardLessATM.style';
 
 import DealContent from './dealContent';
@@ -65,25 +63,34 @@ const CardLessATM = () => {
 
   const history = useHistory();
 
+  const [quickLogin, setQuickLogin] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [step, setStep] = useState(0);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [dialogCallback, setDialogCallback] = useState(() => () => setOpenDialog(false));
 
+  // 跳轉到無卡提款申請頁
   const toWithdrawPage = () => {
     history.push('/cardLessATM1');
   };
 
+  const handleDialogOpen = (message) => {
+    setErrorMessage(message);
+    setOpenDialog(true);
+  };
+
+  // 開通無卡提款
   const cardLessActive = async (callbackFnc) => {
     const activeResponse = await cardLessATMApi.cardLessWithdrawActive();
-    const { activeResultCode } = activeResponse.data;
+    const { activeResultCode, message } = activeResponse.data;
     if (activeResultCode === 0) {
       callbackFnc();
+    } else {
+      handleDialogOpen(message);
     }
   };
 
-  const agreeContract = async (s) => {
-    setStep(s);
-  };
-
+  // 設定無卡提款密碼
   const changePwdHandler = async (param) => {
     // 檢查是否新網站申請
     const newSiteRegistResponse = await cardLessATMApi.checkNewSiteRegist();
@@ -93,6 +100,8 @@ const CardLessATM = () => {
         .then((response) => {
           if (response.code === 0) {
             cardLessActive(() => toWithdrawPage());
+          } else {
+            handleDialogOpen(response.message);
           }
         });
     } else {
@@ -105,7 +114,6 @@ const CardLessATM = () => {
       newWithdrawPwd: data.withdrawPassword,
     };
     // 是否使用快速登入
-    const quickLogin = true;
     if (quickLogin) {
       setDrawerOpen(true);
     } else {
@@ -121,99 +129,136 @@ const CardLessATM = () => {
     changePwdHandler(param);
   };
 
-  const renderPage = () => {
-    if (step === 0) {
-      return (
-        <>
-          <Accordion title="無卡提款約定事項" space="bottom" open>
-            <DealContent />
-          </Accordion>
-          <FEIBButton
-            onClick={() => agreeContract(1)}
-          >
-            同意條款並繼續
-          </FEIBButton>
-        </>
-      );
+  // 檢查UDID與快速登入
+  const checkUDIDAndQuickLogin = async () => {
+    const checkUDIDAndQuickLoginResponse = await cardLessATMApi.checkUDIDAndQuickLogin();
+    // eslint-disable-next-line no-shadow
+    const { quickLogin, checkUDID, message } = checkUDIDAndQuickLoginResponse.data;
+    if (checkUDID) {
+      setQuickLogin(quickLogin);
+    } else {
+      handleDialogOpen(message);
+      setDialogCallback(() => () => {
+        setOpenDialog(false);
+        closeFunc('home');
+      });
     }
-    return (
-      <form id="withdrawPwdForm" onSubmit={handleSubmit(onSubmit)}>
-        <PasswordInput
-          label="提款密碼"
-          id="withdrawPassword"
-          name="withdrawPassword"
-          placeholder="請輸入提款密碼(4-12位數字)"
-          control={control}
-          errorMessage={errors.withdrawPassword?.message}
-        />
-        <PasswordInput
-          label="確認提款密碼"
-          id="withdrawPasswordCheck"
-          name="withdrawPasswordCheck"
-          placeholder="請再輸入一次提款密碼(4-12位數字)"
-          control={control}
-          errorMessage={errors.withdrawPasswordCheck?.message}
-        />
-        <FEIBInputLabel htmlFor="OTPPassword">開通驗證碼</FEIBInputLabel>
-        <Controller
-          name="otpCode"
-          defaultValue=""
-          control={control}
-          render={({ field }) => (
-            <FEIBInput
-              {...field}
-              type="text"
-              id="otpCode"
-              name="otpCode"
-              placeholder="請輸入開通驗證碼"
-              error={!!errors.otpCode?.message}
-            />
-          )}
-        />
-        <FEIBErrorMessage>{errors.otpCode?.message}</FEIBErrorMessage>
-        <Accordion space="both">
-          <ul>
-            <li>本交易限時15分鐘內有效，請於交易有效時間內，至本行提供無卡提款功能之ATM完成提款。若逾時請重新申請。(實際交易有效時間以本行系統時間為準)。</li>
-            <li>提醒您，ATM提款時請務必確認您的存款餘額是否足夠，避免提款失敗。 </li>
-            <li>無卡提款密碼連續錯誤3次，即鎖住服務，須重新申請服務。</li>
-          </ul>
-        </Accordion>
-        <div className="btn-fix">
-          <FEIBButton
-            type="submit"
-          >
-            確認
-          </FEIBButton>
-        </div>
-      </form>
-    );
+    return checkUDID;
   };
 
   const getStatusCode = async () => {
     // 檢查晶片狀態；“01”=新申請 “02”=尚未開卡 “04”=已啟用 “05”=已掛失 “06”=已註銷 “07”=已銷戶 “08”=臨時掛失中 “09”=申請中
     const statusCodeResponse = await cardLessATMApi.getStatusCode();
-    const { statusCode } = statusCodeResponse.data;
+    const { statusCode, message } = statusCodeResponse.data;
     if (statusCode === 2) {
       // eslint-disable-next-line no-console
       console.log('無卡提款已開通');
-      toWithdrawPage();
+      checkUDIDAndQuickLogin().then((res) => {
+        if (res) {
+          toWithdrawPage();
+        }
+      });
     }
-    if (statusCode === 1) {
-      // eslint-disable-next-line no-console
-      console.log('無卡提款已申請未開通');
+    if (statusCode !== 2) {
+      if (statusCode === 1) {
+        // eslint-disable-next-line no-console
+        console.log('無卡提款已申請未開通');
+        checkUDIDAndQuickLogin();
+      } else {
+        handleDialogOpen(message);
+      }
     }
   };
 
   const getCardStatus = async () => {
     // 檢查晶片狀態；“01”=新申請 “02”=尚未開卡 “04”=已啟用 “05”=已掛失 “06”=已註銷 “07”=已銷戶 “08”=臨時掛失中 “09”=申請中
     const cardStatusResponse = await cardLessATMApi.getCardStatus();
-    const { cardStatus } = cardStatusResponse.data;
+    const { cardStatus, message } = cardStatusResponse.data;
     if (cardStatus === 4) {
       // eslint-disable-next-line no-console
       console.log('無卡提款已啟用');
       getStatusCode();
     }
+    if (cardStatus !== 4) {
+      if (cardStatus === 1) {
+        handleDialogOpen('晶片卡申請中');
+      }
+      if (cardStatus === 2) {
+        console.log('轉導到晶片卡開卡頁');
+      }
+      if (cardStatus !== 1 || cardStatus !== 2) {
+        handleDialogOpen(message);
+      }
+    }
   };
+
+  const renderPage = () => (
+    <form id="withdrawPwdForm" onSubmit={handleSubmit(onSubmit)}>
+      <PasswordInput
+        label="提款密碼"
+        id="withdrawPassword"
+        name="withdrawPassword"
+        placeholder="請輸入提款密碼(4-12位數字)"
+        control={control}
+        errorMessage={errors.withdrawPassword?.message}
+      />
+      <PasswordInput
+        label="確認提款密碼"
+        id="withdrawPasswordCheck"
+        name="withdrawPasswordCheck"
+        placeholder="請再輸入一次提款密碼(4-12位數字)"
+        control={control}
+        errorMessage={errors.withdrawPasswordCheck?.message}
+      />
+      <FEIBInputLabel htmlFor="OTPPassword">開通驗證碼</FEIBInputLabel>
+      <Controller
+        name="otpCode"
+        defaultValue=""
+        control={control}
+        render={({ field }) => (
+          <FEIBInput
+            {...field}
+            type="text"
+            id="otpCode"
+            name="otpCode"
+            placeholder="請輸入開通驗證碼"
+            error={!!errors.otpCode?.message}
+          />
+        )}
+      />
+      <FEIBErrorMessage>{errors.otpCode?.message}</FEIBErrorMessage>
+      <Accordion space="both">
+        <ul>
+          <li>本交易限時15分鐘內有效，請於交易有效時間內，至本行提供無卡提款功能之ATM完成提款。若逾時請重新申請。(實際交易有效時間以本行系統時間為準)。</li>
+          <li>提醒您，ATM提款時請務必確認您的存款餘額是否足夠，避免提款失敗。 </li>
+          <li>無卡提款密碼連續錯誤3次，即鎖住服務，須重新申請服務。</li>
+        </ul>
+      </Accordion>
+      <Accordion title="無卡提款約定事項" space="bottom">
+        <DealContent />
+      </Accordion>
+      <div className="btn-fix">
+        <FEIBButton
+          type="submit"
+        >
+          同意條款並送出
+        </FEIBButton>
+      </div>
+    </form>
+  );
+
+  const renderDialog = () => (
+    <Dialog
+      isOpen={openDialog}
+      onClose={dialogCallback}
+      content={<p>{errorMessage}</p>}
+      action={(
+        <FEIBButton onClick={dialogCallback}>
+          確定
+        </FEIBButton>
+      )}
+    />
+  );
 
   const renderDrawer = () => (
     <BottomDrawer
@@ -245,15 +290,14 @@ const CardLessATM = () => {
   usePageInfo('/api/cardLessATM');
 
   useEffect(async () => {
-    if (step === 0) {
-      getCardStatus();
-    }
-  });
+    getCardStatus();
+  }, []);
 
   return (
     <CardLessATMWrapper>
       {renderPage()}
       {renderDrawer()}
+      {renderDialog()}
     </CardLessATMWrapper>
   );
 };
