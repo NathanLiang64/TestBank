@@ -19,9 +19,9 @@ export const getStatusCode = async () => {
 };
 
 // 取得提款卡資訊
-export const getCardInfo = async () => {
+export const getAccountSummary = async () => {
   const response = await userAxios
-    .get('/api/getCardInfo')
+    .get('/api/getAccountSummary')
     .then((data) => data)
     .catch((err) => err);
   return response.data;
@@ -45,19 +45,10 @@ export const changeCardlessPwd = async (param) => {
   return response.data;
 };
 
-// 檢查是否新網站申請
-export const checkNewSiteRegist = async () => {
+// 開通無卡提款與設定無卡提款密碼
+export const cardLessWithdrawActivate = async (param) => {
   const response = await userAxios
-    .get('/api/checkNewSiteRegist')
-    .then((data) => data)
-    .catch((err) => err);
-  return response.data;
-};
-
-// 開通無卡提款
-export const cardLessWithdrawActive = async () => {
-  const response = await userAxios
-    .get('/api/cardLessWithdrawActive')
+    .get('/api/cardLessWithdrawActivate', param)
     .then((data) => data)
     .catch((err) => err);
   return response.data;

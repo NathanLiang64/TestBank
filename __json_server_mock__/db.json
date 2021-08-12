@@ -3795,17 +3795,18 @@
     "code": 0,
     "data": {
       "cardStatus": 4,
+      "newSiteRegist": true,
       "message": "檢查晶片卡狀態回傳訊息"
     }
   },
   "getStatusCode": {
     "code": 0,
     "data": {
-      "statusCode": 2,
+      "statusCode": 1,
       "message": "檢查無卡提款狀態回傳訊息"
     }
   },
-  "getCardInfo": {
+  "getAccountSummary": {
     "code": 0,
     "data": {
       "account": "043-040-99001568",
@@ -3832,18 +3833,11 @@
       "message": "無卡提款密碼變更成功"
     }
   },
-  "checkNewSiteRegist": {
+  "cardLessWithdrawActivate": {
     "code": 0,
     "data": {
-      "newSiteRegist": true,
-      "message": "檢查是否新網站註冊"
-    }
-  },
-  "cardLessWithdrawActive": {
-    "code": 0,
-    "data": {
-      "activeResultCode": 0,
-      "message": "無卡提款啟用成功"
+      "activeResultCode": 1,
+      "message": "無卡提款啟用失敗"
     }
   },
   "checkUDIDAndQuickLogin": {

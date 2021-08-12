@@ -212,9 +212,9 @@ const CardLessWithDrawChgPwd = () => {
 
   return (
     <CardLessATMWrapper>
-      <ResultDialog />
       {renderDrawer()}
       {renderForm()}
+      <ResultDialog />
     </CardLessATMWrapper>
   );
 };
