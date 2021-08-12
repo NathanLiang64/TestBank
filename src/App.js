@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import Header from 'components/Header';
 import TabBar from 'components/TabBar';
 import ShakeShake from 'pages/ShakeShake';
+import PasswordDrawer from 'components/PasswordDrawer';
 import routes from 'routes';
 
 /* Store */
@@ -24,6 +25,7 @@ const App = () => (
       </Switch>
       <TabBar />
       <ShakeShake />
+      <PasswordDrawer />
     </PersistGate>
   </Provider>
 );

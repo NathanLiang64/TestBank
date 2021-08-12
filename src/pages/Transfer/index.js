@@ -20,6 +20,7 @@ import {
 import { doGetInitData } from 'apis/transferApi';
 import { numberToChinese } from 'utilities/Generator';
 import { bankCodeValidation, receivingAccountValidation } from 'utilities/validation';
+import { setIsPasswordRequired } from 'components/PasswordDrawer/stores/actions';
 import { setCards } from './stores/actions';
 import TransferWrapper from './transfer.style';
 
@@ -47,6 +48,7 @@ const Transfer = () => {
   const [showReserveMoreOption, setShowReserveMoreOption] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const cards = useSelector(({ transfer }) => transfer.cards);
+  const fastLogin = useSelector(({ passwordDrawer }) => passwordDrawer.fastLogin);
   const dispatch = useDispatch();
 
   const handleChangeTabList = (event, id) => {
@@ -65,8 +67,14 @@ const Transfer = () => {
   // eslint-disable-next-line no-unused-vars
   const handleChangeSlide = (swiper) => {};
 
-  // eslint-disable-next-line no-unused-vars
-  const handleClickTransferButton = (data) => {
+  // TODO: 待確認流程後修改輸入網銀密碼組件呼叫方式和邏輯
+  const handleClickTransferButton = (event) => {
+    // eslint-disable-next-line no-unused-vars
+    handleSubmit((data) => {
+      event.preventDefault();
+      if (fastLogin) dispatch(setIsPasswordRequired(true));
+      // console.log(data);
+    })(event);
     // console.log(data);
   };
 
@@ -308,7 +316,7 @@ const Transfer = () => {
             <FEIBTab label="約定轉帳" value="designated" />
             <FEIBTab label="社群轉帳" value="accountBook" />
           </FEIBTabList>
-          <form onSubmit={handleSubmit(handleClickTransferButton)}>
+          <form onSubmit={handleClickTransferButton}>
             { renderTabPanels() }
             <div className="customSpace">
               <FEIBInputLabel htmlFor="transferAmount">金額</FEIBInputLabel>
