@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { cardLessATMApi } from 'apis';
-import { closeFunc } from 'utilities/BankeePlus';
+// import { closeFunc } from 'utilities/BankeePlus';
 
 /* Elements */
 import {
@@ -49,7 +49,7 @@ const CardLessATM1 = () => {
 
   const history = useHistory();
 
-  const [cardInformation, setCardInformation] = useState({
+  const [accountSummary, setAccountSummary] = useState({
     account: '',
     balance: 0,
     discountTimes: 0,
@@ -57,11 +57,9 @@ const CardLessATM1 = () => {
 
   const amountArr = [1000, 2000, 3000, 5000, 10000, 20000];
 
-  const [quickLogin, setQuickLogin] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [dialogCallback, setDialogCallback] = useState(() => () => setOpenDialog(false));
 
   const toResultPage = (data) => {
     history.push('/cardLessATM2', { data });
@@ -88,10 +86,10 @@ const CardLessATM1 = () => {
     }
   };
 
-  const getCardInfo = async () => {
-    const cardInfoResponse = await cardLessATMApi.getCardInfo();
-    const cardInfo = cardInfoResponse.data;
-    setCardInformation({ ...cardInfo });
+  const getAccountSummary = async () => {
+    const summaryResponse = await cardLessATMApi.getAccountSummary();
+    const summary = summaryResponse.data;
+    setAccountSummary({ ...summary });
   };
 
   const handleDialogOpen = (message) => {
@@ -110,33 +108,11 @@ const CardLessATM1 = () => {
       });
   };
 
-  // 檢查UDID與快速登入
-  const checkUDIDAndQuickLogin = async () => {
-    const checkUDIDAndQuickLoginResponse = await cardLessATMApi.checkUDIDAndQuickLogin();
-    // eslint-disable-next-line no-shadow
-    const { quickLogin, checkUDID, message } = checkUDIDAndQuickLoginResponse.data;
-    if (checkUDID) {
-      setQuickLogin(quickLogin);
-    } else {
-      handleDialogOpen(message);
-      setDialogCallback(() => () => {
-        setOpenDialog(false);
-        closeFunc('home');
-      });
-    }
-    return checkUDID;
-  };
-
   const onSubmit = (data) => {
     const param = {
       ...data,
     };
-    // 是否使用快速登入
-    if (quickLogin) {
-      setDrawerOpen(true);
-    } else {
-      cardlessWithdrawApply(param);
-    }
+    cardlessWithdrawApply(param);
   };
 
   const drawerSubmit = (data) => {
@@ -151,11 +127,11 @@ const CardLessATM1 = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <DebitCard
         cardName="存款卡"
-        account={cardInformation.account}
-        balance={cardInformation.balance}
+        account={accountSummary.account}
+        balance={accountSummary.balance}
         transferTitle="跨提優惠"
         transferLimit={5}
-        transferRemaining={cardInformation.discountTimes}
+        transferRemaining={accountSummary.discountTimes}
         color="purple"
       />
       <FEIBInputLabel>您想提領多少錢呢？</FEIBInputLabel>
@@ -214,7 +190,7 @@ const CardLessATM1 = () => {
         <FEIBButton
           type="submit"
         >
-          下一步
+          確認
         </FEIBButton>
       </div>
     </form>
@@ -223,10 +199,10 @@ const CardLessATM1 = () => {
   const renderDialog = () => (
     <Dialog
       isOpen={openDialog}
-      onClose={dialogCallback}
+      onClose={() => setOpenDialog(false)}
       content={<p>{errorMessage}</p>}
       action={(
-        <FEIBButton onClick={dialogCallback}>
+        <FEIBButton onClick={() => setOpenDialog(false)}>
           確定
         </FEIBButton>
       )}
@@ -263,8 +239,7 @@ const CardLessATM1 = () => {
   usePageInfo('/api/cardLessATM');
 
   useEffect(() => {
-    getCardInfo();
-    checkUDIDAndQuickLogin();
+    getAccountSummary();
   }, []);
 
   return (
