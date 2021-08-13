@@ -20,7 +20,7 @@ import {
 import { doGetInitData } from 'apis/transferApi';
 import { numberToChinese } from 'utilities/Generator';
 import { bankCodeValidation, receivingAccountValidation } from 'utilities/validation';
-import { setIsPasswordRequired } from 'components/PasswordDrawer/stores/actions';
+import { directTo } from 'utilities/mockWebController';
 import { setCards } from './stores/actions';
 import TransferWrapper from './transfer.style';
 
@@ -48,7 +48,6 @@ const Transfer = () => {
   const [showReserveMoreOption, setShowReserveMoreOption] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const cards = useSelector(({ transfer }) => transfer.cards);
-  const fastLogin = useSelector(({ passwordDrawer }) => passwordDrawer.fastLogin);
   const dispatch = useDispatch();
 
   const handleChangeTabList = (event, id) => {
@@ -67,15 +66,12 @@ const Transfer = () => {
   // eslint-disable-next-line no-unused-vars
   const handleChangeSlide = (swiper) => {};
 
-  // TODO: 待確認流程後修改輸入網銀密碼組件呼叫方式和邏輯
-  const handleClickTransferButton = (event) => {
-    // eslint-disable-next-line no-unused-vars
-    handleSubmit((data) => {
-      event.preventDefault();
-      if (fastLogin) dispatch(setIsPasswordRequired(true));
-      // console.log(data);
-    })(event);
+  const handleClickTransferButton = (data) => {
     // console.log(data);
+    const { receivingAccount, transferAmount, transferType } = data;
+    const paramsObject = { receivingAccount, transferAmount, transferType };
+    const params = Object.keys(paramsObject).map((key) => `${key}=${paramsObject[key]}`).join('&');
+    directTo('transfer1', params);
   };
 
   const renderCards = (debitCards) => (
@@ -316,7 +312,7 @@ const Transfer = () => {
             <FEIBTab label="約定轉帳" value="designated" />
             <FEIBTab label="社群轉帳" value="accountBook" />
           </FEIBTabList>
-          <form onSubmit={handleClickTransferButton}>
+          <form onSubmit={handleSubmit(handleClickTransferButton)}>
             { renderTabPanels() }
             <div className="customSpace">
               <FEIBInputLabel htmlFor="transferAmount">金額</FEIBInputLabel>

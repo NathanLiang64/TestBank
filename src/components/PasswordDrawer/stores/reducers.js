@@ -3,6 +3,7 @@ import * as types from './types';
 const initState = {
   fastLogin: true,
   isPasswordRequired: false,
+  result: false,
 };
 
 const reducers = (state = initState, action) => {
@@ -16,6 +17,11 @@ const reducers = (state = initState, action) => {
       return {
         ...state,
         isPasswordRequired: action.payload,
+      };
+    case types.SET_RESULT:
+      return {
+        ...state,
+        result: action.payload,
       };
     default:
       return state;
