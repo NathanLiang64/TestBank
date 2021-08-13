@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { useCheckLocation, usePageInfo } from 'hooks';
+// import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -133,7 +133,7 @@ const CardLessATM = () => {
     };
     const cardStatusResponse = await cardLessATMApi.getCardStatus(param);
     const { cardStatus, message } = cardStatusResponse.data;
-    alert('晶片卡狀態碼: ', cardStatus);
+    alert(`晶片卡狀態碼: ${cardStatus}`);
     switch (cardStatus) {
       case 1:
         generateDailog(
@@ -314,8 +314,8 @@ const CardLessATM = () => {
     />
   );
 
-  useCheckLocation();
-  usePageInfo('/api/cardLessATM');
+  // useCheckLocation();
+  // usePageInfo('/api/cardLessATM');
 
   useEffect(async () => {
     getCardStatus();
