@@ -1,7 +1,7 @@
 /* eslint-disable radix,no-restricted-globals */
 import { Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { useCheckLocation, usePageInfo } from 'hooks';
+// import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { userLogin } from 'apis/loginApi';
 import {
@@ -15,7 +15,7 @@ import {
   FEIBLinkButton, FEIBCheckbox, FEIBCheckboxLabel,
 } from 'components/elements';
 import e2ee from 'utilities/E2ee';
-import getJwtKey from 'utilities/DoGetToken';
+// import getJwtKey from 'utilities/DoGetToken';
 import theme from 'themes/theme';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
@@ -41,7 +41,7 @@ const Login = () => {
     resolver: yupResolver(schema),
   });
   useEffect(() => {
-    getJwtKey();
+    // getJwtKey();
   }, []);
   const userInfo = useSelector(({ login }) => login.userInfo);
 
@@ -85,8 +85,8 @@ const Login = () => {
     }
   };
 
-  useCheckLocation();
-  usePageInfo('/api/login');
+  // useCheckLocation();
+  // usePageInfo('/api/login');
 
   return (
     userInfo

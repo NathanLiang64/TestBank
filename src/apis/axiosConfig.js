@@ -37,7 +37,8 @@ const userAxios = () => {
   if (process.env.NODE_ENV === 'production') {
     return instance;
   }
-  return axios;
+  // return axios;
+  return instance;
 };
 
 userAxios().interceptors.request.use(
@@ -58,13 +59,24 @@ userAxios().interceptors.request.use(
 
 userAxios().interceptors.response.use(
   (response) => {
+    // const jwt = localStorage.getItem('jwtToken');
+    // if (jwt) {
+    //   const aeskey = localStorage.getItem('aesKey');
+    //   const ivkey = localStorage.getItem('iv');
+    //   // 加密
+    //   const encrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
+    //   response = encrypt;
+    // }
+    // return response;
+    console.log(response);
     const jwt = localStorage.getItem('jwtToken');
     if (jwt) {
       const aeskey = localStorage.getItem('aesKey');
       const ivkey = localStorage.getItem('iv');
-      // 加密
-      const encrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
-      response = encrypt;
+      // 解密
+      // const encrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
+      const decrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.encData);
+      response = decrypt;
     }
     return response;
   },
