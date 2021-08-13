@@ -45,6 +45,7 @@ userAxios().interceptors.request.use(
   (config) => {
     if (config.url === '/auth/publicKey' || config.url === '/auth/login') {
       console.log('no axios');
+      config.headers['Access-Control-Allow-Origin'] = '*';
       return config;
     }
     const jwt = localStorage.getItem('jwtToken');
