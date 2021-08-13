@@ -1,18 +1,18 @@
 import userAxios from './axiosConfig';
 
-// 檢查晶片卡狀態
-export const getCardStatus = async () => {
+// 檢查金融卡卡狀態
+export const getCardStatus = async (param) => {
   const response = await userAxios
-    .get('/api/getCardStatus')
+    .post('/api/atmCard/getStatus', param)
     .then((data) => data)
     .catch((err) => err);
   return response.data;
 };
 
 // 檢查無卡提款狀態
-export const getStatusCode = async () => {
+export const getCardlessStatus = async () => {
   const response = await userAxios
-    .get('/api/getStatusCode')
+    .get('/api/cardlessWD/getStatus')
     .then((data) => data)
     .catch((err) => err);
   return response.data;
@@ -21,7 +21,7 @@ export const getStatusCode = async () => {
 // 取得提款卡資訊
 export const getAccountSummary = async () => {
   const response = await userAxios
-    .get('/api/getAccountSummary')
+    .get('/api/deposit/getAccountSummary')
     .then((data) => data)
     .catch((err) => err);
   return response.data;
@@ -30,7 +30,7 @@ export const getAccountSummary = async () => {
 // 申請無卡提款
 export const cardLessWithdrawApply = async (param) => {
   const response = await userAxios
-    .get('/api/cardLessWithdrawApply', param)
+    .get('/api/cardlessWD/withdrawal', param)
     .then((data) => data)
     .catch((err) => err);
   return response.data;
@@ -39,7 +39,7 @@ export const cardLessWithdrawApply = async (param) => {
 // 變更無卡提款密碼
 export const changeCardlessPwd = async (param) => {
   const response = await userAxios
-    .get('/api/changeCardlessPwd', param)
+    .get('/api/cardlessWD/changePwd', param)
     .then((data) => data)
     .catch((err) => err);
   return response.data;
@@ -48,16 +48,7 @@ export const changeCardlessPwd = async (param) => {
 // 開通無卡提款與設定無卡提款密碼
 export const cardLessWithdrawActivate = async (param) => {
   const response = await userAxios
-    .get('/api/cardLessWithdrawActivate', param)
-    .then((data) => data)
-    .catch((err) => err);
-  return response.data;
-};
-
-// 檢查UDID與快速登入
-export const checkUDIDAndQuickLogin = async () => {
-  const response = await userAxios
-    .get('/api/checkUDIDAndQuickLogin')
+    .get('/api/cardlessWD/activate', param)
     .then((data) => data)
     .catch((err) => err);
   return response.data;
