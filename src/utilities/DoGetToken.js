@@ -18,8 +18,7 @@ const getKey = async (data) => {
   let jwtToken;
   let ivToken;
   let aesTokenKey;
-  const ServerPublicKey = await userAxios.post('/auth/publicKey');
-  console.log(ServerPublicKey);
+  const ServerPublicKey = await userAxios.post('/auth/getPublicKey');
   const iv = CipherUtil.generateIV();
   const aesKey = CipherUtil.generateAES();
   ivToken = iv;
@@ -39,30 +38,25 @@ const getKey = async (data) => {
     username: await e2ee(data.account),
     password: await e2ee(data.password),
   };
-  // const getJWTToken = JWEUtil.encryptJWEMessage(ServerPublicKey.data.result.publicKey, JSON.stringify(message));
-  // const getMyJWT = await userAxios.post('/auth/authenticate', getJWTToken);
-  const getJWTToken = JWEUtil.encryptJWEMessage(ServerPublicKey.data.result.publicKey, JSON.stringify(message));
+  const getJWTToken = JWEUtil.encryptJWEMessage(ServerPublicKey.data.data.result, JSON.stringify(message));
   const getMyJWT = await userAxios.post('/auth/login', getJWTToken);
-  const deCode = JSON.parse(JWEUtil.decryptJWEMessage(getPublicAndPrivate.privateKey, getMyJWT.data));
-  jwtToken = deCode.result.jwtToken;
-  localStorage.setItem('privateKey', privateKey);
-  localStorage.setItem('publicKey', publicKey);
-  localStorage.setItem('jwtToken', jwtToken);
-  localStorage.setItem('iv', ivToken);
-  localStorage.setItem('aesKey', aesTokenKey);
-  // userAxios.interceptors.request.use(
-  //   (config) => {
-  //     const jwt = localStorage.getItem('jwtToken');
-  //     // eslint-disable-next-line no-param-reassign
-  //     config.headers.authorization = `Bearer ${jwt}`;
-  //     const aeskey = localStorage.getItem('aesKey');
-  //     const ivkey = localStorage.getItem('iv');
-  //     // 加密
-  //     const encrypt = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(config.data));
-  //     config.data = encrypt;
-  //     return config;
-  //   },
-  // );
+  if (getMyJWT.data.code === '0000') {
+    const deCode = JSON.parse(JWEUtil.decryptJWEMessage(getPublicAndPrivate.privateKey, getMyJWT.data.data));
+    jwtToken = deCode.result.jwtToken;
+    localStorage.setItem('privateKey', privateKey);
+    localStorage.setItem('publicKey', publicKey);
+    localStorage.setItem('jwtToken', jwtToken);
+    localStorage.setItem('iv', ivToken);
+    localStorage.setItem('aesKey', aesTokenKey);
+    return {
+      result: 'success',
+      message: 'Login success',
+    };
+  }
+  return {
+    result: 'fail',
+    message: getMyJWT.data.message,
+  };
 };
 
 export default getKey;

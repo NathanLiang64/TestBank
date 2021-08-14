@@ -90,12 +90,12 @@ const CardLessATM = () => {
   };
 
   // 檢查無卡提款狀態; 0=未申請, 1=已申請未開通, 2=已開通, 3=已註銷, 4=已失效, 5=其他
-  const getCardlessStatus = async () => {
-    const statusCodeResponse = await cardLessATMApi.getCardlessStatus();
-    const { cwdStatus, newSiteRegist } = statusCodeResponse.data;
+  const getCardlessStatus = async (param) => {
+    const statusCodeResponse = await cardLessATMApi.getCardlessStatus(param);
+    const { cwdStatus, newSiteRegist } = statusCodeResponse;
     setNewSiteReg(newSiteRegist);
     switch (cwdStatus) {
-      case 1:
+      case '1':
         generateDailog(
           '愛方便的您，怎麼少了無卡提款服務，快來啟用吧！',
           (
@@ -110,7 +110,7 @@ const CardLessATM = () => {
         );
         break;
 
-      case 2:
+      case '2':
         toWithdrawPage();
         break;
 
@@ -132,10 +132,9 @@ const CardLessATM = () => {
       custId: 'A196158521',
     };
     const cardStatusResponse = await cardLessATMApi.getCardStatus(param);
-    const { cardStatus, message } = cardStatusResponse.data;
-    alert(`晶片卡狀態碼: ${cardStatus}`);
+    const { cardStatus } = cardStatusResponse;
     switch (cardStatus) {
-      case 1:
+      case '01':
         generateDailog(
           '晶片卡申請中！',
           (<FEIBButton onClick={() => closeFunc('home')}>確定</FEIBButton>),
@@ -143,7 +142,7 @@ const CardLessATM = () => {
         );
         break;
 
-      case 2:
+      case '02':
         generateDailog(
           '請先完成金融卡開卡以啟用無卡提款服務！',
           (
@@ -158,13 +157,13 @@ const CardLessATM = () => {
         );
         break;
 
-      case 4:
-        getCardlessStatus();
+      case '04':
+        getCardlessStatus(param);
         break;
 
       default:
         generateDailog(
-          message,
+          '發生錯誤',
           (<FEIBButton onClick={() => closeFunc('home')}>確定</FEIBButton>),
           closeFunction,
         );

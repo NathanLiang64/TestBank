@@ -43,13 +43,9 @@ const userAxios = () => {
 
 userAxios().interceptors.request.use(
   (config) => {
-    if (config.url === '/auth/publicKey' || config.url === '/auth/login') {
-      console.log('no axios');
-      config.headers['Access-Control-Allow-Origin'] = '*';
-      return config;
-    }
     const jwt = localStorage.getItem('jwtToken');
     if (jwt) {
+      config.data.txnId = 'MBacab2ec9-21a7-46d1-a3dd-bf00dcb0d5f2';
       config.headers.authorization = `Bearer ${jwt}`;
       const aeskey = localStorage.getItem('aesKey');
       const ivkey = localStorage.getItem('iv');
@@ -64,23 +60,15 @@ userAxios().interceptors.request.use(
 
 userAxios().interceptors.response.use(
   (response) => {
-    // const jwt = localStorage.getItem('jwtToken');
-    // if (jwt) {
-    //   const aeskey = localStorage.getItem('aesKey');
-    //   const ivkey = localStorage.getItem('iv');
-    //   // 加密
-    //   const encrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
-    //   response = encrypt;
-    // }
-    // return response;
-    // console.log(response);
     const jwt = localStorage.getItem('jwtToken');
     if (jwt) {
       const aeskey = localStorage.getItem('aesKey');
       const ivkey = localStorage.getItem('iv');
       // 解密
       // const encrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
-      const decrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.encData);
+      const { jwtToken } = response.data;
+      localStorage.setItem('jwtToken', jwtToken);
+      const decrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
       response = decrypt;
     }
     return response;

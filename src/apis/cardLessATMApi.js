@@ -6,16 +6,16 @@ export const getCardStatus = async (param) => {
     .post('/api/atmCard/getStatus', param)
     .then((data) => data)
     .catch((err) => err);
-  return response.data;
+  return response;
 };
 
 // 檢查無卡提款狀態
-export const getCardlessStatus = async () => {
+export const getCardlessStatus = async (param) => {
   const response = await userAxios
-    .get('/api/cardlessWD/getStatus')
+    .post('/api/cardlessWD/getStatus', param)
     .then((data) => data)
     .catch((err) => err);
-  return response.data;
+  return response;
 };
 
 // 取得提款卡資訊

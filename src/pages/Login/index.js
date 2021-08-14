@@ -1,6 +1,7 @@
 /* eslint-disable radix,no-restricted-globals */
 import { Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 // import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 // import { userLogin } from 'apis/loginApi';
@@ -40,6 +41,9 @@ const Login = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
+
+  const history = useHistory();
+
   useEffect(() => {
     // getJwtKey();
   }, []);
@@ -87,7 +91,13 @@ const Login = () => {
   // };
 
   const onSubmit = async (data) => {
-    getJwtKey(data);
+    const { result, message } = await getJwtKey(data);
+    if (result === 'success') {
+      alert(message);
+      history.push('/');
+    } else {
+      alert(message);
+    }
   };
 
   // useCheckLocation();
