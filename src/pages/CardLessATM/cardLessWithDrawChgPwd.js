@@ -14,8 +14,7 @@ import PasswordInput from 'components/PasswordInput';
 import Accordion from 'components/Accordion';
 import Dialog from 'components/Dialog';
 import Alert from 'components/Alert';
-import BottomDrawer from 'components/BottomDrawer';
-import { passwordValidation } from 'utilities/validation';
+// import e2ee from 'utilities/E2ee';
 
 /* Styles */
 // import theme from 'themes/theme';
@@ -26,44 +25,34 @@ const CardLessWithDrawChgPwd = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    withdrawPwdConfirm: yup
+    oldPassword: yup
       .string()
       .required('請輸入舊無卡提款密碼')
       .min(4, '提款密碼須為 4-12 位數字')
       .max(12, '提款密碼須為 4-12 位數字')
       .matches(/^[0-9]*$/, '提款密碼僅能使用數字'),
-    newWithdrawPwd: yup
+    newPassword: yup
       .string()
       .required('請輸入新無卡提款密碼')
       .min(4, '新提款密碼須為 4-12 位數字')
       .max(12, '新提款密碼須為 4-12 位數字')
       .matches(/^[0-9]*$/, '提款密碼僅能使用數字'),
-    newWithdrawPwdConfirm: yup
+    newPasswordConfirm: yup
       .string()
       .required('請再輸入一次新無卡提款密碼')
       .min(4, '新提款密碼須為 4-12 位數字')
       .max(12, '新提款密碼須為 4-12 位數字')
       .matches(/^[0-9]*$/, '提款密碼僅能使用數字')
-      .oneOf([yup.ref('newWithdrawPwd'), null], '兩次輸入的新提款密碼必須相同'),
+      .oneOf([yup.ref('newPassword'), null], '兩次輸入的新提款密碼必須相同'),
   });
   const {
-    handleSubmit, control, formState: { errors }, getValues,
+    handleSubmit, control, formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const passwordSchema = yup.object().shape({
-    ...passwordValidation,
-  });
-
-  const passwordForm = useForm({
-    resolver: yupResolver(passwordSchema),
-  });
-
   const history = useHistory();
 
-  // const [quickLogin, setQuickLogin] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [alertType, setAlertType] = useState('success');
   const [dialogTitle, setDialogTitle] = useState('');
   const [dialogContent, setDialogContent] = useState('');
@@ -75,7 +64,7 @@ const CardLessWithDrawChgPwd = () => {
   };
 
   const handleDialogOpen = (data) => {
-    if (data.result) {
+    if (data.respMsg === '') {
       setAlertType('success');
       setDialogTitle('變更成功');
       setDialogContent('您的無卡提款密碼變更成功囉！');
@@ -83,7 +72,7 @@ const CardLessWithDrawChgPwd = () => {
     } else {
       setAlertType('error');
       setDialogTitle('變更失敗');
-      setDialogContent('您的無卡提款密碼變更失敗！');
+      setDialogContent(data.message);
     }
     setShowResultDialog(true);
   };
@@ -92,29 +81,16 @@ const CardLessWithDrawChgPwd = () => {
   const changePwdHandler = async (param) => {
     cardLessATMApi.changeCardlessPwd(param)
       .then((response) => {
-        if (response.code === 0) {
-          handleDialogOpen(response.data);
-        }
+        handleDialogOpen(response);
       });
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const param = {
-      newWithdrawPwd: data.newWithdrawPwd,
-    };
-    // 是否使用快速登入
-    const quickLogin = true;
-    if (quickLogin) {
-      setDrawerOpen(true);
-    } else {
-      changePwdHandler(param);
-    }
-  };
-
-  const drawerSubmit = (data) => {
-    const param = {
-      newWithdrawPwd: getValues().newWithdrawPwd,
-      pwd: data.password,
+      // oldPassword: await e2ee(data.oldPassword),
+      // newPassword: await e2ee(data.newPassword),
+      oldPassword: data.oldPassword,
+      newPassword: data.newPassword,
     };
     changePwdHandler(param);
   };
@@ -123,30 +99,30 @@ const CardLessWithDrawChgPwd = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <PasswordInput
         label="舊提款密碼"
-        id="withdrawPwdConfirm"
-        name="withdrawPwdConfirm"
+        id="oldPassword"
+        name="oldPassword"
         placeholder="請輸入舊提款密碼(4-12位數字)"
         inputMode="numric"
         control={control}
-        errorMessage={errors.withdrawPwdConfirm?.message}
+        errorMessage={errors.oldPassword?.message}
       />
       <PasswordInput
         label="新提款密碼"
-        id="newWithdrawPwd"
-        name="newWithdrawPwd"
+        id="newPassword"
+        name="newPassword"
         placeholder="請輸入新提款密碼(4-12位數字)"
         inputMode="numric"
         control={control}
-        errorMessage={errors.newWithdrawPwd?.message}
+        errorMessage={errors.newPassword?.message}
       />
       <PasswordInput
         label="確認新提款密碼"
-        id="newWithdrawPwdConfirm"
-        name="newWithdrawPwdConfirm"
+        id="newPasswordConfirm"
+        name="newPasswordConfirm"
         placeholder="請再輸入一次新提款密碼(4-12位數字)"
         inputMode="numric"
         control={control}
-        errorMessage={errors.newWithdrawPwdConfirm?.message}
+        errorMessage={errors.newPasswordConfirm?.message}
       />
       <Accordion space="both">
         <ul>
@@ -159,32 +135,6 @@ const CardLessWithDrawChgPwd = () => {
         確認
       </FEIBButton>
     </form>
-  );
-
-  const renderDrawer = () => (
-    <BottomDrawer
-      title="輸入網銀密碼"
-      isOpen={drawerOpen}
-      onClose={() => setDrawerOpen(false)}
-      content={(
-        <CardLessATMWrapper style={{ marginTop: '0', padding: '0 1.6rem 4rem' }}>
-          <form onSubmit={passwordForm.handleSubmit(drawerSubmit)}>
-            <PasswordInput
-              label="網銀密碼"
-              id="password"
-              name="password"
-              control={passwordForm.control}
-              errorMessage={passwordForm.formState.errors.password?.message}
-            />
-            <FEIBButton
-              type="submit"
-            >
-              送出
-            </FEIBButton>
-          </form>
-        </CardLessATMWrapper>
-      )}
-    />
   );
 
   const ResultDialog = () => (
@@ -212,7 +162,6 @@ const CardLessWithDrawChgPwd = () => {
 
   return (
     <CardLessATMWrapper>
-      {renderDrawer()}
       {renderForm()}
       <ResultDialog />
     </CardLessATMWrapper>

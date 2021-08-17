@@ -19,11 +19,11 @@ const CardLessATM2 = ({ location }) => {
   const [resultInfo, setResultInfo] = useState({
     result: 0,
     message: '無卡提款申請成功',
-    bankNo: '',
     withdrawalNo: '',
     startDateTime: '',
     endDateTime: '',
     amount: 0,
+    account: '',
   });
 
   const formatAmount = (amount) => new Intl.NumberFormat('zh-TW', { style: 'currency', currency: 'TWD', minimumFractionDigits: 0 }).format(amount);
@@ -54,8 +54,7 @@ const CardLessATM2 = ({ location }) => {
         </div>
         <div className="accountInfo">
           <div>
-            銀行代號：
-            {resultInfo.bankNo}
+            銀行代號：805
           </div>
           <div className="withdrawNo">
             提款序號：
@@ -75,12 +74,10 @@ const CardLessATM2 = ({ location }) => {
         </div>
       </div>
       <div className="section2">
-        <Accordion title="詳細交易" space="bottom" open>
-          <InformationList title="申請時間" content={resultInfo.startDateTime} />
-          <InformationList title="交易類型" content="無卡提款" />
-          <InformationList title="提款帳號" content={resultInfo.startDateTime} />
-        </Accordion>
-        <Accordion space="bottom" open>
+        <InformationList title="申請時間" content={resultInfo.startDateTime} />
+        <InformationList title="交易類型" content="無卡提款" />
+        <InformationList title="提款帳號" content={resultInfo.account} />
+        <Accordion space="both" open>
           <ul>
             <li>本交易限時15分鐘內有效，請於交易有效時間內，至本行提供無卡提款功能之ATM完成提款。若逾時請重新申請。(實際交易有效時間以本行系統時間為準)。</li>
             <li>提醒您，ATM提款時請務必確認您的存款餘額是否足夠，避免提款失敗。 </li>

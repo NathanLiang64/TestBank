@@ -3795,14 +3795,14 @@
     "code": 0,
     "data": {
       "cardStatus": 4,
-      "newSiteRegist": true,
       "message": "檢查晶片卡狀態回傳訊息"
     }
   },
-  "getStatusCode": {
+  "getCardlessStatus": {
     "code": 0,
     "data": {
-      "statusCode": 1,
+      "cwdStatus": 1,
+      "newSiteRegist": true,
       "message": "檢查無卡提款狀態回傳訊息"
     }
   },

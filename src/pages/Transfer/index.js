@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -20,7 +21,8 @@ import {
 import { doGetInitData } from 'apis/transferApi';
 import { numberToChinese } from 'utilities/Generator';
 import { bankCodeValidation, receivingAccountValidation } from 'utilities/validation';
-import { setCards } from './stores/actions';
+import { directTo } from 'utilities/mockWebController';
+import { setCards, setTransferData } from './stores/actions';
 import TransferWrapper from './transfer.style';
 
 /* Swiper modules */
@@ -36,7 +38,7 @@ const Transfer = () => {
       .test('test', '金額不可為 0', (value) => !(parseInt(value, 10) <= 0)),
   });
   const {
-    control, handleSubmit, formState: { errors }, setValue, trigger, watch,
+    control, handleSubmit, formState: { errors }, setValue, trigger, watch, unregister,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -48,6 +50,7 @@ const Transfer = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const cards = useSelector(({ transfer }) => transfer.cards);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const handleChangeTabList = (event, id) => {
     setTabId(id);
@@ -65,9 +68,14 @@ const Transfer = () => {
   // eslint-disable-next-line no-unused-vars
   const handleChangeSlide = (swiper) => {};
 
-  // eslint-disable-next-line no-unused-vars
   const handleClickTransferButton = (data) => {
     // console.log(data);
+    if (!data.transactionDate) data.transactionDate = new Date();
+    dispatch(setTransferData((data)));
+    // const { receivingAccount, transferAmount, transferType } = data;
+    // const paramsObject = { receivingAccount, transferAmount, transferType };
+    // const params = Object.keys(paramsObject).map((key) => `${key}=${paramsObject[key]}`).join('&');
+    directTo(history, 'transfer1');
   };
 
   const renderCards = (debitCards) => (
@@ -156,7 +164,7 @@ const Transfer = () => {
             branchName="遠東商銀"
             branchCode="805"
             account="043000990000"
-            avatarSrc="https:images.unsplash.com/photo-1528341866330-07e6d1752ec2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=801&q=80"
+            avatarSrc="https//:images.unsplash.com/photo-1528341866330-07e6d1752ec2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=801&q=80"
           />
         </div>
       </FEIBTabPanel>
@@ -193,16 +201,16 @@ const Transfer = () => {
         <Controller
           name="transactionCycle"
           control={control}
-          defaultValue="1"
+          defaultValue="2"
           render={({ field }) => (
             <FEIBSelect
               {...field}
               id="transactionCycle"
               name="transactionCycle"
             >
-              <FEIBOption value="1">1</FEIBOption>
               <FEIBOption value="2">2</FEIBOption>
               <FEIBOption value="3">3</FEIBOption>
+              <FEIBOption value="4">4</FEIBOption>
             </FEIBSelect>
           )}
         />
@@ -275,6 +283,10 @@ const Transfer = () => {
     if (watch('transferType') === 'reserve') {
       setShowReserveOption(true);
     } else {
+      unregister('transactionDate');
+      unregister('transactionCycle');
+      unregister('transactionNumber');
+      unregister('transactionFrequency');
       setShowReserveOption(false);
     }
   }, [watch('transferType')]);
@@ -283,6 +295,8 @@ const Transfer = () => {
     if (watch('transactionNumber') === 'many') {
       setShowReserveMoreOption(true);
     } else {
+      unregister('transactionCycle');
+      unregister('transactionFrequency');
       setShowReserveMoreOption(false);
     }
   }, [watch('transactionNumber')]);

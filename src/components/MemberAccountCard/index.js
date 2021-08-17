@@ -1,4 +1,8 @@
+/* eslint-disable */
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
   AccountCircleRounded, AddRounded, CreateRounded, DeleteRounded,
 } from '@material-ui/icons';
@@ -8,6 +12,7 @@ import BankCodeInput from 'components/BankCodeInput';
 import {
   FEIBErrorMessage, FEIBIconButton, FEIBInput, FEIBInputLabel,
 } from 'components/elements';
+import { bankCodeValidation } from 'utilities/validation';
 import theme from 'themes/theme';
 import MemberAccountCardWrapper, { MemberDrawerContentWrapper } from './memberAccountCard.style';
 
@@ -34,6 +39,13 @@ const MemberAccountCard = ({
   branchName,
   account,
 }) => {
+  const schema = yup.object().shape({ ...bankCodeValidation });
+  const {
+    control, formState: { errors }, setValue, trigger,
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
   const [openDrawer, setOpenDrawer] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState(`${transferType}轉帳`);
   const [renderContent, setRenderContent] = useState('default');
@@ -120,7 +132,13 @@ const MemberAccountCard = ({
   const addFrequentlyUsedAccountContent = () => (
     <>
       <div>
-        <BankCodeInput />
+        <BankCodeInput
+          id="bankCode"
+          setValue={setValue}
+          trigger={trigger}
+          control={control}
+          errorMessage={errors.bankCode?.message}
+        />
       </div>
       <div>
         <FEIBInputLabel>帳號</FEIBInputLabel>

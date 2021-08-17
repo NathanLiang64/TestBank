@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable consistent-return */
 /* eslint-disable class-methods-use-this */
 import CipherUtil from './CipherUtil';
@@ -123,9 +124,9 @@ class JWEUtil {
   decryptJWEMessage(privateKeyString, message) {
     try {
       const privateKey = CipherUtil.getRSAPrivateKeyFromPem(privateKeyString);
-      const cipherText = message.ciphertext;
-      const { iv } = message;
-      const encryptedKey = message.recipients[0].encrypted_key;
+      const cipherText = message._ciphertext;
+      const iv = message._iv;
+      const encryptedKey = message._recipients[0]._encrypted_key;
       const aesKey = CipherUtil.decryptRSA(privateKey, encryptedKey);
       const enc = CipherUtil.getEnc(forge.util.encode64(aesKey));
       const request = CipherUtil.decryptAES(enc, iv, cipherText);

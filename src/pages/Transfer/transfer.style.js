@@ -38,7 +38,6 @@ const TransferWrapper = styled(Layout)`
   .notice {
     margin-bottom: 2rem;
     font-size: 1.4rem;
-    font-weight: 300;
   }
   
   .transferType {
@@ -150,6 +149,51 @@ const TransferWrapper = styled(Layout)`
         margin-right: 0;
       }
     }
+  }
+  
+  // 轉帳確認頁
+  &.transferConfirmPage {
+    //display: flex;
+    //flex-direction: column;
+    //align-items: center;
+    padding: 0;
+    background: ${({ theme }) => theme.colors.basic.white};
+    
+    section {
+      padding: 1.6rem 2.4rem;
+      text-align: center;
+      
+      &.transferAction {
+        padding: 2.4rem 1.6rem;
+      }
+      
+      &.transferMainInfo {
+        padding: 2.4rem 3.2rem;
+        
+        p {
+          color: ${({ theme }) => theme.colors.text.lightGray};
+        }
+        h3 {
+          color: ${({ theme }) => theme.colors.primary.dark};
+          font-size: 2.4rem;
+        }
+        .transferAmount {
+          margin: 1.2rem 0;
+          font-weight: 900;
+        }
+      }
+      
+      .transferButtonArea {
+        padding-top: 1.6rem;
+      }
+    }
+    
+    hr {
+      margin: 0;
+      border: 0;
+      border-top: .8rem solid ${({ theme }) => theme.colors.background.lighterBlue};
+    }
+
   }
 `;
 

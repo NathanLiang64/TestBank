@@ -217,7 +217,10 @@ const receivingAccountValidation = {
 
 // 銀行代碼
 const bankCodeValidation = {
-  bankCode: yup.string().required(errorMessage.bankCodeRequired),
+  bankCode: yup.object({
+    bankCode: yup.string().required(errorMessage.bankCodeRequired),
+    bankName: yup.string().required(errorMessage.bankCodeRequired),
+  }).nullable(true).required(errorMessage.bankCodeRequired),
 };
 
 /**
@@ -236,10 +239,13 @@ const payAmountValidation = {
 
 // 轉出帳號行庫驗證
 const billPayBankCodeValidation = {
-  otherBankCode: yup.string()
+  otherBankCode: yup.object()
     .when('payType', {
       is: 2,
-      then: yup.string().required(errorMessage.bankCodeRequired),
+      then: yup.object({
+        bankCode: yup.string().required(errorMessage.bankCodeRequired),
+        bankName: yup.string().required(errorMessage.bankCodeRequired),
+      }).nullable(true).required(errorMessage.bankCodeRequired),
       // then: yup.string().test('otherBankCode-notspace', errorMessage.bankCodeRequired, (value) => value !== ''),
     }),
 };
