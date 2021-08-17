@@ -22,6 +22,7 @@ const PasswordDrawer = () => {
   const handleClickSubmit = (data) => {
     if (data.password === '1qaz2wsx') {
       dispatch(setResult(true));
+      // dispatch(setFastLogin(false));
       dispatch(setIsPasswordRequired(false));
     } else {
       // console.log('不通過');

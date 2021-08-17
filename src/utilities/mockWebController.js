@@ -1,15 +1,15 @@
-export const directTo = (functionCodeName, params) => {
+export const directTo = (history, path, params) => {
   if (params) {
-    window.location.href = `${window.location.origin}/${functionCodeName}?${params}`;
+    history.push(`/${path}?${params}`);
   } else {
-    window.location.pathname = `/${functionCodeName}`;
+    history.push(`/${path}`);
   }
 };
 
-export const close = () => {
-  window.history.go(-1);
+export const close = (history) => {
+  history.goBack();
 };
 
-export const goHome = () => {
-  window.location.pathname = '/';
+export const goHome = (history) => {
+  history.push('/');
 };

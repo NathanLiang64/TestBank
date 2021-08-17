@@ -25,11 +25,11 @@ const BankCodeInput = ({
   errorMessage,
 }) => {
   const [openBankCodeList, setOpenBankCodeList] = useState(false);
-  const [selectBank, setSelectBank] = useState('');
+  const [selectBank, setSelectBank] = useState({ bankCode: '', bankName: '' });
 
-  const handleSelectBankCode = (value) => {
-    setSelectBank(value);
-    setValue(id, value);
+  const handleSelectBankCode = (object) => {
+    setSelectBank(object);
+    setValue(id, object);
     trigger(id);
   };
 
@@ -47,7 +47,7 @@ const BankCodeInput = ({
             name={id}
             type="text"
             placeholder="請選擇"
-            value={selectBank}
+            value={`${selectBank.bankCode} ${selectBank.bankName}`}
             $icon={<FormatListBulletedRounded />}
             $iconFontSize={2.4}
             $iconOnClick={() => setOpenBankCodeList(true)}

@@ -41,7 +41,7 @@ const MemberAccountCard = ({
 }) => {
   const schema = yup.object().shape({ ...bankCodeValidation });
   const {
-    control, handleSubmit, formState: { errors }, setValue, trigger, watch,
+    control, formState: { errors }, setValue, trigger,
   } = useForm({
     resolver: yupResolver(schema),
   });

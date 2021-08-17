@@ -19,7 +19,11 @@ const BankCode = ({ isOpen, onClose, onSelect }) => {
     for (const bank of event.currentTarget.children) {
       selectedBank.push(bank.innerText);
     }
-    onSelect(`${selectedBank[1]} ${selectedBank[0]}`);
+    onSelect({
+      bankCode: selectedBank[1],
+      bankName: selectedBank[0],
+    });
+    // onSelect(`${selectedBank[1]} ${selectedBank[0]}`);
     onClose();
   };
 
