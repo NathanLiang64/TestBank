@@ -21,6 +21,7 @@ import theme from 'themes/theme';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
 import { useEffect } from 'react';
+import { closeFunc } from 'utilities/BankeePlus';
 import LoginWrapper from './login.style';
 import { accountValidation, identityValidation, passwordValidation } from '../../utilities/validation';
 // import CipherUtil from '../../utilities/CipherUtil';
@@ -93,8 +94,12 @@ const Login = () => {
   const onSubmit = async (data) => {
     const { result, message } = await getJwtKey(data);
     if (result === 'success') {
-      alert(message);
-      history.push('/');
+      // alert(message);
+      if (window.bankeeplus) {
+        closeFunc('home');
+      } else {
+        history.push('/');
+      }
     } else {
       alert(message);
     }

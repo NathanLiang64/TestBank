@@ -5,7 +5,11 @@ const LoginWrapper = styled(Layout)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  
+  z-index: 1001;
+  margin-top: 0;
+  height: 100vh;
+  background: ${({ theme }) => theme.colors.basic.white};
+
   .MuiFormLabel-root,
   .MuiIconButton-root,
   .MuiFormControlLabel-label {
