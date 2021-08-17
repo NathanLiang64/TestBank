@@ -1,7 +1,7 @@
 /* eslint-disable radix,no-restricted-globals */
 import { Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router';
+// import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 // import { userLogin } from 'apis/loginApi';
@@ -24,6 +24,7 @@ import { useEffect } from 'react';
 import { closeFunc } from 'utilities/BankeePlus';
 import LoginWrapper from './login.style';
 import { accountValidation, identityValidation, passwordValidation } from '../../utilities/validation';
+
 // import CipherUtil from '../../utilities/CipherUtil';
 // import userAxios from '../../apis/axiosConfig';
 // import JWEUtil from '../../utilities/JWEUtil';
@@ -43,7 +44,7 @@ const Login = () => {
     resolver: yupResolver(schema),
   });
 
-  const history = useHistory();
+  // const history = useHistory();
 
   useEffect(() => {
     // getJwtKey();
@@ -92,14 +93,15 @@ const Login = () => {
   // };
 
   const onSubmit = async (data) => {
+    alert('準備登入');
     const { result, message } = await getJwtKey(data);
     if (result === 'success') {
-      // alert(message);
-      if (window.bankeeplus) {
-        closeFunc('home');
-      } else {
-        history.push('/');
-      }
+      alert('登入成功');
+      closeFunc('home');
+      // if (window.bankeeplus) {
+      // } else {
+      //   history.push('/');
+      // }
     } else {
       alert(message);
     }
