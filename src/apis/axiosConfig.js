@@ -45,7 +45,8 @@ userAxios().interceptors.request.use(
   (config) => {
     const jwt = localStorage.getItem('jwtToken');
     if (jwt) {
-      config.data.txnId = 'MBacab2ec9-21a7-46d1-a3dd-bf00dcb0d5f2';
+      config.data.custId = localStorage.getItem('custId');
+      config.data.isgToken = '0c281a7a1-1a35-0347-6d71-a4da7d0a41d113092';
       config.headers.authorization = `Bearer ${jwt}`;
       const aeskey = localStorage.getItem('aesKey');
       const ivkey = localStorage.getItem('iv');
@@ -68,8 +69,12 @@ userAxios().interceptors.response.use(
       // const encrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
       const { jwtToken } = response.data;
       localStorage.setItem('jwtToken', jwtToken);
-      const decrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
-      response = decrypt;
+      if (response.data.code === '0000') {
+        const decrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
+        response = decrypt;
+      } else {
+        response = response.data;
+      }
     }
     return response;
   },

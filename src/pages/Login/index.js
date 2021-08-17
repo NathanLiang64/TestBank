@@ -2,7 +2,7 @@
 import { Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
-// import { useCheckLocation, usePageInfo } from 'hooks';
+import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 // import { userLogin } from 'apis/loginApi';
 import {
@@ -100,8 +100,8 @@ const Login = () => {
     }
   };
 
-  // useCheckLocation();
-  // usePageInfo('/api/login');
+  useCheckLocation();
+  usePageInfo('/api/login');
 
   return (
     userInfo

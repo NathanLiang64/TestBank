@@ -1,6 +1,6 @@
 import userAxios from './axiosConfig';
 
-// 檢查金融卡卡狀態
+// 檢查金融卡卡狀態 done
 export const getCardStatus = async (param) => {
   const response = await userAxios
     .post('/api/atmCard/getStatus', param)
@@ -9,7 +9,7 @@ export const getCardStatus = async (param) => {
   return response;
 };
 
-// 檢查無卡提款狀態
+// 檢查無卡提款狀態 done
 export const getCardlessStatus = async (param) => {
   const response = await userAxios
     .post('/api/cardlessWD/getStatus', param)
@@ -18,38 +18,38 @@ export const getCardlessStatus = async (param) => {
   return response;
 };
 
-// 取得提款卡資訊
-export const getAccountSummary = async () => {
+// 取得提款卡資訊 done
+export const getAccountSummary = async (param) => {
   const response = await userAxios
-    .get('/api/deposit/getAccountSummary')
+    .post('/api/deposit/getAccountSummary', param)
     .then((data) => data)
     .catch((err) => err);
-  return response.data;
+  return response;
 };
 
-// 申請無卡提款
+// 申請無卡提款 done
 export const cardLessWithdrawApply = async (param) => {
   const response = await userAxios
-    .get('/api/cardlessWD/withdrawal', param)
+    .post('/api/cardlessWD/withdrawal', param)
     .then((data) => data)
     .catch((err) => err);
-  return response.data;
+  return response;
 };
 
-// 變更無卡提款密碼
+// 變更無卡提款密碼 done
 export const changeCardlessPwd = async (param) => {
   const response = await userAxios
-    .get('/api/cardlessWD/changePwd', param)
+    .post('/api/cardlessWD/changePwd', param)
     .then((data) => data)
     .catch((err) => err);
-  return response.data;
+  return response;
 };
 
-// 開通無卡提款與設定無卡提款密碼
+// 開通無卡提款與設定無卡提款密碼 done
 export const cardLessWithdrawActivate = async (param) => {
   const response = await userAxios
-    .get('/api/cardlessWD/activate', param)
+    .post('/api/cardlessWD/activate', param)
     .then((data) => data)
     .catch((err) => err);
-  return response.data;
+  return response;
 };

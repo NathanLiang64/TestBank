@@ -6,10 +6,10 @@ import e2ee from './E2ee';
 // const iv = CipherUtil.generateIV();
 // const aesKey = CipherUtil.generateAES();
 // const getPublicAndPrivate = CipherUtil.generateRSA();
-const txnId = 'WEBCTLff7fd095-2cd0-4418-94cb-023256911c06';
+// const txnId = 'WEBCTLff7fd095-2cd0-4418-94cb-023256911c06';
 const channelCode = 'HHB_A';
 const appVersion = '1.0.15';
-const txSeq = '20210802155847';
+// const txSeq = '20210802155847';
 
 const getKey = async (data) => {
   localStorage.clear();
@@ -30,10 +30,8 @@ const getKey = async (data) => {
     publicKey: getPublicAndPrivate.publicKey.replace(/(\r\n\t|\r\n|\n|\r\t)/gm, '').replace('-----BEGIN PUBLIC KEY-----', '').replace('-----END PUBLIC KEY-----', ''),
     iv,
     aesKey,
-    txnId,
     channelCode,
     appVersion,
-    txSeq,
     custId: data.identity.toUpperCase(),
     username: await e2ee(data.account),
     password: await e2ee(data.password),
@@ -48,6 +46,7 @@ const getKey = async (data) => {
     localStorage.setItem('jwtToken', jwtToken);
     localStorage.setItem('iv', ivToken);
     localStorage.setItem('aesKey', aesTokenKey);
+    localStorage.setItem('custId', message.custId);
     return {
       result: 'success',
       message: 'Login success',
