@@ -28,7 +28,7 @@ class JWTUtil {
    */
   // eslint-disable-next-line class-methods-use-this
   decryptJWTMessage(aesKey, iv, message) {
-    const request = CipherUtil.decryptAES(aesKey, iv, message.data);
+    const request = CipherUtil.decryptAES(aesKey, iv, message.encData);
     const hmac = CipherUtil.encryptHMAC(aesKey, request);
     assert.strictEqual(hmac, message.mac);
     const json = JSON.parse(request);

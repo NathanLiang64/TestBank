@@ -13,11 +13,8 @@ import {
 } from 'components/elements';
 import Dialog from 'components/Dialog';
 import DebitCard from 'components/DebitCard';
-import PasswordInput from 'components/PasswordInput';
 import Accordion from 'components/Accordion';
-import { passwordValidation } from 'utilities/validation';
 import { AddCircleRounded, RemoveCircleRounded } from '@material-ui/icons';
-import BottomDrawer from 'components/BottomDrawer';
 
 /* Styles */
 // import theme from 'themes/theme';
@@ -39,38 +36,32 @@ const CardLessATM1 = () => {
     resolver: yupResolver(schema),
   });
 
-  const passwordSchema = yup.object().shape({
-    ...passwordValidation,
-  });
-
-  const passwordForm = useForm({
-    resolver: yupResolver(passwordSchema),
-  });
-
   const history = useHistory();
 
   const [accountSummary, setAccountSummary] = useState({
     account: '',
     balance: 0,
-    discountTimes: 0,
+    cwdhCnt: '06',
   });
 
   const amountArr = [1000, 2000, 3000, 5000, 10000, 20000];
 
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  // 跳轉結果頁
   const toResultPage = (data) => {
     history.push('/cardLessATM2', { data });
   };
 
+  // 格式化帳戶餘額
   const toCurrncy = (num) => {
     const arr = num.toString().split('');
     arr.splice(-3, 0, ',');
     return arr.join('');
   };
 
+  // 增減提款金額
   const changeAmount = (type) => {
     const preAmount = getValues('withdrawAmount');
     if (type) {
@@ -86,10 +77,10 @@ const CardLessATM1 = () => {
     }
   };
 
+  // 取得提款卡資訊
   const getAccountSummary = async () => {
-    const summaryResponse = await cardLessATMApi.getAccountSummary();
-    const summary = summaryResponse.data;
-    setAccountSummary({ ...summary });
+    const summaryResponse = await cardLessATMApi.getAccountSummary({});
+    setAccountSummary({ ...summaryResponse });
   };
 
   const handleDialogOpen = (message) => {
@@ -97,28 +88,32 @@ const CardLessATM1 = () => {
     setOpenDialog(true);
   };
 
-  const cardlessWithdrawApply = (param) => {
-    cardLessATMApi.cardLessWithdrawApply(param)
-      .then((response) => {
-        if (response.code === 0) {
-          toResultPage(response.data);
-        } else {
-          handleDialogOpen(response.data.message);
-        }
-      });
+  // 無卡提款交易
+  const cardlessWithdrawApply = async (param) => {
+    const withdrawResponse = await cardLessATMApi.cardLessWithdrawApply(param);
+    const { account, withdrawAmount } = param;
+    const {
+      seqNo, startDateTime, endDateTime, message,
+    } = withdrawResponse;
+    const data = {
+      withdrawalNo: seqNo,
+      amount: withdrawAmount,
+      account,
+      startDateTime,
+      endDateTime,
+    };
+
+    if (seqNo) {
+      toResultPage(data);
+    } else {
+      handleDialogOpen(message);
+    }
   };
 
   const onSubmit = (data) => {
     const param = {
       ...data,
-    };
-    cardlessWithdrawApply(param);
-  };
-
-  const drawerSubmit = (data) => {
-    const param = {
-      ...getValues(),
-      pwd: data.password,
+      account: accountSummary.account,
     };
     cardlessWithdrawApply(param);
   };
@@ -130,8 +125,8 @@ const CardLessATM1 = () => {
         account={accountSummary.account}
         balance={accountSummary.balance}
         transferTitle="跨提優惠"
-        transferLimit={5}
-        transferRemaining={accountSummary.discountTimes}
+        transferLimit={6}
+        transferRemaining={accountSummary.cwdhCnt.substr(1, 1)}
         color="purple"
       />
       <FEIBInputLabel>您想提領多少錢呢？</FEIBInputLabel>
@@ -209,32 +204,6 @@ const CardLessATM1 = () => {
     />
   );
 
-  const renderDrawer = () => (
-    <BottomDrawer
-      title="輸入網銀密碼"
-      isOpen={drawerOpen}
-      onClose={() => setDrawerOpen(false)}
-      content={(
-        <CardLessATMWrapper style={{ marginTop: '0', padding: '0 1.6rem 4rem' }}>
-          <form onSubmit={passwordForm.handleSubmit(drawerSubmit)}>
-            <PasswordInput
-              label="網銀密碼"
-              id="password"
-              name="password"
-              control={passwordForm.control}
-              errorMessage={passwordForm.formState.errors.password?.message}
-            />
-            <FEIBButton
-              type="submit"
-            >
-              送出
-            </FEIBButton>
-          </form>
-        </CardLessATMWrapper>
-      )}
-    />
-  );
-
   useCheckLocation();
   usePageInfo('/api/cardLessATM');
 
@@ -245,7 +214,6 @@ const CardLessATM1 = () => {
   return (
     <CardLessATMWrapper>
       {renderWithdrawForm()}
-      {renderDrawer()}
       {renderDialog()}
     </CardLessATMWrapper>
   );

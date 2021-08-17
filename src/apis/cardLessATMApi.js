@@ -1,64 +1,55 @@
 import userAxios from './axiosConfig';
 
-// 檢查晶片卡狀態
-export const getCardStatus = async () => {
+// 檢查金融卡卡狀態 done
+export const getCardStatus = async (param) => {
   const response = await userAxios
-    .get('/api/getCardStatus')
+    .post('/api/atmCard/getStatus', param)
     .then((data) => data)
     .catch((err) => err);
-  return response.data;
+  return response;
 };
 
-// 檢查無卡提款狀態
-export const getStatusCode = async () => {
+// 檢查無卡提款狀態 done
+export const getCardlessStatus = async (param) => {
   const response = await userAxios
-    .get('/api/getStatusCode')
+    .post('/api/cardlessWD/getStatus', param)
     .then((data) => data)
     .catch((err) => err);
-  return response.data;
+  return response;
 };
 
-// 取得提款卡資訊
-export const getAccountSummary = async () => {
+// 取得提款卡資訊 done
+export const getAccountSummary = async (param) => {
   const response = await userAxios
-    .get('/api/getAccountSummary')
+    .post('/api/deposit/getAccountSummary', param)
     .then((data) => data)
     .catch((err) => err);
-  return response.data;
+  return response;
 };
 
-// 申請無卡提款
+// 申請無卡提款 done
 export const cardLessWithdrawApply = async (param) => {
   const response = await userAxios
-    .get('/api/cardLessWithdrawApply', param)
+    .post('/api/cardlessWD/withdrawal', param)
     .then((data) => data)
     .catch((err) => err);
-  return response.data;
+  return response;
 };
 
-// 變更無卡提款密碼
+// 變更無卡提款密碼 done
 export const changeCardlessPwd = async (param) => {
   const response = await userAxios
-    .get('/api/changeCardlessPwd', param)
+    .post('/api/cardlessWD/changePwd', param)
     .then((data) => data)
     .catch((err) => err);
-  return response.data;
+  return response;
 };
 
-// 開通無卡提款與設定無卡提款密碼
+// 開通無卡提款與設定無卡提款密碼 done
 export const cardLessWithdrawActivate = async (param) => {
   const response = await userAxios
-    .get('/api/cardLessWithdrawActivate', param)
+    .post('/api/cardlessWD/activate', param)
     .then((data) => data)
     .catch((err) => err);
-  return response.data;
-};
-
-// 檢查UDID與快速登入
-export const checkUDIDAndQuickLogin = async () => {
-  const response = await userAxios
-    .get('/api/checkUDIDAndQuickLogin')
-    .then((data) => data)
-    .catch((err) => err);
-  return response.data;
+  return response;
 };

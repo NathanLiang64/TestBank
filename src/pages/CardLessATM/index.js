@@ -17,9 +17,7 @@ import {
 import Dialog from 'components/Dialog';
 import PasswordInput from 'components/PasswordInput';
 import Accordion from 'components/Accordion';
-import BottomDrawer from 'components/BottomDrawer';
 import ConfirmButtons from 'components/ConfirmButtons';
-import { passwordValidation } from 'utilities/validation';
 
 /* Styles */
 import CardLessATMWrapper from './cardLessATM.style';
@@ -44,28 +42,21 @@ const CardLessATM = () => {
       .max(12, '提款密碼須為 4-12 位數字')
       .matches(/^[0-9]*$/, '提款密碼僅能使用數字')
       .oneOf([yup.ref('withdrawPassword'), null], '兩次輸入的提款密碼必須相同'),
-    otpCode: yup
+    verificationCode: yup
       .string()
       .required('請輸入開通驗證碼'),
   });
   const {
-    handleSubmit, control, formState: { errors }, getValues,
+    handleSubmit, control, formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
-  });
-
-  const passwordSchema = yup.object().shape({
-    ...passwordValidation,
-  });
-
-  const passwordForm = useForm({
-    resolver: yupResolver(passwordSchema),
   });
 
   const history = useHistory();
 
   // const [quickLogin, setQuickLogin] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  // eslint-disable-next-line no-unused-vars
+  const [newSiteReg, setNewSiteReg] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogContent, setDialogContent] = useState('');
   const [dialogButtons, setDialogButtons] = useState(null);
@@ -88,11 +79,13 @@ const CardLessATM = () => {
   };
 
   // 檢查無卡提款狀態; 0=未申請, 1=已申請未開通, 2=已開通, 3=已註銷, 4=已失效, 5=其他
-  const getStatusCode = async () => {
-    const statusCodeResponse = await cardLessATMApi.getStatusCode();
-    const { statusCode, message } = statusCodeResponse.data;
-    switch (statusCode) {
-      case 1:
+  const getCardlessStatus = async (param) => {
+    const statusCodeResponse = await cardLessATMApi.getCardlessStatus(param);
+    console.log('無卡提款狀態', statusCodeResponse);
+    const { cwdStatus, newSiteRegist, message } = statusCodeResponse;
+    setNewSiteReg(newSiteRegist);
+    switch (cwdStatus) {
+      case '1':
         generateDailog(
           '愛方便的您，怎麼少了無卡提款服務，快來啟用吧！',
           (
@@ -107,29 +100,38 @@ const CardLessATM = () => {
         );
         break;
 
-      case 2:
+      case '2':
         toWithdrawPage();
+        break;
+
+      case '4':
+        generateDailog(
+          '無卡提款已失效',
+          (
+            <FEIBButton onClick={() => closeFunction()}>確定</FEIBButton>
+          ),
+          closeFunction,
+        );
         break;
 
       default:
         generateDailog(
           message,
           (
-            <FEIBButton onClick={() => setOpenDialog(false)}>確定</FEIBButton>
+            <FEIBButton onClick={() => closeFunction()}>確定</FEIBButton>
           ),
           closeFunction,
         );
-        break;
     }
   };
 
   // 檢查金融卡狀態；“01”=新申請 “02”=尚未開卡 “04”=已啟用 “05”=已掛失 “06”=已註銷 “07”=已銷戶 “08”=臨時掛失中 “09”=申請中
   const getCardStatus = async () => {
-    const cardStatusResponse = await cardLessATMApi.getCardStatus();
-    const { cardStatus, message } = cardStatusResponse.data;
-    console.log(cardStatus, message);
+    const cardStatusResponse = await cardLessATMApi.getCardStatus({});
+    console.log('金融卡狀態', cardStatusResponse);
+    const { cardStatus, message } = cardStatusResponse;
     switch (cardStatus) {
-      case 1:
+      case '01':
         generateDailog(
           '晶片卡申請中！',
           (<FEIBButton onClick={() => closeFunc('home')}>確定</FEIBButton>),
@@ -137,7 +139,7 @@ const CardLessATM = () => {
         );
         break;
 
-      case 2:
+      case '02':
         generateDailog(
           '請先完成金融卡開卡以啟用無卡提款服務！',
           (
@@ -152,8 +154,8 @@ const CardLessATM = () => {
         );
         break;
 
-      case 4:
-        getStatusCode();
+      case '04':
+        getCardlessStatus({});
         break;
 
       default:
@@ -168,50 +170,42 @@ const CardLessATM = () => {
 
   // 開通無卡提款與設定無卡提款密碼
   const activateWithdrawAndSetPwd = async (param) => {
-    cardLessATMApi.cardLessWithdrawActivate(param)
-      .then((response) => {
-        if (response.code === 0) {
-          generateDailog(
-            '已完成開通無卡提款服務！',
-            (
-              <FEIBButton
-                onClick={() => {
-                  setOpenDialog(false);
-                  toWithdrawPage();
-                }}
-              >
-                確定
-              </FEIBButton>
-            ),
-            () => () => {
+    const activateResponse = await cardLessATMApi.cardLessWithdrawActivate(param);
+    const { message } = activateResponse;
+
+    if (message) {
+      generateDailog(
+        message,
+        (
+          <FEIBButton onClick={() => setOpenDialog(false)}>確定</FEIBButton>
+        ),
+        () => () => setOpenDialog(false),
+      );
+    } else {
+      generateDailog(
+        '已完成開通無卡提款服務！',
+        (
+          <FEIBButton
+            onClick={() => {
               setOpenDialog(false);
               toWithdrawPage();
-            },
-          );
-        } else {
-          generateDailog(
-            response.message,
-            (
-              <FEIBButton onClick={() => setOpenDialog(false)}>確定</FEIBButton>
-            ),
-            () => () => setOpenDialog(false),
-          );
-        }
-      });
+            }}
+          >
+            確定
+          </FEIBButton>
+        ),
+        () => () => {
+          setOpenDialog(false);
+          toWithdrawPage();
+        },
+      );
+    }
   };
 
   const onSubmit = async (data) => {
     const param = {
-      newWithdrawPwd: data.withdrawPassword,
-      otpCode: data.otpCode,
-    };
-    activateWithdrawAndSetPwd(param);
-  };
-
-  const drawerSubmit = (data) => {
-    const param = {
-      newWithdrawPwd: getValues().withdrawPassword,
-      pwd: data.password,
+      withdrawPwd: data.withdrawPassword,
+      verificationCode: data.verificationCode,
     };
     activateWithdrawAndSetPwd(param);
   };
@@ -236,21 +230,21 @@ const CardLessATM = () => {
       />
       <FEIBInputLabel htmlFor="OTPPassword">開通驗證碼</FEIBInputLabel>
       <Controller
-        name="otpCode"
+        name="verificationCode"
         defaultValue=""
         control={control}
         render={({ field }) => (
           <FEIBInput
             {...field}
             type="text"
-            id="otpCode"
-            name="otpCode"
+            id="verificationCode"
+            name="verificationCode"
             placeholder="請輸入開通驗證碼"
-            error={!!errors.otpCode?.message}
+            error={!!errors.verificationCode?.message}
           />
         )}
       />
-      <FEIBErrorMessage>{errors.otpCode?.message}</FEIBErrorMessage>
+      <FEIBErrorMessage>{errors.verificationCode?.message}</FEIBErrorMessage>
       <Accordion title="無卡提款約定事項" space="both">
         <DealContent />
       </Accordion>
@@ -282,32 +276,6 @@ const CardLessATM = () => {
     />
   );
 
-  const renderDrawer = () => (
-    <BottomDrawer
-      title="輸入網銀密碼"
-      isOpen={drawerOpen}
-      onClose={() => setDrawerOpen(false)}
-      content={(
-        <CardLessATMWrapper style={{ marginTop: '0', padding: '0 1.6rem 4rem' }}>
-          <form onSubmit={passwordForm.handleSubmit(drawerSubmit)}>
-            <PasswordInput
-              label="網銀密碼"
-              id="password"
-              name="password"
-              control={passwordForm.control}
-              errorMessage={passwordForm.formState.errors.password?.message}
-            />
-            <FEIBButton
-              type="submit"
-            >
-              送出
-            </FEIBButton>
-          </form>
-        </CardLessATMWrapper>
-      )}
-    />
-  );
-
   useCheckLocation();
   usePageInfo('/api/cardLessATM');
 
@@ -318,7 +286,6 @@ const CardLessATM = () => {
   return (
     <CardLessATMWrapper>
       {renderPage()}
-      {renderDrawer()}
       {renderDialog()}
     </CardLessATMWrapper>
   );
