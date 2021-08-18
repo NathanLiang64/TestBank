@@ -4,6 +4,7 @@ import Header from 'components/Header';
 import TabBar from 'components/TabBar';
 // import ShakeShake from 'pages/ShakeShake';
 import PasswordDrawer from 'components/PasswordDrawer';
+import Spinner from 'components/Spinner';
 import routes from 'routes';
 
 /* Store */
@@ -27,6 +28,7 @@ const App = () => (
       {/* <ShakeShake /> */}
       <PasswordDrawer />
     </PersistGate>
+    <Spinner />
   </Provider>
 );
 export default App;

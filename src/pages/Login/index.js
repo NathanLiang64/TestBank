@@ -1,7 +1,8 @@
 /* eslint-disable radix,no-restricted-globals */
 import { Redirect } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-// import { useHistory } from 'react-router';
+import { useSelector, useDispatch } from 'react-redux';
+import { setShowSpinner } from 'components/Spinner/stores/actions';
+import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 // import { userLogin } from 'apis/loginApi';
@@ -44,7 +45,8 @@ const Login = () => {
     resolver: yupResolver(schema),
   });
 
-  // const history = useHistory();
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   useEffect(() => {
     // getJwtKey();
@@ -93,16 +95,17 @@ const Login = () => {
   // };
 
   const onSubmit = async (data) => {
-    alert('準備登入');
+    dispatch(setShowSpinner(true));
     const { result, message } = await getJwtKey(data);
     if (result === 'success') {
-      alert('登入成功');
-      closeFunc('home');
-      // if (window.bankeeplus) {
-      // } else {
-      //   history.push('/');
-      // }
+      if (window.bankeeplus) {
+        closeFunc('home');
+      } else {
+        history.push('/');
+      }
+      dispatch(setShowSpinner(false));
     } else {
+      dispatch(setShowSpinner(false));
       alert(message);
     }
   };
