@@ -24,9 +24,7 @@ const BillPay = () => {
   /**
    *- 資料驗證
    */
-  const schema = yup.object().shape({
-    ...passwordValidation,
-  });
+  const schema = yup.object().shape({ ...passwordValidation });
   const { control, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
@@ -131,7 +129,7 @@ const BillPay = () => {
           </tr>
           <tr>
             <td>轉出銀行代號</td>
-            <td>{billPayData.otherBankCode}</td>
+            <td>{`${billPayData.otherBankCode.bankName} (${billPayData.otherBankCode.bankCode})`}</td>
           </tr>
           <tr>
             <td>轉出銀行帳號</td>
