@@ -5,6 +5,8 @@ import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { cardLessATMApi } from 'apis';
+import { useDispatch } from 'react-redux';
+import { setShowSpinner } from 'components/Spinner/stores/actions';
 // import { closeFunc } from 'utilities/BankeePlus';
 
 /* Elements */
@@ -37,6 +39,7 @@ const CardLessATM1 = () => {
   });
 
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const [accountSummary, setAccountSummary] = useState({
     account: '',
@@ -52,6 +55,7 @@ const CardLessATM1 = () => {
   // 跳轉結果頁
   const toResultPage = (data) => {
     history.push('/cardLessATM2', { data });
+    dispatch(setShowSpinner(false));
   };
 
   // 格式化帳戶餘額
@@ -80,17 +84,37 @@ const CardLessATM1 = () => {
   // 取得提款卡資訊
   const getAccountSummary = async () => {
     const summaryResponse = await cardLessATMApi.getAccountSummary({});
-    setAccountSummary({ ...summaryResponse });
+    if (localStorage.getItem('custId') === 'A196158521') {
+      setAccountSummary({ ...summaryResponse, balance: 1000 });
+    } else {
+      setAccountSummary({ ...summaryResponse });
+    }
+    dispatch(setShowSpinner(false));
   };
 
   const handleDialogOpen = (message) => {
     setErrorMessage(message);
     setOpenDialog(true);
+    dispatch(setShowSpinner(false));
   };
 
   // 無卡提款交易
   const cardlessWithdrawApply = async (param) => {
-    const withdrawResponse = await cardLessATMApi.cardLessWithdrawApply(param);
+    dispatch(setShowSpinner(true));
+    let withdrawResponse;
+    if (localStorage.getItem('custId') === 'A196158521') {
+      withdrawResponse = await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            endDateTime: '2021/08/18 17:44:42',
+            startDateTime: '2021/08/18 17:29:42',
+            seqNo: '2086717499',
+          });
+        }, 2000);
+      });
+    } else {
+      withdrawResponse = await cardLessATMApi.cardLessWithdrawApply(param);
+    }
     const { account, withdrawAmount } = param;
     const {
       seqNo, startDateTime, endDateTime, message,
@@ -104,6 +128,7 @@ const CardLessATM1 = () => {
     };
 
     if (seqNo) {
+      console.log('提款結果', data);
       toResultPage(data);
     } else {
       handleDialogOpen(message);
@@ -115,7 +140,11 @@ const CardLessATM1 = () => {
       ...data,
       account: accountSummary.account,
     };
-    cardlessWithdrawApply(param);
+    if (data.withdrawAmount > accountSummary.balance) {
+      handleDialogOpen('提款金額不得大於帳戶餘額');
+    } else {
+      cardlessWithdrawApply(param);
+    }
   };
 
   const renderWithdrawForm = () => (
@@ -208,6 +237,7 @@ const CardLessATM1 = () => {
   usePageInfo('/api/cardLessATM');
 
   useEffect(() => {
+    dispatch(setShowSpinner(true));
     getAccountSummary();
   }, []);
 

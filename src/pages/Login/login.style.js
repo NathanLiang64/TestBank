@@ -7,6 +7,7 @@ const LoginWrapper = styled(Layout)`
   align-items: center;
   z-index: 1001;
   margin-top: 0;
+  width: 100vw;
   height: 100vh;
   background: ${({ theme }) => theme.colors.basic.white};
 

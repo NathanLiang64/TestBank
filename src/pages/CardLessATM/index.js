@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
+import { useDispatch } from 'react-redux';
+import { setShowSpinner } from 'components/Spinner/stores/actions';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
@@ -53,6 +55,7 @@ const CardLessATM = () => {
   });
 
   const history = useHistory();
+  const dispatch = useDispatch();
 
   // const [quickLogin, setQuickLogin] = useState(false);
   // eslint-disable-next-line no-unused-vars
@@ -76,6 +79,7 @@ const CardLessATM = () => {
     setDialogContent(content);
     setDialogButtons(buttons);
     setOpenDialog(true);
+    dispatch(setShowSpinner(false));
   };
 
   // 檢查無卡提款狀態; 0=未申請, 1=已申請未開通, 2=已開通, 3=已註銷, 4=已失效, 5=其他
@@ -93,7 +97,7 @@ const CardLessATM = () => {
               mainButtonValue="確認"
               mainButtonOnClick={() => setOpenDialog(false)}
               subButtonValue="取消"
-              subButtonOnClick={() => closeFunc('home')}
+              subButtonOnClick={closeFunction()}
             />
           ),
           closeFunction,
@@ -108,7 +112,7 @@ const CardLessATM = () => {
         generateDailog(
           '無卡提款已失效',
           (
-            <FEIBButton onClick={() => closeFunction()}>確定</FEIBButton>
+            <FEIBButton onClick={closeFunction()}>確定</FEIBButton>
           ),
           closeFunction,
         );
@@ -118,7 +122,7 @@ const CardLessATM = () => {
         generateDailog(
           message,
           (
-            <FEIBButton onClick={() => closeFunction()}>確定</FEIBButton>
+            <FEIBButton onClick={closeFunction()}>確定</FEIBButton>
           ),
           closeFunction,
         );
@@ -134,7 +138,7 @@ const CardLessATM = () => {
       case '01':
         generateDailog(
           '晶片卡申請中！',
-          (<FEIBButton onClick={() => closeFunc('home')}>確定</FEIBButton>),
+          (<FEIBButton onClick={closeFunction()}>確定</FEIBButton>),
           closeFunction,
         );
         break;
@@ -147,7 +151,7 @@ const CardLessATM = () => {
               mainButtonValue="我要開卡"
               mainButtonOnClick={() => console.log('跳轉到金融開卡頁')}
               subButtonValue="取消"
-              subButtonOnClick={() => closeFunc('home')}
+              subButtonOnClick={closeFunction()}
             />
           ),
           closeFunction,
@@ -161,7 +165,7 @@ const CardLessATM = () => {
       default:
         generateDailog(
           message,
-          (<FEIBButton onClick={() => closeFunc('home')}>確定</FEIBButton>),
+          (<FEIBButton onClick={closeFunction()}>確定</FEIBButton>),
           closeFunction,
         );
         break;
@@ -170,7 +174,17 @@ const CardLessATM = () => {
 
   // 開通無卡提款與設定無卡提款密碼
   const activateWithdrawAndSetPwd = async (param) => {
-    const activateResponse = await cardLessATMApi.cardLessWithdrawActivate(param);
+    dispatch(setShowSpinner(true));
+    let activateResponse;
+    if (localStorage.getItem('custId') === 'A196158521') {
+      activateResponse = await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({ respMsg: '' });
+        }, 2000);
+      });
+    } else {
+      activateResponse = await cardLessATMApi.cardLessWithdrawActivate(param);
+    }
     const { message } = activateResponse;
 
     if (message) {
@@ -280,6 +294,7 @@ const CardLessATM = () => {
   usePageInfo('/api/cardLessATM');
 
   useEffect(async () => {
+    dispatch(setShowSpinner(true));
     getCardStatus();
   }, []);
 

@@ -63,9 +63,20 @@ const TabBar = () => {
       img: CardLessATMImage,
       route: '/cardLessATM',
     },
+    {
+      id: 8,
+      label: '登出',
+      img: NoticeImage,
+      route: 'logout',
+    },
   ];
 
-  const toPage = (item) => {
+  const toPage = async (item) => {
+    if (item.route === 'logout') {
+      history.push('/login');
+      localStorage.clear();
+      return;
+    }
     if (item.route) {
       history.push(item.route);
     }
