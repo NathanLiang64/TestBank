@@ -27,7 +27,9 @@ const DepositOverview = () => {
   const ref = useRef();
   const dispatch = useDispatch();
   const { push } = useHistory();
-  const { doGetInitData, getDetailsData } = depositOverviewApi;
+  // TODO: for demo, remove mock data
+  // const { doGetInitData, getDetailsData } = depositOverviewApi;
+  const { getDetailsData } = depositOverviewApi;
 
   const selectedCard = (id, allCards) => {
     const filteredCard = allCards.find((card) => card.id === id);
@@ -131,11 +133,58 @@ const DepositOverview = () => {
 
   // 取得所有存款卡的初始資料
   useEffect(async () => {
-    const response = await doGetInitData('/api/depositOverview');
-    if (response.initData) {
-      const { debitCards } = response.initData;
-      dispatch(setCards(debitCards));
-    }
+    // TODO: for demo, remove mock data
+    // const response = await doGetInitData('/api/depositOverview');
+    // if (response.initData) {
+    //   const { debitCards } = response.initData;
+    //   dispatch(setCards(debitCards));
+    // }
+    // TODO: for demo, add debitCards data from mock data (db.json)
+    const debitCards = [
+      {
+        id: 1,
+        cardBranch: '信義分行',
+        cardName: '保時捷車友會',
+        cardAccount: '043-004-99001234',
+        cardBalance: 2000000,
+        interbankWithdrawal: 3,
+        interbankTransfer: 5,
+        interest: 3,
+        interestRate: 2.6,
+        interestRateLimit: '5萬',
+        functionList: [
+          { title: '轉帳', path: '/transfer', icon: null },
+          { title: '無卡提款', path: '/cardLessATM', icon: null },
+        ],
+        moreList: [
+          { title: '定存', path: '/', icon: 'monetization_on' },
+          { title: '換匯', path: '/', icon: 'euro' },
+        ],
+      },
+      {
+        id: 2,
+        cardBranch: '大安分行',
+        cardName: '另一張存款卡',
+        cardAccount: '043-004-99001234',
+        cardBalance: 1680000,
+        interbankWithdrawal: 1,
+        interbankTransfer: 5,
+        interest: 5,
+        interestRate: 3.6,
+        interestRateLimit: '6萬',
+        functionList: [
+          { title: '轉帳', path: '/transfer', icon: null },
+          { title: '無卡提款', path: '/cardLessATM', icon: null },
+        ],
+        moreList: [
+          { title: '設為速查帳戶', path: '/cardLessATM', icon: 'playlist_add' },
+          { title: '增加子帳戶', path: '/cardLessATM', icon: 'library_add' },
+          { title: '存摺封面下載', path: '/cardLessATM', icon: 'system_update' },
+          { title: '編輯帳戶別名', path: '/cardLessATM', icon: 'edit' },
+        ],
+      },
+    ];
+    dispatch(setCards(debitCards));
   }, []);
 
   // 根據用戶選擇的卡片，將該卡片資料儲存至 redux
