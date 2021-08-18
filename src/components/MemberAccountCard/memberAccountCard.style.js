@@ -110,6 +110,19 @@ const MemberDrawerContentWrapper = styled.div`
       }
     }
   }
+  
+  .addFrequentlyUsedAccountArea {
+    text-align: center;
+
+    .Avatar {
+      display: inline-block;
+      margin-bottom: 1.6rem;
+    }
+    
+    label {
+      text-align: left;
+    }
+  }
 `;
 
 export default MemberAccountCardWrapper;

@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
-const AvatarWrapper = styled.div`
+const AvatarWrapper = styled.div.attrs({
+  className: 'Avatar',
+})`
   
   .photo {
     padding: ${({ $small }) => ($small ? '.2rem' : '.4rem')};

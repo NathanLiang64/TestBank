@@ -1,3 +1,5 @@
+import 'swiper/swiper.min.css';
+import 'swiper/components/pagination/pagination.min.css';
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyles = createGlobalStyle`
@@ -143,7 +145,7 @@ const GlobalStyles = createGlobalStyle`
     backdrop-filter: ${({ theme }) => `blur(${theme.filters.blur})`};
   }
 
-  .swiper-pagination-bullet {
+  .swiper-container-horizontal > .swiper-pagination-bullets .swiper-pagination-bullet {
     width: .6rem;
     height: .6rem;
     background: #CCC;  // TODO: 該色票未新增至全域變數，待確認
