@@ -193,7 +193,6 @@ const TransferWrapper = styled(Layout)`
       border: 0;
       border-top: .8rem solid ${({ theme }) => theme.colors.background.lighterBlue};
     }
-
   }
 `;
 

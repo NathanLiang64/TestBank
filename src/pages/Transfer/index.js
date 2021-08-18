@@ -110,6 +110,7 @@ const Transfer = () => {
 
   const renderTabPanels = () => (
     <>
+      {/* 一般轉帳頁籤 */}
       <FEIBTabPanel value="transfer">
         <div>
           <BankCodeInput
@@ -141,6 +142,7 @@ const Transfer = () => {
         </div>
       </FEIBTabPanel>
 
+      {/* 常用轉帳頁籤 */}
       <FEIBTabPanel value="frequentlyUsed">
         <FEIBInputLabel>轉入帳號</FEIBInputLabel>
         <div className="memberAccountCardArea">
@@ -155,6 +157,7 @@ const Transfer = () => {
         </div>
       </FEIBTabPanel>
 
+      {/* 約定轉帳頁籤 */}
       <FEIBTabPanel value="designated">
         <FEIBInputLabel>轉入帳號</FEIBInputLabel>
         <div className="memberAccountCardArea">
@@ -169,6 +172,7 @@ const Transfer = () => {
         </div>
       </FEIBTabPanel>
 
+      {/* 社群轉帳頁籤 */}
       <FEIBTabPanel value="accountBook">
         <p>社群轉帳</p>
       </FEIBTabPanel>
