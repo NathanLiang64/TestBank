@@ -174,9 +174,9 @@ const CardLessATM = () => {
 
   // 開通無卡提款與設定無卡提款密碼
   const activateWithdrawAndSetPwd = async (param) => {
-    dispatch(setShowSpinner(true));
     let activateResponse;
     if (localStorage.getItem('custId') === 'A196158521') {
+      dispatch(setShowSpinner(true));
       activateResponse = await new Promise((resolve) => {
         setTimeout(() => {
           resolve({ respMsg: '' });
@@ -294,7 +294,6 @@ const CardLessATM = () => {
   usePageInfo('/api/cardLessATM');
 
   useEffect(async () => {
-    dispatch(setShowSpinner(true));
     getCardStatus();
   }, []);
 

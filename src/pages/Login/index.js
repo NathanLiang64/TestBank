@@ -50,6 +50,7 @@ const Login = () => {
 
   useEffect(() => {
     // getJwtKey();
+    dispatch(setShowSpinner(false));
   }, []);
   const userInfo = useSelector(({ login }) => login.userInfo);
 
@@ -95,7 +96,6 @@ const Login = () => {
   // };
 
   const onSubmit = async (data) => {
-    dispatch(setShowSpinner(true));
     const { result, message } = await getJwtKey(data);
     if (result === 'success') {
       if (window.bankeeplus) {
@@ -103,9 +103,7 @@ const Login = () => {
       } else {
         history.push('/');
       }
-      dispatch(setShowSpinner(false));
     } else {
-      dispatch(setShowSpinner(false));
       alert(message);
     }
   };
