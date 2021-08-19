@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
+import { useDispatch } from 'react-redux';
+import { setShowSpinner } from 'components/Spinner/stores/actions';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { cardLessATMApi } from 'apis';
-import { useDispatch } from 'react-redux';
-import { setShowSpinner } from 'components/Spinner/stores/actions';
 // import { closeFunc } from 'utilities/BankeePlus';
 
 /* Elements */
@@ -55,7 +55,6 @@ const CardLessATM1 = () => {
   // 跳轉結果頁
   const toResultPage = (data) => {
     history.push('/cardLessATM2', { data });
-    dispatch(setShowSpinner(false));
   };
 
   // 格式化帳戶餘額
@@ -89,13 +88,11 @@ const CardLessATM1 = () => {
     } else {
       setAccountSummary({ ...summaryResponse });
     }
-    dispatch(setShowSpinner(false));
   };
 
   const handleDialogOpen = (message) => {
     setErrorMessage(message);
     setOpenDialog(true);
-    dispatch(setShowSpinner(false));
   };
 
   // 無卡提款交易
@@ -133,6 +130,7 @@ const CardLessATM1 = () => {
     } else {
       handleDialogOpen(message);
     }
+    dispatch(setShowSpinner(false));
   };
 
   const onSubmit = (data) => {
@@ -237,7 +235,6 @@ const CardLessATM1 = () => {
   usePageInfo('/api/cardLessATM');
 
   useEffect(() => {
-    dispatch(setShowSpinner(true));
     getAccountSummary();
   }, []);
 

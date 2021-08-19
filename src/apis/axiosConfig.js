@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { setShowSpinner } from 'components/Spinner/stores/actions';
+import store from '../stores';
 import JWTUtil from '../utilities/JWTUtil';
 
 // Request failed with status code
@@ -41,8 +43,11 @@ const userAxios = () => {
   return instance;
 };
 
+const { dispatch } = store;
+
 userAxios().interceptors.request.use(
   (config) => {
+    dispatch(setShowSpinner(true));
     const jwt = localStorage.getItem('jwtToken');
     if (jwt) {
       config.data.custId = localStorage.getItem('custId');
@@ -61,6 +66,7 @@ userAxios().interceptors.request.use(
 
 userAxios().interceptors.response.use(
   (response) => {
+    dispatch(setShowSpinner(false));
     const jwt = localStorage.getItem('jwtToken');
     if (jwt) {
       const aeskey = localStorage.getItem('aesKey');
@@ -80,6 +86,7 @@ userAxios().interceptors.response.use(
   },
   // eslint-disable-next-line consistent-return
   (error) => {
+    dispatch(setShowSpinner(false));
     const { response } = error;
 
     if (response) {
