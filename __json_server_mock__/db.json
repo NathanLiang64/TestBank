@@ -4152,6 +4152,49 @@
       ]
     }
   },
+  "getFavoriteAcct": {
+    "favoriteAcctList": [
+      {
+        "bankNo": "805",
+        "bankName": "遠東國際商業銀行",
+        "acctId": "04300499001234",
+        "acctName": "Robert Fox",
+        "acctImg": "https://images.unsplash.com/photo-1591605555749-d25cfd47e981?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
+      },
+      {
+        "bankNo": "806",
+        "bankName": "元大商銀",
+        "acctId": "04300499005678",
+        "acctName": "Jermey123",
+        "acctImg": ""
+      }
+    ]
+  },
+  "getDesignedAcct": {
+    "designedAcctList": [
+      {
+        "bankNo": "805",
+        "bankName": "遠東商銀",
+        "acctId": "04300499001234",
+        "acctName": "Catherine Smith",
+        "acctImg": "https://images.unsplash.com/photo-1528341866330-07e6d1752ec2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=801&q=80"
+      },
+      {
+        "bankNo": "805",
+        "bankName": "遠東商銀",
+        "acctId": "04300499005678",
+        "acctName": "Jason",
+        "acctImg": ""
+      },
+      {
+        "bankNo": "806",
+        "bankName": "元大商銀",
+        "acctId": "04300499009101",
+        "acctName": "Mike",
+        "acctImg": ""
+      }
+    ]
+  },
   "profile": {
     "name": "Profile",
     "title": "個人化設定",

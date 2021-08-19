@@ -23,9 +23,10 @@ const BankCodeInput = ({
   setValue,
   trigger,
   errorMessage,
+  bankCode,
 }) => {
   const [openBankCodeList, setOpenBankCodeList] = useState(false);
-  const [selectBank, setSelectBank] = useState({ bankCode: '', bankName: '' });
+  const [selectBank, setSelectBank] = useState(bankCode || { bankNo: '', bankName: '' });
 
   const handleSelectBankCode = (object) => {
     setSelectBank(object);
@@ -38,7 +39,7 @@ const BankCodeInput = ({
       <FEIBInputLabel htmlFor="bankCode">銀行代碼</FEIBInputLabel>
       <Controller
         name={id}
-        defaultValue=""
+        defaultValue={selectBank.bankNo && selectBank.bankName ? `${selectBank.bankNo} ${selectBank.bankName}` : ''}
         control={control}
         render={({ field }) => (
           <FEIBInput
@@ -47,7 +48,7 @@ const BankCodeInput = ({
             name={id}
             type="text"
             placeholder="請選擇"
-            value={selectBank.bankCode && selectBank.bankName ? `${selectBank.bankCode} ${selectBank.bankName}` : ''}
+            value={selectBank.bankNo && selectBank.bankName ? `${selectBank.bankNo} ${selectBank.bankName}` : ''}
             $icon={<FormatListBulletedRounded />}
             $iconFontSize={2.4}
             $iconOnClick={() => setOpenBankCodeList(true)}

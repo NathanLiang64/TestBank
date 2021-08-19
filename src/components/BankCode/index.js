@@ -20,7 +20,7 @@ const BankCode = ({ isOpen, onClose, onSelect }) => {
       selectedBank.push(bank.innerText);
     }
     onSelect({
-      bankCode: selectedBank[1],
+      bankNo: selectedBank[1],
       bankName: selectedBank[0],
     });
     // onSelect(`${selectedBank[1]} ${selectedBank[0]}`);
