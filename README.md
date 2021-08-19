@@ -105,6 +105,7 @@
   - SnackModal - 聖森
   - PickerProviders - 唯物
   - Accordion - 唯物
+  - Spinner - 唯物
 
 ---
 

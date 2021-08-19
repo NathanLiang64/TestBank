@@ -7,36 +7,48 @@ const errorMessage = {
   passwordRequired: '請輸入您的網銀密碼',
   passwordIncludeEnglishAndNumber: '密碼需包含英文與數字',
   passwordCannotBeTheSameAsId: '「密碼」不可與「身分證號碼」相同',
-  passwordWrongLength: '您輸入的網銀密碼長度有誤，請重新輸入。',
+  passwordWrongLength: '您輸入的網銀密碼長度有誤，請重新輸入',
   passwordCannotSameCharacter: '「密碼」同一個字母或數字不可超過4次',
   passwordCannotConsecutive: '「密碼」連續字母或數字不可超過4位',
 
   // 身份證字號
-  identityRequired: '身分證字號尚未輸入，請確認，謝謝。',
-  identityWrongFormat: '輸入錯誤，請重新填寫，謝謝。',
+  identityRequired: '身分證字號尚未輸入，請確認',
+  identityWrongFormat: '輸入錯誤，請重新填寫',
 
   // 使用者代號
-  userAccountRequired: '使用者代號尚未輸入，請確認，謝謝。',
-  userAccountWrongLength: '您輸入的使用者代號長度有誤，請重新輸入，謝謝。',
+  userAccountRequired: '使用者代號尚未輸入，請確認',
+  userAccountWrongLength: '您輸入的使用者代號長度有誤，請重新輸入',
 
   // Email 信箱
-  emailWrongFormat: '電子信箱格式有誤，請重新檢查。',
-  emailRequired: '電子信箱尚未填寫，請重新檢查。',
+  emailWrongFormat: '電子信箱格式有誤，請重新檢查',
+  emailRequired: '電子信箱尚未填寫，請重新檢查',
 
   // 金額
-  moneyRequired: '輸入金額欄位尚未填寫，請重新檢查。',
-  moneyWrongFormat: '輸入金額欄位格式有誤，請重新檢查。',
+  moneyRequired: '輸入金額欄位尚未填寫，請重新檢查',
+  moneyWrongFormat: '輸入金額欄位格式有誤，請重新檢查',
+
+  // 轉出金額
+  transferAmountRequired: '請輸入轉帳金額',
+  transferAmountWrongFormat: '轉出金額不可大於百萬',
+  transferAmountCannotBeZero: '金額不可為 0',
 
   // 轉出行庫
-  bankCodeRequired: '轉出行庫尚未選取，請重新檢查。',
+  bankCodeRequired: '轉出行庫尚未選取，請重新檢查',
+
+  // 銀行帳號
+  bankAccountRequired: '請輸入銀行帳號',
+  bankAccountWrongFormat: '轉入帳號格式有誤，請重新檢查',
 
   // 轉出帳號
-  transferAccountRequired: '輸入轉出帳號尚未填寫，請重新檢查。',
-  transferAccountWrongFormat: '輸入轉出帳號格式有誤，請重新檢查。',
+  transferAccountRequired: '輸入轉出帳號尚未填寫，請重新檢查',
+  transferAccountWrongFormat: '輸入轉出帳號格式有誤，請重新檢查',
 
   // 轉入帳號
   receivingAccountRequired: '請輸入轉入帳號',
-  receivingAccountWrongFormat: '轉入帳號格式有誤，請重新檢查。',
+  receivingAccountWrongFormat: '轉入帳號格式有誤，請重新檢查',
+
+  // 暱稱
+  nicknameRequired: '請輸入暱稱',
 };
 
 /* ====================== 驗證規則 ====================== */
@@ -209,19 +221,49 @@ const accountValidation = {
     .min(6, errorMessage.userAccountWrongLength).max(20, errorMessage.userAccountWrongLength),
 };
 
+// 銀行帳號
+const bankAccountValidation = () => (
+  yup.string()
+    .required(errorMessage.bankAccountRequired)
+    .min(10, errorMessage.bankAccountWrongFormat).max(16, errorMessage.bankAccountWrongFormat)
+);
+
 // 轉入帳號
-const receivingAccountValidation = {
-  receivingAccount: yup.string().required(errorMessage.receivingAccountRequired)
-    .min(10, errorMessage.receivingAccountWrongFormat).max(16, errorMessage.receivingAccountWrongFormat),
-};
+const receivingAccountValidation = () => (
+  yup.string()
+    .required(errorMessage.receivingAccountRequired)
+    .min(10, errorMessage.receivingAccountWrongFormat).max(16, errorMessage.receivingAccountWrongFormat)
+);
+
+// 轉出金額
+const transferAmountValidation = () => (
+  yup.string()
+    .required(errorMessage.transferAmountRequired)
+    .max(7, errorMessage.transferAmountWrongFormat)
+    .test('test', errorMessage.transferAmountCannotBeZero, (value) => !(parseInt(value, 10) <= 0))
+);
 
 // 銀行代碼
-const bankCodeValidation = {
-  bankCode: yup.object({
+// const bankCodeValidation = {
+//   bankCode: yup.object({
+//     bankCode: yup.string().required(errorMessage.bankCodeRequired),
+//     bankName: yup.string().required(errorMessage.bankCodeRequired),
+//   }).nullable(true).required(errorMessage.bankCodeRequired),
+// };
+
+// 銀行代碼
+const bankCodeValidation = () => (
+  yup.object({
     bankCode: yup.string().required(errorMessage.bankCodeRequired),
     bankName: yup.string().required(errorMessage.bankCodeRequired),
-  }).nullable(true).required(errorMessage.bankCodeRequired),
-};
+  }).nullable(true).required(errorMessage.bankCodeRequired)
+);
+
+// 暱稱
+const nicknameValidation = () => (
+  yup.string()
+    .required(errorMessage.nicknameRequired)
+);
 
 /**
  *- 信用卡繳款驗證
@@ -242,10 +284,11 @@ const billPayBankCodeValidation = {
   otherBankCode: yup.object()
     .when('payType', {
       is: 2,
-      then: yup.object({
-        bankCode: yup.string().required(errorMessage.bankCodeRequired),
-        bankName: yup.string().required(errorMessage.bankCodeRequired),
-      }).nullable(true).required(errorMessage.bankCodeRequired),
+      then: bankCodeValidation(),
+      // then: yup.object({
+      //   bankCode: yup.string().required(errorMessage.bankCodeRequired),
+      //   bankName: yup.string().required(errorMessage.bankCodeRequired),
+      // }).nullable(true).required(errorMessage.bankCodeRequired),
       // then: yup.string().test('otherBankCode-notspace', errorMessage.bankCodeRequired, (value) => value !== ''),
     }),
 };
@@ -277,6 +320,9 @@ export {
   billPayBankCodeValidation,
   transferAccountValidation,
   emailValidation,
+  bankAccountValidation,
   receivingAccountValidation,
+  transferAmountValidation,
+  nicknameValidation,
   bankCodeValidation,
 };

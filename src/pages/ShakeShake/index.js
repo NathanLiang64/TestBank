@@ -13,8 +13,6 @@ import {
 } from 'components/elements';
 import { shakeShakeApi } from 'apis';
 import theme from 'themes/theme';
-import 'swiper/swiper.min.css';
-import 'swiper/components/pagination/pagination.min.css';
 import { setIsShake, setUserCards, setUserCardInfo } from './stores/actions';
 import ShakeShakeWrapper from './shakeShake.style';
 

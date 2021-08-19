@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
@@ -20,7 +21,7 @@ import {
 } from 'components/elements';
 import { doGetInitData } from 'apis/transferApi';
 import { numberToChinese } from 'utilities/Generator';
-import { bankCodeValidation, receivingAccountValidation } from 'utilities/validation';
+import { bankCodeValidation, receivingAccountValidation, transferAmountValidation } from 'utilities/validation';
 import { directTo } from 'utilities/mockWebController';
 import { setCards, setTransferData } from './stores/actions';
 import TransferWrapper from './transfer.style';
@@ -30,15 +31,15 @@ SwiperCore.use([Pagination]);
 
 const Transfer = () => {
   const schema = yup.object().shape({
-    ...bankCodeValidation,
-    ...receivingAccountValidation,
-    transferAmount: yup.string()
-      .required('請輸入轉帳金額')
-      .max(7, '轉出金額不可大於百萬')
-      .test('test', '金額不可為 0', (value) => !(parseInt(value, 10) <= 0)),
+    bankCode: yup.mixed()
+      .when('transferOption', { is: 'transfer', then: bankCodeValidation() }),
+    receivingAccount: yup.string()
+      .when('transferOption', { is: 'transfer', then: receivingAccountValidation() }),
+    transferAmount: transferAmountValidation(),
   });
+
   const {
-    control, handleSubmit, formState: { errors }, setValue, trigger, watch, unregister,
+    control, handleSubmit, formState: { errors }, setValue, trigger, watch, unregister, register,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -54,6 +55,7 @@ const Transfer = () => {
 
   const handleChangeTabList = (event, id) => {
     setTabId(id);
+    setValue('transferOption', id);
   };
 
   const handleChangeAmount = (event) => {
@@ -69,6 +71,9 @@ const Transfer = () => {
   const handleChangeSlide = (swiper) => {};
 
   const handleClickTransferButton = (data) => {
+    // 刪除驗證用的選項
+    delete data.transferOption;
+
     // console.log(data);
     if (!data.transactionDate) data.transactionDate = new Date();
     dispatch(setTransferData((data)));
@@ -167,7 +172,7 @@ const Transfer = () => {
             branchName="遠東商銀"
             branchCode="805"
             account="043000990000"
-            avatarSrc="https//:images.unsplash.com/photo-1528341866330-07e6d1752ec2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=801&q=80"
+            avatarSrc="https://images.unsplash.com/photo-1528341866330-07e6d1752ec2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=801&q=80"
           />
         </div>
       </FEIBTabPanel>
@@ -276,6 +281,8 @@ const Transfer = () => {
   useEffect(async () => {
     const response = await doGetInitData('/api/transfer');
     if (response.initData) dispatch(setCards(response.initData.cards));
+    // transferOption 是為了避免不同頁籤造成驗證衝突，初始設置 transfer (一般轉帳)
+    setValue('transferOption', 'transfer');
   }, []);
 
   // 根據用戶選擇的卡片，將該卡片資料儲存至 redux
@@ -326,7 +333,9 @@ const Transfer = () => {
             <FEIBTab label="約定轉帳" value="designated" />
             <FEIBTab label="社群轉帳" value="accountBook" />
           </FEIBTabList>
-          <form onSubmit={handleSubmit(handleClickTransferButton)}>
+          {/* transferOption 是為了避免不同頁籤造成驗證衝突 */}
+          <input type="text" style={{ display: 'none' }} {...register('transferOption')} />
+          <form>
             { renderTabPanels() }
             <div className="customSpace">
               <FEIBInputLabel htmlFor="transferAmount">金額</FEIBInputLabel>
@@ -401,7 +410,7 @@ const Transfer = () => {
               </ul>
             </Accordion>
             <div className="transferButtonArea">
-              <FEIBButton>轉帳</FEIBButton>
+              <FEIBButton onClick={handleSubmit(handleClickTransferButton)}>轉帳</FEIBButton>
               <p className="notice">轉帳前多思考，避免被騙更苦惱</p>
             </div>
           </form>

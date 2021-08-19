@@ -47,7 +47,7 @@ const BankCodeInput = ({
             name={id}
             type="text"
             placeholder="請選擇"
-            value={`${selectBank.bankCode} ${selectBank.bankName}`}
+            value={selectBank.bankCode && selectBank.bankName ? `${selectBank.bankCode} ${selectBank.bankName}` : ''}
             $icon={<FormatListBulletedRounded />}
             $iconFontSize={2.4}
             $iconOnClick={() => setOpenBankCodeList(true)}

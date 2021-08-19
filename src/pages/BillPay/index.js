@@ -128,9 +128,7 @@ const BillPay = () => {
       <section>
         <div className="formAreaTitle">
           <h2>請選擇繳費金額</h2>
-          <FEIBBorderButton className="customSize" type="button">
-            申請分期
-          </FEIBBorderButton>
+          <FEIBBorderButton className="customSize" type="button">申請分期</FEIBBorderButton>
         </div>
         <Controller
           name="payType"

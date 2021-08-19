@@ -1,6 +1,5 @@
-/* eslint-disable */
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
@@ -10,9 +9,9 @@ import Avatar from 'components/Avatar';
 import BottomDrawer from 'components/BottomDrawer';
 import BankCodeInput from 'components/BankCodeInput';
 import {
-  FEIBErrorMessage, FEIBIconButton, FEIBInput, FEIBInputLabel,
+  FEIBButton, FEIBErrorMessage, FEIBIconButton, FEIBInput, FEIBInputLabel,
 } from 'components/elements';
-import { bankCodeValidation } from 'utilities/validation';
+import { bankAccountValidation, bankCodeValidation, nicknameValidation } from 'utilities/validation';
 import theme from 'themes/theme';
 import MemberAccountCardWrapper, { MemberDrawerContentWrapper } from './memberAccountCard.style';
 
@@ -39,9 +38,13 @@ const MemberAccountCard = ({
   branchName,
   account,
 }) => {
-  const schema = yup.object().shape({ ...bankCodeValidation });
+  const schema = yup.object().shape({
+    memberAccountCardBankCode: bankCodeValidation(),
+    bankAccount: bankAccountValidation(),
+    nickname: nicknameValidation(),
+  });
   const {
-    control, formState: { errors }, setValue, trigger,
+    control, handleSubmit, formState: { errors }, setValue, trigger, watch,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -54,10 +57,6 @@ const MemberAccountCard = ({
     startX: 0,
     endX: 0,
   });
-
-  const handleClickSwitchMemberDrawer = () => {
-    setOpenDrawer(true);
-  };
 
   const handleClickAddMemberButton = () => {
     setDrawerTitle(`新增${transferType}帳號`);
@@ -82,7 +81,6 @@ const MemberAccountCard = ({
     // console.info('end', moreAction.endX);
   };
 
-  // eslint-disable-next-line no-unused-vars
   const handleTouchEnd = () => {
     // console.info('result-startX', moreAction.startX);
     // console.info('result-endX', moreAction.endX);
@@ -92,6 +90,14 @@ const MemberAccountCard = ({
     } else {
       setMoreAction({ ...moreAction, isMoreActionOpen: false });
     }
+  };
+
+  // eslint-disable-next-line no-unused-vars
+  const handleSubmitAddFrequentlyUsed = (data) => {
+    // console.log(data);
+    // 送資料
+    setRenderContent('default');
+    setDrawerTitle(`${transferType}轉帳`);
   };
 
   // 預設的會員帳號頁面 (常用轉帳、約定轉帳)，常用帳號才有新增按鈕
@@ -130,27 +136,59 @@ const MemberAccountCard = ({
 
   // 新增常用帳號頁面
   const addFrequentlyUsedAccountContent = () => (
-    <>
-      <div>
-        <BankCodeInput
-          id="bankCode"
-          setValue={setValue}
-          trigger={trigger}
-          control={control}
-          errorMessage={errors.bankCode?.message}
-        />
-      </div>
-      <div>
-        <FEIBInputLabel>帳號</FEIBInputLabel>
-        <FEIBInput type="number" placeholder="請輸入" />
-        <FEIBErrorMessage>請輸入銀行帳號</FEIBErrorMessage>
-      </div>
-    </>
+    <form className="addFrequentlyUsedAccountArea">
+      <Avatar name={watch('nickname')} />
+      <BankCodeInput
+        id="memberAccountCardBankCode"
+        setValue={setValue}
+        trigger={trigger}
+        control={control}
+        errorMessage={errors.memberAccountCardBankCode?.message}
+      />
+
+      <FEIBInputLabel>帳號</FEIBInputLabel>
+      <Controller
+        name="bankAccount"
+        defaultValue=""
+        control={control}
+        render={({ field }) => (
+          <FEIBInput
+            {...field}
+            id="bankAccount"
+            type="number"
+            name="bankAccount"
+            placeholder="請輸入"
+            error={!!errors.bankAccount}
+          />
+        )}
+      />
+      <FEIBErrorMessage>{errors.bankAccount?.message}</FEIBErrorMessage>
+
+      <FEIBInputLabel>暱稱</FEIBInputLabel>
+      <Controller
+        name="nickname"
+        defaultValue=""
+        control={control}
+        render={({ field }) => (
+          <FEIBInput
+            {...field}
+            id="nickname"
+            type="text"
+            name="nickname"
+            placeholder="請輸入"
+            error={!!errors.nickname}
+          />
+        )}
+      />
+      <FEIBErrorMessage>{errors.nickname?.message}</FEIBErrorMessage>
+
+      <FEIBButton onClick={handleSubmit(handleSubmitAddFrequentlyUsed)}>加入</FEIBButton>
+    </form>
   );
 
   // 變更選取的會員按鈕
   const renderChangeMemberButton = () => (
-    <div className="changeMemberButton" onClick={handleClickSwitchMemberDrawer}>
+    <div className="changeMemberButton" onClick={() => setOpenDrawer(true)}>
       <FEIBIconButton $iconColor={theme.colors.primary.light} $fontSize={2.4}>
         <AccountCircleRounded />
       </FEIBIconButton>
@@ -164,14 +202,12 @@ const MemberAccountCard = ({
         <CreateRounded />
         <span>編輯</span>
       </button>
-      {
-        transferType === '常用' && (
-          <button type="button" className="remove">
-            <DeleteRounded />
-            <span>刪除</span>
-          </button>
-        )
-      }
+      { transferType === '常用' && (
+        <button type="button" className="remove">
+          <DeleteRounded />
+          <span>刪除</span>
+        </button>
+      ) }
     </div>
   );
 
