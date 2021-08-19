@@ -1,19 +1,13 @@
+/* eslint-disable */
 import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  AccountCircleRounded, AddRounded, CreateRounded, DeleteRounded,
-} from '@material-ui/icons';
+import { CreateRounded, DeleteRounded } from '@material-ui/icons';
 import Avatar from 'components/Avatar';
-import BottomDrawer from 'components/BottomDrawer';
-import BankCodeInput from 'components/BankCodeInput';
-import {
-  FEIBButton, FEIBErrorMessage, FEIBIconButton, FEIBInput, FEIBInputLabel,
-} from 'components/elements';
 import { bankAccountValidation, bankCodeValidation, nicknameValidation } from 'utilities/validation';
-import theme from 'themes/theme';
-import MemberAccountCardWrapper, { MemberDrawerContentWrapper } from './memberAccountCard.style';
+import MemberAccountCardWrapper from './memberAccountCard.style';
+import BankCodeInput from '../BankCodeInput';
+import { FEIBButton, FEIBErrorMessage, FEIBInput, FEIBInputLabel } from '../elements';
+import { Controller } from 'react-hook-form';
 
 /*
 * ==================== MemberAccountCard 組件說明 ====================
@@ -24,49 +18,35 @@ import MemberAccountCardWrapper, { MemberDrawerContentWrapper } from './memberAc
 * 2. transferType -> 轉帳型態 (常用或預約)
 * 3. name -> 會員名稱
 * 4. avatarSrc -> 會員頭像的圖片路徑
-* 5. branchCode -> 銀行代碼
-* 6. branchName -> 銀行名稱
+* 5. bankNo -> 銀行代碼
+* 6. bankName -> 銀行名稱
 * 7. account -> 會員帳號
 * */
 
 const MemberAccountCard = ({
-  listType,
-  transferType,
+  type,
   name,
-  avatarSrc,
-  branchCode,
-  branchName,
+  bankNo,
+  bankName,
   account,
+  avatarSrc,
+  noBorder,
+  setClickMoreOption,
 }) => {
   const schema = yup.object().shape({
     memberAccountCardBankCode: bankCodeValidation(),
     bankAccount: bankAccountValidation(),
     nickname: nicknameValidation(),
   });
-  const {
-    control, handleSubmit, formState: { errors }, setValue, trigger, watch,
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
 
-  const [openDrawer, setOpenDrawer] = useState(false);
-  const [drawerTitle, setDrawerTitle] = useState(`${transferType}轉帳`);
-  const [renderContent, setRenderContent] = useState('default');
   const [moreAction, setMoreAction] = useState({
     isMoreActionOpen: false,
     startX: 0,
     endX: 0,
   });
 
-  const handleClickAddMemberButton = () => {
-    setDrawerTitle(`新增${transferType}帳號`);
-    setRenderContent('addFrequentlyUsedAccount');
-  };
-
-  const handleClickCloseDrawer = () => {
-    setOpenDrawer(false);
-    setDrawerTitle(`${transferType}轉帳`);
-    setRenderContent('default');
+  const handleClickEdit = () => {
+    setClickMoreOption({ click: true, button: 'edit', target: account });
   };
 
   const handleTouchStart = (event) => {
@@ -92,117 +72,15 @@ const MemberAccountCard = ({
     }
   };
 
-  // eslint-disable-next-line no-unused-vars
-  const handleSubmitAddFrequentlyUsed = (data) => {
-    // console.log(data);
-    // 送資料
-    setRenderContent('default');
-    setDrawerTitle(`${transferType}轉帳`);
-  };
-
-  // 預設的會員帳號頁面 (常用轉帳、約定轉帳)，常用帳號才有新增按鈕
-  const defaultMemberAccountContent = () => (
-    <>
-      {
-        transferType === '常用' && (
-          <div className="addMemberButtonArea" onClick={handleClickAddMemberButton}>
-            <div className="addMemberButtonIcon">
-              <AddRounded />
-            </div>
-            <span className="addMemberButtonText">{`新增${transferType}帳號`}</span>
-          </div>
-        )
-      }
-      <div className="members">
-        <MemberAccountCard
-          listType
-          transferType={transferType}
-          name="Robert Fox"
-          branchName="遠東商銀"
-          branchCode="805"
-          account="043000990000"
-        />
-        <MemberAccountCard
-          listType
-          transferType={transferType}
-          name="Jermey123"
-          branchName="遠東商銀"
-          branchCode="805"
-          account="043000990000"
-        />
-      </div>
-    </>
-  );
-
-  // 新增常用帳號頁面
-  const addFrequentlyUsedAccountContent = () => (
-    <form className="addFrequentlyUsedAccountArea">
-      <Avatar name={watch('nickname')} />
-      <BankCodeInput
-        id="memberAccountCardBankCode"
-        setValue={setValue}
-        trigger={trigger}
-        control={control}
-        errorMessage={errors.memberAccountCardBankCode?.message}
-      />
-
-      <FEIBInputLabel>帳號</FEIBInputLabel>
-      <Controller
-        name="bankAccount"
-        defaultValue=""
-        control={control}
-        render={({ field }) => (
-          <FEIBInput
-            {...field}
-            id="bankAccount"
-            type="number"
-            name="bankAccount"
-            placeholder="請輸入"
-            error={!!errors.bankAccount}
-          />
-        )}
-      />
-      <FEIBErrorMessage>{errors.bankAccount?.message}</FEIBErrorMessage>
-
-      <FEIBInputLabel>暱稱</FEIBInputLabel>
-      <Controller
-        name="nickname"
-        defaultValue=""
-        control={control}
-        render={({ field }) => (
-          <FEIBInput
-            {...field}
-            id="nickname"
-            type="text"
-            name="nickname"
-            placeholder="請輸入"
-            error={!!errors.nickname}
-          />
-        )}
-      />
-      <FEIBErrorMessage>{errors.nickname?.message}</FEIBErrorMessage>
-
-      <FEIBButton onClick={handleSubmit(handleSubmitAddFrequentlyUsed)}>加入</FEIBButton>
-    </form>
-  );
-
-  // 變更選取的會員按鈕
-  const renderChangeMemberButton = () => (
-    <div className="changeMemberButton" onClick={() => setOpenDrawer(true)}>
-      <FEIBIconButton $iconColor={theme.colors.primary.light} $fontSize={2.4}>
-        <AccountCircleRounded />
-      </FEIBIconButton>
-    </div>
-  );
-
-  // 更多選項 (編輯、刪除)，常用帳號才有刪除選項
+  // 更多選項 (編輯、刪除)
   const renderMoreActionMenu = () => (
     <div className={`moreActionMenu ${moreAction.isMoreActionOpen ? 'show' : ''}`}>
-      <button type="button" className="edit">
+      <button type="button" className="edit" onClick={handleClickEdit}>
         <CreateRounded />
         <span>編輯</span>
       </button>
-      { transferType === '常用' && (
+      {/* 常用帳號才有刪除選項 */}
+      { type === '常用帳號' && (
         <button type="button" className="remove">
           <DeleteRounded />
           <span>刪除</span>
@@ -211,44 +89,20 @@ const MemberAccountCard = ({
     </div>
   );
 
-  // 由 renderController 控制要顯示哪個頁面
-  const renderController = (content) => {
-    switch (content) {
-      case 'default':
-        return defaultMemberAccountContent(transferType);
-      case 'addFrequentlyUsedAccount':
-        return addFrequentlyUsedAccountContent();
-      default:
-        return defaultMemberAccountContent();
-    }
-  };
-
   return (
-    <>
-      <MemberAccountCardWrapper
-        $listType={listType}
-        onTouchStart={listType && handleTouchStart}
-        onTouchMove={listType && handleTouchMove}
-        onTouchEnd={listType && handleTouchEnd}
-      >
-        <Avatar small src={avatarSrc} name={name} />
-        <div className="memberInfo">
-          <h3>{name || '會員'}</h3>
-          <p>{`${branchName}(${branchCode}) ${account}`}</p>
-        </div>
-        { listType ? renderMoreActionMenu() : renderChangeMemberButton() }
-      </MemberAccountCardWrapper>
-      <BottomDrawer
-        title={drawerTitle}
-        isOpen={openDrawer}
-        onClose={handleClickCloseDrawer}
-        content={(
-          <MemberDrawerContentWrapper>
-            { renderController(renderContent) }
-          </MemberDrawerContentWrapper>
-        )}
-      />
-    </>
+    <MemberAccountCardWrapper
+      $noBorder={noBorder}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      <Avatar small src={avatarSrc} name={name} />
+      <div className="memberInfo">
+        <h3>{name || '會員'}</h3>
+        <p>{`${bankName}(${bankNo}) ${account}`}</p>
+      </div>
+      { renderMoreActionMenu() }
+    </MemberAccountCardWrapper>
   );
 };
 
