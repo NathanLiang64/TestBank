@@ -1,44 +1,17 @@
-/* eslint-disable */
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Controller, useForm } from 'react-hook-form';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { AddRounded } from '@material-ui/icons';
+import BottomDrawer from 'components/BottomDrawer';
 import MemberAccountCard from 'components/MemberAccountCard';
-import BankCodeInput from 'components/BankCodeInput';
-import Avatar from 'components/Avatar';
-import {
-  FEIBButton, FEIBErrorMessage, FEIBInput, FEIBInputLabel,
-} from 'components/elements';
-import { bankAccountValidation, bankCodeValidation, nicknameValidation } from 'utilities/validation';
 import { TransferDrawerWrapper } from './transfer.style';
-import BottomDrawer from '../../components/BottomDrawer';
+import TransferFrequentlyUsedAccount from '../TransferFrequentlyUsedAccount';
+import TransferDesignedAccount from '../TransferDesignedAccount';
 
 const Transfer2 = ({ openDrawer, setOpenDrawer }) => {
-  const schema = yup.object().shape({
-    memberAccountCardBankCode: bankCodeValidation(),
-    bankAccount: bankAccountValidation(),
-    nickname: nicknameValidation(),
-  });
-  const {
-    control, handleSubmit, formState: { errors }, setValue, trigger, watch,
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
   const frequentlyUsedAccounts = useSelector(({ transfer }) => transfer.frequentlyUsedAccounts);
   const designedAccounts = useSelector(({ transfer }) => transfer.designedAccounts);
   const [drawerContent, setDrawerContent] = useState('default');
   const [clickMoreOption, setClickMoreOption] = useState({ click: false, button: '', target: null });
-
-  // eslint-disable-next-line no-unused-vars
-  const handleSubmitAddFrequentlyUsed = (data) => {
-    setDrawerContent('default');
-    setOpenDrawer({ ...openDrawer, title: '常用帳號' });
-    setClickMoreOption({ click: false, button: '', target: null });
-    console.log(data);
-    // 送資料
-  };
 
   const handleCloseDrawer = () => {
     setOpenDrawer({ ...openDrawer, open: false });
@@ -88,101 +61,15 @@ const Transfer2 = ({ openDrawer, setOpenDrawer }) => {
     </>
   );
 
-  // TODO: Bug, 待修正
-  // 新增/編輯常用帳號頁面
-  const frequentlyUsedAccountContent = (account) => {
-    if (account) {
-      const target = frequentlyUsedAccounts.find((member) => member.acctId === account);
-      const {
-        acctImg,
-        bankNo,
-        bankName,
-        acctId,
-        acctName,
-      } = target;
-      return (
-        <form className="addFrequentlyUsedAccountArea">
-          <Avatar src={acctImg} name={watch('nickname')} />
-          <BankCodeInput
-            id="memberAccountCardBankCode"
-            setValue={setValue}
-            trigger={trigger}
-            control={control}
-            bankCode={{ bankNo, bankName }}
-            errorMessage={errors.memberAccountCardBankCode?.message}
-          />
-
-          <FEIBInputLabel>帳號</FEIBInputLabel>
-          <Controller
-            name="bankAccount"
-            defaultValue={acctId}
-            control={control}
-            render={({ field }) => (
-              <FEIBInput {...field} id="bankAccount" type="number" name="bankAccount" placeholder="請輸入" error={!!errors.bankAccount} />
-            )}
-          />
-          <FEIBErrorMessage>{errors.bankAccount?.message}</FEIBErrorMessage>
-
-          <FEIBInputLabel>暱稱</FEIBInputLabel>
-          <Controller
-            name="nickname"
-            defaultValue={acctName}
-            control={control}
-            render={({ field }) => (
-              <FEIBInput {...field} id="nickname" type="text" name="nickname" placeholder="請輸入" error={!!errors.nickname} />
-            )}
-          />
-          <FEIBErrorMessage>{errors.nickname?.message}</FEIBErrorMessage>
-
-          <FEIBButton onClick={handleSubmit(handleSubmitAddFrequentlyUsed)}>加入</FEIBButton>
-        </form>
-      );
-    }
-
-    return (
-      <form className="addFrequentlyUsedAccountArea">
-        <Avatar name={watch('nickname')} />
-        <BankCodeInput
-          id="memberAccountCardBankCode"
-          setValue={setValue}
-          trigger={trigger}
-          control={control}
-          errorMessage={errors.memberAccountCardBankCode?.message}
-        />
-
-        <FEIBInputLabel>帳號</FEIBInputLabel>
-        <Controller
-          name="bankAccount"
-          defaultValue=""
-          control={control}
-          render={({ field }) => (
-            <FEIBInput {...field} id="bankAccount" type="number" name="bankAccount" placeholder="請輸入" error={!!errors.bankAccount} />
-          )}
-        />
-        <FEIBErrorMessage>{errors.bankAccount?.message}</FEIBErrorMessage>
-
-        <FEIBInputLabel>暱稱</FEIBInputLabel>
-        <Controller
-          name="nickname"
-          defaultValue=""
-          control={control}
-          render={({ field }) => (
-            <FEIBInput {...field} id="nickname" type="text" name="nickname" placeholder="請輸入" error={!!errors.nickname} />
-          )}
-        />
-        <FEIBErrorMessage>{errors.nickname?.message}</FEIBErrorMessage>
-
-        <FEIBButton onClick={handleSubmit(handleSubmitAddFrequentlyUsed)}>加入</FEIBButton>
-      </form>
-    );
-  };
-
   useEffect(() => {
     // if (clickMoreOption) console.log(clickMoreOption);
-    const { click, button, target } = clickMoreOption;
-    if (click && button === 'edit') {
-      const targetMember = frequentlyUsedAccounts.find((member) => member.acctId === target);
+    const { click, button } = clickMoreOption;
+    if (click && button === 'edit' && openDrawer.title === '常用帳號') {
       setDrawerContent('editFrequentlyUsedAccount');
+      setOpenDrawer({ ...openDrawer, title: '編輯常用帳號' });
+    } else if (click && button === 'edit' && openDrawer.title === '約定帳號') {
+      setDrawerContent('editDesignedAccount');
+      setOpenDrawer({ ...openDrawer, title: '編輯約轉帳號' });
     }
   }, [clickMoreOption]);
 
@@ -190,12 +77,36 @@ const Transfer2 = ({ openDrawer, setOpenDrawer }) => {
   const drawerController = (content) => {
     switch (content) {
       case 'default':
-        // return defaultMemberAccountContent(transferType);
         return defaultMemberAccountContent(openDrawer.title);
       case 'addFrequentlyUsedAccount':
-        return frequentlyUsedAccountContent();
+        return (
+          <TransferFrequentlyUsedAccount
+            openDrawer={openDrawer}
+            setOpenDrawer={setOpenDrawer}
+            setDrawerContent={setDrawerContent}
+            setClickMoreOption={setClickMoreOption}
+          />
+        );
       case 'editFrequentlyUsedAccount':
-        return frequentlyUsedAccountContent(clickMoreOption.target);
+        return (
+          <TransferFrequentlyUsedAccount
+            openDrawer={openDrawer}
+            setOpenDrawer={setOpenDrawer}
+            setDrawerContent={setDrawerContent}
+            setClickMoreOption={setClickMoreOption}
+            target={clickMoreOption.target}
+          />
+        );
+      case 'editDesignedAccount':
+        return (
+          <TransferDesignedAccount
+            openDrawer={openDrawer}
+            setOpenDrawer={setOpenDrawer}
+            setDrawerContent={setDrawerContent}
+            setClickMoreOption={setClickMoreOption}
+            target={clickMoreOption.target}
+          />
+        );
       default:
         return defaultMemberAccountContent(openDrawer.title);
     }

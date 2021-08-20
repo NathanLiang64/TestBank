@@ -234,7 +234,8 @@ const TransferDrawerWrapper = styled.div`
     color: ${({ theme }) => theme.colors.primary.light};
   }
 
-  .addFrequentlyUsedAccountArea {
+  .addFrequentlyUsedAccountArea,
+  .editDesignedAccountArea {
     text-align: center;
 
     .Avatar {
@@ -244,6 +245,21 @@ const TransferDrawerWrapper = styled.div`
 
     label {
       text-align: left;
+    }
+  }
+  
+  .editDesignedAccountArea {
+    .accountArea {
+      margin-bottom: 1.6rem;
+      padding: 1.6rem 1.2rem;
+      border-radius: .8rem;
+      font-size: 1.6rem;
+      color: ${({ theme }) => theme.colors.text.lightGray};
+      background: ${({ theme }) => theme.colors.background.lighterBlue};
+      
+      p {
+        margin-top: 1.2rem;
+      }
     }
   }
 `;

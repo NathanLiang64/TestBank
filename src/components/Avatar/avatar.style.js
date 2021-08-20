@@ -17,6 +17,12 @@ const AvatarWrapper = styled.div.attrs({
     border-radius: 50%;
   }
   
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
   .default {
     display: flex;
     justify-content: center;

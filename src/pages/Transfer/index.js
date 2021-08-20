@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
@@ -15,7 +14,6 @@ import Accordion from 'components/Accordion';
 import BankCodeInput from 'components/BankCodeInput';
 import MemberAccountCard from 'components/MemberAccountCard';
 import DatePickerProvider from 'components/DatePickerProvider';
-import BottomDrawer from 'components/BottomDrawer';
 import {
   FEIBTabContext, FEIBTabList, FEIBTab, FEIBTabPanel,
   FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBDatePicker,
@@ -30,7 +28,7 @@ import {
   setCards,
   setDesignedAccounts,
   setFrequentlyUsedAccounts,
-  setTransferData
+  setTransferData,
 } from './stores/actions';
 import Transfer2 from './transfer_2';
 import TransferWrapper from './transfer.style';
@@ -162,19 +160,18 @@ const Transfer = () => {
       {/* 常用轉帳頁籤 */}
       <FEIBTabPanel value="frequentlyUsed">
         <FEIBInputLabel>轉入帳號</FEIBInputLabel>
-        { frequentlyUsedAccounts && (
+        { frequentlyUsedAccounts.length > 0 && (
           <div className="memberAccountCardArea">
             <MemberAccountCard
-              // transferType="常用"
-              // accountList={frequentlyUsedAccounts}
               name={frequentlyUsedAccounts[0].acctName}
               bankName={frequentlyUsedAccounts[0].bankName}
               bankNo={frequentlyUsedAccounts[0].bankNo}
               account={frequentlyUsedAccounts[0].acctId}
               avatarSrc={frequentlyUsedAccounts[0].acctImg}
               noBorder
+              noOption
             />
-            <div className="changeMemberButton" onClick={() => setOpenDrawer({ title: '常用帳號' , open: true })}>
+            <div className="changeMemberButton" onClick={() => setOpenDrawer({ title: '常用帳號', open: true })}>
               <FEIBIconButton $iconColor={theme.colors.primary.light} $fontSize={2.4}>
                 <AccountCircleRounded />
               </FEIBIconButton>
@@ -186,20 +183,18 @@ const Transfer = () => {
       {/* 約定轉帳頁籤 */}
       <FEIBTabPanel value="designated">
         <FEIBInputLabel>轉入帳號</FEIBInputLabel>
-        { designedAccounts && (
+        { designedAccounts.length > 0 && (
           <div className="memberAccountCardArea">
-            {/* 初始顯示為常用帳號列表的第一筆清單 */}
             <MemberAccountCard
-              // transferType="約定"
-              // accountList={designedAccounts}
               name={designedAccounts[0].acctName}
               bankName={designedAccounts[0].bankName}
               bankNo={designedAccounts[0].bankNo}
               account={designedAccounts[0].acctId}
               avatarSrc={designedAccounts[0].acctImg}
               noBorder
+              noOption
             />
-            <div className="changeMemberButton" onClick={() => setOpenDrawer({ title: '約定帳號' , open: true })}>
+            <div className="changeMemberButton" onClick={() => setOpenDrawer({ title: '約定帳號', open: true })}>
               <FEIBIconButton $iconColor={theme.colors.primary.light} $fontSize={2.4}>
                 <AccountCircleRounded />
               </FEIBIconButton>

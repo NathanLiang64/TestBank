@@ -1,26 +1,20 @@
-/* eslint-disable */
 import { useState } from 'react';
-import * as yup from 'yup';
 import { CreateRounded, DeleteRounded } from '@material-ui/icons';
 import Avatar from 'components/Avatar';
-import { bankAccountValidation, bankCodeValidation, nicknameValidation } from 'utilities/validation';
 import MemberAccountCardWrapper from './memberAccountCard.style';
-import BankCodeInput from '../BankCodeInput';
-import { FEIBButton, FEIBErrorMessage, FEIBInput, FEIBInputLabel } from '../elements';
-import { Controller } from 'react-hook-form';
 
 /*
 * ==================== MemberAccountCard 組件說明 ====================
 * MemberAccountCard 組件包含了 Avatar 組合成一張會員帳號卡片
 * ==================== MemberAccountCard 可傳參數 ====================
-* 1. listType -> 列表卡片型態
-*    列表卡片擁有列表的樣式，可滑動顯示編輯卡片，且沒有右側 icon
-* 2. transferType -> 轉帳型態 (常用或預約)
-* 3. name -> 會員名稱
-* 4. avatarSrc -> 會員頭像的圖片路徑
-* 5. bankNo -> 銀行代碼
-* 6. bankName -> 銀行名稱
-* 7. account -> 會員帳號
+* 1. type -> 組件型態，type 若為 '常用帳號' 才有刪除選項
+* 2. name -> 會員名稱
+* 3. bankNo -> 銀行代碼
+* 4. bankName -> 銀行名稱
+* 5. account -> 會員帳號
+* 6. avatarSrc -> 會員頭像的圖片路徑
+* 7. noBorder -> 無框線
+* 8. noOption -> 左滑時無編輯 & 刪除選項
 * */
 
 const MemberAccountCard = ({
@@ -31,20 +25,16 @@ const MemberAccountCard = ({
   account,
   avatarSrc,
   noBorder,
+  noOption,
   setClickMoreOption,
 }) => {
-  const schema = yup.object().shape({
-    memberAccountCardBankCode: bankCodeValidation(),
-    bankAccount: bankAccountValidation(),
-    nickname: nicknameValidation(),
-  });
-
   const [moreAction, setMoreAction] = useState({
     isMoreActionOpen: false,
     startX: 0,
     endX: 0,
   });
 
+  // TODO: click edit function 可以考慮提出來
   const handleClickEdit = () => {
     setClickMoreOption({ click: true, button: 'edit', target: account });
   };
@@ -64,11 +54,13 @@ const MemberAccountCard = ({
   const handleTouchEnd = () => {
     // console.info('result-startX', moreAction.startX);
     // console.info('result-endX', moreAction.endX);
-
-    if ((moreAction.startX > moreAction.endX) && (moreAction.startX - moreAction.endX > 20)) {
+    if (
+      moreAction.startX && moreAction.endX
+      && (moreAction.startX > moreAction.endX) && (moreAction.startX - moreAction.endX > 20)
+    ) {
       setMoreAction({ ...moreAction, isMoreActionOpen: true });
     } else {
-      setMoreAction({ ...moreAction, isMoreActionOpen: false });
+      setMoreAction({ startX: 0, endX: 0, isMoreActionOpen: false });
     }
   };
 
@@ -101,7 +93,7 @@ const MemberAccountCard = ({
         <h3>{name || '會員'}</h3>
         <p>{`${bankName}(${bankNo}) ${account}`}</p>
       </div>
-      { renderMoreActionMenu() }
+      { !noOption && renderMoreActionMenu() }
     </MemberAccountCardWrapper>
   );
 };
