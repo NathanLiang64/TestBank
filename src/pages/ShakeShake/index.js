@@ -98,7 +98,7 @@ const ShakeShake = () => {
   // 資料尚未從 api 取回時的等待畫面
   const renderLoading = () => (
     <div className="loadingArea">
-      <Loading space="both" />
+      <Loading space="both" color={theme.colors.text.light} />
     </div>
   );
 

@@ -13,7 +13,6 @@ const BillPayWrapper = styled(Layout)`
   
   .buttons {
     margin-top: .6rem;
-    margin-bottom: 4rem;
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-column-gap: 1.6rem;

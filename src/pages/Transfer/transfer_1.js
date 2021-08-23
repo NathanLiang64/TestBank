@@ -1,15 +1,19 @@
-import { useEffect } from 'react';
+/* eslint-disable */
+import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import InformationList from 'components/InformationList';
 import InfoArea from 'components/InfoArea';
+import Dialog from 'components/Dialog';
+import Loading from 'components/Loading';
 import { FEIBButton } from 'components/elements';
 import { setIsPasswordRequired, setResult } from 'components/PasswordDrawer/stores/actions';
 import { dateFormatter, timeFormatter } from 'utilities/Generator';
 import { directTo } from 'utilities/mockWebController';
-import TransferWrapper from './transfer.style';
+import TransferWrapper, { TransferMOTPDialogWrapper } from './transfer.style';
 
 const Transfer1 = () => {
+  const [openMOTPDialog, setOpenMOTPDialog] = useState(false);
   const fastLogin = useSelector(({ passwordDrawer }) => passwordDrawer.fastLogin);
   const result = useSelector(({ passwordDrawer }) => passwordDrawer.result);
   const transferData = useSelector(({ transfer }) => transfer.transferData);
@@ -43,7 +47,7 @@ const Transfer1 = () => {
 
   const onSubmit = () => {
     // console.log(transferData);
-    directTo(history, 'transfer');
+    setOpenMOTPDialog(true);
   };
 
   useEffect(() => {
@@ -51,13 +55,29 @@ const Transfer1 = () => {
     dispatch(setResult(false));
   }, [result]);
 
+  useEffect(() => {
+    if (openMOTPDialog) {
+      // 模擬 MOTP 驗證所需時間
+      const delay = (interval) => new Promise((resolve) => setTimeout(resolve, interval));
+
+      // 模擬 MOTP 驗證所需時間 2 秒
+      const waitMOTP = async () => await delay(2000);
+
+      // 驗證成功後關閉 MOTP 驗證彈窗並跳轉至成功頁
+      waitMOTP().then(() => {
+        setOpenMOTPDialog(false);
+        directTo(history, 'transfer3');
+      });
+    }
+  }, [openMOTPDialog]);
+
   return (
     <TransferWrapper className="transferConfirmPage">
       <hr />
       <section className="transferMainInfo">
         <p>轉出金額與轉入帳號</p>
         <h3 className="transferAmount">{transferAmount ? `$${transferAmount}` : ''}</h3>
-        <h3>{bankCode.bankCode ? `${bankCode.bankName}(${bankCode.bankCode})` : ''}</h3>
+        <h3>{bankCode.bankNo ? `${bankCode.bankName}(${bankCode.bankNo})` : ''}</h3>
         <h3>{receivingAccount ? `${receivingAccount}` : ''}</h3>
       </section>
       <hr />
@@ -85,6 +105,16 @@ const Transfer1 = () => {
           <p className="notice">轉帳前多思考，避免被騙更苦惱</p>
         </div>
       </section>
+      <Dialog
+        title="行動守護精靈 MOTP"
+        isOpen={openMOTPDialog}
+        content={(
+          <TransferMOTPDialogWrapper>
+            <Loading />
+            <p>驗證中</p>
+          </TransferMOTPDialogWrapper>
+        )}
+      />
     </TransferWrapper>
   );
 };

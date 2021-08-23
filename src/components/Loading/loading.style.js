@@ -17,7 +17,7 @@ const LoadingWrapper = styled.div`
   padding: ${({ $space }) => handleSpaceType($space)};
   
   .MuiCircularProgress-svg {
-    color: ${({ theme }) => theme.colors.text.light};
+    color: ${({ $color, theme }) => $color || theme.colors.primary.light};
   }
 `;
 

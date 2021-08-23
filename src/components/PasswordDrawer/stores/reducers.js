@@ -2,6 +2,7 @@ import * as types from './types';
 
 const initState = {
   fastLogin: true,
+  motp: false,
   isPasswordRequired: false,
   result: false,
 };

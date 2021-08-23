@@ -156,12 +156,11 @@ const TransferWrapper = styled(Layout)`
       }
     }
   }
-  
+
   // 轉帳確認頁
-  &.transferConfirmPage {
-    //display: flex;
-    //flex-direction: column;
-    //align-items: center;
+  &.transferConfirmPage,
+  // 轉帳結果頁
+  &.transferResultPage {
     padding: 0;
     background: ${({ theme }) => theme.colors.basic.white};
     
@@ -198,6 +197,62 @@ const TransferWrapper = styled(Layout)`
       margin: 0;
       border: 0;
       border-top: .8rem solid ${({ theme }) => theme.colors.background.lighterBlue};
+    }
+    
+    .stateArea {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 1.6rem;
+      padding: 0 3.2rem;
+    }
+    
+    .stateImage {
+      width: 14.4rem;
+    }
+
+    .stateText {
+      font-size: 2.4rem;
+      text-align: center;
+      font-weight: 500;
+      
+      &.success {
+        color: ${({ theme }) => theme.colors.secondary.brand};
+      }
+      &.error {
+        color: ${({ theme }) => theme.colors.state.error};
+      }
+    }
+  }
+  
+  // 轉帳結果頁
+  &.transferResultPage {
+
+    section {
+      
+      &.transferMainInfo {
+
+        button {
+          display: inline-flex;
+          align-items: center;
+          margin-top: .8rem;
+          font-size: 1.4rem;
+
+          span {
+            margin-left: .4rem;
+          }
+        }
+
+        .transferAmount {
+          margin: .4rem 0;
+          font-weight: 500;
+        }
+      }
+
+      &.transactionDetailArea {
+        padding-top: 0;
+        padding-bottom: 7.2rem;
+      }
     }
   }
 `;
@@ -264,5 +319,17 @@ const TransferDrawerWrapper = styled.div`
   }
 `;
 
+const TransferMOTPDialogWrapper = styled.div`
+  margin-bottom: 2.4rem;
+  text-align: center;
+  
+  p {
+    margin-top: 1.6rem;
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: ${({ theme }) => theme.colors.text.lightGray};
+  }
+`;
+
 export default TransferWrapper;
-export { TransferDrawerWrapper };
+export { TransferDrawerWrapper, TransferMOTPDialogWrapper };

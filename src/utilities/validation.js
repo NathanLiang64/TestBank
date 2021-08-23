@@ -49,6 +49,9 @@ const errorMessage = {
 
   // 暱稱
   nicknameRequired: '請輸入暱稱',
+
+  // OTP 驗證碼
+  otpCodeRequired: '請輸入 OTP 驗證碼',
 };
 
 /* ====================== 驗證規則 ====================== */
@@ -265,6 +268,12 @@ const nicknameValidation = () => (
     .required(errorMessage.nicknameRequired)
 );
 
+// OTP 驗證碼
+const otpCodeValidation = () => (
+  yup.string()
+    .required(errorMessage.otpCodeRequired)
+);
+
 /**
  *- 信用卡繳款驗證
  */
@@ -325,4 +334,5 @@ export {
   transferAmountValidation,
   nicknameValidation,
   bankCodeValidation,
+  otpCodeValidation,
 };

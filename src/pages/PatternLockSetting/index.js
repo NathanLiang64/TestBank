@@ -216,11 +216,13 @@ const PatternLockSetting = () => {
   return (
     <PatternLockSettingWrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {SwitchArea()}
-        {TextArea()}
-        { !patternLockSettingData.isActive && CheckArea()}
-        {PassWordArea()}
-        {ButtonArea()}
+        <div>
+          { SwitchArea() }
+          { TextArea() }
+          { !patternLockSettingData.isActive && CheckArea() }
+          { PassWordArea() }
+        </div>
+        { ButtonArea() }
         { showResultDialog ? ResultDialog() : ConfirmDialog() }
       </form>
     </PatternLockSettingWrapper>

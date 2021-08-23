@@ -288,9 +288,11 @@ const BillPay = () => {
   const renderPage = () => (
     <BillPayWrapper small={initData && initData.feib}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {initData && initData.feib ? renderCardArea() : null}
-        {initData && renderFormArea()}
-        {initData && !initData.feib ? renderOtherCCArea() : null}
+        <div>
+          {initData && initData.feib ? renderCardArea() : null}
+          {initData && renderFormArea()}
+          {initData && !initData.feib ? renderOtherCCArea() : null}
+        </div>
         {initData && renderButtons()}
       </form>
     </BillPayWrapper>
