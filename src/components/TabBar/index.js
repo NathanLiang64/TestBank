@@ -1,4 +1,5 @@
 import { useHistory } from 'react-router';
+import { logout } from 'apis/authApi';
 
 import TransferImage from 'assets/images/tabBarIcons/transfer.svg';
 import NoticeImage from 'assets/images/tabBarIcons/notice.svg';
@@ -73,8 +74,19 @@ const TabBar = () => {
 
   const toPage = async (item) => {
     if (item.route === 'logout') {
-      history.push('/login');
-      localStorage.clear();
+      const logoutData = {
+        channelCode: 'HHB_A',
+        appVersion: '1.0.15',
+        udid: '',
+      };
+      const logoutResponse = await logout(logoutData);
+      if (!logoutResponse.message) {
+        history.push('/login');
+        localStorage.clear();
+      } else {
+        // eslint-disable-next-line no-alert
+        alert(logoutResponse.message);
+      }
       return;
     }
     if (item.route) {

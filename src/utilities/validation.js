@@ -254,7 +254,7 @@ const transferAmountValidation = () => (
 // 銀行代碼
 const bankCodeValidation = () => (
   yup.object({
-    bankCode: yup.string().required(errorMessage.bankCodeRequired),
+    bankNo: yup.string().required(errorMessage.bankCodeRequired),
     bankName: yup.string().required(errorMessage.bankCodeRequired),
   }).nullable(true).required(errorMessage.bankCodeRequired)
 );

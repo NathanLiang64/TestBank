@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
@@ -8,6 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Pagination } from 'swiper/core';
 import { RadioGroup } from '@material-ui/core';
+import { AccountCircleRounded } from '@material-ui/icons';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import DebitCard from 'components/DebitCard';
 import Accordion from 'components/Accordion';
@@ -17,13 +17,20 @@ import DatePickerProvider from 'components/DatePickerProvider';
 import {
   FEIBTabContext, FEIBTabList, FEIBTab, FEIBTabPanel,
   FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBDatePicker,
-  FEIBRadioLabel, FEIBRadio, FEIBButton, FEIBSelect, FEIBOption,
+  FEIBRadioLabel, FEIBRadio, FEIBButton, FEIBSelect, FEIBOption, FEIBIconButton,
 } from 'components/elements';
 import { doGetInitData } from 'apis/transferApi';
 import { numberToChinese } from 'utilities/Generator';
 import { bankCodeValidation, receivingAccountValidation, transferAmountValidation } from 'utilities/validation';
 import { directTo } from 'utilities/mockWebController';
-import { setCards, setTransferData } from './stores/actions';
+import theme from 'themes/theme';
+import {
+  setCards,
+  setDesignedAccounts,
+  setFrequentlyUsedAccounts,
+  setTransferData,
+} from './stores/actions';
+import Transfer2 from './transfer_2';
 import TransferWrapper from './transfer.style';
 
 /* Swiper modules */
@@ -49,7 +56,10 @@ const Transfer = () => {
   const [showReserveOption, setShowReserveOption] = useState(false);
   const [showReserveMoreOption, setShowReserveMoreOption] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [openDrawer, setOpenDrawer] = useState({ title: '常用帳號', open: false });
   const cards = useSelector(({ transfer }) => transfer.cards);
+  const frequentlyUsedAccounts = useSelector(({ transfer }) => transfer.frequentlyUsedAccounts);
+  const designedAccounts = useSelector(({ transfer }) => transfer.designedAccounts);
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -150,31 +160,47 @@ const Transfer = () => {
       {/* 常用轉帳頁籤 */}
       <FEIBTabPanel value="frequentlyUsed">
         <FEIBInputLabel>轉入帳號</FEIBInputLabel>
-        <div className="memberAccountCardArea">
-          <MemberAccountCard
-            transferType="常用"
-            name="Robert Fox"
-            branchName="遠東商銀"
-            branchCode="805"
-            account="043000990000"
-            avatarSrc="https://images.unsplash.com/photo-1591605555749-d25cfd47e981?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
-          />
-        </div>
+        { frequentlyUsedAccounts.length > 0 && (
+          <div className="memberAccountCardArea">
+            <MemberAccountCard
+              name={frequentlyUsedAccounts[0].acctName}
+              bankName={frequentlyUsedAccounts[0].bankName}
+              bankNo={frequentlyUsedAccounts[0].bankNo}
+              account={frequentlyUsedAccounts[0].acctId}
+              avatarSrc={frequentlyUsedAccounts[0].acctImg}
+              noBorder
+              noOption
+            />
+            <div className="changeMemberButton" onClick={() => setOpenDrawer({ title: '常用帳號', open: true })}>
+              <FEIBIconButton $iconColor={theme.colors.primary.light} $fontSize={2.4}>
+                <AccountCircleRounded />
+              </FEIBIconButton>
+            </div>
+          </div>
+        ) }
       </FEIBTabPanel>
 
       {/* 約定轉帳頁籤 */}
       <FEIBTabPanel value="designated">
         <FEIBInputLabel>轉入帳號</FEIBInputLabel>
-        <div className="memberAccountCardArea">
-          <MemberAccountCard
-            transferType="約定"
-            name="Catherine Smith"
-            branchName="遠東商銀"
-            branchCode="805"
-            account="043000990000"
-            avatarSrc="https://images.unsplash.com/photo-1528341866330-07e6d1752ec2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=801&q=80"
-          />
-        </div>
+        { designedAccounts.length > 0 && (
+          <div className="memberAccountCardArea">
+            <MemberAccountCard
+              name={designedAccounts[0].acctName}
+              bankName={designedAccounts[0].bankName}
+              bankNo={designedAccounts[0].bankNo}
+              account={designedAccounts[0].acctId}
+              avatarSrc={designedAccounts[0].acctImg}
+              noBorder
+              noOption
+            />
+            <div className="changeMemberButton" onClick={() => setOpenDrawer({ title: '約定帳號', open: true })}>
+              <FEIBIconButton $iconColor={theme.colors.primary.light} $fontSize={2.4}>
+                <AccountCircleRounded />
+              </FEIBIconButton>
+            </div>
+          </div>
+        ) }
       </FEIBTabPanel>
 
       {/* 社群轉帳頁籤 */}
@@ -279,8 +305,15 @@ const Transfer = () => {
 
   // 取得所有存款卡的初始資料
   useEffect(async () => {
-    const response = await doGetInitData('/api/transfer');
-    if (response.initData) dispatch(setCards(response.initData.cards));
+    const cardResponse = await doGetInitData('/api/transfer');
+    if (cardResponse.initData) dispatch(setCards(cardResponse.initData.cards));
+
+    const favoriteResponse = await doGetInitData('/api/getFavoriteAcct');
+    if (favoriteResponse) dispatch(setFrequentlyUsedAccounts(favoriteResponse.favoriteAcctList));
+
+    const designedResponse = await doGetInitData('/api/getDesignedAcct');
+    if (designedResponse) dispatch(setDesignedAccounts(designedResponse.designedAcctList));
+
     // transferOption 是為了避免不同頁籤造成驗證衝突，初始設置 transfer (一般轉帳)
     setValue('transferOption', 'transfer');
   }, []);
@@ -416,6 +449,7 @@ const Transfer = () => {
           </form>
         </FEIBTabContext>
       </div>
+      <Transfer2 openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
     </TransferWrapper>
   );
 };

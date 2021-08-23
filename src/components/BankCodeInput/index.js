@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Controller } from 'react-hook-form';
 import { FormatListBulletedRounded } from '@material-ui/icons';
 import BankCode from 'components/BankCode';
@@ -15,6 +15,7 @@ import { FEIBErrorMessage, FEIBInput, FEIBInputLabel } from 'components/elements
 * 3. setValue -> 傳入 react-hook-form 的 setValue 參數
 * 4. trigger -> 傳入 react-hook-form 的 trigger 參數
 * 5. errorMessage -> 表單驗證的錯誤訊息
+* 6. bankCode -> 若原先就有 bankCode 值，可傳入，若無則預設為帶有 2 個空字串的物件
 * */
 
 const BankCodeInput = ({
@@ -23,9 +24,10 @@ const BankCodeInput = ({
   setValue,
   trigger,
   errorMessage,
+  bankCode,
 }) => {
   const [openBankCodeList, setOpenBankCodeList] = useState(false);
-  const [selectBank, setSelectBank] = useState({ bankCode: '', bankName: '' });
+  const [selectBank, setSelectBank] = useState(bankCode || { bankNo: '', bankName: '' });
 
   const handleSelectBankCode = (object) => {
     setSelectBank(object);
@@ -33,12 +35,20 @@ const BankCodeInput = ({
     trigger(id);
   };
 
+  useEffect(() => {
+    if (bankCode && (!selectBank.bankNo && !selectBank.bankName)) {
+      setSelectBank(bankCode);
+    } else {
+      setSelectBank(selectBank);
+    }
+  }, [bankCode]);
+
   return (
     <>
       <FEIBInputLabel htmlFor="bankCode">銀行代碼</FEIBInputLabel>
       <Controller
         name={id}
-        defaultValue=""
+        defaultValue={selectBank.bankNo && selectBank.bankName ? `${selectBank.bankNo} ${selectBank.bankName}` : ''}
         control={control}
         render={({ field }) => (
           <FEIBInput
@@ -47,7 +57,7 @@ const BankCodeInput = ({
             name={id}
             type="text"
             placeholder="請選擇"
-            value={selectBank.bankCode && selectBank.bankName ? `${selectBank.bankCode} ${selectBank.bankName}` : ''}
+            value={selectBank.bankNo && selectBank.bankName ? `${selectBank.bankNo} ${selectBank.bankName}` : ''}
             $icon={<FormatListBulletedRounded />}
             $iconFontSize={2.4}
             $iconOnClick={() => setOpenBankCodeList(true)}

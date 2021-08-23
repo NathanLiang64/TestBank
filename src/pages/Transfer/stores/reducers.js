@@ -2,6 +2,8 @@ import * as types from './types';
 
 const initState = {
   cards: [],
+  frequentlyUsedAccounts: [],
+  designedAccounts: [],
   transferData: {},
 };
 
@@ -11,6 +13,16 @@ const reducers = (state = initState, action) => {
       return {
         ...state,
         cards: action.payload,
+      };
+    case types.SET_FREQUENTLY_USED_ACCOUNTS:
+      return {
+        ...state,
+        frequentlyUsedAccounts: action.payload,
+      };
+    case types.SET_DESIGNED_ACCOUNTS:
+      return {
+        ...state,
+        designedAccounts: action.payload,
       };
     case types.SET_TRANSFER_DATA:
       return {

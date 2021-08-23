@@ -5,6 +5,16 @@ export const setCards = (array) => ({
   payload: array,
 });
 
+export const setFrequentlyUsedAccounts = (array) => ({
+  type: types.SET_FREQUENTLY_USED_ACCOUNTS,
+  payload: array,
+});
+
+export const setDesignedAccounts = (array) => ({
+  type: types.SET_DESIGNED_ACCOUNTS,
+  payload: array,
+});
+
 export const setTransferData = (object) => ({
   type: types.SET_TRANSFER_DATA,
   payload: object,
