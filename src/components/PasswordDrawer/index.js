@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { useSelector, useDispatch } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -22,6 +24,8 @@ const PasswordDrawer = () => {
   });
   const { handleSubmit, control, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
   const isPasswordRequired = useSelector(({ passwordDrawer }) => passwordDrawer.isPasswordRequired);
+  const fastLogin = useSelector(({ passwordDrawer }) => passwordDrawer.fastLogin);
+  const motp = useSelector(({ passwordDrawer }) => passwordDrawer.motp);
   const [resendDisabled, setResendDisabled] = useState(true);
   const [replayCountDown, setReplayCountDown] = useState(false);
 
@@ -103,8 +107,8 @@ const PasswordDrawer = () => {
       content={(
         <PasswordDrawerWrapper>
           <form onSubmit={handleSubmit(handleClickSubmit)}>
-            { renderOTPArea() }
-            { renderPasswordArea() }
+            { !motp && renderOTPArea() }
+            { fastLogin && renderPasswordArea() }
             <FEIBButton type="submit">送出</FEIBButton>
           </form>
         </PasswordDrawerWrapper>

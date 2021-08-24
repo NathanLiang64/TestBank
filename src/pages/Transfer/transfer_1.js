@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
@@ -15,19 +14,14 @@ import TransferWrapper, { TransferMOTPDialogWrapper } from './transfer.style';
 const Transfer1 = () => {
   const [openMOTPDialog, setOpenMOTPDialog] = useState(false);
   const fastLogin = useSelector(({ passwordDrawer }) => passwordDrawer.fastLogin);
+  const motp = useSelector(({ passwordDrawer }) => passwordDrawer.motp);
   const result = useSelector(({ passwordDrawer }) => passwordDrawer.result);
   const transferData = useSelector(({ transfer }) => transfer.transferData);
   const history = useHistory();
   const dispatch = useDispatch();
 
   const {
-    bankCode,
-    receivingAccount,
-    remark,
-    transactionCycle,
-    transactionDate,
-    transactionFrequency,
-    transferAmount,
+    bankCode, receivingAccount, remark, transactionCycle, transactionDate, transactionFrequency, transferAmount,
   } = transferData;
 
   const switchFrequency = (frequency) => {
@@ -42,13 +36,32 @@ const Transfer1 = () => {
   };
 
   const handleClickTransferButton = () => {
-    if (fastLogin) dispatch(setIsPasswordRequired(true));
+    if (fastLogin || !motp) dispatch(setIsPasswordRequired(true));
   };
 
   const onSubmit = () => {
     // console.log(transferData);
     setOpenMOTPDialog(true);
   };
+
+  const renderMOTPNotice = () => (
+    <InfoArea className="infoArea">
+      提醒您，即將進行非約定轉帳，請確認網路連線，以確保行動守護精靈MOTP可正常驗證
+    </InfoArea>
+  );
+
+  const renderMOTPLoadingDialog = () => (
+    <Dialog
+      title="行動守護精靈 MOTP"
+      isOpen={openMOTPDialog}
+      content={(
+        <TransferMOTPDialogWrapper>
+          <Loading />
+          <p>驗證中</p>
+        </TransferMOTPDialogWrapper>
+      )}
+    />
+  );
 
   useEffect(() => {
     if (result) onSubmit();
@@ -66,7 +79,7 @@ const Transfer1 = () => {
       // 驗證成功後關閉 MOTP 驗證彈窗並跳轉至成功頁
       waitMOTP().then(() => {
         setOpenMOTPDialog(false);
-        directTo(history, 'transfer3');
+        directTo(history, 'transfer2');
       });
     }
   }, [openMOTPDialog]);
@@ -99,22 +112,13 @@ const Transfer1 = () => {
       </section>
       <hr />
       <section className="transferAction">
-        <InfoArea>提醒您，即將進行非約定轉帳，請確認網路連線，以確保行動守護精靈MOTP可正常驗證</InfoArea>
+        { motp && renderMOTPNotice() }
         <div className="transferButtonArea">
           <FEIBButton onClick={handleClickTransferButton}>確認</FEIBButton>
           <p className="notice">轉帳前多思考，避免被騙更苦惱</p>
         </div>
       </section>
-      <Dialog
-        title="行動守護精靈 MOTP"
-        isOpen={openMOTPDialog}
-        content={(
-          <TransferMOTPDialogWrapper>
-            <Loading />
-            <p>驗證中</p>
-          </TransferMOTPDialogWrapper>
-        )}
-      />
+      { motp && renderMOTPLoadingDialog() }
     </TransferWrapper>
   );
 };

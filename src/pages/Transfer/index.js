@@ -25,13 +25,10 @@ import { bankCodeValidation, receivingAccountValidation, transferAmountValidatio
 import { directTo } from 'utilities/mockWebController';
 import theme from 'themes/theme';
 import {
-  setCards,
-  setDesignedAccounts,
-  setFrequentlyUsedAccounts,
-  setTransferData,
+  setCards, setDesignedAccounts, setFrequentlyUsedAccounts, setTransferData, setOpenDrawer, setClickMoreOptions,
 } from './stores/actions';
-import Transfer2 from './transfer_2';
 import TransferWrapper from './transfer.style';
+import TransferDrawer from '../TransferDrawer';
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
@@ -44,7 +41,6 @@ const Transfer = () => {
       .when('transferOption', { is: 'transfer', then: receivingAccountValidation() }),
     transferAmount: transferAmountValidation(),
   });
-
   const {
     control, handleSubmit, formState: { errors }, setValue, trigger, watch, unregister, register,
   } = useForm({
@@ -55,11 +51,13 @@ const Transfer = () => {
   const [amount, setAmount] = useState({ number: '', chinese: '' });
   const [showReserveOption, setShowReserveOption] = useState(false);
   const [showReserveMoreOption, setShowReserveMoreOption] = useState(false);
+  const [selectTransferMember, setSelectTransferMember] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [openDrawer, setOpenDrawer] = useState({ title: '常用帳號', open: false });
   const cards = useSelector(({ transfer }) => transfer.cards);
   const frequentlyUsedAccounts = useSelector(({ transfer }) => transfer.frequentlyUsedAccounts);
   const designedAccounts = useSelector(({ transfer }) => transfer.designedAccounts);
+  const openDrawer = useSelector(({ transfer }) => transfer.openDrawer);
+  const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -93,17 +91,18 @@ const Transfer = () => {
     directTo(history, 'transfer1');
   };
 
+  const handleOpenFrequentlyUsedList = () => {
+    dispatch(setOpenDrawer({ ...openDrawer, title: '常用帳號', open: true }));
+  };
+
+  const handleOpenDesignatedList = () => {
+    dispatch(setOpenDrawer({ ...openDrawer, title: '約定帳號', open: true }));
+  };
+
   const renderCards = (debitCards) => (
     debitCards.map((card) => {
       const {
-        cardBranch,
-        cardName,
-        cardAccount,
-        cardBalance,
-        cardColor,
-        moreList,
-        interbankTransferLimit,
-        interbankTransferRemaining,
+        cardBranch, cardName, cardAccount, cardBalance, cardColor, moreList, interbankTransferLimit, interbankTransferRemaining,
       } = card;
       return (
         <SwiperSlide key={cardAccount}>
@@ -160,18 +159,18 @@ const Transfer = () => {
       {/* 常用轉帳頁籤 */}
       <FEIBTabPanel value="frequentlyUsed">
         <FEIBInputLabel>轉入帳號</FEIBInputLabel>
-        { frequentlyUsedAccounts.length > 0 && (
+        { selectTransferMember && (
           <div className="memberAccountCardArea">
             <MemberAccountCard
-              name={frequentlyUsedAccounts[0].acctName}
-              bankName={frequentlyUsedAccounts[0].bankName}
-              bankNo={frequentlyUsedAccounts[0].bankNo}
-              account={frequentlyUsedAccounts[0].acctId}
-              avatarSrc={frequentlyUsedAccounts[0].acctImg}
+              name={selectTransferMember.acctName}
+              bankName={selectTransferMember.bankName}
+              bankNo={selectTransferMember.bankNo}
+              account={selectTransferMember.acctId}
+              avatarSrc={selectTransferMember.acctImg}
               noBorder
               noOption
             />
-            <div className="changeMemberButton" onClick={() => setOpenDrawer({ title: '常用帳號', open: true })}>
+            <div className="changeMemberButton" onClick={handleOpenFrequentlyUsedList}>
               <FEIBIconButton $iconColor={theme.colors.primary.light} $fontSize={2.4}>
                 <AccountCircleRounded />
               </FEIBIconButton>
@@ -183,18 +182,18 @@ const Transfer = () => {
       {/* 約定轉帳頁籤 */}
       <FEIBTabPanel value="designated">
         <FEIBInputLabel>轉入帳號</FEIBInputLabel>
-        { designedAccounts.length > 0 && (
+        { selectTransferMember && (
           <div className="memberAccountCardArea">
             <MemberAccountCard
-              name={designedAccounts[0].acctName}
-              bankName={designedAccounts[0].bankName}
-              bankNo={designedAccounts[0].bankNo}
-              account={designedAccounts[0].acctId}
-              avatarSrc={designedAccounts[0].acctImg}
+              name={selectTransferMember.acctName}
+              bankName={selectTransferMember.bankName}
+              bankNo={selectTransferMember.bankNo}
+              account={selectTransferMember.acctId}
+              avatarSrc={selectTransferMember.acctImg}
               noBorder
               noOption
             />
-            <div className="changeMemberButton" onClick={() => setOpenDrawer({ title: '約定帳號', open: true })}>
+            <div className="changeMemberButton" onClick={handleOpenDesignatedList}>
               <FEIBIconButton $iconColor={theme.colors.primary.light} $fontSize={2.4}>
                 <AccountCircleRounded />
               </FEIBIconButton>
@@ -219,11 +218,7 @@ const Transfer = () => {
           control={control}
           defaultValue="weekly"
           render={({ field }) => (
-            <FEIBSelect
-              {...field}
-              id="transactionFrequency"
-              name="transactionFrequency"
-            >
+            <FEIBSelect {...field} id="transactionFrequency" name="transactionFrequency">
               <FEIBOption value="weekly">每周</FEIBOption>
               <FEIBOption value="monthly">每月</FEIBOption>
             </FEIBSelect>
@@ -238,11 +233,7 @@ const Transfer = () => {
           control={control}
           defaultValue="2"
           render={({ field }) => (
-            <FEIBSelect
-              {...field}
-              id="transactionCycle"
-              name="transactionCycle"
-            >
+            <FEIBSelect {...field} id="transactionCycle" name="transactionCycle">
               <FEIBOption value="2">2</FEIBOption>
               <FEIBOption value="3">3</FEIBOption>
               <FEIBOption value="4">4</FEIBOption>
@@ -262,11 +253,7 @@ const Transfer = () => {
         control={control}
         defaultValue="once"
         render={({ field }) => (
-          <FEIBSelect
-            {...field}
-            id="transactionNumber"
-            name="transactionNumber"
-          >
+          <FEIBSelect {...field} id="transactionNumber" name="transactionNumber">
             <FEIBOption value="once">一次</FEIBOption>
             <FEIBOption value="many">多次</FEIBOption>
           </FEIBSelect>
@@ -325,8 +312,10 @@ const Transfer = () => {
 
   useEffect(() => {
     if (watch('transferType') === 'reserve') {
+      // 若轉帳類型為 "預約"，顯示 "預約轉帳的子選項" UI
       setShowReserveOption(true);
     } else {
+      // 否則取消註冊 "預約轉帳子選項" 的多項表單值，且不顯示 "預約轉帳的子選項" UI
       unregister('transactionDate');
       unregister('transactionCycle');
       unregister('transactionNumber');
@@ -337,24 +326,52 @@ const Transfer = () => {
 
   useEffect(() => {
     if (watch('transactionNumber') === 'many') {
+      // 若交易次數為 "多次"，顯示 "預約多次交易的子選項" UI
       setShowReserveMoreOption(true);
     } else {
+      // 否則取消註冊 "預約多次交易的子選項" 的兩項表單值，且不顯示 "預約多次交易的子選項" UI
       unregister('transactionCycle');
       unregister('transactionFrequency');
       setShowReserveMoreOption(false);
     }
   }, [watch('transactionNumber')]);
 
+  useEffect(() => {
+    // 每次切換 Tab 都先清空點擊選項
+    dispatch(setClickMoreOptions({ click: false, button: '', target: null }));
+    // 若當前頁面為常用轉帳，將常用帳號清單內的第一筆設置為預設的轉帳對象，並開啟常用帳號 Drawer UI
+    if (watch('transferOption') === 'frequentlyUsed') {
+      if (frequentlyUsedAccounts.length) setSelectTransferMember(frequentlyUsedAccounts[0]);
+      handleOpenFrequentlyUsedList();
+    }
+    // 若當前頁面為約定轉帳，將約定帳號清單內的第一筆設置為預設的轉帳對象，並開啟約定帳號 Drawer UI
+    if (watch('transferOption') === 'designated') {
+      if (designedAccounts.length) setSelectTransferMember(designedAccounts[0]);
+      handleOpenDesignatedList();
+    }
+  }, [watch('transferOption')]);
+
+  useEffect(() => {
+    let currentTarget = null;
+    if (clickMoreOptions.button === 'select' && clickMoreOptions.target) {
+      // 若點擊選項為 select 且當前頁面為常用轉帳，至常用帳號清單內比對相符的 target 帳號
+      if (watch('transferOption') === 'frequentlyUsed') {
+        currentTarget = frequentlyUsedAccounts.find((member) => member.acctId === clickMoreOptions.target);
+      }
+      // 若點擊選項為 select 且當前頁面為約定轉帳，至約定帳號清單內比對相符的 target 帳號
+      if (watch('transferOption') === 'designated') {
+        currentTarget = designedAccounts.find((member) => member.acctId === clickMoreOptions.target);
+      }
+      // 將該對象設置至轉帳對象並關閉 Drawer
+      setSelectTransferMember(currentTarget);
+      dispatch(setOpenDrawer({ ...openDrawer, open: false }));
+    }
+  }, [clickMoreOptions]);
+
   return (
     <TransferWrapper>
       <div className="userCardArea">
-        <Swiper
-          slidesPerView={1.14}
-          spaceBetween={8}
-          centeredSlides
-          pagination
-          onSlideChange={handleChangeSlide}
-        >
+        <Swiper slidesPerView={1.14} spaceBetween={8} centeredSlides pagination onSlideChange={handleChangeSlide}>
           { cards.length > 0 && renderCards(cards) }
         </Swiper>
       </div>
@@ -407,14 +424,7 @@ const Transfer = () => {
                 control={control}
                 defaultValue="now"
                 render={({ field }) => (
-                  <RadioGroup
-                    {...field}
-                    row
-                    aria-label="轉帳類型"
-                    id="transferType"
-                    name="transferType"
-                    defaultValue="now"
-                  >
+                  <RadioGroup {...field} row aria-label="轉帳類型" id="transferType" name="transferType" defaultValue="now">
                     <FEIBRadioLabel value="now" className="customWidth" control={<FEIBRadio />} label="立即" />
                     <FEIBRadioLabel value="reserve" control={<FEIBRadio />} label="預約" />
                   </RadioGroup>
@@ -449,7 +459,7 @@ const Transfer = () => {
           </form>
         </FEIBTabContext>
       </div>
-      <Transfer2 openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
+      <TransferDrawer />
     </TransferWrapper>
   );
 };

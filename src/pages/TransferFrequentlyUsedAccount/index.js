@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -9,10 +9,9 @@ import {
   FEIBButton, FEIBErrorMessage, FEIBInput, FEIBInputLabel,
 } from 'components/elements';
 import { bankAccountValidation, bankCodeValidation, nicknameValidation } from 'utilities/validation';
+import { setOpenDrawer, setClickMoreOptions } from '../Transfer/stores/actions';
 
-const TransferFrequentlyUsedAccount = ({
-  openDrawer, setDrawerContent, setOpenDrawer, setClickMoreOption, target,
-}) => {
+const TransferFrequentlyUsedAccount = () => {
   const schema = yup.object().shape({
     memberAccountCardBankCode: bankCodeValidation(),
     bankAccount: bankAccountValidation(),
@@ -25,30 +24,31 @@ const TransferFrequentlyUsedAccount = ({
   });
 
   const frequentlyUsedAccounts = useSelector(({ transfer }) => transfer.frequentlyUsedAccounts);
+  const openDrawer = useSelector(({ transfer }) => transfer.openDrawer);
+  const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
   const [targetMember, setTargetMember] = useState({});
   const [avatar, setAvatar] = useState(null);
+  const dispatch = useDispatch();
 
-  // eslint-disable-next-line no-unused-vars
   const handleSubmitFrequentlyUsed = (data) => {
     if (avatar) data.avatar = avatar;
     // 送資料
     // console.log(data);
-    setDrawerContent('default');
-    setClickMoreOption({ click: false, button: '', target: null });
-    setOpenDrawer({ ...openDrawer, title: '常用帳號' });
+    dispatch(setOpenDrawer({ ...openDrawer, title: '常用帳號', content: 'default' }));
+    dispatch(setClickMoreOptions({ click: false, button: '', target: null }));
   };
 
   const handleSelectAvatar = (file) => setAvatar(file);
 
   useEffect(() => {
-    if (target) {
-      const currenTarget = frequentlyUsedAccounts.find((member) => member.acctId === target);
+    if (clickMoreOptions.target) {
+      const currenTarget = frequentlyUsedAccounts.find((member) => member.acctId === clickMoreOptions.target);
       setTargetMember(currenTarget);
       setValue('memberAccountCardBankCode', { bankNo: currenTarget.bankNo, bankName: currenTarget.bankName });
       setValue('bankAccount', currenTarget.acctId);
       setValue('nickname', currenTarget.acctName);
     }
-  }, [target]);
+  }, [clickMoreOptions.target]);
 
   if (targetMember) {
     return (

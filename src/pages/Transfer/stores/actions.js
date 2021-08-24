@@ -19,3 +19,13 @@ export const setTransferData = (object) => ({
   type: types.SET_TRANSFER_DATA,
   payload: object,
 });
+
+export const setOpenDrawer = (object) => ({
+  type: types.SET_OPEN_DRAWER,
+  payload: object,
+});
+
+export const setClickMoreOptions = (object) => ({
+  type: types.SET_CLICK_MORE_OPTIONS,
+  payload: object,
+});
