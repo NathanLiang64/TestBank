@@ -4,22 +4,25 @@ import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import e2ee from 'utilities/E2ee';
+// eslint-disable-next-line no-unused-vars
+import { changeUserNameApi } from 'apis';
 
 /* Elements */
 import {
   FEIBInput, FEIBInputLabel, FEIBButton, FEIBErrorMessage,
 } from 'components/elements';
-import PasswordInput from 'components/PasswordInput';
+// import PasswordInput from 'components/PasswordInput';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
-import { passwordValidation } from 'utilities/validation';
+// import { passwordValidation } from 'utilities/validation';
 
 /* Styles */
 // import theme from 'themes/theme';
 import ChangeUserNameWrapper from './changeUserName.style';
 
 const ChangeUserName = () => {
-  const history = useHistory();
+  // const history = useHistory();
   /**
    *- 資料驗證
    */
@@ -40,7 +43,7 @@ const ChangeUserName = () => {
       .min(6, '您輸入的新使用者代號長度有誤，請重新輸入。')
       .max(20, '您輸入的新使用者代號長度有誤，請重新輸入。')
       .oneOf([yup.ref('newUserName'), null], '必須與新使用者代號相同'),
-    ...passwordValidation,
+    // ...passwordValidation,
   });
   const {
     handleSubmit, control, formState: { errors },
@@ -48,18 +51,25 @@ const ChangeUserName = () => {
     resolver: yupResolver(schema),
   });
 
-  // const history = useHistory();
+  const history = useHistory();
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [form, setForm] = useState({
     userName: '',
     newUserName: '',
     newUserNameCheck: '',
-    password: '',
   });
 
-  const handleChangeUserName = () => {
+  const handleChangeUserName = async () => {
+    const param = {
+      userName: await e2ee(form.userName),
+      newUserName: await e2ee(form.newUserName),
+      newUserNameCheck: await e2ee(form.newUserNameCheck),
+    };
+    const changeUserNameResponse = await changeUserNameApi.changeUserName(param);
+    console.log('變更使用者代號回傳', changeUserNameResponse);
+    const data = !!changeUserNameResponse;
+    history.push('/changeUserName1', { data });
     setShowConfirmDialog(false);
-    history.push('/changeUserName1');
   };
 
   const onSubmit = (data) => {
@@ -87,64 +97,67 @@ const ChangeUserName = () => {
   return (
     <ChangeUserNameWrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <FEIBInputLabel htmlFor="userName">您的使用者代號</FEIBInputLabel>
-        <Controller
-          name="userName"
-          defaultValue=""
-          control={control}
-          render={({ field }) => (
-            <FEIBInput
-              {...field}
-              type="text"
-              id="userName"
-              name="userName"
-              placeholder="請輸入6~20位英數字，英文字區分大小寫"
-              error={!!errors.userName}
-            />
-          )}
-        />
-        <FEIBErrorMessage>{errors.userName?.message}</FEIBErrorMessage>
-        <FEIBInputLabel>新的使用者代號</FEIBInputLabel>
-        <Controller
-          name="newUserName"
-          defaultValue=""
-          control={control}
-          render={({ field }) => (
-            <FEIBInput
-              {...field}
-              type="text"
-              id="newUserName"
-              name="newUserName"
-              placeholder="請輸入6~20位英數字，英文字區分大小寫"
-              error={!!errors.newUserName}
-            />
-          )}
-        />
-        <FEIBErrorMessage>{errors.newUserName?.message}</FEIBErrorMessage>
-        <FEIBInputLabel>請確認新的使用者代號</FEIBInputLabel>
-        <Controller
-          name="newUserNameCheck"
-          defaultValue=""
-          control={control}
-          render={({ field }) => (
-            <FEIBInput
-              {...field}
-              type="text"
-              id="newUserNameCheck"
-              name="newUserNameCheck"
-              placeholder="請再輸入一次新的使用者代號"
-              error={!!errors.newUserNameCheck}
-            />
-          )}
-        />
-        <FEIBErrorMessage>{errors.newUserNameCheck?.message}</FEIBErrorMessage>
-        <PasswordInput
-          label="請輸入網銀密碼"
-          id="password"
-          name="password"
-          control={control}
-          errorMessage={errors.password?.message}
-        />
+        <div>
+
+          <FEIBInputLabel htmlFor="userName">您的使用者代號</FEIBInputLabel>
+          <Controller
+            name="userName"
+            defaultValue=""
+            control={control}
+            render={({ field }) => (
+              <FEIBInput
+                {...field}
+                type="text"
+                id="userName"
+                name="userName"
+                placeholder="請輸入6~20位英數字，英文字區分大小寫"
+                error={!!errors.userName}
+              />
+            )}
+          />
+          <FEIBErrorMessage>{errors.userName?.message}</FEIBErrorMessage>
+          <FEIBInputLabel>新的使用者代號</FEIBInputLabel>
+          <Controller
+            name="newUserName"
+            defaultValue=""
+            control={control}
+            render={({ field }) => (
+              <FEIBInput
+                {...field}
+                type="text"
+                id="newUserName"
+                name="newUserName"
+                placeholder="請輸入6~20位英數字，英文字區分大小寫"
+                error={!!errors.newUserName}
+              />
+            )}
+          />
+          <FEIBErrorMessage>{errors.newUserName?.message}</FEIBErrorMessage>
+          <FEIBInputLabel>請確認新的使用者代號</FEIBInputLabel>
+          <Controller
+            name="newUserNameCheck"
+            defaultValue=""
+            control={control}
+            render={({ field }) => (
+              <FEIBInput
+                {...field}
+                type="text"
+                id="newUserNameCheck"
+                name="newUserNameCheck"
+                placeholder="請再輸入一次新的使用者代號"
+                error={!!errors.newUserNameCheck}
+              />
+            )}
+          />
+          <FEIBErrorMessage>{errors.newUserNameCheck?.message}</FEIBErrorMessage>
+          {/* <PasswordInput
+            label="請輸入網銀密碼"
+            id="password"
+            name="password"
+            control={control}
+            errorMessage={errors.password?.message}
+          /> */}
+        </div>
         <FEIBButton
           type="submit"
         >

@@ -1,8 +1,10 @@
+// import { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+// import { basicInformationApi } from 'apis';
 
 /* Elements */
 import {
@@ -13,8 +15,8 @@ import {
   FEIBButton,
   FEIBErrorMessage,
 } from 'components/elements';
-import PasswordInput from 'components/PasswordInput';
-import { passwordValidation } from 'utilities/validation';
+// import PasswordInput from 'components/PasswordInput';
+// import { passwordValidation } from 'utilities/validation';
 /* Styles */
 import BasicInformationWrapper from './basicInformation.style';
 
@@ -32,7 +34,6 @@ const BasicInformation = () => {
       .string()
       .required('請輸入電子信箱')
       .email('電子信箱格式不符'),
-    ...passwordValidation,
     city: yup
       .string()
       .required('請選擇縣市'),
@@ -42,6 +43,7 @@ const BasicInformation = () => {
     address: yup
       .string()
       .required('請輸入通訊地址'),
+    // ...passwordValidation,
   });
   const {
     handleSubmit, control, formState: { errors },
@@ -55,115 +57,121 @@ const BasicInformation = () => {
     history.push('/basicInformation1');
   };
 
+  // 取得縣市列表
+  // const getCountyList = () => {
+  // };
+
   useCheckLocation();
   usePageInfo('/api/basicInformation');
 
   return (
     <BasicInformationWrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <FEIBInputLabel>行動電話</FEIBInputLabel>
-        <Controller
-          name="phone"
-          defaultValue=""
-          control={control}
-          render={({ field }) => (
-            <FEIBInput
-              {...field}
-              type="text"
-              inputMode="tel"
-              id="phone"
-              name="phone"
-              placeholder="請輸入行動電話"
-              error={!!errors.phone}
-            />
-          )}
-        />
-        <FEIBErrorMessage>{errors.phone?.message}</FEIBErrorMessage>
-        <FEIBInputLabel>電子信箱</FEIBInputLabel>
-        <Controller
-          name="email"
-          defaultValue=""
-          control={control}
-          render={({ field }) => (
-            <FEIBInput
-              {...field}
-              type="text"
-              inputMode="email"
-              id="email"
-              name="email"
-              placeholder="請輸入電子信箱"
-              error={!!errors.email}
-            />
-          )}
-        />
-        <FEIBErrorMessage>{errors.email?.message}</FEIBErrorMessage>
-        <FEIBInputLabel>通訊地址</FEIBInputLabel>
-        <div className="selectContainer">
-          <div>
-            <Controller
-              name="city"
-              defaultValue=""
-              control={control}
-              placeholder="請選擇縣市"
-              render={({ field }) => (
-                <FEIBSelect
-                  {...field}
-                  id="city"
-                  name="city"
-                  placeholder="請選擇縣市"
-                  error={!!errors.city}
-                >
-                  <FEIBOption value="" disabled>請選擇縣市</FEIBOption>
-                  <FEIBOption value="1">台北市</FEIBOption>
-                </FEIBSelect>
-              )}
-            />
-            <FEIBErrorMessage>{errors.city?.message}</FEIBErrorMessage>
+        <div>
+          <FEIBInputLabel>行動電話</FEIBInputLabel>
+          <Controller
+            name="phone"
+            defaultValue=""
+            control={control}
+            render={({ field }) => (
+              <FEIBInput
+                {...field}
+                type="text"
+                inputMode="tel"
+                id="phone"
+                name="phone"
+                placeholder="請輸入行動電話"
+                error={!!errors.phone}
+              />
+            )}
+          />
+          <FEIBErrorMessage>{errors.phone?.message}</FEIBErrorMessage>
+          <FEIBInputLabel>電子信箱</FEIBInputLabel>
+          <Controller
+            name="email"
+            defaultValue=""
+            control={control}
+            render={({ field }) => (
+              <FEIBInput
+                {...field}
+                type="text"
+                inputMode="email"
+                id="email"
+                name="email"
+                placeholder="請輸入電子信箱"
+                error={!!errors.email}
+              />
+            )}
+          />
+          <FEIBErrorMessage>{errors.email?.message}</FEIBErrorMessage>
+          <FEIBInputLabel>通訊地址</FEIBInputLabel>
+          <div className="selectContainer">
+            <div>
+              <Controller
+                name="city"
+                defaultValue=""
+                control={control}
+                placeholder="請選擇縣市"
+                render={({ field }) => (
+                  <FEIBSelect
+                    {...field}
+                    id="city"
+                    name="city"
+                    placeholder="請選擇縣市"
+                    error={!!errors.city}
+                  >
+                    <FEIBOption value="" disabled>請選擇縣市</FEIBOption>
+                    <FEIBOption value="1">台北市</FEIBOption>
+                  </FEIBSelect>
+                )}
+              />
+              <FEIBErrorMessage>{errors.city?.message}</FEIBErrorMessage>
+            </div>
+            <div>
+              <Controller
+                name="district"
+                defaultValue=""
+                control={control}
+                render={({ field }) => (
+                  <FEIBSelect
+                    {...field}
+                    id="district"
+                    name="district"
+                    error={!!errors.district}
+                  >
+                    <FEIBOption value="" disabled>請選擇鄉鎮市區</FEIBOption>
+                    <FEIBOption value="1">大安區</FEIBOption>
+                  </FEIBSelect>
+                )}
+              />
+              <FEIBErrorMessage>{errors.district?.message}</FEIBErrorMessage>
+            </div>
           </div>
-          <div>
-            <Controller
-              name="district"
-              defaultValue=""
-              control={control}
-              render={({ field }) => (
-                <FEIBSelect
-                  {...field}
-                  id="district"
-                  name="district"
-                  error={!!errors.district}
-                >
-                  <FEIBOption value="" disabled>請選擇鄉鎮市區</FEIBOption>
-                  <FEIBOption value="1">大安區</FEIBOption>
-                </FEIBSelect>
-              )}
-            />
-            <FEIBErrorMessage>{errors.district?.message}</FEIBErrorMessage>
-          </div>
+          <Controller
+            name="address"
+            defaultValue=""
+            control={control}
+            render={({ field }) => (
+              <FEIBInput
+                {...field}
+                type="text"
+                inputMode="address"
+                id="address"
+                name="address"
+                placeholder="請輸入通訊地址"
+                error={!!errors.address}
+              />
+            )}
+          />
+          <FEIBErrorMessage>{errors.address?.message}</FEIBErrorMessage>
+          {/* <PasswordInput
+            label="網銀密碼"
+            id="password"
+            name="password"
+            control={control}
+            errorMessage={errors.password?.message}
+          /> */}
         </div>
-        <Controller
-          name="address"
-          defaultValue=""
-          control={control}
-          render={({ field }) => (
-            <FEIBInput
-              {...field}
-              type="text"
-              inputMode="address"
-              id="address"
-              name="address"
-              placeholder="請輸入通訊地址"
-              error={!!errors.address}
-            />
-          )}
-        />
-        <FEIBErrorMessage>{errors.address?.message}</FEIBErrorMessage>
-        <PasswordInput
-          label="網銀密碼"
-          id="password"
-          name="password"
-          control={control}
-          errorMessage={errors.password?.message}
-        />
         <FEIBButton
           type="submit"
         >
