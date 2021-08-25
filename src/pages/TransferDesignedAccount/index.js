@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -8,10 +8,9 @@ import {
   FEIBButton, FEIBErrorMessage, FEIBInput, FEIBInputLabel,
 } from 'components/elements';
 import { nicknameValidation } from 'utilities/validation';
+import { setOpenDrawer, setClickMoreOptions } from '../Transfer/stores/actions';
 
-const TransferDesignedAccount = ({
-  openDrawer, setDrawerContent, setOpenDrawer, setClickMoreOption, target,
-}) => {
+const TransferDesignedAccount = () => {
   const schema = yup.object().shape({ nickname: nicknameValidation() });
   const {
     control, handleSubmit, formState: { errors }, setValue, watch,
@@ -20,28 +19,29 @@ const TransferDesignedAccount = ({
   });
 
   const designedAccounts = useSelector(({ transfer }) => transfer.designedAccounts);
+  const openDrawer = useSelector(({ transfer }) => transfer.openDrawer);
+  const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
   const [targetMember, setTargetMember] = useState({});
   const [avatar, setAvatar] = useState(null);
+  const dispatch = useDispatch();
 
-  // eslint-disable-next-line no-unused-vars
   const handleSubmitFrequentlyUsed = (data) => {
     if (avatar) data.avatar = avatar;
     // 送資料
     // console.log(data);
-    setDrawerContent('default');
-    setClickMoreOption({ click: false, button: '', target: null });
-    setOpenDrawer({ ...openDrawer, title: '約定帳號' });
+    dispatch(setOpenDrawer({ ...openDrawer, title: '約定帳號', content: 'default' }));
+    dispatch(setClickMoreOptions({ click: false, button: '', target: null }));
   };
 
   const handleSelectAvatar = (file) => setAvatar(file);
 
   useEffect(() => {
-    if (target) {
-      const currenTarget = designedAccounts.find((member) => member.acctId === target);
+    if (clickMoreOptions.target) {
+      const currenTarget = designedAccounts.find((member) => member.acctId === clickMoreOptions.target);
       setTargetMember(currenTarget);
       setValue('nickname', currenTarget.acctName);
     }
-  }, [target]);
+  }, [clickMoreOptions.target]);
 
   return (
     <div className="editDesignedAccountArea">

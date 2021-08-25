@@ -5,6 +5,8 @@ const initState = {
   frequentlyUsedAccounts: [],
   designedAccounts: [],
   transferData: {},
+  openDrawer: { title: '常用帳號', content: '', open: false },
+  clickMoreOptions: { click: false, button: '', target: null },
 };
 
 const reducers = (state = initState, action) => {
@@ -28,6 +30,16 @@ const reducers = (state = initState, action) => {
       return {
         ...state,
         transferData: action.payload,
+      };
+    case types.SET_OPEN_DRAWER:
+      return {
+        ...state,
+        openDrawer: action.payload,
+      };
+    case types.SET_CLICK_MORE_OPTIONS:
+      return {
+        ...state,
+        clickMoreOptions: action.payload,
       };
     default:
       return state;

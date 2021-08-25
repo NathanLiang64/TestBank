@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import SuccessImage from 'assets/images/stateSuccess.svg';
@@ -11,9 +12,9 @@ import {
 /* Styles */
 import ChangeUserNameWrapper from './changeUserName.style';
 
-const ChangeUserName1 = () => {
+const ChangeUserName1 = ({ location }) => {
   const history = useHistory();
-  const isSuccess = true;
+  const [isSuccess, setIsSuccess] = useState(true);
 
   const toProfile = () => {
     history.push('/profile');
@@ -21,6 +22,10 @@ const ChangeUserName1 = () => {
 
   useCheckLocation();
   usePageInfo('/api/changeUserName');
+
+  useEffect(() => {
+    setIsSuccess(location.state.data);
+  }, []);
 
   return (
     <ChangeUserNameWrapper>

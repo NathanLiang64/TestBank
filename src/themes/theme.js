@@ -33,6 +33,7 @@ const theme = {
     },
     background: {
       light: '#E9EBEE',
+      lightBlue: '#D8E0ED',
       lighter: '#F5F5F5',
       lighterBlue: '#F3F5FC',
       lightest: '#FFFEFD',

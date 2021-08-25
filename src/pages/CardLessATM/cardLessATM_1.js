@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { useDispatch } from 'react-redux';
-import { setShowSpinner } from 'components/Spinner/stores/actions';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
@@ -39,7 +37,6 @@ const CardLessATM1 = () => {
   });
 
   const history = useHistory();
-  const dispatch = useDispatch();
 
   const [accountSummary, setAccountSummary] = useState({
     account: '',
@@ -80,24 +77,29 @@ const CardLessATM1 = () => {
     }
   };
 
-  // 取得提款卡資訊
-  const getAccountSummary = async () => {
-    const summaryResponse = await cardLessATMApi.getAccountSummary({});
-    if (localStorage.getItem('custId') === 'A196158521') {
-      setAccountSummary({ ...summaryResponse, balance: 1000 });
-    } else {
-      setAccountSummary({ ...summaryResponse });
-    }
-  };
-
   const handleDialogOpen = (message) => {
     setErrorMessage(message);
     setOpenDialog(true);
   };
 
+  // 取得提款卡資訊
+  const getAccountSummary = async () => {
+    const summaryResponse = await cardLessATMApi.getAccountSummary({ account: '' });
+    console.log('取得提款帳號資訊', summaryResponse);
+    const { message } = summaryResponse;
+    if (!message) {
+      if (localStorage.getItem('custId') === 'A196158521') {
+        setAccountSummary({ ...summaryResponse, balance: 1000 });
+      } else {
+        setAccountSummary({ ...summaryResponse });
+      }
+    } else {
+      handleDialogOpen(message);
+    }
+  };
+
   // 無卡提款交易
   const cardlessWithdrawApply = async (param) => {
-    dispatch(setShowSpinner(true));
     let withdrawResponse;
     if (localStorage.getItem('custId') === 'A196158521') {
       withdrawResponse = await new Promise((resolve) => {
@@ -130,7 +132,6 @@ const CardLessATM1 = () => {
     } else {
       handleDialogOpen(message);
     }
-    dispatch(setShowSpinner(false));
   };
 
   const onSubmit = (data) => {
@@ -147,74 +148,74 @@ const CardLessATM1 = () => {
 
   const renderWithdrawForm = () => (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <DebitCard
-        cardName="存款卡"
-        account={accountSummary.account}
-        balance={accountSummary.balance}
-        transferTitle="跨提優惠"
-        transferLimit={6}
-        transferRemaining={accountSummary.cwdhCnt.substr(1, 1)}
-        color="purple"
-      />
-      <FEIBInputLabel>您想提領多少錢呢？</FEIBInputLabel>
-      <Controller
-        name="withdrawAmount"
-        defaultValue=""
-        control={control}
-        render={({ field }) => (
-          <>
-            <FEIBInput
-              {...field}
-              type="text"
-              inputMode="numeric"
-              id="withdrawAmount"
-              name="withdrawAmount"
-              placeholder="請輸入金額"
-              error={!!errors.withdrawAmount}
-            />
-            <div className="addMinusIcons">
-              <RemoveCircleRounded onClick={() => changeAmount(0)} />
-              <AddCircleRounded onClick={() => changeAmount(1)} />
-            </div>
-          </>
-        )}
-      />
-      <FEIBErrorMessage>{errors.withdrawAmount?.message}</FEIBErrorMessage>
-      <FEIBInputLabel className="limit-label">以千元為單位，單日單次上限＄20,000</FEIBInputLabel>
-      <div className="amountButtonsContainer">
-        {
-          amountArr.map((item) => (
-            <div key={item} className="withdrawalBtnContainer">
-              <FEIBBorderButton
-                type="button"
-                className="withdrawal-btn customSize"
-                onClick={() => {
-                  setValue('withdrawAmount', item);
-                  clearErrors('withdrawAmount');
-                }}
-              >
-                {
-                  toCurrncy(item)
-                }
-              </FEIBBorderButton>
-            </div>
-          ))
-        }
+      <div>
+        <DebitCard
+          cardName="存款卡"
+          account={accountSummary.account}
+          balance={accountSummary.balance}
+          transferTitle="跨提優惠"
+          transferLimit={6}
+          transferRemaining={accountSummary.cwdhCnt.substr(1, 1)}
+          color="purple"
+        />
+        <FEIBInputLabel>您想提領多少錢呢？</FEIBInputLabel>
+        <Controller
+          name="withdrawAmount"
+          defaultValue=""
+          control={control}
+          render={({ field }) => (
+            <>
+              <FEIBInput
+                {...field}
+                type="text"
+                inputMode="numeric"
+                id="withdrawAmount"
+                name="withdrawAmount"
+                placeholder="請輸入金額"
+                error={!!errors.withdrawAmount}
+              />
+              <div className="addMinusIcons">
+                <RemoveCircleRounded onClick={() => changeAmount(0)} />
+                <AddCircleRounded onClick={() => changeAmount(1)} />
+              </div>
+            </>
+          )}
+        />
+        <FEIBErrorMessage>{errors.withdrawAmount?.message}</FEIBErrorMessage>
+        <FEIBInputLabel className="limit-label">以千元為單位，單日單次上限＄20,000</FEIBInputLabel>
+        <div className="amountButtonsContainer">
+          {
+            amountArr.map((item) => (
+              <div key={item} className="withdrawalBtnContainer">
+                <FEIBBorderButton
+                  type="button"
+                  className="withdrawal-btn customSize"
+                  onClick={() => {
+                    setValue('withdrawAmount', item);
+                    clearErrors('withdrawAmount');
+                  }}
+                >
+                  {
+                    toCurrncy(item)
+                  }
+                </FEIBBorderButton>
+              </div>
+            ))
+          }
+        </div>
+        <Accordion space="both">
+          <ul>
+            <li>本交易限時15分鐘內有效，請於交易有效時間內，至本行提供無卡提款功能之ATM完成提款。若逾時請重新申請。(實際交易有效時間以本行系統時間為準)。</li>
+            <li>提醒您，ATM提款時請務必確認您的存款餘額是否足夠，避免提款失敗。 </li>
+            <li>無卡提款密碼連續錯誤3次，即鎖住服務，須重新申請服務。</li>
+          </ul>
+        </Accordion>
       </div>
-      <Accordion space="both">
-        <ul>
-          <li>本交易限時15分鐘內有效，請於交易有效時間內，至本行提供無卡提款功能之ATM完成提款。若逾時請重新申請。(實際交易有效時間以本行系統時間為準)。</li>
-          <li>提醒您，ATM提款時請務必確認您的存款餘額是否足夠，避免提款失敗。 </li>
-          <li>無卡提款密碼連續錯誤3次，即鎖住服務，須重新申請服務。</li>
-        </ul>
-      </Accordion>
-      <div className="btn-fix">
-        <FEIBButton
-          type="submit"
-        >
-          確認
-        </FEIBButton>
-      </div>
+      <FEIBButton
+        type="submit"
+      >
+        確認
+      </FEIBButton>
     </form>
   );
 

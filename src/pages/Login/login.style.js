@@ -2,6 +2,9 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const LoginWrapper = styled(Layout)`
+  form {
+    display: initial;
+  }
   display: flex;
   flex-direction: column;
   align-items: center;

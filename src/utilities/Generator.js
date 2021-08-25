@@ -11,6 +11,7 @@ export const toCurrency = (number) => {
 
 // 將日期格式轉為 YYYY/MM/DD 字串
 export const dateFormatter = (date) => {
+  if (typeof date === 'string') date = new Date(date);
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
   const day = date.getDate().toString().padStart(2, '0');
@@ -38,6 +39,13 @@ export const timeFormatter = (time) => {
   const hour = time.getHours().toString().padStart(2, '0');
   const minute = time.getMinutes().toString().padStart(2, '0');
   return `${hour}:${minute}`;
+};
+
+// 將秒數轉為 MM:SS 字串
+export const countdownTimerFormatter = (count) => {
+  const min = Math.floor(count / 60);
+  const sec = count % 60;
+  return `${min < 10 ? `0${min}` : min}:${sec < 10 ? `0${sec}` : sec}`;
 };
 
 // 將拉阿伯數字轉換為中文大寫

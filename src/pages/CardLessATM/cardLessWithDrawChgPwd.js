@@ -97,38 +97,40 @@ const CardLessWithDrawChgPwd = () => {
 
   const renderForm = () => (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <PasswordInput
-        label="舊提款密碼"
-        id="oldPassword"
-        name="oldPassword"
-        placeholder="請輸入舊提款密碼(4-12位數字)"
-        inputMode="numric"
-        control={control}
-        errorMessage={errors.oldPassword?.message}
-      />
-      <PasswordInput
-        label="新提款密碼"
-        id="newPassword"
-        name="newPassword"
-        placeholder="請輸入新提款密碼(4-12位數字)"
-        inputMode="numric"
-        control={control}
-        errorMessage={errors.newPassword?.message}
-      />
-      <PasswordInput
-        label="確認新提款密碼"
-        id="newPasswordConfirm"
-        name="newPasswordConfirm"
-        placeholder="請再輸入一次新提款密碼(4-12位數字)"
-        inputMode="numric"
-        control={control}
-        errorMessage={errors.newPasswordConfirm?.message}
-      />
-      <Accordion space="both">
-        <ul>
-          <li>提醒您應注意密碼之設置及使用，不宜使用與您個人資料有關或具連續性、重複性或規則性之號碼為密碼，且不得將上開交易驗證資訊以任何方式使第三人知悉獲得以知悉，以確保交易安全。</li>
-        </ul>
-      </Accordion>
+      <div>
+        <PasswordInput
+          label="舊提款密碼"
+          id="oldPassword"
+          name="oldPassword"
+          placeholder="請輸入舊提款密碼(4-12位數字)"
+          inputMode="numric"
+          control={control}
+          errorMessage={errors.oldPassword?.message}
+        />
+        <PasswordInput
+          label="新提款密碼"
+          id="newPassword"
+          name="newPassword"
+          placeholder="請輸入新提款密碼(4-12位數字)"
+          inputMode="numric"
+          control={control}
+          errorMessage={errors.newPassword?.message}
+        />
+        <PasswordInput
+          label="確認新提款密碼"
+          id="newPasswordConfirm"
+          name="newPasswordConfirm"
+          placeholder="請再輸入一次新提款密碼(4-12位數字)"
+          inputMode="numric"
+          control={control}
+          errorMessage={errors.newPasswordConfirm?.message}
+        />
+        <Accordion space="both">
+          <ul>
+            <li>提醒您應注意密碼之設置及使用，不宜使用與您個人資料有關或具連續性、重複性或規則性之號碼為密碼，且不得將上開交易驗證資訊以任何方式使第三人知悉獲得以知悉，以確保交易安全。</li>
+          </ul>
+        </Accordion>
+      </div>
       <FEIBButton
         type="submit"
       >

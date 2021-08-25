@@ -226,56 +226,56 @@ const CardLessATM = () => {
 
   const renderPage = () => (
     <form id="withdrawPwdForm" onSubmit={handleSubmit(onSubmit)}>
-      <PasswordInput
-        label="提款密碼"
-        id="withdrawPassword"
-        name="withdrawPassword"
-        placeholder="請輸入提款密碼(4-12位數字)"
-        control={control}
-        errorMessage={errors.withdrawPassword?.message}
-      />
-      <PasswordInput
-        label="確認提款密碼"
-        id="withdrawPasswordCheck"
-        name="withdrawPasswordCheck"
-        placeholder="請再輸入一次提款密碼(4-12位數字)"
-        control={control}
-        errorMessage={errors.withdrawPasswordCheck?.message}
-      />
-      <FEIBInputLabel htmlFor="OTPPassword">開通驗證碼</FEIBInputLabel>
-      <Controller
-        name="verificationCode"
-        defaultValue=""
-        control={control}
-        render={({ field }) => (
-          <FEIBInput
-            {...field}
-            type="text"
-            id="verificationCode"
-            name="verificationCode"
-            placeholder="請輸入開通驗證碼"
-            error={!!errors.verificationCode?.message}
-          />
-        )}
-      />
-      <FEIBErrorMessage>{errors.verificationCode?.message}</FEIBErrorMessage>
-      <Accordion title="無卡提款約定事項" space="both">
-        <DealContent />
-      </Accordion>
-      <Accordion space="bottom">
-        <ul>
-          <li>本交易限時15分鐘內有效，請於交易有效時間內，至本行提供無卡提款功能之ATM完成提款。若逾時請重新申請。(實際交易有效時間以本行系統時間為準)。</li>
-          <li>提醒您，ATM提款時請務必確認您的存款餘額是否足夠，避免提款失敗。 </li>
-          <li>無卡提款密碼連續錯誤3次，即鎖住服務，須重新申請服務。</li>
-        </ul>
-      </Accordion>
-      <div className="btn-fix">
-        <FEIBButton
-          type="submit"
-        >
-          同意條款並送出
-        </FEIBButton>
+      <div>
+        <PasswordInput
+          label="提款密碼"
+          id="withdrawPassword"
+          name="withdrawPassword"
+          placeholder="請輸入提款密碼(4-12位數字)"
+          control={control}
+          errorMessage={errors.withdrawPassword?.message}
+        />
+        <PasswordInput
+          label="確認提款密碼"
+          id="withdrawPasswordCheck"
+          name="withdrawPasswordCheck"
+          placeholder="請再輸入一次提款密碼(4-12位數字)"
+          control={control}
+          errorMessage={errors.withdrawPasswordCheck?.message}
+        />
+        <FEIBInputLabel htmlFor="OTPPassword">開通驗證碼</FEIBInputLabel>
+        <Controller
+          name="verificationCode"
+          defaultValue=""
+          control={control}
+          render={({ field }) => (
+            <FEIBInput
+              {...field}
+              type="text"
+              id="verificationCode"
+              name="verificationCode"
+              placeholder="請輸入開通驗證碼"
+              error={!!errors.verificationCode?.message}
+            />
+          )}
+        />
+        <FEIBErrorMessage>{errors.verificationCode?.message}</FEIBErrorMessage>
+        <Accordion title="無卡提款約定事項" space="both">
+          <DealContent />
+        </Accordion>
+        <Accordion space="bottom">
+          <ul>
+            <li>本交易限時15分鐘內有效，請於交易有效時間內，至本行提供無卡提款功能之ATM完成提款。若逾時請重新申請。(實際交易有效時間以本行系統時間為準)。</li>
+            <li>提醒您，ATM提款時請務必確認您的存款餘額是否足夠，避免提款失敗。 </li>
+            <li>無卡提款密碼連續錯誤3次，即鎖住服務，須重新申請服務。</li>
+          </ul>
+        </Accordion>
       </div>
+      <FEIBButton
+        type="submit"
+      >
+        同意條款並送出
+      </FEIBButton>
     </form>
   );
 

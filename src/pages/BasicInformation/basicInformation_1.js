@@ -45,7 +45,7 @@ const BasicInformation1 = () => {
         }
       </div>
       <FEIBButton onClick={toProfile}>
-        確定
+        確認
       </FEIBButton>
     </BasicInformationWrapper>
   );

@@ -156,12 +156,11 @@ const TransferWrapper = styled(Layout)`
       }
     }
   }
-  
+
   // 轉帳確認頁
-  &.transferConfirmPage {
-    //display: flex;
-    //flex-direction: column;
-    //align-items: center;
+  &.transferConfirmPage,
+  // 轉帳結果頁
+  &.transferResultPage {
     padding: 0;
     background: ${({ theme }) => theme.colors.basic.white};
     
@@ -170,7 +169,12 @@ const TransferWrapper = styled(Layout)`
       text-align: center;
       
       &.transferAction {
-        padding: 2.4rem 1.6rem;
+        padding: 1.2rem 1.6rem 2.4rem 1.6rem;
+        
+        .infoArea {
+          margin-top: 1.2rem;
+          margin-bottom: .4rem;
+        }
       }
       
       &.transferMainInfo {
@@ -190,7 +194,7 @@ const TransferWrapper = styled(Layout)`
       }
       
       .transferButtonArea {
-        padding-top: 1.6rem;
+        padding-top: 1.2rem;
       }
     }
     
@@ -199,70 +203,76 @@ const TransferWrapper = styled(Layout)`
       border: 0;
       border-top: .8rem solid ${({ theme }) => theme.colors.background.lighterBlue};
     }
-  }
-`;
-
-const TransferDrawerWrapper = styled.div`
-  padding: 0 1.6rem 2.4rem 1.6rem;
-
-  .addMemberButtonArea {
-    display: flex;
-    align-items: center;
-    padding: 1.2rem .8rem;
-    border-top: .1rem solid ${({ theme }) => theme.colors.border.lighter};
-    border-bottom: .1rem solid ${({ theme }) => theme.colors.border.lighter};
-  }
-
-  .addMemberButtonIcon {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    width: 4.4rem;
-    height: 4.4rem;
-    background: ${({ theme }) => theme.colors.primary.light};
-
-    .MuiSvgIcon-root {
-      font-size: 3.2rem;
-      color: ${({ theme }) => theme.colors.basic.white};
+    
+    .stateArea {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 1.6rem;
+      padding: 0 3.2rem;
     }
-  }
-
-  .addMemberButtonText {
-    margin-left: 1.2rem;
-    font-size: 1.6rem;
-    color: ${({ theme }) => theme.colors.primary.light};
-  }
-
-  .addFrequentlyUsedAccountArea,
-  .editDesignedAccountArea {
-    text-align: center;
-
-    .Avatar {
-      display: inline-block;
-      margin-bottom: 1.6rem;
+    
+    .stateImage {
+      width: 14.4rem;
     }
 
-    label {
-      text-align: left;
+    .stateText {
+      font-size: 2.4rem;
+      text-align: center;
+      font-weight: 500;
+      
+      &.success {
+        color: ${({ theme }) => theme.colors.secondary.brand};
+      }
+      &.error {
+        color: ${({ theme }) => theme.colors.state.error};
+      }
     }
   }
   
-  .editDesignedAccountArea {
-    .accountArea {
-      margin-bottom: 1.6rem;
-      padding: 1.6rem 1.2rem;
-      border-radius: .8rem;
-      font-size: 1.6rem;
-      color: ${({ theme }) => theme.colors.text.lightGray};
-      background: ${({ theme }) => theme.colors.background.lighterBlue};
+  // 轉帳結果頁
+  &.transferResultPage {
+
+    section {
       
-      p {
-        margin-top: 1.2rem;
+      &.transferMainInfo {
+
+        button {
+          display: inline-flex;
+          align-items: center;
+          margin-top: .8rem;
+          font-size: 1.4rem;
+
+          span {
+            margin-left: .4rem;
+          }
+        }
+
+        .transferAmount {
+          margin: .4rem 0;
+          font-weight: 500;
+        }
+      }
+
+      &.transactionDetailArea {
+        padding-top: 0;
+        padding-bottom: 7.2rem;
       }
     }
   }
 `;
 
+const TransferMOTPDialogWrapper = styled.div`
+  margin-bottom: 2.4rem;
+  text-align: center;
+  
+  p {
+    margin-top: 1.6rem;
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: ${({ theme }) => theme.colors.text.lightGray};
+  }
+`;
+
 export default TransferWrapper;
-export { TransferDrawerWrapper };
+export { TransferMOTPDialogWrapper };

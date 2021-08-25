@@ -46,6 +46,7 @@ import Exchange1 from 'pages/Exchange/exchange_1';
 import Exchange2 from 'pages/Exchange/exchange_2';
 import Transfer from 'pages/Transfer';
 import Transfer1 from 'pages/Transfer/transfer_1';
+import Transfer2 from 'pages/Transfer/transfer_2';
 import Profile from 'pages/Profile';
 import More from 'pages/More';
 import FinancialDepartments from 'pages/FinancialDepartments';
@@ -105,6 +106,7 @@ const routes = [
   { path: '/exchange2', exact: false, component: Exchange2 },
   { path: '/transfer', exact: false, component: Transfer },
   { path: '/transfer1', exact: false, component: Transfer1 },
+  { path: '/transfer2', exact: false, component: Transfer2 },
   { path: '/profile', exact: false, component: Profile },
   { path: '/more', exact: false, component: More },
   { path: '/financialDepartments', exact: false, component: FinancialDepartments },

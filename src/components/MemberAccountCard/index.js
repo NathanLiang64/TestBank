@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { CreateRounded, DeleteRounded } from '@material-ui/icons';
 import Avatar from 'components/Avatar';
+import { setClickMoreOptions } from 'pages/Transfer/stores/actions';
 import MemberAccountCardWrapper from './memberAccountCard.style';
 
 /*
@@ -14,19 +16,11 @@ import MemberAccountCardWrapper from './memberAccountCard.style';
 * 5. account -> 會員帳號
 * 6. avatarSrc -> 會員頭像的圖片路徑
 * 7. noBorder -> 無框線
-* 8. noOption -> 左滑時無編輯 & 刪除選項
+* 8. noOption -> 左滑時無編輯 & 刪除選項、且點擊時無狀態
 * */
 
 const MemberAccountCard = ({
-  type,
-  name,
-  bankNo,
-  bankName,
-  account,
-  avatarSrc,
-  noBorder,
-  noOption,
-  setClickMoreOption,
+  type, name, bankNo, bankName, account, avatarSrc, noBorder, noOption,
 }) => {
   const [moreAction, setMoreAction] = useState({
     isMoreActionOpen: false,
@@ -34,9 +28,10 @@ const MemberAccountCard = ({
     endX: 0,
   });
 
-  // TODO: click edit function 可以考慮提出來
-  const handleClickEdit = () => {
-    setClickMoreOption({ click: true, button: 'edit', target: account });
+  const dispatch = useDispatch();
+
+  const handleClick = (buttonType) => {
+    dispatch(setClickMoreOptions({ click: true, button: buttonType, target: account }));
   };
 
   const handleTouchStart = (event) => {
@@ -67,13 +62,13 @@ const MemberAccountCard = ({
   // 更多選項 (編輯、刪除)
   const renderMoreActionMenu = () => (
     <div className={`moreActionMenu ${moreAction.isMoreActionOpen ? 'show' : ''}`}>
-      <button type="button" className="edit" onClick={handleClickEdit}>
+      <button type="button" className="edit" onClick={() => handleClick('edit')}>
         <CreateRounded />
         <span>編輯</span>
       </button>
       {/* 常用帳號才有刪除選項 */}
       { type === '常用帳號' && (
-        <button type="button" className="remove">
+        <button type="button" className="remove" onClick={() => handleClick('remove')}>
           <DeleteRounded />
           <span>刪除</span>
         </button>
@@ -87,6 +82,7 @@ const MemberAccountCard = ({
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      onClick={(noOption || moreAction.isMoreActionOpen) ? null : () => handleClick('select')}
     >
       <Avatar small src={avatarSrc} name={name} />
       <div className="memberInfo">

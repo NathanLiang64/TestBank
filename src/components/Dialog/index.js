@@ -39,14 +39,16 @@ const Dialog = ({
         {action}
       </DialogActions>
     )}
-    <FEIBIconButton
-      className="closeIconButton"
-      $fontSize={2.2}
-      $iconColor={theme.colors.text.lightGray}
-      onClick={onClose}
-    >
-      <CloseRounded />
-    </FEIBIconButton>
+    { onClose && (
+      <FEIBIconButton
+        className="closeIconButton"
+        $fontSize={2.2}
+        $iconColor={theme.colors.text.lightGray}
+        onClick={onClose}
+      >
+        <CloseRounded />
+      </FEIBIconButton>
+    ) }
   </DialogWrapper>
 );
 
