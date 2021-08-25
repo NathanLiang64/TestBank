@@ -1,6 +1,7 @@
 export const directTo = (history, path, params) => {
   if (params) {
-    history.push(`/${path}?${params}`);
+    history.push(`/${path}`, params);
+    // history.push(`/${path}?${params}`);
   } else {
     history.push(`/${path}`);
   }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import InformationList from 'components/InformationList';
 import InfoArea from 'components/InfoArea';
@@ -16,13 +16,13 @@ const Transfer1 = () => {
   const fastLogin = useSelector(({ passwordDrawer }) => passwordDrawer.fastLogin);
   const motp = useSelector(({ passwordDrawer }) => passwordDrawer.motp);
   const result = useSelector(({ passwordDrawer }) => passwordDrawer.result);
-  const transferData = useSelector(({ transfer }) => transfer.transferData);
   const history = useHistory();
   const dispatch = useDispatch();
+  const { state } = useLocation();
 
   const {
     bankCode, receivingAccount, remark, transactionCycle, transactionDate, transactionFrequency, transferAmount,
-  } = transferData;
+  } = state;
 
   const switchFrequency = (frequency) => {
     switch (frequency) {
@@ -39,10 +39,7 @@ const Transfer1 = () => {
     if (fastLogin || !motp) dispatch(setIsPasswordRequired(true));
   };
 
-  const onSubmit = () => {
-    // console.log(transferData);
-    setOpenMOTPDialog(true);
-  };
+  const onSubmit = () => setOpenMOTPDialog(true);
 
   const renderMOTPNotice = () => (
     <InfoArea className="infoArea">
@@ -79,7 +76,7 @@ const Transfer1 = () => {
       // 驗證成功後關閉 MOTP 驗證彈窗並跳轉至成功頁
       waitMOTP().then(() => {
         setOpenMOTPDialog(false);
-        directTo(history, 'transfer2');
+        directTo(history, 'transfer2', state);
       });
     }
   }, [openMOTPDialog]);
@@ -108,7 +105,7 @@ const Transfer1 = () => {
           />
         )}
         <InformationList title="手續費" content="$0" />
-        <InformationList title="備註" content={remark ? transferData.remark : ''} />
+        <InformationList title="備註" content={remark || ''} />
       </section>
       <hr />
       <section className="transferAction">

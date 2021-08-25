@@ -24,9 +24,7 @@ import { numberToChinese } from 'utilities/Generator';
 import { bankCodeValidation, receivingAccountValidation, transferAmountValidation } from 'utilities/validation';
 import { directTo } from 'utilities/mockWebController';
 import theme from 'themes/theme';
-import {
-  setCards, setDesignedAccounts, setFrequentlyUsedAccounts, setTransferData, setOpenDrawer, setClickMoreOptions,
-} from './stores/actions';
+import { setOpenDrawer, setClickMoreOptions } from './stores/actions';
 import TransferWrapper from './transfer.style';
 import TransferDrawer from '../TransferDrawer';
 
@@ -53,9 +51,9 @@ const Transfer = () => {
   const [showReserveMoreOption, setShowReserveMoreOption] = useState(false);
   const [selectTransferMember, setSelectTransferMember] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const cards = useSelector(({ transfer }) => transfer.cards);
-  const frequentlyUsedAccounts = useSelector(({ transfer }) => transfer.frequentlyUsedAccounts);
-  const designedAccounts = useSelector(({ transfer }) => transfer.designedAccounts);
+  const [cards, setCards] = useState([]);
+  const [frequentlyUsedAccounts, setFrequentlyUsedAccounts] = useState([]);
+  const [designedAccounts, setDesignedAccounts] = useState([]);
   const openDrawer = useSelector(({ transfer }) => transfer.openDrawer);
   const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
   const dispatch = useDispatch();
@@ -84,11 +82,10 @@ const Transfer = () => {
 
     // console.log(data);
     if (!data.transactionDate) data.transactionDate = new Date();
-    dispatch(setTransferData((data)));
     // const { receivingAccount, transferAmount, transferType } = data;
     // const paramsObject = { receivingAccount, transferAmount, transferType };
     // const params = Object.keys(paramsObject).map((key) => `${key}=${paramsObject[key]}`).join('&');
-    directTo(history, 'transfer1');
+    directTo(history, 'transfer1', data);
   };
 
   const handleOpenFrequentlyUsedList = () => {
@@ -162,6 +159,7 @@ const Transfer = () => {
         { selectTransferMember && (
           <div className="memberAccountCardArea">
             <MemberAccountCard
+              id={selectTransferMember.id}
               name={selectTransferMember.acctName}
               bankName={selectTransferMember.bankName}
               bankNo={selectTransferMember.bankNo}
@@ -185,6 +183,7 @@ const Transfer = () => {
         { selectTransferMember && (
           <div className="memberAccountCardArea">
             <MemberAccountCard
+              id={selectTransferMember.id}
               name={selectTransferMember.acctName}
               bankName={selectTransferMember.bankName}
               bankNo={selectTransferMember.bankNo}
@@ -293,13 +292,13 @@ const Transfer = () => {
   // 取得所有存款卡的初始資料
   useEffect(async () => {
     const cardResponse = await doGetInitData('/api/transfer');
-    if (cardResponse.initData) dispatch(setCards(cardResponse.initData.cards));
+    if (cardResponse.initData) setCards(cardResponse.initData.cards);
 
     const favoriteResponse = await doGetInitData('/api/getFavoriteAcct');
-    if (favoriteResponse) dispatch(setFrequentlyUsedAccounts(favoriteResponse.favoriteAcctList));
+    if (favoriteResponse) setFrequentlyUsedAccounts(favoriteResponse.favoriteAcctList);
 
     const designedResponse = await doGetInitData('/api/getDesignedAcct');
-    if (designedResponse) dispatch(setDesignedAccounts(designedResponse.designedAcctList));
+    if (designedResponse) setDesignedAccounts(designedResponse.designedAcctList);
 
     // transferOption 是為了避免不同頁籤造成驗證衝突，初始設置 transfer (一般轉帳)
     setValue('transferOption', 'transfer');
@@ -356,11 +355,11 @@ const Transfer = () => {
     if (clickMoreOptions.button === 'select' && clickMoreOptions.target) {
       // 若點擊選項為 select 且當前頁面為常用轉帳，至常用帳號清單內比對相符的 target 帳號
       if (watch('transferOption') === 'frequentlyUsed') {
-        currentTarget = frequentlyUsedAccounts.find((member) => member.acctId === clickMoreOptions.target);
+        currentTarget = frequentlyUsedAccounts.find((member) => member.id === clickMoreOptions.target);
       }
       // 若點擊選項為 select 且當前頁面為約定轉帳，至約定帳號清單內比對相符的 target 帳號
       if (watch('transferOption') === 'designated') {
-        currentTarget = designedAccounts.find((member) => member.acctId === clickMoreOptions.target);
+        currentTarget = designedAccounts.find((member) => member.id === clickMoreOptions.target);
       }
       // 將該對象設置至轉帳對象並關閉 Drawer
       setSelectTransferMember(currentTarget);

@@ -7,6 +7,7 @@ import Avatar from 'components/Avatar';
 import {
   FEIBButton, FEIBErrorMessage, FEIBInput, FEIBInputLabel,
 } from 'components/elements';
+import { doGetInitData } from 'apis/transferApi';
 import { nicknameValidation } from 'utilities/validation';
 import { setOpenDrawer, setClickMoreOptions } from '../Transfer/stores/actions';
 
@@ -18,7 +19,6 @@ const TransferDesignedAccount = () => {
     resolver: yupResolver(schema),
   });
 
-  const designedAccounts = useSelector(({ transfer }) => transfer.designedAccounts);
   const openDrawer = useSelector(({ transfer }) => transfer.openDrawer);
   const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
   const [targetMember, setTargetMember] = useState({});
@@ -35,11 +35,14 @@ const TransferDesignedAccount = () => {
 
   const handleSelectAvatar = (file) => setAvatar(file);
 
-  useEffect(() => {
+  useEffect(async () => {
     if (clickMoreOptions.target) {
-      const currenTarget = designedAccounts.find((member) => member.acctId === clickMoreOptions.target);
-      setTargetMember(currenTarget);
-      setValue('nickname', currenTarget.acctName);
+      const response = await doGetInitData('/api/getDesignedAcct');
+      if (response) {
+        const currenTarget = response.designedAcctList.find((member) => member.id === clickMoreOptions.target);
+        setTargetMember(currenTarget);
+        setValue('nickname', currenTarget.acctName);
+      }
     }
   }, [clickMoreOptions.target]);
 
