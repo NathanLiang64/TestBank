@@ -1,6 +1,6 @@
-// import { useHistory } from 'react-router';
 import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useLocation } from 'react-router';
+import { useDispatch } from 'react-redux';
 import { PersonAddRounded, CameraAltOutlined, ShareOutlined } from '@material-ui/icons';
 import Accordion from 'components/Accordion';
 import BottomAction from 'components/BottomAction';
@@ -14,19 +14,13 @@ import { setOpenDrawer } from './stores/actions';
 
 const Transfer2 = () => {
   const [openTransferDrawer, setOpenTransferDrawer] = useState(false);
-  const transferData = useSelector(({ transfer }) => transfer.transferData);
   const dispatch = useDispatch();
+  const { state } = useLocation();
   const isSuccess = true;
 
   const {
-    bankCode,
-    receivingAccount,
-    remark,
-    transactionCycle,
-    transactionDate,
-    transactionFrequency,
-    transferAmount,
-  } = transferData;
+    bankCode, receivingAccount, remark, transactionCycle, transactionDate, transactionFrequency, transferAmount,
+  } = state;
 
   const switchFrequency = (frequency) => {
     switch (frequency) {
@@ -74,14 +68,14 @@ const Transfer2 = () => {
           content={transactionDate ? `${dateFormatter(transactionDate)} ${timeFormatter(transactionDate)}` : ''}
         />
         {transactionFrequency && transactionCycle && (
-        <InformationList
-          title="週期"
-          content={`${switchFrequency(transactionFrequency)}${transactionDate.getDate()}號`}
-          remark={`預計轉帳${transactionCycle}次`}
-        />
+          <InformationList
+            title="週期"
+            content={`${switchFrequency(transactionFrequency)}${transactionDate.getDate()}號`}
+            remark={`預計轉帳${transactionCycle}次`}
+          />
         )}
         <InformationList title="手續費" content="$0" />
-        <InformationList title="備註" content={remark ? transferData.remark : ''} />
+        <InformationList title="備註" content={remark || ''} />
       </section>
       <section className="transactionDetailArea">
         <Accordion title="詳細交易" space="bottom">
