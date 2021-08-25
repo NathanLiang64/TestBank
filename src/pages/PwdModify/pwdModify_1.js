@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import SuccessImage from 'assets/images/stateSuccess.svg';
@@ -11,9 +12,9 @@ import {
 /* Styles */
 import PwdModifyWrapper from './pwdModify.style';
 
-const PwdModify1 = () => {
+const PwdModify1 = ({ location }) => {
   const history = useHistory();
-  const isSuccess = true;
+  const [isSuccess, setIsSuccess] = useState(true);
 
   const toProfile = () => {
     history.push('/profile');
@@ -21,6 +22,10 @@ const PwdModify1 = () => {
 
   useCheckLocation();
   usePageInfo('/api/pwdModify');
+
+  useEffect(() => {
+    setIsSuccess(location.state.data);
+  }, []);
 
   return (
     <PwdModifyWrapper>

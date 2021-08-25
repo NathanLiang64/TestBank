@@ -8,6 +8,9 @@ import * as loginApi from './loginApi';
 import * as shakeShakeApi from './shakeShakeApi';
 import * as transferApi from './transferApi';
 import * as cardLessATMApi from './cardLessATMApi';
+import * as basicInformationApi from './basicInformationApi';
+import * as changeUserNameApi from './changeUserNameApi';
+import * as pwdModifyApi from './pwdModifyApi';
 
 export {
   headerApi,
@@ -20,4 +23,7 @@ export {
   shakeShakeApi,
   transferApi,
   cardLessATMApi,
+  basicInformationApi,
+  changeUserNameApi,
+  pwdModifyApi,
 };

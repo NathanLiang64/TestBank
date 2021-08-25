@@ -176,10 +176,6 @@ const GlobalStyles = createGlobalStyle`
     color: ${({ theme }) => theme.colors.text.point} !important;
   }
 
-  .btn-fix {
-    padding: 1.2rem 0 2.4rem;
-  }
-
   .mainBlock {
     display: flex;
     justify-content: center;
@@ -187,6 +183,14 @@ const GlobalStyles = createGlobalStyle`
     border-radius: 1rem;
     padding: 1.6rem 1.2rem;
     background: ${({ theme }) => theme.colors.background.lighterBlue};
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100%;
+    padding-bottom: 4rem;
   }
 `;
 
