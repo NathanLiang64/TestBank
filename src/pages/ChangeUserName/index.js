@@ -5,7 +5,6 @@ import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import e2ee from 'utilities/E2ee';
-// eslint-disable-next-line no-unused-vars
 import { changeUserNameApi } from 'apis';
 
 /* Elements */
@@ -22,7 +21,7 @@ import ConfirmButtons from 'components/ConfirmButtons';
 import ChangeUserNameWrapper from './changeUserName.style';
 
 const ChangeUserName = () => {
-  // const history = useHistory();
+  const history = useHistory();
   /**
    *- 資料驗證
    */
@@ -46,37 +45,38 @@ const ChangeUserName = () => {
     // ...passwordValidation,
   });
   const {
-    handleSubmit, control, formState: { errors },
+    handleSubmit, control, formState: { errors }, getValues,
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const history = useHistory();
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [form, setForm] = useState({
-    userName: '',
-    newUserName: '',
-    newUserNameCheck: '',
-  });
 
+  // 跳轉結果頁
+  const toResultPage = (data) => {
+    history.push('/changeUserName1', { data });
+  };
+
+  // 呼叫變更使用者代號 API
   const handleChangeUserName = async () => {
     const param = {
-      userName: await e2ee(form.userName),
-      newUserName: await e2ee(form.newUserName),
-      newUserNameCheck: await e2ee(form.newUserNameCheck),
+      userName: await e2ee(getValues('userName')),
+      newUserName: await e2ee(getValues('newUserName')),
+      newUserNameCheck: await e2ee(getValues('newUserNameCheck')),
     };
     const changeUserNameResponse = await changeUserNameApi.changeUserName(param);
     console.log('變更使用者代號回傳', changeUserNameResponse);
-    const data = !!changeUserNameResponse;
-    history.push('/changeUserName1', { data });
+    const data = 'custName' in changeUserNameResponse;
+    toResultPage(data);
     setShowConfirmDialog(false);
   };
 
-  const onSubmit = (data) => {
-    setForm({ ...data });
+  // 點擊儲存變更按鈕，表單驗證
+  const onSubmit = () => {
     setShowConfirmDialog(true);
   };
 
+  // 確認變更使用代號彈窗
   const ConfirmDialog = () => (
     <Dialog
       isOpen={showConfirmDialog}
@@ -98,7 +98,6 @@ const ChangeUserName = () => {
     <ChangeUserNameWrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
-
           <FEIBInputLabel htmlFor="userName">您的使用者代號</FEIBInputLabel>
           <Controller
             name="userName"

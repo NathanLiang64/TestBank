@@ -1,4 +1,4 @@
-// import { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
@@ -46,23 +46,48 @@ const BasicInformation = () => {
     // ...passwordValidation,
   });
   const {
-    handleSubmit, control, formState: { errors },
+    handleSubmit, control, formState: { errors }, reset,
   } = useForm({
     resolver: yupResolver(schema),
   });
 
+  // 取得縣市列表
+  const getCountyList = () => {
+    // const data = [];
+  };
+
+  // 取得鄉鎮市區列表
+  const getDistrict = () => {
+  };
+
+  // 取得個人資料
+  const getPersonalData = () => {
+    // mock data
+    const data = {
+      phone: '0905123456',
+      email: 'example@mail.com',
+      city: '台北市',
+      district: '大安區',
+      address: '某某路一段二號',
+    };
+    reset(data);
+  };
+
+  // 更新個人資料
   const onSubmit = (data) => {
     // eslint-disable-next-line no-console
     console.log(data);
     history.push('/basicInformation1');
   };
 
-  // 取得縣市列表
-  // const getCountyList = () => {
-  // };
-
   useCheckLocation();
   usePageInfo('/api/basicInformation');
+
+  useEffect(() => {
+    getCountyList();
+    getDistrict();
+    getPersonalData();
+  }, []);
 
   return (
     <BasicInformationWrapper>
@@ -121,7 +146,7 @@ const BasicInformation = () => {
                     error={!!errors.city}
                   >
                     <FEIBOption value="" disabled>請選擇縣市</FEIBOption>
-                    <FEIBOption value="1">台北市</FEIBOption>
+                    <FEIBOption value="台北市">台北市</FEIBOption>
                   </FEIBSelect>
                 )}
               />
@@ -140,7 +165,7 @@ const BasicInformation = () => {
                     error={!!errors.district}
                   >
                     <FEIBOption value="" disabled>請選擇鄉鎮市區</FEIBOption>
-                    <FEIBOption value="1">大安區</FEIBOption>
+                    <FEIBOption value="大安區">大安區</FEIBOption>
                   </FEIBSelect>
                 )}
               />

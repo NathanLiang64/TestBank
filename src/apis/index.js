@@ -10,6 +10,7 @@ import * as transferApi from './transferApi';
 import * as cardLessATMApi from './cardLessATMApi';
 import * as basicInformationApi from './basicInformationApi';
 import * as changeUserNameApi from './changeUserNameApi';
+import * as pwdModifyApi from './pwdModifyApi';
 
 export {
   headerApi,
@@ -24,4 +25,5 @@ export {
   cardLessATMApi,
   basicInformationApi,
   changeUserNameApi,
+  pwdModifyApi,
 };

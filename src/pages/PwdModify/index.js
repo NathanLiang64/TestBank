@@ -4,6 +4,7 @@ import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { pwdModifyApi } from 'apis';
 
 /* Elements */
 import {
@@ -33,30 +34,38 @@ const PwdModify = () => {
       .oneOf([yup.ref('newPassword'), null], '必須與新網銀密碼相同'),
   });
   const {
-    handleSubmit, control, formState: { errors },
+    handleSubmit, control, formState: { errors }, getValues,
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const [form, setForm] = useState({
-    password: '',
-    newPassword: '',
-    newPasswordCheck: '',
-  });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
-  const handlePasswordModify = () => {
-    setShowConfirmDialog(false);
-    history.push('/pwdModify1');
+  // 跳轉結果頁
+  const toResultPage = (data) => {
+    history.push('/pwdModify1', { data });
   };
 
-  const onSubmit = async (data) => {
-    data.password = await e2ee(data.password);
-    data.newPassword = await e2ee(data.newPassword);
-    setForm({ ...data });
+  // 呼叫變更網銀密碼 API
+  const handlePasswordModify = async () => {
+    const param = {
+      password: await e2ee(getValues('password')),
+      newPassword: await e2ee(getValues('newPassword')),
+      newPasswordCheck: await e2ee(getValues('newPasswordCheck')),
+    };
+    const changePwdResponse = await pwdModifyApi.changePwd(param);
+    console.log('變更網銀密碼回傳', changePwdResponse);
+    const data = 'custName' in changePwdResponse;
+    toResultPage(data);
+    setShowConfirmDialog(false);
+  };
+
+  // 點擊儲存變更按鈕，表單驗證
+  const onSubmit = async () => {
     setShowConfirmDialog(true);
   };
 
+  // 確認變更網銀密碼彈窗
   const ConfirmDialog = () => (
     <Dialog
       isOpen={showConfirmDialog}
@@ -77,27 +86,29 @@ const PwdModify = () => {
   return (
     <PwdModifyWrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <PasswordInput
-          label="您的網銀密碼"
-          id="password"
-          name="password"
-          control={control}
-          errorMessage={errors.password?.message}
-        />
-        <PasswordInput
-          label="新的網銀密碼"
-          id="newPassword"
-          name="newPassword"
-          control={control}
-          errorMessage={errors.newPassword?.message}
-        />
-        <PasswordInput
-          label="請確認新的網銀密碼"
-          id="newPasswordCheck"
-          name="newPasswordCheck"
-          control={control}
-          errorMessage={errors.newPasswordCheck?.message}
-        />
+        <div>
+          <PasswordInput
+            label="您的網銀密碼"
+            id="password"
+            name="password"
+            control={control}
+            errorMessage={errors.password?.message}
+          />
+          <PasswordInput
+            label="新的網銀密碼"
+            id="newPassword"
+            name="newPassword"
+            control={control}
+            errorMessage={errors.newPassword?.message}
+          />
+          <PasswordInput
+            label="請確認新的網銀密碼"
+            id="newPasswordCheck"
+            name="newPasswordCheck"
+            control={control}
+            errorMessage={errors.newPasswordCheck?.message}
+          />
+        </div>
         <FEIBButton
           type="submit"
         >
