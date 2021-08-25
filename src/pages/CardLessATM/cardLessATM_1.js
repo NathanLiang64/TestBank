@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { useDispatch } from 'react-redux';
-import { setShowSpinner } from 'components/Spinner/stores/actions';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
@@ -39,7 +37,6 @@ const CardLessATM1 = () => {
   });
 
   const history = useHistory();
-  const dispatch = useDispatch();
 
   const [accountSummary, setAccountSummary] = useState({
     account: '',
@@ -80,24 +77,29 @@ const CardLessATM1 = () => {
     }
   };
 
-  // 取得提款卡資訊
-  const getAccountSummary = async () => {
-    const summaryResponse = await cardLessATMApi.getAccountSummary({});
-    if (localStorage.getItem('custId') === 'A196158521') {
-      setAccountSummary({ ...summaryResponse, balance: 1000 });
-    } else {
-      setAccountSummary({ ...summaryResponse });
-    }
-  };
-
   const handleDialogOpen = (message) => {
     setErrorMessage(message);
     setOpenDialog(true);
   };
 
+  // 取得提款卡資訊
+  const getAccountSummary = async () => {
+    const summaryResponse = await cardLessATMApi.getAccountSummary({ account: '' });
+    console.log('取得提款帳號資訊', summaryResponse);
+    const { message } = summaryResponse;
+    if (!message) {
+      if (localStorage.getItem('custId') === 'A196158521') {
+        setAccountSummary({ ...summaryResponse, balance: 1000 });
+      } else {
+        setAccountSummary({ ...summaryResponse });
+      }
+    } else {
+      handleDialogOpen(message);
+    }
+  };
+
   // 無卡提款交易
   const cardlessWithdrawApply = async (param) => {
-    dispatch(setShowSpinner(true));
     let withdrawResponse;
     if (localStorage.getItem('custId') === 'A196158521') {
       withdrawResponse = await new Promise((resolve) => {
@@ -130,7 +132,6 @@ const CardLessATM1 = () => {
     } else {
       handleDialogOpen(message);
     }
-    dispatch(setShowSpinner(false));
   };
 
   const onSubmit = (data) => {

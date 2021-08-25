@@ -3,7 +3,7 @@ import userAxios from './axiosConfig';
 // 檢查金融卡卡狀態 done
 export const getCardStatus = async (param) => {
   const response = await userAxios
-    .post('/api/atmCard/getStatus', param)
+    .post('/api/cardlessWD/atmCard/getStatus', param)
     .then((data) => data)
     .catch((err) => err);
   return response;
@@ -21,7 +21,7 @@ export const getCardlessStatus = async (param) => {
 // 取得提款卡資訊 done
 export const getAccountSummary = async (param) => {
   const response = await userAxios
-    .post('/api/deposit/getAccountSummary', param)
+    .post('/api/cardlessWD/deposit/getAccountSummary', param)
     .then((data) => data)
     .catch((err) => err);
   return response;
