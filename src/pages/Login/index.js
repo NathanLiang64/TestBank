@@ -98,7 +98,8 @@ const Login = () => {
   const onSubmit = async (data) => {
     const { result, message } = await getJwtKey(data);
     if (result === 'success') {
-      if (window.bankeeplus) {
+      // eslint-disable-next-line no-undef
+      if (window.bankeeplus || webkit.messageHandlers.bankeeplus) {
         closeFunc('home');
       } else {
         history.push('/');
