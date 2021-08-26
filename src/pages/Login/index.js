@@ -98,10 +98,10 @@ const Login = () => {
   const onSubmit = async (data) => {
     const { result, message } = await getJwtKey(data);
     if (result === 'success') {
-      // eslint-disable-next-line no-undef
-      if (window.bankeeplus || webkit.messageHandlers.bankeeplus) {
+      console.log('login success');
+      try {
         closeFunc('home');
-      } else {
+      } catch (error) {
         history.push('/');
       }
     } else {
