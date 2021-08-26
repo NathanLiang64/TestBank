@@ -17,10 +17,11 @@ import MemberAccountCardWrapper from './memberAccountCard.style';
 * 6. avatarSrc -> 會員頭像的圖片路徑
 * 7. noBorder -> 無框線
 * 8. noOption -> 左滑時無編輯 & 刪除選項、且點擊時無狀態
+* 9. id -> 唯一識別碼
 * */
 
 const MemberAccountCard = ({
-  type, name, bankNo, bankName, account, avatarSrc, noBorder, noOption,
+  id, type, name, bankNo, bankName, account, avatarSrc, noBorder, noOption,
 }) => {
   const [moreAction, setMoreAction] = useState({
     isMoreActionOpen: false,
@@ -31,7 +32,8 @@ const MemberAccountCard = ({
   const dispatch = useDispatch();
 
   const handleClick = (buttonType) => {
-    dispatch(setClickMoreOptions({ click: true, button: buttonType, target: account }));
+    setMoreAction({ ...moreAction, isMoreActionOpen: false });
+    dispatch(setClickMoreOptions({ click: true, button: buttonType, target: id }));
   };
 
   const handleTouchStart = (event) => {

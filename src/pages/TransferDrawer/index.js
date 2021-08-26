@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { AddRounded } from '@material-ui/icons';
 import BottomDrawer from 'components/BottomDrawer';
@@ -7,10 +7,11 @@ import TransferDrawerWrapper from './transferDrawer.style';
 import TransferFrequentlyUsedAccount from '../TransferFrequentlyUsedAccount';
 import TransferDesignedAccount from '../TransferDesignedAccount';
 import { setOpenDrawer } from '../Transfer/stores/actions';
+import { doGetInitData } from '../../apis/transferApi';
 
 const TransferDrawer = () => {
-  const frequentlyUsedAccounts = useSelector(({ transfer }) => transfer.frequentlyUsedAccounts);
-  const designedAccounts = useSelector(({ transfer }) => transfer.designedAccounts);
+  const [frequentlyUsedAccounts, setFrequentlyUsedAccounts] = useState();
+  const [designedAccounts, setDesignedAccounts] = useState();
   const openDrawer = useSelector(({ transfer }) => transfer.openDrawer);
   const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
   const dispatch = useDispatch();
@@ -28,7 +29,8 @@ const TransferDrawer = () => {
   const memberAccountCardList = (list, type) => (
     list.map((member) => (
       <MemberAccountCard
-        key={member.acctId}
+        id={member.id}
+        key={member.id}
         type={type}
         name={member.acctName}
         bankNo={member.bankNo}
@@ -39,13 +41,16 @@ const TransferDrawer = () => {
     ))
   );
 
+  // eslint-disable-next-line consistent-return
   const renderMemberAccountCardListByType = () => {
     // 如果當前頁面為常用帳號則 render 常用帳號清單卡片
     if (openDrawer.title === '常用帳號' && frequentlyUsedAccounts) {
       return memberAccountCardList(frequentlyUsedAccounts, openDrawer.title);
     }
     // 否則 render 約定帳號清單卡片
-    return memberAccountCardList(designedAccounts, openDrawer.title);
+    if (openDrawer.title === '約定帳號' && designedAccounts) {
+      return memberAccountCardList(designedAccounts, openDrawer.title);
+    }
   };
 
   // 預設的會員帳號頁面 (常用/約定帳號清單)，常用帳號才有新增按鈕
@@ -82,6 +87,9 @@ const TransferDrawer = () => {
         content: 'editDesignedAccount',
       }));
     }
+    if (click && button === 'remove' && openDrawer.title === '常用帳號') {
+      // call api 刪除常用帳號內的單筆資料
+    }
   }, [clickMoreOptions]);
 
   // 由 drawerController 控制當前顯示畫面
@@ -101,6 +109,14 @@ const TransferDrawer = () => {
         return defaultMemberAccountContent(openDrawer.title);
     }
   };
+
+  useEffect(async () => {
+    const favoriteResponse = await doGetInitData('/api/getFavoriteAcct');
+    setFrequentlyUsedAccounts(favoriteResponse.favoriteAcctList);
+
+    const designedResponse = await doGetInitData('/api/getDesignedAcct');
+    setDesignedAccounts(designedResponse.designedAcctList);
+  }, []);
 
   return (
     <BottomDrawer

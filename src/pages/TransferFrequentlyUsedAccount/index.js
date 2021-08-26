@@ -9,6 +9,7 @@ import {
   FEIBButton, FEIBErrorMessage, FEIBInput, FEIBInputLabel,
 } from 'components/elements';
 import { bankAccountValidation, bankCodeValidation, nicknameValidation } from 'utilities/validation';
+import { doGetInitData } from 'apis/transferApi';
 import { setOpenDrawer, setClickMoreOptions } from '../Transfer/stores/actions';
 
 const TransferFrequentlyUsedAccount = () => {
@@ -23,7 +24,6 @@ const TransferFrequentlyUsedAccount = () => {
     resolver: yupResolver(schema),
   });
 
-  const frequentlyUsedAccounts = useSelector(({ transfer }) => transfer.frequentlyUsedAccounts);
   const openDrawer = useSelector(({ transfer }) => transfer.openDrawer);
   const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
   const [targetMember, setTargetMember] = useState({});
@@ -40,13 +40,16 @@ const TransferFrequentlyUsedAccount = () => {
 
   const handleSelectAvatar = (file) => setAvatar(file);
 
-  useEffect(() => {
+  useEffect(async () => {
     if (clickMoreOptions.target) {
-      const currenTarget = frequentlyUsedAccounts.find((member) => member.acctId === clickMoreOptions.target);
-      setTargetMember(currenTarget);
-      setValue('memberAccountCardBankCode', { bankNo: currenTarget.bankNo, bankName: currenTarget.bankName });
-      setValue('bankAccount', currenTarget.acctId);
-      setValue('nickname', currenTarget.acctName);
+      const response = await doGetInitData('/api/getFavoriteAcct');
+      if (response) {
+        const currenTarget = response.favoriteAcctList.find((member) => member.id === clickMoreOptions.target);
+        setTargetMember(currenTarget);
+        setValue('memberAccountCardBankCode', { bankNo: currenTarget.bankNo, bankName: currenTarget.bankName });
+        setValue('bankAccount', currenTarget.acctId);
+        setValue('nickname', currenTarget.acctName);
+      }
     }
   }, [clickMoreOptions.target]);
 
