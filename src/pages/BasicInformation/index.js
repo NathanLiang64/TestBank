@@ -4,7 +4,7 @@ import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// import { basicInformationApi } from 'apis';
+import { basicInformationApi } from 'apis';
 
 /* Elements */
 import {
@@ -26,7 +26,7 @@ const BasicInformation = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    phone: yup
+    mobile: yup
       .string()
       .required('請輸入行動電話')
       .matches(/^09[0-9]{8}$/, '行動電話格式不符'),
@@ -34,22 +34,27 @@ const BasicInformation = () => {
       .string()
       .required('請輸入電子信箱')
       .email('電子信箱格式不符'),
-    city: yup
+    county: yup
       .string()
       .required('請選擇縣市'),
-    district: yup
+    city: yup
       .string()
       .required('請選擇鄉鎮市區'),
-    address: yup
+    addr: yup
       .string()
       .required('請輸入通訊地址'),
     // ...passwordValidation,
   });
   const {
-    handleSubmit, control, formState: { errors }, reset,
+    handleSubmit, control, formState: { errors }, reset, getValues,
   } = useForm({
     resolver: yupResolver(schema),
   });
+
+  // 跳轉結果頁
+  const toResultPage = () => {
+    history.push('/basicInformation1');
+  };
 
   // 取得縣市列表
   const getCountyList = () => {
@@ -57,27 +62,38 @@ const BasicInformation = () => {
   };
 
   // 取得鄉鎮市區列表
-  const getDistrict = () => {
+  const getCity = () => {
   };
 
   // 取得個人資料
-  const getPersonalData = () => {
-    // mock data
+  const getPersonalData = async () => {
+    const basicInformationResponse = await basicInformationApi.getBasicInformation({});
+    console.log('取得基本資料回傳', basicInformationResponse);
     const data = {
-      phone: '0905123456',
-      email: 'example@mail.com',
-      city: '台北市',
-      district: '大安區',
-      address: '某某路一段二號',
+      ...basicInformationResponse,
     };
     reset(data);
   };
 
   // 更新個人資料
-  const onSubmit = (data) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
-    history.push('/basicInformation1');
+  const modifyPersonalData = async () => {
+    const data = getValues();
+    const param = {
+      county: data.county,
+      district: data.city,
+      zipcode: data.zipCode,
+      address: data.addr,
+      mailAddr: data.email,
+      mobilePhone: data.mobile,
+    };
+    const modifyDataResponse = await basicInformationApi.modifyBasicInformation(param);
+    console.log('更新基本資料回傳', modifyDataResponse);
+    toResultPage();
+  };
+
+  // 點擊儲存變更按鈕
+  const onSubmit = () => {
+    modifyPersonalData();
   };
 
   useCheckLocation();
@@ -85,7 +101,7 @@ const BasicInformation = () => {
 
   useEffect(() => {
     getCountyList();
-    getDistrict();
+    getCity();
     getPersonalData();
   }, []);
 
@@ -95,7 +111,7 @@ const BasicInformation = () => {
         <div>
           <FEIBInputLabel>行動電話</FEIBInputLabel>
           <Controller
-            name="phone"
+            name="mobile"
             defaultValue=""
             control={control}
             render={({ field }) => (
@@ -103,14 +119,14 @@ const BasicInformation = () => {
                 {...field}
                 type="text"
                 inputMode="tel"
-                id="phone"
-                name="phone"
+                id="mobile"
+                name="mobile"
                 placeholder="請輸入行動電話"
-                error={!!errors.phone}
+                error={!!errors.mobile}
               />
             )}
           />
-          <FEIBErrorMessage>{errors.phone?.message}</FEIBErrorMessage>
+          <FEIBErrorMessage>{errors.mobile?.message}</FEIBErrorMessage>
           <FEIBInputLabel>電子信箱</FEIBInputLabel>
           <Controller
             name="email"
@@ -133,62 +149,62 @@ const BasicInformation = () => {
           <div className="selectContainer">
             <div>
               <Controller
-                name="city"
+                name="county"
                 defaultValue=""
                 control={control}
                 placeholder="請選擇縣市"
                 render={({ field }) => (
                   <FEIBSelect
                     {...field}
-                    id="city"
-                    name="city"
+                    id="county"
+                    name="county"
                     placeholder="請選擇縣市"
-                    error={!!errors.city}
+                    error={!!errors.county}
                   >
                     <FEIBOption value="" disabled>請選擇縣市</FEIBOption>
                     <FEIBOption value="台北市">台北市</FEIBOption>
                   </FEIBSelect>
                 )}
               />
-              <FEIBErrorMessage>{errors.city?.message}</FEIBErrorMessage>
+              <FEIBErrorMessage>{errors.county?.message}</FEIBErrorMessage>
             </div>
             <div>
               <Controller
-                name="district"
+                name="city"
                 defaultValue=""
                 control={control}
                 render={({ field }) => (
                   <FEIBSelect
                     {...field}
-                    id="district"
-                    name="district"
-                    error={!!errors.district}
+                    id="city"
+                    name="city"
+                    error={!!errors.city}
                   >
                     <FEIBOption value="" disabled>請選擇鄉鎮市區</FEIBOption>
-                    <FEIBOption value="大安區">大安區</FEIBOption>
+                    <FEIBOption value="中正區">中正區</FEIBOption>
                   </FEIBSelect>
                 )}
               />
-              <FEIBErrorMessage>{errors.district?.message}</FEIBErrorMessage>
+              <FEIBErrorMessage>{errors.city?.message}</FEIBErrorMessage>
             </div>
           </div>
           <Controller
-            name="address"
+            name="addr"
             defaultValue=""
             control={control}
             render={({ field }) => (
               <FEIBInput
                 {...field}
                 type="text"
-                inputMode="address"
-                id="address"
-                name="address"
+                inputMode="addr"
+                id="addr"
+                name="addr"
                 placeholder="請輸入通訊地址"
-                error={!!errors.address}
+                error={!!errors.addr}
               />
             )}
           />
-          <FEIBErrorMessage>{errors.address?.message}</FEIBErrorMessage>
+          <FEIBErrorMessage>{errors.addr?.message}</FEIBErrorMessage>
           {/* <PasswordInput
             label="網銀密碼"
             id="password"

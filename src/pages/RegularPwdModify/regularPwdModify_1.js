@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { goToFunc } from 'utilities/BankeePlus';
 import SuccessImage from 'assets/images/stateSuccess.svg';
@@ -11,8 +12,8 @@ import {
 /* Styles */
 import RegularPwdModifyWrapper from './regularPwdModify.style';
 
-const RegularPwdModify1 = () => {
-  const isSuccess = false;
+const RegularPwdModify1 = ({ location }) => {
+  const [isSuccess, setIsSuccess] = useState(true);
 
   const toHome = () => {
     goToFunc('home');
@@ -20,6 +21,10 @@ const RegularPwdModify1 = () => {
 
   useCheckLocation();
   usePageInfo('/api/regularPwdModify');
+
+  useEffect(() => {
+    setIsSuccess(location.state.data);
+  }, []);
 
   return (
     <RegularPwdModifyWrapper>

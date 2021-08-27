@@ -5,6 +5,7 @@ import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { goToFunc } from 'utilities/BankeePlus';
+import { pwdModifyApi } from 'apis';
 
 /* Elements */
 import PasswordInput from 'components/PasswordInput';
@@ -32,28 +33,31 @@ const RegularPwdModify = () => {
       .oneOf([yup.ref('newPassword'), null], '必須與新網銀密碼相同'),
   });
   const {
-    handleSubmit, control, formState: { errors },
+    handleSubmit, control, formState: { errors }, getValues,
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const [form, setForm] = useState({
-    password: '',
-    newPassword: '',
-    newPasswordCheck: '',
-  });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showWarningDialog, setShowWarningDialog] = useState(false);
 
-  // const handleFormChange = ({ target }) => {
-  //   const formObject = { ...form };
-  //   formObject[target.name] = target.value;
-  //   setForm({ ...formObject });
-  // };
+  // 跳轉結果頁
+  const toResultPage = (data) => {
+    history.push('/regularPwdModify1', { data });
+  };
 
-  const handlePasswordModify = () => {
+  // 呼叫變更網銀密碼API
+  const handlePasswordModify = async () => {
+    const param = {
+      password: await e2ee(getValues('password')),
+      newPassword: await e2ee(getValues('newPassword')),
+      newPasswordCheck: await e2ee(getValues('newPasswordCheck')),
+    };
+    const changePwdResponse = await pwdModifyApi.changePwd(param);
+    console.log('變更網銀密碼回傳', changePwdResponse);
+    const data = 'custName' in changePwdResponse;
+    toResultPage(data);
     setShowConfirmDialog(false);
-    history.push('/regularPwdModify1');
   };
 
   const handleWarnConfirm = () => {
@@ -61,10 +65,7 @@ const RegularPwdModify = () => {
     goToFunc('home');
   };
 
-  const onSubmit = async (data) => {
-    data.password = await e2ee(data.password);
-    data.newPassword = await e2ee(data.newPassword);
-    setForm({ ...data });
+  const onSubmit = async () => {
     setShowConfirmDialog(true);
   };
 
@@ -107,38 +108,42 @@ const RegularPwdModify = () => {
   return (
     <RegularPwdModifyWrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <PasswordInput
-          label="您的網銀密碼"
-          id="password"
-          name="password"
-          control={control}
-          errorMessage={errors.password?.message}
-        />
-        <PasswordInput
-          label="新的網銀密碼"
-          id="newPassword"
-          name="newPassword"
-          control={control}
-          errorMessage={errors.newPassword?.message}
-        />
-        <PasswordInput
-          label="請確認新的網銀密碼"
-          id="newPasswordCheck"
-          name="newPasswordCheck"
-          control={control}
-          errorMessage={errors.newPasswordCheck?.message}
-        />
-        <InfoArea space="bottom">
-          *每六個月請進行密碼以及個資更新以確保帳號安全
-        </InfoArea>
-        <ConfirmButtons
-          subButtonValue="維持不變"
-          mainButtonValue="儲存變更"
-          subButtonOnClick={(event) => {
-            event.preventDefault();
-            setShowWarningDialog(true);
-          }}
-        />
+        <div>
+          <PasswordInput
+            label="您的網銀密碼"
+            id="password"
+            name="password"
+            control={control}
+            errorMessage={errors.password?.message}
+          />
+          <PasswordInput
+            label="新的網銀密碼"
+            id="newPassword"
+            name="newPassword"
+            control={control}
+            errorMessage={errors.newPassword?.message}
+          />
+          <PasswordInput
+            label="請確認新的網銀密碼"
+            id="newPasswordCheck"
+            name="newPasswordCheck"
+            control={control}
+            errorMessage={errors.newPasswordCheck?.message}
+          />
+        </div>
+        <div>
+          <InfoArea space="bottom">
+            *每六個月請進行密碼以及個資更新以確保帳號安全
+          </InfoArea>
+          <ConfirmButtons
+            subButtonValue="維持不變"
+            mainButtonValue="儲存變更"
+            subButtonOnClick={(event) => {
+              event.preventDefault();
+              setShowWarningDialog(true);
+            }}
+          />
+        </div>
       </form>
       <WarningDialog />
       <ConfirmDialog />
