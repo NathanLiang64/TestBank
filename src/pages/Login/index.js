@@ -22,7 +22,7 @@ import theme from 'themes/theme';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
 import { useEffect } from 'react';
-import { closeFunc } from 'utilities/BankeePlus';
+import { goToFunc } from 'utilities/BankeePlus';
 import LoginWrapper from './login.style';
 import { accountValidation, identityValidation, passwordValidation } from '../../utilities/validation';
 
@@ -100,7 +100,8 @@ const Login = () => {
     if (result === 'success') {
       console.log('login success');
       try {
-        closeFunc('home');
+        alert('登入成功');
+        goToFunc('home');
       } catch (error) {
         history.push('/');
       }

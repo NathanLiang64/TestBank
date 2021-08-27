@@ -21,16 +21,16 @@ export const getDistrict = async (param) => {
 // 取得個人基本資料
 export const getBasicInformation = async (param) => {
   const response = await userAxios
-    .get('/api/getBasicInformation', param)
+    .post('/api/setting/custQuery', param)
     .then((data) => data)
     .catch((err) => err);
   return response;
 };
 
 // 更新個人基本資料
-export const updateBasicInformation = async (param) => {
+export const modifyBasicInformation = async (param) => {
   const response = await userAxios
-    .get('/api/updateBasicInformation', param)
+    .post('/api/setting/custModify', param)
     .then((data) => data)
     .catch((err) => err);
   return response;
