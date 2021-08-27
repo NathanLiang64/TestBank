@@ -35,28 +35,36 @@ const TransferFrequentlyUsedAccount = () => {
     // 送資料
     // console.log(data);
     dispatch(setOpenDrawer({ ...openDrawer, title: '常用帳號', content: 'default' }));
-    dispatch(setClickMoreOptions({ click: false, button: '', target: null }));
+    dispatch(setClickMoreOptions({
+      ...clickMoreOptions,
+      add: { click: false, target: null },
+      edit: { click: false, target: null },
+      remove: { click: false, target: null },
+    }));
   };
 
   const handleSelectAvatar = (file) => setAvatar(file);
 
   useEffect(async () => {
-    if (clickMoreOptions.target) {
+    const { edit } = clickMoreOptions;
+    if (edit.click && edit.target) {
       const response = await doGetInitData('/api/getFavoriteAcct');
       if (response) {
-        const currenTarget = response.favoriteAcctList.find((member) => member.id === clickMoreOptions.target);
+        const currenTarget = response.favoriteAcctList.find((member) => member.id === edit.target);
         setTargetMember(currenTarget);
         setValue('memberAccountCardBankCode', { bankNo: currenTarget.bankNo, bankName: currenTarget.bankName });
         setValue('bankAccount', currenTarget.acctId);
         setValue('nickname', currenTarget.acctName);
       }
     }
-  }, [clickMoreOptions.target]);
+  }, [clickMoreOptions.edit]);
 
   if (targetMember) {
     return (
       <form className="addFrequentlyUsedAccountArea">
-        <Avatar src={targetMember.acctImg} name={watch('nickname')} onPreview={handleSelectAvatar} />
+        <div className="avatarArea">
+          <Avatar src={targetMember.acctImg} name={watch('nickname')} onPreview={handleSelectAvatar} />
+        </div>
         <BankCodeInput
           id="memberAccountCardBankCode"
           setValue={setValue}
@@ -95,7 +103,9 @@ const TransferFrequentlyUsedAccount = () => {
 
   return (
     <form className="addFrequentlyUsedAccountArea">
-      <Avatar name={watch('nickname')} />
+      <div className="avatarArea">
+        <Avatar name={watch('nickname')} />
+      </div>
       <BankCodeInput
         id="memberAccountCardBankCode"
         setValue={setValue}

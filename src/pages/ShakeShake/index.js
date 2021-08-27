@@ -12,6 +12,7 @@ import {
   FEIBIconButton, FEIBTabContext, FEIBTab, FEIBTabList, FEIBTabPanel,
 } from 'components/elements';
 import { shakeShakeApi } from 'apis';
+import { accountFormatter } from 'utilities/Generator';
 import theme from 'themes/theme';
 import { setIsShake, setUserCards, setUserCardInfo } from './stores/actions';
 import ShakeShakeWrapper from './shakeShake.style';
@@ -49,7 +50,7 @@ const ShakeShake = () => {
       <>
         <p className="cardName">{cardName}</p>
         <div className="accountInfo">
-          <p className="account">{`${bankName} ${cardAccount}`}</p>
+          <p className="account">{`${bankName} ${accountFormatter(cardAccount)}`}</p>
           <CopyTextIconButton copyText={cardAccount} />
         </div>
       </>

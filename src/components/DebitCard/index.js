@@ -12,7 +12,7 @@ import {
   FEIBIconButton, FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBButton,
 } from 'components/elements';
 import theme from 'themes/theme';
-import { toCurrency } from 'utilities/Generator';
+import { accountFormatter, toCurrency } from 'utilities/Generator';
 import DebitCardBackground from 'assets/images/debitCardBackground.png';
 import DebitCardWrapper from './debitCard.style';
 
@@ -196,7 +196,7 @@ const DebitCard = ({
         <h2 className="cardName">{cardName}</h2>
         <div className="accountInfo">
           { originalType() && <p className="branch">{branch}</p> }
-          <p className="account">{account}</p>
+          <p className="account">{accountFormatter(account)}</p>
           <CopyTextIconButton copyText={account} />
         </div>
       </div>

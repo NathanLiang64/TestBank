@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { CreateRounded, DeleteRounded } from '@material-ui/icons';
 import Avatar from 'components/Avatar';
 import { setClickMoreOptions } from 'pages/Transfer/stores/actions';
@@ -29,11 +29,15 @@ const MemberAccountCard = ({
     endX: 0,
   });
 
+  const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
   const dispatch = useDispatch();
 
   const handleClick = (buttonType) => {
     setMoreAction({ ...moreAction, isMoreActionOpen: false });
-    dispatch(setClickMoreOptions({ click: true, button: buttonType, target: id }));
+    dispatch(setClickMoreOptions({
+      ...clickMoreOptions,
+      [buttonType]: { click: true, target: id },
+    }));
   };
 
   const handleTouchStart = (event) => {

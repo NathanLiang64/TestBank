@@ -102,6 +102,11 @@ const TransferWrapper = styled(Layout)`
   }
   
   .reserveOption {
+    .dateRangePickerArea {
+      margin-top: 3.6rem;
+      margin-bottom: 1rem;
+    }
+
     .datePickerLabel {
       margin-top: 1.8rem;
       margin-bottom: 1.8rem;
@@ -257,6 +262,23 @@ const TransferWrapper = styled(Layout)`
       &.transactionDetailArea {
         padding-top: 0;
         padding-bottom: 7.2rem;
+      }
+
+
+      &.errorInfo {
+        margin: 2.4rem 1.6rem 3.2rem 1.6rem;
+        text-align: center;
+
+        .errorCode {
+          margin-bottom: .8rem;
+          font-size: 1.6rem;
+          color: ${({ theme }) => theme.colors.text.lightGray};
+        }
+
+        .errorText {
+          font-size: 1.4rem;
+          color: ${({ theme }) => theme.colors.text.light};
+        }
       }
     }
   }
