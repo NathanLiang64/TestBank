@@ -29,11 +29,12 @@ const errorMessage = {
 
   // 轉出金額
   transferAmountRequired: '請輸入轉帳金額',
-  transferAmountWrongFormat: '轉出金額不可大於百萬',
-  transferAmountCannotBeZero: '金額不可為 0',
+  transferAmountCannotExceedLimit: '您輸入金額超過單筆轉帳限額',
+  transferAmountCannotExceedDepositAmount: '您輸入金額超過轉出帳號餘額',
+  transferAmountCannotBeZero: '您輸入金額有誤，請重新輸入',
 
   // 轉出行庫
-  bankCodeRequired: '轉出行庫尚未選取，請重新檢查',
+  bankCodeRequired: '您輸入的銀行代碼有誤，請重新輸入',
 
   // 銀行帳號
   bankAccountRequired: '請輸入銀行帳號',
@@ -239,11 +240,12 @@ const receivingAccountValidation = () => (
 );
 
 // 轉出金額
-const transferAmountValidation = () => (
+const transferAmountValidation = (depositAmount) => (
   yup.string()
     .required(errorMessage.transferAmountRequired)
-    .max(7, errorMessage.transferAmountWrongFormat)
+    .max(7, errorMessage.transferAmountCannotExceedLimit)
     .test('test', errorMessage.transferAmountCannotBeZero, (value) => !(parseInt(value, 10) <= 0))
+    .test('test', errorMessage.transferAmountCannotExceedDepositAmount, (value) => !(parseInt(value, 10) > depositAmount))
 );
 
 // 銀行代碼

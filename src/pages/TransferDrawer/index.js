@@ -9,7 +9,7 @@ import TransferDesignedAccount from '../TransferDesignedAccount';
 import { setOpenDrawer } from '../Transfer/stores/actions';
 import { doGetInitData } from '../../apis/transferApi';
 
-const TransferDrawer = () => {
+const TransferDrawer = ({ setTabId }) => {
   const [frequentlyUsedAccounts, setFrequentlyUsedAccounts] = useState();
   const [designedAccounts, setDesignedAccounts] = useState();
   const openDrawer = useSelector(({ transfer }) => transfer.openDrawer);
@@ -68,11 +68,26 @@ const TransferDrawer = () => {
     </>
   );
 
+  useEffect(async () => {
+    const favoriteResponse = await doGetInitData('/api/getFavoriteAcct');
+    setFrequentlyUsedAccounts(favoriteResponse.favoriteAcctList);
+
+    const designedResponse = await doGetInitData('/api/getDesignedAcct');
+    setDesignedAccounts(designedResponse.designedAcctList);
+  }, []);
+
+  useEffect(() => {
+    // 如果常用帳號清單為空的，預設開啟新增常用帳號，若無新增即關閉 Drawer 則導回一般轉帳頁面
+    if (openDrawer.title === '新增常用帳號' && !openDrawer.open && frequentlyUsedAccounts) {
+      if (frequentlyUsedAccounts.length === 0) setTabId('transfer');
+    }
+  }, [openDrawer, frequentlyUsedAccounts]);
+
   // 追蹤點擊事件選項
   useEffect(() => {
-    const { click, button } = clickMoreOptions;
+    const { edit, remove } = clickMoreOptions;
     // 如果點擊選項為 edit (編輯) 且當前頁面為常用帳號，則 Drawer 內容跳轉至編輯常用帳號 UI
-    if (click && button === 'edit' && openDrawer.title === '常用帳號') {
+    if (edit.click && openDrawer.title === '常用帳號') {
       dispatch(setOpenDrawer({
         ...openDrawer,
         title: '編輯常用帳號',
@@ -80,14 +95,14 @@ const TransferDrawer = () => {
       }));
     }
     // 如果點擊選項為 edit (編輯) 且當前頁面為約定帳號，則 Drawer 內容跳轉至編輯約定帳號 UI
-    if (click && button === 'edit' && openDrawer.title === '約定帳號') {
+    if (edit.click && openDrawer.title === '約定帳號') {
       dispatch(setOpenDrawer({
         ...openDrawer,
         title: '編輯約轉帳號',
         content: 'editDesignedAccount',
       }));
     }
-    if (click && button === 'remove' && openDrawer.title === '常用帳號') {
+    if (remove.click && openDrawer.title === '常用帳號') {
       // call api 刪除常用帳號內的單筆資料
     }
   }, [clickMoreOptions]);
@@ -109,14 +124,6 @@ const TransferDrawer = () => {
         return defaultMemberAccountContent(openDrawer.title);
     }
   };
-
-  useEffect(async () => {
-    const favoriteResponse = await doGetInitData('/api/getFavoriteAcct');
-    setFrequentlyUsedAccounts(favoriteResponse.favoriteAcctList);
-
-    const designedResponse = await doGetInitData('/api/getDesignedAcct');
-    setDesignedAccounts(designedResponse.designedAcctList);
-  }, []);
 
   return (
     <BottomDrawer

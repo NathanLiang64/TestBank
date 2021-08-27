@@ -25,26 +25,42 @@ const TransferDesignedAccount = () => {
   const [avatar, setAvatar] = useState(null);
   const dispatch = useDispatch();
 
-  const handleSubmitFrequentlyUsed = (data) => {
+  const handleClickSubmit = (data) => {
     if (avatar) data.avatar = avatar;
+    data.acctId = targetMember.acctId;
+    data.bankNo = targetMember.bankNo;
+    data.bankName = targetMember.bankName;
     // 送資料
     // console.log(data);
-    dispatch(setOpenDrawer({ ...openDrawer, title: '約定帳號', content: 'default' }));
-    dispatch(setClickMoreOptions({ click: false, button: '', target: null }));
+
+    const { add, edit } = clickMoreOptions;
+    if (edit.click) dispatch(setOpenDrawer({ ...openDrawer, title: '約定帳號', content: 'default' }));
+    if (add.click) dispatch(setOpenDrawer({ ...openDrawer, content: 'default', open: false }));
+
+    dispatch(setClickMoreOptions({
+      ...clickMoreOptions,
+      add: { click: false, target: null },
+      edit: { click: false, target: null },
+      remove: { click: false, target: null },
+    }));
   };
 
   const handleSelectAvatar = (file) => setAvatar(file);
 
   useEffect(async () => {
-    if (clickMoreOptions.target) {
+    const { add, edit } = clickMoreOptions;
+    if (edit.click && edit.target) {
       const response = await doGetInitData('/api/getDesignedAcct');
       if (response) {
-        const currenTarget = response.designedAcctList.find((member) => member.id === clickMoreOptions.target);
+        const currenTarget = response.designedAcctList.find((member) => member.id === edit.target);
         setTargetMember(currenTarget);
         setValue('nickname', currenTarget.acctName);
       }
     }
-  }, [clickMoreOptions.target]);
+    if (add.click && add.target) {
+      setTargetMember(add.target);
+    }
+  }, [clickMoreOptions.edit, clickMoreOptions.add]);
 
   return (
     <div className="editDesignedAccountArea">
@@ -53,7 +69,9 @@ const TransferDesignedAccount = () => {
         <p>{`${targetMember.bankName} ${targetMember.acctId}`}</p>
       </div>
       <form>
-        <Avatar src={targetMember.acctImg} name={watch('nickname')} onPreview={handleSelectAvatar} />
+        <div className="avatarArea">
+          <Avatar src={targetMember.acctImg} name={watch('nickname')} onPreview={handleSelectAvatar} />
+        </div>
         <FEIBInputLabel>暱稱</FEIBInputLabel>
         <Controller
           name="nickname"
@@ -65,7 +83,7 @@ const TransferDesignedAccount = () => {
         />
         <FEIBErrorMessage>{errors.nickname?.message}</FEIBErrorMessage>
 
-        <FEIBButton onClick={handleSubmit(handleSubmitFrequentlyUsed)}>完成</FEIBButton>
+        <FEIBButton onClick={handleSubmit(handleClickSubmit)}>完成</FEIBButton>
       </form>
     </div>
   );

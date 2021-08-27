@@ -7,7 +7,7 @@ import Dialog from 'components/Dialog';
 import Loading from 'components/Loading';
 import { FEIBButton } from 'components/elements';
 import { setIsPasswordRequired, setResult } from 'components/PasswordDrawer/stores/actions';
-import { dateFormatter, timeFormatter } from 'utilities/Generator';
+import { dateFormatter, timeFormatter, weekNumberToChinese } from 'utilities/Generator';
 import { directTo } from 'utilities/mockWebController';
 import TransferWrapper, { TransferMOTPDialogWrapper } from './transfer.style';
 
@@ -21,8 +21,10 @@ const Transfer1 = () => {
   const { state } = useLocation();
 
   const {
-    bankCode, receivingAccount, remark, transactionCycle, transactionDate, transactionFrequency, transferAmount,
+    debitAccount, debitName, bankCode, receivingAccount, remark, transactionCycle, transactionDate, transactionFrequency, transferAmount,
   } = state;
+
+  // TODO: 補預計轉帳次數計算邏輯 (非 transactionCycle 數字)
 
   const switchFrequency = (frequency) => {
     switch (frequency) {
@@ -92,7 +94,7 @@ const Transfer1 = () => {
       </section>
       <hr />
       <section>
-        <InformationList title="轉出帳號" content="04300499001234" remark="保時捷車友會" />
+        <InformationList title="轉出帳號" content={debitAccount} remark={debitName} />
         <InformationList
           title="時間"
           content={transactionDate ? `${dateFormatter(transactionDate)} ${timeFormatter(transactionDate)}` : ''}
@@ -100,7 +102,12 @@ const Transfer1 = () => {
         {transactionFrequency && transactionCycle && (
           <InformationList
             title="週期"
-            content={`${switchFrequency(transactionFrequency)}${transactionDate.getDate()}號`}
+            // content={`${switchFrequency(transactionFrequency)}${transactionDate.getDate()}號`}
+            content={
+              transactionFrequency === 'monthly'
+                ? `${switchFrequency(transactionFrequency)}${transactionCycle}號`
+                : `${switchFrequency(transactionFrequency)}${weekNumberToChinese(transactionCycle)}`
+            }
             remark={`預計轉帳${transactionCycle}次`}
           />
         )}
