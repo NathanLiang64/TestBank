@@ -35,7 +35,7 @@ const Accordion = ({
         }
       </button>
       <FEIBCollapse in={show}>
-        <div className="content">
+        <div className="collapseContent">
           <div className="line" />
           {children}
         </div>

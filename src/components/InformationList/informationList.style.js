@@ -10,7 +10,7 @@ const InformationListWrapper = styled.div`
     border-bottom: 0;
   }
 
-  .title {
+  p.title {
     font-size: 1.6rem;
     line-height: 1.3;
     color: ${({ theme }) => theme.colors.text.lightGray};
@@ -23,6 +23,7 @@ const InformationListWrapper = styled.div`
     .content {
       font-size: 1.6rem;
       line-height: 1.3;
+      color: ${({ theme }) => theme.colors.text.dark};
     }
 
     .remark {

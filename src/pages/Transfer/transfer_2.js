@@ -7,7 +7,6 @@ import {
 import Accordion from 'components/Accordion';
 import BottomAction from 'components/BottomAction';
 import InformationList from 'components/InformationList';
-import { dateFormatter, timeFormatter } from 'utilities/Generator';
 import SuccessImage from 'assets/images/stateSuccess.svg';
 import ErrorImage from 'assets/images/stateError.svg';
 import { directTo } from 'utilities/mockWebController';
@@ -24,25 +23,21 @@ const Transfer2 = () => {
   const isSuccess = true;
 
   const {
-    debitAccount, debitName, bankCode, receivingAccount, remark, transactionCycle, transactionDate, transactionFrequency, transferAmount,
+    money, bankNo, bankName, receivingAccount, date,
+    frequency, amount, debitAccount, debitName, remark,
+    depositAmount, transferRemaining, transferType,
   } = state;
 
-  const switchFrequency = (frequency) => {
-    switch (frequency) {
-      case 'weekly':
-        return '每週';
-      case 'monthly':
-        return '每個月';
-      default:
-        return '';
-    }
+  const hideAccount = (account) => {
+    const hiddenChart = account.substr(0, account.length - 5);
+    return account.replace(hiddenChart, '*********');
   };
 
   const handleClickAddAccount = () => {
     setOpenTransferDrawer(true);
     const account = {
-      bankNo: bankCode.bankNo,
-      bankName: bankCode.bankName,
+      bankNo,
+      bankName,
       acctId: receivingAccount,
     };
     dispatch(setOpenDrawer({ title: '加入常用帳號', content: 'editDesignedAccount', open: true }));
@@ -53,8 +48,8 @@ const Transfer2 = () => {
     <>
       <section className="transferMainInfo">
         <p>轉出金額與轉入帳號</p>
-        <h3 className="transferAmount">{transferAmount ? `$${transferAmount}` : ''}</h3>
-        <h3>{bankCode.bankNo ? `${bankCode.bankName}(${bankCode.bankNo})` : ''}</h3>
+        <h3 className="transferAmount">{money}</h3>
+        <h3>{`${bankName}(${bankNo})`}</h3>
         <h3>{receivingAccount ? `${receivingAccount}` : ''}</h3>
         <button type="button">
           <PersonAddRounded />
@@ -63,24 +58,15 @@ const Transfer2 = () => {
       </section>
       <hr />
       <section>
-        <InformationList title="轉出帳號" content={debitAccount} remark={debitName} />
-        <InformationList
-          title="時間"
-          content={transactionDate ? `${dateFormatter(transactionDate)} ${timeFormatter(transactionDate)}` : ''}
-        />
-        {transactionFrequency && transactionCycle && (
-          <InformationList
-            title="週期"
-            content={`${switchFrequency(transactionFrequency)}${transactionDate.getDate()}號`}
-            remark={`預計轉帳${transactionCycle}次`}
-          />
-        )}
-        <InformationList title="手續費" content="$0" />
-        <InformationList title="備註" content={remark || ''} />
+        <InformationList title="轉出帳號後五碼" content={hideAccount(debitAccount)} remark={debitName} />
+        <InformationList title="時間" content={date} />
+        {frequency && amount && <InformationList title="週期" content={frequency} remark={`預計轉帳${amount}次`} />}
       </section>
       <section className="transactionDetailArea">
         <Accordion title="詳細交易" space="bottom">
-          <p>詳細交易內容</p>
+          <InformationList title="帳戶餘額" content={`$${depositAmount}`} remark={debitName} />
+          {transferType === 'now' && <InformationList title="手續費" content="$0" remark={`跨轉優惠:剩餘${transferRemaining}次`} />}
+          <InformationList title="備註" content={remark || ''} />
         </Accordion>
       </section>
       <BottomAction>

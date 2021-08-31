@@ -28,6 +28,7 @@ import theme from 'themes/theme';
 import { setOpenDrawer, setClickMoreOptions } from './stores/actions';
 import TransferWrapper from './transfer.style';
 import TransferDrawer from '../TransferDrawer';
+import Dialog from '../../components/Dialog';
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
@@ -45,12 +46,14 @@ const Transfer = () => {
   const [selectedDate, setSelectedDate] = useState(datePickerLimit.minDate);
   const [cards, setCards] = useState([]);
   const [datePickerType, setDatePickerType] = useState('single');
-  // eslint-disable-next-line no-unused-vars
   const [transactionCycleType, setTransactionCycleType] = useState('monthly');
+  const [transactionDateRange, setTransactionDateRange] = useState([selectedDate, new Date(new Date().setDate(new Date().getDate() + 2))]);
   const [selectCardId, setSelectCardId] = useState(1);
   const [depositAmount, setDepositAmount] = useState(0);
+  const [transferRemaining, setTransferRemaining] = useState(0);
   const [frequentlyUsedAccounts, setFrequentlyUsedAccounts] = useState([]);
   const [designedAccounts, setDesignedAccounts] = useState([]);
+  const [openAlertDialog, setOpenAlertDialog] = useState(false);
 
   const openDrawer = useSelector(({ transfer }) => transfer.openDrawer);
   const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
@@ -119,18 +122,19 @@ const Transfer = () => {
       }
     }
 
-    // 轉帳時間若未選取，預設此時
-    if (!data.transactionDate) data.transactionDate = new Date();
-    // if (data.transactionDate) data.transactionDate = new Date(data.transactionDate);
+    // 若沒有 transactionDate 代表用戶選擇預約多次轉帳，套用用戶選擇的日期範圍
+    if (!data.transactionDate) data.transactionDate = transactionDateRange;
 
     // 刪除驗證用的選項
     delete data.transferOption;
 
     // console.log(data);
+
+    const displayInfo = { ...data, depositAmount, transferRemaining };
     // const { receivingAccount, transferAmount, transferType } = data;
     // const paramsObject = { receivingAccount, transferAmount, transferType };
     // const params = Object.keys(paramsObject).map((key) => `${key}=${paramsObject[key]}`).join('&');
-    directTo(history, 'transfer1', data);
+    directTo(history, 'transfer1', displayInfo);
   };
 
   const handleOpenFrequentlyUsedList = () => {
@@ -140,6 +144,20 @@ const Transfer = () => {
   const handleOpenDesignatedList = () => {
     dispatch(setOpenDrawer({ ...openDrawer, title: '約定帳號', open: true }));
   };
+
+  const handleCloseAlertDialog = () => {
+    setOpenAlertDialog(false);
+    setTabId('transfer');
+  };
+
+  const renderAlertDialog = () => (
+    <Dialog
+      isOpen={openAlertDialog}
+      onClose={handleCloseAlertDialog}
+      content={<p>尚未設定約定帳號，請至各分行臨櫃申請</p>}
+      action={<FEIBButton onClick={handleCloseAlertDialog}>確認</FEIBButton>}
+    />
+  );
 
   const renderCards = (debitCards) => (
     debitCards.map((card, index) => {
@@ -318,7 +336,6 @@ const Transfer = () => {
     </div>
   );
 
-  // TODO: 補日期範圍選擇器判斷與轉帳確認顯示結果
   const renderReserveOption = () => (
     <div className="reserveOption">
       <FEIBInputLabel htmlFor="transactionNumber">交易次數</FEIBInputLabel>
@@ -365,9 +382,9 @@ const Transfer = () => {
           <div className="dateRangePickerArea">
             <DateRangePicker
               label="交易時間"
-              date={[selectedDate, selectedDate]}
+              date={transactionDateRange}
               {...datePickerLimit}
-              // onClick={(range) => console.log(range)}
+              onClick={(range) => setTransactionDateRange(range)}
             />
           </div>
         )
@@ -396,32 +413,34 @@ const Transfer = () => {
   }, []);
 
   useEffect(() => {
-    if (watch('transferType') === 'reserve') {
-      // 若轉帳類型為 "預約"，顯示 "預約轉帳的子選項" UI
-      setShowReserveOption(true);
-    } else {
-      // 否則取消註冊 "預約轉帳子選項" 的多項表單值，且不顯示 "預約轉帳的子選項" UI
-      unregister('transactionDate');
+    // 若轉帳類行為 "立即"，取消註冊 "預約轉帳子選項" 的多項表單值，且不顯示 "預約轉帳的子選項" UI
+    if (watch('transferType') === 'now') {
+      setValue('transactionDate', new Date());
       unregister('transactionCycle');
       unregister('transactionNumber');
       unregister('transactionFrequency');
       setShowReserveOption(false);
     }
-  }, [watch('transferType')]);
 
-  useEffect(() => {
-    if (watch('transactionNumber') === 'many') {
-      // 若交易次數為 "多次"，顯示 "預約多次交易的子選項" UI
-      setShowReserveMoreOption(true);
-      setDatePickerType('range');
-    } else {
-      // 否則取消註冊 "預約多次交易的子選項" 的兩項表單值，且不顯示 "預約多次交易的子選項" UI
-      unregister('transactionCycle');
-      unregister('transactionFrequency');
-      setShowReserveMoreOption(false);
-      setDatePickerType('single');
+    // 若轉帳類型為 "預約"，顯示 "預約轉帳的子選項" UI
+    if (watch('transferType') === 'reserve') {
+      setShowReserveOption(true);
+
+      // 若轉帳類型為 "預約" 且轉帳次數為 "多次"，取消註冊 "轉帳日期" 表單值，並顯示 "週期" 及 "頻率"  UI
+      if (watch('transactionNumber') === 'many') {
+        unregister('transactionDate');
+        setShowReserveMoreOption(true);
+        setDatePickerType('range');
+      } else {
+        // 否則取消註冊 "週期" 及 "頻率" 表單值、預設轉帳日期為明日，並取消顯示 "週期" 及 "頻率" UI
+        unregister('transactionCycle');
+        unregister('transactionFrequency');
+        setShowReserveMoreOption(false);
+        setDatePickerType('single');
+        setValue('transactionDate', selectedDate);
+      }
     }
-  }, [watch('transactionNumber')]);
+  }, [watch('transferType'), watch('transactionNumber')]);
 
   useEffect(() => {
     if (!watch('transactionFrequency')) {
@@ -460,9 +479,13 @@ const Transfer = () => {
 
     // 若當前頁面為約定轉帳
     if (watch('transferOption') === 'designated') {
+      // 若約定帳號列表為空，開啟提示彈窗
+      if (designedAccounts.length === 0) setOpenAlertDialog(true);
       // 若約定帳號列表不威空，將約定帳號清單內的第一筆設置為預設的轉帳對象，並開啟約定帳號 Drawer UI
-      if (designedAccounts.length) setSelectTransferMember({ ...selectTransferMember, designed: designedAccounts[0] });
-      handleOpenDesignatedList();
+      if (designedAccounts.length) {
+        setSelectTransferMember({ ...selectTransferMember, designed: designedAccounts[0] });
+        handleOpenDesignatedList();
+      }
     }
   }, [watch('transferOption')]);
 
@@ -489,6 +512,7 @@ const Transfer = () => {
     if (cards.length && selectCardId) {
       const card = cards.find((item) => item.id === selectCardId);
       setDepositAmount(card.cardBalance);
+      setTransferRemaining(card.interbankTransferRemaining);
     }
   }, [cards, selectCardId]);
 
@@ -586,6 +610,7 @@ const Transfer = () => {
         </FEIBTabContext>
       </div>
       <TransferDrawer setTabId={setTabId} />
+      { openAlertDialog && renderAlertDialog() }
     </TransferWrapper>
   );
 };
