@@ -3759,7 +3759,7 @@
   },
   "depositPlus": {
     "name": "DepositPlus",
-    "title": "優惠定額明細",
+    "title": "優惠利率額度",
     "route": "/depositPlus"
   },
   "billPay":{

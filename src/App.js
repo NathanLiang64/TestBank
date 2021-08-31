@@ -2,9 +2,10 @@ import { Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import Header from 'components/Header';
 import TabBar from 'components/TabBar';
-// import ShakeShake from 'pages/ShakeShake';
 import PasswordDrawer from 'components/PasswordDrawer';
 import Spinner from 'components/Spinner';
+// import ShakeShake from 'pages/ShakeShake';
+import Favorite from 'pages/Favorite';
 import routes from 'routes';
 
 /* Store */
@@ -26,6 +27,7 @@ const App = () => (
       </Switch>
       <TabBar />
       {/* <ShakeShake /> */}
+      <Favorite />
       <PasswordDrawer />
     </PersistGate>
     <Spinner />
