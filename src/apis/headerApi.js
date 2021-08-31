@@ -113,6 +113,9 @@ const pageInfo = {
   foreignCurrencyAccounts: {
     title: '帳戶',
   },
+  regularBasicInformation: {
+    title: '六個月基本資料變更',
+  },
 };
 
 // 取得頁面資訊

@@ -24,29 +24,31 @@ const BasicInformation1 = () => {
 
   return (
     <BasicInformationWrapper>
-      <div className="stateArea">
-        <div className="stateImage">
-          <img src={isSuccess ? SuccessImage : ErrorImage} alt="Success" />
+      <form>
+        <div className="stateArea">
+          <div className="stateImage">
+            <img src={isSuccess ? SuccessImage : ErrorImage} alt="Success" />
+          </div>
+          {
+            isSuccess
+              ? (
+                <>
+                  <h3 className="stateText success">變更成功</h3>
+                  <div className="stateContent">您已成功變更基本資料！</div>
+                </>
+              )
+              : (
+                <>
+                  <h3 className="stateText error">變更失敗</h3>
+                  <div className="stateContent">變更基本資料失敗！</div>
+                </>
+              )
+          }
         </div>
-        {
-          isSuccess
-            ? (
-              <>
-                <h3 className="stateText success">變更成功</h3>
-                <div className="stateContent">您已成功變更基本資料！</div>
-              </>
-            )
-            : (
-              <>
-                <h3 className="stateText error">變更失敗</h3>
-                <div className="stateContent">變更基本資料失敗！</div>
-              </>
-            )
-        }
-      </div>
-      <FEIBButton onClick={toProfile}>
-        確認
-      </FEIBButton>
+        <FEIBButton onClick={toProfile}>
+          確認
+        </FEIBButton>
+      </form>
     </BasicInformationWrapper>
   );
 };

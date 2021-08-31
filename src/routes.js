@@ -53,6 +53,9 @@ import FinancialDepartments from 'pages/FinancialDepartments';
 import Network from 'pages/Network';
 import SecuritiesSwapAccounts from 'pages/SecuritiesSwapAccounts';
 import ForeignCurrencyAccounts from 'pages/ForeignCurrencyAccounts';
+import RegularBasicInformation from 'pages/RegularBasicInformation';
+import RegularBasicInformation1 from 'pages/RegularBasicInformation/regularBasicInformation_1';
+import RegularBasicInformation2 from 'pages/RegularBasicInformation/regularBasicInformation_2';
 
 /* 開發用目錄頁 */
 import Nav from 'pages/Nav';
@@ -113,6 +116,9 @@ const routes = [
   { path: '/network', exact: false, component: Network },
   { path: '/securitiesSwapAccounts', exact: false, component: SecuritiesSwapAccounts },
   { path: '/foreignCurrencyAccounts', exact: false, component: ForeignCurrencyAccounts },
+  { path: '/regularBasicInformation', exact: false, component: RegularBasicInformation },
+  { path: '/regularBasicInformation1', exact: false, component: RegularBasicInformation1 },
+  { path: '/regularBasicInformation2', exact: false, component: RegularBasicInformation2 },
 ];
 
 export default routes;
