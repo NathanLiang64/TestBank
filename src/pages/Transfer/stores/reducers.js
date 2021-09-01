@@ -2,7 +2,15 @@ import * as types from './types';
 
 const initState = {
   openDrawer: { title: '常用帳號', content: '', open: false },
-  clickMoreOptions: { click: false, button: '', target: null },
+  clickMoreOptions: {
+    click: false,
+    button: '',
+    target: null,
+    select: { click: false, target: null },
+    add: { click: false, target: null },
+    edit: { click: false, target: null },
+    remove: { click: false, target: null },
+  },
 };
 
 const reducers = (state = initState, action) => {

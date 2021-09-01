@@ -12,8 +12,8 @@
 
 ## 進行中
 - 生物辨識登入設定（流程調整）- 唯物
-- 轉帳 (Transfer) - 聖森
-- 存款優惠利率額度 (DepositPlus) - 聖森 (待設計稿確認)
+- 我的最愛 (Favorite) - 聖森
+- 優惠利率額度 (DepositPlus) - 聖森
 - 元件封裝 - 唯物 & 聖森
 
 ---
@@ -29,6 +29,7 @@
   - 圖形密碼登入設定 (PatternLockSetting) - 聖森
   - 信用卡繳費 (BillPay) - 聖森
   - 金融卡掛失補發 (LossReissue) - 聖森
+  - 轉帳 (Transfer) - 聖森
   - JWE & JWT 加密 - 聖森
   - 登入頁 (Login) - 聖森
   - 無卡提款 - 唯物

@@ -9,9 +9,12 @@ export const toCurrency = (number) => {
   return parts.join('.');
 };
 
+// 將帳號轉為指定字數間帶有分隔符 (-) 之顯示方式
+export const accountFormatter = (account) => `${account.slice(0, 3)}-${account.slice(3, 6)}-${account.slice(6)}`;
+
 // 將日期格式轉為 YYYY/MM/DD 字串
 export const dateFormatter = (date) => {
-  if (typeof date === 'string') date = new Date(date);
+  date = new Date(date);
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
   const day = date.getDate().toString().padStart(2, '0');
@@ -36,6 +39,7 @@ export const stringDateFormatter = (stringDate) => {
 
 // 將時間格式轉為 HH:DD 字串
 export const timeFormatter = (time) => {
+  time = new Date(time);
   const hour = time.getHours().toString().padStart(2, '0');
   const minute = time.getMinutes().toString().padStart(2, '0');
   return `${hour}:${minute}`;
@@ -46,6 +50,28 @@ export const countdownTimerFormatter = (count) => {
   const min = Math.floor(count / 60);
   const sec = count % 60;
   return `${min < 10 ? `0${min}` : min}:${sec < 10 ? `0${sec}` : sec}`;
+};
+
+// 將數字 1-7 轉為中文大寫
+export const weekNumberToChinese = (value) => {
+  switch (parseInt(value, 10)) {
+    case 1:
+      return '一';
+    case 2:
+      return '二';
+    case 3:
+      return '三';
+    case 4:
+      return '四';
+    case 5:
+      return '五';
+    case 6:
+      return '六';
+    case 7:
+      return '日';
+    default:
+      return '';
+  }
 };
 
 // 將拉阿伯數字轉換為中文大寫

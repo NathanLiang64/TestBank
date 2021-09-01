@@ -20,7 +20,9 @@ import DateRangePickerWrapper from './dateRangePicker.style';
 *    該 function 可以接收一個任意參數，透過該參數將可取得所選的日期範圍
 * */
 
-const DateRangePicker = ({ label, date, onClick }) => {
+const DateRangePicker = ({
+  label, date, onClick, minDate, maxDate,
+}) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [dateRangeText, setDateRangeText] = useState('');
   const [dateRange, setDateRange] = useState({
@@ -85,6 +87,8 @@ const DateRangePicker = ({ label, date, onClick }) => {
               startDatePlaceholder="起始日期"
               endDatePlaceholder="結束日期"
               dateDisplayFormat="yyyy/MM/dd"
+              minDate={minDate}
+              maxDate={maxDate}
             />
             <div className="buttons">
               <Button className="cancel" onClick={() => setShowDatePicker(false)}>取消</Button>

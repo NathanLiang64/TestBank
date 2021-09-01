@@ -8,6 +8,7 @@ import { reducers as depositOverviewReducer } from 'pages/DepositOverview/stores
 import { reducers as depositInquiryReducer } from 'pages/DepositInquiry/stores';
 import { reducers as shakeShakeReducer } from 'pages/ShakeShake/stores';
 import { reducers as transferReducer } from 'pages/Transfer/stores';
+import { reducers as favoriteReducer } from 'pages/Favorite/stores';
 import { reducers as passwordDrawerReducer } from 'components/PasswordDrawer/stores';
 import { reducers as spinnerReducer } from 'components/Spinner/stores';
 
@@ -21,6 +22,7 @@ const reducer = combineReducers({
   depositInquiry: depositInquiryReducer,
   shakeShake: shakeShakeReducer,
   transfer: transferReducer,
+  favorite: favoriteReducer,
   passwordDrawer: passwordDrawerReducer,
   spinner: spinnerReducer,
 });

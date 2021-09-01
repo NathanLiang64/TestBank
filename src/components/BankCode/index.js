@@ -5,10 +5,12 @@ import { bankList as taiwanBankList } from 'taiwan-bank-data';
 import { FEIBIconButton, FEIBInput, FEIBInputLabel } from 'components/elements';
 import theme from 'themes/theme';
 import BankCodeWrapper from './bankCode.style';
+import { doGetInitData } from '../../apis/transferApi';
 
 const BankCode = ({ isOpen, onClose, onSelect }) => {
   const [searchValue, setSearchValue] = useState('');
   const [bankList, setBankList] = useState(taiwanBankList);
+  const [favoriteBankList, setFavoriteBankList] = useState([]);
 
   const handleClickBankItem = (event) => {
     // 初始化
@@ -26,6 +28,11 @@ const BankCode = ({ isOpen, onClose, onSelect }) => {
     // onSelect(`${selectedBank[1]} ${selectedBank[0]}`);
     onClose();
   };
+
+  useEffect(async () => {
+    const response = await doGetInitData('/api/getFavoriteBankCodeList');
+    if (response.favoriteBankCodeList) setFavoriteBankList(response.favoriteBankCodeList);
+  }, []);
 
   useEffect(() => {
     if (searchValue) {
@@ -59,19 +66,12 @@ const BankCode = ({ isOpen, onClose, onSelect }) => {
       <DialogContent>
         <ul>
           <li>常用銀行</li>
-          <li>
-            <p>遠東銀行</p>
-            <span>805</span>
-          </li>
-          {/* { TODO: 最近10筆裡面最常使用的兩家銀行；若最近十筆都是不同的銀行 (No.2 & No.3 次數相同) ，隨User使用次數把資料帶回來，預設是遠銀 } */}
-          <li>
-            <p>匯豐銀行</p>
-            <span>081</span>
-          </li>
-          <li>
-            <p>台灣企銀</p>
-            <span>050</span>
-          </li>
+          { favoriteBankList.map((item) => (
+            <li key={item.bankNo} data-code={item.bankNo} onClick={handleClickBankItem}>
+              <p>{item.bankName}</p>
+              <span>{item.bankNo}</span>
+            </li>
+          )) }
         </ul>
 
         <ul>

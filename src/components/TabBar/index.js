@@ -1,4 +1,5 @@
 import { useHistory } from 'react-router';
+import { useDispatch } from 'react-redux';
 import { logout } from 'apis/authApi';
 
 import TransferImage from 'assets/images/tabBarIcons/transfer.svg';
@@ -11,10 +12,12 @@ import QRCodeImage from 'assets/images/tabBarIcons/qrCode.svg';
 import CardLessATMImage from 'assets/images/tabBarIcons/cardlessATM.svg';
 import ArrowImage from 'assets/images/tabBarIcons/arrow.svg';
 import AvatarImage from 'assets/images/tabBarIcons/Navigation_member.png';
+import { setOpenFavoriteDrawer } from 'pages/Favorite/stores/actions';
 import TabBarWrapper from './tabBar.style';
 
 const TabBar = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
   const tabButtonList = [
     {
       id: 0,
@@ -32,7 +35,7 @@ const TabBar = () => {
       id: 2,
       label: '最愛',
       img: FavoriteImage,
-      route: '',
+      route: 'favorite',
     },
     {
       id: 3,
@@ -87,6 +90,10 @@ const TabBar = () => {
         // eslint-disable-next-line no-alert
         alert(logoutResponse.message);
       }
+      return;
+    }
+    if (item.route === 'favorite') {
+      dispatch(setOpenFavoriteDrawer(true));
       return;
     }
     if (item.route) {

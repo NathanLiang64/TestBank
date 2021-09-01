@@ -18,7 +18,7 @@ const pageInfo = {
     title: '交易明細',
   },
   depositPlus: {
-    title: '優惠定額明細',
+    title: '優惠利率額度',
   },
   billPay: {
     title: '信用卡繳費',
@@ -112,6 +112,9 @@ const pageInfo = {
   },
   foreignCurrencyAccounts: {
     title: '帳戶',
+  },
+  regularBasicInformation: {
+    title: '六個月基本資料變更',
   },
 };
 
