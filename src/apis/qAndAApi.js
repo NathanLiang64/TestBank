@@ -1,11 +1,19 @@
 import userAxios from './axiosConfig';
 
-const getTabs = (apiUrl) => (
-  userAxios.get(apiUrl)
-    .then((response) => response.data)
-    .catch((error) => error.response)
-);
+// 取得常見問題主類別
+export const getQACategory = async (param) => {
+  const response = await userAxios
+    .post('/api/setting/queryQACat', param)
+    .then((data) => data)
+    .catch((err) => err);
+  return response;
+};
 
-export {
-  getTabs,
+// 取得常見問題子類別
+export const getQASubCategory = async (param) => {
+  const response = await userAxios
+    .post('/api/setting/queryQASubCat', param)
+    .then((data) => data)
+    .catch((err) => err);
+  return response;
 };

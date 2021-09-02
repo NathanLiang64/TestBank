@@ -4216,6 +4216,40 @@
       }
     ]
   },
+  "getFavoriteList": {
+    "favoriteList": [
+      {
+        "id": "1",
+        "label": "推薦碼分享",
+        "icon": "share",
+        "route": ""
+      },
+      {
+        "id": "2",
+        "label": "優惠",
+        "icon": "gift",
+        "route": ""
+      },
+      {
+        "id": "3",
+        "label": "申請信用卡",
+        "icon": "applyCreditCard",
+        "route": ""
+      },
+      {
+        "id": "4",
+        "label": "無卡提款",
+        "icon": "cardLess",
+        "route": ""
+      },
+      {
+        "id": "5",
+        "label": "數存會員升級(立即驗)",
+        "icon": "eBank",
+        "route": ""
+      }
+    ]
+  },
   "profile": {
     "name": "Profile",
     "title": "個人化設定",
