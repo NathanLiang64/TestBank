@@ -116,6 +116,9 @@ const pageInfo = {
   regularBasicInformation: {
     title: '六個月基本資料變更',
   },
+  exportBankBook: {
+    title: '匯出存摺',
+  },
 };
 
 // 取得頁面資訊
