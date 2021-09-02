@@ -56,7 +56,7 @@ const DateRangePicker = ({
     if (date.length > 0) {
       setDateRangeToString(date);
     }
-  }, []);
+  }, [date]);
 
   return (
     <DateRangePickerWrapper>

@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useCheckLocation, usePageInfo } from 'hooks';
-import { getTabs } from 'apis/qAndAApi';
+import { qAndAApi } from 'apis';
 
 /* Elements */
 import {
@@ -19,11 +20,17 @@ const QandA = () => {
   const [qAcontent, setQAcontent] = useState([]);
 
   const getQAContent = async (key) => {
-    const { initData } = await getTabs('/api/qAndA');
-    const result = initData.tabContent
-      .find((item) => item.key === Number(key))
-      .contentList;
-    setQAcontent(result);
+    console.log(key);
+    // const { initData } = await getTabs('/api/qAndA');
+    // const result = initData.tabContent
+    //   .find((item) => item.key === Number(key))
+    //   .contentList;
+    // setQAcontent(result);
+  };
+
+  const getQATab = async () => {
+    const tabResponse = await qAndAApi.getQACategory({});
+    console.log(tabResponse);
   };
 
   const handleTabChange = (event, type) => {
@@ -53,10 +60,7 @@ const QandA = () => {
   usePageInfo('/api/qAndA');
 
   useEffect(async () => {
-    // 取得 tabs
-    const response = await getTabs('/api/qAndA');
-    setTabs(response.initData.tabs);
-    getQAContent(0);
+    getQATab();
   }, []);
 
   return (

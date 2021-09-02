@@ -46,7 +46,7 @@ const tabPageList = {
       {
         value: '8',
         label: '匯出存摺',
-        route: '',
+        route: '/exportBankBook',
       },
     ],
   },
