@@ -1,6 +1,6 @@
 import userAxios from './axiosConfig';
 
-// 取得常見問題主類別
+// 取得常見問題主類別 done
 export const getQACategory = async (param) => {
   const response = await userAxios
     .post('/api/setting/queryQACat', param)
@@ -9,7 +9,7 @@ export const getQACategory = async (param) => {
   return response;
 };
 
-// 取得常見問題子類別
+// 取得常見問題子類別 done
 export const getQASubCategory = async (param) => {
   const response = await userAxios
     .post('/api/setting/queryQASubCat', param)

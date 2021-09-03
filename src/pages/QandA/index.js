@@ -1,6 +1,6 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useCheckLocation, usePageInfo } from 'hooks';
+import parse from 'html-react-parser';
 import { qAndAApi } from 'apis';
 
 /* Elements */
@@ -8,72 +8,95 @@ import {
   FEIBTabContext,
   FEIBTabList,
   FEIBTab,
-  FEIBTabPanel,
 } from 'components/elements';
 import Accordion from 'components/Accordion';
 /* Styles */
 import QandAWrapper from './QandA.style';
 
 const QandA = () => {
+  const [show, setShow] = useState(false);
   const [tabs, setTabs] = useState([]);
-  const [tabValue, setTabValue] = useState('0');
-  const [qAcontent, setQAcontent] = useState([]);
+  const [tabValue, setTabValue] = useState('會員申請');
+  const [qAcontent, setQAcontent] = useState([{
+    title: '--',
+    subItems: [
+      {
+        question: '--',
+        answer: '--',
+      },
+    ],
+  }]);
 
-  const getQAContent = async (key) => {
-    console.log(key);
-    // const { initData } = await getTabs('/api/qAndA');
-    // const result = initData.tabContent
-    //   .find((item) => item.key === Number(key))
-    //   .contentList;
-    // setQAcontent(result);
+  const getQAContent = async (cat) => {
+    const param = { cat };
+    const qaContentResponse = await qAndAApi.getQASubCategory(param);
+    // eslint-disable-next-line no-console
+    console.log('取得 QA 內容回傳', qaContentResponse);
+    setQAcontent(qaContentResponse);
+    setShow(true);
   };
 
   const getQATab = async () => {
     const tabResponse = await qAndAApi.getQACategory({});
-    console.log(tabResponse);
+    // eslint-disable-next-line no-console
+    console.log('取得 QA 分類回傳', tabResponse);
+    setTabs(tabResponse);
+    setTabValue(tabResponse[0]);
   };
 
   const handleTabChange = (event, type) => {
-    setTabValue(type);
-    getQAContent(type);
+    if (type !== tabValue) {
+      setTabValue(type);
+    }
   };
 
   const renderTabs = () => (
     <FEIBTabList onChange={handleTabChange} $size="small" $type="fixed">
       {
         tabs.map((item) => (
-          <FEIBTab key={item.key} label={item.tabLabel} value={item.key.toString()} />
+          <FEIBTab key={item} label={item} value={item} />
         ))
       }
     </FEIBTabList>
   );
 
+  const renderAccordion = (subItems) => (
+    subItems.map((item) => (
+      <Accordion title={item.question} key={item.question} className="customAccordion">
+        { parse(item.answer) }
+      </Accordion>
+    ))
+  );
+
   const renderQAContent = () => (
     qAcontent.map((item) => (
-      <Accordion title={item.label} key={item.key} space="bottom" open={Number(item.key) === 0}>
-        {item.content}
-      </Accordion>
+      <div key={item.title}>
+        <div className="subTitle">
+          { item.title }
+        </div>
+        { renderAccordion(item.subItems) }
+      </div>
     ))
   );
 
   useCheckLocation();
   usePageInfo('/api/qAndA');
 
-  useEffect(async () => {
+  useEffect(() => {
     getQATab();
   }, []);
+
+  useEffect(() => {
+    getQAContent(tabValue);
+  }, [tabValue]);
 
   return (
     <QandAWrapper>
       <FEIBTabContext value={tabValue}>
         { renderTabs() }
-        {
-          tabs.map((item) => (
-            <FEIBTabPanel key={item.key} value={item.key.toString()}>
-              { renderQAContent() }
-            </FEIBTabPanel>
-          ))
-        }
+        <div style={{ visibility: show ? 'visible' : 'hidden' }}>
+          { renderQAContent() }
+        </div>
       </FEIBTabContext>
     </QandAWrapper>
   );

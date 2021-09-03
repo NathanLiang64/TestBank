@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import SuccessImage from 'assets/images/stateSuccess.svg';
@@ -11,9 +12,9 @@ import {
 /* Styles */
 import BasicInformationWrapper from './basicInformation.style';
 
-const BasicInformation1 = () => {
+const BasicInformation1 = ({ location }) => {
   const history = useHistory();
-  const isSuccess = false;
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const toProfile = () => {
     history.push('/profile');
@@ -21,6 +22,10 @@ const BasicInformation1 = () => {
 
   useCheckLocation();
   usePageInfo('/api/basicInformation');
+
+  useEffect(() => {
+    setIsSuccess(location.state.data);
+  }, []);
 
   return (
     <BasicInformationWrapper>
