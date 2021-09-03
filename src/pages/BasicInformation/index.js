@@ -52,8 +52,9 @@ const BasicInformation = () => {
   });
 
   // 跳轉結果頁
-  const toResultPage = () => {
-    history.push('/basicInformation1');
+  const toResultPage = (param) => {
+    const data = 'mobilePhone' in param;
+    history.push('/basicInformation1', { data });
   };
 
   // 取得縣市列表
@@ -86,9 +87,10 @@ const BasicInformation = () => {
       mailAddr: data.email,
       mobilePhone: data.mobile,
     };
+    console.log(param);
     const modifyDataResponse = await basicInformationApi.modifyBasicInformation(param);
     console.log('更新基本資料回傳', modifyDataResponse);
-    toResultPage();
+    toResultPage(modifyDataResponse);
   };
 
   // 點擊儲存變更按鈕
