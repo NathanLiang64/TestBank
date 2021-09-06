@@ -12,7 +12,7 @@ import QRCodeImage from 'assets/images/tabBarIcons/qrCode.svg';
 import CardLessATMImage from 'assets/images/tabBarIcons/cardlessATM.svg';
 import ArrowImage from 'assets/images/tabBarIcons/arrow.svg';
 import AvatarImage from 'assets/images/tabBarIcons/Navigation_member.png';
-import { setOpenFavoriteDrawer } from 'pages/Favorite/stores/actions';
+import { setDrawerContent, setOpenFavoriteDrawer } from 'pages/Favorite/stores/actions';
 import TabBarWrapper from './tabBar.style';
 
 const TabBar = () => {
@@ -94,6 +94,7 @@ const TabBar = () => {
     }
     if (item.route === 'favorite') {
       dispatch(setOpenFavoriteDrawer(true));
+      dispatch(setDrawerContent(''));
       return;
     }
     if (item.route) {

@@ -1,10 +1,13 @@
 import styled from 'styled-components';
 
 const FavoriteDrawerWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  padding: 0 1.6rem;
+  
+  .defaultPage {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 0 1.6rem;
+  }
   
   .editButton {
     display: inline-flex;
@@ -79,6 +82,37 @@ const FavoriteDrawerWrapper = styled.div`
     65% {transform: scale(1); }
     80% {transform: scale(1.2); }
     100% {transform: scale(1); }
+  }
+  
+  // 新增我的最愛頁面
+  .addFavoritePage {
+    padding: 0 1.6rem 1.6rem 1.6rem;
+    
+    .MuiTab-root {
+      padding: 0 .8rem;
+    }
+    
+    .mainContent {
+      max-height: 74vh;
+      overflow: auto;
+    }
+    
+    section {
+      margin-bottom: 2.4rem;
+      
+      > .title {
+        margin-bottom: 1.2rem;
+        font-size: 1.6rem;
+        font-weight: 700;
+        text-align: center;
+      }
+    }
+    
+    .blockGroup {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: .8rem;
+    }
   }
 `;
 

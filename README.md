@@ -108,6 +108,7 @@
   - BankCode - 聖森
   - BankCodeInput - 聖森
   - BottomAction - 聖森
+  - FavoriteBlockButton - 聖森
   - PickerProviders - 唯物
   - Accordion - 唯物
   - Spinner - 唯物
