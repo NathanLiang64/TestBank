@@ -2,20 +2,12 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { EditRounded, RemoveRounded } from '@material-ui/icons';
 import BottomDrawer from 'components/BottomDrawer';
-import {
-  ShareIcon, GiftIcon, ApplyCreditCardIcon, CardLessIcon, EBankIcon,
-  // QRCodeTransferIcon,
-} from 'assets/images/icons';
-import { getFavoriteList } from 'apis/favoriteApi';
+import { getCustomFavoriteList } from 'apis/favoriteApi';
 import BlockEmpty from 'assets/images/favoriteBlock/blockEmpty.png';
-import BlockPink from 'assets/images/favoriteBlock/blockPink.svg';
-import BlockYellow from 'assets/images/favoriteBlock/blockYellow.svg';
-import BlockBlue from 'assets/images/favoriteBlock/blockBlue.svg';
-import BlockOrange from 'assets/images/favoriteBlock/blockOrange.svg';
-import BlockGreen from 'assets/images/favoriteBlock/blockGreen.svg';
-import BlockPurple from 'assets/images/favoriteBlock/blockPurple.svg';
+import Favorite1 from './favorite_1';
+import { setDrawerContent, setOpenFavoriteDrawer } from './stores/actions';
+import { blockBackgroundGenerator, iconGenerator } from './favoriteGenerator';
 import FavoriteDrawerWrapper from './favorite.style';
-import { setOpenFavoriteDrawer } from './stores/actions';
 
 const Favorite = () => {
   const [favoriteList, setFavoriteList] = useState(null);
@@ -23,45 +15,8 @@ const Favorite = () => {
   const [blockAmount, setBlockAmount] = useState(0);
   const [showRemoveButton, setShowRemoveButton] = useState(false);
   const openFavoriteDrawer = useSelector(({ favorite }) => favorite.openFavoriteDrawer);
+  const drawerContent = useSelector(({ favorite }) => favorite.drawerContent);
   const dispatch = useDispatch();
-
-  const iconGenerator = (name) => {
-    switch (name) {
-      case 'share':
-        return <ShareIcon />;
-      case 'gift':
-        return <GiftIcon />;
-      case 'applyCreditCard':
-        return <ApplyCreditCardIcon />;
-      case 'cardLess':
-        return <CardLessIcon />;
-      case 'eBank':
-        return <EBankIcon />;
-      case 'QRCodeTransfer':
-        return <EBankIcon />;
-      default:
-        return null;
-    }
-  };
-
-  const blockBackgroundGenerator = (index) => {
-    switch (index) {
-      case 1:
-        return BlockPink;
-      case 2:
-        return BlockYellow;
-      case 3:
-        return BlockBlue;
-      case 4:
-        return BlockOrange;
-      case 5:
-        return BlockGreen;
-      case 6:
-        return BlockPurple;
-      default:
-        return null;
-    }
-  };
 
   const handleCloseDrawer = () => {
     setShowRemoveButton(false);
@@ -79,13 +34,8 @@ const Favorite = () => {
   };
 
   const handleEditBlock = () => setShowRemoveButton(true);
-
-  const handleClickAddBlock = () => {
-    // console.log('新增最愛');
-  };
-
+  const handleClickAddBlock = () => dispatch(setDrawerContent('add'));
   const handleTouchStart = () => setPressTimer(setTimeout(handleEditBlock, 500));
-
   const handleTouchEnd = () => pressTimer && clearTimeout(pressTimer);
 
   /* eslint-disable react/no-array-index-key */
@@ -101,12 +51,58 @@ const Favorite = () => {
     ));
   };
 
+  // render 已設置的最愛項目，最愛項目總數為 6，前 2 項為預設存在 (不可編輯)，背景由 index + 3 開始渲染
+  const renderFavoriteBlocks = (blocks) => blocks.map((item, index) => (
+    <button type="button" key={item.id} data-id={item.id} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+      { showRemoveButton && <span className="removeButton" onClick={handleClickRemoveBlock}><RemoveRounded /></span> }
+      <img src={blockBackgroundGenerator(index + 3)} alt="block" />
+      <span className="icon">
+        {iconGenerator(item.icon)}
+      </span>
+      {item.label}
+    </button>
+  ));
+
+  const defaultContent = () => (
+    <div className="defaultPage">
+      <button type="button" className="editButton" onClick={handleOpenEditView}>
+        編輯
+        <EditRounded />
+      </button>
+
+      <div className="favoriteArea" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+        <button type="button">
+          <img src={blockBackgroundGenerator(1)} alt="block" />
+          <span className="icon">{iconGenerator('share')}</span>
+          推薦碼分享
+        </button>
+        <button type="button" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+          <img src={blockBackgroundGenerator(2)} alt="block" />
+          <span className="icon">{iconGenerator('gift')}</span>
+          優惠
+        </button>
+        { favoriteList && renderFavoriteBlocks(favoriteList) }
+        { blockAmount > 0 && renderEmptyBlocks(blockAmount) }
+      </div>
+    </div>
+  );
+
+  const drawerController = (content) => {
+    switch (content) {
+      case 'add':
+        return <Favorite1 />;
+      default:
+        return defaultContent();
+    }
+  };
+
   useEffect(() => {
-    getFavoriteList().then((response) => setFavoriteList(response.favoriteList));
+    getCustomFavoriteList().then((response) => setFavoriteList(response.customFavoriteList));
   }, []);
 
   useEffect(() => {
-    if (favoriteList) setBlockAmount(6 - favoriteList.length);
+    // 最愛項目總數為 6，前 2 項為預設存在 (不可編輯)，故取 4 項自訂最愛項目
+    if (favoriteList) setBlockAmount(4 - favoriteList.length);
   }, [favoriteList, blockAmount]);
 
   return (
@@ -116,25 +112,7 @@ const Favorite = () => {
       onClose={handleCloseDrawer}
       content={(
         <FavoriteDrawerWrapper>
-          <button type="button" className="editButton" onClick={handleOpenEditView}>
-            編輯
-            <EditRounded />
-          </button>
-
-          <div className="favoriteArea">
-            { favoriteList && favoriteList.map((item, index) => (
-              <button type="button" key={item.id} data-id={item.id} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-                { showRemoveButton && <span className="removeButton" onClick={handleClickRemoveBlock}><RemoveRounded /></span> }
-                <img src={blockBackgroundGenerator(index + 1)} alt="block" />
-                <span className="icon">
-                  {iconGenerator(item.icon)}
-                </span>
-                {item.label}
-              </button>
-            )) }
-
-            { blockAmount > 0 && renderEmptyBlocks(blockAmount) }
-          </div>
+          { drawerController(drawerContent) }
         </FavoriteDrawerWrapper>
       )}
     />

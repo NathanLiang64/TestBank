@@ -2,6 +2,7 @@ import * as types from './types';
 
 const initState = {
   openFavoriteDrawer: false,
+  drawerContent: '',
 };
 
 const reducers = (state = initState, action) => {
@@ -10,6 +11,11 @@ const reducers = (state = initState, action) => {
       return {
         ...state,
         openFavoriteDrawer: action.payload,
+      };
+    case types.SET_DRAWER_CONTENT:
+      return {
+        ...state,
+        drawerContent: action.payload,
       };
     default:
       return state;
