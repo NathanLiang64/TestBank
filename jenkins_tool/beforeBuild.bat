@@ -24,8 +24,8 @@ echo 當前工作目錄沒有node執行檔, 使用7z解壓縮
 :: 判斷當前工作目錄使否含有maven執行檔
 if exist apache-maven-3.8.1 (
 echo 當前工作目錄已含有maven執行檔, 開始執行%1包版...
-".\jenkins_tool\mavenBuild.bat" %1
+".\jenkins_tool\mavenBuild.bat" %1 & ".\jenkins_tool\afterBuild.bat" %1
 ) else (
 echo 當前工作目錄沒有maven執行檔, 使用7z解壓縮並開始執行%1包版...
-"c:\program files\7-zip\7z.exe" -y x ".\jenkins_tool\maven_for_react.7z" & ".\jenkins_tool\mavenBuild.bat" %1
+"c:\program files\7-zip\7z.exe" -y x ".\jenkins_tool\maven_for_react.7z" & ".\jenkins_tool\mavenBuild.bat" %1 & ".\jenkins_tool\afterBuild.bat" %1
 )
