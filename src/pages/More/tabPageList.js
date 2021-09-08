@@ -134,7 +134,7 @@ const tabPageList = {
       {
         value: '0',
         label: '換匯',
-        route: '',
+        route: '/exchange',
       },
       {
         value: '1',

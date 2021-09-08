@@ -90,7 +90,7 @@ const pageInfo = {
     title: '外幣換匯確認',
   },
   exchange2: {
-    title: '外幣換匯成功',
+    title: '外幣換匯結果',
   },
   transfer: {
     title: '轉帳',
