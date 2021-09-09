@@ -30,6 +30,18 @@ export const blockBackgroundGenerator = (index) => {
       return BlockGreen;
     case 6:
       return BlockPurple;
+    case 7:
+      return BlockPink;
+    case 8:
+      return BlockYellow;
+    case 9:
+      return BlockBlue;
+    case 10:
+      return BlockOrange;
+    case 11:
+      return BlockGreen;
+    case 12:
+      return BlockPurple;
     default:
       return null;
   }

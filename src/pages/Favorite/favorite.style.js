@@ -1,12 +1,13 @@
 import styled from 'styled-components';
 
 const FavoriteDrawerWrapper = styled.div`
+  margin-top: 2rem;
   
   .defaultPage {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    padding: 0 1.6rem;
+    padding: 0 1.6rem 4rem 1.6rem;
   }
   
   .editButton {
@@ -29,6 +30,8 @@ const FavoriteDrawerWrapper = styled.div`
     margin-top: 1.6rem;
     margin-bottom: 4rem;
     width: 100%;
+    max-height: calc(96vh - 12.6rem);
+    overflow-y: auto;
     
     button {
       display: flex;
@@ -85,7 +88,8 @@ const FavoriteDrawerWrapper = styled.div`
   }
   
   // 新增我的最愛頁面
-  .addFavoritePage {
+  .addFavoritePage,
+  .editFavoritePage {
     padding: 0 1.6rem 1.6rem 1.6rem;
     
     .MuiTab-root {
@@ -93,8 +97,8 @@ const FavoriteDrawerWrapper = styled.div`
     }
     
     .mainContent {
-      max-height: 74vh;
-      overflow: auto;
+      max-height: calc(96vh - 12.6rem);
+      overflow-y: auto;
     }
     
     section {
@@ -113,6 +117,20 @@ const FavoriteDrawerWrapper = styled.div`
       grid-template-columns: repeat(3, 1fr);
       grid-gap: .8rem;
     }
+    
+    .tipArea {
+      margin-bottom: 2.4rem;
+      padding: 1.6rem;
+      border-radius: .8rem;
+      text-align: center;
+      font-size: 1.4rem;
+      background: ${({ theme }) => theme.colors.background.lighterBlue};
+    }
+  }
+  
+  .editFavoritePage .mainContent {
+    max-height: calc(96vh - 20.2rem);
+    padding-bottom: 6rem;
   }
 `;
 
