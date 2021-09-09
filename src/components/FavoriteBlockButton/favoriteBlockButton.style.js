@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 const FavoriteBlockButtonStyle = styled.button.attrs({
   type: 'button',
-  className: 'favoriteBlockButton',
 })`
   display: flex;
   flex-direction: column;
@@ -13,12 +12,16 @@ const FavoriteBlockButtonStyle = styled.button.attrs({
   border-radius: .8rem;
   transition: all .2s;
 
-  &:hover {
+  &.selected {
     border-color: ${({ theme }) => theme.colors.primary.light};
     background: ${({ theme }) => theme.colors.primary.light};
     
     p, span {
       color: ${({ theme }) => theme.colors.basic.white};
+    }
+
+    .selectedIcon {
+      display: block;
     }
   }
   
@@ -46,6 +49,15 @@ const FavoriteBlockButtonStyle = styled.button.attrs({
     align-items: center;
     font-size: 3.2rem;
     color: ${({ theme }) => theme.colors.primary.light};
+  }
+  
+  .selectedIcon {
+    display: none;
+    position: absolute;
+    top: .8rem;
+    left: .8rem;
+    font-size: 1.4rem;
+    color: ${({ theme }) => theme.colors.basic.white};
   }
 `;
 
