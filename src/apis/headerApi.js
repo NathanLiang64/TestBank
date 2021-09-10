@@ -119,6 +119,15 @@ const pageInfo = {
   exportBankBook: {
     title: '匯出存摺',
   },
+  foreignCurrencyTransfer: {
+    title: '外幣轉帳',
+  },
+  foreignCurrencyTransfer1: {
+    title: '外幣轉帳確認',
+  },
+  foreignCurrencyTransfer2: {
+    title: '外幣轉帳結果',
+  },
 };
 
 // 取得頁面資訊

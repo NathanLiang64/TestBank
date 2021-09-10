@@ -58,6 +58,9 @@ import RegularBasicInformation1 from 'pages/RegularBasicInformation/regularBasic
 import RegularBasicInformation2 from 'pages/RegularBasicInformation/regularBasicInformation_2';
 import ExportBankBook from 'pages/ExportBankBook';
 import ExportBankBook1 from 'pages/ExportBankBook/exportBankBook_1';
+import ForeignCurrencyTransfer from 'pages/ForeignCurrencyTransfer';
+import ForeignCurrencyTransfer1 from 'pages/ForeignCurrencyTransfer/foreignCurrencyTransfer_1';
+import ForeignCurrencyTransfer2 from 'pages/ForeignCurrencyTransfer/foreignCurrencyTransfer_2';
 
 /* 開發用目錄頁 */
 import Nav from 'pages/Nav';
@@ -123,6 +126,9 @@ const routes = [
   { path: '/regularBasicInformation2', exact: false, component: RegularBasicInformation2 },
   { path: '/exportBankBook', exact: false, component: ExportBankBook },
   { path: '/exportBankBook1', exact: false, component: ExportBankBook1 },
+  { path: '/foreignCurrencyTransfer', exact: false, component: ForeignCurrencyTransfer },
+  { path: '/foreignCurrencyTransfer1', exact: false, component: ForeignCurrencyTransfer1 },
+  { path: '/foreignCurrencyTransfer2', exact: false, component: ForeignCurrencyTransfer2 },
 ];
 
 export default routes;
