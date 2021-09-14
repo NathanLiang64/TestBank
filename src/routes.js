@@ -61,6 +61,9 @@ import ExportBankBook1 from 'pages/ExportBankBook/exportBankBook_1';
 import ForeignCurrencyTransfer from 'pages/ForeignCurrencyTransfer';
 import ForeignCurrencyTransfer1 from 'pages/ForeignCurrencyTransfer/foreignCurrencyTransfer_1';
 import ForeignCurrencyTransfer2 from 'pages/ForeignCurrencyTransfer/foreignCurrencyTransfer_2';
+import ReserveTransferSearch from 'pages/ReserveTransferSearch';
+import ReserveTransferSearch1 from 'pages/ReserveTransferSearch/reserveTransferSearch_1';
+import ReserveTransferSearch2 from 'pages/ReserveTransferSearch/reserveTransferSearch_2';
 
 /* 開發用目錄頁 */
 import Nav from 'pages/Nav';
@@ -129,6 +132,9 @@ const routes = [
   { path: '/foreignCurrencyTransfer', exact: false, component: ForeignCurrencyTransfer },
   { path: '/foreignCurrencyTransfer1', exact: false, component: ForeignCurrencyTransfer1 },
   { path: '/foreignCurrencyTransfer2', exact: false, component: ForeignCurrencyTransfer2 },
+  { path: '/reserveTransferSearch', exact: false, component: ReserveTransferSearch },
+  { path: '/reserveTransferSearch1', exact: false, component: ReserveTransferSearch1 },
+  { path: '/reserveTransferSearch2', exact: false, component: ReserveTransferSearch2 },
 ];
 
 export default routes;

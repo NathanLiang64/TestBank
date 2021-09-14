@@ -68,7 +68,7 @@ const ForeignCurrencyTransfer2 = () => {
                 畫面截圖
               </button>
               <div className="divider" />
-              <button type="button" onClick={() => window.alert('call 原生分享')}>
+              <button type="button" onClick={() => window.alert('跳轉查詢明細')}>
                 <ShareOutlined />
                 查詢明細
               </button>

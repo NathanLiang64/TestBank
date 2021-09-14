@@ -12,6 +12,7 @@ import * as basicInformationApi from './basicInformationApi';
 import * as changeUserNameApi from './changeUserNameApi';
 import * as pwdModifyApi from './pwdModifyApi';
 import * as qAndAApi from './qAndAApi';
+import * as reserveTransferSearchApi from './reserveTransferSearchApi';
 
 export {
   headerApi,
@@ -28,4 +29,5 @@ export {
   changeUserNameApi,
   pwdModifyApi,
   qAndAApi,
+  reserveTransferSearchApi,
 };

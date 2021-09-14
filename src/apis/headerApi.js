@@ -128,6 +128,12 @@ const pageInfo = {
   foreignCurrencyTransfer2: {
     title: '外幣轉帳結果',
   },
+  reserveTransferSearch: {
+    title: '預約轉帳查詢/取消',
+  },
+  reserveTransferSearch1: {
+    title: '取消預約轉帳',
+  },
 };
 
 // 取得頁面資訊

@@ -11,7 +11,7 @@
 ---
 
 ## 進行中
-- 生物辨識登入設定（流程調整）- 唯物
+- 預約轉帳查詢 - 唯物
 - 我的最愛 (Favorite) - 聖森
 - 優惠利率額度 (DepositPlus) - 聖森
 - 元件封裝 - 唯物 & 聖森
@@ -113,6 +113,7 @@
   - Accordion - 唯物
   - Spinner - 唯物
   - CountDown - 唯物 & 聖森
+  - InformationTape - 唯物
 
 ---
 
