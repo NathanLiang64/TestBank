@@ -64,6 +64,7 @@ import ForeignCurrencyTransfer2 from 'pages/ForeignCurrencyTransfer/foreignCurre
 import ReserveTransferSearch from 'pages/ReserveTransferSearch';
 import ReserveTransferSearch1 from 'pages/ReserveTransferSearch/reserveTransferSearch_1';
 import ReserveTransferSearch2 from 'pages/ReserveTransferSearch/reserveTransferSearch_2';
+import MobileTransfer from 'pages/MobileTransfer';
 
 /* 開發用目錄頁 */
 import Nav from 'pages/Nav';
@@ -135,6 +136,7 @@ const routes = [
   { path: '/reserveTransferSearch', exact: false, component: ReserveTransferSearch },
   { path: '/reserveTransferSearch1', exact: false, component: ReserveTransferSearch1 },
   { path: '/reserveTransferSearch2', exact: false, component: ReserveTransferSearch2 },
+  { path: '/mobileTransfer', exact: false, component: MobileTransfer },
 ];
 
 export default routes;

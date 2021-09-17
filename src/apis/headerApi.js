@@ -134,6 +134,9 @@ const pageInfo = {
   reserveTransferSearch1: {
     title: '取消預約轉帳',
   },
+  mobileTransfer: {
+    title: '手機號碼收款設定',
+  },
 };
 
 // 取得頁面資訊
