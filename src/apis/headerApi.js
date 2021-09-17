@@ -119,6 +119,24 @@ const pageInfo = {
   exportBankBook: {
     title: '匯出存摺',
   },
+  foreignCurrencyTransfer: {
+    title: '外幣轉帳',
+  },
+  foreignCurrencyTransfer1: {
+    title: '外幣轉帳確認',
+  },
+  foreignCurrencyTransfer2: {
+    title: '外幣轉帳結果',
+  },
+  reserveTransferSearch: {
+    title: '預約轉帳查詢/取消',
+  },
+  reserveTransferSearch1: {
+    title: '取消預約轉帳',
+  },
+  mobileTransfer: {
+    title: '手機號碼收款設定',
+  },
 };
 
 // 取得頁面資訊

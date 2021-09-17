@@ -76,10 +76,12 @@ export const weekNumberToChinese = (value) => {
 
 // 將拉阿伯數字轉換為中文大寫
 /* eslint-disable eqeqeq */
-export const numberToChinese = (number) => {
-  if (Number.isNaN(Number(number))) {
+export const numberToChinese = (num) => {
+  if (Number.isNaN(Number(num))) {
     return '(非數字)';
   }
+  let number = num.split('.')[0];
+  const digtalNum = num.split('.')[1];
   const chineseNumber = ('零壹貳參肆伍陸柒捌玖').split('');
   const amountSmallUnit = ['', '拾', '佰', '千'];
   const amountBigUnit = ['', '萬', '億', '兆', '京', '垓', '秭', '穰', '溝', '澗', '正', '載'];
@@ -121,7 +123,15 @@ export const numberToChinese = (number) => {
 
   if (chineseBigNumber != '') {
     /* chineseBigNumber += '元整'; */
-    chineseBigNumber = `(${chineseBigNumber}元)`;
+    if (!digtalNum) {
+      chineseBigNumber = `(${chineseBigNumber}元)`;
+    } else {
+      let chineseDigtalNumber = '';
+      for (let i = 0; i < digtalNum.length; i++) {
+        chineseDigtalNumber += chineseNumber[Number(digtalNum[i])];
+      }
+      chineseBigNumber = `(${chineseBigNumber}點${chineseDigtalNumber}元)`;
+    }
   }
   return chineseBigNumber;
 };
