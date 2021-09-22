@@ -4,9 +4,9 @@ import { Close } from '@material-ui/icons';
 import { bankList as taiwanBankList } from 'taiwan-bank-data';
 import { FEIBIconButton, FEIBInput, FEIBInputLabel } from 'components/elements';
 import theme from 'themes/theme';
+import { getBankCode } from 'apis/transferApi';
 import BankCodeWrapper from './bankCode.style';
-import { doGetInitData } from '../../apis/transferApi';
-
+/* eslint-disable */
 const BankCode = ({ isOpen, onClose, onSelect }) => {
   const [searchValue, setSearchValue] = useState('');
   const [bankList, setBankList] = useState(taiwanBankList);
@@ -30,8 +30,12 @@ const BankCode = ({ isOpen, onClose, onSelect }) => {
   };
 
   useEffect(async () => {
-    const response = await doGetInitData('/api/getFavoriteBankCodeList');
-    if (response.favoriteBankCodeList) setFavoriteBankList(response.favoriteBankCodeList);
+    getBankCode({txnId: 'MBff7fd095-2cd0-4418-94cb-021234911c06'})
+      // .then((response) => console.log('bankCode res', response))
+      // .catch((error) => console.log(error));
+
+    // const response = await doGetInitData('/api/getFavoriteBankCodeList');
+    // if (response.favoriteBankCodeList) setFavoriteBankList(response.favoriteBankCodeList);
   }, []);
 
   useEffect(() => {

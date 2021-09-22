@@ -46,6 +46,7 @@ const Favorite = () => {
   };
 
   const handleClickRemoveBlock = (event) => {
+    // const blockId = event.currentTarget.parentElement.getAttribute('data-id');
     const blockId = event.currentTarget.parentElement.getAttribute('data-rbd-draggable-id');
 
     // update favoriteList
@@ -68,50 +69,8 @@ const Favorite = () => {
   const handleTouchStart = () => setPressTimer(setTimeout(handleEditBlock, 800));
   const handleTouchEnd = () => pressTimer && clearTimeout(pressTimer);
 
-  const renderEmptyBlockElement = (dragProvided, block, index) => (
-    <button
-      type="button"
-      // key={index + 1}
-      onClick={() => handleOpenView('add', index + 1)}
-      {...dragProvided.draggableProps}
-      {...dragProvided.dragHandleProps}
-      ref={dragProvided.innerRef}
-    >
-      <img src={block} alt="empty" />
-    </button>
-  )
-
-  const renderBlockElement = (dragProvided, block, index) => (
-    <button
-      type="button"
-      // key={block.id}
-      data-id={block.id}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      {...dragProvided.draggableProps}
-      {...dragProvided.dragHandleProps}
-      ref={dragProvided.innerRef}
-    >
-      { showRemoveButton && <span className="removeButton" onClick={handleClickRemoveBlock}><RemoveRounded /></span> }
-      {/* 最愛項目總數為 12，前 2 項為預設存在 (不可編輯)，背景由 index + 3 開始渲染 */}
-      <img src={blockBackgroundGenerator(index + 3)} alt="block" />
-      <span className="icon">
-        {iconGenerator(block.id)}
-      </span>
-      {block.label}
-    </button>
-  )
-
-  const renderBlocksEl = (blocks) => blocks.map((block, index) => (
-    <Draggable key={block.id || index + 1} draggableId={block.id || block + (index + 1)} index={index + 1}>
-      { (provided) => (
-        block.id ? renderBlockElement(provided, block, index) : renderEmptyBlockElement(provided, block, index)
-      ) }
-    </Draggable>
-  ))
-
   // 若為 string 則 render 空區塊，若非 string 則 render 已選的最愛功能項目
-  const renderBlockEl = (blocks) => blocks.map((block, index) => (
+  const renderBlockElement = (blocks) => blocks.map((block, index) => (
     typeof block === 'string'
       ? (
         <Draggable key={index + 1} draggableId={block + (index + 1)} index={index + 1}>
@@ -164,7 +123,7 @@ const Favorite = () => {
     for (let i = 0; i < 10; i++) {
       if (!blocks[i]) blocks[i] = BlockEmpty;
     }
-    return renderBlocksEl(blocks);
+    return renderBlockElement(blocks);
   };
 
   // 預設的彈窗頁面 - 已設置的最愛項目
@@ -194,7 +153,6 @@ const Favorite = () => {
   //     </DragDropContext>
   //   </div>
 
-  // TODO: 拖曳功能待修正
   // 預設的彈窗頁面 - 已設置的最愛項目
   const defaultContent = () => (
     <div className="defaultPage">
