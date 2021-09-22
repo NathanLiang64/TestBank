@@ -5,3 +5,9 @@ export const doGetInitData = (apiUrl) => (
     .then((response) => response.data)
     .catch((error) => error.response)
 );
+
+export const getBankCode = async (params) => (
+  await userAxios.post('/api/transfer/queryBank', params)
+    .then((response) => response)
+    .catch((error) => error)
+);

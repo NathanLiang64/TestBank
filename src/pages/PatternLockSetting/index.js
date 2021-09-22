@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { useCheckLocation, usePageInfo } from 'hooks';
-import { patternLockSettingApi } from 'apis';
+// import { patternLockSettingApi } from 'apis';
 import Dialog from 'components/Dialog';
 import NoticeArea from 'components/NoticeArea';
 import ConfirmButtons from 'components/ConfirmButtons';
@@ -14,12 +14,13 @@ import {
 import e2ee from 'utilities/E2ee';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { passwordValidation } from 'utilities/validation';
 import PatternLockSettingWrapper from './patternLockSetting.style';
 import PatternLockSetting2 from './patternLockSetting_2';
 import { setIsActive, setIsResultSuccess, setType } from './stores/actions';
-import { passwordValidation } from '../../utilities/validation';
+import { getActiveState } from './mockData';
 
-const { init } = patternLockSettingApi;
+// const { init } = patternLockSettingApi;
 const PatternLockSetting = () => {
   /**
    *- 資料驗證
@@ -192,11 +193,13 @@ const PatternLockSetting = () => {
   );
 
   useEffect(async () => {
-    const data = await init();
+    // const data = await init();
     // 儲存api的值到redux中
-    dispatch(setIsActive(data.initData.isActive));
+    // dispatch(setIsActive(data.initData.isActive));
     // 儲存api的值到頁面的state中
-    setisActive(data.initData.isActive);
+    // setisActive(data.initData.isActive);
+
+    dispatch(setIsActive(getActiveState.isActive));
   }, []);
 
   useEffect(() => {

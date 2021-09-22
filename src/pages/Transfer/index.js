@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
@@ -399,14 +400,14 @@ const Transfer = () => {
 
   // 取得所有存款卡的初始資料
   useEffect(async () => {
-    const cardResponse = await doGetInitData('/api/transfer');
-    if (cardResponse.initData) setCards(cardResponse.initData.cards);
-
-    const favoriteResponse = await doGetInitData('/api/getFavoriteAcct');
-    if (favoriteResponse) setFrequentlyUsedAccounts(favoriteResponse.favoriteAcctList);
-
-    const designedResponse = await doGetInitData('/api/getDesignedAcct');
-    if (designedResponse) setDesignedAccounts(designedResponse.designedAcctList);
+    // const cardResponse = await doGetInitData('/api/transfer');
+    // if (cardResponse.initData) setCards(cardResponse.initData.cards);
+    //
+    // const favoriteResponse = await doGetInitData('/api/getFavoriteAcct');
+    // if (favoriteResponse) setFrequentlyUsedAccounts(favoriteResponse.favoriteAcctList);
+    //
+    // const designedResponse = await doGetInitData('/api/getDesignedAcct');
+    // if (designedResponse) setDesignedAccounts(designedResponse.designedAcctList);
 
     // transferOption 是為了避免不同頁籤造成驗證衝突，初始設置 transfer (一般轉帳)
     setValue('transferOption', 'transfer');

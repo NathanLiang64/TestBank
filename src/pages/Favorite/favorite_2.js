@@ -1,5 +1,5 @@
-// 編輯我的最愛
-import { useEffect, useState } from 'react';
+/* eslint-disable */
+import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import FavoriteBlockButton from 'components/FavoriteBlockButton';
 import BottomAction from 'components/BottomAction';
@@ -8,23 +8,27 @@ import { iconGenerator } from './favoriteGenerator';
 import { setCustomFavoriteList } from './stores/actions';
 import SnackModal from '../../components/SnackModal';
 
+// 編輯我的最愛
 const Favorite2 = () => {
   const [tabId, setTabId] = useState('account');
   const customFavoriteList = useSelector(({ favorite }) => favorite.customFavoriteList);
   const [editedBlockList, setEditedBlockList] = useState([]);
+  const [sectionPosition, setSectionPosition] = useState([]);
   const [selectedAmount, setSelectedAmount] = useState(0);
   const [showTip, setShowTip] = useState(false);
   const favoriteDrawer = useSelector(({ favorite }) => favorite.favoriteDrawer);
   const favoriteList = useSelector(({ favorite }) => favorite.favoriteList);
   const dispatch = useDispatch();
+  const mainContentRef = useRef();
 
   const handleClickEditCompleted = (editedList) => {
     // updated customFavoriteList
     const result = favoriteList.map((group) => (
       group.blocks.filter((item) => editedList.find((name) => item.id === name))
     )).flat();
-    result.forEach((block) => {
+    result.forEach((block, index) => {
       block.selected = true;
+      block.selectedOrder = index + 1;
     });
     dispatch(setCustomFavoriteList(result));
 
@@ -42,6 +46,19 @@ const Favorite2 = () => {
 
     favoriteDrawer.back();
   };
+
+  const handleChangeTabs = (event, value) => {
+    const target = document.querySelector(`.${value}`);
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleScrollContent = () => {
+    const { scrollTop } = mainContentRef?.current;
+    const target = sectionPosition.find((section) => section.position >= scrollTop);
+    setTabId(target?.id);
+  };
+
+  useEffect(()=>console.log(editedBlockList), [editedBlockList?.length]);
 
   const handleClickBlock = (group, blockId) => {
     // 添加/刪減項目邏輯
@@ -102,11 +119,6 @@ const Favorite2 = () => {
   ));
 
   useEffect(() => {
-    const target = document.querySelector(`.${tabId}`);
-    if (target) target.scrollIntoView({ behavior: 'smooth' });
-  }, [tabId]);
-
-  useEffect(() => {
     if (customFavoriteList.length) {
       customFavoriteList.forEach((existedBlock) => editedBlockList.push(existedBlock.id));
     }
@@ -122,10 +134,20 @@ const Favorite2 = () => {
     return () => clearTimeout(timer);
   }, [showTip]);
 
+  useEffect(() => {
+    if (mainContentRef?.current) {
+      const categories = Array.from(mainContentRef?.current.children)
+      const sectionPositionList = categories.map((section) => (
+        { id: section.className, position: section.offsetTop }
+      ));
+      setSectionPosition(sectionPositionList);
+    }
+  }, [mainContentRef]);
+
   return (
     <div className="editFavoritePage">
       <FEIBTabContext value={tabId}>
-        <FEIBTabList $size="small" onChange={(event, value) => setTabId(value)}>
+        <FEIBTabList $size="small" onChange={handleChangeTabs}>
           { renderTabList(favoriteList) }
         </FEIBTabList>
       </FEIBTabContext>
@@ -134,15 +156,12 @@ const Favorite2 = () => {
         <p>您最多可以選取10項服務加入我的最愛！</p>
       </div>
 
-      <div className="mainContent">
+      <div className="mainContent" ref={mainContentRef} onScroll={handleScrollContent}>
         { renderBlockGroup(favoriteList) }
       </div>
 
       <BottomAction position={0}>
-        <button
-          type="button"
-          onClick={() => handleClickEditCompleted(editedBlockList)}
-        >
+        <button type="button" onClick={() => handleClickEditCompleted(editedBlockList)}>
           {`編輯完成(${selectedAmount})`}
         </button>
       </BottomAction>

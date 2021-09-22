@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { CreateRounded, DeleteRounded } from '@material-ui/icons';
 import Avatar from 'components/Avatar';
-import { setClickMoreOptions } from 'pages/Transfer/stores/actions';
 import MemberAccountCardWrapper from './memberAccountCard.style';
 
 /*
@@ -17,11 +15,13 @@ import MemberAccountCardWrapper from './memberAccountCard.style';
 * 6. avatarSrc -> 會員頭像的圖片路徑
 * 7. noBorder -> 無框線
 * 8. noOption -> 左滑時無編輯 & 刪除選項、且點擊時無狀態
-* 9. id -> 唯一識別碼
+* 9. onSelect -> 點擊會員帳號卡片事件 (選取時)
+* 10. onEdit -> 左滑帳號卡片後，點擊編輯按鈕事件
+* 11. onRemove -> 左滑帳號卡片後，點擊刪除按鈕事件
 * */
 
 const MemberAccountCard = ({
-  id, type, name, bankNo, bankName, account, avatarSrc, noBorder, noOption,
+  type, name, bankNo, bankName, account, avatarSrc, noBorder, noOption, onSelect, onEdit, onRemove,
 }) => {
   const [moreAction, setMoreAction] = useState({
     isMoreActionOpen: false,
@@ -29,15 +29,14 @@ const MemberAccountCard = ({
     endX: 0,
   });
 
-  const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
-  const dispatch = useDispatch();
-
-  const handleClick = (buttonType) => {
+  const handleClickEdit = () => {
     setMoreAction({ ...moreAction, isMoreActionOpen: false });
-    dispatch(setClickMoreOptions({
-      ...clickMoreOptions,
-      [buttonType]: { click: true, target: id },
-    }));
+    onEdit();
+  };
+
+  const handleClickRemove = () => {
+    setMoreAction({ ...moreAction, isMoreActionOpen: false });
+    onRemove();
   };
 
   const handleTouchStart = (event) => {
@@ -68,13 +67,13 @@ const MemberAccountCard = ({
   // 更多選項 (編輯、刪除)
   const renderMoreActionMenu = () => (
     <div className={`moreActionMenu ${moreAction.isMoreActionOpen ? 'show' : ''}`}>
-      <button type="button" className="edit" onClick={() => handleClick('edit')}>
+      <button type="button" className="edit" onClick={handleClickEdit}>
         <CreateRounded />
         <span>編輯</span>
       </button>
       {/* 常用帳號才有刪除選項 */}
       { type === '常用帳號' && (
-        <button type="button" className="remove" onClick={() => handleClick('remove')}>
+        <button type="button" className="remove" onClick={handleClickRemove}>
           <DeleteRounded />
           <span>刪除</span>
         </button>
@@ -88,7 +87,7 @@ const MemberAccountCard = ({
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      onClick={(noOption || moreAction.isMoreActionOpen) ? null : () => handleClick('select')}
+      onClick={(noOption || moreAction.isMoreActionOpen) ? null : onSelect}
     >
       <Avatar small src={avatarSrc} name={name} />
       <div className="memberInfo">

@@ -14,6 +14,7 @@ import ArrowImage from 'assets/images/tabBarIcons/arrow.svg';
 import AvatarImage from 'assets/images/tabBarIcons/Navigation_member.png';
 import { setFavoriteDrawer } from 'pages/Favorite/stores/actions';
 import TabBarWrapper from './tabBar.style';
+import { setIsShake } from '../../pages/ShakeShake/stores/actions';
 
 const TabBar = () => {
   const history = useHistory();
@@ -59,7 +60,7 @@ const TabBar = () => {
       id: 6,
       label: 'QR Code轉帳',
       img: QRCodeImage,
-      route: '/QRCodeTransfer',
+      route: 'QRCodeTransfer',
     },
     {
       id: 7,
@@ -90,6 +91,10 @@ const TabBar = () => {
         // eslint-disable-next-line no-alert
         alert(logoutResponse.message);
       }
+      return;
+    }
+    if (item.route === 'QRCodeTransfer') {
+      dispatch(setIsShake(true));
       return;
     }
     if (item.route === 'favorite') {
