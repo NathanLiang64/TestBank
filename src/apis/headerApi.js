@@ -137,6 +137,9 @@ const pageInfo = {
   mobileTransfer: {
     title: '手機號碼收款設定',
   },
+  mobileTransfer2: {
+    title: '資料確認',
+  },
 };
 
 // 取得頁面資訊

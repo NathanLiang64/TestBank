@@ -14,10 +14,6 @@ const RegularBasicInformationWrapper = styled(Layout)`
   .section {
     padding: 1.6rem;
   }
-  .line {
-    height: .8rem;
-    background: ${({ theme }) => theme.colors.background.lighterBlue};
-  }
   .stateArea {
     display: flex;
     flex-direction: column;
