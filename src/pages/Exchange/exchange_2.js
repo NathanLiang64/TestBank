@@ -25,6 +25,10 @@ const Exchange1 = () => {
     history.push('/exchange');
   };
 
+  const toPriceSettingPage = () => {
+    history.push('/foreignCurrencyPriceSetting');
+  };
+
   useCheckLocation();
   usePageInfo('/api/exchange2');
 
@@ -52,7 +56,7 @@ const Exchange1 = () => {
               <div className="label into">轉入帳號</div>
               <div className="accountData">遠東商銀(805)</div>
               <div className="accountData">00200701715231</div>
-              <div className="priceNotiSetting">外幣到價通知設定</div>
+              <div className="priceNotiSetting" onClick={toPriceSettingPage}>外幣到價通知設定</div>
             </div>
           )
         }

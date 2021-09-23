@@ -140,6 +140,9 @@ const pageInfo = {
   mobileTransfer2: {
     title: '資料確認',
   },
+  foreignCurrencyPriceSetting: {
+    title: '外幣到價通知設定',
+  },
 };
 
 // 取得頁面資訊

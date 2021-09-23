@@ -68,6 +68,7 @@ import MobileTransfer from 'pages/MobileTransfer';
 import MobileTransfer1 from 'pages/MobileTransfer/mobileTransfer_1';
 import MobileTransfer2 from 'pages/MobileTransfer/mobileTransfer_2';
 import MobileTransfer3 from 'pages/MobileTransfer/mobileTransfer_3';
+import ForeignCurrencyPriceSetting from 'pages/ForeignCurrencyPriceSetting';
 
 /* 開發用目錄頁 */
 import Nav from 'pages/Nav';
@@ -143,6 +144,7 @@ const routes = [
   { path: '/mobileTransfer1', exact: false, component: MobileTransfer1 },
   { path: '/mobileTransfer2', exact: false, component: MobileTransfer2 },
   { path: '/mobileTransfer3', exact: false, component: MobileTransfer3 },
+  { path: '/foreignCurrencyPriceSetting', exact: false, component: ForeignCurrencyPriceSetting },
 ];
 
 export default routes;
