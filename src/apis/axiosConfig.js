@@ -55,7 +55,7 @@ userAxios().interceptors.request.use(
       config.headers.authorization = `Bearer ${jwt}`;
       const aeskey = localStorage.getItem('aesKey');
       const ivkey = localStorage.getItem('iv');
-      console.log(config.data);
+      // console.log(config.data);
       // 加密
       const encrypt = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(config.data));
       config.data = encrypt;
@@ -75,7 +75,7 @@ userAxios().interceptors.response.use(
       // 解密
       // const encrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
       const { jwtToken } = response.data;
-      console.log('jwtToken', response.data);
+      // console.log('jwtToken', response.data);
       if (jwtToken) {
         localStorage.setItem('jwtToken', jwtToken);
       } else {

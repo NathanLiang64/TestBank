@@ -135,3 +135,39 @@ export const numberToChinese = (num) => {
   }
   return chineseBigNumber;
 };
+
+// 貨幣單位文字轉為符號
+export const currencySymbolGenerator = (currency) => {
+  switch (currency) {
+    case 'TWD': // 新台幣
+      return '$';
+    case 'USD': // 美金
+      return 'US$';
+    case 'GBP': // 英鎊
+      return '£';
+    case 'HKD': // 港幣
+      return 'HK$';
+    case 'CHF': // 瑞士法郎
+      return 'Fr';
+    case 'AUD': // 澳幣
+      return 'A$';
+    case 'SGD': // 新加坡幣
+      return 'S$';
+    case 'JPY': // 日幣
+      return '¥';
+    case 'CAD': // 加幣
+      return 'CAN$';
+    case 'THB': // 泰幣
+      return '฿';
+    case 'ZAR': // 南非幣
+      return 'R';
+    case 'CNY': // 人民幣
+      return 'RMB¥';
+    case 'EUR': // 歐元
+      return '€';
+    case 'NZD': // 紐西蘭幣
+      return 'NZ$';
+    default:
+      return null;
+  }
+};

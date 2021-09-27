@@ -7,12 +7,7 @@ import DebitCard from 'components/DebitCard';
 import DetailCard from 'components/DetailCard';
 import { depositOverviewApi } from 'apis';
 import {
-  setCards,
-  setCardInfo,
-  setDetailAreaHeight,
-  setInterestPanelTitle,
-  setInterestPanelContent,
-  setComputedCardList,
+  setCards, setCardInfo, setDetailAreaHeight, setInterestPanelTitle, setInterestPanelContent, setComputedCardList,
 } from './stores/actions';
 import DepositOverviewWrapper from './depositOverview.style';
 
@@ -74,12 +69,7 @@ const DepositOverview = () => {
 
   const renderDebitCard = (info) => {
     const {
-      cardBranch,
-      cardName,
-      cardAccount,
-      cardBalance,
-      functionList,
-      moreList,
+      cardBranch, cardName, cardAccount, cardBalance, functionList, moreList,
     } = info;
     return (
       <DebitCard
