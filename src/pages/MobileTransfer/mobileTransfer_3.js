@@ -13,7 +13,7 @@ import MobileTransferWrapper from './mobileTransfer.style';
 const MobileTransfer3 = ({ location }) => {
   const history = useHistory();
   const [isSuccess, setIsSuccess] = useState(false);
-  const [deleteSuccess, setDeleteSuccess] = useState(false);
+  const [deleteSuccess, setDeleteSuccess] = useState(true);
 
   const toMobileTransferPage = () => {
     history.push('/mobileTransfer');

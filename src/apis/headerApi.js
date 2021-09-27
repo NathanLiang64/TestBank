@@ -143,6 +143,9 @@ const pageInfo = {
   foreignCurrencyPriceSetting: {
     title: '外幣到價通知設定',
   },
+  quickLoginSetting: {
+    title: '快速登入設定',
+  },
 };
 
 // 取得頁面資訊

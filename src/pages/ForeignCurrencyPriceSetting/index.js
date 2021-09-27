@@ -32,8 +32,9 @@ const ForeignCurrencyPriceSetting = () => {
       .string()
       .required('請選擇幣別'),
     price: yup
-      .string()
-      .required('請輸入通知匯率'),
+      .number()
+      .typeError('匯率須為數字')
+      .positive('匯率必須大於 0'),
   });
   const {
     handleSubmit, control, formState: { errors },

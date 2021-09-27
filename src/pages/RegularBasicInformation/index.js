@@ -14,8 +14,7 @@ import {
 } from 'components/elements';
 import ConfirmButtons from 'components/ConfirmButtons';
 import Accordion from 'components/Accordion';
-// import PasswordInput from 'components/PasswordInput';
-// import { passwordValidation } from 'utilities/validation';
+
 /* Styles */
 import RegularBasicInformationWrapper from './regularBasicInformation.style';
 
