@@ -36,7 +36,7 @@ import LoanInterest from 'pages/LoanInterest';
 import BasicInformation from 'pages/BasicInformation';
 import BasicInformation1 from 'pages//BasicInformation/basicInformation_1';
 import QandA from 'pages/QandA';
-import Open from 'pages/Open';
+import Provisioning from 'pages/Provisioning';
 import Deduct from 'pages/Deduct';
 import Deduct1 from 'pages/Deduct/deduct1';
 import Deduct2 from 'pages/Deduct/deduct2';
@@ -113,7 +113,7 @@ const routes = [
   { path: '/basicInformation', exact: false, component: BasicInformation },
   { path: '/basicInformation1', exact: false, component: BasicInformation1 },
   { path: '/qAndA', exact: false, component: QandA },
-  { path: '/open', exact: false, component: Open },
+  { path: '/provisioning', exact: false, component: Provisioning },
   { path: '/deduct', exact: false, component: Deduct },
   { path: '/deduct1', exact: false, component: Deduct1 },
   { path: '/deduct2', exact: false, component: Deduct2 },

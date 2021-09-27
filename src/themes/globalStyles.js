@@ -201,6 +201,21 @@ const GlobalStyles = createGlobalStyle`
   .txtCenter {
     text-align: center;
   }
+
+  .dialogResultContent {
+    padding: 0 1.6rem 2.4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    img {
+      width: 14.4rem;
+    }
+    .resultText {
+      margin-top: 1rem;
+      font-size: 2.6rem;
+      color: ${({ theme }) => theme.colors.secondary.brand};
+    }
+  }
 `;
 
 export default GlobalStyles;
