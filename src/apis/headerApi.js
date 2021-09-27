@@ -77,8 +77,8 @@ const pageInfo = {
   qAndA: {
     title: 'Q & A',
   },
-  open: {
-    title: '開通 APP',
+  provisioning: {
+    title: '開通行動銀行服務',
   },
   deduct: {
     title: '自動扣繳申請/查詢',
