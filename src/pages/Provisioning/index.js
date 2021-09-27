@@ -12,7 +12,7 @@ import Dialog from 'components/Dialog';
 import ProvisioningWrapper from './provisioning.style';
 
 const Provisioning = () => {
-  const [dialogOpen, setDialogOpen] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const triggerProvide = () => {
     setDialogOpen(true);
