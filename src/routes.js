@@ -65,6 +65,11 @@ import ReserveTransferSearch from 'pages/ReserveTransferSearch';
 import ReserveTransferSearch1 from 'pages/ReserveTransferSearch/reserveTransferSearch_1';
 import ReserveTransferSearch2 from 'pages/ReserveTransferSearch/reserveTransferSearch_2';
 import MobileTransfer from 'pages/MobileTransfer';
+import MobileTransfer1 from 'pages/MobileTransfer/mobileTransfer_1';
+import MobileTransfer2 from 'pages/MobileTransfer/mobileTransfer_2';
+import MobileTransfer3 from 'pages/MobileTransfer/mobileTransfer_3';
+import ForeignCurrencyPriceSetting from 'pages/ForeignCurrencyPriceSetting';
+import QuickLoginSetting from 'pages/QuickLoginSetting';
 
 /* 開發用目錄頁 */
 import Nav from 'pages/Nav';
@@ -137,6 +142,11 @@ const routes = [
   { path: '/reserveTransferSearch1', exact: false, component: ReserveTransferSearch1 },
   { path: '/reserveTransferSearch2', exact: false, component: ReserveTransferSearch2 },
   { path: '/mobileTransfer', exact: false, component: MobileTransfer },
+  { path: '/mobileTransfer1', exact: false, component: MobileTransfer1 },
+  { path: '/mobileTransfer2', exact: false, component: MobileTransfer2 },
+  { path: '/mobileTransfer3', exact: false, component: MobileTransfer3 },
+  { path: '/foreignCurrencyPriceSetting', exact: false, component: ForeignCurrencyPriceSetting },
+  { path: '/quickLoginSetting', exact: false, component: QuickLoginSetting },
 ];
 
 export default routes;

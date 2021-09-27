@@ -70,7 +70,7 @@ const PwdModify = () => {
     <Dialog
       isOpen={showConfirmDialog}
       onClose={() => setShowConfirmDialog(false)}
-      content={<p>您確定要變更網銀密碼嗎？</p>}
+      content={<p className="txtCenter">您確定要變更網銀密碼嗎？</p>}
       action={(
         <ConfirmButtons
           mainButtonOnClick={handlePasswordModify}

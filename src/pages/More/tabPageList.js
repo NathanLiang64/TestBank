@@ -217,7 +217,7 @@ const tabPageList = {
       {
         value: '3',
         label: '手機號碼收款設定',
-        route: '',
+        route: '/mobileTransfer',
       },
       {
         value: '4',
@@ -232,7 +232,7 @@ const tabPageList = {
       {
         value: '6',
         label: '預約轉帳查詢',
-        route: '',
+        route: '/reserveTransferSearch',
       },
       {
         value: '7',

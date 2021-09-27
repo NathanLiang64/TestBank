@@ -21,14 +21,12 @@ const ReserveTransferSearch1 = () => {
 
   return (
     <ReserveTransferSearchWrapper>
-      <div className="line" />
-      <section className="confrimDataContainer">
+      <section className="confrimDataContainer lighterBlueLine">
         <div className="dataLabel">轉出金額與轉入帳號</div>
         <div className="balance">$300</div>
         <div className="accountInfo">遠東商銀（805）</div>
         <div className="accountInfo">043000990000</div>
       </section>
-      <div className="line" />
       <section className="informationListContainer">
         <InformationList title="轉出帳號" content="04300499001234" remark="保時捷車友會" />
         <InformationList title="預約轉帳日" content="2021/05/15" />

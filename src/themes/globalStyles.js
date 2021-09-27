@@ -192,6 +192,15 @@ const GlobalStyles = createGlobalStyle`
     min-height: 100%;
     padding-bottom: 4rem;
   }
+
+  .lighterBlueLine {
+    border-top: .8rem solid ${({ theme }) => theme.colors.background.lighterBlue};
+    border-bottom: .8rem solid ${({ theme }) => theme.colors.background.lighterBlue};
+  }
+
+  .txtCenter {
+    text-align: center;
+  }
 `;
 
 export default GlobalStyles;
