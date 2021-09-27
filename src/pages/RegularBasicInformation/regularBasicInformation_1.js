@@ -29,13 +29,11 @@ const RegularBasicInformation1 = () => {
 
   return (
     <RegularBasicInformationWrapper className="confirmWrapper">
-      <div className="line" />
-      <div className="section">
+      <div className="section lighterBlueLine">
         <InformationList title="職業類別" content="金融業" />
         <InformationList title="職稱" content="一般職員" />
         <InformationList title="個人年收入" content="50~80萬" />
       </div>
-      <div className="line" />
       <div className="section">
         <Accordion title="注意事項" space="bottom">
           1.本次項目資料更新後，若客戶留存於本行之基本資料更新日距上次更新屆滿 6 個月，才會再次顯示。

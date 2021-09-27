@@ -1,8 +1,10 @@
 import styled from 'styled-components';
 import Layout from 'components/Layout';
-// import theme from 'themes/theme';
 
 const ForeignCurrencyAccountsWrapper = styled(Layout)`
+  display: flex;
+  flex-direction: column;
+  
   .userCardArea {
     left: -1.6rem;
     width: 100vw;

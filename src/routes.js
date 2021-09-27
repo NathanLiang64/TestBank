@@ -58,6 +58,18 @@ import RegularBasicInformation1 from 'pages/RegularBasicInformation/regularBasic
 import RegularBasicInformation2 from 'pages/RegularBasicInformation/regularBasicInformation_2';
 import ExportBankBook from 'pages/ExportBankBook';
 import ExportBankBook1 from 'pages/ExportBankBook/exportBankBook_1';
+import ForeignCurrencyTransfer from 'pages/ForeignCurrencyTransfer';
+import ForeignCurrencyTransfer1 from 'pages/ForeignCurrencyTransfer/foreignCurrencyTransfer_1';
+import ForeignCurrencyTransfer2 from 'pages/ForeignCurrencyTransfer/foreignCurrencyTransfer_2';
+import ReserveTransferSearch from 'pages/ReserveTransferSearch';
+import ReserveTransferSearch1 from 'pages/ReserveTransferSearch/reserveTransferSearch_1';
+import ReserveTransferSearch2 from 'pages/ReserveTransferSearch/reserveTransferSearch_2';
+import MobileTransfer from 'pages/MobileTransfer';
+import MobileTransfer1 from 'pages/MobileTransfer/mobileTransfer_1';
+import MobileTransfer2 from 'pages/MobileTransfer/mobileTransfer_2';
+import MobileTransfer3 from 'pages/MobileTransfer/mobileTransfer_3';
+import ForeignCurrencyPriceSetting from 'pages/ForeignCurrencyPriceSetting';
+import QuickLoginSetting from 'pages/QuickLoginSetting';
 
 /* 開發用目錄頁 */
 import Nav from 'pages/Nav';
@@ -123,6 +135,18 @@ const routes = [
   { path: '/regularBasicInformation2', exact: false, component: RegularBasicInformation2 },
   { path: '/exportBankBook', exact: false, component: ExportBankBook },
   { path: '/exportBankBook1', exact: false, component: ExportBankBook1 },
+  { path: '/foreignCurrencyTransfer', exact: false, component: ForeignCurrencyTransfer },
+  { path: '/foreignCurrencyTransfer1', exact: false, component: ForeignCurrencyTransfer1 },
+  { path: '/foreignCurrencyTransfer2', exact: false, component: ForeignCurrencyTransfer2 },
+  { path: '/reserveTransferSearch', exact: false, component: ReserveTransferSearch },
+  { path: '/reserveTransferSearch1', exact: false, component: ReserveTransferSearch1 },
+  { path: '/reserveTransferSearch2', exact: false, component: ReserveTransferSearch2 },
+  { path: '/mobileTransfer', exact: false, component: MobileTransfer },
+  { path: '/mobileTransfer1', exact: false, component: MobileTransfer1 },
+  { path: '/mobileTransfer2', exact: false, component: MobileTransfer2 },
+  { path: '/mobileTransfer3', exact: false, component: MobileTransfer3 },
+  { path: '/foreignCurrencyPriceSetting', exact: false, component: ForeignCurrencyPriceSetting },
+  { path: '/quickLoginSetting', exact: false, component: QuickLoginSetting },
 ];
 
 export default routes;

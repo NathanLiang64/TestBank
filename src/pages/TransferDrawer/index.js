@@ -1,13 +1,14 @@
+/* eslint-disable */
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { AddRounded } from '@material-ui/icons';
 import BottomDrawer from 'components/BottomDrawer';
 import MemberAccountCard from 'components/MemberAccountCard';
+// import { doGetInitData } from 'apis/transferApi';
 import TransferDrawerWrapper from './transferDrawer.style';
 import TransferFrequentlyUsedAccount from '../TransferFrequentlyUsedAccount';
 import TransferDesignedAccount from '../TransferDesignedAccount';
-import { setOpenDrawer } from '../Transfer/stores/actions';
-import { doGetInitData } from '../../apis/transferApi';
+import { setClickMoreOptions, setOpenDrawer } from '../Transfer/stores/actions';
 
 const TransferDrawer = ({ setTabId }) => {
   const [frequentlyUsedAccounts, setFrequentlyUsedAccounts] = useState();
@@ -15,6 +16,13 @@ const TransferDrawer = ({ setTabId }) => {
   const openDrawer = useSelector(({ transfer }) => transfer.openDrawer);
   const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
   const dispatch = useDispatch();
+
+  const handleClick = (buttonType, id) => {
+    dispatch(setClickMoreOptions({
+      ...clickMoreOptions,
+      [buttonType]: { click: true, target: id },
+    }));
+  };
 
   // 點擊關閉 Drawer
   const handleCloseDrawer = () => {
@@ -29,7 +37,7 @@ const TransferDrawer = ({ setTabId }) => {
   const memberAccountCardList = (list, type) => (
     list.map((member) => (
       <MemberAccountCard
-        id={member.id}
+        // id={member.id}
         key={member.id}
         type={type}
         name={member.acctName}
@@ -37,6 +45,9 @@ const TransferDrawer = ({ setTabId }) => {
         bankName={member.bankName}
         account={member.acctId}
         avatarSrc={member.acctImg}
+        onSelect={() => handleClick('select', member.id)}
+        onEdit={() => handleClick('edit', member.id)}
+        onRemove={() => handleClick('remove', member.id)}
       />
     ))
   );
@@ -69,11 +80,11 @@ const TransferDrawer = ({ setTabId }) => {
   );
 
   useEffect(async () => {
-    const favoriteResponse = await doGetInitData('/api/getFavoriteAcct');
-    setFrequentlyUsedAccounts(favoriteResponse.favoriteAcctList);
-
-    const designedResponse = await doGetInitData('/api/getDesignedAcct');
-    setDesignedAccounts(designedResponse.designedAcctList);
+    // const favoriteResponse = await doGetInitData('/api/getFavoriteAcct');
+    // setFrequentlyUsedAccounts(favoriteResponse.favoriteAcctList);
+    //
+    // const designedResponse = await doGetInitData('/api/getDesignedAcct');
+    // setDesignedAccounts(designedResponse.designedAcctList);
   }, []);
 
   useEffect(() => {

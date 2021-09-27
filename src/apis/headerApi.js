@@ -90,7 +90,7 @@ const pageInfo = {
     title: '外幣換匯確認',
   },
   exchange2: {
-    title: '外幣換匯成功',
+    title: '外幣換匯結果',
   },
   transfer: {
     title: '轉帳',
@@ -111,13 +111,40 @@ const pageInfo = {
     title: '帳戶',
   },
   foreignCurrencyAccounts: {
-    title: '帳戶',
+    title: '外幣帳戶',
   },
   regularBasicInformation: {
     title: '六個月基本資料變更',
   },
   exportBankBook: {
     title: '匯出存摺',
+  },
+  foreignCurrencyTransfer: {
+    title: '外幣轉帳',
+  },
+  foreignCurrencyTransfer1: {
+    title: '外幣轉帳確認',
+  },
+  foreignCurrencyTransfer2: {
+    title: '外幣轉帳結果',
+  },
+  reserveTransferSearch: {
+    title: '預約轉帳查詢/取消',
+  },
+  reserveTransferSearch1: {
+    title: '取消預約轉帳',
+  },
+  mobileTransfer: {
+    title: '手機號碼收款設定',
+  },
+  mobileTransfer2: {
+    title: '資料確認',
+  },
+  foreignCurrencyPriceSetting: {
+    title: '外幣到價通知設定',
+  },
+  quickLoginSetting: {
+    title: '快速登入設定',
   },
 };
 

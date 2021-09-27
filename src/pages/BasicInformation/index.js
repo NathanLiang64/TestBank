@@ -4,7 +4,7 @@ import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { basicInformationApi } from 'apis';
+import { basicInformationApi, settingApi } from 'apis';
 
 /* Elements */
 import {
@@ -43,7 +43,6 @@ const BasicInformation = () => {
     addr: yup
       .string()
       .required('請輸入通訊地址'),
-    // ...passwordValidation,
   });
   const {
     handleSubmit, control, formState: { errors }, reset, getValues,
@@ -58,8 +57,10 @@ const BasicInformation = () => {
   };
 
   // 取得縣市列表
-  const getCountyList = () => {
-    // const data = [];
+  const getCountyList = async () => {
+    const countyListResponse = await settingApi.getCountyList({});
+    console.log('取得縣市鄉鎮區資料');
+    console.log(countyListResponse);
   };
 
   // 取得鄉鎮市區列表

@@ -1,154 +1,100 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { ArrowForwardIos } from '@material-ui/icons';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import DebitCard from 'components/DebitCard';
 import DetailCard from 'components/DetailCard';
+// import { getForeignCurrencyAccounts, getTransactionDetails } from 'apis/foreignCurrencyAccountsApi';
+import mockData from './mockData';
 
 /* Styles */
 import ForeignCurrencyAccountsWrapper from './foreignCurrencyAccounts.style';
 
 const ForeignCurrencyAccounts = () => {
+  const [debitCards, setDebitCards] = useState([]);
+  const [details, setDetails] = useState([]);
+  const [computedDetails, setComputedDetails] = useState([]);
+  const [detailAreaHeight, setDetailAreaHeight] = useState(0);
+
   const ref = useRef();
-  // mock data
-  const cardInfo = {
-    cardBranch: '信義分行',
-    cardName: '英鎊',
-    cardAccount: '043-004-99001234',
-    cardBalance: 5340.56,
-    functionList: [
-      { title: '轉帳', path: '/transfer', icon: null },
-      { title: '換匯', path: '/exchange', icon: null },
-    ],
-    moreList: [
-      { title: 'MasterCard Send Cross Border', path: '/', icon: 'radio_button_unchecked' },
-      { title: '設定為主要外幣帳戶', path: '/', icon: 'radio_button_unchecked' },
-      { title: '帳戶名稱編輯', path: '/', icon: 'radio_button_unchecked' },
-    ],
-  };
-  const computedCardList = [
-    {
-      id: 1,
-      avatar: null,
-      title: '12月的伙食費',
-      type: 'income',
-      date: '12/08',
-      sender: 'Amanda Wilkins',
-      amount: 1200,
-      balance: 212489283,
-    },
-    {
-      id: 2,
-      avatar: null,
-      title: '跨行轉入',
-      type: 'income',
-      date: '12/08',
-      sender: '345-17282981',
-      amount: 2650,
-      balance: 212489874,
-    },
-    {
-      id: 3,
-      avatar: null,
-      title: '跨行轉入',
-      type: 'income',
-      date: '12/08',
-      sender: '345-17282981',
-      amount: 2650,
-      balance: 212489874,
-    },
-  ];
 
   // eslint-disable-next-line no-unused-vars
   const handleChangeSlide = (swiper) => {};
 
   const renderDetailCardList = (list) => (
-    list.map((card) => {
-      const {
-        id,
-        avatar,
-        title,
-        type,
-        date,
-        sender,
-        amount,
-        balance,
-      } = card;
-      return (
-        <DetailCard
-          key={id}
-          avatar={avatar}
-          title={title}
-          type={type}
-          date={date}
-          sender={sender}
-          amount={amount}
-          balance={balance}
-        />
-      );
-    })
+    list.map((detail) => (
+      <DetailCard
+        key={detail.index}
+        avatar={detail.avatar}
+        title={detail.description}
+        type={detail.cdType}
+        date={detail.txnDate}
+        time={detail.txnTime}
+        bizDate={detail.bizDate}
+        targetBank={detail.targetBank}
+        targetAccount={detail.targetAcct}
+        targetMember={detail.targetMbrID}
+        dollarSign={detail.currency}
+        amount={detail.amount}
+        balance={detail.balance}
+      />
+    ))
   );
 
-  const renderDebitCard = (info) => {
-    const {
-      cardBranch,
-      cardName,
-      cardAccount,
-      cardBalance,
-      functionList,
-      moreList,
-    } = info;
-    return (
-      <>
-        <SwiperSlide>
-          <DebitCard
-            type="original"
-            branch={cardBranch}
-            cardName={cardName}
-            account={cardAccount}
-            balance={cardBalance}
-            functionList={functionList}
-            moreList={moreList}
-            moreDefault={false}
-            dollarSign="£"
-            color="blue"
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <DebitCard
-            type="original"
-            branch={cardBranch}
-            cardName={cardName}
-            account={cardAccount}
-            balance={cardBalance}
-            functionList={functionList}
-            moreList={moreList}
-            moreDefault={false}
-            dollarSign="£"
-            color="blue"
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <DebitCard
-            type="original"
-            branch={cardBranch}
-            cardName={cardName}
-            account={cardAccount}
-            balance={cardBalance}
-            functionList={functionList}
-            moreList={moreList}
-            moreDefault={false}
-            dollarSign="£"
-            color="blue"
-          />
-        </SwiperSlide>
-      </>
-    );
-  };
+  const renderDebitCard = (accounts) => accounts.map((account) => (
+    <SwiperSlide key={account.id}>
+      <DebitCard
+        type="original"
+        branch={account.acctBranch}
+        cardName={account.acctName}
+        account={account.acctId}
+        balance={account.acctBalx}
+        functionList={account.functionList}
+        moreList={account.moreList}
+        moreDefault={false}
+        dollarSign={account.ccyCd}
+        color="blue"
+      />
+    </SwiperSlide>
+  ));
 
   useCheckLocation();
   usePageInfo('/api/foreignCurrencyAccounts');
+
+  useEffect(() => {
+    /* ========== mock data (for mock api) ========== */
+    // getForeignCurrencyAccounts()
+    //   .then((data) => setDebitCards(data))
+    //   .catch((error) => console.error(error))
+    //
+    // getTransactionDetails()
+    //   .then(({ acctDetails }) => setDetails(acctDetails))
+    //   .catch((error) => console.error(error))
+
+    /* ========== mock data (for prototype) ========== */
+    const { getForeignCurrencyAccounts, getTransactionDetails } = mockData;
+    setDebitCards(getForeignCurrencyAccounts);
+    setDetails(getTransactionDetails.acctDetails);
+  }, []);
+
+  // 取得帳號資料後，計算 transactionDetail DOM 高度
+  useEffect(() => {
+    if (debitCards.length) {
+      const { offsetHeight } = ref.current;
+      setDetailAreaHeight(offsetHeight);
+    }
+  }, [debitCards]);
+
+  // 根據剩餘高度計算要顯示的卡片數量，計算裝置可容納的交易明細卡片數量
+  useEffect(async () => {
+    if (details.length) {
+      const list = [];
+      const computedCount = Math.floor((detailAreaHeight - 32) / 80);
+      for (let i = 0; i < computedCount; i++) list.push(details[i]);
+      setComputedDetails(list);
+    }
+  }, [details, detailAreaHeight]);
 
   return (
     <ForeignCurrencyAccountsWrapper>
@@ -160,11 +106,11 @@ const ForeignCurrencyAccounts = () => {
           pagination
           onSlideChange={handleChangeSlide}
         >
-          { cardInfo && renderDebitCard(cardInfo) }
+          { debitCards.length ? renderDebitCard(debitCards) : null }
         </Swiper>
       </div>
       <div className="transactionDetail" ref={ref}>
-        { computedCardList && renderDetailCardList(computedCardList) }
+        { computedDetails.length ? renderDetailCardList(computedDetails) : null }
         <Link className="moreButton" to="/foreignCurrencyAccounts">
           更多明細
           <ArrowForwardIos />

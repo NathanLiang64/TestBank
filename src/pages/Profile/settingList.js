@@ -1,11 +1,7 @@
 const settingList = [
   {
-    name: '生物辨識設定',
-    route: '/fingerPrintLockSetting',
-  },
-  {
-    name: '圖形辨識設定',
-    route: '/patternLockSetting',
+    name: '快速登入設定',
+    route: '/quickLoginSetting',
   },
   {
     name: '行動裝置綁定',

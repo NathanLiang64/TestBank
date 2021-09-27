@@ -4,10 +4,14 @@ import { Drawer as MaterialDrawer } from '@material-ui/core';
 const DrawerWrapper = styled(MaterialDrawer).attrs({
   anchor: 'bottom',
 })`
+  .MuiPaper-root {
+    max-height: 96vh;
+    overflow-y: unset;
+  }
+  
   .MuiDrawer-paperAnchorBottom {
     border-top-left-radius: 3rem;
     border-top-right-radius: 3rem;
-    overflow-x: hidden;
   }
   
   .drawerTitle {
@@ -24,13 +28,24 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
     }
   }
   
+  .backButton,
   .closeButton {
     position: absolute;
+  }
+  
+  .backButton {
+    top: .4rem;
+    left: .4rem;
+  }
+
+  .closeButton {
     top: .6rem;
     right: .8rem;
   }
   
   .content {
+    overflow-y: ${({ $contentNoScrollable }) => !$contentNoScrollable && 'auto'};
+
     // for DebitCard more list
     li {
       border-bottom: .1rem solid ${({ theme }) => theme.colors.border.lightest};

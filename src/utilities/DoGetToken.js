@@ -40,6 +40,8 @@ const getKey = async (data) => {
   const getMyJWT = await userAxios.post('/auth/login', getJWTToken);
   if (getMyJWT.data.code === '0000') {
     const deCode = JSON.parse(JWEUtil.decryptJWEMessage(getPublicAndPrivate.privateKey, getMyJWT.data.data));
+    // console.log(deCode);
+    // console.log(getMyJWT);
     jwtToken = deCode.result.jwtToken;
     localStorage.setItem('privateKey', privateKey);
     localStorage.setItem('publicKey', publicKey);

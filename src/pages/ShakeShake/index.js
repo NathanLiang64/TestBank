@@ -11,11 +11,12 @@ import Loading from 'components/Loading';
 import {
   FEIBIconButton, FEIBTabContext, FEIBTab, FEIBTabList, FEIBTabPanel,
 } from 'components/elements';
-import { shakeShakeApi } from 'apis';
+// import { shakeShakeApi } from 'apis';
 import { accountFormatter } from 'utilities/Generator';
 import theme from 'themes/theme';
 import { setIsShake, setUserCards, setUserCardInfo } from './stores/actions';
 import ShakeShakeWrapper from './shakeShake.style';
+import { getDebitCard } from './mockData';
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
@@ -27,7 +28,7 @@ const ShakeShake = () => {
   const userCardInfo = useSelector(({ shakeShake }) => shakeShake.userCardInfo);
 
   const dispatch = useDispatch();
-  const { doGetShakeInitData } = shakeShakeApi;
+  // const { doGetShakeInitData } = shakeShakeApi;
 
   const selectedUserCard = (id, allCards) => {
     const filteredCard = allCards.find((card) => card.id === id);
@@ -105,11 +106,12 @@ const ShakeShake = () => {
 
   useEffect(async () => {
     // 取得所有存款卡的初始資料
-    const qrCodeResponse = await doGetShakeInitData('/api/shakeShake');
-    if (qrCodeResponse.initData) {
-      const { debitCards } = qrCodeResponse.initData;
-      dispatch(setUserCards(debitCards));
-    }
+    // const qrCodeResponse = await doGetShakeInitData('/api/shakeShake');
+    // if (qrCodeResponse.initData) {
+    //   const { debitCards } = qrCodeResponse.initData;
+    //   dispatch(setUserCards(debitCards));
+    // }
+    dispatch(setUserCards(getDebitCard.debitCards));
   }, []);
 
   // 根據用戶選擇的卡片，將該卡片資料儲存至 redux，預設顯示 id 為 1 的卡片

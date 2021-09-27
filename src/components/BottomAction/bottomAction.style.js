@@ -4,7 +4,12 @@ const BottomActionWrapper = styled.div.attrs({
   className: 'BottomAction',
 })`
   position: fixed;
-  bottom: 6rem;
+  left: 0;
+  bottom: ${({ $bottomPosition }) => {
+    if ($bottomPosition === 0) return '0';
+    if ($bottomPosition) return `${$bottomPosition / 10}rem`;
+    return '6rem';
+  }};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -23,7 +28,8 @@ const BottomActionWrapper = styled.div.attrs({
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 16rem;
+    width: 100%;
+    height: 100%;
     font-size: 1.8rem;
     line-height: 1.43;
 

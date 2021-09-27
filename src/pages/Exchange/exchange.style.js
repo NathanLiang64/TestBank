@@ -2,6 +2,18 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const ExchangeWrapper = styled(Layout)`
+  .borderBtnContainer {
+    .customSize {
+      min-height: unset;
+      padding-left: 1.2rem;
+      padding-right: 1.2rem;
+      padding-bottom: .1rem;
+      width: unset;
+      height: 2.5rem;
+      font-size: 1.4rem;
+      margin-right: unset;
+    }
+  }
   &.confirmPage {
     padding: .8rem 1.6rem 0rem 1.6rem;
   }
@@ -14,25 +26,63 @@ const ExchangeWrapper = styled(Layout)`
       left: -1.6rem;
       background: white;
       width: 100vw;
-      padding: 2.4rem 3.2rem;
+      padding: 2.4rem 1.6rem;
       text-align: center;
       margin-bottom: .8rem;
+      &.resultFail {
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
       &:last-child {
         margin-bottom: 0;
       }
-      .label {
-        color: #666;
-        font-size: 16px;
-        margin-bottom: 1.2rem;
+      .mainBlock {
+        flex-direction: column;
+        margin-bottom: 2.4rem;
+        .countDownTitle {
+          font-size: 1.4rem;
+          color: ${({ theme }) => theme.colors.text.lightGray};
+        }
       }
-      .firstData {
-        color: ${({ theme }) => theme.colors.primary.dark};
-        font-size: 24px;
-      }
-      .exchangeRate {
-        margin-top: .8rem;
-        font-size: 14px;
-        color: ${({ theme }) => theme.colors.text.dark};
+      .infoData {
+        .label {
+          color: ${({ theme }) => theme.colors.text.lightGray};
+          font-size: 16px;
+          margin-bottom: .4rem;
+        }
+        .label.into {
+          margin: 1.6rem 0 .6rem;
+        }
+        .foreignCurrency {
+          color: ${({ theme }) => theme.colors.primary.dark};
+          font-size: 24px;
+          font-weight: 600;
+          line-height: 3.6rem;
+          margin-bottom: 1.2rem;
+        }
+        .changeNT, .exchangeRate {
+          color: ${({ theme }) => theme.colors.primary.dark};
+          font-size: 1.8rem;
+          line-height: 2.7rem;
+          font-weight: 400;
+        }
+        .employee {
+          color: ${({ theme }) => theme.colors.state.danger};
+        }
+        .accountData {
+          color: ${({ theme }) => theme.colors.primary.dark};
+          font-size: 2.4rem;
+          line-height: 3.6rem;
+          font-weight: 400;
+        }
+        .priceNotiSetting {
+          margin-top: .8rem;
+          font-size: 1.4rem;
+          line-height: 2.1rem;
+          color: ${({ theme }) => theme.colors.text.dark};
+        }
       }
     }
     .exchangeAccordion {
@@ -46,24 +96,23 @@ const ExchangeWrapper = styled(Layout)`
       }
     }
   }
-  .checkImg {
-    width: 17.5rem;
-    height: 9rem;
+  .stateImage {
+    width: 14.4rem;
+  }
+  .stateContent {
+    font-size: 2.4rem;
+    font-weight: 400;
+    line-height: 3.6rem;
     margin-bottom: 2.4rem;
+    &.success {
+      color: ${({ theme }) => theme.colors.secondary.brand};
+    }
+    &.fail {
+      color: ${({ theme }) => theme.colors.state.error};
+    }
   }
   table {
     margin-bottom: 2rem;
-  }
-  section {
-    .customSize {
-      min-height: unset;
-      padding-left: 1.2rem;
-      padding-right: 1.2rem;
-      padding-bottom: .1rem;
-      width: unset;
-      height: 2.8rem;
-      font-size: 1.4rem;
-    }
   }
   ol {
     padding-left: 2.4rem;
@@ -78,7 +127,7 @@ const ExchangeWrapper = styled(Layout)`
   .MuiFormHelperText-root.Mui-error {
     &.balance {
       position: absolute;
-      color: ${({ theme }) => theme.colors.text.dark};
+      color: ${({ theme }) => theme.colors.text.mediumGray};
       text-align: left;
       transform: translateY(calc(-100% - 1.6rem));
     }

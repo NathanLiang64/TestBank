@@ -22,6 +22,7 @@ const theme = {
       light: '#6F89B2',
       darkGray: '#505050',
       lightGray: '#666',
+      mediumGray: '#999',
       placeholder: '#CCC',
       link: '#3EC4EE',
       point: '#E60E0E',

@@ -12,7 +12,7 @@ import {
   FEIBIconButton, FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBButton,
 } from 'components/elements';
 import theme from 'themes/theme';
-import { accountFormatter, toCurrency } from 'utilities/Generator';
+import { accountFormatter, currencySymbolGenerator, toCurrency } from 'utilities/Generator';
 import DebitCardBackground from 'assets/images/debitCardBackground.png';
 import DebitCardWrapper from './debitCard.style';
 
@@ -50,7 +50,7 @@ const DebitCard = ({
   transferRemaining,
   moreList,
   moreDefault = true,
-  dollarSign = '$',
+  dollarSign = 'TWD',
   color = 'purple',
 }) => {
   const [showBalance, setShowBalance] = useState(true);
@@ -203,7 +203,7 @@ const DebitCard = ({
       <div className={`cardBalance ${originalType() && 'grow'}`}>
         { !hideIcon && renderEyeIconButton() }
         <h3 className="balance">
-          {showBalance ? `${dollarSign}${toCurrency(balance)}` : '＊＊＊＊＊'}
+          {`${currencySymbolGenerator(dollarSign)}${showBalance ? toCurrency(balance) : '＊＊＊＊＊'}`}
         </h3>
       </div>
       { (originalType() && (functionList && renderFunctionList(functionList))) || (transferLimit && transferRemaining && renderTransferLimit(transferLimit, transferRemaining)) }

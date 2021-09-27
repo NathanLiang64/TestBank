@@ -50,6 +50,7 @@ const TransferFrequentlyUsedAccount = () => {
     if (edit.click && edit.target) {
       const response = await doGetInitData('/api/getFavoriteAcct');
       if (response) {
+        console.log(response);
         const currenTarget = response.favoriteAcctList.find((member) => member.id === edit.target);
         setTargetMember(currenTarget);
         setValue('memberAccountCardBankCode', { bankNo: currenTarget.bankNo, bankName: currenTarget.bankName });

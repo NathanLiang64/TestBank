@@ -7,6 +7,10 @@ const SnackModalDialogWrapper = styled(Dialog)`
     background: transparent !important;
     backdrop-filter: unset;
   }
+  
+  .MuiDialogTitle-root {
+    padding: 0;
+  }
 `;
 
 const SnackModalWrapper = styled.div`

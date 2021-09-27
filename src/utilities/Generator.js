@@ -76,10 +76,12 @@ export const weekNumberToChinese = (value) => {
 
 // 將拉阿伯數字轉換為中文大寫
 /* eslint-disable eqeqeq */
-export const numberToChinese = (number) => {
-  if (Number.isNaN(Number(number))) {
+export const numberToChinese = (num) => {
+  if (Number.isNaN(Number(num))) {
     return '(非數字)';
   }
+  let number = num.split('.')[0];
+  const digtalNum = num.split('.')[1];
   const chineseNumber = ('零壹貳參肆伍陸柒捌玖').split('');
   const amountSmallUnit = ['', '拾', '佰', '千'];
   const amountBigUnit = ['', '萬', '億', '兆', '京', '垓', '秭', '穰', '溝', '澗', '正', '載'];
@@ -121,7 +123,51 @@ export const numberToChinese = (number) => {
 
   if (chineseBigNumber != '') {
     /* chineseBigNumber += '元整'; */
-    chineseBigNumber = `(${chineseBigNumber}元)`;
+    if (!digtalNum) {
+      chineseBigNumber = `(${chineseBigNumber}元)`;
+    } else {
+      let chineseDigtalNumber = '';
+      for (let i = 0; i < digtalNum.length; i++) {
+        chineseDigtalNumber += chineseNumber[Number(digtalNum[i])];
+      }
+      chineseBigNumber = `(${chineseBigNumber}點${chineseDigtalNumber}元)`;
+    }
   }
   return chineseBigNumber;
+};
+
+// 貨幣單位文字轉為符號
+export const currencySymbolGenerator = (currency) => {
+  switch (currency) {
+    case 'TWD': // 新台幣
+      return '$';
+    case 'USD': // 美金
+      return 'US$';
+    case 'GBP': // 英鎊
+      return '£';
+    case 'HKD': // 港幣
+      return 'HK$';
+    case 'CHF': // 瑞士法郎
+      return 'Fr';
+    case 'AUD': // 澳幣
+      return 'A$';
+    case 'SGD': // 新加坡幣
+      return 'S$';
+    case 'JPY': // 日幣
+      return '¥';
+    case 'CAD': // 加幣
+      return 'CAN$';
+    case 'THB': // 泰幣
+      return '฿';
+    case 'ZAR': // 南非幣
+      return 'R';
+    case 'CNY': // 人民幣
+      return 'RMB¥';
+    case 'EUR': // 歐元
+      return '€';
+    case 'NZD': // 紐西蘭幣
+      return 'NZ$';
+    default:
+      return null;
+  }
 };
