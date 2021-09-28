@@ -25,7 +25,7 @@ const settingList = [
   },
   {
     name: '手機號碼收款設定',
-    route: '',
+    route: '/mobileTransfer',
   },
   {
     name: '使用者代號變更',
