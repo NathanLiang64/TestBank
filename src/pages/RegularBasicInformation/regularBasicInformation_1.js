@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
+import { regularBasicInformationApi } from 'apis';
 
 /* Elements */
 import {
@@ -12,27 +13,49 @@ import InformationList from 'components/InformationList';
 /* Styles */
 import RegularBasicInformationWrapper from './regularBasicInformation.style';
 
-const RegularBasicInformation1 = () => {
+const RegularBasicInformation1 = ({ location }) => {
   const history = useHistory();
 
+  const [confirmData, setConfirmData] = useState({
+    income: '02',
+    incomeLabel: '30-50萬',
+    industry: '0307',
+    industryLabel: '製造業',
+    title: '02',
+    titleLabel: '法人董事之董事長',
+  });
+
   // 跳轉結果頁
-  const toResultPage = () => {
-    history.push('/regularBasicInformation2');
+  const toResultPage = (result) => {
+    history.push('/regularBasicInformation2', result);
   };
 
   // 更新基本資料
-  const modifyPersonalData = () => {
-    toResultPage();
+  const modifyPersonalData = async () => {
+    const modifyData = {
+      jobCd: confirmData.industry,
+      grade: confirmData.title,
+      inCome: confirmData.income,
+    };
+    const modifyResponse = await regularBasicInformationApi.modifyRegularBasicInformation(modifyData);
+    const { grade, inCome, jobCd } = modifyResponse;
+    if (grade && inCome && jobCd) {
+      toResultPage(true);
+    } else {
+      toResultPage(false);
+    }
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    setConfirmData(location.state);
+  }, []);
 
   return (
     <RegularBasicInformationWrapper className="confirmWrapper">
       <div className="section lighterBlueLine">
-        <InformationList title="職業類別" content="金融業" />
-        <InformationList title="職稱" content="一般職員" />
-        <InformationList title="個人年收入" content="50~80萬" />
+        <InformationList title="職業類別" content={confirmData.industryLabel} />
+        <InformationList title="職稱" content={confirmData.titleLabel} />
+        <InformationList title="個人年收入" content={confirmData.incomeLabel} />
       </div>
       <div className="section">
         <Accordion title="注意事項" space="bottom">

@@ -11,9 +11,6 @@ const ProvisioningWrapper = styled(Layout)`
   .dealContent {
     text-align: justify;
   }
-  .red {
-    color: red;
-  }
 `;
 
 export default ProvisioningWrapper;
