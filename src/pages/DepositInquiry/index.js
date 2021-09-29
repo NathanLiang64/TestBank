@@ -91,8 +91,8 @@ const DepositInquiry = () => {
     const response = await getDetailsData(`${baseUrl}?actno=${account}`);
     if (response) {
       const { monthly, acctDetails } = response;
-      setTabList(monthly.length ? monthly.reverse() : []);
       setTabId(acctDetails.length ? acctDetails[0].txnDate.substr(0, 6) : '');
+      setTabList(monthly.length ? monthly.reverse() : []);
       dispatch(setDetailList(acctDetails));
 
       // 畫面跳轉至畫面第一筆資料

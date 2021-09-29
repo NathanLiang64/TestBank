@@ -1,11 +1,15 @@
 import styled from 'styled-components';
 import Layout from 'components/Layout';
-// import theme from 'themes/theme';
 
-const SecuritiesSwapAccountsWrapper = styled(Layout)`
+const ForeignCurrencyAccountWrapper = styled(Layout)`
+  display: flex;
+  flex-direction: column;
+  
   .userCardArea {
-    left: -1.6rem;
-    width: 100vw;
+    ${({ $multipleCardsStyle }) => $multipleCardsStyle && (`
+      left: -1.6rem;
+      width: 100vw;
+    `)}
     
     .swiper-container {
       padding-bottom: 1.6rem;
@@ -21,7 +25,7 @@ const SecuritiesSwapAccountsWrapper = styled(Layout)`
     flex-direction: column;
     align-items: flex-end;
     flex-grow: 1;
-    margin: 1.6rem 0;
+    margin-bottom: 1.6rem;
 
     .moreButton {
       display: inline-flex;
@@ -39,4 +43,4 @@ const SecuritiesSwapAccountsWrapper = styled(Layout)`
   }
 `;
 
-export default SecuritiesSwapAccountsWrapper;
+export default ForeignCurrencyAccountWrapper;
