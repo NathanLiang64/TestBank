@@ -28,7 +28,7 @@ const MobileTransfer1 = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    name: yup
+    userName: yup
       .string()
       .required('請輸入姓名'),
     mobile: yup
@@ -50,14 +50,19 @@ const MobileTransfer1 = () => {
     setAccountDefault(!accountDefault);
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = (formData) => {
     // eslint-disable-next-line no-console
-    console.log(data);
+    console.log(formData);
+    const data = {
+      isDefault: accountDefault,
+      ...formData,
+    };
     history.push(
       '/mobileTransfer2',
       {
         type: 'add',
         isModify: false,
+        data,
       },
     );
   };
@@ -81,20 +86,20 @@ const MobileTransfer1 = () => {
           <div>
             <FEIBInputLabel>姓名</FEIBInputLabel>
             <Controller
-              name="name"
+              name="userName"
               control={control}
               render={({ field }) => (
                 <FEIBInput
                   {...field}
                   type="text"
-                  id="name"
-                  name="name"
+                  id="userName"
+                  name="userName"
                   placeholder="請輸入姓名"
-                  error={!!errors.name}
+                  error={!!errors.userName}
                 />
               )}
             />
-            <FEIBErrorMessage>{errors.name?.message}</FEIBErrorMessage>
+            <FEIBErrorMessage>{errors.userName?.message}</FEIBErrorMessage>
             <FEIBInputLabel>手機號碼</FEIBInputLabel>
             <Controller
               name="mobile"
