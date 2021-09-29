@@ -11,6 +11,7 @@ import { reducers as transferReducer } from 'pages/Transfer/stores';
 import { reducers as favoriteReducer } from 'pages/Favorite/stores';
 import { reducers as passwordDrawerReducer } from 'components/PasswordDrawer/stores';
 import { reducers as spinnerReducer } from 'components/Spinner/stores';
+import { reducers as foreignCurrencyAccountReducer } from 'pages/ForeignCurrencyAccount/stores';
 
 const reducer = combineReducers({
   header: headerReducer,
@@ -25,6 +26,7 @@ const reducer = combineReducers({
   favorite: favoriteReducer,
   passwordDrawer: passwordDrawerReducer,
   spinner: spinnerReducer,
+  foreignCurrencyAccount: foreignCurrencyAccountReducer,
 });
 
 export default reducer;
