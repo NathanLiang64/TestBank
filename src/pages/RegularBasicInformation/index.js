@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { regularBasicInformationApi } from 'apis';
 
 /* Elements */
 import {
@@ -36,21 +37,65 @@ const RegularBasicInformation = () => {
     // ...passwordValidation,
   });
   const {
-    handleSubmit, control, formState: { errors }, getValues, reset,
+    handleSubmit, control, formState: { errors }, getValues, reset, setValue,
   } = useForm({
     resolver: yupResolver(schema),
   });
 
+  const [regularBasicData, setRegularBasicData] = useState({
+    grade: '',
+    income: '',
+    jobcd: '',
+  });
+  const [gradeOptions, setGradeOptions] = useState([{ code: '', name: '' }]);
+  const [incomeOptions, setIncomeOptions] = useState([{ code: '', name: '' }]);
+  const [jobOptions, setJobOptions] = useState([{ code: '', name: '' }]);
+
+  // 點擊重新設定
+  const resetForm = () => {
+    reset({
+      industry: regularBasicData.jobcd,
+      title: regularBasicData.grade,
+      income: regularBasicData.income,
+    });
+  };
+
+  // 取得職業別清單
+  const getJobsCode = async () => {
+    const jobsCodeResponse = await regularBasicInformationApi.getJobsCode({});
+    // eslint-disable-next-line no-console
+    console.log(jobsCodeResponse);
+    if (!jobsCodeResponse.message) {
+      const {
+        grade, income, jobcd, gradeList, incomeList, jobList,
+      } = jobsCodeResponse;
+      setGradeOptions(gradeList);
+      setIncomeOptions(incomeList);
+      setJobOptions(jobList);
+      setRegularBasicData({ grade, income, jobcd });
+      setValue('industry', jobcd);
+      setValue('title', grade);
+      setValue('income', income);
+    } else {
+      alert(jobsCodeResponse.message);
+    }
+  };
+
   // 跳轉確認頁
-  const toConfirmPage = () => {
-    history.push('/regularBasicInformation1');
+  const toConfirmPage = (data) => {
+    history.push('/regularBasicInformation1', data);
   };
 
   // 更新個人資料
   const modifyPersonalData = async () => {
     const data = getValues();
-    console.log(data);
-    toConfirmPage();
+    const confirmData = {
+      industryLabel: jobOptions.find((item) => item.code === data.industry).name,
+      titleLabel: gradeOptions.find((item) => item.code === data.title).name,
+      incomeLabel: incomeOptions.find((item) => item.code === data.income).name,
+      ...data,
+    };
+    toConfirmPage(confirmData);
   };
 
   // 點擊確認按鈕
@@ -58,24 +103,16 @@ const RegularBasicInformation = () => {
     modifyPersonalData();
   };
 
-  // 點擊重新設定
-  const resetForm = () => {
-    reset({
-      industry: '1',
-      title: '1',
-      income: '1',
-    });
-  };
+  // 建立選單
+  const renderOptionsList = (data) => data.map((item) => (
+    <FEIBOption key={item.code} value={item.code}>{item.name}</FEIBOption>
+  ));
 
   useCheckLocation();
   usePageInfo('/api/regularBasicInformation');
 
   useEffect(() => {
-    reset({
-      industry: '1',
-      title: '1',
-      income: '1',
-    });
+    getJobsCode();
   }, []);
 
   return (
@@ -101,7 +138,7 @@ const RegularBasicInformation = () => {
                   error={!!errors.industry}
                 >
                   <FEIBOption value="" disabled>請選擇行業類別</FEIBOption>
-                  <FEIBOption value="1">金融業</FEIBOption>
+                  { renderOptionsList(jobOptions) }
                 </FEIBSelect>
               )}
             />
@@ -119,7 +156,7 @@ const RegularBasicInformation = () => {
                   error={!!errors.title}
                 >
                   <FEIBOption value="" disabled>請選擇職稱</FEIBOption>
-                  <FEIBOption value="1">一般職員</FEIBOption>
+                  { renderOptionsList(gradeOptions) }
                 </FEIBSelect>
               )}
             />
@@ -137,8 +174,7 @@ const RegularBasicInformation = () => {
                   error={!!errors.income}
                 >
                   <FEIBOption value="" disabled>請選擇個人年收入</FEIBOption>
-                  <FEIBOption value="1">50~80 萬</FEIBOption>
-                  <FEIBOption value="2">80~120 萬</FEIBOption>
+                  { renderOptionsList(incomeOptions) }
                 </FEIBSelect>
               )}
             />

@@ -14,6 +14,7 @@ import * as pwdModifyApi from './pwdModifyApi';
 import * as qAndAApi from './qAndAApi';
 import * as reserveTransferSearchApi from './reserveTransferSearchApi';
 import * as settingApi from './settingApi';
+import * as regularBasicInformationApi from './regularBasicInformationApi';
 
 export {
   headerApi,
@@ -32,4 +33,5 @@ export {
   qAndAApi,
   reserveTransferSearchApi,
   settingApi,
+  regularBasicInformationApi,
 };
