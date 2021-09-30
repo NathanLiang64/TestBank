@@ -16,12 +16,12 @@ const tabPageList = {
       {
         value: '2',
         label: '外幣活存',
-        route: '/foreignCurrencyAccounts',
+        route: '/foreignCurrencyAccount',
       },
       {
         value: '3',
         label: '證券交割帳戶',
-        route: '/securitiesSwapAccounts',
+        route: '/tradingAccount',
       },
       {
         value: '4',

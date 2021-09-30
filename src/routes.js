@@ -34,7 +34,7 @@ import ProjectJ from 'pages/ProjectJ';
 import LoanInquiry from 'pages/LoanInquiry';
 import LoanInterest from 'pages/LoanInterest';
 import BasicInformation from 'pages/BasicInformation';
-import BasicInformation1 from 'pages//BasicInformation/basicInformation_1';
+import BasicInformation1 from 'pages/BasicInformation/basicInformation_1';
 import QandA from 'pages/QandA';
 import Provisioning from 'pages/Provisioning';
 import Deduct from 'pages/Deduct';
@@ -51,8 +51,9 @@ import Profile from 'pages/Profile';
 import More from 'pages/More';
 import FinancialDepartments from 'pages/FinancialDepartments';
 import Network from 'pages/Network';
-import SecuritiesSwapAccounts from 'pages/SecuritiesSwapAccounts';
-import ForeignCurrencyAccounts from 'pages/ForeignCurrencyAccounts';
+import TradingAccount from 'pages/TradingAccount';
+import ForeignCurrencyAccount from 'pages/ForeignCurrencyAccount';
+import ForeignCurrencyAccountDetails from 'pages/ForeignCurrencyAccountDetails';
 import RegularBasicInformation from 'pages/RegularBasicInformation';
 import RegularBasicInformation1 from 'pages/RegularBasicInformation/regularBasicInformation_1';
 import RegularBasicInformation2 from 'pages/RegularBasicInformation/regularBasicInformation_2';
@@ -128,8 +129,9 @@ const routes = [
   { path: '/more', exact: false, component: More },
   { path: '/financialDepartments', exact: false, component: FinancialDepartments },
   { path: '/network', exact: false, component: Network },
-  { path: '/securitiesSwapAccounts', exact: false, component: SecuritiesSwapAccounts },
-  { path: '/foreignCurrencyAccounts', exact: false, component: ForeignCurrencyAccounts },
+  { path: '/tradingAccount', exact: false, component: TradingAccount },
+  { path: '/foreignCurrencyAccount', exact: false, component: ForeignCurrencyAccount },
+  { path: '/foreignCurrencyAccountDetails', exact: false, component: ForeignCurrencyAccountDetails },
   { path: '/regularBasicInformation', exact: false, component: RegularBasicInformation },
   { path: '/regularBasicInformation1', exact: false, component: RegularBasicInformation1 },
   { path: '/regularBasicInformation2', exact: false, component: RegularBasicInformation2 },

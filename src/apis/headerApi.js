@@ -107,11 +107,14 @@ const pageInfo = {
   network: {
     title: '社群圈',
   },
-  securitiesSwapAccounts: {
-    title: '帳戶',
+  tradingAccount: {
+    title: '證券交割戶',
   },
-  foreignCurrencyAccounts: {
+  foreignCurrencyAccount: {
     title: '外幣帳戶',
+  },
+  foreignCurrencyAccountDetails: {
+    title: '外幣交易明細',
   },
   regularBasicInformation: {
     title: '六個月基本資料變更',

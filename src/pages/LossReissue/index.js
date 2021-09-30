@@ -5,7 +5,6 @@ import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useCheckLocation, usePageInfo } from 'hooks';
-import { lossReissueApi } from 'apis';
 import Dialog from 'components/Dialog';
 import Accordion from 'components/Accordion';
 import ConfirmButtons from 'components/ConfirmButtons';
@@ -15,6 +14,8 @@ import {
 } from 'components/elements';
 import e2ee from 'utilities/E2ee';
 import { passwordValidation } from 'utilities/validation';
+// import { doGetInitData } from 'apis/lossReissueApi';
+import mockData from './mockData';
 import LossReissueWrapper from './lossReissue.style';
 import {
   setActionText, setAccount, setCardState, setUserAddress, setIsResultSuccess,
@@ -44,7 +45,6 @@ const LossReissue = () => {
 
   const { push } = useHistory();
   const dispatch = useDispatch();
-  const { doGetInitData } = lossReissueApi;
 
   const handleClickSubmitButton = async (data) => {
     data.password = await e2ee(data.password);
@@ -128,18 +128,23 @@ const LossReissue = () => {
   usePageInfo('/api/lossReissue');
 
   useEffect(async () => {
-    const response = await doGetInitData('/api/lossReissue');
-    if (response.initData) {
-      const {
-        // fastLogin,
-        accountNo,
-        cardStatus,
-        userAddress,
-      } = response.initData;
-      dispatch(setAccount(accountNo));
-      dispatch(setCardState(cardStatus));
-      dispatch(setUserAddress(userAddress));
-    }
+    /* ========== mock data (for mock api) ========== */
+    // const response = await doGetInitData('/api/lossReissue');
+    // if (response.initData) {
+    //   const {
+    //     // fastLogin,
+    //     accountNo, cardStatus, userAddress,
+    //   } = response.initData;
+    //   dispatch(setAccount(accountNo));
+    //   dispatch(setCardState(cardStatus));
+    //   dispatch(setUserAddress(userAddress));
+    // }
+
+    /* ========== mock data (for prototype) ========== */
+    const { accountNo, cardStatus, userAddress } = mockData.getInitData;
+    dispatch(setAccount(accountNo));
+    dispatch(setCardState(cardStatus));
+    dispatch(setUserAddress(userAddress));
   }, []);
 
   useEffect(() => {
