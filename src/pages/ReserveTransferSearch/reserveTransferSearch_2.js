@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
@@ -13,7 +14,12 @@ import AddPersonIcon from 'assets/images/addPersonIcon.svg';
 import ReserveTransferSearchWrapper from './reserveTransferSearch.style';
 
 const ReserveTransferSearch2 = () => {
+  const history = useHistory();
   const isSuccess = true;
+
+  const toSearchPage = () => {
+    history.push('/reserveTransferSearch');
+  };
 
   useCheckLocation();
   usePageInfo('/api/reserveTransferSearch1');
@@ -56,7 +62,7 @@ const ReserveTransferSearch2 = () => {
               </Accordion>
             </section>
             <section className="buttonContainer">
-              <FEIBButton>確認</FEIBButton>
+              <FEIBButton onClick={toSearchPage}>確認</FEIBButton>
             </section>
           </>
         )
@@ -75,7 +81,7 @@ const ReserveTransferSearch2 = () => {
               <div className="dataLabel">設定逾時</div>
             </section>
             <section className="buttonContainer">
-              <FEIBButton>確認</FEIBButton>
+              <FEIBButton onClick={toSearchPage}>確認</FEIBButton>
             </section>
           </>
         )
