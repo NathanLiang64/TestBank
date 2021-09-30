@@ -16,7 +16,7 @@ const BankCode = ({ isOpen, onClose, onSelect }) => {
   const handleClickBankItem = (event) => {
     // 初始化
     setSearchValue('');
-    setBankList(taiwanBankList);
+    setBankList(originBankeCode);
     // 回傳選擇的銀行代碼
     const selectedBank = [];
     for (const bank of event.currentTarget.children) {
