@@ -149,6 +149,9 @@ const ExchangeWrapper = styled(Layout)`
     padding-top: 1.2rem;
     padding-bottom: .8rem;
   }
+  #foreignBalance, #ntDollorBalance {
+    color: transparent;
+  }
 `;
 
 export default ExchangeWrapper;

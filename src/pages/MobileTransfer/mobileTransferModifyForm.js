@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
@@ -20,7 +20,7 @@ import Accordion from 'components/Accordion';
 /* Styles */
 import MobileTransferWrapper from './mobileTransfer.style';
 
-const MobileTransferModifyForm = ({ onClose }) => {
+const MobileTransferModifyForm = ({ onClose, modifyData }) => {
   const history = useHistory();
   /**
    *- 資料驗證
@@ -37,7 +37,7 @@ const MobileTransferModifyForm = ({ onClose }) => {
       .required('請選擇收款帳號'),
   });
   const {
-    handleSubmit, control, formState: { errors },
+    handleSubmit, control, formState: { errors }, setValue,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -48,17 +48,34 @@ const MobileTransferModifyForm = ({ onClose }) => {
     setAccountDefault(!accountDefault);
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = (formData) => {
     // eslint-disable-next-line no-console
-    console.log(data);
+    console.log(formData);
+    const data = {
+      isDefault: accountDefault,
+      id: modifyData.id,
+      ...formData,
+    };
     history.push(
       '/mobileTransfer2',
       {
         type: 'edit',
         isModify: true,
+        data,
       },
     );
   };
+
+  useEffect(() => {
+    console.log(modifyData);
+    const {
+      userName, account, mobile, isDefault,
+    } = modifyData;
+    setValue('userName', userName);
+    setValue('account', account);
+    setValue('mobile', mobile);
+    setAccountDefault(isDefault);
+  }, []);
 
   return (
     <MobileTransferWrapper className="drawerWrapper">
@@ -96,7 +113,8 @@ const MobileTransferModifyForm = ({ onClose }) => {
                   error={!!errors.mobile}
                 >
                   <FEIBOption value="" disabled>請選擇手機號碼</FEIBOption>
-                  <FEIBOption value="0988392725">0988392725</FEIBOption>
+                  <FEIBOption value="0988392726">0988392726</FEIBOption>
+                  <FEIBOption value="0988392899">0988392899</FEIBOption>
                 </FEIBSelect>
               )}
             />
@@ -116,7 +134,8 @@ const MobileTransferModifyForm = ({ onClose }) => {
                   error={!!errors.account}
                 >
                   <FEIBOption value="" disabled>請選擇收款帳號</FEIBOption>
-                  <FEIBOption value="04300499031163">04300499031163</FEIBOption>
+                  <FEIBOption value="00300400326306">00300400326306</FEIBOption>
+                  <FEIBOption value="00300400326307">00300400326307</FEIBOption>
                 </FEIBSelect>
               )}
             />

@@ -14,6 +14,13 @@ const MobileTransfer2 = ({ location }) => {
   const history = useHistory();
   const [dealType, setDealType] = useState('');
   const [isModifyConfirmPage, setIsModifyConfirmPage] = useState(true);
+  const [confirmData, setConfirmData] = useState({
+    id: 0,
+    mobile: '',
+    isDefault: false,
+    account: '',
+    userName: '',
+  });
 
   const setDealTypeContent = (type) => {
     switch (type) {
@@ -33,8 +40,9 @@ const MobileTransfer2 = ({ location }) => {
     history.push(
       '/mobileTransfer3',
       {
+        // 新增修改刪除成功或失敗
         result: true,
-        isDeleteResult: false,
+        isDeleteResult: location.state.type === 'delete',
       },
     );
   };
@@ -43,9 +51,10 @@ const MobileTransfer2 = ({ location }) => {
   usePageInfo('/api/mobileTransfer2');
 
   useEffect(() => {
-    const { type, isModify } = location.state;
+    const { type, isModify, data } = location.state;
     setDealTypeContent(type);
     setIsModifyConfirmPage(isModify);
+    setConfirmData(data);
   }, []);
 
   return (
@@ -54,10 +63,10 @@ const MobileTransfer2 = ({ location }) => {
         <div className={`confirmDataContainer lighterBlueLine ${isModifyConfirmPage && 'modifyConfirmPage'}`}>
           <div>
             <InformationList title="交易種類" content={dealType} />
-            <InformationList title="姓名" content="王小明" />
-            <InformationList title="手機號碼" content="0988392725" />
-            <InformationList title="收款帳號" content="04300499031163" />
-            <InformationList title="預設收款帳戶" content="是" />
+            <InformationList title="姓名" content={confirmData.userName} />
+            <InformationList title="手機號碼" content={confirmData.mobile} />
+            <InformationList title="收款帳號" content={confirmData.account} />
+            <InformationList title="預設收款帳戶" content={confirmData.isDefault ? '是' : '否'} />
           </div>
           {
             isModifyConfirmPage && (
