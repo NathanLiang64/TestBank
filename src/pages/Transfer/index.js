@@ -30,6 +30,7 @@ import { setOpenDrawer, setClickMoreOptions } from './stores/actions';
 import TransferWrapper from './transfer.style';
 import TransferDrawer from '../TransferDrawer';
 import Dialog from '../../components/Dialog';
+import {setNtdTrAcct} from './stores/actions'
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
@@ -401,8 +402,10 @@ const Transfer = () => {
   // 取得所有存款卡的初始資料
   useEffect(async () => {
     const cardResponse = await getNtdTrAcct({motpDeviceId:'12313131'});
-    console.log(cardResponse);
-    if (cardResponse.accounts) setCards(cardResponse.accounts);
+    if (cardResponse.accounts){
+      setCards(cardResponse.accounts);
+      dispatch(setNtdTrAcct(cardResponse));
+    } 
     //
     // const favoriteResponse = await doGetInitData('/api/getFavoriteAcct');
     // if (favoriteResponse) setFrequentlyUsedAccounts(favoriteResponse.favoriteAcctList);

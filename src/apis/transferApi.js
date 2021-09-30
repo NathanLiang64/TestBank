@@ -15,6 +15,9 @@ export const getBankCode = async (params) => (
 
 export const getNtdTrAcct = async (params) => (
   await userAxios.post('/api/transfer/queryNtdTrAcct', params)
-    .then((response) => response)
+    .then((response) => {
+      console.log(response);
+      return response;
+    })
     .catch((error) => error)
 );
