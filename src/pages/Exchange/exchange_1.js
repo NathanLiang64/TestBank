@@ -37,6 +37,10 @@ const Exchange1 = () => {
   // const [drawerOpen, setDrawerOpen] = useState(false);
   const isEmployee = true;
 
+  const toFormPage = () => {
+    history.goBack();
+  };
+
   const handleNextStep = () => {
     history.push('/exchange2');
   };
@@ -57,8 +61,7 @@ const Exchange1 = () => {
           <div>
             <CountDown
               minute={0.5}
-              // onEnd={() => history.goBack()}
-              onEnd={() => console.log('end')}
+              onEnd={toFormPage}
             />
           </div>
         </div>

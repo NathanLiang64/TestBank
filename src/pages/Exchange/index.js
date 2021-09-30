@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
@@ -10,6 +11,7 @@ import { RadioGroup } from '@material-ui/core';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { numberToChinese } from 'utilities/Generator';
 import Dialog from 'components/Dialog';
 import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
@@ -45,18 +47,18 @@ const Exchange = () => {
     property: yup
       .string()
       .required('請選擇匯款性質'),
-    outBalance: yup
+    foreignBalance: yup
       .string()
       .when('outType', {
         is: (val) => val === '1',
         then: yup.string().required('請輸入金額'),
         otherwise: yup.string().notRequired(),
       }),
-    inBalance: yup
+    ntDollorBalance: yup
       .string()
       .when('outType', {
         is: (val) => val === '2',
-        then: yup.string().required('請選擇金額'),
+        then: yup.string().required('請輸入金額'),
         otherwise: yup.string().notRequired(),
       }),
     memo: yup.string(),
@@ -73,9 +75,27 @@ const Exchange = () => {
   const [inAccountList, setInAccountList] = useState([]);
   const [currencyTypeList, setCurrencyTypeLise] = useState([]);
   const [propertiesList, setPropertiesList] = useState([]);
+  const [ntDollorStr, setNtDollorStr] = useState('');
+  const [foreignDollorStr, setForeignDollorStr] = useState('');
 
   const handleBalanceChange = (event) => {
-    setValue(event.target.name, event.target.value);
+    const targetName = event.target.name;
+    const targetValue = event.target.value;
+    setValue(targetName, targetValue);
+    if (targetName === 'foreignBalance') {
+      if (!targetValue) {
+        setForeignDollorStr('');
+      } else {
+        setForeignDollorStr(`$${targetValue}${numberToChinese(targetValue)}`);
+      }
+    }
+    if (targetName === 'ntDollorBalance') {
+      if (!targetValue) {
+        setNtDollorStr('');
+      } else {
+        setNtDollorStr(`$${targetValue}${numberToChinese(targetValue)}`);
+      }
+    }
   };
 
   const handleTableToggle = () => {
@@ -124,8 +144,8 @@ const Exchange = () => {
     setPropertiesList(propertyList);
     setValue('exchangeType', '1');
     setValue('outType', '1');
-    setValue('outBalance', '');
-    setValue('inBalance', '');
+    setValue('foreignBalance', '');
+    setValue('ntDollorBalance', '');
   }, []);
 
   return (
@@ -229,44 +249,50 @@ const Exchange = () => {
                   label={`希望${watch('exchangeType') === '2' ? '轉出' : '轉入'}${watch('currency')}`}
                 />
                 <Controller
-                  name="outBalance"
+                  name="foreignBalance"
                   defaultValue=""
                   control={control}
                   render={({ balanceField }) => (
-                    <FEIBInput
-                      {...balanceField}
-                      type="text"
-                      inputMode="numeric"
-                      id="outBalance"
-                      name="outBalance"
-                      placeholder="請輸入金額"
-                      error={!!errors.outBalance}
-                      disabled={watch('outType') !== '1'}
-                      onChange={handleBalanceChange}
-                    />
+                    <>
+                      <FEIBInput
+                        {...balanceField}
+                        type="text"
+                        inputMode="numeric"
+                        id="foreignBalance"
+                        name="foreignBalance"
+                        placeholder={`請輸入${watch('exchangeType') === '2' ? '轉出' : '轉入'}金額`}
+                        error={!!errors.foreignBalance}
+                        disabled={watch('outType') !== '1'}
+                        onChange={handleBalanceChange}
+                      />
+                      <div className="balanceLayout">{foreignDollorStr}</div>
+                    </>
                   )}
                 />
-                <FEIBErrorMessage>{errors.outBalance?.message}</FEIBErrorMessage>
+                <FEIBErrorMessage>{errors.foreignBalance?.message}</FEIBErrorMessage>
                 <FEIBRadioLabel className="outTypeRadioLabel" value="2" control={<FEIBRadio />} label={`希望${watch('exchangeType') === '2' ? '轉入' : '轉出'}新臺幣`} />
                 <Controller
-                  name="inBalance"
+                  name="ntDollorBalance"
                   defaultValue=""
                   control={control}
                   render={({ balanceField }) => (
-                    <FEIBInput
-                      {...balanceField}
-                      type="text"
-                      inputMode="numeric"
-                      id="inBalance"
-                      name="inBalance"
-                      placeholder={`請輸入${watch('exchangeType') === '2' ? '轉入' : '轉出'}金額`}
-                      error={!!errors.inBalance}
-                      disabled={watch('outType') !== '2'}
-                      onChange={handleBalanceChange}
-                    />
+                    <>
+                      <FEIBInput
+                        {...balanceField}
+                        type="text"
+                        inputMode="numeric"
+                        id="ntDollorBalance"
+                        name="ntDollorBalance"
+                        placeholder={`請輸入${watch('exchangeType') === '2' ? '轉入' : '轉出'}金額`}
+                        error={!!errors.ntDollorBalance}
+                        disabled={watch('outType') !== '2'}
+                        onChange={handleBalanceChange}
+                      />
+                      <div className="balanceLayout">{ntDollorStr}</div>
+                    </>
                   )}
                 />
-                <FEIBErrorMessage>{errors.inBalance?.message}</FEIBErrorMessage>
+                <FEIBErrorMessage>{errors.ntDollorBalance?.message}</FEIBErrorMessage>
               </RadioGroup>
             )}
           />

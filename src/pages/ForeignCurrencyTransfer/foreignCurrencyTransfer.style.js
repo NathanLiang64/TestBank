@@ -110,13 +110,6 @@ const ForeignCurrencyTransferWrapper = styled(Layout)`
   #balance {
     color: transparent;
   }
-  .balanceLayout {
-    font-size: 1.6rem;
-    color: ${({ theme }) => theme.colors.primary.dark};
-    transform: translateY(-3.1rem);
-    pointer-events: none;
-    height: 0;
-  }
 `;
 
 export default ForeignCurrencyTransferWrapper;
