@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
@@ -9,6 +10,13 @@ import { FEIBButton } from 'components/elements';
 import ForeignCurrencyTransferWrapper from './foreignCurrencyTransfer.style';
 
 const ForeignCurrencyTransfer1 = () => {
+  const history = useHistory();
+
+  // 確認進行轉帳
+  const applyTransfer = () => {
+    history.push('/foreignCurrencyTransfer2');
+  };
+
   useCheckLocation();
   usePageInfo('/api/foreignCurrencyTransfer1');
 
@@ -31,7 +39,7 @@ const ForeignCurrencyTransfer1 = () => {
           <InformationList title="備註" content="聖誕節禮物" />
         </div>
         <div className="btnContainer">
-          <FEIBButton>確認</FEIBButton>
+          <FEIBButton onClick={applyTransfer}>確認</FEIBButton>
           <div className="warnText">轉帳前多思考，避免被騙更苦惱</div>
         </div>
       </div>

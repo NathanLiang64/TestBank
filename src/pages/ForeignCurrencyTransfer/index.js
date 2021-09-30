@@ -5,9 +5,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { numberToChinese } from 'utilities/Generator';
+import { numberToChinese, currencySymbolGenerator } from 'utilities/Generator';
 import { transferAmountValidation } from 'utilities/validation';
-
 /* Elements */
 import Accordion from 'components/Accordion';
 import DebitCard from 'components/DebitCard';
@@ -24,16 +23,16 @@ const mockAccounts = [
   {
     cardBranch: '信義分行',
     cardName: '英鎊',
-    dollarSign: '£',
-    cardAccount: '043-004-99001234',
+    dollarSign: 'GBP',
+    cardAccount: '04300499001234',
     cardBalance: 5340.56,
     transferRemaining: 3,
   },
   {
     cardBranch: '信義分行',
-    cardName: '英鎊',
-    dollarSign: '$',
-    cardAccount: '043-004-99001234',
+    cardName: '美金',
+    dollarSign: 'USD',
+    cardAccount: '04300499001234',
     cardBalance: 5340.56,
     transferRemaining: 3,
   },
@@ -68,7 +67,6 @@ const ForeignCurrencyTransfer = () => {
     setCurrentAccount(mockAccounts[0]);
   };
 
-  // eslint-disable-next-line no-unused-vars
   const handleChangeSlide = (swiper) => {
     setCurrentAccount(mockAccounts[swiper.realIndex]);
   };
@@ -149,14 +147,14 @@ const ForeignCurrencyTransfer = () => {
                     inputMode="numeric"
                     id="balance"
                     name="balance"
-                    placeholder={`${currentAccount.dollarSign}0（零元）`}
+                    placeholder={`${currencySymbolGenerator(currentAccount.dollarSign)}0（零元）`}
                     error={!!errors.balance}
                     onChange={(event) => {
                       setValue('balance', event.target.value);
                       if (!event.target.value) {
                         setMixBalanceStr('');
                       } else {
-                        setMixBalanceStr(`${currentAccount.dollarSign}${event.target.value}${numberToChinese(event.target.value)}`);
+                        setMixBalanceStr(`${currencySymbolGenerator(currentAccount.dollarSign)}${event.target.value}${numberToChinese(event.target.value)}`);
                       }
                     }}
                   />
