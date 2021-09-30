@@ -72,7 +72,8 @@ const BasicInformation = () => {
   };
 
   // 取得縣市列表
-  const getCountyList = async () => {
+  // eslint-disable-next-line no-unused-vars
+  const getCountyList = async (address) => {
     const countyListResponse = await settingApi.getCountyList({});
     setAddressOptionsData(countyListResponse);
     const countyList = countyListResponse.map((item) => {
@@ -83,6 +84,8 @@ const BasicInformation = () => {
       return data;
     });
     setCountyOptions(countyList);
+    const { cities } = countyListResponse.find((item) => item.countyName === address.county);
+    setCityOptions(cities);
   };
 
   // 取得個人資料
@@ -93,6 +96,12 @@ const BasicInformation = () => {
       ...basicInformationResponse,
     };
     reset(data);
+    console.log(data);
+    const { county, city } = data;
+    getCountyList({
+      county,
+      city,
+    });
   };
 
   // 更新個人資料
@@ -146,7 +155,7 @@ const BasicInformation = () => {
   usePageInfo('/api/basicInformation');
 
   useEffect(() => {
-    getCountyList();
+    // getCountyList();
     getPersonalData();
   }, []);
 

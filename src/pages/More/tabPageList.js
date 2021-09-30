@@ -93,7 +93,7 @@ const tabPageList = {
       {
         value: '1',
         label: '外幣轉帳',
-        route: '',
+        route: '/foreignCurrencyTransfer',
       },
       {
         value: '2',
