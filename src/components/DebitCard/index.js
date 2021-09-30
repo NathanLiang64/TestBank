@@ -207,8 +207,8 @@ const DebitCard = ({
         </h3>
       </div>
       { (originalType() && (functionList && renderFunctionList(functionList))) || (transferLimit && transferRemaining && renderTransferLimit(transferLimit, transferRemaining)) }
-      { originalType() && renderMoreIconButton() }
-      { originalType() && renderBottomDrawer(moreList) }
+      { originalType() && moreList && renderMoreIconButton() }
+      { originalType() && moreList && renderBottomDrawer(moreList) }
       { originalType() && renderEditCardNameDialog(cardName) }
     </DebitCardWrapper>
   );
