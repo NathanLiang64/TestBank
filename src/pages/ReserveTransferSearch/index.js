@@ -31,14 +31,14 @@ import ReserveTransferSearchWrapper from './reserveTransferSearch.style';
 const mockAccounts = [
   {
     cardName: '保時捷車友會',
-    dollarSign: '$',
+    dollarSign: 'TWD',
     cardAccount: '04300499001234',
     cardBalance: 2000000,
     transferRemaining: 3,
   },
   {
     cardName: '保時捷車友會',
-    dollarSign: '$',
+    dollarSign: 'TWD',
     cardAccount: '04300499001234',
     cardBalance: 2000000,
     transferRemaining: 3,
@@ -74,12 +74,14 @@ const mockResultData = [
     inActNo: '822-00255540253722',
     amount: '$1,200',
     stderrMsg: '',
+    success: true,
   },
   {
     trnsDate: '2021/01/25',
     inActNo: '822-00255540253722',
     amount: '$1,200',
     stderrMsg: '餘額不足',
+    success: false,
   },
 ];
 
@@ -99,6 +101,7 @@ const ReserveTransferSearch = () => {
   const [resultDateRange, setResultDateRange] = useState([new Date(new Date().setFullYear(new Date().getFullYear() - 2)), new Date()]);
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [showResultDialog, setShowResultDialog] = useState(false);
+  const [resultDialogData, setResultDialogData] = useState({});
 
   const getTransferOutAccounts = async () => {
     // const response = await reserveTransferSearchApi.getTransferOutAccounts({});
@@ -136,6 +139,7 @@ const ReserveTransferSearch = () => {
   const renderCard = () => cardsList.map((item) => (
     <SwiperSlide>
       <DebitCard
+        key={item.account}
         branch={item.cardBranch}
         cardName={item.cardName}
         account={item.cardAccount}
@@ -160,14 +164,20 @@ const ReserveTransferSearch = () => {
     />
   ));
 
+  // 打開結果彈窗
+  const handleOpenResultDialog = (data) => {
+    setResultDialogData(data);
+    setShowResultDialog(true);
+  };
+
   // 結果查詢列表
   const renderResultTapes = () => mockResultData.map((item) => (
     <InformationTape
       img={item.stderrMsg ? FailImage : SuccessImage}
       topLeft={item.inActNo}
       topRight={item.amount}
-      bottomLeft={`交易日期${item.trnsDate}`}
-      onClick={() => setShowResultDialog(true)}
+      bottomLeft={`交易日期：${item.trnsDate}`}
+      onClick={() => handleOpenResultDialog(item)}
     />
   ));
 
@@ -196,7 +206,7 @@ const ReserveTransferSearch = () => {
       title="預約轉帳結果"
       isOpen={showResultDialog}
       onClose={() => setShowResultDialog(false)}
-      content={(<ResultContent />)}
+      content={(<ResultContent data={resultDialogData} />)}
     />
   );
 
