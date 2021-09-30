@@ -27,7 +27,7 @@ const App = () => (
       </Switch>
       <TabBar />
       <ShakeShake />
-      <Favorite />
+      {/* <Favorite /> */}
       <PasswordDrawer />
     </PersistGate>
     <Spinner />
