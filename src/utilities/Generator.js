@@ -171,3 +171,20 @@ export const currencySymbolGenerator = (currency) => {
       return null;
   }
 };
+
+// 姓名隱碼化，王小明 -> 王Ｏ明
+export const hideName = (name) => {
+  if (!name) return;
+
+  /* eslint-disable consistent-return */
+  const nameLength = name.length;
+  const firstCharacter = name.substr(0, 1);
+
+  if (nameLength < 2) return firstCharacter;
+  if (nameLength < 3) return `${firstCharacter}Ｏ`;
+
+  const lastCharacter = name.substr(nameLength - 1, 1);
+  const others = [];
+  for (let i = 0; i < name.length - 2; i++) others.push('Ｏ');
+  return firstCharacter + others.join('') + lastCharacter;
+};
