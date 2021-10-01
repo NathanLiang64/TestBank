@@ -21,7 +21,7 @@ import {
   FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBDatePicker,
   FEIBRadioLabel, FEIBRadio, FEIBButton, FEIBSelect, FEIBOption, FEIBIconButton,
 } from 'components/elements';
-import { doGetInitData } from 'apis/transferApi';
+import { doGetInitData,getNtdTrAcct } from 'apis/transferApi';
 import { numberToChinese, weekNumberToChinese } from 'utilities/Generator';
 import { bankCodeValidation, receivingAccountValidation, transferAmountValidation } from 'utilities/validation';
 import { directTo } from 'utilities/mockWebController';
@@ -30,6 +30,7 @@ import { setOpenDrawer, setClickMoreOptions } from './stores/actions';
 import TransferWrapper from './transfer.style';
 import TransferDrawer from '../TransferDrawer';
 import Dialog from '../../components/Dialog';
+import {setNtdTrAcct} from './stores/actions'
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
@@ -49,7 +50,7 @@ const Transfer = () => {
   const [datePickerType, setDatePickerType] = useState('single');
   const [transactionCycleType, setTransactionCycleType] = useState('monthly');
   const [transactionDateRange, setTransactionDateRange] = useState([selectedDate, new Date(new Date().setDate(new Date().getDate() + 2))]);
-  const [selectCardId, setSelectCardId] = useState(1);
+  const [selectCardId, setSelectCardId] = useState(0);
   const [depositAmount, setDepositAmount] = useState(0);
   const [transferRemaining, setTransferRemaining] = useState(0);
   const [frequentlyUsedAccounts, setFrequentlyUsedAccounts] = useState([]);
@@ -163,19 +164,19 @@ const Transfer = () => {
   const renderCards = (debitCards) => (
     debitCards.map((card, index) => {
       const {
-        cardBranch, cardName, cardAccount, cardBalance, cardColor, moreList, interbankTransferLimit, interbankTransferRemaining,
+        branchId, cardName, accountId, balance, cardColor, moreList, tfrhCount, interbankTransferRemaining,
       } = card;
       return (
-        <SwiperSlide key={cardAccount} data-index={index}>
+        <SwiperSlide key={accountId} data-index={index}>
           <DebitCard
             type="original"
-            branch={cardBranch}
-            cardName={cardName}
-            account={cardAccount}
-            balance={cardBalance}
+            branch={branchId}
+            cardName="沒有銀行帳號名稱"
+            account={accountId}
+            balance={balance}
             color={cardColor}
-            transferLimit={interbankTransferLimit}
-            transferRemaining={interbankTransferRemaining}
+            transferLimit={tfrhCount}
+            transferRemaining="沒有剩餘次數"
             moreList={moreList}
           />
         </SwiperSlide>
@@ -400,8 +401,11 @@ const Transfer = () => {
 
   // 取得所有存款卡的初始資料
   useEffect(async () => {
-    // const cardResponse = await doGetInitData('/api/transfer');
-    // if (cardResponse.initData) setCards(cardResponse.initData.cards);
+    const cardResponse = await getNtdTrAcct({motpDeviceId:'12313131'});
+    if (cardResponse.accounts){
+      setCards(cardResponse.accounts);
+      dispatch(setNtdTrAcct(cardResponse));
+    } 
     //
     // const favoriteResponse = await doGetInitData('/api/getFavoriteAcct');
     // if (favoriteResponse) setFrequentlyUsedAccounts(favoriteResponse.favoriteAcctList);
@@ -510,6 +514,8 @@ const Transfer = () => {
 
   // 取得用戶存款餘額 (用於設置至轉出金額驗證規則)
   useEffect(() => {
+    console.log(cards.length > 0);
+    
     if (cards.length && selectCardId) {
       const card = cards.find((item) => item.id === selectCardId);
       setDepositAmount(card.cardBalance);

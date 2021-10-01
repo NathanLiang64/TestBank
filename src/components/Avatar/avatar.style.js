@@ -3,6 +3,8 @@ import styled from 'styled-components';
 const AvatarWrapper = styled.div.attrs({
   className: 'Avatar',
 })`
+  margin-left: auto;
+  margin-right: auto;
   
   .photo {
     padding: ${({ $small }) => ($small ? '.2rem' : '.4rem')};
