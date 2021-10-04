@@ -67,6 +67,7 @@ const GlobalStyles = createGlobalStyle`
   html {
     height: 100%;
     font-size: 62.5%;
+    position: fixed;
   }
   
   body {

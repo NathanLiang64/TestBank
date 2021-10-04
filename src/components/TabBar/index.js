@@ -1,6 +1,6 @@
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
-import { logout } from 'apis/authApi';
+// import { logout } from 'apis/authApi';
 
 import TransferImage from 'assets/images/tabBarIcons/transfer.svg';
 import NoticeImage from 'assets/images/tabBarIcons/notice.svg';
@@ -76,21 +76,33 @@ const TabBar = () => {
     },
   ];
 
+  const logOut = () => {
+    const url = ' https://appbankee-t.feib.com.tw/ords/db1/netdb/logoutUser';
+    const data = {
+      id_number: localStorage.getItem('custId'),
+    };
+    const callLogout = () => fetch(url, {
+      body: JSON.stringify(data),
+      headers: {
+        'content-type': 'application/json',
+      },
+      method: 'POST',
+    }).then((response) => response.json());
+
+    callLogout()
+      .then(({ code }) => {
+        if (code === '00') {
+          history.push('/login');
+          localStorage.clear();
+        } else {
+          alert('登出失敗');
+        }
+      });
+  };
+
   const toPage = async (item) => {
     if (item.route === 'logout') {
-      const logoutData = {
-        channelCode: 'HHB_A',
-        appVersion: '1.0.15',
-        udid: '',
-      };
-      const logoutResponse = await logout(logoutData);
-      if (!logoutResponse.message) {
-        history.push('/login');
-        localStorage.clear();
-      } else {
-        // eslint-disable-next-line no-alert
-        alert(logoutResponse.message);
-      }
+      logOut();
       return;
     }
     if (item.route === 'QRCodeTransfer') {
