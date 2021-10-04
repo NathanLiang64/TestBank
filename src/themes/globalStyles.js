@@ -43,9 +43,17 @@ const GlobalStyles = createGlobalStyle`
   q:before, q:after {
     content: '';
   }
+
   table {
     border-collapse: collapse;
     border-spacing: 0;
+
+    caption {
+      margin-bottom: 1.6rem;
+      font-size: 1.4rem;
+      text-align: left;
+      color: ${({ theme }) => theme.colors.text.light};
+    }
   }
   
   /* ========== Custom ========== */
@@ -59,6 +67,7 @@ const GlobalStyles = createGlobalStyle`
   html {
     height: 100%;
     font-size: 62.5%;
+    position: fixed;
   }
   
   body {
@@ -99,20 +108,37 @@ const GlobalStyles = createGlobalStyle`
   }
 
   table {
-    border: .1rem solid ${({ theme }) => theme.colors.border.lighter};
+    // border: .1rem solid ${({ theme }) => theme.colors.border.lighter};
     width: 100%;
     font-size: 1.4rem;
     background: white;
 
+    thead {
+      color: ${({ theme }) => theme.colors.primary.light};
+      font-size: 1.2rem;
+    }
+    
+    tbody tr {
+      border-bottom: .1rem solid ${({ theme }) => theme.colors.border.lightest};
+    }
+
     tr {
-      border-bottom: .1rem solid ${({ theme }) => theme.colors.border.lighter};
+      
+      th {
+        padding-bottom: .4rem;
+      }
 
       td {
-        border-right: .1rem solid ${({ theme }) => theme.colors.border.lighter};
-        padding: .8rem;
+        // border-right: .1rem solid ${({ theme }) => theme.colors.border.lighter};
+        padding: .4rem 0;
+        color: ${({ theme }) => theme.colors.text.dark};
 
         &:first-child {
-          color: ${({ theme }) => theme.colors.primary.dark};
+          color: ${({ theme }) => theme.colors.text.lightGray};
+        }
+
+        &.center {
+          text-align: center;
         }
       }
     }

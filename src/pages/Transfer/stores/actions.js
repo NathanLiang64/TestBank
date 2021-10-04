@@ -9,3 +9,8 @@ export const setClickMoreOptions = (object) => ({
   type: types.SET_CLICK_MORE_OPTIONS,
   payload: object,
 });
+
+export const setNtdTrAcct = (object) => ({
+  type: types.SET_NTD_TR_ACCT,
+  payload: object,
+});

@@ -53,6 +53,53 @@ const QuickLoginSettingWrapper = styled(Layout)`
     margin-top: 2.4rem;
     margin-bottom: 1.6rem;
   }
+  .patternSetting {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    // background: rgba(172, 141, 232, 0.8);
+    background: rgba(66,48,99,.6) !important;
+    backdrop-filter: blur(.4rem);
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    &.hide {
+      display: none;
+    }
+
+    .tip {
+      color: white;
+      font-size: 2rem;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .pointContainer {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      .point {
+        width: 5.4rem;
+        height: 5.4rem;
+        border: .1rem solid white;
+        border-radius: 2.7rem;
+        margin: 2.2rem;
+        position: relative;
+        &::before {
+          position: absolute;
+          content: ' ';
+          width: 1.4rem;
+          height: 1.4rem;
+          background: white;
+          border-radius: .7rem;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+      }
+    }
+  }
 `;
 
 export default QuickLoginSettingWrapper;

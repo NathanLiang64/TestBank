@@ -10,6 +10,8 @@ import {
 import Accordion from 'components/Accordion';
 import Dialog from 'components/Dialog';
 import { EditRounded } from '@material-ui/icons';
+// eslint-disable-next-line no-unused-vars
+import PatternSetting from './patternSetting';
 
 /* Styles */
 import QuickLoginSettingWrapper from './quickLoginSetting.style';
@@ -19,7 +21,7 @@ const QuickLoginSetting = () => {
   const [currentType, setCurrentType] = useState('');
   const [isBioActive, setIsBioActive] = useState(false);
   const [isPatternActive, setIsPatternActive] = useState(false);
-
+  const [showPattern, setShowPattern] = useState(false);
   const handleDialogOpen = () => {
     setOpenDialog(true);
   };
@@ -41,6 +43,8 @@ const QuickLoginSetting = () => {
     }
     setIsPatternActive((prev) => !prev);
   };
+
+  const closePattern = () => setShowPattern(false);
 
   const renderDialog = () => (
     <Dialog
@@ -89,7 +93,7 @@ const QuickLoginSetting = () => {
             )}
             label="圖形辨識設定"
           />
-          <div className={`mainBlock ${!isPatternActive && 'hide'}`}>
+          <div className={`mainBlock ${!isPatternActive && 'hide'}`} onClick={() => setShowPattern(true)}>
             <div className="text">
               圖形辨識變更
             </div>
@@ -110,6 +114,7 @@ const QuickLoginSetting = () => {
           <li>如果手機重置或重新安裝APP時，需要重新設定本功能。</li>
         </ol>
       </Accordion>
+      <PatternSetting showPattern={showPattern} closePattern={closePattern} />
       {
         renderDialog()
       }
