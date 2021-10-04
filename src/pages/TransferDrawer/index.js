@@ -15,6 +15,8 @@ const TransferDrawer = ({ setTabId }) => {
   const [designedAccounts, setDesignedAccounts] = useState();
   const openDrawer = useSelector(({ transfer }) => transfer.openDrawer);
   const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
+  const getFrequentlyUsedAccounts = useSelector(({ transfer }) => transfer.frequentlyUsedAcct);
+  console.log(getFrequentlyUsedAccounts);
   const dispatch = useDispatch();
 
   const handleClick = (buttonType, id) => {
@@ -38,12 +40,12 @@ const TransferDrawer = ({ setTabId }) => {
     list.map((member) => (
       <MemberAccountCard
         // id={member.id}
-        key={member.id}
+        key={member.accountId}
         type={type}
-        name={member.acctName}
-        bankNo={member.bankNo}
+        name={member.accountName}
+        bankNo={member.bankId}
         bankName={member.bankName}
-        account={member.acctId}
+        account={member.accountId}
         avatarSrc={member.acctImg}
         onSelect={() => handleClick('select', member.id)}
         onEdit={() => handleClick('edit', member.id)}
@@ -56,6 +58,7 @@ const TransferDrawer = ({ setTabId }) => {
   const renderMemberAccountCardListByType = () => {
     // 如果當前頁面為常用帳號則 render 常用帳號清單卡片
     if (openDrawer.title === '常用帳號' && frequentlyUsedAccounts) {
+      console.log(frequentlyUsedAccounts);
       return memberAccountCardList(frequentlyUsedAccounts, openDrawer.title);
     }
     // 否則 render 約定帳號清單卡片
@@ -82,6 +85,8 @@ const TransferDrawer = ({ setTabId }) => {
   useEffect(async () => {
     // const favoriteResponse = await doGetInitData('/api/getFavoriteAcct');
     // setFrequentlyUsedAccounts(favoriteResponse.favoriteAcctList);
+    console.log(getFrequentlyUsedAccounts);
+    setFrequentlyUsedAccounts(getFrequentlyUsedAccounts);
     //
     // const designedResponse = await doGetInitData('/api/getDesignedAcct');
     // setDesignedAccounts(designedResponse.designedAcctList);

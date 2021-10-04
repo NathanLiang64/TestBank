@@ -21,3 +21,21 @@ export const getNtdTrAcct = async (params) => (
     })
     .catch((error) => error)
 );
+
+export const getFavAcct = async (params) => (
+  await userAxios.post('/api/transfer/queryFavAcct', params)
+    .then((response) => {
+      console.log(response);
+      return response;
+    })
+    .catch((error) => error)
+);
+
+export const insertFacAcct = async (params) => (
+  await userAxios.post('/api/transfer/insertFacAcct', params)
+    .then((response) => {
+      console.log(response);
+      return response;
+    })
+    .catch((error) => error)
+);

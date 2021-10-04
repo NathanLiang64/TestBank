@@ -21,7 +21,7 @@ import {
   FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBDatePicker,
   FEIBRadioLabel, FEIBRadio, FEIBButton, FEIBSelect, FEIBOption, FEIBIconButton,
 } from 'components/elements';
-import { doGetInitData,getNtdTrAcct } from 'apis/transferApi';
+import { doGetInitData,getNtdTrAcct,getFavAcct } from 'apis/transferApi';
 import { numberToChinese, weekNumberToChinese } from 'utilities/Generator';
 import { bankCodeValidation, receivingAccountValidation, transferAmountValidation } from 'utilities/validation';
 import { directTo } from 'utilities/mockWebController';
@@ -30,7 +30,7 @@ import { setOpenDrawer, setClickMoreOptions } from './stores/actions';
 import TransferWrapper from './transfer.style';
 import TransferDrawer from '../TransferDrawer';
 import Dialog from '../../components/Dialog';
-import {setNtdTrAcct} from './stores/actions'
+import {setNtdTrAcct,setFqlyUsedAccounts} from './stores/actions'
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
@@ -224,11 +224,11 @@ const Transfer = () => {
         { selectTransferMember.frequentlyUsed && (
           <div className="memberAccountCardArea">
             <MemberAccountCard
-              id={selectTransferMember.frequentlyUsed.id}
-              name={selectTransferMember.frequentlyUsed.acctName}
+              id={selectTransferMember.frequentlyUsed.accountId}
+              name={selectTransferMember.frequentlyUsed.accountName}
               bankName={selectTransferMember.frequentlyUsed.bankName}
-              bankNo={selectTransferMember.frequentlyUsed.bankNo}
-              account={selectTransferMember.frequentlyUsed.acctId}
+              bankNo={selectTransferMember.frequentlyUsed.bankId}
+              account={selectTransferMember.frequentlyUsed.accountId}
               avatarSrc={selectTransferMember.frequentlyUsed.acctImg}
               noBorder
               noOption
@@ -406,9 +406,11 @@ const Transfer = () => {
       setCards(cardResponse.accounts);
       dispatch(setNtdTrAcct(cardResponse));
     } 
-    //
-    // const favoriteResponse = await doGetInitData('/api/getFavoriteAcct');
-    // if (favoriteResponse) setFrequentlyUsedAccounts(favoriteResponse.favoriteAcctList);
+    const favoriteResponse = await getFavAcct({});
+    if (favoriteResponse.code!='WEBCTL1003'){
+      setFrequentlyUsedAccounts(favoriteResponse);
+      dispatch(setFqlyUsedAccounts(favoriteResponse))
+    } 
     //
     // const designedResponse = await doGetInitData('/api/getDesignedAcct');
     // if (designedResponse) setDesignedAccounts(designedResponse.designedAcctList);
@@ -473,6 +475,7 @@ const Transfer = () => {
     if (watch('transferOption') === 'frequentlyUsed') {
       // 若常用帳號列表為空，開啟新增常用帳號 Drawer UI
       if (frequentlyUsedAccounts.length === 0) {
+        console.log(frequentlyUsedAccounts);
         dispatch(setOpenDrawer({ title: '新增常用帳號', content: 'addFrequentlyUsedAccount', open: true }));
       }
       // 若常用帳號列表不為空，將常用帳號清單內的第一筆設置為預設的轉帳對象，並開啟常用帳號 Drawer UI

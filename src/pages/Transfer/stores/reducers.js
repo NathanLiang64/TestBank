@@ -12,6 +12,7 @@ const initState = {
     remove: { click: false, target: null },
   },
   ntdTrAcct: {},
+  frequentlyUsedAcct: {},
 };
 
 const reducers = (state = initState, action) => {
@@ -30,6 +31,11 @@ const reducers = (state = initState, action) => {
       return {
         ...state,
         ntdTrAcct: action.payload,
+      };
+    case types.SET_FREQUENTLY_USED_ACCT:
+      return {
+        ...state,
+        frequentlyUsedAcct: action.payload,
       };
     default:
       return state;
