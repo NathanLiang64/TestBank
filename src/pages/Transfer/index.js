@@ -407,11 +407,13 @@ const Transfer = () => {
       dispatch(setNtdTrAcct(cardResponse));
     } 
     const favoriteResponse = await getFavAcct({});
+    console.log(favoriteResponse);
     if (favoriteResponse.code!='WEBCTL1003'){
       setFrequentlyUsedAccounts(favoriteResponse);
       dispatch(setFqlyUsedAccounts(favoriteResponse))
     } 
    const designedResponse = await queryRegAcct({});
+   console.log(designedResponse);
    if (designedResponse.code!='WEBCTL1003'){
     setDesignedAccounts(designedResponse);
     dispatch(setDgnedAccounts(favoriteResponse))

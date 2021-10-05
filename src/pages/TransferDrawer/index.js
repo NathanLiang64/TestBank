@@ -13,12 +13,12 @@ import { setClickMoreOptions, setOpenDrawer,setFqlyUsedAccounts,setDgnedAccounts
 
 
 const TransferDrawer = ({ setTabId }) => {
-  const [frequentlyUsedAccounts, setFrequentlyUsedAccounts] = useState(useSelector(({ transfer }) => transfer.frequentlyUsedAcct));
-  const [designedAccounts, setDesignedAccounts] = useState(useSelector(({ transfer }) => transfer.designedAcct));
+  const [frequentlyUsedAccounts, setFrequentlyUsedAccounts] = useState();
+  const [designedAccounts, setDesignedAccounts] = useState();
   const openDrawer = useSelector(({ transfer }) => transfer.openDrawer);
   const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
-  const getFrequentlyUsedAccounts = useSelector(({ transfer }) => transfer.frequentlyUsedAcct);
-  console.log(getFrequentlyUsedAccounts);
+  const frequentlyUsedAccountsRedux = useSelector(({ transfer }) => transfer.frequentlyUsedAcct);
+  const designedAccountsRedux = useSelector(({ transfer }) => transfer.designedAcct);
   const dispatch = useDispatch();
 
   const handleClick = (buttonType, id) => {
@@ -85,19 +85,26 @@ const TransferDrawer = ({ setTabId }) => {
   );
 
   useEffect(async () => {
-    if(frequentlyUsedAccounts){
+    console.log("redux")
+    console.log(frequentlyUsedAccountsRedux);
+    if(!frequentlyUsedAccounts&&!frequentlyUsedAccountsRedux){
       const favoriteResponse = await getFavAcct('/api/getFavoriteAcct');
       if (favoriteResponse.code!='WEBCTL1003'){
         setFrequentlyUsedAccounts(favoriteResponse);
         dispatch(setFqlyUsedAccounts(favoriteResponse))
       } 
+    }else{
+      setFrequentlyUsedAccounts(frequentlyUsedAccountsRedux);
     }
-    if(designedAccounts){
+
+    if(!designedAccounts&&!designedAccountsRedux){
       const designedResponse = await queryRegAcct('/api/getDesignedAcct');
       if (designedResponse.code!='WEBCTL1003'){
         setDesignedAccounts(designedResponse);
-        dispatch(setDgnedAccounts(favoriteResponse))
+        dispatch(setDgnedAccounts(designedResponse))
       } 
+    }else{
+      setDesignedAccounts(designedAccountsRedux);
     }
     
   }, []);
