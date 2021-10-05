@@ -5,14 +5,16 @@ import { AddRounded } from '@material-ui/icons';
 import BottomDrawer from 'components/BottomDrawer';
 import MemberAccountCard from 'components/MemberAccountCard';
 // import { doGetInitData } from 'apis/transferApi';
+import { getFavAcct,queryRegAcct } from 'apis/transferApi';
 import TransferDrawerWrapper from './transferDrawer.style';
 import TransferFrequentlyUsedAccount from '../TransferFrequentlyUsedAccount';
 import TransferDesignedAccount from '../TransferDesignedAccount';
-import { setClickMoreOptions, setOpenDrawer } from '../Transfer/stores/actions';
+import { setClickMoreOptions, setOpenDrawer,setFqlyUsedAccounts,setDgnedAccounts } from '../Transfer/stores/actions';
+
 
 const TransferDrawer = ({ setTabId }) => {
-  const [frequentlyUsedAccounts, setFrequentlyUsedAccounts] = useState();
-  const [designedAccounts, setDesignedAccounts] = useState();
+  const [frequentlyUsedAccounts, setFrequentlyUsedAccounts] = useState(useSelector(({ transfer }) => transfer.frequentlyUsedAcct));
+  const [designedAccounts, setDesignedAccounts] = useState(useSelector(({ transfer }) => transfer.designedAcct));
   const openDrawer = useSelector(({ transfer }) => transfer.openDrawer);
   const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
   const getFrequentlyUsedAccounts = useSelector(({ transfer }) => transfer.frequentlyUsedAcct);
@@ -83,13 +85,21 @@ const TransferDrawer = ({ setTabId }) => {
   );
 
   useEffect(async () => {
-    // const favoriteResponse = await doGetInitData('/api/getFavoriteAcct');
-    // setFrequentlyUsedAccounts(favoriteResponse.favoriteAcctList);
-    console.log(getFrequentlyUsedAccounts);
-    setFrequentlyUsedAccounts(getFrequentlyUsedAccounts);
-    //
-    // const designedResponse = await doGetInitData('/api/getDesignedAcct');
-    // setDesignedAccounts(designedResponse.designedAcctList);
+    if(frequentlyUsedAccounts){
+      const favoriteResponse = await getFavAcct('/api/getFavoriteAcct');
+      if (favoriteResponse.code!='WEBCTL1003'){
+        setFrequentlyUsedAccounts(favoriteResponse);
+        dispatch(setFqlyUsedAccounts(favoriteResponse))
+      } 
+    }
+    if(designedAccounts){
+      const designedResponse = await queryRegAcct('/api/getDesignedAcct');
+      if (designedResponse.code!='WEBCTL1003'){
+        setDesignedAccounts(designedResponse);
+        dispatch(setDgnedAccounts(favoriteResponse))
+      } 
+    }
+    
   }, []);
 
   useEffect(() => {

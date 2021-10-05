@@ -19,3 +19,8 @@ export const setFqlyUsedAccounts = (object) => ({
   type: types.SET_FREQUENTLY_USED_ACCT,
   payload: object,
 });
+
+export const setDgnedAccounts = (object) => ({
+  type: types.SET_DESIGNED_ACCT,
+  payload: object,
+});

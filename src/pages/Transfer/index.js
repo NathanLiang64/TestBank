@@ -21,7 +21,7 @@ import {
   FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBDatePicker,
   FEIBRadioLabel, FEIBRadio, FEIBButton, FEIBSelect, FEIBOption, FEIBIconButton,
 } from 'components/elements';
-import { doGetInitData,getNtdTrAcct,getFavAcct } from 'apis/transferApi';
+import { doGetInitData,getNtdTrAcct,getFavAcct,queryRegAcct } from 'apis/transferApi';
 import { numberToChinese, weekNumberToChinese } from 'utilities/Generator';
 import { bankCodeValidation, receivingAccountValidation, transferAmountValidation } from 'utilities/validation';
 import { directTo } from 'utilities/mockWebController';
@@ -30,7 +30,7 @@ import { setOpenDrawer, setClickMoreOptions } from './stores/actions';
 import TransferWrapper from './transfer.style';
 import TransferDrawer from '../TransferDrawer';
 import Dialog from '../../components/Dialog';
-import {setNtdTrAcct,setFqlyUsedAccounts} from './stores/actions'
+import {setNtdTrAcct,setFqlyUsedAccounts,setDgnedAccounts} from './stores/actions'
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
@@ -411,9 +411,11 @@ const Transfer = () => {
       setFrequentlyUsedAccounts(favoriteResponse);
       dispatch(setFqlyUsedAccounts(favoriteResponse))
     } 
-    //
-    // const designedResponse = await doGetInitData('/api/getDesignedAcct');
-    // if (designedResponse) setDesignedAccounts(designedResponse.designedAcctList);
+   const designedResponse = await queryRegAcct({});
+   if (designedResponse.code!='WEBCTL1003'){
+    setDesignedAccounts(designedResponse);
+    dispatch(setDgnedAccounts(favoriteResponse))
+  } 
 
     // transferOption 是為了避免不同頁籤造成驗證衝突，初始設置 transfer (一般轉帳)
     setValue('transferOption', 'transfer');

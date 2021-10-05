@@ -39,3 +39,12 @@ export const insertFacAcct = async (params) => (
     })
     .catch((error) => error)
 );
+
+export const queryRegAcct = async (params) => (
+  await userAxios.post('/api/transfer/queryRegAcct', params)
+    .then((response) => {
+      console.log(response);
+      return response;
+    })
+    .catch((error) => error)
+);

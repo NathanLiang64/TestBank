@@ -13,6 +13,7 @@ const initState = {
   },
   ntdTrAcct: {},
   frequentlyUsedAcct: {},
+  designedAcct: {},
 };
 
 const reducers = (state = initState, action) => {
@@ -36,6 +37,11 @@ const reducers = (state = initState, action) => {
       return {
         ...state,
         frequentlyUsedAcct: action.payload,
+      };
+    case types.SET_DESIGNED_ACCT:
+      return {
+        ...state,
+        designedAcct: action.payload,
       };
     default:
       return state;
