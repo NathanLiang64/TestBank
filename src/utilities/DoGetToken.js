@@ -51,13 +51,18 @@ const getKey = async (data) => {
     if (getMyJWT.data.code === 'WEBCTL1008') {
       if (window.confirm(getMyJWT.data.message)) {
         const repeatLoginResponse = await userAxios.post('/auth/repeatLogin', {});
-        console.log(repeatLoginResponse);
         if (Object.keys(repeatLoginResponse).length === 0) {
           return {
             result: 'success',
             message: 'Login success',
           };
         }
+      } else {
+        localStorage.clear();
+        return {
+          result: 'fail',
+          message: '已取消登入',
+        };
       }
     } else {
       return {
