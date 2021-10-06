@@ -11,9 +11,9 @@ const initState = {
     edit: { click: false, target: null },
     remove: { click: false, target: null },
   },
-  ntdTrAcct: {},
-  frequentlyUsedAcct: {},
-  designedAcct: {},
+  ntdTrAcct: null,
+  frequentlyUsedAcct: null,
+  designedAcct: null,
 };
 
 const reducers = (state = initState, action) => {

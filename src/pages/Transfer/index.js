@@ -521,10 +521,13 @@ const Transfer = () => {
 
   // 取得用戶存款餘額 (用於設置至轉出金額驗證規則)
   useEffect(() => {
-    console.log(cards.length > 0);
-    
+    console.log(cards);
+    console.log("selectCardId");
+    console.log(selectCardId);
     if (cards.length && selectCardId) {
       const card = cards.find((item) => item.id === selectCardId);
+      console.log("card");
+      console.log(card);
       setDepositAmount(card.cardBalance);
       setTransferRemaining(card.interbankTransferRemaining);
     }
