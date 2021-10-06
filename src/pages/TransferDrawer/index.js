@@ -60,12 +60,12 @@ const TransferDrawer = ({ setTabId }) => {
   const renderMemberAccountCardListByType = () => {
     // 如果當前頁面為常用帳號則 render 常用帳號清單卡片
     console.log(frequentlyUsedAccounts);
-    if (openDrawer.title === '常用帳號' && frequentlyUsedAccounts && frequentlyUsedAccounts!==undefined) {
+    if (openDrawer.title === '常用帳號' && frequentlyUsedAccounts && frequentlyUsedAccounts!==undefined && frequentlyUsedAccounts.length>0) {
       console.log(frequentlyUsedAccounts);
       return memberAccountCardList(frequentlyUsedAccounts, openDrawer.title);
     }
     // 否則 render 約定帳號清單卡片
-    if (openDrawer.title === '約定帳號' && designedAccounts && designedAccounts!==undefined) {
+    if (openDrawer.title === '約定帳號' && designedAccounts && designedAccounts!==undefined && designedAccounts.length>0) {
       return memberAccountCardList(designedAccounts, openDrawer.title);
     }
   };
