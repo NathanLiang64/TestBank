@@ -5,16 +5,20 @@ import { AddRounded } from '@material-ui/icons';
 import BottomDrawer from 'components/BottomDrawer';
 import MemberAccountCard from 'components/MemberAccountCard';
 // import { doGetInitData } from 'apis/transferApi';
+import { getFavAcct,queryRegAcct } from 'apis/transferApi';
 import TransferDrawerWrapper from './transferDrawer.style';
 import TransferFrequentlyUsedAccount from '../TransferFrequentlyUsedAccount';
 import TransferDesignedAccount from '../TransferDesignedAccount';
-import { setClickMoreOptions, setOpenDrawer } from '../Transfer/stores/actions';
+import { setClickMoreOptions, setOpenDrawer,setFqlyUsedAccounts,setDgnedAccounts } from '../Transfer/stores/actions';
+
 
 const TransferDrawer = ({ setTabId }) => {
   const [frequentlyUsedAccounts, setFrequentlyUsedAccounts] = useState();
   const [designedAccounts, setDesignedAccounts] = useState();
   const openDrawer = useSelector(({ transfer }) => transfer.openDrawer);
   const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
+  const frequentlyUsedAccountsRedux = useSelector(({ transfer }) => transfer.frequentlyUsedAcct);
+  const designedAccountsRedux = useSelector(({ transfer }) => transfer.designedAcct);
   const dispatch = useDispatch();
 
   const handleClick = (buttonType, id) => {
@@ -38,12 +42,12 @@ const TransferDrawer = ({ setTabId }) => {
     list.map((member) => (
       <MemberAccountCard
         // id={member.id}
-        key={member.id}
+        key={member.accountId}
         type={type}
-        name={member.acctName}
-        bankNo={member.bankNo}
+        name={member.accountName}
+        bankNo={member.bankId}
         bankName={member.bankName}
-        account={member.acctId}
+        account={member.accountId}
         avatarSrc={member.acctImg}
         onSelect={() => handleClick('select', member.id)}
         onEdit={() => handleClick('edit', member.id)}
@@ -55,11 +59,13 @@ const TransferDrawer = ({ setTabId }) => {
   // eslint-disable-next-line consistent-return
   const renderMemberAccountCardListByType = () => {
     // 如果當前頁面為常用帳號則 render 常用帳號清單卡片
-    if (openDrawer.title === '常用帳號' && frequentlyUsedAccounts) {
+    console.log(frequentlyUsedAccounts);
+    if (openDrawer.title === '常用帳號' && frequentlyUsedAccounts && frequentlyUsedAccounts!==undefined && frequentlyUsedAccounts.length>0) {
+      console.log(frequentlyUsedAccounts);
       return memberAccountCardList(frequentlyUsedAccounts, openDrawer.title);
     }
     // 否則 render 約定帳號清單卡片
-    if (openDrawer.title === '約定帳號' && designedAccounts) {
+    if (openDrawer.title === '約定帳號' && designedAccounts && designedAccounts!==undefined && designedAccounts.length>0) {
       return memberAccountCardList(designedAccounts, openDrawer.title);
     }
   };
@@ -80,11 +86,28 @@ const TransferDrawer = ({ setTabId }) => {
   );
 
   useEffect(async () => {
-    // const favoriteResponse = await doGetInitData('/api/getFavoriteAcct');
-    // setFrequentlyUsedAccounts(favoriteResponse.favoriteAcctList);
-    //
-    // const designedResponse = await doGetInitData('/api/getDesignedAcct');
-    // setDesignedAccounts(designedResponse.designedAcctList);
+    console.log("redux")
+    console.log(frequentlyUsedAccountsRedux);
+    if(!frequentlyUsedAccounts&&!frequentlyUsedAccountsRedux){
+      const favoriteResponse = await getFavAcct('/api/getFavoriteAcct');
+      if (favoriteResponse.code!='WEBCTL1003'){
+        setFrequentlyUsedAccounts(favoriteResponse);
+        dispatch(setFqlyUsedAccounts(favoriteResponse))
+      } 
+    }else{
+      setFrequentlyUsedAccounts(frequentlyUsedAccountsRedux);
+    }
+
+    if(!designedAccounts&&!designedAccountsRedux){
+      const designedResponse = await queryRegAcct('/api/getDesignedAcct');
+      if (designedResponse.code!='WEBCTL1003'){
+        setDesignedAccounts(designedResponse);
+        dispatch(setDgnedAccounts(designedResponse))
+      } 
+    }else{
+      setDesignedAccounts(designedAccountsRedux);
+    }
+    
   }, []);
 
   useEffect(() => {
