@@ -4230,7 +4230,6 @@
           { "id": "account5", "label": "台幣定存", "selected": false, "disabled": false, "selectedOrder": null },
           { "id": "account6", "label": "存錢計畫", "selected": false, "disabled": false, "selectedOrder": null },
           { "id": "account7", "label": "社群帳本", "selected": false, "disabled": false, "selectedOrder": null },
-          { "id": "account8", "label": "綜合對帳單", "selected": false, "disabled": false, "selectedOrder": null },
           { "id": "account9", "label": "匯出存摺", "selected": false, "disabled": false, "selectedOrder": null }
         ]
       },
@@ -4280,7 +4279,7 @@
           { "id": "creditCard2", "label": "帳單明細", "selected": false, "disabled": false, "selectedOrder": null },
           { "id": "creditCard3", "label": "繳費", "selected": false, "disabled": false, "selectedOrder": null },
           { "id": "creditCard4", "label": "額度臨調", "selected": false, "disabled": false, "selectedOrder": null },
-          { "id": "creditCard5", "label": "自動扣繳申請&查詢", "selected": false, "disabled": false, "selectedOrder": null }
+          { "id": "creditCard5", "label": "自動扣繳申請/查詢", "selected": false, "disabled": false, "selectedOrder": null }
         ]
       },
       {
@@ -4298,7 +4297,6 @@
         "groupName": "金融助手",
         "blocks": [
           { "id": "helper1", "label": "個人化設定", "selected": false, "disabled": false, "selectedOrder": null },
-          { "id": "helper2", "label": "我的最愛設定", "selected": false, "disabled": false, "selectedOrder": null },
           { "id": "helper3", "label": "手機號碼收款設定", "selected": false, "disabled": false, "selectedOrder": null },
           { "id": "helper4", "label": "數存會員升級(立即驗)", "selected": true, "disabled": false, "selectedOrder": 3 },
           { "id": "helper5", "label": "視訊約定帳號設定", "selected": false, "disabled": false, "selectedOrder": null },

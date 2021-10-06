@@ -254,13 +254,13 @@ const Favorite = () => {
   return (
     <BottomDrawer
       noScrollable
-      title={favoriteDrawer.title}
-      isOpen={favoriteDrawer.open}
+      title={favoriteDrawer?.title}
+      isOpen={favoriteDrawer?.open}
       onClose={handleCloseDrawer}
-      onBack={favoriteDrawer.back}
+      onBack={favoriteDrawer?.back}
       content={(
         <FavoriteDrawerWrapper>
-          { drawerController(favoriteDrawer.content) }
+          { drawerController(favoriteDrawer?.content) }
         </FavoriteDrawerWrapper>
       )}
     />

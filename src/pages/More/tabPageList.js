@@ -11,7 +11,7 @@ const tabPageList = {
       {
         value: '1',
         label: '台幣活存',
-        route: '',
+        route: '/depositOverview',
       },
       {
         value: '2',
