@@ -1,102 +1,100 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router';
+import { useDispatch } from 'react-redux';
+import FavoriteBlockButton from 'components/FavoriteBlockButton';
+import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
 import { useCheckLocation, usePageInfo } from 'hooks';
-
-/* Elements */
-import {
-  FEIBTabContext, FEIBTabList, FEIBTab,
-} from 'components/elements';
-
-/* Style */
+import { iconGenerator } from 'pages/Favorite/favoriteGenerator';
+import { setFavoriteDrawer } from 'pages/Favorite/stores/actions';
+import { setIsShake } from 'pages/ShakeShake/stores/actions';
 import MoreWrapper from './more.style';
-
-import TabPageList from './tabPageList';
-import Icons from './iconList';
+import mockData from './mockData';
 
 const More = () => {
+  const mainContentRef = useRef();
   const history = useHistory();
-  const tabTypeList = ['service', 'apply', 'withdrawal', 'invest', 'creditCard', 'loan', 'helper', 'community'];
+  const dispatch = useDispatch();
 
-  const [value, setValue] = useState('service');
-  const [contentArray, setContentArray] = useState([]);
+  const [moreList, setMoreList] = useState([]);
+  const [sectionPosition, setSectionPosition] = useState([]);
+  const [tabId, setTabId] = useState('account');
 
   const toPage = (route) => {
+    if (route === 'QRCodeTransfer') {
+      dispatch(setIsShake(true));
+      return;
+    }
+    if (route === 'favorite') {
+      dispatch(setFavoriteDrawer({
+        title: '我的最愛', content: '', open: true, back: null,
+      }));
+      return;
+    }
     history.push(route);
   };
 
-  const handleTabChange = (event, type) => {
-    const main = document.getElementsByTagName('main')[0];
-    main.scrollTop = contentArray.find((item) => item.id === type).offsetTop;
-    setValue(type);
+  const handleChangeTabs = (event, value) => {
+    const target = document.querySelector(`.${value}`);
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleScroll = (e) => {
-    const { scrollTop } = e.target;
-    const currentContent = contentArray.find((item) => item.offsetTop >= scrollTop);
-    if (currentContent.id !== value) {
-      setValue(currentContent.id);
-    }
+  const handleScrollContent = () => {
+    const { scrollTop } = mainContentRef?.current;
+    const target = sectionPosition.find((section) => section.position >= scrollTop);
+    setTabId(target?.id);
   };
 
-  const renderTabs = () => (
-    <div className="tabContainer">
-      <FEIBTabContext value={value}>
-        <FEIBTabList onChange={handleTabChange}>
-          <FEIBTab label="帳戶服務" value="service" />
-          <FEIBTab label="申請" value="apply" />
-          <FEIBTab label="轉帳提款" value="withdrawal" />
-          <FEIBTab label="投資理財" value="invest" />
-          <FEIBTab label="信用卡" value="creditCard" />
-          <FEIBTab label="貸款" value="loan" />
-          <FEIBTab label="金融助手" value="helper" />
-          <FEIBTab label="社群圈" value="community" />
-        </FEIBTabList>
-      </FEIBTabContext>
-    </div>
-  );
-
-  const renderIconButton = (type) => TabPageList[type].list.map((item) => (
-    <div key={item.value} className="iconButton" onClick={() => toPage(item.route)}>
-      <svg width="40" height="40">
-        <image xlinkHref={Icons[type + item.value]} width="40" height="40" />
-      </svg>
-      <span>
-        { item.label }
-      </span>
-    </div>
+  const renderBlock = (group, blocks) => blocks.map((block) => (
+    <FavoriteBlockButton
+      key={block.id}
+      icon={iconGenerator(block.id)}
+      label={block.label}
+      onClick={() => toPage(block.route)}
+      noBorder
+    />
   ));
 
-  const renderContent = () => tabTypeList.map((item) => (
-    <div key={item} id={item} className="contentContainer">
-      <div className="title">
-        { TabPageList[item].mainLabel }
+  const renderContent = (group) => group.map((section) => (
+    <section key={section.id} className={section.group}>
+      <h3 className="title">{section.groupName}</h3>
+      <div className="blockGroup">
+        { renderBlock(section.group, section.blocks) }
       </div>
-      <div className="content">
-        { renderIconButton(item) }
-      </div>
-    </div>
+    </section>
+  ));
+
+  const renderTabList = (tabs) => tabs.map((tab) => (
+    <FEIBTab key={tab.id} label={tab.groupName} value={tab.group} />
   ));
 
   useCheckLocation();
   usePageInfo('/api/more');
 
   useEffect(() => {
-    const contentList = document.getElementsByClassName('contentContainer');
-    const contentArr = [];
-    for (const item of contentList) {
-      contentArr.push({
-        id: item.id,
-        clientHeight: item.clientHeight,
-        offsetTop: item.offsetTop - 72,
-      });
-    }
-    setContentArray(contentArr);
+    setMoreList(mockData.moreList);
   }, []);
 
+  useEffect(() => {
+    if (mainContentRef?.current) {
+      const categories = Array.from(mainContentRef?.current?.children);
+      const sectionPositionList = categories.map((section) => (
+        { id: section.className, position: section.offsetTop }
+      ));
+      setSectionPosition(sectionPositionList);
+    }
+  }, [mainContentRef?.current]);
+
   return (
-    <MoreWrapper onScroll={handleScroll} small>
-      { renderTabs() }
-      { renderContent() }
+    <MoreWrapper small>
+      <FEIBTabContext value={tabId}>
+        <FEIBTabList $size="small" onChange={handleChangeTabs}>
+          { renderTabList(moreList) }
+        </FEIBTabList>
+      </FEIBTabContext>
+
+      <div className="mainContent" ref={mainContentRef} onScroll={handleScrollContent}>
+        { renderContent(moreList) }
+      </div>
     </MoreWrapper>
   );
 };
