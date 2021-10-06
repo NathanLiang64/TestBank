@@ -59,12 +59,13 @@ const TransferDrawer = ({ setTabId }) => {
   // eslint-disable-next-line consistent-return
   const renderMemberAccountCardListByType = () => {
     // 如果當前頁面為常用帳號則 render 常用帳號清單卡片
-    if (openDrawer.title === '常用帳號' && frequentlyUsedAccounts) {
+    console.log(frequentlyUsedAccounts);
+    if (openDrawer.title === '常用帳號' && frequentlyUsedAccounts && frequentlyUsedAccounts!==undefined) {
       console.log(frequentlyUsedAccounts);
       return memberAccountCardList(frequentlyUsedAccounts, openDrawer.title);
     }
     // 否則 render 約定帳號清單卡片
-    if (openDrawer.title === '約定帳號' && designedAccounts) {
+    if (openDrawer.title === '約定帳號' && designedAccounts && designedAccounts!==undefined) {
       return memberAccountCardList(designedAccounts, openDrawer.title);
     }
   };

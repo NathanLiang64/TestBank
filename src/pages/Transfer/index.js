@@ -93,8 +93,12 @@ const Transfer = () => {
 
   const handleClickTransferButton = (data) => {
     // 轉出帳號
-    const selectCard = cards.find((card) => card.id === selectCardId);
-    data.debitAccount = selectCard.cardAccount;
+    console.log(cards);
+    console.log(selectCardId);
+    const selectCard = cards.find((card) => card.accountId === selectCardId);
+    console.log("轉帳")
+    console.log(selectCard);
+    data.debitAccount = selectCard.accountId;
     data.debitName = selectCard.cardName;
 
     // 常用/約定轉帳時，取得受款人帳號
@@ -404,6 +408,8 @@ const Transfer = () => {
     const cardResponse = await getNtdTrAcct({motpDeviceId:'12313131'});
     if (cardResponse.accounts){
       setCards(cardResponse.accounts);
+      console.log(cardResponse.accounts[0].accountId);
+      setSelectCardId(cardResponse.accounts[0].accountId);
       dispatch(setNtdTrAcct(cardResponse));
     } 
     const favoriteResponse = await getFavAcct({});
@@ -524,11 +530,11 @@ const Transfer = () => {
     console.log(cards);
     console.log("selectCardId");
     console.log(selectCardId);
-    if (cards.length && selectCardId) {
-      const card = cards.find((item) => item.id === selectCardId);
+    if (cards.length>0 && selectCardId) {
+      const card = cards.find((item) => item.accountId === selectCardId);
       console.log("card");
       console.log(card);
-      setDepositAmount(card.cardBalance);
+      setDepositAmount(card.balance);
       setTransferRemaining(card.interbankTransferRemaining);
     }
   }, [cards, selectCardId]);
