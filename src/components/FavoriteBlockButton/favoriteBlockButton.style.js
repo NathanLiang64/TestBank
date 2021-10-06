@@ -8,7 +8,7 @@ const FavoriteBlockButtonStyle = styled.button.attrs({
   align-items: center;
   min-height: 9.6rem;
   padding: 1.6rem .4rem .8rem .4rem;
-  border: .2rem solid ${({ theme }) => theme.colors.background.lighterBlue};
+  border: ${({ $noBorder, theme }) => ($noBorder ? '0' : `.2rem solid ${theme.colors.background.lighterBlue}`)};
   border-radius: .8rem;
   transition: all .2s;
 
@@ -40,7 +40,7 @@ const FavoriteBlockButtonStyle = styled.button.attrs({
   p {
     margin-top: .8rem;
     font-size: 1.4rem;
-    color: ${({ theme }) => theme.colors.text.light};
+    color: ${({ $noBorder, theme }) => ($noBorder ? theme.colors.text.dark : theme.colors.text.light)};
   }
 
   span {

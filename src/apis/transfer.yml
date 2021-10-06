@@ -1,0 +1,1095 @@
+openapi: 3.0.2
+info:
+   title: 轉帳相關
+   version: "2.0"
+servers:
+   - url: https://bankeesit.feib.com.tw/webctl/api/transfer
+paths:
+  /modifyRegAcct:
+    post:
+      summary: 約定帳號更新(維護)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: "#/components/schemas/AccountMaintenanceRq"
+                example: 
+                  {
+                  custId: 'M197799277',
+                  inAcct: '04300499100689',
+                  inBank: '805',
+                  nickName: 'test',
+                  email: ''
+                }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ApiResponse<AggreeAcctMdfyRs>"
+  /modifyFacAcct:
+    post:
+      summary: 常用帳號更新(維護)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: "#/components/schemas/AccountMaintenanceRq"
+                example: 
+                  {
+                  custId: 'M197799277',
+                  inAcct: '04300499100689',
+                  inBank: '805',
+                  nickName: 'test',
+                  email: 'test@gmail.com',
+                  orgAcctId: '04300499100689',
+                  orgBankId: '805'
+                }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ApiResponse<FavorityAcctMdfyRs>"
+  /deleteFacAcct:
+    post:
+      summary: 常用帳號刪除 (單筆)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: "#/components/schemas/AccountMaintenanceRq"
+                example: 
+                  {
+                  custId: 'M197799277',
+                  inAcct: '04300499100689',
+                  inBank: '806',
+                  nickName: 'test',
+                  email: 'test@gmail.com',
+                  orgAcctId: '04300499100689',
+                  orgBankId: '805'
+                }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ApiResponse<FavorityAcctMdfyRs>"
+  /insertFacAcct:
+    post:
+      summary: 常用帳號新增
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: "#/components/schemas/AccountMaintenanceRq"
+                example: 
+                  {
+                  custId: 'M197799277',
+                  inAcct: '04300499100689',
+                  inBank: '805',
+                  nickName: 'test',
+                  email: 'test@gmail.com',
+                  orgAcctId: '',
+                  orgBankId: ''
+                }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ApiResponse<FavorityAcctMdfyRs>"
+  /queryReservedTransDetails:
+    post:
+      summary: 查詢預約轉帳明細  (預約轉帳查詢 查詢起日必在當天以後)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: "#/components/schemas/ReservedTransferQryRq"
+                example: 
+                  {
+                  custId: 'M197799277',
+                  queryType: '3',
+                  qrySDt: '2021/09/01',  
+                  qryEDt: '2021/12/31'
+                }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ApiResponse<List<NtdBookWQRs>>"
+  /queryResultTransDetails:
+    post:
+      summary: 查詢結果轉帳明細  (結果轉帳查詢 查詢迄日不能超過今日)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: "#/components/schemas/ResultTransferQryRq"
+                example: 
+                  {
+                  custId: 'M197799277',
+                  qryRstSDt: '2021/07/01',  
+                  qryRstEDt: '2021/07/31'
+                }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ApiResponse<List<NtdBookWResultRs>>"
+  /cancelReservedTrans:
+    post:
+      summary: 取消預約轉帳
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: "#/components/schemas/NtdBookWCancelRq"
+                example: 
+                  {
+                  custId: 'M197799277',
+                  qryRstSDt: '2021/07/01',  
+                  qryRstEDt: '2021/07/31'
+                }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ApiResponse<NtdBookWCancelRs>"
+  /queryFavAcct:
+    post:
+      summary: 查詢常用帳號
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: "../common.yml#/components/schemas/CustIdRq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ApiResponse<List<FavAcctDtl>>"
+  /queryRegAcct:
+    post:
+      summary: 查詢約定帳號
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: "../common.yml#/components/schemas/CustIdRq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ApiResponse<QueryAcctByServiceRs>"
+  /queryBank:
+    post:
+      summary: 查詢銀行代碼
+      requestBody:
+        required: true
+        content:
+            application/json:
+              schema:
+                  $ref: "../common.yml#/components/schemas/CustIdRq"
+      responses:
+        "200":
+            description: OK
+            content:
+              application/json;charset=UTF-8:
+                  schema:
+                    $ref: "#/components/schemas/ApiResponse<List<Bank>>"
+  /queryNtdTrAcct:
+    post:
+      summary: 查詢轉岀帳號資訊
+      requestBody:
+        required: true
+        content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/QueryNtdTrAcctRq"
+      responses:
+        "200":
+            description: OK
+            content:
+              application/json;charset=UTF-8:
+                  schema:
+                    $ref: "#/components/schemas/ApiResponse<QueryNtdTrAcctRs>"
+  /queryBankAcct:
+    post:
+      summary: 查詢轉岀帳號資訊(簡單資訊)
+      requestBody:
+        required: true
+        content:
+            application/json:
+              schema:
+                  $ref: "../common.yml#/components/schemas/CustIdRq"
+      responses:
+        "200":
+            description: OK
+            content:
+              application/json;charset=UTF-8:
+                  schema:
+                    $ref: "#/components/schemas/ApiResponse<List<BankAcct>>"
+  /ntdTr/confirm:
+    post:
+      summary: 轉帳確認
+      requestBody:
+        required: true
+        content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/TrCfmRq"
+      responses:
+        "200":
+            description: OK
+            content:
+              application/json;charset=UTF-8:
+                  schema:
+                    $ref: "#/components/schemas/ApiResponse<NtdTrCfmRs>"
+  /ntdTr/book/confirm:
+    post:
+      summary: 預約轉帳確認
+      requestBody:
+        required: true
+        content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/TrBookCfmRq"
+      responses:
+        "200":
+            description: OK
+            content:
+              application/json;charset=UTF-8:
+                  schema:
+                    $ref: "#/components/schemas/ApiResponse<NtdTrCfmRs>"
+  /ntdTr:
+    post:
+      summary: 即時轉帳
+      requestBody:
+        required: true
+        content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/TrRq"
+      responses:
+        "200":
+            description: OK
+            content:
+              application/json;charset=UTF-8:
+                  schema:
+                    $ref: "#/components/schemas/ApiResponse<NtdTrRs>"
+  /ntdTrBook:
+    post:
+      summary: 預約轉帳
+      requestBody:
+        required: true
+        content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/TrBookRq"
+      responses:
+        "200":
+            description: OK
+            content:
+              application/json;charset=UTF-8:
+                  schema:
+                    $ref: "#/components/schemas/ApiResponse<NtdTrBookRs>"
+components:
+  schemas:
+    AccountMaintenanceRq:
+      type: object
+      properties:
+        custId:
+          type: string
+          description: 身分證號
+          example: S174343754
+        nickName:
+          type: string
+          description: 帳號暱稱
+        inBank:
+          type: string
+          description: 轉入銀行
+        inAcct:
+          type: string
+          description: 轉入帳號
+        email:
+          type: string
+          description: 通知EMAIL
+        orgBankId:
+          type: string
+          description: 原始轉入銀行
+        orgAcctId:
+          type: string
+          description: 原始轉入帳號
+    ApiResponse<AggreeAcctMdfyRs>:       
+      allOf: 
+        - $ref: '../common.yml#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            encData:
+              type: object
+              description: 資料內容
+              properties:
+                bankId:
+                  type: string
+                  description: 轉入帳號行庫
+                accountId:
+                  type: string
+                  description: 轉入帳號
+                nickName:
+                  type: string  
+                  description: 轉入帳號名稱（暱稱）
+                email:
+                  type: string
+                  description: 通知EMAIL
+    ApiResponse<FavorityAcctMdfyRs>:
+      allOf: # combines ApiResponse and data
+        - $ref: '../common.yml#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            encData:
+              type: object
+              description: 資料內容
+              properties:
+                bankId:
+                  type: string
+                  description: 轉入帳號行庫
+                bankName:
+                  type: string
+                  description: 轉入帳號行庫名稱
+                accountId:
+                  type: string
+                  description: 轉入帳號
+                accountName:
+                  type: string  
+                  description: 轉入帳號名稱（暱稱）
+                email:
+                  type: string
+                  description: 通知EMAIL
+                orgBankId:
+                  type: string
+                  description: 原始轉入銀行
+                orgAcctId:
+                  type: string
+                  description: 原始轉入帳號
+    ReservedTransferQryRq:
+      type: object
+      properties:
+        custId:
+          type: string
+          description: 身分證號
+          example: S174343754
+        queryType:
+          type: string
+          description: 查詢類別
+          example: '3'
+        qrySDt:
+          type: string
+          description: 查詢起日  (在當天之後)
+          example: 20210609
+        qryEDt:
+          type: string
+          description: 查詢迄日
+          example: 20210709
+    ResultTransferQryRq:
+      type: object
+      properties:
+        custId:
+          type: string
+          description: 身分證號
+          example: S174343754
+        qryRstSDt:
+          type: string
+          description: 預約查詢結果起日
+          example: 2021/08/01
+        qryRstEDt:
+          type: string
+          description: 預約查詢結果迄日
+          example: 2021/08/16
+    ApiResponse<List<NtdBookWQRs>>:       
+      allOf: # combines ApiResponse and data
+        - $ref: '../common.yml#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            encData:
+              type: array
+              items: 
+                $ref: '#/components/schemas/NtdBookWQRs'
+    ApiResponse<List<NtdBookWResultRs>>:       
+      allOf: # combines ApiResponse and data
+        - $ref: '../common.yml#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            encData:
+              type: array
+              items: 
+                $ref: '#/components/schemas/NtdBookWResultRs'
+    NtdBookWQRs:
+      type: object
+      properties:
+        bookType:
+          type: string
+        trnsDate:
+          type: string
+        payDateWording:
+          type: string
+        payDateEnd:
+          type: string
+        payDate:
+          type: string
+        inActNo:
+          type: string
+        amount:
+          type: string
+    NtdBookWResultRs:
+      type: object
+      properties:
+        trnsDate:
+          type: string
+        inActNo:
+          type: string
+        amount:
+          type: string
+        stderrMsg:
+          type: string
+    NtdBookWCancelRq:
+      type: object
+      properties:
+        custId:
+          type: string
+        pwdE2ee:
+          type: string
+        trnsDate:
+          type: string
+          description: 轉帳日期
+        outActNo:
+          type: string
+          description: 轉出帳號
+        inBank:
+          type: string
+          description: 轉入銀行
+        inActNo:
+          type: string
+          description: 轉入帳號
+        amount:
+          type: string
+          description: 轉帳金額
+        payDate:
+          type: string
+        payDateEnd:
+          type: string
+        chargeMode:
+          type: string
+        chargeDay:
+          type: string
+        memo:
+          type: string
+        seqNo:
+          type: string
+        bookType:
+          type: string
+    ApiResponse<NtdBookWCancelRs>:
+      allOf: # combines ApiResponse and data
+        - $ref: '../common.yml#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            encData:
+              type: object
+              properties:
+                bookType:
+                  type: string
+                trnsDate:
+                  type: string
+                payDateWording:
+                  type: string
+                payDateEnd:
+                  type: string
+                payDate:
+                  type: string
+                inActNo:
+                  type: string
+                amount:
+                  type: string
+                memo:
+                  type: string
+    ApiResponse<List<FavAcctDtl>>:
+      allOf: # combines ApiResponse and data
+        - $ref: '../common.yml#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            encData:
+              type: array
+              items: object
+              properties:
+                bankId:
+                  type: string
+                  description: 轉入帳號行庫
+                bankName:
+                  type: string
+                  description: 轉入帳號行庫名稱
+                accountId:
+                  type: string
+                  description: 轉入帳號
+                accountName:
+                  type: string
+                  description: 轉入帳號名稱（暱稱）
+                email:
+                  type: string
+                  description: 通知EMAIL
+    ApiResponse<QueryAcctByServiceRs>:
+      allOf: # combines ApiResponse and data
+        - $ref: '../common.yml#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            encData:
+              type: object
+              properties:
+                isMotpOpen:
+                  type: string
+                  description: MOTP是否啟用, 未設定MOTP時，回覆空值 Y:啟用 N:未啟用
+                accounts:
+                  type: array
+                  description: 約定轉入帳號
+                  items:
+                    type: object
+                    properties:
+                      bankId:
+                        type: string
+                        description: 銀行代碼
+                      acctId:
+                        type: string
+                        description: 帳號
+                      isManyCcy:
+                        type: string
+                        description: 是否為多幣別帳號
+                      bankName:
+                        type: string
+                        description: 銀行名稱
+                      nickName:
+                        type: string
+                        description: 暱稱
+                      email:
+                        type: string
+                    description: 通知EMAIL
+    ApiResponse<List<Bank>>:       
+      allOf: # combines ApiResponse and data
+        - $ref: '../common.yml#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            encData:
+              type: array
+              items:
+                type: object
+                properties:
+                  bankNo:
+                    type: string
+                  bankName:
+                    type: string
+    QueryNtdTrAcctRq:
+         type: object
+         properties:
+            custId:
+               type: string
+               description: 身分證號
+               example: S174343754
+            motpDeviceId:
+               type: string
+               description: 裝置Id 
+               example: '48c3d54d-bab3-471a-9778-2c98a157c3f8'
+    ApiResponse<QueryNtdTrAcctRs>:
+      allOf: # combines ApiResponse and data
+        - $ref: '../common.yml#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            encData:
+              type: object
+              properties:
+                isMotpOpen:
+                  type: boolean
+                  description: MOTP是否啟用
+                accounts:
+                  type: array
+                  items: object
+                  properties:
+                    tfrhCount:
+                      type: string
+                      description: 提款轉帳優惠次數
+                    singleLimit:
+                      type: string
+                      description: 交易金額額度
+    TrCfmRq:
+         type: object
+         properties:
+            custId:
+               type: string
+               description: 身分證號
+               example: S174343754
+            outAcctNo:
+               type: string
+               description: 轉出帳號
+               example: '04300499099488'
+            inBank:
+               type: string
+               description: 轉入銀行
+               example: '007'
+            inAcctNo:
+               type: string
+               description: 轉入帳號
+               example: '04300490003796'
+            amount:
+               type: string
+               description: 轉帳金額
+               example: '10'
+            email:
+               type: string
+               description: email
+               example: +
+            emailContent:
+               type: string
+               description: email內容
+               example: 57SE5a6a5biz6JmfIC0gYW5keXRlc3Q=
+            memo:
+               type: string
+               description: 附言
+               example: 57SE5a6a5biz6Jmf44CA77yN44CA772B772O772E772Z772U772F772T772U
+            deviceId:
+               type: string
+               description: motp綁定裝置編號
+               example: ''
+            isQRCode:
+               type: boolean
+               description: 是否為QRCode轉帳
+               example: false
+            isMotpOpen:
+               type: boolean
+               description: MOTP是否啟用(查詢轉岀帳號資訊時會回傳)
+               example: true
+    TrBookCfmRq:
+        type: object
+        properties:
+          custId:
+              type: string
+              description: 身分證號
+              example: S174343754
+          outAcctNo:
+              type: string
+              description: 轉出帳號
+              example: '04300499099488'
+          inBank:
+              type: string
+              description: 轉入銀行
+              example: '007'
+          inAcctNo:
+              type: string
+              description: 轉入帳號
+              example: '04300490003796'
+          amount:
+              type: string
+              description: 轉帳金額
+              example: '10'
+          email:
+              type: string
+              description: email
+              example: +
+          emailContent:
+              type: string
+              description: email內容
+              example: 57SE5a6a5biz6JmfIC0gYW5keXRlc3Q=
+          memo:
+              type: string
+              description: 附言
+              example: 57SE5a6a5biz6Jmf44CA77yN44CA772B772O772E772Z772U772F772T772U
+          deviceId:
+              type: string
+              description: motp綁定裝置編號
+              example: ''
+          bookType:
+              type: string
+              description: 單筆:S, 每週:W, 每月:M
+              example: 'S'
+          bookDate:
+              type: string
+              description: 單筆預約日期(bookType為S時輸入)
+              example: '2021-08-08'
+          dayOfW:
+              type: string
+              description: 每週幾, 01、02、03、04、05、06、07(bookType為W時輸入)
+              example: '01'
+          dayOfM:
+              type: string
+              description: 每月幾號(bookType為M時輸入)
+              example: '08'
+          startDate:
+              type: string
+              description: 預約週期起日(bookType為W/M時輸入)
+              example: '2021-06-08'
+          endDate:
+              type: string
+              description: 預約週期迄日(bookType為W/M時輸入)
+              example: '2021-10-08'
+    ApiResponse<NtdTrCfmRs>:
+      allOf:
+      - $ref: '../common.yml#/components/schemas/ApiResponse'
+      - type: object
+        properties:
+          encData:
+            type: object
+            properties:
+              otpId:
+                type: string
+                description: '[timestamp]'
+                example: '20210525115033174'
+              checkNum:
+                type: string
+                description: 交易識別碼
+                example: 'EKZJ'
+              countdown:
+                type: string
+                description: 倒數秒數
+                example: '300'
+              initialKey:
+                type: string
+    TrRq:
+      type: object
+      properties:
+        custId:
+            type: string
+            description: 身分證號
+            example: S174343754
+        outAcctNo:
+            type: string
+            description: 轉出帳號
+            example: '04300499099488'
+        inBank:
+            type: string
+            description: 轉入銀行
+            example: '007'
+        inAcctNo:
+            type: string
+            description: 轉入帳號
+            example: '04300490003796'
+        amount:
+            type: string
+            description: 轉帳金額
+            example: '10'
+        email:
+            type: string
+            description: email
+            example: +
+        emailContent:
+            type: string
+            description: email內容
+            example: 57SE5a6a5biz6JmfIC0gYW5keXRlc3Q=
+        memo:
+            type: string
+            description: 附言
+            example: 57SE5a6a5biz6Jmf44CA77yN44CA772B772O772E772Z772U772F772T772U
+        deviceId:
+            type: string
+            description: motp綁定裝置編號
+            example: ''
+        nextDayFlag:
+            type: string
+            description: 次營業日記號
+            example: '2021/06/15'
+        otpId:
+            type: string
+        otpCode:
+            type: string
+        isMotpOpen:
+            type: boolean
+            description: MOTP是否啟用, 查詢轉岀帳號資訊時取得isMotpOpen, 因此不需要在台幣轉帳確認時再取一次 
+            example: true
+        isRegister: 
+            type: boolean
+            description: 是否為約定帳戶轉帳
+            example: true
+    ApiResponse<NtdTrRs>:
+      allOf:
+      - $ref: '../common.yml#/components/schemas/ApiResponse'
+      - type: object
+        properties:
+          encData:
+            type: object
+            properties:
+              outAcctNo:
+                type: string
+                description: 轉出帳號
+                example: '04300499099488'
+              inBank:
+                type: string
+                description: 轉入銀行
+                example: '007'
+              inAcctNo:
+                type: string
+                description: 轉入帳號
+                example: '04300490003796'
+              amount:
+                type: string
+                description: 轉帳金額
+                example: '10'
+              email:
+                type: string
+                description: email
+                example: +
+              emailContent:
+                type: string
+                description: email內容
+                example: 57SE5a6a5biz6JmfIC0gYW5keXRlc3Q=
+              memo:
+                type: string
+                description: 附言
+                example: 57SE5a6a5biz6Jmf44CA77yN44CA772B772O772E772Z772U772F772T772U
+              acctBlx:
+                type: string
+                description: 轉出後餘額
+                example: '10000'
+              inBankName:
+                type: string
+                description: 轉入銀行名稱
+                example: '遠東銀行'
+              nickName:
+                type: string
+                description: 轉入帳號名稱
+                example: '小明'
+              payDate:
+                type: string
+              transId:
+                type: string
+                description: SERVER交易序號
+              transType:
+                type: string
+                description: 交易種類
+              fee:
+                type: string
+                description: 手續費
+                example: '15'
+              transDate:
+                type: string
+              ccycd:
+                type: string
+                description: 交易幣別
+                example: 'TWD'
+              otpId:
+                type: string
+                description: '[timestamp]'
+                example: '20210525115033174'
+              check:
+                type: string
+    TrBookRq:
+         type: object
+         properties:
+          custId:
+            type: string
+            description: 身分證號
+            example: S174343754
+          outAcctNo:
+            type: string
+            description: 轉出帳號
+            example: '04300499099488'
+          inBank:
+            type: string
+            description: 轉入銀行
+            example: '007'
+          inAcctNo:
+            type: string
+            description: 轉入帳號
+            example: '04300490003796'
+          amount:
+            type: string
+            description: 轉帳金額
+            example: '10'
+          email:
+            type: string
+            description: email
+            example: +
+          emailContent:
+            type: string
+            description: email內容
+            example: 57SE5a6a5biz6JmfIC0gYW5keXRlc3Q=
+          memo:
+            type: string
+            description: 附言
+            example: 57SE5a6a5biz6Jmf44CA77yN44CA772B772O772E772Z772U772F772T772U
+          bookType:
+            type: string
+            description: 單筆:S, 每週:W, 每月:M
+            example: 'S'
+          bookDate:
+            type: string
+            description: 單筆預約日期(bookType為S時輸入)
+            example: '2021-08-08'
+          dayOfW:
+            type: string
+            description: 每週幾, 01、02、03、04、05、06、07(bookType為W時輸入)
+            example: '01'
+          dayOfM:
+            type: string
+            description: 每月幾號(bookType為M時輸入)
+            example: '08'
+          startDate:
+            type: string
+            description: 預約週期起日(bookType為W/M時輸入)
+            example: '2021-06-08'
+          endDate:
+            type: string
+            description: 預約週期迄日(bookType為W/M時輸入)
+            example: '2021-10-08'
+          deviceId:
+            type: string
+            description: motp綁定裝置編號
+            example: ''
+          nextDayFlag:
+            type: string
+            description: 次營業日記號
+            example: '2021/06/15'
+          otpId:
+            type: string
+          otpCode:
+            type: string
+          isMotpOpen:
+            type: boolean
+            description: MOTP是否啟用, 查詢轉岀帳號資訊時取得isMotpOpen, 因此不需要在台幣轉帳確認時再取一次 
+            example: true
+          isRegister: 
+            type: boolean
+            description: 是否為約定帳戶轉帳
+            example: true
+    ApiResponse<NtdTrBookRs>:
+      allOf:
+      - $ref: '../common.yml#/components/schemas/ApiResponse'
+      - type: object
+        properties:
+          encData:
+            type: object
+            properties:
+              outAcctNo:
+                type: string
+                description: 轉出帳號
+                example: '04300499099488'
+              inBank:
+                type: string
+                description: 轉入銀行
+                example: '007'
+              inAcctNo:
+                type: string
+                description: 轉入帳號
+                example: '04300490003796'
+              amount:
+                type: string
+                description: 轉帳金額
+                example: '10'
+              email:
+                type: string
+                description: email
+                example: +
+              emailContent:
+                type: string
+                description: email內容
+                example: 57SE5a6a5biz6JmfIC0gYW5keXRlc3Q=
+              memo:
+                type: string
+                description: 附言
+                example: 57SE5a6a5biz6Jmf44CA77yN44CA772B772O772E772Z772U772F772T772U
+              acctBlx:
+                type: string
+                description: 轉出後餘額
+                example: '10000'
+              inBankName:
+                type: string
+                description: 轉入銀行名稱
+                example: '遠東銀行'
+              nickName:
+                type: string
+                description: 轉入帳號名稱
+                example: '小明'
+              payDate:
+                type: string
+              transId:
+                type: string
+                description: SERVER交易序號
+              transType:
+                type: string
+                description: 交易種類
+              fee:
+                type: string
+                description: 手續費
+                example: '15'
+              transDate:
+                type: string
+              ccycd:
+                type: string
+                description: 交易幣別
+                example: 'TWD'
+              otpId:
+                type: string
+                description: '[timestamp]'
+                example: '20210525115033174'
+              check:
+                type: string
+              payDateWording:
+                type: string
+              bookWording:
+                type: string
+              payDateEnd:
+                type: string
+              bookType:
+                type: string
+              seqNo:
+                type: string
+    ApiResponse<List<BankAcct>>:       
+      allOf: # combines ApiResponse and data
+        - $ref: '../common.yml#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            encData:
+              type: array
+              items:
+                type: object
+                properties:
+                  acctNo:
+                    type: string
+                    description: 帳號
+                    example: 04300499099455
+                  acctType:
+                    type: string
+                    description: 類型
+                    example: M
+                  acctSubType:
+                    type: string                
+                  alias:
+                    type: string
+                    description: 暱稱
+                    example: 個人暱稱帳戶
+
+
+    
+       
+      
+    
+      
+            

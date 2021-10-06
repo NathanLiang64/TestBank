@@ -2,53 +2,61 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const MoreWrapper = styled(Layout)`
-  scroll-behavior: smooth;
-  padding-top: 7.2rem;
-  .tabContainer {
-    width: 100vw;
-    transform: translate(-1.6rem, -7.2rem);
-    position: fixed;
-    background: ${({ theme }) => theme.colors.basic.white};
-    z-index: 1000;
-    padding-left: 1.6rem;
-    overflow: hidden;
-    .MuiTabs-root {
-      padding-right: 1.6rem;
-    }
+  top: 2.4rem;
+  padding: 0;
+  height: calc(100% - 8.4rem);  // top 2.4 + bottomTabBar 6
+  overflow: hidden;
+
+  .MuiTabs-root {
+    margin: 0 1.6rem 2.4rem 1.6rem;
+  }
+  
+  .MuiTab-root {
+    padding: 0 .8rem;
   }
 
-  .contentContainer {
-    padding-bottom: 3.2rem;
-    &:before {
-      left: 0;
-      position: absolute;
-      content: '';
-      width: 100vw;
-      height: .8rem;
-      background: ${({ theme }) => theme.colors.background.lighterBlue};
-      transform: translateX(-1.6rem);
-    }
-    .title {
-      text-align: center;
-      padding: 3.2rem 0 2.4rem;
-      font-weight: 500;
-    }
-    .content {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-column-gap: 1.5rem;
-      grid-row-gap: 4rem;
+  .mainContent {
+    padding: 0 1.6rem;
+    height: calc(100% - 6rem);
+    overflow-y: auto;
 
-      .iconButton {
-        display: flex;
-        flex-direction: column;
+    section {
+      padding-top: 3.2rem;
+      padding-bottom: 2.4rem;
 
-        svg {
-          margin: 0 auto .8rem;
-        }
+      &:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -1.6rem;
+        display: block;
+        width: 100vw;
+        height: .8rem;
+        background: ${({ theme }) => theme.colors.background.lighterBlue};
+      }
 
-        span {
-          text-align: center
+      .title {
+        margin-bottom: 1.2rem;
+        font-weight: 500;
+        text-align: center;
+      }
+
+      .blockGroup {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: .8rem;
+
+        .iconButton {
+          display: flex;
+          flex-direction: column;
+
+          svg {
+            margin: 0 auto .8rem;
+          }
+
+          span {
+            text-align: center
+          }
         }
       }
     }

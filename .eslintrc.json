@@ -36,5 +36,6 @@
     "no-plusplus": "off",
     "no-restricted-syntax": ["error", "LabeledStatement", "WithStatement"],
     "no-return-await": "off"
-  }
+  },
+  "ignorePatterns": ["/src/apis/*.yml"]
 }
