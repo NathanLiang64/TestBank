@@ -52,6 +52,7 @@ userAxios().interceptors.request.use(
     if (jwt) {
       config.data.custId = localStorage.getItem('custId');
       config.data.isgToken = '0c281a7a1-1a35-0347-6d71-a4da7d0a41d113092';
+      config.data.bindingUdid = '48c3d54d-bab3-471a-9778-2c98a157c3f80199263632160019';
       config.headers.authorization = `Bearer ${jwt}`;
       const aeskey = localStorage.getItem('aesKey');
       const ivkey = localStorage.getItem('iv');

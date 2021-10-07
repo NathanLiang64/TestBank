@@ -249,6 +249,24 @@ const GlobalStyles = createGlobalStyle`
     pointer-events: none;
     height: 0;
   }
+  .noticeEditList {
+    li {
+      padding: 2rem 1.6rem;
+      font-weight: 400;
+      font-size: 2rem;
+      line-height: 3rem;
+      color: ${({ theme }) => theme.colors.text.dark};
+      display: flex;
+      align-items: center;
+      .mockIcon {
+        width: 2rem;
+        height: 2rem;
+        border: .2rem solid ${({ theme }) => theme.colors.primary.dark};
+        border-radius: 1rem;
+        margin-right: 1.6rem;
+      }
+    }
+  }
 `;
 
 export default GlobalStyles;
