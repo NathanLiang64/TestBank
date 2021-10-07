@@ -107,7 +107,7 @@ const FavoriteDrawerWrapper = styled.div`
       > .title {
         margin-bottom: 1.2rem;
         font-size: 1.6rem;
-        font-weight: 700;
+        font-weight: 500;
         text-align: center;
       }
     }

@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import FavoriteBlockButton from 'components/FavoriteBlockButton';
@@ -58,7 +57,7 @@ const Favorite2 = () => {
     setTabId(target?.id);
   };
 
-  useEffect(()=>console.log(editedBlockList), [editedBlockList?.length]);
+  // useEffect(()=>console.log(editedBlockList), [editedBlockList?.length]);
 
   const handleClickBlock = (group, blockId) => {
     // 添加/刪減項目邏輯
@@ -136,7 +135,7 @@ const Favorite2 = () => {
 
   useEffect(() => {
     if (mainContentRef?.current) {
-      const categories = Array.from(mainContentRef?.current.children)
+      const categories = Array.from(mainContentRef?.current.children);
       const sectionPositionList = categories.map((section) => (
         { id: section.className, position: section.offsetTop }
       ));

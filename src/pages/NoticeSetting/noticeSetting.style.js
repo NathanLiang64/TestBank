@@ -1,56 +1,33 @@
 import styled from 'styled-components';
 import Layout from 'components/Layout';
-import theme from 'themes/theme';
 
 const NoticeSettingWrapper = styled(Layout)`
-  .noticeContainer {
-    &.all {
-      margin-bottom: 2rem;
-    }
-    &:nth-child(6) {
-      border-bottom: 1px solid ${theme.colors.border.lighter};
-    }
-  }
-  .sectionLabel {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    height: 45px;
-    line-height: 45px;
-    padding: 0 1.6rem;
-    transition: all .3s ease;
-    font-size: 100%;
-    border-radius: 0;
-    span {
+    .settingItem {
+      padding: 2.6rem .8rem;
       display: flex;
       align-items: center;
-    }
-    &.on {
-      background-color: ${theme.colors.primary.light};
-      color: white;
-    }
-    .MuiIconButton-root {
-      padding: 0px;
-    }
-  }
-  .MuiCollapse-container {
-    width: 100%;
-  }
-  &.settingPage {
-    .MuiFormControlLabel-root {
-      left: -1.6rem;
-    }
-  }
-  .customNoticeArea {
-    ol {
-      padding-left: 2.4rem;
-      li {
-        list-style-type: decimal;
-        margin-bottom: 1rem;
+      justify-content: space-between;
+      border-top: .1rem solid ${({ theme }) => theme.colors.text.placeholder};
+      &:last-child {
+        border-bottom: .1rem solid ${({ theme }) => theme.colors.text.placeholder};
+      }
+      .settingLabel {
+        display: flex;
+        flex-direction: column;
+        .main {
+          font-weight: 400;
+          font-size: 1.6rem;
+          line-height: 2.4rem;
+          color: ${({ theme }) => theme.colors.text.dark};
+        }
+        .sub {
+          font-weight: 400;
+          font-size: 1.2rem;
+          line-height: 1.8rem;
+          color: ${({ theme }) => theme.colors.text.light};
+        }
       }
     }
-  }
 `;
 
 export default NoticeSettingWrapper;

@@ -21,7 +21,7 @@ import {
   FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBDatePicker,
   FEIBRadioLabel, FEIBRadio, FEIBButton, FEIBSelect, FEIBOption, FEIBIconButton,
 } from 'components/elements';
-import { doGetInitData,getNtdTrAcct } from 'apis/transferApi';
+import { doGetInitData,getNtdTrAcct,getFavAcct,queryRegAcct } from 'apis/transferApi';
 import { numberToChinese, weekNumberToChinese } from 'utilities/Generator';
 import { bankCodeValidation, receivingAccountValidation, transferAmountValidation } from 'utilities/validation';
 import { directTo } from 'utilities/mockWebController';
@@ -30,7 +30,7 @@ import { setOpenDrawer, setClickMoreOptions } from './stores/actions';
 import TransferWrapper from './transfer.style';
 import TransferDrawer from '../TransferDrawer';
 import Dialog from '../../components/Dialog';
-import {setNtdTrAcct} from './stores/actions'
+import {setNtdTrAcct,setFqlyUsedAccounts,setDgnedAccounts} from './stores/actions'
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
@@ -93,8 +93,12 @@ const Transfer = () => {
 
   const handleClickTransferButton = (data) => {
     // 轉出帳號
-    const selectCard = cards.find((card) => card.id === selectCardId);
-    data.debitAccount = selectCard.cardAccount;
+    console.log(cards);
+    console.log(selectCardId);
+    const selectCard = cards.find((card) => card.accountId === selectCardId);
+    console.log("轉帳")
+    console.log(selectCard);
+    data.debitAccount = selectCard.accountId;
     data.debitName = selectCard.cardName;
 
     // 常用/約定轉帳時，取得受款人帳號
@@ -224,11 +228,11 @@ const Transfer = () => {
         { selectTransferMember.frequentlyUsed && (
           <div className="memberAccountCardArea">
             <MemberAccountCard
-              id={selectTransferMember.frequentlyUsed.id}
-              name={selectTransferMember.frequentlyUsed.acctName}
+              id={selectTransferMember.frequentlyUsed.accountId}
+              name={selectTransferMember.frequentlyUsed.accountName}
               bankName={selectTransferMember.frequentlyUsed.bankName}
-              bankNo={selectTransferMember.frequentlyUsed.bankNo}
-              account={selectTransferMember.frequentlyUsed.acctId}
+              bankNo={selectTransferMember.frequentlyUsed.bankId}
+              account={selectTransferMember.frequentlyUsed.accountId}
               avatarSrc={selectTransferMember.frequentlyUsed.acctImg}
               noBorder
               noOption
@@ -404,14 +408,22 @@ const Transfer = () => {
     const cardResponse = await getNtdTrAcct({motpDeviceId:'12313131'});
     if (cardResponse.accounts){
       setCards(cardResponse.accounts);
+      console.log(cardResponse.accounts[0].accountId);
+      setSelectCardId(cardResponse.accounts[0].accountId);
       dispatch(setNtdTrAcct(cardResponse));
     } 
-    //
-    // const favoriteResponse = await doGetInitData('/api/getFavoriteAcct');
-    // if (favoriteResponse) setFrequentlyUsedAccounts(favoriteResponse.favoriteAcctList);
-    //
-    // const designedResponse = await doGetInitData('/api/getDesignedAcct');
-    // if (designedResponse) setDesignedAccounts(designedResponse.designedAcctList);
+    const favoriteResponse = await getFavAcct({});
+    console.log(favoriteResponse);
+    if (favoriteResponse.code!='WEBCTL1003'){
+      setFrequentlyUsedAccounts(favoriteResponse);
+      dispatch(setFqlyUsedAccounts(favoriteResponse))
+    } 
+   const designedResponse = await queryRegAcct({});
+   console.log(designedResponse);
+   if (designedResponse.code!='WEBCTL1003'){
+    setDesignedAccounts(designedResponse);
+    dispatch(setDgnedAccounts(favoriteResponse))
+  } 
 
     // transferOption 是為了避免不同頁籤造成驗證衝突，初始設置 transfer (一般轉帳)
     setValue('transferOption', 'transfer');
@@ -473,6 +485,7 @@ const Transfer = () => {
     if (watch('transferOption') === 'frequentlyUsed') {
       // 若常用帳號列表為空，開啟新增常用帳號 Drawer UI
       if (frequentlyUsedAccounts.length === 0) {
+        console.log(frequentlyUsedAccounts);
         dispatch(setOpenDrawer({ title: '新增常用帳號', content: 'addFrequentlyUsedAccount', open: true }));
       }
       // 若常用帳號列表不為空，將常用帳號清單內的第一筆設置為預設的轉帳對象，並開啟常用帳號 Drawer UI
@@ -514,11 +527,14 @@ const Transfer = () => {
 
   // 取得用戶存款餘額 (用於設置至轉出金額驗證規則)
   useEffect(() => {
-    console.log(cards.length > 0);
-    
-    if (cards.length && selectCardId) {
-      const card = cards.find((item) => item.id === selectCardId);
-      setDepositAmount(card.cardBalance);
+    console.log(cards);
+    console.log("selectCardId");
+    console.log(selectCardId);
+    if (cards.length>0 && selectCardId) {
+      const card = cards.find((item) => item.accountId === selectCardId);
+      console.log("card");
+      console.log(card);
+      setDepositAmount(card.balance);
       setTransferRemaining(card.interbankTransferRemaining);
     }
   }, [cards, selectCardId]);
