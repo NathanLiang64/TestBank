@@ -15,10 +15,8 @@ import DepositInquiry from 'pages/DepositInquiry';
 import DepositPlus from 'pages/DepositPlus';
 import NicknameSetting from 'pages/NicknameSetting';
 import NoticeSetting from 'pages/NoticeSetting';
-import NoticeSetting1 from 'pages/NoticeSetting/noticeSetting_1';
 import PatternLockSetting from 'pages/PatternLockSetting';
 import Notice from 'pages/Notice';
-import Notice1 from 'pages/Notice/notice_1';
 import FingerPrintLockSetting from 'pages/FingerPrintLockSetting';
 import ChangeUserName from 'pages/ChangeUserName';
 import ChangeUserName1 from 'pages/ChangeUserName/changeUserName_1';
@@ -92,11 +90,9 @@ const routes = [
   { path: '/depositInquiry', exact: false, component: DepositInquiry },
   { path: '/depositPlus', exact: false, component: DepositPlus },
   { path: '/noticeSetting', exact: true, component: NoticeSetting },
-  { path: '/noticeSetting1', exact: false, component: NoticeSetting1 },
   { path: '/nicknameSetting', exact: false, component: NicknameSetting },
   { path: '/patternLockSetting', exact: false, component: PatternLockSetting },
   { path: '/notice', exact: false, component: Notice },
-  { path: '/notice1', exact: false, component: Notice1 },
   { path: '/fingerPrintLockSetting', exact: false, component: FingerPrintLockSetting },
   { path: '/changeUserName', exact: false, component: ChangeUserName },
   { path: '/changeUserName1', exact: false, component: ChangeUserName1 },

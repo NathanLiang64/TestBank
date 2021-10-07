@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { goToFunc } from 'utilities/BankeePlus';
 import SuccessImage from 'assets/images/stateSuccess.svg';
+import { provisioningApi } from 'apis';
 
 /* Elements */
 import { FEIBButton } from 'components/elements';
@@ -14,8 +15,13 @@ import ProvisioningWrapper from './provisioning.style';
 const Provisioning = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const triggerProvide = () => {
-    setDialogOpen(true);
+  const triggerProvide = async () => {
+    const openhbResponse = await provisioningApi.openhb({});
+    if (Object.keys(openhbResponse).length === 0) {
+      setDialogOpen(true);
+    } else {
+      alert(openhbResponse.message);
+    }
   };
 
   const toHomePage = () => {

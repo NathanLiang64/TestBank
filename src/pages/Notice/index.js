@@ -1,230 +1,179 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable no-unused-vars */
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
-
+import { noticeApi } from 'apis';
 /* Elements */
+import EditIcon from 'assets/images/icons/editIcon.svg';
+import SettingIcon from 'assets/images/icons/settingIcon.svg';
 import {
   FEIBTabContext,
   FEIBTabList,
   FEIBTab,
-  FEIBTabPanel,
-  FEIBBorderButton,
+  // FEIBTabPanel,
+  // FEIBBorderButton,
 } from 'components/elements';
-// import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import ConfirmButtons from 'components/ConfirmButtons';
-import Dialog from 'components/Dialog';
+import BottomDrawer from 'components/BottomDrawer';
+import MessageItem from './messageItem';
 
 /* Styles */
-import theme from 'themes/theme';
 import NoticeWrapper from './notice.style';
 
 const Notice = () => {
   const history = useHistory();
-  const [dummyNoticeList, setDummyNotcieList] = useState([
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const [tabValue, setTabValue] = useState('0');
+  const [messagesList, setMessagesList] = useState([
     {
-      type: 0,
-      noticeID: 1,
-      readed: false,
-      content: '您於05/12 15:00 進行信用卡消費，卡號末4碼5566，消費金額3900元，謹慎理財信用至上',
-      date: '2021/05/12 15:00',
+      content: 'aHR0cDovLzEwLjQ4LjIwLjk2L3VwbG9hZC9EaWdpdGFsQmFuay9odG1sL0FQUC90ZXN0Lmh0bWw=',
+      id: '2021042800399208',
+      outline: '5ris6Kmm6aCQ6Kit5YWs5ZGK',
+      sendTime: '2021/04/28 10:47',
+      status: 'R',
+      type: 'D',
     },
     {
-      type: 0,
-      noticeID: 2,
-      readed: true,
-      content: '您於05/12 15:00 進行信用卡消費，卡號末4碼5566，消費金額3900元',
-      date: '2021/05/12 15:00',
-    },
-    {
-      type: 1,
-      noticeID: 1,
-      readed: true,
-      content: '最新優惠 xxxx',
-      date: '2021/05/12 15:00',
-    },
-    {
-      type: 1,
-      noticeID: 2,
-      readed: false,
-      content: '最新優惠 yyyy',
-      date: '2021/05/12 15:00',
-    },
-    {
-      type: 2,
-      noticeID: 1,
-      readed: true,
-      content: '您於05/12 15:00 進行收款，帳號末4碼3333，收款金額300元',
-      date: '2021/05/12 15:00',
-    },
-    {
-      type: 2,
-      noticeID: 2,
-      readed: false,
-      content: '您於05/12 15:00 進行轉帳，帳號末4碼6666，轉帳金額900元',
-      date: '2021/05/12 15:00',
-    },
-  ]);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [dialogContent, setDialogContent] = useState('是否將通知關閉');
-  const [handleClickMainButton, setHandleClickMainButton] = useState(() => () => {});
-  const [value, setValue] = useState('0');
-  const [personalAccountNotice, setPersonalAccountNotice] = useState([
-    {
-      type: 0,
-      noticeID: 1,
-      readed: false,
-      content: '',
-      date: '',
-    },
-  ]);
-  const [socialPromoNotice, setSocialPromoNotice] = useState([
-    {
-      type: 0,
-      noticeID: 1,
-      readed: false,
-      content: '',
-      date: '',
-    },
-  ]);
-  const [socialAccountNotice, setSocialAccountNotice] = useState([
-    {
-      type: 0,
-      noticeID: 1,
-      readed: false,
-      content: '',
-      date: '',
+      content: 'aHR0cDovLzEwLjQ4LjIwLjk2L3VwbG9hZC9EaWdpdGFsQmFuay9odG1sL0FQUC90ZXN0Lmh0bWw=',
+      id: '2021042800399209',
+      outline: '5ris6Kmm6aCQ6Kit5YWs5ZGK',
+      sendTime: '2021/04/28 10:47',
+      status: '0',
+      type: 'D',
     },
   ]);
 
-  const getNoticeListByType = (type) => {
-    if (type === '0') {
-      const data = dummyNoticeList.filter((notice) => notice.type === Number(type));
-      setPersonalAccountNotice(data);
-    }
-    if (type === '1') {
-      const data = dummyNoticeList.filter((notice) => notice.type === Number(type));
-      setSocialPromoNotice(data);
-    }
-    if (type === '2') {
-      const data = dummyNoticeList.filter((notice) => notice.type === Number(type));
-      setSocialAccountNotice(data);
-    }
+  // 跳轉通知設定頁
+  const toSettingPage = () => {
+    history.push('/noticeSetting');
   };
 
-  const handleToggleDialog = (bool) => {
-    setOpenDialog(bool);
+  const getNoticeItem = async () => {
+    const data = await noticeApi.getNoticeItem({});
+    console.log(data.notices.filter((item) => item.level === 1));
+    console.log(data.notices);
   };
 
-  const handleTabChange = (event, type) => {
-    setValue(type);
-    getNoticeListByType(type);
-  };
-
-  const readAllNotice = () => {
-    const newNoticeList = dummyNoticeList.map((data) => {
-      const noticeItem = data;
-      if (noticeItem.type === Number(value)) {
-        noticeItem.readed = true;
-      }
-      return noticeItem;
+  // 取得通知列表
+  const getNotices = async () => {
+    const data = await noticeApi.getNotices({
+      channelCode: 'HHB_A',
     });
-    setDummyNotcieList(newNoticeList);
+    setMessagesList(data.messages);
   };
 
-  const deleteAllNotice = () => {
-    const newNoticeList = dummyNoticeList.filter((data) => data.type !== Number(value));
-    setDummyNotcieList(newNoticeList);
+  // 選擇通知類別
+  const handleTabChange = (event, type) => {
+    setTabValue(type);
   };
 
-  const handleRead = () => {
-    setDialogContent('是否確認將訊息皆設定為已讀？');
-    setHandleClickMainButton(() => () => readAllNotice());
-    setOpenDialog(true);
+  // 開關編輯選單
+  const handleOpenDrawer = () => {
+    setOpenDrawer(!openDrawer);
   };
 
-  const handleDelete = () => {
-    setDialogContent('是否確認將訊息皆設定為刪除？');
-    setHandleClickMainButton(() => () => deleteAllNotice());
-    setOpenDialog(true);
+  // 已讀單項訊息
+  const readSpecMessage = (msg) => {
+    if (msg.status !== 'R') {
+      const newMessagesList = messagesList
+        .map((item) => {
+          if (msg.id === item.id) {
+            item.status = 'R';
+          }
+          return item;
+        });
+      setMessagesList(newMessagesList);
+    }
   };
 
-  const toNoticeContentPage = (data) => {
-    history.push('/notice1', { data });
+  // 已讀全部訊息
+  const readAllMessages = () => {
+    const newMessageList = messagesList
+      .map((item) => ({
+        ...item,
+        status: 'R',
+      }));
+    setMessagesList(newMessageList);
+    handleOpenDrawer();
   };
 
-  const renderNoticeList = (data) => (
-    <button type="button" key={data.noticeID} className="noticeCard" onClick={() => toNoticeContentPage(data)}>
-      <div className="alertIcon">
-        <FiberManualRecordIcon style={{ fontSize: '1rem', opacity: data.readed ? '0' : '1' }} />
-      </div>
-      <div className="right">
-        <div className="content">{data.content}</div>
-        <div className="date">{data.date}</div>
-      </div>
-    </button>
+  // 刪除單項訊息
+  const deleteSpecMessage = (msg) => {
+    const newMessagesList = messagesList.filter((item) => item.id !== msg.id);
+    setMessagesList(newMessagesList);
+  };
+
+  // 刪除全部訊息
+  const deleteAllMessages = () => {
+    const newMessages = [];
+    setMessagesList(newMessages);
+    handleOpenDrawer();
+  };
+
+  const renderMessagesList = () => messagesList.map((item) => (
+    <MessageItem
+      key={item.id}
+      item={item}
+      readClick={() => readSpecMessage(item)}
+      deleteClick={() => deleteSpecMessage(item)}
+    />
+  ));
+
+  const renderEditList = () => (
+    <ul className="noticeEditList">
+      <li onClick={readAllMessages}>
+        <div className="mockIcon" />
+        全部已讀
+      </li>
+      <li onClick={deleteAllMessages}>
+        <div className="mockIcon" />
+        全部刪除
+      </li>
+    </ul>
   );
 
   useCheckLocation();
   usePageInfo('/api/notice');
 
   useEffect(() => {
-    getNoticeListByType('0');
-    getNoticeListByType('1');
-    getNoticeListByType('2');
-  }, [dummyNoticeList]);
+    // getNoticeItem();
+    getNotices();
+  }, []);
 
   return (
-    <NoticeWrapper small>
-      <FEIBTabContext value={value}>
-        <FEIBTabList onChange={handleTabChange}>
-          <FEIBTab label="個人帳務" value="0" />
-          <FEIBTab label="社群/優惠" value="1" />
-          <FEIBTab label="社群帳本" value="2" />
-        </FEIBTabList>
-        <div className="button-container">
-          <FEIBBorderButton onClick={handleRead}>全部已讀</FEIBBorderButton>
-          <FEIBBorderButton $borderColor={theme.colors.background.point} $color={theme.colors.text.point} onClick={handleDelete}>全部刪除</FEIBBorderButton>
+    <NoticeWrapper>
+      <div className="lighterBlueLine" />
+      <div className="noticeContainer">
+        <div className="settingEditContainer">
+          <div className="btn setting" onClick={toSettingPage}>
+            設定
+            <img src={SettingIcon} alt="" />
+          </div>
+          <div
+            className="btn edit"
+            onClick={handleOpenDrawer}
+          >
+            編輯
+            <img src={EditIcon} alt="" />
+          </div>
         </div>
-        <FEIBTabPanel value="0">
-          {
-            personalAccountNotice.map((notice) => (
-              renderNoticeList(notice)
-            ))
-          }
-        </FEIBTabPanel>
-        <FEIBTabPanel value="1">
-          {
-            socialPromoNotice.map((notice) => (
-              renderNoticeList(notice)
-            ))
-          }
-        </FEIBTabPanel>
-        <FEIBTabPanel value="2">
-          {
-            socialAccountNotice.map((notice) => (
-              renderNoticeList(notice)
-            ))
-          }
-        </FEIBTabPanel>
-      </FEIBTabContext>
-      <Dialog
-        isOpen={openDialog}
-        onClose={() => {
-          handleToggleDialog(false);
-        }}
-        content={dialogContent}
-        action={(
-          <ConfirmButtons
-            mainButtonOnClick={() => {
-              handleClickMainButton();
-              getNoticeListByType(value);
-              handleToggleDialog(false);
-            }}
-            subButtonOnClick={() => handleToggleDialog(false)}
-          />
-        )}
-      />
+        <FEIBTabContext value={tabValue}>
+          <FEIBTabList $size="small" onChange={handleTabChange}>
+            <FEIBTab label="帳務" value="0" />
+            <FEIBTab label="社群" value="1" />
+            <FEIBTab label="公告" value="2" />
+            <FEIBTab label="安全" value="3" />
+            <FEIBTab label="全部" value="4" />
+          </FEIBTabList>
+        </FEIBTabContext>
+        {
+          renderMessagesList()
+        }
+        <BottomDrawer
+          isOpen={openDrawer}
+          onClose={handleOpenDrawer}
+          content={renderEditList()}
+        />
+      </div>
     </NoticeWrapper>
   );
 };
