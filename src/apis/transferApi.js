@@ -48,3 +48,12 @@ export const queryRegAcct = async (params) => (
     })
     .catch((error) => error)
 );
+
+export const doNtdTrConfirm = async (params) => (
+  await userAxios.post('/api/transfer/ntdTr/confirm', params)
+    .then((response) => {
+      console.log(response);
+      return response;
+    })
+    .catch((error) => error)
+);
