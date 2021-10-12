@@ -59,3 +59,13 @@ export const doNtdTrConfirm = async (params) => (
     })
     .catch((error) => error)
 );
+
+// 常用帳號刪除(單筆)
+export const doDeleteFacAcct = async (params) => (
+  await userAxios.post('/api/transfer/deleteFacAcct', params)
+    .then((response) => {
+      console.log(response);
+      return response;
+    })
+    .catch((error) => error)
+);

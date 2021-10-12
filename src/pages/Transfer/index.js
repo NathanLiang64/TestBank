@@ -418,7 +418,7 @@ const Transfer = () => {
     } 
     const favoriteResponse = await getFavAcct({});
     console.log(favoriteResponse);
-    if (favoriteResponse.code!='WEBCTL1003'){
+    if (favoriteResponse.code!='WEBCTL1003' || favoriteResponse.code!= "WEBCTL1001"){
       setFrequentlyUsedAccounts(favoriteResponse);
       dispatch(setFqlyUsedAccounts(favoriteResponse))
     } 

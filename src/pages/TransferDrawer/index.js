@@ -39,6 +39,7 @@ const TransferDrawer = ({ setTabId }) => {
   };
 
   const memberAccountCardList = (list, type) => (
+    
     list.map((member) => (
       <MemberAccountCard
         // id={member.id}
@@ -49,9 +50,9 @@ const TransferDrawer = ({ setTabId }) => {
         bankName={member.bankName}
         account={member.accountId}
         avatarSrc={member.acctImg}
-        onSelect={() => handleClick('select', member.id)}
-        onEdit={() => handleClick('edit', member.id)}
-        onRemove={() => handleClick('remove', member.id)}
+        onSelect={() => handleClick('select', member.accountId)}
+        onEdit={() => handleClick('edit', member.accountId)}
+        onRemove={() => handleClick('remove', member.accountId)}
       />
     ))
   );
@@ -90,7 +91,7 @@ const TransferDrawer = ({ setTabId }) => {
     console.log(frequentlyUsedAccountsRedux);
     if(!frequentlyUsedAccounts&&!frequentlyUsedAccountsRedux){
       const favoriteResponse = await getFavAcct('/api/getFavoriteAcct');
-      if (favoriteResponse.code!='WEBCTL1003'){
+      if (favoriteResponse.code!='WEBCTL1003' || favoriteResponse.code!= "WEBCTL1001"){
         setFrequentlyUsedAccounts(favoriteResponse);
         dispatch(setFqlyUsedAccounts(favoriteResponse))
       } 
@@ -138,6 +139,8 @@ const TransferDrawer = ({ setTabId }) => {
     }
     if (remove.click && openDrawer.title === '常用帳號') {
       // call api 刪除常用帳號內的單筆資料
+      console.log("典籍刪除");
+      console.log(clickMoreOptions);
     }
   }, [clickMoreOptions]);
 
