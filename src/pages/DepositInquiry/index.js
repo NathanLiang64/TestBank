@@ -14,14 +14,9 @@ import {
 } from 'components/elements';
 import theme from 'themes/theme';
 import { dateFormatter, stringDateCodeFormatter } from 'utilities/Generator';
-import DepositInquiryWrapper from './depositInquiry.style';
+import DepositInquiryWrapper, { DownloadDrawerWrapper } from './depositInquiry.style';
 import {
-  setDetailList,
-  setOpenInquiryDrawer,
-  setDateRange,
-  setKeywords,
-  setCustomKeyword,
-  setTempDateRange,
+  setDetailList, setOpenInquiryDrawer, setDateRange, setKeywords, setCustomKeyword, setTempDateRange,
 } from './stores/actions';
 
 const DepositInquiry = () => {
@@ -276,14 +271,19 @@ const DepositInquiry = () => {
 
   const renderDownloadDrawer = () => (
     <BottomDrawer
-      className="debitInquiryDownloadDrawer"
       isOpen={openDownloadDrawer}
       onClose={() => setOpenDownloadDrawer(false)}
       content={(
-        <ul>
-          <li onClick={() => handleClickDownloadDetails('pdf')}><p>下載 PDF</p></li>
-          <li onClick={() => handleClickDownloadDetails('excel')}><p>下載 EXCEL</p></li>
-        </ul>
+        <DownloadDrawerWrapper>
+          <li onClick={() => handleClickDownloadDetails('pdf')}>
+            <p>下載 PDF</p>
+            <GetAppRounded className="downloadIcon" />
+          </li>
+          <li onClick={() => handleClickDownloadDetails('excel')}>
+            <p>下載 EXCEL</p>
+            <GetAppRounded className="downloadIcon" />
+          </li>
+        </DownloadDrawerWrapper>
       )}
     />
   );

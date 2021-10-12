@@ -73,6 +73,11 @@ import QuickLoginSetting from 'pages/QuickLoginSetting';
 /* 開發用目錄頁 */
 import Nav from 'pages/Nav';
 
+/* 轉帳靜態頁 (for prototype) */
+import TransferStatic from 'pages/TransferStatic';
+import TransferStatic1 from 'pages/TransferStatic/transfer_1';
+import TransferStatic2 from 'pages/TransferStatic/transfer_2';
+
 const routes = [
   { path: '/', exact: true, component: Nav },
   { path: '/login', exact: false, component: Login },
@@ -145,6 +150,9 @@ const routes = [
   { path: '/mobileTransfer3', exact: false, component: MobileTransfer3 },
   { path: '/foreignCurrencyPriceSetting', exact: false, component: ForeignCurrencyPriceSetting },
   { path: '/quickLoginSetting', exact: false, component: QuickLoginSetting },
+  { path: '/transferStatic', exact: false, component: TransferStatic },
+  { path: '/transferStatic1', exact: false, component: TransferStatic1 },
+  { path: '/transferStatic2', exact: false, component: TransferStatic2 },
 ];
 
 export default routes;

@@ -10,6 +10,11 @@ const MemberAccountCardWrapper = styled.div`
     border-top: ${({ $noBorder, theme }) => ($noBorder ? '' : `.1rem solid ${theme.colors.border.lighter}`)};
   }
   
+  .Avatar {
+    margin-left: unset;
+    margin-right: unset;
+  }
+  
   .memberInfo {
     margin-left: 1.2rem;
 
