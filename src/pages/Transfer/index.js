@@ -88,6 +88,7 @@ const Transfer = () => {
 
   // eslint-disable-next-line no-unused-vars
   const handleChangeSlide = (swiper) => {
+    console.log('swiper',swiper)
     setSelectCardId(swiper.activeIndex + 1);
   };
 
@@ -104,15 +105,18 @@ const Transfer = () => {
     // 常用/約定轉帳時，取得受款人帳號
     const { select } = clickMoreOptions;
     if (data.transferOption === 'frequentlyUsed') {
+      console.log("=============常用帳號轉帳==============");
+      console.log("select",select)
       if (select.target) {
         const currentTarget = frequentlyUsedAccounts.find((member) => member.id === select.target);
         const { acctId, bankNo, bankName } = currentTarget;
-        data.bankCode = { bankNo, bankName };
+        data.bankCode = { bankId, bankName };
         data.receivingAccount = acctId;
       } else {
-        const { acctId, bankNo, bankName } = frequentlyUsedAccounts[0];
-        data.bankCode = { bankNo, bankName };
-        data.receivingAccount = acctId;
+        const { accountId, bankId, bankName } = frequentlyUsedAccounts[0];
+        console.log("frequentlyUsedAccounts",frequentlyUsedAccounts[0]);
+        data.bankCode = { bankId, bankName };
+        data.receivingAccount = accountId;
       }
     }
     if (data.transferOption === 'designated') {

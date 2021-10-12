@@ -146,10 +146,11 @@ const Transfer1 = () => {
     } = state;
 
     if (transactionFrequency && transactionCycle) {
+      console.log('149', bankCode);
       setDisplayInfo({
         ...displayInfo,
         money: `$${transferAmount}` || '',
-        bankNo: bankCode.bankNo,
+        bankNo: bankCode.bankId,
         bankName: bankCode.bankName,
         date: transferType === 'now' || transactionNumber === 'once'
           ? dateFormatter(transactionDate)
@@ -167,10 +168,12 @@ const Transfer1 = () => {
         transferType,
       });
     } else {
+      console.log('171', bankCode);
       setDisplayInfo({
+
         ...displayInfo,
         money: `$${transferAmount}` || '',
-        bankNo: bankCode.bankNo,
+        bankNo: bankCode.bankId,
         bankName: bankCode.bankName,
         date: transferType === 'now' || transactionNumber === 'once'
           ? dateFormatter(transactionDate)
