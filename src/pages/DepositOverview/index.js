@@ -108,11 +108,11 @@ const DepositOverview = () => {
           <p>{content}</p>
         </div>
         <div className="panelItem" onClick={handleClickInterestRateLimit}>
-          <h3>優惠利率額度</h3>
-          <p className="inline">
-            {interestRateLimit}
+          <h3>
+            優惠利率額度
             <ArrowForwardIos />
-          </p>
+          </h3>
+          <p>{interestRateLimit}</p>
         </div>
       </div>
     );

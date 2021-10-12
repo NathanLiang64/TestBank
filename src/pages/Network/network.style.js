@@ -127,6 +127,11 @@ const NetworkWrapper = styled(Layout)`
     .overviewContent {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
+      
+      &.twoColumn {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
       .num {
         font-size: 2rem;
         color: ${({ theme }) => theme.colors.primary.light};
