@@ -12,6 +12,8 @@ const FEIBSwitch = styled(MaterialSwitch)`
     padding: .35rem;
     .MuiSwitch-track {
       border-radius: 1.55rem;
+      background-color: #78788029;
+      opacity: 1;
     }
   }
   .MuiSwitch-switchBase {

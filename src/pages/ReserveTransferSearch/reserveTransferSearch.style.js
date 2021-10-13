@@ -97,8 +97,16 @@ const ReserveTransferSearchWrapper = styled(Layout)`
           }
         }
       }
-      .MuiButtonBase-root {
+      .MuiIconButton-root {
         display: none;
+      }
+      .clearImg {
+        position: absolute;
+        width: 1.6rem;
+        height: 1.6rem;
+        left: 20rem;
+        top: 50%;
+        transform: translateY(-50%);
       }
     }
   }

@@ -14,11 +14,14 @@ export const accountFormatter = (account) => `${account.slice(0, 3)}-${account.s
 
 // 將日期格式轉為 YYYY/MM/DD 字串
 export const dateFormatter = (date) => {
-  date = new Date(date);
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  return `${year}/${month}/${day}`;
+  if (date) {
+    date = new Date(date);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}/${month}/${day}`;
+  }
+  return '';
 };
 
 // 將日期格式轉為 YYYYMMDD 字串
@@ -167,6 +170,42 @@ export const currencySymbolGenerator = (currency) => {
       return '€';
     case 'NZD': // 紐西蘭幣
       return 'NZ$';
+    default:
+      return null;
+  }
+};
+
+// 貨幣單位英文轉華文
+export const currencyZhGenerator = (currency) => {
+  switch (currency) {
+    case 'TWD': // 新台幣
+      return '新台幣';
+    case 'USD': // 美金
+      return '美金';
+    case 'GBP': // 英鎊
+      return '英鎊';
+    case 'HKD': // 港幣
+      return '港幣';
+    case 'CHF': // 瑞士法郎
+      return '瑞士法郎';
+    case 'AUD': // 澳幣
+      return '澳幣';
+    case 'SGD': // 新加坡幣
+      return '新加坡幣';
+    case 'JPY': // 日幣
+      return '日圓';
+    case 'CAD': // 加幣
+      return '加幣';
+    case 'THB': // 泰幣
+      return '泰銖';
+    case 'ZAR': // 南非幣
+      return '南非幣';
+    case 'CNY': // 人民幣
+      return '人民幣';
+    case 'EUR': // 歐元
+      return '歐元';
+    case 'NZD': // 紐西蘭幣
+      return '紐西蘭幣';
     default:
       return null;
   }
