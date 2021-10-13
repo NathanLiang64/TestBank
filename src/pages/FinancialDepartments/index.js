@@ -1,9 +1,9 @@
 import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Styles */
-import BznkLogo from 'assets/images/Bznk_logo.png';
-import PezzaloanLogo from 'assets/images/Pezzaloan_logo.png';
-import AsiaEastLogo from 'assets/images/AsiaEast_logo.png';
+import BznkLogo from 'assets/images/Bznk_logo.svg';
+import PezzaloanLogo from 'assets/images/Pezzaloan_logo.svg';
+import AsiaEastLogo from 'assets/images/AsiaEast_logo.svg';
 import FinancialDepartmentsWrapper from './financialDepartments.style';
 
 const FinancialDepartments = () => {

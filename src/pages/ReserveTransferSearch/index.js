@@ -17,6 +17,7 @@ import DebitCard from 'components/DebitCard';
 import InformationTape from 'components/InformationTape';
 import Dialog from 'components/Dialog';
 import SearchIcon from '@material-ui/icons/Search';
+import ClearIcon from 'assets/images/icons/clearIcon.svg';
 import DateRangePicker from 'components/DateRangePicker';
 import SuccessImage from 'assets/images/successIcon.png';
 import FailImage from 'assets/images/failIcon.png';
@@ -48,22 +49,28 @@ const mockAccounts = [
 // mock 預約轉帳查詢資料
 const mockReserveTransData = [
   {
-    bookType: '單筆',
-    trnsDate: '預約轉帳日：2021/01/25',
-    payDateWording: '聖誕節禮物',
+    bookType: '1',
+    trnsDate: '2021/01/25',
+    payDateWording: '',
     payDateEnd: '',
     payDate: '',
-    inActNo: '822-00255540253722',
+    bankCode: '805',
+    inActNo: '00255540253722',
+    outActNo: '0430099001234',
     amount: '$1,200',
+    remark: '',
   },
   {
-    bookType: '週期',
-    trnsDate: '預約轉帳日：2021/05/15',
+    bookType: '2',
+    trnsDate: '2021/05/15',
     payDateWording: '每個月15號',
     payDateEnd: '2022/02/28',
     payDate: '2021/05/01',
-    inActNo: '822-00255540253722',
+    bankCode: '805',
+    inActNo: '00255540253722',
+    outActNo: '0430099001234',
     amount: '$1,200',
+    remark: '聖誕節禮物',
   },
 ];
 
@@ -71,14 +78,16 @@ const mockReserveTransData = [
 const mockResultData = [
   {
     trnsDate: '2021/01/25',
-    inActNo: '822-00255540253722',
+    bankCode: '805',
+    inActNo: '00255540253722',
     amount: '$1,200',
     stderrMsg: '',
     success: true,
   },
   {
     trnsDate: '2021/01/25',
-    inActNo: '822-00255540253722',
+    bankCode: '805',
+    inActNo: '00255540253722',
     amount: '$1,200',
     stderrMsg: '餘額不足',
     success: false,
@@ -102,6 +111,7 @@ const ReserveTransferSearch = () => {
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [showResultDialog, setShowResultDialog] = useState(false);
   const [resultDialogData, setResultDialogData] = useState({});
+  const [currentReserveData, setCurrentReserveData] = useState({});
 
   const getTransferOutAccounts = async () => {
     // const response = await reserveTransferSearchApi.getTransferOutAccounts({});
@@ -110,7 +120,7 @@ const ReserveTransferSearch = () => {
   };
 
   const toConfirmPage = () => {
-    history.push('/reserveTransferSearch1');
+    history.push('/reserveTransferSearch1', currentReserveData);
   };
 
   // eslint-disable-next-line no-unused-vars
@@ -126,13 +136,26 @@ const ReserveTransferSearch = () => {
   };
 
   const handleClickReserveDateRangePicker = (range) => {
-    console.log(range);
     setReserveDateRange(range);
   };
 
   const handleClickResultDateRangePicker = (range) => {
     console.log(range);
     setResultDateRange(range);
+  };
+
+  const clearReserveDateRange = () => {
+    setReserveDateRange([null, null]);
+  };
+
+  const clearResultDateRange = () => {
+    setResultDateRange([null, null]);
+  };
+
+  const handleReserveDataDialogOpen = (data) => {
+    console.log(data);
+    setCurrentReserveData(data);
+    setShowDetailDialog(true);
   };
 
   // 轉出帳號卡片 swiper
@@ -156,11 +179,11 @@ const ReserveTransferSearch = () => {
   // 預約轉帳查詢列表
   const renderReserveTapes = () => mockReserveTransData.map((item) => (
     <InformationTape
-      topLeft={item.inActNo}
+      topLeft={`${item.bankCode}-${item.inActNo}`}
       topRight={item.amount}
-      bottomLeft={item.trnsDate}
-      bottomRight={item.bookType}
-      onClick={() => setShowDetailDialog(true)}
+      bottomLeft={`預約轉帳日：${item.trnsDate}`}
+      bottomRight={item.bookType === '1' ? '單筆' : '週期'}
+      onClick={() => handleReserveDataDialogOpen(item)}
     />
   ));
 
@@ -174,7 +197,7 @@ const ReserveTransferSearch = () => {
   const renderResultTapes = () => mockResultData.map((item) => (
     <InformationTape
       img={item.stderrMsg ? FailImage : SuccessImage}
-      topLeft={item.inActNo}
+      topLeft={`${item.bankCode}-${item.inActNo}`}
       topRight={item.amount}
       bottomLeft={`交易日期：${item.trnsDate}`}
       onClick={() => handleOpenResultDialog(item)}
@@ -187,7 +210,7 @@ const ReserveTransferSearch = () => {
       title="預約轉帳"
       isOpen={showDetailDialog}
       onClose={() => setShowDetailDialog(false)}
-      content={(<DetailContent />)}
+      content={(<DetailContent data={currentReserveData} />)}
       action={(
         <FEIBButton
           $color={theme.colors.text.dark}
@@ -239,12 +262,15 @@ const ReserveTransferSearch = () => {
           <FEIBTabPanel value="1">
             <div className="searchDateRange">
               <SearchIcon />
-              <DateRangePicker
-                {...reserveDatePickerLimit}
-                date={reserveDateRange}
-                label=" "
-                onClick={handleClickReserveDateRangePicker}
-              />
+              <div>
+                <DateRangePicker
+                  {...reserveDatePickerLimit}
+                  date={reserveDateRange}
+                  label=" "
+                  onClick={handleClickReserveDateRangePicker}
+                />
+                <img className="clearImg" src={ClearIcon} alt="" onClick={clearReserveDateRange} />
+              </div>
             </div>
             <div className="tapeList">
               { renderReserveTapes() }
@@ -253,12 +279,15 @@ const ReserveTransferSearch = () => {
           <FEIBTabPanel value="2">
             <div className="searchDateRange">
               <SearchIcon />
-              <DateRangePicker
-                {...resultDatePickerLimit}
-                date={resultDateRange}
-                label=" "
-                onClick={handleClickResultDateRangePicker}
-              />
+              <div>
+                <DateRangePicker
+                  {...resultDatePickerLimit}
+                  date={resultDateRange}
+                  label=" "
+                  onClick={handleClickResultDateRangePicker}
+                />
+                <img className="clearImg" src={ClearIcon} alt="" onClick={clearResultDateRange} />
+              </div>
             </div>
             <div className="tapeList">
               { renderResultTapes() }

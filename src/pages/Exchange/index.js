@@ -11,7 +11,7 @@ import { RadioGroup } from '@material-ui/core';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { numberToChinese } from 'utilities/Generator';
+import { numberToChinese, currencyZhGenerator, currencySymbolGenerator } from 'utilities/Generator';
 import Dialog from 'components/Dialog';
 import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
@@ -26,7 +26,7 @@ const Exchange = () => {
   // mock data
   const ntDollarsAccountsList = ['043000990000'];
   const foreignCurrencyAccountsList = ['00200700030001'];
-  const mockCurrencyTypeList = ['美金', '日幣'];
+  const mockCurrencyTypeList = ['USD', 'JPY'];
   const propertyList = ['外幣互換兌入'];
   const employee = true;
 
@@ -64,7 +64,7 @@ const Exchange = () => {
     memo: yup.string(),
   });
   const {
-    handleSubmit, control, formState: { errors }, watch, setValue,
+    handleSubmit, control, formState: { errors }, watch, setValue, register,
   } = useForm({
     resolver: yupResolver(schema),
     reValidateMode: 'onBlur',
@@ -86,7 +86,7 @@ const Exchange = () => {
       if (!targetValue) {
         setForeignDollorStr('');
       } else {
-        setForeignDollorStr(`$${targetValue}${numberToChinese(targetValue)}`);
+        setForeignDollorStr(`${currencySymbolGenerator(watch('currency'))}${targetValue}${numberToChinese(targetValue)}`);
       }
     }
     if (targetName === 'ntDollorBalance') {
@@ -108,6 +108,8 @@ const Exchange = () => {
     const inAccounts = inAccountList;
     setOutAccountList(inAccounts);
     setInAccountList(outAccounts);
+    setValue('outAccount', inAccounts[0]);
+    setValue('inAccount', outAccounts[0]);
   };
 
   const ExchangeTableDialog = () => (
@@ -146,6 +148,10 @@ const Exchange = () => {
     setValue('outType', '1');
     setValue('foreignBalance', '');
     setValue('ntDollorBalance', '');
+    setValue('currency', 'USD');
+    setValue('outAccount', ntDollarsAccountsList[0]);
+    setValue('inAccount', foreignCurrencyAccountsList[0]);
+    setValue('property', propertyList[0]);
   }, []);
 
   return (
@@ -155,7 +161,7 @@ const Exchange = () => {
           外匯匯率查詢
         </FEIBBorderButton>
       </div>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <section>
           <FEIBInputLabel className="exchangeTypeLabel">換匯種類</FEIBInputLabel>
           <Controller
@@ -207,12 +213,22 @@ const Exchange = () => {
                 name="currency"
                 error={!!errors.currency}
               >
-                { renderItemsList(currencyTypeList) }
+                {
+                  currencyTypeList.map((item) => (
+                    <FEIBOption key={item} value={item}>{ currencyZhGenerator(item) }</FEIBOption>
+                  ))
+                }
               </FEIBSelect>
             )}
           />
           <FEIBErrorMessage>{errors.currency?.message}</FEIBErrorMessage>
-          <FEIBErrorMessage className="balance">預估可換 USD 333.33（實際金額以交易結果為準）</FEIBErrorMessage>
+          <FEIBErrorMessage className="balance">
+            預估可換
+            &nbsp;
+            {watch('currency')}
+            &nbsp;
+            333.33（實際金額以交易結果為準）
+          </FEIBErrorMessage>
           <FEIBInputLabel>轉入帳號</FEIBInputLabel>
           <Controller
             name="inAccount"
@@ -230,7 +246,13 @@ const Exchange = () => {
             )}
           />
           <FEIBErrorMessage>{errors.inAccount?.message}</FEIBErrorMessage>
-          <FEIBErrorMessage className="balance">可用餘額 USD 222.00</FEIBErrorMessage>
+          <FEIBErrorMessage className="balance">
+            可用餘額
+            &nbsp;
+            {watch('currency')}
+            &nbsp;
+            222.00
+          </FEIBErrorMessage>
           <Controller
             name="outType"
             control={control}
@@ -246,7 +268,7 @@ const Exchange = () => {
                   className="outTypeRadioLabel"
                   value="1"
                   control={<FEIBRadio />}
-                  label={`希望${watch('exchangeType') === '2' ? '轉出' : '轉入'}${watch('currency')}`}
+                  label={`希望${watch('exchangeType') === '2' ? '轉出' : '轉入'}${watch('currency')}${currencyZhGenerator(watch('currency'))}`}
                 />
                 <Controller
                   name="foreignBalance"
@@ -264,6 +286,9 @@ const Exchange = () => {
                         error={!!errors.foreignBalance}
                         disabled={watch('outType') !== '1'}
                         onChange={handleBalanceChange}
+                        inputProps={{
+                          maxLength: 9,
+                        }}
                       />
                       <div className="balanceLayout">{foreignDollorStr}</div>
                     </>
@@ -287,6 +312,9 @@ const Exchange = () => {
                         error={!!errors.ntDollorBalance}
                         disabled={watch('outType') !== '2'}
                         onChange={handleBalanceChange}
+                        inputProps={{
+                          maxLength: 9,
+                        }}
                       />
                       <div className="balanceLayout">{ntDollorStr}</div>
                     </>
