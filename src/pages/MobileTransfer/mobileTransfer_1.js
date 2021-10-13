@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
@@ -22,6 +22,9 @@ import DealContent from './dealContent';
 /* Styles */
 import MobileTransferWrapper from './mobileTransfer.style';
 
+const mobileList = ['0988392725'];
+const accountList = ['04300499031163'];
+
 const MobileTransfer1 = () => {
   const history = useHistory();
   /**
@@ -39,7 +42,7 @@ const MobileTransfer1 = () => {
       .required('請選擇收款帳號'),
   });
   const {
-    handleSubmit, control, formState: { errors },
+    handleSubmit, control, formState: { errors }, setValue,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -67,8 +70,17 @@ const MobileTransfer1 = () => {
     );
   };
 
+  const renderOptions = (data) => data.map((item) => (
+    <FEIBOption value={item}>{item}</FEIBOption>
+  ));
+
   useCheckLocation();
   usePageInfo('/api/mobileTransfer');
+
+  useEffect(() => {
+    setValue('mobile', mobileList[0]);
+    setValue('account', accountList[0]);
+  }, []);
 
   return (
     <MobileTransferWrapper>
@@ -115,7 +127,9 @@ const MobileTransfer1 = () => {
                   error={!!errors.mobile}
                 >
                   <FEIBOption value="" disabled>請選擇手機號碼</FEIBOption>
-                  <FEIBOption value="0988392725">0988392725</FEIBOption>
+                  {
+                    renderOptions(mobileList)
+                  }
                 </FEIBSelect>
               )}
             />
@@ -135,7 +149,9 @@ const MobileTransfer1 = () => {
                   error={!!errors.account}
                 >
                   <FEIBOption value="" disabled>請選擇收款帳號</FEIBOption>
-                  <FEIBOption value="04300499031163">04300499031163</FEIBOption>
+                  {
+                    renderOptions(accountList)
+                  }
                 </FEIBSelect>
               )}
             />

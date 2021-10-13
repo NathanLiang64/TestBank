@@ -70,7 +70,7 @@ const DetailCard = ({
 
   const renderTypeIcon = () => (
     <div className={`type ${type === 'c' ? 'spend' : 'income'}`}>
-      { type === 'd' ? <ArrowBack /> : <ArrowForward /> }
+      { type === 'c' ? <ArrowBack /> : <ArrowForward /> }
     </div>
   );
 

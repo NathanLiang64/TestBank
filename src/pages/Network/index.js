@@ -244,7 +244,7 @@ const Network = () => {
       </div>
       <div className="contentCard">
         <div className="title">社群圈回饋</div>
-        <div className="overviewContent">
+        <div className="overviewContent twoColumn">
           <div className="overviewItem" onClick={() => startFunc(history, 'depositPlus')}>
             <div className="subTitle">
               優惠利率額度
@@ -266,10 +266,10 @@ const Network = () => {
               {renderText(feedback.profit)}
             </div>
           </div>
-          <div className="overviewItem">
-            <div className="subTitle">貸款社群回饋</div>
-            <div className="num">{renderText(feedback.loan)}</div>
-          </div>
+          {/* <div className="overviewItem"> */}
+          {/*  <div className="subTitle">貸款社群回饋</div> */}
+          {/*  <div className="num">{renderText(feedback.loan)}</div> */}
+          {/* </div> */}
         </div>
       </div>
 
