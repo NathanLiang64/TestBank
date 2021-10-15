@@ -57,6 +57,9 @@ const FEIBSelect = styled(MaterialSelect).attrs({
   .MuiSvgIcon-root {
     font-size: 3.6rem;
     color: ${({ theme }) => theme.colors.primary.light};
+    position: absolute;
+    right: 0;
+    pointer-events: none;
   }
   
   &.MuiInput-underline {

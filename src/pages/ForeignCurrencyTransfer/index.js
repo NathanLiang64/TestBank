@@ -167,6 +167,10 @@ const ForeignCurrencyTransfer = () => {
                         setMixBalanceStr(`${currencySymbolGenerator(currentAccount.dollarSign)}${event.target.value}${numberToChinese(event.target.value)}`);
                       }
                     }}
+                    inputProps={{
+                      maxLength: 9,
+                      autoComplete: 'off',
+                    }}
                   />
                   <div className="balanceLayout">{mixBalanceStr}</div>
                 </>

@@ -288,6 +288,7 @@ const Exchange = () => {
                         onChange={handleBalanceChange}
                         inputProps={{
                           maxLength: 9,
+                          autoComplete: 'off',
                         }}
                       />
                       <div className="balanceLayout">{foreignDollorStr}</div>
@@ -304,6 +305,7 @@ const Exchange = () => {
                     <>
                       <FEIBInput
                         {...balanceField}
+                        autoComplete="off"
                         type="text"
                         inputMode="numeric"
                         id="ntDollorBalance"
@@ -314,6 +316,7 @@ const Exchange = () => {
                         onChange={handleBalanceChange}
                         inputProps={{
                           maxLength: 9,
+                          autoComplete: 'off',
                         }}
                       />
                       <div className="balanceLayout">{ntDollorStr}</div>
@@ -349,10 +352,11 @@ const Exchange = () => {
             render={({ field }) => (
               <FEIBInput
                 {...field}
+                autoComplete="off"
                 type="text"
                 id="memo"
                 name="memo"
-                placeholder="請輸入備註"
+                placeholder="請輸入文字"
                 error={!!errors.memo}
               />
             )}
