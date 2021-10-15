@@ -1,6 +1,6 @@
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
-import { logout } from 'apis/authApi';
+// import { logout } from 'apis/authApi';
 
 import TransferImage from 'assets/images/tabBarIcons/transfer.svg';
 import NoticeImage from 'assets/images/tabBarIcons/notice.svg';
@@ -12,8 +12,9 @@ import QRCodeImage from 'assets/images/tabBarIcons/qrCode.svg';
 import CardLessATMImage from 'assets/images/tabBarIcons/cardlessATM.svg';
 import ArrowImage from 'assets/images/tabBarIcons/arrow.svg';
 import AvatarImage from 'assets/images/tabBarIcons/Navigation_member.png';
-import { setOpenFavoriteDrawer } from 'pages/Favorite/stores/actions';
+import { setFavoriteDrawer } from 'pages/Favorite/stores/actions';
 import TabBarWrapper from './tabBar.style';
+import { setIsShake } from '../../pages/ShakeShake/stores/actions';
 
 const TabBar = () => {
   const history = useHistory();
@@ -59,7 +60,7 @@ const TabBar = () => {
       id: 6,
       label: 'QR Code轉帳',
       img: QRCodeImage,
-      route: '/QRCodeTransfer',
+      route: 'QRCodeTransfer',
     },
     {
       id: 7,
@@ -75,25 +76,43 @@ const TabBar = () => {
     },
   ];
 
+  const logOut = () => {
+    const url = ' https://appbankee-t.feib.com.tw/ords/db1/netdb/logoutUser';
+    const data = {
+      id_number: localStorage.getItem('custId'),
+    };
+    const callLogout = () => fetch(url, {
+      body: JSON.stringify(data),
+      headers: {
+        'content-type': 'application/json',
+      },
+      method: 'POST',
+    }).then((response) => response.json());
+
+    callLogout()
+      .then(({ code }) => {
+        if (code === '00') {
+          history.push('/login');
+          localStorage.clear();
+        } else {
+          alert('登出失敗');
+        }
+      });
+  };
+
   const toPage = async (item) => {
     if (item.route === 'logout') {
-      const logoutData = {
-        channelCode: 'HHB_A',
-        appVersion: '1.0.15',
-        udid: '',
-      };
-      const logoutResponse = await logout(logoutData);
-      if (!logoutResponse.message) {
-        history.push('/login');
-        localStorage.clear();
-      } else {
-        // eslint-disable-next-line no-alert
-        alert(logoutResponse.message);
-      }
+      logOut();
+      return;
+    }
+    if (item.route === 'QRCodeTransfer') {
+      dispatch(setIsShake(true));
       return;
     }
     if (item.route === 'favorite') {
-      dispatch(setOpenFavoriteDrawer(true));
+      dispatch(setFavoriteDrawer({
+        title: '我的最愛', content: '', open: true, back: null,
+      }));
       return;
     }
     if (item.route) {

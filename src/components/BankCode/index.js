@@ -4,18 +4,19 @@ import { Close } from '@material-ui/icons';
 import { bankList as taiwanBankList } from 'taiwan-bank-data';
 import { FEIBIconButton, FEIBInput, FEIBInputLabel } from 'components/elements';
 import theme from 'themes/theme';
+import { getBankCode } from 'apis/transferApi';
 import BankCodeWrapper from './bankCode.style';
-import { doGetInitData } from '../../apis/transferApi';
-
+/* eslint-disable */
 const BankCode = ({ isOpen, onClose, onSelect }) => {
   const [searchValue, setSearchValue] = useState('');
   const [bankList, setBankList] = useState(taiwanBankList);
   const [favoriteBankList, setFavoriteBankList] = useState([]);
+  const [originBankeCode , setOriginBankeCode] = useState();
 
   const handleClickBankItem = (event) => {
     // 初始化
     setSearchValue('');
-    setBankList(taiwanBankList);
+    setBankList(originBankeCode);
     // 回傳選擇的銀行代碼
     const selectedBank = [];
     for (const bank of event.currentTarget.children) {
@@ -30,19 +31,30 @@ const BankCode = ({ isOpen, onClose, onSelect }) => {
   };
 
   useEffect(async () => {
-    const response = await doGetInitData('/api/getFavoriteBankCodeList');
-    if (response.favoriteBankCodeList) setFavoriteBankList(response.favoriteBankCodeList);
+  const ctrlBankCode =await  getBankCode({})
+      .then((response) =>  response)
+      .catch((error) => console.log(error));
+      console.log(ctrlBankCode);
+      setBankList(ctrlBankCode);
+      setOriginBankeCode(ctrlBankCode);
+    // const response = await doGetInitData('/api/getFavoriteBankCodeList');
+    // if (response.favoriteBankCodeList) setFavoriteBankList(response.favoriteBankCodeList);
   }, []);
 
   useEffect(() => {
-    if (searchValue) {
-      const filteredBankList = taiwanBankList.filter((bank) => (
-        bank.code.includes(searchValue) || bank.name.includes(searchValue)
-      ));
-      setBankList(filteredBankList);
-    } else {
-      setBankList(taiwanBankList);
+
+    //預防初始值null
+    if(originBankeCode){
+      if (searchValue) {
+        const filteredBankList = bankList.filter((bank) => (
+          bank.bankNo.includes(searchValue) || bank.bankName.includes(searchValue)
+        ));
+        setBankList(filteredBankList);
+      } else {
+        setBankList(originBankeCode);
+      }
     }
+    
   }, [searchValue]);
 
   return (
@@ -86,9 +98,9 @@ const BankCode = ({ isOpen, onClose, onSelect }) => {
           </div>
           {
             bankList.map((bank) => (
-              <li key={bank.code} data-code={bank.code} onClick={handleClickBankItem}>
-                <p>{bank.name}</p>
-                <span>{bank.code}</span>
+              <li key={bank.bankNo} data-code={bank.bankNo} onClick={handleClickBankItem}>
+                <p>{bank.bankName}</p>
+                <span>{bank.bankNo}</span>
               </li>
             ))
           }

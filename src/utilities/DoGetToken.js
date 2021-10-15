@@ -38,8 +38,9 @@ const getKey = async (data) => {
   };
   const getJWTToken = JWEUtil.encryptJWEMessage(ServerPublicKey.data.data.result, JSON.stringify(message));
   const getMyJWT = await userAxios.post('/auth/login', getJWTToken);
-  if (getMyJWT.data.code === '0000') {
+  if (getMyJWT.data.code === '0000' || getMyJWT.data.code === 'WEBCTL1008') {
     const deCode = JSON.parse(JWEUtil.decryptJWEMessage(getPublicAndPrivate.privateKey, getMyJWT.data.data));
+    // console.log(getMyJWT);
     jwtToken = deCode.result.jwtToken;
     localStorage.setItem('privateKey', privateKey);
     localStorage.setItem('publicKey', publicKey);
@@ -47,10 +48,28 @@ const getKey = async (data) => {
     localStorage.setItem('iv', ivToken);
     localStorage.setItem('aesKey', aesTokenKey);
     localStorage.setItem('custId', message.custId);
-    return {
-      result: 'success',
-      message: 'Login success',
-    };
+    if (getMyJWT.data.code === 'WEBCTL1008') {
+      if (window.confirm(getMyJWT.data.message)) {
+        const repeatLoginResponse = await userAxios.post('/auth/repeatLogin', {});
+        if (Object.keys(repeatLoginResponse).length === 0) {
+          return {
+            result: 'success',
+            message: 'Login success',
+          };
+        }
+      } else {
+        localStorage.clear();
+        return {
+          result: 'fail',
+          message: '已取消登入',
+        };
+      }
+    } else {
+      return {
+        result: 'success',
+        message: 'Login success',
+      };
+    }
   }
   return {
     result: 'fail',

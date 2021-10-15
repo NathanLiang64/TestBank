@@ -11,17 +11,17 @@ const tabPageList = {
       {
         value: '1',
         label: '台幣活存',
-        route: '',
+        route: '/depositOverview',
       },
       {
         value: '2',
         label: '外幣活存',
-        route: '/foreignCurrencyAccounts',
+        route: '/foreignCurrencyAccount',
       },
       {
         value: '3',
         label: '證券交割帳戶',
-        route: '/securitiesSwapAccounts',
+        route: '/tradingAccount',
       },
       {
         value: '4',
@@ -46,7 +46,7 @@ const tabPageList = {
       {
         value: '8',
         label: '匯出存摺',
-        route: '',
+        route: '/exportBankBook',
       },
     ],
   },
@@ -93,7 +93,7 @@ const tabPageList = {
       {
         value: '1',
         label: '外幣轉帳',
-        route: '',
+        route: '/foreignCurrencyTransfer',
       },
       {
         value: '2',
@@ -134,7 +134,7 @@ const tabPageList = {
       {
         value: '0',
         label: '換匯',
-        route: '',
+        route: '/exchange',
       },
       {
         value: '1',
@@ -217,7 +217,7 @@ const tabPageList = {
       {
         value: '3',
         label: '手機號碼收款設定',
-        route: '',
+        route: '/mobileTransfer',
       },
       {
         value: '4',
@@ -232,7 +232,7 @@ const tabPageList = {
       {
         value: '6',
         label: '預約轉帳查詢',
-        route: '',
+        route: '/reserveTransferSearch',
       },
       {
         value: '7',

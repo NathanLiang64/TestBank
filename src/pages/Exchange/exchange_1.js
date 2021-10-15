@@ -1,48 +1,54 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 
-import * as yup from 'yup';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+// import * as yup from 'yup';
+// import { useForm } from 'react-hook-form';
+// import { yupResolver } from '@hookform/resolvers/yup';
 
 /* Elements */
-import { FEIBButton } from 'components/elements';
-import PasswordInput from 'components/PasswordInput';
+// import { FEIBButton } from 'components/elements';
+// import PasswordInput from 'components/PasswordInput';
 import Accordion from 'components/Accordion';
 import ConfirmButtons from 'components/ConfirmButtons';
-import BottomDrawer from 'components/BottomDrawer';
+// import BottomDrawer from 'components/BottomDrawer';
 import InformationList from 'components/InformationList';
-import { passwordValidation } from 'utilities/validation';
+import CountDown from 'components/CountDown';
+// import { passwordValidation } from 'utilities/validation';
+import ExchangeNotice from './exchangeNotice';
 
 /* Styles */
 import ExchangeWrapper from './exchange.style';
 
 const Exchange1 = () => {
   const history = useHistory();
-  /**
-   *- 資料驗證
-   */
-  const schema = yup.object().shape({
-    ...passwordValidation,
-  });
-  const {
-    handleSubmit, control, formState: { errors },
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
+  // /**
+  //  *- 資料驗證
+  //  */
+  // const schema = yup.object().shape({
+  //   ...passwordValidation,
+  // });
+  // const {
+  //   handleSubmit, control, formState: { errors },
+  // } = useForm({
+  //   resolver: yupResolver(schema),
+  // });
 
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  // const [drawerOpen, setDrawerOpen] = useState(false);
+  const isEmployee = true;
+
+  const toFormPage = () => {
+    history.goBack();
+  };
 
   const handleNextStep = () => {
-    setDrawerOpen(true);
-  };
-
-  const onSubmit = (data) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
     history.push('/exchange2');
   };
+
+  // const onSubmit = (data) => {
+  //   console.log(data);
+  //   history.push('/exchange2');
+  // };
 
   useCheckLocation();
   usePageInfo('/api/exchange1');
@@ -50,21 +56,41 @@ const Exchange1 = () => {
   return (
     <ExchangeWrapper className="confirmPage">
       <div className="infoSection">
-        <div className="label">轉出金額與轉入帳號</div>
-        <div className="firstData">NTD$2806.00</div>
-        <div className="firstData">USD$100.00</div>
-        <div className="firstData">遠東商銀(805)</div>
-        <div className="firstData">00200701715231</div>
-        <div className="exchangeRate">換匯匯率 28.0520</div>
+        <div className="mainBlock">
+          <div className="countDownTitle">尚餘交易時間</div>
+          <div>
+            <CountDown
+              minute={0.5}
+              onEnd={toFormPage}
+            />
+          </div>
+        </div>
+        <div className="infoData">
+          <div className="label">轉換外幣</div>
+          <div className="foreignCurrency">USD$100.00</div>
+          <div className="changeNT">折合台幣：NTD$2806.66</div>
+          <div className="exchangeRate">換匯匯率：28.0520</div>
+          {
+            isEmployee && (<div className="employee">員工優惠匯率</div>)
+          }
+          <div className="label into">轉入帳號</div>
+          <div className="accountData">遠東商銀(805)</div>
+          <div className="accountData">00200701715231</div>
+        </div>
       </div>
       <div className="infoSection">
-        <InformationList title="轉出帳號" content="00200401715213" />
-        <InformationList title="換匯種類" content="台幣轉外幣" />
-        <InformationList title="轉換外幣幣別" content="美金 USD" />
-        <InformationList title="匯款性質分類" content="外匯互換兌入" />
+        <div>
+          <InformationList title="轉出帳號" content="00200401715213" />
+          <InformationList title="換匯種類" content="台幣轉外幣" />
+          <InformationList title="轉換外幣幣別" content="美金 USD" />
+          <InformationList title="匯款性質分類" content="外匯互換兌入" />
+        </div>
         <Accordion className="exchangeAccordion" title="詳細交易" space="both" open>
-          <InformationList title="帳戶餘額" content="NTD$92.397" />
+          <InformationList title="帳戶餘額" content="$92,397" />
           <InformationList title="備註" content="美金儲蓄" />
+        </Accordion>
+        <Accordion space="bottom">
+          <ExchangeNotice />
         </Accordion>
         <div className="confirmBtns">
           <ConfirmButtons
@@ -73,25 +99,6 @@ const Exchange1 = () => {
           />
         </div>
       </div>
-      <BottomDrawer
-        title="輸入網銀密碼"
-        isOpen={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        content={(
-          <ExchangeWrapper style={{ marginTop: '0', padding: '0 1.6rem 4rem' }}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <PasswordInput
-                label="網銀密碼"
-                id="password"
-                name="password"
-                control={control}
-                errorMessage={errors.password?.message}
-              />
-              <FEIBButton type="submit" style={{ marginTop: '1.6rem' }}>確認</FEIBButton>
-            </form>
-          </ExchangeWrapper>
-        )}
-      />
     </ExchangeWrapper>
   );
 };

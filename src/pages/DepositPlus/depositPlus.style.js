@@ -126,12 +126,12 @@ const LevelDialogContentWrapper = styled.div`
 
   .Table {
     
-    caption {
-      margin-bottom: 1.6rem;
-      font-size: 1.4rem;
-      text-align: left;
-      color: ${({ theme }) => theme.colors.text.light};
-    }
+    // caption {
+    //   margin-bottom: 1.6rem;
+    //   font-size: 1.4rem;
+    //   text-align: left;
+    //   color: ${({ theme }) => theme.colors.text.light};
+    // }
   }
 `;
 

@@ -15,10 +15,8 @@ import DepositInquiry from 'pages/DepositInquiry';
 import DepositPlus from 'pages/DepositPlus';
 import NicknameSetting from 'pages/NicknameSetting';
 import NoticeSetting from 'pages/NoticeSetting';
-import NoticeSetting1 from 'pages/NoticeSetting/noticeSetting_1';
 import PatternLockSetting from 'pages/PatternLockSetting';
 import Notice from 'pages/Notice';
-import Notice1 from 'pages/Notice/notice_1';
 import FingerPrintLockSetting from 'pages/FingerPrintLockSetting';
 import ChangeUserName from 'pages/ChangeUserName';
 import ChangeUserName1 from 'pages/ChangeUserName/changeUserName_1';
@@ -34,9 +32,9 @@ import ProjectJ from 'pages/ProjectJ';
 import LoanInquiry from 'pages/LoanInquiry';
 import LoanInterest from 'pages/LoanInterest';
 import BasicInformation from 'pages/BasicInformation';
-import BasicInformation1 from 'pages//BasicInformation/basicInformation_1';
+import BasicInformation1 from 'pages/BasicInformation/basicInformation_1';
 import QandA from 'pages/QandA';
-import Open from 'pages/Open';
+import Provisioning from 'pages/Provisioning';
 import Deduct from 'pages/Deduct';
 import Deduct1 from 'pages/Deduct/deduct1';
 import Deduct2 from 'pages/Deduct/deduct2';
@@ -51,14 +49,34 @@ import Profile from 'pages/Profile';
 import More from 'pages/More';
 import FinancialDepartments from 'pages/FinancialDepartments';
 import Network from 'pages/Network';
-import SecuritiesSwapAccounts from 'pages/SecuritiesSwapAccounts';
-import ForeignCurrencyAccounts from 'pages/ForeignCurrencyAccounts';
+import TradingAccount from 'pages/TradingAccount';
+import ForeignCurrencyAccount from 'pages/ForeignCurrencyAccount';
+import ForeignCurrencyAccountDetails from 'pages/ForeignCurrencyAccountDetails';
 import RegularBasicInformation from 'pages/RegularBasicInformation';
 import RegularBasicInformation1 from 'pages/RegularBasicInformation/regularBasicInformation_1';
 import RegularBasicInformation2 from 'pages/RegularBasicInformation/regularBasicInformation_2';
+import ExportBankBook from 'pages/ExportBankBook';
+import ExportBankBook1 from 'pages/ExportBankBook/exportBankBook_1';
+import ForeignCurrencyTransfer from 'pages/ForeignCurrencyTransfer';
+import ForeignCurrencyTransfer1 from 'pages/ForeignCurrencyTransfer/foreignCurrencyTransfer_1';
+import ForeignCurrencyTransfer2 from 'pages/ForeignCurrencyTransfer/foreignCurrencyTransfer_2';
+import ReserveTransferSearch from 'pages/ReserveTransferSearch';
+import ReserveTransferSearch1 from 'pages/ReserveTransferSearch/reserveTransferSearch_1';
+import ReserveTransferSearch2 from 'pages/ReserveTransferSearch/reserveTransferSearch_2';
+import MobileTransfer from 'pages/MobileTransfer';
+import MobileTransfer1 from 'pages/MobileTransfer/mobileTransfer_1';
+import MobileTransfer2 from 'pages/MobileTransfer/mobileTransfer_2';
+import MobileTransfer3 from 'pages/MobileTransfer/mobileTransfer_3';
+import ForeignCurrencyPriceSetting from 'pages/ForeignCurrencyPriceSetting';
+import QuickLoginSetting from 'pages/QuickLoginSetting';
 
 /* 開發用目錄頁 */
 import Nav from 'pages/Nav';
+
+/* 轉帳靜態頁 (for prototype) */
+import TransferStatic from 'pages/TransferStatic';
+import TransferStatic1 from 'pages/TransferStatic/transfer_1';
+import TransferStatic2 from 'pages/TransferStatic/transfer_2';
 
 const routes = [
   { path: '/', exact: true, component: Nav },
@@ -77,11 +95,9 @@ const routes = [
   { path: '/depositInquiry', exact: false, component: DepositInquiry },
   { path: '/depositPlus', exact: false, component: DepositPlus },
   { path: '/noticeSetting', exact: true, component: NoticeSetting },
-  { path: '/noticeSetting1', exact: false, component: NoticeSetting1 },
   { path: '/nicknameSetting', exact: false, component: NicknameSetting },
   { path: '/patternLockSetting', exact: false, component: PatternLockSetting },
   { path: '/notice', exact: false, component: Notice },
-  { path: '/notice1', exact: false, component: Notice1 },
   { path: '/fingerPrintLockSetting', exact: false, component: FingerPrintLockSetting },
   { path: '/changeUserName', exact: false, component: ChangeUserName },
   { path: '/changeUserName1', exact: false, component: ChangeUserName1 },
@@ -99,7 +115,7 @@ const routes = [
   { path: '/basicInformation', exact: false, component: BasicInformation },
   { path: '/basicInformation1', exact: false, component: BasicInformation1 },
   { path: '/qAndA', exact: false, component: QandA },
-  { path: '/open', exact: false, component: Open },
+  { path: '/provisioning', exact: false, component: Provisioning },
   { path: '/deduct', exact: false, component: Deduct },
   { path: '/deduct1', exact: false, component: Deduct1 },
   { path: '/deduct2', exact: false, component: Deduct2 },
@@ -114,11 +130,29 @@ const routes = [
   { path: '/more', exact: false, component: More },
   { path: '/financialDepartments', exact: false, component: FinancialDepartments },
   { path: '/network', exact: false, component: Network },
-  { path: '/securitiesSwapAccounts', exact: false, component: SecuritiesSwapAccounts },
-  { path: '/foreignCurrencyAccounts', exact: false, component: ForeignCurrencyAccounts },
+  { path: '/tradingAccount', exact: false, component: TradingAccount },
+  { path: '/foreignCurrencyAccount', exact: false, component: ForeignCurrencyAccount },
+  { path: '/foreignCurrencyAccountDetails', exact: false, component: ForeignCurrencyAccountDetails },
   { path: '/regularBasicInformation', exact: false, component: RegularBasicInformation },
   { path: '/regularBasicInformation1', exact: false, component: RegularBasicInformation1 },
   { path: '/regularBasicInformation2', exact: false, component: RegularBasicInformation2 },
+  { path: '/exportBankBook', exact: false, component: ExportBankBook },
+  { path: '/exportBankBook1', exact: false, component: ExportBankBook1 },
+  { path: '/foreignCurrencyTransfer', exact: false, component: ForeignCurrencyTransfer },
+  { path: '/foreignCurrencyTransfer1', exact: false, component: ForeignCurrencyTransfer1 },
+  { path: '/foreignCurrencyTransfer2', exact: false, component: ForeignCurrencyTransfer2 },
+  { path: '/reserveTransferSearch', exact: false, component: ReserveTransferSearch },
+  { path: '/reserveTransferSearch1', exact: false, component: ReserveTransferSearch1 },
+  { path: '/reserveTransferSearch2', exact: false, component: ReserveTransferSearch2 },
+  { path: '/mobileTransfer', exact: false, component: MobileTransfer },
+  { path: '/mobileTransfer1', exact: false, component: MobileTransfer1 },
+  { path: '/mobileTransfer2', exact: false, component: MobileTransfer2 },
+  { path: '/mobileTransfer3', exact: false, component: MobileTransfer3 },
+  { path: '/foreignCurrencyPriceSetting', exact: false, component: ForeignCurrencyPriceSetting },
+  { path: '/quickLoginSetting', exact: false, component: QuickLoginSetting },
+  { path: '/transferStatic', exact: false, component: TransferStatic },
+  { path: '/transferStatic1', exact: false, component: TransferStatic1 },
+  { path: '/transferStatic2', exact: false, component: TransferStatic2 },
 ];
 
 export default routes;

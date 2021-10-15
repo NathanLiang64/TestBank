@@ -17,11 +17,12 @@ const DepositOverviewWrapper = styled(Layout)`
   .infoPanel {
     display: flex;
     justify-content: space-between;
-    padding: 0 .8rem;
+    align-items: baseline;
     
     .panelItem {
       text-align: center;
       letter-spacing: .1rem;
+      width: 100%;
       
       h3 {
         font-size: 1.4rem;

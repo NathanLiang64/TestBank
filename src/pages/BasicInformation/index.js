@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { basicInformationApi } from 'apis';
+import { basicInformationApi, settingApi } from 'apis';
 
 /* Elements */
 import {
@@ -43,26 +43,49 @@ const BasicInformation = () => {
     addr: yup
       .string()
       .required('請輸入通訊地址'),
-    // ...passwordValidation,
   });
   const {
-    handleSubmit, control, formState: { errors }, reset, getValues,
+    handleSubmit, control, formState: { errors }, reset, getValues, setValue,
   } = useForm({
     resolver: yupResolver(schema),
   });
 
+  // eslint-disable-next-line no-unused-vars
+  const [addressOptionsData, setAddressOptionsData] = useState([]);
+  const [countyOptions, setCountyOptions] = useState([
+    {
+      countyName: '',
+      countyCode: '',
+    },
+  ]);
+  const [cityOptions, setCityOptions] = useState([
+    {
+      cityName: '',
+      cityCode: '',
+    },
+  ]);
+
   // 跳轉結果頁
-  const toResultPage = () => {
-    history.push('/basicInformation1');
+  const toResultPage = (param) => {
+    const data = 'mobilePhone' in param;
+    history.push('/basicInformation1', { data });
   };
 
   // 取得縣市列表
-  const getCountyList = () => {
-    // const data = [];
-  };
-
-  // 取得鄉鎮市區列表
-  const getCity = () => {
+  // eslint-disable-next-line no-unused-vars
+  const getCountyList = async (address) => {
+    const countyListResponse = await settingApi.getCountyList({});
+    setAddressOptionsData(countyListResponse);
+    const countyList = countyListResponse.map((item) => {
+      const data = {
+        countyName: item.countyName,
+        countyCode: item.countyCode,
+      };
+      return data;
+    });
+    setCountyOptions(countyList);
+    const { cities } = countyListResponse.find((item) => item.countyName === address.county);
+    setCityOptions(cities);
   };
 
   // 取得個人資料
@@ -73,6 +96,12 @@ const BasicInformation = () => {
       ...basicInformationResponse,
     };
     reset(data);
+    console.log(data);
+    const { county, city } = data;
+    getCountyList({
+      county,
+      city,
+    });
   };
 
   // 更新個人資料
@@ -86,9 +115,10 @@ const BasicInformation = () => {
       mailAddr: data.email,
       mobilePhone: data.mobile,
     };
+    console.log(param);
     const modifyDataResponse = await basicInformationApi.modifyBasicInformation(param);
     console.log('更新基本資料回傳', modifyDataResponse);
-    toResultPage();
+    toResultPage(modifyDataResponse);
   };
 
   // 點擊儲存變更按鈕
@@ -96,12 +126,36 @@ const BasicInformation = () => {
     modifyPersonalData();
   };
 
+  // 彈性變更鄉鎮市區選單
+  const filterCityOptions = (county) => {
+    const { cities } = addressOptionsData.find((item) => item.countyName === county);
+    setCityOptions(cities);
+  };
+
+  // 縣市選單變更
+  const handleCountyChange = (e) => {
+    setValue('county', e.target.value);
+    filterCityOptions(e.target.value);
+  };
+
+  // 鄉鎮市區選單變更
+  const handleCityChange = (e) => {
+    setValue('city', e.target.value);
+    const { cityCode } = cityOptions.find((item) => item.cityName === e.target.value);
+    setValue('zipCode', cityCode);
+  };
+
+  // 建立縣市選單
+  const renderCountyOptions = () => countyOptions.map((item) => (<FEIBOption value={item.countyName} key={item.countyCode}>{item.countyName}</FEIBOption>));
+
+  // 建立鄉鎮市區選單
+  const renderCityOptions = () => cityOptions.map((item) => (<FEIBOption value={item.cityName} key={item.cityCode}>{item.cityName}</FEIBOption>));
+
   useCheckLocation();
   usePageInfo('/api/basicInformation');
 
   useEffect(() => {
-    getCountyList();
-    getCity();
+    // getCountyList();
     getPersonalData();
   }, []);
 
@@ -160,9 +214,10 @@ const BasicInformation = () => {
                     name="county"
                     placeholder="請選擇縣市"
                     error={!!errors.county}
+                    onChange={handleCountyChange}
                   >
                     <FEIBOption value="" disabled>請選擇縣市</FEIBOption>
-                    <FEIBOption value="台北市">台北市</FEIBOption>
+                    { renderCountyOptions() }
                   </FEIBSelect>
                 )}
               />
@@ -179,9 +234,10 @@ const BasicInformation = () => {
                     id="city"
                     name="city"
                     error={!!errors.city}
+                    onChange={handleCityChange}
                   >
                     <FEIBOption value="" disabled>請選擇鄉鎮市區</FEIBOption>
-                    <FEIBOption value="中正區">中正區</FEIBOption>
+                    { renderCityOptions() }
                   </FEIBSelect>
                 )}
               />

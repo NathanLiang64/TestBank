@@ -2,7 +2,12 @@ import { useState } from 'react';
 import { MonetizationOn, ArrowBack, ArrowForward } from '@material-ui/icons';
 import Dialog from 'components/Dialog';
 import InformationList from 'components/InformationList';
-import { toCurrency, stringDateFormatter, timeFormatter } from 'utilities/Generator';
+import {
+  toCurrency,
+  stringDateFormatter,
+  timeFormatter,
+  currencySymbolGenerator,
+} from 'utilities/Generator';
 import DetailCardWrapper, { DetailDialogContentWrapper } from './detailCard.style';
 
 /*
@@ -65,7 +70,7 @@ const DetailCard = ({
 
   const renderTypeIcon = () => (
     <div className={`type ${type === 'c' ? 'spend' : 'income'}`}>
-      { type === 'd' ? <ArrowBack /> : <ArrowForward /> }
+      { type === 'c' ? <ArrowBack /> : <ArrowForward /> }
     </div>
   );
 
@@ -79,7 +84,7 @@ const DetailCard = ({
           <div className="mainBlock">
             <p className="mainBlockTitle">{title}</p>
             <p className="mainBlockAmount">
-              {`${type === 'c' ? '- ' : ''}${dollarSign !== 'TWD' ? dollarSign : ''}$${amount}`}
+              {`${type === 'c' ? '- ' : ''}${currencySymbolGenerator(dollarSign) + amount}`}
             </p>
           </div>
           <InformationList title="交易時間" content={`${date} ${time}`} />
@@ -116,9 +121,9 @@ const DetailCard = ({
         <div className="amount">
           <h4>
             { type === 'c' && '- ' }
-            {`${dollarSign !== 'TWD' ? dollarSign : ''}$${amount}`}
+            {currencySymbolGenerator(dollarSign) + amount}
           </h4>
-          <p>{`${dollarSign !== 'TWD' ? dollarSign : ''}$${toCurrency(balance)}`}</p>
+          <p>{currencySymbolGenerator(dollarSign) + toCurrency(balance)}</p>
         </div>
       </DetailCardWrapper>
       { renderDetailDialog() }

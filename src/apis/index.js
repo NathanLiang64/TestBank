@@ -11,6 +11,13 @@ import * as cardLessATMApi from './cardLessATMApi';
 import * as basicInformationApi from './basicInformationApi';
 import * as changeUserNameApi from './changeUserNameApi';
 import * as pwdModifyApi from './pwdModifyApi';
+import * as qAndAApi from './qAndAApi';
+import * as reserveTransferSearchApi from './reserveTransferSearchApi';
+import * as settingApi from './settingApi';
+import * as regularBasicInformationApi from './regularBasicInformationApi';
+import * as noticeApi from './noticeApi';
+import * as provisioningApi from './provisioningApi';
+import * as financialDepartmentsApi from './financialDepartmentsApi';
 
 export {
   headerApi,
@@ -26,4 +33,11 @@ export {
   basicInformationApi,
   changeUserNameApi,
   pwdModifyApi,
+  qAndAApi,
+  reserveTransferSearchApi,
+  settingApi,
+  regularBasicInformationApi,
+  noticeApi,
+  provisioningApi,
+  financialDepartmentsApi,
 };

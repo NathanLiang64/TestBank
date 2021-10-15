@@ -43,9 +43,17 @@ const GlobalStyles = createGlobalStyle`
   q:before, q:after {
     content: '';
   }
+
   table {
     border-collapse: collapse;
     border-spacing: 0;
+
+    caption {
+      margin-bottom: 1.6rem;
+      font-size: 1.4rem;
+      text-align: left;
+      color: ${({ theme }) => theme.colors.text.light};
+    }
   }
   
   /* ========== Custom ========== */
@@ -59,6 +67,7 @@ const GlobalStyles = createGlobalStyle`
   html {
     height: 100%;
     font-size: 62.5%;
+    position: fixed;
   }
   
   body {
@@ -99,20 +108,37 @@ const GlobalStyles = createGlobalStyle`
   }
 
   table {
-    border: .1rem solid ${({ theme }) => theme.colors.border.lighter};
+    // border: .1rem solid ${({ theme }) => theme.colors.border.lighter};
     width: 100%;
     font-size: 1.4rem;
     background: white;
 
+    thead {
+      color: ${({ theme }) => theme.colors.primary.light};
+      font-size: 1.2rem;
+    }
+    
+    tbody tr {
+      border-bottom: .1rem solid ${({ theme }) => theme.colors.border.lightest};
+    }
+
     tr {
-      border-bottom: .1rem solid ${({ theme }) => theme.colors.border.lighter};
+      
+      th {
+        padding-bottom: .4rem;
+      }
 
       td {
-        border-right: .1rem solid ${({ theme }) => theme.colors.border.lighter};
-        padding: .8rem;
+        // border-right: .1rem solid ${({ theme }) => theme.colors.border.lighter};
+        padding: .4rem 0;
+        color: ${({ theme }) => theme.colors.text.dark};
 
         &:first-child {
-          color: ${({ theme }) => theme.colors.primary.dark};
+          color: ${({ theme }) => theme.colors.text.lightGray};
+        }
+
+        &.center {
+          text-align: center;
         }
       }
     }
@@ -191,6 +217,56 @@ const GlobalStyles = createGlobalStyle`
     justify-content: space-between;
     min-height: 100%;
     padding-bottom: 4rem;
+  }
+
+  .lighterBlueLine {
+    border-top: .8rem solid ${({ theme }) => theme.colors.background.lighterBlue};
+    border-bottom: .8rem solid ${({ theme }) => theme.colors.background.lighterBlue};
+  }
+
+  .txtCenter {
+    text-align: center;
+  }
+
+  .dialogResultContent {
+    padding: 0 1.6rem 2.4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    img {
+      width: 14.4rem;
+    }
+    .resultText {
+      margin-top: 1rem;
+      font-size: 2.6rem;
+      color: ${({ theme }) => theme.colors.secondary.brand};
+    }
+  }
+  .balanceLayout {
+    font-size: 1.6rem;
+    color: ${({ theme }) => theme.colors.primary.dark};
+    transform: translateY(-3.7rem);
+    pointer-events: none;
+    height: 3.5rem;
+    line-height: 3.5rem;
+  }
+  .noticeEditList {
+    li {
+      padding: 2rem 1.6rem;
+      font-weight: 400;
+      font-size: 2rem;
+      line-height: 3rem;
+      color: ${({ theme }) => theme.colors.text.dark};
+      display: flex;
+      align-items: center;
+      .mockIcon {
+        width: 2rem;
+        height: 2rem;
+        border: .2rem solid ${({ theme }) => theme.colors.primary.dark};
+        border-radius: 1rem;
+        margin-right: 1.6rem;
+      }
+    }
   }
 `;
 

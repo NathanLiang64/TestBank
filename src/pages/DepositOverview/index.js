@@ -7,12 +7,7 @@ import DebitCard from 'components/DebitCard';
 import DetailCard from 'components/DetailCard';
 import { depositOverviewApi } from 'apis';
 import {
-  setCards,
-  setCardInfo,
-  setDetailAreaHeight,
-  setInterestPanelTitle,
-  setInterestPanelContent,
-  setComputedCardList,
+  setCards, setCardInfo, setDetailAreaHeight, setInterestPanelTitle, setInterestPanelContent, setComputedCardList,
 } from './stores/actions';
 import DepositOverviewWrapper from './depositOverview.style';
 
@@ -74,12 +69,7 @@ const DepositOverview = () => {
 
   const renderDebitCard = (info) => {
     const {
-      cardBranch,
-      cardName,
-      cardAccount,
-      cardBalance,
-      functionList,
-      moreList,
+      cardBranch, cardName, cardAccount, cardBalance, functionList, moreList,
     } = info;
     return (
       <DebitCard
@@ -118,11 +108,11 @@ const DepositOverview = () => {
           <p>{content}</p>
         </div>
         <div className="panelItem" onClick={handleClickInterestRateLimit}>
-          <h3>優惠利率額度</h3>
-          <p className="inline">
-            {interestRateLimit}
+          <h3>
+            優惠利率額度
             <ArrowForwardIos />
-          </p>
+          </h3>
+          <p>{interestRateLimit}</p>
         </div>
       </div>
     );

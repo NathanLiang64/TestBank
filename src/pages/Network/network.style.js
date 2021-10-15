@@ -2,41 +2,14 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const NetworkWrapper = styled(Layout)`
+  
   .infoContainer {
+    display: flex;
+    flex-direction: column;
     padding-bottom: 2.4rem;
-    .avatarContainer {
-      width: 8.8rem;
-      height: 8.8rem;
-      margin: 0 auto 1.2rem;
-      position: relative;
-  
-      .penIconContainer {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 3.2rem;
-        height: 3.2rem;
-        background: ${({ theme }) => theme.colors.basic.white};
-        border-radius: 1.6rem;
-  
-        .penIconBackground {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 2.8rem;
-          height: 2.8rem;
-          border-radius: 1.4rem;
-          background: ${({ theme }) => theme.colors.primary.light};
-          
-          svg {
-            color: ${({ theme }) => theme.colors.basic.white};
-            font-size: 1.87rem;
-          }
-        }
-      }
+    
+    .Avatar {
+      margin-bottom: 1.2rem;
     }
   
     .nickName {
@@ -140,6 +113,7 @@ const NetworkWrapper = styled(Layout)`
       display: flex;
       align-items: center;
       transform: translateY(-0.5rem);
+
       button {
         width: 2.2rem;
         padding: 0;
@@ -153,6 +127,11 @@ const NetworkWrapper = styled(Layout)`
     .overviewContent {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
+      
+      &.twoColumn {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
       .num {
         font-size: 2rem;
         color: ${({ theme }) => theme.colors.primary.light};
@@ -162,4 +141,33 @@ const NetworkWrapper = styled(Layout)`
   }
 `;
 
+const ShareContentForm = styled.form`
+  padding-bottom: 2.4rem;
+  
+  #shareContent {
+    margin-top: .8rem;
+  }
+  
+  .limitText {
+    display: block;
+    text-align: right;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: ${({ theme }) => theme.colors.text.dark};
+    
+    &.warningColor {
+      color: ${({ theme }) => theme.colors.state.danger};
+    }
+  }
+`;
+
+const RecommendListWrapper = styled.div`
+  margin-bottom: 2.4rem;
+  
+  table {
+    margin-bottom: 2.4rem;
+  }
+`;
+
 export default NetworkWrapper;
+export { ShareContentForm, RecommendListWrapper };

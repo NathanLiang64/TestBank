@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import SuccessImage from 'assets/images/stateSuccess.svg';
@@ -11,9 +12,9 @@ import {
 /* Styles */
 import RegularBasicInformationWrapper from './regularBasicInformation.style';
 
-const RegularBasicInformation2 = () => {
+const RegularBasicInformation2 = ({ location }) => {
   const history = useHistory();
-  const isSuccess = true;
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const toHome = () => {
     history.push('');
@@ -21,6 +22,10 @@ const RegularBasicInformation2 = () => {
 
   useCheckLocation();
   usePageInfo('/api/regularBasicInformation');
+
+  useEffect(() => {
+    setIsSuccess(location.state);
+  }, []);
 
   return (
     <RegularBasicInformationWrapper>

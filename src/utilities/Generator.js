@@ -14,11 +14,14 @@ export const accountFormatter = (account) => `${account.slice(0, 3)}-${account.s
 
 // 將日期格式轉為 YYYY/MM/DD 字串
 export const dateFormatter = (date) => {
-  date = new Date(date);
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  return `${year}/${month}/${day}`;
+  if (date) {
+    date = new Date(date);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}/${month}/${day}`;
+  }
+  return '';
 };
 
 // 將日期格式轉為 YYYYMMDD 字串
@@ -76,10 +79,12 @@ export const weekNumberToChinese = (value) => {
 
 // 將拉阿伯數字轉換為中文大寫
 /* eslint-disable eqeqeq */
-export const numberToChinese = (number) => {
-  if (Number.isNaN(Number(number))) {
+export const numberToChinese = (num) => {
+  if (Number.isNaN(Number(num))) {
     return '(非數字)';
   }
+  let number = num.split('.')[0];
+  const digtalNum = num.split('.')[1];
   const chineseNumber = ('零壹貳參肆伍陸柒捌玖').split('');
   const amountSmallUnit = ['', '拾', '佰', '千'];
   const amountBigUnit = ['', '萬', '億', '兆', '京', '垓', '秭', '穰', '溝', '澗', '正', '載'];
@@ -121,7 +126,104 @@ export const numberToChinese = (number) => {
 
   if (chineseBigNumber != '') {
     /* chineseBigNumber += '元整'; */
-    chineseBigNumber = `(${chineseBigNumber}元)`;
+    if (!digtalNum) {
+      chineseBigNumber = `(${chineseBigNumber}元)`;
+    } else {
+      let chineseDigtalNumber = '';
+      for (let i = 0; i < digtalNum.length; i++) {
+        chineseDigtalNumber += chineseNumber[Number(digtalNum[i])];
+      }
+      chineseBigNumber = `(${chineseBigNumber}點${chineseDigtalNumber}元)`;
+    }
   }
   return chineseBigNumber;
+};
+
+// 貨幣單位文字轉為符號
+export const currencySymbolGenerator = (currency) => {
+  switch (currency) {
+    case 'TWD': // 新台幣
+      return '$';
+    case 'USD': // 美金
+      return 'US$';
+    case 'GBP': // 英鎊
+      return '£';
+    case 'HKD': // 港幣
+      return 'HK$';
+    case 'CHF': // 瑞士法郎
+      return 'Fr';
+    case 'AUD': // 澳幣
+      return 'A$';
+    case 'SGD': // 新加坡幣
+      return 'S$';
+    case 'JPY': // 日幣
+      return '¥';
+    case 'CAD': // 加幣
+      return 'CAN$';
+    case 'THB': // 泰幣
+      return '฿';
+    case 'ZAR': // 南非幣
+      return 'R';
+    case 'CNY': // 人民幣
+      return 'RMB¥';
+    case 'EUR': // 歐元
+      return '€';
+    case 'NZD': // 紐西蘭幣
+      return 'NZ$';
+    default:
+      return null;
+  }
+};
+
+// 貨幣單位英文轉華文
+export const currencyZhGenerator = (currency) => {
+  switch (currency) {
+    case 'TWD': // 新台幣
+      return '新台幣';
+    case 'USD': // 美金
+      return '美金';
+    case 'GBP': // 英鎊
+      return '英鎊';
+    case 'HKD': // 港幣
+      return '港幣';
+    case 'CHF': // 瑞士法郎
+      return '瑞士法郎';
+    case 'AUD': // 澳幣
+      return '澳幣';
+    case 'SGD': // 新加坡幣
+      return '新加坡幣';
+    case 'JPY': // 日幣
+      return '日圓';
+    case 'CAD': // 加幣
+      return '加幣';
+    case 'THB': // 泰幣
+      return '泰銖';
+    case 'ZAR': // 南非幣
+      return '南非幣';
+    case 'CNY': // 人民幣
+      return '人民幣';
+    case 'EUR': // 歐元
+      return '歐元';
+    case 'NZD': // 紐西蘭幣
+      return '紐西蘭幣';
+    default:
+      return null;
+  }
+};
+
+// 姓名隱碼化，王小明 -> 王Ｏ明
+export const hideName = (name) => {
+  if (!name) return;
+
+  /* eslint-disable consistent-return */
+  const nameLength = name.length;
+  const firstCharacter = name.substr(0, 1);
+
+  if (nameLength < 2) return firstCharacter;
+  if (nameLength < 3) return `${firstCharacter}Ｏ`;
+
+  const lastCharacter = name.substr(nameLength - 1, 1);
+  const others = [];
+  for (let i = 0; i < name.length - 2; i++) others.push('Ｏ');
+  return firstCharacter + others.join('') + lastCharacter;
 };

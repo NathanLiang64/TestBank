@@ -1,29 +1,29 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
-import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
+import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-
-/* Elements */
+import { CreateRounded, KeyboardArrowRightRounded } from '@material-ui/icons';
+import Dialog from 'components/Dialog';
+import Avatar from 'components/Avatar';
+import CopyTextIconButton from 'components/CopyTextIconButton';
 import {
   FEIBInput, FEIBInputLabel, FEIBButton, FEIBErrorMessage, FEIBIconButton, FEIBTextarea,
 } from 'components/elements';
-import CopyTextIconButton from 'components/CopyTextIconButton';
-import Dialog from 'components/Dialog';
-
-/* Styles */
-// eslint-disable-next-line no-unused-vars
-import { CreateRounded, KeyboardArrowRightRounded } from '@material-ui/icons';
-import Avatar from 'assets/images/avatar.png';
-import NetworkWrapper from './network.style';
+import { hideName, stringDateFormatter } from 'utilities/Generator';
+// import { getNetworkUserInfo, getNetworkOverview, getNetworkFeedback } from 'apis/networkApi';
+import { startFunc } from 'apis/appFuncApi';
+import theme from 'themes/theme';
+import NetworkWrapper, { ShareContentForm, RecommendListWrapper } from './network.style';
+import mockData from './mockData';
 
 const Network = () => {
   const [textareaLength, setTextareaLength] = useState(0);
-  const [nickName, setNickName] = useState('Joyce Horng');
-  const [shareContent, setShareContent] = useState('點擊「成為Bankee會員」申辦Bankee數位存晚帳戶，想活存利率2.6%！');
-  const [showEditNickNameDialog, setShowEditNickNameDialog] = useState(false);
-  const [showEditShareContentDialog, setShowEditShareContentDialog] = useState(false);
-
+  const [userInfo, setUserInfo] = useState({});
+  const [overview, setOverview] = useState({});
+  const [feedback, setFeedback] = useState({});
+  const [openDialog, setOpenDialog] = useState({ open: false, title: '' });
   /**
    *- 資料驗證
    */
@@ -31,7 +31,7 @@ const Network = () => {
     nickName: yup
       .string()
       .when('shareContent', {
-        is: () => showEditNickNameDialog,
+        is: openDialog.open && openDialog.title === '暱稱',
         then: yup.string().required('請輸入您的名稱'),
         otherwise: yup.string().notRequired(),
       }),
@@ -39,42 +39,47 @@ const Network = () => {
       .string()
       .notRequired(),
   }, [['nickName', 'shareContent']]);
+
   const {
     handleSubmit, control, formState: { errors }, reset, setValue,
   } = useForm({
     resolver: yupResolver(schema),
   });
+  const history = useHistory();
 
-  const getTextareaLength = (textLength) => {
-    setTextareaLength(textLength);
-  };
+  const getTextareaLength = (textLength) => setTextareaLength(textLength);
 
   const showEditUserNameDialog = () => {
     reset();
-    setValue('nickName', nickName);
-    setShowEditNickNameDialog(true);
+    setValue('nickName', userInfo.nickname);
+    setOpenDialog({ open: true, title: '暱稱' });
   };
 
   const onNickNameSubmit = (data) => {
-    setNickName(data.nickName);
-    setShowEditNickNameDialog(false);
+    setUserInfo({ ...userInfo, nickname: data.nickName });
+    setOpenDialog({ ...openDialog, open: false });
   };
 
   const showEditContentDialog = () => {
     reset();
-    setValue('shareContent', shareContent);
-    setTextareaLength(shareContent.length);
-    setShowEditShareContentDialog(true);
+    setValue('shareContent', userInfo.shareContent);
+    setTextareaLength(userInfo.shareContent?.length);
+    setOpenDialog({ open: true, title: '分享內容' });
   };
 
   const onShareContentSubmit = (data) => {
-    console.log(data);
-    setShareContent(data.shareContent);
-    setShowEditShareContentDialog(false);
+    setUserInfo({ ...userInfo, shareContent: data.shareContent });
+    setOpenDialog({ ...openDialog, open: false });
   };
 
+  const showRecommendListDialog = () => {
+    setOpenDialog({ open: true, title: '推薦名單' });
+  };
+
+  const renderText = (value) => value || '-';
+
   // 編輯暱稱表單
-  const renderForm = () => (
+  const renderNicknameForm = () => (
     <form id="nickNameForm" onSubmit={handleSubmit(onNickNameSubmit)} style={{ paddingBottom: '2.4rem' }}>
       <FEIBInputLabel htmlFor="nickName">您的名稱</FEIBInputLabel>
       <Controller
@@ -82,14 +87,7 @@ const Network = () => {
         defaultValue=""
         control={control}
         render={({ field }) => (
-          <FEIBInput
-            {...field}
-            type="text"
-            id="nickName"
-            name="nickName"
-            placeholder="請輸入您的名稱"
-            error={!!errors.nickName}
-          />
+          <FEIBInput {...field} type="text" id="nickName" name="nickName" placeholder="請輸入您的名稱" error={!!errors.nickName} />
         )}
       />
       <FEIBErrorMessage>{errors.nickName?.message}</FEIBErrorMessage>
@@ -97,19 +95,9 @@ const Network = () => {
     </form>
   );
 
-  // 編輯暱稱 Dialog
-  const renderEditNickNameDialog = () => (
-    <Dialog
-      isOpen={showEditNickNameDialog}
-      onClose={() => setShowEditNickNameDialog(false)}
-      title="暱稱"
-      content={renderForm()}
-    />
-  );
-
-  const renderTextareaForm = () => (
-    <form id="shareContentForm" onSubmit={handleSubmit(onShareContentSubmit)} style={{ paddingBottom: '2.4rem' }}>
-      <FEIBInputLabel htmlFor="shareContent" style={{ marginBottom: '.8rem' }}>您的分享內容</FEIBInputLabel>
+  const renderShareContentForm = () => (
+    <ShareContentForm onSubmit={handleSubmit(onShareContentSubmit)}>
+      <FEIBInputLabel htmlFor="shareContent">您的分享文案</FEIBInputLabel>
       <Controller
         name="shareContent"
         defaultValue=""
@@ -121,84 +109,118 @@ const Network = () => {
               field.onChange(e.target.value);
               getTextareaLength(e.target.textLength);
             }}
-            type="text"
+            $borderColor={textareaLength > 200 && theme.colors.state.danger}
+            rowsMin={3}
+            rowsMax={10}
             id="shareContent"
             name="shareContent"
             placeholder="請輸入您的分享文案"
-            maxLength="200"
           />
         )}
       />
-      <div style={{ textAlign: 'right', color: textareaLength < 200 ? '#042C5C' : '#FF5F5F', fontSize: '1.2rem' }}>
-        <span>
-          字數限制（
-          { textareaLength }
-          /200）
-        </span>
-      </div>
+      <span className={`limitText ${textareaLength > 200 ? 'warningColor' : ''}`}>
+        字數限制（
+        { textareaLength }
+        /200）
+      </span>
       <FEIBErrorMessage />
-      <FEIBButton type="submit">完成</FEIBButton>
-    </form>
+      <FEIBButton type="submit" disabled={!textareaLength || textareaLength > 200}>完成</FEIBButton>
+    </ShareContentForm>
   );
 
-  // 編輯分享內容 Dialog
-  const renderEditShareContentDialog = () => (
-    <Dialog
-      isOpen={showEditShareContentDialog}
-      onClose={() => setShowEditShareContentDialog(false)}
-      title="分享內容"
-      content={renderTextareaForm()}
-    />
+  const renderRecommendList = () => (
+    <RecommendListWrapper>
+      <table>
+        {/* <caption>說明</caption> */}
+        <thead>
+          <tr>
+            <th>姓名</th>
+            <th>核卡完成日期</th>
+            <th>開戶完成日期</th>
+          </tr>
+        </thead>
+        <tbody>
+          { overview.recommendList?.map((item) => (
+            <tr key={item.id}>
+              <td className="center">{renderText(hideName(item.name))}</td>
+              <td className="center">{stringDateFormatter(item.approvedDate)}</td>
+              <td className="center">{stringDateFormatter(item.accountApplyDate)}</td>
+            </tr>
+          )) }
+        </tbody>
+      </table>
+      <FEIBButton onClick={() => setOpenDialog({ ...openDialog, open: false })}>確認</FEIBButton>
+    </RecommendListWrapper>
   );
+
+  // eslint-disable-next-line consistent-return
+  const dialogContentController = (dialogTitle) => {
+    switch (dialogTitle) {
+      case '暱稱':
+        return renderNicknameForm();
+      case '分享內容':
+        return renderShareContentForm();
+      case '推薦名單':
+        return renderRecommendList();
+      default:
+        return <></>;
+    }
+  };
 
   useCheckLocation();
   usePageInfo('/api/network');
 
+  useEffect(() => {
+    /* ========== mock data (for mock api) ========== */
+    // getNetworkUserInfo()
+    //   .then((data) => setUserInfo(data))
+    //   .catch((error) => console.error(error));
+    //
+    // getNetworkOverview()
+    //   .then((data) => setOverview(data))
+    //   .catch((error) => console.error(error));
+    //
+    // getNetworkFeedback()
+    //   .then((data) => setFeedback(data))
+    //   .catch((error) => console.error(error));
+
+    /* ========== mock data (for prototype) ========== */
+    const { getNetworkUserInfo, getNetworkOverview, getNetworkFeedback } = mockData;
+    setUserInfo(getNetworkUserInfo);
+    setOverview(getNetworkOverview);
+    setFeedback(getNetworkFeedback);
+  }, []);
+
   return (
     <NetworkWrapper>
       <div className="infoContainer">
-        <div className="avatarContainer">
-          <img src={Avatar} alt="" />
-          <div className="penIconContainer">
-            <div className="penIconBackground">
-              <CreateRounded />
-            </div>
-          </div>
-        </div>
+        <Avatar src={userInfo?.avatar} name={userInfo?.nickname} />
         <div className="nickName">
-          <span>{ nickName }</span>
+          <span>{renderText(userInfo?.nickname)}</span>
           <CreateRounded onClick={showEditUserNameDialog} />
         </div>
-        <div className="level">
-          <span>等級 3</span>
-        </div>
+        <span className="level">{`等級 ${renderText(userInfo?.level)}`}</span>
       </div>
       <div className="contentCard promo">
         <div className="title">推薦好友加入社群圈</div>
         <div className="mainBlock">
           <div className="subTitle">我的推薦碼</div>
           <div className="code">
-            <span>
-              630FG3
-            </span>
-            <CopyTextIconButton copyText="630FG3" />
+            <span>{renderText(userInfo?.referralCode)}</span>
+            <CopyTextIconButton copyText={userInfo?.referralCode || ''} displayMessage="已複製推薦碼" />
           </div>
         </div>
         <div className="subTitle shareTitle">分享內容</div>
         <div className="shareContent">
-          <span>
-            { shareContent }
-          </span>
+          <span>{renderText(userInfo?.shareContent)}</span>
           <CreateRounded style={{ fontSize: '2.13rem' }} onClick={showEditContentDialog} />
         </div>
         <FEIBButton>分享推薦碼</FEIBButton>
       </div>
       <div className="contentCard">
         <div className="title">
-          <div className="search">
-            <span>
-              查詢
-            </span>
+          <div className="search" onClick={showRecommendListDialog}>
+            <span>查詢</span>
             <FEIBIconButton>
               <KeyboardArrowRightRounded />
             </FEIBIconButton>
@@ -208,31 +230,29 @@ const Network = () => {
         <div className="overviewContent">
           <div className="overviewItem">
             <div className="subTitle">點擊人數</div>
-            <div className="num">79</div>
+            <div className="num">{renderText(overview.clicks)}</div>
           </div>
           <div className="overviewItem">
             <div className="subTitle">申請中人數</div>
-            <div className="num">0</div>
+            <div className="num">{renderText(overview.applying)}</div>
           </div>
           <div className="overviewItem">
             <div className="subTitle">已核可人數</div>
-            <div className="num">2</div>
+            <div className="num">{renderText(overview.approved)}</div>
           </div>
         </div>
       </div>
       <div className="contentCard">
-        <div className="title">
-          社群圈回饋
-        </div>
-        <div className="overviewContent">
-          <div className="overviewItem">
+        <div className="title">社群圈回饋</div>
+        <div className="overviewContent twoColumn">
+          <div className="overviewItem" onClick={() => startFunc(history, 'depositPlus')}>
             <div className="subTitle">
               優惠利率額度
               <FEIBIconButton>
                 <KeyboardArrowRightRounded />
               </FEIBIconButton>
             </div>
-            <div className="num">5 萬</div>
+            <div className="num">{renderText(feedback.interestRateLimit)}</div>
           </div>
           <div className="overviewItem">
             <div className="subTitle">
@@ -241,16 +261,24 @@ const Network = () => {
                 <KeyboardArrowRightRounded />
               </FEIBIconButton>
             </div>
-            <div className="num">NT $60</div>
+            <div className="num">
+              NT$
+              {renderText(feedback.profit)}
+            </div>
           </div>
-          <div className="overviewItem">
-            <div className="subTitle">貸款社群回饋</div>
-            <div className="num">XXXXX</div>
-          </div>
+          {/* <div className="overviewItem"> */}
+          {/*  <div className="subTitle">貸款社群回饋</div> */}
+          {/*  <div className="num">{renderText(feedback.loan)}</div> */}
+          {/* </div> */}
         </div>
       </div>
-      { renderEditNickNameDialog() }
-      { renderEditShareContentDialog() }
+
+      <Dialog
+        isOpen={openDialog.open}
+        onClose={() => setOpenDialog({ ...openDialog, open: false })}
+        title={openDialog.title}
+        content={dialogContentController(openDialog.title)}
+      />
     </NetworkWrapper>
   );
 };

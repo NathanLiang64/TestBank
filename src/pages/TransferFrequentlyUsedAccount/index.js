@@ -9,7 +9,7 @@ import {
   FEIBButton, FEIBErrorMessage, FEIBInput, FEIBInputLabel,
 } from 'components/elements';
 import { bankAccountValidation, bankCodeValidation, nicknameValidation } from 'utilities/validation';
-import { doGetInitData } from 'apis/transferApi';
+import { doGetInitData, insertFacAcct } from 'apis/transferApi';
 import { setOpenDrawer, setClickMoreOptions } from '../Transfer/stores/actions';
 
 const TransferFrequentlyUsedAccount = () => {
@@ -33,7 +33,8 @@ const TransferFrequentlyUsedAccount = () => {
   const handleSubmitFrequentlyUsed = (data) => {
     if (avatar) data.avatar = avatar;
     // 送資料
-    // console.log(data);
+    console.log(data);
+    insertFacAcct({ inAcct: data.bankAccount, inBank: data.memberAccountCardBankCode.bankNo, nickName: data.nickname });
     dispatch(setOpenDrawer({ ...openDrawer, title: '常用帳號', content: 'default' }));
     dispatch(setClickMoreOptions({
       ...clickMoreOptions,
@@ -50,6 +51,7 @@ const TransferFrequentlyUsedAccount = () => {
     if (edit.click && edit.target) {
       const response = await doGetInitData('/api/getFavoriteAcct');
       if (response) {
+        console.log(response);
         const currenTarget = response.favoriteAcctList.find((member) => member.id === edit.target);
         setTargetMember(currenTarget);
         setValue('memberAccountCardBankCode', { bankNo: currenTarget.bankNo, bankName: currenTarget.bankName });

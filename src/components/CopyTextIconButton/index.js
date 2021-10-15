@@ -42,7 +42,7 @@ const CopyTextIconButton = ({
         isCopied && (
           <SnackModal
             icon={<FileCopyOutlined />}
-            text={`已複製${displayMessage || '帳號'}`}
+            text={displayMessage || '已複製帳號'}
           />
         )
       }

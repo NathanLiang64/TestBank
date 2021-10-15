@@ -52,9 +52,11 @@ userAxios().interceptors.request.use(
     if (jwt) {
       config.data.custId = localStorage.getItem('custId');
       config.data.isgToken = '0c281a7a1-1a35-0347-6d71-a4da7d0a41d113092';
+      config.data.bindingUdid = '48c3d54d-bab3-471a-9778-2c98a157c3f80199263632160019';
       config.headers.authorization = `Bearer ${jwt}`;
       const aeskey = localStorage.getItem('aesKey');
       const ivkey = localStorage.getItem('iv');
+      // console.log(config.data);
       // 加密
       const encrypt = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(config.data));
       config.data = encrypt;
@@ -65,7 +67,7 @@ userAxios().interceptors.request.use(
 );
 
 userAxios().interceptors.response.use(
-  (response) => {
+  async (response) => {
     dispatch(setShowSpinner(false));
     const jwt = localStorage.getItem('jwtToken');
     if (jwt) {
@@ -74,9 +76,30 @@ userAxios().interceptors.response.use(
       // 解密
       // const encrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
       const { jwtToken } = response.data;
-      localStorage.setItem('jwtToken', jwtToken);
+      // console.log('jwtToken', response.data);
+      if (jwtToken) {
+        localStorage.setItem('jwtToken', jwtToken);
+      } else {
+        // eslint-disable-next-line no-alert
+        // alert('權限失效，請重新登入');
+        // const logoutData = {
+        //   channelCode: 'HHB_A',
+        //   appVersion: '1.0.15',
+        //   udid: '',
+        // };
+        // const logoutResponse = await userAxios().post('/auth/logout', logoutData);
+        // if (!logoutResponse.message) {
+        //   const { host } = window.location;
+        //   window.location.replace(`${host}/login`);
+        //   localStorage.clear();
+        // } else {
+        //   // eslint-disable-next-line no-alert
+        //   alert(logoutResponse.message);
+        // }
+      }
       if (response.data.code === '0000') {
         const decrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
+        // console.log(decrypt);
         response = decrypt;
       } else {
         response = response.data;

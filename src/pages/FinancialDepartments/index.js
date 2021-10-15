@@ -1,9 +1,11 @@
+import { useEffect } from 'react';
 import { useCheckLocation, usePageInfo } from 'hooks';
+import { financialDepartmentsApi } from 'apis';
 
 /* Styles */
-import BznkLogo from 'assets/images/Bznk_logo.png';
-import PezzaloanLogo from 'assets/images/Pezzaloan_logo.png';
-import AsiaEastLogo from 'assets/images/AsiaEast_logo.png';
+import BznkLogo from 'assets/images/Bznk_logo.svg';
+import PezzaloanLogo from 'assets/images/Pezzaloan_logo.svg';
+import AsiaEastLogo from 'assets/images/AsiaEast_logo.svg';
 import FinancialDepartmentsWrapper from './financialDepartments.style';
 
 const FinancialDepartments = () => {
@@ -25,6 +27,11 @@ const FinancialDepartments = () => {
     },
   ];
 
+  const getStores = async () => {
+    const storesResponse = await financialDepartmentsApi.getFinanceStore({});
+    console.log(storesResponse);
+  };
+
   const renderCards = () => bankList.map((item) => (
     <div key={item.id} className="financialCard">
       <div className="imgContainer">
@@ -38,6 +45,10 @@ const FinancialDepartments = () => {
 
   useCheckLocation();
   usePageInfo('/api/financialDepartments');
+
+  useEffect(() => {
+    getStores();
+  }, []);
 
   return (
     <FinancialDepartmentsWrapper>
