@@ -1,0 +1,58 @@
+openapi: 3.0.2
+info:
+   title: 選單相關
+   version: "2.0"
+servers:
+   - url: https://bankeesit.feib.com.tw/webctl/api/menu
+paths:
+   /getFinanceStore:
+      post:
+         summary: 查詢金融百貨清單
+         requestBody:
+            required: true
+            content:
+               application/json:
+                  schema:
+                     $ref: "../common.yml#/components/schemas/CustIdRq"
+         responses:
+            "200":
+               description: OK
+               content:
+                  application/json;charset=UTF-8:
+                     schema:
+                        $ref: "#/components/schemas/ApiResponse<List<FinanceStore>>"
+components:
+   schemas:
+      ApiResponse<List<FinanceStore>>:
+         allOf: # combines ApiResponse and data
+            - $ref: ../common.yml#/components/schemas/ApiResponse
+            - type: object
+         properties:
+            encData:
+               type: array
+               items:
+                  properties:
+                     empBranch:
+                        type: string
+                        description: 推廣分會
+                        example: VM1147
+                     itemName:
+                        type: string
+                        description: 選項名稱
+                        example: BZNK
+                     uniformNumber:
+                        type: string
+                        description: 統一編號
+                        example: 55887050
+                     icon:
+                        type: string
+                        description: 圖示檔名
+                        example: imageA02.png
+                     urlLink:
+                        type: string
+                        description: 導入連結
+                        example: 
+                     isAuth:
+                        type: string
+                        description: 是否授權綁定
+                        example: 1

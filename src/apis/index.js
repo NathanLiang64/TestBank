@@ -17,6 +17,7 @@ import * as settingApi from './settingApi';
 import * as regularBasicInformationApi from './regularBasicInformationApi';
 import * as noticeApi from './noticeApi';
 import * as provisioningApi from './provisioningApi';
+import * as financialDepartmentsApi from './financialDepartmentsApi';
 
 export {
   headerApi,
@@ -38,4 +39,5 @@ export {
   regularBasicInformationApi,
   noticeApi,
   provisioningApi,
+  financialDepartmentsApi,
 };

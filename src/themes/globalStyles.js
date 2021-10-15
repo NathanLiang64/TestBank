@@ -245,9 +245,10 @@ const GlobalStyles = createGlobalStyle`
   .balanceLayout {
     font-size: 1.6rem;
     color: ${({ theme }) => theme.colors.primary.dark};
-    transform: translateY(-3.1rem);
+    transform: translateY(-3.7rem);
     pointer-events: none;
-    height: 0;
+    height: 3.5rem;
+    line-height: 3.5rem;
   }
   .noticeEditList {
     li {

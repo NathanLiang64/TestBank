@@ -45,7 +45,7 @@ const ForeignCurrencyTransfer2 = () => {
             <div className="confrimDataContainer">
               <div className="dataLabel">轉出金額與轉入帳號</div>
               <div className="balance">£100.00</div>
-              <div className="accountInfo">遠東商銀（805）</div>
+              <div className="accountInfo">遠東商銀(805)</div>
               <div className="accountInfo">00200701710979</div>
             </div>
             <div className="line" />
