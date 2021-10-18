@@ -50,8 +50,8 @@ const DebitCard = ({
   transferRemaining,
   moreList,
   moreDefault = true,
-  dollarSign = 'TWD',
-  color = 'purple',
+  dollarSign,
+  color,
 }) => {
   const [showBalance, setShowBalance] = useState(true);
   const [openDrawer, setOpenDrawer] = useState(false);
