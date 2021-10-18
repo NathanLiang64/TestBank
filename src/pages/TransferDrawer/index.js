@@ -90,7 +90,7 @@ const TransferDrawer = ({ setTabId }) => {
     console.log("redux")
     console.log(frequentlyUsedAccountsRedux);
     if(!frequentlyUsedAccounts&&!frequentlyUsedAccountsRedux){
-      const favoriteResponse = await getFavAcct('/api/getFavoriteAcct');
+      const favoriteResponse = await getFavAcct({});
       if (favoriteResponse.code!='WEBCTL1003' || favoriteResponse.code!= "WEBCTL1001"){
         setFrequentlyUsedAccounts(favoriteResponse);
         dispatch(setFqlyUsedAccounts(favoriteResponse))
@@ -100,7 +100,7 @@ const TransferDrawer = ({ setTabId }) => {
     }
 
     if(!designedAccounts&&!designedAccountsRedux){
-      const designedResponse = await queryRegAcct('/api/getDesignedAcct');
+      const designedResponse = await queryRegAcct({});
       if (designedResponse.code!='WEBCTL1003'){
         setDesignedAccounts(designedResponse);
         dispatch(setDgnedAccounts(designedResponse))

@@ -46,7 +46,30 @@ export const queryRegAcct = async (params) => (
   await userAxios.post('/api/transfer/queryRegAcct', params)
     .then((response) => {
       console.log(response);
-      return response;
+      return [{
+        id: 'fL9HylbGfbbRPs9N5AAgy0cazPT2wDXc',
+        bankId: '805',
+        bankName: '遠東商銀',
+        acctId: '04300499099427',
+        acctName: 'Catherine Smith',
+        acctImg: 'https://images.unsplash.com/photo-1528341866330-07e6d1752ec2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=801&q=80',
+      },
+      {
+        id: 'xC3wzNqK0x3OOkih0uDxJP5aXeP5eFwu',
+        bankId: '805',
+        bankName: '遠東商銀',
+        acctId: '04300499001010',
+        acctName: 'Jason',
+        acctImg: '',
+      },
+      {
+        id: 's1JkfvhrK0pmtz8UtPYafyjD0Enprlqp',
+        bankId: '806',
+        bankName: '元大商銀',
+        acctId: '04300499001011',
+        acctName: 'Mike',
+        acctImg: '',
+      }];
     })
     .catch((error) => error)
 );

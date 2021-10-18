@@ -121,13 +121,14 @@ const Transfer = () => {
     }
     if (data.transferOption === 'designated') {
       if (select.target) {
+        console.log("designedAccounts",designedAccounts)
         const currentTarget = designedAccounts.find((member) => member.id === select.target);
         const { acctId, bankNo, bankName } = currentTarget;
-        data.bankCode = { bankNo, bankName };
+        data.bankCode = { bankId, bankName };
         data.receivingAccount = acctId;
       } else {
-        const { acctId, bankNo, bankName } = designedAccounts[0];
-        data.bankCode = { bankNo, bankName };
+        const { acctId, bankId, bankName } = designedAccounts[0];
+        data.bankCode = { bankId, bankName };
         data.receivingAccount = acctId;
       }
     }
@@ -259,7 +260,7 @@ const Transfer = () => {
               id={selectTransferMember.designed.id}
               name={selectTransferMember.designed.acctName}
               bankName={selectTransferMember.designed.bankName}
-              bankNo={selectTransferMember.designed.bankNo}
+              bankNo={selectTransferMember.designed.bankId}
               account={selectTransferMember.designed.acctId}
               avatarSrc={selectTransferMember.designed.acctImg}
               noBorder
