@@ -92,3 +92,13 @@ export const doDeleteFacAcct = async (params) => (
     })
     .catch((error) => error)
 );
+
+// 預約轉帳確認
+export const doBookNtdTrConfirm = async (params) => (
+  await userAxios.post('/api/transfer/ntdTr/book/confirm', params)
+    .then((response) => {
+      console.log(response);
+      return response;
+    })
+    .catch((error) => error)
+);

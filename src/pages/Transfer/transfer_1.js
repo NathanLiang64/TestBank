@@ -10,7 +10,7 @@ import { setIsPasswordRequired, setResult } from 'components/PasswordDrawer/stor
 import { dateFormatter, weekNumberToChinese } from 'utilities/Generator';
 import { directTo } from 'utilities/mockWebController';
 import TransferWrapper, { TransferMOTPDialogWrapper } from './transfer.style';
-import { doNtdTrConfirm } from '../../apis/transferApi';
+import { doNtdTrConfirm, doBookNtdTrConfirm } from '../../apis/transferApi';
 
 const Transfer1 = () => {
   const [openMOTPDialog, setOpenMOTPDialog] = useState(false);
@@ -90,9 +90,15 @@ const Transfer1 = () => {
     const data = {
       outAcctNo: displayInfo.receivingAccount, inBank: displayInfo.bankNo, inAcctNo: displayInfo.receivingAccount, amount: displayInfo.money.replace('$', ''), memo: displayInfo.remark, deviceId: '131313', isQRCode: false, isMotpOpen: false,
     };
-    const ntdTrConfirmResponse = await doNtdTrConfirm(data);
-    console.log(ntdTrConfirmResponse);
-    if (fastLogin || !motp) dispatch(setIsPasswordRequired(true));
+
+    if (displayInfo.transferType === 'reserve') {
+      const ntdTrConfirmResponse = await doBookNtdTrConfirm(data);
+      console.log(ntdTrConfirmResponse);
+    } else {
+      const ntdTrConfirmResponse = await doNtdTrConfirm(data);
+      console.log(ntdTrConfirmResponse);
+      if (fastLogin || !motp) dispatch(setIsPasswordRequired(true));
+    }
   };
 
   const onSubmit = () => setOpenMOTPDialog(true);
@@ -169,6 +175,7 @@ const Transfer1 = () => {
       });
     } else {
       console.log('171', bankCode);
+      if (bankCode.bankNo !== undefined)bankCode.bankId = bankCode.bankNo;
       setDisplayInfo({
 
         ...displayInfo,

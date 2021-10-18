@@ -94,11 +94,9 @@ const Transfer = () => {
 
   const handleClickTransferButton = (data) => {
     // 轉出帳號
-    console.log(cards);
-    console.log(selectCardId);
+    
     const selectCard = cards.find((card) => card.accountId === selectCardId);
-    console.log("轉帳")
-    console.log(selectCard);
+    console.log("轉帳Data",data);
     data.debitAccount = selectCard.accountId;
     data.debitName = selectCard.cardName;
 
