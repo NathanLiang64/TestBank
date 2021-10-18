@@ -92,8 +92,9 @@ const ForeignCurrencyAccount = () => {
 
     /* ========== mock data (for prototype) ========== */
     const { getForeignCurrencyAccounts, getTransactionDetails } = mockData;
+    const { acctDetails } = getTransactionDetails;
     setDebitCards(getForeignCurrencyAccounts);
-    setDetails(getTransactionDetails.acctDetails);
+    setDetails(acctDetails);
   }, []);
 
   // 取得帳號資料後，計算 transactionDetail DOM 高度
@@ -106,10 +107,10 @@ const ForeignCurrencyAccount = () => {
   }, [debitCards]);
 
   // 根據剩餘高度計算要顯示的卡片數量，計算裝置可容納的交易明細卡片數量
-  useEffect(async () => {
+  useEffect(() => {
     if (details?.length) {
       const list = [];
-      const computedCount = Math.floor((detailAreaHeight - 32) / 80);
+      const computedCount = Math.floor((detailAreaHeight - 30) / 80);
       for (let i = 0; i < computedCount; i++) list.push(details[i]);
       setComputedDetails(list);
     }

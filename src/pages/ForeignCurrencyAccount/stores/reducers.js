@@ -1,8 +1,8 @@
 import * as types from './types';
 
 const initState = {
-  selectedAccount: {},
   txnDetails: [],
+  selectedAccount: {},
 };
 
 const reducers = (state = initState, action) => {

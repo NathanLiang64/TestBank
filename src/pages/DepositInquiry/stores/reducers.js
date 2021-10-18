@@ -1,7 +1,7 @@
 import * as types from './types';
 
 const initState = {
-  detailList: null,
+  detailList: [],
   openInquiryDrawer: false,
   dateRange: [],
   tempDateRange: [],

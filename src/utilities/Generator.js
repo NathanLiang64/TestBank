@@ -4,13 +4,19 @@
 
 // 將數字轉為加上千分位符號的字串
 export const toCurrency = (number) => {
-  const parts = number.toString().split('.');
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  return parts.join('.');
+  if (number) {
+    const parts = number.toString().split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return parts.join('.');
+  }
+  if (number === 0 || number === '0') return '0';
+  return '';
 };
 
 // 將帳號轉為指定字數間帶有分隔符 (-) 之顯示方式
-export const accountFormatter = (account) => `${account.slice(0, 3)}-${account.slice(3, 6)}-${account.slice(6)}`;
+export const accountFormatter = (account) => (
+  account ? `${account.slice(0, 3)}-${account.slice(3, 6)}-${account.slice(6)}` : '-'
+);
 
 // 將日期格式轉為 YYYY/MM/DD 字串
 export const dateFormatter = (date) => {

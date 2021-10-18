@@ -1,45 +1,33 @@
 import * as types from './types';
 
 const initState = {
-  cards: [],
-  cardInfo: null,
-  transactionDetailAreaHeight: 0,
-  computedCardList: null,
-  interestPanelTitle: '優惠利率',
-  interestPanelContent: '',
+  debitCards: [],
+  selectedAccount: {},
+  txnDetails: [],
+  txnMonthly: [],
 };
 
 const reducers = (state = initState, action) => {
   switch (action.type) {
-    case types.SET_CARDS:
+    case types.SET_DEBIT_CARDS:
       return {
         ...state,
-        cards: action.payload,
+        debitCards: action.payload,
       };
-    case types.SET_CARD_INFO:
+    case types.SET_SELECTED_ACCOUNT:
       return {
         ...state,
-        cardInfo: action.payload,
+        selectedAccount: action.payload,
       };
-    case types.SET_DETAIL_AREA_HEIGHT:
+    case types.SET_TXN_DETAILS:
       return {
         ...state,
-        transactionDetailAreaHeight: action.payload,
+        txnDetails: action.payload,
       };
-    case types.SET_COMPUTED_CARD_LIST:
+    case types.SET_TXN_MONTHLY:
       return {
         ...state,
-        computedCardList: action.payload,
-      };
-    case types.SET_INTEREST_PANEL_TITLE:
-      return {
-        ...state,
-        interestPanelTitle: action.payload,
-      };
-    case types.SET_INTEREST_PANEL_CONTENT:
-      return {
-        ...state,
-        interestPanelContent: action.payload,
+        txnMonthly: action.payload,
       };
     default:
       return state;
