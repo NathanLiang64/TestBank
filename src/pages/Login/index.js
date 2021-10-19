@@ -1,31 +1,29 @@
 /* eslint-disable radix,no-restricted-globals */
+import { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { setShowSpinner } from 'components/Spinner/stores/actions';
 import { useHistory } from 'react-router';
-import { useCheckLocation, usePageInfo } from 'hooks';
+import { useSelector, useDispatch } from 'react-redux';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { setShowSpinner } from 'components/Spinner/stores/actions';
+import { useCheckLocation, usePageInfo } from 'hooks';
 // import { userLogin } from 'apis/loginApi';
 import {
-  ArrowForwardRounded,
-  RadioButtonUnchecked,
-  RadioButtonChecked,
-} from '@material-ui/icons';
-import PasswordInput from 'components/PasswordInput';
-import {
-  FEIBInput, FEIBInputLabel, FEIBErrorMessage,
-  FEIBLinkButton, FEIBCheckbox, FEIBCheckboxLabel,
+  FEIBInput, FEIBErrorMessage, FEIBLinkButton, FEIBCheckbox, FEIBCheckboxLabel, FEIBIconButton,
 } from 'components/elements';
+import {
+  ArrowBackIcon, ArrowNextIcon, CheckboxCheckedIcon, CheckboxUncheckedIcon, FaceIdIcon, VisibilityIcon, VisibilityOffIcon,
+} from 'assets/images/icons';
 // import e2ee from 'utilities/E2ee';
+import { setFavoriteDrawer } from 'pages/Favorite/stores/actions';
 import getJwtKey from 'utilities/DoGetToken';
-import theme from 'themes/theme';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Controller, useForm } from 'react-hook-form';
-import { useEffect } from 'react';
 import { goToFunc } from 'utilities/BankeePlus';
+import { accountValidation, identityValidation, passwordValidation } from 'utilities/validation';
+import theme from 'themes/theme';
+import Logo from 'assets/images/logoTransparent.png';
+import BgImage from 'assets/images/loginBackground.png';
 import LoginWrapper from './login.style';
-import { accountValidation, identityValidation, passwordValidation } from '../../utilities/validation';
-import { setFavoriteDrawer } from '../Favorite/stores/actions';
 
 // import CipherUtil from '../../utilities/CipherUtil';
 // import userAxios from '../../apis/axiosConfig';
@@ -36,15 +34,16 @@ const Login = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    ...identityValidation,
-    ...accountValidation,
-    ...passwordValidation,
+    ...identityValidation, ...accountValidation, ...passwordValidation,
   });
   const {
     control, handleSubmit, setValue, formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
+
+  const [showUserId, setShowUserId] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -126,44 +125,25 @@ const Login = () => {
       : (
         <LoginWrapper fullScreen>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="title">
-              <h3>Hello !</h3>
-              <p>To be Friendlier & Smarter</p>
+            <div className="head">
+              <img src={Logo} alt="logo" />
+              <span>Bankee 我們的社群銀行</span>
             </div>
 
             <div className="formItems" style={{ width: '100%' }}>
-              <div style={{ width: '100%' }}>
-                <FEIBInputLabel
-                  htmlFor="identity"
-                  $color={theme.colors.basic.white}
-                >
-                  身分證字號
-                </FEIBInputLabel>
+              <div>
                 <Controller
                   name="identity"
                   control={control}
                   defaultValue=""
                   render={({ field }) => (
-                    <FEIBInput
-                      {...field}
-                      id="identity"
-                      name="identity"
-                      $color={theme.colors.basic.white}
-                      $borderColor={theme.colors.basic.white}
-                      onBlur={(e) => upperId(e)}
-                    />
+                    <FEIBInput {...field} id="identity" name="identity" placeholder="身分證字號/手機號碼" onBlur={(e) => upperId(e)} />
                   )}
                 />
                 <FEIBErrorMessage>{errors.identity?.message}</FEIBErrorMessage>
               </div>
 
-              <div style={{ width: '100%' }}>
-                <FEIBInputLabel
-                  htmlFor="account"
-                  $color={theme.colors.basic.white}
-                >
-                  使用者代號
-                </FEIBInputLabel>
+              <div>
                 <Controller
                   name="account"
                   control={control}
@@ -173,63 +153,70 @@ const Login = () => {
                       {...field}
                       id="account"
                       name="account"
-                      $color={theme.colors.basic.white}
-                      $borderColor={theme.colors.basic.white}
+                      placeholder="使用者代號"
+                      type={showUserId ? 'text' : 'password'}
+                      $icon={showUserId ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                      $iconOnClick={() => setShowUserId(!showUserId)}
                     />
                   )}
                 />
                 <FEIBErrorMessage>{errors.account?.message}</FEIBErrorMessage>
               </div>
 
-              <div style={{ width: '100%' }}>
-                <PasswordInput
-                  label="密碼"
-                  id="password"
+              <div>
+                <Controller
+                  name="password"
                   control={control}
-                  color={theme.colors.basic.white}
-                  borderColor={theme.colors.basic.white}
-                  placeholder=" "
-                  errorMessage={errors.password?.message}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <FEIBInput
+                      {...field}
+                      id="password"
+                      name="password"
+                      placeholder="密碼"
+                      type={showPassword ? 'text' : 'password'}
+                      $icon={showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                      $iconOnClick={() => setShowPassword(!showPassword)}
+                    />
+                  )}
                 />
+                <FEIBErrorMessage>{errors.password?.message}</FEIBErrorMessage>
               </div>
 
-              <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-                <div>
-                  <FEIBCheckboxLabel
-                    control={(
-                      <FEIBCheckbox
-                        $iconColor={theme.colors.basic.white}
-                        icon={<RadioButtonUnchecked />}
-                        checkedIcon={<RadioButtonChecked />}
-                      />
-                    )}
-                    label="記住我的身分"
-                    $color={theme.colors.basic.white}
-                  />
-                </div>
+              <div className="rememberAccountArea">
+                <FEIBCheckboxLabel
+                  control={<FEIBCheckbox icon={<CheckboxUncheckedIcon />} checkedIcon={<CheckboxCheckedIcon />} />}
+                  label="記住我的身分"
+                />
                 <div className="forgot">
-                  <FEIBLinkButton $color={theme.colors.basic.white}>忘記使用者代號或密碼</FEIBLinkButton>
+                  <FEIBLinkButton $color={theme.colors.text.lightGray}>
+                    忘記帳號或密碼
+                    <ArrowNextIcon />
+                  </FEIBLinkButton>
                 </div>
               </div>
             </div>
 
             <div className="controlButtons">
               <div className="login">
+                <FEIBIconButton
+                  className="fastLogin"
+                  $fontSize={2.4}
+                  // onClick={onClose}
+                >
+                  <FaceIdIcon />
+                </FEIBIconButton>
                 <button type="submit">
                   登入
-                  <ArrowForwardRounded />
+                  <ArrowBackIcon />
                 </button>
               </div>
               <div className="signup">
-                <span>還沒有帳號嗎？</span>
-                <FEIBLinkButton
-                  className="boldLink"
-                  $color={theme.colors.text.link}
-                >
-                  Sign up!
-                </FEIBLinkButton>
+                <span>還沒有帳號？</span>
+                <FEIBLinkButton $color={theme.colors.text.link}>立即申請</FEIBLinkButton>
               </div>
             </div>
+            <img src={BgImage} alt="logo" className="backgroundImage" />
           </form>
         </LoginWrapper>
       )

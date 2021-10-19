@@ -6,21 +6,22 @@ const HeaderWrapper = styled.header`
   left: 0;
   width: 100%;
   height: 4.4rem;
+  padding: .8rem;
   background: ${({ theme }) => theme.colors.basic.white};
   z-index: 1000;
   
   .goBack,
-  .goHome,
-  h2 {
+  .goHome {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
   }
   
   h2 {
+    position: absolute;
+    top: 52%;
     left: 50%;
     font-size: 1.8rem;
-    font-weight: 300;
     letter-spacing: .04rem;
     color: ${({ theme }) => theme.colors.text.dark};
     transform: translate(-50%, -50%);
@@ -29,7 +30,12 @@ const HeaderWrapper = styled.header`
   .goHome {
     position: absolute;
     top: 50%;
-    right: 0;
+    right: .8rem;
+  }
+  
+  .Icon {
+    font-size: 2.4rem;
+    color: ${({ theme }) => theme.colors.text.dark};
   }
 `;
 

@@ -1,9 +1,8 @@
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
-import { ArrowBack, Home } from '@material-ui/icons';
 import { FEIBIconButton } from 'components/elements';
 import { closeFunc } from 'utilities/BankeePlus';
-
+import { ArrowBackIcon, HomeIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
 import HeaderWrapper from './header.style';
 
@@ -38,9 +37,9 @@ const Header = () => {
 
   return (
     <HeaderWrapper>
-      { !isHomePage && renderIconButton('goBack', <ArrowBack />) }
+      { !isHomePage && renderIconButton('goBack', <ArrowBackIcon />) }
       <h2>{title}</h2>
-      { !isHomePage && renderIconButton('goHome', <Home />) }
+      { !isHomePage && renderIconButton('goHome', <HomeIcon />) }
     </HeaderWrapper>
   );
 };
