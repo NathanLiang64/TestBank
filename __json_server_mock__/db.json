@@ -5237,6 +5237,11 @@
     "title": "社群圈",
     "route": "/network"
   },
+  "taiwanDollarAccount": {
+    "name": "TaiwanDollarAccount",
+    "title": "帳戶",
+    "route": "/taiwanDollarAccount"
+  },
   "tradingAccount": {
     "name": "TradingAccount",
     "title": "證券交割戶",

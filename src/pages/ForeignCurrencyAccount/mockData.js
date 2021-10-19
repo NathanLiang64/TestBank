@@ -4,7 +4,7 @@ const mockData = {
       id: '1',
       acctBranch: '信義分行',
       acctName: '英鎊',
-      acctId: '04300499001234',
+      acctId: '04300499312641',
       acctType: '004',
       acctBalx: 5340.56,
       ccyCd: 'GBP',
@@ -15,14 +15,13 @@ const mockData = {
       moreList: [
         { title: 'MasterCard Send Cross Border', path: '/', icon: 'radio_button_unchecked' },
         { title: '設定為主要外幣帳戶', path: '/', icon: 'radio_button_unchecked' },
-        { title: '帳戶名稱編輯', path: '/', icon: 'radio_button_unchecked' },
       ],
     },
     {
       id: '2',
       acctBranch: '中山分行',
       acctName: '日幣',
-      acctId: '04100499005678',
+      acctId: '04300490004059',
       acctType: '004',
       acctBalx: 53640.56,
       ccyCd: 'JPY',
@@ -33,14 +32,13 @@ const mockData = {
       moreList: [
         { title: 'MasterCard Send Cross Border', path: '/', icon: 'radio_button_unchecked' },
         { title: '設定為主要外幣帳戶', path: '/', icon: 'radio_button_unchecked' },
-        { title: '帳戶名稱編輯', path: '/', icon: 'radio_button_unchecked' },
       ],
     },
     {
       id: '3',
       acctBranch: '松江分行',
       acctName: '歐元',
-      acctId: '01500499001234',
+      acctId: '00100100063106',
       acctType: '004',
       acctBalx: 836.13,
       ccyCd: 'EUR',
@@ -51,7 +49,6 @@ const mockData = {
       moreList: [
         { title: 'MasterCard Send Cross Border', path: '/', icon: 'radio_button_unchecked' },
         { title: '設定為主要外幣帳戶', path: '/', icon: 'radio_button_unchecked' },
-        { title: '帳戶名稱編輯', path: '/', icon: 'radio_button_unchecked' },
       ],
     },
   ],
