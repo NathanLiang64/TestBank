@@ -26,7 +26,7 @@ const Nav = () => {
       </Accordion>
 
       <Accordion title="驗收單元功能清單 (2)" space="bottom">
-        <Link to="/depositOverview">D01 存款卡（母帳戶）</Link>
+        <Link to="/taiwanDollarAccount">D01 存款卡（母帳戶）</Link>
         <Link to="/billPay">D06-5 信用卡-繳費</Link>
         <Link to="/adjustment">D06-7 信用卡-額度臨調</Link>
         <Link to="/loanInquiry">D07-1 貸款應繳查詢</Link>

@@ -13,7 +13,7 @@ const mockData = {
         {
           id: 'account2',
           label: '台幣活存',
-          route: '/depositOverview',
+          route: '/taiwanDollarAccount',
         },
         {
           id: 'account3',
