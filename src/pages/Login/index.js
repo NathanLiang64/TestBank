@@ -25,6 +25,7 @@ import { useEffect } from 'react';
 import { goToFunc } from 'utilities/BankeePlus';
 import LoginWrapper from './login.style';
 import { accountValidation, identityValidation, passwordValidation } from '../../utilities/validation';
+import { setFavoriteDrawer } from '../Favorite/stores/actions';
 
 // import CipherUtil from '../../utilities/CipherUtil';
 // import userAxios from '../../apis/axiosConfig';
@@ -51,7 +52,13 @@ const Login = () => {
   useEffect(() => {
     // getJwtKey();
     dispatch(setShowSpinner(false));
+
+    // 避免我的最愛 catch 住，在開啟 APP 後就顯示
+    dispatch(setFavoriteDrawer({
+      title: '我的最愛', open: false, content: '', back: null,
+    }));
   }, []);
+
   const userInfo = useSelector(({ login }) => login.userInfo);
 
   const upperId = (e) => {

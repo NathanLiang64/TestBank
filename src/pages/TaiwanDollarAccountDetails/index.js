@@ -1,19 +1,19 @@
 import { useSelector } from 'react-redux';
 import AccountDetails from 'components/AccountDetails';
-import { getTransactionDetails } from 'apis/foreignCurrencyAccountApi';
+import { getTransactionDetails } from 'apis/taiwanDollarAccountApi';
 import { useCheckLocation, usePageInfo } from 'hooks';
 
-const ForeignCurrencyAccountDetails = () => {
-  const selectedAccount = useSelector(({ foreignCurrencyAccount }) => foreignCurrencyAccount.selectedAccount);
-  const txnDetails = useSelector(({ foreignCurrencyAccount }) => foreignCurrencyAccount.txnDetails);
-  const txnMonthly = useSelector(({ foreignCurrencyAccount }) => foreignCurrencyAccount.txnMonthly);
+const TaiwanDollarAccountDetails = () => {
+  const selectedAccount = useSelector(({ taiwanDollarAccount }) => taiwanDollarAccount.selectedAccount);
+  const txnDetails = useSelector(({ taiwanDollarAccount }) => taiwanDollarAccount.txnDetails);
+  const txnMonthly = useSelector(({ taiwanDollarAccount }) => taiwanDollarAccount.txnMonthly);
 
   const getDetailsByConditions = (conditions) => (
     getTransactionDetails(conditions).then((response) => response)
   );
 
   useCheckLocation();
-  usePageInfo('/api/foreignCurrencyAccountDetails');
+  usePageInfo('/api/taiwanDollarAccountDetails');
 
   return (
     <AccountDetails
@@ -23,9 +23,9 @@ const ForeignCurrencyAccountDetails = () => {
       onTabClick={getDetailsByConditions}
       onScroll={getDetailsByConditions}
       onSearch={getDetailsByConditions}
-      cardColor="blue"
+      cardColor="purple"
     />
   );
 };
 
-export default ForeignCurrencyAccountDetails;
+export default TaiwanDollarAccountDetails;

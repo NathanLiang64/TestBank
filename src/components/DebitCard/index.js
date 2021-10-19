@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Icon } from '@material-ui/core';
 import {
-  Visibility, VisibilityOff, MoreVert, SystemUpdate, Edit,
+  Visibility, VisibilityOff, MoreVert, Edit,
 } from '@material-ui/icons';
 import BottomDrawer from 'components/BottomDrawer';
 import Dialog from 'components/Dialog';
@@ -61,12 +61,6 @@ const DebitCard = ({
 
   const handleClickShowBalance = () => {
     setShowBalance(!showBalance);
-  };
-
-  const handleClickDownloadBankbook = () => {
-    setOpenDrawer(false);
-    // 存摺封面下載
-    // window.location.href = 'http://114.32.27.40:8080/test/downloadPDF';
   };
 
   const handleClickEditCardName = () => {
@@ -143,20 +137,12 @@ const DebitCard = ({
       {/* 下方為功能列表內的固定功能 */}
       {
         moreDefault && (
-          <>
-            <li onClick={handleClickDownloadBankbook}>
-              <p>
-                <SystemUpdate />
-                存摺封面下載
-              </p>
-            </li>
-            <li onClick={handleClickEditCardName}>
-              <p>
-                <Edit />
-                帳戶名稱編輯
-              </p>
-            </li>
-          </>
+          <li onClick={handleClickEditCardName}>
+            <p>
+              <Edit />
+              帳戶名稱編輯
+            </p>
+          </li>
         )
       }
     </ul>

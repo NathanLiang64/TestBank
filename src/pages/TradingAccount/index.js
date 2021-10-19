@@ -1,132 +1,62 @@
-import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import AccountOverview from 'components/AccountOverview';
 import { useCheckLocation, usePageInfo } from 'hooks';
-import { ArrowForwardIos } from '@material-ui/icons';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import DebitCard from 'components/DebitCard';
-import DetailCard from 'components/DetailCard';
-// import { getTradingAccounts, getTransactionDetails } from 'apis/tradingAccountApi';
+import { getTransactionDetails } from 'apis/tradingAccountApi';
 import mockData from './mockData';
-
-/* Styles */
-import TradingAccountWrapper from './tradingAccount.style';
+import {
+  setDebitCards, setSelectedAccount, setTransactionDetails, setTransactionMonthly,
+} from './stores/actions';
 
 const TradingAccount = () => {
-  const [debitCards, setDebitCards] = useState([]);
-  const [details, setDetails] = useState([]);
-  const [computedDetails, setComputedDetails] = useState([]);
-  const [detailAreaHeight, setDetailAreaHeight] = useState(0);
+  const debitCards = useSelector(({ tradingAccount }) => tradingAccount.debitCards);
+  const selectedAccount = useSelector(({ tradingAccount }) => tradingAccount.selectedAccount);
+  const txnDetails = useSelector(({ tradingAccount }) => tradingAccount.txnDetails);
 
-  const ref = useRef();
+  const dispatch = useDispatch();
 
-  // eslint-disable-next-line no-unused-vars
-  const handleChangeSlide = (swiper) => {};
-
-  const renderDetailCardList = (list) => list.map((detail) => (
-    <DetailCard
-      key={detail.index}
-      avatar={detail.avatar}
-      title={detail.description}
-      type={detail.cdType}
-      date={detail.txnDate}
-      time={detail.txnTime}
-      bizDate={detail.bizDate}
-      targetBank={detail.targetBank}
-      targetAccount={detail.targetAcct}
-      targetMember={detail.targetMbrID}
-      dollarSign={detail.currency}
-      amount={detail.amount}
-      balance={detail.balance}
-    />
-  ));
-
-  const renderSingleDebitCard = (account) => (
-    <DebitCard
-      type="original"
-      branch={account.acctBranch}
-      cardName={account.acctName}
-      account={account.acctId}
-      balance={account.acctBalx}
-      functionList={account.functionList}
-      moreList={account.moreList}
-      moreDefault={false}
-      dollarSign={account.ccyCd}
-      color="yellow"
-    />
-  );
-
-  const renderMultipleDebitCards = (accounts) => (
-    <Swiper
-      slidesPerView={1.14}
-      spaceBetween={8}
-      centeredSlides
-      pagination
-      onSlideChange={handleChangeSlide}
-    >
-      { accounts.map((account) => (
-        <SwiperSlide key={account.id}>
-          { renderSingleDebitCard(account) }
-        </SwiperSlide>
-      )) }
-    </Swiper>
-  );
-
-  const renderDebitCard = (accounts) => (
-    accounts.length > 1
-      ? renderMultipleDebitCards(debitCards)
-      : renderSingleDebitCard(debitCards[0])
-  );
+  const handleChangeAccount = (swiper) => dispatch(setSelectedAccount(debitCards[swiper.activeIndex]));
 
   useCheckLocation();
   usePageInfo('/api/tradingAccount');
 
   useEffect(() => {
     /* ========== mock data (for mock api) ========== */
-    // getTradingAccounts()
-    //   .then((data) => setDebitCards(data))
-    //   .catch((error) => console.error(error));
-    //
-    // getTransactionDetails()
-    //   .then(({ acctDetails }) => setDetails(acctDetails))
+    // getForeignCurrencyAccounts()
+    //   .then((data) => dispatch(setDebitCards(data))
     //   .catch((error) => console.error(error));
 
     /* ========== mock data (for prototype) ========== */
-    const { getTradingAccounts, getTransactionDetails } = mockData;
-    setDebitCards(getTradingAccounts);
-    setDetails(getTransactionDetails.acctDetails);
+    const { getTradingAccounts } = mockData;
+    dispatch(setDebitCards(getTradingAccounts));
   }, []);
 
-  // 取得帳號資料後，計算 transactionDetail DOM 高度
+  // 取得帳號資料後，預設選擇第一組帳號
   useEffect(() => {
-    if (debitCards.length) {
-      const { offsetHeight } = ref.current;
-      setDetailAreaHeight(offsetHeight);
-    }
+    if (debitCards?.length) dispatch(setSelectedAccount(debitCards[0]));
   }, [debitCards]);
 
-  // 根據剩餘高度計算要顯示的卡片數量，計算裝置可容納的交易明細卡片數量
-  useEffect(async () => {
-    if (details.length) {
-      const list = [];
-      const computedCount = Math.floor((detailAreaHeight - 32) / 80);
-      for (let i = 0; i < computedCount; i++) list.push(details[i]);
-      setComputedDetails(list);
+  // 根據當前帳戶取得交易明細資料及優惠利率數字
+  useEffect(() => {
+    if (selectedAccount) {
+      const requestData = { account: selectedAccount.acctId };
+      getTransactionDetails(requestData)
+        .then(({ monthly, acctDetails }) => {
+          dispatch(setTransactionMonthly(monthly));
+          dispatch(setTransactionDetails(acctDetails));
+        });
     }
-  }, [details, detailAreaHeight]);
+  }, [selectedAccount]);
 
   return (
-    <TradingAccountWrapper small $multipleCardsStyle={debitCards.length > 1}>
-      <div className="userCardArea">
-        { debitCards.length ? renderDebitCard(debitCards) : null }
-      </div>
-      <div className="transactionDetail" ref={ref}>
-        { computedDetails.length ? renderDetailCardList(computedDetails) : null }
-        <Link className="moreButton" to="/tradingAccount">
-          更多明細
-          <ArrowForwardIos />
-        </Link>
-      </div>
-    </TradingAccountWrapper>
+    <AccountOverview
+      accounts={debitCards}
+      selectedAccount={selectedAccount}
+      onAccountChange={handleChangeAccount}
+      details={txnDetails}
+      detailsLink="/tradingAccountDetails"
+      cardColor="yellow"
+    />
   );
 };
 

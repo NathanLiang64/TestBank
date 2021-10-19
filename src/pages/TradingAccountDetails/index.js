@@ -1,19 +1,19 @@
 import { useSelector } from 'react-redux';
 import AccountDetails from 'components/AccountDetails';
-import { getTransactionDetails } from 'apis/foreignCurrencyAccountApi';
+import { getTransactionDetails } from 'apis/tradingAccountApi';
 import { useCheckLocation, usePageInfo } from 'hooks';
 
-const ForeignCurrencyAccountDetails = () => {
-  const selectedAccount = useSelector(({ foreignCurrencyAccount }) => foreignCurrencyAccount.selectedAccount);
-  const txnDetails = useSelector(({ foreignCurrencyAccount }) => foreignCurrencyAccount.txnDetails);
-  const txnMonthly = useSelector(({ foreignCurrencyAccount }) => foreignCurrencyAccount.txnMonthly);
+const TradingAccountDetails = () => {
+  const selectedAccount = useSelector(({ tradingAccount }) => tradingAccount.selectedAccount);
+  const txnDetails = useSelector(({ tradingAccount }) => tradingAccount.txnDetails);
+  const txnMonthly = useSelector(({ tradingAccount }) => tradingAccount.txnMonthly);
 
   const getDetailsByConditions = (conditions) => (
     getTransactionDetails(conditions).then((response) => response)
   );
 
   useCheckLocation();
-  usePageInfo('/api/foreignCurrencyAccountDetails');
+  usePageInfo('/api/tradingAccountDetails');
 
   return (
     <AccountDetails
@@ -23,9 +23,9 @@ const ForeignCurrencyAccountDetails = () => {
       onTabClick={getDetailsByConditions}
       onScroll={getDetailsByConditions}
       onSearch={getDetailsByConditions}
-      cardColor="blue"
+      cardColor="yellow"
     />
   );
 };
 
-export default ForeignCurrencyAccountDetails;
+export default TradingAccountDetails;

@@ -1,9 +1,9 @@
+import userAxios from 'apis/axiosConfig';
 import axios from 'axios';
-import userAxios from './axiosConfig';
 
-// 取得所有證券交割帳號
-export const getTradingAccounts = async () => (
-  await userAxios.get('/api/getTradingAccounts')
+// 取得所有台幣帳號
+export const getAccounts = async () => (
+  await userAxios.get('/api/getAccounts')
     .then((response) => response.data)
     .catch((error) => error)
 );

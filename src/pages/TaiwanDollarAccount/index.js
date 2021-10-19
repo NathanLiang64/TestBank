@@ -2,33 +2,32 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AccountOverview from 'components/AccountOverview';
 import { useCheckLocation, usePageInfo } from 'hooks';
-import { getTransactionDetails } from 'apis/foreignCurrencyAccountApi';
+import { getTransactionDetails } from 'apis/taiwanDollarAccountApi';
 import mockData from './mockData';
 import {
   setDebitCards, setSelectedAccount, setTransactionDetails, setTransactionMonthly,
 } from './stores/actions';
 
-const ForeignCurrencyAccount = () => {
-  const debitCards = useSelector(({ foreignCurrencyAccount }) => foreignCurrencyAccount.debitCards);
-  const selectedAccount = useSelector(({ foreignCurrencyAccount }) => foreignCurrencyAccount.selectedAccount);
-  const txnDetails = useSelector(({ foreignCurrencyAccount }) => foreignCurrencyAccount.txnDetails);
+const TaiwanDollarAccount = () => {
+  const debitCards = useSelector(({ taiwanDollarAccount }) => taiwanDollarAccount.debitCards);
+  const selectedAccount = useSelector(({ taiwanDollarAccount }) => taiwanDollarAccount.selectedAccount);
+  const txnDetails = useSelector(({ taiwanDollarAccount }) => taiwanDollarAccount.txnDetails);
 
   const dispatch = useDispatch();
 
   const handleChangeAccount = (swiper) => dispatch(setSelectedAccount(debitCards[swiper.activeIndex]));
 
   useCheckLocation();
-  usePageInfo('/api/foreignCurrencyAccount');
+  usePageInfo('/api/taiwanDollarAccount');
 
+  // 首次加載時取得用戶所有帳號
   useEffect(() => {
     /* ========== mock data (for mock api) ========== */
-    // getForeignCurrencyAccounts()
-    //   .then((data) => dispatch(setDebitCards(data))
-    //   .catch((error) => console.error(error));
+    // getAccounts().then((response) => dispatch(setDebitCards(response));
 
     /* ========== mock data (for prototype) ========== */
-    const { getForeignCurrencyAccounts } = mockData;
-    dispatch(setDebitCards(getForeignCurrencyAccounts));
+    const { getAccounts } = mockData;
+    dispatch(setDebitCards(getAccounts));
   }, []);
 
   // 取得帳號資料後，預設選擇第一組帳號
@@ -54,10 +53,11 @@ const ForeignCurrencyAccount = () => {
       selectedAccount={selectedAccount}
       onAccountChange={handleChangeAccount}
       details={txnDetails}
-      detailsLink="/foreignCurrencyAccountDetails"
-      cardColor="blue"
+      detailsLink="/taiwanDollarAccountDetails"
+      cardColor="purple"
+      showInterestRatePanel
     />
   );
 };
 
-export default ForeignCurrencyAccount;
+export default TaiwanDollarAccount;

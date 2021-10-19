@@ -10,8 +10,8 @@ import LossReissue2 from 'pages/LossReissue/lossReissue_2';
 import AccountMaintenance from 'pages/AccountMaintenance';
 import BillPay from 'pages/BillPay';
 import BillPay1 from 'pages/BillPay/billPay_1';
-import DepositOverview from 'pages/DepositOverview';
-import DepositInquiry from 'pages/DepositInquiry';
+// import DepositOverview from 'pages/DepositOverview';
+// import DepositInquiry from 'pages/DepositInquiry';
 import DepositPlus from 'pages/DepositPlus';
 import NicknameSetting from 'pages/NicknameSetting';
 import NoticeSetting from 'pages/NoticeSetting';
@@ -50,6 +50,9 @@ import More from 'pages/More';
 import FinancialDepartments from 'pages/FinancialDepartments';
 import Network from 'pages/Network';
 import TradingAccount from 'pages/TradingAccount';
+import TradingAccountDetails from 'pages/TradingAccountDetails';
+import TaiwanDollarAccount from 'pages/TaiwanDollarAccount';
+import TaiwanDollarAccountDetails from 'pages/TaiwanDollarAccountDetails';
 import ForeignCurrencyAccount from 'pages/ForeignCurrencyAccount';
 import ForeignCurrencyAccountDetails from 'pages/ForeignCurrencyAccountDetails';
 import RegularBasicInformation from 'pages/RegularBasicInformation';
@@ -91,8 +94,8 @@ const routes = [
   { path: '/accountMaintenance', exact: false, component: AccountMaintenance },
   { path: '/billPay', exact: true, component: BillPay },
   { path: '/billPay1', exact: false, component: BillPay1 },
-  { path: '/depositOverview', exact: false, component: DepositOverview },
-  { path: '/depositInquiry', exact: false, component: DepositInquiry },
+  // { path: '/depositOverview', exact: false, component: DepositOverview },
+  // { path: '/depositInquiry', exact: false, component: DepositInquiry },
   { path: '/depositPlus', exact: false, component: DepositPlus },
   { path: '/noticeSetting', exact: true, component: NoticeSetting },
   { path: '/nicknameSetting', exact: false, component: NicknameSetting },
@@ -130,7 +133,10 @@ const routes = [
   { path: '/more', exact: false, component: More },
   { path: '/financialDepartments', exact: false, component: FinancialDepartments },
   { path: '/network', exact: false, component: Network },
+  { path: '/taiwanDollarAccount', exact: false, component: TaiwanDollarAccount },
+  { path: '/taiwanDollarAccountDetails', exact: false, component: TaiwanDollarAccountDetails },
   { path: '/tradingAccount', exact: false, component: TradingAccount },
+  { path: '/tradingAccountDetails', exact: false, component: TradingAccountDetails },
   { path: '/foreignCurrencyAccount', exact: false, component: ForeignCurrencyAccount },
   { path: '/foreignCurrencyAccountDetails', exact: false, component: ForeignCurrencyAccountDetails },
   { path: '/regularBasicInformation', exact: false, component: RegularBasicInformation },

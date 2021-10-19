@@ -18,7 +18,7 @@ const Exchange1 = () => {
   const isSuccess = true;
 
   const toTradeDetailPage = () => {
-    history.push('depositInquiry');
+    history.push('/taiwanDollarAccountDetails');
   };
 
   const toExchangePage = () => {

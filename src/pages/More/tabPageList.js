@@ -11,7 +11,7 @@ const tabPageList = {
       {
         value: '1',
         label: '台幣活存',
-        route: '/depositOverview',
+        route: '/taiwanDollarAccount',
       },
       {
         value: '2',
