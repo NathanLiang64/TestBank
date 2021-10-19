@@ -10,6 +10,7 @@ import { setIsPasswordRequired, setResult } from 'components/PasswordDrawer/stor
 import { dateFormatter, weekNumberToChinese } from 'utilities/Generator';
 import { directTo } from 'utilities/mockWebController';
 import TransferWrapper, { TransferMOTPDialogWrapper } from './transfer.style';
+import { doNtdTrConfirm, doBookNtdTrConfirm } from '../../apis/transferApi';
 
 const Transfer1 = () => {
   const [openMOTPDialog, setOpenMOTPDialog] = useState(false);
@@ -84,8 +85,20 @@ const Transfer1 = () => {
     return count;
   };
 
-  const handleClickTransferButton = () => {
-    if (fastLogin || !motp) dispatch(setIsPasswordRequired(true));
+  const handleClickTransferButton = async () => {
+    console.log(displayInfo);
+    const data = {
+      outAcctNo: displayInfo.receivingAccount, inBank: displayInfo.bankNo, inAcctNo: displayInfo.receivingAccount, amount: displayInfo.money.replace('$', ''), memo: displayInfo.remark, deviceId: '131313', isQRCode: false, isMotpOpen: false,
+    };
+
+    if (displayInfo.transferType === 'reserve') {
+      const ntdTrConfirmResponse = await doBookNtdTrConfirm(data);
+      console.log(ntdTrConfirmResponse);
+    } else {
+      const ntdTrConfirmResponse = await doNtdTrConfirm(data);
+      console.log(ntdTrConfirmResponse);
+      if (fastLogin || !motp) dispatch(setIsPasswordRequired(true));
+    }
   };
 
   const onSubmit = () => setOpenMOTPDialog(true);
@@ -139,10 +152,11 @@ const Transfer1 = () => {
     } = state;
 
     if (transactionFrequency && transactionCycle) {
+      console.log('149', bankCode);
       setDisplayInfo({
         ...displayInfo,
         money: `$${transferAmount}` || '',
-        bankNo: bankCode.bankNo,
+        bankNo: bankCode.bankId,
         bankName: bankCode.bankName,
         date: transferType === 'now' || transactionNumber === 'once'
           ? dateFormatter(transactionDate)
@@ -160,10 +174,13 @@ const Transfer1 = () => {
         transferType,
       });
     } else {
+      console.log('171', bankCode);
+      if (bankCode.bankNo !== undefined)bankCode.bankId = bankCode.bankNo;
       setDisplayInfo({
+
         ...displayInfo,
         money: `$${transferAmount}` || '',
-        bankNo: bankCode.bankNo,
+        bankNo: bankCode.bankId,
         bankName: bankCode.bankName,
         date: transferType === 'now' || transactionNumber === 'once'
           ? dateFormatter(transactionDate)

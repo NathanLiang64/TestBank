@@ -7,7 +7,7 @@ import Avatar from 'components/Avatar';
 import {
   FEIBButton, FEIBErrorMessage, FEIBInput, FEIBInputLabel,
 } from 'components/elements';
-import { doGetInitData } from 'apis/transferApi';
+import { queryRegAcct } from 'apis/transferApi';
 import { nicknameValidation } from 'utilities/validation';
 import { setOpenDrawer, setClickMoreOptions } from '../Transfer/stores/actions';
 
@@ -50,7 +50,8 @@ const TransferDesignedAccount = () => {
   useEffect(async () => {
     const { add, edit } = clickMoreOptions;
     if (edit.click && edit.target) {
-      const response = await doGetInitData('/api/getDesignedAcct');
+      const response = await queryRegAcct({});
+
       if (response) {
         const currenTarget = response.designedAcctList.find((member) => member.id === edit.target);
         setTargetMember(currenTarget);

@@ -9,7 +9,7 @@ import {
   FEIBButton, FEIBErrorMessage, FEIBInput, FEIBInputLabel,
 } from 'components/elements';
 import { bankAccountValidation, bankCodeValidation, nicknameValidation } from 'utilities/validation';
-import { doGetInitData, insertFacAcct } from 'apis/transferApi';
+import { getFavAcct, insertFacAcct } from 'apis/transferApi';
 import { setOpenDrawer, setClickMoreOptions } from '../Transfer/stores/actions';
 
 const TransferFrequentlyUsedAccount = () => {
@@ -49,7 +49,7 @@ const TransferFrequentlyUsedAccount = () => {
   useEffect(async () => {
     const { edit } = clickMoreOptions;
     if (edit.click && edit.target) {
-      const response = await doGetInitData('/api/getFavoriteAcct');
+      const response = await getFavAcct({});
       if (response) {
         console.log(response);
         const currenTarget = response.favoriteAcctList.find((member) => member.id === edit.target);
