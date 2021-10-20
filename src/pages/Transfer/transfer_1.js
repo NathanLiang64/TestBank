@@ -85,38 +85,58 @@ const Transfer1 = () => {
     return count;
   };
 
-  const doMonthlyData = (data) => {
-    const mothlyData = { data };
-    return mothlyData;
+  const addZero = (num) => {
+    if (parseInt(num, 10) < 10) {
+      num = `0${num}`;
+    }
+    return num;
   };
 
-  const doWeeklyData = (data) => {
-    console.log('doWeeklyData', data);
-    data.bookType = 'W';
-    data.dayOfW = `0${data.transactionCycle}`;
-    const startDate = data.tranceDate[0];
-    const endDate = data.tranceDate[1];
+  const doMonthlyData = (displayOriginInfo, data) => {
+    console.log('doMonthlyData', data);
+    data.bookType = 'M';
+    data.dayOfM = addZero(displayOriginInfo.transactionCycle);
+    const startDate = displayOriginInfo.tranceDate[0];
+    const endDate = displayOriginInfo.tranceDate[1];
     data.startDate = startDate;
     data.endDate = endDate;
     data.deviceId = 'test';
     return data;
   };
 
-  const doMakeResrveData = (data) => {
+  const doWeeklyData = (displayOriginInfo, data) => {
+    console.log('doWeeklyData', data);
+    data.bookType = 'W';
+    data.dayOfW = `0${displayOriginInfo.transactionCycle}`;
+    const startDate = displayOriginInfo.tranceDate[0];
+    const endDate = displayOriginInfo.tranceDate[1];
+    data.startDate = startDate;
+    data.endDate = endDate;
+    data.deviceId = 'test';
+    return data;
+  };
+
+  const doSingleData = (displayOriginInfo, data) => {
+    console.log('doSingleData', data);
+    data.bookType = 'S';
+    data.bookDate = displayOriginInfo.date;
+    data.deviceId = 'test';
+    return data;
+  };
+
+  const doMakeResrveData = (displayOriginInfo, data) => {
     console.log('doMakeResrveData', data);
-    switch (data.transactionFrequency) {
+    switch (displayOriginInfo.transactionFrequency) {
       case 'monthly': {
-        return doMonthlyData(data);
+        return doMonthlyData(displayOriginInfo, data);
       }
       case 'weekly': {
-        console.log('執行weekly');
-        return doWeeklyData(data);
+        return doWeeklyData(displayOriginInfo, data);
       }
 
       default:
-        break;
+        return doSingleData(displayOriginInfo, data);
     }
-    return null;
   };
 
   const handleClickTransferButton = async () => {
@@ -127,7 +147,7 @@ const Transfer1 = () => {
 
     if (displayInfo.transferType === 'reserve') {
       console.log('displayInfo', displayInfo);
-      const resrveData = doMakeResrveData(displayInfo);
+      const resrveData = doMakeResrveData(displayInfo, data);
       console.log('resrveData', resrveData);
       const ntdTrConfirmResponse = await doBookNtdTrConfirm(resrveData);
       console.log(ntdTrConfirmResponse);
@@ -189,7 +209,7 @@ const Transfer1 = () => {
     } = state;
 
     if (transactionFrequency && transactionCycle) {
-      console.log('149', bankCode);
+      if (bankCode.bankNo !== undefined)bankCode.bankId = bankCode.bankNo;
       setDisplayInfo({
         ...displayInfo,
         money: `$${transferAmount}` || '',
