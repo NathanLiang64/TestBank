@@ -11,7 +11,7 @@ const FavoriteBlockButton = ({
     onClick={onClick}
     $noBorder={noBorder}
   >
-    <span>{icon}</span>
+    {icon}
     <p>{label}</p>
     <BlockSelectedIcon className="selectedIcon" />
   </FavoriteBlockButtonStyle>
