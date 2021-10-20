@@ -17,7 +17,7 @@ const FavoriteBlockButtonStyle = styled.button.attrs({
     background: ${({ theme }) => theme.colors.primary.light};
     
     p, .Icon {
-      color: ${({ theme }) => theme.colors.basic.white};
+       color: ${({ theme }) => theme.colors.basic.white};
     }
 
     .selectedIcon {
@@ -48,7 +48,7 @@ const FavoriteBlockButtonStyle = styled.button.attrs({
     justify-content: center;
     align-items: center;
     font-size: 3.2rem;
-    //color: ${({ theme }) => theme.colors.primary.light};
+    color: ${({ theme }) => theme.colors.primary.light};
   }
   
   .selectedIcon {

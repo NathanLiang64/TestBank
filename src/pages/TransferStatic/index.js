@@ -176,6 +176,7 @@ const TransferStatic = () => {
             transferLimit={interbankTransferLimit}
             transferRemaining={interbankTransferRemaining}
             moreList={moreList}
+            dollarSign="TWD"
           />
         </SwiperSlide>
       );
