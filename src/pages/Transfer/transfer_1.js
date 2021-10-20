@@ -85,6 +85,40 @@ const Transfer1 = () => {
     return count;
   };
 
+  const doMonthlyData = (data) => {
+    const mothlyData = { data };
+    return mothlyData;
+  };
+
+  const doWeeklyData = (data) => {
+    console.log('doWeeklyData', data);
+    data.bookType = 'W';
+    data.dayOfW = `0${data.transactionCycle}`;
+    const startDate = data.tranceDate[0];
+    const endDate = data.tranceDate[1];
+    data.startDate = startDate;
+    data.endDate = endDate;
+    data.deviceId = 'test';
+    return data;
+  };
+
+  const doMakeResrveData = (data) => {
+    console.log('doMakeResrveData', data);
+    switch (data.transactionFrequency) {
+      case 'monthly': {
+        return doMonthlyData(data);
+      }
+      case 'weekly': {
+        console.log('執行weekly');
+        return doWeeklyData(data);
+      }
+
+      default:
+        break;
+    }
+    return null;
+  };
+
   const handleClickTransferButton = async () => {
     console.log(displayInfo);
     const data = {
@@ -92,7 +126,10 @@ const Transfer1 = () => {
     };
 
     if (displayInfo.transferType === 'reserve') {
-      const ntdTrConfirmResponse = await doBookNtdTrConfirm(data);
+      console.log('displayInfo', displayInfo);
+      const resrveData = doMakeResrveData(displayInfo);
+      console.log('resrveData', resrveData);
+      const ntdTrConfirmResponse = await doBookNtdTrConfirm(resrveData);
       console.log(ntdTrConfirmResponse);
     } else {
       const ntdTrConfirmResponse = await doNtdTrConfirm(data);
@@ -158,9 +195,9 @@ const Transfer1 = () => {
         money: `$${transferAmount}` || '',
         bankNo: bankCode.bankId,
         bankName: bankCode.bankName,
-        date: transferType === 'now' || transactionNumber === 'once'
+        tranceDate: transferType === 'now' || transactionNumber === 'once'
           ? dateFormatter(transactionDate)
-          : `${dateFormatter(transactionDate[0])}~${dateFormatter(transactionDate[1])}`,
+          : [dateFormatter(transactionDate[0]), dateFormatter(transactionDate[1])],
         frequency: transactionFrequency === 'monthly'
           ? `${switchFrequency(transactionFrequency)}${transactionCycle}號`
           : `${switchFrequency(transactionFrequency)}${weekNumberToChinese(transactionCycle)}`,
@@ -172,6 +209,8 @@ const Transfer1 = () => {
         depositAmount,
         transferRemaining,
         transferType,
+        transactionFrequency,
+        transactionCycle,
       });
     } else {
       console.log('171', bankCode);
@@ -192,6 +231,7 @@ const Transfer1 = () => {
         depositAmount,
         transferRemaining,
         transferType,
+        transactionFrequency,
       });
     }
   }, [state]);
