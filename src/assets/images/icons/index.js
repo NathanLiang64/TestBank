@@ -9,8 +9,15 @@ const IconWrapper = styled.span`
 const Icon = ({
   className, size, children, color,
 }) => (
-  <IconWrapper className={`Icon ${className || ''}`} $color={color} $size={size}>
-    <svg viewBox="0 0 24 24" fill="currentColor" fillRule="evenodd" clipRule="evenodd">
+  <IconWrapper className={`Icon ${className || ''}`} $color={color}>
+    <svg
+      viewBox="0 0 24 24"
+      width={size ? `${size}px` : '1em'}
+      height={size ? `${size}px` : '1em'}
+      fill="currentColor"
+      fillRule="evenodd"
+      clipRule="evenodd"
+    >
       {children}
     </svg>
   </IconWrapper>

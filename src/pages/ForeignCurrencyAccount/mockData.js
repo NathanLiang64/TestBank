@@ -9,7 +9,7 @@ const mockData = {
       acctBalx: 5340.56,
       ccyCd: 'GBP',
       functionList: [
-        { title: '轉帳', path: '/transfer', icon: null },
+        { title: '轉帳', path: '/foreignCurrencyTransfer', icon: null },
         { title: '換匯', path: '/exchange', icon: null },
       ],
       moreList: [
@@ -26,7 +26,7 @@ const mockData = {
       acctBalx: 53640.56,
       ccyCd: 'JPY',
       functionList: [
-        { title: '轉帳', path: '/transfer', icon: null },
+        { title: '轉帳', path: '/foreignCurrencyTransfer', icon: null },
         { title: '換匯', path: '/exchange', icon: null },
       ],
       moreList: [
@@ -43,7 +43,7 @@ const mockData = {
       acctBalx: 836.13,
       ccyCd: 'EUR',
       functionList: [
-        { title: '轉帳', path: '/transfer', icon: null },
+        { title: '轉帳', path: '/foreignCurrencyTransfer', icon: null },
         { title: '換匯', path: '/exchange', icon: null },
       ],
       moreList: [

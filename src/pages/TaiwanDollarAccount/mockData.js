@@ -1,3 +1,4 @@
+// TODO: 轉帳路由記得改回來
 const mockData = {
   getAccounts: [
     {
@@ -14,7 +15,7 @@ const mockData = {
       interestRate: 2.6,
       interestRateLimit: '5萬',
       functionList: [
-        { title: '轉帳', path: '/transfer', icon: null },
+        { title: '轉帳', path: '/transferStatic', icon: null },
         { title: '無卡提款', path: '/cardLessATM', icon: null },
       ],
       moreList: [

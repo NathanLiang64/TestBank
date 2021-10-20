@@ -1,3 +1,4 @@
+// TODO: 轉帳路由記得改回來
 const mockData = {
   getTradingAccounts: [
     {
@@ -9,7 +10,7 @@ const mockData = {
       acctBalx: 20000000,
       ccyCd: 'TWD',
       functionList: [
-        { title: '轉帳', path: '/transfer', icon: null },
+        { title: '轉帳', path: '/transferStatic', icon: null },
         { title: '換匯', path: '/exchange', icon: null },
       ],
       moreList: [
@@ -25,7 +26,7 @@ const mockData = {
       acctBalx: 120485,
       ccyCd: 'TWD',
       functionList: [
-        { title: '轉帳', path: '/transfer', icon: null },
+        { title: '轉帳', path: '/transferStatic', icon: null },
         { title: '換匯', path: '/exchange', icon: null },
       ],
       moreList: [
@@ -41,7 +42,7 @@ const mockData = {
       acctBalx: 28425,
       ccyCd: 'TWD',
       functionList: [
-        { title: '轉帳', path: '/transfer', icon: null },
+        { title: '轉帳', path: '/transferStatic', icon: null },
         { title: '換匯', path: '/exchange', icon: null },
       ],
       moreList: [
