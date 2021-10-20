@@ -95,9 +95,9 @@ const Favorite = () => {
       { showRemoveButton && <span className="removeButton" onClick={handleClickRemoveBlock}><RemoveRounded /></span> }
       {/* 最愛項目總數為 12，前 2 項為預設存在 (不可編輯)，背景由 index + 3 開始渲染 */}
       <img src={blockBackgroundGenerator(index + 3)} alt="block" />
-      <span className="icon">
-        {iconGenerator(block.id)}
-      </span>
+      {/*<span className="icon">*/}
+      {iconGenerator(block.id)}
+      {/*</span>*/}
       {block.label}
     </button>
   )
@@ -208,12 +208,12 @@ const Favorite = () => {
             <div className="favoriteArea" {...provided.droppableProps} ref={provided.innerRef}>
               <button type="button" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
                 <img src={blockBackgroundGenerator(1)} alt="block" />
-                <span className="icon">{iconGenerator('share')}</span>
+                {iconGenerator('share')}
                 推薦碼分享
               </button>
               <button type="button" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
                 <img src={blockBackgroundGenerator(2)} alt="block" />
-                <span className="icon">{iconGenerator('gift')}</span>
+                {iconGenerator('gift')}
                 優惠
               </button>
               { renderBlocks() }

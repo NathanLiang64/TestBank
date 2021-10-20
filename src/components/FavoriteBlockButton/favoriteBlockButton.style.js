@@ -16,7 +16,7 @@ const FavoriteBlockButtonStyle = styled.button.attrs({
     border-color: ${({ theme }) => theme.colors.primary.light};
     background: ${({ theme }) => theme.colors.primary.light};
     
-    p, span {
+    p, .Icon {
       color: ${({ theme }) => theme.colors.basic.white};
     }
 
@@ -26,7 +26,7 @@ const FavoriteBlockButtonStyle = styled.button.attrs({
   }
   
   &:disabled {
-    p, span {
+    p, .Icon {
       color: ${({ theme }) => theme.colors.text.light};
       opacity: .8;
     }
@@ -43,12 +43,12 @@ const FavoriteBlockButtonStyle = styled.button.attrs({
     color: ${({ $noBorder, theme }) => ($noBorder ? theme.colors.text.dark : theme.colors.text.light)};
   }
 
-  span {
+  .Icon {
     display: inline-flex;
     justify-content: center;
     align-items: center;
     font-size: 3.2rem;
-    color: ${({ theme }) => theme.colors.primary.light};
+    //color: ${({ theme }) => theme.colors.primary.light};
   }
   
   .selectedIcon {

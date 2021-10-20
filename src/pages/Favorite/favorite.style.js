@@ -42,6 +42,7 @@ const FavoriteDrawerWrapper = styled.div`
       height: 14.8rem;
       border-radius: .8rem;
       font-size: 1.6rem;
+      color: ${({ theme }) => theme.colors.text.lightGray};
       user-select: none;
       
       img {
@@ -51,7 +52,8 @@ const FavoriteDrawerWrapper = styled.div`
         z-index: -1;
       }
       
-      .icon {
+      .Icon {
+        margin-bottom: 1.2rem;
         font-size: 3.2rem;
         color: ${({ theme }) => theme.colors.text.lightGray};
       }
