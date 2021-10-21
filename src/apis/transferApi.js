@@ -111,3 +111,12 @@ export const doModifyFacAcct = async (params) => (
     })
     .catch((error) => error)
 );
+// 約定帳號維護
+export const doModifyRegAcct = async (params) => (
+  await userAxios.post('/api/transfer/modifyRegAcct', params)
+    .then((response) => {
+      console.log(response);
+      return response;
+    })
+    .catch((error) => error)
+);
