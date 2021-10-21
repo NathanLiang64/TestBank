@@ -50,9 +50,9 @@ const TransferDrawer = ({ setTabId }) => {
         bankName={member.bankName}
         account={member.acctId}
         avatarSrc={member.acctImg}
-        onSelect={() => handleClick('select', member.accountId)}
-        onEdit={() => handleClick('edit', member.accountId)}
-        onRemove={() => handleClick('remove', member.accountId)}
+        onSelect={() => handleClick('select', member.acctId)}
+        onEdit={() => handleClick('edit', member.acctId)}
+        onRemove={() => handleClick('remove', member.acctId)}
       />
     ))
   );

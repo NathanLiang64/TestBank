@@ -48,12 +48,15 @@ const TransferDesignedAccount = () => {
   const handleSelectAvatar = (file) => setAvatar(file);
 
   useEffect(async () => {
+    console.log('執行');
     const { add, edit } = clickMoreOptions;
+    console.log(clickMoreOptions);
     if (edit.click && edit.target) {
       const response = await queryRegAcct({});
       console.log('response', response);
       if (response) {
-        const currenTarget = response.designedAcctList.find((member) => member.id === edit.target);
+        const currenTarget = response.find((member) => member.acctId === edit.target);
+
         setTargetMember(currenTarget);
         setValue('nickname', currenTarget.acctName);
       }
