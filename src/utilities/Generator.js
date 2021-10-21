@@ -19,12 +19,13 @@ export const accountFormatter = (account) => (
 );
 
 // 將日期格式轉為 YYYY/MM/DD 字串
-export const dateFormatter = (date) => {
+export const dateFormatter = (date, dashType) => {
   if (date) {
     date = new Date(date);
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
+    if (dashType) return `${year}-${month}-${day}`;
     return `${year}/${month}/${day}`;
   }
   return '';

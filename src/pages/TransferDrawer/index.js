@@ -5,7 +5,7 @@ import { AddRounded } from '@material-ui/icons';
 import BottomDrawer from 'components/BottomDrawer';
 import MemberAccountCard from 'components/MemberAccountCard';
 // import { doGetInitData } from 'apis/transferApi';
-import { getFavAcct,queryRegAcct } from 'apis/transferApi';
+import { getFavAcct,queryRegAcct,doDeleteFacAcct } from 'apis/transferApi';
 import TransferDrawerWrapper from './transferDrawer.style';
 import TransferFrequentlyUsedAccount from '../TransferFrequentlyUsedAccount';
 import TransferDesignedAccount from '../TransferDesignedAccount';
@@ -43,16 +43,16 @@ const TransferDrawer = ({ setTabId }) => {
     list.map((member) => (
       <MemberAccountCard
         // id={member.id}
-        key={member.accountId}
+        key={member.acctId}
         type={type}
-        name={member.accountName}
+        name={member.acctName}
         bankNo={member.bankId}
         bankName={member.bankName}
-        account={member.accountId}
+        account={member.acctId}
         avatarSrc={member.acctImg}
-        onSelect={() => handleClick('select', member.accountId)}
-        onEdit={() => handleClick('edit', member.accountId)}
-        onRemove={() => handleClick('remove', member.accountId)}
+        onSelect={() => handleClick('select', member.acctId)}
+        onEdit={() => handleClick('edit', member.acctId)}
+        onRemove={() => handleClick('remove', member.acctId)}
       />
     ))
   );
@@ -66,7 +66,9 @@ const TransferDrawer = ({ setTabId }) => {
       return memberAccountCardList(frequentlyUsedAccounts, openDrawer.title);
     }
     // 否則 render 約定帳號清單卡片
+    console.log("約定帳號");
     if (openDrawer.title === '約定帳號' && designedAccounts && designedAccounts!==undefined && designedAccounts.length>0) {
+      console.log("designedAccounts",designedAccounts);
       return memberAccountCardList(designedAccounts, openDrawer.title);
     }
   };
@@ -119,7 +121,7 @@ const TransferDrawer = ({ setTabId }) => {
   }, [openDrawer, frequentlyUsedAccounts]);
 
   // 追蹤點擊事件選項
-  useEffect(() => {
+  useEffect(async() => {
     const { edit, remove } = clickMoreOptions;
     // 如果點擊選項為 edit (編輯) 且當前頁面為常用帳號，則 Drawer 內容跳轉至編輯常用帳號 UI
     if (edit.click && openDrawer.title === '常用帳號') {
@@ -139,8 +141,9 @@ const TransferDrawer = ({ setTabId }) => {
     }
     if (remove.click && openDrawer.title === '常用帳號') {
       // call api 刪除常用帳號內的單筆資料
-      console.log("典籍刪除");
-      console.log(clickMoreOptions);
+      const accountInformation = frequentlyUsedAccounts.find((member)=>member.accountId===clickMoreOptions.remove.target);
+      const data={"nickName":accountInformation.accountName,"inBank":accountInformation.bankId,"inAcct":accountInformation.accountId}
+      const deleteFacAcctResult = await doDeleteFacAcct(data);
     }
   }, [clickMoreOptions]);
 

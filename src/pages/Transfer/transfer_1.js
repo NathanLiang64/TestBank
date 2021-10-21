@@ -85,6 +85,60 @@ const Transfer1 = () => {
     return count;
   };
 
+  const addZero = (num) => {
+    if (parseInt(num, 10) < 10) {
+      num = `0${num}`;
+    }
+    return num;
+  };
+
+  const doMonthlyData = (displayOriginInfo, data) => {
+    console.log('doMonthlyData', data);
+    data.bookType = 'M';
+    data.dayOfM = addZero(displayOriginInfo.transactionCycle);
+    const startDate = displayOriginInfo.tranceDate[0];
+    const endDate = displayOriginInfo.tranceDate[1];
+    data.startDate = startDate;
+    data.endDate = endDate;
+    data.deviceId = 'test';
+    return data;
+  };
+
+  const doWeeklyData = (displayOriginInfo, data) => {
+    console.log('doWeeklyData', data);
+    data.bookType = 'W';
+    data.dayOfW = `0${displayOriginInfo.transactionCycle}`;
+    const startDate = displayOriginInfo.tranceDate[0];
+    const endDate = displayOriginInfo.tranceDate[1];
+    data.startDate = startDate;
+    data.endDate = endDate;
+    data.deviceId = 'test';
+    return data;
+  };
+
+  const doSingleData = (displayOriginInfo, data) => {
+    console.log('doSingleData', data);
+    data.bookType = 'S';
+    data.bookDate = displayOriginInfo.date;
+    data.deviceId = 'test';
+    return data;
+  };
+
+  const doMakeResrveData = (displayOriginInfo, data) => {
+    console.log('doMakeResrveData', data);
+    switch (displayOriginInfo.transactionFrequency) {
+      case 'monthly': {
+        return doMonthlyData(displayOriginInfo, data);
+      }
+      case 'weekly': {
+        return doWeeklyData(displayOriginInfo, data);
+      }
+
+      default:
+        return doSingleData(displayOriginInfo, data);
+    }
+  };
+
   const handleClickTransferButton = async () => {
     console.log(displayInfo);
     const data = {
@@ -92,7 +146,10 @@ const Transfer1 = () => {
     };
 
     if (displayInfo.transferType === 'reserve') {
-      const ntdTrConfirmResponse = await doBookNtdTrConfirm(data);
+      console.log('displayInfo', displayInfo);
+      const resrveData = doMakeResrveData(displayInfo, data);
+      console.log('resrveData', resrveData);
+      const ntdTrConfirmResponse = await doBookNtdTrConfirm(resrveData);
       console.log(ntdTrConfirmResponse);
     } else {
       const ntdTrConfirmResponse = await doNtdTrConfirm(data);
@@ -152,15 +209,15 @@ const Transfer1 = () => {
     } = state;
 
     if (transactionFrequency && transactionCycle) {
-      console.log('149', bankCode);
+      if (bankCode.bankNo !== undefined)bankCode.bankId = bankCode.bankNo;
       setDisplayInfo({
         ...displayInfo,
         money: `$${transferAmount}` || '',
         bankNo: bankCode.bankId,
         bankName: bankCode.bankName,
-        date: transferType === 'now' || transactionNumber === 'once'
+        tranceDate: transferType === 'now' || transactionNumber === 'once'
           ? dateFormatter(transactionDate)
-          : `${dateFormatter(transactionDate[0])}~${dateFormatter(transactionDate[1])}`,
+          : [dateFormatter(transactionDate[0]), dateFormatter(transactionDate[1])],
         frequency: transactionFrequency === 'monthly'
           ? `${switchFrequency(transactionFrequency)}${transactionCycle}號`
           : `${switchFrequency(transactionFrequency)}${weekNumberToChinese(transactionCycle)}`,
@@ -172,6 +229,8 @@ const Transfer1 = () => {
         depositAmount,
         transferRemaining,
         transferType,
+        transactionFrequency,
+        transactionCycle,
       });
     } else {
       console.log('171', bankCode);
@@ -192,6 +251,7 @@ const Transfer1 = () => {
         depositAmount,
         transferRemaining,
         transferType,
+        transactionFrequency,
       });
     }
   }, [state]);
