@@ -47,16 +47,26 @@ const TransferFrequentlyUsedAccount = () => {
   const handleSelectAvatar = (file) => setAvatar(file);
 
   useEffect(async () => {
+    console.log(clickMoreOptions);
     const { edit } = clickMoreOptions;
     if (edit.click && edit.target) {
-      const response = await getFavAcct({});
+      let response = await getFavAcct({});
+      console.log('getFavAcct', response);
+      response = {
+        favoriteAcctList: [{
+          bankId: '805', bankName: '遠東銀行', accountId: '04300490003488', accountName: '４８８', email: '',
+        },
+        {
+          bankId: '805', bankName: '遠東銀行', accountId: '04300499004366', accountName: '１２３３２１', email: '',
+        }],
+      };
       if (response) {
         console.log(response);
-        const currenTarget = response.favoriteAcctList.find((member) => member.id === edit.target);
+        const currenTarget = response.favoriteAcctList.find((member) => member.accountId === edit.target);
         setTargetMember(currenTarget);
-        setValue('memberAccountCardBankCode', { bankNo: currenTarget.bankNo, bankName: currenTarget.bankName });
-        setValue('bankAccount', currenTarget.acctId);
-        setValue('nickname', currenTarget.acctName);
+        setValue('memberAccountCardBankCode', { bankNo: currenTarget.bankId, bankName: currenTarget.bankName });
+        setValue('bankAccount', currenTarget.accountId);
+        setValue('nickname', currenTarget.accountName);
       }
     }
   }, [clickMoreOptions.edit]);
@@ -72,7 +82,7 @@ const TransferFrequentlyUsedAccount = () => {
           setValue={setValue}
           trigger={trigger}
           control={control}
-          bankCode={{ bankNo: targetMember.bankNo, bankName: targetMember.bankName }}
+          bankCode={{ bankNo: targetMember.bankId, bankName: targetMember.bankName }}
           errorMessage={errors.memberAccountCardBankCode?.message}
         />
 
