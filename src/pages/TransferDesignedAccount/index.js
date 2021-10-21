@@ -51,7 +51,7 @@ const TransferDesignedAccount = () => {
     const { add, edit } = clickMoreOptions;
     if (edit.click && edit.target) {
       const response = await queryRegAcct({});
-
+      console.log('response', response);
       if (response) {
         const currenTarget = response.designedAcctList.find((member) => member.id === edit.target);
         setTargetMember(currenTarget);

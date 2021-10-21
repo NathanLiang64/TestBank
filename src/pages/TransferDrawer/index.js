@@ -43,12 +43,12 @@ const TransferDrawer = ({ setTabId }) => {
     list.map((member) => (
       <MemberAccountCard
         // id={member.id}
-        key={member.accountId}
+        key={member.acctId}
         type={type}
-        name={member.accountName}
+        name={member.acctName}
         bankNo={member.bankId}
         bankName={member.bankName}
-        account={member.accountId}
+        account={member.acctId}
         avatarSrc={member.acctImg}
         onSelect={() => handleClick('select', member.accountId)}
         onEdit={() => handleClick('edit', member.accountId)}
@@ -66,7 +66,9 @@ const TransferDrawer = ({ setTabId }) => {
       return memberAccountCardList(frequentlyUsedAccounts, openDrawer.title);
     }
     // 否則 render 約定帳號清單卡片
+    console.log("約定帳號");
     if (openDrawer.title === '約定帳號' && designedAccounts && designedAccounts!==undefined && designedAccounts.length>0) {
+      console.log("designedAccounts",designedAccounts);
       return memberAccountCardList(designedAccounts, openDrawer.title);
     }
   };

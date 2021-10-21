@@ -425,7 +425,7 @@ const Transfer = () => {
    console.log(designedResponse);
    if (designedResponse.code!='WEBCTL1003'){
     setDesignedAccounts(designedResponse);
-    dispatch(setDgnedAccounts(favoriteResponse))
+    dispatch(setDgnedAccounts(designedResponse))
   } 
 
     // transferOption 是為了避免不同頁籤造成驗證衝突，初始設置 transfer (一般轉帳)
