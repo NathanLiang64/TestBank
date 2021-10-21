@@ -9,7 +9,7 @@ import {
   FEIBButton, FEIBErrorMessage, FEIBInput, FEIBInputLabel,
 } from 'components/elements';
 import { bankAccountValidation, bankCodeValidation, nicknameValidation } from 'utilities/validation';
-import { getFavAcct, insertFacAcct } from 'apis/transferApi';
+import { getFavAcct, insertFacAcct, doModifyFacAcct } from 'apis/transferApi';
 import { setOpenDrawer, setClickMoreOptions } from '../Transfer/stores/actions';
 
 const TransferFrequentlyUsedAccount = () => {
@@ -33,8 +33,21 @@ const TransferFrequentlyUsedAccount = () => {
   const handleSubmitFrequentlyUsed = (data) => {
     if (avatar) data.avatar = avatar;
     // 送資料
-    console.log(data);
-    insertFacAcct({ inAcct: data.bankAccount, inBank: data.memberAccountCardBankCode.bankNo, nickName: data.nickname });
+    console.log('送資料', data);
+
+    // 點擊修改
+    if (clickMoreOptions.edit.click) {
+      data.inBank = data.memberAccountCardBankCode.bankNo;
+      data.inAcct = data.memberAccountCardBankCode.bankName;
+      data.nickName = data.nickname;
+      doModifyFacAcct(data);
+    }
+
+    // 點擊新增
+    if (clickMoreOptions.add.click) {
+      insertFacAcct({ inAcct: data.bankAccount, inBank: data.memberAccountCardBankCode.bankNo, nickName: data.nickname });
+    }
+
     dispatch(setOpenDrawer({ ...openDrawer, title: '常用帳號', content: 'default' }));
     dispatch(setClickMoreOptions({
       ...clickMoreOptions,
@@ -63,6 +76,7 @@ const TransferFrequentlyUsedAccount = () => {
       if (response) {
         console.log(response);
         const currenTarget = response.favoriteAcctList.find((member) => member.accountId === edit.target);
+        console.log('currenTarget', currenTarget);
         setTargetMember(currenTarget);
         setValue('memberAccountCardBankCode', { bankNo: currenTarget.bankId, bankName: currenTarget.bankName });
         setValue('bankAccount', currenTarget.accountId);
@@ -72,6 +86,7 @@ const TransferFrequentlyUsedAccount = () => {
   }, [clickMoreOptions.edit]);
 
   if (targetMember) {
+    console.log(targetMember.bankId);
     return (
       <form className="addFrequentlyUsedAccountArea">
         <div className="avatarArea">
