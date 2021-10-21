@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { EventNoteRounded } from '@material-ui/icons';
 import { KeyboardDatePicker as MaterialDatePicker } from '@material-ui/pickers';
+import { CalendarIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
 
 const FEIBDatePicker = styled(MaterialDatePicker).attrs({
@@ -8,7 +8,7 @@ const FEIBDatePicker = styled(MaterialDatePicker).attrs({
   format: 'yyyy/MM/dd',
   okLabel: '確定',
   cancelLabel: '取消',
-  keyboardIcon: <EventNoteRounded style={{ color: theme.colors.primary.light }} />,
+  keyboardIcon: <CalendarIcon />,
 })`
   .MuiInputBase-root {
     margin-top: .4rem;
@@ -32,13 +32,11 @@ const FEIBDatePicker = styled(MaterialDatePicker).attrs({
     padding-top: .6rem;
     padding-bottom: 1rem;
   }
-  
-  .MuiIconButton-root {
-    padding-right: .8rem;
-  }
 
-  .MuiSvgIcon-root {
-    font-size: 2.5rem;
+  .Icon {
+    top: -.4rem;
+    right: -.1rem;
+    font-size: 2rem;
   }
   
   .MuiPickersToolbar-toolbar {

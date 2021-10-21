@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
-import { Visibility, VisibilityOff } from '@material-ui/icons';
+import { VisibilityIcon, VisibilityOffIcon } from 'assets/images/icons';
 import { FEIBInput, FEIBInputLabel, FEIBErrorMessage } from 'components/elements';
 
 /*
@@ -52,7 +52,7 @@ const PasswordInput = ({
             error={!!inputErrorMessage}
             $color={inputColor}
             $borderColor={inputBorderColor}
-            $icon={showPassword ? <Visibility /> : <VisibilityOff />}
+            $icon={showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
             $iconFontSize={2}
             $iconOnClick={handleClickShowPassword}
           />
@@ -71,7 +71,7 @@ const PasswordInput = ({
       onBlur={inputOnBlur}
       $color={inputColor}
       $borderColor={inputBorderColor}
-      $icon={showPassword ? <Visibility /> : <VisibilityOff />}
+      $icon={showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
       $iconFontSize={2}
       $iconOnClick={handleClickShowPassword}
     />

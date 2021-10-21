@@ -34,16 +34,21 @@ const AccountDetailsWrapper = styled(Layout)`
   .searchBar {
     display: flex;
     align-items: center;
+    min-height: 5.2rem;
+    margin-bottom: .8rem;
+    padding: .4rem .6rem;
 
     p {
-      margin: 0 -.4rem;
       font-size: 1.4rem;
       color: ${({ theme }) => theme.colors.primary.light};
     }
 
     .searchCondition {
+      top: .2rem;
       display: flex;
       align-items: center;
+      margin-left: .2rem;
+      color: ${({ theme }) => theme.colors.text.dark};
     }
   }
 
@@ -58,7 +63,7 @@ const AccountDetailsWrapper = styled(Layout)`
   .customPosition {
     position: absolute;
     top: 50%;
-    right: 0;
+    right: 1.2rem;
     transform: translateY(-50%);
   }
 `;
@@ -70,9 +75,9 @@ const DownloadDrawerWrapper = styled.ul`
     justify-content: space-between;
     align-items: center;
     
-    .MuiSvgIcon-root.downloadIcon {
-      font-size: 2.8rem;
-      margin-right: 1.8rem;
+    .Icon.downloadIcon {
+      font-size: 2rem;
+      margin-right: 2rem;
       color: ${({ theme }) => theme.colors.text.dark};
     }
   }

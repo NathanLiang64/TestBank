@@ -4,13 +4,13 @@ import { useCheckLocation, usePageInfo } from 'hooks';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { CreateRounded, KeyboardArrowRightRounded } from '@material-ui/icons';
 import Dialog from 'components/Dialog';
 import Avatar from 'components/Avatar';
 import CopyTextIconButton from 'components/CopyTextIconButton';
 import {
   FEIBInput, FEIBInputLabel, FEIBButton, FEIBErrorMessage, FEIBIconButton, FEIBTextarea,
 } from 'components/elements';
+import { ArrowNextIcon, EditIcon } from 'assets/images/icons';
 import { hideName, stringDateFormatter } from 'utilities/Generator';
 // import { getNetworkUserInfo, getNetworkOverview, getNetworkFeedback } from 'apis/networkApi';
 import { startFunc } from 'apis/appFuncApi';
@@ -196,8 +196,10 @@ const Network = () => {
       <div className="infoContainer">
         <Avatar src={userInfo?.avatar} name={userInfo?.nickname} />
         <div className="nickName">
-          <span>{renderText(userInfo?.nickname)}</span>
-          <CreateRounded onClick={showEditUserNameDialog} />
+          <span className="name">{renderText(userInfo?.nickname)}</span>
+          <FEIBIconButton $fontSize={1.6} onClick={showEditUserNameDialog}>
+            <EditIcon />
+          </FEIBIconButton>
         </div>
         <span className="level">{`等級 ${renderText(userInfo?.level)}`}</span>
       </div>
@@ -213,7 +215,9 @@ const Network = () => {
         <div className="subTitle shareTitle">分享內容</div>
         <div className="shareContent">
           <span>{renderText(userInfo?.shareContent)}</span>
-          <CreateRounded style={{ fontSize: '2.13rem' }} onClick={showEditContentDialog} />
+          <FEIBIconButton $fontSize={1.6} onClick={showEditContentDialog}>
+            <EditIcon />
+          </FEIBIconButton>
         </div>
         <FEIBButton>分享推薦碼</FEIBButton>
       </div>
@@ -221,9 +225,7 @@ const Network = () => {
         <div className="title">
           <div className="search" onClick={showRecommendListDialog}>
             <span>查詢</span>
-            <FEIBIconButton>
-              <KeyboardArrowRightRounded />
-            </FEIBIconButton>
+            <ArrowNextIcon />
           </div>
           社群圈概況
         </div>
@@ -248,18 +250,14 @@ const Network = () => {
           <div className="overviewItem" onClick={() => startFunc(history, 'depositPlus')}>
             <div className="subTitle">
               優惠利率額度
-              <FEIBIconButton>
-                <KeyboardArrowRightRounded />
-              </FEIBIconButton>
+              <ArrowNextIcon />
             </div>
             <div className="num">{renderText(feedback.interestRateLimit)}</div>
           </div>
           <div className="overviewItem">
             <div className="subTitle">
               信用卡分潤
-              <FEIBIconButton>
-                <KeyboardArrowRightRounded />
-              </FEIBIconButton>
+              <ArrowNextIcon />
             </div>
             <div className="num">
               NT$

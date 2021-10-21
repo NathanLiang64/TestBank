@@ -16,7 +16,8 @@ const FEIBIconButton = styled(MaterialIconButton).attrs({
   &.MuiIconButton-root {
     color: ${({ $iconColor }) => $iconColor || 'inherit'};
     
-    .MuiSvgIcon-root {
+    .MuiSvgIcon-root,
+    .Icon {
       font-size: ${({ $fontSize }) => ($fontSize && `${$fontSize}rem`) || '1.5rem'};
     }
   }

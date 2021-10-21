@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { ArrowForwardIos, SyncAltRounded } from '@material-ui/icons';
 import DebitCard from 'components/DebitCard';
 import DetailCard from 'components/DetailCard';
+import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
 import AccountOverviewWrapper from './accountOverview.style';
 
 const AccountOverview = ({
@@ -101,17 +101,17 @@ const AccountOverview = ({
             {interbankTransfer}
           </p>
         </div>
-        <div className="panelItem customPosition" onClick={handleClickInterestRatePanel}>
+        <div className="panelItem" onClick={handleClickInterestRatePanel}>
           <h3>
             {title}
-            <SyncAltRounded />
+            <SwitchIcon className="switchIcon" />
           </h3>
           <p>{content}</p>
         </div>
         <div className="panelItem" onClick={() => push('/depositPlus')}>
           <h3>
             優惠利率額度
-            <ArrowForwardIos />
+            <ArrowNextIcon />
           </h3>
           <p>{interestRateLimit}</p>
         </div>
@@ -164,7 +164,7 @@ const AccountOverview = ({
         { computedDetails && renderDetailCardList(computedDetails) }
         <Link className="moreButton" to={detailsLink}>
           更多明細
-          <ArrowForwardIos />
+          <ArrowNextIcon />
         </Link>
       </div>
     </AccountOverviewWrapper>

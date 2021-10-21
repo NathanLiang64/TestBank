@@ -33,8 +33,9 @@ const BottomActionWrapper = styled.div.attrs({
     font-size: 1.8rem;
     line-height: 1.43;
 
-    .MuiSvgIcon-root {
-      margin-right: .2rem;
+    .Icon {
+      top: -.2rem;
+      margin-right: .4rem;
       font-size: 2.4rem;
     }
   }
