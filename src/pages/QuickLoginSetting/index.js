@@ -41,6 +41,9 @@ const QuickLoginSetting = () => {
       setIsBioActive(false);
       handleDialogOpen();
     }
+    if (!isPatternActive) {
+      setShowPattern(true);
+    }
     setIsPatternActive((prev) => !prev);
   };
 

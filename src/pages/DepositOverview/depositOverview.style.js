@@ -2,26 +2,34 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const DepositOverviewWrapper = styled(Layout)`
-   background: ${({ theme }) => theme.colors.background.lightest};
+  background: ${({ theme }) => theme.colors.background.lightest};
+  display: flex;
+  flex-direction: column;
   
-  .measuredHeight {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
-  
-  .debitCard {
-    margin-bottom: 1.6rem;
+  .userCardArea {
+    ${({ $multipleCardsStyle }) => $multipleCardsStyle && (`
+      left: -1.6rem;
+      width: 100vw;
+    `)}
+
+    .swiper-container {
+      padding-bottom: 1.6rem;
+    }
+
+    .swiper-pagination {
+      left: -.8rem;
+    }
   }
   
   .infoPanel {
     display: flex;
     justify-content: space-between;
-    padding: 0 .8rem;
+    align-items: baseline;
     
     .panelItem {
       text-align: center;
       letter-spacing: .1rem;
+      width: 100%;
       
       h3 {
         font-size: 1.4rem;

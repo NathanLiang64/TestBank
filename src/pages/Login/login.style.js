@@ -2,9 +2,6 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const LoginWrapper = styled(Layout)`
-  form {
-    display: initial;
-  }
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,43 +11,39 @@ const LoginWrapper = styled(Layout)`
   height: 100vh;
   background: ${({ theme }) => theme.colors.basic.white};
 
-  .MuiFormLabel-root,
-  .MuiIconButton-root,
-  .MuiFormControlLabel-label {
-    opacity: .6;
-  }
+  //.MuiFormLabel-root,
+  //.MuiIconButton-root,
+  //.MuiFormControlLabel-label {
+    //opacity: .6;
+  //}
   
-  .MuiIconButton-root {
-    color: ${({ theme }) => theme.colors.basic.white};
-  }
+  // .MuiIconButton-root {
+  //   color: ${({ theme }) => theme.colors.basic.white};
+  // }
   
-  .Mui-checked {
-    opacity: 1;
-  }
+  //.Mui-checked {
+  //  opacity: 1;
+  //}
   
-  .title {
+  .head {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
+    flex-grow: 3;
     padding-bottom: 2vh;
-    height: 20vh;
-    background: ${({ theme }) => theme.colors.primary.light};
-
-    h3, p {
-      font-weight: 300;
-      letter-spacing: .1rem;
-      color: ${({ theme }) => theme.colors.basic.white};
-      opacity: .6;
+    //height: 20vh;
+    background: ${({ theme }) => theme.colors.card.purple};
+    
+    img {
+      margin-bottom: 1.2rem;
+      width: 18.6rem;
+      z-index: 1;
     }
 
-    h3 {
-      margin-bottom: .4rem;
-      font-size: 3.6rem;
-    }
-
-    p {
+    span {
       font-size: 1.4rem;
+      color: ${({ theme }) => theme.colors.text.lightGray};
     }
   }
   
@@ -59,65 +52,138 @@ const LoginWrapper = styled(Layout)`
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    flex-grow: 6;
     padding-left: 2.4rem;
     padding-right: 2.4rem;
     border-bottom-left-radius: 3.2rem;
-    height: 48vh;
-    background: ${({ theme }) => theme.colors.primary.light};
+    //height: 60vh;
+    background: ${({ theme }) => theme.colors.card.purple};
+    
+    > div {
+      width: 100%;
+    }
+
+    .MuiInput-input::placeholder {
+      font-size: 1.4rem;
+      color: ${({ theme }) => theme.colors.text.lightGray};
+    }
+    
+    .MuiInput-root .MuiIconButton-root {
+      color: ${({ theme }) => theme.colors.primary.light};
+      
+      .MuiSvgIcon-root {
+        font-size: 2rem;
+      }
+    }
+    
+    .MuiCheckbox-root .MuiIconButton-label {
+      font-size: 2.4rem;
+    }
+    
+    .rememberAccountArea {
+      display: flex;
+      justify-content: space-between;
+      
+      .MuiFormControlLabel-root {
+        margin-right: 0;
+        color: #333;
+
+        .MuiFormControlLabel-label {
+          top: .1rem;
+        }
+      }
+    }
   }
   
   .controlButtons {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
-    height: 24vh;
+    padding: .8rem 0;
+    flex-grow: 3;
+    //height: 12vh;
     
     .login {
-      button[type=submit] {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 0 auto;
-        border: 0;
-        font-size: 2.4rem;
-        font-weight: bold;
-        // color: ${({ theme }) => theme.colors.primary.dark};
-        //background: transparent;
-      }
-      .MuiSvgIcon-root {
-        margin-left: .4rem;
+      display: flex;
+      width: 100%;
+      
+      .fastLogin .Icon {
         font-size: 2.4rem;
         color: ${({ theme }) => theme.colors.primary.dark};
+      }
+      
+      button {
+        flex-grow: 1;
+        
+        &[type=submit] {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 0;
+          border: 0;
+          font-size: 2rem;
+          color: ${({ theme }) => theme.colors.primary.dark};
+          
+          &:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            display: inline-block;
+            width: .1rem;
+            height: 3.4rem;
+            background: #C0C7D2;
+            transform: translateY(-50%);
+          }
+
+          .Icon {
+            margin-left: .8rem;
+            color: ${({ theme }) => theme.colors.primary.dark};
+            transform: rotate(180deg);
+          }
+        }
       }
     }
     
     .signup {
-      margin-top: 1.2rem;
-      margin-bottom: .8rem;
-      font-size: 1.4rem;
+      display: flex;
+      align-items: baseline;
       color: ${({ theme }) => theme.colors.text.light};
-
-      .boldLink {
-        font-weight: bold;
+      
+      span {
+        top: -.1rem;
+      }
+      
+      button {
+        font-size: 1.6rem;
       }
     }
   }
   
   form {
+    padding-bottom: 0;
     width: 100%;
     height: 100%;
+    
+    .backgroundImage {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
   }
   
-  .forgot {
+  .forgot,
+  .forgot button {
+    top: -.05rem;
     display: flex;
+    align-items: center;
+    padding: 0;
     
-    button {
-      opacity: .6;
-      
-      &:hover {
-        opacity: 1;
-      }
+    .MuiSvgIcon-root {
+      margin-left: .4rem;
+      color: ${({ theme }) => theme.colors.primary.light};
     }
   }
 `;

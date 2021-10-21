@@ -107,8 +107,17 @@ const pageInfo = {
   network: {
     title: '社群圈',
   },
+  taiwanDollarAccount: {
+    title: '帳戶',
+  },
+  taiwanDollarAccountDetails: {
+    title: '交易明細',
+  },
   tradingAccount: {
     title: '證券交割戶',
+  },
+  tradingAccountDetails: {
+    title: '證券交割戶交易明細',
   },
   foreignCurrencyAccount: {
     title: '外幣帳戶',

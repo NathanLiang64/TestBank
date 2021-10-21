@@ -24,7 +24,7 @@ const TabBar = () => {
       id: 0,
       label: '轉帳',
       img: TransferImage,
-      route: '/transfer',
+      route: '/transferStatic',
     },
     {
       id: 1,

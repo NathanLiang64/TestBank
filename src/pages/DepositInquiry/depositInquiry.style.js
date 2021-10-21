@@ -65,4 +65,20 @@ const DepositInquiryWrapper = styled(Layout)`
   }
 `;
 
+const DownloadDrawerWrapper = styled.ul`
+  
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    .MuiSvgIcon-root.downloadIcon {
+      font-size: 2.8rem;
+      margin-right: 1.8rem;
+      color: ${({ theme }) => theme.colors.text.dark};
+    }
+  }
+`;
+
 export default DepositInquiryWrapper;
+export { DownloadDrawerWrapper };

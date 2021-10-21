@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { CreateRounded, DeleteRounded } from '@material-ui/icons';
 import Avatar from 'components/Avatar';
+import { DeleteIcon, EditIcon } from 'assets/images/icons';
 import MemberAccountCardWrapper from './memberAccountCard.style';
 
 /*
@@ -68,13 +68,13 @@ const MemberAccountCard = ({
   const renderMoreActionMenu = () => (
     <div className={`moreActionMenu ${moreAction.isMoreActionOpen ? 'show' : ''}`}>
       <button type="button" className="edit" onClick={handleClickEdit}>
-        <CreateRounded />
+        <EditIcon />
         <span>編輯</span>
       </button>
       {/* 常用帳號才有刪除選項 */}
       { type === '常用帳號' && (
         <button type="button" className="remove" onClick={handleClickRemove}>
-          <DeleteRounded />
+          <DeleteIcon />
           <span>刪除</span>
         </button>
       ) }

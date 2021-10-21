@@ -3,7 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import VisibilitySensor from 'react-visibility-sensor';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { SearchRounded, CancelRounded, GetAppRounded } from '@material-ui/icons';
-import { depositInquiryApi } from 'apis';
+// import { getDetailsData } from 'apis/depositInquiryApi';
+import { getTransactionDetails } from 'apis/depositOverviewApi';
 import DepositSearchCondition from 'pages/DepositSearchCondition';
 import EmptyData from 'components/EmptyData';
 import DebitCard from 'components/DebitCard';
@@ -14,14 +15,9 @@ import {
 } from 'components/elements';
 import theme from 'themes/theme';
 import { dateFormatter, stringDateCodeFormatter } from 'utilities/Generator';
-import DepositInquiryWrapper from './depositInquiry.style';
+import DepositInquiryWrapper, { DownloadDrawerWrapper } from './depositInquiry.style';
 import {
-  setDetailList,
-  setOpenInquiryDrawer,
-  setDateRange,
-  setKeywords,
-  setCustomKeyword,
-  setTempDateRange,
+  setDetailList, setOpenInquiryDrawer, setDateRange, setKeywords, setCustomKeyword, setTempDateRange,
 } from './stores/actions';
 
 const DepositInquiry = () => {
@@ -34,13 +30,14 @@ const DepositInquiry = () => {
   // eslint-disable-next-line no-unused-vars
   const [inViewChildren, setInViewChildren] = useState([]);
 
-  const cardInfo = useSelector(({ depositOverview }) => depositOverview.cardInfo);
+  const selectedAccount = useSelector(({ depositOverview }) => depositOverview.selectedAccount);
+  const txnMonthly = useSelector(({ depositOverview }) => depositOverview.txnMonthly);
+  const txnDetails = useSelector(({ depositOverview }) => depositOverview.txnDetails);
   const detailList = useSelector(({ depositInquiry }) => depositInquiry.detailList);
   const openInquiryDrawer = useSelector(({ depositInquiry }) => depositInquiry.openInquiryDrawer);
   const dateRange = useSelector(({ depositInquiry }) => depositInquiry.dateRange);
   const keywords = useSelector(({ depositInquiry }) => depositInquiry.keywords);
   const customKeyword = useSelector(({ depositInquiry }) => depositInquiry.customKeyword);
-  const { getDetailsData } = depositInquiryApi;
   const dispatch = useDispatch();
 
   const initKeywords = [
@@ -70,8 +67,7 @@ const DepositInquiry = () => {
       if (item.selected) tranTPList.push(item.name[item.name.length - 1]);
     });
     return {
-      baseUrl: 'https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx',
-      account: '04300499312641',
+      account: selectedAccount.acctId,
       beginDT: dateRange[0] ? stringDateCodeFormatter(dateRange[0]) : '',
       endDT: dateRange[1] ? stringDateCodeFormatter(dateRange[1]) : '',
       tranTP: tranTPList.join(),
@@ -86,66 +82,72 @@ const DepositInquiry = () => {
     dispatch(setCustomKeyword(''));
     dispatch(setKeywords(initKeywords));
 
-    // 取得所有存款卡的初始資料
-    const { baseUrl, account } = requestConditions();
-    const response = await getDetailsData(`${baseUrl}?actno=${account}`);
-    if (response) {
-      const { monthly, acctDetails } = response;
-      setTabId(acctDetails.length ? acctDetails[0].txnDate.substr(0, 6) : '');
-      setTabList(monthly.length ? monthly.reverse() : []);
-      dispatch(setDetailList(acctDetails));
+    // 取得所有存款卡的初始資料後存取月份資輛 (Tabs)
+    if (txnDetails?.length) {
+      setTabId(txnDetails[0].txnDate.substr(0, 6));
+      setTabList(txnMonthly.sort((a, b) => b - a));
+    }
 
-      // 畫面跳轉至畫面第一筆資料
+    // 畫面跳轉至畫面第一筆資料
+    if (transactionDetailRef?.current) {
       const target = transactionDetailRef.current.children[0];
       if (target) target.scrollIntoView({ behavior: 'smooth' });
     }
+
+    dispatch(setDetailList(txnDetails));
   };
 
   // 點擊月份頁籤，代入條件：1.帳號, 2.日期起訖範圍, 3.類別, 4.自訂關鍵字, 5.月份
   const handleClickMonthTab = async (event) => {
-    const {
-      baseUrl, account, beginDT, endDT, tranTP, custom,
-    } = requestConditions();
-    // 由點擊的月份頁籤 (Tab) 取得月份條件
+    // 由點擊的月份頁籤 (Tab) 取得月份條件，固定月份時查詢資料方向為 0 (雙向)
     const month = event.currentTarget.getAttribute('data-month');
+    const {
+      account, beginDT, endDT, tranTP, custom,
+    } = requestConditions();
 
-    const apiUrl = `${baseUrl}?actno=${account}&beginDT=${beginDT}&endDT=${endDT}&tranTP=${tranTP}&textSH=${custom}&dataMonth=${month}`;
-    const response = await getDetailsData(`${apiUrl}&dataMonth=${month}`);
-    if (response) {
-      const { acctDetails, monthly } = response;
-      dispatch(setDetailList(acctDetails));
-      setTabList(monthly.reverse());
-    }
-
-    // 畫面跳轉至該月份第一筆資料
-    const target = Array.from(transactionDetailRef.current.children).find((child) => child.id === month);
-    if (target) target.scrollIntoView({ behavior: 'smooth' });
-    setTabId(month);
+    getTransactionDetails({
+      account, beginDT, endDT, tranTP, custom, month, direct: '0',
+    })
+      .then((response) => {
+        const { acctDetails, monthly } = response;
+        dispatch(setDetailList(acctDetails));
+        setTabList(monthly.sort((a, b) => b - a));
+      })
+      .then(() => {
+        // 畫面跳轉至該月份第一筆資料
+        const target = Array.from(transactionDetailRef.current.children).find((child) => child.id === month);
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+        setTabId(month);
+      });
   };
 
   // 滾動畫面後獲取新的交易明細，代入條件：1.帳號, 2.日期起訖範圍, 3.類別, 4.自訂關鍵字, 5.起始索引值, 6.方向
-  const getMoreDetailsData = async (scrollDirection, startIndex) => {
+  const getMoreDetailsData = (scrollDirection, startIndex) => {
     const {
-      baseUrl, account, beginDT, endDT, tranTP, custom,
+      account, beginDT, endDT, tranTP, custom,
     } = requestConditions();
     const direct = scrollDirection === 'up' ? '-1' : '1';
     const newDetailList = [];
 
-    const apiUrl = `${baseUrl}?actno=${account}&beginDT=${beginDT}&endDT=${endDT}&tranTP=${tranTP}&textSH=${custom}&startIndex=${startIndex}&direct=${direct}`;
-    const response = await getDetailsData(apiUrl);
-    if (response) {
-      if (scrollDirection === 'up') {
-        newDetailList.push(...response.acctDetails, ...detailList);
-        // TODO: 資料更新後是否會跳至最頂部，待測試
-        // const target = Array.from(transactionDetailRef.current.children).find((child) => child.getAttribute('data-index') === (startIndex + 1).toString());
-        // target.scrollIntoView();
-      } else if (scrollDirection === 'down') {
-        newDetailList.push(...detailList, ...response.acctDetails);
-      }
-      dispatch(setDetailList(newDetailList));
+    if (startIndex) {
+      getTransactionDetails({
+        account, beginDT, endDT, tranTP, custom, direct, startIndex,
+      })
+        .then((response) => {
+          const { acctDetails } = response;
+          if (scrollDirection === 'up') {
+            newDetailList.push(...acctDetails, ...detailList);
+            // TODO: 資料更新後是否會跳至最頂部，待測試
+            // const target = Array.from(transactionDetailRef.current.children).find((child) => child.getAttribute('data-index') === (startIndex + 1).toString());
+            // target.scrollIntoView();
+          } else if (scrollDirection === 'down') {
+            newDetailList.push(...detailList, ...response.acctDetails);
+          }
+          dispatch(setDetailList(newDetailList));
+          // 資料取回後，解除 isPending 狀態
+          setIsPending(false);
+        });
     }
-    // 資料取回後，解除 isPending 狀態
-    setIsPending(false);
   };
 
   // 確認是否正在處理資料請求，唯有未在處理請求時才能再次獲取資料
@@ -185,11 +187,13 @@ const DepositInquiry = () => {
     }
   };
 
-  const renderCardArea = (card) => (
+  const renderCardArea = (account) => (
     <DebitCard
-      cardName={card.cardName}
-      account={card.cardAccount}
-      balance={card.cardBalance}
+      cardName={account.acctName}
+      account={account.acctId}
+      balance={account.acctBalx}
+      dollarSign={account.ccyCd}
+      color="purple"
     />
   );
 
@@ -276,14 +280,19 @@ const DepositInquiry = () => {
 
   const renderDownloadDrawer = () => (
     <BottomDrawer
-      className="debitInquiryDownloadDrawer"
       isOpen={openDownloadDrawer}
       onClose={() => setOpenDownloadDrawer(false)}
       content={(
-        <ul>
-          <li onClick={() => handleClickDownloadDetails('pdf')}><p>下載 PDF</p></li>
-          <li onClick={() => handleClickDownloadDetails('excel')}><p>下載 EXCEL</p></li>
-        </ul>
+        <DownloadDrawerWrapper>
+          <li onClick={() => handleClickDownloadDetails('pdf')}>
+            <p>下載 PDF</p>
+            <GetAppRounded className="downloadIcon" />
+          </li>
+          <li onClick={() => handleClickDownloadDetails('excel')}>
+            <p>下載 EXCEL</p>
+            <GetAppRounded className="downloadIcon" />
+          </li>
+        </DownloadDrawerWrapper>
       )}
     />
   );
@@ -294,7 +303,7 @@ const DepositInquiry = () => {
 
   return (
     <DepositInquiryWrapper small>
-      { cardInfo && renderCardArea(cardInfo) }
+      { renderCardArea(selectedAccount) }
       <div className="inquiryArea measuredHeight">
         { renderSearchBarArea() }
         { tabList.length ? renderMonthTabs(tabList) : null }

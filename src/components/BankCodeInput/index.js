@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Controller } from 'react-hook-form';
-import { FormatListBulletedRounded } from '@material-ui/icons';
 import BankCode from 'components/BankCode';
 import { FEIBErrorMessage, FEIBInput, FEIBInputLabel } from 'components/elements';
+import { ListIcon } from 'assets/images/icons';
 
 /*
 * ================== BankCodeInput 組件說明 ==================
@@ -60,7 +60,7 @@ const BankCodeInput = ({
             type="text"
             placeholder="請選擇"
             value={selectBank.bankNo && selectBank.bankName ? `${selectBank.bankNo} ${selectBank.bankName}` : ''}
-            $icon={<FormatListBulletedRounded />}
+            $icon={<ListIcon />}
             $iconFontSize={2.4}
             $iconOnClick={() => setOpenBankCodeList(true)}
             readOnly

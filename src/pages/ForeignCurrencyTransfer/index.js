@@ -38,6 +38,8 @@ const mockAccounts = [
   },
 ];
 
+const mockAccountList = ['00200701710979'];
+
 const ForeignCurrencyTransfer = () => {
   const history = useHistory();
   const [currentAccount, setCurrentAccount] = useState({});
@@ -76,6 +78,10 @@ const ForeignCurrencyTransfer = () => {
     history.push('/foreignCurrencyTransfer1');
   };
 
+  const renderOptions = (data) => data.map((item) => (
+    <FEIBOption value={item}>{item}</FEIBOption>
+  ));
+
   const renderCard = () => cardsList.map((item) => (
     <SwiperSlide>
       <DebitCard
@@ -97,6 +103,8 @@ const ForeignCurrencyTransfer = () => {
 
   useEffect(() => {
     getForeignCurrencyAccounts();
+    setValue('account', mockAccountList[0]);
+    setValue('transferType', '1');
   }, []);
 
   return (
@@ -129,7 +137,9 @@ const ForeignCurrencyTransfer = () => {
                   error={!!errors.account}
                 >
                   <FEIBOption value="" disabled>請選擇轉入帳號</FEIBOption>
-                  <FEIBOption value="00200701710979">00200701710979</FEIBOption>
+                  {
+                    renderOptions(mockAccountList)
+                  }
                 </FEIBSelect>
               )}
             />
@@ -156,6 +166,10 @@ const ForeignCurrencyTransfer = () => {
                       } else {
                         setMixBalanceStr(`${currencySymbolGenerator(currentAccount.dollarSign)}${event.target.value}${numberToChinese(event.target.value)}`);
                       }
+                    }}
+                    inputProps={{
+                      maxLength: 9,
+                      autoComplete: 'off',
                     }}
                   />
                   <div className="balanceLayout">{mixBalanceStr}</div>

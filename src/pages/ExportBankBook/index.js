@@ -8,7 +8,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 /* Elements */
 import {
   FEIBInputLabel,
-  // FEIBInput,
   FEIBSelect,
   FEIBOption,
   FEIBButton,
@@ -38,7 +37,6 @@ const ExportBankBook = () => {
     account: yup
       .string()
       .required('請選擇匯出帳戶'),
-    // ...passwordValidation,
   });
   const {
     handleSubmit, control, formState: { errors }, watch, setValue,
@@ -54,6 +52,7 @@ const ExportBankBook = () => {
   const [accountsList, setAccountsList] = useState([]);
   const [mail, setMail] = useState('');
   const [exportDateRange, setExportDateRange] = useState([]);
+  const [showDateRangeErrMsg, setShowDateRangeErrMsg] = useState(false);
 
   const getAccountsListAndMail = () => {
     setAccountsList(mockData.accountsList);
@@ -79,8 +78,17 @@ const ExportBankBook = () => {
     setExportDateRange([startDate, endDate]);
   };
 
+  const checkDateRangePicker = () => exportDateRange.length === 0;
+
   const onSubmit = (data) => {
     console.log(data);
+    if (data.outType === '2') {
+      const checkResult = checkDateRangePicker();
+      setShowDateRangeErrMsg(checkResult);
+      if (checkResult) {
+        return;
+      }
+    }
     history.push('exportBankBook1', { data: { mail, success: true } });
   };
 
@@ -143,7 +151,9 @@ const ExportBankBook = () => {
               {...datePickerLimit}
               onClick={(range) => setExportDateRange(range)}
             />
-            <FEIBErrorMessage>{errors.dateRange?.message}</FEIBErrorMessage>
+            <FEIBErrorMessage>
+              {showDateRangeErrMsg && ('請選擇日期區間')}
+            </FEIBErrorMessage>
             <div className="tip">可查詢三年交易明細，查詢區間最多六個月</div>
             <div className="rangeBtnContainer">
               <FEIBBorderButton className="customSize" type="button" onClick={() => setDateRange(0)}>近一個月</FEIBBorderButton>
@@ -159,6 +169,7 @@ const ExportBankBook = () => {
           <InfoArea space="bottom">
             將匯出至留存信箱：
             { mail }
+            <br />
             若需更改留存信箱，請至基本資料變更進行修改
           </InfoArea>
           <FEIBButton

@@ -2,9 +2,8 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Icon } from '@material-ui/core';
-import {
-  Visibility, VisibilityOff, MoreVert, SystemUpdate, Edit,
-} from '@material-ui/icons';
+import { Edit } from '@material-ui/icons';
+import { MoreIcon, VisibilityIcon, VisibilityOffIcon } from 'assets/images/icons';
 import BottomDrawer from 'components/BottomDrawer';
 import Dialog from 'components/Dialog';
 import CopyTextIconButton from 'components/CopyTextIconButton';
@@ -50,8 +49,8 @@ const DebitCard = ({
   transferRemaining,
   moreList,
   moreDefault = true,
-  dollarSign = 'TWD',
-  color = 'purple',
+  dollarSign,
+  color,
 }) => {
   const [showBalance, setShowBalance] = useState(true);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -61,12 +60,6 @@ const DebitCard = ({
 
   const handleClickShowBalance = () => {
     setShowBalance(!showBalance);
-  };
-
-  const handleClickDownloadBankbook = () => {
-    setOpenDrawer(false);
-    // 存摺封面下載
-    // window.location.href = 'http://114.32.27.40:8080/test/downloadPDF';
   };
 
   const handleClickEditCardName = () => {
@@ -85,24 +78,18 @@ const DebitCard = ({
 
   // 渲染卡片餘額左側的 "眼睛" 圖標 (顯示/隱藏)
   const renderEyeIconButton = () => (
-    <FEIBIconButton
-      $fontSize={1.6}
-      $iconColor={theme.colors.text.darkGray}
-      onClick={handleClickShowBalance}
-    >
-      {showBalance ? <Visibility /> : <VisibilityOff />}
+    <FEIBIconButton $fontSize={1.6} onClick={handleClickShowBalance}>
+      { showBalance
+        ? <VisibilityIcon size={16} color={theme.colors.text.lightGray} />
+        : <VisibilityOffIcon size={16} color={theme.colors.text.lightGray} /> }
     </FEIBIconButton>
   );
 
   // 渲染卡片右上角的 "更多" 圖標
   const renderMoreIconButton = () => (
     <div className="moreIconButton">
-      <FEIBIconButton
-        $iconColor={theme.colors.text.lightGray}
-        $fontSize={2}
-        onClick={() => setOpenDrawer(true)}
-      >
-        <MoreVert />
+      <FEIBIconButton $fontSize={1.6} onClick={() => setOpenDrawer(true)}>
+        <MoreIcon />
       </FEIBIconButton>
     </div>
   );
@@ -143,20 +130,12 @@ const DebitCard = ({
       {/* 下方為功能列表內的固定功能 */}
       {
         moreDefault && (
-          <>
-            <li onClick={handleClickDownloadBankbook}>
-              <p>
-                <SystemUpdate />
-                存摺封面下載
-              </p>
-            </li>
-            <li onClick={handleClickEditCardName}>
-              <p>
-                <Edit />
-                帳戶名稱編輯
-              </p>
-            </li>
-          </>
+          <li onClick={handleClickEditCardName}>
+            <p>
+              <Edit />
+              帳戶名稱編輯
+            </p>
+          </li>
         )
       }
     </ul>

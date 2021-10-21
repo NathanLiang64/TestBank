@@ -8,7 +8,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Pagination } from 'swiper/core';
 import { RadioGroup } from '@material-ui/core';
-import { AccountCircleRounded } from '@material-ui/icons';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import DebitCard from 'components/DebitCard';
 import Accordion from 'components/Accordion';
@@ -19,18 +18,18 @@ import DateRangePicker from 'components/DateRangePicker';
 import {
   FEIBTabContext, FEIBTabList, FEIBTab, FEIBTabPanel,
   FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBDatePicker,
-  FEIBRadioLabel, FEIBRadio, FEIBButton, FEIBSelect, FEIBOption, FEIBIconButton,
+  FEIBRadioLabel, FEIBRadio, FEIBButton, FEIBSelect, FEIBOption,
 } from 'components/elements';
-import { doGetInitData,getNtdTrAcct,getFavAcct,queryRegAcct } from 'apis/transferApi';
+import { ChangeMemberIcon } from 'assets/images/icons';
+import { getNtdTrAcct, getFavAcct, queryRegAcct } from 'apis/transferApi';
 import { numberToChinese, weekNumberToChinese } from 'utilities/Generator';
 import { bankCodeValidation, receivingAccountValidation, transferAmountValidation } from 'utilities/validation';
 import { directTo } from 'utilities/mockWebController';
-import theme from 'themes/theme';
 import { setOpenDrawer, setClickMoreOptions } from './stores/actions';
 import TransferWrapper from './transfer.style';
 import TransferDrawer from '../TransferDrawer';
 import Dialog from '../../components/Dialog';
-import {setNtdTrAcct,setFqlyUsedAccounts,setDgnedAccounts} from './stores/actions'
+import { setNtdTrAcct, setFqlyUsedAccounts, setDgnedAccounts } from './stores/actions'
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
@@ -185,6 +184,7 @@ const Transfer = () => {
             transferLimit={tfrhCount}
             transferRemaining="沒有剩餘次數"
             moreList={moreList}
+            dollarSign="TWD"
           />
         </SwiperSlide>
       );
@@ -241,9 +241,7 @@ const Transfer = () => {
               noOption
             />
             <div className="changeMemberButton" onClick={handleOpenFrequentlyUsedList}>
-              <FEIBIconButton $iconColor={theme.colors.primary.light} $fontSize={2.4}>
-                <AccountCircleRounded />
-              </FEIBIconButton>
+              <ChangeMemberIcon />
             </div>
           </div>
         ) }
@@ -265,9 +263,7 @@ const Transfer = () => {
               noOption
             />
             <div className="changeMemberButton" onClick={handleOpenDesignatedList}>
-              <FEIBIconButton $iconColor={theme.colors.primary.light} $fontSize={2.4}>
-                <AccountCircleRounded />
-              </FEIBIconButton>
+              <ChangeMemberIcon />
             </div>
           </div>
         ) }

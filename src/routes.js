@@ -10,15 +10,13 @@ import LossReissue2 from 'pages/LossReissue/lossReissue_2';
 import AccountMaintenance from 'pages/AccountMaintenance';
 import BillPay from 'pages/BillPay';
 import BillPay1 from 'pages/BillPay/billPay_1';
-import DepositOverview from 'pages/DepositOverview';
-import DepositInquiry from 'pages/DepositInquiry';
+// import DepositOverview from 'pages/DepositOverview';
+// import DepositInquiry from 'pages/DepositInquiry';
 import DepositPlus from 'pages/DepositPlus';
 import NicknameSetting from 'pages/NicknameSetting';
 import NoticeSetting from 'pages/NoticeSetting';
-import NoticeSetting1 from 'pages/NoticeSetting/noticeSetting_1';
 import PatternLockSetting from 'pages/PatternLockSetting';
 import Notice from 'pages/Notice';
-import Notice1 from 'pages/Notice/notice_1';
 import FingerPrintLockSetting from 'pages/FingerPrintLockSetting';
 import ChangeUserName from 'pages/ChangeUserName';
 import ChangeUserName1 from 'pages/ChangeUserName/changeUserName_1';
@@ -52,6 +50,9 @@ import More from 'pages/More';
 import FinancialDepartments from 'pages/FinancialDepartments';
 import Network from 'pages/Network';
 import TradingAccount from 'pages/TradingAccount';
+import TradingAccountDetails from 'pages/TradingAccountDetails';
+import TaiwanDollarAccount from 'pages/TaiwanDollarAccount';
+import TaiwanDollarAccountDetails from 'pages/TaiwanDollarAccountDetails';
 import ForeignCurrencyAccount from 'pages/ForeignCurrencyAccount';
 import ForeignCurrencyAccountDetails from 'pages/ForeignCurrencyAccountDetails';
 import RegularBasicInformation from 'pages/RegularBasicInformation';
@@ -75,6 +76,11 @@ import QuickLoginSetting from 'pages/QuickLoginSetting';
 /* 開發用目錄頁 */
 import Nav from 'pages/Nav';
 
+/* 轉帳靜態頁 (for prototype) */
+import TransferStatic from 'pages/TransferStatic';
+import TransferStatic1 from 'pages/TransferStatic/transfer_1';
+import TransferStatic2 from 'pages/TransferStatic/transfer_2';
+
 const routes = [
   { path: '/', exact: true, component: Nav },
   { path: '/login', exact: false, component: Login },
@@ -88,15 +94,13 @@ const routes = [
   { path: '/accountMaintenance', exact: false, component: AccountMaintenance },
   { path: '/billPay', exact: true, component: BillPay },
   { path: '/billPay1', exact: false, component: BillPay1 },
-  { path: '/depositOverview', exact: false, component: DepositOverview },
-  { path: '/depositInquiry', exact: false, component: DepositInquiry },
+  // { path: '/depositOverview', exact: false, component: DepositOverview },
+  // { path: '/depositInquiry', exact: false, component: DepositInquiry },
   { path: '/depositPlus', exact: false, component: DepositPlus },
   { path: '/noticeSetting', exact: true, component: NoticeSetting },
-  { path: '/noticeSetting1', exact: false, component: NoticeSetting1 },
   { path: '/nicknameSetting', exact: false, component: NicknameSetting },
   { path: '/patternLockSetting', exact: false, component: PatternLockSetting },
   { path: '/notice', exact: false, component: Notice },
-  { path: '/notice1', exact: false, component: Notice1 },
   { path: '/fingerPrintLockSetting', exact: false, component: FingerPrintLockSetting },
   { path: '/changeUserName', exact: false, component: ChangeUserName },
   { path: '/changeUserName1', exact: false, component: ChangeUserName1 },
@@ -129,7 +133,10 @@ const routes = [
   { path: '/more', exact: false, component: More },
   { path: '/financialDepartments', exact: false, component: FinancialDepartments },
   { path: '/network', exact: false, component: Network },
+  { path: '/taiwanDollarAccount', exact: false, component: TaiwanDollarAccount },
+  { path: '/taiwanDollarAccountDetails', exact: false, component: TaiwanDollarAccountDetails },
   { path: '/tradingAccount', exact: false, component: TradingAccount },
+  { path: '/tradingAccountDetails', exact: false, component: TradingAccountDetails },
   { path: '/foreignCurrencyAccount', exact: false, component: ForeignCurrencyAccount },
   { path: '/foreignCurrencyAccountDetails', exact: false, component: ForeignCurrencyAccountDetails },
   { path: '/regularBasicInformation', exact: false, component: RegularBasicInformation },
@@ -149,6 +156,9 @@ const routes = [
   { path: '/mobileTransfer3', exact: false, component: MobileTransfer3 },
   { path: '/foreignCurrencyPriceSetting', exact: false, component: ForeignCurrencyPriceSetting },
   { path: '/quickLoginSetting', exact: false, component: QuickLoginSetting },
+  { path: '/transferStatic', exact: false, component: TransferStatic },
+  { path: '/transferStatic1', exact: false, component: TransferStatic1 },
+  { path: '/transferStatic2', exact: false, component: TransferStatic2 },
 ];
 
 export default routes;

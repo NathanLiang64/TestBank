@@ -15,6 +15,9 @@ import * as qAndAApi from './qAndAApi';
 import * as reserveTransferSearchApi from './reserveTransferSearchApi';
 import * as settingApi from './settingApi';
 import * as regularBasicInformationApi from './regularBasicInformationApi';
+import * as noticeApi from './noticeApi';
+import * as provisioningApi from './provisioningApi';
+import * as financialDepartmentsApi from './financialDepartmentsApi';
 
 export {
   headerApi,
@@ -34,4 +37,7 @@ export {
   reserveTransferSearchApi,
   settingApi,
   regularBasicInformationApi,
+  noticeApi,
+  provisioningApi,
+  financialDepartmentsApi,
 };

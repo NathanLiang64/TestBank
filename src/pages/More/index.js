@@ -44,15 +44,17 @@ const More = () => {
     setTabId(target?.id);
   };
 
-  const renderBlock = (group, blocks) => blocks.map((block) => (
-    <FavoriteBlockButton
-      key={block.id}
-      icon={iconGenerator(block.id)}
-      label={block.label}
-      onClick={() => toPage(block.route)}
-      noBorder
-    />
-  ));
+  const renderBlock = (group, blocks) => (
+    blocks.map((block) => (
+      <FavoriteBlockButton
+        key={block.id}
+        icon={iconGenerator(block.id)}
+        label={block.label}
+        onClick={() => toPage(block.route)}
+        noBorder
+      />
+    ))
+  );
 
   const renderContent = (group) => group.map((section) => (
     <section key={section.id} className={section.group}>
