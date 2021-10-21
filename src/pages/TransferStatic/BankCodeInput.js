@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { Controller } from 'react-hook-form';
 import { bankList as taiwanBankList } from 'taiwan-bank-data';
 import { DialogContent, DialogTitle } from '@material-ui/core';
-import { Close, FormatListBulletedRounded } from '@material-ui/icons';
+import { Close } from '@material-ui/icons';
 import {
   FEIBErrorMessage, FEIBIconButton, FEIBInput, FEIBInputLabel,
 } from 'components/elements';
-import BankCodeWrapper from '../../components/BankCode/bankCode.style';
-import theme from '../../themes/theme';
+import BankCodeWrapper from 'components/BankCode/bankCode.style';
+import { ListIcon } from 'assets/images/icons';
+import theme from 'themes/theme';
 import mockData from './mockData';
 
 /*
@@ -97,7 +98,7 @@ const BankCodeInput = ({
             type="text"
             placeholder="請選擇"
             value={selectBank.bankNo && selectBank.bankName ? `${selectBank.bankNo} ${selectBank.bankName}` : ''}
-            $icon={<FormatListBulletedRounded />}
+            $icon={<ListIcon className="listIcon" />}
             $iconFontSize={2.4}
             $iconOnClick={() => setOpenBankCodeList(true)}
             readOnly

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
+import { ArrowDownIcon } from 'assets/images/icons';
 import { Select as MaterialSelect } from '@material-ui/core';
-import { KeyboardArrowDownRounded } from '@material-ui/icons';
 
 const handleSpaceType = (position) => {
   switch (position) {
@@ -31,7 +31,7 @@ const handleSpaceType = (position) => {
 * */
 
 const FEIBSelect = styled(MaterialSelect).attrs({
-  IconComponent: () => <KeyboardArrowDownRounded />,
+  IconComponent: () => <ArrowDownIcon />,
 })`
   height: 4rem;
   margin: ${({ $space }) => handleSpaceType($space)};
@@ -54,11 +54,10 @@ const FEIBSelect = styled(MaterialSelect).attrs({
     transform: translateY(-50%);
   }
 
-  .MuiSvgIcon-root {
-    font-size: 3.6rem;
-    color: ${({ theme }) => theme.colors.primary.light};
+  .Icon {
     position: absolute;
-    right: 0;
+    right: 1rem;
+    font-size: 2rem;
     pointer-events: none;
   }
   

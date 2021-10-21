@@ -33,14 +33,19 @@ const AccountOverviewWrapper = styled(Layout)`
       width: 100%;
       
       h3 {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
         font-size: 1.4rem;
         color: ${({ theme }) => theme.colors.text.lightGray};
         
-        // sync icon
-        .MuiSvgIcon-root {
-          top: .3rem;
-          font-size: 1.8rem;
-          color: ${({ theme }) => theme.colors.primary.light};
+        .Icon {
+          top: -.2rem;
+          font-size: 1.6rem;
+          
+          &.switchIcon {
+            margin-left: .2rem;
+          }
         }
       }
       
@@ -50,10 +55,6 @@ const AccountOverviewWrapper = styled(Layout)`
         align-items: center;
         font-size: 2rem;
         color: ${({ theme }) => theme.colors.primary.light};
-      }
-      
-      &.customPosition {
-        margin-top: -.3rem;
       }
     }
   }
@@ -73,9 +74,10 @@ const AccountOverviewWrapper = styled(Layout)`
       font-size: 1.4rem;
       letter-spacing: .1rem;
       
-      .MuiSvgIcon-root {
+      .Icon {
+        top: -.2rem;
         margin-left: .2rem;
-        font-size: 1.4rem;
+        font-size: 1.6rem;
       }
     }
   }

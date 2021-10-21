@@ -28,7 +28,7 @@ const DebitCardWrapper = styled.div`
       color: ${({ theme }) => theme.colors.text.lightGray};
 
       .MuiIconButton-root {
-        margin-left: -.4rem;
+        margin-left: -.8rem;
       }
       
       .branch,
@@ -50,10 +50,15 @@ const DebitCardWrapper = styled.div`
   .cardBalance {
     display: flex;
     justify-content: flex-end;
-    align-items: baseline;
+    align-items: center;
     
     &.grow {
       margin-bottom: .4rem;
+    }
+    
+    .MuiIconButton-root {
+      top: -.1rem;
+      margin-right: -.4rem;
     }
 
     .balance {

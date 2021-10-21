@@ -1,9 +1,9 @@
 /* eslint-disable */
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { AddRounded } from '@material-ui/icons';
 import BottomDrawer from 'components/BottomDrawer';
 import MemberAccountCard from 'components/MemberAccountCard';
+import { AddIcon } from 'assets/images/icons';
 // import { doGetInitData } from 'apis/transferApi';
 import { getFavAcct,queryRegAcct } from 'apis/transferApi';
 import TransferDrawerWrapper from './transferDrawer.style';
@@ -77,7 +77,7 @@ const TransferDrawer = ({ setTabId }) => {
       { title === '常用帳號' && (
         <div className="addMemberButtonArea" onClick={handleClickAddFrequentlyUsedAccount}>
           <div className="addMemberButtonIcon">
-            <AddRounded />
+            <AddIcon />
           </div>
           <span className="addMemberButtonText">新增常用帳號</span>
         </div>

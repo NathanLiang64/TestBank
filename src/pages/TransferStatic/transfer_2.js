@@ -1,21 +1,24 @@
 import { useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  PersonAddRounded, CameraAltOutlined, ShareOutlined, PhoneRounded, AutorenewRounded,
-} from '@material-ui/icons';
 import Accordion from 'components/Accordion';
 import BottomAction from 'components/BottomAction';
 import InformationList from 'components/InformationList';
 import SuccessImage from 'assets/images/stateSuccess.svg';
 import ErrorImage from 'assets/images/stateError.svg';
+import {
+  AddMemberIcon, CameraIcon, PhoneIcon, ShareIcon, TransactionIcon,
+} from 'assets/images/icons';
 import { directTo } from 'utilities/mockWebController';
 import TransferWrapper from './transfer.style';
 import TransferStaticDrawer from '../TransferStaticDrawer';
 import { setClickMoreOptions, setOpenDrawer } from './stores/actions';
+import SnackModal from '../../components/SnackModal';
+import theme from '../../themes/theme';
 
 const Transfer2 = () => {
   const [openTransferDrawer, setOpenTransferDrawer] = useState(false);
+  const [isSnapshotSuccess, setIsSnapshotSuccess] = useState(false);
   const clickMoreOptions = useSelector(({ transferStatic }) => transferStatic.clickMoreOptions);
   const history = useHistory();
   const dispatch = useDispatch();
@@ -44,6 +47,13 @@ const Transfer2 = () => {
     dispatch(setClickMoreOptions({ ...clickMoreOptions, add: { click: true, target: account } }));
   };
 
+  const handleClickScreenshot = () => {
+    window.alert('call 原生截圖');
+    setIsSnapshotSuccess(true);
+    // 1 秒後將 isSnapshotSuccess 的值重置
+    setTimeout(() => setIsSnapshotSuccess(false), 1000);
+  };
+
   const renderTransferMainInfo = () => (
     <>
       <section className="transferMainInfo">
@@ -52,7 +62,7 @@ const Transfer2 = () => {
         <h3>{`${bankName}(${bankNo})`}</h3>
         <h3>{receivingAccount ? `${receivingAccount}` : ''}</h3>
         <button type="button">
-          <PersonAddRounded />
+          <AddMemberIcon />
           <span onClick={handleClickAddAccount}>加入常用轉帳</span>
         </button>
       </section>
@@ -70,13 +80,13 @@ const Transfer2 = () => {
         </Accordion>
       </section>
       <BottomAction>
-        <button type="button" onClick={() => window.alert('call 原生截圖')}>
-          <CameraAltOutlined />
+        <button type="button" onClick={handleClickScreenshot}>
+          <CameraIcon />
           畫面截圖
         </button>
         <div className="divider" />
         <button type="button" onClick={() => window.alert('call 原生分享')}>
-          <ShareOutlined />
+          <ShareIcon />
           社群通知
         </button>
       </BottomAction>
@@ -91,12 +101,12 @@ const Transfer2 = () => {
       </section>
       <BottomAction>
         <button type="button" onClick={() => window.alert('通話')}>
-          <PhoneRounded />
+          <PhoneIcon />
           聯絡客服
         </button>
         <div className="divider" />
         <button type="button" onClick={() => directTo(history, 'transferStatic')}>
-          <AutorenewRounded />
+          <TransactionIcon />
           重新轉帳
         </button>
       </BottomAction>
@@ -115,6 +125,13 @@ const Transfer2 = () => {
       </div>
       { isSuccess ? renderTransferMainInfo() : errorInfo() }
       { openTransferDrawer && <TransferStaticDrawer /> }
+
+      { isSnapshotSuccess && (
+        <SnackModal
+          icon={<CameraIcon size={32} color={theme.colors.basic.white} />}
+          text="截圖成功"
+        />
+      ) }
     </TransferWrapper>
   );
 };

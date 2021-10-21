@@ -7,7 +7,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Pagination } from 'swiper/core';
 import { RadioGroup } from '@material-ui/core';
-import { AccountCircleRounded } from '@material-ui/icons';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import DebitCard from 'components/DebitCard';
 import Accordion from 'components/Accordion';
@@ -18,12 +17,12 @@ import Dialog from 'components/Dialog';
 import {
   FEIBTabContext, FEIBTabList, FEIBTab, FEIBTabPanel,
   FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBDatePicker,
-  FEIBRadioLabel, FEIBRadio, FEIBButton, FEIBSelect, FEIBOption, FEIBIconButton,
+  FEIBRadioLabel, FEIBRadio, FEIBButton, FEIBSelect, FEIBOption,
 } from 'components/elements';
+import { ChangeMemberIcon } from 'assets/images/icons';
 import { numberToChinese, weekNumberToChinese } from 'utilities/Generator';
 import { bankCodeValidation, receivingAccountValidation, transferAmountValidation } from 'utilities/validation';
 import { directTo } from 'utilities/mockWebController';
-import theme from 'themes/theme';
 import { setOpenDrawer, setClickMoreOptions } from './stores/actions';
 import BankCodeInput from './BankCodeInput';
 import TransferWrapper from './transfer.style';
@@ -233,9 +232,7 @@ const TransferStatic = () => {
               noOption
             />
             <div className="changeMemberButton" onClick={handleOpenFrequentlyUsedList}>
-              <FEIBIconButton $iconColor={theme.colors.primary.light} $fontSize={2.4}>
-                <AccountCircleRounded />
-              </FEIBIconButton>
+              <ChangeMemberIcon />
             </div>
           </div>
         ) }
@@ -257,9 +254,7 @@ const TransferStatic = () => {
               noOption
             />
             <div className="changeMemberButton" onClick={handleOpenDesignatedList}>
-              <FEIBIconButton $iconColor={theme.colors.primary.light} $fontSize={2.4}>
-                <AccountCircleRounded />
-              </FEIBIconButton>
+              <ChangeMemberIcon />
             </div>
           </div>
         ) }
