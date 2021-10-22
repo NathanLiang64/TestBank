@@ -13,8 +13,8 @@ const mockData = {
         { title: '換匯', path: '/exchange', icon: null },
       ],
       moreList: [
-        { title: 'MasterCard Send Cross Border', path: '/', icon: 'radio_button_unchecked' },
-        { title: '設定為主要外幣帳戶', path: '/', icon: 'radio_button_unchecked' },
+        { title: 'MasterCard Send Cross Border', path: '/', icon: 'temp' },
+        { title: '設定為主要外幣帳戶', path: '/', icon: 'temp' },
       ],
     },
     {
@@ -30,8 +30,8 @@ const mockData = {
         { title: '換匯', path: '/exchange', icon: null },
       ],
       moreList: [
-        { title: 'MasterCard Send Cross Border', path: '/', icon: 'radio_button_unchecked' },
-        { title: '設定為主要外幣帳戶', path: '/', icon: 'radio_button_unchecked' },
+        { title: 'MasterCard Send Cross Border', path: '/', icon: 'temp' },
+        { title: '設定為主要外幣帳戶', path: '/', icon: 'temp' },
       ],
     },
     {
@@ -47,8 +47,8 @@ const mockData = {
         { title: '換匯', path: '/exchange', icon: null },
       ],
       moreList: [
-        { title: 'MasterCard Send Cross Border', path: '/', icon: 'radio_button_unchecked' },
-        { title: '設定為主要外幣帳戶', path: '/', icon: 'radio_button_unchecked' },
+        { title: 'MasterCard Send Cross Border', path: '/', icon: 'temp' },
+        { title: '設定為主要外幣帳戶', path: '/', icon: 'temp' },
       ],
     },
   ],

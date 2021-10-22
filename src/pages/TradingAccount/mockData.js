@@ -14,7 +14,7 @@ const mockData = {
         { title: '換匯', path: '/exchange', icon: null },
       ],
       moreList: [
-        { title: '設定為主要證券交割帳號', path: '/', icon: 'radio_button_unchecked' },
+        { title: '設定為主要證券交割帳號', path: '/', icon: 'temp' },
       ],
     },
     {
@@ -30,7 +30,7 @@ const mockData = {
         { title: '換匯', path: '/exchange', icon: null },
       ],
       moreList: [
-        { title: '設定為主要證券交割帳號', path: '/', icon: 'radio_button_unchecked' },
+        { title: '設定為主要證券交割帳號', path: '/', icon: 'temp' },
       ],
     },
     {
@@ -46,7 +46,7 @@ const mockData = {
         { title: '換匯', path: '/exchange', icon: null },
       ],
       moreList: [
-        { title: '設定為主要證券交割帳號', path: '/', icon: 'radio_button_unchecked' },
+        { title: '設定為主要證券交割帳號', path: '/', icon: 'temp' },
       ],
     },
   ],

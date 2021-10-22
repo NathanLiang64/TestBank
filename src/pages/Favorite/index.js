@@ -2,10 +2,11 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { EditRounded, RemoveRounded } from '@material-ui/icons';
+import { RemoveRounded } from '@material-ui/icons';
 import BottomDrawer from 'components/BottomDrawer';
 // import { getFavoriteList } from 'apis/favoriteApi';
 import BlockEmpty from 'assets/images/favoriteBlock/blockEmpty.png';
+import { EditIcon, RemoveIcon } from 'assets/images/icons';
 import Favorite1 from './favorite_1';
 import Favorite2 from './favorite_2';
 import { setFavoriteDrawer, setFavoriteList, setCustomFavoriteList } from './stores/actions';
@@ -92,7 +93,7 @@ const Favorite = () => {
       {...dragProvided.dragHandleProps}
       ref={dragProvided.innerRef}
     >
-      { showRemoveButton && <span className="removeButton" onClick={handleClickRemoveBlock}><RemoveRounded /></span> }
+      { showRemoveButton && <span className="removeButton" onClick={handleClickRemoveBlock}><RemoveIcon /></span> }
       {/* 最愛項目總數為 12，前 2 項為預設存在 (不可編輯)，背景由 index + 3 開始渲染 */}
       <img src={blockBackgroundGenerator(index + 3)} alt="block" />
       {/*<span className="icon">*/}
@@ -172,7 +173,7 @@ const Favorite = () => {
   //   <div className="defaultPage">
   //     <button type="button" className="editButton" onClick={() => handleOpenView('edit')}>
   //       編輯
-  //       <EditRounded />
+  //       <EditIcon />
   //     </button>
   //
   //     <DragDropContext>
@@ -200,7 +201,7 @@ const Favorite = () => {
     <div className="defaultPage">
       <button type="button" className="editButton" onClick={() => handleOpenView('edit')}>
         編輯
-        <EditRounded />
+        <EditIcon />
       </button>
       <DragDropContext onDragStart={() => console.log('drag start')}>
         <Droppable droppableId="favCards">

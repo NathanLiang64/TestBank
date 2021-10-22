@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { Icon } from '@material-ui/core';
-import { Edit } from '@material-ui/icons';
-import { MoreIcon, VisibilityIcon, VisibilityOffIcon } from 'assets/images/icons';
+import {
+  EditAccountIcon, MoreIcon, VisibilityIcon, VisibilityOffIcon,
+} from 'assets/images/icons';
 import BottomDrawer from 'components/BottomDrawer';
 import Dialog from 'components/Dialog';
 import CopyTextIconButton from 'components/CopyTextIconButton';
@@ -13,6 +13,7 @@ import {
 import theme from 'themes/theme';
 import { accountFormatter, currencySymbolGenerator, toCurrency } from 'utilities/Generator';
 import DebitCardBackground from 'assets/images/debitCardBackground.png';
+import { iconGenerator } from './debitCardIconGenerator';
 import DebitCardWrapper from './debitCard.style';
 
 /*
@@ -122,7 +123,7 @@ const DebitCard = ({
       {list.map((item) => (
         <li key={item.title}>
           <Link to={item.path}>
-            <Icon>{item.icon}</Icon>
+            {iconGenerator(item.icon)}
             {item.title}
           </Link>
         </li>
@@ -132,7 +133,7 @@ const DebitCard = ({
         moreDefault && (
           <li onClick={handleClickEditCardName}>
             <p>
-              <Edit />
+              <EditAccountIcon />
               帳戶名稱編輯
             </p>
           </li>

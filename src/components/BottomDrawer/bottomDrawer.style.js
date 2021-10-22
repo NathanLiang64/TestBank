@@ -34,12 +34,12 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
   }
   
   .backButton {
-    top: .4rem;
-    left: .4rem;
+    top: .8rem;
+    left: .8rem;
   }
 
   .closeButton {
-    top: .6rem;
+    top: .8rem;
     right: .8rem;
   }
   
@@ -62,10 +62,13 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
         letter-spacing: .1rem;
       }
       
+      .Icon,
       .MuiSvgIcon-root,
       .MuiIcon-root {
-        margin-right: 1.2rem;
+        top: -.2rem;
+        margin-right: 1.6rem;
         font-size: 2rem;
+        color: ${({ theme }) => theme.colors.text.dark};
       }
     }
   }

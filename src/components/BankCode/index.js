@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { DialogTitle, DialogContent } from '@material-ui/core';
-import { Close } from '@material-ui/icons';
 import { bankList as taiwanBankList } from 'taiwan-bank-data';
 import { FEIBIconButton, FEIBInput, FEIBInputLabel } from 'components/elements';
-import theme from 'themes/theme';
+import { CrossIcon } from 'assets/images/icons';
 import { getBankCode } from 'apis/transferApi';
+import theme from 'themes/theme';
 import BankCodeWrapper from './bankCode.style';
 /* eslint-disable */
 const BankCode = ({ isOpen, onClose, onSelect }) => {
@@ -68,11 +68,9 @@ const BankCode = ({ isOpen, onClose, onSelect }) => {
         <span className="title">銀行代碼</span>
         <FEIBIconButton
           className="closeButton"
-          $fontSize={2}
-          $iconColor={theme.colors.text.lightGray}
           onClick={onClose}
         >
-          <Close />
+          <CrossIcon size={20} color={theme.colors.text.dark} />
         </FEIBIconButton>
       </DialogTitle>
       <DialogContent>

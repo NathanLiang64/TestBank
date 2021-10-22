@@ -42,6 +42,10 @@ const ShakeShakeWrapper = styled.div`
       justify-content: center;
       align-items: center;
       left: -.8rem;
+      
+      p {
+        top: .1rem;
+      }
     }
   }
 

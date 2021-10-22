@@ -1,7 +1,6 @@
 import { DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
-import { CloseRounded } from '@material-ui/icons';
 import { FEIBIconButton } from 'components/elements';
-import theme from 'themes/theme';
+import { CrossIcon } from 'assets/images/icons';
 import DialogWrapper from './dialog.style';
 
 /*
@@ -34,19 +33,17 @@ const Dialog = ({
     <DialogContent>
       {content}
     </DialogContent>
-    {action && (
+    { action && (
       <DialogActions>
         {action}
       </DialogActions>
-    )}
+    ) }
     { onClose && (
       <FEIBIconButton
         className="closeIconButton"
-        $fontSize={2.2}
-        $iconColor={theme.colors.text.lightGray}
         onClick={onClose}
       >
-        <CloseRounded />
+        <CrossIcon />
       </FEIBIconButton>
     ) }
   </DialogWrapper>
