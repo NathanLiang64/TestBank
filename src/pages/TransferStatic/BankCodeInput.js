@@ -2,12 +2,11 @@ import { useState, useEffect } from 'react';
 import { Controller } from 'react-hook-form';
 import { bankList as taiwanBankList } from 'taiwan-bank-data';
 import { DialogContent, DialogTitle } from '@material-ui/core';
-import { Close } from '@material-ui/icons';
 import {
   FEIBErrorMessage, FEIBIconButton, FEIBInput, FEIBInputLabel,
 } from 'components/elements';
 import BankCodeWrapper from 'components/BankCode/bankCode.style';
-import { ListIcon } from 'assets/images/icons';
+import { CrossIcon, ListIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
 import mockData from './mockData';
 
@@ -118,11 +117,9 @@ const BankCodeInput = ({
           <span className="title">銀行代碼</span>
           <FEIBIconButton
             className="closeButton"
-            $fontSize={2}
-            $iconColor={theme.colors.text.lightGray}
             onClick={() => setOpenBankCodeList(false)}
           >
-            <Close />
+            <CrossIcon size={20} color={theme.colors.text.dark} />
           </FEIBIconButton>
         </DialogTitle>
         <DialogContent>

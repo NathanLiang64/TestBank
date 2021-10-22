@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import VisibilitySensor from 'react-visibility-sensor';
-import { CancelRounded } from '@material-ui/icons';
 import AccountDetailsSearchCondition from 'components/AccountDetailsSearchCondition';
 import DebitCard from 'components/DebitCard';
 import DetailCard from 'components/DetailCard';
@@ -10,7 +9,7 @@ import BottomDrawer from 'components/BottomDrawer';
 import {
   FEIBIconButton, FEIBTab, FEIBTabContext, FEIBTabList,
 } from 'components/elements';
-import { DownloadIcon, SearchIcon } from 'assets/images/icons';
+import { CrossCircleIcon, DownloadIcon, SearchIcon } from 'assets/images/icons';
 import { dateFormatter, stringDateCodeFormatter } from 'utilities/Generator';
 import theme from 'themes/theme';
 import {
@@ -199,8 +198,8 @@ const AccountDetails = ({
   const renderSearchBarText = (date) => (
     <div className="searchCondition">
       <p>{`${dateFormatter(new Date(date[0]))} ~ ${dateFormatter(new Date(date[1]))}`}</p>
-      <FEIBIconButton $fontSize={2} $iconColor={theme.colors.primary.light} onClick={init}>
-        <CancelRounded />
+      <FEIBIconButton onClick={init}>
+        <CrossCircleIcon />
       </FEIBIconButton>
     </div>
   );

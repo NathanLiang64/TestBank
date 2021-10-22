@@ -12,19 +12,20 @@ const FEIBRadioLabel = styled(MaterialRadioLabel)`
 
   // Label font size
   .MuiTypography-body1 {
-    top: .5rem;
+    top: .2rem;
     font-size: 1.6rem;
   }
   
   // Label position
   .MuiFormControlLabel-label {
-    margin-left: .8rem;
+    margin-left: -.2rem;
   }
 
   // Icon font size
-  //.MuiSvgIcon-root {
-  //  font-size: 2.4rem;
-  //}
+  .MuiIconButton-root,
+  .MuiSvgIcon-root {
+    font-size: 2.4rem;
+  }
 `;
 
 export default FEIBRadioLabel;

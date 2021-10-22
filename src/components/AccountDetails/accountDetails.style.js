@@ -49,6 +49,11 @@ const AccountDetailsWrapper = styled(Layout)`
       align-items: center;
       margin-left: .2rem;
       color: ${({ theme }) => theme.colors.text.dark};
+      
+      .Icon {
+        left: -.4rem;
+        font-size: 1.6rem;
+      }
     }
   }
 

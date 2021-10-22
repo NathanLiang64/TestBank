@@ -1,13 +1,11 @@
 import { useState } from 'react';
-import { MonetizationOn, ArrowBack, ArrowForward } from '@material-ui/icons';
+import { ArrowBack, ArrowForward } from '@material-ui/icons';
 import Dialog from 'components/Dialog';
 import InformationList from 'components/InformationList';
 import {
-  toCurrency,
-  stringDateFormatter,
-  timeFormatter,
-  currencySymbolGenerator,
+  toCurrency, stringDateFormatter, timeFormatter, currencySymbolGenerator,
 } from 'utilities/Generator';
+import { DetailsDefaultAvatarIcon } from 'assets/images/icons';
 import DetailCardWrapper, { DetailDialogContentWrapper } from './detailCard.style';
 
 /*
@@ -63,7 +61,7 @@ const DetailCard = ({
       ? <img src={avatar} alt="avatar" />
       : (
         <div className="defaultAvatar">
-          <MonetizationOn />
+          <DetailsDefaultAvatarIcon />
         </div>
       )
   );

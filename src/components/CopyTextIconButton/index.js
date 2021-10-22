@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-// import { FileCopyOutlined } from '@material-ui/icons';
 import SnackModal from 'components/SnackModal';
 import { FEIBIconButton } from 'components/elements';
 import { CopyIcon } from 'assets/images/icons';
