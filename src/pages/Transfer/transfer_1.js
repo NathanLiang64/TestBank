@@ -217,7 +217,7 @@ const Transfer1 = () => {
         bankName: bankCode.bankName,
         tranceDate: transferType === 'now' || transactionNumber === 'once'
           ? dateFormatter(transactionDate)
-          : [dateFormatter(transactionDate[0]), dateFormatter(transactionDate[1])],
+          : [dateFormatter(transactionDate[0], true), dateFormatter(transactionDate[1]), true],
         frequency: transactionFrequency === 'monthly'
           ? `${switchFrequency(transactionFrequency)}${transactionCycle}號`
           : `${switchFrequency(transactionFrequency)}${weekNumberToChinese(transactionCycle)}`,
@@ -243,7 +243,7 @@ const Transfer1 = () => {
         bankName: bankCode.bankName,
         date: transferType === 'now' || transactionNumber === 'once'
           ? dateFormatter(transactionDate)
-          : `${dateFormatter(transactionDate[0])}~${dateFormatter(transactionDate[1])}`,
+          : `${dateFormatter(transactionDate[0], true)}~${dateFormatter(transactionDate[1], true)}`,
         receivingAccount,
         debitAccount,
         debitName,
