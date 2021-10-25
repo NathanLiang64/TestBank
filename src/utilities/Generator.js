@@ -18,7 +18,7 @@ export const accountFormatter = (account) => (
   account ? `${account.slice(0, 3)}-${account.slice(3, 6)}-${account.slice(6)}` : '-'
 );
 
-// 將日期格式轉為 YYYY/MM/DD 字串
+// 將日期格式轉為 YYYY/MM/DD 字串或 YYYY-MM-DD 字串 (傳入第 2 個參數，值為 truthy)
 export const dateFormatter = (date, dashType) => {
   if (date) {
     date = new Date(date);

@@ -5,7 +5,7 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
   anchor: 'bottom',
 })`
   .MuiPaper-root {
-    max-height: 96vh;
+    max-height: 84vh;
     overflow-y: unset;
   }
   
