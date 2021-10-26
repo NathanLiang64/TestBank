@@ -16,9 +16,9 @@ const FavoriteDrawerWrapper = styled.div`
     font-size: 1.4rem;
     color: ${({ theme }) => theme.colors.text.dark};
     
-    .MuiSvgIcon-root {
+    .Icon {
       margin-left: .4rem;
-      font-size: 2rem;
+      font-size: 1.6rem;
       color: ${({ theme }) => theme.colors.primary.light};
     }
   }
@@ -72,8 +72,9 @@ const FavoriteDrawerWrapper = styled.div`
         animation: scaleUp .4s backwards;
         transform-origin: center;
         
-        .MuiSvgIcon-root {
-          font-size: 2.4rem;
+        .Icon {
+          margin-bottom: 0;
+          font-size: 1.6rem;
           color: ${({ theme }) => theme.colors.basic.white};
         }
       }

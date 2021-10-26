@@ -1,4 +1,5 @@
-import EmptyDataIcon from 'assets/images/icons/emptyData.svg';
+import { EmptyDataIcon } from 'assets/images/icons';
+import theme from 'themes/theme';
 import EmptyDataWrapper from './emptyData.style';
 
 /*
@@ -8,10 +9,12 @@ import EmptyDataWrapper from './emptyData.style';
 * 無
 * */
 
-const EmptyData = () => (
-  <EmptyDataWrapper>
-    <img src={EmptyDataIcon} alt="Empty Data" />
-    <p>搜尋條件無資料</p>
+const EmptyData = ({
+  content, color,
+}) => (
+  <EmptyDataWrapper $color={color}>
+    <EmptyDataIcon color={color || theme.colors.text.light} />
+    <p>{content || '搜尋條件無資料'}</p>
   </EmptyDataWrapper>
 );
 

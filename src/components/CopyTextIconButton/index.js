@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { FileCopyOutlined } from '@material-ui/icons';
 import SnackModal from 'components/SnackModal';
 import { FEIBIconButton } from 'components/elements';
+import { CopyIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
 import CopyTextIconButtonWrapper from './copyTextIconButton.style';
 
@@ -25,6 +25,7 @@ const CopyTextIconButton = ({
     // 1 秒後將 isCopied 的值重置
     setTimeout(() => setIsCopied(false), 1000);
   };
+
   return (
     <CopyTextIconButtonWrapper>
       <CopyToClipboard
@@ -35,13 +36,13 @@ const CopyTextIconButton = ({
           $iconColor={iconColor || theme.colors.text.lightGray}
           $fontSize={1.6}
         >
-          <FileCopyOutlined />
+          <CopyIcon size={16} />
         </FEIBIconButton>
       </CopyToClipboard>
       {
         isCopied && (
           <SnackModal
-            icon={<FileCopyOutlined />}
+            icon={<CopyIcon size={32} color={theme.colors.basic.white} />}
             text={displayMessage || '已複製帳號'}
           />
         )

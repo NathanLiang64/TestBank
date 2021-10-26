@@ -77,10 +77,14 @@ const Favorite2 = () => {
     setEditedBlockList(result);
 
     // 更新 UI 樣式
-    const groupDOM = document.querySelector(`.${group}`);
-    const blocks = Array.from(groupDOM.children[1].children);
-    const blockDOM = blocks.find((block) => block.getAttribute('data-block') === blockId);
-    blockDOM.classList.toggle('selected');
+    // const groupDOM = document.querySelector(`.${group}`);
+    // const blocks = Array.from(groupDOM.children[1].children);
+    // const blockDOM = blocks.find((block) => block.getAttribute('data-block') === blockId);
+    // blockDOM.classList.toggle('selected');
+
+    const buttons = Array.from(document.querySelectorAll('.favoriteBlockButton'));
+    const selectedButton = buttons.find((block) => block.getAttribute('data-block') === blockId);
+    selectedButton.classList.toggle('selected');
 
     // 新增 block 至 customFavoriteList
     // const updatedCustomFavoriteList = customFavoriteList;

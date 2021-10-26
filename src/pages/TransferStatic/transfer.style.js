@@ -38,7 +38,7 @@ const TransferWrapper = styled(Layout)`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: .4rem;
+    padding: .4rem 1.2rem .4rem .4rem;
     margin-top: .8rem;
     margin-bottom: 2.4rem;
     border-radius: .6rem;
@@ -51,7 +51,7 @@ const TransferWrapper = styled(Layout)`
   }
   
   .transferType {
-    margin-bottom: 1.6rem;
+    margin-bottom: 2.4rem;
   }
   
   .transferButtonArea {
@@ -192,13 +192,19 @@ const TransferWrapper = styled(Layout)`
         p {
           color: ${({ theme }) => theme.colors.text.lightGray};
         }
+
         h3 {
           color: ${({ theme }) => theme.colors.primary.dark};
           font-size: 2.4rem;
         }
+
         .transferAmount {
           margin: 1.2rem 0;
           font-weight: 900;
+        }
+
+        .Icon {
+          margin-right: .4rem;
         }
       }
       

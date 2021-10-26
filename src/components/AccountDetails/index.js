@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import VisibilitySensor from 'react-visibility-sensor';
-import { CancelRounded, GetAppRounded, SearchRounded } from '@material-ui/icons';
 import AccountDetailsSearchCondition from 'components/AccountDetailsSearchCondition';
 import DebitCard from 'components/DebitCard';
 import DetailCard from 'components/DetailCard';
@@ -10,6 +9,7 @@ import BottomDrawer from 'components/BottomDrawer';
 import {
   FEIBIconButton, FEIBTab, FEIBTabContext, FEIBTabList,
 } from 'components/elements';
+import { CrossCircleIcon, DownloadIcon, SearchIcon } from 'assets/images/icons';
 import { dateFormatter, stringDateCodeFormatter } from 'utilities/Generator';
 import theme from 'themes/theme';
 import {
@@ -198,8 +198,8 @@ const AccountDetails = ({
   const renderSearchBarText = (date) => (
     <div className="searchCondition">
       <p>{`${dateFormatter(new Date(date[0]))} ~ ${dateFormatter(new Date(date[1]))}`}</p>
-      <FEIBIconButton $fontSize={2} $iconColor={theme.colors.primary.light} onClick={init}>
-        <CancelRounded />
+      <FEIBIconButton onClick={init}>
+        <CrossCircleIcon />
       </FEIBIconButton>
     </div>
   );
@@ -261,11 +261,11 @@ const AccountDetails = ({
         <DownloadDrawerWrapper>
           <li onClick={() => handleClickDownloadDetails('pdf')}>
             <p>下載 PDF</p>
-            <GetAppRounded className="downloadIcon" />
+            <DownloadIcon className="downloadIcon" />
           </li>
           <li onClick={() => handleClickDownloadDetails('excel')}>
             <p>下載 EXCEL</p>
-            <GetAppRounded className="downloadIcon" />
+            <DownloadIcon className="downloadIcon" />
           </li>
         </DownloadDrawerWrapper>
       )}
@@ -291,12 +291,12 @@ const AccountDetails = ({
       <div className="inquiryArea measuredHeight">
 
         <div className="searchBar">
-          <FEIBIconButton $fontSize={2.8} onClick={() => dispatch(setOpenInquiryDrawer(true))}>
-            <SearchRounded />
+          <FEIBIconButton onClick={() => dispatch(setOpenInquiryDrawer(true))}>
+            <SearchIcon size={20} color={theme.colors.text.dark} />
           </FEIBIconButton>
           { (dateRange.length > 0) && renderSearchBarText(dateRange) }
-          <FEIBIconButton $fontSize={2.8} className="customPosition" onClick={() => setOpenDownloadDrawer(true)}>
-            <GetAppRounded />
+          <FEIBIconButton className="customPosition" onClick={() => setOpenDownloadDrawer(true)}>
+            <DownloadIcon size={20} color={theme.colors.text.dark} />
           </FEIBIconButton>
         </div>
 

@@ -20,8 +20,8 @@ const mockData = {
           { title: '無卡提款', path: '/cardLessATM', icon: null },
         ],
         moreList: [
-          { title: '定存', path: '/', icon: 'monetization_on' },
-          { title: '換匯', path: '/', icon: 'euro' },
+          { title: '定存', path: '/', icon: 'fixedDeposit' },
+          { title: '換匯', path: '/', icon: 'exchange' },
         ],
       },
       {
@@ -43,8 +43,8 @@ const mockData = {
           { title: '無卡提款', path: '/cardLessATM', icon: null },
         ],
         moreList: [
-          { title: '定存', path: '/', icon: 'monetization_on' },
-          { title: '換匯', path: '/', icon: 'euro' },
+          { title: '定存', path: '/', icon: 'fixedDeposit' },
+          { title: '換匯', path: '/', icon: 'exchange' },
         ],
       },
       {
@@ -66,8 +66,8 @@ const mockData = {
           { title: '無卡提款', path: '/cardLessATM', icon: null },
         ],
         moreList: [
-          { title: '定存', path: '/', icon: 'monetization_on' },
-          { title: '換匯', path: '/', icon: 'euro' },
+          { title: '定存', path: '/', icon: 'fixedDeposit' },
+          { title: '換匯', path: '/', icon: 'exchange' },
         ],
       },
     ],

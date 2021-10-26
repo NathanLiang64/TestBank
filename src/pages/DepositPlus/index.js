@@ -4,7 +4,8 @@ import {
   FEIBButton, FEIBTab, FEIBTabContext, FEIBTabList,
 } from 'components/elements';
 import { useCheckLocation, usePageInfo } from 'hooks';
-import { ArrowForwardIosRounded, StarRounded } from '@material-ui/icons';
+import { ArrowNextIcon } from 'assets/images/icons';
+import { StarRounded } from '@material-ui/icons';
 import DepositPlusWrapper, { LevelDialogContentWrapper } from './depositPlus.style';
 
 const Deposit = () => {
@@ -72,7 +73,7 @@ const Deposit = () => {
           <h3>活動明細</h3>
           <button type="button" onClick={() => setOpenLevelDialog(true)}>
             各項活動說明
-            <ArrowForwardIosRounded />
+            <ArrowNextIcon />
           </button>
         </div>
 

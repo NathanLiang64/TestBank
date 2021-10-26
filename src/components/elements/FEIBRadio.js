@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Radio as MaterialRadio } from '@material-ui/core';
+import { RadioCheckedIcon, RadioUncheckedIcon } from 'assets/images/icons';
 
 /*
 * ==================== FEIBRadio 可用選項 ====================
@@ -9,6 +10,8 @@ import { Radio as MaterialRadio } from '@material-ui/core';
 
 const FEIBRadio = styled(MaterialRadio).attrs({
   color: 'default',
+  icon: <RadioUncheckedIcon size={24} />,
+  checkedIcon: <RadioCheckedIcon size={24} />,
 })`
   &.MuiRadio-root {
     color: ${({ theme, $iconColor }) => $iconColor || theme.colors.text.dark};

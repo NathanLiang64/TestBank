@@ -7,7 +7,7 @@ import Avatar from 'components/Avatar';
 import {
   FEIBButton, FEIBErrorMessage, FEIBInput, FEIBInputLabel,
 } from 'components/elements';
-import { queryRegAcct } from 'apis/transferApi';
+import { queryRegAcct, doModifyRegAcct } from 'apis/transferApi';
 import { nicknameValidation } from 'utilities/validation';
 import { setOpenDrawer, setClickMoreOptions } from '../Transfer/stores/actions';
 
@@ -27,11 +27,14 @@ const TransferDesignedAccount = () => {
 
   const handleClickSubmit = (data) => {
     if (avatar) data.avatar = avatar;
-    data.acctId = targetMember.acctId;
-    data.bankNo = targetMember.bankNo;
-    data.bankName = targetMember.bankName;
+    console.log('targetMember', targetMember);
+    data.inAcct = targetMember.acctId;
+    data.inBank = targetMember.bankId;
+    data.nickName = data.nickname;
     // 送資料
-    // console.log(data);
+    console.log(data);
+
+    doModifyRegAcct(data);
 
     const { add, edit } = clickMoreOptions;
     if (edit.click) dispatch(setOpenDrawer({ ...openDrawer, title: '約定帳號', content: 'default' }));
@@ -48,12 +51,14 @@ const TransferDesignedAccount = () => {
   const handleSelectAvatar = (file) => setAvatar(file);
 
   useEffect(async () => {
+    console.log('執行');
     const { add, edit } = clickMoreOptions;
+    console.log(clickMoreOptions);
     if (edit.click && edit.target) {
       const response = await queryRegAcct({});
-
+      console.log('response', response);
       if (response) {
-        const currenTarget = response.designedAcctList.find((member) => member.id === edit.target);
+        const currenTarget = response.find((member) => member.acctId === edit.target);
         setTargetMember(currenTarget);
         setValue('nickname', currenTarget.acctName);
       }

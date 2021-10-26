@@ -18,16 +18,14 @@ const NetworkWrapper = styled(Layout)`
       align-items: center;
       margin-bottom: .4rem;
   
-      span {
+      .name {
         color: ${({ theme }) => theme.colors.text.dark};
         font-size: 1.8rem;
         font-weight: 500;
       }
-  
-      svg {
-        color: ${({ theme }) => theme.colors.primary.light};
-        font-size: 2.13rem;
-        margin-left: .8rem;
+      
+      .MuiIconButton-root {
+        margin-left: -.4rem;
       }
     }
   
@@ -51,24 +49,22 @@ const NetworkWrapper = styled(Layout)`
       transform: translate(-1.6rem, -3.2rem);
     }
 
+    .Icon {
+      top: -.1rem;
+      font-size: 1.6rem;
+    }
+
     .title {
       margin-bottom: 2.4rem;
     }
 
     .subTitle {
+      display: flex;
+      justify-content: center;
+      align-items: center;
       color: ${({ theme }) => theme.colors.text.lightGray};
       font-size: 1.4rem;
       margin-bottom: .8rem;
-      button {
-        width: 2.2rem;
-        height: 2rem;
-        padding: 0;
-        transform: translate(-0.4rem, -0.2rem);
-        svg {
-          font-size: 2.9rem;
-          color: ${({ theme }) => theme.colors.primary.light};
-        }
-      }
     }
 
     .shareContent {
@@ -78,25 +74,27 @@ const NetworkWrapper = styled(Layout)`
       color: ${({ theme }) => theme.colors.text.light};
       margin-bottom: 2.4rem;
 
-      svg {
+      .MuiIconButton-root {
         position: absolute;
-        right: 0;
-        top: -0.3rem;
-        color: ${({ theme }) => theme.colors.primary.light};
+        top: -1rem;
+        right: -1rem;
       }
     }
 
     .mainBlock {
       flex-direction: column;
       margin-bottom: 2.4rem;
+      
       .code {
         color: ${({ theme }) => theme.colors.primary.dark};
         font-size: 3rem;
         display: flex;
         font-weight: 500;
+        
         button {
           padding: 0 0 0 0.3rem;
           transform: translateY(-0.2rem);
+          
           svg {
             color: ${({ theme }) => theme.colors.primary.dark};
           }
@@ -113,15 +111,6 @@ const NetworkWrapper = styled(Layout)`
       display: flex;
       align-items: center;
       transform: translateY(-0.5rem);
-
-      button {
-        width: 2.2rem;
-        padding: 0;
-        svg {
-          font-size: 2.9rem;
-          color: ${({ theme }) => theme.colors.primary.light};
-        }
-      }
     }
 
     .overviewContent {

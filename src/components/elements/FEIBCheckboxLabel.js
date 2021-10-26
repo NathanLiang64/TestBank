@@ -17,10 +17,11 @@ const FEIBCheckboxLabel = styled(MaterialCheckboxLabel)`
 
   // Label position
   .MuiFormControlLabel-label {
-    left: -.3rem;
+    //left: -.3rem;
   }
-  
+
   // Icon font size
+  .MuiIconButton-root,
   .MuiSvgIcon-root {
     font-size: 2.4rem;
   }
