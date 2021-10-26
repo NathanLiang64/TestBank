@@ -18,13 +18,14 @@ import {
 // import e2ee from 'utilities/E2ee';
 import { setFavoriteDrawer } from 'pages/Favorite/stores/actions';
 import getJwtKey from 'utilities/DoGetToken';
-import { goToFunc } from 'utilities/BankeePlus';
+// import { goToFunc } from 'utilities/BankeePlus';
 import { accountValidation, identityValidation, passwordValidation } from 'utilities/validation';
 import theme from 'themes/theme';
 import Logo from 'assets/images/logoTransparent.png';
 import BgImage from 'assets/images/loginBackground.png';
 import LoginWrapper from './login.style';
-
+import FaceIdLoginModal from './faceIdLoginModal';
+import RegisterModal from './registerModal';
 // import CipherUtil from '../../utilities/CipherUtil';
 // import userAxios from '../../apis/axiosConfig';
 // import JWEUtil from '../../utilities/JWEUtil';
@@ -44,6 +45,8 @@ const Login = () => {
 
   const [showUserId, setShowUserId] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [showFaceIdLogin, setShowFaceIdLogin] = useState(false);
+  const [showActions, setShowActions] = useState(false);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -63,43 +66,14 @@ const Login = () => {
   const upperId = (e) => {
     setValue('identity', e.target.value.toUpperCase());
   };
-  // const iv = CipherUtil.generateIV();
-  // const aesKey = CipherUtil.generateAES();
-  // const getPublicAndPrivate = CipherUtil.generateRSA();
-  // const txnId = 'WEBCTLff7fd095-2cd0-4418-94cb-023256911c06';
-  // const channelCode = 'HHB_A';
-  // const appVersion = '1.0.15';
-  // const txSeq = '20210802155847';
 
-  // const onSubmit = async (data) => {
-  //   consolw.log(data);
-  //   const ServerPublicKey = await userAxios.post('/auth/getPublicKey'); // 取得公鑰
-  //   const jweRq = {
-  //     publicKey: getPublicAndPrivate.publicKey.replace(/(\r\n\t|\r\n|\n|\r\t)/gm, '').replace('-----BEGIN PUBLIC KEY-----', '').replace('-----END PUBLIC KEY-----', ''),
-  //     iv,
-  //     aesKey,
-  //     txnId,
-  //     channelCode,
-  //     appVersion,
-  //     txSeq,
-  //     custId: data.identity.toUpperCase(),
-  //     username: await e2ee(data.account),
-  //     password: await e2ee(data.password),
-  //   };
-  //   // console.log('jweRq', jweRq);
-  //   // data.identity = data.identity.toUpperCase();
-  //   // data.account = await e2ee(data.account);
-  //   // data.password = await e2ee(data.password);
-  //   // const response = await userLogin(data);
+  const handleFaceIdLoginOpen = () => {
+    setShowFaceIdLogin(!showFaceIdLogin);
+  };
 
-  //   const getJWTToken = JWEUtil.encryptJWEMessage(ServerPublicKey.data.data.result, JSON.stringify(jweRq));
-  //   const response = await userLogin(getJWTToken);
-  //   // console.log('jwtToken', response);
-  //   localStorage.setItem('jwtToken', response);
-  //   if (response.data.message === 'Success!!' && response.data.code === '0000') {
-  //     // alert('登入成功');
-  //   }
-  // };
+  const handleActionsOpen = () => {
+    setShowActions(!showActions);
+  };
 
   const onSubmit = async (data) => {
     const { result, message } = await getJwtKey(data);
@@ -107,7 +81,8 @@ const Login = () => {
       console.log('login success');
       try {
         alert('登入成功');
-        goToFunc('home');
+        history.push('/tutorials');
+        // goToFunc('home');
       } catch (error) {
         history.push('/');
       }
@@ -202,7 +177,7 @@ const Login = () => {
                 <FEIBIconButton
                   className="fastLogin"
                   $fontSize={2.4}
-                  // onClick={onClose}
+                  onClick={handleFaceIdLoginOpen}
                 >
                   <FaceIdIcon />
                 </FEIBIconButton>
@@ -213,11 +188,13 @@ const Login = () => {
               </div>
               <div className="signup">
                 <span>還沒有帳號？</span>
-                <FEIBLinkButton $color={theme.colors.text.link}>立即申請</FEIBLinkButton>
+                <FEIBLinkButton $color={theme.colors.text.link} onClick={handleActionsOpen}>立即申請</FEIBLinkButton>
               </div>
             </div>
             <img src={BgImage} alt="logo" className="backgroundImage" />
           </form>
+          <FaceIdLoginModal show={showFaceIdLogin} close={handleFaceIdLoginOpen} />
+          <RegisterModal show={showActions} close={handleActionsOpen} />
         </LoginWrapper>
       )
   );

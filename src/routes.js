@@ -81,6 +81,9 @@ import TransferStatic from 'pages/TransferStatic';
 import TransferStatic1 from 'pages/TransferStatic/transfer_1';
 import TransferStatic2 from 'pages/TransferStatic/transfer_2';
 
+/* Tutorials (for prototype) */
+import Tutorials from 'pages/Tutorials';
+
 const routes = [
   { path: '/', exact: true, component: Nav },
   { path: '/login', exact: false, component: Login },
@@ -159,6 +162,7 @@ const routes = [
   { path: '/transferStatic', exact: false, component: TransferStatic },
   { path: '/transferStatic1', exact: false, component: TransferStatic1 },
   { path: '/transferStatic2', exact: false, component: TransferStatic2 },
+  { path: '/tutorials', exact: false, component: Tutorials },
 ];
 
 export default routes;

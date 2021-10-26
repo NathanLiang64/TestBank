@@ -58,6 +58,7 @@ const Notice = () => {
     const data = await noticeApi.getNotices({
       channelCode: 'HHB_A',
     });
+    console.log(data.messages);
     setMessagesList(data.messages);
   };
 

@@ -3,6 +3,7 @@ import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import SuccessImage from 'assets/images/stateSuccess.svg';
 import ErrorImage from 'assets/images/stateError.svg';
+import { goToFunc } from 'utilities/BankeePlus';
 
 /* Elements */
 import {
@@ -17,7 +18,11 @@ const RegularBasicInformation2 = ({ location }) => {
   const [isSuccess, setIsSuccess] = useState(false);
 
   const toHome = () => {
-    history.push('');
+    try {
+      goToFunc('home');
+    } catch (error) {
+      history.push('/');
+    }
   };
 
   useCheckLocation();

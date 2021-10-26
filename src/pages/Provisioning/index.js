@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
-import { goToFunc } from 'utilities/BankeePlus';
-import SuccessImage from 'assets/images/stateSuccess.svg';
-import { provisioningApi } from 'apis';
+// import { goToFunc } from 'utilities/BankeePlus';
+import SuccessImage from 'assets/images/successImg.svg';
+// import { provisioningApi } from 'apis';
 
 /* Elements */
 import { FEIBButton } from 'components/elements';
@@ -13,20 +14,23 @@ import Dialog from 'components/Dialog';
 import ProvisioningWrapper from './provisioning.style';
 
 const Provisioning = () => {
+  const history = useHistory();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const triggerProvide = async () => {
-    const openhbResponse = await provisioningApi.openhb({});
-    if (Object.keys(openhbResponse).length === 0) {
-      setDialogOpen(true);
-    } else {
-      alert(openhbResponse.message);
-    }
+    // const openhbResponse = await provisioningApi.openhb({});
+    // if (Object.keys(openhbResponse).length === 0) {
+    //   setDialogOpen(true);
+    // } else {
+    //   alert(openhbResponse.message);
+    // }
+    setDialogOpen(true);
   };
 
   const toHomePage = () => {
     setDialogOpen(false);
-    goToFunc('home');
+    // goToFunc('home');
+    history.push('/regularPwdModify');
   };
 
   const renderDialog = () => (
