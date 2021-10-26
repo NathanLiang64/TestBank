@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { goToFunc } from 'utilities/BankeePlus';
-import { pwdModifyApi } from 'apis';
+// import { pwdModifyApi } from 'apis';
 
 /* Elements */
 import PasswordInput from 'components/PasswordInput';
@@ -13,7 +13,7 @@ import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
 import InfoArea from 'components/InfoArea';
 import { passwordValidation } from 'utilities/validation';
-import e2ee from 'utilities/E2ee';
+// import e2ee from 'utilities/E2ee';
 
 /* Styles */
 // import theme from 'themes/theme';
@@ -33,7 +33,8 @@ const RegularPwdModify = () => {
       .oneOf([yup.ref('newPassword'), null], '必須與新網銀密碼相同'),
   });
   const {
-    handleSubmit, control, formState: { errors }, getValues,
+    // handleSubmit, control, formState: { errors }, getValues,
+    handleSubmit, control, formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -48,14 +49,15 @@ const RegularPwdModify = () => {
 
   // 呼叫變更網銀密碼API
   const handlePasswordModify = async () => {
-    const param = {
-      password: await e2ee(getValues('password')),
-      newPassword: await e2ee(getValues('newPassword')),
-      newPasswordCheck: await e2ee(getValues('newPasswordCheck')),
-    };
-    const changePwdResponse = await pwdModifyApi.changePwd(param);
-    console.log('變更網銀密碼回傳', changePwdResponse);
-    const data = 'custName' in changePwdResponse;
+    // const param = {
+    //   password: await e2ee(getValues('password')),
+    //   newPassword: await e2ee(getValues('newPassword')),
+    //   newPasswordCheck: await e2ee(getValues('newPasswordCheck')),
+    // };
+    // const changePwdResponse = await pwdModifyApi.changePwd(param);
+    // console.log('變更網銀密碼回傳', changePwdResponse);
+    // const data = 'custName' in changePwdResponse;
+    const data = true;
     toResultPage(data);
     setShowConfirmDialog(false);
   };

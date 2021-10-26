@@ -3,6 +3,10 @@ import Layout from 'components/Layout';
 // import theme from 'themes/theme';
 
 const RegularPwdModifyWrapper = styled(Layout)`
+  z-index: 1001;
+  height: 100vh;
+  background: ${({ theme }) => theme.colors.basic.white};
+  padding-bottom: 4rem;
   .stateArea {
     display: flex;
     flex-direction: column;

@@ -186,6 +186,35 @@ const LoginWrapper = styled(Layout)`
       color: ${({ theme }) => theme.colors.primary.light};
     }
   }
+
+  .faceIdLogin {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    // background: rgba(172, 141, 232, 0.8);
+    background: rgba(66,48,99,.6) !important;
+    backdrop-filter: blur(.4rem);
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    &.hide {
+      display: none;
+    }
+    .loginImg {
+      width: 156px;
+      height: 158px;
+    }
+    .loginAgainImg {
+      width: 270px;
+      height: 260px;
+    }
+    .actionImg {
+      width: 270px;
+      height: 181px;
+    }
+  }
 `;
 
 export default LoginWrapper;

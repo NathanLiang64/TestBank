@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
-import { goToFunc } from 'utilities/BankeePlus';
+// import { goToFunc } from 'utilities/BankeePlus';
 import SuccessImage from 'assets/images/stateSuccess.svg';
 import ErrorImage from 'assets/images/stateError.svg';
 
@@ -13,10 +14,12 @@ import {
 import RegularPwdModifyWrapper from './regularPwdModify.style';
 
 const RegularPwdModify1 = ({ location }) => {
+  const history = useHistory();
   const [isSuccess, setIsSuccess] = useState(true);
 
   const toHome = () => {
-    goToFunc('home');
+    // goToFunc('home');
+    history.push('/regularBasicInformation');
   };
 
   useCheckLocation();
