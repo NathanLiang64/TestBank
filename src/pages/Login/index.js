@@ -18,6 +18,7 @@ import {
 // import e2ee from 'utilities/E2ee';
 import { setFavoriteDrawer } from 'pages/Favorite/stores/actions';
 import getJwtKey from 'utilities/DoGetToken';
+import HandShake from 'utilities/HandShake';
 // import { goToFunc } from 'utilities/BankeePlus';
 import { accountValidation, identityValidation, passwordValidation } from 'utilities/validation';
 import theme from 'themes/theme';
@@ -51,8 +52,13 @@ const Login = () => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  useEffect(() => {
-    // getJwtKey();
+  useEffect(async () => {
+    const { result, message } = await HandShake();
+    if (result === 'success') {
+      console.log(result);
+    } else {
+      alert(`Hand shake fail! ${message}`);
+    }
     dispatch(setShowSpinner(false));
 
     // 避免我的最愛 catch 住，在開啟 APP 後就顯示

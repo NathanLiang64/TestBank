@@ -93,7 +93,6 @@ const TabBar = () => {
       .then(({ code }) => {
         if (code === '00') {
           history.push('/login');
-          localStorage.clear();
         } else {
           alert('登出失敗');
         }
