@@ -60,9 +60,9 @@ const ChangeUserName = () => {
   // 呼叫變更使用者代號 API
   const handleChangeUserName = async () => {
     const param = {
-      userName: await e2ee(getValues('userName')),
-      newUserName: await e2ee(getValues('newUserName')),
-      newUserNameCheck: await e2ee(getValues('newUserNameCheck')),
+      userName: e2ee(getValues('userName')),
+      newUserName: e2ee(getValues('newUserName')),
+      newUserNameCheck: e2ee(getValues('newUserNameCheck')),
     };
     const changeUserNameResponse = await changeUserNameApi.changeUserName(param);
     console.log('變更使用者代號回傳', changeUserNameResponse);
