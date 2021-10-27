@@ -1,21 +1,26 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { StarRounded } from '@material-ui/icons';
 import Dialog from 'components/Dialog';
 import {
   FEIBButton, FEIBTab, FEIBTabContext, FEIBTabList,
 } from 'components/elements';
 import { useCheckLocation, usePageInfo } from 'hooks';
+import { getBonusPeriodList, getDepositPlus } from 'apis/depositPlusApi';
 import { ArrowNextIcon } from 'assets/images/icons';
-import { StarRounded } from '@material-ui/icons';
 import DepositPlusWrapper, { LevelDialogContentWrapper } from './depositPlus.style';
 
 const Deposit = () => {
-  const monthly = ['12', '11', '10', '09', '08', '07', '06'];
-
-  const [tabId, setTabId] = useState(monthly[0]);
+  const [tabId, setTabId] = useState('');
+  const [monthly, setMonthly] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [openLevelDialog, setOpenLevelDialog] = useState(false);
+  const [depositPlusDetail, setDepositPlusDetail] = useState({});
 
-  useCheckLocation();
-  usePageInfo('/api/depositPlus');
+  const {
+    period, bonusDetail, summaryRate, summaryBonusQuota,
+  } = depositPlusDetail;
+
+  const renderText = (value) => value || '-';
 
   const handleClickMonthTab = () => {
     // console.log('do something');
@@ -53,19 +58,55 @@ const Deposit = () => {
     </LevelDialogContentWrapper>
   );
 
+  const renderMonthlyTabs = (list) => list.map((month) => (
+    <FEIBTab key={month} label={`${month.substr(4)}月`} value={month} onClick={handleClickMonthTab} />
+  ));
+
+  const renderTabArea = (monthList) => (
+    <FEIBTabContext value={tabId}>
+      <FEIBTabList onChange={(event, id) => setTabId(id)} $size="small" className="tabList">
+        { renderMonthlyTabs(monthList) }
+      </FEIBTabList>
+    </FEIBTabContext>
+  );
+
+  useCheckLocation();
+  usePageInfo('/api/depositPlus');
+
+  useEffect(() => {
+    getBonusPeriodList({})
+      .then((response) => {
+        const sortedMonthly = response?.sort((a, b) => b - a);
+        setMonthly(sortedMonthly);
+        setTabId(sortedMonthly[0]);
+      });
+
+    // // 優惠利率額度等級表，點開彈窗再 call
+    // getDepositPlusLevelList({ year: '2021' })
+    //   .then((response) => console.log('by year: ', response));
+  }, []);
+
+  useEffect(() => {
+    if (monthly.length) setTabId(monthly[0]);
+  }, [monthly.length]);
+
+  useEffect(() => {
+    if (tabId) {
+      getDepositPlus({ dateRange: tabId })
+        .then((response) => setDepositPlusDetail(response));
+    }
+  }, [tabId]);
+
   return (
     <DepositPlusWrapper>
-      <FEIBTabContext value={tabId}>
-        <FEIBTabList onChange={(event, id) => setTabId(id)} $size="small" className="tabList">
-          { monthly.map((month) => (
-            <FEIBTab key={month} label={`${month}月`} value={month} onClick={handleClickMonthTab} />
-          )) }
-        </FEIBTabList>
-      </FEIBTabContext>
+      { tabId && monthly.length && renderTabArea(monthly) }
 
       <div className="mainArea">
-        <span>2020/12 優惠利率額度總計</span>
-        <h3>$5,000,000</h3>
+        <span>
+          {`${renderText(period?.substr(0, 4))}/${renderText(period?.substr(4))} `}
+          優惠利率額度總計
+        </span>
+        <h3>{`$${renderText(summaryBonusQuota)}`}</h3>
       </div>
 
       <section className="detailArea">
@@ -87,17 +128,19 @@ const Deposit = () => {
               <p>社群圈優惠額度</p>
               <span>依優惠額度等級</span>
             </div>
-            <p className="limitPrice">$1200</p>
+            <p className="limitPrice">
+              {`$${bonusDetail?.length ? bonusDetail[0].bonusQuota : '-'}`}
+            </p>
           </li>
           <li className="listBody">
             <div>
               <p>
-                2.6% 通通有
+                {`${renderText(summaryRate * 100)}% 通通有`}
                 <StarRounded className="starIcon" />
               </p>
               <span>適用活動優惠</span>
             </div>
-            <p className="limitPrice">$5,000,000</p>
+            <p className="limitPrice">{`$${renderText(summaryBonusQuota)}`}</p>
           </li>
         </ul>
 

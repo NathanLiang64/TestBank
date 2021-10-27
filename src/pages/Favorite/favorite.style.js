@@ -15,6 +15,7 @@ const FavoriteDrawerWrapper = styled.div`
     align-items: center;
     font-size: 1.4rem;
     color: ${({ theme }) => theme.colors.text.dark};
+    user-select: none;
     
     .Icon {
       margin-left: .4rem;
