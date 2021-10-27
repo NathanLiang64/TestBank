@@ -68,7 +68,6 @@ userAxios().interceptors.request.use(
 
 userAxios().interceptors.response.use(
   async (response) => {
-    console.log(response);
     dispatch(setShowSpinner(false));
     const jwt = localStorage.getItem('jwtToken');
     if (jwt) {

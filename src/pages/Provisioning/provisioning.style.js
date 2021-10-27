@@ -3,7 +3,7 @@ import Layout from 'components/Layout';
 
 const ProvisioningWrapper = styled(Layout)`
   z-index: 1001;
-  height: 100vh;
+  height: 100%;
   background: ${({ theme }) => theme.colors.basic.white};
   .tip {
     text-align: center;

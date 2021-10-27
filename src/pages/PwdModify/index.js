@@ -49,9 +49,9 @@ const PwdModify = () => {
   // 呼叫變更網銀密碼 API
   const handlePasswordModify = async () => {
     const param = {
-      password: await e2ee(getValues('password')),
-      newPassword: await e2ee(getValues('newPassword')),
-      newPasswordCheck: await e2ee(getValues('newPasswordCheck')),
+      password: e2ee(getValues('password')),
+      newPassword: e2ee(getValues('newPassword')),
+      newPasswordCheck: e2ee(getValues('newPasswordCheck')),
     };
     const changePwdResponse = await pwdModifyApi.changePwd(param);
     console.log('變更網銀密碼回傳', changePwdResponse);
