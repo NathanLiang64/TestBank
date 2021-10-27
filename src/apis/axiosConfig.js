@@ -68,6 +68,7 @@ userAxios().interceptors.request.use(
 
 userAxios().interceptors.response.use(
   async (response) => {
+    console.log(response);
     dispatch(setShowSpinner(false));
     const jwt = localStorage.getItem('jwtToken');
     if (jwt) {
@@ -79,27 +80,12 @@ userAxios().interceptors.response.use(
       // console.log('jwtToken', response.data);
       if (jwtToken) {
         localStorage.setItem('jwtToken', jwtToken);
-      } else {
-        // eslint-disable-next-line no-alert
-        // alert('權限失效，請重新登入');
-        // const logoutData = {
-        //   channelCode: 'HHB_A',
-        //   appVersion: '1.0.15',
-        //   udid: '',
-        // };
-        // const logoutResponse = await userAxios().post('/auth/logout', logoutData);
-        // if (!logoutResponse.message) {
-        //   const { host } = window.location;
-        //   window.location.replace(`${host}/login`);
-        //   localStorage.clear();
-        // } else {
-        //   // eslint-disable-next-line no-alert
-        //   alert(logoutResponse.message);
-        // }
+      }
+      if (response.config.url === '/auth/login') {
+        return response.data;
       }
       if (response.data.code === '0000') {
         const decrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
-        // console.log(decrypt);
         response = decrypt;
       } else {
         response = response.data;
