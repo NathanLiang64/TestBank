@@ -6,7 +6,7 @@ import TWCA4E2EELib from './TWCA4E2EELib';
  * @param value
  * @returns {string}
  */
-const e2ee = async (value) => {
+const e2ee = (value) => {
   // const response = await getE2EEFlag();
   const response = {
     e2ee_flag: 'Y',

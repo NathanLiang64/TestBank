@@ -4,9 +4,8 @@ import Layout from 'components/Layout';
 
 const RegularPwdModifyWrapper = styled(Layout)`
   z-index: 1001;
-  height: 100vh;
+  height: 100%;
   background: ${({ theme }) => theme.colors.basic.white};
-  padding-bottom: 4rem;
   .stateArea {
     display: flex;
     flex-direction: column;
