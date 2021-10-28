@@ -2,6 +2,9 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const RegularBasicInformationWrapper = styled(Layout)`
+  z-index: 1001;
+  height: 100%;
+  background: ${({ theme }) => theme.colors.basic.white};
   .description {
     padding: 0 1.6rem;
     font-size: 1.4rem;
