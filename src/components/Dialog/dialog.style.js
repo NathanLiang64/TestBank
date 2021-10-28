@@ -7,6 +7,10 @@ const DialogWrapper = styled(MaterialDialog)`
   .MuiPaper-root {
     border-radius: .8rem;
     width: 100%;
+    
+    &.MuiDialog-paperScrollPaper {
+      max-height: calc(100% - 16rem);
+    }
   }
 
   .MuiDialogTitle-root {
@@ -21,7 +25,7 @@ const DialogWrapper = styled(MaterialDialog)`
   
   .MuiDialogContent-root {
     padding-top: 0;
-    padding-bottom: 0rem;
+    padding-bottom: 0;
     font-size: 1.5rem;
   }
 
