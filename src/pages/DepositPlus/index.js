@@ -5,14 +5,14 @@ import {
   FEIBButton, FEIBTab, FEIBTabContext, FEIBTabList,
 } from 'components/elements';
 import { useCheckLocation, usePageInfo } from 'hooks';
-import { getBonusPeriodList, getDepositPlus } from 'apis/depositPlusApi';
+import { getBonusPeriodList, getDepositPlus, getDepositPlusLevelList } from 'apis/depositPlusApi';
 import { ArrowNextIcon } from 'assets/images/icons';
 import DepositPlusWrapper, { LevelDialogContentWrapper } from './depositPlus.style';
 
 const Deposit = () => {
   const [tabId, setTabId] = useState('');
   const [monthly, setMonthly] = useState([]);
-  // eslint-disable-next-line no-unused-vars
+  const [levelList, setLevelList] = useState([]);
   const [openLevelDialog, setOpenLevelDialog] = useState(false);
   const [depositPlusDetail, setDepositPlusDetail] = useState({});
 
@@ -22,44 +22,43 @@ const Deposit = () => {
 
   const renderText = (value) => value || '-';
 
-  const handleClickMonthTab = () => {
-    // console.log('do something');
-  };
-
   const renderLevelDialogContent = () => (
     <LevelDialogContentWrapper>
-      <table className="Table">
+      <table>
         <caption>幣別：新臺幣</caption>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>X Axis</th>
-            <th>Y Axis</th>
+            <th>等級</th>
+            <th>
+              社群圈存款
+              <br />
+              月平均額度之總額
+            </th>
+            <th>
+              推薦人個人
+              <br />
+              存款優惠利率額度
+            </th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>Test Flight 1</td>
-            <td>120°</td>
-            <td>40°</td>
-          </tr>
-          <tr>
-            <td>Test Flight 2</td>
-            <td>120°</td>
-            <td>40°</td>
-          </tr>
-          <tr>
-            <td>Test Flight 3</td>
-            <td>120°</td>
-            <td>40°</td>
-          </tr>
+        <tbody className="rowCenter1 rowRight2 rowRight3">
+          { levelList.map((item) => {
+            const { range, offlineDepositRange, plus } = item;
+            return (
+              <tr key={range}>
+                <td>{range}</td>
+                <td>{offlineDepositRange}</td>
+                <td>{plus}</td>
+              </tr>
+            );
+          }) }
         </tbody>
       </table>
     </LevelDialogContentWrapper>
   );
 
   const renderMonthlyTabs = (list) => list.map((month) => (
-    <FEIBTab key={month} label={`${month.substr(4)}月`} value={month} onClick={handleClickMonthTab} />
+    <FEIBTab key={month} label={`${month.substr(4)}月`} value={month} />
   ));
 
   const renderTabArea = (monthList) => (
@@ -80,22 +79,29 @@ const Deposit = () => {
         setMonthly(sortedMonthly);
         setTabId(sortedMonthly[0]);
       });
-
-    // // 優惠利率額度等級表，點開彈窗再 call
-    // getDepositPlusLevelList({ year: '2021' })
-    //   .then((response) => console.log('by year: ', response));
   }, []);
 
   useEffect(() => {
     if (monthly.length) setTabId(monthly[0]);
   }, [monthly.length]);
 
+  // 切換頁籤撈取不同月份資料
   useEffect(() => {
     if (tabId) {
       getDepositPlus({ dateRange: tabId })
         .then((response) => setDepositPlusDetail(response));
     }
   }, [tabId]);
+
+  // 優惠利率額度等級表，點開彈窗再撈取資料
+  useEffect(() => {
+    const year = `${tabId.substr(0, 4)}`;
+    // 如果已有資料則不再重複撈取資料
+    if (!levelList.length) {
+      getDepositPlusLevelList({ year })
+        .then((response) => setLevelList(response ?? []));
+    }
+  }, [openLevelDialog, levelList.length]);
 
   return (
     <DepositPlusWrapper>
