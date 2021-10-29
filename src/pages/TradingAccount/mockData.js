@@ -4,7 +4,7 @@ const mockData = {
     {
       id: '1',
       acctBranch: '信義分行',
-      acctName: '證卷交割帳戶',
+      acctName: '證券交割帳戶',
       acctId: '04300499312641',
       acctType: '004',
       acctBalx: 20000000,
@@ -20,7 +20,7 @@ const mockData = {
     {
       id: '2',
       acctBranch: '中山分行',
-      acctName: '證卷交割帳戶2',
+      acctName: '證券交割帳戶2',
       acctId: '04300490004059',
       acctType: '004',
       acctBalx: 120485,
@@ -36,7 +36,7 @@ const mockData = {
     {
       id: '3',
       acctBranch: '松江分行',
-      acctName: '證卷交割帳戶3',
+      acctName: '證券交割帳戶3',
       acctId: '00100100063106',
       acctType: '004',
       acctBalx: 28425,

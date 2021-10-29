@@ -26,7 +26,7 @@ const LossReissue = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    ...passwordValidation,
+    password: passwordValidation(),
   });
   const {
     handleSubmit, control, watch, formState: { errors },

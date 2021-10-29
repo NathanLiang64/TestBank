@@ -29,7 +29,7 @@ const FingerPrint = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    ...passwordValidation,
+    password: passwordValidation(),
   });
   const {
     handleSubmit, watch, control, formState: { errors },

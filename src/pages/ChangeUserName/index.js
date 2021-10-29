@@ -14,6 +14,7 @@ import {
 // import PasswordInput from 'components/PasswordInput';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
+import { accountValidation, confirmAccountValidation } from 'utilities/validation';
 // import { passwordValidation } from 'utilities/validation';
 
 /* Styles */
@@ -26,22 +27,9 @@ const ChangeUserName = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    userName: yup
-      .string()
-      .required('請輸入您的使用者代號')
-      .min(6, '您輸入的使用者代號長度有誤，請重新輸入。')
-      .max(20, '您輸入的使用者代號長度有誤，請重新輸入。'),
-    newUserName: yup
-      .string()
-      .required('請輸入新的使用者代號')
-      .min(6, '您輸入的新使用者代號長度有誤，請重新輸入。')
-      .max(20, '您輸入的新使用者代號長度有誤，請重新輸入。'),
-    newUserNameCheck: yup
-      .string()
-      .required('請再輸入一次新的使用者代號')
-      .min(6, '您輸入的新使用者代號長度有誤，請重新輸入。')
-      .max(20, '您輸入的新使用者代號長度有誤，請重新輸入。')
-      .oneOf([yup.ref('newUserName'), null], '必須與新使用者代號相同'),
+    userName: accountValidation(),
+    newUserName: accountValidation(),
+    newUserNameCheck: confirmAccountValidation('newUserName'),
     // ...passwordValidation,
   });
   const {

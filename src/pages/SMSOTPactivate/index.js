@@ -33,7 +33,7 @@ const SMSOTPactivate = () => {
     OTPPassword: yup
       .string()
       .required('請輸入您的開通密碼'),
-    ...passwordValidation,
+    password: passwordValidation(),
   });
   const {
     // eslint-disable-next-line no-unused-vars
