@@ -73,7 +73,7 @@ const TransferWrapper = styled(Layout)`
       height: 4.4rem;
     }
   }
-  
+
   .customWidth {
     width: 50%;
   }
@@ -84,7 +84,8 @@ const TransferWrapper = styled(Layout)`
     }
     
     .MuiInputBase-input {
-      width: 26%;
+      //width: 26%;
+      color: transparent;
     }
     
     .adornment {
@@ -170,7 +171,7 @@ const TransferWrapper = styled(Layout)`
   &.transferConfirmPage,
   // 轉帳結果頁
   &.transferResultPage {
-    padding: 0;
+    padding: 1.6rem 0 0 0;
     background: ${({ theme }) => theme.colors.basic.white};
     
     section {
@@ -232,6 +233,7 @@ const TransferWrapper = styled(Layout)`
     }
 
     .stateText {
+      margin-top: 1.6rem;
       font-size: 2.4rem;
       text-align: center;
       font-weight: 500;
@@ -272,23 +274,6 @@ const TransferWrapper = styled(Layout)`
       &.transactionDetailArea {
         padding-top: 0;
         padding-bottom: 7.2rem;
-      }
-
-
-      &.errorInfo {
-        margin: 2.4rem 1.6rem 3.2rem 1.6rem;
-        text-align: center;
-
-        .errorCode {
-          margin-bottom: .8rem;
-          font-size: 1.6rem;
-          color: ${({ theme }) => theme.colors.text.lightGray};
-        }
-
-        .errorText {
-          font-size: 1.4rem;
-          color: ${({ theme }) => theme.colors.text.light};
-        }
       }
     }
   }

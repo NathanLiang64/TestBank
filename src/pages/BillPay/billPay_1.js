@@ -24,7 +24,10 @@ const BillPay = () => {
   /**
    *- 資料驗證
    */
-  const schema = yup.object().shape({ ...passwordValidation });
+  const schema = yup.object().shape({
+    password: passwordValidation(),
+  });
+
   const { control, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });

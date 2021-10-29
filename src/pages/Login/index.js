@@ -36,7 +36,9 @@ const Login = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    ...identityValidation, ...accountValidation, ...passwordValidation,
+    account: accountValidation(),
+    identity: identityValidation(),
+    password: passwordValidation(),
   });
   const {
     control, handleSubmit, setValue, formState: { errors },

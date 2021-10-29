@@ -53,7 +53,7 @@ const OTPValidate = () => {
     otpCode: yup
       .string()
       .required('請輸入 OTP 驗證碼'),
-    ...passwordValidation,
+    password: passwordValidation(),
   });
   const {
     handleSubmit, control, formState: { errors },

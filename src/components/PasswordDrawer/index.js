@@ -20,7 +20,7 @@ import PasswordDrawerWrapper from './passwordDrawer.style';
 const PasswordDrawer = () => {
   const schema = yup.object().shape({
     otpCode: otpCodeValidation(),
-    ...passwordValidation,
+    password: passwordValidation(),
   });
   const { handleSubmit, control, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
   const isPasswordRequired = useSelector(({ passwordDrawer }) => passwordDrawer.isPasswordRequired);
