@@ -15,6 +15,17 @@ const SuccessFailureAnimationsWrapper = styled.div`
       color: ${({ theme }) => theme.colors.state.error};
     }
   }
+
+  section.successInfo {
+    text-align: center;
+    margin-top: 1.6rem;
+    color: ${({ theme }) => theme.colors.text.light};
+    font-size: 1.4rem;
+    * {
+      font-size: 1.4rem;
+      color: ${({ theme }) => theme.colors.text.light};
+    }
+  }
   
   section.errorInfo {
     text-align: center;
