@@ -287,6 +287,7 @@ const GlobalStyles = createGlobalStyle`
       color: ${({ theme }) => theme.colors.secondary.brand};
     }
   }
+
   .balanceLayout {
     font-size: 1.6rem;
     color: ${({ theme }) => theme.colors.primary.dark};
@@ -295,6 +296,7 @@ const GlobalStyles = createGlobalStyle`
     height: 3.5rem;
     line-height: 3.5rem;
   }
+
   .noticeEditList {
     li {
       padding: 2rem 1.6rem;

@@ -4,17 +4,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import Accordion from 'components/Accordion';
 import BottomAction from 'components/BottomAction';
 import InformationList from 'components/InformationList';
-import SuccessImage from 'assets/images/stateSuccess.svg';
-import ErrorImage from 'assets/images/stateError.svg';
+import SnackModal from 'components/SnackModal';
+import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import {
   AddMemberIcon, CameraIcon, PhoneIcon, ShareIcon, TransactionIcon,
 } from 'assets/images/icons';
 import { directTo } from 'utilities/mockWebController';
+import theme from 'themes/theme';
 import TransferWrapper from './transfer.style';
-import TransferDrawer from '../TransferDrawer';
 import { setClickMoreOptions, setOpenDrawer } from './stores/actions';
-import SnackModal from '../../components/SnackModal';
-import theme from '../../themes/theme';
+import TransferDrawer from '../TransferDrawer';
 
 const Transfer2 = () => {
   const [openTransferDrawer, setOpenTransferDrawer] = useState(false);
@@ -79,58 +78,40 @@ const Transfer2 = () => {
           <InformationList title="備註" content={remark || ''} />
         </Accordion>
       </section>
-      <BottomAction>
-        <button type="button" onClick={handleClickScreenshot}>
-          <CameraIcon />
-          畫面截圖
-        </button>
-        <div className="divider" />
-        <button type="button" onClick={() => window.alert('call 原生分享')}>
-          <ShareIcon />
-          社群通知
-        </button>
-      </BottomAction>
     </>
   );
 
-  const errorInfo = () => (
-    <>
-      <section className="errorInfo">
-        <p className="errorCode">錯誤代碼：E341</p>
-        <p className="errorText">此處放置 API 回傳之錯誤訊息。</p>
-      </section>
-      <BottomAction>
-        <button type="button" onClick={() => window.alert('通話')}>
-          <PhoneIcon />
-          聯絡客服
-        </button>
-        <div className="divider" />
-        <button type="button" onClick={() => directTo(history, 'transfer')}>
-          <TransactionIcon />
-          重新轉帳
-        </button>
-      </BottomAction>
-    </>
+  const renderBottomAction = (success) => (
+    <BottomAction>
+      <button type="button" onClick={success ? handleClickScreenshot : () => window.alert('通話')}>
+        { success ? <CameraIcon /> : <PhoneIcon />}
+        { success ? '畫面截圖' : '聯絡客服' }
+      </button>
+      <div className="divider" />
+      <button type="button" onClick={success ? () => window.alert('call 原生分享') : () => directTo(history, 'transferStatic')}>
+        { success ? <ShareIcon /> : <TransactionIcon />}
+        { success ? '社群通知' : '重新轉帳' }
+      </button>
+    </BottomAction>
   );
 
   return (
     <TransferWrapper className="transferResultPage">
-      <div className="stateArea">
-        <div className="stateImage">
-          <img src={isSuccess ? SuccessImage : ErrorImage} alt="Success" />
-        </div>
-        <h3 className={`stateText ${isSuccess ? 'success' : 'error'}`}>
-          {isSuccess ? '轉帳成功' : '轉帳失敗'}
-        </h3>
-      </div>
-      { isSuccess ? renderTransferMainInfo() : errorInfo() }
-      { openTransferDrawer && <TransferDrawer /> }
+      <SuccessFailureAnimations
+        isSuccess={isSuccess}
+        successTitle="轉帳成功"
+        errorTitle="轉帳失敗"
+        errorCode="E341"
+        errorDesc="親愛的客戶，您好非約定轉帳超過當日轉帳限額，請重新執行交易，如有疑問，請與本行客戶服務中心聯繫。"
+        errorSpace
+      >
+        { renderTransferMainInfo() }
+      </SuccessFailureAnimations>
 
+      { renderBottomAction(isSuccess) }
+      { openTransferDrawer && <TransferDrawer /> }
       { isSnapshotSuccess && (
-        <SnackModal
-          icon={<CameraIcon size={32} color={theme.colors.basic.white} />}
-          text="截圖成功"
-        />
+        <SnackModal icon={<CameraIcon size={32} color={theme.colors.basic.white} />} text="截圖成功" />
       ) }
     </TransferWrapper>
   );

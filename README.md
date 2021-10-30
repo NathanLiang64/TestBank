@@ -121,6 +121,8 @@
   - AccountOverview - 聖森
   - AccountDetails - 聖森
   - AccountDetailsSearchCondition - 聖森
+  - Animation - 聖森
+  - SuccessFailureAnimations - 聖森
   - PickerProviders - 唯物
   - Accordion - 唯物
   - Spinner - 唯物

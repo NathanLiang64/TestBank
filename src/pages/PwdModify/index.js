@@ -14,7 +14,7 @@ import PasswordInput from 'components/PasswordInput';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
 import e2ee from 'utilities/E2ee';
-import { passwordValidation } from 'utilities/validation';
+import { confirmPasswordValidation, passwordValidation } from 'utilities/validation';
 
 /* Styles */
 // import theme from 'themes/theme';
@@ -26,12 +26,9 @@ const PwdModify = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    ...passwordValidation,
-    newPassword: passwordValidation.password,
-    newPasswordCheck: yup
-      .string()
-      .required('請再輸入一次新網銀密碼')
-      .oneOf([yup.ref('newPassword'), null], '必須與新網銀密碼相同'),
+    password: passwordValidation(),
+    newPassword: passwordValidation(),
+    newPasswordCheck: confirmPasswordValidation('newPassword'),
   });
   const {
     handleSubmit, control, formState: { errors }, getValues,

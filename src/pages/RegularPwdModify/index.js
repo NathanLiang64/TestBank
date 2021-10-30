@@ -8,11 +8,13 @@ import { yupResolver } from '@hookform/resolvers/yup';
 // import { pwdModifyApi } from 'apis';
 
 /* Elements */
+import { FEIBButton } from 'components/elements';
 import PasswordInput from 'components/PasswordInput';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
 import InfoArea from 'components/InfoArea';
-import { passwordValidation } from 'utilities/validation';
+import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
+import { confirmPasswordValidation, passwordValidation } from 'utilities/validation';
 // import e2ee from 'utilities/E2ee';
 
 /* Styles */
@@ -25,12 +27,9 @@ const RegularPwdModify = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    ...passwordValidation,
-    newPassword: passwordValidation.password,
-    newPasswordCheck: yup
-      .string()
-      .required('請再輸入一次新網銀密碼')
-      .oneOf([yup.ref('newPassword'), null], '必須與新網銀密碼相同'),
+    password: passwordValidation(),
+    newPassword: passwordValidation(),
+    newPasswordCheck: confirmPasswordValidation('newPassword'),
   });
   const {
     // handleSubmit, control, formState: { errors }, getValues,
@@ -38,17 +37,28 @@ const RegularPwdModify = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showNotiDialog, setShowNotiDialog] = useState(true);
   const [showWarningDialog, setShowWarningDialog] = useState(false);
+  const [showResultDialog, setShowResultDialog] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(true);
+  const successContent = (
+    <>
+      <p>您的網銀密碼已變更成功囉！</p>
+      <p>下次請使用新設定之密碼進行登入</p>
+    </>
+  );
 
-  // 跳轉結果頁
-  const toResultPage = (data) => {
-    history.push('/regularPwdModify1', { data });
+  // 關閉結果彈窗
+  const handleCloseResultDialog = () => {
+    if (isSuccess) {
+      // goToFunc('home');
+      history.push('/regularBasicInformation');
+    }
+    setShowResultDialog(false);
   };
 
-  // 呼叫變更網銀密碼API
-  const handlePasswordModify = async () => {
+  // 點擊儲存變更，呼叫變更網銀密碼API
+  const onSubmit = async () => {
     // const param = {
     //   password: await e2ee(getValues('password')),
     //   newPassword: await e2ee(getValues('newPassword')),
@@ -58,21 +68,43 @@ const RegularPwdModify = () => {
     // console.log('變更網銀密碼回傳', changePwdResponse);
     // const data = 'custName' in changePwdResponse;
     const data = true;
-    toResultPage(data);
-    setShowConfirmDialog(false);
+    if (data) {
+      setIsSuccess(true);
+    } else {
+      setIsSuccess(false);
+    }
+    setShowResultDialog(true);
   };
 
-  const handleWarnConfirm = () => {
-    setShowWarningDialog(false);
-    // goToFunc('home');
-    history.push('/regularBasicInformation');
-  };
+  // 提醒久未變更密碼彈窗
+  const renderNotiDialog = () => (
+    <Dialog
+      isOpen={showNotiDialog}
+      onClose={() => setShowNotiDialog(false)}
+      content={(
+        <>
+          <p>親愛的客戶，您好：</p>
+          <p>距離您上次變更密碼已屆一年。為了保障帳戶安全，請再一次變更密碼。謝謝您！</p>
+        </>
+      )}
+      action={(
+        <ConfirmButtons
+          subButtonValue="維持不變"
+          mainButtonValue="立即變更"
+          subButtonOnClick={() => {
+            setShowNotiDialog(false);
+            setShowWarningDialog(true);
+          }}
+          mainButtonOnClick={() => {
+            setShowNotiDialog(false);
+          }}
+        />
+      )}
+    />
+  );
 
-  const onSubmit = async () => {
-    setShowConfirmDialog(true);
-  };
-
-  const WarningDialog = () => (
+  // 警告不變更密碼會有安全性問題
+  const renderWarningDialog = () => (
     <Dialog
       isOpen={showWarningDialog}
       onClose={() => setShowWarningDialog(false)}
@@ -84,23 +116,33 @@ const RegularPwdModify = () => {
       )}
       action={(
         <ConfirmButtons
-          mainButtonOnClick={handleWarnConfirm}
+          mainButtonOnClick={() => {
+            setShowWarningDialog(false);
+            // goToFunc('home');
+            history.push('/regularBasicInformation');
+          }}
           subButtonOnClick={() => setShowWarningDialog(false)}
         />
       )}
     />
   );
 
-  const ConfirmDialog = () => (
+  // 密碼變更結果彈窗
+  const renderResultDialog = () => (
     <Dialog
-      isOpen={showConfirmDialog}
-      onClose={() => setShowConfirmDialog(false)}
-      content={<p>您確定要變更網銀密碼嗎？</p>}
-      action={(
-        <ConfirmButtons
-          mainButtonOnClick={handlePasswordModify}
-          subButtonOnClick={() => setShowConfirmDialog(false)}
-        />
+      isOpen={showResultDialog}
+      onClose={handleCloseResultDialog}
+      title=" "
+      content={(
+        <div className="dialogResultContent">
+          <SuccessFailureAnimations
+            isSuccess={isSuccess}
+            successTitle="設定成功"
+            successDesc={successContent}
+            errorTitle="設定失敗"
+            errorDesc="變更網銀密碼失敗"
+          />
+        </div>
       )}
     />
   );
@@ -138,18 +180,12 @@ const RegularPwdModify = () => {
           <InfoArea space="bottom">
             *每六個月請進行密碼以及個資更新以確保帳號安全
           </InfoArea>
-          <ConfirmButtons
-            subButtonValue="維持不變"
-            mainButtonValue="儲存變更"
-            subButtonOnClick={(event) => {
-              event.preventDefault();
-              setShowWarningDialog(true);
-            }}
-          />
+          <FEIBButton type="submit">儲存變更</FEIBButton>
         </div>
       </form>
-      <WarningDialog />
-      <ConfirmDialog />
+      { renderNotiDialog() }
+      { renderWarningDialog() }
+      { renderResultDialog() }
     </RegularPwdModifyWrapper>
   );
 };

@@ -4,7 +4,8 @@ import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { regularBasicInformationApi } from 'apis';
+// import { regularBasicInformationApi } from 'apis';
+import { goToFunc } from 'utilities/BankeePlus';
 
 /* Elements */
 import {
@@ -15,6 +16,8 @@ import {
 } from 'components/elements';
 import ConfirmButtons from 'components/ConfirmButtons';
 import Accordion from 'components/Accordion';
+import Dialog from 'components/Dialog';
+import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 
 /* Styles */
 import RegularBasicInformationWrapper from './regularBasicInformation.style';
@@ -34,10 +37,10 @@ const RegularBasicInformation = () => {
     income: yup
       .string()
       .required('尚未選擇個人年收入'),
-    // ...passwordValidation,
   });
   const {
-    handleSubmit, control, formState: { errors }, getValues, reset, setValue,
+    // handleSubmit, control, formState: { errors }, getValues, reset, setValue,
+    handleSubmit, control, formState: { errors }, reset, setValue,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -50,6 +53,8 @@ const RegularBasicInformation = () => {
   const [gradeOptions, setGradeOptions] = useState([{ code: '', name: '' }]);
   const [incomeOptions, setIncomeOptions] = useState([{ code: '', name: '' }]);
   const [jobOptions, setJobOptions] = useState([{ code: '', name: '' }]);
+  const [showResultDialog, setShowResultDialog] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(true);
 
   // 點擊重新設定
   const resetForm = () => {
@@ -62,40 +67,68 @@ const RegularBasicInformation = () => {
 
   // 取得職業別清單
   const getJobsCode = async () => {
-    const jobsCodeResponse = await regularBasicInformationApi.getJobsCode({});
+    // const jobsCodeResponse = await regularBasicInformationApi.getJobsCode({});
     // eslint-disable-next-line no-console
-    console.log(jobsCodeResponse);
-    if (!jobsCodeResponse.message) {
-      const {
-        grade, income, jobcd, gradeList, incomeList, jobList,
-      } = jobsCodeResponse;
-      setGradeOptions(gradeList);
-      setIncomeOptions(incomeList);
-      setJobOptions(jobList);
-      setRegularBasicData({ grade, income, jobcd });
-      setValue('industry', jobcd);
-      setValue('title', grade);
-      setValue('income', income);
-    } else {
-      alert(jobsCodeResponse.message);
-    }
+    // console.log(jobsCodeResponse);
+    // if (!jobsCodeResponse.message) {
+    //   const {
+    //     grade, income, jobcd, gradeList, incomeList, jobList,
+    //   } = jobsCodeResponse;
+    //   setGradeOptions(gradeList);
+    //   setIncomeOptions(incomeList);
+    //   setJobOptions(jobList);
+    //   setRegularBasicData({ grade, income, jobcd });
+    //   setValue('industry', jobcd);
+    //   setValue('title', grade);
+    //   setValue('income', income);
+    // } else {
+    //   alert(jobsCodeResponse.message);
+    // }
+    const mockGradeList = [
+      { code: '01', name: '法人董事' },
+      { code: '02', name: '法人董事之董事長' },
+      { code: '03', name: '董事長' },
+    ];
+    const mockIncomeList = [
+      { code: '01', name: '30萬以下' },
+      { code: '02', name: '30-50萬' },
+      { code: '03', name: '50-80萬' },
+    ];
+    const mockJobList = [
+      { code: '0301', name: '家管' },
+      { code: '0302', name: '學生' },
+      { code: '0303', name: '無、待業' },
+    ];
+    setGradeOptions(mockGradeList);
+    setIncomeOptions(mockIncomeList);
+    setJobOptions(mockJobList);
+    const grade = mockGradeList[0].code;
+    const income = mockIncomeList[0].code;
+    const jobcd = mockJobList[0].code;
+    setRegularBasicData({ grade, income, jobcd });
+    setValue('industry', jobcd);
+    setValue('title', grade);
+    setValue('income', income);
   };
 
-  // 跳轉確認頁
-  const toConfirmPage = (data) => {
-    history.push('/regularBasicInformation1', data);
-  };
-
-  // 更新個人資料
+  // 更新基本資料
   const modifyPersonalData = async () => {
-    const data = getValues();
-    const confirmData = {
-      industryLabel: jobOptions.find((item) => item.code === data.industry).name,
-      titleLabel: gradeOptions.find((item) => item.code === data.title).name,
-      incomeLabel: incomeOptions.find((item) => item.code === data.income).name,
-      ...data,
-    };
-    toConfirmPage(confirmData);
+    // const data = getValues();
+    // const modifyData = {
+    //   jobCd: data.industry,
+    //   grade: data.title,
+    //   inCome: data.income,
+    // };
+    // const modifyResponse = await regularBasicInformationApi.modifyRegularBasicInformation(modifyData);
+    // const { grade, inCome, jobCd } = modifyResponse;
+    // if (grade && inCome && jobCd) {
+    //   toResultPage(true);
+    // } else {
+    //   toResultPage(false);
+    // }
+    const result = true;
+    setIsSuccess(result);
+    setShowResultDialog(true);
   };
 
   // 點擊確認按鈕
@@ -103,10 +136,42 @@ const RegularBasicInformation = () => {
     modifyPersonalData();
   };
 
+  // 關閉結果彈窗
+  const handleCloseResultDialog = () => {
+    if (isSuccess) {
+      try {
+        goToFunc('home');
+      } catch (error) {
+        history.push('/');
+      }
+    }
+    setShowResultDialog(false);
+  };
+
   // 建立選單
   const renderOptionsList = (data) => data.map((item) => (
     <FEIBOption key={item.code} value={item.code}>{item.name}</FEIBOption>
   ));
+
+  // 基本資料更新結果彈窗
+  const renderResultDialog = () => (
+    <Dialog
+      isOpen={showResultDialog}
+      onClose={handleCloseResultDialog}
+      title=" "
+      content={(
+        <div className="dialogResultContent">
+          <SuccessFailureAnimations
+            isSuccess={isSuccess}
+            successTitle="設定成功"
+            successDesc="基本資料變更成功"
+            errorTitle="設定失敗"
+            errorDesc="基本資料變更失敗"
+          />
+        </div>
+      )}
+    />
+  );
 
   useCheckLocation();
   usePageInfo('/api/regularBasicInformation');
@@ -196,6 +261,7 @@ const RegularBasicInformation = () => {
           subButtonOnClick={resetForm}
         />
       </form>
+      { renderResultDialog() }
     </RegularBasicInformationWrapper>
   );
 };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
-import { regularBasicInformationApi } from 'apis';
+// import { regularBasicInformationApi } from 'apis';
 
 /* Elements */
 import {
@@ -32,18 +32,19 @@ const RegularBasicInformation1 = ({ location }) => {
 
   // 更新基本資料
   const modifyPersonalData = async () => {
-    const modifyData = {
-      jobCd: confirmData.industry,
-      grade: confirmData.title,
-      inCome: confirmData.income,
-    };
-    const modifyResponse = await regularBasicInformationApi.modifyRegularBasicInformation(modifyData);
-    const { grade, inCome, jobCd } = modifyResponse;
-    if (grade && inCome && jobCd) {
-      toResultPage(true);
-    } else {
-      toResultPage(false);
-    }
+    // const modifyData = {
+    //   jobCd: confirmData.industry,
+    //   grade: confirmData.title,
+    //   inCome: confirmData.income,
+    // };
+    // const modifyResponse = await regularBasicInformationApi.modifyRegularBasicInformation(modifyData);
+    // const { grade, inCome, jobCd } = modifyResponse;
+    // if (grade && inCome && jobCd) {
+    //   toResultPage(true);
+    // } else {
+    //   toResultPage(false);
+    // }
+    toResultPage(true);
   };
 
   useEffect(() => {

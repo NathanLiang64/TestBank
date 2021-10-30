@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 // import { goToFunc } from 'utilities/BankeePlus';
-import SuccessImage from 'assets/images/successImg.svg';
+// import SuccessImage from 'assets/images/successImg.svg';
 // import { provisioningApi } from 'apis';
 
 /* Elements */
 import { FEIBButton } from 'components/elements';
 import Accordion from 'components/Accordion';
 import Dialog from 'components/Dialog';
+import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 
 /* Styles */
 import ProvisioningWrapper from './provisioning.style';
@@ -16,6 +17,7 @@ import ProvisioningWrapper from './provisioning.style';
 const Provisioning = () => {
   const history = useHistory();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(true);
 
   const triggerProvide = async () => {
     // const openhbResponse = await provisioningApi.openhb({});
@@ -24,24 +26,35 @@ const Provisioning = () => {
     // } else {
     //   alert(openhbResponse.message);
     // }
+    setIsSuccess(true);
     setDialogOpen(true);
   };
 
   const toHomePage = () => {
-    setDialogOpen(false);
     // goToFunc('home');
     history.push('/regularPwdModify');
+  };
+
+  const handleCloseResultDialog = () => {
+    if (isSuccess) {
+      toHomePage();
+    }
+    setDialogOpen(false);
   };
 
   const renderDialog = () => (
     <Dialog
       isOpen={dialogOpen}
-      onClose={toHomePage}
+      onClose={handleCloseResultDialog}
       title=" "
       content={(
         <div className="dialogResultContent">
-          <img src={SuccessImage} alt="Success" />
-          <div className="resultText">開通完成</div>
+          <SuccessFailureAnimations
+            isSuccess={isSuccess}
+            successTitle="設定成功"
+            errorTitle="設定失敗"
+            errorDesc="開通行動銀行服務失敗"
+          />
         </div>
       )}
     />

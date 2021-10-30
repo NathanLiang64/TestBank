@@ -23,7 +23,6 @@ import ChangeUserName1 from 'pages/ChangeUserName/changeUserName_1';
 import PwdModify from 'pages/PwdModify';
 import PwdModify1 from 'pages/PwdModify/pwdModify_1';
 import RegularPwdModify from 'pages/RegularPwdModify';
-import RegularPwdModify1 from 'pages/RegularPwdModify/regularPwdModify_1';
 import SMSOTPactivate from 'pages/SMSOTPactivate';
 import QRCodeTransfer from 'pages/QRCodeTransfer';
 import Adjustment from 'pages/Adjustment';
@@ -56,8 +55,6 @@ import TaiwanDollarAccountDetails from 'pages/TaiwanDollarAccountDetails';
 import ForeignCurrencyAccount from 'pages/ForeignCurrencyAccount';
 import ForeignCurrencyAccountDetails from 'pages/ForeignCurrencyAccountDetails';
 import RegularBasicInformation from 'pages/RegularBasicInformation';
-import RegularBasicInformation1 from 'pages/RegularBasicInformation/regularBasicInformation_1';
-import RegularBasicInformation2 from 'pages/RegularBasicInformation/regularBasicInformation_2';
 import ExportBankBook from 'pages/ExportBankBook';
 import ExportBankBook1 from 'pages/ExportBankBook/exportBankBook_1';
 import ForeignCurrencyTransfer from 'pages/ForeignCurrencyTransfer';
@@ -110,7 +107,6 @@ const routes = [
   { path: '/pwdModify', exact: false, component: PwdModify },
   { path: '/pwdModify1', exact: false, component: PwdModify1 },
   { path: '/regularPwdModify', exact: false, component: RegularPwdModify },
-  { path: '/regularPwdModify1', exact: false, component: RegularPwdModify1 },
   { path: '/smsOTPactivate', exact: false, component: SMSOTPactivate },
   { path: '/QRCodeTransfer', exact: false, component: QRCodeTransfer },
   { path: '/adjustment', exact: false, component: Adjustment },
@@ -143,8 +139,6 @@ const routes = [
   { path: '/foreignCurrencyAccount', exact: false, component: ForeignCurrencyAccount },
   { path: '/foreignCurrencyAccountDetails', exact: false, component: ForeignCurrencyAccountDetails },
   { path: '/regularBasicInformation', exact: false, component: RegularBasicInformation },
-  { path: '/regularBasicInformation1', exact: false, component: RegularBasicInformation1 },
-  { path: '/regularBasicInformation2', exact: false, component: RegularBasicInformation2 },
   { path: '/exportBankBook', exact: false, component: ExportBankBook },
   { path: '/exportBankBook1', exact: false, component: ExportBankBook1 },
   { path: '/foreignCurrencyTransfer', exact: false, component: ForeignCurrencyTransfer },
