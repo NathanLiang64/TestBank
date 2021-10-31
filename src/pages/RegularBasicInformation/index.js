@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
+import { useDispatch } from 'react-redux';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
@@ -16,13 +17,13 @@ import {
 } from 'components/elements';
 import ConfirmButtons from 'components/ConfirmButtons';
 import Accordion from 'components/Accordion';
-import Dialog from 'components/Dialog';
-import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
+import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
 
 /* Styles */
 import RegularBasicInformationWrapper from './regularBasicInformation.style';
 
 const RegularBasicInformation = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
   /**
    *- 資料驗證
@@ -53,8 +54,6 @@ const RegularBasicInformation = () => {
   const [gradeOptions, setGradeOptions] = useState([{ code: '', name: '' }]);
   const [incomeOptions, setIncomeOptions] = useState([{ code: '', name: '' }]);
   const [jobOptions, setJobOptions] = useState([{ code: '', name: '' }]);
-  const [showResultDialog, setShowResultDialog] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(true);
 
   // 點擊重新設定
   const resetForm = () => {
@@ -111,6 +110,32 @@ const RegularBasicInformation = () => {
     setValue('income', income);
   };
 
+  // 關閉結果彈窗
+  const handleCloseResultDialog = () => {
+    try {
+      goToFunc('home');
+    } catch (error) {
+      history.push('/');
+    }
+  };
+
+  // 設定結果彈窗
+  const setResultDialog = (result) => {
+    let closeCallBack;
+    if (result) closeCallBack = handleCloseResultDialog;
+    else closeCallBack = () => {};
+    dispatch(setResultContent({
+      isSuccess: result,
+      successTitle: '設定成功',
+      successDesc: '基本資料變更成功',
+      errorTitle: '設定失敗',
+      errorCode: 'xxxx',
+      errorDesc: '基本資料變更失敗',
+    }));
+    dispatch(setCloseCallBack(closeCallBack));
+    dispatch(setIsOpen(true));
+  };
+
   // 更新基本資料
   const modifyPersonalData = async () => {
     // const data = getValues();
@@ -127,8 +152,7 @@ const RegularBasicInformation = () => {
     //   toResultPage(false);
     // }
     const result = true;
-    setIsSuccess(result);
-    setShowResultDialog(true);
+    setResultDialog(result);
   };
 
   // 點擊確認按鈕
@@ -136,42 +160,10 @@ const RegularBasicInformation = () => {
     modifyPersonalData();
   };
 
-  // 關閉結果彈窗
-  const handleCloseResultDialog = () => {
-    if (isSuccess) {
-      try {
-        goToFunc('home');
-      } catch (error) {
-        history.push('/');
-      }
-    }
-    setShowResultDialog(false);
-  };
-
   // 建立選單
   const renderOptionsList = (data) => data.map((item) => (
     <FEIBOption key={item.code} value={item.code}>{item.name}</FEIBOption>
   ));
-
-  // 基本資料更新結果彈窗
-  const renderResultDialog = () => (
-    <Dialog
-      isOpen={showResultDialog}
-      onClose={handleCloseResultDialog}
-      title=" "
-      content={(
-        <div className="dialogResultContent">
-          <SuccessFailureAnimations
-            isSuccess={isSuccess}
-            successTitle="設定成功"
-            successDesc="基本資料變更成功"
-            errorTitle="設定失敗"
-            errorDesc="基本資料變更失敗"
-          />
-        </div>
-      )}
-    />
-  );
 
   useCheckLocation();
   usePageInfo('/api/regularBasicInformation');
@@ -261,7 +253,6 @@ const RegularBasicInformation = () => {
           subButtonOnClick={resetForm}
         />
       </form>
-      { renderResultDialog() }
     </RegularBasicInformationWrapper>
   );
 };

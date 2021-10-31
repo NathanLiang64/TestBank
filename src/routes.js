@@ -19,9 +19,7 @@ import PatternLockSetting from 'pages/PatternLockSetting';
 import Notice from 'pages/Notice';
 import FingerPrintLockSetting from 'pages/FingerPrintLockSetting';
 import ChangeUserName from 'pages/ChangeUserName';
-import ChangeUserName1 from 'pages/ChangeUserName/changeUserName_1';
 import PwdModify from 'pages/PwdModify';
-import PwdModify1 from 'pages/PwdModify/pwdModify_1';
 import RegularPwdModify from 'pages/RegularPwdModify';
 import SMSOTPactivate from 'pages/SMSOTPactivate';
 import QRCodeTransfer from 'pages/QRCodeTransfer';
@@ -31,7 +29,6 @@ import ProjectJ from 'pages/ProjectJ';
 import LoanInquiry from 'pages/LoanInquiry';
 import LoanInterest from 'pages/LoanInterest';
 import BasicInformation from 'pages/BasicInformation';
-import BasicInformation1 from 'pages/BasicInformation/basicInformation_1';
 import QandA from 'pages/QandA';
 import Provisioning from 'pages/Provisioning';
 import Deduct from 'pages/Deduct';
@@ -66,7 +63,6 @@ import ReserveTransferSearch2 from 'pages/ReserveTransferSearch/reserveTransferS
 import MobileTransfer from 'pages/MobileTransfer';
 import MobileTransfer1 from 'pages/MobileTransfer/mobileTransfer_1';
 import MobileTransfer2 from 'pages/MobileTransfer/mobileTransfer_2';
-import MobileTransfer3 from 'pages/MobileTransfer/mobileTransfer_3';
 import ForeignCurrencyPriceSetting from 'pages/ForeignCurrencyPriceSetting';
 import QuickLoginSetting from 'pages/QuickLoginSetting';
 
@@ -103,9 +99,7 @@ const routes = [
   { path: '/notice', exact: false, component: Notice },
   { path: '/fingerPrintLockSetting', exact: false, component: FingerPrintLockSetting },
   { path: '/changeUserName', exact: false, component: ChangeUserName },
-  { path: '/changeUserName1', exact: false, component: ChangeUserName1 },
   { path: '/pwdModify', exact: false, component: PwdModify },
-  { path: '/pwdModify1', exact: false, component: PwdModify1 },
   { path: '/regularPwdModify', exact: false, component: RegularPwdModify },
   { path: '/smsOTPactivate', exact: false, component: SMSOTPactivate },
   { path: '/QRCodeTransfer', exact: false, component: QRCodeTransfer },
@@ -115,7 +109,6 @@ const routes = [
   { path: '/loanInquiry', exact: false, component: LoanInquiry },
   { path: '/loanInterest', exact: false, component: LoanInterest },
   { path: '/basicInformation', exact: false, component: BasicInformation },
-  { path: '/basicInformation1', exact: false, component: BasicInformation1 },
   { path: '/qAndA', exact: false, component: QandA },
   { path: '/provisioning', exact: false, component: Provisioning },
   { path: '/deduct', exact: false, component: Deduct },
@@ -150,7 +143,6 @@ const routes = [
   { path: '/mobileTransfer', exact: false, component: MobileTransfer },
   { path: '/mobileTransfer1', exact: false, component: MobileTransfer1 },
   { path: '/mobileTransfer2', exact: false, component: MobileTransfer2 },
-  { path: '/mobileTransfer3', exact: false, component: MobileTransfer3 },
   { path: '/foreignCurrencyPriceSetting', exact: false, component: ForeignCurrencyPriceSetting },
   { path: '/quickLoginSetting', exact: false, component: QuickLoginSetting },
   { path: '/transferStatic', exact: false, component: TransferStatic },

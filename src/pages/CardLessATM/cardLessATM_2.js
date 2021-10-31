@@ -6,7 +6,7 @@ import {
   FEIBButton,
 } from 'components/elements';
 import Accordion from 'components/Accordion';
-import SuccessImage from 'assets/images/stateSuccess.svg';
+import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import InformationList from 'components/InformationList';
 
 /* Styles */
@@ -15,7 +15,6 @@ import CardLessATMWrapper from './cardLessATM.style';
 const CardLessATM2 = ({ location }) => {
   const history = useHistory();
 
-  const [countSec, setCountSec] = useState(15 * 60);
   const [resultInfo, setResultInfo] = useState({
     result: 0,
     message: '無卡提款申請成功',
@@ -28,30 +27,18 @@ const CardLessATM2 = ({ location }) => {
 
   const formatAmount = (amount) => new Intl.NumberFormat('zh-TW', { style: 'currency', currency: 'TWD', minimumFractionDigits: 0 }).format(amount);
 
-  // const formatCountSec = (count) => {
-  //   const min = Math.floor(count / 60);
-  //   const sec = count % 60;
-  //   return `${min < 10 ? `0${min}` : min}:${sec < 10 ? `0${sec}` : sec}`;
-  // };
-
   useEffect(() => {
     setResultInfo(location.state.data);
-    const countDown = setInterval(() => {
-      if (countSec > 0) {
-        // eslint-disable-next-line no-shadow
-        setCountSec((countSec) => countSec - 1);
-      }
-    }, 1000);
-    return () => clearInterval(countDown);
-  }, [countSec]);
+  }, []);
 
   return (
     <CardLessATMWrapper className="result-wrapper">
       <div className="section1">
-        <div className="successImg">
-          <img src={SuccessImage} alt="Success" />
-          <div className="successTxt">設定成功</div>
-        </div>
+        <SuccessFailureAnimations
+          isSuccess={!!resultInfo.withdrawalNo}
+          successTitle="設定成功"
+          errorTitle="設定失敗"
+        />
         <div className="accountInfo">
           <div>
             銀行代號：805

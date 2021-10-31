@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
@@ -13,7 +14,7 @@ import PasswordInput from 'components/PasswordInput';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
 import InfoArea from 'components/InfoArea';
-import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
+import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
 import { confirmPasswordValidation, passwordValidation } from 'utilities/validation';
 // import e2ee from 'utilities/E2ee';
 
@@ -22,6 +23,7 @@ import { confirmPasswordValidation, passwordValidation } from 'utilities/validat
 import RegularPwdModifyWrapper from './regularPwdModify.style';
 
 const RegularPwdModify = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
   /**
    *- 資料驗證
@@ -39,22 +41,40 @@ const RegularPwdModify = () => {
   });
   const [showNotiDialog, setShowNotiDialog] = useState(true);
   const [showWarningDialog, setShowWarningDialog] = useState(false);
-  const [showResultDialog, setShowResultDialog] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(true);
-  const successContent = (
-    <>
-      <p>您的網銀密碼已變更成功囉！</p>
-      <p>下次請使用新設定之密碼進行登入</p>
-    </>
-  );
 
   // 關閉結果彈窗
   const handleCloseResultDialog = () => {
-    if (isSuccess) {
-      // goToFunc('home');
-      history.push('/regularBasicInformation');
+    // goToFunc('home');
+    history.push('/regularBasicInformation');
+  };
+
+  // 設定結果彈窗
+  const setResultDialog = (response) => {
+    const result = 'custName' in response;
+    let closeCallBack;
+    let errorCode = '';
+    let errorDesc = '';
+    if (result) {
+      closeCallBack = handleCloseResultDialog;
+    } else {
+      [errorCode, errorDesc] = response.message.split(' ');
+      closeCallBack = () => {};
     }
-    setShowResultDialog(false);
+    dispatch(setResultContent({
+      isSuccess: result,
+      successTitle: '設定成功',
+      successDesc: (
+        <>
+          <p>您的網銀密碼已變更成功囉！</p>
+          <p>下次請使用新設定之密碼進行登入</p>
+        </>
+      ),
+      errorTitle: '設定失敗',
+      errorCode,
+      errorDesc,
+    }));
+    dispatch(setCloseCallBack(closeCallBack));
+    dispatch(setIsOpen(true));
   };
 
   // 點擊儲存變更，呼叫變更網銀密碼API
@@ -67,13 +87,9 @@ const RegularPwdModify = () => {
     // const changePwdResponse = await pwdModifyApi.changePwd(param);
     // console.log('變更網銀密碼回傳', changePwdResponse);
     // const data = 'custName' in changePwdResponse;
-    const data = true;
-    if (data) {
-      setIsSuccess(true);
-    } else {
-      setIsSuccess(false);
-    }
-    setShowResultDialog(true);
+    // 假設變更成功
+    const data = { custName: '' };
+    setResultDialog(data);
   };
 
   // 提醒久未變更密碼彈窗
@@ -127,26 +143,6 @@ const RegularPwdModify = () => {
     />
   );
 
-  // 密碼變更結果彈窗
-  const renderResultDialog = () => (
-    <Dialog
-      isOpen={showResultDialog}
-      onClose={handleCloseResultDialog}
-      title=" "
-      content={(
-        <div className="dialogResultContent">
-          <SuccessFailureAnimations
-            isSuccess={isSuccess}
-            successTitle="設定成功"
-            successDesc={successContent}
-            errorTitle="設定失敗"
-            errorDesc="變更網銀密碼失敗"
-          />
-        </div>
-      )}
-    />
-  );
-
   useCheckLocation();
   usePageInfo('/api/regularPwdModify');
 
@@ -185,7 +181,6 @@ const RegularPwdModify = () => {
       </form>
       { renderNotiDialog() }
       { renderWarningDialog() }
-      { renderResultDialog() }
     </RegularPwdModifyWrapper>
   );
 };

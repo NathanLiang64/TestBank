@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 // import { goToFunc } from 'utilities/BankeePlus';
@@ -8,57 +8,50 @@ import { useCheckLocation, usePageInfo } from 'hooks';
 /* Elements */
 import { FEIBButton } from 'components/elements';
 import Accordion from 'components/Accordion';
-import Dialog from 'components/Dialog';
-import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 
 /* Styles */
 import ProvisioningWrapper from './provisioning.style';
+import { setIsOpen, setCloseCallBack, setResultContent } from '../ResultDialog/stores/actions';
 
 const Provisioning = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(true);
-
-  const triggerProvide = async () => {
-    // const openhbResponse = await provisioningApi.openhb({});
-    // if (Object.keys(openhbResponse).length === 0) {
-    //   setDialogOpen(true);
-    // } else {
-    //   alert(openhbResponse.message);
-    // }
-    setIsSuccess(true);
-    setDialogOpen(true);
-  };
 
   const toHomePage = () => {
     // goToFunc('home');
     history.push('/regularPwdModify');
   };
 
-  const handleCloseResultDialog = () => {
-    if (isSuccess) {
-      toHomePage();
+  // 設定結果彈窗
+  const setResultDialog = (response) => {
+    const result = Object.keys(response).length === 0;
+    let errorCode = '';
+    let errorDesc = '';
+    let closeCallBack;
+    if (result) {
+      closeCallBack = () => toHomePage();
+    } else {
+      [errorCode, errorDesc] = response.message.split(' ');
+      closeCallBack = () => {};
     }
-    setDialogOpen(false);
+    dispatch(setCloseCallBack(closeCallBack));
+    dispatch(setResultContent({
+      isSuccess: result,
+      successTitle: '設定成功',
+      successDesc: '',
+      errorTitle: '設定失敗',
+      errorCode,
+      errorDesc,
+    }));
+    dispatch(setIsOpen(true));
   };
 
-  const renderDialog = () => (
-    <Dialog
-      isOpen={dialogOpen}
-      onClose={handleCloseResultDialog}
-      title=" "
-      content={(
-        <div className="dialogResultContent">
-          <SuccessFailureAnimations
-            isSuccess={isSuccess}
-            successTitle="設定成功"
-            errorTitle="設定失敗"
-            errorDesc="開通行動銀行服務失敗"
-          />
-        </div>
-      )}
-    />
-  );
+  const triggerProvide = async () => {
+    // const openhbResponse = await provisioningApi.openhb({});
+    // 假設開通成功
+    const openhbResponse = {};
+    setResultDialog(openhbResponse);
+  };
 
   useCheckLocation();
   usePageInfo('/api/provisioning');
@@ -144,7 +137,6 @@ const Provisioning = () => {
         </div>
       </Accordion>
       <FEIBButton onClick={triggerProvide}>同意條款並送出</FEIBButton>
-      { renderDialog() }
     </ProvisioningWrapper>
   );
 };

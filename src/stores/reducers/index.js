@@ -16,6 +16,7 @@ import { reducers as taiwanDollarAccountReducer } from 'pages/TaiwanDollarAccoun
 import { reducers as foreignCurrencyAccountReducer } from 'pages/ForeignCurrencyAccount/stores';
 import { reducers as tradingAccountReducer } from 'pages/TradingAccount/stores';
 import { reducers as accountDetailsReducer } from 'components/AccountDetails/stores';
+import { reducers as resultDialogReducer } from 'pages/ResultDialog/stores';
 
 const reducer = combineReducers({
   header: headerReducer,
@@ -35,6 +36,7 @@ const reducer = combineReducers({
   foreignCurrencyAccount: foreignCurrencyAccountReducer,
   tradingAccount: tradingAccountReducer,
   accountDetails: accountDetailsReducer,
+  resultDialog: resultDialogReducer,
 });
 
 export default reducer;
