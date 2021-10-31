@@ -23,7 +23,7 @@ const SuccessFailureAnimations = ({
   successTitle = '成功',
   successDesc,
   errorTitle = '失敗',
-  errorCode = '-',
+  errorCode,
   errorDesc,
   errorSpace,
   children,
@@ -36,10 +36,14 @@ const SuccessFailureAnimations = ({
 
   const renderErrorInfo = (code, desc) => (
     <section className={`errorInfo ${errorSpace ? 'horizontalSpacing' : ''}`}>
-      <p className="errorCode">
-        錯誤代碼：
-        {code}
-      </p>
+      {
+        code && (
+          <p className="errorCode">
+            錯誤代碼：
+            {code}
+          </p>
+        )
+      }
       <p className="errorText">{desc}</p>
     </section>
   );

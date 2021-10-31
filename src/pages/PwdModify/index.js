@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { useHistory } from 'react-router';
+import { useDispatch } from 'react-redux';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
@@ -10,9 +10,8 @@ import { pwdModifyApi } from 'apis';
 import {
   FEIBButton,
 } from 'components/elements';
+import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
 import PasswordInput from 'components/PasswordInput';
-import Dialog from 'components/Dialog';
-import ConfirmButtons from 'components/ConfirmButtons';
 import e2ee from 'utilities/E2ee';
 import { confirmPasswordValidation, passwordValidation } from 'utilities/validation';
 
@@ -21,6 +20,7 @@ import { confirmPasswordValidation, passwordValidation } from 'utilities/validat
 import PwdModifyWrapper from './pwdModify.style';
 
 const PwdModify = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
   /**
    *- 資料驗證
@@ -36,11 +36,38 @@ const PwdModify = () => {
     resolver: yupResolver(schema),
   });
 
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  // 關閉結果彈窗
+  const handleCloseResultDialog = () => {
+    history.go(-1);
+  };
 
-  // 跳轉結果頁
-  const toResultPage = (data) => {
-    history.push('/pwdModify1', { data });
+  // 設定結果彈窗
+  const setResultDialog = (response) => {
+    const result = 'custName' in response;
+    let errorCode = '';
+    let errorDesc = '';
+    let closeCallBack;
+    if (result) {
+      closeCallBack = handleCloseResultDialog;
+    } else {
+      [errorCode, errorDesc] = response.message.split(' ');
+      closeCallBack = () => {};
+    }
+    dispatch(setResultContent({
+      isSuccess: result,
+      successTitle: '設定成功',
+      successDesc: (
+        <>
+          <p>您的網銀密碼已變更成功囉！</p>
+          <p>下次請使用新設定之密碼進行登入</p>
+        </>
+      ),
+      errorTitle: '設定失敗',
+      errorCode,
+      errorDesc,
+    }));
+    dispatch(setCloseCallBack(closeCallBack));
+    dispatch(setIsOpen(true));
   };
 
   // 呼叫變更網銀密碼 API
@@ -52,30 +79,13 @@ const PwdModify = () => {
     };
     const changePwdResponse = await pwdModifyApi.changePwd(param);
     console.log('變更網銀密碼回傳', changePwdResponse);
-    const data = 'custName' in changePwdResponse;
-    toResultPage(data);
-    setShowConfirmDialog(false);
+    setResultDialog(changePwdResponse);
   };
 
   // 點擊儲存變更按鈕，表單驗證
   const onSubmit = async () => {
-    setShowConfirmDialog(true);
+    handlePasswordModify();
   };
-
-  // 確認變更網銀密碼彈窗
-  const ConfirmDialog = () => (
-    <Dialog
-      isOpen={showConfirmDialog}
-      onClose={() => setShowConfirmDialog(false)}
-      content={<p className="txtCenter">您確定要變更網銀密碼嗎？</p>}
-      action={(
-        <ConfirmButtons
-          mainButtonOnClick={handlePasswordModify}
-          subButtonOnClick={() => setShowConfirmDialog(false)}
-        />
-      )}
-    />
-  );
 
   useCheckLocation();
   usePageInfo('/api/pwdModify');
@@ -112,7 +122,6 @@ const PwdModify = () => {
           儲存變更
         </FEIBButton>
       </form>
-      <ConfirmDialog />
     </PwdModifyWrapper>
   );
 };

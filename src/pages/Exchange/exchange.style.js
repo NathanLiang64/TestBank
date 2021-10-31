@@ -47,6 +47,7 @@ const ExchangeWrapper = styled(Layout)`
         }
       }
       .infoData {
+        margin-top: 2.4rem;
         .label {
           color: ${({ theme }) => theme.colors.text.lightGray};
           font-size: 16px;
@@ -94,21 +95,6 @@ const ExchangeWrapper = styled(Layout)`
           }
         }
       }
-    }
-  }
-  .stateImage {
-    width: 14.4rem;
-  }
-  .stateContent {
-    font-size: 2.4rem;
-    font-weight: 400;
-    line-height: 3.6rem;
-    margin-bottom: 2.4rem;
-    &.success {
-      color: ${({ theme }) => theme.colors.secondary.brand};
-    }
-    &.fail {
-      color: ${({ theme }) => theme.colors.state.error};
     }
   }
   table {

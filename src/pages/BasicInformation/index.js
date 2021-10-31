@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
+import { useDispatch } from 'react-redux';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
@@ -15,12 +16,13 @@ import {
   FEIBButton,
   FEIBErrorMessage,
 } from 'components/elements';
-// import PasswordInput from 'components/PasswordInput';
-// import { passwordValidation } from 'utilities/validation';
+import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
+
 /* Styles */
 import BasicInformationWrapper from './basicInformation.style';
 
 const BasicInformation = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
   /**
    *- 資料驗證
@@ -65,14 +67,7 @@ const BasicInformation = () => {
     },
   ]);
 
-  // 跳轉結果頁
-  const toResultPage = (param) => {
-    const data = 'mobilePhone' in param;
-    history.push('/basicInformation1', { data });
-  };
-
   // 取得縣市列表
-  // eslint-disable-next-line no-unused-vars
   const getCountyList = async (address) => {
     const countyListResponse = await settingApi.getCountyList({});
     setAddressOptionsData(countyListResponse);
@@ -104,6 +99,35 @@ const BasicInformation = () => {
     });
   };
 
+  // 關閉結果彈窗
+  const handleCloseResultDialog = () => {
+    history.go(-1);
+  };
+
+  // 設定結果彈窗
+  const setResultDialog = (response) => {
+    const result = 'mobilePhone' in response;
+    let errorCode = '';
+    let errorDesc = '';
+    let closeCallBack;
+    if (result) {
+      closeCallBack = handleCloseResultDialog;
+    } else {
+      [errorCode, errorDesc] = response.message.split(' ');
+      closeCallBack = () => {};
+    }
+    dispatch(setResultContent({
+      isSuccess: result,
+      successTitle: '設定成功',
+      successDesc: '基本資料變更成功',
+      errorTitle: '設定失敗',
+      errorCode,
+      errorDesc,
+    }));
+    dispatch(setCloseCallBack(closeCallBack));
+    dispatch(setIsOpen(true));
+  };
+
   // 更新個人資料
   const modifyPersonalData = async () => {
     const data = getValues();
@@ -118,7 +142,7 @@ const BasicInformation = () => {
     console.log(param);
     const modifyDataResponse = await basicInformationApi.modifyBasicInformation(param);
     console.log('更新基本資料回傳', modifyDataResponse);
-    toResultPage(modifyDataResponse);
+    setResultDialog(modifyDataResponse);
   };
 
   // 點擊儲存變更按鈕

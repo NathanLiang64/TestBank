@@ -61,6 +61,15 @@ const errorMessage = {
 
   // OTP 驗證碼
   otpCodeRequired: '請輸入 OTP 驗證碼',
+
+  // 無卡提款密碼
+  withdrawPasswordRequired: '請輸入無卡提款密碼',
+  withdrawPasswordLength: '您輸入的無卡提款密碼長度有誤，請重新輸入',
+  withdrawPasswordNumberOnly: '提款密碼僅能使用數字',
+
+  // 二次確認無卡提款密碼
+  confirmWithdrawPasswordRequired: '請再輸入一次新無卡提款密碼',
+  confirmWithdrawPasswordNotMatching: '必須與新無卡提款密碼相同',
 };
 
 /* ====================== 驗證規則 ====================== */
@@ -337,4 +346,20 @@ export const emailValidation = () => (
       is: true,
       then: yup.string().email(errorMessage.emailWrongFormat).required(errorMessage.emailRequired),
     })
+);
+
+// 無卡提款密碼驗證
+export const cardlessWithdrawPasswordValidation = () => (
+  yup.string()
+    .required(errorMessage.withdrawPasswordRequired)
+    .min(4, errorMessage.withdrawPasswordLength)
+    .max(12, errorMessage.withdrawPasswordLength)
+    .matches(/^[0-9]*$/, errorMessage.withdrawPasswordNumberOnly)
+);
+
+// 二次確認無卡提款密碼
+export const confirmCardlessWithdrawPasswordValidation = (passwordKeyName) => (
+  yup.string()
+    .required(errorMessage.confirmWithdrawPasswordRequired)
+    .oneOf([yup.ref(passwordKeyName), null], errorMessage.confirmWithdrawPasswordNotMatching)
 );
