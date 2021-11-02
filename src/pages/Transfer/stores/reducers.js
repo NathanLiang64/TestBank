@@ -14,6 +14,10 @@ const initState = {
   ntdTrAcct: [],
   frequentlyUsedAcct: [],
   designedAcct: [],
+
+  accounts: [],
+  favAccounts: [],
+  regAccounts: [],
 };
 
 const reducers = (state = initState, action) => {
@@ -42,6 +46,22 @@ const reducers = (state = initState, action) => {
       return {
         ...state,
         designedAcct: action.payload,
+      };
+
+    case types.SET_ACCOUNTS:
+      return {
+        ...state,
+        accounts: action.payload,
+      };
+    case types.SET_FAV_ACCOUNTS:
+      return {
+        ...state,
+        favAccounts: action.payload,
+      };
+    case types.SET_REG_ACCOUNTS:
+      return {
+        ...state,
+        regAccounts: action.payload,
       };
     default:
       return state;

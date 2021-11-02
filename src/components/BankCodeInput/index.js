@@ -26,7 +26,7 @@ const BankCodeInput = ({
   errorMessage,
   bankCode,
 }) => {
-  console.log('bankCode', bankCode);
+  // console.log('bankCode', bankCode);
   const [openBankCodeList, setOpenBankCodeList] = useState(false);
   const [selectBank, setSelectBank] = useState(bankCode || { bankNo: '', bankName: '' });
 
@@ -37,7 +37,7 @@ const BankCodeInput = ({
   };
 
   useEffect(() => {
-    console.log('selectBank', selectBank);
+    // console.log('selectBank', selectBank);
     if (bankCode && (!selectBank.bankNo && !selectBank.bankName)) {
       setSelectBank(bankCode);
     } else {

@@ -237,17 +237,17 @@ const Favorite = () => {
     }
   };
 
-  useEffect(() => {
-    getFavoriteList().then((response) => {
-      console.log(response);
-      dispatch(setCustomFavoriteList(response));
+  // useEffect(() => {
+    // getFavoriteList().then((response) => {
+      // console.log(response);
+      // dispatch(setCustomFavoriteList(response));
       // dispatch(setFavoriteList(mockFavoriteList.favoriteList));
-    });
-    getFavoriteSettings().then((res) => {
-      console.log(res);
-    })
+    // });
+    // getFavoriteSettings().then((res) => {
+      // console.log(res);
+    // })
     // dispatch(setFavoriteList(mockFavoriteList.favoriteList));
-  }, []);
+  // }, []);
 
   // useEffect(() => {
   //   const customList = [];

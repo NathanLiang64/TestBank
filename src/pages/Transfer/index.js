@@ -21,15 +21,13 @@ import {
   FEIBRadioLabel, FEIBRadio, FEIBButton, FEIBSelect, FEIBOption,
 } from 'components/elements';
 import { ChangeMemberIcon } from 'assets/images/icons';
-import { getNtdTrAcct, getFavAcct, queryRegAcct } from 'apis/transferApi';
+import { getMotpStatusOnTransfer, getNtdAccounts } from 'apis/transferApi';
 import { numberToChinese, weekNumberToChinese } from 'utilities/Generator';
 import { bankCodeValidation, receivingAccountValidation, transferAmountValidation } from 'utilities/validation';
 import { directTo } from 'utilities/mockWebController';
-import { setOpenDrawer, setClickMoreOptions } from './stores/actions';
+import { setOpenDrawer, setClickMoreOptions, setAccounts } from './stores/actions';
 import TransferWrapper from './transfer.style';
 import TransferDrawer from '../TransferDrawer';
-import Dialog from '../../components/Dialog';
-import { setNtdTrAcct, setFqlyUsedAccounts, setDgnedAccounts } from './stores/actions'
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
@@ -45,19 +43,22 @@ const Transfer = () => {
   const [showReserveMoreOption, setShowReserveMoreOption] = useState(false);
   const [selectTransferMember, setSelectTransferMember] = useState({ frequentlyUsed: null, designed: null });
   const [selectedDate, setSelectedDate] = useState(datePickerLimit.minDate);
-  const [cards, setCards] = useState([]);
   const [datePickerType, setDatePickerType] = useState('single');
   const [transactionCycleType, setTransactionCycleType] = useState('monthly');
   const [transactionDateRange, setTransactionDateRange] = useState([selectedDate, new Date(new Date().setDate(new Date().getDate() + 2))]);
-  const [selectCardId, setSelectCardId] = useState(0);
+  const [selectedCardIndex, setSelectedCardIndex] = useState(0);
   const [depositAmount, setDepositAmount] = useState(0);
   const [transferRemaining, setTransferRemaining] = useState(0);
-  const [frequentlyUsedAccounts, setFrequentlyUsedAccounts] = useState([]);
-  const [designedAccounts, setDesignedAccounts] = useState([]);
-  const [openAlertDialog, setOpenAlertDialog] = useState(false);
+  const [otpStatus, setOtpStatus] = useState({ isOtpOpen: false, isMotpOpen: false })
 
   const openDrawer = useSelector(({ transfer }) => transfer.openDrawer);
+  const favAccounts = useSelector(({ transfer }) => transfer.favAccounts);
+  const regAccounts = useSelector(({ transfer }) => transfer.regAccounts);
   const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
+
+  /* Adrian */
+  const accounts = useSelector(({ transfer }) => transfer.accounts);
+
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -93,64 +94,74 @@ const Transfer = () => {
     });
   };
 
-  // eslint-disable-next-line no-unused-vars
-  const handleChangeSlide = (swiper) => {
-    console.log('swiper',swiper)
-    setSelectCardId(swiper.activeIndex + 1);
-  };
+  const handleChangeSlide = (swiper) => setSelectedCardIndex(swiper.activeIndex);
 
   const handleClickTransferButton = (data) => {
     // 轉出帳號
-    
-    const selectCard = cards.find((card) => card.accountId === selectCardId);
-    console.log("轉帳Data",data);
-    data.debitAccount = selectCard.accountId;
-    data.debitName = selectCard.cardName;
 
-    // 常用/約定轉帳時，取得受款人帳號
-    const { select } = clickMoreOptions;
-    if (data.transferOption === 'frequentlyUsed') {
-      console.log("=============常用帳號轉帳==============");
-      console.log("select",select)
-      if (select.target) {
-        const currentTarget = frequentlyUsedAccounts.find((member) => member.id === select.target);
-        const { acctId, bankNo, bankName } = currentTarget;
-        data.bankCode = { bankId, bankName };
-        data.receivingAccount = acctId;
-      } else {
-        const { accountId, bankId, bankName } = frequentlyUsedAccounts[0];
-        console.log("frequentlyUsedAccounts",frequentlyUsedAccounts[0]);
-        data.bankCode = { bankId, bankName };
-        data.receivingAccount = accountId;
-      }
-    }
-    if (data.transferOption === 'designated') {
-      if (select.target) {
-        console.log("designedAccounts",designedAccounts)
-        const currentTarget = designedAccounts.find((member) => member.id === select.target);
-        const { acctId, bankNo, bankName } = currentTarget;
-        data.bankCode = { bankId, bankName };
-        data.receivingAccount = acctId;
-      } else {
-        const { acctId, bankId, bankName } = designedAccounts[0];
-        data.bankCode = { bankId, bankName };
-        data.receivingAccount = acctId;
-      }
-    }
+    // const selectedAccount = accounts.find((card) => card.accountId === selectedCardIndex);
+    const selectedAccount = accounts[selectedCardIndex];
+    console.log('submit transfer', data);
+    console.log('selectedCard', selectedAccount);
 
-    // 若沒有 transactionDate 代表用戶選擇預約多次轉帳，套用用戶選擇的日期範圍
-    if (!data.transactionDate) data.transactionDate = transactionDateRange;
-
-    // 刪除驗證用的選項
-    delete data.transferOption;
-
-    // console.log(data);
-
-    const displayInfo = { ...data, depositAmount, transferRemaining };
-    // const { receivingAccount, transferAmount, transferType } = data;
-    // const paramsObject = { receivingAccount, transferAmount, transferType };
-    // const params = Object.keys(paramsObject).map((key) => `${key}=${paramsObject[key]}`).join('&');
-    directTo(history, 'transfer1', displayInfo);
+    // "custId": 身分證號 string,
+    // "outAcctNo": 轉出帳號 string,
+    // "inBank": 轉入銀行 string,
+    // "inAcctNo": 轉入帳號 string,
+    // "amount": 轉帳金額 string,
+    // "email": email string,
+    // "emailContent": email內容 string,
+    // "memo": 附言 string,
+    // "deviceId": motp綁定裝置編號 string,
+    // "isQRCode": false,
+    // "isMotpOpen": true
+    // data.debitAccount = selectCard.accountId;
+    // data.debitName = selectCard.cardName;
+    //
+    // // 常用/約定轉帳時，取得受款人帳號
+    // const { select } = clickMoreOptions;
+    // if (data.transferOption === 'frequentlyUsed') {
+    //   console.log("=============常用帳號轉帳==============");
+    //   console.log("select",select)
+    //   if (select.target) {
+    //     const currentTarget = frequentlyUsedAccounts.find((member) => member.id === select.target);
+    //     const { acctId, bankNo, bankName } = currentTarget;
+    //     data.bankCode = { bankId, bankName };
+    //     data.receivingAccount = acctId;
+    //   } else {
+    //     const { accountId, bankId, bankName } = frequentlyUsedAccounts[0];
+    //     console.log("frequentlyUsedAccounts",frequentlyUsedAccounts[0]);
+    //     data.bankCode = { bankId, bankName };
+    //     data.receivingAccount = accountId;
+    //   }
+    // }
+    // if (data.transferOption === 'designated') {
+    //   if (select.target) {
+    //     console.log("designedAccounts",designedAccounts)
+    //     const currentTarget = designedAccounts.find((member) => member.id === select.target);
+    //     const { acctId, bankNo, bankName } = currentTarget;
+    //     data.bankCode = { bankId, bankName };
+    //     data.receivingAccount = acctId;
+    //   } else {
+    //     const { acctId, bankId, bankName } = designedAccounts[0];
+    //     data.bankCode = { bankId, bankName };
+    //     data.receivingAccount = acctId;
+    //   }
+    // }
+    //
+    // // 若沒有 transactionDate 代表用戶選擇預約多次轉帳，套用用戶選擇的日期範圍
+    // if (!data.transactionDate) data.transactionDate = transactionDateRange;
+    //
+    // // 刪除驗證用的選項
+    // delete data.transferOption;
+    //
+    // // console.log(data);
+    //
+    // const displayInfo = { ...data, depositAmount, transferRemaining };
+    // // const { receivingAccount, transferAmount, transferType } = data;
+    // // const paramsObject = { receivingAccount, transferAmount, transferType };
+    // // const params = Object.keys(paramsObject).map((key) => `${key}=${paramsObject[key]}`).join('&');
+    // directTo(history, 'transfer1', displayInfo);
   };
 
   const handleOpenFrequentlyUsedList = () => {
@@ -161,43 +172,27 @@ const Transfer = () => {
     dispatch(setOpenDrawer({ ...openDrawer, title: '約定帳號', open: true }));
   };
 
-  const handleCloseAlertDialog = () => {
-    setOpenAlertDialog(false);
-    setTabId('transfer');
-  };
-
-  const renderAlertDialog = () => (
-    <Dialog
-      isOpen={openAlertDialog}
-      onClose={handleCloseAlertDialog}
-      content={<p>尚未設定約定帳號，請至各分行臨櫃申請</p>}
-      action={<FEIBButton onClick={handleCloseAlertDialog}>確認</FEIBButton>}
-    />
-  );
-
-  const renderCards = (debitCards) => (
-    debitCards.map((card, index) => {
-      const {
-        branchId, cardName, accountId, balance, cardColor, moreList, tfrhCount, interbankTransferRemaining,
-      } = card;
-      return (
-        <SwiperSlide key={accountId} data-index={index}>
-          <DebitCard
-            type="original"
-            branch={branchId}
-            cardName="沒有銀行帳號名稱"
-            account={accountId}
-            balance={balance}
-            color={cardColor}
-            transferLimit={tfrhCount}
-            transferRemaining="沒有剩餘次數"
-            moreList={moreList}
-            dollarSign="TWD"
-          />
-        </SwiperSlide>
-      );
-    })
-  );
+  const renderCards = (account) => account.map((account, index) => {
+    const {
+      branchId, cardName, accountId, balance, isTwd, ccyCd, accountType, moreList, tfrhCount, interbankTransferRemaining,
+    } = account;
+    return (
+      <SwiperSlide key={accountId} data-index={index}>
+        <DebitCard
+          type="original"
+          branch={branchId || '沒有分行'}
+          cardName="沒有銀行帳號名稱"
+          account={accountId}
+          accountType={accountType}
+          balance={balance}
+          transferLimit={tfrhCount}
+          transferRemaining="沒有剩餘次數"
+          moreList={moreList}
+          dollarSign={isTwd === 'Y' ? 'TWD' : ccyCd}
+        />
+      </SwiperSlide>
+    );
+  });
 
   const renderTabPanels = () => (
     <>
@@ -261,11 +256,11 @@ const Transfer = () => {
         { selectTransferMember.designed && (
           <div className="memberAccountCardArea">
             <MemberAccountCard
-              id={selectTransferMember.designed.id}
-              name={selectTransferMember.designed.acctName}
+              id={selectTransferMember.designed.accountId}
+              name={selectTransferMember.designed.accountName}
               bankName={selectTransferMember.designed.bankName}
               bankNo={selectTransferMember.designed.bankId}
-              account={selectTransferMember.designed.acctId}
+              account={selectTransferMember.designed.accountId}
               avatarSrc={selectTransferMember.designed.acctImg}
               noBorder
               noOption
@@ -410,27 +405,18 @@ const Transfer = () => {
   useCheckLocation();
   usePageInfo('/api/transfer');
 
-  // 取得所有存款卡的初始資料
-  useEffect(async () => {
-    const cardResponse = await getNtdTrAcct({motpDeviceId:'12313131'});
-    if (cardResponse.accounts){
-      setCards(cardResponse.accounts);
-      console.log(cardResponse.accounts[0].accountId);
-      setSelectCardId(cardResponse.accounts[0].accountId);
-      dispatch(setNtdTrAcct(cardResponse));
-    } 
-    const favoriteResponse = await getFavAcct({});
-    console.log(favoriteResponse);
-    if (favoriteResponse.code!='WEBCTL1003' || favoriteResponse.code!= "WEBCTL1001"){
-      setFrequentlyUsedAccounts(favoriteResponse);
-      dispatch(setFqlyUsedAccounts(favoriteResponse))
-    } 
-   const designedResponse = await queryRegAcct({});
-   console.log(designedResponse);
-   if (designedResponse.code!='WEBCTL1003'){
-    setDesignedAccounts(designedResponse);
-    dispatch(setDgnedAccounts(designedResponse))
-  } 
+  // 取得初始資料
+  useEffect(() => {
+    const deviceId = '12313131';
+    // 取得所有存款卡
+    getNtdAccounts({ motpDeviceId: deviceId })
+      .then((response) => dispatch(setAccounts(response?.accounts)));
+
+    // 是否開通 OTP 和 MOTP
+    getMotpStatusOnTransfer({ deviceId }).then((response) => {
+      const { isOtpOpen, isMotpOpen } = response;
+      setOtpStatus({ isOtpOpen: isOtpOpen === 'Y', isMotpOpen: isMotpOpen === 'Y' })
+    });
 
     // transferOption 是為了避免不同頁籤造成驗證衝突，初始設置 transfer (一般轉帳)
     setValue('transferOption', 'transfer');
@@ -486,33 +472,26 @@ const Transfer = () => {
     }));
 
     // 若當前頁面為一般轉帳，關閉 Drawer UI
-    if (watch('transferOption') === 'transfer') dispatch(setOpenDrawer({ ...openDrawer, content: 'default', open: false }));
+    if (watch('transferOption') === 'transfer') {
+      dispatch(setOpenDrawer({ ...openDrawer, content: 'default', open: false }));
+    }
 
     // 若當前頁面為常用轉帳
-    if (watch('transferOption') === 'frequentlyUsed') {
-      // 若常用帳號列表為空，開啟新增常用帳號 Drawer UI
-      if (frequentlyUsedAccounts.length === 0) {
-        console.log(frequentlyUsedAccounts);
-        dispatch(setOpenDrawer({ title: '新增常用帳號', content: 'addFrequentlyUsedAccount', open: true }));
-      }
-      // 若常用帳號列表不為空，將常用帳號清單內的第一筆設置為預設的轉帳對象，並開啟常用帳號 Drawer UI
-      if (frequentlyUsedAccounts.length) {
-        setSelectTransferMember({ ...selectTransferMember, frequentlyUsed: frequentlyUsedAccounts[0] });
-        handleOpenFrequentlyUsedList();
-      }
-    }
+    if (watch('transferOption') === 'frequentlyUsed') handleOpenFrequentlyUsedList();
 
     // 若當前頁面為約定轉帳
-    if (watch('transferOption') === 'designated') {
-      // 若約定帳號列表為空，開啟提示彈窗
-      if (designedAccounts.length === 0) setOpenAlertDialog(true);
-      // 若約定帳號列表不威空，將約定帳號清單內的第一筆設置為預設的轉帳對象，並開啟約定帳號 Drawer UI
-      if (designedAccounts.length) {
-        setSelectTransferMember({ ...selectTransferMember, designed: designedAccounts[0] });
-        handleOpenDesignatedList();
-      }
-    }
+    if (watch('transferOption') === 'designated') handleOpenDesignatedList();
   }, [watch('transferOption')]);
+
+  // 常用轉帳頁籤內的帳號卡片預設為常用帳號清單的第一筆
+  useEffect(() => {
+    if (favAccounts?.length) setSelectTransferMember({ ...selectTransferMember, frequentlyUsed: favAccounts[0] });
+  }, [favAccounts]);
+
+  // 約定轉帳頁籤內的帳號卡片預設為約定帳號清單的第一筆
+  useEffect(() => {
+    if (regAccounts?.length) setSelectTransferMember({ ...selectTransferMember, designed: regAccounts[0] });
+  }, [regAccounts]);
 
   useEffect(() => {
     let currentTarget = null;
@@ -520,12 +499,12 @@ const Transfer = () => {
     if (select.click && select.target) {
       // 若點擊選項為 select 且當前頁面為常用轉帳，至常用帳號清單內比對相符的 target 帳號
       if (watch('transferOption') === 'frequentlyUsed') {
-        currentTarget = frequentlyUsedAccounts.find((member) => member.id === select.target);
+        currentTarget = favAccounts.find((member) => member.accountId === select.target);
         setSelectTransferMember({ ...selectTransferMember, frequentlyUsed: currentTarget });
       }
       // 若點擊選項為 select 且當前頁面為約定轉帳，至約定帳號清單內比對相符的 target 帳號
       if (watch('transferOption') === 'designated') {
-        currentTarget = designedAccounts.find((member) => member.id === select.target);
+        currentTarget = regAccounts.find((member) => member.accountId === select.target);
         setSelectTransferMember({ ...selectTransferMember, designed: currentTarget });
       }
       dispatch(setOpenDrawer({ ...openDrawer, open: false }));
@@ -534,17 +513,13 @@ const Transfer = () => {
 
   // 取得用戶存款餘額 (用於設置至轉出金額驗證規則)
   useEffect(() => {
-    console.log(cards);
-    console.log("selectCardId");
-    console.log(selectCardId);
-    if (cards.length>0 && selectCardId) {
-      const card = cards.find((item) => item.accountId === selectCardId);
-      console.log("card");
-      console.log(card);
-      setDepositAmount(card.balance);
-      setTransferRemaining(card.interbankTransferRemaining);
+    if (accounts?.length && selectedCardIndex >= 0) {
+      const account = accounts[selectedCardIndex];
+      const { balance, interbankTransferRemaining } = account
+      setDepositAmount(balance);
+      setTransferRemaining(interbankTransferRemaining);
     }
-  }, [cards, selectCardId]);
+  }, [accounts, selectedCardIndex]);
 
   useEffect(() => setValue('transferOption', tabId), [tabId]);
 
@@ -552,7 +527,7 @@ const Transfer = () => {
     <TransferWrapper>
       <div className="userCardArea">
         <Swiper slidesPerView={1.14} spaceBetween={8} centeredSlides pagination onSlideChange={handleChangeSlide}>
-          { cards.length > 0 && renderCards(cards) }
+          { accounts?.length ? renderCards(accounts) : null }
         </Swiper>
       </div>
       <div className="transferServicesArea">
@@ -640,7 +615,6 @@ const Transfer = () => {
         </FEIBTabContext>
       </div>
       <TransferDrawer setTabId={setTabId} />
-      { openAlertDialog && renderAlertDialog() }
     </TransferWrapper>
   );
 };

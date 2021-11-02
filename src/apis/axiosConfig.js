@@ -112,7 +112,31 @@ userAxios().interceptors.response.use(
       return Promise.reject(error);
     }
   },
-
 );
 
+const userRequest = (method, url, data = {}) => {
+  method = method.toLowerCase();
+  switch (method) {
+    case 'get':
+      return userAxios().get(url, { params: data });
+    case 'post':
+      return userAxios().post(url, data);
+    case 'put':
+      return userAxios().put(url, data);
+    case 'patch':
+      return userAxios().patch(url, data);
+    case 'delete':
+      return userAxios().delete(url, { params: data });
+    default:
+      console.log(`未知的 method: ${method}`);
+      return false;
+  }
+};
+
+// const getStorageData = (keyName) => {
+//   const value = localStorage.getItem(keyName);
+//   return value || null;
+// };
+
 export default userAxios();
+export { userRequest };
