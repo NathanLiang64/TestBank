@@ -76,6 +76,10 @@ const TabBar = () => {
     },
   ];
 
+  const toProfile = () => {
+    history.push('/profile');
+  };
+
   const logOut = () => {
     const url = ' https://appbankee-t.feib.com.tw/ords/db1/netdb/logoutUser';
     const data = {
@@ -138,7 +142,7 @@ const TabBar = () => {
           <image xlinkHref={ArrowImage} width="8" height="12" />
         </svg>
       </div>
-      <div className="avatar">
+      <div className="avatar" onClick={toProfile}>
         <img src={AvatarImage} alt="" />
       </div>
     </TabBarWrapper>
