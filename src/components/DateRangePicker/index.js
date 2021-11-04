@@ -55,6 +55,10 @@ const DateRangePicker = ({
   useEffect(() => {
     if (date.length > 0) {
       setDateRangeToString(date);
+      setDateRange({
+        startDate: date[0] || new Date(),
+        endDate: date[1] || new Date(),
+      });
     }
   }, [date]);
 
