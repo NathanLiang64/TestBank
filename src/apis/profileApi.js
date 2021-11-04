@@ -1,18 +1,18 @@
 import userAxios from './axiosConfig';
 
-// 取得帳號列表
-export const getAccountsList = async (param) => {
+// 取得使用者暱稱 done
+export const getNickName = async (param) => {
   const response = await userAxios
-    .post('/api/deposit/queryBankAcct', param)
+    .post('/api/setting/member/getInfo', param)
     .then((data) => data)
     .catch((err) => err);
   return response;
 };
 
-// email 發送數位存摺
-export const sendBankBookMail = async (param) => {
+// 更新使用者暱稱 done
+export const updateNickName = async (param) => {
   const response = await userAxios
-    .post('/api/deposit/sendAcctTxDtl', param)
+    .post('/api/setting/member/updateInfo', param)
     .then((data) => data)
     .catch((err) => err);
   return response;

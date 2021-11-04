@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { RemoveRounded } from '@material-ui/icons';
 import BottomDrawer from 'components/BottomDrawer';
-import { getFavoriteList, getFavoriteSettings } from 'apis/favoriteApi';
+// import { getFavoriteList } from 'apis/favoriteApi';
 import BlockEmpty from 'assets/images/favoriteBlock/blockEmpty.png';
 import { EditIcon, RemoveIcon } from 'assets/images/icons';
 import Favorite1 from './favorite_1';
@@ -13,7 +13,6 @@ import { setFavoriteDrawer, setFavoriteList, setCustomFavoriteList } from './sto
 import { blockBackgroundGenerator, iconGenerator } from './favoriteGenerator';
 import FavoriteDrawerWrapper from './favorite.style';
 import { mockFavoriteList } from './mockData';
-import axios from 'axios';
 
 const Favorite = () => {
   const [pressTimer, setPressTimer] = useState(0);
@@ -104,7 +103,7 @@ const Favorite = () => {
     </button>
   )
 
-  const renderBlocksElement = (blocks) => blocks.map((block, index) => (
+  const renderBlocksEl = (blocks) => blocks.map((block, index) => (
     <Draggable key={block.id || index + 1} draggableId={block.id || block + (index + 1)} index={index + 1}>
       { (provided) => (
         block.id ? renderBlockElement(provided, block, index) : renderEmptyBlockElement(provided, block, index)
@@ -161,14 +160,40 @@ const Favorite = () => {
   const renderBlocks = () => {
     const blocks = [];
     customFavoriteList.forEach((block) => {
-      console.log(block);
       blocks[block.selectedOrder - 1] = block;
     });
     for (let i = 0; i < 10; i++) {
       if (!blocks[i]) blocks[i] = BlockEmpty;
     }
-    return renderBlocksElement(blocks);
+    return renderBlocksEl(blocks);
   };
+
+  // 預設的彈窗頁面 - 已設置的最愛項目
+  // const defaultContent = () => (
+  //   <div className="defaultPage">
+  //     <button type="button" className="editButton" onClick={() => handleOpenView('edit')}>
+  //       編輯
+  //       <EditIcon />
+  //     </button>
+  //
+  //     <DragDropContext>
+  //       <Droppable droppableId="favCards">
+  //         <div className="favoriteArea">
+  //           <button type="button" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+  //             <img src={blockBackgroundGenerator(1)} alt="block" />
+  //             <span className="icon">{iconGenerator('share')}</span>
+  //             推薦碼分享
+  //           </button>
+  //           <button type="button" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+  //             <img src={blockBackgroundGenerator(2)} alt="block" />
+  //             <span className="icon">{iconGenerator('gift')}</span>
+  //             優惠
+  //           </button>
+  //           { renderBlocks() }
+  //         </div>
+  //       </Droppable>
+  //     </DragDropContext>
+  //   </div>
 
   // TODO: 拖曳功能待修正
   // 預設的彈窗頁面 - 已設置的最愛項目
@@ -200,31 +225,6 @@ const Favorite = () => {
       </DragDropContext>
     </div>
   );
-  // {
-  //   (id) "actKey": "Z01",
-  //   (label) "name": "推薦碼分享",
-  //   "url": null,
-  //   "icon": "imageZ01",
-  //   "groupType": null,
-  //   "alterMsg": "功能開發中",
-  //   "isFavorite": null
-  // }
-
-  // {
-  //   "groupKey": "A",
-  //   "groupName": "202102",
-  //   "items": [
-  //     {
-  //       "actKey": "A01",
-  //       "name": "帳戶總覽",
-  //       "url": null,
-  //       "icon": "imageA01.png",
-  //       "groupType": null,
-  //       "alterMsg": "功能開發中",
-  //       "isFavorite": "1"
-  //     }
-  //   ]
-  // }
 
   const drawerController = (content) => {
     switch (content) {
@@ -238,26 +238,19 @@ const Favorite = () => {
   };
 
   useEffect(() => {
-    getFavoriteList().then((response) => {
-      console.log(response);
-      dispatch(setCustomFavoriteList(response));
-      // dispatch(setFavoriteList(mockFavoriteList.favoriteList));
-    });
-    getFavoriteSettings().then((res) => {
-      console.log(res);
-    })
-    // dispatch(setFavoriteList(mockFavoriteList.favoriteList));
+    // getFavoriteList().then((response) => dispatch(setFavoriteList(response.favoriteList)));
+    dispatch(setFavoriteList(mockFavoriteList.favoriteList));
   }, []);
 
-  // useEffect(() => {
-  //   const customList = [];
-  //   favoriteList?.forEach((group) => group.blocks.forEach((item) => item.selected && customList.push(item)));
-  //   dispatch(setCustomFavoriteList(customList));
+  useEffect(() => {
+    const customList = [];
+    favoriteList?.forEach((group) => group.blocks.forEach((item) => item.selected && customList.push(item)));
+    dispatch(setCustomFavoriteList(customList));
     // const selectedBlocks = favoriteList
     //   .map((group) => group.blocks.filter((block) => block.selected))
     //   .flat();
     // setSelectedFavoriteList(selectedBlocks);
-  // }, [favoriteList?.length]);
+  }, [favoriteList?.length]);
 
   return (
     <BottomDrawer

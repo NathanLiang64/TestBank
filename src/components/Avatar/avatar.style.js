@@ -40,7 +40,7 @@ const AvatarWrapper = styled.div.attrs({
       
       &.Icon {
         top: -.2rem;
-        font-size: 3.2rem;
+        font-size: ${({ $small }) => ($small ? '2rem' : '3.2rem')};
       }
     }
 

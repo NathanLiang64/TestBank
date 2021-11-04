@@ -1,78 +1,56 @@
-import userAxios from 'apis/axiosConfig';
+import userAxios, { userRequest } from 'apis/axiosConfig';
+import { getMotpStatus } from './settingApi';
 
 export const doGetInitData = (apiUrl) => (
-
   userAxios.get(apiUrl)
     .then((response) => response.data)
     .catch((error) => error.response)
 );
 
-export const getBankCode = async (params) => (
-  await userAxios.post('/api/transfer/queryBank', params)
-    .then((response) => response)
-    .catch((error) => error)
+// 查詢轉出帳號 - Adrian
+export const getNtdAccounts = (params) => (
+  userRequest('post', '/api/transfer/queryNtdTrAcct', params)
 );
 
-// 查詢轉岀帳號資訊
-export const getNtdTrAcct = async (params) => (
-  await userAxios.post('/api/transfer/queryNtdTrAcct', params)
-    .then((response) => {
-      console.log(response);
-      return response;
-    })
-    .catch((error) => error)
-);
-// 查詢常用帳號
-export const getFavAcct = async (params) => (
-  await userAxios.post('/api/transfer/queryFavAcct', params)
-    .then((response) => {
-      console.log(response);
-      return response;
-    })
-    .catch((error) => error)
-);
-// 常用帳號新增
-export const insertFacAcct = async (params) => (
-  await userAxios.post('/api/transfer/insertFacAcct', params)
-    .then((response) => {
-      console.log(response);
-      return response;
-    })
-    .catch((error) => error)
+// 取得 MOTP 狀態
+export const getMotpStatusOnTransfer = getMotpStatus;
+// "custId": "J230265485",
+// "deviceId": "675066ee-2f25-4d97-812a-12c7f8d18489"
+
+// 查詢常用帳號 - Adrian
+export const getFavAccounts = (params) => (
+  userRequest('post', '/api/transfer/queryFavAcct', params)
 );
 
-// 查詢約定帳號
-export const queryRegAcct = async (params) => (
-  await userAxios.post('/api/transfer/queryRegAcct', params)
-    .then((response) => {
-      console.log(response);
-      return [{
-        id: 'fL9HylbGfbbRPs9N5AAgy0cazPT2wDXc',
-        bankId: '805',
-        bankName: '遠東商銀',
-        acctId: '04300499099427',
-        acctName: 'Catherine Smith',
-        acctImg: 'https://images.unsplash.com/photo-1528341866330-07e6d1752ec2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=801&q=80',
-      },
-      {
-        id: 'xC3wzNqK0x3OOkih0uDxJP5aXeP5eFwu',
-        bankId: '805',
-        bankName: '遠東商銀',
-        acctId: '04300499001010',
-        acctName: 'Jason',
-        acctImg: '',
-      },
-      {
-        id: 's1JkfvhrK0pmtz8UtPYafyjD0Enprlqp',
-        bankId: '806',
-        bankName: '元大商銀',
-        acctId: '04300499001011',
-        acctName: 'Mike',
-        acctImg: '',
-      }];
-    })
-    .catch((error) => error)
+// 查詢約定帳號 - Adrian
+export const getRegAccounts = (params) => (
+  userRequest('post', '/api/transfer/queryRegAcct', params)
 );
+
+// 新增單筆常用帳號 - Adrian
+export const addFavAccount = (params) => (
+  userRequest('post', '/api/transfer/insertFacAcct', params)
+);
+
+// 編輯單筆常用帳號 - Adrian
+export const updateFavAccount = (params) => (
+  userRequest('post', '/api/transfer/modifyFacAcct', params)
+);
+
+// 刪除單筆常用帳號 - Adrian
+export const removeFavAccount = (params) => (
+  userRequest('post', '/api/transfer/deleteFacAcct', params)
+);
+
+// 編輯單筆約定帳號 - Adrian
+export const updateRegAccount = (params) => (
+  userRequest('post', '/api/transfer/modifyRegAcct', params)
+);
+
+export const confirmTransferDetail = (params) => (
+  userRequest('post', '/api/transfer/ntdTr/confirm', params)
+);
+
 // 轉帳確認
 export const doNtdTrConfirm = async (params) => (
   await userAxios.post('/api/transfer/ntdTr/confirm', params)

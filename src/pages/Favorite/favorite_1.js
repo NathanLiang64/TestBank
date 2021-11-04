@@ -4,7 +4,6 @@ import FavoriteBlockButton from 'components/FavoriteBlockButton';
 import { FEIBTab, FEIBTabContext, FEIBTabList } from 'components/elements';
 import { iconGenerator } from './favoriteGenerator';
 import { setCustomFavoriteList } from './stores/actions';
-import { getFavoriteSettings } from '../../apis/favoriteApi';
 
 // 新增我的最愛
 const Favorite1 = ({ blockOrder }) => {
@@ -52,43 +51,18 @@ const Favorite1 = ({ blockOrder }) => {
     />
   ));
 
-  const renderBlockGroup = (group) => group.map((section) => {
-    console.log('group', group);
-    return (
-      <section key={section.id} className={section.group}>
-        <h3 className="title">{section.groupName}</h3>
-        <div className="blockGroup">
-          { renderBlock(section.group, section.blocks) }
-        </div>
-      </section>
-    );
-  });
+  const renderBlockGroup = (group) => group.map((section) => (
+    <section key={section.id} className={section.group}>
+      <h3 className="title">{section.groupName}</h3>
+      <div className="blockGroup">
+        { renderBlock(section.group, section.blocks) }
+      </div>
+    </section>
+  ));
 
   const renderTabList = (tabs) => tabs.map((tab) => (
     <FEIBTab key={tab.id} label={tab.groupName} value={tab.group} />
   ));
-
-  // {
-  //   (id) "groupKey": "A",
-  //   "groupName": "帳戶服務",
-  //   (blocks) "items": [
-  //     {
-  //       (id) "actKey": "A01",
-  //       (label) "name": "帳戶總覽",
-  //       x "url": null,
-  //       x "icon": "imageA01.png",
-  //       "groupType": null,
-  //       "alterMsg": "功能開發中",
-  //       "isFavorite": "0"
-  //     }
-  //   ]
-  // }
-
-  useEffect(() => {
-    getFavoriteSettings().then((res) => {
-      console.log(res);
-    });
-  }, []);
 
   useEffect(() => {
     if (mainContentRef?.current) {

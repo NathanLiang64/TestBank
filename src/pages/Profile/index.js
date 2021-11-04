@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
@@ -10,6 +10,7 @@ import {
   FEIBInput, FEIBInputLabel, FEIBButton, FEIBErrorMessage,
 } from 'components/elements';
 import Dialog from 'components/Dialog';
+import { profileApi } from 'apis';
 
 /* Styles */
 import { CreateRounded, KeyboardArrowRightRounded } from '@material-ui/icons';
@@ -22,7 +23,7 @@ const Profile = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    userName: yup
+    nickName: yup
       .string()
       .required('請輸入您的名稱'),
   });
@@ -33,18 +34,29 @@ const Profile = () => {
   });
   const history = useHistory();
 
-  const [userName, setUserName] = useState('Joyce Horng');
-  const [showChangeUserNameDialog, setShowChangeUserNameDialog] = useState(false);
+  const [nickName, setNickName] = useState('Joyce Horng');
+  const [showChangeNickNameDialog, setShowChangeNickNameDialog] = useState(false);
 
-  const showEditUserNameDialog = () => {
+  const showEditNickNameDialog = () => {
     reset();
-    setValue('userName', userName);
-    setShowChangeUserNameDialog(true);
+    setValue('nickName', nickName);
+    setShowChangeNickNameDialog(true);
   };
 
-  const onSubmit = (data) => {
-    setUserName(data.userName);
-    setShowChangeUserNameDialog(false);
+  const getNickName = async () => {
+    const response = await profileApi.getNickName({});
+    setNickName(response.nickName);
+  };
+
+  const onSubmit = async (data) => {
+    const param = {
+      nickName: data.nickName,
+    };
+    const response = await profileApi.updateNickName(param);
+    if (typeof (response) === 'string') {
+      setNickName(data.nickName);
+      setShowChangeNickNameDialog(false);
+    }
   };
 
   const toPage = (route) => {
@@ -61,29 +73,43 @@ const Profile = () => {
   ));
 
   const renderForm = () => (
-    <form id="userNameForm" onSubmit={handleSubmit(onSubmit)}>
-      <FEIBInputLabel htmlFor="userName">您的名稱</FEIBInputLabel>
+    <form id="nickNameForm" onSubmit={handleSubmit(onSubmit)} style={{ paddingBottom: '0' }}>
+      <FEIBInputLabel htmlFor="nickName">您的名稱</FEIBInputLabel>
       <Controller
-        name="userName"
+        name="nickName"
         defaultValue=""
         control={control}
         render={({ field }) => (
           <FEIBInput
             {...field}
             type="text"
-            id="userName"
-            name="userName"
+            id="nickName"
+            name="nickName"
             placeholder="請輸入您的名稱"
-            error={!!errors.userName}
+            error={!!errors.nickName}
           />
         )}
       />
-      <FEIBErrorMessage>{errors.userName?.message}</FEIBErrorMessage>
+      <FEIBErrorMessage>{errors.nickName?.message}</FEIBErrorMessage>
     </form>
+  );
+
+  const renderDialog = () => (
+    <Dialog
+      isOpen={showChangeNickNameDialog}
+      onClose={() => setShowChangeNickNameDialog(false)}
+      title="編輯名稱"
+      content={renderForm()}
+      action={(<FEIBButton type="submit" form="nickNameForm">完成</FEIBButton>)}
+    />
   );
 
   useCheckLocation();
   usePageInfo('/api/profile');
+
+  useEffect(() => {
+    getNickName();
+  }, []);
 
   return (
     <ProfileWrapper>
@@ -95,18 +121,12 @@ const Profile = () => {
           </div>
         </div>
       </div>
-      <div className="userName">
-        <span>{ userName }</span>
-        <CreateRounded onClick={showEditUserNameDialog} />
+      <div className="nickName">
+        <span>{ nickName }</span>
+        <CreateRounded onClick={showEditNickNameDialog} />
       </div>
       { renderEntryList() }
-      <Dialog
-        isOpen={showChangeUserNameDialog}
-        onClose={() => setShowChangeUserNameDialog(false)}
-        title="編輯名稱"
-        content={renderForm()}
-        action={(<FEIBButton type="submit" form="userNameForm">完成</FEIBButton>)}
-      />
+      { renderDialog() }
     </ProfileWrapper>
   );
 };

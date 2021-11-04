@@ -146,6 +146,29 @@ export const numberToChinese = (num) => {
   return chineseBigNumber;
 };
 
+// 帳戶科目別對應的存款卡顏色
+export const accountTypeColorGenerator = (currency) => {
+  switch (currency) {
+    case '001': // 活期存款
+      return '';
+    case '003': // 行員存款
+      return '';
+    case '004': // 活期儲蓄存款
+      return 'purple';
+    case '007': // 外幣存款
+      return 'blue';
+    case '010': // 定存 (010 科目別包含台外幣定存)
+      return '';
+    case '031': // 支存
+      return '';
+    case '041': // 信託
+      return '';
+    case '050': // 放款
+    default:
+      return null;
+  }
+};
+
 // 貨幣單位文字轉為符號
 export const currencySymbolGenerator = (currency) => {
   switch (currency) {
