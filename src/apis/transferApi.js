@@ -14,8 +14,6 @@ export const getNtdAccounts = (params) => (
 
 // 取得 MOTP 狀態
 export const getMotpStatusOnTransfer = getMotpStatus;
-// "custId": "J230265485",
-// "deviceId": "675066ee-2f25-4d97-812a-12c7f8d18489"
 
 // 查詢常用帳號 - Adrian
 export const getFavAccounts = (params) => (
@@ -47,6 +45,7 @@ export const updateRegAccount = (params) => (
   userRequest('post', '/api/transfer/modifyRegAcct', params)
 );
 
+// 一般轉帳 (立即轉帳) 確認 - Adrian
 export const confirmTransferDetail = (params) => (
   userRequest('post', '/api/transfer/ntdTr/confirm', params)
 );

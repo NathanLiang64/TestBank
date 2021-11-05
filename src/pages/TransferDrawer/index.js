@@ -141,12 +141,13 @@ const TransferDrawer = ({ setTabId }) => {
         // ]
         // dispatch(setRegAccounts(regMockData))
 
-        if (!response?.length) {
+        if (!response.accounts?.length) {
+          console.log(response);
           dispatch(setRegAccounts([]));
           setOpenAlertDialog({ open: true, content: response.message });
           return;
         }
-        dispatch(setRegAccounts(response));
+        dispatch(setRegAccounts(response?.accounts));
       });
       // .catch((error) => console.log('查詢約定帳號 error', error));
     }

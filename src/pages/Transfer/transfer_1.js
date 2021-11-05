@@ -202,6 +202,19 @@ const Transfer1 = () => {
 
   useEffect(() => {
     /* eslint-disable no-shadow */
+    // 從上一頁代過來的參數
+    // {
+    //   outAcctNo: accountId,
+    //   inBank: bankNo,
+    //   inAcctNo: receivingAccount,
+    //   amount: transferAmount,
+    //   email: '',
+    //   emailContent: '',
+    //   memo: remark,
+    //   deviceId: deviceId,
+    //   isQRCode: false,
+    //   isMotpOpen: otpStatus.isMotpOpen,
+    // };
     const {
       debitAccount, debitName, bankCode, receivingAccount, transferType, transferAmount,
       transactionDate, transactionNumber, remark, transactionFrequency, transactionCycle,
@@ -209,7 +222,7 @@ const Transfer1 = () => {
     } = state;
 
     if (transactionFrequency && transactionCycle) {
-      if (bankCode.bankNo !== undefined)bankCode.bankId = bankCode.bankNo;
+      if (bankCode.bankNo) bankCode.bankId = bankCode.bankNo;
       setDisplayInfo({
         ...displayInfo,
         money: `$${transferAmount}` || '',
