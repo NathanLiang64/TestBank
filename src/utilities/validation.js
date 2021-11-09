@@ -272,12 +272,12 @@ export const receivingAccountValidation = () => (
     .min(10, errorMessage.receivingAccountWrongFormat).max(16, errorMessage.receivingAccountWrongFormat)
 );
 
-// 轉出金額
-export const transferAmountValidation = (depositAmount) => (
+// 轉出金額 (參數 - depositAmount: 帳戶餘額, perTxnLimit: 單筆轉帳限額)
+export const transferAmountValidation = (depositAmount, perTxnLimit) => (
   yup.string()
     .required(errorMessage.transferAmountRequired)
-    .max(7, errorMessage.transferAmountCannotExceedLimit)
     .test('test', errorMessage.transferAmountCannotBeZero, (value) => !(parseInt(value, 10) <= 0))
+    .test('test', errorMessage.transferAmountCannotExceedLimit, (value) => !(parseInt(value, 10) > (perTxnLimit ?? 50000)))
     .test('test', errorMessage.transferAmountCannotExceedDepositAmount, (value) => !(parseInt(value, 10) > depositAmount))
 );
 

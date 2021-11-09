@@ -21,7 +21,7 @@ import {
   FEIBRadioLabel, FEIBRadio, FEIBButton, FEIBSelect, FEIBOption,
 } from 'components/elements';
 import { ChangeMemberIcon } from 'assets/images/icons';
-import { getMotpStatusOnTransfer, getNtdAccounts } from 'apis/transferApi';
+import { getMotpStatusOnTransfer, getNtdAccounts, confirmTransferDetail } from 'apis/transferApi';
 import { numberToChinese, weekNumberToChinese } from 'utilities/Generator';
 import { bankCodeValidation, receivingAccountValidation, transferAmountValidation } from 'utilities/validation';
 import { directTo } from 'utilities/mockWebController';
@@ -47,7 +47,7 @@ const Transfer = () => {
   const [transactionCycleType, setTransactionCycleType] = useState('monthly');
   const [transactionDateRange, setTransactionDateRange] = useState([selectedDate, new Date(new Date().setDate(new Date().getDate() + 2))]);
   const [selectedCardIndex, setSelectedCardIndex] = useState(0);
-  const [depositAmount, setDepositAmount] = useState(0);
+  const [amountLimit, setAmountLimit] = useState({ deposit: 0, perTxn: 0 });
   const [transferRemaining, setTransferRemaining] = useState(0);
   const [otpStatus, setOtpStatus] = useState({ isOtpOpen: false, isMotpOpen: false })
 
@@ -58,23 +58,25 @@ const Transfer = () => {
 
   /* Adrian */
   const accounts = useSelector(({ transfer }) => transfer.accounts);
-
+  
   const dispatch = useDispatch();
   const history = useHistory();
 
+  const deviceId = '675066ee-2f25-4d97-812a-12c7f8d18489';
+  
   const schema = yup.object().shape({
     bankCode: yup.mixed()
-      .when('transferOption', { is: 'transfer', then: bankCodeValidation() }),
+    .when('transferOption', { is: 'transfer', then: bankCodeValidation() }),
     receivingAccount: yup.string()
-      .when('transferOption', { is: 'transfer', then: receivingAccountValidation() }),
-    transferAmount: transferAmountValidation(depositAmount),
+    .when('transferOption', { is: 'transfer', then: receivingAccountValidation() }),
+    transferAmount: transferAmountValidation(200000, amountLimit.perTxn),
   });
   const {
     control, handleSubmit, formState: { errors }, setValue, trigger, watch, unregister, register,
   } = useForm({
     resolver: yupResolver(schema),
   });
-
+  
   const handleChangeTabList = (event, id) => setTabId(id);
 
   const handleChangeAmount = (event) => {
@@ -101,8 +103,42 @@ const Transfer = () => {
 
     // const selectedAccount = accounts.find((card) => card.accountId === selectedCardIndex);
     const selectedAccount = accounts[selectedCardIndex];
+    const { accountId } = selectedAccount;
+    const {
+      bankCode: { bankNo }, receivingAccount, transferAmount, remark,
+    } = data;
     console.log('submit transfer', data);
     console.log('selectedCard', selectedAccount);
+
+    const params = {
+      outAcctNo: accountId,
+      inBank: bankNo,
+      inAcctNo: receivingAccount,
+      amount: transferAmount,
+      email: '',
+      emailContent: '',
+      memo: remark,
+      deviceId: deviceId,
+      isQRCode: false,
+      isMotpOpen: otpStatus.isMotpOpen,
+    };
+
+    console.log('params', params);
+    confirmTransferDetail(params)
+      .then((response) => {
+        console.log('轉帳確認 res', response);
+        if (!response.code) {
+          const confirmParams = { ...params, otpId: response.otpId };
+          // {
+          //   "otpId": "20211103151735622",
+          //   "checkNum": "CFQY",
+          //   "countdown": "300",
+          //   "initialKey": "        "
+          // }
+          directTo(history, 'transfer1', confirmParams);
+        }
+      })
+      .catch((error) => console.log('轉帳確認 err', error));
 
     // "custId": 身分證號 string,
     // "outAcctNo": 轉出帳號 string,
@@ -115,6 +151,12 @@ const Transfer = () => {
     // "deviceId": motp綁定裝置編號 string,
     // "isQRCode": false,
     // "isMotpOpen": true
+
+    // "nextDayFlag": 次營業日記號 "2021/06/15", 可不代
+    // "otpId": string
+    // "otpCode": OTP 驗證碼 string
+    // "isRegister": 是否為約定帳戶轉帳 boolean
+
     // data.debitAccount = selectCard.accountId;
     // data.debitName = selectCard.cardName;
     //
@@ -407,7 +449,6 @@ const Transfer = () => {
 
   // 取得初始資料
   useEffect(() => {
-    const deviceId = '12313131';
     // 取得所有存款卡
     getNtdAccounts({ motpDeviceId: deviceId })
       .then((response) => dispatch(setAccounts(response?.accounts)));
@@ -511,12 +552,12 @@ const Transfer = () => {
     }
   }, [clickMoreOptions.select]);
 
-  // 取得用戶存款餘額 (用於設置至轉出金額驗證規則)
+  // 取得用戶存款餘額 & 單筆轉帳限額 (用於設置至轉出金額驗證規則)
   useEffect(() => {
     if (accounts?.length && selectedCardIndex >= 0) {
       const account = accounts[selectedCardIndex];
-      const { balance, interbankTransferRemaining } = account
-      setDepositAmount(balance);
+      const { balance, interbankTransferRemaining, singleLimit } = account;
+      setAmountLimit({ deposit: balance, perTxn: singleLimit });
       setTransferRemaining(interbankTransferRemaining);
     }
   }, [accounts, selectedCardIndex]);
