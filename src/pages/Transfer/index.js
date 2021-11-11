@@ -48,17 +48,14 @@ const Transfer = () => {
   const [transactionDateRange, setTransactionDateRange] = useState([selectedDate, new Date(new Date().setDate(new Date().getDate() + 2))]);
   const [selectedCardIndex, setSelectedCardIndex] = useState(0);
   const [amountLimit, setAmountLimit] = useState({ deposit: 0, perTxn: 0 });
-  const [transferRemaining, setTransferRemaining] = useState(0);
-  const [otpStatus, setOtpStatus] = useState({ isOtpOpen: false, isMotpOpen: false })
+  const [otpStatus, setOtpStatus] = useState({ isOtpOpen: false, isMotpOpen: false });
 
+  const accounts = useSelector(({ transfer }) => transfer.accounts);
   const openDrawer = useSelector(({ transfer }) => transfer.openDrawer);
   const favAccounts = useSelector(({ transfer }) => transfer.favAccounts);
   const regAccounts = useSelector(({ transfer }) => transfer.regAccounts);
   const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
 
-  /* Adrian */
-  const accounts = useSelector(({ transfer }) => transfer.accounts);
-  
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -69,7 +66,7 @@ const Transfer = () => {
     .when('transferOption', { is: 'transfer', then: bankCodeValidation() }),
     receivingAccount: yup.string()
     .when('transferOption', { is: 'transfer', then: receivingAccountValidation() }),
-    transferAmount: transferAmountValidation(200000, amountLimit.perTxn),
+    transferAmount: transferAmountValidation(amountLimit.deposit, amountLimit.perTxn),
   });
   const {
     control, handleSubmit, formState: { errors }, setValue, trigger, watch, unregister, register,
@@ -80,13 +77,6 @@ const Transfer = () => {
   const handleChangeTabList = (event, id) => setTabId(id);
 
   const handleChangeAmount = (event) => {
-    // setAmount(() => {
-    //   const newAmount = event.target.value;
-    //   setValue('transferAmount', newAmount);
-    //   trigger('transferAmount');
-    //   return ({ number: newAmount, chinese: numberToChinese(newAmount) });
-    // });
-
     setAmount(() => {
       const newAmount = event.target.value;
       setValue('transferAmount', newAmount);
@@ -98,7 +88,7 @@ const Transfer = () => {
 
   const handleChangeSlide = (swiper) => setSelectedCardIndex(swiper.activeIndex);
 
-  const handleClickTransferButton = (data) => {
+  const handleClickTransferButton = async (data) => {
     // 轉出帳號
 
     // const selectedAccount = accounts.find((card) => card.accountId === selectedCardIndex);
@@ -124,21 +114,37 @@ const Transfer = () => {
     };
 
     console.log('params', params);
-    confirmTransferDetail(params)
+    const otpId = await confirmTransferDetail(params)
       .then((response) => {
         console.log('轉帳確認 res', response);
         if (!response.code) {
-          const confirmParams = { ...params, otpId: response.otpId };
+          return response.otpId;
+          // const confirmParams = { ...params, otpId: response.otpId };
           // {
           //   "otpId": "20211103151735622",
           //   "checkNum": "CFQY",
           //   "countdown": "300",
           //   "initialKey": "        "
           // }
-          directTo(history, 'transfer1', confirmParams);
+          // directTo(history, 'transfer1', confirmParams);
         }
       })
       .catch((error) => console.log('轉帳確認 err', error));
+
+    if (otpId) {
+      const { outAcctNo, deviceId, isQRCode, isMotpOpen } = params;
+      const confirmParams = {
+        ...data,
+        outAcctNo,
+        deviceId,
+        isQRCode,
+        isMotpOpen,
+        otpId,
+        isRegister: false,
+      };
+      console.log(confirmParams);
+      directTo(history, 'transfer1', confirmParams);
+    }
 
     // "custId": 身分證號 string,
     // "outAcctNo": 轉出帳號 string,
@@ -223,12 +229,12 @@ const Transfer = () => {
         <DebitCard
           type="original"
           branch={branchId || '沒有分行'}
-          cardName="沒有銀行帳號名稱"
+          cardName="沒有銀行帳號別名"
           account={accountId}
           accountType={accountType}
           balance={balance}
-          transferLimit={tfrhCount}
-          transferRemaining="沒有剩餘次數"
+          transferLimit="沒有總次數"
+          transferRemaining={tfrhCount}
           moreList={moreList}
           dollarSign={isTwd === 'Y' ? 'TWD' : ccyCd}
         />
@@ -451,7 +457,10 @@ const Transfer = () => {
   useEffect(() => {
     // 取得所有存款卡
     getNtdAccounts({ motpDeviceId: deviceId })
-      .then((response) => dispatch(setAccounts(response?.accounts)));
+      .then((response) => {
+        console.log(response);
+        dispatch(setAccounts(response?.accounts));
+      });
 
     // 是否開通 OTP 和 MOTP
     getMotpStatusOnTransfer({ deviceId }).then((response) => {
@@ -556,9 +565,8 @@ const Transfer = () => {
   useEffect(() => {
     if (accounts?.length && selectedCardIndex >= 0) {
       const account = accounts[selectedCardIndex];
-      const { balance, interbankTransferRemaining, singleLimit } = account;
+      const { balance, singleLimit } = account;
       setAmountLimit({ deposit: balance, perTxn: singleLimit });
-      setTransferRemaining(interbankTransferRemaining);
     }
   }, [accounts, selectedCardIndex]);
 

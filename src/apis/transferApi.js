@@ -1,6 +1,8 @@
 import userAxios, { userRequest } from 'apis/axiosConfig';
 import { getMotpStatus } from './settingApi';
 
+// L158714757
+
 export const doGetInitData = (apiUrl) => (
   userAxios.get(apiUrl)
     .then((response) => response.data)
@@ -45,9 +47,14 @@ export const updateRegAccount = (params) => (
   userRequest('post', '/api/transfer/modifyRegAcct', params)
 );
 
-// 一般轉帳 (立即轉帳) 確認 - Adrian
+// 一般轉帳 (即時轉帳) 確認 - Adrian
 export const confirmTransferDetail = (params) => (
   userRequest('post', '/api/transfer/ntdTr/confirm', params)
+);
+
+// 一般轉帳 (即時轉帳) - Adrian
+export const doTransfer = (params) => (
+  userRequest('post', '/api/transfer/ntdTr', params)
 );
 
 // 轉帳確認
