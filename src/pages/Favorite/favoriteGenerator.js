@@ -150,6 +150,7 @@ export const iconGenerator = (name) => {
   }
 };
 
+// TODO: 金融助手 Icons 設計稿有修改
 export const favIconGenerator = (actKey) => {
   switch (actKey) {
     // 預設
@@ -259,11 +260,11 @@ export const favIconGenerator = (actKey) => {
       return <HelperIcon11 />;
 
     // 社群圈
-    case 'social1':
+    case 'H01':
       return <SocialIcon1 />;
-    case 'social2':
+    case 'H02':
       return <SocialIcon2 />;
-    case 'social3':
+    case 'H03':
       return <SocialIcon3 />;
 
     default:

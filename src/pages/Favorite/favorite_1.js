@@ -2,37 +2,37 @@ import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import FavoriteBlockButton from 'components/FavoriteBlockButton';
 import { FEIBTab, FEIBTabContext, FEIBTabList } from 'components/elements';
-import { getFavoriteSettings } from 'apis/favoriteApi';
-import { iconGenerator } from './favoriteGenerator';
-import { setCustomFavoriteList } from './stores/actions';
+import { getFavoriteSettings, updateFavoriteItem } from 'apis/favoriteApi';
+import { favIconGenerator } from './favoriteGenerator';
+import { setFavoriteList } from './stores/actions';
 
 // 新增我的最愛
-const Favorite1 = ({ blockOrder }) => {
-  const [tabId, setTabId] = useState('account');
+const Favorite1 = ({ blockOrder, updateFavoriteList }) => {
+  const [tabId, setTabId] = useState('A');
   const [sectionPosition, setSectionPosition] = useState([]);
   const favoriteDrawer = useSelector(({ favorite }) => favorite.favoriteDrawer);
   const favoriteList = useSelector(({ favorite }) => favorite.favoriteList);
-  const customFavoriteList = useSelector(({ favorite }) => favorite.customFavoriteList);
   const dispatch = useDispatch();
   const mainContentRef = useRef();
 
-  const handleClickBlock = (group, blockId) => {
-    const targetGroup = favoriteList.find((item) => item.group === group);
-    const targetBlock = targetGroup.blocks.find((block) => block.id === blockId);
-    targetBlock.selected = true;
-    targetBlock.selectedOrder = blockOrder;
-    // call api 新增 customFavoriteList
+  const handleClickBlock = (actKey, position) => {
+    const params = { actKey, position };
 
-    // 新增 block 至 customFavoriteList
-    const updatedCustomFavoriteList = JSON.parse(JSON.stringify(customFavoriteList));
-    updatedCustomFavoriteList.push(targetBlock);
-    dispatch(setCustomFavoriteList(updatedCustomFavoriteList));
-    favoriteDrawer.back();
+    // call api 新增新的項目
+    updateFavoriteItem(params)
+      .then((response) => {
+        if (response.code) return;
+        // 更新用戶最愛的項目並回到我的最愛總覽頁
+        updateFavoriteList();
+        favoriteDrawer.back();
+      });
+    // .catch((error) => console.log('編輯最愛 err', error));
   };
 
+  // 點擊 Tab 頁籤時滾動至相應的 Section
   const handleChangeTabs = (event, value) => {
-    const target = document.querySelector(`.${value}`);
-    if (target) target.scrollIntoView({ behavior: 'smooth' });
+    const targetSection = document.querySelector(`.${value}`);
+    if (targetSection) targetSection.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleScrollContent = () => {
@@ -41,49 +41,36 @@ const Favorite1 = ({ blockOrder }) => {
     setTabId(target?.id);
   };
 
-  const renderBlock = (group, blocks) => blocks.map((block) => (
+  const renderBlock = (blocks) => blocks.map((block) => (
     <FavoriteBlockButton
-      key={block.id}
-      icon={iconGenerator(block.id)}
-      label={block.label}
-      className={block.selected ? 'selected' : ''}
-      disabled={block.disabled}
-      onClick={() => !block.selected && handleClickBlock(group, block.id)}
+      key={block.actKey}
+      icon={favIconGenerator(block.actKey)}
+      label={block.name}
+      className={block.isFavorite === '1' ? 'selected' : ''}
+      // disabled={block.disabled}
+      onClick={() => block.isFavorite === '0' && handleClickBlock(block.actKey, blockOrder)}
+      noCheckbox
     />
   ));
 
   const renderBlockGroup = (group) => group.map((section) => (
-    <section key={section.id} className={section.group}>
+    <section key={section.groupKey} className={section.groupKey}>
       <h3 className="title">{section.groupName}</h3>
       <div className="blockGroup">
-        { renderBlock(section.group, section.blocks) }
+        { renderBlock(section.items) }
       </div>
     </section>
   ));
 
   const renderTabList = (tabs) => tabs.map((tab) => (
-    <FEIBTab key={tab.id} label={tab.groupName} value={tab.group} />
+    <FEIBTab key={tab.groupKey} label={tab.groupName} value={tab.groupKey} />
   ));
 
-  // {
-  //   (id) "groupKey": "A",
-  //   "groupName": "帳戶服務",
-  //   (blocks) "items": [
-  //     {
-  //       (id) "actKey": "A01",
-  //       (label) "name": "帳戶總覽",
-  //       x "url": null,
-  //       x "icon": "imageA01.png",
-  //       "groupType": null,
-  //       "alterMsg": "功能開發中",
-  //       "isFavorite": "0"
-  //     }
-  //   ]
-  // }
-
   useEffect(() => {
-    getFavoriteSettings().then((res) => {
-      console.log(res);
+    getFavoriteSettings().then((response) => {
+      if (Array.isArray(response) && response?.length) {
+        dispatch(setFavoriteList(response));
+      }
     });
   }, []);
 

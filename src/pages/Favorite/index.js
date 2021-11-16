@@ -22,7 +22,7 @@ const Favorite = () => {
   // 取得用戶我的最愛清單
   const updateFavoriteList = () => {
     getFavoriteList().then((response) => {
-      console.log(response);
+      if (response.code) return;
       dispatch(setCustomFavoriteList(response));
     });
   };
@@ -51,16 +51,15 @@ const Favorite = () => {
   };
 
   // 點擊移除按鈕
-  const handleClickRemoveBlock = (key) => {
+  const handleClickRemoveBlock = (position) => {
     const params = {
-      actKey: key,
-      position: null
+      actKey: null,
+      position: position
     };
-    // console.log(params);
 
     updateFavoriteItem(params)
       .then((response) => {
-        console.log('刪除最愛 res', response);
+        if (response.code) return;
         updateFavoriteList();
       })
       .catch((error) => console.log('刪除最愛 err', error));
@@ -84,7 +83,7 @@ const Favorite = () => {
         block.actKey
           ? (<>
             { (showRemoveButton && block.actKey[0] !== 'Z') && (
-              <span className="removeButton" onClick={() => handleClickRemoveBlock(block.actKey)}><RemoveIcon /></span>
+              <span className="removeButton" onClick={() => handleClickRemoveBlock(block.position)}><RemoveIcon /></span>
             ) }
             <img src={blockBackgroundGenerator(index + 1)} alt="block" />
             {favIconGenerator(block.actKey)}
@@ -96,13 +95,13 @@ const Favorite = () => {
   ));
 
   // 排列已選的最愛功能項目，空欄位補上空白區塊
-  const renderBlocks = () => {
+  const renderBlocks = (list) => {
     const blocks = [];
-    customFavoriteList.forEach((block) => {
+    list.forEach((block) => {
       const position = parseInt(block.position, 10);
-      if (position < 0) blocks.push(block)
       // position + 2 -> 前 2 個是固定的、不可更動，從陣列第三筆開始排序
-      blocks[position + 2] = block
+      if (position < 0) blocks.push(block)
+      if (position >= 0) blocks[position + 2] = block
     });
     for (let i = 0; i < 12; i++) {
       if (!blocks[i]) blocks[i] = BlockEmpty;
@@ -117,7 +116,7 @@ const Favorite = () => {
         <EditIcon />
       </button>
       <div className="favoriteArea">
-        { renderBlocks() }
+        { customFavoriteList.length ? renderBlocks(customFavoriteList) : null }
       </div>
     </div>
   );
@@ -125,38 +124,15 @@ const Favorite = () => {
   const drawerController = (content) => {
     switch (content) {
       case 'add':
-        return <Favorite1 blockOrder={blockOrder} />;
+        return <Favorite1 blockOrder={blockOrder} updateFavoriteList={updateFavoriteList} />;
       case 'edit':
-        return <Favorite2 />;
+        return <Favorite2 updateFavoriteList={updateFavoriteList} />;
       default:
         return defaultContent();
     }
   };
 
-  useEffect(() => {
-    updateFavoriteList();
-  // dispatch(setFavoriteList(mockFavoriteList.favoriteList));
-  }, []);
-
-  // useEffect(() => {
-  //   const customList = [];
-  //   favoriteList?.forEach((group) => group.blocks.forEach((item) => item.selected && customList.push(item)));
-  //   dispatch(setCustomFavoriteList(customList));
-  // const selectedBlocks = favoriteList
-  //   .map((group) => group.blocks.filter((block) => block.selected))
-  //   .flat();
-  // setSelectedFavoriteList(selectedBlocks);
-  // }, [favoriteList?.length]);
-
-  // const test = () => {
-  //   const params = {
-  //     actKey: 'A03',
-  //     position: "4"
-  //   };
-  //   updateFavoriteItem(params)
-  //     .then((res) => console.log('編輯最愛 res', res))
-  //     .catch((err) => console.log('編輯最愛 err', err))
-  // }
+  useEffect(() => updateFavoriteList(), []);
 
   return (
     <BottomDrawer
@@ -167,7 +143,6 @@ const Favorite = () => {
       onBack={favoriteDrawer?.back}
       content={(
         <FavoriteDrawerWrapper>
-          {/*<button type="button" onClick={test}>測試</button>*/}
           { drawerController(favoriteDrawer?.content) }
         </FavoriteDrawerWrapper>
       )}
