@@ -2,14 +2,15 @@ import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import FavoriteBlockButton from 'components/FavoriteBlockButton';
 import BottomAction from 'components/BottomAction';
+import SnackModal from 'components/SnackModal';
 import { FEIBTab, FEIBTabContext, FEIBTabList } from 'components/elements';
-import { iconGenerator } from './favoriteGenerator';
-import { setCustomFavoriteList } from './stores/actions';
-import SnackModal from '../../components/SnackModal';
+import { getFavoriteSettings, updateFavoriteItem } from 'apis/favoriteApi';
+import { favIconGenerator } from './favoriteGenerator';
+import { setFavoriteList } from './stores/actions';
 
 // 編輯我的最愛
-const Favorite2 = () => {
-  const [tabId, setTabId] = useState('account');
+const Favorite2 = ({ updateFavoriteList }) => {
+  const [tabId, setTabId] = useState('A');
   const customFavoriteList = useSelector(({ favorite }) => favorite.customFavoriteList);
   const [editedBlockList, setEditedBlockList] = useState([]);
   const [sectionPosition, setSectionPosition] = useState([]);
@@ -17,32 +18,31 @@ const Favorite2 = () => {
   const [showTip, setShowTip] = useState(false);
   const favoriteDrawer = useSelector(({ favorite }) => favorite.favoriteDrawer);
   const favoriteList = useSelector(({ favorite }) => favorite.favoriteList);
-  const dispatch = useDispatch();
   const mainContentRef = useRef();
+  const dispatch = useDispatch();
 
+  // 點擊編輯完成
   const handleClickEditCompleted = (editedList) => {
-    // updated customFavoriteList
-    const result = favoriteList.map((group) => (
-      group.blocks.filter((item) => editedList.find((name) => item.id === name))
-    )).flat();
-    result.forEach((block, index) => {
-      block.selected = true;
-      block.selectedOrder = index + 1;
+    const result = Array.from(editedList);
+
+    // 編輯功能無順序性，若選取的最愛數量不足 10 則後面全部以空項目替換 (null)
+    if (result.length < 10) {
+      const num = 10 - result.length;
+      for (let i = 0; i < num; i++) result.push(null);
+    }
+
+    // 更新用戶最愛的項目
+    result.forEach((actKey, position) => {
+      const params = { actKey, position };
+      updateFavoriteItem(params)
+        .then((response) => {
+          if (response.code) return;
+          updateFavoriteList();
+        });
+      // .catch((error) => console.log('編輯最愛 err', error));
     });
-    dispatch(setCustomFavoriteList(result));
 
-    // updated favoriteList
-    // call api to remove selected blocks
-    // const filteredFavoriteList = JSON.parse(JSON.stringify(favoriteList));
-    // filteredFavoriteList.forEach((group) => {
-    //   group.blocks.forEach((block) => {
-    //     editedList.forEach((blockName) => {
-    //       if (block.id === blockName) block.selected = true;
-    //     })
-    //   })
-    // });
-    // dispatch(setFavoriteList(filteredFavoriteList));
-
+    // 回到我的最愛總覽頁
     favoriteDrawer.back();
   };
 
@@ -57,73 +57,68 @@ const Favorite2 = () => {
     setTabId(target?.id);
   };
 
-  // useEffect(()=>console.log(editedBlockList), [editedBlockList?.length]);
-
-  const handleClickBlock = (group, blockId) => {
+  const handleClickBlock = (blockKey) => {
     // 添加/刪減項目邏輯
-    const result = editedBlockList;
-    if (editedBlockList.includes(blockId)) {
-      const targetIndex = editedBlockList.findIndex((id) => id === blockId);
+    const result = Array.from(editedBlockList);
+    if (result.includes(blockKey)) {
+      const targetIndex = result.findIndex((actKey) => actKey === blockKey);
       result.splice(targetIndex, 1);
     } else {
-      if (10 - editedBlockList.length <= 0) {
+      if (10 - result.length <= 0) {
         setShowTip(true);
         return;
       }
-      result.push(blockId);
+      result.push(blockKey);
     }
-    // console.log('result', result);
     setSelectedAmount(editedBlockList.length);
     setEditedBlockList(result);
 
     // 更新 UI 樣式
-    // const groupDOM = document.querySelector(`.${group}`);
-    // const blocks = Array.from(groupDOM.children[1].children);
-    // const blockDOM = blocks.find((block) => block.getAttribute('data-block') === blockId);
-    // blockDOM.classList.toggle('selected');
-
     const buttons = Array.from(document.querySelectorAll('.favoriteBlockButton'));
-    const selectedButton = buttons.find((block) => block.getAttribute('data-block') === blockId);
+    const selectedButton = buttons.find((block) => block.getAttribute('data-block') === blockKey);
     selectedButton.classList.toggle('selected');
-
-    // 新增 block 至 customFavoriteList
-    // const updatedCustomFavoriteList = customFavoriteList;
-    // updatedCustomFavoriteList.push(targetBlock);
-    // dispatch(setCustomFavoriteList(updatedCustomFavoriteList));
-
-    // const targetGroup = favoriteList.find((targetGroup) => targetGroup.group === group);
-    // const targetBlock = targetGroup.blocks.find((block) => block.id === blockId);
-    // console.log(targetBlock);
   };
 
-  const renderBlock = (group, blocks) => blocks.map((block) => (
+  const renderBlock = (blocks) => blocks.map((block) => (
     <FavoriteBlockButton
-      key={block.id}
-      data={block.id}
-      icon={iconGenerator(block.id)}
-      label={block.label}
-      className={block.selected ? 'selected' : ''}
-      disabled={block.disabled}
-      onClick={() => handleClickBlock(group, block.id)}
+      key={block.actKey}
+      data={block.actKey}
+      icon={favIconGenerator(block.actKey)}
+      label={block.name}
+      className={block.isFavorite === '1' ? 'selected' : ''}
+      // disabled={block.disabled}
+      onClick={() => handleClickBlock(block.actKey)}
     />
   ));
 
   const renderBlockGroup = (group) => group.map((section) => (
-    <section key={section.id} className={section.group}>
+    <section key={section.groupKey} className={section.groupKey}>
       <h3 className="title">{section.groupName}</h3>
       <div className="blockGroup">
-        { renderBlock(section.group, section.blocks) }
+        { renderBlock(section.items) }
       </div>
     </section>
   ));
 
   const renderTabList = (tabs) => tabs.map((tab) => (
-    <FEIBTab key={tab.id} label={tab.groupName} value={tab.group} />
+    <FEIBTab key={tab.groupKey} label={tab.groupName} value={tab.groupKey} />
   ));
 
   useEffect(() => {
-    if (customFavoriteList.length) {
-      customFavoriteList.forEach((existedBlock) => editedBlockList.push(existedBlock.id));
+    getFavoriteSettings().then((response) => {
+      if (Array.isArray(response) && response?.length) {
+        dispatch(setFavoriteList(response));
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (customFavoriteList?.length) {
+      const existedBlocks = [];
+      customFavoriteList.forEach((existedBlock) => {
+        if (existedBlock.actKey[0] !== 'Z') existedBlocks.push(existedBlock.actKey);
+      });
+      setEditedBlockList(existedBlocks);
     }
   }, [customFavoriteList]);
 

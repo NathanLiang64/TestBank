@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
@@ -7,10 +8,10 @@ import Dialog from 'components/Dialog';
 import Loading from 'components/Loading';
 import { FEIBButton } from 'components/elements';
 import { setIsPasswordRequired, setResult } from 'components/PasswordDrawer/stores/actions';
+import { doNtdTrConfirm, doBookNtdTrConfirm, doTransfer } from 'apis/transferApi';
 import { dateFormatter, weekNumberToChinese } from 'utilities/Generator';
 import { directTo } from 'utilities/mockWebController';
 import TransferWrapper, { TransferMOTPDialogWrapper } from './transfer.style';
-import { doNtdTrConfirm, doBookNtdTrConfirm } from '../../apis/transferApi';
 
 const Transfer1 = () => {
   const [openMOTPDialog, setOpenMOTPDialog] = useState(false);
@@ -140,22 +141,45 @@ const Transfer1 = () => {
   };
 
   const handleClickTransferButton = async () => {
-    console.log(displayInfo);
+    console.log('displayInfo', displayInfo);
     const data = {
       outAcctNo: displayInfo.receivingAccount, inBank: displayInfo.bankNo, inAcctNo: displayInfo.receivingAccount, amount: displayInfo.money.replace('$', ''), memo: displayInfo.remark, deviceId: '131313', isQRCode: false, isMotpOpen: false,
     };
 
+    // 預約轉帳
     if (displayInfo.transferType === 'reserve') {
-      console.log('displayInfo', displayInfo);
+      // console.log('displayInfo', displayInfo);
       const resrveData = doMakeResrveData(displayInfo, data);
-      console.log('resrveData', resrveData);
+      // console.log('resrveData', resrveData);
       const ntdTrConfirmResponse = await doBookNtdTrConfirm(resrveData);
       console.log(ntdTrConfirmResponse);
-    } else {
-      const ntdTrConfirmResponse = await doNtdTrConfirm(data);
-      console.log(ntdTrConfirmResponse);
-      if (fastLogin || !motp) dispatch(setIsPasswordRequired(true));
+      return;
     }
+
+    // 即時轉帳
+    const { outAcctNo, bankCode: { bankId }, receivingAccount, transferAmount, remark, deviceId, otpId, isMotpOpen, isRegister } = state;
+    const params = {
+      outAcctNo,
+      inBank: bankId,
+      inAcctNo: receivingAccount,
+      amount: transferAmount,
+      memo: remark,
+      deviceId,
+      otpId,
+      otpCode: "string",
+      isMotpOpen,
+      isRegister,
+    }
+    console.log('params', params);
+    doTransfer(params)
+      .then((response) => {
+        console.log('轉帳 res', response)
+      })
+      .catch((error) => console.log('轉帳 err', error))
+
+    // const ntdTrConfirmResponse = await doNtdTrConfirm(data);
+    // console.log(ntdTrConfirmResponse);
+    // if (fastLogin || !motp) dispatch(setIsPasswordRequired(true));
   };
 
   const onSubmit = () => setOpenMOTPDialog(true);
@@ -202,25 +226,13 @@ const Transfer1 = () => {
 
   useEffect(() => {
     /* eslint-disable no-shadow */
-    // 從上一頁代過來的參數
-    // {
-    //   outAcctNo: accountId,
-    //   inBank: bankNo,
-    //   inAcctNo: receivingAccount,
-    //   amount: transferAmount,
-    //   email: '',
-    //   emailContent: '',
-    //   memo: remark,
-    //   deviceId: deviceId,
-    //   isQRCode: false,
-    //   isMotpOpen: otpStatus.isMotpOpen,
-    // };
     const {
-      debitAccount, debitName, bankCode, receivingAccount, transferType, transferAmount,
+      outAcctNo, bankCode, receivingAccount, transferType, transferAmount,
       transactionDate, transactionNumber, remark, transactionFrequency, transactionCycle,
-      depositAmount, transferRemaining,
+      depositAmount, transferRemaining, isMotpOpen,
     } = state;
 
+    // 如果是預約轉帳
     if (transactionFrequency && transactionCycle) {
       if (bankCode.bankNo) bankCode.bankId = bankCode.bankNo;
       setDisplayInfo({
@@ -235,9 +247,9 @@ const Transfer1 = () => {
           ? `${switchFrequency(transactionFrequency)}${transactionCycle}號`
           : `${switchFrequency(transactionFrequency)}${weekNumberToChinese(transactionCycle)}`,
         amount: computeTransferAmount(transactionFrequency, transactionCycle, transactionDate),
+        debitAccount: outAcctNo,
         receivingAccount,
-        debitAccount,
-        debitName,
+        debitName: '串接簡易資訊後才會有名稱',
         remark,
         depositAmount,
         transferRemaining,
@@ -246,10 +258,9 @@ const Transfer1 = () => {
         transactionCycle,
       });
     } else {
-      console.log('171', bankCode);
+      console.log('state', state);
       if (bankCode.bankNo !== undefined)bankCode.bankId = bankCode.bankNo;
       setDisplayInfo({
-
         ...displayInfo,
         money: `$${transferAmount}` || '',
         bankNo: bankCode.bankId,
@@ -258,14 +269,19 @@ const Transfer1 = () => {
           ? dateFormatter(transactionDate)
           : `${dateFormatter(transactionDate[0], true)}~${dateFormatter(transactionDate[1], true)}`,
         receivingAccount,
-        debitAccount,
-        debitName,
+        debitAccount: outAcctNo,
+        debitName: '串接簡易資訊後才會有名稱',
         remark,
         depositAmount,
         transferRemaining,
         transferType,
         transactionFrequency,
       });
+    }
+
+    // 檢查是否開通 MOTP，若未開通則發送 OTP 簡訊
+    if (!isMotpOpen) {
+
     }
   }, [state]);
 

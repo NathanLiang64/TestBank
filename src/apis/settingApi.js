@@ -13,3 +13,8 @@ export const getCountyList = async (param) => {
 export const getMotpStatus = (params) => (
   userRequest('post', '/api/setting/motp/status', params)
 );
+
+// 發送 OTP 驗證碼
+export const sendOtpCode = (params) => (
+  userRequest('post', '/api/sendOtp', params)
+);
