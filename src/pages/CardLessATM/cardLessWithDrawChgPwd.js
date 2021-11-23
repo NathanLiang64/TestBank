@@ -1,5 +1,6 @@
-import { useState } from 'react';
+/* eslint-disable no-unused-vars */
 import { useHistory } from 'react-router';
+import { useDispatch } from 'react-redux';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
@@ -12,38 +13,21 @@ import {
 } from 'components/elements';
 import PasswordInput from 'components/PasswordInput';
 import Accordion from 'components/Accordion';
-import Dialog from 'components/Dialog';
-import Alert from 'components/Alert';
-// import e2ee from 'utilities/E2ee';
-
+import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
+import { cardlessWithdrawPasswordValidation, confirmCardlessWithdrawPasswordValidation } from 'utilities/validation';
 /* Styles */
-// import theme from 'themes/theme';
 import CardLessATMWrapper from './cardLessATM.style';
 
 const CardLessWithDrawChgPwd = () => {
+  const dispatch = useDispatch();
+  const history = useHistory();
   /**
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    oldPassword: yup
-      .string()
-      .required('請輸入舊無卡提款密碼')
-      .min(4, '提款密碼須為 4-12 位數字')
-      .max(12, '提款密碼須為 4-12 位數字')
-      .matches(/^[0-9]*$/, '提款密碼僅能使用數字'),
-    newPassword: yup
-      .string()
-      .required('請輸入新無卡提款密碼')
-      .min(4, '新提款密碼須為 4-12 位數字')
-      .max(12, '新提款密碼須為 4-12 位數字')
-      .matches(/^[0-9]*$/, '提款密碼僅能使用數字'),
-    newPasswordConfirm: yup
-      .string()
-      .required('請再輸入一次新無卡提款密碼')
-      .min(4, '新提款密碼須為 4-12 位數字')
-      .max(12, '新提款密碼須為 4-12 位數字')
-      .matches(/^[0-9]*$/, '提款密碼僅能使用數字')
-      .oneOf([yup.ref('newPassword'), null], '兩次輸入的新提款密碼必須相同'),
+    oldPassword: cardlessWithdrawPasswordValidation(),
+    newPassword: cardlessWithdrawPasswordValidation(),
+    newPasswordConfirm: confirmCardlessWithdrawPasswordValidation('newPassword'),
   });
   const {
     handleSubmit, control, formState: { errors },
@@ -51,44 +35,42 @@ const CardLessWithDrawChgPwd = () => {
     resolver: yupResolver(schema),
   });
 
-  const history = useHistory();
-
-  const [alertType, setAlertType] = useState('success');
-  const [dialogTitle, setDialogTitle] = useState('');
-  const [dialogContent, setDialogContent] = useState('');
-  const [showResultDialog, setShowResultDialog] = useState(false);
-  const [dialogCallback, setDialogCallback] = useState(() => () => setShowResultDialog(false));
-
-  const toWithdrawPage = () => {
+  // 關閉結果彈窗
+  const handleCloseResultDialog = () => {
     history.push('/cardLessATM1');
   };
 
-  const handleDialogOpen = (data) => {
-    if (data.respMsg === '') {
-      setAlertType('success');
-      setDialogTitle('變更成功');
-      setDialogContent('您的無卡提款密碼變更成功囉！');
-      setDialogCallback(() => () => toWithdrawPage());
+  // 設定結果彈窗
+  const setResultDialog = (response) => {
+    const result = response.respMsg === '';
+    let closeCallBack;
+    let errorDesc = '';
+    if (result) {
+      closeCallBack = handleCloseResultDialog;
     } else {
-      setAlertType('error');
-      setDialogTitle('變更失敗');
-      setDialogContent(data.message);
+      errorDesc = response.message;
+      closeCallBack = () => {};
     }
-    setShowResultDialog(true);
+    dispatch(setResultContent({
+      isSuccess: result,
+      successTitle: '設定成功',
+      successDesc: '您的無卡提款密碼變更成功囉！',
+      errorTitle: '設定失敗',
+      errorCode: '',
+      errorDesc,
+    }));
+    dispatch(setCloseCallBack(closeCallBack));
+    dispatch(setIsOpen(true));
   };
 
   // 設定無卡提款密碼
   const changePwdHandler = async (param) => {
-    cardLessATMApi.changeCardlessPwd(param)
-      .then((response) => {
-        handleDialogOpen(response);
-      });
+    const changePwdResponse = await cardLessATMApi.changeCardlessPwd(param);
+    setResultDialog(changePwdResponse);
   };
 
   const onSubmit = async (data) => {
     const param = {
-      // oldPassword: await e2ee(data.oldPassword),
-      // newPassword: await e2ee(data.newPassword),
       oldPassword: data.oldPassword,
       newPassword: data.newPassword,
     };
@@ -103,27 +85,36 @@ const CardLessWithDrawChgPwd = () => {
           id="oldPassword"
           name="oldPassword"
           placeholder="請輸入舊提款密碼(4-12位數字)"
-          inputMode="numric"
+          inputMode="numeric"
           control={control}
           errorMessage={errors.oldPassword?.message}
+          inputProps={{
+            maxLength: 12,
+          }}
         />
         <PasswordInput
           label="新提款密碼"
           id="newPassword"
           name="newPassword"
           placeholder="請輸入新提款密碼(4-12位數字)"
-          inputMode="numric"
+          inputMode="numeric"
           control={control}
           errorMessage={errors.newPassword?.message}
+          inputProps={{
+            maxLength: 12,
+          }}
         />
         <PasswordInput
           label="確認新提款密碼"
           id="newPasswordConfirm"
           name="newPasswordConfirm"
           placeholder="請再輸入一次新提款密碼(4-12位數字)"
-          inputMode="numric"
+          inputMode="numeric"
           control={control}
           errorMessage={errors.newPasswordConfirm?.message}
+          inputProps={{
+            maxLength: 12,
+          }}
         />
         <Accordion space="both">
           <ul>
@@ -139,33 +130,12 @@ const CardLessWithDrawChgPwd = () => {
     </form>
   );
 
-  const ResultDialog = () => (
-    <Dialog
-      isOpen={showResultDialog}
-      onClose={dialogCallback}
-      content={(
-        <>
-          <Alert state={alertType}>{dialogTitle}</Alert>
-          <p>
-            { dialogContent }
-          </p>
-        </>
-      )}
-      action={(
-        <FEIBButton onClick={dialogCallback}>
-          確定
-        </FEIBButton>
-      )}
-    />
-  );
-
   useCheckLocation();
   usePageInfo('/api/cardLessWithDrawChgPwd');
 
   return (
     <CardLessATMWrapper>
       {renderForm()}
-      <ResultDialog />
     </CardLessATMWrapper>
   );
 };

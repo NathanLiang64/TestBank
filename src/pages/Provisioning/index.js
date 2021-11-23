@@ -1,47 +1,57 @@
-import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
-import { goToFunc } from 'utilities/BankeePlus';
-import SuccessImage from 'assets/images/stateSuccess.svg';
-import { provisioningApi } from 'apis';
+// import { goToFunc } from 'utilities/BankeePlus';
+// import SuccessImage from 'assets/images/successImg.svg';
+// import { provisioningApi } from 'apis';
 
 /* Elements */
 import { FEIBButton } from 'components/elements';
 import Accordion from 'components/Accordion';
-import Dialog from 'components/Dialog';
 
 /* Styles */
 import ProvisioningWrapper from './provisioning.style';
+import { setIsOpen, setCloseCallBack, setResultContent } from '../ResultDialog/stores/actions';
 
 const Provisioning = () => {
-  const [dialogOpen, setDialogOpen] = useState(false);
-
-  const triggerProvide = async () => {
-    const openhbResponse = await provisioningApi.openhb({});
-    if (Object.keys(openhbResponse).length === 0) {
-      setDialogOpen(true);
-    } else {
-      alert(openhbResponse.message);
-    }
-  };
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   const toHomePage = () => {
-    setDialogOpen(false);
-    goToFunc('home');
+    // goToFunc('home');
+    history.push('/regularPwdModify');
   };
 
-  const renderDialog = () => (
-    <Dialog
-      isOpen={dialogOpen}
-      onClose={toHomePage}
-      title=" "
-      content={(
-        <div className="dialogResultContent">
-          <img src={SuccessImage} alt="Success" />
-          <div className="resultText">開通完成</div>
-        </div>
-      )}
-    />
-  );
+  // 設定結果彈窗
+  const setResultDialog = (response) => {
+    const result = Object.keys(response).length === 0;
+    let errorCode = '';
+    let errorDesc = '';
+    let closeCallBack;
+    if (result) {
+      closeCallBack = () => toHomePage();
+    } else {
+      [errorCode, errorDesc] = response.message.split(' ');
+      closeCallBack = () => {};
+    }
+    dispatch(setCloseCallBack(closeCallBack));
+    dispatch(setResultContent({
+      isSuccess: result,
+      successTitle: '設定成功',
+      successDesc: '',
+      errorTitle: '設定失敗',
+      errorCode,
+      errorDesc,
+    }));
+    dispatch(setIsOpen(true));
+  };
+
+  const triggerProvide = async () => {
+    // const openhbResponse = await provisioningApi.openhb({});
+    // 假設開通成功
+    const openhbResponse = {};
+    setResultDialog(openhbResponse);
+  };
 
   useCheckLocation();
   usePageInfo('/api/provisioning');
@@ -127,7 +137,6 @@ const Provisioning = () => {
         </div>
       </Accordion>
       <FEIBButton onClick={triggerProvide}>同意條款並送出</FEIBButton>
-      { renderDialog() }
     </ProvisioningWrapper>
   );
 };

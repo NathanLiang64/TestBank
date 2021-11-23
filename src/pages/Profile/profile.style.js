@@ -37,7 +37,7 @@ const ProfileWrapper = styled(Layout)`
     }
   }
 
-  .userName {
+  .nickName {
     display: flex;
     justify-content: center;
     align-items: center;

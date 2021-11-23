@@ -42,23 +42,11 @@ const CardLessATMWrapper = styled(Layout)`
     margin-bottom: .8rem;
     padding: 1.5rem 3.2rem 2.4rem;
     background: ${({ theme }) => theme.colors.basic.white};
-    .successImg {
-      height: 11rem;
-      margin-bottom: 2.7rem;
-      img {
-        height: calc(11rem - 3.4rem);
-      }
-      .successTxt {
-        text-align: center;
-        font-size: 2.4rem;
-        color: ${({ theme }) => theme.colors.secondary.brand};
-      }
-    }
     .accountInfo {
       font-size: 2.4rem;
       color: ${({ theme }) => theme.colors.primary.dark};
       font-weight: 400;
-      margin-bottom: 1.6rem;
+      margin: 2.4rem 0 1.6rem;
       .withdrawNo {
         font-weight: bold;
       }

@@ -4,21 +4,28 @@
 
 // 將數字轉為加上千分位符號的字串
 export const toCurrency = (number) => {
-  const parts = number.toString().split('.');
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  return parts.join('.');
+  if (number) {
+    const parts = number.toString().split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return parts.join('.');
+  }
+  if (number === 0 || number === '0') return '0';
+  return '';
 };
 
 // 將帳號轉為指定字數間帶有分隔符 (-) 之顯示方式
-export const accountFormatter = (account) => `${account.slice(0, 3)}-${account.slice(3, 6)}-${account.slice(6)}`;
+export const accountFormatter = (account) => (
+  account ? `${account.slice(0, 3)}-${account.slice(3, 6)}-${account.slice(6)}` : '-'
+);
 
-// 將日期格式轉為 YYYY/MM/DD 字串
-export const dateFormatter = (date) => {
+// 將日期格式轉為 YYYY/MM/DD 字串或 YYYY-MM-DD 字串 (傳入第 2 個參數，值為 truthy)
+export const dateFormatter = (date, dashType) => {
   if (date) {
     date = new Date(date);
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
+    if (dashType) return `${year}-${month}-${day}`;
     return `${year}/${month}/${day}`;
   }
   return '';
@@ -137,6 +144,29 @@ export const numberToChinese = (num) => {
     }
   }
   return chineseBigNumber;
+};
+
+// 帳戶科目別對應的存款卡顏色
+export const accountTypeColorGenerator = (currency) => {
+  switch (currency) {
+    case '001': // 活期存款
+      return '';
+    case '003': // 行員存款
+      return '';
+    case '004': // 活期儲蓄存款
+      return 'purple';
+    case '007': // 外幣存款
+      return 'blue';
+    case '010': // 定存 (010 科目別包含台外幣定存)
+      return '';
+    case '031': // 支存
+      return '';
+    case '041': // 信託
+      return '';
+    case '050': // 放款
+    default:
+      return null;
+  }
 };
 
 // 貨幣單位文字轉為符號

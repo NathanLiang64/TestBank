@@ -1,34 +1,31 @@
-/* eslint-disable */
-import { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
-import { depositInquiryApi } from 'apis';
 import DateRangePicker from 'components/DateRangePicker';
 import CheckboxButton from 'components/CheckboxButton';
 import ConfirmButtons from 'components/ConfirmButtons';
 import {
-  FEIBTabContext, FEIBTabList, FEIBTab, FEIBInputLabel, FEIBInput,
+  FEIBInput, FEIBInputLabel, FEIBTab, FEIBTabContext, FEIBTabList,
 } from 'components/elements';
 import { dateFormatter, stringDateCodeFormatter } from 'utilities/Generator';
+import { getTransactionDetails } from 'apis/depositOverviewApi';
 import DepositSearchConditionWrapper from './depositSearchCondition.style';
 import {
-  setOpenInquiryDrawer,
-  setDateRange,
-  setTempDateRange,
-  setKeywords,
-  setCustomKeyword, setDetailList,
+  setCustomKeyword, setDateRange, setDetailList, setKeywords, setOpenInquiryDrawer, setTempDateRange,
 } from '../DepositInquiry/stores/actions';
 
-const DepositSearchCondition = ({ init, requestConditions, setTabList, setTabId }) => {
+const DepositSearchCondition = ({
+  init, requestConditions, setTabList, setTabId,
+}) => {
   const keywords = useSelector(({ depositInquiry }) => depositInquiry.keywords);
   const customKeyword = useSelector(({ depositInquiry }) => depositInquiry.customKeyword);
   const dateRange = useSelector(({ depositInquiry }) => depositInquiry.dateRange);
   const tempDateRange = useSelector(({ depositInquiry }) => depositInquiry.tempDateRange);
   const [autoDateTabId, setAutoDateTabId] = useState('0');
   const { register, unregister, handleSubmit } = useForm();
-  const { getDetailsData } = depositInquiryApi;
   const dispatch = useDispatch();
 
+  /* eslint-disable */
   const handleChangeKeywords = (event) => {
     const tempKeywords = Array.from(keywords);
     tempKeywords.find((item) => {
@@ -79,19 +76,21 @@ const DepositSearchCondition = ({ init, requestConditions, setTabList, setTabId 
     dispatch(setCustomKeyword(data.keywordCustom));
 
     // 查詢代入條件：1.帳號, 2.日期起訖範圍, 3.類別, 4.自訂關鍵字
-    const { baseUrl, account, tranTP } = requestConditions();
+    const { account, tranTP } = requestConditions();
     const beginDT = data.dateRange[0];
     const endDT = data.dateRange[1];
     const custom = data.keywordCustom;
 
-    const apiUrl = `${baseUrl}?actno=${account}&beginDT=${beginDT}&endDT=${endDT}&tranTP=${tranTP}&textSH=${custom}`;
-    const response = await getDetailsData(apiUrl);
-    if (response) {
-      const { acctDetails, monthly } = response;
-      dispatch(setDetailList(acctDetails));
-      setTabList(monthly.length ? monthly.reverse() : []);
-      setTabId(acctDetails.length ? acctDetails[0].txnDate.substr(0, 6) : '');
-    }
+    getTransactionDetails({
+      account, beginDT, endDT, tranTP, custom,
+    })
+      .then((response) => {
+        const { acctDetails, monthly } = response;
+        dispatch(setDetailList(acctDetails));
+        setTabList(monthly?.length ? monthly.sort((a, b) => b - a) : [])
+        return acctDetails?.length ? acctDetails[0].txnDate.substr(0, 6) : '';
+      })
+      .then((tabId) => setTabId(tabId));
   };
 
   const handleClickDateRangePicker = (range) => {
@@ -133,9 +132,9 @@ const DepositSearchCondition = ({ init, requestConditions, setTabList, setTabId 
 
     return (
       <div className="autoDateArea">
-        <p>{ dateFormatter(startDate) } ~ { dateFormatter(today) }</p>
-        <input type="text" { ...register('dateRange.0') } value={startDate} />
-        <input type="text" { ...register('dateRange.1') } value={today} />
+        <p>{`${dateFormatter(startDate)} ~ ${dateFormatter(today)}`}</p>
+        <input type="text" {...register('dateRange.0')} value={startDate} />
+        <input type="text" {...register('dateRange.1')} value={today} />
       </div>
     );
   };

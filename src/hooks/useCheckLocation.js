@@ -12,7 +12,7 @@ const useCheckLocation = () => {
     } else {
       dispatch(setIsHomePage(false));
     }
-    if (path.includes('regularPwdModify') || path === '/open') {
+    if (path.includes('exportBankBook1') || path.includes('regularPwdModify') || path.includes('provisioning') || path.includes('regularBasicInformation') || path === '/open') {
       // if (state) {
       dispatch(setIsHomePage(true));
       // }

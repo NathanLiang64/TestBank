@@ -20,8 +20,8 @@ const TransferDrawerWrapper = styled.div`
     height: 4.4rem;
     background: ${({ theme }) => theme.colors.primary.light};
 
-    .MuiSvgIcon-root {
-      font-size: 3.2rem;
+    .Icon {
+      font-size: 2rem;
       color: ${({ theme }) => theme.colors.basic.white};
     }
   }

@@ -5,11 +5,7 @@ import { FileCopyOutlined, ArrowForwardIosRounded } from '@material-ui/icons';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import InfoArea from 'components/InfoArea';
 import {
-  FEIBTab,
-  FEIBTabContext,
-  FEIBTabList,
-  FEIBTabPanel,
-  FEIBButton, FEIBIconButton,
+  FEIBTab, FEIBTabContext, FEIBTabList, FEIBTabPanel, FEIBButton, FEIBIconButton,
 } from 'components/elements';
 import theme from 'themes/theme';
 import QRCodeTransferWrapper from './QRCodeTransfer.style';

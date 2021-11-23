@@ -124,14 +124,14 @@ const DepositPlusWrapper = styled(Layout)`
 
 const LevelDialogContentWrapper = styled.div`
 
-  .Table {
+  table {
+    tbody {
+      font-size: 1.2rem;
+    }
     
-    // caption {
-    //   margin-bottom: 1.6rem;
-    //   font-size: 1.4rem;
-    //   text-align: left;
-    //   color: ${({ theme }) => theme.colors.text.light};
-    // }
+    thead > tr > th:nth-child(2) {
+      max-width: 12rem;
+    }
   }
 `;
 

@@ -15,14 +15,14 @@ const handleSpaceType = (position) => {
 
 const AccordionWrapper = styled.div`
   margin: ${({ $space }) => handleSpaceType($space)};
-  border-radius: .4rem;
+  border-radius: .8rem;
   background: ${({ theme }) => theme.colors.background.lighterBlue};
 
   button {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 .6rem 0 1.2rem;
+    padding: 0 1.2rem;
     width: 100%;
     min-height: 4.8rem;
     font-size: 1.6rem;
@@ -30,6 +30,10 @@ const AccordionWrapper = styled.div`
 
     h3 {
       padding: 1.2rem 0;
+    }
+    
+    .Icon {
+      font-size: 2rem;
     }
   }
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { EditRounded, PersonRounded } from '@material-ui/icons';
+import { EditIcon, PersonalIcon } from 'assets/images/icons';
 import AvatarWrapper from './avatar.style';
 
 /*
@@ -26,13 +26,13 @@ const Avatar = ({
 
   const renderDefaultBackground = () => (
     <div className="default">
-      { name ? <span>{name.substr(0, 1)}</span> : <PersonRounded /> }
+      { name ? <span>{name.substr(0, 1)}</span> : <PersonalIcon /> }
     </div>
   );
 
   const renderEditButton = () => (
     <div className="editButton" onClick={handleClickEditButton}>
-      <EditRounded />
+      <EditIcon />
       <input
         ref={photoRef}
         type="file"

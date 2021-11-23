@@ -6,10 +6,9 @@ import { useCheckLocation, usePageInfo } from 'hooks';
 import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
 import Accordion from 'components/Accordion';
+import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 
 /* Styles */
-import SuccessImage from 'assets/images/stateSuccess.svg';
-import ErrorImage from 'assets/images/stateError.svg';
 import AddPersonIcon from 'assets/images/addPersonIcon.svg';
 import ReserveTransferSearchWrapper from './reserveTransferSearch.style';
 
@@ -30,17 +29,12 @@ const ReserveTransferSearch2 = ({ location }) => {
 
   return (
     <ReserveTransferSearchWrapper className={!isSuccess && 'resultFail'}>
+      <SuccessFailureAnimations isSuccess={isSuccess} successTitle="設定成功" errorTitle="設定失敗" />
       {
         // 成功畫面
         isSuccess && (
           <>
             <section className="resultDataContainer">
-              <div className="stateContainer">
-                <img className="stateImage" src={SuccessImage} alt="" />
-                <div className="stateContent success">
-                  設定成功
-                </div>
-              </div>
               <div className="dataLabel">轉出金額與轉入帳號</div>
               <div className="balance">{location.state.amount}</div>
               <div className="accountInfo">
@@ -77,31 +71,12 @@ const ReserveTransferSearch2 = ({ location }) => {
                 <InformationList title="備註" content={location.state.remark} />
               </Accordion>
             </section>
-            <section className="buttonContainer">
-              <FEIBButton onClick={toSearchPage}>確認</FEIBButton>
-            </section>
           </>
         )
       }
-      {
-        // 失敗畫面
-        !isSuccess && (
-          <>
-            <section className="resultDataContainer">
-              <div className="stateContainer">
-                <img className="stateImage" src={ErrorImage} alt="" />
-                <div className="stateContent fail">
-                  設定失敗
-                </div>
-              </div>
-              <div className="dataLabel">設定逾時</div>
-            </section>
-            <section className="buttonContainer">
-              <FEIBButton onClick={toSearchPage}>確認</FEIBButton>
-            </section>
-          </>
-        )
-      }
+      <section className="buttonContainer">
+        <FEIBButton onClick={toSearchPage}>確認</FEIBButton>
+      </section>
     </ReserveTransferSearchWrapper>
   );
 };

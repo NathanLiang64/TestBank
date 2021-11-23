@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Pagination } from 'swiper/core';
 import QRCode from 'qrcode.react';
-import { ArrowForwardIosRounded, Share } from '@material-ui/icons';
+import { ArrowForwardIosRounded } from '@material-ui/icons';
 import ScanPhoto from 'assets/images/scanningQRCode.png';
 import BottomDrawer from 'components/BottomDrawer';
 import CopyTextIconButton from 'components/CopyTextIconButton';
@@ -11,8 +11,9 @@ import Loading from 'components/Loading';
 import {
   FEIBIconButton, FEIBTabContext, FEIBTab, FEIBTabList, FEIBTabPanel,
 } from 'components/elements';
-// import { shakeShakeApi } from 'apis';
+// import { doGetShakeInitData } from 'apis/shakeShakeApi';
 import { accountFormatter } from 'utilities/Generator';
+import { ShareIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
 import { setIsShake, setUserCards, setUserCardInfo } from './stores/actions';
 import ShakeShakeWrapper from './shakeShake.style';
@@ -28,7 +29,6 @@ const ShakeShake = () => {
   const userCardInfo = useSelector(({ shakeShake }) => shakeShake.userCardInfo);
 
   const dispatch = useDispatch();
-  // const { doGetShakeInitData } = shakeShakeApi;
 
   const selectedUserCard = (id, allCards) => {
     const filteredCard = allCards.find((card) => card.id === id);
@@ -71,12 +71,8 @@ const ShakeShake = () => {
               fgColor={theme.colors.text.dark}
             />
             <div className="shareButtonArea">
-              <FEIBIconButton
-                className="shareIconButton"
-                $fontSize={1.8}
-                $iconColor={theme.colors.text.dark}
-              >
-                <Share />
+              <FEIBIconButton className="shareIconButton">
+                <ShareIcon size={16} color={theme.colors.text.dark} />
               </FEIBIconButton>
               <p>分享QR CODE</p>
             </div>

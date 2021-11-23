@@ -18,6 +18,8 @@ import * as regularBasicInformationApi from './regularBasicInformationApi';
 import * as noticeApi from './noticeApi';
 import * as provisioningApi from './provisioningApi';
 import * as financialDepartmentsApi from './financialDepartmentsApi';
+import * as exportBankBookApi from './exportBankBookApi';
+import * as profileApi from './profileApi';
 
 export {
   headerApi,
@@ -40,4 +42,6 @@ export {
   noticeApi,
   provisioningApi,
   financialDepartmentsApi,
+  exportBankBookApi,
+  profileApi,
 };

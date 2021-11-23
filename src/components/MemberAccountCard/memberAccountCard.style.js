@@ -64,9 +64,10 @@ const MemberAccountCardWrapper = styled.div`
         background: ${({ theme }) => theme.colors.state.danger};
       }
 
-      .MuiSvgIcon-root {
+      .Icon {
         margin-bottom: .4rem;
-        font-size: 2.4rem;
+        font-size: 2rem;
+        color: white;
       }
 
       span {

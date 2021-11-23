@@ -2,7 +2,7 @@ import { BlockSelectedIcon } from 'assets/images/icons';
 import FavoriteBlockButtonStyle from './favoriteBlockButton.style';
 
 const FavoriteBlockButton = ({
-  icon, label, className, disabled, onClick, data, noBorder,
+  icon, label, className, disabled, onClick, data, noCheckbox, noBorder,
 }) => (
   <FavoriteBlockButtonStyle
     data-block={data}
@@ -11,9 +11,9 @@ const FavoriteBlockButton = ({
     onClick={onClick}
     $noBorder={noBorder}
   >
-    <span>{icon}</span>
+    {icon}
     <p>{label}</p>
-    <BlockSelectedIcon className="selectedIcon" />
+    { !noCheckbox && <BlockSelectedIcon className="selectedIcon" /> }
   </FavoriteBlockButtonStyle>
 );
 

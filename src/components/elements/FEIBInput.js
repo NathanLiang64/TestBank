@@ -81,6 +81,12 @@ const FEIBInput = styled(MaterialInput).attrs(({
       border-color: ${({ theme }) => theme.colors.state.danger};
     }
   }
+  
+  // 銀行代碼 List Icon
+  .listIcon {
+    right: -.4rem;
+    font-size: 2rem;
+  }
 `;
 
 export default FEIBInput;

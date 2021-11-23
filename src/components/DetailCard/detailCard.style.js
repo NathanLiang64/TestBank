@@ -24,10 +24,9 @@ const DetailCardWrapper = styled.div`
     border-radius: 50%;
     background: ${({ theme }) => theme.colors.background.light};
     
-    // 預設頭像的 icon 樣式
-    .MuiSvgIcon-root {
-      font-size: 2.4rem;
-      color: ${({ theme }) => theme.colors.primary.light};
+    .Icon {
+      top: -.2rem;
+      left: -.2rem;
     }
   }
 

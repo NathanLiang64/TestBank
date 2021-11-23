@@ -6,6 +6,7 @@ import PasswordDrawer from 'components/PasswordDrawer';
 import Spinner from 'components/Spinner';
 import ShakeShake from 'pages/ShakeShake';
 import Favorite from 'pages/Favorite';
+import ResultDialog from 'pages/ResultDialog';
 import routes from 'routes';
 
 /* Store */
@@ -29,6 +30,7 @@ const App = () => (
       <ShakeShake />
       <Favorite />
       <PasswordDrawer />
+      <ResultDialog />
     </PersistGate>
     <Spinner />
   </Provider>

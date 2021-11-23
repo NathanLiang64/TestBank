@@ -11,17 +11,25 @@ const errorMessage = {
   passwordCannotSameCharacter: '「密碼」同一個字母或數字不可超過4次',
   passwordCannotConsecutive: '「密碼」連續字母或數字不可超過4位',
 
+  // 二次確認密碼
+  confirmPasswordRequired: '請再輸入一次新網銀密碼',
+  confirmPasswordNotMatching: '必須與新網銀密碼相同',
+
   // 身份證字號
-  identityRequired: '身分證字號尚未輸入，請確認',
+  identityRequired: '身分證字號尚未輸入，請重新檢查',
   identityWrongFormat: '輸入錯誤，請重新填寫',
 
   // 使用者代號
-  userAccountRequired: '使用者代號尚未輸入，請確認',
-  userAccountWrongLength: '您輸入的使用者代號長度有誤，請重新輸入',
+  userAccountRequired: '使用者代號尚未輸入，請重新檢查',
+  userAccountWrongFormat: '輸入的使用者代號格式有誤，請重新檢查',
+
+  // 二次確認使用者代號
+  confirmUserAccountRequired: '請再輸入一次新的使用者代號',
+  confirmUserAccountNotMatching: '必須與新使用者代號相同',
 
   // Email 信箱
-  emailWrongFormat: '電子信箱格式有誤，請重新檢查',
   emailRequired: '電子信箱尚未填寫，請重新檢查',
+  emailWrongFormat: '電子信箱格式有誤，請重新檢查',
 
   // 金額
   moneyRequired: '輸入金額欄位尚未填寫，請重新檢查',
@@ -53,6 +61,15 @@ const errorMessage = {
 
   // OTP 驗證碼
   otpCodeRequired: '請輸入 OTP 驗證碼',
+
+  // 無卡提款密碼
+  withdrawPasswordRequired: '請輸入無卡提款密碼',
+  withdrawPasswordLength: '您輸入的無卡提款密碼長度有誤，請重新輸入',
+  withdrawPasswordNumberOnly: '提款密碼僅能使用數字',
+
+  // 二次確認無卡提款密碼
+  confirmWithdrawPasswordRequired: '請再輸入一次新無卡提款密碼',
+  confirmWithdrawPasswordNotMatching: '必須與新無卡提款密碼相同',
 };
 
 /* ====================== 驗證規則 ====================== */
@@ -188,13 +205,13 @@ const validateTextContinuous = (password) => {
   return !isRepeat;
 };
 
-/* =========== 頁面驗證項目 =========== */
+/* ==================== 頁面驗證項目 ==================== */
 /**
  *- 共通驗證
  */
 // 密碼驗證
-const passwordValidation = {
-  password: yup.string().matches(/^(?=.*[a-zA-Z]+)(?=.*[0-9]+)[a-zA-Z0-9]+$/, errorMessage.passwordIncludeEnglishAndNumber)
+export const passwordValidation = () => (
+  yup.string().matches(/^(?=.*[a-zA-Z]+)(?=.*[0-9]+)[a-zA-Z0-9]+$/, errorMessage.passwordIncludeEnglishAndNumber)
     .required(errorMessage.passwordRequired).min(8, errorMessage.passwordWrongLength)
     .max(20, errorMessage.passwordWrongLength)
     .test(
@@ -206,58 +223,66 @@ const passwordValidation = {
       'check-password-text-continuous',
       errorMessage.passwordCannotConsecutive,
       (value) => validateTextContinuous(value),
-    ),
-};
+    )
+);
+
+// 二次確認網銀密碼
+export const confirmPasswordValidation = (passwordKeyName) => (
+  yup.string()
+    .required(errorMessage.confirmPasswordRequired)
+    .oneOf([yup.ref(passwordKeyName), null], errorMessage.confirmPasswordNotMatching)
+);
 
 // 身分證
-const identityValidation = {
-  identity: yup.string().required(errorMessage.identityRequired)
+export const identityValidation = () => (
+  yup.string().required(errorMessage.identityRequired)
     .test(
       'check-custID',
       errorMessage.identityWrongFormat,
       (value) => checkID(value),
-    ),
-};
+    )
+);
 
 // 使用者代號
-const accountValidation = {
-  account: yup.string().required(errorMessage.userAccountRequired)
-    .min(6, errorMessage.userAccountWrongLength).max(20, errorMessage.userAccountWrongLength),
-};
+export const accountValidation = () => (
+  yup.string()
+    .required(errorMessage.userAccountRequired)
+    .matches(/^[A-Za-z0-9]{6,20}$/, errorMessage.userAccountWrongFormat)
+  // .min(6, errorMessage.userAccountWrongLength).max(20, errorMessage.userAccountWrongLength),
+);
+
+// 二次確認使用者代號
+export const confirmAccountValidation = (accountKeyName) => (
+  yup.string()
+    .required(errorMessage.confirmUserAccountRequired)
+    .oneOf([yup.ref(accountKeyName), null], errorMessage.confirmUserAccountNotMatching)
+);
 
 // 銀行帳號
-const bankAccountValidation = () => (
+export const bankAccountValidation = () => (
   yup.string()
     .required(errorMessage.bankAccountRequired)
     .min(10, errorMessage.bankAccountWrongFormat).max(16, errorMessage.bankAccountWrongFormat)
 );
 
 // 轉入帳號
-const receivingAccountValidation = () => (
+export const receivingAccountValidation = () => (
   yup.string()
     .required(errorMessage.receivingAccountRequired)
     .min(10, errorMessage.receivingAccountWrongFormat).max(16, errorMessage.receivingAccountWrongFormat)
 );
 
-// 轉出金額
-const transferAmountValidation = (depositAmount) => (
+// 轉出金額 (參數 - depositAmount: 帳戶餘額, perTxnLimit: 單筆轉帳限額)
+export const transferAmountValidation = (depositAmount, perTxnLimit) => (
   yup.string()
     .required(errorMessage.transferAmountRequired)
-    .max(7, errorMessage.transferAmountCannotExceedLimit)
     .test('test', errorMessage.transferAmountCannotBeZero, (value) => !(parseInt(value, 10) <= 0))
+    .test('test', errorMessage.transferAmountCannotExceedLimit, (value) => !(parseInt(value, 10) > (perTxnLimit ?? 50000)))
     .test('test', errorMessage.transferAmountCannotExceedDepositAmount, (value) => !(parseInt(value, 10) > depositAmount))
 );
 
 // 銀行代碼
-// const bankCodeValidation = {
-//   bankCode: yup.object({
-//     bankCode: yup.string().required(errorMessage.bankCodeRequired),
-//     bankName: yup.string().required(errorMessage.bankCodeRequired),
-//   }).nullable(true).required(errorMessage.bankCodeRequired),
-// };
-
-// 銀行代碼
-const bankCodeValidation = () => (
+export const bankCodeValidation = () => (
   yup.object({
     bankNo: yup.string().required(errorMessage.bankCodeRequired),
     bankName: yup.string().required(errorMessage.bankCodeRequired),
@@ -265,13 +290,13 @@ const bankCodeValidation = () => (
 );
 
 // 暱稱
-const nicknameValidation = () => (
+export const nicknameValidation = () => (
   yup.string()
     .required(errorMessage.nicknameRequired)
 );
 
 // OTP 驗證碼
-const otpCodeValidation = () => (
+export const otpCodeValidation = () => (
   yup.string()
     .required(errorMessage.otpCodeRequired)
 );
@@ -280,19 +305,19 @@ const otpCodeValidation = () => (
  *- 信用卡繳款驗證
  */
 // 繳款金額驗證
-const payAmountValidation = {
-  payAmount: yup.number()
+export const payAmountValidation = () => (
+  yup.number()
     .when('payMoney', {
       is: 3,
       then: yup.number(errorMessage.moneyWrongFormat)
         .required(errorMessage.moneyRequired)
         .test('payAmount-notzero', errorMessage.moneyWrongFormat, (value) => payAmountValidationNotZero(value)),
-    }),
-};
+    })
+);
 
 // 轉出帳號行庫驗證
-const billPayBankCodeValidation = {
-  otherBankCode: yup.object()
+export const billPayBankCodeValidation = () => (
+  yup.object()
     .when('payType', {
       is: 2,
       then: bankCodeValidation(),
@@ -301,40 +326,40 @@ const billPayBankCodeValidation = {
       //   bankName: yup.string().required(errorMessage.bankCodeRequired),
       // }).nullable(true).required(errorMessage.bankCodeRequired),
       // then: yup.string().test('otherBankCode-notspace', errorMessage.bankCodeRequired, (value) => value !== ''),
-    }),
-};
+    })
+);
 
 // 轉出帳號驗證
-const transferAccountValidation = {
-  otherTrnAcct: yup.string()
+export const transferAccountValidation = () => (
+  yup.string()
     .when('payType', {
       is: 2,
       then: yup.string(errorMessage.transferAccountRequired)
         .required(errorMessage.transferAccountRequired).max(16, errorMessage.transferAccountWrongFormat),
-    }),
-};
+    })
+);
 
 // Email 驗證
-const emailValidation = {
-  email: yup.string()
+export const emailValidation = () => (
+  yup.string()
     .when('sendEmail', {
       is: true,
       then: yup.string().email(errorMessage.emailWrongFormat).required(errorMessage.emailRequired),
-    }),
-};
+    })
+);
 
-export {
-  identityValidation,
-  accountValidation,
-  passwordValidation,
-  payAmountValidation,
-  billPayBankCodeValidation,
-  transferAccountValidation,
-  emailValidation,
-  bankAccountValidation,
-  receivingAccountValidation,
-  transferAmountValidation,
-  nicknameValidation,
-  bankCodeValidation,
-  otpCodeValidation,
-};
+// 無卡提款密碼驗證
+export const cardlessWithdrawPasswordValidation = () => (
+  yup.string()
+    .required(errorMessage.withdrawPasswordRequired)
+    .min(4, errorMessage.withdrawPasswordLength)
+    .max(12, errorMessage.withdrawPasswordLength)
+    .matches(/^[0-9]*$/, errorMessage.withdrawPasswordNumberOnly)
+);
+
+// 二次確認無卡提款密碼
+export const confirmCardlessWithdrawPasswordValidation = (passwordKeyName) => (
+  yup.string()
+    .required(errorMessage.confirmWithdrawPasswordRequired)
+    .oneOf([yup.ref(passwordKeyName), null], errorMessage.confirmWithdrawPasswordNotMatching)
+);

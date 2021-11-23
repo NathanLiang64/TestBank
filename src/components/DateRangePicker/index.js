@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { DateRangePicker as KeyboardDateRangePicker } from 'react-date-range';
 import { Button } from '@material-ui/core';
-import { EventNoteRounded } from '@material-ui/icons';
-import { dateFormatter } from 'utilities/Generator';
 import { FEIBInputLabel, FEIBInput } from 'components/elements';
+import { dateFormatter } from 'utilities/Generator';
+import { CalendarIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
 import DateRangePickerWrapper from './dateRangePicker.style';
 
@@ -55,6 +55,10 @@ const DateRangePicker = ({
   useEffect(() => {
     if (date.length > 0) {
       setDateRangeToString(date);
+      setDateRange({
+        startDate: date[0] || new Date(),
+        endDate: date[1] || new Date(),
+      });
     }
   }, [date]);
 
@@ -64,7 +68,7 @@ const DateRangePicker = ({
       <FEIBInput
         placeholder="請選擇"
         value={dateRangeText}
-        $icon={<EventNoteRounded />}
+        $icon={<CalendarIcon />}
         $iconFontSize={2.4}
         readOnly
         onClick={() => setShowDatePicker(true)}

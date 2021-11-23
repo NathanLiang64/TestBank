@@ -1,6 +1,5 @@
-import { CloseRounded, ArrowBackRounded } from '@material-ui/icons';
 import { FEIBIconButton } from 'components/elements';
-import theme from 'themes/theme';
+import { ArrowBackIcon, CrossIcon } from 'assets/images/icons';
 import DrawerWrapper from './bottomDrawer.style';
 
 /*
@@ -28,11 +27,10 @@ const BottomDrawer = ({
   const renderBackButton = (clickEvent) => (
     <FEIBIconButton
       className="backButton"
-      $fontSize={2.4}
-      $iconColor={theme.colors.text.dark}
+      $fontSize={1.6}
       onClick={clickEvent}
     >
-      <ArrowBackRounded />
+      <ArrowBackIcon />
     </FEIBIconButton>
   );
 
@@ -48,11 +46,9 @@ const BottomDrawer = ({
         <h3 className="title">{title}</h3>
         <FEIBIconButton
           className="closeButton"
-          $fontSize={2}
-          $iconColor={theme.colors.text.lightGray}
           onClick={onClose}
         >
-          <CloseRounded />
+          <CrossIcon />
         </FEIBIconButton>
       </div>
       <div className="content">

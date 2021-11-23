@@ -1,70 +1,118 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { StarRounded } from '@material-ui/icons';
 import Dialog from 'components/Dialog';
 import {
   FEIBButton, FEIBTab, FEIBTabContext, FEIBTabList,
 } from 'components/elements';
 import { useCheckLocation, usePageInfo } from 'hooks';
-import { ArrowForwardIosRounded, StarRounded } from '@material-ui/icons';
+import { getBonusPeriodList, getDepositPlus, getDepositPlusLevelList } from 'apis/depositPlusApi';
+import { ArrowNextIcon } from 'assets/images/icons';
 import DepositPlusWrapper, { LevelDialogContentWrapper } from './depositPlus.style';
 
 const Deposit = () => {
-  const monthly = ['12', '11', '10', '09', '08', '07', '06'];
-
-  const [tabId, setTabId] = useState(monthly[0]);
+  const [tabId, setTabId] = useState('');
+  const [monthly, setMonthly] = useState([]);
+  const [levelList, setLevelList] = useState([]);
   const [openLevelDialog, setOpenLevelDialog] = useState(false);
+  const [depositPlusDetail, setDepositPlusDetail] = useState({});
 
-  useCheckLocation();
-  usePageInfo('/api/depositPlus');
+  const {
+    period, bonusDetail, summaryRate, summaryBonusQuota,
+  } = depositPlusDetail;
 
-  const handleClickMonthTab = () => {
-    // console.log('do something');
-  };
+  const renderText = (value) => value || '-';
 
   const renderLevelDialogContent = () => (
     <LevelDialogContentWrapper>
-      <table className="Table">
+      <table>
         <caption>幣別：新臺幣</caption>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>X Axis</th>
-            <th>Y Axis</th>
+            <th>等級</th>
+            <th>
+              社群圈存款
+              <br />
+              月平均額度之總額
+            </th>
+            <th>
+              推薦人個人
+              <br />
+              存款優惠利率額度
+            </th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>Test Flight 1</td>
-            <td>120°</td>
-            <td>40°</td>
-          </tr>
-          <tr>
-            <td>Test Flight 2</td>
-            <td>120°</td>
-            <td>40°</td>
-          </tr>
-          <tr>
-            <td>Test Flight 3</td>
-            <td>120°</td>
-            <td>40°</td>
-          </tr>
+        <tbody className="rowCenter1 rowRight2 rowRight3">
+          { levelList.map((item) => {
+            const { range, offlineDepositRange, plus } = item;
+            return (
+              <tr key={range}>
+                <td>{range}</td>
+                <td>{offlineDepositRange}</td>
+                <td>{plus}</td>
+              </tr>
+            );
+          }) }
         </tbody>
       </table>
     </LevelDialogContentWrapper>
   );
 
+  const renderMonthlyTabs = (list) => list.map((month) => (
+    <FEIBTab key={month} label={`${month.substr(4)}月`} value={month} />
+  ));
+
+  const renderTabArea = (monthList) => (
+    <FEIBTabContext value={tabId}>
+      <FEIBTabList onChange={(event, id) => setTabId(id)} $size="small" className="tabList">
+        { renderMonthlyTabs(monthList) }
+      </FEIBTabList>
+    </FEIBTabContext>
+  );
+
+  useCheckLocation();
+  usePageInfo('/api/depositPlus');
+
+  useEffect(() => {
+    getBonusPeriodList({})
+      .then((response) => {
+        const sortedMonthly = response?.sort((a, b) => b - a);
+        setMonthly(sortedMonthly);
+        setTabId(sortedMonthly[0]);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (monthly.length) setTabId(monthly[0]);
+  }, [monthly.length]);
+
+  // 切換頁籤撈取不同月份資料
+  useEffect(() => {
+    if (tabId) {
+      getDepositPlus({ dateRange: tabId })
+        .then((response) => setDepositPlusDetail(response));
+    }
+  }, [tabId]);
+
+  // 優惠利率額度等級表，點開彈窗再撈取資料
+  useEffect(() => {
+    const year = `${tabId.substr(0, 4)}`;
+    // 如果已有資料則不再重複撈取資料
+    if (!levelList.length) {
+      getDepositPlusLevelList({ year })
+        .then((response) => setLevelList(response ?? []));
+    }
+  }, [openLevelDialog, levelList.length]);
+
   return (
     <DepositPlusWrapper>
-      <FEIBTabContext value={tabId}>
-        <FEIBTabList onChange={(event, id) => setTabId(id)} $size="small" className="tabList">
-          { monthly.map((month) => (
-            <FEIBTab key={month} label={`${month}月`} value={month} onClick={handleClickMonthTab} />
-          )) }
-        </FEIBTabList>
-      </FEIBTabContext>
+      { tabId && monthly.length && renderTabArea(monthly) }
 
       <div className="mainArea">
-        <span>2020/12 優惠利率額度總計</span>
-        <h3>$5,000,000</h3>
+        <span>
+          {`${renderText(period?.substr(0, 4))}/${renderText(period?.substr(4))} `}
+          優惠利率額度總計
+        </span>
+        <h3>{`$${renderText(summaryBonusQuota)}`}</h3>
       </div>
 
       <section className="detailArea">
@@ -72,7 +120,7 @@ const Deposit = () => {
           <h3>活動明細</h3>
           <button type="button" onClick={() => setOpenLevelDialog(true)}>
             各項活動說明
-            <ArrowForwardIosRounded />
+            <ArrowNextIcon />
           </button>
         </div>
 
@@ -86,17 +134,19 @@ const Deposit = () => {
               <p>社群圈優惠額度</p>
               <span>依優惠額度等級</span>
             </div>
-            <p className="limitPrice">$1200</p>
+            <p className="limitPrice">
+              {`$${bonusDetail?.length ? bonusDetail[0].bonusQuota : '-'}`}
+            </p>
           </li>
           <li className="listBody">
             <div>
               <p>
-                2.6% 通通有
+                {`${renderText(summaryRate * 100)}% 通通有`}
                 <StarRounded className="starIcon" />
               </p>
               <span>適用活動優惠</span>
             </div>
-            <p className="limitPrice">$5,000,000</p>
+            <p className="limitPrice">{`$${renderText(summaryBonusQuota)}`}</p>
           </li>
         </ul>
 
