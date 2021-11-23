@@ -26,7 +26,7 @@ const PatternLockSetting = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    ...passwordValidation,
+    password: passwordValidation(),
   });
   const {
     control, handleSubmit, watch, formState: { errors },

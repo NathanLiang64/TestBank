@@ -7,13 +7,12 @@ import Accordion from 'components/Accordion';
 import BottomAction from 'components/BottomAction';
 import InformationList from 'components/InformationList';
 import { FEIBButton } from 'components/elements';
+import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import {
   CameraAltOutlined, ShareOutlined,
 } from '@material-ui/icons';
 
 /* Styles */
-import SuccessImage from 'assets/images/stateSuccess.svg';
-import ErrorImage from 'assets/images/stateError.svg';
 import ForeignCurrencyTransferWrapper from './foreignCurrencyTransfer.style';
 
 const ForeignCurrencyTransfer2 = () => {
@@ -31,14 +30,7 @@ const ForeignCurrencyTransfer2 = () => {
 
   return (
     <ForeignCurrencyTransferWrapper className={isSuccess ? 'confirmAndResult' : 'confirmAndResult fail'}>
-      <div className="stateContainer">
-        <img className="stateImage" src={isSuccess ? SuccessImage : ErrorImage} alt="" />
-        <div className={isSuccess ? 'stateContent success' : 'stateContent fail'}>
-          {
-            isSuccess ? '轉帳成功' : '轉帳失敗'
-          }
-        </div>
-      </div>
+      <SuccessFailureAnimations isSuccess={isSuccess} successTitle="轉帳成功" errorTitle="轉帳失敗" />
       {
         isSuccess && (
           <>

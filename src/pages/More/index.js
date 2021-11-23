@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import FavoriteBlockButton from 'components/FavoriteBlockButton';
 import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
 import { useCheckLocation, usePageInfo } from 'hooks';
+// import { getMoreList } from 'apis/moreApi';
 import { iconGenerator } from 'pages/Favorite/favoriteGenerator';
 import { setFavoriteDrawer } from 'pages/Favorite/stores/actions';
 import { setIsShake } from 'pages/ShakeShake/stores/actions';
@@ -44,15 +45,17 @@ const More = () => {
     setTabId(target?.id);
   };
 
-  const renderBlock = (group, blocks) => blocks.map((block) => (
-    <FavoriteBlockButton
-      key={block.id}
-      icon={iconGenerator(block.id)}
-      label={block.label}
-      onClick={() => toPage(block.route)}
-      noBorder
-    />
-  ));
+  const renderBlock = (group, blocks) => (
+    blocks.map((block) => (
+      <FavoriteBlockButton
+        key={block.id}
+        icon={iconGenerator(block.id)}
+        label={block.label}
+        onClick={() => toPage(block.route)}
+        noBorder
+      />
+    ))
+  );
 
   const renderContent = (group) => group.map((section) => (
     <section key={section.id} className={section.group}>
@@ -71,6 +74,8 @@ const More = () => {
   usePageInfo('/api/more');
 
   useEffect(() => {
+    // db 資料內 url 為空，無法導頁，暫不接 api
+    // getMoreList()
     setMoreList(mockData.moreList);
   }, []);
 

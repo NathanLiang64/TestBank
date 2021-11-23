@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Checkbox as MaterialCheckbox } from '@material-ui/core';
+import { CheckboxCheckedIcon, CheckboxUncheckedIcon } from 'assets/images/icons';
 
 /*
 * ==================== FEIBCheckbox 可用選項 ====================
@@ -9,6 +10,8 @@ import { Checkbox as MaterialCheckbox } from '@material-ui/core';
 
 const FEIBCheckbox = styled(MaterialCheckbox).attrs({
   color: 'default',
+  icon: <CheckboxUncheckedIcon size={24} />,
+  checkedIcon: <CheckboxCheckedIcon size={24} />,
 })`
   &.MuiCheckbox-root {
     color: ${({ theme, $iconColor }) => $iconColor || theme.colors.text.dark};

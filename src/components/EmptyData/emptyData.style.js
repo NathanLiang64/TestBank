@@ -13,7 +13,7 @@ const EmptyDataWrapper = styled.div`
   }
   
   p {
-    color: ${({ theme }) => theme.colors.text.light};
+    color: ${({ $color, theme }) => $color || theme.colors.text.light};
   }
 `;
 

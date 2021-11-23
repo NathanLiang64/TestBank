@@ -1,31 +1,48 @@
-/* eslint-disable */
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { AddRounded } from '@material-ui/icons';
 import BottomDrawer from 'components/BottomDrawer';
 import MemberAccountCard from 'components/MemberAccountCard';
-// import { doGetInitData } from 'apis/transferApi';
-import { getFavAcct,queryRegAcct } from 'apis/transferApi';
+import Dialog from 'components/Dialog';
+import { FEIBButton } from 'components/elements';
+import { getFavAccounts, getRegAccounts, removeFavAccount } from 'apis/transferApi';
+import { AddIcon } from 'assets/images/icons';
 import TransferDrawerWrapper from './transferDrawer.style';
 import TransferFrequentlyUsedAccount from '../TransferFrequentlyUsedAccount';
 import TransferDesignedAccount from '../TransferDesignedAccount';
-import { setClickMoreOptions, setOpenDrawer,setFqlyUsedAccounts,setDgnedAccounts } from '../Transfer/stores/actions';
-
+import {
+  setClickMoreOptions, setFavAccounts, setOpenDrawer, setRegAccounts,
+} from '../Transfer/stores/actions';
 
 const TransferDrawer = ({ setTabId }) => {
-  const [frequentlyUsedAccounts, setFrequentlyUsedAccounts] = useState();
-  const [designedAccounts, setDesignedAccounts] = useState();
+  const [openAlertDialog, setOpenAlertDialog] = useState({ open: false, content: '' });
   const openDrawer = useSelector(({ transfer }) => transfer.openDrawer);
   const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
-  const frequentlyUsedAccountsRedux = useSelector(({ transfer }) => transfer.frequentlyUsedAcct);
-  const designedAccountsRedux = useSelector(({ transfer }) => transfer.designedAcct);
+  const favAccounts = useSelector(({ transfer }) => transfer.favAccounts);
+  const regAccounts = useSelector(({ transfer }) => transfer.regAccounts);
+
   const dispatch = useDispatch();
 
+  // 設置點擊狀態
   const handleClick = (buttonType, id) => {
     dispatch(setClickMoreOptions({
       ...clickMoreOptions,
       [buttonType]: { click: true, target: id },
     }));
+  };
+
+  // 取得常用帳號清單
+  const updateFavAccounts = () => {
+    getFavAccounts().then((response) => {
+      // 若常用帳號列表為空或得到錯誤，開啟新增常用帳號 Drawer UI
+      if (!response?.length) {
+        dispatch(setFavAccounts([]));
+        handleClick('add', null);
+        dispatch(setOpenDrawer({ title: '新增常用帳號', content: 'addFrequentlyUsedAccount', open: true }));
+        return;
+      }
+      dispatch(setFavAccounts(response));
+    });
+    // .catch((error) => console.log('查詢常用帳號 error', error));
   };
 
   // 點擊關閉 Drawer
@@ -35,39 +52,66 @@ const TransferDrawer = ({ setTabId }) => {
 
   // 點擊新增常用帳號按鈕
   const handleClickAddFrequentlyUsedAccount = () => {
+    handleClick('add', null);
     dispatch(setOpenDrawer({ ...openDrawer, title: '新增常用帳號', content: 'addFrequentlyUsedAccount' }));
   };
 
-  const memberAccountCardList = (list, type) => (
-    list.map((member) => (
-      <MemberAccountCard
-        // id={member.id}
-        key={member.accountId}
-        type={type}
-        name={member.accountName}
-        bankNo={member.bankId}
-        bankName={member.bankName}
-        account={member.accountId}
-        avatarSrc={member.acctImg}
-        onSelect={() => handleClick('select', member.id)}
-        onEdit={() => handleClick('edit', member.id)}
-        onRemove={() => handleClick('remove', member.id)}
-      />
-    ))
-  );
+  const handleRemoveAccount = () => {
+    const account = favAccounts.find((member) => member.accountId === clickMoreOptions.remove.target);
+    const {
+      accountId, accountName, bankId, email,
+    } = account;
+    const params = {
+      email,
+      inBank: bankId,
+      inAcct: accountId,
+      nickName: accountName,
+    };
+    removeFavAccount(params).then(() => {
+      // console.log('刪除常用帳號 res', response);
+      dispatch(setClickMoreOptions({ ...clickMoreOptions, remove: { click: false, target: null } }));
+      updateFavAccounts();
+    });
+    // .catch((error) => console.log('刪除常用帳號 err', error));
+  };
 
-  // eslint-disable-next-line consistent-return
-  const renderMemberAccountCardListByType = () => {
+  // 點擊關閉提示彈窗
+  const handleCloseAlertDialog = () => {
+    setOpenAlertDialog({ ...openAlertDialog, open: false });
+
+    // 若點擊狀態為刪除，彈窗提示確認後將執行刪除常用帳號
+    if (clickMoreOptions.remove.click) {
+      handleRemoveAccount();
+      return;
+    }
+
+    // 若點擊狀態非刪除，代表此警示彈窗為提醒用戶臨櫃設定約轉帳號，純粹關閉彈窗並導回一般轉帳頁籤
+    setTabId('transfer');
+  };
+
+  const memberAccountCardList = (list, type) => list.map((member) => (
+    <MemberAccountCard
+      id={member.accountId}
+      // key={member.accountId}
+      key={Date.now + Math.random()}
+      type={type}
+      name={member.accountName}
+      bankNo={member.bankId}
+      bankName={member.bankName}
+      account={member.accountId}
+      avatarSrc={member.acctImg}
+      onSelect={() => handleClick('select', member.accountId)}
+      onEdit={() => handleClick('edit', member.accountId)}
+      onRemove={() => handleClick('remove', member.accountId)}
+    />
+  ));
+
+  const renderMemberAccountCardListByType = (type) => {
     // 如果當前頁面為常用帳號則 render 常用帳號清單卡片
-    console.log(frequentlyUsedAccounts);
-    if (openDrawer.title === '常用帳號' && frequentlyUsedAccounts && frequentlyUsedAccounts!==undefined && frequentlyUsedAccounts.length>0) {
-      console.log(frequentlyUsedAccounts);
-      return memberAccountCardList(frequentlyUsedAccounts, openDrawer.title);
-    }
-    // 否則 render 約定帳號清單卡片
-    if (openDrawer.title === '約定帳號' && designedAccounts && designedAccounts!==undefined && designedAccounts.length>0) {
-      return memberAccountCardList(designedAccounts, openDrawer.title);
-    }
+    if (type === '常用帳號' && favAccounts?.length) return memberAccountCardList(favAccounts, type);
+    // 如果當前頁面為約定帳號則 render 約定帳號清單卡片
+    if (type === '約定帳號' && regAccounts?.length) return memberAccountCardList(regAccounts, type);
+    return null;
   };
 
   // 預設的會員帳號頁面 (常用/約定帳號清單)，常用帳號才有新增按鈕
@@ -76,46 +120,43 @@ const TransferDrawer = ({ setTabId }) => {
       { title === '常用帳號' && (
         <div className="addMemberButtonArea" onClick={handleClickAddFrequentlyUsedAccount}>
           <div className="addMemberButtonIcon">
-            <AddRounded />
+            <AddIcon />
           </div>
           <span className="addMemberButtonText">新增常用帳號</span>
         </div>
       ) }
-      { renderMemberAccountCardListByType() }
+      { renderMemberAccountCardListByType(openDrawer?.title) }
     </>
   );
 
-  useEffect(async () => {
-    console.log("redux")
-    console.log(frequentlyUsedAccountsRedux);
-    if(!frequentlyUsedAccounts&&!frequentlyUsedAccountsRedux){
-      const favoriteResponse = await getFavAcct('/api/getFavoriteAcct');
-      if (favoriteResponse.code!='WEBCTL1003'){
-        setFrequentlyUsedAccounts(favoriteResponse);
-        dispatch(setFqlyUsedAccounts(favoriteResponse))
-      } 
-    }else{
-      setFrequentlyUsedAccounts(frequentlyUsedAccountsRedux);
-    }
+  useEffect(() => {
+    if (openDrawer.title === '常用帳號' && openDrawer.open) updateFavAccounts();
 
-    if(!designedAccounts&&!designedAccountsRedux){
-      const designedResponse = await queryRegAcct('/api/getDesignedAcct');
-      if (designedResponse.code!='WEBCTL1003'){
-        setDesignedAccounts(designedResponse);
-        dispatch(setDgnedAccounts(designedResponse))
-      } 
-    }else{
-      setDesignedAccounts(designedAccountsRedux);
+    if (openDrawer.title === '約定帳號' && openDrawer.open) {
+      getRegAccounts().then((response) => {
+        // Test mock data
+        // const regMockData = [
+        //   { bankId: '007', bankName: '第一銀行', accountId: '456464654646', accountName: '１１３１３１３', email: '' },
+        //   { bankId: '805', bankName: '遠東銀行', accountId: '04300499100835', accountName: '８３５', email: ''  },
+        // ]
+        // dispatch(setRegAccounts(regMockData))
+
+        if (!response.accounts?.length) {
+          console.log(response);
+          dispatch(setRegAccounts([]));
+          setOpenAlertDialog({ open: true, content: response.message });
+          return;
+        }
+        dispatch(setRegAccounts(response?.accounts));
+      });
+      // .catch((error) => console.log('查詢約定帳號 error', error));
     }
-    
-  }, []);
+  }, [openDrawer?.title, openDrawer?.open]);
 
   useEffect(() => {
-    // 如果常用帳號清單為空的，預設開啟新增常用帳號，若無新增即關閉 Drawer 則導回一般轉帳頁面
-    if (openDrawer.title === '新增常用帳號' && !openDrawer.open && frequentlyUsedAccounts) {
-      if (frequentlyUsedAccounts.length === 0) setTabId('transfer');
-    }
-  }, [openDrawer, frequentlyUsedAccounts]);
+    // 如果常用帳號列表為空，無新增任何常用帳號即關閉 Drawer 則導回一般轉帳頁面
+    if (openDrawer.title === '新增常用帳號' && !openDrawer.open && !favAccounts?.length) setTabId('transfer');
+  }, [openDrawer, favAccounts]);
 
   // 追蹤點擊事件選項
   useEffect(() => {
@@ -136,8 +177,9 @@ const TransferDrawer = ({ setTabId }) => {
         content: 'editDesignedAccount',
       }));
     }
+    // 如果點擊選項為 remove (刪除) 且當前頁面為常用帳號
     if (remove.click && openDrawer.title === '常用帳號') {
-      // call api 刪除常用帳號內的單筆資料
+      setOpenAlertDialog({ open: true, content: '您確定要將該筆帳號從常用帳號清單移除嗎？' });
     }
   }, [clickMoreOptions]);
 
@@ -167,6 +209,12 @@ const TransferDrawer = ({ setTabId }) => {
       content={(
         <TransferDrawerWrapper>
           { drawerController(openDrawer?.content) }
+          <Dialog
+            isOpen={openAlertDialog.open}
+            onClose={handleCloseAlertDialog}
+            content={<p>{openAlertDialog.content}</p>}
+            action={<FEIBButton onClick={handleCloseAlertDialog}>確認</FEIBButton>}
+          />
         </TransferDrawerWrapper>
       )}
     />

@@ -13,7 +13,7 @@ const mockData = {
         {
           id: 'account2',
           label: '台幣活存',
-          route: '/depositOverview',
+          route: '/taiwanDollarAccount',
         },
         {
           id: 'account3',
@@ -79,6 +79,7 @@ const mockData = {
         },
       ],
     },
+    // TODO: 轉帳路由記得改回來
     {
       id: '3',
       group: 'transaction',
@@ -87,7 +88,7 @@ const mockData = {
         {
           id: 'transaction1',
           label: '台幣轉帳',
-          route: '/transfer',
+          route: '/transferStatic',
         },
         {
           id: 'transaction2',

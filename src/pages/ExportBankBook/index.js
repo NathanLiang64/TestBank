@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
@@ -20,16 +21,14 @@ import { RadioGroup } from '@material-ui/core';
 import DateRangePicker from 'components/DateRangePicker';
 import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
+import { exportBankBookApi, basicInformationApi } from 'apis';
+import { stringDateCodeFormatter } from 'utilities/Generator';
 import AccordionContent from './accordionContent';
 
 /* Styles */
 import ExportBankBookWrapper from './exportBankBook.style';
 
 const ExportBankBook = () => {
-  const mockData = {
-    accountsList: ['04300499031163', '04300499031164', '04300499031165'],
-    mail: 'feib1688@gmail.com',
-  };
   /**
    *- 資料驗證
    */
@@ -51,18 +50,27 @@ const ExportBankBook = () => {
   };
   const [accountsList, setAccountsList] = useState([]);
   const [mail, setMail] = useState('');
-  const [exportDateRange, setExportDateRange] = useState([]);
+  const [exportDateRange, setExportDateRange] = useState([new Date(), new Date()]);
   const [showDateRangeErrMsg, setShowDateRangeErrMsg] = useState(false);
+  const [dateRangeErrorMessage, setDateRangeErrorMessage] = useState('');
 
-  const getAccountsListAndMail = () => {
-    setAccountsList(mockData.accountsList);
-    setValue('account', mockData.accountsList[0]);
-    setMail(mockData.mail);
+  // 取得帳號清單
+  const getAccounts = async () => {
+    const response = await exportBankBookApi.getAccountsList({});
+    const accounts = response.map((item) => item.acctNo);
+    setAccountsList(accounts);
+    setValue('account', accounts[0]);
+  };
+
+  // 取得 Email
+  const getEmail = async () => {
+    const { email } = await basicInformationApi.getBasicInformation({});
+    setMail(email);
   };
 
   const setDateRange = (rangeType) => {
     let startDate;
-    const endDate = new Date();
+    const date = new Date();
     switch (rangeType) {
       case 0:
         startDate = new Date(new Date().setDate(new Date().getDate() - 30));
@@ -75,28 +83,64 @@ const ExportBankBook = () => {
         break;
       default:
     }
-    setExportDateRange([startDate, endDate]);
+    setExportDateRange([startDate, date]);
   };
 
-  const checkDateRangePicker = () => exportDateRange.length === 0;
+  const handleDatePickerClick = (range) => {
+    setExportDateRange(range);
+  };
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const checkDateRangePickerValid = () => {
+    let valid = false;
+    if (exportDateRange.length === 0) {
+      setDateRangeErrorMessage('請選擇日期區間');
+      setShowDateRangeErrMsg(true);
+      return valid;
+    }
+    const differenceInTime = exportDateRange[1].getTime() - exportDateRange[0].getTime();
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+    if (differenceInDays > 180) {
+      setDateRangeErrorMessage('查詢區間不得超過六個月');
+      setShowDateRangeErrMsg(true);
+      return valid;
+    }
+    valid = true;
+    return valid;
+  };
+
+  const onSubmit = async (data) => {
     if (data.outType === '2') {
-      const checkResult = checkDateRangePicker();
-      setShowDateRangeErrMsg(checkResult);
-      if (checkResult) {
+      const valid = checkDateRangePickerValid();
+      if (!valid) {
         return;
       }
     }
-    history.push('exportBankBook1', { data: { mail, success: true } });
+    const param = {
+      actNo: data.account,
+      tranType: '1,2,3,4,5,6',
+      dataMonth: stringDateCodeFormatter(exportDateRange[0]).substr(0, 6),
+      startDate: stringDateCodeFormatter(exportDateRange[0]),
+      endDate: stringDateCodeFormatter(exportDateRange[1]),
+      startIndex: 999,
+      direct: 2,
+      keyword: '',
+      fileType: 1,
+      pdfTemplateType: data.outType === '1' ? 1 : 3,
+    };
+    const response = await exportBankBookApi.sendBankBookMail(param);
+    if (response === 'Send mail success!') {
+      history.push('exportBankBook1', { data: { mail, success: true } });
+    } else {
+      history.push('exportBankBook1', { data: { success: false } });
+    }
   };
 
   useCheckLocation();
   usePageInfo('/api/exportBankBook');
 
   useEffect(() => {
-    getAccountsListAndMail();
+    getAccounts();
+    getEmail();
   }, []);
 
   return (
@@ -149,10 +193,10 @@ const ExportBankBook = () => {
               label="自訂搜尋日期區間"
               date={exportDateRange}
               {...datePickerLimit}
-              onClick={(range) => setExportDateRange(range)}
+              onClick={handleDatePickerClick}
             />
             <FEIBErrorMessage>
-              {showDateRangeErrMsg && ('請選擇日期區間')}
+              {showDateRangeErrMsg && dateRangeErrorMessage}
             </FEIBErrorMessage>
             <div className="tip">可查詢三年交易明細，查詢區間最多六個月</div>
             <div className="rangeBtnContainer">

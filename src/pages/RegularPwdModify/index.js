@@ -1,75 +1,126 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { goToFunc } from 'utilities/BankeePlus';
-import { pwdModifyApi } from 'apis';
+// import { goToFunc } from 'utilities/BankeePlus';
+// import { pwdModifyApi } from 'apis';
 
 /* Elements */
+import { FEIBButton } from 'components/elements';
 import PasswordInput from 'components/PasswordInput';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
 import InfoArea from 'components/InfoArea';
-import { passwordValidation } from 'utilities/validation';
-import e2ee from 'utilities/E2ee';
+import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
+import { confirmPasswordValidation, passwordValidation } from 'utilities/validation';
+// import e2ee from 'utilities/E2ee';
 
 /* Styles */
 // import theme from 'themes/theme';
 import RegularPwdModifyWrapper from './regularPwdModify.style';
 
 const RegularPwdModify = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
   /**
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    ...passwordValidation,
-    newPassword: passwordValidation.password,
-    newPasswordCheck: yup
-      .string()
-      .required('請再輸入一次新網銀密碼')
-      .oneOf([yup.ref('newPassword'), null], '必須與新網銀密碼相同'),
+    password: passwordValidation(),
+    newPassword: passwordValidation(),
+    newPasswordCheck: confirmPasswordValidation('newPassword'),
   });
   const {
-    handleSubmit, control, formState: { errors }, getValues,
+    // handleSubmit, control, formState: { errors }, getValues,
+    handleSubmit, control, formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
-
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showNotiDialog, setShowNotiDialog] = useState(true);
   const [showWarningDialog, setShowWarningDialog] = useState(false);
 
-  // 跳轉結果頁
-  const toResultPage = (data) => {
-    history.push('/regularPwdModify1', { data });
+  // 關閉結果彈窗
+  const handleCloseResultDialog = () => {
+    // goToFunc('home');
+    history.push('/regularBasicInformation');
   };
 
-  // 呼叫變更網銀密碼API
-  const handlePasswordModify = async () => {
-    const param = {
-      password: await e2ee(getValues('password')),
-      newPassword: await e2ee(getValues('newPassword')),
-      newPasswordCheck: await e2ee(getValues('newPasswordCheck')),
-    };
-    const changePwdResponse = await pwdModifyApi.changePwd(param);
-    console.log('變更網銀密碼回傳', changePwdResponse);
-    const data = 'custName' in changePwdResponse;
-    toResultPage(data);
-    setShowConfirmDialog(false);
+  // 設定結果彈窗
+  const setResultDialog = (response) => {
+    const result = 'custName' in response;
+    let closeCallBack;
+    let errorCode = '';
+    let errorDesc = '';
+    if (result) {
+      closeCallBack = handleCloseResultDialog;
+    } else {
+      [errorCode, errorDesc] = response.message.split(' ');
+      closeCallBack = () => {};
+    }
+    dispatch(setResultContent({
+      isSuccess: result,
+      successTitle: '設定成功',
+      successDesc: (
+        <>
+          <p>您的網銀密碼已變更成功囉！</p>
+          <p>下次請使用新設定之密碼進行登入</p>
+        </>
+      ),
+      errorTitle: '設定失敗',
+      errorCode,
+      errorDesc,
+    }));
+    dispatch(setCloseCallBack(closeCallBack));
+    dispatch(setIsOpen(true));
   };
 
-  const handleWarnConfirm = () => {
-    setShowWarningDialog(false);
-    goToFunc('home');
-  };
-
+  // 點擊儲存變更，呼叫變更網銀密碼API
   const onSubmit = async () => {
-    setShowConfirmDialog(true);
+    // const param = {
+    //   password: await e2ee(getValues('password')),
+    //   newPassword: await e2ee(getValues('newPassword')),
+    //   newPasswordCheck: await e2ee(getValues('newPasswordCheck')),
+    // };
+    // const changePwdResponse = await pwdModifyApi.changePwd(param);
+    // console.log('變更網銀密碼回傳', changePwdResponse);
+    // const data = 'custName' in changePwdResponse;
+    // 假設變更成功
+    const data = { custName: '' };
+    setResultDialog(data);
   };
 
-  const WarningDialog = () => (
+  // 提醒久未變更密碼彈窗
+  const renderNotiDialog = () => (
+    <Dialog
+      isOpen={showNotiDialog}
+      onClose={() => setShowNotiDialog(false)}
+      content={(
+        <>
+          <p>親愛的客戶，您好：</p>
+          <p>距離您上次變更密碼已屆一年。為了保障帳戶安全，請再一次變更密碼。謝謝您！</p>
+        </>
+      )}
+      action={(
+        <ConfirmButtons
+          subButtonValue="維持不變"
+          mainButtonValue="立即變更"
+          subButtonOnClick={() => {
+            setShowNotiDialog(false);
+            setShowWarningDialog(true);
+          }}
+          mainButtonOnClick={() => {
+            setShowNotiDialog(false);
+          }}
+        />
+      )}
+    />
+  );
+
+  // 警告不變更密碼會有安全性問題
+  const renderWarningDialog = () => (
     <Dialog
       isOpen={showWarningDialog}
       onClose={() => setShowWarningDialog(false)}
@@ -81,22 +132,12 @@ const RegularPwdModify = () => {
       )}
       action={(
         <ConfirmButtons
-          mainButtonOnClick={handleWarnConfirm}
+          mainButtonOnClick={() => {
+            setShowWarningDialog(false);
+            // goToFunc('home');
+            history.push('/regularBasicInformation');
+          }}
           subButtonOnClick={() => setShowWarningDialog(false)}
-        />
-      )}
-    />
-  );
-
-  const ConfirmDialog = () => (
-    <Dialog
-      isOpen={showConfirmDialog}
-      onClose={() => setShowConfirmDialog(false)}
-      content={<p>您確定要變更網銀密碼嗎？</p>}
-      action={(
-        <ConfirmButtons
-          mainButtonOnClick={handlePasswordModify}
-          subButtonOnClick={() => setShowConfirmDialog(false)}
         />
       )}
     />
@@ -135,18 +176,11 @@ const RegularPwdModify = () => {
           <InfoArea space="bottom">
             *每六個月請進行密碼以及個資更新以確保帳號安全
           </InfoArea>
-          <ConfirmButtons
-            subButtonValue="維持不變"
-            mainButtonValue="儲存變更"
-            subButtonOnClick={(event) => {
-              event.preventDefault();
-              setShowWarningDialog(true);
-            }}
-          />
+          <FEIBButton type="submit">儲存變更</FEIBButton>
         </div>
       </form>
-      <WarningDialog />
-      <ConfirmDialog />
+      { renderNotiDialog() }
+      { renderWarningDialog() }
     </RegularPwdModifyWrapper>
   );
 };

@@ -9,7 +9,7 @@ import {
   FEIBButton, FEIBErrorMessage, FEIBInput, FEIBInputLabel,
 } from 'components/elements';
 import { bankAccountValidation, bankCodeValidation, nicknameValidation } from 'utilities/validation';
-import { doGetInitData, insertFacAcct } from 'apis/transferApi';
+import { addFavAccount, updateFavAccount } from 'apis/transferApi';
 import { setOpenDrawer, setClickMoreOptions } from '../Transfer/stores/actions';
 
 const TransferFrequentlyUsedAccount = () => {
@@ -28,13 +28,13 @@ const TransferFrequentlyUsedAccount = () => {
   const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
   const [targetMember, setTargetMember] = useState({});
   const [avatar, setAvatar] = useState(null);
+
+  const favAccounts = useSelector(({ transfer }) => transfer.favAccounts);
+
   const dispatch = useDispatch();
 
-  const handleSubmitFrequentlyUsed = (data) => {
-    if (avatar) data.avatar = avatar;
-    // 送資料
-    console.log(data);
-    insertFacAcct({ inAcct: data.bankAccount, inBank: data.memberAccountCardBankCode.bankNo, nickName: data.nickname });
+  // 回到常用帳號列表
+  const goBackToFavAccountList = () => {
     dispatch(setOpenDrawer({ ...openDrawer, title: '常用帳號', content: 'default' }));
     dispatch(setClickMoreOptions({
       ...clickMoreOptions,
@@ -44,24 +44,65 @@ const TransferFrequentlyUsedAccount = () => {
     }));
   };
 
+  const handleSubmitFrequentlyUsed = (data) => {
+    if (avatar) data.avatar = avatar;
+    // console.log('原始資料', data);
+
+    const { nickname, memberAccountCardBankCode: { bankNo }, bankAccount } = data;
+    const { accountId, bankId, email } = targetMember;
+    // console.log('targetMember', targetMember)
+
+    // 提交編輯常用帳號
+    if (clickMoreOptions.edit.click) {
+      const params = {
+        email,
+        nickName: nickname,
+        inBank: bankNo,
+        inAcct: bankAccount,
+        orgBankId: bankId,
+        orgAcctId: accountId,
+      };
+      // console.log('編輯params', params);
+
+      updateFavAccount(params).then(() => {
+        // console.log('編輯常用帳號 res', response);
+        goBackToFavAccountList();
+      });
+      // .catch((error) => console.log('編輯常用帳號 err', error));
+    }
+
+    // 提交新增常用帳號
+    if (clickMoreOptions.add.click) {
+      const params = {
+        nickName: nickname,
+        inBank: bankNo,
+        inAcct: bankAccount,
+      };
+      // console.log('新增 params', params);
+
+      addFavAccount(params).then(() => {
+        // console.log('新增常用帳號 res', response);
+        goBackToFavAccountList();
+      });
+      // .catch((error) => console.log('新增常用帳號 err', error));
+    }
+  };
+
   const handleSelectAvatar = (file) => setAvatar(file);
 
   useEffect(async () => {
     const { edit } = clickMoreOptions;
     if (edit.click && edit.target) {
-      const response = await doGetInitData('/api/getFavoriteAcct');
-      if (response) {
-        console.log(response);
-        const currenTarget = response.favoriteAcctList.find((member) => member.id === edit.target);
-        setTargetMember(currenTarget);
-        setValue('memberAccountCardBankCode', { bankNo: currenTarget.bankNo, bankName: currenTarget.bankName });
-        setValue('bankAccount', currenTarget.acctId);
-        setValue('nickname', currenTarget.acctName);
-      }
+      const currenTarget = favAccounts.find((member) => member.accountId === edit.target);
+      setTargetMember(currenTarget);
+      setValue('memberAccountCardBankCode', { bankNo: currenTarget.bankId, bankName: currenTarget.bankName });
+      setValue('bankAccount', currenTarget.accountId);
+      setValue('nickname', currenTarget.accountName);
     }
   }, [clickMoreOptions.edit]);
 
   if (targetMember) {
+    // console.log('targetMember.bankId', targetMember.bankId);
     return (
       <form className="addFrequentlyUsedAccountArea">
         <div className="avatarArea">
@@ -72,7 +113,7 @@ const TransferFrequentlyUsedAccount = () => {
           setValue={setValue}
           trigger={trigger}
           control={control}
-          bankCode={{ bankNo: targetMember.bankNo, bankName: targetMember.bankName }}
+          bankCode={{ bankNo: targetMember.bankId, bankName: targetMember.bankName }}
           errorMessage={errors.memberAccountCardBankCode?.message}
         />
 

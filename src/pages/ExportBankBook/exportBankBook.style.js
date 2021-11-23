@@ -31,24 +31,6 @@ const ExportBankBookWrapper = styled(Layout)`
     flex-direction: column;
     align-items: center;
     margin-bottom: 2.4rem;
-  
-    .stateImage {
-      width: 14.4rem;
-    }
-
-    .stateText {
-      font-size: 2.4rem;
-      text-align: center;
-      font-weight: 500;
-      margin-bottom: 2.4rem;
-
-      &.success {
-        color: ${({ theme }) => theme.colors.secondary.brand};
-      }
-      &.error {
-        color: ${({ theme }) => theme.colors.state.error};
-      }
-    }
 
     .stateContent {
       text-align: center;

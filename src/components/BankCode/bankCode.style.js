@@ -31,7 +31,7 @@ const BankCodeWrapper = styled(MaterialDialog)`
     .closeButton {
       position: absolute;
       top: 0;
-      right: .2rem;
+      right: .8rem;
     }
   }
   

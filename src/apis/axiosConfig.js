@@ -79,27 +79,12 @@ userAxios().interceptors.response.use(
       // console.log('jwtToken', response.data);
       if (jwtToken) {
         localStorage.setItem('jwtToken', jwtToken);
-      } else {
-        // eslint-disable-next-line no-alert
-        // alert('權限失效，請重新登入');
-        // const logoutData = {
-        //   channelCode: 'HHB_A',
-        //   appVersion: '1.0.15',
-        //   udid: '',
-        // };
-        // const logoutResponse = await userAxios().post('/auth/logout', logoutData);
-        // if (!logoutResponse.message) {
-        //   const { host } = window.location;
-        //   window.location.replace(`${host}/login`);
-        //   localStorage.clear();
-        // } else {
-        //   // eslint-disable-next-line no-alert
-        //   alert(logoutResponse.message);
-        // }
+      }
+      if (response.config.url === '/auth/login') {
+        return response.data;
       }
       if (response.data.code === '0000') {
         const decrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
-        // console.log(decrypt);
         response = decrypt;
       } else {
         response = response.data;
@@ -127,7 +112,31 @@ userAxios().interceptors.response.use(
       return Promise.reject(error);
     }
   },
-
 );
 
+const userRequest = (method, url, data = {}) => {
+  method = method.toLowerCase();
+  switch (method) {
+    case 'get':
+      return userAxios().get(url, { params: data });
+    case 'post':
+      return userAxios().post(url, data);
+    case 'put':
+      return userAxios().put(url, data);
+    case 'patch':
+      return userAxios().patch(url, data);
+    case 'delete':
+      return userAxios().delete(url, { params: data });
+    default:
+      console.log(`未知的 method: ${method}`);
+      return false;
+  }
+};
+
+// const getStorageData = (keyName) => {
+//   const value = localStorage.getItem(keyName);
+//   return value || null;
+// };
+
 export default userAxios();
+export { userRequest };

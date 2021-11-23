@@ -1,21 +1,23 @@
 import { useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  PersonAddRounded, CameraAltOutlined, ShareOutlined, PhoneRounded, AutorenewRounded,
-} from '@material-ui/icons';
 import Accordion from 'components/Accordion';
 import BottomAction from 'components/BottomAction';
 import InformationList from 'components/InformationList';
-import SuccessImage from 'assets/images/stateSuccess.svg';
-import ErrorImage from 'assets/images/stateError.svg';
+import SnackModal from 'components/SnackModal';
+import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
+import {
+  AddMemberIcon, CameraIcon, PhoneIcon, ShareIcon, TransactionIcon,
+} from 'assets/images/icons';
 import { directTo } from 'utilities/mockWebController';
+import theme from 'themes/theme';
 import TransferWrapper from './transfer.style';
-import TransferStaticDrawer from '../TransferStaticDrawer';
 import { setClickMoreOptions, setOpenDrawer } from './stores/actions';
+import TransferStaticDrawer from '../TransferStaticDrawer';
 
 const Transfer2 = () => {
   const [openTransferDrawer, setOpenTransferDrawer] = useState(false);
+  const [isSnapshotSuccess, setIsSnapshotSuccess] = useState(false);
   const clickMoreOptions = useSelector(({ transferStatic }) => transferStatic.clickMoreOptions);
   const history = useHistory();
   const dispatch = useDispatch();
@@ -44,6 +46,13 @@ const Transfer2 = () => {
     dispatch(setClickMoreOptions({ ...clickMoreOptions, add: { click: true, target: account } }));
   };
 
+  const handleClickScreenshot = () => {
+    window.alert('call 原生截圖');
+    setIsSnapshotSuccess(true);
+    // 1 秒後將 isSnapshotSuccess 的值重置
+    setTimeout(() => setIsSnapshotSuccess(false), 1000);
+  };
+
   const renderTransferMainInfo = () => (
     <>
       <section className="transferMainInfo">
@@ -52,7 +61,7 @@ const Transfer2 = () => {
         <h3>{`${bankName}(${bankNo})`}</h3>
         <h3>{receivingAccount ? `${receivingAccount}` : ''}</h3>
         <button type="button">
-          <PersonAddRounded />
+          <AddMemberIcon />
           <span onClick={handleClickAddAccount}>加入常用轉帳</span>
         </button>
       </section>
@@ -69,52 +78,41 @@ const Transfer2 = () => {
           <InformationList title="備註" content={remark || ''} />
         </Accordion>
       </section>
-      <BottomAction>
-        <button type="button" onClick={() => window.alert('call 原生截圖')}>
-          <CameraAltOutlined />
-          畫面截圖
-        </button>
-        <div className="divider" />
-        <button type="button" onClick={() => window.alert('call 原生分享')}>
-          <ShareOutlined />
-          社群通知
-        </button>
-      </BottomAction>
     </>
   );
 
-  const errorInfo = () => (
-    <>
-      <section className="errorInfo">
-        <p className="errorCode">錯誤代碼：E341</p>
-        <p className="errorText">此處放置 API 回傳之錯誤訊息。</p>
-      </section>
-      <BottomAction>
-        <button type="button" onClick={() => window.alert('通話')}>
-          <PhoneRounded />
-          聯絡客服
-        </button>
-        <div className="divider" />
-        <button type="button" onClick={() => directTo(history, 'transferStatic')}>
-          <AutorenewRounded />
-          重新轉帳
-        </button>
-      </BottomAction>
-    </>
+  const renderBottomAction = (success) => (
+    <BottomAction>
+      <button type="button" onClick={success ? handleClickScreenshot : () => window.alert('通話')}>
+        { success ? <CameraIcon /> : <PhoneIcon />}
+        { success ? '畫面截圖' : '聯絡客服' }
+      </button>
+      <div className="divider" />
+      <button type="button" onClick={success ? () => window.alert('call 原生分享') : () => directTo(history, 'transferStatic')}>
+        { success ? <ShareIcon /> : <TransactionIcon />}
+        { success ? '社群通知' : '重新轉帳' }
+      </button>
+    </BottomAction>
   );
 
   return (
     <TransferWrapper className="transferResultPage">
-      <div className="stateArea">
-        <div className="stateImage">
-          <img src={isSuccess ? SuccessImage : ErrorImage} alt="Success" />
-        </div>
-        <h3 className={`stateText ${isSuccess ? 'success' : 'error'}`}>
-          {isSuccess ? '轉帳成功' : '轉帳失敗'}
-        </h3>
-      </div>
-      { isSuccess ? renderTransferMainInfo() : errorInfo() }
+      <SuccessFailureAnimations
+        isSuccess={isSuccess}
+        successTitle="轉帳成功"
+        errorTitle="轉帳失敗"
+        errorCode="E341"
+        errorDesc="親愛的客戶，您好非約定轉帳超過當日轉帳限額，請重新執行交易，如有疑問，請與本行客戶服務中心聯繫。"
+        errorSpace
+      >
+        { renderTransferMainInfo() }
+      </SuccessFailureAnimations>
+
+      { renderBottomAction(isSuccess) }
       { openTransferDrawer && <TransferStaticDrawer /> }
+      { isSnapshotSuccess && (
+        <SnackModal icon={<CameraIcon size={32} color={theme.colors.basic.white} />} text="截圖成功" />
+      ) }
     </TransferWrapper>
   );
 };

@@ -21,10 +21,7 @@ import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
-  payAmountValidation,
-  billPayBankCodeValidation,
-  transferAccountValidation,
-  emailValidation,
+  payAmountValidation, billPayBankCodeValidation, transferAccountValidation, emailValidation,
 } from 'utilities/validation';
 import BillPayWrapper from './billPay.style';
 
@@ -43,10 +40,10 @@ const BillPay = () => {
     payType: yup.number(),
     payMoney: yup.number(),
     sendEmail: yup.boolean(),
-    ...payAmountValidation,
-    ...billPayBankCodeValidation,
-    ...transferAccountValidation,
-    ...emailValidation,
+    payAmount: payAmountValidation(),
+    otherBankCode: billPayBankCodeValidation(),
+    otherTrnAcct: transferAccountValidation(),
+    email: emailValidation(),
   });
   const {
     control, handleSubmit, watch, setValue, trigger, formState: { errors },

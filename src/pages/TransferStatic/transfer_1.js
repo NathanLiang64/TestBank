@@ -23,6 +23,7 @@ const Transfer1 = () => {
     amount: 0,
     remark: '',
   });
+
   const fastLogin = useSelector(({ passwordDrawer }) => passwordDrawer.fastLogin);
   const motp = useSelector(({ passwordDrawer }) => passwordDrawer.motp);
   const result = useSelector(({ passwordDrawer }) => passwordDrawer.result);

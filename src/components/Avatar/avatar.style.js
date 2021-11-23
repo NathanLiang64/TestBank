@@ -37,6 +37,11 @@ const AvatarWrapper = styled.div.attrs({
       font-size: ${({ $small }) => ($small ? '2rem' : '3.6rem')};
       font-weight: 700;
       color: ${({ theme }) => theme.colors.primary.light};
+      
+      &.Icon {
+        top: -.2rem;
+        font-size: ${({ $small }) => ($small ? '2rem' : '3.2rem')};
+      }
     }
 
     .MuiSvgIcon-root {
@@ -47,18 +52,18 @@ const AvatarWrapper = styled.div.attrs({
 
   .editButton {
     position: absolute;
-    top: 6rem;
-    left: 6rem;
+    top: 5.6rem;
+    left: 5.6rem;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 50%;
-    width: 3rem;
-    height: 3rem;
+    width: 3.2rem;
+    height: 3.2rem;
     border: .2rem solid ${({ theme }) => theme.colors.basic.white};
     background: ${({ theme }) => theme.colors.primary.light};
     
-    .MuiSvgIcon-root {
+    .Icon {
       font-size: 1.6rem;
       color: ${({ theme }) => theme.colors.basic.white};
     }

@@ -7,7 +7,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Pagination } from 'swiper/core';
 import { RadioGroup } from '@material-ui/core';
-import { AccountCircleRounded } from '@material-ui/icons';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import DebitCard from 'components/DebitCard';
 import Accordion from 'components/Accordion';
@@ -18,12 +17,12 @@ import Dialog from 'components/Dialog';
 import {
   FEIBTabContext, FEIBTabList, FEIBTab, FEIBTabPanel,
   FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBDatePicker,
-  FEIBRadioLabel, FEIBRadio, FEIBButton, FEIBSelect, FEIBOption, FEIBIconButton,
+  FEIBRadioLabel, FEIBRadio, FEIBButton, FEIBSelect, FEIBOption,
 } from 'components/elements';
+import { ChangeMemberIcon } from 'assets/images/icons';
 import { numberToChinese, weekNumberToChinese } from 'utilities/Generator';
 import { bankCodeValidation, receivingAccountValidation, transferAmountValidation } from 'utilities/validation';
 import { directTo } from 'utilities/mockWebController';
-import theme from 'themes/theme';
 import { setOpenDrawer, setClickMoreOptions } from './stores/actions';
 import BankCodeInput from './BankCodeInput';
 import TransferWrapper from './transfer.style';
@@ -39,7 +38,8 @@ const TransferStatic = () => {
     maxDate: new Date(new Date().setFullYear(new Date().getFullYear() + 2)),
   };
   const [tabId, setTabId] = useState('transfer');
-  const [amount, setAmount] = useState({ number: '', chinese: '' });
+  // const [amount, setAmount] = useState({ number: '', chinese: '' });
+  const [amount, setAmount] = useState('');
   const [showReserveOption, setShowReserveOption] = useState(false);
   const [showReserveMoreOption, setShowReserveMoreOption] = useState(false);
   const [selectTransferMember, setSelectTransferMember] = useState({ frequentlyUsed: null, designed: null });
@@ -76,11 +76,19 @@ const TransferStatic = () => {
   const handleChangeTabList = (event, id) => setTabId(id);
 
   const handleChangeAmount = (event) => {
+    // setAmount(() => {
+    //   const newAmount = event.target.value;
+    //   setValue('transferAmount', newAmount);
+    //   trigger('transferAmount');
+    //   return ({ number: newAmount, chinese: numberToChinese(newAmount) });
+    // });
+
     setAmount(() => {
       const newAmount = event.target.value;
       setValue('transferAmount', newAmount);
       trigger('transferAmount');
-      return ({ number: newAmount, chinese: numberToChinese(newAmount) });
+      if (!newAmount) return '';
+      return `$${newAmount}${numberToChinese(newAmount)}`;
     });
   };
 
@@ -176,6 +184,7 @@ const TransferStatic = () => {
             transferLimit={interbankTransferLimit}
             transferRemaining={interbankTransferRemaining}
             moreList={moreList}
+            dollarSign="TWD"
           />
         </SwiperSlide>
       );
@@ -232,9 +241,7 @@ const TransferStatic = () => {
               noOption
             />
             <div className="changeMemberButton" onClick={handleOpenFrequentlyUsedList}>
-              <FEIBIconButton $iconColor={theme.colors.primary.light} $fontSize={2.4}>
-                <AccountCircleRounded />
-              </FEIBIconButton>
+              <ChangeMemberIcon />
             </div>
           </div>
         ) }
@@ -256,9 +263,7 @@ const TransferStatic = () => {
               noOption
             />
             <div className="changeMemberButton" onClick={handleOpenDesignatedList}>
-              <FEIBIconButton $iconColor={theme.colors.primary.light} $fontSize={2.4}>
-                <AccountCircleRounded />
-              </FEIBIconButton>
+              <ChangeMemberIcon />
             </div>
           </div>
         ) }
@@ -540,24 +545,33 @@ const TransferStatic = () => {
                 control={control}
                 defaultValue=""
                 render={({ field }) => (
-                  <FEIBInput
-                    {...field}
-                    className="customStyles"
-                    id="transferAmount"
-                    name="transferAmount"
-                    type="number"
-                    value={amount.number}
-                    placeholder="0"
-                    startAdornment={<span className={`adornment ${amount.number === '' && 'empty'}`}>$</span>}
-                    endAdornment={(
-                      <span className={`adornment chinese ${amount.number === '' && 'empty'}`}>
-                        {amount.number ? amount.chinese : '(零元)'}
-                      </span>
-                    )}
-                    onChange={handleChangeAmount}
-                    onClick={(event) => event.currentTarget.children[1].focus()}
-                    error={!!errors.transferAmount}
-                  />
+                  <>
+                    <FEIBInput
+                      {...field}
+                      type="number"
+                      inputMode="numeric"
+                      className="transferAmountInput"
+                      id="transferAmount"
+                      name="transferAmount"
+                      // value={amount.number}
+                      // placeholder="0"
+                      placeholder="$0（零元）"
+                      // startAdornment={<span className={`adornment ${amount.number === '' && 'empty'}`}>$</span>}
+                      // endAdornment={(
+                      //   <span className={`adornment chinese ${amount.number === '' && 'empty'}`}>
+                      //     {amount.number ? amount.chinese : '(零元)'}
+                      //   </span>
+                      // )}
+                      // onClick={(event) => event.currentTarget.children[1].focus()}
+                      error={!!errors.transferAmount}
+                      onChange={handleChangeAmount}
+                      inputProps={{
+                        maxLength: 9,
+                        autoComplete: 'off',
+                      }}
+                    />
+                    <div className="balanceLayout">{amount}</div>
+                  </>
                 )}
               />
               <FEIBErrorMessage>{errors.transferAmount?.message}</FEIBErrorMessage>

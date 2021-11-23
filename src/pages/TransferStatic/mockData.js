@@ -16,12 +16,12 @@ const mockData = {
         interbankTransferLimit: 5,
         interbankTransferRemaining: 3,
         functionList: [
-          { title: '轉帳', path: '/transfer', icon: null },
+          { title: '轉帳', path: '/transferStatic', icon: null },
           { title: '無卡提款', path: '/cardLessATM', icon: null },
         ],
         moreList: [
-          { title: '定存', path: '/', icon: 'monetization_on' },
-          { title: '換匯', path: '/', icon: 'euro' },
+          { title: '定存', path: '/', icon: 'fixedDeposit' },
+          { title: '換匯', path: '/', icon: 'exchange' },
         ],
       },
       {
@@ -39,12 +39,12 @@ const mockData = {
         interbankTransferLimit: 5,
         interbankTransferRemaining: 4,
         functionList: [
-          { title: '轉帳', path: '/transfer', icon: null },
+          { title: '轉帳', path: '/transferStatic', icon: null },
           { title: '無卡提款', path: '/cardLessATM', icon: null },
         ],
         moreList: [
-          { title: '定存', path: '/', icon: 'monetization_on' },
-          { title: '換匯', path: '/', icon: 'euro' },
+          { title: '定存', path: '/', icon: 'fixedDeposit' },
+          { title: '換匯', path: '/', icon: 'exchange' },
         ],
       },
       {
@@ -62,12 +62,12 @@ const mockData = {
         interbankTransferLimit: 5,
         interbankTransferRemaining: 1,
         functionList: [
-          { title: '轉帳', path: '/transfer', icon: null },
+          { title: '轉帳', path: '/transferStatic', icon: null },
           { title: '無卡提款', path: '/cardLessATM', icon: null },
         ],
         moreList: [
-          { title: '定存', path: '/', icon: 'monetization_on' },
-          { title: '換匯', path: '/', icon: 'euro' },
+          { title: '定存', path: '/', icon: 'fixedDeposit' },
+          { title: '換匯', path: '/', icon: 'exchange' },
         ],
       },
     ],

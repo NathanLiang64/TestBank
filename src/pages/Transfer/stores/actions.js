@@ -24,3 +24,18 @@ export const setDgnedAccounts = (object) => ({
   type: types.SET_DESIGNED_ACCT,
   payload: object,
 });
+
+export const setAccounts = (array) => ({
+  type: types.SET_ACCOUNTS,
+  payload: array,
+});
+
+export const setFavAccounts = (array) => ({
+  type: types.SET_FAV_ACCOUNTS,
+  payload: array,
+});
+
+export const setRegAccounts = (array) => ({
+  type: types.SET_REG_ACCOUNTS,
+  payload: array,
+});

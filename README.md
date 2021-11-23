@@ -22,13 +22,19 @@
   - 搖一搖 QRCode 轉帳 (ShakeShake) - 聖森
   - QRCode 轉帳 (QRCodeTransfer) - 聖森
   - E2EE 加密 - 聖森
-  - 存款卡首頁 (DepositOverview) - 聖森
-  - 交易明細 (DepositInquiry) - 聖森
-  - 明細搜尋 (DepositSearchCondition) - 聖森
+  - 台幣帳戶 (TaiwanDollarAccount) - 聖森
+  - 台幣帳戶交易明細 (含明細搜尋) (TaiwanDollarAccountDetails) - 聖森
+  - 外幣帳戶 (ForeignCurrencyAccount) - 聖森
+  - 外幣帳戶交易明細 (含明細搜尋) (ForeignCurrencyAccountDetails) - 聖森
+  - 證券交割戶 (TradingAccount) - 聖森
+  - 證券交割戶交易明細 (含明細搜尋) (TradingAccountDetails) - 聖森
+  - 轉帳 (Transfer) - 聖森
+  - 我的最愛 (Favorite) - 聖森
+  - 更多 (More) - 聖森
+  - 社群圈 (Network) - 聖森
   - 圖形密碼登入設定 (PatternLockSetting) - 聖森
   - 信用卡繳費 (BillPay) - 聖森
   - 金融卡掛失補發 (LossReissue) - 聖森
-  - 轉帳 (Transfer) - 聖森
   - JWE & JWT 加密 - 聖森
   - 登入頁 (Login) - 聖森
   - 無卡提款 - 唯物
@@ -112,6 +118,11 @@
   - BankCodeInput - 聖森
   - BottomAction - 聖森
   - FavoriteBlockButton - 聖森
+  - AccountOverview - 聖森
+  - AccountDetails - 聖森
+  - AccountDetailsSearchCondition - 聖森
+  - Animation - 聖森
+  - SuccessFailureAnimations - 聖森
   - PickerProviders - 唯物
   - Accordion - 唯物
   - Spinner - 唯物

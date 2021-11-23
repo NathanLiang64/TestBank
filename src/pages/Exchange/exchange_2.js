@@ -6,10 +6,9 @@ import { FEIBButton } from 'components/elements';
 import Accordion from 'components/Accordion';
 import ConfirmButtons from 'components/ConfirmButtons';
 import InformationList from 'components/InformationList';
+import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 
 /* Styles */
-import SuccessImage from 'assets/images/stateSuccess.svg';
-import ErrorImage from 'assets/images/stateError.svg';
 import ExchangeWrapper from './exchange.style';
 
 const Exchange1 = () => {
@@ -18,7 +17,7 @@ const Exchange1 = () => {
   const isSuccess = true;
 
   const toTradeDetailPage = () => {
-    history.push('depositInquiry');
+    history.push('/taiwanDollarAccountDetails');
   };
 
   const toExchangePage = () => {
@@ -35,14 +34,11 @@ const Exchange1 = () => {
   return (
     <ExchangeWrapper className="finishPage">
       <div className={`infoSection  ${!isSuccess && 'resultFail'}`}>
-        <div>
-          <img className="stateImage" src={isSuccess ? SuccessImage : ErrorImage} alt="" />
-          <div className={isSuccess ? 'stateContent success' : 'stateContent fail'}>
-            {
-              isSuccess ? '外幣換匯成功' : '外幣換匯失敗'
-            }
-          </div>
-        </div>
+        <SuccessFailureAnimations
+          isSuccess={isSuccess}
+          successTitle="外幣換匯成功"
+          errorTitle="外幣換匯失敗"
+        />
         {
           isSuccess && (
             <div className="infoData">

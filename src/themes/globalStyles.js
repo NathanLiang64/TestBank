@@ -54,6 +54,51 @@ const GlobalStyles = createGlobalStyle`
       text-align: left;
       color: ${({ theme }) => theme.colors.text.light};
     }
+    
+    tbody {
+      
+      &.rowCenterAll {
+        > tr > td {
+          text-align: center;
+        }
+      }
+      &.rowCenter1 {
+        > tr > td:first-child {
+          text-align: center;
+        }
+      }
+      &.rowCenter2 {
+        > tr > td:nth-child(2) {
+          text-align: center;
+        }
+      }
+      &.rowCenter3 {
+        > tr > td:nth-child(3) {
+          text-align: center;
+        }
+      }
+      
+      &.rowRightAll {
+        > tr > td {
+          text-align: right;
+        }
+      }
+      &.rowRight1 {
+        > tr > td:first-child {
+          text-align: right;
+        }
+      }
+      &.rowRight2 {
+        > tr > td:nth-child(2) {
+          text-align: right;
+        }
+      }
+      &.rowRight3 {
+        > tr > td:nth-child(3) {
+          text-align: right;
+        }
+      }
+    }
   }
   
   /* ========== Custom ========== */
@@ -242,6 +287,7 @@ const GlobalStyles = createGlobalStyle`
       color: ${({ theme }) => theme.colors.secondary.brand};
     }
   }
+
   .balanceLayout {
     font-size: 1.6rem;
     color: ${({ theme }) => theme.colors.primary.dark};
@@ -250,6 +296,7 @@ const GlobalStyles = createGlobalStyle`
     height: 3.5rem;
     line-height: 3.5rem;
   }
+
   .noticeEditList {
     li {
       padding: 2rem 1.6rem;

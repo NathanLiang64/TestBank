@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { Icon } from '@material-ui/core';
 import {
-  Visibility, VisibilityOff, MoreVert, SystemUpdate, Edit,
-} from '@material-ui/icons';
+  EditAccountIcon, MoreIcon, VisibilityIcon, VisibilityOffIcon,
+} from 'assets/images/icons';
 import BottomDrawer from 'components/BottomDrawer';
 import Dialog from 'components/Dialog';
 import CopyTextIconButton from 'components/CopyTextIconButton';
@@ -12,8 +11,11 @@ import {
   FEIBIconButton, FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBButton,
 } from 'components/elements';
 import theme from 'themes/theme';
-import { accountFormatter, currencySymbolGenerator, toCurrency } from 'utilities/Generator';
+import {
+  accountFormatter, accountTypeColorGenerator, currencySymbolGenerator, toCurrency,
+} from 'utilities/Generator';
 import DebitCardBackground from 'assets/images/debitCardBackground.png';
+import { iconGenerator } from './debitCardIconGenerator';
 import DebitCardWrapper from './debitCard.style';
 
 /*
@@ -25,16 +27,17 @@ import DebitCardWrapper from './debitCard.style';
 * 2. branch -> 分行名稱，組件 type 為 original 的卡片 (完整內容) 才需要傳入
 * 3. cardName -> 卡片名稱
 * 4. account -> 卡片帳號
-* 5. balance -> 卡片餘額，輸入純數字即可，顯示時會自動加上貨幣符號及千分位逗點
-* 6. hideIcon -> 此組件預設會在餘額前顯示眼睛圖示的 Icon Button
+* 5. accountType -> 帳戶科目別 (ex: "004")
+* 6. balance -> 卡片餘額，輸入純數字即可，顯示時會自動加上貨幣符號及千分位逗點
+* 7. hideIcon -> 此組件預設會在餘額前顯示眼睛圖示的 Icon Button
 *    點擊 Icon 後可隱藏餘額，倘若不需要此功能請在組件加上 hideIcon 屬性
-* 7. functionList -> 卡片功能清單，型別為陣列，組件 type 為 original 的卡片 (完整內容) 才需要傳入
-* 8. transferLimit -> 轉帳優惠總次數
-* 9. transferRemaining -> 轉帳優惠剩餘次數
-* 10.moreList -> 點擊更多圖標後彈出的更多功能清單，型別為陣列，組件 type 為 original 的卡片 (完整內容) 才需要傳入
-* 11.moreDefault -> 是否顯示更多功能清單，預設為顯示
-* 12.dollarSign -> 貨幣符號，預設為 '$'
-* 13.color -> 卡片顏色，預設紫色
+* 8. functionList -> 卡片功能清單，型別為陣列，組件 type 為 original 的卡片 (完整內容) 才需要傳入
+* 9. transferLimit -> 轉帳優惠總次數
+* 10. transferRemaining -> 轉帳優惠剩餘次數
+* 11.moreList -> 點擊更多圖標後彈出的更多功能清單，型別為陣列，組件 type 為 original 的卡片 (完整內容) 才需要傳入
+* 12.moreDefault -> 是否顯示更多功能清單，預設為顯示
+* 13.dollarSign -> 貨幣符號，預設為 '$'
+* 14.color -> 卡片顏色，預設紫色
 * */
 
 const DebitCard = ({
@@ -42,6 +45,7 @@ const DebitCard = ({
   branch,
   cardName,
   account,
+  accountType,
   balance,
   hideIcon,
   functionList,
@@ -50,8 +54,8 @@ const DebitCard = ({
   transferRemaining,
   moreList,
   moreDefault = true,
-  dollarSign = 'TWD',
-  color = 'purple',
+  dollarSign,
+  color,
 }) => {
   const [showBalance, setShowBalance] = useState(true);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -61,12 +65,6 @@ const DebitCard = ({
 
   const handleClickShowBalance = () => {
     setShowBalance(!showBalance);
-  };
-
-  const handleClickDownloadBankbook = () => {
-    setOpenDrawer(false);
-    // 存摺封面下載
-    // window.location.href = 'http://114.32.27.40:8080/test/downloadPDF';
   };
 
   const handleClickEditCardName = () => {
@@ -85,24 +83,18 @@ const DebitCard = ({
 
   // 渲染卡片餘額左側的 "眼睛" 圖標 (顯示/隱藏)
   const renderEyeIconButton = () => (
-    <FEIBIconButton
-      $fontSize={1.6}
-      $iconColor={theme.colors.text.darkGray}
-      onClick={handleClickShowBalance}
-    >
-      {showBalance ? <Visibility /> : <VisibilityOff />}
+    <FEIBIconButton $fontSize={1.6} onClick={handleClickShowBalance}>
+      { showBalance
+        ? <VisibilityIcon size={16} color={theme.colors.text.lightGray} />
+        : <VisibilityOffIcon size={16} color={theme.colors.text.lightGray} /> }
     </FEIBIconButton>
   );
 
   // 渲染卡片右上角的 "更多" 圖標
   const renderMoreIconButton = () => (
     <div className="moreIconButton">
-      <FEIBIconButton
-        $iconColor={theme.colors.text.lightGray}
-        $fontSize={2}
-        onClick={() => setOpenDrawer(true)}
-      >
-        <MoreVert />
+      <FEIBIconButton $fontSize={1.6} onClick={() => setOpenDrawer(true)}>
+        <MoreIcon />
       </FEIBIconButton>
     </div>
   );
@@ -135,7 +127,7 @@ const DebitCard = ({
       {list.map((item) => (
         <li key={item.title}>
           <Link to={item.path}>
-            <Icon>{item.icon}</Icon>
+            {iconGenerator(item.icon)}
             {item.title}
           </Link>
         </li>
@@ -143,20 +135,12 @@ const DebitCard = ({
       {/* 下方為功能列表內的固定功能 */}
       {
         moreDefault && (
-          <>
-            <li onClick={handleClickDownloadBankbook}>
-              <p>
-                <SystemUpdate />
-                存摺封面下載
-              </p>
-            </li>
-            <li onClick={handleClickEditCardName}>
-              <p>
-                <Edit />
-                帳戶名稱編輯
-              </p>
-            </li>
-          </>
+          <li onClick={handleClickEditCardName}>
+            <p>
+              <EditAccountIcon />
+              帳戶名稱編輯
+            </p>
+          </li>
         )
       }
     </ul>
@@ -190,7 +174,7 @@ const DebitCard = ({
   );
 
   return (
-    <DebitCardWrapper className="debitCard" $cardColor={color}>
+    <DebitCardWrapper className="debitCard" $cardColor={accountTypeColorGenerator(accountType) || color}>
       <img src={DebitCardBackground} alt="background" className="backgroundImage" />
       <div className="cardTitle">
         <h2 className="cardName">{cardName}</h2>
