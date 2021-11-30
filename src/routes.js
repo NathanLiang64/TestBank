@@ -6,7 +6,7 @@ import CardLessATM1 from 'pages/CardLessATM/cardLessATM_1';
 import CardLessATM2 from 'pages/CardLessATM/cardLessATM_2';
 import CardLessWithDrawChgPwd from 'pages/CardLessATM/cardLessWithDrawChgPwd';
 import LossReissue from 'pages/LossReissue';
-import LossReissue2 from 'pages/LossReissue/lossReissue_2';
+// import LossReissue2 from 'pages/LossReissue/lossReissue_2';
 import AccountMaintenance from 'pages/AccountMaintenance';
 import BillPay from 'pages/BillPay';
 import BillPay1 from 'pages/BillPay/billPay_1';
@@ -86,7 +86,7 @@ const routes = [
   { path: '/cardLessATM2', exact: false, component: CardLessATM2 },
   { path: '/cardLessWithDrawChgPwd', exact: false, component: CardLessWithDrawChgPwd },
   { path: '/lossReissue', exact: false, component: LossReissue },
-  { path: '/lossReissue2', exact: false, component: LossReissue2 },
+  // { path: '/lossReissue2', exact: false, component: LossReissue2 },
   { path: '/accountMaintenance', exact: false, component: AccountMaintenance },
   { path: '/billPay', exact: true, component: BillPay },
   { path: '/billPay1', exact: false, component: BillPay1 },

@@ -19,7 +19,7 @@ import FEIBdefaultButton from './_defaultElements/FEIBdefaultButton';
 *    直接填寫數字，例如：4，若未傳值預設為 3.6，最小限制 3.2
 * */
 
-const FEIBButton = styled(FEIBdefaultButton)`
+const FEIBButton = styled(FEIBdefaultButton).attrs({ className: 'Button' })`
   background: ${({ theme, $bgColor }) => $bgColor || theme.colors.primary.light};
   
   &:hover {

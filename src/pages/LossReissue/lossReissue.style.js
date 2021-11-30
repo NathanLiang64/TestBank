@@ -2,84 +2,98 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const LossReissueWrapper = styled(Layout)`
-  form button[type=submit] {
-    margin-top: 4rem;
+  display: flex;
+  flex-direction: column;
+  
+  .lossReissueContent {
+    flex-grow: 1;
+  }
+
+  .Button {
+    margin-top: 2.4rem;
+    margin-bottom: 4rem;
   }
   
   .notice {
-    margin-top: 0;
-    
-    p {
-      text-align: left;
-    }
+    margin-top: 2.4rem;
+    padding: 0 1.6rem;
+    font-size: 1.4rem;
+    color: ${({ theme }) => theme.colors.text.light};
   }
   
   .point {
     color: ${({ theme }) => theme.colors.text.point};
   }
+  
+  .mainBlock {
+    display: flex;
+    flex-direction: column;
+    padding-top: 1.2rem;
+    padding-bottom: 1.2rem;
+
+    li {
+      display: flex;
+      align-items: center;
+      padding: 1.6rem .8rem;
+      width: 100%;
+
+      &:not(:last-child) {
+        border-bottom: .1rem dashed ${({ theme }) => theme.colors.text.light};
+      }
+      
+      .blockLeft {
+        flex-grow: 1;
+        
+        .label {
+          font-weight: 500;
+          
+          &.debitCardStatusLabel {
+            color: ${({ theme }) => theme.colors.text.lightGray};
+          }
+        }
+        
+        .content {
+          margin-top: .2rem;
+          display: inline-block;
+          font-size: 1.2rem;
+          line-height: 1.6;
+          color: ${({ theme }) => theme.colors.text.light};
+        }
+      }
+
+      .blockRight {
+        width: 7rem;
+        text-align: right;
+        
+        .debitState {
+          color: ${({ theme }) => theme.colors.primary.dark};
+        }
+        
+        .Icon {
+          font-size: 2rem;
+        }
+      }
+    }
+  }
 `;
 
-const LossReissueResultWrapper = styled(Layout)`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  
-  .stateImage {
-    width: 14.4rem;
-  }
+const LossReissueDialogWrapper = styled.div`
 
-  .stateText,
-  .bank,
-  .account {
-    font-size: 2.4rem;
+  p {
     text-align: center;
   }
-  
-  .stateText {
-    font-weight: 500;
-    
-    &.success {
-      color: ${({ theme }) => theme.colors.secondary.brand};
-    }
-    &.error {
-      color: ${({ theme }) => theme.colors.state.error};
-    }
+
+  form {
+    padding-bottom: 0;
   }
 
-  .accountArea {
-    margin: 2.4rem 1.6rem 3.2rem 1.6rem;
-    text-align: center;
-
-    .bank,
-    .account {
-      color: ${({ theme }) => theme.colors.primary.dark};
-    }
-    
-    .errorCode {
-      margin-bottom: .8rem;
-      font-size: 1.6rem;
-      color: ${({ theme }) => theme.colors.text.lightGray};
-    }
-
-    .errorText {
-      font-size: 1.4rem;
-      color: ${({ theme }) => theme.colors.text.light};
-    }
-  }
-
-  
-  .divider {
-    display: block;
-    width: 100vw;
-    height: .8rem;
-    background: ${({ theme }) => theme.colors.background.lighterBlue};
-  }
-  
-  .list {
-    padding: 1.6rem .8rem;
-    width: 100%;
-  }
+  .formElementGroup {
+    display: grid;
+    align-items: flex-end;
+    grid-template-columns: repeat(2, 1fr);
+    grid-column-gap: 1.6rem;
+ }
 `;
 
 export default LossReissueWrapper;
-export { LossReissueResultWrapper };
+export { LossReissueDialogWrapper };

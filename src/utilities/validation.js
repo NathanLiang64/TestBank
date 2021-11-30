@@ -70,6 +70,10 @@ const errorMessage = {
   // 二次確認無卡提款密碼
   confirmWithdrawPasswordRequired: '請再輸入一次新無卡提款密碼',
   confirmWithdrawPasswordNotMatching: '必須與新無卡提款密碼相同',
+
+  // 地址
+  addressRequired: '請輸入完整地址',
+  addressWrongFormat: '通訊地址資料格式為中、英文、數字',
 };
 
 /* ====================== 驗證規則 ====================== */
@@ -301,6 +305,29 @@ export const otpCodeValidation = () => (
     .required(errorMessage.otpCodeRequired)
 );
 
+// 地址
+export const addressValidation = () => (
+  yup.string()
+    .required(errorMessage.addressRequired)
+    .matches(/^[a-zA-Z0-9_\u4e00-\u9fa5]+$/, errorMessage.addressWrongFormat)
+);
+
+// 無卡提款密碼驗證
+export const cardlessWithdrawPasswordValidation = () => (
+  yup.string()
+    .required(errorMessage.withdrawPasswordRequired)
+    .min(4, errorMessage.withdrawPasswordLength)
+    .max(12, errorMessage.withdrawPasswordLength)
+    .matches(/^[0-9]*$/, errorMessage.withdrawPasswordNumberOnly)
+);
+
+// 二次確認無卡提款密碼
+export const confirmCardlessWithdrawPasswordValidation = (passwordKeyName) => (
+  yup.string()
+    .required(errorMessage.confirmWithdrawPasswordRequired)
+    .oneOf([yup.ref(passwordKeyName), null], errorMessage.confirmWithdrawPasswordNotMatching)
+);
+
 /**
  *- 信用卡繳款驗證
  */
@@ -346,20 +373,4 @@ export const emailValidation = () => (
       is: true,
       then: yup.string().email(errorMessage.emailWrongFormat).required(errorMessage.emailRequired),
     })
-);
-
-// 無卡提款密碼驗證
-export const cardlessWithdrawPasswordValidation = () => (
-  yup.string()
-    .required(errorMessage.withdrawPasswordRequired)
-    .min(4, errorMessage.withdrawPasswordLength)
-    .max(12, errorMessage.withdrawPasswordLength)
-    .matches(/^[0-9]*$/, errorMessage.withdrawPasswordNumberOnly)
-);
-
-// 二次確認無卡提款密碼
-export const confirmCardlessWithdrawPasswordValidation = (passwordKeyName) => (
-  yup.string()
-    .required(errorMessage.confirmWithdrawPasswordRequired)
-    .oneOf([yup.ref(passwordKeyName), null], errorMessage.confirmWithdrawPasswordNotMatching)
 );
