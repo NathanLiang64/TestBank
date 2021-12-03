@@ -175,7 +175,7 @@ const tabPageList = {
       {
         value: '4',
         label: '自動扣繳申請/查詢',
-        route: '/deduct',
+        route: '/automaticBillPayment',
       },
     ],
   },

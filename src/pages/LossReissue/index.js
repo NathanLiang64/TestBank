@@ -1,192 +1,304 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
-import { useSelector, useDispatch } from 'react-redux';
-import * as yup from 'yup';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { addressValidation } from 'utilities/validation';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import Dialog from 'components/Dialog';
 import Accordion from 'components/Accordion';
-import ConfirmButtons from 'components/ConfirmButtons';
-import PasswordInput from 'components/PasswordInput';
+import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import {
-  FEIBInput, FEIBInputLabel, FEIBButton, FEIBErrorMessage,
+  FEIBButton, FEIBErrorMessage, FEIBInput, FEIBInputLabel, FEIBOption, FEIBSelect,
 } from 'components/elements';
-import e2ee from 'utilities/E2ee';
-import { passwordValidation } from 'utilities/validation';
-// import { doGetInitData } from 'apis/lossReissueApi';
-import mockData from './mockData';
-import LossReissueWrapper from './lossReissue.style';
-import {
-  setActionText, setAccount, setCardState, setUserAddress, setIsResultSuccess,
-} from './stores/actions';
+import { executeDebitCardReApply, executeDebitCardReportLost, getDebitCardStatus } from 'apis/lossReissueApi';
+import { EditIcon } from 'assets/images/icons';
+import LossReissueWrapper, { LossReissueDialogWrapper } from './lossReissue.style';
 
 const LossReissue = () => {
-  /**
-   *- 資料驗證
-   */
+  const [debitCardInfo, setDebitCardInfo] = useState(null);
+  const [actionText, setActionText] = useState('');
+  const [openDialog, setOpenDialog] = useState({
+    open: false, title: '', content: <></>, buttonVisibility: false,
+  });
+  const [isSuccess, setIsSuccess] = useState(false);
+
   const schema = yup.object().shape({
-    password: passwordValidation(),
+    address: actionText === '補發' ? addressValidation() : '',
   });
   const {
-    handleSubmit, control, watch, formState: { errors },
+    // eslint-disable-next-line no-unused-vars
+    control, handleSubmit, formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
+  const { goBack } = useHistory();
 
-  const account = useSelector(({ lossReissue }) => lossReissue.account);
-  const state = useSelector(({ lossReissue }) => lossReissue.state);
-  const actionText = useSelector(({ lossReissue }) => lossReissue.actionText);
-  const address = useSelector(({ lossReissue }) => lossReissue.address);
-  const [openConfirmDialog, setConfirmOpenDialog] = useState(false);
-  // eslint-disable-next-line no-unused-vars
-  const [password, setPassword] = useState('');
-  const [buttonDisabled, setButtonDisabled] = useState(false);
+  const updateDebitCardStatus = () => {
+    getDebitCardStatus()
+      .then((response) => {
+        // console.log('金融卡狀態 res', response);
+        // if (response.code) dispatch(setDebitCardInfo(null));
+        // dispatch(setDebitCardInfo(response));
 
-  const { push } = useHistory();
-  const dispatch = useDispatch();
-
-  const handleClickSubmitButton = async (data) => {
-    data.password = await e2ee(data.password);
-    setPassword(data.password);
-    setConfirmOpenDialog(true);
+        if (response.code) setDebitCardInfo(null);
+        setDebitCardInfo(response);
+      });
+    // .catch((error) => console.log('金融卡狀態 err', error));
   };
 
-  // 點擊確定後顯示申請結果
-  const handleClickMainButton = () => {
-    // call api 決定顯示申請成功失敗結果
-    dispatch(setIsResultSuccess(true));
-    // 導頁至結果頁
-    push('/lossReissue2');
+  const handleEditAddress = (data) => {
+    console.log('editAddress data', data);
+    setOpenDialog({ ...openDialog, open: false });
   };
 
-  /*
-  * 卡片狀態為 " 臨時掛失中 " 或 " 已啟用 " 時應顯示 " 掛失申請 " 按鈕
-  * 卡片狀態為 " 已掛失 " 或 " 已註銷 " 時應顯示 " 補發申請 " 按鈕
-  * */
-  const renderButton = (cardState) => {
-    if (cardState === '臨時掛失中' || cardState === '已啟用') {
-      dispatch(setActionText('掛失'));
-    } else {
-      dispatch(setActionText('補發'));
-      dispatch(setUserAddress('台北市信義區信義路4段5號6樓'));
+  const handleCloseDialog = () => {
+    if (debitCardInfo?.cardStatus === '01') goBack();
+    setOpenDialog({ ...openDialog, open: false });
+  };
+
+  const handleClickSubmitButton = (data) => {
+    console.log('data', data);
+    setOpenDialog({
+      open: true,
+      title: '',
+      content: (
+        <p>
+          是否確認
+          {actionText}
+          ？
+        </p>
+      ),
+      buttonVisibility: true,
+    });
+  };
+
+  // 執行掛失或補發
+  const executeAction = (actionType, params) => {
+    // 掛失
+    if (actionType === '掛失') {
+      executeDebitCardReportLost(params)
+        .then((response) => {
+          // console.log('執行掛失 res', response);
+          if (response.code) {
+            setIsSuccess(false);
+          } else {
+            setIsSuccess(true);
+          }
+        });
+      // .catch((error) => console.log('執行掛失 err', error));
+      return;
     }
-    return (
-      <FEIBButton type="submit" disabled={buttonDisabled}>
-        { `${actionText}申請` }
-      </FEIBButton>
-    );
+
+    // 補發
+    executeDebitCardReApply(params)
+      .then((response) => {
+        // console.log('執行補發 res', response);
+        if (response.code) {
+          setIsSuccess(false);
+        } else {
+          setIsSuccess(true);
+        }
+      });
+    // .catch((error) => console.log('執行補發 err', error));
   };
 
-  const renderPasswordInput = () => (
-    <div className="passwordArea">
-      <PasswordInput
-        id="password"
-        control={control}
-        errorMessage={errors.password?.message}
-      />
-    </div>
-  );
+  // 點擊確定後執行申請
+  const handleClickExecuteButton = () => {
+    const { accountNo, addr } = debitCardInfo;
+    const params = { accountNo, addr };
+    executeAction(actionText, params);
+    updateDebitCardStatus();
 
-  const renderConfirmDialog = () => (
-    <Dialog
-      isOpen={openConfirmDialog}
-      onClose={() => setConfirmOpenDialog(false)}
-      content={<DialogContent />}
-      action={(
-        <ConfirmButtons
-          mainButtonOnClick={handleClickMainButton}
-          subButtonOnClick={() => setConfirmOpenDialog(false)}
+    setOpenDialog({
+      ...openDialog,
+      title: '',
+      content: (
+        <SuccessFailureAnimations
+          isSuccess={isSuccess}
+          successTitle="設定成功"
+          errorTitle="設定失敗"
+          successDesc={`狀態：${actionText}（${debitCardInfo?.accountNo}）`}
         />
-      )}
-    />
-  );
-
-  const DialogContent = () => {
-    if (state === '臨時掛失中' || state === '已啟用') {
-      return <p>是否確認掛失申請 ?</p>;
-    }
-    return (
-      <>
-        <p>申請後約 5 ~ 7 個工作天</p>
-        <p>我們會將金融卡寄送至您留存在本行的通訊地址：</p>
-        <p className="textColorPoint">{address}</p>
-        <br />
-        <p>若您的通訊地址需要修改，請至</p>
-        <p className="textColorPrimary">設定➝基本資料變更➝通訊地址</p>
-        <p>進行變更，謝謝！</p>
-        <br />
-        <p>是否確認補發？</p>
-      </>
-    );
+      ),
+      buttonVisibility: false,
+    });
   };
 
-  // 卡片狀態為 " 新申請 " 或 " 已銷戶 " 時不應出現按鈕
-  const checkCardState = (cardState) => (cardState !== '新申請' && cardState !== '已銷戶');
+  // TODO: webctl 地址欄位 api 待修正，現為 1 欄字串，待修為改城市、行政區、詳細地址 3 欄
+  const renderEditAddressContent = () => (
+    <form>
+      <div className="formContent">
+        <div className="formElementGroup">
+          <div>
+            <FEIBInputLabel htmlFor="transactionFrequency">通訊地址</FEIBInputLabel>
+            <Controller
+              name="city"
+              control={control}
+              defaultValue="1"
+              render={({ field }) => (
+                <FEIBSelect {...field} id="transactionFrequency" name="transactionFrequency">
+                  <FEIBOption value="1">台北市</FEIBOption>
+                  <FEIBOption value="2">新北市</FEIBOption>
+                </FEIBSelect>
+              )}
+            />
+            <FEIBErrorMessage>{errors.city?.message}</FEIBErrorMessage>
+          </div>
+          <div>
+            <Controller
+              name="district"
+              control={control}
+              defaultValue="1"
+              render={({ field }) => (
+                <FEIBSelect {...field} id="transactionCycle" name="transactionCycle">
+                  <FEIBOption value="1">大安區</FEIBOption>
+                  <FEIBOption value="2">信義區</FEIBOption>
+                </FEIBSelect>
+              )}
+            />
+            <FEIBErrorMessage>{errors.district?.message}</FEIBErrorMessage>
+          </div>
+        </div>
+        <div>
+          <Controller
+            name="address"
+            defaultValue={debitCardInfo?.addr}
+            control={control}
+            render={({ field }) => (
+              <FEIBInput {...field} placeholder="請輸入" error={!!errors.address} />
+            )}
+          />
+          <FEIBErrorMessage>{errors.address?.message}</FEIBErrorMessage>
+        </div>
+      </div>
+      <FEIBButton type="button" onClick={handleSubmit(handleEditAddress)}>完成</FEIBButton>
+    </form>
+  );
+
+  const handleClickEditAddress = () => {
+    setOpenDialog({
+      open: true,
+      title: '通訊地址',
+      content: renderEditAddressContent(),
+      buttonVisibility: false,
+    });
+  };
+
+  const renderText = (value) => value ?? '-';
+
+  const statusTextGenerator = (status) => {
+    switch (status) {
+      case '01':
+        return '新申請';
+      case '02':
+        return '尚未開卡';
+      case '04':
+        return '已啟用';
+      case '05':
+        return '已掛失';
+      case '06':
+        return '已註銷';
+      case '07':
+        return '已銷戶';
+      case '08':
+        return '臨時掛失中';
+      case '09':
+        return '申請中';
+      default:
+        return '-';
+    }
+  };
+
+  const actionTextGenerator = (status) => {
+    if (status === '01') return '';
+    if (status === '02' || status === '04') return '掛失';
+    return '補發';
+  };
+
+  useEffect(async () => {
+    /* ========== mock data (for prototype) ========== */
+    // const { accountNo, cardStatus, userAddress } = mockData.getInitData;
+    // dispatch(setAccount(accountNo));
+    // dispatch(setCardState(cardStatus));
+    // dispatch(setUserAddress(userAddress));
+
+    updateDebitCardStatus();
+  }, []);
+
+  useEffect(() => {
+    if (debitCardInfo?.cardStatus === '01') {
+      setOpenDialog({
+        open: true,
+        title: '',
+        content: <p>晶片卡申請中提示文字</p>,
+        buttonVisibility: false,
+      });
+    }
+    const action = actionTextGenerator(debitCardInfo?.cardStatus);
+    setActionText(action);
+  }, [debitCardInfo?.cardStatus]);
 
   useCheckLocation();
   usePageInfo('/api/lossReissue');
 
-  useEffect(async () => {
-    /* ========== mock data (for mock api) ========== */
-    // const response = await doGetInitData('/api/lossReissue');
-    // if (response.initData) {
-    //   const {
-    //     // fastLogin,
-    //     accountNo, cardStatus, userAddress,
-    //   } = response.initData;
-    //   dispatch(setAccount(accountNo));
-    //   dispatch(setCardState(cardStatus));
-    //   dispatch(setUserAddress(userAddress));
-    // }
-
-    /* ========== mock data (for prototype) ========== */
-    const { accountNo, cardStatus, userAddress } = mockData.getInitData;
-    dispatch(setAccount(accountNo));
-    dispatch(setCardState(cardStatus));
-    dispatch(setUserAddress(userAddress));
-  }, []);
-
-  useEffect(() => {
-    const userPassword = watch('password');
-    if (userPassword.length >= 1) {
-      setButtonDisabled(false);
-    } else {
-      setButtonDisabled(true);
-    }
-  }, [watch('password')]);
-
   return (
-    <LossReissueWrapper>
-      <form onSubmit={handleSubmit(handleClickSubmitButton)}>
-        <div>
-          <div>
-            <FEIBInputLabel>帳號</FEIBInputLabel>
-            <FEIBInput name="account" value={account} disabled />
-            <FEIBErrorMessage />
-          </div>
+    <LossReissueWrapper small>
+      <div className="lossReissueContent">
+        <ul className="mainBlock">
+          <li>
+            <div className="blockLeft">
+              <p className="label debitCardStatusLabel">金融卡狀態</p>
+              <span className="content">{renderText(debitCardInfo?.accountNo)}</span>
+            </div>
+            <div className="blockRight">
+              <h3 className="debitState">{statusTextGenerator(debitCardInfo?.cardStatus)}</h3>
+            </div>
+          </li>
+          { actionText === '補發' && (
+            <li>
+              <div className="blockLeft">
+                <p className="label">通訊地址</p>
+                <span className="content">{renderText(debitCardInfo?.addr)}</span>
+              </div>
+              <div className="blockRight">
+                <button type="button" onClick={handleClickEditAddress}>
+                  <EditIcon />
+                </button>
+              </div>
+            </li>
+          ) }
+        </ul>
 
-          <div>
-            <FEIBInputLabel>金融卡狀態</FEIBInputLabel>
-            <FEIBInput name="state" value={state} disabled />
-            <FEIBErrorMessage />
-          </div>
+        { actionText === '補發' && (
+          <p className="notice">
+            申請後5-7個工作天，我們會將金融卡寄送至您留存在本行的通訊地址。
+          </p>
+        ) }
 
-          { checkCardState(state) && renderPasswordInput() }
+        <Accordion space="top">
+          <ol>
+            <li>Bankee存款帳戶申請補發Bankee金融卡，手續費新臺幣(以下同)100元及郵寄掛號費50元將由Bankee存款帳戶中自動扣除(前述Bankee存款帳戶泛指持有「Bankee數位存款帳戶」或「Bankee一般帳戶」者，以下簡稱本存戶)。</li>
+            <li>本存戶向遠東國際商業銀行辦理金融卡申請/異動申請，除金融卡註銷外，嗣後往來仍悉遵「遠東國際商業銀行金融卡服務約定事項」有關業務規定辦理。</li>
+            <li>於各項異動手續辦理妥前，所有使用本存戶Bankee金融卡之交易或申請人為不實之申請，而致蒙受損害時，其一切損害及責任概由本存戶負責。</li>
+            <li>本存戶於申請此服務時，業已審閱並充分了解全部內容，並完全同意後才使用各項服務及申請憑證。</li>
+          </ol>
+        </Accordion>
+      </div>
 
-          <Accordion space={checkCardState(state) && 'top'} open>
-            <ol>
-              <li>Bankee存款帳戶申請補發Bankee金融卡，手續費新臺幣(以下同)100元及郵寄掛號費50元將由Bankee存款帳戶中自動扣除(前述Bankee存款帳戶泛指持有「Bankee數位存款帳戶」或「Bankee一般帳戶」者，以下簡稱本存戶)。</li>
-              <li>本存戶向遠東國際商業銀行辦理金融卡申請/異動申請，除金融卡註銷外，嗣後往來仍悉遵「遠東國際商業銀行金融卡服務約定事項」有關業務規定辦理。</li>
-              <li>於各項異動手續辦理妥前，所有使用本存戶Bankee金融卡之交易或申請人為不實之申請，而致蒙受損害時，其一切損害及責任概由本存戶負責。</li>
-              <li>本存戶於申請此服務時，業已審閱並充分了解全部內容，並完全同意後才使用各項服務及申請憑證。</li>
-            </ol>
-          </Accordion>
-        </div>
+      { debitCardInfo?.cardStatus !== '01' && (
+        <FEIBButton onClick={handleSubmit(handleClickSubmitButton)}>
+          { `${actionText}申請` }
+        </FEIBButton>
+      ) }
 
-        { checkCardState(state) && renderButton(state) }
-      </form>
-      { openConfirmDialog && renderConfirmDialog() }
+      <Dialog
+        title={openDialog.title}
+        isOpen={openDialog.open}
+        onClose={handleCloseDialog}
+        content={<LossReissueDialogWrapper>{openDialog.content}</LossReissueDialogWrapper>}
+        action={openDialog.buttonVisibility ? <FEIBButton onClick={handleClickExecuteButton}>確定</FEIBButton> : <div />}
+      />
     </LossReissueWrapper>
   );
 };
