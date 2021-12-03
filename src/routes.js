@@ -65,6 +65,8 @@ import MobileTransfer1 from 'pages/MobileTransfer/mobileTransfer_1';
 import MobileTransfer2 from 'pages/MobileTransfer/mobileTransfer_2';
 import ForeignCurrencyPriceSetting from 'pages/ForeignCurrencyPriceSetting';
 import QuickLoginSetting from 'pages/QuickLoginSetting';
+import Instalment from 'pages/Instalment';
+import AutomaticBillPayment from 'pages/AutomaticBillPayment';
 
 /* 開發用目錄頁 */
 import Nav from 'pages/Nav';
@@ -149,6 +151,8 @@ const routes = [
   { path: '/transferStatic1', exact: false, component: TransferStatic1 },
   { path: '/transferStatic2', exact: false, component: TransferStatic2 },
   { path: '/tutorials', exact: false, component: Tutorials },
+  { path: '/instalment', exact: false, component: Instalment },
+  { path: '/automaticBillPayment', exact: false, component: AutomaticBillPayment },
 ];
 
 export default routes;

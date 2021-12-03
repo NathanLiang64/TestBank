@@ -172,6 +172,8 @@ export const accountTypeColorGenerator = (currency) => {
 // 貨幣單位文字轉為符號
 export const currencySymbolGenerator = (currency) => {
   switch (currency) {
+    case 'NTD': // 新台幣
+      return '$';
     case 'TWD': // 新台幣
       return '$';
     case 'USD': // 美金
@@ -209,6 +211,8 @@ export const currencySymbolGenerator = (currency) => {
 export const currencyZhGenerator = (currency) => {
   switch (currency) {
     case 'TWD': // 新台幣
+      return '新台幣';
+    case 'NTD': // 新台幣
       return '新台幣';
     case 'USD': // 美金
       return '美金';

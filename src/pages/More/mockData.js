@@ -177,7 +177,7 @@ const mockData = {
         {
           id: 'creditCard5',
           label: '自動扣繳申請/查詢',
-          route: '/deduct',
+          route: '/automaticBillPayment',
         },
       ],
     },
