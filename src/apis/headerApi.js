@@ -158,6 +158,12 @@ const pageInfo = {
   quickLoginSetting: {
     title: '快速登入設定',
   },
+  instalment: {
+    title: '消費分期',
+  },
+  automaticBillPayment: {
+    title: '自動扣繳申請/查詢',
+  },
 };
 
 // 取得頁面資訊

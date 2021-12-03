@@ -76,7 +76,6 @@ userAxios().interceptors.response.use(
       // 解密
       // const encrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
       const { jwtToken } = response.data;
-      // console.log('jwtToken', response.data);
       if (jwtToken) {
         localStorage.setItem('jwtToken', jwtToken);
       }

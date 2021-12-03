@@ -8,3 +8,21 @@ export const getTransferOutAccounts = async (param) => {
     .catch((err) => err);
   return response;
 };
+
+// 查詢預約轉帳明細
+export const getReservedTransDetails = async (param) => {
+  const response = await userAxios
+    .post('/api/transfer/queryReservedTransDetails', param)
+    .then((data) => data)
+    .catch((err) => err);
+  return response;
+};
+
+// 查詢預約轉帳結果明細
+export const getResultTransDetails = async (param) => {
+  const response = await userAxios
+    .post('/api/transfer/queryResultTransDetails', param)
+    .then((data) => data)
+    .catch((err) => err);
+  return response;
+};
