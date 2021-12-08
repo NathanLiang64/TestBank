@@ -1,13 +1,13 @@
 import userAxios, { userRequest } from 'apis/axiosConfig';
 import { getMotpStatus } from './settingApi';
 
-// L158714757
+// 測試帳號 L158714757
 
-export const doGetInitData = (apiUrl) => (
-  userAxios.get(apiUrl)
-    .then((response) => response.data)
-    .catch((error) => error.response)
-);
+// export const doGetInitData = (apiUrl) => (
+//   userAxios.get(apiUrl)
+//     .then((response) => response.data)
+//     .catch((error) => error.response)
+// );
 
 // 查詢轉出帳號 - Adrian
 export const getNtdAccounts = (params) => (
@@ -57,47 +57,9 @@ export const doTransfer = (params) => (
   userRequest('post', '/api/transfer/ntdTr', params)
 );
 
-// 轉帳確認
-export const doNtdTrConfirm = async (params) => (
-  await userAxios.post('/api/transfer/ntdTr/confirm', params)
-    .then((response) => {
-      console.log(response);
-      return response;
-    })
-    .catch((error) => error)
-);
-
-// 常用帳號刪除(單筆)
-export const doDeleteFacAcct = async (params) => (
-  await userAxios.post('/api/transfer/deleteFacAcct', params)
-    .then((response) => {
-      console.log(response);
-      return response;
-    })
-    .catch((error) => error)
-);
-
-// 預約轉帳確認
+// 預約轉帳確認 - Jack
 export const doBookNtdTrConfirm = async (params) => (
   await userAxios.post('/api/transfer/ntdTr/book/confirm', params)
-    .then((response) => {
-      console.log(response);
-      return response;
-    })
-    .catch((error) => error)
-);
-
-export const doModifyFacAcct = async (params) => (
-  await userAxios.post('/api/transfer/modifyFacAcct', params)
-    .then((response) => {
-      console.log(response);
-      return response;
-    })
-    .catch((error) => error)
-);
-// 約定帳號維護
-export const doModifyRegAcct = async (params) => (
-  await userAxios.post('/api/transfer/modifyRegAcct', params)
     .then((response) => {
       console.log(response);
       return response;
