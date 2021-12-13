@@ -1,6 +1,7 @@
 import { useDispatch } from 'react-redux';
 // import { useHistory } from 'react-router';
 // import { useCheckLocation, usePageInfo } from 'hooks';
+import { useGetEnCrydata } from 'hooks';
 import { closeFunc, switchLoading } from 'utilities/BankeePlus';
 // import SuccessImage from 'assets/images/successImg.svg';
 // import { provisioningApi } from 'apis';
@@ -61,6 +62,7 @@ const Provisioning = () => {
 
   // useCheckLocation();
   // usePageInfo('/api/provisioning');
+  useGetEnCrydata();
 
   return (
     <ProvisioningWrapper>
