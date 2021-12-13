@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router';
+// import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
-// import { goToFunc } from 'utilities/BankeePlus';
+import { closeFunc } from 'utilities/BankeePlus';
 // import SuccessImage from 'assets/images/successImg.svg';
 // import { provisioningApi } from 'apis';
 
@@ -15,11 +15,22 @@ import { setIsOpen, setCloseCallBack, setResultContent } from '../ResultDialog/s
 
 const Provisioning = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  // const history = useHistory();
+
+  // if (idevice) {
+  //   var action = JSON.stringify(packet_goFunc5);
+  //   window.webkit.messageHandlers.jstoapp.postMessage(action);
+  // } else {
+  //   if (jstoapp) {
+  //     var action = JSON.stringify(packet_goFuncData5);
+  //     jstoapp.goFunc(action);
+  //   }
+  // }
 
   const toHomePage = () => {
-    // goToFunc('home');
-    history.push('/regularPwdModify');
+    // goToFunc('goPreview');
+    closeFunc();
+    // history.push('/regularPwdModify');
   };
 
   // 設定結果彈窗
