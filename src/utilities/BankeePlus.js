@@ -29,7 +29,7 @@ function goToFunc(funcName, jsonParams = null) {
   console.log(navigator.userAgent);
   // console.debug('name:' + funcName + ', data:' + jsonParams);
   if (device.ios()) {
-    const msg = JSON.parse('{"name":"' + funcName + '", "data":"' + jsonParams + '"}');
+    const msg = JSON.stringify({ name: funcName, data: jsonParams });
     // eslint-disable-next-line no-undef
     window.webkit.messageHandlers.jstoapp.postMessage(msg);
   } else if (device.android()) {
@@ -46,7 +46,7 @@ function goToFunc(funcName, jsonParams = null) {
 // 觸發APP返回上一頁功能
 function closeFunc() {
   if (device.ios()) {
-    const msg = JSON.parse('{"name":"closeFunc"}');
+    const msg = JSON.stringify({ name: 'closeFunc' });
     // eslint-disable-next-line no-undef
     // webkit.messageHandlers.bankeeplus.postMessage(msg);
     window.webkit.messageHandlers.jstoapp.postMessage(msg);
