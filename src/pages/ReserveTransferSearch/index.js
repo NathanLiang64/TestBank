@@ -4,7 +4,7 @@ import { useHistory } from 'react-router';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { reserveTransferSearchApi } from 'apis';
-
+import { dateFormatter } from 'utilities/Generator';
 /* Elements */
 import {
   FEIBTabContext,
@@ -16,6 +16,7 @@ import {
 import DebitCard from 'components/DebitCard';
 import InformationTape from 'components/InformationTape';
 import Dialog from 'components/Dialog';
+import EmptyData from 'components/EmptyData';
 import SearchIcon from '@material-ui/icons/Search';
 import ClearIcon from 'assets/images/icons/clearIcon.svg';
 import DateRangePicker from 'components/DateRangePicker';
@@ -28,69 +29,39 @@ import ResultContent from './resultContent';
 /* Style */
 import ReserveTransferSearchWrapper from './reserveTransferSearch.style';
 
-// mock account data
-const mockAccounts = [
-  {
-    cardName: '保時捷車友會',
-    dollarSign: 'TWD',
-    cardAccount: '04300499001234',
-    cardBalance: 2000000,
-    transferRemaining: 3,
-  },
-  {
-    cardName: '保時捷車友會',
-    dollarSign: 'TWD',
-    cardAccount: '04300499001234',
-    cardBalance: 2000000,
-    transferRemaining: 3,
-  },
-];
-
 // mock 預約轉帳查詢資料
 const mockReserveTransData = [
   {
-    bookType: '1',
-    trnsDate: '2021/01/25',
-    payDateWording: '',
-    payDateEnd: '',
-    payDate: '',
-    bankCode: '805',
-    inActNo: '00255540253722',
-    outActNo: '0430099001234',
-    amount: '$1,200',
-    remark: '',
-  },
-  {
-    bookType: '2',
-    trnsDate: '2021/05/15',
-    payDateWording: '每個月15號',
-    payDateEnd: '2022/02/28',
-    payDate: '2021/05/01',
-    bankCode: '805',
-    inActNo: '00255540253722',
-    outActNo: '0430099001234',
-    amount: '$1,200',
-    remark: '聖誕節禮物',
+    trnsDate: '2021/12/03', // 預約交易日, yyyy/mm/dd
+    inActNo: '0012345678', // 轉入帳號
+    payDate: '2021/12/05', // 轉帳日期
+    amount: '1000', // 轉帳金額
+    ccycd: 'NTD', // 交易幣別
+    trncd: '', // 交易別代碼
+    trncdName: '', // 交易別
+    bookType: '', // 預約類別代碼
+    bookTypeName: '', // 預約類別
+    memo: '', // 附言
+    inBank: '', // 轉入銀行
+    inBankName: '', // 轉入銀行名稱
+    nickName: '', // 轉入帳號名稱
+    payDateEnd: '', // 轉帳日期(迄日)
+    chargeMode: '', // 轉帳週期
+    chargeDay: '', // 扣款日
+    payDateWording: '', // 預約轉帳日期顯示 Wording, ex.每週一 或是 2013/01/01
+    type: '', // 交易種類, 週期或單次
+    seqNo: '', // 預約序號
+    source: '', // 預約種類, 1:網路預約 2:臨櫃預約
   },
 ];
 
 // mock 預約轉帳結果資料
 const mockResultData = [
   {
-    trnsDate: '2021/01/25',
-    bankCode: '805',
-    inActNo: '00255540253722',
-    amount: '$1,200',
+    trnsDate: '', // 轉帳日期
+    inActNo: '', // 轉入帳號
+    amount: '', // 轉入金額
     stderrMsg: '',
-    success: true,
-  },
-  {
-    trnsDate: '2021/01/25',
-    bankCode: '805',
-    inActNo: '00255540253722',
-    amount: '$1,200',
-    stderrMsg: '餘額不足',
-    success: false,
   },
 ];
 
@@ -112,11 +83,15 @@ const ReserveTransferSearch = () => {
   const [showResultDialog, setShowResultDialog] = useState(false);
   const [resultDialogData, setResultDialogData] = useState({});
   const [currentReserveData, setCurrentReserveData] = useState({});
+  const [reserveDataList, setReserveDataList] = useState([mockReserveTransData]);
+  const [resultDataList, setResultDataList] = useState(mockResultData);
 
+  // 取得帳號清單
   const getTransferOutAccounts = async () => {
-    // const response = await reserveTransferSearchApi.getTransferOutAccounts({});
-    // console.log(response);
-    setCardsList(mockAccounts);
+    const { accounts, isMotpOpen } = await reserveTransferSearchApi.getTransferOutAccounts({ motpDeviceId: '675066ee-2f25-4d97-812a-12c7f8d18489' });
+    if (accounts) {
+      setCardsList(accounts);
+    }
   };
 
   const toConfirmPage = () => {
@@ -127,12 +102,6 @@ const ReserveTransferSearch = () => {
   const handleChangeSlide = (swiper) => {
     // setCurrentAccount(mockAccounts[swiper.realIndex]);
     console.log(swiper);
-  };
-
-  const handleTabChange = (event, type) => {
-    if (type !== tabValue) {
-      setTabValue(type);
-    }
   };
 
   const handleClickReserveDateRangePicker = (range) => {
@@ -152,37 +121,72 @@ const ReserveTransferSearch = () => {
     setResultDateRange([null, null]);
   };
 
-  const handleReserveDataDialogOpen = (data) => {
-    console.log(data);
-    setCurrentReserveData(data);
-    setShowDetailDialog(true);
+  // 取得預約轉帳明細
+  const getReservedTransDetails = async () => {
+    const param = {
+      queryType: '3',
+      qrySDt: dateFormatter(reserveDateRange[0]),
+      qryEDt: dateFormatter(reserveDateRange[1]),
+    };
+    const response = await reserveTransferSearchApi.getReservedTransDetails(param);
+    console.log(response);
+    setReserveDataList([]);
+  };
+
+  // 取得預約轉帳結果
+  const getResultTransDetails = async () => {
+    const param = {
+      qryRstSDt: dateFormatter(resultDateRange[0]),
+      qryRstEDt: dateFormatter(resultDateRange[1]),
+    };
+    const response = await reserveTransferSearchApi.getResultTransDetails(param);
+    console.log(response);
+    setResultDataList([]);
+  };
+
+  const handleTabChange = (event, type) => {
+    if (type !== tabValue) {
+      if (type === '1') {
+        getReservedTransDetails();
+      }
+      if (type === '2') {
+        getResultTransDetails();
+      }
+      setTabValue(type);
+    }
   };
 
   // 轉出帳號卡片 swiper
   const renderCard = () => cardsList.map((item) => (
     <SwiperSlide>
       <DebitCard
-        key={item.account}
-        branch={item.cardBranch}
-        cardName={item.cardName}
-        account={item.cardAccount}
-        balance={item.cardBalance}
-        dollarSign={item.dollarSign}
+        key={item.accountId}
+        branch={item.branchId}
+        cardName={item.showName || '--'}
+        account={item.accountId}
+        balance={item.balance}
+        dollarSign={item.ccyCd}
         transferTitle="跨轉優惠"
-        transferLimit={5}
-        transferRemaining={item.transferRemaining}
+        transferLimit={6}
+        transferRemaining={item.tfrhCount}
         color="purple"
       />
     </SwiperSlide>
   ));
 
+  const handleReserveDataDialogOpen = (data) => {
+    console.log(data);
+    setCurrentReserveData(data);
+    setShowDetailDialog(true);
+  };
+
   // 預約轉帳查詢列表
-  const renderReserveTapes = () => mockReserveTransData.map((item) => (
+  const renderReserveTapes = () => reserveDataList.map((item) => (
     <InformationTape
-      topLeft={`${item.bankCode}-${item.inActNo}`}
+      topLeft={`${item.inBank}-${item.inActNo}`}
       topRight={item.amount}
       bottomLeft={`預約轉帳日：${item.trnsDate}`}
-      bottomRight={item.bookType === '1' ? '單筆' : '週期'}
+      bottomRight={item.type}
       onClick={() => handleReserveDataDialogOpen(item)}
     />
   ));
@@ -194,7 +198,7 @@ const ReserveTransferSearch = () => {
   };
 
   // 結果查詢列表
-  const renderResultTapes = () => mockResultData.map((item) => (
+  const renderResultTapes = () => resultDataList.map((item) => (
     <InformationTape
       img={item.stderrMsg ? FailImage : SuccessImage}
       topLeft={`${item.bankCode}-${item.inActNo}`}
@@ -240,6 +244,16 @@ const ReserveTransferSearch = () => {
     getTransferOutAccounts();
   }, []);
 
+  useEffect(() => {
+    getReservedTransDetails();
+  }, [reserveDateRange]);
+
+  useEffect(() => {
+    if (tabValue === '2') {
+      getResultTransDetails();
+    }
+  }, [resultDateRange]);
+
   return (
     <ReserveTransferSearchWrapper className="searchResult">
       <div className="cardArea">
@@ -272,9 +286,13 @@ const ReserveTransferSearch = () => {
                 <img className="clearImg" src={ClearIcon} alt="" onClick={clearReserveDateRange} />
               </div>
             </div>
-            <div className="tapeList">
-              { renderReserveTapes() }
-            </div>
+            {
+              reserveDataList.length > 0 ? (
+                <div className="tapeList">
+                  { renderReserveTapes() }
+                </div>
+              ) : (<div className="emptyConatiner"><EmptyData /></div>)
+            }
           </FEIBTabPanel>
           <FEIBTabPanel value="2">
             <div className="searchDateRange">
@@ -289,9 +307,13 @@ const ReserveTransferSearch = () => {
                 <img className="clearImg" src={ClearIcon} alt="" onClick={clearResultDateRange} />
               </div>
             </div>
-            <div className="tapeList">
-              { renderResultTapes() }
-            </div>
+            {
+              resultDataList.length > 0 ? (
+                <div className="tapeList">
+                  { renderResultTapes() }
+                </div>
+              ) : (<div className="emptyConatiner"><EmptyData /></div>)
+            }
           </FEIBTabPanel>
         </FEIBTabContext>
       </div>
