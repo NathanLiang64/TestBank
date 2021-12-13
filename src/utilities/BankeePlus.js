@@ -6,14 +6,19 @@ const device = {
 
 function goToFunc(funcName, jsonParams = null) {
   if (device.ios()) {
-    const msg = JSON.parse('{"name":"' + funcName + '", "data":"' + jsonParams + '"}');
+    // const msg = JSON.parse('{"name":"' + funcName + '", "data":"' + jsonParams + '"}');
     // eslint-disable-next-line no-undef
-    webkit.messageHandlers.bankeeplus.postMessage(msg);
+    // webkit.messageHandlers.bankeeplus.postMessage(msg);
+    const action = {
+      name: funcName,
+      data: jsonParams,
+    };
+    window.webkit.messageHandlers.jstoapp.postMessage(action);
     return;
   }
 
   if (device.android()) {
-    window.bankeeplus.gotofunc(funcName, jsonParams);
+    window.jstoapp[funcName](jsonParams);
   }
 }
 
