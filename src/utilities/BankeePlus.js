@@ -73,6 +73,17 @@ function switchLoading(param) {
   }
 }
 
+// webvie 通知APP取得安全資料
+function getEnCrydata() {
+  if (device.ios()) {
+    const msg = JSON.stringify({ name: 'getEnCrydata' });
+    window.webkit.messageHandlers.jstoapp.postMessage(msg);
+  }
+  if (device.android()) {
+    window.jstoapp.getEnCrydata();
+  }
+}
+
 function goHome() {
   funcStack.clear();
   goToFunc('/more');
@@ -83,4 +94,5 @@ export {
   closeFunc,
   goHome,
   switchLoading,
+  getEnCrydata,
 };
