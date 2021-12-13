@@ -5,7 +5,7 @@ import TabBar from 'components/TabBar';
 import PasswordDrawer from 'components/PasswordDrawer';
 import Spinner from 'components/Spinner';
 import ShakeShake from 'pages/ShakeShake';
-import Favorite from 'pages/Favorite';
+// import Favorite from 'pages/Favorite';
 import ResultDialog from 'pages/ResultDialog';
 import routes from 'routes';
 
@@ -28,7 +28,7 @@ const App = () => (
       </Switch>
       <TabBar />
       <ShakeShake />
-      <Favorite />
+      {/* <Favorite /> */}
       <PasswordDrawer />
       <ResultDialog />
     </PersistGate>
