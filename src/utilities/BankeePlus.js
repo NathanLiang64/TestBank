@@ -30,7 +30,6 @@ function goToFunc(funcName, jsonParams = null) {
   // console.debug('name:' + funcName + ', data:' + jsonParams);
   if (device.ios()) {
     const msg = JSON.stringify({ name: funcName, data: jsonParams });
-    // eslint-disable-next-line no-undef
     window.webkit.messageHandlers.jstoapp.postMessage(msg);
   } else if (device.android()) {
     window.jstoapp[funcName](jsonParams);
@@ -47,8 +46,6 @@ function goToFunc(funcName, jsonParams = null) {
 function closeFunc() {
   if (device.ios()) {
     const msg = JSON.stringify({ name: 'closeFunc' });
-    // eslint-disable-next-line no-undef
-    // webkit.messageHandlers.bankeeplus.postMessage(msg);
     window.webkit.messageHandlers.jstoapp.postMessage(msg);
   } else if (device.android()) {
     window.jstoapp.closeFunc();
@@ -63,6 +60,19 @@ function closeFunc() {
   }
 }
 
+// 開關 loading
+function switchLoading(param) {
+  const data = { open: param ? 'Y' : 'N' };
+  if (device.ios()) {
+    const msg = JSON.stringify({ name: 'onLoading', data });
+    window.webkit.messageHandlers.jstoapp.postMessage(msg);
+  }
+  if (device.android()) {
+    const androidParam = JSON.stringify(data);
+    window.jstoapp.onLoading(androidParam);
+  }
+}
+
 function goHome() {
   funcStack.clear();
   goToFunc('/more');
@@ -72,4 +82,5 @@ export {
   goToFunc,
   closeFunc,
   goHome,
+  switchLoading,
 };

@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 // import Header from 'components/Header';
 // import TabBar from 'components/TabBar';
 // import PasswordDrawer from 'components/PasswordDrawer';
-import Spinner from 'components/Spinner';
+// import Spinner from 'components/Spinner';
 // import ShakeShake from 'pages/ShakeShake';
 // import Favorite from 'pages/Favorite';
 import ResultDialog from 'pages/ResultDialog';
@@ -32,7 +32,7 @@ const App = () => (
       {/* <PasswordDrawer /> */}
       <ResultDialog />
     </PersistGate>
-    <Spinner />
+    {/* <Spinner /> */}
   </Provider>
 );
 export default App;
