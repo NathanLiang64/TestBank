@@ -1,8 +1,7 @@
-/* eslint-disable no-unused-vars */
 import { useDispatch } from 'react-redux';
 // import { useHistory } from 'react-router';
-import { useCheckLocation, usePageInfo } from 'hooks';
-import { closeFunc } from 'utilities/BankeePlus';
+// import { useCheckLocation, usePageInfo } from 'hooks';
+import { closeFunc, switchLoading } from 'utilities/BankeePlus';
 // import SuccessImage from 'assets/images/successImg.svg';
 // import { provisioningApi } from 'apis';
 
@@ -48,11 +47,16 @@ const Provisioning = () => {
     dispatch(setIsOpen(true));
   };
 
+  // 呼叫開通 api
   const triggerProvide = async () => {
     // const openhbResponse = await provisioningApi.openhb({});
-    // 假設開通成功
-    const openhbResponse = {};
-    setResultDialog(openhbResponse);
+    // 模擬呼叫開通 API 且成功
+    switchLoading(true);
+    setTimeout(() => {
+      const openhbResponse = {};
+      switchLoading(false);
+      setResultDialog(openhbResponse);
+    }, 3000);
   };
 
   // useCheckLocation();
