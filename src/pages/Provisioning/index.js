@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useDispatch } from 'react-redux';
 // import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
@@ -16,16 +17,6 @@ import { setIsOpen, setCloseCallBack, setResultContent } from '../ResultDialog/s
 const Provisioning = () => {
   const dispatch = useDispatch();
   // const history = useHistory();
-
-  // if (idevice) {
-  //   var action = JSON.stringify(packet_goFunc5);
-  //   window.webkit.messageHandlers.jstoapp.postMessage(action);
-  // } else {
-  //   if (jstoapp) {
-  //     var action = JSON.stringify(packet_goFuncData5);
-  //     jstoapp.goFunc(action);
-  //   }
-  // }
 
   const toHomePage = () => {
     // goToFunc('goPreview');
@@ -64,8 +55,8 @@ const Provisioning = () => {
     setResultDialog(openhbResponse);
   };
 
-  useCheckLocation();
-  usePageInfo('/api/provisioning');
+  // useCheckLocation();
+  // usePageInfo('/api/provisioning');
 
   return (
     <ProvisioningWrapper>

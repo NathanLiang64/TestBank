@@ -151,6 +151,9 @@ const ReserveTransferSearchWrapper = styled(Layout)`
       }
     }
   }
+  .emptyConatiner {
+    padding-top: 50%;
+  }
 `;
 
 export default ReserveTransferSearchWrapper;
