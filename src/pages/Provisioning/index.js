@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
 // import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
-import { goToFunc } from 'utilities/BankeePlus';
+import { closeFunc } from 'utilities/BankeePlus';
 // import SuccessImage from 'assets/images/successImg.svg';
 // import { provisioningApi } from 'apis';
 
@@ -28,7 +28,8 @@ const Provisioning = () => {
   // }
 
   const toHomePage = () => {
-    goToFunc('goPreview');
+    // goToFunc('goPreview');
+    closeFunc();
     // history.push('/regularPwdModify');
   };
 
