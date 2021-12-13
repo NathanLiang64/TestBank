@@ -64,7 +64,7 @@ function closeFunc() {
 function switchLoading(param) {
   const data = { open: param ? 'Y' : 'N' };
   if (device.ios()) {
-    const msg = JSON.stringify({ name: 'onLoading', data });
+    const msg = JSON.stringify({ name: 'onLoading', data: JSON.stringify(data) });
     window.webkit.messageHandlers.jstoapp.postMessage(msg);
   }
   if (device.android()) {
