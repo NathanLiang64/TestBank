@@ -9,8 +9,13 @@ const ResultDialog = () => {
   const resultContent = useSelector(({ resultDialog }) => resultDialog.resultContent);
   const closeCallBack = useSelector(({ resultDialog }) => resultDialog.closeCallBack);
   const closeDialog = () => {
-    closeCallBack();
-    dispatch(setIsOpen(false));
+    try {
+      closeCallBack();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      dispatch(setIsOpen(false));
+    }
   };
   return (
     <Dialog
