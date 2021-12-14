@@ -1,10 +1,10 @@
-import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { pwdModifyApi } from 'apis';
+import { closeFunc, switchLoading } from 'utilities/BankeePlus';
 
 /* Elements */
 import {
@@ -21,7 +21,6 @@ import PwdModifyWrapper from './pwdModify.style';
 
 const PwdModify = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
   /**
    *- 資料驗證
    */
@@ -38,7 +37,7 @@ const PwdModify = () => {
 
   // 關閉結果彈窗
   const handleCloseResultDialog = () => {
-    history.go(-1);
+    closeFunc();
   };
 
   // 設定結果彈窗
@@ -68,10 +67,12 @@ const PwdModify = () => {
     }));
     dispatch(setCloseCallBack(closeCallBack));
     dispatch(setIsOpen(true));
+    switchLoading(true);
   };
 
   // 呼叫變更網銀密碼 API
   const handlePasswordModify = async () => {
+    switchLoading(true);
     const param = {
       password: e2ee(getValues('password')),
       newPassword: e2ee(getValues('newPassword')),
