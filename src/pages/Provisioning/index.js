@@ -2,6 +2,7 @@ import { useDispatch } from 'react-redux';
 // import { useHistory } from 'react-router';
 // import { useCheckLocation, usePageInfo } from 'hooks';
 import { useGetEnCrydata } from 'hooks';
+import Cookies from 'js-cookie';
 import { closeFunc, switchLoading } from 'utilities/BankeePlus';
 // import SuccessImage from 'assets/images/successImg.svg';
 // import { provisioningApi } from 'apis';
@@ -52,6 +53,8 @@ const Provisioning = () => {
   const triggerProvide = async () => {
     // const openhbResponse = await provisioningApi.openhb({});
     // 模擬呼叫開通 API 且成功
+    const jwtToken = Cookies.get('jwtToken');
+    alert(jwtToken);
     switchLoading(true);
     setTimeout(() => {
       const openhbResponse = {};
