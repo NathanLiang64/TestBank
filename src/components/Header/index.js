@@ -1,26 +1,16 @@
-import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router';
 import { FEIBIconButton } from 'components/elements';
-import { closeFunc } from 'utilities/BankeePlus';
+// import { closeFunc } from 'utilities/BankeePlus';
 import { ArrowBackIcon, HomeIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
 import HeaderWrapper from './header.style';
 
-const Header = () => {
-  const history = useHistory();
-  const title = useSelector(({ header }) => header.title);
-  const isHomePage = useSelector(({ header }) => header.isHomePage);
-
+const Header = ({ title, showBack = true, showHome = true }) => {
   const handleHomeIconClick = (className) => {
     if (className === 'goHome') {
-      closeFunc('home');
+      console.log('通知app回首頁');
     }
     if (className === 'goBack') {
-      if (history.length <= 1) {
-        closeFunc('back');
-      } else {
-        history.goBack();
-      }
+      console.log('回前一頁');
     }
   };
 
@@ -37,9 +27,9 @@ const Header = () => {
 
   return (
     <HeaderWrapper>
-      { !isHomePage && renderIconButton('goBack', <ArrowBackIcon />) }
+      { showBack && renderIconButton('goBack', <ArrowBackIcon />) }
       <h2>{title}</h2>
-      { !isHomePage && renderIconButton('goHome', <HomeIcon />) }
+      { showHome && renderIconButton('goHome', <HomeIcon />) }
     </HeaderWrapper>
   );
 };

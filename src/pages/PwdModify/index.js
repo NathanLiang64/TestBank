@@ -6,6 +6,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { pwdModifyApi } from 'apis';
 import { closeFunc, switchLoading } from 'utilities/BankeePlus';
 
+import Header from 'components/Header';
+
 /* Elements */
 import {
   FEIBButton,
@@ -67,7 +69,7 @@ const PwdModify = () => {
     }));
     dispatch(setCloseCallBack(closeCallBack));
     dispatch(setIsOpen(true));
-    switchLoading(true);
+    switchLoading(false);
   };
 
   // 呼叫變更網銀密碼 API
@@ -91,38 +93,41 @@ const PwdModify = () => {
   useGetEnCrydata();
 
   return (
-    <PwdModifyWrapper>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <PasswordInput
-            label="您的網銀密碼"
-            id="password"
-            name="password"
-            control={control}
-            errorMessage={errors.password?.message}
-          />
-          <PasswordInput
-            label="新的網銀密碼"
-            id="newPassword"
-            name="newPassword"
-            control={control}
-            errorMessage={errors.newPassword?.message}
-          />
-          <PasswordInput
-            label="請確認新的網銀密碼"
-            id="newPasswordCheck"
-            name="newPasswordCheck"
-            control={control}
-            errorMessage={errors.newPasswordCheck?.message}
-          />
-        </div>
-        <FEIBButton
-          type="submit"
-        >
-          儲存變更
-        </FEIBButton>
-      </form>
-    </PwdModifyWrapper>
+    <>
+      <Header title="網銀密碼變更" />
+      <PwdModifyWrapper>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div>
+            <PasswordInput
+              label="您的網銀密碼"
+              id="password"
+              name="password"
+              control={control}
+              errorMessage={errors.password?.message}
+            />
+            <PasswordInput
+              label="新的網銀密碼"
+              id="newPassword"
+              name="newPassword"
+              control={control}
+              errorMessage={errors.newPassword?.message}
+            />
+            <PasswordInput
+              label="請確認新的網銀密碼"
+              id="newPasswordCheck"
+              name="newPasswordCheck"
+              control={control}
+              errorMessage={errors.newPasswordCheck?.message}
+            />
+          </div>
+          <FEIBButton
+            type="submit"
+          >
+            儲存變更
+          </FEIBButton>
+        </form>
+      </PwdModifyWrapper>
+    </>
   );
 };
 

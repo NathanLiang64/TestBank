@@ -1,6 +1,5 @@
 /* eslint-disable */
 function setEnCrydata(event) {
-  alert(JSON.stringify(event));
   const { Crydata, Enivec } = event;
   const aesKey = window.atob(Crydata).substr(7);
   const iv = window.atob(Enivec).substr(7);

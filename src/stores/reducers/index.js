@@ -1,5 +1,4 @@
 import { combineReducers } from 'redux';
-import { reducers as headerReducer } from 'components/Header/stores';
 import { reducers as loginReducer } from 'pages/Login/stores';
 import { reducers as billPayReducer } from 'pages/BillPay/stores';
 import { reducers as patternLockSettingReducer } from 'pages/PatternLockSetting/stores';
@@ -18,7 +17,6 @@ import { reducers as accountDetailsReducer } from 'components/AccountDetails/sto
 import { reducers as resultDialogReducer } from 'pages/ResultDialog/stores';
 
 const reducer = combineReducers({
-  header: headerReducer,
   login: loginReducer,
   billPay: billPayReducer,
   patternLockSetting: patternLockSettingReducer,
