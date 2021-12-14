@@ -54,7 +54,6 @@ const Provisioning = () => {
     // const openhbResponse = await provisioningApi.openhb({});
     // 模擬呼叫開通 API 且成功
     const jwtToken = Cookies.get('jwtToken');
-    alert(document.cookie);
     alert(jwtToken);
     switchLoading(true);
     setTimeout(() => {
