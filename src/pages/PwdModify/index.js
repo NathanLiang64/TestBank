@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { useCheckLocation, usePageInfo } from 'hooks';
+import { useGetEnCrydata } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -88,8 +88,7 @@ const PwdModify = () => {
     handlePasswordModify();
   };
 
-  useCheckLocation();
-  usePageInfo('/api/pwdModify');
+  useGetEnCrydata();
 
   return (
     <PwdModifyWrapper>
