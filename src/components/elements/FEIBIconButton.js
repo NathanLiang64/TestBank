@@ -12,13 +12,18 @@ import { IconButton as MaterialIconButton } from '@material-ui/core';
 const FEIBIconButton = styled(MaterialIconButton).attrs({
   type: 'button',
 })`
-  
   &.MuiIconButton-root {
     color: ${({ $iconColor }) => $iconColor || 'inherit'};
     
     .MuiSvgIcon-root,
     .Icon {
       font-size: ${({ $fontSize }) => ($fontSize && `${$fontSize}rem`) || '1.5rem'};
+      svg {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+      }
     }
   }
 `;

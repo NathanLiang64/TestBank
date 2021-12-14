@@ -30,7 +30,7 @@ function goToFunc(funcName, jsonParams = null) {
   // console.debug('name:' + funcName + ', data:' + jsonParams);
   if (device.ios()) {
     const msg = JSON.stringify({ name: funcName, data: jsonParams });
-    window.webkit.messageHandlers.jstoapp.postMessage(msg);
+    window.webkit?.messageHandlers.jstoapp.postMessage(msg);
   } else if (device.android()) {
     window.jstoapp[funcName](jsonParams);
   } else {
@@ -46,7 +46,7 @@ function goToFunc(funcName, jsonParams = null) {
 function closeFunc() {
   if (device.ios()) {
     const msg = JSON.stringify({ name: 'closeFunc' });
-    window.webkit.messageHandlers.jstoapp.postMessage(msg);
+    window.webkit?.messageHandlers.jstoapp.postMessage(msg);
   } else if (device.android()) {
     window.jstoapp.closeFunc();
   } else {
@@ -65,7 +65,7 @@ function switchLoading(param) {
   const data = { open: param ? 'Y' : 'N' };
   if (device.ios()) {
     const msg = JSON.stringify({ name: 'onLoading', data: JSON.stringify(data) });
-    window.webkit.messageHandlers.jstoapp.postMessage(msg);
+    window.webkit?.messageHandlers.jstoapp.postMessage(msg);
   }
   if (device.android()) {
     const androidParam = JSON.stringify(data);
@@ -77,10 +77,21 @@ function switchLoading(param) {
 function getEnCrydata() {
   if (device.ios()) {
     const msg = JSON.stringify({ name: 'getEnCrydata' });
-    window.webkit.messageHandlers.jstoapp.postMessage(msg);
+    window.webkit?.messageHandlers.jstoapp.postMessage(msg);
   }
   if (device.android()) {
     window.jstoapp.getEnCrydata();
+  }
+}
+
+// 網頁通知APP跳轉至首頁
+function goAppHome() {
+  if (device.ios()) {
+    const msg = JSON.stringify({ name: 'goHome' });
+    window.webkit?.messageHandlers.jstoapp.postMessage(msg);
+  }
+  if (device.android()) {
+    window.jstoapp.goHome();
   }
 }
 
@@ -95,4 +106,5 @@ export {
   goHome,
   switchLoading,
   getEnCrydata,
+  goAppHome,
 };

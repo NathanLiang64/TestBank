@@ -6,7 +6,7 @@ const HeaderWrapper = styled.header`
   left: 0;
   width: 100%;
   height: 4.4rem;
-  padding: .8rem;
+  padding: .4rem;
   background: ${({ theme }) => theme.colors.basic.white};
   z-index: 1000;
   
@@ -19,7 +19,7 @@ const HeaderWrapper = styled.header`
   
   h2 {
     position: absolute;
-    top: 52%;
+    top: 50%;
     left: 50%;
     font-size: 1.8rem;
     letter-spacing: .04rem;
