@@ -1,6 +1,6 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
 import JWTUtil from '../utilities/JWTUtil';
-
 // Request failed with status code
 const errorHandle = (status, message) => {
   switch (status) {
@@ -43,7 +43,7 @@ const userAxios = () => {
 
 userAxios().interceptors.request.use(
   (config) => {
-    const jwt = localStorage.getItem('jwtToken');
+    const jwt = localStorage.getItem('jwtToken') || Cookies.get('jwtToken');
     if (jwt) {
       config.data.custId = localStorage.getItem('custId');
       config.data.isgToken = '0c281a7a1-1a35-0347-6d71-a4da7d0a41d113092';

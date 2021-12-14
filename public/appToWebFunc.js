@@ -1,10 +1,11 @@
 /* eslint-disable */
 function setEnCrydata(event) {
   alert(JSON.stringify(event));
-  // Crydata: aes, Enivec: iv
   const { Crydata, Enivec } = event;
-  alert('Crydata: ' + Crydata);
-  alert('Enivec: ' + Enivec);
+  const aesKey = window.atob(Crydata).substr(7);
+  const iv = window.atob(Enivec).substr(7);
+  localStorage.setItem('iv', iv);
+  localStorage.setItem('aesKey', aesKey);
 };
 
 console.log('load app to webview functions success');
