@@ -1,37 +1,41 @@
 import { useState, useEffect, useRef } from 'react';
-import { useHistory } from 'react-router';
-import { useDispatch } from 'react-redux';
+// import { useDispatch } from 'react-redux';
+
+/* Elements */
+import Header from 'components/Header';
 import FavoriteBlockButton from 'components/FavoriteBlockButton';
 import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
-// import { useCheckLocation, usePageInfo } from 'hooks';
+import { goToFunc } from 'utilities/BankeePlus';
 // import { getMoreList } from 'apis/moreApi';
 import { iconGenerator } from 'pages/Favorite/favoriteGenerator';
-import { setFavoriteDrawer } from 'pages/Favorite/stores/actions';
-import { setIsShake } from 'pages/ShakeShake/stores/actions';
+// import { setFavoriteDrawer } from 'pages/Favorite/stores/actions';
+// import { setIsShake } from 'pages/ShakeShake/stores/actions';
+
+/* Styles */
 import MoreWrapper from './more.style';
 import mockData from './mockData';
 
 const More = () => {
   const mainContentRef = useRef();
-  const history = useHistory();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const [moreList, setMoreList] = useState([]);
   const [sectionPosition, setSectionPosition] = useState([]);
   const [tabId, setTabId] = useState('account');
 
   const toPage = (route) => {
-    if (route === 'QRCodeTransfer') {
-      dispatch(setIsShake(true));
-      return;
-    }
-    if (route === 'favorite') {
-      dispatch(setFavoriteDrawer({
-        title: '我的最愛', content: '', open: true, back: null,
-      }));
-      return;
-    }
-    history.push(route);
+    console.log('啟動 Function:', route);
+    // if (route === 'QRCodeTransfer') {
+    //   dispatch(setIsShake(true));
+    //   return;
+    // }
+    // if (route === 'favorite') {
+    //   dispatch(setFavoriteDrawer({
+    //     title: '我的最愛', content: '', open: true, back: null,
+    //   }));
+    //   return;
+    // }
+    goToFunc(route);
   };
 
   const handleChangeTabs = (event, value) => {
@@ -87,17 +91,20 @@ const More = () => {
   }, [mainContentRef?.current]);
 
   return (
-    <MoreWrapper small>
-      <FEIBTabContext value={tabId}>
-        <FEIBTabList $size="small" onChange={handleChangeTabs}>
-          { renderTabList(moreList) }
-        </FEIBTabList>
-      </FEIBTabContext>
+    <>
+      <Header title="更多" />
+      <MoreWrapper small>
+        <FEIBTabContext value={tabId}>
+          <FEIBTabList $size="small" onChange={handleChangeTabs}>
+            { renderTabList(moreList) }
+          </FEIBTabList>
+        </FEIBTabContext>
 
-      <div className="mainContent" ref={mainContentRef} onScroll={handleScrollContent}>
-        { renderContent(moreList) }
-      </div>
-    </MoreWrapper>
+        <div className="mainContent" ref={mainContentRef} onScroll={handleScrollContent}>
+          { renderContent(moreList) }
+        </div>
+      </MoreWrapper>
+    </>
   );
 };
 
