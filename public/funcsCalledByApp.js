@@ -10,8 +10,15 @@ function setEnCrydata(event) {
 
 // 取得來自 APP 的功能資料
 function setPagedata(event) {
-  alert(`page data from app: ${event}`);
-  localStorage.setItem('pageData', event);
+  const { funcParams, keepData } = event;
+  if (funcParams) {
+    alert(`page data from app: ${funcParams}`);
+    localStorage.setItem('funcParams', funcParams);
+  }
+  if (keepData) {
+    alert(`page data from app: ${keepData}`);
+    localStorage.setItem('keepData', keepData);
+  }
 };
 
 console.log('load app to webview functions success');
