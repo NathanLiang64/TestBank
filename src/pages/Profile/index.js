@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
-import { useHistory } from 'react-router';
-import { useCheckLocation, usePageInfo } from 'hooks';
+// import { useHistory } from 'react-router';
+// import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { goToFunc } from 'utilities/BankeePlus';
 
 /* Elements */
 import {
   FEIBInput, FEIBInputLabel, FEIBButton, FEIBErrorMessage,
 } from 'components/elements';
+import Header from 'components/Header';
 import Dialog from 'components/Dialog';
-import { profileApi } from 'apis';
+// import { profileApi } from 'apis';
 
 /* Styles */
 import { CreateRounded, KeyboardArrowRightRounded } from '@material-ui/icons';
@@ -32,7 +34,6 @@ const Profile = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-  const history = useHistory();
 
   const [nickName, setNickName] = useState('Joyce Horng');
   const [showChangeNickNameDialog, setShowChangeNickNameDialog] = useState(false);
@@ -44,29 +45,30 @@ const Profile = () => {
   };
 
   const getNickName = async () => {
-    const response = await profileApi.getNickName({});
-    setNickName(response.nickName);
+    // const response = await profileApi.getNickName({});
+    // setNickName(response.nickName);
   };
 
   const onSubmit = async (data) => {
-    const param = {
-      nickName: data.nickName,
-    };
-    const response = await profileApi.updateNickName(param);
-    if (typeof (response) === 'string') {
-      setNickName(data.nickName);
-      setShowChangeNickNameDialog(false);
-    }
+    // const param = {
+    //   nickName: data.nickName,
+    // };
+    // const response = await profileApi.updateNickName(param);
+    // if (typeof (response) === 'string') {
+    setNickName(data.nickName);
+    //   setShowChangeNickNameDialog(false);
+    // }
   };
 
-  const toPage = (route) => {
-    if (route) {
-      history.push(route);
+  const toPage = (funcCode) => {
+    if (funcCode) {
+      goToFunc(funcCode);
+      // history.push(route);
     }
   };
 
   const renderEntryList = () => SettingList.map((item) => (
-    <div className="entryList" key={item.name} onClick={() => toPage(item.route)}>
+    <div className="entryList" key={item.name} onClick={() => toPage(item.funcCode)}>
       {item.name}
       <KeyboardArrowRightRounded />
     </div>
@@ -104,30 +106,30 @@ const Profile = () => {
     />
   );
 
-  useCheckLocation();
-  usePageInfo('/api/profile');
-
   useEffect(() => {
     getNickName();
   }, []);
 
   return (
-    <ProfileWrapper>
-      <div className="avatarContainer">
-        <img src={Avatar} alt="" />
-        <div className="penIconContainer">
-          <div className="penIconBackground">
-            <CreateRounded />
+    <>
+      <Header title="個人化設定" />
+      <ProfileWrapper>
+        <div className="avatarContainer">
+          <img src={Avatar} alt="" />
+          <div className="penIconContainer">
+            <div className="penIconBackground">
+              <CreateRounded />
+            </div>
           </div>
         </div>
-      </div>
-      <div className="nickName">
-        <span>{ nickName }</span>
-        <CreateRounded onClick={showEditNickNameDialog} />
-      </div>
-      { renderEntryList() }
-      { renderDialog() }
-    </ProfileWrapper>
+        <div className="nickName">
+          <span>{ nickName }</span>
+          <CreateRounded onClick={showEditNickNameDialog} />
+        </div>
+        { renderEntryList() }
+        { renderDialog() }
+      </ProfileWrapper>
+    </>
   );
 };
 

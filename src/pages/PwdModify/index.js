@@ -51,7 +51,9 @@ const PwdModify = () => {
     if (result) {
       closeCallBack = handleCloseResultDialog;
     } else {
-      [errorCode, errorDesc] = response.message.split(' ');
+      // [errorCode, errorDesc] = response.message.split(' ');
+      [errorCode, errorDesc] = ['test error', '變更失敗'];
+      alert(JSON.stringify(response));
       closeCallBack = () => {};
     }
     dispatch(setResultContent({

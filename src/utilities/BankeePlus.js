@@ -1,4 +1,4 @@
-import { useHistory } from 'react-router';
+// import { history } from '../index';
 
 /* eslint-disable prefer-template */
 const device = {
@@ -16,29 +16,36 @@ const funcStack = {
   },
   pop: () => {
     const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
-    const funcItem = stack.pop();
+    stack.pop();
     localStorage.setItem('funcStack', JSON.stringify(stack));
-    return funcItem;
+    return stack;
   },
   clear: () => {
     localStorage.setItem('funcStack', '[]');
   },
 };
 
-function goToFunc(funcName, jsonParams = null) {
+// 網頁通知APP跳轉指定功能
+function goToFunc(funcID, funcParams = null, keepData = null) {
   console.log(navigator.userAgent);
   // console.debug('name:' + funcName + ', data:' + jsonParams);
+  const data = {
+    funcID,
+    funcParams,
+    keepData,
+  };
   if (device.ios()) {
-    const msg = JSON.stringify({ name: funcName, data: jsonParams });
+    const msg = JSON.stringify({ name: 'startFunc', data: JSON.stringify(data) });
     window.webkit?.messageHandlers.jstoapp.postMessage(msg);
   } else if (device.android()) {
-    window.jstoapp[funcName](jsonParams);
+    window.jstoapp[funcID](data);
   } else {
-    console.log(`[Start Function(${funcName})]`);
-    funcStack.push(funcName, jsonParams);
-
-    const history = useHistory();
-    history.push();
+    console.log(`[Start Function(${funcID})]`);
+    funcStack.push(funcID, funcParams, keepData);
+    // console.log(history);
+    // const history = useHistory();
+    // history.push(`/${funcID}`);
+    window.location.pathname = `/${funcID}`;
   }
 }
 
@@ -50,12 +57,15 @@ function closeFunc() {
   } else if (device.android()) {
     window.jstoapp.closeFunc();
   } else {
-    const funcItem = funcStack.pop();
+    const stack = funcStack.pop();
+    const funcItem = stack[stack.length - 1];
     if (funcItem) {
-      console.log(`[Close Function and Back to(${funcItem.funcName})]`);
-
-      const history = useHistory();
-      history.push(funcItem.funcName);
+      console.log(`[Close Function and Back to(${funcItem.code})]`);
+      window.location.pathname = `/${funcItem.code}`;
+      // const history = useHistory();
+      // history.push(funcItem.funcName);
+    } else {
+      window.location.pathname = '/';
     }
   }
 }
@@ -84,20 +94,23 @@ function getEnCrydata() {
   }
 }
 
+function goHome() {
+  funcStack.clear();
+  goToFunc('');
+}
+
 // 網頁通知APP跳轉至首頁
 function goAppHome() {
   if (device.ios()) {
     const msg = JSON.stringify({ name: 'goHome' });
     window.webkit?.messageHandlers.jstoapp.postMessage(msg);
+    return;
   }
   if (device.android()) {
     window.jstoapp.goHome();
+    return;
   }
-}
-
-function goHome() {
-  funcStack.clear();
-  goToFunc('/more');
+  goHome();
 }
 
 export {
