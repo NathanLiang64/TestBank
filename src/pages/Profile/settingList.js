@@ -33,7 +33,7 @@ const settingList = [
   },
   {
     name: '網銀密碼變更',
-    funcCode: 'pwdModify',
+    funcCode: '/pwdModify',
   },
 ];
 
