@@ -62,7 +62,7 @@ const Profile = () => {
 
   const toPage = (funcCode) => {
     if (funcCode) {
-      goToFunc(funcCode);
+      goToFunc(funcCode, `mock data from webview, to ${funcCode}`);
       // history.push(route);
     }
   };
