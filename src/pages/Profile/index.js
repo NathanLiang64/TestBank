@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 // import { useHistory } from 'react-router';
-import { useGetEnCrydata } from 'hooks';
+import { useGetEnCrydata, useGetPagedata } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -106,7 +106,7 @@ const Profile = () => {
     />
   );
 
-  useGetEnCrydata();
+  useGetPagedata();
 
   useEffect(() => {
     getNickName();
