@@ -3,6 +3,7 @@ import usePageInfo from './usePageInfo';
 import useClientRect from './useClientRect';
 import useBarcodeGenerator from './useBarcodeGenerator';
 import useGetEnCrydata from './useGetEnCrydata';
+import useGetPagedata from './useGetPagedata';
 
 export {
   useCheckLocation,
@@ -10,4 +11,5 @@ export {
   useClientRect,
   useBarcodeGenerator,
   useGetEnCrydata,
+  useGetPagedata,
 };

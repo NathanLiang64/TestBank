@@ -115,6 +115,17 @@ function goAppHome() {
   goHome();
 }
 
+// 網頁通知APP取得功能參數
+function getPagedata() {
+  if (device.ios()) {
+    const msg = JSON.stringify({ name: 'getPagedata' });
+    window.webkit?.messageHandlers.jstoapp.postMessage(msg);
+  }
+  if (device.android()) {
+    window.jstoapp?.getPagedata();
+  }
+}
+
 export {
   goToFunc,
   closeFunc,
@@ -122,4 +133,5 @@ export {
   switchLoading,
   getEnCrydata,
   goAppHome,
+  getPagedata,
 };
