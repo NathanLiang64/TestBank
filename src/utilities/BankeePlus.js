@@ -38,7 +38,7 @@ function goToFunc(funcID, funcParams = null, keepData = null) {
     const msg = JSON.stringify({ name: 'startFunc', data: JSON.stringify(data) });
     window.webkit?.messageHandlers.jstoapp.postMessage(msg);
   } else if (device.android()) {
-    window.jstoapp[funcID](data);
+    window.jstoapp.startFunc(data);
   } else {
     console.log(`[Start Function(${funcID})]`);
     funcStack.push(funcID, funcParams, keepData);
