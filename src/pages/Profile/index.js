@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 // import { useHistory } from 'react-router';
-// import { useCheckLocation, usePageInfo } from 'hooks';
+import { useGetEnCrydata } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -62,7 +62,7 @@ const Profile = () => {
 
   const toPage = (funcCode) => {
     if (funcCode) {
-      goToFunc(funcCode, `mock data from webview, to ${funcCode}`);
+      goToFunc(funcCode, `mock data from webview, to ${funcCode}`, 'keep data set by profile function.');
       // history.push(route);
     }
   };
@@ -105,6 +105,8 @@ const Profile = () => {
       action={(<FEIBButton type="submit" form="nickNameForm">完成</FEIBButton>)}
     />
   );
+
+  useGetEnCrydata();
 
   useEffect(() => {
     getNickName();
