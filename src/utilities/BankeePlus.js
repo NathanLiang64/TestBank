@@ -26,9 +26,10 @@ const funcStack = {
 };
 
 // 網頁通知APP跳轉指定功能
-function goToFunc(funcID, funcParams = null, keepData = null) {
+function goToFunc(funcID, funcParams = '', keepData = '') {
   console.log(navigator.userAgent);
   // console.debug('name:' + funcName + ', data:' + jsonParams);
+  funcID = funcID.replace('/', '');
   const data = {
     funcID,
     funcParams,

@@ -4,7 +4,6 @@ import Layout from 'components/Layout';
 const MoreWrapper = styled(Layout)`
   top: 2.4rem;
   padding: 0;
-  height: calc(100% - 8.4rem);  // top 2.4 + bottomTabBar 6
   overflow: hidden;
 
   .MuiTabs-root {
@@ -17,7 +16,7 @@ const MoreWrapper = styled(Layout)`
 
   .mainContent {
     padding: 0 1.6rem;
-    height: calc(100% - 6rem);
+    height: 100%;
     overflow-y: auto;
 
     section {

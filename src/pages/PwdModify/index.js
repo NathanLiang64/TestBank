@@ -6,9 +6,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { pwdModifyApi } from 'apis';
 import { closeFunc, switchLoading } from 'utilities/BankeePlus';
 
-import Header from 'components/Header';
-
 /* Elements */
+import Header from 'components/Header';
 import {
   FEIBButton,
 } from 'components/elements';
@@ -44,6 +43,7 @@ const PwdModify = () => {
 
   // 設定結果彈窗
   const setResultDialog = (response) => {
+    alert(JSON.stringify(response));
     const result = 'custName' in response;
     let errorCode = '';
     let errorDesc = '';
@@ -53,7 +53,6 @@ const PwdModify = () => {
     } else {
       // [errorCode, errorDesc] = response.message.split(' ');
       [errorCode, errorDesc] = ['test error', '變更失敗'];
-      alert(JSON.stringify(response));
       closeCallBack = () => {};
     }
     dispatch(setResultContent({
