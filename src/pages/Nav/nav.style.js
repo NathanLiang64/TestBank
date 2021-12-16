@@ -7,6 +7,10 @@ const NavWrapper = styled(Layout)`
     display: block;
     font-size: 1.6rem;
     padding: .4rem 0;
+    border-radius: 5px;
+    background: #F3F5FC;
+    padding: .8rem;
+    margin-bottom: 1rem;
   }
 `;
 

@@ -60,16 +60,16 @@ const Profile = () => {
     // }
   };
 
-  const toPage = (funcCode) => {
-    if (funcCode) {
-      goToFunc(funcCode, `mock data from webview, to ${funcCode}`, 'keep data set by profile function.');
+  const toPage = ({ route, funcID }) => {
+    if (route) {
+      goToFunc({ route, funcID }, `mock data from webview, to ${funcID}`, 'keep data set by profile function.');
       // history.push(route);
     }
   };
 
-  const renderEntryList = () => SettingList.map((item) => (
-    <div className="entryList" key={item.name} onClick={() => toPage(item.funcCode)}>
-      {item.name}
+  const renderEntryList = () => SettingList.map(({ name, route, funcID }) => (
+    <div className="entryList" key={name} onClick={() => toPage({ route, funcID })}>
+      {name}
       <KeyboardArrowRightRounded />
     </div>
   ));
