@@ -1,5 +1,6 @@
 /* eslint-disable arrow-body-style */
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
+import { goToFunc } from 'utilities/BankeePlus';
 // import { useDispatch } from 'react-redux';
 // import Accordion from 'components/Accordion';
 // import { setIsShake } from 'pages/ShakeShake/stores/actions';
@@ -12,64 +13,68 @@ const Nav = () => {
   //   dispatch(setIsShake(true));
   // };
 
+  const goToFunction = (route, funcID) => {
+    goToFunc({ route, funcID });
+  };
+
   return (
     <NavWrapper>
-      <Link to="/more">
+      <div onClick={() => goToFunction('/more', 104100)}>
         <ul>
           <li>功能：更多</li>
           <li>route: /more</li>
           <li>funcID: 104100</li>
         </ul>
-      </Link>
-      <Link to="/profile">
+      </div>
+      <div onClick={() => goToFunction('/profile', 111100)}>
         <ul>
           <li>功能：個人化設定</li>
           <li>route: /profile</li>
           <li>funcID: 111100</li>
         </ul>
-      </Link>
-      <Link to="/quickLoginSetting">
+      </div>
+      <div onClick={() => goToFunction('/quickLoginSetting', 112100)}>
         <ul>
           <li>功能：快速登入設定</li>
           <li>route: /quickLoginSetting</li>
           <li>funcID: 112100</li>
         </ul>
-      </Link>
-      <Link to="/smsOTPactivate">
+      </div>
+      <div onClick={() => goToFunction('/smsOTPactivate', 113100)}>
         <ul>
           <li>功能：簡訊OTP設定</li>
           <li>route: /smsOTPactivate</li>
           <li>funcID: 113100</li>
         </ul>
-      </Link>
-      <Link to="/basicInformation">
+      </div>
+      <div onClick={() => goToFunction('/basicInformation', 114100)}>
         <ul>
           <li>功能：基本資料變更</li>
           <li>route: /basicInformation</li>
           <li>funcID: 114100</li>
         </ul>
-      </Link>
-      <Link to="/mobileTransfer">
+      </div>
+      <div onClick={() => goToFunction('/mobileTransfer', 115100)}>
         <ul>
           <li>功能：手機號碼收款設定</li>
           <li>route: /mobileTransfer</li>
           <li>funcID: 115100</li>
         </ul>
-      </Link>
-      <Link to="/changeUserName">
+      </div>
+      <div onClick={() => goToFunction('/changeUserName', 116100)}>
         <ul>
           <li>功能：使用者代號變更</li>
           <li>route: /changeUserName</li>
           <li>funcID: 116100</li>
         </ul>
-      </Link>
-      <Link to="/pwdModify">
+      </div>
+      <div onClick={() => goToFunction('/pwdModify', 117100)}>
         <ul>
           <li>功能：網銀密碼變更</li>
           <li>route: /pwdModify</li>
           <li>funcID: 117100</li>
         </ul>
-      </Link>
+      </div>
       {/* <Accordion title="驗收單元功能清單 (1)" space="bottom">
         <Link to="/notice">E02 訊息通知</Link>
         <Link to="/noticeSetting">E02-1 訊息通知設定</Link>
