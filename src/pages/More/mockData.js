@@ -207,6 +207,7 @@ const mockData = {
           id: 'helper1',
           label: '個人化設定',
           route: '/profile',
+          funcID: 111100,
         },
         {
           id: 'helper2',

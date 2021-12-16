@@ -7,10 +7,10 @@ const device = {
 };
 
 const funcStack = {
-  push: (code, params, keepData, hideMenu) => {
+  push: (func, params, keepData, hideMenu) => {
     const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
     stack.push({
-      code, params, keepData, hideMenu,
+      func, params, keepData, hideMenu,
     });
     localStorage.setItem('funcStack', JSON.stringify(stack));
   },
@@ -26,10 +26,10 @@ const funcStack = {
 };
 
 // 網頁通知APP跳轉指定功能
-function goToFunc(funcID, funcParams = '', keepData = '') {
+function goToFunc({ route, funcID }, funcParams = '', keepData = '') {
   console.log(navigator.userAgent);
   // console.debug('name:' + funcName + ', data:' + jsonParams);
-  funcID = funcID.replace('/', '');
+  route = route.replace('/', '');
   const data = {
     funcID,
     funcParams,
@@ -43,11 +43,11 @@ function goToFunc(funcID, funcParams = '', keepData = '') {
     window.jstoapp.startFunc(param);
   } else {
     console.log(`[Start Function(${funcID})]`);
-    funcStack.push(funcID, funcParams, keepData);
+    funcStack.push({ route, funcID }, funcParams, keepData);
     // console.log(history);
     // const history = useHistory();
     // history.push(`/${funcID}`);
-    window.location.pathname = `/${funcID}`;
+    window.location.pathname = `/${route}`;
   }
 }
 
@@ -62,8 +62,8 @@ function closeFunc() {
     const stack = funcStack.pop();
     const funcItem = stack[stack.length - 1];
     if (funcItem) {
-      console.log(`[Close Function and Back to(${funcItem.code})]`);
-      window.location.pathname = `/${funcItem.code}`;
+      console.log(`[Close Function and Back to(${funcItem.func.route})]`);
+      window.location.pathname = `/${funcItem.func.route}`;
       // const history = useHistory();
       // history.push(funcItem.funcName);
     } else {
@@ -98,7 +98,7 @@ function getEnCrydata() {
 
 function goHome() {
   funcStack.clear();
-  goToFunc('');
+  goToFunc({ route: '/', funcID: 'home' });
 }
 
 // 網頁通知APP跳轉至首頁

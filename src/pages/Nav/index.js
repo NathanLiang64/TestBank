@@ -1,19 +1,76 @@
+/* eslint-disable arrow-body-style */
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import Accordion from 'components/Accordion';
-import { setIsShake } from 'pages/ShakeShake/stores/actions';
+// import { useDispatch } from 'react-redux';
+// import Accordion from 'components/Accordion';
+// import { setIsShake } from 'pages/ShakeShake/stores/actions';
 import NavWrapper from './nav.style';
 
 const Nav = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  const nativeActionWasTriggered = () => {
-    dispatch(setIsShake(true));
-  };
+  // const nativeActionWasTriggered = () => {
+  //   dispatch(setIsShake(true));
+  // };
 
   return (
     <NavWrapper>
-      <Accordion title="驗收單元功能清單 (1)" space="bottom">
+      <Link to="/more">
+        <ul>
+          <li>功能：更多</li>
+          <li>route: /more</li>
+          <li>funcID: 104100</li>
+        </ul>
+      </Link>
+      <Link to="/profile">
+        <ul>
+          <li>功能：個人化設定</li>
+          <li>route: /profile</li>
+          <li>funcID: 111100</li>
+        </ul>
+      </Link>
+      <Link to="/quickLoginSetting">
+        <ul>
+          <li>功能：快速登入設定</li>
+          <li>route: /quickLoginSetting</li>
+          <li>funcID: 112100</li>
+        </ul>
+      </Link>
+      <Link to="/smsOTPactivate">
+        <ul>
+          <li>功能：簡訊OTP設定</li>
+          <li>route: /smsOTPactivate</li>
+          <li>funcID: 113100</li>
+        </ul>
+      </Link>
+      <Link to="/basicInformation">
+        <ul>
+          <li>功能：基本資料變更</li>
+          <li>route: /basicInformation</li>
+          <li>funcID: 114100</li>
+        </ul>
+      </Link>
+      <Link to="/mobileTransfer">
+        <ul>
+          <li>功能：手機號碼收款設定</li>
+          <li>route: /mobileTransfer</li>
+          <li>funcID: 115100</li>
+        </ul>
+      </Link>
+      <Link to="/changeUserName">
+        <ul>
+          <li>功能：使用者代號變更</li>
+          <li>route: /changeUserName</li>
+          <li>funcID: 116100</li>
+        </ul>
+      </Link>
+      <Link to="/pwdModify">
+        <ul>
+          <li>功能：網銀密碼變更</li>
+          <li>route: /pwdModify</li>
+          <li>funcID: 117100</li>
+        </ul>
+      </Link>
+      {/* <Accordion title="驗收單元功能清單 (1)" space="bottom">
         <Link to="/notice">E02 訊息通知</Link>
         <Link to="/noticeSetting">E02-1 訊息通知設定</Link>
         <Link to="/fingerPrintLockSetting">E05-03 生物辨識登入設定</Link>
@@ -47,7 +104,7 @@ const Nav = () => {
         <Link to="/open">開通APP</Link>
         <Link to="/deduct">自動扣繳申請/查詢</Link>
         <Link to="/transfer">轉帳</Link>
-      </Accordion>
+      </Accordion> */}
     </NavWrapper>
   );
 };

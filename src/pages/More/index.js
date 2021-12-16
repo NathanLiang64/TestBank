@@ -23,7 +23,7 @@ const More = () => {
   const [sectionPosition, setSectionPosition] = useState([]);
   const [tabId, setTabId] = useState('account');
 
-  const toPage = (route) => {
+  const toPage = ({ route, funcID }) => {
     console.log('啟動 Function:', route);
     // if (route === 'QRCodeTransfer') {
     //   dispatch(setIsShake(true));
@@ -35,7 +35,7 @@ const More = () => {
     //   }));
     //   return;
     // }
-    goToFunc(route);
+    goToFunc({ route, funcID });
   };
 
   const handleChangeTabs = (event, value) => {
@@ -55,7 +55,7 @@ const More = () => {
         key={block.id}
         icon={iconGenerator(block.id)}
         label={block.label}
-        onClick={() => toPage(block.route)}
+        onClick={() => toPage(block)}
         noBorder
       />
     ))

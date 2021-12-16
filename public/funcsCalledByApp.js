@@ -12,11 +12,9 @@ function setEnCrydata(event) {
 function setPagedata(event) {
   const { funcParams, keepData } = event;
   if (funcParams) {
-    alert(`page data from app: ${funcParams}`);
     localStorage.setItem('funcParams', funcParams);
   }
   if (keepData) {
-    alert(`page data from app: ${keepData}`);
     localStorage.setItem('keepData', keepData);
   }
 };
