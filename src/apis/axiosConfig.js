@@ -91,7 +91,7 @@ userAxios().interceptors.response.use(
   // eslint-disable-next-line consistent-return
   (error) => {
     const { response } = error;
-
+    showWebLog('Response Error', response);
     if (response) {
       // 成功發出 request 且收到 response，但有 error
       errorHandle(response.status, response.data.error);
