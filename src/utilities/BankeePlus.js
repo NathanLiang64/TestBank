@@ -139,6 +139,19 @@ function setAuthdata(jwtToken) {
   }
 }
 
+// 傳 log 給 App
+function showWebLog(type = 'none', log) {
+  const data = { type, log };
+  if (device.ios()) {
+    const msg = JSON.stringify({ name: 'showWebLog', data: JSON.stringify(data) });
+    window.webkit?.messageHandlers.jstoapp.postMessage(msg);
+  }
+  if (device.android()) {
+    const androidParam = JSON.stringify(data);
+    window.jstoapp?.showWebLog(androidParam);
+  }
+}
+
 export {
   goToFunc,
   closeFunc,
@@ -148,4 +161,5 @@ export {
   goAppHome,
   getPagedata,
   setAuthdata,
+  showWebLog,
 };

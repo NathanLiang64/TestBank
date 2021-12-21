@@ -43,7 +43,6 @@ const PwdModify = () => {
 
   // 設定結果彈窗
   const setResultDialog = (response) => {
-    alert(JSON.stringify(response));
     const result = 'custName' in response;
     let errorCode = '';
     let errorDesc = '';

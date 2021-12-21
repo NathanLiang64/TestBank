@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import JWTUtil from '../utilities/JWTUtil';
+import { showWebLog } from '../utilities/BankeePlus';
 // Request failed with status code
 const errorHandle = (status, message) => {
   switch (status) {
@@ -51,7 +52,7 @@ userAxios().interceptors.request.use(
       config.headers.authorization = `Bearer ${jwt}`;
       const aeskey = localStorage.getItem('aesKey');
       const ivkey = localStorage.getItem('iv');
-      console.log('request: ', config.data);
+      showWebLog('Request', config.data);
       // 加密
       const encrypt = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(config.data));
       config.data = encrypt;
@@ -77,7 +78,7 @@ userAxios().interceptors.response.use(
       if (response.config.url === '/auth/login') {
         return response.data;
       }
-      console.log('response: ', response.data);
+      showWebLog('Response', response.data);
       if (response.data.code === '0000') {
         const decrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
         response = decrypt;
