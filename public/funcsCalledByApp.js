@@ -8,7 +8,6 @@ const device = {
 function switchLoadingInTag(param) {
   const data = { open: param ? 'Y' : 'N' };
   if (device.ios()) {
-    alert('call ios onLoading');
     const msg = JSON.stringify({ name: 'onLoading', data: JSON.stringify(data) });
     window.webkit?.messageHandlers.jstoapp.postMessage(msg);
   }
@@ -26,8 +25,6 @@ function setEnCrydata(event) {
   const iv = window.atob(Enivec).substr(7);
   localStorage.setItem('iv', iv);
   localStorage.setItem('aesKey', aesKey);
-  alert('iv: ' + iv);
-  alert('aesKey: ' + aesKey);
   switchLoadingInTag(false)
 };
 

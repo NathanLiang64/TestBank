@@ -98,7 +98,8 @@ userAxios().interceptors.response.use(
   (error) => {
     switchLoading(false);
     const { response } = error;
-    showWebLog('Response Error', response);
+    alert(JSON.stringify(error));
+    showWebLog('Response Error', error);
     if (response) {
       // 成功發出 request 且收到 response，但有 error
       errorHandle(response.status, response.data.error);
