@@ -1,12 +1,16 @@
 /* eslint-disable arrow-body-style */
 // import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router';
 import { goToFunc } from 'utilities/BankeePlus';
 // import { useDispatch } from 'react-redux';
 // import Accordion from 'components/Accordion';
 // import { setIsShake } from 'pages/ShakeShake/stores/actions';
+import { FEIBButton } from 'components/elements';
+
 import NavWrapper from './nav.style';
 
 const Nav = () => {
+  const history = useHistory();
   // const dispatch = useDispatch();
 
   // const nativeActionWasTriggered = () => {
@@ -17,8 +21,31 @@ const Nav = () => {
     goToFunc({ route, funcID });
   };
 
+  // 登出
+  const logOut = () => {
+    const url = 'https://appbankee-t.feib.com.tw/ords/db1/netdb/logoutUser';
+    const data = {
+      id_number: localStorage.getItem('custId'),
+    };
+    const callLogout = () => fetch(url, {
+      body: JSON.stringify(data),
+      headers: {
+        'content-type': 'application/json',
+      },
+      method: 'POST',
+    }).then((response) => response.json());
+
+    callLogout()
+      .then(({ code }) => {
+        if (code === '00') {
+          history.push('/login');
+        }
+      });
+  };
+
   return (
     <NavWrapper>
+      <FEIBButton onClick={logOut}>登出</FEIBButton>
       <div onClick={() => goToFunction('/more', 104100)}>
         <ul>
           <li>功能：更多</li>

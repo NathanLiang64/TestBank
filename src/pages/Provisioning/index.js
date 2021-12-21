@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
 import { useGetEnCrydata } from 'hooks';
-import { closeFunc, switchLoading } from 'utilities/BankeePlus';
+import { closeFunc } from 'utilities/BankeePlus';
 // import { provisioningApi } from 'apis';
 
 /* Elements */
@@ -50,10 +50,8 @@ const Provisioning = () => {
   const triggerProvide = async () => {
     // const openhbResponse = await provisioningApi.openhb({});
     // 模擬呼叫開通 API 且成功
-    switchLoading(true);
     setTimeout(() => {
       const openhbResponse = {};
-      switchLoading(false);
       setResultDialog(openhbResponse);
     }, 3000);
   };

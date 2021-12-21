@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import JWTUtil from '../utilities/JWTUtil';
-import { showWebLog } from '../utilities/BankeePlus';
+import { showWebLog, switchLoading } from '../utilities/BankeePlus';
 // Request failed with status code
 const errorHandle = (status, message) => {
   switch (status) {
@@ -44,6 +44,7 @@ const userAxios = () => {
 
 userAxios().interceptors.request.use(
   (config) => {
+    switchLoading(true);
     const jwt = localStorage.getItem('jwtToken') || Cookies.get('jwtToken');
     if (jwt) {
       config.data.custId = localStorage.getItem('custId');
@@ -64,16 +65,21 @@ userAxios().interceptors.request.use(
 
 userAxios().interceptors.response.use(
   async (response) => {
-    const jwt = localStorage.getItem('jwtToken') || Cookies.get('jwtToken');
-    if (jwt) {
+    switchLoading(false);
+    const jwtLocal = localStorage.getItem('jwtToken');
+    const jwtCookie = Cookies.get('jwtToken');
+    if (jwtLocal || jwtCookie) {
       const aeskey = localStorage.getItem('aesKey');
       const ivkey = localStorage.getItem('iv');
       // 解密
       // const encrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
       const { jwtToken } = response.data;
       if (jwtToken) {
-        localStorage.setItem('jwtToken', jwtToken);
-        Cookies.set('jwtToken', jwtToken);
+        if (jwtLocal) {
+          localStorage.setItem('jwtToken', jwtToken);
+        } else {
+          Cookies.set('jwtToken', jwtToken);
+        }
       }
       if (response.config.url === '/auth/login') {
         return response.data;
@@ -90,6 +96,7 @@ userAxios().interceptors.response.use(
   },
   // eslint-disable-next-line consistent-return
   (error) => {
+    switchLoading(false);
     const { response } = error;
     showWebLog('Response Error', response);
     if (response) {
@@ -123,6 +130,7 @@ const userRequest = (method, url, data = {}) => {
     case 'delete':
       return userAxios().delete(url, { params: data });
     default:
+      // eslint-disable-next-line no-console
       console.log(`未知的 method: ${method}`);
       return false;
   }

@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router';
-import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// import { goToFunc } from 'utilities/BankeePlus';
-// import { pwdModifyApi } from 'apis';
+import { goAppHome } from 'utilities/BankeePlus';
+import { pwdModifyApi } from 'apis';
 
 /* Elements */
 import { FEIBButton } from 'components/elements';
@@ -17,7 +15,7 @@ import ConfirmButtons from 'components/ConfirmButtons';
 import InfoArea from 'components/InfoArea';
 import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
 import { confirmPasswordValidation, passwordValidation } from 'utilities/validation';
-// import e2ee from 'utilities/E2ee';
+import e2ee from 'utilities/E2ee';
 
 /* Styles */
 // import theme from 'themes/theme';
@@ -25,7 +23,6 @@ import RegularPwdModifyWrapper from './regularPwdModify.style';
 
 const RegularPwdModify = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
   /**
    *- 資料驗證
    */
@@ -35,31 +32,24 @@ const RegularPwdModify = () => {
     newPasswordCheck: confirmPasswordValidation('newPassword'),
   });
   const {
-    // handleSubmit, control, formState: { errors }, getValues,
-    handleSubmit, control, formState: { errors },
+    handleSubmit, control, formState: { errors }, getValues,
+    // handleSubmit, control, formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
   const [showNotiDialog, setShowNotiDialog] = useState(true);
   const [showWarningDialog, setShowWarningDialog] = useState(false);
 
-  // 關閉結果彈窗
-  const handleCloseResultDialog = () => {
-    // goToFunc('home');
-    history.push('/regularBasicInformation');
-  };
-
   // 設定結果彈窗
   const setResultDialog = (response) => {
     const result = 'custName' in response;
-    let closeCallBack;
     let errorCode = '';
     let errorDesc = '';
     if (result) {
-      closeCallBack = handleCloseResultDialog;
+      dispatch(setCloseCallBack(() => goAppHome()));
     } else {
       [errorCode, errorDesc] = response.message.split(' ');
-      closeCallBack = () => {};
+      dispatch(setCloseCallBack(() => {}));
     }
     dispatch(setResultContent({
       isSuccess: result,
@@ -74,23 +64,21 @@ const RegularPwdModify = () => {
       errorCode,
       errorDesc,
     }));
-    dispatch(setCloseCallBack(closeCallBack));
     dispatch(setIsOpen(true));
   };
 
   // 點擊儲存變更，呼叫變更網銀密碼API
   const onSubmit = async () => {
-    // const param = {
-    //   password: await e2ee(getValues('password')),
-    //   newPassword: await e2ee(getValues('newPassword')),
-    //   newPasswordCheck: await e2ee(getValues('newPasswordCheck')),
-    // };
-    // const changePwdResponse = await pwdModifyApi.changePwd(param);
-    // console.log('變更網銀密碼回傳', changePwdResponse);
-    // const data = 'custName' in changePwdResponse;
-    // 假設變更成功
-    const data = { custName: '' };
-    setResultDialog(data);
+    const param = {
+      password: await e2ee(getValues('password')),
+      newPassword: await e2ee(getValues('newPassword')),
+      newPasswordCheck: await e2ee(getValues('newPasswordCheck')),
+    };
+    const changePwdResponse = await pwdModifyApi.changePwd(param);
+    setResultDialog(changePwdResponse);
+    // // 假設變更成功
+    // const data = { custName: '' };
+    // setResultDialog(data);
   };
 
   // 提醒久未變更密碼彈窗
@@ -135,17 +123,13 @@ const RegularPwdModify = () => {
         <ConfirmButtons
           mainButtonOnClick={() => {
             setShowWarningDialog(false);
-            // goToFunc('home');
-            history.push('/regularBasicInformation');
+            goAppHome();
           }}
           subButtonOnClick={() => setShowWarningDialog(false)}
         />
       )}
     />
   );
-
-  useCheckLocation();
-  usePageInfo('/api/regularPwdModify');
 
   return (
     <>

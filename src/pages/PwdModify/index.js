@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { pwdModifyApi } from 'apis';
-import { closeFunc, switchLoading } from 'utilities/BankeePlus';
+import { closeFunc } from 'utilities/BankeePlus';
 
 /* Elements */
 import Header from 'components/Header';
@@ -69,12 +69,10 @@ const PwdModify = () => {
     }));
     dispatch(setCloseCallBack(closeCallBack));
     dispatch(setIsOpen(true));
-    switchLoading(false);
   };
 
   // 呼叫變更網銀密碼 API
   const handlePasswordModify = async () => {
-    switchLoading(true);
     const param = {
       password: e2ee(getValues('password')),
       newPassword: e2ee(getValues('newPassword')),
