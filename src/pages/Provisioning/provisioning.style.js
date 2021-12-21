@@ -11,9 +11,6 @@ const ProvisioningWrapper = styled(Layout)`
     line-height: 2.4rem;
     font-weight: 400;
   }
-  .dealContent {
-    text-align: justify;
-  }
 `;
 
 export default ProvisioningWrapper;

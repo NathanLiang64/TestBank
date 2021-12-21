@@ -86,10 +86,9 @@ const Login = () => {
   const onSubmit = async (data) => {
     const { result, message } = await getJwtKey(data);
     if (result === 'success') {
-      console.log('login success');
       try {
         alert('登入成功');
-        history.push('/tutorials');
+        history.push('/');
         // goToFunc('home');
       } catch (error) {
         history.push('/');

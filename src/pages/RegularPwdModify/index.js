@@ -10,6 +10,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 /* Elements */
 import { FEIBButton } from 'components/elements';
+import Header from 'components/Header';
 import PasswordInput from 'components/PasswordInput';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
@@ -147,41 +148,44 @@ const RegularPwdModify = () => {
   usePageInfo('/api/regularPwdModify');
 
   return (
-    <RegularPwdModifyWrapper>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <PasswordInput
-            label="您的網銀密碼"
-            id="password"
-            name="password"
-            control={control}
-            errorMessage={errors.password?.message}
-          />
-          <PasswordInput
-            label="新的網銀密碼"
-            id="newPassword"
-            name="newPassword"
-            control={control}
-            errorMessage={errors.newPassword?.message}
-          />
-          <PasswordInput
-            label="請確認新的網銀密碼"
-            id="newPasswordCheck"
-            name="newPasswordCheck"
-            control={control}
-            errorMessage={errors.newPasswordCheck?.message}
-          />
-        </div>
-        <div>
-          <InfoArea space="bottom">
-            *每六個月請進行密碼以及個資更新以確保帳號安全
-          </InfoArea>
-          <FEIBButton type="submit">儲存變更</FEIBButton>
-        </div>
-      </form>
-      { renderNotiDialog() }
-      { renderWarningDialog() }
-    </RegularPwdModifyWrapper>
+    <>
+      <Header title="定期網銀密碼變更" hideBack hideHome />
+      <RegularPwdModifyWrapper>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div>
+            <PasswordInput
+              label="您的網銀密碼"
+              id="password"
+              name="password"
+              control={control}
+              errorMessage={errors.password?.message}
+            />
+            <PasswordInput
+              label="新的網銀密碼"
+              id="newPassword"
+              name="newPassword"
+              control={control}
+              errorMessage={errors.newPassword?.message}
+            />
+            <PasswordInput
+              label="請確認新的網銀密碼"
+              id="newPasswordCheck"
+              name="newPasswordCheck"
+              control={control}
+              errorMessage={errors.newPasswordCheck?.message}
+            />
+          </div>
+          <div>
+            <InfoArea space="bottom">
+              *定期進行密碼以及個資更新以確保帳號安全
+            </InfoArea>
+            <FEIBButton type="submit">儲存變更</FEIBButton>
+          </div>
+        </form>
+        { renderNotiDialog() }
+        { renderWarningDialog() }
+      </RegularPwdModifyWrapper>
+    </>
   );
 };
 
