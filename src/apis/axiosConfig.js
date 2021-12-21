@@ -64,7 +64,7 @@ userAxios().interceptors.request.use(
 
 userAxios().interceptors.response.use(
   async (response) => {
-    const jwt = localStorage.getItem('jwtToken');
+    const jwt = localStorage.getItem('jwtToken') || Cookies.get('jwtToken');
     if (jwt) {
       const aeskey = localStorage.getItem('aesKey');
       const ivkey = localStorage.getItem('iv');
