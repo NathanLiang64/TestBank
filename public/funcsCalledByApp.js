@@ -1,6 +1,6 @@
 /* eslint-disable */
 // 開關 loading
-function switchLoading(param) {
+function switchLoadingInTag(param) {
   const data = { open: param ? 'Y' : 'N' };
   if (device.ios()) {
     const msg = JSON.stringify({ name: 'onLoading', data: JSON.stringify(data) });
@@ -19,7 +19,9 @@ function setEnCrydata(event) {
   const iv = window.atob(Enivec).substr(7);
   localStorage.setItem('iv', iv);
   localStorage.setItem('aesKey', aesKey);
-  setTimeout(() => switchLoading(false), 2000)
+  alert('iv: ' + iv);
+  alert('aesKey: ' + aesKey);
+  switchLoadingInTag(false)
 };
 
 // 取得來自 APP 的功能資料
