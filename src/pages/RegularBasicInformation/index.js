@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
-import { useCheckLocation, usePageInfo } from 'hooks';
+import { useGetEnCrydata } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // import { regularBasicInformationApi } from 'apis';
-import { goToFunc } from 'utilities/BankeePlus';
+import { goAppHome } from 'utilities/BankeePlus';
 
 /* Elements */
 import {
@@ -25,7 +24,6 @@ import RegularBasicInformationWrapper from './regularBasicInformation.style';
 
 const RegularBasicInformation = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
   /**
    *- 資料驗證
    */
@@ -68,7 +66,7 @@ const RegularBasicInformation = () => {
   // 取得職業別清單
   const getJobsCode = async () => {
     // const jobsCodeResponse = await regularBasicInformationApi.getJobsCode({});
-    // eslint-disable-next-line no-console
+    // // eslint-disable-next-line no-console
     // console.log(jobsCodeResponse);
     // if (!jobsCodeResponse.message) {
     //   const {
@@ -84,47 +82,44 @@ const RegularBasicInformation = () => {
     // } else {
     //   alert(jobsCodeResponse.message);
     // }
-    const mockGradeList = [
-      { code: '01', name: '法人董事' },
-      { code: '02', name: '法人董事之董事長' },
-      { code: '03', name: '董事長' },
-    ];
-    const mockIncomeList = [
-      { code: '01', name: '30萬以下' },
-      { code: '02', name: '30-50萬' },
-      { code: '03', name: '50-80萬' },
-    ];
-    const mockJobList = [
-      { code: '0301', name: '家管' },
-      { code: '0302', name: '學生' },
-      { code: '0303', name: '無、待業' },
-    ];
-    setGradeOptions(mockGradeList);
-    setIncomeOptions(mockIncomeList);
-    setJobOptions(mockJobList);
-    const grade = mockGradeList[0].code;
-    const income = mockIncomeList[0].code;
-    const jobcd = mockJobList[0].code;
-    setRegularBasicData({ grade, income, jobcd });
-    setValue('industry', jobcd);
-    setValue('title', grade);
-    setValue('income', income);
-  };
 
-  // 關閉結果彈窗
-  const handleCloseResultDialog = () => {
-    try {
-      goToFunc('home');
-    } catch (error) {
-      history.push('/');
-    }
+    // 模擬取得 job code
+    setTimeout(() => {
+      const mockGradeList = [
+        { code: '01', name: '法人董事' },
+        { code: '02', name: '法人董事之董事長' },
+        { code: '03', name: '董事長' },
+      ];
+      const mockIncomeList = [
+        { code: '01', name: '30萬以下' },
+        { code: '02', name: '30-50萬' },
+        { code: '03', name: '50-80萬' },
+      ];
+      const mockJobList = [
+        { code: '0301', name: '家管' },
+        { code: '0302', name: '學生' },
+        { code: '0303', name: '無、待業' },
+      ];
+      setGradeOptions(mockGradeList);
+      setIncomeOptions(mockIncomeList);
+      setJobOptions(mockJobList);
+      const grade = mockGradeList[0].code;
+      const income = mockIncomeList[0].code;
+      const jobcd = mockJobList[0].code;
+      setRegularBasicData({ grade, income, jobcd });
+      setValue('industry', jobcd);
+      setValue('title', grade);
+      setValue('income', income);
+    }, 2000);
   };
 
   // 設定結果彈窗
   const setResultDialog = (result) => {
-    let closeCallBack;
-    if (result) closeCallBack = handleCloseResultDialog;
-    else closeCallBack = () => {};
+    if (result) {
+      dispatch(setCloseCallBack(() => goAppHome()));
+    } else {
+      dispatch(setCloseCallBack(() => {}));
+    }
     dispatch(setResultContent({
       isSuccess: result,
       successTitle: '設定成功',
@@ -133,7 +128,6 @@ const RegularBasicInformation = () => {
       errorCode: 'xxxx',
       errorDesc: '基本資料變更失敗',
     }));
-    dispatch(setCloseCallBack(closeCallBack));
     dispatch(setIsOpen(true));
   };
 
@@ -166,8 +160,7 @@ const RegularBasicInformation = () => {
     <FEIBOption key={item.code} value={item.code}>{item.name}</FEIBOption>
   ));
 
-  useCheckLocation();
-  usePageInfo('/api/regularBasicInformation');
+  useGetEnCrydata();
 
   useEffect(() => {
     getJobsCode();

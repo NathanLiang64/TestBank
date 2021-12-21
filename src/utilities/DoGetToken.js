@@ -41,7 +41,7 @@ const getKey = async (data) => {
   }
   return {
     result: 'fail',
-    message: loginResponse.data.message,
+    message: loginResponse.message,
   };
 };
 

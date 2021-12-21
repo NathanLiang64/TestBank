@@ -4,10 +4,10 @@ import { Redirect } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
+import Cookies from 'js-cookie';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { setShowSpinner } from 'components/Spinner/stores/actions';
-import { useCheckLocation, usePageInfo } from 'hooks';
 // import { userLogin } from 'apis/loginApi';
 import {
   FEIBInput, FEIBErrorMessage, FEIBLinkButton, FEIBCheckbox, FEIBCheckboxLabel, FEIBIconButton,
@@ -55,6 +55,7 @@ const Login = () => {
   const history = useHistory();
 
   useEffect(async () => {
+    Cookies.remove('jwtToken');
     const { result, message } = await HandShake();
     if (result === 'success') {
       console.log(result);
@@ -97,9 +98,6 @@ const Login = () => {
       alert(message);
     }
   };
-
-  useCheckLocation();
-  usePageInfo('/api/login');
 
   return (
     userInfo

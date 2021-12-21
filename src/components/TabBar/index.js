@@ -81,7 +81,7 @@ const TabBar = () => {
   };
 
   const logOut = () => {
-    const url = ' https://appbankee-t.feib.com.tw/ords/db1/netdb/logoutUser';
+    const url = 'https://appbankee-t.feib.com.tw/ords/db1/netdb/logoutUser';
     const data = {
       id_number: localStorage.getItem('custId'),
     };
