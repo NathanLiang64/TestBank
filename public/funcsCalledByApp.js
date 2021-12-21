@@ -1,12 +1,19 @@
 /* eslint-disable */
+const device = {
+  ios: () => /iPhone|iPad|iPod/i.test(navigator.userAgent),
+  android: () => /Android/i.test(navigator.userAgent),
+};
+
 // 開關 loading
 function switchLoadingInTag(param) {
   const data = { open: param ? 'Y' : 'N' };
   if (device.ios()) {
+    alert('call ios onLoading');
     const msg = JSON.stringify({ name: 'onLoading', data: JSON.stringify(data) });
     window.webkit?.messageHandlers.jstoapp.postMessage(msg);
   }
   if (device.android()) {
+    alert('call ios onLoading');
     const androidParam = JSON.stringify(data);
     window.jstoapp.onLoading(androidParam);
   }
