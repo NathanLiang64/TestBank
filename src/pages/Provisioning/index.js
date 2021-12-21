@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
 import { useGetEnCrydata } from 'hooks';
-import { closeFunc } from 'utilities/BankeePlus';
-// import { provisioningApi } from 'apis';
+import { goAppHome } from 'utilities/BankeePlus';
+import { provisioningApi } from 'apis';
 
 /* Elements */
 import { FEIBButton } from 'components/elements';
@@ -14,27 +14,18 @@ import { setIsOpen, setCloseCallBack, setResultContent } from '../ResultDialog/s
 
 const Provisioning = () => {
   const dispatch = useDispatch();
-  // const history = useHistory();
-
-  const toHomePage = () => {
-    // goToFunc('goPreview');
-    closeFunc();
-    // history.push('/regularPwdModify');
-  };
 
   // 設定結果彈窗
   const setResultDialog = (response) => {
     const result = Object.keys(response).length === 0;
     let errorCode = '';
     let errorDesc = '';
-    let closeCallBack;
     if (result) {
-      closeCallBack = () => toHomePage();
+      dispatch(setCloseCallBack(() => goAppHome()));
     } else {
       [errorCode, errorDesc] = response.message.split(' ');
-      closeCallBack = () => {};
+      dispatch(setCloseCallBack(() => {}));
     }
-    dispatch(setCloseCallBack(closeCallBack));
     dispatch(setResultContent({
       isSuccess: result,
       successTitle: '設定成功',
@@ -48,16 +39,15 @@ const Provisioning = () => {
 
   // 呼叫開通 api
   const triggerProvide = async () => {
-    // const openhbResponse = await provisioningApi.openhb({});
-    // 模擬呼叫開通 API 且成功
-    setTimeout(() => {
-      const openhbResponse = {};
-      setResultDialog(openhbResponse);
-    }, 3000);
+    const openhbResponse = await provisioningApi.openhb({});
+    setResultDialog(openhbResponse);
+    // // 模擬呼叫開通 API 且成功
+    // setTimeout(() => {
+    //   const openhbResponse = {};
+    //   setResultDialog(openhbResponse);
+    // }, 3000);
   };
 
-  // useCheckLocation();
-  // usePageInfo('/api/provisioning');
   useGetEnCrydata();
 
   return (
