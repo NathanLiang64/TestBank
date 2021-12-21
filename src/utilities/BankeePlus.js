@@ -126,6 +126,19 @@ function getPagedata() {
   }
 }
 
+// 網頁通知APP更新Authorization
+function setAuthdata(jwtToken) {
+  const data = { auth: jwtToken };
+  if (device.ios()) {
+    const msg = JSON.stringify({ name: 'setAuthdata', data: JSON.stringify(data) });
+    window.webkit?.messageHandlers.jstoapp.postMessage(msg);
+  }
+  if (device.android()) {
+    const androidParam = JSON.stringify(data);
+    window.jstoapp?.setAuthdata(androidParam);
+  }
+}
+
 export {
   goToFunc,
   closeFunc,
@@ -134,4 +147,5 @@ export {
   getEnCrydata,
   goAppHome,
   getPagedata,
+  setAuthdata,
 };
