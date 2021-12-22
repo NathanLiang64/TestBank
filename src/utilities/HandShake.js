@@ -1,4 +1,5 @@
 import userAxios from 'apis/axiosConfig';
+import Cookies from 'js-cookie';
 import CipherUtil from './CipherUtil';
 import JWEUtil from './JWEUtil';
 
@@ -30,7 +31,7 @@ const handshake = async () => {
     jwtToken = deCode.result.jwtToken;
     localStorage.setItem('privateKey', privateKey);
     localStorage.setItem('publicKey', publicKey);
-    localStorage.setItem('jwtToken', jwtToken);
+    Cookies.set('jwtToken', jwtToken);
     localStorage.setItem('iv', ivToken);
     localStorage.setItem('aesKey', aesTokenKey);
     return {

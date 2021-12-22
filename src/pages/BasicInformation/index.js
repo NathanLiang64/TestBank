@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
@@ -87,16 +88,16 @@ const BasicInformation = () => {
   const getPersonalData = async () => {
     const basicInformationResponse = await basicInformationApi.getBasicInformation({});
     console.log('取得基本資料回傳', basicInformationResponse);
-    const data = {
-      ...basicInformationResponse,
-    };
-    reset(data);
-    console.log(data);
-    const { county, city } = data;
-    getCountyList({
-      county,
-      city,
-    });
+    // const data = {
+    //   ...basicInformationResponse,
+    // };
+    // reset(data);
+    // console.log(data);
+    // const { county, city } = data;
+    // getCountyList({
+    //   county,
+    //   city,
+    // });
   };
 
   // 關閉結果彈窗

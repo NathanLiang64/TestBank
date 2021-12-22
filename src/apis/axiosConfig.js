@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import JWTUtil from '../utilities/JWTUtil';
@@ -45,17 +46,22 @@ const userAxios = () => {
 userAxios().interceptors.request.use(
   (config) => {
     switchLoading(true);
-    const jwt = localStorage.getItem('jwtToken') || Cookies.get('jwtToken');
+    const jwt = Cookies.get('jwtToken');
+    alert(`jwtToken: ${jwt}}`);
     if (jwt) {
-      config.data.custId = localStorage.getItem('custId');
-      config.data.isgToken = '0c281a7a1-1a35-0347-6d71-a4da7d0a41d113092';
-      config.data.bindingUdid = '48c3d54d-bab3-471a-9778-2c98a157c3f80199263632160019';
+      // config.data.custId = localStorage.getItem('custId');
+      // config.data.isgToken = '0c281a7a1-1a35-0347-6d71-a4da7d0a41d113092';
+      // config.data.bindingUdid = '48c3d54d-bab3-471a-9778-2c98a157c3f80199263632160019';
       config.headers.authorization = `Bearer ${jwt}`;
       const aeskey = localStorage.getItem('aesKey');
       const ivkey = localStorage.getItem('iv');
+      alert(`aeskey: ${aeskey}`);
+      alert(`ivkey: ${ivkey}`);
       showWebLog('Request', config.data);
       // 加密
       const encrypt = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(config.data));
+      alert(`encrypt data: ${encrypt.data}`);
+      alert(`encrypt mac: ${encrypt.mac}`);
       config.data = encrypt;
     }
     return config;
@@ -66,20 +72,15 @@ userAxios().interceptors.request.use(
 userAxios().interceptors.response.use(
   async (response) => {
     switchLoading(false);
-    const jwtLocal = localStorage.getItem('jwtToken');
-    const jwtCookie = Cookies.get('jwtToken');
-    if (jwtLocal || jwtCookie) {
+    const token = Cookies.get('jwtToken');
+    if (token) {
       const aeskey = localStorage.getItem('aesKey');
       const ivkey = localStorage.getItem('iv');
       // 解密
       // const encrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
       const { jwtToken } = response.data;
       if (jwtToken) {
-        if (jwtLocal) {
-          localStorage.setItem('jwtToken', jwtToken);
-        } else {
-          Cookies.set('jwtToken', jwtToken);
-        }
+        Cookies.set('jwtToken', jwtToken);
       }
       if (response.config.url === '/auth/login') {
         return response.data;
@@ -98,8 +99,8 @@ userAxios().interceptors.response.use(
   (error) => {
     switchLoading(false);
     const { response } = error;
-    alert(JSON.stringify(error));
     showWebLog('Response Error', error);
+    alert(JSON.stringify(error));
     if (response) {
       // 成功發出 request 且收到 response，但有 error
       errorHandle(response.status, response.data.error);
