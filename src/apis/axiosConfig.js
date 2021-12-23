@@ -47,22 +47,24 @@ userAxios().interceptors.request.use(
   (config) => {
     switchLoading(true);
     const jwt = Cookies.get('jwtToken');
-    alert(`jwtToken: ${jwt}}`);
     if (jwt) {
-      // config.data.custId = localStorage.getItem('custId');
-      // config.data.isgToken = '0c281a7a1-1a35-0347-6d71-a4da7d0a41d113092';
-      // config.data.bindingUdid = '48c3d54d-bab3-471a-9778-2c98a157c3f80199263632160019';
-      config.headers.authorization = `Bearer ${jwt}`;
       const aeskey = localStorage.getItem('aesKey');
       const ivkey = localStorage.getItem('iv');
-      alert(`aeskey: ${aeskey}`);
-      alert(`ivkey: ${ivkey}`);
-      showWebLog('Request', config.data);
+      showWebLog('jwtToken', jwt);
+      console.log('jwtToken', jwt);
+      showWebLog('aeskey', aeskey);
+      console.log('aeskey', aeskey);
+      showWebLog('ivkey', ivkey);
+      console.log('ivkey', ivkey);
+      config.data.bindingUdid = '48c3d54d-bab3-471a-9778-2c98a157c3f80199263632160019';
+      config.headers.authorization = `Bearer ${jwt}`;
+      showWebLog('beforeEncrypt', config.data);
+      console.log('beforeEncrypt', config.data);
       // 加密
       const encrypt = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(config.data));
-      alert(`encrypt data: ${encrypt.data}`);
-      alert(`encrypt mac: ${encrypt.mac}`);
       config.data = encrypt;
+      showWebLog('afterEncrypt', config.data);
+      console.log('afterEncrypt', config.data);
     }
     return config;
   },
