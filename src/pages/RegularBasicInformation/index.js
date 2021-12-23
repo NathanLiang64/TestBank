@@ -4,7 +4,7 @@ import { useGetEnCrydata } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// import { regularBasicInformationApi } from 'apis';
+import { regularBasicInformationApi } from 'apis';
 import { goAppHome } from 'utilities/BankeePlus';
 
 /* Elements */
@@ -65,52 +65,52 @@ const RegularBasicInformation = () => {
 
   // 取得職業別清單
   const getJobsCode = async () => {
-    // const jobsCodeResponse = await regularBasicInformationApi.getJobsCode({});
-    // // eslint-disable-next-line no-console
-    // console.log(jobsCodeResponse);
-    // if (!jobsCodeResponse.message) {
-    //   const {
-    //     grade, income, jobcd, gradeList, incomeList, jobList,
-    //   } = jobsCodeResponse;
-    //   setGradeOptions(gradeList);
-    //   setIncomeOptions(incomeList);
-    //   setJobOptions(jobList);
-    //   setRegularBasicData({ grade, income, jobcd });
-    //   setValue('industry', jobcd);
-    //   setValue('title', grade);
-    //   setValue('income', income);
-    // } else {
-    //   alert(jobsCodeResponse.message);
-    // }
-
-    // 模擬取得 job code
-    setTimeout(() => {
-      const mockGradeList = [
-        { code: '01', name: '法人董事' },
-        { code: '02', name: '法人董事之董事長' },
-        { code: '03', name: '董事長' },
-      ];
-      const mockIncomeList = [
-        { code: '01', name: '30萬以下' },
-        { code: '02', name: '30-50萬' },
-        { code: '03', name: '50-80萬' },
-      ];
-      const mockJobList = [
-        { code: '0301', name: '家管' },
-        { code: '0302', name: '學生' },
-        { code: '0303', name: '無、待業' },
-      ];
-      setGradeOptions(mockGradeList);
-      setIncomeOptions(mockIncomeList);
-      setJobOptions(mockJobList);
-      const grade = mockGradeList[0].code;
-      const income = mockIncomeList[0].code;
-      const jobcd = mockJobList[0].code;
+    const jobsCodeResponse = await regularBasicInformationApi.getJobsCode({});
+    // eslint-disable-next-line no-console
+    console.log(jobsCodeResponse);
+    if (!jobsCodeResponse.message) {
+      const {
+        grade, income, jobcd, gradeList, incomeList, jobList,
+      } = jobsCodeResponse;
+      setGradeOptions(gradeList);
+      setIncomeOptions(incomeList);
+      setJobOptions(jobList);
       setRegularBasicData({ grade, income, jobcd });
       setValue('industry', jobcd);
       setValue('title', grade);
       setValue('income', income);
-    }, 2000);
+    } else {
+      alert(jobsCodeResponse.message);
+    }
+
+    // // 模擬取得 job code
+    // setTimeout(() => {
+    //   const mockGradeList = [
+    //     { code: '01', name: '法人董事' },
+    //     { code: '02', name: '法人董事之董事長' },
+    //     { code: '03', name: '董事長' },
+    //   ];
+    //   const mockIncomeList = [
+    //     { code: '01', name: '30萬以下' },
+    //     { code: '02', name: '30-50萬' },
+    //     { code: '03', name: '50-80萬' },
+    //   ];
+    //   const mockJobList = [
+    //     { code: '0301', name: '家管' },
+    //     { code: '0302', name: '學生' },
+    //     { code: '0303', name: '無、待業' },
+    //   ];
+    //   setGradeOptions(mockGradeList);
+    //   setIncomeOptions(mockIncomeList);
+    //   setJobOptions(mockJobList);
+    //   const grade = mockGradeList[0].code;
+    //   const income = mockIncomeList[0].code;
+    //   const jobcd = mockJobList[0].code;
+    //   setRegularBasicData({ grade, income, jobcd });
+    //   setValue('industry', jobcd);
+    //   setValue('title', grade);
+    //   setValue('income', income);
+    // }, 2000);
   };
 
   // 設定結果彈窗
