@@ -45,6 +45,7 @@ const userAxios = () => {
 
 userAxios().interceptors.request.use(
   (config) => {
+    console.log(config);
     switchLoading(true);
     const jwt = Cookies.get('jwtToken');
     if (jwt) {
@@ -66,6 +67,7 @@ userAxios().interceptors.request.use(
       showWebLog('afterEncrypt', config.data);
       console.log('afterEncrypt', config.data);
     }
+    showWebLog('RequestData', config.data);
     return config;
   },
   (error) => Promise.reject(error),

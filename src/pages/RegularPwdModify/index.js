@@ -82,6 +82,14 @@ const RegularPwdModify = () => {
     // setResultDialog(data);
   };
 
+  const alertAesKey = () => {
+    alert(localStorage.getItem('aesKey'));
+  };
+
+  const alertIvKey = () => {
+    alert(localStorage.getItem('iv'));
+  };
+
   // 提醒久未變更密碼彈窗
   const renderNotiDialog = () => (
     <Dialog
@@ -162,6 +170,8 @@ const RegularPwdModify = () => {
               errorMessage={errors.newPasswordCheck?.message}
             />
           </div>
+          <FEIBButton type="button" onClick={alertAesKey}>aesKey</FEIBButton>
+          <FEIBButton type="button" onClick={alertIvKey}>ivKey</FEIBButton>
           <div>
             <InfoArea space="bottom">
               *定期進行密碼以及個資更新以確保帳號安全
