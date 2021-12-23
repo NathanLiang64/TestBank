@@ -2,7 +2,7 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import JWTUtil from '../utilities/JWTUtil';
-import { showWebLog, switchLoading } from '../utilities/BankeePlus';
+import { showWebLog, switchLoading, setAuthdata } from '../utilities/BankeePlus';
 // Request failed with status code
 const errorHandle = (status, message) => {
   switch (status) {
@@ -45,7 +45,6 @@ const userAxios = () => {
 
 userAxios().interceptors.request.use(
   (config) => {
-    console.log(config);
     switchLoading(true);
     const jwt = Cookies.get('jwtToken');
     if (jwt) {
@@ -62,15 +61,16 @@ userAxios().interceptors.request.use(
       showWebLog('beforeEncrypt', config.data);
       console.log('beforeEncrypt', config.data);
       // 加密
-      const encrypt = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(config.data));
-      config.data = encrypt;
-      showWebLog('afterEncrypt', config.data);
-      console.log('afterEncrypt', config.data);
+      config.data = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(config.data));
     }
     showWebLog('RequestData', config.data);
     return config;
   },
-  (error) => Promise.reject(error),
+  (error) => {
+    console.log('Request Error', error);
+    showWebLog('RequestError', error);
+    return Promise.reject(error);
+  },
 );
 
 userAxios().interceptors.response.use(
@@ -85,6 +85,7 @@ userAxios().interceptors.response.use(
       const { jwtToken } = response.data;
       if (jwtToken) {
         Cookies.set('jwtToken', jwtToken);
+        setAuthdata(jwtToken);
       }
       if (response.config.url === '/auth/login') {
         return response.data;
@@ -93,6 +94,8 @@ userAxios().interceptors.response.use(
       if (response.data.code === '0000') {
         const decrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
         response = decrypt;
+      } else if (response.data.code === 'WEBCTL1001') {
+        response = { rootCode: 'WEBCTL1001', message: '非預期錯誤' };
       } else {
         response = response.data;
       }
@@ -104,7 +107,6 @@ userAxios().interceptors.response.use(
     switchLoading(false);
     const { response } = error;
     showWebLog('Response Error', error);
-    alert(JSON.stringify(error));
     if (response) {
       // 成功發出 request 且收到 response，但有 error
       errorHandle(response.status, response.data.error);
