@@ -79,7 +79,7 @@ const RegularBasicInformation = () => {
       setValue('title', grade);
       setValue('income', income);
     } else {
-      dispatch(setCloseCallBack(() => {}));
+      dispatch(setCloseCallBack(() => goAppHome()));
       dispatch(setResultContent({
         isSuccess: false,
         successTitle: '',
