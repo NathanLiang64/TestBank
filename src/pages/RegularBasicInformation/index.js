@@ -24,6 +24,7 @@ import RegularBasicInformationWrapper from './regularBasicInformation.style';
 
 const RegularBasicInformation = () => {
   const dispatch = useDispatch();
+  dispatch(setIsOpen(false));
   /**
    *- 資料驗證
    */
@@ -39,8 +40,8 @@ const RegularBasicInformation = () => {
       .required('尚未選擇個人年收入'),
   });
   const {
-    // handleSubmit, control, formState: { errors }, getValues, reset, setValue,
-    handleSubmit, control, formState: { errors }, reset, setValue,
+    handleSubmit, control, formState: { errors }, getValues, reset, setValue,
+    // handleSubmit, control, formState: { errors }, reset, setValue,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -66,8 +67,6 @@ const RegularBasicInformation = () => {
   // 取得職業別清單
   const getJobsCode = async () => {
     const jobsCodeResponse = await regularBasicInformationApi.getJobsCode({});
-    // eslint-disable-next-line no-console
-    console.log(jobsCodeResponse);
     if (!jobsCodeResponse.message) {
       const {
         grade, income, jobcd, gradeList, incomeList, jobList,
@@ -80,44 +79,30 @@ const RegularBasicInformation = () => {
       setValue('title', grade);
       setValue('income', income);
     } else {
-      alert(jobsCodeResponse.message);
+      dispatch(setCloseCallBack(() => {}));
+      dispatch(setResultContent({
+        isSuccess: false,
+        successTitle: '',
+        successDesc: '',
+        errorTitle: '發生錯誤',
+        errorCode: jobsCodeResponse.code,
+        errorDesc: jobsCodeResponse.message,
+      }));
+      dispatch(setIsOpen(true));
     }
-
-    // // 模擬取得 job code
-    // setTimeout(() => {
-    //   const mockGradeList = [
-    //     { code: '01', name: '法人董事' },
-    //     { code: '02', name: '法人董事之董事長' },
-    //     { code: '03', name: '董事長' },
-    //   ];
-    //   const mockIncomeList = [
-    //     { code: '01', name: '30萬以下' },
-    //     { code: '02', name: '30-50萬' },
-    //     { code: '03', name: '50-80萬' },
-    //   ];
-    //   const mockJobList = [
-    //     { code: '0301', name: '家管' },
-    //     { code: '0302', name: '學生' },
-    //     { code: '0303', name: '無、待業' },
-    //   ];
-    //   setGradeOptions(mockGradeList);
-    //   setIncomeOptions(mockIncomeList);
-    //   setJobOptions(mockJobList);
-    //   const grade = mockGradeList[0].code;
-    //   const income = mockIncomeList[0].code;
-    //   const jobcd = mockJobList[0].code;
-    //   setRegularBasicData({ grade, income, jobcd });
-    //   setValue('industry', jobcd);
-    //   setValue('title', grade);
-    //   setValue('income', income);
-    // }, 2000);
   };
 
   // 設定結果彈窗
-  const setResultDialog = (result) => {
+  const setResultDialog = (response) => {
+    const { grade, inCome, jobCd } = response;
+    const result = grade && inCome && jobCd;
+    let errorCode = '';
+    let errorDesc = '';
     if (result) {
       dispatch(setCloseCallBack(() => goAppHome()));
     } else {
+      errorCode = response.code;
+      errorDesc = response.message;
       dispatch(setCloseCallBack(() => {}));
     }
     dispatch(setResultContent({
@@ -125,29 +110,22 @@ const RegularBasicInformation = () => {
       successTitle: '設定成功',
       successDesc: '基本資料變更成功',
       errorTitle: '設定失敗',
-      errorCode: 'xxxx',
-      errorDesc: '基本資料變更失敗',
+      errorCode,
+      errorDesc,
     }));
     dispatch(setIsOpen(true));
   };
 
   // 更新基本資料
   const modifyPersonalData = async () => {
-    // const data = getValues();
-    // const modifyData = {
-    //   jobCd: data.industry,
-    //   grade: data.title,
-    //   inCome: data.income,
-    // };
-    // const modifyResponse = await regularBasicInformationApi.modifyRegularBasicInformation(modifyData);
-    // const { grade, inCome, jobCd } = modifyResponse;
-    // if (grade && inCome && jobCd) {
-    //   toResultPage(true);
-    // } else {
-    //   toResultPage(false);
-    // }
-    const result = true;
-    setResultDialog(result);
+    const data = getValues();
+    const modifyData = {
+      jobCd: data.industry,
+      grade: data.title,
+      inCome: data.income,
+    };
+    const modifyResponse = await regularBasicInformationApi.modifyRegularBasicInformation(modifyData);
+    setResultDialog(modifyResponse);
   };
 
   // 點擊確認按鈕

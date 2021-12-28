@@ -14,6 +14,7 @@ import { setIsOpen, setCloseCallBack, setResultContent } from '../ResultDialog/s
 
 const Provisioning = () => {
   const dispatch = useDispatch();
+  dispatch(setIsOpen(false));
 
   // 設定結果彈窗
   const setResultDialog = (response) => {
@@ -23,7 +24,7 @@ const Provisioning = () => {
     if (result) {
       dispatch(setCloseCallBack(() => goAppHome()));
     } else {
-      errorCode = response.rootCode;
+      errorCode = response.code;
       errorDesc = response.message;
       dispatch(setCloseCallBack(() => {}));
     }

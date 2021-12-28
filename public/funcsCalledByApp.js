@@ -12,7 +12,6 @@ function switchLoadingInTag(param) {
     window.webkit?.messageHandlers.jstoapp.postMessage(msg);
   }
   if (device.android()) {
-    alert('call ios onLoading');
     const androidParam = JSON.stringify(data);
     window.jstoapp.onLoading(androidParam);
   }
