@@ -24,6 +24,7 @@ import RegularPwdModifyWrapper from './regularPwdModify.style';
 
 const RegularPwdModify = () => {
   const dispatch = useDispatch();
+  dispatch(setIsOpen(false));
   /**
    *- 資料驗證
    */
@@ -49,7 +50,7 @@ const RegularPwdModify = () => {
     if (result) {
       dispatch(setCloseCallBack(() => goAppHome()));
     } else {
-      errorCode = response.rootCode;
+      errorCode = response.code;
       errorDesc = response.message;
       dispatch(setCloseCallBack(() => {}));
     }

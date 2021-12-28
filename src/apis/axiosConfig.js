@@ -94,10 +94,8 @@ userAxios().interceptors.response.use(
       if (response.data.code === '0000') {
         const decrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
         response = decrypt;
-      } else if (response.data.code === 'WEBCTL1001') {
-        response = { rootCode: 'WEBCTL1001', message: '非預期錯誤' };
       } else {
-        response = response.data;
+        response = { code: response.data.code, message: response.data.message };
       }
     }
     return response;
