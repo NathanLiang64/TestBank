@@ -98,7 +98,7 @@ function getEnCrydata() {
 
 function goHome() {
   funcStack.clear();
-  goToFunc({ route: `${process.env.REACT_APP_ROUTER_BASE}/`, funcID: 'home' });
+  goToFunc({ route: '/', funcID: 'home' });
 }
 
 // 網頁通知APP跳轉至首頁
