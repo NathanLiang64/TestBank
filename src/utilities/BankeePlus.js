@@ -47,7 +47,7 @@ function goToFunc({ route, funcID }, funcParams = '', keepData = '') {
     // console.log(history);
     // const history = useHistory();
     // history.push(`/${funcID}`);
-    window.location.pathname = `/${route}`;
+    window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${route}`;
   }
 }
 
@@ -63,11 +63,11 @@ function closeFunc() {
     const funcItem = stack[stack.length - 1];
     if (funcItem) {
       console.log(`[Close Function and Back to(${funcItem.func.route})]`);
-      window.location.pathname = `/${funcItem.func.route}`;
+      window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcItem.func.route}`;
       // const history = useHistory();
       // history.push(funcItem.funcName);
     } else {
-      window.location.pathname = '/';
+      window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/`;
     }
   }
 }
@@ -98,7 +98,7 @@ function getEnCrydata() {
 
 function goHome() {
   funcStack.clear();
-  goToFunc({ route: '/', funcID: 'home' });
+  goToFunc({ route: `${process.env.REACT_APP_ROUTER_BASE}/`, funcID: 'home' });
 }
 
 // 網頁通知APP跳轉至首頁

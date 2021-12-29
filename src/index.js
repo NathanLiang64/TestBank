@@ -9,7 +9,7 @@ import App from './App';
 
 ReactDOM.render(
   <ThemeProvider theme={theme}>
-    <BrowserRouter basename={process.env.PUBLIC_URL || ''}>
+    <BrowserRouter basename={process.env.REACT_APP_ROUTER_BASE || ''}>
       <App />
       <GlobalStyles />
     </BrowserRouter>
