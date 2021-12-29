@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useGetEnCrydata } from 'hooks';
 import * as yup from 'yup';
@@ -24,7 +24,6 @@ import RegularPwdModifyWrapper from './regularPwdModify.style';
 
 const RegularPwdModify = () => {
   const dispatch = useDispatch();
-  dispatch(setIsOpen(false));
   /**
    *- 資料驗證
    */
@@ -143,6 +142,8 @@ const RegularPwdModify = () => {
   );
 
   useGetEnCrydata();
+
+  useEffect(() => dispatch(setIsOpen(false)), []);
 
   return (
     <>

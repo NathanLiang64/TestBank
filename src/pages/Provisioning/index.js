@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useGetEnCrydata } from 'hooks';
 import { goAppHome } from 'utilities/BankeePlus';
@@ -14,7 +15,6 @@ import { setIsOpen, setCloseCallBack, setResultContent } from '../ResultDialog/s
 
 const Provisioning = () => {
   const dispatch = useDispatch();
-  dispatch(setIsOpen(false));
 
   // 設定結果彈窗
   const setResultDialog = (response) => {
@@ -52,6 +52,8 @@ const Provisioning = () => {
   };
 
   useGetEnCrydata();
+
+  useEffect(() => dispatch(setIsOpen(false)), []);
 
   return (
     <>
