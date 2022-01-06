@@ -36,23 +36,17 @@ const PwdModify = () => {
     resolver: yupResolver(schema),
   });
 
-  // 關閉結果彈窗
-  const handleCloseResultDialog = () => {
-    closeFunc();
-  };
-
   // 設定結果彈窗
   const setResultDialog = (response) => {
     const result = 'custName' in response;
     let errorCode = '';
     let errorDesc = '';
-    let closeCallBack;
     if (result) {
-      closeCallBack = handleCloseResultDialog;
+      dispatch(setCloseCallBack(() => closeFunc()));
     } else {
-      // [errorCode, errorDesc] = response.message.split(' ');
-      [errorCode, errorDesc] = ['test error', '變更失敗'];
-      closeCallBack = () => {};
+      errorCode = response.code;
+      errorDesc = response.message;
+      dispatch(setCloseCallBack(() => {}));
     }
     dispatch(setResultContent({
       isSuccess: result,
@@ -67,7 +61,6 @@ const PwdModify = () => {
       errorCode,
       errorDesc,
     }));
-    dispatch(setCloseCallBack(closeCallBack));
     dispatch(setIsOpen(true));
   };
 
@@ -79,7 +72,6 @@ const PwdModify = () => {
       newPasswordCheck: e2ee(getValues('newPasswordCheck')),
     };
     const changePwdResponse = await pwdModifyApi.changePwd(param);
-    console.log('變更網銀密碼回傳', changePwdResponse);
     setResultDialog(changePwdResponse);
   };
 

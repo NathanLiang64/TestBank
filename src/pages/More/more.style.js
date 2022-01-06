@@ -16,7 +16,7 @@ const MoreWrapper = styled(Layout)`
 
   .mainContent {
     padding: 0 1.6rem;
-    height: 100%;
+    height: calc(100% - 3rem - 2.4rem - 2.4rem);
     overflow-y: auto;
 
     section {

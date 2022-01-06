@@ -4,8 +4,15 @@ import { ArrowBackIcon, HomeIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
 import HeaderWrapper from './header.style';
 
-const Header = ({ title, hideBack, hideHome }) => {
+const Header = ({
+  title, hideBack, hideHome, goBack,
+}) => {
   const handleHomeIconClick = (className) => {
+    if (goBack) {
+      goBack();
+      return;
+    }
+
     if (className === 'goHome') {
       goAppHome();
     }

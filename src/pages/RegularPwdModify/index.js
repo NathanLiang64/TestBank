@@ -78,18 +78,7 @@ const RegularPwdModify = () => {
     };
     const changePwdResponse = await pwdModifyApi.changePwd(param);
     setResultDialog(changePwdResponse);
-    // // 假設變更成功
-    // const data = { custName: '' };
-    // setResultDialog(data);
   };
-
-  // const alertAesKey = () => {
-  //   alert(localStorage.getItem('aesKey'));
-  // };
-
-  // const alertIvKey = () => {
-  //   alert(localStorage.getItem('iv'));
-  // };
 
   // 提醒久未變更密碼彈窗
   const renderNotiDialog = () => (

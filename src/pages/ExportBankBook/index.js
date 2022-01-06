@@ -21,7 +21,7 @@ import { RadioGroup } from '@material-ui/core';
 import DateRangePicker from 'components/DateRangePicker';
 import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
-import { exportBankBookApi, basicInformationApi } from 'apis';
+import { exportBankBookApi, basicInformationApi, bankAccountsApi } from 'apis';
 import { stringDateCodeFormatter } from 'utilities/Generator';
 import AccordionContent from './accordionContent';
 
@@ -56,7 +56,7 @@ const ExportBankBook = () => {
 
   // 取得帳號清單
   const getAccounts = async () => {
-    const response = await exportBankBookApi.getAccountsList({});
+    const response = await bankAccountsApi.getAccountsList({});
     const accounts = response.map((item) => item.acctNo);
     setAccountsList(accounts);
     setValue('account', accounts[0]);
