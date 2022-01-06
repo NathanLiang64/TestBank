@@ -24,7 +24,6 @@ import RegularBasicInformationWrapper from './regularBasicInformation.style';
 
 const RegularBasicInformation = () => {
   const dispatch = useDispatch();
-  dispatch(setIsOpen(false));
   /**
    *- 資料驗證
    */
@@ -141,6 +140,7 @@ const RegularBasicInformation = () => {
   useGetEnCrydata();
 
   useEffect(() => {
+    dispatch(setIsOpen(false));
     getJobsCode();
   }, []);
 

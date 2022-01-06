@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { useCheckLocation, usePageInfo } from 'hooks';
+import { useGetEnCrydata } from 'hooks';
+import { mpTransferApi } from 'apis';
 
 /* Elements */
+import Header from 'components/Header';
 import AddNewItem from 'components/AddNewItem';
 import SettingItem from 'components/SettingItem';
 import BottomDrawer from 'components/BottomDrawer';
@@ -42,6 +44,11 @@ const MobileTransfer = () => {
   // 新增手機號碼收款
   const addMobileTransferSetting = () => {
     history.push('/mobileTransfer1');
+  };
+
+  const getUserActNo = async () => {
+    const response = await mpTransferApi.getUserActNo({ tokenStatus: 1 });
+    console.log(response);
   };
 
   // 編輯手機號碼收款
@@ -92,15 +99,21 @@ const MobileTransfer = () => {
     />
   );
 
-  useCheckLocation();
-  usePageInfo('/api/mobileTransfer');
+  useGetEnCrydata();
+
+  useEffect(() => {
+    getUserActNo();
+  }, []);
 
   return (
-    <MobileTransferWrapper className="settingListContainer">
-      <AddNewItem onClick={addMobileTransferSetting} addLabel="新增手機號碼收款設定" />
-      { renderMobileTransferItems() }
-      { renderModifyDrawer() }
-    </MobileTransferWrapper>
+    <>
+      <Header title="手機號碼收款設定" />
+      <MobileTransferWrapper className="settingListContainer">
+        <AddNewItem onClick={addMobileTransferSetting} addLabel="新增手機號碼收款設定" />
+        { renderMobileTransferItems() }
+        { renderModifyDrawer() }
+      </MobileTransferWrapper>
+    </>
   );
 };
 
