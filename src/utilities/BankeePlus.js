@@ -27,7 +27,6 @@ const funcStack = {
 
 // 網頁通知APP跳轉指定功能
 function goToFunc({ route, funcID }, funcParams = '', keepData = '') {
-  console.log(navigator.userAgent);
   // console.debug('name:' + funcName + ', data:' + jsonParams);
   route = route.replace('/', '');
   const data = {
@@ -142,6 +141,7 @@ function setAuthdata(jwtToken) {
 // 傳 log 給 App
 function showWebLog(type = 'none', log) {
   const data = { type, log };
+  console.log(data);
   if (device.ios()) {
     const msg = JSON.stringify({ name: 'showWebLog', data: JSON.stringify(data) });
     window.webkit?.messageHandlers.jstoapp.postMessage(msg);

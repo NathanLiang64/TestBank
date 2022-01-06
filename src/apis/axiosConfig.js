@@ -51,15 +51,11 @@ userAxios().interceptors.request.use(
       const aeskey = localStorage.getItem('aesKey');
       const ivkey = localStorage.getItem('iv');
       showWebLog('jwtToken', jwt);
-      console.log('jwtToken', jwt);
       showWebLog('aeskey', aeskey);
-      console.log('aeskey', aeskey);
       showWebLog('ivkey', ivkey);
-      console.log('ivkey', ivkey);
       config.data.bindingUdid = '48c3d54d-bab3-471a-9778-2c98a157c3f80199263632160019';
       config.headers.authorization = `Bearer ${jwt}`;
       showWebLog('beforeEncrypt', config.data);
-      console.log('beforeEncrypt', config.data);
       // 加密
       config.data = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(config.data));
     }
@@ -67,7 +63,6 @@ userAxios().interceptors.request.use(
     return config;
   },
   (error) => {
-    console.log('Request Error', error);
     showWebLog('RequestError', error);
     return Promise.reject(error);
   },
@@ -93,9 +88,11 @@ userAxios().interceptors.response.use(
       showWebLog('Response', response.data);
       if (response.data.code === '0000') {
         const decrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
+        showWebLog('decryptData', decrypt);
         response = decrypt;
       } else {
         response = { code: response.data.code, message: response.data.message };
+        showWebLog('errorResponse', response);
       }
     }
     return response;

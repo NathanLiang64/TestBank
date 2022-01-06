@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-// import { useHistory } from 'react-router';
-import { useGetPagedata } from 'hooks';
+import { useGetEnCrydata } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { goToFunc } from 'utilities/BankeePlus';
+import { profileApi } from 'apis';
 
 /* Elements */
 import {
@@ -12,7 +12,6 @@ import {
 } from 'components/elements';
 import Header from 'components/Header';
 import Dialog from 'components/Dialog';
-// import { profileApi } from 'apis';
 
 /* Styles */
 import { CreateRounded, KeyboardArrowRightRounded } from '@material-ui/icons';
@@ -35,7 +34,7 @@ const Profile = () => {
     resolver: yupResolver(schema),
   });
 
-  const [nickName, setNickName] = useState('Joyce Horng');
+  const [nickName, setNickName] = useState('');
   const [showChangeNickNameDialog, setShowChangeNickNameDialog] = useState(false);
 
   const showEditNickNameDialog = () => {
@@ -45,25 +44,24 @@ const Profile = () => {
   };
 
   const getNickName = async () => {
-    // const response = await profileApi.getNickName({});
-    // setNickName(response.nickName);
+    const response = await profileApi.getNickName({});
+    setNickName(response.nickName);
   };
 
   const onSubmit = async (data) => {
-    // const param = {
-    //   nickName: data.nickName,
-    // };
-    // const response = await profileApi.updateNickName(param);
-    // if (typeof (response) === 'string') {
-    setNickName(data.nickName);
-    //   setShowChangeNickNameDialog(false);
-    // }
+    const param = {
+      nickName: data.nickName,
+    };
+    const response = await profileApi.updateNickName(param);
+    if (typeof (response) === 'string') {
+      setNickName(data.nickName);
+      setShowChangeNickNameDialog(false);
+    }
   };
 
   const toPage = ({ route, funcID }) => {
     if (route) {
-      goToFunc({ route, funcID }, `mock data from webview, to ${funcID}`, 'keep data set by profile function.');
-      // history.push(route);
+      goToFunc({ route, funcID });
     }
   };
 
@@ -106,7 +104,7 @@ const Profile = () => {
     />
   );
 
-  useGetPagedata();
+  useGetEnCrydata();
 
   useEffect(() => {
     getNickName();

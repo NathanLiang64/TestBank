@@ -20,6 +20,8 @@ import * as provisioningApi from './provisioningApi';
 import * as financialDepartmentsApi from './financialDepartmentsApi';
 import * as exportBankBookApi from './exportBankBookApi';
 import * as profileApi from './profileApi';
+import * as mpTransferApi from './mpTransferApi';
+import * as bankAccountsApi from './bankAccountsApi';
 
 export {
   headerApi,
@@ -44,4 +46,6 @@ export {
   financialDepartmentsApi,
   exportBankBookApi,
   profileApi,
+  mpTransferApi,
+  bankAccountsApi,
 };

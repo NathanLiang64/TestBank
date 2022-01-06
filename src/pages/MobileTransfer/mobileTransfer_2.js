@@ -1,9 +1,12 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
-import { useCheckLocation, usePageInfo } from 'hooks';
+import { mpTransferApi } from 'apis';
+import { closeFunc } from 'utilities/BankeePlus';
 
 /* Elements */
+import Header from 'components/Header';
 import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
 import Accordion from 'components/Accordion';
@@ -73,12 +76,12 @@ const MobileTransfer2 = ({ location }) => {
     const successDesc = getSuccessDesc();
     let errorCode = '';
     let errorDesc = '';
-    let closeCallBack;
     if (result) {
-      closeCallBack = handleCloseResultDialog;
+      dispatch(setCloseCallBack(() => closeFunc()));
     } else {
-      [errorCode, errorDesc] = response.message.split(' ');
-      closeCallBack = () => {};
+      errorCode = response.code;
+      errorDesc = response.message;
+      dispatch(setCloseCallBack(() => {}));
     }
     dispatch(setResultContent({
       isSuccess: result,
@@ -88,18 +91,24 @@ const MobileTransfer2 = ({ location }) => {
       errorCode,
       errorDesc,
     }));
-    dispatch(setCloseCallBack(closeCallBack));
     dispatch(setIsOpen(true));
   };
 
   const modifyMobileTransferData = async (event) => {
     event.preventDefault();
-    const modifyMobileTransferResponse = { mobilePhone: '' };
-    setResultDialog(modifyMobileTransferResponse);
+    const { account, isDefault, mobile } = confirmData;
+    const param = {
+      actNo: account,
+      bankCode: '805',
+      mobilePhone: mobile,
+      defaultType: isDefault ? 'Y' : 'N',
+    };
+    const response = await mpTransferApi.createMobileNo(param);
+    setResultDialog(response);
   };
 
-  useCheckLocation();
-  usePageInfo('/api/mobileTransfer2');
+  // 回上一頁
+  const goBack = () => history.goBack();
 
   useEffect(() => {
     const { type, isModify, data } = location.state;
@@ -109,34 +118,37 @@ const MobileTransfer2 = ({ location }) => {
   }, []);
 
   return (
-    <MobileTransferWrapper>
-      <form>
-        <div className={`confirmDataContainer lighterBlueLine ${isModifyConfirmPage && 'modifyConfirmPage'}`}>
-          <div>
-            <InformationList title="交易種類" content={dealType} />
-            <InformationList title="姓名" content={confirmData.userName} />
-            <InformationList title="手機號碼" content={confirmData.mobile} />
-            <InformationList title="收款帳號" content={confirmData.account} />
-            <InformationList title="預設收款帳戶" content={confirmData.isDefault ? '是' : '否'} />
+    <>
+      <Header title="資料確認" goBack={goBack} />
+      <MobileTransferWrapper>
+        <form>
+          <div className={`confirmDataContainer lighterBlueLine ${isModifyConfirmPage && 'modifyConfirmPage'}`}>
+            <div>
+              <InformationList title="交易種類" content={dealType} />
+              <InformationList title="姓名" content={confirmData.userName} />
+              <InformationList title="手機號碼" content={confirmData.mobile} />
+              <InformationList title="收款帳號" content={confirmData.account} />
+              <InformationList title="預設收款帳戶" content={confirmData.isDefault ? '是' : '否'} />
+            </div>
+            {
+              isModifyConfirmPage && (
+                <Accordion>
+                  <ol>
+                    <li>一個手機號碼僅能設定一組存款帳號，若重複設定，將取消舊設定，改採新設定。</li>
+                    <li>若欲設定帳號已被其他手機號碼設定，請先取消後再進行設定。</li>
+                  </ol>
+                </Accordion>
+              )
+            }
           </div>
-          {
-            isModifyConfirmPage && (
-              <Accordion>
-                <ol>
-                  <li>一個手機號碼僅能設定一組存款帳號，若重複設定，將取消舊設定，改採新設定。</li>
-                  <li>若欲設定帳號已被其他手機號碼設定，請先取消後再進行設定。</li>
-                </ol>
-              </Accordion>
-            )
-          }
-        </div>
-        <FEIBButton
-          onClick={modifyMobileTransferData}
-        >
-          確認
-        </FEIBButton>
-      </form>
-    </MobileTransferWrapper>
+          <FEIBButton
+            onClick={modifyMobileTransferData}
+          >
+            確認
+          </FEIBButton>
+        </form>
+      </MobileTransferWrapper>
+    </>
   );
 };
 
