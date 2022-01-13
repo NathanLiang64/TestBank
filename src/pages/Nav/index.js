@@ -46,60 +46,60 @@ const Nav = () => {
   return (
     <NavWrapper>
       <FEIBButton onClick={logOut}>登出</FEIBButton>
-      <div onClick={() => goToFunction('/more', 104100)}>
+      <div onClick={() => goToFunction('/more', 'B00600')}>
         <ul>
           <li>功能：更多</li>
           <li>route: /more</li>
-          <li>funcID: 104100</li>
+          <li>funcID: B00600</li>
         </ul>
       </div>
-      <div onClick={() => goToFunction('/profile', 111100)}>
+      <div onClick={() => goToFunction('/profile', 'T00100')}>
         <ul>
           <li>功能：個人化設定</li>
           <li>route: /profile</li>
-          <li>funcID: 111100</li>
+          <li>funcID: T00100</li>
         </ul>
       </div>
-      <div onClick={() => goToFunction('/quickLoginSetting', 112100)}>
+      <div onClick={() => goToFunction('/quickLoginSetting', 'T00200')}>
         <ul>
           <li>功能：快速登入設定</li>
           <li>route: /quickLoginSetting</li>
-          <li>funcID: 112100</li>
+          <li>funcID: T00200</li>
         </ul>
       </div>
-      <div onClick={() => goToFunction('/smsOTPactivate', 113100)}>
+      <div onClick={() => goToFunction('/smsOTPactivate', 'T00400')}>
         <ul>
           <li>功能：簡訊OTP設定</li>
           <li>route: /smsOTPactivate</li>
-          <li>funcID: 113100</li>
+          <li>funcID: T00400</li>
         </ul>
       </div>
-      <div onClick={() => goToFunction('/basicInformation', 114100)}>
+      <div onClick={() => goToFunction('/basicInformation', 'T00700')}>
         <ul>
           <li>功能：基本資料變更</li>
           <li>route: /basicInformation</li>
-          <li>funcID: 114100</li>
+          <li>funcID: T00700</li>
         </ul>
       </div>
-      <div onClick={() => goToFunction('/mobileTransfer', 115100)}>
+      <div onClick={() => goToFunction('/mobileTransfer', 'T00600')}>
         <ul>
           <li>功能：手機號碼收款設定</li>
           <li>route: /mobileTransfer</li>
-          <li>funcID: 115100</li>
+          <li>funcID: T00600</li>
         </ul>
       </div>
-      <div onClick={() => goToFunction('/changeUserName', 116100)}>
+      <div onClick={() => goToFunction('/changeUserName', 'T00800')}>
         <ul>
           <li>功能：使用者代號變更</li>
           <li>route: /changeUserName</li>
-          <li>funcID: 116100</li>
+          <li>funcID: T00800</li>
         </ul>
       </div>
-      <div onClick={() => goToFunction('/pwdModify', 117100)}>
+      <div onClick={() => goToFunction('/pwdModify', 'T00900')}>
         <ul>
           <li>功能：網銀密碼變更</li>
           <li>route: /pwdModify</li>
-          <li>funcID: 117100</li>
+          <li>funcID: T00900</li>
         </ul>
       </div>
       {/* <Accordion title="驗收單元功能清單 (1)" space="bottom">
