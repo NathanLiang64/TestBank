@@ -2,22 +2,22 @@ const settingList = [
   {
     name: '快速登入設定',
     route: '/quickLoginSetting',
-    funcID: '112100',
+    funcID: 'T00200',
   },
   {
     name: '行動裝置綁定',
     route: '',
-    funcID: '0',
+    funcID: 'T00300',
   },
   {
     name: '簡訊 OTP 設定',
     route: '/smsOTPactivate',
-    funcID: '113100',
+    funcID: 'T00400',
   },
   {
     name: '行動守護精靈設定',
     route: '',
-    funcID: '0',
+    funcID: 'T00500',
   },
   {
     name: '行動金融憑證設定',
@@ -27,22 +27,22 @@ const settingList = [
   {
     name: '基本資料變更',
     route: '/basicInformation',
-    funcID: '114100',
+    funcID: 'T00700',
   },
   {
     name: '手機號碼收款設定',
     route: '/mobileTransfer',
-    funcID: '115100',
+    funcID: 'T00600',
   },
   {
     name: '使用者代號變更',
     route: '/changeUserName',
-    funcID: '116100',
+    funcID: 'T00800',
   },
   {
     name: '網銀密碼變更',
     route: '/pwdModify',
-    funcID: '117100',
+    funcID: 'T00900',
   },
 ];
 
