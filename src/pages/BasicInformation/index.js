@@ -122,14 +122,16 @@ const BasicInformation = () => {
 
   // 更新個人資料
   const modifyPersonalData = async () => {
-    const data = getValues();
+    const {
+      county, city, zipCode, addr, email, mobile,
+    } = getValues();
     const param = {
-      county: data.county,
-      district: data.city,
-      zipcode: data.zipCode,
-      address: data.addr,
-      mailAddr: data.email,
-      mobilePhone: data.mobile,
+      county,
+      city,
+      zipCode,
+      addr,
+      email,
+      mobile,
     };
     const modifyDataResponse = await basicInformationApi.modifyBasicInformation(param);
     setResultDialog(modifyDataResponse);
