@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useCheckLocation, usePageInfo } from 'hooks';
+import { useGetEnCrydata } from 'hooks';
 import parse from 'html-react-parser';
 import { qAndAApi } from 'apis';
 
 /* Elements */
+import Header from 'components/Header';
 import {
   FEIBTabContext,
   FEIBTabList,
@@ -79,8 +80,7 @@ const QandA = () => {
     ))
   );
 
-  useCheckLocation();
-  usePageInfo('/api/qAndA');
+  useGetEnCrydata();
 
   useEffect(() => {
     getQATab();
@@ -91,14 +91,17 @@ const QandA = () => {
   }, [tabValue]);
 
   return (
-    <QandAWrapper>
-      <FEIBTabContext value={tabValue}>
-        { renderTabs() }
-        <div style={{ visibility: show ? 'visible' : 'hidden' }}>
-          { renderQAContent() }
-        </div>
-      </FEIBTabContext>
-    </QandAWrapper>
+    <>
+      <Header title="常見問題" />
+      <QandAWrapper>
+        <FEIBTabContext value={tabValue}>
+          { renderTabs() }
+          <div style={{ visibility: show ? 'visible' : 'hidden' }}>
+            { renderQAContent() }
+          </div>
+        </FEIBTabContext>
+      </QandAWrapper>
+    </>
   );
 };
 
