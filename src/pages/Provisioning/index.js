@@ -44,11 +44,6 @@ const Provisioning = () => {
     const openhbResponse = await provisioningApi.openhb({});
     console.log(openhbResponse);
     setResultDialog(openhbResponse);
-    // // 模擬呼叫開通 API 且成功
-    // setTimeout(() => {
-    //   const openhbResponse = {};
-    //   setResultDialog(openhbResponse);
-    // }, 3000);
   };
 
   useGetEnCrydata();

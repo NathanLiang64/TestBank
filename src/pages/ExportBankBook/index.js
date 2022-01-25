@@ -57,9 +57,14 @@ const ExportBankBook = () => {
   // 取得帳號清單
   const getAccounts = async () => {
     const response = await bankAccountsApi.getAccountsList({});
-    const accounts = response.map((item) => item.acctNo);
-    setAccountsList(accounts);
-    setValue('account', accounts[0]);
+    if (response?.length > 0) {
+      const accounts = response.map((item) => item.acctNo);
+      setAccountsList(accounts);
+      setValue('account', accounts[0]);
+    } else {
+      setAccountsList([]);
+      setValue('account', '');
+    }
   };
 
   // 取得 Email

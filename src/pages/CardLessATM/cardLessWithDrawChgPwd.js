@@ -1,13 +1,14 @@
 /* eslint-disable no-unused-vars */
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
-import { useCheckLocation, usePageInfo } from 'hooks';
+import { useGetEnCrydata } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { cardLessATMApi } from 'apis';
 
 /* Elements */
+import Header from 'components/Header';
 import {
   FEIBButton,
 } from 'components/elements';
@@ -130,13 +131,15 @@ const CardLessWithDrawChgPwd = () => {
     </form>
   );
 
-  useCheckLocation();
-  usePageInfo('/api/cardLessWithDrawChgPwd');
+  useGetEnCrydata();
 
   return (
-    <CardLessATMWrapper>
-      {renderForm()}
-    </CardLessATMWrapper>
+    <>
+      <Header title="變更無卡提款密碼" />
+      <CardLessATMWrapper>
+        {renderForm()}
+      </CardLessATMWrapper>
+    </>
   );
 };
 
