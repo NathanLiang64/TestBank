@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { cardLessATMApi } from 'apis';
-// import { closeFunc } from 'utilities/BankeePlus';
+import { closeFunc } from 'utilities/BankeePlus';
 
 /* Elements */
 import {
   FEIBInput, FEIBInputLabel, FEIBButton, FEIBBorderButton, FEIBErrorMessage,
 } from 'components/elements';
+import Header from 'components/Header';
 import Dialog from 'components/Dialog';
 import DebitCard from 'components/DebitCard';
 import Accordion from 'components/Accordion';
@@ -77,6 +77,7 @@ const CardLessATM1 = () => {
     }
   };
 
+  // 發生錯誤開啟 dialog，關閉 dialog 一律通知 app 關閉功能
   const handleDialogOpen = (message) => {
     setErrorMessage(message);
     setOpenDialog(true);
@@ -88,11 +89,7 @@ const CardLessATM1 = () => {
     console.log('取得提款帳號資訊', summaryResponse);
     const { message } = summaryResponse;
     if (!message) {
-      if (localStorage.getItem('custId') === 'A196158521') {
-        setAccountSummary({ ...summaryResponse, balance: 1000 });
-      } else {
-        setAccountSummary({ ...summaryResponse });
-      }
+      setAccountSummary({ ...summaryResponse });
     } else {
       handleDialogOpen(message);
     }
@@ -100,20 +97,7 @@ const CardLessATM1 = () => {
 
   // 無卡提款交易
   const cardlessWithdrawApply = async (param) => {
-    let withdrawResponse;
-    if (localStorage.getItem('custId') === 'A196158521') {
-      withdrawResponse = await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            endDateTime: '2021/08/18 17:44:42',
-            startDateTime: '2021/08/18 17:29:42',
-            seqNo: '2086717499',
-          });
-        }, 2000);
-      });
-    } else {
-      withdrawResponse = await cardLessATMApi.cardLessWithdrawApply(param);
-    }
+    const withdrawResponse = await cardLessATMApi.cardLessWithdrawApply(param);
     const { account, withdrawAmount } = param;
     const {
       seqNo, startDateTime, endDateTime, message,
@@ -225,25 +209,25 @@ const CardLessATM1 = () => {
       onClose={() => setOpenDialog(false)}
       content={<p>{errorMessage}</p>}
       action={(
-        <FEIBButton onClick={() => setOpenDialog(false)}>
+        <FEIBButton onClick={() => closeFunc()}>
           確定
         </FEIBButton>
       )}
     />
   );
 
-  useCheckLocation();
-  usePageInfo('/api/cardLessATM');
-
   useEffect(() => {
     getAccountSummary();
   }, []);
 
   return (
-    <CardLessATMWrapper>
-      {renderWithdrawForm()}
-      {renderDialog()}
-    </CardLessATMWrapper>
+    <>
+      <Header title="無卡提款" />
+      <CardLessATMWrapper>
+        {renderWithdrawForm()}
+        {renderDialog()}
+      </CardLessATMWrapper>
+    </>
   );
 };
 

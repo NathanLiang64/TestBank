@@ -44,6 +44,7 @@ const mockData = {
           id: 'account9',
           label: '匯出存摺',
           route: '/exportBankBook',
+          funcID: 'C00800',
         },
       ],
     },
@@ -104,6 +105,7 @@ const mockData = {
           id: 'transaction4',
           label: '無卡提款',
           route: '/cardLessATM',
+          funcID: '/D00300',
         },
         {
           id: 'transaction5',
@@ -146,6 +148,7 @@ const mockData = {
           id: 'invest3',
           label: '金融百貨',
           route: '/financialDepartments',
+          funcID: 'E00300',
         },
       ],
     },
@@ -233,6 +236,7 @@ const mockData = {
           id: 'helper6',
           label: '預約轉帳查詢',
           route: '/reserveTransferSearch',
+          funcID: 'S00300',
         },
         {
           id: 'helper7',
@@ -248,6 +252,7 @@ const mockData = {
           id: 'helper9',
           label: '常見問題',
           route: '/qAndA',
+          funcID: 'S00600',
         },
         {
           id: 'helper10',

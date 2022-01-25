@@ -1,5 +1,3 @@
-// import { history } from '../index';
-
 /* eslint-disable prefer-template */
 const device = {
   ios: () => /iPhone|iPad|iPod/i.test(navigator.userAgent),
