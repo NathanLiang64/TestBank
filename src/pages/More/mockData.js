@@ -9,31 +9,37 @@ const mockData = {
           id: 'account1',
           label: '帳戶總覽',
           route: '',
+          funcID: 'C00100',
         },
         {
           id: 'account2',
           label: '台幣活存',
           route: '/taiwanDollarAccount',
+          funcID: 'C00300',
         },
         {
           id: 'account3',
           label: '外幣活存',
           route: '/foreignCurrencyAccount',
+          funcID: 'C00400',
         },
         {
           id: 'account4',
           label: '證券交割帳戶',
           route: '/tradingAccount',
+          funcID: 'C00500',
         },
         {
           id: 'account5',
           label: '台幣定存',
           route: '',
+          funcID: '',
         },
         {
           id: 'account6',
           label: '存錢計畫',
           route: '',
+          funcID: 'C00600',
         },
         {
           id: 'account7',
@@ -80,7 +86,6 @@ const mockData = {
         },
       ],
     },
-    // TODO: 轉帳路由記得改回來
     {
       id: '3',
       group: 'transaction',
@@ -89,7 +94,8 @@ const mockData = {
         {
           id: 'transaction1',
           label: '台幣轉帳',
-          route: '/transferStatic',
+          route: '/transfer',
+          funcID: 'D00100',
         },
         {
           id: 'transaction2',
@@ -100,6 +106,7 @@ const mockData = {
           id: 'transaction3',
           label: 'QR CODE轉帳',
           route: 'QRCodeTransfer',
+          funcID: 'D00200',
         },
         {
           id: 'transaction4',
@@ -111,6 +118,7 @@ const mockData = {
           id: 'transaction5',
           label: '變更無卡提款密碼',
           route: '/cardLessWithDrawChgPwd',
+          funcID: '/D00400',
         },
         {
           id: 'transaction6',
@@ -121,11 +129,13 @@ const mockData = {
           id: 'transaction7',
           label: '常用帳號管理',
           route: '',
+          funcID: '/D00500',
         },
         {
           id: 'transaction8',
           label: '約定帳號管理',
           route: '',
+          funcID: '/D00600',
         },
       ],
     },
@@ -138,11 +148,13 @@ const mockData = {
           id: 'invest1',
           label: '換匯',
           route: '/exchange',
+          funcID: '/E00100',
         },
         {
           id: 'invest2',
           label: '匯率',
           route: '',
+          funcID: '/E00200',
         },
         {
           id: 'invest3',
@@ -161,16 +173,19 @@ const mockData = {
           id: 'creditCard1',
           label: '即時消費明細',
           route: '',
+          funcID: 'R00100',
         },
         {
           id: 'creditCard2',
           label: '帳單明細',
           route: '',
+          funcID: 'R00300',
         },
         {
           id: 'creditCard3',
           label: '繳費',
           route: '',
+          funcID: 'R00400',
         },
         {
           id: 'creditCard4',
@@ -181,6 +196,7 @@ const mockData = {
           id: 'creditCard5',
           label: '自動扣繳申請/查詢',
           route: '/automaticBillPayment',
+          funcID: 'R00500',
         },
       ],
     },
@@ -193,11 +209,13 @@ const mockData = {
           id: 'loan1',
           label: '我的貸款',
           route: '',
+          funcID: 'L00100',
         },
         {
           id: 'loan2',
           label: '應繳查詢',
           route: '',
+          funcID: 'L00200',
         },
       ],
     },
@@ -216,11 +234,13 @@ const mockData = {
           id: 'helper2',
           label: '我的最愛設定',
           route: 'favorite',
+          funcID: 'S00200',
         },
         {
           id: 'helper3',
           label: '手機號碼收款設定',
           route: '/mobileTransfer',
+          funcID: 'T00600',
         },
         {
           id: 'helper4',
@@ -242,11 +262,13 @@ const mockData = {
           id: 'helper7',
           label: '訊息通知設定',
           route: '/noticeSetting',
+          funcID: 'S00400',
         },
         {
           id: 'helper8',
           label: '他行存款自動存入設定',
           route: '',
+          funcID: 'S00500',
         },
         {
           id: 'helper9',
@@ -258,11 +280,13 @@ const mockData = {
           id: 'helper10',
           label: '金融卡啟用',
           route: '',
+          funcID: 'S00700',
         },
         {
           id: 'helper11',
           label: '金融卡掛失補發',
           route: '/lossReissue',
+          funcID: 'S00800',
         },
       ],
     },
@@ -275,16 +299,19 @@ const mockData = {
           id: 'social1',
           label: '社群圈',
           route: '/network',
+          funcID: 'M00100',
         },
         {
           id: 'social2',
           label: '好友查詢',
           route: '',
+          funcID: 'M00200',
         },
         {
           id: 'social3',
           label: '社群圈分潤',
           route: '',
+          funcID: 'M00300',
         },
       ],
     },
