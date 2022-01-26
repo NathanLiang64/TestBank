@@ -29,6 +29,24 @@ const errorHandle = (status, message) => {
   }
 };
 
+// action log
+// eslint-disable-next-line no-unused-vars
+const postActionLog = (func, log) => {
+  const data = {
+    function: func, log: JSON.stringify(log),
+  };
+  fetch(
+    'https://appbankee-t.feib.com.tw/ords/db1/uat/sys/addLog',
+    {
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(data),
+      method: 'POST',
+    },
+  );
+};
+
 // Axios instance
 const instance = axios.create({
   baseURL: process.env.REACT_APP_URL,
@@ -56,6 +74,7 @@ userAxios().interceptors.request.use(
       config.data.bindingUdid = '48c3d54d-bab3-471a-9778-2c98a157c3f80199263632160019';
       config.headers.authorization = `Bearer ${jwt}`;
       showWebLog('beforeEncrypt', config.data);
+      postActionLog(`request: ${config.url}`, config.data);
       // 加密
       config.data = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(config.data));
     }
@@ -70,6 +89,7 @@ userAxios().interceptors.request.use(
 
 userAxios().interceptors.response.use(
   async (response) => {
+    const apiUrl = response.config.url;
     switchLoading(false);
     const token = Cookies.get('jwtToken');
     if (token) {
@@ -94,6 +114,7 @@ userAxios().interceptors.response.use(
         response = { code: response.data.code, message: response.data.message };
         showWebLog('errorResponse', response);
       }
+      postActionLog(`response: ${apiUrl}`, response);
     }
     return response;
   },

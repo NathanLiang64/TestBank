@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -30,14 +31,14 @@ import ResultContent from './resultContent';
 import ReserveTransferSearchWrapper from './reserveTransferSearch.style';
 
 // mock 預約轉帳結果資料
-const mockResultData = [
-  {
-    trnsDate: '', // 轉帳日期
-    inActNo: '', // 轉入帳號
-    amount: '', // 轉入金額
-    stderrMsg: '', // 轉帳結果
-  },
-];
+// const mockResultData = [
+//   {
+//     trnsDate: '', // 轉帳日期
+//     inActNo: '', // 轉入帳號
+//     amount: '', // 轉入金額
+//     stderrMsg: '', // 轉帳結果
+//   },
+// ];
 
 const ReserveTransferSearch = () => {
   const history = useHistory();
@@ -59,7 +60,7 @@ const ReserveTransferSearch = () => {
   const [resultDialogData, setResultDialogData] = useState({});
   const [currentReserveData, setCurrentReserveData] = useState({});
   const [reserveDataList, setReserveDataList] = useState([]);
-  const [resultDataList, setResultDataList] = useState(mockResultData);
+  const [resultDataList, setResultDataList] = useState([]);
 
   // 取得帳號清單
   const getTransferOutAccounts = async () => {
@@ -163,8 +164,8 @@ const ReserveTransferSearch = () => {
   };
 
   // 轉出帳號卡片 swiper
-  const renderCard = () => cardsList.map((item) => (
-    <SwiperSlide>
+  const renderCard = () => cardsList.map((item, idx) => (
+    <SwiperSlide key={idx}>
       <DebitCard
         key={item.accountId}
         branch={item.branchId}
@@ -174,7 +175,7 @@ const ReserveTransferSearch = () => {
         dollarSign={item.ccyCd}
         transferTitle="跨轉優惠"
         transferLimit={6}
-        transferRemaining={item.tfrhCount}
+        transferRemaining={item.tfrhCount.length >= 2 ? item.tfrhCount.replace('0', '') : item.tfrhCount}
         color="purple"
       />
     </SwiperSlide>
@@ -189,7 +190,6 @@ const ReserveTransferSearch = () => {
   // 預約轉帳查詢列表
   const renderReserveTapes = () => reserveDataList.map((item, idx) => (
     <InformationTape
-      // eslint-disable-next-line react/no-array-index-key
       key={idx}
       topLeft={`${item.inBank}-${item.inActNo}`}
       topRight={`$ ${item.amount}`}
@@ -208,10 +208,9 @@ const ReserveTransferSearch = () => {
   // 結果查詢列表
   const renderResultTapes = () => resultDataList.map((item, idx) => (
     <InformationTape
-      // eslint-disable-next-line react/no-array-index-key
       key={idx}
       img={item.stderrMsg ? FailImage : SuccessImage}
-      topLeft={`${item.bankCode}-${item.inActNo}`}
+      topLeft={`${item.inActNo}`}
       topRight={`$ ${item.amount}`}
       bottomLeft={`交易日期：${item.trnsDate}`}
       onClick={() => handleOpenResultDialog(item)}
