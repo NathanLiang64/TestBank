@@ -12,7 +12,11 @@ const FinancialDepartments = () => {
 
   const getStores = async () => {
     const storesResponse = await financialDepartmentsApi.getFinanceStore({});
-    setBankList(storesResponse || []);
+    if (Array.isArray(storesResponse)) {
+      setBankList(storesResponse);
+    } else {
+      setBankList([]);
+    }
   };
 
   const renderCards = () => bankList.map((item) => (
