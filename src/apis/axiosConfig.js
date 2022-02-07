@@ -92,6 +92,7 @@ userAxios().interceptors.response.use(
     const apiUrl = response.config.url;
     switchLoading(false);
     const token = Cookies.get('jwtToken');
+    postActionLog(`response: ${apiUrl}`, '成功取得資料(status: 200)');
     if (token) {
       const aeskey = localStorage.getItem('aesKey');
       const ivkey = localStorage.getItem('iv');
@@ -115,6 +116,8 @@ userAxios().interceptors.response.use(
         showWebLog('errorResponse', response);
       }
       postActionLog(`response: ${apiUrl}`, response);
+    } else {
+      postActionLog(`response: ${apiUrl}`, '無jwt token');
     }
     return response;
   },
