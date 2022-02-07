@@ -99,7 +99,18 @@ const BasicInformation = () => {
 
   // 設定結果彈窗
   const setResultDialog = (response) => {
-    const result = 'mobilePhone' in response;
+    // addr
+    // city
+    // county
+    // email
+    // mobile
+    // zipCode
+    const result = 'addr' in response
+      && 'city' in response
+      && 'county' in response
+      && 'email' in response
+      && 'mobile' in response
+      && 'zipCode' in response;
     let errorCode = '';
     let errorDesc = '';
     if (result) {
