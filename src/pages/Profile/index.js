@@ -35,6 +35,7 @@ const Profile = () => {
   });
 
   const [nickName, setNickName] = useState('');
+  const [uuid, setUuid] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   const [showChangeNickNameDialog, setShowChangeNickNameDialog] = useState(false);
 
@@ -49,6 +50,9 @@ const Profile = () => {
     formData.append('file', file);
     const response = await profileApi.uploadAvatar(formData);
     console.log(response);
+    if (response === 'OK') {
+      setAvatarUrl(`https://bankeesit.feib.com.tw/img/pf_${uuid}_b.jpg?timestamp=${Date.now()}`);
+    }
   };
 
   const showEditNickNameDialog = () => {
@@ -60,7 +64,8 @@ const Profile = () => {
   const getNickName = async () => {
     const response = await profileApi.getNickName({});
     setNickName(response.nickName);
-    setAvatarUrl(`https://bankeesit.feib.com.tw/img/pf_${response.uuid}_b.jpg`);
+    setUuid(response.uuid);
+    setAvatarUrl(`https://bankeesit.feib.com.tw/img/pf_${response.uuid}_b.jpg?timestamp=${Date.now()}`);
   };
 
   const onSubmit = async (data) => {
