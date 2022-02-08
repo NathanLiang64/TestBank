@@ -1,4 +1,3 @@
-/* eslint-disable no-alert */
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import JWTUtil from '../utilities/JWTUtil';
@@ -32,8 +31,9 @@ const errorHandle = (status, message) => {
 // action log
 // eslint-disable-next-line no-unused-vars
 const postActionLog = (func, log) => {
+  const jwt = Cookies.get('jwtToken');
   const data = {
-    function: func, log: JSON.stringify(log),
+    function: func, log: JSON.stringify(log), jwtToken: jwt,
   };
   fetch(
     'https://appbankee-t.feib.com.tw/ords/db1/uat/sys/addLog',
@@ -71,12 +71,18 @@ userAxios().interceptors.request.use(
       showWebLog('jwtToken', jwt);
       showWebLog('aeskey', aeskey);
       showWebLog('ivkey', ivkey);
-      config.data.bindingUdid = '48c3d54d-bab3-471a-9778-2c98a157c3f80199263632160019';
       config.headers.authorization = `Bearer ${jwt}`;
-      showWebLog('beforeEncrypt', config.data);
-      postActionLog(`request: ${config.url}`, config.data);
-      // 加密
-      config.data = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(config.data));
+      // 判斷是否是上傳圖片
+      if (config.url.includes('uploadImagePF')) {
+        const jwtRq = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify({}));
+        config.data.append('jwtRq', JSON.stringify(jwtRq));
+      } else {
+        config.data.bindingUdid = '48c3d54d-bab3-471a-9778-2c98a157c3f80199263632160019';
+        showWebLog('beforeEncrypt', config.data);
+        postActionLog(`request: ${config.url}`, config.data);
+        // 加密
+        config.data = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(config.data));
+      }
     }
     showWebLog('RequestData', config.data);
     return config;

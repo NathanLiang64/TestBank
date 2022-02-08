@@ -8,6 +8,22 @@ const ProfileWrapper = styled(Layout)`
     margin: 0 auto 1.2rem;
     position: relative;
 
+    img {
+      border-radius: 50%;
+    }
+
+    label {
+      width: 100%;
+      height: 100%;
+      display: block;
+      position: absolute;
+      top: 0;
+    }
+
+    #avatar-input {
+      display: none;
+    }
+
     .penIconContainer {
       position: absolute;
       right: 0;
