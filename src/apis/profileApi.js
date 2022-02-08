@@ -17,3 +17,20 @@ export const updateNickName = async (param) => {
     .catch((err) => err);
   return response;
 };
+
+// 上傳 avatar
+export const uploadAvatar = async (param) => {
+  const response = await userAxios
+    .post(
+      '/api/setting/member/uploadImagePF',
+      param,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    )
+    .then((data) => data)
+    .catch((err) => err);
+  return response;
+};

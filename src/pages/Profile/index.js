@@ -35,7 +35,21 @@ const Profile = () => {
   });
 
   const [nickName, setNickName] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
   const [showChangeNickNameDialog, setShowChangeNickNameDialog] = useState(false);
+
+  // 上傳大頭貼
+  const uploadAvatarImg = async (e) => {
+    const file = e.target.files[0];
+    if (!file.type.includes('image')) {
+      alert('無檔案或上傳檔案格式錯誤');
+      return;
+    }
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await profileApi.uploadAvatar(formData);
+    console.log(response);
+  };
 
   const showEditNickNameDialog = () => {
     reset();
@@ -46,6 +60,7 @@ const Profile = () => {
   const getNickName = async () => {
     const response = await profileApi.getNickName({});
     setNickName(response.nickName);
+    setAvatarUrl(`https://bankeesit.feib.com.tw/img/pf_${response.uuid}_b.jpg`);
   };
 
   const onSubmit = async (data) => {
@@ -115,12 +130,21 @@ const Profile = () => {
       <Header title="個人化設定" />
       <ProfileWrapper>
         <div className="avatarContainer">
-          <img src={Avatar} alt="" />
+          <img src={avatarUrl} onError={() => setAvatarUrl(Avatar)} alt="" />
           <div className="penIconContainer">
             <div className="penIconBackground">
               <CreateRounded />
             </div>
           </div>
+          <label htmlFor="avatar-input">
+            <input
+              type="file"
+              accept="image/*"
+              name="upload_file"
+              id="avatar-input"
+              onChange={uploadAvatarImg}
+            />
+          </label>
         </div>
         <div className="nickName">
           <span>{ nickName }</span>
