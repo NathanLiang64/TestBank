@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
-import { getEnCrydata, switchLoading } from '../utilities/BankeePlus';
+import { getEnCrydata } from '../utilities/BankeePlus';
 
 const useGetEnCrydata = () => useEffect(() => {
-  switchLoading(true);
   getEnCrydata();
 }, []);
 
