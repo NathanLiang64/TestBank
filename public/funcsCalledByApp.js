@@ -38,4 +38,11 @@ function setPagedata(event) {
   }
 };
 
+// APP 主動更新網頁jwtToken
+function returnAuthdata(event) {
+  alert(JSON.stringify(event))
+  const { auth } = event;
+  alert(auth)
+}
+
 console.log('load app to webview functions success');
