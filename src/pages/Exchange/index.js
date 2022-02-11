@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useGetEnCrydata } from 'hooks';
+import { exchangeApi } from 'apis';
 
 /* Elements */
 import {
@@ -11,7 +12,7 @@ import { RadioGroup } from '@material-ui/core';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { numberToChinese, currencyZhGenerator, currencySymbolGenerator } from 'utilities/Generator';
+import { numberToChinese, currencySymbolGenerator } from 'utilities/Generator';
 import Dialog from 'components/Dialog';
 import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
@@ -26,7 +27,6 @@ const Exchange = () => {
   // mock data
   const ntDollarsAccountsList = ['043000990000'];
   const foreignCurrencyAccountsList = ['00200700030001'];
-  const mockCurrencyTypeList = ['USD', 'JPY'];
   const propertyList = ['外幣互換兌入'];
   const employee = true;
 
@@ -71,12 +71,52 @@ const Exchange = () => {
   });
 
   const [showTableDialog, setShowTableDialog] = useState(false);
+  const [ntdAccountsList, setNtdAccountsList] = useState([]);
+  const [frgnAccountsList, setFrgnAccountsList] = useState([]);
   const [outAccountList, setOutAccountList] = useState([]);
   const [inAccountList, setInAccountList] = useState([]);
-  const [currencyTypeList, setCurrencyTypeLise] = useState([]);
+  const [currencyTypeList, setCurrencyTypeList] = useState([]);
+  const [selectedCurrency, setSelectedCurrency] = useState({});
   const [propertiesList, setPropertiesList] = useState([]);
   const [ntDollorStr, setNtDollorStr] = useState('');
   const [foreignDollorStr, setForeignDollorStr] = useState('');
+
+  // 查詢台幣帳號
+  const getNtdAccountsList = async () => {
+    const response = await exchangeApi.getNtdAccountsList({});
+    console.log(response);
+    if (response?.accounts.length > 0) {
+      setNtdAccountsList(response?.accounts);
+    }
+  };
+
+  // 查詢外幣帳號
+  const getFcAccountsList = async () => {
+    const response = await exchangeApi.getFrgnAccoutsList({});
+    if (response?.length > 0) {
+      console.log(response);
+      setFrgnAccountsList(response);
+      setInAccountList(response);
+    }
+  };
+
+  // 取得可交易幣別清單
+  const getCcyList = async () => {
+    const response = await exchangeApi.getCcyList({});
+    if (response?.length) {
+      setCurrencyTypeList(response);
+      setValue('currency', response[0].ccyId);
+    }
+  };
+
+  // 取得交易性質列表
+  const getEchgPropertyList = async () => {
+    const response = await exchangeApi.getExchangePropertyList({
+      trnsType: '',
+      action: '1',
+    });
+    console.log(response);
+  };
 
   const handleBalanceChange = (event) => {
     const targetName = event.target.name;
@@ -86,7 +126,7 @@ const Exchange = () => {
       if (!targetValue) {
         setForeignDollorStr('');
       } else {
-        setForeignDollorStr(`${currencySymbolGenerator(watch('currency'))}${targetValue}${numberToChinese(targetValue)}`);
+        setForeignDollorStr(`${currencySymbolGenerator(selectedCurrency?.ccyCd)}${targetValue}${numberToChinese(targetValue)}`);
       }
     }
     if (targetName === 'ntDollorBalance') {
@@ -103,6 +143,8 @@ const Exchange = () => {
   };
 
   const handleExchangeTypeChange = (event) => {
+    console.log(frgnAccountsList);
+    console.log(ntdAccountsList);
     setValue('exchangeType', event.target.value);
     const outAccounts = outAccountList;
     const inAccounts = inAccountList;
@@ -132,7 +174,7 @@ const Exchange = () => {
 
   const renderItemsList = (data) => (
     data.map((item) => (
-      <FEIBOption key={item} value={item}>{item}</FEIBOption>
+      <FEIBOption key={item.acctId} value={item.acctId}>{item.acctId}</FEIBOption>
     ))
   );
 
@@ -141,17 +183,29 @@ const Exchange = () => {
   useEffect(() => {
     setOutAccountList(ntDollarsAccountsList);
     setInAccountList(foreignCurrencyAccountsList);
-    setCurrencyTypeLise(mockCurrencyTypeList);
     setPropertiesList(propertyList);
     setValue('exchangeType', '1');
     setValue('outType', '1');
     setValue('foreignBalance', '');
     setValue('ntDollorBalance', '');
-    setValue('currency', 'USD');
     setValue('outAccount', ntDollarsAccountsList[0]);
     setValue('inAccount', foreignCurrencyAccountsList[0]);
     setValue('property', propertyList[0]);
   }, []);
+
+  useEffect(() => {
+    getNtdAccountsList();
+    getFcAccountsList();
+    getCcyList();
+    getEchgPropertyList();
+  }, []);
+
+  useEffect(() => {
+    const selCcy = currencyTypeList.find((item) => item?.ccyId === watch('currency'));
+    if (selCcy) {
+      setSelectedCurrency(selCcy);
+    }
+  }, [watch('currency')]);
 
   return (
     <>
@@ -216,7 +270,7 @@ const Exchange = () => {
                 >
                   {
                     currencyTypeList.map((item) => (
-                      <FEIBOption key={item} value={item}>{ currencyZhGenerator(item) }</FEIBOption>
+                      <FEIBOption key={item?.ccyCd} value={item?.ccyId}>{ item?.ccyName }</FEIBOption>
                     ))
                   }
                 </FEIBSelect>
@@ -226,7 +280,9 @@ const Exchange = () => {
             <FEIBErrorMessage className="balance">
               預估可換
               &nbsp;
-              {watch('currency')}
+              {
+                selectedCurrency.ccyCd
+              }
               &nbsp;
               333.33（實際金額以交易結果為準）
             </FEIBErrorMessage>
@@ -250,7 +306,9 @@ const Exchange = () => {
             <FEIBErrorMessage className="balance">
               可用餘額
               &nbsp;
-              {watch('currency')}
+              {
+                selectedCurrency.ccyCd
+              }
               &nbsp;
               222.00
             </FEIBErrorMessage>
@@ -269,7 +327,7 @@ const Exchange = () => {
                     className="outTypeRadioLabel"
                     value="1"
                     control={<FEIBRadio />}
-                    label={`希望${watch('exchangeType') === '2' ? '轉出' : '轉入'}${watch('currency')}${currencyZhGenerator(watch('currency'))}`}
+                    label={`希望${watch('exchangeType') === '2' ? '轉出' : '轉入'}${selectedCurrency?.ccyName}`}
                   />
                   <Controller
                     name="foreignBalance"

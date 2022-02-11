@@ -1,49 +1,7 @@
 import { useEffect, useState } from 'react';
-import { currencyZhGenerator } from 'utilities/Generator';
+import { exchangeApi } from 'apis';
+import { dateFormatter, timeSecondFormatter } from 'utilities/Generator';
 import styled from 'styled-components';
-
-const mockData = [
-  {
-    currencyCode: 'USD',
-    buy: '28.0520',
-    sell: '28.1520',
-  },
-  {
-    currencyCode: 'JPY',
-    buy: '0.2709',
-    sell: '0.2739',
-  },
-  {
-    currencyCode: 'CNY',
-    buy: '4.2900',
-    sell: '4.3450',
-  },
-  {
-    currencyCode: 'EUR',
-    buy: '34.3800',
-    sell: '34.6800',
-  },
-  {
-    currencyCode: 'HKD',
-    buy: '3.6010',
-    sell: '3.6490',
-  },
-  {
-    currencyCode: 'AUD',
-    buy: '21.5000',
-    sell: '21.7900',
-  },
-  {
-    currencyCode: 'GBP',
-    buy: '38.1100',
-    sell: '38.4700',
-  },
-  {
-    currencyCode: 'CAD',
-    buy: '21.9700',
-    sell: '22.1400',
-  },
-];
 
 const ExchangeTableWrapper = styled.div`
   .describe {
@@ -84,11 +42,16 @@ const ExchangeTableWrapper = styled.div`
 `;
 
 const ExchangeTable = () => {
+  const [getInfoStr, setGetInfoStr] = useState('');
   const [exchangeRate, setExchangeRate] = useState([]);
 
-  const getExchangeRate = () => {
-    console.log('fetch rate data');
-    setExchangeRate(mockData);
+  const getExchangeRate = async () => {
+    const now = Date.now();
+    const dateStr = dateFormatter(now);
+    const timeStr = timeSecondFormatter(now);
+    setGetInfoStr(`${dateStr} ${timeStr}`);
+    const response = await exchangeApi.getExchangeRateInfo({});
+    setExchangeRate(response);
   };
 
   useEffect(() => {
@@ -100,7 +63,8 @@ const ExchangeTable = () => {
       <section>
         <div className="describe">
           <h2>
-            查詢時間：2020/12/31 15:09:28
+            查詢時間：
+            { getInfoStr }
             <br />
             本匯率僅供參考，實際匯率以本行交易時之匯率為準。
           </h2>
@@ -117,16 +81,17 @@ const ExchangeTable = () => {
         <tbody>
           {
             exchangeRate.map((item) => (
-              <tr>
+              <tr key={item.ccycd}>
                 <td>
-                  { currencyZhGenerator(item.currencyCode) }
-                  { item.currencyCode }
+                  { item.ccyname }
+                  &nbsp;
+                  { item.ccycd }
                 </td>
                 <td>
-                  { item.buy }
+                  { item.brate }
                 </td>
                 <td>
-                  { item.buy }
+                  { item.srate }
                 </td>
               </tr>
             ))
