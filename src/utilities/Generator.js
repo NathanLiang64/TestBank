@@ -55,6 +55,15 @@ export const timeFormatter = (time) => {
   return `${hour}:${minute}`;
 };
 
+// 將時間格式轉為 HH:DD:SS 字串
+export const timeSecondFormatter = (time) => {
+  time = new Date(time);
+  const hour = time.getHours().toString().padStart(2, '0');
+  const minute = time.getMinutes().toString().padStart(2, '0');
+  const seconds = time.getSeconds().toString().padStart(2, '0');
+  return `${hour}:${minute}:${seconds}`;
+};
+
 // 將秒數轉為 MM:SS 字串
 export const countdownTimerFormatter = (count) => {
   const min = Math.floor(count / 60);
