@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useGetEnCrydata } from 'hooks';
 import { exchangeApi } from 'apis';
+import { closeFunc } from 'utilities/BankeePlus';
 
 /* Elements */
 import {
@@ -12,7 +14,7 @@ import { RadioGroup } from '@material-ui/core';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { numberToChinese, currencySymbolGenerator } from 'utilities/Generator';
+import { numberToChinese, currencySymbolGenerator, toCurrency } from 'utilities/Generator';
 import Dialog from 'components/Dialog';
 import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
@@ -24,10 +26,6 @@ import ExchangeTable from './exchangeTable';
 import ExchangeWrapper from './exchange.style';
 
 const Exchange = () => {
-  // mock data
-  const ntDollarsAccountsList = ['043000990000'];
-  const foreignCurrencyAccountsList = ['00200700030001'];
-  const propertyList = ['外幣互換兌入'];
   const employee = true;
 
   const history = useHistory();
@@ -64,29 +62,36 @@ const Exchange = () => {
     memo: yup.string(),
   });
   const {
-    handleSubmit, control, formState: { errors }, watch, setValue,
+    handleSubmit, control, formState: { errors }, watch, setValue, getValues,
   } = useForm({
     resolver: yupResolver(schema),
     reValidateMode: 'onBlur',
   });
 
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState('');
   const [showTableDialog, setShowTableDialog] = useState(false);
   const [ntdAccountsList, setNtdAccountsList] = useState([]);
   const [frgnAccountsList, setFrgnAccountsList] = useState([]);
-  const [outAccountList, setOutAccountList] = useState([]);
-  const [inAccountList, setInAccountList] = useState([]);
   const [currencyTypeList, setCurrencyTypeList] = useState([]);
   const [selectedCurrency, setSelectedCurrency] = useState({});
   const [propertiesList, setPropertiesList] = useState([]);
   const [ntDollorStr, setNtDollorStr] = useState('');
   const [foreignDollorStr, setForeignDollorStr] = useState('');
 
+  // 查詢是否為行員
+  const isEmployee = async () => {
+    const response = await exchangeApi.isEmployee({});
+    console.log(response);
+  };
+
   // 查詢台幣帳號
   const getNtdAccountsList = async () => {
     const response = await exchangeApi.getNtdAccountsList({});
-    console.log(response);
     if (response?.accounts.length > 0) {
       setNtdAccountsList(response?.accounts);
+      setValue('outAccount', response?.accounts[0].accountId);
+      // setValue('inAccount', outAccounts[0]);
     }
   };
 
@@ -94,9 +99,8 @@ const Exchange = () => {
   const getFcAccountsList = async () => {
     const response = await exchangeApi.getFrgnAccoutsList({});
     if (response?.length > 0) {
-      console.log(response);
       setFrgnAccountsList(response);
-      setInAccountList(response);
+      setValue('inAccount', response[0].acctId);
     }
   };
 
@@ -110,12 +114,30 @@ const Exchange = () => {
   };
 
   // 取得交易性質列表
-  const getEchgPropertyList = async () => {
+  const getEchgPropertyList = async (trnsType, init) => {
     const response = await exchangeApi.getExchangePropertyList({
-      trnsType: '',
+      trnsType,
       action: '1',
     });
-    console.log(response);
+    if (response.message) {
+      setDialogMessage(response.message);
+      setOpenDialog(true);
+    } else {
+      setPropertiesList(response);
+      setValue('property', response[0].leglCode);
+      if (init) {
+        getNtdAccountsList();
+        getFcAccountsList();
+        getCcyList();
+        isEmployee();
+      }
+    }
+  };
+
+  // 處理訊息彈窗關閉
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    closeFunc();
   };
 
   const handleBalanceChange = (event) => {
@@ -142,16 +164,49 @@ const Exchange = () => {
     setShowTableDialog((prev) => !prev);
   };
 
+  // 換匯種類變更
   const handleExchangeTypeChange = (event) => {
-    console.log(frgnAccountsList);
-    console.log(ntdAccountsList);
     setValue('exchangeType', event.target.value);
-    const outAccounts = outAccountList;
-    const inAccounts = inAccountList;
-    setOutAccountList(inAccounts);
-    setInAccountList(outAccounts);
-    setValue('outAccount', inAccounts[0]);
-    setValue('inAccount', outAccounts[0]);
+    getEchgPropertyList(event.target.value);
+    const { inAccount, outAccount } = getValues();
+    setValue('outAccount', inAccount);
+    setValue('inAccount', outAccount);
+  };
+
+  const onSubmit = async (data) => {
+    const {
+      currency,
+      exchangeType,
+      foreignBalance,
+      ntDollorBalance,
+      inAccount,
+      memo,
+      outAccount,
+      outType,
+      property,
+    } = data;
+    const param = {
+      trnsType: exchangeType,
+      outAcct: outAccount,
+      inAcct: inAccount,
+      ccyCd: selectedCurrency.ccyCd,
+      trfCcyCd: outType === '1' ? selectedCurrency.ccyCd : 'NTD',
+      trfAmt: outType === '1' ? foreignBalance : ntDollorBalance,
+      bankerCd: '',
+    };
+    const response = await exchangeApi.getRate(param);
+    if (!response.message) {
+      const confirmData = {
+        ...response,
+        memo,
+        leglCode: property,
+        leglDesc: propertiesList.find((item) => item.leglCode === property).leglDesc,
+      };
+      history.push('/exchange1', { ...confirmData });
+    } else {
+      setDialogMessage(response.message);
+      setOpenDialog(true);
+    }
   };
 
   const ExchangeTableDialog = () => (
@@ -166,38 +221,79 @@ const Exchange = () => {
     />
   );
 
-  const onSubmit = (data) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
-    history.push('/exchange1');
-  };
+  const renderDialog = () => (
+    <Dialog
+      isOpen={openDialog}
+      onClose={handleCloseDialog}
+      content={<p>{ dialogMessage }</p>}
+      action={(
+        <FEIBButton onClick={handleCloseDialog}>確認</FEIBButton>
+      )}
+    />
+  );
 
-  const renderItemsList = (data) => (
+  const renderNTAccountOption = (data) => (
+    data.map((item) => (
+      <FEIBOption key={item.accountId} value={item.accountId}>{item.accountId}</FEIBOption>
+    ))
+  );
+
+  const renderFrgnAccountOption = (data) => (
     data.map((item) => (
       <FEIBOption key={item.acctId} value={item.acctId}>{item.acctId}</FEIBOption>
     ))
   );
 
+  const renderTrnsTypeList = (data) => (
+    data.map((item) => (
+      <FEIBOption key={item.leglCode} value={item.leglCode}>{item.leglDesc}</FEIBOption>
+    ))
+  );
+
+  const renderNTBlance = () => (
+    <FEIBErrorMessage className="balance">
+      可用餘額 NTD&nbsp;
+      {
+        toCurrency(ntdAccountsList.find((item) => (
+          watch('exchangeType') === '1' ? item.accountId === watch('outAccount') : item.accountId === watch('inAccount')
+        ))?.accountBalx)
+      }
+    </FEIBErrorMessage>
+  );
+
+  const renderFrgnBalance = () => (
+    <FEIBErrorMessage className="balance">
+      可用餘額
+      &nbsp;
+      {
+        selectedCurrency.ccyCd
+      }
+      &nbsp;
+      {
+        frgnAccountsList.find((item) => (
+          watch('exchangeType') === '1' ? item.acctId === watch('inAccount') : item.acctId === watch('outAccount')
+        ))?.details.find((item) => item.ccyCd === selectedCurrency.ccyCd)?.acctBalx || 0
+      }
+    </FEIBErrorMessage>
+  );
+
   useGetEnCrydata();
 
   useEffect(() => {
-    setOutAccountList(ntDollarsAccountsList);
-    setInAccountList(foreignCurrencyAccountsList);
-    setPropertiesList(propertyList);
+    // setOutAccountList(ntDollarsAccountsList);
+    // setInAccountList(foreignCurrencyAccountsList);
+    // setPropertiesList(propertyList);
     setValue('exchangeType', '1');
     setValue('outType', '1');
     setValue('foreignBalance', '');
     setValue('ntDollorBalance', '');
-    setValue('outAccount', ntDollarsAccountsList[0]);
-    setValue('inAccount', foreignCurrencyAccountsList[0]);
-    setValue('property', propertyList[0]);
+    // setValue('outAccount', ntDollarsAccountsList[0]);
+    // setValue('inAccount', foreignCurrencyAccountsList[0]);
+    // setValue('property', propertyList[0]);
   }, []);
 
   useEffect(() => {
-    getNtdAccountsList();
-    getFcAccountsList();
-    getCcyList();
-    getEchgPropertyList();
+    getEchgPropertyList('1', true);
   }, []);
 
   useEffect(() => {
@@ -250,12 +346,20 @@ const Exchange = () => {
                   name="outAccount"
                   error={!!errors.outAccount}
                 >
-                  { renderItemsList(outAccountList) }
+                  {
+                    watch('exchangeType') === '1'
+                      ? (renderNTAccountOption(ntdAccountsList))
+                      : (renderFrgnAccountOption(frgnAccountsList))
+                  }
                 </FEIBSelect>
               )}
             />
             <FEIBErrorMessage>{errors.outAccount?.message}</FEIBErrorMessage>
-            <FEIBErrorMessage className="balance">可用餘額 NTD 10,000.00</FEIBErrorMessage>
+            {
+              watch('exchangeType') === '1'
+                ? (renderNTBlance())
+                : (renderFrgnBalance())
+            }
             <FEIBInputLabel>換匯幣別</FEIBInputLabel>
             <Controller
               name="currency"
@@ -298,20 +402,20 @@ const Exchange = () => {
                   name="inAccount"
                   error={!!errors.inAccount}
                 >
-                  { renderItemsList(inAccountList) }
+                  {
+                    watch('exchangeType') === '1'
+                      ? (renderFrgnAccountOption(frgnAccountsList))
+                      : (renderNTAccountOption(ntdAccountsList))
+                  }
                 </FEIBSelect>
               )}
             />
             <FEIBErrorMessage>{errors.inAccount?.message}</FEIBErrorMessage>
-            <FEIBErrorMessage className="balance">
-              可用餘額
-              &nbsp;
-              {
-                selectedCurrency.ccyCd
-              }
-              &nbsp;
-              222.00
-            </FEIBErrorMessage>
+            {
+              watch('exchangeType') === '1'
+                ? (renderFrgnBalance())
+                : (renderNTBlance())
+            }
             <Controller
               name="outType"
               control={control}
@@ -334,7 +438,7 @@ const Exchange = () => {
                     defaultValue=""
                     control={control}
                     render={({ balanceField }) => (
-                      <>
+                      <div>
                         <FEIBInput
                           {...balanceField}
                           type="text"
@@ -351,7 +455,7 @@ const Exchange = () => {
                           }}
                         />
                         <div className="balanceLayout">{foreignDollorStr}</div>
-                      </>
+                      </div>
                     )}
                   />
                   <FEIBErrorMessage>{errors.foreignBalance?.message}</FEIBErrorMessage>
@@ -361,7 +465,7 @@ const Exchange = () => {
                     defaultValue=""
                     control={control}
                     render={({ balanceField }) => (
-                      <>
+                      <div>
                         <FEIBInput
                           {...balanceField}
                           autoComplete="off"
@@ -379,7 +483,7 @@ const Exchange = () => {
                           }}
                         />
                         <div className="balanceLayout">{ntDollorStr}</div>
-                      </>
+                      </div>
                     )}
                   />
                   <FEIBErrorMessage>{errors.ntDollorBalance?.message}</FEIBErrorMessage>
@@ -398,7 +502,7 @@ const Exchange = () => {
                   name="property"
                   error={!!errors.property}
                 >
-                  { renderItemsList(propertiesList) }
+                  { renderTrnsTypeList(propertiesList) }
                 </FEIBSelect>
               )}
             />
@@ -440,6 +544,7 @@ const Exchange = () => {
           </section>
         </form>
         <ExchangeTableDialog />
+        { renderDialog() }
       </ExchangeWrapper>
     </>
   );

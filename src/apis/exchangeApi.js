@@ -45,6 +45,15 @@ export const getFrgnAccoutsList = async (param) => {
   return response;
 };
 
+// 外幣交易匯率取得
+export const getRate = async (param) => {
+  const response = await userAxios
+    .post('api/frgn/rateGet', param)
+    .then((data) => data)
+    .catch((err) => err);
+  return response;
+};
+
 // 外幣換匯 N2F
 export const exchangeNtoF = async (param) => {
   const response = await userAxios
@@ -58,6 +67,15 @@ export const exchangeNtoF = async (param) => {
 export const exchangeFtoN = async (param) => {
   const response = await userAxios
     .post('api/frgn/exchF2n', param)
+    .then((data) => data)
+    .catch((err) => err);
+  return response;
+};
+
+// 查詢是否為行員
+export const isEmployee = async (param) => {
+  const response = await userAxios
+    .post('api/queryFundGroup', param)
     .then((data) => data)
     .catch((err) => err);
   return response;
