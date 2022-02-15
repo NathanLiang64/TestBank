@@ -202,7 +202,10 @@ const Exchange = () => {
         leglCode: property,
         leglDesc: propertiesList.find((item) => item.leglCode === property).leglDesc,
       };
-      history.push('/exchange1', { confirmData });
+      history.push('/exchange1', { ...confirmData });
+    } else {
+      setDialogMessage(response.message);
+      setOpenDialog(true);
     }
   };
 
@@ -240,12 +243,6 @@ const Exchange = () => {
       <FEIBOption key={item.acctId} value={item.acctId}>{item.acctId}</FEIBOption>
     ))
   );
-
-  // const renderItemsList = (data) => (
-  //   data.map((item) => (
-  //     <FEIBOption key={item.acctId} value={item.acctId}>{item.acctId}</FEIBOption>
-  //   ))
-  // );
 
   const renderTrnsTypeList = (data) => (
     data.map((item) => (
