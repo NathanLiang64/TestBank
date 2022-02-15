@@ -291,10 +291,12 @@ const GlobalStyles = createGlobalStyle`
   .balanceLayout {
     font-size: 1.6rem;
     color: ${({ theme }) => theme.colors.primary.dark};
-    transform: translateY(-3.7rem);
+    // transform: translateY(-3.7rem);
     pointer-events: none;
     height: 3.5rem;
     line-height: 3.5rem;
+    position: absolute;
+    top: 0;
   }
 
   .noticeEditList {
