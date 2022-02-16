@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useGetEnCrydata } from 'hooks';
@@ -26,8 +25,6 @@ import ExchangeTable from './exchangeTable';
 import ExchangeWrapper from './exchange.style';
 
 const Exchange = () => {
-  const employee = true;
-
   const history = useHistory();
   /**
    *- 資料驗證
@@ -70,7 +67,9 @@ const Exchange = () => {
 
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
+  const [isCloseFunc, setIsCloseFunc] = useState(false);
   const [showTableDialog, setShowTableDialog] = useState(false);
+  const [banker, setBanker] = useState({});
   const [ntdAccountsList, setNtdAccountsList] = useState([]);
   const [frgnAccountsList, setFrgnAccountsList] = useState([]);
   const [currencyTypeList, setCurrencyTypeList] = useState([]);
@@ -79,10 +78,27 @@ const Exchange = () => {
   const [ntDollorStr, setNtDollorStr] = useState('');
   const [foreignDollorStr, setForeignDollorStr] = useState('');
 
+  // 設定訊息彈窗
+  const handleSetDialog = (msg, isCloseFun) => {
+    setDialogMessage(msg);
+    setIsCloseFunc(isCloseFun);
+    setOpenDialog(true);
+  };
+
+  // 處理訊息彈窗關閉
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    if (isCloseFunc) {
+      closeFunc();
+    }
+  };
+
   // 查詢是否為行員
-  const isEmployee = async () => {
+  const getIsEmployee = async () => {
     const response = await exchangeApi.isEmployee({});
-    console.log(response);
+    if (response.bankerCd) {
+      setBanker(response);
+    }
   };
 
   // 查詢台幣帳號
@@ -91,7 +107,6 @@ const Exchange = () => {
     if (response?.accounts.length > 0) {
       setNtdAccountsList(response?.accounts);
       setValue('outAccount', response?.accounts[0].accountId);
-      // setValue('inAccount', outAccounts[0]);
     }
   };
 
@@ -120,8 +135,7 @@ const Exchange = () => {
       action: '1',
     });
     if (response.message) {
-      setDialogMessage(response.message);
-      setOpenDialog(true);
+      handleSetDialog(response.message, true);
     } else {
       setPropertiesList(response);
       setValue('property', response[0].leglCode);
@@ -129,15 +143,9 @@ const Exchange = () => {
         getNtdAccountsList();
         getFcAccountsList();
         getCcyList();
-        isEmployee();
+        getIsEmployee();
       }
     }
-  };
-
-  // 處理訊息彈窗關閉
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    closeFunc();
   };
 
   const handleBalanceChange = (event) => {
@@ -173,9 +181,50 @@ const Exchange = () => {
     setValue('inAccount', outAccount);
   };
 
+  // 取得台幣帳戶餘額
+  const getNTDAmt = () => ntdAccountsList.find((item) => (
+    watch('exchangeType') === '1' ? item.accountId === watch('outAccount') : item.accountId === watch('inAccount')
+  ))?.accountBalx;
+
+  // 取得外幣帳戶餘額
+  const getFrgnAmt = () => frgnAccountsList.find((item) => (
+    watch('exchangeType') === '1' ? item.acctId === watch('inAccount') : item.acctId === watch('outAccount')
+  ))?.details.find((item) => item.ccyCd === selectedCurrency.ccyCd)?.acctBalx || '0';
+
+  // 檢查是否超出餘額
+  const checkOverAmt = (data) => {
+    const amt = Number(data);
+    // 判斷台轉外, 外轉台
+    const exchangeType = watch('exchangeType') === '1' ? 'n2f' : 'f2n';
+    // 判斷幣別
+    const isNTD = watch('outType') === '2';
+    const ntAmt = getNTDAmt();
+    const frgnAmt = Number(getFrgnAmt().replace(/,/gi, ''));
+    // 如果是台轉外，檢查是否超過台幣餘額
+    if (exchangeType === 'n2f') {
+      if (isNTD) {
+        return amt > ntAmt;
+      }
+      if (!isNTD) {
+        return amt > ntAmt / selectedCurrency.sellRate;
+      }
+    }
+    // 如果是外轉台，檢查是否超過外幣餘額
+    if (exchangeType === 'f2n') {
+      if (isNTD) {
+        return amt / selectedCurrency.sellRate > frgnAmt;
+      }
+      if (!isNTD) {
+        return amt > frgnAmt;
+      }
+    }
+    return true;
+  };
+
+  // 取得換匯資訊與密文
   const onSubmit = async (data) => {
     const {
-      currency,
+      // currency,
       exchangeType,
       foreignBalance,
       ntDollorBalance,
@@ -185,14 +234,20 @@ const Exchange = () => {
       outType,
       property,
     } = data;
+    const trfAmt = outType === '1' ? foreignBalance : ntDollorBalance;
+    const checkOverResult = checkOverAmt(trfAmt);
+    if (checkOverResult) {
+      handleSetDialog('您輸入的金額已超過轉出帳號的餘額', false);
+      return;
+    }
     const param = {
       trnsType: exchangeType,
       outAcct: outAccount,
       inAcct: inAccount,
       ccyCd: selectedCurrency.ccyCd,
       trfCcyCd: outType === '1' ? selectedCurrency.ccyCd : 'NTD',
-      trfAmt: outType === '1' ? foreignBalance : ntDollorBalance,
-      bankerCd: '',
+      trfAmt,
+      bankerCd: banker?.bankerCd || '',
     };
     const response = await exchangeApi.getRate(param);
     if (!response.message) {
@@ -201,12 +256,21 @@ const Exchange = () => {
         memo,
         leglCode: property,
         leglDesc: propertiesList.find((item) => item.leglCode === property).leglDesc,
+        outAccountAmount: exchangeType === '1' ? getNTDAmt() : Number(getFrgnAmt().replace(/,/gi, '')),
       };
       history.push('/exchange1', { ...confirmData });
     } else {
-      setDialogMessage(response.message);
-      setOpenDialog(true);
+      handleSetDialog(response.message, false);
     }
+  };
+
+  const generateAvailibleAmount = () => {
+    const ntAmt = getNTDAmt();
+    const frgnAmt = Number(getFrgnAmt().replace(/,/gi, ''));
+    if (watch('exchangeType') === '1') {
+      return toCurrency(Math.round(ntAmt / selectedCurrency.sellRate));
+    }
+    return toCurrency(Math.round(frgnAmt * selectedCurrency.sellRate));
   };
 
   const ExchangeTableDialog = () => (
@@ -254,9 +318,7 @@ const Exchange = () => {
     <FEIBErrorMessage className="balance">
       可用餘額 NTD&nbsp;
       {
-        toCurrency(ntdAccountsList.find((item) => (
-          watch('exchangeType') === '1' ? item.accountId === watch('outAccount') : item.accountId === watch('inAccount')
-        ))?.accountBalx)
+        toCurrency(getNTDAmt())
       }
     </FEIBErrorMessage>
   );
@@ -270,9 +332,7 @@ const Exchange = () => {
       }
       &nbsp;
       {
-        frgnAccountsList.find((item) => (
-          watch('exchangeType') === '1' ? item.acctId === watch('inAccount') : item.acctId === watch('outAccount')
-        ))?.details.find((item) => item.ccyCd === selectedCurrency.ccyCd)?.acctBalx || 0
+        getFrgnAmt()
       }
     </FEIBErrorMessage>
   );
@@ -280,16 +340,10 @@ const Exchange = () => {
   useGetEnCrydata();
 
   useEffect(() => {
-    // setOutAccountList(ntDollarsAccountsList);
-    // setInAccountList(foreignCurrencyAccountsList);
-    // setPropertiesList(propertyList);
     setValue('exchangeType', '1');
     setValue('outType', '1');
     setValue('foreignBalance', '');
     setValue('ntDollorBalance', '');
-    // setValue('outAccount', ntDollarsAccountsList[0]);
-    // setValue('inAccount', foreignCurrencyAccountsList[0]);
-    // setValue('property', propertyList[0]);
   }, []);
 
   useEffect(() => {
@@ -385,10 +439,13 @@ const Exchange = () => {
               預估可換
               &nbsp;
               {
-                selectedCurrency.ccyCd
+                watch('exchangeType') === '1' ? selectedCurrency.ccyCd : 'NTD'
               }
               &nbsp;
-              333.33（實際金額以交易結果為準）
+              {
+                generateAvailibleAmount()
+              }
+              （實際金額以交易結果為準）
             </FEIBErrorMessage>
             <FEIBInputLabel>轉入帳號</FEIBInputLabel>
             <Controller
@@ -431,7 +488,7 @@ const Exchange = () => {
                     className="outTypeRadioLabel"
                     value="1"
                     control={<FEIBRadio />}
-                    label={`希望${watch('exchangeType') === '2' ? '轉出' : '轉入'}${selectedCurrency?.ccyName}`}
+                    label={`希望${watch('exchangeType') === '2' ? '轉出' : '轉入'}${selectedCurrency?.ccyName || ''}`}
                   />
                   <Controller
                     name="foreignBalance"
@@ -532,7 +589,7 @@ const Exchange = () => {
               <ExchangeNotice />
             </Accordion>
             {
-              employee && (<InfoArea>換匯匯率將依據本行員工優惠匯率進行交易</InfoArea>)
+              banker.bankerCd && (<InfoArea>換匯匯率將依據本行員工優惠匯率進行交易</InfoArea>)
             }
             <div className="submitBtn">
               <FEIBButton

@@ -31,9 +31,8 @@ const errorHandle = (status, message) => {
 // action log
 // eslint-disable-next-line no-unused-vars
 const postActionLog = (func, log) => {
-  const jwt = Cookies.get('jwtToken');
   const data = {
-    function: func, log: JSON.stringify(log), jwtToken: jwt,
+    function: func, log: JSON.stringify(log), custId: localStorage.getItem('custId'), source: 'WebView',
   };
   fetch(
     'https://appbankee-t.feib.com.tw/ords/db1/uat/sys/addLog',

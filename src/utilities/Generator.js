@@ -205,6 +205,8 @@ export const currencySymbolGenerator = (currency) => {
       return '฿';
     case 'ZAR': // 南非幣
       return 'R';
+    case 'PLN': // 波蘭幣
+      return 'zł';
     case 'CNY': // 人民幣
       return 'RMB¥';
     case 'EUR': // 歐元
@@ -243,6 +245,8 @@ export const currencyZhGenerator = (currency) => {
       return '泰銖';
     case 'ZAR': // 南非幣
       return '南非幣';
+    case 'PLN': // 波蘭幣
+      return '波蘭幣';
     case 'CNY': // 人民幣
       return '人民幣';
     case 'EUR': // 歐元
