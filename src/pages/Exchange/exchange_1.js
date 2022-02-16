@@ -1,6 +1,7 @@
-/* eslint-disable no-unreachable */
+import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { exchangeApi } from 'apis';
+import { toCurrency } from 'utilities/Generator';
 
 /* Elements */
 import Header from 'components/Header';
@@ -15,30 +16,34 @@ import ExchangeWrapper from './exchange.style';
 
 const Exchange1 = ({ location }) => {
   const history = useHistory();
-  const isEmployee = true;
+  const [confirmData, setConfirmData] = useState({});
 
   const goBack = () => history.goBack();
 
   const handleNextStep = async () => {
-    console.log(location.state);
     let response;
     // 1: 台轉外
-    if (location.state.trnsType === '1') {
-      response = await exchangeApi.exchangeNtoF(location.state);
-      console.log(response);
+    if (confirmData?.trnsType === '1') {
+      response = await exchangeApi.exchangeNtoF(confirmData);
     }
     // 2: 外轉台
-    if (location.state.trnsType === '2') {
-      response = await exchangeApi.exchangeFtoN(location.state);
-      console.log(response);
+    if (confirmData?.trnsType === '2') {
+      response = await exchangeApi.exchangeFtoN(confirmData);
     }
-    history.push('/exchange2');
+    history.push('/exchange2', { ...response, memo: confirmData?.memo });
   };
 
-  // const onSubmit = (data) => {
-  //   console.log(data);
-  //   history.push('/exchange2');
-  // };
+  const generateAccountAmt = () => {
+    const amount = Number(confirmData?.outAccountAmount) - Number(confirmData?.outAmt);
+    const formatAmt = +(`${Math.round(`${amount}e+2`)}e-2`);
+    return toCurrency(formatAmt);
+  };
+
+  useEffect(() => {
+    if (location?.state) {
+      setConfirmData({ ...location?.state });
+    }
+  }, []);
 
   return (
     <>
@@ -49,48 +54,55 @@ const Exchange1 = ({ location }) => {
             <div className="countDownTitle">尚餘交易時間</div>
             <div>
               <CountDown
+                // minute={60}
                 minute={location.state.countdownSec / 60}
                 onEnd={goBack}
               />
             </div>
           </div>
           <div className="infoData">
-            <div className="label">轉換外幣</div>
-            <div className="foreignCurrency">
+            <div className="label">
+              轉換
               {
-                location.state.trnsType === '1' && (`${location.state.inCcyCd} $${location.state.inAmt}`)
-              }
-              {
-                location.state.trnsType === '2' && (`${location.state.outCcyCd} $${location.state.outAmt}`)
+                confirmData?.trnsType === '1' ? '外幣' : '台幣'
               }
             </div>
+            <div className="foreignCurrency">
+              { `${confirmData?.inCcyCd} $${confirmData?.inAmt}` }
+            </div>
             <div className="changeNT">
-              折合台幣：NTD$
-              { location.state.trnsType === '1' && location.state.outAmt }
-              { location.state.trnsType === '2' && location.state.inAmt }
+              折合
+              { confirmData?.trnsType === '1' ? '台幣' : '外幣' }
+              ：
+              { confirmData?.outCcyCd }
+              $
+              { confirmData?.outAmt }
             </div>
             <div className="exchangeRate">
               換匯匯率：
-              { location.state.rate }
+              { confirmData?.rate }
             </div>
             {
-              isEmployee && (<div className="employee">員工優惠匯率</div>)
+              confirmData?.bankerCd && (<div className="employee">員工優惠匯率</div>)
             }
             <div className="label into">轉入帳號</div>
             {/* <div className="accountData">遠東商銀(805)</div> */}
-            <div className="accountData">{ location.state.inAcct }</div>
+            <div className="accountData">{ confirmData?.inAcct }</div>
           </div>
         </div>
         <div className="infoSection">
           <div>
-            <InformationList title="轉出帳號" content={location.state.outAcct} />
-            <InformationList title="換匯種類" content={location.state.trnsType === '1' ? '台幣轉外幣' : '外幣轉台幣'} />
-            <InformationList title="轉換外幣幣別" content={location.state.trnsType === '1' ? `${location.state.inCcyName} ${location.state.inCcyCd}` : `${location.state.outCcyName} ${location.state.outCcyCd}`} />
-            <InformationList title="匯款性質分類" content={location.state.leglDesc} />
+            <InformationList title="轉出帳號" content={confirmData?.outAcct} />
+            <InformationList title="換匯種類" content={confirmData?.trnsType === '1' ? '台幣轉外幣' : '外幣轉台幣'} />
+            <InformationList title="轉換外幣幣別" content={confirmData?.trnsType === '1' ? `${confirmData?.inCcyName} ${confirmData?.inCcyCd}` : `${confirmData?.outCcyName} ${confirmData?.outCcyCd}`} />
+            <InformationList title="匯款性質分類" content={confirmData?.leglDesc} />
           </div>
           <Accordion className="exchangeAccordion" title="詳細交易" space="both" open>
-            {/* <InformationList title="帳戶餘額" content="$92,397" /> */}
-            <InformationList title="備註" content={location.state.memo} />
+            <InformationList
+              title="帳戶餘額"
+              content={`$${generateAccountAmt()}`}
+            />
+            <InformationList title="備註" content={confirmData?.memo} />
           </Accordion>
           <Accordion space="bottom">
             <ExchangeNotice />
