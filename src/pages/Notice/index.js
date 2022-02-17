@@ -1,9 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
-import { useCheckLocation, usePageInfo } from 'hooks';
+import { useGetEnCrydata } from 'hooks';
 import { noticeApi } from 'apis';
+import { goToFunc } from 'utilities/BankeePlus';
+
 /* Elements */
+import Header from 'components/Header';
 import EditIcon from 'assets/images/icons/editIcon.svg';
 import SettingIcon from 'assets/images/icons/settingIcon.svg';
 import {
@@ -44,7 +47,7 @@ const Notice = () => {
 
   // 跳轉通知設定頁
   const toSettingPage = () => {
-    history.push('/noticeSetting');
+    goToFunc({ route: '/noticeSetting', funcID: 'S00400' });
   };
 
   const getNoticeItem = async () => {
@@ -132,8 +135,7 @@ const Notice = () => {
     </ul>
   );
 
-  useCheckLocation();
-  usePageInfo('/api/notice');
+  useGetEnCrydata();
 
   useEffect(() => {
     // getNoticeItem();
@@ -141,41 +143,44 @@ const Notice = () => {
   }, []);
 
   return (
-    <NoticeWrapper>
-      <div className="lighterBlueLine" />
-      <div className="noticeContainer">
-        <div className="settingEditContainer">
-          <div className="btn setting" onClick={toSettingPage}>
-            設定
-            <img src={SettingIcon} alt="" />
+    <>
+      <Header title="訊息通知" />
+      <NoticeWrapper>
+        <div className="lighterBlueLine" />
+        <div className="noticeContainer">
+          <div className="settingEditContainer">
+            <div className="btn setting" onClick={toSettingPage}>
+              設定
+              <img src={SettingIcon} alt="" />
+            </div>
+            <div
+              className="btn edit"
+              onClick={handleOpenDrawer}
+            >
+              編輯
+              <img src={EditIcon} alt="" />
+            </div>
           </div>
-          <div
-            className="btn edit"
-            onClick={handleOpenDrawer}
-          >
-            編輯
-            <img src={EditIcon} alt="" />
-          </div>
+          <FEIBTabContext value={tabValue}>
+            <FEIBTabList $size="small" onChange={handleTabChange}>
+              <FEIBTab label="帳務" value="0" />
+              <FEIBTab label="社群" value="1" />
+              <FEIBTab label="公告" value="2" />
+              <FEIBTab label="安全" value="3" />
+              <FEIBTab label="全部" value="4" />
+            </FEIBTabList>
+          </FEIBTabContext>
+          {
+            renderMessagesList()
+          }
+          <BottomDrawer
+            isOpen={openDrawer}
+            onClose={handleOpenDrawer}
+            content={renderEditList()}
+          />
         </div>
-        <FEIBTabContext value={tabValue}>
-          <FEIBTabList $size="small" onChange={handleTabChange}>
-            <FEIBTab label="帳務" value="0" />
-            <FEIBTab label="社群" value="1" />
-            <FEIBTab label="公告" value="2" />
-            <FEIBTab label="安全" value="3" />
-            <FEIBTab label="全部" value="4" />
-          </FEIBTabList>
-        </FEIBTabContext>
-        {
-          renderMessagesList()
-        }
-        <BottomDrawer
-          isOpen={openDrawer}
-          onClose={handleOpenDrawer}
-          content={renderEditList()}
-        />
-      </div>
-    </NoticeWrapper>
+      </NoticeWrapper>
+    </>
   );
 };
 

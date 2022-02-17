@@ -117,6 +117,9 @@ const Exchange = () => {
       setFrgnAccountsList(response);
       setValue('inAccount', response[0].acctId);
     }
+    if (response?.code) {
+      handleSetDialog('親愛的客戶 您好：因您尚未擁有外幣帳戶，無法使用本功能', true);
+    }
   };
 
   // 取得可交易幣別清單
