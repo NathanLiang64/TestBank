@@ -15,7 +15,6 @@ import ExchangeWrapper from './exchange.style';
 
 const Exchange2 = ({ location }) => {
   const history = useHistory();
-  const isEmployee = true;
   const [isSuccess, setIsSuccess] = useState(true);
   const [exchangeResult, setExchangeResult] = useState({});
 
@@ -75,7 +74,7 @@ const Exchange2 = ({ location }) => {
                   { exchangeResult?.rate }
                 </div>
                 {
-                  isEmployee && (<div className="employee">員工優惠匯率</div>)
+                  exchangeResult?.bankerCd && (<div className="employee">員工優惠匯率</div>)
                 }
                 <div className="label into">轉入帳號</div>
                 {/* <div className="accountData">遠東商銀(805)</div> */}

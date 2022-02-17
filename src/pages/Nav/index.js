@@ -102,6 +102,13 @@ const Nav = () => {
           <li>funcID: T00900</li>
         </ul>
       </div>
+      <div onClick={() => goToFunction('/notice', 'B00300')}>
+        <ul>
+          <li>功能：訊息通知</li>
+          <li>route: /notice</li>
+          <li>funcID: B00300</li>
+        </ul>
+      </div>
       {/* <Accordion title="驗收單元功能清單 (1)" space="bottom">
         <Link to="/notice">E02 訊息通知</Link>
         <Link to="/noticeSetting">E02-1 訊息通知設定</Link>
