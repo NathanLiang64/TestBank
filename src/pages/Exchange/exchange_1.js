@@ -21,16 +21,18 @@ const Exchange1 = ({ location }) => {
   const goBack = () => history.goBack();
 
   const handleNextStep = async () => {
+    const param = { ...confirmData };
+    delete param.outAccountAmount;
     let response;
     // 1: 台轉外
     if (confirmData?.trnsType === '1') {
-      response = await exchangeApi.exchangeNtoF(confirmData);
+      response = await exchangeApi.exchangeNtoF(param);
     }
     // 2: 外轉台
     if (confirmData?.trnsType === '2') {
-      response = await exchangeApi.exchangeFtoN(confirmData);
+      response = await exchangeApi.exchangeFtoN(param);
     }
-    history.push('/exchange2', { ...response, memo: confirmData?.memo });
+    history.push('/exchange2', { ...response, memo: confirmData?.memo, bankerCd: confirmData?.bankerCd });
   };
 
   const generateAccountAmt = () => {
