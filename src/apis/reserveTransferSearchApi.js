@@ -26,3 +26,12 @@ export const getResultTransDetails = async (param) => {
     .catch((err) => err);
   return response;
 };
+
+// 取消預約轉帳交易
+export const cancelReserveTransfer = async (param) => {
+  const response = userAxios
+    .post('/api/transfer/reserved/cancel', param)
+    .then((data) => data)
+    .catch((err) => err);
+  return response;
+};
