@@ -223,7 +223,7 @@ const ReserveTransferSearch = () => {
       title="預約轉帳"
       isOpen={showDetailDialog}
       onClose={() => setShowDetailDialog(false)}
-      content={(<DetailContent data={currentReserveData} />)}
+      content={(<DetailContent contentData={{ data: currentReserveData, selectedAccount }} />)}
       action={(
         <FEIBButton
           $color={theme.colors.text.dark}
