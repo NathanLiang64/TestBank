@@ -6,7 +6,7 @@ import Header from 'components/Header';
 import FavoriteBlockButton from 'components/FavoriteBlockButton';
 import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
 import { goToFunc } from 'utilities/BankeePlus';
-// import { getMoreList } from 'apis/moreApi';
+import { moreApi } from 'apis';
 import { iconGenerator } from 'pages/Favorite/favoriteGenerator';
 // import { setFavoriteDrawer } from 'pages/Favorite/stores/actions';
 // import { setIsShake } from 'pages/ShakeShake/stores/actions';
@@ -23,7 +23,7 @@ const More = () => {
   const [sectionPosition, setSectionPosition] = useState([]);
   const [tabId, setTabId] = useState('account');
 
-  const toPage = ({ route, funcID }) => {
+  const toPage = ({ route, funcID, id }) => {
     console.log('啟動 Function:', route);
     // if (route === 'QRCodeTransfer') {
     //   dispatch(setIsShake(true));
@@ -35,6 +35,11 @@ const More = () => {
     //   }));
     //   return;
     // }
+    if (id === 'apply1') {
+      window.open('https://bankeesit.feib.com.tw/v2web/aplfx/createDraft?utm_source=App&prod=DEPOSIT', '_blank');
+      return;
+    }
+    console.log({ route, funcID });
     goToFunc({ route, funcID });
   };
 
@@ -74,9 +79,10 @@ const More = () => {
     <FEIBTab key={tab.id} label={tab.groupName} value={tab.group} />
   ));
 
-  useEffect(() => {
+  useEffect(async () => {
     // db 資料內 url 為空，無法導頁，暫不接 api
-    // getMoreList()
+    const response = await moreApi.getMoreList();
+    console.log(response);
     setMoreList(mockData.moreList);
   }, []);
 
