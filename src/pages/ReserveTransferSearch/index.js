@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/no-array-index-key */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
@@ -65,7 +66,7 @@ const ReserveTransferSearch = () => {
   // 取得帳號清單
   const getTransferOutAccounts = async () => {
     // const { accounts, isMotpOpen } = await reserveTransferSearchApi.getTransferOutAccounts({ motpDeviceId: '675066ee-2f25-4d97-812a-12c7f8d18489' });
-    const { accounts } = await reserveTransferSearchApi.getTransferOutAccounts({ motpDeviceId: '675066ee-2f25-4d97-812a-12c7f8d18489' });
+    const { accounts } = await reserveTransferSearchApi.getTransferOutAccounts({});
     if (accounts) {
       setCardsList(accounts);
       setSelectedAccount(accounts[0]);
@@ -73,7 +74,8 @@ const ReserveTransferSearch = () => {
   };
 
   const toConfirmPage = () => {
-    history.push('/reserveTransferSearch1', currentReserveData);
+    console.log({ ...currentReserveData, ...selectedAccount });
+    history.push('/reserveTransferSearch1', { ...currentReserveData, ...selectedAccount });
   };
 
   // eslint-disable-next-line no-unused-vars
@@ -109,7 +111,8 @@ const ReserveTransferSearch = () => {
       sdate: dateFormatter(reserveDateRange[0]),
       edate: dateFormatter(reserveDateRange[1]),
     };
-    const { bookList } = await reserveTransferSearchApi.getReservedTransDetails(param);
+    const response = await reserveTransferSearchApi.getReservedTransDetails(param);
+    console.log(response);
     // amount: "1,001"
     // bookType: "158"
     // bookTypeName: "網路預約轉出"
@@ -129,8 +132,8 @@ const ReserveTransferSearch = () => {
     // trncdName: "提取"
     // trnsDate: "111/01/12"
     // type: "週期"
-    if (bookList) {
-      setReserveDataList(bookList);
+    if (response.bookList) {
+      setReserveDataList(response.bookList);
     } else {
       setReserveDataList([]);
     }
@@ -148,7 +151,11 @@ const ReserveTransferSearch = () => {
     };
     const response = await reserveTransferSearchApi.getResultTransDetails(param);
     console.log(response);
-    setResultDataList([]);
+    if (response?.bookList.length > 0) {
+      setResultDataList(response?.bookList);
+    } else {
+      setResultDataList([]);
+    }
   };
 
   const handleTabChange = (event, type) => {
@@ -242,7 +249,7 @@ const ReserveTransferSearch = () => {
       title="預約轉帳結果"
       isOpen={showResultDialog}
       onClose={() => setShowResultDialog(false)}
-      content={(<ResultContent data={resultDialogData} />)}
+      content={(<ResultContent data={resultDialogData} selectedAccount={selectedAccount} />)}
     />
   );
 

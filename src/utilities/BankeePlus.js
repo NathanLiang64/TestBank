@@ -32,6 +32,7 @@ function goToFunc({ route, funcID }, funcParams = '', keepData = '') {
     funcParams,
     keepData,
   };
+  console.log(data);
   if (device.ios()) {
     const msg = JSON.stringify({ name: 'startFunc', data: JSON.stringify(data) });
     window.webkit?.messageHandlers.jstoapp.postMessage(msg);
