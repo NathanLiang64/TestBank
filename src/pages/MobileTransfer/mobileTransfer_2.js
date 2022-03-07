@@ -66,17 +66,16 @@ const MobileTransfer2 = ({ location }) => {
       history.go(-1);
     } else {
       history.go(-1);
-      history.go(-1);
     }
   };
 
   // 設定結果彈窗
   const setResultDialog = (response) => {
-    const result = 'mobilePhone' in response;
+    const { code, message, respData } = response;
     const successDesc = getSuccessDesc();
-    let errorCode = '';
-    let errorDesc = '';
-    if (result) {
+    let errorCode = code;
+    let errorDesc = message;
+    if (respData?.rcode === '4001') {
       dispatch(setCloseCallBack(() => closeFunc()));
     } else {
       errorCode = response.code;
@@ -84,7 +83,7 @@ const MobileTransfer2 = ({ location }) => {
       dispatch(setCloseCallBack(() => {}));
     }
     dispatch(setResultContent({
-      isSuccess: result,
+      isSuccess: respData?.rcode === '4001',
       successTitle: '設定成功',
       successDesc,
       errorTitle: '設定失敗',
@@ -94,7 +93,7 @@ const MobileTransfer2 = ({ location }) => {
     dispatch(setIsOpen(true));
   };
 
-  const modifyMobileTransferData = async (event) => {
+  const modifyMobileTransferData = (event) => {
     event.preventDefault();
     const { account, isDefault, mobile } = confirmData;
     const param = {
@@ -102,9 +101,14 @@ const MobileTransfer2 = ({ location }) => {
       bankCode: '805',
       mobilePhone: mobile,
       defaultType: isDefault ? 'Y' : 'N',
+      otpValue: localStorage.getItem('mima'),
+      trnIdentity: localStorage.getItem('signature'),
     };
-    const response = await mpTransferApi.createMobileNo(param);
-    setResultDialog(response);
+    const createMobileNo = async () => {
+      const response = await mpTransferApi.createMobileNo(param);
+      setResultDialog(response);
+    };
+    window.customFunc = createMobileNo;
   };
 
   // 回上一頁

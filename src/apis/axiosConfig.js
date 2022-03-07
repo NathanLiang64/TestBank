@@ -1,7 +1,9 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import JWTUtil from '../utilities/JWTUtil';
-import { showWebLog, switchLoading, setAuthdata } from '../utilities/BankeePlus';
+import {
+  showWebLog, switchLoading, setAuthdata, goHome,
+} from '../utilities/BankeePlus';
 // Request failed with status code
 const errorHandle = (status, message) => {
   switch (status) {
@@ -115,6 +117,10 @@ userAxios().interceptors.response.use(
         const decrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
         showWebLog('decryptData', decrypt);
         response = decrypt;
+      } else if (response.data.code === 'WEBCTL1007') {
+        response = { code: response.data.code, message: response.data.message };
+        alert(response.data.message);
+        showWebLog('errorResponse', response);
       } else {
         response = { code: response.data.code, message: response.data.message };
         showWebLog('errorResponse', response);
@@ -125,6 +131,7 @@ userAxios().interceptors.response.use(
   },
   // eslint-disable-next-line consistent-return
   (error) => {
+    console.dir(error);
     switchLoading(false);
     const { response } = error;
     showWebLog('Response Error', error);
@@ -133,6 +140,10 @@ userAxios().interceptors.response.use(
       // 成功發出 request 且收到 response，但有 error
       errorHandle(response.status, response.data.error);
       return Promise.reject(error);
+    }
+    if (!response) {
+      alert('發生非預期錯誤，即將離開目前功能');
+      goHome();
     }
     // 成功發出 request 但沒收到 response
     if (!window.navigator.onLine) {
