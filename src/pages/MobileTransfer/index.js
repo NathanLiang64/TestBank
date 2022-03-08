@@ -48,7 +48,7 @@ const MobileTransfer = () => {
 
   const getUserActNo = async () => {
     const response = await mpTransferApi.getUserActNo({ tokenStatus: 1 });
-    console.log(response);
+    console.log('已綁定帳號', response);
   };
 
   // 編輯手機號碼收款
