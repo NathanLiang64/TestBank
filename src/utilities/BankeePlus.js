@@ -151,6 +151,19 @@ function showWebLog(type = 'none', log) {
   }
 }
 
+// 向 APP 請求 OTP 驗證
+function onVerification() {
+  const data = { type: '1' };
+  if (device.ios()) {
+    const msg = JSON.stringify({ name: 'onVerification', data: JSON.stringify(data) });
+    window.webkit?.messageHandlers.jstoapp.postMessage(msg);
+  }
+  if (device.android()) {
+    const androidParam = JSON.stringify(data);
+    window.jstoapp?.onVerification()(androidParam);
+  }
+}
+
 export {
   goToFunc,
   closeFunc,
@@ -161,4 +174,5 @@ export {
   getPagedata,
   setAuthdata,
   showWebLog,
+  onVerification,
 };

@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 // import Header from 'components/Header';
@@ -18,14 +19,16 @@ const App = () => (
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
       {/* <Header /> */}
-      <Switch>
-        {
-          routes.map((route) => {
-            const { path, exact, component } = route;
-            return <Route key={path} path={path} exact={exact} component={component} />;
-          })
-        }
-      </Switch>
+      <Suspense fallback={<></>}>
+        <Switch>
+          {
+            routes.map((route) => {
+              const { path, exact, component } = route;
+              return <Route key={path} path={path} exact={exact} component={component} />;
+            })
+          }
+        </Switch>
+      </Suspense>
       {/* <TabBar /> */}
       {/* <ShakeShake /> */}
       {/* <Favorite /> */}
