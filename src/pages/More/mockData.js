@@ -73,6 +73,7 @@ const mockData = {
           id: 'apply3',
           label: '申請證券交割帳戶',
           route: '',
+          funcID: 'F00200',
         },
         {
           id: 'apply4',

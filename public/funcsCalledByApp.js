@@ -30,4 +30,17 @@ function returnAuthdata(event) {
   document.cookie = 'jwtToken=' + auth;
 }
 
+// APP 通知網頁 otp 驗證結果
+function onComplete(event) {
+  const { type, signature, mima, rtcode, rtmsg } = event;
+  if (Number(rtcode) === 0) {
+    localStorage.setItem('signature', signature);
+    localStorage.setItem('mima', mima);
+    window.customFunc()
+  }
+  if (Number(rtcode) === 1) {
+    alert(rtmsg);
+  }
+}
+
 console.log('load app to webview functions success');

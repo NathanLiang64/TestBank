@@ -3,7 +3,7 @@ import { useHistory } from 'react-router';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { mpTransferApi, bankAccountsApi } from 'apis';
+import { mpTransferApi, bankAccountsApi, basicInformationApi } from 'apis';
 
 /* Elements */
 import Header from 'components/Header';
@@ -29,9 +29,6 @@ const MobileTransfer1 = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    userName: yup
-      .string()
-      .required('請輸入姓名'),
     mobile: yup
       .string()
       .required('請選擇手機號碼'),
@@ -53,16 +50,24 @@ const MobileTransfer1 = () => {
     setAccountDefault(!accountDefault);
   };
 
+  // 取得姓名
+  const getUserName = async () => {
+    const { custName } = await basicInformationApi.getBasicInformation({});
+    setValue('userName', custName || '');
+  };
+
   // 取得手機號碼
   const getMobiles = async () => {
-    const { mobiles } = await mpTransferApi.getMobile({ tokenStatus: 1 });
-    setMobileList(mobiles);
-    setValue('mobile', mobiles[0]);
+    const response = await mpTransferApi.getMobile({ tokenStatus: 1 });
+    console.log('可綁定手機號碼', response);
+    setMobileList(response.mobiles);
+    setValue('mobile', response.mobiles[0]);
   };
 
   // 取得收款帳號
   const getAccounts = async () => {
     const response = await bankAccountsApi.getAccountsList({});
+    console.log(response);
     const accounts = response.map((item) => item.acctNo);
     setAccountList(accounts);
     setValue('account', accounts[0]);
@@ -93,6 +98,7 @@ const MobileTransfer1 = () => {
   ));
 
   useEffect(() => {
+    getUserName();
     getMobiles();
     getAccounts();
   }, []);
@@ -125,6 +131,7 @@ const MobileTransfer1 = () => {
                     name="userName"
                     placeholder="請輸入姓名"
                     error={!!errors.userName}
+                    disabled
                   />
                 )}
               />
