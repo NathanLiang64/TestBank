@@ -151,6 +151,7 @@ const ForeignCurrencyPriceSetting = lazy(() => import('pages/ForeignCurrencyPric
 const QuickLoginSetting = lazy(() => import('pages/QuickLoginSetting'));
 const Instalment = lazy(() => import('pages/Instalment'));
 const AutomaticBillPayment = lazy(() => import('pages/AutomaticBillPayment'));
+const ExchangeRate = lazy(() => import('pages/ExchangeRate'));
 
 const routes = [
   { path: '/', exact: true, component: Nav },
@@ -224,8 +225,9 @@ const routes = [
   { path: '/transferStatic1', exact: false, component: TransferStatic1 },
   { path: '/transferStatic2', exact: false, component: TransferStatic2 },
   { path: '/tutorials', exact: false, component: Tutorials },
-  { path: '/instalment', exact: false, component: Instalment },
-  { path: '/automaticBillPayment', exact: false, component: AutomaticBillPayment },
+  { path: '/staging', exact: false, component: Instalment },
+  { path: '/withholding', exact: false, component: AutomaticBillPayment },
+  { path: '/exchangeRate', exact: false, component: ExchangeRate },
 ];
 
 export default routes;

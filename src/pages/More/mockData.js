@@ -154,7 +154,7 @@ const mockData = {
         {
           id: 'invest2',
           label: '匯率',
-          route: '',
+          route: '/exchangeRate',
           funcID: 'E00200',
         },
         {
