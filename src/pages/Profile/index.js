@@ -42,8 +42,16 @@ const Profile = () => {
   // 上傳大頭貼
   const uploadAvatarImg = async (e) => {
     const file = e.target.files[0];
+    if (!file) {
+      alert('請選擇檔案');
+      return;
+    }
     if (!file.type.includes('image')) {
-      alert('無檔案或上傳檔案格式錯誤');
+      alert('檔案格式錯誤，僅限 JPG, JPEG, PNG 格式圖檔');
+      return;
+    }
+    if ((file.size / 1024) > 512) {
+      alert('檔案大小必須小於 512 KB');
       return;
     }
     const formData = new FormData();
@@ -51,7 +59,11 @@ const Profile = () => {
     const response = await profileApi.uploadAvatar(formData);
     console.log(response);
     if (response === 'OK') {
+      alert('上傳成功');
       setAvatarUrl(`https://bankeesit.feib.com.tw/img/pf_${uuid}_b.jpg?timestamp=${Date.now()}`);
+    }
+    if (response?.code) {
+      alert(`${response?.message}，錯誤碼：${response?.code}`);
     }
   };
 
@@ -63,9 +75,13 @@ const Profile = () => {
 
   const getNickName = async () => {
     const response = await profileApi.getNickName({});
-    setNickName(response.nickName);
-    setUuid(response.uuid);
-    setAvatarUrl(`https://bankeesit.feib.com.tw/img/pf_${response.uuid}_b.jpg?timestamp=${Date.now()}`);
+    if (response?.code) {
+      alert(`取得暱稱與大頭照發生錯誤：${response?.message}(${response?.code})`);
+    } else {
+      setNickName(response.nickName || '');
+      setUuid(response.uuid);
+      setAvatarUrl(`https://bankeesit.feib.com.tw/img/pf_${response.uuid}_b.jpg?timestamp=${Date.now()}`);
+    }
   };
 
   const onSubmit = async (data) => {
@@ -73,6 +89,7 @@ const Profile = () => {
       nickName: data.nickName,
     };
     const response = await profileApi.updateNickName(param);
+    console.log(response);
     if (typeof (response) === 'string') {
       setNickName(data.nickName);
       setShowChangeNickNameDialog(false);
