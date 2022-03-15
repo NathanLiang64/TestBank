@@ -97,7 +97,7 @@ class CipherUtil {
    * @param {*} message
    */
   encryptAES(enc, iv, message) {
-    const cipher = forge.cipher.createCipher('AES-CBC-PKCS7Padding', forge.util.decode64(enc));
+    const cipher = forge.cipher.createCipher('AES-CBC', forge.util.decode64(enc));
     cipher.start({ iv: forge.util.decode64(iv) });
     cipher.update(forge.util.createBuffer(message, 'utf8'));
     cipher.finish();
@@ -113,7 +113,7 @@ class CipherUtil {
    * @param {*} message
    */
   decryptAES(enc, iv, message) {
-    const decipher = forge.cipher.createDecipher('AES-CBC-PKCS7Padding', forge.util.decode64(enc));
+    const decipher = forge.cipher.createDecipher('AES-CBC', forge.util.decode64(enc));
     decipher.start({ iv: forge.util.decode64(iv) });
     // decipher.update(forge.util.createBuffer(forge.util.decode64(message)));
     decipher.update(forge.util.createBuffer(Buffer.from(message, 'base64')));
