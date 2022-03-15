@@ -7,8 +7,8 @@ const device = {
 // 取得 APP 給的加解密資料
 function setEnCrydata(event) {
   const { Crydata, Enivec } = event;
-  const aesKey = window.atob(Crydata).substr(7);
-  const iv = window.atob(Enivec).substr(7);
+  const aesKey = window.atob(Crydata).substring(7);
+  const iv = window.atob(Enivec).substring(7);
   localStorage.setItem('aesKey', aesKey);
   localStorage.setItem('iv', iv);
 };
