@@ -162,6 +162,7 @@ const Profile = () => {
             <input
               type="file"
               accept="image/*"
+              capture="camera"
               name="upload_file"
               id="avatar-input"
               onChange={uploadAvatarImg}
