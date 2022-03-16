@@ -16,6 +16,7 @@ const errorHandle = (status, message) => {
     case 401:
       // eslint-disable-next-line no-console
       console.error('連線逾時，請重新登入');
+      goHome();
       setTimeout(() => {
         // 跳轉至登入頁
       }, 1000);
@@ -143,6 +144,7 @@ userAxios().interceptors.response.use(
     }
     if (!response) {
       alert('發生非預期錯誤，即將離開目前功能');
+      alert(JSON.stringify(error));
       goHome();
     }
     // 成功發出 request 但沒收到 response
