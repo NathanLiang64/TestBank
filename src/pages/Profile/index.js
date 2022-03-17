@@ -76,7 +76,7 @@ const Profile = () => {
   const getNickName = async () => {
     const response = await profileApi.getNickName({});
     if (response?.code) {
-      alert(`取得暱稱與大頭照發生錯誤：${response?.message}(${response?.code})`);
+      alert(`取得暱稱與大頭照發生錯誤(${response?.code})：${response?.message}`);
     } else {
       setNickName(response.nickName || '');
       setUuid(response.uuid);

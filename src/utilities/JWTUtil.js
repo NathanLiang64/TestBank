@@ -1,6 +1,6 @@
 import CipherUtil from './CipherUtil';
 
-const assert = require('assert');
+// const assert = require('assert');
 
 class JWTUtil {
   /**
@@ -11,8 +11,9 @@ class JWTUtil {
    */
   // eslint-disable-next-line class-methods-use-this
   encryptJWTMessage(aesKey, iv, message) {
-    const data = CipherUtil.encryptAES(aesKey, iv, message);
-    const hmac = CipherUtil.encryptHMAC(aesKey, message);
+    const enc = CipherUtil.getEnc(aesKey);
+    const data = CipherUtil.encryptAES(enc, iv, message);
+    const hmac = CipherUtil.encryptHMAC(enc, message);
 
     return {
       data,
@@ -28,9 +29,10 @@ class JWTUtil {
    */
   // eslint-disable-next-line class-methods-use-this
   decryptJWTMessage(aesKey, iv, message) {
-    const request = CipherUtil.decryptAES(aesKey, iv, message.encData);
-    const hmac = CipherUtil.encryptHMAC(aesKey, request);
-    assert.strictEqual(hmac, message.mac);
+    const enc = CipherUtil.getEnc(aesKey);
+    const request = CipherUtil.decryptAES(enc, iv, message.encData);
+    // const hmac = CipherUtil.encryptHMAC(enc, request);
+    // assert.strictEqual(hmac, message.mac);
     const json = JSON.parse(request);
     return json;
   }
