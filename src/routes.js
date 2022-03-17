@@ -150,6 +150,9 @@ const MobileTransfer2 = lazy(() => import('pages/MobileTransfer/mobileTransfer_2
 const ForeignCurrencyPriceSetting = lazy(() => import('pages/ForeignCurrencyPriceSetting'));
 const QuickLoginSetting = lazy(() => import('pages/QuickLoginSetting'));
 const Instalment = lazy(() => import('pages/Instalment'));
+const Instalment1 = lazy(() => import('pages/Instalment/Instalment_1'));
+const Instalment2 = lazy(() => import('pages/Instalment/Instalment_2'));
+const Instalment3 = lazy(() => import('pages/Instalment/Instalment_3'));
 const AutomaticBillPayment = lazy(() => import('pages/AutomaticBillPayment'));
 const ExchangeRate = lazy(() => import('pages/ExchangeRate'));
 
@@ -226,6 +229,9 @@ const routes = [
   { path: '/transferStatic2', exact: false, component: TransferStatic2 },
   { path: '/tutorials', exact: false, component: Tutorials },
   { path: '/staging', exact: false, component: Instalment },
+  { path: '/staging1', exact: false, component: Instalment1 },
+  { path: '/staging2', exact: false, component: Instalment2 },
+  { path: '/staging3', exact: false, component: Instalment3 },
   { path: '/withholding', exact: false, component: AutomaticBillPayment },
   { path: '/exchangeRate', exact: false, component: ExchangeRate },
 ];
