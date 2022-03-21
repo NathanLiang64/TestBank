@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { mpTransferApi } from 'apis';
-import { closeFunc } from 'utilities/BankeePlus';
+import { closeFunc, onVerification } from 'utilities/BankeePlus';
 
 /* Elements */
 import Header from 'components/Header';
@@ -109,6 +109,7 @@ const MobileTransfer2 = ({ location }) => {
       setResultDialog(response);
     };
     window.customFunc = createMobileNo;
+    onVerification();
   };
 
   // 回上一頁
