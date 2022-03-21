@@ -145,7 +145,7 @@ const ReserveTransferSearch = () => {
       acctId: selectedAccount.accountId,
       ccycd: selectedAccount.ccyCd,
       accountType: selectedAccount.accountType,
-      queryType: '3',
+      // queryType: '3',
       sdate: dateFormatter(resultDateRange[0]),
       edate: dateFormatter(resultDateRange[1]),
     };

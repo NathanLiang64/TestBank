@@ -177,6 +177,12 @@ const mockData = {
           funcID: 'R00100',
         },
         {
+          id: 'creditCard5',
+          label: '消費分期',
+          route: '/staging',
+          funcID: 'R00200',
+        },
+        {
           id: 'creditCard2',
           label: '帳單明細',
           route: '',
