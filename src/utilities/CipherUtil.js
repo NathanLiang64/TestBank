@@ -7,7 +7,7 @@ const { type } = require('os');
 
 class CipherUtil {
   /**
-   * Generate RSA
+   * Generate RSA, only for web
    */
   // eslint-disable-next-line class-methods-use-this
   generateRSA() {
@@ -22,7 +22,7 @@ class CipherUtil {
   }
 
   /**
-   * Generate AES
+   * Generate AES, only for web
    */
   generateAES() {
     const key = forge.random.getBytesSync(32);
@@ -30,7 +30,7 @@ class CipherUtil {
   }
 
   /**
-   * Generate IV
+   * Generate IV, only for web
    */
   generateIV() {
     const iv = forge.random.getBytesSync(16);
@@ -48,7 +48,7 @@ class CipherUtil {
   }
 
   /**
-   * Get HMAC
+   * Get HMAC, only for web
    * @param {*} aesKey
    */
   getHMAC(aesKey) {
@@ -58,7 +58,7 @@ class CipherUtil {
   }
 
   /**
-   * From Message to Base64
+   * From Message to Base64, only for web
    * @param {*} publicKey
    * @param {*} message
    */
@@ -74,7 +74,7 @@ class CipherUtil {
   }
 
   /**
-   * From Base64 to Message
+   * From Base64 to Message, only for web
    * @param {*} privateKey
    * @param {*} message
    */
@@ -124,7 +124,7 @@ class CipherUtil {
   }
 
   /**
-   * Transfer Private Key String to Buffer
+   * Transfer Private Key String to Buffer, only for web
    * @param {*} privatKeyString
    */
   getRSAPrivateKeyFromPem(privatKeyString) {
@@ -134,7 +134,7 @@ class CipherUtil {
   }
 
   /**
-   * Transfer Public Key String to Buffer
+   * Transfer Public Key String to Buffer, only for web
    * @param {*} publicKeyString
    */
   getRSAPublicKeyFromPem(publicKeyString) {
