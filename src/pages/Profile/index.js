@@ -149,7 +149,7 @@ const Profile = () => {
 
   return (
     <>
-      <Header title="個人化設定(vjinc)" />
+      <Header title="個人化設定" />
       <ProfileWrapper>
         <div className="avatarContainer">
           <img src={avatarUrl} onError={() => setAvatarUrl(Avatar)} alt="" />
