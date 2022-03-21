@@ -106,7 +106,7 @@ const CardLessATM = () => {
 
       case '4':
         generateDailog(
-          '無卡提款已失效',
+          message,
           (
             <FEIBButton onClick={closeFunction()}>確定</FEIBButton>
           ),
@@ -131,17 +131,17 @@ const CardLessATM = () => {
     console.log('金融卡狀態', cardStatusResponse);
     const { cardStatus, message } = cardStatusResponse;
     switch (cardStatus) {
-      case '01':
-        generateDailog(
-          '晶片卡申請中！',
-          (<FEIBButton onClick={closeFunction()}>確定</FEIBButton>),
-          closeFunction,
-        );
-        break;
+      // case '01':
+      //   generateDailog(
+      //     message,
+      //     (<FEIBButton onClick={closeFunction()}>確定</FEIBButton>),
+      //     closeFunction,
+      //   );
+      //   break;
 
       case '02':
         generateDailog(
-          '請先完成金融卡開卡以啟用無卡提款服務！',
+          message,
           (
             <ConfirmButtons
               mainButtonValue="我要開卡"
