@@ -1,22 +1,26 @@
 import InformationList from 'components/InformationList';
 import SuccessImage from 'assets/images/stateSuccess.svg';
 import ErrorImage from 'assets/images/stateError.svg';
+import { toCurrency } from 'utilities/Generator';
 import DialogContentWrapper from './dialogContent.style';
 
 const DialogContent = ({ data, selectedAccount }) => (
   <DialogContentWrapper>
     <div className="resultContainer">
       <div className="stateContainer">
-        <img className="stateImage" src={data.stderrMsg === '轉帳成功' ? SuccessImage : ErrorImage} alt="" />
-        <div className={`stateContent ${data.stderrMsg === '轉帳成功' ? 'success' : 'fail'}`}>
-          { data.stderrMsg === '轉帳成功' ? '轉帳成功' : '轉帳失敗'}
+        <img className="stateImage" src={data.stderrMsg ? ErrorImage : SuccessImage} alt="" />
+        <div className={`stateContent ${data.stderrMsg ? 'fail' : 'success'}`}>
+          { data.stderrMsg ? '轉帳失敗' : '轉帳成功'}
         </div>
       </div>
-      { !data.stderrMsg === '轉帳成功' && (<div className="msgLabel">{data?.stderrMsg}</div>) }
+      { data.stderrMsg && (<div className="msgLabel">{data?.stderrMsg}</div>) }
     </div>
     <div className="mainBlock">
       <div className="dataLabel">轉出金額與轉入帳號</div>
-      <div className="balance">{data?.amount}</div>
+      <div className="balance">
+        $
+        {toCurrency(data?.amount)}
+      </div>
       <div className="account">{data?.inActNo}</div>
     </div>
     <div className="informationListContainer">
