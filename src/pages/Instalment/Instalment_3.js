@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
@@ -36,6 +37,7 @@ const Instalment3 = () => {
 
   useCheckLocation();
   usePageInfo('/api/instalment');
+  const history = useHistory();
 
   const ResultTable = () => (
     <>
@@ -126,7 +128,7 @@ const Instalment3 = () => {
 
   return (
     <>
-      <Header title="消費分期 (總額)" />
+      <Header title="消費分期 (總額)" goBack={() => history.replace('/staging2')} />
       <InstalmentWrapper className="InstalmentWrapper" small>
         <form>
           <div>
@@ -144,7 +146,13 @@ const Instalment3 = () => {
               </p>
             </div>
           </div>
-          <FEIBButton onClick={() => setOpenDrawer(!openDrawer)}>
+          <FEIBButton
+            type="submit"
+            onClick={() => {
+              setShowResultDialog(true);
+              history.push('/staging');
+            }}
+          >
             確認
           </FEIBButton>
         </form>

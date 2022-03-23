@@ -1,3 +1,4 @@
+import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
@@ -15,6 +16,7 @@ const Instalment2 = () => {
 
   useCheckLocation();
   usePageInfo('/api/instalment');
+  const history = useHistory();
 
   const renderSelectList = () => {
     const list = ['3期', '6期', '9期', '12期'];
@@ -34,7 +36,7 @@ const Instalment2 = () => {
 
   return (
     <>
-      <Header title="消費分期 (總額)" />
+      <Header title="消費分期 (總額)" goBack={() => history.replace('/staging1')} />
       <InstalmentWrapper className="InstalmentWrapper" small>
         <form>
           <div>
@@ -52,7 +54,11 @@ const Instalment2 = () => {
               <AccordionContent />
             </Accordion>
           </div>
-          <FEIBButton onClick={() => {}}>
+          <FEIBButton
+            onClick={() => {
+              history.push('/staging3');
+            }}
+          >
             同意條款並繼續
           </FEIBButton>
         </form>
