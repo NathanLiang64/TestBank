@@ -45,6 +45,33 @@ const ExchangeTable = () => {
   const [getInfoStr, setGetInfoStr] = useState('');
   const [exchangeRate, setExchangeRate] = useState([]);
 
+  const testExchangeRate = [
+    {
+      ccyname: '美金',
+      ccycd: 'USD',
+      brate: '28.0520',
+      srate: '28.1520',
+    },
+    {
+      ccyname: '日圓',
+      ccycd: 'JPY',
+      brate: '0.2709',
+      srate: '0.2739',
+    },
+    {
+      ccyname: '人民幣',
+      ccycd: 'CNY',
+      brate: '4.9200',
+      srate: '4.3450',
+    },
+    {
+      ccyname: '歐元',
+      ccycd: 'EUR',
+      brate: '34.3800',
+      srate: '34.6800',
+    },
+  ];
+
   const getExchangeRate = async () => {
     const now = Date.now();
     const dateStr = dateFormatter(now);
@@ -57,6 +84,22 @@ const ExchangeTable = () => {
   useEffect(() => {
     getExchangeRate();
   }, []);
+
+  const renderTable = (table) => table.map((item) => (
+    <tr key={item.ccycd}>
+      <td>
+        { item.ccyname }
+        &nbsp;
+        { item.ccycd }
+      </td>
+      <td>
+        { item.brate }
+      </td>
+      <td>
+        { item.srate }
+      </td>
+    </tr>
+  ));
 
   return (
     <ExchangeTableWrapper>
@@ -79,23 +122,7 @@ const ExchangeTable = () => {
           </tr>
         </thead>
         <tbody>
-          {
-            exchangeRate.map((item) => (
-              <tr key={item.ccycd}>
-                <td>
-                  { item.ccyname }
-                  &nbsp;
-                  { item.ccycd }
-                </td>
-                <td>
-                  { item.brate }
-                </td>
-                <td>
-                  { item.srate }
-                </td>
-              </tr>
-            ))
-          }
+          {exchangeRate.length > 0 ? renderTable(exchangeRate) : renderTable(testExchangeRate) }
         </tbody>
       </table>
     </ExchangeTableWrapper>
