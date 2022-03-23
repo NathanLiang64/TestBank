@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { mpTransferApi } from 'apis';
-import { closeFunc } from 'utilities/BankeePlus';
+import { closeFunc, onVerification } from 'utilities/BankeePlus';
 
 /* Elements */
 import Header from 'components/Header';
@@ -70,7 +70,8 @@ const MobileTransfer2 = ({ location }) => {
   };
 
   // 設定結果彈窗
-  const setResultDialog = (response) => {
+  const setResultDialog = (response, param) => {
+    // alert(JSON.stringify(param));
     const { code, message, respData } = response;
     const successDesc = getSuccessDesc();
     let errorCode = code;
@@ -79,7 +80,7 @@ const MobileTransfer2 = ({ location }) => {
       dispatch(setCloseCallBack(() => closeFunc()));
     } else {
       errorCode = response.code;
-      errorDesc = response.message;
+      errorDesc = response.message + JSON.stringify(param);
       dispatch(setCloseCallBack(() => {}));
     }
     dispatch(setResultContent({
@@ -106,9 +107,10 @@ const MobileTransfer2 = ({ location }) => {
     };
     const createMobileNo = async () => {
       const response = await mpTransferApi.createMobileNo(param);
-      setResultDialog(response);
+      setResultDialog(response, param);
     };
     window.customFunc = createMobileNo;
+    onVerification();
   };
 
   // 回上一頁

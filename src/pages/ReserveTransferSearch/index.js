@@ -5,6 +5,7 @@ import { useHistory } from 'react-router';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { reserveTransferSearchApi } from 'apis';
 import { dateFormatter } from 'utilities/Generator';
+import { switchLoading, closeFunc } from 'utilities/BankeePlus';
 
 /* Elements */
 import Header from 'components/Header';
@@ -66,10 +67,16 @@ const ReserveTransferSearch = () => {
   // 取得帳號清單
   const getTransferOutAccounts = async () => {
     // const { accounts, isMotpOpen } = await reserveTransferSearchApi.getTransferOutAccounts({ motpDeviceId: '675066ee-2f25-4d97-812a-12c7f8d18489' });
-    const { accounts } = await reserveTransferSearchApi.getTransferOutAccounts({});
+    switchLoading(true);
+    const { accounts, code, message } = await reserveTransferSearchApi.getTransferOutAccounts({});
     if (accounts) {
       setCardsList(accounts);
       setSelectedAccount(accounts[0]);
+      switchLoading(false);
+    } else {
+      alert(`${message}(${code})`);
+      switchLoading(false);
+      closeFunc();
     }
   };
 
@@ -103,6 +110,8 @@ const ReserveTransferSearch = () => {
 
   // 取得預約轉帳明細
   const getReservedTransDetails = async () => {
+    setReserveDataList([]);
+    switchLoading(true);
     const param = {
       acctId: selectedAccount.accountId,
       ccycd: selectedAccount.ccyCd,
@@ -113,49 +122,36 @@ const ReserveTransferSearch = () => {
     };
     const response = await reserveTransferSearchApi.getReservedTransDetails(param);
     console.log(response);
-    // amount: "1,001"
-    // bookType: "158"
-    // bookTypeName: "網路預約轉出"
-    // chargeDay: "004"
-    // chargeMode: "W"
-    // inActNo: "0000000123456789"
-    // inBank: "013"
-    // inBankName: "國泰世華銀行"
-    // memo: "ICAgICAgICAgICAgICAgIA=="
-    // nickName: ""
-    // payDate: "111/01/13"
-    // payDateEnd: "111/04/07"
-    // payDateWording: "每週四"
-    // seqNo: "00001"
-    // source: "1"
-    // trncd: "1"
-    // trncdName: "提取"
-    // trnsDate: "111/01/12"
-    // type: "週期"
     if (response.bookList) {
       setReserveDataList(response.bookList);
     } else {
+      alert(`${response?.message}(${response?.code})`);
       setReserveDataList([]);
     }
+    switchLoading(false);
   };
 
   // 取得預約轉帳結果
   const getResultTransDetails = async () => {
+    setResultDataList([]);
+    switchLoading(true);
     const param = {
       acctId: selectedAccount.accountId,
       ccycd: selectedAccount.ccyCd,
       accountType: selectedAccount.accountType,
-      queryType: '3',
+      // queryType: '3',
       sdate: dateFormatter(resultDateRange[0]),
       edate: dateFormatter(resultDateRange[1]),
     };
     const response = await reserveTransferSearchApi.getResultTransDetails(param);
     console.log(response);
-    if (response?.bookList.length > 0) {
-      setResultDataList(response?.bookList);
+    if (!response?.code > 0) {
+      setResultDataList(response);
     } else {
+      alert(`${response?.message}(${response?.code})`);
       setResultDataList([]);
     }
+    switchLoading(false);
   };
 
   const handleTabChange = (event, type) => {
@@ -261,19 +257,24 @@ const ReserveTransferSearch = () => {
   // 切換帳號搜尋預約明細
   useEffect(() => {
     if (selectedAccount) {
-      getReservedTransDetails();
+      if (tabValue === '1') {
+        getReservedTransDetails();
+      }
+      if (tabValue === '2') {
+        getResultTransDetails();
+      }
     }
   }, [selectedAccount]);
 
   // 時間切換搜尋預約明細
   useEffect(() => {
-    if (selectedAccount) {
+    if (tabValue === '1' && selectedAccount) {
       getReservedTransDetails();
     }
   }, [reserveDateRange]);
 
   useEffect(() => {
-    if (tabValue === '2') {
+    if (tabValue === '2' && selectedAccount) {
       getResultTransDetails();
     }
   }, [resultDateRange]);

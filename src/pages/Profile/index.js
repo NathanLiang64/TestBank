@@ -50,8 +50,8 @@ const Profile = () => {
       alert('檔案格式錯誤，僅限 JPG, JPEG, PNG 格式圖檔');
       return;
     }
-    if ((file.size / 1024) > 512) {
-      alert('檔案大小必須小於 512 KB');
+    if ((file.size / 1024) > 1024) {
+      alert('檔案大小必須小於 1024 KB');
       return;
     }
     const formData = new FormData();

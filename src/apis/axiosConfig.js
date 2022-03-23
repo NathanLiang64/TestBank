@@ -2,7 +2,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import JWTUtil from '../utilities/JWTUtil';
 import {
-  showWebLog, switchLoading, setAuthdata, goHome,
+  setAuthdata, goHome,
 } from '../utilities/BankeePlus';
 // Request failed with status code
 const errorHandle = (status, message) => {
@@ -65,14 +65,10 @@ const userAxios = () => {
 
 userAxios().interceptors.request.use(
   (config) => {
-    switchLoading(true);
     const jwt = Cookies.get('jwtToken');
     if (jwt) {
       const aeskey = localStorage.getItem('aesKey');
       const ivkey = localStorage.getItem('iv');
-      showWebLog('jwtToken', jwt);
-      showWebLog('aeskey', aeskey);
-      showWebLog('ivkey', ivkey);
       config.headers.authorization = `Bearer ${jwt}`;
       // 判斷是否是上傳圖片
       if (config.url.includes('uploadImagePF')) {
@@ -80,25 +76,19 @@ userAxios().interceptors.request.use(
         config.data.append('jwtRq', JSON.stringify(jwtRq));
       } else {
         config.data.bindingUdid = '48c3d54d-bab3-471a-9778-2c98a157c3f80199263632160019';
-        showWebLog('beforeEncrypt', config.data);
         postActionLog(`request: ${config.url}`, config.data);
         // 加密
         config.data = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(config.data));
       }
     }
-    showWebLog('RequestData', config.data);
     return config;
   },
-  (error) => {
-    showWebLog('RequestError', error);
-    return Promise.reject(error);
-  },
+  (error) => Promise.reject(error),
 );
 
 userAxios().interceptors.response.use(
   async (response) => {
     const apiUrl = response.config.url;
-    switchLoading(false);
     const token = Cookies.get('jwtToken');
     if (token) {
       const aeskey = localStorage.getItem('aesKey');
@@ -113,18 +103,14 @@ userAxios().interceptors.response.use(
       if (response.config.url === '/auth/login') {
         return response.data;
       }
-      showWebLog('Response', response.data);
       if (response.data.code === '0000') {
         const decrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
-        showWebLog('decryptData', decrypt);
         response = decrypt;
       } else if (response.data.code === 'WEBCTL1007') {
         response = { code: response.data.code, message: response.data.message };
         alert(response.data.message);
-        showWebLog('errorResponse', response);
       } else {
         response = { code: response.data.code, message: response.data.message };
-        showWebLog('errorResponse', response);
       }
       postActionLog(`response: ${apiUrl}`, response);
     }
@@ -133,9 +119,7 @@ userAxios().interceptors.response.use(
   // eslint-disable-next-line consistent-return
   (error) => {
     console.dir(error);
-    switchLoading(false);
     const { response } = error;
-    showWebLog('Response Error', error);
     postActionLog(`responseError: ${error.config.url}`, response);
     if (response) {
       // 成功發出 request 且收到 response，但有 error
@@ -144,7 +128,6 @@ userAxios().interceptors.response.use(
     }
     if (!response) {
       alert('發生非預期錯誤，即將離開目前功能');
-      alert(JSON.stringify(error));
       goHome();
     }
     // 成功發出 request 但沒收到 response
