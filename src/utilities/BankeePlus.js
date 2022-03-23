@@ -137,18 +137,18 @@ function setAuthdata(jwtToken) {
 }
 
 // 傳 log 給 App
-function showWebLog(type = 'none', log) {
-  const data = { type, log };
-  console.log(data);
-  if (device.ios()) {
-    const msg = JSON.stringify({ name: 'showWebLog', data: JSON.stringify(data) });
-    window.webkit?.messageHandlers.jstoapp.postMessage(msg);
-  }
-  if (device.android()) {
-    const androidParam = JSON.stringify(data);
-    window.jstoapp?.showWebLog(androidParam);
-  }
-}
+// function showWebLog(type = 'none', log) {
+//   const data = { type, log };
+//   console.log(data);
+//   if (device.ios()) {
+//     const msg = JSON.stringify({ name: 'showWebLog', data: JSON.stringify(data) });
+//     window.webkit?.messageHandlers.jstoapp.postMessage(msg);
+//   }
+//   if (device.android()) {
+//     const androidParam = JSON.stringify(data);
+//     window.jstoapp?.showWebLog(androidParam);
+//   }
+// }
 
 // 向 APP 請求 OTP 驗證
 function onVerification() {
@@ -172,6 +172,6 @@ export {
   goAppHome,
   getPagedata,
   setAuthdata,
-  showWebLog,
+  // showWebLog,
   onVerification,
 };
