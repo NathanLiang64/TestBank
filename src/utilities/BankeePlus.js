@@ -159,7 +159,7 @@ function onVerification() {
   }
   if (device.android()) {
     const androidParam = JSON.stringify(data);
-    window.jstoapp?.onVerification()(androidParam);
+    window.jstoapp?.onVerification(androidParam);
   }
 }
 
