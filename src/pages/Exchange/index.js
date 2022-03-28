@@ -362,7 +362,7 @@ const Exchange = () => {
 
   return (
     <>
-      <Header title="外幣換匯" />
+      <Header title="外幣換匯" goBack={() => history.push('/more')} />
       <ExchangeWrapper style={{ padding: '2.4rem 1.6rem 2.4rem 1.6rem' }}>
         <div className="borderBtnContainer">
           <FEIBBorderButton className="customSize" type="button" onClick={handleTableToggle}>
