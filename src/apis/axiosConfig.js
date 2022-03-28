@@ -75,7 +75,6 @@ userAxios().interceptors.request.use(
         const jwtRq = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify({}));
         config.data.append('jwtRq', JSON.stringify(jwtRq));
       } else {
-        config.data.bindingUdid = '48c3d54d-bab3-471a-9778-2c98a157c3f80199263632160019';
         postActionLog(`request: ${config.url}`, config.data);
         // 加密
         config.data = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(config.data));
