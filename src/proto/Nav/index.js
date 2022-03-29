@@ -1,25 +1,15 @@
 /* eslint-disable arrow-body-style */
-// import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import { goToFunc } from 'utilities/BankeePlus';
-// import { useDispatch } from 'react-redux';
-// import Accordion from 'components/Accordion';
-// import { setIsShake } from 'pages/ShakeShake/stores/actions';
 import { FEIBButton } from 'components/elements';
+import { setWaittingVisible } from '../../stores/reducers/ModalReducer';
 
 import NavWrapper from './nav.style';
 
 const Nav = () => {
   const history = useHistory();
-  // const dispatch = useDispatch();
-
-  // const nativeActionWasTriggered = () => {
-  //   dispatch(setIsShake(true));
-  // };
-
-  const goToFunction = (route, funcID) => {
-    goToFunc({ route, funcID });
-  };
+  const dispatch = useDispatch();
 
   // 登出
   const logOut = () => {
@@ -43,79 +33,92 @@ const Nav = () => {
       });
   };
 
+  const startFunc = (route, funcID) => {
+    dispatch(setWaittingVisible(true));
+    goToFunc({ route, funcID });
+    dispatch(setWaittingVisible(false));
+  };
+
   return (
     <NavWrapper>
-      <FEIBButton onClick={logOut}>登出</FEIBButton>
-      <div onClick={() => goToFunction('/more', 'B00600')}>
+      <div onClick={() => startFunc('/taiwanDollarAccount', 'C00300')}>
+        <ul>
+          <li>台幣活存</li>
+          <li>route: /taiwanDollarAccount</li>
+          <li>funcID: C00300</li>
+        </ul>
+      </div>
+      {/* <div onClick={() => goToFunc({ route: '/more', funcID: 'B00600' })}>
         <ul>
           <li>功能：更多</li>
           <li>route: /more</li>
           <li>funcID: B00600</li>
         </ul>
       </div>
-      <div onClick={() => goToFunction('/profile', 'T00100')}>
+      <div onClick={() => goToFunc({ route: '/profile', funcID: 'T00100' })}>
         <ul>
           <li>功能：個人化設定</li>
           <li>route: /profile</li>
           <li>funcID: T00100</li>
         </ul>
       </div>
-      <div onClick={() => goToFunction('/quickLoginSetting', 'T00200')}>
+      <div onClick={() => goToFunc({ route: '/quickLoginSetting', funcID: 'T00200' })}>
         <ul>
           <li>功能：快速登入設定</li>
           <li>route: /quickLoginSetting</li>
           <li>funcID: T00200</li>
         </ul>
       </div>
-      <div onClick={() => goToFunction('/smsOTPactivate', 'T00400')}>
+      <div onClick={() => goToFunc({ route: '/smsOTPactivate', funcID: 'T00400' })}>
         <ul>
           <li>功能：簡訊OTP設定</li>
           <li>route: /smsOTPactivate</li>
           <li>funcID: T00400</li>
         </ul>
       </div>
-      <div onClick={() => goToFunction('/basicInformation', 'T00700')}>
+      <div onClick={() => goToFunc({ route: '/basicInformation', funcID: 'T00700' })}>
         <ul>
           <li>功能：基本資料變更</li>
           <li>route: /basicInformation</li>
           <li>funcID: T00700</li>
         </ul>
       </div>
-      <div onClick={() => goToFunction('/mobileTransfer', 'T00600')}>
+      <div onClick={() => goToFunc({ route: '/mobileTransfer', funcID: 'T00600' })}>
         <ul>
           <li>功能：手機號碼收款設定</li>
           <li>route: /mobileTransfer</li>
           <li>funcID: T00600</li>
         </ul>
       </div>
-      <div onClick={() => goToFunction('/changeUserName', 'T00800')}>
+      <div onClick={() => goToFunc({ route: '/changeUserName', funcID: 'T00800' })}>
         <ul>
           <li>功能：使用者代號變更</li>
           <li>route: /changeUserName</li>
           <li>funcID: T00800</li>
         </ul>
       </div>
-      <div onClick={() => goToFunction('/pwdModify', 'T00900')}>
+      <div onClick={() => goToFunc({ route: '/pwdModify', funcID: 'T00900' })}>
         <ul>
           <li>功能：網銀密碼變更</li>
           <li>route: /pwdModify</li>
           <li>funcID: T00900</li>
         </ul>
       </div>
-      <div onClick={() => goToFunction('/notice', 'B00300')}>
+      <div onClick={() => goToFunc({ route: '/notice', funcID: 'B00300' })}>
         <ul>
           <li>功能：訊息通知</li>
           <li>route: /notice</li>
           <li>funcID: B00300</li>
         </ul>
       </div>
-      <div onClick={() => goToFunction('/staging', '')}>
+      <div onClick={() => goToFunc({ route: '/staging', funcID: '' })}>
         <ul>
           <li>功能：消費分期</li>
           <li>route: /staging</li>
           <li>funcID: </li>
         </ul>
-      </div>
+      </div> */}
+
       {/* <Accordion title="驗收單元功能清單 (1)" space="bottom">
         <Link to="/notice">E02 訊息通知</Link>
         <Link to="/noticeSetting">E02-1 訊息通知設定</Link>
@@ -151,6 +154,7 @@ const Nav = () => {
         <Link to="/deduct">自動扣繳申請/查詢</Link>
         <Link to="/transfer">轉帳</Link>
       </Accordion> */}
+      <FEIBButton onClick={logOut}>登出</FEIBButton>
     </NavWrapper>
   );
 };

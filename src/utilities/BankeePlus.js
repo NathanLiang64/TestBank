@@ -26,7 +26,6 @@ const funcStack = {
 // 網頁通知APP跳轉指定功能
 function goToFunc({ route, funcID }, funcParams = '', keepData = '') {
   // console.debug('name:' + funcName + ', data:' + jsonParams);
-  route = route.replace('/', '');
   const data = {
     funcID,
     funcParams,
@@ -39,13 +38,18 @@ function goToFunc({ route, funcID }, funcParams = '', keepData = '') {
     const param = JSON.stringify(data);
     window.jstoapp.startFunc(param);
   } else {
-    console.log(`[Start Function(${funcID})]`);
+    console.log(`[Start Function(${route}, ${funcID})]`);
+    route = route.replace(/^\/?/, '');
     funcStack.push({ route, funcID }, funcParams, keepData);
     // console.log(history);
     // const history = useHistory();
     // history.push(`/${funcID}`);
     window.location.pathname = `/${route}`;
   }
+}
+
+function startFunc(funcID, funcParams, keepData) {
+  goToFunc({ route: null, funcID }, funcParams, keepData);
 }
 
 // 觸發APP返回上一頁功能
@@ -64,7 +68,7 @@ function closeFunc() {
       // const history = useHistory();
       // history.push(funcItem.funcName);
     } else {
-      window.location.pathname = '/';
+      window.location.pathname = '/home';
     }
   }
 }
@@ -95,7 +99,7 @@ function getEnCrydata() {
 
 function goHome() {
   funcStack.clear();
-  goToFunc({ route: '/', funcID: 'home' });
+  goToFunc({ route: '/home', funcID: 'home' });
 }
 
 // 網頁通知APP跳轉至首頁
@@ -164,6 +168,7 @@ function onVerification() {
 }
 
 export {
+  startFunc,
   goToFunc,
   closeFunc,
   goHome,

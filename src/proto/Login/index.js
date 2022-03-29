@@ -88,7 +88,7 @@ const Login = () => {
     const { result, message } = await getJwtKey(data);
     if (result === 'success') {
       // alert('登入成功');
-      history.push('/more');
+      history.push('/home');
     } else {
       alert(message);
     }
