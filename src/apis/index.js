@@ -1,10 +1,10 @@
-import * as headerApi from './headerApi';
+// import * as headerApi from './headerApi';
 import * as billPayApi from './billPayApi';
 import * as patternLockSettingApi from './patternLockSettingApi';
 import * as lossReissueApi from './lossReissueApi';
 import * as depositOverviewApi from './depositOverviewApi';
 import * as depositInquiryApi from './depositInquiryApi';
-import * as loginApi from './loginApi';
+import * as loginApi from '../proto/Login/loginApi';
 import * as shakeShakeApi from './shakeShakeApi';
 import * as transferApi from './transferApi';
 import * as cardLessATMApi from './cardLessATMApi';
@@ -26,7 +26,7 @@ import * as exchangeApi from './exchangeApi';
 import * as moreApi from './moreApi';
 
 export {
-  headerApi,
+  // headerApi,
   billPayApi,
   patternLockSettingApi,
   lossReissueApi,

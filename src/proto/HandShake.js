@@ -1,7 +1,7 @@
 import userAxios from 'apis/axiosConfig';
 import Cookies from 'js-cookie';
-import CipherUtil from './CipherUtil';
-import JWEUtil from './JWEUtil';
+import CipherUtil from '../utilities/CipherUtil';
+import JWEUtil from '../utilities/JWEUtil';
 
 // 裝置開啟時去呼叫
 const handshake = async () => {

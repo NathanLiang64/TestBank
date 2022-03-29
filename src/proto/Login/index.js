@@ -18,12 +18,12 @@ import {
 // import e2ee from 'utilities/E2ee';
 import { setFavoriteDrawer } from 'pages/Favorite/stores/actions';
 import getJwtKey from 'utilities/DoGetToken';
-import HandShake from 'utilities/HandShake';
 // import { goToFunc } from 'utilities/BankeePlus';
 import { accountValidation, identityValidation, passwordValidation } from 'utilities/validation';
 import theme from 'themes/theme';
 import Logo from 'assets/images/logoTransparent.png';
 import BgImage from 'assets/images/loginBackground.png';
+import HandShake from '../HandShake';
 import LoginWrapper from './login.style';
 import FaceIdLoginModal from './faceIdLoginModal';
 import RegisterModal from './registerModal';
@@ -87,13 +87,8 @@ const Login = () => {
   const onSubmit = async (data) => {
     const { result, message } = await getJwtKey(data);
     if (result === 'success') {
-      try {
-        alert('登入成功');
-        history.push('/');
-        // goToFunc('home');
-      } catch (error) {
-        history.push('/');
-      }
+      // alert('登入成功');
+      history.push('/more');
     } else {
       alert(message);
     }
