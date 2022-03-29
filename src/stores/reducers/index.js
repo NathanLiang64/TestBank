@@ -15,6 +15,7 @@ import { reducers as foreignCurrencyAccountReducer } from 'pages/ForeignCurrency
 import { reducers as tradingAccountReducer } from 'pages/TradingAccount/stores';
 import { reducers as accountDetailsReducer } from 'components/AccountDetails/stores';
 import { reducers as resultDialogReducer } from 'pages/ResultDialog/stores';
+import ModalReducer from './ModalReducer';
 
 const reducer = combineReducers({
   login: loginReducer,
@@ -33,6 +34,7 @@ const reducer = combineReducers({
   tradingAccount: tradingAccountReducer,
   accountDetails: accountDetailsReducer,
   resultDialog: resultDialogReducer,
+  ModalReducer,
 });
 
 export default reducer;

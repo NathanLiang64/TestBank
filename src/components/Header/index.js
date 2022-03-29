@@ -8,16 +8,12 @@ const Header = ({
   title, hideBack, hideHome, goBack,
 }) => {
   const handleHomeIconClick = (className) => {
-    if (goBack) {
-      goBack();
-      return;
-    }
-
     if (className === 'goHome') {
       goAppHome();
-    }
-    if (className === 'goBack') {
-      closeFunc();
+    } else if (className === 'goBack') {
+      if (goBack) {
+        goBack();
+      } else closeFunc();
     }
   };
 
