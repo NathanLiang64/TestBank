@@ -52,8 +52,7 @@ const Notice = () => {
 
   const getNoticeItem = async () => {
     const data = await noticeApi.getNoticeItem({});
-    console.log(data.notices.filter((item) => item.level === 1));
-    console.log(data.notices);
+    console.log(data);
   };
 
   // 取得通知列表
@@ -138,7 +137,7 @@ const Notice = () => {
   useGetEnCrydata();
 
   useEffect(() => {
-    // getNoticeItem();
+    getNoticeItem();
     getNotices();
   }, []);
 

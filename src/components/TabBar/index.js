@@ -97,8 +97,6 @@ const TabBar = () => {
       .then(({ code }) => {
         if (code === '00') {
           history.push('/login');
-        } else {
-          alert('登出失敗');
         }
       });
   };

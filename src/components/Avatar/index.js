@@ -19,7 +19,6 @@ const Avatar = ({
 
   const handleClickEditButton = () => {
     photoRef.current.click();
-    // window.alert('開原生相簿');
   };
 
   const renderPhoto = () => <img src={preview || src} alt={name || 'avatar'} />;

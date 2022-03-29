@@ -26,7 +26,7 @@ const QRCodeTransfer = () => {
 
   const handleClickSelectPicture = () => {
     // eslint-disable-next-line no-alert
-    window.alert('開啟手機相簿');
+    console.log('開啟手機相簿');
   };
 
   // 渲染卡片帳號右側的 "複製" 圖標

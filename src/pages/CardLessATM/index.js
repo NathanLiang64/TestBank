@@ -131,14 +131,6 @@ const CardLessATM = () => {
     console.log('金融卡狀態', cardStatusResponse);
     const { cardStatus, message } = cardStatusResponse;
     switch (cardStatus) {
-      // case '01':
-      //   generateDailog(
-      //     message,
-      //     (<FEIBButton onClick={closeFunction()}>確定</FEIBButton>),
-      //     closeFunction,
-      //   );
-      //   break;
-
       case '02':
         generateDailog(
           message,

@@ -39,7 +39,7 @@ function onComplete(event) {
     window.customFunc()
   }
   if (Number(rtcode) === 1) {
-    alert(rtmsg);
+    console.log(rtmsg);
   }
 }
 
