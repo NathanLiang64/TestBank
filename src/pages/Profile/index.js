@@ -38,20 +38,40 @@ const Profile = () => {
   const [uuid, setUuid] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   const [showChangeNickNameDialog, setShowChangeNickNameDialog] = useState(false);
+  const [dialogMessageModal, setDialogMessageModal] = useState({
+    open: false,
+    content: '',
+  });
+
+  // 關閉訊息彈窗
+  const closeMessageDialog = () => {
+    setDialogMessageModal({
+      open: false,
+      content: '',
+    });
+  };
+
+  // 開啟訊息彈窗
+  const openMessageDialog = (content) => {
+    setDialogMessageModal({
+      open: true,
+      content,
+    });
+  };
 
   // 上傳大頭貼
   const uploadAvatarImg = async (e) => {
     const file = e.target.files[0];
     if (!file) {
-      alert('請選擇檔案');
+      openMessageDialog('請選擇檔案');
       return;
     }
     if (!file.type.includes('image')) {
-      alert('檔案格式錯誤，僅限 JPG, JPEG, PNG 格式圖檔');
+      openMessageDialog('檔案格式錯誤，僅限 JPG, JPEG, PNG 格式圖檔');
       return;
     }
     if ((file.size / 1024) > 1024) {
-      alert('檔案大小必須小於 1024 KB');
+      openMessageDialog('檔案大小必須小於 1024 KB');
       return;
     }
     const formData = new FormData();
@@ -59,11 +79,11 @@ const Profile = () => {
     const response = await profileApi.uploadAvatar(formData);
     console.log(response);
     if (response === 'OK') {
-      alert('上傳成功');
+      openMessageDialog('上傳成功');
       setAvatarUrl(`https://bankeesit.feib.com.tw/img/pf_${uuid}_b.jpg?timestamp=${Date.now()}`);
     }
     if (response?.code) {
-      alert(`${response?.message}，錯誤碼：${response?.code}`);
+      openMessageDialog(`${response?.message}，錯誤碼：${response?.code}`);
     }
   };
 
@@ -76,7 +96,7 @@ const Profile = () => {
   const getNickName = async () => {
     const response = await profileApi.getNickName({});
     if (response?.code) {
-      alert(`取得暱稱與大頭照發生錯誤(${response?.code})：${response?.message}`);
+      openMessageDialog(`取得暱稱與大頭照發生錯誤(${response?.code})：${response?.message}`);
     } else {
       setNickName(response.nickName || '');
       setUuid(response.uuid);
@@ -141,6 +161,18 @@ const Profile = () => {
     />
   );
 
+  // 訊息顯示窗
+  const renderMessageDialog = () => (
+    <Dialog
+      isOpen={dialogMessageModal.open}
+      onClose={closeMessageDialog}
+      content={<p>{dialogMessageModal.content}</p>}
+      action={(
+        <FEIBButton onClick={closeMessageDialog}>確定</FEIBButton>
+      )}
+    />
+  );
+
   useGetEnCrydata();
 
   useEffect(() => {
@@ -149,7 +181,7 @@ const Profile = () => {
 
   return (
     <>
-      <Header title="個人化設定" />
+      <Header title="個人化設定(vjinc)" />
       <ProfileWrapper>
         <div className="avatarContainer">
           <img src={avatarUrl} onError={() => setAvatarUrl(Avatar)} alt="" />
@@ -174,6 +206,7 @@ const Profile = () => {
         </div>
         { renderEntryList() }
         { renderDialog() }
+        { renderMessageDialog() }
       </ProfileWrapper>
     </>
   );

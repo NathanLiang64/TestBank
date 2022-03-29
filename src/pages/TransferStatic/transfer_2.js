@@ -47,7 +47,7 @@ const Transfer2 = () => {
   };
 
   const handleClickScreenshot = () => {
-    window.alert('call 原生截圖');
+    console.log('call 原生截圖');
     setIsSnapshotSuccess(true);
     // 1 秒後將 isSnapshotSuccess 的值重置
     setTimeout(() => setIsSnapshotSuccess(false), 1000);
@@ -83,12 +83,12 @@ const Transfer2 = () => {
 
   const renderBottomAction = (success) => (
     <BottomAction>
-      <button type="button" onClick={success ? handleClickScreenshot : () => window.alert('通話')}>
+      <button type="button" onClick={success ? handleClickScreenshot : () => console.log('通話')}>
         { success ? <CameraIcon /> : <PhoneIcon />}
         { success ? '畫面截圖' : '聯絡客服' }
       </button>
       <div className="divider" />
-      <button type="button" onClick={success ? () => window.alert('call 原生分享') : () => directTo(history, 'transferStatic')}>
+      <button type="button" onClick={success ? () => console.log('call 原生分享') : () => directTo(history, 'transferStatic')}>
         { success ? <ShareIcon /> : <TransactionIcon />}
         { success ? '社群通知' : '重新轉帳' }
       </button>

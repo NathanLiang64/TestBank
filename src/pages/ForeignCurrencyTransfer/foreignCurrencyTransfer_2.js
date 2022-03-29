@@ -55,12 +55,12 @@ const ForeignCurrencyTransfer2 = () => {
               </div>
             </div>
             <BottomAction>
-              <button type="button" onClick={() => window.alert('call 原生截圖')}>
+              <button type="button" onClick={() => console.log('call 原生截圖')}>
                 <CameraAltOutlined />
                 畫面截圖
               </button>
               <div className="divider" />
-              <button type="button" onClick={() => window.alert('跳轉查詢明細')}>
+              <button type="button" onClick={() => console.log('跳轉查詢明細')}>
                 <ShareOutlined />
                 查詢明細
               </button>
