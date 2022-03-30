@@ -90,10 +90,10 @@ const ProjectJ = () => {
             // * 由WebController提供加密API
             if (applyType) {
               // eslint-disable-next-line no-alert
-              alert('https://www.joinusnow.com.tw/investSignUp?data={加密資料}');
+              console.log('https://www.joinusnow.com.tw/investSignUp?data={加密資料}');
             } else {
               // eslint-disable-next-line no-alert
-              alert('https://www.joinusnow.com.tw/investment');
+              console.log('https://www.joinusnow.com.tw/investment');
             }
           }}
         />

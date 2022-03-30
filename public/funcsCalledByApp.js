@@ -34,13 +34,14 @@ function returnAuthdata(event) {
 function onComplete(event) {
   const { Type, signature, Mima, rtcode, rtmsg } = event;
   if (Number(rtcode) === 0) {
-    localStorage.setItem('signature', signature);
-    localStorage.setItem('mima', Mima);
-    window.customFunc()
+    // localStorage.setItem('signature', signature);
+    // localStorage.setItem('mima', Mima);
+    window.customFunc(Mima, signature)
   }
   if (Number(rtcode) === 1) {
-    alert(rtmsg);
+    console.log(rtmsg);
   }
+  window.customFunc = null
 }
 
 console.log('load app to webview functions success');

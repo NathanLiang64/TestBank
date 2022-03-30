@@ -71,7 +71,6 @@ const MobileTransfer2 = ({ location }) => {
 
   // 設定結果彈窗
   const setResultDialog = (response, param) => {
-    // alert(JSON.stringify(param));
     const { code, message, respData } = response;
     const successDesc = getSuccessDesc();
     let errorCode = code;

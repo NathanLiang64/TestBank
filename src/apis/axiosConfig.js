@@ -105,9 +105,6 @@ userAxios().interceptors.response.use(
       if (response.data.code === '0000') {
         const decrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
         response = decrypt;
-      } else if (response.data.code === 'WEBCTL1007') {
-        response = { code: response.data.code, message: response.data.message };
-        alert(response.data.message);
       } else {
         response = { code: response.data.code, message: response.data.message };
       }
@@ -126,7 +123,6 @@ userAxios().interceptors.response.use(
       return Promise.reject(error);
     }
     if (!response) {
-      alert('發生非預期錯誤，即將離開目前功能');
       goHome();
     }
     // 成功發出 request 但沒收到 response

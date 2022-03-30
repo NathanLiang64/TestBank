@@ -58,7 +58,7 @@ const ForeignCurrencyPriceSetting = () => {
 
   // 刪除外幣到價通知
   const deletePriceSetting = () => {
-    alert('刪除到價通知');
+    console.log('刪除到價通知');
   };
 
   const handleCloseDrawer = () => {

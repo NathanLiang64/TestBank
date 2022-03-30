@@ -63,6 +63,19 @@ const ReserveTransferSearch = () => {
   const [currentReserveData, setCurrentReserveData] = useState({});
   const [reserveDataList, setReserveDataList] = useState([]);
   const [resultDataList, setResultDataList] = useState([]);
+  const [dialogModal, setDialogModal] = useState({
+    open: false,
+    content: '',
+  });
+
+  // 關閉訊息彈窗
+  const closeDialog = () => {
+    setDialogModal({
+      open: false,
+      content: '',
+    });
+    closeFunc();
+  };
 
   // 取得帳號清單
   const getTransferOutAccounts = async () => {
@@ -74,7 +87,10 @@ const ReserveTransferSearch = () => {
       setSelectedAccount(accounts[0]);
       switchLoading(false);
     } else {
-      alert(`${message}(${code})`);
+      setDialogModal({
+        open: true,
+        content: `${message}(${code})`,
+      });
       switchLoading(false);
       closeFunc();
     }
@@ -125,7 +141,10 @@ const ReserveTransferSearch = () => {
     if (response.bookList) {
       setReserveDataList(response.bookList);
     } else {
-      alert(`${response?.message}(${response?.code})`);
+      setDialogModal({
+        open: true,
+        content: `${response?.message}(${response?.code})`,
+      });
       setReserveDataList([]);
     }
     switchLoading(false);
@@ -148,7 +167,10 @@ const ReserveTransferSearch = () => {
     if (!response?.code > 0) {
       setResultDataList(response);
     } else {
-      alert(`${response?.message}(${response?.code})`);
+      setDialogModal({
+        open: true,
+        content: `${response?.message}(${response?.code})`,
+      });
       setResultDataList([]);
     }
     switchLoading(false);
@@ -249,6 +271,18 @@ const ReserveTransferSearch = () => {
     />
   );
 
+  // 訊息顯示窗
+  const renderDialog = () => (
+    <Dialog
+      isOpen={dialogModal.open}
+      onClose={closeDialog}
+      content={<p>{dialogModal.content}</p>}
+      action={(
+        <FEIBButton onClick={closeDialog}>確定</FEIBButton>
+      )}
+    />
+  );
+
   // 取得帳號列表
   useEffect(() => {
     getTransferOutAccounts();
@@ -346,6 +380,7 @@ const ReserveTransferSearch = () => {
         </div>
         {renderDetailDialog()}
         {renderResultDialog()}
+        {renderDialog()}
       </ReserveTransferSearchWrapper>
     </>
   );
