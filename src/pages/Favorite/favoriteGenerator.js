@@ -71,7 +71,7 @@ export const iconGenerator = (name) => {
       return <AccountIcon8 />;
     case 'C00800':
       return <AccountIcon9 />;
-    case 'apply1':
+    case 'F00100':
       return <ApplyIcon1 />;
     case 'apply2':
       return <ApplyIcon2 />;
