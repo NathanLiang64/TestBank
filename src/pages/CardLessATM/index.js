@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { useGetEnCrydata } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { cardLessATMApi } from 'apis';
-import { closeFunc } from 'utilities/BankeePlus';
+import { closeFunc, switchLoading } from 'utilities/BankeePlus';
 
 /* Elements */
 import Header from 'components/Header';
@@ -67,6 +66,7 @@ const CardLessATM = () => {
 
   // 跳轉到無卡提款申請頁
   const toWithdrawPage = () => {
+    switchLoading(false);
     history.push('/cardLessATM1');
   };
 
@@ -76,6 +76,7 @@ const CardLessATM = () => {
     setDialogContent(content);
     setDialogButtons(buttons);
     setOpenDialog(true);
+    switchLoading(false);
   };
 
   // 檢查無卡提款狀態; 0=未申請, 1=已申請未開通, 2=已開通, 3=已註銷, 4=已失效, 5=其他
@@ -127,6 +128,7 @@ const CardLessATM = () => {
 
   // 檢查金融卡狀態；“01”=新申請 “02”=尚未開卡 “04”=已啟用 “05”=已掛失 “06”=已註銷 “07”=已銷戶 “08”=臨時掛失中 “09”=申請中
   const getCardStatus = async () => {
+    switchLoading(true);
     const cardStatusResponse = await cardLessATMApi.getCardStatus({});
     console.log('金融卡狀態', cardStatusResponse);
     const { cardStatus, message } = cardStatusResponse;
@@ -162,6 +164,7 @@ const CardLessATM = () => {
 
   // 開通無卡提款與設定無卡提款密碼
   const activateWithdrawAndSetPwd = async (param) => {
+    switchLoading(true);
     const activateResponse = await cardLessATMApi.cardLessWithdrawActivate(param);
     const { message } = activateResponse;
 
@@ -169,7 +172,14 @@ const CardLessATM = () => {
       generateDailog(
         message,
         (
-          <FEIBButton onClick={() => setOpenDialog(false)}>確定</FEIBButton>
+          <FEIBButton
+            onClick={() => {
+              setOpenDialog(false);
+              closeFunc();
+            }}
+          >
+            確定
+          </FEIBButton>
         ),
         () => () => setOpenDialog(false),
       );
@@ -267,8 +277,6 @@ const CardLessATM = () => {
       )}
     />
   );
-
-  useGetEnCrydata();
 
   useEffect(() => {
     getCardStatus();
