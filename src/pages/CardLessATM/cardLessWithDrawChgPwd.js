@@ -1,11 +1,10 @@
 /* eslint-disable no-unused-vars */
-import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
-import { useGetEnCrydata } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { cardLessATMApi } from 'apis';
+import { switchLoading, closeFunc } from 'utilities/BankeePlus';
 
 /* Elements */
 import Header from 'components/Header';
@@ -21,7 +20,6 @@ import CardLessATMWrapper from './cardLessATM.style';
 
 const CardLessWithDrawChgPwd = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
   /**
    *- 資料驗證
    */
@@ -38,7 +36,7 @@ const CardLessWithDrawChgPwd = () => {
 
   // 關閉結果彈窗
   const handleCloseResultDialog = () => {
-    history.push('/cardLessATM1');
+    closeFunc();
   };
 
   // 設定結果彈窗
@@ -62,10 +60,12 @@ const CardLessWithDrawChgPwd = () => {
     }));
     dispatch(setCloseCallBack(closeCallBack));
     dispatch(setIsOpen(true));
+    switchLoading(false);
   };
 
   // 設定無卡提款密碼
   const changePwdHandler = async (param) => {
+    switchLoading(true);
     const changePwdResponse = await cardLessATMApi.changeCardlessPwd(param);
     setResultDialog(changePwdResponse);
   };
@@ -131,7 +131,7 @@ const CardLessWithDrawChgPwd = () => {
     </form>
   );
 
-  useGetEnCrydata();
+  // useGetEnCrydata();
 
   return (
     <>

@@ -95,7 +95,7 @@ function getEnCrydata() {
 
 function goHome() {
   funcStack.clear();
-  goToFunc({ route: '/', funcID: 'home' });
+  goToFunc({ route: '/', funcID: 'B00100' });
 }
 
 // 網頁通知APP跳轉至首頁

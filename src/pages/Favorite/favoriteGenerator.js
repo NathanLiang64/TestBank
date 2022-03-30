@@ -53,97 +53,99 @@ export const iconGenerator = (name) => {
       return <ShareIcon />;
     case 'gift':
       return <GiftIcon />;
-    case 'account1':
+    case 'C00100':
       return <AccountIcon1 />;
-    case 'account2':
+    case 'C00300':
       return <AccountIcon2 />;
-    case 'account3':
+    case 'C00400':
       return <AccountIcon3 />;
-    case 'account4':
+    case 'C00500':
       return <AccountIcon4 />;
     case 'account5':
       return <AccountIcon5 />;
-    case 'account6':
+    case 'C00600':
       return <AccountIcon6 />;
     case 'account7':
       return <AccountIcon7 />;
     case 'account8':
       return <AccountIcon8 />;
-    case 'account9':
+    case 'C00800':
       return <AccountIcon9 />;
     case 'apply1':
       return <ApplyIcon1 />;
     case 'apply2':
       return <ApplyIcon2 />;
-    case 'apply3':
+    case 'F00200':
       return <ApplyIcon3 />;
     case 'apply4':
       return <ApplyIcon4 />;
     case 'apply5':
       return <ApplyIcon5 />;
-    case 'transaction1':
+    case 'D00100':
       return <TransactionIcon1 />;
     case 'transaction2':
       return <TransactionIcon2 />;
-    case 'transaction3':
+    case 'D00200':
       return <TransactionIcon3 />;
-    case 'transaction4':
+    case 'D00300':
       return <TransactionIcon4 />;
-    case 'transaction5':
+    case 'D00400':
       return <TransactionIcon5 />;
     case 'transaction6':
       return <TransactionIcon6 />;
-    case 'transaction7':
+    case 'D00500':
       return <TransactionIcon7 />;
-    case 'transaction8':
+    case 'D00600':
       return <TransactionIcon8 />;
-    case 'invest1':
+    case 'E00100':
       return <InvestIcon1 />;
-    case 'invest2':
+    case 'E00200':
       return <InvestIcon2 />;
-    case 'invest3':
+    case 'E00300':
       return <InvestIcon3 />;
-    case 'creditCard1':
+    case 'R00100':
       return <CreditCardIcon1 />;
-    case 'creditCard2':
+    case 'R00200':
+      return <CreditCardIcon1 />;
+    case 'R00300':
       return <CreditCardIcon2 />;
-    case 'creditCard3':
+    case 'R00400':
       return <CreditCardIcon3 />;
     case 'creditCard4':
       return <CreditCardIcon4 />;
-    case 'creditCard5':
+    case 'R00500':
       return <CreditCardIcon5 />;
-    case 'loan1':
+    case 'L00100':
       return <LoanIcon1 />;
-    case 'loan2':
+    case 'L00200':
       return <LoanIcon2 />;
-    case 'helper1':
+    case 'T00100':
       return <HelperIcon1 />;
-    case 'helper2':
+    case 'S00200':
       return <HelperIcon2 />;
-    case 'helper3':
+    case 'T00600':
       return <HelperIcon3 />;
     case 'helper4':
       return <HelperIcon4 />;
     case 'helper5':
       return <HelperIcon5 />;
-    case 'helper6':
+    case 'S00300':
       return <HelperIcon6 />;
-    case 'helper7':
+    case 'S00400':
       return <HelperIcon7 />;
-    case 'helper8':
+    case 'S00500':
       return <HelperIcon8 />;
-    case 'helper9':
+    case 'S00600':
       return <HelperIcon9 />;
-    case 'helper10':
+    case 'S00700':
       return <HelperIcon10 />;
-    case 'helper11':
+    case 'S00800':
       return <HelperIcon11 />;
-    case 'social1':
+    case 'M00100':
       return <SocialIcon1 />;
-    case 'social2':
+    case 'M00200':
       return <SocialIcon2 />;
-    case 'social3':
+    case 'M00300':
       return <SocialIcon3 />;
     default:
       return null;

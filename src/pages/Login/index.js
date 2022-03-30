@@ -90,7 +90,6 @@ const Login = () => {
       try {
         alert('登入成功');
         history.push('/');
-        // goToFunc('home');
       } catch (error) {
         history.push('/');
       }
