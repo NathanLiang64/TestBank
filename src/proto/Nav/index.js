@@ -33,29 +33,29 @@ const Nav = () => {
       });
   };
 
-  const startFunc = (route, funcID) => {
+  const startFunc = (funcID, params) => {
     dispatch(setWaittingVisible(true));
-    goToFunc({ route, funcID });
+    goToFunc({ route: funcID, funcID }, params);
     dispatch(setWaittingVisible(false));
   };
 
   return (
     <NavWrapper>
-      <div onClick={() => startFunc('/taiwanDollarAccount', 'C00300')}>
+      <div onClick={() => startFunc('C00300', '04300490004059')}>
         <ul>
           <li>台幣活存</li>
           <li>route: /taiwanDollarAccount</li>
           <li>funcID: C00300</li>
         </ul>
       </div>
-      {/* <div onClick={() => goToFunc({ route: '/more', funcID: 'B00600' })}>
+      <div onClick={() => goToFunc({ route: '/more', funcID: 'B00600' })}>
         <ul>
           <li>功能：更多</li>
           <li>route: /more</li>
           <li>funcID: B00600</li>
         </ul>
       </div>
-      <div onClick={() => goToFunc({ route: '/profile', funcID: 'T00100' })}>
+      {/* <div onClick={() => goToFunc({ route: '/profile', funcID: 'T00100' })}>
         <ul>
           <li>功能：個人化設定</li>
           <li>route: /profile</li>

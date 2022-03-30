@@ -157,6 +157,7 @@ const Nav = lazy(() => import('proto/Nav'));
 // --------------------------------
 
 const routes = [
+  { path: '/D00300', exact: true, component: CardLessATM },
   { path: '/cardLessATM', exact: true, component: CardLessATM },
   { path: '/cardLessATM1', exact: false, component: CardLessATM1 },
   { path: '/cardLessATM2', exact: false, component: CardLessATM2 },
@@ -195,12 +196,14 @@ const routes = [
   { path: '/exchange1', exact: false, component: Exchange1 },
   { path: '/exchange2', exact: false, component: Exchange2 },
   { path: '/transfer', exact: false, component: Transfer },
+  { path: '/D00100', exact: false, component: Transfer },
   { path: '/transfer1', exact: false, component: Transfer1 },
   { path: '/transfer2', exact: false, component: Transfer2 },
   { path: '/profile', exact: false, component: Profile },
   { path: '/more', exact: false, component: More },
   { path: '/financialDepartments', exact: false, component: FinancialDepartments },
   { path: '/network', exact: false, component: Network },
+  { path: '/C00300', exact: false, component: TaiwanDollarAccount },
   { path: '/taiwanDollarAccount', exact: false, component: TaiwanDollarAccount },
   { path: '/taiwanDollarAccountDetails', exact: false, component: TaiwanDollarAccountDetails },
   { path: '/tradingAccount', exact: false, component: TradingAccount },
@@ -229,6 +232,7 @@ const routes = [
   { path: '/staging2', exact: false, component: Instalment2 },
   { path: '/staging3', exact: false, component: Instalment3 },
   { path: '/withholding', exact: false, component: AutomaticBillPayment },
+  { path: '/E00100', exact: false, component: ExchangeRate },
   { path: '/exchangeRate', exact: false, component: ExchangeRate },
 
   // TODO：支援開發及Prototype測試使用

@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import AccountDetails from 'components/AccountDetails';
-import { getTransactionDetails } from 'apis/taiwanDollarAccountApi';
+import { getTransactionDetails } from 'pages/TaiwanDollarAccount/api';
 import { useCheckLocation, usePageInfo } from 'hooks';
 
 const TaiwanDollarAccountDetails = () => {

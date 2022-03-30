@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { startFunc } from 'utilities/BankeePlus';
 import {
   EditAccountIcon, MoreIcon, VisibilityIcon, VisibilityOffIcon,
 } from 'assets/images/icons';
@@ -99,13 +99,29 @@ const DebitCard = ({
     </div>
   );
 
+  const onFuncClick = (fid, params) => {
+    // TODO: 若 funcID 是以'/'為開頭，表示是指定固定網址，因此不會導頁
+    startFunc(fid, params);
+  };
+
   // render 功能列表
   const renderFunctionList = (list) => (
     <ul className="functionList">
-      { list.map((item) => (
-        <li key={item.path}>
-          <Link to={item.path}>{item.title}</Link>
-        </li>
+      { list.map((func) => (
+        func.fid
+          ? (
+            <li key={func.fid} onClick={() => onFuncClick(func.fid, func.params)}>
+              <p>
+                {func.title}
+              </p>
+            </li>
+          ) : (
+            <li>
+              <div style={{ color: 'gray' }}>
+                {func.title}
+              </div>
+            </li>
+          )
       )) }
     </ul>
   );
@@ -124,12 +140,12 @@ const DebitCard = ({
   // render 點擊更多圖標後的功能列表
   const renderMoreList = (list) => (
     <ul className="moreList">
-      {list.map((item) => (
-        <li key={item.title}>
-          <Link to={item.path}>
-            {iconGenerator(item.icon)}
-            {item.title}
-          </Link>
+      {list.map((func) => (
+        <li key={func.title} onClick={() => onFuncClick(func.fid, func.params)}>
+          <p>
+            {iconGenerator(func.icon)}
+            {func.title}
+          </p>
         </li>
       ))}
       {/* 下方為功能列表內的固定功能 */}

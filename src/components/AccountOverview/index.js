@@ -7,7 +7,8 @@ import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
 import AccountOverviewWrapper from './accountOverview.style';
 
 const AccountOverview = ({
-  accounts, selectedAccount, onAccountChange, details, showInterestRatePanel, cardColor, detailsLink,
+  accounts, onAccountChange, details, panelInfo, cardColor, detailsLink,
+  funcList, moreFuncs,
 }) => {
   // const debitCards = useSelector(({ accountOverview }) => accountOverview.debitCards);
   // const selectedAccount = useSelector(({ accountOverview }) => accountOverview.selectedAccount);
@@ -21,7 +22,7 @@ const AccountOverview = ({
   const { push } = useHistory();
 
   const handleClickInterestRatePanel = () => {
-    const { interest, interestRate } = selectedAccount;
+    const { interest, interestRate } = panelInfo;
     if (interestPanel.title === '優惠利率') {
       setInterestPanel({ title: '累積利息', content: interest ? `$${interest}` : '-' });
     } else {
@@ -57,8 +58,8 @@ const AccountOverview = ({
       account={userAccount.acctId}
       balance={userAccount.acctBalx}
       dollarSign={userAccount.ccyCd}
-      functionList={userAccount.functionList}
-      moreList={userAccount.moreList}
+      functionList={funcList}
+      moreList={moreFuncs}
       color={cardColor}
     />
   );
@@ -76,7 +77,7 @@ const AccountOverview = ({
       onSlideChange={handleChangeSlide}
     >
       { userAccounts.map((account) => (
-        <SwiperSlide key={account.id}>
+        <SwiperSlide key={account.acctId}>
           { renderSingleDebitCard(account) }
         </SwiperSlide>
       )) }
@@ -122,22 +123,24 @@ const AccountOverview = ({
   // 取得帳號資料後，計算 transactionDetail DOM 高度
   useEffect(() => {
     if (accounts?.length) {
-      const { offsetHeight } = detailsRef?.current;
-      setDetailAreaHeight(offsetHeight);
+      // TODO: 計算可顯示的明細項目數量。
+      // const { offsetHeight } = detailsRef?.current;
+      // setDetailAreaHeight(offsetHeight);
+      setDetailAreaHeight(430);
     }
   }, [accounts]);
 
   // 根據當前帳戶取得交易明細資料及優惠利率數字
   useEffect(() => {
-    if (Object.keys(selectedAccount)?.length) {
-      const { interestRate } = selectedAccount;
+    if (panelInfo) {
+      const { interestRate } = panelInfo;
       setInterestPanel({
         ...interestPanel,
         title: '優惠利率',
         content: interestRate ? `${interestRate}%` : '-',
       });
     }
-  }, [selectedAccount]);
+  }, [panelInfo]);
 
   // 根據剩餘高度計算要顯示的卡片數量，計算裝置可容納的交易明細卡片數量
   useEffect(async () => {
@@ -155,10 +158,8 @@ const AccountOverview = ({
         { accounts?.length ? renderDebitCard(accounts) : null }
       </div>
       {
-        showInterestRatePanel && (
-          // (selectedAccount && interestPanel.title && interestPanel.content) &&
-          renderInterestRatePanel(selectedAccount, interestPanel?.title, interestPanel?.content)
-        )
+        // 顯示 優惠利率資訊面版
+        panelInfo && renderInterestRatePanel(panelInfo, interestPanel?.title, interestPanel?.content)
       }
       <div className="transactionDetail" ref={detailsRef}>
         { computedDetails && renderDetailCardList(computedDetails) }

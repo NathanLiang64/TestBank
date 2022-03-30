@@ -1,4 +1,7 @@
 /* eslint-disable prefer-template */
+import Cookies from 'js-cookie';
+import { showError } from './MessageModal';
+
 const device = {
   ios: () => /iPhone|iPad|iPod/i.test(navigator.userAgent),
   android: () => /Android/i.test(navigator.userAgent),
@@ -44,32 +47,53 @@ function goToFunc({ route, funcID }, funcParams = '', keepData = '') {
     // console.log(history);
     // const history = useHistory();
     // history.push(`/${funcID}`);
-    window.location.pathname = `/${route}`;
+    Cookies.set('funcParams', funcParams);
+    window.location.pathname = `/${route}`; // TODO: 提供 funcParams，如何提供？
   }
 }
 
 function startFunc(funcID, funcParams, keepData) {
-  goToFunc({ route: null, funcID }, funcParams, keepData);
+  if (funcID) {
+    goToFunc({ route: funcID, funcID }, funcParams, keepData);
+  } else {
+    showError('此功能尚未完成！');
+  }
 }
 
 // 觸發APP返回上一頁功能
 function closeFunc() {
   if (device.ios()) {
     const msg = JSON.stringify({ name: 'closeFunc' });
+    // TODO： 取回 keepData；若沒有提供，則應以 funcParams 傳回。
     window.webkit?.messageHandlers.jstoapp.postMessage(msg);
   } else if (device.android()) {
+    // TODO： 取回 keepData；若沒有提供，則應以 funcParams 傳回。
     window.jstoapp.closeFunc();
   } else {
     const stack = funcStack.pop();
     const funcItem = stack[stack.length - 1];
     if (funcItem) {
       console.log(`[Close Function and Back to(${funcItem.func.route})]`);
-      window.location.pathname = `/${funcItem.func.route}`;
+      window.location.pathname = `/${funcItem.func.route}`; // TODO： 提供 keepData，如何提供？
       // const history = useHistory();
       // history.push(funcItem.funcName);
     } else {
       window.location.pathname = '/home';
     }
+  }
+}
+
+/**
+ * 取得 APP Function Controller 提供的功能啟動參數。
+ * @returns 若參數當時是以 JSON 物件儲存，則同樣會轉成物件傳回。
+ */
+function loadFuncParams() {
+  const data = Cookies.get('funcParams');
+  try {
+    const params = JSON.parse(data);
+    return params;
+  } catch (error) {
+    return data;
   }
 }
 
@@ -179,4 +203,5 @@ export {
   setAuthdata,
   // showWebLog,
   onVerification,
+  loadFuncParams,
 };

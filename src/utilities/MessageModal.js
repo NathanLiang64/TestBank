@@ -1,4 +1,4 @@
-import store from '../stores/index';
+import store from '../stores/store';
 import { setModal, setModalVisible } from '../stores/reducers/ModalReducer';
 
 export const closePopup = () => {
