@@ -19,8 +19,12 @@ const FinancialDepartments = () => {
     }
   };
 
+  const openWebSite = (url) => {
+    window.open(url, '_blank');
+  };
+
   const renderCards = () => bankList.map((item) => (
-    <a key={item.empBranch} href={item.urlLink}>
+    <div key={item.empBranch} onClick={() => openWebSite(item.urlLink)}>
       <div className="financialCard">
         <div className="imgContainer">
           <img src={item.logo} alt={item.name} />
@@ -29,7 +33,7 @@ const FinancialDepartments = () => {
           { item.note }
         </div>
       </div>
-    </a>
+    </div>
   ));
 
   useGetEnCrydata();

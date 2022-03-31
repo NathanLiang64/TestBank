@@ -90,6 +90,7 @@ const More = () => {
     if (response?.length > 1) {
       setMoreList(response);
     }
+    // setMoreList(mockData.moreList);
   }, []);
 
   useEffect(() => {
@@ -107,14 +108,21 @@ const More = () => {
       <Header title="更多" />
       <MoreWrapper small>
         <FEIBTabContext value={tabId}>
-          <FEIBTabList $size="small" onChange={handleChangeTabs}>
-            { renderTabList(moreList) }
-          </FEIBTabList>
+          {
+            moreList.length > 0 && (
+              <FEIBTabList $size="small" onChange={handleChangeTabs}>
+                { renderTabList(moreList) }
+              </FEIBTabList>
+            )
+          }
         </FEIBTabContext>
-
-        <div className="mainContent" ref={mainContentRef} onScroll={handleScrollContent}>
-          { renderContent(moreList) }
-        </div>
+        {
+          moreList.length > 0 && (
+            <div className="mainContent" ref={mainContentRef} onScroll={handleScrollContent}>
+              { renderContent(moreList) }
+            </div>
+          )
+        }
       </MoreWrapper>
     </>
   );
