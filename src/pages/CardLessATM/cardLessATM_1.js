@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { cardLessATMApi } from 'apis';
-import { closeFunc } from 'utilities/BankeePlus';
+import { closeFunc, switchLoading } from 'utilities/BankeePlus';
 
 /* Elements */
 import {
@@ -85,6 +85,7 @@ const CardLessATM1 = () => {
 
   // 取得提款卡資訊
   const getAccountSummary = async () => {
+    switchLoading(true);
     const summaryResponse = await cardLessATMApi.getAccountSummary({ account: '' });
     console.log('取得提款帳號資訊', summaryResponse);
     const { message } = summaryResponse;
@@ -93,10 +94,12 @@ const CardLessATM1 = () => {
     } else {
       handleDialogOpen(message);
     }
+    switchLoading(false);
   };
 
   // 無卡提款交易
   const cardlessWithdrawApply = async (param) => {
+    switchLoading(true);
     const withdrawResponse = await cardLessATMApi.cardLessWithdrawApply(param);
     const { account, withdrawAmount } = param;
     const {
@@ -112,8 +115,10 @@ const CardLessATM1 = () => {
 
     if (seqNo) {
       console.log('提款結果', data);
+      switchLoading(false);
       toResultPage(data);
     } else {
+      switchLoading(false);
       handleDialogOpen(message);
     }
   };
@@ -139,7 +144,7 @@ const CardLessATM1 = () => {
           balance={accountSummary.balance}
           transferTitle="跨提優惠"
           transferLimit={6}
-          transferRemaining={accountSummary.cwdhCnt.substr(1, 1)}
+          transferRemaining={parseInt(accountSummary.cwdhCnt, 10)}
           color="purple"
         />
         <FEIBInputLabel>您想提領多少錢呢？</FEIBInputLabel>
