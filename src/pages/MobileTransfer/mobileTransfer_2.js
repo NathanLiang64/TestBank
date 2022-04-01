@@ -96,15 +96,23 @@ const MobileTransfer2 = ({ location }) => {
   const modifyMobileTransferData = (event) => {
     event.preventDefault();
     const { account, isDefault, mobile } = confirmData;
-    const param = {
-      actNo: account,
-      bankCode: '805',
-      mobilePhone: mobile,
-      defaultType: isDefault ? 'Y' : 'N',
-      otpValue: localStorage.getItem('mima'),
-      trnIdentity: localStorage.getItem('signature'),
-    };
-    const createMobileNo = async () => {
+    // const data = {
+    //   actNo: account,
+    //   bankCode: '805',
+    //   mobilePhone: mobile,
+    //   defaultType: isDefault ? 'Y' : 'N',
+    //   // otpValue: localStorage.getItem('mima'),
+    //   // trnIdentity: localStorage.getItem('signature'),
+    // };
+    const createMobileNo = async (mima, signature) => {
+      const param = {
+        actNo: account,
+        bankCode: '805',
+        mobilePhone: mobile,
+        defaultType: isDefault ? 'Y' : 'N',
+        otpCode: mima,
+        otpId: signature,
+      };
       const response = await mpTransferApi.createMobileNo(param);
       setResultDialog(response, param);
     };
