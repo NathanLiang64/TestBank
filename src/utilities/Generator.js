@@ -214,7 +214,7 @@ export const currencySymbolGenerator = (currency) => {
     case 'NZD': // 紐西蘭幣
       return 'NZ$';
     default:
-      return null;
+      return '$';
   }
 };
 
