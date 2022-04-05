@@ -1,4 +1,4 @@
-import { callAPI } from '../../utilities/axios';
+import { callAPI } from 'utilities/axios';
 
 // 取得所有台幣帳號
 export const getAccountSummary = async (request) => {

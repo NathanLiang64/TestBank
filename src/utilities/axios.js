@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
 import { showPrompt, showError, showInfo } from './MessageModal';
 import JWTUtil from './JWTUtil';
 
@@ -21,14 +22,16 @@ userAxios().interceptors.request.use(
   async (request) => {
     console.log(`\x1b[33mAPI :/${request.url}`);
     console.log('Request = ', request.data);
-    const token = sessionStorage.getItem('jwtToken'); // BUG! 會因為多執行緒而錯亂，應該從Request中取回才對。
+    let token = localStorage.getItem('jwtToken'); // BUG! 會因為多執行緒而錯亂，應該從Request中取回才對。
+    if (!token) token = Cookies.get('jwtToken'); // TODO: 為了相容 axiosConfig
+    // console.log(`\x1b[32m[JWT] \x1b[92m${token}`);
     if (token) {
       // eslint-disable-next-line no-param-reassign
       request.headers.authorization = `Bearer ${token}`;
       if (request.data) {
         // Request Payload 加密
-        const aeskey = sessionStorage.getItem('aesKey');
-        const ivkey = sessionStorage.getItem('iv');
+        const aeskey = localStorage.getItem('aesKey');
+        const ivkey = localStorage.getItem('iv');
         const encrypt = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(request.data));
         request.data = encrypt;
       } else request.data = '{}';
@@ -58,17 +61,22 @@ userAxios().interceptors.response.use(
 
       // 不論成功或失敗，都一定會更新 jwtToken
       const renewJwtToken = response.data.jwtToken;
-      sessionStorage.setItem('jwtToken', renewJwtToken); // BUG! 會因為多執行緒而錯亂
-      // TODO: 更新計時器
+      localStorage.setItem('jwtToken', renewJwtToken); // BUG! 會因為多執行緒而錯亂
+      Cookies.set('jwtToken', renewJwtToken); // TODO: 為了相容 axiosConfig
+      // console.log(`\x1b[32m[New JWT] \x1b[92m${renewJwtToken}`);
     }
 
     // 解密
     // 若Request時沒有使用jwtToken，或例外發生時，傳回的資料都不會加密。
     if (response.data.code === '0000' && rqJwtToken) {
-      const aeskey = sessionStorage.getItem('aesKey');
-      const ivkey = sessionStorage.getItem('iv');
+      const aeskey = localStorage.getItem('aesKey');
+      const ivkey = localStorage.getItem('iv');
       const decrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
-      response.data.data = decrypt;
+      response.data = {
+        data: decrypt,
+        code: response.data.code,
+        message: response.data.message,
+      };
       // console.log(`Response Data(解密後) --> ${JSON.stringify(response.data)}`);
     }
 
@@ -90,7 +98,7 @@ userAxios().interceptors.response.use(
       console.log(`%cResponse Error --> ${JSON.stringify(response)}`, 'color: Red;');
       console.error(response.data);
       // TODO: Hold住畫面，再 Reload 一次。
-      showError(`主機忙碌中，請通知客服人員或稍後再試。訊息代碼：(${response.status})`);
+      showError(`主機忙碌中，請通知客服人員或稍後再試。訊息代碼：(${response.status})`); // TODO: 目前沒有 status 這個值。
     }
     return Promise.reject(ex);
 
@@ -152,25 +160,24 @@ export const callAPI = async (url, request, config) => {
     .then(async (rs) => {
       // 只需傳回 WebController 傳回的部份，其他由 axios 額外附加的屬性則不傳回。
       const { code, message } = rs.data;
-      if (code === 'OK') {
-        response = rs.data.data;
-        return;
-      }
+      if (code === '0000') {
+        response = rs.data;
+      } else {
+        switch (code) {
+          case 'APLFX9999':
+            await showError(message, () => {
+              document.location.href = `${process.env.REACT_APP_CARD_SELECT_URL}`;
+            });
+            break;
 
-      switch (code) {
-        case 'APLFX9999':
-          await showError(message, () => {
-            document.location.href = `${process.env.REACT_APP_CARD_SELECT_URL}`;
-          });
-          break;
+          case 'APLFX1402': // JWT Expired
+            await showPrompt('您已閒置過久，為了保護個資的安全，我們必需重新建立與主機的連線。');
+            break;
 
-        case 'APLFX1402': // JWT Expired
-          await showPrompt('您已閒置過久，為了保護個資的安全，我們必需重新建立與主機的連線。');
-          break;
-
-        default:
-          await showInfo(message);
-          break;
+          default:
+            await showInfo(message);
+            break;
+        }
       }
     })
     .catch((rs) => {
@@ -181,7 +188,7 @@ export const callAPI = async (url, request, config) => {
       // console.log('finally: {}', rs);
     });
 
-  return { data: response };
+  return response;
 };
 
 export default userAxios();

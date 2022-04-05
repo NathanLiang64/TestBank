@@ -8,7 +8,6 @@ import Cookies from 'js-cookie';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { setShowSpinner } from 'components/Spinner/stores/actions';
-// import { userLogin } from 'apis/loginApi';
 import {
   FEIBInput, FEIBErrorMessage, FEIBLinkButton, FEIBCheckbox, FEIBCheckboxLabel, FEIBIconButton,
 } from 'components/elements';
@@ -17,13 +16,14 @@ import {
 } from 'assets/images/icons';
 // import e2ee from 'utilities/E2ee';
 import { setFavoriteDrawer } from 'pages/Favorite/stores/actions';
-import getJwtKey from 'utilities/DoGetToken';
 // import { goToFunc } from 'utilities/BankeePlus';
 import { accountValidation, identityValidation, passwordValidation } from 'utilities/validation';
 import theme from 'themes/theme';
 import Logo from 'assets/images/logoTransparent.png';
 import BgImage from 'assets/images/loginBackground.png';
-import HandShake from '../HandShake';
+// import { userLogin } from './login.api';
+import getJwtKey from './DoGetToken';
+import HandShake from './HandShake';
 import LoginWrapper from './login.style';
 import FaceIdLoginModal from './faceIdLoginModal';
 import RegisterModal from './registerModal';
@@ -44,6 +44,11 @@ const Login = () => {
     control, handleSubmit, setValue, formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
+    defaultValues: {
+      identity: 'F123978801',
+      account: '1qaz2wsx',
+      password: 'feib1688',
+    },
   });
 
   const [showUserId, setShowUserId] = useState(true);
@@ -57,9 +62,7 @@ const Login = () => {
   useEffect(async () => {
     Cookies.remove('jwtToken');
     const { result, message } = await HandShake();
-    if (result === 'success') {
-      console.log(result);
-    } else {
+    if (result !== 'success') {
       alert(`Hand shake fail! ${message}`);
     }
     dispatch(setShowSpinner(false));

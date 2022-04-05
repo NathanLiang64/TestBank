@@ -4,7 +4,6 @@ import * as patternLockSettingApi from './patternLockSettingApi';
 import * as lossReissueApi from './lossReissueApi';
 import * as depositOverviewApi from './depositOverviewApi';
 import * as depositInquiryApi from './depositInquiryApi';
-import * as loginApi from '../proto/Login/loginApi';
 import * as shakeShakeApi from './shakeShakeApi';
 import * as transferApi from './transferApi';
 import * as cardLessATMApi from './cardLessATMApi';
@@ -32,7 +31,6 @@ export {
   lossReissueApi,
   depositOverviewApi,
   depositInquiryApi,
-  loginApi,
   shakeShakeApi,
   transferApi,
   cardLessATMApi,

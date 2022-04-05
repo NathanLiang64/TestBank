@@ -1,25 +1,26 @@
 /* eslint-disable prefer-const */
-import userAxios from 'apis/axiosConfig';
-import e2ee from './E2ee';
+import { callAPI } from 'utilities/axios';
+import e2ee from 'utilities/E2ee';
 
 const channelCode = 'HHB_A';
 const appVersion = '1.0.15';
 
 const getKey = async (data) => {
-  const message = {
+  const request = {
     channelCode,
     appVersion,
     custId: data.identity.toUpperCase(),
     username: e2ee(data.account),
     password: e2ee(data.password),
   };
-  localStorage.setItem('custId', message.custId);
-  const loginResponse = await userAxios.post('/auth/login', message);
-  if (loginResponse.code === '0000' || loginResponse.code === 'WEBCTL1008') {
-    if (loginResponse.code === 'WEBCTL1008') {
-      if (window.confirm(loginResponse.message)) {
-        const repeatLoginResponse = await userAxios.post('/auth/repeatLogin', {});
-        if (Object.keys(repeatLoginResponse).length === 0) {
+  localStorage.setItem('custId', request.custId);
+  // console.log(request);
+  const loginRs = await callAPI('/auth/login', request);
+  if (loginRs.code === '0000' || loginRs.code === 'WEBCTL1008') {
+    if (loginRs.code === 'WEBCTL1008') {
+      if (window.confirm(loginRs.message)) {
+        const reloginRs = await callAPI('/auth/repeatLogin');
+        if (Object.keys(reloginRs).length === 0) {
           return {
             result: 'success',
             message: 'Login success',
@@ -41,7 +42,7 @@ const getKey = async (data) => {
   }
   return {
     result: 'fail',
-    message: loginResponse.message,
+    message: loginRs.message,
   };
 };
 

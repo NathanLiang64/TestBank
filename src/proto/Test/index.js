@@ -11,7 +11,7 @@ import {
   FEIBBorderButton,
 } from 'components/elements';
 
-import getJwtKey from 'utilities/DoGetToken';
+import getJwtKey from 'proto/Login/DoGetToken';
 
 /* Global themes */
 import theme from 'themes/theme';

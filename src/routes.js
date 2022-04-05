@@ -150,7 +150,7 @@ const AutomaticBillPayment = lazy(() => import('pages/AutomaticBillPayment'));
 const ExchangeRate = lazy(() => import('pages/ExchangeRate'));
 
 // TODO：支援開發及Prototype測試使用
-const Login = lazy(() => import('proto/Login'));
+const Login = lazy(() => import('proto/Login/login'));
 const Tutorials = lazy(() => import('proto/Tutorials'));
 // const Test = lazy(() => import('proto/Test'));
 const Nav = lazy(() => import('proto/Nav'));
