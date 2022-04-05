@@ -36,7 +36,7 @@ const Profile = () => {
 
   const [nickName, setNickName] = useState('');
   const [uuid, setUuid] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState(Avatar);
   const [showChangeNickNameDialog, setShowChangeNickNameDialog] = useState(false);
   const [dialogMessageModal, setDialogMessageModal] = useState({
     open: false,
@@ -80,7 +80,7 @@ const Profile = () => {
     console.log(response);
     if (response === 'OK') {
       openMessageDialog('上傳成功');
-      setAvatarUrl(`https://bankeesit.feib.com.tw/img/pf_${uuid}_b.jpg?timestamp=${Date.now()}`);
+      setAvatarUrl(`${process.env.REACT_APP_AVATAR_IMG_URL}/pf_${uuid}_b.jpg?timestamp=${Date.now()}`);
     }
     if (response?.code) {
       openMessageDialog(`${response?.message}，錯誤碼：${response?.code}`);
@@ -100,7 +100,7 @@ const Profile = () => {
     } else {
       setNickName(response.nickName || '');
       setUuid(response.uuid);
-      setAvatarUrl(`https://bankeesit.feib.com.tw/img/pf_${response.uuid}_b.jpg?timestamp=${Date.now()}`);
+      setAvatarUrl(`${process.env.REACT_APP_AVATAR_IMG_URL}/pf_${response.uuid}_b.jpg?timestamp=${Date.now()}`);
     }
   };
 
@@ -181,7 +181,7 @@ const Profile = () => {
 
   return (
     <>
-      <Header title="個人化設定(vjinc)" />
+      <Header title="個人化設定" />
       <ProfileWrapper>
         <div className="avatarContainer">
           <img src={avatarUrl} onError={() => setAvatarUrl(Avatar)} alt="" />

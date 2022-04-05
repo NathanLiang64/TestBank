@@ -13,7 +13,7 @@ import { iconGenerator } from 'pages/Favorite/favoriteGenerator';
 
 /* Styles */
 import MoreWrapper from './more.style';
-import mockData from './mockData';
+// import mockData from './mockData';
 
 const More = () => {
   const mainContentRef = useRef();
@@ -23,8 +23,8 @@ const More = () => {
   const [sectionPosition, setSectionPosition] = useState([]);
   const [tabId, setTabId] = useState('account');
 
-  const toPage = ({ route, funcID, id }) => {
-    console.log('啟動 Function:', route);
+  const toPage = ({ actKey }) => {
+    console.log('啟動 Function:', actKey);
     // if (route === 'QRCodeTransfer') {
     //   dispatch(setIsShake(true));
     //   return;
@@ -35,12 +35,16 @@ const More = () => {
     //   }));
     //   return;
     // }
-    if (id === 'apply1') {
-      window.open('https://bankeesit.feib.com.tw/v2web/aplfx/createDraft?utm_source=App&prod=DEPOSIT', '_blank');
+    if (actKey === 'F00100') {
+      window.open(process.env.REACT_APP_DEPOSIT_APPLY_URL, '_blank');
       return;
     }
-    console.log({ route, funcID });
-    goToFunc({ route, funcID });
+    if (actKey === 'F00200') {
+      window.open(process.env.REACT_APP_STOCK_APPLY_URL, '_blank');
+      return;
+    }
+    console.log(actKey);
+    goToFunc({ route: actKey, funcID: actKey });
   };
 
   const handleChangeTabs = (event, value) => {
@@ -57,9 +61,9 @@ const More = () => {
   const renderBlock = (group, blocks) => (
     blocks.map((block) => (
       <FavoriteBlockButton
-        key={block.id}
-        icon={iconGenerator(block.id)}
-        label={block.label}
+        key={block.actKey}
+        icon={iconGenerator(block.actKey)}
+        label={block.name}
         onClick={() => toPage(block)}
         noBorder
       />
@@ -67,23 +71,26 @@ const More = () => {
   );
 
   const renderContent = (group) => group.map((section) => (
-    <section key={section.id} className={section.group}>
+    <section key={section.groupKey} className={section.groupKey}>
       <h3 className="title">{section.groupName}</h3>
       <div className="blockGroup">
-        { renderBlock(section.group, section.blocks) }
+        { renderBlock(section.group, section.items) }
       </div>
     </section>
   ));
 
   const renderTabList = (tabs) => tabs.map((tab) => (
-    <FEIBTab key={tab.id} label={tab.groupName} value={tab.group} />
+    <FEIBTab key={tab.groupKey} label={tab.groupName} value={tab.groupKey} />
   ));
 
   useEffect(async () => {
     // db 資料內 url 為空，無法導頁，暫不接 api
     const response = await moreApi.getMoreList();
     console.log(response);
-    setMoreList(mockData.moreList);
+    if (response?.length > 1) {
+      setMoreList(response);
+    }
+    // setMoreList(mockData.moreList);
   }, []);
 
   useEffect(() => {
@@ -101,14 +108,21 @@ const More = () => {
       <Header title="更多" />
       <MoreWrapper small>
         <FEIBTabContext value={tabId}>
-          <FEIBTabList $size="small" onChange={handleChangeTabs}>
-            { renderTabList(moreList) }
-          </FEIBTabList>
+          {
+            moreList.length > 0 && (
+              <FEIBTabList $size="small" onChange={handleChangeTabs}>
+                { renderTabList(moreList) }
+              </FEIBTabList>
+            )
+          }
         </FEIBTabContext>
-
-        <div className="mainContent" ref={mainContentRef} onScroll={handleScrollContent}>
-          { renderContent(moreList) }
-        </div>
+        {
+          moreList.length > 0 && (
+            <div className="mainContent" ref={mainContentRef} onScroll={handleScrollContent}>
+              { renderContent(moreList) }
+            </div>
+          )
+        }
       </MoreWrapper>
     </>
   );
