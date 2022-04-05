@@ -1,36 +1,47 @@
 /* eslint-disable arrow-body-style */
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import { goToFunc } from 'utilities/BankeePlus';
 import { FEIBButton } from 'components/elements';
 import { setWaittingVisible } from '../../stores/reducers/ModalReducer';
+import { logout } from './Nav.api';
 
-import NavWrapper from './nav.style';
+import NavWrapper from './Nav.style';
 
 const Nav = () => {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  // 登出
-  const logOut = () => {
-    const url = 'https://appbankee-t.feib.com.tw/ords/db1/netdb/logoutUser';
-    const data = {
-      id_number: localStorage.getItem('custId'),
-    };
-    const callLogout = () => fetch(url, {
-      body: JSON.stringify(data),
-      headers: {
-        'content-type': 'application/json',
-      },
-      method: 'POST',
-    }).then((response) => response.json());
+  useEffect(async () => {
+    const token = sessionStorage.getItem('jwtToken');
+    if (!token) {
+      history.push('/login');
+    }
+  }, []);
 
-    callLogout()
-      .then(({ code }) => {
-        if (code === '00') {
-          history.push('/login');
-        }
-      });
+  // 登出
+  const logOut = async () => {
+    await logout();
+    history.push('/login');
+    // const url = 'https://appbankee-t.feib.com.tw/ords/db1/netdb/logoutUser';
+    // const data = {
+    //   id_number: localStorage.getItem('custId'),
+    // };
+    // const callLogout = () => fetch(url, {
+    //   body: JSON.stringify(data),
+    //   headers: {
+    //     'content-type': 'application/json',
+    //   },
+    //   method: 'POST',
+    // }).then((response) => response.json());
+
+    // callLogout()
+    //   .then(({ code }) => {
+    //     if (code === '00') {
+    //       history.push('/login');
+    //     }
+    //   });
   };
 
   const startFunc = (funcID, params) => {
@@ -41,7 +52,7 @@ const Nav = () => {
 
   return (
     <NavWrapper>
-      <div onClick={() => startFunc('C00300', '04300490004059')}>
+      <div onClick={() => startFunc('C00300')}>
         <ul>
           <li>台幣活存</li>
           <li>route: /taiwanDollarAccount</li>

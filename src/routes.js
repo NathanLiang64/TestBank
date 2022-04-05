@@ -153,7 +153,7 @@ const ExchangeRate = lazy(() => import('pages/ExchangeRate'));
 const Login = lazy(() => import('proto/Login/login'));
 const Tutorials = lazy(() => import('proto/Tutorials'));
 // const Test = lazy(() => import('proto/Test'));
-const Nav = lazy(() => import('proto/Nav'));
+const Nav = lazy(() => import('proto/Nav/Nav'));
 // --------------------------------
 
 const routes = [
@@ -238,8 +238,8 @@ const routes = [
   // TODO：支援開發及Prototype測試使用
   { path: '/login', exact: false, component: Login },
   { path: '/tutorials', exact: false, component: Tutorials },
-  { path: '/home', exact: false, component: Nav },
-  { path: '/', exact: true, component: Login },
+  // { path: '/home', exact: false, component: Nav },
+  { path: '/', exact: true, component: Nav },
   // --------------------------------
 ];
 

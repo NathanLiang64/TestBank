@@ -50,14 +50,14 @@ const AccountOverview = ({
     ))
   );
 
-  const renderSingleDebitCard = (userAccount) => (
+  const renderSingleDebitCard = (cardInfo) => (
     <DebitCard
       type="original"
-      branch={userAccount.acctBranch}
-      cardName={userAccount.acctName}
-      account={userAccount.acctId}
-      balance={userAccount.acctBalx}
-      dollarSign={userAccount.ccyCd}
+      branch={cardInfo.acctBranch}
+      cardName={cardInfo.acctName}
+      account={cardInfo.acctId}
+      balance={cardInfo.acctBalx}
+      dollarSign={cardInfo.ccyCd}
       functionList={funcList}
       moreList={moreFuncs}
       color={cardColor}
@@ -77,8 +77,8 @@ const AccountOverview = ({
       onSlideChange={handleChangeSlide}
     >
       { userAccounts.map((account) => (
-        <SwiperSlide key={account.acctId}>
-          { renderSingleDebitCard(account) }
+        <SwiperSlide key={account.cardInfo.acctId}>
+          { renderSingleDebitCard(account.cardInfo) }
         </SwiperSlide>
       )) }
     </Swiper>
@@ -87,7 +87,7 @@ const AccountOverview = ({
   const renderDebitCard = (userAccounts) => (
     userAccounts.length > 1
       ? renderMultipleDebitCards(userAccounts)
-      : renderSingleDebitCard(userAccounts[0])
+      : renderSingleDebitCard(userAccounts[0].cardInfo)
   );
 
   const renderInterestRatePanel = (info, title, content) => {

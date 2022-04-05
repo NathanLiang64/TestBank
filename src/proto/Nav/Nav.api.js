@@ -1,4 +1,4 @@
-import { callAPI } from '../../utilities/axios';
+import { callAPI } from 'utilities/axios';
 
 // 登出
 export const logout = async () => {

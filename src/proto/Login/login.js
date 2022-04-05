@@ -15,7 +15,7 @@ import {
   ArrowBackIcon, ArrowNextIcon, CheckboxCheckedIcon, CheckboxUncheckedIcon, FaceIdIcon, VisibilityIcon, VisibilityOffIcon,
 } from 'assets/images/icons';
 // import e2ee from 'utilities/E2ee';
-import { setFavoriteDrawer } from 'pages/Favorite/stores/actions';
+// import { setFavoriteDrawer } from 'pages/Favorite/stores/actions';
 // import { goToFunc } from 'utilities/BankeePlus';
 import { accountValidation, identityValidation, passwordValidation } from 'utilities/validation';
 import theme from 'themes/theme';
@@ -45,7 +45,7 @@ const Login = () => {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      identity: 'F123978801',
+      identity: 'B100000002', // F123978801
       account: '1qaz2wsx',
       password: 'feib1688',
     },
@@ -60,17 +60,20 @@ const Login = () => {
   const history = useHistory();
 
   useEffect(async () => {
+    localStorage.clear();
+    sessionStorage.clear();
     Cookies.remove('jwtToken');
+
     const { result, message } = await HandShake();
     if (result !== 'success') {
       alert(`Hand shake fail! ${message}`);
     }
     dispatch(setShowSpinner(false));
 
-    // 避免我的最愛 catch 住，在開啟 APP 後就顯示
-    dispatch(setFavoriteDrawer({
-      title: '我的最愛', open: false, content: '', back: null,
-    }));
+    // // 避免我的最愛 catch 住，在開啟 APP 後就顯示
+    // dispatch(setFavoriteDrawer({
+    //   title: '我的最愛', open: false, content: '', back: null,
+    // }));
   }, []);
 
   const userInfo = useSelector(({ login }) => login.userInfo);
@@ -91,7 +94,7 @@ const Login = () => {
     const { result, message } = await getJwtKey(data);
     if (result === 'success') {
       // alert('登入成功');
-      history.push('/home');
+      history.push('/');
     } else {
       alert(message);
     }

@@ -8,18 +8,23 @@ const device = {
 };
 
 const funcStack = {
-  push: (func, params, keepData, hideMenu) => {
+  push: (func, params = null, keepData = null, hideMenu = false) => {
     const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
     stack.push({
       func, params, keepData, hideMenu,
     });
     localStorage.setItem('funcStack', JSON.stringify(stack));
+
+    Cookies.set('funcParams', JSON.stringify(params));
   },
   pop: () => {
     const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
     stack.pop();
     localStorage.setItem('funcStack', JSON.stringify(stack));
-    return stack;
+
+    const item = stack[stack.length - 1];
+    if (item) Cookies.set('funcParams', JSON.stringify(item.params));
+    return item;
   },
   clear: () => {
     localStorage.setItem('funcStack', '[]');
@@ -27,7 +32,7 @@ const funcStack = {
 };
 
 // 網頁通知APP跳轉指定功能
-function goToFunc({ route, funcID }, funcParams = '', keepData = '') {
+function goToFunc({ route, funcID }, funcParams, keepData) {
   // console.debug('name:' + funcName + ', data:' + jsonParams);
   const data = {
     funcID,
@@ -47,7 +52,6 @@ function goToFunc({ route, funcID }, funcParams = '', keepData = '') {
     // console.log(history);
     // const history = useHistory();
     // history.push(`/${funcID}`);
-    Cookies.set('funcParams', funcParams);
     window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${route}`; // TODO: 提供 funcParams，如何提供？
   }
 }
@@ -70,8 +74,7 @@ function closeFunc() {
     // TODO： 取回 keepData；若沒有提供，則應以 funcParams 傳回。
     window.jstoapp.closeFunc();
   } else {
-    const stack = funcStack.pop();
-    const funcItem = stack[stack.length - 1];
+    const funcItem = funcStack.pop();
     if (funcItem) {
       console.log(`[Close Function and Back to(${funcItem.func.route})]`);
       window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcItem.func.route}`; // TODO： 提供 keepData，如何提供？
@@ -89,12 +92,15 @@ function closeFunc() {
  */
 function loadFuncParams() {
   const data = Cookies.get('funcParams');
-  try {
-    const params = JSON.parse(data);
-    return params;
-  } catch (error) {
-    return data;
+  if (data && data !== 'undefined') {
+    try {
+      const params = JSON.parse(data);
+      return params;
+    } catch (error) {
+      return data;
+    }
   }
+  return null;
 }
 
 // 開關 loading

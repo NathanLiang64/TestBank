@@ -22,7 +22,7 @@ userAxios().interceptors.request.use(
   async (request) => {
     console.log(`\x1b[33mAPI :/${request.url}`);
     console.log('Request = ', request.data);
-    let token = localStorage.getItem('jwtToken'); // BUG! 會因為多執行緒而錯亂，應該從Request中取回才對。
+    let token = sessionStorage.getItem('jwtToken'); // BUG! 會因為多執行緒而錯亂，應該從Request中取回才對。
     if (!token) token = Cookies.get('jwtToken'); // TODO: 為了相容 axiosConfig
     // console.log(`\x1b[32m[JWT] \x1b[92m${token}`);
     if (token) {
@@ -61,7 +61,7 @@ userAxios().interceptors.response.use(
 
       // 不論成功或失敗，都一定會更新 jwtToken
       const renewJwtToken = response.data.jwtToken;
-      localStorage.setItem('jwtToken', renewJwtToken); // BUG! 會因為多執行緒而錯亂
+      sessionStorage.setItem('jwtToken', renewJwtToken); // BUG! 會因為多執行緒而錯亂
       Cookies.set('jwtToken', renewJwtToken); // TODO: 為了相容 axiosConfig
       // console.log(`\x1b[32m[New JWT] \x1b[92m${renewJwtToken}`);
     }
@@ -164,9 +164,9 @@ export const callAPI = async (url, request, config) => {
         response = rs.data;
       } else {
         switch (code) {
-          case 'APLFX9999':
+          case 'WEBCTL1006':
             await showError(message, () => {
-              document.location.href = `${process.env.REACT_APP_CARD_SELECT_URL}`;
+              document.location.href = `${process.env.REACT_APP_ROUTER_BASE}/login`;
             });
             break;
 

@@ -1,0 +1,58 @@
+### 參數Sample ###
+
+# actno: 00600410000559 ,2308筆單月份
+# actno: 00100100063106 ,328筆有多月份
+
+### 回傳值說明 ###
+# startIndex: 出現在顯示區首筆的交易明細索引
+# dataDirect: 資料方向性
+# monthly[]: 查詢結果(含進階條件)的所有月份清單
+# acctDetails[]: 
+#   index: 明細在指定條件下的查詢結果中的索引位置，最近一筆為0
+#   txnDate: 交易日期(yyyy/mm/dd)
+#   description: 交易的說明
+#   targetMbrID: 轉出入對象的會員UUID。（用來取會員人頭貼等個人資訊，不能取得個資）
+#   targetBank: 轉出入銀行代碼
+#   targetAcct: 轉出入帳號
+#   amount: 轉出入金額
+#   balance: 目前帳戶交易時的餘額
+#   cdType: 轉出c或轉入d。（用來顯示代表轉出/轉入的Icon用）
+#   currency: 幣別
+##################
+
+### 查詢交易明細(預設) ###
+# actno: 查詢的帳號
+# 一般案例預設: 交易資料:6個月
+# 例: 假設本日7/14，則範圍1/1~7/31 
+# 預設筆數: 取得50筆(新~舊)
+# 一開始未指定任何條件時使用此模式
+GET https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=04300490004059
+
+### 指定月份查詢
+# 參數說明
+# dataMonth: 起始月份，預設為最接近日底的日期為起始索引
+# PS: 指定月份時，資料方向性固定為0 (雙向)
+GET https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=04300490004059&dataMonth=202104
+
+### 指定索引查詢(正向)
+# 參數說明
+# startIndex: 指定起始筆數
+# direct: 方向性.1:正向(新~舊)、2:反向(舊~新)、0:雙向
+# PS: 依方向性會取得50筆(含指定的StartIndex). 雙向的話取得99筆(100-1=StartIndex重覆一筆)
+GET https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=04300490000028&startIndex=0&direct=1
+
+### 指定索引查詢(反向)
+GET https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=00100100063106&startIndex=50&direct=-1
+
+### 進階條件
+# beginDT ~ endDT:交易日期起迄
+# textSH: 文字檢索條件
+# 以上條件可只填入一組或全部填入
+# PS: 月份查詢、索引查詢的條件只能擇一使用(API名稱不同)
+# 進階條件的可以共通使用
+GET https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=04300490004059&beginDT=20210301&endDT=20220531
+
+
+################################
+GET https://appbankee-t.feib.com.tw/ords/db1/cust/account/query?custid=B100000002
+# F123978801
