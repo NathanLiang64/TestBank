@@ -6,7 +6,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import e2ee from 'utilities/E2ee';
 import { changeUserNameApi } from 'apis';
-import { closeFunc } from 'utilities/BankeePlus';
+import { closeFunc, switchLoading } from 'utilities/BankeePlus';
 
 /* Elements */
 import Header from 'components/Header';
@@ -60,6 +60,7 @@ const ChangeUserName = () => {
 
   // 呼叫變更使用者代號 API
   const handleChangeUserName = async () => {
+    switchLoading(true);
     const param = {
       userName: e2ee(getValues('userName')),
       newUserName: e2ee(getValues('newUserName')),
@@ -67,6 +68,7 @@ const ChangeUserName = () => {
     };
     const changeUserNameResponse = await changeUserNameApi.changeUserName(param);
     setResultDialog(changeUserNameResponse);
+    switchLoading(false);
   };
 
   // 點擊儲存變更按鈕，表單驗證
