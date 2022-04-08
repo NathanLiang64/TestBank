@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useGetEnCrydata } from 'hooks';
 import { exchangeApi } from 'apis';
-import { closeFunc } from 'utilities/BankeePlus';
+import { closeFunc, switchLoading } from 'utilities/BankeePlus';
 
 /* Elements */
 import {
@@ -243,6 +243,7 @@ const Exchange = () => {
       handleSetDialog('您輸入的金額已超過轉出帳號的餘額', false);
       return;
     }
+    switchLoading(true);
     const param = {
       trnsType: exchangeType,
       outAcct: outAccount,
@@ -253,6 +254,7 @@ const Exchange = () => {
       bankerCd: banker?.bankerCd || '',
     };
     const response = await exchangeApi.getRate(param);
+    switchLoading(false);
     if (!response.message) {
       const confirmData = {
         ...response,
@@ -501,8 +503,8 @@ const Exchange = () => {
                       <div>
                         <FEIBInput
                           {...balanceField}
-                          type="text"
-                          inputMode="numeric"
+                          type="number"
+                          inputmode="numeric"
                           id="foreignBalance"
                           name="foreignBalance"
                           placeholder={`請輸入${watch('exchangeType') === '2' ? '轉出' : '轉入'}金額`}
@@ -529,8 +531,8 @@ const Exchange = () => {
                         <FEIBInput
                           {...balanceField}
                           autoComplete="off"
-                          type="text"
-                          inputMode="numeric"
+                          type="number"
+                          inputmode="numeric"
                           id="ntDollorBalance"
                           name="ntDollorBalance"
                           placeholder={`請輸入${watch('exchangeType') === '2' ? '轉入' : '轉出'}金額`}
@@ -579,7 +581,7 @@ const Exchange = () => {
                   type="text"
                   id="memo"
                   name="memo"
-                  placeholder="請輸入文字"
+                  placeholder="請輸入備註"
                   error={!!errors.memo}
                 />
               )}

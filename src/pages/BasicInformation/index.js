@@ -142,6 +142,7 @@ const BasicInformation = () => {
 
   // 更新個人資料
   const modifyPersonalData = async () => {
+    switchLoading(true);
     const {
       county, city, zipCode, addr, email, mobile,
     } = getValues();
@@ -155,6 +156,7 @@ const BasicInformation = () => {
     };
     const modifyDataResponse = await basicInformationApi.modifyBasicInformation(param);
     setResultDialog(modifyDataResponse);
+    switchLoading(false);
   };
 
   // 點擊儲存變更按鈕
