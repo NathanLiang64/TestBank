@@ -105,6 +105,7 @@ userAxios().interceptors.response.use(
       if (response.data.code === '0000') {
         const decrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
         response = decrypt;
+        console.log(response);
       } else {
         response = { code: response.data.code, message: response.data.message };
       }
