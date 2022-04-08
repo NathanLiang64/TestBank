@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { basicInformationApi, settingApi } from 'apis';
-import { closeFunc } from 'utilities/BankeePlus';
+import { closeFunc, switchLoading } from 'utilities/BankeePlus';
 
 /* Elements */
 import Header from 'components/Header';
@@ -66,35 +66,44 @@ const BasicInformation = () => {
     },
   ]);
 
-  // 取得縣市列表
-  const getCountyList = async (address) => {
-    const countyListResponse = await settingApi.getCountyList({});
-    setAddressOptionsData(countyListResponse);
-    const countyList = countyListResponse.map((item) => {
+  // 取得個人資料
+  const getPersonalData = async (countyListResponse) => {
+    const basicInformationResponse = await basicInformationApi.getBasicInformation({});
+    if (!basicInformationResponse.code) {
       const data = {
-        countyName: item.countyName,
-        countyCode: item.countyCode,
+        ...basicInformationResponse,
       };
-      return data;
-    });
-    setCountyOptions(countyList);
-    const county = address.county.split(' ')[1] || address.county;
-    const { cities } = countyListResponse.find((item) => item.countyName === county);
-    setCityOptions(cities);
+      reset(data);
+      const { county } = data;
+      const countyData = county.split(' ')[1] || county;
+      const { cities } = countyListResponse.find((item) => item.countyName === countyData);
+      setCityOptions(cities);
+    } else {
+      const { code, message } = basicInformationResponse;
+      console.log(code, message);
+    }
+    switchLoading(false);
   };
 
-  // 取得個人資料
-  const getPersonalData = async () => {
-    const basicInformationResponse = await basicInformationApi.getBasicInformation({});
-    const data = {
-      ...basicInformationResponse,
-    };
-    reset(data);
-    const { county, city } = data;
-    getCountyList({
-      county,
-      city,
-    });
+  // 取得縣市列表
+  const getCountyList = async () => {
+    switchLoading(true);
+    const countyListResponse = await settingApi.getCountyList({});
+    setAddressOptionsData(countyListResponse);
+    if (!countyListResponse.code) {
+      const countyList = countyListResponse.map((item) => (
+        {
+          countyName: item.countyName,
+          countyCode: item.countyCode,
+        }
+      ));
+      setCountyOptions(countyList);
+      getPersonalData(countyListResponse);
+    } else {
+      const { code, message } = countyListResponse;
+      console.log(code, message);
+      switchLoading(false);
+    }
   };
 
   // 設定結果彈窗
@@ -133,6 +142,7 @@ const BasicInformation = () => {
 
   // 更新個人資料
   const modifyPersonalData = async () => {
+    switchLoading(true);
     const {
       county, city, zipCode, addr, email, mobile,
     } = getValues();
@@ -146,6 +156,7 @@ const BasicInformation = () => {
     };
     const modifyDataResponse = await basicInformationApi.modifyBasicInformation(param);
     setResultDialog(modifyDataResponse);
+    switchLoading(false);
   };
 
   // 點擊儲存變更按鈕
@@ -182,7 +193,7 @@ const BasicInformation = () => {
 
   useEffect(() => {
     dispatch(setIsOpen(false));
-    getPersonalData();
+    getCountyList();
   }, []);
 
   return (
