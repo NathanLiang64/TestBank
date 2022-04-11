@@ -157,11 +157,13 @@ const CardLessATM1 = () => {
               <FEIBInput
                 {...field}
                 type="text"
-                inputMode="numeric"
+                inputmode="numeric"
                 id="withdrawAmount"
                 name="withdrawAmount"
+                className="withdrawAmount"
                 placeholder="請輸入金額"
                 error={!!errors.withdrawAmount}
+                disabled
               />
               <div className="addMinusIcons">
                 <RemoveCircleRounded onClick={() => changeAmount(0)} />
