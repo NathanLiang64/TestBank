@@ -35,7 +35,9 @@
     "jsx-a11y/no-noninteractive-element-interactions": "off",
     "no-plusplus": "off",
     "no-restricted-syntax": ["error", "LabeledStatement", "WithStatement"],
-    "no-return-await": "off"
+    "no-return-await": "off",
+    "no-console": "off",
+    "no-alert": "off"
   },
   "ignorePatterns": ["/src/apis/*.yml"]
 }
