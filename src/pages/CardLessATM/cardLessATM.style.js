@@ -64,6 +64,11 @@ const CardLessATMWrapper = styled(Layout)`
     background: ${({ theme }) => theme.colors.basic.white};
   }
 }
+.withdrawAmount {
+  &.MuiInput-underline.Mui-disabled:before {
+    border-bottom-style: solid;
+  }
+}
 #withdrawAmount {
   text-align: center;
 }

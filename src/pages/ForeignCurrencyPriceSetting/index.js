@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
 import {
@@ -19,6 +18,7 @@ import { RadioGroup } from '@material-ui/core';
 import AddNewItem from 'components/AddNewItem';
 import SettingItem from 'components/SettingItem';
 import BottomDrawer from 'components/BottomDrawer';
+import Header from 'components/Header';
 
 /* Styles */
 import ForeignCurrencyPriceSettingWrapper from './foreignCurrencyPriceSetting.style';
@@ -143,20 +143,20 @@ const ForeignCurrencyPriceSetting = () => {
     />
   );
 
-  useCheckLocation();
-  usePageInfo('/api/foreignCurrencyPriceSetting');
-
   return (
-    <ForeignCurrencyPriceSettingWrapper>
-      <AddNewItem onClick={addPriceSetting} addLabel="新增（最多可設定五筆）" />
-      <SettingItem
-        mainLable="美金 USD"
-        subLabel="匯率：27"
-        editClick={editPriceSetting}
-        deleteClick={deletePriceSetting}
-      />
-      { renderDrawer() }
-    </ForeignCurrencyPriceSettingWrapper>
+    <>
+      <Header title="外幣到價通知" />
+      <ForeignCurrencyPriceSettingWrapper>
+        <AddNewItem onClick={addPriceSetting} addLabel="新增（最多可設定五筆）" />
+        <SettingItem
+          mainLable="美金 USD"
+          subLabel="匯率：27"
+          editClick={editPriceSetting}
+          deleteClick={deletePriceSetting}
+        />
+        { renderDrawer() }
+      </ForeignCurrencyPriceSettingWrapper>
+    </>
   );
 };
 
