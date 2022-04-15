@@ -32,7 +32,7 @@ function returnAuthdata(event) {
 
 // APP 通知網頁 otp 驗證結果
 function onComplete(event) {
-  const { Type, signature, Mima, rtcode, rtmsg } = event;
+  const { Type, signature, Mima, rtcode, rtmsg, action } = event;
   if (Number(rtcode) === 0) {
     // localStorage.setItem('signature', signature);
     // localStorage.setItem('mima', Mima);
