@@ -152,7 +152,7 @@ function setAuthdata(jwtToken) {
 
 // 向 APP 請求 OTP 驗證
 function onVerification() {
-  const data = { type: '1', action: '2' };
+  const data = { type: '1', otpType: '2' };
   if (device.ios()) {
     const msg = JSON.stringify({ name: 'onVerification', data: JSON.stringify(data) });
     window.webkit?.messageHandlers.jstoapp.postMessage(msg);
