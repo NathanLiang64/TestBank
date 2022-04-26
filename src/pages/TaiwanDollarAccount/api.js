@@ -2,6 +2,17 @@ import { callAPI } from 'utilities/axios';
 
 // 取得所有台幣帳號
 export const getAccountSummary = async (request) => {
+  // if (request) {
+  //   return [{
+  //     acctBranch: '信義分行',
+  //     acctName: '保時捷車友會',
+  //     acctId: '04300498017356', // B100000002
+  //     acctType: '004',
+  //     acctBalx: 2000000,
+  //     ccyCd: 'TWD',
+  //   }];
+  // }
+
   const response = await callAPI('/api/deposit/v1/accountSummary', request);
   return response.data.map((acct) => ({
     acctBranch: acct.branchName,
@@ -26,6 +37,22 @@ export const getAccountSummary = async (request) => {
     direct: 方向性.1:正向(新~舊)、2:反向(舊~新)、0:雙向方向性
   }
  * @returns 帳戶往來明細清單
+    {
+        "index": 1,
+        "bizDate": "20220425",
+        "txnDate": "20220425",
+        "txnTime": 210156,
+        "description": "現金",
+        "memo": null,
+        "targetMbrId": null,
+        "targetNickName": null,
+        "targetBank": "000",
+        "targetAcct": null,
+        "amount": 36000,
+        "balance": 386000,
+        "cdType": "d",
+        "currency": "TWD"
+    }
  */
 export const getTransactionDetails = async (request) => {
   const response = await callAPI('/api/deposit/v1/queryAcctTxDtl', request);

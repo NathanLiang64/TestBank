@@ -14,9 +14,7 @@ const AccountOverview = ({
   // const selectedAccount = useSelector(({ accountOverview }) => accountOverview.selectedAccount);
   // const txnDetails = useSelector(({ accountOverview }) => accountOverview.txnDetails);
 
-  const [detailAreaHeight, setDetailAreaHeight] = useState(0);
   const [interestPanel, setInterestPanel] = useState({ title: '', content: '' });
-  const [computedDetails, setComputedDetails] = useState([]);
 
   const detailsRef = useRef();
   const { push } = useHistory();
@@ -30,25 +28,44 @@ const AccountOverview = ({
     }
   };
 
-  const renderDetailCardList = (list) => (
-    list.map((card) => (
-      <DetailCard
-        key={card.index}
-        avatar={card.avatar}
-        title={card.description}
-        type={card.cdType}
-        date={card.txnDate}
-        time={card.txnTime}
-        bizDate={card.bizDate}
-        targetBank={card.targetBank}
-        targetAccount={card.targetAcct}
-        targetMember={card.targetMbrID}
-        dollarSign={card.currency}
-        amount={card.amount}
-        balance={card.balance}
-      />
-    ))
-  );
+  const renderDetailCardList = () => {
+    // TODO: 計算可顯示的明細項目數量。
+    // TODO: 因為外層 div 已縮至最小，無法正確計算可顯示的數量。「外層」可能是 Layout 物件。
+    console.log(detailsRef?.current);
+    console.log(detailsRef?.current?.offsetHeight);
+    // const { offsetHeight } = detailsRef?.current;
+    // setDetailAreaHeight(offsetHeight);
+    const detailAreaHeight = 430; // 暫時固定顯示 5 筆
+
+    // 根據剩餘高度計算要顯示的卡片數量，計算裝置可容納的交易明細卡片數量
+    const list = [];
+    if (details?.length) {
+      const computedCount = Math.floor((detailAreaHeight - 30) / 80);
+      for (let i = 0; (i < computedCount && i < details.length); i++) {
+        list.push(details[i]);
+      }
+    }
+
+    return (
+      list.map((card) => (
+        <DetailCard
+          key={card.index}
+          avatar={null} // 大頭貼路徑＋card.targetMbrId
+          title={card.description}
+          type={card.cdType}
+          date={card.txnDate}
+          time={card.txnTime}
+          bizDate={card.bizDate}
+          targetBank={card.targetBank}
+          targetAccount={card.targetAcct}
+          targetMember={card.targetMbrID}
+          dollarSign={card.currency}
+          amount={card.amount}
+          balance={card.balance}
+        />
+      ))
+    );
+  };
 
   const renderSingleDebitCard = (cardInfo) => (
     <DebitCard
@@ -64,17 +81,13 @@ const AccountOverview = ({
     />
   );
 
-  const handleChangeSlide = (swiper) => {
-    onAccountChange(swiper);
-  };
-
   const renderMultipleDebitCards = (userAccounts) => (
     <Swiper
       slidesPerView={1.14}
       spaceBetween={8}
       centeredSlides
       pagination
-      onSlideChange={handleChangeSlide}
+      onSlideChange={onAccountChange}
     >
       { userAccounts.map((account) => (
         <SwiperSlide key={account.cardInfo.acctId}>
@@ -120,16 +133,6 @@ const AccountOverview = ({
     );
   };
 
-  // 取得帳號資料後，計算 transactionDetail DOM 高度
-  useEffect(() => {
-    if (accounts?.length) {
-      // TODO: 計算可顯示的明細項目數量。
-      // const { offsetHeight } = detailsRef?.current;
-      // setDetailAreaHeight(offsetHeight);
-      setDetailAreaHeight(430);
-    }
-  }, [accounts]);
-
   // 根據當前帳戶取得交易明細資料及優惠利率數字
   useEffect(() => {
     if (panelInfo) {
@@ -142,16 +145,6 @@ const AccountOverview = ({
     }
   }, [panelInfo]);
 
-  // 根據剩餘高度計算要顯示的卡片數量，計算裝置可容納的交易明細卡片數量
-  useEffect(async () => {
-    if (details?.length) {
-      const list = [];
-      const computedCount = Math.floor((detailAreaHeight - 30) / 80);
-      for (let i = 0; i < computedCount; i++) list.push(details[i]);
-      setComputedDetails(list);
-    }
-  }, [details, detailAreaHeight]);
-
   return (
     <AccountOverviewWrapper small $multipleCardsStyle={accounts?.length > 1}>
       <div className="userCardArea">
@@ -162,7 +155,7 @@ const AccountOverview = ({
         panelInfo && renderInterestRatePanel(panelInfo, interestPanel?.title, interestPanel?.content)
       }
       <div className="transactionDetail" ref={detailsRef}>
-        { computedDetails && renderDetailCardList(computedDetails) }
+        { details?.length && renderDetailCardList() }
         <Link className="moreButton" to={detailsLink}>
           更多明細
           <ArrowNextIcon />

@@ -18,8 +18,6 @@ import { setAccounts, setSelectedAccount } from './ModelReducer';
  * C00300 台幣帳戶首頁
  */
 const TaiwanDollarAccount = () => {
-  const startParams = loadFuncParams(); // Function Controller 提供的參數
-
   const model = useSelector((state) => state.ntdAccountSummaryReducer);
   const selectedAccount = useSelector((state) => state.ntdAccountSummaryReducer.selectedAccount);
 
@@ -41,11 +39,13 @@ const TaiwanDollarAccount = () => {
         panelInfo: null,
         transactions: null,
       }));
+      console.log(accounts);
 
       dispatch(setAccounts(accounts));
     }
 
     // 以啟動參數(台幣帳號)為預設值；若沒有設，則以第一個帳號為預設值。
+    const startParams = loadFuncParams(); // Function Controller 提供的參數
     if (startParams || accounts.length > 0) {
       const accountNo = startParams ? startParams.defaultAccount : accounts[0].cardInfo.acctId;
       await selectedAccountChange(accounts, accountNo);
@@ -72,7 +72,7 @@ const TaiwanDollarAccount = () => {
       const beginDay = new Date(today.getFullYear() - 3, today.getMonth(), today.getDate());
       const requestData = {
         account: accountNo,
-        beginDate: stringDateCodeFormatter(beginDay), // '20210301',
+        startDate: stringDateCodeFormatter(beginDay), // '20210301',
         endDate: stringDateCodeFormatter(today), // '20220531',
       };
       const transData = await getTransactionDetails(requestData);
@@ -114,7 +114,7 @@ const TaiwanDollarAccount = () => {
           // { title: '存摺封面下載', path: 'http://114.32.27.40:8080/test/downloadPDF', icon: 'system_update' },
         ]}
         panelInfo={selectedAccount.panelInfo}
-        details={selectedAccount.transactions}
+        details={selectedAccount.transactions?.acctTxDtls}
       />
     </Layout>
   ) : <div />;
