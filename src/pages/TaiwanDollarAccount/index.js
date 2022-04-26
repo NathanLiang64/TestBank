@@ -32,7 +32,7 @@ const TaiwanDollarAccount = () => {
     let { accounts } = model;
     if (!accounts) {
       // 首次加載時取得用戶所有帳號
-      const acctData = await getAccountSummary({ CCY: 'TWD' }); // TODO：取得本人的所有台幣的存款帳戶摘要資訊
+      const acctData = await getAccountSummary({ CCY: 'NTD' }); // TODO：取得本人的所有台幣的存款帳戶摘要資訊
       accounts = acctData.map((acct) => ({
         cardInfo: acct,
         // 以下屬性在 selectedAccount 變更時取得。
