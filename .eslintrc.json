@@ -36,7 +36,6 @@
     "no-plusplus": "off",
     "no-restricted-syntax": ["error", "LabeledStatement", "WithStatement"],
     "no-return-await": "off",
-
     "no-console": "off",
     "no-alert": "off"
   },

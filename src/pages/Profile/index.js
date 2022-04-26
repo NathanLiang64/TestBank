@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useGetEnCrydata } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { goToFunc } from 'utilities/BankeePlus';
+import { goToFunc, switchLoading } from 'utilities/BankeePlus';
 import { profileApi } from 'apis';
 
 /* Elements */
@@ -74,6 +73,7 @@ const Profile = () => {
       openMessageDialog('檔案大小必須小於 1024 KB');
       return;
     }
+    switchLoading(true);
     const formData = new FormData();
     formData.append('file', file);
     const response = await profileApi.uploadAvatar(formData);
@@ -85,6 +85,7 @@ const Profile = () => {
     if (response?.code) {
       openMessageDialog(`${response?.message}，錯誤碼：${response?.code}`);
     }
+    switchLoading(false);
   };
 
   const showEditNickNameDialog = () => {
@@ -94,6 +95,7 @@ const Profile = () => {
   };
 
   const getNickName = async () => {
+    switchLoading(true);
     const response = await profileApi.getNickName({});
     if (response?.code) {
       openMessageDialog(`取得暱稱與大頭照發生錯誤(${response?.code})：${response?.message}`);
@@ -102,9 +104,11 @@ const Profile = () => {
       setUuid(response.uuid);
       setAvatarUrl(`${process.env.REACT_APP_AVATAR_IMG_URL}/pf_${response.uuid}_b.jpg?timestamp=${Date.now()}`);
     }
+    switchLoading(false);
   };
 
   const onSubmit = async (data) => {
+    switchLoading(true);
     const param = {
       nickName: data.nickName,
     };
@@ -114,6 +118,7 @@ const Profile = () => {
       setNickName(data.nickName);
       setShowChangeNickNameDialog(false);
     }
+    switchLoading(false);
   };
 
   const toPage = ({ route, funcID }) => {
@@ -173,8 +178,6 @@ const Profile = () => {
     />
   );
 
-  useGetEnCrydata();
-
   useEffect(() => {
     getNickName();
   }, []);
@@ -184,7 +187,7 @@ const Profile = () => {
       <Header title="個人化設定" />
       <ProfileWrapper>
         <div className="avatarContainer">
-          <img src={avatarUrl} onError={() => setAvatarUrl(Avatar)} alt="" />
+          <img src={avatarUrl} onError={() => setAvatarUrl(Avatar)} alt="" key={avatarUrl} />
           <div className="penIconContainer">
             <div className="penIconBackground">
               <CreateRounded />
