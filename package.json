@@ -55,7 +55,7 @@
     "eject": "react-scripts eject",
     "server": "json-server  -H 0.0.0.0 __json_server_mock__/db.json --routes __json_server_mock__/routes.json --watch --port 3005"
   },
-  "homepage": "/webview/app2/",
+  "homepage": "/",
   "browserslist": {
     "production": [
       ">0.2%",

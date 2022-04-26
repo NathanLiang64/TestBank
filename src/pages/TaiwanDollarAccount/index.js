@@ -11,7 +11,7 @@ import AccountOverview from 'components/AccountOverview';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { loadFuncParams } from 'utilities/BankeePlus';
 import { stringDateCodeFormatter } from 'utilities/Generator';
-import { getAccountSummary, getTransactionDetails } from './api';
+import { getAccountSummary, getDepositBonus, getTransactionDetails } from './api';
 import { setAccounts, setSelectedAccount } from './ModelReducer';
 
 /**
@@ -63,7 +63,7 @@ const TaiwanDollarAccount = () => {
 
     // 取得優惠利率資訊
     if (account.panelInfo === null) {
-      // TODO: 取得優惠利率資訊
+      account.panelInfo = await getDepositBonus({ account: accountNo });
     }
 
     // 取得帳戶交易明細（三年內的前25筆即可）

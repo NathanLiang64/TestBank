@@ -2,26 +2,34 @@ import { callAPI } from 'utilities/axios';
 
 // 取得所有台幣帳號
 export const getAccountSummary = async (request) => {
-  // if (request) {
-  //   return [{
-  //     acctBranch: '信義分行',
-  //     acctName: '保時捷車友會',
-  //     acctId: '04300498017356', // B100000002
-  //     acctType: '004',
-  //     acctBalx: 2000000,
-  //     ccyCd: 'TWD',
-  //   }];
-  // }
-
   const response = await callAPI('/api/deposit/v1/accountSummary', request);
   return response.data.map((acct) => ({
-    acctBranch: acct.branchName,
-    acctName: acct.name,
-    acctId: acct.no,
-    acctType: acct.type,
-    acctBalx: acct.balance,
-    ccyCd: acct.currency,
+    acctBranch: acct.branchName, // 分行名稱
+    acctName: acct.name, // 帳戶名稱或暱稱
+    acctId: acct.no, // 帳號
+    acctType: acct.type, // 帳號類別
+    acctBalx: acct.balance, // 帳戶餘額
+    ccyCd: acct.currency, // 幣別代碼
   }));
+};
+
+/**
+ * 取得取得免費跨提/跨轉次數、數存優惠利率及資訊
+ * @param {*} request {
+    actNo: 帳號, ex: 00100100063106,
+  }
+ * @returns 優惠資訊
+  {
+   "freeWithdrawal": 6, // 免費跨提
+   "freeTransfer": 6, // 免費跨轉
+   "bonusQuota": 50000, // 優惠利率額度
+   "bonusRate": 0.081, // 優惠利率
+   "interest": 1999, // 累積利息
+  }
+ */
+export const getDepositBonus = async (request) => {
+  const response = await callAPI('/api/depositPlus/v1/getBonusInfo', request);
+  return response.data;
 };
 
 /**
