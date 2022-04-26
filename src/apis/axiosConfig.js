@@ -65,6 +65,8 @@ const userAxios = () => {
 
 userAxios().interceptors.request.use(
   (config) => {
+    console.log(`\x1b[33mAPI :/${config.url}`);
+    console.log('Request = ', config.data);
     const jwt = Cookies.get('jwtToken');
     if (jwt) {
       const aeskey = localStorage.getItem('aesKey');

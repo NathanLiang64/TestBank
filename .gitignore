@@ -31,3 +31,4 @@ node
 apache-maven-3.8.1
 target
 compiler
+*.log
