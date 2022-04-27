@@ -1,0 +1,23 @@
+version: "3.3"
+
+services:
+  feib-bankee-2022:
+    image: "asia-east1-docker.pkg.dev/lexionlu-web-prod/big-bucket-2021/feib-bankee-2022"
+    container_name: "feib-bankee-2022"
+    ports:
+      - "3006"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=3006"
+      - "traefik.http.routers.feib-bankee-2022.rule=Host(`feib-bankee-api-2022.dev.lexionlu.com`)"
+      - "traefik.http.routers.feib-bankee-2022.entrypoints=websecure"
+      - "traefik.http.routers.feib-bankee-2022.tls=true"
+      - "traefik.http.routers.feib-bankee-2022.tls.certresolver=leresolver"
+      - "traefik.http.routers.feib-bankee-2022.middlewares=feib-bankee-2022"
+      - "traefik.http.middlewares.feib-bankee-2022.basicauth.users=bankee:$$apr1$$Aji3H22j$$QMUrFgEAlM9PY7H5YQzC6/"
+    networks:
+      - "front-edge"
+
+networks:
+  front-edge:
+    external: true
