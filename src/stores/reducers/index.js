@@ -16,7 +16,6 @@ import { reducers as tradingAccountReducer } from 'pages/TradingAccount/stores';
 import { reducers as accountDetailsReducer } from 'components/AccountDetails/stores';
 import { reducers as resultDialogReducer } from 'pages/ResultDialog/stores';
 
-import { ModelReducer as ntdAccountSummaryReducer } from 'pages/TaiwanDollarAccount/ModelReducer';
 import ModalReducer from './ModalReducer';
 
 const reducer = combineReducers({
@@ -37,7 +36,6 @@ const reducer = combineReducers({
   accountDetails: accountDetailsReducer,
   resultDialog: resultDialogReducer,
   ModalReducer,
-  ntdAccountSummaryReducer,
 });
 
 export default reducer;
