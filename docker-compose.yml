@@ -9,7 +9,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.port=3006"
-      - "traefik.http.routers.feib-bankee-2022.rule=Host(`feib-bankee-api-2022.dev.lexionlu.com`)"
+      - "traefik.http.routers.feib-bankee-2022.rule=Host(`feib-bankee-2022.dev.lexionlu.com`)"
       - "traefik.http.routers.feib-bankee-2022.entrypoints=websecure"
       - "traefik.http.routers.feib-bankee-2022.tls=true"
       - "traefik.http.routers.feib-bankee-2022.tls.certresolver=leresolver"
