@@ -59,6 +59,13 @@ const Nav = () => {
           <li>funcID: C00300</li>
         </ul>
       </div>
+      <div onClick={() => startFunc('C00400')}>
+        <ul>
+          <li>外幣活存</li>
+          <li>route: /taiwanDollarAccount</li>
+          <li>funcID: C00400</li>
+        </ul>
+      </div>
       <div onClick={() => goToFunc({ route: '/more', funcID: 'B00600' })}>
         <ul>
           <li>功能：更多</li>

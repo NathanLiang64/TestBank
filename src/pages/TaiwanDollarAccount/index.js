@@ -40,8 +40,8 @@ const TaiwanDollarAccount = () => {
     };
 
     // 首次加載時取得用戶所有台幣的存款帳戶摘要資訊
-    if (!model.account) {
-      const acctData = await getAccountSummary({ CCY: 'NTD' });
+    if (!model.accounts) {
+      const acctData = await getAccountSummary({ AcctType: 'MC' }); // M=台幣主帳戶、C=台幣子帳戶
       model.accounts = Object.assign({}, ...acctData.map((acct) => ({ // Note: 將陣列(Array)轉為字典(Object/HashMap)
         [acct.acctId]: {
           cardInfo: acct, // TODO: 有帳務異動後，就要重載
@@ -55,7 +55,6 @@ const TaiwanDollarAccount = () => {
     // 預設顯示的帳號。
     if (!model.selectedAccount) model.selectedAccount = Object.values(model.accounts)[0].cardInfo.acctId;
 
-    console.log(model);
     setAccounts(model.accounts);
     setSelectedAccount(model.selectedAccount);
 
