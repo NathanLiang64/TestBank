@@ -1,8 +1,9 @@
+/* eslint-disable no-use-before-define */
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import {
   MoreIcon, VisibilityIcon, VisibilityOffIcon,
 } from 'assets/images/icons';
-import BottomDrawer from 'components/BottomDrawer';
 import CopyTextIconButton from 'components/CopyTextIconButton';
 import { FEIBIconButton } from 'components/elements';
 import theme from 'themes/theme';
@@ -10,6 +11,8 @@ import {
   accountFormatter, accountTypeColorGenerator, currencySymbolGenerator, toCurrency,
 } from 'utilities/Generator';
 import DebitCardBackground from 'assets/images/debitCardBackground.png';
+import { showDrawer } from '../../utilities/MessageModal';
+import { setDrawerVisible } from '../../stores/reducers/ModalReducer';
 import { iconGenerator } from './debitCardIconGenerator';
 import DebitCardWrapper from './debitCard.style';
 
@@ -52,8 +55,8 @@ const DebitCard = ({
   color,
   onFunctionChange,
 }) => {
+  const dispatch = useDispatch();
   const [showBalance, setShowBalance] = useState(true);
-  const [openDrawer, setOpenDrawer] = useState(false);
 
   const handleClickShowBalance = () => {
     setShowBalance(!showBalance);
@@ -74,14 +77,14 @@ const DebitCard = ({
   // 渲染卡片右上角的 "更多" 圖標
   const renderMoreIconButton = () => (
     <div className="moreIconButton">
-      <FEIBIconButton $fontSize={1.6} onClick={() => setOpenDrawer(true)}>
+      <FEIBIconButton $fontSize={1.6} onClick={() => showDrawer(renderMoreList(moreList))}>
         <MoreIcon />
       </FEIBIconButton>
     </div>
   );
 
   const onFuncClick = (fid) => {
-    setOpenDrawer(false);
+    dispatch(setDrawerVisible(false));
 
     // TODO: 若 funcID 是以'/'為開頭，表示是指定固定網址，因此不會導頁
     onFunctionChange(fid);
@@ -134,15 +137,6 @@ const DebitCard = ({
     </ul>
   );
 
-  const renderBottomDrawer = (list) => (
-    <BottomDrawer
-      className="debitCardDrawer"
-      isOpen={openDrawer}
-      onClose={() => setOpenDrawer(!openDrawer)}
-      content={renderMoreList(list)}
-    />
-  );
-
   return (
     <DebitCardWrapper className="debitCard" $cardColor={accountTypeColorGenerator(accountType) || color}>
       <img src={DebitCardBackground} alt="background" className="backgroundImage" />
@@ -162,7 +156,6 @@ const DebitCard = ({
       </div>
       { (originalType() && (functionList && renderFunctionList(functionList))) || (transferLimit && transferRemaining && renderTransferLimit(transferLimit, transferRemaining)) }
       { originalType() && moreList && renderMoreIconButton() }
-      { originalType() && moreList && renderBottomDrawer(moreList) }
     </DebitCardWrapper>
   );
 };

@@ -1,5 +1,8 @@
 import store from '../stores/store';
-import { setModal, setModalVisible } from '../stores/reducers/ModalReducer';
+import {
+  setModal, setModalVisible,
+  setDrawer, setDrawerVisible,
+} from '../stores/reducers/ModalReducer';
 
 export const closePopup = () => {
   store.dispatch(setModalVisible(false));
@@ -42,4 +45,11 @@ export const customPopup = async (title, message, onOk, onCancel, okContent, can
     cancelContent,
   }));
   store.dispatch(setModalVisible(true));
+};
+
+export const showDrawer = async (content) => {
+  store.dispatch(setDrawer({
+    content,
+  }));
+  store.dispatch(setDrawerVisible(true));
 };

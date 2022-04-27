@@ -1,6 +1,8 @@
 import {
   SET_MODAL,
   SET_MODAL_VISIBLE,
+  SET_DRAWER,
+  SET_DRAWER_VISIBLE,
   SET_WAITTING_VISIBLE,
   REST_ALL,
 } from '../constant';
@@ -23,6 +25,10 @@ const initialState = {
     backdrop: false,
   },
   showModal: false,
+  drawer: {
+    content: null,
+  },
+  showDrawer: false,
   waitting: false,
 };
 
@@ -34,6 +40,12 @@ export default function ModalReducer(state = initialState, action) {
 
     case SET_MODAL_VISIBLE:
       return { ...state, showModal: data };
+
+    case SET_DRAWER:
+      return { ...state, drawer: data };
+
+    case SET_DRAWER_VISIBLE:
+      return { ...state, showDrawer: data };
 
     case SET_WAITTING_VISIBLE:
       return { ...state, waitting: data };
@@ -56,6 +68,20 @@ export function setModal(data) {
 export function setModalVisible(data) {
   return {
     type: SET_MODAL_VISIBLE,
+    data,
+  };
+}
+
+export function setDrawer(data) {
+  return {
+    type: SET_DRAWER,
+    data,
+  };
+}
+
+export function setDrawerVisible(data) {
+  return {
+    type: SET_DRAWER_VISIBLE,
     data,
   };
 }
