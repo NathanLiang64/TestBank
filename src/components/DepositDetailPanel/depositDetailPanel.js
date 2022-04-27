@@ -23,8 +23,6 @@ const DepositDetailPanel = ({
 
     // TODO: 計算可顯示的明細項目數量。
     // TODO: 因為外層 div 已縮至最小，無法正確計算可顯示的數量。「外層」可能是 Layout 物件。
-    console.log(detailsRef?.current);
-    console.log(detailsRef?.current?.offsetHeight);
     // const { offsetHeight } = detailsRef?.current;
     // setDetailAreaHeight(offsetHeight);
     const detailAreaHeight = 430; // 暫時固定顯示 5 筆

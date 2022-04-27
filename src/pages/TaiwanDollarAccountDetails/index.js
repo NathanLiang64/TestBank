@@ -15,8 +15,6 @@ const TaiwanDollarAccountDetails = () => {
   const dispatch = useDispatch();
 
   const [account, setAccount] = useState(null);
-  const [months, setMonths] = useState(null);
-  const [transactions, setTransactions] = useState(null);
 
   /**
    * 頁面啟動，初始化
@@ -47,9 +45,7 @@ const TaiwanDollarAccountDetails = () => {
 
     // 取得帳戶交易明細（三年內）
     const transData = await getTransactionDetails(request);
-
-    setMonths(transData.monthly);
-    setTransactions(transData);
+    return transData;
   };
 
   /**
@@ -60,10 +56,6 @@ const TaiwanDollarAccountDetails = () => {
       <div>
         <AccountDetails
           selectedAccount={account}
-          txnDetails={transactions?.acctTxDtls}
-          monthly={months}
-          onTabClick={updateTransactions}
-          onScroll={updateTransactions}
           onSearch={updateTransactions}
           cardColor="purple"
         />

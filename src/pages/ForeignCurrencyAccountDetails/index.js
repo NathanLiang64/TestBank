@@ -15,8 +15,6 @@ const ForeignCurrencyAccountDetails = () => {
   const dispatch = useDispatch();
 
   const [account, setAccount] = useState(null);
-  const [months, setMonths] = useState(null);
-  const [transactions, setTransactions] = useState(null);
 
   /**
    * 頁面啟動，初始化
@@ -47,10 +45,7 @@ const ForeignCurrencyAccountDetails = () => {
 
     // 取得帳戶交易明細（三年內）
     const transData = await getTransactionDetails(request);
-    console.log(transData);
-
-    if (!months) setMonths(transData.monthly); // 以第一次查詢結果的月份清單為準，避免清單一直變。
-    setTransactions(transData.acctTxDtls);
+    return transData;
   };
 
   /**
@@ -61,10 +56,6 @@ const ForeignCurrencyAccountDetails = () => {
       <div>
         <AccountDetails
           selectedAccount={account}
-          txnDetails={transactions}
-          monthly={months}
-          onTabClick={updateTransactions}
-          onScroll={updateTransactions}
           onSearch={updateTransactions}
           cardColor="blue"
         />

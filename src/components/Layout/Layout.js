@@ -8,6 +8,7 @@ import Header from 'components/Header';
 import Dialog from 'components/Dialog';
 import BottomDrawer from 'components/BottomDrawer';
 import { FEIBIconButton } from 'components/elements';
+// import theme from 'themes/theme';
 import {
   setModalVisible, setWaittingVisible, setDrawerVisible,
 } from '../../stores/reducers/ModalReducer';
@@ -106,6 +107,8 @@ function Layout({
 
   const Drawer = () => (
     <BottomDrawer
+      title={drawerData.title}
+      // titleColor={theme.colors.primary.dark}
       isOpen={showDrawer}
       onClose={() => dispatch(setDrawerVisible(false))}
       content={drawerData.content}

@@ -41,10 +41,13 @@ export const stringDateCodeFormatter = (date) => {
 
 // 將日期格式由 YYYYMMDD 字串轉為 YYYY/MM/DD 字串
 export const stringDateFormatter = (stringDate) => {
-  const dateArray = stringDate.split('');
-  dateArray.splice(4, 0, '/');
-  dateArray.splice(7, 0, '/');
-  return dateArray.join('');
+  if (stringDate) {
+    const dateArray = stringDate.split('');
+    dateArray.splice(4, 0, '/');
+    dateArray.splice(7, 0, '/');
+    return dateArray.join('');
+  }
+  return '';
 };
 
 // 將時間格式轉為 HH:DD 字串

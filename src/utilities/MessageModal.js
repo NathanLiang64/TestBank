@@ -47,8 +47,9 @@ export const customPopup = async (title, message, onOk, onCancel, okContent, can
   store.dispatch(setModalVisible(true));
 };
 
-export const showDrawer = async (content) => {
+export const showDrawer = async (title, content) => {
   store.dispatch(setDrawer({
+    title,
     content,
   }));
   store.dispatch(setDrawerVisible(true));

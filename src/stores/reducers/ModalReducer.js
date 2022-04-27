@@ -26,6 +26,7 @@ const initialState = {
   },
   showModal: false,
   drawer: {
+    title: null,
     content: null,
   },
   showDrawer: false,
