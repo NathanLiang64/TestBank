@@ -104,6 +104,8 @@ const AccountDetails = ({
       endDT: dtRange[1],
       tranTP: tranTPList.join(),
       custom: custKwds,
+      direct: 1,
+      startIndex: (conds?.startIndex ?? 0),
     };
   };
 
