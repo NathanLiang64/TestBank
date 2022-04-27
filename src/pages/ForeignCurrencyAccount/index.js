@@ -1,20 +1,24 @@
 /* eslint-disable no-use-before-define */
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useForm } from 'react-hook-form';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import AccountOverview from 'components/AccountOverview';
 import DepositDetailPanel from 'components/DepositDetailPanel/depositDetailPanel';
+import { FEIBInputLabel, FEIBInput, FEIBErrorMessage } from 'components/elements';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { customPopup } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc } from 'utilities/BankeePlus';
 import { stringDateCodeFormatter } from 'utilities/Generator';
 import { getAccountSummary, getTransactionDetails } from './api';
 
 const ForeignCurrencyAccount = () => {
   const dispatch = useDispatch();
+  const { register, handleSubmit } = useForm();
 
   const [accounts, setAccounts] = useState(null);
   const [selectedAccount, setSelectedAccount] = useState(null);
@@ -97,6 +101,33 @@ const ForeignCurrencyAccount = () => {
     setSelectedAccount(account.cardInfo.acctId);
   };
 
+  /**
+   * 編輯帳戶名稱
+   * @param {*} name 原始帳戶名稱
+   */
+  const showRenameDialog = async (name) => {
+    const body = (
+      <>
+        <FEIBInputLabel>新的帳戶名稱</FEIBInputLabel>
+        <FEIBInput defaultValue={name} autoFocus {...register('newName', { required: true })} />
+        <FEIBErrorMessage $noSpacing />
+      </>
+    );
+    const onOk = () => {
+      console.log('帳戶名稱 : ', name);
+      handleSubmit((newName) => {
+        // TODO: 因為 register('newName' 無效果，所以拿不回 newName
+        console.log('新帳戶名稱 : ', newName);
+        // TODO: Call API 變更帳戶名稱。
+      });
+    };
+    await customPopup('帳戶名稱編輯', body, onOk);
+  };
+
+  /**
+   * 執行指定的單元功能。
+   * @param {*} funcCode 功能代碼
+   */
   const handleFunctionChange = async (funcCode) => {
     let params = null;
     const model = { accounts, selectedAccount };
@@ -105,9 +136,16 @@ const ForeignCurrencyAccount = () => {
       case 'exchange': // 換匯
         params = { defaultAccount: selectedAccount };
         break;
-      case 'depositPlus':
+      case 'rename': // 帳戶名稱編輯
+        showRenameDialog(accounts[selectedAccount].cardInfo.acctName);
+        return;
+      case 'setMainAccount': // 設定為主要外幣帳戶
+        // TODO: 將目前帳戶 設定為主要外幣帳戶
+        return;
+      case 'masterCardXB': // MasterCard Send Cross Border
       default:
-        break;
+        // TODO：未完成
+        return;
     }
 
     startFunc(funcCode, params, model);
@@ -130,8 +168,9 @@ const ForeignCurrencyAccount = () => {
             { fid: 'exchange', title: '換匯' },
           ]}
           moreFuncs={[
-            { fid: null, title: 'MasterCard Send Cross Border', icon: 'temp' },
-            { fid: null, title: '設定為主要外幣帳戶', icon: 'temp' },
+            { fid: 'masterCardXB', title: 'MasterCard Send Cross Border', icon: 'temp' },
+            { fid: 'setMainAccount', title: '設定為主要外幣帳戶', icon: 'temp' },
+            { fid: 'rename', title: '帳戶名稱編輯', icon: 'edit' },
           ]}
         />
 

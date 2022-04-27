@@ -3,14 +3,13 @@
 import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Modal, Button } from 'react-bootstrap';
-import Header from 'components/Header';
 import Loading from 'components/Loading';
-// import '../styles/custom.css';
+import Header from 'components/Header';
+import Dialog from 'components/Dialog';
+import { FEIBIconButton } from 'components/elements';
 import {
   setModalVisible, setWaittingVisible,
 } from '../../stores/reducers/ModalReducer';
-// import { routepath } from '../../routes';
 
 function Layout({
   title,
@@ -59,6 +58,7 @@ function Layout({
    *  監控 ModalReducer.visible，當開啟時立即關閉 等待中 視窗
    */
   useEffect(async () => {
+    console.log('showModal -> ', showModal);
     // 強制關掉 等待畫面，才能看到 Popup 視窗。
     if (showModal) dispatch(setWaittingVisible(false));
   }, [showModal]);
@@ -67,28 +67,26 @@ function Layout({
    * 顯示訊息視窗
    */
   const MessageModal = () => (
-    <>
-      <Modal show={showModal} onHide={onModalClose} centered backdrop={modalData.backdrop ? '' : 'static'}>
-        <Modal.Header>
-          <Modal.Title className="h5" style={{ color: '#ab8ce4' }}>
-            {modalData.title ?? '系統訊息'}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body style={{ padding: '1rem 1.5rem' }}>
-          {modalData.content}
-        </Modal.Body>
-        <Modal.Footer style={{ justifyContent: 'center', flexWrap: 'nowrap' }}>
-          {(modalData.onCancel || modalData.cancelContent)
-            ? (<Button variant="secondary" onClick={onModalCancel}>
-                  {modalData.cancelContent ?? '取消'}
-               </Button>)
-            : null}
-          <Button variant="primary" onClick={onModalOk} style={{ backgroundColor: '#ab8ce4', color: 'white' }}>
-            {modalData.okContent ?? '確認'}
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
+    <div>
+      <Dialog
+        title={modalData.title ?? '系統訊息'}
+        isOpen={showModal}
+        onClose={onModalClose}
+        content={modalData.content}
+        action={
+          <>
+            {(modalData.onCancel || modalData.cancelContent)
+              ? (<FEIBIconButton onClick={onModalCancel}>
+                    {modalData.cancelContent ?? '取消'}
+                 </FEIBIconButton>)
+              : null}
+            <FEIBIconButton onClick={onModalOk}>
+              {modalData.okContent ?? '確認'}
+            </FEIBIconButton>
+          </>
+        }
+      />
+    </div>
   );
 
   //
@@ -107,7 +105,7 @@ function Layout({
     );
   }
   return (
-    <div style={{ backgroundColor: 'gray' }}>
+    <div className="center" style={{ height: '100%', backgroundColor: 'gray' }}>
       <Loading />
     </div>);
 }

@@ -1,14 +1,10 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import {
-  EditAccountIcon, MoreIcon, VisibilityIcon, VisibilityOffIcon,
+  MoreIcon, VisibilityIcon, VisibilityOffIcon,
 } from 'assets/images/icons';
 import BottomDrawer from 'components/BottomDrawer';
-import Dialog from 'components/Dialog';
 import CopyTextIconButton from 'components/CopyTextIconButton';
-import {
-  FEIBIconButton, FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBButton,
-} from 'components/elements';
+import { FEIBIconButton } from 'components/elements';
 import theme from 'themes/theme';
 import {
   accountFormatter, accountTypeColorGenerator, currencySymbolGenerator, toCurrency,
@@ -52,30 +48,15 @@ const DebitCard = ({
   transferLimit,
   transferRemaining,
   moreList,
-  moreDefault = true,
   dollarSign,
   color,
   onFunctionChange,
 }) => {
   const [showBalance, setShowBalance] = useState(true);
   const [openDrawer, setOpenDrawer] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);
-
-  const { register, handleSubmit } = useForm();
 
   const handleClickShowBalance = () => {
     setShowBalance(!showBalance);
-  };
-
-  const handleClickEditCardName = () => {
-    setOpenDrawer(false);
-    setOpenDialog(true);
-  };
-
-  // eslint-disable-next-line no-unused-vars
-  const handleClickSubmitCardName = (data) => {
-    setOpenDialog(false);
-    // send data
   };
 
   // 判斷卡片類型是否為 original
@@ -100,6 +81,8 @@ const DebitCard = ({
   );
 
   const onFuncClick = (fid) => {
+    setOpenDrawer(false);
+
     // TODO: 若 funcID 是以'/'為開頭，表示是指定固定網址，因此不會導頁
     onFunctionChange(fid);
   };
@@ -148,17 +131,6 @@ const DebitCard = ({
           </p>
         </li>
       ))}
-      {/* 下方為功能列表內的固定功能 */}
-      {
-        moreDefault && (
-          <li onClick={handleClickEditCardName}>
-            <p>
-              <EditAccountIcon />
-              帳戶名稱編輯
-            </p>
-          </li>
-        )
-      }
     </ul>
   );
 
@@ -168,24 +140,6 @@ const DebitCard = ({
       isOpen={openDrawer}
       onClose={() => setOpenDrawer(!openDrawer)}
       content={renderMoreList(list)}
-    />
-  );
-
-  const renderEditCardNameDialog = (name) => (
-    <Dialog
-      title="帳戶名稱編輯"
-      isOpen={openDialog}
-      onClose={() => setOpenDialog(false)}
-      content={(
-        <>
-          <FEIBInputLabel>新的帳戶名稱</FEIBInputLabel>
-          <FEIBInput defaultValue={name} autoFocus {...register('cardName')} />
-          <FEIBErrorMessage $noSpacing />
-        </>
-      )}
-      action={(
-        <FEIBButton onClick={handleSubmit(handleClickSubmitCardName)}>確認</FEIBButton>
-      )}
     />
   );
 
@@ -209,7 +163,6 @@ const DebitCard = ({
       { (originalType() && (functionList && renderFunctionList(functionList))) || (transferLimit && transferRemaining && renderTransferLimit(transferLimit, transferRemaining)) }
       { originalType() && moreList && renderMoreIconButton() }
       { originalType() && moreList && renderBottomDrawer(moreList) }
-      { originalType() && renderEditCardNameDialog(cardName) }
     </DebitCardWrapper>
   );
 };

@@ -2,14 +2,17 @@
 /* eslint-disable object-curly-newline */
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useForm } from 'react-hook-form';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import AccountOverview from 'components/AccountOverview';
 import DepositDetailPanel from 'components/DepositDetailPanel/depositDetailPanel';
+import { FEIBInputLabel, FEIBInput, FEIBErrorMessage } from 'components/elements';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { customPopup } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc } from 'utilities/BankeePlus';
 import { stringDateCodeFormatter } from 'utilities/Generator';
 import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
@@ -21,6 +24,7 @@ import TaiwanDollarAccountWrapper from './taiwanDollarAccount.style';
  */
 const TaiwanDollarAccount = () => {
   const dispatch = useDispatch();
+  const { register, handleSubmit } = useForm();
 
   const [accounts, setAccounts] = useState(null);
   const [selectedAccount, setSelectedAccount] = useState(null);
@@ -167,6 +171,33 @@ const TaiwanDollarAccount = () => {
     setSelectedAccount(account.cardInfo.acctId);
   };
 
+  /**
+   * 編輯帳戶名稱
+   * @param {*} name 原始帳戶名稱
+   */
+  const showRenameDialog = async (name) => {
+    const body = (
+      <>
+        <FEIBInputLabel>新的帳戶名稱</FEIBInputLabel>
+        <FEIBInput defaultValue={name} autoFocus {...register('newName', { required: true })} />
+        <FEIBErrorMessage $noSpacing />
+      </>
+    );
+    const onOk = () => {
+      console.log('帳戶名稱 : ', name);
+      handleSubmit((newName) => {
+        // TODO: 因為 register('newName' 無效果，所以拿不回 newName
+        console.log('新帳戶名稱 : ', newName);
+        // TODO: Call API 變更帳戶名稱。
+      });
+    };
+    await customPopup('帳戶名稱編輯', body, onOk);
+  };
+
+  /**
+   * 執行指定的單元功能。
+   * @param {*} funcCode 功能代碼
+   */
   const handleFunctionChange = async (funcCode) => {
     let params = null;
     const model = { accounts, selectedAccount };
@@ -176,6 +207,9 @@ const TaiwanDollarAccount = () => {
       case 'E00100': // 換匯
         params = { defaultAccount: selectedAccount };
         break;
+      case 'rename': // 帳戶名稱編輯
+        showRenameDialog(accounts[selectedAccount].cardInfo.acctName);
+        return;
       case 'depositPlus':
       default:
         break;
@@ -204,6 +238,7 @@ const TaiwanDollarAccount = () => {
             { fid: 'E00100', title: '換匯', icon: 'exchange' },
             { fid: null, title: '存摺封面下載', icon: 'coverDownload' },
             // { title: '存摺封面下載', path: 'http://114.32.27.40:8080/test/downloadPDF', icon: 'system_update' },
+            { fid: 'rename', title: '帳戶名稱編輯', icon: 'edit' },
           ]}
         />
 
