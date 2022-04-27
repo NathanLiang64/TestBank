@@ -9,7 +9,7 @@ import DepositDetailPanel from 'components/DepositDetailPanel/depositDetailPanel
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { loadFuncParams } from 'utilities/BankeePlus';
+import { loadFuncParams, startFunc } from 'utilities/BankeePlus';
 import { stringDateCodeFormatter } from 'utilities/Generator';
 import { getAccountSummary, getTransactionDetails } from './api';
 
@@ -97,6 +97,22 @@ const ForeignCurrencyAccount = () => {
     setSelectedAccount(account.cardInfo.acctId);
   };
 
+  const handleFunctionChange = async (funcCode) => {
+    let params = null;
+    const model = { accounts, selectedAccount };
+    switch (funcCode) {
+      case 'foreignCurrencyTransfer': // 轉帳
+      case 'exchange': // 換匯
+        params = { defaultAccount: selectedAccount };
+        break;
+      case 'depositPlus':
+      default:
+        break;
+    }
+
+    startFunc(funcCode, params, model);
+  };
+
   /**
    * 頁面輸出
    */
@@ -107,10 +123,11 @@ const ForeignCurrencyAccount = () => {
         <AccountOverview
           accounts={Object.values(accounts ?? [])}
           onAccountChange={handleChangeAccount}
+          onFunctionChange={handleFunctionChange}
           cardColor="blue"
           funcList={[
-            { fid: 'foreignCurrencyTransfer', title: '轉帳', params: { defaultAccount: selectedAccount } },
-            { fid: 'exchange', title: '換匯', params: { defaultAccount: selectedAccount } },
+            { fid: 'foreignCurrencyTransfer', title: '轉帳' },
+            { fid: 'exchange', title: '換匯' },
           ]}
           moreFuncs={[
             { fid: null, title: 'MasterCard Send Cross Border', icon: 'temp' },

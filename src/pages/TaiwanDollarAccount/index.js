@@ -147,7 +147,7 @@ const TaiwanDollarAccount = () => {
           </div>
 
           {/* 用 startFunc 執行 depositPlus ，將 model 存入 keepData 返回時就不用再重 Load */}
-          <div className="panelItem" onClick={() => startFunc('depositPlus', null, { accounts, selectedAccount })}>
+          <div className="panelItem" onClick={() => handleFunctionChange('depositPlus')}>
             <h3>
               優惠利率額度
               <ArrowNextIcon />
@@ -167,6 +167,23 @@ const TaiwanDollarAccount = () => {
     setSelectedAccount(account.cardInfo.acctId);
   };
 
+  const handleFunctionChange = async (funcCode) => {
+    let params = null;
+    const model = { accounts, selectedAccount };
+    switch (funcCode) {
+      case 'D00100': // 轉帳
+      case 'D00300': // 無卡提款
+      case 'E00100': // 換匯
+        params = { defaultAccount: selectedAccount };
+        break;
+      case 'depositPlus':
+      default:
+        break;
+    }
+
+    startFunc(funcCode, params, model);
+  };
+
   /**
    * 頁面輸出
    */
@@ -176,14 +193,15 @@ const TaiwanDollarAccount = () => {
         <AccountOverview
           accounts={Object.values(accounts ?? [])}
           onAccountChange={handleChangeAccount}
+          onFunctionChange={handleFunctionChange}
           cardColor="purple"
           funcList={[
-            { fid: 'D00100', title: '轉帳', params: { defaultAccount: selectedAccount } },
-            { fid: 'D00300', title: '無卡提款', params: { defaultAccount: selectedAccount } },
+            { fid: 'D00100', title: '轉帳' },
+            { fid: 'D00300', title: '無卡提款' },
           ]}
           moreFuncs={[
             { fid: null, title: '定存', icon: 'fixedDeposit' },
-            { fid: 'E00100', title: '換匯', params: { defaultAccount: selectedAccount }, icon: 'exchange' },
+            { fid: 'E00100', title: '換匯', icon: 'exchange' },
             { fid: null, title: '存摺封面下載', icon: 'coverDownload' },
             // { title: '存摺封面下載', path: 'http://114.32.27.40:8080/test/downloadPDF', icon: 'system_update' },
           ]}

@@ -4,7 +4,7 @@ import AccountOverviewWrapper from './accountOverview.style';
 
 const AccountOverview = ({
   accounts, onAccountChange, cardColor,
-  funcList, moreFuncs,
+  funcList, moreFuncs, onFunctionChange,
 }) => {
   const renderSingleDebitCard = (cardInfo) => (
     <DebitCard
@@ -17,6 +17,7 @@ const AccountOverview = ({
       functionList={funcList}
       moreList={moreFuncs}
       color={cardColor}
+      onFunctionChange={onFunctionChange}
     />
   );
 

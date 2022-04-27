@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { startFunc } from 'utilities/BankeePlus';
 import {
   EditAccountIcon, MoreIcon, VisibilityIcon, VisibilityOffIcon,
 } from 'assets/images/icons';
@@ -56,6 +55,7 @@ const DebitCard = ({
   moreDefault = true,
   dollarSign,
   color,
+  onFunctionChange,
 }) => {
   const [showBalance, setShowBalance] = useState(true);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -99,9 +99,9 @@ const DebitCard = ({
     </div>
   );
 
-  const onFuncClick = (fid, params) => {
+  const onFuncClick = (fid) => {
     // TODO: 若 funcID 是以'/'為開頭，表示是指定固定網址，因此不會導頁
-    startFunc(fid, params);
+    onFunctionChange(fid);
   };
 
   // render 功能列表
@@ -110,7 +110,7 @@ const DebitCard = ({
       { list.map((func) => (
         func.fid
           ? (
-            <li key={func.fid} onClick={() => onFuncClick(func.fid, func.params)}>
+            <li key={func.fid} onClick={() => onFuncClick(func.fid)}>
               <p>
                 {func.title}
               </p>
@@ -141,7 +141,7 @@ const DebitCard = ({
   const renderMoreList = (list) => (
     <ul className="moreList">
       {list.map((func) => (
-        <li key={func.title} onClick={() => onFuncClick(func.fid, func.params)}>
+        <li key={func.title} onClick={() => onFuncClick(func.fid)}>
           <p>
             {iconGenerator(func.icon)}
             {func.title}
