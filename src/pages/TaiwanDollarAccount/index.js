@@ -66,6 +66,7 @@ const TaiwanDollarAccount = () => {
    * 更新優惠利率資訊
    */
   const updateBonusPanel = async (account) => {
+    setPanelInfo(null);
     if (account.panelInfo === null) {
       const request = { account: account.cardInfo.acctId };
       account.panelInfo = await getDepositBonus(request);
@@ -78,6 +79,7 @@ const TaiwanDollarAccount = () => {
    * 更新帳戶交易明細清單
    */
   const updateTransactions = async (account) => {
+    setTransactions(null);
     if (account.transactions === null) {
       const today = new Date();
       const beginDay = new Date(today.getFullYear() - 3, today.getMonth(), today.getDate());
@@ -98,7 +100,7 @@ const TaiwanDollarAccount = () => {
   /**
    * 根據當前帳戶取得交易明細資料及優惠利率數字
    */
-  useEffect(() => {
+  useEffect(async () => {
     // TODO: 因為無法解決在非同步模式下，selectedAccount不會變更的問題的暫時解決方案。
     sessionStorage.setItem('selectedAccount', selectedAccount);
 
@@ -161,7 +163,7 @@ const TaiwanDollarAccount = () => {
   /**
    * 當使用者滑動卡片時的事件處理。
    */
-  const handleChangeAccount = (swiper) => {
+  const handleChangeAccount = async (swiper) => {
     const account = Object.values(accounts)[swiper.activeIndex];
     setSelectedAccount(account.cardInfo.acctId);
   };
