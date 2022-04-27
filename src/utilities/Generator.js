@@ -50,6 +50,17 @@ export const stringDateFormatter = (stringDate) => {
   return '';
 };
 
+// 將日期格式由 YYYYMMDD 或 YYYY/MM/DD 字串轉為 Date 物件
+export const stringToDate = (stringDate) => {
+  if (stringDate) {
+    if (stringDate.match(/^\d{8}$/)) {
+      return new Date(stringDateFormatter(stringDate));
+    }
+    return new Date(stringDate);
+  }
+  return null;
+};
+
 // 將時間格式轉為 HH:DD 字串
 export const timeFormatter = (time) => {
   time = new Date(time);
