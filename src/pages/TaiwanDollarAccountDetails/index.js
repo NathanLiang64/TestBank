@@ -1,30 +1,74 @@
-import { useSelector } from 'react-redux';
+/* eslint-disable no-use-before-define */
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+
+/* Elements */
+import Layout from 'components/Layout/Layout';
 import AccountDetails from 'components/AccountDetails';
-import { getTransactionDetails } from 'pages/TaiwanDollarAccount/api';
-import { useCheckLocation, usePageInfo } from 'hooks';
+
+/* Reducers & JS functions */
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { loadFuncParams } from 'utilities/BankeePlus';
+import { getTransactionDetails } from './api';
 
 const TaiwanDollarAccountDetails = () => {
-  const selectedAccount = useSelector(({ taiwanDollarAccount }) => taiwanDollarAccount.selectedAccount);
-  const txnDetails = useSelector(({ taiwanDollarAccount }) => taiwanDollarAccount.txnDetails);
-  const txnMonthly = useSelector(({ taiwanDollarAccount }) => taiwanDollarAccount.txnMonthly);
+  const dispatch = useDispatch();
 
-  const getDetailsByConditions = (conditions) => (
-    getTransactionDetails(conditions).then((response) => response)
-  );
+  const [account, setAccount] = useState(null);
+  const [months, setMonths] = useState(null);
+  const [transactions, setTransactions] = useState(null);
 
-  useCheckLocation();
-  usePageInfo('/api/taiwanDollarAccountDetails');
+  /**
+   * 頁面啟動，初始化
+   */
+  useEffect(async () => {
+    dispatch(setWaittingVisible(true));
 
+    // 以啟動參數(預設帳號)
+    const model = loadFuncParams();
+    setAccount(model);
+
+    dispatch(setWaittingVisible(false));
+  }, []);
+
+  useEffect(async () => {
+    if (account) await updateTransactions();
+  }, [account]);
+
+  /**
+   * 更新帳戶交易明細清單
+   */
+  const updateTransactions = async (conditions) => {
+    const request = {
+      ...conditions,
+      account: account.acctId,
+    };
+    console.log(conditions);
+
+    // 取得帳戶交易明細（三年內）
+    const transData = await getTransactionDetails(request);
+
+    setMonths(transData.monthly);
+    setTransactions(transData);
+  };
+
+  /**
+   * 頁面輸出
+   */
   return (
-    <AccountDetails
-      selectedAccount={selectedAccount}
-      txnDetails={txnDetails}
-      monthly={txnMonthly}
-      onTabClick={getDetailsByConditions}
-      onScroll={getDetailsByConditions}
-      onSearch={getDetailsByConditions}
-      cardColor="purple"
-    />
+    <Layout title="台幣存款交易明細">
+      <div>
+        <AccountDetails
+          selectedAccount={account}
+          txnDetails={transactions?.acctTxDtls}
+          monthly={months}
+          onTabClick={updateTransactions}
+          onScroll={updateTransactions}
+          onSearch={updateTransactions}
+          cardColor="purple"
+        />
+      </div>
+    </Layout>
   );
 };
 

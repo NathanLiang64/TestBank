@@ -283,7 +283,9 @@ const AccountDetails = ({
     />
   );
 
-  useEffect(init, [txnDetailsRef]);
+  useEffect(() => {
+    if (txnDetails) init();
+  }, [txnDetails]);
 
   return (
     <AccountDetailsWrapper small>

@@ -1,11 +1,10 @@
 import { useRef } from 'react';
-import { Link } from 'react-router-dom';
 import DetailCard from 'components/DetailCard';
 import { ArrowNextIcon } from 'assets/images/icons';
 import DepositDetailPanelWrapper from './depositDetailPanel.style';
 
 const DepositDetailPanel = ({
-  details, detailsLink,
+  details, onClick,
 }) => {
   const detailsRef = useRef();
 
@@ -63,10 +62,10 @@ const DepositDetailPanel = ({
       <div className="transactionDetail" ref={detailsRef}>
         {/* 顯示 最近交易明細 */}
         { renderDetailCardList() }
-        <Link className="moreButton" to={detailsLink}>
+        <div className="moreButton" onClick={onClick}>
           更多明細
           <ArrowNextIcon />
-        </Link>
+        </div>
       </div>
     </DepositDetailPanelWrapper>
   );

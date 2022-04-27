@@ -90,6 +90,7 @@ const TaiwanDollarAccount = () => {
         account: account.cardInfo.acctId,
         startDate: stringDateCodeFormatter(beginDay), // 例：'20210301',
         endDate: stringDateCodeFormatter(today), // 例：'20220531',
+        startIndex: 0, // Note: 一定要指定，才會以「分頁」方式取回較少量資料。
       };
       // 取得帳戶交易明細（三年內的前25筆即可）
       const transData = await getTransactionDetails(request);
@@ -202,10 +203,13 @@ const TaiwanDollarAccount = () => {
     let params = null;
     const model = { accounts, selectedAccount };
     switch (funcCode) {
+      case 'taiwanDollarAccountDetails': // 更多明細
+        params = accounts[selectedAccount].cardInfo; // 直接提供帳戶摘要資訊，因為一定是從有帳戶資訊的頁面進去。
+        break;
       case 'D00100': // 轉帳
       case 'D00300': // 無卡提款
       case 'E00100': // 換匯
-        params = { defaultAccount: selectedAccount };
+        params = model; // 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。
         break;
       case 'rename': // 帳戶名稱編輯
         showRenameDialog(accounts[selectedAccount].cardInfo.acctName);
@@ -247,7 +251,7 @@ const TaiwanDollarAccount = () => {
 
         <DepositDetailPanel
           details={transactions}
-          detailsLink="/taiwanDollarAccountDetails" // TODO: 應改為 funcID
+          onClick={() => handleFunctionChange('taiwanDollarAccountDetails')}
         />
       </div>
     </Layout>

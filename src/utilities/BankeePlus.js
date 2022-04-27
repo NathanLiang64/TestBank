@@ -34,7 +34,7 @@ const funcStack = {
       const params = closedItem.keepData ?? startItem.params;
       localStorage.setItem('funcParams', JSON.stringify(params));
       console.log('Close Function and Back to (', startItem.func, ')', params);
-    }
+    } else localStorage.removeItem('funcParams');
     return startItem;
   },
   clear: () => {
@@ -85,7 +85,7 @@ function closeFunc() {
   } else {
     const funcItem = funcStack.pop();
     if (funcItem) {
-      window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcItem.func.route}`; // TODO： 提供 keepData，如何提供？
+      window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcItem.func.route}`; // keepData 存入 localStorage 'funcParams'
       // const history = useHistory();
       // history.push(funcItem.funcName);
     } else {
