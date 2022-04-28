@@ -24,10 +24,8 @@ const AccountDetails = ({
 }) => {
   const [tabId, setTabId] = useState('');
   const [tabList, setTabList] = useState([]);
-  const [isPending, setIsPending] = useState(false);
-  const [viewerChildren, setViewerChildren] = useState([]);
-  // eslint-disable-next-line no-unused-vars
-  const [inViewChildren, setInViewChildren] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [indexRange, setIndexRange] = useState(null);
 
   const detailList = useSelector(({ accountDetails }) => accountDetails.detailList);
   const dateRange = useSelector(({ accountDetails }) => accountDetails.dateRange);
@@ -52,14 +50,16 @@ const AccountDetails = ({
   }, [selectedAccount]);
 
   const init = async (conds = null) => {
+    // 只要有重新查詢交易明細，就必需清除 eof 旗標，否則就不會再補資料了。
+    if (indexRange) indexRange.eof = false;
+
     const response = await onSearch(requestConditions(conds));
-    console.log(response);
+    // console.log(response);
     if (response) {
       const { acctTxDtls, monthly } = response;
       // 取得所有存款卡的初始資料後存取月份資料 (Tabs)
       if (acctTxDtls.length) {
-        setTabList(monthly);
-        setTabId(acctTxDtls[0].txnDate.substr(0, 6));
+        setTabList(monthly.sort((a, b) => b - a));
       }
 
       // 畫面跳轉至畫面第一筆資料
@@ -110,8 +110,31 @@ const AccountDetails = ({
   };
 
   useEffect(() => {
-    if (tabList?.length) setTabList(tabList.sort((a, b) => b - a));
+    if (tabList?.length) setTabId(tabList[0]);
   }, [tabList]);
+
+  /**
+   * 找出明細項目索引的範圍。
+   */
+  useEffect(() => {
+    let indexMax = Number.MIN_VALUE;
+    let indexMin = Number.MAX_VALUE;
+    let inviewMax = Number.MIN_VALUE;
+    let inviewMin = Number.MAX_VALUE;
+
+    detailList?.forEach((card) => {
+      indexMax = Math.max(indexMax, card.index);
+      indexMin = Math.min(indexMin, card.index);
+      if (card.inView) {
+        inviewMax = Math.max(inviewMax, card.index);
+        inviewMin = Math.min(inviewMin, card.index);
+      }
+    });
+
+    setIndexRange({
+      indexMax, indexMin, inviewMax, inviewMin, eof: indexRange?.eof,
+    });
+  }, [detailList]);
 
   // 點擊月份頁籤，代入條件：1.帳號, 2.日期起訖範圍, 3.類別, 4.自訂關鍵字, 5.月份
   const handleClickMonthTab = async (event) => {
@@ -120,7 +143,7 @@ const AccountDetails = ({
     const conditions = {
       ...requestConditions({ dateRange, keywords, customKeyword }),
       month,
-      direct: '0',
+      direct: '0', // 資料方向為0，表示取前後各50筆。
     };
     const response = await onSearch(conditions);
     if (response) {
@@ -134,66 +157,82 @@ const AccountDetails = ({
     }
   };
 
-  // 滾動畫面後獲取新的交易明細，代入條件：1.帳號, 2.日期起訖範圍, 3.類別, 4.自訂關鍵字, 5.起始索引值, 6.方向
+  /**
+   * 滾動畫面後獲取新的交易明細。   ，代入條件：1.帳號, 2.日期起訖範圍, 3.類別, 4.自訂關鍵字, 5.起始索引值, 6.方向
+   * @param {*} scrollDirection 資料方向(-1:看較早前的資料, 1.看較舊的資料）
+   * @param {*} startIndex 出現在顯示區首筆的交易明細索引
+   * @returns 表示已沒有資料可以取得的旗標。
+   */
   const getMoreDetailsData = async (scrollDirection, startIndex) => {
-    const direct = scrollDirection === 'up' ? '-1' : '1';
-    const newDetailList = [];
+    let isEOF = false;
+    // 確認是否正在處理資料請求，唯有未在處理請求時才能再次獲取資料
+    if (!isLoading) {
+      // 一旦進行資料請求，開啟 isPending 狀態，避免條件符合連續 call api
+      setIsLoading(true);
 
-    if (startIndex) {
       const conditions = {
         ...requestConditions({ dateRange, keywords, customKeyword }),
-        direct,
+        direct: scrollDirection,
         startIndex,
       };
       const response = await onSearch(conditions);
       if (response) {
-        const { acctTxDtls } = response;
-        if (scrollDirection === 'up') {
-          newDetailList.push(...acctTxDtls, ...detailList);
-        } else if (scrollDirection === 'down') {
-          newDetailList.push(...detailList, ...response.acctDetails);
+        const newDetailList = [];
+        const newCards = response.acctTxDtls.filter((card) => (card.index < indexRange.indexMin) || (card.index > indexRange.indexMax));
+        if (scrollDirection === -1) {
+          newDetailList.push(...newCards, ...detailList); // 新明細項目加到陣列-前端
+        } else if (scrollDirection === 1) {
+          newDetailList.push(...detailList, ...newCards); // 新明細項目加到陣列-後端
+          indexRange.eof = (newCards.length === 0);
         }
         dispatch(setDetailList(newDetailList));
+        console.log(newCards.length, (newCards.length === 0));
+        isEOF = (newCards.length === 0);
       }
     }
     // 資料取回後，解除 isPending 狀態
-    setIsPending(false);
-  };
-
-  // 確認是否正在處理資料請求，唯有未在處理請求時才能再次獲取資料
-  const checkIsPending = (scrollDirection, startIndex) => {
-    if (!isPending) {
-      // 一旦進行資料請求，開啟 isPending 狀態，避免條件符合連續 call api
-      setIsPending(true);
-      getMoreDetailsData(scrollDirection, startIndex);
-    }
+    setIsLoading(false);
+    return isEOF;
   };
 
   // 判斷畫面捲動方向，當頂/底部的交易明細剩餘 25 筆時正/反向撈取資料
-  const visibilitySensorOnChange = () => {
-    if (txnDetailsRef.current) {
-      setViewerChildren(Array.from(txnDetailsRef.current.children));
-      const inViewList = viewerChildren.filter((item) => item.dataset.inview === 'y');
-      setInViewChildren((prev) => {
-        if (prev.length > 0 && inViewList.length > 0) {
-          // 捲動畫面時，根據當前畫面上的第一筆明細動態切換月份標籤
-          setTabId(inViewList[0].id);
-          // 當畫面往下捲動
-          if (prev[0].dataset.index < inViewList[0].dataset.index) {
-            const prevLastIndex = parseInt(prev[prev.length - 1].dataset.index, 10);
-            const viewerLastIndex = parseInt(viewerChildren[viewerChildren.length - 1].dataset.index, 10);
-            // 底部明細剩餘數量少於 25 張時，由畫面上最後一筆明細索引值 + 1 (viewerLastIndex + 1) 正向獲取接續 50 筆 (50 由資料庫訂定)
-            if (viewerLastIndex - prevLastIndex < 25) checkIsPending('down', viewerLastIndex + 1);
-            // 當畫面往上捲動
-          } else if (prev[0].dataset.index > inViewList[0].dataset.index) {
-            const prevFirstIndex = parseInt(prev[0].dataset.index, 10);
-            const viewerFirstIndex = parseInt(viewerChildren[0].dataset.index, 10);
-            // 頂部明細剩餘數量少於 25 張時，由畫面上第一筆明細索引值 - 1 (viewerFirstIndex - 1) 反向獲取接續 50 筆 (50 由資料庫訂定)
-            if (prevFirstIndex - viewerFirstIndex < 25) checkIsPending('up', viewerFirstIndex - 1);
+  const visibilitySensorOnChange = async () => {
+    if (!isLoading && txnDetailsRef.current) {
+      const allCards = Array.from(txnDetailsRef.current.children);
+      const inviewCards = allCards.filter((card) => card.dataset.inview === 'Y');
+      // console.log(allCards, inviewCards);
+
+      // 捲動畫面時，根據當前畫面上的第一筆明細動態切換月份標籤
+      if (inviewCards?.length) setTabId(inviewCards[0].id);
+
+      // 找出目前視景內的明細項目索引範圍。
+      let inviewMax = Number.MIN_VALUE;
+      let inviewMin = Number.MAX_VALUE;
+      inviewCards.forEach((card) => {
+        const { index } = card.dataset;
+        inviewMax = Math.max(inviewMax, index);
+        inviewMin = Math.min(inviewMin, index);
+      });
+
+      // 資料方向(-1:看較早前的資料, 1.看較舊的資料）
+      const scrollDirection = Math.sign(inviewMin - indexRange.inviewMin);
+      // console.log(indexRange, inviewMax, inviewMin, scrollDirection);
+      if (scrollDirection !== 0) {
+        if (scrollDirection === 1) {
+          // 底部明細剩餘數量少於 25 張時，反向獲取接續 50 筆
+          if ((indexRange.indexMax - inviewMax) <= 25 && !indexRange.eof) {
+            await getMoreDetailsData(scrollDirection, indexRange.indexMax - 1);
+          }
+        } else if (scrollDirection === -1) {
+          // 頂部明細剩餘數量少於 25 張時，反向獲取接續 50 筆
+          if ((indexRange.indexMin - inviewMin) <= 25 && (indexRange.indexMin > 1)) {
+            await getMoreDetailsData(scrollDirection, inviewMin - 1);
           }
         }
-        return inViewList;
-      });
+      }
+
+      indexRange.inviewMax = inviewMax;
+      indexRange.inviewMin = inviewMin;
     }
   };
 
@@ -245,7 +284,7 @@ const AccountDetails = ({
           <DetailCard
             id={card.txnDate.substr(0, 6)}
             index={card.index}
-            inView={isVisible ? 'y' : 'n'}
+            inView={isVisible ? 'Y' : 'N'}
             avatar={card.avatar}
             title={card.description}
             type={card.cdType}
@@ -299,8 +338,9 @@ const AccountDetails = ({
 
         { tabList?.length ? renderMonthTabs(tabList) : null }
 
-        <div className="transactionDetail" ref={txnDetailsRef}>
+        <div className="transactionDetail" ref={txnDetailsRef} style={{ height: 500, maxHeight: 500, overflowY: 'scroll' }}>
           { detailList?.length ? renderDetailCards(detailList) : <EmptyData /> }
+          {/* TODO:資料載入中。 */}
         </div>
       </div>
     </AccountDetailsWrapper>
