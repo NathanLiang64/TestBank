@@ -14,6 +14,13 @@ const handleSpaceType = (position) => {
 };
 
 const LoadingWrapper = styled.div`
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  justify-content: center;
+  align-items: center;
+  background-color: ${({ theme }) => theme.colors.background.light};
+
   padding: ${({ $space }) => handleSpaceType($space)};
   
   .MuiCircularProgress-svg {

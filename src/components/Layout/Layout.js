@@ -131,10 +131,7 @@ function Layout({
       </div>
     );
   }
-  return (
-    <div className="center" style={{ height: '100%', backgroundColor: 'gray' }}>
-      <Loading />
-    </div>);
+  return <Loading />;
 }
 
 Layout.propTypes = {
