@@ -45,9 +45,9 @@ const Login = () => {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      identity: 'B100000002', // F123978801
-      account: '1qaz2wsx',
-      password: 'feib1688',
+      identity: '', // FEIB: F123978801  Lexionlu: B100000002 
+      account: '', //1qaz2wsx
+      password: '', //feib1688
     },
   });
 

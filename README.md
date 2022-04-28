@@ -296,11 +296,6 @@ This project uses custom GitHub Actions as CI/CD to *monitor*, *build* and *depl
 | Lexionlu | ... will deploy to ... | https://feib-bankee-2022.dev.lexionlu.com |
 | stage | ... will deploy to ... | https://feib-bankee-2022.stg.lexionlu.com |
 
-<p style="background-color:orange;padding:1rem;">
-<b>Security warning: </b>
-The testing enviroments are using basic HTTP authentication framework. The default authentication combination is "<b>bankee</b>" and "<b>WxtR3EyLbqU</b>".
-</p>
-
 <br>
 
 ## General Information
@@ -315,6 +310,7 @@ The testing enviroments are using basic HTTP authentication framework. The defau
 | 前提 | 遠銀不滿唯物和聖森所開發的code，找瑞芙協助做refactor。 |
 | 目的 | 協助 Jerry 做 refactoring 和新功能。 |
 | 交付方式 | Push 到客戶的 repo（見下） |
+| 密碼 | 身分證字號：B100000002<br>使用者代號：1qaz2wsx<br>密碼：feib1688 |
 | 備註 | Don't use master branch, use Jerry or Lexionlu branch! |
 
 ## Instruction to deloy to Lexionlu servers
