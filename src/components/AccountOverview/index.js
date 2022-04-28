@@ -1,72 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import DebitCard from 'components/DebitCard';
-import DetailCard from 'components/DetailCard';
-import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
 import AccountOverviewWrapper from './accountOverview.style';
 
 const AccountOverview = ({
-  accounts, onAccountChange, details, panelInfo, cardColor, detailsLink,
-  funcList, moreFuncs,
+  accounts, onAccountChange, cardColor,
+  funcList, moreFuncs, onFunctionChange,
 }) => {
-  // const debitCards = useSelector(({ accountOverview }) => accountOverview.debitCards);
-  // const selectedAccount = useSelector(({ accountOverview }) => accountOverview.selectedAccount);
-  // const txnDetails = useSelector(({ accountOverview }) => accountOverview.txnDetails);
-
-  const [interestPanel, setInterestPanel] = useState({ title: '', content: '' });
-
-  const detailsRef = useRef();
-  const { push } = useHistory();
-
-  const handleClickInterestRatePanel = () => {
-    const { interest, interestRate } = panelInfo;
-    if (interestPanel.title === '優惠利率') {
-      setInterestPanel({ title: '累積利息', content: interest ? `$${interest}` : '-' });
-    } else {
-      setInterestPanel({ ...interestPanel, title: '優惠利率', content: interestRate ? `${interestRate}%` : '-' });
-    }
-  };
-
-  const renderDetailCardList = () => {
-    // TODO: 計算可顯示的明細項目數量。
-    // TODO: 因為外層 div 已縮至最小，無法正確計算可顯示的數量。「外層」可能是 Layout 物件。
-    console.log(detailsRef?.current);
-    console.log(detailsRef?.current?.offsetHeight);
-    // const { offsetHeight } = detailsRef?.current;
-    // setDetailAreaHeight(offsetHeight);
-    const detailAreaHeight = 430; // 暫時固定顯示 5 筆
-
-    // 根據剩餘高度計算要顯示的卡片數量，計算裝置可容納的交易明細卡片數量
-    const list = [];
-    if (details?.length) {
-      const computedCount = Math.floor((detailAreaHeight - 30) / 80);
-      for (let i = 0; (i < computedCount && i < details.length); i++) {
-        list.push(details[i]);
-      }
-    }
-
-    return (
-      list.map((card) => (
-        <DetailCard
-          key={card.index}
-          avatar={null} // 大頭貼路徑＋card.targetMbrId
-          title={card.description}
-          type={card.cdType}
-          date={card.txnDate}
-          time={card.txnTime}
-          bizDate={card.bizDate}
-          targetBank={card.targetBank}
-          targetAccount={card.targetAcct}
-          targetMember={card.targetMbrID}
-          dollarSign={card.currency}
-          amount={card.amount}
-          balance={card.balance}
-        />
-      ))
-    );
-  };
-
   const renderSingleDebitCard = (cardInfo) => (
     <DebitCard
       type="original"
@@ -78,6 +17,7 @@ const AccountOverview = ({
       functionList={funcList}
       moreList={moreFuncs}
       color={cardColor}
+      onFunctionChange={onFunctionChange}
     />
   );
 
@@ -103,63 +43,10 @@ const AccountOverview = ({
       : renderSingleDebitCard(userAccounts[0].cardInfo)
   );
 
-  const renderInterestRatePanel = (info, title, content) => {
-    const { interbankWithdrawal, interbankTransfer, interestRateLimit } = info;
-    return (
-      <div className="interestRatePanel">
-        <div className="panelItem">
-          <h3>免費跨提/轉</h3>
-          <p>
-            {interbankWithdrawal}
-            /
-            {interbankTransfer}
-          </p>
-        </div>
-        <div className="panelItem" onClick={handleClickInterestRatePanel}>
-          <h3>
-            {title}
-            <SwitchIcon className="switchIcon" />
-          </h3>
-          <p>{content}</p>
-        </div>
-        <div className="panelItem" onClick={() => push('/depositPlus')}>
-          <h3>
-            優惠利率額度
-            <ArrowNextIcon />
-          </h3>
-          <p>{interestRateLimit}</p>
-        </div>
-      </div>
-    );
-  };
-
-  // 根據當前帳戶取得交易明細資料及優惠利率數字
-  useEffect(() => {
-    if (panelInfo) {
-      const { interestRate } = panelInfo;
-      setInterestPanel({
-        ...interestPanel,
-        title: '優惠利率',
-        content: interestRate ? `${interestRate}%` : '-',
-      });
-    }
-  }, [panelInfo]);
-
   return (
     <AccountOverviewWrapper small $multipleCardsStyle={accounts?.length > 1}>
       <div className="userCardArea">
         { accounts?.length ? renderDebitCard(accounts) : null }
-      </div>
-      {
-        // 顯示 優惠利率資訊面版
-        panelInfo && renderInterestRatePanel(panelInfo, interestPanel?.title, interestPanel?.content)
-      }
-      <div className="transactionDetail" ref={detailsRef}>
-        { details?.length && renderDetailCardList() }
-        <Link className="moreButton" to={detailsLink}>
-          更多明細
-          <ArrowNextIcon />
-        </Link>
       </div>
     </AccountOverviewWrapper>
   );

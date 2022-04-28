@@ -8,13 +8,14 @@ import {
   FEIBInput, FEIBInputLabel, FEIBTab, FEIBTabContext, FEIBTabList,
 } from 'components/elements';
 import { dateFormatter, stringDateCodeFormatter } from 'utilities/Generator';
+import { setDrawerVisible } from 'stores/reducers/ModalReducer';
 import AccountDetailsSearchConditionWrapper from './accountDetailsSearchCondition.style';
 import {
-  setCustomKeyword, setDateRange, setDetailList, setKeywords, setOpenInquiryDrawer, setTempDateRange,
+  setTempDateRange, setKeywords,
 } from '../AccountDetails/stores/actions';
 
 const AccountDetailsSearchCondition = ({
-  init, requestConditions, setTabList, setTabId, onSearch,
+  onSearch, onCancel,
 }) => {
   const keywords = useSelector(({ accountDetails }) => accountDetails.keywords);
   const customKeyword = useSelector(({ accountDetails }) => accountDetails.customKeyword);
@@ -35,16 +36,15 @@ const AccountDetailsSearchCondition = ({
 
   // 點擊取消按鈕
   const handleClickCancelButton = () => {
-    dispatch(setOpenInquiryDrawer(false));
-    init();
+    dispatch(setDrawerVisible(false));
+    if (onCancel) onCancel();
   };
 
   // 點擊查詢按鈕後傳送資料
-  const handleClickSearchButton = async (data) => {
+  const handleClickSearchButton = async (data) => {    
     if (data.dateRange) {
       // 若 data.dateRange 屬性，代表使用者送出表單時是由 autoDateArea 區塊自動推斷範圍
       // 而 autoDateArea 區塊的日期範圍因為是 input value 傳進來，所以會是字串格格式，需另外轉成日期格式
-      dispatch(setDateRange([new Date(data.dateRange[0]), new Date(data.dateRange[1])]));
       data.dateRange = [
         stringDateCodeFormatter(new Date(data.dateRange[0])),
         stringDateCodeFormatter(new Date(data.dateRange[1])),
@@ -54,7 +54,6 @@ const AccountDetailsSearchCondition = ({
       if (tempDateRange.length) {
         // 若 tempDateRange 有值，代表是由 dateRangePicker 選擇日期
         // 範圍會暫存在 tempDateRange 內，故此處要加入 data.dateRange 後端才收得到
-        dispatch(setDateRange(tempDateRange));
         data.dateRange = [stringDateCodeFormatter(tempDateRange[0]), stringDateCodeFormatter(tempDateRange[1])];
       } else {
         // 若 tempDateRange 沒有值，代表沒有選擇日期，預設儲存查詢半年範圍內 (資料庫會判斷)，此處代空字串即可
@@ -66,41 +65,15 @@ const AccountDetailsSearchCondition = ({
     dispatch(setTempDateRange([]));
 
     // 關閉底部抽屜
-    dispatch(setOpenInquiryDrawer(false));
+    dispatch(setDrawerVisible(false));
 
     // 如果 redux 內的關鍵字有值，送出的關鍵字卻是空的，則關鍵字應代入 redux 內關鍵字的值
-    if (customKeyword && (data.keywordCustom === undefined)) data.keywordCustom = customKeyword;
+    if (customKeyword && (data.customKeyword === undefined)) data.customKeyword = customKeyword;
     // 如果 redux 內的關鍵字和送出的關鍵字都是空的，則關鍵字應為空字串值
-    if (!customKeyword && !data.keywordCustom) data.keywordCustom = '';
-    dispatch(setCustomKeyword(data.keywordCustom));
+    if (!customKeyword && !data.customKeyword) data.customKeyword = '';
 
     // 查詢代入條件：1.帳號, 2.日期起訖範圍, 3.類別, 4.自訂關鍵字
-    const { account, tranTP } = requestConditions();
-    const beginDT = data.dateRange[0];
-    const endDT = data.dateRange[1];
-    const custom = data.keywordCustom;
-
-
-    const conditions = {
-      account, beginDT, endDT, tranTP, custom,
-    };
-    const response = await onSearch(conditions);
-    if (response) {
-      const { acctDetails, monthly } = response;
-      dispatch(setDetailList(acctDetails));
-      setTabList(monthly?.length ? monthly.sort((a, b) => b - a) : [])
-      setTabId(acctDetails?.length ? acctDetails[0].txnDate.substr(0, 6) : '');
-    }
-    // getTransactionDetails({
-    //   account, beginDT, endDT, tranTP, custom,
-    // })
-    //   .then((response) => {
-    //     const { acctDetails, monthly } = response;
-    //     dispatch(setDetailList(acctDetails));
-    //     setTabList(monthly?.length ? monthly.sort((a, b) => b - a) : [])
-    //     return acctDetails?.length ? acctDetails[0].txnDate.substr(0, 6) : '';
-    //   })
-    //   .then((tabId) => setTabId(tabId));
+    if (onSearch) onSearch({ ...data, keywords });
   };
 
   const handleClickDateRangePicker = (range) => {
@@ -179,10 +152,10 @@ const AccountDetailsSearchCondition = ({
       <div className="customKeywords">
         <FEIBInputLabel>自訂關鍵字</FEIBInputLabel>
         <FEIBInput
-          name="keywordCustom"
+          name="customKeyword"
           placeholder="請輸入，最多可輸入16個字元"
           defaultValue={customKeyword}
-          {...register('keywordCustom', { maxLength: 16 })}
+          {...register('customKeyword', { maxLength: 16 })}
         />
       </div>
     </div>
