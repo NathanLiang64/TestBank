@@ -1,4 +1,4 @@
-import userAxios from './axiosConfig';
+import userAxios from '../../apis/axiosConfig';
 
 // 優惠利率額度 - 取得優惠利率年月
 export const getBonusPeriodList = async (params) => (

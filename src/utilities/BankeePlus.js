@@ -1,5 +1,4 @@
 /* eslint-disable prefer-template */
-import Cookies from 'js-cookie';
 import { showError } from './MessageModal';
 
 const device = {
@@ -8,23 +7,35 @@ const device = {
 };
 
 const funcStack = {
-  push: (func, params = null, keepData = null, hideMenu = false) => {
+  push: (func, params = null, keepData = null) => {
+    const startItem = {
+      func, params, keepData,
+    };
+    console.log('Start Function : ', startItem);
+
     const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
-    stack.push({
-      func, params, keepData, hideMenu,
-    });
+    stack.push(startItem);
     localStorage.setItem('funcStack', JSON.stringify(stack));
 
-    Cookies.set('funcParams', JSON.stringify(params));
+    // 寫入 Function 啟動參數。
+    localStorage.setItem('funcParams', JSON.stringify(params));
   },
   pop: () => {
     const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
+    const closedItem = stack[stack.length - 1];
+    console.log('POP -> Closed Item : ', closedItem);
+
     stack.pop();
     localStorage.setItem('funcStack', JSON.stringify(stack));
 
-    const item = stack[stack.length - 1];
-    if (item) Cookies.set('funcParams', JSON.stringify(item.params));
-    return item;
+    const startItem = stack[stack.length - 1];
+    if (startItem) {
+      // 寫入 Function 啟動參數。
+      const params = closedItem.keepData ?? startItem.params;
+      localStorage.setItem('funcParams', JSON.stringify(params));
+      console.log('Close Function and Back to (', startItem.func, ')', params);
+    } else localStorage.removeItem('funcParams');
+    return startItem;
   },
   clear: () => {
     localStorage.setItem('funcStack', '[]');
@@ -33,7 +44,6 @@ const funcStack = {
 
 // 網頁通知APP跳轉指定功能
 function goToFunc({ route, funcID }, funcParams, keepData) {
-  // console.debug('name:' + funcName + ', data:' + jsonParams);
   const data = {
     funcID,
     funcParams,
@@ -46,7 +56,6 @@ function goToFunc({ route, funcID }, funcParams, keepData) {
     const param = JSON.stringify(data);
     window.jstoapp.startFunc(param);
   } else {
-    console.log(`[Start Function(${route}, ${funcID})]`);
     route = route.replace(/^\/?/, '');
     funcStack.push({ route, funcID }, funcParams, keepData);
     // console.log(history);
@@ -76,8 +85,7 @@ function closeFunc() {
   } else {
     const funcItem = funcStack.pop();
     if (funcItem) {
-      console.log(`[Close Function and Back to(${funcItem.func.route})]`);
-      window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcItem.func.route}`; // TODO： 提供 keepData，如何提供？
+      window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcItem.func.route}`; // keepData 存入 localStorage 'funcParams'
       // const history = useHistory();
       // history.push(funcItem.funcName);
     } else {
@@ -91,10 +99,11 @@ function closeFunc() {
  * @returns 若參數當時是以 JSON 物件儲存，則同樣會轉成物件傳回。
  */
 function loadFuncParams() {
-  const data = Cookies.get('funcParams');
+  const data = localStorage.getItem('funcParams');
   if (data && data !== 'undefined') {
     try {
       const params = JSON.parse(data);
+      console.log('>> Function 啟動參數 : ', params);
       return params;
     } catch (error) {
       return data;

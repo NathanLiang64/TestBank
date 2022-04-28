@@ -3,14 +3,15 @@
 import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Modal, Button } from 'react-bootstrap';
-import Header from 'components/Header';
 import Loading from 'components/Loading';
-// import '../styles/custom.css';
+import Header from 'components/Header';
+import Dialog from 'components/Dialog';
+import BottomDrawer from 'components/BottomDrawer';
+import { FEIBIconButton } from 'components/elements';
+// import theme from 'themes/theme';
 import {
-  setModalVisible, setWaittingVisible,
+  setModalVisible, setWaittingVisible, setDrawerVisible,
 } from '../../stores/reducers/ModalReducer';
-// import { routepath } from '../../routes';
 
 function Layout({
   title,
@@ -22,19 +23,21 @@ function Layout({
   const dispatch = useDispatch();
 
   //
-  // 處理 Popup 視窗。
+  // 處理 Popup視窗、 等待中 及 Drawer。
   //
   const modalData = useSelector((state) => state.ModalReducer.modal);
   const showModal = useSelector((state) => state.ModalReducer.showModal);
+  const drawerData = useSelector((state) => state.ModalReducer.drawer);
+  const showDrawer = useSelector((state) => state.ModalReducer.showDrawer);
   const waitting = useSelector((state) => state.ModalReducer.waitting);
 
-  // 當 Popup 視窗 關閉 時，同時關閉 Wait
+  // 關閉 Popup視窗。
   const onModalClose = async () => {
     if (modalData.onClose) {
       modalData.onClose();
     }
     dispatch(setModalVisible(false));
-    dispatch(setWaittingVisible(false));
+    // dispatch(setWaittingVisible(false));
   };
 
   //
@@ -43,7 +46,6 @@ function Layout({
       if ((await modalData.onOk() === false)) return;
     }
     dispatch(setModalVisible(false));
-    // dispatch(setWaittingVisible(false));
   };
 
   //
@@ -52,43 +54,65 @@ function Layout({
       if ((await modalData.onCancel() === false)) return;
     }
     dispatch(setModalVisible(false));
-    // dispatch(setWaittingVisible(false));
   };
 
   /**
-   *  監控 ModalReducer.visible，當開啟時立即關閉 等待中 視窗
+   *  監控 ModalReducer.showModal，當開啟時立即關閉 等待中 及 Drawer
    */
   useEffect(async () => {
+    console.log('showModal -> ', showModal);
     // 強制關掉 等待畫面，才能看到 Popup 視窗。
-    if (showModal) dispatch(setWaittingVisible(false));
+    if (showModal) {
+      dispatch(setWaittingVisible(false));
+      dispatch(setDrawerVisible(false));
+    }
   }, [showModal]);
 
   /**
    * 顯示訊息視窗
    */
   const MessageModal = () => (
-    <>
-      <Modal show={showModal} onHide={onModalClose} centered backdrop={modalData.backdrop ? '' : 'static'}>
-        <Modal.Header>
-          <Modal.Title className="h5" style={{ color: '#ab8ce4' }}>
-            {modalData.title ?? '系統訊息'}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body style={{ padding: '1rem 1.5rem' }}>
-          {modalData.content}
-        </Modal.Body>
-        <Modal.Footer style={{ justifyContent: 'center', flexWrap: 'nowrap' }}>
-          {(modalData.onCancel || modalData.cancelContent)
-            ? (<Button variant="secondary" onClick={onModalCancel}>
-                  {modalData.cancelContent ?? '取消'}
-               </Button>)
-            : null}
-          <Button variant="primary" onClick={onModalOk} style={{ backgroundColor: '#ab8ce4', color: 'white' }}>
-            {modalData.okContent ?? '確認'}
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
+    <div>
+      <Dialog
+        title={modalData.title ?? '系統訊息'}
+        isOpen={showModal}
+        onClose={onModalClose}
+        content={modalData.content}
+        action={
+          <>
+            {(modalData.onCancel || modalData.cancelContent)
+              ? (<FEIBIconButton onClick={onModalCancel}>
+                    {modalData.cancelContent ?? '取消'}
+                 </FEIBIconButton>)
+              : null}
+            <FEIBIconButton onClick={onModalOk}>
+              {modalData.okContent ?? '確認'}
+            </FEIBIconButton>
+          </>
+        }
+      />
+    </div>
+  );
+
+  /**
+   *  監控 ModalReducer.showDrawer，當開啟時立即關閉 等待中 及 Popup視窗。
+   */
+  useEffect(async () => {
+    console.log('showDrawer -> ', showDrawer);
+    if (showDrawer) {
+      dispatch(setWaittingVisible(false));
+      dispatch(setModalVisible(false));
+    }
+  }, [showDrawer]);
+
+  const Drawer = () => (
+    <BottomDrawer
+      title={drawerData.title}
+      // titleColor={theme.colors.primary.dark}
+      isOpen={showDrawer}
+      onClose={() => dispatch(setDrawerVisible(false))}
+      content={drawerData.content}
+    />
   );
 
   //
@@ -102,12 +126,13 @@ function Layout({
         <div>
             {waitting ? null : children}
             <MessageModal />
+            <Drawer />
         </div>
       </div>
     );
   }
   return (
-    <div style={{ backgroundColor: 'gray' }}>
+    <div className="center" style={{ height: '100%', backgroundColor: 'gray' }}>
       <Loading />
     </div>);
 }

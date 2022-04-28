@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
 import { StarRounded } from '@material-ui/icons';
+
+/* Elements */
+import Layout from 'components/Layout/Layout';
 import Dialog from 'components/Dialog';
 import {
   FEIBButton, FEIBTab, FEIBTabContext, FEIBTabList,
 } from 'components/elements';
+
+/* Reducers & JS functions */
 import { useCheckLocation, usePageInfo } from 'hooks';
-import { getBonusPeriodList, getDepositPlus, getDepositPlusLevelList } from 'apis/depositPlusApi';
+import { getBonusPeriodList, getDepositPlus, getDepositPlusLevelList } from 'pages/DepositPlus/api';
 import { ArrowNextIcon } from 'assets/images/icons';
 import DepositPlusWrapper, { LevelDialogContentWrapper } from './depositPlus.style';
 
@@ -104,67 +109,69 @@ const Deposit = () => {
   }, [openLevelDialog, levelList.length]);
 
   return (
-    <DepositPlusWrapper>
-      { tabId && monthly.length && renderTabArea(monthly) }
+    <Layout title="優惠利率額度">
+      <DepositPlusWrapper>
+        { tabId && monthly.length && renderTabArea(monthly) }
 
-      <div className="mainArea">
-        <span>
-          {`${renderText(period?.substr(0, 4))}/${renderText(period?.substr(4))} `}
-          優惠利率額度總計
-        </span>
-        <h3>{`$${renderText(summaryBonusQuota)}`}</h3>
-      </div>
-
-      <section className="detailArea">
-        <div className="sectionTitle">
-          <h3>活動明細</h3>
-          <button type="button" onClick={() => setOpenLevelDialog(true)}>
-            各項活動說明
-            <ArrowNextIcon />
-          </button>
+        <div className="mainArea">
+          <span>
+            {`${renderText(period?.substr(0, 4))}/${renderText(period?.substr(4))} `}
+            優惠利率額度總計
+          </span>
+          <h3>{`$${renderText(summaryBonusQuota)}`}</h3>
         </div>
 
-        <ul className="detailList">
-          <li className="listHead">
-            <span>活動名稱/說明</span>
-            <span>優惠定額上限</span>
-          </li>
-          <li className="listBody">
-            <div>
-              <p>社群圈優惠額度</p>
-              <span>依優惠額度等級</span>
-            </div>
-            <p className="limitPrice">
-              {`$${bonusDetail?.length ? bonusDetail[0].bonusQuota : '-'}`}
-            </p>
-          </li>
-          <li className="listBody">
-            <div>
-              <p>
-                {`${renderText(summaryRate * 100)}% 通通有`}
-                <StarRounded className="starIcon" />
+        <section className="detailArea">
+          <div className="sectionTitle">
+            <h3>活動明細</h3>
+            <button type="button" onClick={() => setOpenLevelDialog(true)}>
+              各項活動說明
+              <ArrowNextIcon />
+            </button>
+          </div>
+
+          <ul className="detailList">
+            <li className="listHead">
+              <span>活動名稱/說明</span>
+              <span>優惠定額上限</span>
+            </li>
+            <li className="listBody">
+              <div>
+                <p>社群圈優惠額度</p>
+                <span>依優惠額度等級</span>
+              </div>
+              <p className="limitPrice">
+                {`$${bonusDetail?.length ? bonusDetail[0].bonusQuota : '-'}`}
               </p>
-              <span>適用活動優惠</span>
-            </div>
-            <p className="limitPrice">{`$${renderText(summaryBonusQuota)}`}</p>
-          </li>
-        </ul>
+            </li>
+            <li className="listBody">
+              <div>
+                <p>
+                  {`${renderText(summaryRate * 100)}% 通通有`}
+                  <StarRounded className="starIcon" />
+                </p>
+                <span>適用活動優惠</span>
+              </div>
+              <p className="limitPrice">{`$${renderText(summaryBonusQuota)}`}</p>
+            </li>
+          </ul>
 
-        <div className="remarkArea">
-          <span>標示</span>
-          <StarRounded className="starIcon" />
-          <span>活動之優惠利率擇優計算</span>
-        </div>
-      </section>
+          <div className="remarkArea">
+            <span>標示</span>
+            <StarRounded className="starIcon" />
+            <span>活動之優惠利率擇優計算</span>
+          </div>
+        </section>
 
-      <Dialog
-        isOpen={openLevelDialog}
-        title="優惠利率額度等級"
-        onClose={() => setOpenLevelDialog(false)}
-        content={renderLevelDialogContent()}
-        action={<FEIBButton onClick={() => setOpenLevelDialog(false)}>確定</FEIBButton>}
-      />
-    </DepositPlusWrapper>
+        <Dialog
+          isOpen={openLevelDialog}
+          title="優惠利率額度等級"
+          onClose={() => setOpenLevelDialog(false)}
+          content={renderLevelDialogContent()}
+          action={<FEIBButton onClick={() => setOpenLevelDialog(false)}>確定</FEIBButton>}
+        />
+      </DepositPlusWrapper>
+    </Layout>
   );
 };
 
