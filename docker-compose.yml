@@ -13,8 +13,6 @@ services:
       - "traefik.http.routers.feib-bankee-2022.entrypoints=websecure"
       - "traefik.http.routers.feib-bankee-2022.tls=true"
       - "traefik.http.routers.feib-bankee-2022.tls.certresolver=leresolver"
-      - "traefik.http.routers.feib-bankee-2022.middlewares=feib-bankee-2022"
-      - "traefik.http.middlewares.feib-bankee-2022.basicauth.users=bankee:$$apr1$$Aji3H22j$$QMUrFgEAlM9PY7H5YQzC6/"
     networks:
       - "front-edge"
 
