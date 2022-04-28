@@ -38,7 +38,7 @@ const ForeignCurrencyAccount = () => {
 
     // 首次加載時取得用戶所有外幣的存款帳戶摘要資訊
     if (!model.accounts) {
-      const acctData = await getAccountSummary({ AcctType: 'F' }); // F=外幣
+      const acctData = await getAccountSummary('F'); // F=外幣
       model.accounts = Object.assign({}, ...acctData.map((acct) => ({ // Note: 將陣列(Array)轉為字典(Object/HashMap)
         [acct.acctId]: {
           cardInfo: acct, // TODO: 有帳務異動後，就要重載

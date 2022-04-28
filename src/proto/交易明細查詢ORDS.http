@@ -32,6 +32,10 @@ GET https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=04300490004059
 # 參數說明
 # dataMonth: 起始月份，預設為最接近日底的日期為起始索引
 # PS: 指定月份時，資料方向性固定為0 (雙向)
+# 注意：
+# 1. 指定的月份必需是在查詢日期區間內的月份。
+# 2. 若沒有提供起迄日期，則預設為最近六個月。
+# 3. 不可指定 startIndex 否則將視為一般查詢。
 GET https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=04300490004059&dataMonth=202104
 
 ### 指定索引查詢(正向)
@@ -39,10 +43,10 @@ GET https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=04300490004059&d
 # startIndex: 指定起始筆數
 # direct: 方向性.1:正向(新~舊)、2:反向(舊~新)、0:雙向
 # PS: 依方向性會取得50筆(含指定的StartIndex). 雙向的話取得99筆(100-1=StartIndex重覆一筆)
-GET https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=04300490000028&startIndex=0&direct=1
+GET https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=04300490004059&startIndex=0&direct=1
 
 ### 指定索引查詢(反向)
-GET https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=00100100063106&startIndex=50&direct=-1
+GET https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=04300490004059&startIndex=50&direct=-1
 
 ### 進階條件
 # beginDT ~ endDT:交易日期起迄
@@ -50,8 +54,8 @@ GET https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=00100100063106&s
 # 以上條件可只填入一組或全部填入
 # PS: 月份查詢、索引查詢的條件只能擇一使用(API名稱不同)
 # 進階條件的可以共通使用
-GET https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=04300490004059&beginDT=20210301&endDT=20220531
-
+GET https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=04300490004059&beginDT=20210301&endDT=20220531&startIndex=0&direct=1&dataMonth=202104
+# GET https://appbankee-t.feib.com.tw/ords/db1/acc/getAccTx?actno=04300490004059
 
 ################################
 GET https://appbankee-t.feib.com.tw/ords/db1/cust/account/query?custid=B100000002

@@ -18,6 +18,8 @@ const userAxios = () => {
 
 userAxios().defaults.retry = 3;
 userAxios().defaults.retryDelay = 1000;
+// userAxios().defaults.maxContentLength = Infinity;
+// userAxios().defaults.maxBodyLength = Infinity;
 userAxios().interceptors.request.use(
   async (request) => {
     console.log(`\x1b[33mAPI :/${request.url}`);
@@ -189,6 +191,66 @@ export const callAPI = async (url, request, config) => {
     });
 
   return response;
+};
+
+/**
+ * 下載檔案。
+ * @param {*} url POST API URL
+ * @param {*} request
+ * @param {*} filename 輸出檔名。
+ * @param {*} contentType
+ */
+const download = async (url, request, filename, contentType) => {
+  console.log(`\x1b[33mAPI :/${url}`);
+  console.log('Request = ', request);
+  let token = sessionStorage.getItem('jwtToken'); // BUG! 會因為多執行緒而錯亂，應該從Request中取回才對。
+  if (!token) token = Cookies.get('jwtToken'); // TODO: 為了相容 axiosConfig
+
+  // Request Payload 加密
+  const aeskey = localStorage.getItem('aesKey');
+  const ivkey = localStorage.getItem('iv');
+  const encrypt = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(request));
+
+  fetch(url, {
+    method: 'POST',
+    headers: new Headers({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': contentType,
+    }),
+    body: JSON.stringify(encrypt),
+  }).then((response) => response.blob())
+    .then((file) => {
+      console.log(file);
+      const fileUrl = URL.createObjectURL(file);
+
+      const a = document.createElement('a');
+      a.href = fileUrl;
+      a.download = filename;
+      a.click();
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+};
+
+/**
+ * 下載 PDF 檔案。
+ * @param {*} url POST API URL
+ * @param {*} request
+ * @param {*} filename 輸出檔名。
+ */
+export const downloadPDF = async (url, request, filename) => {
+  download(url, request, filename, 'application/pdf');
+};
+
+/**
+ * 下載 CSV 檔案。
+ * @param {*} url POST API URL
+ * @param {*} request
+ * @param {*} filename 輸出檔名。
+ */
+export const downloadCSV = async (url, request, filename) => {
+  download(url, request, filename, 'text/csv');
 };
 
 export default userAxios();
