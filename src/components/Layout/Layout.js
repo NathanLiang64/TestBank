@@ -105,6 +105,20 @@ function Layout({
     }
   }, [showDrawer]);
 
+  /**
+   * 監控 ModalReducer.waitting，當開啟時立即關閉 Drawer 及 Popup視窗。
+   */
+  useEffect(async () => {
+    console.log('showWaitting -> ', waitting);
+    if (waitting) {
+      dispatch(setDrawerVisible(false));
+      dispatch(setModalVisible(false));
+    }
+  }, [waitting]);
+
+  /**
+   * 下方彈出抽屜 UI。
+   */
   const Drawer = () => (
     <BottomDrawer
       title={drawerData.title}

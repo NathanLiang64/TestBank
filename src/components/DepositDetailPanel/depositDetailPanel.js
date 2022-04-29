@@ -11,12 +11,14 @@ const DepositDetailPanel = ({
   const renderDetailCardList = () => {
     if (details === null) {
       return (
+        // TODO: 顯示載入中...
         <div>TODO: 顯示載入中...</div>
       );
     }
 
     if (details.length === 0) {
       return (
+        // TODO: 顯示沒有資料的圖案
         <div>TODO: 顯示沒有資料的圖案</div>
       );
     }

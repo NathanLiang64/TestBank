@@ -85,8 +85,6 @@ const DebitCard = ({
 
   const onFuncClick = (fid) => {
     dispatch(setDrawerVisible(false));
-
-    // TODO: 若 funcID 是以'/'為開頭，表示是指定固定網址，因此不會導頁
     onFunctionChange(fid);
   };
 

@@ -66,6 +66,7 @@ function goToFunc({ route, funcID }, funcParams, keepData) {
 }
 
 function startFunc(funcID, funcParams, keepData) {
+  // TODO: 若 funcID 是以'/'為開頭，表示是指定固定網址，因此不會交由 APP切換
   if (funcID) {
     goToFunc({ route: funcID, funcID }, funcParams, keepData);
   } else {

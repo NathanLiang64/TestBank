@@ -41,7 +41,7 @@ const ForeignCurrencyAccount = () => {
       const acctData = await getAccountSummary('F'); // F=外幣
       model.accounts = Object.assign({}, ...acctData.map((acct) => ({ // Note: 將陣列(Array)轉為字典(Object/HashMap)
         [acct.acctId]: {
-          cardInfo: acct, // TODO: 有帳務異動後，就要重載
+          cardInfo: acct,
           // 以下屬性在 selectedAccount 變更時取得。
           transactions: null,
         },
@@ -75,6 +75,10 @@ const ForeignCurrencyAccount = () => {
       const transData = await getTransactionDetails(request);
 
       account.transactions = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
+      if (account.transactions.length > 0) {
+        account.cardInfo.acctBalx = account.transactions[0].balance; // 更新餘額。
+      }
+
       if (request.account !== getSelectedAccount()) return; // Note: 當卡片已經換掉了，就不需要顯示這份資料。
     }
     setTransactions(account.transactions);
@@ -84,7 +88,7 @@ const ForeignCurrencyAccount = () => {
    * 根據當前帳戶取得交易明細資料及優惠利率數字
    */
   useEffect(async () => {
-    // TODO: 因為無法解決在非同步模式下，selectedAccount不會變更的問題的暫時解決方案。
+    // Note: 因為無法解決在非同步模式下，selectedAccount不會變更的問題的暫時解決方案。
     sessionStorage.setItem('selectedAccount', selectedAccount);
 
     if (selectedAccount) {
@@ -92,7 +96,7 @@ const ForeignCurrencyAccount = () => {
       updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可
     }
   }, [selectedAccount]);
-  const getSelectedAccount = () => sessionStorage.getItem('selectedAccount'); // TODO: 暫時解決方案。
+  const getSelectedAccount = () => sessionStorage.getItem('selectedAccount'); // Note: 暫時解決方案。
 
   /**
    * 當使用者滑動卡片時的事件處理。

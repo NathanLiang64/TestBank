@@ -77,10 +77,12 @@ const AccountDetails = ({
    * 下載交易明細清單
    * @param {*} fileType 下載檔案類型, 1:PDF, 2:EXCEL(CSV)
    */
-  const handleClickDownloadDetails = (fileType) => {
+  const handleClickDownloadDetails = async (fileType) => {
+    // dispatch(setWaittingVisible(true)); // BUG : 打開、再關閉後，查詢條件會被清掉。
     dispatch(setDrawerVisible(false));
     const conditions = requestConditions({ dateRange, keywords, customKeyword });
-    downloadDepositTransactionReport(fileType, conditions);
+    await downloadDepositTransactionReport(fileType, conditions);
+    // dispatch(setWaittingVisible(false));
   };
 
   // 獲取交易明細時需代入的參數條件
