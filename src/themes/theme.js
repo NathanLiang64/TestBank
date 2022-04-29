@@ -41,7 +41,7 @@ const theme = {
       star: '#FFD466',
       point: '#E60E0E',
       cancel: '#D8E0ED',
-      mask: 'rgba(66, 48, 99, .6)',
+      mask: 'rgba(56, 31, 115, .5)',
     },
     state: {
       success: '#46D4A7',

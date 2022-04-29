@@ -28,6 +28,7 @@ const DialogWrapper = styled(MaterialDialog)`
     padding-bottom: 0;
     font-size: 1.5rem;
     min-height: 8.8rem;
+    color: ${({ theme }) => theme.colors.text.dark};
   }
 
   .MuiDialogActions-root {

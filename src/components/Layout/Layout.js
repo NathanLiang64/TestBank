@@ -7,7 +7,7 @@ import Loading from 'components/Loading';
 import Header from 'components/Header';
 import Dialog from 'components/Dialog';
 import BottomDrawer from 'components/BottomDrawer';
-import { FEIBIconButton } from 'components/elements';
+import { FEIBButton } from 'components/elements';
 // import theme from 'themes/theme';
 import {
   setModalVisible, setWaittingVisible, setDrawerVisible,
@@ -81,13 +81,13 @@ function Layout({
         action={
           <>
             {(modalData.onCancel || modalData.cancelContent)
-              ? (<FEIBIconButton onClick={onModalCancel}>
+              ? (<FEIBButton onClick={onModalCancel}>
                     {modalData.cancelContent ?? '取消'}
-                 </FEIBIconButton>)
+                 </FEIBButton>)
               : null}
-            <FEIBIconButton onClick={onModalOk}>
+            <FEIBButton onClick={onModalOk}>
               {modalData.okContent ?? '確認'}
-            </FEIBIconButton>
+            </FEIBButton>
           </>
         }
       />
