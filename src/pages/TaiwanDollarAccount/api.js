@@ -1,8 +1,13 @@
-import { callAPI } from 'utilities/axios';
+import { callAPI, downloadPDF } from 'utilities/axios';
+import { stringDateCodeFormatter } from 'utilities/Generator';
 
-// 取得所有台幣帳號
-export const getAccountSummary = async (request) => {
-  const response = await callAPI('/api/deposit/v1/accountSummary', request);
+/**
+ * 取得存款帳戶卡片所需的資訊
+ * @param {*} acctType 帳戶類型 M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶
+ * @returns 存款帳戶資訊。
+ */
+export const getAccountSummary = async (acctTypes) => {
+  const response = await callAPI('/api/deposit/v1/accountSummary', acctTypes);
   return response.data.map((acct) => ({
     acctBranch: acct.branchName, // 分行名稱
     acctName: acct.name, // 帳戶名稱或暱稱
@@ -15,9 +20,7 @@ export const getAccountSummary = async (request) => {
 
 /**
  * 取得取得免費跨提/跨轉次數、數存優惠利率及資訊
- * @param {*} request {
-    actNo: 帳號, ex: 00100100063106,
-  }
+ * @param {*} accountNo 存款帳號
  * @returns 優惠資訊
   {
    "freeWithdrawal": 6, // 免費跨提
@@ -27,8 +30,8 @@ export const getAccountSummary = async (request) => {
    "interest": 1999, // 累積利息
   }
  */
-export const getDepositBonus = async (request) => {
-  const response = await callAPI('/api/depositPlus/v1/getBonusInfo', request);
+export const getDepositBonus = async (accountNo) => {
+  const response = await callAPI('/api/depositPlus/v1/getBonusInfo', accountNo);
   return response.data;
 };
 
@@ -65,4 +68,16 @@ export const getDepositBonus = async (request) => {
 export const getTransactionDetails = async (request) => {
   const response = await callAPI('/api/deposit/v1/queryAcctTxDtl', request);
   return response.data;
+};
+
+/**
+ * 下載存摺封面
+ * @param {*} accountNo 存款帳號
+ * @param {*} currency 幣別代碼，預設為台幣(NTD)
+ * @returns 存摺封面
+ */
+export const downloadDepositBookCover = async (accountNo, currency = 'NTD') => {
+  const today = stringDateCodeFormatter(new Date()); // 今天 yyyyMMdd
+  const filename = `${accountNo}-${today}.pdf`;
+  await downloadPDF('/api/deposit/v1/getDepositBookCover', { accountNo, currency }, filename);
 };

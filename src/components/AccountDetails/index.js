@@ -14,6 +14,7 @@ import { showDrawer } from 'utilities/MessageModal';
 import { stringDateFormatter } from 'utilities/Generator';
 import { setDrawerVisible } from 'stores/reducers/ModalReducer';
 import theme from 'themes/theme';
+import { downloadDepositTransactionReport } from './api';
 import {
   setCustomKeyword, setDateRange, setDetailList, setKeywords,
 } from './stores/actions';
@@ -72,14 +73,14 @@ const AccountDetails = ({
     } else dispatch(setDetailList(null));
   };
 
-  // 點擊下載交易明細
-  const handleClickDownloadDetails = (format) => {
+  /**
+   * 下載交易明細清單
+   * @param {*} fileType 下載檔案類型, 1:PDF, 2:EXCEL(CSV)
+   */
+  const handleClickDownloadDetails = (fileType) => {
     dispatch(setDrawerVisible(false));
-    if (format === 'pdf') {
-      // window.location.href = 'url';  // 交易明細下載 (Pdf 格式)
-    } else if (format === 'excel') {
-      // window.location.href = 'url';  // 交易明細下載 (Excel 格式)
-    }
+    const conditions = requestConditions({ dateRange, keywords, customKeyword });
+    downloadDepositTransactionReport(fileType, conditions);
   };
 
   // 獲取交易明細時需代入的參數條件
@@ -144,6 +145,7 @@ const AccountDetails = ({
       ...requestConditions({ dateRange, keywords, customKeyword }),
       month,
       direct: '0', // 資料方向為0，表示取前後各50筆。
+      startIndex: '', // Note：不可指定 startIndex 否則將視為一般查詢。
     };
     const response = await onSearch(conditions);
     if (response) {
@@ -306,11 +308,11 @@ const AccountDetails = ({
 
   const renderDownloadDrawer = () => (
     <DownloadDrawerWrapper>
-      <li onClick={() => handleClickDownloadDetails('pdf')}>
+      <li onClick={() => handleClickDownloadDetails(1)}>
         <p>下載 PDF</p>
         <DownloadIcon className="downloadIcon" />
       </li>
-      <li onClick={() => handleClickDownloadDetails('excel')}>
+      <li onClick={() => handleClickDownloadDetails(2)}>
         <p>下載 EXCEL</p>
         <DownloadIcon className="downloadIcon" />
       </li>

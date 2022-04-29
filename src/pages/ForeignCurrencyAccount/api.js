@@ -1,8 +1,12 @@
 import { callAPI } from 'utilities/axios';
 
-// 取得所有台幣帳號
-export const getAccountSummary = async (request) => {
-  const response = await callAPI('/api/deposit/v1/accountSummary', request);
+/**
+ * 取得存款帳戶卡片所需的資訊
+ * @param {*} acctType 帳戶類型 M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶
+ * @returns 存款帳戶資訊。
+ */
+export const getAccountSummary = async (acctTypes) => {
+  const response = await callAPI('/api/deposit/v1/accountSummary', acctTypes);
   return response.data.map((acct) => ({
     acctBranch: acct.branchName, // 分行名稱
     acctName: acct.name, // 帳戶名稱或暱稱

@@ -16,7 +16,7 @@ import { customPopup } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc } from 'utilities/BankeePlus';
 import { stringDateCodeFormatter } from 'utilities/Generator';
 import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
-import { getAccountSummary, getDepositBonus, getTransactionDetails } from './api';
+import { getAccountSummary, getDepositBonus, getTransactionDetails, downloadDepositBookCover } from './api';
 import TaiwanDollarAccountWrapper from './taiwanDollarAccount.style';
 
 /**
@@ -45,7 +45,7 @@ const TaiwanDollarAccount = () => {
 
     // 首次加載時取得用戶所有台幣的存款帳戶摘要資訊
     if (!model.accounts) {
-      const acctData = await getAccountSummary({ AcctType: 'MC' }); // M=台幣主帳戶、C=台幣子帳戶
+      const acctData = await getAccountSummary('MC'); // M=台幣主帳戶、C=台幣子帳戶
       model.accounts = Object.assign({}, ...acctData.map((acct) => ({ // Note: 將陣列(Array)轉為字典(Object/HashMap)
         [acct.acctId]: {
           cardInfo: acct, // TODO: 有帳務異動後，就要重載
@@ -71,9 +71,9 @@ const TaiwanDollarAccount = () => {
   const updateBonusPanel = async (account) => {
     setPanelInfo(null);
     if (account.panelInfo === null) {
-      const request = { account: account.cardInfo.acctId };
-      account.panelInfo = await getDepositBonus(request);
-      if (request.account !== getSelectedAccount()) return; // Note: 當卡片已經換掉了，就不需要顯示這份資料。
+      const accountNo = account.cardInfo.acctId;
+      account.panelInfo = await getDepositBonus(accountNo);
+      if (accountNo !== getSelectedAccount()) return; // Note: 當卡片已經換掉了，就不需要顯示這份資料。
     }
     setPanelInfo(account.panelInfo);
   };
@@ -211,7 +211,10 @@ const TaiwanDollarAccount = () => {
       case 'E00100': // 換匯
         params = model; // 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。
         break;
-      case 'rename': // 帳戶名稱編輯
+      case 'DownloadDepositBookCover': // 存摺封面下載
+        downloadDepositBookCover(selectedAccount); // 預設檔名為「帳號-日期.pdf」，密碼：身分證號碼
+        return;
+      case 'Rename': // 帳戶名稱編輯
         showRenameDialog(accounts[selectedAccount].cardInfo.acctName);
         return;
       case 'depositPlus':
@@ -240,9 +243,8 @@ const TaiwanDollarAccount = () => {
           moreFuncs={[
             { fid: null, title: '定存', icon: 'fixedDeposit' },
             { fid: 'E00100', title: '換匯', icon: 'exchange' },
-            { fid: null, title: '存摺封面下載', icon: 'coverDownload' },
-            // { title: '存摺封面下載', path: 'http://114.32.27.40:8080/test/downloadPDF', icon: 'system_update' },
-            { fid: 'rename', title: '帳戶名稱編輯', icon: 'edit' },
+            { fid: 'DownloadDepositBookCover', title: '存摺封面下載', icon: 'coverDownload' },
+            { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
           ]}
         />
 
