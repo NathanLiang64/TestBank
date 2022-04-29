@@ -14,7 +14,6 @@ import { FEIBInputLabel, FEIBInput, FEIBErrorMessage } from 'components/elements
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc } from 'utilities/BankeePlus';
-import { stringDateCodeFormatter } from 'utilities/Generator';
 import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
 import { getAccountSummary, getDepositBonus, getTransactionDetails, downloadDepositBookCover } from './api';
 import TaiwanDollarAccountWrapper from './taiwanDollarAccount.style';
@@ -84,13 +83,9 @@ const TaiwanDollarAccount = () => {
   const updateTransactions = async (account) => {
     setTransactions(null);
     if (account.transactions === null) {
-      const today = new Date();
-      const beginDay = new Date(today.getFullYear() - 3, today.getMonth(), today.getDate());
       const request = {
         account: account.cardInfo.acctId,
-        startDate: stringDateCodeFormatter(beginDay), // 例：'20210301',
-        endDate: stringDateCodeFormatter(today), // 例：'20220531',
-        startIndex: 0, // Note: 一定要指定，才會以「分頁」方式取回較少量資料。
+        currency: 'NTD',
       };
       // 取得帳戶交易明細（三年內的前25筆即可）
       const transData = await getTransactionDetails(request);

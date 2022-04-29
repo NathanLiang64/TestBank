@@ -40,6 +40,7 @@ const ForeignCurrencyAccountDetails = () => {
     const request = {
       ...conditions,
       account: account.acctId,
+      currency: account.ccyCd,
     };
     console.log(conditions);
 

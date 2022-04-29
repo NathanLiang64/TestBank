@@ -40,6 +40,7 @@ const TaiwanDollarAccountDetails = () => {
     const request = {
       ...conditions,
       account: account.acctId,
+      currency: 'NTD',
     };
     console.log(conditions);
 

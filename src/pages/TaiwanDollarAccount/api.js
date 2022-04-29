@@ -9,9 +9,9 @@ import { stringDateCodeFormatter } from 'utilities/Generator';
 export const getAccountSummary = async (acctTypes) => {
   const response = await callAPI('/api/deposit/v1/accountSummary', acctTypes);
   return response.data.map((acct) => ({
-    acctBranch: acct.branchName, // 分行名稱
+    acctBranch: acct.branch, // 分行名稱
     acctName: acct.name, // 帳戶名稱或暱稱
-    acctId: acct.no, // 帳號
+    acctId: acct.account, // 帳號
     acctType: acct.type, // 帳號類別
     acctBalx: acct.balance, // 帳戶餘額
     ccyCd: acct.currency, // 幣別代碼

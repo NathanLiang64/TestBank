@@ -30,7 +30,7 @@ const AccountOverview = ({
       onSlideChange={onAccountChange}
     >
       { userAccounts.map((account) => (
-        <SwiperSlide key={account.cardInfo.acctId}>
+        <SwiperSlide key={`${account.cardInfo.acctId}-${account.cardInfo.ccyCd}`}>
           { renderSingleDebitCard(account.cardInfo) }
         </SwiperSlide>
       )) }
