@@ -79,7 +79,7 @@ const AccountDetails = ({
    */
   const handleClickDownloadDetails = (fileType) => {
     dispatch(setDrawerVisible(false));
-    const conditions = requestConditions();
+    const conditions = requestConditions({ dateRange, keywords, customKeyword });
     downloadDepositTransactionReport(fileType, conditions);
   };
 
