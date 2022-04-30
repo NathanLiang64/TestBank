@@ -38,17 +38,15 @@ const ForeignCurrencyAccount = () => {
     // 首次加載時取得用戶所有外幣的存款帳戶摘要資訊
     if (!model.accounts) {
       const acctData = await getAccountSummary('F'); // F=外幣
-      model.accounts = Object.assign({}, ...acctData.map((acct) => ({ // Note: 將陣列(Array)轉為字典(Object/HashMap)
-        [acct.acctId]: {
-          cardInfo: acct,
-          // 以下屬性在 selectedAccount 變更時取得。
-          transactions: null,
-        },
-      })));
+      model.accounts = acctData.map((acct) => ({ // Note: 將陣列(Array)轉為字典(Object/HashMap)
+        cardInfo: acct,
+        transactions: null, // 此屬性在 selectedAccount 變更時取得。
+      }));
     }
 
     // 預設顯示的帳號。
-    if (!model.selectedAccount) model.selectedAccount = Object.values(model.accounts)[0].cardInfo.acctId;
+    // eslint-disable-next-line prefer-destructuring
+    if (!model.selectedAccount) model.selectedAccount = model.accounts[0].cardInfo.acctId;
 
     setAccounts(model.accounts);
     setSelectedAccount(model.selectedAccount);
@@ -87,7 +85,7 @@ const ForeignCurrencyAccount = () => {
     sessionStorage.setItem('selectedAccount', selectedAccount);
 
     if (selectedAccount) {
-      const account = accounts[selectedAccount];
+      const account = accounts.find((acct) => acct.cardInfo.acctId === selectedAccount);
       updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可
     }
   }, [selectedAccount]);
@@ -97,8 +95,8 @@ const ForeignCurrencyAccount = () => {
    * 當使用者滑動卡片時的事件處理。
    */
   const handleChangeAccount = async (swiper) => {
-    const account = Object.values(accounts)[swiper.activeIndex];
-    setSelectedAccount(account.cardInfo.acctId);
+    const account = accounts[swiper.activeIndex].cardInfo.acctId;
+    setSelectedAccount(account);
   };
 
   /**
@@ -131,16 +129,17 @@ const ForeignCurrencyAccount = () => {
   const handleFunctionChange = async (funcCode) => {
     let params = null;
     const model = { accounts, selectedAccount };
+    const account = accounts.find((acct) => acct.cardInfo.acctId === selectedAccount);
     switch (funcCode) {
       case 'foreignCurrencyAccountDetails': // 更多明細
-        params = accounts[selectedAccount].cardInfo; // 直接提供帳戶摘要資訊，因為一定是從有帳戶資訊的頁面進去。
+        params = account.cardInfo; // 直接提供帳戶摘要資訊，因為一定是從有帳戶資訊的頁面進去。
         break;
       case 'foreignCurrencyTransfer': // 轉帳
       case 'exchange': // 換匯
         params = model; // 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。
         break;
       case 'rename': // 帳戶名稱編輯
-        showRenameDialog(accounts[selectedAccount].cardInfo.acctName);
+        showRenameDialog(account.cardInfo.acctName);
         return;
       case 'setMainAccount': // 設定為主要外幣帳戶
         // TODO: 將目前帳戶 設定為主要外幣帳戶

@@ -144,6 +144,7 @@ const DebitCard = ({
           { originalType() && <p className="branch">{branch}</p> }
           <p className="account">{accountFormatter(account)}</p>
           <CopyTextIconButton copyText={account} />
+          <p className="account">{dollarSign !== 'NTD' ? `(${dollarSign})` : ''}</p>
         </div>
       </div>
       <div className={`cardBalance ${originalType() && 'grow'}`}>
