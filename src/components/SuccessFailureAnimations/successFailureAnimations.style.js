@@ -16,6 +16,10 @@ const SuccessFailureAnimationsWrapper = styled.div`
     }
   }
 
+  section {
+    word-break: break-word;
+  }
+
   section.successInfo {
     text-align: center;
     margin-top: 1.6rem;
