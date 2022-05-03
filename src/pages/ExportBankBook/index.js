@@ -122,13 +122,8 @@ const ExportBankBook = () => {
     }
     const param = {
       actNo: data.account,
-      tranType: '1,2,3,4,5,6',
-      dataMonth: stringDateCodeFormatter(exportDateRange[0]).substr(0, 6),
       startDate: stringDateCodeFormatter(exportDateRange[0]),
       endDate: stringDateCodeFormatter(exportDateRange[1]),
-      startIndex: 999,
-      direct: 2,
-      keyword: '',
       fileType: 1,
       pdfTemplateType: data.outType === '1' ? 1 : 3,
     };
