@@ -3,14 +3,14 @@
 /* ========= 通用函式 ========= */
 
 // 將數字轉為加上千分位符號的字串
-export const toCurrency = (number) => {
-  if (number) {
-    const parts = number.toString().split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    return parts.join('.');
+export const toCurrency = (number, float = 0) => {
+  if (number === null) return '';
+  const parts = number?.toString().split('.') ?? ['0', '']; // 預設為'0'
+  let amount = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','); // 取出整數加上千分位','
+  if (float > 0) {
+    amount = `${amount}.${(`${parts[1]}000000`).substring(0, float)}`; // 將小數加回
   }
-  if (number === 0 || number === '0') return '0';
-  return '';
+  return amount;
 };
 
 // 將帳號轉為指定字數間帶有分隔符 (-) 之顯示方式
@@ -192,84 +192,36 @@ export const accountTypeColorGenerator = (currency) => {
   }
 };
 
+const CurrencyInfo = [
+  { code: 'NTD', info: { name: '新台幣', symbol: '$', float: 0 } },
+  { code: 'TWD', info: { name: '新台幣', symbol: '$', float: 0 } },
+  { code: 'USD', info: { name: '美元', symbol: 'US$', float: 2 } },
+  { code: 'GBP', info: { name: '英鎊', symbol: '£', float: 2 } },
+  { code: 'HKD', info: { name: '港幣', symbol: 'HK$', float: 2 } },
+  { code: 'CHF', info: { name: '瑞士法郎', symbol: 'Fr', float: 2 } },
+  { code: 'AUD', info: { name: '澳幣', symbol: 'A$', float: 2 } },
+  { code: 'SGD', info: { name: '新加坡幣', symbol: 'S$', float: 2 } },
+  { code: 'JPY', info: { name: '日幣', symbol: '¥', float: 0 } },
+  { code: 'CAD', info: { name: '加幣', symbol: 'CAN$', float: 2 } },
+  { code: 'THB', info: { name: '泰幣', symbol: '฿', float: 0 } },
+  { code: 'ZAR', info: { name: '南非幣', symbol: 'R', float: 2 } },
+  { code: 'PLN', info: { name: '波蘭幣', symbol: 'zł', float: 2 } },
+  { code: 'CNY', info: { name: '人民幣', symbol: 'RMB¥', float: 0 } },
+  { code: 'EUR', info: { name: '歐元', symbol: '€', float: 2 } },
+  { code: 'NZD', info: { name: '紐西蘭幣', symbol: 'NZ$', float: 2 } },
+];
+
 // 貨幣單位文字轉為符號
-export const currencySymbolGenerator = (currency) => {
-  switch (currency) {
-    case 'NTD': // 新台幣
-      return '$';
-    case 'TWD': // 新台幣
-      return '$';
-    case 'USD': // 美金
-      return 'US$';
-    case 'GBP': // 英鎊
-      return '£';
-    case 'HKD': // 港幣
-      return 'HK$';
-    case 'CHF': // 瑞士法郎
-      return 'Fr';
-    case 'AUD': // 澳幣
-      return 'A$';
-    case 'SGD': // 新加坡幣
-      return 'S$';
-    case 'JPY': // 日幣
-      return '¥';
-    case 'CAD': // 加幣
-      return 'CAN$';
-    case 'THB': // 泰幣
-      return '฿';
-    case 'ZAR': // 南非幣
-      return 'R';
-    case 'PLN': // 波蘭幣
-      return 'zł';
-    case 'CNY': // 人民幣
-      return 'RMB¥';
-    case 'EUR': // 歐元
-      return '€';
-    case 'NZD': // 紐西蘭幣
-      return 'NZ$';
-    default:
-      return '$';
-  }
+export const currencySymbolGenerator = (currency, amount = null) => {
+  const ccyInfo = CurrencyInfo[currency];
+  const symbol = ccyInfo?.symbol ?? '$';
+  return symbol + toCurrency(amount, ccyInfo?.float);
 };
 
 // 貨幣單位英文轉華文
 export const currencyZhGenerator = (currency) => {
-  switch (currency) {
-    case 'TWD': // 新台幣
-      return '新台幣';
-    case 'NTD': // 新台幣
-      return '新台幣';
-    case 'USD': // 美金
-      return '美金';
-    case 'GBP': // 英鎊
-      return '英鎊';
-    case 'HKD': // 港幣
-      return '港幣';
-    case 'CHF': // 瑞士法郎
-      return '瑞士法郎';
-    case 'AUD': // 澳幣
-      return '澳幣';
-    case 'SGD': // 新加坡幣
-      return '新加坡幣';
-    case 'JPY': // 日幣
-      return '日圓';
-    case 'CAD': // 加幣
-      return '加幣';
-    case 'THB': // 泰幣
-      return '泰銖';
-    case 'ZAR': // 南非幣
-      return '南非幣';
-    case 'PLN': // 波蘭幣
-      return '波蘭幣';
-    case 'CNY': // 人民幣
-      return '人民幣';
-    case 'EUR': // 歐元
-      return '歐元';
-    case 'NZD': // 紐西蘭幣
-      return '紐西蘭幣';
-    default:
-      return null;
-  }
+  const ccyInfo = CurrencyInfo[currency];
+  return ccyInfo?.info.name ?? currency;
 };
 
 // 姓名隱碼化，王小明 -> 王Ｏ明
