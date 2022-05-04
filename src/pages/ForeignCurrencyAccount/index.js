@@ -20,7 +20,7 @@ const ForeignCurrencyAccount = () => {
   const { register, handleSubmit } = useForm();
 
   const [accounts, setAccounts] = useState(null);
-  const [selectedAccount, setSelectedAccount] = useState(null);
+  const [selectedAccountIdx, setSelectedAccountIdx] = useState(-1);
   const [transactions, setTransactions] = useState(null);
 
   /**
@@ -29,11 +29,17 @@ const ForeignCurrencyAccount = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    // 以啟動參數(外幣帳號)為預設值；若沒有設，則以第一個帳號為預設值。
-    const model = loadFuncParams() ?? { // Function Controller 提供的參數
-      accounts: null,
-      selectedAccount: null,
-    };
+    const startParams = loadFuncParams(); // Function Controller 提供的參數
+    // 取得 Function Controller 提供的 keepDdata(model)
+    let model;
+    if (startParams && (typeof startParams === 'object')) {
+      model = startParams;
+    } else {
+      model = {
+        accounts: null, //
+        selectedAccountIdx: null, //
+      };
+    }
 
     // 首次加載時取得用戶所有外幣的存款帳戶摘要資訊
     if (!model.accounts) {
@@ -42,14 +48,18 @@ const ForeignCurrencyAccount = () => {
         cardInfo: acct,
         transactions: null, // 此屬性在 selectedAccount 變更時取得。
       }));
+      model.selectedAccountIdx = 0; // 以第一個帳號為預設值。
     }
 
-    // 預設顯示的帳號。
-    // eslint-disable-next-line prefer-destructuring
-    if (!model.selectedAccount) model.selectedAccount = model.accounts[0].cardInfo.acctId;
+    // 取得 Function Controller 提供的 funcParams(啟動時的預設帳號)
+    if (typeof startParams === 'string') {
+      const index = model.accounts.findIndex((acct) => acct.cardInfo.acctId === startParams);
+      if (index >= 0) model.selectedAccountIdx = index;
+      else alert(`無效的功能啟動參數(預設帳號) : ${startParams}`);
+    }
 
     setAccounts(model.accounts);
-    setSelectedAccount(model.selectedAccount);
+    setSelectedAccountIdx(model.selectedAccountIdx);
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -82,21 +92,17 @@ const ForeignCurrencyAccount = () => {
    */
   useEffect(async () => {
     // Note: 因為無法解決在非同步模式下，selectedAccount不會變更的問題的暫時解決方案。
-    sessionStorage.setItem('selectedAccount', selectedAccount);
+    sessionStorage.setItem('selectedAccountIdx', selectedAccountIdx);
 
-    if (selectedAccount) {
-      const account = accounts.find((acct) => acct.cardInfo.acctId === selectedAccount);
+    if (selectedAccountIdx >= 0) {
+      const account = accounts[selectedAccountIdx];
       updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可
     }
-  }, [selectedAccount]);
-  const getSelectedAccount = () => sessionStorage.getItem('selectedAccount'); // Note: 暫時解決方案。
+  }, [selectedAccountIdx]);
 
-  /**
-   * 當使用者滑動卡片時的事件處理。
-   */
-  const handleChangeAccount = async (swiper) => {
-    const account = accounts[swiper.activeIndex].cardInfo.acctId;
-    setSelectedAccount(account);
+  const getSelectedAccount = () => {
+    const index = sessionStorage.getItem('selectedAccountIdx'); // Note: 暫時解決方案。
+    return accounts[index].cardInfo.acctId;
   };
 
   /**
@@ -128,8 +134,8 @@ const ForeignCurrencyAccount = () => {
    */
   const handleFunctionChange = async (funcCode) => {
     let params = null;
-    const model = { accounts, selectedAccount };
-    const account = accounts.find((acct) => acct.cardInfo.acctId === selectedAccount);
+    const model = { accounts, selectedAccountIdx };
+    const account = accounts[selectedAccountIdx];
     switch (funcCode) {
       case 'foreignCurrencyAccountDetails': // 更多明細
         params = account.cardInfo; // 直接提供帳戶摘要資訊，因為一定是從有帳戶資訊的頁面進去。
@@ -162,7 +168,7 @@ const ForeignCurrencyAccount = () => {
         {/* TODO：外幣有小數位數的問題 */}
         <AccountOverview
           accounts={Object.values(accounts ?? [])}
-          onAccountChange={handleChangeAccount}
+          onAccountChange={(swiper) => setSelectedAccountIdx(swiper.activeIndex)}
           onFunctionChange={handleFunctionChange}
           cardColor="blue"
           funcList={[

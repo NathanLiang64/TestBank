@@ -33,3 +33,4 @@ target
 compiler
 *.log
 *.log.*.gz
+*.tmp
