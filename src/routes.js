@@ -210,7 +210,7 @@ const routes = [
   { path: '/C00400', exact: false, component: ForeignCurrencyAccount },
   { path: '/foreignCurrencyAccountDetails', exact: false, component: ForeignCurrencyAccountDetails },
   { path: '/regularBasicInformation', exact: false, component: RegularBasicInformation },
-  { path: '/exportBankBook', exact: false, component: ExportBankBook },
+  { path: '/C00800', exact: false, component: ExportBankBook },
   { path: '/exportBankBook1', exact: false, component: ExportBankBook1 },
   { path: '/foreignCurrencyTransfer', exact: false, component: ForeignCurrencyTransfer },
   { path: '/foreignCurrencyTransfer1', exact: false, component: ForeignCurrencyTransfer1 },

@@ -4,7 +4,7 @@ import { callAPI } from 'utilities/axios';
  * 取得所有到價通知設定
  * @return {*} 到價通知設定陣列。
  * [{
- *  currenty: 幣別, 例："JPY"; 可以透過 Generator.js 的 getCurrenyInfo() 取得。
+ *  currency: 幣別, 例："JPY"; 可以透過 Generator.js 的 getCurrenyInfo() 取得。
  *  price: 價格, 例：4.5
  *  exType: 換匯種類: 0.現金 1.即期
  * }]
@@ -17,7 +17,7 @@ export const getAllNotices = async () => {
 /**
  * 建立到價通知設定
  * @param {*} notice {
- *  currenty: 幣別, 例："JPY"; 可以透過 Generator.js 的 getCurrenyInfo() 取得。
+ *  currency: 幣別, 例："JPY"; 可以透過 Generator.js 的 getCurrenyInfo() 取得。
  *  price: 價格, 例：4.5
  *  exType: 換匯種類: 0.現金 1.即期
  * }
@@ -30,7 +30,7 @@ export const addNotice = async (notice) => {
 /**
  * 刪除到價通知設定，必需提供完全相同的資料才能刪除。
  * @param {*} notice {
- *  currenty: 幣別, 例："JPY"; 可以透過 Generator.js 的 getCurrenyInfo() 取得。
+ *  currency: 幣別, 例："JPY"; 可以透過 Generator.js 的 getCurrenyInfo() 取得。
  *  price: 價格, 例：4.5
  *  exType: 換匯種類: 0.現金 1.即期
  * }
