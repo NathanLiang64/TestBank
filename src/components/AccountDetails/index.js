@@ -344,7 +344,7 @@ const AccountDetails = ({
 
         <div className="transactionDetail" ref={txnDetailsRef} style={{ height: 500, maxHeight: 500, overflowY: 'scroll' }}>
           { detailList?.length ? renderDetailCards(detailList) : <EmptyData /> }
-          {/* TODO:資料載入中。 */}
+          {/* TODO:資料載入中。（ 用 isLoading 判斷 ） */}
         </div>
       </div>
     </AccountDetailsWrapper>
