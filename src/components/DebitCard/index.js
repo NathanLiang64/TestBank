@@ -8,7 +8,7 @@ import CopyTextIconButton from 'components/CopyTextIconButton';
 import { FEIBIconButton } from 'components/elements';
 import theme from 'themes/theme';
 import {
-  accountFormatter, accountTypeColorGenerator, currencySymbolGenerator, toCurrency,
+  accountFormatter, accountTypeColorGenerator, currencySymbolGenerator,
 } from 'utilities/Generator';
 import DebitCardBackground from 'assets/images/debitCardBackground.png';
 import { showDrawer } from '../../utilities/MessageModal';
@@ -150,7 +150,7 @@ const DebitCard = ({
       <div className={`cardBalance ${originalType() && 'grow'}`}>
         { !hideIcon && renderEyeIconButton() }
         <h3 className="balance">
-          {`${currencySymbolGenerator(dollarSign)}${showBalance ? toCurrency(balance) : '＊＊＊＊＊'}`}
+          {`${currencySymbolGenerator(dollarSign, (showBalance ? balance : '*'))}`}
         </h3>
       </div>
       { (originalType() && (functionList && renderFunctionList(functionList))) || (transferLimit && transferRemaining && renderTransferLimit(transferLimit, transferRemaining)) }
