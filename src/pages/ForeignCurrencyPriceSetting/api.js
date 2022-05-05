@@ -47,5 +47,5 @@ export const removeNotice = async (notice) => {
  */
 export const updateNotice = async (oldNotice, newNotice) => {
   await removeNotice(oldNotice);
-  return addNotice(newNotice);
+  return await addNotice(newNotice);
 };
