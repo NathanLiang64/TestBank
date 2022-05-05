@@ -76,6 +76,7 @@ userAxios().interceptors.request.use(
         config.data.append('jwtRq', JSON.stringify(jwtRq));
       } else {
         postActionLog(`request: ${config.url}`, config.data);
+        console.log('before decrypt: ', config.data);
         // 加密
         config.data = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(config.data));
       }
