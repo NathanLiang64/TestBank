@@ -36,8 +36,8 @@ const ForeignCurrencyAccount = () => {
       model = startParams;
     } else {
       model = {
-        accounts: null, //
-        selectedAccountIdx: null, //
+        accounts: null, // 所有帳戶資料暫存
+        selectedAccountIdx: null, // 目前使用的帳戶索引
       };
     }
 
@@ -88,7 +88,7 @@ const ForeignCurrencyAccount = () => {
   };
 
   /**
-   * 根據當前帳戶取得交易明細資料及優惠利率數字
+   * 根據當前帳戶取得交易明細資料
    */
   useEffect(async () => {
     // Note: 因為無法解決在非同步模式下，selectedAccount不會變更的問題的暫時解決方案。
