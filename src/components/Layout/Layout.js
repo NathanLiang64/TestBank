@@ -145,7 +145,7 @@ function Layout({
       </div>
     );
   }
-  return <Loading />;
+  return <Loading isFullscreen />;
 }
 
 Layout.propTypes = {

@@ -9,6 +9,7 @@ import EmptyData from 'components/EmptyData';
 import {
   FEIBIconButton, FEIBTab, FEIBTabContext, FEIBTabList,
 } from 'components/elements';
+import Loading from 'components/Loading';
 import { CrossCircleIcon, DownloadIcon, SearchIcon } from 'assets/images/icons';
 import { showDrawer } from 'utilities/MessageModal';
 import { stringDateFormatter } from 'utilities/Generator';
@@ -344,7 +345,7 @@ const AccountDetails = ({
 
         <div className="transactionDetail" ref={txnDetailsRef} style={{ height: 500, maxHeight: 500, overflowY: 'scroll' }}>
           { detailList?.length ? renderDetailCards(detailList) : <EmptyData /> }
-          {/* TODO:資料載入中。（ 用 isLoading 判斷 ） */}
+          { isLoading && <Loading space="both" isCentered /> }
         </div>
       </div>
     </AccountDetailsWrapper>

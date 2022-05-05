@@ -124,8 +124,8 @@ const TaiwanDollarAccount = () => {
   const renderBonusInfoPanel = (data) => {
     if (!data) {
       return (
-        // TODO: 顯示載入中...
-        <div>TODO: 顯示載入中...</div>
+        // FBI-9 TODO: 顯示載入中...
+        <div>FBI-9 TODO: 顯示載入中...</div>
       );
     }
 

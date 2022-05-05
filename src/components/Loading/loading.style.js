@@ -14,12 +14,19 @@ const handleSpaceType = (position) => {
 };
 
 const LoadingWrapper = styled.div`
-  display: flex;
-  height: 100vh;
-  width: 100vw;
-  justify-content: center;
-  align-items: center;
-  background-color: ${({ theme }) => theme.colors.background.light};
+  ${({ $isFullscreen }) => $isFullscreen && `
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    justify-content: center;
+    align-items: center;
+    background-color: ${({ theme }) => theme.colors.background.light};
+  `}
+
+  ${({ $isCentered }) => $isCentered && `
+    margin-inline: auto;
+    width: min-content;
+  `}
 
   padding: ${({ $space }) => handleSpaceType($space)};
   
