@@ -22,15 +22,14 @@ const DepositDetailPanel = ({
       );
     }
 
-    // TODO: 計算可顯示的明細項目數量。
-    // TODO: 因為外層 div 已縮至最小，無法正確計算可顯示的數量。「外層」可能是 Layout 物件。
-    // const { offsetHeight } = detailsRef?.current;
-    // setDetailAreaHeight(offsetHeight);
-    const detailAreaHeight = 430; // 暫時固定顯示 5 筆
+    // 計算可顯示的明細項目數量。
+    const yPos = detailsRef?.current.getBoundingClientRect().y;
+    const detailAreaHeight = yPos ? window.innerHeight - yPos : 430; // 如果沒有，預設顯示 5 筆
 
     // 根據剩餘高度計算要顯示的卡片數量，計算裝置可容納的交易明細卡片數量
     const list = [];
-    const computedCount = Math.floor((detailAreaHeight - 30) / 80);
+    // FBI-9 TODO: 因為初始時高度為0，載入後被往下推，又不會重新render，所以先減1個。
+    const computedCount = Math.floor((detailAreaHeight - 30) / 80) - 1;
     for (let i = 0; (i < computedCount && i < details.length); i++) {
       list.push(details[i]);
     }
@@ -61,10 +60,12 @@ const DepositDetailPanel = ({
       <div className="transactionDetail" ref={detailsRef}>
         {/* 顯示 最近交易明細 */}
         { renderDetailCardList() }
-        <div className="moreButton" onClick={onClick}>
-          更多明細
-          <ArrowNextIcon />
-        </div>
+        { details?.length > 0 && (
+          <div className="moreButton" onClick={onClick}>
+            更多明細
+            <ArrowNextIcon />
+          </div>
+        )}
       </div>
     </DepositDetailPanelWrapper>
   );
