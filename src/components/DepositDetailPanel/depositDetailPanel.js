@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import DetailCard from 'components/DetailCard';
+import Loading from 'components/Loading';
 import { ArrowNextIcon } from 'assets/images/icons';
 import DepositDetailPanelWrapper from './depositDetailPanel.style';
 
@@ -11,15 +12,13 @@ const DepositDetailPanel = ({
   const renderDetailCardList = () => {
     if (details === null) {
       return (
-        // TODO: 顯示載入中...
-        <div>TODO: 顯示載入中...</div>
+        <Loading space="both" isCentered />
       );
     }
 
     if (details.length === 0) {
       return (
-        // TODO: 顯示沒有資料的圖案
-        <div>TODO: 顯示沒有資料的圖案</div>
+        <div style={{ alignSelf: 'center', marginBlock: '2 rem' }}>本月沒有任何活動！！</div>
       );
     }
 
