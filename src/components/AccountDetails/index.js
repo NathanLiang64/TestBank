@@ -146,9 +146,9 @@ const AccountDetails = ({
     const month = event.currentTarget.getAttribute('data-month');
     const conditions = {
       ...requestConditions({ dateRange, keywords, customKeyword }),
-      month,
+      dataMonth: month,
       direct: '0', // 資料方向為0，表示取前後各50筆。
-      startIndex: '', // Note：不可指定 startIndex 否則將視為一般查詢。
+      // startIndex: '', // Note：不可指定 startIndex 否則將視為一般查詢。
     };
     const response = await onSearch(conditions);
     if (response) {
