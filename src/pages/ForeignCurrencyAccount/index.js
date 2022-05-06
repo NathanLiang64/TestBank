@@ -122,7 +122,10 @@ const ForeignCurrencyAccount = () => {
       handleSubmit((newName) => {
         console.log('新帳戶名稱 : ', newName);
         // TODO: Call API 變更帳戶名稱。
-      })(event);
+      })(event).catch((error) => {
+        // TODO: handle error
+        console.warn('新帳戶名稱 handleSubmit 回傳 error 必須處理，也有可能是 validation issue。', error);
+      });
     };
     await customPopup('帳戶名稱編輯', body, onOk);
   };
