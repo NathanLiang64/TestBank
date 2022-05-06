@@ -42,7 +42,6 @@ const ForeignCurrencyAccountDetails = () => {
       account: account.acctId,
       currency: account.ccyCd,
     };
-    console.log(conditions);
 
     // 取得帳戶交易明細（三年內）
     const transData = await getTransactionDetails(request);

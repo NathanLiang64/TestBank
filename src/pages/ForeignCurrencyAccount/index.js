@@ -165,7 +165,6 @@ const ForeignCurrencyAccount = () => {
   return (
     <Layout title="外幣活存">
       <div>
-        {/* TODO：外幣有小數位數的問題 */}
         <AccountOverview
           accounts={Object.values(accounts ?? [])}
           onAccountChange={(swiper) => setSelectedAccountIdx(swiper.activeIndex)}
