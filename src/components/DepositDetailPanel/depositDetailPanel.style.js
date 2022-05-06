@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
 const DepositDetailPanelWrapper = styled.div`
+  margin-inline: 1rem;
+
   .transactionDetail {
     display: flex;
     flex-direction: column;
