@@ -23,7 +23,7 @@ const DepositDetailPanel = ({
     }
 
     // 計算可顯示的明細項目數量。
-    const yPos = detailsRef?.current.getBoundingClientRect().y;
+    const yPos = detailsRef?.current?.getBoundingClientRect()?.y;
     const detailAreaHeight = yPos ? window.innerHeight - yPos : 430; // 如果沒有，預設顯示 5 筆
 
     // 根據剩餘高度計算要顯示的卡片數量，計算裝置可容納的交易明細卡片數量
