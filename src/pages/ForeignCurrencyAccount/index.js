@@ -117,13 +117,12 @@ const ForeignCurrencyAccount = () => {
         <FEIBErrorMessage $noSpacing />
       </>
     );
-    const onOk = () => {
+    const onOk = (event) => {
       console.log('帳戶名稱 : ', name);
       handleSubmit((newName) => {
-        // TODO: 因為 register('newName' 無效果，所以拿不回 newName
         console.log('新帳戶名稱 : ', newName);
         // TODO: Call API 變更帳戶名稱。
-      });
+      })(event);
     };
     await customPopup('帳戶名稱編輯', body, onOk);
   };
