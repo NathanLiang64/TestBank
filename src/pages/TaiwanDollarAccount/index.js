@@ -26,7 +26,7 @@ const TaiwanDollarAccount = () => {
   const { register, handleSubmit } = useForm();
 
   const [accounts, setAccounts] = useState(null);
-  const [selectedAccount, setSelectedAccount] = useState(null);
+  const [selectedAccountIdx, setSelectedAccountIdx] = useState(-1);
   const [panelInfo, setPanelInfo] = useState(null);
   const [transactions, setTransactions] = useState(null);
 
@@ -36,30 +36,31 @@ const TaiwanDollarAccount = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    // 以啟動參數(台幣帳號)為預設值；若沒有設，則以第一個帳號為預設值。
-    const model = loadFuncParams() ?? { // Function Controller 提供的參數
-      accounts: null,
-      selectedAccount: null,
-    };
-
-    // 首次加載時取得用戶所有台幣的存款帳戶摘要資訊
-    if (!model.accounts) {
-      const acctData = await getAccountSummary('MC'); // M=台幣主帳戶、C=台幣子帳戶
-      model.accounts = Object.assign({}, ...acctData.map((acct) => ({ // Note: 將陣列(Array)轉為字典(Object/HashMap)
-        [acct.acctId]: {
-          cardInfo: acct,
-          // 以下屬性在 selectedAccount 變更時取得。
-          panelInfo: null,
-          transactions: null,
-        },
-      })));
+    const startParams = loadFuncParams(); // Function Controller 提供的參數
+    // 取得 Function Controller 提供的 keepDdata(model)
+    let model;
+    if (startParams && (typeof startParams === 'object')) {
+      model = startParams;
+    } else {
+      model = {
+        accounts: null, // 所有帳戶資料暫存
+        selectedAccountIdx: null, // 目前使用的帳戶索引
+      };
     }
 
-    // 預設顯示的帳號。
-    if (!model.selectedAccount) model.selectedAccount = Object.values(model.accounts)[0].cardInfo.acctId;
+    // 首次加載時取得用戶所有外幣的存款帳戶摘要資訊
+    if (!model.accounts) {
+      const acctData = await getAccountSummary('MC'); // M=台幣主帳戶、C=台幣子帳戶
+      model.accounts = acctData.map((acct) => ({ // Note: 將陣列(Array)轉為字典(Object/HashMap)
+        cardInfo: acct,
+        panelInfo: null, // 此屬性在 selectedAccountIdx 變更時取得。
+        transactions: null, // 此屬性在 selectedAccountIdx 變更時取得。
+      }));
+      model.selectedAccountIdx = 0; // 以第一個帳號為預設值。
+    }
 
     setAccounts(model.accounts);
-    setSelectedAccount(model.selectedAccount);
+    setSelectedAccountIdx(model.selectedAccountIdx);
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -105,15 +106,19 @@ const TaiwanDollarAccount = () => {
    */
   useEffect(async () => {
     // Note: 因為無法解決在非同步模式下，selectedAccount不會變更的問題的暫時解決方案。
-    sessionStorage.setItem('selectedAccount', selectedAccount);
+    sessionStorage.setItem('selectedAccountIdx', selectedAccountIdx);
 
-    if (selectedAccount) {
-      const account = accounts[selectedAccount];
+    if (selectedAccountIdx >= 0) {
+      const account = accounts[selectedAccountIdx];
       updateBonusPanel(account); // 取得優惠利率資訊
       updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可
     }
-  }, [selectedAccount]);
-  const getSelectedAccount = () => sessionStorage.getItem('selectedAccount'); // Note: 暫時解決方案。
+  }, [selectedAccountIdx]);
+
+  const getSelectedAccount = () => {
+    const index = sessionStorage.getItem('selectedAccountIdx'); // Note: 暫時解決方案。
+    return accounts[index].cardInfo.acctId;
+  };
 
   // 優存(利率/利息)資訊 顯示模式（true.優惠利率, false.累積利息)
   const [showRate, setShowRate] = useState(true);
@@ -165,14 +170,6 @@ const TaiwanDollarAccount = () => {
   };
 
   /**
-   * 當使用者滑動卡片時的事件處理。
-   */
-  const handleChangeAccount = async (swiper) => {
-    const account = Object.values(accounts)[swiper.activeIndex];
-    setSelectedAccount(account.cardInfo.acctId);
-  };
-
-  /**
    * 編輯帳戶名稱
    * @param {*} name 原始帳戶名稱
    */
@@ -201,10 +198,11 @@ const TaiwanDollarAccount = () => {
    */
   const handleFunctionChange = async (funcCode) => {
     let params = null;
-    const model = { accounts, selectedAccount };
+    const model = { accounts, selectedAccountIdx };
+    const account = accounts[selectedAccountIdx];
     switch (funcCode) {
       case 'taiwanDollarAccountDetails': // 更多明細
-        params = accounts[selectedAccount].cardInfo; // 直接提供帳戶摘要資訊，因為一定是從有帳戶資訊的頁面進去。
+        params = account.cardInfo; // 直接提供帳戶摘要資訊，因為一定是從有帳戶資訊的頁面進去。
         break;
       case 'D00100': // 轉帳
       case 'D00300': // 無卡提款
@@ -212,10 +210,10 @@ const TaiwanDollarAccount = () => {
         params = model; // 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。
         break;
       case 'DownloadDepositBookCover': // 存摺封面下載
-        downloadDepositBookCover(selectedAccount); // 預設檔名為「帳號-日期.pdf」，密碼：身分證號碼
+        downloadDepositBookCover(account.cardInfo.acctId); // 預設檔名為「帳號-日期.pdf」，密碼：身分證號碼
         return;
       case 'Rename': // 帳戶名稱編輯
-        showRenameDialog(accounts[selectedAccount].cardInfo.acctName);
+        showRenameDialog(account.cardInfo.acctName);
         return;
       case 'depositPlus':
       default:
@@ -233,7 +231,7 @@ const TaiwanDollarAccount = () => {
       <div>
         <AccountOverview
           accounts={Object.values(accounts ?? [])}
-          onAccountChange={handleChangeAccount}
+          onAccountChange={(swiper) => setSelectedAccountIdx(swiper.activeIndex)}
           onFunctionChange={handleFunctionChange}
           cardColor="purple"
           funcList={[

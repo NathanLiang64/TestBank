@@ -1,0 +1,80 @@
+
+#SIT(外網)
+@ords_api=https://appbankee-t.feib.com.tw/ords/db1
+#SIT(內部)
+#@ords_api=http://10.48.167.40:8081/ords/db1
+@controller = http://localhost:8081/api
+
+### 建立到價通知設定，設定內容不可與即有任何一個設定完全相同。 
+# 條件:
+# custid: 身份證ID
+# currenty: 幣別
+# price: 價格
+# exchange_type: 換匯種類: 0.現金 1.即期
+POST {{ords_api}}/cust/priceNotice/additem
+Content-Type: application/json
+
+{
+  "custid":"Y120409367",
+  "currency": "CNY",
+  "price": 7.35,
+  "exchange_type": 0
+}
+
+### 查詢到價通知 
+# 條件:
+# custid: 身份證ID
+# -----------------------------------------
+# currenty: 幣別
+# price: 價格
+# exchange_type: 換匯種類: 0.現金 1.即期
+# create_date: 建立日期
+# update_date: 更新日期
+GET {{ords_api}}/cust/priceNotice/query?custid=Y120409367
+
+### 刪除到價通知設定，必需提供完全相同的資料才能刪除。
+# 條件:
+# custid: 身份證ID
+# currenty: 幣別
+# price: 價格
+# exchange_type: 換匯種類: 0.現金 1.即期
+# 錯誤:
+# E01: 找不到到價通知的設定資料
+# 
+POST {{ords_api}}/cust/priceNotice/remove
+Content-Type: application/json
+
+{
+  "custid":"A123456789",
+  "currency": "JPY",
+  "price": 29.35,
+  "exchange_type": 0
+}
+
+### 取得數位存摺相關資料
+# 條件:
+# custid: 身份證ID
+# account_no: 帳戶
+# email: 寄送的電子信箱
+# ------------------------------------------
+# account_no: 帳戶
+# email: 寄送的電子信箱 
+# cname: 中文姓名
+# branch_code: 分行代碼
+# branch_name: 分行名稱
+# accountapplydate: 開戶日期
+GET {{ords_api}}/cust/bankbook/getInfo?custid=A123456789A&account_no=04300496088168&email=zyca@feib.com.tw
+
+###
+POST {{controller}}/frgn/v1/getAllNotices
+Content-Type: application/json
+Authorization: Bearer eyJpc2dUb2tlbiI6IjBjOGQ5MTYzNC0xYzNmLTkxZjktYmI3Yi1hMDlhMmY0MDc3ODIyNDg3NyIsImhlYWRlciI6IlZxTmxpSDZqVHFFUE9TQUErWTJEN1dUZXAwYTE5b3FVTmw4a2JLNTF4ZkcyQldVVUdIZTF3aTVLMUQyWjhzeWZsYkpqRkd0clBrSWZXK2pTVDJjSU1uOGxLSGhZV3A1K2dmVlEzdVloVzJlcGVQcHREcUJUSXZVc04zUzZxVXBRR2tYbWhJVjFrOUZkMHRUUlROdlh2eUZrcG1IMEJMZDhad0hkSUZrNGJwMy9hMEhyZ0g1NjVwU1B0cTJQZEQzOVRqRVY4Sit3NmJ0Z2tKNXVWeE5lOXZrdU9CZVVXL0VVeU1Vd1NhL2lQa2RqZ1NFREdZUlBROEkrdFNFU2U1TTY5Rlo2N05WY1Yrdlc5ZXRoVDJLM1hMdkN0QjgrQzltQnE5RHV0V1h2SGkzd1V0N2k3RVRhVklMalE2NGVhMG50cVRaQ3lUbjJvMGgvQlU0K3BjdW92aHdPb3dLUGd5dWxFYnRraHF6VWNZM05SbTRiWGhteFFCbWRQNXdzMWIvamhDcWk0bktHY1VBaEZFYnZGaXZkTUEyQzA4N2d0UzFvTytoMHlFL2RCMEs3TzVLbkN3T3ZwbmcvTVJSaGZEWld6bTIvc2RWTDJQOEQ3NEJqak96RVhwcm9pZUd2ZXZVOWttUDA2U0F5N0hDK0NkSlYxNHZTSi9ud1l2bWFSb3VNYTJ5R2RwczF5ZDlxVUxtUjBqckF2cnhoNU1yZjhTTVdUYUdEdTd3dG56T2FSR2JyMXMwK29MU1RmZEhpY0VCUGZZVlJjOStRVStsb2VxSm9WZGNpbHlWYTFvTGRFajZRWjM5TUZDdEs5VENkNmxYb3JBSU8rSE8vbTE0Q0k0Uk1RUmJLbjRjT3pDcHpZeEpCSkNZUW92YkZHZmM3cTZVWVhBRldRZmoxK28vdUsvMWV6ckdEMGVYVThaTHJWdnltV213dDUyQTRJdmlQaFZUdFhKWnVLSUYzTHc3eExVdU5FblcrWld0VFdodkpHcUVuZ3JLV0hoSTVrMk9UVml2QmRndXBGclBhNVVzd0ZWV3JYK0tOMml0RFd1STdBUHZ6MUlrMFliQ1BvQmtScWxhOVJ5azlHZC9FN3NoZUswdkZHeVlCeG9tcjVHWHRyZkl5akV2ZVlPNXBkeWVwRFU2Y1lqNXpQRFYxemQrL2RwOUNkSCszMU5aVUNQenJpaCtQMXV0b0g1bm9icTRpdlpBbTZUYkUybm5sd2tEVmVYVENua2Y0MFJvZlJ1WGtrdDUrMzNsakV3ZDNPbnNTMWowVi83bXFmMUp0d1JOTlF1a0dNUEp2QWl0cmpDbDUrSHdUenlRTVhLeCtPSEdOYlVhL01PRld5L2lYRC9HcUpKeTVTWGFQZnJJbWJsZXNwaFl6a1hCQVNmS0xLM0JzeWhCUUNjeWtaano0cE00PSIsInR5cCI6IkpXVCIsIml2IjoiZUE2U2ZHOU9YbEdPanJlZkk4cHo5QT09IiwiYWxnIjoiSFMyNTYiLCJrZXkiOiJJcW5tMEFEeHIvVFdzaHVCOGFiK29BPT0ifQ.eyJleHAiOjE2NTE2Nzg1OTEsImp3dC5wYXlsb2FkIjp7ImN1c3RJZCI6IlkxMjA0MDkzNjcifX0.X-GeKyq42om-U-58sJ9oijOQUXC2Fk3k20hLNZMEcOg
+
+{}
+
+###
+POST {{controller}}/frgn/v1/addNoticeItem
+Content-Type: application/json
+Authorization: Bearer eyJpc2dUb2tlbiI6IjBjOGQ5MTYzNC0xYzNmLTkxZjktYmI3Yi1hMDlhMmY0MDc3ODIyNDg3NyIsImhlYWRlciI6IlZxTmxpSDZqVHFFUE9TQUErWTJEN1dUZXAwYTE5b3FVTmw4a2JLNTF4ZkcyQldVVUdIZTF3aTVLMUQyWjhzeWZsYkpqRkd0clBrSWZXK2pTVDJjSU1uOGxLSGhZV3A1K2dmVlEzdVloVzJlcGVQcHREcUJUSXZVc04zUzZxVXBRR2tYbWhJVjFrOUZkMHRUUlROdlh2eUZrcG1IMEJMZDhad0hkSUZrNGJwMy9hMEhyZ0g1NjVwU1B0cTJQZEQzOVRqRVY4Sit3NmJ0Z2tKNXVWeE5lOXZrdU9CZVVXL0VVeU1Vd1NhL2lQa2RqZ1NFREdZUlBROEkrdFNFU2U1TTY5Rlo2N05WY1Yrdlc5ZXRoVDJLM1hMdkN0QjgrQzltQnE5RHV0V1h2SGkzd1V0N2k3RVRhVklMalE2NGVhMG50cVRaQ3lUbjJvMGgvQlU0K3BjdW92aHdPb3dLUGd5dWxFYnRraHF6VWNZM05SbTRiWGhteFFCbWRQNXdzMWIvamhDcWk0bktHY1VBaEZFYnZGaXZkTUEyQzA4N2d0UzFvTytoMHlFL2RCMEs3TzVLbkN3T3ZwbmcvTVJSaGZEWld6bTIvc2RWTDJQOEQ3NEJqak96RVhwcm9pZUd2ZXZVOWttUDA2U0F5N0hDK0NkSlYxNHZTSi9ud1l2bWFSb3VNYTJ5R2RwczF5ZDlxVUxtUjBqckF2cnhoNU1yZjhTTVdUYUdEdTd3dG56T2FSR2JyMXMwK29MU1RmZEhpY0VCUGZZVlJjOStRVStsb2VxSm9WZGNpbHlWYTFvTGRFajZRWjM5TUZDdEs5VENkNmxYb3JBSU8rSE8vbTE0Q0k0Uk1RUmJLbjRjT3pDcHpZeEpCSkNZUW92YkZHZmM3cTZVWVhBRldRZmoxK28vdUsvMWV6ckdEMGVYVThaTHJWdnltV213dDUyQTRJdmlQaFZUdFhKWnVLSUYzTHc3eExVdU5FblcrWld0VFdodkpHcUVuZ3JLV0hoSTVrMk9UVml2QmRndXBGclBhNVVzd0ZWV3JYK0tOMml0RFd1STdBUHZ6MUlrMFliQ1BvQmtScWxhOVJ5azlHZC9FN3NoZUswdkZHeVlCeG9tcjVHWHRyZkl5akV2ZVlPNXBkeWVwRFU2Y1lqNXpQRFYxemQrL2RwOUNkSCszMU5aVUNQenJpaCtQMXV0b0g1bm9icTRpdlpBbTZUYkUybm5sd2tEVmVYVENua2Y0MFJvZlJ1WGtrdDUrMzNsakV3ZDNPbnNTMWowVi83bXFmMUp0d1JOTlF1a0dNUEp2QWl0cmpDbDUrSHdUenlRTVhLeCtPSEdOYlVhL01PRld5L2lYRC9HcUpKeTVTWGFQZnJJbWJsZXNwaFl6a1hCQVNmS0xLM0JzeWhCUUNjeWtaano0cE00PSIsInR5cCI6IkpXVCIsIml2IjoiZUE2U2ZHOU9YbEdPanJlZkk4cHo5QT09IiwiYWxnIjoiSFMyNTYiLCJrZXkiOiJJcW5tMEFEeHIvVFdzaHVCOGFiK29BPT0ifQ.eyJleHAiOjE2NTE2NzkyODYsImp3dC5wYXlsb2FkIjp7ImN1c3RJZCI6IlkxMjA0MDkzNjcifX0.gm_C-Z0Sm2eaABodIRQI3LGSdwXBhyuGTfc5H4P0U94
+
+{ "currency": "USD", "price": 28.75, "exType": 1 }

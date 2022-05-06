@@ -214,6 +214,16 @@ const CurrencyInfo = [
   { code: 'NZD', name: '紐西蘭幣', symbol: 'NZ$', float: 2 },
 ];
 
+/**
+ * 取得指定幣別的（代碼、名稱、符號、小數位數）資訊。
+ * @param {string} currency 貨幣代碼；可為空值，表示所有貨幣。
+ * @return 指定幣別資訊；若未指定則傳回所有幣別資訊。
+ */
+export const getCurrenyInfo = (currency = null) => {
+  const ccyInfo = CurrencyInfo.find((ccy) => currency === null || ccy.code === currency);
+  return ccyInfo;
+};
+
 // 貨幣單位文字轉為符號
 export const currencySymbolGenerator = (currency, amount = null) => {
   const ccyInfo = CurrencyInfo.find((ccy) => ccy.code === currency);
