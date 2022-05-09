@@ -10,10 +10,10 @@ import EmptyDataWrapper from './emptyData.style';
 * */
 
 const EmptyData = ({
-  content, color,
+  content, color, icon = true,
 }) => (
   <EmptyDataWrapper $color={color}>
-    <EmptyDataIcon color={color || theme.colors.text.light} />
+    { icon && <EmptyDataIcon color={color || theme.colors.text.light} />}
     <p>{content || '搜尋條件無資料'}</p>
   </EmptyDataWrapper>
 );

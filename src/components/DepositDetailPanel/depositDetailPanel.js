@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import DetailCard from 'components/DetailCard';
 import Loading from 'components/Loading';
+import EmptyData from 'components/EmptyData';
 import { ArrowNextIcon } from 'assets/images/icons';
 import DepositDetailPanelWrapper from './depositDetailPanel.style';
 
@@ -18,7 +19,9 @@ const DepositDetailPanel = ({
 
     if (details.length === 0) {
       return (
-        <div style={{ alignSelf: 'center', marginBlock: '2 rem' }}>本月沒有任何活動！！</div>
+        <div style={{ height: 500, width: '100%' }}>
+          <EmptyData content="本月沒有任何活動！！" />
+        </div>
       );
     }
 
