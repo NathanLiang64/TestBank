@@ -11,6 +11,7 @@ FROM node:14
 WORKDIR /app
 COPY . .
 RUN npm ci
+ENV REACT_APP_URL https://bankeesit.feib.com.tw/v2web/app2 
 ENV BROWSER none
 ENV PORT 3006
 CMD ["npx", "react-scripts", "start"]
