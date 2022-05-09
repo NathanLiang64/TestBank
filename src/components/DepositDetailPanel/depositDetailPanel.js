@@ -31,8 +31,7 @@ const DepositDetailPanel = ({
 
     // 根據剩餘高度計算要顯示的卡片數量，計算裝置可容納的交易明細卡片數量
     const list = [];
-    // FBI-9 TODO: 因為初始時高度為0，載入後被往下推，又不會重新render，所以先減1個。
-    const computedCount = Math.floor((detailAreaHeight - 30) / 80) - 1;
+    const computedCount = Math.floor((detailAreaHeight - 30) / 80);
     for (let i = 0; (i < computedCount && i < details.length); i++) {
       list.push(details[i]);
     }

@@ -129,8 +129,7 @@ const TaiwanDollarAccount = () => {
   const renderBonusInfoPanel = (data) => {
     if (!data) {
       return (
-        // FBI-9 TODO: 顯示載入中...
-        <div>FBI-9 TODO: 顯示載入中...</div>
+        <div style={{ lineHeight: '5.28833rem', textAlign: 'center', marginBottom: '1.6rem' }}>載入中...</div>
       );
     }
 
