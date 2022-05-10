@@ -1,7 +1,7 @@
 import { closeFunc } from 'utilities/BankeePlus';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import {
   FEIBButton,
 } from 'components/elements';
@@ -16,8 +16,7 @@ const ExportBankBook1 = ({ location }) => {
   };
 
   return (
-    <>
-      <Header title="匯出結果" hideBack />
+    <Layout title="匯出結果" goBack={false}>
       <ExportBankBookWrapper>
         <form>
           <div className="stateArea">
@@ -40,7 +39,7 @@ const ExportBankBook1 = ({ location }) => {
           </FEIBButton>
         </form>
       </ExportBankBookWrapper>
-    </>
+    </Layout>
   );
 };
 
