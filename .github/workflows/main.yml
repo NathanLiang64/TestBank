@@ -1,0 +1,88 @@
+name: Build and Deploy to GCP
+
+on:
+  push:
+    branches:
+      - Lexionlu
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY_URL: asia-east1-docker.pkg.dev
+  PROJECT_ID: lexionlu-web-prod
+  REPO_NAME: big-bucket-2021
+  IMAGE: ${{ secrets.DOCKER_IMAGE_NAME }}
+
+jobs:    
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Setup gcloud CLI
+    - uses: google-github-actions/setup-gcloud@v0.2.0
+      with:
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+
+    # Configure Docker to use the gcloud command-line tool as a credential
+    # helper for authentication
+    - run: |-
+        gcloud --quiet auth configure-docker $REGISTRY_URL
+
+    # Build the Docker image
+    - name: Build
+      run: |-
+        docker build \
+          --tag "$REGISTRY_URL/$PROJECT_ID/$REPO_NAME/$IMAGE" \
+          .
+
+    # Push the Docker image to Google Container Registry
+    - name: Publish
+      run: docker push $REGISTRY_URL/$PROJECT_ID/$REPO_NAME/$IMAGE
+
+    # Set SSH config for remote Docker host
+    - name: Configure SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_KEY" > ~/.ssh/dev.key
+        chmod 600 ~/.ssh/dev.key
+        cat >>~/.ssh/config <<END
+        Host dev
+          HostName $SSH_HOST
+          User $SSH_USER
+          IdentityFile ~/.ssh/dev.key
+          StrictHostKeyChecking no
+        END
+      env:
+        SSH_USER: github
+        SSH_KEY: ${{ secrets.SSH_KEY }}
+        SSH_HOST: dev.lexionlu.com
+
+    # SSH execute docker stop prev image
+    - name: Stop old contianer
+      continue-on-error: true
+      run: ssh dev sudo docker compose -f $IMAGE/docker-compose.yml down
+
+    # SSH execute remove old docker image
+    - name: Remove old image
+      continue-on-error: true
+      run: ssh dev sudo docker image rm  $REGISTRY_URL/$PROJECT_ID/$REPO_NAME/$IMAGE
+
+    # SSH execute make dir
+    - name: Mkdir
+      continue-on-error: true
+      run: ssh dev mkdir -p $IMAGE
+
+    # SSH copy docker compose
+    - name: SCP docker-compose
+      run: scp docker-compose.yml dev:$IMAGE/docker-compose.yml
+
+    # SSH execute docker run image
+    - name: Run
+      run: ssh dev sudo docker compose -f $IMAGE/docker-compose.yml up -d

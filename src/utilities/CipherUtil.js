@@ -21,20 +21,23 @@ class CipherUtil {
     };
   }
 
+  generateKey(len) {
+    const key = forge.random.getBytesSync(len);
+    return forge.util.encode64(key);
+  }
+
   /**
    * Generate AES, only for web
    */
   generateAES() {
-    const key = forge.random.getBytesSync(32);
-    return forge.util.encode64(key);
+    return this.generateKey(16);
   }
 
   /**
    * Generate IV, only for web
    */
   generateIV() {
-    const iv = forge.random.getBytesSync(16);
-    return forge.util.encode64(iv);
+    return this.generateKey(16);
   }
 
   /**

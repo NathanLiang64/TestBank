@@ -33,21 +33,21 @@ const errorHandle = (status, message) => {
 
 // action log
 // eslint-disable-next-line no-unused-vars
-const postActionLog = (func, log) => {
-  const data = {
-    function: func, log: JSON.stringify(log), custId: localStorage.getItem('custId'), source: 'WebView',
-  };
-  fetch(
-    'https://appbankee-t.feib.com.tw/ords/db1/uat/sys/addLog',
-    {
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify(data),
-      method: 'POST',
-    },
-  );
-};
+// const postActionLog = (func, log) => {
+//   const data = {
+//     function: func, log: JSON.stringify(log), custId: localStorage.getItem('custId'), source: 'WebView',
+//   };
+//   fetch(
+//     'https://appbankee-t.feib.com.tw/ords/db1/uat/sys/addLog',
+//     {
+//       headers: {
+//         'content-type': 'application/json',
+//       },
+//       body: JSON.stringify(data),
+//       method: 'POST',
+//     },
+//   );
+// };
 
 // Axios instance
 const instance = axios.create({
@@ -65,6 +65,8 @@ const userAxios = () => {
 
 userAxios().interceptors.request.use(
   (config) => {
+    console.log(`\x1b[33mAPI :/${config.url}`);
+    console.log('Request = ', config.data);
     const jwt = Cookies.get('jwtToken');
     if (jwt) {
       const aeskey = localStorage.getItem('aesKey');
@@ -75,7 +77,8 @@ userAxios().interceptors.request.use(
         const jwtRq = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify({}));
         config.data.append('jwtRq', JSON.stringify(jwtRq));
       } else {
-        postActionLog(`request: ${config.url}`, config.data);
+        // postActionLog(`request: ${config.url}`, config.data);
+        console.log('before decrypt: ', config.data);
         // 加密
         config.data = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(config.data));
       }
@@ -87,7 +90,7 @@ userAxios().interceptors.request.use(
 
 userAxios().interceptors.response.use(
   async (response) => {
-    const apiUrl = response.config.url;
+    // const apiUrl = response.config.url;
     const token = Cookies.get('jwtToken');
     if (token) {
       const aeskey = localStorage.getItem('aesKey');
@@ -109,7 +112,7 @@ userAxios().interceptors.response.use(
       } else {
         response = { code: response.data.code, message: response.data.message };
       }
-      postActionLog(`response: ${apiUrl}`, response);
+      // postActionLog(`response: ${apiUrl}`, response);
     }
     return response;
   },
@@ -117,7 +120,7 @@ userAxios().interceptors.response.use(
   (error) => {
     console.dir(error);
     const { response } = error;
-    postActionLog(`responseError: ${error.config.url}`, response);
+    // postActionLog(`responseError: ${error.config.url}`, response);
     if (response) {
       // 成功發出 request 且收到 response，但有 error
       errorHandle(response.status, response.data.error);

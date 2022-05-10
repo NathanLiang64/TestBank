@@ -66,13 +66,11 @@ const AutomaticBillPayment = () => {
     setDrawerOpen(true);
   };
 
-  // 編輯外幣到價通知
   const editAutoBillPay = () => {
     setDrawerTitle('編輯自動扣繳');
     setDrawerOpen(true);
   };
 
-  // 刪除外幣到價通知
   const deleteAutoBillPay = () => {
   };
 

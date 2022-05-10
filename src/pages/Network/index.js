@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
+// import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -13,7 +13,7 @@ import {
 import { ArrowNextIcon, EditIcon } from 'assets/images/icons';
 import { hideName, stringDateFormatter } from 'utilities/Generator';
 // import { getNetworkUserInfo, getNetworkOverview, getNetworkFeedback } from 'apis/networkApi';
-import { startFunc } from 'apis/appFuncApi';
+import { goToFunc } from 'utilities/BankeePlus';
 import theme from 'themes/theme';
 import NetworkWrapper, { ShareContentForm, RecommendListWrapper } from './network.style';
 import mockData from './mockData';
@@ -45,7 +45,7 @@ const Network = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-  const history = useHistory();
+  // const history = useHistory();
 
   const getTextareaLength = (textLength) => setTextareaLength(textLength);
 
@@ -247,7 +247,7 @@ const Network = () => {
       <div className="contentCard">
         <div className="title">社群圈回饋</div>
         <div className="overviewContent twoColumn">
-          <div className="overviewItem" onClick={() => startFunc(history, 'depositPlus')}>
+          <div className="overviewItem" onClick={() => goToFunc({ route: 'depositPlus', funcID: '' })}>
             <div className="subTitle">
               優惠利率額度
               <ArrowNextIcon />

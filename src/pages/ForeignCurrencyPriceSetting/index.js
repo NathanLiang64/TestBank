@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -19,6 +19,7 @@ import AddNewItem from 'components/AddNewItem';
 import SettingItem from 'components/SettingItem';
 import BottomDrawer from 'components/BottomDrawer';
 import Header from 'components/Header';
+// import { getAllNotices, addNotice, removeNotice } from './api';
 
 /* Styles */
 import ForeignCurrencyPriceSettingWrapper from './foreignCurrencyPriceSetting.style';
@@ -42,8 +43,16 @@ const ForeignCurrencyPriceSetting = () => {
     resolver: yupResolver(schema),
   });
 
+  // const [model, setModel] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState('');
+
+  useEffect(() => {
+    // TODO: 載入所有已設定的通知。
+    // model = Call getAllNotices()
+    // setModel(model);
+  }, []);
+
   // 新增外幣到價通知
   const addPriceSetting = () => {
     setDrawerTitle('新增外幣到價通知');
@@ -53,12 +62,17 @@ const ForeignCurrencyPriceSetting = () => {
   // 編輯外幣到價通知
   const editPriceSetting = () => {
     setDrawerTitle('編輯外幣到價通知');
+    // TODO: 內容不可跟其他設定完全相同。
+    // TODO：call updateNotice(oldNotice, newNotice)
+    // setModel(model);
     setDrawerOpen(true);
   };
 
   // 刪除外幣到價通知
   const deletePriceSetting = () => {
     console.log('刪除到價通知');
+    // TODO：call removeNotice(notice)
+    // setModel(model);
   };
 
   const handleCloseDrawer = () => {
@@ -69,6 +83,10 @@ const ForeignCurrencyPriceSetting = () => {
     // eslint-disable-next-line no-console
     console.log(data);
     handleCloseDrawer();
+    // Note：每個幣別可設多個通知
+    // TODO：call addNotice(notice)
+    // TODO: 內容不可跟其他設定完全相同。
+    // setModel(model);
   };
 
   const renderForm = () => (

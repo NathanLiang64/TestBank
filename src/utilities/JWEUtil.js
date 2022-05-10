@@ -69,12 +69,12 @@ class JWEUtil {
   encryptJWEMessage(publicKeyString, message) {
     try {
       const publicKey = CipherUtil.getRSAPublicKeyFromPem(publicKeyString);
-      const aesKey = CipherUtil.generateAES();
+      const contextKey = CipherUtil.generateKey(32); // 本文加密金鑰
       const iv = CipherUtil.generateIV();
-      const encryptedKey = CipherUtil.encryptRSA(publicKey, forge.util.decode64(aesKey));
-      const enc = CipherUtil.getEnc(aesKey);
+      const encryptedKey = CipherUtil.encryptRSA(publicKey, forge.util.decode64(contextKey));
+      const enc = CipherUtil.getEnc(contextKey);
       const cipherText = CipherUtil.encryptAES(enc, iv, message);
-      const tag = this.getTag(aesKey, message);
+      const tag = this.getTag(contextKey, message);
 
       // return {
       //   tag,

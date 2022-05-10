@@ -1,7 +1,7 @@
 import { closeFunc } from 'utilities/BankeePlus';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import {
   FEIBButton,
 } from 'components/elements';
@@ -11,19 +11,19 @@ import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import ExportBankBookWrapper from './exportBankBook.style';
 
 const ExportBankBook1 = ({ location }) => {
-  const toMorePage = () => {
+  const toMorePage = (e) => {
+    e.preventDefault();
     closeFunc();
   };
 
   return (
-    <>
-      <Header title="匯出結果" hideBack />
+    <Layout title="匯出結果" goBack={false}>
       <ExportBankBookWrapper>
         <form>
           <div className="stateArea">
-            <SuccessFailureAnimations isSuccess={location.state.data.success} successTitle="寄出成功" errorTitle="寄出失敗" />
+            <SuccessFailureAnimations isSuccess={location.state?.data.success} successTitle="寄出成功" errorTitle="寄出失敗" />
             {
-              location.state.data.success
+              location.state?.data.success
                 ? (
                   <div className="stateContent">
                     存簿封面及帳戶明細將在 5 分鐘內寄送至留存信箱：
@@ -40,7 +40,7 @@ const ExportBankBook1 = ({ location }) => {
           </FEIBButton>
         </form>
       </ExportBankBookWrapper>
-    </>
+    </Layout>
   );
 };
 
