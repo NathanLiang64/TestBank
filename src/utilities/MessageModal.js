@@ -2,6 +2,7 @@ import store from '../stores/store';
 import {
   setModal, setModalVisible,
   setDrawer, setDrawerVisible,
+  setAnimationModal, setAnimationModalVisible,
 } from '../stores/reducers/ModalReducer';
 
 export const closePopup = () => {
@@ -53,4 +54,11 @@ export const showDrawer = async (title, content) => {
     content,
   }));
   store.dispatch(setDrawerVisible(true));
+};
+
+export const showAnimationModal = async (content) => {
+  store.dispatch(setAnimationModal({
+    ...content,
+  }));
+  store.dispatch(setAnimationModalVisible(true));
 };
