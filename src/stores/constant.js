@@ -11,3 +11,5 @@ export const SET_MODAL_VISIBLE = 'setModalVisible';
 export const SET_DRAWER = 'setDrawer';
 export const SET_DRAWER_VISIBLE = 'setDrawerVisible';
 export const SET_WAITTING_VISIBLE = 'setWaittingVisible';
+export const SET_ANIMATION_MODAL_VISIBLE = 'setAnimationModalVisible';
+export const SET_ANIMATION_MODAL = 'setAnimationModal';
