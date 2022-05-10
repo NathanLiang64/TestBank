@@ -1,22 +1,41 @@
 /* eslint-disable prefer-template */
+import { showError } from './MessageModal';
+
 const device = {
   ios: () => /iPhone|iPad|iPod/i.test(navigator.userAgent),
   android: () => /Android/i.test(navigator.userAgent),
 };
 
 const funcStack = {
-  push: (func, params, keepData, hideMenu) => {
+  push: (func, params = null, keepData = null) => {
+    const startItem = {
+      func, params, keepData,
+    };
+    console.log('Start Function : ', startItem);
+
     const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
-    stack.push({
-      func, params, keepData, hideMenu,
-    });
+    stack.push(startItem);
     localStorage.setItem('funcStack', JSON.stringify(stack));
+
+    // 寫入 Function 啟動參數。
+    localStorage.setItem('funcParams', JSON.stringify(params));
   },
   pop: () => {
     const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
+    const closedItem = stack[stack.length - 1];
+    console.log('POP -> Closed Item : ', closedItem);
+
     stack.pop();
     localStorage.setItem('funcStack', JSON.stringify(stack));
-    return stack;
+
+    const startItem = stack[stack.length - 1];
+    if (startItem) {
+      // 寫入 Function 啟動參數。
+      const params = closedItem.keepData ?? startItem.params;
+      localStorage.setItem('funcParams', JSON.stringify(params));
+      console.log('Close Function and Back to (', startItem.func, ')', params);
+    } else localStorage.removeItem('funcParams');
+    return startItem;
   },
   clear: () => {
     localStorage.setItem('funcStack', '[]');
@@ -24,9 +43,7 @@ const funcStack = {
 };
 
 // 網頁通知APP跳轉指定功能
-function goToFunc({ route, funcID }, funcParams = '', keepData = '') {
-  // console.debug('name:' + funcName + ', data:' + jsonParams);
-  route = route.replace('/', '');
+function goToFunc({ route, funcID }, funcParams, keepData) {
   const data = {
     funcID,
     funcParams,
@@ -39,12 +56,21 @@ function goToFunc({ route, funcID }, funcParams = '', keepData = '') {
     const param = JSON.stringify(data);
     window.jstoapp.startFunc(param);
   } else {
-    console.log(`[Start Function(${funcID})]`);
+    route = route.replace(/^\/?/, '');
     funcStack.push({ route, funcID }, funcParams, keepData);
     // console.log(history);
     // const history = useHistory();
     // history.push(`/${funcID}`);
-    window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${route}`;
+    window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${route}`; // TODO: 提供 funcParams，如何提供？
+  }
+}
+
+function startFunc(funcID, funcParams, keepData) {
+  // TODO: 若 funcID 是以'/'為開頭，表示是指定固定網址，因此不會交由 APP切換
+  if (funcID) {
+    goToFunc({ route: funcID, funcID }, funcParams, keepData);
+  } else {
+    showError('此功能尚未完成！');
   }
 }
 
@@ -52,21 +78,39 @@ function goToFunc({ route, funcID }, funcParams = '', keepData = '') {
 function closeFunc() {
   if (device.ios()) {
     const msg = JSON.stringify({ name: 'closeFunc' });
+    // TODO： 取回 keepData；若沒有提供，則應以 funcParams 傳回。
     window.webkit?.messageHandlers.jstoapp.postMessage(msg);
   } else if (device.android()) {
+    // TODO： 取回 keepData；若沒有提供，則應以 funcParams 傳回。
     window.jstoapp.closeFunc();
   } else {
-    const stack = funcStack.pop();
-    const funcItem = stack[stack.length - 1];
+    const funcItem = funcStack.pop();
     if (funcItem) {
-      console.log(`[Close Function and Back to(${funcItem.func.route})]`);
-      window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcItem.func.route}`;
+      window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcItem.func.route}`; // keepData 存入 localStorage 'funcParams'
       // const history = useHistory();
       // history.push(funcItem.funcName);
     } else {
       window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/`;
     }
   }
+}
+
+/**
+ * 取得 APP Function Controller 提供的功能啟動參數。
+ * @returns 若參數當時是以 JSON 物件儲存，則同樣會轉成物件傳回。
+ */
+function loadFuncParams() {
+  const data = localStorage.getItem('funcParams');
+  if (data && data !== 'undefined') {
+    try {
+      const params = JSON.parse(data);
+      console.log('>> Function 啟動參數 : ', params);
+      return params;
+    } catch (error) {
+      return data;
+    }
+  }
+  return null;
 }
 
 // 開關 loading
@@ -164,6 +208,7 @@ function onVerification() {
 }
 
 export {
+  startFunc,
   goToFunc,
   closeFunc,
   goHome,
@@ -174,4 +219,5 @@ export {
   setAuthdata,
   // showWebLog,
   onVerification,
+  loadFuncParams,
 };

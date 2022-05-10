@@ -1,20 +1,18 @@
+/* eslint-disable no-use-before-define */
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import {
-  EditAccountIcon, MoreIcon, VisibilityIcon, VisibilityOffIcon,
+  MoreIcon, VisibilityIcon, VisibilityOffIcon,
 } from 'assets/images/icons';
-import BottomDrawer from 'components/BottomDrawer';
-import Dialog from 'components/Dialog';
 import CopyTextIconButton from 'components/CopyTextIconButton';
-import {
-  FEIBIconButton, FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBButton,
-} from 'components/elements';
+import { FEIBIconButton } from 'components/elements';
 import theme from 'themes/theme';
 import {
-  accountFormatter, accountTypeColorGenerator, currencySymbolGenerator, toCurrency,
+  accountFormatter, accountTypeColorGenerator, currencySymbolGenerator,
 } from 'utilities/Generator';
 import DebitCardBackground from 'assets/images/debitCardBackground.png';
+import { showDrawer } from '../../utilities/MessageModal';
+import { setDrawerVisible } from '../../stores/reducers/ModalReducer';
 import { iconGenerator } from './debitCardIconGenerator';
 import DebitCardWrapper from './debitCard.style';
 
@@ -53,29 +51,15 @@ const DebitCard = ({
   transferLimit,
   transferRemaining,
   moreList,
-  moreDefault = true,
   dollarSign,
   color,
+  onFunctionChange,
 }) => {
+  const dispatch = useDispatch();
   const [showBalance, setShowBalance] = useState(true);
-  const [openDrawer, setOpenDrawer] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);
-
-  const { register, handleSubmit } = useForm();
 
   const handleClickShowBalance = () => {
     setShowBalance(!showBalance);
-  };
-
-  const handleClickEditCardName = () => {
-    setOpenDrawer(false);
-    setOpenDialog(true);
-  };
-
-  // eslint-disable-next-line no-unused-vars
-  const handleClickSubmitCardName = (data) => {
-    setOpenDialog(false);
-    // send data
   };
 
   // 判斷卡片類型是否為 original
@@ -93,19 +77,35 @@ const DebitCard = ({
   // 渲染卡片右上角的 "更多" 圖標
   const renderMoreIconButton = () => (
     <div className="moreIconButton">
-      <FEIBIconButton $fontSize={1.6} onClick={() => setOpenDrawer(true)}>
+      <FEIBIconButton $fontSize={1.6} onClick={() => showDrawer('', renderMoreList(moreList))}>
         <MoreIcon />
       </FEIBIconButton>
     </div>
   );
 
+  const onFuncClick = (fid) => {
+    dispatch(setDrawerVisible(false));
+    onFunctionChange(fid);
+  };
+
   // render 功能列表
   const renderFunctionList = (list) => (
     <ul className="functionList">
-      { list.map((item) => (
-        <li key={item.path}>
-          <Link to={item.path}>{item.title}</Link>
-        </li>
+      { list.map((func) => (
+        func.fid
+          ? (
+            <li key={func.fid} onClick={() => onFuncClick(func.fid)}>
+              <p>
+                {func.title}
+              </p>
+            </li>
+          ) : (
+            <li>
+              <div style={{ color: 'gray' }}>
+                {func.title}
+              </div>
+            </li>
+          )
       )) }
     </ul>
   );
@@ -124,53 +124,15 @@ const DebitCard = ({
   // render 點擊更多圖標後的功能列表
   const renderMoreList = (list) => (
     <ul className="moreList">
-      {list.map((item) => (
-        <li key={item.title}>
-          <Link to={item.path}>
-            {iconGenerator(item.icon)}
-            {item.title}
-          </Link>
+      {list.map((func) => (
+        <li key={func.title} onClick={() => onFuncClick(func.fid)}>
+          <p>
+            {iconGenerator(func.icon)}
+            {func.title}
+          </p>
         </li>
       ))}
-      {/* 下方為功能列表內的固定功能 */}
-      {
-        moreDefault && (
-          <li onClick={handleClickEditCardName}>
-            <p>
-              <EditAccountIcon />
-              帳戶名稱編輯
-            </p>
-          </li>
-        )
-      }
     </ul>
-  );
-
-  const renderBottomDrawer = (list) => (
-    <BottomDrawer
-      className="debitCardDrawer"
-      isOpen={openDrawer}
-      onClose={() => setOpenDrawer(!openDrawer)}
-      content={renderMoreList(list)}
-    />
-  );
-
-  const renderEditCardNameDialog = (name) => (
-    <Dialog
-      title="帳戶名稱編輯"
-      isOpen={openDialog}
-      onClose={() => setOpenDialog(false)}
-      content={(
-        <>
-          <FEIBInputLabel>新的帳戶名稱</FEIBInputLabel>
-          <FEIBInput defaultValue={name} autoFocus {...register('cardName')} />
-          <FEIBErrorMessage $noSpacing />
-        </>
-      )}
-      action={(
-        <FEIBButton onClick={handleSubmit(handleClickSubmitCardName)}>確認</FEIBButton>
-      )}
-    />
   );
 
   return (
@@ -182,18 +144,17 @@ const DebitCard = ({
           { originalType() && <p className="branch">{branch}</p> }
           <p className="account">{accountFormatter(account)}</p>
           <CopyTextIconButton copyText={account} />
+          <p className="account">{dollarSign !== 'NTD' ? `(${dollarSign})` : ''}</p>
         </div>
       </div>
       <div className={`cardBalance ${originalType() && 'grow'}`}>
         { !hideIcon && renderEyeIconButton() }
         <h3 className="balance">
-          {`${currencySymbolGenerator(dollarSign)}${showBalance ? toCurrency(balance) : '＊＊＊＊＊'}`}
+          {`${currencySymbolGenerator(dollarSign, (showBalance ? balance : '*'))}`}
         </h3>
       </div>
       { (originalType() && (functionList && renderFunctionList(functionList))) || (transferLimit && transferRemaining && renderTransferLimit(transferLimit, transferRemaining)) }
       { originalType() && moreList && renderMoreIconButton() }
-      { originalType() && moreList && renderBottomDrawer(moreList) }
-      { originalType() && renderEditCardNameDialog(cardName) }
     </DebitCardWrapper>
   );
 };

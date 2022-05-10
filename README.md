@@ -1,3 +1,7 @@
+**瑞芙員工請滑～到最下方的註解**
+
+<br>
+
 # APP2_WebView
 
 - [瑞芙 Wireframe | Axure](https://l3tcqo.axshare.com/)
@@ -250,6 +254,7 @@ App2_WebView
 - `SS_Adrian` - 聖森前端開發人員 Adrian
 - `SS_Archie` - 聖森前端開發人員 Archie
 - `vjinc_Benny` - 唯物前端開發人員 Benny
+- `Lexionlu` - 瑞芙部屬分支 Henry
 
 ---
 
@@ -273,3 +278,49 @@ pages 資料夾底下為功能模組(Function_code)，資料夾命名方式依�
 
 ---
 ```
+
+<br>
+
+# 瑞芙註解：FEIB BANKEE FRONTEND
+
+這是遠銀 FEIB Bankee App2 前端。此版本僅供瑞芙內部測試使用。
+
+<br>
+
+## About Git Branches and its Associated Actions
+
+This project uses custom GitHub Actions as CI/CD to *monitor*, *build* and *deploy* branches to testing environments automatically. The breakdown of branches are shown as table beloew:</p>
+
+| Branches | Associations | URLs |
+|:-:|:-:|:-:|
+| Lexionlu | ... will deploy to ... | https://feib-bankee-2022.dev.lexionlu.com |
+| stage | ... will deploy to ... | https://feib-bankee-2022.stg.lexionlu.com |
+
+<br>
+
+## General Information
+
+| 項目 | 說明 |
+|---|---|
+| 客戶ＰＭ | Melody (聯繫方式：melodieweng@feib.com.tw) |
+| 客戶ＩＴ | Jerry (聯繫方式：jerry88634@feib.com.tw) |
+| ＰＭ | Dena |
+| 前端 | Henry |
+| 後端 | Henry |
+| 前提 | 遠銀不滿唯物和聖森所開發的code，找瑞芙協助做refactor。 |
+| 目的 | 協助 Jerry 做 refactoring 和新功能。 |
+| 交付方式 | Push 到客戶的 repo（見下） |
+| 密碼 | 身分證字號：B100000002<br>使用者代號：1qaz2wsx<br>密碼：feib1688 |
+| 備註 | Don't use master branch, use Jerry or Lexionlu branch! |
+
+## Instruction to deloy to Lexionlu servers
+
+Lexionlu's GitHub repo is configured to deploy to dev and stage server automatically via GitHub Actions. Follow the instructions to push to GitHub:
+
+1. `git remote add github https://github.com/lexionlu-design/feib-bankee-2022.git`
+2. `git push github Lexionlu`
+
+FEIB's repo is at:
+
+1. `git remote add origin https://git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/APP2-WebView`
+2. `git push origin Lexionlu`

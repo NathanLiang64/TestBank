@@ -70,9 +70,6 @@ import { lazy } from 'react';
 // import Instalment from 'pages/Instalment';
 // import AutomaticBillPayment from 'pages/AutomaticBillPayment';
 
-/* 開發用目錄頁 */
-// import Nav from 'pages/Nav';
-
 /* 轉帳靜態頁 (for prototype) */
 // import TransferStatic from 'pages/TransferStatic';
 // import TransferStatic1 from 'pages/TransferStatic/transfer_1';
@@ -83,9 +80,7 @@ const TransferStatic2 = lazy(() => import('pages/TransferStatic/transfer_2'));
 
 /* Tutorials (for prototype) */
 // import Tutorials from 'pages/Tutorials';
-const Tutorials = lazy(() => import('pages/Tutorials'));
 
-const Test = lazy(() => import('pages/Test'));
 const CardLessATM = lazy(() => import('pages/CardLessATM'));
 const CardLessATM1 = lazy(() => import('pages/CardLessATM/cardLessATM_1'));
 const CardLessATM2 = lazy(() => import('pages/CardLessATM/cardLessATM_2'));
@@ -94,8 +89,6 @@ const LossReissue = lazy(() => import('pages/LossReissue'));
 const AccountMaintenance = lazy(() => import('pages/AccountMaintenance'));
 const BillPay = lazy(() => import('pages/BillPay'));
 const BillPay1 = lazy(() => import('pages/BillPay/billPay_1'));
-const Nav = lazy(() => import('pages/Nav'));
-const Login = lazy(() => import('pages/Login'));
 const More = lazy(() => import('pages/More'));
 const DepositPlus = lazy(() => import('pages/DepositPlus'));
 const NicknameSetting = lazy(() => import('pages/NicknameSetting'));
@@ -156,10 +149,15 @@ const Instalment3 = lazy(() => import('pages/Instalment/Instalment_3'));
 const AutomaticBillPayment = lazy(() => import('pages/AutomaticBillPayment'));
 const ExchangeRate = lazy(() => import('pages/ExchangeRate'));
 
+// TODO：支援開發及Prototype測試使用
+const Login = lazy(() => import('proto/Login/login'));
+const Tutorials = lazy(() => import('proto/Tutorials'));
+// const Test = lazy(() => import('proto/Test'));
+const Nav = lazy(() => import('proto/Nav/Nav'));
+// --------------------------------
+
 const routes = [
-  { path: '/', exact: true, component: Nav },
-  { path: '/login', exact: false, component: Login },
-  { path: '/test', exact: false, component: Test },
+  { path: '/D00300', exact: true, component: CardLessATM },
   { path: '/cardLessATM', exact: true, component: CardLessATM },
   { path: '/cardLessATM1', exact: false, component: CardLessATM1 },
   { path: '/cardLessATM2', exact: false, component: CardLessATM2 },
@@ -198,20 +196,21 @@ const routes = [
   { path: '/exchange1', exact: false, component: Exchange1 },
   { path: '/exchange2', exact: false, component: Exchange2 },
   { path: '/transfer', exact: false, component: Transfer },
+  { path: '/D00100', exact: false, component: Transfer },
   { path: '/transfer1', exact: false, component: Transfer1 },
   { path: '/transfer2', exact: false, component: Transfer2 },
   { path: '/profile', exact: false, component: Profile },
   { path: '/more', exact: false, component: More },
   { path: '/financialDepartments', exact: false, component: FinancialDepartments },
   { path: '/network', exact: false, component: Network },
-  { path: '/taiwanDollarAccount', exact: false, component: TaiwanDollarAccount },
+  { path: '/C00300', exact: false, component: TaiwanDollarAccount },
   { path: '/taiwanDollarAccountDetails', exact: false, component: TaiwanDollarAccountDetails },
   { path: '/tradingAccount', exact: false, component: TradingAccount },
   { path: '/tradingAccountDetails', exact: false, component: TradingAccountDetails },
-  { path: '/foreignCurrencyAccount', exact: false, component: ForeignCurrencyAccount },
+  { path: '/C00400', exact: false, component: ForeignCurrencyAccount },
   { path: '/foreignCurrencyAccountDetails', exact: false, component: ForeignCurrencyAccountDetails },
   { path: '/regularBasicInformation', exact: false, component: RegularBasicInformation },
-  { path: '/exportBankBook', exact: false, component: ExportBankBook },
+  { path: '/C00800', exact: false, component: ExportBankBook },
   { path: '/exportBankBook1', exact: false, component: ExportBankBook1 },
   { path: '/foreignCurrencyTransfer', exact: false, component: ForeignCurrencyTransfer },
   { path: '/foreignCurrencyTransfer1', exact: false, component: ForeignCurrencyTransfer1 },
@@ -227,13 +226,20 @@ const routes = [
   { path: '/transferStatic', exact: false, component: TransferStatic },
   { path: '/transferStatic1', exact: false, component: TransferStatic1 },
   { path: '/transferStatic2', exact: false, component: TransferStatic2 },
-  { path: '/tutorials', exact: false, component: Tutorials },
   { path: '/staging', exact: false, component: Instalment },
   { path: '/staging1', exact: false, component: Instalment1 },
   { path: '/staging2', exact: false, component: Instalment2 },
   { path: '/staging3', exact: false, component: Instalment3 },
   { path: '/withholding', exact: false, component: AutomaticBillPayment },
+  { path: '/E00100', exact: false, component: ExchangeRate },
   { path: '/exchangeRate', exact: false, component: ExchangeRate },
+
+  // TODO：支援開發及Prototype測試使用
+  { path: '/login', exact: false, component: Login },
+  { path: '/tutorials', exact: false, component: Tutorials },
+  // { path: '/home', exact: false, component: Nav },
+  { path: '/', exact: true, component: Nav },
+  // --------------------------------
 ];
 
 export default routes;

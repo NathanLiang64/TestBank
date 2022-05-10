@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { DateRangePicker as KeyboardDateRangePicker } from 'react-date-range';
 import { Button } from '@material-ui/core';
 import { FEIBInputLabel, FEIBInput } from 'components/elements';
-import { dateFormatter } from 'utilities/Generator';
+import { dateFormatter, stringToDate } from 'utilities/Generator';
 import { CalendarIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
 import DateRangePickerWrapper from './dateRangePicker.style';
@@ -26,8 +26,8 @@ const DateRangePicker = ({
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [dateRangeText, setDateRangeText] = useState('');
   const [dateRange, setDateRange] = useState({
-    startDate: date[0] || new Date(),
-    endDate: date[1] || new Date(),
+    startDate: new Date(),
+    endDate: new Date(),
   });
 
   const selectionRange = {
@@ -53,12 +53,16 @@ const DateRangePicker = ({
   };
 
   useEffect(() => {
-    if (date.length > 0) {
-      setDateRangeToString(date);
-      setDateRange({
-        startDate: date[0] || new Date(),
-        endDate: date[1] || new Date(),
-      });
+    if (date?.length) {
+      let startDate = date[0];
+      let endDate = date[1];
+      if (typeof startDate === 'string') { // 為了相容台外幣明細
+        if (!startDate) return; // 當沒有設定日期時，維持「自訂搜尋日期區間」為空白。
+        startDate = stringToDate(startDate);
+        endDate = stringToDate(endDate);
+      }
+      setDateRangeToString([startDate, endDate]);
+      setDateRange({ startDate, endDate });
     }
   }, [date]);
 

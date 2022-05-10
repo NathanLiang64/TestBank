@@ -21,10 +21,12 @@
     "js-cookie": "^3.0.1",
     "node-forge": "^0.10.0",
     "node-sass": "^5.0.0",
+    "prop-types": "^15.8.1",
     "qrcode.react": "^1.0.1",
     "react": "^17.0.2",
     "react-barcodes": "^1.1.0",
     "react-beautiful-dnd": "^13.1.0",
+    "react-bootstrap": "^2.2.2",
     "react-copy-to-clipboard": "^5.0.3",
     "react-date-range": "^1.2.0",
     "react-dom": "^17.0.2",
@@ -36,6 +38,7 @@
     "react-scripts": "4.0.3",
     "react-visibility-sensor": "^5.1.1",
     "redux": "^4.1.0",
+    "redux-devtools-extension": "^2.13.9",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
     "reset-css": "^5.0.1",
@@ -52,7 +55,7 @@
     "eject": "react-scripts eject",
     "server": "json-server  -H 0.0.0.0 __json_server_mock__/db.json --routes __json_server_mock__/routes.json --watch --port 3005"
   },
-  "homepage": "/webview/app2/",
+  "homepage": "/",
   "browserslist": {
     "production": [
       ">0.2%",
