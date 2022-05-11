@@ -174,21 +174,21 @@ const Nav = () => {
       </Accordion> */}
       <FEIBButton onClick={logOut}>登出</FEIBButton>
       <div>
-      <Accordion title="到價通知設定">
-        <div onClick={() => getAllNotices()}>
-          <p>取得所有通知設定(API: getAllNotices)</p>
-        </div>
-        <div onClick={() => addNotice({ currency: 'USD', price: '29.56', exType: 0 })}>
-          <p>新增(API: addNotice)</p>
-        </div>
-        <div onClick={() => removeNotice({ currency: 'USD', price: '29.56', exType: 0 })}>
-          <p>刪除(API: removeNotice)</p>
-        </div>
-        <div onClick={() => updateNotice({ currency: 'USD', price: '29.56', exType: 0 }, { currency: 'JPY', price: '4.02', exType: 1 })}>
-          <p>修改(API: updateNotice)</p>
-        </div>
+        <Accordion title="到價通知設定">
+          <div onClick={() => getAllNotices()}>
+            <p>取得所有通知設定(API: getAllNotices)</p>
+          </div>
+          <div onClick={() => addNotice({ currency: 'USD', price: '29.56', exType: 0 })}>
+            <p>新增(API: addNotice)</p>
+          </div>
+          <div onClick={() => removeNotice({ currency: 'USD', price: '29.56', exType: 0 })}>
+            <p>刪除(API: removeNotice)</p>
+          </div>
+          <div onClick={() => updateNotice({ currency: 'USD', price: '29.56', exType: 0 }, { currency: 'JPY', price: '4.02', exType: 1 })}>
+            <p>修改(API: updateNotice)</p>
+          </div>
+        </Accordion>
       </div>
-      </Accordion>
     </NavWrapper>
   );
 };
