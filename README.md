@@ -306,12 +306,24 @@ This project uses custom GitHub Actions as CI/CD to *monitor*, *build* and *depl
 | 客戶ＩＴ | Jerry (聯繫方式：jerry88634@feib.com.tw) |
 | ＰＭ | Dena |
 | 前端 | Henry |
-| 後端 | Henry |
+| 後端 | |
 | 前提 | 遠銀不滿唯物和聖森所開發的code，找瑞芙協助做refactor。 |
 | 目的 | 協助 Jerry 做 refactoring 和新功能。 |
 | 交付方式 | Push 到客戶的 repo（見下） |
 | 密碼 | 身分證字號：B100000002<br>使用者代號：1qaz2wsx<br>密碼：feib1688 |
 | 備註 | Don't use master branch, use Jerry or Lexionlu branch! |
+
+## To run (under dev env)
+
+This app requires backend (the FEIB SIT). There are two ways to run:
+
+> Make sure `REACT_APP_URL` is pointing to FEIB SIT server under the file `.env.development`
+
+or
+
+> `REACT_APP_URL=https://bankeesit.feib.com.tw/v2web/app2 BROWSER=none npm run start`
+
+<br>
 
 ## Instruction to deloy to Lexionlu servers
 
@@ -324,3 +336,4 @@ FEIB's repo is at:
 
 1. `git remote add origin https://git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/APP2-WebView`
 2. `git push origin Lexionlu`
+
