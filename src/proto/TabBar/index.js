@@ -14,7 +14,7 @@ import ArrowImage from 'assets/images/tabBarIcons/arrow.svg';
 import AvatarImage from 'assets/images/tabBarIcons/Navigation_member.png';
 import { setFavoriteDrawer } from 'pages/Favorite/stores/actions';
 import TabBarWrapper from './tabBar.style';
-import { setIsShake } from '../../pages/ShakeShake/stores/actions';
+import { setIsShake } from '../ShakeShake/stores/actions';
 
 const TabBar = () => {
   const history = useHistory();

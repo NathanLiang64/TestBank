@@ -4,7 +4,7 @@ import { reducers as billPayReducer } from 'pages/BillPay/stores';
 import { reducers as patternLockSettingReducer } from 'pages/PatternLockSetting/stores';
 // import { reducers as depositOverviewReducer } from 'pages/DepositOverview/stores';
 // import { reducers as depositInquiryReducer } from 'pages/DepositInquiry/stores';
-import { reducers as shakeShakeReducer } from 'pages/ShakeShake/stores';
+// import { reducers as shakeShakeReducer } from 'proto/ShakeShake/stores';
 import { reducers as transferReducer } from 'pages/Transfer/stores';
 import { reducers as transferStaticReducer } from 'pages/TransferStatic/stores';
 import { reducers as favoriteReducer } from 'pages/Favorite/stores';
@@ -24,7 +24,7 @@ const reducer = combineReducers({
   patternLockSetting: patternLockSettingReducer,
   // depositOverview: depositOverviewReducer,
   // depositInquiry: depositInquiryReducer,
-  shakeShake: shakeShakeReducer,
+  // shakeShake: shakeShakeReducer,
   transfer: transferReducer,
   transferStatic: transferStaticReducer,
   favorite: favoriteReducer,
