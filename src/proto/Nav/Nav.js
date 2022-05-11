@@ -53,7 +53,7 @@ const Nav = () => {
   };
 
   return (
-    <Layout>
+    <Layout title="測試功能首頁" goBack={false} goHome={false}>
       <NavWrapper>
         <div onClick={() => startFunc('C00300')}>
           <ul>

@@ -14,15 +14,15 @@ import { FEIBInputLabel, FEIBInput, FEIBErrorMessage } from 'components/elements
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc } from 'utilities/BankeePlus';
-import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
+// import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
 import {
   getAccountSummary,
-  getDepositBonus,
+  // getDepositBonus,
   getTransactionDetails,
   downloadDepositBookCover,
   setAccountAlias,
 } from './api';
-import TaiwanDollarAccountWrapper from './C00300.style';
+// import TaiwanDollarAccountWrapper from './C00500.style';
 
 /**
  * C00300 台幣帳戶首頁
@@ -33,7 +33,7 @@ const TaiwanDollarAccount = () => {
 
   const [accounts, setAccounts] = useState(null);
   const [selectedAccountIdx, setSelectedAccountIdx] = useState(-1);
-  const [panelInfo, setPanelInfo] = useState(null);
+  // const [panelInfo, setPanelInfo] = useState(null);
   const [transactions, setTransactions] = useState(null);
 
   /**
@@ -56,8 +56,8 @@ const TaiwanDollarAccount = () => {
 
     // 首次加載時取得用戶所有外幣的存款帳戶摘要資訊
     if (!model.accounts) {
-      const acctData = await getAccountSummary('MC'); // M=台幣主帳戶、C=台幣子帳戶
-      // TODO：沒有「台幣帳戶」導去申請？
+      const acctData = await getAccountSummary('S'); // S=交割帳戶
+      // TODO：沒有「交割帳戶」導去申請？
       model.accounts = acctData.map((acct) => ({ // Note: 將陣列(Array)轉為字典(Object/HashMap)
         cardInfo: acct,
         panelInfo: null, // 此屬性在 selectedAccountIdx 變更時取得。
@@ -72,18 +72,18 @@ const TaiwanDollarAccount = () => {
     dispatch(setWaittingVisible(false));
   }, []);
 
-  /**
-   * 更新優惠利率資訊
-   */
-  const updateBonusPanel = async (account) => {
-    setPanelInfo(null);
-    if (account.panelInfo === null) {
-      const accountNo = account.cardInfo.acctId;
-      account.panelInfo = await getDepositBonus(accountNo);
-      if (accountNo !== getSelectedAccount()) return; // Note: 當卡片已經換掉了，就不需要顯示這份資料。
-    }
-    setPanelInfo(account.panelInfo);
-  };
+  // /**
+  //  * 更新優惠利率資訊
+  //  */
+  // const updateBonusPanel = async (account) => {
+  //   setPanelInfo(null);
+  //   if (account.panelInfo === null) {
+  //     const accountNo = account.cardInfo.acctId;
+  //     account.panelInfo = await getDepositBonus(accountNo);
+  //     if (accountNo !== getSelectedAccount()) return; // Note: 當卡片已經換掉了，就不需要顯示這份資料。
+  //   }
+  //   setPanelInfo(account.panelInfo);
+  // };
 
   /**
    * 更新帳戶交易明細清單
@@ -117,7 +117,7 @@ const TaiwanDollarAccount = () => {
 
     if (selectedAccountIdx >= 0) {
       const account = accounts[selectedAccountIdx];
-      updateBonusPanel(account); // 取得優惠利率資訊
+      // updateBonusPanel(account); // 取得優惠利率資訊
       updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可
     }
   }, [selectedAccountIdx]);
@@ -127,53 +127,53 @@ const TaiwanDollarAccount = () => {
     return accounts[index].cardInfo.acctId;
   };
 
-  // 優存(利率/利息)資訊 顯示模式（true.優惠利率, false.累積利息)
-  const [showRate, setShowRate] = useState(true);
+  // // 優存(利率/利息)資訊 顯示模式（true.優惠利率, false.累積利息)
+  // const [showRate, setShowRate] = useState(true);
 
-  /**
-   * 顯示 優存(利率/利息)資訊
-   */
-  const renderBonusInfoPanel = (data) => {
-    if (!data) {
-      return (
-        <div style={{ lineHeight: '5.28833rem', textAlign: 'center', marginBottom: '1.6rem' }}>載入中...</div>
-      );
-    }
+  // /**
+  //  * 顯示 優存(利率/利息)資訊
+  //  */
+  // const renderBonusInfoPanel = (data) => {
+  //   if (!data) {
+  //     return (
+  //       <div style={{ lineHeight: '5.28833rem', textAlign: 'center', marginBottom: '1.6rem' }}>載入中...</div>
+  //     );
+  //   }
 
-    const { freeWithdrawal, freeTransfer, bonusQuota } = data;
-    const value1 = data.bonusRate ? `${data.bonusRate * 100}%` : '-';
-    const value2 = data.interest ? `$${data.interest}` : '-';
-    return (
-      <TaiwanDollarAccountWrapper>
-        <div className="interestRatePanel">
-          <div className="panelItem">
-            <h3>免費跨提/轉</h3>
-            <p>
-              {freeWithdrawal}
-              /
-              {freeTransfer}
-            </p>
-          </div>
-          <div className="panelItem" onClick={() => setShowRate(!showRate)}>
-            <h3>
-              {showRate ? '優惠利率' : '累積利息'}
-              <SwitchIcon className="switchIcon" />
-            </h3>
-            <p>{showRate ? value1 : value2 }</p>
-          </div>
+  //   const { freeWithdrawal, freeTransfer, bonusQuota } = data;
+  //   const value1 = data.bonusRate ? `${data.bonusRate * 100}%` : '-';
+  //   const value2 = data.interest ? `$${data.interest}` : '-';
+  //   return (
+  //     <TaiwanDollarAccountWrapper>
+  //       <div className="interestRatePanel">
+  //         <div className="panelItem">
+  //           <h3>免費跨提/轉</h3>
+  //           <p>
+  //             {freeWithdrawal}
+  //             /
+  //             {freeTransfer}
+  //           </p>
+  //         </div>
+  //         <div className="panelItem" onClick={() => setShowRate(!showRate)}>
+  //           <h3>
+  //             {showRate ? '優惠利率' : '累積利息'}
+  //             <SwitchIcon className="switchIcon" />
+  //           </h3>
+  //           <p>{showRate ? value1 : value2 }</p>
+  //         </div>
 
-          {/* 用 startFunc 執行 depositPlus ，將 model 存入 keepData 返回時就不用再重 Load */}
-          <div className="panelItem" onClick={() => handleFunctionChange('depositPlus')}>
-            <h3>
-              優惠利率額度
-              <ArrowNextIcon />
-            </h3>
-            <p>{bonusQuota}</p>
-          </div>
-        </div>
-      </TaiwanDollarAccountWrapper>
-    );
-  };
+  //         {/* 用 startFunc 執行 depositPlus ，將 model 存入 keepData 返回時就不用再重 Load */}
+  //         <div className="panelItem" onClick={() => handleFunctionChange('depositPlus')}>
+  //           <h3>
+  //             優惠利率額度
+  //             <ArrowNextIcon />
+  //           </h3>
+  //           <p>{bonusQuota}</p>
+  //         </div>
+  //       </div>
+  //     </TaiwanDollarAccountWrapper>
+  //   );
+  // };
 
   /**
    * 編輯帳戶名稱
@@ -213,8 +213,6 @@ const TaiwanDollarAccount = () => {
         params = account.cardInfo; // 直接提供帳戶摘要資訊，因為一定是從有帳戶資訊的頁面進去。
         break;
       case 'D00100': // 轉帳
-      case 'D00300': // 無卡提款
-      case 'E00100': // 換匯
         params = model; // 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。
         break;
       case 'DownloadDepositBookCover': // 存摺封面下載
@@ -235,7 +233,7 @@ const TaiwanDollarAccount = () => {
    * 頁面輸出
    */
   return (
-    <Layout title="台幣活存">
+    <Layout title="台幣交割帳戶">
       <div>
         <AccountOverview
           accounts={Object.values(accounts ?? [])}
@@ -244,18 +242,15 @@ const TaiwanDollarAccount = () => {
           cardColor="purple"
           funcList={[
             { fid: 'D00100', title: '轉帳' },
-            { fid: 'D00300', title: '無卡提款' },
           ]}
           moreFuncs={[
-            { fid: null, title: '定存', icon: 'fixedDeposit' },
-            { fid: 'E00100', title: '換匯', icon: 'exchange' },
             { fid: 'DownloadDepositBookCover', title: '存摺封面下載', icon: 'coverDownload' },
             { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
           ]}
         />
 
         {/* 顯示 優惠利率資訊面版 */}
-        { renderBonusInfoPanel(panelInfo) }
+        {/* { renderBonusInfoPanel(panelInfo) } */}
 
         <DepositDetailPanel
           details={transactions}
