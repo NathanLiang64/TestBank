@@ -42,7 +42,6 @@ const TaiwanDollarAccountDetails = () => {
       account: account.acctId,
       currency: 'NTD',
     };
-    console.log(conditions);
 
     // 取得帳戶交易明細（三年內）
     const transData = await getTransactionDetails(request);

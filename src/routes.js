@@ -124,9 +124,9 @@ const FinancialDepartments = lazy(() => import('pages/FinancialDepartments'));
 const Network = lazy(() => import('pages/Network'));
 const TradingAccount = lazy(() => import('pages/TradingAccount'));
 const TradingAccountDetails = lazy(() => import('pages/TradingAccountDetails'));
-const TaiwanDollarAccount = lazy(() => import('pages/TaiwanDollarAccount'));
+const C00300 = lazy(() => import('pages/C00300_NtdAccount/C00300'));
 const TaiwanDollarAccountDetails = lazy(() => import('pages/TaiwanDollarAccountDetails'));
-const ForeignCurrencyAccount = lazy(() => import('pages/ForeignCurrencyAccount'));
+const C00400 = lazy(() => import('pages/C00400_ForeignAccount/C00400'));
 const ForeignCurrencyAccountDetails = lazy(() => import('pages/ForeignCurrencyAccountDetails'));
 const RegularBasicInformation = lazy(() => import('pages/RegularBasicInformation'));
 const ExportBankBook = lazy(() => import('pages/ExportBankBook'));
@@ -203,11 +203,11 @@ const routes = [
   { path: '/more', exact: false, component: More },
   { path: '/financialDepartments', exact: false, component: FinancialDepartments },
   { path: '/network', exact: false, component: Network },
-  { path: '/C00300', exact: false, component: TaiwanDollarAccount },
+  { path: '/C00300', exact: false, component: C00300 },
   { path: '/taiwanDollarAccountDetails', exact: false, component: TaiwanDollarAccountDetails },
   { path: '/tradingAccount', exact: false, component: TradingAccount },
   { path: '/tradingAccountDetails', exact: false, component: TradingAccountDetails },
-  { path: '/C00400', exact: false, component: ForeignCurrencyAccount },
+  { path: '/C00400', exact: false, component: C00400 },
   { path: '/foreignCurrencyAccountDetails', exact: false, component: ForeignCurrencyAccountDetails },
   { path: '/regularBasicInformation', exact: false, component: RegularBasicInformation },
   { path: '/C00800', exact: false, component: ExportBankBook },

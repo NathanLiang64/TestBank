@@ -15,15 +15,21 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc } from 'utilities/BankeePlus';
 import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
-import { getAccountSummary, getDepositBonus, getTransactionDetails, downloadDepositBookCover } from './api';
-import TaiwanDollarAccountWrapper from './taiwanDollarAccount.style';
+import {
+  getAccountSummary,
+  getDepositBonus,
+  getTransactionDetails,
+  downloadDepositBookCover,
+  setAccountAlias,
+} from './api';
+import TaiwanDollarAccountWrapper from './C00300.style';
 
 /**
  * C00300 台幣帳戶首頁
  */
 const TaiwanDollarAccount = () => {
   const dispatch = useDispatch();
-  const { register, handleSubmit } = useForm();
+  const { register, unregister, handleSubmit } = useForm();
 
   const [accounts, setAccounts] = useState(null);
   const [selectedAccountIdx, setSelectedAccountIdx] = useState(-1);
@@ -173,24 +179,24 @@ const TaiwanDollarAccount = () => {
    * @param {*} name 原始帳戶名稱
    */
   const showRenameDialog = async (name) => {
+    // Note: 因為這個 Dialog 是動態產生的，所以一定要刪掉註冊的元件。
+    //       否則，下次註冊將失效，而且持續傳回最後一次的輪入值，而不會改變。
+    unregister('newName', { keepDirty: false });
+
     const body = (
       <>
         <FEIBInputLabel>新的帳戶名稱</FEIBInputLabel>
-        <FEIBInput defaultValue={name} autoFocus {...register('newName', { required: true })} />
+        <FEIBInput defaultValue={name} autoFocus {...register('newName')} />
         <FEIBErrorMessage $noSpacing />
       </>
     );
-    const onOk = (event) => {
-      console.log('帳戶名稱 : ', name);
-      handleSubmit((newName) => {
-        console.log('新帳戶名稱 : ', newName);
-        // TODO: Call API 變更帳戶名稱。
-      })(event).catch((error) => {
-        // TODO: handle error
-        console.warn('新帳戶名稱 handleSubmit 回傳 error 必須處理，也有可能是 validation issue。', error);
-      });
+    const onOk = (values) => {
+      const account = accounts[selectedAccountIdx].cardInfo;
+      account.acctName = values.newName; // 變更卡片上的帳戶名稱
+      setAccountAlias(account.acctId, account.acctName);
+      setAccounts(accounts); // TODO: 不會觸發 AccountOverview 重刷，因此不會更新畫面！要移動卡片再換回來才會變更。
     };
-    await customPopup('帳戶名稱編輯', body, onOk);
+    await customPopup('帳戶名稱編輯', body, handleSubmit(onOk));
   };
 
   /**

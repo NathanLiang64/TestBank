@@ -20,7 +20,7 @@ const DepositDetailPanel = ({
     if (details.length === 0) {
       return (
         <div style={{ height: 500, width: '100%' }}>
-          <EmptyData content="本月沒有任何活動！！" />
+          <EmptyData content="查無最近三年內的帳務往來資料" />
         </div>
       );
     }

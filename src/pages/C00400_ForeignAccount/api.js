@@ -51,3 +51,25 @@ export const getTransactionDetails = async (request) => {
   const response = await callAPI('/api/deposit/v1/queryAcctTxDtl', request);
   return response.data;
 };
+
+/**
+ * 設定存款帳戶別名
+ * @param {*} accountNo 存款帳號
+ * @param {*} alias 帳戶別名；若為空值，則會恢復原始帳戶名稱
+ * @returns
+ */
+export const setAccountAlias = async (accountNo, alias) => {
+  const response = await callAPI('/api/deposit/v1/setAccountAlias', { accountNo, alias });
+  return response.data;
+};
+
+/**
+ * 設定指定外幣帳戶的主要幣別
+ * @param {*} accountNo 存款帳號
+ * @param {*} currency 主要幣別
+ * @returns
+ */
+export const setAccountMainCurrency = async (accountNo, currency) => {
+  const response = await callAPI('/api/deposit/v1/setAccountMainCurrency', { accountNo, currency });
+  return response.data;
+};

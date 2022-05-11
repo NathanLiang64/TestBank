@@ -81,3 +81,14 @@ export const downloadDepositBookCover = async (accountNo, currency = 'NTD') => {
   const filename = `${accountNo}-${today}.pdf`;
   await downloadPDF('/api/deposit/v1/getDepositBookCover', { accountNo, currency }, filename);
 };
+
+/**
+ * 設定存款帳戶別名
+ * @param {*} accountNo 存款帳號
+ * @param {*} alias 帳戶別名；若為空值，則會恢復原始帳戶名稱
+ * @returns
+ */
+export const setAccountAlias = async (accountNo, alias) => {
+  const response = await callAPI('/api/deposit/v1/setAccountAlias', { accountNo, alias });
+  return response.data;
+};
