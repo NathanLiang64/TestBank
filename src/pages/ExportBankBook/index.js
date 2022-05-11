@@ -6,7 +6,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import {
   FEIBInputLabel,
   FEIBSelect,
@@ -143,8 +143,7 @@ const ExportBankBook = () => {
   }, []);
 
   return (
-    <>
-      <Header title="匯出存摺" />
+    <Layout title="匯出存摺">
       <ExportBankBookWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
@@ -225,7 +224,7 @@ const ExportBankBook = () => {
           </div>
         </form>
       </ExportBankBookWrapper>
-    </>
+    </Layout>
   );
 };
 

@@ -5,6 +5,8 @@ import {
   SET_DRAWER_VISIBLE,
   SET_WAITTING_VISIBLE,
   REST_ALL,
+  SET_ANIMATION_MODAL_VISIBLE,
+  SET_ANIMATION_MODAL,
 } from '../constant';
 
 const initialState = {
@@ -31,6 +33,16 @@ const initialState = {
   },
   showDrawer: false,
   waitting: false,
+  showAnimationModal: false,
+  animationModal: {
+    isSuccess: true,
+    successTitle: '',
+    successDesc: '',
+    errorTitle: '',
+    errorCode: '',
+    errorDesc: '',
+    onClose: null,
+  },
 };
 
 export default function ModalReducer(state = initialState, action) {
@@ -50,6 +62,12 @@ export default function ModalReducer(state = initialState, action) {
 
     case SET_WAITTING_VISIBLE:
       return { ...state, waitting: data };
+
+    case SET_ANIMATION_MODAL_VISIBLE:
+      return { ...state, showAnimationModal: data };
+
+    case SET_ANIMATION_MODAL:
+      return { ...state, animationModal: data };
 
     case REST_ALL:
       return initialState;
@@ -90,6 +108,20 @@ export function setDrawerVisible(data) {
 export function setWaittingVisible(data) {
   return {
     type: SET_WAITTING_VISIBLE,
+    data,
+  };
+}
+
+export function setAnimationModalVisible(data) {
+  return {
+    type: SET_ANIMATION_MODAL_VISIBLE,
+    data,
+  };
+}
+
+export function setAnimationModal(data) {
+  return {
+    type: SET_ANIMATION_MODAL,
     data,
   };
 }

@@ -1,58 +1,61 @@
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+// import { useEffect } from 'react';
+// import { useDispatch } from 'react-redux';
 import { useGetEnCrydata } from 'hooks';
 import { goAppHome } from 'utilities/BankeePlus';
 import { provisioningApi } from 'apis';
-
+import { showAnimationModal } from 'utilities/MessageModal';
 /* Elements */
 import { FEIBButton } from 'components/elements';
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import Accordion from 'components/Accordion';
 
 /* Styles */
 import ProvisioningWrapper from './provisioning.style';
-import { setIsOpen, setCloseCallBack, setResultContent } from '../ResultDialog/stores/actions';
+// import { setIsOpen } from '../ResultDialog/stores/actions';
 
 const Provisioning = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   // 設定結果彈窗
   const setResultDialog = (response) => {
     const result = Object.keys(response).length === 0;
     let errorCode = '';
     let errorDesc = '';
-    if (result) {
-      dispatch(setCloseCallBack(() => goAppHome()));
-    } else {
+    const onClose = () => goAppHome();
+    if (!result) {
       errorCode = response.code;
       errorDesc = response.message;
-      dispatch(setCloseCallBack(() => {}));
     }
-    dispatch(setResultContent({
+    showAnimationModal({
       isSuccess: result,
       successTitle: '設定成功',
       successDesc: '',
       errorTitle: '設定失敗',
       errorCode,
       errorDesc,
-    }));
-    dispatch(setIsOpen(true));
+      onClose,
+    });
+    // dispatch(setResultContent({
+    //   isSuccess: result,
+    //   successTitle: '設定成功',
+    //   successDesc: '',
+    //   errorTitle: '設定失敗',
+    //   errorCode,
+    //   errorDesc,
+    // }));
+    // dispatch(setIsOpen(true));
   };
 
   // 呼叫開通 api
   const triggerProvide = async () => {
     const openhbResponse = await provisioningApi.openhb({});
-    console.log(openhbResponse);
     setResultDialog(openhbResponse);
   };
 
   useGetEnCrydata();
 
-  useEffect(() => dispatch(setIsOpen(false)), []);
-
   return (
-    <>
-      <Header title="開通行動銀行服務" hideBack hideHome />
+    <Layout title="開通行動銀行服務" goBack={false} goHome={false}>
       <ProvisioningWrapper>
         <div className="tip">您尚未開通 Bankee 行動銀行</div>
         <Accordion title="服務條款" space="both" open>
@@ -134,7 +137,7 @@ const Provisioning = () => {
         </Accordion>
         <FEIBButton onClick={triggerProvide}>同意條款並送出</FEIBButton>
       </ProvisioningWrapper>
-    </>
+    </Layout>
   );
 };
 

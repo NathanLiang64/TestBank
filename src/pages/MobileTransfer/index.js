@@ -18,20 +18,20 @@ const MobileTransfer = () => {
 
   // eslint-disable-next-line no-unused-vars
   const [mobileTransferData, setMobileTransferData] = useState([
-    {
-      id: 0,
-      mobile: '0988392726',
-      isDefault: false,
-      account: '00300400326306',
-      userName: '王小明',
-    },
-    {
-      id: 1,
-      mobile: '0988392899',
-      isDefault: true,
-      account: '00300400326307',
-      userName: '王小明',
-    },
+    // {
+    //   id: 0,
+    //   mobile: '0988392726',
+    //   isDefault: false,
+    //   account: '00300400326306',
+    //   userName: '王小明',
+    // },
+    // {
+    //   id: 1,
+    //   mobile: '0988392899',
+    //   isDefault: true,
+    //   account: '00300400326307',
+    //   userName: '王小明',
+    // },
   ]);
   const [modifyData, setModifyData] = useState({
     id: 1,

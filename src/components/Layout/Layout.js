@@ -8,9 +8,10 @@ import Header from 'components/Header';
 import Dialog from 'components/Dialog';
 import BottomDrawer from 'components/BottomDrawer';
 import { FEIBButton } from 'components/elements';
+import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 // import theme from 'themes/theme';
 import {
-  setModalVisible, setWaittingVisible, setDrawerVisible,
+  setModalVisible, setWaittingVisible, setDrawerVisible, setAnimationModalVisible,
 } from '../../stores/reducers/ModalReducer';
 
 function Layout({
@@ -30,6 +31,8 @@ function Layout({
   const drawerData = useSelector((state) => state.ModalReducer.drawer);
   const showDrawer = useSelector((state) => state.ModalReducer.showDrawer);
   const waitting = useSelector((state) => state.ModalReducer.waitting);
+  const showAnimationModal = useSelector((state) => state.ModalReducer.showAnimationModal);
+  const animationModalData = useSelector((state) => state.ModalReducer.animationModal);
 
   // 關閉 Popup視窗。
   const onModalClose = async () => {
@@ -40,7 +43,14 @@ function Layout({
     // dispatch(setWaittingVisible(false));
   };
 
-  //
+  // 關閉結果動畫彈窗
+  const onAnimationModalClose = async () => {
+    if (animationModalData.onClose) {
+      animationModalData.onClose();
+    }
+    dispatch(setAnimationModalVisible(false));
+  };
+
   const onModalOk = async () => {
     if (modalData.onOk) {
       if ((await modalData.onOk() === false)) return;
@@ -57,16 +67,16 @@ function Layout({
   };
 
   /**
-   *  監控 ModalReducer.showModal，當開啟時立即關閉 等待中 及 Drawer
+   *  監控 ModalReducer.showModal, .showAnimationModal，當開啟時立即關閉 等待中 及 Drawer
    */
   useEffect(async () => {
-    console.log('showModal -> ', showModal);
+    console.log('showModal -> ', showModal || showAnimationModal);
     // 強制關掉 等待畫面，才能看到 Popup 視窗。
-    if (showModal) {
+    if (showModal || showAnimationModal) {
       dispatch(setWaittingVisible(false));
       dispatch(setDrawerVisible(false));
     }
-  }, [showModal]);
+  }, [showModal, showAnimationModal]);
 
   /**
    * 顯示訊息視窗
@@ -129,6 +139,29 @@ function Layout({
     />
   );
 
+  /**
+   * 成功失敗動畫彈窗
+   */
+  const AnimationModal = () => (
+    <Dialog
+      isOpen={showAnimationModal}
+      onClose={onAnimationModalClose}
+      title=" "
+      content={(
+        <div className="dialogResultContent">
+          <SuccessFailureAnimations
+            isSuccess={animationModalData.isSuccess}
+            successTitle={animationModalData.successTitle}
+            successDesc={animationModalData.successDesc}
+            errorTitle={animationModalData.errorTitle}
+            errorCode={animationModalData.errorCode}
+            errorDesc={animationModalData.errorDesc}
+          />
+        </div>
+      )}
+    />
+  );
+
   //
   // 頁面外框
   //
@@ -141,6 +174,7 @@ function Layout({
             {waitting ? null : children}
             <MessageModal />
             <Drawer />
+            <AnimationModal />
         </div>
       </div>
     );
