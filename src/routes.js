@@ -148,6 +148,7 @@ const Instalment2 = lazy(() => import('pages/Instalment/Instalment_2'));
 const Instalment3 = lazy(() => import('pages/Instalment/Instalment_3'));
 const AutomaticBillPayment = lazy(() => import('pages/AutomaticBillPayment'));
 const ExchangeRate = lazy(() => import('pages/ExchangeRate'));
+const DepositePlan = lazy(() => import('pages/C00600_DepositPlan/C00600'));
 
 // TODO：支援開發及Prototype測試使用
 const Login = lazy(() => import('proto/Login/login'));
@@ -233,6 +234,7 @@ const routes = [
   { path: '/withholding', exact: false, component: AutomaticBillPayment },
   { path: '/E00100', exact: false, component: ExchangeRate },
   { path: '/exchangeRate', exact: false, component: ExchangeRate },
+  { path: '/C00600', exact: false, component: DepositePlan },
 
   // TODO：支援開發及Prototype測試使用
   { path: '/login', exact: false, component: Login },
