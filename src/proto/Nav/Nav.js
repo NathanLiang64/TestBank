@@ -72,6 +72,12 @@ const Nav = () => {
           <li>funcID: B00600</li>
         </ul>
       </div>
+      <div onClick={() => goToFunc({ route: '/foreignCurrencyPriceSetting', funcID: 'unset' })}>
+        <ul>
+          <li>功能：外幣到價通知</li>
+          <li>funcID: unset</li>
+        </ul>
+      </div>
       {/* <div onClick={() => goToFunc({ route: '/profile', funcID: 'T00100' })}>
         <ul>
           <li>功能：個人化設定</li>
