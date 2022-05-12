@@ -209,8 +209,12 @@ const TaiwanDollarAccount = () => {
     const model = { accounts, selectedAccountIdx };
     const account = accounts[selectedAccountIdx];
     switch (funcCode) {
-      case 'taiwanDollarAccountDetails': // 更多明細
-        params = account.cardInfo; // 直接提供帳戶摘要資訊，因為一定是從有帳戶資訊的頁面進去。
+      case 'moreTranscations': // 更多明細
+        params = {
+          ...account.cardInfo, // 直接提供帳戶摘要資訊，因為一定是從有帳戶資訊的頁面進去。
+          // cardTitle: '存款帳戶交易明細',
+          cardColor: 'purple',
+        };
         break;
       case 'D00100': // 轉帳
       case 'D00300': // 無卡提款
@@ -259,7 +263,7 @@ const TaiwanDollarAccount = () => {
 
         <DepositDetailPanel
           details={transactions}
-          onClick={() => handleFunctionChange('taiwanDollarAccountDetails')}
+          onClick={() => handleFunctionChange('moreTranscations')}
         />
       </div>
     </Layout>

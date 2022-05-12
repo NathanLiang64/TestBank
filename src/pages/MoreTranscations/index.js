@@ -11,7 +11,7 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { loadFuncParams } from 'utilities/BankeePlus';
 import { getTransactionDetails } from './api';
 
-const ForeignCurrencyAccountDetails = () => {
+const MoreTranscations = () => {
   const dispatch = useDispatch();
 
   const [account, setAccount] = useState(null);
@@ -24,6 +24,7 @@ const ForeignCurrencyAccountDetails = () => {
 
     // 以啟動參數(預設帳號)
     const model = loadFuncParams();
+    console.log(model);
     setAccount(model);
 
     dispatch(setWaittingVisible(false));
@@ -40,7 +41,7 @@ const ForeignCurrencyAccountDetails = () => {
     const request = {
       ...conditions,
       account: account.acctId,
-      currency: account.ccyCd,
+      currency: account.currency ?? 'NTD',
     };
 
     // 取得帳戶交易明細（三年內）
@@ -52,16 +53,16 @@ const ForeignCurrencyAccountDetails = () => {
    * 頁面輸出
    */
   return (
-    <Layout title="外幣存款交易明細">
+    <Layout title={account?.cardTitle ?? '帳戶交易明細'}>
       <div>
         <AccountDetails
           selectedAccount={account}
           onSearch={updateTransactions}
-          cardColor="blue"
+          cardColor={account?.cardColor ?? 'purple'}
         />
       </div>
     </Layout>
   );
 };
 
-export default ForeignCurrencyAccountDetails;
+export default MoreTranscations;

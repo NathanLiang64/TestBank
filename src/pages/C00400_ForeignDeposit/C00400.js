@@ -29,7 +29,7 @@ const ForeignCurrencyAccount = () => {
   const [transactions, setTransactions] = useState(null);
 
   /**
-   * 頁面啟動，初始化
+   * C00400 外幣帳戶首頁
    */
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
@@ -145,8 +145,14 @@ const ForeignCurrencyAccount = () => {
     const model = { accounts, selectedAccountIdx };
     const account = accounts[selectedAccountIdx];
     switch (funcCode) {
-      case 'foreignCurrencyAccountDetails': // 更多明細
+      case 'moreTranscations': // 更多明細
         params = account.cardInfo; // 直接提供帳戶摘要資訊，因為一定是從有帳戶資訊的頁面進去。
+        params = {
+          ...account.cardInfo, // 直接提供帳戶摘要資訊，因為一定是從有帳戶資訊的頁面進去。
+          // cardTitle: '存款帳戶交易明細',
+          cardColor: 'blue',
+          currency: account.cardInfo.ccyCd,
+        };
         break;
       case 'foreignCurrencyTransfer': // 轉帳
       case 'exchange': // 換匯
@@ -192,7 +198,7 @@ const ForeignCurrencyAccount = () => {
 
         <DepositDetailPanel
           details={transactions}
-          onClick={() => handleFunctionChange('foreignCurrencyAccountDetails')}
+          onClick={() => handleFunctionChange('moreTranscations')}
         />
       </div>
     </Layout>
