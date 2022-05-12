@@ -13,7 +13,7 @@ const userAxios = () => {
     return instance;
   }
   // 本機測試時，一定要直接使用使用 axios，否則會有跨網域問題。
-  return axios;
+  return instance;
 };
 
 userAxios().defaults.retry = 3;

@@ -195,7 +195,7 @@ export const accountTypeColorGenerator = (currency) => {
   }
 };
 
-const CurrencyInfo = [
+export const CurrencyInfo = [
   { code: 'NTD', name: '新台幣', symbol: '$', float: 0 },
   { code: 'TWD', name: '新台幣', symbol: '$', float: 0 },
   { code: 'USD', name: '美元', symbol: 'US$', float: 2 },
