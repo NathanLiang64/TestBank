@@ -19,12 +19,13 @@ const CheckboxButton = ({
   onChange,
   unclickable,
 }) => (
-  <CheckboxButtonWrapper className="checkboxButton" $unclickable={unclickable} onChange={onChange}>
+  <CheckboxButtonWrapper className="checkboxButton" $unclickable={unclickable}>
     <label htmlFor={id}>
       <input
         type="checkbox"
         id={id}
         checked={checked}
+        onChange={onChange}
         {...register}
       />
       <span>{label}</span>

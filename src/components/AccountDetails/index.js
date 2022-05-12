@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import VisibilitySensor from 'react-visibility-sensor';
-import AccountDetailsSearchCondition from 'components/AccountDetailsSearchCondition';
+import SearchCondition from 'components/AccountDetails/searchCondition';
 import DebitCard from 'components/DebitCard';
 import DetailCard from 'components/DetailCard';
 import EmptyData from 'components/EmptyData';
@@ -15,14 +15,14 @@ import { showDrawer } from 'utilities/MessageModal';
 import { stringDateFormatter } from 'utilities/Generator';
 import { setDrawerVisible } from 'stores/reducers/ModalReducer';
 import theme from 'themes/theme';
-import { downloadDepositTransactionReport } from './api';
+import { getDepositBook } from './api';
 import {
   setCustomKeyword, setDateRange, setDetailList, setKeywords,
 } from './stores/actions';
 import AccountDetailsWrapper, { DownloadDrawerWrapper } from './accountDetails.style';
 
 const AccountDetails = ({
-  selectedAccount, cardColor, onSearch,
+  selectedAccount, onSearch,
 }) => {
   const [tabId, setTabId] = useState('');
   const [tabList, setTabList] = useState([]);
@@ -56,7 +56,6 @@ const AccountDetails = ({
     if (indexRange) indexRange.eof = false;
 
     const response = await onSearch(requestConditions(conds));
-    // console.log(response);
     if (response) {
       const { acctTxDtls, monthly } = response;
       // 取得所有存款卡的初始資料後存取月份資料 (Tabs)
@@ -82,7 +81,7 @@ const AccountDetails = ({
     // dispatch(setWaittingVisible(true)); // BUG : 打開、再關閉後，查詢條件會被清掉。
     dispatch(setDrawerVisible(false));
     const conditions = requestConditions({ dateRange, keywords, customKeyword });
-    await downloadDepositTransactionReport(fileType, conditions);
+    await getDepositBook(fileType, conditions);
     // dispatch(setWaittingVisible(false));
   };
 
@@ -148,12 +147,13 @@ const AccountDetails = ({
       ...requestConditions({ dateRange, keywords, customKeyword }),
       dataMonth: month,
       direct: '0', // 資料方向為0，表示取前後各50筆。
-      // startIndex: '', // Note：不可指定 startIndex 否則將視為一般查詢。
+      startIndex: '', // Note：不可指定 startIndex 否則將視為一般查詢。
     };
     const response = await onSearch(conditions);
     if (response) {
+      setIsLoading(true);
       dispatch(setDetailList(response.acctTxDtls));
-      setTabList(response.monthly.sort((a, b) => b - a));
+      setIsLoading(false);
 
       // 畫面跳轉至該月份第一筆資料
       const target = Array.from(txnDetailsRef.current.children).find((child) => child.id === month);
@@ -205,7 +205,6 @@ const AccountDetails = ({
     if (!isLoading && txnDetailsRef.current) {
       const allCards = Array.from(txnDetailsRef.current.children);
       const inviewCards = allCards.filter((card) => card.dataset.inview === 'Y');
-      // console.log(allCards, inviewCards);
 
       // 捲動畫面時，根據當前畫面上的第一筆明細動態切換月份標籤
       if (inviewCards?.length) setTabId(inviewCards[0].id);
@@ -221,7 +220,6 @@ const AccountDetails = ({
 
       // 資料方向(-1:看較早前的資料, 1.看較舊的資料）
       const scrollDirection = Math.sign(inviewMin - indexRange.inviewMin);
-      // console.log(indexRange, inviewMax, inviewMin, scrollDirection);
       if (scrollDirection !== 0) {
         if (scrollDirection === 1) {
           // 底部明細剩餘數量少於 25 張時，反向獲取接續 50 筆
@@ -247,7 +245,7 @@ const AccountDetails = ({
       account={account?.acctId}
       balance={account?.acctBalx}
       dollarSign={account?.ccyCd}
-      color={cardColor}
+      color={account?.cardColor}
     />
   );
 
@@ -323,7 +321,10 @@ const AccountDetails = ({
   );
 
   const renderSearchDrawer = () => (
-    <AccountDetailsSearchCondition onSearch={init} />
+    <SearchCondition
+      onSearch={init}
+      onCancel={() => dispatch(setDrawerVisible(false))}
+    />
   );
 
   return (

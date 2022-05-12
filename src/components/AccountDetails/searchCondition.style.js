@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const AccountDetailsSearchCondition = styled.div`
+const SearchCondition = styled.div`
   padding: 0 1.6rem 4rem;
   
   .autoDateArea {
@@ -35,4 +35,4 @@ const AccountDetailsSearchCondition = styled.div`
   }
 `;
 
-export default AccountDetailsSearchCondition;
+export default SearchCondition;

@@ -7,7 +7,7 @@ import { stringDateCodeFormatter } from 'utilities/Generator';
  * @param {*} conditions 查詢條件
  * @returns 數位存摺
  */
-export const downloadDepositTransactionReport = async (fileType, conditions) => {
+export const getDepositBook = async (fileType, conditions) => {
   const today = stringDateCodeFormatter(new Date()); // 今天 yyyyMMdd
   const filename = `${conditions.account}-${today}`;
   const request = {

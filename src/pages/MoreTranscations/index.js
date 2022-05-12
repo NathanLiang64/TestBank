@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-import AccountDetails from 'components/AccountDetails';
+import AccountDetails from 'components/AccountDetails/accountDetails';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
@@ -24,18 +24,14 @@ const MoreTranscations = () => {
 
     // 以啟動參數(預設帳號)
     const model = loadFuncParams();
-    console.log(model);
     setAccount(model);
 
     dispatch(setWaittingVisible(false));
   }, []);
 
-  useEffect(async () => {
-    if (account) await updateTransactions();
-  }, [account]);
-
   /**
    * 更新帳戶交易明細清單
+   * @param {*} conditions 查詢條件。
    */
   const updateTransactions = async (conditions) => {
     const request = {
@@ -55,11 +51,12 @@ const MoreTranscations = () => {
   return (
     <Layout title={account?.cardTitle ?? '帳戶交易明細'}>
       <div>
+        {account ? (
         <AccountDetails
           selectedAccount={account}
           onSearch={updateTransactions}
-          cardColor={account?.cardColor ?? 'purple'}
         />
+        ) : null}
       </div>
     </Layout>
   );
