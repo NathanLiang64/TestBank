@@ -11,8 +11,8 @@ import {
   accountFormatter, accountTypeColorGenerator, currencySymbolGenerator,
 } from 'utilities/Generator';
 import DebitCardBackground from 'assets/images/debitCardBackground.png';
-import { showDrawer } from '../../utilities/MessageModal';
-import { setDrawerVisible } from '../../stores/reducers/ModalReducer';
+import { showDrawer } from 'utilities/MessageModal';
+import { setDrawerVisible } from 'stores/reducers/ModalReducer';
 import { iconGenerator } from './debitCardIconGenerator';
 import DebitCardWrapper from './debitCard.style';
 

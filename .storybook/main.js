@@ -23,6 +23,10 @@ module.exports = {
       assets: path.resolve(__dirname, '../src/assets/'),
       themes: path.resolve(__dirname, '../src/themes/'),
       components: path.resolve(__dirname, '../src/components/'),
+      utilities: path.resolve(__dirname, '../src/utilities/'),
+      stores: path.resolve(__dirname, '../src/stores/'),
+      proto: path.resolve(__dirname, '../src/proto/'),
+      pages: path.resolve(__dirname, '../src/pages/'),
     };
 
     // Return the altered config
