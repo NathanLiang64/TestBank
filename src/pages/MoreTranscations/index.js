@@ -52,10 +52,10 @@ const MoreTranscations = () => {
     <Layout title={account?.cardTitle ?? '帳戶交易明細'}>
       <div>
         {account ? (
-        <AccountDetails
-          selectedAccount={account}
-          onSearch={updateTransactions}
-        />
+          <AccountDetails
+            selectedAccount={account}
+            onSearch={updateTransactions}
+          />
         ) : null}
       </div>
     </Layout>
