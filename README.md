@@ -294,7 +294,13 @@ This project uses custom GitHub Actions as CI/CD to *monitor*, *build* and *depl
 | Branches | Associations | URLs |
 |:-:|:-:|:-:|
 | Lexionlu | ... will deploy to ... | https://feib-bankee-2022.dev.lexionlu.com |
+| Lexionlu | ... will deploy storybook to ... | https://feib-bankee-2022-storybook.dev.lexionlu.com |
 | stage | ... will deploy to ... | https://feib-bankee-2022.stg.lexionlu.com |
+
+<p style="background-color:orange;padding:1rem;">
+<b>Security warning: </b>
+The testing enviroments are using basic HTTP authentication framework. The default authentication combination is "<b>bankee</b>" and "<b>WxtR3EyLbqU</b>".
+</p>
 
 <br>
 
