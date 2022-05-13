@@ -7,7 +7,7 @@ import { goToFunc } from 'utilities/BankeePlus';
 import { FEIBButton } from 'components/elements';
 import { setWaittingVisible } from '../../stores/reducers/ModalReducer';
 import { logout } from './Nav.api';
-import { getAllNotices, addNotice, removeNotice, updateNotice } from '../../pages/ForeignCurrencyPriceSetting/api'; // 到價通知設定
+// import { getAllNotices, addNotice, removeNotice, updateNotice } from '../../pages/ForeignCurrencyPriceSetting/api'; // 到價通知設定
 
 import NavWrapper from './Nav.style';
 
@@ -70,6 +70,24 @@ const Nav = () => {
         <ul>
           <li>功能：更多</li>
           <li>funcID: B00600</li>
+        </ul>
+      </div>
+      <div onClick={() => goToFunc({ route: '/foreignCurrencyPriceSetting', funcID: 'unset' })}>
+        <ul>
+          <li>功能：外幣到價通知</li>
+          <li>funcID: unset</li>
+        </ul>
+      </div>
+      <div onClick={() => startFunc('B00300')}>
+        <ul>
+          <li>功能：訊息通知</li>
+          <li>funcID: B00300</li>
+        </ul>
+      </div>
+      <div onClick={() => startFunc('E00100')}>
+        <ul>
+          <li>功能：換匯</li>
+          <li>funcID: E00100</li>
         </ul>
       </div>
       {/* <div onClick={() => goToFunc({ route: '/profile', funcID: 'T00100' })}>
@@ -172,7 +190,7 @@ const Nav = () => {
         <Link to="/transfer">轉帳</Link>
       </Accordion> */}
       <FEIBButton onClick={logOut}>登出</FEIBButton>
-      <div>
+      {/* <div>
         <div onClick={() => getAllNotices()}>
           <ul>
             <li>到價通知設定 - 取得所有通知設定</li>
@@ -197,7 +215,7 @@ const Nav = () => {
             <li>API: updateNotice</li>
           </ul>
         </div>
-      </div>
+      </div> */}
     </NavWrapper>
   );
 };
