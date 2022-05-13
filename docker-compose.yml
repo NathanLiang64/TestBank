@@ -28,7 +28,7 @@ services:
       - "traefik.http.routers.feib-bankee-2022-storybook.entrypoints=websecure"
       - "traefik.http.routers.feib-bankee-2022-storybook.tls=true"
       - "traefik.http.routers.feib-bankee-2022-storybook.tls.certresolver=leresolver"
-      - "traefik.http.routers.feib-bankee-2022-storybook.middlewares=nuxt2"
+      - "traefik.http.routers.feib-bankee-2022-storybook.middlewares=feib-bankee-2022-storybook"
       - "traefik.http.middlewares.feib-bankee-2022-storybook.basicauth.users=bankee:$$apr1$$Aji3H22j$$QMUrFgEAlM9PY7H5YQzC6/"
     networks:
       - "front-edge"
