@@ -1,11 +1,13 @@
-import { useState } from 'react';
-import { useGetEnCrydata } from 'hooks';
+import { useState, useEffect } from 'react';
 
 /* Elements */
 import Header from 'components/Header';
 import {
   FEIBSwitch,
 } from 'components/elements';
+
+/* API */
+import { queryPushSetting } from './api';
 
 /* Styles */
 import NoticeSettingWrapper from './noticeSetting.style';
@@ -16,6 +18,13 @@ const NoticeSetting = () => {
   const [securityNoti, setSecurityNoti] = useState(true);
   const [foreignCurrencyNoti, setForeignCurrencyNoti] = useState(true);
   const [nightNoti, setNightNoti] = useState(true);
+
+  // 取得通知設定
+  const getPushSettingList = async () => {
+    const param = {};
+    const res = await queryPushSetting(param);
+    console.log(res);
+  };
 
   const handleSwitchChange = (type) => {
     switch (type) {
@@ -39,7 +48,9 @@ const NoticeSetting = () => {
     }
   };
 
-  useGetEnCrydata();
+  useEffect(() => {
+    getPushSettingList();
+  }, []);
 
   return (
     <>
