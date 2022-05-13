@@ -6,7 +6,7 @@ import { callAPI } from 'utilities/axios';
  * [{
  *  currency: 幣別, 例："JPY"; 可以透過 Generator.js 的 getCurrenyInfo() 取得。
  *  price: 價格, 例：4.5
- *  exType: 換匯種類: 0.現金 1.即期
+ *  exchange_type: 換匯種類: 0.現金 1.即期
  * }]
  */
 export const getAllNotices = async () => {
@@ -19,7 +19,7 @@ export const getAllNotices = async () => {
  * @param {*} notice {
  *  currency: 幣別, 例："JPY"; 可以透過 Generator.js 的 getCurrenyInfo() 取得。
  *  price: 價格, 例：4.5
- *  exType: 換匯種類: 0.現金 1.即期
+ *  exchange_type: 換匯種類: 0.現金 1.即期
  * }
  */
 export const addNotice = async (notice) => {
@@ -32,7 +32,7 @@ export const addNotice = async (notice) => {
  * @param {*} notice {
  *  currency: 幣別, 例："JPY"; 可以透過 Generator.js 的 getCurrenyInfo() 取得。
  *  price: 價格, 例：4.5
- *  exType: 換匯種類: 0.現金 1.即期
+ *  exchange_type: 換匯種類: 0.現金 1.即期
  * }
  */
 export const removeNotice = async (notice) => {

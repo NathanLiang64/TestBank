@@ -111,14 +111,18 @@ const DebitCard = ({
   );
 
   const renderTransferLimit = (total, current) => (
-    <p className="transferLimit">
-      {transferTitle}
-      :
-      {total}
-      次/剩餘
-      {current}
-      次
-    </p>
+    (transferLimit && transferRemaining)
+      ? (
+        <p className="transferLimit">
+          {transferTitle}
+          :
+          {total}
+          次/剩餘
+          {current}
+          次
+        </p>
+      )
+      : null
   );
 
   // render 點擊更多圖標後的功能列表
@@ -153,7 +157,7 @@ const DebitCard = ({
           {`${currencySymbolGenerator(dollarSign, (showBalance ? balance : '*'))}`}
         </h3>
       </div>
-      { (originalType() && (functionList && renderFunctionList(functionList))) || (transferLimit && transferRemaining && renderTransferLimit(transferLimit, transferRemaining)) }
+      { (originalType() && (functionList && renderFunctionList(functionList))) || renderTransferLimit(transferLimit, transferRemaining) }
       { originalType() && moreList && renderMoreIconButton() }
     </DebitCardWrapper>
   );

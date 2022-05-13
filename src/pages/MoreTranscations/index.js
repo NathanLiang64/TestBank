@@ -4,14 +4,14 @@ import { useDispatch } from 'react-redux';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-import AccountDetails from 'components/AccountDetails';
+import AccountDetails from 'components/AccountDetails/accountDetails';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { loadFuncParams } from 'utilities/BankeePlus';
 import { getTransactionDetails } from './api';
 
-const ForeignCurrencyAccountDetails = () => {
+const MoreTranscations = () => {
   const dispatch = useDispatch();
 
   const [account, setAccount] = useState(null);
@@ -29,18 +29,15 @@ const ForeignCurrencyAccountDetails = () => {
     dispatch(setWaittingVisible(false));
   }, []);
 
-  useEffect(async () => {
-    if (account) await updateTransactions();
-  }, [account]);
-
   /**
    * 更新帳戶交易明細清單
+   * @param {*} conditions 查詢條件。
    */
   const updateTransactions = async (conditions) => {
     const request = {
       ...conditions,
       account: account.acctId,
-      currency: account.ccyCd,
+      currency: account.currency ?? 'NTD',
     };
 
     // 取得帳戶交易明細（三年內）
@@ -52,16 +49,17 @@ const ForeignCurrencyAccountDetails = () => {
    * 頁面輸出
    */
   return (
-    <Layout title="外幣存款交易明細">
+    <Layout title={account?.cardTitle ?? '帳戶交易明細'}>
       <div>
+        {account ? (
         <AccountDetails
           selectedAccount={account}
           onSearch={updateTransactions}
-          cardColor="blue"
         />
+        ) : null}
       </div>
     </Layout>
   );
 };
 
-export default ForeignCurrencyAccountDetails;
+export default MoreTranscations;

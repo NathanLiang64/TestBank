@@ -38,7 +38,8 @@ const DateRangePicker = ({
 
   // 將 dateRange 由 array 轉為 string 並儲存
   const setDateRangeToString = (rangeArray) => {
-    setDateRangeText(`${dateFormatter(rangeArray[0])} - ${dateFormatter(rangeArray[1])}`);
+    const range = (rangeArray[0]) ? (`${dateFormatter(rangeArray[0])} - ${dateFormatter(rangeArray[1])}`) : '';
+    setDateRangeText(range);
   };
 
   const handleClickApplyButton = (data) => {

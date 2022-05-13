@@ -1,75 +1,5 @@
 import { lazy } from 'react';
 
-/* Components */
-// import Login from 'pages/Login';
-// import Test from 'pages/Test';
-// import CardLessATM from 'pages/CardLessATM';
-// import CardLessATM1 from 'pages/CardLessATM/cardLessATM_1';
-// import CardLessATM2 from 'pages/CardLessATM/cardLessATM_2';
-// import CardLessWithDrawChgPwd from 'pages/CardLessATM/cardLessWithDrawChgPwd';
-// import LossReissue from 'pages/LossReissue';
-// import LossReissue2 from 'pages/LossReissue/lossReissue_2';
-// import AccountMaintenance from 'pages/AccountMaintenance';
-// import BillPay from 'pages/BillPay';
-// import BillPay1 from 'pages/BillPay/billPay_1';
-// import DepositOverview from 'pages/DepositOverview';
-// import DepositInquiry from 'pages/DepositInquiry';
-// import DepositPlus from 'pages/DepositPlus';
-// import NicknameSetting from 'pages/NicknameSetting';
-// import NoticeSetting from 'pages/NoticeSetting';
-// import PatternLockSetting from 'pages/PatternLockSetting';
-// import Notice from 'pages/Notice';
-// import FingerPrintLockSetting from 'pages/FingerPrintLockSetting';
-// import ChangeUserName from 'pages/ChangeUserName';
-// import PwdModify from 'pages/PwdModify';
-// import RegularPwdModify from 'pages/RegularPwdModify';
-// import SMSOTPactivate from 'pages/SMSOTPactivate';
-// import QRCodeTransfer from 'pages/QRCodeTransfer';
-// import Adjustment from 'pages/Adjustment';
-// import Adjustment1 from 'pages/Adjustment/adjustment_1';
-// import ProjectJ from 'pages/ProjectJ';
-// import LoanInquiry from 'pages/LoanInquiry';
-// import LoanInterest from 'pages/LoanInterest';
-// import BasicInformation from 'pages/BasicInformation';
-// import QandA from 'pages/QandA';
-// import Provisioning from 'pages/Provisioning';
-// import Deduct from 'pages/Deduct';
-// import Deduct1 from 'pages/Deduct/deduct1';
-// import Deduct2 from 'pages/Deduct/deduct2';
-// import Deduct3 from 'pages/Deduct/deduct3';
-// import Exchange from 'pages/Exchange';
-// import Exchange1 from 'pages/Exchange/exchange_1';
-// import Exchange2 from 'pages/Exchange/exchange_2';
-// import Transfer from 'pages/Transfer';
-// import Transfer1 from 'pages/Transfer/transfer_1';
-// import Transfer2 from 'pages/Transfer/transfer_2';
-// import Profile from 'pages/Profile';
-// import More from 'pages/More';
-// import FinancialDepartments from 'pages/FinancialDepartments';
-// import Network from 'pages/Network';
-// import TradingAccount from 'pages/TradingAccount';
-// import TradingAccountDetails from 'pages/TradingAccountDetails';
-// import TaiwanDollarAccount from 'pages/TaiwanDollarAccount';
-// import TaiwanDollarAccountDetails from 'pages/TaiwanDollarAccountDetails';
-// import ForeignCurrencyAccount from 'pages/ForeignCurrencyAccount';
-// import ForeignCurrencyAccountDetails from 'pages/ForeignCurrencyAccountDetails';
-// import RegularBasicInformation from 'pages/RegularBasicInformation';
-// import ExportBankBook from 'pages/ExportBankBook';
-// import ExportBankBook1 from 'pages/ExportBankBook/exportBankBook_1';
-// import ForeignCurrencyTransfer from 'pages/ForeignCurrencyTransfer';
-// import ForeignCurrencyTransfer1 from 'pages/ForeignCurrencyTransfer/foreignCurrencyTransfer_1';
-// import ForeignCurrencyTransfer2 from 'pages/ForeignCurrencyTransfer/foreignCurrencyTransfer_2';
-// import ReserveTransferSearch from 'pages/ReserveTransferSearch';
-// import ReserveTransferSearch1 from 'pages/ReserveTransferSearch/reserveTransferSearch_1';
-// import ReserveTransferSearch2 from 'pages/ReserveTransferSearch/reserveTransferSearch_2';
-// import MobileTransfer from 'pages/MobileTransfer';
-// import MobileTransfer1 from 'pages/MobileTransfer/mobileTransfer_1';
-// import MobileTransfer2 from 'pages/MobileTransfer/mobileTransfer_2';
-// import ForeignCurrencyPriceSetting from 'pages/ForeignCurrencyPriceSetting';
-// import QuickLoginSetting from 'pages/QuickLoginSetting';
-// import Instalment from 'pages/Instalment';
-// import AutomaticBillPayment from 'pages/AutomaticBillPayment';
-
 /* 轉帳靜態頁 (for prototype) */
 // import TransferStatic from 'pages/TransferStatic';
 // import TransferStatic1 from 'pages/TransferStatic/transfer_1';
@@ -77,9 +7,6 @@ import { lazy } from 'react';
 const TransferStatic = lazy(() => import('pages/TransferStatic'));
 const TransferStatic1 = lazy(() => import('pages/TransferStatic/transfer_1'));
 const TransferStatic2 = lazy(() => import('pages/TransferStatic/transfer_2'));
-
-/* Tutorials (for prototype) */
-// import Tutorials from 'pages/Tutorials';
 
 const CardLessATM = lazy(() => import('pages/CardLessATM'));
 const CardLessATM1 = lazy(() => import('pages/CardLessATM/cardLessATM_1'));
@@ -122,12 +49,10 @@ const Transfer2 = lazy(() => import('pages/Transfer/transfer_2'));
 const Profile = lazy(() => import('pages/Profile'));
 const FinancialDepartments = lazy(() => import('pages/FinancialDepartments'));
 const Network = lazy(() => import('pages/Network'));
-const TradingAccount = lazy(() => import('pages/TradingAccount'));
-const TradingAccountDetails = lazy(() => import('pages/TradingAccountDetails'));
-const TaiwanDollarAccount = lazy(() => import('pages/TaiwanDollarAccount'));
-const TaiwanDollarAccountDetails = lazy(() => import('pages/TaiwanDollarAccountDetails'));
-const ForeignCurrencyAccount = lazy(() => import('pages/ForeignCurrencyAccount'));
-const ForeignCurrencyAccountDetails = lazy(() => import('pages/ForeignCurrencyAccountDetails'));
+const C00300 = lazy(() => import('pages/C00300_NtdDeposit/C00300'));
+const MoreTranscations = lazy(() => import('pages/MoreTranscations'));
+const C00400 = lazy(() => import('pages/C00400_ForeignDeposit/C00400'));
+const C00500 = lazy(() => import('pages/C00500_SecsDeposit/C00500'));
 const RegularBasicInformation = lazy(() => import('pages/RegularBasicInformation'));
 const ExportBankBook = lazy(() => import('pages/ExportBankBook'));
 const ExportBankBook1 = lazy(() => import('pages/ExportBankBook/exportBankBook_1'));
@@ -153,8 +78,8 @@ const DepositePlan = lazy(() => import('pages/C00600_DepositPlan/C00600'));
 // TODO：支援開發及Prototype測試使用
 const Login = lazy(() => import('proto/Login/login'));
 const Tutorials = lazy(() => import('proto/Tutorials'));
-// const Test = lazy(() => import('proto/Test'));
 const Nav = lazy(() => import('proto/Nav/Nav'));
+// const Test = lazy(() => import('proto/Test'));
 // --------------------------------
 
 const routes = [
@@ -204,12 +129,10 @@ const routes = [
   { path: '/more', exact: false, component: More },
   { path: '/financialDepartments', exact: false, component: FinancialDepartments },
   { path: '/network', exact: false, component: Network },
-  { path: '/C00300', exact: false, component: TaiwanDollarAccount },
-  { path: '/taiwanDollarAccountDetails', exact: false, component: TaiwanDollarAccountDetails },
-  { path: '/tradingAccount', exact: false, component: TradingAccount },
-  { path: '/tradingAccountDetails', exact: false, component: TradingAccountDetails },
-  { path: '/C00400', exact: false, component: ForeignCurrencyAccount },
-  { path: '/foreignCurrencyAccountDetails', exact: false, component: ForeignCurrencyAccountDetails },
+  { path: '/C00300', exact: false, component: C00300 },
+  { path: '/moreTranscations', exact: false, component: MoreTranscations },
+  { path: '/C00400', exact: false, component: C00400 },
+  { path: '/C00500', exact: false, component: C00500 },
   { path: '/regularBasicInformation', exact: false, component: RegularBasicInformation },
   { path: '/C00800', exact: false, component: ExportBankBook },
   { path: '/exportBankBook1', exact: false, component: ExportBankBook1 },
