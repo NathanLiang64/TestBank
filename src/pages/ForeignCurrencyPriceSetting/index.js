@@ -89,6 +89,9 @@ const ForeignCurrencyPriceSetting = () => {
   // 新增外幣到價通知
   const addPriceSetting = () => {
     setDrawerTitle('add');
+    setValue('currencyType', 'USD');
+    setValue('priceType', '0');
+    setValue('price', '');
     setDrawerOpen(true);
   };
 
