@@ -12,8 +12,8 @@ import { reducers as passwordDrawerReducer } from 'components/PasswordDrawer/sto
 import { reducers as spinnerReducer } from 'components/Spinner/stores';
 // import { reducers as taiwanDollarAccountReducer } from 'pages/TaiwanDollarAccount/stores';
 // import { reducers as foreignCurrencyAccountReducer } from 'pages/ForeignCurrencyAccount/stores';
-import { reducers as tradingAccountReducer } from 'pages/TradingAccount/stores';
-import { reducers as accountDetailsReducer } from 'components/AccountDetails/stores';
+// import { reducers as tradingAccountReducer } from 'pages/TradingAccount/stores';
+// import { reducers as accountDetailsReducer } from 'components/AccountDetails/stores';
 import { reducers as resultDialogReducer } from 'pages/ResultDialog/stores';
 
 import ModalReducer from './ModalReducer';
@@ -32,8 +32,8 @@ const reducer = combineReducers({
   spinner: spinnerReducer,
   // taiwanDollarAccount: taiwanDollarAccountReducer,
   // foreignCurrencyAccount: foreignCurrencyAccountReducer,
-  tradingAccount: tradingAccountReducer,
-  accountDetails: accountDetailsReducer,
+  // tradingAccount: tradingAccountReducer,
+  // accountDetails: accountDetailsReducer,
   resultDialog: resultDialogReducer,
   ModalReducer,
 });

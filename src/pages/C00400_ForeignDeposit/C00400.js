@@ -150,7 +150,7 @@ const ForeignCurrencyAccount = () => {
         params = {
           ...account.cardInfo, // 直接提供帳戶摘要資訊，因為一定是從有帳戶資訊的頁面進去。
           // cardTitle: '存款帳戶交易明細',
-          cardColor: 'blue',
+          cardColor: 'orange',
           currency: account.cardInfo.ccyCd,
         };
         break;
@@ -184,7 +184,7 @@ const ForeignCurrencyAccount = () => {
           accounts={Object.values(accounts ?? [])}
           onAccountChange={(swiper) => setSelectedAccountIdx(swiper.activeIndex)}
           onFunctionChange={handleFunctionChange}
-          cardColor="blue"
+          cardColor="orange"
           funcList={[
             { fid: 'foreignCurrencyTransfer', title: '轉帳' },
             { fid: 'exchange', title: '換匯' },

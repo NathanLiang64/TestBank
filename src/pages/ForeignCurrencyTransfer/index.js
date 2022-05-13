@@ -93,7 +93,7 @@ const ForeignCurrencyTransfer = () => {
         transferTitle="跨轉優惠"
         transferLimit={6}
         transferRemaining={item.transferRemaining}
-        color="blue"
+        color="orange"
       />
     </SwiperSlide>
   ));
