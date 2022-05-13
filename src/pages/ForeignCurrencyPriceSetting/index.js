@@ -89,6 +89,9 @@ const ForeignCurrencyPriceSetting = () => {
   // 新增外幣到價通知
   const addPriceSetting = () => {
     setDrawerTitle('add');
+    setValue('currencyType', 'USD');
+    setValue('priceType', '0');
+    setValue('price', '');
     setDrawerOpen(true);
   };
 
@@ -98,7 +101,7 @@ const ForeignCurrencyPriceSetting = () => {
     setCurrentSetting({
       currency: data.currency,
       price: data.price,
-      exType: data.exchange_type,
+      exchange_type: data.exchange_type,
     });
     setValue('currencyType', data.currency);
     setValue('priceType', data.exchange_type.toString());
@@ -115,7 +118,7 @@ const ForeignCurrencyPriceSetting = () => {
     const param = {
       currency: data.currency,
       price: data.price,
-      exType: data.exchange_type,
+      exchange_type: data.exchange_type,
     };
     await removeNotice(param);
     getAllPriceNotifications();
@@ -132,7 +135,7 @@ const ForeignCurrencyPriceSetting = () => {
       const param = {
         currency: data.currencyType,
         price: data.price.toFixed(4),
-        exType: Number(data.priceType),
+        exchange_type: Number(data.priceType),
       };
       await addNotice(param);
     }
@@ -140,7 +143,7 @@ const ForeignCurrencyPriceSetting = () => {
       const param = {
         currency: data.currencyType,
         price: data.price.toFixed(4),
-        exType: Number(data.priceType),
+        exchange_type: Number(data.priceType),
       };
       console.log(param);
       await updateNotice(currentSetting, param);
