@@ -35,12 +35,6 @@ jobs:
     - run: |-
         gcloud --quiet auth configure-docker $REGISTRY_URL
 
-    # Generate storybook doc
-    - name: Generate Storybook
-      run: |-
-        npm ci
-        npm run build-storybook
-
     # Build the Docker image
     - name: Build
       run: |-
