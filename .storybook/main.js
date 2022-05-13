@@ -22,6 +22,7 @@ module.exports = {
       ...config.resolve.alias,
       assets: path.resolve(__dirname, '../src/assets/'),
       themes: path.resolve(__dirname, '../src/themes/'),
+      components: path.resolve(__dirname, '../src/components/'),
     };
 
     // Return the altered config
