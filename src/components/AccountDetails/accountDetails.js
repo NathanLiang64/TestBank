@@ -63,6 +63,8 @@ const AccountDetails = ({
     range.loading = setEmptyRange();
     setCondition({
       account: selectedAccount.acctId,
+      startIndex: '',
+      direct: 0, // Note: 設為 0 才會清掉已載入的明細項目。
       ...cond,
     });
   };
@@ -133,7 +135,7 @@ const AccountDetails = ({
         if (condition?.dataMonth) {
           // 畫面跳轉至該月份第一筆資料
           // Note: 因為 child 是 UI元素，所以要透過 getAttribute 才能拿到值，而且是字串型態。
-          currItem = Array.from(containment.children).find((child) => child.getAttribute('data-index') === startIndex.toString());
+          currItem = Array.from(containment.children).find((child) => child.getAttribute('data-index') === startIndex?.toString());
         }
 
         if (currItem) {
@@ -154,7 +156,10 @@ const AccountDetails = ({
         condition={condition}
         onSearch={(newCond) => {
           closeDrawer();
-          resetView(newCond);
+          resetView({
+            ...newCond,
+            dataMonth: null, // Note: 未清掉會列入查詢條件。
+          });
         }}
         onCancel={closeDrawer}
       />
@@ -236,8 +241,8 @@ const AccountDetails = ({
       const newCondition = {
         ...condition,
         dataMonth: month,
-        direct: '0', // 資料方向為0，表示取前後各50筆。
-        startIndex: '', // Note：不可指定 startIndex 否則將視為一般查詢。
+        // direct: '0', // 資料方向為0，表示取前後各50筆。
+        // startIndex: '', // Note：不可指定 startIndex 否則將視為一般查詢。
       };
       resetView(newCondition);
     };
