@@ -61,7 +61,10 @@ const AccountDetails = ({
     range.inview = setEmptyRange();
     range.loaded = setEmptyRange();
     range.loading = setEmptyRange();
-    if (cond) setCondition(cond);
+    setCondition({
+      account: selectedAccount.acctId,
+      ...cond,
+    });
   };
 
   /**

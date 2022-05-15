@@ -37,7 +37,7 @@ const MoreTranscations = () => {
     const request = {
       ...conditions,
       account: account.acctId,
-      currency: account.currency ?? 'NTD',
+      currency: account.currency ?? 'TWD',
     };
 
     // 取得帳戶交易明細（三年內）
@@ -52,10 +52,10 @@ const MoreTranscations = () => {
     <Layout title={account?.cardTitle ?? '帳戶交易明細'}>
       <div>
         {account ? (
-        <AccountDetails
-          selectedAccount={account}
-          onSearch={updateTransactions}
-        />
+          <AccountDetails
+            selectedAccount={account}
+            onSearch={updateTransactions}
+          />
         ) : null}
       </div>
     </Layout>

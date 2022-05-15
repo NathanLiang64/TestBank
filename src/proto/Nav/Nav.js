@@ -79,6 +79,12 @@ const Nav = () => {
             <li>funcID: B00600</li>
           </ul>
         </div>
+        <div onClick={() => startFunc('B00300')}>
+          <ul>
+            <li>功能：訊息通知</li>
+            <li>funcID: B00300</li>
+          </ul>
+        </div>
         {/* <div onClick={() => goToFunc({ route: '/profile', funcID: 'T00100' })}>
           <ul>
             <li>功能：個人化設定</li>
@@ -126,13 +132,6 @@ const Nav = () => {
             <li>功能：網銀密碼變更</li>
             <li>route: /pwdModify</li>
             <li>funcID: T00900</li>
-          </ul>
-        </div>
-        <div onClick={() => goToFunc({ route: '/notice', funcID: 'B00300' })}>
-          <ul>
-            <li>功能：訊息通知</li>
-            <li>route: /notice</li>
-            <li>funcID: B00300</li>
           </ul>
         </div>
         <div onClick={() => goToFunc({ route: '/staging', funcID: '' })}>
