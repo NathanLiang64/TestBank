@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { showPrompt, showError, showInfo } from './MessageModal';
+import { showError } from './MessageModal';
 import JWTUtil from './JWTUtil';
 
 // Axios instance
@@ -83,7 +83,12 @@ userAxios().interceptors.response.use(
     }
 
     if (response.data.code !== '0000') {
+      const { code, message } = response.data;
       // TODO: 導向API失敗的例外處理的頁面！
+      console.log(`\x1b[31m${response.config.url} - Exception = (\x1b[33m${code}\x1b[31m) ${message}`);
+      // eslint-disable-next-line react/jsx-one-expression-per-line
+      showError((<p>*** {code} ***<br />{message}</p>));
+      return Promise.reject(code);
     }
 
     console.log(`\x1b[33m${response.config.url} \x1b[37m - Response = \n`, response);
@@ -172,23 +177,19 @@ export const callAPI = async (url, request, config) => {
             });
             break;
 
-          case 'APLFX1402': // JWT Expired
-            await showPrompt('您已閒置過久，為了保護個資的安全，我們必需重新建立與主機的連線。');
-            break;
-
           default:
-            await showInfo(message);
+            await showError(message);
             break;
         }
       }
-    })
-    .catch((rs) => {
-      console.log('catch: {}', rs);
-    })
-    // eslint-disable-next-line no-unused-vars
-    .finally((rs) => {
-      // console.log('finally: {}', rs);
     });
+  // .catch((rs) => {
+  //   console.log('catch: {}', rs);
+  // })
+  // // eslint-disable-next-line no-unused-vars
+  // .finally((rs) => {
+  //   // console.log('finally: {}', rs);
+  // });
 
   return response;
 };

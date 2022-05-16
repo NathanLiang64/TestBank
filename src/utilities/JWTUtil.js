@@ -32,7 +32,7 @@ class JWTUtil {
   // eslint-disable-next-line class-methods-use-this
   decryptJWTMessage(aesKey, iv, message) {
     // const enc = CipherUtil.getEnc(aesKey);
-    const request = CipherUtil.decryptAES(aesKey, iv, message.encData);
+    const request = CipherUtil.decryptAES(aesKey, iv, message.data ?? message.encData); // encData ??? for SM
     const hmac = CipherUtil.encryptHMAC(aesKey, request);
     assert.strictEqual(hmac, message.mac);
     const json = JSON.parse(request);
