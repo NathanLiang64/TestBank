@@ -44,7 +44,7 @@ const DepositePlan = () => {
   }, []);
 
   return (
-    <Layout title="存錢計畫">
+    <Layout title="存錢計畫" hasClearHeader>
       <SwiperLayout height={200} slides={renderSlides(slides)} onSlideChange={handler}>
         { contents }
       </SwiperLayout>

@@ -20,6 +20,7 @@ function Layout({
   goHome,
   goBack,
   goBackFunc,
+  hasClearHeader,
 }) {
   const dispatch = useDispatch();
 
@@ -168,7 +169,7 @@ function Layout({
   if (!waitting) {
     return (
       <div>
-        <Header title={title} hideHome={!goHome} hideBack={!goBack} goBack={goBackFunc} />
+        <Header title={title} hideHome={!goHome} hideBack={!goBack} goBack={goBackFunc} isTransparent={hasClearHeader} />
 
         <div>
             {waitting ? null : children}
