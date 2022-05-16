@@ -15,7 +15,7 @@ const doc = `### 組件說明
 
 export default {
   title: 'components/Accordion',
-  components: Accordion,
+  component: Accordion,
   argTypes: {
     className: { control: 'text' },
     title: { control: 'text' },
@@ -30,6 +30,6 @@ export default {
 
 const Template = (args) => (
   <Accordion {...args} />
-)
+);
 
 export const Primary = Template.bind({});
