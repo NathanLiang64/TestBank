@@ -7,6 +7,8 @@ import Layout from 'components/Layout/Layout';
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
+import SwiperLayout from './components/swiperLayout';
+
 /**
  * C00600 存錢計畫
  */
@@ -23,7 +25,9 @@ const DepositePlan = () => {
 
   return (
     <Layout title="存錢計畫">
-      <div style={{ marginTop: 100, textAlign: 'center' }}>存錢計畫</div>
+      <SwiperLayout>
+        <div>存錢計畫</div>
+      </SwiperLayout>
     </Layout>
   );
 };
