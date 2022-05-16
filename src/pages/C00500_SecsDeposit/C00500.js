@@ -74,19 +74,16 @@ const C00500 = () => {
   const updateTransactions = async (account) => {
     setTransactions(null);
     if (account.transactions === null) {
-      const request = {
-        account: account.cardInfo.acctId,
-        currency: 'NTD',
-      };
       // 取得帳戶交易明細（三年內的前25筆即可）
-      const transData = await getTransactionDetails(request);
+      const accountNo = account.cardInfo.acctId;
+      const transData = await getTransactionDetails(accountNo);
 
       account.transactions = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
       if (account.transactions.length > 0) {
         account.cardInfo.acctBalx = account.transactions[0].balance; // 更新餘額。
       }
 
-      if (request.account !== getSelectedAccount()) return; // Note: 當卡片已經換掉了，就不需要顯示這份資料。
+      if (accountNo !== getSelectedAccount()) return; // Note: 當卡片已經換掉了，就不需要顯示這份資料。
     }
     setTransactions(account.transactions);
   };

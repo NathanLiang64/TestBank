@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { useGetEnCrydata } from 'hooks';
+// import { useGetEnCrydata } from 'hooks';
 import { exchangeApi } from 'apis';
 import { closeFunc, switchLoading } from 'utilities/BankeePlus';
 
@@ -273,9 +273,9 @@ const Exchange = () => {
     const ntAmt = getNTDAmt();
     const frgnAmt = Number(getFrgnAmt().replace(/,/gi, ''));
     if (watch('exchangeType') === '1') {
-      return toCurrency(Math.round(ntAmt / selectedCurrency.sellRate));
+      return toCurrency(Math.round(ntAmt / selectedCurrency.sellRate) || 0);
     }
-    return toCurrency(Math.round(frgnAmt * selectedCurrency.sellRate));
+    return toCurrency(Math.round(frgnAmt * selectedCurrency.sellRate) || 0);
   };
 
   const ExchangeTableDialog = () => (
@@ -323,7 +323,7 @@ const Exchange = () => {
     <FEIBErrorMessage className="balance">
       可用餘額 NTD&nbsp;
       {
-        toCurrency(getNTDAmt())
+        toCurrency(getNTDAmt() || 0)
       }
     </FEIBErrorMessage>
   );
@@ -342,7 +342,7 @@ const Exchange = () => {
     </FEIBErrorMessage>
   );
 
-  useGetEnCrydata();
+  // useGetEnCrydata();
 
   useEffect(() => {
     setValue('exchangeType', '1');

@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useGetEnCrydata } from 'hooks';
-import { noticeApi } from 'apis';
 import { goToFunc } from 'utilities/BankeePlus';
 
 /* Elements */
@@ -18,6 +17,7 @@ import {
 } from 'components/elements';
 import BottomDrawer from 'components/BottomDrawer';
 import MessageItem from './messageItem';
+import { queryLastPush } from './api';
 
 /* Styles */
 import NoticeWrapper from './notice.style';
@@ -51,17 +51,13 @@ const Notice = () => {
   };
 
   const getNoticeItem = async () => {
-    const data = await noticeApi.getNoticeItem({});
-    console.log(data);
   };
 
   // 取得通知列表
   const getNotices = async () => {
-    const data = await noticeApi.getNotices({
-      channelCode: 'HHB_A',
-    });
-    console.log(data.messages);
-    setMessagesList(data.messages);
+    const response = await queryLastPush();
+    console.log(response);
+    setMessagesList([]);
   };
 
   // 選擇通知類別

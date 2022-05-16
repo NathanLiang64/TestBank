@@ -5,6 +5,7 @@ const ForeignCurrencyPriceSettingWrapper = styled(Layout)`
   &.drawerContainer {
     margin-top: 0;
     padding: 0 1.6rem 2.4rem;
+    height: auto;
     button {
       margin-top: 1.8rem;
     }

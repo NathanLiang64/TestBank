@@ -37,16 +37,7 @@ export const getDepositBonus = async (accountNo) => {
 
 /**
  * 取得當前所選帳號之交易明細
- * @param {*} request {
-    actNo: 帳號, ex: 00100100063106,
-    keyword: 文字檢索條件, ex: 退款.
-    startDate: 交易日期起日, ex: 20200101,
-    endDate: 交易日期迄日, ex: 20210731,
-    tranType: 摘要代碼: 1:跨轉、2:ATM、3:存款息、4:薪轉、5:付款儲存、6:自動扣繳, 可多筆,
-    dataMonth: 起始月份，預設為最接近月底的日期為起始索引, ex: 202104,
-    startIndex: 指定起始索引,
-    direct: 方向性.1:正向(新~舊)、2:反向(舊~新)、0:雙向方向性
-  }
+ * @param {*} accountNo 存款帳號, ex: 00100100063106
  * @returns 帳戶往來明細清單
     {
         "index": 1,
@@ -65,18 +56,18 @@ export const getDepositBonus = async (accountNo) => {
         "currency": "TWD"
     }
  */
-export const getTransactionDetails = async (request) => {
-  const response = await callAPI('/api/deposit/v1/queryAcctTxDtl', request);
+export const getTransactionDetails = async (accountNo) => {
+  const response = await callAPI('/api/deposit/v1/queryAcctTxDtl', { accountNo, currency: 'TWD' });
   return response.data;
 };
 
 /**
  * 下載存摺封面
  * @param {*} accountNo 存款帳號
- * @param {*} currency 幣別代碼，預設為台幣(NTD)
+ * @param {*} currency 幣別代碼，預設為台幣(TWD)
  * @returns 存摺封面
  */
-export const downloadDepositBookCover = async (accountNo, currency = 'NTD') => {
+export const downloadDepositBookCover = async (accountNo, currency = 'TWD') => {
   const today = stringDateCodeFormatter(new Date()); // 今天 yyyyMMdd
   const filename = `${accountNo}-${today}.pdf`;
   await downloadPDF('/api/deposit/v1/getDepositBookCover', { accountNo, currency }, filename);
