@@ -1,7 +1,6 @@
 import styled from 'styled-components';
-import Layout from 'components/Layout';
 
-const NavWrapper = styled(Layout)`
+const NavWrapper = styled.div`
   div {
     display: block;
     font-size: 1.6rem;

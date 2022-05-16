@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import DetailCard from 'components/DetailCard';
 import Loading from 'components/Loading';
+import EmptyData from 'components/EmptyData';
 import { ArrowNextIcon } from 'assets/images/icons';
 import DepositDetailPanelWrapper from './depositDetailPanel.style';
 
@@ -18,7 +19,9 @@ const DepositDetailPanel = ({
 
     if (details.length === 0) {
       return (
-        <div style={{ alignSelf: 'center', marginBlock: '2 rem' }}>本月沒有任何活動！！</div>
+        <div style={{ height: 500, width: '100%' }}>
+          <EmptyData content="查無最近三年內的帳務往來資料" />
+        </div>
       );
     }
 
@@ -28,8 +31,7 @@ const DepositDetailPanel = ({
 
     // 根據剩餘高度計算要顯示的卡片數量，計算裝置可容納的交易明細卡片數量
     const list = [];
-    // FBI-9 TODO: 因為初始時高度為0，載入後被往下推，又不會重新render，所以先減1個。
-    const computedCount = Math.floor((detailAreaHeight - 30) / 80) - 1;
+    const computedCount = Math.floor((detailAreaHeight - 30) / 80);
     for (let i = 0; (i < computedCount && i < details.length); i++) {
       list.push(details[i]);
     }

@@ -7,11 +7,11 @@ import { stringDateCodeFormatter } from 'utilities/Generator';
  * @param {*} conditions 查詢條件
  * @returns 數位存摺
  */
-export const downloadDepositTransactionReport = async (fileType, conditions) => {
+export const getDepositBook = async (fileType, conditions) => {
   const today = stringDateCodeFormatter(new Date()); // 今天 yyyyMMdd
   const filename = `${conditions.account}-${today}`;
   const request = {
-    ...conditions,
+    conditions,
     fileType,
     pdfTemplateType: 2, // Pdf版型, 1:只有封面(可參考PdfTemplateType), 2:只有內容, 3:完整內容
   };
