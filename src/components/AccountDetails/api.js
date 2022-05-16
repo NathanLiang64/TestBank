@@ -9,7 +9,7 @@ import { stringDateCodeFormatter } from 'utilities/Generator';
  */
 export const getDepositBook = async (fileType, conditions) => {
   const today = stringDateCodeFormatter(new Date()); // 今天 yyyyMMdd
-  const filename = `${conditions.account}-${today}`;
+  const filename = `${conditions.accountNo}-${today}`;
   const request = {
     conditions,
     fileType,

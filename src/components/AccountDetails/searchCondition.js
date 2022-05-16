@@ -43,13 +43,13 @@ const SearchCondition = ({
     const handleClickDateRangePicker = (range) => {
       setNewCondition({
         ...newCondition,
-        beginDT: stringDateCodeFormatter(range[0]), // 轉為 YYYYMMDD
-        endDT: stringDateCodeFormatter(range[1]),
+        startDate: stringDateCodeFormatter(range[0]), // 轉為 YYYYMMDD
+        endDate: stringDateCodeFormatter(range[1]),
       });
     };
     const dateRange = [
-      stringToDate(newCondition?.beginDT), // DateRangePicker 需要 Date 型別。
-      stringToDate(newCondition?.endDT),
+      stringToDate(newCondition?.startDate), // DateRangePicker 需要 Date 型別。
+      stringToDate(newCondition?.endDate),
     ];
 
     return (
@@ -88,8 +88,8 @@ const SearchCondition = ({
     const startDate = computedStartDate(autoDateTabId);
     setNewCondition({
       ...newCondition,
-      beginDT: stringDateCodeFormatter(startDate), // 轉為 YYYYMMDD
-      endDT: stringDateCodeFormatter(today),
+      startDate: stringDateCodeFormatter(startDate), // 轉為 YYYYMMDD
+      endDate: stringDateCodeFormatter(today),
     });
   }, [autoDateTabId]);
 
@@ -104,7 +104,7 @@ const SearchCondition = ({
       </FEIBTabList>
       { autoDateTabId === '0' ? renderDataRangePicker() : (
         <div className="autoDateArea">
-          <p>{`${stringDateFormatter(newCondition?.beginDT)} ~ ${stringDateFormatter(newCondition?.endDT)}`}</p>
+          <p>{`${stringDateFormatter(newCondition?.startDate)} ~ ${stringDateFormatter(newCondition?.endDate)}`}</p>
         </div>
       ) }
     </FEIBTabContext>
@@ -118,7 +118,7 @@ const SearchCondition = ({
     // 使用者變更關鍵字的選取狀態。
     const handleKeywordSelectChanged = (event) => {
       const keyId = event.target.id;
-      const selectedItems = newCondition?.tranTP?.split(',') ?? [];
+      const selectedItems = newCondition?.txnType?.split(',') ?? [];
       if (event.target.checked) selectedItems.push(keyId);
       else {
         const index = selectedItems.indexOf(keyId);
@@ -126,13 +126,13 @@ const SearchCondition = ({
       }
       setNewCondition({
         ...newCondition,
-        tranTP: selectedItems.join(','), // 重建預設查詢關鍵字代碼清單。 TODO：確認要不要加','
+        txnType: selectedItems.join(','), // 重建預設查詢關鍵字代碼清單。 TODO：確認要不要加','
       });
     };
     // 檢查目前的關鍵字是否已被使用者選取。
     const isSelected = (keyId) => {
-      if (!newCondition?.tranTP) return false;
-      const selectedItems = newCondition.tranTP.split(',');
+      if (!newCondition?.txnType) return false;
+      const selectedItems = newCondition.txnType.split(',');
       return selectedItems.indexOf(keyId.toString()) >= 0;
     };
     // 傳回 UI 元素

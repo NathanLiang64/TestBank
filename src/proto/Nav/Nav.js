@@ -165,7 +165,6 @@ const Nav = () => {
         </Accordion>
 
         <Accordion title="驗收單元功能清單 (3)" space="bottom">
-          <Link to="/depositInquiry">D01-1 帳戶明細</Link>
           <Link to="/QRCodeTransfer">E08 QRCode 轉帳</Link>
         </Accordion>
 

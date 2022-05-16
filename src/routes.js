@@ -92,8 +92,6 @@ const routes = [
   { path: '/accountMaintenance', exact: false, component: AccountMaintenance },
   { path: '/billPay', exact: true, component: BillPay },
   { path: '/billPay1', exact: false, component: BillPay1 },
-  // { path: '/depositOverview', exact: false, component: DepositOverview },
-  // { path: '/depositInquiry', exact: false, component: DepositInquiry },
   { path: '/depositPlus', exact: false, component: DepositPlus },
   { path: '/S00400', exact: true, component: NoticeSetting },
   { path: '/nicknameSetting', exact: false, component: NicknameSetting },
@@ -160,7 +158,6 @@ const routes = [
   // TODO：支援開發及Prototype測試使用
   { path: '/login', exact: false, component: Login },
   { path: '/tutorials', exact: false, component: Tutorials },
-  // { path: '/home', exact: false, component: Nav },
   { path: '/', exact: true, component: Nav },
   // --------------------------------
 ];

@@ -63,8 +63,8 @@ const AccountDetails = ({
     range.loading = setEmptyRange();
     setCondition({
       ...cond,
-      account: selectedAccount.acctId,
-      startIndex: '',
+      accountNo: selectedAccount.acctId,
+      startIndex: null,
       direct: 0, // Note: 設為 0 才會清掉已載入的明細項目。
     });
   };
@@ -132,7 +132,7 @@ const AccountDetails = ({
       const containment = txnDetailsRef?.current; // 所有明細項目的外層 HTML 容器物件。即： <div className="transactionDetail"
       if (containment) {
         let currItem = containment.children[0]; // 預設跳至第一筆資料
-        if (condition?.dataMonth) {
+        if (condition?.month) {
           // 畫面跳轉至該月份第一筆資料
           // Note: 因為 child 是 UI元素，所以要透過 getAttribute 才能拿到值，而且是字串型態。
           currItem = Array.from(containment.children).find((child) => child.getAttribute('data-index') === startIndex?.toString());
@@ -158,7 +158,7 @@ const AccountDetails = ({
           closeDrawer();
           resetView({
             ...newCond,
-            dataMonth: null, // Note: 未清掉會列入查詢條件。
+            month: null, // Note: 未清掉會列入查詢條件。
           });
         }}
         onCancel={closeDrawer}
@@ -216,10 +216,10 @@ const AccountDetails = ({
    * @param {*} cond 目前的查詢條件。
    */
   const renderSearchBarText = (cond) => {
-    if (!cond || !cond.beginDT) return null; // 沒有設定查詢日期區間，就不顯示。
+    if (!cond || !cond.startDate) return null; // 沒有設定查詢日期區間，就不顯示。
     return (
       <div className="searchCondition">
-        <p>{`${stringDateFormatter(cond.beginDT)} ~ ${stringDateFormatter(cond.endDT)}`}</p>
+        <p>{`${stringDateFormatter(cond.startDate)} ~ ${stringDateFormatter(cond.endDate)}`}</p>
         <FEIBIconButton onClick={() => setCondition(null)}>
           <CrossCircleIcon />
         </FEIBIconButton>
@@ -240,9 +240,9 @@ const AccountDetails = ({
       const month = event.currentTarget.getAttribute('data-month');
       const newCondition = {
         ...condition,
-        dataMonth: month,
+        month,
         // direct: '0', // 資料方向為0，表示取前後各50筆。
-        // startIndex: '', // Note：不可指定 startIndex 否則將視為一般查詢。
+        // startIndex: null, // Note：不可指定 startIndex 否則將視為一般查詢。
       };
       resetView(newCondition);
     };
@@ -325,7 +325,7 @@ const AccountDetails = ({
     // 保留原本的查詢條件，改用 direct 通知補充明細資料的方向及位置。
     setCondition({
       ...condition,
-      dataMonth: null, // Note：一定要清掉，因為切換月份只是一次性的行為，而且不可跟 startIndex 共存。
+      month: null, // Note：一定要清掉，因為切換月份只是一次性的行為，而且不可跟 startIndex 共存。
       direct: scrollDirection,
       startIndex,
     });

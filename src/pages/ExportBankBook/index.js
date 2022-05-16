@@ -121,7 +121,7 @@ const ExportBankBook = () => {
       }
     }
     const param = {
-      actNo: data.account,
+      accountNo: data.account,
       startDate: stringDateCodeFormatter(exportDateRange[0]),
       endDate: stringDateCodeFormatter(exportDateRange[1]),
       fileType: 1,

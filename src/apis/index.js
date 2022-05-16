@@ -2,7 +2,6 @@
 import * as billPayApi from './billPayApi';
 import * as patternLockSettingApi from './patternLockSettingApi';
 import * as lossReissueApi from './lossReissueApi';
-import * as depositOverviewApi from './depositOverviewApi';
 import * as depositInquiryApi from './depositInquiryApi';
 // import * as shakeShakeApi from '../proto/ShakeShake/shakeShakeApi';
 import * as transferApi from './transferApi';
@@ -29,7 +28,6 @@ export {
   billPayApi,
   patternLockSettingApi,
   lossReissueApi,
-  depositOverviewApi,
   depositInquiryApi,
   // shakeShakeApi,
   transferApi,

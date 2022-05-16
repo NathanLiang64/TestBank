@@ -36,7 +36,7 @@ const MoreTranscations = () => {
   const updateTransactions = async (conditions) => {
     const request = {
       ...conditions,
-      account: account.acctId,
+      accountNo: account.acctId,
       currency: account.currency ?? 'TWD',
     };
 

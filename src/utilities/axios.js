@@ -9,11 +9,11 @@ const instance = axios.create({
 });
 
 const userAxios = () => {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === '') {
     return instance;
   }
   // 本機測試時，一定要直接使用使用 axios，否則會有跨網域問題。
-  return instance;
+  return axios;
 };
 
 userAxios().defaults.retry = 3;
