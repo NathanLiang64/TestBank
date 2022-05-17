@@ -1,7 +1,12 @@
 import * as Icons from 'assets/images/icons';
 
+import presetColors from './presetColors';
+
 export default {
   title: 'assets/Icons',
+  argTypes: {
+    color: { control: { type: 'color', presetColors: presetColors(['text']) }},
+  },
 };
 
 const IconArray = [];
@@ -10,7 +15,7 @@ for (let icon in Icons) {
   IconArray.push([icon, Icons[icon]]);
 };
 
-const Template = () => (
+const Template = (args) => (
   <>
     <p style={{ padding: 12, backgroundColor: 'black', marginBottom: 48, borderRadius: 10, color: 'white', fontSize: '10pt' }}>
       // 使用範例
@@ -33,7 +38,7 @@ const Template = () => (
           }}
         >
           <div style={{ height: 32, width: 32 }}>
-            {i[1]({ size: 32, color: 'black' })}
+            {i[1]({ size: 32, color: args.color })}
           </div>
           <div style={{ fontSize: '8pt', color: 'black' }}>{i[0]}</div>
         </div>
@@ -43,3 +48,6 @@ const Template = () => (
 );
 
 export const Primary = Template.bind({});
+Primary.args = {
+  color: 'black',
+};
