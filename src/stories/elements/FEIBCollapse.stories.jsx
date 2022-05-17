@@ -1,4 +1,4 @@
-import FEIBCollapse from '../components/elements/FEIBCollapse';
+import FEIBCollapse from 'components/elements/FEIBCollapse';
 
 export default {
   title: 'elements/FEIBCollapse',

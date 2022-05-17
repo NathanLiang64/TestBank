@@ -1,4 +1,4 @@
-import InformationList from '../components/InformationList';
+import InformationList from 'components/InformationList';
 
 const doc = `### 組件說明
 InformationList 組件用於 2 欄的條列內容
@@ -13,7 +13,7 @@ InformationList 組件用於 2 欄的條列內容
 
 export default {
   title: 'components/InformationList',
-  components: InformationList,
+  component: InformationList,
   argTypes: {
     title: { control: 'text' },
     content: { control: 'text' },

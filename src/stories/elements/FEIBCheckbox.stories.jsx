@@ -1,7 +1,7 @@
-import FEIBCheckbox from '../components/elements/FEIBCheckbox';
-import FEIBCheckboxLabel from '../components/elements/FEIBCheckboxLabel';
+import FEIBCheckbox from 'components/elements/FEIBCheckbox';
+import FEIBCheckboxLabel from 'components/elements/FEIBCheckboxLabel';
 
-import presetColors from './presetColors';
+import presetColors from '../presetColors';
 
 export default {
   title: 'elements/FEIBCheckboxLabel',

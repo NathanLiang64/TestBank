@@ -1,4 +1,4 @@
-import CheckboxButton from '../components/CheckboxButton';
+import CheckboxButton from 'components/CheckboxButton';
 
 const doc = `### 組件說明
 此組件封裝了 label + checkbox
@@ -16,7 +16,7 @@ const doc = `### 組件說明
 
 export default {
   title: 'components/CheckboxButton',
-  components: CheckboxButton,
+  component: CheckboxButton,
   argTypes: {
     label: { control: 'text' },
     id: { control: 'text' },

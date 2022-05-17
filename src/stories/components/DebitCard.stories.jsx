@@ -1,8 +1,8 @@
 import { Provider } from 'react-redux';
 
-import store from '../stores/store';
-import DebitCard from '../components/DebitCard';
-import presetColors from './presetColors';
+import store from 'stores/store';
+import DebitCard from 'components/DebitCard';
+import presetColors from '../presetColors';
 
 const doc = `### 組件說明
 存款卡組件
@@ -30,7 +30,7 @@ const doc = `### 組件說明
 
 export default {
   title: 'components/DebitCard',
-  components: DebitCard, 
+  component: DebitCard, 
   decorators: [
     (Story) => (
       <Provider store={store}>

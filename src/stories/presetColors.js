@@ -1,4 +1,4 @@
-import Theme from '../themes/theme';
+import Theme from 'themes/theme';
 
 const getFormatedColorPresets = (title, colors) => {
   return Object.entries(colors).map((c) => {

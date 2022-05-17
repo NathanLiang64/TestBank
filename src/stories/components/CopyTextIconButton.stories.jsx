@@ -1,6 +1,6 @@
-import CopyTextIconButton from '../components/CopyTextIconButton';
+import CopyTextIconButton from 'components/CopyTextIconButton';
 
-import presetColors from './presetColors';
+import presetColors from '../presetColors';
 
 const doc = `### 組件說明
 此組件封裝了 CopyToClipboard、FEIBIconButton 和 ShackModal
@@ -16,7 +16,7 @@ const doc = `### 組件說明
 
 export default {
   title: 'components/CopyTextIconButton',
-  components: CopyTextIconButton,
+  component: CopyTextIconButton,
   argTypes: {
     copyText: { control: 'text' },
     displayMessage: { control: 'text' },

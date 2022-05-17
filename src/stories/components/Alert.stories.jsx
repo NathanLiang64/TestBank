@@ -1,4 +1,4 @@
-import Alert from '../components/Alert';
+import Alert from 'components/Alert';
 
 const doc = `### 組件說明
 Alert 組件封裝了 Material UI 的 Alert 組件

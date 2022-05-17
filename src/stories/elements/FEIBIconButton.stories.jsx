@@ -1,6 +1,6 @@
-import FEIBIconButton from '../components/elements/FEIBIconButton';
+import FEIBIconButton from 'components/elements/FEIBIconButton';
 
-import presetColors from './presetColors';
+import presetColors from '../presetColors';
 import { HomeIcon } from 'assets/images/icons';
 
 export default {

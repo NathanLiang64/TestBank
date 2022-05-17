@@ -1,8 +1,8 @@
-import InformationTape from '../components/InformationTape';
+import InformationTape from 'components/InformationTape';
 
 export default {
   title: 'components/InformationTape',
-  components: InformationTape,
+  component: InformationTape,
   argTypes: {
     img: { control: 'text' },
     topLeft: { control: 'text' },

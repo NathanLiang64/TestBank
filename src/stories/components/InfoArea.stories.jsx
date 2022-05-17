@@ -1,4 +1,4 @@
-import InfoArea from '../components/InfoArea';
+import InfoArea from 'components/InfoArea';
 
 const doc = `### 組件說明
 說明文字
@@ -13,7 +13,7 @@ const doc = `### 組件說明
 
 export default {
   title: 'components/InfoArea',
-  components: InfoArea,
+  component: InfoArea,
   argTypes: {
     className: { control: 'text' },
     space: { control: 'select', options: ['top', 'bottom', 'both'] },

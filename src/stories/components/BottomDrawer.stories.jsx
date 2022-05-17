@@ -1,4 +1,4 @@
-import BottomDrawer from '../components/BottomDrawer';
+import BottomDrawer from 'components/BottomDrawer';
 
 const doc = `### 組件說明
 BottomDrawer 組件封裝了 Material UI 的抽屜組件
@@ -16,7 +16,7 @@ BottomDrawer 組件封裝了 Material UI 的抽屜組件
 
 export default {
   title: 'components/BottomDrawer',
-  components: BottomDrawer,
+  component: BottomDrawer,
   argTypes: {
     className: { control: 'text' },
     title: { control: 'text' },

@@ -1,5 +1,5 @@
-import PickerWrapper from '../components/DateRangePicker';
-import DateRangePicker from '../components/DateRangePicker';
+import PickerWrapper from 'components/DateRangePicker';
+import DateRangePicker from 'components/DateRangePicker';
 
 const doc = `### 組件說明
 時間範圍選擇輸入框
@@ -17,7 +17,7 @@ const doc = `### 組件說明
 
 export default {
   title: 'components/DateRangePicker',
-  components: DateRangePicker,
+  component: DateRangePicker,
   decorators: [
     (Story) => (
       <PickerWrapper>

@@ -1,4 +1,4 @@
-import Accordion from '../components/Accordion';
+import Accordion from 'components/Accordion';
 
 const doc = `### 組件說明
 注意事項

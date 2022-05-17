@@ -1,8 +1,8 @@
-import CountDown from '../components/CountDown';
+import CountDown from 'components/CountDown';
 
 export default {
   title: 'components/CountDown',
-  components: CountDown,
+  component: CountDown,
   argTypes: {
     minute: { control: 'number' },
     onEnd: { action: 'onEnd' },

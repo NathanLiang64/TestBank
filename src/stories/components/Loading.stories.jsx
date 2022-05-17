@@ -1,10 +1,10 @@
-import Loading from '../components/Loading';
+import Loading from 'components/Loading';
 
-import presetColors from './presetColors';
+import presetColors from '../presetColors';
 
 export default {
   title: 'components/Loading',
-  components: Loading,
+  component: Loading,
   argTypes: {
     space: { control: 'select', options: ['top', 'bottom', 'both'] },
     color: { control: { type: 'color', presetColors: presetColors(['primary', 'secondary', 'text']) }},

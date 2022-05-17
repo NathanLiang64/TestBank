@@ -1,6 +1,6 @@
-import FEIBButton from '../components/elements/FEIBButton';
+import FEIBButton from 'components/elements/FEIBButton';
 
-import presetColors from './presetColors';
+import presetColors from '../presetColors';
 
 export default {
   title: 'elements/FEIBButton',

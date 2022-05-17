@@ -1,6 +1,6 @@
-import EmptyData from '../components/EmptyData';
+import EmptyData from 'components/EmptyData';
 
-import presetColors from './presetColors';
+import presetColors from '../presetColors';
 
 const doc = `### 組件說明
 無資料可顯示時請套用此組件
@@ -9,7 +9,7 @@ const doc = `### 組件說明
 
 export default {
   title: 'components/EmptyData',
-  components: EmptyData,
+  component: EmptyData,
   argTypes: {
     content: { control: 'text' },
     color: { control: { type: 'color', presetColors: presetColors(['text']) }},

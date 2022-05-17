@@ -1,4 +1,4 @@
-import AddNewItem from '../components/AddNewItem';
+import AddNewItem from 'components/AddNewItem';
 
 const doc = `### 組件說明
 新增各類設定選項
@@ -12,7 +12,7 @@ const doc = `### 組件說明
 
 export default {
   title: 'components/AddNewItem',
-  components: AddNewItem,
+  component: AddNewItem,
   argTypes: {
     addLabel: { control: 'text' },
     onClick: { action: 'onClick' },

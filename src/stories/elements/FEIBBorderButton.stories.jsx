@@ -1,6 +1,6 @@
-import FEIBBorderButton from '../components/elements/FEIBBorderButton';
+import FEIBBorderButton from 'components/elements/FEIBBorderButton';
 
-import presetColors from './presetColors';
+import presetColors from '../presetColors';
 
 export default {
   title: 'elements/FEIBBorderButton',

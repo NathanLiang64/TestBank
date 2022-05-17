@@ -1,7 +1,7 @@
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 
-import FEIBDatePicker from '../components/elements/FEIBDatePicker';
+import FEIBDatePicker from 'components/elements/FEIBDatePicker';
 
 export default {
   title: 'elements/FEIBDatePicker',

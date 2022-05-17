@@ -1,4 +1,4 @@
-import ConfirmButtons from '../components/ConfirmButtons';
+import ConfirmButtons from 'components/ConfirmButtons';
 
 const doc = `### 組件說明
 封裝了 1 個主要按鈕和 1 個次要按鈕，不可改變按鈕數量、樣式及排列順序
@@ -17,7 +17,7 @@ const doc = `### 組件說明
 
 export default {
   title: 'components/ConfirmButtons',
-  components: ConfirmButtons,
+  component: ConfirmButtons,
   argTypes: {
     mainButtonValue: { control: 'text' },
     mainButtonOnClick: { action: 'mainButtonOnClick' },

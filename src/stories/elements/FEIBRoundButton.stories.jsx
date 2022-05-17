@@ -1,7 +1,7 @@
-import FEIBRoundButton from '../components/elements/FEIBRoundButton';
-
-import presetColors from './presetColors';
+import FEIBRoundButton from 'components/elements/FEIBRoundButton';
 import { MoreIcon, EditIcon } from 'assets/images/icons';
+
+import presetColors from '../presetColors';
 
 export default {
   title: 'elements/FEIBRoundButton',

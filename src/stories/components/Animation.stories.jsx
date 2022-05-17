@@ -1,14 +1,14 @@
-import Animation from '../components/Animation';
+import Animation from 'components/Animation';
 
-import fail from '../assets/animations/fail.json';
-import saving25 from '../assets/animations/saving25.json';
-import saving50 from '../assets/animations/saving50.json';
-import saving75 from '../assets/animations/saving75.json';
-import saving99 from '../assets/animations/saving99.json';
-import successCheer from '../assets/animations/successCheer.json';
-import successFlower from '../assets/animations/successFlower.json';
-import successLove from '../assets/animations/successLove.json';
-import successMusic from '../assets/animations/successMusic.json';
+import fail from 'assets/animations/fail.json';
+import saving25 from 'assets/animations/saving25.json';
+import saving50 from 'assets/animations/saving50.json';
+import saving75 from 'assets/animations/saving75.json';
+import saving99 from 'assets/animations/saving99.json';
+import successCheer from 'assets/animations/successCheer.json';
+import successFlower from 'assets/animations/successFlower.json';
+import successLove from 'assets/animations/successLove.json';
+import successMusic from 'assets/animations/successMusic.json';
 
 const doc = `### 組件說明
 Animation 組件封裝了 LottieFile 的動畫呈現套件
@@ -23,7 +23,7 @@ Animation 組件封裝了 LottieFile 的動畫呈現套件
 
 export default {
   title: 'components/Animation',
-  components: Animation,
+  component: Animation,
   argTypes: {
     height: { control: 'number' },
     width: { control: 'number' },

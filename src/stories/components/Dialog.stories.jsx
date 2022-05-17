@@ -1,4 +1,4 @@
-import Dialog from '../components/Dialog';
+import Dialog from 'components/Dialog';
 
 const doc = `### 組件說明
 Dialog 組件封裝了 Material UI 的彈窗組件
@@ -15,7 +15,7 @@ Dialog 組件封裝了 Material UI 的彈窗組件
 
 export default {
   title: 'components/Dialog',
-  components: Dialog,
+  component: Dialog,
   argTypes: {
     title: { control: 'text' },
     content: { control: 'text' },
