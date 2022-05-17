@@ -12,6 +12,16 @@ const HeroSlideWrapper = styled.div`
     height: 252px;
     width: 100%;
     margin-bottom: 0.7rem;
+
+    .group {
+      position: absolute;
+      right: 1rem;
+      bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      z-index: 10;
+    }
   }
 
   img {

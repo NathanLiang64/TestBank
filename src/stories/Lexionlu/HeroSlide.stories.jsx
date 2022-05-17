@@ -9,6 +9,8 @@ const doc = `### 組件說明
 2. imgAlt -> 背景圖敘述。
 3. title -> 標題。
 4. account -> 帳戶號。
+5. onMoreClicked -> 當「更多」按鈕觸發。
+6. onEditClicked -> 當「編輯」按鈕觸發。
 
 `;
 
@@ -20,6 +22,8 @@ export default {
     imgAlt: { control: 'text' },
     title: { control: 'text' },
     account: { control: 'text' },
+    onMoreClicked: { action: 'onMoreClicked' },
+    onEditClicked: { action: 'onEditClicked' },
   },
   parameters: {
     docs: { description: { component: doc }},
