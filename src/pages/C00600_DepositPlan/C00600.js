@@ -26,9 +26,9 @@ const renderSlides = (slides) => {
 };
 
 const contents = [
-  <EmptyPlan />,
   <div key={uuid()} style={{ backgroundColor: '#ecc', height: 300 }}>a</div>,
   <div key={uuid()} style={{ backgroundColor: '#cec', height: 300 }}>b</div>,
+  <EmptyPlan />,
 ];
 
 const handler = (swiper) => {
