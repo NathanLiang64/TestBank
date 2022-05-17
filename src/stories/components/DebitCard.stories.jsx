@@ -29,7 +29,7 @@ const doc = `### 組件說明
 `;
 
 export default {
-  title: 'components/DebitCard',
+  title: 'components/-DebitCard',
   component: DebitCard, 
   decorators: [
     (Story) => (

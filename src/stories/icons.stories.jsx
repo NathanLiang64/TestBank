@@ -6,6 +6,7 @@ export default {
   title: 'assets/Icons',
   argTypes: {
     color: { control: { type: 'color', presetColors: presetColors(['text']) }},
+    size: { control: { type: 'number', min: 16, max: 48 }},
   },
 };
 
@@ -22,7 +23,7 @@ const Template = (args) => (
       <br />
       import &#123; BlockSelectedIcon &#125; from 'assets/images/icons';
       <br />
-      &lt;BlockSelectedIcon /&gt;
+      &lt;BlockSelectedIcon color="..." size="..." /&gt;
     </p>
     <div style={{ display: 'flex', flexWrap: 'wrap', rowGap: 48, columnGap: 24, paddingBlock: 32 }}>
       { IconArray.map((i) => (
@@ -32,13 +33,13 @@ const Template = (args) => (
             justifyContent: 'center',
             alignItems: 'center',
             flexDirection: 'column',
-            height: 60,
-            width: 150,
+            height: 28 + args.size,
+            width: 118 + args.size,
             gap: 6,
           }}
         >
-          <div style={{ height: 32, width: 32 }}>
-            {i[1]({ size: 32, color: args.color })}
+          <div style={{ height: args.size, width: args.size }}>
+            {i[1]({...args})}
           </div>
           <div style={{ fontSize: '8pt', color: 'black' }}>{i[0]}</div>
         </div>
@@ -50,4 +51,5 @@ const Template = (args) => (
 export const Primary = Template.bind({});
 Primary.args = {
   color: 'black',
+  size: 32,
 };
