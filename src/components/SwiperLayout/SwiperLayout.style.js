@@ -2,12 +2,16 @@ import styled from 'styled-components';
 
 const SwiperLayoutWrapper = styled.div`
   .swiper-container {
-    padding-bottom: 3.3rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .swiper-container-horizontal > .swiper-pagination-bullets {
+    bottom: 2px;
   }
 
   hr {
     border-color: ${({ theme }) => theme.colors.background.lighter};
-    margin-block: 0.5rem;
+    margin-block: 0 0.5rem;
   }
 `;
 
