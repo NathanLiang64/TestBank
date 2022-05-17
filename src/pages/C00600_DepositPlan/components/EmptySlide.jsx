@@ -16,8 +16,8 @@ const EmptySlide = ({
 }) => (
   <EmptySlideWrapper>
     <AccountIcon6 size={54} color="currentColor" />
-    <div className="title">{title}</div>
-    <div className="slogan">{slogan}</div>
+    <h2 className="title">{title}</h2>
+    <p className="slogan">{slogan}</p>
   </EmptySlideWrapper>
 );
 

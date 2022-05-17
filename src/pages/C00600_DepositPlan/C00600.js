@@ -9,8 +9,9 @@ import SwiperLayout from 'components/SwiperLayout';
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
-import HeroSlide from './components/HeroSlide';
 import EmptySlide from './components/EmptySlide';
+import EmptyPlan from './components/EmptyPlan';
+import HeroSlide from './components/HeroSlide';
 
 const renderSlides = (slides) => {
   const plans = Array.from({ length: 3 }, () => <EmptySlide />);
@@ -25,9 +26,9 @@ const renderSlides = (slides) => {
 };
 
 const contents = [
+  <EmptyPlan />,
   <div key={uuid()} style={{ backgroundColor: '#ecc', height: 300 }}>a</div>,
   <div key={uuid()} style={{ backgroundColor: '#cec', height: 300 }}>b</div>,
-  <div key={uuid()} style={{ backgroundColor: '#cce', height: 300 }}>c</div>,
 ];
 
 const handler = (swiper) => {
