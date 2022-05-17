@@ -10,12 +10,24 @@ import SwiperLayout from 'components/SwiperLayout';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import HeroSlide from './components/HeroSlide';
+import EmptySlide from './components/EmptySlide';
 
-const renderSlides = (slides) => slides?.map((s) => <HeroSlide {...s} />);
+const renderSlides = (slides) => {
+  const plans = Array.from({ length: 3 }, () => <EmptySlide />);
+
+  if (slides) {
+    slides.forEach((s, i) => {
+      plans[i] = <HeroSlide {...s} />;
+    });
+  }
+
+  return plans;
+};
 
 const contents = [
-  <div key={uuid()} style={{ backgroundColor: 'red', height: 300 }}>a</div>,
-  <div key={uuid()} style={{ backgroundColor: 'green', height: 300 }}>b</div>,
+  <div key={uuid()} style={{ backgroundColor: '#ecc', height: 300 }}>a</div>,
+  <div key={uuid()} style={{ backgroundColor: '#cec', height: 300 }}>b</div>,
+  <div key={uuid()} style={{ backgroundColor: '#cce', height: 300 }}>c</div>,
 ];
 
 const handler = (swiper) => {
