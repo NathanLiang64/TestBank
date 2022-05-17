@@ -73,6 +73,12 @@ const Nav = () => {
             <li>funcID: C00500</li>
           </ul>
         </div>
+        <div onClick={() => startFunc('M00100')}>
+          <ul>
+            <li>社群圈</li>
+            <li>funcID: M00100</li>
+          </ul>
+        </div>
         <div onClick={() => goToFunc({ route: '/more', funcID: 'B00600' })}>
           <ul>
             <li>功能：更多</li>
@@ -81,7 +87,7 @@ const Nav = () => {
         </div>
         <div onClick={() => startFunc('B00300')}>
           <ul>
-            <li>功能：訊息通知</li>
+            <li>功能：訊息通知（唯物）</li>
             <li>funcID: B00300</li>
           </ul>
         </div>

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const TaiwanDollarAccountWrapper = styled.div`
+const InterestRatePanelWrapper = styled.div`
   .interestRatePanel {
     display: flex;
     justify-content: space-between;
@@ -40,4 +40,4 @@ const TaiwanDollarAccountWrapper = styled.div`
   }
 `;
 
-export default TaiwanDollarAccountWrapper;
+export default InterestRatePanelWrapper;

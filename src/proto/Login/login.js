@@ -45,14 +45,13 @@ const Login = () => {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      identity: '',
       // identity: 'B100000039', // Bankee台外數存、遠智授扣、交割帳戶
-      account: '',
-      password: '',
+      account: '1qaz2wsx',
+      password: 'feib1688',
     },
   });
 
-  const [showUserId, setShowUserId] = useState(true);
+  const [showUserId, setShowUserId] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showFaceIdLogin, setShowFaceIdLogin] = useState(false);
   const [showActions, setShowActions] = useState(false);
@@ -139,6 +138,7 @@ const Login = () => {
                       type={showUserId ? 'text' : 'password'}
                       $icon={showUserId ? <VisibilityIcon /> : <VisibilityOffIcon />}
                       $iconOnClick={() => setShowUserId(!showUserId)}
+                      autoComplete="off"
                     />
                   )}
                 />
@@ -159,6 +159,7 @@ const Login = () => {
                       type={showPassword ? 'text' : 'password'}
                       $icon={showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
                       $iconOnClick={() => setShowPassword(!showPassword)}
+                      autoComplete="off"
                     />
                   )}
                 />

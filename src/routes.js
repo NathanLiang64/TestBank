@@ -48,7 +48,7 @@ const Transfer1 = lazy(() => import('pages/Transfer/transfer_1'));
 const Transfer2 = lazy(() => import('pages/Transfer/transfer_2'));
 const Profile = lazy(() => import('pages/Profile'));
 const FinancialDepartments = lazy(() => import('pages/FinancialDepartments'));
-const Network = lazy(() => import('pages/Network'));
+const M00100 = lazy(() => import('pages/M00100/M00100'));
 const C00300 = lazy(() => import('pages/C00300_NtdDeposit/C00300'));
 const MoreTranscations = lazy(() => import('pages/MoreTranscations'));
 const C00400 = lazy(() => import('pages/C00400_ForeignDeposit/C00400'));
@@ -125,7 +125,7 @@ const routes = [
   { path: '/profile', exact: false, component: Profile },
   { path: '/more', exact: false, component: More },
   { path: '/financialDepartments', exact: false, component: FinancialDepartments },
-  { path: '/network', exact: false, component: Network },
+  { path: '/M00100', exact: false, component: M00100 },
   { path: '/C00300', exact: false, component: C00300 },
   { path: '/moreTranscations', exact: false, component: MoreTranscations },
   { path: '/C00400', exact: false, component: C00400 },

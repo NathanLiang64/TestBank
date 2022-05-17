@@ -12,7 +12,7 @@ const NetworkWrapper = styled(Layout)`
       margin-bottom: 1.2rem;
     }
   
-    .nickName {
+    .nickname {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -67,7 +67,7 @@ const NetworkWrapper = styled(Layout)`
       margin-bottom: .8rem;
     }
 
-    .shareContent {
+    .essay {
       font-size: 1.4rem;
       line-height: 2.1rem;
       padding: 0 2rem;
@@ -130,10 +130,10 @@ const NetworkWrapper = styled(Layout)`
   }
 `;
 
-const ShareContentForm = styled.form`
+const EssayWrapper = styled.form`
   padding-bottom: 2.4rem;
   
-  #shareContent {
+  #essay {
     margin-top: .8rem;
   }
   
@@ -159,4 +159,4 @@ const RecommendListWrapper = styled.div`
 `;
 
 export default NetworkWrapper;
-export { ShareContentForm, RecommendListWrapper };
+export { EssayWrapper, RecommendListWrapper };
