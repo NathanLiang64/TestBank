@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { regularBasicInformationApi } from 'apis';
-import { goAppHome } from 'utilities/BankeePlus';
+import { goHome } from 'utilities/BankeePlus';
 
 /* Elements */
 import {
@@ -78,7 +78,7 @@ const RegularBasicInformation = () => {
       setValue('title', grade);
       setValue('income', income);
     } else {
-      dispatch(setCloseCallBack(() => goAppHome()));
+      dispatch(setCloseCallBack(() => goHome()));
       dispatch(setResultContent({
         isSuccess: false,
         successTitle: '',
@@ -98,7 +98,7 @@ const RegularBasicInformation = () => {
     let errorCode = '';
     let errorDesc = '';
     if (result) {
-      dispatch(setCloseCallBack(() => goAppHome()));
+      dispatch(setCloseCallBack(() => goHome()));
     } else {
       errorCode = response.code;
       errorDesc = response.message;

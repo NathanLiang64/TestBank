@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { goToFunc, switchLoading } from 'utilities/BankeePlus';
+import { startFunc, switchLoading } from 'utilities/BankeePlus';
 import { profileApi } from 'apis';
 
 /* Elements */
@@ -121,14 +121,8 @@ const Profile = () => {
     switchLoading(false);
   };
 
-  const toPage = ({ route, funcID }) => {
-    if (route) {
-      goToFunc({ route, funcID });
-    }
-  };
-
-  const renderEntryList = () => SettingList.map(({ name, route, funcID }) => (
-    <div className="entryList" key={name} onClick={() => toPage({ route, funcID })}>
+  const renderEntryList = () => SettingList.map(({ name, funcID }) => (
+    <div className="entryList" key={name} onClick={() => startFunc(funcID)}>
       {name}
       <KeyboardArrowRightRounded />
     </div>

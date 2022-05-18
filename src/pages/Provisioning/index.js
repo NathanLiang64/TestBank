@@ -1,7 +1,7 @@
 // import { useEffect } from 'react';
 // import { useDispatch } from 'react-redux';
 import { useGetEnCrydata } from 'hooks';
-import { goAppHome } from 'utilities/BankeePlus';
+import { goHome } from 'utilities/BankeePlus';
 import { provisioningApi } from 'apis';
 import { showAnimationModal } from 'utilities/MessageModal';
 /* Elements */
@@ -21,7 +21,7 @@ const Provisioning = () => {
     const result = Object.keys(response).length === 0;
     let errorCode = '';
     let errorDesc = '';
-    const onClose = () => goAppHome();
+    const onClose = () => goHome();
     if (!result) {
       errorCode = response.code;
       errorDesc = response.message;

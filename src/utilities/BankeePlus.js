@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable brace-style */
 /* eslint-disable prefer-template */
 import { showError } from './MessageModal';
 
@@ -43,55 +45,72 @@ const funcStack = {
   },
 };
 
-// 網頁通知APP跳轉指定功能
-function goToFunc({ route, funcID }, funcParams, keepData) {
-  const data = {
-    funcID,
-    funcParams,
-    keepData,
-  };
+/**
+ * 網頁通知APP跳轉至首頁
+ */
+function goHome() {
   if (device.ios()) {
-    const msg = JSON.stringify({ name: 'startFunc', data: JSON.stringify(data) });
+    const msg = JSON.stringify({ name: 'goHome' });
     window.webkit?.messageHandlers.jstoapp.postMessage(msg);
-  } else if (device.android()) {
-    const param = JSON.stringify(data);
-    window.jstoapp.startFunc(param);
-  } else {
-    route = route.replace(/^\/?/, '');
-    funcStack.push({ route, funcID }, funcParams, keepData);
-    // console.log(history);
-    // const history = useHistory();
-    // history.push(`/${funcID}`);
-    window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${route}`; // TODO: 提供 funcParams，如何提供？
+  }
+  else if (device.android()) {
+    window.jstoapp.goHome();
+  }
+  else {
+    funcStack.clear();
+    startFunc('/');
   }
 }
 
+/**
+ * 網頁通知APP跳轉指定功能
+ * @param {*} funcID 單元功能代碼。
+ * @param {*} funcParams 提共給啟動的單元功能的參數，被啟動的單元功能是透過 loadFuncParams() 取回。
+ * @param {*} keepData 當啟動的單元功能結束後，返回原功能啟動時取回的資料。
+ */
 function startFunc(funcID, funcParams, keepData) {
-  // TODO: 若 funcID 是以'/'為開頭，表示是指定固定網址，因此不會交由 APP切換
-  if (funcID) {
-    goToFunc({ route: funcID, funcID }, funcParams, keepData);
-  } else {
+  if (!funcID) {
     showError('此功能尚未完成！');
+    return;
+  }
+
+  // TODO: 若 funcID 是以'/'為開頭，表示是指定固定網址，因此不會交由 APP切換
+
+  const data = JSON.stringify({ funcID, funcParams, keepData });
+  if (device.ios()) {
+    const msg = JSON.stringify({ name: 'startFunc', data });
+    window.webkit?.messageHandlers.jstoapp.postMessage(msg);
+  }
+  else if (device.android()) {
+    window.jstoapp.startFunc(data);
+  }
+  else {
+    funcID = funcID.replace(/^\/*/, ''); // 移掉前置的 '/' 符號
+    funcStack.push(funcID, funcParams, keepData);
+    window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcID}`;
   }
 }
 
-// 觸發APP返回上一頁功能
+/**
+ * 觸發APP返回上一頁功能
+ */
 function closeFunc() {
   if (device.ios()) {
     const msg = JSON.stringify({ name: 'closeFunc' });
     // TODO： 取回 keepData；若沒有提供，則應以 funcParams 傳回。
     window.webkit?.messageHandlers.jstoapp.postMessage(msg);
-  } else if (device.android()) {
+  }
+  else if (device.android()) {
     // TODO： 取回 keepData；若沒有提供，則應以 funcParams 傳回。
     window.jstoapp.closeFunc();
-  } else {
+  }
+  else {
     const funcItem = funcStack.pop();
+    const rootPath = `${process.env.REACT_APP_ROUTER_BASE}/`;
     if (funcItem) {
-      window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcItem.func.route}`; // keepData 存入 localStorage 'funcParams'
-      // const history = useHistory();
-      // history.push(funcItem.funcName);
+      window.location.pathname = `${rootPath}${funcItem.func.route}`; // keepData 存入 localStorage 'funcParams'
     } else {
-      window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/`;
+      window.location.pathname = rootPath;
     }
   }
 }
@@ -136,25 +155,6 @@ function getEnCrydata() {
   if (device.android()) {
     window.jstoapp.getEnCrydata();
   }
-}
-
-function goHome() {
-  funcStack.clear();
-  goToFunc({ route: '/', funcID: 'B00100' });
-}
-
-// 網頁通知APP跳轉至首頁
-function goAppHome() {
-  if (device.ios()) {
-    const msg = JSON.stringify({ name: 'goHome' });
-    window.webkit?.messageHandlers.jstoapp.postMessage(msg);
-    return;
-  }
-  if (device.android()) {
-    window.jstoapp.goHome();
-    return;
-  }
-  goHome();
 }
 
 // 網頁通知APP取得功能參數
@@ -209,16 +209,13 @@ function onVerification() {
 }
 
 export {
-  startFunc,
-  goToFunc,
-  closeFunc,
   goHome,
+  startFunc,
+  closeFunc,
+  loadFuncParams,
   switchLoading,
   getEnCrydata,
-  goAppHome,
   getPagedata,
   setAuthdata,
-  // showWebLog,
   onVerification,
-  loadFuncParams,
 };

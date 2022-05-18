@@ -1,5 +1,5 @@
 import { FEIBIconButton } from 'components/elements';
-import { closeFunc, goAppHome } from 'utilities/BankeePlus';
+import { closeFunc, goHome } from 'utilities/BankeePlus';
 import { ArrowBackIcon, HomeIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
 import HeaderWrapper from './header.style';
@@ -9,7 +9,7 @@ const Header = ({
 }) => {
   const handleHomeIconClick = (className) => {
     if (className === 'goHome') {
-      goAppHome();
+      goHome();
     } else if (className === 'goBack') {
       if (goBack) {
         goBack();

@@ -4,7 +4,7 @@ import { useGetEnCrydata } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { goAppHome } from 'utilities/BankeePlus';
+import { goHome } from 'utilities/BankeePlus';
 import { pwdModifyApi } from 'apis';
 
 /* Elements */
@@ -47,7 +47,7 @@ const RegularPwdModify = () => {
     let errorCode = '';
     let errorDesc = '';
     if (result) {
-      dispatch(setCloseCallBack(() => goAppHome()));
+      dispatch(setCloseCallBack(() => goHome()));
     } else {
       errorCode = response.code;
       errorDesc = response.message;
@@ -122,7 +122,7 @@ const RegularPwdModify = () => {
         <ConfirmButtons
           mainButtonOnClick={() => {
             setShowWarningDialog(false);
-            goAppHome();
+            goHome();
           }}
           subButtonOnClick={() => setShowWarningDialog(false)}
         />

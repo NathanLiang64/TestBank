@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import Header from 'components/Header';
 import FavoriteBlockButton from 'components/FavoriteBlockButton';
 import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
-import { goToFunc } from 'utilities/BankeePlus';
+import { startFunc } from 'utilities/BankeePlus';
 import { moreApi } from 'apis';
 import { iconGenerator } from 'pages/Favorite/favoriteGenerator';
 // import { setFavoriteDrawer } from 'pages/Favorite/stores/actions';
@@ -44,7 +44,7 @@ const More = () => {
       return;
     }
     console.log(actKey);
-    goToFunc({ route: actKey, funcID: actKey });
+    startFunc(actKey);
   };
 
   const handleChangeTabs = (event, value) => {

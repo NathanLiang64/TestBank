@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useGetEnCrydata } from 'hooks';
-import { goToFunc } from 'utilities/BankeePlus';
+import { startFunc } from 'utilities/BankeePlus';
 
 /* Elements */
 import Header from 'components/Header';
@@ -47,7 +47,7 @@ const Notice = () => {
 
   // 跳轉通知設定頁
   const toSettingPage = () => {
-    goToFunc({ route: '/noticeSetting', funcID: 'S00400' });
+    startFunc('S00400');
   };
 
   const getNoticeItem = async () => {

@@ -19,7 +19,7 @@ const BillPay1 = lazy(() => import('pages/BillPay/billPay_1'));
 const More = lazy(() => import('pages/More'));
 const DepositPlus = lazy(() => import('pages/DepositPlus'));
 const NicknameSetting = lazy(() => import('pages/NicknameSetting'));
-const NoticeSetting = lazy(() => import('pages/NoticeSetting'));
+const S00400 = lazy(() => import('pages/NoticeSetting'));
 const PatternLockSetting = lazy(() => import('pages/PatternLockSetting'));
 const Notice = lazy(() => import('pages/Notice'));
 const FingerPrintLockSetting = lazy(() => import('pages/FingerPrintLockSetting'));
@@ -93,7 +93,7 @@ const routes = [
   { path: '/billPay', exact: true, component: BillPay },
   { path: '/billPay1', exact: false, component: BillPay1 },
   { path: '/depositPlus', exact: false, component: DepositPlus },
-  { path: '/S00400', exact: true, component: NoticeSetting },
+  { path: '/S00400', exact: true, component: S00400 },
   { path: '/nicknameSetting', exact: false, component: NicknameSetting },
   { path: '/patternLockSetting', exact: false, component: PatternLockSetting },
   { path: '/B00300', exact: false, component: Notice },

@@ -1,19 +1,16 @@
 /* eslint-disable object-curly-newline */
 /* eslint-disable arrow-body-style */
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
-import { goToFunc } from 'utilities/BankeePlus';
+import { startFunc } from 'utilities/BankeePlus';
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout';
-import { setWaittingVisible } from '../../stores/reducers/ModalReducer';
 import { logout } from './Nav.api';
 
 import NavWrapper from './Nav.style';
 
 const Nav = () => {
   const history = useHistory();
-  const dispatch = useDispatch();
 
   useEffect(async () => {
     const token = sessionStorage.getItem('jwtToken');
@@ -26,30 +23,6 @@ const Nav = () => {
   const logOut = async () => {
     await logout();
     history.push('/login');
-    // const url = 'https://appbankee-t.feib.com.tw/ords/db1/netdb/logoutUser';
-    // const data = {
-    //   id_number: localStorage.getItem('custId'),
-    // };
-    // const callLogout = () => fetch(url, {
-    //   body: JSON.stringify(data),
-    //   headers: {
-    //     'content-type': 'application/json',
-    //   },
-    //   method: 'POST',
-    // }).then((response) => response.json());
-
-    // callLogout()
-    //   .then(({ code }) => {
-    //     if (code === '00') {
-    //       history.push('/login');
-    //     }
-    //   });
-  };
-
-  const startFunc = (funcID, params) => {
-    dispatch(setWaittingVisible(true));
-    goToFunc({ route: funcID, funcID }, params);
-    dispatch(setWaittingVisible(false));
   };
 
   return (
@@ -79,7 +52,7 @@ const Nav = () => {
             <li>funcID: M00100</li>
           </ul>
         </div>
-        <div onClick={() => goToFunc({ route: '/more', funcID: 'B00600' })}>
+        <div onClick={() => startFunc('B00600')}>
           <ul>
             <li>功能：更多</li>
             <li>funcID: B00600</li>

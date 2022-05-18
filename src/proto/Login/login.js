@@ -16,7 +16,6 @@ import {
 } from 'assets/images/icons';
 // import e2ee from 'utilities/E2ee';
 // import { setFavoriteDrawer } from 'pages/Favorite/stores/actions';
-// import { goToFunc } from 'utilities/BankeePlus';
 import { accountValidation, identityValidation, passwordValidation } from 'utilities/validation';
 import theme from 'themes/theme';
 import Logo from 'assets/images/logoTransparent.png';
