@@ -34,8 +34,8 @@ const CommunityPage = () => {
 
   const { register, unregister, handleSubmit } = useForm();
   const renderText = (value) => value || '-';
-  const defaultEssay = '點擊「成為Bankee會員」申辦Bankee數位存晚帳戶，享活存利率2.6%！';
-  const shareMessageContent = () => `${summary?.essay ?? defaultEssay}https://www.appbankee.com.tw/bankee/rest/re/${summary.memberNo}`;
+  const defaultEssay = '點擊「成為Bankee會員」申辦Bankee數位存款帳戶，享活存利率2.6%！';
+  const shareMessageContent = () => `${summary?.essay ?? defaultEssay} ${process.env.REACT_APP_RECOMMEND_URL}${summary.memberNo}`;
   const [textareaLength, setTextareaLength] = useState(0); // ???
 
   useEffect(async () => {
