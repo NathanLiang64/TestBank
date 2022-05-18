@@ -7,6 +7,8 @@ const ProgressBarWrapper = styled.div`
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
+  width: 100%;
+  height: 2.4rem;
 
   .progress {
     position: relative;
@@ -20,6 +22,8 @@ const ProgressBarWrapper = styled.div`
       background-image: linear-gradient(90deg, var(--purple-light) 8%, var(--purple-dark) 92%);
       height: 0.4rem;
       border-radius: 0.4rem;
+      min-width: 1.2rem;
+      max-width: calc(100% - 1.2rem);
     }
 
     .circle {

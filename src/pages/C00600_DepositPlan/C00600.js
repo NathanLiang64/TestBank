@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import uuid from 'react-uuid';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -12,6 +11,7 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import EmptySlide from './components/EmptySlide';
 import EmptyPlan from './components/EmptyPlan';
 import HeroSlide from './components/HeroSlide';
+import DepositPlan from './components/DepositPlan';
 
 const renderSlides = (slides) => {
   const plans = Array.from({ length: 3 }, () => <EmptySlide />);
@@ -26,8 +26,8 @@ const renderSlides = (slides) => {
 };
 
 const contents = [
-  <div key={uuid()} style={{ backgroundColor: '#ecc', height: 300 }}>a</div>,
-  <div key={uuid()} style={{ backgroundColor: '#cec', height: 300 }}>b</div>,
+  <DepositPlan />,
+  <DepositPlan currentValue={75} />,
   <EmptyPlan />,
 ];
 
