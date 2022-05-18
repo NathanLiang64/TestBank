@@ -30,7 +30,7 @@ const variants = (variant) => {
         font-size: 1.2rem;
       `;
   }
-}
+};
 
 const InfoAreaWrapper = styled.div`
   margin: ${({ $space }) => handleSpaceType($space)};

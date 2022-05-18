@@ -13,7 +13,15 @@ import InfoAreaWrapper from './infoArea.style';
 * 7. bgColor -> 改變背景顏色。
 * */
 
-const InfoArea = ({ className, space, children, position = 'bottom', variant, color, bgColor }) => (
+const InfoArea = ({
+  className,
+  space,
+  children,
+  position = 'bottom',
+  variant,
+  color,
+  bgColor,
+}) => (
   <InfoAreaWrapper
     className={className ? `infoArea ${className}` : 'infoArea'}
     $space={space}
