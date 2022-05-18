@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable brace-style */
 /* eslint-disable prefer-template */
-import { showError } from './MessageModal';
+import { customPopup, showError } from './MessageModal';
 
 const device = {
   // TODO: 開發時使用，上版前應刪除！
@@ -208,6 +208,28 @@ function onVerification() {
   }
 }
 
+/**
+ * 開啟 APP 分享功能。
+ * @param {*} message 要分享的訊息內容，內容為 HTML 格式。
+ */
+function shareMessage(message) {
+  const data = JSON.stringify({
+    name: 'setShareText',
+    data: JSON.stringify({ webtext: message }),
+  });
+
+  if (device.ios()) {
+    window.webkit.messageHandlers.jstoapp.postMessage(data);
+  }
+  else if (device.android()) {
+    window.jstoapp.setShareText(data);
+  }
+  else {
+    // 測試版的分享功能。
+    customPopup('分享功能(測試版)', message);
+  }
+}
+
 export {
   goHome,
   startFunc,
@@ -218,4 +240,5 @@ export {
   getPagedata,
   setAuthdata,
   onVerification,
+  shareMessage,
 };
