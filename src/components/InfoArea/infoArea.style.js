@@ -9,7 +9,7 @@ const handleSpaceType = (position) => {
     case 'both':
       return '1.6rem 1.6rem';
     case 'auto':
-      return '1.6rem auto';
+      return '0 auto';
     default:
       return '0 1.6rem';
   }
