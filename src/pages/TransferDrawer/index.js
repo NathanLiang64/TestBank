@@ -11,7 +11,7 @@ import TransferFrequentlyUsedAccount from '../TransferFrequentlyUsedAccount';
 import TransferDesignedAccount from '../TransferDesignedAccount';
 import {
   setClickMoreOptions, setFavAccounts, setOpenDrawer, setRegAccounts,
-} from '../Transfer/stores/actions';
+} from '../D00100_NtdTransfer/stores/actions';
 
 const TransferDrawer = ({ setTabId }) => {
   const [openAlertDialog, setOpenAlertDialog] = useState({ open: false, content: '' });

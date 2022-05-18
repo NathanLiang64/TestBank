@@ -26,8 +26,9 @@ import { numberToChinese, weekNumberToChinese } from 'utilities/Generator';
 import { bankCodeValidation, receivingAccountValidation, transferAmountValidation } from 'utilities/validation';
 import { directTo } from 'utilities/mockWebController';
 import { setOpenDrawer, setClickMoreOptions, setAccounts } from './stores/actions';
-import TransferWrapper from './transfer.style';
+import TransferWrapper from './D00100.style';
 import TransferDrawer from '../TransferDrawer';
+import Layout from 'components/Layout/Layout';
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
@@ -573,6 +574,7 @@ const Transfer = () => {
   useEffect(() => setValue('transferOption', tabId), [tabId]);
 
   return (
+    <Layout title="台幣轉帳">
     <TransferWrapper>
       <div className="userCardArea">
         <Swiper slidesPerView={1.14} spaceBetween={8} centeredSlides pagination onSlideChange={handleChangeSlide}>
@@ -665,6 +667,7 @@ const Transfer = () => {
       </div>
       <TransferDrawer setTabId={setTabId} />
     </TransferWrapper>
+    </Layout>
   );
 };
 

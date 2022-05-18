@@ -43,12 +43,12 @@ const Deduct3 = lazy(() => import('pages/Deduct/deduct3'));
 const Exchange = lazy(() => import('pages/Exchange'));
 const Exchange1 = lazy(() => import('pages/Exchange/exchange_1'));
 const Exchange2 = lazy(() => import('pages/Exchange/exchange_2'));
-const Transfer = lazy(() => import('pages/Transfer'));
-const Transfer1 = lazy(() => import('pages/Transfer/transfer_1'));
-const Transfer2 = lazy(() => import('pages/Transfer/transfer_2'));
+const D00100 = lazy(() => import('pages/D00100_NtdTransfer/D00100'));
+const D001001 = lazy(() => import('pages/D00100_NtdTransfer/D00100_1'));
+const D001002 = lazy(() => import('pages/D00100_NtdTransfer/D00100_2'));
 const Profile = lazy(() => import('pages/Profile'));
 const FinancialDepartments = lazy(() => import('pages/FinancialDepartments'));
-const M00100 = lazy(() => import('pages/M00100/M00100'));
+const M00100 = lazy(() => import('pages/M00100_Community/M00100'));
 const C00300 = lazy(() => import('pages/C00300_NtdDeposit/C00300'));
 const MoreTranscations = lazy(() => import('pages/MoreTranscations'));
 const C00400 = lazy(() => import('pages/C00400_ForeignDeposit/C00400'));
@@ -118,10 +118,9 @@ const routes = [
   { path: '/E00100', exact: false, component: Exchange },
   { path: '/exchange1', exact: false, component: Exchange1 },
   { path: '/exchange2', exact: false, component: Exchange2 },
-  { path: '/transfer', exact: false, component: Transfer },
-  { path: '/D00100', exact: false, component: Transfer },
-  { path: '/transfer1', exact: false, component: Transfer1 },
-  { path: '/transfer2', exact: false, component: Transfer2 },
+  { path: '/D00100', exact: false, component: D00100 },
+  { path: '/D001001', exact: false, component: D001001 },
+  { path: '/D001002', exact: false, component: D001002 },
   { path: '/profile', exact: false, component: Profile },
   { path: '/more', exact: false, component: More },
   { path: '/financialDepartments', exact: false, component: FinancialDepartments },

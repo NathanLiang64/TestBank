@@ -11,7 +11,7 @@ import {
 } from 'assets/images/icons';
 import { directTo } from 'utilities/mockWebController';
 import theme from 'themes/theme';
-import TransferWrapper from './transfer.style';
+import TransferWrapper from './D00100.style';
 import { setClickMoreOptions, setOpenDrawer } from './stores/actions';
 import TransferDrawer from '../TransferDrawer';
 

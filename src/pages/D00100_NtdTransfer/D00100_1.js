@@ -11,7 +11,7 @@ import { setResult } from 'components/PasswordDrawer/stores/actions';
 import { doBookNtdTrConfirm, doTransfer } from 'apis/transferApi';
 import { dateFormatter, weekNumberToChinese } from 'utilities/Generator';
 import { directTo } from 'utilities/mockWebController';
-import TransferWrapper, { TransferMOTPDialogWrapper } from './transfer.style';
+import TransferWrapper, { TransferMOTPDialogWrapper } from './D00100.style';
 
 const Transfer1 = () => {
   const [openMOTPDialog, setOpenMOTPDialog] = useState(false);

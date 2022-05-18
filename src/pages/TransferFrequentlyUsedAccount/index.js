@@ -10,7 +10,7 @@ import {
 } from 'components/elements';
 import { bankAccountValidation, bankCodeValidation, nicknameValidation } from 'utilities/validation';
 import { addFavAccount, updateFavAccount } from 'apis/transferApi';
-import { setOpenDrawer, setClickMoreOptions } from '../Transfer/stores/actions';
+import { setOpenDrawer, setClickMoreOptions } from '../D00100_NtdTransfer/stores/actions';
 
 const TransferFrequentlyUsedAccount = () => {
   const schema = yup.object().shape({

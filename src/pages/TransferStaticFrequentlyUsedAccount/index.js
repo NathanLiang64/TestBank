@@ -9,7 +9,7 @@ import {
   FEIBButton, FEIBErrorMessage, FEIBInput, FEIBInputLabel,
 } from 'components/elements';
 import { bankAccountValidation, bankCodeValidation, nicknameValidation } from 'utilities/validation';
-import { setOpenDrawer, setClickMoreOptions } from '../Transfer/stores/actions';
+import { setOpenDrawer, setClickMoreOptions } from '../D00100_NtdTransfer/stores/actions';
 import mockData from '../TransferStatic/mockData';
 
 const TransferStaticFrequentlyUsedAccount = () => {

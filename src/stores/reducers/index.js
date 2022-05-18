@@ -5,7 +5,7 @@ import { reducers as patternLockSettingReducer } from 'pages/PatternLockSetting/
 // import { reducers as depositOverviewReducer } from 'pages/DepositOverview/stores';
 // import { reducers as depositInquiryReducer } from 'pages/DepositInquiry/stores';
 // import { reducers as shakeShakeReducer } from 'proto/ShakeShake/stores';
-import { reducers as transferReducer } from 'pages/Transfer/stores';
+import { reducers as transferReducer } from 'pages/D00100_NtdTransfer/stores';
 import { reducers as transferStaticReducer } from 'pages/TransferStatic/stores';
 import { reducers as favoriteReducer } from 'pages/Favorite/stores';
 import { reducers as passwordDrawerReducer } from 'components/PasswordDrawer/stores';

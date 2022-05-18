@@ -8,7 +8,7 @@ import {
   FEIBButton, FEIBErrorMessage, FEIBInput, FEIBInputLabel,
 } from 'components/elements';
 import { nicknameValidation } from 'utilities/validation';
-import { setOpenDrawer, setClickMoreOptions } from '../Transfer/stores/actions';
+import { setOpenDrawer, setClickMoreOptions } from '../D00100_NtdTransfer/stores/actions';
 import mockData from '../TransferStatic/mockData';
 
 const TransferStaticDesignedAccount = () => {

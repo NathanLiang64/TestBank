@@ -91,8 +91,8 @@ const CommunityPage = () => {
   const showEssayEditDialog = async () => {
     // Note: 因為這個 Dialog 是動態產生的，所以一定要刪掉註冊的元件。
     //       否則，下次註冊將失效，而且持續傳回最後一次的輪入值，而不會改變。
-    unregister(fieldName, { keepDirty: true });
     const fieldName = 'essay';
+    unregister(fieldName, { keepDirty: true });
     // TODO: 無法做到目前輸入長度的更新。
     // const onInputChange = (e) => {
     //   const length = e.target.textLength;
@@ -152,7 +152,7 @@ const CommunityPage = () => {
           </thead>
           <tbody>
             { items.map((item) => (
-              <tr key={item.id}>
+              <tr key={item.friendName}>
                 <td className="center">{renderText(hideName(item.friendName))}</td>
                 <td className="center">{stringDateFormatter(item.creditCardApproved)}</td>
                 <td className="center">{stringDateFormatter(item.depositApproved)}</td>

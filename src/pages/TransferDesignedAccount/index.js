@@ -9,7 +9,7 @@ import {
 } from 'components/elements';
 import { updateRegAccount } from 'apis/transferApi';
 import { nicknameValidation } from 'utilities/validation';
-import { setOpenDrawer, setClickMoreOptions } from '../Transfer/stores/actions';
+import { setOpenDrawer, setClickMoreOptions } from '../D00100_NtdTransfer/stores/actions';
 
 const TransferDesignedAccount = () => {
   const schema = yup.object().shape({ nickname: nicknameValidation() });

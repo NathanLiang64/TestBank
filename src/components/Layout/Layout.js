@@ -70,7 +70,7 @@ function Layout({
    *  監控 ModalReducer.showModal, .showAnimationModal，當開啟時立即關閉 等待中 及 Drawer
    */
   useEffect(async () => {
-    console.log('showModal -> ', showModal || showAnimationModal);
+    // console.log('showModal -> ', showModal || showAnimationModal);
     // 強制關掉 等待畫面，才能看到 Popup 視窗。
     if (showModal || showAnimationModal) {
       dispatch(setWaittingVisible(false));
@@ -108,7 +108,7 @@ function Layout({
    *  監控 ModalReducer.showDrawer，當開啟時立即關閉 等待中 及 Popup視窗。
    */
   useEffect(async () => {
-    console.log('showDrawer -> ', showDrawer);
+    // console.log('showDrawer -> ', showDrawer);
     if (showDrawer) {
       dispatch(setWaittingVisible(false));
       dispatch(setModalVisible(false));
@@ -119,7 +119,7 @@ function Layout({
    * 監控 ModalReducer.waitting，當開啟時立即關閉 Drawer 及 Popup視窗。
    */
   useEffect(async () => {
-    console.log('showWaitting -> ', waitting);
+    // console.log('showWaitting -> ', waitting);
     if (waitting) {
       dispatch(setDrawerVisible(false));
       dispatch(setModalVisible(false));
