@@ -30,19 +30,19 @@ const Deposit = () => {
   const renderLevelDialogContent = () => (
     <LevelDialogContentWrapper>
       <table>
-        <caption>幣別：新臺幣</caption>
+        <caption>幣別：新臺幣（元）</caption>
         <thead>
           <tr>
             <th>等級</th>
             <th>
               社群圈存款
               <br />
-              月平均額度之總額
+              月平均餘額之總額
             </th>
             <th>
               推薦人個人
               <br />
-              存款優惠利率額度
+              優惠利率存款額度
             </th>
           </tr>
         </thead>
@@ -150,7 +150,8 @@ const Deposit = () => {
                   {`${renderText(summaryRate * 100)}% 通通有`}
                   <StarRounded className="starIcon" />
                 </p>
-                <span>適用活動優惠</span>
+                {/* TODO 改為「優惠到期日：」 */}
+                <span>優惠到期日：</span>
               </div>
               <p className="limitPrice">{`$${renderText(summaryBonusQuota)}`}</p>
             </li>

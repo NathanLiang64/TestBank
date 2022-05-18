@@ -12,8 +12,8 @@ import { FEIBInputLabel, FEIBInput, FEIBErrorMessage } from 'components/elements
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { customPopup } from 'utilities/MessageModal';
-import { loadFuncParams, startFunc } from 'utilities/BankeePlus';
+import { customPopup, showPrompt } from 'utilities/MessageModal';
+import { loadFuncParams, startFunc, closeFunc } from 'utilities/BankeePlus';
 import {
   getAccountSummary,
   getTransactionDetails,
@@ -31,6 +31,8 @@ const C00500 = () => {
   const [accounts, setAccounts] = useState(null);
   const [selectedAccountIdx, setSelectedAccountIdx] = useState(-1);
   const [transactions, setTransactions] = useState(null);
+
+  const getSelectedAccount = () => accounts[selectedAccountIdx].cardInfo.acctId;
 
   /**
    * 頁面啟動，初始化
@@ -50,10 +52,10 @@ const C00500 = () => {
       };
     }
 
-    // 首次加載時取得用戶所有外幣的存款帳戶摘要資訊
+    // 首次加載時取得用戶所有證券交割的存款帳戶摘要資訊
     if (!model.accounts) {
       const acctData = await getAccountSummary('S'); // S=交割帳戶
-      // TODO：沒有「交割帳戶」導去申請？
+      if (!acctData) showPrompt('您還沒有任何證券交割的存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
       model.accounts = acctData.map((acct) => ({ // Note: 將陣列(Array)轉為字典(Object/HashMap)
         cardInfo: acct,
         panelInfo: null, // 此屬性在 selectedAccountIdx 變更時取得。
@@ -92,20 +94,12 @@ const C00500 = () => {
    * 根據當前帳戶取得交易明細資料及優惠利率數字
    */
   useEffect(async () => {
-    // Note: 因為無法解決在非同步模式下，selectedAccount不會變更的問題的暫時解決方案。
-    sessionStorage.setItem('selectedAccountIdx', selectedAccountIdx);
-
     if (selectedAccountIdx >= 0) {
       const account = accounts[selectedAccountIdx];
       // updateBonusPanel(account); // 取得優惠利率資訊
       updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可
     }
   }, [selectedAccountIdx]);
-
-  const getSelectedAccount = () => {
-    const index = sessionStorage.getItem('selectedAccountIdx'); // Note: 暫時解決方案。
-    return accounts[index].cardInfo.acctId;
-  };
 
   /**
    * 編輯帳戶名稱
@@ -127,7 +121,7 @@ const C00500 = () => {
       const account = accounts[selectedAccountIdx].cardInfo;
       account.acctName = values.newName; // 變更卡片上的帳戶名稱
       setAccountAlias(account.acctId, account.acctName);
-      setAccounts(accounts); // TODO: 不會觸發 AccountOverview 重刷，因此不會更新畫面！要移動卡片再換回來才會變更。
+      setAccounts({ ...accounts });
     };
     await customPopup('帳戶名稱編輯', body, handleSubmit(onOk));
   };
