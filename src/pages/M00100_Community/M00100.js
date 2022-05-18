@@ -12,7 +12,7 @@ import { FEIBInput, FEIBInputLabel, FEIBButton, FEIBIconButton, FEIBTextarea } f
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showInfo } from 'utilities/MessageModal';
-import { loadFuncParams, startFunc } from 'utilities/BankeePlus';
+import { loadFuncParams, startFunc, shareMessage } from 'utilities/BankeePlus';
 import { ArrowNextIcon, EditIcon } from 'assets/images/icons';
 import { hideName, stringDateFormatter } from 'utilities/Generator';
 import theme from 'themes/theme';
@@ -35,7 +35,7 @@ const CommunityPage = () => {
   const { register, unregister, handleSubmit } = useForm();
   const renderText = (value) => value || '-';
   const defaultEssay = '點擊「成為Bankee會員」申辦Bankee數位存晚帳戶，享活存利率2.6%！';
-
+  const shareMessageContent = () => `${summary?.essay ?? defaultEssay}https://www.appbankee.com.tw/bankee/rest/re/${summary.memberNo}`;
   const [textareaLength, setTextareaLength] = useState(0); // ???
 
   useEffect(async () => {
@@ -197,8 +197,7 @@ const CommunityPage = () => {
               <EditIcon />
             </FEIBIconButton>
           </div>
-          {/* TODO 分享推薦碼 - 此功能尚未完成！ */}
-          <FEIBButton onClick={() => showInfo('此功能尚未完成！')}>分享推薦碼</FEIBButton>
+          <FEIBButton onClick={() => shareMessage(shareMessageContent())}>分享推薦碼</FEIBButton>
         </div>
         <div className="contentCard">
           <div className="title">
