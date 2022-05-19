@@ -39,7 +39,7 @@ const contents = [
 
 const DepositPlanPage = (args) => (
   <Layout title="存錢計畫" hasClearHeader>
-    <SwiperLayout slides={slides}>
+    <SwiperLayout slides={slides.map((slide) => slide(args))}>
       { contents.map((card) => card(args)) }
     </SwiperLayout>
   </Layout>
