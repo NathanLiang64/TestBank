@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
 import { useGetEnCrydata } from 'hooks';
 import { goToFunc } from 'utilities/BankeePlus';
 
@@ -17,47 +16,33 @@ import {
 } from 'components/elements';
 import BottomDrawer from 'components/BottomDrawer';
 import MessageItem from './messageItem';
-import { queryLastPush } from './api';
+import {
+  queryLastPush,
+  chgPushStatus,
+  deletePush,
+  chgAllPushStatus,
+  deleteAllPush,
+} from './api';
 
 /* Styles */
 import NoticeWrapper from './notice.style';
 
 const Notice = () => {
-  const history = useHistory();
   const [openDrawer, setOpenDrawer] = useState(false);
-  const [tabValue, setTabValue] = useState('0');
-  const [messagesList, setMessagesList] = useState([
-    {
-      content: 'aHR0cDovLzEwLjQ4LjIwLjk2L3VwbG9hZC9EaWdpdGFsQmFuay9odG1sL0FQUC90ZXN0Lmh0bWw=',
-      id: '2021042800399208',
-      outline: '5ris6Kmm6aCQ6Kit5YWs5ZGK',
-      sendTime: '2021/04/28 10:47',
-      status: 'R',
-      type: 'D',
-    },
-    {
-      content: 'aHR0cDovLzEwLjQ4LjIwLjk2L3VwbG9hZC9EaWdpdGFsQmFuay9odG1sL0FQUC90ZXN0Lmh0bWw=',
-      id: '2021042800399209',
-      outline: '5ris6Kmm6aCQ6Kit5YWs5ZGK',
-      sendTime: '2021/04/28 10:47',
-      status: '0',
-      type: 'D',
-    },
-  ]);
+  const [tabValue, setTabValue] = useState('A');
+  const [messagesList, setMessagesList] = useState([]);
 
   // 跳轉通知設定頁
   const toSettingPage = () => {
     goToFunc({ route: '/noticeSetting', funcID: 'S00400' });
   };
 
-  const getNoticeItem = async () => {
-  };
-
   // 取得通知列表
   const getNotices = async () => {
     const response = await queryLastPush();
-    console.log(response);
-    setMessagesList([]);
+    if (response.length > 0) {
+      setMessagesList(response);
+    }
   };
 
   // 選擇通知類別
@@ -71,51 +56,69 @@ const Notice = () => {
   };
 
   // 已讀單項訊息
-  const readSpecMessage = (msg) => {
+  const readSpecMessage = async (msg) => {
     if (msg.status !== 'R') {
-      const newMessagesList = messagesList
-        .map((item) => {
-          if (msg.id === item.id) {
-            item.status = 'R';
-          }
-          return item;
-        });
-      setMessagesList(newMessagesList);
+      const param = {
+        msgId: msg.msgId,
+      };
+      await chgPushStatus(param);
+      getNotices();
+    }
+    if (msg?.msgUrl) {
+      window.location.href = msg?.msgUrl;
     }
   };
 
   // 已讀全部訊息
-  const readAllMessages = () => {
-    const newMessageList = messagesList
-      .map((item) => ({
-        ...item,
-        status: 'R',
-      }));
-    setMessagesList(newMessageList);
+  const readAllMessages = async () => {
+    const param = {
+      msgType: tabValue !== '0' ? tabValue : '',
+    };
+    await chgAllPushStatus(param);
+    getNotices();
     handleOpenDrawer();
   };
 
   // 刪除單項訊息
-  const deleteSpecMessage = (msg) => {
-    const newMessagesList = messagesList.filter((item) => item.id !== msg.id);
-    setMessagesList(newMessagesList);
+  const deleteSpecMessage = async (msg) => {
+    const param = {
+      msgId: msg.msgId,
+    };
+    await deletePush(param);
+    getNotices();
   };
 
   // 刪除全部訊息
-  const deleteAllMessages = () => {
-    const newMessages = [];
-    setMessagesList(newMessages);
+  const deleteAllMessages = async () => {
+    const param = {
+      msgType: tabValue !== '0' ? tabValue : '',
+    };
+    await deleteAllPush(param);
     handleOpenDrawer();
   };
 
-  const renderMessagesList = () => messagesList.map((item) => (
-    <MessageItem
-      key={item.id}
-      item={item}
-      readClick={() => readSpecMessage(item)}
-      deleteClick={() => deleteSpecMessage(item)}
-    />
-  ));
+  const renderMessagesList = () => {
+    if (tabValue === '0') {
+      return messagesList.map((item) => (
+        <MessageItem
+          key={item?.msgId}
+          item={item}
+          readClick={() => readSpecMessage(item)}
+          deleteClick={() => deleteSpecMessage(item)}
+        />
+      ));
+    }
+    return messagesList
+      .filter((msg) => msg.msgType === tabValue)
+      .map((item) => (
+        <MessageItem
+          key={item?.msgId}
+          item={item}
+          readClick={() => readSpecMessage(item)}
+          deleteClick={() => deleteSpecMessage(item)}
+        />
+      ));
+  };
 
   const renderEditList = () => (
     <ul className="noticeEditList">
@@ -133,7 +136,6 @@ const Notice = () => {
   useGetEnCrydata();
 
   useEffect(() => {
-    getNoticeItem();
     getNotices();
   }, []);
 
@@ -158,11 +160,11 @@ const Notice = () => {
           </div>
           <FEIBTabContext value={tabValue}>
             <FEIBTabList $size="small" onChange={handleTabChange}>
-              <FEIBTab label="帳務" value="0" />
-              <FEIBTab label="社群" value="1" />
-              <FEIBTab label="公告" value="2" />
-              <FEIBTab label="安全" value="3" />
-              <FEIBTab label="全部" value="4" />
+              <FEIBTab label="帳務" value="A" />
+              <FEIBTab label="社群" value="C" />
+              <FEIBTab label="公告" value="P" />
+              <FEIBTab label="安全" value="S" />
+              <FEIBTab label="全部" value="0" />
             </FEIBTabList>
           </FEIBTabContext>
           {

@@ -81,24 +81,24 @@ const TransferStatic2 = lazy(() => import('pages/TransferStatic/transfer_2'));
 /* Tutorials (for prototype) */
 // import Tutorials from 'pages/Tutorials';
 
-const CardLessATM = lazy(() => import('pages/CardLessATM'));
-const CardLessATM1 = lazy(() => import('pages/CardLessATM/cardLessATM_1'));
-const CardLessATM2 = lazy(() => import('pages/CardLessATM/cardLessATM_2'));
-const CardLessWithDrawChgPwd = lazy(() => import('pages/CardLessATM/cardLessWithDrawChgPwd'));
+const CardLessATM = lazy(() => import('pages/D00300_CardLessATM'));
+const CardLessATM1 = lazy(() => import('pages/D00300_CardLessATM/cardLessATM_1'));
+const CardLessATM2 = lazy(() => import('pages/D00300_CardLessATM/cardLessATM_2'));
+const CardLessWithDrawChgPwd = lazy(() => import('pages/D00300_CardLessATM/cardLessWithDrawChgPwd'));
 const LossReissue = lazy(() => import('pages/LossReissue'));
 const AccountMaintenance = lazy(() => import('pages/AccountMaintenance'));
 const BillPay = lazy(() => import('pages/BillPay'));
 const BillPay1 = lazy(() => import('pages/BillPay/billPay_1'));
-const More = lazy(() => import('pages/More'));
+const More = lazy(() => import('pages/B00600_More'));
 const DepositPlus = lazy(() => import('pages/DepositPlus'));
 const NicknameSetting = lazy(() => import('pages/NicknameSetting'));
-const NoticeSetting = lazy(() => import('pages/NoticeSetting'));
+const NoticeSetting = lazy(() => import('pages/S00400_NoticeSetting'));
 const PatternLockSetting = lazy(() => import('pages/PatternLockSetting'));
-const Notice = lazy(() => import('pages/Notice'));
+const Notice = lazy(() => import('pages/B00300_Notice'));
 const FingerPrintLockSetting = lazy(() => import('pages/FingerPrintLockSetting'));
-const ChangeUserName = lazy(() => import('pages/ChangeUserName'));
-const PwdModify = lazy(() => import('pages/PwdModify'));
-const RegularPwdModify = lazy(() => import('pages/RegularPwdModify'));
+const ChangeUserName = lazy(() => import('pages/T00800_ChangeUserName'));
+const PwdModify = lazy(() => import('pages/T00900_PwdModify'));
+const RegularPwdModify = lazy(() => import('pages/A00700_RegularPwdModify'));
 const SMSOTPactivate = lazy(() => import('pages/SMSOTPactivate'));
 const QRCodeTransfer = lazy(() => import('pages/QRCodeTransfer'));
 const Adjustment = lazy(() => import('pages/Adjustment'));
@@ -106,21 +106,21 @@ const Adjustment1 = lazy(() => import('pages/Adjustment/adjustment_1'));
 const ProjectJ = lazy(() => import('pages/ProjectJ'));
 const LoanInquiry = lazy(() => import('pages/LoanInquiry'));
 const LoanInterest = lazy(() => import('pages/LoanInterest'));
-const BasicInformation = lazy(() => import('pages/BasicInformation'));
-const QandA = lazy(() => import('pages/QandA'));
-const Provisioning = lazy(() => import('pages/Provisioning'));
+const BasicInformation = lazy(() => import('pages/T00700_BasicInformation'));
+const QandA = lazy(() => import('pages/S00600_QandA'));
+const Provisioning = lazy(() => import('pages/A00400_Provisioning'));
 const Deduct = lazy(() => import('pages/Deduct'));
 const Deduct1 = lazy(() => import('pages/Deduct/deduct1'));
 const Deduct2 = lazy(() => import('pages/Deduct/deduct2'));
 const Deduct3 = lazy(() => import('pages/Deduct/deduct3'));
-const Exchange = lazy(() => import('pages/Exchange'));
-const Exchange1 = lazy(() => import('pages/Exchange/exchange_1'));
-const Exchange2 = lazy(() => import('pages/Exchange/exchange_2'));
+const Exchange = lazy(() => import('pages/E00100_Exchange'));
+const Exchange1 = lazy(() => import('pages/E00100_Exchange/exchange_1'));
+const Exchange2 = lazy(() => import('pages/E00100_Exchange/exchange_2'));
 const Transfer = lazy(() => import('pages/Transfer'));
 const Transfer1 = lazy(() => import('pages/Transfer/transfer_1'));
 const Transfer2 = lazy(() => import('pages/Transfer/transfer_2'));
-const Profile = lazy(() => import('pages/Profile'));
-const FinancialDepartments = lazy(() => import('pages/FinancialDepartments'));
+const Profile = lazy(() => import('pages/T00100_Profile'));
+const FinancialDepartments = lazy(() => import('pages/E00300_FinancialDepartments'));
 const Network = lazy(() => import('pages/Network'));
 const TradingAccount = lazy(() => import('pages/TradingAccount'));
 const TradingAccountDetails = lazy(() => import('pages/TradingAccountDetails'));
@@ -128,18 +128,18 @@ const TaiwanDollarAccount = lazy(() => import('pages/TaiwanDollarAccount'));
 const TaiwanDollarAccountDetails = lazy(() => import('pages/TaiwanDollarAccountDetails'));
 const ForeignCurrencyAccount = lazy(() => import('pages/ForeignCurrencyAccount'));
 const ForeignCurrencyAccountDetails = lazy(() => import('pages/ForeignCurrencyAccountDetails'));
-const RegularBasicInformation = lazy(() => import('pages/RegularBasicInformation'));
-const ExportBankBook = lazy(() => import('pages/ExportBankBook'));
-const ExportBankBook1 = lazy(() => import('pages/ExportBankBook/exportBankBook_1'));
+const RegularBasicInformation = lazy(() => import('pages/A00600_RegularBasicInformation'));
+const ExportBankBook = lazy(() => import('pages/C00800_ExportBankBook'));
+const ExportBankBook1 = lazy(() => import('pages/C00800_ExportBankBook/exportBankBook_1'));
 const ForeignCurrencyTransfer = lazy(() => import('pages/ForeignCurrencyTransfer'));
 const ForeignCurrencyTransfer1 = lazy(() => import('pages/ForeignCurrencyTransfer/foreignCurrencyTransfer_1'));
 const ForeignCurrencyTransfer2 = lazy(() => import('pages/ForeignCurrencyTransfer/foreignCurrencyTransfer_2'));
-const ReserveTransferSearch = lazy(() => import('pages/ReserveTransferSearch'));
-const ReserveTransferSearch1 = lazy(() => import('pages/ReserveTransferSearch/reserveTransferSearch_1'));
-const ReserveTransferSearch2 = lazy(() => import('pages/ReserveTransferSearch/reserveTransferSearch_2'));
-const MobileTransfer = lazy(() => import('pages/MobileTransfer'));
-const MobileTransfer1 = lazy(() => import('pages/MobileTransfer/mobileTransfer_1'));
-const MobileTransfer2 = lazy(() => import('pages/MobileTransfer/mobileTransfer_2'));
+const ReserveTransferSearch = lazy(() => import('pages/S00300_ReserveTransferSearch'));
+const ReserveTransferSearch1 = lazy(() => import('pages/S00300_ReserveTransferSearch/reserveTransferSearch_1'));
+const ReserveTransferSearch2 = lazy(() => import('pages/S00300_ReserveTransferSearch/reserveTransferSearch_2'));
+const MobileTransfer = lazy(() => import('pages/T00600_MobileTransfer'));
+const MobileTransfer1 = lazy(() => import('pages/T00600_MobileTransfer/mobileTransfer_1'));
+const MobileTransfer2 = lazy(() => import('pages/T00600_MobileTransfer/mobileTransfer_2'));
 const ForeignCurrencyPriceSetting = lazy(() => import('pages/ForeignCurrencyPriceSetting'));
 const QuickLoginSetting = lazy(() => import('pages/QuickLoginSetting'));
 const Instalment = lazy(() => import('pages/Instalment'));
@@ -147,7 +147,7 @@ const Instalment1 = lazy(() => import('pages/Instalment/Instalment_1'));
 const Instalment2 = lazy(() => import('pages/Instalment/Instalment_2'));
 const Instalment3 = lazy(() => import('pages/Instalment/Instalment_3'));
 const AutomaticBillPayment = lazy(() => import('pages/AutomaticBillPayment'));
-const ExchangeRate = lazy(() => import('pages/ExchangeRate'));
+const ExchangeRate = lazy(() => import('pages/E00200_ExchangeRate'));
 
 // TODO：支援開發及Prototype測試使用
 const Login = lazy(() => import('proto/Login/login'));
@@ -171,9 +171,11 @@ const routes = [
   // { path: '/depositInquiry', exact: false, component: DepositInquiry },
   { path: '/depositPlus', exact: false, component: DepositPlus },
   { path: '/S00400', exact: true, component: NoticeSetting },
+  { path: '/noticeSetting', exact: true, component: NoticeSetting },
   { path: '/nicknameSetting', exact: false, component: NicknameSetting },
   { path: '/patternLockSetting', exact: false, component: PatternLockSetting },
   { path: '/B00300', exact: false, component: Notice },
+  { path: '/notice', exact: false, component: Notice },
   { path: '/fingerPrintLockSetting', exact: false, component: FingerPrintLockSetting },
   { path: '/changeUserName', exact: false, component: ChangeUserName },
   { path: '/pwdModify', exact: false, component: PwdModify },
@@ -193,6 +195,7 @@ const routes = [
   { path: '/deduct2', exact: false, component: Deduct2 },
   { path: '/deduct3', exact: false, component: Deduct3 },
   { path: '/E00100', exact: false, component: Exchange },
+  { path: '/exchange', exact: false, component: Exchange },
   { path: '/exchange1', exact: false, component: Exchange1 },
   { path: '/exchange2', exact: false, component: Exchange2 },
   { path: '/transfer', exact: false, component: Transfer },
@@ -211,6 +214,7 @@ const routes = [
   { path: '/foreignCurrencyAccountDetails', exact: false, component: ForeignCurrencyAccountDetails },
   { path: '/regularBasicInformation', exact: false, component: RegularBasicInformation },
   { path: '/C00800', exact: false, component: ExportBankBook },
+  { path: '/exportBankBook', exact: false, component: ExportBankBook },
   { path: '/exportBankBook1', exact: false, component: ExportBankBook1 },
   { path: '/foreignCurrencyTransfer', exact: false, component: ForeignCurrencyTransfer },
   { path: '/foreignCurrencyTransfer1', exact: false, component: ForeignCurrencyTransfer1 },
