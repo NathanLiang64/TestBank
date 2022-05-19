@@ -61,7 +61,10 @@ const TaiwanDollarAccount = () => {
     // 首次加載時取得用戶所有外幣的存款帳戶摘要資訊
     if (!model.accounts) {
       const acctData = await getAccountSummary('MC'); // M=台幣主帳戶、C=台幣子帳戶
-      if (!acctData) showPrompt('您還沒有任何台幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
+      if (!acctData?.length) {
+        showPrompt('您還沒有任何台幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
+        return;
+      }
       model.accounts = acctData.map((acct) => ({ // Note: 將陣列(Array)轉為字典(Object/HashMap)
         cardInfo: acct,
         panelInfo: null, // 此屬性在 selectedAccountIdx 變更時取得。

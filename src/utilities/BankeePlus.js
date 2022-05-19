@@ -108,7 +108,7 @@ function closeFunc() {
     const funcItem = funcStack.pop();
     const rootPath = `${process.env.REACT_APP_ROUTER_BASE}/`;
     if (funcItem) {
-      window.location.pathname = `${rootPath}${funcItem.func.route}`; // keepData 存入 localStorage 'funcParams'
+      window.location.pathname = `${rootPath}${funcItem.func}`; // keepData 存入 localStorage 'funcParams'
     } else {
       window.location.pathname = rootPath;
     }

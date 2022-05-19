@@ -55,7 +55,10 @@ const C00500 = () => {
     // 首次加載時取得用戶所有證券交割的存款帳戶摘要資訊
     if (!model.accounts) {
       const acctData = await getAccountSummary('S'); // S=交割帳戶
-      if (!acctData) showPrompt('您還沒有任何證券交割的存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
+      if (!acctData?.length) {
+        showPrompt('您還沒有任何證券交割的存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
+        return;
+      }
       model.accounts = acctData.map((acct) => ({ // Note: 將陣列(Array)轉為字典(Object/HashMap)
         cardInfo: acct,
         panelInfo: null, // 此屬性在 selectedAccountIdx 變更時取得。

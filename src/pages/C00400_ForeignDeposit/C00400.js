@@ -51,7 +51,10 @@ const ForeignCurrencyAccount = () => {
     // 首次加載時取得用戶所有外幣的存款帳戶摘要資訊
     if (!model.accounts) {
       const acctData = await getAccountSummary('F'); // F=外幣
-      if (!acctData) showPrompt('您還沒有任何外幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
+      if (!acctData?.length) {
+        showPrompt('您還沒有任何外幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
+        return;
+      }
       model.accounts = acctData.map((acct) => ({ // Note: 將陣列(Array)轉為字典(Object/HashMap)
         cardInfo: acct,
         transactions: null, // 此屬性在 selectedAccount 變更時取得。
