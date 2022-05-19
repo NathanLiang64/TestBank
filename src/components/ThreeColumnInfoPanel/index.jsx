@@ -8,7 +8,7 @@ import ThreeColumnInfoPanelWrapper from './ThreeColumnInfoPanel.style';
 const ThreeColumnInfoPanel = ({ isLoading, content, children }) => (
   <ThreeColumnInfoPanelWrapper>
     { isLoading && <div>載入中...</div>}
-    { !isLoading && (children ?? content.map((info) => {
+    { !isLoading && (content ? content.map((info) => {
       const Component = info.onClick ? 'button' : 'div';
       return (
         <Component key={uuid()} onClick={info.onClick} title={info.ariaLabel}>
@@ -18,8 +18,8 @@ const ThreeColumnInfoPanel = ({ isLoading, content, children }) => (
           </h3>
           <div className="value">{info.value}</div>
         </Component>
-      )
-    }))}
+      );
+    }) : children)}
   </ThreeColumnInfoPanelWrapper>
 );
 

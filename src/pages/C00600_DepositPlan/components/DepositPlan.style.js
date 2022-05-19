@@ -1,21 +1,21 @@
 import styled from 'styled-components';
 
-const DepositePlanWrapper = styled.div`
+const DepositPlanWrapper = styled.div`
   margin-block-end: 3.3rem;
 
   .pad {
-    padding-inline: 1.6rem;
-  }
-
-  .flex {
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
+    width: 100%;
+    padding-inline: 1.6rem;
+    padding-block-end: 1.7rem;
+  }
+
+  .flex {
     align-items: center;
     color: ${({ theme }) => theme.colors.text.lightGray};
     font-size: 1.4rem;
-    width: 100%;
-    padding-block-end: 1.7rem;
   }
 
   em {
@@ -29,7 +29,8 @@ const DepositePlanWrapper = styled.div`
   hr {
     border-color: ${({ theme }) => theme.colors.background.lighter};
     margin-block: 1.6rem;
+    width: 100%;
   }
 `;
 
-export default DepositePlanWrapper;
+export default DepositPlanWrapper;
