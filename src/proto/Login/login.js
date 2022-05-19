@@ -46,9 +46,8 @@ const Login = () => {
     resolver: yupResolver(schema),
     defaultValues: {
       identity: '',
-      // identity: 'B100000039', // Bankee台外數存、遠智授扣、交割帳戶
-      account: '',
-      password: '',
+      account: '1qaz2wsx',
+      password: 'feib1688',
     },
   });
 

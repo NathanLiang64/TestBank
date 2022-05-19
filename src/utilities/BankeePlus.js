@@ -2,8 +2,8 @@
 import { showError } from './MessageModal';
 
 const device = {
-  ios: () => /iPhone|iPad|iPod/i.test(navigator.userAgent),
-  android: () => /Android/i.test(navigator.userAgent),
+  ios: () => false, // /iPhone|iPad|iPod/i.test(navigator.userAgent),
+  android: () => false, // /Android/i.test(navigator.userAgent),
 };
 
 const funcStack = {
