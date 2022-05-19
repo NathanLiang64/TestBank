@@ -1,4 +1,4 @@
-import { AccountIcon6 } from 'assets/images/icons';
+import { AccountIcon10 } from 'assets/images/icons';
 
 import EmptySlideWrapper from './EmptySlide.style';
 
@@ -15,7 +15,7 @@ const EmptySlide = ({
   slogan = '開始進行存錢計畫吧！',
 }) => (
   <EmptySlideWrapper>
-    <AccountIcon6 size={54} color="currentColor" />
+    <AccountIcon10 size={54} color="currentColor" />
     <h2 className="title">{title}</h2>
     <p className="slogan">{slogan}</p>
   </EmptySlideWrapper>

@@ -1,11 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-/* Elements */
 import Layout from 'components/Layout/Layout';
 import SwiperLayout from 'components/SwiperLayout';
-
-/* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import EmptySlide from './components/EmptySlide';
