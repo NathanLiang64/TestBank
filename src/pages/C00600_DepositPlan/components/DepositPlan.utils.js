@@ -1,9 +1,9 @@
-import fail from 'assets/animations/fail.json';
+import fail from 'assets/animations/fail-small.json';
 import saving25 from 'assets/animations/saving25.json';
 import saving50 from 'assets/animations/saving50.json';
 import saving75 from 'assets/animations/saving75.json';
 import saving99 from 'assets/animations/saving99.json';
-import successFlower from 'assets/animations/successFlower.json';
+import successFlower from 'assets/animations/successFlower-small.json';
 import Theme from 'themes/theme';
 
 const getStage = (isPlanFailed, progressPercentage) => {

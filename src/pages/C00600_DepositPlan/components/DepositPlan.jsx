@@ -52,7 +52,7 @@ const DepositPlan = ({
       {(isPlanCompleted || isPlanFailed) ? <FEIBButton className="mt-3">結束本計畫</FEIBButton> : (
         <div className="pad">
           <hr />
-          <ThreeColumnInfoPanel content={bonusInfo} />
+          <ThreeColumnInfoPanel isLoading={!bonusInfo} content={bonusInfo} />
           <ArrowNextButton onClick={showDetails}>存錢歷程</ArrowNextButton>
         </div>
       )}

@@ -38,7 +38,7 @@ const handler = (swiper) => {
 /**
  * C00600 存錢計畫
  */
-const DepositePlan = () => {
+const DepositPlanPage = () => {
   const dispatch = useDispatch();
   const [slides, setSlides] = useState(undefined);
 
@@ -65,4 +65,4 @@ const DepositePlan = () => {
   );
 };
 
-export default DepositePlan;
+export default DepositPlanPage;
