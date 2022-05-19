@@ -84,6 +84,12 @@ const Nav = () => {
           <li>funcID: B00300</li>
         </ul>
       </div>
+      <div onClick={() => startFunc('S00400')}>
+        <ul>
+          <li>功能：訊息通知設定</li>
+          <li>funcID: S00400</li>
+        </ul>
+      </div>
       <div onClick={() => startFunc('E00100')}>
         <ul>
           <li>功能：換匯</li>

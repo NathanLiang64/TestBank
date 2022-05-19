@@ -21,18 +21,18 @@ const MessageItem = ({ item, deleteClick, readClick }) => {
 
   return (
     <div
-      className={`notifyItem ${item.status === '0' ? 'newMsg' : ''}`}
+      className={`notifyItem ${item?.status === 'R' ? '' : 'newMsg'}`}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onClick={readClick}
     >
       <section>
-        <div className="notifyTitle">{ item.outline }</div>
-        <div className="notifyTime">{ item.sendTime }</div>
+        <div className="notifyTitle">{ window.atob(item?.msgOutline) }</div>
+        <div className="notifyTime">{ item?.sendTime }</div>
       </section>
       <section className="notifyContent">
-        { item.content }
+        { window.atob(item.msgContent) }
       </section>
       <div
         className={`deleteBtn ${showActions ? '' : 'hide'}`}
