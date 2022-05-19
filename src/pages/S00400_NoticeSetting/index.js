@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 /* Elements */
 import Header from 'components/Header';
@@ -7,7 +7,7 @@ import {
 } from 'components/elements';
 
 /* API */
-import { queryPushSetting } from './api';
+import { queryPushSetting, bindPushSetting } from './api';
 
 /* Styles */
 import NoticeSettingWrapper from './noticeSetting.style';
@@ -16,14 +16,33 @@ const NoticeSetting = () => {
   const [communityNoti, setCommunityNoti] = useState(true);
   const [normalNoti, setNormalNoti] = useState(true);
   const [securityNoti, setSecurityNoti] = useState(true);
-  const [foreignCurrencyNoti, setForeignCurrencyNoti] = useState(true);
+  // const [foreignCurrencyNoti, setForeignCurrencyNoti] = useState(true);
   const [nightNoti, setNightNoti] = useState(true);
 
   // 取得通知設定
   const getPushSettingList = async () => {
     const param = {};
-    const res = await queryPushSetting(param);
-    console.log(res);
+    const {
+      communityNotice,
+      boardNotice,
+      securityNotice,
+      nightMuteNotice,
+    } = await queryPushSetting(param);
+    setCommunityNoti(Boolean(communityNotice));
+    setNormalNoti(Boolean(boardNotice));
+    setSecurityNoti(Boolean(securityNotice));
+    setNightNoti(Boolean(nightMuteNotice));
+  };
+
+  // 更新通知設定
+  const updateNotiSetting = async () => {
+    const param = {
+      communityNotice: communityNoti ? 'Y' : 'N',
+      boardNotice: normalNoti ? 'Y' : 'N',
+      securityNotice: securityNoti ? 'Y' : 'N',
+      nightMuteNotice: nightNoti ? 'Y' : 'N',
+    };
+    bindPushSetting(param);
   };
 
   const handleSwitchChange = (type) => {
@@ -37,9 +56,9 @@ const NoticeSetting = () => {
       case 'security':
         setSecurityNoti(!securityNoti);
         break;
-      case 'foreignCurrency':
-        setForeignCurrencyNoti(!foreignCurrencyNoti);
-        break;
+      // case 'foreignCurrency':
+      //   setForeignCurrencyNoti(!foreignCurrencyNoti);
+      //   break;
       case 'nightNotify':
         setNightNoti(!nightNoti);
         break;
@@ -51,6 +70,16 @@ const NoticeSetting = () => {
   useEffect(() => {
     getPushSettingList();
   }, []);
+
+  const init = useRef(true);
+
+  useEffect(() => {
+    if (init.current) {
+      init.current = false;
+      return;
+    }
+    updateNotiSetting();
+  }, [communityNoti, normalNoti, securityNoti, nightNoti]);
 
   return (
     <>
@@ -92,7 +121,7 @@ const NoticeSetting = () => {
             />
           </div>
         </div>
-        <div className="settingItem">
+        {/* <div className="settingItem">
           <div className="settingLabel">
             <span className="main">外幣到價通知</span>
             <span className="sub">美金/澳幣/日圓</span>
@@ -103,7 +132,7 @@ const NoticeSetting = () => {
               onChange={() => handleSwitchChange('foreignCurrency')}
             />
           </div>
-        </div>
+        </div> */}
         <div className="settingItem">
           <div className="settingLabel">
             <span className="main">夜間通知靜音</span>

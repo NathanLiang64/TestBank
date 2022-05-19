@@ -58,10 +58,28 @@ const Nav = () => {
             <li>funcID: B00600</li>
           </ul>
         </div>
+        {/* <div onClick={() => goToFunc({ route: '/foreignCurrencyPriceSetting', funcID: 'unset' })}>
+          <ul>
+            <li>功能：外幣到價通知</li>
+            <li>funcID: unset</li>
+          </ul>
+        </div> */}
         <div onClick={() => startFunc('B00300')}>
           <ul>
             <li>功能：訊息通知（唯物）</li>
             <li>funcID: B00300</li>
+          </ul>
+        </div>
+        <div onClick={() => startFunc('S00400')}>
+          <ul>
+            <li>功能：訊息通知設定（唯物）</li>
+            <li>funcID: S00400</li>
+          </ul>
+        </div>
+        <div onClick={() => startFunc('E00100')}>
+          <ul>
+            <li>功能：換匯（唯物）</li>
+            <li>funcID: E00100</li>
           </ul>
         </div>
         {/* <div onClick={() => goToFunc({ route: '/profile', funcID: 'T00100' })}>
@@ -111,6 +129,13 @@ const Nav = () => {
             <li>功能：網銀密碼變更</li>
             <li>route: /pwdModify</li>
             <li>funcID: T00900</li>
+          </ul>
+        </div>
+        <div onClick={() => goToFunc({ route: '/notice', funcID: 'B00300' })}>
+          <ul>
+            <li>功能：訊息通知</li>
+            <li>route: /notice</li>
+            <li>funcID: B00300</li>
           </ul>
         </div>
         <div onClick={() => goToFunc({ route: '/staging', funcID: '' })}>

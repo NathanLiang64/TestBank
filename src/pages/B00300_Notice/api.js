@@ -1,35 +1,6 @@
 import { callAPI } from 'utilities/axios';
 
 /**
- * 通知設定綁定
- * @param {*} request {
- *  communityNotice: 是否啟用社群通知 : Y:啟用 , N:關閉
- *  boardNotice: 是否啟用公告通知 : Y:啟用 , N:關閉
- *  securityNotice: 是否啟用安全通知 : Y:啟用 , N:關閉
- *  nightMuteNotice: 是否啟用夜間靜音通知 : Y:啟用 , N:關閉
- * }
- * @returns
- */
-export const bindPushSetting = async (request) => {
-  const response = await callAPI('/api/push/v1/bindPushSetting', request);
-  return response.data;
-};
-
-/**
- * 查詢客戶綁定通知
- * @returns [{
- *  communityNotice: 是否啟用社群通知 : Y:啟用 , N:關閉
- *  boardNotice: 是否啟用公告通知 : Y:啟用 , N:關閉
- *  securityNotice: 是否啟用安全通知 : Y:啟用 , N:關閉
- *  nightMuteNotice: 是否啟用夜間靜音通知 : Y:啟用 , N:關閉
- * }, ...]
- */
-export const queryPushSetting = async () => {
-  const response = await callAPI('/api/push/v1/queryPushSetting');
-  return response.data;
-};
-
-/**
  * 查詢客戶近兩個月推播訊息
  * @returns [{
  *  msgId: 訊息編號
@@ -48,8 +19,8 @@ export const queryLastPush = async () => {
 
 /**
  * 推播訊息單筆已讀
- * @param {*} request { msgId }
- * @returns
+ * @param request { msgId }
+ * @return
  */
 export const chgPushStatus = async (msgId) => {
   const response = await callAPI('/api/push/v1/chgPushStatus', msgId);
@@ -57,9 +28,9 @@ export const chgPushStatus = async (msgId) => {
 };
 
 /**
-* 推播訊息單筆刪除
- * @param {*} request { msgId }
- * @returns
+ * 推播訊息單筆刪除
+ * @param request { msgId }
+ * @return
  */
 export const deletePush = async (msgId) => {
   const response = await callAPI('/api/push/v1/deletePush', msgId);
@@ -68,8 +39,8 @@ export const deletePush = async (msgId) => {
 
 /**
  * 推播訊息全部已讀
- * @param request { msgType }
- * @returns
+ * @param request { msgType } 推播訊息類別 (P：公告、A：帳務、C：社群、S：安全、若空表示全部)
+ * @return
  */
 export const chgAllPushStatus = async (msgType) => {
   const response = await callAPI('/api/push/v1/chgAllPushStatus', msgType);
@@ -78,8 +49,8 @@ export const chgAllPushStatus = async (msgType) => {
 
 /**
  * 推播訊息全部刪除
- * @param request { msgType }
- * @returns
+ * @param request { msgType } 推播訊息類別 (P：公告、A：帳務、C：社群、S：安全、若空表示全部)
+ * @return
  */
 export const deleteAllPush = async (msgType) => {
   const response = await callAPI('/api/push/v1/deleteAllPush', msgType);
