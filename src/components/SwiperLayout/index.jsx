@@ -52,7 +52,9 @@ const SwiperLayout = ({
     if (shouldHandelSlideChange) {
       setActiveIndex(swiper.realIndex);
     }
-    onSlideChange(swiper);
+    if (onSlideChange) {
+      onSlideChange(swiper);
+    }
   };
 
   return (

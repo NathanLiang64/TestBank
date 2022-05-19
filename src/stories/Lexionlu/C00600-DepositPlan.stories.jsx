@@ -1,13 +1,32 @@
 import { Provider } from 'react-redux';
-import store from 'stores/store';
 
+import store from 'stores/store';
 import Layout from 'components/Layout/Layout';
 import SwiperLayout from 'components/SwiperLayout';
+import { showDrawer } from 'utilities/MessageModal';
 
 import EmptySlide from 'pages/C00600_DepositPlan/components/EmptySlide';
 import EmptyPlan from 'pages/C00600_DepositPlan/components/EmptyPlan';
 import HeroSlide from 'pages/C00600_DepositPlan/components/HeroSlide';
 import DepositPlan from 'pages/C00600_DepositPlan/components/DepositPlan';
+
+const moreList = [
+    { fid: null, icon: 'fixedDeposit', title: '定存' },
+    { fid: '', icon: 'exchange', title: '換匯' },
+    { fid: 'DownloadDepositBookCover', icon: 'coverDownload', title: '換匯' },
+];
+
+const renderMoreList = (list) => (
+  <ul className="moreList">
+    {list.map((func) => (
+      <li key={func.title}>
+        <p>
+          {func.title}
+        </p>
+      </li>
+    ))}
+  </ul>
+);
 
 const slides = [
   (args) => <EmptySlide {...args} />,
@@ -68,3 +87,6 @@ const Template = (args) => (
 );
 
 export const AllStages = Template.bind({});
+AllStages.args = {
+ onMoreClicked: () => showDrawer('', renderMoreList(moreList)),
+};
