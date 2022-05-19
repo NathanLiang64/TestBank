@@ -19,7 +19,7 @@ import { getStage } from './DepositPlan.utils';
 * 5. showDetails: function -> 點擊「存錢歷程」觸發。
 * */
 
-  const DepositPlan = ({
+const DepositPlan = ({
   currentValue = 0,
   targetValue = 100,
   expireDate,
