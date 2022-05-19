@@ -2,10 +2,13 @@ import styled from 'styled-components';
 
 const ThreeColumnInfoPanelWrapper = styled.div`
   display: flex;
-  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  height: 5rem;
+  width: 100%;
  
   & > * {
-    flex: 1 1 auto;
+    flex: 1 1 33%;
     text-align: center;
   }
 
@@ -13,6 +16,9 @@ const ThreeColumnInfoPanelWrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 0.5rem;
+    height: 1.6rem;
+    margin-block-end: 0.3rem;
     font-size: 1.4rem;
     color: ${({ theme }) => theme.colors.text.lightGray};
   }
@@ -24,7 +30,7 @@ const ThreeColumnInfoPanelWrapper = styled.div`
 
   .Icon {
     display: block;
-    margin-inline-start: 0.2rem;
+    height: 1.4rem;
   }
 `;
 

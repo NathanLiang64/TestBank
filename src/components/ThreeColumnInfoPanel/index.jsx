@@ -5,12 +5,13 @@ import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
 
 import ThreeColumnInfoPanelWrapper from './ThreeColumnInfoPanel.style';
 
-const ThreeColumnInfoPanel = ({ content, children }) => (
+const ThreeColumnInfoPanel = ({ isLoading, content, children }) => (
   <ThreeColumnInfoPanelWrapper>
-    { children ?? content.map((info) => {
+    { isLoading && <div>載入中...</div>}
+    { !isLoading && (children ?? content.map((info) => {
       const Component = info.onClick ? 'button' : 'div';
       return (
-        <Component key={uuid()} onClick={info.onClick}>
+        <Component key={uuid()} onClick={info.onClick} title={info.ariaLabel}>
           <h3 className="label">
             {info.label}
             {info.onClick && (info.iconType === 'switch' ? <SwitchIcon /> : <ArrowNextIcon />)}
@@ -18,7 +19,7 @@ const ThreeColumnInfoPanel = ({ content, children }) => (
           <div className="value">{info.value}</div>
         </Component>
       )
-    })}
+    }))}
   </ThreeColumnInfoPanelWrapper>
 );
 
