@@ -30,13 +30,13 @@ userAxios().interceptors.request.use(
     if (token) {
       // eslint-disable-next-line no-param-reassign
       request.headers.authorization = `Bearer ${token}`;
-      if (request.data) {
-        // Request Payload 加密
-        const aeskey = localStorage.getItem('aesKey');
-        const ivkey = localStorage.getItem('iv');
-        const encrypt = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(request.data));
-        request.data = encrypt;
-      } else request.data = '{}';
+      // if (request.data) {
+      // Request Payload 加密
+      const aeskey = localStorage.getItem('aesKey');
+      const ivkey = localStorage.getItem('iv');
+      const encrypt = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(request.data));
+      request.data = encrypt;
+      // } else request.data = '{}';
     }
     // console.log(`%cRequest --> ${JSON.stringify(request)}`, 'color: Green;'); // 列出完整的 Request 資訊。
     return request;
