@@ -54,7 +54,7 @@ const Nav = () => {
         </div>
         <div onClick={() => startFunc('B00600')}>
           <ul>
-            <li>功能：更多</li>
+            <li>更多 -- TODO</li>
             <li>funcID: B00600</li>
           </ul>
         </div>
@@ -66,19 +66,19 @@ const Nav = () => {
         </div> */}
         <div onClick={() => startFunc('B00300')}>
           <ul>
-            <li>功能：訊息通知（唯物）</li>
+            <li>唯物：訊息通知</li>
             <li>funcID: B00300</li>
           </ul>
         </div>
         <div onClick={() => startFunc('S00400')}>
           <ul>
-            <li>功能：訊息通知設定（唯物）</li>
+            <li>唯物：訊息通知設定</li>
             <li>funcID: S00400</li>
           </ul>
         </div>
         <div onClick={() => startFunc('E00100')}>
           <ul>
-            <li>功能：換匯（唯物）</li>
+            <li>唯物：換匯</li>
             <li>funcID: E00100</li>
           </ul>
         </div>

@@ -33,7 +33,7 @@ const CommunityPage = () => {
   const [friends, setFriends] = useState();
 
   const { register, unregister, handleSubmit } = useForm();
-  const renderText = (value) => value || '-';
+  const renderText = (value) => ((value !== null) ? value : '-');
   const defaultEssay = '點擊「成為Bankee會員」申辦Bankee數位存款帳戶，享活存利率2.6%！';
   const shareMessageContent = () => `${summary?.essay ?? defaultEssay} ${process.env.REACT_APP_RECOMMEND_URL}${summary.memberNo}`;
   const [textareaLength, setTextareaLength] = useState(0); // ???
@@ -104,7 +104,7 @@ const CommunityPage = () => {
         <FEIBInputLabel htmlFor="essay">您的分享文案</FEIBInputLabel>
         <FEIBTextarea
           {...register(fieldName)}
-          defaultValue={summary.essay ?? defaultEssay}
+          defaultValue={summary.essay}
           placeholder="請輸入您的分享文案"
           // onChange={onInputChange}
           $borderColor={textareaLength > 200 && theme.colors.state.danger}
@@ -117,14 +117,14 @@ const CommunityPage = () => {
       </EssayWrapper>
     );
     const onOk = ({ essay }) => {
-      const length = essay?.length;
-      if (length > 200) essay = essay.substring(0, length); // 截掉超過的部份。
-      if (essay) {
-        if (essay === defaultEssay) essay = null;
-        setSummary({ ...summary, essay }); // 變更暱稱(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
-        setTextareaLength(essay.length);
-        updateEssay(essay);
-      }
+      console.log('essay : "', essay, '"');
+      essay = `${essay?.trim()}`;
+      console.log('essay : "', essay, '"');
+      if (essay.length > 200) essay = essay.substring(0, essay.length); // 截掉超過的部份。
+      if (essay === defaultEssay || !essay.length) essay = null;
+      setSummary({ ...summary, essay }); // 變更分享文案(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
+      setTextareaLength(essay?.length);
+      updateEssay(essay);
     };
     await customPopup('分享內容', body, handleSubmit(onOk), null, '完成');
   };
@@ -141,13 +141,11 @@ const CommunityPage = () => {
     const body = (
       <RecommendListWrapper>
         <table>
-          {/* <caption>說明</caption> */}
           <thead>
             <tr>
               <th>姓名</th>
               <th>核卡完成日期</th>
               <th>開戶完成日期</th>
-              {/* Note 還有很多產品 */}
             </tr>
           </thead>
           <tbody>
@@ -192,7 +190,7 @@ const CommunityPage = () => {
           </div>
           <div className="subTitle shareTitle">分享內容</div>
           <div className="essay">
-            <span>{renderText(summary?.essay ?? defaultEssay)}</span>
+            <span>{renderText(summary?.essay ? summary.essay : defaultEssay)}</span>
             <FEIBIconButton $fontSize={1.6} onClick={showEssayEditDialog}>
               <EditIcon />
             </FEIBIconButton>

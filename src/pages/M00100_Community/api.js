@@ -27,6 +27,7 @@ export const getSummary = async () => {
 /**
  * 取得接受推薦的好友名單
  * @returns [{
+ *   friendUuid: 好友大頭貼
  *   friendName: 好友姓名
  *   creditCardApproved: 核卡完成日期
  *   depositApproved: Bankee台幣開戶完成日期
