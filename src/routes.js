@@ -13,9 +13,11 @@ const A00600 = lazy(() => import('pages/A00600_RegularBasicInformation'));
 const A00700 = lazy(() => import('pages/A00700_RegularPwdModify'));
 const B00300 = lazy(() => import('pages/B00300_Notice'));
 const B00600 = lazy(() => import('pages/B00600_More'));
+const C00100 = lazy(() => import('pages/C00100_AccountOverview/C00100'));
 const C00300 = lazy(() => import('pages/C00300_NtdDeposit/C00300'));
 const C00400 = lazy(() => import('pages/C00400_ForeignDeposit/C00400'));
 const C00500 = lazy(() => import('pages/C00500_SecsDeposit/C00500'));
+const C00600 = lazy(() => import('pages/C00600_DepositPlan/C00600'));
 const C00800 = lazy(() => import('pages/C00800_ExportBankBook'));
 const C008001 = lazy(() => import('pages/C00800_ExportBankBook/exportBankBook_1'));
 const D00100 = lazy(() => import('pages/D00100_NtdTransfer/D00100'));
@@ -87,9 +89,11 @@ const routes = [
   { path: '/A00700', exact: false, component: A00700 },
   { path: '/B00300', exact: false, component: B00300 },
   { path: '/B00600', exact: false, component: B00600 },
+  { path: '/C00100', exact: false, component: C00100 },
   { path: '/C00300', exact: false, component: C00300 },
   { path: '/C00400', exact: false, component: C00400 },
   { path: '/C00500', exact: false, component: C00500 },
+  { path: '/C00600', exact: false, component: C00600 },
   { path: '/C00800', exact: false, component: C00800 },
   { path: '/C008001', exact: false, component: C008001 },
   { path: '/D00100', exact: false, component: D00100 },

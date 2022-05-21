@@ -16,6 +16,23 @@ services:
     networks:
       - "front-edge"
 
+  feib-bankee-2022-storybook:
+    image: "asia-east1-docker.pkg.dev/lexionlu-web-prod/big-bucket-2021/feib-bankee-2022-storybook"
+    container_name: "feib-bankee-2022-storybook"
+    ports:
+      - "80"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.http.routers.feib-bankee-2022-storybook.rule=Host(`feib-bankee-2022-storybook.dev.lexionlu.com`)"
+      - "traefik.http.routers.feib-bankee-2022-storybook.entrypoints=websecure"
+      - "traefik.http.routers.feib-bankee-2022-storybook.tls=true"
+      - "traefik.http.routers.feib-bankee-2022-storybook.tls.certresolver=leresolver"
+      - "traefik.http.routers.feib-bankee-2022-storybook.middlewares=feib-bankee-2022-storybook"
+      - "traefik.http.middlewares.feib-bankee-2022-storybook.basicauth.users=bankee:$$apr1$$Aji3H22j$$QMUrFgEAlM9PY7H5YQzC6/"
+    networks:
+      - "front-edge"
+
 networks:
   front-edge:
     external: true

@@ -13,10 +13,11 @@ import CopyTextIconButtonWrapper from './copyTextIconButton.style';
 * 1. copyText -> 需要被複製的文字
 * 2. displayMessage -> 複製後顯示的訊息，若不傳值則預設顯示 "已複製帳號"
 * 3. iconColor -> IconButton 的圖標顏色
+* 4. isInline -> 設定Button元件為CSS display: inline
 * */
 
 const CopyTextIconButton = ({
-  copyText, displayMessage, iconColor,
+  copyText, displayMessage, iconColor, isInline = false,
 }) => {
   const [isCopied, setIsCopied] = useState(false);
 
@@ -27,7 +28,7 @@ const CopyTextIconButton = ({
   };
 
   return (
-    <CopyTextIconButtonWrapper>
+    <CopyTextIconButtonWrapper $isInline={isInline}>
       <CopyToClipboard
         text={copyText}
         onCopy={handleClickCopyAccount}

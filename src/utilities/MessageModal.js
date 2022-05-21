@@ -36,6 +36,25 @@ export const showInfo = async (message, action) => {
   store.dispatch(setModalVisible(true));
 };
 
+export const showCustomPrompt = async ({
+  title,
+  message,
+  onOk,
+  onCancel,
+  okContent,
+  cancelContent,
+}) => {
+  store.dispatch(setModal({
+    title,
+    content: message,
+    onOk: onOk ?? closePopup,
+    onCancel,
+    okContent,
+    cancelContent,
+  }));
+  store.dispatch(setModalVisible(true));
+};
+
 export const customPopup = async (title, message, onOk, onCancel, okContent, cancelContent) => {
   store.dispatch(setModal({
     title,

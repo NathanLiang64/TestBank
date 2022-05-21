@@ -5,7 +5,7 @@ import theme from 'themes/theme';
 import HeaderWrapper from './header.style';
 
 const Header = ({
-  title, hideBack, hideHome, goBack,
+  title, hideBack, hideHome, goBack, isTransparent,
 }) => {
   const handleHomeIconClick = (className) => {
     if (className === 'goHome') {
@@ -29,7 +29,7 @@ const Header = ({
   );
 
   return (
-    <HeaderWrapper>
+    <HeaderWrapper $isTransparent={isTransparent}>
       { !hideBack && renderIconButton('goBack', <ArrowBackIcon />) }
       <h2>{title}</h2>
       { !hideHome && renderIconButton('goHome', <HomeIcon />) }

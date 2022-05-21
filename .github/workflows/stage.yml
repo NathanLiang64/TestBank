@@ -41,10 +41,16 @@ jobs:
         docker build \
           --tag "$REGISTRY_URL/$PROJECT_ID/$REPO_NAME/$IMAGE" \
           .
+        docker build \
+          -f Dockerfile-storybook \
+          --tag "$REGISTRY_URL/$PROJECT_ID/$REPO_NAME/$IMAGE-storybook" \
+          .
 
     # Push the Docker image to Google Container Registry
     - name: Publish
-      run: docker push $REGISTRY_URL/$PROJECT_ID/$REPO_NAME/$IMAGE
+      run: |-
+        docker push $REGISTRY_URL/$PROJECT_ID/$REPO_NAME/$IMAGE
+        docker push $REGISTRY_URL/$PROJECT_ID/$REPO_NAME/$IMAGE-storybook
 
     # Set SSH config for remote Docker host
     - name: Configure SSH
@@ -72,7 +78,9 @@ jobs:
     # SSH execute remove old docker image
     - name: Remove old image
       continue-on-error: true
-      run: ssh dev sudo docker image rm  $REGISTRY_URL/$PROJECT_ID/$REPO_NAME/$IMAGE
+      run: |-
+        ssh dev sudo docker image rm $REGISTRY_URL/$PROJECT_ID/$REPO_NAME/$IMAGE
+        ssh dev sudo docker image rm $REGISTRY_URL/$PROJECT_ID/$REPO_NAME/$IMAGE-storybook
 
     # Generate docker-compose for stage server
     - name: Sed docker-compose
