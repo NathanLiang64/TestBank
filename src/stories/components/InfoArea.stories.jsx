@@ -36,7 +36,7 @@ export default {
 
 const Template = (args) => (
   <InfoArea {...args} />
-)
+);
 
 export const Primary = Template.bind({});
 Primary.args = {

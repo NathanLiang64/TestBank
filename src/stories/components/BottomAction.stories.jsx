@@ -12,6 +12,6 @@ export default {
 
 const Template = (args) => (
   <BottomAction {...args} />
-)
+);
 
 export const Primary = Template.bind({});

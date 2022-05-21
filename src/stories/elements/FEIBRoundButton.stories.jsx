@@ -13,15 +13,18 @@ export default {
   },
 };
 
-const Template = (args) => (
-  <FEIBRoundButton
-    $fontSize={args.fontSize}
-    $iconColor={args.iconColor}
-  >
-    { args.icon === 'more' && <MoreIcon />}
-    { args.icon === 'edit' && <EditIcon />}
-  </FEIBRoundButton>
-);
+const Template = (args) => {
+  const { fontSize, iconColor, icon } = args;
+  (
+    <FEIBRoundButton
+      $fontSize={fontSize}
+      $iconColor={iconColor}
+    >
+      { icon === 'more' && <MoreIcon />}
+      { icon === 'edit' && <EditIcon />}
+    </FEIBRoundButton>
+  );
+};
 
 export const MoreRoundButton = Template.bind({});
 MoreRoundButton.args = {

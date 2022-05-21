@@ -26,7 +26,7 @@ export default {
 
 const Template = (args) => (
   <InformationList {...args} />
-)
+);
 
 export const Primary = Template.bind({});
 Primary.args = {

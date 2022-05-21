@@ -37,7 +37,7 @@ export default {
 
 const Template = (args) => (
   <SuccessFailureAnimations {...args} />
-)
+);
 
 export const Fail = Template.bind({});
 Fail.args = {

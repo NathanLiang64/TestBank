@@ -32,6 +32,6 @@ export default {
 
 const Template = (args) => (
   <ConfirmButtons {...args} />
-)
+);
 
 export const Primary = Template.bind({});

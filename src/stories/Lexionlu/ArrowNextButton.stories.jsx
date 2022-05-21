@@ -35,4 +35,4 @@ const Template = (args) => (
 export const Primary = Template.bind({});
 Primary.args = {
   children: '存錢歷程',
-}
+};

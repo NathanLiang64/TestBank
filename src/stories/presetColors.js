@@ -1,13 +1,9 @@
 import Theme from 'themes/theme';
 
-const getFormatedColorPresets = (title, colors) => {
-  return Object.entries(colors).map((c) => {
-    return {
-      color: c[1],
-      title: `Theme.colors.${title}.${c[0]}`,
-    };
-  });
-};
+const getFormatedColorPresets = (title, colors) => Object.entries(colors).map((c) => ({
+  color: c[1],
+  title: `Theme.colors.${title}.${c[0]}`,
+}));
 
 const getColorPresetGroups = (presets = ['text']) => {
   if (!Array.isArray(presets)) {

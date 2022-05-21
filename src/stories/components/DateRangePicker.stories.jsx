@@ -1,4 +1,4 @@
-import PickerWrapper from 'components/DateRangePicker';
+import DateRangePickerWrapper from 'components/DateRangePicker/dateRangePicker.style';
 import DateRangePicker from 'components/DateRangePicker';
 
 const doc = `### 組件說明
@@ -20,9 +20,9 @@ export default {
   component: DateRangePicker,
   decorators: [
     (Story) => (
-      <PickerWrapper>
+      <DateRangePickerWrapper>
         <Story />
-      </PickerWrapper>
+      </DateRangePickerWrapper>
     ),
   ],
   argTypes: {
@@ -36,7 +36,7 @@ export default {
 };
 
 const Template = (args) => (
-  <ConfirmButtons {...args} />
-)
+  <DateRangePicker {...args} />
+);
 
 export const Primary = Template.bind({});

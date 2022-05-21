@@ -12,20 +12,28 @@ export default {
 
 const IconArray = [];
 
-for (let icon in Icons) {
-  IconArray.push([icon, Icons[icon]]);
-};
+for (const icon in Icons) {
+  if ({}.hasOwnProperty.call(Icons, icon)) {
+    IconArray.push([icon, Icons[icon]]);
+  }
+}
 
 const Template = (args) => (
   <>
-    <p style={{ padding: 12, backgroundColor: 'black', marginBottom: 48, borderRadius: 10, color: 'white', fontSize: '10pt' }}>
-      // 使用範例
+    <p style={{
+      padding: 12, backgroundColor: 'black', marginBottom: 48, borderRadius: 10, color: 'white', fontSize: '10pt',
+    }}
+    >
+      {/* 使用範例 */}
       <br />
-      import &#123; BlockSelectedIcon &#125; from 'assets/images/icons';
+      {'import { BlockSelectedIcon } from \'assets/images/icons\';'}
       <br />
-      &lt;BlockSelectedIcon color="..." size="..." /&gt;
+      {'<BlockSelectedIcon color="..." size="..." />'}
     </p>
-    <div style={{ display: 'flex', flexWrap: 'wrap', rowGap: 48, columnGap: 24, paddingBlock: 32 }}>
+    <div style={{
+      display: 'flex', flexWrap: 'wrap', rowGap: 48, columnGap: 24, paddingBlock: 32,
+    }}
+    >
       { IconArray.map((i) => (
         <div
           style={{

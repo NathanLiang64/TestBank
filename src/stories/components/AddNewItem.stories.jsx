@@ -24,7 +24,7 @@ export default {
 
 const Template = (args) => (
   <AddNewItem {...args} />
-)
+);
 
 export const Primary = Template.bind({});
 Primary.args = {

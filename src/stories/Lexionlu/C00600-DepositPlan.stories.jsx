@@ -11,9 +11,9 @@ import HeroSlide from 'pages/C00600_DepositPlan/components/HeroSlide';
 import DepositPlan from 'pages/C00600_DepositPlan/components/DepositPlan';
 
 const moreList = [
-    { fid: null, icon: 'fixedDeposit', title: '定存' },
-    { fid: '', icon: 'exchange', title: '換匯' },
-    { fid: 'DownloadDepositBookCover', icon: 'coverDownload', title: '換匯' },
+  { fid: null, icon: 'fixedDeposit', title: '定存' },
+  { fid: '', icon: 'exchange', title: '換匯' },
+  { fid: 'DownloadDepositBookCover', icon: 'coverDownload', title: '換匯' },
 ];
 
 const renderMoreList = (list) => (
@@ -80,7 +80,7 @@ export default {
     onMoreClicked: { action: 'onMoreClick' },
     onEditClicked: { action: 'onEditClick' },
   },
-}
+};
 
 const Template = (args) => (
   <DepositPlanPage {...args} />
@@ -88,5 +88,5 @@ const Template = (args) => (
 
 export const AllStages = Template.bind({});
 AllStages.args = {
- onMoreClicked: () => showDrawer('', renderMoreList(moreList)),
+  onMoreClicked: () => showDrawer('', renderMoreList(moreList)),
 };

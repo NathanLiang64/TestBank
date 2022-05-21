@@ -36,7 +36,7 @@ export default {
 
 const Template = (args) => (
   <Animation {...args} />
-)
+);
 
 export const Fail = Template.bind({});
 Fail.args = { data: fail };

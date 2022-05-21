@@ -29,7 +29,7 @@ export default {
 
 const Template = (args) => (
   <CopyTextIconButton {...args} />
-)
+);
 
 export const Primary = Template.bind({});
 Primary.args = {

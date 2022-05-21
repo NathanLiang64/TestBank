@@ -10,6 +10,15 @@ const NavWrapper = styled.div`
     padding: .8rem;
     margin-bottom: 1rem;
   }
+  .bankee div {
+    background: #C3B0F7;
+  }
+  .lexion div {
+    background: #FAEBD7;
+  }
+  .vj div {
+    background: #98FB98;
+  }
 `;
 
 export default NavWrapper;

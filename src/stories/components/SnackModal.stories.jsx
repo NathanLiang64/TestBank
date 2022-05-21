@@ -24,7 +24,7 @@ export default {
 };
 
 const Template = (args) => (
-  <SnackModal {...args}></SnackModal>
+  <SnackModal {...args} />
 );
 
 export const Primary = Template.bind({});

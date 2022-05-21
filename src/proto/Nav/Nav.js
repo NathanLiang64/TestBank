@@ -28,61 +28,33 @@ const Nav = () => {
   return (
     <Layout title="測試功能首頁" goBack={false} goHome={false}>
       <NavWrapper>
-        <div onClick={() => startFunc('C00300')}>
-          <ul>
-            <li>台幣存款</li>
-            <li>funcID: C00300</li>
-          </ul>
+        <div className="bankee">
+          <div onClick={() => startFunc('C00300')}>C00300 台幣存款首頁</div>
+          <div onClick={() => startFunc('C00400')}>C00400 外幣存款首頁</div>
+          <div onClick={() => startFunc('C00500')}>C00500 交割帳戶首頁</div>
+          <div onClick={() => startFunc('M00100')}>M00100 社群圈首頁</div>
+          <div onClick={() => startFunc('B00600')}>B00600 更多... (施工中)</div>
         </div>
-        <div onClick={() => startFunc('C00400')}>
-          <ul>
-            <li>外幣存款</li>
-            <li>funcID: C00400</li>
-          </ul>
+
+        <div className="lexion">
+          <p style={{ color: '#9D7ADE' }}>** 瑞芙 **</p>
+          <div onClick={() => startFunc('C00100')}>C00600 帳務總覽 - (施工中)</div>
+          <div onClick={() => startFunc('C00600')}>C00600 存錢計劃 - (施工中)</div>
         </div>
-        <div onClick={() => startFunc('C00500')}>
-          <ul>
-            <li>交割帳戶</li>
-            <li>funcID: C00500</li>
-          </ul>
-        </div>
-        <div onClick={() => startFunc('M00100')}>
-          <ul>
-            <li>社群圈</li>
-            <li>funcID: M00100</li>
-          </ul>
-        </div>
-        <div onClick={() => startFunc('B00600')}>
-          <ul>
-            <li>更多 -- TODO</li>
-            <li>funcID: B00600</li>
-          </ul>
+
+        <div className="vj">
+          <p style={{ color: '#9D7ADE' }}>** 唯物 **</p>
+          <div onClick={() => startFunc('B00300')}>B00300 訊息通知 - (施工中)</div>
+          <div onClick={() => startFunc('S00400')}>S00400 訊息通知設定 - (施工中)</div>
+          <div onClick={() => startFunc('E00100')}>E00100 換匯 - (施工中)</div>
         </div>
         {/* <div onClick={() => goToFunc({ route: '/foreignCurrencyPriceSetting', funcID: 'unset' })}>
           <ul>
             <li>功能：外幣到價通知</li>
             <li>funcID: unset</li>
           </ul>
-        </div> */}
-        <div onClick={() => startFunc('B00300')}>
-          <ul>
-            <li>唯物：訊息通知</li>
-            <li>funcID: B00300</li>
-          </ul>
         </div>
-        <div onClick={() => startFunc('S00400')}>
-          <ul>
-            <li>唯物：訊息通知設定</li>
-            <li>funcID: S00400</li>
-          </ul>
-        </div>
-        <div onClick={() => startFunc('E00100')}>
-          <ul>
-            <li>唯物：換匯</li>
-            <li>funcID: E00100</li>
-          </ul>
-        </div>
-        {/* <div onClick={() => goToFunc({ route: '/profile', funcID: 'T00100' })}>
+        <div onClick={() => goToFunc({ route: '/profile', funcID: 'T00100' })}>
           <ul>
             <li>功能：個人化設定</li>
             <li>route: /profile</li>

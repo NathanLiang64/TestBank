@@ -9,18 +9,21 @@ export default {
   },
 };
 
-const Template = (args) => (
-  <FEIBCollapse
-    in={!args.isCollapsed}
-    collapsedSize={args.size}
-  >
-    <div
-      style={{ width: 100, height: 100, backgroundColor: 'red' }}
+const Template = (args) => {
+  const { isCollapsed, size } = args;
+  (
+    <FEIBCollapse
+      in={!isCollapsed}
+      collapsedSize={size}
     >
-      TEST
-    </div>
-  </FEIBCollapse>
-);
+      <div
+        style={{ width: 100, height: 100, backgroundColor: 'red' }}
+      >
+        TEST
+      </div>
+    </FEIBCollapse>
+  );
+};
 
 export const Primary = Template.bind({});
 Primary.args = {

@@ -10,8 +10,10 @@ export default {
 
 const content = [
   { label: '適用利率', value: '0.6%' },
-  { label: '每月存款日', value: '26號', onClick: ()=>{return} },
-  { label: '每次存款金額', value: '1萬', onClick: ()=>{return}, iconType: 'switch' },
+  { label: '每月存款日', value: '26號', onClick: () => {} },
+  {
+    label: '每次存款金額', value: '1萬', onClick: () => {}, iconType: 'switch',
+  },
 ];
 
 const Template = (args) => (

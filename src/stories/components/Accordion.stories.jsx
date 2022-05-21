@@ -24,7 +24,7 @@ export default {
     open: { control: 'boolean' },
   },
   parameters: {
-    docs: { description: { component: doc }},
+    docs: { description: { component: doc } },
   },
 };
 

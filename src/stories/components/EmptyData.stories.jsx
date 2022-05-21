@@ -22,6 +22,6 @@ export default {
 
 const Template = (args) => (
   <EmptyData {...args} />
-)
+);
 
 export const Primary = Template.bind({});

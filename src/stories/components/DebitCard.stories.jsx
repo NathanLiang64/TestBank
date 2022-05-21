@@ -30,7 +30,7 @@ const doc = `### 組件說明
 
 export default {
   title: 'components/-DebitCard',
-  component: DebitCard, 
+  component: DebitCard,
   decorators: [
     (Story) => (
       <Provider store={store}>
@@ -61,6 +61,6 @@ export default {
 
 const Template = (args) => (
   <DebitCard {...args} />
-)
+);
 
 export const Primary = Template.bind({});

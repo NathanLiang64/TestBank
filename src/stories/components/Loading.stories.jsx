@@ -15,6 +15,6 @@ export default {
 
 const Template = (args) => (
   <Loading {...args} />
-)
+);
 
 export const Primary = Template.bind({});

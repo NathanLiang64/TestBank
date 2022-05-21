@@ -12,6 +12,6 @@ export default {
 
 const Template = (args) => (
   <CountDown {...args} />
-)
+);
 
 export const Primary = Template.bind({});

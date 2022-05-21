@@ -15,7 +15,7 @@ export default {
 
 const Template = (args) => (
   <InformationTape {...args} />
-)
+);
 
 export const Primary = Template.bind({});
 Primary.args = {

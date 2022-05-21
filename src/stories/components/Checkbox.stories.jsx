@@ -32,7 +32,7 @@ export default {
 
 const Template = (args) => (
   <CheckboxButton {...args} />
-)
+);
 
 export const Primary = Template.bind({});
 Primary.args = {

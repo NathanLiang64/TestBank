@@ -22,12 +22,15 @@ export default {
   },
 };
 
-const Template = (args) => (
-  <FEIBInputAnimationWrapper>
-    <FEIBInputLabel {...args}>{args.label}</FEIBInputLabel>
-    <FEIBInput {...args} />
-  </FEIBInputAnimationWrapper>
-);
+const Template = (args) => {
+  const { label } = args;
+  (
+    <FEIBInputAnimationWrapper>
+      <FEIBInputLabel {...args}>{label}</FEIBInputLabel>
+      <FEIBInput {...args} />
+    </FEIBInputAnimationWrapper>
+  );
+};
 
 export const Primary = Template.bind({});
 Primary.args = {

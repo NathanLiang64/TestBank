@@ -13,13 +13,16 @@ export default {
   },
 };
 
-const Template = (args) => (
-  <FEIBCheckboxLabel
-    $color={args.color}
-    control={<FEIBCheckbox $iconColor={args.iconColor} />}
-    label={args.label}
-  />
-);
+const Template = (args) => {
+  const { color, iconColor, label } = args;
+  (
+    <FEIBCheckboxLabel
+      $color={color}
+      control={<FEIBCheckbox $iconColor={iconColor} />}
+      label={label}
+    />
+  );
+};
 
 export const Primary = Template.bind({});
 Primary.args = {
