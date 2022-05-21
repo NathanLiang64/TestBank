@@ -6,7 +6,7 @@ import { callAPI } from 'utilities/axios';
  * @returns 存款帳戶資訊。
  */
 export const getAccountSummary = async (acctTypes) => {
-  const response = await callAPI('/api/deposit/v1/accountSummary', acctTypes);
+  const response = await callAPI('/api/deposit/v1/getAccountSummary', acctTypes);
   return response.data.map((acct) => ({
     acctBranch: acct.branch, // 分行名稱
     acctName: acct.name, // 帳戶名稱或暱稱
@@ -22,8 +22,8 @@ export const getAccountSummary = async (acctTypes) => {
  * @param {*} accountNo 存款帳號, ex: 00100100063106
  * @param {*} request currency 存款幣別
  */
-export const getTransactionDetails = async (accountNo, currency) => {
-  const response = await callAPI('/api/deposit/v1/queryAcctTxDtl', { accountNo, currency });
+export const getTransactions = async (accountNo, currency) => {
+  const response = await callAPI('/api/deposit/v1/getTransactions', { accountNo, currency });
   return response.data;
 };
 
@@ -44,7 +44,7 @@ export const setAccountAlias = async (accountNo, alias) => {
  * @param {*} currency 主要幣別
  * @returns
  */
-export const setAccountMainCurrency = async (accountNo, currency) => {
-  const response = await callAPI('/api/deposit/v1/setAccountMainCurrency', { accountNo, currency });
+export const setMainCurrency = async (accountNo, currency) => {
+  const response = await callAPI('/api/deposit/v1/setMainCurrency', { accountNo, currency });
   return response.data;
 };

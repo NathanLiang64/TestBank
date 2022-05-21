@@ -15,9 +15,9 @@ import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/BankeePlus';
 import {
   getAccountSummary,
-  getTransactionDetails,
+  getTransactions,
   setAccountAlias,
-  setAccountMainCurrency,
+  setMainCurrency,
 } from './api';
 
 const ForeignCurrencyAccount = () => {
@@ -83,7 +83,7 @@ const ForeignCurrencyAccount = () => {
     if (account.transactions === null) {
       // 取得帳戶交易明細（三年內的前25筆即可）
       const accountNo = account.cardInfo.acctId;
-      const transData = await getTransactionDetails(accountNo, account.cardInfo.ccyCd);
+      const transData = await getTransactions(accountNo, account.cardInfo.ccyCd);
 
       account.transactions = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
       if (account.transactions.length > 0) {
@@ -157,7 +157,7 @@ const ForeignCurrencyAccount = () => {
         return;
       case 'setMainAccount': // 設定為主要外幣帳戶
         // 將目前帳戶 設定為主要外幣帳戶
-        setAccountMainCurrency(accounts[selectedAccountIdx].cardInfo.acctId, account.cardInfo.ccyCd);
+        setMainCurrency(accounts[selectedAccountIdx].cardInfo.acctId, account.cardInfo.ccyCd);
         return;
       case 'masterCardXB': // MasterCard Send Cross Border
       default:
