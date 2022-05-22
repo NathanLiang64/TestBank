@@ -56,7 +56,7 @@ const ExportBankBook = () => {
 
   // 取得帳號清單
   const getAccounts = async () => {
-    const response = await bankAccountsApi.getAccountsList({});
+    const response = await bankAccountsApi.getAccountsList('MSFC'); // 帳戶類型 M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶
     if (response?.length > 0) {
       const accounts = response.map((item) => item.acctNo);
       setAccountsList(accounts);
@@ -121,9 +121,11 @@ const ExportBankBook = () => {
       }
     }
     const param = {
-      accountNo: data.account,
-      startDate: stringDateCodeFormatter(exportDateRange[0]),
-      endDate: stringDateCodeFormatter(exportDateRange[1]),
+      conditions: {
+        accountNo: data.account,
+        startDate: stringDateCodeFormatter(exportDateRange[0]),
+        endDate: stringDateCodeFormatter(exportDateRange[1]),
+      },
       fileType: 1,
       pdfTemplateType: data.outType === '1' ? 1 : 3,
     };

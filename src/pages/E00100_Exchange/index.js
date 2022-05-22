@@ -70,8 +70,9 @@ const Exchange = () => {
   const [isCloseFunc, setIsCloseFunc] = useState(false);
   const [showTableDialog, setShowTableDialog] = useState(false);
   const [banker, setBanker] = useState({});
-  const [ntdAccountsList, setNtdAccountsList] = useState([]);
-  const [frgnAccountsList, setFrgnAccountsList] = useState([]);
+  const [accountsList, setAccountsList] = useState([]);
+  // const [ntdAccountsList, setNtdAccountsList] = useState([]);
+  // const [frgnAccountsList, setFrgnAccountsList] = useState([]);
   const [currencyTypeList, setCurrencyTypeList] = useState([]);
   const [selectedCurrency, setSelectedCurrency] = useState({});
   const [propertiesList, setPropertiesList] = useState([]);
@@ -101,26 +102,36 @@ const Exchange = () => {
     }
   };
 
-  // 查詢台幣帳號
-  const getNtdAccountsList = async () => {
-    const response = await exchangeApi.getNtdAccountsList({});
-    if (response?.accounts.length > 0) {
-      setNtdAccountsList(response?.accounts);
-      setValue('outAccount', response?.accounts[0].accountId);
+  // 查詢所有帳戶資料
+  const getAccountsList = async () => {
+    const response = await exchangeApi.getAccountsList('MSFC');
+    if (response?.length > 0) {
+      const accounts = response.filter((acct) => acct.transable); // 要排除不可轉帳的帳號。
+      setAccountsList(accounts);
+      setValue('outAccount', accounts[0].account);
     }
   };
 
-  // 查詢外幣帳號
-  const getFcAccountsList = async () => {
-    const response = await exchangeApi.getFrgnAccoutsList({});
-    if (response?.length > 0) {
-      setFrgnAccountsList(response);
-      setValue('inAccount', response[0].acctId);
-    }
-    if (response?.code) {
-      handleSetDialog('親愛的客戶 您好：因您尚未擁有外幣帳戶，無法使用本功能', true);
-    }
-  };
+  // // 查詢台幣帳號
+  // const getNtdAccountsList = async () => {
+  //   const response = await exchangeApi.getAccountsList('MSC');
+  //   if (response?.length > 0) {
+  //     setNtdAccountsList(response);
+  //     setValue('outAccount', response[0].accountId);
+  //   }
+  // };
+
+  // // 查詢外幣帳號
+  // const getFcAccountsList = async () => {
+  //   const response = await exchangeApi.getAccountsList('F');
+  //   if (response?.length > 0) {
+  //     setFrgnAccountsList(response);
+  //     setValue('inAccount', response[0].accountId);
+  //   }
+  //   if (response?.code) {
+  //     handleSetDialog('親愛的客戶 您好：因您尚未擁有外幣帳戶，無法使用本功能', true);
+  //   }
+  // };
 
   // 取得可交易幣別清單
   const getCcyList = async () => {
@@ -143,8 +154,9 @@ const Exchange = () => {
       setPropertiesList(response);
       setValue('property', response[0].leglCode);
       if (init) {
-        getNtdAccountsList();
-        getFcAccountsList();
+        getAccountsList();
+        // getNtdAccountsList();
+        // getFcAccountsList();
         getCcyList();
         getIsEmployee();
       }
@@ -184,15 +196,20 @@ const Exchange = () => {
     setValue('inAccount', outAccount);
   };
 
-  // 取得台幣帳戶餘額
-  const getNTDAmt = () => ntdAccountsList.find((item) => (
-    watch('exchangeType') === '1' ? item.accountId === watch('outAccount') : item.accountId === watch('inAccount')
-  ))?.accountBalx;
+  // 取得帳戶餘額
+  const getAmount = (currency) => accountsList.find((item) => (
+    item.account === watch((currency === 'TWD') ? 'outAccount' : 'inAccount')
+  ))?.details.find((item) => (item.currency === selectedCurrency.ccyCd))?.balance || '0';
 
-  // 取得外幣帳戶餘額
-  const getFrgnAmt = () => frgnAccountsList.find((item) => (
-    watch('exchangeType') === '1' ? item.acctId === watch('inAccount') : item.acctId === watch('outAccount')
-  ))?.details.find((item) => item.ccyCd === selectedCurrency.ccyCd)?.acctBalx || '0';
+  // // 取得台幣帳戶餘額
+  // const getNTDAmt = () => ntdAccountsList.find((item) => (
+  //   watch('exchangeType') === '1' ? item.accountId === watch('outAccount') : item.accountId === watch('inAccount')
+  // ))?.accountBalx;
+
+  // // 取得外幣帳戶餘額
+  // const getFrgnAmt = () => frgnAccountsList.find((item) => (
+  //   watch('exchangeType') === '1' ? item.accountId === watch('inAccount') : item.accountId === watch('outAccount')
+  // ))?.details.find((item) => item.ccyCd === selectedCurrency.ccyCd)?.acctBalx || '0';
 
   // 檢查是否超出餘額
   const checkOverAmt = (data) => {
@@ -201,8 +218,8 @@ const Exchange = () => {
     const exchangeType = watch('exchangeType') === '1' ? 'n2f' : 'f2n';
     // 判斷幣別
     const isNTD = watch('outType') === '2';
-    const ntAmt = getNTDAmt();
-    const frgnAmt = Number(getFrgnAmt().replace(/,/gi, ''));
+    const ntAmt = getAmount('TWD');
+    const frgnAmt = Number(getAmount(selectedCurrency.ccyCd).replace(/,/gi, ''));
     // 如果是台轉外，檢查是否超過台幣餘額
     if (exchangeType === 'n2f') {
       if (isNTD) {
@@ -261,7 +278,7 @@ const Exchange = () => {
         memo,
         leglCode: property,
         leglDesc: propertiesList.find((item) => item.leglCode === property).leglDesc,
-        outAccountAmount: exchangeType === '1' ? getNTDAmt() : Number(getFrgnAmt().replace(/,/gi, '')),
+        outAccountAmount: exchangeType === '1' ? getAmount('TWD') : Number(getAmount(selectedCurrency.ccyCd).replace(/,/gi, '')),
       };
       history.push('/exchange1', { ...confirmData });
     } else {
@@ -270,8 +287,8 @@ const Exchange = () => {
   };
 
   const generateAvailibleAmount = () => {
-    const ntAmt = getNTDAmt();
-    const frgnAmt = Number(getFrgnAmt().replace(/,/gi, ''));
+    const ntAmt = getAmount('TWD');
+    const frgnAmt = Number(getAmount(selectedCurrency.ccyCd).replace(/,/gi, ''));
     if (watch('exchangeType') === '1') {
       return toCurrency(Math.round(ntAmt / selectedCurrency.sellRate) || 0);
     }
@@ -301,16 +318,16 @@ const Exchange = () => {
     />
   );
 
-  const renderNTAccountOption = (data) => (
-    data.map((item) => (
-      <FEIBOption key={item.accountId} value={item.accountId}>{item.accountId}</FEIBOption>
-    ))
-  );
-
-  const renderFrgnAccountOption = (data) => (
-    data.map((item) => (
-      <FEIBOption key={item.acctId} value={item.acctId}>{item.acctId}</FEIBOption>
-    ))
+  /**
+   * 列出帳戶清單。
+   * @param {*} showTwdAccount 若為 true 則列出台幣帳戶清單，反之則列出外幣帳戶清單。
+   */
+  const renderAccountOption = (showTwdAccount) => (
+    accountsList
+      .filter((acct) => acct.details.find((item) => showTwdAccount && item.currency === 'TWD'))
+      .map((item) => (
+        <FEIBOption key={item.account} value={item.account}>{item.account}</FEIBOption>
+      ))
   );
 
   const renderTrnsTypeList = (data) => (
@@ -323,7 +340,7 @@ const Exchange = () => {
     <FEIBErrorMessage className="balance">
       可用餘額 NTD&nbsp;
       {
-        toCurrency(getNTDAmt() || 0)
+        toCurrency(getAmount('TWD') || 0)
       }
     </FEIBErrorMessage>
   );
@@ -337,7 +354,7 @@ const Exchange = () => {
       }
       &nbsp;
       {
-        getFrgnAmt()
+        getAmount(selectedCurrency.ccyCd)
       }
     </FEIBErrorMessage>
   );
@@ -405,11 +422,12 @@ const Exchange = () => {
                   name="outAccount"
                   error={!!errors.outAccount}
                 >
-                  {
+                  {(renderAccountOption(watch('exchangeType') === 1))}
+                  {/*
                     watch('exchangeType') === '1'
-                      ? (renderNTAccountOption(ntdAccountsList))
+                      ? (renderAccountOption(accountsList, watch('exchangeType')))
                       : (renderFrgnAccountOption(frgnAccountsList))
-                  }
+                  */}
                 </FEIBSelect>
               )}
             />
@@ -464,11 +482,12 @@ const Exchange = () => {
                   name="inAccount"
                   error={!!errors.inAccount}
                 >
-                  {
+                  {(renderAccountOption(watch('exchangeType') === '2'))}
+                  {/*
                     watch('exchangeType') === '1'
                       ? (renderFrgnAccountOption(frgnAccountsList))
                       : (renderNTAccountOption(ntdAccountsList))
-                  }
+                  */}
                 </FEIBSelect>
               )}
             />

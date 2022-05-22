@@ -27,19 +27,22 @@ export const getExchangePropertyList = async (param) => {
   return response;
 };
 
-// 取得台幣帳戶
-export const getNtdAccountsList = async (param) => {
+/**
+ * 取得帳戶清單
+ * @param {*} acctTypes 帳戶類型 M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶
+ * @returns [{
+ *   account: 帳號,
+ *   name: 帳戶名稱，若有暱稱則會優先用暱稱,
+ *   transable: 已設約轉 或 同ID互轉,
+ *   details: [{ // 外幣多幣別時有多筆
+ *     balance: 帳戶餘額,
+ *     currency: 幣別代碼,
+ *   }, ...]
+ * }, ...]
+ */
+export const getAccountsList = async (acctTypes) => {
   const response = await userAxios
-    .post('api/deposit/ntdAcctSummary', param)
-    .then((data) => data)
-    .catch((err) => err);
-  return response;
-};
-
-// 取得外幣帳號
-export const getFrgnAccoutsList = async (param) => {
-  const response = await userAxios
-    .post('api/frgn/frgnAcctSummary', param)
+    .post('api/deposit/v1/getAccounts', acctTypes)
     .then((data) => data)
     .catch((err) => err);
   return response;

@@ -66,7 +66,7 @@ const MobileTransfer1 = () => {
 
   // 取得收款帳號
   const getAccounts = async () => {
-    const response = await bankAccountsApi.getAccountsList({});
+    const response = await bankAccountsApi.getAccountsList('MCS'); // 帳戶類型 M:母帳戶, S:證券戶, C:子帳戶
     console.log(response);
     const accounts = response.map((item) => item.acctNo);
     setAccountList(accounts);
