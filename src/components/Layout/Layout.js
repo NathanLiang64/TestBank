@@ -9,7 +9,7 @@ import Dialog from 'components/Dialog';
 import BottomDrawer from 'components/BottomDrawer';
 import { FEIBButton } from 'components/elements';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
-// import theme from 'themes/theme';
+import theme from 'themes/theme';
 import {
   setModalVisible, setWaittingVisible, setDrawerVisible, setAnimationModalVisible,
 } from '../../stores/reducers/ModalReducer';
@@ -92,9 +92,15 @@ function Layout({
         action={
           <>
             {(modalData.onCancel || modalData.cancelContent)
-              ? (<FEIBButton onClick={onModalCancel}>
-                    {modalData.cancelContent ?? '取消'}
-                 </FEIBButton>)
+              ? (
+                <FEIBButton
+                  $bgColor={theme.colors.background.cancel}
+                  $color={theme.colors.text.dark}
+                  onClick={onModalCancel}
+                >
+                  {modalData.cancelContent ?? '取消'}
+                </FEIBButton>
+              )
               : null}
             <FEIBButton onClick={onModalOk}>
               {modalData.okContent ?? '確認'}
