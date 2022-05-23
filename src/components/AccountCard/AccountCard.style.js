@@ -2,17 +2,6 @@ import styled from 'styled-components';
 
 import CardBackground from 'assets/images/debitCardBackground.png';
 
-/*
- * 1. 母帳戶(深紫)
- * 2. 社群圈(粉)
- * 3. 存錢計劃(黃)
- * 4. 證卷交割帳戶(藍)
- * 5. 外幣帳戶(橘)
- * 6. 信用卡(綠)
- * 7. 貸款卡(淺紫)
- * 8. 社群帳本卡(粉)
-*/
-
 const AccountCardWrapper = styled.button`
   display: flex;
   justify-content: flex-begen;
@@ -35,6 +24,10 @@ const AccountCardWrapper = styled.button`
     display: flex;
     justify-content: space-between;
     width: 100%;
+  }
+
+  .items-end {
+    align-items: flex-end;
   }
 
   .balance {

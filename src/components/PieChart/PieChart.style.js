@@ -1,8 +1,23 @@
 import styled from 'styled-components';
 
+const handleSpaceType = (position) => {
+  switch (position) {
+    case 'top':
+      return 'margin-block-start: 5.4rem;';
+    case 'bottom':
+      return 'margin-block-end: 5.4rem;';
+    case 'both':
+      return 'margin-block: 5.4rem;';
+    default:
+      return ';';
+  }
+};
+
 const PieChartWrapper = styled.div`
   position: relative;
-  width: fit-content;
+  width: ${({ $isCentered }) => ($isCentered ? '100%' : 'fit-content')};
+  margin-block: 1rem;
+  ${({ $space }) => handleSpaceType($space)};
 
   .group {
     position: absolute;

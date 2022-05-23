@@ -10,6 +10,8 @@ const doc = `### 組件說明
 3. dollarSign -> 資產貨幣。
 4. width -> 圓餅圖圖寬。
 5. height -> 圓餅圖圖高。
+6. isCentered -> 將圓餅圖至中。
+7. space -> 此組件預設無 margin，可傳入 "top"、"bottom"、"both" 字串來產生固定高度的 margin
 
 `;
 
@@ -22,6 +24,8 @@ export default {
     dollarSign: { control: 'text' },
     width: { control: { type: 'number' } },
     height: { control: { type: 'number' } },
+    isCentered: { control: 'boolean' },
+    space: { control: 'select', options: ['top', 'bottom', 'both'] },
   },
   parameters: {
     docs: { description: { component: doc } },
