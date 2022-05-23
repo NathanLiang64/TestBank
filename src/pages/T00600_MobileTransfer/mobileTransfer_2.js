@@ -1,9 +1,8 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
-import { mpTransferApi } from 'apis';
-import { closeFunc, onVerification } from 'utilities/BankeePlus';
+// import { closeFunc, onVerification } from 'utilities/BankeePlus';
+import { closeFunc } from 'utilities/BankeePlus';
 
 /* Elements */
 import Header from 'components/Header';
@@ -14,6 +13,8 @@ import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialo
 
 /* Styles */
 import MobileTransferWrapper from './mobileTransfer.style';
+
+import { createMobileNo } from './api';
 
 const MobileTransfer2 = ({ location }) => {
   const dispatch = useDispatch();
@@ -61,16 +62,16 @@ const MobileTransfer2 = ({ location }) => {
   };
 
   // 關閉結果彈窗
-  const handleCloseResultDialog = () => {
-    if (dealCode === 'delete' || dealCode === 'edit') {
-      history.go(-1);
-    } else {
-      history.go(-1);
-    }
-  };
+  // const handleCloseResultDialog = () => {
+  //   if (dealCode === 'delete' || dealCode === 'edit') {
+  //     history.go(-1);
+  //   } else {
+  //     history.go(-1);
+  //   }
+  // };
 
   // 設定結果彈窗
-  const setResultDialog = (response, param) => {
+  const setResultDialog = (response) => {
     const { code, message, respData } = response;
     const successDesc = getSuccessDesc();
     let errorCode = code;
@@ -79,7 +80,7 @@ const MobileTransfer2 = ({ location }) => {
       dispatch(setCloseCallBack(() => closeFunc()));
     } else {
       errorCode = response.code;
-      errorDesc = response.message + JSON.stringify(param);
+      errorDesc = response.message;
       dispatch(setCloseCallBack(() => {}));
     }
     dispatch(setResultContent({
@@ -93,31 +94,21 @@ const MobileTransfer2 = ({ location }) => {
     dispatch(setIsOpen(true));
   };
 
-  const modifyMobileTransferData = (event) => {
+  const modifyMobileTransferData = async (event) => {
     event.preventDefault();
     const { account, isDefault, mobile } = confirmData;
-    // const data = {
-    //   actNo: account,
-    //   bankCode: '805',
-    //   mobilePhone: mobile,
-    //   defaultType: isDefault ? 'Y' : 'N',
-    //   // otpValue: localStorage.getItem('mima'),
-    //   // trnIdentity: localStorage.getItem('signature'),
-    // };
-    const createMobileNo = async (mima, signature) => {
-      const param = {
-        actNo: account,
-        bankCode: '805',
-        mobilePhone: mobile,
-        defaultType: isDefault ? 'Y' : 'N',
-        otpCode: mima,
-        otpId: signature,
-      };
-      const response = await mpTransferApi.createMobileNo(param);
-      setResultDialog(response, param);
+    const param = {
+      actNo: account,
+      bankCode: '805',
+      mobilePhone: mobile,
+      defaultType: isDefault ? 'Y' : 'N',
+      otpCode: '123456',
+      otpId: '123456',
     };
-    window.customFunc = createMobileNo;
-    onVerification();
+    const response = await createMobileNo(param);
+    console.log(response);
+    setResultDialog(response);
+    // onVerification();
   };
 
   // 回上一頁

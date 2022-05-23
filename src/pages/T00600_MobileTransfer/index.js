@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useGetEnCrydata } from 'hooks';
-import { mpTransferApi } from 'apis';
+// import { mpTransferApi } from 'apis';
 
 /* Elements */
 import Header from 'components/Header';
@@ -9,6 +9,8 @@ import AddNewItem from 'components/AddNewItem';
 import SettingItem from 'components/SettingItem';
 import BottomDrawer from 'components/BottomDrawer';
 import MobileTransferModifyForm from './mobileTransferModifyForm';
+
+import { getUserActNo } from './api';
 
 /* Styles */
 import MobileTransferWrapper from './mobileTransfer.style';
@@ -46,8 +48,8 @@ const MobileTransfer = () => {
     history.push('/mobileTransfer1');
   };
 
-  const getUserActNo = async () => {
-    const response = await mpTransferApi.getUserActNo({ tokenStatus: 1 });
+  const getUserAccountList = async () => {
+    const response = await getUserActNo({ tokenStatus: 1 });
     console.log('已綁定帳號', response);
   };
 
@@ -102,7 +104,7 @@ const MobileTransfer = () => {
   useGetEnCrydata();
 
   useEffect(() => {
-    getUserActNo();
+    getUserAccountList();
   }, []);
 
   return (

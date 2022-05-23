@@ -28,10 +28,10 @@ const NoticeSetting = () => {
       securityNotice,
       nightMuteNotice,
     } = await queryPushSetting(param);
-    setCommunityNoti(Boolean(communityNotice));
-    setNormalNoti(Boolean(boardNotice));
-    setSecurityNoti(Boolean(securityNotice));
-    setNightNoti(Boolean(nightMuteNotice));
+    setCommunityNoti(communityNotice === 'Y');
+    setNormalNoti(boardNotice === 'Y');
+    setSecurityNoti(securityNotice === 'Y');
+    setNightNoti(nightMuteNotice === 'Y');
   };
 
   // 更新通知設定
@@ -42,7 +42,8 @@ const NoticeSetting = () => {
       securityNotice: securityNoti ? 'Y' : 'N',
       nightMuteNotice: nightNoti ? 'Y' : 'N',
     };
-    bindPushSetting(param);
+    const response = await bindPushSetting(param);
+    console.log(response);
   };
 
   const handleSwitchChange = (type) => {

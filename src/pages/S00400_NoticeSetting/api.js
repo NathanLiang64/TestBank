@@ -26,5 +26,5 @@ export const bindPushSetting = async (request) => {
  */
 export const queryPushSetting = async () => {
   const response = await callAPI('/api/push/v1/queryPushSetting');
-  return response.data;
+  return response?.data;
 };
