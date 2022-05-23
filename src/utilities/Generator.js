@@ -195,6 +195,26 @@ export const accountTypeColorGenerator = (currency) => {
   }
 };
 
+// 帳務總覽對應卡色
+export const accountOverviewColorGenerator = (type) => {
+  switch (type) {
+    case 'M':
+      return { type: '母帳戶', color: 'purple' };
+    case 'S':
+      return { type: '證券戶', color: 'blue' };
+    case 'F':
+      return { type: '外幣帳戶', color: 'orange' };
+    case 'C':
+      return { type: '子帳戶', color: 'yellow' };
+    case 'CC':
+      return { type: '信用卡', color: 'green' };
+    case 'L':
+      return { type: '貸款', color: 'lightPurple' };
+    default:
+      return { type: '', color: '' };
+  }
+};
+
 export const CurrencyInfo = [
   { code: 'NTD', name: '新台幣', symbol: '$', float: 0 },
   { code: 'TWD', name: '新台幣', symbol: '$', float: 0 },
