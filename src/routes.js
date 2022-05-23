@@ -118,6 +118,7 @@ const routes = [
   { path: '/T00600', exact: false, component: T00600 },
   { path: '/T006001', exact: false, component: T006001 },
   { path: '/T006002', exact: false, component: T006002 },
+  { path: '/T00200', exact: false, component: QuickLoginSetting },
   { path: '/T00700', exact: false, component: T00700 },
   { path: '/T00800', exact: false, component: T00800 },
   { path: '/T00900', exact: false, component: T00900 },

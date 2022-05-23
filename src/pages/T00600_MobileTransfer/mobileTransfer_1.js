@@ -3,7 +3,6 @@ import { useHistory } from 'react-router';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { mpTransferApi, bankAccountsApi, basicInformationApi } from 'apis';
 
 /* Elements */
 import Header from 'components/Header';
@@ -19,6 +18,7 @@ import {
 } from 'components/elements';
 import Accordion from 'components/Accordion';
 import DealContent from './dealContent';
+import { fetchName, fetchAccounts, fetchMobiles } from './api';
 
 /* Styles */
 import MobileTransferWrapper from './mobileTransfer.style';
@@ -52,16 +52,18 @@ const MobileTransfer1 = () => {
 
   // 取得姓名
   const getUserName = async () => {
-    const { custName } = await basicInformationApi.getBasicInformation({});
+    const { custName } = await fetchName();
     setValue('userName', custName || '');
   };
 
   // 取得手機號碼
   const getMobiles = async () => {
-    const response = await mpTransferApi.getMobile({ tokenStatus: 1 });
-    console.log('可綁定手機號碼', response);
-    setMobileList(response.mobiles);
-    setValue('mobile', response.mobiles[0]);
+    const { mobiles } = await fetchMobiles({ tokenStatus: 1 });
+    const isArr = Array.isArray(mobiles);
+    if (isArr) {
+      setMobileList(mobiles);
+      setValue('mobile', mobiles[0]);
+    }
   };
 
   // 取得收款帳號
@@ -76,11 +78,11 @@ const MobileTransfer1 = () => {
   // 新增收款設定
   const onSubmit = (formData) => {
     // eslint-disable-next-line no-console
-    console.log(formData);
     const data = {
       isDefault: accountDefault,
       ...formData,
     };
+    console.log(data);
     history.push(
       '/mobileTransfer2',
       {
