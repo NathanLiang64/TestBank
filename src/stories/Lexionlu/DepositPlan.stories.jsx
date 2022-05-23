@@ -7,7 +7,7 @@ const doc = `### 組件說明
 
 1. currentValue: number -> 目前金額，單位為「萬」。
 2. targetValue: number -> 目標金額，單位為「萬」。
-3. expireDate: string -> YYYY-MM-DD
+3. expireDate: string -> YYYYMMDD
 4. bonusInfo: object[] -> [{ label: string, value: string }, ...]
 5. showDetails: function -> 點擊「存錢歷程」觸發。
 
@@ -41,48 +41,48 @@ const Template = (args) => (
 export const Progress0 = Template.bind({});
 Progress0.args = {
   currentValue: 0,
-  expireDate: '2099-12-31',
+  expireDate: '20991231',
   bonusInfo: infoPanel,
 };
 
 export const Progress25 = Template.bind({});
 Progress25.args = {
   currentValue: 25,
-  expireDate: '2099-12-31',
+  expireDate: '20991231',
   bonusInfo: infoPanel,
 };
 
 export const Progress50 = Template.bind({});
 Progress50.args = {
   currentValue: 50,
-  expireDate: '2099-12-31',
+  expireDate: '20991231',
   bonusInfo: infoPanel,
 };
 
 export const Progress75 = Template.bind({});
 Progress75.args = {
   currentValue: 75,
-  expireDate: '2099-12-31',
+  expireDate: '20991231',
   bonusInfo: infoPanel,
 };
 
 export const Progress99 = Template.bind({});
 Progress99.args = {
   currentValue: 99,
-  expireDate: '2099-12-31',
+  expireDate: '20991231',
   bonusInfo: infoPanel,
 };
 
 export const Success = Template.bind({});
 Success.args = {
   currentValue: 100,
-  expireDate: '2099-12-31',
+  expireDate: '20991231',
   bonusInfo: infoPanel,
 };
 
 export const Failed = Template.bind({});
 Failed.args = {
   currentValue: 99,
-  expireDate: '2000-01-01',
+  expireDate: '20000101',
   bonusInfo: infoPanel,
 };

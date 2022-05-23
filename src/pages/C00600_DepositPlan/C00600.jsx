@@ -56,6 +56,7 @@ const DepositPlanPage = () => {
     dispatch(setWaittingVisible(true));
 
     // TODO: 是否已申請bankee帳戶(台幣)
+    // eslint-disable-next-line
     if (false) {
       // TODO：沒有「台幣帳戶」導去申請
       showNoMainAccountAlert({ onDismiss: () => history.goBack() });
@@ -65,11 +66,13 @@ const DepositPlanPage = () => {
     // 是否已開立8個子帳戶
     if (res.totalSubAccountCount >= 8) {
       // TODO: 是否至少一個子帳號是沒有綁定帳本或存錢計畫
+      // eslint-disable-next-line
       if (false) {
         showUnavaliableSubAccountAlert({ onDismiss: () => history.goBack() });
       }
 
       // TODO: 該子帳戶餘額是否為0
+      // eslint-disable-next-line
       if (false) {
         showNonZeroBalanceAlert({ onDismiss: () => history.goBack() });
       }
