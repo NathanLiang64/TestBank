@@ -157,7 +157,7 @@ const CardLessATM1 = () => {
               <FEIBInput
                 {...field}
                 type="text"
-                inputmode="numeric"
+                inputMode="numeric"
                 id="withdrawAmount"
                 name="withdrawAmount"
                 className="withdrawAmount"

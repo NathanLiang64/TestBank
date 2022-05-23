@@ -523,7 +523,7 @@ const Exchange = () => {
                         <FEIBInput
                           {...balanceField}
                           type="number"
-                          inputmode="numeric"
+                          inputMode="numeric"
                           id="foreignBalance"
                           name="foreignBalance"
                           placeholder={`請輸入${watch('exchangeType') === '2' ? '轉出' : '轉入'}金額`}
@@ -551,7 +551,7 @@ const Exchange = () => {
                           {...balanceField}
                           autoComplete="off"
                           type="number"
-                          inputmode="numeric"
+                          inputMode="numeric"
                           id="ntDollorBalance"
                           name="ntDollorBalance"
                           placeholder={`請輸入${watch('exchangeType') === '2' ? '轉入' : '轉出'}金額`}
