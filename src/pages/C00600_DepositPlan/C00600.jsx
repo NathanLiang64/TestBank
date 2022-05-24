@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 
-import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import SwiperLayout from 'components/SwiperLayout';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
+import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
 import EmptySlide from './components/EmptySlide';
 import EmptyPlan from './components/EmptyPlan';
-import HeroSlide from './components/HeroSlide';
 import DepositPlan from './components/DepositPlan';
+import { MainScrollWrapper } from './C00600.style';
 
 import {
   showNoMainAccountAlert,
@@ -25,7 +25,7 @@ const renderSlides = (plans) => {
 
   if (plans) {
     plans.forEach((p, i) => {
-      slides[i] = <HeroSlide title={p.name} account={p.subAccountNo} />;
+      slides[i] = <DepositPlanHeroSlide title={p.name} account={p.subAccountNo} />;
     });
   }
 
@@ -86,11 +86,11 @@ const DepositPlanPage = () => {
 
   return (
     <Layout title="存錢計畫" hasClearHeader>
-      <Main>
+      <MainScrollWrapper>
         <SwiperLayout slides={renderSlides(plans)}>
           { renderContents(plans) }
         </SwiperLayout>
-      </Main>
+      </MainScrollWrapper>
     </Layout>
   );
 };

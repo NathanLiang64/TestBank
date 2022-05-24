@@ -1,4 +1,4 @@
-import HeroSlide from 'pages/C00600_DepositPlan/components/HeroSlide';
+import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
 
 const doc = `### 組件說明
 存錢計畫的上方卡片。
@@ -11,12 +11,15 @@ const doc = `### 組件說明
 4. account -> 帳戶號。
 5. onMoreClicked -> 當「更多」按鈕觸發。
 6. onEditClicked -> 當「編輯」按鈕觸發。
+7. isSimple -> 用於存錢歷程。
+8. balance -> 金額。
+9. dollarSign -> 資產貨幣。
 
 `;
 
 export default {
-  title: 'lexionlu/HeroSlide',
-  component: HeroSlide,
+  title: 'lexionlu/DepositPlanHeroSlide',
+  component: DepositPlanHeroSlide,
   argTypes: {
     imgSrc: { control: 'text' },
     imgAlt: { control: 'text' },
@@ -24,6 +27,9 @@ export default {
     account: { control: 'text' },
     onMoreClicked: { action: 'onMoreClicked' },
     onEditClicked: { action: 'onEditClicked' },
+    isSimple: { control: 'boolean' },
+    balance: { control: { type: 'number' } },
+    dollarSign: { control: 'text' },
   },
   parameters: {
     docs: { description: { component: doc }},
@@ -31,7 +37,7 @@ export default {
 };
 
 const Template = (args) => (
-  <HeroSlide {...args} />
+  <DepositPlanHeroSlide {...args} />
 );
 
 export const Primary = Template.bind({});

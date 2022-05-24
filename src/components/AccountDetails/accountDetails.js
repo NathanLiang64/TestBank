@@ -6,6 +6,7 @@ import SearchCondition from 'components/AccountDetails/searchCondition';
 import DebitCard from 'components/DebitCard';
 import DetailCard from 'components/DetailCard';
 import EmptyData from 'components/EmptyData';
+import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
 import {
   FEIBIconButton, FEIBTab, FEIBTabContext, FEIBTabList,
 } from 'components/elements';
@@ -20,10 +21,11 @@ import AccountDetailsWrapper, { DownloadDrawerWrapper } from './accountDetails.s
 
 /**
  * 交易明細頁
- * 支援：C00300, C00400, C00500
+ * mode=0 -> C00300, C00400, C00500
+ * mode=1 -> C00600
  */
 const AccountDetails = ({
-  selectedAccount, onSearch,
+  selectedAccount, onSearch, mode = 0,
 }) => {
   const dispatch = useDispatch();
 
@@ -196,6 +198,14 @@ const AccountDetails = ({
     );
     showDrawer('', content);
   };
+
+  /**
+   * 顯示 存錢計畫 資訊卡
+   * @param {*} DepositPlan 啟用查詢明細頁的帳號資料
+   */
+  const renderDepositPlanHero = (plan) => (
+    <DepositPlanHeroSlide isSimple title={plan.name} account={plan.accountNo} balane={plan.balance} />
+  );
 
   /**
    * 顯示 啟用查詢明細頁的帳號 資訊卡
@@ -376,7 +386,8 @@ const AccountDetails = ({
    */
   return (
     <AccountDetailsWrapper small>
-      { renderCardArea(selectedAccount) }
+      { (mode === 0) && renderCardArea(selectedAccount) }
+      { (mode === 1) && renderDepositPlanHero(selectedAccount) }
       <div className="inquiryArea measuredHeight">
 
         <div className="searchBar">
