@@ -41,7 +41,7 @@ const MobileTransfer = () => {
       customPopup(
         '系統訊息',
         '您尚未設定「手機號碼收款」功能，是否立即進行設定？',
-        null,
+        addMobileTransferSetting,
         closeFunc,
       );
     }
