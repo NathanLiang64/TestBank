@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
-// import { closeFunc, onVerification } from 'utilities/BankeePlus';
-import { closeFunc } from 'utilities/BankeePlus';
+import { closeFunc, transactionAuth } from 'utilities/BankeePlus';
 
 /* Elements */
 import Header from 'components/Header';
@@ -108,7 +107,7 @@ const MobileTransfer2 = ({ location }) => {
     const response = await createMobileNo(param);
     console.log(response);
     setResultDialog(response);
-    // onVerification();
+    transactionAuth();
   };
 
   // 回上一頁
