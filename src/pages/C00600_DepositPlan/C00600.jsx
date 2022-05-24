@@ -18,14 +18,14 @@ import {
   showNonZeroBalanceAlert,
 } from './utils/customPrompts';
 
-import { getDepositPlans } from './mock-api';
+import { getDepositPlans } from './api';
 
 const renderSlides = (plans) => {
   const slides = Array.from({ length: 3 }, () => <EmptySlide />);
 
   if (plans) {
     plans.forEach((p, i) => {
-      slides[i] = <DepositPlanHeroSlide title={p.name} account={p.subAccountNo} />;
+      slides[i] = <DepositPlanHeroSlide account={p.bindAccountNo} {...p} />;
     });
   }
 

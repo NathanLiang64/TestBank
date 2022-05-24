@@ -204,7 +204,7 @@ const AccountDetails = ({
    * @param {*} DepositPlan 啟用查詢明細頁的帳號資料
    */
   const renderDepositPlanHero = (plan) => (
-    <DepositPlanHeroSlide isSimple title={plan.name} account={plan.accountNo} balane={plan.balance} />
+    <DepositPlanHeroSlide isSimple {...plan} />
   );
 
   /**

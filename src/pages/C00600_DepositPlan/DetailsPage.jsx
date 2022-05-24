@@ -8,7 +8,7 @@ import AccountDetails from 'components/AccountDetails/accountDetails';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { loadFuncParams } from 'utilities/BankeePlus';
+// import { loadFuncParams } from 'utilities/BankeePlus';
 import { getTransactionDetails } from './api';
 
 const MoreTranscations = () => {
@@ -23,7 +23,10 @@ const MoreTranscations = () => {
     dispatch(setWaittingVisible(true));
 
     // 以啟動參數(預設帳號)
-    const model = loadFuncParams();
+    // const model = loadFuncParams();
+    const model = {
+      bindAccountNo: '04300498016343',
+    };
     setPlan(model);
 
     dispatch(setWaittingVisible(false));
