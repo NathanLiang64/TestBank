@@ -3,6 +3,7 @@ import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 
 import Layout from 'components/Layout/Layout';
+import { MainScrollWrapper } from 'components/Layout';
 import SwiperLayout from 'components/SwiperLayout';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
@@ -10,7 +11,6 @@ import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
 import EmptySlide from './components/EmptySlide';
 import EmptyPlan from './components/EmptyPlan';
 import DepositPlan from './components/DepositPlan';
-import { MainScrollWrapper } from './C00600.style';
 
 import {
   showNoMainAccountAlert,

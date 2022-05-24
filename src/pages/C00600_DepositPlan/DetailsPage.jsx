@@ -52,7 +52,7 @@ const MoreTranscations = () => {
    * 頁面輸出
    */
   return (
-    <Layout title="存錢歷程">
+    <Layout title="存錢歷程" hasClearHeader>
       {plan ? (
         <AccountDetails
           selectedAccount={plan}

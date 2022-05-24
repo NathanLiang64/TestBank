@@ -6,6 +6,10 @@ const DepositPlanHeroSlideWrapper = styled.div`
   justify-content: center;
   align-items: center;
   gap: 0.3rem;
+  ${({ $shouldExtend }) => $shouldExtend && `
+    margin-bottom: -3rem;
+    z-index: 0;
+  `}
 
   .toolkits {
     position: relative;

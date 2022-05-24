@@ -212,13 +212,15 @@ const AccountDetails = ({
    * @param {*} account 啟用查詢明細頁的帳號資料
    */
   const renderCardArea = (account) => (
-    <DebitCard
-      cardName={account?.acctName}
-      account={account?.acctId}
-      balance={account?.acctBalx}
-      dollarSign={account?.ccyCd}
-      color={account?.cardColor}
-    />
+    <div className="debitCardWrapper">
+      <DebitCard
+        cardName={account?.acctName}
+        account={account?.acctId}
+        balance={account?.acctBalx}
+        dollarSign={account?.ccyCd}
+        color={account?.cardColor}
+      />
+    </div>
   );
 
   /**

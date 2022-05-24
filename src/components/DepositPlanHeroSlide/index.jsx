@@ -59,7 +59,7 @@ const DepositPlanHeroSlide = ({
   };
 
   return (
-    <DepositPlanHeroSlideWrapper>
+    <DepositPlanHeroSlideWrapper $shouldExtend={isSimple}>
       <div className="toolkits">
         { isSimple && (
         <div className="overlay">
