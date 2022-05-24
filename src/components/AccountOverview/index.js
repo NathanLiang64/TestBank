@@ -10,7 +10,7 @@ const AccountOverview = ({
     <DebitCard
       type="original"
       branch={cardInfo.acctBranch}
-      cardName={cardInfo.acctName}
+      cardName={cardInfo.acctName ? cardInfo.acctName : '(尚未命名)'}
       account={cardInfo.acctId}
       balance={cardInfo.acctBalx}
       dollarSign={cardInfo.ccyCd}
