@@ -4,6 +4,7 @@ import { setDrawer, setDrawerVisible } from 'stores/reducers/ModalReducer';
 
 import AccountCard from 'components/AccountCard';
 import { accountOverviewCardVarient } from 'utilities/Generator';
+import { startFunc } from 'utilities/BankeePlus';
 
 import AccountCardListWrapper from './AccountCardList.style';
 
@@ -23,14 +24,20 @@ const renderSubAccountDrawer = (accounts) => {
         marginBottom: '4rem',
       }}
     >
-      { accounts.map((card) => (
-        <AccountCard
-          key={uuid()}
-          cardName={card.alias ?? '存錢計畫'}
-          percent={Math.round((card.balance / totalBalance) * 100)}
-          {...card}
-        />
-      )) }
+      { accounts.map((card) => {
+        const onClick = () => {
+          startFunc('C00600', { accountNo: card.accountNo });
+        };
+        return (
+          <AccountCard
+            key={uuid()}
+            cardName={card.alias ?? '存錢計畫'}
+            percent={Math.round((card.balance / totalBalance) * 100)}
+            onClick={onClick}
+            {...card}
+          />
+        );
+      }) }
     </div>
   );
 };
@@ -68,20 +75,35 @@ const AccountCardList = ({ data }) => {
     <AccountCardListWrapper>
       { mainList.map((card) => {
         let annotation;
-        let onClick;
+        let funcID;
+        let onClick = () => startFunc(funcID);
 
         switch (card.type) {
-          case 'C':
+          case 'M': // 母帳戶
+            funcID = 'C00300';
+            break;
+          case 'F': // 外幣帳戶
+            funcID = 'C00400';
+            break;
+          case 'S': // 證券戶
+            funcID = 'C00400';
+            break;
+          case 'C': // 子帳戶
             onClick = () => {
               dispatch(setDrawer({ title: '選擇計畫', content: renderSubAccountDrawer(subAccounts) }));
               dispatch(setDrawerVisible(true));
             };
             break;
-          case 'CC':
+          case 'CC': // 信用卡
             annotation = '已使用額度';
+            funcID = 'C00700';
+            break;
+          case 'L': // 貸款
+            funcID = 'L00100';
             break;
           default:
             annotation = null;
+            funcID = null;
             onClick = null;
         }
 

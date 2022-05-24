@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 
+import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import SwiperLayout from 'components/SwiperLayout';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
@@ -85,9 +86,11 @@ const DepositPlanPage = () => {
 
   return (
     <Layout title="存錢計畫" hasClearHeader>
-      <SwiperLayout slides={renderSlides(plans)}>
-        { renderContents(plans) }
-      </SwiperLayout>
+      <Main>
+        <SwiperLayout slides={renderSlides(plans)}>
+          { renderContents(plans) }
+        </SwiperLayout>
+      </Main>
     </Layout>
   );
 };
