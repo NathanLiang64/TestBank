@@ -15,7 +15,7 @@ export default {
 
 const Template = (args) => {
   const { fontSize, iconColor, icon } = args;
-  (
+  return (
     <FEIBRoundButton
       $fontSize={fontSize}
       $iconColor={iconColor}

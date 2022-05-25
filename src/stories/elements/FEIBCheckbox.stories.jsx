@@ -15,7 +15,7 @@ export default {
 
 const Template = (args) => {
   const { color, iconColor, label } = args;
-  (
+  return (
     <FEIBCheckboxLabel
       $color={color}
       control={<FEIBCheckbox $iconColor={iconColor} />}

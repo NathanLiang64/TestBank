@@ -24,7 +24,7 @@ export default {
 
 const Template = (args) => {
   const { label } = args;
-  (
+  return (
     <FEIBInputAnimationWrapper>
       <FEIBInputLabel {...args}>{label}</FEIBInputLabel>
       <FEIBInput {...args} />
