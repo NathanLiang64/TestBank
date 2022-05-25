@@ -8,8 +8,8 @@ import Layout from 'components/Layout/Layout';
 import SwiperLayout from 'components/SwiperLayout';
 import PieChart from 'components/PieChart';
 
-// import { getBalanceInfo } from './api';
-import { mockData } from './mockData';
+import { getBalanceInfo } from './api';
+// import { mockData } from './mockData';
 import AccountCardList from './components/AccountCardList';
 
 const renderSlides = (data) => {
@@ -50,8 +50,8 @@ const AccountOverviewPage = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    // const response = getBalanceInfo();
-    const response = mockData;
+    const response = getBalanceInfo();
+    // const response = mockData;
 
     setAccounts(response);
 

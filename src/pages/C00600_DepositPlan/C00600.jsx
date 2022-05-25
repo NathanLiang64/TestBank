@@ -14,29 +14,8 @@ import EmptySlide from './components/EmptySlide';
 import EmptyPlan from './components/EmptyPlan';
 import DepositPlan from './components/DepositPlan';
 
-import { getAccountSummary } from '../C00300_NtdDeposit/api';
+// import { getAccountSummary } from '../C00300_NtdDeposit/api';
 import { getDepositPlans } from './api';
-
-const renderSlides = (plans) => {
-  const slides = Array.from({ length: 3 }, () => <EmptySlide key={uuid()} />);
-  if (plans) {
-    plans.forEach((p, i) => {
-      slides[i] = <DepositPlanHeroSlide key={uuid()} account={p.bindAccountNo} {...p} />;
-    });
-  }
-  return slides;
-};
-
-const renderContents = (plans) => {
-  const slides = Array.from({ length: 3 }, () => <EmptyPlan key={uuid()} />);
-  if (plans) {
-    plans.forEach((p, i) => {
-      const currentValue = p.amount / 10000;
-      slides[i] = <DepositPlan key={uuid()} currentValue={currentValue} expireDate={p.endDate} {...p} />;
-    });
-  }
-  return slides;
-};
 
 /**
  * C00600 存錢計畫
@@ -46,12 +25,14 @@ const DepositPlanPage = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const [plans, setPlans] = useState(undefined);
+  const [subAccounts, setSubAccounts] = useState(undefined);
+  const [totalSubAccountCount, setTotalSubAccountCount] = useState(undefined);
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
     // 是否已申請bankee帳戶(台幣)
-    const acctData = await getAccountSummary('MC'); // M=台幣主帳戶、C=台幣子帳戶
+    const acctData = null; // await getAccountSummary('MC'); // M=台幣主帳戶、C=台幣子帳戶
     if (!acctData?.length) {
       showCustomPrompt({
         title: '新增存錢計畫',
@@ -63,23 +44,60 @@ const DepositPlanPage = () => {
     }
 
     const res = await getDepositPlans();
+    console.debug('getDepositPlans', res);
 
-    // 如果從別的頁面跳轉，並欲想顯示特定計畫...
-    if ('focusToAccountNo' in location.state) {
-      // TODO
-      console.debug('do something with accountNo', location.state.focusToAccountNo);
-    }
+    // 為簡化至後元件的利用，將目前金額加入計畫物件之中。
+    res.plans.forEach((plan) => {
+      plan.balance = res.subAccounts[plan.bindAccountNo]?.balance;
+    });
 
     setPlans(res.plans);
+    setSubAccounts(res.subAccounts);
+    setTotalSubAccountCount(res.totalSubAccountCount);
+
+    // 如果從別的頁面跳轉，並欲想顯示特定計畫...
+    if (location.state && ('focusToAccountNo' in location.state)) {
+      // TODO: 如果從別的頁面跳轉，並欲想顯示特定計畫...
+      console.debug('do something with accountNo', location.state.focusToAccountNo);
+    }
 
     dispatch(setWaittingVisible(false));
   }, []);
 
+  const renderSlides = () => {
+    const slides = Array.from({ length: 3 }, () => <EmptySlide key={uuid()} />);
+    if (plans) {
+      plans.forEach((p, i) => {
+        slides[i] = <DepositPlanHeroSlide key={uuid()} account={p.bindAccountNo} {...p} />;
+      });
+    }
+    return slides;
+  };
+
+  const renderContents = () => {
+    const shouldShowUnavailableSubAccountAlert = () => {
+      if ((totalSubAccountCount >= 8) && !(subAccounts?.length > 0)) {
+        showCustomPrompt({
+          title: '新增存錢計畫',
+          message: '目前沒有可作為綁定存錢計畫之子帳戶，請先關閉帳本後，或先完成已進行中的存錢計畫。',
+          okContent: '現在就來申請吧!',
+        });
+      }
+    };
+    const slides = Array.from({ length: 3 }, () => <EmptyPlan key={uuid()} onMount={shouldShowUnavailableSubAccountAlert} />);
+    if (plans) {
+      plans.forEach((p, i) => {
+        slides[i] = <DepositPlan key={uuid()} {...p} />;
+      });
+    }
+    return slides;
+  };
+
   return (
     <Layout title="存錢計畫" hasClearHeader>
       <MainScrollWrapper>
-        <SwiperLayout slides={renderSlides(plans)}>
-          { renderContents(plans) }
+        <SwiperLayout slides={renderSlides()}>
+          { renderContents() }
         </SwiperLayout>
       </MainScrollWrapper>
     </Layout>
