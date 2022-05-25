@@ -18,7 +18,7 @@ import {
 } from 'components/elements';
 import Accordion from 'components/Accordion';
 import DealContent from './dealContent';
-import { fetchName, fetchAccounts, fetchMobiles } from './api';
+import { fetchName, getAccountsList, fetchMobiles } from './api';
 
 /* Styles */
 import MobileTransferWrapper from './mobileTransfer.style';
@@ -68,7 +68,8 @@ const MobileTransfer1 = () => {
 
   // 取得收款帳號
   const getAccounts = async () => {
-    const response = await fetchAccounts({});
+    const response = await getAccountsList('MCS'); // 帳戶類型 M:母帳戶, S:證券戶, C:子帳戶
+    console.log(response);
     const accounts = response.map((item) => item.acctNo);
     setAccountList(accounts);
     setValue('account', accounts[0]);
