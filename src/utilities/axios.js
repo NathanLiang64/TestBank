@@ -24,8 +24,7 @@ userAxios().interceptors.request.use(
   async (request) => {
     console.log(`\x1b[33mAPI :/${request.url}`);
     console.log('Request = ', request.data);
-    let token = sessionStorage.getItem('jwtToken'); // BUG! 會因為多執行緒而錯亂，應該從Request中取回才對。
-    if (!token) token = Cookies.get('jwtToken'); // TODO: 為了相容 axiosConfig
+    const token = sessionStorage.getItem('jwtToken'); // BUG! 會因為多執行緒而錯亂，應該從Request中取回才對。
     // console.log(`\x1b[32m[JWT] \x1b[92m${token}`);
     if (token) {
       // eslint-disable-next-line no-param-reassign
@@ -208,8 +207,7 @@ export const callAPI = async (url, request, config) => {
 const download = async (url, request, filename, contentType) => {
   console.log(`\x1b[33mAPI :/${url}`);
   console.log('Request = ', request);
-  let token = sessionStorage.getItem('jwtToken'); // BUG! 會因為多執行緒而錯亂，應該從Request中取回才對。
-  if (!token) token = Cookies.get('jwtToken'); // TODO: 為了相容 axiosConfig
+  const token = sessionStorage.getItem('jwtToken'); // BUG! 會因為多執行緒而錯亂，應該從Request中取回才對。
 
   // Request Payload 加密
   const aeskey = localStorage.getItem('aesKey');
