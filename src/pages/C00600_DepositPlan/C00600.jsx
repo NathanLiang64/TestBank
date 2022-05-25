@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
 
 import Layout from 'components/Layout/Layout';
@@ -50,6 +50,7 @@ const renderContents = (plans) => {
  */
 const DepositPlanPage = () => {
   const history = useHistory();
+  const location = useLocation();
   const dispatch = useDispatch();
   const [plans, setPlans] = useState(undefined);
 
@@ -64,6 +65,11 @@ const DepositPlanPage = () => {
     }
 
     const res = getDepositPlans();
+
+    if ('focusToAccountNo' in location.state) {
+      console.debug('do something with accountNo', location.state.focusToAccountNo);
+    }
+
     // 是否已開立8個子帳戶
     if (res.totalSubAccountCount >= 8) {
       // TODO: 是否至少一個子帳號是沒有綁定帳本或存錢計畫

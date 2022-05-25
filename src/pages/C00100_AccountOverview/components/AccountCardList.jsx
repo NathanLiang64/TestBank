@@ -1,52 +1,22 @@
 import uuid from 'react-uuid';
+import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { setDrawer, setDrawerVisible } from 'stores/reducers/ModalReducer';
 
 import AccountCard from 'components/AccountCard';
 import { accountOverviewCardVarient } from 'utilities/Generator';
-import { startFunc } from 'utilities/BankeePlus';
 
 import AccountCardListWrapper from './AccountCardList.style';
-
-// 累加帳戶金額
-const accumulateBalance = (list) => list.reduce((accumulate, item) => accumulate + Math.abs(item.balance), 0);
-
-// 產生子帳戶下拉選單
-const renderSubAccountDrawer = (accounts) => {
-  const totalBalance = accumulateBalance(accounts);
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '2.4rem',
-        paddingInline: '1.6rem',
-        marginBottom: '4rem',
-      }}
-    >
-      { accounts.map((card) => {
-        const onClick = () => {
-          startFunc('C00600', { accountNo: card.accountNo });
-        };
-        return (
-          <AccountCard
-            key={uuid()}
-            cardName={card.alias ?? '存錢計畫'}
-            percent={Math.round((card.balance / totalBalance) * 100)}
-            onClick={onClick}
-            {...card}
-          />
-        );
-      }) }
-    </div>
-  );
-};
 
 /**
  * C00100 帳戶總覽之下方帳戶列表元件
  */
 const AccountCardList = ({ data }) => {
   const dispatch = useDispatch();
+  const history = useHistory();
+
+  // 累加帳戶金額
+  const accumulateBalance = (list) => list.reduce((accumulate, item) => accumulate + Math.abs(item.balance), 0);
 
   // 子帳戶除外
   const mainList = data.filter((account) => account.type !== 'C');
@@ -71,12 +41,43 @@ const AccountCardList = ({ data }) => {
   // 依金額從大到小排序。
   mainList.sort((a, b) => b.balance - a.balance);
 
+  // 產生子帳戶下拉選單
+  const renderSubAccountDrawer = (accounts) => {
+    const subTotalBalance = accumulateBalance(accounts);
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '2.4rem',
+          paddingInline: '1.6rem',
+          marginBottom: '4rem',
+        }}
+      >
+        { accounts.map((card) => {
+          const onClick = () => {
+            history.push('/C00600', { focusToAccountNo: card.accountNo });
+          };
+          return (
+            <AccountCard
+              key={uuid()}
+              cardName={card.alias ?? '存錢計畫'}
+              percent={Math.round((card.balance / subTotalBalance) * 100)}
+              onClick={onClick}
+              {...card}
+            />
+          );
+        }) }
+      </div>
+    );
+  };
+
   return (
     <AccountCardListWrapper>
       { mainList.map((card) => {
         let annotation;
         let funcID;
-        let onClick = () => startFunc(funcID);
+        let onClick = () => history(`/${funcID}`);
 
         switch (card.type) {
           case 'M': // 母帳戶

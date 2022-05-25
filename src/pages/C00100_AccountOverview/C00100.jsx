@@ -50,20 +50,10 @@ const AccountOverviewPage = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    // 頁面切換呼叫 startFunc 之時在 AccountCardList 元件內，
-    // 該元件無完整資訊，故另外管理 sessionStorage。
-    // 且 startFunc 會強制改寫URL，導致頁面重新載入，故無法善用 Redux。
-    const sessionCache = sessionStorage.getItem('C00100');
+    // const response = getBalanceInfo();
+    const response = mockData;
 
-    if (sessionCache) {
-      setAccounts(JSON.parse(sessionCache));
-    } else {
-      // const response = getBalanceInfo();
-      const response = mockData;
-
-      setAccounts(response);
-      sessionStorage.setItem('C00100', JSON.stringify(response));
-    }
+    setAccounts(response);
 
     dispatch(setWaittingVisible(false));
   }, []);
