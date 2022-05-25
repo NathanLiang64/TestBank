@@ -35,7 +35,7 @@ const MobileTransfer = () => {
   };
 
   const getBindedAccountList = async () => {
-    const { accounts } = await getUserActNo({ tokenStatus: 1 });
+    const { accounts } = await getUserActNo();
     console.log('已綁定帳號', accounts);
     if (accounts && accounts.length === 0) {
       customPopup(
@@ -50,7 +50,7 @@ const MobileTransfer = () => {
 
   // 檢查是否設定快速登入、基本資料是否有手機號碼
   const checkBindAndMobile = async () => {
-    const { binding, cifMobile } = await fetchMobiles({ tokenStatus: 1 });
+    const { binding, cifMobile } = await fetchMobiles();
     // 檢查是否綁定快速登入
     if (binding === 'N') {
       customPopup(

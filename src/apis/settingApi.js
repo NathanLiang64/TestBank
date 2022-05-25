@@ -14,7 +14,13 @@ export const getMotpStatus = (params) => (
   userRequest('post', '/api/setting/motp/status', params)
 );
 
-// 發送 OTP 驗證碼
-export const sendOtpCode = (params) => (
-  userRequest('post', '/api/sendOtp', params)
+/**
+ * 發送 OTP 驗證碼
+ * @param {*} otpMode: OTP模式(11/12/21/22)，十位數：1＝MBGW,2=APPGW、個位數：1=發送至非約轉門號, 2=發送至CIF門號
+ * @returns {
+ *   transId: OTP簡訊中的識別碼。
+ * }
+ */
+export const sendOtpCode = (otpMode) => (
+  userRequest('post', '/api/sendOtp', otpMode)
 );

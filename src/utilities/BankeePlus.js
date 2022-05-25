@@ -200,6 +200,10 @@ function setAuthdata(jwtToken) {
  * 由 APP 發起交易驗證功能，包含輸入網銀帳密、生物辨識、OTP...。
  * @param {*} txnType 交易類型，例：設定類（通知設定、變更基本資料...）、交易類（轉帳、換匯）
  * @param {*} otpMode OTP模式(11/12/21/22)，十位數：1＝MBGW,2=APPGW、個位數：1=發送至非約轉門號, 2=發送至CIF門號
+ * @returns {
+ *   code: 執行狀態。00.成功, 其他代碼分別表示不同 JS funciton 的失敗訊息。
+ *   data: 執行結果。例：OTP驗證，則傳回使用者輸入的「驗證碼」。
+ * }
  */
 async function transactionAuth(txnType, otpMode) {
   const promise = new Promise((resolve) => {
@@ -239,7 +243,7 @@ async function transactionAuth(txnType, otpMode) {
  * }
  */
 async function appSendOTP(otpMode, callback) {
-  const apiRs = sendOtpCode({ action: otpMode }); // 不需提供其他參數
+  const apiRs = await sendOtpCode(otpMode); // 不需提供其他參數
 
   // Web測試版。
   const body = (
@@ -248,16 +252,19 @@ async function appSendOTP(otpMode, callback) {
       <br />
       <p>{`發送門號：${(otpMode % 10) === 1 ? '非約轉門號' : 'CIF門號'}`}</p>
       <br />
-      <p>{`OTP識別碼：${apiRs.otpCode}`}</p>
+      <p>{`OTP識別碼：${apiRs.data.transId}`}</p>
       <br />
       <p>輸入驗證碼</p>
-      <input type="text" id="otpVerify" />
+      <input type="text" id="otpVerify" defaultValue={apiRs.data.otpCode} />
     </div>
   );
-  const onOk = () => callback({
-    code: '00', // 正常結果。
-    data: document.querySelector('#otpVerify').value, // 使用者輸入的「驗證碼」。 // TODO 取得 輸入的驗證碼
-  });
+  const onOk = () => {
+    // TODO 驗證 OTP Code 是否正確。
+    callback({
+      code: '00', // 正常結果。
+      data: document.querySelector('#otpVerify').value, // 使用者輸入的「驗證碼」。 // TODO 取得 輸入的驗證碼
+    });
+  };
   const onCancel = () => callback({
     code: '01', // 表示使用者取消。
     data: null,
