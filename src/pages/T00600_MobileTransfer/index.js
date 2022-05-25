@@ -11,7 +11,7 @@ import BottomDrawer from 'components/BottomDrawer';
 import Layout from 'components/Layout/Layout';
 import MobileTransferModifyForm from './mobileTransferModifyForm';
 
-import { getUserActNo, fetchMobiles } from './api';
+import { fetchMobiles } from './api';
 
 /* Styles */
 import MobileTransferWrapper from './mobileTransfer.style';
@@ -35,17 +35,17 @@ const MobileTransfer = () => {
   };
 
   const getBindedAccountList = async () => {
-    const { accounts } = await getUserActNo();
-    console.log('已綁定帳號', accounts);
-    if (accounts && accounts.length === 0) {
-      customPopup(
-        '系統訊息',
-        '您尚未設定「手機號碼收款」功能，是否立即進行設定？',
-        null,
-        closeFunc,
-      );
-    }
-    setMobileTransferData(accounts || []);
+    // const { accounts } = await getUserActNo();
+    // console.log('已綁定帳號', accounts);
+    // if (accounts && accounts.length === 0) {
+    //   customPopup(
+    //     '系統訊息',
+    //     '您尚未設定「手機號碼收款」功能，是否立即進行設定？',
+    //     null,
+    //     closeFunc,
+    //   );
+    // }
+    // setMobileTransferData(accounts || []);
   };
 
   // 檢查是否設定快速登入、基本資料是否有手機號碼

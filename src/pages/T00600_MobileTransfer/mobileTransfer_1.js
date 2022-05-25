@@ -70,7 +70,7 @@ const MobileTransfer1 = () => {
   const getAccounts = async () => {
     const response = await getAccountsList('MCS'); // 帳戶類型 M:母帳戶, S:證券戶, C:子帳戶
     console.log(response);
-    const accounts = response.map((item) => item.acctNo);
+    const accounts = response.map((item) => item.account);
     setAccountList(accounts);
     setValue('account', accounts[0]);
   };

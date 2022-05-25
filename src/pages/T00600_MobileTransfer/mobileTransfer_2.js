@@ -97,7 +97,7 @@ const MobileTransfer2 = ({ location }) => {
     event.preventDefault();
 
     // 透過 APP 發送及驗證 OTP，並傳回結果。
-    const result = await transactionAuth();
+    const result = await transactionAuth('xxx', 21);
     console.log(result);
     if (result.code === '00') {
       const { account, isDefault, mobile } = confirmData;

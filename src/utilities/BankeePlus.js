@@ -252,10 +252,10 @@ async function appSendOTP(otpMode, callback) {
       <br />
       <p>{`發送門號：${(otpMode % 10) === 1 ? '非約轉門號' : 'CIF門號'}`}</p>
       <br />
-      <p>{`OTP識別碼：${apiRs.data.transId}`}</p>
+      <p>{`OTP識別碼：${apiRs.transId}`}</p>
       <br />
       <p>輸入驗證碼</p>
-      <input type="text" id="otpVerify" defaultValue={apiRs.data.otpCode} />
+      <input type="text" id="otpVerify" defaultValue={apiRs.otpCode} />
     </div>
   );
   const onOk = () => {
