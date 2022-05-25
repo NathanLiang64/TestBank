@@ -16,11 +16,11 @@ const renderSlides = (data) => {
   const slides = [];
 
   if (data?.assets && data.assets.length > 0) {
-    slides.push(<PieChart key={uuid()} label="正資產" data={data.assets} space="top" isCentered />);
+    slides.push(<PieChart key={uuid()} label="正資產" data={data.assets} isCentered />);
   }
 
   if (data?.debts && data.debts.length > 0) {
-    slides.push(<PieChart key={uuid()} label="負資產" data={data.debts} space="top" isCentered />);
+    slides.push(<PieChart key={uuid()} label="負資產" data={data.debts} isCentered />);
   }
 
   return slides;
