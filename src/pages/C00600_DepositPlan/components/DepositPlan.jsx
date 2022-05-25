@@ -44,7 +44,9 @@ const DepositPlan = ({
   const shouldShowButton = isPlanExpired || isPlanCompleted;
   const stage = getStage(isPlanFailed, progressPercentage);
 
-  const { rate } = progInfo;
+  // const { rate } = progInfo;
+  // TODO: remove after API implemented.
+  const { rate } = progInfo ?? { rate: '0.6' };
   const fancyCycleTimming = () => {
     if (cycleMode === 1) {
       return `周${weekNumberToChinese(cycleTiming === 0 ? 7 : cycleTiming)}`;

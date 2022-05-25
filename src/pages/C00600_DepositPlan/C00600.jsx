@@ -44,7 +44,6 @@ const DepositPlanPage = () => {
     }
 
     const res = await getDepositPlans();
-    console.debug('getDepositPlans', res);
 
     // 為簡化至後元件的利用，將目前金額加入計畫物件之中。
     res.plans.forEach((plan) => {

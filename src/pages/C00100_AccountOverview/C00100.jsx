@@ -51,7 +51,6 @@ const AccountOverviewPage = () => {
     dispatch(setWaittingVisible(true));
 
     const response = await getBalanceInfo();
-    console.debug('getBalanceInfo', response);
     // const response = mockData;
 
     setAccounts(response);
