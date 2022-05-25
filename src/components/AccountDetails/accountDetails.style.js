@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import Layout from 'components/Layout';
+import { MainScrollWrapper } from 'components/Layout';
 
-const AccountDetailsWrapper = styled(Layout)`
+const AccountDetailsWrapper = styled(MainScrollWrapper)`
   display: flex;
   flex-direction: column;
   background: ${({ theme }) => theme.colors.background.lighterBlue};
@@ -13,15 +13,20 @@ const AccountDetailsWrapper = styled(Layout)`
     height: calc(100% - 18.5rem);
   }
 
+  .debitCardWrapper {
+    margin-top: 4.4rem;
+    padding: 2.4rem 0.8rem 0 1.6rem;
+  }
+
   .debitCard {
     margin-bottom: .8rem;
   }
 
   .inquiryArea {
-    left: -1.6rem;
+    padding: 1.6rem;
     border-top-left-radius: 3rem;
     border-top-right-radius: 3rem;
-    width: 100vw;
+    width: 100%;
     background: ${({ theme }) => theme.colors.basic.white};
   }
 

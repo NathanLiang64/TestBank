@@ -20,3 +20,15 @@ const Layout = styled.main`
 `;
 
 export default Layout;
+
+/*
+* ==================== 組件說明 ====================
+* 適用於滿版畫面
+* ================ 可傳參數 ================
+* */
+
+export const MainScrollWrapper = styled.main`
+  height: calc(100vh - 4.4rem);
+  overflow-x: hidden;
+  overflow-y: auto;
+`;

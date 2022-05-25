@@ -12,8 +12,10 @@ const doc = `### 組件說明
 5. color -> 卡片顏色，預設紫色
 6. dollarSign -> 貨幣符號，預設為 '$'
 7. percent -> 百分比（0~100，不含符號）
-8. ariaLabel -> title for button，預設為 cardName
-9. children
+8. annotation -> 金額旁的備註，如：以使用額度
+9. ariaLabel -> title for button，預設為 cardName
+10. onClick -> 點即時呼叫。
+11.children
 
 `;
 
@@ -28,7 +30,9 @@ export default {
     color: { control: 'text' },
     dollarSign: { control: 'text' },
     percent: { control: 'number' },
+    annotation: { control: 'text' },
     ariaLabel: { control: 'text' },
+    onClick: { action: 'onClick' },
     children: { control: 'text' },
   },
   parameters: {

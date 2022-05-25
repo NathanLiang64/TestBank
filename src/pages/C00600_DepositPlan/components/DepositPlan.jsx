@@ -4,6 +4,7 @@ import ProgressBar from 'components/ProgressBar';
 import FEIBButton from 'components/elements/FEIBButton';
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import ArrowNextButton from 'components/ArrowNextButton';
+import { dateFormatter, stringToDate } from 'utilities/Generator';
 
 import DepositPlanWrapper from './DepositPlan.style';
 import { getStage } from './DepositPlan.utils';
@@ -14,22 +15,10 @@ import { getStage } from './DepositPlan.utils';
 * ==================== DepositPlan 可傳參數 ====================
 * 1. currentValue: number -> 目前金額，單位為「萬」。
 * 2. targetValue: number -> 目標金額，單位為「萬」。
-* 3. expireDate: string -> YYYY-MM-DD
+* 3. expireDate: string -> YYYYMMDD
 * 4. bonusInfo: object[] -> [{ label: string, value: string }, ...]
 * 5. showDetails: function -> 點擊「存錢歷程」觸發。
 * */
-
-const stringToDate = (dateStr) => {
-  const d = [...dateStr.match(/(\d{4})(\d{2})(\d{2})/)];
-  d.shift();
-  return new Date(...d);
-};
-
-const formatedDateString = (dateStr, deliminator = '.') => {
-  const d = [...dateStr.match(/(\d{4})(\d{2})(\d{2})/)];
-  d.shift();
-  return d.join(deliminator);
-};
 
 const DepositPlan = ({
   currentValue = 0,
@@ -58,7 +47,7 @@ const DepositPlan = ({
         <ProgressBar value={progressPercentage} />
         {/* eslint-disable react/jsx-one-expression-per-line */}
         <div>目前金額 <em>{currentValue}萬</em>/{targetValue}萬</div>
-        { expireDate && !isPlanCompleted && (<div>{formatedDateString(expireDate)}到期</div>)}
+        { expireDate && !isPlanCompleted && (<div>{dateFormatter(stringToDate(expireDate))}到期</div>)}
         {/* eslint-enable react/jsx-one-expression-per-line */}
       </div>
       {(isPlanCompleted || isPlanFailed) ? <FEIBButton className="mt-3">結束本計畫</FEIBButton> : (

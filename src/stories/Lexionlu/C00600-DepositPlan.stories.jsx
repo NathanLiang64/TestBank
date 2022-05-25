@@ -7,7 +7,7 @@ import { showDrawer } from 'utilities/MessageModal';
 
 import EmptySlide from 'pages/C00600_DepositPlan/components/EmptySlide';
 import EmptyPlan from 'pages/C00600_DepositPlan/components/EmptyPlan';
-import HeroSlide from 'pages/C00600_DepositPlan/components/HeroSlide';
+import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
 import DepositPlan from 'pages/C00600_DepositPlan/components/DepositPlan';
 
 const moreList = [
@@ -30,13 +30,13 @@ const renderMoreList = (list) => (
 
 const slides = [
   (args) => <EmptySlide {...args} />,
-  (args) => <HeroSlide {...args} />,
-  (args) => <HeroSlide {...args} />,
-  (args) => <HeroSlide {...args} />,
-  (args) => <HeroSlide {...args} />,
-  (args) => <HeroSlide {...args} />,
-  (args) => <HeroSlide {...args} />,
-  (args) => <HeroSlide {...args} />,
+  (args) => <DepositPlanHeroSlide {...args} />,
+  (args) => <DepositPlanHeroSlide {...args} />,
+  (args) => <DepositPlanHeroSlide {...args} />,
+  (args) => <DepositPlanHeroSlide {...args} />,
+  (args) => <DepositPlanHeroSlide {...args} />,
+  (args) => <DepositPlanHeroSlide {...args} />,
+  (args) => <DepositPlanHeroSlide {...args} />,
 ];
 
 const infoPanel = [
