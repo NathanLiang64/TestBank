@@ -16,6 +16,14 @@ export const toCurrency = (number, float = 0) => {
   return amount;
 };
 
+// 將數字轉為「千」或「萬」，假設數字大於「千」，小於「千萬」
+// 例：1000 -> 1千    10000 -> 1萬    1000000 -> 100萬
+// 特例：999 -> 1千    10000000 -> 1,000萬
+export const toThousandNotation = (number) => {
+  const isTenThousand = Math.floor(number / 1000) >= 10;
+  return isTenThousand ? `${toCurrency(number / 10000)}萬` : `${Math.round(number / 1000)}千`;
+};
+
 // 將帳號轉為指定字數間帶有分隔符 (-) 之顯示方式
 export const accountFormatter = (account) => (
   account ? `${account.slice(0, 3)}-${account.slice(3, 6)}-${account.slice(6)}` : '-'

@@ -11,7 +11,7 @@ export default {
 
 const Template = (args) => {
   const { isCollapsed, size } = args;
-  (
+  return (
     <FEIBCollapse
       in={!isCollapsed}
       collapsedSize={size}

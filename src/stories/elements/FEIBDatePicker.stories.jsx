@@ -18,11 +18,8 @@ export default {
   },
 };
 
-const Template = (args) => {
-  const { value } = args;
-  (
-    <FEIBDatePicker value={value} />
-  );
-};
+const Template = (args) => (
+  <FEIBDatePicker {...args} />
+);
 
 export const Primary = Template.bind({});

@@ -66,7 +66,7 @@ export const getTransactionDetails = async (request) => {
     totalSubAccountCount, // 此用戶已擁有的子帳戶數量（不區分用途）
  */
 export const getDepositPlans = async () => {
-  const response = await callAPI('/api/depositPlus/v1/getAllPlans');
+  const response = await callAPI('/api/depositPlan/v1/getAllPlans');
   return response.data;
 };
 
@@ -92,7 +92,7 @@ export const getDepositPlans = async () => {
  * }, ...]
  */
 export const getDepositPlanProgram = async () => {
-  const response = await callAPI('/api/depositPlus/v1/getPrograms');
+  const response = await callAPI('/api/depositPlan/v1/getPrograms');
   return response.data;
 };
 
@@ -117,7 +117,7 @@ export const createDepositPlan = async (request) => {
   //    2. Max(totalSubAccountCount) is 8
   //    3. subAccounts.count must > 0
   // 沒有可用(建)子帳戶時，則提示「*****」
-  const response = await callAPI('/api/depositPlus/v1/create', request);
+  const response = await callAPI('/api/depositPlan/v1/create', request);
   return response.data;
 };
 
@@ -131,7 +131,7 @@ export const createDepositPlan = async (request) => {
  * }
  */
 export const updateDepositPlan = async (request) => {
-  const response = await callAPI('/api/depositPlus/v1/update', request);
+  const response = await callAPI('/api/depositPlan/v1/update', request);
   return response.data;
 };
 
@@ -142,6 +142,6 @@ export const updateDepositPlan = async (request) => {
  */
 export const closeDepositPlan = async (planId) => {
   // 有沒有達標，前端可判斷，因為有帳戶餘額及目標金額
-  const response = await callAPI('/api/depositPlus/v1/close', planId);
+  const response = await callAPI('/api/depositPlan/v1/close', planId);
   return response.data;
 };

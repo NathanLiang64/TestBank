@@ -8,19 +8,19 @@ import Layout from 'components/Layout/Layout';
 import SwiperLayout from 'components/SwiperLayout';
 import PieChart from 'components/PieChart';
 
-// import { getBalanceInfo } from './api';
-import { mockData } from './mockData';
+import { getBalanceInfo } from './api';
+// import { mockData } from './mockData';
 import AccountCardList from './components/AccountCardList';
 
 const renderSlides = (data) => {
   const slides = [];
 
   if (data?.assets && data.assets.length > 0) {
-    slides.push(<PieChart key={uuid()} label="正資產" data={data.assets} space="top" isCentered />);
+    slides.push(<PieChart key={uuid()} label="正資產" data={data.assets} isCentered />);
   }
 
   if (data?.debts && data.debts.length > 0) {
-    slides.push(<PieChart key={uuid()} label="負資產" data={data.debts} space="top" isCentered />);
+    slides.push(<PieChart key={uuid()} label="負資產" data={data.debts} isCentered />);
   }
 
   return slides;
@@ -50,20 +50,10 @@ const AccountOverviewPage = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    // 頁面切換呼叫 startFunc 之時在 AccountCardList 元件內，
-    // 該元件無完整資訊，故另外管理 sessionStorage。
-    // 且 startFunc 會強制改寫URL，導致頁面重新載入，故無法善用 Redux。
-    const sessionCache = sessionStorage.getItem('C00100');
+    const response = await getBalanceInfo();
+    // const response = mockData;
 
-    if (sessionCache) {
-      setAccounts(JSON.parse(sessionCache));
-    } else {
-      // const response = getBalanceInfo();
-      const response = mockData;
-
-      setAccounts(response);
-      sessionStorage.setItem('C00100', JSON.stringify(response));
-    }
+    setAccounts(response);
 
     dispatch(setWaittingVisible(false));
   }, []);
