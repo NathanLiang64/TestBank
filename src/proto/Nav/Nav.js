@@ -2,9 +2,9 @@
 /* eslint-disable arrow-body-style */
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { startFunc } from 'utilities/BankeePlus';
+import { startFunc, transactionAuth } from 'utilities/BankeePlus';
 import { FEIBButton } from 'components/elements';
-import Layout from 'components/Layout';
+import Layout from 'components/Layout/Layout';
 import { logout } from './Nav.api';
 
 import NavWrapper from './Nav.style';
@@ -35,6 +35,13 @@ const Nav = () => {
           <div onClick={() => startFunc('M00100')}>M00100 社群圈首頁</div>
           <div onClick={() => startFunc('D00100')}>D00100 台幣轉帳 - (施工中)</div>
           <div onClick={() => startFunc('B00600')}>B00600 更多... (待施工)</div>
+          <div onClick={async () => {
+            const result = await transactionAuth('ZZZ', 11);
+            console.log('*** OTP Result from BankeePlus : ', result);
+          }}
+          >
+            OTP測試
+          </div>
         </div>
 
         <div className="lexion">

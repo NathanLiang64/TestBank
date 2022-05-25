@@ -1,8 +1,8 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable brace-style */
 /* eslint-disable prefer-template */
+import { sendOtpCode } from 'apis/settingApi';
 import { customPopup, showError } from './MessageModal';
-import { sendOTP } from './api';
 
 const device = {
   // TODO: 開發時使用，上版前應刪除！
@@ -202,35 +202,44 @@ function setAuthdata(jwtToken) {
  * @param {*} otpMode OTP模式(11/12/21/22)，十位數：1＝MBGW,2=APPGW、個位數：1=發送至非約轉門號, 2=發送至CIF門號
  */
 async function transactionAuth(txnType, otpMode) {
-  const data = { type: txnType, otpType: '2' };
-  if (device.ios()) {
-    const msg = JSON.stringify({ name: 'onVerification', data: JSON.stringify(data) });
-    await window.webkit?.messageHandlers.jstoapp.postMessage(msg);
-  }
-  else if (device.android()) {
-    const androidParam = JSON.stringify(data);
-    await window.jstoapp?.onVerification(androidParam);
-  }
-  else {
-    // 由 APP 發出 OTP，並將識別碼顯示於畫面，待 User 輸入驗證碼後。
-    // Controller 將 OTP ID 存入 JwtToken
-    // APP 將 User 輸入的驗證碼寫入 localStorege 再由 WebView 取回。
-    await appSendOTP(otpMode, (result) => {
-      localStorage.setItem('appJsResponse', result.data); // 將 APP 傳回的資料寫回。
-    });
-  }
+  const promise = new Promise((resolve) => {
+    // TODO
+    const data = { type: txnType, otpType: '2' };
+    if (device.ios()) {
+      const msg = JSON.stringify({ name: 'onVerification', data: JSON.stringify(data) });
+      window.webkit?.messageHandlers.jstoapp.postMessage(msg);
+    }
+    else if (device.android()) {
+      const androidParam = JSON.stringify(data);
+      window.jstoapp?.onVerification(androidParam);
+    }
+    else {
+      // 由 APP 發出 OTP，並將識別碼顯示於畫面，待 User 輸入驗證碼後。
+      // Controller 將 OTP ID 存入 JwtToken
+      // APP 將 User 輸入的驗證碼寫入 localStorege 再由 WebView 取回。
+      appSendOTP(otpMode, (result) => {
+        console.log('*** OTP Result from APP : ', result);
+        localStorage.setItem('appJsResponse', result.data); // 將 APP 傳回的資料寫回。
+        resolve(result);
+      });
+    }
+  });
+
+  const result = await promise;
+  console.log('*** OTP Result from Promise : ', result);
+  return result;
 }
 
 /**
  * 模擬 APP 的 OTP 發送及要求使用者輸入 驗證碼
  * @param {*} otpMode OTP模式
- * @param {*} callback {
+ * @param {*} callback JavaScript {
  *   code: 執行狀態。00.成功, 其他代碼分別表示不同 JS funciton 的失敗訊息。
  *   data: 執行結果。例：OTP驗證，則傳回使用者輸入的「驗證碼」。
  * }
  */
 async function appSendOTP(otpMode, callback) {
-  const apiRs = sendOTP(otpMode); // 不需提供其他參數
+  const apiRs = sendOtpCode({ action: otpMode }); // 不需提供其他參數
 
   // Web測試版。
   const body = (
@@ -247,7 +256,7 @@ async function appSendOTP(otpMode, callback) {
   );
   const onOk = () => callback({
     code: '00', // 正常結果。
-    data: document.querySelector('otpVerify'), // 使用者輸入的「驗證碼」。 // TODO 取得 輸入的驗證碼
+    data: document.querySelector('#otpVerify').value, // 使用者輸入的「驗證碼」。 // TODO 取得 輸入的驗證碼
   });
   const onCancel = () => callback({
     code: '01', // 表示使用者取消。
