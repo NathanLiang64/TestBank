@@ -67,9 +67,17 @@ const DepositPlanPage = () => {
   const renderSlides = () => {
     const slides = Array.from({ length: 3 }, () => <EmptySlide key={uuid()} />);
     if (plans) {
+      let masterSlideIndex;
       plans.forEach((p, i) => {
+        if (p.isMaster) {
+          masterSlideIndex = i;
+        }
         slides[i] = <DepositPlanHeroSlide key={uuid()} account={p.bindAccountNo} {...p} />;
       });
+      if (masterSlideIndex) {
+        const masterSlide = slides.splice(masterSlideIndex, 1)[0];
+        slides.splice(1, 0, masterSlide);
+      }
     }
     return slides;
   };
@@ -86,9 +94,17 @@ const DepositPlanPage = () => {
     };
     const slides = Array.from({ length: 3 }, () => <EmptyPlan key={uuid()} onMount={shouldShowUnavailableSubAccountAlert} />);
     if (plans) {
+      let masterSlideIndex;
       plans.forEach((p, i) => {
+        if (p.isMaster) {
+          masterSlideIndex = i;
+        }
         slides[i] = <DepositPlan key={uuid()} {...p} />;
       });
+      if (masterSlideIndex) {
+        const masterSlide = slides.splice(masterSlideIndex, 1)[0];
+        slides.splice(1, 0, masterSlide);
+      }
     }
     return slides;
   };

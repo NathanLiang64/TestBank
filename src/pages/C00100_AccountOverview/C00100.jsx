@@ -50,7 +50,8 @@ const AccountOverviewPage = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    const response = getBalanceInfo();
+    const response = await getBalanceInfo();
+    console.debug('getBalanceInfo', response);
     // const response = mockData;
 
     setAccounts(response);
