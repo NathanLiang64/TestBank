@@ -12,6 +12,7 @@ const handshake = async () => {
   // let ivToken;
   // let aesTokenKey;
   const ServerPublicKey = await userAxios.post('/auth/getPublicKey');
+  console.log('==> /auth/getPublicKey - Response : ', ServerPublicKey);
   const iv = CipherUtil.generateIV();
   const aesKey = CipherUtil.generateAES();
   const ivToken = iv;
@@ -24,13 +25,16 @@ const handshake = async () => {
     aesKey,
   };
   const getJWTToken = JWEUtil.encryptJWEMessage(ServerPublicKey.data.data.result, JSON.stringify(message));
+
   const getMyJWT = await userAxios.post('/auth/handshake', getJWTToken);
   if (getMyJWT.data.code === '0000') {
     const deCode = JSON.parse(JWEUtil.decryptJWEMessage(getPublicAndPrivate.privateKey, getMyJWT.data.data));
     // console.log(getMyJWT);
     jwtToken = deCode.result.jwtToken;
+    console.log('==> /auth/handshake - Response(decode) : ', deCode, jwtToken);
     localStorage.setItem('privateKey', privateKey);
     localStorage.setItem('publicKey', publicKey);
+    sessionStorage.setItem('jwtToken', jwtToken);
     Cookies.set('jwtToken', jwtToken);
     localStorage.setItem('iv', ivToken);
     localStorage.setItem('aesKey', aesTokenKey);

@@ -5,11 +5,15 @@ const doc = `### 組件說明
 
 ### 可傳參數
 
-1. currentValue: number -> 目前金額，單位為「萬」。
-2. targetValue: number -> 目標金額，單位為「萬」。
-3. expireDate: string -> YYYY-MM-DD
-4. bonusInfo: object[] -> [{ label: string, value: string }, ...]
-5. showDetails: function -> 點擊「存錢歷程」觸發。
+1. currentBalance: number -> 目前金額，預設NTD。
+2. goalAmount: number -> 目標金額，預設NTD。
+3. endDate: string -> YYYYMMDD
+4. progInfo -> 存錢計劃適用方案(Program)資訊
+5. amount -> 每期存入金額，格式：99999。
+6. cycleMode -> 存入週期（1.每周、2.每月）
+7. cycleTiming -> 存入時機；每周：0～6(周日～周六)、每月：1~28及月底(31)
+8. onShowDetailClick: function -> 點擊「存錢歷程」觸發。
+9. onTerminatePlanClick: function -> 點擊「結束本計畫」觸發。
 
 `;
 
@@ -17,22 +21,32 @@ export default {
   title: 'lexionlu/DepositPlan',
   component: DepositPlan,
   argTypes: {
-    currentValue: { control: { type: 'range', min: 0 } },
-    targetValue: { control: { type: 'number', mine: 0 } },
-    expireDate: { control: { type: 'text'} },
-    bonusInfo: { control: { type: 'array' } },
-    showDetails: { action: 'showDetails' },
+    currentBalance: {
+      control: {
+        type: 'range', min: 0, max: 1010000, step: 10000,
+      },
+    },
+    goalAmount: {
+      control: {
+        type: 'range', min: 0, max: 1000000, step: 10000,
+      },
+    },
+    endDate: { control: { type: 'text'} },
+    progInfo: { control: { type: 'array' } },
+    amount: {
+      control: {
+        type: 'range', min: 0, max: 10000, step: 1000,
+      },
+    },
+    cycleMode: { control: { type: 'number' } },
+    cycleTiming: { control: { type: 'number' } },
+    onShowDetailClick: { action: 'onShowDetailClick' },
+    onTerminatePlanClick: { action: 'onTerminatePlanClick' },
   },
   parameters: {
     docs: { description: { component: doc }},
   },
 };
-
-const infoPanel = [
-  { label: '適用利率', value: '0.6%' },
-  { label: '每月存款日', value: '26號' },
-  { label: '每次存款金額', value: '1萬' },
-];
 
 const Template = (args) => (
   <DepositPlan {...args} />
@@ -40,49 +54,70 @@ const Template = (args) => (
 
 export const Progress0 = Template.bind({});
 Progress0.args = {
-  currentValue: 0,
-  expireDate: '2099-12-31',
-  bonusInfo: infoPanel,
+  currentBalance: 0,
+  endDate: '20991231',
+  progInfo: { rate: '0.6' },
+  amount: 1000,
+  cycleMode: 2,
+  cycleTiming: 31,
 };
 
 export const Progress25 = Template.bind({});
 Progress25.args = {
-  currentValue: 25,
-  expireDate: '2099-12-31',
-  bonusInfo: infoPanel,
+  currentBalance: 25,
+  endDate: '20991231',
+  progInfo: { rate: '0.6' },
+  amount: 1000,
+  cycleMode: 2,
+  cycleTiming: 31,
 };
 
 export const Progress50 = Template.bind({});
 Progress50.args = {
-  currentValue: 50,
-  expireDate: '2099-12-31',
-  bonusInfo: infoPanel,
+  currentBalance: 50,
+  endDate: '20991231',
+  progInfo: { rate: '0.6' },
+  amount: 1000,
+  cycleMode: 2,
+  cycleTiming: 31,
 };
 
 export const Progress75 = Template.bind({});
 Progress75.args = {
-  currentValue: 75,
-  expireDate: '2099-12-31',
-  bonusInfo: infoPanel,
+  currentBalance: 75,
+  endDate: '20991231',
+  progInfo: { rate: '0.6' },
+  amount: 1000,
+  cycleMode: 2,
+  cycleTiming: 31,
 };
 
 export const Progress99 = Template.bind({});
 Progress99.args = {
-  currentValue: 99,
-  expireDate: '2099-12-31',
-  bonusInfo: infoPanel,
+  currentBalance: 99,
+  endDate: '20991231',
+  progInfo: { rate: '0.6' },
+  amount: 1000,
+  cycleMode: 2,
+  cycleTiming: 31,
 };
 
 export const Success = Template.bind({});
 Success.args = {
-  currentValue: 100,
-  expireDate: '2099-12-31',
-  bonusInfo: infoPanel,
+  currentBalance: 100,
+  endDate: '20991231',
+  progInfo: { rate: '0.6' },
+  amount: 1000,
+  cycleMode: 2,
+  cycleTiming: 31,
 };
 
 export const Failed = Template.bind({});
 Failed.args = {
-  currentValue: 99,
-  expireDate: '2000-01-01',
-  bonusInfo: infoPanel,
+  currentBalance: 99,
+  endDate: '20000101',
+  progInfo: { rate: '0.6' },
+  amount: 1000,
+  cycleMode: 2,
+  cycleTiming: 31,
 };

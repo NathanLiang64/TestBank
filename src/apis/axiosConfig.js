@@ -31,24 +31,6 @@ const errorHandle = (status, message) => {
   }
 };
 
-// action log
-// eslint-disable-next-line no-unused-vars
-// const postActionLog = (func, log) => {
-//   const data = {
-//     function: func, log: JSON.stringify(log), custId: localStorage.getItem('custId'), source: 'WebView',
-//   };
-//   fetch(
-//     'https://appbankee-t.feib.com.tw/ords/db1/uat/sys/addLog',
-//     {
-//       headers: {
-//         'content-type': 'application/json',
-//       },
-//       body: JSON.stringify(data),
-//       method: 'POST',
-//     },
-//   );
-// };
-
 // Axios instance
 const instance = axios.create({
   baseURL: process.env.REACT_APP_URL,
@@ -99,6 +81,7 @@ userAxios().interceptors.response.use(
       // const encrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
       const { jwtToken } = response.data;
       if (jwtToken) {
+        sessionStorage.setItem('jwtToken', jwtToken);
         Cookies.set('jwtToken', jwtToken);
         setAuthdata(jwtToken);
       }

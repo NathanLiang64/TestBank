@@ -4,6 +4,9 @@ import ProgressBar from 'components/ProgressBar';
 import FEIBButton from 'components/elements/FEIBButton';
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import ArrowNextButton from 'components/ArrowNextButton';
+import {
+  toThousandNotation, weekNumberToChinese, dateFormatter, stringToDate,
+} from 'utilities/Generator';
 
 import DepositPlanWrapper from './DepositPlan.style';
 import { getStage } from './DepositPlan.utils';
@@ -12,60 +15,68 @@ import { getStage } from './DepositPlan.utils';
 * ==================== DepositPlan 組件說明 ====================
 * 存錢計畫下方資訊卡
 * ==================== DepositPlan 可傳參數 ====================
-* 1. currentValue: number -> 目前金額，單位為「萬」。
-* 2. targetValue: number -> 目標金額，單位為「萬」。
-* 3. expireDate: string -> YYYY-MM-DD
-* 4. bonusInfo: object[] -> [{ label: string, value: string }, ...]
-* 5. showDetails: function -> 點擊「存錢歷程」觸發。
+* 1. currentBalance: number -> 目前金額，預設NTD。
+* 2. goalAmount: number -> 目標金額，預設NTD。
+* 3. endDate: string -> YYYYMMDD
+* 4. progInfo -> 存錢計劃適用方案(Program)資訊
+* 5. amount -> 每期存入金額，格式：99999。
+* 6. cycleMode -> 存入週期（1.每周、2.每月）
+* 7. cycleTiming -> 存入時機；每周：0～6(周日～周六)、每月：1~28及月底(31)
+* 8. onShowDetailClick: function -> 點擊「存錢歷程」觸發。
+* 9. onTerminatePlanClick: function -> 點擊「結束本計畫」觸發。
 * */
 
-const stringToDate = (dateStr) => {
-  const d = [...dateStr.match(/(\d{4})(\d{2})(\d{2})/)];
-  d.shift();
-  return new Date(...d);
-};
-
-const formatedDateString = (dateStr, deliminator = '.') => {
-  const d = [...dateStr.match(/(\d{4})(\d{2})(\d{2})/)];
-  d.shift();
-  return d.join(deliminator);
-};
-
 const DepositPlan = ({
-  currentValue = 0,
-  targetValue = 100,
-  expireDate,
-  bonusInfo,
-  showDetails,
+  currentBalance = 0,
+  goalAmount = 1000000,
+  endDate,
+  progInfo,
+  amount,
+  cycleMode,
+  cycleTiming,
+  onShowDetailClick,
+  onTerminatePlanClick,
 }) => {
-  const progressPercentage = Math.trunc((currentValue / targetValue) * 100);
+  const progressPercentage = Math.trunc((currentBalance / goalAmount) * 100);
   const isPlanCompleted = progressPercentage >= 100;
-  const isPlanFailed = progressPercentage < 100 && expireDate && stringToDate(expireDate) < new Date();
+  const isPlanExpired = endDate && (stringToDate(endDate) < new Date());
+  const isPlanFailed = progressPercentage < 100 && isPlanExpired;
+  const shouldShowButton = isPlanExpired || isPlanCompleted;
   const stage = getStage(isPlanFailed, progressPercentage);
+
+  // const { rate } = progInfo;
+  // TODO: remove after API implemented.
+  const { rate } = progInfo ?? { rate: '0.6' };
+  const fancyCycleTimming = () => {
+    if (cycleMode === 1) {
+      return `周${weekNumberToChinese(cycleTiming === 0 ? 7 : cycleTiming)}`;
+    }
+    return (cycleTiming <= 28) ? `${cycleTiming}號` : '月底';
+  };
+  const bonusInfo = [
+    { label: '適用利率', value: `${rate}%`},
+    { label: `每${cycleMode === 1 ? '周' : '月'}存款日`, value: fancyCycleTimming()},
+    { label: '每次存款金額', value: toThousandNotation(amount)},
+  ];
 
   return (
     <DepositPlanWrapper>
       <div className="pad flex">
         <Animation data={stage.animation} height={169} width={312} />
-        <InfoArea
-          variant="top"
-          position="top"
-          space="auto"
-          {...stage.infoAreaStyles}
-        >
+        <InfoArea variant="top" position="top" space="auto" {...stage.infoAreaStyles}>
           {stage.text}
         </InfoArea>
         <ProgressBar value={progressPercentage} />
         {/* eslint-disable react/jsx-one-expression-per-line */}
-        <div>目前金額 <em>{currentValue}萬</em>/{targetValue}萬</div>
-        { expireDate && !isPlanCompleted && (<div>{formatedDateString(expireDate)}到期</div>)}
+        <div>目前金額 <em>{toThousandNotation(currentBalance)}</em>/{toThousandNotation(goalAmount)}</div>
+        { endDate && <div>{dateFormatter(stringToDate(endDate))}到期</div>}
         {/* eslint-enable react/jsx-one-expression-per-line */}
       </div>
-      {(isPlanCompleted || isPlanFailed) ? <FEIBButton className="mt-3">結束本計畫</FEIBButton> : (
+      {shouldShowButton ? <FEIBButton className="mt-3" onClick={onTerminatePlanClick}>結束本計畫</FEIBButton> : (
         <div className="pad">
           <hr />
-          <ThreeColumnInfoPanel isLoading={!bonusInfo} content={bonusInfo} />
-          <ArrowNextButton onClick={showDetails}>存錢歷程</ArrowNextButton>
+          <ThreeColumnInfoPanel content={bonusInfo} />
+          <ArrowNextButton onClick={onShowDetailClick}>存錢歷程</ArrowNextButton>
         </div>
       )}
     </DepositPlanWrapper>

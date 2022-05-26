@@ -9,7 +9,7 @@ import AccountDetails from 'components/AccountDetails/accountDetails';
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { loadFuncParams } from 'utilities/BankeePlus';
-import { getTransactionDetails } from './api';
+import { getTransactions } from './api';
 
 const MoreTranscations = () => {
   const dispatch = useDispatch();
@@ -41,7 +41,7 @@ const MoreTranscations = () => {
     };
 
     // 取得帳戶交易明細（三年內）
-    const transData = await getTransactionDetails(request);
+    const transData = await getTransactions(request);
     return transData;
   };
 

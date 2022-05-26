@@ -20,6 +20,6 @@ import { callAPI } from 'utilities/axios';
     }, ...],
  */
 export const getBalanceInfo = async () => {
-  const response = await callAPI('/api/deposit/v1/balanceInfo');
+  const response = await callAPI('/api/deposit/v1/getBalanceInfo');
   return response.data;
 };

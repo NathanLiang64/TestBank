@@ -16,7 +16,7 @@ import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/BankeePlus';
 import {
   getAccountSummary,
-  getTransactionDetails,
+  getTransactions,
   downloadDepositBookCover,
   setAccountAlias,
 } from './api';
@@ -81,7 +81,7 @@ const C00500 = () => {
     if (account.transactions === null) {
       // 取得帳戶交易明細（三年內的前25筆即可）
       const accountNo = account.cardInfo.acctId;
-      const transData = await getTransactionDetails(accountNo);
+      const transData = await getTransactions(accountNo);
 
       account.transactions = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
       if (account.transactions.length > 0) {

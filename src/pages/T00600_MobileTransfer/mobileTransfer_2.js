@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
-import { closeFunc } from 'utilities/BankeePlus';
+import { closeFunc, transactionAuth } from 'utilities/BankeePlus';
 
 /* Elements */
 import Header from 'components/Header';
@@ -95,19 +95,22 @@ const MobileTransfer2 = ({ location }) => {
 
   const modifyMobileTransferData = async (event) => {
     event.preventDefault();
-    const { account, isDefault, mobile } = confirmData;
-    const param = {
-      actNo: account,
-      bankCode: '805',
-      mobilePhone: mobile,
-      defaultType: isDefault ? 'Y' : 'N',
-      otpCode: '123456',
-      otpId: '123456',
-    };
-    const response = await createMobileNo(param);
-    console.log(response);
-    setResultDialog(response);
-    // transactionAuth();
+
+    // 透過 APP 發送及驗證 OTP，並傳回結果。
+    const result = await transactionAuth('xxx', 21);
+    console.log(result);
+    if (result.code === '00') {
+      const { account, isDefault, mobile } = confirmData;
+      const param = {
+        account,
+        mobile,
+        isDefault: isDefault ? 'Y' : 'N',
+        otpCode: result.data,
+      };
+      const response = await createMobileNo(param);
+      console.log(response);
+      setResultDialog(response);
+    }
   };
 
   // 回上一頁

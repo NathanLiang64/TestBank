@@ -16,6 +16,14 @@ export const toCurrency = (number, float = 0) => {
   return amount;
 };
 
+// 將數字轉為「千」或「萬」，假設數字大於「千」，小於「千萬」
+// 例：1000 -> 1千    10000 -> 1萬    1000000 -> 100萬
+// 特例：999 -> 1千    10000000 -> 1,000萬
+export const toThousandNotation = (number) => {
+  const isTenThousand = Math.floor(number / 1000) >= 10;
+  return isTenThousand ? `${toCurrency(number / 10000)}萬` : `${Math.round(number / 1000)}千`;
+};
+
 // 將帳號轉為指定字數間帶有分隔符 (-) 之顯示方式
 export const accountFormatter = (account) => (
   account ? `${account.slice(0, 3)}-${account.slice(3, 6)}-${account.slice(6)}` : '-'
@@ -192,6 +200,26 @@ export const accountTypeColorGenerator = (currency) => {
     case '050': // 放款
     default:
       return null;
+  }
+};
+
+// 帳務總覽對應名稱和卡色
+export const accountOverviewCardVarient = (type) => {
+  switch (type) {
+    case 'M':
+      return { name: '母帳戶', color: 'purple' };
+    case 'S':
+      return { name: '證券戶', color: 'blue' };
+    case 'F':
+      return { name: '外幣帳戶', color: 'orange' };
+    case 'C':
+      return { name: '子帳戶', color: 'yellow' };
+    case 'CC':
+      return { name: '信用卡', color: 'green' };
+    case 'L':
+      return { name: '貸款', color: 'lightPurple' };
+    default:
+      return { name: '', color: '' };
   }
 };
 

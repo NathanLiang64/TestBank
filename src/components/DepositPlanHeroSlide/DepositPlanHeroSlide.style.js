@@ -1,17 +1,34 @@
 import styled from 'styled-components';
 
-const HeroSlideWrapper = styled.div`
+const DepositPlanHeroSlideWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 0.3rem;
+  ${({ $shouldExtend }) => $shouldExtend && `
+    margin-bottom: -3rem;
+    z-index: 0;
+  `}
 
   .toolkits {
     position: relative;
     height: 252px;
     width: 100%;
     margin-bottom: 0.7rem;
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-inline: 3.2rem;
+      gap: 0.3rem;
+      z-index: 10;
+      background-image: linear-gradient(180deg, rgb(172 141 232 / 0.74) 0%, rgb(93 47 179 / 0.74) 100%);
+      color: ${({ theme }) => theme.colors.basic.white};
+    }
 
     .group {
       position: absolute;
@@ -44,6 +61,12 @@ const HeroSlideWrapper = styled.div`
     text-align: center;
     color: ${({ theme }) => theme.colors.text.lightGray};
   }
+
+  .balance {
+    align-self: flex-end;
+    font-size: 3rem;
+    font-weight: 500;
+  }
 `;
 
-export default HeroSlideWrapper;
+export default DepositPlanHeroSlideWrapper;

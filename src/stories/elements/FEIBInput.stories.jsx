@@ -1,3 +1,5 @@
+import FEIBInputAnimationWrapper from 'components/elements/FEIBInputAnimationWrapper';
+import FEIBInputLabel from 'components/elements/FEIBInputLabel';
 import FEIBInput from 'components/elements/FEIBInput';
 import { HomeIcon } from 'assets/images/icons';
 
@@ -27,7 +29,8 @@ const doc = `### 可用選項
 
 export default {
   title: 'elements/FEIBInput',
-  component: FEIBInput,
+  component: FEIBInputAnimationWrapper,
+  subcomponents: { FEIBInput, FEIBInputLabel },
   argTypes: {
     $fontSize: { control: { type: 'number', step: 0.1 }},
     $color: { control: { type: 'color', presetColors: presetColors(['text']) }},
@@ -37,17 +40,25 @@ export default {
     $icon: { control: 'object' },
     $iconFontSize: { control: { type: 'number', step: 0.1 }},
     $iconOnClick: { action: 'iconOnClick' },
+    label: { control: { type: 'text' }},
   },
   parameters: {
     docs: { description: { component: doc }},
   },
 };
 
-const Template = (args) => (
-  <FEIBInput {...args} />
-);
+const Template = (args) => {
+  const { label } = args;
+  return (
+    <FEIBInputAnimationWrapper>
+      <FEIBInputLabel {...args}>{label}</FEIBInputLabel>
+      <FEIBInput {...args} />
+    </FEIBInputAnimationWrapper>
+  );
+};
 
 export const Primary = Template.bind({});
 Primary.args = {
+  label: 'Example label',
   $icon: <HomeIcon />,
 };

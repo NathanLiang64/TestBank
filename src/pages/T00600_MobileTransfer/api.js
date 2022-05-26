@@ -25,82 +25,64 @@ export const getAccountsList = async (acctTypes) => {
 };
 
 /**
- * 查詢可綁定手機及狀態
- * @param {*} request {
- *   tokenStatus,  綁定代號狀態 1: 有效，0: 無效
- * }
+ * 取得用戶名下所有手機收款的綁定設定資訊。
  * @returns {*} {
- *   otpMobile: 綁定OTP的手機號碼,
- *   cifMobile: 優利CIF個人基本資料中留存的手機號碼,
- *   mobiles: [], 可綁定手機清單,
  *   bindQuickLogin: 是否(Y/N)已綁定快速登入。未綁定(N)時，則不能使用手機收款。
+ *   bindTxnOtpMobile: 是否(Y/N)已綁定非約轉交易OTP時所使用的手機號碼。
+ *   bindCifMobile: 是否(Y/N)已留存個人聯絡手機號碼於優利CIF。
+ *   mobiles: [], 可用來綁定的手機號碼清單，但不包含已綁定的手機號碼,
  *   bindings: [{
  *     mobile: 表示收款帳戶的手機號碼,
- *     bankCode: 銀行代碼,
- *     account: 銀行帳號,
- *     token: 門號綁定代碼, 例：FEIB20211125040408ndIbKTrFdIMITG
- *     tokenStatus: 狀態（1:有效, 0:無效）,
+ *     account: 綁定的銀行帳號,
+ *     status: 狀態（1:有效, 0:無效）,
  *     isDefault: 表示預設的收款手機號碼,
  *   }, ...]
  * }
  */
-export const fetchMobiles = async (request) => {
-  const response = await callAPI('/api/mpt/queryMobile', request);
+export const fetchMobiles = async () => {
+  const response = await callAPI('/api/mobileAccount/v1/getBindingSummary');
   return response.data;
 };
-
-// // 取得已綁定銀行帳號清單
-// export const getUserActNo = async (param) => {
-//   const response = await callAPI('/api/mpt/userActNo', param);
-//   return response.data;
-// };
 
 /**
  * 手機號碼收款設定新增
- * @param token
  * @param request {
  *   mobile: 綁定的手機號碼,
- *   bankCode: 綁定的銀行代碼,
  *   account: 綁定的銀行帳號,
  *   isDefault: 是否(Y/N)做為預設收款手機號碼
- *   otpCode: OTP 6位數字驗證碼, // TODO 由 APP 透過 localStorage 傳回。
+ *   otpCode: OTP 6位數字驗證碼,
  * }
- * @return true:成功, false:失敗。
- * @throws Exception
+ * @returns true:成功, false:失敗。
  */
 export const createMobileNo = async (param) => {
-  const response = await callAPI('/api/mpt/userCreate', param);
+  const response = await callAPI('/api/mobileAccount/v1/create', param);
   return response.data;
 };
 
 /**
- * 手機號碼收款設定更新
- * @param token
+ * 更新手機號碼收款設定
  * @param request {
  *   mobile: 綁定的手機號碼,
- *   bankCode: 綁定的銀行代碼, // TODO ??? 不用嗎？
  *   account: 綁定的銀行帳號,
- *   otpCode: OTP 6位數字驗證碼, // TODO 由 APP 透過 localStorage 傳回。
+ *   isDefault: 是否(Y/N)做為預設收款手機號碼
+ *   otpCode: OTP驗證碼（6位數字）,
  * }
- * @return true:成功, false:失敗。
- * @throws Exception
+ * @returns true:成功, false:失敗。
  */
 export const editMobileNo = async (param) => {
-  const response = await callAPI('/api/mpt/userChgAcct', param);
+  const response = await callAPI('/api/mobileAccount/v1/update', param);
   return response.data;
 };
 
 /**
- * 手機號碼收款設定取消客戶綁定
- * @param token
+ * 解除手機號碼收款綁定
  * @param request {
  *   mobile: 綁定的手機號碼,
- *   otpCode: OTP 6位數字驗證碼, // TODO 由 APP 透過 localStorage 傳回。
+ *   otpCode: OTP驗證碼（6位數字）,
  * }
- * @return true:成功, false:失敗。
- * @throws Exception
+ * @returns true:成功, false:失敗。
  */
 export const unbindMobileNo = async (param) => {
-  const response = await callAPI('/api/mpt/userUnbind', param);
+  const response = await callAPI('/api/mobileAccount/v1/unbind', param);
   return response.data;
 };

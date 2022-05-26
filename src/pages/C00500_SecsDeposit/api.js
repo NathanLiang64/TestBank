@@ -7,7 +7,7 @@ import { stringDateCodeFormatter } from 'utilities/Generator';
  * @returns 存款帳戶資訊。
  */
 export const getAccountSummary = async (acctTypes) => {
-  const response = await callAPI('/api/deposit/v1/accountSummary', acctTypes);
+  const response = await callAPI('/api/deposit/v1/getAccountSummary', acctTypes);
   return response.data.map((acct) => ({
     acctBranch: acct.branch, // 分行名稱
     acctName: acct.name, // 帳戶名稱或暱稱
@@ -56,8 +56,8 @@ export const getAccountSummary = async (acctTypes) => {
         "currency": "TWD"
     }
  */
-export const getTransactionDetails = async (accountNo) => {
-  const response = await callAPI('/api/deposit/v1/queryAcctTxDtl', { accountNo, currency: 'TWD' });
+export const getTransactions = async (accountNo) => {
+  const response = await callAPI('/api/deposit/v1/getTransactions', { accountNo, currency: 'TWD' });
   return response.data;
 };
 

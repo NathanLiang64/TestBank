@@ -29,6 +29,7 @@ import RegisterModal from './registerModal';
 // import CipherUtil from '../../utilities/CipherUtil';
 // import userAxios from '../../apis/axiosConfig';
 // import JWEUtil from '../../utilities/JWEUtil';
+import { personalDataPreload } from './login.api';
 
 const Login = () => {
   /**
@@ -92,6 +93,7 @@ const Login = () => {
   const onSubmit = async (data) => {
     const { result, message } = await getJwtKey(data);
     if (result === 'success') {
+      personalDataPreload();
       // alert('登入成功');
       history.push('/');
     } else {

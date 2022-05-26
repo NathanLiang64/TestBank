@@ -24,8 +24,7 @@ userAxios().interceptors.request.use(
   async (request) => {
     console.log(`\x1b[33mAPI :/${request.url}`);
     console.log('Request = ', request.data);
-    let token = sessionStorage.getItem('jwtToken'); // BUG! 會因為多執行緒而錯亂，應該從Request中取回才對。
-    if (!token) token = Cookies.get('jwtToken'); // TODO: 為了相容 axiosConfig
+    const token = sessionStorage.getItem('jwtToken'); // BUG! 會因為多執行緒而錯亂，應該從Request中取回才對。
     // console.log(`\x1b[32m[JWT] \x1b[92m${token}`);
     if (token) {
       // eslint-disable-next-line no-param-reassign
@@ -86,8 +85,12 @@ userAxios().interceptors.response.use(
       const { code, message } = response.data;
       // TODO: 導向API失敗的例外處理的頁面！
       console.log(`\x1b[31m${response.config.url} - Exception = (\x1b[33m${code}\x1b[31m) ${message}`);
-      // eslint-disable-next-line react/jsx-one-expression-per-line
-      showError((<p>*** {code} ***<br />{message}</p>));
+      if (code === 'ISG0001') {
+        showError('因為您已閒置過久未操作系統，為考量資訊安全；銀行端已自動切斷您的連線。若您要繼續使用，請重新登入，造成您的不便敬請見諒。'); // TODO , () => closeFunc());
+      } else {
+        // eslint-disable-next-line react/jsx-one-expression-per-line
+        showError((<p>*** {code} ***<br />{message}</p>));
+      }
       return Promise.reject(code);
     }
 
@@ -204,8 +207,7 @@ export const callAPI = async (url, request, config) => {
 const download = async (url, request, filename, contentType) => {
   console.log(`\x1b[33mAPI :/${url}`);
   console.log('Request = ', request);
-  let token = sessionStorage.getItem('jwtToken'); // BUG! 會因為多執行緒而錯亂，應該從Request中取回才對。
-  if (!token) token = Cookies.get('jwtToken'); // TODO: 為了相容 axiosConfig
+  const token = sessionStorage.getItem('jwtToken'); // BUG! 會因為多執行緒而錯亂，應該從Request中取回才對。
 
   // Request Payload 加密
   const aeskey = localStorage.getItem('aesKey');

@@ -13,7 +13,6 @@ const getKey = async (data) => {
     username: e2ee(data.account),
     password: e2ee(data.password),
   };
-  localStorage.setItem('custId', request.custId);
   // console.log(request);
   const loginRs = await callAPI('/auth/login', request);
   if (loginRs.code === '0000' || loginRs.code === 'WEBCTL1008') {

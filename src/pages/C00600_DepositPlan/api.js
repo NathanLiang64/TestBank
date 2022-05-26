@@ -1,6 +1,41 @@
 import { callAPI } from 'utilities/axios';
 
 /**
+ * 取得當前所選帳號之交易明細
+ * @param {*} request {
+    accountNo: 帳號, ex: 00100100063106,
+    custom: 文字檢索條件, ex: 退款.
+    startDate: 交易日期起日, ex: 20200101,
+    endDate: 交易日期迄日, ex: 20210731,
+    txnType: 摘要代碼: 1:跨轉、2:ATM、3:存款息、4:薪轉、5:付款儲存、6:自動扣繳, 可多筆,
+    month: 起始月份，預設為最接近月底的日期為起始索引, ex: 202104,
+    startIndex: 指定起始索引,
+    direct: 方向性.1:正向(新~舊)、2:反向(舊~新)、0:雙向方向性
+  }
+ * @returns 帳戶往來明細清單
+    {
+        "index": 1,
+        "bizDate": "20220425",
+        "txnDate": "20220425",
+        "txnTime": 210156,
+        "description": "現金",
+        "memo": null,
+        "targetMbrId": null,
+        "targetNickName": null,
+        "targetBank": "000",
+        "targetAcct": null,
+        "amount": 36000,
+        "balance": 386000,
+        "cdType": "d",
+        "currency": "TWD"
+    }
+ */
+export const getTransactionDetails = async (request) => {
+  const response = await callAPI('/api/deposit/v1/queryAcctTxDtl', request);
+  return response.data;
+};
+
+/**
  * 取得目前用戶的存錢計劃清單
  * @returns {object}
  {
@@ -31,7 +66,7 @@ import { callAPI } from 'utilities/axios';
     totalSubAccountCount, // 此用戶已擁有的子帳戶數量（不區分用途）
  */
 export const getDepositPlans = async () => {
-  const response = await callAPI('/api/depositPlus/v1/getAllPlans');
+  const response = await callAPI('/api/depositPlan/v1/getAllPlans');
   return response.data;
 };
 
@@ -57,7 +92,7 @@ export const getDepositPlans = async () => {
  * }, ...]
  */
 export const getDepositPlanProgram = async () => {
-  const response = await callAPI('/api/depositPlus/v1/getPrograms');
+  const response = await callAPI('/api/depositPlan/v1/getPrograms');
   return response.data;
 };
 
@@ -82,7 +117,7 @@ export const createDepositPlan = async (request) => {
   //    2. Max(totalSubAccountCount) is 8
   //    3. subAccounts.count must > 0
   // 沒有可用(建)子帳戶時，則提示「*****」
-  const response = await callAPI('/api/depositPlus/v1/create', request);
+  const response = await callAPI('/api/depositPlan/v1/create', request);
   return response.data;
 };
 
@@ -96,7 +131,7 @@ export const createDepositPlan = async (request) => {
  * }
  */
 export const updateDepositPlan = async (request) => {
-  const response = await callAPI('/api/depositPlus/v1/update', request);
+  const response = await callAPI('/api/depositPlan/v1/update', request);
   return response.data;
 };
 
@@ -107,6 +142,6 @@ export const updateDepositPlan = async (request) => {
  */
 export const closeDepositPlan = async (planId) => {
   // 有沒有達標，前端可判斷，因為有帳戶餘額及目標金額
-  const response = await callAPI('/api/depositPlus/v1/close', planId);
+  const response = await callAPI('/api/depositPlan/v1/close', planId);
   return response.data;
 };
