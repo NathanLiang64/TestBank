@@ -54,26 +54,18 @@ const DepositPlanPage = () => {
     setSubAccounts(res.subAccounts);
     setTotalSubAccountCount(res.totalSubAccountCount);
 
-    // 如果從別的頁面跳轉，並欲想顯示特定計畫...
-    if (location.state && ('focusToAccountNo' in location.state)) {
-      // TODO: 如果從別的頁面跳轉，並欲想顯示特定計畫...
-      console.debug('do something with accountNo', location.state.focusToAccountNo);
-    }
-
     dispatch(setWaittingVisible(false));
   }, []);
 
   const renderSlides = () => {
     const slides = Array.from({ length: 3 }, () => <EmptySlide key={uuid()} />);
+    let masterSlideIndex = null;
     if (plans) {
-      let masterSlideIndex;
       plans.forEach((p, i) => {
-        if (p.isMaster) {
-          masterSlideIndex = i;
-        }
+        if (p.isMaster) { masterSlideIndex = i; }
         slides[i] = <DepositPlanHeroSlide key={uuid()} account={p.bindAccountNo} {...p} />;
       });
-      if (masterSlideIndex) {
+      if (masterSlideIndex !== null) {
         const masterSlide = slides.splice(masterSlideIndex, 1)[0];
         slides.splice(1, 0, masterSlide);
       }
@@ -81,37 +73,59 @@ const DepositPlanPage = () => {
     return slides;
   };
 
-  const renderContents = () => {
-    const shouldShowUnavailableSubAccountAlert = () => {
-      if ((totalSubAccountCount >= 8) && !(subAccounts?.length > 0)) {
-        showCustomPrompt({
-          title: '新增存錢計畫',
-          message: '目前沒有可作為綁定存錢計畫之子帳戶，請先關閉帳本後，或先完成已進行中的存錢計畫。',
-          okContent: '現在就來申請吧!',
-        });
-      }
-    };
-    const slides = Array.from({ length: 3 }, () => <EmptyPlan key={uuid()} onMount={shouldShowUnavailableSubAccountAlert} />);
-    if (plans) {
-      let masterSlideIndex;
-      plans.forEach((p, i) => {
-        if (p.isMaster) {
-          masterSlideIndex = i;
-        }
-        slides[i] = <DepositPlan key={uuid()} {...p} />;
+  const handleShowDetailClick = (accountNo, startDate, endDate) => {
+    history.push('/C006001', { focusToAccountNo: accountNo, startDate, endDate });
+  };
+
+  const shouldShowUnavailableSubAccountAlert = () => {
+    if ((totalSubAccountCount >= 8) && !(subAccounts?.length > 0)) {
+      showCustomPrompt({
+        title: '新增存錢計畫',
+        message: '目前沒有可作為綁定存錢計畫之子帳戶，請先關閉帳本後，或先完成已進行中的存錢計畫。',
+        okContent: '現在就來申請吧!',
       });
-      if (masterSlideIndex) {
+    }
+  };
+
+  // TODO: 如果從別的頁面跳轉，並欲想顯示特定計畫...
+  const renderContents = () => {
+    const slides = Array.from({ length: 3 }, () => <EmptyPlan key={uuid()} onMount={shouldShowUnavailableSubAccountAlert} />);
+    let masterSlideIndex = null;
+    if (plans) {
+      plans.forEach((p, i) => {
+        if (p.isMaster) { masterSlideIndex = i; }
+        slides[i] = (
+          <DepositPlan
+            key={uuid()}
+            onShowDetailClick={() => handleShowDetailClick(p.bindAccountNo, p.startDate, p.endDate)}
+            {...p}
+          />
+        );
+      });
+      if (masterSlideIndex !== null) {
         const masterSlide = slides.splice(masterSlideIndex, 1)[0];
         slides.splice(1, 0, masterSlide);
       }
     }
     return slides;
+  };
+
+  const focusToIntentedSlide = (swiper) => {
+    let activeIndex = 1; // 預設中間
+
+    // 如果從別的頁面跳轉，並欲想顯示特定計畫...
+    if (location.state && ('focusToAccountNo' in location.state)) {
+      plans.forEach((p, i) => {
+        if (p.bindAccountNo === location.state.focusToAccountNo) activeIndex = i;
+      });
+    }
+    swiper.slideTo(activeIndex, 0);
   };
 
   return (
     <Layout title="存錢計畫" hasClearHeader>
       <MainScrollWrapper>
-        <SwiperLayout slides={renderSlides()}>
+        <SwiperLayout slides={renderSlides()} onAfterInit={focusToIntentedSlide}>
           { renderContents() }
         </SwiperLayout>
       </MainScrollWrapper>

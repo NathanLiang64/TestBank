@@ -1,36 +1,26 @@
-/* eslint-disable no-use-before-define */
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useState } from 'react';
+import { useLocation } from 'react-router';
 
-/* Elements */
 import Layout from 'components/Layout/Layout';
 import AccountDetails from 'components/AccountDetails/accountDetails';
+import EmptyData from 'components/EmptyData';
 
-/* Reducers & JS functions */
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-// import { loadFuncParams } from 'utilities/BankeePlus';
 import { getTransactionDetails } from './api';
 
 const MoreTranscations = () => {
-  const dispatch = useDispatch();
-
+  const location = useLocation();
   const [plan, setPlan] = useState(null);
 
   /**
-   * 頁面啟動，初始化
+   * 從別的頁面跳轉至此頁時，應指定所查詢的帳戶。
    */
-  useEffect(async () => {
-    dispatch(setWaittingVisible(true));
-
-    // 以啟動參數(預設帳號)
-    // const model = loadFuncParams();
-    const model = {
-      bindAccountNo: '04300498016343',
-    };
-    setPlan(model);
-
-    dispatch(setWaittingVisible(false));
-  }, []);
+  if (location.state && ('focusToAccountNo' in location.state)) {
+    setPlan({
+      accountNo: location.state.focusToAccountNo,
+      startDate: location.state.startDate,
+      endDate: location.state.endDate,
+    });
+  }
 
   /**
    * 更新帳戶交易明細清單
@@ -39,7 +29,9 @@ const MoreTranscations = () => {
   const updateTransactions = async (conditions) => {
     const request = {
       ...conditions,
-      accountNo: plan.bindAccountNo,
+      accountNo: plan?.accountNo,
+      startDate: plan?.startDate,
+      endDate: plan?.endDate,
       currency: 'TWD',
     };
 
@@ -48,9 +40,6 @@ const MoreTranscations = () => {
     return transData;
   };
 
-  /**
-   * 頁面輸出
-   */
   return (
     <Layout title="存錢歷程" hasClearHeader>
       {plan ? (
@@ -59,7 +48,7 @@ const MoreTranscations = () => {
           onSearch={updateTransactions}
           mode={1}
         />
-      ) : null}
+      ) : <EmptyData />}
     </Layout>
   );
 };
