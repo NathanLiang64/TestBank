@@ -45,11 +45,6 @@ const DepositPlanPage = () => {
 
     const res = await getDepositPlans();
 
-    // 為簡化至後元件的利用，將目前金額加入計畫物件之中。
-    res.plans.forEach((plan) => {
-      plan.balance = res.subAccounts[plan.bindAccountNo]?.balance;
-    });
-
     setPlans(res.plans);
     setSubAccounts(res.subAccounts);
     setTotalSubAccountCount(res.totalSubAccountCount);
@@ -73,8 +68,8 @@ const DepositPlanPage = () => {
     return slides;
   };
 
-  const handleShowDetailClick = (accountNo, startDate, endDate) => {
-    history.push('/C006001', { focusToAccountNo: accountNo, startDate, endDate });
+  const handleShowDetailClick = (plan) => {
+    history.push('/C006001', { plan });
   };
 
   const shouldShowUnavailableSubAccountAlert = () => {
@@ -97,7 +92,7 @@ const DepositPlanPage = () => {
         slides[i] = (
           <DepositPlan
             key={uuid()}
-            onShowDetailClick={() => handleShowDetailClick(p.bindAccountNo, p.startDate, p.endDate)}
+            onShowDetailClick={() => handleShowDetailClick(p)}
             {...p}
           />
         );

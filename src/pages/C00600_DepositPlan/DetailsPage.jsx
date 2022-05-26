@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
 import { useLocation } from 'react-router';
 
 import Layout from 'components/Layout/Layout';
 import AccountDetails from 'components/AccountDetails/accountDetails';
-import EmptyData from 'components/EmptyData';
 
 import { getTransactionDetails } from './api';
 
@@ -14,13 +14,11 @@ const MoreTranscations = () => {
   /**
    * 從別的頁面跳轉至此頁時，應指定所查詢的帳戶。
    */
-  if (location.state && ('focusToAccountNo' in location.state)) {
-    setPlan({
-      accountNo: location.state.focusToAccountNo,
-      startDate: location.state.startDate,
-      endDate: location.state.endDate,
-    });
-  }
+  useEffect(() => {
+    if (location.state && ('plan' in location.state)) {
+      setPlan(location.state.plan);
+    }
+  }, []);
 
   /**
    * 更新帳戶交易明細清單
@@ -29,7 +27,7 @@ const MoreTranscations = () => {
   const updateTransactions = async (conditions) => {
     const request = {
       ...conditions,
-      accountNo: plan?.accountNo,
+      accountNo: plan?.bindAccountNo,
       startDate: plan?.startDate,
       endDate: plan?.endDate,
       currency: 'TWD',
@@ -48,7 +46,7 @@ const MoreTranscations = () => {
           onSearch={updateTransactions}
           mode={1}
         />
-      ) : <EmptyData />}
+      ) : null}
     </Layout>
   );
 };
