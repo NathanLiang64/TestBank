@@ -56,7 +56,9 @@ function Layout({
     if (modalData.onOk) {
       if ((await modalData.onOk() === false)) return;
     }
-    dispatch(setModalVisible(false));
+    if (!modalData.noDismiss) {
+      dispatch(setModalVisible(false));
+    }
   };
 
   //
