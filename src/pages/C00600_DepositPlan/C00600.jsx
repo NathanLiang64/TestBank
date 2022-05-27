@@ -91,7 +91,7 @@ const DepositPlanPage = () => {
 
   const handleTerminatePlan = (plan) => {
     const confirmTermination = async () => {
-      const response = await closeDepositPlan({ planId: plan.planId });
+      const response = await closeDepositPlan({ planId: plan.planId, authorizedKey: plan.planId });
       if ('email' in response) {
         ConfirmDepositPlanHasBeenClosed({ email: response.email, onOk: () => history.push('/') });
       } else {
