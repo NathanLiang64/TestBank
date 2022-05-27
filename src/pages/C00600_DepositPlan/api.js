@@ -1,5 +1,8 @@
 import { callAPI } from 'utilities/axios';
 
+import mockTerms from './terms';
+import mockPrograms from './mockPrograms';
+
 /**
  * 取得當前所選帳號之交易明細
  * @param {*} request {
@@ -92,7 +95,8 @@ export const getDepositPlans = async () => {
  * }, ...]
  */
 export const getDepositPlanProgram = async () => {
-  const response = await callAPI('/api/depositPlan/v1/getPrograms');
+  // const response = await callAPI('/api/depositPlan/v1/getPrograms');
+  const response = await new Promise((resolve) => resolve({ data: mockPrograms }));
   return response.data;
 };
 
@@ -143,5 +147,15 @@ export const updateDepositPlan = async (request) => {
 export const closeDepositPlan = async (planId) => {
   // 有沒有達標，前端可判斷，因為有帳戶餘額及目標金額
   const response = await callAPI('/api/depositPlan/v1/close', planId);
+  return response.data;
+};
+
+/**
+ * 取得存錢計畫服務條款
+ * @returns
+ */
+export const getDepositPlanTerms = async () => {
+  // Assume backend store Terms as escaped HTML...
+  const response = await new Promise((resolve) => resolve({ data: decodeURI(mockTerms) }));
   return response.data;
 };

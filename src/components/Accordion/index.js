@@ -12,14 +12,16 @@ import AccordionWrapper from './accordion.style';
 * 3. space -> 此組件預設無 margin，可傳入 "top"、"bottom"、"both" 字串來產生固定高度的 margin
 * 4. children -> 顯示文字，不須設置 children 屬性，直接在標籤內部填寫文字
 * 5. open -> 傳入 open 參數則預設開啟狀態
+* 6. onClick -> 可用來作lazy-loading
 * */
 
 const Accordion = ({
-  className, title, space, children, open,
+  className, title, space, children, open, onClick,
 }) => {
   const [show, setShow] = useState(open);
 
   const handleOpen = () => {
+    if (typeof onClick === 'function') onClick();
     setShow(!show);
   };
 
