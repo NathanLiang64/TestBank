@@ -28,7 +28,7 @@ import {
 } from './utils/prompts';
 
 /**
- * C00600 存錢計畫
+ * C00600 存錢計畫 首頁
  */
 const DepositPlanPage = () => {
   const history = useHistory();
