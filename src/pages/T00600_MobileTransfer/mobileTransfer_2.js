@@ -12,7 +12,7 @@ import Layout from 'components/Layout/Layout';
 /* Styles */
 import MobileTransferWrapper from './mobileTransfer.style';
 
-import { createMobileNo } from './api';
+import { createMobileNo, editMobileNo, unbindMobileNo } from './api';
 
 const MobileTransfer2 = ({ location }) => {
   const history = useHistory();
@@ -94,9 +94,26 @@ const MobileTransfer2 = ({ location }) => {
         isDefault: isDefault ? 'Y' : 'N',
         otpCode: result.data,
       };
-      const response = await createMobileNo(param);
-      console.log(response);
-      setResultDialog(response);
+      // 新增設定
+      if (!isModifyConfirmPage) {
+        const response = await createMobileNo(param);
+        setResultDialog(response);
+      }
+      // 編輯或取消設定
+      if (isModifyConfirmPage) {
+        if (dealType === 'edit') {
+          const editResponse = await editMobileNo(param);
+          setResultDialog(editResponse);
+        }
+        if (dealType === 'delete') {
+          const deleteParam = {
+            mobile,
+            otpCode: result.data,
+          };
+          const deleteResponse = await unbindMobileNo(deleteParam);
+          setResultDialog(deleteResponse);
+        }
+      }
     }
   };
 

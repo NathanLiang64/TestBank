@@ -11,7 +11,7 @@ import BottomDrawer from 'components/BottomDrawer';
 import Layout from 'components/Layout/Layout';
 import MobileTransferModifyForm from './mobileTransferModifyForm';
 
-import { fetchMobiles } from './api';
+import { fetchMobiles, fetchName } from './api';
 
 /* Styles */
 import MobileTransferWrapper from './mobileTransfer.style';
@@ -23,11 +23,10 @@ const MobileTransfer = () => {
   const [mobileTransferData, setMobileTransferData] = useState([]);
   const [mobilesList, setMobilesList] = useState([]);
   const [modifyData, setModifyData] = useState({
-    id: 1,
-    mobile: '0988392899',
-    isDefault: true,
-    account: '00300400326307',
-    userName: '王小明',
+    mobile: '',
+    account: '',
+    status: '',
+    isDefault: '',
   });
   const [drawerOpen, setDrawerOpen] = useState(false);
   // 新增手機號碼收款
@@ -82,19 +81,22 @@ const MobileTransfer = () => {
 
   // 編輯手機號碼收款
   const editMobileTransferSetting = (data) => {
-    console.log(data);
     setModifyData(data);
     setDrawerOpen(true);
   };
 
   // 刪除手機號碼收款
-  const deleteMobileTransferSetting = (data) => {
+  const deleteMobileTransferSetting = async (data) => {
+    const { custName } = await fetchName();
     history.push(
       '/mobileTransfer2',
       {
         type: 'delete',
         isModify: true,
-        data,
+        data: {
+          userName: custName || '',
+          ...data,
+        },
       },
     );
   };
@@ -108,7 +110,7 @@ const MobileTransfer = () => {
   const renderMobileTransferItems = () => mobileTransferData
     .map((item) => (
       <SettingItem
-        key={item.id}
+        key={item.mobile}
         mainLable={item.mobile}
         subLabel={`${item.isDefault ? '預設收款帳戶' : '非預設收款帳戶'} ${item.account}`}
         editClick={() => editMobileTransferSetting(item)}
