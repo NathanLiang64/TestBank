@@ -7,20 +7,25 @@ import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
 import SwiperLayout from 'components/SwiperLayout';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { showDrawer, showCustomPrompt } from 'utilities/MessageModal';
-import { stringToDate } from 'utilities/Generator';
-import {
-  AccountIcon6, RadioUncheckedIcon, TransactionIcon1,
-} from 'assets/images/icons';
+import { closeFunc } from 'utilities/BankeePlus';
+import { showDrawer } from 'utilities/MessageModal';
+import { AccountIcon6, RadioUncheckedIcon, TransactionIcon1 } from 'assets/images/icons';
 
 import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
 import EmptySlide from './components/EmptySlide';
 import EmptyPlan from './components/EmptyPlan';
 import DepositPlan from './components/DepositPlan';
 
-// import { getAccountSummary } from '../C00300_NtdDeposit/api';
-import { getDepositPlans, updateDepositPlan } from './api';
-// import { getDepositPlans, updateDepositPlan, closeDepositPlan } from './api';
+import { getAccountSummary } from '../C00300_NtdDeposit/api';
+import { getDepositPlans, updateDepositPlan, closeDepositPlan } from './api';
+import {
+  AlertNoMainAccount,
+  AlertMainDepositPlanHasBeenSetAlready,
+  AlertUnavailableSubAccount,
+  PromptShouldCloseDepositPlanOrNot,
+  ConfirmDepositPlanHasBeenClosed,
+  ConfirmNotToCloseDepositPlan,
+} from './utils/prompts';
 
 /**
  * C00600 存錢計畫
@@ -37,16 +42,10 @@ const DepositPlanPage = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    // 是否已申請bankee帳戶(台幣)
-    const acctData = null; // await getAccountSummary('MC'); // M=台幣主帳戶、C=台幣子帳戶
+    // 檢查是否已申請主帳戶，「否」則到申請頁。
+    const acctData = await getAccountSummary('M');
     if (!acctData?.length) {
-      showCustomPrompt({
-        title: '新增存錢計畫',
-        message: '您尚未持有Bankee存款帳戶',
-        // TODO: 沒有「台幣帳戶」導去申請
-        onOk: () => history.goBack(),
-        okContent: '現在就來申請吧!',
-      });
+      AlertNoMainAccount({onOk: () => history.goBack});
     }
 
     const response = await getDepositPlans();
@@ -58,68 +57,48 @@ const DepositPlanPage = () => {
     dispatch(setWaittingVisible(false));
   }, []);
 
-  const handleEditClick = () => {
-    // TODO
-    console.debug('handleEditClick');
-  };
-
+  /**
+   * 產生上方標題圖時會用的
+   */
   const handleSetMasterPlan = (plan) => {
     if (plan.isMaster) {
-      showCustomPrompt({
-        title: '設定為主要存錢計畫',
-        message: '目前的計畫已設定為主要存錢計畫。',
-        okContent: '了解!',
-      });
-    } else {
-      updateDepositPlan({ planId: plan.planId, isMaster: true });
-      // TODO: if failed?
+      AlertMainDepositPlanHasBeenSetAlready();
+      return;
+    }
 
-      // Center the plan slide instead of fetching API again.
-      setPlans(plans.map((p) => {
-        p.isMaster = false;
-        if (p.planId === plan.planId) p.isMaster = true;
-        return p;
-      }));
-      if (swiperController) swiperController.slideTo(1);
+    updateDepositPlan({ planId: plan.planId, isMaster: true });
+    // TODO: if failed?
+
+    // 一併更新前端資料
+    setPlans(plans.map((p) => {
+      p.isMaster = false;
+      if (p.planId === plan.planId) p.isMaster = true;
+      return p;
+    }));
+
+    // 移動畫面顯示主要計畫
+    if (swiperController) swiperController.slideTo(1);
+  };
+
+  const handleGoBackClick = () => {
+    const shouldBlockGoBack = document.querySelector('.blockGoBack');
+    if (shouldBlockGoBack) {
+      ConfirmNotToCloseDepositPlan();
+    } else {
+      closeFunc();
     }
   };
 
   const handleTerminatePlan = (plan) => {
     const confirmTermination = async () => {
-      // const response = await closeDepositPlan({ planId: plan.planId });
-      const response = { email: 'email' };
-
-      if ('email' in response) { // result=true 的時候有email -> 有email時是成功的。
-        showCustomPrompt({
-          title: '結束本計畫',
-          message: `本存錢計畫已結束，存錢計畫相關資訊及存錢歷程將匯出至留存信箱${response.email}`,
-          okContent: '確認',
-          onOk: () => history.push('/'),
-        });
+      const response = await closeDepositPlan({ planId: plan.planId });
+      if ('email' in response) {
+        ConfirmDepositPlanHasBeenClosed({ email: response.email, onOk: () => history.push('/') });
       } else {
-        // TODO: show error message
+        // TODO: FBI-26 show error message
       }
     };
-
-    const { endDate } = plan;
-    const isPlanExpired = endDate && (stringToDate(endDate) < new Date());
-
-    showCustomPrompt({
-      title: '結束本計畫',
-      message: (
-        <p style={{ textAlign: 'left' }}>
-          您確定要
-          {!isPlanExpired && '提早'}
-          結束本計畫?
-          <br />
-          本計畫帳上餘額將轉回主帳戶
-        </p>
-      ),
-      okContent: '確認結束',
-      cancelContent: '我再想想',
-      onOk: () => confirmTermination(),
-      noDismiss: true,
-    });
+    PromptShouldCloseDepositPlanOrNot({ endDate: plan.endDate, onOk: () => confirmTermination});
   };
 
   const handleMoreClick = (plan) => {
@@ -144,23 +123,20 @@ const DepositPlanPage = () => {
     showDrawer('', options);
   };
 
-  const handleShowDetailClick = (plan) => {
-    history.push('/C006001', { plan });
+  const handleEditClick = () => {
+    // TODO: FBI-15
+    console.debug('handleEditClick');
   };
 
-  const shouldShowUnavailableSubAccountAlert = () => {
-    if ((totalSubAccountCount >= 8) && !(subAccounts?.length > 0)) {
-      showCustomPrompt({
-        title: '新增存錢計畫',
-        message: '目前沒有可作為綁定存錢計畫之子帳戶，請先關閉帳本後，或先完成已進行中的存錢計畫。',
-        okContent: '現在就來申請吧!',
-      });
-    }
-  };
-
+  /**
+   * 產生上方標題圖的 slides
+   * 預設3張新增計畫頁，再替換成後端回傳的計畫，最後再把主要計畫移至中間。
+   */
   const renderSlides = () => {
     const slides = Array.from({ length: 3 }, () => <EmptySlide key={uuid()} />);
+
     let masterSlideIndex = null;
+
     if (plans) {
       plans.forEach((p, i) => {
         if (p.isMaster) { masterSlideIndex = i; }
@@ -174,6 +150,7 @@ const DepositPlanPage = () => {
           />
         );
       });
+
       if (masterSlideIndex !== null) {
         const masterSlide = slides.splice(masterSlideIndex, 1)[0];
         slides.splice(1, 0, masterSlide);
@@ -182,9 +159,26 @@ const DepositPlanPage = () => {
     return slides;
   };
 
+  /**
+   * 產生下方內容時會用的
+   */
+  const handleShowDetailClick = (plan) => {
+    history.push('/C006001', { plan });
+  };
+
+  const shouldShowUnavailableSubAccountAlert = () => {
+    if ((totalSubAccountCount >= 8) && !(subAccounts?.length > 0)) AlertUnavailableSubAccount();
+  };
+
+  /**
+   * 產生下方內容的 slides
+   * 預設3張新增計畫頁，再替換成後端回傳的計畫，最後再把主要計畫移至中間。
+   */
   const renderContents = () => {
     const slides = Array.from({ length: 3 }, () => <EmptyPlan key={uuid()} onMount={shouldShowUnavailableSubAccountAlert} />);
+
     let masterSlideIndex = null;
+
     if (plans) {
       plans.forEach((p, i) => {
         if (p.isMaster) { masterSlideIndex = i; }
@@ -196,6 +190,7 @@ const DepositPlanPage = () => {
           />
         );
       });
+
       if (masterSlideIndex !== null) {
         const masterSlide = slides.splice(masterSlideIndex, 1)[0];
         slides.splice(1, 0, masterSlide);
@@ -204,10 +199,13 @@ const DepositPlanPage = () => {
     return slides;
   };
 
+  /**
+   * 頁面載入後，依需求切換應該顯示的計畫。
+   * 如果是從別的頁面跳轉，可能會想要顯示特定的計畫，或預設顯示主要計畫。
+   */
   const focusToIntentedSlide = (swiper) => {
     let activeIndex = 1; // 預設中間
 
-    // 如果從別的頁面跳轉，並欲想顯示特定計畫...
     if (location.state && ('focusToAccountNo' in location.state)) {
       plans.forEach((p, i) => {
         if (p.bindAccountNo === location.state.focusToAccountNo) activeIndex = i;
@@ -215,12 +213,16 @@ const DepositPlanPage = () => {
     }
     swiper.slideTo(activeIndex, 0);
 
-    // Side-effect: save swiper for later use.
+    // Side-effect: 因為設定主計畫後會重新排序，所以必須呼叫swiper切換頁面，故存起來。
     if (!swiperController) setSwipterController(swiper);
   };
 
+  /**
+   * 產生頁面
+   * 只要提供相同數量的 slides 和 content，SwiperLayout會自動切換對應的內容。
+   */
   return (
-    <Layout title="存錢計畫" hasClearHeader>
+    <Layout title="存錢計畫" hasClearHeader goBackFunc={handleGoBackClick}>
       <MainScrollWrapper>
         <SwiperLayout slides={renderSlides()} onAfterInit={focusToIntentedSlide}>
           { renderContents() }

@@ -44,9 +44,7 @@ const DepositPlan = ({
   const shouldShowButton = isPlanExpired || isPlanCompleted;
   const stage = getStage(isPlanFailed, progressPercentage);
 
-  // const { rate } = progInfo;
-  // TODO: remove after API implemented.
-  const { rate } = progInfo ?? { rate: '0.6' };
+  const { rate } = progInfo;
   const fancyCycleTimming = () => {
     if (cycleMode === 1) {
       return `周${weekNumberToChinese(cycleTiming === 0 ? 7 : cycleTiming)}`;
@@ -72,7 +70,14 @@ const DepositPlan = ({
         { endDate && <div>{dateFormatter(stringToDate(endDate))}到期</div>}
         {/* eslint-enable react/jsx-one-expression-per-line */}
       </div>
-      {shouldShowButton ? <FEIBButton className="mt-3" onClick={onTerminatePlanClick}>結束本計畫</FEIBButton> : (
+      {shouldShowButton ? (
+        <>
+          <FEIBButton className="mt-3" onClick={onTerminatePlanClick}>結束本計畫</FEIBButton>
+
+          {/* Use as indicator to overwrite goBackFunc (in Layout) or not. */}
+          <div className="blockGoBack" />
+        </>
+      ) : (
         <div className="pad">
           <hr />
           <ThreeColumnInfoPanel content={bonusInfo} />
