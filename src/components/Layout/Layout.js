@@ -56,7 +56,10 @@ function Layout({
     if (modalData.onOk) {
       if ((await modalData.onOk() === false)) return;
     }
-    dispatch(setModalVisible(false));
+    // 如果有需要接續 modal 得操作，可以設定 noDismiss 為 true，以避免點擊ok按鈕後，下個 modal 遭關閉。
+    if (!modalData.noDismiss) {
+      dispatch(setModalVisible(false));
+    }
   };
 
   //

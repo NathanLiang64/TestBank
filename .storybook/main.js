@@ -21,12 +21,13 @@ module.exports = {
     config.resolve.alias = {
       ...config.resolve.alias,
       assets: path.resolve(__dirname, '../src/assets/'),
-      themes: path.resolve(__dirname, '../src/themes/'),
+      apis: path.resolve(__dirname, '../src/apis/'),
       components: path.resolve(__dirname, '../src/components/'),
-      utilities: path.resolve(__dirname, '../src/utilities/'),
-      stores: path.resolve(__dirname, '../src/stores/'),
-      proto: path.resolve(__dirname, '../src/proto/'),
       pages: path.resolve(__dirname, '../src/pages/'),
+      proto: path.resolve(__dirname, '../src/proto/'),
+      stores: path.resolve(__dirname, '../src/stores/'),
+      themes: path.resolve(__dirname, '../src/themes/'),
+      utilities: path.resolve(__dirname, '../src/utilities/'),
     };
 
     // Return the altered config
