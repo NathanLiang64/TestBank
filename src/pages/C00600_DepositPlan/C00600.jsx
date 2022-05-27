@@ -143,7 +143,7 @@ const DepositPlanPage = () => {
         slides[i] = (
           <DepositPlanHeroSlide
             key={uuid()}
-            account={p.bindAccountNo}
+            accountNo={p.bindAccountNo}
             onMoreClicked={() => handleMoreClick(p)}
             onEditClicked={() => handleEditClick(p)}
             {...p}
