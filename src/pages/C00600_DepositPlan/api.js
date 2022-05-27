@@ -58,8 +58,10 @@ export const getTransactionDetails = async (request) => {
       cycleMode, // 存入週期（1.每周、2.每月）
       cycleTiming, // 存入時機；每周：0～6(周日～周六)、每月：1~28及月底(31)
       amount, // 每期存入金額，格式：99999。
+      period, // 計劃存入期數
       goalAmount: // 依 amount * 期數 計算出的計劃目標存款金額。
       bindAccountNo, // 綁定的子帳戶（帳號、餘額）
+      currentBalance, // 目前子帳戶的存款餘額
       isMaster, // 表示呈現在APP首頁的主要計劃，即進存錢計劃功能的預設開啟計劃。
     }, ...],
     subAccounts: [{ // 可用子帳戶清單及是否有餘額，已排除綁定其他用途的子帳戶
@@ -112,8 +114,14 @@ export const getDepositPlanProgram = async () => {
  *    cycleTiming, // 存入時機；每周：0～6(周日～周六)、每月1~28或月底(31)；此欄位不可為空值。
  *    amount, // 每共月存入金額，格式：99999。此欄位不可為空值。
  *    bindAccountNo, // 使用的子帳戶，例：04300491000001；若子帳戶為空值，表示建立新子帳戶。
+ *    currentBalance, // 目前子帳戶的存款餘額。
+ *    authorizedKey, 授權金鑰。這個值是經由通過 APP 驗證後取得。
  * }
- * @returns 計劃代碼（planId, UUID 型式）。有值表示建立成功；若為 null 表示建立失敗，會傳回錯誤。
+ * @returns {
+ *   {boolean} result: API執行結果。
+ *   planId: 計劃代碼（UUID 型式）。有值表示建立成功；若為 null 表示建立失敗，會傳回錯誤。
+ *   currentBalance, // 目前子帳戶的存款餘額, 可以用來判斷是否立即轉帳成功。
+ * }
  */
 export const createDepositPlan = async (request) => {
   // Rule:
@@ -133,6 +141,9 @@ export const createDepositPlan = async (request) => {
  *    image, // Title圖片（前端自訂代碼 或 由用戶上傳的Base64影像資料；空字串表示不變更）
  *    isMaster, // 表示主要計劃的旗標；若為 null，則表示不變更。
  * }
+ * @returns {
+ *   {boolean} result: API執行結果。
+ * }
  */
 export const updateDepositPlan = async (request) => {
   const response = await callAPI('/api/depositPlan/v1/update', request);
@@ -140,9 +151,15 @@ export const updateDepositPlan = async (request) => {
 };
 
 /**
- * 結束存錢計劃
- * @param {*} planId 計劃代碼（UUID 型式）
- * @returns
+ * 結束存錢計劃，並將往來記錄以數位存摺模式寄給用戶。
+ * @param {*} {
+ *   planId 計劃代碼（UUID 型式）
+ *   authorizedKey, 授權金鑰。這個值是經由通過 APP 驗證後取得。
+ * }
+ * @returns {
+ *   {boolean} result: API執行結果。
+ *   email: 存錢計畫、存錢歷程打包成PDF檔(需要加密)的寄送郵箱。
+ * }
  */
 export const closeDepositPlan = async (planId) => {
   // 有沒有達標，前端可判斷，因為有帳戶餘額及目標金額
