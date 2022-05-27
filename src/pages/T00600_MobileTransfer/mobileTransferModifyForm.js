@@ -16,6 +16,7 @@ import {
 } from 'components/elements';
 import ConfirmButtons from 'components/ConfirmButtons';
 import Accordion from 'components/Accordion';
+import { fetchName } from './api';
 
 /* Styles */
 import MobileTransferWrapper from './mobileTransfer.style';
@@ -44,16 +45,19 @@ const MobileTransferModifyForm = ({ onClose, modifyData }) => {
 
   const [accountDefault, setAccountDefault] = useState(true);
 
+  // 取得姓名
+  const getUserName = async () => {
+    const { custName } = await fetchName();
+    setValue('userName', custName || '');
+  };
+
   const switchAccountDefault = () => {
     setAccountDefault(!accountDefault);
   };
 
-  const onSubmit = (formData) => {
-    // eslint-disable-next-line no-console
-    console.log(formData);
+  const onSubmit = async (formData) => {
     const data = {
       isDefault: accountDefault,
-      id: modifyData.id,
       ...formData,
     };
     history.push(
@@ -67,11 +71,10 @@ const MobileTransferModifyForm = ({ onClose, modifyData }) => {
   };
 
   useEffect(() => {
-    console.log(modifyData);
+    getUserName();
     const {
-      userName, account, mobile, isDefault,
+      account, mobile, isDefault,
     } = modifyData;
-    setValue('userName', userName);
     setValue('account', account);
     setValue('mobile', mobile);
     setAccountDefault(isDefault);
