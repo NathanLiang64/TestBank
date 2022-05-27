@@ -185,10 +185,10 @@ export const callAPI = async (url, request, config) => {
             break;
         }
       }
+    })
+    .catch((err) => {
+      response = err;
     });
-  // .catch((rs) => {
-  //   console.log('catch: {}', rs);
-  // })
   // // eslint-disable-next-line no-unused-vars
   // .finally((rs) => {
   //   // console.log('finally: {}', rs);

@@ -84,14 +84,14 @@ const MobileTransfer1 = () => {
       ...formData,
     };
     console.log(data);
-    // history.push(
-    //   '/mobileTransfer2',
-    //   {
-    //     type: 'add',
-    //     isModify: false,
-    //     data,
-    //   },
-    // );
+    history.push(
+      '/mobileTransfer2',
+      {
+        type: 'add',
+        isModify: false,
+        data,
+      },
+    );
   };
 
   const goBack = () => history.goBack();
