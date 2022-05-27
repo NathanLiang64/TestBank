@@ -49,7 +49,7 @@ const MobileTransfer = () => {
     setMobileTransferData(bindings || []);
     setMobilesList(mobiles || []);
     // 檢查是否綁定快速登入
-    if (bindQuickLogin !== 'N') {
+    if (bindQuickLogin === 'N') {
       customPopup(
         '系統訊息',
         '為符合手機號碼轉帳相關規範，請至設定>指紋辨識/臉部辨識/圖形密碼登入設定，進行快速登入綁定，造成不便，敬請見諒。',
