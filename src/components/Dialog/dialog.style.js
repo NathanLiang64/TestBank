@@ -27,7 +27,7 @@ const DialogWrapper = styled(MaterialDialog)`
     padding-top: 0;
     padding-bottom: 0;
     font-size: 1.5rem;
-    min-height: 8.8rem;
+    min-height: 5.5rem;
     color: ${({ theme }) => theme.colors.text.dark};
   }
 
