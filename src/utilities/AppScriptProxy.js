@@ -1,7 +1,10 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable brace-style */
 /* eslint-disable prefer-template */
-import { sendOtpCode } from 'apis/settingApi';
+import {
+  sendOtpCode,
+  veriifyOtp,
+} from 'proto/forAppApi';
 import { customPopup, showError } from './MessageModal';
 
 const device = {
@@ -38,8 +41,15 @@ const funcStack = {
       const params = closedItem.keepData ?? startItem.params;
       localStorage.setItem('funcParams', JSON.stringify(params));
       console.log('Close Function and Back to (', startItem.func, ')', params);
-    } else localStorage.removeItem('funcParams');
+    } else {
+      localStorage.removeItem('funcParams');
+    }
     return startItem;
+  },
+  peek: () => {
+    const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
+    const lastItem = stack[stack.length - 1];
+    return lastItem;
   },
   clear: () => {
     localStorage.setItem('funcStack', '[]');
@@ -221,7 +231,7 @@ async function transactionAuth(txnType, otpMode) {
       // 由 APP 發出 OTP，並將識別碼顯示於畫面，待 User 輸入驗證碼後。
       // Controller 將 OTP ID 存入 JwtToken
       // APP 將 User 輸入的驗證碼寫入 localStorege 再由 WebView 取回。
-      appSendOTP(otpMode, (result) => {
+      sendOTP(otpMode, (result) => {
         console.log('*** OTP Result from APP : ', result);
         localStorage.setItem('appJsResponse', result.data); // 將 APP 傳回的資料寫回。
         resolve(result);
@@ -242,8 +252,9 @@ async function transactionAuth(txnType, otpMode) {
  *   data: 執行結果。例：OTP驗證，則傳回使用者輸入的「驗證碼」。
  * }
  */
-async function appSendOTP(otpMode, callback) {
-  const apiRs = await sendOtpCode(otpMode); // 不需提供其他參數
+async function sendOTP(otpMode, callback) {
+  const funcCode = funcStack.peek()?.func ?? '/'; // 取得目前執行中的單元功能代碼；首頁因為沒有功能代碼，所以用'/'表示。
+  const sendRs = await sendOtpCode(funcCode, otpMode);
 
   // Web測試版。
   const body = (
@@ -252,21 +263,29 @@ async function appSendOTP(otpMode, callback) {
       <br />
       <p>{`發送門號：${(otpMode % 10) === 1 ? '非約轉門號' : 'CIF門號'}`}</p>
       <br />
-      <p>{`OTP識別碼：${apiRs.transId}`}</p>
+      <p>{`OTP識別碼：${sendRs.transId}`}</p>
       <br />
       <p>輸入驗證碼</p>
-      <input type="text" id="otpVerify" defaultValue={apiRs.otpCode} />
+      <input type="text" id="otpVerify" defaultValue={sendRs.otpCode} />
     </div>
   );
-  const onOk = () => {
-    // TODO 驗證 OTP Code 是否正確。
-    callback({
-      code: '00', // 正常結果。
-      data: document.querySelector('#otpVerify').value, // 使用者輸入的「驗證碼」。 // TODO 取得 輸入的驗證碼
-    });
+  // 驗證 OTP Code 是否正確。
+  const onOk = async () => {
+    const otpCode = document.querySelector('#otpVerify').value; // 使用者輸入的「驗證碼」。
+    const veriifyRs = await veriifyOtp(funcCode, otpCode);
+    if (veriifyRs.result === true) {
+      callback({
+        code: '00', // 正常結果。
+        data: otpCode,
+      });
+    } else {
+      await showError(veriifyRs.message);
+    }
+    return veriifyRs.result;
   };
+  // 表示使用者取消。
   const onCancel = () => callback({
-    code: '01', // 表示使用者取消。
+    code: '01',
     data: null,
   });
   customPopup('OTP 驗證 (測試版)', body, onOk, onCancel);
