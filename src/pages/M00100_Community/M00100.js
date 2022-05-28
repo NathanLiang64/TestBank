@@ -12,7 +12,7 @@ import { FEIBInput, FEIBInputLabel, FEIBButton, FEIBIconButton, FEIBTextarea } f
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showInfo } from 'utilities/MessageModal';
-import { loadFuncParams, startFunc, shareMessage } from 'utilities/BankeePlus';
+import { loadFuncParams, startFunc, shareMessage } from 'utilities/AppScriptProxy';
 import { ArrowNextIcon, EditIcon } from 'assets/images/icons';
 import { hideName, stringDateFormatter } from 'utilities/Generator';
 import theme from 'themes/theme';

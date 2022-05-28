@@ -5,8 +5,9 @@ import { sendOtpCode } from 'apis/settingApi';
 import { customPopup, showError } from './MessageModal';
 
 const device = {
-  ios: () => /iPhone|iPad|iPod/i.test(navigator.userAgent),
-  android: () => /Android/i.test(navigator.userAgent),
+  // TODO: 開發時使用，上版前應刪除！
+  ios: () => false, // /iPhone|iPad|iPod/i.test(navigator.userAgent),
+  android: () => false, // /Android/i.test(navigator.userAgent),
 };
 
 const funcStack = {

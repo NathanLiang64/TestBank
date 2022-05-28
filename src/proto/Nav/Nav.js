@@ -2,7 +2,7 @@
 /* eslint-disable arrow-body-style */
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { startFunc, transactionAuth } from 'utilities/BankeePlus';
+import { startFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
 import { logout } from './Nav.api';
@@ -37,7 +37,7 @@ const Nav = () => {
           <div onClick={() => startFunc('B00600')}>B00600 更多... (待施工)</div>
           <div onClick={async () => {
             const result = await transactionAuth('ZZZ', 11);
-            console.log('*** OTP Result from BankeePlus : ', result);
+            console.log('*** OTP Result from AppScriptProxy : ', result);
           }}
           >
             OTP測試

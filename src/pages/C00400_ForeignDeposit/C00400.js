@@ -12,7 +12,7 @@ import { FEIBInputLabel, FEIBInput, FEIBErrorMessage } from 'components/elements
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
-import { loadFuncParams, startFunc, closeFunc } from 'utilities/BankeePlus';
+import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
 import {
   getAccountSummary,
   getTransactions,
