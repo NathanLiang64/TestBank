@@ -1,33 +1,43 @@
 /**
- * // DEBUG
+ * // DEBUG 用
  * 這些 API 是用來模擬 APP 功能用的，並非提供給 WebView 使用！
  */
 
 import { callAPI } from 'utilities/axios';
 
 /**
- * 單元功能要求發送OTP驗證碼簡訊，並依 otpMode 決定發送閘道及手機門號。
- * @param {*} funcCode: 要求發送OTP的單元功能。 這個欄位由 APP 從 FunctionController 取得。
- * @param {*} otpMode: OTP模式(11/12/21/22)，十位數：1＝MBGW,2=APPGW、個位數：1=發送至非約轉門號, 2=發送至CIF門號
+ * 單元功能要求 建立交易授權驗證，必要時會發送OTP驗證碼簡訊，並依 otpMode 決定發送閘道及手機門號。
+ * @param {*} request {
+ *   funcCode: 要求發送OTP的單元功能。 這個欄位由 APP 從 FunctionController 取得。
+ *   authCode: 要求進行的驗證模式的代碼。
+ *   mobile: 簡訊識別碼發送的手機門號。當綁定或變更門號時，因為需要確認手機號碼的正確性，所以要再驗OTP
+ * }
  * @returns {
- *   transId: OTP簡訊中的識別碼。
+ *   key: 本次要求驗證的金鑰，用來檢核使用者輸入
+ *   otpSmsId: OTP簡訊中的識別碼。
+ *   otpMobile: 簡訊識別碼發送的手機門號。
  * }
  */
-export const sendOtpCode = async (funcCode, otpMode) => {
-  const response = await callAPI('/api/v1/sendOtp', { funcCode, otpMode });
+export const createTransactionAuth = async (request) => {
+  const response = await callAPI('/api/transactionAuth/v1/create', request);
   return response.data;
 };
 
 /**
- * 單元功能要求檢驗使用者輸入的OTP驗證碼。
- * @param {*} funcCode: 要求發送OTP的單元功能。 這個欄位由 APP 從 FunctionController 取得。
- * @param {*} otpCode: 使用者輸入的驗證碼。
+ * 依指定的驗證模式，對使用者輸入的資料進行驗證。
+ * @param {*} request {
+ *   authKey: 本次要求驗證的金鑰，需透過 createTransactionAuth 取得。
+ *   funcCode: 要求發送OTP的單元功能。 這個欄位由 APP 從 FunctionController 取得。
+ *   auth2FA: 可以讓Server端確認真的通過驗證的資料，例：全景的驗證資料
+ *   netbankPwd: 使用者輸入的「網銀密碼」，已做過 E2EE 加密。
+ *   otpCode: 使用者輸入的「驗證碼」。
+ * }
  * @returns {
- *   result: 驗證結果。 true/false
- *   message: 檢查結果說明。
+ *   result: 驗證結果(true/false)
+ *   message: 驗證失敗狀況描述。
  * }
  */
-export const veriifyOtp = async (funcCode, otpCode) => {
-  const response = await callAPI('/api/v1/veriifyOtp', { funcCode, otpCode });
+export const transactionAuthVeriify = async (request) => {
+  const response = await callAPI('/api/transactionAuth/v1/veriify', request);
   return response.data;
 };

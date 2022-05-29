@@ -36,11 +36,32 @@ const Nav = () => {
           <div onClick={() => startFunc('D00100')}>D00100 台幣轉帳 - (施工中)</div>
           <div onClick={() => startFunc('B00600')}>B00600 更多... (待施工)</div>
           <div onClick={async () => {
-            const result = await transactionAuth('ZZZ', 11);
+            const result = await transactionAuth(0x35);
             console.log('*** OTP Result from AppScriptProxy : ', result);
           }}
           >
-            OTP測試
+            台幣-非約轉(2FA / PWD+OTP)
+          </div>
+          <div onClick={async () => {
+            const result = await transactionAuth(0x30);
+            console.log('*** OTP Result from AppScriptProxy : ', result);
+          }}
+          >
+            台幣-約轉(2FA / PWD)
+          </div>
+          <div onClick={async () => {
+            const result = await transactionAuth(0x17, '0900123456');
+            console.log('*** OTP Result from AppScriptProxy : ', result);
+          }}
+          >
+            生物辨識/圖形-設定(PWD+OTP)
+          </div>
+          <div onClick={async () => {
+            const result = await transactionAuth(0x20);
+            console.log('*** OTP Result from AppScriptProxy : ', result);
+          }}
+          >
+            生物辨識/圖形-解除(2FA)
           </div>
         </div>
 
