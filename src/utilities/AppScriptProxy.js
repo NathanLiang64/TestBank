@@ -1,12 +1,19 @@
+/* eslint-disable no-bitwise */
+/* eslint-disable object-curly-newline */
 /* eslint-disable no-use-before-define */
 /* eslint-disable brace-style */
 /* eslint-disable prefer-template */
-import { sendOtpCode } from 'apis/settingApi';
-import { customPopup, showError } from './MessageModal';
+import {
+  createTransactionAuth,
+  transactionAuthVeriify,
+} from 'proto/forAppApi';
+import e2ee from './E2ee';
+import { customPopup, showError, showInfo } from './MessageModal';
 
 const device = {
-  ios: () => /iPhone|iPad|iPod/i.test(navigator.userAgent),
-  android: () => /Android/i.test(navigator.userAgent),
+  // TODO: 開發時使用，上版前應刪除！
+  ios: () => false, // /iPhone|iPad|iPod/i.test(navigator.userAgent),
+  android: () => false, // /Android/i.test(navigator.userAgent),
 };
 
 const funcStack = {
@@ -37,8 +44,15 @@ const funcStack = {
       const params = closedItem.keepData ?? startItem.params;
       localStorage.setItem('funcParams', JSON.stringify(params));
       console.log('Close Function and Back to (', startItem.func, ')', params);
-    } else localStorage.removeItem('funcParams');
+    } else {
+      localStorage.removeItem('funcParams');
+    }
     return startItem;
+  },
+  peek: () => {
+    const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
+    const lastItem = stack[stack.length - 1];
+    return lastItem;
   },
   clear: () => {
     localStorage.setItem('funcStack', '[]');
@@ -197,78 +211,156 @@ function setAuthdata(jwtToken) {
 
 /**
  * 由 APP 發起交易驗證功能，包含輸入網銀帳密、生物辨識、OTP...。
- * @param {*} txnType 交易類型，例：設定類（通知設定、變更基本資料...）、交易類（轉帳、換匯）
- * @param {*} otpMode OTP模式(11/12/21/22)，十位數：1＝MBGW,2=APPGW、個位數：1=發送至非約轉門號, 2=發送至CIF門號
+ * @param {*} authCode 要求進行的驗證模式的代碼。
+ * @param {*} otpMobile 簡訊識別碼發送的手機門號。當綁定或變更門號時，因為需要確認手機號碼的正確性，所以要再驗OTP
  * @returns {
  *   code: 執行狀態。00.成功, 其他代碼分別表示不同 JS funciton 的失敗訊息。
  *   data: 執行結果。例：OTP驗證，則傳回使用者輸入的「驗證碼」。
  * }
  */
-async function transactionAuth(txnType, otpMode) {
+async function transactionAuth(authCode, otpMobile) {
   const promise = new Promise((resolve) => {
-    // TODO
-    const data = { type: txnType, otpType: '2' };
-    if (device.ios()) {
-      const msg = JSON.stringify({ name: 'onVerification', data: JSON.stringify(data) });
-      window.webkit?.messageHandlers.jstoapp.postMessage(msg);
-    }
-    else if (device.android()) {
-      const androidParam = JSON.stringify(data);
-      window.jstoapp?.onVerification(androidParam);
-    }
-    else {
-      // 由 APP 發出 OTP，並將識別碼顯示於畫面，待 User 輸入驗證碼後。
-      // Controller 將 OTP ID 存入 JwtToken
-      // APP 將 User 輸入的驗證碼寫入 localStorege 再由 WebView 取回。
-      appSendOTP(otpMode, (result) => {
+    const request = {
+      authCode,
+      otpMobile,
+      callback: (result) => {
         console.log('*** OTP Result from APP : ', result);
         localStorage.setItem('appJsResponse', result.data); // 將 APP 傳回的資料寫回。
         resolve(result);
-      });
+      },
+    };
+
+    if (device.ios()) {
+      const msg = JSON.stringify({ name: 'onVerification', data: JSON.stringify(request) });
+      window.webkit?.messageHandlers.jstoapp.postMessage(msg);
+    }
+    else if (device.android()) {
+      const androidParam = JSON.stringify(request);
+      window.jstoapp?.onVerification(androidParam);
+    }
+    else {
+      appTransactionAuth(request);
     }
   });
 
   const result = await promise;
   console.log('*** OTP Result from Promise : ', result);
+  await showInfo('交易驗證結果：' + (result.result ? '成功' : '失敗'));
   return result;
 }
 
 /**
- * 模擬 APP 的 OTP 發送及要求使用者輸入 驗證碼
- * @param {*} otpMode OTP模式
- * @param {*} callback JavaScript {
- *   code: 執行狀態。00.成功, 其他代碼分別表示不同 JS funciton 的失敗訊息。
- *   data: 執行結果。例：OTP驗證，則傳回使用者輸入的「驗證碼」。
+ * 模擬 APP 要求使用者進行交易授權驗證。
+ * @param request {
+ *   authCode: 要求進行的驗證模式的代碼。
+ *   otpMobile: 簡訊識別碼發送的手機門號。當綁定或變更門號時，因為需要確認手機號碼的正確性，所以要再驗OTP
+ *   callback: { 要求進行驗證的來源 JavaScript 提供的 Callback JavaScript
+ *     result: 驗證結果(true/false)
+ *     message: 驗證失敗狀況描述。
+ *   }
  * }
  */
-async function appSendOTP(otpMode, callback) {
-  const apiRs = await sendOtpCode(otpMode); // 不需提供其他參數
+async function appTransactionAuth(request) {
+  const { authCode, otpMobile, callback } = request;
+
+  // 取得目前執行中的單元功能代碼，要求 Controller 發送或驗出時，皆需提供此參數。
+  const funcCode = funcStack.peek()?.func ?? '/'; // 首頁因為沒有功能代碼，所以用'/'表示。
+
+  const loginMode = 21; // TODO 取得登入模式：0.未登入, 1.訪客登入, 11.快速登入, 21.帳密登入
+  const boundMID = true; // TODO 取得 MID 的綁定狀態。
+
+  // 檢查是否可用生物辨識或圖形鎖驗證。
+  let allowed2FA = ((loginMode === 11 || loginMode === 21) && ((authCode & 0x20) !== 0)); // 表示可以使用 生物辨識或圖形鎖 通過驗證。
+
+  const failTimes = 0; // TODO 若三次不通過，則改為使用網銀密碼驗證！
+  allowed2FA = allowed2FA && (failTimes < 3);
+
+  // 檢查是否需輸入網銀密碼（只要有 2FA 的功能，就不用輸入密碼；只有在三次驗不過之後，才切換到用密碼驗證）
+  const allowedPWD = (!allowed2FA && (loginMode === 21) && (authCode & 0x1F) !== 0); // 表示可以使用 網銀密碼或OTP或(網銀密碼+OTP) 通過驗證。
+  const inputPwd = (allowedPWD && (authCode & 0x10)); // 表示需要輸入網銀密碼
+
+  // TODO 沒有 boundMID，但又限定只能使用 2FA 時；傳回 false 尚未進行行動裝置綁定，無法使用此功能！
+  if (allowedPWD === false && boundMID === false) {
+    await showError('尚未完成行動裝置綁定，無法使用此功能！');
+    return;
+  }
+
+  // 建立交易授權驗證。
+  const otpMode = (authCode & 0x0F);
+  const sendOtp = (allowedPWD && otpMode !== 0) || ((otpMode & 0x03) === 0x03); // 表示需要發送OTP
+  const txnAuth = await createTransactionAuth({ // 傳回值包含發送簡訊的手機門號及簡訊識別碼。
+    funcCode,
+    authCode: authCode + 0x96c1fc6b98e00, // TODO 這個 HashCode 要由 Controller 在 Login 的 Response 傳回。
+    otpMobile,
+  });
+  if (!txnAuth) return; // createTransactionAuth 發生異常就結束。
 
   // Web測試版。
   const body = (
     <div>
-      <p>{`發送閘導：${Number.parseInt(otpMode / 10, 10) === 1 ? 'MBGW' : 'APPGW'}`}</p>
-      <br />
-      <p>{`發送門號：${(otpMode % 10) === 1 ? '非約轉門號' : 'CIF門號'}`}</p>
-      <br />
-      <p>{`OTP識別碼：${apiRs.transId}`}</p>
-      <br />
-      <p>輸入驗證碼</p>
-      <input type="text" id="otpVerify" defaultValue={apiRs.otpCode} />
+      {/* 驗證生物辨識或圖形鎖驗證 */}
+      {(allowed2FA && failTimes < 3) ? (
+        <div>
+          <p>《 驗證生物辨識或圖形鎖驗證 》</p>
+          <input type="text" id="auth2FA" />
+          <br />
+          <p>輸入 xxx 表示驗證失敗！</p>
+          <p>TODO 若三次不通過，則改為使用網銀密碼驗證！</p>
+          <br />
+        </div>
+      ) : null}
+
+      {/* 驗證OTP */}
+      {sendOtp ? (
+        <div>
+          <p>{`發送門號：${txnAuth.otpMobile}`}</p>
+          <p>{`OTP識別碼：${txnAuth.otpSmsId}`}</p>
+          <p>輸入驗證碼</p>
+          <input type="text" id="otpCode" defaultValue={txnAuth.otpCode} />
+          <br />
+        </div>
+      ) : null}
+
+      {/* 驗證網銀密碼 */}
+      {inputPwd ? (
+        <div>
+          <p>輸入網銀密碼</p>
+          <input type="text" id="netbankPwd" defaultValue="feib1688" />
+          <br />
+        </div>
+      ) : null}
     </div>
   );
-  const onOk = () => {
-    // TODO 驗證 OTP Code 是否正確。
-    callback({
-      code: '00', // 正常結果。
-      data: document.querySelector('#otpVerify').value, // 使用者輸入的「驗證碼」。 // TODO 取得 輸入的驗證碼
-    });
+
+  // 驗證 OTP Code 是否正確。
+  const onOk = async () => {
+    // TODO 2FA驗證模式應該自動驗證，不需要使用者按OK；一旦驗證通過，則自動關閉視窗，並傳回結果。
+    const auth2FA = document.querySelector('#auth2FA')?.value; // 可以讓Server端確認真的通過驗證的資料，例：全景的驗證資料
+
+    // 驗證 OTP驗證碼 & 網銀密碼
+    const otpCode = document.querySelector('#otpCode')?.value; // 使用者輸入的「驗證碼」。
+    const netbankPwd = e2ee(document.querySelector('#netbankPwd')?.value); // 使用者輸入的「網銀密碼」，還要再做 E2EE。
+    const veriifyRs = await transactionAuthVeriify({ authKey: txnAuth.key, funcCode, auth2FA, netbankPwd, otpCode });
+    if (!veriifyRs) return false; // createTransactionAuth 發生異常就結束。
+    if (veriifyRs.result === true) {
+      callback({
+        result: true, // 正常結果。
+        message: null,
+      });
+    } else {
+      await showError(veriifyRs.message);
+      return false;
+    }
+    return veriifyRs.result;
   };
+
+  // 表示使用者取消。
   const onCancel = () => callback({
-    code: '01', // 表示使用者取消。
-    data: null,
+    result: false,
+    message: '使用者取消驗證。',
   });
-  customPopup('OTP 驗證 (測試版)', body, onOk, onCancel);
+
+  customPopup('交易授權驗證 (測試版)', body, onOk, onCancel);
 }
 
 /**

@@ -11,7 +11,7 @@ import BottomDrawer from 'components/BottomDrawer';
 import Layout from 'components/Layout/Layout';
 import MobileTransferModifyForm from './mobileTransferModifyForm';
 
-import { fetchMobiles } from './api';
+import { fetchMobiles, fetchName } from './api';
 
 /* Styles */
 import MobileTransferWrapper from './mobileTransfer.style';
@@ -21,38 +21,35 @@ const MobileTransfer = () => {
 
   // eslint-disable-next-line no-unused-vars
   const [mobileTransferData, setMobileTransferData] = useState([]);
+  const [mobilesList, setMobilesList] = useState([]);
   const [modifyData, setModifyData] = useState({
-    id: 1,
-    mobile: '0988392899',
-    isDefault: true,
-    account: '00300400326307',
-    userName: '王小明',
+    mobile: '',
+    account: '',
+    status: '',
+    isDefault: '',
   });
   const [drawerOpen, setDrawerOpen] = useState(false);
   // 新增手機號碼收款
   const addMobileTransferSetting = () => {
+    if (mobilesList.length === 0) {
+      customPopup(
+        '系統訊息',
+        '您在本行留存的手機號碼皆已設定，請先取消， 再進行設定。',
+      );
+      return;
+    }
     history.push('/mobileTransfer1');
-  };
-
-  const getBindedAccountList = async () => {
-    // const { accounts } = await getUserActNo();
-    // console.log('已綁定帳號', accounts);
-    // if (accounts && accounts.length === 0) {
-    //   customPopup(
-    //     '系統訊息',
-    //     '您尚未設定「手機號碼收款」功能，是否立即進行設定？',
-    //     null,
-    //     closeFunc,
-    //   );
-    // }
-    // setMobileTransferData(accounts || []);
   };
 
   // 檢查是否設定快速登入、基本資料是否有手機號碼
   const checkBindAndMobile = async () => {
-    const { binding, cifMobile } = await fetchMobiles();
+    const {
+      bindQuickLogin, bindTxnOtpMobile, bindings, mobiles,
+    } = await fetchMobiles({ tokenStatus: 1 });
+    setMobileTransferData(bindings || []);
+    setMobilesList(mobiles || []);
     // 檢查是否綁定快速登入
-    if (binding === 'N') {
+    if (bindQuickLogin === 'N') {
       customPopup(
         '系統訊息',
         '為符合手機號碼轉帳相關規範，請至設定>指紋辨識/臉部辨識/圖形密碼登入設定，進行快速登入綁定，造成不便，敬請見諒。',
@@ -62,7 +59,7 @@ const MobileTransfer = () => {
       return;
     }
     // 檢查是否留存手機號碼
-    if (!cifMobile) {
+    if (bindTxnOtpMobile === 'N') {
       customPopup(
         '系統訊息',
         '您尚未於本行留存手機號碼，請先前往「基本資料變更」頁留存，再進設定。',
@@ -72,24 +69,34 @@ const MobileTransfer = () => {
       );
       return;
     }
-    getBindedAccountList();
+    if (bindings && bindings.length === 0) {
+      customPopup(
+        '系統訊息',
+        '您尚未設定「手機號碼收款」功能，是否立即進行設定？',
+        () => history.push('/mobileTransfer1'),
+        closeFunc,
+      );
+    }
   };
 
   // 編輯手機號碼收款
   const editMobileTransferSetting = (data) => {
-    console.log(data);
     setModifyData(data);
     setDrawerOpen(true);
   };
 
   // 刪除手機號碼收款
-  const deleteMobileTransferSetting = (data) => {
+  const deleteMobileTransferSetting = async (data) => {
+    const { custName } = await fetchName();
     history.push(
       '/mobileTransfer2',
       {
         type: 'delete',
         isModify: true,
-        data,
+        data: {
+          userName: custName || '',
+          ...data,
+        },
       },
     );
   };
@@ -103,7 +110,7 @@ const MobileTransfer = () => {
   const renderMobileTransferItems = () => mobileTransferData
     .map((item) => (
       <SettingItem
-        key={item.id}
+        key={item.mobile}
         mainLable={item.mobile}
         subLabel={`${item.isDefault ? '預設收款帳戶' : '非預設收款帳戶'} ${item.account}`}
         editClick={() => editMobileTransferSetting(item)}

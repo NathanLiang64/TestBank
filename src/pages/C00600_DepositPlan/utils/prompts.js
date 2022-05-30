@@ -1,6 +1,6 @@
 import { showCustomPrompt } from 'utilities/MessageModal';
 import { stringToDate } from 'utilities/Generator';
-import { goHome } from 'utilities/BankeePlus';
+import { goHome } from 'utilities/AppScriptProxy';
 
 export const AlertNoMainAccount = ({ onOk }) => {
   showCustomPrompt({

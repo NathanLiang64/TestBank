@@ -5,7 +5,6 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 /* Elements */
-import Header from 'components/Header';
 import {
   FEIBInputLabel,
   FEIBInput,
@@ -17,6 +16,7 @@ import {
   FEIBSwitch,
 } from 'components/elements';
 import Accordion from 'components/Accordion';
+import Layout from 'components/Layout/Layout';
 import DealContent from './dealContent';
 import { fetchName, getAccountsList, fetchMobiles } from './api';
 
@@ -69,10 +69,11 @@ const MobileTransfer1 = () => {
   // 取得收款帳號
   const getAccounts = async () => {
     const response = await getAccountsList('MCS'); // 帳戶類型 M:母帳戶, S:證券戶, C:子帳戶
-    console.log(response);
-    const accounts = response.map((item) => item.account);
-    setAccountList(accounts);
-    setValue('account', accounts[0]);
+    if (Array.isArray(response)) {
+      const accounts = response.map((item) => item.account);
+      setAccountList(accounts);
+      setValue('account', accounts[0]);
+    }
   };
 
   // 新增收款設定
@@ -106,8 +107,7 @@ const MobileTransfer1 = () => {
   }, []);
 
   return (
-    <>
-      <Header title="手機號碼收款設定" goBack={goBack} />
+    <Layout title="手機號碼收款設定" goBack={goBack}>
       <MobileTransferWrapper>
         <div className="summaryContainer lighterBlueLine">
           <p>
@@ -206,7 +206,7 @@ const MobileTransfer1 = () => {
           </form>
         </div>
       </MobileTransferWrapper>
-    </>
+    </Layout>
   );
 };
 

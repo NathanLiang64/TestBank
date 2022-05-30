@@ -1,22 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { useDispatch } from 'react-redux';
 import { closeFunc, transactionAuth } from 'utilities/BankeePlus';
+import { showAnimationModal } from 'utilities/MessageModal';
 
 /* Elements */
-import Header from 'components/Header';
 import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
 import Accordion from 'components/Accordion';
-import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
+import Layout from 'components/Layout/Layout';
 
 /* Styles */
 import MobileTransferWrapper from './mobileTransfer.style';
 
-import { createMobileNo } from './api';
+import { createMobileNo, editMobileNo, unbindMobileNo } from './api';
 
 const MobileTransfer2 = ({ location }) => {
-  const dispatch = useDispatch();
   const history = useHistory();
   const [dealCode, setDealCode] = useState('');
   const [dealType, setDealType] = useState('');
@@ -71,26 +69,15 @@ const MobileTransfer2 = ({ location }) => {
 
   // 設定結果彈窗
   const setResultDialog = (response) => {
-    const { code, message, respData } = response;
-    const successDesc = getSuccessDesc();
-    let errorCode = code;
-    let errorDesc = message;
-    if (respData?.rcode === '4001') {
-      dispatch(setCloseCallBack(() => closeFunc()));
-    } else {
-      errorCode = response.code;
-      errorDesc = response.message;
-      dispatch(setCloseCallBack(() => {}));
-    }
-    dispatch(setResultContent({
-      isSuccess: respData?.rcode === '4001',
+    showAnimationModal({
+      isSuccess: response,
       successTitle: '設定成功',
-      successDesc,
+      successDesc: getSuccessDesc(),
       errorTitle: '設定失敗',
-      errorCode,
-      errorDesc,
-    }));
-    dispatch(setIsOpen(true));
+      errorCode: '',
+      errorDesc: '',
+      onClose: () => closeFunc(),
+    });
   };
 
   const modifyMobileTransferData = async (event) => {
@@ -107,9 +94,26 @@ const MobileTransfer2 = ({ location }) => {
         isDefault: isDefault ? 'Y' : 'N',
         otpCode: result.data,
       };
-      const response = await createMobileNo(param);
-      console.log(response);
-      setResultDialog(response);
+      // 新增設定
+      if (!isModifyConfirmPage) {
+        const response = await createMobileNo(param);
+        setResultDialog(response);
+      }
+      // 編輯或取消設定
+      if (isModifyConfirmPage) {
+        if (dealType === 'edit') {
+          const editResponse = await editMobileNo(param);
+          setResultDialog(editResponse);
+        }
+        if (dealType === 'delete') {
+          const deleteParam = {
+            mobile,
+            otpCode: result.data,
+          };
+          const deleteResponse = await unbindMobileNo(deleteParam);
+          setResultDialog(deleteResponse);
+        }
+      }
     }
   };
 
@@ -124,8 +128,7 @@ const MobileTransfer2 = ({ location }) => {
   }, []);
 
   return (
-    <>
-      <Header title="資料確認" goBack={goBack} />
+    <Layout title="資料確認" goBack={goBack}>
       <MobileTransferWrapper>
         <form>
           <div className={`confirmDataContainer lighterBlueLine ${isModifyConfirmPage && 'modifyConfirmPage'}`}>
@@ -154,7 +157,7 @@ const MobileTransfer2 = ({ location }) => {
           </FEIBButton>
         </form>
       </MobileTransferWrapper>
-    </>
+    </Layout>
   );
 };
 

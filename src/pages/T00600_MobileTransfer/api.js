@@ -47,10 +47,8 @@ export const fetchMobiles = async () => {
 /**
  * 手機號碼收款設定新增
  * @param request {
- *   mobile: 綁定的手機號碼,
  *   account: 綁定的銀行帳號,
  *   isDefault: 是否(Y/N)做為預設收款手機號碼
- *   otpCode: OTP 6位數字驗證碼,
  * }
  * @returns true:成功, false:失敗。
  */
@@ -62,10 +60,8 @@ export const createMobileNo = async (param) => {
 /**
  * 更新手機號碼收款設定
  * @param request {
- *   mobile: 綁定的手機號碼,
  *   account: 綁定的銀行帳號,
  *   isDefault: 是否(Y/N)做為預設收款手機號碼
- *   otpCode: OTP驗證碼（6位數字）,
  * }
  * @returns true:成功, false:失敗。
  */
@@ -76,13 +72,9 @@ export const editMobileNo = async (param) => {
 
 /**
  * 解除手機號碼收款綁定
- * @param request {
- *   mobile: 綁定的手機號碼,
- *   otpCode: OTP驗證碼（6位數字）,
- * }
  * @returns true:成功, false:失敗。
  */
-export const unbindMobileNo = async (param) => {
-  const response = await callAPI('/api/mobileAccount/v1/unbind', param);
+export const unbindMobileNo = async () => {
+  const response = await callAPI('/api/mobileAccount/v1/unbind');
   return response.data;
 };
