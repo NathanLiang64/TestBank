@@ -71,3 +71,14 @@ export const ConfirmNotToCloseDepositPlan = () => {
     onOk: goHome,
   });
 };
+
+export const AlertProgramNoFound = ({ onOk, onCancel }) => {
+  showCustomPrompt({
+    title: '找不到計畫資訊',
+    message: '可能是編輯中頁面刷新所導致，請重新建立。',
+    okContent: '建立存錢計畫',
+    cancelContent: '回上一頁',
+    onOk,
+    onCancel,
+  });
+};

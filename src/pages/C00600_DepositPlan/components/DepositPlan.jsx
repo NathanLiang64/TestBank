@@ -49,7 +49,7 @@ const DepositPlan = ({
     if (cycleMode === 1) {
       return `周${weekNumberToChinese(cycleTiming === 0 ? 7 : cycleTiming)}`;
     }
-    return (cycleTiming <= 28) ? `${cycleTiming}號` : '月底';
+    return `${cycleTiming}號`;
   };
   const bonusInfo = [
     { label: '適用利率', value: `${rate}%`},

@@ -4,6 +4,7 @@ import { FormHelperText as MaterialErrorMessage } from '@material-ui/core';
 /*
 * ==================== FEIBErrorMessage 可用選項 ====================
 * 1. $noSpacing -> 無下方間距，型別為布林值
+* 2. $color
  */
 
 const FEIBErrorMessage = styled(MaterialErrorMessage).attrs({
@@ -18,7 +19,7 @@ const FEIBErrorMessage = styled(MaterialErrorMessage).attrs({
     font-weight: 300;
 
     &.Mui-error {
-      color: ${({ theme }) => theme.colors.state.danger};
+      color: ${({ theme, $color }) => $color ?? theme.colors.state.danger};
     }
   }
 `;
