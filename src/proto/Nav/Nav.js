@@ -5,7 +5,7 @@ import { useHistory } from 'react-router';
 import { startFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
-import { logout } from './Nav.api';
+import { logout, mobileAccountUnbind } from './Nav.api';
 
 import NavWrapper from './Nav.style';
 
@@ -62,6 +62,21 @@ const Nav = () => {
           }}
           >
             生物辨識/圖形-解除(2FA)
+          </div>
+
+          <div onClick={async () => {
+            const result = await transactionAuth(0x2B, '0900123456');
+            console.log('*** OTP Result from AppScriptProxy : ', result);
+          }}
+          >
+            解除手機號碼收款綁定-驗證(2FA+OTP)
+          </div>
+          <div onClick={async () => {
+            const result = await mobileAccountUnbind();
+            console.log('*** OTP Result from AppScriptProxy : ', result);
+          }}
+          >
+            解除手機號碼收款綁定-執行
           </div>
         </div>
 

@@ -7,7 +7,7 @@ import {
   createTransactionAuth,
   transactionAuthVeriify,
 } from 'proto/forAppApi';
-// import e2ee from './E2ee';
+import e2ee from './E2ee';
 import { customPopup, showError, showInfo } from './MessageModal';
 
 const device = {
@@ -267,10 +267,10 @@ async function appTransactionAuth(request) {
   const funcCode = funcStack.peek()?.func ?? '/'; // 首頁因為沒有功能代碼，所以用'/'表示。
 
   const loginMode = 21; // TODO 取得登入模式：0.未登入, 1.訪客登入, 11.快速登入, 21.帳密登入
-  const boundMID = false; // TODO 取得 MID 的綁定狀態。
+  const boundMID = true; // TODO 取得 MID 的綁定狀態。
 
   // 檢查是否可用生物辨識或圖形鎖驗證。
-  let allowed2FA = ((loginMode === 11 || loginMode === 21) && boundMID && ((authCode & 0x20) !== 0)); // 表示可以使用 生物辨識或圖形鎖 通過驗證。
+  let allowed2FA = ((loginMode === 11 || loginMode === 21) && ((authCode & 0x20) !== 0)); // 表示可以使用 生物辨識或圖形鎖 通過驗證。
 
   const failTimes = 0; // TODO 若三次不通過，則改為使用網銀密碼驗證！
   allowed2FA = allowed2FA && (failTimes < 3);
@@ -278,6 +278,12 @@ async function appTransactionAuth(request) {
   // 檢查是否需輸入網銀密碼（只要有 2FA 的功能，就不用輸入密碼；只有在三次驗不過之後，才切換到用密碼驗證）
   const allowedPWD = (!allowed2FA && (loginMode === 21) && (authCode & 0x1F) !== 0); // 表示可以使用 網銀密碼或OTP或(網銀密碼+OTP) 通過驗證。
   const inputPwd = (allowedPWD && (authCode & 0x10)); // 表示需要輸入網銀密碼
+
+  // TODO 沒有 boundMID，但又限定只能使用 2FA 時；傳回 false 尚未進行行動裝置綁定，無法使用此功能！
+  if (allowedPWD === false && boundMID === false) {
+    await showError('尚未完成行動裝置綁定，無法使用此功能！');
+    return;
+  }
 
   // 建立交易授權驗證。
   const otpMode = (authCode & 0x0F);
@@ -320,7 +326,6 @@ async function appTransactionAuth(request) {
         <div>
           <p>輸入網銀密碼</p>
           <input type="text" id="netbankPwd" defaultValue="feib1688" />
-          <p>輸入 xxx 表示驗證失敗！</p>
           <br />
         </div>
       ) : null}
@@ -334,8 +339,7 @@ async function appTransactionAuth(request) {
 
     // 驗證 OTP驗證碼 & 網銀密碼
     const otpCode = document.querySelector('#otpCode')?.value; // 使用者輸入的「驗證碼」。
-    // const netbankPwd = e2ee(document.querySelector('#netbankPwd')?.value); // 使用者輸入的「網銀密碼」，還要再做 E2EE。
-    const netbankPwd = document.querySelector('#netbankPwd')?.value; // DEBUG 使用者輸入的「網銀密碼」，還要再做 E2EE。
+    const netbankPwd = e2ee(document.querySelector('#netbankPwd')?.value); // 使用者輸入的「網銀密碼」，還要再做 E2EE。
     const veriifyRs = await transactionAuthVeriify({ authKey: txnAuth.key, funcCode, auth2FA, netbankPwd, otpCode });
     if (!veriifyRs) return false; // createTransactionAuth 發生異常就結束。
     if (veriifyRs.result === true) {
