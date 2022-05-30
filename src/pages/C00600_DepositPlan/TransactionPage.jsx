@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-
 import { useLocation } from 'react-router';
 
 import Layout from 'components/Layout/Layout';
@@ -7,7 +6,10 @@ import AccountDetails from 'components/AccountDetails/accountDetails';
 
 import { getTransactionDetails } from './api';
 
-const MoreTranscations = () => {
+/**
+ * C00600 存錢計畫 歷程頁
+ */
+const DepositPlanTransactionPage = () => {
   const location = useLocation();
   const [plan, setPlan] = useState(null);
 
@@ -51,4 +53,4 @@ const MoreTranscations = () => {
   );
 };
 
-export default MoreTranscations;
+export default DepositPlanTransactionPage;
