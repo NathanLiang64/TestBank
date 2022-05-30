@@ -1,11 +1,14 @@
 import styled from 'styled-components';
 
 const CreatePageWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 3.2rem;
-  width: 100%;
   margin-bottom: 3.2rem;
+
+  .flex {
+    display: flex;
+    flex-direction: column;
+    gap: 3.2rem;
+    width: 100%;
+  }
 
   .title {
     font-size: 2.4rem;
