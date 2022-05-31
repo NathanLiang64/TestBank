@@ -1,48 +1,36 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { useCheckLocation, usePageInfo } from 'hooks';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { numberToChinese, currencySymbolGenerator } from 'utilities/Generator';
 import { transferAmountValidation } from 'utilities/validation';
+import { customPopup } from 'utilities/MessageModal';
+import { getAccountsList, getExchangePropertyList } from 'pages/ForeignCurrencyTransfer/api';
+import { closeFunc } from 'utilities/BankeePlus';
 /* Elements */
 import Accordion from 'components/Accordion';
 import DebitCard from 'components/DebitCard';
 import {
   FEIBSelect, FEIBOption, FEIBInput, FEIBInputLabel, FEIBButton, FEIBErrorMessage,
 } from 'components/elements';
-import NoteContent from './noteContent';
+import Layout from 'components/Layout/Layout';
+import NoteContent from 'pages/ForeignCurrencyTransfer/noteContent';
 
 /* Styles */
 import ForeignCurrencyTransferWrapper from './foreignCurrencyTransfer.style';
 
-// mock data
-const mockAccounts = [
-  {
-    cardBranch: '信義分行',
-    cardName: '英鎊',
-    dollarSign: 'GBP',
-    cardAccount: '04300499001234',
-    cardBalance: 5340.56,
-    transferRemaining: 3,
-  },
-  {
-    cardBranch: '信義分行',
-    cardName: '美金',
-    dollarSign: 'USD',
-    cardAccount: '04300499001234',
-    cardBalance: 5340.56,
-    transferRemaining: 3,
-  },
-];
-
-const mockAccountList = ['00200701710979'];
-
 const ForeignCurrencyTransfer = () => {
   const history = useHistory();
+  // 交易性質清單
+  const [transTypeOptions, setTransTypeOptions] = useState([]);
+  // 已選的帳號選單
   const [currentAccount, setCurrentAccount] = useState({});
+  // 帳號清單
+  const [accountsList, setAccountsList] = useState([]);
+  const [mixBalanceStr, setMixBalanceStr] = useState('');
   /**
    *- 資料驗證
    */
@@ -50,7 +38,7 @@ const ForeignCurrencyTransfer = () => {
     account: yup
       .string()
       .required('請選擇轉入帳號'),
-    balance: transferAmountValidation(currentAccount.cardBalance),
+    balance: transferAmountValidation(currentAccount.balance),
     transferType: yup
       .string()
       .required('請選擇匯款性質'),
@@ -61,69 +49,115 @@ const ForeignCurrencyTransfer = () => {
     resolver: yupResolver(schema),
   });
 
-  const [cardsList, setCardsList] = useState([]);
-  const [mixBalanceStr, setMixBalanceStr] = useState('');
-
-  const getForeignCurrencyAccounts = () => {
-    setCardsList(mockAccounts);
-    setCurrentAccount(mockAccounts[0]);
+  // 取得帳戶清單
+  const getForeignCurrencyAccounts = async () => {
+    const accounts = await getAccountsList('F');
+    console.log(accounts);
+    if (Array.isArray(accounts)) {
+      if (accounts?.length) {
+        const formatAccounts = accounts.map((acc) => acc.details.map((detail) => (
+          {
+            ...detail,
+            account: acc.account,
+            name: acc.name,
+          }
+        ))).flat();
+        console.log('帳戶清單', formatAccounts);
+        setAccountsList(formatAccounts);
+        setCurrentAccount(formatAccounts[0]);
+      } else {
+        customPopup(
+          '系統訊息',
+          '您目前沒有任何外幣帳戶',
+          closeFunc,
+        );
+      }
+    }
   };
 
+  // 取得交易性質
+  const getTransTypeOptions = async () => {
+    const options = await getExchangePropertyList({ trnsType: 3, action: 1 });
+    console.log('交易性質', options);
+    if (Array.isArray(options)) {
+      setTransTypeOptions(options);
+      setValue('transferType', options[0]?.leglCode);
+    }
+  };
+
+  // 切換帳戶
   const handleChangeSlide = (swiper) => {
-    setCurrentAccount(mockAccounts[swiper.realIndex]);
+    setCurrentAccount(accountsList[swiper.realIndex]);
   };
 
   const onSubmit = (data) => {
-    console.log(data);
-    history.push('/foreignCurrencyTransfer1');
+    const confirmData = {
+      // 交易類別
+      transType: '3',
+      // 轉出帳號
+      outAcct: currentAccount.account,
+      outCcyCd: currentAccount.currency,
+      outAmt: data.balance,
+      // 轉入帳號
+      inAcct: data.account,
+      inCcyCd: currentAccount.currency,
+      inAmt: data.balance,
+      trfCcyCd: currentAccount.currency,
+      rate: '1',
+      costRate: '1',
+      leglCode: data.transferType,
+      leglDesc: transTypeOptions.find((option) => option.leglCode === data.transferType).leglDesc,
+      memo: data.memo,
+      // 當前餘額
+      acctBalance: currentAccount.balance,
+    };
+    console.log(confirmData);
+    history.push('/foreignCurrencyTransfer1', confirmData);
   };
 
-  const renderOptions = (data) => data.map((item) => (
-    <FEIBOption value={item}>{item}</FEIBOption>
+  const renderAccountsOptions = () => ['123123123'].map((item) => (
+    <FEIBOption key={Math.random()} value={item}>{item}</FEIBOption>
   ));
 
-  const renderCard = () => cardsList.map((item) => (
-    <SwiperSlide>
+  // render 交易性質選項
+  const renderTransOptions = () => transTypeOptions.map((option) => (
+    <FEIBOption key={option?.leglCode} value={option?.leglCode}>{option?.leglDesc}</FEIBOption>
+  ));
+
+  const renderCard = () => accountsList.map((account) => (
+    <SwiperSlide key={Math.random()}>
       <DebitCard
-        branch={item.cardBranch}
-        cardName={item.cardName}
-        account={item.cardAccount}
-        balance={item.cardBalance}
-        dollarSign={item.dollarSign}
-        transferTitle="跨轉優惠"
-        transferLimit={6}
-        transferRemaining={item.transferRemaining}
+        account={account.account}
+        cardName={account.name}
+        balance={account.balance}
+        dollarSign={account.currency}
         color="orange"
       />
     </SwiperSlide>
   ));
 
-  useCheckLocation();
-  usePageInfo('/api/foreignCurrencyTransfer');
-
   useEffect(() => {
     getForeignCurrencyAccounts();
-    setValue('account', mockAccountList[0]);
-    setValue('transferType', '1');
+    getTransTypeOptions();
   }, []);
 
   return (
-    <ForeignCurrencyTransferWrapper>
-      <div className="userCardArea">
-        <Swiper
-          slidesPerView={1.14}
-          spaceBetween={8}
-          centeredSlides
-          pagination
-          onSlideChange={handleChangeSlide}
-        >
-          { renderCard() }
-        </Swiper>
-      </div>
-      <div className="formContainer">
-        <div className="formTitle">本行同幣別外幣轉帳</div>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div>
+    <Layout title="本行同幣別外幣轉帳">
+      <ForeignCurrencyTransferWrapper>
+        <div className="userCardArea">
+          <Swiper
+            slidesPerView={1.14}
+            spaceBetween={8}
+            centeredSlides
+            pagination
+            onSlideChange={handleChangeSlide}
+          >
+            { renderCard() }
+          </Swiper>
+        </div>
+        <div className="formContainer">
+          <div className="formTitle">本行同幣別外幣轉帳</div>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <FEIBInputLabel>帳號</FEIBInputLabel>
             <Controller
               name="account"
@@ -138,7 +172,7 @@ const ForeignCurrencyTransfer = () => {
                 >
                   <FEIBOption value="" disabled>請選擇轉入帳號</FEIBOption>
                   {
-                    renderOptions(mockAccountList)
+                    renderAccountsOptions()
                   }
                 </FEIBSelect>
               )}
@@ -150,21 +184,21 @@ const ForeignCurrencyTransfer = () => {
               defaultValue=""
               control={control}
               render={({ field }) => (
-                <>
+                <div>
                   <FEIBInput
                     {...field}
                     type="text"
                     inputMode="numeric"
                     id="balance"
                     name="balance"
-                    placeholder={`${currencySymbolGenerator(currentAccount.dollarSign)}0（零元）`}
+                    placeholder={`${currencySymbolGenerator(currentAccount.currency)}0（零元）`}
                     error={!!errors.balance}
                     onChange={(event) => {
                       setValue('balance', event.target.value);
                       if (!event.target.value) {
                         setMixBalanceStr('');
                       } else {
-                        setMixBalanceStr(`${currencySymbolGenerator(currentAccount.dollarSign)}${event.target.value}${numberToChinese(event.target.value)}`);
+                        setMixBalanceStr(`${currencySymbolGenerator(currentAccount.currency)}${event.target.value}${numberToChinese(event.target.value)}`);
                       }
                     }}
                     inputProps={{
@@ -173,7 +207,7 @@ const ForeignCurrencyTransfer = () => {
                     }}
                   />
                   <div className="balanceLayout">{mixBalanceStr}</div>
-                </>
+                </div>
               )}
             />
             <FEIBErrorMessage>{errors.balance?.message}</FEIBErrorMessage>
@@ -190,8 +224,9 @@ const ForeignCurrencyTransfer = () => {
                   error={!!errors.transferType}
                 >
                   <FEIBOption value="" disabled>請選擇匯款性質</FEIBOption>
-                  <FEIBOption value="1">不同客戶間外匯轉讓（還款、捐助..）</FEIBOption>
-                  <FEIBOption value="2">本人自行帳戶轉帳</FEIBOption>
+                  {
+                    renderTransOptions()
+                  }
                 </FEIBSelect>
               )}
             />
@@ -216,18 +251,18 @@ const ForeignCurrencyTransfer = () => {
             <Accordion space="top">
               <NoteContent />
             </Accordion>
-          </div>
-          <div className="btnContainer">
-            <FEIBButton
-              type="submit"
-            >
-              轉帳
-            </FEIBButton>
-            <div className="warnText">轉帳前多思考，避免被騙更苦惱</div>
-          </div>
-        </form>
-      </div>
-    </ForeignCurrencyTransferWrapper>
+            <div className="btnContainer">
+              <FEIBButton
+                type="submit"
+              >
+                轉帳
+              </FEIBButton>
+              <div className="warnText">轉帳前多思考，避免被騙更苦惱</div>
+            </div>
+          </form>
+        </div>
+      </ForeignCurrencyTransferWrapper>
+    </Layout>
   );
 };
 
