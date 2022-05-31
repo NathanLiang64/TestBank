@@ -89,7 +89,7 @@ const DepositPlanDetailPage = () => {
     const list = [
       { label: '存錢計畫名稱', value: plan?.name },
       { label: '存錢計畫之帳號', value: accountFormatter(plan?.bindAccountNo) },
-      { label: '存錢計畫期始日', value: dateFormatter(stringToDate(plan?.startDate), true) },
+      { label: '存錢計畫起始日', value: dateFormatter(stringToDate(plan?.startDate), true) },
       { label: '存錢計畫到期日', value: dateFormatter(stringToDate(plan?.endDate), true) },
       { label: '存錢週期', value: renderModeTimingString(plan) },
       { label: '第一筆扣款日', value: dateFormatter(stringToDate(plan?.startDate), true) },

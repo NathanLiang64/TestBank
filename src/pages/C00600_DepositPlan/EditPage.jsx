@@ -19,6 +19,7 @@ import {
 } from 'utilities/Generator';
 
 import { AlertProgramNoFound } from './utils/prompts';
+import { getDurationTuple } from './utils/common';
 import EditPageWrapper from './EditPage.style';
 
 /**
@@ -56,36 +57,6 @@ const DepositPlanEditPage = () => {
       });
     }
   }, []);
-
-  const getDurationTuple = (today, cycleDuration, cycleMode, cycleTiming) => {
-    const day = today.getDate();
-    const month = today.getMonth();
-
-    const begin = new Date(today);
-    if (cycleTiming < day) {
-      if (cycleTiming < 28) {
-        begin.setDate(cycleTiming);
-        begin.setMonth(month + 1);
-      }
-    } else {
-      begin.setDate(cycleTiming);
-    }
-
-    const end = new Date(begin);
-    const offset = cycleDuration / (cycleMode === 1 ? 4 : 1);
-    end.setMonth(end.getMonth() + offset);
-    if (end.getDate() > 28) end.setDate(28);
-
-    const next = new Date(begin);
-    if (cycleMode === 1) {
-      // TODO: this is incorrent, next week may not be exactly 7 days.
-      next.setDate(next.getDate() + 7);
-    } else {
-      next.setMonth(next.getMonth() + 1);
-      if (next.getDate() > 28) next.setDate(28);
-    }
-    return { begin, end, next };
-  };
 
   const getDefaultCycleTiming = (mode) => {
     if (mode === 1) return new Date().getDay();
