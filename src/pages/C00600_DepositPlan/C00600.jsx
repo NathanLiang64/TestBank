@@ -112,9 +112,9 @@ const DepositPlanPage = () => {
   const handleMoreClick = (plan) => {
     const list = [
       { icon: <RadioUncheckedIcon />, title: '設定為主要存錢計畫', onClick: handleSetMasterPlan },
-      { icon: <AccountIcon6 />, title: '存錢計畫資訊', onClick: () => {} },
+      { icon: <AccountIcon6 />, title: '存錢計畫資訊', onClick: () => history.push('/C006004', { isConfirmMode: false, plan }) },
       { icon: <RadioUncheckedIcon />, title: '結束本計畫', onClick: handleTerminatePlan },
-      { icon: <TransactionIcon1 />, title: '轉帳', onClick: () => {} },
+      { icon: <TransactionIcon1 />, title: '轉帳', onClick: () => {} }, // TODO
     ];
     const options = (
       <ul>
