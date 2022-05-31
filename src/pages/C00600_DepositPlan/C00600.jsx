@@ -7,18 +7,28 @@ import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
 import SwiperLayout from 'components/SwiperLayout';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { showCustomPrompt } from 'utilities/MessageModal';
+import { closeFunc } from 'utilities/BankeePlus';
+import { showDrawer } from 'utilities/MessageModal';
+import { AccountIcon6, RadioUncheckedIcon, TransactionIcon1 } from 'assets/images/icons';
 
 import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
 import EmptySlide from './components/EmptySlide';
 import EmptyPlan from './components/EmptyPlan';
 import DepositPlan from './components/DepositPlan';
 
-// import { getAccountSummary } from '../C00300_NtdDeposit/api';
-import { getDepositPlans } from './api';
+import { getAccountSummary } from '../C00300_NtdDeposit/api';
+import { getDepositPlans, updateDepositPlan, closeDepositPlan } from './api';
+import {
+  AlertNoMainAccount,
+  AlertMainDepositPlanHasBeenSetAlready,
+  AlertUnavailableSubAccount,
+  PromptShouldCloseDepositPlanOrNot,
+  ConfirmDepositPlanHasBeenClosed,
+  ConfirmNotToCloseDepositPlan,
+} from './utils/prompts';
 
 /**
- * C00600 存錢計畫
+ * C00600 存錢計畫 首頁
  */
 const DepositPlanPage = () => {
   const history = useHistory();
@@ -27,80 +37,121 @@ const DepositPlanPage = () => {
   const [plans, setPlans] = useState(undefined);
   const [subAccounts, setSubAccounts] = useState(undefined);
   const [totalSubAccountCount, setTotalSubAccountCount] = useState(undefined);
+  const [swiperController, setSwipterController] = useState(undefined);
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    // 是否已申請bankee帳戶(台幣)
-    const acctData = null; // await getAccountSummary('MC'); // M=台幣主帳戶、C=台幣子帳戶
+    // 檢查是否已申請主帳戶，「否」則到申請頁。
+    const acctData = await getAccountSummary('M');
     if (!acctData?.length) {
-      showCustomPrompt({
-        title: '新增存錢計畫',
-        message: '您尚未持有Bankee存款帳戶',
-        // TODO: 沒有「台幣帳戶」導去申請
-        onOk: () => history.goBack(),
-        okContent: '現在就來申請吧!',
-      });
+      AlertNoMainAccount({onOk: () => history.goBack});
     }
 
-    const res = await getDepositPlans();
+    const response = await getDepositPlans();
 
-    // 為簡化至後元件的利用，將目前金額加入計畫物件之中。
-    res.plans.forEach((plan) => {
-      plan.balance = res.subAccounts[plan.bindAccountNo]?.balance;
-    });
-
-    setPlans(res.plans);
-    setSubAccounts(res.subAccounts);
-    setTotalSubAccountCount(res.totalSubAccountCount);
-
-    // 如果從別的頁面跳轉，並欲想顯示特定計畫...
-    if (location.state && ('focusToAccountNo' in location.state)) {
-      // TODO: 如果從別的頁面跳轉，並欲想顯示特定計畫...
-      console.debug('do something with accountNo', location.state.focusToAccountNo);
-    }
+    setPlans(response.plans);
+    setSubAccounts(response.subAccounts);
+    setTotalSubAccountCount(response.totalSubAccountCount);
 
     dispatch(setWaittingVisible(false));
   }, []);
 
-  const renderSlides = () => {
-    const slides = Array.from({ length: 3 }, () => <EmptySlide key={uuid()} />);
-    if (plans) {
-      let masterSlideIndex;
-      plans.forEach((p, i) => {
-        if (p.isMaster) {
-          masterSlideIndex = i;
-        }
-        slides[i] = <DepositPlanHeroSlide key={uuid()} account={p.bindAccountNo} {...p} />;
-      });
-      if (masterSlideIndex) {
-        const masterSlide = slides.splice(masterSlideIndex, 1)[0];
-        slides.splice(1, 0, masterSlide);
-      }
+  /**
+   * 產生上方標題圖時會用的
+   */
+  const handleSetMasterPlan = (plan) => {
+    if (plan.isMaster) {
+      AlertMainDepositPlanHasBeenSetAlready();
+      return;
     }
-    return slides;
+
+    updateDepositPlan({ planId: plan.planId, isMaster: true });
+    // TODO: if failed?
+
+    // 一併更新前端資料
+    setPlans(plans.map((p) => {
+      p.isMaster = false;
+      if (p.planId === plan.planId) p.isMaster = true;
+      return p;
+    }));
+
+    // 移動畫面顯示主要計畫
+    if (swiperController) swiperController.slideTo(1);
   };
 
-  const renderContents = () => {
-    const shouldShowUnavailableSubAccountAlert = () => {
-      if ((totalSubAccountCount >= 8) && !(subAccounts?.length > 0)) {
-        showCustomPrompt({
-          title: '新增存錢計畫',
-          message: '目前沒有可作為綁定存錢計畫之子帳戶，請先關閉帳本後，或先完成已進行中的存錢計畫。',
-          okContent: '現在就來申請吧!',
-        });
+  const handleGoBackClick = () => {
+    const shouldBlockGoBack = document.querySelector('.blockGoBack');
+    if (shouldBlockGoBack) {
+      ConfirmNotToCloseDepositPlan();
+    } else {
+      closeFunc();
+    }
+  };
+
+  const handleTerminatePlan = (plan) => {
+    const confirmTermination = async () => {
+      const response = await closeDepositPlan({ planId: plan.planId, authorizedKey: plan.planId });
+      if ('email' in response) {
+        ConfirmDepositPlanHasBeenClosed({ email: response.email, onOk: () => history.push('/') });
+      } else {
+        // TODO: FBI-26 show error message
       }
     };
-    const slides = Array.from({ length: 3 }, () => <EmptyPlan key={uuid()} onMount={shouldShowUnavailableSubAccountAlert} />);
+    PromptShouldCloseDepositPlanOrNot({ endDate: plan.endDate, onOk: () => confirmTermination});
+  };
+
+  const handleMoreClick = (plan) => {
+    const list = [
+      { icon: <RadioUncheckedIcon />, title: '設定為主要存錢計畫', onClick: handleSetMasterPlan },
+      { icon: <AccountIcon6 />, title: '存錢計畫資訊', onClick: () => {} },
+      { icon: <RadioUncheckedIcon />, title: '結束本計畫', onClick: handleTerminatePlan },
+      { icon: <TransactionIcon1 />, title: '轉帳', onClick: () => {} },
+    ];
+    const options = (
+      <ul>
+        {list.map((func) => (
+          <li key={func.title}>
+            <button type="button" onClick={() => func.onClick(plan)}>
+              {func.icon}
+              {func.title}
+            </button>
+          </li>
+        ))}
+      </ul>
+    );
+    showDrawer('', options);
+  };
+
+  const handleEditClick = () => {
+    // TODO: FBI-15
+    console.debug('handleEditClick');
+  };
+
+  /**
+   * 產生上方標題圖的 slides
+   * 預設3張新增計畫頁，再替換成後端回傳的計畫，最後再把主要計畫移至中間。
+   */
+  const renderSlides = () => {
+    const slides = Array.from({ length: 3 }, () => <EmptySlide key={uuid()} />);
+
+    let masterSlideIndex = null;
+
     if (plans) {
-      let masterSlideIndex;
       plans.forEach((p, i) => {
-        if (p.isMaster) {
-          masterSlideIndex = i;
-        }
-        slides[i] = <DepositPlan key={uuid()} {...p} />;
+        if (p.isMaster) { masterSlideIndex = i; }
+        slides[i] = (
+          <DepositPlanHeroSlide
+            key={uuid()}
+            accountNo={p.bindAccountNo}
+            onMoreClicked={() => handleMoreClick(p)}
+            onEditClicked={() => handleEditClick(p)}
+            {...p}
+          />
+        );
       });
-      if (masterSlideIndex) {
+
+      if (masterSlideIndex !== null) {
         const masterSlide = slides.splice(masterSlideIndex, 1)[0];
         slides.splice(1, 0, masterSlide);
       }
@@ -108,10 +159,72 @@ const DepositPlanPage = () => {
     return slides;
   };
 
+  /**
+   * 產生下方內容時會用的
+   */
+  const handleShowDetailClick = (plan) => {
+    history.push('/C006001', { plan });
+  };
+
+  const shouldShowUnavailableSubAccountAlert = () => {
+    if ((totalSubAccountCount >= 8) && !(subAccounts?.length > 0)) AlertUnavailableSubAccount();
+  };
+
+  /**
+   * 產生下方內容的 slides
+   * 預設3張新增計畫頁，再替換成後端回傳的計畫，最後再把主要計畫移至中間。
+   */
+  const renderContents = () => {
+    const slides = Array.from({ length: 3 }, () => <EmptyPlan key={uuid()} onMount={shouldShowUnavailableSubAccountAlert} />);
+
+    let masterSlideIndex = null;
+
+    if (plans) {
+      plans.forEach((p, i) => {
+        if (p.isMaster) { masterSlideIndex = i; }
+        slides[i] = (
+          <DepositPlan
+            key={uuid()}
+            onShowDetailClick={() => handleShowDetailClick(p)}
+            {...p}
+          />
+        );
+      });
+
+      if (masterSlideIndex !== null) {
+        const masterSlide = slides.splice(masterSlideIndex, 1)[0];
+        slides.splice(1, 0, masterSlide);
+      }
+    }
+    return slides;
+  };
+
+  /**
+   * 頁面載入後，依需求切換應該顯示的計畫。
+   * 如果是從別的頁面跳轉，可能會想要顯示特定的計畫，或預設顯示主要計畫。
+   */
+  const focusToIntentedSlide = (swiper) => {
+    let activeIndex = 1; // 預設中間
+
+    if (location.state && ('focusToAccountNo' in location.state)) {
+      plans.forEach((p, i) => {
+        if (p.bindAccountNo === location.state.focusToAccountNo) activeIndex = i;
+      });
+    }
+    swiper.slideTo(activeIndex, 0);
+
+    // Side-effect: 因為設定主計畫後會重新排序，所以必須呼叫swiper切換頁面，故存起來。
+    if (!swiperController) setSwipterController(swiper);
+  };
+
+  /**
+   * 產生頁面
+   * 只要提供相同數量的 slides 和 content，SwiperLayout會自動切換對應的內容。
+   */
   return (
-    <Layout title="存錢計畫" hasClearHeader>
+    <Layout title="存錢計畫" hasClearHeader goBackFunc={handleGoBackClick}>
       <MainScrollWrapper>
-        <SwiperLayout slides={renderSlides()}>
+        <SwiperLayout slides={renderSlides()} onAfterInit={focusToIntentedSlide}>
           { renderContents() }
         </SwiperLayout>
       </MainScrollWrapper>

@@ -1,5 +1,5 @@
 import { FEIBIconButton } from 'components/elements';
-import { closeFunc, goHome } from 'utilities/BankeePlus';
+import { closeFunc, goHome } from 'utilities/AppScriptProxy';
 import { ArrowBackIcon, HomeIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
 import HeaderWrapper from './header.style';

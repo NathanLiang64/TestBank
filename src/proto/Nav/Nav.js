@@ -2,10 +2,10 @@
 /* eslint-disable arrow-body-style */
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { startFunc, transactionAuth } from 'utilities/BankeePlus';
+import { startFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
-import { logout } from './Nav.api';
+import { logout, mobileAccountUnbind } from './Nav.api';
 
 import NavWrapper from './Nav.style';
 
@@ -36,17 +36,53 @@ const Nav = () => {
           <div onClick={() => startFunc('D00100')}>D00100 台幣轉帳 - (施工中)</div>
           <div onClick={() => startFunc('B00600')}>B00600 更多... (待施工)</div>
           <div onClick={async () => {
-            const result = await transactionAuth('ZZZ', 11);
-            console.log('*** OTP Result from BankeePlus : ', result);
+            const result = await transactionAuth(0x35);
+            console.log('*** OTP Result from AppScriptProxy : ', result);
           }}
           >
-            OTP測試
+            台幣-非約轉(2FA / PWD+OTP)
+          </div>
+          <div onClick={async () => {
+            const result = await transactionAuth(0x30);
+            console.log('*** OTP Result from AppScriptProxy : ', result);
+          }}
+          >
+            台幣-約轉(2FA / PWD)
+          </div>
+          <div onClick={async () => {
+            const result = await transactionAuth(0x17, '0900123456');
+            console.log('*** OTP Result from AppScriptProxy : ', result);
+          }}
+          >
+            生物辨識/圖形-設定(PWD+OTP)
+          </div>
+          <div onClick={async () => {
+            const result = await transactionAuth(0x20);
+            console.log('*** OTP Result from AppScriptProxy : ', result);
+          }}
+          >
+            生物辨識/圖形-解除(2FA)
+          </div>
+
+          <div onClick={async () => {
+            const result = await transactionAuth(0x2B, '0900123456');
+            console.log('*** OTP Result from AppScriptProxy : ', result);
+          }}
+          >
+            解除手機號碼收款綁定-驗證(2FA+OTP)
+          </div>
+          <div onClick={async () => {
+            const result = await mobileAccountUnbind();
+            console.log('*** OTP Result from AppScriptProxy : ', result);
+          }}
+          >
+            解除手機號碼收款綁定-執行
           </div>
         </div>
 
         <div className="lexion">
           <p style={{ color: '#9D7ADE' }}>** 瑞芙 **</p>
-          <div onClick={() => startFunc('C00100')}>C00600 帳務總覽 - (施工中)</div>
+          <div onClick={() => startFunc('C00100')}>C00100 帳務總覽 - (施工中)</div>
           <div onClick={() => startFunc('C00600')}>C00600 存錢計劃 - (施工中)</div>
         </div>
 

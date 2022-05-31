@@ -18,7 +18,10 @@ const C00300 = lazy(() => import('pages/C00300_NtdDeposit/C00300'));
 const C00400 = lazy(() => import('pages/C00400_ForeignDeposit/C00400'));
 const C00500 = lazy(() => import('pages/C00500_SecsDeposit/C00500'));
 const C00600 = lazy(() => import('pages/C00600_DepositPlan/C00600'));
-const C006001 = lazy(() => import('pages/C00600_DepositPlan/DetailsPage'));
+const C00600Transaction = lazy(() => import('pages/C00600_DepositPlan/TransactionPage'));
+const C00600Create = lazy(() => import('pages/C00600_DepositPlan/CreatePage'));
+const C00600Edit = lazy(() => import('pages/C00600_DepositPlan/EditPage'));
+const C00600Detail = lazy(() => import('pages/C00600_DepositPlan/DetailPage'));
 const C00800 = lazy(() => import('pages/C00800_ExportBankBook'));
 const C008001 = lazy(() => import('pages/C00800_ExportBankBook/exportBankBook_1'));
 const D00100 = lazy(() => import('pages/D00100_NtdTransfer/D00100'));
@@ -95,7 +98,10 @@ const routes = [
   { path: '/C00400', exact: false, component: C00400 },
   { path: '/C00500', exact: false, component: C00500 },
   { path: '/C00600', exact: false, component: C00600 },
-  { path: '/C006001', exact: false, component: C006001 },
+  { path: '/C006001', exact: false, component: C00600Transaction },
+  { path: '/C006002', exact: false, component: C00600Create },
+  { path: '/C006003', exact: false, component: C00600Edit },
+  { path: '/C006004', exact: false, component: C00600Detail },
   { path: '/C00800', exact: false, component: C00800 },
   { path: '/C008001', exact: false, component: C008001 },
   { path: '/D00100', exact: false, component: D00100 },

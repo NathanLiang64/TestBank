@@ -43,6 +43,7 @@ export const showCustomPrompt = async ({
   onCancel,
   okContent,
   cancelContent,
+  noDismiss, // 如果有需要接續 modal 得操作，可以設定為 true 避免點擊ok按鈕後，下個 modal 遭關閉。
 }) => {
   store.dispatch(setModal({
     title,
@@ -51,6 +52,7 @@ export const showCustomPrompt = async ({
     onCancel,
     okContent,
     cancelContent,
+    noDismiss: noDismiss ?? false,
   }));
   store.dispatch(setModalVisible(true));
 };

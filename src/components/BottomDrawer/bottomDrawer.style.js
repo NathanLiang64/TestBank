@@ -54,18 +54,18 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
         border-top: .1rem solid ${({ theme }) => theme.colors.border.lightest};
       }
       
-      a, p {
+      a, p, button {
         display: flex;
         align-items: center;
         padding: 2rem;
         font-size: 2rem;
-        letter-spacing: .1rem;
+        width: 100%;
+        color: ${({ theme }) => theme.colors.text.dark};
       }
       
       .Icon,
       .MuiSvgIcon-root,
       .MuiIcon-root {
-        top: -.2rem;
         margin-right: 1.6rem;
         font-size: 2rem;
         color: ${({ theme }) => theme.colors.text.dark};

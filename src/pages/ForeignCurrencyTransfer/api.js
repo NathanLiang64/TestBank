@@ -13,8 +13,8 @@ import { callAPI } from 'utilities/axios';
  *   }, ...]
  * }, ...]
  */
-export const getAccountsList = async () => {
-  const response = await callAPI('/api/deposit/v1/getAccounts');
+export const getAccountsList = async (acctTypes) => {
+  const response = await callAPI('/api/deposit/v1/getAccounts', acctTypes);
   return response.data;
 };
 

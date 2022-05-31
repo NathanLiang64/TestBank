@@ -86,10 +86,10 @@ userAxios().interceptors.response.use(
       // TODO: 導向API失敗的例外處理的頁面！
       console.log(`\x1b[31m${response.config.url} - Exception = (\x1b[33m${code}\x1b[31m) ${message}`);
       if (code === 'ISG0001') {
-        showError('因為您已閒置過久未操作系統，為考量資訊安全；銀行端已自動切斷您的連線。若您要繼續使用，請重新登入，造成您的不便敬請見諒。'); // TODO , () => closeFunc());
+        await showError('因為您已閒置過久未操作系統，為考量資訊安全；銀行端已自動切斷您的連線。若您要繼續使用，請重新登入，造成您的不便敬請見諒。'); // TODO , () => closeFunc());
       } else {
         // eslint-disable-next-line react/jsx-one-expression-per-line
-        showError((<p>*** {code} ***<br />{message}</p>));
+        await showError((<p>*** {code} ***<br />{message}</p>));
       }
       return Promise.reject(code);
     }
@@ -99,7 +99,7 @@ userAxios().interceptors.response.use(
     // 傳回 未加密 或 解密後 的資料
     return response;
   },
-  (ex) => {
+  async (ex) => {
     // 系統層錯誤！
     // 若是環境問題，則直接顯示；若是WebController未處理的錯誤，則另外處理。
     console.log(`%cResponse Error --> ${JSON.stringify(ex)}`, 'color: Red;');
@@ -108,7 +108,7 @@ userAxios().interceptors.response.use(
       console.log(`%cResponse Error --> ${JSON.stringify(response)}`, 'color: Red;');
       console.error(response.data);
       // TODO: Hold住畫面，再 Reload 一次。
-      showError(`主機忙碌中，請通知客服人員或稍後再試。訊息代碼：(${response.status})`); // TODO: 目前沒有 status 這個值。
+      await showError(`主機忙碌中，請通知客服人員或稍後再試。訊息代碼：(${response.status})`); // TODO: 目前沒有 status 這個值。
     }
     return Promise.reject(ex);
 
