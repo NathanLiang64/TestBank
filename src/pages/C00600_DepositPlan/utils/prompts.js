@@ -82,3 +82,25 @@ export const AlertProgramNoFound = ({ onOk, onCancel }) => {
     onCancel,
   });
 };
+
+export const AlertInvalidEntry = ({ goBack }) => {
+  showCustomPrompt({
+    title: '系統錯誤',
+    message: '本頁為操作流程之分頁，不應獨立造訪，請回上一頁。',
+    okContent: '回上一頁',
+    cancelContent: '回首頁',
+    onOk: goBack,
+    onCancel: goHome,
+  });
+};
+
+export const AlertReachedMaxPlans = ({ goBack }) => {
+  showCustomPrompt({
+    title: '新增存錢計畫',
+    message: '您已建立（最多）3個存錢計畫。',
+    okContent: '回上一頁',
+    cancelContent: '回首頁',
+    onOk: goBack,
+    onCancel: goHome,
+  });
+};

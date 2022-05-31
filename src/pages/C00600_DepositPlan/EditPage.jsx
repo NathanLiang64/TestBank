@@ -11,14 +11,14 @@ import {
 } from 'components/elements';
 import Theme from 'themes/theme';
 import {
-  toCurrency, accountFormatter, dateFormatter, stringToDate, stringDateCodeFormatter, weekNumberToChinese,
+  toCurrency, accountFormatter, stringDateCodeFormatter, weekNumberToChinese,
 } from 'utilities/Generator';
 
 import { AlertProgramNoFound } from './utils/prompts';
 import EditPageWrapper from './EditPage.style';
 
 /**
- * C00600 存錢計畫 編輯頁
+ * C00600 存錢計畫 (新增) 編輯頁
  */
 const DepositPlanEditPage = () => {
   const history = useHistory();
@@ -27,19 +27,15 @@ const DepositPlanEditPage = () => {
     control, register, handleSubmit, watch, setValue, formState: { errors },
   } = useForm();
   const uid = Array.from({ length: 7}, () => uuid());
-  const [plan, setPlan] = useState();
   const [program, setProgram] = useState();
   const [isRestrictedPromotion, setIsRestrictedPromotion] = useState(false);
-  const [isRestrictedEdit, setIsRestrictedEdit] = useState(false);
   const [subAccounts, setSubAccounts] = useState();
   const [hasReachedMaxSubAccounts, setHasReachedMaxSubAccounts] = useState(false);
-  const [hasReachedMaxPlans, setHasReachedMaxPlans] = useState(false);
 
   useEffect(() => {
     if (location.state && ('program' in location.state)) {
       setProgram(location.state.program);
       setSubAccounts(location.state.subAccounts);
-      setHasReachedMaxPlans(location.state.hasReachedMaxPlans);
       setHasReachedMaxSubAccounts(location.state.hasReachedMaxSubAccounts);
 
       if (location.state.program.code > 0) setIsRestrictedPromotion(true);
@@ -49,9 +45,6 @@ const DepositPlanEditPage = () => {
       if (location.state.program.code > 0 || 'isRestrictedPromotion' in location.state) {
         setValue('name', location.state.program.name, { shouldValidate: false });
       }
-    } else if (location.state && ('plan' in location.state)) {
-      setPlan(location.state.plan);
-      if ('isRestrictedEdit' in location.state) setIsRestrictedEdit(location.state.isRestrictedEdit);
     } else {
       AlertProgramNoFound({
         onOk: () => history.push('/C006002'),
@@ -80,12 +73,6 @@ const DepositPlanEditPage = () => {
     return { begin, end };
   };
 
-  const getDuration = () => {
-    const begin = dateFormatter(stringToDate(plan.startDate), true);
-    const end = dateFormatter(stringToDate(plan.endDate), true);
-    return `${begin} ~ ${end}`;
-  };
-
   const getDefaultCycleTiming = (mode) => {
     if (mode === 1) return new Date().getDay();
     const date = new Date().getDate();
@@ -99,10 +86,12 @@ const DepositPlanEditPage = () => {
     return gm;
   };
 
+  const getRemainingBalance = (accountNo) => subAccounts?.find((a) => a.accountNo === accountNo)?.balance ?? 0;
+
   const onSubmit = (data) => {
     const date = getDurationTuple(new Date(), data.cycleDuration, data.cycleMode, data.cycleTiming);
     const payload = {
-      progCode: 0,
+      progCode: program.code,
       imageId: 0,
       name: data.name,
       startDate: stringDateCodeFormatter(date.begin),
@@ -111,18 +100,17 @@ const DepositPlanEditPage = () => {
       cycleTiming: data.cycleTiming,
       amount: data.amount,
       bindAccountNo: data.bindAccountNo === 'new' ? null : data.bindAccountNo,
-      currentBalance: 0,
+      currentBalance: getRemainingBalance(data.bindAccountNo),
       goalAmount: getGoalAmount(data.amount, data.cycleDuration, data.cycleMode),
       authorizedKey: 0,
-      hasReachedMaxPlans,
     };
     // TODO
-    console.debug('payload', payload);
+    console.debug('create API payload', payload);
   };
 
   const renderSubAccountOptions = () => {
-    const options = [];
-    if (subAccounts) options.concat(subAccounts);
+    let options = [];
+    if (subAccounts) options = options.concat(subAccounts);
     if (!hasReachedMaxSubAccounts) options.push({ accountNo: 'new', balance: 0 });
     return options.map((a) => (
       <FEIBOption key={uuid()} value={a.accountNo}>
@@ -162,26 +150,22 @@ const DepositPlanEditPage = () => {
 
             <div>
               <FEIBInputLabel htmlFor={uid[2]}>預計存錢區間</FEIBInputLabel>
-              { isRestrictedEdit ? (
-                <FEIBInput id={uid[2]} value={plan ? getDuration() : ''} disabled />
-              ) : (
-                <Controller
-                  name="cycleDuration"
-                  control={control}
-                  defaultValue={3}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <FEIBSelect id={uid[2]} {...field}>
-                      { Array.from({length: 22}, (_, i) => i + 3).map((v) => (
-                        <FEIBOption key={uuid()} value={v}>
-                          {v}
-                          個月
-                        </FEIBOption>
-                      ))}
-                    </FEIBSelect>
-                  )}
-                />
-              )}
+              <Controller
+                name="cycleDuration"
+                control={control}
+                defaultValue={3}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <FEIBSelect id={uid[2]} {...field}>
+                    { Array.from({length: 22}, (_, i) => i + 3).map((v) => (
+                      <FEIBOption key={uuid()} value={v}>
+                        {v}
+                        個月
+                      </FEIBOption>
+                    ))}
+                  </FEIBSelect>
+                )}
+              />
               <FEIBErrorMessage />
             </div>
 
@@ -194,7 +178,7 @@ const DepositPlanEditPage = () => {
                   defaultValue={2}
                   rules={{ required: true }}
                   render={({ field }) => (
-                    <FEIBSelect id={uid[3]} disabled={true || isRestrictedPromotion || isRestrictedEdit} {...field}>
+                    <FEIBSelect id={uid[3]} disabled={true || isRestrictedPromotion} {...field}>
                       <FEIBOption value={1}>每週</FEIBOption>
                       <FEIBOption value={2}>每月</FEIBOption>
                     </FEIBSelect>
@@ -211,7 +195,7 @@ const DepositPlanEditPage = () => {
                   defaultValue={getDefaultCycleTiming(watch('cycleMode', 2))}
                   rules={{ required: true }}
                   render={({ field }) => (
-                    <FEIBSelect id={uid[4]} disabled={isRestrictedEdit || isRestrictedPromotion} {...field}>
+                    <FEIBSelect id={uid[4]} disabled={isRestrictedPromotion} {...field}>
                       { watch('cycleMode', 2) === 1
                         ? Array.from({length: 7}, (_, i) => i).map((v) => (
                           <FEIBOption key={uuid()} value={v}>{`周${weekNumberToChinese(v === 0 ? 7 : v)}`}</FEIBOption>
@@ -237,8 +221,7 @@ const DepositPlanEditPage = () => {
                 type="number"
                 error={!!(errors?.amount)}
                 $color={errors?.amount ? Theme.colors.state.danger : undefined}
-                disabled={isRestrictedEdit}
-                {...register('amount', { min: 10000, max: 90000000 })}
+                {...register('amount', { required: true, min: 10000, max: 90000000 })}
               />
               <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
                 {`存款目標為 ${toCurrency(getGoalAmount(watch('amount', 0), watch('cycleDuration', 3), watch('cycleMode', 2)))} 元`}
@@ -248,23 +231,28 @@ const DepositPlanEditPage = () => {
 
             <div>
               <FEIBInputLabel htmlFor={uid[6]}>選擇陪你存錢的帳號</FEIBInputLabel>
-              { isRestrictedEdit ? (
-                <FEIBInput id={uid[6]} value={plan?.bindAccountNo} disabled />
-              ) : (
-                <Controller
-                  name="bindAccountNo"
-                  control={control}
-                  placeholder="請選擇子帳號且不能修改"
-                  defaultValue=""
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <FEIBSelect id={uid[6]} {...field}>
-                      { renderSubAccountOptions() }
-                    </FEIBSelect>
-                  )}
-                />
-              )}
-              <FEIBErrorMessage />
+              <Controller
+                name="bindAccountNo"
+                control={control}
+                defaultValue="*"
+                rules={{ required: true, validate: (i) => i !== '*' }}
+                render={({ field }) => (
+                  <FEIBSelect
+                    id={uid[6]}
+                    error={!!(errors?.bindAccountNo)}
+                    $color={watch('bindAccountNo') === '*' ? Theme.colors.text.placeholder : undefined}
+                    {...field}
+                  >
+                    <FEIBOption value="*" disabled>請選擇子帳號且不能修改</FEIBOption>
+                    { renderSubAccountOptions() }
+                  </FEIBSelect>
+                )}
+              />
+              <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
+                存款餘額為
+                { getRemainingBalance(watch('bindAccountNo')) }
+                元
+              </FEIBErrorMessage>
             </div>
 
             <FEIBButton type="submit">確認</FEIBButton>

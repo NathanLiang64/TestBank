@@ -16,6 +16,7 @@ import Loading from 'components/Loading';
 import CreatePageWrapper from './CreatePage.style';
 import { getDepositPlanProgram, getDepositPlanTerms } from './api';
 // import { getDepositPlans, getDepositPlanProgram, getDepositPlanTerms } from './api';
+import { AlertReachedMaxPlans } from './utils/prompts';
 
 /**
  * C00600 存錢計畫 新增頁
@@ -30,7 +31,6 @@ const DepositPlanCreatePage = () => {
   const [terms, setTerms] = useState();
   const [subAccounts, setSubAccounts] = useState();
   const [hasReachedMaxSubAccounts, setHasReachedMaxSubAccounts] = useState(false);
-  const [hasReachedMaxPlans, setHasReachedMaxPlans] = useState(false);
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
@@ -49,6 +49,7 @@ const DepositPlanCreatePage = () => {
       totalSubAccountCount = location.state.totalSubAccountCount;
     } else {
       /*
+       * TODO
       const response = await getDepositPlans();
       plansLength = response.plans.length;
       accounts = response.subAccounts;
@@ -59,9 +60,11 @@ const DepositPlanCreatePage = () => {
       totalSubAccountCount = 1;
     }
 
+    // Guard
+    if (plansLength >= 3) AlertReachedMaxPlans({ goBack: () => history.goBack() });
+
     setSubAccounts(accounts);
     setHasReachedMaxSubAccounts(totalSubAccountCount >= 8);
-    setHasReachedMaxPlans(plansLength >= 3);
   }, []);
 
   const lazyLoadTerms = async () => {
@@ -71,7 +74,7 @@ const DepositPlanCreatePage = () => {
   const onSubmit = (data) => {
     const program = programs.find((p) => p.code === +data.code);
     history.push('/C006003', {
-      program, subAccounts, hasReachedMaxPlans, hasReachedMaxSubAccounts,
+      program, subAccounts, hasReachedMaxSubAccounts,
     });
   };
 

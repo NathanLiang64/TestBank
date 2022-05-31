@@ -124,7 +124,7 @@ const DepositPlanPage = () => {
   };
 
   const handleEditClick = (plan) => {
-    history.push('/C006003', { isRestrictedEdit: true, plan });
+    history.push('/C006005', { plan });
   };
 
   /**
