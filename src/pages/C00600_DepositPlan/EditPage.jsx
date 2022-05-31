@@ -102,7 +102,7 @@ const DepositPlanEditPage = () => {
       bindAccountNo: data.bindAccountNo === 'new' ? null : data.bindAccountNo,
       currentBalance: getRemainingBalance(data.bindAccountNo),
       goalAmount: getGoalAmount(data.amount, data.cycleDuration, data.cycleMode),
-      authorizedKey: 0,
+      authorizedKey: 'dog', // TODO
     };
     // TODO
     console.debug('create API payload', payload);

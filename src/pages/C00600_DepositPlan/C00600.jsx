@@ -19,6 +19,7 @@ import DepositPlan from './components/DepositPlan';
 import { getAccountSummary } from '../C00300_NtdDeposit/api';
 import { getDepositPlans, updateDepositPlan, closeDepositPlan } from './api';
 import {
+  AlertUpdateFail,
   AlertNoMainAccount,
   AlertMainDepositPlanHasBeenSetAlready,
   AlertUnavailableSubAccount,
@@ -60,24 +61,31 @@ const DepositPlanPage = () => {
   /**
    * 產生上方標題圖時會用的
    */
-  const handleSetMasterPlan = (plan) => {
+  const handleSetMasterPlan = async (plan) => {
     if (plan.isMaster) {
       AlertMainDepositPlanHasBeenSetAlready();
       return;
     }
 
-    updateDepositPlan({ planId: plan.planId, isMaster: true });
-    // TODO: if failed?
+    const response = await updateDepositPlan({
+      planId: plan.planId,
+      isMaster: true,
+      authorizedKey: plan.planId, // TODO
+    });
 
-    // 一併更新前端資料
-    setPlans(plans.map((p) => {
-      p.isMaster = false;
-      if (p.planId === plan.planId) p.isMaster = true;
-      return p;
-    }));
+    if (response.result) {
+      // 一併更新前端資料
+      setPlans(plans.map((p) => {
+        p.isMaster = false;
+        if (p.planId === plan.planId) p.isMaster = true;
+        return p;
+      }));
 
-    // 移動畫面顯示主要計畫
-    if (swiperController) swiperController.slideTo(1);
+      // 移動畫面顯示主要計畫
+      if (swiperController) swiperController.slideTo(1);
+    } else {
+      AlertUpdateFail();
+    }
   };
 
   const handleGoBackClick = () => {

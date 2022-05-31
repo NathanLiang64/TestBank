@@ -14,8 +14,9 @@ import {
   toCurrency, accountFormatter, dateFormatter, stringToDate,
 } from 'utilities/Generator';
 
-import { AlertInvalidEntry } from './utils/prompts';
+import { AlertInvalidEntry, AlertUpdateFail } from './utils/prompts';
 import EditPageWrapper from './EditPage.style';
+import { updateDepositPlan } from './api';
 
 /**
  * C00600 存錢計畫 (已建立) 編輯頁
@@ -48,15 +49,18 @@ const DepositPlanEditPage = () => {
     return `${begin} ~ ${end}`;
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const payload = {
       planId: plan.planId,
       name: data.name !== plan.name ? data.name : null,
       image: data.imageId !== plan.imageId ? data.imageId : null,
-      authorizedKey: 0,
+      authorizedKey: plan.planId, // TODO
     };
-    // TODO
-    console.debug('update API payload', payload);
+
+    const response = await updateDepositPlan(payload);
+
+    if (response.result) history.push('/C00600');
+    else AlertUpdateFail();
   };
 
   return (

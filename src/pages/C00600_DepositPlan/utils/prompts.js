@@ -104,3 +104,11 @@ export const AlertReachedMaxPlans = ({ goBack }) => {
     onCancel: goHome,
   });
 };
+
+export const AlertUpdateFail = () => {
+  showCustomPrompt({
+    title: '更新存錢計畫',
+    message: '更新失敗，請稍候重試。',
+    okContent: '了解',
+  });
+};
