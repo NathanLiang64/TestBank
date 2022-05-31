@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { Controller, useForm } from 'react-hook-form';
 import uuid from 'react-uuid';
 import parse from 'html-react-parser';
@@ -15,6 +15,7 @@ import Loading from 'components/Loading';
 
 import CreatePageWrapper from './CreatePage.style';
 import { getDepositPlanProgram, getDepositPlanTerms } from './api';
+// import { getDepositPlans, getDepositPlanProgram, getDepositPlanTerms } from './api';
 
 /**
  * C00600 存錢計畫 新增頁
@@ -22,14 +23,45 @@ import { getDepositPlanProgram, getDepositPlanTerms } from './api';
 const DepositPlanCreatePage = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation();
   const { control, handleSubmit } = useForm();
+
   const [programs, setPrograms] = useState();
   const [terms, setTerms] = useState();
+  const [subAccounts, setSubAccounts] = useState();
+  const [hasReachedMaxSubAccounts, setHasReachedMaxSubAccounts] = useState(false);
+  const [hasReachedMaxPlans, setHasReachedMaxPlans] = useState(false);
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
     setPrograms(await getDepositPlanProgram());
     dispatch(setWaittingVisible(false));
+  }, []);
+
+  useEffect(async () => {
+    let plansLength;
+    let accounts;
+    let totalSubAccountCount;
+
+    if (location.state && ('totalSubAccountCount' in location.state)) {
+      plansLength = location.state.plansLength;
+      accounts = location.state.subAccounts;
+      totalSubAccountCount = location.state.totalSubAccountCount;
+    } else {
+      /*
+      const response = await getDepositPlans();
+      plansLength = response.plans.length;
+      accounts = response.subAccounts;
+      totalSubAccountCount = response.totalSubAccountCount;
+      */
+      plansLength = 1;
+      accounts = [];
+      totalSubAccountCount = 1;
+    }
+
+    setSubAccounts(accounts);
+    setHasReachedMaxSubAccounts(totalSubAccountCount >= 8);
+    setHasReachedMaxPlans(plansLength >= 3);
   }, []);
 
   const lazyLoadTerms = async () => {
@@ -38,7 +70,9 @@ const DepositPlanCreatePage = () => {
 
   const onSubmit = (data) => {
     const program = programs.find((p) => p.code === +data.code);
-    history.push('/C006003', { program });
+    history.push('/C006003', {
+      program, subAccounts, hasReachedMaxPlans, hasReachedMaxSubAccounts,
+    });
   };
 
   return (

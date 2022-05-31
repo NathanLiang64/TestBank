@@ -123,9 +123,8 @@ const DepositPlanPage = () => {
     showDrawer('', options);
   };
 
-  const handleEditClick = () => {
-    // TODO: FBI-15
-    console.debug('handleEditClick');
+  const handleEditClick = (plan) => {
+    history.push('/C006003', { isRestrictedEdit: true, plan });
   };
 
   /**
@@ -162,6 +161,10 @@ const DepositPlanPage = () => {
   /**
    * 產生下方內容時會用的
    */
+  const handleAddClick = () => {
+    history.push('/C006002', { plansLength: plans?.length, subAccounts, totalSubAccountCount });
+  };
+
   const handleShowDetailClick = (plan) => {
     history.push('/C006001', { plan });
   };
@@ -175,7 +178,13 @@ const DepositPlanPage = () => {
    * 預設3張新增計畫頁，再替換成後端回傳的計畫，最後再把主要計畫移至中間。
    */
   const renderContents = () => {
-    const slides = Array.from({ length: 3 }, () => <EmptyPlan key={uuid()} onMount={shouldShowUnavailableSubAccountAlert} />);
+    const slides = Array.from({ length: 3 }, () => (
+      <EmptyPlan
+        key={uuid()}
+        onAddClick={handleAddClick}
+        onMount={shouldShowUnavailableSubAccountAlert}
+      />
+    ));
 
     let masterSlideIndex = null;
 

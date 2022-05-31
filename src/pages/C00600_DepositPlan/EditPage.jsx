@@ -11,7 +11,7 @@ import {
 } from 'components/elements';
 import Theme from 'themes/theme';
 import {
-  toCurrency, weekNumberToChinese,
+  toCurrency, accountFormatter, dateFormatter, stringToDate, stringDateCodeFormatter, weekNumberToChinese,
 } from 'utilities/Generator';
 
 import { AlertProgramNoFound } from './utils/prompts';
@@ -27,39 +27,62 @@ const DepositPlanEditPage = () => {
     control, register, handleSubmit, watch, setValue, formState: { errors },
   } = useForm();
   const uid = Array.from({ length: 7}, () => uuid());
+  const [plan, setPlan] = useState();
   const [program, setProgram] = useState();
   const [isRestrictedPromotion, setIsRestrictedPromotion] = useState(false);
   const [isRestrictedEdit, setIsRestrictedEdit] = useState(false);
+  const [subAccounts, setSubAccounts] = useState();
+  const [hasReachedMaxSubAccounts, setHasReachedMaxSubAccounts] = useState(false);
+  const [hasReachedMaxPlans, setHasReachedMaxPlans] = useState(false);
 
   useEffect(() => {
-    if (!location?.state) return;
+    if (location.state && ('program' in location.state)) {
+      setProgram(location.state.program);
+      setSubAccounts(location.state.subAccounts);
+      setHasReachedMaxPlans(location.state.hasReachedMaxPlans);
+      setHasReachedMaxSubAccounts(location.state.hasReachedMaxSubAccounts);
 
-    if (!('program' in location.state)) {
+      if (location.state.program.code > 0) setIsRestrictedPromotion(true);
+      if ('isRestrictedPromotion' in location.state) setIsRestrictedPromotion(location.state.isRestrictedPromotion);
+
+      // useState is async, isRestrictedPromotion may be unavaliable.
+      if (location.state.program.code > 0 || 'isRestrictedPromotion' in location.state) {
+        setValue('name', location.state.program.name, { shouldValidate: false });
+      }
+    } else if (location.state && ('plan' in location.state)) {
+      setPlan(location.state.plan);
+      if ('isRestrictedEdit' in location.state) setIsRestrictedEdit(location.state.isRestrictedEdit);
+    } else {
       AlertProgramNoFound({
         onOk: () => history.push('/C006002'),
         onCancel: () => history.goBack(),
       });
     }
-    setProgram(location.state.program);
-
-    if (location.state.program.code > 0) setIsRestrictedPromotion(true);
-    if ('isRestrictedPromotion' in location.state) setIsRestrictedPromotion(location.state.isRestrictedPromotion);
-    if ('isRestrictedEdit' in location.state) setIsRestrictedEdit(location.state.isRestrictedEdit);
-
-    if (location.state.program.code > 0 || isRestrictedPromotion) {
-      setValue('name', location.state.program.name, { shouldValidate: false });
-    }
-
-    // TODO
-    console.log('EditPage', program, isRestrictedPromotion, isRestrictedEdit);
   }, []);
 
-  // TODO
-  const onSubmit = (data) => console.log(data);
+  const getDurationTuple = (today, cycleDuration, cycleMode, cycleTiming) => {
+    const day = today.getDate();
+    const month = today.getMonth();
+
+    const begin = new Date(today);
+    if (cycleTiming < day) {
+      if (cycleTiming < 28) {
+        begin.setDate(cycleTiming);
+        begin.setMonth(month + 1);
+      }
+    } else {
+      begin.setDate(cycleTiming);
+    }
+    const offset = cycleDuration / (cycleMode === 1 ? 4 : 1);
+    const end = new Date(begin);
+    end.setMonth(end.getMonth() + offset);
+    if (end.getDate() > 28) end.setDate(28);
+    return { begin, end };
+  };
 
   const getDuration = () => {
-    const begin = '2022-01-01';
-    const end = '2022-12-31';
+    const begin = dateFormatter(stringToDate(plan.startDate), true);
+    const end = dateFormatter(stringToDate(plan.endDate), true);
     return `${begin} ~ ${end}`;
   };
 
@@ -74,6 +97,38 @@ const DepositPlanEditPage = () => {
     const gm = amount * cycle * duration;
     if (Number.isNaN(gm)) return 0;
     return gm;
+  };
+
+  const onSubmit = (data) => {
+    const date = getDurationTuple(new Date(), data.cycleDuration, data.cycleMode, data.cycleTiming);
+    const payload = {
+      progCode: 0,
+      imageId: 0,
+      name: data.name,
+      startDate: stringDateCodeFormatter(date.begin),
+      endDate: stringDateCodeFormatter(date.end),
+      cycleMode: data.cycleMode,
+      cycleTiming: data.cycleTiming,
+      amount: data.amount,
+      bindAccountNo: data.bindAccountNo === 'new' ? null : data.bindAccountNo,
+      currentBalance: 0,
+      goalAmount: getGoalAmount(data.amount, data.cycleDuration, data.cycleMode),
+      authorizedKey: 0,
+      hasReachedMaxPlans,
+    };
+    // TODO
+    console.debug('payload', payload);
+  };
+
+  const renderSubAccountOptions = () => {
+    const options = [];
+    if (subAccounts) options.concat(subAccounts);
+    if (!hasReachedMaxSubAccounts) options.push({ accountNo: 'new', balance: 0 });
+    return options.map((a) => (
+      <FEIBOption key={uuid()} value={a.accountNo}>
+        {a.accountNo === 'new' ? '加開子帳戶' : accountFormatter(a.accountNo)}
+      </FEIBOption>
+    ));
   };
 
   return (
@@ -108,7 +163,7 @@ const DepositPlanEditPage = () => {
             <div>
               <FEIBInputLabel htmlFor={uid[2]}>預計存錢區間</FEIBInputLabel>
               { isRestrictedEdit ? (
-                <FEIBInput id={uid[2]} value={getDuration()} disabled />
+                <FEIBInput id={uid[2]} value={plan ? getDuration() : ''} disabled />
               ) : (
                 <Controller
                   name="cycleDuration"
@@ -194,7 +249,7 @@ const DepositPlanEditPage = () => {
             <div>
               <FEIBInputLabel htmlFor={uid[6]}>選擇陪你存錢的帳號</FEIBInputLabel>
               { isRestrictedEdit ? (
-                <FEIBInput id={uid[6]} value={program.bindAccountNo} disabled />
+                <FEIBInput id={uid[6]} value={plan?.bindAccountNo} disabled />
               ) : (
                 <Controller
                   name="bindAccountNo"
@@ -204,8 +259,7 @@ const DepositPlanEditPage = () => {
                   rules={{ required: true }}
                   render={({ field }) => (
                     <FEIBSelect id={uid[6]} {...field}>
-                      <FEIBOption value="01400099990000">00011122223333</FEIBOption>
-                      <FEIBOption value="">新增</FEIBOption>
+                      { renderSubAccountOptions() }
                     </FEIBSelect>
                   )}
                 />
