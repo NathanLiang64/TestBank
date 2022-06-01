@@ -5,7 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 import uuid from 'react-uuid';
 
 import Layout from 'components/Layout/Layout';
-import Main from 'components/Layout';
+import { MainScrollWrapper } from 'components/Layout';
 import {
   FEIBButton, FEIBInputLabel, FEIBInput, FEIBErrorMessage,
 } from 'components/elements';
@@ -15,8 +15,9 @@ import {
 } from 'utilities/Generator';
 
 import { AlertInvalidEntry, AlertUpdateFail } from './utils/prompts';
-import EditPageWrapper from './EditPage.style';
 import { updateDepositPlan } from './api';
+import HeroWithEdit from './components/HeroWithEdit';
+import EditPageWrapper from './EditPage.style';
 
 /**
  * C00600 存錢計畫 (已建立) 編輯頁
@@ -64,70 +65,75 @@ const DepositPlanEditPage = () => {
   };
 
   return (
-    <Layout title="編輯存錢計畫" goBackFunc={() => history.goBack()}>
-      <Main>
+    <Layout title="編輯存錢計畫" hasClearHeader goBackFunc={() => history.goBack()}>
+      <MainScrollWrapper>
         <EditPageWrapper>
-          <form className="flex" onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)}>
 
-            <div>
-              <FEIBInputLabel htmlFor={uid[1]}>為你的計畫命名吧</FEIBInputLabel>
-              <Controller
-                name="name"
-                control={control}
-                defaultValue={isRestrictedPromotion ? plan.name : ''}
-                rules={{ maxLength: 7, required: true }}
-                render={({ field }) => (
-                  <FEIBInput
-                    id={uid[1]}
-                    error={!!(errors?.name)}
-                    $color={errors?.name ? Theme.colors.state.danger : undefined}
-                    placeholder="請輸入7個以內的中英文字、數字或符號"
-                    disabled={isRestrictedPromotion}
-                    {...field}
-                  />
-                )}
-              />
-              <FEIBErrorMessage>
-                {errors.name && <span>請輸入7個以內的中英文字、數字或符號</span>}
-              </FEIBErrorMessage>
-            </div>
+            <HeroWithEdit />
 
-            <div>
-              <FEIBInputLabel htmlFor={uid[2]}>預計存錢區間</FEIBInputLabel>
-              <FEIBInput id={uid[2]} value={plan ? getDuration() : ''} disabled />
-              <FEIBErrorMessage />
-            </div>
+            <div className="flex">
 
-            <div className="col-2">
-              <div className="w-50">
-                <FEIBInputLabel htmlFor={uid[3]}>存錢頻率</FEIBInputLabel>
-                <FEIBInput id={uid[3]} value={plan?.cycleMode === 1 ? '每週' : '每月'} disabled />
+              <div>
+                <FEIBInputLabel htmlFor={uid[1]}>為你的計畫命名吧</FEIBInputLabel>
+                <Controller
+                  name="name"
+                  control={control}
+                  defaultValue={isRestrictedPromotion ? plan.name : ''}
+                  rules={{ maxLength: 7, required: true }}
+                  render={({ field }) => (
+                    <FEIBInput
+                      id={uid[1]}
+                      error={!!(errors?.name)}
+                      $color={errors?.name ? Theme.colors.state.danger : undefined}
+                      placeholder="請輸入7個以內的中英文字、數字或符號"
+                      disabled={isRestrictedPromotion}
+                      {...field}
+                    />
+                  )}
+                />
+                <FEIBErrorMessage>
+                  {errors.name && <span>請輸入7個以內的中英文字、數字或符號</span>}
+                </FEIBErrorMessage>
+              </div>
+
+              <div>
+                <FEIBInputLabel htmlFor={uid[2]}>預計存錢區間</FEIBInputLabel>
+                <FEIBInput id={uid[2]} value={plan ? getDuration() : ''} disabled />
                 <FEIBErrorMessage />
               </div>
 
-              <div className="w-50">
-                <FEIBInputLabel htmlFor={uid[4]}>週期</FEIBInputLabel>
-                <FEIBInput id={uid[4]} value={`${plan?.cycleTiming}日`} disabled />
+              <div className="col-2">
+                <div className="w-50">
+                  <FEIBInputLabel htmlFor={uid[3]}>存錢頻率</FEIBInputLabel>
+                  <FEIBInput id={uid[3]} value={plan?.cycleMode === 1 ? '每週' : '每月'} disabled />
+                  <FEIBErrorMessage />
+                </div>
+
+                <div className="w-50">
+                  <FEIBInputLabel htmlFor={uid[4]}>週期</FEIBInputLabel>
+                  <FEIBInput id={uid[4]} value={`${plan?.cycleTiming}日`} disabled />
+                  <FEIBErrorMessage />
+                </div>
+              </div>
+
+              <div>
+                <FEIBInputLabel htmlFor={uid[5]}>預計每期存錢金額</FEIBInputLabel>
+                <FEIBInput id={uid[5]} value={toCurrency(plan?.goalAmount ?? 0)} disabled />
                 <FEIBErrorMessage />
               </div>
-            </div>
 
-            <div>
-              <FEIBInputLabel htmlFor={uid[5]}>預計每期存錢金額</FEIBInputLabel>
-              <FEIBInput id={uid[5]} value={toCurrency(plan?.goalAmount ?? 0)} disabled />
-              <FEIBErrorMessage />
-            </div>
+              <div>
+                <FEIBInputLabel htmlFor={uid[6]}>選擇陪你存錢的帳號</FEIBInputLabel>
+                <FEIBInput id={uid[6]} value={accountFormatter(plan?.bindAccountNo)} disabled />
+                <FEIBErrorMessage />
+              </div>
 
-            <div>
-              <FEIBInputLabel htmlFor={uid[6]}>選擇陪你存錢的帳號</FEIBInputLabel>
-              <FEIBInput id={uid[6]} value={accountFormatter(plan?.bindAccountNo)} disabled />
-              <FEIBErrorMessage />
+              <FEIBButton type="submit">確認</FEIBButton>
             </div>
-
-            <FEIBButton type="submit">確認</FEIBButton>
           </form>
         </EditPageWrapper>
-      </Main>
+      </MainScrollWrapper>
     </Layout>
   );
 };
