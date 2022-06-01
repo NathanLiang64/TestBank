@@ -8,7 +8,7 @@ import { MainScrollWrapper } from 'components/Layout';
 import SwiperLayout from 'components/SwiperLayout';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { closeFunc } from 'utilities/BankeePlus';
-import { showDrawer } from 'utilities/MessageModal';
+import { showAnimationModal, showDrawer } from 'utilities/MessageModal';
 import { AccountIcon6, RadioUncheckedIcon, TransactionIcon1 } from 'assets/images/icons';
 
 import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
@@ -103,10 +103,15 @@ const DepositPlanPage = () => {
       if ('email' in response) {
         ConfirmDepositPlanHasBeenClosed({ email: response.email, onOk: () => history.push('/') });
       } else {
-        // TODO: FBI-26 show error message
+        showAnimationModal({
+          isSuccess: false,
+          errorTitle: '設定失敗',
+          errorCode: 'E341', // TODO
+          errorDesc: '親愛的客戶，因關閉計畫失敗，請重新執行交易，如有疑問，請與本行客戶服務中心聯繫。',
+        });
       }
     };
-    PromptShouldCloseDepositPlanOrNot({ endDate: plan.endDate, onOk: () => confirmTermination});
+    PromptShouldCloseDepositPlanOrNot({ endDate: plan.endDate, onOk: () => confirmTermination()});
   };
 
   const handleMoreClick = (plan) => {
@@ -114,8 +119,10 @@ const DepositPlanPage = () => {
       { icon: <RadioUncheckedIcon />, title: '設定為主要存錢計畫', onClick: handleSetMasterPlan },
       { icon: <AccountIcon6 />, title: '存錢計畫資訊', onClick: () => history.push('/C006004', { isConfirmMode: false, plan }) },
       { icon: <RadioUncheckedIcon />, title: '結束本計畫', onClick: handleTerminatePlan },
-      { icon: <TransactionIcon1 />, title: '轉帳', onClick: () => {} }, // TODO
     ];
+    if (plan.progInfo.type === 0) {
+      list.push({ icon: <TransactionIcon1 />, title: '轉帳', onClick: () => history.push('/D00100') });
+    }
     const options = (
       <ul>
         {list.map((func) => (

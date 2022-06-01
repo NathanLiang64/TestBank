@@ -59,13 +59,13 @@ const DepositPlanDetailPage = () => {
       if (payload.imageId === 0) await handleImageUpload(response.planId);
       setMode(2);
       sessionStorage.removeItem('C006003');
+      document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth'});
     } else {
-      // TODO
       showAnimationModal({
         isSuccess: false,
         errorTitle: '設定失敗',
-        errorCode: 'E341',
-        errorDesc: '親愛的客戶，因關閉計畫失敗，請重新執行交易，如有疑問，請與本行客戶服務中心聯繫。',
+        errorCode: 'E341', // TODO
+        errorDesc: '親愛的客戶，因建立計畫失敗，請重新執行交易，如有疑問，請與本行客戶服務中心聯繫。',
         onClose: () => history.goBack(),
       });
     }

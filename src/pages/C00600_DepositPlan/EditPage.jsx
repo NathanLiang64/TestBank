@@ -43,11 +43,11 @@ const DepositPlanEditPage = () => {
       setSubAccounts(location.state.subAccounts);
       setHasReachedMaxSubAccounts(location.state.hasReachedMaxSubAccounts);
 
-      if (location.state.program.code > 0) setIsRestrictedPromotion(true);
+      if (location.state.program.type > 0) setIsRestrictedPromotion(true);
       if ('isRestrictedPromotion' in location.state) setIsRestrictedPromotion(location.state.isRestrictedPromotion);
 
       // useState is async, isRestrictedPromotion may be unavaliable.
-      if (location.state.program.code > 0 || 'isRestrictedPromotion' in location.state) {
+      if (location.state.program.type > 0 || 'isRestrictedPromotion' in location.state) {
         setValue('name', location.state.program.name, { shouldValidate: false });
       }
     } else {
@@ -88,7 +88,7 @@ const DepositPlanEditPage = () => {
     const date = getDurationTuple(new Date(), data.cycleDuration, data.cycleMode, data.cycleTiming);
     const payload = {
       progCode: program.code,
-      imageId: 0,
+      imageId: 1, // TODO
       name: data.name,
       startDate: stringDateCodeFormatter(date.begin),
       endDate: stringDateCodeFormatter(date.end),

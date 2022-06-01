@@ -34,7 +34,7 @@ const DepositPlanEditPage = () => {
   useEffect(() => {
     if (location.state && ('plan' in location.state)) {
       setPlan(location.state.plan);
-      setIsRestrictedPromotion(location.state.plan.code > 0);
+      setIsRestrictedPromotion(location.state.plan.type > 0);
       if ('isRestrictedPromotion' in location.state) setIsRestrictedPromotion(location.state.isRestrictedPromotion);
 
       setValue('name', location.state.plan.name, { shouldValidate: false });

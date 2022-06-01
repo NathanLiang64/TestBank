@@ -14,8 +14,7 @@ import { FEIBButton, FEIBRadioLabel, FEIBRadio } from 'components/elements';
 import Loading from 'components/Loading';
 
 import CreatePageWrapper from './CreatePage.style';
-import { getDepositPlanProgram, getDepositPlanTerms } from './api';
-// import { getDepositPlans, getDepositPlanProgram, getDepositPlanTerms } from './api';
+import { getDepositPlans, getDepositPlanProgram, getDepositPlanTerms } from './api';
 import { AlertReachedMaxPlans } from './utils/prompts';
 
 /**
@@ -48,16 +47,10 @@ const DepositPlanCreatePage = () => {
       accounts = location.state.subAccounts;
       totalSubAccountCount = location.state.totalSubAccountCount;
     } else {
-      /*
-       * TODO
       const response = await getDepositPlans();
       plansLength = response.plans.length;
       accounts = response.subAccounts;
       totalSubAccountCount = response.totalSubAccountCount;
-      */
-      plansLength = 1;
-      accounts = [];
-      totalSubAccountCount = 1;
     }
 
     // Guard
@@ -73,7 +66,7 @@ const DepositPlanCreatePage = () => {
 
   const onSubmit = (data) => {
     sessionStorage.removeItem('C006003');
-    const program = programs.find((p) => p.code === +data.code);
+    const program = programs.find((p) => p.code === data.code);
     history.push('/C006003', {
       program, subAccounts, hasReachedMaxSubAccounts,
     });
@@ -89,7 +82,7 @@ const DepositPlanCreatePage = () => {
               <Controller
                 name="code"
                 control={control}
-                defaultValue="0"
+                defaultValue=""
                 render={({ field }) => (
                   <RadioGroup
                     {...field}
