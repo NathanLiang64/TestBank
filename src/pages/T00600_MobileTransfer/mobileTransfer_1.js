@@ -107,7 +107,7 @@ const MobileTransfer1 = () => {
   }, []);
 
   return (
-    <Layout title="手機號碼收款設定" goBack={goBack}>
+    <Layout title="手機號碼收款設定" goBackFunc={goBack}>
       <MobileTransferWrapper>
         <div className="summaryContainer lighterBlueLine">
           <p>

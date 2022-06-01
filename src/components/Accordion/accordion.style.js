@@ -38,6 +38,7 @@ const AccordionWrapper = styled.div`
   }
 
   .collapseContent {
+    word-wrap:break-word;
     padding: 0 1.2rem 1.2rem;
     max-height: 32rem;
     font-size: 1.4rem;
