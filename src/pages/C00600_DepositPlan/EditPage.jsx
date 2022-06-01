@@ -210,7 +210,13 @@ const DepositPlanEditPage = () => {
                 type="number"
                 error={!!(errors?.amount)}
                 $color={errors?.amount ? Theme.colors.state.danger : undefined}
-                {...register('amount', { required: true, min: 10000, max: 90000000 })}
+                {...register('amount', {
+                  required: true,
+                  validate: (v) => {
+                    const amountRange = program.amountRange[watch('cycleMode', 2) === 1 ? 'week' : 'month'];
+                    return (v >= amountRange?.min ?? 10_000) && (v <= amountRange?.max ?? 9_000_000);
+                  },
+                })}
               />
               <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
                 {`存款目標為 ${toCurrency(getGoalAmount(watch('amount', 0), watch('cycleDuration', 3), watch('cycleMode', 2)))} 元`}
