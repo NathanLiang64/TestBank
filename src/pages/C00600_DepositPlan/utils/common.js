@@ -13,18 +13,18 @@ export const getDurationTuple = (today, cycleDuration, cycleMode, cycleTiming) =
   }
 
   const end = new Date(begin);
+  if (end.getDate() > 28) end.setDate(28);
   if (cycleMode === 1) {
     end.setDate(end.getDate() + (((cycleDuration * 4) - 1) * 7));
   } else {
-    if (end.getDate() > 28) end.setDate(28);
     end.setMonth(end.getMonth() + cycleDuration);
   }
 
   const next = new Date(begin);
+  if (next.getDate() > 28) next.setDate(28);
   if (cycleMode === 1) {
     next.setDate(next.getDate() + 7);
   } else {
-    if (next.getDate() > 28) next.setDate(28);
     next.setMonth(next.getMonth() + 1);
   }
   return { begin, end, next };
