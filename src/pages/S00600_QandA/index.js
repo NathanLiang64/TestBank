@@ -64,7 +64,7 @@ const QandA = () => {
   const renderAccordion = (subItems) => (
     subItems.map((item) => (
       <Accordion title={item.question} key={item.question} className="customAccordion">
-        { parse(item.answer) }
+        { parse(item.answer.replace(/\u2028/gi, '')) }
       </Accordion>
     ))
   );

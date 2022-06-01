@@ -22,16 +22,19 @@ const NoticeSetting = () => {
   // 取得通知設定
   const getPushSettingList = async () => {
     const param = {};
-    const {
-      communityNotice,
-      boardNotice,
-      securityNotice,
-      nightMuteNotice,
-    } = await queryPushSetting(param);
-    setCommunityNoti(communityNotice === 'Y');
-    setNormalNoti(boardNotice === 'Y');
-    setSecurityNoti(securityNotice === 'Y');
-    setNightNoti(nightMuteNotice === 'Y');
+    const response = await queryPushSetting(param);
+    if (response) {
+      const {
+        communityNotice,
+        boardNotice,
+        securityNotice,
+        nightMuteNotice,
+      } = response;
+      setCommunityNoti(communityNotice === 'Y');
+      setNormalNoti(boardNotice === 'Y');
+      setSecurityNoti(securityNotice === 'Y');
+      setNightNoti(nightMuteNotice === 'Y');
+    }
   };
 
   // 更新通知設定

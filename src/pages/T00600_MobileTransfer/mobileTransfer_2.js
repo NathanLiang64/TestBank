@@ -128,7 +128,7 @@ const MobileTransfer2 = ({ location }) => {
   }, []);
 
   return (
-    <Layout title="資料確認" goBack={goBack}>
+    <Layout title="資料確認" goBackFunc={goBack}>
       <MobileTransferWrapper>
         <form>
           <div className={`confirmDataContainer lighterBlueLine ${isModifyConfirmPage && 'modifyConfirmPage'}`}>
