@@ -19,14 +19,14 @@ const InformationList = ({
   extra,
 }) => (
   <InformationListWrapper>
-    <div className="flex text-lg">
+    <div className="flex text-title">
       <div className="text-gray">{title}</div>
       <div className="text-dark">
         {content}
-        {extra && <span className="text-green">{extra}</span>}
+        {extra && <span>{extra}</span>}
       </div>
     </div>
-    <div className="flex text-sm">
+    <div className="flex text-remark">
       <div className="text-light">{caption}</div>
       <div className="text-light">{remark}</div>
     </div>

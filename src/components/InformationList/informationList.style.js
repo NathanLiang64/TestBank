@@ -14,13 +14,13 @@ const InformationListWrapper = styled.div`
     width: 100%;
   }
 
-  .text-lg {
+  .text-title {
     font-size: 1.6rem;
     line-height: 2.4rem;
     min-height: 2.4rem;
   }
 
-  .text-sm {
+  .text-remark {
     font-size: 1.2rem;
     line-height: 1.8rem;
     min-height: 1.8rem;
