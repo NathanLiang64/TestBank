@@ -29,7 +29,7 @@ const DepositPlanEditPage = () => {
   const history = useHistory();
   const location = useLocation();
   const {
-    control, register, handleSubmit, watch, setValue, formState: { errors },
+    control, handleSubmit, watch, setValue, formState: { errors },
   } = useForm();
   const uid = Array.from({ length: 7}, () => uuid());
   const [program, setProgram] = useState();
@@ -55,6 +55,17 @@ const DepositPlanEditPage = () => {
         onOk: () => history.push('/C006002'),
         onCancel: () => history.goBack(),
       });
+    }
+
+    let backlog = sessionStorage.getItem('C006003');
+    if (backlog) {
+      backlog = JSON.parse(backlog);
+      setValue('name', backlog.name);
+      setValue('cycleDuration', backlog.cycleDuration);
+      setValue('cycleMode', backlog.cycleMode);
+      setValue('cycleTiming', backlog.cycleTiming);
+      setValue('amount', backlog.amount);
+      setValue('bindAccountNo', backlog.bindAccountNo);
     }
   }, []);
 
@@ -93,7 +104,7 @@ const DepositPlanEditPage = () => {
         nextDeductionDate: dateFormatter(date.next, true),
       },
     };
-    console.debug('create API payload', payload); // TODO
+    sessionStorage.setItem('C006003', JSON.stringify(data));
     history.push('/C006004', { isConfirmMode: true, payload });
   };
 
@@ -205,18 +216,25 @@ const DepositPlanEditPage = () => {
 
             <div>
               <FEIBInputLabel htmlFor={uid[5]}>預計每期存錢金額</FEIBInputLabel>
-              <FEIBInput
-                id={uid[5]}
-                type="number"
-                error={!!(errors?.amount)}
-                $color={errors?.amount ? Theme.colors.state.danger : undefined}
-                {...register('amount', {
+              <Controller
+                name="amount"
+                control={control}
+                rules={{
                   required: true,
                   validate: (v) => {
                     const amountRange = program.amountRange[watch('cycleMode', 2) === 1 ? 'week' : 'month'];
                     return (v >= amountRange?.min ?? 10_000) && (v <= amountRange?.max ?? 9_000_000);
                   },
-                })}
+                }}
+                render={({ field }) => (
+                  <FEIBInput
+                    id={uid[5]}
+                    type="number"
+                    error={!!(errors?.amount)}
+                    $color={errors?.amount ? Theme.colors.state.danger : undefined}
+                    {...field}
+                  />
+                )}
               />
               <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
                 {`存款目標為 ${toCurrency(getGoalAmount(watch('amount', 0), watch('cycleDuration', 3), watch('cycleMode', 2)))} 元`}

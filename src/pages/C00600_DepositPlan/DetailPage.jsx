@@ -16,7 +16,7 @@ import {
 } from 'utilities/Generator';
 
 import { createDepositPlan } from './api';
-import { AlertInvalidEntry } from './utils/prompts';
+import { AlertInvalidEntry, ConfirmToTransferSubAccountBalance } from './utils/prompts';
 import DetailPageWrapper from './DetailPage.style';
 
 /**
@@ -48,7 +48,7 @@ const DepositPlanDetailPage = () => {
     console.debug('handleImageUpload', planId, image);
   };
 
-  const handleConfirm = async () => {
+  const handleCreate = async () => {
     const payload = {...program};
     payload.extra = undefined;
     payload.authorizedKey = 'doggy'; // TODO
@@ -57,8 +57,17 @@ const DepositPlanDetailPage = () => {
     if (response?.result) {
       setMode(2);
       if (payload.imageId === 0) await handleImageUpload(response.planId);
+      sessionStorage.removeItem('C006003');
     } else {
       // bad
+    }
+  };
+
+  const handleConfirm = () => {
+    if (program.currentBalance > 0) {
+      ConfirmToTransferSubAccountBalance({ onOk: () => handleCreate, onCancel: () => history.goBack() });
+    } else {
+      handleCreate();
     }
   };
 
@@ -101,8 +110,20 @@ const DepositPlanDetailPage = () => {
     return renderListItem(list);
   };
 
+  const renderTitle = () => {
+    switch (mode) {
+      case 0:
+        return '存款計劃資訊';
+      case 1:
+        return '存款計劃確認';
+      case 2:
+      default:
+        return '存款計劃設定結果';
+    }
+  };
+
   return (
-    <Layout title="存款計劃資訊" goBackFunc={() => history.goBack()}>
+    <Layout title={renderTitle} goBackFunc={() => history.goBack()}>
       <MainScrollWrapper>
         <DetailPageWrapper>
           { mode > 0 && (

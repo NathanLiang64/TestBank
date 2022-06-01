@@ -72,6 +72,7 @@ const DepositPlanCreatePage = () => {
   };
 
   const onSubmit = (data) => {
+    sessionStorage.removeItem('C006003');
     const program = programs.find((p) => p.code === +data.code);
     history.push('/C006003', {
       program, subAccounts, hasReachedMaxSubAccounts,
