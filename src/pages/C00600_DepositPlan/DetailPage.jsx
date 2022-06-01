@@ -14,6 +14,7 @@ import {
   dateFormatter,
   weekNumberToChinese,
 } from 'utilities/Generator';
+import { showAnimationModal } from 'utilities/MessageModal';
 
 import { createDepositPlan } from './api';
 import { AlertInvalidEntry, ConfirmToTransferSubAccountBalance } from './utils/prompts';
@@ -55,11 +56,18 @@ const DepositPlanDetailPage = () => {
 
     const response = await createDepositPlan(payload);
     if (response?.result) {
-      setMode(2);
       if (payload.imageId === 0) await handleImageUpload(response.planId);
+      setMode(2);
       sessionStorage.removeItem('C006003');
     } else {
-      // bad
+      // TODO
+      showAnimationModal({
+        isSuccess: false,
+        errorTitle: '設定失敗',
+        errorCode: 'E341',
+        errorDesc: '親愛的客戶，因關閉計畫失敗，請重新執行交易，如有疑問，請與本行客戶服務中心聯繫。',
+        onClose: () => history.goBack(),
+      });
     }
   };
 
@@ -74,7 +82,7 @@ const DepositPlanDetailPage = () => {
   const renderModeTimingString = (p) => p && (p.cycleMode === 1 ? `每週${weekNumberToChinese(p.cycleTiming === 0 ? 7 : p.cycleTiming)}` : `每月${p.cycleTiming}號`);
 
   const renderListItem = (list) => list.map((l) => (
-    <InformationList key={uuid()} title={l.label} content={l.value} />
+    <InformationList key={uuid()} title={l.label} content={l.value} caption={l.caption} remark={l.next} extra={typeof l.extra === 'function' && l.extra()} />
   ));
 
   const renderProgramDetails = () => {
@@ -87,7 +95,9 @@ const DepositPlanDetailPage = () => {
         type: 'extra',
         label: '第一筆扣款日',
         value: dateFormatter(stringToDate(program?.startDate), true),
-        next: program?.extra.next,
+        caption: '下一筆扣款日',
+        next: program?.extra.nextDeductionDate,
+        extra: () => (mode === 2 ? '扣款成功' : undefined),
       },
       { label: '存錢帳號', value: accountFormatter(program?.bindAccountNo) },
     ];
@@ -123,7 +133,7 @@ const DepositPlanDetailPage = () => {
   };
 
   return (
-    <Layout title={renderTitle} goBackFunc={() => history.goBack()}>
+    <Layout title={renderTitle()} goBackFunc={() => history.goBack()}>
       <MainScrollWrapper>
         <DetailPageWrapper>
           { mode > 0 && (

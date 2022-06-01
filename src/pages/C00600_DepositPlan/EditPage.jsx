@@ -112,6 +112,7 @@ const DepositPlanEditPage = () => {
     let options = [];
     if (subAccounts) options = options.concat(subAccounts);
     if (!hasReachedMaxSubAccounts) options.push({ accountNo: 'new', balance: 0 });
+    if (options.length === 0) return <FEIBOption value="*">無未綁定的子帳戶或已達8個子帳戶上限</FEIBOption>;
     return options.map((a) => (
       <FEIBOption key={uuid()} value={a.accountNo}>
         {a.accountNo === 'new' ? '加開子帳戶' : accountFormatter(a.accountNo)}
@@ -219,6 +220,7 @@ const DepositPlanEditPage = () => {
               <Controller
                 name="amount"
                 control={control}
+                defaultValue=""
                 rules={{
                   required: true,
                   validate: (v) => {
