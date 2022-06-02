@@ -30,6 +30,7 @@ const DepositPlanEditPage = () => {
   } = useForm();
   const uid = Array.from({ length: 7}, () => uuid());
   const [plan, setPlan] = useState();
+  const [newImageId, setNewImageId] = useState();
   const [isRestrictedPromotion, setIsRestrictedPromotion] = useState(false);
 
   useEffect(() => {
@@ -54,7 +55,7 @@ const DepositPlanEditPage = () => {
     const payload = {
       planId: plan.planId,
       name: data.name !== plan.name ? data.name : null,
-      image: data.imageId !== plan.imageId ? data.imageId : null,
+      image: newImageId > 0 ? newImageId : sessionStorage.getItem('C00600-hero'),
       authorizedKey: plan.planId, // TODO
     };
 
@@ -62,6 +63,7 @@ const DepositPlanEditPage = () => {
 
     if (response.result) history.push('/C00600');
     else AlertUpdateFail();
+    sessionStorage.removeItem('C00600-hero');
   };
 
   return (
@@ -70,7 +72,11 @@ const DepositPlanEditPage = () => {
         <EditPageWrapper>
           <form onSubmit={handleSubmit(onSubmit)}>
 
-            <HeroWithEdit />
+            <HeroWithEdit
+              planId={plan?.planId}
+              imageId={plan?.imageId}
+              onChange={(id) => setNewImageId(id)}
+            />
 
             <div className="flex">
 

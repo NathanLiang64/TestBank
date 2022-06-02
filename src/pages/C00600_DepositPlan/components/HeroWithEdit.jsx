@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+
 import Themes from 'themes/theme';
 import { showDrawer } from 'utilities/MessageModal';
 import FEIBRoundButton from 'components/elements/FEIBRoundButton';
@@ -13,13 +14,19 @@ import BG6 from 'assets/images/deposit-plan/hero-6@2x.jpg';
 
 import HeroWithEditWrapper from './HeroWithEdit.style';
 
-const HeroWithEdit = () => {
-  const [imageId, setImageId] = useState();
+const HeroWithEdit = ({
+  planId, imageId, onChange,
+}) => {
+  const imageInput = useRef();
+  const [imageSrc, setImageSrc] = useState();
+  const [newImageId, setNewImageId] = useState();
+  const [isDirty, setIsDirty] = useState(false);
 
   const imgSrc = () => {
-    switch (imageId) {
+    switch (newImageId) {
       case 0:
-        return `${process.env.REACT_APP_URL}/images/dp/plans.ah-----.jpg`;
+        if (imageSrc) return imageSrc;
+        return `${process.env.REACT_APP_URL}/images/dp/plans.${planId}.jpg`;
       case 2:
         return BG2;
       case 3:
@@ -33,6 +40,38 @@ const HeroWithEdit = () => {
       case 1:
       default:
         return BG1;
+    }
+  };
+
+  useEffect(() => {
+    if (imageId) setNewImageId(imageId);
+  }, [imageId]);
+
+  useEffect(() => {
+    if (isDirty) onChange(newImageId);
+  }, [newImageId]);
+
+  const handleOnImageChange = (event) => {
+    const images = event.target.files;
+    if (images.length > 0) {
+      setImageSrc(URL.createObjectURL(images[0]));
+      setIsDirty(true);
+      setNewImageId(0);
+
+      const reader = new FileReader();
+      reader.addEventListener('load', (e) => {
+        sessionStorage.setItem('C00600-hero', e.target.result.split(';base64,')[1]);
+      }, false);
+      reader.readAsDataURL(images[0]);
+    }
+  };
+
+  const handleOnClick = (func) => {
+    if (func.id === 0) {
+      imageInput.current.click();
+    } else {
+      setIsDirty(true);
+      setNewImageId(func.id);
     }
   };
 
@@ -50,7 +89,7 @@ const HeroWithEdit = () => {
       <ul>
         {list.map((func) => (
           <li key={func.title}>
-            <button type="button" onClick={() => setImageId(func.id)}>
+            <button type="button" onClick={() => handleOnClick(func)}>
               {func.title}
             </button>
           </li>
@@ -58,18 +97,18 @@ const HeroWithEdit = () => {
       </ul>
     );
     showDrawer('', options);
-    return imageId;
   };
 
   return (
     <HeroWithEditWrapper>
-      { typeof imageId === 'undefined' && (
+      <input hidden aria-label="選擇圖片" ref={imageInput} type="file" accept="image/*" onChange={handleOnImageChange} />
+      { typeof newImageId === 'undefined' && (
         <button type="button" className="mt-16" onClick={onSelectClick}>
           <AccountIcon10 color={Themes.colors.text.light} size="54" />
           <div className="text-select">選擇圖片</div>
         </button>
       )}
-      { typeof imageId !== 'undefined' && (
+      { typeof newImageId !== 'undefined' && (
       <div className="toolkits">
         <div className="group">
           <FEIBRoundButton aria-label="選擇圖片" onClick={onSelectClick}>

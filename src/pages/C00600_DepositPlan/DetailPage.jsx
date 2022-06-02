@@ -16,7 +16,7 @@ import {
 } from 'utilities/Generator';
 import { showAnimationModal } from 'utilities/MessageModal';
 
-import { createDepositPlan } from './api';
+import { createDepositPlan, updateDepositPlan } from './api';
 import { AlertInvalidEntry, ConfirmToTransferSubAccountBalance } from './utils/prompts';
 import DetailPageWrapper from './DetailPage.style';
 
@@ -44,9 +44,17 @@ const DepositPlanDetailPage = () => {
     }
   }, []);
 
-  const handleImageUpload = async (planId, image) => {
-    // TODO
-    console.debug('handleImageUpload', planId, image);
+  const handleImageUpload = async (planId, imageId) => {
+    const payload = {
+      planId,
+      image: imageId > 0 ? imageId : sessionStorage.getItem('C00600-hero'),
+      authorizedKey: planId, // TODO
+    };
+
+    const response = await updateDepositPlan(payload);
+
+    if (response.result) history.push('/C00600');
+    sessionStorage.removeItem('C00600-hero');
   };
 
   const handleCreate = async () => {

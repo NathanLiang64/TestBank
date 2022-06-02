@@ -37,6 +37,7 @@ const DepositPlanEditPage = () => {
   const [isRestrictedPromotion, setIsRestrictedPromotion] = useState(false);
   const [subAccounts, setSubAccounts] = useState();
   const [hasReachedMaxSubAccounts, setHasReachedMaxSubAccounts] = useState(false);
+  const [newImageId, setNewImageId] = useState();
 
   useEffect(() => {
     if (location.state && ('program' in location.state)) {
@@ -89,7 +90,7 @@ const DepositPlanEditPage = () => {
     const date = getDurationTuple(new Date(), data.cycleDuration, data.cycleMode, data.cycleTiming);
     const payload = {
       progCode: program.code,
-      imageId: 1, // TODO
+      image: newImageId ?? 1,
       name: data.name,
       startDate: stringDateCodeFormatter(date.begin),
       endDate: stringDateCodeFormatter(date.end),
@@ -127,7 +128,9 @@ const DepositPlanEditPage = () => {
         <EditPageWrapper>
           <form onSubmit={handleSubmit(onSubmit)}>
 
-            <HeroWithEdit />
+            <HeroWithEdit
+              onChange={(id) => setNewImageId(id)}
+            />
 
             <div className="flex">
 
