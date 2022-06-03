@@ -77,7 +77,7 @@ const AccountCardList = ({ data }) => {
       { mainList.map((card) => {
         let annotation;
         let funcID;
-        let onClick = () => history(`/${funcID}`);
+        let onClick = () => history.push(`/${funcID}`);
 
         switch (card.type) {
           case 'M': // 母帳戶

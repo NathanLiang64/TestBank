@@ -1,7 +1,6 @@
 import { callAPI } from 'utilities/axios';
 
 import mockTerms from './terms';
-import mockPrograms from './mockPrograms';
 
 /**
  * 取得當前所選帳號之交易明細
@@ -97,8 +96,7 @@ export const getDepositPlans = async () => {
  * }, ...]
  */
 export const getDepositPlanProgram = async () => {
-  // const response = await callAPI('/api/depositPlan/v1/getPrograms');
-  const response = await new Promise((resolve) => resolve({ data: mockPrograms }));
+  const response = await callAPI('/api/depositPlan/v1/getPrograms');
   return response.data;
 };
 

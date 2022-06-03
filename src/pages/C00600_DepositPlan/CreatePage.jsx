@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { Controller, useForm } from 'react-hook-form';
 import uuid from 'react-uuid';
 import parse from 'html-react-parser';
@@ -14,7 +14,8 @@ import { FEIBButton, FEIBRadioLabel, FEIBRadio } from 'components/elements';
 import Loading from 'components/Loading';
 
 import CreatePageWrapper from './CreatePage.style';
-import { getDepositPlanProgram, getDepositPlanTerms } from './api';
+import { getDepositPlans, getDepositPlanProgram, getDepositPlanTerms } from './api';
+import { AlertReachedMaxPlans } from './utils/prompts';
 
 /**
  * C00600 存錢計畫 新增頁
@@ -22,9 +23,13 @@ import { getDepositPlanProgram, getDepositPlanTerms } from './api';
 const DepositPlanCreatePage = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation();
   const { control, handleSubmit } = useForm();
+
   const [programs, setPrograms] = useState();
   const [terms, setTerms] = useState();
+  const [subAccounts, setSubAccounts] = useState();
+  const [hasReachedMaxSubAccounts, setHasReachedMaxSubAccounts] = useState(false);
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
@@ -32,17 +37,43 @@ const DepositPlanCreatePage = () => {
     dispatch(setWaittingVisible(false));
   }, []);
 
+  useEffect(async () => {
+    let plansLength;
+    let accounts;
+    let totalSubAccountCount;
+
+    if (location.state && ('totalSubAccountCount' in location.state)) {
+      plansLength = location.state.plansLength;
+      accounts = location.state.subAccounts;
+      totalSubAccountCount = location.state.totalSubAccountCount;
+    } else {
+      const response = await getDepositPlans();
+      plansLength = response.plans.length;
+      accounts = response.subAccounts;
+      totalSubAccountCount = response.totalSubAccountCount;
+    }
+
+    // Guard
+    if (plansLength >= 3) AlertReachedMaxPlans({ goBack: () => history.goBack() });
+
+    setSubAccounts(accounts);
+    setHasReachedMaxSubAccounts(totalSubAccountCount >= 8);
+  }, []);
+
   const lazyLoadTerms = async () => {
     if (!terms) setTerms(await getDepositPlanTerms());
   };
 
   const onSubmit = (data) => {
-    const program = programs.find((p) => p.code === +data.code);
-    history.push('/C006003', { program });
+    sessionStorage.removeItem('C006003');
+    const program = programs.find((p) => p.code === data.code);
+    history.push('/C006003', {
+      program, subAccounts, hasReachedMaxSubAccounts,
+    });
   };
 
   return (
-    <Layout title="新增存錢計畫">
+    <Layout title="新增存錢計畫" goBackFunc={() => history.goBack()}>
       <Main>
         <CreatePageWrapper>
           <form className="flex" onSubmit={handleSubmit(onSubmit)}>
@@ -51,7 +82,7 @@ const DepositPlanCreatePage = () => {
               <Controller
                 name="code"
                 control={control}
-                defaultValue="0"
+                defaultValue=""
                 render={({ field }) => (
                   <RadioGroup
                     {...field}
