@@ -56,7 +56,6 @@ const DepositPlanEditPage = () => {
       planId: plan.planId,
       name: data.name !== plan.name ? data.name : null,
       image: newImageId > 0 ? newImageId : sessionStorage.getItem('C00600-hero'),
-      authorizedKey: plan.planId, // TODO
     };
 
     const response = await updateDepositPlan(payload);

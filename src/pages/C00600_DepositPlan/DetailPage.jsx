@@ -14,7 +14,8 @@ import {
   dateFormatter,
   weekNumberToChinese,
 } from 'utilities/Generator';
-import { showAnimationModal } from 'utilities/MessageModal';
+import { showAnimationModal, showError } from 'utilities/MessageModal';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 
 import { createDepositPlan, updateDepositPlan } from './api';
 import { AlertInvalidEntry, ConfirmToTransferSubAccountBalance } from './utils/prompts';
@@ -48,7 +49,6 @@ const DepositPlanDetailPage = () => {
     const payload = {
       planId,
       image: imageId > 0 ? imageId : sessionStorage.getItem('C00600-hero'),
-      authorizedKey: planId, // TODO
     };
 
     const response = await updateDepositPlan(payload);
@@ -58,9 +58,14 @@ const DepositPlanDetailPage = () => {
   };
 
   const handleCreate = async () => {
+    const auth = await transactionAuth(0x30); // 需通過 2FA 或 網銀密碼 驗證才能建立計劃。
+    if (!auth.result) {
+      await showError(auth.message);
+      return;
+    }
+
     const payload = {...program};
     payload.extra = undefined;
-    payload.authorizedKey = 'doggy'; // TODO
 
     const response = await createDepositPlan(payload);
     if (response?.result) {

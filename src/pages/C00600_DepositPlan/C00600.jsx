@@ -8,8 +8,9 @@ import { MainScrollWrapper } from 'components/Layout';
 import SwiperLayout from 'components/SwiperLayout';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { closeFunc } from 'utilities/BankeePlus';
-import { showAnimationModal, showDrawer } from 'utilities/MessageModal';
+import { showAnimationModal, showDrawer, showError } from 'utilities/MessageModal';
 import { AccountIcon6, RadioUncheckedIcon, TransactionIcon1 } from 'assets/images/icons';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 
 import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
 import EmptySlide from './components/EmptySlide';
@@ -70,7 +71,6 @@ const DepositPlanPage = () => {
     const response = await updateDepositPlan({
       planId: plan.planId,
       isMaster: true,
-      authorizedKey: plan.planId, // TODO
     });
 
     if (response.result) {
@@ -99,7 +99,15 @@ const DepositPlanPage = () => {
 
   const handleTerminatePlan = (plan) => {
     const confirmTermination = async () => {
-      const response = await closeDepositPlan({ planId: plan.planId, authorizedKey: plan.planId });
+      const auth = await transactionAuth(0x30); // 需通過 2FA 或 網銀密碼 驗證才能關閉計劃。
+      if (!auth.result) {
+        await showError(auth.message);
+        return;
+      }
+
+      const response = await closeDepositPlan({
+        planId: plan.planId,
+      });
       if ('email' in response) {
         ConfirmDepositPlanHasBeenClosed({ email: response.email, onOk: () => history.push('/') });
       } else {
