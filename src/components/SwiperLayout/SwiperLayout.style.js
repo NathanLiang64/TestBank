@@ -10,7 +10,7 @@ const SwiperLayoutWrapper = styled.div`
   }
 
   hr {
-    border-color: ${({ theme }) => theme.colors.background.lighter};
+    border-color: ${({ theme }) => theme.colors.border.lightest};
     margin-block: 0.5rem;
   }
 `;

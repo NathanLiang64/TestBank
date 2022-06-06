@@ -78,11 +78,13 @@ const DepositPlan = ({
           <div className="blockGoBack" />
         </>
       ) : (
-        <div className="pad">
+        <>
           <hr />
-          <ThreeColumnInfoPanel content={bonusInfo} />
-          <ArrowNextButton onClick={onShowDetailClick}>存錢歷程</ArrowNextButton>
-        </div>
+          <div className="pad">
+            <ThreeColumnInfoPanel content={bonusInfo} />
+            <ArrowNextButton onClick={onShowDetailClick}>存錢歷程</ArrowNextButton>
+          </div>
+        </>
       )}
     </DepositPlanWrapper>
   );
