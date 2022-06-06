@@ -133,7 +133,7 @@ const DepositPlanEditPage = () => {
   };
 
   return (
-    <Layout title="編輯存錢計畫" hasClearHeader goBackFunc={() => history.goBack()}>
+    <Layout title="新增存錢計畫" hasClearHeader goBackFunc={() => history.goBack()}>
       <MainScrollWrapper>
         <EditPageWrapper>
           <form onSubmit={handleSubmit(onSubmit)}>
