@@ -69,6 +69,12 @@ const DepositPlanEditPage = () => {
     sessionStorage.removeItem('C00600-hero'); // 清除暫存背景圖。
   };
 
+  const getInputColor = (e) => {
+    if (isRestrictedPromotion) return Theme.colors.text.lightGray;
+    if (e?.name) return Theme.colors.state.danger;
+    return undefined;
+  };
+
   return (
     <Layout title="編輯存錢計畫" hasClearHeader goBackFunc={() => history.goBack()}>
       <MainScrollWrapper>
@@ -94,7 +100,7 @@ const DepositPlanEditPage = () => {
                     <FEIBInput
                       id={uid[1]}
                       error={!!(errors?.name)}
-                      $color={errors?.name ? Theme.colors.state.danger : undefined}
+                      $color={() => getInputColor(errors)}
                       placeholder="請輸入7個以內的中英文字、數字或符號"
                       disabled={isRestrictedPromotion}
                       {...field}
@@ -108,33 +114,58 @@ const DepositPlanEditPage = () => {
 
               <div>
                 <FEIBInputLabel htmlFor={uid[2]}>預計存錢區間</FEIBInputLabel>
-                <FEIBInput id={uid[2]} value={plan ? getDuration() : ''} disabled />
+                <FEIBInput
+                  id={uid[2]}
+                  value={plan ? getDuration() : ''}
+                  $color={Theme.colors.text.lightGray}
+                  disabled
+                />
                 <FEIBErrorMessage />
               </div>
 
               <div className="col-2">
                 <div className="w-50">
                   <FEIBInputLabel htmlFor={uid[3]}>存錢頻率</FEIBInputLabel>
-                  <FEIBInput id={uid[3]} value={plan?.cycleMode === 1 ? '每週' : '每月'} disabled />
+                  <FEIBInput
+                    id={uid[3]}
+                    value={plan?.cycleMode === 1 ? '每週' : '每月'}
+                    $color={Theme.colors.text.lightGray}
+                    disabled
+                  />
                   <FEIBErrorMessage />
                 </div>
 
                 <div className="w-50">
                   <FEIBInputLabel htmlFor={uid[4]}>週期</FEIBInputLabel>
-                  <FEIBInput id={uid[4]} value={`${plan?.cycleTiming}日`} disabled />
+                  <FEIBInput
+                    id={uid[4]}
+                    value={`${plan?.cycleTiming}日`}
+                    $color={Theme.colors.text.lightGray}
+                    disabled
+                  />
                   <FEIBErrorMessage />
                 </div>
               </div>
 
               <div>
                 <FEIBInputLabel htmlFor={uid[5]}>預計每期存錢金額</FEIBInputLabel>
-                <FEIBInput id={uid[5]} value={toCurrency(plan?.goalAmount ?? 0)} disabled />
+                <FEIBInput
+                  id={uid[5]}
+                  value={toCurrency(plan?.goalAmount ?? 0)}
+                  $color={Theme.colors.text.lightGray}
+                  disabled
+                />
                 <FEIBErrorMessage />
               </div>
 
               <div>
                 <FEIBInputLabel htmlFor={uid[6]}>選擇陪你存錢的帳號</FEIBInputLabel>
-                <FEIBInput id={uid[6]} value={accountFormatter(plan?.bindAccountNo)} disabled />
+                <FEIBInput
+                  id={uid[6]}
+                  value={accountFormatter(plan?.bindAccountNo)}
+                  $color={Theme.colors.text.lightGray}
+                  disabled
+                />
                 <FEIBErrorMessage />
               </div>
 

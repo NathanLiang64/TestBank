@@ -126,6 +126,12 @@ const DepositPlanEditPage = () => {
     ));
   };
 
+  const getInputColor = (e) => {
+    if (isRestrictedPromotion) return Theme.colors.text.lightGray;
+    if (e?.name) return Theme.colors.state.danger;
+    return undefined;
+  };
+
   return (
     <Layout title="編輯存錢計畫" hasClearHeader goBackFunc={() => history.goBack()}>
       <MainScrollWrapper>
@@ -149,7 +155,7 @@ const DepositPlanEditPage = () => {
                     <FEIBInput
                       id={uid[1]}
                       error={!!(errors?.name)}
-                      $color={errors?.name ? Theme.colors.state.danger : undefined}
+                      $color={() => getInputColor(errors)}
                       placeholder="請輸入7個以內的中英文字、數字或符號"
                       disabled={isRestrictedPromotion}
                       {...field}
