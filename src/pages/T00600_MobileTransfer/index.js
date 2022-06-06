@@ -29,6 +29,7 @@ const MobileTransfer = () => {
     isDefault: '',
   });
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [otpMobileNum, setOtpMobileNum] = useState('');
   // 新增手機號碼收款
   const addMobileTransferSetting = () => {
     if (mobilesList.length === 0) {
@@ -38,16 +39,17 @@ const MobileTransfer = () => {
       );
       return;
     }
-    history.push('/mobileTransfer1');
+    history.push('/mobileTransfer1', { otpMobileNum });
   };
 
   // 檢查是否設定快速登入、基本資料是否有手機號碼
   const checkBindAndMobile = async () => {
     const {
-      bindQuickLogin, bindTxnOtpMobile, bindings, mobiles,
+      bindQuickLogin, bindTxnOtpMobile, bindings, mobiles, otpMobile,
     } = await fetchMobiles({ tokenStatus: 1 });
     setMobileTransferData(bindings || []);
     setMobilesList(mobiles || []);
+    setOtpMobileNum(otpMobile);
     // 檢查是否綁定快速登入
     if (bindQuickLogin === 'N') {
       customPopup(
@@ -73,7 +75,7 @@ const MobileTransfer = () => {
       customPopup(
         '系統訊息',
         '您尚未設定「手機號碼收款」功能，是否立即進行設定？',
-        () => history.push('/mobileTransfer1'),
+        () => history.push('/mobileTransfer1', { otpMobileNum: otpMobile }),
         closeFunc,
       );
     }
