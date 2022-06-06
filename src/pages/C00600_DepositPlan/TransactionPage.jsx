@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 
 import Layout from 'components/Layout/Layout';
 import AccountDetails from 'components/AccountDetails/accountDetails';
@@ -10,6 +10,7 @@ import { getTransactionDetails } from './api';
  * C00600 存錢計畫 歷程頁
  */
 const DepositPlanTransactionPage = () => {
+  const history = useHistory();
   const location = useLocation();
   const [plan, setPlan] = useState(null);
 
@@ -41,7 +42,7 @@ const DepositPlanTransactionPage = () => {
   };
 
   return (
-    <Layout title="存錢歷程" hasClearHeader>
+    <Layout title="存錢歷程" hasClearHeader goBackFunc={() => history.goBack()}>
       {plan ? (
         <AccountDetails
           selectedAccount={plan}
