@@ -33,14 +33,18 @@ const DepositPlanDetailPage = () => {
 
   useEffect(() => {
     if (location.state && ('isConfirmMode' in location.state)) {
-      if (location.state.isConfirmMode) { // 新增確認模式
+      // 資訊頁有二種使用情境：確認新增存錢計畫、閱覽存錢計畫資訊。
+      if (location.state.isConfirmMode) {
+        // 設定成 (新增) 確認模式
         setMode(1);
         setProgram(location.state.payload);
-      } else { // 已建立資訊模式
+      } else {
+        // 設定成 (已建立) 資訊模式
         setMode(0);
         setPlan(location.state.plan);
       }
     } else {
+      // Guard: 此頁面接續上一頁的操作，意指若未在該情況下進入此頁為不正常操作。
       AlertInvalidEntry({ onBack: () => history.goBack() });
     }
   }, []);
@@ -52,9 +56,10 @@ const DepositPlanDetailPage = () => {
     };
 
     const response = await updateDepositPlan(payload);
-
     if (response.result) history.push('/C00600');
-    sessionStorage.removeItem('C00600-hero');
+    // 這邊沒有錯誤判斷，但不影響核心功能(不終止計畫的新增)，使用者可自行重新選圖。
+
+    sessionStorage.removeItem('C00600-hero'); // 清除暫存背景圖。
   };
 
   const handleCreate = async () => {
@@ -65,13 +70,16 @@ const DepositPlanDetailPage = () => {
     }
 
     const payload = {...program};
-    payload.extra = undefined;
+    payload.extra = undefined; // 清除不必要資訊。
 
     const response = await createDepositPlan(payload);
     if (response?.result) {
       if (payload.imageId === 0) await handleImageUpload(response.planId);
+      // 設定成 成功建立模式
       setMode(2);
-      sessionStorage.removeItem('C006003');
+      sessionStorage.removeItem('C006003'); // 清除暫存表單資料。
+
+      // 建立成功後，將頁面滑至上方。
       document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth'});
     } else {
       showAnimationModal({
@@ -86,6 +94,7 @@ const DepositPlanDetailPage = () => {
 
   const handleConfirm = () => {
     if (program.currentBalance > 0) {
+      // 如果所選的子帳戶有餘額，要提示用戶自動轉帳。這裡假設同支API會後端會自動處理。
       ConfirmToTransferSubAccountBalance({ onOk: () => handleCreate, onCancel: () => history.goBack() });
     } else {
       handleCreate();

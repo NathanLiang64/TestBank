@@ -36,10 +36,10 @@ const DepositPlanPage = () => {
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
-  const [plans, setPlans] = useState(undefined);
-  const [subAccounts, setSubAccounts] = useState(undefined);
-  const [totalSubAccountCount, setTotalSubAccountCount] = useState(undefined);
-  const [swiperController, setSwipterController] = useState(undefined);
+  const [plans, setPlans] = useState();
+  const [subAccounts, setSubAccounts] = useState();
+  const [totalSubAccountCount, setTotalSubAccountCount] = useState();
+  const [swiperController, setSwipterController] = useState();
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));

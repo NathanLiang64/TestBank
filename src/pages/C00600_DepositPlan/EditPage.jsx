@@ -32,6 +32,7 @@ const DepositPlanEditPage = () => {
   const {
     control, handleSubmit, watch, setValue, formState: { errors },
   } = useForm();
+
   const uid = Array.from({ length: 7}, () => uuid());
   const [program, setProgram] = useState();
   const [isRestrictedPromotion, setIsRestrictedPromotion] = useState(false);
@@ -53,15 +54,18 @@ const DepositPlanEditPage = () => {
         setValue('name', location.state.program.name, { shouldValidate: false });
       }
     } else {
+      // Guard: 此頁面接續上一頁的操作，意指若未在該情況下進入此頁為不正常操作。
       AlertProgramNoFound({
         onOk: () => history.push('/C006002'),
         onCancel: () => history.goBack(),
       });
     }
 
+    // 當跳回此頁面時，填入先前的資訊
     let backlog = sessionStorage.getItem('C006003');
     if (backlog) {
       backlog = JSON.parse(backlog);
+      setNewImageId(backlog.image);
       setValue('name', backlog.name);
       setValue('cycleDuration', backlog.cycleDuration);
       setValue('cycleMode', backlog.cycleMode);

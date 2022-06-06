@@ -28,6 +28,7 @@ const DepositPlanEditPage = () => {
   const {
     control, handleSubmit, setValue, formState: { errors },
   } = useForm();
+
   const uid = Array.from({ length: 7}, () => uuid());
   const [plan, setPlan] = useState();
   const [newImageId, setNewImageId] = useState();
@@ -39,8 +40,10 @@ const DepositPlanEditPage = () => {
       setIsRestrictedPromotion(location.state.plan.type > 0);
       if ('isRestrictedPromotion' in location.state) setIsRestrictedPromotion(location.state.isRestrictedPromotion);
 
+      // 預先填入計畫名稱
       setValue('name', location.state.plan.name, { shouldValidate: false });
     } else {
+      // Guard: 此頁面接續上一頁的操作，意指若未在該情況下進入此頁為不正常操作。
       AlertInvalidEntry({ onBack: () => history.goBack() });
     }
   }, []);
@@ -62,7 +65,8 @@ const DepositPlanEditPage = () => {
 
     if (response.result) history.push('/C00600');
     else AlertUpdateFail();
-    sessionStorage.removeItem('C00600-hero');
+
+    sessionStorage.removeItem('C00600-hero'); // 清除暫存背景圖。
   };
 
   return (

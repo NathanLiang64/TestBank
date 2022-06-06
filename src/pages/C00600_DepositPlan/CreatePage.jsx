@@ -33,31 +33,32 @@ const DepositPlanCreatePage = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    setPrograms(await getDepositPlanProgram());
-    dispatch(setWaittingVisible(false));
-  }, []);
 
-  useEffect(async () => {
     let plansLength;
     let accounts;
     let totalSubAccountCount;
 
     if (location.state && ('totalSubAccountCount' in location.state)) {
+      // 從存錢計畫首頁跳轉，故已有子帳戶資訊。
       plansLength = location.state.plansLength;
       accounts = location.state.subAccounts;
       totalSubAccountCount = location.state.totalSubAccountCount;
     } else {
+      // 從其他頁面跳轉至此，應載入子帳戶資訊。
       const response = await getDepositPlans();
       plansLength = response.plans.length;
       accounts = response.subAccounts;
       totalSubAccountCount = response.totalSubAccountCount;
     }
 
-    // Guard
+    // Guard: 存錢計畫首頁最多就三個計畫，意指若未在該情況下進入此頁為不正常操作。
     if (plansLength >= 3) AlertReachedMaxPlans({ goBack: () => history.goBack() });
 
     setSubAccounts(accounts);
     setHasReachedMaxSubAccounts(totalSubAccountCount >= 8);
+
+    setPrograms(await getDepositPlanProgram());
+    dispatch(setWaittingVisible(false));
   }, []);
 
   const lazyLoadTerms = async () => {
@@ -65,7 +66,9 @@ const DepositPlanCreatePage = () => {
   };
 
   const onSubmit = (data) => {
-    sessionStorage.removeItem('C006003');
+    sessionStorage.removeItem('C006003'); // 清除暫存表單資料。
+    sessionStorage.removeItem('C00600-hero'); // 清除暫存背景圖。
+
     const program = programs.find((p) => p.code === data.code);
     history.push('/C006003', {
       program, subAccounts, hasReachedMaxSubAccounts,
