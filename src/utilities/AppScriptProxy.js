@@ -5,10 +5,10 @@
 /* eslint-disable prefer-template */
 import {
   createTransactionAuth,
-  transactionAuthVeriify,
+  transactionAuthVerify,
 } from 'proto/forAppApi';
 import e2ee from './E2ee';
-import { customPopup, showError, showInfo } from './MessageModal';
+import { customPopup, showError } from './MessageModal';
 
 const device = {
   // TODO: 開發時使用，上版前應刪除！
@@ -214,20 +214,18 @@ function setAuthdata(jwtToken) {
  * @param {*} authCode 要求進行的驗證模式的代碼。
  * @param {*} otpMobile 簡訊識別碼發送的手機門號。當綁定或變更門號時，因為需要確認手機號碼的正確性，所以要再驗OTP
  * @returns {
- *   code: 執行狀態。00.成功, 其他代碼分別表示不同 JS funciton 的失敗訊息。
- *   data: 執行結果。例：OTP驗證，則傳回使用者輸入的「驗證碼」。
+ *   result: 驗證結果(true/false)。
+ *   message: 驗證失敗狀況描述。
  * }
  */
+let transactionAuthPromiseResolve = null; // 提供 APP Callback 時，結束Promise使用！
 async function transactionAuth(authCode, otpMobile) {
   const promise = new Promise((resolve) => {
+    transactionAuthPromiseResolve = resolve;
     const request = {
       authCode,
       otpMobile,
-      callback: (result) => {
-        console.log('*** OTP Result from APP : ', result);
-        localStorage.setItem('appJsResponse', result.data); // 將 APP 傳回的資料寫回。
-        resolve(result);
-      },
+      callback: 'transactionAuthCallback',
     };
 
     if (device.ios()) {
@@ -245,8 +243,19 @@ async function transactionAuth(authCode, otpMobile) {
 
   const result = await promise;
   console.log('*** OTP Result from Promise : ', result);
-  await showInfo('交易驗證結果：' + (result.result ? '成功' : '失敗'));
+  // await showInfo('交易驗證結果：' + (result.result ? '成功' : '失敗'));
   return result;
+}
+
+/**
+ * 負責接收 APP JavaScript API callback 的方法。
+ * @param {*} result APP JavaScript API的傳回值。
+ */
+// eslint-disable-next-line no-unused-vars
+function transactionAuthCallback(result) {
+  console.log('*** OTP Result from APP : ', result);
+  // localStorage.setItem('appJsResponse', result.data); // 將 APP 傳回的資料寫回。
+  transactionAuthPromiseResolve(result);
 }
 
 /**
@@ -279,7 +288,7 @@ async function appTransactionAuth(request) {
   const allowedPWD = (!allowed2FA && (loginMode === 21) && (authCode & 0x1F) !== 0); // 表示可以使用 網銀密碼或OTP或(網銀密碼+OTP) 通過驗證。
   const inputPwd = (allowedPWD && (authCode & 0x10)); // 表示需要輸入網銀密碼
 
-  // TODO 沒有 boundMID，但又限定只能使用 2FA 時；傳回 false 尚未進行行動裝置綁定，無法使用此功能！
+  // NOTE 沒有 boundMID，但又限定只能使用 2FA 時；傳回 false 尚未進行行動裝置綁定，無法使用此功能！
   if (allowedPWD === false && boundMID === false) {
     await showError('尚未完成行動裝置綁定，無法使用此功能！');
     return;
@@ -332,6 +341,9 @@ async function appTransactionAuth(request) {
     </div>
   );
 
+  // eslint-disable-next-line no-eval
+  const cbfunc = eval(callback);
+
   // 驗證 OTP Code 是否正確。
   const onOk = async () => {
     // TODO 2FA驗證模式應該自動驗證，不需要使用者按OK；一旦驗證通過，則自動關閉視窗，並傳回結果。
@@ -340,22 +352,22 @@ async function appTransactionAuth(request) {
     // 驗證 OTP驗證碼 & 網銀密碼
     const otpCode = document.querySelector('#otpCode')?.value; // 使用者輸入的「驗證碼」。
     const netbankPwd = e2ee(document.querySelector('#netbankPwd')?.value); // 使用者輸入的「網銀密碼」，還要再做 E2EE。
-    const veriifyRs = await transactionAuthVeriify({ authKey: txnAuth.key, funcCode, auth2FA, netbankPwd, otpCode });
-    if (!veriifyRs) return false; // createTransactionAuth 發生異常就結束。
-    if (veriifyRs.result === true) {
-      callback({
+    const verifyRs = await transactionAuthVerify({ authKey: txnAuth.key, funcCode, auth2FA, netbankPwd, otpCode });
+    if (!verifyRs) return false; // createTransactionAuth 發生異常就結束。
+    if (verifyRs.result === true) {
+      cbfunc({
         result: true, // 正常結果。
         message: null,
       });
     } else {
-      await showError(veriifyRs.message);
+      await showError(verifyRs.message);
       return false;
     }
-    return veriifyRs.result;
+    return verifyRs.result;
   };
 
   // 表示使用者取消。
-  const onCancel = () => callback({
+  const onCancel = () => cbfunc({
     result: false,
     message: '使用者取消驗證。',
   });

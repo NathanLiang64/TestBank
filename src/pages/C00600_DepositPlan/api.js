@@ -1,7 +1,6 @@
 import { callAPI } from 'utilities/axios';
 
 import mockTerms from './terms';
-import mockPrograms from './mockPrograms';
 
 /**
  * 取得當前所選帳號之交易明細
@@ -97,8 +96,7 @@ export const getDepositPlans = async () => {
  * }, ...]
  */
 export const getDepositPlanProgram = async () => {
-  // const response = await callAPI('/api/depositPlan/v1/getPrograms');
-  const response = await new Promise((resolve) => resolve({ data: mockPrograms }));
+  const response = await callAPI('/api/depositPlan/v1/getPrograms');
   return response.data;
 };
 
@@ -115,7 +113,6 @@ export const getDepositPlanProgram = async () => {
  *    amount, // 每共月存入金額，格式：99999。此欄位不可為空值。
  *    bindAccountNo, // 使用的子帳戶，例：04300491000001；若子帳戶為空值，表示建立新子帳戶。
  *    currentBalance, // 目前子帳戶的存款餘額。
- *    authorizedKey, 授權金鑰。這個值是經由通過 APP 驗證後取得。
  * }
  * @returns {
  *   {boolean} result: API執行結果。
@@ -154,7 +151,6 @@ export const updateDepositPlan = async (request) => {
  * 結束存錢計劃，並將往來記錄以數位存摺模式寄給用戶。
  * @param {*} {
  *   planId 計劃代碼（UUID 型式）
- *   authorizedKey, 授權金鑰。這個值是經由通過 APP 驗證後取得。
  * }
  * @returns {
  *   {boolean} result: API執行結果。

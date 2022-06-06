@@ -41,7 +41,7 @@ const DepositPlanHeroSlide = ({
   const imgSrc = () => {
     switch (imageId) {
       case 0:
-        return `/images/dp/plans.${planId}.jpg`;
+        return `${process.env.REACT_APP_URL}/images/dp/plans.${planId}.jpg`;
       case 2:
         return BG2;
       case 3:
