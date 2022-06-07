@@ -66,7 +66,7 @@ const AccountCardList = ({ data }) => {
             <AccountCard
               key={uuid()}
               cardName={card.alias ?? '存錢計畫'}
-              percent={Math.round((card.balance / subTotalBalance) * 100)}
+              percent={subTotalBalance > 0 ? Math.round((card.balance / subTotalBalance) * 100) : 0}
               onClick={onClick}
               {...card}
             />
@@ -116,7 +116,7 @@ const AccountCardList = ({ data }) => {
           <AccountCard
             key={uuid()}
             cardName={card.alias ?? accountOverviewCardVarient(card.type).name}
-            percent={Math.round((card.balance / totalBalance) * 100)}
+            percent={totalBalance > 0 ? Math.round((card.balance / totalBalance) * 100) : 0}
             annotation={annotation}
             onClick={onClick}
             {...card}
