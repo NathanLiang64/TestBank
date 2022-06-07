@@ -94,6 +94,7 @@ const AccountCardList = ({ data }) => {
                 acctName: card.alias,
                 acctType: card.type,
                 ccyCd: 'TWD',
+                cardColor: 'purple',
               });
             };
             break;
