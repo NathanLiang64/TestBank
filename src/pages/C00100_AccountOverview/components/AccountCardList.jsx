@@ -5,6 +5,7 @@ import { setDrawer, setDrawerVisible } from 'stores/reducers/ModalReducer';
 
 import AccountCard from 'components/AccountCard';
 import { accountOverviewCardVarient } from 'utilities/Generator';
+import { startFunc } from 'utilities/AppScriptProxy';
 
 import AccountCardListWrapper from './AccountCardList.style';
 
@@ -85,7 +86,16 @@ const AccountCardList = ({ data }) => {
 
         switch (card.type) {
           case 'M': // 母帳戶
-            funcID = 'C00300';
+            onClick = () => {
+              startFunc('moreTranscations', {
+                acctBalx: card.balance,
+                accBranch: card.accountNo.slice(0, 3),
+                acctId: card.accountNo,
+                acctName: card.alias,
+                acctType: card.type,
+                ccyCd: 'TWD',
+              });
+            };
             break;
           case 'F': // 外幣帳戶
             funcID = 'C00400';
