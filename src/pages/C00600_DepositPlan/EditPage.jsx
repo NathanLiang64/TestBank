@@ -129,7 +129,7 @@ const DepositPlanEditPage = () => {
   const getInputColor = (e) => {
     if (isRestrictedPromotion) return Theme.colors.text.lightGray;
     if (e?.name) return Theme.colors.state.danger;
-    return undefined;
+    return Theme.colors.primary.brand;
   };
 
   return (
