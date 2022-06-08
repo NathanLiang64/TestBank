@@ -5,7 +5,7 @@ import {
   mockCreditCardDetails,
   mockRewards,
   mockCreditCardTerms,
-} from 'mockData';
+} from './mockData';
 
 /**
  * 取得信用卡資訊與交易明細

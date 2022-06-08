@@ -4,7 +4,7 @@ const BadgeWrapper = styled.div`
   background: ${({ theme }) => theme.colors.background.lighterBlue};
   padding: 1.6rem;
   color: ${({ theme, $color }) => $color || theme.colors.primary.brand};
-  box-radius: 0.8rem;
+  border-radius: 0.8rem;
   min-height: 9.8rem;
   display: flex;
   justify-content: center;

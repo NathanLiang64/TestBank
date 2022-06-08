@@ -4,7 +4,7 @@ import {
   mockBills,
   mockBillDetails,
   mockCreditCardTerms,
-} from 'mockData';
+} from './mockData';
 
 /**
  * 取得信用卡繳費單
@@ -16,6 +16,7 @@ import {
      "amount": 本期應繳金額
      "minAmount": 最低應繳金額
      "billDate": 繳費截止日
+     "currency": 幣值
      "accounts": [ 可轉出的帳戶
        {
          "accountNo": 帳號

@@ -4,6 +4,7 @@ export default function mockBills(accounts = false) {
     amount: 12_200,
     minAmount: 1_000,
     billDate: '20220620',
+    currency: 'NTD',
     accounts: accounts && [
       {
         accountNo: '11122233334444',
