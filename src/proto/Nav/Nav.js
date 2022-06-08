@@ -84,6 +84,10 @@ const Nav = () => {
           <p style={{ color: '#9D7ADE' }}>** 瑞芙 **</p>
           <div onClick={() => startFunc('C00100')}>C00100 帳務總覽 - (施工中)</div>
           <div onClick={() => startFunc('C00600')}>C00600 存錢計劃 - (施工中)</div>
+          <div onClick={() => startFunc('C00700')}>C00700 信用卡 首頁 - (施工中)</div>
+          <div onClick={() => startFunc('R00100')}>R00100 信用卡 即時消費明細 - (施工中)</div>
+          <div onClick={() => startFunc('R00300')}>R00300 信用卡 帳單明細 - (施工中)</div>
+          <div onClick={() => startFunc('R00400')}>R00400 信用卡 繳費 - (施工中)</div>
         </div>
 
         <div className="vj">
