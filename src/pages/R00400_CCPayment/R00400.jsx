@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import Layout from 'components/Layout/Layout';
-import { MainScrollWrapper } from 'components/Layout';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import Layout from 'components/Layout/Layout';
+import Main from 'components/Layout';
+import Badge from 'components/Badge';
 
 /**
  * C00700 信用卡 付款頁
@@ -17,9 +18,9 @@ const CreditCardPaymentPage = () => {
   }, []);
   return (
     <Layout title="繳款" hasClearHeader>
-      <MainScrollWrapper>
-        <div>A</div>
-      </MainScrollWrapper>
+      <Main>
+        <Badge label="應繳金額" value="$12,000" />
+      </Main>
     </Layout>
   );
 };

@@ -3,8 +3,6 @@
 import {
   mockCreditCard,
   mockCreditCardDetails,
-  mockRewards,
-  mockCreditCardTerms,
 } from 'mockData';
 
 /**
@@ -48,27 +46,39 @@ export const getCreditCards = async () => {
 };
 
 /**
- * 取得信用卡資訊
+ * 取得信用卡交易明細
+   TODO 目前先直接複製台幣交易明細，不知需否調整
    @param {
-     "accountNo": 卡號
+     accountNo: 帳號, ex: 00100100063106,
+     custom: 文字檢索條件, ex: 退款.
+     startDate: 交易日期起日, ex: 20200101,
+     endDate: 交易日期迄日, ex: 20210731,
+     txnType: 摘要代碼: 1:跨轉、2:ATM、3:存款息、4:薪轉、5:付款儲存、6:自動扣繳, 可多筆,
+     month: 起始月份，預設為最接近月底的日期為起始索引, ex: 202104,
+     startIndex: 指定起始索引,
+     direct: 方向性.1:正向(新~舊)、2:反向(舊~新)、0:雙向方向性
    }
    @returns {
-     "invoiceDate": 帳單結帳日
-     "billDate": 繳費截止日
-     "amount": 本期應繳金額
-     "minAmount": 最低應繳金額
-     "accumulatedPaid": 本期累積已繳金額
-     "recentPayDate": 最近繳費日
-     "credit": 信用卡額度
-     "creditUsed": 已使用額度
-     "creditAvailable": 可使用額度
-     "localCashCredit": 國內預借現金可使用額度
-     "foreignCashCredit": 國外預借現金可使用額度
+     "id": TODO 需要ID之類的識別碼
+     "index": 1,
+     "bizDate": "20220425",
+     "txnDate": "20220425",
+     "txnTime": 210156,
+     "description": "全家便利商店",
+     "memo": "備註最多7個字",
+     "targetMbrId": null,
+     "targetNickName": null,
+     "targetBank": "000",
+     "targetAcct": null,
+     "amount": 36000,
+     "balance": 386000,
+     "cdType": "d",
+     "currency": "TWD"
    }
  */
-export const getCreditCardDetails = async (accountNo) => {
-  // const response = await callAPI('/api/', accountNo);
-  const response = await new Promise((resolve) => resolve({ data: mockCreditCardDetails(accountNo) }));
+export const getTransactionDetails = async (request) => {
+  // const response = await callAPI('/api/', request);
+  const response = await new Promise((resolve) => resolve({ data: mockCreditCardDetails, request }));
   return response.data;
 };
 
@@ -85,35 +95,5 @@ export const getCreditCardDetails = async (accountNo) => {
 export const updateMemo = async (id, memo) => {
   // const response = await callAPI('/api/', { id, memo });
   const response = await new Promise((resolve) => resolve({ data: { result: true, id, memo } }));
-  return response.data;
-};
-
-/**
- * 取得信用卡現金回饋
-   TODO 確定要一個月的抓，還是一次就六個月？
-   @param {
-     "month": 指定月份，留空為六個月。
-   }
-   @returns [
-     {
-       "month": 本期月份
-       "card": 刷卡回饋
-       "social": 社群圈分潤
-       "point": 金讚點數兌換回饋
-     }, ...]
- */
-export const getRewards = async (month) => {
-  // const response = await callAPI('/api/', month);
-  const response = await new Promise((resolve) => resolve({ data: mockRewards(month) }));
-  return response.data;
-};
-
-/**
- * 取得信用卡注意事項
- * @returns
- */
-export const getCreditCardTerms = async () => {
-  // Assume backend store Terms as escaped HTML...
-  const response = await new Promise((resolve) => resolve({ data: decodeURI(mockCreditCardTerms) }));
   return response.data;
 };

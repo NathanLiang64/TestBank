@@ -23,8 +23,8 @@ const C00600Create = lazy(() => import('pages/C00600_DepositPlan/CreatePage'));
 const C00600Edit = lazy(() => import('pages/C00600_DepositPlan/EditPage'));
 const C00600EditR = lazy(() => import('pages/C00600_DepositPlan/RestrictedEditPage'));
 const C00600Detail = lazy(() => import('pages/C00600_DepositPlan/DetailPage'));
-const C00700Payment = lazy(() => import('pages/C00700_CreditCard/Payment'));
-const C00700Bill = lazy(() => import('pages/C00700_CreditCard/Bill'));
+const R00400 = lazy(() => import('pages/R00400_CCPayment/R00400'));
+const R00300 = lazy(() => import('pages/R00300_CCBill/R00300'));
 const C00800 = lazy(() => import('pages/C00800_ExportBankBook'));
 const C008001 = lazy(() => import('pages/C00800_ExportBankBook/exportBankBook_1'));
 const D00100 = lazy(() => import('pages/D00100_NtdTransfer/D00100'));
@@ -107,11 +107,8 @@ const routes = [
   { path: '/C006004', exact: false, component: C00600Detail },
   { path: '/C006005', exact: false, component: C00600EditR },
   // { path: '/C00700', exact: false, component: C00700 },
-  // { path: '/C007001', exact: false, component: C00700Transaction },
-  // { path: '/C007002', exact: false, component: C00700Detail },
-  // { path: '/C007003', exact: false, component: C00700Reward },
-  { path: '/C007004', exact: false, component: C00700Payment },
-  { path: '/C007005', exact: false, component: C00700Bill },
+  // { path: '/C007001', exact: false, component: C00700Detail },
+  // { path: '/C007002', exact: false, component: C00700Reward },
   { path: '/C00800', exact: false, component: C00800 },
   { path: '/C008001', exact: false, component: C008001 },
   { path: '/D00100', exact: false, component: D00100 },
@@ -127,6 +124,9 @@ const routes = [
   { path: '/E00200', exact: false, component: E00200 },
   { path: '/E00300', exact: false, component: E00300 },
   { path: '/M00100', exact: false, component: M00100 },
+  // { path: '/R00100', exact: false, component: R00100 }, // 信用卡 即時消費明細
+  { path: '/R00300', exact: false, component: R00300 }, // 信用卡 帳單明細
+  { path: '/R00400', exact: false, component: R00400 }, // 信用卡 繳費
   { path: '/S00300', exact: false, component: S00300 },
   { path: '/S003001', exact: false, component: S003001 },
   { path: '/S003002', exact: false, component: S003002 },
