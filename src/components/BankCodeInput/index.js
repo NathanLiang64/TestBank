@@ -23,6 +23,7 @@ const BankCodeInput = ({
   control,
   setValue,
   trigger,
+  rules,
   errorMessage,
   bankCode,
 }) => {
@@ -52,6 +53,7 @@ const BankCodeInput = ({
         name={id}
         defaultValue={selectBank.bankNo && selectBank.bankName ? `${selectBank.bankNo} ${selectBank.bankName}` : ''}
         control={control}
+        rules={rules}
         render={({ field }) => (
           <FEIBInput
             {...field}

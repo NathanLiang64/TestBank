@@ -84,6 +84,13 @@ const Page = () => {
     return currencySymbolGenerator(bills.currency ?? 'NTD', bills.accounts.find((a) => a.accountNo === watch('account'))?.balance);
   };
 
+  const validateCustomAmount = (v) => {
+    if (watch('amountOption') === AMOUNT_OPTION.CUSTOM) {
+      return !Number.isNaN(v) && (v >= bills.minAmount) && (v <= bills.amount);
+    }
+    return true;
+  };
+
   const getAmount = (data) => {
     const {
       amountOption, customAmount,
@@ -124,7 +131,7 @@ const Page = () => {
         };
     }
 
-    if (paymentOption === 'store') {
+    if (paymentOption === PAYMENT_OPTION.CSTORE) {
       // TODO
       console.debug('onSubmit callAPI getPaymentCodes', payload);
       return;
@@ -158,6 +165,7 @@ const Page = () => {
                 name="amountOption"
                 control={control}
                 defaultValue=""
+                rules={{ required: true }}
                 render={({ field }) => (
                   <RadioGroup {...field}>
                     <FEIBRadioLabel control={<FEIBRadio />} label={`本期應繳金額 ${currencySymbolGenerator(bills?.currency ?? 'NTD', bills?.amount)}`} value={AMOUNT_OPTION.ALL} />
@@ -174,18 +182,23 @@ const Page = () => {
                 name="customAmount"
                 control={control}
                 defaultValue=""
+                rules={{ validate: validateCustomAmount }}
                 render={({ field }) => (
                   <FEIBInput
                     id={uid[0]}
                     type="number"
                     placeholder="請輸入金額"
+                    error={!!(errors?.customAmount)}
                     $color={watch('amountOption') !== AMOUNT_OPTION.CUSTOM ? Theme.colors.text.placeholder : Theme.colors.primary.brand}
                     disabled={watch('amountOption') !== AMOUNT_OPTION.CUSTOM}
                     {...field}
                   />
                 )}
               />
-              <FEIBErrorMessage />
+              <FEIBErrorMessage>
+                { errors?.amountOption && '請選擇繳款金額' }
+                { errors?.customAmount && '繳款金額需介於最低應繳金額和本期應繳金額之間' }
+              </FEIBErrorMessage>
             </div>
 
             { paymentOption === PAYMENT_OPTION.INTERNAL && (
@@ -195,8 +208,9 @@ const Page = () => {
                   name="accountNo"
                   control={control}
                   defaultValue=""
+                  rules={{ required: true }}
                   render={({ field }) => (
-                    <FEIBSelect id={uid[1]} {...field}>
+                    <FEIBSelect id={uid[1]} error={!!(errors?.accountNo)} {...field}>
                       { bills?.accounts.map((v) => (
                         <FEIBOption key={uuid()} value={v.accountNo}>{accountFormatter(v.accountNo)}</FEIBOption>
                       ))}
@@ -217,7 +231,8 @@ const Page = () => {
                   setValue={setValue}
                   trigger={trigger}
                   control={control}
-                  errorMessage={errors.bankCode?.message}
+                  rules={{ required: true }}
+                  errorMessage={errors?.bankCode && '請選擇銀行代碼'}
                 />
 
                 <FEIBInputLabel htmlFor={uid[3]}>轉出帳號</FEIBInputLabel>
@@ -225,11 +240,13 @@ const Page = () => {
                   name="extAccountNo"
                   control={control}
                   defaultValue=""
+                  rules={{ required: true, pattern: /\d{12,16}/ }}
                   render={({ field }) => (
                     <FEIBInput
                       id={uid[3]}
                       type="text"
                       placeholder="請輸入"
+                      error={!!(errors?.extAccountNo)}
                       {...field}
                     />
                   )}
@@ -242,7 +259,13 @@ const Page = () => {
               </>
             )}
 
-            <FEIBButton className="mt-4" type="submit">{paymentOption === PAYMENT_OPTION.EXTERNAL ? '同意並送出' : '確認送出'}</FEIBButton>
+            <FEIBButton
+              className="mt-4"
+              type="submit"
+              disabled={bills?.amount <= 0}
+            >
+              {paymentOption === PAYMENT_OPTION.EXTERNAL ? '同意並送出' : '確認送出'}
+            </FEIBButton>
           </form>
         </PageWrapper>
       </Main>
