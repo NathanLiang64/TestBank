@@ -37,6 +37,18 @@ import {
 } from './api';
 import PageWrapper from './R00400.style';
 
+const PAYMENT_OPTION = {
+  INTERNAL: 'self',
+  EXTERNAL: 'external',
+  CSTORE: 'shop',
+};
+
+const AMOUNT_OPTION = {
+  CUSTOM: 'custom',
+  MIN: 'min',
+  ALL: 'all',
+};
+
 /**
  * R00400 信用卡 付款頁
  */
@@ -46,7 +58,7 @@ const Page = () => {
     control, watch, handleSubmit, formState: { errors }, trigger, setValue,
   } = useForm();
 
-  const [paymentOption, setPaymentOption] = useState('self');
+  const [paymentOption, setPaymentOption] = useState(PAYMENT_OPTION.INTERNAL);
   const [bills, setBills] = useState();
   const [terms, setTerms] = useState();
 
@@ -72,8 +84,54 @@ const Page = () => {
     return currencySymbolGenerator(bills.currency ?? 'NTD', bills.accounts.find((a) => a.accountNo === watch('account'))?.balance);
   };
 
+  const getAmount = (data) => {
+    const {
+      amountOption, customAmount,
+    } = data;
+    switch (amountOption) {
+      case AMOUNT_OPTION.CUSTOM:
+        return +customAmount;
+      case AMOUNT_OPTION.MIN:
+        return bills.minAmount;
+      case AMOUNT_OPTION.ALL:
+      default:
+        return bills.amount;
+    }
+  };
+
   const onSubmit = (data) => {
-    console.debug('onSubmit', data);
+    let payload;
+
+    switch (paymentOption) {
+      case PAYMENT_OPTION.CSTORE:
+        payload = {
+          amount: getAmount(data),
+        };
+        break;
+      case PAYMENT_OPTION.EXTERNAL:
+        payload = {
+          amount: getAmount(data),
+          acctBranch: data.bankCode.bankNo,
+          acctId: data.extAccountNo,
+        };
+        break;
+      case PAYMENT_OPTION.INTERNAL:
+      default:
+        payload = {
+          amount: getAmount(data),
+          acctBranch: data.accountNo.slice(0, 3),
+          acctId: data.accountNo,
+        };
+    }
+
+    if (paymentOption === 'store') {
+      // TODO
+      console.debug('onSubmit callAPI getPaymentCodes', payload);
+      return;
+    }
+
+    // TODO
+    console.debug('onSubmit callAPI makePayment', payload);
   };
 
   return (
@@ -85,9 +143,9 @@ const Page = () => {
           <div className="badMargin">
             <FEIBTabContext value={paymentOption}>
               <FEIBTabList onChange={handleOnTabChange}>
-                <FEIBTab label="本行帳戶" value="self" />
-                <FEIBTab label="他行帳戶" value="external" />
-                <FEIBTab label="超商條碼" value="store" />
+                <FEIBTab label="本行帳戶" value={PAYMENT_OPTION.INTERNAL} />
+                <FEIBTab label="他行帳戶" value={PAYMENT_OPTION.EXTERNAL} />
+                <FEIBTab label="超商條碼" value={PAYMENT_OPTION.CSTORE} />
               </FEIBTabList>
             </FEIBTabContext>
           </div>
@@ -102,9 +160,9 @@ const Page = () => {
                 defaultValue=""
                 render={({ field }) => (
                   <RadioGroup {...field}>
-                    <FEIBRadioLabel control={<FEIBRadio />} label={`本期應繳金額 ${currencySymbolGenerator(bills?.currency ?? 'NTD', bills?.amount)}`} value="all" />
-                    <FEIBRadioLabel control={<FEIBRadio />} label={`最低應繳金額 ${currencySymbolGenerator(bills?.currency ?? 'NTD', bills?.minAmount)}`} value="min" />
-                    <FEIBRadioLabel control={<FEIBRadio />} label="自訂金額" value="custom" />
+                    <FEIBRadioLabel control={<FEIBRadio />} label={`本期應繳金額 ${currencySymbolGenerator(bills?.currency ?? 'NTD', bills?.amount)}`} value={AMOUNT_OPTION.ALL} />
+                    <FEIBRadioLabel control={<FEIBRadio />} label={`最低應繳金額 ${currencySymbolGenerator(bills?.currency ?? 'NTD', bills?.minAmount)}`} value={AMOUNT_OPTION.MIN} />
+                    <FEIBRadioLabel control={<FEIBRadio />} label="自訂金額" value={AMOUNT_OPTION.CUSTOM} />
                   </RadioGroup>
                 )}
               />
@@ -121,6 +179,8 @@ const Page = () => {
                     id={uid[0]}
                     type="number"
                     placeholder="請輸入金額"
+                    $color={watch('amountOption') !== AMOUNT_OPTION.CUSTOM ? Theme.colors.text.placeholder : Theme.colors.primary.brand}
+                    disabled={watch('amountOption') !== AMOUNT_OPTION.CUSTOM}
                     {...field}
                   />
                 )}
@@ -128,52 +188,61 @@ const Page = () => {
               <FEIBErrorMessage />
             </div>
 
-            <FEIBInputLabel htmlFor={uid[1]}>轉出帳號</FEIBInputLabel>
-            <Controller
-              name="account"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <FEIBSelect id={uid[1]} {...field}>
-                  { bills?.accounts.map((v) => (
-                    <FEIBOption key={uuid()} value={v.accountNo}>{accountFormatter(v.accountNo)}</FEIBOption>
-                  ))}
-                </FEIBSelect>
-              )}
-            />
-            <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
-              { renderBalance() && `可用餘額 ${renderBalance()}` }
-            </FEIBErrorMessage>
-
-            <BankCodeInput
-              id="bankCode"
-              setValue={setValue}
-              trigger={trigger}
-              control={control}
-              errorMessage={errors.bankCode?.message}
-            />
-
-            <FEIBInputLabel htmlFor={uid[3]}>轉出帳號</FEIBInputLabel>
-            <Controller
-              name="ext-account"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <FEIBInput
-                  id={uid[3]}
-                  type="text"
-                  placeholder="請輸入"
-                  {...field}
+            { paymentOption === PAYMENT_OPTION.INTERNAL && (
+              <>
+                <FEIBInputLabel htmlFor={uid[1]}>轉出帳號</FEIBInputLabel>
+                <Controller
+                  name="accountNo"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <FEIBSelect id={uid[1]} {...field}>
+                      { bills?.accounts.map((v) => (
+                        <FEIBOption key={uuid()} value={v.accountNo}>{accountFormatter(v.accountNo)}</FEIBOption>
+                      ))}
+                    </FEIBSelect>
+                  )}
                 />
-              )}
-            />
-            <FEIBErrorMessage />
+                <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
+                  { renderBalance() && `可用餘額 ${renderBalance()}` }
+                </FEIBErrorMessage>
+              </>
+            )}
 
-            <Accordion title="注意事項" className="terms" onClick={lazyLoadTerms}>
-              { terms ? parse(terms) : <Loading space="both" isCentered /> }
-            </Accordion>
+            { paymentOption === PAYMENT_OPTION.EXTERNAL && (
+              <>
 
-            <FEIBButton className="mt-4" type="submit">{paymentOption === 'external' ? '同意並送出' : '確認送出'}</FEIBButton>
+                <BankCodeInput
+                  id="bankCode"
+                  setValue={setValue}
+                  trigger={trigger}
+                  control={control}
+                  errorMessage={errors.bankCode?.message}
+                />
+
+                <FEIBInputLabel htmlFor={uid[3]}>轉出帳號</FEIBInputLabel>
+                <Controller
+                  name="extAccountNo"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <FEIBInput
+                      id={uid[3]}
+                      type="text"
+                      placeholder="請輸入"
+                      {...field}
+                    />
+                  )}
+                />
+                <FEIBErrorMessage />
+
+                <Accordion title="注意事項" className="terms" onClick={lazyLoadTerms}>
+                  { terms ? parse(terms) : <Loading space="both" isCentered /> }
+                </Accordion>
+              </>
+            )}
+
+            <FEIBButton className="mt-4" type="submit">{paymentOption === PAYMENT_OPTION.EXTERNAL ? '同意並送出' : '確認送出'}</FEIBButton>
           </form>
         </PageWrapper>
       </Main>
