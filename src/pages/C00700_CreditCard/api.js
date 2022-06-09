@@ -14,7 +14,7 @@ import {
      "type": "bankee" 或 "all"
      "accountNo": 卡號
      "expenditure": 已使用額度
-     "autoDeduct": 是否已設定自動扣繳 (所有信用卡忽略)
+     "autoDeduct": 是否已設定自動扣繳
      "bonusInfo": {  (所有信用卡忽略)
        "level": 會員等級
        "rewardLocalRate": 國內回饋百分比(不含%符號)

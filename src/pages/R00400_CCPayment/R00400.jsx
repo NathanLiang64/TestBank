@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
 import { RadioGroup } from '@material-ui/core';
@@ -37,6 +38,7 @@ import {
   getBills,
   getCreditCardTerms,
   getPaymentCodes,
+  makePayment,
 } from './api';
 import PageWrapper from './R00400.style';
 
@@ -56,6 +58,7 @@ const AMOUNT_OPTION = {
  * R00400 信用卡 付款頁
  */
 const Page = () => {
+  const history = useHistory();
   const dispatch = useDispatch();
   const {
     control, watch, handleSubmit, formState: { errors }, trigger, setValue,
@@ -113,9 +116,6 @@ const Page = () => {
         onOk: false,
       }));
       dispatch(setModalVisible(true));
-    } else {
-      // TODO
-      console.debug('error payment code');
     }
   };
 
@@ -141,7 +141,7 @@ const Page = () => {
     }
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     let payload;
 
     switch (paymentOption) {
@@ -171,8 +171,8 @@ const Page = () => {
       return;
     }
 
-    // TODO
-    console.debug('onSubmit callAPI makePayment', payload);
+    const response = await makePayment(payload);
+    history.push('R004001', { isSuccessful: !!response.result, autoDeduct: response.autoDeduct });
   };
 
   return (

@@ -64,12 +64,13 @@ export const getBillDetails = async () => {
    }
    @returns {
      "result": API執行結果。
+     "autoDeduct": 是否已設定自動扣繳
    }
  */
 export const makePayment = async ({ amount, acctBranch, acctId }) => {
   // const response = await callAPI('/api/', { amount, acctBranch, acctId });
   const response = await new Promise((resolve) => resolve({
-    data: { result: true }, amount, acctBranch, acctId,
+    data: { result: true, autoDedut: false }, amount, acctBranch, acctId,
   }));
   return response.data;
 };

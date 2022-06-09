@@ -23,8 +23,9 @@ const C00600Create = lazy(() => import('pages/C00600_DepositPlan/CreatePage'));
 const C00600Edit = lazy(() => import('pages/C00600_DepositPlan/EditPage'));
 const C00600EditR = lazy(() => import('pages/C00600_DepositPlan/RestrictedEditPage'));
 const C00600Detail = lazy(() => import('pages/C00600_DepositPlan/DetailPage'));
-const R00400 = lazy(() => import('pages/R00400_CCPayment/R00400'));
 const R00300 = lazy(() => import('pages/R00300_CCBill/R00300'));
+const R00400 = lazy(() => import('pages/R00400_CCPayment/R00400'));
+const R00400Result = lazy(() => import('pages/R00400_CCPayment/TransferResult'));
 const C00800 = lazy(() => import('pages/C00800_ExportBankBook'));
 const C008001 = lazy(() => import('pages/C00800_ExportBankBook/exportBankBook_1'));
 const D00100 = lazy(() => import('pages/D00100_NtdTransfer/D00100'));
@@ -125,8 +126,9 @@ const routes = [
   { path: '/E00300', exact: false, component: E00300 },
   { path: '/M00100', exact: false, component: M00100 },
   // { path: '/R00100', exact: false, component: R00100 }, // 信用卡 即時消費明細
-  { path: '/R00300', exact: false, component: R00300 }, // 信用卡 帳單明細
-  { path: '/R00400', exact: false, component: R00400 }, // 信用卡 繳費
+  { path: '/R00300', exact: false, component: R00300 },
+  { path: '/R00400', exact: false, component: R00400 },
+  { path: '/R004001', exact: false, component: R00400Result },
   { path: '/S00300', exact: false, component: S00300 },
   { path: '/S003001', exact: false, component: S003001 },
   { path: '/S003002', exact: false, component: S003002 },
