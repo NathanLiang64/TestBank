@@ -60,7 +60,7 @@ const Page = () => {
   );
 
   return (
-    <Layout title="轉帳結果">
+    <Layout title="轉帳結果" goBackFunc={history.goBack()}>
       <Main>
         <PageWrapper>
           <SuccessFailureAnimations
@@ -80,7 +80,7 @@ const Page = () => {
                   <FEIBSwitch onChange={() => history.push('/R00500')} />
                 </div>
               </div>
-              <Accordion title="注意事項" className="terms" onClick={lazyLoadTerms}>
+              <Accordion title="注意事項" onClick={lazyLoadTerms}>
                 { terms ? parse(terms) : <Loading space="both" isCentered /> }
               </Accordion>
             </>

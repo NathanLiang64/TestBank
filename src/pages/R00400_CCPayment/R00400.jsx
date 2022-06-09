@@ -108,7 +108,7 @@ const Page = () => {
             <img src={response.image1} height="82" alt="" />
             { response.image2 && <img src={response.image2} height="82" alt="" /> }
             { response.image3 && <img src={response.image3} height="82" alt="" /> }
-            <Accordion title="注意事項" className="terms" onClick={lazyLoadTerms}>
+            <Accordion title="注意事項" onClick={lazyLoadTerms}>
               { getTermsFromOutsideModal() }
             </Accordion>
           </div>
@@ -176,7 +176,7 @@ const Page = () => {
   };
 
   return (
-    <Layout title="繳款" hasClearHeader>
+    <Layout title="繳款" goBackFunc={history.goBack()}>
       <Main small>
         <PageWrapper>
           <Badge label={`${bills?.month}月應繳金額`} value={currencySymbolGenerator(bills?.currency ?? 'NTD', bills?.amount)} />
@@ -287,7 +287,7 @@ const Page = () => {
                 />
                 <FEIBErrorMessage />
 
-                <Accordion title="注意事項" className="terms" onClick={lazyLoadTerms}>
+                <Accordion title="注意事項" onClick={lazyLoadTerms}>
                   { terms ? parse(terms) : <Loading space="both" isCentered /> }
                 </Accordion>
               </>
