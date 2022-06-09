@@ -17,7 +17,9 @@ import {
      "amount": 本期應繳金額
      "minAmount": 最低應繳金額
      "billDate": 繳費截止日
+     "accountNo": 信用卡卡號，用於交易查詢
      "currency": 幣值
+     "autoDeduct": 是否已設定自動扣繳
      "accounts": [ 可轉出的帳戶
        {
          "accountNo": 帳號
@@ -70,7 +72,7 @@ export const getBillDetails = async () => {
 export const makePayment = async ({ amount, acctBranch, acctId }) => {
   // const response = await callAPI('/api/', { amount, acctBranch, acctId });
   const response = await new Promise((resolve) => resolve({
-    data: { result: true, autoDedut: false }, amount, acctBranch, acctId,
+    data: { result: true, autoDeduct: false }, amount, acctBranch, acctId,
   }));
   return response.data;
 };

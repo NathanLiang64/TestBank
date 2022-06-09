@@ -1,4 +1,5 @@
 export default {
+  currency: 'NTD',
   amount: 43_657,
   minAmount: 1_000,
   invoiceDate: '20220620',

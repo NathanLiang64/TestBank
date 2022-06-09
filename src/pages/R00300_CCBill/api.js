@@ -17,7 +17,9 @@ import {
      "amount": 本期應繳金額
      "minAmount": 最低應繳金額
      "billDate": 繳費截止日
+     "accountNo": 信用卡卡號，用於交易查詢
      "currency": 幣值
+     "autoDeduct": 是否已設定自動扣繳
      "accounts": [ 可轉出的帳戶
        {
          "accountNo": 帳號
@@ -71,6 +73,7 @@ export const getTransactionDetails = async (request) => {
 /**
  * 取得帳單資訊
    @returns {
+     "currency": 信用卡帳單幣別
      "amount": 本期應繳金額
      "minAmount": 最低應繳金額
      "invoiceDate": 帳單結帳日
@@ -96,14 +99,20 @@ export const getBillDetails = async () => {
  * 下載帳單
    TODO 不確定是否需要其他query條件，是否回傳檔案網址
    @param {
-      "format": "pdf" 或 "excel"
+      "fileType": 1 = pdf 或 2 = excel
    }
    @returns {
      "url": 檔案URL。
    }
  */
 export const getInvoice = async (format) => {
-  // const response = await callAPI('/api/');
+  /*
+  if (fileType === 1) {
+    await downloadPDF('/api/deposit/v1/getDepositBook', request, `${filename}.pdf`);
+  } else if (fileType === 2) {
+    await downloadCSV('/api/deposit/v1/getDepositBook', request, `${filename}.csv`);
+  }
+  */
   const response = await new Promise((resolve) => resolve({ data: { url: '/', format } }));
   return response.data;
 };
