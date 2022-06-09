@@ -34,7 +34,7 @@ const D001002 = lazy(() => import('pages/D00100_NtdTransfer/D00100_2'));
 const D00300 = lazy(() => import('pages/D00300_CardLessATM'));
 const D003001 = lazy(() => import('pages/D00300_CardLessATM/cardLessATM_1'));
 const D003002 = lazy(() => import('pages/D00300_CardLessATM/cardLessATM_2'));
-const D003003 = lazy(() => import('pages/D00300_CardLessATM/cardLessWithDrawChgPwd'));
+const D00400 = lazy(() => import('pages/D00400_CardLessWithDrawChgPwd'));
 const E00100 = lazy(() => import('pages/E00100_Exchange'));
 const E001001 = lazy(() => import('pages/E00100_Exchange/exchange_1'));
 const E001002 = lazy(() => import('pages/E00100_Exchange/exchange_2'));
@@ -123,7 +123,7 @@ const routes = [
   { path: '/D00300', exact: true, component: D00300 },
   { path: '/D003001', exact: false, component: D003001 },
   { path: '/D003002', exact: false, component: D003002 },
-  { path: '/D003003', exact: false, component: D003003 },
+  { path: '/D00400', exact: false, component: D00400 },
   { path: '/E00100', exact: false, component: E00100 },
   { path: '/E001001', exact: false, component: E001001 },
   { path: '/E001002', exact: false, component: E001002 },
@@ -188,7 +188,7 @@ const routes = [
   { path: '/cardLessATM', exact: true, component: D00300 },
   { path: '/cardLessATM1', exact: false, component: D003001 },
   { path: '/cardLessATM2', exact: false, component: D003002 },
-  { path: '/cardLessWithDrawChgPwd', exact: false, component: D003003 },
+  { path: '/cardLessWithDrawChgPwd', exact: false, component: D00400 },
   { path: '/noticeSetting', exact: true, component: S00400 },
   { path: '/notice', exact: false, component: B00300 },
   { path: '/regularPwdModify', exact: false, component: A00700 },
