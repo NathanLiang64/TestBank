@@ -4,6 +4,7 @@ import {
   mockBills,
   mockBillDetails,
   mockCreditCardTerms,
+  mockPaymentCodes,
 } from './mockData';
 
 /**
@@ -66,11 +67,9 @@ export const getBillDetails = async () => {
    }
  */
 export const makePayment = async ({ amount, acctBranch, acctId }) => {
-  // const response = await callAPI('/api/');
+  // const response = await callAPI('/api/', { amount, acctBranch, acctId });
   const response = await new Promise((resolve) => resolve({
-    data: {
-      result: true, amount, acctBranch, acctId,
-    },
+    data: { result: true }, amount, acctBranch, acctId,
   }));
   return response.data;
 };
@@ -79,15 +78,18 @@ export const makePayment = async ({ amount, acctBranch, acctId }) => {
  * 信繳用卡 超商費用
    TODO 不確定是否需要其他資訊，是否回傳圖片網址或base64
    @param {
-      "amount": 金額
+      "amt": 交易金額
    }
    @returns {
-     "image": 條碼圖檔URL。
+     "type": "code39" 或 "qrcode"
+     "image1": 條碼圖檔URL。
+     "image2": 條碼圖檔URL，QR code 忽略。
+     "image3": 條碼圖檔URL，QR code 忽略。
    }
  */
 export const getPaymentCodes = async (amount) => {
-  // const response = await callAPI('/api/');
-  const response = await new Promise((resolve) => resolve({ data: { image: '/', amount } }));
+  // const response = await callAPI('/api/', { amt: amount });
+  const response = await new Promise((resolve) => resolve({ data: mockPaymentCodes(amount) }));
   return response.data;
 };
 

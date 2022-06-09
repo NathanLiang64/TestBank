@@ -9,7 +9,9 @@ import {
   accountFormatter,
   currencySymbolGenerator,
 } from 'utilities/Generator';
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import {
+  setModal, setModalVisible, setWaittingVisible,
+} from 'stores/reducers/ModalReducer';
 import Theme from 'themes/theme';
 import Layout from 'components/Layout/Layout';
 import Main from 'components/Layout';
@@ -34,6 +36,7 @@ import {
 import {
   getBills,
   getCreditCardTerms,
+  getPaymentCodes,
 } from './api';
 import PageWrapper from './R00400.style';
 
@@ -79,9 +82,41 @@ const Page = () => {
     if (!terms) setTerms(await getCreditCardTerms());
   };
 
+  // 包在 Modal 裡的元件無法取得 terms 必數（不同scope），所以 arrow function call:
+  const getTermsFromOutsideModal = () => (terms ? parse(terms) : <Loading space="both" isCentered />);
+
   const renderBalance = () => {
     if (!bills || !watch('account')) return undefined;
     return currencySymbolGenerator(bills.currency ?? 'NTD', bills.accounts.find((a) => a.accountNo === watch('account'))?.balance);
+  };
+
+  const renderPaymentCode = async (amount) => {
+    const response = await getPaymentCodes(amount);
+    if (response?.type) {
+      dispatch(setModal({
+        title: '超商條碼繳款',
+        content: (
+          <div style={{
+            display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '1rem',
+          }}
+          >
+            <Badge label="應繳金額" value={currencySymbolGenerator(bills?.currency ?? 'NTD', amount)} />
+            <p>適用商家：四大超商（7-ELEVEN、全家、萊爾富和OK MART）</p>
+            <img src={response.image1} height="82" alt="" />
+            { response.image2 && <img src={response.image2} height="82" alt="" /> }
+            { response.image3 && <img src={response.image3} height="82" alt="" /> }
+            <Accordion title="注意事項" className="terms" onClick={lazyLoadTerms}>
+              { getTermsFromOutsideModal() }
+            </Accordion>
+          </div>
+        ),
+        onOk: false,
+      }));
+      dispatch(setModalVisible(true));
+    } else {
+      // TODO
+      console.debug('error payment code');
+    }
   };
 
   const validateCustomAmount = (v) => {
@@ -132,8 +167,7 @@ const Page = () => {
     }
 
     if (paymentOption === PAYMENT_OPTION.CSTORE) {
-      // TODO
-      console.debug('onSubmit callAPI getPaymentCodes', payload);
+      renderPaymentCode(payload.amount);
       return;
     }
 
