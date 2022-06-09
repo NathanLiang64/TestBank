@@ -7,7 +7,9 @@ InformationList 組件用於 2 欄的條列內容
 
 1. title -> 顯示左側之標題文字
 2. content -> 顯示於右側內容文字，與標題同水平高度
-3. remark -> 顯示於右側內容文字下方的備註文字
+3. caption -> 顯示於左側內容文字下方的備註文字
+4. remark -> 顯示於右側內容文字下方的備註文字
+5. extra -> 顯示於右側內容文字之內
 
 `;
 
@@ -17,7 +19,9 @@ export default {
   argTypes: {
     title: { control: 'text' },
     content: { control: 'text' },
+    caption: { control: 'text' },
     remark: { control: 'text' },
+    extra: { control: 'text' },
   },
   parameters: {
     docs: { description: { component: doc }},
@@ -32,5 +36,7 @@ export const Primary = Template.bind({});
 Primary.args = {
   title: '轉出帳號後五碼',
   content: '*********01234',
+  caption: '2012-12-12',
   remark: '保時捷車友會',
+  extra: '扣款成功',
 };

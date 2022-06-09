@@ -1,5 +1,7 @@
 import { FEIBIconButton } from 'components/elements';
 import { ArrowBackIcon, CrossIcon } from 'assets/images/icons';
+import store from 'stores/store';
+import { setDrawerVisible } from 'stores/reducers/ModalReducer';
 import DrawerWrapper from './bottomDrawer.style';
 
 /*
@@ -34,6 +36,10 @@ const BottomDrawer = ({
     </FEIBIconButton>
   );
 
+  const handleClickBubble = () => {
+    store.dispatch(setDrawerVisible(false));
+  };
+
   return (
     <DrawerWrapper
       className={className}
@@ -51,7 +57,7 @@ const BottomDrawer = ({
           <CrossIcon />
         </FEIBIconButton>
       </div>
-      <div className="content">
+      <div className="content" onClick={handleClickBubble}>
         {content}
       </div>
     </DrawerWrapper>

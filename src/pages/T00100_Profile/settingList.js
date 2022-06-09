@@ -54,6 +54,11 @@ const settingList = [
     route: '',
     funcID: '0',
   },
+  {
+    name: '搖一搖功能設定',
+    route: '',
+    funcID: '0',
+  },
 ];
 
 export default settingList;

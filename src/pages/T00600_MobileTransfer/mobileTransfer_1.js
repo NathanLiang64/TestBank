@@ -23,7 +23,7 @@ import { fetchName, getAccountsList, fetchMobiles } from './api';
 /* Styles */
 import MobileTransferWrapper from './mobileTransfer.style';
 
-const MobileTransfer1 = () => {
+const MobileTransfer1 = ({ location }) => {
   const history = useHistory();
   /**
    *- 資料驗證
@@ -90,6 +90,7 @@ const MobileTransfer1 = () => {
         type: 'add',
         isModify: false,
         data,
+        otpMobileNum: location.state.otpMobileNum,
       },
     );
   };

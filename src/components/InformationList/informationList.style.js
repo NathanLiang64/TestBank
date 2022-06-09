@@ -1,39 +1,47 @@
 import styled from 'styled-components';
 
 const InformationListWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 1.6rem .8rem;
+  padding: 1.6rem 0.8rem;
   border-bottom: .1rem dashed ${({ theme }) => theme.colors.text.light};
 
   &:last-child {
     border-bottom: 0;
   }
 
-  p.title {
+  .flex {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .text-title {
     font-size: 1.6rem;
-    line-height: 1.3;
+    line-height: 2.4rem;
+    min-height: 2.4rem;
+  }
+
+  .text-remark {
+    font-size: 1.2rem;
+    line-height: 1.8rem;
+    min-height: 1.8rem;
+  }
+
+  .text-gray {
     color: ${({ theme }) => theme.colors.text.lightGray};
   }
 
-  > div {
-    max-height: 4.2rem;
-    text-align: right;
+  .text-dark {
+    color: ${({ theme }) => theme.colors.text.dark};
+  }
 
-    .content {
-      font-size: 1.6rem;
-      line-height: 1.3;
-      color: ${({ theme }) => theme.colors.text.dark};
-    }
+  .text-light {
+    color: ${({ theme }) => theme.colors.text.light};
+  }
 
-    .remark {
-      display: inline-block;
-      height: 1.8rem;
-      line-height: 1.3;
-      font-size: 1.2rem;
-      font-weight: 300;
-      color: ${({ theme }) => theme.colors.text.light};
-    }
+  .text-green {
+    color: ${({ theme }) => theme.colors.state.success};
+    margin-inline-start: 1rem;
+  }
 `;
 
 export default InformationListWrapper;

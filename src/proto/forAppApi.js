@@ -37,7 +37,7 @@ export const createTransactionAuth = async (request) => {
  *   message: 驗證失敗狀況描述。
  * }
  */
-export const transactionAuthVeriify = async (request) => {
-  const response = await callAPI('/api/transactionAuth/v1/veriify', request);
+export const transactionAuthVerify = async (request) => {
+  const response = await callAPI('/api/transactionAuth/v1/verify', request);
   return response.data;
 };

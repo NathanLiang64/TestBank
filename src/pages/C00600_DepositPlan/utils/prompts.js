@@ -72,6 +72,17 @@ export const ConfirmNotToCloseDepositPlan = () => {
   });
 };
 
+export const ConfirmToTransferSubAccountBalance = ({ onOk, onCancel }) => {
+  showCustomPrompt({
+    title: '新增存錢計畫',
+    message: '欲作為存錢計劃之子帳戶餘額須為0，系統會立即將您子帳戶之餘額轉入Bankee主帳戶。',
+    okContent: '立即轉帳',
+    cancelContent: '我再想想',
+    onOk,
+    onCancel,
+  });
+};
+
 export const AlertProgramNoFound = ({ onOk, onCancel }) => {
   showCustomPrompt({
     title: '找不到計畫資訊',
@@ -80,5 +91,35 @@ export const AlertProgramNoFound = ({ onOk, onCancel }) => {
     cancelContent: '回上一頁',
     onOk,
     onCancel,
+  });
+};
+
+export const AlertInvalidEntry = ({ goBack }) => {
+  showCustomPrompt({
+    title: '系統錯誤',
+    message: '本頁為操作流程之分頁，不應獨立造訪，請回上一頁。',
+    okContent: '回上一頁',
+    cancelContent: '回首頁',
+    onOk: goBack,
+    onCancel: goHome,
+  });
+};
+
+export const AlertReachedMaxPlans = ({ goBack }) => {
+  showCustomPrompt({
+    title: '新增存錢計畫',
+    message: '您已建立（最多）3個存錢計畫。',
+    okContent: '回上一頁',
+    cancelContent: '回首頁',
+    onOk: goBack,
+    onCancel: goHome,
+  });
+};
+
+export const AlertUpdateFail = () => {
+  showCustomPrompt({
+    title: '更新存錢計畫',
+    message: '更新失敗，請稍候重試。',
+    okContent: '了解',
   });
 };
