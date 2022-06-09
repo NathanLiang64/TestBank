@@ -176,7 +176,7 @@ const Page = () => {
   };
 
   return (
-    <Layout title="繳款" goBackFunc={history.goBack()}>
+    <Layout title="繳款" goBackFunc={() => history.goBack()}>
       <Main small>
         <PageWrapper>
           <Badge label={`${bills?.month}月應繳金額`} value={currencySymbolGenerator(bills?.currency ?? 'NTD', bills?.amount)} />

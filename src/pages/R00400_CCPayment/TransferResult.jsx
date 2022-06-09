@@ -60,7 +60,7 @@ const Page = () => {
   );
 
   return (
-    <Layout title="轉帳結果" goBackFunc={history.goBack()}>
+    <Layout title="轉帳結果" goBackFunc={() => history.goBack()}>
       <Main>
         <PageWrapper>
           <SuccessFailureAnimations
