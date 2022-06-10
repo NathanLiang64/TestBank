@@ -26,6 +26,7 @@ const Page = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
+    // TODO Read accountNo from location.
     const response = await getBills();
     setBills(response);
     dispatch(setWaittingVisible(false));
@@ -37,12 +38,10 @@ const Page = () => {
         <PageWrapper>
           <Badge label={`${bills?.month}月應繳金額`} value={currencySymbolGenerator(bills?.currency ?? 'NTD', bills?.amount)} />
           <Reminder bills={bills} />
-
-          <Transactions />
+          <Transactions bills={bills} />
           <BillDetails />
           <Terms />
           <Tray />
-
         </PageWrapper>
       </Main>
     </Layout>

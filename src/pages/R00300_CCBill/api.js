@@ -1,9 +1,9 @@
 // import { callAPI } from 'utilities/axios';
 
 import {
-  mockCreditCardDetails,
   mockBills,
   mockBillDetails,
+  mockTransactions,
   mockCreditCardTerms,
 } from './mockData';
 
@@ -67,7 +67,7 @@ export const getBills = async (param) => {
  */
 export const getTransactionDetails = async (request) => {
   // const response = await callAPI('/api/', request);
-  const response = await new Promise((resolve) => resolve({ data: mockCreditCardDetails, request }));
+  const response = await new Promise((resolve) => resolve({ data: mockTransactions(request) }));
   return response.data;
 };
 
