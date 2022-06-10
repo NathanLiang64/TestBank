@@ -16,7 +16,7 @@ import Accordion from 'components/Accordion';
 import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
 import { cardlessWithdrawPasswordValidation, confirmCardlessWithdrawPasswordValidation } from 'utilities/validation';
 /* Styles */
-import CardLessATMWrapper from './cardLessATM.style';
+import CardLessATMWrapper from '../D00300_CardLessATM/cardLessATM.style';
 
 const CardLessWithDrawChgPwd = () => {
   const dispatch = useDispatch();

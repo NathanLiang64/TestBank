@@ -180,7 +180,7 @@ const mockData = {
         },
         {
           id: 'creditCard5',
-          name: '消費分期',
+          name: '晚點付',
           route: '/staging',
           actKey: 'R00200',
         },

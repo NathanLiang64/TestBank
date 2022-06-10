@@ -19,11 +19,11 @@ const Instalment2 = () => {
   const history = useHistory();
 
   const renderSelectList = () => {
-    const list = ['3期', '6期', '9期', '12期'];
+    const list = ['1 期', '3 期', '6 期', '9 期', '12 期'];
     return (
       <div className="selectList">
         <div>
-          選擇消費分期期數
+          選擇晚點付期數
         </div>
         { list.map((item, index) => (
           <p>
@@ -36,7 +36,7 @@ const Instalment2 = () => {
 
   return (
     <>
-      <Header title="消費分期 (總額)" goBack={() => history.replace('/staging1')} />
+      <Header title="晚點付 (總額)" goBack={() => history.replace('/staging1')} />
       <InstalmentWrapper className="InstalmentWrapper" small>
         <form>
           <div>
@@ -47,7 +47,7 @@ const Instalment2 = () => {
               <h2 className="titleText">{ stagingPercentage }</h2>
             </div>
             {renderSelectList()}
-            <Accordion title="消費分期約定條款" space="both">
+            <Accordion title="晚點付約定條款" space="both">
               <InstallmentTerms />
             </Accordion>
             <Accordion space="both">

@@ -20,6 +20,16 @@ const settingList = [
   //   funcID: 'T00500',
   // },
   {
+    name: '非約定轉帳設定',
+    route: '',
+    funcID: '0',
+  },
+  {
+    name: '無卡提款設定',
+    route: '/cardLessSetting',
+    funcID: '0',
+  },
+  {
     name: '行動金融憑證設定',
     route: '',
     funcID: '0',
@@ -43,16 +53,6 @@ const settingList = [
     name: '網銀密碼變更',
     route: '/pwdModify',
     funcID: 'T00900',
-  },
-  {
-    name: '非約定轉帳設定',
-    route: '',
-    funcID: '0',
-  },
-  {
-    name: '無卡提款設定',
-    route: '',
-    funcID: '0',
   },
   {
     name: '搖一搖功能設定',
