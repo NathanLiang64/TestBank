@@ -1,8 +1,13 @@
+import { useDispatch } from 'react-redux';
 import { CalendarIcon } from 'assets/images/icons';
 import { stringToDate } from 'utilities/Generator';
+import { setModal, setModalVisible } from 'stores/reducers/ModalReducer';
+import { FEIBIconButton } from 'components/elements';
 import ReminderWrapper from './Reminder.style';
 
 const Reminder = ({ bills }) => {
+  const dispatch = useDispatch();
+
   const renderReminderText = () => {
     const due = stringToDate(bills.billDate);
     const today = new Date();
@@ -31,12 +36,40 @@ const Reminder = ({ bills }) => {
     );
   };
 
+  const downloadICS = () => {
+    const context = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'BEGIN:VEVENT',
+      `DTSTART;VALUE=DATE:${bills.billDate}`,
+      `SUMMARY:${renderReminderText().replace('<br />', '')}`,
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].join('\n');
+    const blob = new Blob([context], { type: 'text/calendar;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', '提醒繳款.ics');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleCalendarClick = () => {
+    dispatch(setModal({
+      title: '系統訊息', content: '將帳單繳款提示加入手機行事曆？', okContent: '確認', onOk: () => downloadICS(),
+    }));
+    dispatch(setModalVisible(true));
+  };
+
   return (
     <ReminderWrapper>
       { bills && (
       <>
         <div className="auto">{ renderReminderText() }</div>
-        <CalendarIcon />
+        <FEIBIconButton className="badIcon" onClick={handleCalendarClick}>
+          <CalendarIcon />
+        </FEIBIconButton>
       </>
       )}
     </ReminderWrapper>

@@ -13,8 +13,10 @@ const ReminderWrapper = styled.div`
     width: fit-content;
   }
 
-  .Icon {
-    transform: translateY(0.2rem);
+  .badIcon {
+    display: block;
+    margin: -0.8rem;
+    height: fit-content;
   }
 `;
 
