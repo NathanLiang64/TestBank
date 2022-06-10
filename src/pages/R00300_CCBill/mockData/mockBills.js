@@ -1,4 +1,4 @@
-export default function mockBills(accounts = false) {
+export default function mockBills(param) {
   return {
     month: 6,
     amount: 12_200,
@@ -7,7 +7,7 @@ export default function mockBills(accounts = false) {
     accountNo: '11122233334444',
     currency: 'NTD',
     autoDeduct: false,
-    accounts: accounts && [
+    accounts: param?.showAccounts && [
       {
         accountNo: '11122233334444',
         balance: 10_000,

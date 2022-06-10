@@ -10,7 +10,8 @@ import {
 /**
  * 取得信用卡繳費單
    @param {
-     "accounts": 指定使否需提供可轉出的帳戶列表，預設 false。
+     "accountNo": 指定信用卡帳單，若未指定預設Bankee信用卡。
+     "showAccounts": 指定使否需提供可轉出的帳戶列表，預設 false。
    }
    @returns {
      "month": 本期月份
@@ -27,9 +28,9 @@ import {
        }, ...],
    }
  */
-export const getBills = async (accounts) => {
-  // const response = await callAPI('/api/', accounts);
-  const response = await new Promise((resolve) => resolve({ data: mockBills(accounts) }));
+export const getBills = async (param) => {
+  // const response = await callAPI('/api/', param);
+  const response = await new Promise((resolve) => resolve({ data: mockBills(param) }));
   return response.data;
 };
 

@@ -72,7 +72,8 @@ const Page = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    const response = await getBills(true);
+    // TODO Read accountNo from location.
+    const response = await getBills({ showAccounts: true });
     setBills(response);
     dispatch(setWaittingVisible(false));
   }, []);
