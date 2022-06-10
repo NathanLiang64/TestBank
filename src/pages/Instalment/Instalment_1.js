@@ -62,7 +62,7 @@ const Instalment1 = () => {
 
   return (
     <>
-      <Header title="消費分期 (單筆)" goBack={() => history.replace('/staging')} />
+      <Header title="晚點付 (單筆)" goBack={() => history.replace('/staging')} />
       <InstalmentWrapper className="InstalmentWrapper" small>
         <form>
           <div>

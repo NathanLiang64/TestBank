@@ -89,6 +89,7 @@ const Instalment1 = lazy(() => import('pages/Instalment/Instalment_1'));
 const Instalment2 = lazy(() => import('pages/Instalment/Instalment_2'));
 const Instalment3 = lazy(() => import('pages/Instalment/Instalment_3'));
 const AutomaticBillPayment = lazy(() => import('pages/AutomaticBillPayment'));
+const CardLessSetting = lazy(() => import('pages/CardLessSetting'));
 
 // TODO：支援開發及Prototype測試使用
 const Login = lazy(() => import('proto/Login/login'));
@@ -149,6 +150,7 @@ const routes = [
   { path: '/T00800', exact: false, component: T00800 },
   { path: '/T00900', exact: false, component: T00900 },
 
+  { path: '/cardLessSetting', exact: false, component: CardLessSetting },
   { path: '/lossReissue', exact: false, component: LossReissue },
   { path: '/accountMaintenance', exact: false, component: AccountMaintenance },
   { path: '/billPay', exact: true, component: BillPay },

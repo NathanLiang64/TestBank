@@ -98,6 +98,7 @@ const Nav = () => {
           <div onClick={() => startFunc('E00100')}>E00100 換匯 - (施工中)</div>
           <div onClick={() => startFunc('T00600')}>T00600 手機號碼收款設定 - (施工中)</div>
           <div onClick={() => startFunc('foreignCurrencyTransfer')}>無 function code 外幣轉外幣 - (施工中)</div>
+          <div onClick={() => startFunc('cardLessSetting')}>無 function code 無卡提款設定 - (完成切版)</div>
         </div>
         {/* <div onClick={() => goToFunc({ route: '/foreignCurrencyPriceSetting', funcID: 'unset' })}>
           <ul>
@@ -163,7 +164,7 @@ const Nav = () => {
         </div>
         <div onClick={() => goToFunc({ route: '/staging', funcID: '' })}>
           <ul>
-            <li>功能：消費分期</li>
+            <li>功能：晚點付</li>
             <li>route: /staging</li>
             <li>funcID: </li>
           </ul>

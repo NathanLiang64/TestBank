@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import * as yup from 'yup';
-import { Controller, useForm } from 'react-hook-form';
+// import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { cardLessATMApi } from 'apis';
 import { closeFunc, switchLoading } from 'utilities/BankeePlus';
@@ -10,9 +11,9 @@ import { closeFunc, switchLoading } from 'utilities/BankeePlus';
 import Header from 'components/Header';
 import {
   FEIBButton,
-  FEIBInputLabel,
-  FEIBInput,
-  FEIBErrorMessage,
+  // FEIBInputLabel,
+  // FEIBInput,
+  // FEIBErrorMessage,
 } from 'components/elements';
 import Dialog from 'components/Dialog';
 import PasswordInput from 'components/PasswordInput';
@@ -42,9 +43,9 @@ const CardLessATM = () => {
       .max(12, '提款密碼須為 4-12 位數字')
       .matches(/^[0-9]*$/, '提款密碼僅能使用數字')
       .oneOf([yup.ref('withdrawPassword'), null], '兩次輸入的提款密碼必須相同'),
-    verificationCode: yup
-      .string()
-      .required('請輸入開通驗證碼'),
+    // verificationCode: yup
+    //   .string()
+    //   .required('請輸入開通驗證碼'),
   });
   const {
     handleSubmit, control, formState: { errors },
@@ -231,7 +232,7 @@ const CardLessATM = () => {
           control={control}
           errorMessage={errors.withdrawPasswordCheck?.message}
         />
-        <FEIBInputLabel htmlFor="OTPPassword">開通驗證碼</FEIBInputLabel>
+        {/* <FEIBInputLabel htmlFor="OTPPassword">開通驗證碼</FEIBInputLabel>
         <Controller
           name="verificationCode"
           defaultValue=""
@@ -247,7 +248,7 @@ const CardLessATM = () => {
             />
           )}
         />
-        <FEIBErrorMessage>{errors.verificationCode?.message}</FEIBErrorMessage>
+        <FEIBErrorMessage>{errors.verificationCode?.message}</FEIBErrorMessage> */}
         <Accordion title="無卡提款約定事項" space="both">
           <DealContent />
         </Accordion>
