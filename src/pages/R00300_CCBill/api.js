@@ -106,7 +106,7 @@ export const getBillDetails = async () => {
    }
  */
 export const getInvoice = async (format) => {
-  /*
+  /* TODO
   if (fileType === 1) {
     await downloadPDF('/api/deposit/v1/getDepositBook', request, `${filename}.pdf`);
   } else if (fileType === 2) {

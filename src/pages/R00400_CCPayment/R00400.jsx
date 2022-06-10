@@ -183,7 +183,7 @@ const Page = () => {
 
           <div className="badMargin">
             <FEIBTabContext value={paymentOption}>
-              <FEIBTabList onChange={handleOnTabChange}>
+              <FEIBTabList $size="small" $type="fized" onChange={handleOnTabChange}>
                 <FEIBTab label="本行帳戶" value={PAYMENT_OPTION.INTERNAL} />
                 <FEIBTab label="他行帳戶" value={PAYMENT_OPTION.EXTERNAL} />
                 <FEIBTab label="超商條碼" value={PAYMENT_OPTION.CSTORE} />
