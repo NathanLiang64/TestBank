@@ -1,4 +1,5 @@
 import { useDispatch } from 'react-redux';
+import uuid from 'react-uuid';
 import { CalendarIcon } from 'assets/images/icons';
 import { stringToDate } from 'utilities/Generator';
 import { setModal, setModalVisible } from 'stores/reducers/ModalReducer';
@@ -39,13 +40,18 @@ const Reminder = ({ bills }) => {
   const downloadICS = () => {
     const context = [
       'BEGIN:VCALENDAR',
+      'PRODID:-//FEIB//Bankee credit card reminder//TW',
       'VERSION:2.0',
       'BEGIN:VEVENT',
+      `UID:${uuid()}`,
+      `DTSTAMP:${new Date().toISOString().replaceAll('-', '').replaceAll(':', '')
+        .split('.')[0]}Z`,
       `DTSTART;VALUE=DATE:${bills.billDate}`,
-      `SUMMARY:${renderReminderText().replace('<br />', '')}`,
+      'RRULE:FREQ=MONTHLY',
+      'SUMMARY:Bankee信用卡繳款截止日',
       'END:VEVENT',
       'END:VCALENDAR',
-    ].join('\n');
+    ].join('\r\n');
     const blob = new Blob([context], { type: 'text/calendar;charset=utf-8' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
