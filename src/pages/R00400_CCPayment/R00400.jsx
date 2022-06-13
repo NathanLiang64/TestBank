@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
 import { RadioGroup } from '@material-ui/core';
@@ -40,7 +40,7 @@ import {
   getPaymentCodes,
   makePayment,
 } from './api';
-import PageWrapper from './R00400.style';
+import PageWrapper, { PopUpWrapper } from './R00400.style';
 
 const PAYMENT_OPTION = {
   INTERNAL: 'self',
@@ -59,6 +59,7 @@ const AMOUNT_OPTION = {
  */
 const Page = () => {
   const history = useHistory();
+  const location = useLocation();
   const dispatch = useDispatch();
   const {
     control, watch, handleSubmit, formState: { errors }, trigger, setValue,
@@ -72,8 +73,9 @@ const Page = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    // TODO Read accountNo from location.
-    const response = await getBills({ showAccounts: true });
+    let accountNo;
+    if (location.state && ('accountNo' in location.state)) accountNo = location.state.accountNo;
+    const response = await getBills({ accountNo, showAccounts: true });
     setBills(response);
     dispatch(setWaittingVisible(false));
   }, []);
@@ -100,19 +102,22 @@ const Page = () => {
       dispatch(setModal({
         title: '超商條碼繳款',
         content: (
-          <div style={{
-            display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '1rem',
-          }}
-          >
+          <PopUpWrapper>
             <Badge label="應繳金額" value={currencySymbolGenerator(bills?.currency ?? 'NTD', amount)} />
-            <p>適用商家：四大超商（7-ELEVEN、全家、萊爾富和OK MART）</p>
+            <p className="note">
+              適用商家：
+              <wbr />
+              四大超商（7-ELEVEN、全家、
+              <wbr />
+              萊爾富和OK MART）
+            </p>
             <img src={response.image1} height="82" alt="" />
             { response.image2 && <img src={response.image2} height="82" alt="" /> }
             { response.image3 && <img src={response.image3} height="82" alt="" /> }
             <Accordion title="注意事項" onClick={lazyLoadTerms}>
               { getTermsFromOutsideModal() }
             </Accordion>
-          </div>
+          </PopUpWrapper>
         ),
         onOk: false,
       }));

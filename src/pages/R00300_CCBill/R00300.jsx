@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
 
 import Layout from 'components/Layout/Layout';
@@ -21,13 +21,15 @@ import PageWrapper from './R00300.style';
  */
 const Page = () => {
   const history = useHistory();
+  const location = useLocation();
   const dispatch = useDispatch();
   const [bills, setBills] = useState();
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    // TODO Read accountNo from location.
-    const response = await getBills();
+    let accountNo;
+    if (location.state && ('accountNo' in location.state)) accountNo = location.state.accountNo;
+    const response = await getBills({ accountNo });
     setBills(response);
     dispatch(setWaittingVisible(false));
   }, []);

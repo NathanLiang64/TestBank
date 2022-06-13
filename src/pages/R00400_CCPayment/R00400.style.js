@@ -24,4 +24,18 @@ const PageWrapper = styled.div`
   }
 `;
 
+const PopUpWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+
+  .note {
+    text-align: center;
+    font-size: 1.4rem;
+    color: ${({ theme }) => theme.colors.text.lightGray};
+  }
+`;
+
 export default PageWrapper;
+export { PopUpWrapper };
