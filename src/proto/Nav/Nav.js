@@ -84,6 +84,7 @@ const Nav = () => {
           <p style={{ color: '#9D7ADE' }}>** 瑞芙 **</p>
           <div onClick={() => startFunc('C00100')}>C00100 帳務總覽 - (施工中)</div>
           <div onClick={() => startFunc('C00600')}>C00600 存錢計劃 - (施工中)</div>
+          <div onClick={() => startFunc('C00700')}>C00700 信用卡 - (施工中)</div>
         </div>
 
         <div className="vj">

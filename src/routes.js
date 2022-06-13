@@ -25,6 +25,7 @@ const C00600EditR = lazy(() => import('pages/C00600_DepositPlan/RestrictedEditPa
 const C00600Detail = lazy(() => import('pages/C00600_DepositPlan/DetailPage'));
 const R00400 = lazy(() => import('pages/R00400_CCPayment/R00400'));
 const R00300 = lazy(() => import('pages/R00300_CCBill/R00300'));
+const C00700 = lazy(() => import('pages/C00700_CreditCard/C00700'));
 const C00800 = lazy(() => import('pages/C00800_ExportBankBook'));
 const C008001 = lazy(() => import('pages/C00800_ExportBankBook/exportBankBook_1'));
 const D00100 = lazy(() => import('pages/D00100_NtdTransfer/D00100'));
@@ -106,7 +107,7 @@ const routes = [
   { path: '/C006003', exact: false, component: C00600Edit },
   { path: '/C006004', exact: false, component: C00600Detail },
   { path: '/C006005', exact: false, component: C00600EditR },
-  // { path: '/C00700', exact: false, component: C00700 },
+  { path: '/C00700', exact: false, component: C00700 },
   // { path: '/C007001', exact: false, component: C00700Detail },
   // { path: '/C007002', exact: false, component: C00700Reward },
   { path: '/C00800', exact: false, component: C00800 },
