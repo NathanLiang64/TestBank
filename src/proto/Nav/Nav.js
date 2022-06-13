@@ -88,6 +88,7 @@ const Nav = () => {
           <div onClick={() => startFunc('R00100')}>R00100 信用卡 即時消費明細 - (施工中)</div>
           <div onClick={() => startFunc('R00300')}>R00300 信用卡 帳單明細 - (施工中)</div>
           <div onClick={() => startFunc('R00400')}>R00400 信用卡 繳費 - (施工中)</div>
+          <div onClick={() => startFunc('M00200')}>M00200 社群圈 好友查詢 - (施工中)</div>
         </div>
 
         <div className="vj">
