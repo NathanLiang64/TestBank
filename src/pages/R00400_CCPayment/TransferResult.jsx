@@ -74,7 +74,7 @@ const Page = () => {
           { result?.isSuccessful && !(result?.autoDeduct) && (
             <>
               <div>
-                <div className="mb-2">您尚未申請自動扣繳</div>
+                <div className="mb-2 text-gray">您尚未申請自動扣繳</div>
                 <div className="deduct">
                   <div>自動扣繳</div>
                   <FEIBSwitch onChange={() => history.push('/R00500')} />
@@ -86,9 +86,12 @@ const Page = () => {
             </>
           )}
           { result?.isSuccessful && result?.autoDeduct && (
-            <div className="auto">
+            <div className="auto text-gray">
               <div>您已申請自動扣繳</div>
-              <a href="/">設定自動扣繳</a>
+              <button type="button" onClick={() => history.push('/R00500')}>
+                <i className="circle" />
+                設定自動扣繳
+              </button>
             </div>
           )}
           { renderBottomAction(result?.isSuccessful) }

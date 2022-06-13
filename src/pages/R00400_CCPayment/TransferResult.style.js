@@ -16,19 +16,34 @@ const PageWrapper = styled.div`
     align-items: center;
     padding: 1rem;
     border-radius: 0.8rem;
+    color: ${({ theme }) => theme.colors.text.lightGray};
+  }
+
+  .text-gray {
+    font-size: 1.4rem;
+    color: ${({ theme }) => theme.colors.text.lightGray};
   }
 
   .auto {
     margin-block-start: 3rem;
     text-align: center;
 
-    a {
-      display: block;
-      color: ${({ theme }) => theme.colors.text.lightGray};
-      font-size: 1.4rem;
-      margin-block-start: 1rem;
+    button {
+      color: ${({ theme }) => theme.colors.text.dark};
+      margin-block-start: 0.8rem;
+    }
+
+    .circle {
+      border: 2px solid ${({ theme }) => theme.colors.text.dark};
+      display: inline-block;
+      width: 1.6rem;
+      height: 1.6rem;
+      border-radius: 100%;
+      margin-right: 0.4rem;
+      vertical-align: -0.2rem;
     }
   }
+
 `;
 
 export default PageWrapper;
