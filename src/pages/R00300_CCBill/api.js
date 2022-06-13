@@ -14,8 +14,8 @@ import {
      "showAccounts": 指定使否需提供可轉出的帳戶列表，預設 false。
    }
    @returns {
-     "month": 本期月份
-     "amount": 本期應繳金額
+     "month": 本期月份。
+     "amount": 本期應繳金額，無帳單時為0。
      "minAmount": 最低應繳金額
      "billDate": 繳費截止日
      "accountNo": 信用卡卡號，用於交易查詢

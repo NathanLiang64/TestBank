@@ -39,11 +39,17 @@ const Page = () => {
       <Main small>
         <PageWrapper>
           <Badge label={`${bills?.month}月應繳金額`} value={currencySymbolGenerator(bills?.currency ?? 'NTD', bills?.amount)} />
-          <Reminder bills={bills} />
+          { bills?.amount > 0 && (
+            <Reminder bills={bills} />
+          )}
           <Transactions bills={bills} />
-          <BillDetails />
-          <Terms />
-          <Tray />
+          { bills?.amount > 0 && (
+            <>
+              <BillDetails />
+              <Terms />
+              <Tray bills={bills} />
+            </>
+          )}
         </PageWrapper>
       </Main>
     </Layout>

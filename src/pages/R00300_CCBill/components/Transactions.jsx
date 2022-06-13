@@ -74,7 +74,7 @@ const Transactions = ({ bills }) => {
               { getMonthList().map((m) => <FEIBTab key={uuid()} label={`${m.slice(4, 6)}月`} value={m} />)}
             </FEIBTabList>
           </FEIBTabContext>
-          { displayList && displayList.length > 0 ? (
+          { displayList?.length > 0 ? (
             <>
               <div className="info-tape-wrapper" ref={scrollArea}>
                 { isLoading ? <Loading space="both" isCentered /> : displayList }
