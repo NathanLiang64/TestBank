@@ -14,23 +14,20 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showInfo } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, shareMessage } from 'utilities/AppScriptProxy';
 import { ArrowNextIcon, EditIcon } from 'assets/images/icons';
-import { hideName, stringDateFormatter } from 'utilities/Generator';
 import theme from 'themes/theme';
 import {
   getSummary,
-  getFriends,
   // TODO updateAvatar,
   updateNickname,
   updateEssay,
 } from './api';
-import NetworkWrapper, { EssayWrapper, RecommendListWrapper } from './M00100.style';
+import NetworkWrapper, { EssayWrapper } from './M00100.style';
 
 /**
  * 社群圈首頁
  */
 const CommunityPage = () => {
   const [summary, setSummary] = useState();
-  const [friends, setFriends] = useState();
 
   const { register, unregister, handleSubmit } = useForm();
   const renderText = (value) => ((value !== null) ? value : '-');
@@ -49,7 +46,6 @@ const CommunityPage = () => {
     } else {
       model = {
         summary: null, // 社群圈摘要資訊
-        friends: null, // 接受推薦的好友名單
       };
     }
 
@@ -130,40 +126,6 @@ const CommunityPage = () => {
   };
 
   /**
-   * 列出 推薦名單
-   */
-  const showRecommendListDialog = async (items) => {
-    if (!items) {
-      items = await getFriends();
-      setFriends(items);
-    }
-
-    const body = (
-      <RecommendListWrapper>
-        <table>
-          <thead>
-            <tr>
-              <th>姓名</th>
-              <th>核卡完成日期</th>
-              <th>開戶完成日期</th>
-            </tr>
-          </thead>
-          <tbody>
-            { items.map((item) => (
-              <tr key={item.friendName}>
-                <td className="center">{renderText(hideName(item.friendName))}</td>
-                <td className="center">{stringDateFormatter(item.creditCardApproved)}</td>
-                <td className="center">{stringDateFormatter(item.depositApproved)}</td>
-              </tr>
-            )) }
-          </tbody>
-        </table>
-      </RecommendListWrapper>
-    );
-    customPopup('推薦名單', body);
-  };
-
-  /**
    * 頁面輸出
    */
   return (
@@ -199,7 +161,7 @@ const CommunityPage = () => {
         </div>
         <div className="contentCard">
           <div className="title">
-            <div className="search" onClick={() => showRecommendListDialog(friends)}>
+            <div className="search" onClick={() => startFunc('M00200', null, { summary })}>
               <span>查詢</span>
               <ArrowNextIcon />
             </div>
@@ -223,7 +185,7 @@ const CommunityPage = () => {
         <div className="contentCard">
           <div className="title">社群圈回饋</div>
           <div className="overviewContent twoColumn">
-            <div className="overviewItem" onClick={() => startFunc('depositPlus', null, { summary, friends })}>
+            <div className="overviewItem" onClick={() => startFunc('depositPlus', null, { summary })}>
               <div className="subTitle">
                 優惠存款額度
                 <ArrowNextIcon />
