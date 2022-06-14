@@ -2,7 +2,7 @@
 
 import {
   mockCreditCard,
-  mockCreditCardDetails,
+  mockTransactions,
 } from './mockData';
 
 /**
@@ -76,9 +76,9 @@ export const getCreditCards = async () => {
      "currency": "TWD"
    }
  */
-export const getTransactionDetails = async (request) => {
+export const getTransactions = async (request) => {
   // const response = await callAPI('/api/', request);
-  const response = await new Promise((resolve) => resolve({ data: mockCreditCardDetails, request }));
+  const response = await new Promise((resolve) => resolve({ data: mockTransactions(request) }));
   return response.data;
 };
 

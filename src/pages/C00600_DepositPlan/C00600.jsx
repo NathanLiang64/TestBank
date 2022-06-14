@@ -9,7 +9,9 @@ import SwiperLayout from 'components/SwiperLayout';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { closeFunc } from 'utilities/BankeePlus';
 import { showAnimationModal, showDrawer, showError } from 'utilities/MessageModal';
-import { AccountIcon6, RadioUncheckedIcon, TransactionIcon1 } from 'assets/images/icons';
+import {
+  AccountIcon11, AccountIcon12, RadioUncheckedIcon, TransactionIcon1,
+} from 'assets/images/icons';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 
 import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
@@ -125,8 +127,8 @@ const DepositPlanPage = () => {
   const handleMoreClick = (plan) => {
     const list = [
       { icon: <RadioUncheckedIcon />, title: '設定為主要存錢計畫', onClick: handleSetMasterPlan },
-      { icon: <AccountIcon6 />, title: '存錢計畫資訊', onClick: () => history.push('/C006004', { isConfirmMode: false, plan }) },
-      { icon: <RadioUncheckedIcon />, title: '結束本計畫', onClick: handleTerminatePlan },
+      { icon: <AccountIcon11 />, title: '存錢計畫資訊', onClick: () => history.push('/C006004', { isConfirmMode: false, plan }) },
+      { icon: <AccountIcon12 />, title: '結束本計畫', onClick: handleTerminatePlan },
     ];
     if (plan.progInfo.type === 0) {
       list.push({ icon: <TransactionIcon1 />, title: '轉帳', onClick: () => history.push('/D00100') });

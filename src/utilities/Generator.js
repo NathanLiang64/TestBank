@@ -17,11 +17,11 @@ export const toCurrency = (number, float = 0) => {
 };
 
 // 將數字轉為「千」或「萬」，假設數字大於「千」，小於「千萬」
-// 例：1_000 -> 1千    10_000 -> 1萬    1_000_000 -> 100萬
-// 特例：999 -> 1千    10_000_000 -> 1,000萬
+// 例：1000 -> 1千    10000 -> 1萬    1000000 -> 100萬
+// 特例：999 -> 1千    10000000 -> 1,000萬
 export const toThousandNotation = (number) => {
-  const isTenThousand = Math.floor(number / 1_000) >= 10;
-  return isTenThousand ? `${toCurrency(number / 10_000)}萬` : `${Math.round(number / 1_000)}千`;
+  const isTenThousand = Math.floor(number / 1000) >= 10;
+  return isTenThousand ? `${toCurrency(number / 10000)}萬` : `${Math.round(number / 1000)}千`;
 };
 
 // 將帳號轉為指定字數間帶有分隔符 (-) 之顯示方式

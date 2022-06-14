@@ -41,6 +41,7 @@ const E00200 = lazy(() => import('pages/E00200_ExchangeRate'));
 const E00300 = lazy(() => import('pages/E00300_FinancialDepartments'));
 const M00100 = lazy(() => import('pages/M00100_Community/M00100'));
 const M00200 = lazy(() => import('pages/M00200_FriendSearch/M00200'));
+const R00100 = lazy(() => import('pages/R00100_CCTransaction/R00100'));
 const R00300 = lazy(() => import('pages/R00300_CCBill/R00300'));
 const R00400 = lazy(() => import('pages/R00400_CCPayment/R00400'));
 const R00400Result = lazy(() => import('pages/R00400_CCPayment/TransferResult'));
@@ -129,7 +130,7 @@ const routes = [
   { path: '/E00300', exact: false, component: E00300 },
   { path: '/M00100', exact: false, component: M00100 },
   { path: '/M00200', exact: false, component: M00200 },
-  // { path: '/R00100', exact: false, component: R00100 }, // 信用卡 即時消費明細
+  { path: '/R00100', exact: false, component: R00100 },
   { path: '/R00300', exact: false, component: R00300 },
   { path: '/R00400', exact: false, component: R00400 },
   { path: '/R004001', exact: false, component: R00400Result },
