@@ -50,9 +50,10 @@ export const getCreditCards = async () => {
 /**
  * 取得信用卡資訊
    @param {
-     "accountNo": 卡號
+     "accountNo": 指定信用卡資訊，若未指定預設Bankee信用卡。
    }
    @returns {
+     "currency": 幣別
      "invoiceDate": 帳單結帳日
      "billDate": 繳費截止日
      "amount": 本期應繳金額
@@ -66,9 +67,9 @@ export const getCreditCards = async () => {
      "foreignCashCredit": 國外預借現金可使用額度
    }
  */
-export const getCreditCardDetails = async (accountNo) => {
-  // const response = await callAPI('/api/', accountNo);
-  const response = await new Promise((resolve) => resolve({ data: mockCreditCardDetails(accountNo) }));
+export const getCreditCardDetails = async (param) => {
+  // const response = await callAPI('/api/', param);
+  const response = await new Promise((resolve) => resolve({ data: mockCreditCardDetails(param) }));
   return response.data;
 };
 
