@@ -23,10 +23,8 @@ const C00600Create = lazy(() => import('pages/C00600_DepositPlan/CreatePage'));
 const C00600Edit = lazy(() => import('pages/C00600_DepositPlan/EditPage'));
 const C00600EditR = lazy(() => import('pages/C00600_DepositPlan/RestrictedEditPage'));
 const C00600Detail = lazy(() => import('pages/C00600_DepositPlan/DetailPage'));
-const R00300 = lazy(() => import('pages/R00300_CCBill/R00300'));
-const R00400 = lazy(() => import('pages/R00400_CCPayment/R00400'));
-const R00400Result = lazy(() => import('pages/R00400_CCPayment/TransferResult'));
 const C00800 = lazy(() => import('pages/C00800_ExportBankBook'));
+const C00700Reward = lazy(() => import('pages/C00700_CreditCard/Rewards'));
 const C008001 = lazy(() => import('pages/C00800_ExportBankBook/exportBankBook_1'));
 const D00100 = lazy(() => import('pages/D00100_NtdTransfer/D00100'));
 const D001001 = lazy(() => import('pages/D00100_NtdTransfer/D00100_1'));
@@ -42,6 +40,9 @@ const E00200 = lazy(() => import('pages/E00200_ExchangeRate'));
 const E00300 = lazy(() => import('pages/E00300_FinancialDepartments'));
 const M00100 = lazy(() => import('pages/M00100_Community/M00100'));
 const M00200 = lazy(() => import('pages/M00200_FriendSearch/M00200'));
+const R00300 = lazy(() => import('pages/R00300_CCBill/R00300'));
+const R00400 = lazy(() => import('pages/R00400_CCPayment/R00400'));
+const R00400Result = lazy(() => import('pages/R00400_CCPayment/TransferResult'));
 const S00300 = lazy(() => import('pages/S00300_ReserveTransferSearch'));
 const S003001 = lazy(() => import('pages/S00300_ReserveTransferSearch/reserveTransferSearch_1'));
 const S003002 = lazy(() => import('pages/S00300_ReserveTransferSearch/reserveTransferSearch_2'));
@@ -110,7 +111,7 @@ const routes = [
   { path: '/C006005', exact: false, component: C00600EditR },
   // { path: '/C00700', exact: false, component: C00700 },
   // { path: '/C007001', exact: false, component: C00700Detail },
-  // { path: '/C007002', exact: false, component: C00700Reward },
+  { path: '/C007002', exact: false, component: C00700Reward },
   { path: '/C00800', exact: false, component: C00800 },
   { path: '/C008001', exact: false, component: C008001 },
   { path: '/D00100', exact: false, component: D00100 },

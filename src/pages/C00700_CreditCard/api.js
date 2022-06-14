@@ -92,19 +92,21 @@ export const updateMemo = async (id, memo) => {
  * 取得信用卡現金回饋
    TODO 確定要一個月的抓，還是一次就六個月？
    @param {
+     "accountNo": 指定信用卡帳單，若未指定預設Bankee信用卡。
      "month": 指定月份，留空為六個月。
    }
    @returns [
      {
-       "month": 本期月份
+       "date": YYYYMM
        "card": 刷卡回饋
        "social": 社群圈分潤
-       "point": 金讚點數兌換回饋
+       "point": 金讚點數兌換回饋,
+       "currency": 幣別,
      }, ...]
  */
-export const getRewards = async (month) => {
-  // const response = await callAPI('/api/', month);
-  const response = await new Promise((resolve) => resolve({ data: mockRewards(month) }));
+export const getRewards = async (param) => {
+  // const response = await callAPI('/api/', param);
+  const response = await new Promise((resolve) => resolve({ data: mockRewards(param) }));
   return response.data;
 };
 

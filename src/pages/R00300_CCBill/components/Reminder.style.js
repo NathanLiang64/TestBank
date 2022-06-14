@@ -15,7 +15,7 @@ const ReminderWrapper = styled.div`
 
   .badIcon {
     display: block;
-    margin: -0.8rem;
+    margin: -1.1rem;
     height: fit-content;
   }
 `;

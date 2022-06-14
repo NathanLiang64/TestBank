@@ -92,8 +92,8 @@ const Page = () => {
   const getTermsFromOutsideModal = () => (terms ? parse(terms) : <Loading space="both" isCentered />);
 
   const renderBalance = () => {
-    if (!bills || !watch('account')) return undefined;
-    return currencySymbolGenerator(bills.currency ?? 'NTD', bills.accounts.find((a) => a.accountNo === watch('account'))?.balance);
+    if (!bills || !watch('accountNo')) return undefined;
+    return `可用餘額 ${currencySymbolGenerator(bills.currency ?? 'NTD', bills.accounts.find((a) => a.accountNo === watch('accountNo'))?.balance)}`;
   };
 
   const renderPaymentCode = async (amount) => {
@@ -258,7 +258,7 @@ const Page = () => {
                   )}
                 />
                 <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
-                  { renderBalance() && `可用餘額 ${renderBalance()}` }
+                  { renderBalance() }
                 </FEIBErrorMessage>
               </>
             )}

@@ -10,31 +10,28 @@ const Reminder = ({ bills }) => {
   const dispatch = useDispatch();
 
   const renderReminderText = () => {
-    const due = stringToDate(bills.billDate);
-    const today = new Date();
+    const due = stringToDate(bills.billDate); // UTC時區
+    const today = new Date(); // UTC時區
+
+    // 移除時間資訊，方便比對
+    today.setUTCHours(0);
+    today.setUTCMinutes(0);
+    today.setUTCSeconds(0);
+    today.setUTCMilliseconds(0);
+
     const dueDateString = `每月${due.getDate()}日`;
     const deltaDays = Math.ceil(Math.abs(due - today) / (1000 * 60 * 60 * 24));
 
-    // 逾截止日
-    if (today > due) return bills.autoDeduct ? `${dueDateString}自動扣繳` : `繳款截止日：${dueDateString}`;
+    // 逾截止日（當日）
+    if (today >= due) return bills.autoDeduct ? `${dueDateString}自動扣繳` : `繳款截止日：${dueDateString}`;
 
     // 10天以上
     if (deltaDays >= 10) return bills.autoDeduct ? `自動扣繳（${dueDateString}）尚有${deltaDays}天` : `繳款截止日（${dueDateString}）尚有${deltaDays}天`;
 
     // 1-9天
-    return bills.autoDeduct ? (
-      <>
-        {`自動扣繳（${dueDateString}）尚有${deltaDays}天`}
-        <br />
-        提醒您確認帳戶餘額！
-      </>
-    ) : (
-      <>
-        {`繳款截止日（${dueDateString}）尚有${deltaDays}天`}
-        <br />
-        提醒您於截止日前繳款
-      </>
-    );
+    return bills.autoDeduct
+      ? `自動扣繳（${dueDateString}）尚有${deltaDays}天，提醒您確認帳戶餘額！`
+      : `繳款截止日（${dueDateString}）尚有${deltaDays}天，提醒您於截止日前繳款`;
   };
 
   const downloadICS = () => {
@@ -73,7 +70,7 @@ const Reminder = ({ bills }) => {
       { bills && (
       <>
         <div className="auto">{ renderReminderText() }</div>
-        <FEIBIconButton className="badIcon" onClick={handleCalendarClick}>
+        <FEIBIconButton $fontSize={2} className="badIcon" onClick={handleCalendarClick}>
           <CalendarIcon />
         </FEIBIconButton>
       </>

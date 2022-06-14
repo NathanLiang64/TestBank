@@ -114,8 +114,7 @@ export const getInvoice = async (format) => {
     await downloadCSV('/api/deposit/v1/getDepositBook', request, `${filename}.csv`);
   }
   */
-  const response = await new Promise((resolve) => resolve({ data: { url: '/', format } }));
-  return response.data;
+  alert('待串接API', format === 1 ? '下載PDF' : '下載EXCEL');
 };
 
 /**

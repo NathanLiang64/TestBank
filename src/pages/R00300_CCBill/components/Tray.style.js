@@ -21,17 +21,4 @@ const TrayWrapper = styled.div`
   }
 `;
 
-const DownloadWrapper = styled.ul`
-  button {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .Icon {
-    margin-right: 0 !important;
-  }
-`;
-
 export default TrayWrapper;
-export { DownloadWrapper };

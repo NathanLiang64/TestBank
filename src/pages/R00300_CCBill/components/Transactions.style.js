@@ -29,4 +29,11 @@ const TransactionWrapper = styled.div`
   }
 `;
 
+const PopUpWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+`;
+
 export default TransactionWrapper;
+export { PopUpWrapper };
