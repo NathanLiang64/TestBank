@@ -15,6 +15,7 @@ import { currencySymbolGenerator } from 'utilities/Generator';
 import { getThisMonth, getMonthList } from 'utilities/MonthGenerator';
 
 import { getRewards } from './api';
+import PageWrapper from './Rewards.style';
 
 /**
  * C00700 信用卡 回饋
@@ -47,45 +48,50 @@ const Page = () => {
   return (
     <Layout title="信用卡 回饋" goBackFunc={() => history.goBack()}>
       <Main>
-        <FEIBTabContext value={selectedMonth}>
-          <FEIBTabList $size="small" $type="fixed" onChange={handleOnTabChange}>
-            { getMonthList().map((m) => <FEIBTab key={uuid()} label={`${m.slice(4, 6)}月`} value={m} />)}
-          </FEIBTabList>
-        </FEIBTabContext>
-        { displayReward ? (
-          <>
-            <Badge
-              label={`${displayReward.date.slice(0, 4)}/${displayReward.date.slice(4, 6)} 回饋合計`}
-              value={currencySymbolGenerator(displayReward.currency ?? 'TWD', sumAmount(displayReward))}
-            />
-            <table>
-              <th>
-                <td className="">活動名稱</td>
-                <td>金額</td>
-              </th>
-              <tr>
-                <td>刷卡回饋</td>
-                <td>{currencySymbolGenerator(displayReward.currency ?? 'TWD', displayReward.card)}</td>
-              </tr>
-              <tr>
-                <td>社群圈分潤</td>
-                <td>{currencySymbolGenerator(displayReward.currency ?? 'TWD', displayReward.point)}</td>
-              </tr>
-              {displayReward.point > 0 && (
-              <tr>
-                <td>金讚點數兌換回饋</td>
-                <td>{currencySymbolGenerator(displayReward.currency ?? 'TWD', displayReward.point)}</td>
-              </tr>
-              )}
-            </table>
-            實際回饋金額以帳單為準
-          </>
-        ) : (
-          <div style={{ height: '20rem', marginTop: '6rem' }}>
-            <EmptyData />
-          </div>
-        )}
-        <FEIBButton onClick={() => history.goBack()}>回信用卡首頁</FEIBButton>
+        <PageWrapper>
+          <FEIBTabContext value={selectedMonth}>
+            <FEIBTabList $size="small" $type="fixed" onChange={handleOnTabChange}>
+              { getMonthList().map((m) => <FEIBTab key={uuid()} label={`${m.slice(4, 6)}月`} value={m} />)}
+            </FEIBTabList>
+          </FEIBTabContext>
+          { displayReward ? (
+            <>
+              <Badge
+                label={`${displayReward.date.slice(0, 4)}/${displayReward.date.slice(4, 6)} 回饋合計`}
+                value={currencySymbolGenerator(displayReward.currency ?? 'TWD', sumAmount(displayReward))}
+              />
+              <table className="table">
+                <tr>
+                  <th className="w-3/4">活動名稱</th>
+                  <th className="w-1/4">金額</th>
+                </tr>
+                <tr>
+                  <td>刷卡回饋</td>
+                  <td>{currencySymbolGenerator(displayReward.currency ?? 'TWD', displayReward.card)}</td>
+                </tr>
+                <tr>
+                  <td>社群圈分潤</td>
+                  <td>{currencySymbolGenerator(displayReward.currency ?? 'TWD', displayReward.point)}</td>
+                </tr>
+                {displayReward.point > 0 && (
+                <tr>
+                  <td>金讚點數兌換回饋</td>
+                  <td>{currencySymbolGenerator(displayReward.currency ?? 'TWD', displayReward.point)}</td>
+                </tr>
+                )}
+              </table>
+              <hr />
+              <div className="font-14 mb-6">
+                實際回饋金額以帳單為準
+              </div>
+            </>
+          ) : (
+            <div style={{ height: '20rem', marginTop: '6rem' }}>
+              <EmptyData />
+            </div>
+          )}
+          <FEIBButton onClick={() => history.goBack()}>回信用卡首頁</FEIBButton>
+        </PageWrapper>
       </Main>
     </Layout>
   );
