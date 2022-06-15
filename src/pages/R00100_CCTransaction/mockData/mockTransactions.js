@@ -7,7 +7,7 @@ export default function mockTransactions(param) {
   const end = stringToDate(param.endDate);
 
   const list = [];
-  while (start < end) {
+  while (start <= end) {
     list.push(dateToCodeString(end));
     end.setDate(end.getDate() - 1);
   }
