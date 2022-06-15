@@ -8,12 +8,8 @@ import Main from 'components/Layout';
 import { TransactionIcon1, RadioUncheckedIcon } from 'assets/images/icons';
 import { showDrawer } from 'utilities/MessageModal';
 
-import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
-import ArrowNextButton from 'components/ArrowNextButton';
-
 import CreditCard from './components/CreditCard';
 import DetailCreditCard from './components/detailCreditCard';
-
 import { getCreditCards } from './api';
 
 /**
@@ -23,37 +19,35 @@ const CreditCardPage = () => {
   const history = useHistory();
   const [plans, setPlans] = useState();
 
-  const aa = (data) => {
-    data = 3;
-    return data;
-  };
   /**
-   * 會員等級/回饋資訊 參數資訊
+   * 頁面啟動，初始化
    */
-  const bonusInfo = [
-    {
-      label: '會員等級', value: '4', iconType: 'Arrow', onClick: aa('de'),
-    },
-    {
-      label: '國內/外回饋', value: '1.2/3%', iconType: 'Arrow', onClick: aa('de'),
-    },
-    {
-      label: '回饋試算', value: '$39', iconType: 'Arrow', onClick: aa('de'),
-    },
-  ];
+  useEffect(async () => {
+    const response = await getCreditCards();
+    setPlans(response);
+  });
 
-  const functionList = () => {
+  /**
+   * 執行指定的單元功能。
+   * @param {*} funcCode 功能代碼
+   */
+
+  // render 功能列表
+  const functionAllList = (item) => {
     const list = [
-      { title: '晚點付', path: '/transfer', icon: null },
-      { title: '帳單', path: '/transfer', icon: null },
-      { title: '繳費', path: '/exchange', icon: null },
+      { fid: '/D00100', title: '晚點付', account: item.account },
+      { fid: '/R00300', title: '帳單', account: item.account },
+      { fid: '/R00400', title: '繳費', account: item.account },
     ];
+    if (item.type === 'all') {
+      list.splice(0, 1);
+    }
     const options = (
       <ul className="functionList">
         { list.map((func) => (
           func.fid
             ? (
-              <li key={func.fid}>
+              <li key={func.fid} onClick={() => history.push(func.fid, { accountNo: func.account })}>
                 <p>
                   {func.title}
                 </p>
@@ -68,10 +62,10 @@ const CreditCardPage = () => {
         )) }
       </ul>
     );
-    console.log(options);
     return options;
   };
 
+  // 信用卡更多
   const handleMoreClick = (plan) => {
     const list = [
       { icon: <RadioUncheckedIcon />, title: '信用卡資訊'},
@@ -92,14 +86,8 @@ const CreditCardPage = () => {
     );
     showDrawer('', options);
   };
-  /**
-   * 產生上方內容的 slides
-   */
-  useEffect(async () => {
-    const response = await getCreditCards();
-    setPlans(response);
-  });
 
+  // 信用卡卡號(產生上方內容的 slides)
   const renderSlides = (data) => {
     if (!data || data.length === 0) return null;
     return (
@@ -112,27 +100,25 @@ const CreditCardPage = () => {
           color="green"
           annotation="已使用額度"
           onMoreClicked={() => handleMoreClick()}
-          functionList={functionList()}
+          functionList={functionAllList(item)}
         />
       ))
     );
   };
-  const renderLists = (data) => {
+
+  // 信用卡明細總覽
+  const renderCreditList = (data) => {
     if (!data || data.length === 0) return null;
+    console.log(data);
     return (
-      plans.map((item) => (
-        <DetailCreditCard
-          id={item.id}
-          index={item.index}
-          // inView="1"
-          title={item.description}
-          date={item.txnDate}
-          bizDate={item.bizDate}
-          dollarSign={item.currency}
-          targetCard="1113456"
-          amount={item.amount}
-          balance={item.balance}
-        />
+      data.map((item) => (
+        <div>
+          <DetailCreditCard
+            key={uuid()}
+            transactions={item.transactions}
+            bonus={item?.bonusInfo}
+          />
+        </div>
       ))
     );
   };
@@ -141,13 +127,7 @@ const CreditCardPage = () => {
     <Layout title="信用卡" goBackFunc={() => history.goBack()}>
       <Main>
         <SwiperLayout slides={renderSlides(plans)} hasDivider={false} slidesPerView={1.14} spaceBetween={8}>
-          <div className="pad">
-            {/* 顯示 會員等級/回饋資訊面版 */}
-            <ThreeColumnInfoPanel content={bonusInfo} />
-            {/* 顯示 明細細項 */}
-            {renderLists(plans)}
-            <ArrowNextButton onClick={aa}>更多明細</ArrowNextButton>
-          </div>
+          {renderCreditList(plans)}
         </SwiperLayout>
       </Main>
     </Layout>

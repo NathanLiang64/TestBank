@@ -4,7 +4,6 @@ import {
   currencySymbolGenerator,
 } from 'utilities/Generator';
 import * as yup from 'yup';
-
 import { CreateRounded } from '@material-ui/icons';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -16,40 +15,27 @@ import {
   FEIBInput, FEIBInputLabel, FEIBButton, FEIBErrorMessage,
 } from 'components/elements';
 import Dialog from 'components/Dialog';
+import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
+import ArrowNextButton from 'components/ArrowNextButton';
 
 // timeFormatter
-import DetailCardWrapper from './detailCreditCard.style';
-
-// { DetailDialogContentWrapper }
+import DetailCardWrapper, { DetailDialogContentWrapper } from './detailCreditCard.style';
 
 /*
 * ==================== DetailCard 組件說明 ====================
 * 交易明細卡片組件
 * ==================== DetailCard 可傳參數 ====================
-* 1. id -> Html DOM 元素 id
-* 2. index -> HTML data-index 參數，放置後端撈回的卡片索引值
-* 3. inView -> HTML data-inview 參數，顯示卡片是否在畫面可視範圍
-* 6. title -> 明細標題
-* 7. date -> 交易日期
-* 9. bizDate -> 帳務日期
-* 10. dollarSign -> 貨幣單位
-* 13. targetCard -> 目標帳號的會員 ID
-* 14. amount -> 交易金額
-* 15. balance -> 交易後所剩餘額
-* 16. noShadow -> 卡片不帶陰影樣式
+* 1. nickName -> 備註
+* 2. transactions -> 交易明細內容
+* 3. bonus -> 會員等級/回饋/回饋試算
+* 4. onClick -> 更多明細
 * */
 
 const DetailCard = ({
-  id,
-  index,
-  inView,
-  title,
-  date,
-  dollarSign,
-  targetCard,
-  amount,
-  noShadow,
   nickName,
+  transactions,
+  bonus,
+  onClick,
 }) => {
   const [showChangeNickNameDialog, setShowChangeNickNameDialog] = useState(false);
   const [setNickName] = useState('');
@@ -66,13 +52,13 @@ const DetailCard = ({
     return '';
   };
   // 信用卡號顯示後四碼
-  const creditNumberFormat = (stringCredit) => {
-    if (stringCredit) {
-      const creditArray = stringCredit.substring(stringCredit.length - 4);
-      return creditArray;
-    }
-    return '';
-  };
+  // const creditNumberFormat = (stringCredit) => {
+  //   if (stringCredit) {
+  //     const creditArray = stringCredit.substring(stringCredit.length - 4);
+  //     return creditArray;
+  //   }
+  //   return '';
+  // };
 
   const schema = yup.object().shape({
     nickName: yup
@@ -138,34 +124,95 @@ const DetailCard = ({
     setShowChangeNickNameDialog(true);
   };
 
+  const bonusInfo = () => ([
+    {
+      label: '會員等級', value: `${bonus.level}`, iconType: 'Arrow',
+    },
+    {
+      label: '國內/外回饋', value: `${bonus.rewardLocalRate}/${bonus.rewardForeignRate}%`, iconType: 'Arrow',
+    },
+    {
+      label: '回饋試算', value: `${bonus.rewards}`, iconType: 'Arrow',
+    },
+  ]);
+
+  // 多餘7筆,就只輸出7筆
+  const render = (lists) => {
+    const arr = [];
+    for (let i = 1; i < 8; i++) {
+      const options = (
+        <DetailCardWrapper data-index={lists[i].index} noShadow id={lists[i].id}>
+          <div className="description">
+            <h4>{lists[i].description}</h4>
+            <p>
+              {stringDateFormat(lists[i].bizDate)}
+              {/* {list.targetCard ? ` | 卡-${creditNumberFormat(list.targetCard)}` : ''} */}
+            </p>
+          </div>
+          <div className="amount">
+            {/* 刷卡金額 */}
+            <h4>
+              {currencySymbolGenerator(lists[i].currency, lists[i].amount)}
+            </h4>
+            <div className="remark">
+              <span>{lists[i].memo}</span>
+              <CreateRounded onClick={showEditNickNameDialog} />
+              { renderDialog() }
+            </div>
+          </div>
+        </DetailCardWrapper>
+      );
+      arr.push(options);
+    }
+    return arr;
+  };
+
+  // 信用卡總明細列表
+  const renderFunctionList = (lists) => (
+    <div>
+      {/* 假設資料少等於7筆,就全部輸出 ; 假設資料多餘7筆,就只輸出7筆 */}
+      {
+      lists.length <= 7 ? (
+        lists.map((list) => (
+          <DetailCardWrapper
+            data-index={list.index}
+            noShadow
+            id={list.id}
+          >
+            <div className="description">
+              <h4>{list.description}</h4>
+              <p>
+                {stringDateFormat(list.bizDate)}
+                {/* {list.targetCard ? ` | 卡-${creditNumberFormat(list.targetCard)}` : ''} */}
+              </p>
+            </div>
+            <div className="amount">
+              {/* 刷卡金額 */}
+              <h4>
+                {currencySymbolGenerator(list.currency, list.amount)}
+              </h4>
+              <div className="remark">
+                <span>{list.memo}</span>
+                <CreateRounded onClick={showEditNickNameDialog} />
+                { renderDialog() }
+              </div>
+            </div>
+          </DetailCardWrapper>
+        ))
+      ) : (render(lists))
+    }
+    </div>
+  );
+
   return (
     <>
-      <DetailCardWrapper
-        data-index={index}
-        data-inview={inView}
-        $noShadow={noShadow}
-        id={id}
-        // onClick={() => setOpenDetailDialog(true)}
-      >
-        <div className="description">
-          <h4>{title}</h4>
-          <p>
-            {stringDateFormat(date)}
-            {targetCard ? ` | 卡-${creditNumberFormat(targetCard)}` : ''}
-          </p>
+      <DetailDialogContentWrapper>
+        <div className="panel">
+          {!!bonus && <ThreeColumnInfoPanel content={bonusInfo()} />}
         </div>
-        <div className="amount">
-          {/* 刷卡金額 */}
-          <h4>
-            {currencySymbolGenerator(dollarSign, amount)}
-          </h4>
-          <div className="remark">
-            <span>編輯最多七個字</span>
-            <CreateRounded onClick={showEditNickNameDialog} />
-            { renderDialog() }
-          </div>
-        </div>
-      </DetailCardWrapper>
+      </DetailDialogContentWrapper>
+      {renderFunctionList(transactions)}
+      {transactions.length > 7 && <ArrowNextButton onClick={onClick}>更多明細</ArrowNextButton>}
     </>
   );
 };

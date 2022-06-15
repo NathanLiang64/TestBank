@@ -16,7 +16,7 @@ const DetailCardWrapper = styled.div`
     width: 4rem;
     height: 4rem;
   }
-  
+
   .defaultAvatar {
     display: flex;
     justify-content: center;
@@ -89,7 +89,7 @@ const DetailCardWrapper = styled.div`
       font-weight: 500;
     }
   }
-  
+
   .remark {
     display: flex;
     justify-content: right;
@@ -112,25 +112,10 @@ const DetailCardWrapper = styled.div`
 `;
 
 const DetailDialogContentWrapper = styled.div`
-  margin-bottom: 2.4rem;
-    
-  .mainBlock {
-    margin-bottom: 1.6rem;
-    flex-direction: column;
-  }
-
-  .mainBlockTitle {
-    font-size: 1.4rem;
-    color: ${({ theme }) => theme.colors.text.lightGray};
-  }
-
-  .mainBlockAmount {
-    font-size: 3rem;
-    font-weight: 500;
-    color: ${({ theme }) => theme.colors.primary.dark};
-  }
-
-  
+.panel{
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
 `;
 
 export default DetailCardWrapper;
