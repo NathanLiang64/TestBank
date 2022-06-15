@@ -1,4 +1,6 @@
-const genTransactions = () => Array(10).map((_, i) => ({
+const genTransactions = () => Array.from(Array(10)).map((_, i) => ({
+  id: i + 1,
+  ccNo: '1112223333444455',
   index: i + 1,
   bizDate: (20220425 + i).toString(),
   txnDate: (20220425 + i).toString(),

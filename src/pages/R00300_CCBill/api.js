@@ -49,6 +49,7 @@ export const getBills = async (param) => {
    }
    @returns {
      "id": TODO 需要ID之類的識別碼
+     "ccNo": TODO 需要新增卡號
      "index": 1,
      "bizDate": "20220425",
      "txnDate": "20220425",

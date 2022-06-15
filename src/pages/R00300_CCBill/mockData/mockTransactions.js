@@ -11,6 +11,7 @@ export default function mockTransactions(param) {
 
   return list.map((l) => ({
     id: 1,
+    ccNo: '1112223333444455',
     index: 1,
     bizDate: l.toString(),
     txnDate: l.toString(),
