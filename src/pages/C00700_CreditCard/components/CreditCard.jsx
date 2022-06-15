@@ -1,5 +1,4 @@
 import {
-  accountFormatter,
   accountOverviewCardVarient,
   currencySymbolGenerator,
 } from 'utilities/Generator';
@@ -25,10 +24,14 @@ import AccountCardWrapper from './CreditCard.style';
 * 13. functionList -> 卡片功能清單，型別為陣列，組件 type 為 original 的卡片 (完整內容) 才需要傳入
 * */
 
+const creditFormatter = (account) => (
+  account ? `${account.slice(0, 4)}-${account.slice(4, 8)}-${account.slice(8, 12)}-${account.slice(12, 16)}` : '-'
+);
+
 const AccountCard = ({
   type = 'M',
   cardName = 'Title',
-  accountNo = '22244499991111',
+  accountNo = '2224449999111133',
   balance = '200000',
   color,
   dollarSign = 'NTD',
@@ -39,7 +42,6 @@ const AccountCard = ({
   onMoreClicked,
   functionList,
 }) => (
-
   <AccountCardWrapper
     title={ariaLabel || cardName}
     $cardColor={color || accountOverviewCardVarient(type).color}
@@ -49,13 +51,11 @@ const AccountCard = ({
       <>
         <div className="justify-between">
           <div>{cardName}</div>
-          <div className="moreIconButton">
-            <FEIBIconButton aria-label="展開下拉式選單" onClick={onMoreClicked}>
-              <MoreIcon />
-            </FEIBIconButton>
-          </div>
+          {
+            onMoreClicked && (<div className="moreIconButton"><FEIBIconButton aria-label="展開下拉式選單" onClick={onMoreClicked}><MoreIcon /></FEIBIconButton></div>)
+          }
         </div>
-        <div>{accountNo && accountFormatter(accountNo)}</div>
+        <div>{accountNo && creditFormatter(accountNo)}</div>
         <div className="justify-between items-center">
           <div>{annotation}</div>
           <div className="balance">

@@ -15,6 +15,7 @@ import { currencySymbolGenerator, dateFormatter, stringToDate } from 'utilities/
 
 import { getCreditCardDetails, getCreditCardTerms } from './api';
 import PageWrapper from './Details.style';
+import CreditCard from './components/CreditCard';
 
 /**
  * C007001 信用卡 資訊
@@ -66,10 +67,15 @@ const Page = () => {
       <Main>
         <PageWrapper>
           <div>
-            <div>TODO: insert card component here</div>
-            <div>{ details?.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡' }</div>
-            <div>{ details?.accountNo }</div>
-            <div>{ details?.creditUsed }</div>
+            <div>
+              <CreditCard
+                cardName={details?.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
+                accountNo={details?.accountNo}
+                color="green"
+                annotation="已使用額度"
+                balance={details?.creditUsed}
+              />
+            </div>
           </div>
           <div>
             { details && getCardListing(details).map((d) => (

@@ -66,17 +66,23 @@ const CreditCardPage = () => {
   };
 
   // 信用卡更多
-  const handleMoreClick = (plan) => {
+  const handleMoreClick = (item) => {
     const list = [
-      { icon: <RadioUncheckedIcon />, title: '信用卡資訊'},
-      { icon: <RadioUncheckedIcon />, title: '自動扣繳'},
-      { icon: <TransactionIcon1 />, title: '每月現金回饋' },
+      {
+        fid: '/C007001', icon: <RadioUncheckedIcon />, title: '信用卡資訊', data: item,
+      },
+      {
+        fid: '/withholding', icon: <RadioUncheckedIcon />, title: '自動扣繳', data: item,
+      },
+      {
+        fid: '/C007002', icon: <TransactionIcon1 />, title: '每月現金回饋', data: item,
+      },
     ];
     const options = (
       <ul>
         {list.map((func) => (
           <li key={func.title}>
-            <button type="button" onClick={() => func.onClick(plan)}>
+            <button type="button" onClick={() => history.push(func.fid, { details: func.account})}>
               {func.icon}
               {func.title}
             </button>
@@ -99,7 +105,7 @@ const CreditCardPage = () => {
           balance={item.expenditure}
           color="green"
           annotation="已使用額度"
-          onMoreClicked={() => handleMoreClick()}
+          onMoreClicked={handleMoreClick(item)}
           functionList={functionAllList(item)}
         />
       ))
