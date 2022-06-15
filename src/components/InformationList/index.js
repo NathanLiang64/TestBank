@@ -23,7 +23,7 @@ const InformationList = ({
       <div className="text-gray">{title}</div>
       <div className="text-dark">
         {content}
-        {extra && <span>{extra}</span>}
+        {extra && <span className="text-green">{extra}</span>}
       </div>
     </div>
     <div className="flex text-remark">

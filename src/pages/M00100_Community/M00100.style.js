@@ -150,13 +150,5 @@ const EssayWrapper = styled.form`
   }
 `;
 
-const RecommendListWrapper = styled.div`
-  margin-bottom: 2.4rem;
-  
-  table {
-    margin-bottom: 2.4rem;
-  }
-`;
-
 export default NetworkWrapper;
-export { EssayWrapper, RecommendListWrapper };
+export { EssayWrapper };

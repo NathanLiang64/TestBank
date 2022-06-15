@@ -1,7 +1,5 @@
-import mockCreditCard from './mockCreditCard';
-import mockCreditCardDetails from './mockCreditCardDetails';
+import mockTransactions from './mockTransactions';
 
 export {
-  mockCreditCard,
-  mockCreditCardDetails,
+  mockTransactions,
 };

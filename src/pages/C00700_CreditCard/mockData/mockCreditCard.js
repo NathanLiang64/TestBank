@@ -1,25 +1,21 @@
-const genTransactions = () => {
-  const temp = [];
-  for (let i = 0; i < 10; i++) {
-    temp.push({
-      index: i + 1,
-      bizDate: (20220425 + i).toString(),
-      txnDate: (20220425 + i).toString(),
-      txnTime: 210156,
-      description: '全家便利商店',
-      memo: '最多七個字',
-      targetMbrId: null,
-      targetNickName: null,
-      targetBank: '000',
-      targetAcct: null,
-      amount: 1_000 * i,
-      balance: 386_000 - (1_000 * i),
-      cdType: 'cc',
-      currency: 'TWD',
-    });
-  }
-  return temp;
-};
+const genTransactions = () => Array.from(Array(10)).map((_, i) => ({
+  id: i + 1,
+  ccNo: '1112223333444455',
+  index: i + 1,
+  bizDate: (20220425 + i).toString(),
+  txnDate: (20220425 + i).toString(),
+  txnTime: 210156,
+  description: '全家便利商店',
+  memo: '最多七個字',
+  targetMbrId: null,
+  targetNickName: null,
+  targetBank: '000',
+  targetAcct: null,
+  amount: 1_000 * i,
+  balance: 386_000 - (1_000 * i),
+  cdType: 'cc',
+  currency: 'TWD',
+}));
 
 export default [
   {

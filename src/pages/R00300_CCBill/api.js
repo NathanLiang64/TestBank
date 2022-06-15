@@ -1,23 +1,26 @@
 // import { callAPI } from 'utilities/axios';
 
 import {
-  mockCreditCardDetails,
   mockBills,
   mockBillDetails,
+  mockTransactions,
   mockCreditCardTerms,
 } from './mockData';
 
 /**
  * 取得信用卡繳費單
    @param {
-     "accounts": 指定使否需提供可轉出的帳戶列表，預設 false。
+     "accountNo": 指定信用卡帳單，若未指定預設Bankee信用卡。
+     "showAccounts": 指定使否需提供可轉出的帳戶列表，預設 false。
    }
    @returns {
-     "month": 本期月份
-     "amount": 本期應繳金額
+     "month": 本期月份。
+     "amount": 本期應繳金額，無帳單時為0。
      "minAmount": 最低應繳金額
      "billDate": 繳費截止日
+     "accountNo": 信用卡卡號，用於交易查詢
      "currency": 幣值
+     "autoDeduct": 是否已設定自動扣繳
      "accounts": [ 可轉出的帳戶
        {
          "accountNo": 帳號
@@ -25,9 +28,9 @@ import {
        }, ...],
    }
  */
-export const getBills = async (accounts) => {
-  // const response = await callAPI('/api/', accounts);
-  const response = await new Promise((resolve) => resolve({ data: mockBills(accounts) }));
+export const getBills = async (param) => {
+  // const response = await callAPI('/api/', param);
+  const response = await new Promise((resolve) => resolve({ data: mockBills(param) }));
   return response.data;
 };
 
@@ -46,6 +49,7 @@ export const getBills = async (accounts) => {
    }
    @returns {
      "id": TODO 需要ID之類的識別碼
+     "ccNo": TODO 需要新增卡號
      "index": 1,
      "bizDate": "20220425",
      "txnDate": "20220425",
@@ -64,13 +68,14 @@ export const getBills = async (accounts) => {
  */
 export const getTransactionDetails = async (request) => {
   // const response = await callAPI('/api/', request);
-  const response = await new Promise((resolve) => resolve({ data: mockCreditCardDetails, request }));
+  const response = await new Promise((resolve) => resolve({ data: mockTransactions(request) }));
   return response.data;
 };
 
 /**
  * 取得帳單資訊
    @returns {
+     "currency": 信用卡帳單幣別
      "amount": 本期應繳金額
      "minAmount": 最低應繳金額
      "invoiceDate": 帳單結帳日
@@ -96,16 +101,21 @@ export const getBillDetails = async () => {
  * 下載帳單
    TODO 不確定是否需要其他query條件，是否回傳檔案網址
    @param {
-      "format": "pdf" 或 "excel"
+      "fileType": 1 = pdf 或 2 = excel
    }
    @returns {
      "url": 檔案URL。
    }
  */
 export const getInvoice = async (format) => {
-  // const response = await callAPI('/api/');
-  const response = await new Promise((resolve) => resolve({ data: { url: '/', format } }));
-  return response.data;
+  /* TODO
+  if (fileType === 1) {
+    await downloadPDF('/api/deposit/v1/getDepositBook', request, `${filename}.pdf`);
+  } else if (fileType === 2) {
+    await downloadCSV('/api/deposit/v1/getDepositBook', request, `${filename}.csv`);
+  }
+  */
+  alert('待串接API', format === 1 ? '下載PDF' : '下載EXCEL');
 };
 
 /**

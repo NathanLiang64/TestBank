@@ -1,49 +1,8 @@
 // import { callAPI } from 'utilities/axios';
 
 import {
-  mockCreditCard,
-  mockCreditCardDetails,
+  mockTransactions,
 } from './mockData';
-
-/**
- * 取得信用卡資訊與交易明細
-   @returns [
-   {
-     "type": "bankee" 或 "all"
-     "accountNo": 卡號
-     "expenditure": 已使用額度
-     "autoDeduct": 是否已設定自動扣繳 (所有信用卡忽略)
-     "bonusInfo": {  (所有信用卡忽略)
-       "level": 會員等級
-       "rewardLocalRate": 國內回饋百分比(不含%符號)
-       "rewardForeignRate": 國外回饋百分比(不含%符號)
-       "rewards": 回饋試算
-     },
-     "transactions": [
-       {
-         "id": TODO 需要ID之類的識別碼
-         "index": 1,
-         "bizDate": "20220425",
-         "txnDate": "20220425",
-         "txnTime": 210156,
-         "description": "全家便利商店",
-         "memo": "備註最多7個字",
-         "targetMbrId": null,
-         "targetNickName": null,
-         "targetBank": "000",
-         "targetAcct": null,
-         "amount": 36000,
-         "balance": 386000,
-         "cdType": "cc",
-         "currency": "TWD"
-       }, ...],
-    }, ...]
- */
-export const getCreditCards = async () => {
-  // const response = await callAPI('/api/');
-  const response = await new Promise((resolve) => resolve({ data: mockCreditCard }));
-  return response.data;
-};
 
 /**
  * 取得信用卡交易明細
@@ -76,9 +35,9 @@ export const getCreditCards = async () => {
      "currency": "TWD"
    }
  */
-export const getTransactionDetails = async (request) => {
+export const getTransactions = async (request) => {
   // const response = await callAPI('/api/', request);
-  const response = await new Promise((resolve) => resolve({ data: mockCreditCardDetails, request }));
+  const response = await new Promise((resolve) => resolve({ data: mockTransactions(request) }));
   return response.data;
 };
 

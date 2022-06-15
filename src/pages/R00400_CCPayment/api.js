@@ -4,19 +4,23 @@ import {
   mockBills,
   mockBillDetails,
   mockCreditCardTerms,
+  mockPaymentCodes,
 } from './mockData';
 
 /**
  * 取得信用卡繳費單
    @param {
-     "accounts": 指定使否需提供可轉出的帳戶列表，預設 false。
+     "accountNo": 指定信用卡帳單，若未指定預設Bankee信用卡。
+     "showAccounts": 指定使否需提供可轉出的帳戶列表，預設 false。
    }
    @returns {
      "month": 本期月份
      "amount": 本期應繳金額
      "minAmount": 最低應繳金額
      "billDate": 繳費截止日
+     "accountNo": 信用卡卡號，用於交易查詢
      "currency": 幣值
+     "autoDeduct": 是否已設定自動扣繳
      "accounts": [ 可轉出的帳戶
        {
          "accountNo": 帳號
@@ -24,9 +28,9 @@ import {
        }, ...],
    }
  */
-export const getBills = async (accounts) => {
-  // const response = await callAPI('/api/', accounts);
-  const response = await new Promise((resolve) => resolve({ data: mockBills(accounts) }));
+export const getBills = async (param) => {
+  // const response = await callAPI('/api/', param);
+  const response = await new Promise((resolve) => resolve({ data: mockBills(param) }));
   return response.data;
 };
 
@@ -63,14 +67,13 @@ export const getBillDetails = async () => {
    }
    @returns {
      "result": API執行結果。
+     "autoDeduct": 是否已設定自動扣繳
    }
  */
 export const makePayment = async ({ amount, acctBranch, acctId }) => {
-  // const response = await callAPI('/api/');
+  // const response = await callAPI('/api/', { amount, acctBranch, acctId });
   const response = await new Promise((resolve) => resolve({
-    data: {
-      result: true, amount, acctBranch, acctId,
-    },
+    data: { result: true, autoDeduct: false }, amount, acctBranch, acctId,
   }));
   return response.data;
 };
@@ -79,15 +82,18 @@ export const makePayment = async ({ amount, acctBranch, acctId }) => {
  * 信繳用卡 超商費用
    TODO 不確定是否需要其他資訊，是否回傳圖片網址或base64
    @param {
-      "amount": 金額
+      "amt": 交易金額
    }
    @returns {
-     "image": 條碼圖檔URL。
+     "type": "code39" 或 "qrcode"
+     "image1": 條碼圖檔URL。
+     "image2": 條碼圖檔URL，QR code 忽略。
+     "image3": 條碼圖檔URL，QR code 忽略。
    }
  */
 export const getPaymentCodes = async (amount) => {
-  // const response = await callAPI('/api/');
-  const response = await new Promise((resolve) => resolve({ data: { image: '/', amount } }));
+  // const response = await callAPI('/api/', { amt: amount });
+  const response = await new Promise((resolve) => resolve({ data: mockPaymentCodes(amount) }));
   return response.data;
 };
 

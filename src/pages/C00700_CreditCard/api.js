@@ -14,7 +14,7 @@ import {
      "type": "bankee" 或 "all"
      "accountNo": 卡號
      "expenditure": 已使用額度
-     "autoDeduct": 是否已設定自動扣繳 (所有信用卡忽略)
+     "autoDeduct": 是否已設定自動扣繳
      "bonusInfo": {  (所有信用卡忽略)
        "level": 會員等級
        "rewardLocalRate": 國內回饋百分比(不含%符號)
@@ -24,6 +24,7 @@ import {
      "transactions": [
        {
          "id": TODO 需要ID之類的識別碼
+         "ccNo": TODO 需要新增卡號
          "index": 1,
          "bizDate": "20220425",
          "txnDate": "20220425",
@@ -50,9 +51,10 @@ export const getCreditCards = async () => {
 /**
  * 取得信用卡資訊
    @param {
-     "accountNo": 卡號
+     "accountNo": 指定信用卡資訊，若未指定預設Bankee信用卡。
    }
    @returns {
+     "currency": 幣別
      "invoiceDate": 帳單結帳日
      "billDate": 繳費截止日
      "amount": 本期應繳金額
@@ -66,9 +68,9 @@ export const getCreditCards = async () => {
      "foreignCashCredit": 國外預借現金可使用額度
    }
  */
-export const getCreditCardDetails = async (accountNo) => {
-  // const response = await callAPI('/api/', accountNo);
-  const response = await new Promise((resolve) => resolve({ data: mockCreditCardDetails(accountNo) }));
+export const getCreditCardDetails = async (param) => {
+  // const response = await callAPI('/api/', param);
+  const response = await new Promise((resolve) => resolve({ data: mockCreditCardDetails(param) }));
   return response.data;
 };
 
@@ -92,19 +94,21 @@ export const updateMemo = async (id, memo) => {
  * 取得信用卡現金回饋
    TODO 確定要一個月的抓，還是一次就六個月？
    @param {
+     "accountNo": 指定信用卡帳單，若未指定預設Bankee信用卡。
      "month": 指定月份，留空為六個月。
    }
    @returns [
      {
-       "month": 本期月份
+       "date": YYYYMM
        "card": 刷卡回饋
        "social": 社群圈分潤
-       "point": 金讚點數兌換回饋
+       "point": 金讚點數兌換回饋,
+       "currency": 幣別,
      }, ...]
  */
-export const getRewards = async (month) => {
-  // const response = await callAPI('/api/', month);
-  const response = await new Promise((resolve) => resolve({ data: mockRewards(month) }));
+export const getRewards = async (param) => {
+  // const response = await callAPI('/api/', param);
+  const response = await new Promise((resolve) => resolve({ data: mockRewards(param) }));
   return response.data;
 };
 

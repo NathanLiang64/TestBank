@@ -318,6 +318,11 @@ const GlobalStyles = createGlobalStyle`
     }
   }
 
+  .MuiInput-underline.Mui-disabled::before,
+  .MuiInput-underline.Mui-disabled::after {
+    border-bottom-style: solid !important;
+  }
+
   .sr-only {
     position: absolute;
     width: 1px;
