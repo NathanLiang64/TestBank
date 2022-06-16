@@ -26,7 +26,9 @@ const handleSpaceType = (position) => {
 * 4. $focusBorderColor -> 游標點擊後聚焦在物件時的邊框顏色
 *    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)，預設為淺主色
 *    若已填寫 $borderColor 則直接繼承 $borderColor 色碼，也允許額外設定不同的色碼給此屬性
-* * 5. $space -> 元件上下留白空間
+* 5. $iconColor -> 文字顏色
+*    填寫包含 # 符號的色碼 (建議直接使用 theme.js 內的全域變數)，預設為主色
+* 6. $space -> 元件上下留白空間
 *    預設無 margin，可傳入 "top"、"bottom"、"both" 字串來產生固定高度的 margin
 * */
 
@@ -71,6 +73,10 @@ const FEIBSelect = styled(MaterialSelect).attrs({
       border-width: .1rem;
       border-color: ${({ theme, $borderColor, $focusBorderColor }) => $focusBorderColor || $borderColor || theme.colors.border.light};
     }
+  }
+
+  .Icon {
+    color: ${({ theme, $iconColor }) => $iconColor || theme.colors.primary.brand} !important;
   }
 `;
 

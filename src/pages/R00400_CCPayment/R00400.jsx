@@ -89,7 +89,7 @@ const Page = () => {
 
   const renderBalance = () => {
     if (!bills || !watch('accountNo')) return undefined;
-    return `可用餘額 ${currencySymbolGenerator(bills.currency ?? 'NTD', bills.accounts.find((a) => a.accountNo === watch('accountNo'))?.balance)}`;
+    return `可用餘額 ${currencySymbolGenerator(bills.currency ?? 'NTD', bills.accounts.find((a) => a.accountNo === watch('accountNo'))?.balance)}元`;
   };
 
   const renderPaymentCode = async (amount) => {
@@ -285,7 +285,9 @@ const Page = () => {
                     />
                   )}
                 />
-                <FEIBErrorMessage />
+                <FEIBErrorMessage>
+                  轉出帳號格式有誤，請重新檢查。
+                </FEIBErrorMessage>
               </>
             )}
 

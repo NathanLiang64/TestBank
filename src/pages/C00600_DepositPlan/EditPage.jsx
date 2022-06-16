@@ -52,6 +52,8 @@ const DepositPlanEditPage = () => {
       // useState is async, isRestrictedPromotion may be unavaliable.
       if (location.state.program.type > 0 || 'isRestrictedPromotion' in location.state) {
         setValue('name', location.state.program.name, { shouldValidate: false });
+        setValue('cycleDuration', location.state.program?.cycleDuration ?? 4, { shouldValidate: false });
+        setValue('cycleMode', location.state.program?.cycleMode ?? 2, { shouldValidate: false });
       }
     } else {
       // Guard: 此頁面接續上一頁的操作，意指若未在該情況下進入此頁為不正常操作。
@@ -172,10 +174,16 @@ const DepositPlanEditPage = () => {
                 <Controller
                   name="cycleDuration"
                   control={control}
-                  defaultValue={3}
+                  defaultValue={program?.cycleDuration ?? 3}
                   rules={{ required: true }}
                   render={({ field }) => (
-                    <FEIBSelect id={uid[2]} {...field}>
+                    <FEIBSelect
+                      id={uid[2]}
+                      disabled={isRestrictedPromotion}
+                      $color={isRestrictedPromotion ? Theme.colors.text.lightGray : Theme.colors.primary.brand}
+                      $iconColor={isRestrictedPromotion ? Theme.colors.text.placeholder : Theme.colors.primary.brand}
+                      {...field}
+                    >
                       { Array.from({length: 22}, (_, i) => i + 3).map((v) => (
                         <FEIBOption key={uuid()} value={v}>
                           {v}
@@ -194,10 +202,16 @@ const DepositPlanEditPage = () => {
                   <Controller
                     name="cycleMode"
                     control={control}
-                    defaultValue={2}
+                    defaultValue={program?.cycleMode ?? 2}
                     rules={{ required: true }}
                     render={({ field }) => (
-                      <FEIBSelect id={uid[3]} disabled={isRestrictedPromotion} {...field}>
+                      <FEIBSelect
+                        id={uid[3]}
+                        disabled={isRestrictedPromotion}
+                        $color={isRestrictedPromotion ? Theme.colors.text.lightGray : Theme.colors.primary.brand}
+                        $iconColor={isRestrictedPromotion ? Theme.colors.text.placeholder : Theme.colors.primary.brand}
+                        {...field}
+                      >
                         <FEIBOption value={1} disabled>每週</FEIBOption>
                         <FEIBOption value={2}>每月</FEIBOption>
                       </FEIBSelect>
@@ -257,7 +271,7 @@ const DepositPlanEditPage = () => {
                   )}
                 />
                 <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
-                  {`存款目標為 ${toCurrency(getGoalAmount(watch('amount', 0), watch('cycleDuration', 3), watch('cycleMode', 2)))} 元`}
+                  {(watch('amount', 0) > 0) && `存款目標為 ${toCurrency(getGoalAmount(watch('amount', 0), watch('cycleDuration', 3), watch('cycleMode', 2)))}元`}
                 </FEIBErrorMessage>
                 <div>金額最低＄10,000 元，最高＄90,000,000 元，以萬元為單位</div>
               </div>
@@ -282,9 +296,7 @@ const DepositPlanEditPage = () => {
                   )}
                 />
                 <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
-                  存款餘額為
-                  { getRemainingBalance(watch('bindAccountNo')) }
-                  元
+                  { ((watch('bindAccountNo') !== '*') && (watch('bindAccountNo') !== 'new')) && `存款餘額為${getRemainingBalance(watch('bindAccountNo'))}元` }
                 </FEIBErrorMessage>
               </div>
 
