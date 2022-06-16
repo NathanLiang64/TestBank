@@ -15,6 +15,7 @@ import { currencySymbolGenerator, dateFormatter, stringToDate } from 'utilities/
 
 import { getCreditCardDetails, getCreditCardTerms } from './api';
 import PageWrapper from './Details.style';
+import CreditCard from './components/CreditCard';
 
 /**
  * C007001 信用卡 資訊
@@ -25,6 +26,7 @@ const Page = () => {
   const dispatch = useDispatch();
   const [details, setDetails] = useState();
   const [terms, setTerms] = useState();
+  const [card, setCard] = useState();
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
@@ -34,7 +36,12 @@ const Page = () => {
 
     // Save for easy access later
     response.accountNo = accountNo;
-    response.type = location?.state?.type ?? 'bankee';
+
+    setCard({
+      type: location?.state?.type,
+      accountNo: location?.state?.accountNo,
+      creditUsed: location?.state?.expenditure,
+    });
 
     setDetails(response);
     dispatch(setWaittingVisible(false));
@@ -66,10 +73,15 @@ const Page = () => {
       <Main>
         <PageWrapper>
           <div>
-            <div>TODO: insert card component here</div>
-            <div>{ details?.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡' }</div>
-            <div>{ details?.accountNo }</div>
-            <div>{ details?.creditUsed }</div>
+            <div>
+              <CreditCard
+                cardName={card?.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
+                accountNo={card?.accountNo}
+                color="green"
+                annotation="已使用額度"
+                balance={card?.creditUsed}
+              />
+            </div>
           </div>
           <div>
             { details && getCardListing(details).map((d) => (

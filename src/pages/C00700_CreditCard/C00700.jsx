@@ -1,5 +1,6 @@
 import { useEffect, useState} from 'react';
 import { useHistory } from 'react-router';
+import { useDispatch } from 'react-redux';
 import uuid from 'react-uuid';
 
 import Layout from 'components/Layout/Layout';
@@ -8,6 +9,7 @@ import Main from 'components/Layout';
 import { TransactionIcon1, RadioUncheckedIcon } from 'assets/images/icons';
 import { showDrawer } from 'utilities/MessageModal';
 
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import CreditCard from './components/CreditCard';
 import DetailCreditCard from './components/detailCreditCard';
 import { getCreditCards } from './api';
@@ -18,13 +20,16 @@ import { getCreditCards } from './api';
 const CreditCardPage = () => {
   const history = useHistory();
   const [plans, setPlans] = useState();
+  const dispatch = useDispatch();
 
   /**
    * 頁面啟動，初始化
    */
   useEffect(async () => {
+    dispatch(setWaittingVisible(true));
     const response = await getCreditCards();
     setPlans(response);
+    dispatch(setWaittingVisible(false));
   });
 
   /**
@@ -47,13 +52,13 @@ const CreditCardPage = () => {
         { list.map((func) => (
           func.fid
             ? (
-              <li key={func.fid} onClick={() => history.push(func.fid, { accountNo: func.account })}>
-                <p>
+              <li key={uuid()}>
+                <button type="button" onClick={() => history.push(func.fid, { accountNo: func.account })}>
                   {func.title}
-                </p>
+                </button>
               </li>
             ) : (
-              <li>
+              <li key={uuid()}>
                 <div style={{ color: 'gray' }}>
                   {func.title}
                 </div>
@@ -66,17 +71,23 @@ const CreditCardPage = () => {
   };
 
   // 信用卡更多
-  const handleMoreClick = (plan) => {
+  const handleMoreClick = (item) => {
     const list = [
-      { icon: <RadioUncheckedIcon />, title: '信用卡資訊'},
-      { icon: <RadioUncheckedIcon />, title: '自動扣繳'},
-      { icon: <TransactionIcon1 />, title: '每月現金回饋' },
+      {
+        fid: '/C007001', icon: <RadioUncheckedIcon />, title: '信用卡資訊', data: { accountNo: item.accountNo, type: item.type, expenditure: item.expenditure },
+      },
+      {
+        fid: '/withholding', icon: <RadioUncheckedIcon />, title: '自動扣繳', data: item,
+      },
+      {
+        fid: '/C007002', icon: <TransactionIcon1 />, title: '每月現金回饋', data: item,
+      },
     ];
     const options = (
       <ul>
         {list.map((func) => (
-          <li key={func.title}>
-            <button type="button" onClick={() => func.onClick(plan)}>
+          <li key={uuid()}>
+            <button type="button" onClick={() => history.push(func.fid, func.data)}>
               {func.icon}
               {func.title}
             </button>
@@ -99,7 +110,7 @@ const CreditCardPage = () => {
           balance={item.expenditure}
           color="green"
           annotation="已使用額度"
-          onMoreClicked={() => handleMoreClick()}
+          onMoreClicked={() => handleMoreClick(item)}
           functionList={functionAllList(item)}
         />
       ))
@@ -112,9 +123,8 @@ const CreditCardPage = () => {
     console.log(data);
     return (
       data.map((item) => (
-        <div>
+        <div key={uuid()}>
           <DetailCreditCard
-            key={uuid()}
             transactions={item.transactions}
             bonus={item?.bonusInfo}
           />
