@@ -21,7 +21,7 @@ export default [
   {
     type: 'bankee',
     accountNo: '11122233334444',
-    expenditure: 10000000,
+    creditUsed: 10000000,
     autoDeduct: true,
     bonusInfo: {
       level: 4,
@@ -34,7 +34,7 @@ export default [
   {
     type: 'all',
     accountNo: '11122233334444',
-    expenditure: 20000000,
+    creditUsed: 20000000,
     autoDeduct: false,
     transactions: genTransactions(),
   },

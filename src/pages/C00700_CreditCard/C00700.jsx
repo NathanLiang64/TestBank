@@ -71,23 +71,19 @@ const CreditCardPage = () => {
   };
 
   // 信用卡更多
-  const handleMoreClick = (item) => {
+  const handleMoreClick = (card) => {
     const list = [
       {
-        fid: '/C007001', icon: <RadioUncheckedIcon />, title: '信用卡資訊', data: { accountNo: item.accountNo, type: item.type, expenditure: item.expenditure },
+        fid: '/C007001', icon: <RadioUncheckedIcon />, title: '信用卡資訊', param: card,
       },
-      {
-        fid: '/withholding', icon: <RadioUncheckedIcon />, title: '自動扣繳', data: item,
-      },
-      {
-        fid: '/C007002', icon: <TransactionIcon1 />, title: '每月現金回饋', data: item,
-      },
+      { fid: '/withholding', icon: <RadioUncheckedIcon />, title: '自動扣繳' },
+      { fid: '/C007002', icon: <TransactionIcon1 />, title: '每月現金回饋' },
     ];
     const options = (
       <ul>
         {list.map((func) => (
           <li key={uuid()}>
-            <button type="button" onClick={() => history.push(func.fid, func.data)}>
+            <button type="button" onClick={() => history.push(func.fid, func?.param)}>
               {func.icon}
               {func.title}
             </button>
@@ -107,7 +103,7 @@ const CreditCardPage = () => {
           key={uuid()}
           cardName={item.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
           accountNo={item.accountNo}
-          balance={item.expenditure}
+          balance={item.creditUsed}
           color="green"
           annotation="已使用額度"
           onMoreClicked={() => handleMoreClick(item)}

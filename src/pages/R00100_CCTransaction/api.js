@@ -1,8 +1,25 @@
 // import { callAPI } from 'utilities/axios';
 
-import {
-  mockTransactions,
-} from './mockData';
+import mockBasicCreditCard from './mockData/mockBasicCreditCard';
+import mockTransactions from './mockData/mockTransactions';
+
+/**
+ * 取得簡單信用卡資訊
+   @param {
+     accountNo: 帳號, ex: 00100100063106,
+   }
+   @returns [
+   {
+     "type": "bankee" 或 "all"
+     "accountNo": 卡號
+     "creditUsed": 已使用額度
+    }, ...]
+ */
+export const getBasicCCInfo = async (param) => {
+  // const response = await callAPI('/api/', param);
+  const response = await new Promise((resolve) => resolve({ data: mockBasicCreditCard(param) }));
+  return response.data;
+};
 
 /**
  * 取得信用卡交易明細

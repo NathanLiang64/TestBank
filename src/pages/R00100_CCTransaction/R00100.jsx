@@ -14,7 +14,7 @@ import BottomAction from 'components/BottomAction';
 import EmptyData from 'components/EmptyData';
 import Loading from 'components/Loading';
 
-import { getTransactions } from './api';
+import { getBasicCCInfo, getTransactions } from './api';
 import PageWrapper from './R00100.style';
 
 const uid = uuid();
@@ -68,11 +68,15 @@ const Page = () => {
     backlog = backlog.concat(response);
     setTransactions(backlog);
 
-    setCard({
-      type: location?.state?.type,
-      accountNo: location?.state?.accountNo,
-      creditUsed: location?.state?.expenditure,
-    });
+    if (location.state && ('type' in location.state)) {
+      setCard({
+        type: location.state.type,
+        accountNo,
+        creditUsed: location.state.creditUsed,
+      });
+    } else {
+      setCard(await getBasicCCInfo(accountNo));
+    }
 
     dispatch(setWaittingVisible(false));
 

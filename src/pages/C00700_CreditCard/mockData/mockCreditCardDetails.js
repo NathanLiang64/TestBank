@@ -1,5 +1,7 @@
 export default function mockCreditCardDetails() {
   return {
+    type: 'bankee',
+    accountNo: '11122233334444',
     currency: 'TWD',
     invoiceDate: '20220620',
     billDate: '20220719',

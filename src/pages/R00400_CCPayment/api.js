@@ -1,11 +1,9 @@
 // import { callAPI } from 'utilities/axios';
 
-import {
-  mockBills,
-  mockBillDetails,
-  mockCreditCardTerms,
-  mockPaymentCodes,
-} from './mockData';
+import mockBills from './mockData/mockBills';
+import mockBillDetails from './mockData/mockBillDetails';
+import mockCreditCardTerms from './mockData/mockCreditCardTerms';
+import mockPaymentCodes from './mockData/mockPaymentCodes';
 
 /**
  * 取得信用卡繳費單

@@ -54,6 +54,8 @@ const AMOUNT_OPTION = {
   ALL: 'all',
 };
 
+const uid = Array.from({ length: 4}, () => uuid());
+
 /**
  * R00400 信用卡 付款頁
  */
@@ -69,8 +71,6 @@ const Page = () => {
   const [bills, setBills] = useState();
   const [terms, setTerms] = useState();
 
-  const uid = Array.from({ length: 4}, () => uuid());
-
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
     let accountNo;
@@ -79,10 +79,6 @@ const Page = () => {
     setBills(response);
     dispatch(setWaittingVisible(false));
   }, []);
-
-  const handleOnTabChange = (_, id) => {
-    setPaymentOption(id);
-  };
 
   const lazyLoadTerms = async () => {
     if (!terms) setTerms(await getCreditCardTerms());
@@ -189,7 +185,7 @@ const Page = () => {
 
           <div className="badMargin">
             <FEIBTabContext value={paymentOption}>
-              <FEIBTabList $size="small" $type="fized" onChange={handleOnTabChange}>
+              <FEIBTabList $size="small" $type="fized" onChange={(_, id) => setPaymentOption(id)}>
                 <FEIBTab label="本行帳戶" value={PAYMENT_OPTION.INTERNAL} />
                 <FEIBTab label="他行帳戶" value={PAYMENT_OPTION.EXTERNAL} />
                 <FEIBTab label="超商條碼" value={PAYMENT_OPTION.CSTORE} />
@@ -265,7 +261,6 @@ const Page = () => {
 
             { paymentOption === PAYMENT_OPTION.EXTERNAL && (
               <>
-
                 <BankCodeInput
                   id="bankCode"
                   setValue={setValue}
@@ -274,7 +269,6 @@ const Page = () => {
                   rules={{ required: true }}
                   errorMessage={errors?.bankCode && '請選擇銀行代碼'}
                 />
-
                 <FEIBInputLabel htmlFor={uid[3]}>轉出帳號</FEIBInputLabel>
                 <Controller
                   name="extAccountNo"
@@ -292,11 +286,13 @@ const Page = () => {
                   )}
                 />
                 <FEIBErrorMessage />
-
-                <Accordion title="注意事項" onClick={lazyLoadTerms}>
-                  { terms ? parse(terms) : <Loading space="both" isCentered /> }
-                </Accordion>
               </>
+            )}
+
+            { paymentOption !== PAYMENT_OPTION.INTERNAL && (
+              <Accordion title="注意事項" onClick={lazyLoadTerms}>
+                { terms ? parse(terms) : <Loading space="both" isCentered /> }
+              </Accordion>
             )}
 
             <FEIBButton

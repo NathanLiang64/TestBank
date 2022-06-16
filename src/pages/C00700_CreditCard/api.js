@@ -1,11 +1,9 @@
 // import { callAPI } from 'utilities/axios';
 
-import {
-  mockCreditCard,
-  mockCreditCardDetails,
-  mockRewards,
-  mockCreditCardTerms,
-} from './mockData';
+import mockCreditCard from './mockData/mockCreditCard';
+import mockCreditCardDetails from './mockData/mockCreditCardDetails';
+import mockRewards from './mockData/mockRewards';
+import mockCreditCardTerms from './mockData/mockCreditCardTerms';
 
 /**
  * 取得信用卡資訊與交易明細
@@ -13,7 +11,7 @@ import {
    {
      "type": "bankee" 或 "all"
      "accountNo": 卡號
-     "expenditure": 已使用額度
+     "creditUsed": 已使用額度
      "autoDeduct": 是否已設定自動扣繳
      "bonusInfo": {  (所有信用卡忽略)
        "level": 會員等級
@@ -54,6 +52,8 @@ export const getCreditCards = async () => {
      "accountNo": 指定信用卡資訊，若未指定預設Bankee信用卡。
    }
    @returns {
+     "type": "bankee" 或 "all"
+     "accountNo": 卡號
      "currency": 幣別
      "invoiceDate": 帳單結帳日
      "billDate": 繳費截止日
