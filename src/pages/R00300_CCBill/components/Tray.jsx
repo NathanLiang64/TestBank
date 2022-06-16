@@ -1,6 +1,6 @@
 import { useHistory } from 'react-router';
 
-import { TransactionIcon, DownloadIcon } from 'assets/images/icons';
+import { CreditCardIcon3, DownloadIcon } from 'assets/images/icons';
 import BottomAction from 'components/BottomAction';
 import { getInvoice } from '../api';
 import TrayWrapper from './Tray.style';
@@ -13,7 +13,7 @@ const Tray = ({ bills }) => {
       <BottomAction className="badFlex">
         { !(bills?.autoDeduct) && (
         <button type="button" onClick={() => history.push('/R00400')}>
-          <TransactionIcon />
+          <CreditCardIcon3 />
           繳費
         </button>
         )}
