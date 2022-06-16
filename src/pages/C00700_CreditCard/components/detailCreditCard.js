@@ -9,6 +9,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { switchLoading } from 'utilities/BankeePlus';
 import { profileApi } from 'apis';
+import uuid from 'react-uuid';
 
 /* Elements */
 import {
@@ -141,7 +142,7 @@ const DetailCard = ({
     const arr = [];
     for (let i = 1; i < 8; i++) {
       const options = (
-        <DetailCardWrapper data-index={lists[i].index} noShadow id={lists[i].id}>
+        <DetailCardWrapper key={uuid()} data-index={lists[i].index} noShadow id={lists[i].id}>
           <div className="description">
             <h4>{lists[i].description}</h4>
             <p>
@@ -175,6 +176,7 @@ const DetailCard = ({
       lists.length <= 7 ? (
         lists.map((list) => (
           <DetailCardWrapper
+            key={uuid()}
             data-index={list.index}
             noShadow
             id={list.id}
@@ -200,7 +202,7 @@ const DetailCard = ({
           </DetailCardWrapper>
         ))
       ) : (render(lists))
-    }
+      }
     </div>
   );
 

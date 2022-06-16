@@ -26,6 +26,7 @@ const Page = () => {
   const dispatch = useDispatch();
   const [details, setDetails] = useState();
   const [terms, setTerms] = useState();
+  const [card, setCard] = useState();
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
@@ -35,7 +36,12 @@ const Page = () => {
 
     // Save for easy access later
     response.accountNo = accountNo;
-    response.type = location?.state?.type ?? 'bankee';
+
+    setCard({
+      type: location?.state?.type,
+      accountNo: location?.state?.accountNo,
+      creditUsed: location?.state?.expenditure,
+    });
 
     setDetails(response);
     dispatch(setWaittingVisible(false));
@@ -69,11 +75,11 @@ const Page = () => {
           <div>
             <div>
               <CreditCard
-                cardName={details?.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
-                accountNo={details?.accountNo}
+                cardName={card?.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
+                accountNo={card?.accountNo}
                 color="green"
                 annotation="已使用額度"
-                balance={details?.creditUsed}
+                balance={card?.creditUsed}
               />
             </div>
           </div>

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import CardBackground from 'assets/images/debitCardBackground.png';
 
-const AccountCardWrapper = styled.button`
+const AccountCardWrapper = styled.div`
   display: flex;
   justify-content: flex-begen;
   flex-direction: column;
