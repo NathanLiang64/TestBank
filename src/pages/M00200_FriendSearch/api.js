@@ -1,5 +1,5 @@
-// import { callAPI } from 'utilities/axios';
-import mockData from './mockData';
+import { callAPI } from 'utilities/axios';
+// import mockData from './mockData';
 
 /**
  * 取得接受推薦的好友名單
@@ -11,7 +11,7 @@ import mockData from './mockData';
  * }, ...]
  */
 export const getFriends = async () => {
-  // const response = await callAPI('/api/community/v1/getFriends');
-  const response = await new Promise((resolve) => resolve({ data: mockData }));
+  const response = await callAPI('/api/community/v1/getFriends');
+  // const response = await new Promise((resolve) => resolve({ data: mockData }));
   return response.data;
 };
