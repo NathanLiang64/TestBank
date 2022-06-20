@@ -24,6 +24,7 @@ const Page = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const [bills, setBills] = useState();
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
@@ -34,19 +35,27 @@ const Page = () => {
     dispatch(setWaittingVisible(false));
   }, []);
 
+  const handleGoBack = () => {
+    if (isExpanded) setIsExpanded(false);
+    else history.goBack();
+  };
+
   return (
-    <Layout title="信用卡帳單" goBackFunc={() => history.goBack()}>
+    <Layout title="信用卡帳單" goBackFunc={handleGoBack}>
       <Main small>
         <PageWrapper>
           <Badge label={`${bills?.month}月應繳金額`} value={currencySymbolGenerator(bills?.currency ?? 'NTD', bills?.amount)} />
           { bills?.amount > 0 && (
             <Reminder bills={bills} />
           )}
-          <Transactions bills={bills} />
+          <Transactions bills={bills} isExpanded={isExpanded} onExpandClick={() => setIsExpanded(true)} />
           { bills?.amount > 0 && (
             <>
               <BillDetails />
               <Terms />
+              { isExpanded && (
+                <div className="fixed-bottom">更多帳單資訊請滑至底部查看</div>
+              )}
               <Tray bills={bills} />
             </>
           )}

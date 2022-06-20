@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import uuid from 'react-uuid';
 
 import { ArrowNextIcon } from 'assets/images/icons';
@@ -14,10 +14,8 @@ import TransactionsWrapper from './Transactions.style';
 
 const backlogMap = new Map();
 
-const Transactions = ({ bills }) => {
-  const scrollArea = useRef();
+const Transactions = ({ bills, isExpanded, onExpandClick }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
   const [displayList, setDisplayList] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(getThisMonth());
 
@@ -42,7 +40,6 @@ const Transactions = ({ bills }) => {
       ));
     }
     setDisplayList(list);
-    if (scrollArea?.current) scrollArea.current.scrollTo({ top: 0, behavior: 'smooth' });
     setIsLoading(false);
   }, [selectedMonth, isExpanded]);
 
@@ -61,13 +58,13 @@ const Transactions = ({ bills }) => {
           </FEIBTabContext>
           { displayList?.length > 0 ? (
             <>
-              <div className="info-tape-wrapper" ref={scrollArea}>
+              <div className="px-16">
                 { isLoading ? <Loading space="both" isCentered /> : displayList }
               </div>
 
               { !isExpanded && (
               <div className="toolbar">
-                <button type="button" className="btn-icon" onClick={() => setIsExpanded(true)}>
+                <button type="button" className="btn-icon" onClick={() => onExpandClick()}>
                   更多明細
                   <ArrowNextIcon />
                 </button>
