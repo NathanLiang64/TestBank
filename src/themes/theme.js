@@ -38,6 +38,7 @@ const theme = {
       lighter: '#F5F5F5',
       lighterBlue: '#F3F5FC',
       lightest: '#FFFEFD',
+      lightness: '#CCC',
       star: '#FFD466',
       point: '#E60E0E',
       cancel: '#D8E0ED',

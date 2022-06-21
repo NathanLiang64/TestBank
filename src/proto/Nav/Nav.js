@@ -37,28 +37,28 @@ const Nav = () => {
           <div onClick={() => startFunc('B00600')}>B00600 更多... (待施工)</div>
           <div onClick={async () => {
             const result = await transactionAuth(0x35);
-            console.log('*** OTP Result from AppScriptProxy : ', result);
+            console.log('*** Result from AppScriptProxy : ', result);
           }}
           >
             台幣-非約轉(2FA / PWD+OTP)
           </div>
           <div onClick={async () => {
             const result = await transactionAuth(0x30);
-            console.log('*** OTP Result from AppScriptProxy : ', result);
+            console.log('*** Result from AppScriptProxy : ', result);
           }}
           >
             台幣-約轉(2FA / PWD)
           </div>
           <div onClick={async () => {
             const result = await transactionAuth(0x17, '0900123456');
-            console.log('*** OTP Result from AppScriptProxy : ', result);
+            console.log('*** Result from AppScriptProxy : ', result);
           }}
           >
             生物辨識/圖形-設定(PWD+OTP)
           </div>
           <div onClick={async () => {
             const result = await transactionAuth(0x20);
-            console.log('*** OTP Result from AppScriptProxy : ', result);
+            console.log('*** Result from AppScriptProxy : ', result);
           }}
           >
             生物辨識/圖形-解除(2FA)
@@ -66,14 +66,14 @@ const Nav = () => {
 
           <div onClick={async () => {
             const result = await transactionAuth(0x2B, '0900123456');
-            console.log('*** OTP Result from AppScriptProxy : ', result);
+            console.log('*** Result from AppScriptProxy : ', result);
           }}
           >
             解除手機號碼收款綁定-驗證(2FA+OTP)
           </div>
           <div onClick={async () => {
             const result = await mobileAccountUnbind();
-            console.log('*** OTP Result from AppScriptProxy : ', result);
+            console.log('*** Result from AppScriptProxy : ', result);
           }}
           >
             解除手機號碼收款綁定-執行
@@ -98,6 +98,7 @@ const Nav = () => {
           <div onClick={() => startFunc('E00100')}>E00100 換匯 - (施工中)</div>
           <div onClick={() => startFunc('T00600')}>T00600 手機號碼收款設定 - (施工中)</div>
           <div onClick={() => startFunc('foreignCurrencyTransfer')}>無 function code 外幣轉外幣 - (施工中)</div>
+          <div onClick={() => startFunc('cardLessSetting')}>無 function code 無卡提款設定 - (完成切版)</div>
         </div>
         {/* <div onClick={() => goToFunc({ route: '/foreignCurrencyPriceSetting', funcID: 'unset' })}>
           <ul>
@@ -163,7 +164,7 @@ const Nav = () => {
         </div>
         <div onClick={() => goToFunc({ route: '/staging', funcID: '' })}>
           <ul>
-            <li>功能：消費分期</li>
+            <li>功能：晚點付</li>
             <li>route: /staging</li>
             <li>funcID: </li>
           </ul>

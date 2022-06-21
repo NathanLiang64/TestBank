@@ -115,8 +115,8 @@ const Instalment3 = () => {
           </svg>
           <p style={{ fontSize: '2rem', color: '#93DA49', textAlign: 'center' }}>設定成功</p>
           <div>
-            <p style={{ textAlign: 'center' }}>您已完成Bankee信用卡</p>
-            <p style={{ textAlign: 'center' }}>消費分期申請</p>
+            <p style={{ textAlign: 'center' }}>您已完成 Bankee 信用卡</p>
+            <p style={{ textAlign: 'center' }}>晚點付申請</p>
           </div>
         </div>
       )}
@@ -128,7 +128,7 @@ const Instalment3 = () => {
 
   return (
     <>
-      <Header title="消費分期 (總額)" goBack={() => history.replace('/staging2')} />
+      <Header title="晚點付 (總額)" goBack={() => history.replace('/staging2')} />
       <InstalmentWrapper className="InstalmentWrapper" small>
         <form>
           <div>

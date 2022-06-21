@@ -44,4 +44,14 @@ function onComplete(event) {
   window.customFunc = null
 }
 
+/**
+ * 負責接收 APP JavaScript API callback 的共用方法。
+ * @param {*} result APP JavaScript API的傳回值。 
+ */
+function AppJavaScriptCallback(result) {
+  console.log('*** Result from APP JavaScript : ', result);
+  localStorage.setItem('appJsResponse', (result ? JSON.stringify(result) : null)); // 將 APP 傳回的資料寫回。
+  window.AppJavaScriptCallbackPromiseResolve(result);
+}
+
 console.log('load app to webview functions success');

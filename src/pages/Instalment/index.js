@@ -59,12 +59,12 @@ const Instalment = () => {
 
   return (
     <>
-      <Header title="消費分期" goBack={() => history.replace('/')} />
+      <Header title="晚點付" goBack={() => history.replace('/')} />
       <InstalmentWrapper className="InstalmentWrapper" small>
         <form onSubmit={() => {}}>
           <div>
             <div className="InstalmentWrapperText">
-              點選申請消費分期項目
+              點選申請晚點付項目
             </div>
             {renderSelectList()}
             <Accordion space="both">

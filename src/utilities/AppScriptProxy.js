@@ -12,8 +12,8 @@ import { customPopup, showError } from './MessageModal';
 
 const device = {
   // TODO: 開發時使用，上版前應刪除！
-  ios: () => false, // /iPhone|iPad|iPod/i.test(navigator.userAgent),
-  android: () => false, // /Android/i.test(navigator.userAgent),
+  ios: () => /iPhone|iPad|iPod/i.test(navigator.userAgent),
+  android: () => /Android/i.test(navigator.userAgent),
 };
 
 const funcStack = {
@@ -210,6 +210,42 @@ function setAuthdata(jwtToken) {
 // }
 
 /**
+ *
+ * @param {*} appJsName APP提供的JavaScript funciton名稱。
+ * @param {*} jsParams JavaScript的執行參數。
+ * @returns
+ */
+async function callAppJavaScript(appJsName, jsParams) {
+  console.log(`\x1b[33mAPP JS://${appJsName}`);
+  console.log('Params = ', jsParams);
+  const promise = new Promise((resolve) => {
+    window.AppJavaScriptCallbackPromiseResolve = resolve;
+    const request = {
+      ...jsParams,
+      callback: 'AppJavaScriptCallback', // 此方法可提供所有WebView共用。
+    };
+
+    if (device.ios()) {
+      const msg = JSON.stringify({ name: appJsName, data: JSON.stringify(request) });
+      window.webkit?.messageHandlers.jstoapp.postMessage(msg);
+    }
+    else if (device.android()) {
+      // const androidParam = JSON.stringify(request);
+      // // eslint-disable-next-line no-eval
+      // eval('window.jstoapp?.' + appJsName)(androidParam);
+      console.log('window.jstoapp?.' + appJsName);
+      appTransactionAuth(request);
+    }
+    else throw new Error('未支援的裝置。');
+  });
+
+  const result = await promise;
+  console.log(`\x1b[33mAPP JS://${appJsName} \x1b[37m - Result = \n`, result);
+  console.log('*** Result from localStorage : ', localStorage.getItem('appJsResponse'));
+  return result;
+}
+
+/**
  * 由 APP 發起交易驗證功能，包含輸入網銀帳密、生物辨識、OTP...。
  * @param {*} authCode 要求進行的驗證模式的代碼。
  * @param {*} otpMobile 簡訊識別碼發送的手機門號。當綁定或變更門號時，因為需要確認手機號碼的正確性，所以要再驗OTP
@@ -218,14 +254,13 @@ function setAuthdata(jwtToken) {
  *   message: 驗證失敗狀況描述。
  * }
  */
-let transactionAuthPromiseResolve = null; // 提供 APP Callback 時，結束Promise使用！
 async function transactionAuth(authCode, otpMobile) {
-  const promise = new Promise((resolve) => {
-    transactionAuthPromiseResolve = resolve;
+  /* const promise = new Promise((resolve) => {
+    window.AppJavaScriptCallbackPromiseResolve = resolve;
     const request = {
       authCode,
       otpMobile,
-      callback: 'transactionAuthCallback',
+      callback: 'AppJavaScriptCallback', // 此方法可提供所有WebView共用。
     };
 
     if (device.ios()) {
@@ -242,20 +277,12 @@ async function transactionAuth(authCode, otpMobile) {
   });
 
   const result = await promise;
-  console.log('*** OTP Result from Promise : ', result);
-  // await showInfo('交易驗證結果：' + (result.result ? '成功' : '失敗'));
+  */
+  const result = await callAppJavaScript('onVerification', {
+    authCode,
+    otpMobile,
+  });
   return result;
-}
-
-/**
- * 負責接收 APP JavaScript API callback 的方法。
- * @param {*} result APP JavaScript API的傳回值。
- */
-// eslint-disable-next-line no-unused-vars
-function transactionAuthCallback(result) {
-  console.log('*** OTP Result from APP : ', result);
-  // localStorage.setItem('appJsResponse', result.data); // 將 APP 傳回的資料寫回。
-  transactionAuthPromiseResolve(result);
 }
 
 /**
@@ -269,6 +296,7 @@ function transactionAuthCallback(result) {
  *   }
  * }
  */
+// eslint-disable-next-line no-unused-vars
 async function appTransactionAuth(request) {
   const { authCode, otpMobile, callback } = request;
 
