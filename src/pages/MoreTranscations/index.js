@@ -23,7 +23,7 @@ const MoreTranscations = () => {
     dispatch(setWaittingVisible(true));
 
     // 以啟動參數(預設帳號)
-    const model = loadFuncParams();
+    const model = await loadFuncParams();
     setAccount(model);
 
     dispatch(setWaittingVisible(false));
