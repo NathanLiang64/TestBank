@@ -1,47 +1,24 @@
+/**
+ * 負責接收 APP JavaScript API callback 的共用方法。
+ * @param {*} value APP JavaScript API的傳回值。
+ */
 /* eslint-disable */
-const device = {
-  ios: () => /iPhone|iPad|iPod/i.test(navigator.userAgent),
-  android: () => /Android/i.test(navigator.userAgent),
-};
-
-// 取得 APP 給的加解密資料
-function setEnCrydata(event) {
-  const { Crydata, Enivec } = event;
-  const aesKey = window.atob(Crydata).substring(7);
-  const iv = window.atob(Enivec).substring(7);
-  localStorage.setItem('aesKey', aesKey);
-  localStorage.setItem('iv', iv);
-};
-
-// 取得來自 APP 的功能資料
-function setPagedata(event) {
-  const { funcParams, keepData } = event;
-  if (funcParams) {
-    localStorage.setItem('funcParams', funcParams);
+function AppJavaScriptCallback(value) {
+  // console.log('*** Result from APP JavaScript : ', value);  
+  let result;
+  try {
+    // 若是 JSON 格式，則以物件型態傳回。
+    result = JSON.parse(value);
+  } catch (ex) {
+    result = value;
   }
-  if (keepData) {
-    localStorage.setItem('keepData', keepData);
-  }
-};
-
-// APP 主動更新網頁jwtToken
-function returnAuthdata(event) {
-  const { auth } = event;
-  document.cookie = 'jwtToken=' + auth;
+  // AppJavaScriptCallbackPromiseResolve 是在 utility/AppScriptProxy.js 的 callAppJavaScript() 方法中定義。
+  window.AppJavaScriptCallbackPromiseResolve(result);
 }
 
-// APP 通知網頁 otp 驗證結果
-function onComplete(event) {
-  const { Type, signature, Mima, rtcode, rtmsg, otpType } = event;
-  if (Number(rtcode) === 0) {
-    // localStorage.setItem('signature', signature);
-    // localStorage.setItem('mima', Mima);
-    window.customFunc(Mima, signature)
-  }
-  if (Number(rtcode) === 1) {
-    console.log(rtmsg);
-  }
-  window.customFunc = null
+/**
+ * APP呼叫，通知WebView返回功能上一頁
+ */
+function goBack() {
+  // TODO 如何通知執行中的 WebView ？
 }
-
-console.log('load app to webview functions success');

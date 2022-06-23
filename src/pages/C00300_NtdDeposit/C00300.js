@@ -46,7 +46,7 @@ const TaiwanDollarAccount = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    const startParams = loadFuncParams(); // Function Controller 提供的參數
+    const startParams = await loadFuncParams(); // Function Controller 提供的參數
     // 取得 Function Controller 提供的 keepDdata(model)
     let model;
     if (startParams && (typeof startParams === 'object')) {
