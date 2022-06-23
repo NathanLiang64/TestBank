@@ -1,11 +1,11 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useGetEnCrydata } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { basicInformationApi, settingApi } from 'apis';
-import { closeFunc, switchLoading } from 'utilities/BankeePlus';
+import { closeFunc } from 'utilities/BankeePlus';
+import { getCountyList, getBasicInformation, modifyBasicInformation } from 'pages/T00700_BasicInformation/api';
 
 /* Elements */
 import Header from 'components/Header';
@@ -68,7 +68,7 @@ const BasicInformation = () => {
 
   // 取得個人資料
   const getPersonalData = async (countyListResponse) => {
-    const basicInformationResponse = await basicInformationApi.getBasicInformation({});
+    const basicInformationResponse = await getBasicInformation({});
     if (!basicInformationResponse.code) {
       const data = {
         ...basicInformationResponse,
@@ -82,28 +82,26 @@ const BasicInformation = () => {
       const { code, message } = basicInformationResponse;
       console.log(code, message);
     }
-    switchLoading(false);
   };
 
   // 取得縣市列表
-  const getCountyList = async () => {
-    switchLoading(true);
-    const countyListResponse = await settingApi.getCountyList({});
-    setAddressOptionsData(countyListResponse);
-    if (!countyListResponse.code) {
-      const countyList = countyListResponse.map((item) => (
-        {
-          countyName: item.countyName,
-          countyCode: item.countyCode,
-        }
-      ));
-      setCountyOptions(countyList);
-      getPersonalData(countyListResponse);
-    } else {
-      const { code, message } = countyListResponse;
-      console.log(code, message);
-      switchLoading(false);
-    }
+  const fetchCountyList = async () => {
+    const countyListResponse = await getCountyList({});
+    console.log(countyListResponse);
+    // setAddressOptionsData(countyListResponse);
+    // if (!countyListResponse.code) {
+    //   const countyList = countyListResponse.map((item) => (
+    //     {
+    //       countyName: item.countyName,
+    //       countyCode: item.countyCode,
+    //     }
+    //   ));
+    //   setCountyOptions(countyList);
+    //   getPersonalData(countyListResponse);
+    // } else {
+    //   const { code, message } = countyListResponse;
+    //   console.log(code, message);
+    // }
   };
 
   // 設定結果彈窗
@@ -142,7 +140,6 @@ const BasicInformation = () => {
 
   // 更新個人資料
   const modifyPersonalData = async () => {
-    switchLoading(true);
     const {
       county, city, zipCode, addr, email, mobile,
     } = getValues();
@@ -154,9 +151,8 @@ const BasicInformation = () => {
       email,
       mobile,
     };
-    const modifyDataResponse = await basicInformationApi.modifyBasicInformation(param);
+    const modifyDataResponse = await modifyBasicInformation(param);
     setResultDialog(modifyDataResponse);
-    switchLoading(false);
   };
 
   // 點擊儲存變更按鈕
@@ -189,11 +185,9 @@ const BasicInformation = () => {
   // 建立鄉鎮市區選單
   const renderCityOptions = () => cityOptions.map((item) => (<FEIBOption value={item.cityName} key={item.cityCode}>{item.cityName}</FEIBOption>));
 
-  useGetEnCrydata();
-
   useEffect(() => {
     dispatch(setIsOpen(false));
-    getCountyList();
+    fetchCountyList();
   }, []);
 
   return (
