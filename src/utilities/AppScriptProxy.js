@@ -80,7 +80,7 @@ const funcStack = {
       // 寫入 Function 啟動參數。
       const params = closedItem.keepData ?? startItem.funcParams;
       localStorage.setItem('funcParams', params);
-      console.log('Close Function and Back to (', startItem.func, ')', params);
+      console.log('Close Function and Back to (', startItem.funcID, ')', JSON.parse(params));
     } else {
       localStorage.removeItem('funcParams');
     }
@@ -140,7 +140,7 @@ async function closeFunc() {
     const funcItem = funcStack.pop();
     const rootPath = `${process.env.REACT_APP_ROUTER_BASE}/`;
     if (funcItem) {
-      window.location.pathname = `${rootPath}${funcItem.func}`; // keepData 存入 localStorage 'funcParams'
+      window.location.pathname = `${rootPath}${funcItem.funcID}`; // keepData 存入 localStorage 'funcParams'
     } else {
       window.location.pathname = rootPath;
     }
