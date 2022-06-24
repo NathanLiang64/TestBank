@@ -1,9 +1,11 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { startFunc, switchLoading } from 'utilities/BankeePlus';
+import { startFunc } from 'utilities/AppScriptProxy';
 import { profileApi } from 'apis';
+import { getNickName, updateNickName } from 'pages/T00100_Profile/api';
 
 /* Elements */
 import {
@@ -73,7 +75,6 @@ const Profile = () => {
       openMessageDialog('檔案大小必須小於 1024 KB');
       return;
     }
-    switchLoading(true);
     const formData = new FormData();
     formData.append('file', file);
     const response = await profileApi.uploadAvatar(formData);
@@ -85,7 +86,6 @@ const Profile = () => {
     if (response?.code) {
       openMessageDialog(`${response?.message}，錯誤碼：${response?.code}`);
     }
-    switchLoading(false);
   };
 
   const showEditNickNameDialog = () => {
@@ -94,31 +94,27 @@ const Profile = () => {
     setShowChangeNickNameDialog(true);
   };
 
-  const getNickName = async () => {
-    switchLoading(true);
-    const response = await profileApi.getNickName({});
-    if (response?.code) {
-      openMessageDialog(`取得暱稱與大頭照發生錯誤(${response?.code})：${response?.message}`);
+  const fetchNickName = async () => {
+    const { code, data, message } = await getNickName({});
+    if (code === '0000') {
+      setNickName(data.nickName || '');
+      setUuid(data.uuid);
+      setAvatarUrl(`${process.env.REACT_APP_AVATAR_IMG_URL}/pf_${data.uuid}_b.jpg?timestamp=${Date.now()}`);
     } else {
-      setNickName(response.nickName || '');
-      setUuid(response.uuid);
-      setAvatarUrl(`${process.env.REACT_APP_AVATAR_IMG_URL}/pf_${response.uuid}_b.jpg?timestamp=${Date.now()}`);
+      openMessageDialog(`取得暱稱與大頭照發生錯誤(${code})：${message}`);
     }
-    switchLoading(false);
   };
 
   const onSubmit = async (data) => {
-    switchLoading(true);
     const param = {
       nickName: data.nickName,
     };
-    const response = await profileApi.updateNickName(param);
+    const response = await updateNickName(param);
     console.log(response);
     if (typeof (response) === 'string') {
       setNickName(data.nickName);
       setShowChangeNickNameDialog(false);
     }
-    switchLoading(false);
   };
 
   const renderEntryList = () => SettingList.map(({ name, funcID }) => (
@@ -173,7 +169,7 @@ const Profile = () => {
   );
 
   useEffect(() => {
-    getNickName();
+    fetchNickName();
   }, []);
 
   return (
