@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { startFunc, switchLoading } from 'utilities/BankeePlus';
+import { startFunc } from 'utilities/AppScriptProxy';
 import { profileApi } from 'apis';
 import { getNickName, updateNickName } from 'pages/T00100_Profile/api';
 
@@ -75,7 +75,6 @@ const Profile = () => {
       openMessageDialog('檔案大小必須小於 1024 KB');
       return;
     }
-    switchLoading(true);
     const formData = new FormData();
     formData.append('file', file);
     const response = await profileApi.uploadAvatar(formData);
@@ -87,7 +86,6 @@ const Profile = () => {
     if (response?.code) {
       openMessageDialog(`${response?.message}，錯誤碼：${response?.code}`);
     }
-    switchLoading(false);
   };
 
   const showEditNickNameDialog = () => {
@@ -97,7 +95,6 @@ const Profile = () => {
   };
 
   const fetchNickName = async () => {
-    switchLoading(true);
     const { code, data, message } = await getNickName({});
     if (code === '0000') {
       setNickName(data.nickName || '');
@@ -106,11 +103,9 @@ const Profile = () => {
     } else {
       openMessageDialog(`取得暱稱與大頭照發生錯誤(${code})：${message}`);
     }
-    switchLoading(false);
   };
 
   const onSubmit = async (data) => {
-    switchLoading(true);
     const param = {
       nickName: data.nickName,
     };
@@ -120,7 +115,6 @@ const Profile = () => {
       setNickName(data.nickName);
       setShowChangeNickNameDialog(false);
     }
-    switchLoading(false);
   };
 
   const renderEntryList = () => SettingList.map(({ name, funcID }) => (
