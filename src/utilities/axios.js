@@ -2,6 +2,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { showError } from './MessageModal';
 import JWTUtil from './JWTUtil';
+import { getJwtToken, syncJwtToken } from './AppScriptProxy';
 
 // Axios instance
 const instance = axios.create({
@@ -24,7 +25,7 @@ userAxios().interceptors.request.use(
   async (request) => {
     console.log(`\x1b[33mAPI :/${request.url}`);
     console.log('Request = ', request.data);
-    const token = sessionStorage.getItem('jwtToken'); // BUG! 會因為多執行緒而錯亂，應該從Request中取回才對。
+    const token = await getJwtToken();
     // console.log(`\x1b[32m[JWT] \x1b[92m${token}`);
     if (token) {
       // eslint-disable-next-line no-param-reassign
@@ -54,15 +55,14 @@ userAxios().interceptors.response.use(
     // console.log(`%cResponse --> \n%c${JSON.stringify(response)}`, 'color: Yellow;', 'color: Green;');
     // console.log(`jwtToken=${response.data.jwtToken}`);
     let rqJwtToken; // 來查是否發出的Request有沒有加密
-    // const jwtToken = sessionStorage.getItem('jwtToken'); // BUG! 會因為多執行緒而錯亂，應該從Request中取回才對。
-    const headerAuth = response.config.headers.authorization; // 取出Request時所使用的 jwtToken
+    const headerAuth = response.config.headers.authorization; // 用Request時所使用的 jwtToken 來判斷是否有使用 JWT
     if (headerAuth && headerAuth.startsWith('Bearer ')) {
       // eslint-disable-next-line prefer-destructuring
       rqJwtToken = headerAuth.split(' ')[1];
 
       // 不論成功或失敗，都一定會更新 jwtToken
       const renewJwtToken = response.data.jwtToken;
-      sessionStorage.setItem('jwtToken', renewJwtToken); // BUG! 會因為多執行緒而錯亂
+      await syncJwtToken(renewJwtToken); // BUG! 可能因為多執行緒而錯亂
       Cookies.set('jwtToken', renewJwtToken); // TODO: 為了相容 axiosConfig
       // console.log(`\x1b[32m[New JWT] \x1b[92m${renewJwtToken}`);
     }
@@ -207,7 +207,7 @@ export const callAPI = async (url, request, config) => {
 const download = async (url, request, filename, contentType) => {
   console.log(`\x1b[33mAPI :/${url}`);
   console.log('Request = ', request);
-  const token = sessionStorage.getItem('jwtToken'); // BUG! 會因為多執行緒而錯亂，應該從Request中取回才對。
+  const token = await getJwtToken();
 
   // Request Payload 加密
   const aeskey = localStorage.getItem('aesKey');

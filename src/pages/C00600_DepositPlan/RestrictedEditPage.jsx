@@ -28,6 +28,7 @@ const DepositPlanEditPage = () => {
   const {
     control, handleSubmit, setValue, formState: { errors },
   } = useForm();
+
   const uid = Array.from({ length: 7}, () => uuid());
   const [plan, setPlan] = useState();
   const [newImageId, setNewImageId] = useState();
@@ -39,8 +40,10 @@ const DepositPlanEditPage = () => {
       setIsRestrictedPromotion(location.state.plan.type > 0);
       if ('isRestrictedPromotion' in location.state) setIsRestrictedPromotion(location.state.isRestrictedPromotion);
 
+      // 預先填入計畫名稱
       setValue('name', location.state.plan.name, { shouldValidate: false });
     } else {
+      // Guard: 此頁面接續上一頁的操作，意指若未在該情況下進入此頁為不正常操作。
       AlertInvalidEntry({ onBack: () => history.goBack() });
     }
   }, []);
@@ -62,7 +65,14 @@ const DepositPlanEditPage = () => {
 
     if (response.result) history.push('/C00600');
     else AlertUpdateFail();
-    sessionStorage.removeItem('C00600-hero');
+
+    sessionStorage.removeItem('C00600-hero'); // 清除暫存背景圖。
+  };
+
+  const getInputColor = (e) => {
+    if (isRestrictedPromotion) return Theme.colors.text.lightGray;
+    if (e?.name) return Theme.colors.state.danger;
+    return Theme.colors.primary.brand;
   };
 
   return (
@@ -90,7 +100,7 @@ const DepositPlanEditPage = () => {
                     <FEIBInput
                       id={uid[1]}
                       error={!!(errors?.name)}
-                      $color={errors?.name ? Theme.colors.state.danger : undefined}
+                      $color={() => getInputColor(errors)}
                       placeholder="請輸入7個以內的中英文字、數字或符號"
                       disabled={isRestrictedPromotion}
                       {...field}
@@ -104,33 +114,58 @@ const DepositPlanEditPage = () => {
 
               <div>
                 <FEIBInputLabel htmlFor={uid[2]}>預計存錢區間</FEIBInputLabel>
-                <FEIBInput id={uid[2]} value={plan ? getDuration() : ''} disabled />
+                <FEIBInput
+                  id={uid[2]}
+                  value={plan ? getDuration() : ''}
+                  $color={Theme.colors.text.lightGray}
+                  disabled
+                />
                 <FEIBErrorMessage />
               </div>
 
               <div className="col-2">
                 <div className="w-50">
                   <FEIBInputLabel htmlFor={uid[3]}>存錢頻率</FEIBInputLabel>
-                  <FEIBInput id={uid[3]} value={plan?.cycleMode === 1 ? '每週' : '每月'} disabled />
+                  <FEIBInput
+                    id={uid[3]}
+                    value={plan?.cycleMode === 1 ? '每週' : '每月'}
+                    $color={Theme.colors.text.lightGray}
+                    disabled
+                  />
                   <FEIBErrorMessage />
                 </div>
 
                 <div className="w-50">
                   <FEIBInputLabel htmlFor={uid[4]}>週期</FEIBInputLabel>
-                  <FEIBInput id={uid[4]} value={`${plan?.cycleTiming}日`} disabled />
+                  <FEIBInput
+                    id={uid[4]}
+                    value={`${plan?.cycleTiming}日`}
+                    $color={Theme.colors.text.lightGray}
+                    disabled
+                  />
                   <FEIBErrorMessage />
                 </div>
               </div>
 
               <div>
                 <FEIBInputLabel htmlFor={uid[5]}>預計每期存錢金額</FEIBInputLabel>
-                <FEIBInput id={uid[5]} value={toCurrency(plan?.goalAmount ?? 0)} disabled />
+                <FEIBInput
+                  id={uid[5]}
+                  value={toCurrency(plan?.goalAmount ?? 0)}
+                  $color={Theme.colors.text.lightGray}
+                  disabled
+                />
                 <FEIBErrorMessage />
               </div>
 
               <div>
                 <FEIBInputLabel htmlFor={uid[6]}>選擇陪你存錢的帳號</FEIBInputLabel>
-                <FEIBInput id={uid[6]} value={accountFormatter(plan?.bindAccountNo)} disabled />
+                <FEIBInput
+                  id={uid[6]}
+                  value={accountFormatter(plan?.bindAccountNo)}
+                  $color={Theme.colors.text.lightGray}
+                  disabled
+                />
                 <FEIBErrorMessage />
               </div>
 

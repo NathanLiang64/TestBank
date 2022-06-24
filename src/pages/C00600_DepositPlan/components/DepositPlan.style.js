@@ -27,8 +27,8 @@ const DepositPlanWrapper = styled.div`
   }
 
   hr {
-    border-color: ${({ theme }) => theme.colors.background.lighter};
-    margin-block: 1.6rem;
+    border-color: ${({ theme }) => theme.colors.border.lightest};
+    margin-block: 2rem;
     width: 100%;
   }
 `;

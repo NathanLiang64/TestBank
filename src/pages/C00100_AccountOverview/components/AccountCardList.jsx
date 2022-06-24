@@ -5,11 +5,16 @@ import { setDrawer, setDrawerVisible } from 'stores/reducers/ModalReducer';
 
 import AccountCard from 'components/AccountCard';
 import { accountOverviewCardVarient } from 'utilities/Generator';
+import { startFunc } from 'utilities/AppScriptProxy';
 
 import AccountCardListWrapper from './AccountCardList.style';
 
 /**
  * C00100 帳戶總覽之下方帳戶列表元件
+ * 首先，先過濾帳戶列表，因為：
+ *   1. 子帳戶會有多個，必須加總起來，且點擊後，會出現下拉式選單。
+ *   2. 依照spec，帳戶總覽不呈現社群帳本。
+ * 最後，再依金額排序。
  */
 const AccountCardList = ({ data }) => {
   const dispatch = useDispatch();
@@ -35,7 +40,7 @@ const AccountCardList = ({ data }) => {
     subAccounts.sort((a, b) => b.balance - a.balance);
   }
 
-  // 負債的金額是負值，將金額轉正。
+  // 負債的金額是負值，將金額轉正，以便後續處理。
   mainList.forEach((account) => { account.balance = Math.abs(account.balance); });
 
   // 依金額從大到小排序。
@@ -62,7 +67,7 @@ const AccountCardList = ({ data }) => {
             <AccountCard
               key={uuid()}
               cardName={card.alias ?? '存錢計畫'}
-              percent={Math.round((card.balance / subTotalBalance) * 100)}
+              percent={subTotalBalance > 0 ? Math.round((card.balance / subTotalBalance) * 100) : 0}
               onClick={onClick}
               {...card}
             />
@@ -81,7 +86,17 @@ const AccountCardList = ({ data }) => {
 
         switch (card.type) {
           case 'M': // 母帳戶
-            funcID = 'C00300';
+            onClick = () => {
+              startFunc('moreTranscations', {
+                acctBalx: card.balance,
+                accBranch: card.accountNo.slice(0, 3),
+                acctId: card.accountNo,
+                acctName: card.alias,
+                acctType: card.type,
+                ccyCd: 'TWD',
+                cardColor: 'purple',
+              });
+            };
             break;
           case 'F': // 外幣帳戶
             funcID = 'C00400';
@@ -112,7 +127,7 @@ const AccountCardList = ({ data }) => {
           <AccountCard
             key={uuid()}
             cardName={card.alias ?? accountOverviewCardVarient(card.type).name}
-            percent={Math.round((card.balance / totalBalance) * 100)}
+            percent={totalBalance > 0 ? Math.round((card.balance / totalBalance) * 100) : 0}
             annotation={annotation}
             onClick={onClick}
             {...card}

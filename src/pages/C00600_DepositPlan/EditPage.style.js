@@ -6,7 +6,6 @@ const EditPageWrapper = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1.6rem;
-    width: 100%;
     margin: 2.4rem 1.6rem;
   }
 

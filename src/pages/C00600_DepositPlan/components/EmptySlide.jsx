@@ -15,8 +15,10 @@ const EmptySlide = ({
   slogan = '開始進行存錢計畫吧！',
 }) => (
   <EmptySlideWrapper>
-    <AccountIcon10 size={54} color="currentColor" />
-    <h2 className="title">{title}</h2>
+    <div className="bg-gray">
+      <AccountIcon10 size={54} color="currentColor" />
+      <h2 className="title">{title}</h2>
+    </div>
     <p className="slogan">{slogan}</p>
   </EmptySlideWrapper>
 );
