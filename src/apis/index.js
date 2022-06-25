@@ -20,7 +20,6 @@ import * as exportBankBookApi from './exportBankBookApi';
 import * as profileApi from './profileApi';
 import * as bankAccountsApi from './bankAccountsApi';
 import * as exchangeApi from './exchangeApi';
-import * as moreApi from './moreApi';
 
 export {
   // headerApi,
@@ -45,5 +44,4 @@ export {
   profileApi,
   bankAccountsApi,
   exchangeApi,
-  moreApi,
 };
