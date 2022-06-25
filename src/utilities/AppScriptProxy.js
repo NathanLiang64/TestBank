@@ -65,7 +65,7 @@ const funcStack = {
     localStorage.setItem('funcStack', JSON.stringify(stack));
 
     // 寫入 Function 啟動參數。
-    localStorage.setItem('funcParams', startItem.funcParams);
+    localStorage.setItem('funcParams', (startItem.funcParams ?? null));
   },
   pop: () => {
     const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
@@ -78,9 +78,9 @@ const funcStack = {
     const startItem = stack[stack.length - 1];
     if (startItem) {
       // 寫入 Function 啟動參數。
-      const params = closedItem.keepData ?? startItem.funcParams;
-      localStorage.setItem('funcParams', params);
-      console.log('Close Function and Back to (', startItem.funcID, ')', JSON.parse(params));
+      const params = (closedItem.keepData ?? startItem.funcParams);
+      localStorage.setItem('funcParams', (params ?? null));
+      console.log('Close Function and Back to (', startItem.funcID, ')', (params ? JSON.parse(params) : null));
     } else {
       localStorage.removeItem('funcParams');
     }
@@ -158,7 +158,9 @@ async function loadFuncParams() {
       let params = null;
       if (data === 'localStorage') {
         data = localStorage.getItem('funcParams');
-        params = JSON.parse(data);
+        if (data === 'null') params = null;
+        else if (data.startsWith('{')) params = JSON.parse(data);
+        else params = data;
       } else {
         // 解析由 APP 傳回的資料, 只要有 keepData 就表示是由叫用的功能結束返回
         // 因此，要以 keepData 為單元功能的啟動參數。
