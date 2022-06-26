@@ -34,7 +34,7 @@ const Nav = () => {
           <div onClick={() => startFunc('C00500')}>C00500 交割帳戶首頁</div>
           <div onClick={() => startFunc('M00100')}>M00100 社群圈首頁</div>
           <div onClick={() => startFunc('D00100')}>D00100 台幣轉帳 - (施工中)</div>
-          <div onClick={() => startFunc('B00600')}>B00600 更多... (待施工)</div>
+          <div onClick={() => startFunc('B00600')}>B00600 更多...</div>
           <div onClick={async () => {
             const result = await transactionAuth(0x35);
             console.log('*** Result from AppScriptProxy : ', result);
