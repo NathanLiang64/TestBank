@@ -17,7 +17,7 @@ class CipherUtil {
     const publicKeyPem = forge.pki.publicKeyToPem(publicKey);
     return {
       privateKey: privateKeyPem,
-      publicKey: publicKeyPem,
+      publicKey: publicKeyPem.replace(/(\r\n\t|\r\n|\n|\r\t)/gm, '').replace('-----BEGIN PUBLIC KEY-----', '').replace('-----END PUBLIC KEY-----', ''),
     };
   }
 
