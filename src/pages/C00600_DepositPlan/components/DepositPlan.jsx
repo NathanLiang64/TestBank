@@ -1,5 +1,3 @@
-import Failed from 'assets/animations/fail.svg';
-import Animation from 'components/Animation';
 import InfoArea from 'components/InfoArea';
 import ProgressBar from 'components/ProgressBar';
 import FEIBButton from 'components/elements/FEIBButton';
@@ -61,11 +59,7 @@ const DepositPlan = ({
   return (
     <DepositPlanWrapper>
       <div className="pad flex">
-        {isPlanFailed ? (
-          <img src={Failed} alt="Failed plan" width="116" height="119" />
-        ) : (
-          <Animation data={stage.animation} height={169} width={312} />
-        )}
+        <img src={stage.animation} alt="" width="124" height="120" />
         <InfoArea variant="top" position="top" space="auto" {...stage.infoAreaStyles}>
           {stage.text}
         </InfoArea>

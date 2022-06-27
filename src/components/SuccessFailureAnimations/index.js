@@ -1,6 +1,5 @@
-import Animation from 'components/Animation';
-import SuccessAnimation from 'assets/animations/successFlower.json';
-import FailAnimation from 'assets/animations/fail.json';
+import SuccessAnimation from 'assets/animations/successFlower.svg';
+import FailAnimation from 'assets/animations/fail.svg';
 import SuccessFailureAnimationsWrapper from './successFailureAnimations.style';
 
 /*
@@ -50,7 +49,7 @@ const SuccessFailureAnimations = ({
 
   return (
     <SuccessFailureAnimationsWrapper>
-      <Animation data={isSuccess ? SuccessAnimation : FailAnimation} />
+      <img src={isSuccess ? SuccessAnimation : FailAnimation} width="124" height="120" alt="" />
       <h3 className={`stateText ${isSuccess ? 'success' : 'error'}`}>
         {isSuccess ? successTitle : errorTitle}
       </h3>
