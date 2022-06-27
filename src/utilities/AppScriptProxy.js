@@ -240,16 +240,16 @@ async function getEnCrydata() {
  * 通知 APP 同步 WebView 的 JwtToken
  * @param {*} jwtToken WebView 最新取得的 JwtToken
  */
-async function syncJwtToken(jwtToken) {
+function syncJwtToken(jwtToken) {
   if (jwtToken) {
     sessionStorage.setItem('jwtToken', jwtToken);
   } else {
     sessionStorage.removeItem('jwtToken');
-    console.log('\x1b[31m*** WARNING *** JWT Token 為空值！');
+    console.log('\x1b[31m*** WARNING *** syncJwtToken 將 JWT Token 設為空值！');
   }
 
   const data = { auth: jwtToken };
-  await callAppJavaScript('setAuthdata', data, false);
+  callAppJavaScript('setAuthdata', data, false);
 }
 
 /**
@@ -261,13 +261,16 @@ async function syncJwtToken(jwtToken) {
 async function getJwtToken(force) {
   let jwtToken = sessionStorage.getItem('jwtToken');
   if (!jwtToken || force) {
+    // 從 APP 取得 JWT Token，並存入 sessionStorage 給之後的 WebView 功能使用。
     const result = await callAppJavaScript('getAPPAuthdata', null, true, () => null); // 傳回值： {"auth":""}
     jwtToken = result?.auth; // NOTE 不應該為 null, 不論是 result 或 auth。
     if (jwtToken) {
       sessionStorage.setItem('jwtToken', jwtToken);
-    } else sessionStorage.removeItem('jwtToken');
+    } else {
+      sessionStorage.removeItem('jwtToken');
+      console.log('\x1b[31m*** WARNING *** getJwtToken 取得的 JWT Token 為空值！');
+    }
   }
-  if (!jwtToken) console.log('\x1b[31m*** WARNING *** JWT Token 為空值！');
   // console.log(`\x1b[32m[JWT] \x1b[92m${jwtToken}`);
   return jwtToken;
 }
