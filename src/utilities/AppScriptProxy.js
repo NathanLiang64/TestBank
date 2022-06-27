@@ -19,16 +19,17 @@ const device = {
  * 執行 APP 提供的 JavaScript（ jstoapp ）
  * @param {*} appJsName APP提供的JavaScript funciton名稱。
  * @param {*} jsParams JavaScript的執行參數。
+ * @param {*} needCallback 表示需要從 APP 取得傳回值，所以需要等待 Callback
  * @param {*} webDevTest Web開發測試時的執行方法。(Option)
  * @returns
  */
-async function callAppJavaScript(appJsName, jsParams, webDevTest) {
+async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) {
   console.log(`\x1b[33mAPP-JS://${appJsName} \x1b[37m - Params = `, jsParams);
   const promise = new Promise((resolve) => {
     window.AppJavaScriptCallbackPromiseResolve = resolve;
     const request = {
       ...jsParams,
-      callback: 'AppJavaScriptCallback', // 此方法可提供所有WebView共用。
+      callback: (needCallback ? 'AppJavaScriptCallback' : null), // 此方法可提供所有WebView共用。
     };
 
     if (device.ios()) {
@@ -40,10 +41,14 @@ async function callAppJavaScript(appJsName, jsParams, webDevTest) {
       // eslint-disable-next-line no-eval
       eval('window.jstoapp?.' + appJsName)(androidParam); // TODO 無效的 appJsName 的處理
     }
-    else if (webDevTest) {
+    else if (needCallback || webDevTest) {
       window.AppJavaScriptCallback(webDevTest(request));
+      return;
     }
-    else throw new Error('使用 Web 版未支援的 APP JavaScript 模擬方法(' + appJsName + ')');
+    // else throw new Error('使用 Web 版未支援的 APP JavaScript 模擬方法(' + appJsName + ')');
+
+    // 若不需要從 APP 取得傳回值，就直接結束。
+    if (!needCallback) resolve();
   });
 
   // result 是由 AppJavaScriptCallback 接收，並嘗試用 JSON Parse 轉為物件，轉不成功則以原資料內容傳回。
@@ -65,7 +70,7 @@ const funcStack = {
     localStorage.setItem('funcStack', JSON.stringify(stack));
 
     // 寫入 Function 啟動參數。
-    localStorage.setItem('funcParams', startItem.funcParams);
+    localStorage.setItem('funcParams', (startItem.funcParams ?? null));
   },
   pop: () => {
     const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
@@ -78,9 +83,9 @@ const funcStack = {
     const startItem = stack[stack.length - 1];
     if (startItem) {
       // 寫入 Function 啟動參數。
-      const params = closedItem.keepData ?? startItem.funcParams;
-      localStorage.setItem('funcParams', params);
-      console.log('Close Function and Back to (', startItem.func, ')', params);
+      const params = (closedItem.keepData ?? startItem.funcParams);
+      localStorage.setItem('funcParams', (params ?? null));
+      console.log('Close Function and Back to (', startItem.funcID, ')', (params ? JSON.parse(params) : null));
     } else {
       localStorage.removeItem('funcParams');
     }
@@ -100,7 +105,7 @@ const funcStack = {
  * 網頁通知APP跳轉至首頁
  */
 async function goHome() {
-  await callAppJavaScript('goHome', null, () => {
+  await callAppJavaScript('goHome', null, false, () => {
     funcStack.clear();
     startFunc('/');
   });
@@ -125,7 +130,7 @@ async function startFunc(funcID, funcParams, keepData) {
     funcParams: JSON.stringify(funcParams),
     keepData: JSON.stringify(keepData),
   });
-  await callAppJavaScript('startFunc', data, () => {
+  await callAppJavaScript('startFunc', data, false, () => {
     funcID = funcID.replace(/^\/*/, ''); // 移掉前置的 '/' 符號
     funcStack.push(data);
     window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcID}`;
@@ -136,11 +141,11 @@ async function startFunc(funcID, funcParams, keepData) {
  * 觸發APP返回上一頁功能
  */
 async function closeFunc() {
-  await callAppJavaScript('closeFunc', null, () => {
+  await callAppJavaScript('closeFunc', null, false, () => {
     const funcItem = funcStack.pop();
     const rootPath = `${process.env.REACT_APP_ROUTER_BASE}/`;
     if (funcItem) {
-      window.location.pathname = `${rootPath}${funcItem.func}`; // keepData 存入 localStorage 'funcParams'
+      window.location.pathname = `${rootPath}${funcItem.funcID}`; // keepData 存入 localStorage 'funcParams'
     } else {
       window.location.pathname = rootPath;
     }
@@ -152,13 +157,15 @@ async function closeFunc() {
  * @returns 若參數當時是以 JSON 物件儲存，則同樣會轉成物件傳回。
  */
 async function loadFuncParams() {
-  let data = await callAppJavaScript('getPagedata', null, () => 'localStorage');
+  let data = await callAppJavaScript('getPagedata', null, true, () => 'localStorage');
   if (data && data !== 'undefined') {
     try {
       let params = null;
       if (data === 'localStorage') {
         data = localStorage.getItem('funcParams');
-        params = JSON.parse(data);
+        if (data === 'null') params = null;
+        else if (data.startsWith('{')) params = JSON.parse(data);
+        else params = data;
       } else {
         // 解析由 APP 傳回的資料, 只要有 keepData 就表示是由叫用的功能結束返回
         // 因此，要以 keepData 為單元功能的啟動參數。
@@ -182,7 +189,7 @@ async function loadFuncParams() {
  */
 async function switchLoading(visible) {
   const data = { open: visible ? 'Y' : 'N' };
-  await callAppJavaScript('onLoading', data);
+  await callAppJavaScript('onLoading', data, false);
 }
 
 /**
@@ -192,7 +199,7 @@ async function switchLoading(visible) {
  */
 async function doOCR(imageType) {
   const data = { ocrType: imageType };
-  return await callAppJavaScript('onOCR', data);
+  return await callAppJavaScript('onOCR', data, true);
 }
 
 /**
@@ -202,7 +209,7 @@ async function doOCR(imageType) {
  */
 async function showPopup(url) {
   const data = { url };
-  await callAppJavaScript('openPopWebView', data, () => {
+  await callAppJavaScript('openPopWebView', data, false, () => {
     // TODO 用 MessageModal 的 customPopup 模擬。
   });
 }
@@ -213,7 +220,7 @@ async function showPopup(url) {
  */
 async function shareMessage(message) {
   const data = { webtext: message };
-  await callAppJavaScript('setShareText', data, () => {
+  await callAppJavaScript('setShareText', data, false, () => {
     // 測試版的分享功能。
     customPopup('分享功能 (測試版)', message);
   });
@@ -226,18 +233,23 @@ async function shareMessage(message) {
 // ??? webvie 通知APP取得安全資料
 // ??? 用途為何？
 async function getEnCrydata() {
-  return await callAppJavaScript('getEnCrydata');
+  return await callAppJavaScript('getEnCrydata', null, false);
 }
 
 /**
  * 通知 APP 同步 WebView 的 JwtToken
  * @param {*} jwtToken WebView 最新取得的 JwtToken
  */
-async function syncJwtToken(jwtToken) {
-  sessionStorage.setItem('jwtToken', jwtToken);
+function syncJwtToken(jwtToken) {
+  if (jwtToken) {
+    sessionStorage.setItem('jwtToken', jwtToken);
+  } else {
+    sessionStorage.removeItem('jwtToken');
+    console.log('\x1b[31m*** WARNING *** syncJwtToken 將 JWT Token 設為空值！');
+  }
 
   const data = { auth: jwtToken };
-  await callAppJavaScript('setAuthdata', data, () => null);
+  callAppJavaScript('setAuthdata', data, false);
 }
 
 /**
@@ -247,13 +259,20 @@ async function syncJwtToken(jwtToken) {
  * @returns 最新的 JwtToken
  */
 async function getJwtToken(force) {
-  const jwtToken = sessionStorage.getItem('jwtToken');
-  if (jwtToken && !force) return jwtToken;
-
-  const result = await callAppJavaScript('getAPPAuthdata', null, () => null); // 傳回值： {"auth":""}
-  console.log(`\x1b[32m[JWT] \x1b[92m${result.auth}`);
-  sessionStorage.setItem('jwtToken', result.auth);
-  return result.auth; // NOTE 不應該為 null, 不論是 result 或 auth。
+  let jwtToken = sessionStorage.getItem('jwtToken');
+  if (!jwtToken || force) {
+    // 從 APP 取得 JWT Token，並存入 sessionStorage 給之後的 WebView 功能使用。
+    const result = await callAppJavaScript('getAPPAuthdata', null, true, () => null); // 傳回值： {"auth":""}
+    jwtToken = result?.auth; // NOTE 不應該為 null, 不論是 result 或 auth。
+    if (jwtToken) {
+      sessionStorage.setItem('jwtToken', jwtToken);
+    } else {
+      sessionStorage.removeItem('jwtToken');
+      console.log('\x1b[31m*** WARNING *** getJwtToken 取得的 JWT Token 為空值！');
+    }
+  }
+  // console.log(`\x1b[32m[JWT] \x1b[92m${jwtToken}`);
+  return jwtToken;
 }
 
 // NOTE onVerification 不符合需求
@@ -272,7 +291,7 @@ async function transactionAuth(authCode, otpMobile) {
     authCode,
     otpMobile,
   };
-  return await callAppJavaScript('transactionAuth', data, appTransactionAuth);
+  return await callAppJavaScript('transactionAuth', data, true, appTransactionAuth);
 }
 
 /**

@@ -5,7 +5,7 @@ import { useHistory } from 'react-router';
 import { startFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
-import { logout, mobileAccountUnbind } from './Nav.api';
+import { logout, mobileAccountUnbind, getHomeData } from './Nav.api';
 
 import NavWrapper from './Nav.style';
 
@@ -34,50 +34,29 @@ const Nav = () => {
           <div onClick={() => startFunc('C00500')}>C00500 交割帳戶首頁</div>
           <div onClick={() => startFunc('M00100')}>M00100 社群圈首頁</div>
           <div onClick={() => startFunc('D00100')}>D00100 台幣轉帳 - (施工中)</div>
-          <div onClick={() => startFunc('B00600')}>B00600 更多... (待施工)</div>
-          <div onClick={async () => {
-            const result = await transactionAuth(0x35);
-            console.log('*** Result from AppScriptProxy : ', result);
-          }}
-          >
+          <div onClick={() => startFunc('B00600')}>B00600 更多...</div>
+
+          <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await transactionAuth(0x35))}>
             台幣-非約轉(2FA / PWD+OTP)
           </div>
-          <div onClick={async () => {
-            const result = await transactionAuth(0x30);
-            console.log('*** Result from AppScriptProxy : ', result);
-          }}
-          >
+          <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await transactionAuth(0x30))}>
             台幣-約轉(2FA / PWD)
           </div>
-          <div onClick={async () => {
-            const result = await transactionAuth(0x17, '0900123456');
-            console.log('*** Result from AppScriptProxy : ', result);
-          }}
-          >
+          <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await transactionAuth(0x17, '0900123456'))}>
             生物辨識/圖形-設定(PWD+OTP)
           </div>
-          <div onClick={async () => {
-            const result = await transactionAuth(0x20);
-            console.log('*** Result from AppScriptProxy : ', result);
-          }}
-          >
+          <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await transactionAuth(0x2B))}>
             生物辨識/圖形-解除(2FA)
           </div>
-
-          <div onClick={async () => {
-            const result = await transactionAuth(0x2B, '0900123456');
-            console.log('*** Result from AppScriptProxy : ', result);
-          }}
-          >
+          <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await transactionAuth(0x2B, '0900123456'))}>
             解除手機號碼收款綁定-驗證(2FA+OTP)
           </div>
-          <div onClick={async () => {
-            const result = await mobileAccountUnbind();
-            console.log('*** Result from AppScriptProxy : ', result);
-          }}
-          >
+
+          <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await mobileAccountUnbind())}>
             解除手機號碼收款綁定-執行
           </div>
+
+          <div onClick={() => getHomeData()}>SM-API://getHomeData</div>
         </div>
 
         <div className="lexion">

@@ -1,13 +1,13 @@
+/* eslint-disable brace-style */
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { showError } from './MessageModal';
+import JWEUtil from './JWEUtil';
 import JWTUtil from './JWTUtil';
 import { getJwtToken, syncJwtToken } from './AppScriptProxy';
 
 // Axios instance
-const instance = axios.create({
-  baseURL: process.env.REACT_APP_URL,
-});
+const instance = axios.create();
 
 const userAxios = () => {
   if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === '') {
@@ -23,20 +23,25 @@ userAxios().defaults.retryDelay = 1000;
 // userAxios().defaults.maxBodyLength = Infinity;
 userAxios().interceptors.request.use(
   async (request) => {
-    console.log(`\x1b[33mAPI :/${request.url}`);
+    console.log(`\x1b[33mAPI : ${request.method.toUpperCase()} /${request.url}`);
     console.log('Request = ', request.data);
-    const token = await getJwtToken();
-    // console.log(`\x1b[32m[JWT] \x1b[92m${token}`);
-    if (token) {
-      // eslint-disable-next-line no-param-reassign
-      request.headers.authorization = `Bearer ${token}`;
-      // if (request.data) {
-      // Request Payload 加密
-      const aeskey = localStorage.getItem('aesKey');
-      const ivkey = localStorage.getItem('iv');
-      const encrypt = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(request.data));
-      request.data = encrypt;
-      // } else request.data = '{}';
+    if (request.method === 'get') return request;
+
+    const payload = JSON.stringify(request.data);
+
+    const jwtToken = await getJwtToken();
+    if (jwtToken) request.headers.authorization = `Bearer ${jwtToken}`;
+
+    // 處理 JWE Request 加密；在完成 Login 之前，都是使用 JWE 加密模式。
+    if (request.url.startsWith('/smJwe/')) { // TODO request.url.startsWith('//auth/')
+      const serverPKey = sessionStorage.getItem('serverPKey');
+      request.data = JWEUtil.encryptJWEMessage(serverPKey, payload);
+    }
+    // 處理 JWT Request 加密；當通過 Login 驗證之後，所有 POST 全部都是使用 JWT 加密模式。
+    else if (jwtToken) {
+      const aeskey = sessionStorage.getItem('aesKey');
+      const ivkey = sessionStorage.getItem('iv');
+      request.data = JWTUtil.encryptJWTMessage(aeskey, ivkey, payload);
     }
     // console.log(`%cRequest --> ${JSON.stringify(request)}`, 'color: Green;'); // 列出完整的 Request 資訊。
     return request;
@@ -44,7 +49,7 @@ userAxios().interceptors.request.use(
   (ex) => {
     // 系統層錯誤！
     // 若是環境問題，則直接顯示；若是WebController未處理的錯誤，則另外處理。
-    console.log(`%cRequest Error --> ${JSON.stringify(ex)}`, 'color: Red;');
+    console.log('\x1b[31mRequest Error --> ', ex);
 
     Promise.reject(ex);
   },
@@ -54,35 +59,52 @@ userAxios().interceptors.response.use(
   async (response) => {
     // console.log(`%cResponse --> \n%c${JSON.stringify(response)}`, 'color: Yellow;', 'color: Green;');
     // console.log(`jwtToken=${response.data.jwtToken}`);
+    // eslint-disable-next-line object-curly-newline
+    const { code, data, mac, jwtToken } = response.data; // 不論成功或失敗，都一定會更新 jwtToken
+
     let rqJwtToken; // 來查是否發出的Request有沒有加密
     const headerAuth = response.config.headers.authorization; // 用Request時所使用的 jwtToken 來判斷是否有使用 JWT
     if (headerAuth && headerAuth.startsWith('Bearer ')) {
       // eslint-disable-next-line prefer-destructuring
       rqJwtToken = headerAuth.split(' ')[1];
 
-      // 不論成功或失敗，都一定會更新 jwtToken
-      const renewJwtToken = response.data.jwtToken;
-      await syncJwtToken(renewJwtToken); // BUG! 可能因為多執行緒而錯亂
-      Cookies.set('jwtToken', renewJwtToken); // TODO: 為了相容 axiosConfig
-      // console.log(`\x1b[32m[New JWT] \x1b[92m${renewJwtToken}`);
+      // console.log(`\x1b[32m[New JWT] \x1b[92m${jwtToken}`);
+      if (!jwtToken) console.log(`\x1b[31m*** WARNING *** ${response.config.url} 將 JWT Token 設為空值！`, response);
+      else {
+        syncJwtToken(jwtToken); // BUG! 可能因為多執行緒而錯亂
+        Cookies.set('jwtToken', jwtToken); // TODO: 為了相容 axiosConfig
+      }
     }
 
-    // 解密
-    // 若Request時沒有使用jwtToken，或例外發生時，傳回的資料都不會加密。
-    if (response.data.code === '0000' && rqJwtToken) {
-      const aeskey = localStorage.getItem('aesKey');
-      const ivkey = localStorage.getItem('iv');
-      const decrypt = JWTUtil.decryptJWTMessage(aeskey, ivkey, response.data);
-      response.data = {
-        data: decrypt,
-        code: response.data.code,
-        message: response.data.message,
-      };
-      // console.log(`Response Data(解密後) --> ${JSON.stringify(response.data)}`);
+    if (code === '0000') {
+      let resultData;
+      // 處理 JWE Response 解密
+      if (response.config.url.startsWith('/smJwe/')) {
+        const privateKey = sessionStorage.getItem('privateKey');
+        resultData = JSON.parse(JWEUtil.decryptJWEMessage(privateKey, data));
+        // console.log(resultData);
+      }
+      // 處理 JWT Response 解密；若Request時沒有使用jwtToken，或例外發生時，傳回的資料都不會加密。
+      else if (rqJwtToken) {
+        const aeskey = sessionStorage.getItem('aesKey');
+        const ivkey = sessionStorage.getItem('iv');
+        const encData = (data || response.data.encData); // 為相容 SM
+        // console.log(aeskey, ivkey, encData);
+        resultData = JWTUtil.decryptJWTMessage(aeskey, ivkey, encData, mac);
+      }
+
+      // console.log(`Response Data(解密後) --> ${JSON.stringify(resultData)}`);
+      if (resultData) {
+        response.data = {
+          code,
+          data: resultData,
+          message: response.data.message,
+        };
+      }
     }
 
-    if (response.data.code !== '0000') {
-      const { code, message } = response.data;
+    if (code !== '0000') {
+      const { message } = response.data;
       // TODO: 導向API失敗的例外處理的頁面！
       console.log(`\x1b[31m${response.config.url} - Exception = (\x1b[33m${code}\x1b[31m) ${message}`);
       if (code === 'ISG0001') {
@@ -94,7 +116,7 @@ userAxios().interceptors.response.use(
       return Promise.reject(code);
     }
 
-    console.log(`\x1b[33m${response.config.url} \x1b[37m - Response = \n`, response);
+    console.log(`\x1b[33m${response.config.url} \x1b[37m - Response = `, response.data);
 
     // 傳回 未加密 或 解密後 的資料
     return response;
@@ -210,8 +232,8 @@ const download = async (url, request, filename, contentType) => {
   const token = await getJwtToken();
 
   // Request Payload 加密
-  const aeskey = localStorage.getItem('aesKey');
-  const ivkey = localStorage.getItem('iv');
+  const aeskey = sessionStorage.getItem('aesKey');
+  const ivkey = sessionStorage.getItem('iv');
   const encrypt = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(request));
 
   fetch(url, {
