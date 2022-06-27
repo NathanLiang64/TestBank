@@ -59,7 +59,7 @@ const DepositPlan = ({
   return (
     <DepositPlanWrapper>
       <div className="pad flex">
-        <img src={stage.animation} alt="" width="124" height="120" />
+        <img src={stage.animation} className="object-contain" alt="" width="124" height="120" />
         <InfoArea variant="top" position="top" space="auto" {...stage.infoAreaStyles}>
           {stage.text}
         </InfoArea>
