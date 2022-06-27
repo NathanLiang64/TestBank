@@ -20,6 +20,7 @@ const handshake = async () => {
   const message = {
     txnId: `WVIEW_${uuid()}`,
     // deviceId: null,
+    deviceId: '18157973-686F-4ACC-8EF1-4D034040A898',
     osType: 0,
     osVersion: '15.5',
     appVersion: '1.0.26',
