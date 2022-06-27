@@ -72,11 +72,14 @@ const Nav = () => {
 
         <div className="vj">
           <p style={{ color: '#9D7ADE' }}>** 唯物 **</p>
+          <div onClick={() => startFunc('A00400')}>A00400 開通APP</div>
           <div onClick={() => startFunc('B00300')}>B00300 訊息通知 - (施工中)</div>
           <div onClick={() => startFunc('S00400')}>S00400 訊息通知設定 - (施工中)</div>
           <div onClick={() => startFunc('E00100')}>E00100 換匯 - (施工中)</div>
+          <div onClick={() => startFunc('T00100')}>T00100 個人化設定</div>
           <div onClick={() => startFunc('T00600')}>T00600 手機號碼收款設定 - (施工中)</div>
-          <div onClick={() => startFunc('foreignCurrencyTransfer')}>無 function code 外幣轉外幣 - (施工中)</div>
+          <div onClick={() => startFunc('T00700')}>T00600 手機號碼收款設定 - (施工中)</div>
+          <div onClick={() => startFunc('T00700')}>T00700 外幣轉外幣 - (施工中)</div>
           <div onClick={() => startFunc('cardLessSetting')}>無 function code 無卡提款設定 - (完成切版)</div>
         </div>
         {/* <div onClick={() => goToFunc({ route: '/foreignCurrencyPriceSetting', funcID: 'unset' })}>

@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { numberToChinese, currencySymbolGenerator } from 'utilities/Generator';
 import { transferAmountValidation } from 'utilities/validation';
 import { customPopup } from 'utilities/MessageModal';
-import { getAccountsList, getExchangePropertyList } from 'pages/ForeignCurrencyTransfer/api';
+import { getAccountsList, getExchangePropertyList, getIntoAccount } from 'pages/D00700_ForeignCurrencyTransfer/api';
 import { closeFunc } from 'utilities/BankeePlus';
 /* Elements */
 import Accordion from 'components/Accordion';
@@ -17,7 +17,7 @@ import {
   FEIBSelect, FEIBOption, FEIBInput, FEIBInputLabel, FEIBButton, FEIBErrorMessage,
 } from 'components/elements';
 import Layout from 'components/Layout/Layout';
-import NoteContent from 'pages/ForeignCurrencyTransfer/noteContent';
+import NoteContent from 'pages/D00700_ForeignCurrencyTransfer/noteContent';
 
 /* Styles */
 import ForeignCurrencyTransferWrapper from './foreignCurrencyTransfer.style';
@@ -73,6 +73,12 @@ const ForeignCurrencyTransfer = () => {
         );
       }
     }
+  };
+
+  // 取得約定轉入帳號
+  const getTransableAcc = async () => {
+    const response = await getIntoAccount();
+    console.log(response);
   };
 
   // 取得交易性質
@@ -139,6 +145,7 @@ const ForeignCurrencyTransfer = () => {
   useEffect(() => {
     getForeignCurrencyAccounts();
     getTransTypeOptions();
+    getTransableAcc();
   }, []);
 
   return (
