@@ -69,8 +69,11 @@ userAxios().interceptors.response.use(
       rqJwtToken = headerAuth.split(' ')[1];
 
       // console.log(`\x1b[32m[New JWT] \x1b[92m${jwtToken}`);
-      await syncJwtToken(jwtToken); // BUG! 可能因為多執行緒而錯亂
-      Cookies.set('jwtToken', jwtToken); // TODO: 為了相容 axiosConfig
+      if (!jwtToken) console.log(`\x1b[31m*** WARNING *** ${response.config.url} 將 JWT Token 設為空值！`, response);
+      else {
+        syncJwtToken(jwtToken); // BUG! 可能因為多執行緒而錯亂
+        Cookies.set('jwtToken', jwtToken); // TODO: 為了相容 axiosConfig
+      }
     }
 
     if (code === '0000') {

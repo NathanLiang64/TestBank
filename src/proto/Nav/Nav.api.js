@@ -10,3 +10,8 @@ export const mobileAccountUnbind = async (request) => {
   const response = await callAPI('/api/mobileAccount/v1/unbind', request);
   return response.data;
 };
+
+export const getHomeData = async () => {
+  const response = await callAPI('/smApi/v1/getHomeData');
+  return response;
+};

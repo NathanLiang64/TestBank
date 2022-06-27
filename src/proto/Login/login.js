@@ -1,3 +1,4 @@
+/* eslint-disable object-curly-newline */
 /* eslint-disable radix,no-restricted-globals */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
@@ -20,7 +21,7 @@ import HandShake from './HandShake';
 import LoginWrapper from './login.style';
 import FaceIdLoginModal from './faceIdLoginModal';
 import RegisterModal from './registerModal';
-import { login, personalDataPreload, getInitData } from './login.api';
+import { login, personalDataPreload } from './login.api';
 
 const Login = () => {
   /**
@@ -77,8 +78,7 @@ const Login = () => {
     const isSuccess = await login(data);
     if (isSuccess) { // 登入成功
       await personalDataPreload();
-      const rs = await getInitData();
-      console.log(rs);
+      // await getInitData();
       history.push('/');
     }
   };
