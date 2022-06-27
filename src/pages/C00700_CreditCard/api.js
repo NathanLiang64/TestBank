@@ -84,9 +84,9 @@ export const getCreditCardDetails = async (param) => {
      "result": API執行結果。
    }
  */
-export const updateMemo = async (id, memo) => {
-  // const response = await callAPI('/api/', { id, memo });
-  const response = await new Promise((resolve) => resolve({ data: { result: true, id, memo } }));
+export const updateMemo = async (param) => {
+  // const response = await callAPI('/api/', param);
+  const response = await new Promise((resolve) => resolve({ data: { result: true, param } }));
   return response.data;
 };
 

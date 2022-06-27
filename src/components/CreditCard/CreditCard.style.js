@@ -82,6 +82,10 @@ const AccountCardWrapper = styled.div`
       a {
         color: ${({ theme }) => theme.colors.text.lightGray};
       }
+      
+      button {
+        font-size: 1.6rem;
+      }
     }
     
 `;
