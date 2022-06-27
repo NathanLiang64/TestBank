@@ -30,4 +30,42 @@ const PageWrapper = styled.div`
   }
 `;
 
+const DetailDialogErrorMsg = styled.div`
+.errorMsg {
+  visibility:hidden;
+}
+.errorBorder{
+  &:before,
+  &:hover:not(.Mui-disabled):before {
+    border-color:#FF5F5F !important;
+  }
+}
+
+.badIcon {
+  margin: -1.1rem;
+  height: fit-content;
+}
+
+.remark {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+
+  span {
+    margin-bottom: .2rem;
+    font-size: 1.2rem;
+    letter-spacing: .05rem;
+    color: ${({ theme }) => theme.colors.text.light};
+  }
+
+  svg {
+    color: ${({ theme }) => theme.colors.primary.light};
+    font-size: 2.13rem;
+    margin-left: .4rem;
+    width:16px;
+  }
+}
+`;
+
 export default PageWrapper;
+export { DetailDialogErrorMsg };

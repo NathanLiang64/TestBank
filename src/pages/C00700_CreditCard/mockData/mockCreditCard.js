@@ -1,12 +1,14 @@
+import uuid from 'react-uuid';
+
 const genTransactions = () => Array.from(Array(10)).map((_, i) => ({
-  id: i + 1,
+  id: uuid(),
   ccNo: '1112223333444455',
   index: i + 1,
   bizDate: (20220425 + i).toString(),
   txnDate: (20220425 + i).toString(),
   txnTime: 210156,
   description: '全家便利商店',
-  memo: '最多七個字',
+  memo: '',
   targetMbrId: null,
   targetNickName: null,
   targetBank: '000',

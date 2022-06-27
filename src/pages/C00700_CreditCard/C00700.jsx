@@ -6,11 +6,12 @@ import uuid from 'react-uuid';
 import Layout from 'components/Layout/Layout';
 import SwiperLayout from 'components/SwiperLayout';
 import Main from 'components/Layout';
+import CreditCard from 'components/CreditCard';
+
 import { TransactionIcon1, RadioUncheckedIcon } from 'assets/images/icons';
 import { showDrawer } from 'utilities/MessageModal';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import CreditCard from './components/CreditCard';
 import DetailCreditCard from './components/detailCreditCard';
 import { getCreditCards } from './api';
 
@@ -116,13 +117,14 @@ const CreditCardPage = () => {
   // 信用卡明細總覽
   const renderCreditList = (data) => {
     if (!data || data.length === 0) return null;
-    console.log(data);
     return (
       data.map((item) => (
         <div key={uuid()}>
           <DetailCreditCard
-            transactions={item.transactions}
+            details={item.transactions}
             bonus={item?.bonusInfo}
+            onClick={() => history.push('R00100', item)}
+            type={item.type}
           />
         </div>
       ))

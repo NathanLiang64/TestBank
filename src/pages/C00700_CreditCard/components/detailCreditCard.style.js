@@ -9,6 +9,12 @@ const DetailCardWrapper = styled.div`
   width: 100%;
   background: ${({ theme }) => theme.colors.basic.white};
   box-shadow: ${({ $noShadow }) => ($noShadow ? '0' : '0 .4rem 1rem rgba(0, 0, 0, .12);')};
+
+  .badIcon {
+    display: block;
+    margin: -1.1rem;
+    height: fit-content;
+  }
   
   .defaultAvatar,
   .avatar {
@@ -112,11 +118,24 @@ const DetailCardWrapper = styled.div`
 `;
 
 const DetailDialogContentWrapper = styled.div`
-.panel{
+.panel {
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
 }
 `;
 
+const DetailDialogErrorMsg = styled.div`
+.errorMsg {
+  visibility:hidden;
+}
+.errorBorder{
+  &:before,
+  &:hover:not(.Mui-disabled):before {
+    border-color:#FF5F5F !important;
+  }
+}
+
+`;
+
 export default DetailCardWrapper;
-export { DetailDialogContentWrapper };
+export { DetailDialogContentWrapper, DetailDialogErrorMsg };
