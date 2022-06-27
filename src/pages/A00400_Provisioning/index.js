@@ -1,8 +1,5 @@
-// import { useEffect } from 'react';
-// import { useDispatch } from 'react-redux';
-import { useGetEnCrydata } from 'hooks';
-import { goHome } from 'utilities/BankeePlus';
-import { provisioningApi } from 'apis';
+import { goHome } from 'utilities/AppScriptProxy';
+import { openhb } from 'pages/A00400_Provisioning/api';
 import { showAnimationModal } from 'utilities/MessageModal';
 /* Elements */
 import { FEIBButton } from 'components/elements';
@@ -11,23 +8,19 @@ import Accordion from 'components/Accordion';
 
 /* Styles */
 import ProvisioningWrapper from './provisioning.style';
-// import { setIsOpen } from '../ResultDialog/stores/actions';
 
 const Provisioning = () => {
-  // const dispatch = useDispatch();
-
   // 設定結果彈窗
-  const setResultDialog = (response) => {
-    const result = Object.keys(response).length === 0;
+  const setResultDialog = ({ code, message }) => {
     let errorCode = '';
     let errorDesc = '';
     const onClose = () => goHome();
-    if (!result) {
-      errorCode = response.code;
-      errorDesc = response.message;
+    if (code !== '0000') {
+      errorCode = code;
+      errorDesc = message;
     }
     showAnimationModal({
-      isSuccess: result,
+      isSuccess: code === '0000',
       successTitle: '設定成功',
       successDesc: '',
       errorTitle: '設定失敗',
@@ -35,24 +28,14 @@ const Provisioning = () => {
       errorDesc,
       onClose,
     });
-    // dispatch(setResultContent({
-    //   isSuccess: result,
-    //   successTitle: '設定成功',
-    //   successDesc: '',
-    //   errorTitle: '設定失敗',
-    //   errorCode,
-    //   errorDesc,
-    // }));
-    // dispatch(setIsOpen(true));
   };
 
   // 呼叫開通 api
   const triggerProvide = async () => {
-    const openhbResponse = await provisioningApi.openhb({});
+    const openhbResponse = await openhb({});
+    console.log(openhbResponse);
     setResultDialog(openhbResponse);
   };
-
-  useGetEnCrydata();
 
   return (
     <Layout title="開通行動銀行服務" goBack={false} goHome={false}>

@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { closeFunc } from 'utilities/BankeePlus';
+import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { getCountyList, getBasicInformation, modifyBasicInformation } from 'pages/T00700_BasicInformation/api';
 
 /* Elements */
@@ -68,40 +68,36 @@ const BasicInformation = () => {
 
   // 取得個人資料
   const getPersonalData = async (countyListResponse) => {
-    const basicInformationResponse = await getBasicInformation({});
-    if (!basicInformationResponse.code) {
-      const data = {
-        ...basicInformationResponse,
-      };
-      reset(data);
+    const { code, data, message } = await getBasicInformation({});
+    if (code === '0000') {
+      reset({
+        ...data,
+      });
       const { county } = data;
       const countyData = county.split(' ')[1] || county;
       const { cities } = countyListResponse.find((item) => item.countyName === countyData);
       setCityOptions(cities);
     } else {
-      const { code, message } = basicInformationResponse;
       console.log(code, message);
     }
   };
 
   // 取得縣市列表
   const fetchCountyList = async () => {
-    const countyListResponse = await getCountyList({});
-    console.log(countyListResponse);
-    // setAddressOptionsData(countyListResponse);
-    // if (!countyListResponse.code) {
-    //   const countyList = countyListResponse.map((item) => (
-    //     {
-    //       countyName: item.countyName,
-    //       countyCode: item.countyCode,
-    //     }
-    //   ));
-    //   setCountyOptions(countyList);
-    //   getPersonalData(countyListResponse);
-    // } else {
-    //   const { code, message } = countyListResponse;
-    //   console.log(code, message);
-    // }
+    const { code, data, message } = await getCountyList({});
+    setAddressOptionsData(data);
+    if (code === '0000') {
+      const countyList = data.map((item) => (
+        {
+          countyName: item.countyName,
+          countyCode: item.countyCode,
+        }
+      ));
+      setCountyOptions(countyList);
+      getPersonalData(data);
+    } else {
+      console.log(code, message);
+    }
   };
 
   // 設定結果彈窗
@@ -152,12 +148,18 @@ const BasicInformation = () => {
       mobile,
     };
     const modifyDataResponse = await modifyBasicInformation(param);
+    console.log(modifyDataResponse);
     setResultDialog(modifyDataResponse);
   };
 
   // 點擊儲存變更按鈕
-  const onSubmit = () => {
-    modifyPersonalData();
+  const onSubmit = async () => {
+    const { mobile } = getValues();
+    const authCode = 0x26 || 0x37;
+    const jsRs = await transactionAuth(authCode, mobile);
+    if (jsRs.result) {
+      modifyPersonalData();
+    }
   };
 
   // 彈性變更鄉鎮市區選單
