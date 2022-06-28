@@ -323,11 +323,11 @@ The testing enviroments are using basic HTTP authentication framework. The defau
 
 This app requires backend (the FEIB SIT). There are two ways to run:
 
-> Make sure `REACT_APP_URL` is pointing to FEIB SIT server under the file `.env.development`
+> Make sure `REACT_APP_URL` and `REACT_APP_SM_CTRL_URL` are pointing to FEIB SIT server under the file `.env.development`
 
 or
 
-> `REACT_APP_URL=https://bankeesit.feib.com.tw/v2web/app2 BROWSER=none npm run start`
+> `REACT_APP_URL=https://bankeesit.feib.com.tw/v2web/app2 REACT_APP_SM_CTRL_URL=https://bankeesit.feib.com.tw/APP2_WebCtrl BROWSER=none npm run start`
 
 <br>
 
