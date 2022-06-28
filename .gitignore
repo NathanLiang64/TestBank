@@ -35,7 +35,3 @@ compiler
 *.log
 *.log.*.gz
 *.tmp
-
-# ignore jenkins_tool on Lexionlu branch
-# archives are too big to push to GitHub
-jenkins_tool
