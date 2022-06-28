@@ -10,9 +10,7 @@ const PageWrapper = styled.div`
     position: fixed;
     bottom: 12rem;
     inset-inline: 0;
-    margin-inline: auto;
-    padding-inline: 0.2rem;
-    width: fit-content;
+    text-align: center;
     background-color: ${({ theme }) => theme.colors.basic.white};
     color: ${({ theme }) => theme.colors.text.light};
     font-size: 1.4rem;
