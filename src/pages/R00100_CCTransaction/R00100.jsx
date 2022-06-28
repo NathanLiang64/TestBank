@@ -174,6 +174,7 @@ const Page = () => {
                 topRight={currencySymbolGenerator(t.currency ?? 'TWD', t.amount)}
                 bottomLeft={`${t.txnDate.slice(4, 6)}/${t.txnDate.slice(6, 8)}`}
                 bottomRight={showMemo(t.memo, t.id)}
+                noShadow
               />
             )) : (
               <div style={{ height: '20rem', marginTop: '6rem' }}>
