@@ -7,7 +7,9 @@ import JWTUtil from './JWTUtil';
 import { getJwtToken, syncJwtToken } from './AppScriptProxy';
 
 // Axios instance
-const instance = axios.create();
+const instance = axios.create({
+  baseURL: process.env.REACT_APP_URL,
+});
 
 const userAxios = () => {
   if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === '') {
