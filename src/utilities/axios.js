@@ -25,7 +25,9 @@ userAxios().defaults.retryDelay = 1000;
 // userAxios().defaults.maxBodyLength = Infinity;
 userAxios().interceptors.request.use(
   async (request) => {
-    console.log(`\x1b[33mAPI : ${request.method.toUpperCase()} /${request.url}`);
+    axios.defaults.baseURL = (request.url.startsWith('/sm')) ? process.env.REACT_APP_SM_CTRL_URL : process.env.REACT_APP_URL;
+
+    console.log(`\x1b[33mAPI : ${request.method.toUpperCase()} ${axios.defaults.baseURL}${request.url}`);
     console.log('Request = ', request.data);
     if (request.method === 'get') return request;
 
