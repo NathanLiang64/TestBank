@@ -331,6 +331,18 @@ or
 
 <br>
 
+## Instruction on cherry-pick from Jerry branch
+
+Becuase commit 8d40326 includes jenkins_tool/node_modules.7z, which exceeds 100MB file size limit by GitHub. So, we cannot do a simple `merge`, else the *mistaken and mis-use* crazy large file will be merged into git history. Hence, cause us the issue when `push` to Github.
+
+We have to `cherry-pick` the commits from Jerry branch...
+
+```
+git cherry-pick <commit>
+```
+
+<br>
+
 ## Instruction to deloy to Lexionlu servers
 
 Lexionlu's GitHub repo is configured to deploy to dev and stage server automatically via GitHub Actions. Follow the instructions to push to GitHub:
