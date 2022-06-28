@@ -64,7 +64,7 @@ Progress0.args = {
 
 export const Progress25 = Template.bind({});
 Progress25.args = {
-  currentBalance: 25,
+  currentBalance: 250000,
   endDate: '20991231',
   progInfo: { rate: '0.6' },
   amount: 1000,
@@ -74,7 +74,7 @@ Progress25.args = {
 
 export const Progress50 = Template.bind({});
 Progress50.args = {
-  currentBalance: 50,
+  currentBalance: 500000,
   endDate: '20991231',
   progInfo: { rate: '0.6' },
   amount: 1000,
@@ -84,7 +84,7 @@ Progress50.args = {
 
 export const Progress75 = Template.bind({});
 Progress75.args = {
-  currentBalance: 75,
+  currentBalance: 750000,
   endDate: '20991231',
   progInfo: { rate: '0.6' },
   amount: 1000,
@@ -94,7 +94,7 @@ Progress75.args = {
 
 export const Progress99 = Template.bind({});
 Progress99.args = {
-  currentBalance: 99,
+  currentBalance: 990000,
   endDate: '20991231',
   progInfo: { rate: '0.6' },
   amount: 1000,
@@ -104,7 +104,7 @@ Progress99.args = {
 
 export const Success = Template.bind({});
 Success.args = {
-  currentBalance: 100,
+  currentBalance: 1000000,
   endDate: '20991231',
   progInfo: { rate: '0.6' },
   amount: 1000,
@@ -114,7 +114,7 @@ Success.args = {
 
 export const Failed = Template.bind({});
 Failed.args = {
-  currentBalance: 99,
+  currentBalance: 990000,
   endDate: '20000101',
   progInfo: { rate: '0.6' },
   amount: 1000,

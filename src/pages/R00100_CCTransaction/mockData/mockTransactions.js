@@ -1,3 +1,5 @@
+import uuid from 'react-uuid';
+
 const dateToCodeString = (date) => date.toISOString().slice(0, 10).replaceAll('-', '');
 
 const stringToDate = (date) => new Date(`${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}`);
@@ -13,13 +15,13 @@ export default function mockTransactions(param) {
   }
 
   return list.map((l) => ({
-    id: 1,
+    id: uuid(),
     index: 1,
     bizDate: l,
     txnDate: l,
     txnTime: 210156,
     description: '全家便利商店',
-    memo: '備註最多7個字',
+    memo: '',
     targetMbrId: null,
     targetNickName: null,
     targetBank: '000',
