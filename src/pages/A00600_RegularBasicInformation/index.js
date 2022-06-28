@@ -4,8 +4,9 @@ import { useGetEnCrydata } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { regularBasicInformationApi } from 'apis';
-import { goHome } from 'utilities/BankeePlus';
+// import { regularBasicInformationApi } from 'apis';
+import { fetchJobsCode, updateRegularBasicInformation } from 'pages/A00600_RegularBasicInformation/api';
+import { goHome } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import {
@@ -65,11 +66,11 @@ const RegularBasicInformation = () => {
 
   // 取得職業別清單
   const getJobsCode = async () => {
-    const jobsCodeResponse = await regularBasicInformationApi.getJobsCode({});
-    if (!jobsCodeResponse.message) {
+    const { code, message, data } = await fetchJobsCode({});
+    if (code === '0000') {
       const {
         grade, income, jobcd, gradeList, incomeList, jobList,
-      } = jobsCodeResponse;
+      } = data;
       setGradeOptions(gradeList);
       setIncomeOptions(incomeList);
       setJobOptions(jobList);
@@ -84,33 +85,27 @@ const RegularBasicInformation = () => {
         successTitle: '',
         successDesc: '',
         errorTitle: '發生錯誤',
-        errorCode: jobsCodeResponse.code,
-        errorDesc: jobsCodeResponse.message,
+        errorCode: code,
+        errorDesc: message,
       }));
       dispatch(setIsOpen(true));
     }
   };
 
   // 設定結果彈窗
-  const setResultDialog = (response) => {
-    const { grade, inCome, jobCd } = response;
-    const result = grade && inCome && jobCd;
-    let errorCode = '';
-    let errorDesc = '';
-    if (result) {
+  const setResultDialog = ({ code, message }) => {
+    if (code === '0000') {
       dispatch(setCloseCallBack(() => goHome()));
     } else {
-      errorCode = response.code;
-      errorDesc = response.message;
       dispatch(setCloseCallBack(() => {}));
     }
     dispatch(setResultContent({
-      isSuccess: result,
+      isSuccess: code === '0000',
       successTitle: '設定成功',
       successDesc: '基本資料變更成功',
       errorTitle: '設定失敗',
-      errorCode,
-      errorDesc,
+      errorCode: code,
+      errorDesc: message,
     }));
     dispatch(setIsOpen(true));
   };
@@ -123,7 +118,7 @@ const RegularBasicInformation = () => {
       grade: data.title,
       inCome: data.income,
     };
-    const modifyResponse = await regularBasicInformationApi.modifyRegularBasicInformation(modifyData);
+    const modifyResponse = await updateRegularBasicInformation(modifyData);
     setResultDialog(modifyResponse);
   };
 
