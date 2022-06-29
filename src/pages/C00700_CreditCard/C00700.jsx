@@ -14,6 +14,7 @@ import { showDrawer } from 'utilities/MessageModal';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import DetailCreditCard from './components/detailCreditCard';
 import { getCreditCards } from './api';
+import SwiperCreditCard from './C00700.style';
 
 /**
  * C00700 信用卡 首頁
@@ -100,16 +101,18 @@ const CreditCardPage = () => {
     if (!data || data.length === 0) return null;
     return (
       plans.map((item) => (
-        <CreditCard
-          key={uuid()}
-          cardName={item.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
-          accountNo={item.accountNo}
-          balance={item.creditUsed}
-          color="green"
-          annotation="已使用額度"
-          onMoreClicked={() => handleMoreClick(item)}
-          functionList={functionAllList(item)}
-        />
+        <SwiperCreditCard>
+          <CreditCard
+            key={uuid()}
+            cardName={item.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
+            accountNo={item.type === 'bankee' && item.accountNo}
+            balance={item.creditUsed}
+            color="green"
+            annotation="已使用額度"
+            onMoreClicked={() => handleMoreClick(item)}
+            functionList={functionAllList(item)}
+          />
+        </SwiperCreditCard>
       ))
     );
   };
@@ -125,7 +128,9 @@ const CreditCardPage = () => {
             bonus={item?.bonusInfo}
             onClick={() => history.push('R00100', item)}
             type={item.type}
+            account={item.accountNo}
           />
+          { console.log(item) }
         </div>
       ))
     );
@@ -133,8 +138,8 @@ const CreditCardPage = () => {
 
   return (
     <Layout title="信用卡" goBackFunc={() => history.goBack()}>
-      <Main>
-        <SwiperLayout slides={renderSlides(plans)} hasDivider={false} slidesPerView={1.14} spaceBetween={8}>
+      <Main small>
+        <SwiperLayout slides={renderSlides(plans)} hasDivider={false} slidesPerView={1.06}>
           {renderCreditList(plans)}
         </SwiperLayout>
       </Main>

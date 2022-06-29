@@ -119,8 +119,7 @@ const DetailCardWrapper = styled.div`
 
 const DetailDialogContentWrapper = styled.div`
 .panel {
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
+  padding-top: 2.5rem;
 }
 `;
 
@@ -137,5 +136,37 @@ const DetailDialogErrorMsg = styled.div`
 
 `;
 
+const TableDialog = styled.div`
+  text-align: center;
+  table {
+    font-size: 1.2rem;
+    
+    thead {
+      border-bottom:0.1rem solid #F3F3F3;
+
+      tr th {
+        padding-top: 0.6rem;
+        padding-bottom: 0.8rem;
+        font-weight: 500;
+        width: 33.333333%;
+      }
+    }
+    tbody tr th {
+      width: 33.333333%;
+      padding-top: 0.4rem;
+      padding-bottom: 0.4rem;
+      font-size: 1rem;
+    }
+  }
+
+  .remark  {
+    font-weight: 500;
+    color: ${({ theme }) => theme.colors.text.light};
+    font-size: 1.1rem;
+    padding-top: 0.4rem;
+    margin-left: -0.65rem;
+  }
+`;
+
 export default DetailCardWrapper;
-export { DetailDialogContentWrapper, DetailDialogErrorMsg };
+export { DetailDialogContentWrapper, DetailDialogErrorMsg, TableDialog };
