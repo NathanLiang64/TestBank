@@ -38,7 +38,7 @@ const Page = () => {
   };
 
   const renderBottomAction = (success) => (
-    <BottomAction>
+    <BottomAction position={0}>
       { success ? (
         <button type="button" onClick={() => history.push('/C00700')}>
           回信用卡首頁
