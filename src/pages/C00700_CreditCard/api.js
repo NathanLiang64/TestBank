@@ -22,7 +22,6 @@ import mockCreditCardTerms from './mockData/mockCreditCardTerms';
      "transactions": [
        {
          "id": TODO 需要ID之類的識別碼
-         "ccNo": TODO 需要新增卡號
          "index": 1,
          "bizDate": "20220425",
          "txnDate": "20220425",
@@ -32,7 +31,7 @@ import mockCreditCardTerms from './mockData/mockCreditCardTerms';
          "targetMbrId": null,
          "targetNickName": null,
          "targetBank": "000",
-         "targetAcct": null,
+         "targetAcct": TODO 或許這個是卡號
          "amount": 36000,
          "balance": 386000,
          "cdType": "cc",

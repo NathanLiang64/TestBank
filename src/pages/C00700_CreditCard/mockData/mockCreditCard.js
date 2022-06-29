@@ -2,7 +2,6 @@ import uuid from 'react-uuid';
 
 const genTransactions = () => Array.from(Array(10)).map((_, i) => ({
   id: uuid(),
-  ccNo: '1112223333444455',
   index: i + 1,
   bizDate: (20220425 + i).toString(),
   txnDate: (20220425 + i).toString(),
@@ -12,7 +11,7 @@ const genTransactions = () => Array.from(Array(10)).map((_, i) => ({
   targetMbrId: null,
   targetNickName: null,
   targetBank: '000',
-  targetAcct: null,
+  targetAcct: '1112223333444455',
   amount: 1_000 * i,
   balance: 386_000 - (1_000 * i),
   cdType: 'cc',

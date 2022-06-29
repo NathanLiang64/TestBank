@@ -25,7 +25,7 @@ export default function mockTransactions(param) {
     targetMbrId: null,
     targetNickName: null,
     targetBank: '000',
-    targetAcct: null,
+    targetAcct: '11122233334444',
     amount: Math.random() * 29_990 + 10,
     balance: 386000,
     cdType: 'cc',
