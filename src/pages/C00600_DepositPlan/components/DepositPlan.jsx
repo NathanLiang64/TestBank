@@ -1,4 +1,3 @@
-import Animation from 'components/Animation';
 import InfoArea from 'components/InfoArea';
 import ProgressBar from 'components/ProgressBar';
 import FEIBButton from 'components/elements/FEIBButton';
@@ -60,7 +59,7 @@ const DepositPlan = ({
   return (
     <DepositPlanWrapper>
       <div className="pad flex">
-        <Animation data={stage.animation} height={169} width={312} />
+        <img src={stage.animation} className="object-contain" alt="" width="124" height="120" />
         <InfoArea variant="top" position="top" space="auto" {...stage.infoAreaStyles}>
           {stage.text}
         </InfoArea>

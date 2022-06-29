@@ -11,7 +11,6 @@ const AccountCardWrapper = styled.div`
   background-image: url(${CardBackground});
   background-position: right center;
   background-repeat: no-repeat;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 8px;
   width: 100%;
   min-height: 117px;
@@ -81,6 +80,10 @@ const AccountCardWrapper = styled.div`
       
       a {
         color: ${({ theme }) => theme.colors.text.lightGray};
+      }
+      
+      button {
+        font-size: 1.6rem;
       }
     }
     

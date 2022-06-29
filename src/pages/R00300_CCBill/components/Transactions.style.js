@@ -1,10 +1,6 @@
 import styled from 'styled-components';
 
 const TransactionWrapper = styled.div`
-  .px-16 {
-    padding-inline: 1.6rem;
-  }
-
   .toolbar {
     display: flex;
     justify-content: end;

@@ -1,6 +1,11 @@
-export default function mockCreditCardDetails() {
+export default function mockCreditCardDetails(param) {
+  let type = 'bankee';
+  if ('accountNo' in param) {
+    type = param.accountNo;
+  }
+
   return {
-    type: 'bankee',
+    type,
     accountNo: '11122233334444',
     currency: 'TWD',
     invoiceDate: '20220620',

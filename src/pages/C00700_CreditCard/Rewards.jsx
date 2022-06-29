@@ -42,7 +42,7 @@ const Page = () => {
 
   const handleOnTabChange = (_, id) => {
     setSelectedMonth(id);
-    setDisplayReward(rewards.find((r) => r.date === setSelectedMonth));
+    setDisplayReward(rewards.find((r) => r.date === id));
   };
 
   return (
@@ -61,24 +61,28 @@ const Page = () => {
                 value={currencySymbolGenerator(displayReward.currency ?? 'TWD', sumAmount(displayReward))}
               />
               <table className="table">
-                <tr>
-                  <th className="w-3/4">活動名稱</th>
-                  <th className="w-1/4">金額</th>
-                </tr>
-                <tr>
-                  <td>刷卡回饋</td>
-                  <td>{currencySymbolGenerator(displayReward.currency ?? 'TWD', displayReward.card)}</td>
-                </tr>
-                <tr>
-                  <td>社群圈分潤</td>
-                  <td>{currencySymbolGenerator(displayReward.currency ?? 'TWD', displayReward.point)}</td>
-                </tr>
-                {displayReward.point > 0 && (
-                <tr>
-                  <td>金讚點數兌換回饋</td>
-                  <td>{currencySymbolGenerator(displayReward.currency ?? 'TWD', displayReward.point)}</td>
-                </tr>
-                )}
+                <thead>
+                  <tr>
+                    <th className="w-3/4">活動名稱</th>
+                    <th className="w-1/4">金額</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>刷卡回饋</td>
+                    <td>{currencySymbolGenerator(displayReward.currency ?? 'TWD', displayReward.card)}</td>
+                  </tr>
+                  <tr>
+                    <td>社群圈分潤</td>
+                    <td>{currencySymbolGenerator(displayReward.currency ?? 'TWD', displayReward.point)}</td>
+                  </tr>
+                  {displayReward.point > 0 && (
+                  <tr>
+                    <td>金讚點數兌換回饋</td>
+                    <td>{currencySymbolGenerator(displayReward.currency ?? 'TWD', displayReward.point)}</td>
+                  </tr>
+                  )}
+                </tbody>
               </table>
               <hr />
               <div className="font-14 mb-6">

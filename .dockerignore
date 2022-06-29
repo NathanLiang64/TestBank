@@ -4,3 +4,12 @@
 *docker-compose*
 node_modules
 storybook-static
+jenkins_tool
+target
+compiler
+build
+*.log
+*.log.*.gz
+*.tmp
+.idea
+.vscode

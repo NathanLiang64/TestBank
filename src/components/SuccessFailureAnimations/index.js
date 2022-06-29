@@ -1,6 +1,8 @@
-import Animation from 'components/Animation';
-import SuccessAnimation from 'assets/animations/successFlower.json';
-import FailAnimation from 'assets/animations/fail.json';
+import SuccessCheer from 'assets/animations/successCheer.svg';
+import SuccessFlower from 'assets/animations/successFlower.svg';
+import SuccessLove from 'assets/animations/successLove.svg';
+import SuccessMusic from 'assets/animations/successMusic.svg';
+import FailAnimation from 'assets/animations/fail.svg';
 import SuccessFailureAnimationsWrapper from './successFailureAnimations.style';
 
 /*
@@ -48,9 +50,23 @@ const SuccessFailureAnimations = ({
     </section>
   );
 
+  const randomSuccessAnimation = () => {
+    switch (Math.floor(Math.random() * (3))) {
+      case 0:
+        return SuccessMusic;
+      case 1:
+        return SuccessLove;
+      case 2:
+        return SuccessCheer;
+      case 3:
+      default:
+        return SuccessFlower;
+    }
+  };
+
   return (
     <SuccessFailureAnimationsWrapper>
-      <Animation data={isSuccess ? SuccessAnimation : FailAnimation} />
+      <img src={isSuccess ? randomSuccessAnimation() : FailAnimation} width="124" height="120" alt="" />
       <h3 className={`stateText ${isSuccess ? 'success' : 'error'}`}>
         {isSuccess ? successTitle : errorTitle}
       </h3>
