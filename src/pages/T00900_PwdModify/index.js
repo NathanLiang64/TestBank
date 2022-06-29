@@ -3,8 +3,8 @@ import { useGetEnCrydata } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { pwdModifyApi } from 'apis';
-import { closeFunc } from 'utilities/BankeePlus';
+import { changePwd } from 'pages/T00900_PwdModify/api';
+import { closeFunc, switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Header from 'components/Header';
@@ -37,19 +37,15 @@ const PwdModify = () => {
   });
 
   // 設定結果彈窗
-  const setResultDialog = (response) => {
-    const result = 'custName' in response;
-    let errorCode = '';
-    let errorDesc = '';
-    if (result) {
+  const setResultDialog = ({ code, message }) => {
+    const isSuccess = code === '0000';
+    if (isSuccess) {
       dispatch(setCloseCallBack(() => closeFunc()));
     } else {
-      errorCode = response.code;
-      errorDesc = response.message;
       dispatch(setCloseCallBack(() => {}));
     }
     dispatch(setResultContent({
-      isSuccess: result,
+      isSuccess,
       successTitle: '設定成功',
       successDesc: (
         <>
@@ -58,21 +54,27 @@ const PwdModify = () => {
         </>
       ),
       errorTitle: '設定失敗',
-      errorCode,
-      errorDesc,
+      errorCode: code,
+      errorDesc: message,
     }));
     dispatch(setIsOpen(true));
   };
 
   // 呼叫變更網銀密碼 API
   const handlePasswordModify = async () => {
-    const param = {
-      password: e2ee(getValues('password')),
-      newPassword: e2ee(getValues('newPassword')),
-      newPasswordCheck: e2ee(getValues('newPasswordCheck')),
-    };
-    const changePwdResponse = await pwdModifyApi.changePwd(param);
-    setResultDialog(changePwdResponse);
+    const authCode = 0x25;
+    const jsRs = await transactionAuth(authCode);
+    if (jsRs.result) {
+      switchLoading(true);
+      const param = {
+        password: e2ee(getValues('password')),
+        newPassword: e2ee(getValues('newPassword')),
+        newPasswordCheck: e2ee(getValues('newPasswordCheck')),
+      };
+      const changePwdResponse = await changePwd(param);
+      setResultDialog(changePwdResponse);
+      switchLoading(false);
+    }
   };
 
   // 點擊儲存變更按鈕，表單驗證
