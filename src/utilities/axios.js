@@ -9,13 +9,7 @@ import { getJwtToken, syncJwtToken } from './AppScriptProxy';
 // Axios instance
 const instance = axios.create();
 
-const userAxios = () => {
-  if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === '') {
-    return instance;
-  }
-  // 本機測試時，一定要直接使用使用 axios，否則會有跨網域問題。
-  return axios;
-};
+const userAxios = () => instance;
 
 userAxios().defaults.retry = 3;
 userAxios().defaults.retryDelay = 1000;
@@ -23,9 +17,7 @@ userAxios().defaults.retryDelay = 1000;
 // userAxios().defaults.maxBodyLength = Infinity;
 userAxios().interceptors.request.use(
   async (request) => {
-    axios.defaults.baseURL = (request.url.startsWith('/sm')) ? process.env.REACT_APP_SM_CTRL_URL : process.env.REACT_APP_URL;
-
-    console.log(`\x1b[33mAPI : ${request.method.toUpperCase()} ${axios.defaults.baseURL}${request.url}`);
+    console.log(`\x1b[33mAPI : ${request.method.toUpperCase()} /${request.url}`);
     console.log('Request = ', request.data);
     if (request.method === 'get') return request;
 

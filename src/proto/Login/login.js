@@ -21,7 +21,8 @@ import HandShake from './HandShake';
 import LoginWrapper from './login.style';
 import FaceIdLoginModal from './faceIdLoginModal';
 import RegisterModal from './registerModal';
-import { login, personalDataPreload } from './login.api';
+// import { login, personalDataPreload, getInitData, getHomeData } from './login.api';
+import { login, getInitData } from './login.api';
 
 const Login = () => {
   /**
@@ -77,8 +78,9 @@ const Login = () => {
   const onSubmit = async (data) => {
     const isSuccess = await login(data);
     if (isSuccess) { // 登入成功
-      await personalDataPreload();
-      // await getInitData();
+      // await personalDataPreload();
+      await getInitData();
+      // await getHomeData();
       history.push('/');
     }
   };
