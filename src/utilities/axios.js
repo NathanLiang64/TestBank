@@ -9,13 +9,7 @@ import { getJwtToken, syncJwtToken } from './AppScriptProxy';
 // Axios instance
 const instance = axios.create();
 
-const userAxios = () => {
-  if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === '') {
-    return instance;
-  }
-  // 本機測試時，一定要直接使用使用 axios，否則會有跨網域問題。
-  return axios;
-};
+const userAxios = () => instance;
 
 userAxios().defaults.retry = 3;
 userAxios().defaults.retryDelay = 1000;

@@ -44,3 +44,8 @@ export const getInitData = async () => {
   const response = await callAPI('/smApi/v1/getInitData');
   return response;
 };
+
+export const getHomeData = async () => {
+  const response = await callAPI('/smApi/v1/getHomeData');
+  return response;
+};
