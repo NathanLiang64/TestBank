@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useGetEnCrydata } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { goHome } from 'utilities/BankeePlus';
+import { goHome } from 'utilities/AppScriptProxy';
 // import { pwdModifyApi } from 'apis';
 import { changePwd } from 'pages/A00700_RegularPwdModify/api';
 
@@ -126,8 +125,6 @@ const RegularPwdModify = () => {
       )}
     />
   );
-
-  useGetEnCrydata();
 
   useEffect(() => dispatch(setIsOpen(false)), []);
 
