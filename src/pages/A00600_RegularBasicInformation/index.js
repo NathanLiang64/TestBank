@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useGetEnCrydata } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -131,8 +130,6 @@ const RegularBasicInformation = () => {
   const renderOptionsList = (data) => data.map((item) => (
     <FEIBOption key={item.code} value={item.code}>{item.name}</FEIBOption>
   ));
-
-  useGetEnCrydata();
 
   useEffect(() => {
     dispatch(setIsOpen(false));
