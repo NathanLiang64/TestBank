@@ -1,12 +1,11 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useGetEnCrydata } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import e2ee from 'utilities/E2ee';
-import { changeUserNameApi } from 'apis';
-import { closeFunc, switchLoading } from 'utilities/BankeePlus';
+import { changeUserName } from 'pages/T00800_ChangeUserName/api';
+import { closeFunc, switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Header from 'components/Header';
@@ -36,47 +35,45 @@ const ChangeUserName = () => {
   });
 
   // 設定結果彈窗
-  const setResultDialog = (response) => {
-    const result = 'custName' in response;
-    let errorCode = '';
-    let errorDesc = '';
-    if (result) {
+  const setResultDialog = ({ code, message }) => {
+    const isSuccess = code === '0000';
+    if (isSuccess) {
       dispatch(setCloseCallBack(() => closeFunc()));
     } else {
-      errorCode = response.code;
-      errorDesc = response.message;
       dispatch(setCloseCallBack(() => {}));
     }
     dispatch(setResultContent({
-      isSuccess: result,
+      isSuccess,
       successTitle: '設定成功',
       successDesc: '您已成功變更使用者代號',
       errorTitle: '設定失敗',
-      errorCode,
-      errorDesc,
+      errorCode: code,
+      errorDesc: message,
     }));
     dispatch(setIsOpen(true));
   };
 
   // 呼叫變更使用者代號 API
   const handleChangeUserName = async () => {
-    switchLoading(true);
-    const param = {
-      userName: e2ee(getValues('userName')),
-      newUserName: e2ee(getValues('newUserName')),
-      newUserNameCheck: e2ee(getValues('newUserNameCheck')),
-    };
-    const changeUserNameResponse = await changeUserNameApi.changeUserName(param);
-    setResultDialog(changeUserNameResponse);
-    switchLoading(false);
+    const authCode = 0x25;
+    const jsRs = await transactionAuth(authCode);
+    if (jsRs.result) {
+      switchLoading(true);
+      const param = {
+        userName: e2ee(getValues('userName')),
+        newUserName: e2ee(getValues('newUserName')),
+        newUserNameCheck: e2ee(getValues('newUserNameCheck')),
+      };
+      const changeUserNameResponse = await changeUserName(param);
+      setResultDialog(changeUserNameResponse);
+      switchLoading(false);
+    }
   };
 
   // 點擊儲存變更按鈕，表單驗證
   const onSubmit = () => {
     handleChangeUserName();
   };
-
-  useGetEnCrydata();
 
   useEffect(() => dispatch(setIsOpen(false)), []);
 
