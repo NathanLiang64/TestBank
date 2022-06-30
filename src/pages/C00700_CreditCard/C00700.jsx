@@ -130,7 +130,6 @@ const CreditCardPage = () => {
             type={item.type}
             account={item.accountNo}
           />
-          { console.log(item) }
         </div>
       ))
     );

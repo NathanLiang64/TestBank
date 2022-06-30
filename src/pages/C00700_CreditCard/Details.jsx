@@ -92,7 +92,6 @@ const Page = () => {
           <FEIBButton onClick={() => history.push('/R00400', { accountNo: details.accountNo })}>繳費</FEIBButton>
         </PageWrapper>
       </Main>
-      { console.log(details) }
     </Layout>
   );
 };
