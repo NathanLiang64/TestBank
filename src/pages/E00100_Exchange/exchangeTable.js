@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { exchangeApi } from 'apis';
+import { getExchangeRateInfo } from 'pages/E00100_Exchange/api';
 import { dateFormatter, timeSecondFormatter } from 'utilities/Generator';
 import styled from 'styled-components';
 
@@ -50,8 +50,10 @@ const ExchangeTable = () => {
     const dateStr = dateFormatter(now);
     const timeStr = timeSecondFormatter(now);
     setGetInfoStr(`${dateStr} ${timeStr}`);
-    const response = await exchangeApi.getExchangeRateInfo({});
-    setExchangeRate(response);
+    const { code, data } = await getExchangeRateInfo({});
+    if (code === '0000') {
+      setExchangeRate(data);
+    }
   };
 
   useEffect(() => {
