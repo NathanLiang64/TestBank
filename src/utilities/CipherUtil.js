@@ -3,7 +3,7 @@ const forge = require('node-forge');
 // eslint-disable-next-line no-unused-vars
 const crypto = require('crypto');
 // eslint-disable-next-line no-unused-vars
-const { type } = require('os');
+// const { type } = require('os');
 
 class CipherUtil {
   /**
