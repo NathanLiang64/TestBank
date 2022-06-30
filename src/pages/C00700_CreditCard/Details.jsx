@@ -33,7 +33,6 @@ const Page = () => {
     let accountNo;
     if (location.state && ('accountNo' in location.state)) accountNo = location.state.accountNo;
     const response = await getCreditCardDetails({ accountNo });
-
     setDetails(response);
     dispatch(setWaittingVisible(false));
   }, []);
@@ -93,6 +92,7 @@ const Page = () => {
           <FEIBButton onClick={() => history.push('/R00400', { accountNo: details.accountNo })}>繳費</FEIBButton>
         </PageWrapper>
       </Main>
+      { console.log(details) }
     </Layout>
   );
 };

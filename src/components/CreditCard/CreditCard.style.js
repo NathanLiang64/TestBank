@@ -14,7 +14,7 @@ const AccountCardWrapper = styled.div`
   border-radius: 8px;
   width: 100%;
   min-height: 117px;
-  padding: 1.2rem;
+  padding: 1.2rem 1.2rem 0.8rem;
   text-align: left;
   font-size: 1.6rem;
   color: ${({ theme }) => theme.colors.text.lightGray};
