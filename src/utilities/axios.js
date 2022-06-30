@@ -30,9 +30,14 @@ const processRequest = async (request) => {
   if (jwtToken) request.headers.authorization = `Bearer ${jwtToken}`;
 
   // 處理 JWE Request 加密；在完成 Login 之前，都是使用 JWE 加密模式。
-  if (request.url.startsWith('/smJwe/')) { // TODO request.url.startsWith('//auth/')
-    const serverPKey = sessionStorage.getItem('serverPKey');
-    request.data = JWEUtil.encryptJWEMessage(serverPKey, payload);
+  if (request.url.startsWith('/sm')) {
+    if (request.url.startsWith('/smJwe/')) { // TODO request.url.startsWith('//auth/')
+      const serverPKey = sessionStorage.getItem('serverPKey');
+      request.data = JWEUtil.encryptJWEMessage(serverPKey, payload);
+    }
+
+    request.url = request.url.replace('/smApi/', '/api/');
+    request.url = request.url.replace('/smJwe/', '/api/');
   }
   // 處理 JWT Request 加密；當通過 Login 驗證之後，所有 POST 全部都是使用 JWT 加密模式。
   else if (jwtToken) {
@@ -164,22 +169,17 @@ instance.interceptors.response.use(
 const userRequest = async (method, url, data = {}, config) => {
   console.log(instance.defaults.baseURL + url);
   instance.defaults.baseURL = (url.startsWith('/sm')) ? process.env.REACT_APP_SM_CTRL_URL : process.env.REACT_APP_URL;
-  let newUrl = url;
-  if (url.startsWith('/sm')) {
-    newUrl = url.replace('/smApi/', '/api/');
-    newUrl = url.replace('/smJwe/', '/api/');
-  }
   console.log(instance.defaults.baseURL + url);
 
   method = method.toLowerCase();
   let result = null;
   switch (method) {
     case 'get':
-      result = await instance.get(newUrl, { params: data }, config);
+      result = await instance.get(url, { params: data }, config);
       break;
 
     case 'post':
-      result = await instance.post(newUrl, data, config);
+      result = await instance.post(url, data, config);
       break;
 
     // case 'put':
