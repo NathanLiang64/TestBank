@@ -18,6 +18,7 @@ import mockCreditCardTerms from './mockData/mockCreditCardTerms';
        "rewardLocalRate": 國內回饋百分比(不含%符號)
        "rewardForeignRate": 國外回饋百分比(不含%符號)
        "rewards": 回饋試算
+       "currency": 回饋幣別,
      },
      "transactions": [
        {

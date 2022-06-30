@@ -29,6 +29,7 @@ export default [
       rewardLocalRate: 1.2,
       rewardForeignRate: 3,
       rewards: 39,
+      currency: 'TWD',
     },
     transactions: genTransactions(),
   },
