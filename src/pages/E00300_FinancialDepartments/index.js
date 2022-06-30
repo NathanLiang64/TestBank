@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useGetEnCrydata } from 'hooks';
-import { financialDepartmentsApi } from 'apis';
+import { getFinanceStore } from 'pages/E00300_FinancialDepartments/api';
 
 import Header from 'components/Header';
 
@@ -11,11 +10,9 @@ const FinancialDepartments = () => {
   const [bankList, setBankList] = useState([]);
 
   const getStores = async () => {
-    const storesResponse = await financialDepartmentsApi.getFinanceStore({});
-    if (Array.isArray(storesResponse)) {
-      setBankList(storesResponse);
-    } else {
-      setBankList([]);
+    const { code, data } = await getFinanceStore({});
+    if (code === '0000') {
+      setBankList(data);
     }
   };
 
@@ -35,8 +32,6 @@ const FinancialDepartments = () => {
       </div>
     </div>
   ));
-
-  useGetEnCrydata();
 
   useEffect(() => {
     getStores();
