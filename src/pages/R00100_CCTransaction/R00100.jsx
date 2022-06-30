@@ -94,8 +94,6 @@ const Page = () => {
   const onSubmit = async (index) => {
     const input = document.getElementById(uid).querySelector('input[name="pwd"]');
     const errorMsg = document.getElementById(uid).querySelector('.errorMsg');
-    console.log(input.value);
-    console.log(index);
     if (input.value.length > 7) {
       errorMsg.style.visibility = 'visible';
       input.parentElement.classList.add('errorBorder');
@@ -103,7 +101,6 @@ const Page = () => {
       dispatch(setWaittingVisible(true));
       errorMsg.style.visibility = 'hidden';
       const response = await updateMemo({ id: index, memo: input.value });
-      console.log(response);
       if (response) {
         const tmp = backlog.slice();
         const indexNumber = tmp.findIndex((element) => element.id === index);
