@@ -240,7 +240,7 @@ async function getEnCrydata() {
  * 通知 APP 同步 WebView 的 JwtToken
  * @param {*} jwtToken WebView 最新取得的 JwtToken
  */
-function syncJwtToken(jwtToken) {
+async function syncJwtToken(jwtToken) {
   if (jwtToken) {
     sessionStorage.setItem('jwtToken', jwtToken);
   } else {
@@ -249,7 +249,7 @@ function syncJwtToken(jwtToken) {
   }
 
   const data = { auth: jwtToken };
-  callAppJavaScript('setAuthdata', data, false);
+  await callAppJavaScript('setAuthdata', data, false);
 }
 
 /**

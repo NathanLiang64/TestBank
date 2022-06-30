@@ -69,7 +69,7 @@ const processResponse = async (response) => {
     // console.log(`\x1b[32m[New JWT] \x1b[92m${jwtToken}`);
     if (!jwtToken) console.log(`\x1b[31m*** WARNING *** ${response.config.url} 將 JWT Token 設為空值！`, response);
     else {
-      syncJwtToken(jwtToken); // BUG! 可能因為多執行緒而錯亂
+      await syncJwtToken(jwtToken); // BUG! 可能因為多執行緒而錯亂
       Cookies.set('jwtToken', jwtToken); // TODO: 為了相容 axiosConfig
     }
   }
@@ -77,7 +77,7 @@ const processResponse = async (response) => {
   if (code === '0000') {
     let resultData;
     // 處理 JWE Response 解密
-    if (response.config.url.startsWith('/smJwe/')) {
+    if (data.recipients) { // TODO 暫時用這種方式檢查 JWE
       const privateKey = sessionStorage.getItem('privateKey');
       resultData = JSON.parse(JWEUtil.decryptJWEMessage(privateKey, data));
       // console.log(resultData);
