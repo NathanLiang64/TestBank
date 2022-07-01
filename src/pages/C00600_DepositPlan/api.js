@@ -33,7 +33,7 @@ import mockTerms from './terms';
     }
  */
 export const getTransactionDetails = async (request) => {
-  const response = await callAPI('/api/deposit/v1/getTransaction', request);
+  const response = await callAPI('/api/deposit/v1/getTransactions', request);
   return response.data;
 };
 
