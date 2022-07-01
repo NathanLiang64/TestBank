@@ -8,7 +8,7 @@ import SwiperLayout from 'components/SwiperLayout';
 import Main from 'components/Layout';
 import CreditCard from 'components/CreditCard';
 
-import { TransactionIcon1, RadioUncheckedIcon } from 'assets/images/icons';
+import { CreditCardIcon5, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
 import { showDrawer } from 'utilities/MessageModal';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
@@ -76,10 +76,10 @@ const CreditCardPage = () => {
   const handleMoreClick = (card) => {
     const list = [
       {
-        fid: '/C007001', icon: <RadioUncheckedIcon />, title: '信用卡資訊', param: card,
+        fid: '/C007001', icon: <CreditCardIcon6 />, title: '信用卡資訊', param: card,
       },
-      { fid: '/withholding', icon: <RadioUncheckedIcon />, title: '自動扣繳' },
-      { fid: '/C007002', icon: <TransactionIcon1 />, title: '每月現金回饋' },
+      { fid: '/withholding', icon: <CreditCardIcon5 />, title: '自動扣繳' },
+      { fid: '/C007002', icon: <CircleIcon />, title: '每月現金回饋' },
     ];
     const options = (
       <ul>
