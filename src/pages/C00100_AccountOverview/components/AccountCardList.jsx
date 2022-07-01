@@ -65,15 +65,16 @@ const AccountCardList = ({ data }) => {
           };
           return (
             <button
+              key={uuid()}
               type="button"
               title={`前往${card.alias ?? '存錢計畫'}`}
-              ariaLabel={`前往${card.alias ?? '存錢計畫'}`}
+              aria-label={`前往${card.alias ?? '存錢計畫'}`}
               onClick={onClick}
             >
               <AccountCard
-                key={uuid()}
                 cardName={card.alias ?? '存錢計畫'}
                 percent={subTotalBalance > 0 ? Math.round((card.balance / subTotalBalance) * 100) : 0}
+                hasShadow
                 {...card}
               />
             </button>
@@ -130,14 +131,21 @@ const AccountCardList = ({ data }) => {
         }
 
         return (
-          <AccountCard
+          <button
             key={uuid()}
-            cardName={card.alias ?? accountOverviewCardVarient(card.type).name}
-            percent={totalBalance > 0 ? Math.round((card.balance / totalBalance) * 100) : 0}
-            annotation={annotation}
+            type="button"
+            title={`前往${card.alias ?? accountOverviewCardVarient(card.type).name}`}
+            aria-label={`前往${card.alias ?? accountOverviewCardVarient(card.type).name}`}
             onClick={onClick}
-            {...card}
-          />
+          >
+            <AccountCard
+              cardName={card.alias ?? accountOverviewCardVarient(card.type).name}
+              percent={totalBalance > 0 ? Math.round((card.balance / totalBalance) * 100) : 0}
+              annotation={annotation}
+              hasShadow
+              {...card}
+            />
+          </button>
         );
       })}
     </AccountCardListWrapper>
