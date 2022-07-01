@@ -44,4 +44,24 @@ const Template = (args) => (
   <AccountCard {...args} />
 );
 
-export const Primary = Template.bind({});
+export const Purple = Template.bind({});
+
+export const Yellow = Template.bind({});
+Yellow.args = {
+  color: 'yellow',
+};
+
+export const Blue = Template.bind({});
+Blue.args = {
+  color: 'blue',
+};
+
+export const Green = Template.bind({});
+Green.args = {
+  color: 'green',
+};
+
+export const LightPurple = Template.bind({});
+LightPurple.args = {
+  color: 'lightPurple',
+};

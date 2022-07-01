@@ -64,13 +64,19 @@ const AccountCardList = ({ data }) => {
             history.push('/C00600', { focusToAccountNo: card.accountNo });
           };
           return (
-            <AccountCard
-              key={uuid()}
-              cardName={card.alias ?? '存錢計畫'}
-              percent={subTotalBalance > 0 ? Math.round((card.balance / subTotalBalance) * 100) : 0}
+            <button
+              type="button"
+              title={`前往${card.alias ?? '存錢計畫'}`}
+              ariaLabel={`前往${card.alias ?? '存錢計畫'}`}
               onClick={onClick}
-              {...card}
-            />
+            >
+              <AccountCard
+                key={uuid()}
+                cardName={card.alias ?? '存錢計畫'}
+                percent={subTotalBalance > 0 ? Math.round((card.balance / subTotalBalance) * 100) : 0}
+                {...card}
+              />
+            </button>
           );
         }) }
       </div>
