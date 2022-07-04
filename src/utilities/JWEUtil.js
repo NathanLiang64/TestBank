@@ -57,8 +57,8 @@ class JWEUtil {
    */
   encryptJWEMessage(publicKeyString, message) {
     const publicKey = CipherUtil.getRSAPublicKeyFromPem(publicKeyString);
-    const contextKey = CipherUtil.generateKey(32); // 本文加密金鑰
-    const iv = CipherUtil.generateIV();
+    const contextKey = CipherUtil.generateKey(256); // [本文加密金鑰]加密演算法採 A128CBC-HS256，亂數前 128 Bits 為 HMAC Key，後 128 Bits 為 ENC Key。
+    const iv = CipherUtil.generateKey(128); // iv 的長度固定為 128its
     const encryptedKey = CipherUtil.encryptRSA(publicKey, forge.util.decode64(contextKey));
     const enc = CipherUtil.getEnc(contextKey);
     const ciphertext = CipherUtil.encryptAES(enc, iv, message);
