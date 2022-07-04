@@ -331,16 +331,6 @@ or
 
 <br>
 
-<br>
-
-## Git clone from FEIB AWS's repo
-
-```
-git clone https://Lexionlu-at-938308357453:YCY85cjEI7teOL9nA3bYJrXFQi8%2F%2BkXDXlFXe%2FViN6E%3D@git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/APP2_WebView
-```
-
-<br>
-
 ## Instruction on cherry-pick from Jerry branch
 
 Becuase commit 8d40326 includes jenkins_tool/node_modules.7z, which exceeds 100MB file size limit by GitHub. So, we cannot do a simple `merge`, else the *mistaken and mis-use* crazy large file will be merged into git history. Hence, cause us the issue when `push` to Github.
@@ -362,6 +352,6 @@ Lexionlu's GitHub repo is configured to deploy to dev and stage server automatic
 
 FEIB's repo is at:
 
-1. `git remote add origin https://git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/APP2-WebView`
-2. `git push origin Lexionlu`
+1. `git remote add feib [https://git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/APP2-WebView](https://Lexionlu-at-938308357453:YCY85cjEI7teOL9nA3bYJrXFQi8%2F%2BkXDXlFXe%2FViN6E%3D@git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/APP2_WebView)`
+2. `git push feib Lexionlu`
 
