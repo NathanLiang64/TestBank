@@ -352,6 +352,6 @@ Lexionlu's GitHub repo is configured to deploy to dev and stage server automatic
 
 FEIB's repo is at:
 
-1. `git remote add feib [https://git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/APP2-WebView](https://Lexionlu-at-938308357453:YCY85cjEI7teOL9nA3bYJrXFQi8%2F%2BkXDXlFXe%2FViN6E%3D@git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/APP2_WebView)`
+1. `git remote add feib https://Lexionlu-at-938308357453:YCY85cjEI7teOL9nA3bYJrXFQi8%2F%2BkXDXlFXe%2FViN6E%3D@git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/APP2_WebView`
 2. `git push feib Lexionlu`
 
