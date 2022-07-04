@@ -55,6 +55,7 @@ const Login = () => {
 
   useEffect(async () => {
     await HandShake();
+    await getInitData();
 
     dispatch(setShowSpinner(false));
   }, []);
@@ -79,7 +80,6 @@ const Login = () => {
     const isSuccess = await login(data);
     if (isSuccess) { // 登入成功
       // await personalDataPreload();
-      await getInitData();
       // await getHomeData();
       history.push('/');
     }
