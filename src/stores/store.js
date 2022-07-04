@@ -15,7 +15,7 @@ import CipherUtil from '../utilities/CipherUtil';
  *- 將redux資料暫存在storageSession
  *- 引入thunk達到異步存取redux
  */
-const modulus = CipherUtil.generateAES();
+const modulus = CipherUtil.generateKey(256);
 
 const encrypt = createTransform(
   (data, key) => {

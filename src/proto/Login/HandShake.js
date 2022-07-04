@@ -9,8 +9,8 @@ const handshake = async () => {
   sessionStorage.clear();
 
   const { privateKey, publicKey } = CipherUtil.generateRSA();
-  const aesKey = CipherUtil.generateAES();
-  const iv = CipherUtil.generateIV();
+  const aesKey = CipherUtil.generateKey(256); // 使用JWT模式時，Request/Response Payload 的加解密金鑰，採用 AES256。
+  const iv = CipherUtil.generateKey(128); // IV固定為 128bits
 
   sessionStorage.setItem('privateKey', privateKey);
   sessionStorage.setItem('publicKey', publicKey);

@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import CipherUtil from './CipherUtil';
 
 const assert = require('assert');
@@ -9,13 +10,9 @@ class JWTUtil {
    * @param {*} iv
    * @param {*} message
    */
-  // eslint-disable-next-line class-methods-use-this
   encryptJWTMessage(aesKey, iv, message) {
     const data = CipherUtil.encryptAES(aesKey, iv, message);
     const hmac = CipherUtil.encryptHMAC(aesKey, message);
-    // const enc = CipherUtil.getEnc(aesKey);
-    // const data = CipherUtil.encryptAES(enc, iv, message);
-    // const hmac = CipherUtil.encryptHMAC(enc, message);
 
     return {
       data,
@@ -30,13 +27,17 @@ class JWTUtil {
    * @param {*} message
    * @param {*} mac
    */
-  // eslint-disable-next-line class-methods-use-this
   decryptJWTMessage(aesKey, iv, message, mac) {
-    const request = CipherUtil.decryptAES(aesKey, iv, message);
-    const hmac = CipherUtil.encryptHMAC(aesKey, request);
-    assert.strictEqual(hmac, mac);
-    const json = JSON.parse(request);
-    return json;
+    try {
+      const request = CipherUtil.decryptAES(aesKey, iv, message);
+      const hmac = CipherUtil.encryptHMAC(aesKey, request);
+      assert.strictEqual(hmac, mac);
+      const json = JSON.parse(request);
+      return json;
+    } catch (ex) {
+      console.log(ex);
+      return null;
+    }
   }
 }
 export default new JWTUtil();
