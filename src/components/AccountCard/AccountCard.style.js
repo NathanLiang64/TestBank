@@ -1,17 +1,33 @@
 import styled from 'styled-components';
 
-import CardBackground from 'assets/images/debitCardBackground.png';
+import purple from 'assets/images/cardWatermarks/purple.png';
+import yellow from 'assets/images/cardWatermarks/yellow.png';
+import blue from 'assets/images/cardWatermarks/blue.png';
+import green from 'assets/images/cardWatermarks/green.png';
+import lightPurple from 'assets/images/cardWatermarks/lightPurple.png';
 
-const AccountCardWrapper = styled.button`
+const getWatermark = (color) => {
+  switch (color) {
+    case 'blue': return blue;
+    case 'yellow': return yellow;
+    case 'green': return green;
+    case 'lightPurple': return lightPurple;
+    default:
+    case 'purple': return purple;
+  }
+};
+
+const AccountCardWrapper = styled.div`
   display: flex;
   justify-content: flex-begen;
   flex-direction: column;
   gap: 0.7rem;
   background-color: ${({ theme, $cardColor }) => theme.colors.card[$cardColor]};
-  background-image: url(${CardBackground});
-  background-position: right center;
+  background-image: url(${({ $cardColor }) => getWatermark($cardColor)});
+  background-position: right top;
+  background-size: 231px 167px;
   background-repeat: no-repeat;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  ${({ $hasShadow }) => $hasShadow && 'box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);'}
   border-radius: 8px;
   width: 100%;
   min-height: 117px;

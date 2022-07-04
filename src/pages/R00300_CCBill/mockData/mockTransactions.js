@@ -11,7 +11,6 @@ export default function mockTransactions(param) {
 
   return list.map((l) => ({
     id: 1,
-    ccNo: '1112223333444455',
     index: 1,
     bizDate: l.toString(),
     txnDate: l.toString(),
@@ -21,7 +20,7 @@ export default function mockTransactions(param) {
     targetMbrId: null,
     targetNickName: null,
     targetBank: '000',
-    targetAcct: null,
+    targetAcct: '1112223333444455',
     amount: Math.random() * 29_990 + 10,
     balance: 386000,
     cdType: 'cc',

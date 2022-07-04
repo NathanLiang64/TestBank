@@ -45,7 +45,7 @@ export const getBasicCCInfo = async (param) => {
      "targetMbrId": null,
      "targetNickName": null,
      "targetBank": "000",
-     "targetAcct": null,
+     "targetAcct": TODO 或許這個是卡號
      "amount": 36000,
      "balance": 386000,
      "cdType": "d",
