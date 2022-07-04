@@ -51,7 +51,7 @@ const CardLessATM1 = () => {
 
   // 跳轉結果頁
   const toResultPage = (data) => {
-    history.push('/cardLessATM2', { data });
+    history.push('/D003002', { data });
   };
 
   // 格式化帳戶餘額

@@ -68,7 +68,7 @@ const CardLessATM = () => {
   // 跳轉到無卡提款申請頁
   const toWithdrawPage = () => {
     switchLoading(false);
-    history.push('/cardLessATM1');
+    history.push('/D003001');
   };
 
   // 設定 Dialog 內容
