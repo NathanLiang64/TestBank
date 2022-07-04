@@ -74,19 +74,20 @@ const processResponse = async (response) => {
     }
   }
 
+  const encData = data ?? response.data.encData; // 為相容 SM
   if (code === '0000') {
     let resultData;
     // 處理 JWE Response 解密
-    if (data.recipients) { // TODO 暫時用這種方式檢查 JWE
+    if (encData.recipients) { // TODO 暫時用這種方式檢查 JWE
+      console.log('*** Start JWE Decode ***');
       const privateKey = sessionStorage.getItem('privateKey');
-      resultData = JSON.parse(JWEUtil.decryptJWEMessage(privateKey, data));
-      // console.log(resultData);
+      resultData = JSON.parse(JWEUtil.decryptJWEMessage(privateKey, encData));
     }
     // 處理 JWT Response 解密；若Request時沒有使用jwtToken，或例外發生時，傳回的資料都不會加密。
     else if (rqJwtToken) {
+      // console.log('*** Start JWT Decode ***');
       const aeskey = sessionStorage.getItem('aesKey');
       const ivkey = sessionStorage.getItem('iv');
-      const encData = (data || response.data.encData); // 為相容 SM
       // console.log(aeskey, ivkey, encData);
       resultData = JWTUtil.decryptJWTMessage(aeskey, ivkey, encData, mac);
     }
@@ -167,9 +168,8 @@ instance.interceptors.response.use(
  * @returns
  */
 const userRequest = async (method, url, data = {}, config) => {
-  console.log(instance.defaults.baseURL + url);
   instance.defaults.baseURL = (url.startsWith('/sm')) ? process.env.REACT_APP_SM_CTRL_URL : process.env.REACT_APP_URL;
-  console.log(instance.defaults.baseURL + url);
+  // console.log(instance.defaults.baseURL + url);
 
   method = method.toLowerCase();
   let result = null;

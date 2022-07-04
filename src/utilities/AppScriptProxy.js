@@ -48,7 +48,7 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
     // else throw new Error('使用 Web 版未支援的 APP JavaScript 模擬方法(' + appJsName + ')');
 
     // 若不需要從 APP 取得傳回值，就直接結束。
-    if (!needCallback) resolve();
+    if (!needCallback) resolve(null);
   });
 
   // result 是由 AppJavaScriptCallback 接收，並嘗試用 JSON Parse 轉為物件，轉不成功則以原資料內容傳回。
