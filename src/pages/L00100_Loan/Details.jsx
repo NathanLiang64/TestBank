@@ -55,7 +55,7 @@ const Page = () => {
           <AccountCard type="L">
             <div>{details?.alias}</div>
             <div>&nbsp;</div>
-            <div className="justify-right items-end gap-4">
+            <div className="justify-end items-end gap-4">
               <div>貸款餘額</div>
               <div className="balance">
                 {`${currencySymbolGenerator(details?.currency ?? 'NTD', details?.loanAmount ?? 0)}`}

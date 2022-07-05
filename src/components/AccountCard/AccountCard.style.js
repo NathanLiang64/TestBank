@@ -36,7 +36,7 @@ const AccountCardWrapper = styled.div`
   font-size: 1.6rem;
   color: ${({ theme }) => theme.colors.text.lightGray};
 
-  .justify-left {
+  .justify-start {
     display: flex;
     justify-content: flex-start;
     width: 100%;
@@ -48,14 +48,26 @@ const AccountCardWrapper = styled.div`
     width: 100%;
   }
 
-  .justify-right {
+  .justify-end {
     display: flex;
     justify-content: flex-end;
     width: 100%;
   }
 
+  .items-start {
+    align-items: flex-start;
+  }
+
+  .items-center {
+    align-items: center;
+  }
+
   .items-end {
     align-items: flex-end;
+  }
+
+  .items-baseline {
+    align-items: baseline;
   }
 
   .balance {
@@ -66,6 +78,24 @@ const AccountCardWrapper = styled.div`
 
   .gap-4 {
     gap: 1rem;
+  }
+
+  .gap-6 {
+    gap: 1.6rem;
+  }
+
+  .mt-4 {
+    margin-top: 1rem;
+  }
+
+  .text-16 {
+    font-size: 1.6rem;
+  }
+
+  .divider > *:not(:first-child) {
+    border-inline-start: 1px solid ${({ theme }) => theme.colors.border.light};
+    padding-inline-start: 0.8rem;
+    margin-inline-start: -0.8rem;
   }
 `;
 

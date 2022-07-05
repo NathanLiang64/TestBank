@@ -5,7 +5,7 @@ const genTransactions = (amount = 5) => [...Array(amount).keys()].map((i) => {
   mockMonth.setMonth(new Date().getMonth() - i);
   return {
     id: uuid(),
-    txnDate: `${mockMonth.getFullYear()}${mockMonth.getMonth() < 9 ? '0' : ''}${mockMonth.getMonth() + 1}`,
+    txnDate: `${mockMonth.getFullYear()}${mockMonth.getMonth() < 9 ? '0' : ''}${mockMonth.getMonth() + 1}04`,
     amount: Math.round(Math.random() * 50_000) + 1_000,
     balance: Math.round(Math.random() * 50_000) + 50_000,
     currency: 'NTD',
