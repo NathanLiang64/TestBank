@@ -1,3 +1,5 @@
+/* eslint react/no-array-index-key: 0 */
+
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
@@ -16,6 +18,8 @@ import {
 import { getLoanRewards } from './api';
 import PageWrapper from './Rewards.style';
 
+const uid = uuid();
+
 /**
  * L00100 貸款 可能回饋頁
  */
@@ -31,12 +35,12 @@ const Page = () => {
     dispatch(setWaittingVisible(false));
   }, []);
 
-  const renderTransactions = (transactions) => transactions.map((t) => (
+  const renderTransactions = (transactions) => transactions.map((t, i) => (
     <InformationList
-      key={uuid()}
+      key={`${uid}-${i}`}
       title={dateFormatter(stringToDate(t.txnDate))}
-      content={`利息金額 ${currencySymbolGenerator(t.currency ?? 'TWD', t.amount)}`}
-      remark={`${t.rate}%利息 ${currencySymbolGenerator(t.currency ?? 'TWD', Math.round(t.amount * (t.rate / 100)))}`}
+      content={t.isSuccess ? `利息金額 ${currencySymbolGenerator(t.currency ?? 'TWD', t.amount)}` : '當日扣款失敗'}
+      remark={t.isSuccess ? `${t.rate}%利息 ${currencySymbolGenerator(t.currency ?? 'TWD', Math.round(t.amount * (t.rate / 100)))}` : '挑戰失敗'}
     />
   ));
 
