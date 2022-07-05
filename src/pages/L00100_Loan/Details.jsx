@@ -1,7 +1,7 @@
 /* eslint react/no-array-index-key: 0 */
 
 import { useState, useEffect } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
 import uuid from 'react-uuid';
 
@@ -24,12 +24,15 @@ const uid = uuid();
  */
 const Page = () => {
   const history = useHistory();
+  const location = useLocation();
   const dispatch = useDispatch();
   const [details, setDetails] = useState();
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    const response = await getLoanDetails({});
+    let accountNo;
+    if (location.state && ('accountNo' in location.state)) accountNo = location.state.accountNo;
+    const response = await getLoanDetails({ accountNo });
     setDetails(response);
     dispatch(setWaittingVisible(false));
   }, []);

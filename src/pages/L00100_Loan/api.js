@@ -88,3 +88,47 @@ export const getLoanDetails = async (param) => {
   const response = await new Promise((resolve) => resolve({ data: mockLoanDetails(param) }));
   return response.data;
 };
+
+/**
+ * 下載合約
+   @param {
+      accountNo: 貸款號
+      fileType: 1 = pdf 或 2 = excel
+   }
+   @returns {
+     url: 檔案URL。
+   }
+ */
+export const getContract = async (param) => {
+  /* TODO
+  if (fileType === 1) {
+    await downloadPDF('/api/deposit/v1/getDepositBook', request, `${filename}.pdf`);
+  } else if (fileType === 2) {
+    await downloadCSV('/api/deposit/v1/getDepositBook', request, `${filename}.csv`);
+  }
+  */
+  const { accountNo, format } = param;
+  alert(`待串接API，下載合約貸款號：${accountNo}`, format === 1 ? '下載PDF' : '下載EXCEL');
+};
+
+/**
+ * 下載清償證明
+   @param {
+      accountNo: 貸款號
+      fileType: 1 = pdf 或 2 = excel
+   }
+   @returns {
+     url: 檔案URL。
+   }
+ */
+export const getStatment = async (param) => {
+  /* TODO
+  if (fileType === 1) {
+    await downloadPDF('/api/deposit/v1/getDepositBook', request, `${filename}.pdf`);
+  } else if (fileType === 2) {
+    await downloadCSV('/api/deposit/v1/getDepositBook', request, `${filename}.csv`);
+  }
+  */
+  const { accountNo, format } = param;
+  alert(`待串接API，下載證明貸款號：${accountNo}`, format === 1 ? '下載PDF' : '下載EXCEL');
+};

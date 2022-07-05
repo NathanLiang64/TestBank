@@ -76,21 +76,12 @@ const AccountCardWrapper = styled.div`
     color: ${({ theme }) => theme.colors.text.darkGray};
   }
 
-  .gap-4 {
-    gap: 1rem;
-  }
-
-  .gap-6 {
-    gap: 1.6rem;
-  }
-
-  .mt-4 {
-    margin-top: 1rem;
-  }
-
-  .text-16 {
-    font-size: 1.6rem;
-  }
+  .gap-4 { gap: 1rem; }
+  .gap-6 { gap: 1.6rem; }
+  .mt-4 { margin-top: 1rem; }
+  .-mt-5 { margin-top: -12px; }
+  .-mr-5 { margin-right: -12px; }
+  .text-16 { font-size: 1.6rem; }
 
   .divider > *:not(:first-child) {
     border-inline-start: 1px solid ${({ theme }) => theme.colors.border.light};
