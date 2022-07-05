@@ -36,9 +36,21 @@ const AccountCardWrapper = styled.div`
   font-size: 1.6rem;
   color: ${({ theme }) => theme.colors.text.lightGray};
 
+  .justify-left {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
   .justify-between {
     display: flex;
     justify-content: space-between;
+    width: 100%;
+  }
+
+  .justify-right {
+    display: flex;
+    justify-content: flex-end;
     width: 100%;
   }
 
@@ -50,6 +62,10 @@ const AccountCardWrapper = styled.div`
     text-align: right;
     font-size: 3rem;
     color: ${({ theme }) => theme.colors.text.darkGray};
+  }
+
+  .gap-4 {
+    gap: 1rem;
   }
 `;
 
