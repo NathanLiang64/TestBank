@@ -1,8 +1,8 @@
 // import { callAPI } from 'utilities/axios';
 
-import mockLoanSummary from 'mockData/mockLoanSummary';
-import mockLoanRewards from 'mockData/mockRewards';
-import mockLoanDetails from 'mockData/mockLoanDetails';
+import mockLoanSummary from './mockData/mockLoanSummary';
+import mockLoanRewards from './mockData/mockRewards';
+import mockLoanDetails from './mockData/mockLoanDetails';
 
 /**
  * 貸款首頁 - 取得貸款資訊和還款紀錄

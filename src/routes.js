@@ -44,6 +44,9 @@ const E001001 = lazy(() => import('pages/E00100_Exchange/exchange_1'));
 const E001002 = lazy(() => import('pages/E00100_Exchange/exchange_2'));
 const E00200 = lazy(() => import('pages/E00200_ExchangeRate'));
 const E00300 = lazy(() => import('pages/E00300_FinancialDepartments'));
+const L00100 = lazy(() => import('pages/L00100_Loan/L00100'));
+const L00100Detail = lazy(() => import('pages/L00100_Loan/Details'));
+const L00100Reward = lazy(() => import('pages/L00100_Loan/Rewards'));
 const M00100 = lazy(() => import('pages/M00100_Community/M00100'));
 const M00200 = lazy(() => import('pages/M00200_FriendSearch/M00200'));
 const R00100 = lazy(() => import('pages/R00100_CCTransaction/R00100'));
@@ -134,6 +137,9 @@ const routes = [
   { path: '/E001002', exact: false, component: E001002 },
   { path: '/E00200', exact: false, component: E00200 },
   { path: '/E00300', exact: false, component: E00300 },
+  { path: '/L00100', exact: false, component: L00100 },
+  { path: '/L001001', exact: false, component: L00100Reward },
+  { path: '/L001002', exact: false, component: L00100Detail },
   { path: '/M00100', exact: false, component: M00100 },
   { path: '/M00200', exact: false, component: M00200 },
   { path: '/R00100', exact: false, component: R00100 },
