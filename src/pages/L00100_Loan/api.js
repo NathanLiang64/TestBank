@@ -1,3 +1,9 @@
+// import { callAPI } from 'utilities/axios';
+
+import mockLoanSummary from 'mockData/mockLoanSummary';
+import mockLoanRewards from 'mockData/mockRewards';
+import mockLoanDetails from 'mockData/mockLoanDetails';
+
 /**
  * 貸款首頁 - 取得貸款資訊和還款紀錄
    @returns [
@@ -7,7 +13,7 @@
      balance: 貸款餘額
      currency: 幣別
      bonusInfo: {
-       billDate: 應繳款日
+       cycleTiming: 每期還款日，回傳數字1~28
        interest: 應繳本息
        rewards: 可能回饋，未參加回饋挑戰可忽略
        isJoinedRewardProgram: 是否參加回饋挑戰
@@ -23,6 +29,11 @@
        }, ...],
     }, ...]
  */
+export const getLoanSummary = async () => {
+  // const response = await callAPI('/api/');
+  const response = await new Promise((resolve) => resolve({ data: mockLoanSummary }));
+  return response.data;
+};
 
 /**
  * 可能回饋 - 取得回饋紀錄
@@ -42,8 +53,13 @@
          rate: 利息（不含%），挑戰失敗可忽略
          currency: 幣別，挑戰失敗可忽略
        }, ...]
-   }, ...]
+   }
  */
+export const getLoanRewards = async (param) => {
+  // const response = await callAPI('/api/');
+  const response = await new Promise((resolve) => resolve({ data: mockLoanRewards(param) }));
+  return response.data;
+};
 
 /**
  * 貸款資訊 - 取得貸款資訊
@@ -67,3 +83,8 @@
      currency: 幣別
    },
  */
+export const getLoanDetails = async (param) => {
+  // const response = await callAPI('/api/');
+  const response = await new Promise((resolve) => resolve({ data: mockLoanDetails(param) }));
+  return response.data;
+};
