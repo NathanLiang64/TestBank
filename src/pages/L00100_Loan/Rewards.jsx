@@ -1,12 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
+import uuid from 'react-uuid';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
+import Badge from 'components/Badge';
+import InformationList from 'components/InformationList';
+import EmptyData from 'components/EmptyData';
+import {
+  dateFormatter, stringToDate, currencySymbolGenerator,
+} from 'utilities/Generator';
 
 import { getLoanRewards } from './api';
+import PageWrapper from './Rewards.style';
 
 /**
  * L00100 貸款 可能回饋頁
@@ -23,10 +31,31 @@ const Page = () => {
     dispatch(setWaittingVisible(false));
   }, []);
 
+  const renderTransactions = (transactions) => transactions.map((t) => (
+    <InformationList
+      key={uuid()}
+      title={dateFormatter(stringToDate(t.txnDate))}
+      content={`利息金額 ${currencySymbolGenerator(t.currency ?? 'TWD', t.amount)}`}
+      remark={`${t.rate}%利息 ${currencySymbolGenerator(t.currency ?? 'TWD', Math.round(t.amount * (t.rate / 100)))}`}
+    />
+  ));
+
   return (
     <Layout title="可能回饋" goBackFunc={() => history.goBack()}>
-      <Main>
-        { rewards && rewards?.accountNo }
+      <Main small>
+        <PageWrapper>
+          <Badge
+            label={rewards?.isJoinedRewardProgram ? '可能回饋' : '您尚未參加挑戰'}
+            value={rewards?.isJoinedRewardProgram ? currencySymbolGenerator(rewards?.currency ?? 'NTD', rewards?.rewards ?? 0) : '-'}
+          />
+          { rewards?.transactions?.length > 0 ? (
+            renderTransactions(rewards.transactions)
+          ) : (
+            <div style={{ height: '20rem', marginTop: '6rem' }}>
+              <EmptyData />
+            </div>
+          ) }
+        </PageWrapper>
       </Main>
     </Layout>
   );

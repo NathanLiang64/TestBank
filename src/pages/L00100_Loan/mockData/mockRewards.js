@@ -3,7 +3,7 @@ const genTransactions = (amount = 6) => [...Array(amount).keys()].map((i) => {
   mockMonth.setMonth(new Date().getMonth() - i);
   return {
     isSuccess: Math.random() < 0.2,
-    txnDate: `${mockMonth.getFullYear()}${mockMonth.getMonth() < 9 ? '0' : ''}${mockMonth.getMonth() + 1}`,
+    txnDate: `${mockMonth.getFullYear()}${mockMonth.getMonth() < 9 ? '0' : ''}${mockMonth.getMonth() + 1}01`,
     amount: Math.round(Math.random() * 50_000) + 1_000,
     rate: 2.6,
     currency: 'NTD',
