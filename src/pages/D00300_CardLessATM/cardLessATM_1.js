@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { cardLessATMApi } from 'apis';
-import { closeFunc, switchLoading } from 'utilities/BankeePlus';
+import { closeFunc, switchLoading } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import {

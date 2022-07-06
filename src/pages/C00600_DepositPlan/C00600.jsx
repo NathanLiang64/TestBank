@@ -7,12 +7,11 @@ import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
 import SwiperLayout from 'components/SwiperLayout';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { closeFunc } from 'utilities/BankeePlus';
 import { showAnimationModal, showDrawer, showError } from 'utilities/MessageModal';
 import {
   AccountIcon11, AccountIcon12, CircleIcon, TransactionIcon1,
 } from 'assets/images/icons';
-import { transactionAuth } from 'utilities/AppScriptProxy';
+import { transactionAuth, closeFunc } from 'utilities/AppScriptProxy';
 
 import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
 import EmptySlide from './components/EmptySlide';

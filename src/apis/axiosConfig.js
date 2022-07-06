@@ -2,8 +2,8 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import JWTUtil from '../utilities/JWTUtil';
 import {
-  setAuthdata, goHome,
-} from '../utilities/BankeePlus';
+  goHome, syncJwtToken,
+} from '../utilities/AppScriptProxy';
 // Request failed with status code
 const errorHandle = (status, message) => {
   switch (status) {
@@ -83,7 +83,7 @@ userAxios().interceptors.response.use(
       if (jwtToken) {
         sessionStorage.setItem('jwtToken', jwtToken);
         Cookies.set('jwtToken', jwtToken);
-        setAuthdata(jwtToken);
+        await syncJwtToken(jwtToken);
       }
       if (response.config.url === '/auth/login') {
         return response.data;

@@ -9,7 +9,7 @@ import { numberToChinese, currencySymbolGenerator } from 'utilities/Generator';
 import { transferAmountValidation } from 'utilities/validation';
 import { customPopup } from 'utilities/MessageModal';
 import { getAccountsList, getExchangePropertyList, getIntoAccount } from 'pages/D00700_ForeignCurrencyTransfer/api';
-import { closeFunc } from 'utilities/BankeePlus';
+import { closeFunc } from 'utilities/AppScriptProxy';
 /* Elements */
 import Accordion from 'components/Accordion';
 import DebitCard from 'components/DebitCard';

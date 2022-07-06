@@ -1,4 +1,4 @@
-import { closeFunc } from 'utilities/BankeePlus';
+import { closeFunc } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
