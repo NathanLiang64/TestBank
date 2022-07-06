@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 import Themes from 'themes/theme';
-import { showDrawer } from 'utilities/MessageModal';
+import { setDrawer, setDrawerVisible } from 'stores/reducers/ModalReducer';
 import FEIBRoundButton from 'components/elements/FEIBRoundButton';
 import { AccountIcon10, EditIcon } from 'assets/images/icons';
 
@@ -21,6 +22,7 @@ const HeroWithEdit = ({
   const [imageSrc, setImageSrc] = useState();
   const [newImageId, setNewImageId] = useState();
   const [isDirty, setIsDirty] = useState(false);
+  const dispatch = useDispatch();
 
   const imgSrc = () => {
     switch (newImageId) {
@@ -96,7 +98,8 @@ const HeroWithEdit = ({
         ))}
       </ul>
     );
-    showDrawer('', options);
+    dispatch(setDrawer({ title: '', content: options, shouldAutoClose: true }));
+    dispatch(setDrawerVisible(true));
   };
 
   return (
