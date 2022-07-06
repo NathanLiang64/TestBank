@@ -34,6 +34,9 @@ const processRequest = async (request) => {
     if (request.url.startsWith('/smJwe/')) { // TODO request.url.startsWith('//auth/')
       const serverPKey = sessionStorage.getItem('serverPKey');
       request.data = JWEUtil.encryptJWEMessage(serverPKey, payload);
+    } else {
+      const aes = await getAesKey();
+      request.data = JWTUtil.encryptJWTMessage(aes.aesKey, aes.iv, payload);
     }
 
     request.url = request.url.replace('/smApi/', '/api/');
