@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable consistent-return */
 /* eslint-disable class-methods-use-this */
 import CipherUtil from './CipherUtil';
 
@@ -9,13 +7,8 @@ class JWEUtil {
   /**
    * Get protected
    */
-  // eslint-disable-next-line class-methods-use-this
   getProtected() {
-    // eslint-disable-next-line no-underscore-dangle
-    const _protected = {
-      enc: 'A128CBC-HS256',
-    };
-    return forge.util.encode64(JSON.stringify(_protected));
+    return forge.util.encode64(JSON.stringify({ enc: 'A128CBC-HS256' }));
   }
 
   /**
@@ -23,7 +16,6 @@ class JWEUtil {
    * @param {*} aesKey
    * @param {*} publicKey
    */
-  // eslint-disable-next-line class-methods-use-this
   getEncryptedKey(aesKey, publicKey) {
     return CipherUtil.encryptRSA(publicKey, aesKey);
   }
@@ -34,7 +26,6 @@ class JWEUtil {
    * @param {*} iv
    * @param {*} message
    */
-  // eslint-disable-next-line class-methods-use-this
   getCipherText(enc, iv, message) {
     return CipherUtil.encryptAES(enc, iv, message);
   }
@@ -43,7 +34,6 @@ class JWEUtil {
    * Get AAD
    * @param {*} _protected
    */
-  // eslint-disable-next-line class-methods-use-this
   getAad(_protected) {
     return Buffer.byteLength(_protected, 'ascii');
   }
@@ -53,7 +43,6 @@ class JWEUtil {
    * @param {*} aesKey
    * @param {*} cipherText
    */
-  // eslint-disable-next-line class-methods-use-this
   getTag(aesKey, cipherText) {
     const hmac = CipherUtil.getHMAC(aesKey);
     const tag = CipherUtil.encryptHMAC(hmac, cipherText);
@@ -67,50 +56,29 @@ class JWEUtil {
    * @param {*} message
    */
   encryptJWEMessage(publicKeyString, message) {
-    try {
-      const publicKey = CipherUtil.getRSAPublicKeyFromPem(publicKeyString);
-      const contextKey = CipherUtil.generateKey(32); // 本文加密金鑰
-      const iv = CipherUtil.generateIV();
-      const encryptedKey = CipherUtil.encryptRSA(publicKey, forge.util.decode64(contextKey));
-      const enc = CipherUtil.getEnc(contextKey);
-      const cipherText = CipherUtil.encryptAES(enc, iv, message);
-      const tag = this.getTag(contextKey, message);
+    const publicKey = CipherUtil.getRSAPublicKeyFromPem(publicKeyString);
+    const contextKey = CipherUtil.generateKey(256); // [本文加密金鑰]加密演算法採 A128CBC-HS256，亂數前 128 Bits 為 HMAC Key，後 128 Bits 為 ENC Key。
+    const iv = CipherUtil.generateKey(128); // iv 的長度固定為 128its
+    const encryptedKey = CipherUtil.encryptRSA(publicKey, forge.util.decode64(contextKey));
+    const enc = CipherUtil.getEnc(contextKey);
+    const ciphertext = CipherUtil.encryptAES(enc, iv, message);
+    const tag = this.getTag(contextKey, message);
 
-      // return {
-      //   tag,
-      //   ciphertext: cipherText,
-      //   protected: 'eyJlbmMiOiJBMTI4Q0JDLUhTMjU2In0=',
-      //   iv,
-      //   recipients: [
-      //     {
-      //       header: {
-      //         alg: 'RSA-OAEP-256',
-      //       },
-      //       encrypted_key: encryptedKey,
-      //     },
-      //   ],
-      //   unprotected: null,
-      // };
-      return {
-        _tag: tag,
-        _ciphertext: cipherText,
-        _protected: 'eyJlbmMiOiJBMTI4Q0JDLUhTMjU2In0=',
-        _iv: iv,
-        _recipients: [
-          {
-            _header: {
-              alg: 'RSA-OAEP-256',
-            },
-            _encrypted_key: encryptedKey,
+    return {
+      tag,
+      ciphertext,
+      protected: 'eyJlbmMiOiJBMTI4Q0JDLUhTMjU2In0=',
+      iv,
+      recipients: [
+        {
+          header: {
+            alg: 'RSA-OAEP-256',
           },
-        ],
-        _unprotected: null,
-      };
-    } catch (error) {
-      // Exception
-      // eslint-disable-next-line no-console
-      console.log(error);
-    }
+          encrypted_key: encryptedKey,
+        },
+      ],
+      unprotected: null,
+    };
   }
 
   /**
@@ -118,25 +86,16 @@ class JWEUtil {
    * @param {*} privateKeyString
    * @param {*} message
    */
-  // eslint-disable-next-line consistent-return
-  // eslint-disable-next-line class-methods-use-this
-  // eslint-disable-next-line consistent-return
   decryptJWEMessage(privateKeyString, message) {
-    try {
-      const privateKey = CipherUtil.getRSAPrivateKeyFromPem(privateKeyString);
-      const cipherText = message._ciphertext;
-      const iv = message._iv;
-      const encryptedKey = message._recipients[0]._encrypted_key;
-      const aesKey = CipherUtil.decryptRSA(privateKey, encryptedKey);
-      const enc = CipherUtil.getEnc(forge.util.encode64(aesKey));
-      const request = CipherUtil.decryptAES(enc, iv, cipherText);
+    const privateKey = CipherUtil.getRSAPrivateKeyFromPem(privateKeyString);
+    const {ciphertext} = message;
+    const {iv} = message;
+    const encryptedKey = message.recipients[0].encrypted_key;
+    const aesKey = CipherUtil.decryptRSA(privateKey, encryptedKey);
+    const enc = CipherUtil.getEnc(forge.util.encode64(aesKey));
+    const request = CipherUtil.decryptAES(enc, iv, ciphertext);
 
-      return request; // String
-    } catch (error) {
-      // Exception
-      // eslint-disable-next-line no-console
-      console.log(error);
-    }
+    return request; // String
   }
 }
 export default new JWEUtil();

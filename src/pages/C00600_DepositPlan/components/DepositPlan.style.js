@@ -18,6 +18,10 @@ const DepositPlanWrapper = styled.div`
     font-size: 1.4rem;
   }
 
+  .object-contain {
+    object-fit: contain;
+  }
+
   em {
     color: ${({ theme }) => theme.colors.primary.dark};
   }

@@ -58,9 +58,7 @@ const Transactions = ({ bills, isExpanded, onExpandClick }) => {
           </FEIBTabContext>
           { displayList?.length > 0 ? (
             <>
-              <div className="px-16">
-                { isLoading ? <Loading space="both" isCentered /> : displayList }
-              </div>
+              { isLoading ? <Loading space="both" isCentered /> : displayList }
 
               { !isExpanded && (
               <div className="toolbar">

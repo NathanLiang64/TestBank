@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useGetEnCrydata } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { goHome } from 'utilities/BankeePlus';
-import { pwdModifyApi } from 'apis';
+import { goHome } from 'utilities/AppScriptProxy';
+// import { pwdModifyApi } from 'apis';
+import { changePwd } from 'pages/A00700_RegularPwdModify/api';
 
 /* Elements */
 import { FEIBButton } from 'components/elements';
@@ -42,19 +42,15 @@ const RegularPwdModify = () => {
   const [showWarningDialog, setShowWarningDialog] = useState(false);
 
   // 設定結果彈窗
-  const setResultDialog = (response) => {
-    const result = 'custName' in response;
-    let errorCode = '';
-    let errorDesc = '';
-    if (result) {
+  const setResultDialog = ({ code, message }) => {
+    const isSuccess = code === '0000';
+    if (isSuccess) {
       dispatch(setCloseCallBack(() => goHome()));
     } else {
-      errorCode = response.code;
-      errorDesc = response.message;
       dispatch(setCloseCallBack(() => {}));
     }
     dispatch(setResultContent({
-      isSuccess: result,
+      isSuccess,
       successTitle: '設定成功',
       successDesc: (
         <>
@@ -63,8 +59,8 @@ const RegularPwdModify = () => {
         </>
       ),
       errorTitle: '設定失敗',
-      errorCode,
-      errorDesc,
+      errorCode: code,
+      errorDesc: message,
     }));
     dispatch(setIsOpen(true));
   };
@@ -76,7 +72,7 @@ const RegularPwdModify = () => {
       newPassword: await e2ee(getValues('newPassword')),
       newPasswordCheck: await e2ee(getValues('newPasswordCheck')),
     };
-    const changePwdResponse = await pwdModifyApi.changePwd(param);
+    const changePwdResponse = await changePwd(param);
     setResultDialog(changePwdResponse);
   };
 
@@ -129,8 +125,6 @@ const RegularPwdModify = () => {
       )}
     />
   );
-
-  useGetEnCrydata();
 
   useEffect(() => dispatch(setIsOpen(false)), []);
 

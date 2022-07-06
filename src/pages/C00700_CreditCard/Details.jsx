@@ -11,11 +11,12 @@ import Layout from 'components/Layout/Layout';
 import InformationList from 'components/InformationList';
 import Accordion from 'components/Accordion';
 import Loading from 'components/Loading';
+import CreditCard from 'components/CreditCard';
+
 import { currencySymbolGenerator, dateFormatter, stringToDate } from 'utilities/Generator';
 
 import { getCreditCardDetails, getCreditCardTerms } from './api';
 import PageWrapper from './Details.style';
-import CreditCard from './components/CreditCard';
 
 /**
  * C007001 信用卡 資訊
@@ -32,7 +33,6 @@ const Page = () => {
     let accountNo;
     if (location.state && ('accountNo' in location.state)) accountNo = location.state.accountNo;
     const response = await getCreditCardDetails({ accountNo });
-
     setDetails(response);
     dispatch(setWaittingVisible(false));
   }, []);

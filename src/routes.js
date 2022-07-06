@@ -35,23 +35,33 @@ const D00300 = lazy(() => import('pages/D00300_CardLessATM'));
 const D003001 = lazy(() => import('pages/D00300_CardLessATM/cardLessATM_1'));
 const D003002 = lazy(() => import('pages/D00300_CardLessATM/cardLessATM_2'));
 const D00400 = lazy(() => import('pages/D00400_CardLessWithDrawChgPwd'));
+const D00700 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer'));
+const D00800 = lazy(() => import('pages/D00800_ReserveTransferSearch'));
+const D008001 = lazy(() => import('pages/D00800_ReserveTransferSearch/reserveTransferSearch_1'));
+const D008002 = lazy(() => import('pages/D00800_ReserveTransferSearch/reserveTransferSearch_2'));
 const E00100 = lazy(() => import('pages/E00100_Exchange'));
 const E001001 = lazy(() => import('pages/E00100_Exchange/exchange_1'));
 const E001002 = lazy(() => import('pages/E00100_Exchange/exchange_2'));
 const E00200 = lazy(() => import('pages/E00200_ExchangeRate'));
 const E00300 = lazy(() => import('pages/E00300_FinancialDepartments'));
+const L00100 = lazy(() => import('pages/L00100_Loan/L00100'));
+const L00100Detail = lazy(() => import('pages/L00100_Loan/Details'));
+const L00100Reward = lazy(() => import('pages/L00100_Loan/Rewards'));
 const M00100 = lazy(() => import('pages/M00100_Community/M00100'));
 const M00200 = lazy(() => import('pages/M00200_FriendSearch/M00200'));
 const R00100 = lazy(() => import('pages/R00100_CCTransaction/R00100'));
+const R00200 = lazy(() => import('pages/R00200_Instalment'));
 const R00300 = lazy(() => import('pages/R00300_CCBill/R00300'));
 const R00400 = lazy(() => import('pages/R00400_CCPayment/R00400'));
 const R00400Result = lazy(() => import('pages/R00400_CCPayment/TransferResult'));
-const S00300 = lazy(() => import('pages/S00300_ReserveTransferSearch'));
-const S003001 = lazy(() => import('pages/S00300_ReserveTransferSearch/reserveTransferSearch_1'));
-const S003002 = lazy(() => import('pages/S00300_ReserveTransferSearch/reserveTransferSearch_2'));
+const R00500 = lazy(() => import('pages/R00500_AutomaticBillPayment'));
+const R00600 = lazy(() => import('pages/R00600_Adjustment'));
+const R006001 = lazy(() => import('pages/R00600_Adjustment/adjustment_1'));
 const S00400 = lazy(() => import('pages/S00400_NoticeSetting'));
 const S00600 = lazy(() => import('pages/S00600_QandA'));
 const T00100 = lazy(() => import('pages/T00100_Profile'));
+const T00200 = lazy(() => import('pages/T00200_QuickLoginSetting'));
+const T00400 = lazy(() => import('pages/T00400_CardLessSetting'));
 const T00600 = lazy(() => import('pages/T00600_MobileTransfer'));
 const T006001 = lazy(() => import('pages/T00600_MobileTransfer/mobileTransfer_1'));
 const T006002 = lazy(() => import('pages/T00600_MobileTransfer/mobileTransfer_2'));
@@ -69,8 +79,6 @@ const PatternLockSetting = lazy(() => import('pages/PatternLockSetting'));
 const FingerPrintLockSetting = lazy(() => import('pages/FingerPrintLockSetting'));
 const SMSOTPactivate = lazy(() => import('pages/SMSOTPactivate'));
 const QRCodeTransfer = lazy(() => import('pages/QRCodeTransfer'));
-const Adjustment = lazy(() => import('pages/Adjustment'));
-const Adjustment1 = lazy(() => import('pages/Adjustment/adjustment_1'));
 const ProjectJ = lazy(() => import('pages/ProjectJ'));
 const LoanInquiry = lazy(() => import('pages/LoanInquiry'));
 const LoanInterest = lazy(() => import('pages/LoanInterest'));
@@ -79,17 +87,12 @@ const Deduct1 = lazy(() => import('pages/Deduct/deduct1'));
 const Deduct2 = lazy(() => import('pages/Deduct/deduct2'));
 const Deduct3 = lazy(() => import('pages/Deduct/deduct3'));
 const MoreTranscations = lazy(() => import('pages/MoreTranscations'));
-const ForeignCurrencyTransfer = lazy(() => import('pages/ForeignCurrencyTransfer'));
-const ForeignCurrencyTransfer1 = lazy(() => import('pages/ForeignCurrencyTransfer/foreignCurrencyTransfer_1'));
-const ForeignCurrencyTransfer2 = lazy(() => import('pages/ForeignCurrencyTransfer/foreignCurrencyTransfer_2'));
+const ForeignCurrencyTransfer1 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer/foreignCurrencyTransfer_1'));
+const ForeignCurrencyTransfer2 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer/foreignCurrencyTransfer_2'));
 const ForeignCurrencyPriceSetting = lazy(() => import('pages/ForeignCurrencyPriceSetting'));
-const QuickLoginSetting = lazy(() => import('pages/QuickLoginSetting'));
-const Instalment = lazy(() => import('pages/Instalment'));
-const Instalment1 = lazy(() => import('pages/Instalment/Instalment_1'));
-const Instalment2 = lazy(() => import('pages/Instalment/Instalment_2'));
-const Instalment3 = lazy(() => import('pages/Instalment/Instalment_3'));
-const AutomaticBillPayment = lazy(() => import('pages/AutomaticBillPayment'));
-const CardLessSetting = lazy(() => import('pages/CardLessSetting'));
+const Instalment1 = lazy(() => import('pages/R00200_Instalment/Instalment_1'));
+const Instalment2 = lazy(() => import('pages/R00200_Instalment/Instalment_2'));
+const Instalment3 = lazy(() => import('pages/R00200_Instalment/Instalment_3'));
 
 // TODO：支援開發及Prototype測試使用
 const Login = lazy(() => import('proto/Login/login'));
@@ -125,32 +128,41 @@ const routes = [
   { path: '/D003001', exact: false, component: D003001 },
   { path: '/D003002', exact: false, component: D003002 },
   { path: '/D00400', exact: false, component: D00400 },
+  { path: '/D00700', exact: false, component: D00700 },
+  { path: '/D00800', exact: false, component: D00800 },
+  { path: '/D008001', exact: false, component: D008001 },
+  { path: '/D008002', exact: false, component: D008002 },
   { path: '/E00100', exact: false, component: E00100 },
   { path: '/E001001', exact: false, component: E001001 },
   { path: '/E001002', exact: false, component: E001002 },
   { path: '/E00200', exact: false, component: E00200 },
   { path: '/E00300', exact: false, component: E00300 },
+  { path: '/L00100', exact: false, component: L00100 },
+  { path: '/L001001', exact: false, component: L00100Reward },
+  { path: '/L001002', exact: false, component: L00100Detail },
   { path: '/M00100', exact: false, component: M00100 },
   { path: '/M00200', exact: false, component: M00200 },
   { path: '/R00100', exact: false, component: R00100 },
+  { path: '/R00200', exact: false, component: R00200 },
   { path: '/R00300', exact: false, component: R00300 },
   { path: '/R00400', exact: false, component: R00400 },
   { path: '/R004001', exact: false, component: R00400Result },
-  { path: '/S00300', exact: false, component: S00300 },
-  { path: '/S003001', exact: false, component: S003001 },
-  { path: '/S003002', exact: false, component: S003002 },
+  { path: '/R00500', exact: false, component: R00500 },
+  { path: '/R00600', exact: false, component: R00600 },
+  { path: '/R006001', exact: false, component: R006001 },
   { path: '/S00400', exact: true, component: S00400 },
   { path: '/S00600', exact: false, component: S00600 },
   { path: '/T00100', exact: false, component: T00100 },
   { path: '/T00600', exact: false, component: T00600 },
   { path: '/T006001', exact: false, component: T006001 },
   { path: '/T006002', exact: false, component: T006002 },
-  { path: '/T00200', exact: false, component: QuickLoginSetting },
+  { path: '/T00200', exact: false, component: T00200 },
+  { path: '/T00400', exact: false, component: T00400 },
   { path: '/T00700', exact: false, component: T00700 },
   { path: '/T00800', exact: false, component: T00800 },
   { path: '/T00900', exact: false, component: T00900 },
 
-  { path: '/cardLessSetting', exact: false, component: CardLessSetting },
+  // 缺 function id
   { path: '/lossReissue', exact: false, component: LossReissue },
   { path: '/accountMaintenance', exact: false, component: AccountMaintenance },
   { path: '/billPay', exact: true, component: BillPay },
@@ -161,58 +173,23 @@ const routes = [
   { path: '/fingerPrintLockSetting', exact: false, component: FingerPrintLockSetting },
   { path: '/smsOTPactivate', exact: false, component: SMSOTPactivate },
   { path: '/QRCodeTransfer', exact: false, component: QRCodeTransfer },
-  { path: '/adjustment', exact: false, component: Adjustment },
-  { path: '/adjustment1', exact: false, component: Adjustment1 },
   { path: '/projectJ', exact: false, component: ProjectJ },
   { path: '/loanInquiry', exact: false, component: LoanInquiry },
   { path: '/loanInterest', exact: false, component: LoanInterest },
   { path: '/moreTranscations', exact: false, component: MoreTranscations },
   { path: '/foreignCurrencyPriceSetting', exact: false, component: ForeignCurrencyPriceSetting },
-  { path: '/quickLoginSetting', exact: false, component: QuickLoginSetting },
   { path: '/transferStatic', exact: false, component: TransferStatic },
   { path: '/transferStatic1', exact: false, component: TransferStatic1 },
   { path: '/transferStatic2', exact: false, component: TransferStatic2 },
-  { path: '/staging', exact: false, component: Instalment },
   { path: '/staging1', exact: false, component: Instalment1 },
   { path: '/staging2', exact: false, component: Instalment2 },
   { path: '/staging3', exact: false, component: Instalment3 },
-  { path: '/withholding', exact: false, component: AutomaticBillPayment },
-  { path: '/foreignCurrencyTransfer', exact: false, component: ForeignCurrencyTransfer },
   { path: '/foreignCurrencyTransfer1', exact: false, component: ForeignCurrencyTransfer1 },
   { path: '/foreignCurrencyTransfer2', exact: false, component: ForeignCurrencyTransfer2 },
   { path: '/deduct', exact: false, component: Deduct },
   { path: '/deduct1', exact: false, component: Deduct1 },
   { path: '/deduct2', exact: false, component: Deduct2 },
   { path: '/deduct3', exact: false, component: Deduct3 },
-
-  // 以下若程式中沒有用到，就應該刪除。
-  { path: '/changeUserName', exact: false, component: T00800 },
-  { path: '/cardLessATM', exact: true, component: D00300 },
-  { path: '/cardLessATM1', exact: false, component: D003001 },
-  { path: '/cardLessATM2', exact: false, component: D003002 },
-  { path: '/cardLessWithDrawChgPwd', exact: false, component: D00400 },
-  { path: '/noticeSetting', exact: true, component: S00400 },
-  { path: '/notice', exact: false, component: B00300 },
-  { path: '/regularPwdModify', exact: false, component: A00700 },
-  { path: '/basicInformation', exact: false, component: T00700 },
-  { path: '/provisioning', exact: false, component: A00400 },
-  { path: '/qAndA', exact: false, component: S00600 },
-  { path: '/exchange', exact: false, component: E00100 },
-  { path: '/exchange1', exact: false, component: E001001 },
-  { path: '/exchange2', exact: false, component: E001002 },
-  { path: '/profile', exact: false, component: T00100 },
-  { path: '/financialDepartments', exact: false, component: E00300 },
-  { path: '/regularBasicInformation', exact: false, component: A00600 },
-  { path: '/reserveTransferSearch', exact: false, component: S00300 },
-  { path: '/reserveTransferSearch1', exact: false, component: S003001 },
-  { path: '/reserveTransferSearch2', exact: false, component: S003002 },
-  { path: '/mobileTransfer', exact: false, component: T00600 },
-  { path: '/mobileTransfer1', exact: false, component: T006001 },
-  { path: '/mobileTransfer2', exact: false, component: T006002 },
-  { path: '/exportBankBook', exact: false, component: C00800 },
-  { path: '/exportBankBook1', exact: false, component: C008001 },
-  { path: '/exchangeRate', exact: false, component: E00200 },
-  { path: '/pwdModify', exact: false, component: T00900 },
 
   // TODO：支援開發及Prototype測試使用
   { path: '/login', exact: false, component: Login },

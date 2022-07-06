@@ -323,11 +323,23 @@ The testing enviroments are using basic HTTP authentication framework. The defau
 
 This app requires backend (the FEIB SIT). There are two ways to run:
 
-> Make sure `REACT_APP_URL` is pointing to FEIB SIT server under the file `.env.development`
+> Make sure `REACT_APP_URL` and `REACT_APP_SM_CTRL_URL` are pointing to FEIB SIT server under the file `.env.development`
 
 or
 
-> `REACT_APP_URL=https://bankeesit.feib.com.tw/v2web/app2 BROWSER=none npm run start`
+> `REACT_APP_URL=https://bankeesit.feib.com.tw/v2web/app2 REACT_APP_SM_CTRL_URL=https://bankeesit.feib.com.tw/APP2_WebCtrl BROWSER=none npm run start`
+
+<br>
+
+## Instruction on cherry-pick from Jerry branch
+
+Becuase commit 8d40326 includes jenkins_tool/node_modules.7z, which exceeds 100MB file size limit by GitHub. So, we cannot do a simple `merge`, else the *mistaken and mis-use* crazy large file will be merged into git history. Hence, cause us the issue when `push` to Github.
+
+We have to `cherry-pick` the commits from Jerry branch...
+
+```
+git cherry-pick <commit>
+```
 
 <br>
 
@@ -340,6 +352,6 @@ Lexionlu's GitHub repo is configured to deploy to dev and stage server automatic
 
 FEIB's repo is at:
 
-1. `git remote add origin https://git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/APP2-WebView`
-2. `git push origin Lexionlu`
+1. `git remote add feib https://Lexionlu-at-938308357453:YCY85cjEI7teOL9nA3bYJrXFQi8%2F%2BkXDXlFXe%2FViN6E%3D@git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/APP2_WebView`
+2. `git push feib Lexionlu`
 

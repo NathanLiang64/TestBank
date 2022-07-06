@@ -10,7 +10,7 @@ const Tray = ({ bills }) => {
 
   return (
     <TrayWrapper>
-      <BottomAction className="badFlex">
+      <BottomAction className="badFlex" position={0}>
         { !(bills?.autoDeduct) && (
         <button type="button" onClick={() => history.push('/R00400')}>
           <CreditCardIcon3 />

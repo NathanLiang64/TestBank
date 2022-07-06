@@ -1,21 +1,31 @@
 /* eslint react/no-array-index-key: 0 */
 
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
 import uuid from 'react-uuid';
 
 import { currencySymbolGenerator, stringDateCodeFormatter } from 'utilities/Generator';
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { showCustomPrompt } from 'utilities/MessageModal';
+import { setWaittingVisible, setModalVisible} from 'stores/reducers/ModalReducer';
 import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
 import InformationTape from 'components/InformationTape';
 import BottomAction from 'components/BottomAction';
 import EmptyData from 'components/EmptyData';
 import Loading from 'components/Loading';
+import CreditCard from 'components/CreditCard';
+import {
+  FEIBIconButton,
+  FEIBInputLabel,
+  FEIBInput,
+  FEIBErrorMessage,
+} from 'components/elements';
 
-import { getBasicCCInfo, getTransactions } from './api';
-import PageWrapper from './R00100.style';
+import { EditIcon } from 'assets/images/icons';
+import { getBasicCCInfo, getTransactions, updateMemo } from './api';
+import PageWrapper, { DetailDialogErrorMsg } from './R00100.style';
+import Loader from './components/loader';
 
 const uid = uuid();
 const endDate = new Date();
@@ -35,7 +45,6 @@ const Page = () => {
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
-  const loader = useRef();
   const [card, setCard] = useState();
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState();
@@ -79,25 +88,80 @@ const Page = () => {
     }
 
     dispatch(setWaittingVisible(false));
-
-    // 設定划到最下方時自動載入
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].intersectionRatio <= 0) return;
-      if (isLoading) return;
-      fetchTransactions();
-    }, { threshold: 0 });
-    observer.observe(loader.current);
   }, []);
+
+  //  提交memoText
+  const onSubmit = async (index) => {
+    const input = document.getElementById(uid).querySelector('input[name="pwd"]');
+    const errorMsg = document.getElementById(uid).querySelector('.errorMsg');
+    if (input.value.length > 7) {
+      errorMsg.style.visibility = 'visible';
+      input.parentElement.classList.add('errorBorder');
+    } else {
+      dispatch(setWaittingVisible(true));
+      errorMsg.style.visibility = 'hidden';
+      const response = await updateMemo({ id: index, memo: input.value });
+      if (response) {
+        const tmp = backlog.slice();
+        const indexNumber = tmp.findIndex((element) => element.id === index);
+        tmp[indexNumber].memo = input.value;
+        backlog = tmp;
+        setTransactions(backlog);
+      }
+      dispatch(setModalVisible(false));
+      dispatch(setWaittingVisible(false));
+    }
+  };
+
+  const showMemo = (memo, id) => {
+    const EditDialog = () => {
+      showCustomPrompt({
+        title: '編輯備註',
+        message: (
+          <div id={uid} style={{ paddingBottom: '2.4rem' }}>
+            <FEIBInputLabel htmlFor="memo">備註說明</FEIBInputLabel>
+            <DetailDialogErrorMsg>
+              <FEIBInput
+                name="pwd"
+                placeholder="請輸入您的備註"
+                defaultValue={memo}
+              />
+              <FEIBErrorMessage className="errorMsg">
+                編輯最多七個字
+              </FEIBErrorMessage>
+            </DetailDialogErrorMsg>
+          </div>
+        ),
+        noDismiss: true,
+        okContent: '完成',
+        onOk: () => onSubmit(id),
+      });
+      dispatch(setModalVisible(true));
+    };
+    const options = (
+      <DetailDialogErrorMsg className="remark">
+        <span>{memo}</span>
+        <FEIBIconButton $fontSize={1.6} onClick={() => EditDialog()} className="badIcon">
+          <EditIcon />
+        </FEIBIconButton>
+      </DetailDialogErrorMsg>
+    );
+    return options;
+  };
 
   return (
     <Layout title="信用卡即時消費明細" goBackFunc={() => history.goBack()}>
       <MainScrollWrapper>
         <PageWrapper>
           <div className="bg-gray">
-            <div>TODO: insert card component here</div>
-            <div>{ card?.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡' }</div>
-            <div>{ card?.accountNo }</div>
-            <div>{ card?.creditUsed }</div>
+            <CreditCard
+              key={uuid()}
+              cardName={card?.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
+              accountNo={card?.accountNo}
+              balance={card?.creditUsed}
+              color="green"
+              annotation="已使用額度"
+            />
           </div>
           <div className="txn-wrapper">
             { transactions.length > 0 ? transactions.map((t, i) => (
@@ -106,7 +170,8 @@ const Page = () => {
                 topLeft={t.description}
                 topRight={currencySymbolGenerator(t.currency ?? 'TWD', t.amount)}
                 bottomLeft={`${t.txnDate.slice(4, 6)}/${t.txnDate.slice(6, 8)}`}
-                bottomRight="TODO: 替換InformationTape+編輯元件"
+                bottomRight={showMemo(t.memo, t.id)}
+                noShadow
               />
             )) : (
               <div style={{ height: '20rem', marginTop: '6rem' }}>
@@ -116,7 +181,7 @@ const Page = () => {
           </div>
           { isLoading && <Loading isCentered />}
           <div className="note">實際請款金額以帳單為準</div>
-          <div className="loader" ref={loader} />
+          <Loader isLoading={isLoading} fetchTransactions={fetchTransactions} />
           <BottomAction>
             <button type="button">晚點付</button>
           </BottomAction>

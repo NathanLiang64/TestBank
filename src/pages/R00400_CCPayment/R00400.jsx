@@ -286,7 +286,7 @@ const Page = () => {
                   )}
                 />
                 <FEIBErrorMessage>
-                  轉出帳號格式有誤，請重新檢查。
+                  {errors?.extAccountNo && '轉出帳號格式有誤，請重新檢查。' }
                 </FEIBErrorMessage>
               </>
             )}

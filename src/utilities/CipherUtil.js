@@ -1,15 +1,11 @@
 /* eslint-disable class-methods-use-this */
 const forge = require('node-forge');
-// eslint-disable-next-line no-unused-vars
 const crypto = require('crypto');
-// eslint-disable-next-line no-unused-vars
-const { type } = require('os');
 
 class CipherUtil {
   /**
    * Generate RSA, only for web
    */
-  // eslint-disable-next-line class-methods-use-this
   generateRSA() {
     const keyPair = forge.pki.rsa.generateKeyPair({ bits: 2048, e: 0x10001 });
     const privateKeyPem = forge.pki.privateKeyToPem(keyPair.privateKey);
@@ -17,31 +13,22 @@ class CipherUtil {
     const publicKeyPem = forge.pki.publicKeyToPem(publicKey);
     return {
       privateKey: privateKeyPem,
-      publicKey: publicKeyPem,
+      publicKey: publicKeyPem.replace(/(\r\n\t|\r\n|\n|\r\t)/gm, '').replace('-----BEGIN PUBLIC KEY-----', '').replace('-----END PUBLIC KEY-----', ''),
     };
   }
 
-  generateKey(len) {
-    const key = forge.random.getBytesSync(len);
+  /**
+   * 產生指定位元長度的隨機 Key 值陣列，並以 Base64 字串傳回。
+   * @param {*} bits 隨機 Key 的位元長度。
+   * @returns Base64 格式的隨機 Key 值陣列。
+   */
+  generateKey(bits) {
+    const key = forge.random.getBytesSync(bits / 8);
     return forge.util.encode64(key);
   }
 
   /**
-   * Generate AES, only for web
-   */
-  generateAES() {
-    return this.generateKey(16);
-  }
-
-  /**
-   * Generate IV, only for web
-   */
-  generateIV() {
-    return this.generateKey(16);
-  }
-
-  /**
-   * Get ENC
+   * Get ENC for JWE
    * @param {*} aesKey
    */
   getEnc(aesKey) {
@@ -51,7 +38,7 @@ class CipherUtil {
   }
 
   /**
-   * Get HMAC, only for web
+   * Get HMAC, only for web for JWE
    * @param {*} aesKey
    */
   getHMAC(aesKey) {

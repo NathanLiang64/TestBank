@@ -1,52 +1,48 @@
-import userAxios from 'apis/axiosConfig';
+import uuid from 'react-uuid';
 import Cookies from 'js-cookie';
-import CipherUtil from '../../utilities/CipherUtil';
-import JWEUtil from '../../utilities/JWEUtil';
+import CipherUtil from 'utilities/CipherUtil';
+import { userRequest, callAPI } from 'utilities/axios';
 
 // 裝置開啟時去呼叫
 const handshake = async () => {
   localStorage.clear();
-  // let privateKey;
-  // let publicKey;
-  let jwtToken;
-  // let ivToken;
-  // let aesTokenKey;
-  const ServerPublicKey = await userAxios.post('/auth/getPublicKey');
-  console.log('==> /auth/getPublicKey - Response : ', ServerPublicKey);
-  const iv = CipherUtil.generateIV();
-  const aesKey = CipherUtil.generateAES();
-  const ivToken = iv;
-  const aesTokenKey = aesKey;
-  const getPublicAndPrivate = CipherUtil.generateRSA();
-  const { privateKey, publicKey } = getPublicAndPrivate;
-  const message = {
-    publicKey: getPublicAndPrivate.publicKey.replace(/(\r\n\t|\r\n|\n|\r\t)/gm, '').replace('-----BEGIN PUBLIC KEY-----', '').replace('-----END PUBLIC KEY-----', ''),
-    iv,
-    aesKey,
-  };
-  const getJWTToken = JWEUtil.encryptJWEMessage(ServerPublicKey.data.data.result, JSON.stringify(message));
+  sessionStorage.clear();
 
-  const getMyJWT = await userAxios.post('/auth/handshake', getJWTToken);
-  if (getMyJWT.data.code === '0000') {
-    const deCode = JSON.parse(JWEUtil.decryptJWEMessage(getPublicAndPrivate.privateKey, getMyJWT.data.data));
-    // console.log(getMyJWT);
-    jwtToken = deCode.result.jwtToken;
-    console.log('==> /auth/handshake - Response(decode) : ', deCode, jwtToken);
-    localStorage.setItem('privateKey', privateKey);
-    localStorage.setItem('publicKey', publicKey);
+  const { privateKey, publicKey } = CipherUtil.generateRSA();
+  const aesKey = CipherUtil.generateKey(256); // 使用JWT模式時，Request/Response Payload 的加解密金鑰，採用 AES256。
+  const iv = CipherUtil.generateKey(128); // IV固定為 128bits
+
+  sessionStorage.setItem('privateKey', privateKey);
+  sessionStorage.setItem('publicKey', publicKey);
+  sessionStorage.setItem('aesKey', aesKey);
+  sessionStorage.setItem('iv', iv);
+
+  const message = {
+    txnId: `WVIEW_${uuid()}`,
+    // deviceId: null,
+    deviceId: '18157973-686F-4ACC-8EF1-4D034040A898',
+    osType: 0,
+    osVersion: '15.5',
+    appVersion: '1.0.26',
+    encK: aesKey,
+    iv,
+    rsaPubK: publicKey,
+  };
+  if (!message.deviceId) alert('請在 proto/Login/HandShake 填入 deviceId');
+  const getPKeyRs = await userRequest('get', '/auth/v1/getPublicKey');
+  sessionStorage.setItem('serverPKey', getPKeyRs.data.data);
+
+  //
+  // 精誠隨想的 Handshak
+  //
+  const preloadRs = await callAPI('/smJwe/v1/preload', message);
+  if (preloadRs.code === '0000') {
+    const { jwtToken } = preloadRs.data;
     sessionStorage.setItem('jwtToken', jwtToken);
     Cookies.set('jwtToken', jwtToken);
-    localStorage.setItem('iv', ivToken);
-    localStorage.setItem('aesKey', aesTokenKey);
-    return {
-      result: 'success',
-      message: getMyJWT.data.message,
-    };
+  } else {
+    alert(`Hand shake fail! ${preloadRs.message}`);
   }
-  return {
-    result: 'fail',
-    message: getMyJWT.data.message,
-  };
 };
 
 export default handshake;

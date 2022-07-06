@@ -30,6 +30,10 @@ const PageWrapper = styled.div`
 
     .w-1/4 { width: 25%; }
     .w-3/4 { width: 75%; }
+
+    tbody > tr {
+      border: 0;
+    }
   }
 
   hr {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useGetEnCrydata } from 'hooks';
 import parse from 'html-react-parser';
-import { qAndAApi } from 'apis';
+// import { qAndAApi } from 'apis';
+import { getQACategory, getQASubCategory } from 'pages/S00600_QandA/api';
 
 /* Elements */
 import Header from 'components/Header';
@@ -30,19 +30,23 @@ const QandA = () => {
 
   const getQAContent = async (cat) => {
     const param = { cat };
-    const qaContentResponse = await qAndAApi.getQASubCategory(param);
+    const { code, data } = await getQASubCategory(param);
     // eslint-disable-next-line no-console
-    console.log('取得 QA 內容回傳', qaContentResponse);
-    setQAcontent(qaContentResponse);
+    if (code === '0000') {
+      console.log('取得 QA 內容回傳', data);
+      setQAcontent(data);
+    }
     setShow(true);
   };
 
   const getQATab = async () => {
-    const tabResponse = await qAndAApi.getQACategory({});
+    const { code, data } = await getQACategory({});
     // eslint-disable-next-line no-console
-    console.log('取得 QA 分類回傳', tabResponse);
-    setTabs(tabResponse);
-    setTabValue(tabResponse[0]);
+    if (code === '0000') {
+      console.log('取得 QA 分類回傳', data);
+      setTabs(data);
+      setTabValue(data[0]);
+    }
   };
 
   const handleTabChange = (event, type) => {
@@ -79,8 +83,6 @@ const QandA = () => {
       </div>
     ))
   );
-
-  useGetEnCrydata();
 
   useEffect(() => {
     getQATab();

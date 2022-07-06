@@ -1,130 +1,138 @@
+/* eslint-disable no-use-before-define */
 import { useState, useEffect, useRef } from 'react';
-// import { useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import FavoriteBlockButton from 'components/FavoriteBlockButton';
 import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
-import { startFunc } from 'utilities/BankeePlus';
-import { moreApi } from 'apis';
 import { iconGenerator } from 'pages/Favorite/favoriteGenerator';
-// import { setFavoriteDrawer } from 'pages/Favorite/stores/actions';
-// import { setIsShake } from 'pages/ShakeShake/stores/actions';
 
-/* Styles */
+/* Reducers & JS functions */
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+// import { showPrompt } from 'utilities/MessageModal';
+import { startFunc } from 'utilities/AppScriptProxy';
+import { getMoreList } from './api';
 import MoreWrapper from './more.style';
-// import mockData from './mockData';
 
+/**
+ * B00600 更多單元功能
+ */
 const More = () => {
-  const mainContentRef = useRef();
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const funcListRef = useRef();
 
-  const [moreList, setMoreList] = useState([]);
+  const [funcGroups, setFuncGroups] = useState([]);
+  const [currentGroup, setCurrentGroup] = useState();
   const [sectionPosition, setSectionPosition] = useState([]);
-  const [tabId, setTabId] = useState('account');
 
-  const toPage = ({ actKey }) => {
-    console.log('啟動 Function:', actKey);
-    // if (route === 'QRCodeTransfer') {
-    //   dispatch(setIsShake(true));
-    //   return;
-    // }
-    // if (route === 'favorite') {
-    //   dispatch(setFavoriteDrawer({
-    //     title: '我的最愛', content: '', open: true, back: null,
-    //   }));
-    //   return;
-    // }
-    if (actKey === 'F00100') {
-      window.open(process.env.REACT_APP_DEPOSIT_APPLY_URL, '_blank');
-      return;
-    }
-    if (actKey === 'F00200') {
-      window.open(process.env.REACT_APP_STOCK_APPLY_URL, '_blank');
-      return;
-    }
-    console.log(actKey);
-    startFunc(actKey);
-  };
+  /**
+   * 頁面啟動，初始化
+   */
+  useEffect(async () => {
+    dispatch(setWaittingVisible(true));
 
+    // 取得 Function Controller 提供的 keepDdata(model)
+    const funcItemsData = sessionStorage.getItem('funcItems');
+
+    // 首次加載時取得用戶所有外幣的存款帳戶摘要資訊
+    let groups;
+    if (!funcItemsData) {
+      groups = await getMoreList();
+      sessionStorage.setItem('funcItems', JSON.stringify(groups));
+    } else {
+      groups = JSON.parse(funcItemsData);
+    }
+    setFuncGroups(groups);
+    setCurrentGroup((groups && groups.length) ? groups[0].groupKey : '');
+
+    dispatch(setWaittingVisible(false));
+  }, []);
+
+  /**
+   * 當單元功能分類(Section)變更時，調整 TAB頁籤 底線位置。
+   */
   const handleChangeTabs = (event, value) => {
     const target = document.querySelector(`.${value}`);
     if (target) target.scrollIntoView({ behavior: 'smooth' });
   };
 
+  /**
+   * 滾動單元功能清單時，調整 TAB頁籤 底線位置。
+   */
   const handleScrollContent = () => {
-    const { scrollTop } = mainContentRef?.current;
+    const { scrollTop } = funcListRef?.current;
     const target = sectionPosition.find((section) => section.position >= scrollTop);
-    setTabId(target?.id);
+    setCurrentGroup(target?.id);
   };
 
-  const renderBlock = (group, blocks) => (
-    blocks.map((block) => (
-      <FavoriteBlockButton
-        key={block.actKey}
-        icon={iconGenerator(block.actKey)}
-        label={block.name}
-        onClick={() => toPage(block)}
-        noBorder
-      />
-    ))
-  );
-
-  const renderContent = (group) => group.map((section) => (
-    <section key={section.groupKey} className={section.groupKey}>
-      <h3 className="title">{section.groupName}</h3>
-      <div className="blockGroup">
-        { renderBlock(section.group, section.items) }
-      </div>
-    </section>
-  ));
-
-  const renderTabList = (tabs) => tabs.map((tab) => (
-    <FEIBTab key={tab.groupKey} label={tab.groupName} value={tab.groupKey} />
-  ));
-
-  useEffect(async () => {
-    // db 資料內 url 為空，無法導頁，暫不接 api
-    const response = await moreApi.getMoreList();
-    console.log(response);
-    if (response?.length > 1) {
-      setMoreList(response);
-    }
-    // setMoreList(mockData.moreList);
-  }, []);
-
+  /**
+   * 滾動單元功能清單時，以單元功能分類(Section)調整 TAB頁籤 底線位置。
+   */
   useEffect(() => {
-    if (mainContentRef?.current) {
-      const categories = Array.from(mainContentRef?.current?.children);
-      const sectionPositionList = categories.map((section) => (
+    if (funcListRef?.current) {
+      const categories = Array.from(funcListRef?.current?.children);
+      const groupPosition = categories.map((section) => (
         { id: section.className, position: section.offsetTop }
       ));
-      setSectionPosition(sectionPositionList);
+      setSectionPosition(groupPosition);
     }
-  }, [mainContentRef?.current]);
+  }, [funcListRef?.current]);
 
-  return (
-    <>
-      <Header title="更多" />
-      <MoreWrapper small>
-        <FEIBTabContext value={tabId}>
+  /**
+   * 顯示指定分類的單元功能項目清單。
+   * @param {*} group
+   */
+  const renderFuncGroup = (group) => {
+    const doStartFunc = (funcCode) => {
+      // TODO 不可執行的功能，例：純卡戶 執行 申請信用卡。
+      // TODO 但 純卡戶 執行轉帳，則是由 Funciton Manager 提供資訊，由 Funciton Controller 詢問是否立即申請。
+      startFunc(funcCode);
+    };
+
+    // TODO 加上「new」的圖示，可以用 上線時間 判斷，例：在一個月內都會出現。
+    return (
+      <section key={group.groupKey} className={group.groupKey}>
+        <h3 className="title">{group.groupName}</h3>
+        <div className="blockGroup">
           {
-            moreList.length > 0 && (
-              <FEIBTabList $size="small" onChange={handleChangeTabs}>
-                { renderTabList(moreList) }
-              </FEIBTabList>
-            )
+            group.items.map((item) => (
+              <FavoriteBlockButton
+                key={item.actKey}
+                icon={iconGenerator(item.actKey)}
+                label={item.name}
+                onClick={() => doStartFunc(item.actKey)}
+                noBorder
+              />
+            ))
           }
+        </div>
+      </section>
+    );
+  };
+
+  /**
+   * 頁面輸出
+   */
+  return (
+    <Layout title="更多">
+      <MoreWrapper small>
+        <FEIBTabContext value={currentGroup}>
+          <FEIBTabList $size="small" onChange={handleChangeTabs}>
+            {
+              funcGroups.map((group) => (
+                <FEIBTab key={group.groupKey} label={group.groupName} value={group.groupKey} />
+              ))
+            }
+          </FEIBTabList>
         </FEIBTabContext>
-        {
-          moreList.length > 0 && (
-            <div className="mainContent" ref={mainContentRef} onScroll={handleScrollContent}>
-              { renderContent(moreList) }
-            </div>
-          )
-        }
+        <div className="mainContent" ref={funcListRef} onScroll={handleScrollContent}>
+          {
+            funcGroups.map((group) => (renderFuncGroup(group)))
+          }
+        </div>
       </MoreWrapper>
-    </>
+    </Layout>
   );
 };
 

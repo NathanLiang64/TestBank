@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { cardLessATMApi } from 'apis';
-import { closeFunc, switchLoading } from 'utilities/BankeePlus';
+import { closeFunc, switchLoading } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Header from 'components/Header';
@@ -68,7 +68,7 @@ const CardLessATM = () => {
   // 跳轉到無卡提款申請頁
   const toWithdrawPage = () => {
     switchLoading(false);
-    history.push('/cardLessATM1');
+    history.push('/D003001');
   };
 
   // 設定 Dialog 內容

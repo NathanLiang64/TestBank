@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 const InformationTapeWrapper = styled.div`
   padding: 1.2rem;
-  box-shadow: 0 .4rem 1rem rgba(0, 0, 0, 0.12);
+  box-shadow: ${({ $noShadow }) => ($noShadow ? '0' : '0 .4rem 1rem rgba(0, 0, 0, .12);')};
   border-radius: .6rem;
   display: flex;
   justfy-content: space-between;

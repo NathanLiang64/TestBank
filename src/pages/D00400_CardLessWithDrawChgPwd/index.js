@@ -3,8 +3,8 @@ import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { cardLessATMApi } from 'apis';
-import { switchLoading, closeFunc } from 'utilities/BankeePlus';
+import { switchLoading, closeFunc } from 'utilities/AppScriptProxy';
+import { changeCardlessPwd } from 'pages/D00400_CardLessWithDrawChgPwd/api';
 
 /* Elements */
 import Header from 'components/Header';
@@ -40,23 +40,21 @@ const CardLessWithDrawChgPwd = () => {
   };
 
   // 設定結果彈窗
-  const setResultDialog = (response) => {
-    const result = response.respMsg === '';
+  const setResultDialog = ({ code, message }) => {
+    const isSuccess = code === '0000';
     let closeCallBack;
-    let errorDesc = '';
-    if (result) {
+    if (isSuccess) {
       closeCallBack = handleCloseResultDialog;
     } else {
-      errorDesc = response.message;
       closeCallBack = () => {};
     }
     dispatch(setResultContent({
-      isSuccess: result,
+      isSuccess,
       successTitle: '設定成功',
       successDesc: '您的無卡提款密碼變更成功囉！',
       errorTitle: '設定失敗',
-      errorCode: '',
-      errorDesc,
+      errorCode: code,
+      errorDesc: message,
     }));
     dispatch(setCloseCallBack(closeCallBack));
     dispatch(setIsOpen(true));
@@ -66,7 +64,7 @@ const CardLessWithDrawChgPwd = () => {
   // 設定無卡提款密碼
   const changePwdHandler = async (param) => {
     switchLoading(true);
-    const changePwdResponse = await cardLessATMApi.changeCardlessPwd(param);
+    const changePwdResponse = await changeCardlessPwd(param);
     setResultDialog(changePwdResponse);
   };
 
@@ -130,8 +128,6 @@ const CardLessWithDrawChgPwd = () => {
       </FEIBButton>
     </form>
   );
-
-  // useGetEnCrydata();
 
   return (
     <>

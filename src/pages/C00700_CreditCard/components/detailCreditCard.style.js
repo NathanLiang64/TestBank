@@ -9,6 +9,12 @@ const DetailCardWrapper = styled.div`
   width: 100%;
   background: ${({ theme }) => theme.colors.basic.white};
   box-shadow: ${({ $noShadow }) => ($noShadow ? '0' : '0 .4rem 1rem rgba(0, 0, 0, .12);')};
+
+  .badIcon {
+    display: block;
+    margin: -1.1rem;
+    height: fit-content;
+  }
   
   .defaultAvatar,
   .avatar {
@@ -112,11 +118,55 @@ const DetailCardWrapper = styled.div`
 `;
 
 const DetailDialogContentWrapper = styled.div`
-.panel{
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
+.panel {
+  padding-top: 2.5rem;
 }
 `;
 
+const DetailDialogErrorMsg = styled.div`
+.errorMsg {
+  visibility:hidden;
+}
+.errorBorder{
+  &:before,
+  &:hover:not(.Mui-disabled):before {
+    border-color:#FF5F5F !important;
+  }
+}
+
+`;
+
+const TableDialog = styled.div`
+  text-align: center;
+  table {
+    font-size: 1.2rem;
+    
+    thead {
+      border-bottom:0.1rem solid #F3F3F3;
+
+      tr th {
+        padding-top: 0.6rem;
+        padding-bottom: 0.8rem;
+        font-weight: 500;
+        width: 33.333333%;
+      }
+    }
+    tbody tr th {
+      width: 33.333333%;
+      padding-top: 0.4rem;
+      padding-bottom: 0.4rem;
+      font-size: 1rem;
+    }
+  }
+
+  .remark  {
+    font-weight: 500;
+    color: ${({ theme }) => theme.colors.text.light};
+    font-size: 1.1rem;
+    padding-top: 0.4rem;
+    margin-left: -0.65rem;
+  }
+`;
+
 export default DetailCardWrapper;
-export { DetailDialogContentWrapper };
+export { DetailDialogContentWrapper, DetailDialogErrorMsg, TableDialog };
