@@ -25,6 +25,7 @@ const BottomDrawer = ({
   isOpen,
   onClose,
   onBack,
+  shouldAutoClose = false,
 }) => {
   const renderBackButton = (clickEvent) => (
     <FEIBIconButton
@@ -37,7 +38,7 @@ const BottomDrawer = ({
   );
 
   const handleClickBubble = () => {
-    store.dispatch(setDrawerVisible(false));
+    if (shouldAutoClose) store.dispatch(setDrawerVisible(false));
   };
 
   return (

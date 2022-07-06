@@ -67,6 +67,7 @@ const Page = () => {
           ))}
         </ul>
       ),
+      shouldAutoClose: true,
     }));
     dispatch(setDrawerVisible(true));
   };

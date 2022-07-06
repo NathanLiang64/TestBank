@@ -9,9 +9,9 @@ import Main from 'components/Layout';
 import CreditCard from 'components/CreditCard';
 
 import { CreditCardIcon5, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
-import { showDrawer } from 'utilities/MessageModal';
 
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { setDrawer, setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
+
 import DetailCreditCard from './components/detailCreditCard';
 import { getCreditCards } from './api';
 import SwiperCreditCard from './C00700.style';
@@ -93,7 +93,8 @@ const CreditCardPage = () => {
         ))}
       </ul>
     );
-    showDrawer('', options);
+    dispatch(setDrawer({ title: '', content: options, shouldAutoClose: true }));
+    dispatch(setDrawerVisible(true));
   };
 
   // 信用卡卡號(產生上方內容的 slides)
