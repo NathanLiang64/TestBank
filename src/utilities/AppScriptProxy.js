@@ -230,10 +230,24 @@ async function shareMessage(message) {
 
 // TODO 提供 Exception 資訊給 APP 寫入回報，就有需要了。
 
-// ??? webvie 通知APP取得安全資料
-// ??? 用途為何？
-async function getEnCrydata() {
-  return await callAppJavaScript('getEnCrydata', null, false);
+/**
+ * 取得 JWT Payload 加密用的 AES Key 及 IV
+ * @returns
+ */
+async function getAesKey() {
+  const aesKey = sessionStorage.getItem('aesKey');
+  if (aesKey) {
+    return {
+      aesKey,
+      iv: sessionStorage.getItem('iv'),
+    };
+  }
+  //  response { Crydata, Enivec }
+  const rs = await callAppJavaScript('getEnCrydata', null, true);
+  return {
+    aesKey: rs.Crydata,
+    iv: rs.Enivec,
+  };
 }
 
 /**
@@ -431,7 +445,7 @@ export {
   switchLoading,
   doOCR,
   showPopup,
-  getEnCrydata,
+  getAesKey,
   syncJwtToken,
   getJwtToken,
   transactionAuth,
