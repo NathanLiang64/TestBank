@@ -64,13 +64,20 @@ const AccountCardList = ({ data }) => {
             history.push('/C00600', { focusToAccountNo: card.accountNo });
           };
           return (
-            <AccountCard
+            <button
               key={uuid()}
-              cardName={card.alias ?? '存錢計畫'}
-              percent={subTotalBalance > 0 ? Math.round((card.balance / subTotalBalance) * 100) : 0}
+              type="button"
+              title={`前往${card.alias ?? '存錢計畫'}`}
+              aria-label={`前往${card.alias ?? '存錢計畫'}`}
               onClick={onClick}
-              {...card}
-            />
+            >
+              <AccountCard
+                cardName={card.alias ?? '存錢計畫'}
+                percent={subTotalBalance > 0 ? Math.round((card.balance / subTotalBalance) * 100) : 0}
+                hasShadow
+                {...card}
+              />
+            </button>
           );
         }) }
       </div>
@@ -106,7 +113,7 @@ const AccountCardList = ({ data }) => {
             break;
           case 'C': // 子帳戶
             onClick = () => {
-              dispatch(setDrawer({ title: '選擇計畫', content: renderSubAccountDrawer(subAccounts) }));
+              dispatch(setDrawer({ title: '選擇計畫', content: renderSubAccountDrawer(subAccounts), shouldAutoClose: true }));
               dispatch(setDrawerVisible(true));
             };
             break;
@@ -124,14 +131,21 @@ const AccountCardList = ({ data }) => {
         }
 
         return (
-          <AccountCard
+          <button
             key={uuid()}
-            cardName={card.alias ?? accountOverviewCardVarient(card.type).name}
-            percent={totalBalance > 0 ? Math.round((card.balance / totalBalance) * 100) : 0}
-            annotation={annotation}
+            type="button"
+            title={`前往${card.alias ?? accountOverviewCardVarient(card.type).name}`}
+            aria-label={`前往${card.alias ?? accountOverviewCardVarient(card.type).name}`}
             onClick={onClick}
-            {...card}
-          />
+          >
+            <AccountCard
+              cardName={card.alias ?? accountOverviewCardVarient(card.type).name}
+              percent={totalBalance > 0 ? Math.round((card.balance / totalBalance) * 100) : 0}
+              annotation={annotation}
+              hasShadow
+              {...card}
+            />
+          </button>
         );
       })}
     </AccountCardListWrapper>

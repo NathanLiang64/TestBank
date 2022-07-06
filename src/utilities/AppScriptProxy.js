@@ -48,7 +48,7 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
     // else throw new Error('使用 Web 版未支援的 APP JavaScript 模擬方法(' + appJsName + ')');
 
     // 若不需要從 APP 取得傳回值，就直接結束。
-    if (!needCallback) resolve();
+    if (!needCallback) resolve(null);
   });
 
   // result 是由 AppJavaScriptCallback 接收，並嘗試用 JSON Parse 轉為物件，轉不成功則以原資料內容傳回。
@@ -230,10 +230,24 @@ async function shareMessage(message) {
 
 // TODO 提供 Exception 資訊給 APP 寫入回報，就有需要了。
 
-// ??? webvie 通知APP取得安全資料
-// ??? 用途為何？
-async function getEnCrydata() {
-  return await callAppJavaScript('getEnCrydata', null, false);
+/**
+ * 取得 JWT Payload 加密用的 AES Key 及 IV
+ * @returns
+ */
+async function getAesKey() {
+  const aesKey = sessionStorage.getItem('aesKey');
+  if (aesKey) {
+    return {
+      aesKey,
+      iv: sessionStorage.getItem('iv'),
+    };
+  }
+  //  response { Crydata, Enivec }
+  const rs = await callAppJavaScript('getEnCrydata', null, true);
+  return {
+    aesKey: rs.Crydata,
+    iv: rs.Enivec,
+  };
 }
 
 /**
@@ -419,7 +433,7 @@ export {
   switchLoading,
   doOCR,
   showPopup,
-  getEnCrydata,
+  getAesKey,
   syncJwtToken,
   getJwtToken,
   transactionAuth,

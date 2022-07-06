@@ -1,5 +1,6 @@
 import { useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router';
 import uuid from 'react-uuid';
 
 import {
@@ -10,6 +11,7 @@ import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReduce
 /* Elements */
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import ArrowNextButton from 'components/ArrowNextButton';
+
 import {
   FEIBIconButton,
   FEIBInputLabel,
@@ -19,10 +21,11 @@ import {
 
 import { EditIcon } from 'assets/images/icons';
 import { showCustomPrompt } from 'utilities/MessageModal';
+
 import { updateMemo } from '../api';
 
 // timeFormatter
-import DetailCardWrapper, { DetailDialogContentWrapper, DetailDialogErrorMsg } from './detailCreditCard.style';
+import DetailCardWrapper, { DetailDialogContentWrapper, DetailDialogErrorMsg, TableDialog} from './detailCreditCard.style';
 
 /*
 * ==================== DetailCard 組件說明 ====================
@@ -32,6 +35,7 @@ import DetailCardWrapper, { DetailDialogContentWrapper, DetailDialogErrorMsg } f
 * 2. transactions -> 交易明細內容
 * 3. bonus -> 會員等級/回饋/回饋試算
 * 4. onClick -> 更多明細
+* 5. accountNo -> 現金回饋
 * */
 
 const uid = uuid();
@@ -41,10 +45,12 @@ const DetailCard = ({
   details,
   bonus,
   onClick,
+  account,
 }) => {
   // 暫存明細資料
   const [transactions, setTransactions] = useState([]);
   const dispatch = useDispatch();
+  const history = useHistory();
   /**
    * 初始化
    */
@@ -68,15 +74,142 @@ const DetailCard = ({
     return '';
   };
 
+  // 回饋表格資訊
+  const backInfo = {
+    title: ['社群圈等級', '升級條件*', '國內/國外'],
+    body: [{
+      level: '4',
+      condition: '達60萬',
+      percentage: '1.20%/3%',
+    },
+    {
+      level: '3',
+      condition: '達24萬',
+      percentage: '1.20%/1.20%',
+    },
+    {
+      level: '2',
+      condition: '達8萬',
+      percentage: '1.00%/1.00%',
+    },
+    {
+      level: '1',
+      condition: '達2萬',
+      percentage: '0.60%/0.60%',
+    },
+    {
+      level: '0',
+      condition: '未達2萬',
+      percentage: '0.15%/0.15%',
+    },
+    ],
+  };
+
+  // 刷卡回饋popup
+  const showbackDialog = () => {
+    showCustomPrompt({
+      title: '會員等級',
+      message: (
+        <TableDialog>
+          <table>
+            <thead>
+              <tr>
+                { backInfo.title.map((info) => (
+                  <th key={`${uuid()}-head`}>
+                    {info}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              { backInfo.body.map((info) => (
+                <tr key={`${uuid()}-body`}>
+                  <th>{info.level}</th>
+                  <th>{info.condition}</th>
+                  <th>{info.percentage}</th>
+                </tr>
+              )) }
+            </tbody>
+          </table>
+          <span className="remark"> ＊依個人Bankee數存月平均存款餘額核定等級 </span>
+        </TableDialog>
+      ),
+      noDismiss: true,
+      okContent: '回信用卡首頁',
+      onOk: () => history.push('/C00700'),
+    });
+    dispatch(setModalVisible(true));
+  };
+
+  // 會員等級表格資訊
+  const levelInfo = {
+    title: ['社群圈等級', '升級條件*'],
+    body: [{
+      level: '4',
+      condition: '達60萬',
+    },
+    {
+      level: '3',
+      condition: '達24萬',
+    },
+    {
+      level: '2',
+      condition: '達8萬',
+    },
+    {
+      level: '1',
+      condition: '達2萬',
+    },
+    {
+      level: '0',
+      condition: '未達2萬',
+    },
+    ],
+  };
+  // 會員等級popup
+  const showlevelDialog = () => {
+    showCustomPrompt({
+      title: '會員等級',
+      message: (
+        <TableDialog>
+          <table>
+            <thead>
+              <tr>
+                { levelInfo.title.map((info) => (
+                  <th key={`${uuid()}-header`}>{info}</th>
+                )) }
+              </tr>
+            </thead>
+            <tbody>
+              { levelInfo.body.map((info) => (
+                <tr key={`${uuid()}-body`}>
+                  <th>{info.level}</th>
+                  <th>{info.condition}</th>
+                </tr>
+              )) }
+            </tbody>
+          </table>
+          <span className="remark">
+            ＊依個人Bankee數存月平均存款餘額核定等級
+          </span>
+        </TableDialog>
+      ),
+      noDismiss: true,
+      okContent: '回信用卡首頁',
+      onOk: () => history.push('/C00700'),
+    });
+    dispatch(setModalVisible(true));
+  };
+
   const bonusInfo = () => ([
     {
-      label: '會員等級', value: `${bonus.level}`, iconType: 'Arrow',
+      label: '會員等級', value: `${bonus.level}`, iconType: 'Arrow', onClick: () => { showlevelDialog(); },
     },
     {
-      label: '國內/外回饋', value: `${bonus.rewardLocalRate}/${bonus.rewardForeignRate}%`, iconType: 'Arrow',
+      label: '國內/外回饋', value: `${bonus.rewardLocalRate}/${bonus.rewardForeignRate}%`, iconType: 'Arrow', onClick: () => { showbackDialog(); },
     },
     {
-      label: '回饋試算', value: `${bonus.rewards}`, iconType: 'Arrow',
+      label: '回饋試算', value: `${currencySymbolGenerator(bonus.currency)}${bonus.rewards}`, iconType: 'Arrow', onClick: () => history.push('/C007002', { accountNo: account }),
     },
   ]);
 
@@ -118,7 +251,6 @@ const DetailCard = ({
               編輯最多七個字
             </FEIBErrorMessage>
           </DetailDialogErrorMsg>
-
         </div>
       ),
       noDismiss: true,
@@ -131,7 +263,7 @@ const DetailCard = ({
   // 多餘7筆,就只輸出7筆
   const render = (lists, types) => {
     const arr = [];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 3; i++) {
       if (!lists[i]?.index) {
         break;
       } else {
@@ -141,7 +273,7 @@ const DetailCard = ({
               <h4>{lists[i].description}</h4>
               <p>
                 {stringDateFormat(lists[i].bizDate)}
-                {types === 'all' ? ` | 卡-${creditNumberFormat(lists[i].targetCard)}` : ''}
+                {types === 'all' ? ` | 卡-${creditNumberFormat(lists[i].targetAcct)}` : ''}
               </p>
             </div>
             <div className="amount">
@@ -166,7 +298,7 @@ const DetailCard = ({
 
   // 信用卡總明細列表
   const renderFunctionList = (lists, types) => (
-    <div>
+    <div style={{paddingTop: '2.5rem'}}>
       {
         lists.length > 0 && (render(lists, types))
       }
@@ -176,9 +308,11 @@ const DetailCard = ({
   return (
     <>
       <DetailDialogContentWrapper>
+        { !!bonus && (
         <div className="panel">
-          {!!bonus && <ThreeColumnInfoPanel content={bonusInfo()} />}
+          <ThreeColumnInfoPanel content={bonusInfo()} />
         </div>
+        )}
       </DetailDialogContentWrapper>
       {renderFunctionList(transactions, type)}
       {details.length > 7 && <ArrowNextButton onClick={onClick}>更多明細</ArrowNextButton>}

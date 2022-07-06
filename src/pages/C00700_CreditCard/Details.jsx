@@ -33,7 +33,6 @@ const Page = () => {
     let accountNo;
     if (location.state && ('accountNo' in location.state)) accountNo = location.state.accountNo;
     const response = await getCreditCardDetails({ accountNo });
-
     setDetails(response);
     dispatch(setWaittingVisible(false));
   }, []);

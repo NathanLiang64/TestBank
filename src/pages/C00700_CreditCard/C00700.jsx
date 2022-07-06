@@ -8,12 +8,13 @@ import SwiperLayout from 'components/SwiperLayout';
 import Main from 'components/Layout';
 import CreditCard from 'components/CreditCard';
 
-import { TransactionIcon1, RadioUncheckedIcon } from 'assets/images/icons';
-import { showDrawer } from 'utilities/MessageModal';
+import { CreditCardIcon5, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
 
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { setDrawer, setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
+
 import DetailCreditCard from './components/detailCreditCard';
 import { getCreditCards } from './api';
+import SwiperCreditCard from './C00700.style';
 
 /**
  * C00700 信用卡 首頁
@@ -75,10 +76,10 @@ const CreditCardPage = () => {
   const handleMoreClick = (card) => {
     const list = [
       {
-        fid: '/C007001', icon: <RadioUncheckedIcon />, title: '信用卡資訊', param: card,
+        fid: '/C007001', icon: <CreditCardIcon6 />, title: '信用卡資訊', param: card,
       },
-      { fid: '/withholding', icon: <RadioUncheckedIcon />, title: '自動扣繳' },
-      { fid: '/C007002', icon: <TransactionIcon1 />, title: '每月現金回饋' },
+      { fid: '/withholding', icon: <CreditCardIcon5 />, title: '自動扣繳' },
+      { fid: '/C007002', icon: <CircleIcon />, title: '每月現金回饋' },
     ];
     const options = (
       <ul>
@@ -92,7 +93,8 @@ const CreditCardPage = () => {
         ))}
       </ul>
     );
-    showDrawer('', options);
+    dispatch(setDrawer({ title: '', content: options, shouldAutoClose: true }));
+    dispatch(setDrawerVisible(true));
   };
 
   // 信用卡卡號(產生上方內容的 slides)
@@ -100,16 +102,18 @@ const CreditCardPage = () => {
     if (!data || data.length === 0) return null;
     return (
       plans.map((item) => (
-        <CreditCard
-          key={uuid()}
-          cardName={item.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
-          accountNo={item.accountNo}
-          balance={item.creditUsed}
-          color="green"
-          annotation="已使用額度"
-          onMoreClicked={() => handleMoreClick(item)}
-          functionList={functionAllList(item)}
-        />
+        <SwiperCreditCard>
+          <CreditCard
+            key={uuid()}
+            cardName={item.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
+            accountNo={item.type === 'bankee' && item.accountNo}
+            balance={item.creditUsed}
+            color="green"
+            annotation="已使用額度"
+            onMoreClicked={() => handleMoreClick(item)}
+            functionList={functionAllList(item)}
+          />
+        </SwiperCreditCard>
       ))
     );
   };
@@ -125,6 +129,7 @@ const CreditCardPage = () => {
             bonus={item?.bonusInfo}
             onClick={() => history.push('R00100', item)}
             type={item.type}
+            account={item.accountNo}
           />
         </div>
       ))
@@ -133,8 +138,8 @@ const CreditCardPage = () => {
 
   return (
     <Layout title="信用卡" goBackFunc={() => history.goBack()}>
-      <Main>
-        <SwiperLayout slides={renderSlides(plans)} hasDivider={false} slidesPerView={1.14} spaceBetween={8}>
+      <Main small>
+        <SwiperLayout slides={renderSlides(plans)} hasDivider={false} slidesPerView={1.06}>
           {renderCreditList(plans)}
         </SwiperLayout>
       </Main>

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { closeFunc } from 'utilities/BankeePlus';
-import { transactionAuth } from 'utilities/AppScriptProxy';
+import { transactionAuth, closeFunc } from 'utilities/AppScriptProxy';
 import { showAnimationModal } from 'utilities/MessageModal';
 
 /* Elements */

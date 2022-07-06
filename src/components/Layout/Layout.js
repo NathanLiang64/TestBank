@@ -146,6 +146,7 @@ function Layout({
       isOpen={showDrawer}
       onClose={() => dispatch(setDrawerVisible(false))}
       content={drawerData.content}
+      shouldAutoClose={drawerData.shouldAutoClose}
     />
   );
 

@@ -10,11 +10,11 @@ const doc = `### 組件說明
 3. account -> 卡片帳號
 4. balance -> 卡片餘額，輸入純數字即可，顯示時會自動加上貨幣符號及千分位逗點
 5. color -> 卡片顏色，預設紫色
-6. dollarSign -> 貨幣符號，預設為 '$'
-7. percent -> 百分比（0~100，不含符號）
-8. annotation -> 金額旁的備註，如：以使用額度
-9. ariaLabel -> title for button，預設為 cardName
-10. onClick -> 點即時呼叫。
+6. hasShadow -> 顯示影子，預設無
+7. dollarSign -> 貨幣符號，預設為 '$'
+8. percent -> 百分比（0~100，不含符號）
+9. annotation -> 金額旁的備註，如：以使用額度
+10.ariaLabel -> title for button，預設為 cardName
 11.children
 
 `;
@@ -44,4 +44,24 @@ const Template = (args) => (
   <AccountCard {...args} />
 );
 
-export const Primary = Template.bind({});
+export const Purple = Template.bind({});
+
+export const Yellow = Template.bind({});
+Yellow.args = {
+  color: 'yellow',
+};
+
+export const Blue = Template.bind({});
+Blue.args = {
+  color: 'blue',
+};
+
+export const Green = Template.bind({});
+Green.args = {
+  color: 'green',
+};
+
+export const LightPurple = Template.bind({});
+LightPurple.args = {
+  color: 'lightPurple',
+};

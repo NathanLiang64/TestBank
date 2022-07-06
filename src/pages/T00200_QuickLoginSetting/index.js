@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useGetEnCrydata } from 'hooks';
 
 /* Elements */
 import Header from 'components/Header';
@@ -49,8 +48,6 @@ const QuickLoginSetting = () => {
   };
 
   const closePattern = () => setShowPattern(false);
-
-  useGetEnCrydata();
 
   const renderDialog = () => (
     <Dialog

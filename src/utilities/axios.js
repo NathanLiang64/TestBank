@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import { showError } from './MessageModal';
 import JWEUtil from './JWEUtil';
 import JWTUtil from './JWTUtil';
-import { getJwtToken, syncJwtToken } from './AppScriptProxy';
+import { getJwtToken, syncJwtToken, getAesKey } from './AppScriptProxy';
 
 // Axios instance
 const instance = axios.create({
@@ -41,9 +41,8 @@ const processRequest = async (request) => {
   }
   // 處理 JWT Request 加密；當通過 Login 驗證之後，所有 POST 全部都是使用 JWT 加密模式。
   else if (jwtToken) {
-    const aeskey = sessionStorage.getItem('aesKey');
-    const ivkey = sessionStorage.getItem('iv');
-    request.data = JWTUtil.encryptJWTMessage(aeskey, ivkey, payload);
+    const aes = await getAesKey();
+    request.data = JWTUtil.encryptJWTMessage(aes.aesKey, aes.iv, payload);
   }
   // console.log(`%cRequest --> ${JSON.stringify(request)}`, 'color: Green;'); // 列出完整的 Request 資訊。
   return request;
@@ -74,21 +73,21 @@ const processResponse = async (response) => {
     }
   }
 
+  const encData = data ?? response.data.encData; // 為相容 SM
   if (code === '0000') {
     let resultData;
     // 處理 JWE Response 解密
-    if (data.recipients) { // TODO 暫時用這種方式檢查 JWE
+    if (encData.recipients) { // TODO 暫時用這種方式檢查 JWE
+      console.log('*** Start JWE Decode ***');
       const privateKey = sessionStorage.getItem('privateKey');
-      resultData = JSON.parse(JWEUtil.decryptJWEMessage(privateKey, data));
-      // console.log(resultData);
+      resultData = JSON.parse(JWEUtil.decryptJWEMessage(privateKey, encData));
     }
     // 處理 JWT Response 解密；若Request時沒有使用jwtToken，或例外發生時，傳回的資料都不會加密。
     else if (rqJwtToken) {
-      const aeskey = sessionStorage.getItem('aesKey');
-      const ivkey = sessionStorage.getItem('iv');
-      const encData = (data || response.data.encData); // 為相容 SM
-      // console.log(aeskey, ivkey, encData);
-      resultData = JWTUtil.decryptJWTMessage(aeskey, ivkey, encData, mac);
+      // console.log('*** Start JWT Decode ***');
+      const aes = await getAesKey();
+      // console.log(aes, encData);
+      resultData = JWTUtil.decryptJWTMessage(aes.aesKey, aes.iv, encData, mac);
     }
 
     // console.log(`Response Data(解密後) --> ${JSON.stringify(resultData)}`);
@@ -167,9 +166,8 @@ instance.interceptors.response.use(
  * @returns
  */
 const userRequest = async (method, url, data = {}, config) => {
-  console.log(instance.defaults.baseURL + url);
   instance.defaults.baseURL = (url.startsWith('/sm')) ? process.env.REACT_APP_SM_CTRL_URL : process.env.REACT_APP_URL;
-  console.log(instance.defaults.baseURL + url);
+  // console.log(instance.defaults.baseURL + url);
 
   method = method.toLowerCase();
   let result = null;
@@ -249,9 +247,8 @@ const download = async (url, request, filename, contentType) => {
   const token = await getJwtToken();
 
   // Request Payload 加密
-  const aeskey = sessionStorage.getItem('aesKey');
-  const ivkey = sessionStorage.getItem('iv');
-  const encrypt = JWTUtil.encryptJWTMessage(aeskey, ivkey, JSON.stringify(request));
+  const aes = await getAesKey();
+  const encrypt = JWTUtil.encryptJWTMessage(aes.aesKey, aes.iv, JSON.stringify(request));
 
   fetch(url, {
     method: 'POST',

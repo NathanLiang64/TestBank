@@ -25,6 +25,7 @@ const BottomDrawer = ({
   isOpen,
   onClose,
   onBack,
+  shouldAutoClose = false,
 }) => {
   const renderBackButton = (clickEvent) => (
     <FEIBIconButton
@@ -36,15 +37,23 @@ const BottomDrawer = ({
     </FEIBIconButton>
   );
 
-  const handleClickBubble = () => {
+  /**
+   * 處理右上角 X 關閉 Drawer 事件。
+   */
+  const handleCloseBtnClick = () => {
     store.dispatch(setDrawerVisible(false));
+    if (onClose) onClose();
+  };
+
+  const handleClickBubble = () => {
+    if (shouldAutoClose) store.dispatch(setDrawerVisible(false));
   };
 
   return (
     <DrawerWrapper
       className={className}
       open={isOpen}
-      onClose={onClose}
+      onClose={handleCloseBtnClick}
       $contentNoScrollable={noScrollable}
     >
       <div className="drawerTitle">

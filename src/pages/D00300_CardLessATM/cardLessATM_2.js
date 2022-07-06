@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { closeFunc } from 'utilities/BankeePlus';
+import { closeFunc } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Header from 'components/Header';
