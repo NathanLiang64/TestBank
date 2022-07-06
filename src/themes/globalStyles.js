@@ -315,6 +315,15 @@ const GlobalStyles = createGlobalStyle`
         border-radius: 1rem;
         margin-right: 1.6rem;
       }
+      .downloadImg {
+        width: 2rem;
+      }
+    }
+  }
+
+  .downloadItemList {
+    li {
+      justify-content: space-between;
     }
   }
 
