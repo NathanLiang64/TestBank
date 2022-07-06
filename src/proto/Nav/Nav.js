@@ -5,7 +5,7 @@ import { useHistory } from 'react-router';
 import { startFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
-import { logout, mobileAccountUnbind, getHomeData } from './Nav.api';
+import { logout, mobileAccountUnbind, getHomeData, registerToken, functionTrace } from './Nav.api';
 
 import NavWrapper from './Nav.style';
 
@@ -57,6 +57,8 @@ const Nav = () => {
           </div>
 
           <div onClick={() => getHomeData()}>SM-API://getHomeData</div>
+          <div onClick={() => registerToken({ pushToken: '4fcd5d52dc5ba7208bac5758bb84d6ca7061f5abfe0bd54b684a9d1a6c3a7e49' })}>SM-API://registerToken</div>
+          <div onClick={() => functionTrace({ date: '2022-07-05 14:40:20', functionCode: 'C00100', functionParams: '' })}>SM-API://functionTrace</div>
         </div>
 
         <div className="lexion">
