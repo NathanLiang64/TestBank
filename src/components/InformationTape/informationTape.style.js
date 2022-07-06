@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
-const InformationTapeWrapper = styled.div`
+const InformationTapeWrapper = styled.div.attrs({
+  className: 'InformationTape',
+})`
   padding: 1.2rem;
   box-shadow: ${({ $noShadow }) => ($noShadow ? '0' : '0 .4rem 1rem rgba(0, 0, 0, .12);')};
   border-radius: .6rem;
