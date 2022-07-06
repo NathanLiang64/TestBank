@@ -44,6 +44,8 @@ const E001001 = lazy(() => import('pages/E00100_Exchange/exchange_1'));
 const E001002 = lazy(() => import('pages/E00100_Exchange/exchange_2'));
 const E00200 = lazy(() => import('pages/E00200_ExchangeRate'));
 const E00300 = lazy(() => import('pages/E00300_FinancialDepartments'));
+const L00300 = lazy(() => import('pages/L00300_LoanInterest'));
+const L003001 = lazy(() => import('pages/L00300_LoanInterest/loanInterest_1'));
 const M00100 = lazy(() => import('pages/M00100_Community/M00100'));
 const M00200 = lazy(() => import('pages/M00200_FriendSearch/M00200'));
 const R00100 = lazy(() => import('pages/R00100_CCTransaction/R00100'));
@@ -78,7 +80,6 @@ const SMSOTPactivate = lazy(() => import('pages/SMSOTPactivate'));
 const QRCodeTransfer = lazy(() => import('pages/QRCodeTransfer'));
 const ProjectJ = lazy(() => import('pages/ProjectJ'));
 const LoanInquiry = lazy(() => import('pages/LoanInquiry'));
-const LoanInterest = lazy(() => import('pages/LoanInterest'));
 const Deduct = lazy(() => import('pages/Deduct'));
 const Deduct1 = lazy(() => import('pages/Deduct/deduct1'));
 const Deduct2 = lazy(() => import('pages/Deduct/deduct2'));
@@ -134,6 +135,8 @@ const routes = [
   { path: '/E001002', exact: false, component: E001002 },
   { path: '/E00200', exact: false, component: E00200 },
   { path: '/E00300', exact: false, component: E00300 },
+  { path: '/L00300', exact: false, component: L00300 },
+  { path: '/L003001', exact: false, component: L003001 },
   { path: '/M00100', exact: false, component: M00100 },
   { path: '/M00200', exact: false, component: M00200 },
   { path: '/R00100', exact: false, component: R00100 },
@@ -169,7 +172,6 @@ const routes = [
   { path: '/QRCodeTransfer', exact: false, component: QRCodeTransfer },
   { path: '/projectJ', exact: false, component: ProjectJ },
   { path: '/loanInquiry', exact: false, component: LoanInquiry },
-  { path: '/loanInterest', exact: false, component: LoanInterest },
   { path: '/moreTranscations', exact: false, component: MoreTranscations },
   { path: '/foreignCurrencyPriceSetting', exact: false, component: ForeignCurrencyPriceSetting },
   { path: '/transferStatic', exact: false, component: TransferStatic },
