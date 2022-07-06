@@ -113,7 +113,7 @@ const AccountCardList = ({ data }) => {
             break;
           case 'C': // 子帳戶
             onClick = () => {
-              dispatch(setDrawer({ title: '選擇計畫', content: renderSubAccountDrawer(subAccounts) }));
+              dispatch(setDrawer({ title: '選擇計畫', content: renderSubAccountDrawer(subAccounts), shouldAutoClose: true }));
               dispatch(setDrawerVisible(true));
             };
             break;

@@ -6,8 +6,8 @@ import uuid from 'react-uuid';
 import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
 import SwiperLayout from 'components/SwiperLayout';
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { showAnimationModal, showDrawer, showError } from 'utilities/MessageModal';
+import { setWaittingVisible, setDrawer, setDrawerVisible } from 'stores/reducers/ModalReducer';
+import { showAnimationModal, showError } from 'utilities/MessageModal';
 import {
   AccountIcon11, AccountIcon12, CircleIcon, TransactionIcon1,
 } from 'assets/images/icons';
@@ -144,7 +144,8 @@ const DepositPlanPage = () => {
         ))}
       </ul>
     );
-    showDrawer('', options);
+    dispatch(setDrawer({ title: '', content: options, shouldAutoClose: true }));
+    dispatch(setDrawerVisible(true));
   };
 
   const handleEditClick = (plan) => {
