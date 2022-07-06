@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { useGetEnCrydata } from 'hooks';
 import { customPopup } from 'utilities/MessageModal';
-import { closeFunc, startFunc } from 'utilities/BankeePlus';
+import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import AddNewItem from 'components/AddNewItem';
@@ -131,8 +130,6 @@ const MobileTransfer = () => {
       )}
     />
   );
-
-  useGetEnCrydata();
 
   useEffect(() => {
     checkBindAndMobile();

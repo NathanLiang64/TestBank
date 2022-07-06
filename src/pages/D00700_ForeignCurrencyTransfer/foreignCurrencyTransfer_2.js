@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { closeFunc } from 'utilities/BankeePlus';
+import { closeFunc } from 'utilities/AppScriptProxy';
 import { accountFormatter, currencySymbolGenerator } from 'utilities/Generator';
 
 /* Elements */

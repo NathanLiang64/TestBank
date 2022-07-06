@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
-import { useGetEnCrydata } from 'hooks';
-import { startFunc } from 'utilities/BankeePlus';
+import { startFunc } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Header from 'components/Header';
@@ -132,8 +131,6 @@ const Notice = () => {
       </li>
     </ul>
   );
-
-  useGetEnCrydata();
 
   useEffect(() => {
     getNotices();

@@ -1,5 +1,4 @@
 import { useDispatch } from 'react-redux';
-import { useGetEnCrydata } from 'hooks';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -81,8 +80,6 @@ const PwdModify = () => {
   const onSubmit = async () => {
     handlePasswordModify();
   };
-
-  useGetEnCrydata();
 
   return (
     <>

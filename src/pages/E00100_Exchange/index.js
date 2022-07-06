@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-// import { useGetEnCrydata } from 'hooks';
 import { exchangeApi } from 'apis';
-import { closeFunc, switchLoading } from 'utilities/BankeePlus';
+import { closeFunc, switchLoading } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import {
@@ -358,8 +357,6 @@ const Exchange = () => {
       }
     </FEIBErrorMessage>
   );
-
-  // useGetEnCrydata();
 
   useEffect(() => {
     setValue('exchangeType', '1');

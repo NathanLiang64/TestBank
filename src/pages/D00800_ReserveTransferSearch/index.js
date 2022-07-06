@@ -5,7 +5,7 @@ import { useHistory } from 'react-router';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { reserveTransferSearchApi } from 'apis';
 import { dateFormatter } from 'utilities/Generator';
-import { switchLoading, closeFunc } from 'utilities/BankeePlus';
+import { switchLoading, closeFunc } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Header from 'components/Header';

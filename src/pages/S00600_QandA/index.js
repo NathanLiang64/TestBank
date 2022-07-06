@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useGetEnCrydata } from 'hooks';
 import parse from 'html-react-parser';
 // import { qAndAApi } from 'apis';
 import { getQACategory, getQASubCategory } from 'pages/S00600_QandA/api';
@@ -84,8 +83,6 @@ const QandA = () => {
       </div>
     ))
   );
-
-  useGetEnCrydata();
 
   useEffect(() => {
     getQATab();
