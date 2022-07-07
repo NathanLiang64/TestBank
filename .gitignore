@@ -35,3 +35,4 @@ compiler
 *.log
 *.log.*.gz
 *.tmp
+/bin/
