@@ -2,7 +2,6 @@
 /* eslint-disable object-curly-newline */
 /* eslint-disable no-use-before-define */
 /* eslint-disable brace-style */
-/* eslint-disable prefer-template */
 import forge from 'node-forge';
 import {
   createTransactionAuth,
@@ -12,8 +11,8 @@ import e2ee from './E2ee';
 import { customPopup, showError } from './MessageModal';
 
 const device = {
-  ios: () => !(sessionStorage.getItem('webLogin') === 'true') && /iPhone|iPad|iPod/i.test(navigator.userAgent),
-  android: () => !(sessionStorage.getItem('webLogin') === 'true') && /Android/i.test(navigator.userAgent),
+  ios: () => !(sessionStorage.getItem('webMode') === 'true') && /iPhone|iPad|iPod/i.test(navigator.userAgent),
+  android: () => !(sessionStorage.getItem('webMode') === 'true') && /Android/i.test(navigator.userAgent),
 };
 
 /**
@@ -40,7 +39,7 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
     else if (device.android()) {
       const androidParam = JSON.stringify(request);
       // eslint-disable-next-line no-eval
-      eval('window.jstoapp.' + appJsName)(androidParam); // TODO 無效的 appJsName 的處理
+      eval(`window.jstoapp.${appJsName}`)(androidParam); // TODO 無效的 appJsName 的處理
     }
     else if (needCallback || webDevTest) {
       window.AppJavaScriptCallback(webDevTest(request));
@@ -106,8 +105,8 @@ const funcStack = {
  * 網頁通知APP跳轉至首頁
  */
 async function goHome() {
+  funcStack.clear();
   await callAppJavaScript('goHome', null, false, () => {
-    funcStack.clear();
     startFunc('/');
   });
 }
@@ -124,33 +123,46 @@ async function startFunc(funcID, funcParams, keepData) {
     return;
   }
 
-  // TODO: 若 funcID 是以'/'為開頭，表示是指定固定網址，因此不會交由 APP切換
-
+  funcID = funcID.replace(/^\/*/, ''); // 移掉前置的 '/' 符號,
   const data = JSON.stringify({
     funcID,
     funcParams: JSON.stringify(funcParams),
     keepData: JSON.stringify(keepData),
   });
-  await callAppJavaScript('startFunc', data, false, () => {
-    funcID = funcID.replace(/^\/*/, ''); // 移掉前置的 '/' 符號
-    funcStack.push(data);
+  funcStack.push(data);
+
+  // 只要不是 A00100 這種格式的頁面，一律視為 WebPage 而不透過 APP 的 Function Controller 轉導。
+  const isFunction = (/^[A-Z]\d{5}$/.test(funcID));
+  if (isFunction) {
+    await callAppJavaScript('startFunc', data, false, () => {
+      window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcID}`;
+    });
+  } else {
     window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcID}`;
-  });
+  }
 }
 
 /**
  * 觸發APP返回上一頁功能
  */
 async function closeFunc() {
-  await callAppJavaScript('closeFunc', null, false, () => {
-    const funcItem = funcStack.pop();
+  const funcItem = funcStack.pop();
+  const isFunction = (/^[A-Z]\d{5}$/.test(funcItem?.funcID));
+
+  const webCloseFunc = () => {
     const rootPath = `${process.env.REACT_APP_ROUTER_BASE}/`;
     if (funcItem) {
       window.location.pathname = `${rootPath}${funcItem.funcID}`; // keepData 存入 localStorage 'funcParams'
     } else {
       window.location.pathname = rootPath;
     }
-  });
+  };
+
+  if (isFunction) {
+    await callAppJavaScript('closeFunc', null, false, webCloseFunc);
+  } else {
+    webCloseFunc();
+  }
 }
 
 /**
@@ -243,7 +255,6 @@ async function getAesKey() {
       iv: sessionStorage.getItem('iv'),
     };
   }
-  //  response { Crydata, Enivec }
   const rs = await callAppJavaScript('getEnCrydata', null, true);
   return {
     aesKey: forge.util.decode64(rs.Crydata).substring(7),
