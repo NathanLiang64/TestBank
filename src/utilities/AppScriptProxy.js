@@ -3,6 +3,7 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable brace-style */
 /* eslint-disable prefer-template */
+import forge from 'node-forge';
 import {
   createTransactionAuth,
   transactionAuthVerify,
@@ -11,8 +12,8 @@ import e2ee from './E2ee';
 import { customPopup, showError } from './MessageModal';
 
 const device = {
-  ios: () => /iPhone|iPad|iPod/i.test(navigator.userAgent),
-  android: () => /Android/i.test(navigator.userAgent),
+  ios: () => !(sessionStorage.getItem('webLogin') === 'true') && /iPhone|iPad|iPod/i.test(navigator.userAgent),
+  android: () => !(sessionStorage.getItem('webLogin') === 'true') && /Android/i.test(navigator.userAgent),
 };
 
 /**
@@ -34,12 +35,12 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
 
     if (device.ios()) {
       const msg = JSON.stringify({ name: appJsName, data: JSON.stringify(request) });
-      window.webkit?.messageHandlers.jstoapp.postMessage(msg); // TODO 無效的 appJsName 的處理
+      window.webkit.messageHandlers.jstoapp.postMessage(msg); // TODO 無效的 appJsName 的處理
     }
     else if (device.android()) {
       const androidParam = JSON.stringify(request);
       // eslint-disable-next-line no-eval
-      eval('window.jstoapp?.' + appJsName)(androidParam); // TODO 無效的 appJsName 的處理
+      eval('window.jstoapp.' + appJsName)(androidParam); // TODO 無效的 appJsName 的處理
     }
     else if (needCallback || webDevTest) {
       window.AppJavaScriptCallback(webDevTest(request));
@@ -245,8 +246,8 @@ async function getAesKey() {
   //  response { Crydata, Enivec }
   const rs = await callAppJavaScript('getEnCrydata', null, true);
   return {
-    aesKey: rs.Crydata,
-    iv: rs.Enivec,
+    aesKey: forge.util.decode64(rs.Crydata).substring(7),
+    iv: forge.util.decode64(rs.Enivec).substring(7),
   };
 }
 
