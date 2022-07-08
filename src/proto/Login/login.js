@@ -1,7 +1,7 @@
 /* eslint-disable object-curly-newline */
 /* eslint-disable radix,no-restricted-globals */
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
+// import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -13,6 +13,7 @@ import {
 import {
   ArrowBackIcon, ArrowNextIcon, CheckboxCheckedIcon, CheckboxUncheckedIcon, FaceIdIcon, VisibilityIcon, VisibilityOffIcon,
 } from 'assets/images/icons';
+import { goHome } from 'utilities/AppScriptProxy';
 import { accountValidation, identityValidation, passwordValidation } from 'utilities/validation';
 import theme from 'themes/theme';
 import Logo from 'assets/images/logoTransparent.png';
@@ -51,7 +52,7 @@ const Login = () => {
   const [showActions, setShowActions] = useState(false);
 
   const dispatch = useDispatch();
-  const history = useHistory();
+  // const history = useHistory();
 
   useEffect(async () => {
     await HandShake();
@@ -81,7 +82,8 @@ const Login = () => {
     if (isSuccess) { // 登入成功
       // await personalDataPreload();
       // await getHomeData();
-      history.push('/');
+      // history.push('/');
+      goHome();
     }
   };
 
