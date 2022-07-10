@@ -32,6 +32,12 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
       callback: (needCallback ? 'AppJavaScriptCallback' : null), // 此方法可提供所有WebView共用。
     };
 
+    // DEBUG 在 APP 還沒完成交易驗證之前，先用 Web版進行測試。
+    if (appJsName === 'transactionAuth') {
+      window.AppJavaScriptCallback(webDevTest(request));
+      return;
+    }
+
     if (device.ios()) {
       const msg = JSON.stringify({ name: appJsName, data: JSON.stringify(request) });
       window.webkit.messageHandlers.jstoapp.postMessage(msg); // TODO 無效的 appJsName 的處理
@@ -380,14 +386,13 @@ async function appTransactionAuth(request) {
   const boundMID = false; // TODO 取得 MID 的綁定狀態。
 
   // 檢查是否可用生物辨識或圖形鎖驗證。
-  let allowed2FA = ((loginMode === 11 || loginMode === 21) && ((authCode & 0x20) !== 0)); // 表示可以使用 生物辨識或圖形鎖 通過驗證。
+  const allowed2FA = boundMID && (loginMode === 11) && ((authCode & 0x20) !== 0);
 
   const failTimes = 0; // TODO 若三次不通過，則改為使用網銀密碼驗證！
-  allowed2FA = allowed2FA && (failTimes < 3);
 
-  // 檢查是否需輸入網銀密碼（只要有 2FA 的功能，就不用輸入密碼；只有在三次驗不過之後，才切換到用密碼驗證）
-  const allowedPWD = (!allowed2FA && (loginMode === 21) && (authCode & 0x1F) !== 0); // 表示可以使用 網銀密碼或OTP或(網銀密碼+OTP) 通過驗證。
-  const inputPwd = (allowedPWD && (authCode & 0x10)); // 表示需要輸入網銀密碼
+  // 檢查是否需要通過 網銀密碼 驗證。
+  // 只要有 2FA 的功能，就不用輸入密碼；只有在2FA三次驗不過之後，才切換到用密碼驗證
+  const allowedPWD = !(allowed2FA && (failTimes < 3)) && (loginMode === 21) && ((authCode & 0x10) !== 0);
 
   // NOTE 沒有 boundMID，但又限定只能使用 2FA 時；傳回 false 尚未進行行動裝置綁定，無法使用此功能！
   if (allowedPWD === false && boundMID === false) {
@@ -395,9 +400,10 @@ async function appTransactionAuth(request) {
     return;
   }
 
+  // 檢查是否需要通過 OTP 驗證，需要則立即發送OTP。
+  const sendOtp = (allowedPWD || allowed2FA || ((authCode & 0x30) === 0)) && ((authCode & 0x0F) !== 0);
+
   // 建立交易授權驗證。
-  const otpMode = (authCode & 0x0F);
-  const sendOtp = (allowedPWD && otpMode !== 0) || ((otpMode & 0x03) === 0x03); // 表示需要發送OTP
   const txnAuth = await createTransactionAuth({ // 傳回值包含發送簡訊的手機門號及簡訊識別碼。
     funcCode,
     authCode: authCode + 0x96c1fc6b98e00, // TODO 這個 HashCode 要由 Controller 在 Login 的 Response 傳回。
@@ -432,7 +438,7 @@ async function appTransactionAuth(request) {
       ) : null}
 
       {/* 驗證網銀密碼 */}
-      {inputPwd ? (
+      {allowedPWD ? (
         <div>
           <p>輸入網銀密碼</p>
           <input type="text" id="netbankPwd" defaultValue="feib1688" />
