@@ -32,6 +32,12 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
       callback: (needCallback ? 'AppJavaScriptCallback' : null), // 此方法可提供所有WebView共用。
     };
 
+    // DEBUG 在 APP 還沒完成交易驗證之前，先用 Web版進行測試。
+    if (appJsName === 'transactionAuth') {
+      window.AppJavaScriptCallback(webDevTest(request));
+      return;
+    }
+
     if (device.ios()) {
       const msg = JSON.stringify({ name: appJsName, data: JSON.stringify(request) });
       window.webkit.messageHandlers.jstoapp.postMessage(msg); // TODO 無效的 appJsName 的處理
@@ -61,8 +67,7 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
  * Web版 Function Controller
  */
 const funcStack = {
-  push: (data) => {
-    const startItem = JSON.parse(data);
+  push: (startItem) => {
     console.log('Start Function : ', startItem);
 
     const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
@@ -73,22 +78,25 @@ const funcStack = {
     localStorage.setItem('funcParams', (startItem.funcParams ?? null));
   },
   pop: () => {
+    localStorage.removeItem('funcParams');
+
     const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
+    if (stack.length === 0) return null;
+
     const closedItem = stack[stack.length - 1];
     // console.log('POP -> Closed Item : ', closedItem);
 
     stack.pop();
     localStorage.setItem('funcStack', JSON.stringify(stack));
 
+    // 寫入 Function 啟動參數。
     const startItem = stack[stack.length - 1];
-    if (startItem) {
-      // 寫入 Function 啟動參數。
-      const params = (closedItem.keepData ?? startItem.funcParams);
+    if (closedItem) {
+      const params = (closedItem.keepData ?? startItem?.funcParams);
       localStorage.setItem('funcParams', (params ?? null));
-      console.log('Close Function and Back to (', startItem.funcID, ')', (params ? JSON.parse(params) : null));
-    } else {
-      localStorage.removeItem('funcParams');
+      console.log('Close Function and Back to (', startItem?.funcID ?? 'Home', ')', (params ? JSON.parse(params) : null));
     }
+
     return startItem;
   },
   peek: () => {
@@ -124,11 +132,11 @@ async function startFunc(funcID, funcParams, keepData) {
   }
 
   funcID = funcID.replace(/^\/*/, ''); // 移掉前置的 '/' 符號,
-  const data = JSON.stringify({
+  const data = {
     funcID,
     funcParams: JSON.stringify(funcParams),
     keepData: JSON.stringify(keepData),
-  });
+  };
   funcStack.push(data);
 
   // 只要不是 A00100 這種格式的頁面，一律視為 WebPage 而不透過 APP 的 Function Controller 轉導。
@@ -146,22 +154,30 @@ async function startFunc(funcID, funcParams, keepData) {
  * 觸發APP返回上一頁功能
  */
 async function closeFunc() {
-  const funcItem = funcStack.pop();
-  const isFunction = (/^[A-Z]\d{5}$/.test(funcItem?.funcID));
+  const closeItem = funcStack.peek(); // 因為 funcStack 還沒 pop，所以用 peek 還以取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
+  const isFunction = !closeItem || (/^[A-Z]\d{5}$/.test(closeItem.funcID)); // 表示 funcID 是由 Function Controller 控制的單元功能。
 
-  const webCloseFunc = () => {
+  const startItem = funcStack.pop();
+  const webCloseFunc = async () => {
     const rootPath = `${process.env.REACT_APP_ROUTER_BASE}/`;
-    if (funcItem) {
-      window.location.pathname = `${rootPath}${funcItem.funcID}`; // keepData 存入 localStorage 'funcParams'
+    // 當 funcStack.pop 不出項目時，表示可能是由 APP 先啟動了某項功能（例：首頁卡片或是下方MenuBar）
+    if (startItem) {
+      // 表示返回由 WebView 啟動的單元功能或頁面，例：從「更多」啟動了某項單元功能，當此單元功能關閉時，就會進到這裡。
+      window.location.pathname = `${rootPath}${startItem.funcID}`; // keepData 存入 localStorage 'funcParams'
     } else {
-      window.location.pathname = rootPath;
+      // 雖然 Web端的 funcStack 已經空了，但有可能要返回的功能是由 APP 啟動的；所以，要先詢問 APP 是否有正在執行中的單元功能。
+      const appJsRs = await callAppJavaScript('getActiveFuncID', null, true); // 取得 APP 目前的 FuncID
+      if (appJsRs) {
+        // 例：首頁卡片 啟動 存錢計劃，當 存錢計劃 選擇返回前一功能時，就會進到這裡。（因為此時的 funcStack 是空的）
+        window.location.pathname = `${rootPath}${appJsRs.funcID}`;
+      } else window.location.pathname = rootPath;
     }
   };
 
   if (isFunction) {
     await callAppJavaScript('closeFunc', null, false, webCloseFunc);
   } else {
-    webCloseFunc();
+    await webCloseFunc();
   }
 }
 
@@ -170,30 +186,36 @@ async function closeFunc() {
  * @returns 若參數當時是以 JSON 物件儲存，則同樣會轉成物件傳回。
  */
 async function loadFuncParams() {
-  let data = await callAppJavaScript('getPagedata', null, true, () => 'localStorage');
-  if (data && data !== 'undefined') {
-    try {
-      let params = null;
-      if (data === 'localStorage') {
-        data = localStorage.getItem('funcParams');
-        if (data === 'null') params = null;
-        else if (data.startsWith('{')) params = JSON.parse(data);
-        else params = data;
-      } else {
+  try {
+    const funcItem = funcStack.peek(); // 因為功能已經啟動，所以用 peek 取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
+    const isFunction = !funcItem || (/^[A-Z]\d{5}$/.test(funcItem.funcID)); // 表示 funcID 是由 Function Controller 控制的單元功能。
+
+    const webGetFuncParams = async () => {
+      const params = localStorage.getItem('funcParams');
+      if (!params || params === 'null') return null;
+      if (params.startsWith('{')) return JSON.parse(params);
+      return params;
+    };
+
+    let params = null;
+    if (isFunction) {
+      const data = await callAppJavaScript('getPagedata', null, true, webGetFuncParams);
+      if (data && data !== 'undefined') {
         // 解析由 APP 傳回的資料, 只要有 keepData 就表示是由叫用的功能結束返回
         // 因此，要以 keepData 為單元功能的啟動參數。
         // 反之，表示是單元功能被啟動，此時才是以 funcParams 為單元功能的啟動參數。
         params = data.keepData ?? data.funcParams;
       }
-
-      console.log('>> Function 啟動參數 : ', params);
-      return params;
-    } catch (error) {
-      console.log(error);
+    } else {
+      params = webGetFuncParams();
     }
+    // await showAlert(`>> Function 啟動參數 : ${JSON.stringify(params)}`);
+    console.log('>> Function 啟動參數 : ', params);
+    return params;
+  } catch (error) {
+    await showAlert(JSON.stringify(error));
+    return error;
   }
-
-  return null;
 }
 
 /**
@@ -224,6 +246,17 @@ async function showPopup(url) {
   const data = { url };
   await callAppJavaScript('openPopWebView', data, false, () => {
     // TODO 用 MessageModal 的 customPopup 模擬。
+  });
+}
+
+/**
+ * 開啟原生的 Alert 視窗。
+ * @param {*} message 要顯示的訊息。
+ */
+async function showAlert(message) {
+  const data = { message };
+  await callAppJavaScript('showAlert', data, false, () => {
+    alert(message);
   });
 }
 
@@ -341,14 +374,13 @@ async function appTransactionAuth(request) {
   const boundMID = false; // TODO 取得 MID 的綁定狀態。
 
   // 檢查是否可用生物辨識或圖形鎖驗證。
-  let allowed2FA = ((loginMode === 11 || loginMode === 21) && ((authCode & 0x20) !== 0)); // 表示可以使用 生物辨識或圖形鎖 通過驗證。
+  const allowed2FA = boundMID && (loginMode === 11) && ((authCode & 0x20) !== 0);
 
   const failTimes = 0; // TODO 若三次不通過，則改為使用網銀密碼驗證！
-  allowed2FA = allowed2FA && (failTimes < 3);
 
-  // 檢查是否需輸入網銀密碼（只要有 2FA 的功能，就不用輸入密碼；只有在三次驗不過之後，才切換到用密碼驗證）
-  const allowedPWD = (!allowed2FA && (loginMode === 21) && (authCode & 0x1F) !== 0); // 表示可以使用 網銀密碼或OTP或(網銀密碼+OTP) 通過驗證。
-  const inputPwd = (allowedPWD && (authCode & 0x10)); // 表示需要輸入網銀密碼
+  // 檢查是否需要通過 網銀密碼 驗證。
+  // 只要有 2FA 的功能，就不用輸入密碼；只有在2FA三次驗不過之後，才切換到用密碼驗證
+  const allowedPWD = !(allowed2FA && (failTimes < 3)) && (loginMode === 21) && ((authCode & 0x10) !== 0);
 
   // NOTE 沒有 boundMID，但又限定只能使用 2FA 時；傳回 false 尚未進行行動裝置綁定，無法使用此功能！
   if (allowedPWD === false && boundMID === false) {
@@ -356,9 +388,10 @@ async function appTransactionAuth(request) {
     return;
   }
 
+  // 檢查是否需要通過 OTP 驗證，需要則立即發送OTP。
+  const sendOtp = (allowedPWD || allowed2FA || ((authCode & 0x30) === 0)) && ((authCode & 0x0F) !== 0);
+
   // 建立交易授權驗證。
-  const otpMode = (authCode & 0x0F);
-  const sendOtp = (allowedPWD && otpMode !== 0) || ((otpMode & 0x03) === 0x03); // 表示需要發送OTP
   const txnAuth = await createTransactionAuth({ // 傳回值包含發送簡訊的手機門號及簡訊識別碼。
     funcCode,
     authCode: authCode + 0x96c1fc6b98e00, // TODO 這個 HashCode 要由 Controller 在 Login 的 Response 傳回。
@@ -393,7 +426,7 @@ async function appTransactionAuth(request) {
       ) : null}
 
       {/* 驗證網銀密碼 */}
-      {inputPwd ? (
+      {allowedPWD ? (
         <div>
           <p>輸入網銀密碼</p>
           <input type="text" id="netbankPwd" defaultValue="feib1688" />
@@ -445,6 +478,7 @@ export {
   switchLoading,
   doOCR,
   showPopup,
+  showAlert,
   getAesKey,
   syncJwtToken,
   getJwtToken,

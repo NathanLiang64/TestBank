@@ -45,7 +45,7 @@ const Nav = () => {
           <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await transactionAuth(0x17, '0900123456'))}>
             生物辨識/圖形-設定(PWD+OTP)
           </div>
-          <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await transactionAuth(0x2B))}>
+          <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await transactionAuth(0x20))}>
             生物辨識/圖形-解除(2FA)
           </div>
           <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await transactionAuth(0x2B, '0900123456'))}>
