@@ -83,7 +83,8 @@ const Nav = () => {
           <div onClick={() => startFunc('E00100')}>E00100 換匯 - (施工中)</div>
           <div onClick={() => startFunc('T00100')}>T00100 個人化設定</div>
           <div onClick={() => startFunc('T00600')}>T00600 手機號碼收款設定 - (施工中)</div>
-          <div onClick={() => startFunc('T00700')}>T00700 外幣轉外幣 - (施工中)</div>
+          <div onClick={() => startFunc('T00700')}>T00700 基本資料變更 - (施工中)</div>
+          <div onClick={() => startFunc('D00700')}>D00700 外幣轉外幣 - (施工中)</div>
           <div onClick={() => startFunc('L00300')}>L00300 繳款紀錄查詢 - (施工中)</div>
           <div onClick={() => startFunc('cardLessSetting')}>無 function code 無卡提款設定 - (完成切版)</div>
         </div>
