@@ -10,7 +10,7 @@ import {
   FEIBTabContext,
   FEIBTabList,
   FEIBTab,
-  // FEIBTabPanel,
+  FEIBTabPanel,
   // FEIBBorderButton,
 } from 'components/elements';
 import BottomDrawer from 'components/BottomDrawer';
@@ -29,7 +29,11 @@ import NoticeWrapper from './notice.style';
 const Notice = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [tabValue, setTabValue] = useState('A');
-  const [messagesList, setMessagesList] = useState([]);
+  const [allMessagesList, setAllMessagesList] = useState([]);
+  const [pMessagesList, setPmessagesList] = useState([]);
+  const [aMessagesList, setAmessagesList] = useState([]);
+  const [cMessagesList, setCmessagesList] = useState([]);
+  const [sMessagesList, setSmessagesList] = useState([]);
 
   // 跳轉通知設定頁
   const toSettingPage = () => {
@@ -38,9 +42,18 @@ const Notice = () => {
 
   // 取得通知列表
   const getNotices = async () => {
-    const response = await queryLastPush();
-    if (response.length > 0) {
-      setMessagesList(response);
+    const { code, data } = await queryLastPush();
+    if (code === '0000') {
+      const allMsg = data;
+      const pMsg = data.filter((item) => item.msgType === 'P');
+      const aMsg = data.filter((item) => item.msgType === 'A');
+      const cMsg = data.filter((item) => item.msgType === 'C');
+      const sMsg = data.filter((item) => item.msgType === 'S');
+      setAllMessagesList(allMsg);
+      setPmessagesList(pMsg);
+      setAmessagesList(aMsg);
+      setCmessagesList(cMsg);
+      setSmessagesList(sMsg);
     }
   };
 
@@ -96,28 +109,14 @@ const Notice = () => {
     handleOpenDrawer();
   };
 
-  const renderMessagesList = () => {
-    if (tabValue === '0') {
-      return messagesList.map((item) => (
-        <MessageItem
-          key={item?.msgId}
-          item={item}
-          readClick={() => readSpecMessage(item)}
-          deleteClick={() => deleteSpecMessage(item)}
-        />
-      ));
-    }
-    return messagesList
-      .filter((msg) => msg.msgType === tabValue)
-      .map((item) => (
-        <MessageItem
-          key={item?.msgId}
-          item={item}
-          readClick={() => readSpecMessage(item)}
-          deleteClick={() => deleteSpecMessage(item)}
-        />
-      ));
-  };
+  const renderMessagesList = (msgList) => msgList.map((item) => (
+    <MessageItem
+      key={item?.msgId}
+      item={item}
+      readClick={() => readSpecMessage(item)}
+      deleteClick={() => deleteSpecMessage(item)}
+    />
+  ));
 
   const renderEditList = () => (
     <ul className="noticeEditList">
@@ -163,10 +162,32 @@ const Notice = () => {
               <FEIBTab label="安全" value="S" />
               <FEIBTab label="全部" value="0" />
             </FEIBTabList>
+            <FEIBTabPanel value="A">
+              {
+                renderMessagesList(aMessagesList)
+              }
+            </FEIBTabPanel>
+            <FEIBTabPanel value="C">
+              {
+                renderMessagesList(cMessagesList)
+              }
+            </FEIBTabPanel>
+            <FEIBTabPanel value="P">
+              {
+                renderMessagesList(pMessagesList)
+              }
+            </FEIBTabPanel>
+            <FEIBTabPanel value="S">
+              {
+                renderMessagesList(sMessagesList)
+              }
+            </FEIBTabPanel>
+            <FEIBTabPanel value="0">
+              {
+                renderMessagesList(allMessagesList)
+              }
+            </FEIBTabPanel>
           </FEIBTabContext>
-          {
-            renderMessagesList()
-          }
           <BottomDrawer
             isOpen={openDrawer}
             onClose={handleOpenDrawer}
