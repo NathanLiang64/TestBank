@@ -42,7 +42,7 @@ const initialState = {
     errorTitle: '',
     errorCode: '',
     errorDesc: '',
-    onClose: null,
+    onClose: null, // Drawer 右上角 X 按下時的處理方式。
   },
 };
 

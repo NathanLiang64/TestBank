@@ -39,12 +39,13 @@ const Page = () => {
   }, []);
 
   const renderTransactions = (transactions) => transactions.map((t, i) => (
-    <InformationList
-      key={`${uid}-${i}`}
-      title={dateFormatter(stringToDate(t.txnDate))}
-      content={t.isSuccess ? `利息金額 ${currencySymbolGenerator(t.currency ?? 'TWD', t.amount)}` : '當日扣款失敗'}
-      remark={t.isSuccess ? `${t.rate}%利息 ${currencySymbolGenerator(t.currency ?? 'TWD', Math.round(t.amount * (t.rate / 100)))}` : '挑戰失敗'}
-    />
+    <li key={`${uid}-${i}`}>
+      <InformationList
+        title={dateFormatter(stringToDate(t.txnDate))}
+        content={t.isSuccess ? `利息金額 ${currencySymbolGenerator(t.currency ?? 'TWD', t.amount)}` : '當日扣款失敗'}
+        remark={t.isSuccess ? `${t.rate}%利息 ${currencySymbolGenerator(t.currency ?? 'TWD', Math.round(t.amount * (t.rate / 100)))}` : <span className="text-red">挑戰失敗</span>}
+      />
+    </li>
   ));
 
   return (
@@ -52,11 +53,16 @@ const Page = () => {
       <Main small>
         <PageWrapper>
           <Badge
-            label={rewards?.isJoinedRewardProgram ? '可能回饋' : '您尚未參加挑戰'}
+            label={rewards?.isJoinedRewardProgram ? '回饋累計' : '您尚未參加挑戰'}
             value={rewards?.isJoinedRewardProgram ? currencySymbolGenerator(rewards?.currency ?? 'NTD', rewards?.rewards ?? 0) : '-'}
           />
           { rewards?.transactions?.length > 0 ? (
-            renderTransactions(rewards.transactions)
+            <div>
+              <h2>扣款明細</h2>
+              <ul>
+                {renderTransactions(rewards.transactions)}
+              </ul>
+            </div>
           ) : (
             <div style={{ height: '20rem', marginTop: '6rem' }}>
               <EmptyData />
