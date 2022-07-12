@@ -81,7 +81,7 @@ const NicknameSetting = lazy(() => import('pages/NicknameSetting'));
 const PatternLockSetting = lazy(() => import('pages/PatternLockSetting'));
 const FingerPrintLockSetting = lazy(() => import('pages/FingerPrintLockSetting'));
 const SMSOTPactivate = lazy(() => import('pages/SMSOTPactivate'));
-const QRCodeTransfer = lazy(() => import('pages/QRCodeTransfer'));
+const QRCodeTransfer = lazy(() => import('proto/QRCodeTransfer'));
 const ProjectJ = lazy(() => import('pages/ProjectJ'));
 const LoanInquiry = lazy(() => import('pages/LoanInquiry'));
 const Deduct = lazy(() => import('pages/Deduct'));
