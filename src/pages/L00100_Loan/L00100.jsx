@@ -54,7 +54,7 @@ const Page = () => {
       { icon: <CircleIcon />, title: '清償證明下載', onClick: () => { getStatment({ accountNo, format: 1 }); } },
     ];
     dispatch(setDrawer({
-      title: '選擇計畫',
+      title: '',
       content: (
         <ul>
           {list.map((func) => (
@@ -172,12 +172,14 @@ const Page = () => {
     return cards.map((card, i) => (
       <ContentWrapper key={`${uid}-a${i}`}>
         <ThreeColumnInfoPanel content={renderBonusContents(card.bonusInfo, card.accountNo)} />
-        <div>{ renderTransactions(card) }</div>
-        <div className="toolbar">
-          <button className="btn-icon" type="button" onClick={() => handleMoreTransactionsClick(card.accountNo)}>
-            更多明細
-            <ArrowNextIcon />
-          </button>
+        <div>
+          <div>{ renderTransactions(card) }</div>
+          <div className="toolbar">
+            <button className="btn-icon" type="button" onClick={() => handleMoreTransactionsClick(card.accountNo)}>
+              更多明細
+              <ArrowNextIcon />
+            </button>
+          </div>
         </div>
       </ContentWrapper>
     ));
