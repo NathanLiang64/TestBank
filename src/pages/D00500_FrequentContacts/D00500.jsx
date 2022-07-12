@@ -5,18 +5,7 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
-
-const mock = [
-  {
-    name: 'Loid Forger', bankName: 'Peanuts Bank', bankNo: '017', account: '11122233334444',
-  },
-  {
-    name: 'Anya Forger', bankName: 'Peanuts Bank', bankNo: '017', account: '11122233324444',
-  },
-  {
-    name: 'Yor Forger', bankName: 'Peanuts Bank', bankNo: '017', account: '11122233304444',
-  },
-];
+import { getFavAccounts, updateFavAccount, removeFavAccount } from 'apis/transferApi';
 
 /**
  * D00500 常用帳號管理頁
@@ -27,16 +16,62 @@ const Page = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    setCards(mock);
+    setCards(await getFavAccounts());
     dispatch(setWaittingVisible(false));
   }, []);
 
-  const handleEdit = (card) => {
-    console.debug('handleEdit', card);
+  const handleEdit = async (card) => {
+    const params = {
+      email: card?.email,
+      inBank: card?.bankId,
+      inAcct: card?.accountId,
+      nickName: card?.accountName,
+      orgBankId: card?.bankId,
+      orgAcctId: card?.accountId,
+    };
+    try {
+      await updateFavAccount(params);
+      return true;
+    } catch (error) {
+      // TODO: You may want to remove below line in production.
+      console.warn('Error returned from updateFavAccount', error);
+      return false;
+    }
   };
 
-  const handleRemove = (card) => {
-    console.debug('handleRemove', card);
+  const handleRemove = async (card) => {
+    const params = {
+      email: card?.email,
+      inBank: card?.bankId,
+      inAcct: card?.accountId,
+      nickName: card?.accountName,
+    };
+    try {
+      await removeFavAccount(params);
+      return true;
+    } catch (error) {
+      // TODO: You may want to remove below line in production.
+      console.warn('Error returned from updateFavAccount', error);
+      return false;
+    }
+  };
+
+  const onEditClick = (card) => {
+    // TODO: Do something with UI, then call API:
+    const successful = handleEdit(card);
+
+    if (!successful) {
+      // TODO: You may want to do something with UI?
+    }
+  };
+
+  const onRemoveClick = (card) => {
+    // TODO: Do something with UI, then call API:
+    const successful = handleRemove(card);
+
+    if (!successful) {
+      // TODO: You may want to do something with UI?
+    }
   };
 
   return (
@@ -44,11 +79,15 @@ const Page = () => {
       <Main small>
         { !!cards && cards.map((card) => (
           <MemberAccountCard
-            key={card.account}
+            key={card.accountId}
             type="常用帳號"
-            {...card}
-            onEdit={() => handleEdit(card)}
-            onRemove={() => handleRemove(card)}
+            name={card.accountName}
+            bankNo={card.bankId}
+            bankName={card.bankName}
+            account={card.accountId}
+            avatarSrc={card.acctImg}
+            onEdit={() => onEditClick(card)}
+            onRemove={() => onRemoveClick(card)}
           />
         )) }
       </Main>

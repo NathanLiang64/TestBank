@@ -5,7 +5,6 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
-import { getFavAccounts } from 'apis/transferApi';
 
 const mock = [
   {
@@ -29,8 +28,6 @@ const Page = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
     setCards(mock);
-    const tmp = await getFavAccounts();
-    console.debug('FavAccounts', tmp);
     dispatch(setWaittingVisible(false));
   }, []);
 
