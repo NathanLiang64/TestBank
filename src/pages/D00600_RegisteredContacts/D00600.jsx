@@ -5,17 +5,12 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
+// import { getRegAccounts, updateRegAccount } from 'apis/transferApi';
 
 const mock = [
-  {
-    name: 'Loid Forger', bankName: 'Peanuts Bank', bankNo: '017', account: '11122233334444',
-  },
-  {
-    name: 'Anya Forger', bankName: 'Peanuts Bank', bankNo: '017', account: '11122233324444',
-  },
-  {
-    name: 'Yor Forger', bankName: 'Peanuts Bank', bankNo: '017', account: '11122233304444',
-  },
+  { name: 'Loid Forger', bankName: 'Peanuts Bank', account: '11122233334444' },
+  { name: 'Anya Forger', bankName: 'Peanuts Bank', account: '11122233324444' },
+  { name: 'Yor Forger', bankName: 'Peanuts Bank', account: '11122233304444' },
 ];
 
 /**
@@ -27,14 +22,55 @@ const Page = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
+    // setCards(await getFavAccounts());
+    // TODO:  若要呼叫 API，取消以上註解，並移除以下一行。
     setCards(mock);
     dispatch(setWaittingVisible(false));
   }, []);
 
+  /**
+   * 呼叫 API 更新帳戶資訊
+   */
   const handleEdit = (card) => {
+    /*
+    const params = {
+      email: card?.email,
+      inBank: card?.bankId,
+      inAcct: card?.accountId,
+      nickName: card?.accountName,
+      orgBankId: card?.bankId,
+      orgAcctId: card?.accountId,
+    };
+    try {
+      await updateRegAccount(params);
+      return true;
+    } catch (error) {
+      // TODO: You may want to remove below line in production.
+      console.warn('Error returned from updateFavAccount', error);
+      return false;
+    }
+    */
+
+    // TODO:  若要呼叫 API，取消以上註解，並移除以下兩行。
     console.debug('handleEdit', card);
+    return true;
   };
 
+  /**
+   * 處理UI流程：編輯帳戶
+   */
+  const onEditClick = (card) => {
+    // TODO: Do something with UI, then call API:
+    const successful = handleEdit(card);
+
+    if (!successful) {
+      // TODO: You may want to do something with UI?
+    }
+  };
+
+  /**
+   * 顯示帳戶列表
+   */
   return (
     <Layout title="約定帳號管理">
       <Main small>
@@ -42,7 +78,7 @@ const Page = () => {
           <MemberAccountCard
             key={card.account}
             {...card}
-            onEdit={() => handleEdit(card)}
+            onEdit={() => onEditClick(card)}
           />
         )) }
       </Main>

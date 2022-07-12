@@ -20,6 +20,9 @@ const Page = () => {
     dispatch(setWaittingVisible(false));
   }, []);
 
+  /**
+   * 呼叫 API 更新帳戶資訊
+   */
   const handleEdit = async (card) => {
     const params = {
       email: card?.email,
@@ -39,6 +42,9 @@ const Page = () => {
     }
   };
 
+  /**
+   * 呼叫 API 移除登記帳戶
+   */
   const handleRemove = async (card) => {
     const params = {
       email: card?.email,
@@ -51,11 +57,14 @@ const Page = () => {
       return true;
     } catch (error) {
       // TODO: You may want to remove below line in production.
-      console.warn('Error returned from updateFavAccount', error);
+      console.warn('Error returned from removeFavAccount', error);
       return false;
     }
   };
 
+  /**
+   * 處理UI流程：編輯帳戶
+   */
   const onEditClick = (card) => {
     // TODO: Do something with UI, then call API:
     const successful = handleEdit(card);
@@ -65,6 +74,9 @@ const Page = () => {
     }
   };
 
+  /**
+   * 處理UI流程：移除登記帳戶
+   */
   const onRemoveClick = (card) => {
     // TODO: Do something with UI, then call API:
     const successful = handleRemove(card);
@@ -74,6 +86,9 @@ const Page = () => {
     }
   };
 
+  /**
+   * 顯示帳戶列表
+   */
   return (
     <Layout title="常用帳號管理">
       <Main small>
