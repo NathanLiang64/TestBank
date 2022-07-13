@@ -4,7 +4,7 @@
 /* eslint-disable brace-style */
 import forge from 'node-forge';
 import PasswordDrawer from 'components/PasswordDrawer';
-import { createTransactionAuth } from 'proto/forAppApi';
+import { getTransactionAuthMode, createTransactionAuth } from 'components/PasswordDrawer/api';
 import { customPopup, showDrawer, showError } from './MessageModal';
 
 const device = {
@@ -34,9 +34,9 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
       window.webkit.messageHandlers.jstoapp.postMessage(msg); // TODO 無效的 appJsName 的處理
     }
     else if (device.android()) {
-      const androidParam = JSON.stringify(request);
+      const command = `window.jstoapp.${appJsName}(${JSON.stringify(request)})`;
       // eslint-disable-next-line no-eval
-      eval(`window.jstoapp.${appJsName}`)(androidParam); // TODO 無效的 appJsName 的處理
+      eval(command); // TODO 無效的 appJsName 的處理
     }
     else if (needCallback || webDevTest) {
       window.AppJavaScriptCallback(webDevTest(request));
@@ -384,18 +384,16 @@ async function appTransactionAuth(request) {
   // 取得目前執行中的單元功能代碼，要求 Controller 發送或驗出時，皆需提供此參數。
   const funcCode = funcStack.peek()?.func ?? '/'; // 首頁因為沒有功能代碼，所以用'/'表示。
 
-  const loginMode = 21; // TODO 取得登入模式：0.未登入, 1.訪客登入, 11.快速登入, 21.帳密登入
-  const boundMID = false; // TODO 取得 MID 的綁定狀態。
+  // 取得需要使用者輸入驗證的項目。
+  const authMode = await getTransactionAuthMode(authCode); // 要驗 2FA 還是密碼，要以 create 時的為準。
+  const allowed2FA = (authMode & 0x01) !== 0; // 表示需要通過 生物辨識或圖形鎖 驗證。
+  let allowedPWD = (authMode & 0x02) !== 0; // 表示需要通過 網銀密碼 驗證。
 
-  // 檢查是否需要通過 生物辨識或圖形鎖 驗證。
-  const allowed2FA = boundMID && (loginMode === 11) && ((authCode & 0x20) !== 0);
-
-  // 檢查是否需要通過 網銀密碼 驗證。
-  let allowedPWD = !allowed2FA && (loginMode === 21) && ((authCode & 0x10) !== 0);
+  const failResult = (message) => callback({ result: false, message });
 
   // NOTE 沒有 boundMID，但又限定只能使用 2FA 時；傳回 false 尚未進行行動裝置綁定，無法使用此功能！
-  if (allowedPWD === false && boundMID === false) {
-    await showError('尚未完成行動裝置綁定，無法使用此功能！');
+  if (!authMode || authMode === 0x00) { // 當 authMode 為 null 時，表示有例外發生。
+    failResult('尚未完成行動裝置綁定，無法使用此功能！');
     return;
   }
 
@@ -408,7 +406,10 @@ async function appTransactionAuth(request) {
     authCode: authCode + 0x96c1fc6b98e00, // TODO 這個 HashCode 要由 Controller 在 Login 的 Response 傳回。
     otpMobile,
   });
-  if (!txnAuth) return; // createTransactionAuth 發生異常就結束。
+  if (!txnAuth) { // createTransactionAuth 發生異常就結束。
+    failResult('無法建立交易授權驗證。');
+    return;
+  }
 
   // 進行雙因子驗證，呼叫 APP 進行驗證。
   if (allowed2FA) {
@@ -428,10 +429,7 @@ async function appTransactionAuth(request) {
     <PasswordDrawer funcCode={funcCode} authData={txnAuth} inputPWD={allowedPWD} onFinished={callback} />
   );
 
-  showDrawer('交易授權驗證 (Web版)', body, () => callback({
-    result: false,
-    message: '使用者取消驗證。',
-  }));
+  showDrawer('交易授權驗證 (Web版)', body, () => failResult('使用者取消驗證。'));
 }
 
 export {

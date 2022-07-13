@@ -1,12 +1,7 @@
 import { Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
-// import Header from 'components/Header';
-// import TabBar from 'components/TabBar';
-// import PasswordDrawer from 'components/PasswordDrawer';
 // import Spinner from 'components/Spinner';
-// import ShakeShake from 'pages/ShakeShake';
-// import Favorite from 'pages/Favorite';
 import ResultDialog from 'pages/ResultDialog';
 import routes from 'routes';
 
@@ -18,8 +13,7 @@ import store from './stores/store';
 const App = () => (
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      {/* <Header /> */}
-      <Suspense fallback={<></>}>
+      <Suspense fallback={<div>載入中....</div>}>
         <Switch>
           {
             routes.map((route) => {
@@ -29,10 +23,6 @@ const App = () => (
           }
         </Switch>
       </Suspense>
-      {/* <TabBar /> */}
-      {/* <ShakeShake /> */}
-      {/* <Favorite /> */}
-      {/* <PasswordDrawer /> */}
       <ResultDialog />
     </PersistGate>
     {/* <Spinner /> */}
