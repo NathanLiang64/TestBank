@@ -4,7 +4,9 @@ import { Controller, useForm } from 'react-hook-form';
 import uuid from 'react-uuid';
 
 import { getFavAccounts } from 'apis/transferApi';
-import { setDrawer, setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
+import {
+  setModal, setModalVisible, setDrawer, setDrawerVisible, setWaittingVisible,
+} from 'stores/reducers/ModalReducer';
 
 import { AddIcon } from 'assets/images/icons';
 import Main from 'components/Layout';
@@ -35,9 +37,9 @@ const Page = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
     try {
-      setCards(await getFavAccounts());
-    } catch {
       setCards(mock);
+    } catch {
+      setCards(await getFavAccounts());
     }
     dispatch(setWaittingVisible(false));
   }, []);
@@ -65,8 +67,8 @@ const Page = () => {
     if (shouldUpdateNickname) param.accountName = data.accountName;
     // do something with photo too
 
-    const successful = handleEdit(param);
-    if (!successful) {
+    const successful = false && handleEdit(param);
+    if (successful) {
       // TODO: You may want to do something with UI?
       dispatch(setDrawerVisible(false));
       return;
@@ -118,12 +120,23 @@ const Page = () => {
    * 處理UI流程：移除登記帳戶
    */
   const onRemoveClick = (card) => {
-    // TODO: Do something with UI, then call API:
-    const successful = handleRemove(card);
+    const onRemoveConfirm = () => {
+      const successful = handleRemove(card);
+      if (!successful) {
+        // TODO: You may want to do something with UI?
+      }
+      const tmpCards = cards.filter((c) => c.accountId !== card.accountId);
+      setCards(tmpCards);
+    };
 
-    if (!successful) {
-      // TODO: You may want to do something with UI?
-    }
+    dispatch(setModal({
+      title: '系統訊息',
+      content: '您確定要刪除此帳號?',
+      okContent: '確定刪除',
+      onOk: onRemoveConfirm,
+      cancelContent: '我再想想',
+    }));
+    dispatch(setModalVisible(true));
   };
 
   /**
