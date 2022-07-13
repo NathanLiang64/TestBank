@@ -67,6 +67,7 @@ const Page = () => {
       dispatch(setDrawerVisible(false));
       return;
     }
+    param.isNew = true;
     setCards([param, ...cards]);
     dispatch(setDrawerVisible(false));
   };
@@ -235,6 +236,7 @@ const Page = () => {
               bankName={card.bankName}
               account={card.accountId}
               avatarSrc={card.acctImg}
+              hasNewTag={card.isNew}
               onEdit={() => onEditClick(card)}
               onRemove={() => onRemoveClick(card)}
             />

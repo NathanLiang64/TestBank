@@ -24,6 +24,17 @@ const MemberAccountCardWrapper = styled.div`
       line-height: 1.8;
     }
 
+    .new-tag {
+      display: inline-block;
+      margin-inline-start: 0.5rem;
+      padding-inline: 0.8rem;
+      font-size: 1.2rem;
+      font-weight: 400;
+      vertical-align: text-bottom;
+      background-color: ${({ theme }) => theme.colors.primary.light};
+      color: ${({ theme }) => theme.colors.basic.white};
+    }
+
     p {
       font-size: 1.2rem;
       color: ${({ theme }) => theme.colors.text.light};
