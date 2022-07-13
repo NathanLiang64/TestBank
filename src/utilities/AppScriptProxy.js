@@ -34,7 +34,7 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
       window.webkit.messageHandlers.jstoapp.postMessage(msg); // TODO 無效的 appJsName 的處理
     }
     else if (device.android()) {
-      const command = `window.jstoapp.${appJsName}(${JSON.stringify(request)})`;
+      const command = `window.jstoapp.${appJsName}('${JSON.stringify(request)}')`;
       // eslint-disable-next-line no-eval
       eval(command); // TODO 無效的 appJsName 的處理
     }
