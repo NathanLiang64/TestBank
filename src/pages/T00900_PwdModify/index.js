@@ -6,7 +6,7 @@ import { changePwd } from 'pages/T00900_PwdModify/api';
 import { closeFunc, switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import {
   FEIBButton,
 } from 'components/elements';
@@ -82,8 +82,7 @@ const PwdModify = () => {
   };
 
   return (
-    <>
-      <Header title="網銀密碼變更" />
+    <Layout title="網銀密碼變更">
       <PwdModifyWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
@@ -116,7 +115,7 @@ const PwdModify = () => {
           </FEIBButton>
         </form>
       </PwdModifyWrapper>
-    </>
+    </Layout>
   );
 };
 
