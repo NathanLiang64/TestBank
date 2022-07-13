@@ -136,6 +136,14 @@ function Layout({
     }
   }, [waitting]);
 
+  //
+  const onDrawerCancel = async () => {
+    if (drawerData.onClose) {
+      if ((await drawerData.onClose() === false)) return;
+    }
+    dispatch(setDrawerVisible(false));
+  };
+
   /**
    * 下方彈出抽屜 UI。
    */
@@ -144,7 +152,7 @@ function Layout({
       title={drawerData.title}
       // titleColor={theme.colors.primary.dark}
       isOpen={showDrawer}
-      onClose={() => dispatch(setDrawerVisible(false))}
+      onClose={onDrawerCancel}
       content={drawerData.content}
       shouldAutoClose={drawerData.shouldAutoClose}
     />

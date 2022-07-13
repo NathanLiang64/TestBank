@@ -35,6 +35,8 @@ const D00300 = lazy(() => import('pages/D00300_CardLessATM'));
 const D003001 = lazy(() => import('pages/D00300_CardLessATM/cardLessATM_1'));
 const D003002 = lazy(() => import('pages/D00300_CardLessATM/cardLessATM_2'));
 const D00400 = lazy(() => import('pages/D00400_CardLessWithDrawChgPwd'));
+const D00500 = lazy(() => import('pages/D00500_FrequentContacts/D00500'));
+const D00600 = lazy(() => import('pages/D00600_RegisteredContacts/D00600'));
 const D00700 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer'));
 const D00800 = lazy(() => import('pages/D00800_ReserveTransferSearch'));
 const D008001 = lazy(() => import('pages/D00800_ReserveTransferSearch/reserveTransferSearch_1'));
@@ -44,12 +46,12 @@ const E001001 = lazy(() => import('pages/E00100_Exchange/exchange_1'));
 const E001002 = lazy(() => import('pages/E00100_Exchange/exchange_2'));
 const E00200 = lazy(() => import('pages/E00200_ExchangeRate'));
 const E00300 = lazy(() => import('pages/E00300_FinancialDepartments'));
-const L00300 = lazy(() => import('pages/L00300_LoanInterest'));
-const L003001 = lazy(() => import('pages/L00300_LoanInterest/loanInterest_1'));
 const L00200 = lazy(() => import('pages/L00200_Principle'));
 const L00100 = lazy(() => import('pages/L00100_Loan/L00100'));
 const L00100Detail = lazy(() => import('pages/L00100_Loan/Details'));
 const L00100Reward = lazy(() => import('pages/L00100_Loan/Rewards'));
+const L00300 = lazy(() => import('pages/L00300_LoanInterest'));
+const L003001 = lazy(() => import('pages/L00300_LoanInterest/loanInterest_1'));
 const M00100 = lazy(() => import('pages/M00100_Community/M00100'));
 const M00200 = lazy(() => import('pages/M00200_FriendSearch/M00200'));
 const R00100 = lazy(() => import('pages/R00100_CCTransaction/R00100'));
@@ -81,7 +83,7 @@ const NicknameSetting = lazy(() => import('pages/NicknameSetting'));
 const PatternLockSetting = lazy(() => import('pages/PatternLockSetting'));
 const FingerPrintLockSetting = lazy(() => import('pages/FingerPrintLockSetting'));
 const SMSOTPactivate = lazy(() => import('pages/SMSOTPactivate'));
-const QRCodeTransfer = lazy(() => import('pages/QRCodeTransfer'));
+const QRCodeTransfer = lazy(() => import('proto/QRCodeTransfer'));
 const ProjectJ = lazy(() => import('pages/ProjectJ'));
 const LoanInquiry = lazy(() => import('pages/LoanInquiry'));
 const Deduct = lazy(() => import('pages/Deduct'));
@@ -130,6 +132,8 @@ const routes = [
   { path: '/D003001', exact: false, component: D003001 },
   { path: '/D003002', exact: false, component: D003002 },
   { path: '/D00400', exact: false, component: D00400 },
+  { path: '/D00500', exact: false, component: D00500 },
+  { path: '/D00600', exact: false, component: D00600 },
   { path: '/D00700', exact: false, component: D00700 },
   { path: '/D00800', exact: false, component: D00800 },
   { path: '/D008001', exact: false, component: D008001 },
@@ -139,12 +143,12 @@ const routes = [
   { path: '/E001002', exact: false, component: E001002 },
   { path: '/E00200', exact: false, component: E00200 },
   { path: '/E00300', exact: false, component: E00300 },
-  { path: '/L00300', exact: false, component: L00300 },
-  { path: '/L003001', exact: false, component: L003001 },
   { path: '/L00200', exact: false, component: L00200 },
   { path: '/L00100', exact: false, component: L00100 },
   { path: '/L001001', exact: false, component: L00100Reward },
   { path: '/L001002', exact: false, component: L00100Detail },
+  { path: '/L00300', exact: false, component: L00300 },
+  { path: '/L003001', exact: false, component: L003001 },
   { path: '/M00100', exact: false, component: M00100 },
   { path: '/M00200', exact: false, component: M00200 },
   { path: '/R00100', exact: false, component: R00100 },

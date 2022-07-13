@@ -3,12 +3,9 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable brace-style */
 import forge from 'node-forge';
-import {
-  createTransactionAuth,
-  transactionAuthVerify,
-} from 'proto/forAppApi';
-import e2ee from './E2ee';
-import { customPopup, showError } from './MessageModal';
+import PasswordDrawer from 'components/PasswordDrawer';
+import { getTransactionAuthMode, createTransactionAuth } from 'components/PasswordDrawer/api';
+import { customPopup, showDrawer, showError } from './MessageModal';
 
 const device = {
   ios: () => !(sessionStorage.getItem('webMode') === 'true') && /iPhone|iPad|iPod/i.test(navigator.userAgent),
@@ -32,20 +29,14 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
       callback: (needCallback ? 'AppJavaScriptCallback' : null), // 此方法可提供所有WebView共用。
     };
 
-    // DEBUG 在 APP 還沒完成交易驗證之前，先用 Web版進行測試。
-    if (appJsName === 'transactionAuth') {
-      window.AppJavaScriptCallback(webDevTest(request));
-      return;
-    }
-
     if (device.ios()) {
       const msg = JSON.stringify({ name: appJsName, data: JSON.stringify(request) });
       window.webkit.messageHandlers.jstoapp.postMessage(msg); // TODO 無效的 appJsName 的處理
     }
     else if (device.android()) {
-      const androidParam = JSON.stringify(request);
+      const command = `window.jstoapp.${appJsName}(${JSON.stringify(request)})`;
       // eslint-disable-next-line no-eval
-      eval(`window.jstoapp.${appJsName}`)(androidParam); // TODO 無效的 appJsName 的處理
+      eval(command); // TODO 無效的 appJsName 的處理
     }
     else if (needCallback || webDevTest) {
       window.AppJavaScriptCallback(webDevTest(request));
@@ -350,7 +341,30 @@ async function transactionAuth(authCode, otpMobile) {
     authCode,
     otpMobile,
   };
-  return await callAppJavaScript('transactionAuth', data, true, appTransactionAuth);
+  // return await callAppJavaScript('transactionAuth', data, true, appTransactionAuth);
+
+  // DEBUG 在 APP 還沒完成交易驗證之前，先用 Web版進行測試。
+  let promiseResolve;
+  const promise = new Promise((resolve) => {
+    promiseResolve = resolve;
+  });
+  await appTransactionAuth({...data, callback: (result) => promiseResolve(result)});
+  return await promise;
+}
+
+/**
+ * 進行雙因子驗證，最多進行三次；若都失敗，則傳回 false。
+ * @param {*} authKey 建立授權驗證時傳回的金鑰，用來檢核使用者輸入。
+ * @returns {
+ *   result: 驗證結果(true/false)。
+ *   message: 驗證失敗狀況描述。
+ * }
+ */
+async function verifyBio(authCode) {
+  const data = {
+    authCode,
+  };
+  return await callAppJavaScript('verifyBio', data, true, () => ({ result: true })); // Call /v1/setBioResult
 }
 
 /**
@@ -370,21 +384,16 @@ async function appTransactionAuth(request) {
   // 取得目前執行中的單元功能代碼，要求 Controller 發送或驗出時，皆需提供此參數。
   const funcCode = funcStack.peek()?.func ?? '/'; // 首頁因為沒有功能代碼，所以用'/'表示。
 
-  const loginMode = 21; // TODO 取得登入模式：0.未登入, 1.訪客登入, 11.快速登入, 21.帳密登入
-  const boundMID = false; // TODO 取得 MID 的綁定狀態。
+  // 取得需要使用者輸入驗證的項目。
+  const authMode = await getTransactionAuthMode(authCode); // 要驗 2FA 還是密碼，要以 create 時的為準。
+  const allowed2FA = (authMode & 0x01) !== 0; // 表示需要通過 生物辨識或圖形鎖 驗證。
+  let allowedPWD = (authMode & 0x02) !== 0; // 表示需要通過 網銀密碼 驗證。
 
-  // 檢查是否可用生物辨識或圖形鎖驗證。
-  const allowed2FA = boundMID && (loginMode === 11) && ((authCode & 0x20) !== 0);
-
-  const failTimes = 0; // TODO 若三次不通過，則改為使用網銀密碼驗證！
-
-  // 檢查是否需要通過 網銀密碼 驗證。
-  // 只要有 2FA 的功能，就不用輸入密碼；只有在2FA三次驗不過之後，才切換到用密碼驗證
-  const allowedPWD = !(allowed2FA && (failTimes < 3)) && (loginMode === 21) && ((authCode & 0x10) !== 0);
+  const failResult = (message) => callback({ result: false, message });
 
   // NOTE 沒有 boundMID，但又限定只能使用 2FA 時；傳回 false 尚未進行行動裝置綁定，無法使用此功能！
-  if (allowedPWD === false && boundMID === false) {
-    await showError('尚未完成行動裝置綁定，無法使用此功能！');
+  if (!authMode || authMode === 0x00) { // 當 authMode 為 null 時，表示有例外發生。
+    failResult('尚未完成行動裝置綁定，無法使用此功能！');
     return;
   }
 
@@ -397,77 +406,30 @@ async function appTransactionAuth(request) {
     authCode: authCode + 0x96c1fc6b98e00, // TODO 這個 HashCode 要由 Controller 在 Login 的 Response 傳回。
     otpMobile,
   });
-  if (!txnAuth) return; // createTransactionAuth 發生異常就結束。
+  if (!txnAuth) { // createTransactionAuth 發生異常就結束。
+    failResult('無法建立交易授權驗證。');
+    return;
+  }
 
-  // Web測試版。
+  // 進行雙因子驗證，呼叫 APP 進行驗證。
+  if (allowed2FA) {
+    const rs = await verifyBio(txnAuth.key); // 若生物辨識三次不通過，才會傳回 false！
+    // 因為已綁MID，所以 密碼 也可以當第二因子；因此改用密碼驗證。
+    if (rs.result === false) allowedPWD = true;
+
+    // NOTE 驗證成功(allowedPWD一定是false)但不用驗OTP，就直接傳回成功。
+    //      若是驗證失敗或是還要驗OTP，就要開 Drawer 進行密碼或OTP驗證。
+    if (!allowedPWD && !sendOtp) {
+      callback(rs);
+      return;
+    }
+  }
+
   const body = (
-    <div>
-      {/* 驗證生物辨識或圖形鎖驗證 */}
-      {(allowed2FA && failTimes < 3) ? (
-        <div>
-          <p>《 驗證生物辨識或圖形鎖驗證 》</p>
-          <input type="text" id="auth2FA" />
-          <br />
-          <p>輸入 xxx 表示驗證失敗！</p>
-          <p>TODO 若三次不通過，則改為使用網銀密碼驗證！</p>
-          <br />
-        </div>
-      ) : null}
-
-      {/* 驗證OTP */}
-      {sendOtp ? (
-        <div>
-          <p>{`發送門號：${txnAuth.otpMobile}`}</p>
-          <p>{`OTP識別碼：${txnAuth.otpSmsId}`}</p>
-          <p>輸入驗證碼</p>
-          <input type="text" id="otpCode" defaultValue={txnAuth.otpCode} />
-          <br />
-        </div>
-      ) : null}
-
-      {/* 驗證網銀密碼 */}
-      {allowedPWD ? (
-        <div>
-          <p>輸入網銀密碼</p>
-          <input type="text" id="netbankPwd" defaultValue="feib1688" />
-          <br />
-        </div>
-      ) : null}
-    </div>
+    <PasswordDrawer funcCode={funcCode} authData={txnAuth} inputPWD={allowedPWD} onFinished={callback} />
   );
 
-  // eslint-disable-next-line no-eval
-  const cbfunc = eval(callback);
-
-  // 驗證 OTP Code 是否正確。
-  const onOk = async () => {
-    // TODO 2FA驗證模式應該自動驗證，不需要使用者按OK；一旦驗證通過，則自動關閉視窗，並傳回結果。
-    const auth2FA = document.querySelector('#auth2FA')?.value; // 可以讓Server端確認真的通過驗證的資料，例：全景的驗證資料
-
-    // 驗證 OTP驗證碼 & 網銀密碼
-    const otpCode = document.querySelector('#otpCode')?.value; // 使用者輸入的「驗證碼」。
-    const netbankPwd = e2ee(document.querySelector('#netbankPwd')?.value); // 使用者輸入的「網銀密碼」，還要再做 E2EE。
-    const verifyRs = await transactionAuthVerify({ authKey: txnAuth.key, funcCode, auth2FA, netbankPwd, otpCode });
-    if (!verifyRs) return false; // createTransactionAuth 發生異常就結束。
-    if (verifyRs.result === true) {
-      cbfunc({
-        result: true, // 正常結果。
-        message: null,
-      });
-    } else {
-      await showError(verifyRs.message);
-      return false;
-    }
-    return verifyRs.result;
-  };
-
-  // 表示使用者取消。
-  const onCancel = () => cbfunc({
-    result: false,
-    message: '使用者取消驗證。',
-  });
-
-  customPopup('交易授權驗證 (測試版)', body, onOk, onCancel);
+  showDrawer('交易授權驗證 (Web版)', body, () => failResult('使用者取消驗證。'));
 }
 
 export {

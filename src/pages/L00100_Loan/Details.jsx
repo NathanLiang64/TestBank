@@ -57,9 +57,9 @@ const Page = () => {
         <PageWrapper>
           <AccountCard type="L">
             <div>{details?.alias}</div>
-            <div>&nbsp;</div>
-            <div className="justify-end items-end gap-4">
-              <div>貸款餘額</div>
+            <div>{details?.accountNo}</div>
+            <div className="justify-between items-center gap-4">
+              <div className="text-14">貸款餘額</div>
               <div className="balance">
                 {`${currencySymbolGenerator(details?.currency ?? 'NTD', details?.loanAmount ?? 0)}`}
               </div>
@@ -69,11 +69,9 @@ const Page = () => {
             { details && getListing(details).map((d, i) => (
               <InformationList key={`${uid}-${i}`} {...d} />
             ))}
+            <hr />
           </div>
-          <div>
-            <h2>※ 注意事項</h2>
-            <p>提早結清：12個月內結清，收取3%提前還款手續費；超過第12個月起提前還款收取0%手續費。</p>
-          </div>
+          <p className="remark">提早結清：12個月內結清，收取3%提前還款手續費；超過第12個月起提前還款收取0%手續費。</p>
         </PageWrapper>
       </Main>
     </Layout>
