@@ -1,6 +1,16 @@
 import { callAPI } from 'utilities/axios';
 
 /**
+ * 取得需要使用者輸入驗證的項目。
+ * @param {*} autoCode 要求進行的驗證模式的代碼。
+ * @returns 驗證項目旗標。(0x01:生物辨識或圖形鎖, 0x02:網銀密碼)
+ */
+export const getTransactionAuthMode = async (autoCode) => {
+  const response = await callAPI('/api/transactionAuth/v1/getAuthMode', autoCode);
+  return response.data;
+};
+
+/**
  * 單元功能要求 建立交易授權驗證，必要時會發送OTP驗證碼簡訊，並依 otpMode 決定發送閘道及手機門號。
  * @param {*} request {
  *   funcCode: 要求發送OTP的單元功能。 這個欄位由 APP 從 FunctionController 取得。

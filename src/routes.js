@@ -35,6 +35,8 @@ const D00300 = lazy(() => import('pages/D00300_CardLessATM'));
 const D003001 = lazy(() => import('pages/D00300_CardLessATM/cardLessATM_1'));
 const D003002 = lazy(() => import('pages/D00300_CardLessATM/cardLessATM_2'));
 const D00400 = lazy(() => import('pages/D00400_CardLessWithDrawChgPwd'));
+const D00500 = lazy(() => import('pages/D00500_FrequentContacts/D00500'));
+const D00600 = lazy(() => import('pages/D00600_RegisteredContacts/D00600'));
 const D00700 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer'));
 const D00800 = lazy(() => import('pages/D00800_ReserveTransferSearch'));
 const D008001 = lazy(() => import('pages/D00800_ReserveTransferSearch/reserveTransferSearch_1'));
@@ -130,6 +132,8 @@ const routes = [
   { path: '/D003001', exact: false, component: D003001 },
   { path: '/D003002', exact: false, component: D003002 },
   { path: '/D00400', exact: false, component: D00400 },
+  { path: '/D00500', exact: false, component: D00500 },
+  { path: '/D00600', exact: false, component: D00600 },
   { path: '/D00700', exact: false, component: D00700 },
   { path: '/D00800', exact: false, component: D00800 },
   { path: '/D008001', exact: false, component: D008001 },
