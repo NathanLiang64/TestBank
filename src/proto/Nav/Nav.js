@@ -73,6 +73,8 @@ const Nav = () => {
           <div onClick={() => startFunc('L00100')}>L00100 貸款 首頁 - (施工中)</div>
           <div onClick={() => startFunc('L001001')}>L00100 貸款 可能回饋頁 - (施工中)</div>
           <div onClick={() => startFunc('L001002')}>L00100 貸款 資訊頁 - (施工中)</div>
+          <div onClick={() => startFunc('D00500')}>D00500 常用帳號管理 - (施工中)</div>
+          <div onClick={() => startFunc('D00600')}>D00600 約定帳號管理 - (施工中)</div>
         </div>
 
         <div className="vj">
