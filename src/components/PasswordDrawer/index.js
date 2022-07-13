@@ -41,8 +41,8 @@ const PasswordDrawer = ({
   const dispatch = useDispatch();
 
   const schema = yup.object().shape({
-    otpCode: otpCodeValidation(),
-    password: passwordValidation(),
+    otpCode: authData.otpSmsId ? otpCodeValidation() : null,
+    password: inputPWD ? passwordValidation() : null,
   });
   const { handleSubmit, control, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
   const [resendDisabled, setResendDisabled] = useState(true);

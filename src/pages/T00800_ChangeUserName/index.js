@@ -8,10 +8,10 @@ import { changeUserName } from 'pages/T00800_ChangeUserName/api';
 import { closeFunc, switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
 
 /* Elements */
-import Header from 'components/Header';
 import {
   FEIBInput, FEIBInputLabel, FEIBButton, FEIBErrorMessage,
 } from 'components/elements';
+import Layout from 'components/Layout/Layout';
 import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
 import { accountValidation, confirmAccountValidation } from 'utilities/validation';
 
@@ -78,8 +78,7 @@ const ChangeUserName = () => {
   useEffect(() => dispatch(setIsOpen(false)), []);
 
   return (
-    <>
-      <Header title="使用者代號變更" />
+    <Layout title="使用者代號變更">
       <ChangeUserNameWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
@@ -142,7 +141,7 @@ const ChangeUserName = () => {
           </FEIBButton>
         </form>
       </ChangeUserNameWrapper>
-    </>
+    </Layout>
   );
 };
 
