@@ -14,7 +14,7 @@ import { callAPI } from 'utilities/axios';
  */
 export const queryLastPush = async () => {
   const response = await callAPI('/api/push/v1/queryLastPush');
-  return response.data;
+  return response;
 };
 
 /**
