@@ -57,7 +57,7 @@ const Page = () => {
         <PageWrapper>
           <AccountCard type="L">
             <div>{details?.alias}</div>
-            <div>{details?.accountNo}</div>
+            <div>{`${details?.accountNo} (${details?.loanNo})`}</div>
             <div className="justify-between items-center gap-4">
               <div className="text-14">貸款餘額</div>
               <div className="balance">
