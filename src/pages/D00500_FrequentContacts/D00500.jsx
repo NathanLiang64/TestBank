@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import uuid from 'react-uuid';
 
-import { getFavAccounts } from 'apis/transferApi';
+// import { getFavAccounts } from 'apis/transferApi';
 import {
   setModal, setModalVisible, setDrawer, setDrawerVisible, setWaittingVisible,
 } from 'stores/reducers/ModalReducer';
@@ -19,14 +19,20 @@ import Badge from 'components/Badge';
 import Avatar from 'components/Avatar';
 import { FEIBButton, FEIBInputLabel, FEIBInput } from 'components/elements';
 
-import { handleAdd, handleEdit, handleRemove } from './api';
+import {
+  getAllFrequentAccount,
+  addFrequentAccount,
+  updateFrequentAccount,
+  deleteFrequentAccount,
+} from './api';
+
 import PageWrapper, { DrawerWrapper } from './D00500.style';
 
-const mock = [
-  { accountName: 'Loid Forger', bankName: 'Peanuts Bank', accountId: '11122233334444' },
-  { accountName: 'Anya Forger', bankName: 'Peanuts Bank', accountId: '11122233324444' },
-  { accountName: 'Yor Forger', bankName: 'Peanuts Bank', accountId: '11122233304444' },
-];
+// const mock = [
+//   { nickName: 'Loid Forger', bankName: 'Peanuts Bank', acctId: '11122233334444' },
+//   { nickName: 'Anya Forger', bankName: 'Peanuts Bank', acctId: '11122233324444' },
+//   { nickName: 'Yor Forger', bankName: 'Peanuts Bank', acctId: '11122233304444' },
+// ];
 
 const uid = uuid();
 
@@ -41,14 +47,14 @@ const Page = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    try {
-      const successful = false && setCards(await getFavAccounts());
-      if (!successful) throw new Error();
-    } catch {
-      setCards(mock);
-    }
+    // try {
+    //   const successful = false && setCards(await getFavAccounts());
+    //   if (!successful) throw new Error();
+    // } catch {
+    //   setCards(mock);
+    // }
     // TODO: You may want to replace above try..catch block with just this single line:
-    // setCards(await getFavAccounts());
+    setCards(await getAllFrequentAccount());
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -58,9 +64,9 @@ const Page = () => {
    */
   const onAddSubmit = (data, card) => {
     const param = {...card};
-    param.accountName = data.accountName;
+    param.nickName = data.nickName;
     // TODO: Remove 'false &&' to enable API call.
-    const successful = false && handleAdd(param);
+    const successful = false && addFrequentAccount(param);
 
     if (!successful) {
       // TODO: You may want to do something with UI?
@@ -75,18 +81,18 @@ const Page = () => {
   const onAddClickStep1 = (card) => {
     // Note: 因為這個 Dialog 是動態產生的，所以一定要刪掉註冊的元件。
     //       否則，下次註冊將失效，而且持續傳回最後一次的輪入值，而不會改變。
-    unregister('accountId', { keepDirty: false });
+    unregister('acctId', { keepDirty: false });
 
     const options = (
       <DrawerWrapper>
         <form className="flex-col" onSubmit={handleSubmit((data) => onAddClickStep2(data))}>
           {/* TODO: Add bank number input */}
           <div>
-            <FEIBInputLabel htmlFor={`${uid}-add-accountId`}>帳號</FEIBInputLabel>
+            <FEIBInputLabel htmlFor={`${uid}-add-acctId`}>帳號</FEIBInputLabel>
             <FEIBInput
-              id={`${uid}-add-accountId`}
-              defaultValue={card?.accountId ?? ''}
-              {...register('accountId')}
+              id={`${uid}-add-acctId`}
+              defaultValue={card?.acctId ?? ''}
+              {...register('acctId')}
             />
           </div>
           <FEIBButton type="submit">繼續</FEIBButton>
@@ -100,25 +106,25 @@ const Page = () => {
   const onAddClickStep2 = (card) => {
     // Note: 因為這個 Dialog 是動態產生的，所以一定要刪掉註冊的元件。
     //       否則，下次註冊將失效，而且持續傳回最後一次的輪入值，而不會改變。
-    unregister('accountName', { keepDirty: false });
+    unregister('nickName', { keepDirty: false });
 
     const options = (
       <DrawerWrapper>
         <Badge>
           <div className="label">帳號</div>
-          <div className="text-blue">{`${card.bankName} ${accountFormatter(card.accountId)}`}</div>
+          <div className="text-blue">{`${card.bankName} ${accountFormatter(card.acctId)}`}</div>
         </Badge>
         <form className="flex-col" onSubmit={handleSubmit((data) => onAddSubmit(data, card))}>
           <div className="self-center">
-            <Avatar name={card.accountName} src={card.acctImg} />
+            <Avatar name={card.nickName} src={card.headshot} />
           </div>
           <div>
             <FEIBInputLabel htmlFor={`${uid}-edit-name`}>暱稱</FEIBInputLabel>
             <FEIBInput
               id={`${uid}-edit-name`}
               placeholder="請輸入"
-              defaultValue={card.accountName ?? ''}
-              {...register('accountName')}
+              defaultValue={card.nickName ?? ''}
+              {...register('nickName')}
             />
           </div>
           <FEIBButton type="submit">加入</FEIBButton>
@@ -133,14 +139,17 @@ const Page = () => {
    * 處理UI流程：編輯帳戶
    */
   const onEditSubmit = (data, card) => {
+    // TODO 轉入帳戶也可以變更。
+    //  orgBankId: 變更前 常用轉入帳戶-銀行代碼，未變更也需要有值。
+    //  orgAcctId: 變更前 常用轉入帳戶-帳號，未變更也需要有值。
     const param = {...card};
-    const shouldUpdateNickname = card.accountName !== data.accountName;
+    const shouldUpdateNickname = card.nickName !== data.nickName;
 
-    if (shouldUpdateNickname) param.accountName = data.accountName;
+    if (shouldUpdateNickname) param.nickName = data.nickName;
     // TODO: Do something with photo too
 
     // TODO: Remove 'false &&' to enable API call.
-    const successful = false && handleEdit(param);
+    const successful = false && updateFrequentAccount(param);
     if (!successful) {
       // TODO: You may want to do something with UI?
       dispatch(setDrawerVisible(false));
@@ -149,8 +158,8 @@ const Page = () => {
 
     const tmpCards = cards.slice();
     tmpCards.forEach((c) => {
-      if (c.accountId === card.accountId) {
-        if (shouldUpdateNickname) c.accountName = data.accountName;
+      if (c.acctId === card.acctId) {
+        if (shouldUpdateNickname) c.nickName = data.nickName;
         // TODO: Do something with photo too
       }
     });
@@ -161,25 +170,25 @@ const Page = () => {
   const onEditClick = (card) => {
     // Note: 因為這個 Dialog 是動態產生的，所以一定要刪掉註冊的元件。
     //       否則，下次註冊將失效，而且持續傳回最後一次的輪入值，而不會改變。
-    unregister('accountName', { keepDirty: false });
+    unregister('nickName', { keepDirty: false });
 
     const options = (
       <DrawerWrapper>
         <Badge>
           <div className="label">帳號</div>
-          <div className="text-blue">{`${card.bankName} ${accountFormatter(card.accountId)}`}</div>
+          <div className="text-blue">{`${card.bankName} ${accountFormatter(card.acctId)}`}</div>
         </Badge>
         <form className="flex-col" onSubmit={handleSubmit((data) => onEditSubmit(data, card))}>
           <div className="self-center">
-            <Avatar name={card.accountName} src={card.acctImg} />
+            <Avatar name={card.nickName} src={card.headshot} />
           </div>
           <div>
             <FEIBInputLabel htmlFor={`${uid}-edit-name`}>暱稱</FEIBInputLabel>
             <FEIBInput
               id={`${uid}-edit-name`}
               placeholder="請輸入"
-              defaultValue={card.accountName ?? ''}
-              {...register('accountName')}
+              defaultValue={card.nickName ?? ''}
+              {...register('nickName')}
             />
           </div>
           <FEIBButton type="submit">完成</FEIBButton>
@@ -196,11 +205,11 @@ const Page = () => {
   const onRemoveClick = (card) => {
     const onRemoveConfirm = () => {
       // TODO: Remove 'false &&' to enable API call.
-      const successful = false && handleRemove(card);
+      const successful = false && deleteFrequentAccount(card.bankId, card.acctId);
       if (!successful) {
         // TODO: You may want to do something with UI?
       }
-      const tmpCards = cards.filter((c) => c.accountId !== card.accountId);
+      const tmpCards = cards.filter((c) => c.acctId !== card.acctId);
       setCards(tmpCards);
     };
 
@@ -229,13 +238,13 @@ const Page = () => {
           </button>
           { !!cards && cards.map((card) => (
             <MemberAccountCard
-              key={card.accountId}
+              key={card.acctId}
               type="常用帳號"
-              name={card.accountName}
+              name={card.nickName}
               bankNo={card.bankId}
               bankName={card.bankName}
-              account={card.accountId}
-              avatarSrc={card.acctImg}
+              account={card.acctId}
+              avatarSrc={card.headshot}
               hasNewTag={card.isNew}
               onEdit={() => onEditClick(card)}
               onRemove={() => onRemoveClick(card)}

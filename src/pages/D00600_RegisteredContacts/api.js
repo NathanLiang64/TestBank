@@ -1,10 +1,5 @@
 import { callAPI } from 'utilities/axios';
 
-// // 查詢約定帳號 - Adrian
-// export const getRegAccounts = (params) => (
-//   userRequest('post', '/api/transfer/queryRegAcct', params)
-// );
-
 /**
  * 查詢指定轉出帳號約定轉入帳號清單。
  * @param {*} accountNo 要查詢約定轉入帳號清單的帳號。
@@ -18,7 +13,7 @@ import { callAPI } from 'utilities/axios';
  * }, ...]
  */
 export const getAllRegisteredAccount = async (accountNo) => {
-  const response = await callAPI('/api/transfer/v1/getAllRegisteredAccount', { accountNo });
+  const response = await callAPI('/api/transfer/registeredAccount/v1/getAll', { accountNo });
   return response.data;
 };
 
@@ -33,11 +28,6 @@ export const getAllRegisteredAccount = async (accountNo) => {
  * @returns
  */
 export const updateRegisteredAccount = async (request) => {
-  const response = await callAPI('/api/transfer/v1/updateRegisteredAccount', request);
+  const response = await callAPI('/api/transfer/registeredAccount/v1/update', request);
   return response.data;
 };
-
-// // 編輯單筆約定帳號 - Adrian
-// export const updateRegAccount = (params) => (
-//   userRequest('post', '/api/transfer/modifyRegAcct', params)
-// );

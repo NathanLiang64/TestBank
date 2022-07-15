@@ -7,7 +7,7 @@ import InfoArea from 'components/InfoArea';
 import Dialog from 'components/Dialog';
 import Loading from 'components/Loading';
 import { FEIBButton } from 'components/elements';
-import { setResult } from 'components/PasswordDrawer/stores/actions';
+// import { setResult } from 'components/PasswordDrawer/stores/actions';
 import { doBookNtdTrConfirm, doTransfer } from 'apis/transferApi';
 import { dateFormatter, weekNumberToChinese } from 'utilities/Generator';
 import { directTo } from 'utilities/mockWebController';
@@ -205,7 +205,7 @@ const Transfer1 = () => {
 
   useEffect(() => {
     if (result) onSubmit();
-    dispatch(setResult(false));
+    // dispatch(setResult(false));
   }, [result]);
 
   useEffect(() => {
