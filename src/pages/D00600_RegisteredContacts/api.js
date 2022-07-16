@@ -6,8 +6,8 @@ import { callAPI } from 'utilities/axios';
  * @returns [{
  *   bankId: 約定轉入帳戶-銀行代碼
  *   acctId: 約定轉入帳戶-帳號
- *   isManyCcy: 是否為多幣別帳號 // TODO 目前應該是無值，因為MBGW沒看到！
- *   bankName: 銀行名稱 // TODO 目前應該是無值，因為MBGW沒看到！
+ *   isManyCcy: 是否為多幣別帳號 // TODO 不確定用途，目前都是傳回"00"
+ *   bankName: 銀行名稱
  *   nickName: 暱稱
  *   email: 通知EMAIL
  * }, ...]
@@ -25,7 +25,13 @@ export const getAllRegisteredAccount = async (accountNo) => {
  *   nickName: 新暱稱；若為空字串，則表示清除，若為null，則表示不變。
  *   email: 新通知EMAIL；若為空字串，則表示清除，若為null，則表示不變。
  * }
- * @returns
+ * @returns [{
+ *   bankId: 約定轉入帳戶-銀行代碼
+ *   acctId: 約定轉入帳戶-帳號
+ *   nickName: 暱稱
+ *   email: 通知EMAIL
+ *   headshot: 大頭照，只有常用轉入帳戶是Bankee會員才會有值。若為 null 表示沒有頭像。
+ * }, ...]
  */
 export const updateRegisteredAccount = async (request) => {
   const response = await callAPI('/api/transfer/registeredAccount/v1/update', request);
