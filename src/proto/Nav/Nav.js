@@ -5,7 +5,14 @@ import { useHistory } from 'react-router';
 import { startFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
-import { logout, mobileAccountUnbind, getHomeData, registerToken, functionTrace } from './Nav.api';
+import {
+  getAllFrequentAccount,
+  addFrequentAccount,
+  updateFrequentAccount,
+  deleteFrequentAccount,
+} from 'pages/D00500_FrequentContacts/api';
+import { getAllRegisteredAccount, updateRegisteredAccount } from 'pages/D00600_RegisteredContacts/api';
+import { logout, mobileAccountUnbind, getHomeData, registerToken } from './Nav.api';
 
 import NavWrapper from './Nav.style';
 
@@ -58,7 +65,7 @@ const Nav = () => {
 
           <div onClick={() => getHomeData()}>SM-API://getHomeData</div>
           <div onClick={() => registerToken({ pushToken: '4fcd5d52dc5ba7208bac5758bb84d6ca7061f5abfe0bd54b684a9d1a6c3a7e49' })}>SM-API://registerToken</div>
-          <div onClick={() => functionTrace({ date: '2022-07-05 14:40:20', functionCode: 'C00100', functionParams: '' })}>SM-API://functionTrace</div>
+          {/* <div onClick={() => functionTrace({ date: '2022-07-05 14:40:20', functionCode: 'C00100', functionParams: '' })}>SM-API://functionTrace</div> */}
         </div>
 
         <div className="lexion">
@@ -90,110 +97,18 @@ const Nav = () => {
           <div onClick={() => startFunc('L00300')}>L00300 繳款紀錄查詢 - (施工中)</div>
           <div onClick={() => startFunc('cardLessSetting')}>無 function code 無卡提款設定 - (完成切版)</div>
         </div>
-        {/* <div onClick={() => goToFunc({ route: '/foreignCurrencyPriceSetting', funcID: 'unset' })}>
-          <ul>
-            <li>功能：外幣到價通知</li>
-            <li>funcID: unset</li>
-          </ul>
-        </div>
-        <div onClick={() => goToFunc({ route: '/profile', funcID: 'T00100' })}>
-          <ul>
-            <li>功能：個人化設定</li>
-            <li>route: /profile</li>
-            <li>funcID: T00100</li>
-          </ul>
-        </div>
-        <div onClick={() => goToFunc({ route: '/quickLoginSetting', funcID: 'T00200' })}>
-          <ul>
-            <li>功能：快速登入設定</li>
-            <li>route: /quickLoginSetting</li>
-            <li>funcID: T00200</li>
-          </ul>
-        </div>
-        <div onClick={() => goToFunc({ route: '/smsOTPactivate', funcID: 'T00400' })}>
-          <ul>
-            <li>功能：簡訊OTP設定</li>
-            <li>route: /smsOTPactivate</li>
-            <li>funcID: T00400</li>
-          </ul>
-        </div>
-        <div onClick={() => goToFunc({ route: '/basicInformation', funcID: 'T00700' })}>
-          <ul>
-            <li>功能：基本資料變更</li>
-            <li>route: /basicInformation</li>
-            <li>funcID: T00700</li>
-          </ul>
-        </div>
-        <div onClick={() => goToFunc({ route: '/mobileTransfer', funcID: 'T00600' })}>
-          <ul>
-            <li>功能：手機號碼收款設定</li>
-            <li>route: /mobileTransfer</li>
-            <li>funcID: T00600</li>
-          </ul>
-        </div>
-        <div onClick={() => goToFunc({ route: '/changeUserName', funcID: 'T00800' })}>
-          <ul>
-            <li>功能：使用者代號變更</li>
-            <li>route: /changeUserName</li>
-            <li>funcID: T00800</li>
-          </ul>
-        </div>
-        <div onClick={() => goToFunc({ route: '/pwdModify', funcID: 'T00900' })}>
-          <ul>
-            <li>功能：網銀密碼變更</li>
-            <li>route: /pwdModify</li>
-            <li>funcID: T00900</li>
-          </ul>
-        </div>
-        <div onClick={() => goToFunc({ route: '/notice', funcID: 'B00300' })}>
-          <ul>
-            <li>功能：訊息通知</li>
-            <li>route: /notice</li>
-            <li>funcID: B00300</li>
-          </ul>
-        </div>
-        <div onClick={() => goToFunc({ route: '/staging', funcID: '' })}>
-          <ul>
-            <li>功能：晚點付</li>
-            <li>route: /staging</li>
-            <li>funcID: </li>
-          </ul>
-        </div> */}
 
-        {/* <Accordion title="驗收單元功能清單 (1)" space="bottom">
-          <Link to="/notice">E02 訊息通知</Link>
-          <Link to="/noticeSetting">E02-1 訊息通知設定</Link>
-          <Link to="/fingerPrintLockSetting">E05-03 生物辨識登入設定</Link>
-          <Link to="/patternLockSetting">E05-04 圖形密碼登入設定</Link>
-          <Link to="/smsOTPactivate">E05-06 簡訊OTP設定</Link>
-          <Link to="/changeUserName">E05-10 使用者代號變更</Link>
-          <Link to="/pwdModify">E05-11 網銀密碼變更</Link>
-          <Link to="/projectJ">E06-06 Join智慧信貸</Link>
-          <Link to="/lossReissue">E06-10 金融卡掛失補發</Link>
-        </Accordion>
+        <div className="bankee">
+          <p style={{ color: '#9D7ADE' }}>** 使用 Y120409367 測試  **</p>
+          <div onClick={() => getAllFrequentAccount()}>D00500-API://getAllFrequentAccount</div>
+          <div onClick={() => addFrequentAccount({ bankId: '822', acctId: '107532104335', nickName: 'Jerry', email: 'jerry88634@feib.com.tw' })}>D00500-API://addFrequentAccount</div>
+          <div onClick={() => updateFrequentAccount({ bankId: '805', acctId: '04300498002896', nickName: 'New Name', email: 'alaya@gmail.com', orgBankId: '805', orgAcctId: '04300498002896' })}>D00500-API://updateFrequentAccount</div>
+          <div onClick={() => deleteFrequentAccount({ bankId: '822', acctId: '107532104335' })}>D00500-API://deleteFrequentAccount</div>
 
-        <Accordion title="驗收單元功能清單 (2)" space="bottom">
-          <Link to="/taiwanDollarAccount">D01 存款卡（母帳戶）</Link>
-          <Link to="/billPay">D06-5 信用卡-繳費</Link>
-          <Link to="/adjustment">D06-7 信用卡-額度臨調</Link>
-          <Link to="/loanInquiry">D07-1 貸款應繳查詢</Link>
-          <Link to="/loanInterest">D07-2 貸款繳息紀錄查詢</Link>
-          <div onClick={nativeActionWasTriggered} className="shake">D08-1 QR-Code轉帳（搖一搖）</div>
-          <Link to="/cardLessATM">E09 無卡提款</Link>
-        </Accordion>
+          <div onClick={() => getAllRegisteredAccount('04300499100376')}>D00600-API://getAllRegisteredAccount</div>
+          <div onClick={() => updateRegisteredAccount({ bankId: '805', acctId: '04300490004059', nickName: 'Jerry帳本', email: 'jerry88634@feib.com.tw' })}>D00600-API://updateRegisteredAccount</div>
+        </div>
 
-        <Accordion title="驗收單元功能清單 (3)" space="bottom">
-          <Link to="/QRCodeTransfer">E08 QRCode 轉帳</Link>
-        </Accordion>
-
-        <Accordion title="其它功能" space="bottom">
-          <Link to="/nicknameSetting">暱稱設定</Link>
-          <Link to="/login">登入頁（JWE&JWT&E2EE）</Link>
-          <Link to="/qAndA">Q＆A</Link>
-          <Link to="/open">開通APP</Link>
-          <Link to="/deduct">自動扣繳申請/查詢</Link>
-          <Link to="/transfer">轉帳</Link>
-        </Accordion> */}
         <FEIBButton onClick={logOut}>登出</FEIBButton>
       </NavWrapper>
     </Layout>

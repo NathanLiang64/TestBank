@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import InformationList from 'components/InformationList';
 import InfoArea from 'components/InfoArea';
 import Dialog from 'components/Dialog';
 import Loading from 'components/Loading';
 import { FEIBButton } from 'components/elements';
-import { setIsPasswordRequired, setResult } from 'components/PasswordDrawer/stores/actions';
+// import { setIsPasswordRequired, setResult } from 'components/PasswordDrawer/stores/actions';
 import { dateFormatter, weekNumberToChinese } from 'utilities/Generator';
 import { directTo } from 'utilities/mockWebController';
 import TransferWrapper, { TransferMOTPDialogWrapper } from './transfer.style';
@@ -24,11 +24,11 @@ const Transfer1 = () => {
     remark: '',
   });
 
-  const fastLogin = useSelector(({ passwordDrawer }) => passwordDrawer.fastLogin);
+  // const fastLogin = useSelector(({ passwordDrawer }) => passwordDrawer.fastLogin);
   const motp = useSelector(({ passwordDrawer }) => passwordDrawer.motp);
   const result = useSelector(({ passwordDrawer }) => passwordDrawer.result);
   const history = useHistory();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const { state } = useLocation();
 
   const {
@@ -86,7 +86,7 @@ const Transfer1 = () => {
   };
 
   const handleClickTransferButton = () => {
-    if (fastLogin || !motp) dispatch(setIsPasswordRequired(true));
+    // if (fastLogin || !motp) dispatch(setIsPasswordRequired(true));
   };
 
   const onSubmit = () => setOpenMOTPDialog(true);
@@ -112,7 +112,7 @@ const Transfer1 = () => {
 
   useEffect(() => {
     if (result) onSubmit();
-    dispatch(setResult(false));
+    // dispatch(setResult(false));
   }, [result]);
 
   useEffect(() => {

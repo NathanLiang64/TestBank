@@ -44,9 +44,14 @@ const DrawerWrapper = styled.div`
     gap: 2.4rem;
   }
 
+  .self-center {
+    align-self: center;
+  };
+
   .text-blue {
     color: ${({ theme }) => theme.colors.text.darker};
     margin-block-start: 1rem;
+    text-align: center;
   }
 `;
 
