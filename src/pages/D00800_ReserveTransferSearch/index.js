@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { reserveTransferSearchApi } from 'apis';
 import { dateFormatter } from 'utilities/Generator';
 import { switchLoading, closeFunc } from 'utilities/AppScriptProxy';
+import { getTransferOutAccounts, getReservedTransDetails, getResultTransDetails } from 'pages/D00800_ReserveTransferSearch/api';
 
 /* Elements */
 import Header from 'components/Header';
@@ -31,16 +31,6 @@ import ResultContent from './resultContent';
 
 /* Style */
 import ReserveTransferSearchWrapper from './reserveTransferSearch.style';
-
-// mock 預約轉帳結果資料
-// const mockResultData = [
-//   {
-//     trnsDate: '', // 轉帳日期
-//     inActNo: '', // 轉入帳號
-//     amount: '', // 轉入金額
-//     stderrMsg: '', // 轉帳結果
-//   },
-// ];
 
 const ReserveTransferSearch = () => {
   const history = useHistory();
@@ -78,13 +68,12 @@ const ReserveTransferSearch = () => {
   };
 
   // 取得帳號清單
-  const getTransferOutAccounts = async () => {
-    // const { accounts, isMotpOpen } = await reserveTransferSearchApi.getTransferOutAccounts({ motpDeviceId: '675066ee-2f25-4d97-812a-12c7f8d18489' });
+  const fetchTransferOutAccounts = async () => {
     switchLoading(true);
-    const { accounts, code, message } = await reserveTransferSearchApi.getTransferOutAccounts({});
-    if (accounts) {
-      setCardsList(accounts);
-      setSelectedAccount(accounts[0]);
+    const { data, code, message } = await getTransferOutAccounts({});
+    if (code === '0000') {
+      setCardsList(data.accounts);
+      setSelectedAccount(data.accounts[0]);
       switchLoading(false);
     } else {
       setDialogModal({
@@ -125,7 +114,7 @@ const ReserveTransferSearch = () => {
   };
 
   // 取得預約轉帳明細
-  const getReservedTransDetails = async () => {
+  const fetchReservedTransDetails = async () => {
     setReserveDataList([]);
     switchLoading(true);
     const param = {
@@ -136,7 +125,7 @@ const ReserveTransferSearch = () => {
       sdate: dateFormatter(reserveDateRange[0]),
       edate: dateFormatter(reserveDateRange[1]),
     };
-    const response = await reserveTransferSearchApi.getReservedTransDetails(param);
+    const response = await getReservedTransDetails(param);
     console.log(response);
     if (response.bookList) {
       setReserveDataList(response.bookList);
@@ -151,7 +140,7 @@ const ReserveTransferSearch = () => {
   };
 
   // 取得預約轉帳結果
-  const getResultTransDetails = async () => {
+  const fetchResultTransDetails = async () => {
     setResultDataList([]);
     switchLoading(true);
     const param = {
@@ -162,7 +151,7 @@ const ReserveTransferSearch = () => {
       sdate: dateFormatter(resultDateRange[0]),
       edate: dateFormatter(resultDateRange[1]),
     };
-    const response = await reserveTransferSearchApi.getResultTransDetails(param);
+    const response = await getResultTransDetails(param);
     console.log(response);
     if (!response?.code > 0) {
       setResultDataList(response);
@@ -179,10 +168,10 @@ const ReserveTransferSearch = () => {
   const handleTabChange = (event, type) => {
     if (type !== tabValue) {
       if (type === '1') {
-        getReservedTransDetails();
+        fetchReservedTransDetails();
       }
       if (type === '2') {
-        getResultTransDetails();
+        fetchResultTransDetails();
       }
       setTabValue(type);
     }
@@ -285,17 +274,17 @@ const ReserveTransferSearch = () => {
 
   // 取得帳號列表
   useEffect(() => {
-    getTransferOutAccounts();
+    fetchTransferOutAccounts();
   }, []);
 
   // 切換帳號搜尋預約明細
   useEffect(() => {
     if (selectedAccount) {
       if (tabValue === '1') {
-        getReservedTransDetails();
+        fetchReservedTransDetails();
       }
       if (tabValue === '2') {
-        getResultTransDetails();
+        fetchResultTransDetails();
       }
     }
   }, [selectedAccount]);
@@ -303,13 +292,13 @@ const ReserveTransferSearch = () => {
   // 時間切換搜尋預約明細
   useEffect(() => {
     if (tabValue === '1' && selectedAccount) {
-      getReservedTransDetails();
+      fetchReservedTransDetails();
     }
   }, [reserveDateRange]);
 
   useEffect(() => {
     if (tabValue === '2' && selectedAccount) {
-      getResultTransDetails();
+      fetchResultTransDetails();
     }
   }, [resultDateRange]);
 

@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { exchangeApi } from 'apis';
 import { closeFunc, switchLoading } from 'utilities/AppScriptProxy';
+import {
+  isEmployee, getAccountsList, getCcyList, getExchangePropertyList, getRate,
+} from 'pages/E00100_Exchange/api';
 
 /* Elements */
 import {
@@ -95,15 +97,15 @@ const Exchange = () => {
 
   // 查詢是否為行員
   const getIsEmployee = async () => {
-    const response = await exchangeApi.isEmployee({});
+    const response = await isEmployee({});
     if (response.bankerCd) {
       setBanker(response);
     }
   };
 
   // 查詢所有帳戶資料
-  const getAccountsList = async () => {
-    const response = await exchangeApi.getAccountsList('MSFC');
+  const fetchAccountsList = async () => {
+    const response = await getAccountsList('MSFC');
     if (response?.length > 0) {
       const accounts = response.filter((acct) => acct.transable); // 要排除不可轉帳的帳號。
       setAccountsList(accounts);
@@ -133,8 +135,8 @@ const Exchange = () => {
   // };
 
   // 取得可交易幣別清單
-  const getCcyList = async () => {
-    const response = await exchangeApi.getCcyList({});
+  const fetchCcyList = async () => {
+    const response = await getCcyList({});
     if (response?.length) {
       setCurrencyTypeList(response);
       setValue('currency', response[0].ccyId);
@@ -143,7 +145,7 @@ const Exchange = () => {
 
   // 取得交易性質列表
   const getEchgPropertyList = async (trnsType, init) => {
-    const response = await exchangeApi.getExchangePropertyList({
+    const response = await getExchangePropertyList({
       trnsType,
       action: '1',
     });
@@ -153,10 +155,10 @@ const Exchange = () => {
       setPropertiesList(response);
       setValue('property', response[0].leglCode);
       if (init) {
-        getAccountsList();
+        fetchAccountsList();
         // getNtdAccountsList();
         // getFcAccountsList();
-        getCcyList();
+        fetchCcyList();
         getIsEmployee();
       }
     }
@@ -269,7 +271,7 @@ const Exchange = () => {
       trfAmt,
       bankerCd: banker?.bankerCd || '',
     };
-    const response = await exchangeApi.getRate(param);
+    const response = await getRate(param);
     switchLoading(false);
     if (!response.message) {
       const confirmData = {

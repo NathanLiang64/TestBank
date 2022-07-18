@@ -3,14 +3,14 @@ import { useHistory } from 'react-router';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { cardLessATMApi } from 'apis';
-import { closeFunc, switchLoading } from 'utilities/AppScriptProxy';
+import { getAccountSummary, cardLessWithdrawApply } from 'pages/D00300_CardLessATM/api';
+import { closeFunc, switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
 
 /* Elements */
+import Layout from 'components/Layout/Layout';
 import {
   FEIBInput, FEIBInputLabel, FEIBButton, FEIBBorderButton, FEIBErrorMessage,
 } from 'components/elements';
-import Header from 'components/Header';
 import Dialog from 'components/Dialog';
 import DebitCard from 'components/DebitCard';
 import Accordion from 'components/Accordion';
@@ -84,9 +84,9 @@ const CardLessATM1 = () => {
   };
 
   // 取得提款卡資訊
-  const getAccountSummary = async () => {
+  const fetchAccountSummary = async () => {
     switchLoading(true);
-    const summaryResponse = await cardLessATMApi.getAccountSummary({ account: '' });
+    const summaryResponse = await getAccountSummary({ account: '' });
     console.log('取得提款帳號資訊', summaryResponse);
     const { message } = summaryResponse;
     if (!message) {
@@ -98,28 +98,32 @@ const CardLessATM1 = () => {
   };
 
   // 無卡提款交易
-  const cardlessWithdrawApply = async (param) => {
-    switchLoading(true);
-    const withdrawResponse = await cardLessATMApi.cardLessWithdrawApply(param);
-    const { account, withdrawAmount } = param;
-    const {
-      seqNo, startDateTime, endDateTime, message,
-    } = withdrawResponse;
-    const data = {
-      withdrawalNo: seqNo,
-      amount: withdrawAmount,
-      account,
-      startDateTime,
-      endDateTime,
-    };
+  const requestCardlessWithdrawApply = async (param) => {
+    const authCode = 0x20;
+    const jsRs = await transactionAuth(authCode);
+    if (jsRs.result) {
+      switchLoading(true);
+      const withdrawResponse = await cardLessWithdrawApply(param);
+      const { account, withdrawAmount } = param;
+      const {
+        seqNo, startDateTime, endDateTime, message,
+      } = withdrawResponse;
+      const data = {
+        withdrawalNo: seqNo,
+        amount: withdrawAmount,
+        account,
+        startDateTime,
+        endDateTime,
+      };
 
-    if (seqNo) {
-      console.log('提款結果', data);
       switchLoading(false);
-      toResultPage(data);
-    } else {
-      switchLoading(false);
-      handleDialogOpen(message);
+
+      if (seqNo) {
+        console.log('提款結果', data);
+        toResultPage(data);
+      } else {
+        handleDialogOpen(message);
+      }
     }
   };
 
@@ -131,7 +135,7 @@ const CardLessATM1 = () => {
     if (data.withdrawAmount > accountSummary.balance) {
       handleDialogOpen('提款金額不得大於帳戶餘額');
     } else {
-      cardlessWithdrawApply(param);
+      requestCardlessWithdrawApply(param);
     }
   };
 
@@ -224,17 +228,16 @@ const CardLessATM1 = () => {
   );
 
   useEffect(() => {
-    getAccountSummary();
+    fetchAccountSummary();
   }, []);
 
   return (
-    <>
-      <Header title="無卡提款" />
+    <Layout title="無卡提款">
       <CardLessATMWrapper>
         {renderWithdrawForm()}
         {renderDialog()}
       </CardLessATMWrapper>
-    </>
+    </Layout>
   );
 };
 

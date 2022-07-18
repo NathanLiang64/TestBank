@@ -36,14 +36,14 @@ export const cardLessWithdrawApply = async (param) => {
   return response;
 };
 
-// 變更無卡提款密碼 done
-export const changeCardlessPwd = async (param) => {
-  const response = await userAxios
-    .post('/api/cardlessWD/changePwd', param)
-    .then((data) => data)
-    .catch((err) => err);
-  return response;
-};
+// // 變更無卡提款密碼 done
+// export const changeCardlessPwd = async (param) => {
+//   const response = await userAxios
+//     .post('/api/cardlessWD/changePwd', param)
+//     .then((data) => data)
+//     .catch((err) => err);
+//   return response;
+// };
 
 // 開通無卡提款與設定無卡提款密碼 done
 export const cardLessWithdrawActivate = async (param) => {

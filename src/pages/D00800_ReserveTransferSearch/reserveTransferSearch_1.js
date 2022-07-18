@@ -1,11 +1,10 @@
-import { useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { useCheckLocation, usePageInfo } from 'hooks';
 import { toCurrency } from 'utilities/Generator';
-import { reserveTransferSearchApi } from 'apis';
+import { cancelReserveTransfer } from 'pages/D00800_ReserveTransferSearch/api';
+import { switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
 import Accordion from 'components/Accordion';
@@ -19,30 +18,28 @@ const ReserveTransferSearch1 = ({ location }) => {
   const goBack = () => history.goBack();
 
   const toResultPage = async () => {
-    const {
-      trnsDate, accountId, seqNo, source,
-    } = location.state;
-    const data = {
-      trnsDate, acctId: accountId, seqNo, queryType: source,
-    };
-    const { code, message } = await reserveTransferSearchApi.cancelReserveTransfer(data);
-    if (!code) {
-      history.push('/reserveTransferSearch2', { ...location.state });
-    } else {
-      history.push('/reserveTransferSearch2', { code, message });
+    const authCode = 0x30;
+    const jsRs = await transactionAuth(authCode);
+    if (jsRs.result) {
+      switchLoading(true);
+      const {
+        trnsDate, accountId, seqNo, source,
+      } = location.state;
+      const data = {
+        trnsDate, acctId: accountId, seqNo, queryType: source,
+      };
+      const { code, message } = await cancelReserveTransfer(data);
+      switchLoading(false);
+      if (code === '0000') {
+        history.push('/reserveTransferSearch2', { ...location.state });
+      } else {
+        history.push('/reserveTransferSearch2', { code, message });
+      }
     }
   };
 
-  useCheckLocation();
-  usePageInfo('/api/reserveTransferSearch1');
-
-  useEffect(() => {
-    console.log(location);
-  });
-
   return (
-    <>
-      <Header title="取消預約轉帳" goBack={goBack} />
+    <Layout title="取消預約轉帳" goBack={goBack}>
       <ReserveTransferSearchWrapper>
         <section className="confrimDataContainer lighterBlueLine">
           <div className="dataLabel">轉出金額與轉入帳號</div>
@@ -86,7 +83,7 @@ const ReserveTransferSearch1 = ({ location }) => {
           <FEIBButton onClick={toResultPage}>確認取消</FEIBButton>
         </section>
       </ReserveTransferSearchWrapper>
-    </>
+    </Layout>
   );
 };
 
