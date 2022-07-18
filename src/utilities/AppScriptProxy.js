@@ -382,7 +382,7 @@ async function appTransactionAuth(request) {
   const { authCode, otpMobile, callback } = request;
 
   // 取得目前執行中的單元功能代碼，要求 Controller 發送或驗出時，皆需提供此參數。
-  const funcCode = funcStack.peek()?.func ?? '/'; // 首頁因為沒有功能代碼，所以用'/'表示。
+  const funcCode = funcStack.peek()?.funcID ?? '/'; // 首頁因為沒有功能代碼，所以用'/'表示。
 
   // 取得需要使用者輸入驗證的項目。
   const authMode = await getTransactionAuthMode(authCode); // 要驗 2FA 還是密碼，要以 create 時的為準。
@@ -429,7 +429,7 @@ async function appTransactionAuth(request) {
     <PasswordDrawer funcCode={funcCode} authData={txnAuth} inputPWD={allowedPWD} onFinished={callback} />
   );
 
-  showDrawer('交易授權驗證 (Web版)', body, () => failResult('使用者取消驗證。'));
+  await showDrawer('交易授權驗證 (Web版)', body, () => failResult('使用者取消驗證。'));
 }
 
 export {

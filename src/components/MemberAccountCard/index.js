@@ -15,13 +15,14 @@ import MemberAccountCardWrapper from './memberAccountCard.style';
 * 6. avatarSrc -> 會員頭像的圖片路徑
 * 7. noBorder -> 無框線
 * 8. noOption -> 左滑時無編輯 & 刪除選項、且點擊時無狀態
-* 9. onSelect -> 點擊會員帳號卡片事件 (選取時)
-* 10. onEdit -> 左滑帳號卡片後，點擊編輯按鈕事件
-* 11. onRemove -> 左滑帳號卡片後，點擊刪除按鈕事件
+* 9. hasNewTag -> 顯示NEW標籤
+* 10. onSelect -> 點擊會員帳號卡片事件 (選取時)
+* 11. onEdit -> 左滑帳號卡片後，點擊編輯按鈕事件
+* 12. onRemove -> 左滑帳號卡片後，點擊刪除按鈕事件
 * */
 
 const MemberAccountCard = ({
-  type, name, bankNo, bankName, account, avatarSrc, noBorder, noOption, onSelect, onEdit, onRemove,
+  type, name, bankNo, bankName, account, avatarSrc, noBorder, noOption, hasNewTag = false, onSelect, onEdit, onRemove,
 }) => {
   const [moreAction, setMoreAction] = useState({
     isMoreActionOpen: false,
@@ -91,7 +92,10 @@ const MemberAccountCard = ({
     >
       <Avatar small src={avatarSrc} name={name} />
       <div className="memberInfo">
-        <h3>{name || '會員'}</h3>
+        <h3>
+          {name || '會員'}
+          {hasNewTag && (<div className="new-tag">New</div>)}
+        </h3>
         <p>{`${bankName}(${bankNo}) ${account}`}</p>
       </div>
       { !noOption && renderMoreActionMenu() }

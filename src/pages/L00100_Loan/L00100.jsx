@@ -20,7 +20,8 @@ import {
   accountFormatter, dateFormatter, stringToDate, currencySymbolGenerator,
 } from 'utilities/Generator';
 
-import { getLoanSummary, getContract, getStatment } from './api';
+import { getLoanSummary, getContract } from './api';
+// import { getLoanSummary, getContract, getStatment } from './api';
 import PageWrapper, { ContentWrapper } from './L00100.style';
 
 const uid = uuid();
@@ -51,7 +52,9 @@ const Page = () => {
       { icon: <CircleIcon />, title: '全部貸款', onClick: () => {} },
       */
       { icon: <CircleIcon />, title: '合約下載', onClick: () => { getContract({ accountNo, format: 1 }); } },
+      /*
       { icon: <CircleIcon />, title: '清償證明下載', onClick: () => { getStatment({ accountNo, format: 1 }); } },
+      */
     ];
     dispatch(setDrawer({
       title: '',
@@ -88,7 +91,7 @@ const Page = () => {
         <div className="justify-between items-start">
           <div>
             <div>{card.alias ?? '貸款'}</div>
-            <div>{accountFormatter(card.accountNo)}</div>
+            <div>{`${accountFormatter(card.accountNo)} (${card.loanNo})`}</div>
           </div>
           <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.accountNo)}>
             <MoreIcon />
@@ -121,9 +124,15 @@ const Page = () => {
     },
     {
       label: '可能回饋',
+      value: '-',
+    },
+    /*
+    {
+      label: '可能回饋',
       value: info.isJoinedRewardProgram ? currencySymbolGenerator(info.currency ?? 'NTD', info.rewards) : '-',
       onClick: () => history.push('/L001001', { accountNo }),
     },
+    */
   ]);
 
   const handleSingleTransaction = (id) => {

@@ -10,6 +10,7 @@ import mockLoanDetails from './mockData/mockLoanDetails';
    {
      alias: 貸款別名
      accountNo: 卡號
+     loanNo: 貸款分號
      balance: 貸款餘額
      currency: 幣別
      bonusInfo: {
