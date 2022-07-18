@@ -28,10 +28,9 @@ export const login = async (data) => {
       }
 
       alert('已取消登入');
-      return false;
-    }
-  }
-  alert(loginRs.message);
+    } else alert(message);
+  } else alert(loginRs.message);
+
   return false;
 };
 

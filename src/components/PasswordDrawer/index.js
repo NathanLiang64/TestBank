@@ -1,52 +1,75 @@
-/* eslint-disable */
-
-import { useSelector, useDispatch } from 'react-redux';
+/* eslint-disable object-curly-newline */
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import BottomDrawer from 'components/BottomDrawer';
 import {
   FEIBButton, FEIBErrorMessage, FEIBInput, FEIBInputLabel,
 } from 'components/elements';
 import PasswordInput from 'components/PasswordInput';
 import CountDown from 'components/CountDown';
 import { otpCodeValidation, passwordValidation } from 'utilities/validation';
-// import theme from 'themes/theme';
-import { useEffect, useState } from 'react';
-import { setIsPasswordRequired, setResult } from './stores/actions';
+import { showAlert } from 'utilities/AppScriptProxy';
+import e2ee from 'utilities/E2ee';
+import { setDrawerVisible } from 'stores/reducers/ModalReducer';
+import { transactionAuthVerify } from './api';
 import PasswordDrawerWrapper from './passwordDrawer.style';
 
-// TODO: trying refactor (using custom hook to check)
-const PasswordDrawer = () => {
+/**
+ * Web版 交易驗證模組 UI
+ * @param {*} param0 {
+ *   authData: {
+ *     key: 本次要求驗證的金鑰，用來檢核使用者輸入
+ *     otpSmsId: OTP簡訊中的識別碼。
+ *     otpMobile: 簡訊識別碼發送的手機門號。
+ *   },
+ *   inputPWD: 表示需要使用者輸入密碼。
+ *   onFinished: 完成時的事件。
+ *     事件參數 {
+ *       result: 驗證結果(true/false)。
+ *       message: 驗證失敗狀況描述。
+ *     }
+ * }
+ */
+const PasswordDrawer = ({
+  funcCode,
+  authData,
+  inputPWD,
+  onFinished,
+}) => {
+  const dispatch = useDispatch();
+
   const schema = yup.object().shape({
-    otpCode: otpCodeValidation(),
-    password: passwordValidation(),
+    otpCode: authData.otpSmsId ? otpCodeValidation() : null,
+    password: inputPWD ? passwordValidation() : null,
   });
   const { handleSubmit, control, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
-  const isPasswordRequired = useSelector(({ passwordDrawer }) => passwordDrawer.isPasswordRequired);
-  const fastLogin = useSelector(({ passwordDrawer }) => passwordDrawer.fastLogin);
-  const motp = useSelector(({ passwordDrawer }) => passwordDrawer.motp);
   const [resendDisabled, setResendDisabled] = useState(true);
   const [replayCountDown, setReplayCountDown] = useState(false);
 
-  const dispatch = useDispatch();
-
   const handleClickResendButton = () => {
+    // TODO 重送OTP
     setResendDisabled(true);
     setReplayCountDown(true);
     // call otp api
   };
 
-  const handleClickSubmit = (data) => {
-    // 假設 1qaz2wsx 是用戶密碼，輸入正確才可通過
-    if (data.password === '1qaz2wsx') {
-      dispatch(setResult(true));
-      // dispatch(setFastLogin(false));
-      dispatch(setIsPasswordRequired(false));
+  const handleClickSubmit = async (data) => {
+    // 驗證 OTP驗證碼 & 網銀密碼
+    const {otpCode} = data; // 使用者輸入的「驗證碼」。
+    const netbankPwd = e2ee(data.password); // 使用者輸入的「網銀密碼」，還要再做 E2EE。
+    const verifyRs = await transactionAuthVerify({ authKey: authData.key, funcCode, netbankPwd, otpCode });
+    if (!verifyRs) return false; // createTransactionAuth 發生異常就結束。
+    if (verifyRs.result === true) {
+      // 正常結果。
+      onFinished({ result: true, message: null });
+      dispatch(setDrawerVisible(false));
     } else {
-      // console.log('不通過');
-      dispatch(setResult(false));
+      // TODO 處理密碼錯誤的情況，累計三次驗證失敗之後，就傳回驗證失敗
+      showAlert(verifyRs.message); // NOTE 不能用 Layout 中的 Drawer，因為再跳出 Popup Window 後， Drawer 會立即關掉！
     }
+    return verifyRs.result;
   };
 
   useEffect(() => {
@@ -59,6 +82,7 @@ const PasswordDrawer = () => {
       <div className="countDownArea">
         <div className="countDown">
           <p>時間倒數</p>
+          {/* TODO 結束時，詢問重送或取消驗證 */}
           <CountDown onEnd={() => setResendDisabled(false)} replay={replayCountDown} />
         </div>
         <FEIBButton
@@ -69,7 +93,8 @@ const PasswordDrawer = () => {
           重新寄驗證碼
         </FEIBButton>
       </div>
-      <FEIBInputLabel>一次性 OTP 驗證</FEIBInputLabel>
+      {/* eslint-disable-next-line react/jsx-one-expression-per-line */}
+      <FEIBInputLabel>一次性 OTP 驗證 (發送門號：{`${authData.otpMobile}`})</FEIBInputLabel>
       <Controller
         name="otpCode"
         defaultValue=""
@@ -82,7 +107,7 @@ const PasswordDrawer = () => {
             name="otpCode"
             placeholder="請輸入驗證碼"
             error={!!errors.otpCode}
-            startAdornment={<p className="prefixCode">R5BG</p>}
+            startAdornment={<p className="prefixCode">{`${authData.otpSmsId}`}</p>}
           />
         )}
       />
@@ -100,21 +125,20 @@ const PasswordDrawer = () => {
   );
 
   return (
-    <BottomDrawer
-      title="輸入網銀密碼"
-      isOpen={isPasswordRequired}
-      onClose={() => dispatch(setIsPasswordRequired(false))}
-      content={(
-        <PasswordDrawerWrapper>
-          <form onSubmit={handleSubmit(handleClickSubmit)}>
-            { !motp && renderOTPArea() }
-            { fastLogin && renderPasswordArea() }
-            <FEIBButton type="submit">送出</FEIBButton>
-          </form>
-        </PasswordDrawerWrapper>
-      )}
-    />
+    <PasswordDrawerWrapper>
+      <form onSubmit={handleSubmit(handleClickSubmit)}>
+        { authData.otpSmsId && renderOTPArea() }
+        { inputPWD && renderPasswordArea() }
+        <FEIBButton type="submit">送出</FEIBButton>
+      </form>
+    </PasswordDrawerWrapper>
   );
+};
+
+PasswordDrawer.defaultProps = {
+  authData: null,
+  inputPWD: true,
+  onFinished: null,
 };
 
 export default PasswordDrawer;

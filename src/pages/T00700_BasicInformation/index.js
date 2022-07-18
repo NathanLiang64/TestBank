@@ -8,7 +8,7 @@ import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { getCountyList, getBasicInformation, modifyBasicInformation } from 'pages/T00700_BasicInformation/api';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import {
   FEIBInputLabel,
   FEIBInput,
@@ -75,8 +75,10 @@ const BasicInformation = () => {
       });
       const { county } = data;
       const countyData = county.split(' ')[1] || county;
-      const { cities } = countyListResponse.find((item) => item.countyName === countyData);
-      setCityOptions(cities);
+      const countyItem = countyListResponse.find((item) => item.countyName === countyData);
+      if (countyItem) {
+        setCityOptions(countyItem.cities);
+      }
     } else {
       console.log(code, message);
     }
@@ -155,7 +157,8 @@ const BasicInformation = () => {
   // 點擊儲存變更按鈕
   const onSubmit = async () => {
     const { mobile } = getValues();
-    const authCode = 0x26 || 0x37;
+    // const authCode = 0x26 || 0x37;
+    const authCode = 0x37;
     const jsRs = await transactionAuth(authCode, mobile);
     if (jsRs.result) {
       modifyPersonalData();
@@ -193,8 +196,7 @@ const BasicInformation = () => {
   }, []);
 
   return (
-    <>
-      <Header title="基本資料變更" />
+    <Layout title="基本資料變更">
       <BasicInformationWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
@@ -311,7 +313,7 @@ const BasicInformation = () => {
           </FEIBButton>
         </form>
       </BasicInformationWrapper>
-    </>
+    </Layout>
   );
 };
 

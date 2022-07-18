@@ -16,6 +16,7 @@ export default () => [
   {
     alias: '房貸',
     accountNo: '11122233334444',
+    loanNo: '001',
     balance: 2_000_000,
     currency: 'NTD',
     bonusInfo: {

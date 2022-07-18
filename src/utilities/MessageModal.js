@@ -69,10 +69,17 @@ export const customPopup = async (title, message, onOk, onCancel, okContent, can
   store.dispatch(setModalVisible(true));
 };
 
-export const showDrawer = async (title, content) => {
+/**
+ * 在 Layout 下方彈出抽屜。
+ * @param {*} title 上方的標題文字。
+ * @param {*} content 要呈現的內容。
+ * @param {*} onCloseBtnPressed 當右上角 X 按下時的處理方式。
+ */
+export const showDrawer = async (title, content, onCloseBtnPressed) => {
   store.dispatch(setDrawer({
     title,
     content,
+    onClose: onCloseBtnPressed,
   }));
   store.dispatch(setDrawerVisible(true));
 };

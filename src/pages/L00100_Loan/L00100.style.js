@@ -21,9 +21,10 @@ const PageWrapper = styled.div`
 const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1.6rem;
+  gap: 2.5rem;
   padding-inline: 1.6rem;
   padding-bottom: 6rem;
+  margin-top: 2.5rem;
 `;
 
 export default PageWrapper;

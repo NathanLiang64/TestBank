@@ -7,7 +7,7 @@ import { userRequest, callAPI } from 'utilities/axios';
 const handshake = async () => {
   localStorage.clear();
   sessionStorage.clear();
-  sessionStorage.setItem('webLogin', true);
+  sessionStorage.setItem('webMode', true);
 
   const { privateKey, publicKey } = CipherUtil.generateRSA();
   const aesKey = CipherUtil.generateKey(256); // 使用JWT模式時，Request/Response Payload 的加解密金鑰，採用 AES256。
