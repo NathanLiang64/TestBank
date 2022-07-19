@@ -5,6 +5,7 @@ import { useHistory } from 'react-router';
 import { startFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
+/*
 import {
   getAllFrequentAccount,
   addFrequentAccount,
@@ -12,7 +13,8 @@ import {
   deleteFrequentAccount,
 } from 'pages/D00500_FrequentContacts/api';
 import { getAllRegisteredAccount, updateRegisteredAccount } from 'pages/D00600_RegisteredContacts/api';
-import { logout, mobileAccountUnbind, getHomeData, registerToken } from './Nav.api';
+*/
+import { logout, mobileAccountUnbind, getHomeData, registerToken, getFavoriteList, modifyFavoriteItem, deleteFavoriteItem, getFavoriteSettingList } from './Nav.api';
 
 import NavWrapper from './Nav.style';
 
@@ -99,14 +101,11 @@ const Nav = () => {
         </div>
 
         <div className="bankee">
-          <p style={{ color: '#9D7ADE' }}>** 使用 Y120409367 測試  **</p>
-          <div onClick={() => getAllFrequentAccount()}>D00500-API://getAllFrequentAccount</div>
-          <div onClick={() => addFrequentAccount({ bankId: '822', acctId: '107532104335', nickName: 'Jerry', email: 'jerry88634@feib.com.tw' })}>D00500-API://addFrequentAccount</div>
-          <div onClick={() => updateFrequentAccount({ bankId: '805', acctId: '04300498002896', nickName: 'New Name', email: 'alaya@gmail.com', orgBankId: '805', orgAcctId: '04300498002896' })}>D00500-API://updateFrequentAccount</div>
-          <div onClick={() => deleteFrequentAccount({ bankId: '822', acctId: '107532104335' })}>D00500-API://deleteFrequentAccount</div>
-
-          <div onClick={() => getAllRegisteredAccount('04300499100376')}>D00600-API://getAllRegisteredAccount</div>
-          <div onClick={() => updateRegisteredAccount({ bankId: '805', acctId: '04300490004059', nickName: 'Jerry帳本', email: 'jerry88634@feib.com.tw' })}>D00600-API://updateRegisteredAccount</div>
+          <p style={{ color: '#9D7ADE' }}>** 使用 P151006031 測試  **</p>
+          <div onClick={() => getFavoriteSettingList()}>Favorite-API://getFavoriteSettingList</div>
+          <div onClick={() => getFavoriteList()}>Favorite-API://getFavoriteList</div>
+          <div onClick={() => modifyFavoriteItem({ actKey: 'D00400', position: '13' })}>Favorite-API://modifyFavoriteItem</div>
+          <div onClick={() => deleteFavoriteItem('C00300')}>Favorite-API://deleteFavoriteItem</div>
         </div>
 
         <FEIBButton onClick={logOut}>登出</FEIBButton>
