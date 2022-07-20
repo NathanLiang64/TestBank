@@ -20,7 +20,7 @@ import { callAPI } from 'utilities/axios';
  * @throws Exception
  */
 export const getFavoriteSettingList = async () => {
-  const response = await callAPI('/api/menu/v1/favFuncList/getSetting');
+  const response = await callAPI('/api/menu/favoriteFunc/v1/setting');
   return response.data;
 };
 /**
@@ -39,7 +39,7 @@ export const getFavoriteSettingList = async () => {
  * @throws Exception
  */
 export const getFavoriteList = async () => {
-  const response = await callAPI('/api/menu/v1/favFuncList/getAll');
+  const response = await callAPI('/api/menu/favoriteFunc/v1/getAll');
   return response.data;
 };
 /**
@@ -60,11 +60,11 @@ export const getFavoriteList = async () => {
  * TODO: otherDesc尚未加入ORDS API中
  */
 export const modifyFavoriteItem = async (request) => {
-  const response = await callAPI('/api/menu/v1/favFuncList/modify', request);
+  const response = await callAPI('/api/menu/favoriteFunc/v1/modify', request);
   return response.data;
 };
 /**
-* (我的最愛)刪除清單中的項目
+* (我的最愛)移除清單中的項目
 *
 * @param JwtToken
 * @param actKey: 功能代碼
@@ -77,6 +77,6 @@ export const modifyFavoriteItem = async (request) => {
 * @throws Exception
 */
 export const deleteFavoriteItem = async (request) => {
-  const response = await callAPI('/api/menu/v1/favFuncList/delete', request);
+  const response = await callAPI('/api/menu/favoriteFunc/v1/remove', request);
   return response.data;
 };
