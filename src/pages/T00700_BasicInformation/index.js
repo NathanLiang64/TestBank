@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
@@ -65,11 +64,13 @@ const BasicInformation = () => {
       cityCode: '',
     },
   ]);
+  const [originMobileNum, setOriginMobileNum] = useState('');
 
   // 取得個人資料
   const getPersonalData = async (countyListResponse) => {
     const { code, data, message } = await getBasicInformation({});
     if (code === '0000') {
+      setOriginMobileNum(data.mobile);
       reset({
         ...data,
       });
@@ -157,9 +158,18 @@ const BasicInformation = () => {
   // 點擊儲存變更按鈕
   const onSubmit = async () => {
     const { mobile } = getValues();
-    // const authCode = 0x26 || 0x37;
-    const authCode = 0x37;
-    const jsRs = await transactionAuth(authCode, mobile);
+    // 有變更手機號碼
+    if (mobile !== originMobileNum) {
+      const authCode = 0x37;
+      const jsRs = await transactionAuth(authCode, mobile);
+      if (jsRs.result) {
+        modifyPersonalData();
+      }
+      return;
+    }
+    // 無變更手機號碼
+    const authCode = 0x26;
+    const jsRs = await transactionAuth(authCode);
     if (jsRs.result) {
       modifyPersonalData();
     }

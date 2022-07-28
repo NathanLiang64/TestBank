@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import e2ee from 'utilities/E2ee';
 import { changeUserName } from 'pages/T00800_ChangeUserName/api';
@@ -9,8 +9,9 @@ import { closeFunc, switchLoading, transactionAuth } from 'utilities/AppScriptPr
 
 /* Elements */
 import {
-  FEIBInput, FEIBInputLabel, FEIBButton, FEIBErrorMessage,
+  FEIBButton,
 } from 'components/elements';
+import PasswordInput from 'components/PasswordInput';
 import Layout from 'components/Layout/Layout';
 import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
 import { accountValidation, confirmAccountValidation } from 'utilities/validation';
@@ -82,57 +83,27 @@ const ChangeUserName = () => {
       <ChangeUserNameWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
-            <FEIBInputLabel htmlFor="userName">您的使用者代號</FEIBInputLabel>
-            <Controller
+            <PasswordInput
+              label="您的使用者代號"
+              id="userName"
               name="userName"
-              defaultValue=""
               control={control}
-              render={({ field }) => (
-                <FEIBInput
-                  {...field}
-                  type="text"
-                  id="userName"
-                  name="userName"
-                  placeholder="請輸入6~20位英數字，英文字區分大小寫"
-                  error={!!errors.userName}
-                />
-              )}
+              errorMessage={errors.userName?.message}
             />
-            <FEIBErrorMessage>{errors.userName?.message}</FEIBErrorMessage>
-            <FEIBInputLabel>新的使用者代號</FEIBInputLabel>
-            <Controller
+            <PasswordInput
+              label="新的使用者代號"
+              id="newUserName"
               name="newUserName"
-              defaultValue=""
               control={control}
-              render={({ field }) => (
-                <FEIBInput
-                  {...field}
-                  type="text"
-                  id="newUserName"
-                  name="newUserName"
-                  placeholder="請輸入6~20位英數字，英文字區分大小寫"
-                  error={!!errors.newUserName}
-                />
-              )}
+              errorMessage={errors.newUserName?.message}
             />
-            <FEIBErrorMessage>{errors.newUserName?.message}</FEIBErrorMessage>
-            <FEIBInputLabel>請確認新的使用者代號</FEIBInputLabel>
-            <Controller
+            <PasswordInput
+              label="請確認新的使用者代號"
+              id="newUserNameCheck"
               name="newUserNameCheck"
-              defaultValue=""
               control={control}
-              render={({ field }) => (
-                <FEIBInput
-                  {...field}
-                  type="text"
-                  id="newUserNameCheck"
-                  name="newUserNameCheck"
-                  placeholder="請再輸入一次新的使用者代號"
-                  error={!!errors.newUserNameCheck}
-                />
-              )}
+              errorMessage={errors.newUserNameCheck?.message}
             />
-            <FEIBErrorMessage>{errors.newUserNameCheck?.message}</FEIBErrorMessage>
           </div>
           <FEIBButton
             type="submit"

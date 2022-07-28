@@ -1,13 +1,12 @@
-/* eslint-disable no-unused-vars */
 import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { switchLoading, closeFunc } from 'utilities/AppScriptProxy';
+import { switchLoading, closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { changeCardlessPwd } from 'pages/D00400_CardLessWithDrawChgPwd/api';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import {
   FEIBButton,
 } from 'components/elements';
@@ -63,9 +62,13 @@ const CardLessWithDrawChgPwd = () => {
 
   // 設定無卡提款密碼
   const changePwdHandler = async (param) => {
-    switchLoading(true);
-    const changePwdResponse = await changeCardlessPwd(param);
-    setResultDialog(changePwdResponse);
+    const authCode = 0x26;
+    const jsRs = await transactionAuth(authCode);
+    if (jsRs.result) {
+      switchLoading(true);
+      const changePwdResponse = await changeCardlessPwd(param);
+      setResultDialog(changePwdResponse);
+    }
   };
 
   const onSubmit = async (data) => {
@@ -130,12 +133,11 @@ const CardLessWithDrawChgPwd = () => {
   );
 
   return (
-    <>
-      <Header title="變更無卡提款密碼" />
+    <Layout title="變更無卡提款密碼">
       <CardLessATMWrapper>
         {renderForm()}
       </CardLessATMWrapper>
-    </>
+    </Layout>
   );
 };
 

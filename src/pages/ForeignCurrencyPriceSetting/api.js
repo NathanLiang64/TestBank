@@ -49,3 +49,9 @@ export const updateNotice = async (oldNotice, newNotice) => {
   await removeNotice(oldNotice);
   return await addNotice(newNotice);
 };
+
+// 取得可交易幣別
+export const getCcyList = async (param) => {
+  const response = await callAPI('/api/frgn/qserviceTrfiCcy', param);
+  return response.data;
+};

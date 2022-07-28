@@ -4,8 +4,8 @@ import * as yup from 'yup';
 // import { Controller, useForm } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { cardLessATMApi } from 'apis';
 import { closeFunc, switchLoading } from 'utilities/AppScriptProxy';
+import { getCardlessStatus, getCardStatus, cardLessWithdrawActivate } from 'pages/D00300_CardLessATM/api';
 
 /* Elements */
 import Header from 'components/Header';
@@ -81,8 +81,8 @@ const CardLessATM = () => {
   };
 
   // 檢查無卡提款狀態; 0=未申請, 1=已申請未開通, 2=已開通, 3=已註銷, 4=已失效, 5=其他
-  const getCardlessStatus = async (param) => {
-    const statusCodeResponse = await cardLessATMApi.getCardlessStatus(param);
+  const fetchCardlessStatus = async (param) => {
+    const statusCodeResponse = await getCardlessStatus(param);
     console.log('無卡提款狀態', statusCodeResponse);
     const { cwdStatus, newSiteRegist, message } = statusCodeResponse;
     setNewSiteReg(newSiteRegist);
@@ -128,9 +128,9 @@ const CardLessATM = () => {
   };
 
   // 檢查金融卡狀態；“01”=新申請 “02”=尚未開卡 “04”=已啟用 “05”=已掛失 “06”=已註銷 “07”=已銷戶 “08”=臨時掛失中 “09”=申請中
-  const getCardStatus = async () => {
+  const fetchCardStatus = async () => {
     switchLoading(true);
-    const cardStatusResponse = await cardLessATMApi.getCardStatus({});
+    const cardStatusResponse = await getCardStatus({});
     console.log('金融卡狀態', cardStatusResponse);
     const { cardStatus, message } = cardStatusResponse;
     switch (cardStatus) {
@@ -150,7 +150,7 @@ const CardLessATM = () => {
         break;
 
       case '04':
-        getCardlessStatus({});
+        fetchCardlessStatus({});
         break;
 
       default:
@@ -166,7 +166,7 @@ const CardLessATM = () => {
   // 開通無卡提款與設定無卡提款密碼
   const activateWithdrawAndSetPwd = async (param) => {
     switchLoading(true);
-    const activateResponse = await cardLessATMApi.cardLessWithdrawActivate(param);
+    const activateResponse = await cardLessWithdrawActivate(param);
     const { message } = activateResponse;
 
     if (message) {
@@ -280,7 +280,7 @@ const CardLessATM = () => {
   );
 
   useEffect(() => {
-    getCardStatus();
+    fetchCardStatus();
   }, []);
 
   return (

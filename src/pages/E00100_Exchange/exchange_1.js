@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { exchangeApi } from 'apis';
+import { exchangeNtoF, exchangeFtoN } from 'pages/E00100_Exchange/api';
 import { toCurrency } from 'utilities/Generator';
+import { switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import Accordion from 'components/Accordion';
 import ConfirmButtons from 'components/ConfirmButtons';
 import InformationList from 'components/InformationList';
@@ -21,18 +22,24 @@ const Exchange1 = ({ location }) => {
   const goBack = () => history.goBack();
 
   const handleNextStep = async () => {
-    const param = { ...confirmData };
-    delete param.outAccountAmount;
-    let response;
-    // 1: 台轉外
-    if (confirmData?.trnsType === '1') {
-      response = await exchangeApi.exchangeNtoF(param);
+    const authCode = 0x30;
+    const jsRs = await transactionAuth(authCode);
+    if (jsRs.result) {
+      switchLoading(true);
+      const param = { ...confirmData };
+      delete param.outAccountAmount;
+      let response;
+      // 1: 台轉外
+      if (confirmData?.trnsType === '1') {
+        response = await exchangeNtoF(param);
+      }
+      // 2: 外轉台
+      if (confirmData?.trnsType === '2') {
+        response = await exchangeFtoN(param);
+      }
+      switchLoading(false);
+      history.push('/exchange2', { ...response, memo: confirmData?.memo, bankerCd: confirmData?.bankerCd });
     }
-    // 2: 外轉台
-    if (confirmData?.trnsType === '2') {
-      response = await exchangeApi.exchangeFtoN(param);
-    }
-    history.push('/exchange2', { ...response, memo: confirmData?.memo, bankerCd: confirmData?.bankerCd });
   };
 
   const generateAccountAmt = () => {
@@ -48,8 +55,7 @@ const Exchange1 = ({ location }) => {
   }, []);
 
   return (
-    <>
-      <Header title="外幣換匯確認" goBack={goBack} />
+    <Layout title="外幣換匯確認" goBack={goBack}>
       <ExchangeWrapper className="confirmPage">
         <div className="infoSection">
           <div className="mainBlock">
@@ -117,7 +123,7 @@ const Exchange1 = ({ location }) => {
           </div>
         </div>
       </ExchangeWrapper>
-    </>
+    </Layout>
   );
 };
 

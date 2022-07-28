@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { exchangeApi } from 'apis';
 import { CurrencyInfo, dateFormatter, timeSecondFormatter } from 'utilities/Generator';
 
 /* Elements */
@@ -28,6 +27,7 @@ import {
   addNotice,
   removeNotice,
   updateNotice,
+  getCcyList,
 } from './api';
 
 /* Styles */
@@ -65,7 +65,7 @@ const ForeignCurrencyPriceSetting = () => {
 
   // 取得外幣列表
   const getCurrencyInfo = async () => {
-    const response = await exchangeApi.getCcyList({});
+    const response = await getCcyList({});
     console.log(response);
     if (!response?.code) {
       setCurrencyInfo(response);
