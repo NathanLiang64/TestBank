@@ -3,13 +3,12 @@ import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { goHome } from 'utilities/AppScriptProxy';
-// import { pwdModifyApi } from 'apis';
+import { goHome, switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
 import { changePwd } from 'pages/A00700_RegularPwdModify/api';
 
 /* Elements */
+import Layout from 'components/Layout/Layout';
 import { FEIBButton } from 'components/elements';
-import Header from 'components/Header';
 import PasswordInput from 'components/PasswordInput';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
@@ -67,13 +66,19 @@ const RegularPwdModify = () => {
 
   // 點擊儲存變更，呼叫變更網銀密碼API
   const onSubmit = async () => {
-    const param = {
-      password: await e2ee(getValues('password')),
-      newPassword: await e2ee(getValues('newPassword')),
-      newPasswordCheck: await e2ee(getValues('newPasswordCheck')),
-    };
-    const changePwdResponse = await changePwd(param);
-    setResultDialog(changePwdResponse);
+    const authCode = 0x0;
+    const jsRs = await transactionAuth(authCode);
+    if (jsRs.result) {
+      switchLoading(true);
+      const param = {
+        password: e2ee(getValues('password')),
+        newPassword: e2ee(getValues('newPassword')),
+        newPasswordCheck: e2ee(getValues('newPasswordCheck')),
+      };
+      const changePwdResponse = await changePwd(param);
+      setResultDialog(changePwdResponse);
+      switchLoading(false);
+    }
   };
 
   // 提醒久未變更密碼彈窗
@@ -129,8 +134,7 @@ const RegularPwdModify = () => {
   useEffect(() => dispatch(setIsOpen(false)), []);
 
   return (
-    <>
-      <Header title="定期網銀密碼變更" hideBack hideHome />
+    <Layout title="定期網銀密碼變更" goBack={false} goHome={false}>
       <RegularPwdModifyWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
@@ -156,8 +160,6 @@ const RegularPwdModify = () => {
               errorMessage={errors.newPasswordCheck?.message}
             />
           </div>
-          {/* <FEIBButton type="button" onClick={alertAesKey}>aesKey</FEIBButton>
-          <FEIBButton type="button" onClick={alertIvKey}>ivKey</FEIBButton> */}
           <div>
             <InfoArea space="bottom">
               *定期進行密碼以及個資更新以確保帳號安全
@@ -168,7 +170,7 @@ const RegularPwdModify = () => {
         { renderNotiDialog() }
         { renderWarningDialog() }
       </RegularPwdModifyWrapper>
-    </>
+    </Layout>
   );
 };
 
