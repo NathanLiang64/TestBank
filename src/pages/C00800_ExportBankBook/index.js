@@ -1,8 +1,12 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { getEmail, sendBankBookMail } from 'pages/C00800_ExportBankBook/api';
+import { bankAccountsApi } from 'apis';
+import { stringDateCodeFormatter } from 'utilities/Generator';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -20,8 +24,6 @@ import { RadioGroup } from '@material-ui/core';
 import DateRangePicker from 'components/DateRangePicker';
 import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
-import { exportBankBookApi, basicInformationApi, bankAccountsApi } from 'apis';
-import { stringDateCodeFormatter } from 'utilities/Generator';
 import AccordionContent from './accordionContent';
 
 /* Styles */
@@ -67,9 +69,11 @@ const ExportBankBook = () => {
   };
 
   // 取得 Email
-  const getEmail = async () => {
-    const { email } = await basicInformationApi.getBasicInformation({});
-    setMail(email);
+  const fetchEmail = async () => {
+    const { code, data } = await getEmail({});
+    if (code === '0000') {
+      setMail(data?.email || '');
+    }
   };
 
   const setDateRange = (rangeType) => {
@@ -128,17 +132,17 @@ const ExportBankBook = () => {
       fileType: 1,
       pdfTemplateType: data.outType === '1' ? 1 : 3,
     };
-    const response = await exportBankBookApi.sendBankBookMail(param);
-    if (response === 'Send mail success!') {
-      history.push('exportBankBook1', { data: { mail, success: true } });
+    const response = await sendBankBookMail(param);
+    if (response?.data === 'Send mail success!') {
+      history.push('/C008001', { data: { mail, success: true } });
     } else {
-      history.push('exportBankBook1', { data: { success: false } });
+      history.push('/C008001', { data: { success: false } });
     }
   };
 
   useEffect(() => {
     getAccounts();
-    getEmail();
+    fetchEmail();
   }, []);
 
   return (
