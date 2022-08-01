@@ -9,7 +9,7 @@ const PrincipleWrapper = styled(Layout)`
   }
 
   .detailUl {
-    padding: 2.4rem 3.2rem;
+    padding: 2.4rem 3.2rem 0;
     li {
       display: flex;
       justify-content: space-between;
@@ -36,7 +36,7 @@ const PrincipleWrapper = styled(Layout)`
   .noticeTip {
     color: ${({ theme }) => theme.colors.text.light};
     font-size: 1.4rem;
-    padding: 0 3.2rem;
+    padding: 2.4rem 3.2rem;
     line-height: 150%;
   }
 `;
