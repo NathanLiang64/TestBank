@@ -275,9 +275,6 @@ const GlobalStyles = createGlobalStyle`
 
   .dialogResultContent {
     padding: 0 1.6rem 2.4rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     img {
       width: 14.4rem;
     }
