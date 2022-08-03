@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
 const SuccessFailureAnimationsWrapper = styled.div`
-  img {
-    display: block;
-    margin: 0 auto;
+  .animContainer {
+    display: flex;
+    justify-content: center;
   }
 
   .stateText {
