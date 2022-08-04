@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { closeFunc, switchLoading } from 'utilities/AppScriptProxy';
@@ -9,7 +10,7 @@ import {
 import {
   FEIBSelect, FEIBOption, FEIBInputLabel, FEIBInput, FEIBRadio, FEIBRadioLabel, FEIBBorderButton, FEIBButton, FEIBErrorMessage,
 } from 'components/elements';
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import { RadioGroup } from '@material-ui/core';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -149,9 +150,8 @@ const Exchange = () => {
       trnsType,
       action: '1',
     });
-    if (response.message) {
-      handleSetDialog(response.message, true);
-    } else {
+
+    if (Array.isArray(response)) {
       setPropertiesList(response);
       setValue('property', response[0].leglCode);
       if (init) {
@@ -379,8 +379,7 @@ const Exchange = () => {
   }, [watch('currency')]);
 
   return (
-    <>
-      <Header title="外幣換匯" goBack={() => history.push('/more')} />
+    <Layout title="外幣換匯">
       <ExchangeWrapper style={{ padding: '2.4rem 1.6rem 2.4rem 1.6rem' }}>
         <div className="borderBtnContainer">
           <FEIBBorderButton className="customSize" type="button" onClick={handleTableToggle}>
@@ -626,7 +625,7 @@ const Exchange = () => {
         <ExchangeTableDialog />
         { renderDialog() }
       </ExchangeWrapper>
-    </>
+    </Layout>
   );
 };
 

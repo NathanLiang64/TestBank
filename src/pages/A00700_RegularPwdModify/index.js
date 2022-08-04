@@ -66,7 +66,7 @@ const RegularPwdModify = () => {
 
   // 點擊儲存變更，呼叫變更網銀密碼API
   const onSubmit = async () => {
-    const authCode = 0x0;
+    const authCode = 0x25;
     const jsRs = await transactionAuth(authCode);
     if (jsRs.result) {
       switchLoading(true);

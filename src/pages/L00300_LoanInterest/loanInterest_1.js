@@ -43,7 +43,7 @@ const LoanInterest = () => {
               <span>{ data.type }</span>
             </li>
             <li>
-              <span>攤還本息</span>
+              <span>攤還本金</span>
               <span>{ data.principalAndInterest }</span>
             </li>
             <li>
@@ -67,7 +67,7 @@ const LoanInterest = () => {
               <span>{ data.amountDue }</span>
             </li>
             <li>
-              <span>本金金額</span>
+              <span>本金餘額</span>
               <span>{ data.principal }</span>
             </li>
           </ul>

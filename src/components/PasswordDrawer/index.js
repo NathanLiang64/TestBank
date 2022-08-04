@@ -63,7 +63,8 @@ const PasswordDrawer = ({
     if (!verifyRs) return false; // createTransactionAuth 發生異常就結束。
     if (verifyRs.result === true) {
       // 正常結果。
-      onFinished({ result: true, message: null });
+      // Note 因為之後叫用交易相關 API 時可能會需要用到，所以傳回 E2EE 加密後的 netbankPwd 值。
+      onFinished({ result: true, message: null, netbankPwd });
       dispatch(setDrawerVisible(false));
     } else {
       // TODO 處理密碼錯誤的情況，累計三次驗證失敗之後，就傳回驗證失敗

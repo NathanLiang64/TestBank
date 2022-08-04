@@ -87,6 +87,7 @@ const Nav = () => {
         <div className="vj">
           <p style={{ color: '#9D7ADE' }}>** 唯物 **</p>
           <div onClick={() => startFunc('A00400')}>A00400 開通APP</div>
+          <div onClick={() => startFunc('C00800')}>C00800 匯出存摺</div>
           <div onClick={() => startFunc('B00300')}>B00300 訊息通知 - (施工中)</div>
           <div onClick={() => startFunc('S00400')}>S00400 訊息通知設定 - (施工中)</div>
           <div onClick={() => startFunc('E00100')}>E00100 換匯 - (施工中)</div>
