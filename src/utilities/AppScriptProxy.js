@@ -334,6 +334,7 @@ async function getJwtToken(force) {
  * @returns {
  *   result: 驗證結果(true/false)。
  *   message: 驗證失敗狀況描述。
+ *   netbankPwd: 因為之後叫用交易相關 API 時可能會需要用到，所以傳回 E2EE 加密後的密碼。
  * }
  */
 async function transactionAuth(authCode, otpMobile) {
@@ -358,6 +359,7 @@ async function transactionAuth(authCode, otpMobile) {
  * @returns {
  *   result: 驗證結果(true/false)。
  *   message: 驗證失敗狀況描述。
+ *   netbankPwd: 因為之後叫用交易相關 API 時可能會需要用到，所以傳回 E2EE 加密後的密碼。
  * }
  */
 async function verifyBio(authCode) {
@@ -375,6 +377,7 @@ async function verifyBio(authCode) {
  *   callback: { 要求進行驗證的來源 JavaScript 提供的 Callback JavaScript
  *     result: 驗證結果(true/false)
  *     message: 驗證失敗狀況描述。
+ *     netbankPwd: 因為之後叫用交易相關 API 時可能會需要用到，所以傳回 E2EE 加密後的密碼。
  *   }
  * }
  */
