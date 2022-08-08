@@ -18,12 +18,6 @@ export const getAccountsList = async (acctTypes) => {
   return response.data;
 };
 
-// 取得約定帳號
-export const getIntoAccount = async () => {
-  const response = await callAPI('/api/transfer/queryRegAcct', {});
-  return response.data;
-};
-
 /**
  * 取得外幣交易性質別清單。
  * WebView：E00100換匯
@@ -50,7 +44,7 @@ export const getExchangePropertyList = async (param) => {
  *   ...(很多)
  * }
  */
-export const exchangeNtoF = async (param) => {
+export const transferFtoF = async (param) => {
   const response = await callAPI('/api/foreign/v1/transfer', param);
   return response.data;
 };
