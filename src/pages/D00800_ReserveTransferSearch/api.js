@@ -9,13 +9,13 @@ export const getTransferOutAccounts = async (param) => {
 // 查詢預約轉帳明細
 export const getReservedTransDetails = async (param) => {
   const response = await callAPI('/api/transfer/reserved/transDetails', param);
-  return response.data;
+  return response;
 };
 
 // 查詢預約轉帳結果明細
 export const getResultTransDetails = async (param) => {
   const response = await callAPI('/api/transfer/reserved/resultDetails', param);
-  return response.data;
+  return response;
 };
 
 // 取消預約轉帳交易
