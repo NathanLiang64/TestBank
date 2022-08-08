@@ -370,6 +370,87 @@ async function verifyBio(authCode) {
 }
 
 /**
+ * 查詢快速登入綁定狀態
+ * @returns {
+ *  result: 驗證結果(true/false)。
+ *  message: 駿證失敗狀況描述。
+ *  QLStatus: 本裝置快速登入綁定狀態：(result為true時有值) 0：未綁定 1：已正常綁定 2：綁定但已鎖定 3：已在其它裝置綁定 4：本裝置已綁定其他帳號
+ *  QLType: 快登裝置綁定所使用驗證方式(正常綁定狀態有值) (type->1:生物辨識/2:圖形辨識)
+ * }
+ */
+async function getQLStatus() {
+  return await callAppJavaScript('getQLStatus', null, true, () => {
+    console.log('web 執行取得綁定狀態');
+    return {
+      result: 'true',
+      QLStatus: '0',
+    };
+  });
+}
+
+/**
+ * 設定快登認證資料
+ * @param {*} QLtype 快登裝置綁定所使用驗證方式(type->1:生物辨識/2:圖形辨識)
+ * @returns {
+ *  result: 驗證結果(true/false)。
+ *  message: 駿證失敗狀況描述。
+ * }
+ */
+async function regQLfeature(QLtype) {
+  const data = {
+    QLtype,
+  };
+  return await callAppJavaScript('regQLfeature', data, true, () => {
+    console.log('web 通知 APP 設定快登資料');
+    return {
+      result: 'true',
+    };
+  });
+}
+
+/**
+ * 綁定快登裝置
+ * @param {*} QLtype 快登裝置綁定所使用驗證方式(type->1:生物辨識/2:圖形辨識)
+ * @param {*} pwdE2ee E2EE加密後的密碼
+ * @returns {
+ *  result: 驗證結果(true/false)。
+ *  message: 駿證失敗狀況描述。
+ * }
+ */
+async function regQL(QLtype, pwdE2ee) {
+  const data = {
+    QLtype,
+    pwdE2ee,
+  };
+  return await callAppJavaScript('regQL', data, true, () => {
+    console.log('web 通知 APP 綁定快登資料');
+    return {
+      result: 'true',
+    };
+  });
+}
+
+/**
+ * 解除快登綁定
+ * @param {*} delQL 快登裝置綁定所使用驗證方式(type->1:生物辨識/2:圖形辨識)
+ * @returns {
+ *  result: 驗證結果(true/false)。
+ *  message: 駿證失敗狀況描述。
+ * }
+ */
+async function delQL(delType) {
+  const data = {
+    delType,
+  };
+  return await callAppJavaScript('delQL', data, true, () => {
+    console.log('web 通知 APP 解除快登綁定');
+    return {
+      result: 'true',
+    };
+  });
+}
+
+/**
  * 模擬 APP 要求使用者進行交易授權驗證。
  * @param request {
  *   authCode: 要求進行的驗證模式的代碼。
@@ -449,4 +530,8 @@ export {
   getJwtToken,
   transactionAuth,
   shareMessage,
+  getQLStatus,
+  regQLfeature,
+  regQL,
+  delQL,
 };
