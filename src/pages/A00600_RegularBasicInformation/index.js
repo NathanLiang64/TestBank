@@ -5,7 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // import { regularBasicInformationApi } from 'apis';
 import { fetchJobsCode, updateRegularBasicInformation } from 'pages/A00600_RegularBasicInformation/api';
-import { goHome } from 'utilities/AppScriptProxy';
+import { closeFunc } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import {
@@ -13,6 +13,7 @@ import {
   FEIBSelect,
   FEIBOption,
   FEIBErrorMessage,
+  FEIBButton,
 } from 'components/elements';
 import Header from 'components/Header';
 import ConfirmButtons from 'components/ConfirmButtons';
@@ -20,6 +21,7 @@ import Accordion from 'components/Accordion';
 import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
 
 /* Styles */
+import theme from 'themes/theme';
 import RegularBasicInformationWrapper from './regularBasicInformation.style';
 
 const RegularBasicInformation = () => {
@@ -78,7 +80,7 @@ const RegularBasicInformation = () => {
       setValue('title', grade);
       setValue('income', income);
     } else {
-      dispatch(setCloseCallBack(() => goHome()));
+      dispatch(setCloseCallBack(() => closeFunc()));
       dispatch(setResultContent({
         isSuccess: false,
         successTitle: '',
@@ -94,7 +96,7 @@ const RegularBasicInformation = () => {
   // 設定結果彈窗
   const setResultDialog = ({ code, message }) => {
     if (code === '0000') {
-      dispatch(setCloseCallBack(() => goHome()));
+      dispatch(setCloseCallBack(() => closeFunc()));
     } else {
       dispatch(setCloseCallBack(() => {}));
     }
@@ -213,11 +215,22 @@ const RegularBasicInformation = () => {
               (2)姓名、身分證字號、戶籍地址，公司負責人之資料已有變動．請親洽臨櫃辦理。
             </Accordion>
           </div>
-          <ConfirmButtons
-            mainButtonValue="確認"
-            subButtonValue="重新設定"
-            subButtonOnClick={resetForm}
-          />
+          <div>
+            <ConfirmButtons
+              mainButtonValue="確認"
+              subButtonValue="重新設定"
+              subButtonOnClick={resetForm}
+            />
+            <FEIBButton
+              type="button"
+              $bgColor={theme.colors.background.cancel}
+              $color={theme.colors.text.dark}
+              onClick={() => closeFunc()}
+              style={{ marginTop: '2rem' }}
+            >
+              維持不變
+            </FEIBButton>
+          </div>
         </form>
       </RegularBasicInformationWrapper>
     </>

@@ -88,6 +88,9 @@ const Nav = () => {
           <p style={{ color: '#9D7ADE' }}>** 唯物 **</p>
           <div onClick={() => startFunc('T00200')}>T00200 快速登入設定</div>
           <div onClick={() => startFunc('A00400')}>A00400 開通APP</div>
+          <div onClick={() => startFunc('A00600')}>A00600 定期更新基本個資</div>
+          <div onClick={() => startFunc('A00700')}>A00700 定期更新網銀密碼</div>
+          <div onClick={() => startFunc('A00400')}>A00400 開通APP</div>
           <div onClick={() => startFunc('C00800')}>C00800 匯出存摺</div>
           <div onClick={() => startFunc('D00800')}>D00800 預約轉帳查詢</div>
           <div onClick={() => startFunc('B00300')}>B00300 訊息通知 - (施工中)</div>
