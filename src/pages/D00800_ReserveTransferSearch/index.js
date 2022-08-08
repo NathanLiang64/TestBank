@@ -87,7 +87,7 @@ const ReserveTransferSearch = () => {
 
   const toConfirmPage = () => {
     console.log({ ...currentReserveData, ...selectedAccount });
-    history.push('/reserveTransferSearch1', { ...currentReserveData, ...selectedAccount });
+    history.push('/D008001', { ...currentReserveData, ...selectedAccount });
   };
 
   // eslint-disable-next-line no-unused-vars

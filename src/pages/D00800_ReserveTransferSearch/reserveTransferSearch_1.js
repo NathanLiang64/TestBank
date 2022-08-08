@@ -31,15 +31,15 @@ const ReserveTransferSearch1 = ({ location }) => {
       const { code, message } = await cancelReserveTransfer(data);
       switchLoading(false);
       if (code === '0000') {
-        history.push('/reserveTransferSearch2', { ...location.state });
+        history.push('/D008002', { ...location.state });
       } else {
-        history.push('/reserveTransferSearch2', { code, message });
+        history.push('/D008002', { code, message });
       }
     }
   };
 
   return (
-    <Layout title="取消預約轉帳" goBack={goBack}>
+    <Layout title="取消預約轉帳" goBackFunc={goBack}>
       <ReserveTransferSearchWrapper>
         <section className="confrimDataContainer lighterBlueLine">
           <div className="dataLabel">轉出金額與轉入帳號</div>
