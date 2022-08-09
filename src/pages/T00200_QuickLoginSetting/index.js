@@ -1,76 +1,168 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import {
   FEIBSwitch,
   FEIBSwitchLabel,
-  FEIBButton,
 } from 'components/elements';
 import Accordion from 'components/Accordion';
-import Dialog from 'components/Dialog';
 import { EditRounded } from '@material-ui/icons';
-// eslint-disable-next-line no-unused-vars
-import PatternSetting from './patternSetting';
+import {
+  getQLStatus,
+  regQLfeature,
+  regQL,
+  delQL,
+  closeFunc,
+  transactionAuth,
+} from 'utilities/AppScriptProxy';
+import { customPopup, showAnimationModal } from 'utilities/MessageModal';
 
 /* Styles */
 import QuickLoginSettingWrapper from './quickLoginSetting.style';
 
 const QuickLoginSetting = () => {
-  const [openDialog, setOpenDialog] = useState(false);
-  const [currentType, setCurrentType] = useState('');
-  const [isBioActive, setIsBioActive] = useState(false);
+  const [isBioActive, setIsBioActive] = useState(true);
   const [isPatternActive, setIsPatternActive] = useState(false);
-  const [showPattern, setShowPattern] = useState(false);
-  const handleDialogOpen = () => {
-    setOpenDialog(true);
-  };
 
-  const handleBioSwitchChange = () => {
-    if (isPatternActive) {
-      setCurrentType('圖形辨識');
-      setIsPatternActive(false);
-      handleDialogOpen();
-    }
-    setIsBioActive((prev) => !prev);
-  };
-
-  const handlePatternActiveChange = () => {
-    if (isBioActive) {
-      setCurrentType('生物辨識');
+  // 解除快登綁定
+  const callAppDelQL = async (type) => {
+    const { result, message } = await delQL(type);
+    const isSuccess = result === 'true';
+    // 顯示解除綁定結果
+    showAnimationModal({
+      isSuccess,
+      successTitle: '解除成功',
+      successDesc: '',
+      errorTitle: '解除失敗',
+      errorCode: '',
+      errorDesc: message,
+    });
+    if (type === '1' && isSuccess) {
       setIsBioActive(false);
-      handleDialogOpen();
     }
-    if (!isPatternActive) {
-      setShowPattern(true);
+    if (type === '2' && isSuccess) {
+      setIsPatternActive(false);
     }
-    setIsPatternActive((prev) => !prev);
   };
 
-  const closePattern = () => setShowPattern(false);
+  // 檢查綁定狀態
+  const checkSettingStatus = () => {
+    if (isBioActive && !isPatternActive) {
+      customPopup(
+        '系統訊息',
+        '生物辨識與圖形辨識僅能擇一使用，如欲使用圖形辨識服務，請先解除生物綁定',
+      );
+      return true;
+    }
+    if (!isBioActive && isPatternActive) {
+      customPopup(
+        '系統訊息',
+        '生物辨識與圖形辨識僅能擇一使用，如欲使用生物辨識服務，請先解除圖形綁定',
+      );
+      return true;
+    }
+    return false;
+  };
 
-  const renderDialog = () => (
-    <Dialog
-      isOpen={openDialog}
-      onClose={() => setOpenDialog(false)}
-      content={(
-        <p>
-          生物辨識與圖形辨識僅能擇一使用，將關閉
-          {currentType}
-          服務，如欲使用
-          {currentType}
-          請重新開啟服務。
-        </p>
-      )}
-      action={(
-        <FEIBButton onClick={() => setOpenDialog(false)}>確認</FEIBButton>
-      )}
-    />
-  );
+  // 取得綁定狀態
+  const fetchQLStatus = async () => {
+    const {
+      result,
+      message,
+      QLStatus,
+      QLType,
+    } = await getQLStatus();
+
+    // 回傳成功
+    if (result === 'true') {
+      // 未綁定
+      if (QLStatus === '0') {
+        setIsBioActive(false);
+        setIsPatternActive(false);
+      }
+      // 已綁定
+      if (QLStatus === '1' || QLStatus === '2') {
+        const status = QLType === '1';
+        setIsBioActive(status);
+        setIsPatternActive(!status);
+      }
+      // 已綁定帳號或裝置
+      if (QLStatus === '3' || QLStatus === '4') {
+        customPopup(
+          '已裝置綁定',
+          '您已進行裝置綁定，請至原裝置解除綁定或致電客服',
+        );
+      }
+    }
+
+    // 回傳失敗
+    if (result === 'false') {
+      customPopup(
+        '系統訊息',
+        message,
+        () => {
+          closeFunc();
+        },
+      );
+    }
+  };
+
+  // 進行裝置綁定
+  const callAppBindRegQL = async (type, pwd) => {
+    const { result, message } = await regQL(type, pwd);
+    const isSuccess = result === 'true';
+    // 顯示綁定結果
+    showAnimationModal({
+      isSuccess,
+      successTitle: '設定成功',
+      successDesc: '',
+      errorTitle: '設定失敗',
+      errorCode: '',
+      errorDesc: message,
+    });
+    // 設定 Switch 狀態
+    if (type === '1') {
+      setIsBioActive(isSuccess);
+    }
+    if (type === '2') {
+      setIsPatternActive(isSuccess);
+    }
+  };
+
+  // 設定生物或圖形辨識, 1: 生物辨識, 2: 圖形辨識
+  const callAppSetBioOrPattern = async (type) => {
+    const isBinded = checkSettingStatus();
+    if (isBinded) return;
+    const { result, message } = await regQLfeature(type);
+
+    // 設定綁定資料成功進行交易驗證
+    if (result === 'true') {
+      const code = 0x17;
+      const rs = await transactionAuth(code);
+      if (rs?.result) {
+        // 交易驗證成功，進行綁定
+        callAppBindRegQL(type, rs?.netbankPwd);
+      }
+    }
+
+    if (result === 'false') {
+      customPopup(
+        '系統訊息',
+        message,
+        () => {
+          closeFunc();
+        },
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchQLStatus();
+  }, []);
 
   return (
-    <>
-      <Header title="快速登入設定" />
+    <Layout title="快速登入設定">
       <QuickLoginSettingWrapper>
         <div className="tip">設定後就能快速登入囉！（僅能擇一）</div>
         <div>
@@ -79,7 +171,13 @@ const QuickLoginSetting = () => {
               control={(
                 <FEIBSwitch
                   checked={isBioActive}
-                  onChange={handleBioSwitchChange}
+                  onClick={() => {
+                    if (isBioActive) {
+                      callAppDelQL('1');
+                    } else {
+                      callAppSetBioOrPattern('1');
+                    }
+                  }}
                 />
               )}
               label="生物辨識設定"
@@ -90,12 +188,18 @@ const QuickLoginSetting = () => {
               control={(
                 <FEIBSwitch
                   checked={isPatternActive}
-                  onChange={handlePatternActiveChange}
+                  onClick={() => {
+                    if (isPatternActive) {
+                      callAppDelQL('2');
+                    } else {
+                      callAppSetBioOrPattern('2');
+                    }
+                  }}
                 />
               )}
               label="圖形辨識設定"
             />
-            <div className={`mainBlock ${!isPatternActive && 'hide'}`} onClick={() => setShowPattern(true)}>
+            <div className={`mainBlock ${!isPatternActive && 'hide'}`} onClick={() => {}}>
               <div className="text">
                 圖形辨識變更
               </div>
@@ -104,7 +208,10 @@ const QuickLoginSetting = () => {
           </div>
         </div>
         <div className="agreeTip">
-          啟用快速登入表示您同意以下使用條款
+          <p>提醒您：</p>
+          <p>(1)本服務須使用手機行動網路進行認證。</p>
+          <p>(2)啟用快速登入將同時進行裝置綁定，且同意以下使用條款。</p>
+          <p>(3)如需取消裝置綁定，請關閉快速登入設定或致電本行客服，謝謝。</p>
         </div>
         <Accordion title="使用條款">
           <ol>
@@ -116,12 +223,8 @@ const QuickLoginSetting = () => {
             <li>如果手機重置或重新安裝APP時，需要重新設定本功能。</li>
           </ol>
         </Accordion>
-        <PatternSetting showPattern={showPattern} closePattern={closePattern} />
-        {
-          renderDialog()
-        }
       </QuickLoginSettingWrapper>
-    </>
+    </Layout>
   );
 };
 

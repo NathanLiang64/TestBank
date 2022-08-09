@@ -3,12 +3,12 @@ import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { goHome, switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
+import { switchLoading, transactionAuth, closeFunc } from 'utilities/AppScriptProxy';
 import { changePwd } from 'pages/A00700_RegularPwdModify/api';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-import { FEIBButton } from 'components/elements';
+// import { FEIBButton } from 'components/elements';
 import PasswordInput from 'components/PasswordInput';
 import Dialog from 'components/Dialog';
 import ConfirmButtons from 'components/ConfirmButtons';
@@ -44,7 +44,7 @@ const RegularPwdModify = () => {
   const setResultDialog = ({ code, message }) => {
     const isSuccess = code === '0000';
     if (isSuccess) {
-      dispatch(setCloseCallBack(() => goHome()));
+      dispatch(setCloseCallBack(() => closeFunc()));
     } else {
       dispatch(setCloseCallBack(() => {}));
     }
@@ -123,7 +123,7 @@ const RegularPwdModify = () => {
         <ConfirmButtons
           mainButtonOnClick={() => {
             setShowWarningDialog(false);
-            goHome();
+            closeFunc();
           }}
           subButtonOnClick={() => setShowWarningDialog(false)}
         />
@@ -164,7 +164,15 @@ const RegularPwdModify = () => {
             <InfoArea space="bottom">
               *定期進行密碼以及個資更新以確保帳號安全
             </InfoArea>
-            <FEIBButton type="submit">儲存變更</FEIBButton>
+            {/* <FEIBButton type="submit">儲存變更</FEIBButton> */}
+            <ConfirmButtons
+              subButtonValue="維持不變"
+              mainButtonValue="儲存變更"
+              subButtonOnClick={() => closeFunc()}
+              // mainButtonOnClick={() => {
+              //   setShowNotiDialog(false);
+              // }}
+            />
           </div>
         </form>
         { renderNotiDialog() }
