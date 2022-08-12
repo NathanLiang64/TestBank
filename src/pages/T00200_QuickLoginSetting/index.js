@@ -138,7 +138,7 @@ const QuickLoginSetting = () => {
 
     // 設定綁定資料成功進行交易驗證
     if (result === 'true') {
-      const code = 0x17;
+      const code = 0x15;
       const rs = await transactionAuth(code);
       if (rs?.result) {
         // 交易驗證成功，進行綁定
