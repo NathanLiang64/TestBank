@@ -57,7 +57,7 @@ const settingList = [
   {
     name: '搖一搖功能設定',
     route: '',
-    funcID: '0',
+    funcID: 'Z99997',
   },
 ];
 
