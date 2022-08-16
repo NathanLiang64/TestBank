@@ -354,7 +354,7 @@ async function transactionAuth(authCode, otpMobile) {
 }
 
 /**
- * 進行雙因子驗證，最多進行三次；若都失敗，則傳回 false。
+ * 進行雙因子驗證，最多進行三次；若都失敗 或是 使用者取消，則傳回 false。
  * @param {*} authKey 建立授權驗證時傳回的金鑰，用來檢核使用者輸入。
  * @returns {
  *   result: 驗證結果(true/false)。
@@ -416,7 +416,7 @@ async function appTransactionAuth(request) {
 
   // 進行雙因子驗證，呼叫 APP 進行驗證。
   if (allowed2FA) {
-    const rs = await verifyBio(txnAuth.key); // 若生物辨識三次不通過，才會傳回 false！
+    const rs = await verifyBio(txnAuth.key); // 若生物辨識三次不通過 或是 使用者取消，才會傳回 false！
     // 因為已綁MID，所以 密碼 也可以當第二因子；因此改用密碼驗證。
     if (rs.result === false) allowedPWD = true;
 
