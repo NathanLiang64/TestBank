@@ -46,7 +46,7 @@ const RegularPwdModify = () => {
     if (isSuccess) {
       dispatch(setCloseCallBack(() => closeFunc()));
     } else {
-      dispatch(setCloseCallBack(() => {}));
+      dispatch(setCloseCallBack(() => closeFunc()));
     }
     dispatch(setResultContent({
       isSuccess,

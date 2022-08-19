@@ -61,11 +61,11 @@ export const iconGenerator = (name) => {
       return <AccountIcon3 />;
     case 'C00500':
       return <AccountIcon4 />;
-    case 'account5':
+    case 'C00900':
       return <AccountIcon5 />;
     case 'C00600':
       return <AccountIcon6 />;
-    case 'account7':
+    case 'C00200':
       return <AccountIcon7 />;
     case 'account8':
       return <AccountIcon8 />;
@@ -73,17 +73,17 @@ export const iconGenerator = (name) => {
       return <AccountIcon9 />;
     case 'F00100':
       return <ApplyIcon1 />;
-    case 'apply2':
+    case 'F00300':
       return <ApplyIcon2 />;
     case 'F00200':
       return <ApplyIcon3 />;
-    case 'apply4':
+    case 'F00500':
       return <ApplyIcon4 />;
-    case 'apply5':
+    case 'F00400':
       return <ApplyIcon5 />;
     case 'D00100':
       return <TransactionIcon1 />;
-    case 'transaction2':
+    case 'D00700':
       return <TransactionIcon2 />;
     case 'D00200':
       return <TransactionIcon3 />;
@@ -91,7 +91,7 @@ export const iconGenerator = (name) => {
       return <TransactionIcon4 />;
     case 'D00400':
       return <TransactionIcon5 />;
-    case 'transaction6':
+    case 'D00900':
       return <TransactionIcon6 />;
     case 'D00500':
       return <TransactionIcon7 />;
@@ -111,7 +111,7 @@ export const iconGenerator = (name) => {
       return <CreditCardIcon2 />;
     case 'R00400':
       return <CreditCardIcon3 />;
-    case 'creditCard4':
+    case 'R00600':
       return <CreditCardIcon4 />;
     case 'R00500':
       return <CreditCardIcon5 />;
@@ -123,12 +123,16 @@ export const iconGenerator = (name) => {
       return <HelperIcon1 />;
     case 'S00200':
       return <HelperIcon2 />;
+    case 'S00100':
+      return <HelperIcon2 />;
     case 'T00600':
       return <HelperIcon3 />;
-    case 'helper4':
+    case 'S00900':
       return <HelperIcon4 />;
     case 'helper5':
       return <HelperIcon5 />;
+    case 'D00800':
+      return <HelperIcon6 />;
     case 'S00300':
       return <HelperIcon6 />;
     case 'S00400':
