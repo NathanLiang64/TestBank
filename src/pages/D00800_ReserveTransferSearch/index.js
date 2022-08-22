@@ -87,7 +87,7 @@ const ReserveTransferSearch = () => {
 
   const toConfirmPage = () => {
     console.log({ ...currentReserveData, ...selectedAccount });
-    history.push('/reserveTransferSearch1', { ...currentReserveData, ...selectedAccount });
+    history.push('/D008001', { ...currentReserveData, ...selectedAccount });
   };
 
   // eslint-disable-next-line no-unused-vars
@@ -101,7 +101,6 @@ const ReserveTransferSearch = () => {
   };
 
   const handleClickResultDateRangePicker = (range) => {
-    console.log(range);
     setResultDateRange(range);
   };
 
@@ -125,16 +124,9 @@ const ReserveTransferSearch = () => {
       sdate: dateFormatter(reserveDateRange[0]),
       edate: dateFormatter(reserveDateRange[1]),
     };
-    const response = await getReservedTransDetails(param);
-    console.log(response);
-    if (response.bookList) {
-      setReserveDataList(response.bookList);
-    } else {
-      setDialogModal({
-        open: true,
-        content: `${response?.message}(${response?.code})`,
-      });
-      setReserveDataList([]);
+    const { code, data } = await getReservedTransDetails(param);
+    if (code === '0000') {
+      setReserveDataList(data?.bookList);
     }
     switchLoading(false);
   };
@@ -151,16 +143,9 @@ const ReserveTransferSearch = () => {
       sdate: dateFormatter(resultDateRange[0]),
       edate: dateFormatter(resultDateRange[1]),
     };
-    const response = await getResultTransDetails(param);
-    console.log(response);
-    if (!response?.code > 0) {
-      setResultDataList(response);
-    } else {
-      setDialogModal({
-        open: true,
-        content: `${response?.message}(${response?.code})`,
-      });
-      setResultDataList([]);
+    const { code, data } = await getResultTransDetails(param);
+    if (code === '0000') {
+      setResultDataList(data?.bookList);
     }
     switchLoading(false);
   };
@@ -196,7 +181,6 @@ const ReserveTransferSearch = () => {
   ));
 
   const handleReserveDataDialogOpen = (data) => {
-    console.log(data);
     setCurrentReserveData(data);
     setShowDetailDialog(true);
   };

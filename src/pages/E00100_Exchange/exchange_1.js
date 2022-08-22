@@ -55,7 +55,7 @@ const Exchange1 = ({ location }) => {
   }, []);
 
   return (
-    <Layout title="外幣換匯確認" goBack={goBack}>
+    <Layout title="外幣換匯確認" goBackFunc={goBack}>
       <ExchangeWrapper className="confirmPage">
         <div className="infoSection">
           <div className="mainBlock">

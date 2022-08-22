@@ -1,11 +1,14 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { accountFormatter, currencySymbolGenerator } from 'utilities/Generator';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import InformationList from 'components/InformationList';
 import { FEIBButton } from 'components/elements';
+import { transferFtoF } from './api';
 
 /* Styles */
 import ForeignCurrencyTransferWrapper from './foreignCurrencyTransfer.style';
@@ -14,23 +17,14 @@ const ForeignCurrencyTransfer1 = ({ location }) => {
   const history = useHistory();
   const [confirmData, setConfirmData] = useState({});
 
-  // 執行外幣轉帳
-  const submitTransfer = (param) => (
-    {
-      trnsType: '3',
-      outAmt: '',
-      inAmt: '',
-      rate: '',
-      negoNo: '',
-      avBal: '',
-      ...param,
-    }
-  );
-
   // 確認進行轉帳
-  const applyTransfer = () => {
-    const response = submitTransfer(confirmData);
-    history.push('/foreignCurrencyTransfer2', response);
+  const applyTransfer = async () => {
+    const code = 0x30;
+    const rs = await transactionAuth(code);
+    if (rs?.result) {
+      const response = await transferFtoF(confirmData);
+      history.push('/foreignCurrencyTransfer2', response);
+    }
   };
 
   // 取得日期
@@ -42,7 +36,6 @@ const ForeignCurrencyTransfer1 = ({ location }) => {
   };
 
   useEffect(() => {
-    console.log(location);
     setConfirmData({
       ...location.state,
       dateStr: getDateStr(),

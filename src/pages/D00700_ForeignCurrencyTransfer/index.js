@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { numberToChinese, currencySymbolGenerator } from 'utilities/Generator';
 import { transferAmountValidation } from 'utilities/validation';
 import { customPopup } from 'utilities/MessageModal';
-import { getAccountsList, getExchangePropertyList, getIntoAccount } from 'pages/D00700_ForeignCurrencyTransfer/api';
+import { getAccountsList, getExchangePropertyList } from 'pages/D00700_ForeignCurrencyTransfer/api';
 import { closeFunc } from 'utilities/AppScriptProxy';
 /* Elements */
 import Accordion from 'components/Accordion';
@@ -60,6 +60,7 @@ const ForeignCurrencyTransfer = () => {
             ...detail,
             account: acc.account,
             name: acc.name,
+            aggreedAcct: acc.aggreedAcct,
           }
         ))).flat();
         console.log('帳戶清單', formatAccounts);
@@ -73,12 +74,6 @@ const ForeignCurrencyTransfer = () => {
         );
       }
     }
-  };
-
-  // 取得約定轉入帳號
-  const getTransableAcc = async () => {
-    const response = await getIntoAccount();
-    console.log(response);
   };
 
   // 取得交易性質
@@ -121,8 +116,8 @@ const ForeignCurrencyTransfer = () => {
     history.push('/foreignCurrencyTransfer1', confirmData);
   };
 
-  const renderAccountsOptions = () => ['123123123'].map((item) => (
-    <FEIBOption key={Math.random()} value={item}>{item}</FEIBOption>
+  const renderAccountsOptions = () => currentAccount?.aggreedAcct?.map((item) => (
+    <FEIBOption key={Math.random()} value={item?.account}>{item?.account}</FEIBOption>
   ));
 
   // render 交易性質選項
@@ -145,7 +140,6 @@ const ForeignCurrencyTransfer = () => {
   useEffect(() => {
     getForeignCurrencyAccounts();
     getTransTypeOptions();
-    getTransableAcc();
   }, []);
 
   return (

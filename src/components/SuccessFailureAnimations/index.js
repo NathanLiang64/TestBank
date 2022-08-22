@@ -66,7 +66,9 @@ const SuccessFailureAnimations = ({
 
   return (
     <SuccessFailureAnimationsWrapper>
-      <img src={isSuccess ? randomSuccessAnimation() : FailAnimation} width="124" height="120" alt="" />
+      <div className="animContainer">
+        <img src={isSuccess ? randomSuccessAnimation() : FailAnimation} width="124" height="120" alt="" />
+      </div>
       <h3 className={`stateText ${isSuccess ? 'success' : 'error'}`}>
         {isSuccess ? successTitle : errorTitle}
       </h3>

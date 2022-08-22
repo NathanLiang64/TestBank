@@ -1,9 +1,10 @@
 import styled from 'styled-components';
 
 const SuccessFailureAnimationsWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  .animContainer {
+    display: flex;
+    justify-content: center;
+  }
 
   .stateText {
     margin-top: 1.6rem;

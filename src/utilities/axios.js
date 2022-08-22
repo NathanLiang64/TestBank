@@ -47,7 +47,8 @@ const processRequest = async (request) => {
     const aes = await getAesKey();
     request.data = JWTUtil.encryptJWTMessage(aes.aesKey, aes.iv, payload);
   }
-  // console.log(`%cRequest --> ${JSON.stringify(request)}`, 'color: Green;'); // 列出完整的 Request 資訊。
+  console.log(jwtToken);
+  console.log(`%cRequest --> ${JSON.stringify(request)}`, 'color: Green;'); // 列出完整的 Request 資訊。
   return request;
 };
 

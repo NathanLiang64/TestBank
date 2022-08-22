@@ -106,7 +106,7 @@ const Exchange = () => {
 
   // 查詢所有帳戶資料
   const fetchAccountsList = async () => {
-    const response = await getAccountsList('MSFC');
+    const response = await getAccountsList('MSF');
     if (response?.length > 0) {
       const accounts = response.filter((acct) => acct.transable); // 要排除不可轉帳的帳號。
       setAccountsList(accounts);
