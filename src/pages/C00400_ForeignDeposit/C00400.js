@@ -159,6 +159,8 @@ const ForeignCurrencyAccount = () => {
         // 將目前帳戶 設定為主要外幣帳戶
         setMainCurrency(accounts[selectedAccountIdx].cardInfo.acctId, account.cardInfo.ccyCd);
         return;
+      case 'E00100': // 外幣到價通知
+        break;
       case 'masterCardXB': // MasterCard Send Cross Border
       default:
         // TODO：未完成
@@ -186,6 +188,7 @@ const ForeignCurrencyAccount = () => {
           moreFuncs={[
             { fid: 'masterCardXB', title: 'MasterCard Send Cross Border', icon: 'temp' },
             { fid: 'setMainAccount', title: '設定為主要外幣帳戶', icon: 'temp' },
+            { fid: 'E00100', title: '外幣到價通知', icon: 'temp' },
             { fid: 'rename', title: '帳戶名稱編輯', icon: 'edit' },
           ]}
         />
