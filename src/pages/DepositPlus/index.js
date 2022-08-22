@@ -10,8 +10,8 @@ import {
 
 /* Reducers & JS functions */
 import { useCheckLocation, usePageInfo } from 'hooks';
-import { getBonusPeriodList, getDepositPlus, getDepositPlusLevelList } from 'pages/DepositPlus/api';
 import { ArrowNextIcon } from 'assets/images/icons';
+import { getBonusPeriodList, getDepositPlus, getDepositPlusLevelList } from './api';
 import DepositPlusWrapper, { LevelDialogContentWrapper } from './depositPlus.style';
 
 const Deposit = () => {
