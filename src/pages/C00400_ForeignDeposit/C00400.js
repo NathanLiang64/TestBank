@@ -140,7 +140,6 @@ const ForeignCurrencyAccount = () => {
     const account = accounts[selectedAccountIdx];
     switch (funcCode) {
       case 'moreTranscations': // 更多明細
-        params = account.cardInfo; // 直接提供帳戶摘要資訊，因為一定是從有帳戶資訊的頁面進去。
         params = {
           ...account.cardInfo, // 直接提供帳戶摘要資訊，因為一定是從有帳戶資訊的頁面進去。
           // cardTitle: '存款帳戶交易明細',
@@ -186,7 +185,7 @@ const ForeignCurrencyAccount = () => {
             { fid: 'exchange', title: '換匯' },
           ]}
           moreFuncs={[
-            { fid: 'masterCardXB', title: 'MasterCard Send Cross Border', icon: 'temp' },
+            // { fid: 'masterCardXB', title: 'MasterCard Send Cross Border', icon: 'temp' },
             { fid: 'setMainAccount', title: '設定為主要外幣帳戶', icon: 'temp' },
             { fid: 'E00100', title: '外幣到價通知', icon: 'temp' },
             { fid: 'rename', title: '帳戶名稱編輯', icon: 'edit' },
