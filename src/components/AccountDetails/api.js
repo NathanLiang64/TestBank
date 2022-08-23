@@ -1,4 +1,4 @@
-import { downloadPDF, downloadCSV } from 'utilities/axios';
+import { download } from 'utilities/axios';
 import { stringDateCodeFormatter } from 'utilities/Generator';
 
 /**
@@ -15,9 +15,5 @@ export const getDepositBook = async (fileType, conditions) => {
     fileType,
     pdfTemplateType: 2, // Pdf版型, 1:只有封面(可參考PdfTemplateType), 2:只有內容, 3:完整內容
   };
-  if (fileType === 1) {
-    await downloadPDF('/api/deposit/v1/getDepositBook', request, `${filename}.pdf`);
-  } else if (fileType === 2) {
-    await downloadCSV('/api/deposit/v1/getDepositBook', request, `${filename}.csv`);
-  }
+  await download('/api/deposit/v1/getDepositBook', request, `${filename}.csv`);
 };

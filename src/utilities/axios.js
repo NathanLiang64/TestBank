@@ -243,9 +243,8 @@ export const callAPI = async (url, request, config) => {
  * @param {*} url POST API URL
  * @param {*} request
  * @param {*} filename 輸出檔名。
- * @param {*} contentType
  */
-const download = async (url, request, filename, contentType) => {
+export const download = async (url, request, filename) => {
   console.log(`\x1b[33mAPI :/${url}`);
   console.log('Request = ', request);
   const token = await getJwtToken();
@@ -258,7 +257,7 @@ const download = async (url, request, filename, contentType) => {
     method: 'POST',
     headers: new Headers({
       Authorization: `Bearer ${token}`,
-      'Content-Type': contentType,
+      'Content-Type': 'application/json',
     }),
     body: JSON.stringify(encrypt),
   }).then((response) => response.blob())
@@ -276,25 +275,7 @@ const download = async (url, request, filename, contentType) => {
     });
 };
 
-/**
- * 下載 PDF 檔案。
- * @param {*} url POST API URL
- * @param {*} request
- * @param {*} filename 輸出檔名。
- */
-export const downloadPDF = async (url, request, filename) => {
-  download(url, request, filename, 'application/pdf');
-};
 
-/**
- * 下載 CSV 檔案。
- * @param {*} url POST API URL
- * @param {*} request
- * @param {*} filename 輸出檔名。
- */
-export const downloadCSV = async (url, request, filename) => {
-  download(url, request, filename, 'text/csv');
-};
 
 export default userAxios();
 export { userRequest };
