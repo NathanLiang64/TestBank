@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { DialogTitle, DialogContent } from '@material-ui/core';
 import { FEIBIconButton, FEIBInput, FEIBInputLabel } from 'components/elements';
-import { getBankCode } from 'apis/bankCodeApi';
 import { CrossIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
+import { getBankCode } from './api';
 import BankCodeWrapper from './bankCode.style';
 
 const BankCode = ({ isOpen, onClose, onSelect }) => {

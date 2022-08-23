@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { useCheckLocation, usePageInfo } from 'hooks';
-// import { patternLockSettingApi } from 'apis';
 import Dialog from 'components/Dialog';
 import NoticeArea from 'components/NoticeArea';
 import ConfirmButtons from 'components/ConfirmButtons';

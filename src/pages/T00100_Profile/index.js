@@ -4,8 +4,7 @@ import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { startFunc } from 'utilities/AppScriptProxy';
-import { profileApi } from 'apis';
-import { getNickName, updateNickName } from 'pages/T00100_Profile/api';
+import { getNickName, updateNickName, uploadAvatar } from 'pages/T00100_Profile/api';
 
 /* Elements */
 import {
@@ -77,7 +76,7 @@ const Profile = () => {
     }
     const formData = new FormData();
     formData.append('file', file);
-    const response = await profileApi.uploadAvatar(formData);
+    const response = await uploadAvatar(formData);
     console.log(response);
     if (response === 'OK') {
       openMessageDialog('上傳成功');

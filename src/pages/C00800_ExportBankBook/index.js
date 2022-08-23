@@ -5,7 +5,6 @@ import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getEmail, sendBankBookMail } from 'pages/C00800_ExportBankBook/api';
-import { bankAccountsApi } from 'apis';
 import { stringDateCodeFormatter } from 'utilities/Generator';
 
 /* Elements */
@@ -25,6 +24,7 @@ import DateRangePicker from 'components/DateRangePicker';
 import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
 import AccordionContent from './accordionContent';
+import { getAccountsList } from './api';
 
 /* Styles */
 import ExportBankBookWrapper from './exportBankBook.style';
@@ -57,7 +57,7 @@ const ExportBankBook = () => {
 
   // 取得帳號清單
   const getAccounts = async () => {
-    const response = await bankAccountsApi.getAccountsList('MSFC'); // 帳戶類型 M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶
+    const response = await getAccountsList('MSFC'); // 帳戶類型 M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶
     if (response?.length > 0) {
       const accounts = response.map((item) => item.acctNo);
       setAccountsList(accounts);

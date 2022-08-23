@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import uuid from 'react-uuid';
 
-// import { getFavAccounts } from 'apis/transferApi';
 import {
   setModal, setModalVisible, setDrawer, setDrawerVisible, setWaittingVisible,
 } from 'stores/reducers/ModalReducer';

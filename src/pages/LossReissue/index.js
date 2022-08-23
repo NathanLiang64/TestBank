@@ -11,8 +11,8 @@ import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import {
   FEIBButton, FEIBErrorMessage, FEIBInput, FEIBInputLabel, FEIBOption, FEIBSelect,
 } from 'components/elements';
-import { executeDebitCardReApply, executeDebitCardReportLost, getDebitCardStatus } from 'apis/lossReissueApi';
 import { EditIcon } from 'assets/images/icons';
+import { executeDebitCardReApply, executeDebitCardReportLost, getDebitCardStatus } from './api';
 import LossReissueWrapper, { LossReissueDialogWrapper } from './lossReissue.style';
 
 const LossReissue = () => {
