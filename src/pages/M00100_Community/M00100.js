@@ -11,7 +11,7 @@ import { FEIBInput, FEIBInputLabel, FEIBButton, FEIBIconButton, FEIBTextarea } f
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { customPopup, showInfo } from 'utilities/MessageModal';
+import { customPopup } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, shareMessage } from 'utilities/AppScriptProxy';
 import { ArrowNextIcon, EditIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
@@ -192,10 +192,9 @@ const CommunityPage = () => {
               </div>
               <div className="num">{renderText(summary?.bonusInfo.amount)}</div>
             </div>
-            {/* TODO 信用卡分潤 - 此功能尚未完成！ */}
-            <div className="overviewItem" onClick={() => showInfo('此功能尚未完成！')}>
+            <div className="overviewItem" onClick={() => startFunc('C00700', null, { summary })}>
               <div className="subTitle">
-                信用卡分潤
+                信用卡回饋
                 <ArrowNextIcon />
               </div>
               <div className="num">
