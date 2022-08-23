@@ -14,7 +14,7 @@ const SearchCondition = ({
   condition, onSearch, onCancel,
 }) => {
   const [newCondition, setNewCondition] = useState(condition);
-  const [autoDateTabId, setAutoDateTabId] = useState('0');
+  const [autoDateTabId, setAutoDateTabId] = useState(condition.mode ?? '0');
 
   const defaultKeywords = [
     { id: 1, title: '跨轉' },
@@ -83,13 +83,14 @@ const SearchCondition = ({
   };
 
   useEffect(() => {
-    if (autoDateTabId === '0') return;
-    const today = new Date();
-    const startDate = computedStartDate(autoDateTabId);
+    const mode = autoDateTabId;
+    const today = (mode === '0') ? null : stringDateCodeFormatter(new Date());
+    const startDate = (mode === '0') ? null : stringDateCodeFormatter(computedStartDate(autoDateTabId));
     setNewCondition({
       ...newCondition,
-      startDate: stringDateCodeFormatter(startDate), // 轉為 YYYYMMDD
-      endDate: stringDateCodeFormatter(today),
+      mode, // 查詢模式(0.自訂, 1.近6個月, 2.近1年, 3.近2年, 4.近3年)
+      startDate, // 轉為 YYYYMMDD
+      endDate: today,
     });
   }, [autoDateTabId]);
 
