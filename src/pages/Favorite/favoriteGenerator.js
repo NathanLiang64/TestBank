@@ -6,13 +6,13 @@ import BlockGreen from 'assets/images/favoriteBlock/blockGreen.svg';
 import BlockPurple from 'assets/images/favoriteBlock/blockPurple.svg';
 import {
   ShareIcon, GiftIcon,
-  AccountIcon1, AccountIcon2, AccountIcon3, AccountIcon4, AccountIcon5, AccountIcon6, AccountIcon7, AccountIcon8, AccountIcon9,
+  AccountIcon1, AccountIcon2, AccountIcon3, AccountIcon4, AccountIcon5, AccountIcon6, AccountIcon7, AccountIcon8, AccountIcon9, AccountIcon14,
   ApplyIcon1, ApplyIcon2, ApplyIcon3, ApplyIcon4, ApplyIcon5,
   TransactionIcon1, TransactionIcon2, TransactionIcon3, TransactionIcon4, TransactionIcon5, TransactionIcon6, TransactionIcon7, TransactionIcon8,
   InvestIcon1, InvestIcon2, InvestIcon3,
   CreditCardIcon1, CreditCardIcon2, CreditCardIcon3, CreditCardIcon4, CreditCardIcon5,
   LoanIcon1, LoanIcon2,
-  HelperIcon1, HelperIcon2, HelperIcon3, HelperIcon4, HelperIcon5, HelperIcon6, HelperIcon7, HelperIcon8, HelperIcon9, HelperIcon10, HelperIcon11,
+  HelperIcon1, HelperIcon2, HelperIcon3, HelperIcon4, HelperIcon5, HelperIcon6, HelperIcon7, HelperIcon8, HelperIcon9, HelperIcon10, HelperIcon11, HelperIcon12,
   SocialIcon1, SocialIcon2, SocialIcon3,
 } from 'assets/images/icons';
 
@@ -71,6 +71,8 @@ export const iconGenerator = (name) => {
       return <AccountIcon8 />;
     case 'C00800':
       return <AccountIcon9 />;
+    case 'C01000':
+      return <AccountIcon14 />;
     case 'F00100':
       return <ApplyIcon1 />;
     case 'F00300':
@@ -122,19 +124,17 @@ export const iconGenerator = (name) => {
     case 'T00100':
       return <HelperIcon1 />;
     case 'S00200':
-      return <HelperIcon2 />;
+      return <HelperIcon12 />;
     case 'S00100':
       return <HelperIcon2 />;
     case 'T00600':
       return <HelperIcon3 />;
     case 'S00900':
       return <HelperIcon4 />;
-    case 'helper5':
-      return <HelperIcon5 />;
     case 'D00800':
       return <HelperIcon6 />;
     case 'S00300':
-      return <HelperIcon6 />;
+      return <HelperIcon5 />;
     case 'S00400':
       return <HelperIcon7 />;
     case 'S00500':
