@@ -27,6 +27,7 @@ function Layout({
   //
   // 處理 Popup視窗、 等待中 及 Drawer。
   //
+  const { overPanel } = useSelector((state) => state.ModalReducer);
   const modalData = useSelector((state) => state.ModalReducer.modal);
   const showModal = useSelector((state) => state.ModalReducer.showModal);
   const drawerData = useSelector((state) => state.ModalReducer.drawer);
@@ -152,6 +153,7 @@ function Layout({
       title={drawerData.title}
       // titleColor={theme.colors.primary.dark}
       isOpen={showDrawer}
+      onBack={drawerData.goBack}
       onClose={onDrawerCancel}
       content={drawerData.content}
       shouldAutoClose={drawerData.shouldAutoClose}
@@ -193,6 +195,7 @@ function Layout({
             {waitting ? null : children}
             <MessageModal />
             <Drawer />
+            {overPanel}
             <AnimationModal />
         </div>
       </div>

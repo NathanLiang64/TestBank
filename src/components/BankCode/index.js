@@ -3,62 +3,47 @@ import { DialogTitle, DialogContent } from '@material-ui/core';
 import { FEIBIconButton, FEIBInput, FEIBInputLabel } from 'components/elements';
 import { CrossIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
-import { getBankCode } from './api';
 import BankCodeWrapper from './bankCode.style';
 
-const BankCode = ({ isOpen, onClose, onSelect }) => {
-  const [searchValue, setSearchValue] = useState('');
-  const [bankList, setBankList] = useState([]);
-  const [filteredBankList, setFilteredBankList] = useState([]);
-  // eslint-disable-next-line no-unused-vars
-  const [favoriteBankList, setFavoriteBankList] = useState([]);
+const BankCode = ({ banks, onClose, onSelected }) => {
+  const [favoriteBankList, setFavoriteBankList] = useState();
+  const [searchValue, setSearchValue] = useState();
 
-  const handleClickBankItem = (event) => {
-    // 回傳選擇的銀行代碼
-    const selectedBank = [];
-    for (const bank of event.currentTarget.children) {
-      selectedBank.push(bank.innerText);
-    }
-    onSelect({
-      bankNo: selectedBank[1],
-      bankName: selectedBank[0],
-    });
-    onClose();
-
-    // 初始化
-    setSearchValue('');
-  };
-
-  const renderBankCode = (list) => list.map((bank) => (
-    <li key={bank.bankNo} data-code={bank.bankNo} onClick={handleClickBankItem}>
-      <p>{bank.bankName}</p>
-      <span>{bank.bankNo}</span>
-    </li>
-  ));
-
+  /**
+   *- 初始化
+   */
   useEffect(async () => {
-    getBankCode()
-      .then((response) => {
-        setBankList(response);
-        setFilteredBankList(response);
-      });
-    // .catch((error) => console.log('取得銀行代碼 error', error))
+    setFavoriteBankList(banks.filter((b) => b.bankNo === '805')); // TODO 加入常用銀行清單，存入 localStrorage
   }, []);
 
-  useEffect(() => {
-    if (searchValue && filteredBankList) {
-      const filteredList = bankList.filter((bank) => (
-        bank.bankNo.includes(searchValue) || bank.bankName.includes(searchValue)
-      ));
-      setFilteredBankList(filteredList);
-      return;
-    }
-    setFilteredBankList(bankList);
-  }, [searchValue]);
+  /**
+   * 回傳選擇的銀行代碼及名稱。
+   * @param {*} bank 選擇的銀行
+   */
+  const onBankSelected = (bank) => {
+    onClose();
+    onSelected(bank);
+  };
 
+  /**
+   * 依篩選條件列出銀行清單，未設定條件時全部列出。
+   */
+  const BankList = () => {
+    const newBanks = banks.filter((b) => !searchValue || searchValue === '' || b.bankNo.includes(searchValue) || b.bankName.includes(searchValue));
+    return newBanks.map((bank) => (
+      <li key={bank.bankNo} data-code={bank.bankNo} onClick={() => onBankSelected(bank)}>
+        <p>{bank.bankName}</p>
+        <span>{bank.bankNo}</span>
+      </li>
+    ));
+  };
+
+  /**
+   * HTML輸出。
+   */
   return (
     <BankCodeWrapper
-      open={isOpen}
+      open
       onClose={onClose}
       aria-labelledby="taiwan-bank-code-list"
       aria-describedby="taiwan-bank-code-list"
@@ -72,10 +57,10 @@ const BankCode = ({ isOpen, onClose, onSelect }) => {
       <DialogContent>
         <ul>
           <li>常用銀行</li>
-          { favoriteBankList.map((item) => (
-            <li key={item.bankNo} data-code={item.bankNo} onClick={handleClickBankItem}>
-              <p>{item.bankName}</p>
-              <span>{item.bankNo}</span>
+          { favoriteBankList?.map((bank) => (
+            <li key={bank.bankNo} data-code={bank.bankNo} onClick={() => onBankSelected(bank)}>
+              <p>{bank.bankName}</p>
+              <span>{bank.bankNo}</span>
             </li>
           )) }
         </ul>
@@ -90,7 +75,7 @@ const BankCode = ({ isOpen, onClose, onSelect }) => {
               onChange={(event) => setSearchValue(event.target.value)}
             />
           </div>
-          { filteredBankList?.length ? renderBankCode(filteredBankList) : null }
+          <BankList />
         </ul>
       </DialogContent>
     </BankCodeWrapper>
