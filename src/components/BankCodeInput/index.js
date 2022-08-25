@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Controller } from 'react-hook-form';
 import BankCode from 'components/BankCode';
 import { FEIBErrorMessage, FEIBInput, FEIBInputLabel } from 'components/elements';
 import { ListIcon } from 'assets/images/icons';
+import { Controller } from 'react-hook-form';
+import { getBankCode } from './api';
 
 /*
 * ================== BankCodeInput 組件說明 ==================
@@ -19,64 +20,75 @@ import { ListIcon } from 'assets/images/icons';
 * */
 
 const BankCodeInput = ({
-  id,
+  name,
   control,
   setValue,
   trigger,
   rules,
   errorMessage,
-  bankCode,
+  // bankCode = defaultValue,
+  defaultValue,
 }) => {
-  // console.log('bankCode', bankCode);
-  const [openBankCodeList, setOpenBankCodeList] = useState(false);
-  const [selectBank, setSelectBank] = useState(bankCode || { bankNo: '', bankName: '' });
+  const storageItemName = 'BankList';
+  const [bankList, setBankList] = useState();
+  const [showSelector, setShowSelector] = useState();
 
-  const handleSelectBankCode = (object) => {
-    setSelectBank(object);
-    setValue(id, object);
-    trigger(id);
-  };
-
-  useEffect(() => {
-    // console.log('selectBank', selectBank);
-    if (bankCode && (!selectBank.bankNo && !selectBank.bankName)) {
-      setSelectBank(bankCode);
-    } else {
-      setSelectBank(selectBank);
+  /**
+   *- 初始化
+   */
+  useEffect(async () => {
+    let banks = sessionStorage.getItem(storageItemName);
+    try {
+      banks = JSON.parse(banks);
+    } catch (ex) {
+      sessionStorage.removeItem(storageItemName);
+      banks = null;
     }
-  }, [bankCode]);
 
+    if (!banks) {
+      banks = await getBankCode();
+      sessionStorage.setItem(storageItemName, JSON.stringify(banks)); // 暫存入以減少API叫用
+    }
+    setBankList(banks);
+  }, []);
+
+  /**
+   * HTML輸出。
+   */
   return (
     <>
-      <FEIBInputLabel htmlFor="bankCode">銀行代碼</FEIBInputLabel>
       <Controller
-        name={id}
-        defaultValue={selectBank.bankNo && selectBank.bankName ? `${selectBank.bankNo} ${selectBank.bankName}` : ''}
         control={control}
+        name={name}
         rules={rules}
         render={({ field }) => (
-          <FEIBInput
-            {...field}
-            id={id}
-            name={id}
-            type="text"
-            placeholder="請選擇"
-            value={selectBank.bankNo && selectBank.bankName ? `${selectBank.bankNo} ${selectBank.bankName}` : ''}
-            $icon={<ListIcon />}
-            $iconFontSize={2.4}
-            $iconOnClick={() => setOpenBankCodeList(true)}
-            readOnly
-            error={!!errorMessage}
-            onClick={() => setOpenBankCodeList(true)}
-          />
+          <>
+            <FEIBInputLabel htmlFor={name}>銀行代碼</FEIBInputLabel>
+            <FEIBInput
+              {...field}
+              placeholder="請選擇"
+              value={`${defaultValue} ${bankList?.find((b) => b.bankNo === defaultValue)?.bankName ?? ''}`}
+              $icon={<ListIcon />}
+              $iconFontSize={2.4}
+              $iconOnClick={() => setShowSelector(true)}
+              readOnly
+              error={!!errorMessage}
+              onClick={() => setShowSelector(true)}
+            />
+            <FEIBErrorMessage>{errorMessage}</FEIBErrorMessage>
+          </>
         )}
       />
-      <FEIBErrorMessage>{errorMessage}</FEIBErrorMessage>
-      <BankCode
-        isOpen={openBankCodeList}
-        onClose={() => setOpenBankCodeList(false)}
-        onSelect={handleSelectBankCode}
-      />
+      {showSelector ? (
+        <BankCode
+          banks={bankList}
+          onClose={() => setShowSelector(false)}
+          onSelected={(bank) => {
+            setValue(name, bank.bankNo);
+            trigger(name);
+          }}
+        />
+      ) : null}
     </>
   );
 };

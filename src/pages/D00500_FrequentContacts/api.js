@@ -1,6 +1,18 @@
 import { callAPI } from 'utilities/axios';
 
 /**
+ * 查詢銀行代碼
+ * @returns {
+ *   bankNo: 銀行代碼。
+ *   bankName: 銀行名稱。
+ * }
+ */
+export const getBankCode = async (params) => {
+  const response = await callAPI('/api/transfer/queryBank', params);
+  return response.data;
+};
+
+/**
  * 查詢用戶自設的常用轉入帳號清單。
  * @returns [{
  *   bankId: 常用轉入帳戶-銀行代碼

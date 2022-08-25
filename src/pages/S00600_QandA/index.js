@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import parse from 'html-react-parser';
-// import { qAndAApi } from 'apis';
 import { getQACategory, getQASubCategory } from 'pages/S00600_QandA/api';
 
 /* Elements */

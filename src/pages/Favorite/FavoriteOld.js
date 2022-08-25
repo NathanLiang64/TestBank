@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { EditRounded, RemoveRounded } from '@material-ui/icons';
 import BottomDrawer from 'components/BottomDrawer';
-// import { getFavoriteList } from 'apis/favoriteApi';
 import BlockEmpty from 'assets/images/favoriteBlock/blockEmpty.png';
 import Favorite1 from './favorite_1';
 import Favorite2 from './favorite_2';

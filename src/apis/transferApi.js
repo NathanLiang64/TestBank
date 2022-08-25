@@ -1,5 +1,5 @@
 import userAxios, { userRequest } from 'apis/axiosConfig';
-import { getMotpStatus } from './settingApi';
+// import { getMotpStatus } from './settingApi';
 
 // 測試帳號 L158714757
 
@@ -14,8 +14,12 @@ export const getNtdAccounts = (params) => (
   userRequest('post', '/api/transfer/queryNtdTrAcct', params)
 );
 
-// 取得 MOTP 狀態
-export const getMotpStatusOnTransfer = getMotpStatus;
+// // 取得 MOTP 狀態
+// export const getMotpStatusOnTransfer = getMotpStatus;
+// 取得 OTP 及 MOTP 開通狀態
+export const getMotpStatusOnTransfer = (params) => (
+  userRequest('post', '/api/setting/motp/status', params)
+);
 
 // 查詢常用帳號 - Adrian
 export const getFavAccounts = (params) => (

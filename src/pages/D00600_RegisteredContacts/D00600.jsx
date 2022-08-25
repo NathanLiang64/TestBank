@@ -5,7 +5,6 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
-// import { getRegAccounts, updateRegAccount } from 'apis/transferApi';
 
 /**
  * 先修好 D00500 再把程式碼複製過來！

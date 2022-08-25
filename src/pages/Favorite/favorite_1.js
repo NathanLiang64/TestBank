@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import FavoriteBlockButton from 'components/FavoriteBlockButton';
 import { FEIBTab, FEIBTabContext, FEIBTabList } from 'components/elements';
-import { getFavoriteSettings, updateFavoriteItem } from 'apis/favoriteApi';
+import { getFavoriteSettingList, modifyFavoriteItem } from './api';
 import { favIconGenerator } from './favoriteGenerator';
 import { setFavoriteList } from './stores/actions';
 
@@ -15,18 +15,16 @@ const Favorite1 = ({ blockOrder, updateFavoriteList }) => {
   const dispatch = useDispatch();
   const mainContentRef = useRef();
 
-  const handleClickBlock = (actKey, position) => {
+  const handleClickBlock = async (actKey, position) => {
     const params = { actKey, position };
 
     // call api 新增新的項目
-    updateFavoriteItem(params)
-      .then((response) => {
-        if (response.code) return;
-        // 更新用戶最愛的項目並回到我的最愛總覽頁
-        updateFavoriteList();
-        favoriteDrawer.back();
-      });
-    // .catch((error) => console.log('編輯最愛 err', error));
+    const response = await modifyFavoriteItem(params);
+    if (response.result) {
+      // 更新用戶最愛的項目並回到我的最愛總覽頁
+      updateFavoriteList();
+      favoriteDrawer.back();
+    }
   };
 
   // 點擊 Tab 頁籤時滾動至相應的 Section
@@ -66,12 +64,15 @@ const Favorite1 = ({ blockOrder, updateFavoriteList }) => {
     <FEIBTab key={tab.groupKey} label={tab.groupName} value={tab.groupKey} />
   ));
 
-  useEffect(() => {
-    getFavoriteSettings().then((response) => {
-      if (Array.isArray(response) && response?.length) {
-        dispatch(setFavoriteList(response));
-      }
-    });
+  useEffect(async () => {
+    const response = await getFavoriteSettingList();
+
+    dispatch(setFavoriteList(response.items));
+    // getFavoriteSettings().then((response) => {
+    //   if (Array.isArray(response) && response?.length) {
+    //     dispatch(setFavoriteList(response));
+    //   }
+    // });
   }, []);
 
   useEffect(() => {

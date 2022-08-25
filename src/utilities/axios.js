@@ -1,7 +1,6 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable brace-style */
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import { showError } from './MessageModal';
 import JWEUtil from './JWEUtil';
 import JWTUtil from './JWTUtil';
@@ -73,7 +72,6 @@ const processResponse = async (response) => {
     if (!jwtToken) console.log(`\x1b[31m*** WARNING *** ${response.config.url} 將 JWT Token 設為空值！`, response);
     else {
       await syncJwtToken(jwtToken); // BUG! 可能因為多執行緒而錯亂
-      Cookies.set('jwtToken', jwtToken); // TODO: 為了相容 axiosConfig
     }
   }
 

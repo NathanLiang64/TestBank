@@ -10,7 +10,6 @@ import {
 import { RadioGroup } from '@material-ui/core';
 
 /* function */
-import { billPayApi } from 'apis';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { useHistory } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,11 +22,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import {
   payAmountValidation, billPayBankCodeValidation, transferAccountValidation, emailValidation,
 } from 'utilities/validation';
+import { init } from './api';
 import BillPayWrapper from './billPay.style';
 
 import { actions } from './stores';
 
-const { init } = billPayApi;
 const { setInitData, setPayData } = actions;
 
 // const notZero = (value) => (parseFloat(value) > parseFloat('0'));

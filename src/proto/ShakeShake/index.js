@@ -11,7 +11,6 @@ import Loading from 'components/Loading';
 import {
   FEIBIconButton, FEIBTabContext, FEIBTab, FEIBTabList, FEIBTabPanel,
 } from 'components/elements';
-// import { doGetShakeInitData } from 'apis/shakeShakeApi';
 import { accountFormatter } from 'utilities/Generator';
 import { ShareIcon } from 'assets/images/icons';
 import theme from 'themes/theme';

@@ -114,27 +114,6 @@ const Exchange = () => {
     }
   };
 
-  // // 查詢台幣帳號
-  // const getNtdAccountsList = async () => {
-  //   const response = await exchangeApi.getAccountsList('MSC');
-  //   if (response?.length > 0) {
-  //     setNtdAccountsList(response);
-  //     setValue('outAccount', response[0].accountId);
-  //   }
-  // };
-
-  // // 查詢外幣帳號
-  // const getFcAccountsList = async () => {
-  //   const response = await exchangeApi.getAccountsList('F');
-  //   if (response?.length > 0) {
-  //     setFrgnAccountsList(response);
-  //     setValue('inAccount', response[0].accountId);
-  //   }
-  //   if (response?.code) {
-  //     handleSetDialog('親愛的客戶 您好：因您尚未擁有外幣帳戶，無法使用本功能', true);
-  //   }
-  // };
-
   // 取得可交易幣別清單
   const fetchCcyList = async () => {
     const response = await getCcyList({});

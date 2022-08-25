@@ -1,6 +1,5 @@
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
-// import { logout } from 'apis/authApi';
 
 import TransferImage from 'assets/images/tabBarIcons/transfer.svg';
 import NoticeImage from 'assets/images/tabBarIcons/notice.svg';
