@@ -5,11 +5,11 @@ import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { FEIBButton, FEIBInputLabel, FEIBInput } from 'components/elements';
-import { accountFormatter } from 'utilities/Generator';
+import { FEIBButton, FEIBInputLabel, FEIBInput, FEIBErrorMessage } from 'components/elements';
 import Badge from 'components/Badge';
 import Avatar from 'components/Avatar';
 import BankCodeInput from 'components/BankCodeInput';
+import { accountFormatter } from 'utilities/Generator';
 import { getBankCode } from './api';
 import { DrawerWrapper } from './D00500.style';
 
@@ -115,6 +115,7 @@ function AccountEditor({
               />
             )}
           />
+          <FEIBErrorMessage>{errors.acctId?.message}</FEIBErrorMessage>
         </div>
 
         <FEIBButton type="submit">下一步</FEIBButton>
@@ -160,7 +161,7 @@ function AccountEditor({
           />
           <FEIBButton type="submit">完成</FEIBButton>
         </div>
-        <FEIBButton type="button" onClick={() => setConfirmPage(false)}>修改</FEIBButton>
+        {/* <FEIBButton type="button" onClick={() => setConfirmPage(false)}>修改</FEIBButton> */}
       </form>
     );
   };

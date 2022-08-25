@@ -43,8 +43,7 @@ const Page = () => {
    */
   const addnewAccount = async () => {
     const onFinished = async (newCard) => {
-      console.log(newCard);
-      const successful = addFrequentAccount(newCard);
+      const successful = await addFrequentAccount(newCard);
       if (successful) {
         setCards([{
           ...newCard,
@@ -54,10 +53,10 @@ const Page = () => {
       dispatch(setDrawerVisible(false));
     };
 
-    const options = (
-      <AccountEditor onFinished={onFinished} />
-    );
-    dispatch(setDrawer({ title: '新增常用帳號', content: options }));
+    dispatch(setDrawer({
+      title: '新增常用帳號',
+      content: (<AccountEditor onFinished={onFinished} />),
+    }));
     dispatch(setDrawerVisible(true));
   };
 
@@ -68,8 +67,7 @@ const Page = () => {
   const editAccount = async (card) => {
     const { bankId, acctId } = card; // 變更前 常用轉入帳戶-銀行代碼 及 帳號
     const onFinished = async (newCard) => {
-      console.log(newCard);
-      const successful = updateFrequentAccount({
+      const successful = await updateFrequentAccount({
         ...newCard,
         orgBankId: bankId,
         orgAcctId: acctId,
@@ -81,10 +79,10 @@ const Page = () => {
       }
     };
 
-    const options = (
-      <AccountEditor initData={card} onFinished={onFinished} />
-    );
-    dispatch(setDrawer({ title: '編輯常用帳號', content: options }));
+    dispatch(setDrawer({
+      title: '編輯常用帳號',
+      content: (<AccountEditor onFinished={onFinished} />),
+    }));
     dispatch(setDrawerVisible(true));
   };
 
@@ -92,8 +90,8 @@ const Page = () => {
    * 處理UI流程：移除登記帳戶
    */
   const removeAccount = (card) => {
-    const onRemoveConfirm = () => {
-      const successful = deleteFrequentAccount({ bankId: card.bankId, acctId: card.acctId });
+    const onRemoveConfirm = async () => {
+      const successful = await deleteFrequentAccount({ bankId: card.bankId, acctId: card.acctId });
       if (successful) {
         const tmpCards = cards.filter((c) => c.acctId !== card.acctId);
         setCards(tmpCards);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import BankCode from 'components/BankCode';
+import BankCode from 'components/BankCodeInput/bankSelector';
 import { FEIBErrorMessage, FEIBInput, FEIBInputLabel } from 'components/elements';
 import { ListIcon } from 'assets/images/icons';
 import { Controller } from 'react-hook-form';

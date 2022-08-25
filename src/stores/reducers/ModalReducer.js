@@ -30,6 +30,7 @@ const initialState = {
   drawer: {
     title: null,
     content: null,
+    goBack: null,
     shouldAutoClose: false,
   },
   showDrawer: false,

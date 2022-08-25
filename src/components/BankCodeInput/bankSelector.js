@@ -3,7 +3,7 @@ import { DialogTitle, DialogContent } from '@material-ui/core';
 import { FEIBIconButton, FEIBInput, FEIBInputLabel } from 'components/elements';
 import { CrossIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
-import BankCodeWrapper from './bankCode.style';
+import BankCodeWrapper from './bankSelector.style';
 
 const BankCode = ({ banks, onClose, onSelected }) => {
   const [favoriteBankList, setFavoriteBankList] = useState();
