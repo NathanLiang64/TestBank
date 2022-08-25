@@ -5,7 +5,7 @@ import { DialogContent, DialogTitle } from '@material-ui/core';
 import {
   FEIBErrorMessage, FEIBIconButton, FEIBInput, FEIBInputLabel,
 } from 'components/elements';
-import BankCodeWrapper from 'components/BankCode/bankCode.style';
+import BankCodeWrapper from 'components/BankCodeInput/bankSelector.style';
 import { CrossIcon, ListIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
 import mockData from './mockData';
