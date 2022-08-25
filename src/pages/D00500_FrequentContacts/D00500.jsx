@@ -81,7 +81,7 @@ const Page = () => {
 
     dispatch(setDrawer({
       title: '編輯常用帳號',
-      content: (<AccountEditor onFinished={onFinished} />),
+      content: (<AccountEditor initData={card} onFinished={onFinished} />),
     }));
     dispatch(setDrawerVisible(true));
   };
