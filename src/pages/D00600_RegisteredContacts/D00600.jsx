@@ -1,22 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
-
-/**
- * 先修好 D00500 再把程式碼複製過來！
- * 先修好 D00500 再把程式碼複製過來！
- * 先修好 D00500 再把程式碼複製過來！
- */
-
-const mock = [
-  { name: 'Loid Forger', bankName: 'Peanuts Bank', account: '11122233334444' },
-  { name: 'Anya Forger', bankName: 'Peanuts Bank', account: '11122233324444' },
-  { name: 'Yor Forger', bankName: 'Peanuts Bank', account: '11122233304444' },
-];
+import { setDrawer, setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { getAllRegisteredAccount, updateRegisteredAccount } from './api';
+import AccountEditor from './D00600_AccountEditor';
+import PageWrapper from './D00600.style';
 
 /**
  * D00600 約定帳號管理頁
@@ -25,52 +15,35 @@ const Page = () => {
   const dispatch = useDispatch();
   const [cards, setCards] = useState([]);
 
+  /**
+   *- 初始化
+   */
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    // setCards(await getFavAccounts());
-    // TODO:  若要呼叫 API，取消以上註解，並移除以下一行。
-    setCards(mock);
+
+    setCards(await getAllRegisteredAccount());
+
     dispatch(setWaittingVisible(false));
   }, []);
 
   /**
-   * 呼叫 API 更新帳戶資訊
-   */
-  const handleEdit = (card) => {
-    /*
-    const params = {
-      email: card?.email,
-      inBank: card?.bankId,
-      inAcct: card?.accountId,
-      nickName: card?.accountName,
-      orgBankId: card?.bankId,
-      orgAcctId: card?.accountId,
-    };
-    try {
-      await updateRegAccount(params);
-      return true;
-    } catch (error) {
-      // TODO: You may want to remove below line in production.
-      console.warn('Error returned from updateFavAccount', error);
-      return false;
-    }
-    */
-
-    // TODO:  若要呼叫 API，取消以上註解，並移除以下兩行。
-    console.debug('handleEdit', card);
-    return true;
-  };
-
-  /**
    * 處理UI流程：編輯帳戶
+   * @param {*} card 變更前資料。
    */
-  const onEditClick = (card) => {
-    // TODO: Do something with UI, then call API:
-    const successful = handleEdit(card);
+  const editAccount = async (card) => {
+    const onFinished = async (newCard) => {
+      const successful = await updateRegisteredAccount(newCard);
+      dispatch(setDrawerVisible(false));
+      if (successful) {
+        setCards([...cards]); // 強制更新清單。
+      }
+    };
 
-    if (!successful) {
-      // TODO: You may want to do something with UI?
-    }
+    dispatch(setDrawer({
+      title: '編輯約定帳號',
+      content: (<AccountEditor initData={card} onFinished={onFinished} />),
+    }));
+    dispatch(setDrawerVisible(true));
   };
 
   /**
@@ -79,13 +52,20 @@ const Page = () => {
   return (
     <Layout title="約定帳號管理">
       <Main small>
-        { !!cards && cards.map((card) => (
-          <MemberAccountCard
-            key={card.account}
-            {...card}
-            onEdit={() => onEditClick(card)}
-          />
-        )) }
+        <PageWrapper>
+          {cards?.map((card) => (
+            <MemberAccountCard
+              key={card.acctId}
+              type="約定帳號"
+              name={card.nickName}
+              bankNo={card.bankId}
+              bankName={card.bankName}
+              account={card.acctId}
+              avatarSrc={card.headshot}
+              onEdit={() => editAccount(card)}
+            />
+          )) }
+        </PageWrapper>
       </Main>
     </Layout>
   );
