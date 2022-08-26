@@ -23,7 +23,7 @@ import LoginWrapper from './login.style';
 import FaceIdLoginModal from './faceIdLoginModal';
 import RegisterModal from './registerModal';
 // import { login, personalDataPreload, getInitData, getHomeData } from './login.api';
-import { login, getInitData } from './login.api';
+import { login, getInitData, getAnnouncementData } from './login.api';
 
 const Login = () => {
   /**
@@ -57,6 +57,7 @@ const Login = () => {
   useEffect(async () => {
     await HandShake();
     await getInitData();
+    await getAnnouncementData();
 
     dispatch(setShowSpinner(false));
   }, []);
