@@ -42,7 +42,7 @@ const CreditCardPage = () => {
   // render 功能列表
   const functionAllList = (item) => {
     const list = [
-      { fid: '/D00100', title: '晚點付', account: item.account },
+      { fid: '/R00200', title: '晚點付', account: item.account },
       { fid: '/R00300', title: '帳單', account: item.account },
       { fid: '/R00400', title: '繳費', account: item.account },
     ];
