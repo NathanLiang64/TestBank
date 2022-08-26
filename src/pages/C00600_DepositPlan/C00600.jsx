@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import uuid from 'react-uuid';
 
@@ -11,7 +11,9 @@ import { showAnimationModal, showError } from 'utilities/MessageModal';
 import {
   AccountIcon11, AccountIcon12, CircleIcon, TransactionIcon1,
 } from 'assets/images/icons';
-import { transactionAuth, closeFunc } from 'utilities/AppScriptProxy';
+import {
+  loadFuncParams, startFunc, closeFunc, transactionAuth,
+} from 'utilities/AppScriptProxy';
 
 import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
 import EmptySlide from './components/EmptySlide';
@@ -34,8 +36,7 @@ import {
  * C00600 存錢計畫 首頁
  */
 const DepositPlanPage = () => {
-  const history = useHistory();
-  const location = useLocation();
+  const history = useHistory(); // TODO 應該改用 startFunc
   const dispatch = useDispatch();
   const [plans, setPlans] = useState();
   const [subAccounts, setSubAccounts] = useState();
@@ -48,7 +49,7 @@ const DepositPlanPage = () => {
     // 檢查是否已申請主帳戶，「否」則到申請頁。
     const acctData = await getAccountSummary('M');
     if (!acctData?.length) {
-      AlertNoMainAccount({onOk: () => history.goBack});
+      AlertNoMainAccount({onOk: closeFunc});
     }
 
     const response = await getDepositPlans();
@@ -187,11 +188,11 @@ const DepositPlanPage = () => {
    * 產生下方內容時會用的
    */
   const handleAddClick = () => {
-    history.push('/C006002', { plansLength: plans?.length, subAccounts, totalSubAccountCount });
+    startFunc('C006002', { plansLength: plans?.length, subAccounts, totalSubAccountCount });
   };
 
   const handleShowDetailClick = (plan) => {
-    history.push('/C006001', { plan });
+    startFunc('C006001', { plan });
   };
 
   const shouldShowUnavailableSubAccountAlert = () => {
@@ -237,12 +238,15 @@ const DepositPlanPage = () => {
    * 頁面載入後，依需求切換應該顯示的計畫。
    * 如果是從別的頁面跳轉，可能會想要顯示特定的計畫，或預設顯示主要計畫。
    */
-  const focusToIntentedSlide = (swiper) => {
+  const focusToIntentedSlide = async (swiper) => {
     let activeIndex = 1; // 預設中間
 
-    if (location.state && ('focusToAccountNo' in location.state)) {
+    // startParams = { focusToAccountNo: 預設開啟的存錢計劃子帳號 }
+    const startParams = await loadFuncParams(); // Function Controller 提供的參數
+    if (startParams && (typeof startParams === 'object')) {
+      const accountNo = startParams.focusToAccountNo;
       plans.forEach((p, i) => {
-        if (p.bindAccountNo === location.state.focusToAccountNo) activeIndex = i;
+        if (p.bindAccountNo === accountNo) activeIndex = i;
       });
     }
     swiper.slideTo(activeIndex, 0);
