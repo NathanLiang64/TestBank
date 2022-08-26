@@ -18,10 +18,9 @@ const MemberAccountCardWrapper = styled.div`
   .memberInfo {
     margin-left: 1.2rem;
 
-    h3 {
+    .title {
       font-size: 1.8rem;
-      font-weight: 700;
-      line-height: 1.8;
+      line-height: 2.7rem;
     }
 
     .new-tag {
@@ -35,8 +34,9 @@ const MemberAccountCardWrapper = styled.div`
       color: ${({ theme }) => theme.colors.basic.white};
     }
 
-    p {
+    .note {
       font-size: 1.2rem;
+      line-height: 1.8rem;
       color: ${({ theme }) => theme.colors.text.light};
     }
   }

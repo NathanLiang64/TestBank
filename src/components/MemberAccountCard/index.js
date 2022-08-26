@@ -92,11 +92,15 @@ const MemberAccountCard = ({
     >
       <Avatar small src={avatarSrc} name={name} />
       <div className="memberInfo">
-        <h3>
-          {name || '會員'}
-          {hasNewTag && (<div className="new-tag">New</div>)}
-        </h3>
-        <p>{`${bankName}(${bankNo}) ${account}`}</p>
+        <div className="flex-auto">
+          <div className="title">
+            {name || '會員'}
+            {hasNewTag && (<div className="new-tag">New</div>)}
+          </div>
+          <div className="note">
+            {`${bankName}(${bankNo}) ${account}`}
+          </div>
+        </div>
       </div>
       { !noOption && renderMoreActionMenu() }
     </MemberAccountCardWrapper>
