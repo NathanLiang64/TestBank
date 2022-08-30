@@ -48,6 +48,13 @@ const QuickLoginSettingWrapper = styled(Layout)`
       }
     }
   }
+  .bindingInfo {
+    padding-top: 2rem;
+    h1 {
+      font-weight: bold;
+      font-size: 1.8rem;
+    }
+  }
   .agreeTip {
     padding: 0 1.6rem;
     margin-top: 2.4rem;

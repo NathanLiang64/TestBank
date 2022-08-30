@@ -9,6 +9,10 @@ export const closePopup = () => {
   store.dispatch(setModalVisible(false));
 };
 
+export const closeDrawer = () => {
+  store.dispatch(setDrawerVisible(false));
+};
+
 export const showPrompt = async (message, action) => {
   store.dispatch(setModal({
     title: '溫馨提醒',
