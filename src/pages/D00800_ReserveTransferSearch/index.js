@@ -8,7 +8,7 @@ import { switchLoading, closeFunc } from 'utilities/AppScriptProxy';
 import { getTransferOutAccounts, getReservedTransDetails, getResultTransDetails } from 'pages/D00800_ReserveTransferSearch/api';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import {
   FEIBTabContext,
   FEIBTabList,
@@ -287,8 +287,7 @@ const ReserveTransferSearch = () => {
   }, [resultDateRange]);
 
   return (
-    <>
-      <Header title="預約轉帳查詢/取消" />
+    <Layout title="預約轉帳查詢/取消">
       <ReserveTransferSearchWrapper className="searchResult">
         <div className="cardArea">
           <Swiper
@@ -355,7 +354,7 @@ const ReserveTransferSearch = () => {
         {renderResultDialog()}
         {renderDialog()}
       </ReserveTransferSearchWrapper>
-    </>
+    </Layout>
   );
 };
 

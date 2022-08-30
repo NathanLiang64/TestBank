@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import {
   FEIBSwitch,
 } from 'components/elements';
@@ -86,8 +86,7 @@ const NoticeSetting = () => {
   }, [communityNoti, normalNoti, securityNoti, nightNoti]);
 
   return (
-    <>
-      <Header title="訊息通知設定" />
+    <Layout title="訊息通知設定">
       <NoticeSettingWrapper>
         <div className="settingItem">
           <div className="settingLabel">
@@ -154,7 +153,7 @@ const NoticeSetting = () => {
           </div>
         </div>
       </NoticeSettingWrapper>
-    </>
+    </Layout>
   );
 };
 

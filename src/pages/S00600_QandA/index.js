@@ -4,13 +4,14 @@ import parse from 'html-react-parser';
 import { getQACategory, getQASubCategory } from 'pages/S00600_QandA/api';
 
 /* Elements */
-import Header from 'components/Header';
 import {
   FEIBTabContext,
   FEIBTabList,
   FEIBTab,
 } from 'components/elements';
 import Accordion from 'components/Accordion';
+import Layout from 'components/Layout/Layout';
+
 /* Styles */
 import QandAWrapper from './QandA.style';
 
@@ -93,8 +94,7 @@ const QandA = () => {
   }, [tabValue]);
 
   return (
-    <>
-      <Header title="常見問題" />
+    <Layout title="常見問題">
       <QandAWrapper>
         <FEIBTabContext value={tabValue}>
           { renderTabs() }
@@ -103,7 +103,7 @@ const QandA = () => {
           </div>
         </FEIBTabContext>
       </QandAWrapper>
-    </>
+    </Layout>
   );
 };
 

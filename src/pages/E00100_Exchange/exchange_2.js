@@ -3,7 +3,7 @@ import { useHistory } from 'react-router';
 import { currencyZhGenerator } from 'utilities/Generator';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import { FEIBButton } from 'components/elements';
 import Accordion from 'components/Accordion';
 import ConfirmButtons from 'components/ConfirmButtons';
@@ -40,8 +40,7 @@ const Exchange2 = ({ location }) => {
   }, []);
 
   return (
-    <>
-      <Header title="外幣換匯結果" hideBack />
+    <Layout title="外幣換匯結果" goBack={false}>
       <ExchangeWrapper className="finishPage">
         <div className={`infoSection  ${!isSuccess && 'resultFail'}`}>
           <SuccessFailureAnimations
@@ -114,7 +113,7 @@ const Exchange2 = ({ location }) => {
           )
         }
       </ExchangeWrapper>
-    </>
+    </Layout>
   );
 };
 

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { startFunc } from 'utilities/AppScriptProxy';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import EditIcon from 'assets/images/icons/editIcon.svg';
 import SettingIcon from 'assets/images/icons/settingIcon.svg';
 import {
@@ -136,8 +136,7 @@ const Notice = () => {
   }, []);
 
   return (
-    <>
-      <Header title="訊息通知" />
+    <Layout title="訊息通知">
       <NoticeWrapper>
         <div className="lighterBlueLine" />
         <div className="noticeContainer">
@@ -195,7 +194,7 @@ const Notice = () => {
           />
         </div>
       </NoticeWrapper>
-    </>
+    </Layout>
   );
 };
 

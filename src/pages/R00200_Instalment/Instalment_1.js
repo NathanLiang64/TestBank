@@ -3,7 +3,7 @@ import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import BottomDrawer from 'components/BottomDrawer';
 import PasswordInput from 'components/PasswordInput';
 import { FEIBButton, FEIBCheckbox } from 'components/elements';
@@ -61,8 +61,7 @@ const Instalment1 = () => {
   );
 
   return (
-    <>
-      <Header title="晚點付 (單筆)" goBack={() => history.replace('/staging')} />
+    <Layout title="晚點付 (單筆)">
       <InstalmentWrapper className="InstalmentWrapper" small>
         <form>
           <div>
@@ -93,7 +92,7 @@ const Instalment1 = () => {
           title="輸入網銀密碼"
         />
       </InstalmentWrapper>
-    </>
+    </Layout>
   );
 };
 
