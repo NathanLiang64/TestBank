@@ -2,17 +2,17 @@
 /* eslint-disable arrow-body-style */
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { startFunc, transactionAuth } from 'utilities/AppScriptProxy';
+import { startFunc } from 'utilities/AppScriptProxy';
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
-import {
-  getAllFrequentAccount,
-  addFrequentAccount,
-  updateFrequentAccount,
-  deleteFrequentAccount,
-} from 'pages/D00500_FrequentContacts/api';
-import { getAllRegisteredAccount, updateRegisteredAccount } from 'pages/D00600_RegisteredContacts/api';
-import { logout, mobileAccountUnbind, getHomeData, registerToken } from './Nav.api';
+// import {
+//   getAllFrequentAccount,
+//   addFrequentAccount,
+//   updateFrequentAccount,
+//   deleteFrequentAccount,
+// } from 'pages/D00500_FrequentContacts/api';
+// import { getAllRegisteredAccount, updateRegisteredAccount } from 'pages/D00600_RegisteredContacts/api';
+import { logout, getHomeData, registerToken } from './Nav.api';
 
 import NavWrapper from './Nav.style';
 
@@ -43,7 +43,7 @@ const Nav = () => {
           <div onClick={() => startFunc('D00100')}>D00100 台幣轉帳 - (施工中)</div>
           <div onClick={() => startFunc('B00600')}>B00600 更多...</div>
 
-          <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await transactionAuth(0x35))}>
+          {/* <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await transactionAuth(0x35))}>
             台幣-非約轉(2FA / PWD+OTP)
           </div>
           <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await transactionAuth(0x30))}>
@@ -61,7 +61,7 @@ const Nav = () => {
 
           <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await mobileAccountUnbind())}>
             解除手機號碼收款綁定-執行
-          </div>
+          </div> */}
 
           <div onClick={() => getHomeData()}>SM-API://getHomeData</div>
           <div onClick={() => registerToken({ pushToken: '4fcd5d52dc5ba7208bac5758bb84d6ca7061f5abfe0bd54b684a9d1a6c3a7e49' })}>SM-API://registerToken</div>
@@ -70,8 +70,8 @@ const Nav = () => {
 
         <div className="lexion">
           <p style={{ color: '#9D7ADE' }}>** 瑞芙 **</p>
-          <div onClick={() => startFunc('C00100')}>C00100 帳務總覽 - (施工中)</div>
-          <div onClick={() => startFunc('C00600')}>C00600 存錢計劃 - (施工中)</div>
+          <div onClick={() => startFunc('C00100')}>C00100 帳務總覽</div>
+          <div onClick={() => startFunc('C00600')}>C00600 存錢計劃</div>
           <div onClick={() => startFunc('C00700')}>C00700 信用卡 首頁 - (施工中)</div>
           <div onClick={() => startFunc('R00100')}>R00100 信用卡 即時消費明細 - (施工中)</div>
           <div onClick={() => startFunc('R00300')}>R00300 信用卡 帳單明細 - (施工中)</div>
@@ -80,8 +80,8 @@ const Nav = () => {
           <div onClick={() => startFunc('L00100')}>L00100 貸款 首頁 - (施工中)</div>
           <div onClick={() => startFunc('L001001')}>L00100 貸款 可能回饋頁 - (施工中)</div>
           <div onClick={() => startFunc('L001002')}>L00100 貸款 資訊頁 - (施工中)</div>
-          <div onClick={() => startFunc('D00500')}>D00500 常用帳號管理 - (施工中)</div>
-          <div onClick={() => startFunc('D00600')}>D00600 約定帳號管理 - (施工中)</div>
+          <div onClick={() => startFunc('D00500')}>D00500 常用帳號管理</div>
+          <div onClick={() => startFunc('D00600')}>D00600 約定帳號管理</div>
         </div>
 
         <div className="vj">
@@ -104,7 +104,7 @@ const Nav = () => {
           <div onClick={() => startFunc('cardLessSetting')}>無 function code 無卡提款設定 - (完成切版)</div>
         </div>
 
-        <div className="bankee">
+        {/* <div className="bankee">
           <p style={{ color: '#9D7ADE' }}>** 使用 Y120409367 測試  **</p>
           <div onClick={() => getAllFrequentAccount()}>D00500-API://getAllFrequentAccount</div>
           <div onClick={() => addFrequentAccount({ bankId: '822', acctId: '107532104335', nickName: 'Jerry', email: 'jerry88634@feib.com.tw' })}>D00500-API://addFrequentAccount</div>
@@ -113,7 +113,7 @@ const Nav = () => {
 
           <div onClick={() => getAllRegisteredAccount('04300499100376')}>D00600-API://getAllRegisteredAccount</div>
           <div onClick={() => updateRegisteredAccount({ bankId: '805', acctId: '04300490004059', nickName: 'Jerry帳本', email: 'jerry88634@feib.com.tw' })}>D00600-API://updateRegisteredAccount</div>
-        </div>
+        </div> */}
 
         <FEIBButton onClick={logOut}>登出</FEIBButton>
       </NavWrapper>

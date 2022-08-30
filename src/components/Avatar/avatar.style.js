@@ -37,6 +37,7 @@ const AvatarWrapper = styled.div.attrs({
       font-size: ${({ $small }) => ($small ? '2rem' : '3.6rem')};
       font-weight: 700;
       color: ${({ theme }) => theme.colors.primary.light};
+      padding-left: 0.2rem;
       
       &.Icon {
         top: -.2rem;

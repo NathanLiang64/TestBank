@@ -24,7 +24,7 @@ const handshake = async () => {
     deviceId: uuid(),
     osType: 0,
     osVersion: '15.5',
-    appVersion: '1.0.26',
+    appVersion: '1.0.11',
     encK: aesKey,
     iv,
     rsaPubK: publicKey,

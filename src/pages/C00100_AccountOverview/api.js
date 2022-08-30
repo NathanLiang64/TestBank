@@ -11,6 +11,7 @@ import { callAPI } from 'utilities/axios';
       balance, // 帳戶餘額（外幣會折算「當天」的台幣價值）
       purpose, // 綁定用途（0.未綁定, 1.社群帳本, 2.存錢計畫）
       alias, // 帳戶別名 或是 社群帳本名稱、存錢計畫名稱
+      currency, // 幣別代碼
     }, ...],
     // 負債清單
     debts: [{

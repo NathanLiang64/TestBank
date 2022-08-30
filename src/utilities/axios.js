@@ -46,8 +46,8 @@ const processRequest = async (request) => {
     const aes = await getAesKey();
     request.data = JWTUtil.encryptJWTMessage(aes.aesKey, aes.iv, payload);
   }
-  console.log(jwtToken);
-  console.log(`%cRequest --> ${JSON.stringify(request)}`, 'color: Green;'); // 列出完整的 Request 資訊。
+  // console.log(jwtToken);
+  // console.log(`%cRequest --> ${JSON.stringify(request)}`, 'color: Green;'); // 列出完整的 Request 資訊。
   return request;
 };
 
@@ -57,7 +57,7 @@ const processRequest = async (request) => {
  * @returns
  */
 const processResponse = async (response) => {
-  // console.log(`%cResponse --> \n%c${JSON.stringify(response)}`, 'color: Yellow;', 'color: Green;');
+  // console.log('%cResponse --> \n%c%o', 'color: Yellow;', 'color: Green;', response);
   // console.log(`jwtToken=${response.data.jwtToken}`);
   // eslint-disable-next-line object-curly-newline
   const { code, data, mac, jwtToken } = response.data; // 不論成功或失敗，都一定會更新 jwtToken

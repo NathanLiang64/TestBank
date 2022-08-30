@@ -61,7 +61,11 @@ export const stringDateFormatter = (stringDate) => {
   return '';
 };
 
-// 將日期格式由 YYYYMMDD 或 YYYY/MM/DD 字串轉為 Date 物件
+/**
+ * 將日期字串轉為 Date 物件。
+ * @param {*} stringDate YYYYMMDD 或 YYYY/MM/DD 格式的日期字串。
+ * @returns {Date} 轉換後的日期。
+ */
 export const stringToDate = (stringDate) => {
   if (stringDate) {
     if (stringDate.match(/^\d{8}$/)) {
@@ -204,6 +208,15 @@ export const accountTypeColorGenerator = (currency) => {
 };
 
 // 帳務總覽對應名稱和卡色
+// 卡牌顏色:
+// 1. 母帳戶(深紫)
+// 2. 社群圈(粉)
+// 3. 存錢計劃(黃)
+// 4. 證卷交割帳戶(藍)
+// 5. 外幣帳戶(橘)
+// 6. 信用卡(綠)
+// 7. 貸款卡(淺紫)
+// 8. 社群帳本卡(粉)
 export const accountOverviewCardVarient = (type) => {
   switch (type) {
     case 'M':

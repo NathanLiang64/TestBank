@@ -76,12 +76,6 @@ const Page = () => {
                     <td>社群圈分潤</td>
                     <td>{currencySymbolGenerator(displayReward.currency ?? 'TWD', displayReward.point)}</td>
                   </tr>
-                  {displayReward.point > 0 && (
-                  <tr>
-                    <td>金讚點數兌換回饋</td>
-                    <td>{currencySymbolGenerator(displayReward.currency ?? 'TWD', displayReward.point)}</td>
-                  </tr>
-                  )}
                 </tbody>
               </table>
               <hr />
