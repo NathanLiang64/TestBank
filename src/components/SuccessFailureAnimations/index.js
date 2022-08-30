@@ -1,8 +1,19 @@
-import SuccessCheer from 'assets/animations/successCheer.svg';
-import SuccessFlower from 'assets/animations/successFlower.svg';
-import SuccessLove from 'assets/animations/successLove.svg';
-import SuccessMusic from 'assets/animations/successMusic.svg';
-import FailAnimation from 'assets/animations/fail.svg';
+/* eslint-disable no-unused-vars */
+import Lottie from 'lottie-react';
+
+import SuccessFlower from 'assets/animations/success1_flower.json';
+import SuccessLove from 'assets/animations/success2_love.json';
+import SuccessCheer from 'assets/animations/success3_cheer.json';
+import SuccessMusic from 'assets/animations/success4_music.json';
+import Fail from 'assets/animations/fail.json';
+
+// svg
+// import SuccessCheer from 'assets/animations/successCheer.svg';
+// import SuccessFlower from 'assets/animations/successFlower.svg';
+// import SuccessLove from 'assets/animations/successLove.svg';
+// import SuccessMusic from 'assets/animations/successMusic.svg';
+// import FailAnimation from 'assets/animations/fail.svg';
+
 import SuccessFailureAnimationsWrapper from './successFailureAnimations.style';
 
 /*
@@ -50,24 +61,27 @@ const SuccessFailureAnimations = ({
     </section>
   );
 
-  const randomSuccessAnimation = () => {
-    switch (Math.floor(Math.random() * (3))) {
-      case 0:
-        return SuccessMusic;
-      case 1:
-        return SuccessLove;
-      case 2:
-        return SuccessCheer;
-      case 3:
-      default:
-        return SuccessFlower;
+  const animationData = () => {
+    if (isSuccess) {
+      switch (Math.floor(Math.random() * (3))) {
+        case 0:
+          return SuccessMusic;
+        case 1:
+          return SuccessLove;
+        case 2:
+          return SuccessCheer;
+        case 3:
+        default:
+          return SuccessFlower;
+      }
     }
+    return Fail;
   };
 
   return (
     <SuccessFailureAnimationsWrapper>
       <div className="animContainer">
-        <img src={isSuccess ? randomSuccessAnimation() : FailAnimation} width="124" height="120" alt="" />
+        <Lottie animationData={animationData()} loop />
       </div>
       <h3 className={`stateText ${isSuccess ? 'success' : 'error'}`}>
         {isSuccess ? successTitle : errorTitle}

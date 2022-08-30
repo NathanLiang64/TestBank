@@ -4,6 +4,8 @@ const SuccessFailureAnimationsWrapper = styled.div`
   .animContainer {
     display: flex;
     justify-content: center;
+    width: 12rem;
+    margin: 0 auto;
   }
 
   .stateText {
