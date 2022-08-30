@@ -88,7 +88,7 @@ const DetailCard = ({
           <InformationList title="帳務日期" content={bizDate} />
           <InformationList
             title="帳號"
-            content={targetBank && targetAccount ? `(${targetBank}) ${targetAccount}` : ''}
+            content={targetBank && targetAccount ? `(${targetBank}) ${targetAccount}` : '(查無帳號資訊)'}
           />
         </DetailDialogContentWrapper>
       )}

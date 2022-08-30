@@ -1,25 +1,24 @@
 import { useState, useEffect } from 'react';
-import { useHistory, useLocation } from 'react-router';
 
 import Layout from 'components/Layout/Layout';
 import AccountDetails from 'components/AccountDetails/accountDetails';
-
+import { loadFuncParams, closeFunc } from 'utilities/AppScriptProxy';
 import { getTransactionDetails } from './api';
 
 /**
  * C00600 存錢計畫 歷程頁
  */
 const DepositPlanTransactionPage = () => {
-  const history = useHistory();
-  const location = useLocation();
   const [plan, setPlan] = useState(null);
 
   /**
    * 從別的頁面跳轉至此頁時，應指定所查詢的帳戶。
    */
-  useEffect(() => {
-    if (location.state && ('plan' in location.state)) {
-      setPlan(location.state.plan);
+  useEffect(async () => {
+    // startParams: 要顯示明細的存錢計劃詳細資料，規格參照：api.js - getDepositPlans API
+    const startParams = await loadFuncParams(); // Function Controller 提供的參數
+    if (startParams && (typeof startParams === 'object')) {
+      setPlan(startParams);
     }
   }, []);
 
@@ -42,7 +41,7 @@ const DepositPlanTransactionPage = () => {
   };
 
   return (
-    <Layout title="存錢歷程" hasClearHeader goBackFunc={() => history.goBack()}>
+    <Layout title="存錢歷程" hasClearHeader goBackFunc={() => closeFunc()}>
       {plan ? (
         <AccountDetails
           selectedAccount={plan}

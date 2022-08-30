@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
-// import { regularBasicInformationApi } from 'apis';
 
 /* Elements */
 import {

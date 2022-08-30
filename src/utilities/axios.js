@@ -1,7 +1,6 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable brace-style */
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import { showError } from './MessageModal';
 import JWEUtil from './JWEUtil';
 import JWTUtil from './JWTUtil';
@@ -47,8 +46,8 @@ const processRequest = async (request) => {
     const aes = await getAesKey();
     request.data = JWTUtil.encryptJWTMessage(aes.aesKey, aes.iv, payload);
   }
-  console.log(jwtToken);
-  console.log(`%cRequest --> ${JSON.stringify(request)}`, 'color: Green;'); // 列出完整的 Request 資訊。
+  // console.log(jwtToken);
+  // console.log(`%cRequest --> ${JSON.stringify(request)}`, 'color: Green;'); // 列出完整的 Request 資訊。
   return request;
 };
 
@@ -58,7 +57,7 @@ const processRequest = async (request) => {
  * @returns
  */
 const processResponse = async (response) => {
-  // console.log(`%cResponse --> \n%c${JSON.stringify(response)}`, 'color: Yellow;', 'color: Green;');
+  // console.log('%cResponse --> \n%c%o', 'color: Yellow;', 'color: Green;', response);
   // console.log(`jwtToken=${response.data.jwtToken}`);
   // eslint-disable-next-line object-curly-newline
   const { code, data, mac, jwtToken } = response.data; // 不論成功或失敗，都一定會更新 jwtToken
@@ -73,7 +72,6 @@ const processResponse = async (response) => {
     if (!jwtToken) console.log(`\x1b[31m*** WARNING *** ${response.config.url} 將 JWT Token 設為空值！`, response);
     else {
       await syncJwtToken(jwtToken); // BUG! 可能因為多執行緒而錯亂
-      Cookies.set('jwtToken', jwtToken); // TODO: 為了相容 axiosConfig
     }
   }
 
@@ -243,9 +241,8 @@ export const callAPI = async (url, request, config) => {
  * @param {*} url POST API URL
  * @param {*} request
  * @param {*} filename 輸出檔名。
- * @param {*} contentType
  */
-const download = async (url, request, filename, contentType) => {
+export const download = async (url, request, filename) => {
   console.log(`\x1b[33mAPI :/${url}`);
   console.log('Request = ', request);
   const token = await getJwtToken();
@@ -258,7 +255,7 @@ const download = async (url, request, filename, contentType) => {
     method: 'POST',
     headers: new Headers({
       Authorization: `Bearer ${token}`,
-      'Content-Type': contentType,
+      'Content-Type': 'application/json',
     }),
     body: JSON.stringify(encrypt),
   }).then((response) => response.blob())
@@ -274,26 +271,6 @@ const download = async (url, request, filename, contentType) => {
     .catch((e) => {
       console.log(e);
     });
-};
-
-/**
- * 下載 PDF 檔案。
- * @param {*} url POST API URL
- * @param {*} request
- * @param {*} filename 輸出檔名。
- */
-export const downloadPDF = async (url, request, filename) => {
-  download(url, request, filename, 'application/pdf');
-};
-
-/**
- * 下載 CSV 檔案。
- * @param {*} url POST API URL
- * @param {*} request
- * @param {*} filename 輸出檔名。
- */
-export const downloadCSV = async (url, request, filename) => {
-  download(url, request, filename, 'text/csv');
 };
 
 export default userAxios();

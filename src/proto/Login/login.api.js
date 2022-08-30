@@ -20,11 +20,12 @@ export const login = async (data) => {
 
     if (errCode === 'E004') {
       if (window.confirm(message)) {
-        return await login({
+        const relogin = {
           ...data,
           isRepeat: true,
           isgToken: response.isgToken,
-        });
+        };
+        return await login(relogin);
       }
 
       alert('已取消登入');
@@ -41,6 +42,11 @@ export const personalDataPreload = async (request) => {
 
 export const getInitData = async () => {
   const response = await callAPI('/smApi/v1/getInitData');
+  return response;
+};
+
+export const getAnnouncementData = async () => {
+  const response = await callAPI('/smApi/v1/getAnnouncementData');
   return response;
 };
 

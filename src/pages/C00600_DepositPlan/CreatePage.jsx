@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory } from 'react-router';
 import { Controller, useForm } from 'react-hook-form';
 import uuid from 'react-uuid';
 import parse from 'html-react-parser';
@@ -12,6 +12,7 @@ import Main from 'components/Layout';
 import Accordion from 'components/Accordion';
 import { FEIBButton, FEIBRadioLabel, FEIBRadio } from 'components/elements';
 import Loading from 'components/Loading';
+import { loadFuncParams, closeFunc } from 'utilities/AppScriptProxy';
 
 import CreatePageWrapper from './CreatePage.style';
 import { getDepositPlans, getDepositPlanProgram, getDepositPlanTerms } from './api';
@@ -23,7 +24,6 @@ import { AlertReachedMaxPlans } from './utils/prompts';
 const DepositPlanCreatePage = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const location = useLocation();
   const { control, handleSubmit } = useForm();
 
   const [programs, setPrograms] = useState();
@@ -38,11 +38,13 @@ const DepositPlanCreatePage = () => {
     let accounts;
     let totalSubAccountCount;
 
-    if (location.state && ('totalSubAccountCount' in location.state)) {
+    // startParams: { plansLength, subAccounts, totalSubAccountCount }
+    const startParams = await loadFuncParams(); // Function Controller 提供的參數
+    if (startParams && (typeof startParams === 'object')) {
       // 從存錢計畫首頁跳轉，故已有子帳戶資訊。
-      plansLength = location.state.plansLength;
-      accounts = location.state.subAccounts;
-      totalSubAccountCount = location.state.totalSubAccountCount;
+      plansLength = startParams.plansLength;
+      accounts = startParams.subAccounts;
+      totalSubAccountCount = startParams.totalSubAccountCount;
     } else {
       // 從其他頁面跳轉至此，應載入子帳戶資訊。
       const response = await getDepositPlans();
@@ -52,7 +54,7 @@ const DepositPlanCreatePage = () => {
     }
 
     // Guard: 存錢計畫首頁最多就三個計畫，意指若未在該情況下進入此頁為不正常操作。
-    if (plansLength >= 3) AlertReachedMaxPlans({ goBack: () => history.goBack() });
+    if (plansLength >= 3) AlertReachedMaxPlans({ goBack: () => closeFunc() });
 
     setSubAccounts(accounts);
     setHasReachedMaxSubAccounts(totalSubAccountCount >= 8);
@@ -76,7 +78,7 @@ const DepositPlanCreatePage = () => {
   };
 
   return (
-    <Layout title="新增存錢計畫" goBackFunc={() => history.goBack()}>
+    <Layout title="新增存錢計畫" goBackFunc={() => closeFunc()}>
       <Main>
         <CreatePageWrapper>
           <form className="flex" onSubmit={handleSubmit(onSubmit)}>

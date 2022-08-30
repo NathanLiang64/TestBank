@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// import { regularBasicInformationApi } from 'apis';
 import { fetchJobsCode, updateRegularBasicInformation } from 'pages/A00600_RegularBasicInformation/api';
 import { closeFunc } from 'utilities/AppScriptProxy';
 

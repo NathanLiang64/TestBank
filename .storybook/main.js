@@ -21,7 +21,6 @@ module.exports = {
     config.resolve.alias = {
       ...config.resolve.alias,
       assets: path.resolve(__dirname, '../src/assets/'),
-      apis: path.resolve(__dirname, '../src/apis/'),
       components: path.resolve(__dirname, '../src/components/'),
       pages: path.resolve(__dirname, '../src/pages/'),
       proto: path.resolve(__dirname, '../src/proto/'),

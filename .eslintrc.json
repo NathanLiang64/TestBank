@@ -40,5 +40,5 @@
     "no-alert": "off",
     "object-curly-spacing": "off"
   },
-  "ignorePatterns": ["/src/apis/*.yml"]
+  "ignorePatterns": []
 }

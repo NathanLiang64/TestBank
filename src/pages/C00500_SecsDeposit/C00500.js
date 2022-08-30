@@ -175,7 +175,7 @@ const C00500 = () => {
           accounts={Object.values(accounts ?? [])}
           onAccountChange={(swiper) => setSelectedAccountIdx(swiper.activeIndex)}
           onFunctionChange={handleFunctionChange}
-          cardColor="yellow"
+          cardColor="blue"
           funcList={[
             { fid: 'D00100', title: '轉帳' },
             { fid: 'E00100', title: '換匯' },

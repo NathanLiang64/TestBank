@@ -30,6 +30,7 @@ const initialState = {
   drawer: {
     title: null,
     content: null,
+    goBack: null,
     shouldAutoClose: false,
   },
   showDrawer: false,
@@ -44,6 +45,7 @@ const initialState = {
     errorDesc: '',
     onClose: null, // Drawer 右上角 X 按下時的處理方式。
   },
+  overPanel: null,
 };
 
 export default function ModalReducer(state = initialState, action) {
@@ -66,6 +68,9 @@ export default function ModalReducer(state = initialState, action) {
 
     case SET_ANIMATION_MODAL_VISIBLE:
       return { ...state, showAnimationModal: data };
+
+    case 'setOverPanel':
+      return { ...state, overPanel: data };
 
     case SET_ANIMATION_MODAL:
       return { ...state, animationModal: data };
@@ -123,6 +128,13 @@ export function setAnimationModalVisible(data) {
 export function setAnimationModal(data) {
   return {
     type: SET_ANIMATION_MODAL,
+    data,
+  };
+}
+
+export function setOverPanel(data) {
+  return {
+    type: 'setOverPanel',
     data,
   };
 }

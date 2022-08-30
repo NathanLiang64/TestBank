@@ -1,5 +1,4 @@
 import TWCA4E2EELib from './TWCA4E2EELib';
-// import { getE2EEFlag } from '../apis/e2eeApi';
 
 /**
  * e2ee加密

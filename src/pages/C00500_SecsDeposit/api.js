@@ -1,4 +1,4 @@
-import { callAPI, downloadPDF } from 'utilities/axios';
+import { callAPI, download } from 'utilities/axios';
 import { stringDateCodeFormatter } from 'utilities/Generator';
 
 /**
@@ -70,7 +70,7 @@ export const getTransactions = async (accountNo) => {
 export const downloadDepositBookCover = async (accountNo, currency = 'TWD') => {
   const today = stringDateCodeFormatter(new Date()); // 今天 yyyyMMdd
   const filename = `${accountNo}-${today}.pdf`;
-  await downloadPDF('/api/deposit/v1/getDepositBookCover', { accountNo, currency }, filename);
+  await download('/api/deposit/v1/getDepositBookCover', { accountNo, currency }, filename);
 };
 
 /**

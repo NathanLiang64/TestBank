@@ -1,5 +1,4 @@
 import uuid from 'react-uuid';
-import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { setDrawer, setDrawerVisible } from 'stores/reducers/ModalReducer';
 
@@ -18,7 +17,6 @@ import AccountCardListWrapper from './AccountCardList.style';
  */
 const AccountCardList = ({ data }) => {
   const dispatch = useDispatch();
-  const history = useHistory();
 
   // 累加帳戶金額
   const accumulateBalance = (list) => list.reduce((accumulate, item) => accumulate + Math.abs(item.balance), 0);
@@ -61,7 +59,7 @@ const AccountCardList = ({ data }) => {
       >
         { accounts.map((card) => {
           const onClick = () => {
-            history.push('/C00600', { focusToAccountNo: card.accountNo });
+            startFunc('C00600', { focusToAccountNo: card.accountNo }); // TODO 從 存錢計畫 返回時的處理。
           };
           return (
             <button
@@ -86,31 +84,29 @@ const AccountCardList = ({ data }) => {
 
   return (
     <AccountCardListWrapper>
-      { mainList.map((card) => {
+      { mainList.map((account) => {
         let annotation;
         let funcID;
-        let onClick = () => history.push(`/${funcID}`);
+        let onClick = () => startFunc(funcID); // TODO 從 存錢計畫 返回時的處理。
+        const cardInfo = accountOverviewCardVarient(account.type);
 
-        switch (card.type) {
+        switch (account.type) {
           case 'M': // 母帳戶
+          case 'F': // 外幣帳戶
+          case 'S': // 證券戶
             onClick = () => {
               startFunc('moreTranscations', {
-                acctBalx: card.balance,
-                accBranch: card.accountNo.slice(0, 3),
-                acctId: card.accountNo,
-                acctName: card.alias,
-                acctType: card.type,
-                ccyCd: 'TWD',
-                cardColor: 'purple',
+                acctBalx: account.balance,
+                accBranch: account.accountNo.slice(0, 3),
+                acctId: account.accountNo,
+                acctName: account.alias,
+                acctType: account.type,
+                ccyCd: account.currency,
+                cardColor: cardInfo.color,
               });
             };
             break;
-          case 'F': // 外幣帳戶
-            funcID = 'C00400';
-            break;
-          case 'S': // 證券戶
-            funcID = 'C00400';
-            break;
+
           case 'C': // 子帳戶
             onClick = () => {
               dispatch(setDrawer({ title: '選擇計畫', content: renderSubAccountDrawer(subAccounts), shouldAutoClose: true }));
@@ -134,16 +130,16 @@ const AccountCardList = ({ data }) => {
           <button
             key={uuid()}
             type="button"
-            title={`前往${card.alias ?? accountOverviewCardVarient(card.type).name}`}
-            aria-label={`前往${card.alias ?? accountOverviewCardVarient(card.type).name}`}
+            title={`前往${account.alias ?? cardInfo.name}`}
+            aria-label={`前往${account.alias ?? cardInfo.name}`}
             onClick={onClick}
           >
-            <AccountCard
-              cardName={card.alias ?? accountOverviewCardVarient(card.type).name}
-              percent={totalBalance > 0 ? Math.round((card.balance / totalBalance) * 100) : 0}
+            <AccountCard // 會依 card.type 決定顏色。
+              cardName={account.alias ?? cardInfo.name}
+              percent={totalBalance > 0 ? Math.round((account.balance / totalBalance) * 100) : 0} // TODO 可能因為捨進位問題，會不等於100
               annotation={annotation}
               hasShadow
-              {...card}
+              {...account}
             />
           </button>
         );
