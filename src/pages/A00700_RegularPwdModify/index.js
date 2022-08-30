@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { switchLoading, transactionAuth, closeFunc } from 'utilities/AppScriptProxy';
-import { changePwd } from 'pages/A00700_RegularPwdModify/api';
+import { renewPwd } from 'pages/A00700_RegularPwdModify/api';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -64,7 +64,7 @@ const RegularPwdModify = () => {
     dispatch(setIsOpen(true));
   };
 
-  // 點擊儲存變更，呼叫變更網銀密碼API
+  // 點擊儲存變更，呼叫更新網銀密碼API
   const onSubmit = async () => {
     const authCode = 0x25;
     const jsRs = await transactionAuth(authCode);
@@ -75,7 +75,7 @@ const RegularPwdModify = () => {
         newPassword: e2ee(getValues('newPassword')),
         newPasswordCheck: e2ee(getValues('newPasswordCheck')),
       };
-      const changePwdResponse = await changePwd(param);
+      const changePwdResponse = await renewPwd(param);
       setResultDialog(changePwdResponse);
       switchLoading(false);
     }

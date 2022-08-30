@@ -1,7 +1,9 @@
 import { callAPI } from 'utilities/axios';
 
 /**
- * 網銀密碼變更
+ * 更新密碼
+ *
+ * 因為驗證關係，更新密碼使用此API
  *
  * @param JwtToken
  * @param PwdChgRq {
@@ -15,7 +17,7 @@ import { callAPI } from 'utilities/axios';
  * }
  * @throws Exception
  */
-export const changePwd = async (param) => {
-  const response = await callAPI('/api/setting/modifyPwd', param);
+export const renewPwd = async (param) => {
+  const response = await callAPI('/api/setting/renewPwd', param);
   return response;
 };
