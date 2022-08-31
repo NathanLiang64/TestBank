@@ -1,93 +1,56 @@
-import { useState, useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { useState, useEffect } from 'react';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import {
   FEIBSwitch,
 } from 'components/elements';
 
 /* API */
+import { closeFunc } from 'utilities/AppScriptProxy';
 import { queryPushSetting, bindPushSetting } from './api';
 
 /* Styles */
 import NoticeSettingWrapper from './noticeSetting.style';
 
 const NoticeSetting = () => {
-  const [communityNoti, setCommunityNoti] = useState(true);
-  const [normalNoti, setNormalNoti] = useState(true);
-  const [securityNoti, setSecurityNoti] = useState(true);
-  // const [foreignCurrencyNoti, setForeignCurrencyNoti] = useState(true);
-  const [nightNoti, setNightNoti] = useState(true);
+  const dispatch = useDispatch();
 
-  // 取得通知設定
-  const getPushSettingList = async () => {
-    const param = {};
-    const response = await queryPushSetting(param);
-    if (response) {
-      const {
-        communityNotice,
-        boardNotice,
-        securityNotice,
-        nightMuteNotice,
-      } = response;
-      setCommunityNoti(communityNotice === 'Y');
-      setNormalNoti(boardNotice === 'Y');
-      setSecurityNoti(securityNotice === 'Y');
-      setNightNoti(nightMuteNotice === 'Y');
-    }
-  };
+  const [model, setModel] = useState({
+    communityNotice: false,
+    boardNotice: false,
+    securityNotice: false,
+    nightMuteNotice: false,
+  });
 
   // 更新通知設定
   const updateNotiSetting = async () => {
     const param = {
-      communityNotice: communityNoti ? 'Y' : 'N',
-      boardNotice: normalNoti ? 'Y' : 'N',
-      securityNotice: securityNoti ? 'Y' : 'N',
-      nightMuteNotice: nightNoti ? 'Y' : 'N',
+      communityNotice: model.communityNotice ? 'Y' : 'N',
+      boardNotice: model.boardNotice ? 'Y' : 'N',
+      securityNotice: model.securityNotice ? 'Y' : 'N',
+      nightMuteNotice: model.nightMuteNotice ? 'Y' : 'N',
     };
-    const response = await bindPushSetting(param);
-    console.log(response);
+    await bindPushSetting(param);
   };
 
-  const handleSwitchChange = (type) => {
-    switch (type) {
-      case 'community':
-        setCommunityNoti(!communityNoti);
-        break;
-      case 'normal':
-        setNormalNoti(!normalNoti);
-        break;
-      case 'security':
-        setSecurityNoti(!securityNoti);
-        break;
-      // case 'foreignCurrency':
-      //   setForeignCurrencyNoti(!foreignCurrencyNoti);
-      //   break;
-      case 'nightNotify':
-        setNightNoti(!nightNoti);
-        break;
-      default:
-        break;
-    }
-  };
+  useEffect(async () => {
+    dispatch(setWaittingVisible(true));
 
-  useEffect(() => {
-    getPushSettingList();
+    const response = await queryPushSetting();
+    if (!response) {
+      // 尙未完成行動裝置綁定
+      // TODO 詢是否立即綁定。
+      await closeFunc();
+    } else setModel({ ...model, ...response });
+
+    dispatch(setWaittingVisible(false));
   }, []);
 
-  const init = useRef(true);
-
-  useEffect(() => {
-    if (init.current) {
-      init.current = false;
-      return;
-    }
-    updateNotiSetting();
-  }, [communityNoti, normalNoti, securityNoti, nightNoti]);
-
   return (
-    <>
-      <Header title="訊息通知設定" />
+    <Layout title="訊息通知設定">
       <NoticeSettingWrapper>
         <div className="settingItem">
           <div className="settingLabel">
@@ -96,8 +59,11 @@ const NoticeSetting = () => {
           </div>
           <div className="switchItem">
             <FEIBSwitch
-              checked={communityNoti}
-              onChange={() => handleSwitchChange('community')}
+              checked={model.communityNotice}
+              onChange={(e, checked) => {
+                model.communityNotice = checked;
+                updateNotiSetting();
+              }}
             />
           </div>
         </div>
@@ -108,8 +74,11 @@ const NoticeSetting = () => {
           </div>
           <div className="switchItem">
             <FEIBSwitch
-              checked={normalNoti}
-              onChange={() => handleSwitchChange('normal')}
+              checked={model.boardNotice}
+              onChange={(e, checked) => {
+                model.boardNotice = checked;
+                updateNotiSetting();
+              }}
             />
           </div>
         </div>
@@ -120,8 +89,11 @@ const NoticeSetting = () => {
           </div>
           <div className="switchItem">
             <FEIBSwitch
-              checked={securityNoti}
-              onChange={() => handleSwitchChange('security')}
+              checked={model.securityNotice}
+              onChange={(e, checked) => {
+                model.securityNotice = checked;
+                updateNotiSetting();
+              }}
             />
           </div>
         </div>
@@ -148,13 +120,16 @@ const NoticeSetting = () => {
           </div>
           <div className="switchItem">
             <FEIBSwitch
-              checked={nightNoti}
-              onChange={() => handleSwitchChange('nightNotify')}
+              checked={model.nightMuteNotice}
+              onChange={(e, checked) => {
+                model.nightMuteNotice = checked;
+                updateNotiSetting();
+              }}
             />
           </div>
         </div>
       </NoticeSettingWrapper>
-    </>
+    </Layout>
   );
 };
 
