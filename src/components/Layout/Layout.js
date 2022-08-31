@@ -27,7 +27,7 @@ function Layout({
   //
   // 處理 Popup視窗、 等待中 及 Drawer。
   //
-  const { overPanel } = useSelector((state) => state.ModalReducer);
+  const { overPanel, setResult } = useSelector((state) => state.ModalReducer);
   const modalData = useSelector((state) => state.ModalReducer.modal);
   const showModal = useSelector((state) => state.ModalReducer.showModal);
   const drawerData = useSelector((state) => state.ModalReducer.drawer);
@@ -43,6 +43,7 @@ function Layout({
     }
     dispatch(setModalVisible(false));
     // dispatch(setWaittingVisible(false));
+    if (setResult) setResult(null);
   };
 
   // 關閉結果動畫彈窗
@@ -58,9 +59,10 @@ function Layout({
       if ((await modalData.onOk() === false)) return;
     }
     // 如果有需要接續 modal 得操作，可以設定 noDismiss 為 true，以避免點擊ok按鈕後，下個 modal 遭關閉。
-    if (!modalData.noDismiss) {
-      dispatch(setModalVisible(false));
-    }
+    if (modalData.noDismiss) return;
+
+    dispatch(setModalVisible(false));
+    if (setResult) setResult(true);
   };
 
   //
@@ -69,6 +71,7 @@ function Layout({
       if ((await modalData.onCancel() === false)) return;
     }
     dispatch(setModalVisible(false));
+    if (setResult) setResult(false);
   };
 
   /**

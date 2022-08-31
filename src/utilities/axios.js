@@ -112,7 +112,6 @@ const processResponse = async (response) => {
       // eslint-disable-next-line react/jsx-one-expression-per-line
       await showError((<p>*** {code} ***<br />{message}</p>));
     }
-    return Promise.reject(code);
   }
 
   console.log(`\x1b[33m${response.config.url} \x1b[37m - Response = `, response.data);
@@ -207,11 +206,10 @@ export const callAPI = async (url, request, config) => {
   let response = null;
   await userRequest('post', url, request, config)
     .then(async (rs) => {
+      response = rs.data;
       // 只需傳回 WebController 傳回的部份，其他由 axios 額外附加的屬性則不傳回。
       const { code, message } = rs.data;
-      if (code === '0000') {
-        response = rs.data;
-      } else {
+      if (code !== '0000') {
         switch (code) {
           case 'WEBCTL1006':
             await showError(message, () => {
@@ -220,7 +218,7 @@ export const callAPI = async (url, request, config) => {
             break;
 
           default:
-            await showError(message);
+            // await showError(message);
             break;
         }
       }

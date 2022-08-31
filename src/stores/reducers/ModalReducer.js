@@ -10,6 +10,7 @@ import {
 } from '../constant';
 
 const initialState = {
+  setResult: (value) => value,
   modal: {
     title: null,
     content: null,
@@ -51,6 +52,9 @@ const initialState = {
 export default function ModalReducer(state = initialState, action) {
   const { type, data } = action;
   switch (type) {
+    case 'setResult':
+      return { ...state, setResult: data };
+
     case SET_MODAL:
       return { ...state, modal: data };
 
@@ -81,6 +85,13 @@ export default function ModalReducer(state = initialState, action) {
     default:
       return state;
   }
+}
+
+export function setResult(data) {
+  return {
+    type: 'setResult',
+    data,
+  };
 }
 
 export function setModal(data) {

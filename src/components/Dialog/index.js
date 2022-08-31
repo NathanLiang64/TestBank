@@ -23,7 +23,7 @@ const Dialog = ({
 }) => (
   <DialogWrapper
     open={isOpen}
-    onClose={onClose}
+    // onClose={onClose}
     aria-labelledby="alert-dialog-title"
     aria-describedby="alert-dialog-description"
   >

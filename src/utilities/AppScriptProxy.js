@@ -309,7 +309,7 @@ async function syncJwtToken(jwtToken) {
  * @returns 最新的 JwtToken
  */
 async function getJwtToken(force) {
-  let jwtToken = sessionStorage.getItem('jwtToken');
+  let jwtToken = sessionStorage.getItem('jwtToken'); // 每次收到 Response 時，就會寫入 sessionStorage
   if (!jwtToken || force) {
     // 從 APP 取得 JWT Token，並存入 sessionStorage 給之後的 WebView 功能使用。
     const result = await callAppJavaScript('getAPPAuthdata', null, true, () => null); // 傳回值： {"auth":""}
