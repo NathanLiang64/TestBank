@@ -74,6 +74,7 @@ const RegularPwdModify = () => {
         password: e2ee(getValues('password')),
         newPassword: e2ee(getValues('newPassword')),
         newPasswordCheck: e2ee(getValues('newPasswordCheck')),
+        actionCode: '1',
       };
       const changePwdResponse = await renewPwd(param);
       setResultDialog(changePwdResponse);
@@ -121,7 +122,11 @@ const RegularPwdModify = () => {
       )}
       action={(
         <ConfirmButtons
-          mainButtonOnClick={() => {
+          mainButtonOnClick={async () => {
+            const param = {
+              actionCode: '2',
+            };
+            await renewPwd(param);
             setShowWarningDialog(false);
             closeFunc();
           }}

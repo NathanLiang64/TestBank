@@ -3,7 +3,6 @@ import { useHistory } from 'react-router';
 import { toCurrency } from 'utilities/Generator';
 
 /* Elements */
-// import Header from 'components/Header';
 import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
 import Accordion from 'components/Accordion';
