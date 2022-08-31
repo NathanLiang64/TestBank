@@ -1,108 +1,75 @@
+import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import parse from 'html-react-parser';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { getQACategory, getQASubCategory } from 'pages/S00600_QandA/api';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import {
   FEIBTabContext,
   FEIBTabList,
   FEIBTab,
 } from 'components/elements';
 import Accordion from 'components/Accordion';
+
 /* Styles */
 import QandAWrapper from './QandA.style';
 
 const QandA = () => {
-  const [show, setShow] = useState(false);
-  const [tabs, setTabs] = useState([]);
-  const [tabValue, setTabValue] = useState('會員申請');
-  const [qAcontent, setQAcontent] = useState([{
-    title: '--',
-    subItems: [
-      {
-        question: '--',
-        answer: '--',
-      },
-    ],
-  }]);
+  const dispatch = useDispatch();
 
-  const getQAContent = async (cat) => {
-    const param = { cat };
-    const { code, data } = await getQASubCategory(param);
-    // eslint-disable-next-line no-console
-    if (code === '0000') {
-      console.log('取得 QA 內容回傳', data);
-      setQAcontent(data);
-    }
-    setShow(true);
-  };
+  const [tabs, setTabs] = useState();
+  const [tabValue, setTabValue] = useState();
+  const [categoryData, setCategoryData] = useState();
 
-  const getQATab = async () => {
-    const { code, data } = await getQACategory({});
-    // eslint-disable-next-line no-console
-    if (code === '0000') {
-      console.log('取得 QA 分類回傳', data);
-      setTabs(data);
-      setTabValue(data[0]);
-    }
-  };
+  useEffect(async () => {
+    dispatch(setWaittingVisible(true));
 
-  const handleTabChange = (event, type) => {
-    if (type !== tabValue) {
-      setTabValue(type);
-    }
-  };
+    const categories = await getQACategory();
+    setTabs(categories);
+    setTabValue(categories[0]);
 
-  const renderTabs = () => (
-    <FEIBTabList onChange={handleTabChange} $size="small" $type="fixed">
-      {
-        tabs.map((item) => (
-          <FEIBTab key={item} label={item} value={item} />
-        ))
-      }
-    </FEIBTabList>
-  );
-
-  const renderAccordion = (subItems) => (
-    subItems.map((item) => (
-      <Accordion title={item.question} key={item.question} className="customAccordion">
-        { parse(item.answer.replace(/\u2028/gi, '')) }
-      </Accordion>
-    ))
-  );
-
-  const renderQAContent = () => (
-    qAcontent.map((item) => (
-      <div key={item.title}>
-        <div className="subTitle">
-          { item.title }
-        </div>
-        { renderAccordion(item.subItems) }
-      </div>
-    ))
-  );
-
-  useEffect(() => {
-    getQATab();
+    dispatch(setWaittingVisible(false));
   }, []);
 
-  useEffect(() => {
-    getQAContent(tabValue);
+  useEffect(async () => {
+    const data = (tabValue) ? await getQASubCategory({ cat: tabValue }) : null;
+    setCategoryData(data);
   }, [tabValue]);
 
-  return (
+  const QAContent = () => (
     <>
-      <Header title="常見問題" />
+      {categoryData?.map((category) => (
+        <div key={category.title}>
+          <div className="subTitle">
+            { category.title }
+          </div>
+
+          <div>
+            {category.subItems?.map((subItem) => (
+              <Accordion title={subItem.question} key={subItem.question} className="customAccordion">
+                { parse(subItem.answer.replace(/\u2028/gi, '')) }
+              </Accordion>
+            ))}
+          </div>
+        </div>
+      ))}
+    </>
+  );
+
+  return (
+    <Layout title="常見問題">
       <QandAWrapper>
         <FEIBTabContext value={tabValue}>
-          { renderTabs() }
-          <div style={{ visibility: show ? 'visible' : 'hidden' }}>
-            { renderQAContent() }
-          </div>
+          <FEIBTabList onChange={(e, type) => setTabValue(type)} $size="small" $type="fixed">
+            {tabs?.map((item) => (<FEIBTab key={item} label={item} value={item} />))}
+          </FEIBTabList>
+
+          <QAContent />
         </FEIBTabContext>
       </QandAWrapper>
-    </>
+    </Layout>
   );
 };
 
