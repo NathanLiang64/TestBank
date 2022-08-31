@@ -4,15 +4,17 @@ import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Loading from 'components/Loading';
-import Header from 'components/Header';
 import Dialog from 'components/Dialog';
 import BottomDrawer from 'components/BottomDrawer';
-import { FEIBButton } from 'components/elements';
+import { FEIBButton, FEIBIconButton } from 'components/elements';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import theme from 'themes/theme';
+import { ArrowBackIcon, HomeIcon } from 'assets/images/icons';
+import { goHome as goHomeFunc, closeFunc } from 'utilities/AppScriptProxy';
 import {
   setModalVisible, setWaittingVisible, setDrawerVisible, setAnimationModalVisible,
 } from '../../stores/reducers/ModalReducer';
+import HeaderWrapper from './Header.style';
 
 function Layout({
   title,
@@ -192,7 +194,15 @@ function Layout({
   if (!waitting) {
     return (
       <div>
-        <Header title={title} hideHome={!goHome} hideBack={!goBack} goBack={goBackFunc} isTransparent={hasClearHeader} />
+        <HeaderWrapper $isTransparent={hasClearHeader}>
+          <FEIBIconButton className="goBack" $fontSize={2.4} $iconColor={theme.colors.text.dark} onClick={goBackFunc ?? closeFunc} visibility={goBack ? 'visible' : 'hidden'}>
+            <ArrowBackIcon />
+          </FEIBIconButton>
+          <h2>{title}</h2>
+          <FEIBIconButton className="goHome" $fontSize={2.4} $iconColor={theme.colors.text.dark} onClick={goHomeFunc} visibility={goHome ? 'visible' : 'hidden'}>
+            <HomeIcon />
+          </FEIBIconButton>
+        </HeaderWrapper>
 
         <div>
             {waitting ? null : children}
