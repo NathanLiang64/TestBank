@@ -20,7 +20,7 @@ import { RadioGroup } from '@material-ui/core';
 import AddNewItem from 'components/AddNewItem';
 import SettingItem from 'components/SettingItem';
 import BottomDrawer from 'components/BottomDrawer';
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 // import { getAllNotices, addNotice, removeNotice } from './api';
 import {
   getAllNotices,
@@ -268,8 +268,7 @@ const ForeignCurrencyPriceSetting = () => {
   }, [currencyType]);
 
   return (
-    <>
-      <Header title="外幣到價通知" />
+    <Layout title="外幣到價通知">
       <ForeignCurrencyPriceSettingWrapper>
         {
           notificationList.length < 5 && (
@@ -279,7 +278,7 @@ const ForeignCurrencyPriceSetting = () => {
         { renderNotiList() }
         { renderDrawer() }
       </ForeignCurrencyPriceSettingWrapper>
-    </>
+    </Layout>
   );
 };
 

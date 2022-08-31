@@ -8,6 +8,7 @@ import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
 import Accordion from 'components/Accordion';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
+import Layout from 'components/Layout/Layout';
 
 /* Styles */
 import AddPersonIcon from 'assets/images/addPersonIcon.svg';
@@ -27,8 +28,7 @@ const ReserveTransferSearch2 = ({ location }) => {
   }, []);
 
   return (
-    <>
-      <Header title="取消預約轉帳" />
+    <Layout title="取消預約轉帳">
       <ReserveTransferSearchWrapper className={!isSuccess && 'resultFail'}>
         <SuccessFailureAnimations isSuccess={isSuccess} successTitle="設定成功" errorTitle="設定失敗" />
         {
@@ -93,7 +93,7 @@ const ReserveTransferSearch2 = ({ location }) => {
           <FEIBButton onClick={toSearchPage}>確認</FEIBButton>
         </section>
       </ReserveTransferSearchWrapper>
-    </>
+    </Layout>
   );
 };
 

@@ -10,7 +10,7 @@ import { getNickName, updateNickName, uploadAvatar } from 'pages/T00100_Profile/
 import {
   FEIBInput, FEIBInputLabel, FEIBButton, FEIBErrorMessage,
 } from 'components/elements';
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import Dialog from 'components/Dialog';
 
 /* Styles */
@@ -172,8 +172,7 @@ const Profile = () => {
   }, []);
 
   return (
-    <>
-      <Header title="個人化設定" />
+    <Layout title="個人化設定">
       <ProfileWrapper>
         <div className="avatarContainer">
           <img src={avatarUrl} onError={() => setAvatarUrl(Avatar)} alt="" key={avatarUrl} />
@@ -200,7 +199,7 @@ const Profile = () => {
         { renderDialog() }
         { renderMessageDialog() }
       </ProfileWrapper>
-    </>
+    </Layout>
   );
 };
 

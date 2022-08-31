@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import { closeFunc } from 'utilities/AppScriptProxy';
 
 /* Elements */
-import Header from 'components/Header';
 import {
   FEIBButton,
 } from 'components/elements';
 import Accordion from 'components/Accordion';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import InformationList from 'components/InformationList';
+import Layout from 'components/Layout/Layout';
 
 /* Styles */
 import CardLessATMWrapper from './cardLessATM.style';
@@ -31,8 +31,7 @@ const CardLessATM2 = ({ location }) => {
   }, []);
 
   return (
-    <>
-      <Header title="無卡提款結果" />
+    <Layout title="無卡提款結果">
       <CardLessATMWrapper className="result-wrapper">
         <div className="section1">
           <SuccessFailureAnimations
@@ -81,7 +80,7 @@ const CardLessATM2 = ({ location }) => {
           </FEIBButton>
         </div>
       </CardLessATMWrapper>
-    </>
+    </Layout>
   );
 };
 

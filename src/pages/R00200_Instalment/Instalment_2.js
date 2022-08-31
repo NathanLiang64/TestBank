@@ -2,7 +2,7 @@ import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import { FEIBButton, FEIBRadioLabel, FEIBRadio } from 'components/elements';
 import Accordion from 'components/Accordion';
 import InstallmentTerms from './installmentTerms';
@@ -35,8 +35,7 @@ const Instalment2 = () => {
   };
 
   return (
-    <>
-      <Header title="晚點付 (總額)" goBack={() => history.replace('/staging1')} />
+    <Layout title="晚點付 (總額)">
       <InstalmentWrapper className="InstalmentWrapper" small>
         <form>
           <div>
@@ -63,7 +62,7 @@ const Instalment2 = () => {
           </FEIBButton>
         </form>
       </InstalmentWrapper>
-    </>
+    </Layout>
   );
 };
 

@@ -1,17 +1,16 @@
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import ExchangeTable from 'pages/E00100_Exchange/exchangeTable';
 
 /* Styles */
 import ExchangeRateWrapper from './exchangeRate.style';
 
 const ExchangeRate = () => (
-  <>
-    <Header title="匯率" />
+  <Layout title="匯率">
     <ExchangeRateWrapper>
       <ExchangeTable />
     </ExchangeRateWrapper>
-  </>
+  </Layout>
 );
 
 export default ExchangeRate;

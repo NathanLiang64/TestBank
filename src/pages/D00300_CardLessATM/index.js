@@ -8,7 +8,7 @@ import { closeFunc, switchLoading } from 'utilities/AppScriptProxy';
 import { getCardlessStatus, getCardStatus, cardLessWithdrawActivate } from 'pages/D00300_CardLessATM/api';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import {
   FEIBButton,
   // FEIBInputLabel,
@@ -284,13 +284,12 @@ const CardLessATM = () => {
   }, []);
 
   return (
-    <>
-      <Header title="無卡提款" />
+    <Layout title="無卡提款">
       <CardLessATMWrapper>
         {renderPage()}
         {renderDialog()}
       </CardLessATMWrapper>
-    </>
+    </Layout>
   );
 };
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 
 /* Elements */
@@ -7,6 +8,7 @@ import {
   FEIBSwitchLabel,
 } from 'components/elements';
 import Accordion from 'components/Accordion';
+import InformationList from 'components/InformationList';
 import { EditRounded } from '@material-ui/icons';
 import {
   getQLStatus,
@@ -16,7 +18,11 @@ import {
   closeFunc,
   transactionAuth,
 } from 'utilities/AppScriptProxy';
-import { customPopup, showAnimationModal } from 'utilities/MessageModal';
+import {
+  customPopup, showAnimationModal, showDrawer, closeDrawer,
+} from 'utilities/MessageModal';
+import { getQuickLoginInfo } from './api';
+import DrawerContent from './drawerContent';
 
 /* Styles */
 import QuickLoginSettingWrapper from './quickLoginSetting.style';
@@ -24,6 +30,23 @@ import QuickLoginSettingWrapper from './quickLoginSetting.style';
 const QuickLoginSetting = () => {
   const [isBioActive, setIsBioActive] = useState(true);
   const [isPatternActive, setIsPatternActive] = useState(false);
+  const [bindingDate, setBindingDate] = useState('');
+  const [bindingDevice, setBindingDevice] = useState('');
+  const [midPhone, setMidPhone] = useState('');
+
+  // 取得綁定資訊
+  const fetchLoginBindingInfo = async () => {
+    const { boundDate, boundDevice, midPhoneNo } = await getQuickLoginInfo();
+    if (boundDate) {
+      setBindingDate(boundDate);
+    }
+    if (boundDevice) {
+      setBindingDevice(boundDevice);
+    }
+    if (midPhoneNo) {
+      setMidPhone(midPhoneNo);
+    }
+  };
 
   // 解除快登綁定
   const callAppDelQL = async (type) => {
@@ -110,6 +133,7 @@ const QuickLoginSetting = () => {
 
   // 進行裝置綁定
   const callAppBindRegQL = async (type, pwd) => {
+    // 通知 app 執行綁頂
     const { result, message } = await regQL(type, pwd);
     const isSuccess = result === 'true';
     // 顯示綁定結果
@@ -121,6 +145,9 @@ const QuickLoginSetting = () => {
       errorCode: '',
       errorDesc: message,
     });
+
+    closeDrawer();
+
     // 設定 Switch 狀態
     if (type === '1') {
       setIsBioActive(isSuccess);
@@ -128,6 +155,7 @@ const QuickLoginSetting = () => {
     if (type === '2') {
       setIsPatternActive(isSuccess);
     }
+    fetchLoginBindingInfo();
   };
 
   // 設定生物或圖形辨識, 1: 生物辨識, 2: 圖形辨識
@@ -138,11 +166,18 @@ const QuickLoginSetting = () => {
 
     // 設定綁定資料成功進行交易驗證
     if (result === 'true') {
-      const code = 0x15;
-      const rs = await transactionAuth(code);
+      const code = 0x17;
+      const rs = await transactionAuth(code, '');
       if (rs?.result) {
-        // 交易驗證成功，進行綁定
-        callAppBindRegQL(type, rs?.netbankPwd);
+        // 交易驗證成功，開啟綁定 drawer，點擊確認進行 MID 驗證
+        showDrawer(
+          'APP 手機裝置綁定',
+          <DrawerContent
+            midPhone={midPhone}
+            confirmClick={() => callAppBindRegQL(type, rs?.netbankPwd)}
+            cancelClick={closeDrawer}
+          />,
+        );
       }
     }
 
@@ -159,6 +194,7 @@ const QuickLoginSetting = () => {
 
   useEffect(() => {
     fetchQLStatus();
+    fetchLoginBindingInfo();
   }, []);
 
   return (
@@ -207,6 +243,15 @@ const QuickLoginSetting = () => {
             </div>
           </div>
         </div>
+        {
+          (isBioActive || isPatternActive) && (
+            <div className="bindingInfo">
+              <h1>已登錄裝置</h1>
+              <InformationList title="啟用日期" content={bindingDate} />
+              <InformationList title="裝置型號" content={bindingDevice} />
+            </div>
+          )
+        }
         <div className="agreeTip">
           <p>提醒您：</p>
           <p>(1)本服務須使用手機行動網路進行認證。</p>

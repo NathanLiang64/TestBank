@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router';
-import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
 import successImg from 'assets/images/successImg.svg';
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import BottomDrawer from 'components/BottomDrawer';
 import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
@@ -35,8 +34,6 @@ const Instalment3 = () => {
     },
   ];
 
-  useCheckLocation();
-  usePageInfo('/api/instalment');
   const history = useHistory();
 
   const ResultTable = () => (
@@ -127,8 +124,7 @@ const Instalment3 = () => {
   );
 
   return (
-    <>
-      <Header title="晚點付 (總額)" goBack={() => history.replace('/staging2')} />
+    <Layout title="晚點付 (總額)">
       <InstalmentWrapper className="InstalmentWrapper" small>
         <form>
           <div>
@@ -164,7 +160,7 @@ const Instalment3 = () => {
         />
         <ResultDialog />
       </InstalmentWrapper>
-    </>
+    </Layout>
   );
 };
 

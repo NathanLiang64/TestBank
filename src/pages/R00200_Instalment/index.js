@@ -3,7 +3,7 @@ import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import Dialog from 'components/Dialog';
 import { FEIBButton, FEIBRadio, FEIBRadioLabel } from 'components/elements';
 import Accordion from 'components/Accordion';
@@ -58,8 +58,7 @@ const Instalment = () => {
   );
 
   return (
-    <>
-      <Header title="晚點付" goBack={() => history.replace('/')} />
+    <Layout title="晚點付">
       <InstalmentWrapper className="InstalmentWrapper" small>
         <form onSubmit={() => {}}>
           <div>
@@ -83,7 +82,7 @@ const Instalment = () => {
           { renderEditCardNameDialog(cardName) }
         </form>
       </InstalmentWrapper>
-    </>
+    </Layout>
   );
 };
 

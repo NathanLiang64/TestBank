@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getFinanceStore } from 'pages/E00300_FinancialDepartments/api';
 
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 
 /* Styles */
 import FinancialDepartmentsWrapper from './financialDepartments.style';
@@ -38,14 +38,13 @@ const FinancialDepartments = () => {
   }, []);
 
   return (
-    <>
-      <Header title="金融百貨" />
+    <Layout title="金融百貨">
       <FinancialDepartmentsWrapper>
         {
           renderCards()
         }
       </FinancialDepartmentsWrapper>
-    </>
+    </Layout>
   );
 };
 

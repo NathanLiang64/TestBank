@@ -14,7 +14,7 @@ import {
   FEIBErrorMessage,
   FEIBButton,
 } from 'components/elements';
-import Header from 'components/Header';
+import Layout from 'components/Layout/Layout';
 import ConfirmButtons from 'components/ConfirmButtons';
 import Accordion from 'components/Accordion';
 import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
@@ -138,8 +138,7 @@ const RegularBasicInformation = () => {
   }, []);
 
   return (
-    <>
-      <Header title="六個月基本資料變更" hideBack hideHome />
+    <Layout title="六個月基本資料變更" goBack={false} goHome={false}>
       <RegularBasicInformationWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
@@ -232,7 +231,7 @@ const RegularBasicInformation = () => {
           </div>
         </form>
       </RegularBasicInformationWrapper>
-    </>
+    </Layout>
   );
 };
 

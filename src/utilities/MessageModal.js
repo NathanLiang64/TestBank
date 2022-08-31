@@ -10,6 +10,10 @@ export const closePopup = () => {
   store.dispatch(setModalVisible(false));
 };
 
+export const closeDrawer = () => {
+  store.dispatch(setDrawerVisible(false));
+};
+
 export const showPrompt = async (message, action) => {
   const promise = new Promise((resolve) => {
     store.dispatch(setModal({
