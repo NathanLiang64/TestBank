@@ -13,6 +13,7 @@ import { ArrowBackIcon, HomeIcon } from 'assets/images/icons';
 import { goHome as goHomeFunc, closeFunc } from 'utilities/AppScriptProxy';
 import {
   setModalVisible, setWaittingVisible, setDrawerVisible, setAnimationModalVisible,
+  setDialogVisible,
 } from '../../stores/reducers/ModalReducer';
 import HeaderWrapper from './Header.style';
 
@@ -29,7 +30,7 @@ function Layout({
   //
   // 處理 Popup視窗、 等待中 及 Drawer。
   //
-  const { overPanel, setResult } = useSelector((state) => state.ModalReducer);
+  const { overPanel, setResult, showDialog } = useSelector((state) => state.ModalReducer);
   const modalData = useSelector((state) => state.ModalReducer.modal);
   const showModal = useSelector((state) => state.ModalReducer.showModal);
   const drawerData = useSelector((state) => state.ModalReducer.drawer);
@@ -64,6 +65,7 @@ function Layout({
     if (modalData.noDismiss) return;
 
     dispatch(setModalVisible(false));
+    dispatch(setDialogVisible(false));
     if (setResult) setResult(true);
   };
 
@@ -73,6 +75,7 @@ function Layout({
       if ((await modalData.onCancel() === false)) return;
     }
     dispatch(setModalVisible(false));
+    dispatch(setDialogVisible(false));
     if (setResult) setResult(false);
   };
 
@@ -82,11 +85,11 @@ function Layout({
   useEffect(async () => {
     // console.log('showModal -> ', showModal || showAnimationModal);
     // 強制關掉 等待畫面，才能看到 Popup 視窗。
-    if (showModal || showAnimationModal) {
+    if (showModal || showDialog || showAnimationModal) {
       dispatch(setWaittingVisible(false));
-      dispatch(setDrawerVisible(false));
+      if (!showDialog) dispatch(setDrawerVisible(false));
     }
-  }, [showModal, showAnimationModal]);
+  }, [showModal, showDialog, showAnimationModal]);
 
   /**
    * 顯示訊息視窗
@@ -95,7 +98,7 @@ function Layout({
     <div>
       <Dialog
         title={modalData.title ?? '系統訊息'}
-        isOpen={showModal}
+        isOpen={showModal || showDialog}
         onClose={onModalClose}
         content={modalData.content}
         action={
@@ -143,7 +146,7 @@ function Layout({
   }, [waitting]);
 
   //
-  const onDrawerCancel = async () => {
+  const onDrawerClose = async () => {
     if (drawerData.onClose) {
       if ((await drawerData.onClose() === false)) return;
     }
@@ -159,7 +162,7 @@ function Layout({
       // titleColor={theme.colors.primary.dark}
       isOpen={showDrawer}
       onBack={drawerData.goBack}
-      onClose={onDrawerCancel}
+      onClose={onDrawerClose}
       content={drawerData.content}
       shouldAutoClose={drawerData.shouldAutoClose}
     />
@@ -206,10 +209,10 @@ function Layout({
 
         <div>
             {waitting ? null : children}
-            <MessageModal />
             <Drawer />
-            {overPanel}
+            <MessageModal />
             <AnimationModal />
+            {overPanel}
         </div>
       </div>
     );
