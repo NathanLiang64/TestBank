@@ -1,8 +1,11 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable object-curly-newline */
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { setDrawer } from 'stores/reducers/ModalReducer';
 import { FEIBButton, FEIBInputLabel, FEIBInput, FEIBErrorMessage } from 'components/elements';
 import Badge from 'components/Badge';
 import Avatar from 'components/Avatar';
@@ -26,6 +29,9 @@ function AccountEditor({
   initData,
   onFinished,
 }) {
+  const dispatch = useDispatch();
+  const drawerSetting = useSelector((state) => state.ModalReducer.drawer);
+
   const storageItemName = 'BankList';
   const [bankList, setBankList] = useState();
   const [model, setModel] = useState(initData);
@@ -92,7 +98,7 @@ function AccountEditor({
             name={idBankNo}
             setValue={setValue}
             trigger={trigger}
-            defaultValue={getValues(idBankNo)}
+            value={getValues(idBankNo)}
             errorMessage={errors.bankId?.message}
           />
         </div>
@@ -101,14 +107,13 @@ function AccountEditor({
           <Controller
             control={control}
             name={idAcctNo}
-            defaultValue={model.acctId}
+            value={model.acctId}
             render={({ field }) => (
               <FEIBInput
                 {...field}
-                autoComplete="off"
                 inputMode="numeric"
-                maxLength="14"
                 placeholder="請輸入常用的銀行帳號"
+                inputProps={{ maxLength: 14, autoComplete: 'off' }}
                 error={!!errors?.acctId} // 畫紅底線
               />
             )}
@@ -151,8 +156,8 @@ function AccountEditor({
               <FEIBInput
                 {...field}
                 autoComplete="off"
-                maxLength="20"
                 placeholder="請輸入容易讓您記住此帳號的暱稱"
+                inputProps={{ maxLength: 20 }}
                 error={!!errors?.nickName} // 畫紅底線
               />
             )}

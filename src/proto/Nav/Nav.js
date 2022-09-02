@@ -36,11 +36,13 @@ const Nav = () => {
     <Layout title="測試功能首頁" goBack={false} goHome={false}>
       <NavWrapper>
         <div className="bankee">
+          <div onClick={() => startFunc('D00100')}>D00100 轉帳（聖森版）</div>
           <div onClick={() => startFunc('C00300')}>C00300 台幣存款首頁</div>
           <div onClick={() => startFunc('C00400')}>C00400 外幣存款首頁</div>
           <div onClick={() => startFunc('C00500')}>C00500 交割帳戶首頁</div>
           <div onClick={() => startFunc('M00100')}>M00100 社群圈首頁</div>
-          <div onClick={() => startFunc('D00100')}>D00100 台幣轉帳 - (施工中)</div>
+          <div onClick={() => startFunc('D00500')}>D00500 常用帳號管理</div>
+          <div onClick={() => startFunc('D00600')}>D00600 約定帳號管理</div>
           <div onClick={() => startFunc('B00600')}>B00600 更多...</div>
 
           {/* <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await transactionAuth(0x35))}>
@@ -80,8 +82,6 @@ const Nav = () => {
           <div onClick={() => startFunc('L00100')}>L00100 貸款 首頁 - (施工中)</div>
           <div onClick={() => startFunc('L001001')}>L00100 貸款 可能回饋頁 - (施工中)</div>
           <div onClick={() => startFunc('L001002')}>L00100 貸款 資訊頁 - (施工中)</div>
-          <div onClick={() => startFunc('D00500')}>D00500 常用帳號管理</div>
-          <div onClick={() => startFunc('D00600')}>D00600 約定帳號管理</div>
         </div>
 
         <div className="vj">

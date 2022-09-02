@@ -70,8 +70,8 @@ function AccountEditor({
               <FEIBInput
                 {...field}
                 autoComplete="off"
-                maxLength="20"
                 placeholder="請輸入容易讓您記住此帳號的暱稱"
+                inputProps={{ maxLength: 20 }}
                 error={!!errors?.nickName} // 畫紅底線
               />
             )}

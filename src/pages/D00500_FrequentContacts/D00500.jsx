@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import {
-  setModal, setModalVisible, setDrawer, setDrawerVisible, setWaittingVisible,
-} from 'stores/reducers/ModalReducer';
-
 import { AddIcon } from 'assets/images/icons';
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
+import { showCustomPrompt, showDrawer } from 'utilities/MessageModal';
+import { loadLocalData, setLocalData } from 'utilities/Generator';
+import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import {
   getAllFrequentAccount,
@@ -25,7 +24,9 @@ import PageWrapper from './D00500.style';
  */
 const Page = () => {
   const dispatch = useDispatch();
-  const [cards, setCards] = useState([]);
+  const [accounts, setAccounts] = useState([]);
+
+  const storageName = 'FreqAccts';
 
   /**
    *- 初始化
@@ -33,7 +34,8 @@ const Page = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    setCards(await getAllFrequentAccount());
+    const accts = await loadLocalData(storageName, getAllFrequentAccount);
+    setAccounts(accts);
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -42,70 +44,61 @@ const Page = () => {
    * 處理UI流程：新增帳戶
    */
   const addnewAccount = async () => {
-    const onFinished = async (newCard) => {
-      const successful = await addFrequentAccount(newCard);
+    const onFinished = async (newAcct) => {
+      const successful = await addFrequentAccount(newAcct);
       if (successful) {
-        setCards([{
-          ...newCard,
+        setAccounts(setLocalData(storageName, [{
+          ...newAcct,
           isNew: true,
-        }, ...cards]);
+        }, ...accounts]));
       }
       dispatch(setDrawerVisible(false));
     };
 
-    dispatch(setDrawer({
-      title: '新增常用帳號',
-      content: (<AccountEditor onFinished={onFinished} />),
-    }));
-    dispatch(setDrawerVisible(true));
+    await showDrawer('新增常用帳號', (<AccountEditor onFinished={onFinished} />));
   };
 
   /**
    * 處理UI流程：編輯帳戶
-   * @param {*} card 變更前資料。
+   * @param {*} acct 變更前資料。
    */
-  const editAccount = async (card) => {
-    const { bankId, acctId } = card; // 變更前 常用轉入帳戶-銀行代碼 及 帳號
-    const onFinished = async (newCard) => {
+  const editAccount = async (acct) => {
+    const { bankId, acctId } = acct; // 變更前 常用轉入帳戶-銀行代碼 及 帳號
+    const onFinished = async (newAcct) => {
       const successful = await updateFrequentAccount({
-        ...newCard,
+        ...newAcct,
         orgBankId: bankId,
         orgAcctId: acctId,
       });
       dispatch(setDrawerVisible(false));
       if (successful) {
-        card.isNew = false;
-        setCards([...cards]); // 強制更新清單。
+        acct.isNew = false;
+        setAccounts(setLocalData(storageName, [...accounts])); // 強制更新清單。
       }
     };
 
-    dispatch(setDrawer({
-      title: '編輯常用帳號',
-      content: (<AccountEditor initData={card} onFinished={onFinished} />),
-    }));
-    dispatch(setDrawerVisible(true));
+    await showDrawer('編輯常用帳號', (<AccountEditor initData={acct} onFinished={onFinished} />));
   };
 
   /**
    * 處理UI流程：移除登記帳戶
    */
-  const removeAccount = (card) => {
+  const removeAccount = (acct) => {
     const onRemoveConfirm = async () => {
-      const successful = await deleteFrequentAccount({ bankId: card.bankId, acctId: card.acctId });
+      const successful = await deleteFrequentAccount({ bankId: acct.bankId, acctId: acct.acctId });
       if (successful) {
-        const tmpCards = cards.filter((c) => c.acctId !== card.acctId);
-        setCards(tmpCards);
+        const tmpCards = accounts.filter((c) => c.acctId !== acct.acctId);
+        setAccounts(setLocalData(storageName, tmpCards));
       }
     };
 
-    dispatch(setModal({
+    showCustomPrompt({
       title: '系統訊息',
-      content: <div style={{ textAlign: 'center' }}>您確定要刪除此帳號?</div>,
+      message: (<div style={{ textAlign: 'center' }}>您確定要刪除此帳號?</div>),
       okContent: '確定刪除',
       onOk: onRemoveConfirm,
       cancelContent: '我再想想',
-    }));
-    dispatch(setModalVisible(true));
+    });
   };
 
   /**
@@ -121,18 +114,18 @@ const Page = () => {
             </div>
             <span className="addMemberButtonText">新增常用帳號</span>
           </button>
-          {cards?.map((card) => (
+          {accounts?.map((acct) => (
             <MemberAccountCard
-              key={card.acctId}
+              key={acct.acctId}
               type="常用帳號"
-              name={card.nickName}
-              bankNo={card.bankId}
-              bankName={card.bankName}
-              account={card.acctId}
-              avatarSrc={card.headshot}
-              hasNewTag={card.isNew}
-              onEdit={() => editAccount(card)}
-              onRemove={() => removeAccount(card)}
+              name={acct.nickName}
+              bankNo={acct.bankId}
+              bankName={acct.bankName}
+              account={acct.acctId}
+              avatarSrc={acct.headshot}
+              hasNewTag={acct.isNew}
+              onEdit={() => editAccount(acct)}
+              onRemove={() => removeAccount(acct)}
             />
           )) }
         </PageWrapper>

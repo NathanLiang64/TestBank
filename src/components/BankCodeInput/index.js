@@ -16,7 +16,7 @@ import { getBankCode } from './api';
 * 3. setValue -> 傳入 react-hook-form 的 setValue 參數
 * 4. trigger -> 傳入 react-hook-form 的 trigger 參數
 * 5. errorMessage -> 表單驗證的錯誤訊息
-* 6. bankCode -> 若原先就有 bankCode 值，可傳入，若無則預設為帶有 2 個空字串的物件
+* 6. value -> 若原先就有 value 值，可傳入，若無則預設為帶有 2 個空字串的物件
 * */
 
 const BankCodeInput = ({
@@ -26,8 +26,7 @@ const BankCodeInput = ({
   trigger,
   rules,
   errorMessage,
-  // bankCode = defaultValue,
-  defaultValue,
+  value,
 }) => {
   const storageItemName = 'BankList';
   const [bankList, setBankList] = useState();
@@ -67,7 +66,7 @@ const BankCodeInput = ({
             <FEIBInput
               {...field}
               placeholder="請選擇"
-              value={`${defaultValue} ${bankList?.find((b) => b.bankNo === defaultValue)?.bankName ?? ''}`}
+              value={`${value ?? ''} ${bankList?.find((b) => b.bankNo === value)?.bankName ?? ''}`}
               $icon={<ListIcon />}
               $iconFontSize={2.4}
               $iconOnClick={() => setShowSelector(true)}

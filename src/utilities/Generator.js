@@ -128,8 +128,8 @@ export const numberToChinese = (num) => {
   if (Number.isNaN(Number(num))) {
     return '(非數字)';
   }
-  let number = num.split('.')[0];
-  const digtalNum = num.split('.')[1];
+  let number = String(num).split('.')[0];
+  const digtalNum = String(num).split('.')[1];
   const chineseNumber = ('零壹貳參肆伍陸柒捌玖').split('');
   const amountSmallUnit = ['', '拾', '佰', '千'];
   const amountBigUnit = ['', '萬', '億', '兆', '京', '垓', '秭', '穰', '溝', '澗', '正', '載'];
@@ -295,4 +295,42 @@ export const hideName = (name) => {
   const others = [];
   for (let i = 0; i < name.length - 2; i++) others.push('Ｏ');
   return firstCharacter + others.join('') + lastCharacter;
+};
+
+/**
+ * 更新本地 SessionStoreage 中的資料。
+ * @param {*} storeName 存在 SessionStoreage 時使用的名稱。
+ * @param {*} newData 要存入的新資料；若為 null 將在 SessionStoreage 中清除此項目。
+ * @returns
+ */
+export const setLocalData = async (storeName, newData) => {
+  if (newData) {
+    sessionStorage.setItem(storeName, JSON.stringify(newData));
+  } else {
+    sessionStorage.removeItem(storeName);
+  }
+  return newData;
+};
+
+/**
+ * 載入本地 SessionStoreage 中的資料。
+ * @param {*} storeName 存在 SessionStoreage 時使用的名稱。
+ * @param {*} loadDataFunc 當 SessionStoreage 沒有資料時，可以透過這個方法取得 預設值。
+ * @returns 存在 SessionStoreage 中的資料。
+ */
+export const loadLocalData = async (storeName, loadDataFunc) => {
+  let data = sessionStorage.getItem(storeName);
+  try {
+    data = JSON.parse(data);
+  } catch (ex) {
+    sessionStorage.removeItem(storeName);
+    data = null;
+  }
+
+  if (!data && loadDataFunc) {
+    data = await loadDataFunc();
+    setLocalData(storeName, data); // 暫存入以減少API叫用
+  }
+
+  return data;
 };
