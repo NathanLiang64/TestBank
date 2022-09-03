@@ -66,7 +66,8 @@ const funcStack = {
     localStorage.setItem('funcStack', JSON.stringify(stack));
 
     // 寫入 Function 啟動參數。
-    localStorage.setItem('funcParams', (startItem.funcParams ?? null));
+    const params = { funcParams: startItem.funcParams, keepData: null };
+    localStorage.setItem('funcParams', (JSON.stringify(params) ?? null));
   },
   pop: () => {
     localStorage.removeItem('funcParams');
@@ -83,8 +84,8 @@ const funcStack = {
     // 寫入 Function 啟動參數。
     const startItem = stack[stack.length - 1];
     if (closedItem) {
-      const params = (closedItem.keepData ?? startItem?.funcParams);
-      localStorage.setItem('funcParams', (params ?? null));
+      const params = { funcParams: startItem?.funcParams, keepData: closedItem.keepData };
+      localStorage.setItem('funcParams', (JSON.stringify(params) ?? null));
       console.log('Close Function and Back to (', startItem?.funcID ?? 'Home', ')', (params ? JSON.parse(params) : null));
     }
 
@@ -195,7 +196,7 @@ async function loadFuncParams() {
         // 解析由 APP 傳回的資料, 只要有 keepData 就表示是由叫用的功能結束返回
         // 因此，要以 keepData 為單元功能的啟動參數。
         // 反之，表示是單元功能被啟動，此時才是以 funcParams 為單元功能的啟動參數。
-        params = data.keepData ?? data.funcParams;
+        params = JSON.parse(data.keepData ?? data.funcParams);
       }
     } else {
       params = webGetFuncParams();
@@ -412,6 +413,7 @@ async function regQLfeature(QLtype) {
  * 綁定快登裝置
  * @param {*} QLtype 快登裝置綁定所使用驗證方式(type->1:生物辨識/2:圖形辨識)
  * @param {*} pwdE2ee E2EE加密後的密碼
+ * @param {*} midToken 由 Controller 提供的 MID Login 取得的 Auth Token
  * @returns {
  *  result: 驗證結果(true/false)。
  *  message: 駿證失敗狀況描述。
