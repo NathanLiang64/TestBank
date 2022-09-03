@@ -66,7 +66,7 @@ const funcStack = {
     localStorage.setItem('funcStack', JSON.stringify(stack));
 
     // 寫入 Function 啟動參數。
-    const params = { funcParams: startItem.funcParams, keepData: null };
+    const params = startItem.funcParams ? { funcParams: startItem.funcParams, keepData: null } : null;
     localStorage.setItem('funcParams', (JSON.stringify(params) ?? null));
   },
   pop: () => {
@@ -85,8 +85,8 @@ const funcStack = {
     const startItem = stack[stack.length - 1];
     if (closedItem) {
       const params = { funcParams: startItem?.funcParams, keepData: closedItem.keepData };
-      localStorage.setItem('funcParams', (JSON.stringify(params) ?? null));
-      console.log('Close Function and Back to (', startItem?.funcID ?? 'Home', ')', (params ? JSON.parse(params) : null));
+      localStorage.setItem('funcParams', JSON.stringify(params));
+      console.log('Close Function and Back to (', startItem?.funcID ?? 'Home', ')', params);
     }
 
     return startItem;
@@ -144,8 +144,13 @@ async function startFunc(funcID, funcParams, keepData) {
 
 /**
  * 觸發APP返回上一頁功能
+ * @param {*} response 傳回值，會暫存在 SessionStorate("FuncRs") 中。
  */
-async function closeFunc() {
+async function closeFunc(response) {
+  if (response) {
+    sessionStorage.setItem('FuncRs', JSON.stringify(response));
+  }
+
   const closeItem = funcStack.peek(); // 因為 funcStack 還沒 pop，所以用 peek 還以取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
   const isFunction = !closeItem || (/^[A-Z]\d{5}$/.test(closeItem.funcID)); // 表示 funcID 是由 Function Controller 控制的單元功能。
 
@@ -182,25 +187,33 @@ async function loadFuncParams() {
     const funcItem = funcStack.peek(); // 因為功能已經啟動，所以用 peek 取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
     const isFunction = !funcItem || (/^[A-Z]\d{5}$/.test(funcItem.funcID)); // 表示 funcID 是由 Function Controller 控制的單元功能。
 
-    const webGetFuncParams = async () => {
+    const webGetFuncParams = () => {
       const params = localStorage.getItem('funcParams');
       if (!params || params === 'null') return null;
       if (params.startsWith('{')) return JSON.parse(params);
       return params;
     };
 
+    const data = isFunction ? (await callAppJavaScript('getPagedata', null, true, webGetFuncParams)) : webGetFuncParams();
     let params = null;
-    if (isFunction) {
-      const data = await callAppJavaScript('getPagedata', null, true, webGetFuncParams);
-      if (data && data !== 'undefined') {
-        // 解析由 APP 傳回的資料, 只要有 keepData 就表示是由叫用的功能結束返回
-        // 因此，要以 keepData 為單元功能的啟動參數。
-        // 反之，表示是單元功能被啟動，此時才是以 funcParams 為單元功能的啟動參數。
-        params = JSON.parse(data.keepData ?? data.funcParams);
-      }
-    } else {
-      params = webGetFuncParams();
+    if (data && data !== 'undefined') {
+      // 解析由 APP 傳回的資料, 只要有 keepData 就表示是由叫用的功能結束返回
+      // 因此，要以 keepData 為單元功能的啟動參數。
+      // 反之，表示是單元功能被啟動，此時才是以 funcParams 為單元功能的啟動參數。
+      params = JSON.parse(data.keepData ?? data.funcParams);
     }
+
+    // 取得 Function 在 closeFunc 時提供的傳回值。
+    const response = sessionStorage.getItem('FuncRs');
+    console.log('>> Function 傳回值 : ', response);
+    sessionStorage.removeItem('FuncRs');
+    if (response) {
+      params = {
+        ...params,
+        response: JSON.parse(response),
+      };
+    }
+
     // await showAlert(`>> Function 啟動參數 : ${JSON.stringify(params)}`);
     console.log('>> Function 啟動參數 : ', params);
     return params;
