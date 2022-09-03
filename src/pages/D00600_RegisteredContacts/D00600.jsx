@@ -4,6 +4,7 @@ import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
 import { showDrawer } from 'utilities/MessageModal';
+import { loadFuncParams, closeFunc } from 'utilities/AppScriptProxy';
 import { loadLocalData, setLocalData } from 'utilities/Generator';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { getAllRegisteredAccount, updateRegisteredAccount } from './api';
@@ -15,7 +16,9 @@ import PageWrapper from './D00600.style';
  */
 const Page = () => {
   const dispatch = useDispatch();
+  const [selectorMode, setSelectorMode] = useState();
   const [accounts, setAccounts] = useState([]);
+  const [selectedAccount, setSelectedAccount] = useState();
 
   const storageName = 'RegAccts';
 
@@ -29,6 +32,17 @@ const Page = () => {
     // TODO 未指定帳號時，應改用頁韱分類。
     const accts = await loadLocalData(storageName, getAllRegisteredAccount);
     setAccounts(accts);
+
+    // Function Controller 提供的參數
+    // startParams = {
+    //   selectorMode: true, 表示選取帳號模式，啟用時要隱藏 Home 圖示。
+    //   defaultAccount: 指定的帳號將設為已選取狀態
+    // };
+    const startParams = await loadFuncParams();
+    if (startParams) {
+      setSelectorMode(startParams.selectorMode ?? false);
+      setSelectedAccount(startParams.defaultAccount);
+    }
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -64,6 +78,8 @@ const Page = () => {
               bankName={acct.bankName}
               account={acct.acctId}
               avatarSrc={acct.headshot}
+              isSelected={(acct.acctId === selectedAccount)}
+              onClick={() => ((selectorMode) ? closeFunc(acct.acctId) : null)} // 傳回值：選取的帳號。
               moreActions={[
                 { lable: '編輯', type: 'edit', onClick: () => editAccount(acct) },
               ]}
