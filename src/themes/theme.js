@@ -17,6 +17,7 @@ const theme = {
       white: '#FFF',
     },
     text: {
+      white: '#FFF',
       darker: '#022B5A',
       dark: '#042C5C',
       light: '#6F89B2',
@@ -48,6 +49,7 @@ const theme = {
       success: '#46D4A7',
       danger: '#FF5F5F',
       error: '#DA4949',
+      selected: '#81BC01',
     },
     card: {
       purple: '#D8CAFB',

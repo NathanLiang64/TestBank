@@ -3,28 +3,26 @@ import Avatar from 'components/Avatar';
 import { DeleteIcon, EditIcon } from 'assets/images/icons';
 import MemberAccountCardWrapper from './memberAccountCard.style';
 
-/*
-* ==================== MemberAccountCard 組件說明 ====================
-* MemberAccountCard 組件包含了 Avatar 組合成一張會員帳號卡片
-* ==================== MemberAccountCard 可傳參數 ====================
-* 1. hasNewTag -> 顯示NEW標籤
-* 2. name -> 會員名稱
-* 3. bankNo -> 銀行代碼
-* 4. bankName -> 銀行名稱
-* 5. account -> 會員帳號
-* 6. avatarSrc -> 會員頭像的圖片路徑
-* 7. noBorder -> 無框線
-* onClick -> 點擊會員帳號卡片事件 (選取時)
-* moreActions: [{
-  type: edit | delete,
-  lable: 按鈕標題,
-  onClick: 點擊按鈕事件,
-}, ...]
-* */
-
+/**
+ * 包含了 Avatar 組合成一張會員帳號卡片
+ * @param {*} hasNewTag 顯示NEW標籤
+ * @param {*} name 會員名稱
+ * @param {*} bankNo 銀行代碼
+ * @param {*} bankName 銀行名稱
+ * @param {*} account 會員帳號
+ * @param {*} avatarSrc 會員頭像的圖片路徑
+ * @param {*} noBorder 無框線
+ * @param {*} isSelected 表示為已選取的狀態
+ * @param {*} onClick 點擊會員帳號卡片事件 (選取時)
+ * @param {*} moreActions [{
+    type: edit | delete,
+    lable: 按鈕標題,
+    onClick: 點擊按鈕事件,
+  }, ...]
+ */
 const MemberAccountCard = ({
   hasNewTag, name, bankNo, bankName, account, avatarSrc, noBorder,
-  onClick, moreActions,
+  isSelected, onClick, moreActions,
 }) => {
   const wrapperRef = useRef(null);
   const [model, setModel] = useState({
@@ -111,6 +109,7 @@ const MemberAccountCard = ({
     <MemberAccountCardWrapper
       ref={wrapperRef}
       $noBorder={noBorder}
+      $selected={isSelected}
       onTouchStart={(e) => { model.startX = e.targetTouches[0].pageX; }}
       onTouchMove={(e) => { model.endX = e.targetTouches[0].pageX; }}
       onTouchEnd={handleTouchEnd}

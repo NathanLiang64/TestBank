@@ -9,6 +9,7 @@ const MemberAccountCardWrapper = styled.div`
   &:first-child {
     border-top: ${({ $noBorder, theme }) => ($noBorder ? '' : `.1rem solid ${theme.colors.border.lighter}`)};
   }
+  background-color: ${({ $selected, theme }) => ($selected ? theme.colors.state.selected : '')};
   
   .Avatar {
     margin-left: unset;
@@ -21,6 +22,7 @@ const MemberAccountCardWrapper = styled.div`
     .title {
       font-size: 1.8rem;
       line-height: 2.7rem;
+      color: ${({ $selected, theme }) => ($selected ? theme.colors.text.white : '')};
     }
 
     .new-tag {
@@ -37,7 +39,7 @@ const MemberAccountCardWrapper = styled.div`
     .note {
       font-size: 1.2rem;
       line-height: 1.8rem;
-      color: ${({ theme }) => theme.colors.text.light};
+      color: ${({ $selected, theme }) => ($selected ? theme.colors.text.white : theme.colors.text.light)};
     }
   }
   
