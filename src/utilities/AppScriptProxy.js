@@ -513,7 +513,7 @@ async function appTransactionAuth(request) {
     <PasswordDrawer funcCode={funcCode} authData={txnAuth} inputPWD={allowedPWD} onFinished={callback} />
   );
 
-  await showDrawer('交易授權驗證 (Web版)', body, () => failResult('使用者取消驗證。'));
+  await showDrawer('交易授權驗證 (Web版)', body, null, () => failResult('使用者取消驗證。'));
 }
 
 export {
