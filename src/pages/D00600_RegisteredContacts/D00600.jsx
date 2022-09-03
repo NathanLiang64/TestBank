@@ -59,13 +59,14 @@ const Page = () => {
           {accounts?.map((acct) => (
             <MemberAccountCard
               key={acct.acctId}
-              type="約定帳號"
               name={acct.nickName}
               bankNo={acct.bankId}
               bankName={acct.bankName}
               account={acct.acctId}
               avatarSrc={acct.headshot}
-              onEdit={() => editAccount(acct)}
+              moreActions={[
+                { lable: '編輯', type: 'edit', onClick: () => editAccount(acct) },
+              ]}
             />
           )) }
         </PageWrapper>

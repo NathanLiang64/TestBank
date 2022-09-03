@@ -117,15 +117,16 @@ const Page = () => {
           {accounts?.map((acct) => (
             <MemberAccountCard
               key={acct.acctId}
-              type="常用帳號"
               name={acct.nickName}
               bankNo={acct.bankId}
               bankName={acct.bankName}
               account={acct.acctId}
               avatarSrc={acct.headshot}
               hasNewTag={acct.isNew}
-              onEdit={() => editAccount(acct)}
-              onRemove={() => removeAccount(acct)}
+              moreActions={[
+                { lable: '編輯', type: 'edit', onClick: () => editAccount(acct) },
+                { lable: '刪除', type: 'delete', onClick: () => removeAccount(acct) },
+              ]}
             />
           )) }
         </PageWrapper>
