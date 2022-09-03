@@ -55,6 +55,23 @@ const Page = () => {
   }, []);
 
   /**
+   * 將選取的帳號傳回給叫用的單元功能，已知[轉帳]有使用。
+   * @param {*} acct 選取的帳號。
+   */
+  const onAccountSelected = (acct) => {
+    if (selectorMode) {
+      const response = {
+        memberId: acct.headshot,
+        accountName: acct.nickName,
+        bankName: acct.bankName,
+        bankId: acct.bankId,
+        accountNo: acct.acctId,
+      };
+      closeFunc(response);
+    }
+  };
+
+  /**
    * 處理UI流程：新增帳戶
    */
   const addnewAccount = async () => {
@@ -138,7 +155,7 @@ const Page = () => {
               avatarSrc={acct.headshot}
               hasNewTag={acct.isNew}
               isSelected={(acct.acctId === selectedAccount)}
-              onClick={() => ((selectorMode) ? closeFunc(acct.acctId) : null)} // 傳回值：選取的帳號。
+              onClick={() => onAccountSelected(acct)} // 傳回值：選取的帳號。
               moreActions={[
                 { lable: '編輯', type: 'edit', onClick: () => editAccount(acct) },
                 { lable: '刪除', type: 'delete', onClick: () => removeAccount(acct) },
