@@ -59,24 +59,24 @@ function Layout({
 
   const onModalOk = async () => {
     if (modalData.onOk) {
-      if ((await modalData.onOk() === false)) return;
+      if ((await modalData.onOk() === false)) return; // 取消 Ok 程序。
     }
     // 如果有需要接續 modal 得操作，可以設定 noDismiss 為 true，以避免點擊ok按鈕後，下個 modal 遭關閉。
     if (modalData.noDismiss) return;
 
     dispatch(setModalVisible(false));
     dispatch(setDialogVisible(false));
-    if (setResult) setResult(true);
+    if (setResult) setResult(true); // 傳回視窗結束狀態。
   };
 
   //
   const onModalCancel = async () => {
     if (modalData.onCancel) {
-      if ((await modalData.onCancel() === false)) return;
+      if ((await modalData.onCancel() === false)) return; // 取消 Cancel 程序。
     }
     dispatch(setModalVisible(false));
     dispatch(setDialogVisible(false));
-    if (setResult) setResult(false);
+    if (setResult) setResult(false); // 傳回視窗結束狀態。
   };
 
   /**
@@ -145,12 +145,26 @@ function Layout({
     }
   }, [waitting]);
 
-  //
-  const onDrawerClose = async () => {
-    if (drawerData.onClose) {
-      if ((await drawerData.onClose() === false)) return;
+  /**
+   * Drawer GoBack
+   */
+  const onDrawerGoBack = async () => {
+    if (drawerData.goBack) {
+      if ((await drawerData.goBack() === false)) return; // 取消 goBack 程序。
     }
     dispatch(setDrawerVisible(false));
+    if (setResult) setResult(true); // 傳回視窗結束狀態。
+  };
+
+  /**
+   * Drawer Close
+   */
+  const onDrawerClose = async () => {
+    if (drawerData.onClose) {
+      if ((await drawerData.onClose() === false)) return; // 取消 Close 程序。
+    }
+    dispatch(setDrawerVisible(false));
+    if (setResult) setResult(false); // 傳回視窗結束狀態。
   };
 
   /**
@@ -159,12 +173,11 @@ function Layout({
   const Drawer = () => (
     <BottomDrawer
       title={drawerData.title}
-      // titleColor={theme.colors.primary.dark}
       isOpen={showDrawer}
-      onBack={drawerData.goBack}
+      onBack={onDrawerGoBack}
       onClose={onDrawerClose}
       content={drawerData.content}
-      shouldAutoClose={drawerData.shouldAutoClose}
+      shouldAutoClose={drawerData.shouldAutoClose} // TODO 確認必要性。
     />
   );
 
@@ -198,13 +211,17 @@ function Layout({
     return (
       <div>
         <HeaderWrapper $isTransparent={hasClearHeader}>
-          <FEIBIconButton className="goBack" $fontSize={2.4} $iconColor={theme.colors.text.dark} onClick={goBackFunc ?? closeFunc} visibility={goBack ? 'visible' : 'hidden'}>
-            <ArrowBackIcon />
-          </FEIBIconButton>
+          {goBack ? (
+            <FEIBIconButton className="goBack" $fontSize={2.4} $iconColor={theme.colors.text.dark} onClick={goBackFunc ?? closeFunc}>
+              <ArrowBackIcon />
+            </FEIBIconButton>
+          ) : null}
           <h2>{title}</h2>
-          <FEIBIconButton className="goHome" $fontSize={2.4} $iconColor={theme.colors.text.dark} onClick={goHomeFunc} visibility={goHome ? 'visible' : 'hidden'}>
-            <HomeIcon />
-          </FEIBIconButton>
+          {goHome ? (
+            <FEIBIconButton className="goHome" $fontSize={2.4} $iconColor={theme.colors.text.dark} onClick={goHomeFunc}>
+              <HomeIcon />
+            </FEIBIconButton>
+          ) : null}
         </HeaderWrapper>
 
         <div>
