@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import SwiperCore, { Pagination } from 'swiper/core';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -21,6 +22,9 @@ import NoteContent from 'pages/D00700_ForeignCurrencyTransfer/noteContent';
 
 /* Styles */
 import ForeignCurrencyTransferWrapper from './foreignCurrencyTransfer.style';
+
+/* Swiper modules */
+SwiperCore.use([Pagination]);
 
 const ForeignCurrencyTransfer = () => {
   const history = useHistory();

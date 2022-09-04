@@ -1,6 +1,10 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
+import SwiperCore, { Pagination } from 'swiper/core';
 import DebitCard from 'components/DebitCard';
 import AccountOverviewWrapper from './accountOverview.style';
+
+/* Swiper modules */
+SwiperCore.use([Pagination]);
 
 const AccountOverview = ({
   accounts, onAccountChange, cardColor,

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import SwiperCore, { Pagination } from 'swiper/core';
 import { dateFormatter } from 'utilities/Generator';
 import { switchLoading, closeFunc } from 'utilities/AppScriptProxy';
 import { getTransferOutAccounts, getReservedTransDetails, getResultTransDetails } from 'pages/D00800_ReserveTransferSearch/api';
@@ -31,6 +32,9 @@ import ResultContent from './resultContent';
 
 /* Style */
 import ReserveTransferSearchWrapper from './reserveTransferSearch.style';
+
+/* Swiper modules */
+SwiperCore.use([Pagination]);
 
 const ReserveTransferSearch = () => {
   const history = useHistory();
