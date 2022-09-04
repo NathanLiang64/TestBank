@@ -1,13 +1,5 @@
 import { lazy } from 'react';
 
-/* 轉帳靜態頁 (for prototype) */
-// import TransferStatic from 'pages/TransferStatic';
-// import TransferStatic1 from 'pages/TransferStatic/transfer_1';
-// import TransferStatic2 from 'pages/TransferStatic/transfer_2';
-const TransferStatic = lazy(() => import('pages/TransferStatic'));
-const TransferStatic1 = lazy(() => import('pages/TransferStatic/transfer_1'));
-const TransferStatic2 = lazy(() => import('pages/TransferStatic/transfer_2'));
-
 const A00400 = lazy(() => import('pages/A00400_Provisioning'));
 const A00600 = lazy(() => import('pages/A00600_RegularBasicInformation'));
 const A00700 = lazy(() => import('pages/A00700_RegularPwdModify'));
@@ -101,7 +93,6 @@ const Instalment3 = lazy(() => import('pages/R00200_Instalment/Instalment_3'));
 
 // TODO：支援開發及Prototype測試使用
 const Login = lazy(() => import('proto/Login/login'));
-const Tutorials = lazy(() => import('proto/Tutorials'));
 const Nav = lazy(() => import('proto/Nav/Nav'));
 // --------------------------------
 
@@ -188,9 +179,6 @@ const routes = [
   { path: '/loanInquiry', exact: false, component: LoanInquiry },
   { path: '/moreTranscations', exact: false, component: MoreTranscations },
   { path: '/foreignCurrencyPriceSetting', exact: false, component: ForeignCurrencyPriceSetting },
-  { path: '/transferStatic', exact: false, component: TransferStatic },
-  { path: '/transferStatic1', exact: false, component: TransferStatic1 },
-  { path: '/transferStatic2', exact: false, component: TransferStatic2 },
   { path: '/staging1', exact: false, component: Instalment1 },
   { path: '/staging2', exact: false, component: Instalment2 },
   { path: '/staging3', exact: false, component: Instalment3 },
@@ -203,7 +191,6 @@ const routes = [
 
   // TODO：支援開發及Prototype測試使用
   { path: '/login', exact: false, component: Login },
-  { path: '/tutorials', exact: false, component: Tutorials },
   { path: '/', exact: true, component: Nav },
   // --------------------------------
 ];

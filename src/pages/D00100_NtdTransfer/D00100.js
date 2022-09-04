@@ -27,7 +27,7 @@ import { bankCodeValidation, receivingAccountValidation, transferAmountValidatio
 import { directTo } from 'utilities/mockWebController';
 import { setOpenDrawer, setClickMoreOptions, setAccounts } from './stores/actions';
 import TransferWrapper from './D00100.style';
-import TransferDrawer from '../TransferDrawer';
+// import TransferDrawer from '../TransferDrawer';
 import Layout from 'components/Layout/Layout';
 
 /* Swiper modules */
@@ -665,7 +665,7 @@ const Transfer = () => {
           </form>
         </FEIBTabContext>
       </div>
-      <TransferDrawer setTabId={setTabId} />
+      {/* <TransferDrawer setTabId={setTabId} /> */}
     </TransferWrapper>
     </Layout>
   );
