@@ -50,8 +50,8 @@ const TransferWrapper = styled(Layout)`
     font-size: 1.4rem;
   }
 
-  .transferType {
-    margin-bottom: 2.4rem;
+  .transferMode {
+    // margin-bottom: 2.4rem;
   }
 
   .transferButtonArea {
@@ -76,6 +76,7 @@ const TransferWrapper = styled(Layout)`
 
   .customWidth {
     width: 50%;
+    margin-right: 0;
   }
 
   .customSpace {
@@ -107,13 +108,15 @@ const TransferWrapper = styled(Layout)`
   }
 
   .reserveOption {
+    margin-top: 1.8rem;
+
     .dateRangePickerArea {
       margin-top: 3.6rem;
       margin-bottom: 1rem;
     }
 
     .datePickerLabel {
-      margin-top: 1.8rem;
+      margin-top: 1rem;
       margin-bottom: 1.8rem;
       top: 1.8rem;
     }
