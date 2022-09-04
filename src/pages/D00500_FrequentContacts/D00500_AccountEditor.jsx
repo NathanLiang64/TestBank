@@ -1,11 +1,8 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable object-curly-newline */
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { setDrawer } from 'stores/reducers/ModalReducer';
 import { FEIBButton, FEIBInputLabel, FEIBInput, FEIBErrorMessage } from 'components/elements';
 import Badge from 'components/Badge';
 import Avatar from 'components/Avatar';
@@ -29,10 +26,6 @@ function AccountEditor({
   initData,
   onFinished,
 }) {
-  const dispatch = useDispatch();
-  const drawerSetting = useSelector((state) => state.ModalReducer.drawer);
-
-  const storageItemName = 'BankList';
   const [bankList, setBankList] = useState();
   const [model, setModel] = useState(initData);
   const [confirmPage, setConfirmPage] = useState(false);
@@ -63,18 +56,7 @@ function AccountEditor({
    *- 初始化
    */
   useEffect(async () => {
-    let banks = sessionStorage.getItem(storageItemName);
-    try {
-      banks = JSON.parse(banks);
-    } catch (ex) {
-      sessionStorage.removeItem(storageItemName);
-      banks = null;
-    }
-
-    if (!banks) {
-      banks = await getBankCode();
-      sessionStorage.setItem(storageItemName, JSON.stringify(banks)); // 暫存入以減少API叫用
-    }
+    const banks = await getBankCode();
     setBankList(banks);
   }, []);
 

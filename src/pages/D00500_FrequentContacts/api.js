@@ -1,4 +1,5 @@
 import { callAPI } from 'utilities/axios';
+import { loadLocalData } from 'utilities/Generator';
 
 /**
  * 查詢銀行代碼
@@ -8,8 +9,11 @@ import { callAPI } from 'utilities/axios';
  * }
  */
 export const getBankCode = async (params) => {
-  const response = await callAPI('/api/transfer/queryBank', params);
-  return response.data;
+  const banks = await loadLocalData('BankList', async () => {
+    const response = await callAPI('/api/transfer/queryBank', params);
+    return response.data;
+  });
+  return banks;
 };
 
 /**
