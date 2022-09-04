@@ -312,9 +312,9 @@ const ReserveTransferSearch = () => {
                 <div>
                   <DateRangePicker
                     {...reserveDatePickerLimit}
-                    date={reserveDateRange}
+                    value={reserveDateRange}
                     label=" "
-                    onClick={handleClickReserveDateRangePicker}
+                    onChange={handleClickReserveDateRangePicker}
                   />
                   <img className="clearImg" src={ClearIcon} alt="" onClick={clearReserveDateRange} />
                 </div>
@@ -333,9 +333,9 @@ const ReserveTransferSearch = () => {
                 <div>
                   <DateRangePicker
                     {...resultDatePickerLimit}
-                    date={resultDateRange}
+                    value={resultDateRange}
                     label=" "
-                    onClick={handleClickResultDateRangePicker}
+                    onChange={handleClickResultDateRangePicker}
                   />
                   <img className="clearImg" src={ClearIcon} alt="" onClick={clearResultDateRange} />
                 </div>

@@ -52,9 +52,10 @@ const SearchCondition = ({
       stringToDate(newCondition?.endDate),
     ];
 
+    // TODO 存款明細查詢-限三年內、存錢計劃-限計劃起始當日（而且還要精確到時間）
     return (
       <div className="dateRangePickerArea">
-        <DateRangePicker date={dateRange} onClick={handleClickDateRangePicker} />
+        <DateRangePicker value={dateRange} onChange={handleClickDateRangePicker} />
       </div>
     );
   };

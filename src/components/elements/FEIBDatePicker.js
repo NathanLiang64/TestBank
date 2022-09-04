@@ -7,6 +7,7 @@ const FEIBDatePicker = styled(MaterialDatePicker).attrs({
   format: 'yyyy/MM/dd',
   okLabel: '確定',
   cancelLabel: '取消',
+  placeholder: '請選擇',
   keyboardIcon: <CalendarIcon size={24} />,
 })`
   &.MuiTextField-root {

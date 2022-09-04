@@ -27,8 +27,8 @@ export default {
   ],
   argTypes: {
     label: { control: 'text' },
-    date: { control: 'array' },
-    onClick: { action: 'onClick' },
+    value: { control: 'array' },
+    onChange: { action: 'onClick' },
   },
   parameters: {
     docs: { description: { component: doc }},

@@ -221,7 +221,7 @@ const Adjustment = () => {
           )
         }
         <div className="inputContainer">
-          <DateRangePicker date={[startDate, endDate]} label="申請期間" onClick={handleClickDateRangePicker} />
+          <DateRangePicker value={[startDate, endDate]} label="申請期間" onChange={handleClickDateRangePicker} />
         </div>
         <FEIBButton
           className="fixBtnMargin"
