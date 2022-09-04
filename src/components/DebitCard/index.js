@@ -111,7 +111,7 @@ const DebitCard = ({
   );
 
   const renderTransferLimit = (total, current) => (
-    (transferLimit && transferRemaining)
+    (transferLimit || transferRemaining)
       ? (
         <p className="transferLimit">
           {transferTitle}

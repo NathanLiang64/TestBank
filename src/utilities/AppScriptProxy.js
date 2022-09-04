@@ -147,7 +147,8 @@ async function startFunc(funcID, funcParams, keepData) {
  * @param {*} response 傳回值，會暫存在 SessionStorate("FuncRs") 中。
  */
 async function closeFunc(response) {
-  if (response) {
+  // NOTE 必需排除 event 物件。
+  if (response && (!response.target && !response.type)) {
     sessionStorage.setItem('FuncRs', JSON.stringify(response));
   }
 

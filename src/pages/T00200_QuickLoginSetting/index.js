@@ -19,8 +19,9 @@ import {
   transactionAuth,
 } from 'utilities/AppScriptProxy';
 import {
-  customPopup, showAnimationModal, showDrawer, closeDrawer,
+  customPopup, showAnimationModal, showDrawer,
 } from 'utilities/MessageModal';
+import { setDrawerVisible } from 'stores/reducers/ModalReducer';
 import { getQuickLoginInfo } from './api';
 import DrawerContent from './drawerContent';
 
@@ -146,7 +147,7 @@ const QuickLoginSetting = () => {
       errorDesc: message,
     });
 
-    closeDrawer();
+    setDrawerVisible(false);
 
     // 設定 Switch 狀態
     if (type === '1') {
@@ -175,7 +176,6 @@ const QuickLoginSetting = () => {
           <DrawerContent
             midPhone={midPhone}
             confirmClick={() => callAppBindRegQL(type, rs?.netbankPwd)}
-            cancelClick={closeDrawer}
           />,
         );
       }
