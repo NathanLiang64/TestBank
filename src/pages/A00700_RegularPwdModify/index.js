@@ -173,7 +173,13 @@ const RegularPwdModify = () => {
             <ConfirmButtons
               subButtonValue="維持不變"
               mainButtonValue="儲存變更"
-              subButtonOnClick={() => closeFunc()}
+              subButtonOnClick={async () => {
+                const param = {
+                  actionCode: '2',
+                };
+                await renewPwd(param);
+                closeFunc();
+              }}
               // mainButtonOnClick={() => {
               //   setShowNotiDialog(false);
               // }}

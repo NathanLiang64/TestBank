@@ -71,13 +71,14 @@ const RegularBasicInformation = () => {
       const {
         grade, income, jobcd, gradeList, incomeList, jobList,
       } = data;
+      console.log(data);
       setGradeOptions(gradeList);
       setIncomeOptions(incomeList);
       setJobOptions(jobList);
       setRegularBasicData({ grade, income, jobcd });
-      setValue('industry', jobcd);
-      setValue('title', grade);
-      setValue('income', income);
+      setValue('industry', jobList.findIndex((item) => item.code === jobcd) === -1 ? '' : jobcd);
+      setValue('title', gradeList.findIndex((item) => item.code === grade) === -1 ? '' : grade);
+      setValue('income', incomeList.findIndex((item) => item.code === income) === -1 ? '' : income);
     } else {
       dispatch(setCloseCallBack(() => closeFunc()));
       dispatch(setResultContent({
