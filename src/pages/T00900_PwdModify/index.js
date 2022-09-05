@@ -61,7 +61,7 @@ const PwdModify = () => {
 
   // 呼叫變更網銀密碼 API
   const handlePasswordModify = async () => {
-    const authCode = 0x25;
+    const authCode = 0x24;
     const jsRs = await transactionAuth(authCode);
     if (jsRs.result) {
       switchLoading(true);
