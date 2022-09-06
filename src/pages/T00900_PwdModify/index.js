@@ -61,7 +61,7 @@ const PwdModify = () => {
 
   // 呼叫變更網銀密碼 API
   const handlePasswordModify = async () => {
-    const authCode = 0x25;
+    const authCode = 0x24;
     const jsRs = await transactionAuth(authCode);
     if (jsRs.result) {
       switchLoading(true);
@@ -69,6 +69,7 @@ const PwdModify = () => {
         password: e2ee(getValues('password')),
         newPassword: e2ee(getValues('newPassword')),
         newPasswordCheck: e2ee(getValues('newPasswordCheck')),
+        actionCode: 1,
       };
       const changePwdResponse = await changePwd(param);
       setResultDialog(changePwdResponse);

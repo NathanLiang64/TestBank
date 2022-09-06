@@ -20,8 +20,8 @@ import HeaderWrapper from './Header.style';
 function Layout({
   title,
   children,
-  goHome,
-  goBack,
+  goHome = true,
+  goBack = true,
   goBackFunc,
   hasClearHeader,
 }) {
@@ -211,17 +211,13 @@ function Layout({
     return (
       <div>
         <HeaderWrapper $isTransparent={hasClearHeader}>
-          {goBack ? (
-            <FEIBIconButton className="goBack" $fontSize={2.4} $iconColor={theme.colors.text.dark} onClick={goBackFunc ?? closeFunc}>
-              <ArrowBackIcon />
-            </FEIBIconButton>
-          ) : null}
+          <FEIBIconButton className="goBack" $fontSize={2.4} $iconColor={theme.colors.text.dark} onClick={goBackFunc ?? closeFunc} $hide={!goBack}>
+            <ArrowBackIcon />
+          </FEIBIconButton>
           <h2>{title}</h2>
-          {goHome ? (
-            <FEIBIconButton className="goHome" $fontSize={2.4} $iconColor={theme.colors.text.dark} onClick={goHomeFunc}>
-              <HomeIcon />
-            </FEIBIconButton>
-          ) : null}
+          <FEIBIconButton className="goHome" $fontSize={2.4} $iconColor={theme.colors.text.dark} onClick={goHomeFunc} $hide={!goHome}>
+            <HomeIcon />
+          </FEIBIconButton>
         </HeaderWrapper>
 
         <div>

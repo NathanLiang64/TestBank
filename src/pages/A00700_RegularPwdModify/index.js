@@ -66,7 +66,7 @@ const RegularPwdModify = () => {
 
   // 點擊儲存變更，呼叫更新網銀密碼API
   const onSubmit = async () => {
-    const authCode = 0x25;
+    const authCode = 0x24;
     const jsRs = await transactionAuth(authCode);
     if (jsRs.result) {
       switchLoading(true);
@@ -74,6 +74,7 @@ const RegularPwdModify = () => {
         password: e2ee(getValues('password')),
         newPassword: e2ee(getValues('newPassword')),
         newPasswordCheck: e2ee(getValues('newPasswordCheck')),
+        actionCode: 1,
       };
       const changePwdResponse = await renewPwd(param);
       setResultDialog(changePwdResponse);
@@ -121,7 +122,11 @@ const RegularPwdModify = () => {
       )}
       action={(
         <ConfirmButtons
-          mainButtonOnClick={() => {
+          mainButtonOnClick={async () => {
+            const param = {
+              actionCode: 2,
+            };
+            await renewPwd(param);
             setShowWarningDialog(false);
             closeFunc();
           }}
@@ -168,7 +173,13 @@ const RegularPwdModify = () => {
             <ConfirmButtons
               subButtonValue="維持不變"
               mainButtonValue="儲存變更"
-              subButtonOnClick={() => closeFunc()}
+              subButtonOnClick={async () => {
+                const param = {
+                  actionCode: 2,
+                };
+                await renewPwd(param);
+                closeFunc();
+              }}
               // mainButtonOnClick={() => {
               //   setShowNotiDialog(false);
               // }}

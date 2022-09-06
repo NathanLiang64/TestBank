@@ -1,5 +1,5 @@
 /* eslint-disable arrow-body-style */
-// import { callAPI } from 'utilities/axios';
+import { callAPI } from 'utilities/axios';
 
 /**
  * 取得快登綁定狀態及MID相關資訊。
@@ -11,11 +11,11 @@
  * @throws Exception
  */
 export const getQuickLoginInfo = async () => {
-  // const response = await callAPI('/api/setting/v1/quickLoginBoundInfo', {});
-  // return response.data;
-  return {
-    boundDate: '20221231',
-    boundDevice: 'iPhone 13',
-    midPhoneNo: '0905123456',
-  };
+  const response = await callAPI('/api/setting/v1/quickLoginBoundInfo', {});
+  return response.data;
+  // return {
+  //   boundDate: '20221231',
+  //   boundDevice: 'iPhone 13',
+  //   midPhoneNo: '0905123456',
+  // };
 };

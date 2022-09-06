@@ -62,7 +62,7 @@ const CardLessWithDrawChgPwd = () => {
 
   // 設定無卡提款密碼
   const changePwdHandler = async (param) => {
-    const authCode = 0x26;
+    const authCode = 0x20;
     const jsRs = await transactionAuth(authCode);
     if (jsRs.result) {
       switchLoading(true);
