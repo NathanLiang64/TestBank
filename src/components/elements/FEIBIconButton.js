@@ -14,13 +14,11 @@ const FEIBIconButton = styled(MaterialIconButton).attrs({
 })`
 
   &.MuiIconButton-root {
-    ${({ $visibility }) => ($visibility
+    ${({ $hide }) => ($hide
     ? (`
-        display: initial;
-      `)
-    : (`
-        display: none;
-      `))};
+      display: none;
+    `)
+    : (''))};
     color: ${({ $iconColor }) => $iconColor || 'inherit'};
     
     .MuiSvgIcon-root,

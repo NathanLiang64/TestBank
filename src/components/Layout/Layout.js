@@ -195,11 +195,11 @@ function Layout({
     return (
       <div>
         <HeaderWrapper $isTransparent={hasClearHeader}>
-          <FEIBIconButton className="goBack" $fontSize={2.4} $iconColor={theme.colors.text.dark} onClick={goBackFunc ?? closeFunc} $visibility={goBack}>
+          <FEIBIconButton className="goBack" $fontSize={2.4} $iconColor={theme.colors.text.dark} onClick={goBackFunc ?? closeFunc} $hide={!goBack}>
             <ArrowBackIcon />
           </FEIBIconButton>
           <h2>{title}</h2>
-          <FEIBIconButton className="goHome" $fontSize={2.4} $iconColor={theme.colors.text.dark} onClick={goHomeFunc} $visibility={goHome}>
+          <FEIBIconButton className="goHome" $fontSize={2.4} $iconColor={theme.colors.text.dark} onClick={goHomeFunc} $hide={!goHome}>
             <HomeIcon />
           </FEIBIconButton>
         </HeaderWrapper>
