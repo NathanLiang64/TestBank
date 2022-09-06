@@ -21,35 +21,35 @@ export const getMotpStatusOnTransfer = (params) => (
   userRequest('post', '/api/setting/motp/status', params)
 );
 
-// 查詢常用帳號 - Adrian
-export const getFavAccounts = (params) => (
-  userRequest('post', '/api/transfer/queryFavAcct', params)
-);
+// // 查詢常用帳號 - Adrian
+// export const getFavAccounts = (params) => (
+//   userRequest('post', '/api/transfer/queryFavAcct', params)
+// );
 
-// 查詢約定帳號 - Adrian
-export const getRegAccounts = (params) => (
-  userRequest('post', '/api/transfer/queryRegAcct', params)
-);
+// // 查詢約定帳號 - Adrian
+// export const getRegAccounts = (params) => (
+//   userRequest('post', '/api/transfer/queryRegAcct', params)
+// );
 
-// 新增單筆常用帳號 - Adrian
-export const addFavAccount = (params) => (
-  userRequest('post', '/api/transfer/insertFacAcct', params)
-);
+// // 新增單筆常用帳號 - Adrian
+// export const addFavAccount = (params) => (
+//   userRequest('post', '/api/transfer/insertFacAcct', params)
+// );
 
-// 編輯單筆常用帳號 - Adrian
-export const updateFavAccount = (params) => (
-  userRequest('post', '/api/transfer/modifyFacAcct', params)
-);
+// // 編輯單筆常用帳號 - Adrian
+// export const updateFavAccount = (params) => (
+//   userRequest('post', '/api/transfer/modifyFacAcct', params)
+// );
 
-// 刪除單筆常用帳號 - Adrian
-export const removeFavAccount = (params) => (
-  userRequest('post', '/api/transfer/deleteFacAcct', params)
-);
+// // 刪除單筆常用帳號 - Adrian
+// export const removeFavAccount = (params) => (
+//   userRequest('post', '/api/transfer/deleteFacAcct', params)
+// );
 
-// 編輯單筆約定帳號 - Adrian
-export const updateRegAccount = (params) => (
-  userRequest('post', '/api/transfer/modifyRegAcct', params)
-);
+// // 編輯單筆約定帳號 - Adrian
+// export const updateRegAccount = (params) => (
+//   userRequest('post', '/api/transfer/modifyRegAcct', params)
+// );
 
 // 一般轉帳 (即時轉帳) 確認 - Adrian
 export const confirmTransferDetail = (params) => (

@@ -12,6 +12,5 @@ import { callAPI } from 'utilities/axios';
  */
 export const getFriends = async () => {
   const response = await callAPI('/api/community/v1/getFriends');
-  // const response = await new Promise((resolve) => resolve({ data: mockData }));
   return response.data;
 };

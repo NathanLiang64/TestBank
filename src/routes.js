@@ -76,7 +76,6 @@ const NicknameSetting = lazy(() => import('pages/NicknameSetting'));
 const PatternLockSetting = lazy(() => import('pages/PatternLockSetting'));
 const FingerPrintLockSetting = lazy(() => import('pages/FingerPrintLockSetting'));
 const SMSOTPactivate = lazy(() => import('pages/SMSOTPactivate'));
-const QRCodeTransfer = lazy(() => import('proto/QRCodeTransfer'));
 const ProjectJ = lazy(() => import('pages/ProjectJ'));
 const LoanInquiry = lazy(() => import('pages/LoanInquiry'));
 const Deduct = lazy(() => import('pages/Deduct'));
@@ -174,7 +173,6 @@ const routes = [
   { path: '/patternLockSetting', exact: false, component: PatternLockSetting },
   { path: '/fingerPrintLockSetting', exact: false, component: FingerPrintLockSetting },
   { path: '/smsOTPactivate', exact: false, component: SMSOTPactivate },
-  { path: '/QRCodeTransfer', exact: false, component: QRCodeTransfer },
   { path: '/projectJ', exact: false, component: ProjectJ },
   { path: '/loanInquiry', exact: false, component: LoanInquiry },
   { path: '/moreTranscations', exact: false, component: MoreTranscations },
