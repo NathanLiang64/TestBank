@@ -224,7 +224,17 @@ const RegularBasicInformation = () => {
               type="button"
               $bgColor={theme.colors.background.cancel}
               $color={theme.colors.text.dark}
-              onClick={() => closeFunc()}
+              onClick={async () => {
+                const data = getValues();
+                const modifyData = {
+                  jobCd: data.industry,
+                  grade: data.title,
+                  inCome: data.income,
+                  actionCode: 0,
+                };
+                await updateRegularBasicInformation(modifyData);
+                closeFunc();
+              }}
               style={{ marginTop: '2rem' }}
             >
               維持不變
