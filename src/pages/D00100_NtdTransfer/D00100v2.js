@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable no-use-before-define */
@@ -28,7 +29,7 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { loadFuncParams, startFunc } from 'utilities/AppScriptProxy';
 import { numberToChinese } from 'utilities/Generator';
 import { ChangeMemberIcon } from 'assets/images/icons';
-import { getAccountsList, getDepositBonus } from './api';
+import { getAccountsList, getAccountExtraInfo } from './api';
 import TransferWrapper from './D00100.style';
 
 /* Swiper modules */
@@ -60,18 +61,18 @@ const Transfer = () => {
       freqAcct: null, // 目前選擇的 常用帳號
       regAcct: null, // 目前選擇的 約定帳號
     },
-    mode: 1, // 0.立即轉帳, 1.預約轉帳
+    amount: null, // 轉出金額
+    mode: 0, // 0.立即轉帳, 1.預約轉帳
     booking: { // 「預約轉帳」資訊
       multiTimes: '1', // 1.單次, *.多次
       transDate: null, // 轉帳日期，multiTimes='1'時。
       transRange: null, // 轉帳日期區間，multiTimes='*'時。
       cycleMode: 1, // 交易頻率: 1.每周, 2.每月
-      cycleTime: 0, // 交易週期: 〔 0~6: 周日~周六 〕或〔 1~28: 每月1~31 〕 //  TODO 月底(28/29/30/31)待確認
+      cycleTime: 0, // 交易週期: 〔 0~6: 周日~周六 〕或〔 1~28: 每月1~31 〕 //  NOTE 月底(28/29/30/31)會加警示。
     },
-    amount: null, // 轉出金額
     memo: null, // 備註
   });
-  const transType = ['一般轉帳', '常用轉帳', '約定轉帳', '社群轉帳'];
+  const transTypes = ['一般轉帳', '常用轉帳', '約定轉帳', '社群轉帳'];
   const cycleWeekly = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
   const cycleMonthly = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
@@ -119,7 +120,6 @@ const Transfer = () => {
    * 初始化
    */
   useEffect(async () => {
-    console.log('Start...');
     dispatch(setWaittingVisible(true));
 
     let keepModel = await loadFuncParams();
@@ -139,9 +139,9 @@ const Transfer = () => {
     console.log('Model : ', keepModel);
     setModel(keepModel);
 
-    // TODO 指定預設帳號時，不能切換轉出帳號，所以也不用 Call API 取資料。
+    // TODO NOTE 指定預設帳號時，不能切換轉出帳號，所以也不用 Call API 取資料。
 
-    // TODO 載入暫存快取，沒有快取才要 Call API 下載。
+    // TODO 載入清單快取，沒有快取才要 Call API 下載。
 
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示 accounts 在宣告時的預設值。
@@ -151,7 +151,6 @@ const Transfer = () => {
       setAccounts(accts);
       updateAccountBonusInfo(accts);
     });
-    // TODO 取得所有分行資訊。
 
     // // 是否開通 OTP 和 MOTP
     // getMotpStatusOnTransfer({ deviceId }).then((response) => {
@@ -163,11 +162,21 @@ const Transfer = () => {
     dispatch(setWaittingVisible(false));
   }, []);
 
+  /**
+   * 初始化帳戶卡；因為 Swiper 無法與 HookForm 綁定，所以要自行處理。
+   */
+  useEffect(() => {
+    // TODO 預設帳號
+    onSwiperChanged({ activeIndex: 0 });
+    const { transOut } = getValues();
+    if (!transOut?.account) onSwiperChanged({ activeIndex: 0 });
+  }, [accounts]);
+
   const updateAccountBonusInfo = (accts) => {
     accts.map(async (acct, n) => {
-      const info = await getDepositBonus(acct.accountNo);
-      acct.freeTransTotal = info.freeWithdrawal; // TODO 免費跨轉總次數
-      acct.freeTransRemain = info.freeTransfer; // TODO 免費跨轉剩餘次數
+      const info = await getAccountExtraInfo(acct.accountNo);
+      acct.freeTransTotal = info.freeTransfer; // TODO 免費跨轉總次數 g0167
+      acct.freeTransRemain = info.freeTransferRemain; // TODO 免費跨轉剩餘次數 g0167
       // 只有第一及最後一個帳號的 跨轉 資訊取得時，才需要更新畫面。
       // 第一個：為了讓使用者在最短時間內看到資料。
       // 最後一個：讓所有帳號卡牌都補上 跨提/轉 資料。
@@ -239,10 +248,12 @@ const Transfer = () => {
       const selectAccount = (type === 1) ? freqAcct : regAcct; // 指定預設為已選取狀態的帳號
       const params = {
         selectorMode: true, // 隱藏 Home 圖示
-        defaultAccount: selectAccount,
+        defaultAccount: selectAccount?.accountNo,
       };
       const newModel = updateModel(getValues());
 
+      // TODO 建立清單資料快取。
+      dispatch(setWaittingVisible(true));
       await startFunc(funcId, params, newModel);
     }
   };
@@ -251,10 +262,10 @@ const Transfer = () => {
    * 切換交易頻率時，將交易週期設為第一項。
    */
   useEffect(() => {
-    const { cycleMode } = getValues();
+    const { booking } = getValues();
     // 交易頻率(cycleMode): 1.每周, 2.每月
     // 交易週期(cycleTime): 〔 0~6: 周日~周六 〕或〔 1~31: 每月1~31 〕
-    setValue(idCycleTime, (cycleMode === 1) ? 0 : 1);
+    setValue(idCycleTime, (booking.cycleMode === 1) ? 0 : 1);
   }, [watch(idCycleMode)]);
 
   /**
@@ -336,7 +347,7 @@ const Transfer = () => {
     <SwiperSlide key={account.accountNo} data-index={index}>
       <DebitCard
         type="original"
-        branch={account.branchId} // TODO 轉為分行名稱
+        branch={account.branchId}
         cardName={account.alias ?? '(未命名)'}
         account={account.accountNo}
         accountType={account.accountNo?.substring(3, 6) ?? '004'}
@@ -348,13 +359,10 @@ const Transfer = () => {
     </SwiperSlide>
   );
 
-  useEffect(() => {
-    // TODO 預設帳號
-    onSwiperChanged({ activeIndex: 0 });
-    const { transOut } = getValues();
-    if (!transOut?.account) onSwiperChanged({ activeIndex: 0 });
-  }, [accounts]);
-
+  /**
+   * 切換帳戶卡，變更 HookForm 轉出帳號相關資料，以及轉帳額度。
+   */
+  const [tranferQuota, setTranferQuota] = useState([10000, 30000, 50000]); // 轉帳額度
   const onSwiperChanged = (e) => {
     const account = accounts[e.activeIndex];
     setValue(idTransOut, {
@@ -364,23 +372,32 @@ const Transfer = () => {
       freeTransRemain: account.freeTransRemain, // 免費跨轉剩餘次數
     });
 
-    // TODO 單筆轉帳限額 (用於設置至轉出金額驗證規則)
-    // const { balance, singleLimit } = account;
-    // setAmountLimit({ deposit: balance, perTxn: singleLimit });
+    // 單筆轉帳限額 (用於設置至轉出金額驗證規則)
+    // dgType = 帳戶類別('  '.非數存帳號, '11'.臨櫃數存昇級一般, '12'.一之二類, ' 2'.二類, '32'.三之二類)
+    let quota = [50000, 100000, 200000]; // 適用：一、二 類
+    if (account.dgType === '32') quota = [10000, 30000, 50000];
+    // else if (account.dgType === ' 2') quota = [50000, 100000, 200000];
+    // else if (['11', '12'].indexOf(account.dgType)) quota = [50000, 100000, 200000];
+    setTranferQuota(quota);
   };
 
-  // const [swiper, setSwiper] = useState();
-  // useEffect(() => {
-  //   console.log('Swiper : ', swiper);
-  //   if (swiper && !swiper.destoryed) {
-  //     swiper.slideTo(1, 0, false);
-  //   }
-  // }, [swiper]);
+  /**
+   * 單筆轉帳限額 (用於設置至轉出金額驗證規則)
+   */
+  const showTranferQuota = () => {
+    const { transType } = getValues;
+    if (transType !== '2') {
+      const formater = new Intl.NumberFormat('en-US');
+      const quota = tranferQuota.map((q) => formater.format(q)).join('/');
+      return (<p className="notice">{`單筆/當日/當月非約定轉帳剩餘額度: ${quota}`}</p>);
+    }
+    return null;
+  };
 
   /**
    * 輸出頁面
    */
-  console.log('Form Values : ', getValues());
+  console.log('Form Values : ', getValues(), errors);
   return (
     <Layout title="台幣轉帳">
       <TransferWrapper>
@@ -395,20 +412,20 @@ const Transfer = () => {
             <FEIBTabContext value={String(watch(idTransType))}>
               <FEIBTabList onChange={onTransTypeChanged} $type="fixed" $size="small" className="tabList">
                 {/* 0.一般轉帳, 1.常用轉帳, 2.約定轉帳, 3.社群轉帳 */}
-                {transType.map((name, n) => (<FEIBTab key={name} label={name} value={String(n)} />))}
+                {transTypes.map((name, n) => (<FEIBTab key={name} label={name} value={String(n)} />))}
               </FEIBTabList>
 
               {/* 轉入帳戶區(一般轉帳) */}
               <FEIBTabPanel value="0">
-                <BankCodeInput control={control} name={idTransInBank} value={getValues(idTransInBank)} setValue={setValue} trigger={trigger} errorMessage={errors.transIn?.bank?.message} />
+                <BankCodeInput control={control} name={idTransInBank} value={getValues(idTransInBank)} setValue={setValue} trigger={trigger} errorMessage={errors?.transIn?.bank?.message} />
                 <div>
                   <FEIBInputLabel htmlFor={idTransInAcct}>轉入帳號</FEIBInputLabel>
-                  <Controller control={control} name={idTransInAcct} defaultValue={getValues(idTransInAcct)}
+                  <Controller control={control} name={idTransInAcct} defaultValue={getValues(idTransInAcct) ?? ''}
                     render={({ field }) => (
-                      <FEIBInput {...field} placeholder="請輸入" inputProps={{ maxLength: 14, autoComplete: 'off' }} type="number" error={errors.transIn?.account?.message} />
+                      <FEIBInput {...field} placeholder="請輸入" inputProps={{ maxLength: 14, autoComplete: 'off' }} type="number" error={!!errors?.transIn?.account} />
                     )}
                   />
-                  <FEIBErrorMessage>{errors.receivingAccount?.message}</FEIBErrorMessage>
+                  <FEIBErrorMessage>{errors.transIn?.account?.message}</FEIBErrorMessage>
                 </div>
               </FEIBTabPanel>
               {/* 轉入帳戶區(常用/約定/社群) */}
@@ -421,13 +438,13 @@ const Transfer = () => {
               <Controller control={control} name={idAmount} defaultValue={getValues(idAmount)}
                 render={({ field }) => (
                   <div>
-                    <FEIBInput {...field} placeholder="$0（零元）" inputProps={{ maxLength: 9, autoComplete: 'off' }} inputMode="numeric" error={errors?.amount} />
+                    <FEIBInput {...field} placeholder="$0（零元）" inputProps={{ maxLength: 9, autoComplete: 'off' }} inputMode="numeric" error={!!errors?.amount} />
                     <div className="balanceLayout">{getValues(idAmountText)}</div>
                   </div>
                 )}
               />
               <FEIBErrorMessage>{errors.amount?.message}</FEIBErrorMessage>
-              <p className="notice">單筆/當日/當月非約定轉帳剩餘額度: 10,000/20,000/40,000</p>
+              {showTranferQuota()}
             </div>
 
             {/* 轉帳類型(0.立即轉帳, 1.預約轉帳) */}
@@ -457,21 +474,23 @@ const Transfer = () => {
                       <FEIBInputLabel className="datePickerLabel">交易時間</FEIBInputLabel>
                       <Controller control={control} name={idTransDate} defaultValue={getValues(idTransDate)}
                         render={({ field }) => (
-                          <DatePickerProvider>
-                            <FEIBDatePicker {...field} name={idTransDate} {...datePickerLimit} />
-                          </DatePickerProvider>
+                          // <DatePickerProvider>
+                          //   <FEIBDatePicker {...field} name={idTransDate} {...datePickerLimit} />
+                          // </DatePickerProvider>
+                          <div />
                         )}
                       />
-                      <FEIBErrorMessage>{errors.booking?.transDate.message}</FEIBErrorMessage>
+                      <FEIBErrorMessage>{errors.booking?.transDate?.message}</FEIBErrorMessage>
                     </>
                   ) : (
                     <div className="dateRangePickerArea">
                       <Controller control={control} name={idTransRange} defaultValue={getValues(idTransRange)}
                         render={({ field }) => (
-                          <DateRangePicker {...field} name={idTransRange} label="交易時間" {...datePickerLimit} />
+                          // <DateRangePicker {...field} name={idTransRange} label="交易時間" {...datePickerLimit} />
+                          <div />
                         )}
                       />
-                      <FEIBErrorMessage>{errors.booking?.transRange.message}</FEIBErrorMessage>
+                      <FEIBErrorMessage>{errors.booking?.transRange?.message}</FEIBErrorMessage>
 
                       {/* 設定交易頻率(1.每周, 2.每月)及交易週期 */}
                       <div className="reserveMoreOption">
@@ -485,7 +504,7 @@ const Transfer = () => {
                               </FEIBSelect>
                             )}
                           />
-                          <FEIBErrorMessage>{errors.booking?.cycleMode.message}</FEIBErrorMessage>
+                          <FEIBErrorMessage>{errors.booking?.cycleMode?.message}</FEIBErrorMessage>
                         </div>
                         <div>
                           <FEIBInputLabel htmlFor={idCycleTime}>交易週期</FEIBInputLabel>
@@ -500,20 +519,26 @@ const Transfer = () => {
                               </FEIBSelect>
                             )}
                           />
-                          {getValues(idCycleTime) >= 29 ? (<FEIBErrorMessage>* 可能順延至次月一日</FEIBErrorMessage>) : null}
-                          <FEIBErrorMessage>{errors.booking?.cycleTime.message}</FEIBErrorMessage>
+                          <FEIBErrorMessage>
+                            {/* eslint-disable-next-line react/jsx-one-expression-per-line */}
+                            {watch(idCycleTime) >= 29 ? (<>* 可能順延至次月一日<br /></>) : null}
+                            {errors.booking?.cycleTime?.message}
+                          </FEIBErrorMessage>
                         </div>
                       </div>
                     </div>
                   )}
                 </div>
-              ) : null}
+              ) : (
+                // 為了保持與備註間的間距。
+                <p style={{ height: '1.8rem'}} />
+              )}
             </div>
 
             {/* 備註 */}
             <div>
               <FEIBInputLabel htmlFor={idMemo}>備註</FEIBInputLabel>
-              <Controller control={control} name={idMemo} defaultValue={getValues(idMemo)}
+              <Controller control={control} name={idMemo} defaultValue={getValues(idMemo) ?? ''}
                 render={({ field }) => (
                   <FEIBInput {...field} placeholder="請輸入" inputProps={{ maxLength: 20, autoComplete: 'off' }} />
                 )}
