@@ -28,7 +28,6 @@ const BankCodeInput = ({
   errorMessage,
   value,
 }) => {
-  const storageItemName = 'BankList';
   const [bankList, setBankList] = useState();
   const [showSelector, setShowSelector] = useState();
 
@@ -36,18 +35,7 @@ const BankCodeInput = ({
    *- 初始化
    */
   useEffect(async () => {
-    let banks = sessionStorage.getItem(storageItemName);
-    try {
-      banks = JSON.parse(banks);
-    } catch (ex) {
-      sessionStorage.removeItem(storageItemName);
-      banks = null;
-    }
-
-    if (!banks) {
-      banks = await getBankCode();
-      sessionStorage.setItem(storageItemName, JSON.stringify(banks)); // 暫存入以減少API叫用
-    }
+    const banks = await getBankCode();
     setBankList(banks);
   }, []);
 

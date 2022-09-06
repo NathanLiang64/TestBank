@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   MoreIcon, VisibilityIcon, VisibilityOffIcon,
@@ -14,6 +14,7 @@ import DebitCardBackground from 'assets/images/debitCardBackground.png';
 import { showDrawer } from 'utilities/MessageModal';
 import { setDrawerVisible } from 'stores/reducers/ModalReducer';
 import { iconGenerator } from './debitCardIconGenerator';
+import { getBranchCode } from './api';
 import DebitCardWrapper from './debitCard.style';
 
 /*
@@ -56,7 +57,14 @@ const DebitCard = ({
   onFunctionChange,
 }) => {
   const dispatch = useDispatch();
+  const [branches, setBranches] = useState([]);
   const [showBalance, setShowBalance] = useState(true);
+
+  useEffect(async () => {
+    setBranches(await getBranchCode());
+  }, []);
+
+  const getBranchName = () => branches?.find((b) => b.branchNo === branch)?.branchName ?? branch;
 
   const handleClickShowBalance = () => {
     setShowBalance(!showBalance);
@@ -145,7 +153,8 @@ const DebitCard = ({
       <div className="cardTitle">
         <h2 className="cardName">{cardName}</h2>
         <div className="accountInfo">
-          { originalType() && <p className="branch">{branch}</p> }
+          {/* 將分行代碼轉為分行名稱 */}
+          { originalType() && <p className="branch">{getBranchName()}</p> }
           <p className="account">{accountFormatter(account)}</p>
           <CopyTextIconButton copyText={account} />
           <p className="account">{dollarSign !== 'NTD' ? `(${dollarSign})` : ''}</p>

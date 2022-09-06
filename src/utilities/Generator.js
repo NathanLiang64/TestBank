@@ -328,8 +328,15 @@ export const loadLocalData = async (storeName, loadDataFunc) => {
   }
 
   if (!data && loadDataFunc) {
-    data = await loadDataFunc();
-    setLocalData(storeName, data); // 暫存入以減少API叫用
+    const result = loadDataFunc();
+    if (result instanceof Promise) {
+      await result.then((response) => {
+        setLocalData(storeName, response); // 暫存入以減少API叫用
+        data = response;
+      });
+    } else {
+      data = result;
+    }
   }
 
   return data;
