@@ -19,7 +19,7 @@ import {
   FEIBButton, FEIBRadioLabel, FEIBRadio, FEIBSelect, FEIBOption,
 } from 'components/elements';
 import DebitCard from 'components/DebitCard';
-import DatePickerProvider from 'components/DatePickerProvider';
+import DatePicker from 'components/DatePicker';
 import DateRangePicker from 'components/DateRangePicker';
 import Accordion from 'components/Accordion';
 import BankCodeInput from 'components/BankCodeInput';
@@ -54,8 +54,8 @@ const Transfer = () => {
       freeTransTotal: null, // 免費跨轉次數
       freeTransRemain: null, // 免費跨轉剩餘次數
     },
-    transType: 0, // 0.一般轉帳, 1.常用轉帳, 2.約定轉帳, 3.社群轉帳
     transIn: { // 轉入帳戶
+      type: 0, // 0.一般轉帳, 1.常用轉帳, 2.約定轉帳, 3.社群轉帳
       bank: null, // 轉入帳戶的銀行
       account: null, // 轉入帳戶的帳號
       freqAcct: null, // 目前選擇的 常用帳號
@@ -84,8 +84,8 @@ const Transfer = () => {
 
   // Form 欄位名稱。
   const idTransOut = 'transOut';
-  const idTransType = 'transType';
   const idTransIn = 'transIn';
+  const idTransType = 'transIn.type';
   const idTransInBank = 'transIn.bank';
   const idTransInAcct = 'transIn.account';
   const idMode = 'mode';
@@ -102,9 +102,28 @@ const Transfer = () => {
   /**
    * 表單資料驗證規則
    */
+  const yupString = yup.string().transform((v) => (v ?? ''));
   const schema = yup.object().shape({
-    // TODO 資料驗證
+    transIn: yup.object().shape({
+      type: yup.number().min(0).max(3).required(),
+      bank: yupString.when('type', (type, s) => ((type === 0) ? s.required() : s.nullable())),
+      account: yupString.when('type', (type, s) => ((type === 0) ? s.required().min(10).max(14) : s.nullable())),
+      freqAcct: yup.object().when('type', (type, s) => ((type === 1) ? s.required() : s.nullable())),
+      regAcct: yup.object().when('type', (type, s) => ((type === 2) ? s.required() : s.nullable())),
+    }),
     amount: yup.string().required(),
+    mode: yup.number().min(0).max(1).required(),
+    booking: yup.object().shape({
+      multiTimes: yup.string().required().length(1).oneOf(['1', '*']),
+      transDate: yup.date().when('multiTimes', (multiTimes, s) => ((multiTimes === '1') ? s.required() : s.nullable())),
+      transRange: yup.array().transform((v) => (v ?? [])).when('multiTimes', (multiTimes, s) => ((multiTimes === '*') ? s.min(2) : s.nullable())),
+      cycleMode: yup.number().when('multiTimes', (multiTimes, s) => ((multiTimes === '*') ? s.required().min(1).max(2) : s.nullable())),
+      cycleTime: yup.number().when('multiTimes', (multiTimes, s) => ((multiTimes === '*')
+        ? s.when('cycleMode', (cycleMode, s1) => ((cycleMode === 1)
+          ? s1.required().min(0).max(6)
+          : s1.required().min(1).max(31)))
+        : s.nullable())),
+    }),
   });
 
   /**
@@ -126,12 +145,12 @@ const Transfer = () => {
     if (keepModel) {
       if (keepModel.response) {
         // 將 D00500/D00600 的傳回值，寫回 Model
-        if (keepModel.transType === 1) keepModel.transIn.freqAcct = keepModel.response;
-        if (keepModel.transType === 2) keepModel.transIn.regAcct = keepModel.response;
+        if (keepModel.transIn.type === 1) keepModel.transIn.freqAcct = keepModel.response;
+        if (keepModel.transIn.type === 2) keepModel.transIn.regAcct = keepModel.response;
       } else {
         // 若還沒有選擇常用/約定帳號，而且原本也沒有值，則切回一般轉帳。
         const { freqAcct, regAcct } = keepModel.transIn;
-        if (!freqAcct && !regAcct) keepModel.transType = 0;
+        if (!freqAcct && !regAcct) keepModel.transIn.type = 0;
       }
     } else {
       keepModel = model;
@@ -194,13 +213,13 @@ const Transfer = () => {
     register(idAmountText); // 轉帳金額的輸出文字。
 
     setValue(idTransOut, m.transOut);
-    setValue(idTransType, m.transType);
-    setValue(idTransIn, m.transIn); // NOTE 不了解為何 freqAcct 及 regAcct 無法填入值，所以用指定的方式。
+    setValue(idTransIn, m.transIn);
+    // NOTE 因為 freqAcct 及 regAcct 沒有控制項，所以要用指定的方式填值。
     setValue('transIn.freqAcct', m.transIn.freqAcct);
     setValue('transIn.regAcct', m.transIn.regAcct);
+    setValue(idAmount, m.amount);
     setValue(idMode, m.mode);
     setValue(idBooking, m.booking);
-    setValue(idAmount, m.amount);
     setValue(idMemo, m.memo);
   };
 
@@ -385,8 +404,8 @@ const Transfer = () => {
    * 單筆轉帳限額 (用於設置至轉出金額驗證規則)
    */
   const showTranferQuota = () => {
-    const { transType } = getValues;
-    if (transType !== '2') {
+    const { transIn } = getValues;
+    if (transIn?.type !== '2') {
       const formater = new Intl.NumberFormat('en-US');
       const quota = tranferQuota.map((q) => formater.format(q)).join('/');
       return (<p className="notice">{`單筆/當日/當月非約定轉帳剩餘額度: ${quota}`}</p>);
@@ -472,24 +491,12 @@ const Transfer = () => {
                   {watch(idMultiTimes) === '1' ? (
                     <>
                       <FEIBInputLabel className="datePickerLabel">交易時間</FEIBInputLabel>
-                      <Controller control={control} name={idTransDate} defaultValue={getValues(idTransDate)}
-                        render={({ field }) => (
-                          // <DatePickerProvider>
-                          //   <FEIBDatePicker {...field} name={idTransDate} {...datePickerLimit} />
-                          // </DatePickerProvider>
-                          <div />
-                        )}
-                      />
+                      <DatePicker control={control} name={idTransDate} {...datePickerLimit} defaultValue={getValues(idTransDate)} />
                       <FEIBErrorMessage>{errors.booking?.transDate?.message}</FEIBErrorMessage>
                     </>
                   ) : (
                     <div className="dateRangePickerArea">
-                      <Controller control={control} name={idTransRange} defaultValue={getValues(idTransRange)}
-                        render={({ field }) => (
-                          // <DateRangePicker {...field} name={idTransRange} label="交易時間" {...datePickerLimit} />
-                          <div />
-                        )}
-                      />
+                      <DateRangePicker control={control} name={idTransRange} label="交易時間" {...datePickerLimit} defaultValue={getValues(idTransRange)} />
                       <FEIBErrorMessage>{errors.booking?.transRange?.message}</FEIBErrorMessage>
 
                       {/* 設定交易頻率(1.每周, 2.每月)及交易週期 */}

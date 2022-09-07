@@ -13,7 +13,7 @@ import DebitCard from 'components/DebitCard';
 import Accordion from 'components/Accordion';
 import BankCodeInput from 'components/BankCodeInput';
 import MemberAccountCard from 'components/MemberAccountCard';
-import DatePickerProvider from 'components/DatePickerProvider';
+import DatePickerProvider from 'components/DatePicker';
 import DateRangePicker from 'components/DateRangePicker';
 import {
   FEIBTabContext, FEIBTabList, FEIBTab, FEIBTabPanel,

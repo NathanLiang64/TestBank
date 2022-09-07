@@ -29,7 +29,7 @@ export const getAccountsList = async () => {
     branchId: acct.account.substring(0, 3),
     balance: acct.details[0].balance,
     alias: acct.name,
-    dgType: acct.type,
+    dgType: acct.dgType,
     transable: acct.transable,
   }));
 };
