@@ -157,7 +157,6 @@ const C00500 = () => {
       case 'Rename': // 帳戶名稱編輯
         showRenameDialog(account.cardInfo.acctName);
         return;
-      case 'depositPlus':
       default:
         break;
     }

@@ -71,7 +71,7 @@ const LossReissue = lazy(() => import('pages/LossReissue'));
 const AccountMaintenance = lazy(() => import('pages/AccountMaintenance'));
 const BillPay = lazy(() => import('pages/BillPay'));
 const BillPay1 = lazy(() => import('pages/BillPay/billPay_1'));
-const DepositPlus = lazy(() => import('pages/DepositPlus'));
+const DepositPlus = lazy(() => import('pages/C00300_NtdDeposit/DepositPlus'));
 const NicknameSetting = lazy(() => import('pages/NicknameSetting'));
 const PatternLockSetting = lazy(() => import('pages/PatternLockSetting'));
 const FingerPrintLockSetting = lazy(() => import('pages/FingerPrintLockSetting'));
