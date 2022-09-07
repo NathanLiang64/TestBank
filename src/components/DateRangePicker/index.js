@@ -1,4 +1,7 @@
+/* eslint-disable object-curly-newline */
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
+import { useController } from 'react-hook-form';
 import { DateRangePicker as KeyboardDateRangePicker } from 'react-date-range';
 import { Button } from '@material-ui/core';
 import { FEIBInputLabel, FEIBInput } from 'components/elements';
@@ -19,11 +22,16 @@ import DateRangePickerWrapper from './dateRangePicker.style';
 *    日期範圍選擇完畢後，點擊面板右下方 "確定" 後所觸發的事件，可直接在外部傳入一個 function
 *    該 function 可以接收一個任意參數，透過該參數將可取得所選的日期範圍
 * */
-
 function DateRangePicker(props) {
   const {
-    label, value, onChange, minDate,
+    control, name, label, minDate, defaultValue,
   } = props;
+  console.log(props);
+  const {
+    field: { onChange, onBlur, value, ref },
+    fieldState: { invalid, isTouched, isDirty },
+    formState: { touchedFields, dirtyFields },
+  } = useController({ name, control, defaultValue });
 
   const [showDatePicker, setShowDatePicker] = useState();
   const [displayText, setDisplayText] = useState();
@@ -93,7 +101,6 @@ function DateRangePicker(props) {
         <div className="dateRangePickerMask">
           <div className="dateRangePickerWrapper" onClick={(event) => { event.stopPropagation(); }}>
             <KeyboardDateRangePicker
-              {...props}
               rangeColors={[theme.colors.primary.light]}
               ranges={[selectionRange]}
               onChange={onSelectChanged}
