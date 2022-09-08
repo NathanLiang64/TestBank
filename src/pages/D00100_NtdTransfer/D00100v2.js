@@ -258,9 +258,10 @@ const Transfer = () => {
     const type = parseInt(id, 10);
     setValue(idTransType, type);
 
+    const values = getValues();
     // 尚未指定常用/約定轉入對象時，自動開啟選擇常用/約定轉入對象的功能。
     let funcId = null;
-    const { freqAcct, regAcct } = getValues(idTransIn);
+    const { freqAcct, regAcct } = values.transIn;
     if (type === 1 && (!freqAcct || !e)) funcId = 'D00500';
     if (type === 2 && (!regAcct || !e)) funcId = 'D00600';
     if (funcId !== null) {
@@ -268,8 +269,9 @@ const Transfer = () => {
       const params = {
         selectorMode: true, // 隱藏 Home 圖示
         defaultAccount: selectAccount?.accountNo,
+        bindAccount: values?.transOut.account, // 提供給 D00600 只列出此帳號設定的約轉帳號清單。
       };
-      const newModel = updateModel(getValues());
+      const newModel = updateModel(values);
 
       // TODO 建立清單資料快取。
       dispatch(setWaittingVisible(true));

@@ -17,6 +17,7 @@ import PageWrapper from './D00600.style';
 const Page = () => {
   const dispatch = useDispatch();
   const [selectorMode, setSelectorMode] = useState();
+  const [bindAccount, setBindAccount] = useState([]);
   const [accounts, setAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState();
 
@@ -28,21 +29,25 @@ const Page = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    // TODO 若有指定帳號，則只取單一帳號的約定帳號清單。
-    // TODO 未指定帳號時，應改用頁韱分類。
-    const accts = await loadLocalData(storageName, getAllRegisteredAccount);
-    setAccounts(accts);
-
+    let bindAcct = null;
     // Function Controller 提供的參數
     // startParams = {
     //   selectorMode: true, 表示選取帳號模式，啟用時要隱藏 Home 圖示。
     //   defaultAccount: 指定的帳號將設為已選取狀態
+    //   bindAccount: 只列出此帳號設定的約轉帳號清單。
     // };
     const startParams = await loadFuncParams();
     if (startParams) {
+      bindAcct = startParams?.bindAccount;
+      setBindAccount(bindAcct);
       setSelectorMode(startParams.selectorMode ?? false);
-      setSelectedAccount(startParams.defaultAccount);
+      setSelectedAccount(startParams?.defaultAccount);
     }
+
+    // 若有指定帳號，則只取單一帳號的約定帳號清單。
+    // TODO 未指定帳號時，應改用頁韱分類。
+    const accts = await loadLocalData(`${storageName}${bindAcct}`, () => getAllRegisteredAccount(bindAcct));
+    setAccounts(accts);
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -73,7 +78,7 @@ const Page = () => {
       const successful = await updateRegisteredAccount(newAcct);
       dispatch(setDrawerVisible(false));
       if (successful) {
-        setAccounts(setLocalData(storageName, [...accounts])); // 強制更新清單。
+        setAccounts(setLocalData(`${storageName}${bindAccount}`, [...accounts])); // 強制更新清單。
       }
     };
 
