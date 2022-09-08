@@ -172,7 +172,8 @@ const QuickLoginSetting = () => {
     // 設定綁定資料成功進行交易驗證
     if (result === 'true') {
       const code = 0x17;
-      const rs = await transactionAuth(code, '');
+      const rs = await transactionAuth(code, midPhone);
+      console.log('交易驗證結果', JSON.stringify(rs));
       if (rs?.result) {
         // 交易驗證成功，開啟綁定 drawer，點擊確認進行 MID 驗證
         showDrawer(
