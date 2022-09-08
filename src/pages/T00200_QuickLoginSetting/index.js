@@ -28,7 +28,7 @@ import DrawerContent from './drawerContent';
 import QuickLoginSettingWrapper from './quickLoginSetting.style';
 
 const QuickLoginSetting = () => {
-  const [isBioActive, setIsBioActive] = useState(true);
+  const [isBioActive, setIsBioActive] = useState(false);
   const [isPatternActive, setIsPatternActive] = useState(false);
   const [bindingDate, setBindingDate] = useState('');
   const [bindingDevice, setBindingDevice] = useState('');
@@ -96,7 +96,12 @@ const QuickLoginSetting = () => {
       QLStatus,
       QLType,
     } = await getQLStatus();
-
+    console.log('web取得綁定狀態結果', JSON.stringify({
+      result,
+      message,
+      QLStatus,
+      QLType,
+    }));
     // 回傳成功
     if (result === 'true') {
       // 未綁定
