@@ -7,8 +7,8 @@ import AccountOverviewWrapper from './accountOverview.style';
 SwiperCore.use([Pagination]);
 
 const AccountOverview = ({
-  accounts, onAccountChange, cardColor,
-  funcList, moreFuncs, onFunctionChange,
+  accounts, onAccountChanged, cardColor,
+  funcList, moreFuncs, onFunctionClick,
 }) => {
   const renderDebitCard = (account) => (
     <DebitCard
@@ -21,21 +21,21 @@ const AccountOverview = ({
       functionList={funcList}
       moreList={moreFuncs}
       color={cardColor}
-      onFunctionClick={onFunctionChange}
+      onFunctionClick={onFunctionClick}
     />
   );
 
   const renderSwiper = () => {
-    const onSlideChange = (swiper) => onAccountChange(swiper.activeIndex);
+    const onSlideChange = (swiper) => onAccountChanged(swiper.activeIndex);
     return (
       <Swiper slidesPerView={1.14} spaceBetween={8} centeredSlides pagination onSlideChange={onSlideChange}>
         { accounts.map((account) => (
           <SwiperSlide key={`${account.accountNo}-${account.currency}`}>
             { renderDebitCard(account) }
-        </SwiperSlide>
-      )) }
-    </Swiper>
-  );
+          </SwiperSlide>
+        )) }
+      </Swiper>
+    );
   };
 
   const renderDebitCardPanel = () => (

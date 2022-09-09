@@ -223,8 +223,8 @@ const TaiwanDollarAccount = () => {
       <div>
         <AccountOverview
           accounts={accounts}
-          onAccountChange={handleAccountChanged}
-          onFunctionChange={handleFunctionClick}
+          onAccountChanged={handleAccountChanged}
+          onFunctionClick={handleFunctionClick}
           cardColor="purple"
           funcList={[
             { fid: 'D00100', title: '轉帳' },
@@ -243,7 +243,7 @@ const TaiwanDollarAccount = () => {
 
         <DepositDetailPanel
           details={transactions.get(accounts[selectedAccountIdx]?.accountNo)}
-          onClick={() => handleFunctionClick('moreTranscations')}
+          onMoreFuncClick={() => handleFunctionClick('moreTranscations')}
         />
       </div>
     </Layout>

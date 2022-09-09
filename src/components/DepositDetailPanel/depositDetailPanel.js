@@ -6,7 +6,7 @@ import { ArrowNextIcon } from 'assets/images/icons';
 import DepositDetailPanelWrapper from './depositDetailPanel.style';
 
 const DepositDetailPanel = ({
-  details, onClick,
+  details, onMoreFuncClick,
 }) => {
   const detailsRef = useRef();
 
@@ -61,7 +61,7 @@ const DepositDetailPanel = ({
         {/* 顯示 最近交易明細 */}
         { renderDetailCardList() }
         { details?.length > 0 && (
-          <div className="moreButton" onClick={onClick}>
+          <div className="moreButton" onClick={onMoreFuncClick}>
             更多明細
             <ArrowNextIcon />
           </div>
