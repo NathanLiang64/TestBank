@@ -42,6 +42,20 @@ export const dateFormatter = (date, dashType) => {
   return '';
 };
 
+/**
+ * 將日期格式轉為 YYYYMMDD 字串。
+ * @param {Date} date 要轉換的日期。
+ * @param {String?} splitter 輸出日期字串的間隔字元。
+ */
+export const dateToString = (date, splitter) => {
+  const parts = [
+    date.getFullYear(),
+    (date.getMonth() + 1).toString().padStart(2, '0'),
+    date.getDate().toString().padStart(2, '0'),
+  ];
+  return parts.join(splitter ?? '/');
+};
+
 // 將日期格式轉為 YYYYMMDD 字串
 export const stringDateCodeFormatter = (date) => {
   const year = date.getFullYear();
