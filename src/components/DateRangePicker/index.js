@@ -26,12 +26,11 @@ function DateRangePicker(props) {
   const {
     control, name, label, minDate, defaultValue,
   } = props;
-  console.log(props);
   const {
     field: { onChange, onBlur, value, ref },
     fieldState: { invalid, isTouched, isDirty },
     formState: { touchedFields, dirtyFields },
-  } = useController({ name, control, defaultValue });
+  } = useController({ name, control });
 
   const [showDatePicker, setShowDatePicker] = useState();
   const [displayText, setDisplayText] = useState();

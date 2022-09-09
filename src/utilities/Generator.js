@@ -316,7 +316,7 @@ export const setLocalData = async (storeName, newData) => {
  * 載入本地 SessionStoreage 中的資料。
  * @param {*} storeName 存在 SessionStoreage 時使用的名稱。
  * @param {*} loadDataFunc 當 SessionStoreage 沒有資料時，可以透過這個方法取得 預設值。
- * @returns 存在 SessionStoreage 中的資料。
+ * @returns {Promise<*>} 存在 SessionStoreage 中的資料。
  */
 export const loadLocalData = async (storeName, loadDataFunc) => {
   let data = sessionStorage.getItem(storeName);
