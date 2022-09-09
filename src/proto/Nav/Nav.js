@@ -36,8 +36,7 @@ const Nav = () => {
     <Layout title="測試功能首頁" goBack={false} goHome={false}>
       <NavWrapper>
         <div className="bankee">
-          <div onClick={() => startFunc('D00100v2')}>D00100v2 轉帳 - (施工中)</div>
-          {/* <div onClick={() => startFunc('D00100')}>D00100 轉帳（聖森版）</div> */}
+          <div onClick={() => startFunc('D00100')}>D00100 轉帳 - (施工中)</div>
           <div onClick={() => startFunc('C00300')}>C00300 台幣存款首頁</div>
           <div onClick={() => startFunc('C00400')}>C00400 外幣存款首頁</div>
           <div onClick={() => startFunc('C00500')}>C00500 交割帳戶首頁</div>

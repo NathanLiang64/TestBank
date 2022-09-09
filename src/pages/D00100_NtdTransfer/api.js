@@ -52,32 +52,3 @@ export const getAccountExtraInfo = async (accountNo) => {
   const response = await callAPI('/api/depositPlus/v1/getBonusInfo', accountNo);
   return response.data;
 };
-
-/**
- * 查詢轉出帳號清單。
- * @returns [{
- *   acctType: 帳戶類型(M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶),
- *   bankId: 銀行代碼,
- *   accountId: 帳號
- *   mainFlag: 主要帳戶，依據帳戶類型會標記一個主要帳戶
- *   balance: 帳戶餘額,
- *   ccyCd: 幣別代碼,
- *   isBooking: 是否有設約定帳號,
- *   tfrhCount: 提款優惠總次數,
- *   cwdhCount: 提款優惠剩餘次數,
- *   singleLimit: 交易金額額度,
- *   alias: 帳戶暱稱,
- *   showName: 顯示名稱，會帶帳戶的預設命名，有暱稱則會優先用暱稱,
- *   bindType: 綁定類別(1.社群帳本、2.存錢計畫)
- *
- *   branchId: 分行代碼 = 取 accountId 0~2碼,
- *   accountType: 帳號類別 = 取 accountId 3~5碼,
- *   isTwd: 是否為台幣 = acctType=M/S/C,
- *   ccyName: 幣別名稱,
- *   isManyCcy: 是否為多幣別帳號 acctType=F,
- * }, ...]
- */
-export const getAccounts = async () => {
-  const response = await callAPI('/api/transfer/queryNtdTrAcct');
-  return response.data.accounts;
-};

@@ -20,8 +20,7 @@ const C00700Detail = lazy(() => import('pages/C00700_CreditCard/Details'));
 const C00700Reward = lazy(() => import('pages/C00700_CreditCard/Rewards'));
 const C00800 = lazy(() => import('pages/C00800_ExportBankBook'));
 const C008001 = lazy(() => import('pages/C00800_ExportBankBook/exportBankBook_1'));
-const D00100 = lazy(() => import('pages/D00100_NtdTransfer/D00100'));
-const D00100v2 = lazy(() => import('pages/D00100_NtdTransfer/D00100v2'));
+const D00100 = lazy(() => import('pages/D00100_NtdTransfer/D00100v2'));
 const D001001 = lazy(() => import('pages/D00100_NtdTransfer/D00100_1'));
 const D001002 = lazy(() => import('pages/D00100_NtdTransfer/D00100_2'));
 const D00300 = lazy(() => import('pages/D00300_CardLessATM'));
@@ -117,7 +116,6 @@ const routes = [
   { path: '/C00800', exact: false, component: C00800 },
   { path: '/C008001', exact: false, component: C008001 },
   { path: '/D00100', exact: false, component: D00100 },
-  { path: '/D00100v2', exact: false, component: D00100v2 },
   { path: '/D001001', exact: false, component: D001001 },
   { path: '/D001002', exact: false, component: D001002 },
   { path: '/D00300', exact: true, component: D00300 },
