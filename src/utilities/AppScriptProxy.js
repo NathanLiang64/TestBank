@@ -488,6 +488,7 @@ async function appTransactionAuth(request) {
   const authMode = await getTransactionAuthMode(authCode); // 要驗 2FA 還是密碼，要以 create 時的為準。
   const allowed2FA = (authMode & 0x01) !== 0; // 表示需要通過 生物辨識或圖形鎖 驗證。
   let allowedPWD = (authMode & 0x02) !== 0; // 表示需要通過 網銀密碼 驗證。
+  const allowedOTP = (authMode & 0x04) !== 0; // 表示需要通過 OTP 驗證。
 
   const failResult = (message) => callback({ result: false, message });
 
@@ -496,9 +497,6 @@ async function appTransactionAuth(request) {
     failResult('尚未完成行動裝置綁定，無法使用此功能！');
     return;
   }
-
-  // 檢查是否需要通過 OTP 驗證，需要則立即發送OTP。
-  const sendOtp = (allowedPWD || allowed2FA || ((authCode & 0x30) === 0)) && ((authCode & 0x0F) !== 0);
 
   // 建立交易授權驗證。
   const txnAuth = await createTransactionAuth({ // 傳回值包含發送簡訊的手機門號及簡訊識別碼。
@@ -519,7 +517,7 @@ async function appTransactionAuth(request) {
 
     // NOTE 驗證成功(allowedPWD一定是false)但不用驗OTP，就直接傳回成功。
     //      若是驗證失敗或是還要驗OTP，就要開 Drawer 進行密碼或OTP驗證。
-    if (!allowedPWD && !sendOtp) {
+    if (!allowedPWD && !allowedOTP) {
       callback(rs);
       return;
     }

@@ -2,7 +2,7 @@
 /* eslint-disable arrow-body-style */
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { startFunc } from 'utilities/AppScriptProxy';
+import { startFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
 // import {
@@ -37,7 +37,7 @@ const Nav = () => {
       <NavWrapper>
         <div className="bankee">
           <div onClick={() => startFunc('D00100v2')}>D00100v2 轉帳 - (施工中)</div>
-          <div onClick={() => startFunc('D00100')}>D00100 轉帳（聖森版）</div>
+          {/* <div onClick={() => startFunc('D00100')}>D00100 轉帳（聖森版）</div> */}
           <div onClick={() => startFunc('C00300')}>C00300 台幣存款首頁</div>
           <div onClick={() => startFunc('C00400')}>C00400 外幣存款首頁</div>
           <div onClick={() => startFunc('C00500')}>C00500 交割帳戶首頁</div>
@@ -46,6 +46,9 @@ const Nav = () => {
           <div onClick={() => startFunc('D00600')}>D00600 約定帳號管理</div>
           <div onClick={() => startFunc('B00600')}>B00600 更多...</div>
 
+          <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await transactionAuth(0x26))}>
+            基本資料變更-電子郵件(2FA / OTP)
+          </div>
           {/* <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await transactionAuth(0x35))}>
             台幣-非約轉(2FA / PWD+OTP)
           </div>
