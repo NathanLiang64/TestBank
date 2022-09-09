@@ -69,7 +69,7 @@ const DebitCardWrapper = styled.div`
     }
   }
 
-  .transferLimit {
+  .freeTransferInfo {
     padding-top: .4rem;
     padding-bottom: .2rem;
     font-size: 1.5rem;

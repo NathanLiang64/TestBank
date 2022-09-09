@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   MoreIcon, VisibilityIcon, VisibilityOffIcon,
@@ -14,7 +14,6 @@ import DebitCardBackground from 'assets/images/debitCardBackground.png';
 import { showDrawer } from 'utilities/MessageModal';
 import { setDrawerVisible } from 'stores/reducers/ModalReducer';
 import { iconGenerator } from './debitCardIconGenerator';
-import { getBranchCode } from './api';
 import DebitCardWrapper from './debitCard.style';
 
 /*
@@ -31,8 +30,8 @@ import DebitCardWrapper from './debitCard.style';
 * 7. hideIcon -> 此組件預設會在餘額前顯示眼睛圖示的 Icon Button
 *    點擊 Icon 後可隱藏餘額，倘若不需要此功能請在組件加上 hideIcon 屬性
 * 8. functionList -> 卡片功能清單，型別為陣列，組件 type 為 original 的卡片 (完整內容) 才需要傳入
-* 9. transferLimit -> 轉帳優惠總次數
-* 10. transferRemaining -> 轉帳優惠剩餘次數
+* 9. freeTransfer -> 轉帳優惠總次數
+* 10. freeTransferRemain -> 轉帳優惠剩餘次數
 * 11.moreList -> 點擊更多圖標後彈出的更多功能清單，型別為陣列，組件 type 為 original 的卡片 (完整內容) 才需要傳入
 * 12.moreDefault -> 是否顯示更多功能清單，預設為顯示
 * 13.dollarSign -> 貨幣符號，預設為 '$'
@@ -44,34 +43,39 @@ const DebitCard = ({
   branch,
   cardName,
   account,
-  accountType,
+  // accountType,
   balance,
-  hideIcon,
-  functionList,
-  transferTitle = '跨轉優惠',
-  transferLimit,
-  transferRemaining,
-  moreList,
+  // transferTitle = '跨轉優惠',
+  freeTransfer,
+  freeTransferRemain,
+  freeWithdraw,
+  freeWithdrawRemain,
   dollarSign,
   color,
-  onFunctionChange,
+  hideIcon,
+  moreList,
+  functionList,
+  onFunctionClick,
 }) => {
   const dispatch = useDispatch();
-  const [branches, setBranches] = useState([]);
+  const model = {
+    branch,
+    cardName: cardName ?? '(未命名)',
+    account,
+    accountType: account.substring(3, 6) ?? '004',
+    balance: balance ?? '--',
+    dollarSign,
+    freeTransfer,
+    freeTransferRemain,
+    freeWithdraw,
+    freeWithdrawRemain,
+  };
+  const isSmallCard = (type !== 'original');
   const [showBalance, setShowBalance] = useState(true);
-
-  useEffect(async () => {
-    setBranches(await getBranchCode());
-  }, []);
-
-  const getBranchName = () => branches?.find((b) => b.branchNo === branch)?.branchName ?? branch;
 
   const handleClickShowBalance = () => {
     setShowBalance(!showBalance);
   };
-
-  // 判斷卡片類型是否為 original
-  const originalType = () => type === 'original';
 
   // 渲染卡片餘額左側的 "眼睛" 圖標 (顯示/隱藏)
   const renderEyeIconButton = () => (
@@ -93,7 +97,7 @@ const DebitCard = ({
 
   const onFuncClick = (fid) => {
     dispatch(setDrawerVisible(false));
-    onFunctionChange(fid);
+    onFunctionClick(fid);
   };
 
   // render 功能列表
@@ -103,35 +107,37 @@ const DebitCard = ({
         func.fid
           ? (
             <li key={func.fid} onClick={() => onFuncClick(func.fid)}>
-              <p>
-                {func.title}
-              </p>
+              <p>{func.title}</p>
             </li>
           ) : (
             <li>
-              <div style={{ color: 'gray' }}>
-                {func.title}
-              </div>
+              <div style={{ color: 'gray' }}>{func.title}</div>
             </li>
           )
       )) }
     </ul>
   );
 
-  const renderTransferLimit = (total, current) => (
-    (transferLimit || transferRemaining)
-      ? (
-        <p className="transferLimit">
-          {transferTitle}
-          :
-          {total}
-          次/剩餘
-          {current}
-          次
-        </p>
-      )
-      : null
-  );
+  const renderFreeTransferInfo = () => {
+    const isWithdraw = (model.freeWithdraw || model.freeWithdrawRemain);
+    const isTransfer = (model.freeTransfer || model.freeTransferRemain);
+    let total = '-';
+    let remain = '-';
+    if (isWithdraw) {
+      total = model.freeWithdraw;
+      remain = model.freeWithdrawRemain;
+    } else if (isTransfer) {
+      total = model.freeTransfer;
+      remain = model.freeTransferRemain;
+    } else return null;
+
+    const title = isWithdraw ? '跨提優惠' : '跨轉優惠';
+    return (
+      <p className="freeTransferInfo">
+        {`${title} : ${total} 次/剩餘 ${remain} 次`}
+      </p>
+    );
+  };
 
   // render 點擊更多圖標後的功能列表
   const renderMoreList = (list) => (
@@ -148,26 +154,27 @@ const DebitCard = ({
   );
 
   return (
-    <DebitCardWrapper className="debitCard" $cardColor={accountTypeColorGenerator(accountType) || color}>
+    <DebitCardWrapper className="debitCard" $cardColor={color ?? accountTypeColorGenerator(model.accountType)}>
       <img src={DebitCardBackground} alt="background" className="backgroundImage" />
       <div className="cardTitle">
-        <h2 className="cardName">{cardName}</h2>
+        <h2 className="cardName">{model.cardName}</h2>
         <div className="accountInfo">
           {/* 將分行代碼轉為分行名稱 */}
-          { originalType() && <p className="branch">{getBranchName()}</p> }
-          <p className="account">{accountFormatter(account)}</p>
-          <CopyTextIconButton copyText={account} />
+          { !isSmallCard && <p className="branch">{branch}</p> }
+          <p className="account">{accountFormatter(model.account)}</p>
+          <CopyTextIconButton copyText={model.account} />
           <p className="account">{dollarSign !== 'NTD' ? `(${dollarSign})` : ''}</p>
         </div>
       </div>
-      <div className={`cardBalance ${originalType() && 'grow'}`}>
+      <div className={`cardBalance ${!isSmallCard ? 'grow' : ''}`}>
         { !hideIcon && renderEyeIconButton() }
         <h3 className="balance">
-          {`${currencySymbolGenerator(dollarSign, (showBalance ? balance : '*'))}`}
+          {`${currencySymbolGenerator(dollarSign, (showBalance ? model.balance : '*'))}`}
         </h3>
       </div>
-      { (originalType() && (functionList && renderFunctionList(functionList))) || renderTransferLimit(transferLimit, transferRemaining) }
-      { originalType() && moreList && renderMoreIconButton() }
+      { renderFreeTransferInfo() }
+      { functionList && renderFunctionList(functionList) }
+      { moreList && renderMoreIconButton() }
     </DebitCardWrapper>
   );
 };

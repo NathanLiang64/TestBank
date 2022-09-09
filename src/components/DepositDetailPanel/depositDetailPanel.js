@@ -11,13 +11,11 @@ const DepositDetailPanel = ({
   const detailsRef = useRef();
 
   const renderDetailCardList = () => {
-    if (details === null) {
-      return (
-        <Loading space="both" isCentered />
-      );
+    if (!details) {
+      return (<Loading space="both" isCentered />);
     }
 
-    if (details.length === 0) {
+    if (!details.length) {
       return (
         <div style={{ height: 500, width: '100%' }}>
           <EmptyData content="查無最近三年內的帳務往來資料" />
@@ -37,21 +35,21 @@ const DepositDetailPanel = ({
     }
 
     return (
-      list.map((card) => (
+      list.map((txnInfo) => (
         <DetailCard
-          key={card.index}
+          key={txnInfo.index}
           avatar={null} // 大頭貼路徑＋card.targetMbrId
-          title={card.description}
-          type={card.cdType}
-          date={card.txnDate}
-          time={card.txnTime}
-          bizDate={card.bizDate}
-          targetBank={card.targetBank}
-          targetAccount={card.targetAcct}
-          targetMember={card.targetMbrID}
-          dollarSign={card.currency}
-          amount={card.amount}
-          balance={card.balance}
+          title={txnInfo.description}
+          type={txnInfo.cdType}
+          date={txnInfo.txnDate}
+          time={txnInfo.txnTime}
+          bizDate={txnInfo.bizDate}
+          targetBank={txnInfo.targetBank}
+          targetAccount={txnInfo.targetAcct}
+          targetMember={txnInfo.targetMbrID}
+          dollarSign={txnInfo.currency}
+          amount={txnInfo.amount}
+          balance={txnInfo.balance}
         />
       ))
     );

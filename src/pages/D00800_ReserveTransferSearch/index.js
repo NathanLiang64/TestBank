@@ -176,9 +176,8 @@ const ReserveTransferSearch = () => {
         account={item.accountId}
         balance={item.balance}
         dollarSign={item.ccyCd}
-        transferTitle="跨轉優惠"
-        transferLimit={6}
-        transferRemaining={item.tfrhCount.length >= 2 ? item.tfrhCount.replace('0', '') : item.tfrhCount}
+        freeTransfer={6}
+        freeTransferRemain={item.tfrhCount.length >= 2 ? item.tfrhCount.replace('0', '') : item.tfrhCount}
         color="purple"
       />
     </SwiperSlide>

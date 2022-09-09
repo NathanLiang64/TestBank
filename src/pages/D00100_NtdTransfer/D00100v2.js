@@ -391,8 +391,8 @@ const Transfer = (props) => {
         account={account.accountNo}
         accountType={account.accountNo?.substring(3, 6) ?? '004'}
         balance={account.balance ?? '--'}
-        transferLimit={account.freeTransTotal ?? '--'}
-        transferRemaining={account.freeTransRemain ?? '--'}
+        freeTransfer={account.freeTransTotal ?? '--'}
+        freeTransferRemain={account.freeTransRemain ?? '--'}
         dollarSign="TWD"
       />
     </SwiperSlide>

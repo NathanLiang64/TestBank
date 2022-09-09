@@ -21,7 +21,7 @@ const AccountOverview = ({
       functionList={funcList}
       moreList={moreFuncs}
       color={cardColor}
-      onFunctionChange={onFunctionChange}
+      onFunctionClick={onFunctionChange}
     />
   );
 
