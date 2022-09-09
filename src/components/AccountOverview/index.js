@@ -10,14 +10,14 @@ const AccountOverview = ({
   accounts, onAccountChange, cardColor,
   funcList, moreFuncs, onFunctionChange,
 }) => {
-  const renderSingleDebitCard = (cardInfo) => (
+  const renderDebitCard = (account) => (
     <DebitCard
       type="original"
-      branch={cardInfo.acctBranch}
-      cardName={cardInfo.acctName ? cardInfo.acctName : '(尚未命名)'}
-      account={cardInfo.acctId}
-      balance={cardInfo.acctBalx}
-      dollarSign={cardInfo.ccyCd}
+      branch={account.branchName}
+      cardName={account.alias}
+      account={account.accountNo}
+      balance={account.balance}
+      dollarSign={account.currency}
       functionList={funcList}
       moreList={moreFuncs}
       color={cardColor}
@@ -25,32 +25,29 @@ const AccountOverview = ({
     />
   );
 
-  const renderMultipleDebitCards = (userAccounts) => (
-    <Swiper
-      slidesPerView={1.14}
-      spaceBetween={8}
-      centeredSlides
-      pagination
-      onSlideChange={onAccountChange}
-    >
-      { userAccounts.map((account) => (
-        <SwiperSlide key={`${account.cardInfo.acctId}-${account.cardInfo.ccyCd}`}>
-          { renderSingleDebitCard(account.cardInfo) }
+  const renderSwiper = () => {
+    const onSlideChange = (swiper) => onAccountChange(swiper.activeIndex);
+    return (
+      <Swiper slidesPerView={1.14} spaceBetween={8} centeredSlides pagination onSlideChange={onSlideChange}>
+        { accounts.map((account) => (
+          <SwiperSlide key={`${account.accountNo}-${account.currency}`}>
+            { renderDebitCard(account) }
         </SwiperSlide>
       )) }
     </Swiper>
   );
+  };
 
-  const renderDebitCard = (userAccounts) => (
-    userAccounts.length > 1
-      ? renderMultipleDebitCards(userAccounts)
-      : renderSingleDebitCard(userAccounts[0].cardInfo)
+  const renderDebitCardPanel = () => (
+    accounts.length > 1
+      ? renderSwiper()
+      : renderDebitCard(accounts[0])
   );
 
   return (
     <AccountOverviewWrapper small $multipleCardsStyle={accounts?.length > 1}>
       <div className="userCardArea">
-        { accounts?.length ? renderDebitCard(accounts) : null }
+        { renderDebitCardPanel() }
       </div>
     </AccountOverviewWrapper>
   );

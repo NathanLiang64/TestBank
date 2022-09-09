@@ -19,23 +19,6 @@ export const getAccountSummary = async (acctTypes) => {
 };
 
 /**
- * 取得取得免費跨提/跨轉次數、數存優惠利率及資訊
- * @param {*} accountNo 存款帳號
- * @returns 優惠資訊
-  {
-   "freeWithdrawal": 6, // 免費跨提
-   "freeTransfer": 6, // 免費跨轉
-   "bonusQuota": 50000, // 優惠利率額度
-   "bonusRate": 0.081, // 優惠利率
-   "interest": 1999, // 累積利息
-  }
- */
-export const getDepositBonus = async (accountNo) => {
-  const response = await callAPI('/api/depositPlus/v1/getBonusInfo', accountNo);
-  return response.data;
-};
-
-/**
  * 取得當前所選帳號之交易明細
  * @param {*} accountNo 存款帳號, ex: 00100100063106
  * @returns 帳戶往來明細清單

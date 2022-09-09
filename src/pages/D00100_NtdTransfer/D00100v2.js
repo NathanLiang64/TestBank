@@ -27,9 +27,9 @@ import { showInfo } from 'utilities/MessageModal';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { loadFuncParams, startFunc } from 'utilities/AppScriptProxy';
-import { loadLocalData, numberToChinese, setLocalData } from 'utilities/Generator';
+import { numberToChinese, setLocalData } from 'utilities/Generator';
 import { ChangeMemberIcon } from 'assets/images/icons';
-import { getAccountsList, getAccountExtraInfo } from './api';
+import { loadAccountsList, AccountListCacheName, getAccountExtraInfo } from './api';
 import TransferWrapper from './D00100.style';
 
 /* Swiper modules */
@@ -51,7 +51,6 @@ const Transfer = (props) => {
   const [amountText, setAmountText] = useState(); // 轉帳金額的輸出文字。
   const [tranferQuota, setTranferQuota] = useState([10000, 30000, 50000]); // 目前帳戶的轉帳限額。
 
-  const accountsCacheName = 'Accounts';
   const transTypes = ['一般轉帳', '常用轉帳', '約定轉帳', '社群轉帳'];
   const cycleWeekly = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
   const cycleMonthly = [
@@ -113,8 +112,8 @@ const Transfer = (props) => {
       transOut: {
         account: null, // 轉出帳號
         balance: null, // 帳戶餘額
-        freeTransTotal: null, // 免費跨轉次數
-        freeTransRemain: null, // 免費跨轉剩餘次數
+        freeTransfer: null, // 免費跨轉次數
+        freeTransferRemain: null, // 免費跨轉剩餘次數
       },
       transIn: { // 轉入帳戶
         type: 0, // 0.一般轉帳, 1.常用轉帳, 2.約定轉帳, 3.社群轉帳
@@ -167,7 +166,7 @@ const Transfer = (props) => {
 
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
-    loadLocalData(accountsCacheName, getAccountsList).then(setAccounts); // 載入後存入快取。
+    loadAccountsList('MSC', setAccounts);
 
     // 將 Model 資料填入 UI Form 的對應欄位。
     if (keepModel) reset(keepModel);
@@ -386,13 +385,13 @@ const Transfer = (props) => {
     <SwiperSlide key={account.accountNo} data-index={index}>
       <DebitCard
         type="original"
-        branch={account.branchId}
-        cardName={account.alias ?? '(未命名)'}
+        branch={account.branchName}
+        cardName={account.alias}
         account={account.accountNo}
         accountType={account.accountNo?.substring(3, 6) ?? '004'}
-        balance={account.balance ?? '--'}
-        freeTransfer={account.freeTransTotal ?? '--'}
-        freeTransferRemain={account.freeTransRemain ?? '--'}
+        balance={account.balance}
+        freeTransfer={account.freeTransfer}
+        freeTransferRemain={account.freeTransferRemain}
         dollarSign="TWD"
       />
     </SwiperSlide>
@@ -406,19 +405,21 @@ const Transfer = (props) => {
 
     const account = accounts[e.activeIndex];
     // 若還沒有取得 免費跨轉次數 則立即補上。
-    if (!account.freeTransTotal) {
+    if (!account.freeTransfer) {
       const info = await getAccountExtraInfo(account.accountNo);
-      account.freeTransTotal = info.freeTransfer;
-      account.freeTransRemain = info.freeTransferRemain;
-      setLocalData(accountsCacheName, accounts);
+      accounts[index] = {
+        ...account,
+        ...info,
+      };
+      setLocalData(AccountListCacheName, accounts);
     }
 
     setValue(idTransOut, {
       account: account.accountNo, // 轉出帳號
       alias: account.alias, // 帳戶名稱，若有暱稱則會優先用暱稱
       balance: account.balance, // 帳戶餘額
-      freeTransTotal: account.freeTransTotal, // 免費跨轉次數
-      freeTransRemain: account.freeTransRemain, // 免費跨轉剩餘次數
+      freeTransfer: account.freeTransfer, // 免費跨轉次數
+      freeTransferRemain: account.freeTransferRemain, // 免費跨轉剩餘次數
     });
 
     // 單筆轉帳限額 (用於設置至轉出金額驗證規則)

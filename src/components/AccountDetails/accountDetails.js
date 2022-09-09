@@ -65,7 +65,7 @@ const AccountDetails = ({
     range.loading = setEmptyRange();
     setCondition({
       ...cond,
-      accountNo: selectedAccount.acctId,
+      accountNo: selectedAccount.accountNo,
       startIndex: null,
       direct: 0, // Note: 設為 0 才會清掉已載入的明細項目。
     });
@@ -215,11 +215,11 @@ const AccountDetails = ({
   const renderCardArea = (account) => (
     <div className="debitCardWrapper">
       <DebitCard
-        cardName={account?.acctName}
-        account={account?.acctId}
-        balance={account?.acctBalx}
-        dollarSign={account?.ccyCd}
-        color={account?.cardColor}
+        cardName={account.alias}
+        account={account.accountNo}
+        balance={account.balance}
+        dollarSign={account.currency}
+        color={account.cardColor}
       />
     </div>
   );
