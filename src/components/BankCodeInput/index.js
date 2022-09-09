@@ -35,8 +35,7 @@ const BankCodeInput = ({
    *- 初始化
    */
   useEffect(async () => {
-    const banks = await getBankCode();
-    setBankList(banks);
+    getBankCode().then((banks) => setBankList(banks));
   }, []);
 
   /**

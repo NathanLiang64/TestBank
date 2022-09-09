@@ -24,13 +24,10 @@ import DateRangePickerWrapper from './dateRangePicker.style';
 * */
 function DateRangePicker(props) {
   const {
-    control, name, label, minDate, defaultValue,
+    control, name, label, minDate, onChange, value,
   } = props;
-  const {
-    field: { onChange, onBlur, value, ref },
-    fieldState: { invalid, isTouched, isDirty },
-    formState: { touchedFields, dirtyFields },
-  } = useController({ name, control });
+  let myOnChange = onChange;
+  let myValue = value;
 
   const [showDatePicker, setShowDatePicker] = useState();
   const [displayText, setDisplayText] = useState();
@@ -43,13 +40,19 @@ function DateRangePicker(props) {
   const [selectionRange, setSelectionRange] = useState(defaultRange);
 
   useEffect(() => {
-    if (value?.length) {
-      let range = value;
-      let startDate = value[0];
+    if (control) {
+      const { field } = useController({ name, control });
+      myOnChange = field.onChange;
+      myValue = field.value;
+    }
+
+    if (myValue?.length) {
+      let range = myValue;
+      let startDate = myValue[0];
       if (typeof startDate === 'string') { // 為了相容台外幣明細
         if (!startDate) return; // 當沒有設定日期時，維持「自訂搜尋日期區間」為空白。
         startDate = stringToDate(startDate);
-        const endDate = stringToDate(value[1]) ?? startDate;
+        const endDate = stringToDate(myValue[1]) ?? startDate;
         range = [startDate, endDate];
       }
       setDateRange(range);
@@ -76,13 +79,13 @@ function DateRangePicker(props) {
 
   const onCancel = () => {
     setShowDatePicker(false);
-    setDateRange(value);
+    setDateRange(myValue);
     setSelectionRange(defaultRange); // NOTE 必需清除，否則在 value 沒有值時，取消再進來仍會保留原本的設計範圍。
   };
 
   const onConfirm = () => {
     setShowDatePicker(false);
-    onChange(dateRange);
+    myOnChange(dateRange);
   };
 
   return (
