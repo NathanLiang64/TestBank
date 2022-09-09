@@ -1,318 +1,142 @@
-/* eslint-disable */
 import { useState, useEffect } from 'react';
-import { useHistory, useLocation } from 'react-router';
-import { useSelector, useDispatch } from 'react-redux';
-import InformationList from 'components/InformationList';
-import InfoArea from 'components/InfoArea';
-import Dialog from 'components/Dialog';
-import Loading from 'components/Loading';
-import { FEIBButton } from 'components/elements';
-// import { setResult } from 'components/PasswordDrawer/stores/actions';
-import { doBookNtdTrConfirm, doTransfer } from 'apis/transferApi';
-import { dateFormatter, weekNumberToChinese } from 'utilities/Generator';
-import { directTo } from 'utilities/mockWebController';
-import TransferWrapper, { TransferMOTPDialogWrapper } from './D00100.style';
+import { useHistory } from 'react-router';
+import { useDispatch } from 'react-redux';
 
-const Transfer1 = () => {
-  const [openMOTPDialog, setOpenMOTPDialog] = useState(false);
-  const [displayInfo, setDisplayInfo] = useState({
-    money: '',
-    bankNo: '',
-    bankName: '',
-    receivingAccount: '',
-    date: '',
-    frequency: '',
-    amount: 0,
-    remark: '',
-  });
-  const fastLogin = useSelector(({ passwordDrawer }) => passwordDrawer.fastLogin);
-  const motp = useSelector(({ passwordDrawer }) => passwordDrawer.motp);
-  const result = useSelector(({ passwordDrawer }) => passwordDrawer.result);
+import Layout from 'components/Layout/Layout';
+import InformationList from 'components/InformationList';
+import { FEIBButton } from 'components/elements';
+
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { transactionAuth } from 'utilities/AppScriptProxy';
+import { dateToString } from 'utilities/Generator';
+import { getBankCode } from 'components/BankCodeInput/api';
+// import { doBookNtdTrConfirm, doTransfer } from 'apis/transferApi';
+import TransferWrapper from './D00100.style';
+
+const TransferConfirm = (props) => {
+  const { location } = props;
+  const { state } = location;
+
   const history = useHistory();
   const dispatch = useDispatch();
-  const { state } = useLocation();
 
-  const {
-    money, bankNo, bankName, receivingAccount, date, frequency, amount, debitAccount, debitName, remark, transferType,
-  } = displayInfo;
+  const [model] = useState(state);
+  const [banks, setBanks] = useState();
 
-  const switchFrequency = (type) => {
-    switch (type) {
-      case 'weekly':
-        return '每週';
-      case 'monthly':
-        return '每個月';
-      default:
-        return '';
+  /**
+   * 頁面初始化
+   */
+  useEffect(async () => {
+    dispatch(setWaittingVisible(true));
+
+    setBanks(await getBankCode());
+  }, []);
+
+  /**
+   * 初始化完成，關閉等待中狀態。
+   */
+  useEffect(async () => {
+    if (model) dispatch(setWaittingVisible(false));
+  }, [model]);
+
+  /**
+   * 將轉帳金額加標千分位符號及前置'$'.
+   */
+  const getDisplayAmount = (amount) => `$${new Intl.NumberFormat('en-US').format(amount)}`;
+
+  /**
+   * 取得銀行名稱。
+   */
+  const getBankName = (bankId) => {
+    const { bankName } = banks?.find((b) => b.bankNo === bankId) ?? '';
+    return `${bankName} (${bankId})`;
+  };
+
+  /**
+   * 產生轉帳發生時間或區間的描述訊息。
+   */
+  const getTransDate = () => {
+    const { mode, booking } = model;
+
+    if (mode === 0) return dateToString(new Date()); // 立即轉帳 用今天表示。
+
+    const { multiTimes, transDate, transRange } = booking;
+    if (multiTimes === '1') {
+      return `${dateToString(transDate)}`;
+    }
+    return `${dateToString(transRange[0])} ~ ${dateToString(transRange[1])}`;
+  };
+
+  /**
+   * 產生週期預約轉帳的描述訊息。
+   */
+  const getCycleDesc = (booking) => {
+    const cycleWeekly = ['日', '一', '二', '三', '四', '五', '六'];
+    const { cycleTiming } = booking;
+    if (booking.cycleMode === 1) {
+      return `每周${cycleWeekly[booking.cycleTiming]}`;
+    }
+    return `每個月${cycleTiming}號`;
+  };
+
+  /**
+   * 執行轉帳程序，包含進行交易驗證。
+   */
+  const onConfirm = async () => {
+    const auth = await transactionAuth(0x35);
+    if (auth.result) {
+      // TODO 發動轉帳
+      // TODO 顯示轉帳結果
     }
   };
 
-  // 計算預計轉帳次數
-  const computeTransferAmount = (type, day, dateRange) => {
-    const startDate = dateRange[0];
-    const endDate = dateRange[1];
-    let count = 0;
-
-    // 交易頻率為 "週" 時，計算日期範圍內有多少相同的日，day 可接受 1-7 數字，為週一到週日
-    if (type === 'weekly') {
-      const ndays = 1 + Math.round((endDate - startDate) / (24 * 3600 * 1000));
-      const sum = (a, b) => a + Math.floor((ndays + ((startDate.getDay() + 6 - b) % 7)) / 7);
-      count = [day].reduce(sum, 0);
-    }
-
-    // 交易頻率為 "月" 時，計算日期範圍內有多少相同的日，day 可接受 1-31，為 1 號到 31 號
-    if (type === 'monthly') {
-      const startYear = startDate.getFullYear(); // 起始年份
-      const startMonth = startDate.getMonth() + 1; // 起始月份
-      const endYear = endDate.getFullYear(); // 結束年份
-      const endMonth = endDate.getMonth() + 1; // 結束年份
-      let removeCount = 0;
-
-      // 去範圍區間月份加總 (去頭尾)
-      const loopMonth = (endYear - startYear) * 12 - startMonth + endMonth - 1;
-      // 根據每月天數判斷是否包含指定日 (day)
-      for (let i = 1; i <= loopMonth; i++) {
-        const nextMonthDays = new Date(startYear, startMonth + i, 0).getDate();
-        if (nextMonthDays < day) removeCount += 1;
-      }
-
-      // 判斷頭尾月份的日期是否在指定日 (day) 內
-      if (startDate.getDate() > day) removeCount += 1;
-      if (endDate.getDate() < day) removeCount += 1;
-
-      // 2 為頭尾月份，範圍區間月份加總 (2 + loopMonth) 減去不包含指定日的月份 (removeCount)
-      count = 2 + loopMonth - removeCount;
-    }
-    return count;
+  /**
+   *返回轉帳首頁。
+   */
+  const goBack = () => {
+    history.replace('/D00100v2', model);
   };
 
-  const addZero = (num) => {
-    if (parseInt(num, 10) < 10) {
-      num = `0${num}`;
-    }
-    return num;
-  };
+  /**
+   * 頁面輸出。
+   */
+  return model ? (
+    <Layout title="轉帳確認" goBackFunc={goBack}>
+      <TransferWrapper className="transferConfirmPage">
+        <hr />
+        <section className="transferMainInfo">
+          <p>轉出金額與轉入帳號</p>
+          <h3 className="transferAmount">{getDisplayAmount(model.amount)}</h3>
+          <h3>{getBankName(model.transIn.bank)}</h3>
+          <h3>{model.transIn.account}</h3>
+        </section>
+        <hr />
+        <section>
+          <InformationList title="轉出帳號" content={model.transOut.account} remark={model.transOut.alias} />
 
-  const doMonthlyData = (displayOriginInfo, data) => {
-    console.log('doMonthlyData', data);
-    data.bookType = 'M';
-    data.dayOfM = addZero(displayOriginInfo.transactionCycle);
-    const startDate = displayOriginInfo.tranceDate[0];
-    const endDate = displayOriginInfo.tranceDate[1];
-    data.startDate = startDate;
-    data.endDate = endDate;
-    data.deviceId = 'test';
-    return data;
-  };
+          <InformationList title="時間" content={getTransDate()} />
+          {model.mode === 1 && (
+          <InformationList
+            title="週期"
+            content={getCycleDesc(model.booking)}
+            remark={model.booking.multiTimes === '*' ? `預計轉帳${model.booking.transTimes}次` : ''}
+          />
+          )}
 
-  const doWeeklyData = (displayOriginInfo, data) => {
-    console.log('doWeeklyData', data);
-    data.bookType = 'W';
-    data.dayOfW = `0${displayOriginInfo.transactionCycle}`;
-    const startDate = displayOriginInfo.tranceDate[0];
-    const endDate = displayOriginInfo.tranceDate[1];
-    data.startDate = startDate;
-    data.endDate = endDate;
-    data.deviceId = 'test';
-    return data;
-  };
-
-  const doSingleData = (displayOriginInfo, data) => {
-    console.log('doSingleData', data);
-    data.bookType = 'S';
-    data.bookDate = displayOriginInfo.date;
-    data.deviceId = 'test';
-    return data;
-  };
-
-  const doMakeResrveData = (displayOriginInfo, data) => {
-    console.log('doMakeResrveData', data);
-    switch (displayOriginInfo.transactionFrequency) {
-      case 'monthly': {
-        return doMonthlyData(displayOriginInfo, data);
-      }
-      case 'weekly': {
-        return doWeeklyData(displayOriginInfo, data);
-      }
-
-      default:
-        return doSingleData(displayOriginInfo, data);
-    }
-  };
-
-  const handleClickTransferButton = async () => {
-    console.log('displayInfo', displayInfo);
-    const data = {
-      outAcctNo: displayInfo.receivingAccount, inBank: displayInfo.bankNo, inAcctNo: displayInfo.receivingAccount, amount: displayInfo.money.replace('$', ''), memo: displayInfo.remark, deviceId: '131313', isQRCode: false, isMotpOpen: false,
-    };
-
-    // 預約轉帳
-    if (displayInfo.transferType === 'reserve') {
-      // console.log('displayInfo', displayInfo);
-      const resrveData = doMakeResrveData(displayInfo, data);
-      // console.log('resrveData', resrveData);
-      const ntdTrConfirmResponse = await doBookNtdTrConfirm(resrveData);
-      console.log(ntdTrConfirmResponse);
-      return;
-    }
-
-    // 即時轉帳
-    const { outAcctNo, bankCode: { bankId }, receivingAccount, transferAmount, remark, deviceId, otpId, isMotpOpen, isRegister } = state;
-    const params = {
-      outAcctNo,
-      inBank: bankId,
-      inAcctNo: receivingAccount,
-      amount: transferAmount,
-      memo: remark,
-      deviceId,
-      otpId,
-      otpCode: "string",
-      isMotpOpen,
-      isRegister,
-    }
-    console.log('params', params);
-    doTransfer(params)
-      .then((response) => {
-        console.log('轉帳 res', response)
-      })
-      .catch((error) => console.log('轉帳 err', error))
-
-    // const ntdTrConfirmResponse = await doNtdTrConfirm(data);
-    // console.log(ntdTrConfirmResponse);
-    // if (fastLogin || !motp) dispatch(setIsPasswordRequired(true));
-  };
-
-  const onSubmit = () => setOpenMOTPDialog(true);
-
-  const renderMOTPNotice = () => (
-    <InfoArea className="infoArea">
-      提醒您，即將進行非約定轉帳，請確認網路連線，以確保行動守護精靈MOTP可正常驗證
-    </InfoArea>
-  );
-
-  const renderMOTPLoadingDialog = () => (
-    <Dialog
-      title="行動守護精靈 MOTP"
-      isOpen={openMOTPDialog}
-      content={(
-        <TransferMOTPDialogWrapper>
-          <Loading />
-          <p>驗證中</p>
-        </TransferMOTPDialogWrapper>
-      )}
-    />
-  );
-
-  useEffect(() => {
-    if (result) onSubmit();
-    // dispatch(setResult(false));
-  }, [result]);
-
-  useEffect(() => {
-    if (openMOTPDialog) {
-      // 模擬 MOTP 驗證所需時間
-      const delay = (interval) => new Promise((resolve) => setTimeout(resolve, interval));
-
-      // 模擬 MOTP 驗證所需時間 2 秒
-      const waitMOTP = async () => await delay(2000);
-
-      // 驗證成功後關閉 MOTP 驗證彈窗並跳轉至成功頁
-      waitMOTP().then(() => {
-        setOpenMOTPDialog(false);
-        directTo(history, 'transfer2', displayInfo);
-      });
-    }
-  }, [openMOTPDialog]);
-
-  useEffect(() => {
-    /* eslint-disable no-shadow */
-    const {
-      outAcctNo, bankCode, receivingAccount, transferType, transferAmount,
-      transactionDate, transactionNumber, remark, transactionFrequency, transactionCycle,
-      depositAmount, transferRemaining, isMotpOpen,
-    } = state;
-
-    // 如果是預約轉帳
-    if (transactionFrequency && transactionCycle) {
-      if (bankCode.bankNo) bankCode.bankId = bankCode.bankNo;
-      setDisplayInfo({
-        ...displayInfo,
-        money: `$${transferAmount}` || '',
-        bankNo: bankCode.bankId,
-        bankName: bankCode.bankName,
-        tranceDate: transferType === 'now' || transactionNumber === 'once'
-          ? dateFormatter(transactionDate)
-          : [dateFormatter(transactionDate[0], true), dateFormatter(transactionDate[1]), true],
-        frequency: transactionFrequency === 'monthly'
-          ? `${switchFrequency(transactionFrequency)}${transactionCycle}號`
-          : `${switchFrequency(transactionFrequency)}${weekNumberToChinese(transactionCycle)}`,
-        amount: computeTransferAmount(transactionFrequency, transactionCycle, transactionDate),
-        debitAccount: outAcctNo,
-        receivingAccount,
-        debitName: '串接簡易資訊後才會有名稱',
-        remark,
-        depositAmount,
-        transferRemaining,
-        transferType,
-        transactionFrequency,
-        transactionCycle,
-      });
-    } else {
-      console.log('state', state);
-      if (bankCode.bankNo !== undefined)bankCode.bankId = bankCode.bankNo;
-      setDisplayInfo({
-        ...displayInfo,
-        money: `$${transferAmount}` || '',
-        bankNo: bankCode.bankId,
-        bankName: bankCode.bankName,
-        date: transferType === 'now' || transactionNumber === 'once'
-          ? dateFormatter(transactionDate)
-          : `${dateFormatter(transactionDate[0], true)}~${dateFormatter(transactionDate[1], true)}`,
-        receivingAccount,
-        debitAccount: outAcctNo,
-        debitName: '串接簡易資訊後才會有名稱',
-        remark,
-        depositAmount,
-        transferRemaining,
-        transferType,
-        transactionFrequency,
-      });
-    }
-
-    // 檢查是否開通 MOTP，若未開通則發送 OTP 簡訊
-    if (!isMotpOpen) {
-
-    }
-  }, [state]);
-
-  return (
-    <TransferWrapper className="transferConfirmPage">
-      <hr />
-      <section className="transferMainInfo">
-        <p>轉出金額與轉入帳號</p>
-        <h3 className="transferAmount">{money}</h3>
-        <h3>{`${bankName}(${bankNo})`}</h3>
-        <h3>{receivingAccount}</h3>
-      </section>
-      <hr />
-      <section>
-        <InformationList title="轉出帳號" content={debitAccount} remark={debitName} />
-        <InformationList title="時間" content={date} />
-        {frequency && <InformationList title="週期" content={frequency} remark={`預計轉帳${amount}次`} />}
-        {transferType === 'now' && <InformationList title="手續費" content="$0" />}
-        <InformationList title="備註" content={remark} />
-      </section>
-      <hr />
-      <section className="transferAction">
-        { motp && renderMOTPNotice() }
-        <div className="transferButtonArea">
-          <FEIBButton onClick={handleClickTransferButton}>確認</FEIBButton>
-          <p className="notice">轉帳前多思考，避免被騙更苦惱</p>
-        </div>
-      </section>
-      { motp && renderMOTPLoadingDialog() }
-    </TransferWrapper>
-  );
+          {/* NOTE model 手續費! 還沒轉出，如何顯示？ 9/8 數金：拿掉！ */}
+          {/* {model.mode === 0 && <InformationList title="手續費" content="$0" />} */}
+          <InformationList title="備註" content={model.memo} />
+        </section>
+        <hr />
+        <section className="transferAction">
+          <div className="transferButtonArea">
+            <FEIBButton onClick={onConfirm}>確認</FEIBButton>
+            <p className="notice">轉帳前多思考，避免被騙更苦惱</p>
+          </div>
+        </section>
+      </TransferWrapper>
+    </Layout>
+  ) : null;
 };
 
-export default Transfer1;
+export default TransferConfirm;
