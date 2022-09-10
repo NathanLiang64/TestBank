@@ -3,11 +3,11 @@ import { loadLocalData } from 'utilities/Generator';
 
 /**
  * 取得所有分行清單。
- * @returns {*} [{
+ * @returns {Promise<[{
      branchNo: 分行代碼,
      branchCode: 分行轉帳代碼,
      branchName: 分行名稱,
-   }, ...]
+   }]>} 分行清單。
  */
 const getBranchCode = async () => {
   const branches = await loadLocalData('BranchList', async () => {
@@ -40,23 +40,26 @@ const getAccountsList = async () => {
   //   details: [{ // 外幣多幣別時有多筆
   //        balance: 帳戶餘額(, // NOTE 餘額「非即時」資訊
   //        currency: 幣別代碼,
-  //   }, ...]
-  // }, ...]
-  const getBranches = getBranchCode();
-  const response = await callAPI('/api/deposit/v1/getAccounts', 'MSFC');
-  const branches = await getBranches;
-  return response.data.map((acct) => {
-    const branchId = acct.account.substring(0, 3);
-    return {
-      acctType: acct.acctType,
-    accountNo: acct.account,
-      branchName: branches.find((b) => b.branchNo === branchId)?.branchName ?? branchId,
-    balance: acct.details[0].balance,
-      currency: acct.details[0].currency,
-    alias: acct.name,
-    dgType: acct.dgType,
-    transable: acct.transable,
-    };
+  //   }]
+  // }]
+  const Promise1 = callAPI('/api/deposit/v1/getAccounts', 'MSFC');
+  const Promise2 = getBranchCode();
+  return await Promise.allSettled([Promise1, Promise2]).then((result) => {
+    const accounts = result[0].value.data;
+    const branches = result[1].value;
+
+    return accounts.map((acct) => {
+      const branchId = acct.account.substring(0, 3);
+      return {
+        acctType: acct.acctType,
+        accountNo: acct.account,
+        branchName: branches.find((b) => b.branchNo === branchId)?.branchName ?? branchId,
+        details: acct.details,
+        alias: acct.name,
+        dgType: acct.dgType,
+        transable: acct.transable,
+      };
+    });
   });
 };
 
@@ -76,9 +79,19 @@ export const AccountListCacheName = 'Accounts';
  * }]>} 帳號基本資料。
  */
 export const loadAccountsList = async (acctTypes, onDataLoaded) => {
-  loadLocalData(AccountListCacheName, getAccountsList).then((accounts) => {
-    const accts = accounts.filter((ac) => acctTypes.indexOf(ac.acctType) >= 0);
-    onDataLoaded(accts);
+  loadLocalData(AccountListCacheName, getAccountsList).then((data) => {
+    const accounts = data.filter((account) => acctTypes.indexOf(account.acctType) >= 0)
+      // NOTE 外幣帳號的架構跟台幣不一樣。
+      // 要把一個帳戶、多個幣別 展開成 多個帳戶 的型式呈現。
+      .map((account) => (!account.details // 若是從 sessionStorage 取出的值，就沒有 details，所以直接傳回即可。
+        ? account
+        : account.details.map((detail) => {
+          const acct = { ...account, ...detail};
+          delete acct.details;
+          return acct;
+        })))
+      .flat();
+    onDataLoaded(accounts);
   });
 };
 

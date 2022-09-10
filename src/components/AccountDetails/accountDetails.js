@@ -106,7 +106,6 @@ const AccountDetails = ({
    * 查詢條件變更時，重新查詢，並重建清單陣列。
    */
   useEffect(async () => {
-    console.log(condition);
     const response = await loadTransition(condition);
     if (response) {
       const { acctTxDtls, monthly, startIndex } = response;

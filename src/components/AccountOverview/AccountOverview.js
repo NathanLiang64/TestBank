@@ -9,7 +9,7 @@ SwiperCore.use([Pagination]);
 const AccountOverview = ({
   accounts, onAccountChanged, cardColor,
   funcList, moreFuncs, onFunctionClick,
-  transferMode, withdrawMode,
+  transferMode, withdrawMode, defaultSlide,
 }) => {
   const renderDebitCard = (account) => (
     <DebitCard
@@ -27,7 +27,7 @@ const AccountOverview = ({
   const renderSwiper = () => {
     const onSlideChange = (swiper) => onAccountChanged(swiper.activeIndex);
     return (
-      <Swiper slidesPerView={1.14} spaceBetween={8} centeredSlides pagination onSlideChange={onSlideChange}>
+      <Swiper slidesPerView={1.14} spaceBetween={8} centeredSlides pagination initialSlide={defaultSlide} onSlideChange={onSlideChange}>
         { accounts.map((account) => (
           <SwiperSlide key={`${account.accountNo}-${account.currency}`}>
             { renderDebitCard(account) }

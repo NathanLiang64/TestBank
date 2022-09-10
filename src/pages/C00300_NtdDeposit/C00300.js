@@ -27,7 +27,7 @@ import PageWrapper from './C00300.style';
 /**
  * C00300 台幣帳戶首頁
  */
-const TaiwanDollarAccount = () => {
+const C00300 = () => {
   const dispatch = useDispatch();
   const { register, unregister, handleSubmit } = useForm();
 
@@ -70,7 +70,7 @@ const TaiwanDollarAccount = () => {
     dispatch(setWaittingVisible(false));
     if (accounts.length === 0) {
       await showPrompt('您還沒有任何台幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
-    } else handleAccountChanged(0);
+    } else handleAccountChanged(selectedAccountIdx ?? 0);
   }, [accounts]);
 
   /**
@@ -96,7 +96,6 @@ const TaiwanDollarAccount = () => {
    * 根據當前帳戶取得交易明細資料及優惠利率數字
    */
   const handleAccountChanged = async (acctIndex) => {
-    setSelectedAccountIdx(acctIndex);
     if (!accounts) return; // 頁面初始化時，不需要進來。
 
     const account = accounts[acctIndex];
@@ -113,6 +112,7 @@ const TaiwanDollarAccount = () => {
     }
     updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可)
   };
+  useEffect(() => { handleAccountChanged(selectedAccountIdx); }, [selectedAccountIdx]);
 
   /**
    * 顯示 優存(利率/利息)資訊
@@ -223,7 +223,8 @@ const TaiwanDollarAccount = () => {
       <PageWrapper small>
         <AccountOverview
           accounts={accounts}
-          onAccountChanged={handleAccountChanged}
+          defaultSlide={selectedAccountIdx}
+          onAccountChanged={setSelectedAccountIdx}
           onFunctionClick={handleFunctionClick}
           cardColor="purple"
           funcList={[
@@ -250,4 +251,4 @@ const TaiwanDollarAccount = () => {
   ) : null;
 };
 
-export default TaiwanDollarAccount;
+export default C00300;
