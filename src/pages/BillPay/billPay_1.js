@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useCheckLocation, usePageInfo, useBarcodeGenerator } from 'hooks';
-import DebitCard from 'components/DebitCard';
+import DebitCard from 'components/DebitCard/DebitCard';
 import Dialog from 'components/Dialog';
 import PasswordInput from 'components/PasswordInput';
 import Accordion from 'components/Accordion';

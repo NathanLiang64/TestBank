@@ -14,7 +14,7 @@ import {
   FEIBButton,
   FEIBErrorMessage,
 } from 'components/elements';
-import DebitCard from 'components/DebitCard';
+import DebitCard from 'components/DebitCard/DebitCard';
 import DateRangePicker from 'components/DateRangePicker';
 
 /* Styles */

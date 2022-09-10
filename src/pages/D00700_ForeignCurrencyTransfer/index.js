@@ -13,7 +13,7 @@ import { getAccountsList, getExchangePropertyList } from 'pages/D00700_ForeignCu
 import { closeFunc } from 'utilities/AppScriptProxy';
 /* Elements */
 import Accordion from 'components/Accordion';
-import DebitCard from 'components/DebitCard';
+import DebitCard from 'components/DebitCard/DebitCard';
 import {
   FEIBSelect, FEIBOption, FEIBInput, FEIBInputLabel, FEIBButton, FEIBErrorMessage,
 } from 'components/elements';

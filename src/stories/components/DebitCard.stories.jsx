@@ -1,7 +1,7 @@
 import { Provider } from 'react-redux';
 
 import store from 'stores/store';
-import DebitCard from 'components/DebitCard';
+import DebitCard from 'components/DebitCard/DebitCard';
 import presetColors from '../presetColors';
 
 const doc = `### 組件說明

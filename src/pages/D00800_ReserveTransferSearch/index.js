@@ -17,7 +17,7 @@ import {
   FEIBTabPanel,
   FEIBButton,
 } from 'components/elements';
-import DebitCard from 'components/DebitCard';
+import DebitCard from 'components/DebitCard/DebitCard';
 import InformationTape from 'components/InformationTape';
 import Dialog from 'components/Dialog';
 import EmptyData from 'components/EmptyData';

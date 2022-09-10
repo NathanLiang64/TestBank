@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import VisibilitySensor from 'react-visibility-sensor';
 import SearchCondition from 'components/AccountDetails/searchCondition';
-import DebitCard from 'components/DebitCard';
+import DebitCard from 'components/DebitCard/DebitCard';
 import DetailCard from 'components/DetailCard';
 import EmptyData from 'components/EmptyData';
 import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';

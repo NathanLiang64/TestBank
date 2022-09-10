@@ -12,7 +12,7 @@ import {
   FEIBInput, FEIBInputLabel, FEIBButton, FEIBBorderButton, FEIBErrorMessage,
 } from 'components/elements';
 import Dialog from 'components/Dialog';
-import DebitCard from 'components/DebitCard';
+import DebitCard from 'components/DebitCard/DebitCard';
 import Accordion from 'components/Accordion';
 import { AddCircleRounded, RemoveCircleRounded } from '@material-ui/icons';
 

@@ -15,7 +15,7 @@ import {
   FEIBInputLabel, FEIBInput, FEIBErrorMessage,
   FEIBButton, FEIBRadioLabel, FEIBRadio, FEIBSelect, FEIBOption,
 } from 'components/elements';
-import AccountOverview from 'components/AccountOverview';
+import AccountOverview from 'components/AccountOverview/AccountOverview';
 import DatePicker from 'components/DatePicker';
 import DateRangePicker from 'components/DateRangePicker';
 import Accordion from 'components/Accordion';

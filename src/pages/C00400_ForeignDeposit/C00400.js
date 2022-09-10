@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-import AccountOverview from 'components/AccountOverview';
+import AccountOverview from 'components/AccountOverview/AccountOverview';
 import DepositDetailPanel from 'components/DepositDetailPanel/depositDetailPanel';
 import { FEIBInputLabel, FEIBInput, FEIBErrorMessage } from 'components/elements';
 
