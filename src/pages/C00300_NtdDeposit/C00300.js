@@ -36,7 +36,7 @@ const TaiwanDollarAccount = () => {
   const [transactions, setTransactions] = useState(new Map());
 
   // 優存(利率/利息)資訊 顯示模式（true.優惠利率, false.累積利息)
-  const [showRate, setShowRate] = useState(true);
+  const [showRate, setShowRate] = useState();
 
   /**
    * 頁面啟動，初始化
@@ -44,18 +44,20 @@ const TaiwanDollarAccount = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
+    // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
+    // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
+    loadAccountsList('MC', setAccounts); // M=台幣主帳戶、C=台幣子帳戶
+
     const startParams = await loadFuncParams(); // Function Controller 提供的參數
     // 取得 Function Controller 提供的 keepDdata(model)
     let keepDdata = null;
     if (startParams && (typeof startParams === 'object')) {
       keepDdata = startParams;
-      setAccounts(keepDdata.accounts);
       setSelectedAccountIdx(keepDdata.selectedAccountIdx);
+      setShowRate(keepDdata.showRate);
     } else {
-      // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
-      // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
-      loadAccountsList('MC', setAccounts); // M=台幣主帳戶、C=台幣子帳戶
       setSelectedAccountIdx(0);
+      setShowRate(true);
     }
   }, []);
 
@@ -129,28 +131,28 @@ const TaiwanDollarAccount = () => {
     const value1 = bonusRate ? `${bonusRate * 100}%` : '-';
     const value2 = interest ? `$${interest}` : '-';
     return (
-        <div className="interestRatePanel">
-          <div className="panelItem">
-            <h3>免費跨提/轉</h3>
-            <p>{`${freeWithdraw}/${freeTransfer}`}</p>
-          </div>
-          <div className="panelItem" onClick={() => setShowRate(!showRate)}>
-            <h3>
-              {showRate ? '優惠利率' : '累積利息'}
-              <SwitchIcon className="switchIcon" />
-            </h3>
-            <p>{showRate ? value1 : value2 }</p>
-          </div>
-
-          {/* 用 startFunc 執行 depositPlus ，將 model 存入 keepData 返回時就不用再重 Load */}
-          <div className="panelItem" onClick={() => handleFunctionClick('depositPlus')}>
-            <h3>
-              優惠利率額度
-              <ArrowNextIcon />
-            </h3>
-            <p>{bonusQuota}</p>
-          </div>
+      <div className="interestRatePanel">
+        <div className="panelItem">
+          <h3>免費跨提/轉</h3>
+          <p>{`${freeWithdraw}/${freeTransfer}`}</p>
         </div>
+        <div className="panelItem" onClick={() => setShowRate(!showRate)}>
+          <h3>
+            {showRate ? '優惠利率' : '累積利息'}
+            <SwitchIcon className="switchIcon" />
+          </h3>
+          <p>{showRate ? value1 : value2 }</p>
+        </div>
+
+        {/* 用 startFunc 執行 depositPlus ，將 model 存入 keepData 返回時就不用再重 Load */}
+        <div className="panelItem" onClick={() => handleFunctionClick('depositPlus')}>
+          <h3>
+            優惠利率額度
+            <ArrowNextIcon />
+          </h3>
+          <p>{bonusQuota}</p>
+        </div>
+      </div>
     );
   };
 
