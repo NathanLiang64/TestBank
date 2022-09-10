@@ -1,3 +1,4 @@
+/* eslint-disable object-curly-newline */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
@@ -20,8 +21,7 @@ import EmptySlide from './components/EmptySlide';
 import EmptyPlan from './components/EmptyPlan';
 import DepositPlan from './components/DepositPlan';
 
-import { getAccountSummary } from '../C00300_NtdDeposit/api';
-import { getDepositPlans, updateDepositPlan, closeDepositPlan } from './api';
+import { getDepositPlans, updateDepositPlan, closeDepositPlan, getAccountSummary } from './api';
 import {
   AlertUpdateFail,
   AlertNoMainAccount,
