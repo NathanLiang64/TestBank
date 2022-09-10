@@ -22,7 +22,7 @@ import {
   downloadDepositBookCover,
   setAccountAlias,
 } from './api';
-import C00300Wrapper from './C00300.style';
+import PageWrapper from './C00300.style';
 
 /**
  * C00300 台幣帳戶首頁
@@ -218,7 +218,7 @@ const TaiwanDollarAccount = () => {
    */
   return accounts ? (
     <Layout title="台幣活存">
-      <C00300Wrapper small>
+      <PageWrapper small>
         <AccountOverview
           accounts={accounts}
           onAccountChanged={handleAccountChanged}
@@ -243,7 +243,7 @@ const TaiwanDollarAccount = () => {
           details={transactions.get(accounts[selectedAccountIdx]?.accountNo)}
           onMoreFuncClick={() => handleFunctionClick('moreTranscations')}
         />
-      </C00300Wrapper>
+      </PageWrapper>
     </Layout>
   ) : null;
 };

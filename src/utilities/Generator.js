@@ -25,9 +25,10 @@ export const toThousandNotation = (number) => {
 };
 
 // 將帳號轉為指定字數間帶有分隔符 (-) 之顯示方式
-export const accountFormatter = (account) => (
-  account ? `${account.slice(0, 3)}-${account.slice(3, 6)}-${account.slice(6)}` : '-'
-);
+export const accountFormatter = (account) => {
+  const acct = account ?? '00000000000000';
+  return `${acct.slice(0, 3)}-${acct.slice(3, 6)}-${acct.slice(6)}`;
+};
 
 // 將日期格式轉為 YYYY/MM/DD 字串或 YYYY-MM-DD 字串 (傳入第 2 個參數，值為 truthy)
 export const dateFormatter = (date, dashType) => {

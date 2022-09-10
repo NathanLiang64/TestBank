@@ -388,7 +388,7 @@ const AccountDetails = ({
    * 主頁面
    */
   return (
-    <AccountDetailsWrapper small>
+    <AccountDetailsWrapper>
       { (mode === 0) && renderCardArea(selectedAccount) }
       { (mode === 1) && renderDepositPlanHero(selectedAccount) }
       <div className="inquiryArea measuredHeight">

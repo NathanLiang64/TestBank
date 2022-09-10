@@ -37,16 +37,16 @@ const AccountOverview = ({
     );
   };
 
-  const renderDebitCardPanel = () => (
-    accounts.length > 1
-      ? renderSwiper()
-      : renderDebitCard(accounts[0])
-  );
-
   return accounts ? (
     <AccountOverviewWrapper $multipleCardsStyle={accounts?.length > 1}>
       <div className="userCardArea">
-        { renderDebitCardPanel() }
+        { accounts.length > 1 ? (
+          renderSwiper()
+        ) : (
+          <div className="singleAccount">
+            {renderDebitCard(accounts[0])}
+          </div>
+        )}
       </div>
     </AccountOverviewWrapper>
   ) : null;

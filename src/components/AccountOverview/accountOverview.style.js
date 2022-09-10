@@ -15,6 +15,10 @@ const AccountOverviewWrapper = styled.div`
     .swiper-pagination {
       left: -.8rem;
     }
+
+    .singleAccount {
+      padding: 1rem 1.6rem;
+    }
   }
 `;
 

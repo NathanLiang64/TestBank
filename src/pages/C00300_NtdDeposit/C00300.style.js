@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Layout from 'components/Layout';
 
-const C00300Wrapper = styled(Layout)`
+const PageWrapper = styled(Layout)`
   background: ${({ theme }) => theme.colors.background.lightest};
   display: flex;
   flex-direction: column;
@@ -48,4 +48,4 @@ const C00300Wrapper = styled(Layout)`
   }
 `;
 
-export default C00300Wrapper;
+export default PageWrapper;

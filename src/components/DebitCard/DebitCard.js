@@ -71,7 +71,7 @@ const DebitCard = ({
     freeWithdraw,
     freeWithdrawRemain,
   };
-  const accountType = model.accountNo.substring(3, 6) ?? '004';
+  const accountType = model.accountNo?.substring(3, 6) ?? '004';
   const isSmallCard = (type !== 'original');
   const [showBalance, setShowBalance] = useState(true);
 
@@ -121,8 +121,8 @@ const DebitCard = ({
   );
 
   const renderFreeTransferInfo = () => {
-    let total = '-';
-    let remain = '-';
+    let total;
+    let remain;
     if (transferMode) {
       total = model.freeTransfer;
       remain = model.freeTransferRemain;
@@ -134,7 +134,7 @@ const DebitCard = ({
     const title = transferMode ? '跨轉優惠' : '跨提優惠';
     return (
       <p className="freeTransferInfo">
-        {`${title} : ${total} 次/剩餘 ${remain} 次`}
+        {`${title} : ${total ?? '-'} 次/剩餘 ${remain ?? '-'} 次`}
       </p>
     );
   };
@@ -163,10 +163,13 @@ const DebitCard = ({
       ) : (
         <>
           {/* 將分行代碼轉為分行名稱 */}
-          <p className="branch">{model.branchName}</p>
+          <p className="branch">{model.branchName ?? ''}</p>
           <p className="account">{accountFormatter(model.accountNo)}</p>
           <CopyTextIconButton copyText={model.accountNo} />
           <p className="account">{['NTD', 'TWD'].indexOf(model.currency) < 0 ? `(${model.currency})` : ''}</p>
+          <p className="account">
+            {model.currency && (['NTD', 'TWD'].indexOf(model.currency) < 0) ? `(${model.currency})` : ''}
+          </p>
         </>
       )}
     </div>
@@ -182,7 +185,7 @@ const DebitCard = ({
       <div className={`cardBalance ${!isSmallCard ? 'grow' : ''}`}>
         { !hideIcon && renderEyeIconButton() }
         <h3 className="balance">
-          {`${currencySymbolGenerator(model.currency, (showBalance ? (model.balance ?? '--') : '*'))}`}
+          {`${currencySymbolGenerator(model.currency, (showBalance ? (model.balance ?? '---') : '*'))}`}
         </h3>
       </div>
       { renderFreeTransferInfo() }
