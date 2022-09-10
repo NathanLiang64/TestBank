@@ -39,37 +39,39 @@ import DebitCardWrapper from './debitCard.style';
 * */
 
 const DebitCard = ({
+  transferMode,
+  withdrawMode,
+  color,
+  accountObj,
+  moreList,
+  functionList,
+  onFunctionClick,
+
   type,
   branch,
   cardName,
   account,
-  // accountType,
   balance,
-  // transferTitle = '跨轉優惠',
   freeTransfer,
   freeTransferRemain,
   freeWithdraw,
   freeWithdrawRemain,
   dollarSign,
-  color,
   hideIcon,
-  moreList,
-  functionList,
-  onFunctionClick,
 }) => {
   const dispatch = useDispatch();
-  const model = {
-    branch,
-    cardName: cardName ?? '(未命名)',
-    account,
-    accountType: account.substring(3, 6) ?? '004',
-    balance: balance ?? '--',
-    dollarSign,
+  const model = accountObj ?? {
+    branchName: branch,
+    alias: cardName,
+    accountNo: account,
+    balance,
+    currency: dollarSign,
     freeTransfer,
     freeTransferRemain,
     freeWithdraw,
     freeWithdrawRemain,
   };
+  const accountType = model.accountNo.substring(3, 6) ?? '004';
   const isSmallCard = (type !== 'original');
   const [showBalance, setShowBalance] = useState(true);
 
@@ -119,19 +121,17 @@ const DebitCard = ({
   );
 
   const renderFreeTransferInfo = () => {
-    const isWithdraw = (model.freeWithdraw || model.freeWithdrawRemain);
-    const isTransfer = (model.freeTransfer || model.freeTransferRemain);
     let total = '-';
     let remain = '-';
-    if (isWithdraw) {
-      total = model.freeWithdraw;
-      remain = model.freeWithdrawRemain;
-    } else if (isTransfer) {
+    if (transferMode) {
       total = model.freeTransfer;
       remain = model.freeTransferRemain;
+    } else if (withdrawMode) {
+      total = model.freeWithdraw;
+      remain = model.freeWithdrawRemain;
     } else return null;
 
-    const title = isWithdraw ? '跨提優惠' : '跨轉優惠';
+    const title = transferMode ? '跨轉優惠' : '跨提優惠';
     return (
       <p className="freeTransferInfo">
         {`${title} : ${total} 次/剩餘 ${remain} 次`}
@@ -153,23 +153,36 @@ const DebitCard = ({
     </ul>
   );
 
+  /**
+   * 帳號列
+   */
+  const renderAccountNo = () => (
+    <div className="accountInfo">
+      {transferMode ? (
+        <p className="account">{accountFormatter(model.accountNo)}</p>
+      ) : (
+        <>
+          {/* 將分行代碼轉為分行名稱 */}
+          <p className="branch">{model.branchName}</p>
+          <p className="account">{accountFormatter(model.accountNo)}</p>
+          <CopyTextIconButton copyText={model.accountNo} />
+          <p className="account">{['NTD', 'TWD'].indexOf(model.currency) < 0 ? `(${model.currency})` : ''}</p>
+        </>
+      )}
+    </div>
+  );
+
   return (
-    <DebitCardWrapper className="debitCard" $cardColor={color ?? accountTypeColorGenerator(model.accountType)}>
+    <DebitCardWrapper className="debitCard" $cardColor={color ?? accountTypeColorGenerator(accountType)}>
       <img src={DebitCardBackground} alt="background" className="backgroundImage" />
       <div className="cardTitle">
-        <h2 className="cardName">{model.cardName}</h2>
-        <div className="accountInfo">
-          {/* 將分行代碼轉為分行名稱 */}
-          { !isSmallCard && <p className="branch">{branch}</p> }
-          <p className="account">{accountFormatter(model.account)}</p>
-          <CopyTextIconButton copyText={model.account} />
-          <p className="account">{dollarSign !== 'NTD' ? `(${dollarSign})` : ''}</p>
-        </div>
+        <h2 className="cardName">{model.alias ?? '(未命名)'}</h2>
+        {renderAccountNo()}
       </div>
       <div className={`cardBalance ${!isSmallCard ? 'grow' : ''}`}>
         { !hideIcon && renderEyeIconButton() }
         <h3 className="balance">
-          {`${currencySymbolGenerator(dollarSign, (showBalance ? model.balance : '*'))}`}
+          {`${currencySymbolGenerator(model.currency, (showBalance ? (model.balance ?? '--') : '*'))}`}
         </h3>
       </div>
       { renderFreeTransferInfo() }

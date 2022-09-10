@@ -9,19 +9,18 @@ SwiperCore.use([Pagination]);
 const AccountOverview = ({
   accounts, onAccountChanged, cardColor,
   funcList, moreFuncs, onFunctionClick,
+  transferMode, withdrawMode,
 }) => {
   const renderDebitCard = (account) => (
     <DebitCard
-      type="original"
-      branch={account.branchName}
-      cardName={account.alias}
-      account={account.accountNo}
-      balance={account.balance}
-      dollarSign={account.currency}
-      functionList={funcList}
-      moreList={moreFuncs}
+      transferMode={transferMode}
+      withdrawMode={withdrawMode}
       color={cardColor}
+      accountObj={account}
+      moreList={moreFuncs}
+      functionList={funcList}
       onFunctionClick={onFunctionClick}
+      type="original"
     />
   );
 
@@ -44,13 +43,13 @@ const AccountOverview = ({
       : renderDebitCard(accounts[0])
   );
 
-  return (
-    <AccountOverviewWrapper small $multipleCardsStyle={accounts?.length > 1}>
+  return accounts ? (
+    <AccountOverviewWrapper $multipleCardsStyle={accounts?.length > 1}>
       <div className="userCardArea">
         { renderDebitCardPanel() }
       </div>
     </AccountOverviewWrapper>
-  );
+  ) : null;
 };
 
 export default AccountOverview;

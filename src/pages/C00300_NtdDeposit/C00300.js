@@ -22,7 +22,7 @@ import {
   downloadDepositBookCover,
   setAccountAlias,
 } from './api';
-import InterestRatePanelWrapper from './C00300.style';
+import C00300Wrapper from './C00300.style';
 
 /**
  * C00300 台幣帳戶首頁
@@ -129,7 +129,6 @@ const TaiwanDollarAccount = () => {
     const value1 = bonusRate ? `${bonusRate * 100}%` : '-';
     const value2 = interest ? `$${interest}` : '-';
     return (
-      <InterestRatePanelWrapper>
         <div className="interestRatePanel">
           <div className="panelItem">
             <h3>免費跨提/轉</h3>
@@ -152,7 +151,6 @@ const TaiwanDollarAccount = () => {
             <p>{bonusQuota}</p>
           </div>
         </div>
-      </InterestRatePanelWrapper>
     );
   };
 
@@ -220,7 +218,7 @@ const TaiwanDollarAccount = () => {
    */
   return accounts ? (
     <Layout title="台幣活存">
-      <div>
+      <C00300Wrapper small>
         <AccountOverview
           accounts={accounts}
           onAccountChanged={handleAccountChanged}
@@ -245,7 +243,7 @@ const TaiwanDollarAccount = () => {
           details={transactions.get(accounts[selectedAccountIdx]?.accountNo)}
           onMoreFuncClick={() => handleFunctionClick('moreTranscations')}
         />
-      </div>
+      </C00300Wrapper>
     </Layout>
   ) : null;
 };

@@ -7,8 +7,6 @@ import { useDispatch } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import SwiperCore, { Pagination } from 'swiper/core';
 import { RadioGroup } from '@material-ui/core';
 
 import Layout from 'components/Layout/Layout';
@@ -17,7 +15,7 @@ import {
   FEIBInputLabel, FEIBInput, FEIBErrorMessage,
   FEIBButton, FEIBRadioLabel, FEIBRadio, FEIBSelect, FEIBOption,
 } from 'components/elements';
-import DebitCard from 'components/DebitCard';
+import AccountOverview from 'components/AccountOverview';
 import DatePicker from 'components/DatePicker';
 import DateRangePicker from 'components/DateRangePicker';
 import Accordion from 'components/Accordion';
@@ -31,9 +29,6 @@ import { numberToChinese, setLocalData } from 'utilities/Generator';
 import { ChangeMemberIcon } from 'assets/images/icons';
 import { loadAccountsList, AccountListCacheName, getAccountExtraInfo } from './api';
 import TransferWrapper from './D00100.style';
-
-/* Swiper modules */
-SwiperCore.use([Pagination]);
 
 /**
  * 轉帳首頁
@@ -177,7 +172,7 @@ const Transfer = (props) => {
    */
   useEffect(() => {
     dispatch(setWaittingVisible(false));
-    onSwiperChanged({ activeIndex: 0 });
+    onAccountChanged(0);
   }, [accounts]);
 
   /**
@@ -381,29 +376,13 @@ const Transfer = (props) => {
     );
   };
 
-  const renderCards = (index, account) => (
-    <SwiperSlide key={account.accountNo} data-index={index}>
-      <DebitCard
-        type="original"
-        branch={account.branchName}
-        cardName={account.alias}
-        account={account.accountNo}
-        accountType={account.accountNo?.substring(3, 6) ?? '004'}
-        balance={account.balance}
-        freeTransfer={account.freeTransfer}
-        freeTransferRemain={account.freeTransferRemain}
-        dollarSign="TWD"
-      />
-    </SwiperSlide>
-  );
-
   /**
    * 切換帳戶卡，變更 HookForm 轉出帳號相關資料，以及轉帳額度。
    */
-  const onSwiperChanged = async (e) => {
+  const onAccountChanged = async (index) => {
     if (!accounts) return; // 頁面初始化時，不需要進來。
 
-    const account = accounts[e.activeIndex];
+    const account = accounts[index];
     // 若還沒有取得 免費跨轉次數 則立即補上。
     if (!account.freeTransfer) {
       const info = await getAccountExtraInfo(account.accountNo);
@@ -450,11 +429,11 @@ const Transfer = (props) => {
   return (
     <Layout title="台幣轉帳">
       <TransferWrapper>
-        <div className="userCardArea">
-          <Swiper slidesPerView={1.14} spaceBetween={8} centeredSlides pagination onSlideChange={onSwiperChanged}>
-            {accounts?.map((acct, n) => renderCards(n, acct))}
-          </Swiper>
-        </div>
+        <AccountOverview
+          transferMode
+          accounts={accounts}
+          onAccountChanged={onAccountChanged}
+        />
 
         <div className="transferServicesArea">
           <form>
@@ -471,7 +450,7 @@ const Transfer = (props) => {
                   <FEIBInputLabel htmlFor={idTransInAcct}>轉入帳號</FEIBInputLabel>
                   <Controller control={control} name={idTransInAcct} defaultValue={getValues(idTransInAcct)}
                     render={({ field }) => (
-                      <FEIBInput {...field} placeholder="請輸入" inputMode="numeric" maxLength={14} autoComplete="off" error={!!errors?.transIn?.account} />
+                      <FEIBInput {...field} placeholder="請輸入" inputProps={{ maxLength: 14, autoComplete: 'off' }} inputMode="numeric" error={!!errors?.transIn?.account} />
                     )}
                   />
                   <FEIBErrorMessage>{errors.transIn?.account?.message}</FEIBErrorMessage>
@@ -487,7 +466,7 @@ const Transfer = (props) => {
               <Controller control={control} name={idAmount} defaultValue={getValues(idAmount)}
                 render={({ field }) => (
                   <div>
-                    <FEIBInput {...field} placeholder="$0（零元)" inputMode="numeric" maxLength={9} autoComplete="off" error={!!errors?.amount} />
+                    <FEIBInput {...field} placeholder="$0（零元）" inputProps={{ maxLength: 9, autoComplete: 'off' }} inputMode="numeric" error={!!errors?.amount} />
                     <div className="balanceLayout">{amountText}</div>
                   </div>
                 )}

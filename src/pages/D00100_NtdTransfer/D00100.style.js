@@ -4,11 +4,11 @@ import Layout from 'components/Layout';
 const TransferWrapper = styled(Layout)`
   //display: flex;
   //flex-direction: column;
-  padding-top: 1.6rem;
+  padding: 1.6rem 0 0 0;
   background: ${({ theme }) => theme.colors.background.lighterBlue};
 
   .transferServicesArea {
-    left: -1.6rem;
+    // left: -1.6rem;
     flex-grow: 1;
     padding: 2.4rem 1.6rem;
     border-top-left-radius: 3rem;
@@ -19,19 +19,6 @@ const TransferWrapper = styled(Layout)`
 
   form {
     padding-bottom: 0;
-  }
-
-  .userCardArea {
-    left: -1.6rem;
-    width: 100vw;
-
-    .swiper-container {
-      padding-bottom: 1.6rem;
-    }
-
-    .swiper-pagination {
-      left: -.8rem;
-    }
   }
 
   .memberAccountCardArea {

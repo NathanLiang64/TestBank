@@ -24,11 +24,10 @@ const DebitCardWrapper = styled.div`
     .accountInfo {
       display: flex;
       align-items: center;
-      margin-top: -.8rem;
       color: ${({ theme }) => theme.colors.text.lightGray};
 
       .MuiIconButton-root {
-        margin-left: -.8rem;
+        margin: -.8rem;
       }
       
       .branch,
