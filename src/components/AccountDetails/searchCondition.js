@@ -1,4 +1,3 @@
-/* eslint-disable object-curly-newline */
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import DateRangePicker from 'components/DateRangePicker';
@@ -14,6 +13,10 @@ const SearchCondition = ({
   condition, onSearch, onCancel,
 }) => {
   const [newCondition, setNewCondition] = useState(condition);
+  const datePickerLimit = { // 用來限制設定選擇日期時的範圍。
+    minDate: new Date(new Date().setFullYear(new Date().getFullYear() - 3)), // 三年內。
+    maxDate: new Date(),
+  };
   const [autoDateTabId, setAutoDateTabId] = useState(condition.mode ?? '0');
 
   const defaultKeywords = [
@@ -95,6 +98,7 @@ const SearchCondition = ({
       { newCondition.mode === '0' ? (
         <div className="dateRangePickerArea">
           <DateRangePicker
+            {...datePickerLimit}
             value={[stringToDate(newCondition?.startDate), stringToDate(newCondition?.endDate)]} // DateRangePicker 需要 Date 型別。
             onChange={handleClickDateRangePicker}
           />

@@ -1,5 +1,3 @@
-/* eslint-disable object-curly-newline */
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useController } from 'react-hook-form';
 import { DateRangePicker as KeyboardDateRangePicker } from 'react-date-range';
@@ -24,28 +22,23 @@ import DateRangePickerWrapper from './dateRangePicker.style';
 * */
 function DateRangePicker(props) {
   const {
-    control, name, label, minDate, onChange, value,
+    control, name, label, minDate, maxDate, onChange, value,
   } = props;
-  let myOnChange = onChange;
-  let myValue = value;
+  const { field } = control ? useController({ name, control }) : { field: { onChange, value } };
+  const myOnChange = field.onChange;
+  const myValue = field.value;
 
   const [showDatePicker, setShowDatePicker] = useState();
   const [displayText, setDisplayText] = useState();
   const [dateRange, setDateRange] = useState();
   const defaultRange = {
-    startDate: minDate,
-    endDate: minDate,
+    startDate: (value ? value[0] : null) ?? new Date(),
+    endDate: (value ? value[1] : null) ?? new Date(),
     key: 'selection',
   };
   const [selectionRange, setSelectionRange] = useState(defaultRange);
 
   useEffect(() => {
-    if (control) {
-      const { field } = useController({ name, control });
-      myOnChange = field.onChange;
-      myValue = field.value;
-    }
-
     if (myValue?.length) {
       let range = myValue;
       let startDate = myValue[0];
@@ -103,6 +96,8 @@ function DateRangePicker(props) {
         <div className="dateRangePickerMask">
           <div className="dateRangePickerWrapper" onClick={(event) => { event.stopPropagation(); }}>
             <KeyboardDateRangePicker
+              minDate={minDate}
+              maxDate={maxDate}
               rangeColors={[theme.colors.primary.light]}
               ranges={[selectionRange]}
               onChange={onSelectChanged}
