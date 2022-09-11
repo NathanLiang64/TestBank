@@ -39,27 +39,6 @@ const SearchCondition = ({
     }
   };
 
-  const renderDataRangePicker = () => {
-    const handleClickDateRangePicker = (range) => {
-      setNewCondition({
-        ...newCondition,
-        startDate: stringDateCodeFormatter(range[0]), // 轉為 YYYYMMDD
-        endDate: stringDateCodeFormatter(range[1]),
-      });
-    };
-    const dateRange = [
-      stringToDate(newCondition?.startDate), // DateRangePicker 需要 Date 型別。
-      stringToDate(newCondition?.endDate),
-    ];
-
-    // TODO 存款明細查詢-限三年內、存錢計劃-限計劃起始當日（而且還要精確到時間）
-    return (
-      <div className="dateRangePickerArea">
-        <DateRangePicker value={dateRange} onChange={handleClickDateRangePicker} />
-      </div>
-    );
-  };
-
   const computedStartDate = (mode) => {
     const date = new Date();
     // eslint-disable-next-line default-case
@@ -95,7 +74,16 @@ const SearchCondition = ({
     });
   }, [autoDateTabId]);
 
+  const handleClickDateRangePicker = (range) => {
+    setNewCondition({
+      ...newCondition,
+      startDate: stringDateCodeFormatter(range[0]), // 轉為 YYYYMMDD
+      endDate: stringDateCodeFormatter(range[1]),
+    });
+  };
+
   const renderTabs = () => (
+    // TODO 存款明細查詢-限三年內、存錢計劃-限計劃起始當日（而且還要精確到時間）
     <FEIBTabContext value={autoDateTabId}>
       <FEIBTabList onChange={(event, id) => setAutoDateTabId(id)} $size="small" $type="fixed">
         <FEIBTab label="自訂" value="0" />
@@ -104,7 +92,14 @@ const SearchCondition = ({
         <FEIBTab label="近兩年" value="3" />
         <FEIBTab label="近三年" value="4" />
       </FEIBTabList>
-      { autoDateTabId === '0' ? renderDataRangePicker() : (
+      { newCondition.mode === '0' ? (
+        <div className="dateRangePickerArea">
+          <DateRangePicker
+            value={[stringToDate(newCondition?.startDate), stringToDate(newCondition?.endDate)]} // DateRangePicker 需要 Date 型別。
+            onChange={handleClickDateRangePicker}
+          />
+        </div>
+      ) : (
         <div className="autoDateArea">
           <p>{`${stringDateFormatter(newCondition?.startDate)} ~ ${stringDateFormatter(newCondition?.endDate)}`}</p>
         </div>

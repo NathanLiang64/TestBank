@@ -56,11 +56,11 @@ function DateRangePicker(props) {
         range = [startDate, endDate];
       }
       setDateRange(range);
-    }
+    } else setDateRange([null, null]);
   }, []);
 
   useEffect(() => {
-    if (dateRange) {
+    if (dateRange && dateRange.length === 2 && dateRange[0] && dateRange[1]) {
       setDisplayText(`${dateFormatter(dateRange[0])} - ${dateFormatter(dateRange[1])}`);
       setSelectionRange({
         ...selectionRange,
