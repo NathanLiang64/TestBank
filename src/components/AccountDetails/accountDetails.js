@@ -126,7 +126,9 @@ const AccountDetails = ({
       }
 
       // 取得所有存款卡的初始資料後存取月份資料 (Tabs)
-      if (monthly.length) setMonthes(monthly.sort((a, b) => b - a));
+      const monthList = monthly.sort((a, b) => b - a);
+      setCurrMonth(monthList[0]);
+      setMonthes(monthList);
 
       // 更新交易明細資料。
       setTransactions(acctTxDtls);
