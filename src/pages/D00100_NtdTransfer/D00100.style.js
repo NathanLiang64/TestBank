@@ -7,6 +7,12 @@ const TransferWrapper = styled(Layout)`
   padding: 1.6rem 0 0 0;
   background: ${({ theme }) => theme.colors.background.lighterBlue};
 
+  .insufficient {
+    text-align: center;
+    color: ${({ theme }) => theme.colors.state.danger};
+    margin-bottom: 1.6rem;
+  }
+
   .transferServicesArea {
     // left: -1.6rem;
     flex-grow: 1;
@@ -14,7 +20,8 @@ const TransferWrapper = styled(Layout)`
     border-top-left-radius: 3rem;
     border-top-right-radius: 3rem;
     width: 100vw;
-    background: ${({ theme }) => theme.colors.basic.white};
+    background: ${({ theme, $insufficient }) => ($insufficient ? theme.colors.background.light : theme.colors.basic.white)};
+    pointer-events: ${({ $insufficient }) => ($insufficient ? 'none' : 'auto')};
   }
 
   form {

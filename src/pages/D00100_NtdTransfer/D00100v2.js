@@ -148,15 +148,15 @@ const Transfer = (props) => {
       if (keepData) {
         if (typeof keepData === 'object') {
           if (keepData.response) {
-          // 將 D00500/D00600 的傳回值，寫回 Model
+            // 將 D00500/D00600 的傳回值，寫回 Model
             if (keepData.transIn.type === 1) keepData.transIn.freqAcct = keepData.response;
             if (keepData.transIn.type === 2) keepData.transIn.regAcct = keepData.response;
             // Swiper 切回原本的 Slide
             // selectedAccountIdx 在 startFunc 前寫入 model 一起保存(暫存)，所以取回後就從 model 中移除。
             setSelectedAccountIdx(keepData.selectedAccountIdx);
             delete keepData.selectedAccountIdx;
-        } else {
-          // 若還沒有選擇常用/約定帳號，而且原本也沒有值，則切回一般轉帳。
+          } else {
+            // 若還沒有選擇常用/約定帳號，而且原本也沒有值，則切回一般轉帳。
             const { freqAcct, regAcct } = keepData.transIn;
             if (!freqAcct && !regAcct) keepData.transIn.type = 0;
             setSelectedAccountIdx(0);
@@ -439,9 +439,10 @@ const Transfer = (props) => {
   /**
    * 輸出頁面
    */
+  console.log(getValues('transOut.balance'), getValues('transOut'));
   return accounts ? (
     <Layout title="台幣轉帳">
-      <TransferWrapper>
+      <TransferWrapper $insufficient={getValues(idTransOut).balance <= 0}>
         <AccountOverview
           transferMode
           accounts={accounts}
@@ -449,6 +450,7 @@ const Transfer = (props) => {
           onAccountChanged={setSelectedAccountIdx}
         />
 
+        {watch(idTransOut).balance <= 0 ? (<p className="insufficient">(帳戶餘額不足)</p>) : null}
         <div className="transferServicesArea">
           <form>
             <FEIBTabContext value={String(watch(idTransType))}>
