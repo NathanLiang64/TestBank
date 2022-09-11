@@ -230,7 +230,7 @@ const Transfer = (props) => {
       transIn: {
         ...params.transIn,
         type: 0,
-        bank: params.transIn?.bank ?? (params.transIn.account ? '805' : ''), // 尚有指定帳號、沒有銀行代碼使；預設為遠銀.
+        bank: params.transIn?.bank ?? (params.transIn?.account ? '805' : ''), // 尚有指定帳號、沒有銀行代碼使；預設為遠銀.
       },
     };
   };
@@ -515,7 +515,7 @@ const Transfer = (props) => {
                 {/* 0.一般轉帳, 1.常用轉帳, 2.約定轉帳, 3.社群轉帳 */}
                 {transTypes.map((name, n) => (
                   // 當 startFuncParams 有預設轉入帳號時，不允許變更。
-                  <FEIBTab key={name} label={name} value={String(n)} disabled={(n !== 0 && startFuncParams?.transIn?.account)} />
+                  <FEIBTab key={name} label={name} value={String(n)} disabled={((n !== 0 && startFuncParams?.transIn?.account) || n === 3)} />
                 ))}
               </FEIBTabList>
 
