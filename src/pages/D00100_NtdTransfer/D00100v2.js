@@ -21,10 +21,10 @@ import DateRangePicker from 'components/DateRangePicker';
 import Accordion from 'components/Accordion';
 import BankCodeInput from 'components/BankCodeInput';
 import MemberAccountCard from 'components/MemberAccountCard';
-import { showInfo } from 'utilities/MessageModal';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { loadFuncParams, startFunc } from 'utilities/AppScriptProxy';
+import { showInfo, showPrompt } from 'utilities/MessageModal';
+import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
 import { numberToChinese, setLocalData } from 'utilities/Generator';
 import { ChangeMemberIcon } from 'assets/images/icons';
 import { loadAccountsList, AccountListCacheName, getAccountExtraInfo } from './api';
@@ -43,6 +43,7 @@ const Transfer = (props) => {
 
   const [model, setModel] = useState();
   const [accounts, setAccounts] = useState();
+  const [selectedAccountIdx, setSelectedAccountIdx] = useState();
   const [amountText, setAmountText] = useState(); // 轉帳金額的輸出文字。
   const [tranferQuota, setTranferQuota] = useState([10000, 30000, 50000]); // 目前帳戶的轉帳限額。
 
@@ -137,46 +138,54 @@ const Transfer = (props) => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    // 當啟動頁面時有提供 state 時，會在建立 model 時以 useState 的預設值填入。
-    let keepModel = state;
-    if (!state) {
-      keepModel = await loadFuncParams();
-      if (keepModel) {
-        if (keepModel.response) {
-          // 將 D00500/D00600 的傳回值，寫回 Model
-          if (keepModel.transIn.type === 1) keepModel.transIn.freqAcct = keepModel.response;
-          if (keepModel.transIn.type === 2) keepModel.transIn.regAcct = keepModel.response;
-        } else {
-          // 若還沒有選擇常用/約定帳號，而且原本也沒有值，則切回一般轉帳。
-          const { freqAcct, regAcct } = keepModel.transIn;
-          if (!freqAcct && !regAcct) keepModel.transIn.type = 0;
-        }
-      } else {
-        keepModel = model;
-      }
-      setModel(keepModel);
-    }
-
-    // TODO NOTE 指定預設帳號時，不能切換轉出帳號，所以也不用 Call API 取資料。
-
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
     loadAccountsList('MSC', setAccounts);
+    // 當啟動頁面時有提供 state 時，會在建立 model 時以 useState 的預設值填入。
+    let keepData = state;
+    if (!state) {
+      keepData = await loadFuncParams();
+      if (keepData) {
+        if (typeof keepData === 'object') {
+          if (keepData.response) {
+          // 將 D00500/D00600 的傳回值，寫回 Model
+            if (keepData.transIn.type === 1) keepData.transIn.freqAcct = keepData.response;
+            if (keepData.transIn.type === 2) keepData.transIn.regAcct = keepData.response;
+            // Swiper 切回原本的 Slide
+            // selectedAccountIdx 在 startFunc 前寫入 model 一起保存(暫存)，所以取回後就從 model 中移除。
+            setSelectedAccountIdx(keepData.selectedAccountIdx);
+            delete keepData.selectedAccountIdx;
+        } else {
+          // 若還沒有選擇常用/約定帳號，而且原本也沒有值，則切回一般轉帳。
+            const { freqAcct, regAcct } = keepData.transIn;
+            if (!freqAcct && !regAcct) keepData.transIn.type = 0;
+            setSelectedAccountIdx(0);
+          }
+          setModel(keepData);
+        }
+      } else {
+        keepData = model;
+      }
+    }
 
     // 將 Model 資料填入 UI Form 的對應欄位。
-    if (keepModel) reset(keepModel);
+    if (keepData) reset(keepData);
   }, []);
 
   /**
    * 初始化帳戶卡；因為 Swiper 無法與 HookForm 綁定，所以要自行處理。
    */
-  useEffect(() => {
+  useEffect(async () => {
+    if (!accounts) return;
+
     dispatch(setWaittingVisible(false));
-    onAccountChanged(0);
+    if (accounts.length === 0) {
+      await showPrompt('您沒有任何可進行轉帳的台幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
+    } else handleAccountChanged(selectedAccountIdx ?? 0);
   }, [accounts]);
 
   /**
-   *
+   * 將 HookForm 的資料寫回 model
    * @param {*} values
    * @returns
    */
@@ -285,7 +294,10 @@ const Transfer = (props) => {
         defaultAccount: selectAccount?.accountNo,
         bindAccount: values?.transOut.account, // 提供給 D00600 只列出此帳號設定的約轉帳號清單。
       };
-      const newModel = updateModel(values);
+      const newModel = {
+        ...updateModel(values),
+        selectedAccountIdx, // 用在返回時將 Swiper 切回目前帳號
+      };
 
       dispatch(setWaittingVisible(true));
       await startFunc(funcId, params, newModel);
@@ -379,7 +391,7 @@ const Transfer = (props) => {
   /**
    * 切換帳戶卡，變更 HookForm 轉出帳號相關資料，以及轉帳額度。
    */
-  const onAccountChanged = async (index) => {
+  const handleAccountChanged = async (index) => {
     if (!accounts) return; // 頁面初始化時，不需要進來。
 
     const account = accounts[index];
@@ -409,6 +421,7 @@ const Transfer = (props) => {
     // else if (['11', '12'].indexOf(account.dgType)) quota = [50000, 100000, 200000];
     setTranferQuota(quota);
   };
+  useEffect(() => { handleAccountChanged(selectedAccountIdx); }, [selectedAccountIdx]);
 
   /**
    * 單筆轉帳限額 (用於設置至轉出金額驗證規則)
@@ -426,13 +439,14 @@ const Transfer = (props) => {
   /**
    * 輸出頁面
    */
-  return (
+  return accounts ? (
     <Layout title="台幣轉帳">
       <TransferWrapper>
         <AccountOverview
           transferMode
           accounts={accounts}
-          onAccountChanged={onAccountChanged}
+          defaultSlide={selectedAccountIdx}
+          onAccountChanged={setSelectedAccountIdx}
         />
 
         <div className="transferServicesArea">
@@ -578,7 +592,7 @@ const Transfer = (props) => {
         </div>
       </TransferWrapper>
     </Layout>
-  );
+  ) : null;
 };
 
 export default Transfer;

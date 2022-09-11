@@ -49,12 +49,12 @@ const C00300 = () => {
     loadAccountsList('MC', setAccounts); // M=台幣主帳戶、C=台幣子帳戶
 
     const startParams = await loadFuncParams(); // Function Controller 提供的參數
-    // 取得 Function Controller 提供的 keepDdata(model)
-    let keepDdata = null;
+    // 取得 Function Controller 提供的 keepData(model)
+    let keepData = null;
     if (startParams && (typeof startParams === 'object')) {
-      keepDdata = startParams;
-      setSelectedAccountIdx(keepDdata.selectedAccountIdx);
-      setShowRate(keepDdata.showRate);
+      keepData = startParams;
+      setSelectedAccountIdx(keepData.selectedAccountIdx);
+      setShowRate(keepData.showRate);
     } else {
       setSelectedAccountIdx(0);
       setShowRate(true);

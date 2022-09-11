@@ -39,7 +39,7 @@ const CommunityPage = () => {
     setWaittingVisible(false);
 
     const startParams = await loadFuncParams(); // Function Controller 提供的參數
-    // 取得 Function Controller 提供的 keepDdata(model)
+    // 取得 Function Controller 提供的 keepData(model)
     let model;
     if (startParams && (typeof startParams === 'object')) {
       model = startParams;

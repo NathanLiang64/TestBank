@@ -45,11 +45,11 @@ const C00400 = () => {
     loadAccountsList('F', setAccounts); // F=外幣帳戶
 
     const startParams = await loadFuncParams(); // Function Controller 提供的參數
-    // 取得 Function Controller 提供的 keepDdata(model)
-    let keepDdata = null;
+    // 取得 Function Controller 提供的 keepData(model)
+    let keepData = null;
     if (startParams && (typeof startParams === 'object')) {
-      keepDdata = startParams;
-      setSelectedAccountIdx(keepDdata.selectedAccountIdx);
+      keepData = startParams;
+      setSelectedAccountIdx(keepData.selectedAccountIdx);
     } else {
       setSelectedAccountIdx(0);
     }
