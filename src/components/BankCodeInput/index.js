@@ -27,6 +27,7 @@ const BankCodeInput = ({
   rules,
   errorMessage,
   value,
+  readonly,
 }) => {
   const [bankList, setBankList] = useState();
   const [showSelector, setShowSelector] = useState();
@@ -42,7 +43,7 @@ const BankCodeInput = ({
    * HTML輸出。
    */
   return (
-    <>
+    <div style={{ pointerEvents: (readonly ? 'none' : 'auto') }}>
       <Controller
         control={control}
         name={name}
@@ -75,7 +76,7 @@ const BankCodeInput = ({
           }}
         />
       ) : null}
-    </>
+    </div>
   );
 };
 

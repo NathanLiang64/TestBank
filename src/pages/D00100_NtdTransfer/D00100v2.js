@@ -168,18 +168,17 @@ const Transfer = (props) => {
             setSelectedAccountIdx(keepData.selectedAccountIdx);
             delete keepData.selectedAccountIdx;
             delete keepData.response;
-            setModel(keepData);
           } else if (typeof keepData.transOut === 'string') {
-            // 取出透過 startFunc 啟動轉帳時，前一功能提供的參數。
+            // 取出透過 startFunc 啟動轉帳時，由前一功能提供的參數。
             setStartFuncParams(keepData);
-            keepData = null; // 避免 HookForm 在 reset 誤將 keepData 填入。
+            return; // 避免 HookForm 在 reset 誤將 keepData 填入。
           } else {
             // 若還沒有選擇常用/約定帳號，而且原本也沒有值，則切回一般轉帳。
             const { freqAcct, regAcct } = keepData.transIn;
             if (!freqAcct && !regAcct) keepData.transIn.type = 0;
             setSelectedAccountIdx(0);
-            setModel(keepData);
           }
+          setModel(keepData);
         }
       } else {
         // 未經由 Function Controller 取得資料時，延用原本的 model
@@ -197,47 +196,51 @@ const Transfer = (props) => {
   useEffect(async () => {
     if (!accounts) return;
 
-    // ...
-    if (accountsLoadedResolver) {
-      console.log('*** 終於等到 accounts :', accounts);
-      accountsLoadedResolver(accounts);
-    }
-
     dispatch(setWaittingVisible(false));
     if (accounts.length === 0) {
       await showPrompt('您沒有任何可進行轉帳的台幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
     } else handleAccountChanged(selectedAccountIdx ?? 0);
   }, [accounts]);
 
-  const [accountsLoadedResolver, setAccountsLoadedResolver] = useState();
   /**
-   *
+   * 處理啟動參數，包含只保留指定帳號，以及將預設值資填入畫面。
+   * @param {*} params 前一功能提供的參數。
    */
-  useEffect(async () => {
-    if (!startFuncParams) return;
-
+  const handleStartParams = async (params) => {
     if (!accounts) {
-      console.log('*** 等 accounts 載入...');
-      const waitingAccountsLoaded = new Promise(setAccountsLoadedResolver);
-      console.log('*** waitingAccountsLoaded :', waitingAccountsLoaded);
-      await waitingAccountsLoaded;
+      console.log('*** 等 accounts 載入...', accounts);
+      return null;
     }
 
-    const transOutAccount = startFuncParams.transOut;
-    delete startFuncParams.transOut; // 因為在將 startFuncParams 寫入 model 時，不需要此欄位。
+    const transOutAccount = params.transOut;
+    delete params.transOut; // 因為在將 params 寫入 model 時，不需要此欄位。
     const index = accounts.findIndex((acct) => acct.accountNo === transOutAccount);
-    if (index >= 0) {
-      // NOTE 指定預設帳號時，不能切換轉出帳號，所以只需建一張帳號卡。
-      setAccounts([accounts[index]]);
-      setSelectedAccountIdx(0);
-      setModel({
-        ...getValues(),
-        ...startFuncParams,
-      });
-    } else {
+    if (index < 0) {
       // 查無指定的轉帳帳號，立即返回closeFunc。
       await showError(`您的帳戶中並沒有指定的轉出帳號(${transOutAccount})，請洽客服人員。`, () => closeFunc());
+      return null;
     }
+
+    // NOTE 指定預設帳號時，不能切換轉出帳號，所以只需建一張帳號卡。
+    setAccounts([accounts[index]]);
+    setSelectedAccountIdx(0);
+    return {
+      ...getValues(),
+      ...params,
+      transIn: {
+        ...params.transIn,
+        type: 0,
+        bank: params.transIn?.bank ?? (params.transIn.account ? '805' : ''), // 尚有指定帳號、沒有銀行代碼使；預設為遠銀.
+      },
+    };
+  };
+
+  /**
+   * 當取得前一功能提供的參數後，立即進行處理。
+   */
+  useEffect(async () => {
+    const newModel = await handleStartParams(startFuncParams);
+    if (newModel) reset(newModel);
   }, [startFuncParams]);
 
   /**
@@ -250,7 +253,6 @@ const Transfer = (props) => {
       ...model,
       ...values,
     };
-    console.log('Model : ', newModel);
     return newModel;
   };
 
@@ -511,17 +513,27 @@ const Transfer = (props) => {
             <FEIBTabContext value={String(watch(idTransType))}>
               <FEIBTabList onChange={onTransTypeChanged} $type="fixed" $size="small" className="tabList">
                 {/* 0.一般轉帳, 1.常用轉帳, 2.約定轉帳, 3.社群轉帳 */}
-                {transTypes.map((name, n) => (<FEIBTab key={name} label={name} value={String(n)} />))}
+                {transTypes.map((name, n) => (
+                  // 當 startFuncParams 有預設轉入帳號時，不允許變更。
+                  <FEIBTab key={name} label={name} value={String(n)} disabled={(n !== 0 && startFuncParams?.transIn?.account)} />
+                ))}
               </FEIBTabList>
 
               {/* 轉入帳戶區(一般轉帳) */}
               <FEIBTabPanel value="0">
-                <BankCodeInput control={control} name={idTransInBank} value={getValues(idTransInBank)} setValue={setValue} trigger={trigger} errorMessage={errors?.transIn?.bank?.message} />
+                {/* 當 startFuncParams 有預設轉入帳號時，不允許變更 */}
+                <BankCodeInput control={control} name={idTransInBank} value={getValues(idTransInBank)} setValue={setValue} trigger={trigger}
+                  readonly={startFuncParams?.transIn?.bank}
+                  errorMessage={errors?.transIn?.bank?.message}
+                />
                 <div>
                   <FEIBInputLabel htmlFor={idTransInAcct}>轉入帳號</FEIBInputLabel>
                   <Controller control={control} name={idTransInAcct} defaultValue={getValues(idTransInAcct)}
                     render={({ field }) => (
-                      <FEIBInput {...field} placeholder="請輸入" inputProps={{ maxLength: 14, autoComplete: 'off' }} inputMode="numeric" error={!!errors?.transIn?.account} />
+                      // 當 startFuncParams 有預設轉入帳號時，不允許變更
+                      <FEIBInput {...field} placeholder="請輸入" inputMode="numeric" error={!!errors?.transIn?.account}
+                        inputProps={{ maxLength: 14, autoComplete: 'off', disabled: startFuncParams?.transIn?.account }}
+                      />
                     )}
                   />
                   <FEIBErrorMessage>{errors.transIn?.account?.message}</FEIBErrorMessage>
@@ -537,7 +549,10 @@ const Transfer = (props) => {
               <Controller control={control} name={idAmount} defaultValue={getValues(idAmount)}
                 render={({ field }) => (
                   <div>
-                    <FEIBInput {...field} placeholder="$0（零元）" inputProps={{ maxLength: 9, autoComplete: 'off' }} inputMode="numeric" error={!!errors?.amount} />
+                    {/* 當 startFuncParams 有預設轉帳金額時，不允許變更 */}
+                    <FEIBInput {...field} placeholder="$0（零元）" inputMode="numeric" error={!!errors?.amount}
+                      inputProps={{ maxLength: 9, autoComplete: 'off', disabled: startFuncParams?.amount }}
+                    />
                     <div className="balanceLayout">{amountText}</div>
                   </div>
                 )}

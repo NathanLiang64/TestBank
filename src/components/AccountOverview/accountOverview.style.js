@@ -12,9 +12,9 @@ const AccountOverviewWrapper = styled.div`
       padding-bottom: 1.6rem;
     }
 
-    .swiper-pagination {
-      left: -.8rem;
-    }
+    // .swiper-pagination {
+    //   left: -.8rem;
+    // }
 
     .singleAccount {
       padding: 1rem 1.6rem;
