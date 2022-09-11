@@ -23,7 +23,7 @@ import BankCodeInput from 'components/BankCodeInput';
 import MemberAccountCard from 'components/MemberAccountCard';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { showInfo, showPrompt } from 'utilities/MessageModal';
+import { showError, showInfo, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
 import { numberToChinese, setLocalData } from 'utilities/Generator';
 import { ChangeMemberIcon } from 'assets/images/icons';
@@ -132,6 +132,17 @@ const Transfer = (props) => {
     },
   });
 
+  /* 透過 startFunc 啟動轉帳時，由前一個功能提供的參數。
+    啟動參數：{
+      transOut: 轉出帳號,
+      transIn: { bank: 轉入銀行, account: 轉入帳號 },
+      amount: 轉帳金額,
+      memo: 備註,
+    }
+    NOTE 只要其中的欄位不是 null，就鎖定不允許變更。
+  */
+  const [startFuncParams, setStartFuncParams] = useState();
+
   /**
    * 初始化
    */
@@ -141,6 +152,7 @@ const Transfer = (props) => {
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
     loadAccountsList('MSC', setAccounts);
+
     // 當啟動頁面時有提供 state 時，會在建立 model 時以 useState 的預設值填入。
     let keepData = state;
     if (!state) {
@@ -155,15 +167,22 @@ const Transfer = (props) => {
             // selectedAccountIdx 在 startFunc 前寫入 model 一起保存(暫存)，所以取回後就從 model 中移除。
             setSelectedAccountIdx(keepData.selectedAccountIdx);
             delete keepData.selectedAccountIdx;
+            delete keepData.response;
+            setModel(keepData);
+          } else if (typeof keepData.transOut === 'string') {
+            // 取出透過 startFunc 啟動轉帳時，前一功能提供的參數。
+            setStartFuncParams(keepData);
+            keepData = null; // 避免 HookForm 在 reset 誤將 keepData 填入。
           } else {
             // 若還沒有選擇常用/約定帳號，而且原本也沒有值，則切回一般轉帳。
             const { freqAcct, regAcct } = keepData.transIn;
             if (!freqAcct && !regAcct) keepData.transIn.type = 0;
             setSelectedAccountIdx(0);
+            setModel(keepData);
           }
-          setModel(keepData);
         }
       } else {
+        // 未經由 Function Controller 取得資料時，延用原本的 model
         keepData = model;
       }
     }
@@ -178,11 +197,48 @@ const Transfer = (props) => {
   useEffect(async () => {
     if (!accounts) return;
 
+    // ...
+    if (accountsLoadedResolver) {
+      console.log('*** 終於等到 accounts :', accounts);
+      accountsLoadedResolver(accounts);
+    }
+
     dispatch(setWaittingVisible(false));
     if (accounts.length === 0) {
       await showPrompt('您沒有任何可進行轉帳的台幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
     } else handleAccountChanged(selectedAccountIdx ?? 0);
   }, [accounts]);
+
+  const [accountsLoadedResolver, setAccountsLoadedResolver] = useState();
+  /**
+   *
+   */
+  useEffect(async () => {
+    if (!startFuncParams) return;
+
+    if (!accounts) {
+      console.log('*** 等 accounts 載入...');
+      const waitingAccountsLoaded = new Promise(setAccountsLoadedResolver);
+      console.log('*** waitingAccountsLoaded :', waitingAccountsLoaded);
+      await waitingAccountsLoaded;
+    }
+
+    const transOutAccount = startFuncParams.transOut;
+    delete startFuncParams.transOut; // 因為在將 startFuncParams 寫入 model 時，不需要此欄位。
+    const index = accounts.findIndex((acct) => acct.accountNo === transOutAccount);
+    if (index >= 0) {
+      // NOTE 指定預設帳號時，不能切換轉出帳號，所以只需建一張帳號卡。
+      setAccounts([accounts[index]]);
+      setSelectedAccountIdx(0);
+      setModel({
+        ...getValues(),
+        ...startFuncParams,
+      });
+    } else {
+      // 查無指定的轉帳帳號，立即返回closeFunc。
+      await showError(`您的帳戶中並沒有指定的轉出帳號(${transOutAccount})，請洽客服人員。`, () => closeFunc());
+    }
+  }, [startFuncParams]);
 
   /**
    * 將 HookForm 的資料寫回 model
@@ -439,7 +495,6 @@ const Transfer = (props) => {
   /**
    * 輸出頁面
    */
-  console.log(getValues('transOut.balance'), getValues('transOut'));
   return accounts ? (
     <Layout title="台幣轉帳">
       <TransferWrapper $insufficient={getValues(idTransOut).balance <= 0}>

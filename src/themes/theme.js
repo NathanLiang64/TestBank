@@ -43,6 +43,7 @@ const theme = {
       star: '#FFD466',
       point: '#E60E0E',
       cancel: '#D8E0ED',
+      disable: '#E9EBEE',
       mask: 'rgba(56, 31, 115, .5)',
     },
     state: {

@@ -149,7 +149,7 @@ const C00500 = () => {
         };
         break;
       case 'D00100': // 轉帳
-        params = model; // 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。
+        params = { transOut: account.accountNo };
         break;
       case 'E00100': // 換匯
         params = model; // 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。

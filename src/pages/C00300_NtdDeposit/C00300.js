@@ -197,9 +197,8 @@ const C00300 = () => {
         };
         break;
       case 'D00100': // 轉帳
-      case 'D00300': // 無卡提款
-      case 'E00100': // 換匯
-        params = model; // 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。
+        params = { transOut: account.accountNo };
+        break;
         break;
       case 'DownloadDepositBookCover': // 存摺封面下載
         downloadDepositBookCover(account.accountNo); // 預設檔名為「帳號-日期.pdf」，密碼：身分證號碼
