@@ -1,6 +1,6 @@
-/* eslint-disable no-use-before-define */
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import uuid from 'react-uuid';
 import {
   MoreIcon, VisibilityIcon, VisibilityOffIcon,
 } from 'assets/images/icons';
@@ -88,36 +88,40 @@ const DebitCard = ({
     </FEIBIconButton>
   );
 
+  /**
+   * 顯示功能清單。
+   * @param {[*]} funcs 功能清單。
+   * @param {boolean} isHorizontal 表示以水平方式排列。
+   */
+  const renderFunctions = (funcs, isHorizontal) => (
+    <ul className={isHorizontal ? 'functionList' : null}>
+      {funcs.map((func) => {
+        const enabled = (func.fid && (func.enabled === undefined || func.enabled));
+        const style = enabled ? null : { color: 'gray' };
+        const onClick = enabled ? () => {
+          dispatch(setDrawerVisible(false));
+          onFunctionClick(func.fid);
+        } : null;
+
+        return (
+          <li key={uuid()} onClick={onClick}>
+            <p style={style}>
+              {func.icon ? iconGenerator(func.icon) : null}
+              {func.title}
+            </p>
+          </li>
+        );
+      })}
+    </ul>
+  );
+
   // 渲染卡片右上角的 "更多" 圖標
   const renderMoreIconButton = () => (
     <div className="moreIconButton">
-      <FEIBIconButton $fontSize={1.6} onClick={() => showDrawer('', renderMoreList(moreList))}>
+      <FEIBIconButton $fontSize={1.6} onClick={() => showDrawer('', renderFunctions(moreList))}>
         <MoreIcon />
       </FEIBIconButton>
     </div>
-  );
-
-  const onFuncClick = (fid) => {
-    dispatch(setDrawerVisible(false));
-    onFunctionClick(fid);
-  };
-
-  // render 功能列表
-  const renderFunctionList = (list) => (
-    <ul className="functionList">
-      { list.map((func) => (
-        func.fid
-          ? (
-            <li key={func.fid} onClick={() => onFuncClick(func.fid)}>
-              <p>{func.title}</p>
-            </li>
-          ) : (
-            <li>
-              <div style={{ color: 'gray' }}>{func.title}</div>
-            </li>
-          )
-      )) }
-    </ul>
   );
 
   const renderFreeTransferInfo = () => {
@@ -138,20 +142,6 @@ const DebitCard = ({
       </p>
     );
   };
-
-  // render 點擊更多圖標後的功能列表
-  const renderMoreList = (list) => (
-    <ul className="moreList">
-      {list.map((func) => (
-        <li key={func.title} onClick={() => onFuncClick(func.fid)}>
-          <p>
-            {iconGenerator(func.icon)}
-            {func.title}
-          </p>
-        </li>
-      ))}
-    </ul>
-  );
 
   /**
    * 帳號列
@@ -189,7 +179,7 @@ const DebitCard = ({
         </h3>
       </div>
       { renderFreeTransferInfo() }
-      { functionList && renderFunctionList(functionList) }
+      { functionList && renderFunctions(functionList, true) }
       { moreList && renderMoreIconButton() }
     </DebitCardWrapper>
   );

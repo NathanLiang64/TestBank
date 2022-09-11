@@ -199,6 +199,11 @@ const C00300 = () => {
       case 'D00100': // 轉帳
         params = { transOut: account.accountNo };
         break;
+      case 'D00300': // 無卡提款
+        params = { transOut: account.accountNo };
+        break;
+      case 'E00100': // 換匯
+        params = { transOut: account.accountNo };
         break;
       case 'DownloadDepositBookCover': // 存摺封面下載
         downloadDepositBookCover(account.accountNo); // 預設檔名為「帳號-日期.pdf」，密碼：身分證號碼
@@ -227,12 +232,12 @@ const C00300 = () => {
           onFunctionClick={handleFunctionClick}
           cardColor="purple"
           funcList={[
-            { fid: 'D00100', title: '轉帳' },
-            { fid: 'D00300', title: '無卡提款' },
+            { fid: 'D00100', title: '轉帳', enabled: (accounts[selectedAccountIdx]?.balance > 0) },
+            { fid: 'D00300', title: '無卡提款', enabled: (accounts[selectedAccountIdx]?.balance > 0) },
           ]}
           moreFuncs={[
-            { fid: null, title: '定存', icon: 'fixedDeposit' },
-            { fid: 'E00100', title: '換匯', icon: 'exchange' },
+            { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false },
+            { fid: 'E00100', title: '換匯', icon: 'exchange', enabled: (accounts[selectedAccountIdx]?.balance > 0) },
             { fid: 'DownloadDepositBookCover', title: '存摺封面下載', icon: 'coverDownload' },
             { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
           ]}

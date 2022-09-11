@@ -152,7 +152,7 @@ const C00500 = () => {
         params = { transOut: account.accountNo };
         break;
       case 'E00100': // 換匯
-        params = model; // 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。
+        params = { transOut: account.accountNo };
         break;
       case 'DownloadDepositBookCover': // 存摺封面下載
         downloadDepositBookCover(account.accountNo); // 預設檔名為「帳號-日期.pdf」，密碼：身分證號碼
@@ -180,8 +180,8 @@ const C00500 = () => {
           onFunctionClick={handleFunctionClick}
           cardColor="blue"
           funcList={[
-            { fid: 'D00100', title: '轉帳' },
-            { fid: 'E00100', title: '換匯' },
+            { fid: 'D00100', title: '轉帳', enabled: (accounts[selectedAccountIdx]?.balance > 0) },
+            { fid: 'E00100', title: '換匯', enabled: (accounts[selectedAccountIdx]?.balance > 0) },
           ]}
           moreFuncs={[
             { fid: 'DownloadDepositBookCover', title: '存摺封面下載', icon: 'coverDownload' },
