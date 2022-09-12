@@ -56,9 +56,9 @@ const TransferConfirm = (props) => {
    * 產生轉帳發生時間或區間的描述訊息。
    */
   const getTransDate = () => {
-    const { mode, booking } = model;
+    const { booking } = model;
 
-    if (mode === 0) return dateToString(new Date()); // 立即轉帳 用今天表示。
+    if (!booking?.mode) return dateToString(new Date()); // 立即轉帳 用今天表示。
 
     const { multiTimes, transDate, transRange } = booking;
     if (multiTimes === '1') {
@@ -94,7 +94,7 @@ const TransferConfirm = (props) => {
    *返回轉帳首頁。
    */
   const goBack = () => {
-    history.replace('/D00100v2', model);
+    history.replace('/D00100', model);
   };
 
   /**

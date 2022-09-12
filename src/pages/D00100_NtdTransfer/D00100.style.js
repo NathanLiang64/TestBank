@@ -105,7 +105,7 @@ const TransferWrapper = styled(Layout)`
     margin-top: 1.8rem;
 
     .dateRangePickerArea {
-      margin-top: 3.6rem;
+      margin-top: 1.6rem;
       margin-bottom: 1rem;
     }
 
