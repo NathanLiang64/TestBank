@@ -32,6 +32,7 @@ const C00300 = () => {
   const { register, unregister, handleSubmit } = useForm();
 
   const [accounts, setAccounts] = useState();
+  const [selectedAccount, setSelectedAccount] = useState();
   const [selectedAccountIdx, setSelectedAccountIdx] = useState();
   const [transactions, setTransactions] = useState(new Map());
 
@@ -111,6 +112,7 @@ const C00300 = () => {
       });
     }
     updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可)
+    setSelectedAccount(account);
   };
   useEffect(() => { handleAccountChanged(selectedAccountIdx); }, [selectedAccountIdx]);
 
@@ -118,10 +120,9 @@ const C00300 = () => {
    * 顯示 優存(利率/利息)資訊
    */
   const renderBonusInfoPanel = () => {
-    const account = accounts[selectedAccountIdx];
-    if (!account) return null;
+    if (!selectedAccount) return null;
 
-    const { freeWithdraw, freeTransfer, bonusQuota, bonusRate, interest } = account;
+    const { freeWithdraw, freeTransfer, bonusQuota, bonusRate, interest } = selectedAccount;
     if (!freeTransfer) {
       return (
         <div style={{ lineHeight: '5.28833rem', textAlign: 'center', marginBottom: '1.6rem' }}>載入中...</div>
@@ -173,9 +174,8 @@ const C00300 = () => {
       </>
     );
     const onOk = (values) => {
-      const account = accounts[selectedAccountIdx];
-      account.alias = values.newName; // 變更卡片上的帳戶名稱
-      setAccountAlias(account.accountNo, account.alias);
+      selectedAccount.alias = values.newName; // 變更卡片上的帳戶名稱
+      setAccountAlias(selectedAccount.accountNo, selectedAccount.alias);
       setAccounts([...accounts]);
     };
     await customPopup('帳戶名稱編輯', body, handleSubmit(onOk));
@@ -188,28 +188,27 @@ const C00300 = () => {
   const handleFunctionClick = async (funcCode) => {
     let params = null;
     const model = { selectedAccountIdx, showRate };
-    const account = accounts[selectedAccountIdx];
     switch (funcCode) {
       case 'moreTranscations': // 更多明細
         params = {
-          ...account, // 直接提供帳戶摘要資訊就不用再下載。
+          ...selectedAccount, // 直接提供帳戶摘要資訊就不用再下載。
           cardColor: 'purple',
         };
         break;
       case 'D00100': // 轉帳
-        params = { transOut: account.accountNo };
+        params = { transOut: selectedAccount.accountNo };
         break;
-      case 'D00300': // 無卡提款
-        params = { transOut: account.accountNo };
+      case 'D00300': // 無卡提款，只有母帳號才可以使用。 // TODO 帶參數過去
+        params = { transOut: selectedAccount.accountNo };
         break;
-      case 'E00100': // 換匯
-        params = { transOut: account.accountNo };
+      case 'E00100': // 換匯 // TODO 帶參數過去
+        params = { transOut: selectedAccount.accountNo };
         break;
       case 'DownloadDepositBookCover': // 存摺封面下載
-        downloadDepositBookCover(account.accountNo); // 預設檔名為「帳號-日期.pdf」，密碼：身分證號碼
+        downloadDepositBookCover(selectedAccount.accountNo); // 預設檔名為「帳號-日期.pdf」，密碼：身分證號碼
         return;
       case 'Rename': // 帳戶名稱編輯
-        showRenameDialog(account.alias);
+        showRenameDialog(selectedAccount.alias);
         return;
       case 'depositPlus':
       default:
@@ -232,12 +231,12 @@ const C00300 = () => {
           onFunctionClick={handleFunctionClick}
           cardColor="purple"
           funcList={[
-            { fid: 'D00100', title: '轉帳', enabled: (accounts[selectedAccountIdx]?.balance > 0) },
-            { fid: 'D00300', title: '無卡提款', enabled: (accounts[selectedAccountIdx]?.balance > 0) },
+            { fid: 'D00100', title: '轉帳', enabled: (selectedAccount?.balance > 0) },
+            { fid: 'D00300', title: '無卡提款', enabled: (selectedAccount?.acctType === 'M' && selectedAccount?.balance > 0) },
           ]}
           moreFuncs={[
             { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false },
-            { fid: 'E00100', title: '換匯', icon: 'exchange', enabled: (accounts[selectedAccountIdx]?.balance > 0) },
+            { fid: 'E00100', title: '換匯', icon: 'exchange', enabled: (selectedAccount?.balance > 0) },
             { fid: 'DownloadDepositBookCover', title: '存摺封面下載', icon: 'coverDownload' },
             { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
           ]}
@@ -247,7 +246,7 @@ const C00300 = () => {
         { renderBonusInfoPanel() }
 
         <DepositDetailPanel
-          details={transactions.get(accounts[selectedAccountIdx]?.accountNo)}
+          details={transactions.get(selectedAccount?.accountNo)}
           onMoreFuncClick={() => handleFunctionClick('moreTranscations')}
         />
       </PageWrapper>
