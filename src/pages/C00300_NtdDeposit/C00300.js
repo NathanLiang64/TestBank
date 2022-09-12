@@ -14,7 +14,7 @@ import { FEIBInputLabel, FEIBInput } from 'components/elements';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { customPopup, showInfo, showPrompt } from 'utilities/MessageModal';
+import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
 import { setLocalData } from 'utilities/Generator';
 import { AccountListCacheName, getAccountExtraInfo, loadAccountsList } from 'pages/D00100_NtdTransfer/api';
@@ -230,7 +230,7 @@ const C00300 = () => {
   /**
    * 頁面輸出
    */
-  return accounts ? (
+  return selectedAccount ? (
     <Layout title="台幣活存">
       <PageWrapper small>
         <AccountOverview
@@ -240,12 +240,12 @@ const C00300 = () => {
           onFunctionClick={handleFunctionClick}
           cardColor="purple"
           funcList={[
-            { fid: 'D00100', title: '轉帳', enabled: (selectedAccount?.balance > 0) },
-            { fid: 'D00300', title: '無卡提款', enabled: (selectedAccount?.acctType === 'M' && selectedAccount?.balance > 0) },
+            { fid: 'D00100', title: '轉帳', enabled: (selectedAccount.balance > 0) },
+            { fid: 'D00300', title: '無卡提款', enabled: (selectedAccount.balance > 0), hidden: (selectedAccount.acctType !== 'M') },
           ]}
           moreFuncs={[
             { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false },
-            { fid: 'E00100', title: '換匯', icon: 'exchange', enabled: (selectedAccount?.balance > 0) },
+            { fid: 'E00100', title: '換匯', icon: 'exchange', enabled: (selectedAccount.balance > 0) },
             { fid: 'DownloadCover', title: '存摺封面下載', icon: 'coverDownload' },
             { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
           ]}
@@ -255,7 +255,7 @@ const C00300 = () => {
         { renderBonusInfoPanel() }
 
         <DepositDetailPanel
-          details={transactions.get(selectedAccount?.accountNo)}
+          details={transactions.get(selectedAccount.accountNo)}
           onMoreFuncClick={() => handleFunctionClick('moreTranscations')}
         />
       </PageWrapper>

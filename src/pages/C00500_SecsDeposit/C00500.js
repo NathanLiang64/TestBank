@@ -178,7 +178,7 @@ const C00500 = () => {
   /**
    * 頁面輸出
    */
-  return accounts ? (
+  return selectedAccount ? (
     <Layout title="台幣交割帳戶">
       <PageWrapper small>
         <AccountOverview
@@ -188,8 +188,8 @@ const C00500 = () => {
           onFunctionClick={handleFunctionClick}
           cardColor="blue"
           funcList={[
-            { fid: 'D00100', title: '轉帳', enabled: (selectedAccount?.balance > 0) },
-            { fid: 'E00100', title: '換匯', enabled: (selectedAccount?.balance > 0) },
+            { fid: 'D00100', title: '轉帳', enabled: (selectedAccount.balance > 0) },
+            { fid: 'E00100', title: '換匯', enabled: (selectedAccount.balance > 0) },
           ]}
           moreFuncs={[
             { fid: 'DownloadCover', title: '存摺封面下載', icon: 'coverDownload' },
@@ -198,7 +198,7 @@ const C00500 = () => {
         />
 
         <DepositDetailPanel
-          details={transactions.get(selectedAccount?.accountNo)}
+          details={transactions.get(selectedAccount.accountNo)}
           onMoreFuncClick={() => handleFunctionClick('moreTranscations')}
         />
       </PageWrapper>
