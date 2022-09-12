@@ -4,7 +4,7 @@ import * as yup from 'yup';
 // import { Controller, useForm } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { closeFunc, switchLoading } from 'utilities/AppScriptProxy';
+import { closeFunc, switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
 import { getCardlessStatus, getCardStatus, cardLessWithdrawActivate } from 'pages/D00300_CardLessATM/api';
 
 /* Elements */
@@ -165,43 +165,47 @@ const CardLessATM = () => {
 
   // 開通無卡提款與設定無卡提款密碼
   const activateWithdrawAndSetPwd = async (param) => {
-    switchLoading(true);
-    const activateResponse = await cardLessWithdrawActivate(param);
-    const { message } = activateResponse;
+    const authCode = 0x20;
+    const jsRs = await transactionAuth(authCode);
+    if (jsRs.result) {
+      switchLoading(true);
+      const activateResponse = await cardLessWithdrawActivate(param);
+      const { message } = activateResponse;
 
-    if (message) {
-      generateDailog(
-        message,
-        (
-          <FEIBButton
-            onClick={() => {
-              setOpenDialog(false);
-              closeFunc();
-            }}
-          >
-            確定
-          </FEIBButton>
-        ),
-        () => () => setOpenDialog(false),
-      );
-    } else {
-      generateDailog(
-        '已完成開通無卡提款服務！',
-        (
-          <FEIBButton
-            onClick={() => {
-              setOpenDialog(false);
-              toWithdrawPage();
-            }}
-          >
-            確定
-          </FEIBButton>
-        ),
-        () => () => {
-          setOpenDialog(false);
-          toWithdrawPage();
-        },
-      );
+      if (message) {
+        generateDailog(
+          message,
+          (
+            <FEIBButton
+              onClick={() => {
+                setOpenDialog(false);
+                closeFunc();
+              }}
+            >
+              確定
+            </FEIBButton>
+          ),
+          () => () => setOpenDialog(false),
+        );
+      } else {
+        generateDailog(
+          '已完成開通無卡提款服務！',
+          (
+            <FEIBButton
+              onClick={() => {
+                setOpenDialog(false);
+                toWithdrawPage();
+              }}
+            >
+              確定
+            </FEIBButton>
+          ),
+          () => () => {
+            setOpenDialog(false);
+            toWithdrawPage();
+          },
+        );
+      }
     }
   };
 

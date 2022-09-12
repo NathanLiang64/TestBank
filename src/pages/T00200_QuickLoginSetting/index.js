@@ -169,13 +169,14 @@ const QuickLoginSetting = () => {
     const isBinded = checkSettingStatus();
     if (isBinded) return;
     const { result, message } = await regQLfeature(type);
+    console.log('設定快登資料結果:', JSON.stringify(result));
 
     // 設定綁定資料成功進行交易驗證
     if (result === 'true') {
       const code = 0x17;
       const rs = await transactionAuth(code, midPhone);
-      console.log('交易驗證結果', JSON.stringify(rs));
-      if (rs?.result) {
+      console.log('交易驗證結果:', JSON.stringify(rs));
+      if (rs.result) {
         // 交易驗證成功，開啟綁定 drawer，點擊確認進行 MID 驗證
         showDrawer(
           'APP 手機裝置綁定',
