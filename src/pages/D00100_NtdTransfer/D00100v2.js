@@ -282,8 +282,7 @@ const Transfer = (props) => {
       return;
     }
 
-    // TODO call API confirmTransferDetail
-
+    // 進行轉帳確認。
     history.push('/D001001', {
       ...newModel,
       booking: {

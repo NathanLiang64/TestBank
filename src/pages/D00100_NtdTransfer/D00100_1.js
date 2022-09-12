@@ -10,7 +10,7 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { dateToString } from 'utilities/Generator';
 import { getBankCode } from 'components/BankCodeInput/api';
-// import { doBookNtdTrConfirm, doTransfer } from 'apis/transferApi';
+import { createNtdTransfer } from './api';
 import TransferWrapper from './D00100.style';
 
 const TransferConfirm = (props) => {
@@ -83,10 +83,36 @@ const TransferConfirm = (props) => {
    * 執行轉帳程序，包含進行交易驗證。
    */
   const onConfirm = async () => {
-    const auth = await transactionAuth(0x35);
+    const auth = await transactionAuth(0x3D); // NOTE 非約轉時 OTP 由 MBGW 發出。
     if (auth.result) {
-      // TODO 發動轉帳
-      // TODO 顯示轉帳結果
+      const { transOut, transIn } = model;
+      // 常用(freqAcct)/約定(regAcct) 帳號 的物件結構={ bankId, accountNo }
+      const quickAcct = [null, transIn.freqAcct, transIn.regAcct][transIn.type];
+      const request = {
+        transOut: transOut.account,
+        transIn: { // 約定帳號 不需要提供額外資訊，由 MBGW 判斷。
+          bank: quickAcct?.bankId ?? transIn.bank, // TODO 是否還要指定自行 或 他行？
+          account: quickAcct?.accountNo ?? transIn.account,
+        },
+        amount: parseInt(model.amount, 10),
+        booking: model.booking,
+        memo: model.memo,
+      };
+      delete request.booking.transTimes;
+
+      // 建立轉帳交易紀錄。
+      // response = {
+      //   "otpId": "20220912050649747",
+      //   "checkNum": "GFZL", 交易識別碼
+      //   "countdown": "120", 倒數秒數
+      //   "initialKey": "" MOTP app且非約轉才會回傳
+      // }
+      const response = await createNtdTransfer(request);
+      if (response) {
+        // TODO 進行交易驗證。
+
+        // TODO 顯示轉帳結果（含加入常用帳號）
+      }
     }
   };
 
