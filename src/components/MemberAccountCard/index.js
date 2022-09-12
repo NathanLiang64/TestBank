@@ -1,108 +1,137 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Avatar from 'components/Avatar';
 import { DeleteIcon, EditIcon } from 'assets/images/icons';
 import MemberAccountCardWrapper from './memberAccountCard.style';
 
-/*
-* ==================== MemberAccountCard 組件說明 ====================
-* MemberAccountCard 組件包含了 Avatar 組合成一張會員帳號卡片
-* ==================== MemberAccountCard 可傳參數 ====================
-* 1. type -> 組件型態，type 若為 '常用帳號' 才有刪除選項
-* 2. name -> 會員名稱
-* 3. bankNo -> 銀行代碼
-* 4. bankName -> 銀行名稱
-* 5. account -> 會員帳號
-* 6. avatarSrc -> 會員頭像的圖片路徑
-* 7. noBorder -> 無框線
-* 8. noOption -> 左滑時無編輯 & 刪除選項、且點擊時無狀態
-* 9. hasNewTag -> 顯示NEW標籤
-* 10. onSelect -> 點擊會員帳號卡片事件 (選取時)
-* 11. onEdit -> 左滑帳號卡片後，點擊編輯按鈕事件
-* 12. onRemove -> 左滑帳號卡片後，點擊刪除按鈕事件
-* */
-
+/**
+ * 包含了 Avatar 組合成一張會員帳號卡片
+ * @param {*} hasNewTag 顯示NEW標籤
+ * @param {*} name 會員名稱
+ * @param {*} bankNo 銀行代碼
+ * @param {*} bankName 銀行名稱
+ * @param {*} account 會員帳號
+ * @param {*} avatarSrc 會員頭像的圖片路徑
+ * @param {*} noBorder 無框線
+ * @param {*} isSelected 表示為已選取的狀態
+ * @param {*} onClick 點擊會員帳號卡片事件 (選取時)
+ * @param {*} moreActions [{
+    type: edit | delete,
+    lable: 按鈕標題,
+    onClick: 點擊按鈕事件,
+  }, ...]
+ */
 const MemberAccountCard = ({
-  type, name, bankNo, bankName, account, avatarSrc, noBorder, noOption, hasNewTag = false, onSelect, onEdit, onRemove,
+  hasNewTag, name, bankNo, bankName, account, avatarSrc, noBorder,
+  isSelected, onClick, moreActions,
 }) => {
-  const [moreAction, setMoreAction] = useState({
-    isMoreActionOpen: false,
-    startX: 0,
-    endX: 0,
+  const wrapperRef = useRef(null);
+  const [model, setModel] = useState({
+    showMorePanel: false,
+    startX: null,
+    endX: null,
   });
 
-  const handleClickEdit = () => {
-    setMoreAction({ ...moreAction, isMoreActionOpen: false });
-    onEdit();
-  };
+  /**
+   * 初始化
+   */
+  useEffect(() => {
+    // 當使用者在元件之外 Click 或準備拖曳時，關閉已開啟的「更多Panel」
+    const handleClickOutside = (event) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setModel({...model, showMorePanel: false});
+      }
+    };
 
-  const handleClickRemove = () => {
-    setMoreAction({ ...moreAction, isMoreActionOpen: false });
-    onRemove();
-  };
+    // 為了自動關閉「更多Panel」，監聽 click 及 touchstart 事件。
+    document.addEventListener('click', handleClickOutside, true);
+    document.addEventListener('touchstart', handleClickOutside, true);
+    return () => {
+      document.removeEventListener('click', handleClickOutside, true);
+      document.removeEventListener('touchstart', handleClickOutside, true);
+    };
+  }, []);
 
-  const handleTouchStart = (event) => {
-    const touch = event.targetTouches[0];
-    setMoreAction({ ...moreAction, startX: touch.pageX });
-    // console.info('start', moreAction.startX);
-  };
-
-  const handleTouchMove = (event) => {
-    const touch = event.targetTouches[0];
-    setMoreAction({ ...moreAction, endX: touch.pageX });
-    // console.info('end', moreAction.endX);
-  };
-
+  /**
+   * 處理手指拖曳結束時「更多功能」的開啟或關閉。
+   */
   const handleTouchEnd = () => {
-    // console.info('result-startX', moreAction.startX);
-    // console.info('result-endX', moreAction.endX);
-    if (
-      moreAction.startX && moreAction.endX
-      && (moreAction.startX > moreAction.endX) && (moreAction.startX - moreAction.endX > 20)
-    ) {
-      setMoreAction({ ...moreAction, isMoreActionOpen: true });
-    } else {
-      setMoreAction({ startX: 0, endX: 0, isMoreActionOpen: false });
-    }
+    if (!model.endX) return; // 只有點一下時, 不會有 TouchMove 事件，所以不會有值。
+
+    let newModel = null;
+    const offset = model.endX - model.startX;
+    // 當手指向左滑動一小段距離時，顯示「更多功能」。
+    // eslint-disable-next-line object-curly-newline
+    if (offset > 10) newModel = { ...model, showMorePanel: false, startX: null, endX: null };
+    // 當手指向右滑動時，則關閉「更多功能」。
+    if (offset < -3) newModel = { ...model, showMorePanel: true };
+
+    // 強制更新畫面。
+    if (newModel !== null) setModel(newModel);
   };
 
-  // 更多選項 (編輯、刪除)
-  const renderMoreActionMenu = () => (
-    <div className={`moreActionMenu ${moreAction.isMoreActionOpen ? 'show' : ''}`}>
-      <button type="button" className="edit" onClick={handleClickEdit}>
-        <EditIcon />
-        <span>編輯</span>
-      </button>
-      {/* 常用帳號才有刪除選項 */}
-      { type === '常用帳號' && (
-        <button type="button" className="remove" onClick={handleClickRemove}>
-          <DeleteIcon />
-          <span>刪除</span>
-        </button>
-      ) }
-    </div>
-  );
+  /**
+   * 顯示更多選項。
+   * @param {*} actions 編輯、刪除 的事件處理。
+   */
+  const renderMoreActionMenu = (actions) => {
+    if (!actions) return null;
 
+    // 執行更多功能時，必需隱藏「更多功能」Panel
+    const onActionClick = (func) => {
+      setModel({ ...model, showMorePanel: false });
+      if (func) func();
+    };
+
+    return (
+      <div className={`moreActionMenu ${model.showMorePanel ? 'show' : ''}`}>
+        {
+          actions?.map((action) => {
+            const iconData = new Map([
+              ['edit', { cssName: 'edit', icon: (<EditIcon />) }],
+              ['delete', { cssName: 'remove', icon: (<DeleteIcon />) }],
+            ]).get(action.type);
+            return (
+              <button type="button" key={action.type} className={iconData.cssName} onClick={() => onActionClick(action.onClick)}>
+                {iconData.icon}
+                <span>{action.lable}</span>
+              </button>
+            );
+          })
+        }
+      </div>
+    );
+  };
+
+  /**
+   * 元件 HTML 輸出。
+   */
   return (
     <MemberAccountCardWrapper
+      ref={wrapperRef}
       $noBorder={noBorder}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
+      $selected={isSelected}
+      onTouchStart={(e) => { model.startX = e.targetTouches[0].pageX; }}
+      onTouchMove={(e) => { model.endX = e.targetTouches[0].pageX; }}
       onTouchEnd={handleTouchEnd}
-      onClick={(noOption || moreAction.isMoreActionOpen) ? null : onSelect}
+      onClick={model.showMorePanel ? null : onClick}
     >
-      <Avatar small src={avatarSrc} name={name} />
-      <div className="memberInfo">
-        <div className="flex-auto">
-          <div className="title">
-            {name || '會員'}
-            {hasNewTag && (<div className="new-tag">New</div>)}
-          </div>
-          <div className="note">
-            {`${bankName}(${bankNo}) ${account}`}
+      <>
+        <Avatar small src={avatarSrc} name={name} />
+        <div className="memberInfo">
+          <div className="flex-auto">
+            <div className="title">
+              {name || '會員'}
+              {hasNewTag && (<div className="new-tag">New</div>)}
+            </div>
+            <div className="note">
+              {`${bankName}(${bankNo}) ${account}`}
+            </div>
           </div>
         </div>
-      </div>
-      { !noOption && renderMoreActionMenu() }
+      </>
+
+      {/* 顯示更多選項（編輯、刪除 的事件處理）。 */}
+      { renderMoreActionMenu(moreActions) }
     </MemberAccountCardWrapper>
   );
 };

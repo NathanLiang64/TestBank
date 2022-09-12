@@ -25,9 +25,10 @@ export const toThousandNotation = (number) => {
 };
 
 // 將帳號轉為指定字數間帶有分隔符 (-) 之顯示方式
-export const accountFormatter = (account) => (
-  account ? `${account.slice(0, 3)}-${account.slice(3, 6)}-${account.slice(6)}` : '-'
-);
+export const accountFormatter = (account) => {
+  const acct = account ?? '00000000000000';
+  return `${acct.slice(0, 3)}-${acct.slice(3, 6)}-${acct.slice(6)}`;
+};
 
 // 將日期格式轉為 YYYY/MM/DD 字串或 YYYY-MM-DD 字串 (傳入第 2 個參數，值為 truthy)
 export const dateFormatter = (date, dashType) => {
@@ -40,6 +41,20 @@ export const dateFormatter = (date, dashType) => {
     return `${year}/${month}/${day}`;
   }
   return '';
+};
+
+/**
+ * 將日期格式轉為 YYYYMMDD 字串。
+ * @param {Date} date 要轉換的日期。
+ * @param {String?} splitter 輸出日期字串的間隔字元。
+ */
+export const dateToString = (date, splitter) => {
+  const parts = [
+    date.getFullYear(),
+    (date.getMonth() + 1).toString().padStart(2, '0'),
+    date.getDate().toString().padStart(2, '0'),
+  ];
+  return parts.join(splitter ?? '/');
 };
 
 // 將日期格式轉為 YYYYMMDD 字串
@@ -128,8 +143,8 @@ export const numberToChinese = (num) => {
   if (Number.isNaN(Number(num))) {
     return '(非數字)';
   }
-  let number = num.split('.')[0];
-  const digtalNum = num.split('.')[1];
+  let number = String(num).split('.')[0];
+  const digtalNum = String(num).split('.')[1];
   const chineseNumber = ('零壹貳參肆伍陸柒捌玖').split('');
   const amountSmallUnit = ['', '拾', '佰', '千'];
   const amountBigUnit = ['', '萬', '億', '兆', '京', '垓', '秭', '穰', '溝', '澗', '正', '載'];
@@ -295,4 +310,49 @@ export const hideName = (name) => {
   const others = [];
   for (let i = 0; i < name.length - 2; i++) others.push('Ｏ');
   return firstCharacter + others.join('') + lastCharacter;
+};
+
+/**
+ * 更新本地 SessionStoreage 中的資料。
+ * @param {*} storeName 存在 SessionStoreage 時使用的名稱。
+ * @param {*} newData 要存入的新資料；若為 null 將在 SessionStoreage 中清除此項目。
+ * @returns
+ */
+export const setLocalData = async (storeName, newData) => {
+  if (newData) {
+    sessionStorage.setItem(storeName, JSON.stringify(newData));
+  } else {
+    sessionStorage.removeItem(storeName);
+  }
+  return newData;
+};
+
+/**
+ * 載入本地 SessionStoreage 中的資料。
+ * @param {*} storeName 存在 SessionStoreage 時使用的名稱。
+ * @param {*} loadDataFunc 當 SessionStoreage 沒有資料時，可以透過這個方法取得 預設值。
+ * @returns {Promise<*>} 存在 SessionStoreage 中的資料。
+ */
+export const loadLocalData = async (storeName, loadDataFunc) => {
+  let data = sessionStorage.getItem(storeName);
+  try {
+    data = JSON.parse(data);
+  } catch (ex) {
+    sessionStorage.removeItem(storeName);
+    data = null;
+  }
+
+  if (!data && loadDataFunc) {
+    const result = loadDataFunc();
+    if (result instanceof Promise) {
+      await result.then((response) => {
+        setLocalData(storeName, response); // 暫存入以減少API叫用
+        data = response;
+      });
+    } else {
+      data = result;
+    }
+  }
+
+  return data;
 };

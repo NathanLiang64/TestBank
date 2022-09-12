@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import VisibilitySensor from 'react-visibility-sensor';
 import SearchCondition from 'components/AccountDetails/searchCondition';
-import DebitCard from 'components/DebitCard';
+import DebitCard from 'components/DebitCard/DebitCard';
 import DetailCard from 'components/DetailCard';
 import EmptyData from 'components/EmptyData';
 import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
@@ -65,7 +65,7 @@ const AccountDetails = ({
     range.loading = setEmptyRange();
     setCondition({
       ...cond,
-      accountNo: selectedAccount.acctId,
+      accountNo: selectedAccount.accountNo,
       startIndex: null,
       direct: 0, // Note: 設為 0 才會清掉已載入的明細項目。
     });
@@ -106,7 +106,6 @@ const AccountDetails = ({
    * 查詢條件變更時，重新查詢，並重建清單陣列。
    */
   useEffect(async () => {
-    console.log(condition);
     const response = await loadTransition(condition);
     if (response) {
       const { acctTxDtls, monthly, startIndex } = response;
@@ -127,7 +126,9 @@ const AccountDetails = ({
       }
 
       // 取得所有存款卡的初始資料後存取月份資料 (Tabs)
-      if (monthly.length) setMonthes(monthly.sort((a, b) => b - a));
+      const monthList = monthly.sort((a, b) => b - a);
+      setCurrMonth(monthList[0]);
+      setMonthes(monthList);
 
       // 更新交易明細資料。
       setTransactions(acctTxDtls);
@@ -215,11 +216,11 @@ const AccountDetails = ({
   const renderCardArea = (account) => (
     <div className="debitCardWrapper">
       <DebitCard
-        cardName={account?.acctName}
-        account={account?.acctId}
-        balance={account?.acctBalx}
-        dollarSign={account?.ccyCd}
-        color={account?.cardColor}
+        cardName={account.alias}
+        account={account.accountNo}
+        balance={account.balance}
+        dollarSign={account.currency}
+        color={account.cardColor}
       />
     </div>
   );
@@ -388,7 +389,7 @@ const AccountDetails = ({
    * 主頁面
    */
   return (
-    <AccountDetailsWrapper small>
+    <AccountDetailsWrapper>
       { (mode === 0) && renderCardArea(selectedAccount) }
       { (mode === 1) && renderDepositPlanHero(selectedAccount) }
       <div className="inquiryArea measuredHeight">

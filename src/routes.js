@@ -1,13 +1,5 @@
 import { lazy } from 'react';
 
-/* 轉帳靜態頁 (for prototype) */
-// import TransferStatic from 'pages/TransferStatic';
-// import TransferStatic1 from 'pages/TransferStatic/transfer_1';
-// import TransferStatic2 from 'pages/TransferStatic/transfer_2';
-const TransferStatic = lazy(() => import('pages/TransferStatic'));
-const TransferStatic1 = lazy(() => import('pages/TransferStatic/transfer_1'));
-const TransferStatic2 = lazy(() => import('pages/TransferStatic/transfer_2'));
-
 const A00400 = lazy(() => import('pages/A00400_Provisioning'));
 const A00600 = lazy(() => import('pages/A00600_RegularBasicInformation'));
 const A00700 = lazy(() => import('pages/A00700_RegularPwdModify'));
@@ -28,7 +20,7 @@ const C00700Detail = lazy(() => import('pages/C00700_CreditCard/Details'));
 const C00700Reward = lazy(() => import('pages/C00700_CreditCard/Rewards'));
 const C00800 = lazy(() => import('pages/C00800_ExportBankBook'));
 const C008001 = lazy(() => import('pages/C00800_ExportBankBook/exportBankBook_1'));
-const D00100 = lazy(() => import('pages/D00100_NtdTransfer/D00100'));
+const D00100 = lazy(() => import('pages/D00100_NtdTransfer/D00100v2'));
 const D001001 = lazy(() => import('pages/D00100_NtdTransfer/D00100_1'));
 const D001002 = lazy(() => import('pages/D00100_NtdTransfer/D00100_2'));
 const D00300 = lazy(() => import('pages/D00300_CardLessATM'));
@@ -78,12 +70,11 @@ const LossReissue = lazy(() => import('pages/LossReissue'));
 const AccountMaintenance = lazy(() => import('pages/AccountMaintenance'));
 const BillPay = lazy(() => import('pages/BillPay'));
 const BillPay1 = lazy(() => import('pages/BillPay/billPay_1'));
-const DepositPlus = lazy(() => import('pages/DepositPlus'));
+const DepositPlus = lazy(() => import('pages/C00300_NtdDeposit/DepositPlus'));
 const NicknameSetting = lazy(() => import('pages/NicknameSetting'));
 const PatternLockSetting = lazy(() => import('pages/PatternLockSetting'));
 const FingerPrintLockSetting = lazy(() => import('pages/FingerPrintLockSetting'));
 const SMSOTPactivate = lazy(() => import('pages/SMSOTPactivate'));
-const QRCodeTransfer = lazy(() => import('proto/QRCodeTransfer'));
 const ProjectJ = lazy(() => import('pages/ProjectJ'));
 const LoanInquiry = lazy(() => import('pages/LoanInquiry'));
 const Deduct = lazy(() => import('pages/Deduct'));
@@ -100,7 +91,6 @@ const Instalment3 = lazy(() => import('pages/R00200_Instalment/Instalment_3'));
 
 // TODO：支援開發及Prototype測試使用
 const Login = lazy(() => import('proto/Login/login'));
-const Tutorials = lazy(() => import('proto/Tutorials'));
 const Nav = lazy(() => import('proto/Nav/Nav'));
 // --------------------------------
 
@@ -181,14 +171,10 @@ const routes = [
   { path: '/patternLockSetting', exact: false, component: PatternLockSetting },
   { path: '/fingerPrintLockSetting', exact: false, component: FingerPrintLockSetting },
   { path: '/smsOTPactivate', exact: false, component: SMSOTPactivate },
-  { path: '/QRCodeTransfer', exact: false, component: QRCodeTransfer },
   { path: '/projectJ', exact: false, component: ProjectJ },
   { path: '/loanInquiry', exact: false, component: LoanInquiry },
   { path: '/moreTranscations', exact: false, component: MoreTranscations },
   { path: '/foreignCurrencyPriceSetting', exact: false, component: ForeignCurrencyPriceSetting },
-  { path: '/transferStatic', exact: false, component: TransferStatic },
-  { path: '/transferStatic1', exact: false, component: TransferStatic1 },
-  { path: '/transferStatic2', exact: false, component: TransferStatic2 },
   { path: '/staging1', exact: false, component: Instalment1 },
   { path: '/staging2', exact: false, component: Instalment2 },
   { path: '/staging3', exact: false, component: Instalment3 },
@@ -201,7 +187,6 @@ const routes = [
 
   // TODO：支援開發及Prototype測試使用
   { path: '/login', exact: false, component: Login },
-  { path: '/tutorials', exact: false, component: Tutorials },
   { path: '/', exact: true, component: Nav },
   // --------------------------------
 ];

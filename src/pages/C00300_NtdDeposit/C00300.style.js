@@ -1,6 +1,14 @@
 import styled from 'styled-components';
+import Layout from 'components/Layout';
 
-const InterestRatePanelWrapper = styled.div`
+const PageWrapper = styled(Layout)`
+  background: ${({ theme }) => theme.colors.background.lightest};
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-left: 0;
+  padding-right: 0; 
+
   .interestRatePanel {
     display: flex;
     justify-content: space-between;
@@ -40,4 +48,4 @@ const InterestRatePanelWrapper = styled.div`
   }
 `;
 
-export default InterestRatePanelWrapper;
+export default PageWrapper;

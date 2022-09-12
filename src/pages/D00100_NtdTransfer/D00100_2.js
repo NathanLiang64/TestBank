@@ -13,10 +13,10 @@ import { directTo } from 'utilities/mockWebController';
 import theme from 'themes/theme';
 import TransferWrapper from './D00100.style';
 import { setClickMoreOptions, setOpenDrawer } from './stores/actions';
-import TransferDrawer from '../TransferDrawer';
+// import TransferDrawer from '../TransferDrawer';
 
 const Transfer2 = () => {
-  const [openTransferDrawer, setOpenTransferDrawer] = useState(false);
+  // const [openTransferDrawer, setOpenTransferDrawer] = useState(false);
   const [isSnapshotSuccess, setIsSnapshotSuccess] = useState(false);
   const clickMoreOptions = useSelector(({ transfer }) => transfer.clickMoreOptions);
   const history = useHistory();
@@ -36,7 +36,7 @@ const Transfer2 = () => {
   };
 
   const handleClickAddAccount = () => {
-    setOpenTransferDrawer(true);
+    // setOpenTransferDrawer(true);
     const account = {
       bankNo,
       bankName,
@@ -109,7 +109,7 @@ const Transfer2 = () => {
       </SuccessFailureAnimations>
 
       { renderBottomAction(isSuccess) }
-      { openTransferDrawer && <TransferDrawer /> }
+      {/* { openTransferDrawer && <TransferDrawer /> } */}
       { isSnapshotSuccess && (
         <SnackModal icon={<CameraIcon size={32} color={theme.colors.basic.white} />} text="截圖成功" />
       ) }

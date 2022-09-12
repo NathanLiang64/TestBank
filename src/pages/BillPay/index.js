@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import DebitCard from 'components/DebitCard';
+import DebitCard from 'components/DebitCard/DebitCard';
 import BankCodeInput from 'components/BankCodeInput';
 import {
   FEIBButton, FEIBBorderButton,

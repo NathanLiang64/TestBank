@@ -12,7 +12,7 @@ import {
   FEIBInput, FEIBInputLabel, FEIBButton, FEIBBorderButton, FEIBErrorMessage,
 } from 'components/elements';
 import Dialog from 'components/Dialog';
-import DebitCard from 'components/DebitCard';
+import DebitCard from 'components/DebitCard/DebitCard';
 import Accordion from 'components/Accordion';
 import { AddCircleRounded, RemoveCircleRounded } from '@material-ui/icons';
 
@@ -146,9 +146,8 @@ const CardLessATM1 = () => {
           cardName="存款卡"
           account={accountSummary.account}
           balance={accountSummary.balance}
-          transferTitle="跨提優惠"
-          transferLimit={6}
-          transferRemaining={parseInt(accountSummary.cwdhCnt, 10)}
+          freeWithdraw={6}
+          freeWithdrawRemain={parseInt(accountSummary.cwdhCnt, 10)}
           color="purple"
         />
         <FEIBInputLabel>您想提領多少錢呢？</FEIBInputLabel>

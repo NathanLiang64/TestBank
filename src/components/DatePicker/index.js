@@ -1,9 +1,14 @@
+/* eslint-disable object-curly-newline */
+/* eslint-disable no-unused-vars */
+import { useState } from 'react';
+import { useController } from 'react-hook-form';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { createMuiTheme } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
 import zhTW from 'date-fns/locale/zh-TW';
 import { ThemeProvider } from '@material-ui/styles';
 import theme from 'themes/theme';
+import FEIBDatePicker from './FEIBDatePicker';
 
 const materialTheme = createMuiTheme({
   overrides: {
@@ -61,12 +66,36 @@ const materialTheme = createMuiTheme({
   },
 });
 
-const PickersProvider = ({ children }) => (
-  <MuiPickersUtilsProvider utils={DateFnsUtils} locale={zhTW}>
-    <ThemeProvider theme={materialTheme}>
-      { children }
-    </ThemeProvider>
-  </MuiPickersUtilsProvider>
-);
+function DatePicker(props) {
+  const {
+    control, name, minDate, maxDate, defaultValue,
+  } = props;
+  const {
+    field: { onChange, onBlur, value, ref },
+    fieldState: { invalid, isTouched, isDirty },
+    formState: { touchedFields, dirtyFields },
+  } = useController({ name, control });
 
-export default PickersProvider;
+  const [pickDate, setPickDate] = useState(defaultValue ? new Date(defaultValue) : null);
+
+  const handleOnChange = (date, dateStr) => {
+    setPickDate(dateStr);
+    onChange(date);
+  };
+
+  return (
+    <MuiPickersUtilsProvider utils={DateFnsUtils} locale={zhTW}>
+      <ThemeProvider theme={materialTheme}>
+        <FEIBDatePicker
+          onBlur={onBlur}
+          value={pickDate}
+          minDate={minDate}
+          maxDate={maxDate}
+          onChange={handleOnChange}
+        />
+      </ThemeProvider>
+    </MuiPickersUtilsProvider>
+  );
+}
+
+export default DatePicker;

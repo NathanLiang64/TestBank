@@ -1,11 +1,12 @@
 /* eslint-disable no-use-before-define */
+/* eslint-disable object-curly-newline */
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-import AccountOverview from 'components/AccountOverview';
+import AccountOverview from 'components/AccountOverview/AccountOverview';
 import DepositDetailPanel from 'components/DepositDetailPanel/depositDetailPanel';
 import { FEIBInputLabel, FEIBInput, FEIBErrorMessage } from 'components/elements';
 
@@ -13,97 +14,99 @@ import { FEIBInputLabel, FEIBInput, FEIBErrorMessage } from 'components/elements
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
+import { setLocalData } from 'utilities/Generator';
+import { AccountListCacheName, getAccountExtraInfo, loadAccountsList } from 'pages/D00100_NtdTransfer/api';
 import {
-  getAccountSummary,
   getTransactions,
   setAccountAlias,
   setMainCurrency,
 } from './api';
+import PageWrapper from './C00400.style';
 
-const ForeignCurrencyAccount = () => {
+/**
+ * C00400 外幣帳戶首頁
+ */
+const C00400 = () => {
   const dispatch = useDispatch();
   const { register, unregister, handleSubmit } = useForm();
 
-  const [accounts, setAccounts] = useState(null);
-  const [selectedAccountIdx, setSelectedAccountIdx] = useState(-1);
-  const [transactions, setTransactions] = useState(null);
-
-  const getSelectedAccount = () => accounts[selectedAccountIdx].cardInfo.acctId;
+  const [accounts, setAccounts] = useState();
+  const [selectedAccountIdx, setSelectedAccountIdx] = useState();
+  const [transactions, setTransactions] = useState(new Map());
 
   /**
-   * C00400 外幣帳戶首頁
+   * 頁面啟動，初始化
    */
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
+    // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
+    // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
+    loadAccountsList('F', setAccounts); // F=外幣帳戶
+
     const startParams = await loadFuncParams(); // Function Controller 提供的參數
-    // 取得 Function Controller 提供的 keepDdata(model)
-    let model;
+    // 取得 Function Controller 提供的 keepData(model)
+    let keepData = null;
     if (startParams && (typeof startParams === 'object')) {
-      model = startParams;
+      keepData = startParams;
+      setSelectedAccountIdx(keepData.selectedAccountIdx);
     } else {
-      model = {
-        accounts: null, // 所有帳戶資料暫存
-        selectedAccountIdx: null, // 目前使用的帳戶索引
-      };
+      setSelectedAccountIdx(0);
     }
+  }, []);
 
-    // 首次加載時取得用戶所有外幣的存款帳戶摘要資訊
-    if (!model.accounts) {
-      const acctData = await getAccountSummary('F'); // F=外幣
-      if (!acctData?.length) {
-        showPrompt('您還沒有任何外幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
-        return;
-      }
-      model.accounts = acctData.map((acct) => ({ // Note: 將陣列(Array)轉為字典(Object/HashMap)
-        cardInfo: acct,
-        transactions: null, // 此屬性在 selectedAccount 變更時取得。
-      }));
-      model.selectedAccountIdx = 0; // 以第一個帳號為預設值。
-    }
-
-    // 取得 Function Controller 提供的 funcParams(啟動時的預設帳號)
-    if (typeof startParams === 'string') {
-      const index = model.accounts.findIndex((acct) => acct.cardInfo.acctId === startParams);
-      if (index >= 0) model.selectedAccountIdx = index;
-      else alert(`無效的功能啟動參數(預設帳號) : ${startParams}`);
-    }
-
-    setAccounts(model.accounts);
-    setSelectedAccountIdx(model.selectedAccountIdx);
+  /**
+   * 初始化帳戶卡資料載入。
+   */
+  useEffect(async () => {
+    if (!accounts) return;
 
     dispatch(setWaittingVisible(false));
-  }, []);
+    if (accounts.length === 0) {
+      await showPrompt('您還沒有任何外幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
+    } else handleAccountChanged(selectedAccountIdx ?? 0);
+  }, [accounts]);
 
   /**
    * 更新帳戶交易明細清單
    */
   const updateTransactions = async (account) => {
-    setTransactions(null);
-    if (account.transactions === null) {
+    const { accountNo, currency } = account;
+    let txnDetails = transactions.get(accountNo);
+    if (!txnDetails) {
       // 取得帳戶交易明細（三年內的前25筆即可）
-      const accountNo = account.cardInfo.acctId;
-      const transData = await getTransactions(accountNo, account.cardInfo.ccyCd);
-
-      account.transactions = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
-      if (account.transactions.length > 0) {
-        account.cardInfo.acctBalx = account.transactions[0].balance; // 更新餘額。
+      const transData = await getTransactions(accountNo, currency);
+      txnDetails = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
+      if (transData.length > 0) {
+        account.balance = txnDetails[0].balance; // 更新餘額。
       }
 
-      if (accountNo !== getSelectedAccount()) return; // Note: 當卡片已經換掉了，就不需要顯示這份資料。
+      transactions.set(accountNo, txnDetails);
+      setTransactions(new Map(transactions)); // 強制更新畫面。
     }
-    setTransactions(account.transactions);
   };
 
   /**
-   * 根據當前帳戶取得交易明細資料
+   * 根據當前帳戶取得交易明細資料及優惠利率數字
    */
-  useEffect(async () => {
-    if (selectedAccountIdx >= 0) {
-      const account = accounts[selectedAccountIdx];
-      updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可
+  const handleAccountChanged = async (acctIndex) => {
+    if (!accounts) return; // 頁面初始化時，不需要進來。
+
+    const account = accounts[acctIndex];
+    // 若還沒有取得 免費跨轉次數 則立即補上。
+    if (!account.freeTransfer) {
+      getAccountExtraInfo(account.accountNo).then((info) => {
+        accounts[acctIndex] = {
+          ...account,
+          ...info,
+        };
+        setLocalData(AccountListCacheName, accounts);
+        setAccounts([...accounts]); // 強制更新畫面。
+      });
     }
-  }, [selectedAccountIdx]);
+    updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可)
+  };
+  useEffect(() => { handleAccountChanged(selectedAccountIdx); }, [selectedAccountIdx]);
 
   /**
    * 編輯帳戶名稱
@@ -122,10 +125,10 @@ const ForeignCurrencyAccount = () => {
       </>
     );
     const onOk = (values) => {
-      const account = accounts[selectedAccountIdx].cardInfo;
-      account.acctName = values.newName; // 變更卡片上的帳戶名稱
-      setAccountAlias(account.acctId, account.acctName);
-      setAccounts({ ...accounts });
+      const account = accounts[selectedAccountIdx];
+      account.alias = values.newName; // 變更卡片上的帳戶名稱
+      setAccountAlias(account.accountNo, account.alias);
+      setAccounts([...accounts]);
     };
     await customPopup('帳戶名稱編輯', body, handleSubmit(onOk));
   };
@@ -134,29 +137,27 @@ const ForeignCurrencyAccount = () => {
    * 執行指定的單元功能。
    * @param {*} funcCode 功能代碼
    */
-  const handleFunctionChange = async (funcCode) => {
+  const handleFunctionClick = async (funcCode) => {
     let params = null;
-    const model = { accounts, selectedAccountIdx };
+    const model = { selectedAccountIdx };
     const account = accounts[selectedAccountIdx];
     switch (funcCode) {
       case 'moreTranscations': // 更多明細
         params = {
-          ...account.cardInfo, // 直接提供帳戶摘要資訊，因為一定是從有帳戶資訊的頁面進去。
-          // cardTitle: '存款帳戶交易明細',
+          ...account, // 直接提供帳戶摘要資訊就不用再下載。
           cardColor: 'orange',
-          currency: account.cardInfo.ccyCd,
         };
         break;
       case 'foreignCurrencyTransfer': // 轉帳
       case 'exchange': // 換匯
         params = model; // 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。
         break;
-      case 'rename': // 帳戶名稱編輯
-        showRenameDialog(account.cardInfo.acctName);
+      case 'Rename': // 帳戶名稱編輯
+        showRenameDialog(account.alias);
         return;
       case 'setMainAccount': // 設定為主要外幣帳戶
         // 將目前帳戶 設定為主要外幣帳戶
-        setMainCurrency(accounts[selectedAccountIdx].cardInfo.acctId, account.cardInfo.ccyCd);
+        setMainCurrency(account.accountNo, account.currency);
         return;
       case 'E00100': // 外幣到價通知
         break;
@@ -172,33 +173,34 @@ const ForeignCurrencyAccount = () => {
   /**
    * 頁面輸出
    */
-  return (
+  return accounts ? (
     <Layout title="外幣活存">
-      <div>
+      <PageWrapper small>
         <AccountOverview
-          accounts={Object.values(accounts ?? [])}
-          onAccountChange={(swiper) => setSelectedAccountIdx(swiper.activeIndex)}
-          onFunctionChange={handleFunctionChange}
+          accounts={accounts}
+          defaultSlide={selectedAccountIdx}
+          onAccountChanged={setSelectedAccountIdx}
+          onFunctionClick={handleFunctionClick}
           cardColor="orange"
           funcList={[
-            { fid: 'foreignCurrencyTransfer', title: '轉帳' },
-            { fid: 'exchange', title: '換匯' },
+            { fid: 'foreignCurrencyTransfer', title: '轉帳', enabled: (accounts[selectedAccountIdx]?.balance > 0) },
+            { fid: 'exchange', title: '換匯', enabled: (accounts[selectedAccountIdx]?.balance > 0) },
           ]}
           moreFuncs={[
             // { fid: 'masterCardXB', title: 'MasterCard Send Cross Border', icon: 'temp' },
             { fid: 'setMainAccount', title: '設定為主要外幣帳戶', icon: 'temp' },
             { fid: 'E00100', title: '外幣到價通知', icon: 'temp' },
-            { fid: 'rename', title: '帳戶名稱編輯', icon: 'edit' },
+            { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
           ]}
         />
 
         <DepositDetailPanel
-          details={transactions}
-          onClick={() => handleFunctionChange('moreTranscations')}
+          details={transactions.get(accounts[selectedAccountIdx]?.accountNo)}
+          onMoreFuncClick={() => handleFunctionClick('moreTranscations')}
         />
-      </div>
+      </PageWrapper>
     </Layout>
-  );
+  ) : null;
 };
 
-export default ForeignCurrencyAccount;
+export default C00400;

@@ -1,6 +1,6 @@
 /* Elements */
 import Layout from 'components/Layout/Layout';
-import DebitCard from 'components/DebitCard';
+import DebitCard from 'components/DebitCard/DebitCard';
 
 /* Styles */
 import LoanInterestWrapper from './loanInterest.style';

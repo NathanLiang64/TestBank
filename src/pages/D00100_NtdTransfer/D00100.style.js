@@ -4,34 +4,28 @@ import Layout from 'components/Layout';
 const TransferWrapper = styled(Layout)`
   //display: flex;
   //flex-direction: column;
-  padding-top: 1.6rem;
+  padding: 1.6rem 0 0 0;
   background: ${({ theme }) => theme.colors.background.lighterBlue};
 
+  .insufficient {
+    text-align: center;
+    color: ${({ theme }) => theme.colors.state.danger};
+    margin-bottom: 1.6rem;
+  }
+
   .transferServicesArea {
-    left: -1.6rem;
+    // left: -1.6rem;
     flex-grow: 1;
     padding: 2.4rem 1.6rem;
     border-top-left-radius: 3rem;
     border-top-right-radius: 3rem;
     width: 100vw;
-    background: ${({ theme }) => theme.colors.basic.white};
+    background: ${({ theme, $insufficient }) => ($insufficient ? theme.colors.background.light : theme.colors.basic.white)};
+    pointer-events: ${({ $insufficient }) => ($insufficient ? 'none' : 'auto')};
   }
 
   form {
     padding-bottom: 0;
-  }
-
-  .userCardArea {
-    left: -1.6rem;
-    width: 100vw;
-
-    .swiper-container {
-      padding-bottom: 1.6rem;
-    }
-
-    .swiper-pagination {
-      left: -.8rem;
-    }
   }
 
   .memberAccountCardArea {
@@ -50,8 +44,8 @@ const TransferWrapper = styled(Layout)`
     font-size: 1.4rem;
   }
 
-  .transferType {
-    margin-bottom: 2.4rem;
+  .transferMode {
+    // margin-bottom: 2.4rem;
   }
 
   .transferButtonArea {
@@ -76,6 +70,7 @@ const TransferWrapper = styled(Layout)`
 
   .customWidth {
     width: 50%;
+    margin-right: 0;
   }
 
   .customSpace {
@@ -107,13 +102,15 @@ const TransferWrapper = styled(Layout)`
   }
 
   .reserveOption {
+    margin-top: 1.8rem;
+
     .dateRangePickerArea {
       margin-top: 3.6rem;
       margin-bottom: 1rem;
     }
 
     .datePickerLabel {
-      margin-top: 1.8rem;
+      margin-top: 1rem;
       margin-bottom: 1.8rem;
       top: 1.8rem;
     }

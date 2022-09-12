@@ -3,7 +3,7 @@ import { useHistory } from 'react-router';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-import DebitCard from 'components/DebitCard';
+import DebitCard from 'components/DebitCard/DebitCard';
 import InformationTape from 'components/InformationTape';
 import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
 import DownloadIcon from 'assets/images/icons/downloadIcon.svg';

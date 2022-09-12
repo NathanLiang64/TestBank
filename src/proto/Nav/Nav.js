@@ -2,7 +2,7 @@
 /* eslint-disable arrow-body-style */
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { startFunc } from 'utilities/AppScriptProxy';
+import { startFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
 // import {
@@ -36,13 +36,18 @@ const Nav = () => {
     <Layout title="測試功能首頁" goBack={false} goHome={false}>
       <NavWrapper>
         <div className="bankee">
+          <div onClick={() => startFunc('D00100')}>D00100 轉帳 - (施工中)</div>
           <div onClick={() => startFunc('C00300')}>C00300 台幣存款首頁</div>
           <div onClick={() => startFunc('C00400')}>C00400 外幣存款首頁</div>
           <div onClick={() => startFunc('C00500')}>C00500 交割帳戶首頁</div>
           <div onClick={() => startFunc('M00100')}>M00100 社群圈首頁</div>
-          <div onClick={() => startFunc('D00100')}>D00100 台幣轉帳 - (施工中)</div>
+          <div onClick={() => startFunc('D00500')}>D00500 常用帳號管理</div>
+          <div onClick={() => startFunc('D00600')}>D00600 約定帳號管理</div>
           <div onClick={() => startFunc('B00600')}>B00600 更多...</div>
 
+          <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await transactionAuth(0x26))}>
+            基本資料變更-電子郵件(2FA / OTP)
+          </div>
           {/* <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await transactionAuth(0x35))}>
             台幣-非約轉(2FA / PWD+OTP)
           </div>
@@ -76,12 +81,10 @@ const Nav = () => {
           <div onClick={() => startFunc('R00100')}>R00100 信用卡 即時消費明細 - (施工中)</div>
           <div onClick={() => startFunc('R00300')}>R00300 信用卡 帳單明細 - (施工中)</div>
           <div onClick={() => startFunc('R00400')}>R00400 信用卡 繳費 - (施工中)</div>
-          <div onClick={() => startFunc('M00200')}>M00200 社群圈 好友查詢 - (施工中)</div>
+          <div onClick={() => startFunc('M00200')}>M00200 社群圈 好友查詢</div>
           <div onClick={() => startFunc('L00100')}>L00100 貸款 首頁 - (施工中)</div>
           <div onClick={() => startFunc('L001001')}>L00100 貸款 可能回饋頁 - (施工中)</div>
           <div onClick={() => startFunc('L001002')}>L00100 貸款 資訊頁 - (施工中)</div>
-          <div onClick={() => startFunc('D00500')}>D00500 常用帳號管理</div>
-          <div onClick={() => startFunc('D00600')}>D00600 約定帳號管理</div>
         </div>
 
         <div className="vj">

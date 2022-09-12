@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import SwiperCore, { Pagination } from 'swiper/core';
 import { dateFormatter } from 'utilities/Generator';
 import { switchLoading, closeFunc } from 'utilities/AppScriptProxy';
 import { getTransferOutAccounts, getReservedTransDetails, getResultTransDetails } from 'pages/D00800_ReserveTransferSearch/api';
@@ -16,7 +17,7 @@ import {
   FEIBTabPanel,
   FEIBButton,
 } from 'components/elements';
-import DebitCard from 'components/DebitCard';
+import DebitCard from 'components/DebitCard/DebitCard';
 import InformationTape from 'components/InformationTape';
 import Dialog from 'components/Dialog';
 import EmptyData from 'components/EmptyData';
@@ -31,6 +32,9 @@ import ResultContent from './resultContent';
 
 /* Style */
 import ReserveTransferSearchWrapper from './reserveTransferSearch.style';
+
+/* Swiper modules */
+SwiperCore.use([Pagination]);
 
 const ReserveTransferSearch = () => {
   const history = useHistory();
@@ -172,9 +176,8 @@ const ReserveTransferSearch = () => {
         account={item.accountId}
         balance={item.balance}
         dollarSign={item.ccyCd}
-        transferTitle="跨轉優惠"
-        transferLimit={6}
-        transferRemaining={item.tfrhCount.length >= 2 ? item.tfrhCount.replace('0', '') : item.tfrhCount}
+        freeTransfer={6}
+        freeTransferRemain={item.tfrhCount.length >= 2 ? item.tfrhCount.replace('0', '') : item.tfrhCount}
         color="purple"
       />
     </SwiperSlide>
@@ -312,9 +315,9 @@ const ReserveTransferSearch = () => {
                 <div>
                   <DateRangePicker
                     {...reserveDatePickerLimit}
-                    date={reserveDateRange}
+                    value={reserveDateRange}
                     label=" "
-                    onClick={handleClickReserveDateRangePicker}
+                    onChange={handleClickReserveDateRangePicker}
                   />
                   <img className="clearImg" src={ClearIcon} alt="" onClick={clearReserveDateRange} />
                 </div>
@@ -333,9 +336,9 @@ const ReserveTransferSearch = () => {
                 <div>
                   <DateRangePicker
                     {...resultDatePickerLimit}
-                    date={resultDateRange}
+                    value={resultDateRange}
                     label=" "
-                    onClick={handleClickResultDateRangePicker}
+                    onChange={handleClickResultDateRangePicker}
                   />
                   <img className="clearImg" src={ClearIcon} alt="" onClick={clearResultDateRange} />
                 </div>

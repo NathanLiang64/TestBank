@@ -13,6 +13,7 @@ import { ArrowBackIcon, HomeIcon } from 'assets/images/icons';
 import { goHome as goHomeFunc, closeFunc } from 'utilities/AppScriptProxy';
 import {
   setModalVisible, setWaittingVisible, setDrawerVisible, setAnimationModalVisible,
+  setDialogVisible,
 } from '../../stores/reducers/ModalReducer';
 import HeaderWrapper from './Header.style';
 
@@ -29,7 +30,7 @@ function Layout({
   //
   // 處理 Popup視窗、 等待中 及 Drawer。
   //
-  const { overPanel, setResult } = useSelector((state) => state.ModalReducer);
+  const { overPanel, setResult, showDialog } = useSelector((state) => state.ModalReducer);
   const modalData = useSelector((state) => state.ModalReducer.modal);
   const showModal = useSelector((state) => state.ModalReducer.showModal);
   const drawerData = useSelector((state) => state.ModalReducer.drawer);
@@ -58,22 +59,24 @@ function Layout({
 
   const onModalOk = async () => {
     if (modalData.onOk) {
-      if ((await modalData.onOk() === false)) return;
+      if ((await modalData.onOk() === false)) return; // 取消 Ok 程序。
     }
     // 如果有需要接續 modal 得操作，可以設定 noDismiss 為 true，以避免點擊ok按鈕後，下個 modal 遭關閉。
     if (modalData.noDismiss) return;
 
     dispatch(setModalVisible(false));
-    if (setResult) setResult(true);
+    dispatch(setDialogVisible(false));
+    if (setResult) setResult(true); // 傳回視窗結束狀態。
   };
 
   //
   const onModalCancel = async () => {
     if (modalData.onCancel) {
-      if ((await modalData.onCancel() === false)) return;
+      if ((await modalData.onCancel() === false)) return; // 取消 Cancel 程序。
     }
     dispatch(setModalVisible(false));
-    if (setResult) setResult(false);
+    dispatch(setDialogVisible(false));
+    if (setResult) setResult(false); // 傳回視窗結束狀態。
   };
 
   /**
@@ -82,11 +85,11 @@ function Layout({
   useEffect(async () => {
     // console.log('showModal -> ', showModal || showAnimationModal);
     // 強制關掉 等待畫面，才能看到 Popup 視窗。
-    if (showModal || showAnimationModal) {
+    if (showModal || showDialog || showAnimationModal) {
       dispatch(setWaittingVisible(false));
-      dispatch(setDrawerVisible(false));
+      if (!showDialog) dispatch(setDrawerVisible(false));
     }
-  }, [showModal, showAnimationModal]);
+  }, [showModal, showDialog, showAnimationModal]);
 
   /**
    * 顯示訊息視窗
@@ -95,7 +98,7 @@ function Layout({
     <div>
       <Dialog
         title={modalData.title ?? '系統訊息'}
-        isOpen={showModal}
+        isOpen={showModal || showDialog}
         onClose={onModalClose}
         content={modalData.content}
         action={
@@ -142,12 +145,26 @@ function Layout({
     }
   }, [waitting]);
 
-  //
-  const onDrawerCancel = async () => {
-    if (drawerData.onClose) {
-      if ((await drawerData.onClose() === false)) return;
+  /**
+   * Drawer GoBack
+   */
+  const onDrawerGoBack = async () => {
+    if (drawerData.goBack) {
+      if ((await drawerData.goBack() === false)) return; // 取消 goBack 程序。
     }
     dispatch(setDrawerVisible(false));
+    if (setResult) setResult(true); // 傳回視窗結束狀態。
+  };
+
+  /**
+   * Drawer Close
+   */
+  const onDrawerClose = async () => {
+    if (drawerData.onClose) {
+      if ((await drawerData.onClose() === false)) return; // 取消 Close 程序。
+    }
+    dispatch(setDrawerVisible(false));
+    if (setResult) setResult(false); // 傳回視窗結束狀態。
   };
 
   /**
@@ -156,12 +173,11 @@ function Layout({
   const Drawer = () => (
     <BottomDrawer
       title={drawerData.title}
-      // titleColor={theme.colors.primary.dark}
       isOpen={showDrawer}
-      onBack={drawerData.goBack}
-      onClose={onDrawerCancel}
+      onBack={onDrawerGoBack}
+      onClose={onDrawerClose}
       content={drawerData.content}
-      shouldAutoClose={drawerData.shouldAutoClose}
+      shouldAutoClose={drawerData.shouldAutoClose} // TODO 確認必要性。
     />
   );
 
@@ -206,10 +222,10 @@ function Layout({
 
         <div>
             {waitting ? null : children}
-            <MessageModal />
             <Drawer />
-            {overPanel}
+            <MessageModal />
             <AnimationModal />
+            {overPanel}
         </div>
       </div>
     );

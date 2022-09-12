@@ -27,7 +27,8 @@ const initialState = {
     // 點選視窗外部，視同關閉視窗
     backdrop: false,
   },
-  showModal: false,
+  showModal: false, // 顯示 獨占 Popup視窗（會強制關閉 Drawer）
+  showDialog: false, // 顯示 一般 Popup視窗（可用在 Drawer）
   drawer: {
     title: null,
     content: null,
@@ -60,6 +61,9 @@ export default function ModalReducer(state = initialState, action) {
 
     case SET_MODAL_VISIBLE:
       return { ...state, showModal: data };
+
+    case 'showDialog':
+      return { ...state, showDialog: data };
 
     case SET_DRAWER:
       return { ...state, drawer: data };
@@ -104,6 +108,13 @@ export function setModal(data) {
 export function setModalVisible(data) {
   return {
     type: SET_MODAL_VISIBLE,
+    data,
+  };
+}
+
+export function setDialogVisible(data) {
+  return {
+    type: 'showDialog',
     data,
   };
 }

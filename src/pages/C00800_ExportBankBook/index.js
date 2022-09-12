@@ -194,9 +194,9 @@ const ExportBankBook = () => {
             <div className="datePickerContainer" style={{ display: watch('outType') === '2' ? 'block' : 'none', marginTop: '.9rem' }}>
               <DateRangePicker
                 label="自訂搜尋日期區間"
-                date={exportDateRange}
+                value={exportDateRange}
                 {...datePickerLimit}
-                onClick={handleDatePickerClick}
+                onChange={handleDatePickerClick}
               />
               <FEIBErrorMessage>
                 {showDateRangeErrMsg && dateRangeErrorMessage}

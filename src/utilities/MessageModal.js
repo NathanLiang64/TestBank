@@ -6,11 +6,11 @@ import {
   setAnimationModal, setAnimationModalVisible,
 } from '../stores/reducers/ModalReducer';
 
-export const closePopup = () => {
+const closePopup = () => {
   store.dispatch(setModalVisible(false));
 };
 
-export const closeDrawer = () => {
+const closeDrawer = () => {
   store.dispatch(setDrawerVisible(false));
 };
 
@@ -113,15 +113,24 @@ export const customPopup = async (title, message, onOk, onCancel, okContent, can
  * 在 Layout 下方彈出抽屜。
  * @param {*} title 上方的標題文字。
  * @param {*} content 要呈現的內容。
- * @param {*} onCloseBtnPressed 當右上角 X 按下時的處理方式。
+ * @param {*} goBack 當左上角 <- 返回按鈕。
+ * @param {*} onClose 當右上角 X 按下時的處理方式。
  */
-export const showDrawer = async (title, content, onCloseBtnPressed) => {
-  store.dispatch(setDrawer({
-    title,
-    content,
-    onClose: onCloseBtnPressed,
-  }));
-  store.dispatch(setDrawerVisible(true));
+export const showDrawer = async (title, content, goBack, onClose) => {
+  const promise = new Promise((resolve) => {
+    store.dispatch(setDrawer({
+      title,
+      content,
+      goBack,
+      onClose: onClose ?? closeDrawer,
+    }));
+    store.dispatch(setResult((value) => resolve(value)));
+    store.dispatch(setDrawerVisible(true));
+  });
+
+  // result 是由 AppJavaScriptCallback 接收，並嘗試用 JSON Parse 轉為物件，轉不成功則以原資料內容傳回。
+  const result = await promise;
+  return result;
 };
 
 export const showAnimationModal = async (content) => {

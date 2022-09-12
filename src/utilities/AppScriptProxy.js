@@ -66,7 +66,8 @@ const funcStack = {
     localStorage.setItem('funcStack', JSON.stringify(stack));
 
     // 寫入 Function 啟動參數。
-    localStorage.setItem('funcParams', (startItem.funcParams ?? null));
+    const params = startItem.funcParams ? { funcParams: startItem.funcParams, keepData: null } : null;
+    localStorage.setItem('funcParams', (JSON.stringify(params) ?? null));
   },
   pop: () => {
     localStorage.removeItem('funcParams');
@@ -83,9 +84,9 @@ const funcStack = {
     // 寫入 Function 啟動參數。
     const startItem = stack[stack.length - 1];
     if (closedItem) {
-      const params = (closedItem.keepData ?? startItem?.funcParams);
-      localStorage.setItem('funcParams', (params ?? null));
-      console.log('Close Function and Back to (', startItem?.funcID ?? 'Home', ')', (params ? JSON.parse(params) : null));
+      const params = { funcParams: startItem?.funcParams, keepData: closedItem.keepData };
+      localStorage.setItem('funcParams', JSON.stringify(params));
+      console.log('Close Function and Back to (', startItem?.funcID ?? 'Home', ')', params);
     }
 
     return startItem;
@@ -143,8 +144,14 @@ async function startFunc(funcID, funcParams, keepData) {
 
 /**
  * 觸發APP返回上一頁功能
+ * @param {*} response 傳回值，會暫存在 SessionStorate("FuncRs") 中。
  */
-async function closeFunc() {
+async function closeFunc(response) {
+  // NOTE 必需排除 event 物件。
+  if (response && (!response.target && !response.type)) {
+    sessionStorage.setItem('FuncRs', JSON.stringify(response));
+  }
+
   const closeItem = funcStack.peek(); // 因為 funcStack 還沒 pop，所以用 peek 還以取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
   const isFunction = !closeItem || (/^[A-Z]\d{5}$/.test(closeItem.funcID)); // 表示 funcID 是由 Function Controller 控制的單元功能。
 
@@ -181,25 +188,33 @@ async function loadFuncParams() {
     const funcItem = funcStack.peek(); // 因為功能已經啟動，所以用 peek 取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
     const isFunction = !funcItem || (/^[A-Z]\d{5}$/.test(funcItem.funcID)); // 表示 funcID 是由 Function Controller 控制的單元功能。
 
-    const webGetFuncParams = async () => {
+    const webGetFuncParams = () => {
       const params = localStorage.getItem('funcParams');
       if (!params || params === 'null') return null;
       if (params.startsWith('{')) return JSON.parse(params);
       return params;
     };
 
+    const data = isFunction ? (await callAppJavaScript('getPagedata', null, true, webGetFuncParams)) : webGetFuncParams();
     let params = null;
-    if (isFunction) {
-      const data = await callAppJavaScript('getPagedata', null, true, webGetFuncParams);
-      if (data && data !== 'undefined') {
-        // 解析由 APP 傳回的資料, 只要有 keepData 就表示是由叫用的功能結束返回
-        // 因此，要以 keepData 為單元功能的啟動參數。
-        // 反之，表示是單元功能被啟動，此時才是以 funcParams 為單元功能的啟動參數。
-        params = data.keepData ?? data.funcParams;
-      }
-    } else {
-      params = webGetFuncParams();
+    if (data && data !== 'undefined') {
+      // 解析由 APP 傳回的資料, 只要有 keepData 就表示是由叫用的功能結束返回
+      // 因此，要以 keepData 為單元功能的啟動參數。
+      // 反之，表示是單元功能被啟動，此時才是以 funcParams 為單元功能的啟動參數。
+      params = JSON.parse(data.keepData ?? data.funcParams);
     }
+
+    // 取得 Function 在 closeFunc 時提供的傳回值。
+    const response = sessionStorage.getItem('FuncRs');
+    console.log('>> Function 傳回值 : ', response);
+    sessionStorage.removeItem('FuncRs');
+    if (response) {
+      params = {
+        ...params,
+        response: JSON.parse(response),
+      };
+    }
+
     // await showAlert(`>> Function 啟動參數 : ${JSON.stringify(params)}`);
     console.log('>> Function 啟動參數 : ', params);
     return params;
@@ -329,13 +344,13 @@ async function getJwtToken(force) {
 
 /**
  * 由 APP 發起交易驗證功能，包含輸入網銀帳密、生物辨識、OTP...。
- * @param {*} authCode 要求進行的驗證模式的代碼。
- * @param {*} otpMobile 簡訊識別碼發送的手機門號。當綁定或變更門號時，因為需要確認手機號碼的正確性，所以要再驗OTP
- * @returns {
- *   result: 驗證結果(true/false)。
- *   message: 驗證失敗狀況描述。
- *   netbankPwd: 因為之後叫用交易相關 API 時可能會需要用到，所以傳回 E2EE 加密後的密碼。
- * }
+ * @param {Number} authCode 要求進行的驗證模式的代碼。
+ * @param {String?} otpMobile 簡訊識別碼發送的手機門號。當綁定或變更門號時，因為需要確認手機號碼的正確性，所以要再驗OTP
+ * @returns {Promise<{
+ *  result: 驗證結果。
+ *  message: 驗證失敗狀況描述。
+ *  netbankPwd: 因為之後叫用交易相關 API 時可能會需要用到，所以傳回 E2EE 加密後的密碼。
+ * }>}
  */
 async function transactionAuth(authCode, otpMobile) {
   const data = {
@@ -412,6 +427,7 @@ async function regQLfeature(QLtype) {
  * 綁定快登裝置
  * @param {*} QLtype 快登裝置綁定所使用驗證方式(type->1:生物辨識/2:圖形辨識)
  * @param {*} pwdE2ee E2EE加密後的密碼
+ * @param {*} midToken 由 Controller 提供的 MID Login 取得的 Auth Token
  * @returns {
  *  result: 驗證結果(true/false)。
  *  message: 駿證失敗狀況描述。
@@ -472,6 +488,7 @@ async function appTransactionAuth(request) {
   const authMode = await getTransactionAuthMode(authCode); // 要驗 2FA 還是密碼，要以 create 時的為準。
   const allowed2FA = (authMode & 0x01) !== 0; // 表示需要通過 生物辨識或圖形鎖 驗證。
   let allowedPWD = (authMode & 0x02) !== 0; // 表示需要通過 網銀密碼 驗證。
+  const allowedOTP = (authMode & 0x04) !== 0; // 表示需要通過 OTP 驗證。
 
   const failResult = (message) => callback({ result: false, message });
 
@@ -480,9 +497,6 @@ async function appTransactionAuth(request) {
     failResult('尚未完成行動裝置綁定，無法使用此功能！');
     return;
   }
-
-  // 檢查是否需要通過 OTP 驗證，需要則立即發送OTP。
-  const sendOtp = (allowedPWD || allowed2FA || ((authCode & 0x30) === 0)) && ((authCode & 0x0F) !== 0);
 
   // 建立交易授權驗證。
   const txnAuth = await createTransactionAuth({ // 傳回值包含發送簡訊的手機門號及簡訊識別碼。
@@ -503,7 +517,7 @@ async function appTransactionAuth(request) {
 
     // NOTE 驗證成功(allowedPWD一定是false)但不用驗OTP，就直接傳回成功。
     //      若是驗證失敗或是還要驗OTP，就要開 Drawer 進行密碼或OTP驗證。
-    if (!allowedPWD && !sendOtp) {
+    if (!allowedPWD && !allowedOTP) {
       callback(rs);
       return;
     }
@@ -513,7 +527,7 @@ async function appTransactionAuth(request) {
     <PasswordDrawer funcCode={funcCode} authData={txnAuth} inputPWD={allowedPWD} onFinished={callback} />
   );
 
-  await showDrawer('交易授權驗證 (Web版)', body, () => failResult('使用者取消驗證。'));
+  await showDrawer('交易授權驗證 (Web版)', body, null, () => failResult('使用者取消驗證。'));
 }
 
 export {

@@ -26,7 +26,6 @@ function AccountEditor({
   initData,
   onFinished,
 }) {
-  const storageItemName = 'BankList';
   const [bankList, setBankList] = useState();
   const [model, setModel] = useState(initData);
   const [confirmPage, setConfirmPage] = useState(false);
@@ -57,18 +56,7 @@ function AccountEditor({
    *- 初始化
    */
   useEffect(async () => {
-    let banks = sessionStorage.getItem(storageItemName);
-    try {
-      banks = JSON.parse(banks);
-    } catch (ex) {
-      sessionStorage.removeItem(storageItemName);
-      banks = null;
-    }
-
-    if (!banks) {
-      banks = await getBankCode();
-      sessionStorage.setItem(storageItemName, JSON.stringify(banks)); // 暫存入以減少API叫用
-    }
+    const banks = await getBankCode();
     setBankList(banks);
   }, []);
 
@@ -92,7 +80,7 @@ function AccountEditor({
             name={idBankNo}
             setValue={setValue}
             trigger={trigger}
-            defaultValue={getValues(idBankNo)}
+            value={getValues(idBankNo)}
             errorMessage={errors.bankId?.message}
           />
         </div>
@@ -101,14 +89,13 @@ function AccountEditor({
           <Controller
             control={control}
             name={idAcctNo}
-            defaultValue={model.acctId}
+            value={model.acctId}
             render={({ field }) => (
               <FEIBInput
                 {...field}
-                autoComplete="off"
                 inputMode="numeric"
-                maxLength="14"
                 placeholder="請輸入常用的銀行帳號"
+                inputProps={{ maxLength: 14, autoComplete: 'off' }}
                 error={!!errors?.acctId} // 畫紅底線
               />
             )}
@@ -151,8 +138,8 @@ function AccountEditor({
               <FEIBInput
                 {...field}
                 autoComplete="off"
-                maxLength="20"
                 placeholder="請輸入容易讓您記住此帳號的暱稱"
+                inputProps={{ maxLength: 20 }}
                 error={!!errors?.nickName} // 畫紅底線
               />
             )}
