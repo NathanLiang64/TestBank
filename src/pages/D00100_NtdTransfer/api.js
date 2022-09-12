@@ -69,6 +69,7 @@ export const AccountListCacheName = 'Accounts';
  * 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
  * @param {String} acctTypes 帳戶類型 M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶
  * @return {Promise<[{
+ *   acctType: 帳戶類型 // M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶,
  *   accountNo: 帳號,
  *   branchName: 分行名稱,
  *   balance: 帳戶餘額, // NOTE 餘額「非即時」資訊
@@ -111,5 +112,31 @@ export const loadAccountsList = async (acctTypes, onDataLoaded) => {
  */
 export const getAccountExtraInfo = async (accountNo) => {
   const response = await callAPI('/api/depositPlus/v1/getBonusInfo', accountNo);
+  return response.data;
+};
+
+/**
+ * 建立台幣轉帳交易，需再完成交易確認才會真的執行轉帳。
+ * @param {{
+      transOut: 轉出帳號
+      transIn: {
+        bank: 轉入帳戶的銀行
+        account: 轉入帳戶的帳號
+      }
+      amount: 轉出金額
+      booking: {
+        mode: 立即或預約 // 0.立即轉帳, 1.預約轉帳
+        multiTimes: 單次或多次 // 單次, *.多次
+        transDate: 轉帳日期 // multiTimes='1'時
+        transRange: 轉帳日期區間 // multiTimes='*'時
+        cycleMode: 交易頻率 // 1.每周, 2.每月
+        cycleTiming: 交易週期 // 〔 0~6: 周日~周六 〕或〔 1~31: 每月1~31〕, 月底(29/30/31)會加警示。
+      }
+      memo: 備註
+    }} request
+ * @returns {*}
+ */
+export const createNtdTransfer = async (request) => {
+  const response = await callAPI('/api/transfer/ntd/v1/create', request);
   return response.data;
 };

@@ -64,7 +64,7 @@ const Transfer = (props) => {
   const idTransInBank = 'transIn.bank';
   const idTransInAcct = 'transIn.account';
   const idAmount = 'amount';
-  const idMode = 'mode';
+  const idMode = 'booking.mode';
   const idMultiTimes = 'booking.multiTimes';
   const idTransDate = 'booking.transDate';
   const idTransRange = 'booking.transRange';
@@ -84,10 +84,10 @@ const Transfer = (props) => {
       regAcct: yup.object().when('type', (type, s) => ((type === 2) ? s.required() : s.nullable())),
     }),
     amount: yup.string().required(),
-    mode: yup.number().min(0).max(1).required(),
     booking: yup.object().shape({
+      mode: yup.number().min(0).max(1).required(),
       multiTimes: yup.string().required().length(1).oneOf(['1', '*']),
-      transDate: yup.object().transform((v) => (v ?? undefined)).when('multiTimes', (multiTimes, s) => ((multiTimes === '1') ? s.required() : s.nullable())),
+      transDate: yup.date().when(['mode', 'multiTimes'], (mode, multiTimes, s) => ((mode === 1 && multiTimes === '1') ? s.typeError('請指定交易日期') : s.nullable())),
       transRange: yup.array().transform((v) => (v ?? [])).when('multiTimes', (multiTimes, s) => ((multiTimes === '*') ? s.length(2) : s.nullable())),
       cycleMode: yup.number().when('multiTimes', (multiTimes, s) => ((multiTimes === '*') ? s.required().min(1).max(2) : s.nullable())),
       cycleTiming: yup.number().when('multiTimes', (multiTimes, s) => ((multiTimes === '*')
@@ -119,8 +119,8 @@ const Transfer = (props) => {
         regAcct: undefined, // 目前選擇的 約定帳號
       },
       amount: undefined, // 轉出金額
-      mode: 0, // 0.立即轉帳, 1.預約轉帳
       booking: { // 「預約轉帳」資訊
+        mode: 0, // 0.立即轉帳, 1.預約轉帳
         multiTimes: '1', // 1.單次, *.多次
         transDate: null, // 轉帳日期，multiTimes='1'時。
         transRange: null, // 轉帳日期區間，multiTimes='*'時。
@@ -212,18 +212,21 @@ const Transfer = (props) => {
       return null;
     }
 
-    const transOutAccount = params.transOut;
+    const transOutAccount = params.transOut ?? '';
     delete params.transOut; // 因為在將 params 寫入 model 時，不需要此欄位。
-    const index = accounts.findIndex((acct) => acct.accountNo === transOutAccount);
-    if (index < 0) {
-      // 查無指定的轉帳帳號，立即返回closeFunc。
-      await showError(`您的帳戶中並沒有指定的轉出帳號(${transOutAccount})，請洽客服人員。`, () => closeFunc());
-      return null;
+    // 若啟動參數有指定預設帳號(transOut)時，則不能切換轉出帳號，只保留此帳號卡。
+    // 若未指定時，則維持所有帳號供使用者選擇。
+    if (transOutAccount !== '') {
+      const index = accounts.findIndex((acct) => acct.accountNo === transOutAccount);
+      if (index < 0) {
+        // 查無指定的轉帳帳號，立即返回closeFunc。
+        await showError(`您的帳戶中並沒有指定的轉出帳號(${transOutAccount})，請洽客服人員。`, () => closeFunc());
+        return null;
+      }
+      setAccounts([accounts[index]]);
     }
-
-    // NOTE 指定預設帳號時，不能切換轉出帳號，所以只需建一張帳號卡。
-    setAccounts([accounts[index]]);
     setSelectedAccountIdx(0);
+
     return {
       ...getValues(),
       ...params,
@@ -279,8 +282,7 @@ const Transfer = (props) => {
       return;
     }
 
-    // TODO call API confirmTransferDetail
-
+    // 進行轉帳確認。
     history.push('/D001001', {
       ...newModel,
       booking: {
@@ -507,7 +509,7 @@ const Transfer = (props) => {
           onAccountChanged={setSelectedAccountIdx}
         />
 
-        {watch(idTransOut).balance <= 0 ? (<p className="insufficient">(帳戶餘額不足)</p>) : null}
+        {/* {watch(idTransOut).balance <= 0 ? (<p className="insufficient">(帳戶餘額不足)</p>) : null} */}
         <div className="transferServicesArea">
           <form>
             <FEIBTabContext value={String(watch(idTransType))}>
