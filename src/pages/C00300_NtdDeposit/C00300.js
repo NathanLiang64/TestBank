@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-max-props-per-line */
+/* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable no-use-before-define */
 /* eslint-disable object-curly-newline */
 import { useEffect, useState } from 'react';
@@ -8,11 +10,11 @@ import { useForm } from 'react-hook-form';
 import Layout from 'components/Layout/Layout';
 import AccountOverview from 'components/AccountOverview/AccountOverview';
 import DepositDetailPanel from 'components/DepositDetailPanel/depositDetailPanel';
-import { FEIBInputLabel, FEIBInput, FEIBErrorMessage } from 'components/elements';
+import { FEIBInputLabel, FEIBInput } from 'components/elements';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { customPopup, showPrompt } from 'utilities/MessageModal';
+import { customPopup, showInfo, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
 import { setLocalData } from 'utilities/Generator';
 import { AccountListCacheName, getAccountExtraInfo, loadAccountsList } from 'pages/D00100_NtdTransfer/api';
@@ -107,7 +109,6 @@ const C00300 = () => {
           ...account,
           ...info,
         };
-        setLocalData(AccountListCacheName, accounts);
         setAccounts([...accounts]); // 強制更新畫面。
       });
     }
@@ -115,6 +116,7 @@ const C00300 = () => {
     setSelectedAccount(account);
   };
   useEffect(() => { handleAccountChanged(selectedAccountIdx); }, [selectedAccountIdx]);
+  useEffect(() => { setLocalData(AccountListCacheName, accounts); }, [accounts]);
 
   /**
    * 顯示 優存(利率/利息)資訊
@@ -169,8 +171,9 @@ const C00300 = () => {
     const body = (
       <>
         <FEIBInputLabel>新的帳戶名稱</FEIBInputLabel>
-        <FEIBInput defaultValue={name} autoFocus {...register('newName')} />
-        <FEIBErrorMessage $noSpacing />
+        <FEIBInput {...register('newName')} autoFocus
+          inputProps={{ maxLength: 10, placeholder: '請設定此帳戶的專屬名稱', defaultValue: name, autoComplete: 'off' }}
+        />
       </>
     );
     const onOk = (values) => {
@@ -195,21 +198,27 @@ const C00300 = () => {
           cardColor: 'purple',
         };
         break;
+
       case 'D00100': // 轉帳
         params = { transOut: selectedAccount.accountNo };
         break;
+
       case 'D00300': // 無卡提款，只有母帳號才可以使用。 // TODO 帶參數過去
         params = { transOut: selectedAccount.accountNo };
         break;
+
       case 'E00100': // 換匯 // TODO 帶參數過去
         params = { transOut: selectedAccount.accountNo };
         break;
-      case 'DownloadDepositBookCover': // 存摺封面下載
+
+      case 'DownloadCover': // 存摺封面下載
         downloadDepositBookCover(selectedAccount.accountNo); // 預設檔名為「帳號-日期.pdf」，密碼：身分證號碼
         return;
+
       case 'Rename': // 帳戶名稱編輯
         showRenameDialog(selectedAccount.alias);
         return;
+
       case 'depositPlus':
       default:
         break;
@@ -237,7 +246,7 @@ const C00300 = () => {
           moreFuncs={[
             { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false },
             { fid: 'E00100', title: '換匯', icon: 'exchange', enabled: (selectedAccount?.balance > 0) },
-            { fid: 'DownloadDepositBookCover', title: '存摺封面下載', icon: 'coverDownload' },
+            { fid: 'DownloadCover', title: '存摺封面下載', icon: 'coverDownload' },
             { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
           ]}
         />

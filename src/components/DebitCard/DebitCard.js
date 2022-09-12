@@ -8,7 +8,7 @@ import CopyTextIconButton from 'components/CopyTextIconButton';
 import { FEIBIconButton } from 'components/elements';
 import theme from 'themes/theme';
 import {
-  accountFormatter, accountTypeColorGenerator, currencySymbolGenerator,
+  accountFormatter, accountTypeColorGenerator, currencySymbolGenerator, getCurrenyName,
 } from 'utilities/Generator';
 import DebitCardBackground from 'assets/images/debitCardBackground.png';
 import { showDrawer } from 'utilities/MessageModal';
@@ -156,10 +156,6 @@ const DebitCard = ({
           <p className="branch">{model.branchName ?? ''}</p>
           <p className="account">{accountFormatter(model.accountNo)}</p>
           <CopyTextIconButton copyText={model.accountNo} />
-          <p className="account">{['NTD', 'TWD'].indexOf(model.currency) < 0 ? `(${model.currency})` : ''}</p>
-          <p className="account">
-            {model.currency && (['NTD', 'TWD'].indexOf(model.currency) < 0) ? `(${model.currency})` : ''}
-          </p>
         </>
       )}
     </div>
@@ -169,7 +165,10 @@ const DebitCard = ({
     <DebitCardWrapper className="debitCard" $cardColor={color ?? accountTypeColorGenerator(accountType)}>
       <img src={DebitCardBackground} alt="background" className="backgroundImage" />
       <div className="cardTitle">
-        <h2 className="cardName">{model.alias ?? '(未命名)'}</h2>
+        <h2 className="cardName">
+          {model.alias ?? '(未命名)'}
+          {model.currency && (['NTD', 'TWD'].indexOf(model.currency) < 9999) ? ` (${getCurrenyName(model.currency)})` : ''}
+        </h2>
         {renderAccountNo()}
       </div>
       <div className={`cardBalance ${!isSmallCard ? 'grow' : ''}`}>
