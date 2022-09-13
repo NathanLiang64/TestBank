@@ -1,11 +1,8 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router';
-import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-import BottomDrawer from 'components/BottomDrawer';
-import PasswordInput from 'components/PasswordInput';
 import { FEIBButton, FEIBCheckbox } from 'components/elements';
 
 /* Styles */
@@ -14,10 +11,6 @@ import InstalmentWrapper from './instalment.style';
 const Instalment1 = () => {
   const [openDrawer, setOpenDrawer] = useState(true);
 
-  const cardName = 'cardName';
-
-  useCheckLocation();
-  usePageInfo('/api/instalment');
   const history = useHistory();
 
   const renderSelectList = () => {
@@ -45,21 +38,6 @@ const Instalment1 = () => {
     );
   };
 
-  const renderBottomDrawer = () => (
-    <div name="cardTitle">
-      <div className="cardTitle">
-        <h2 className="cardName">{ cardName }</h2>
-      </div>
-      <div style={{ hieght: 100 }}>
-        <PasswordInput
-          label="您的網銀密碼"
-          id="password"
-          name="password"
-        />
-      </div>
-    </div>
-  );
-
   return (
     <Layout title="晚點付 (單筆)">
       <InstalmentWrapper className="InstalmentWrapper" small>
@@ -84,13 +62,6 @@ const Instalment1 = () => {
             下一步
           </FEIBButton>
         </form>
-        <BottomDrawer
-          className="instalmentDrawer"
-          isOpen={openDrawer}
-          onClose={() => setOpenDrawer(!openDrawer)}
-          content={() => renderBottomDrawer()}
-          title="輸入網銀密碼"
-        />
       </InstalmentWrapper>
     </Layout>
   );

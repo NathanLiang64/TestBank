@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router';
+import { showDrawer, closeDrawer } from 'utilities/MessageModal';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -7,7 +8,6 @@ import DebitCard from 'components/DebitCard/DebitCard';
 import InformationTape from 'components/InformationTape';
 import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
 import DownloadIcon from 'assets/images/icons/downloadIcon.svg';
-import BottomDrawer from 'components/BottomDrawer';
 
 /* Styles */
 import LoanInterestWrapper from './loanInterest.style';
@@ -16,15 +16,9 @@ const LoanInterest = () => {
   const history = useHistory();
 
   const [dateRange, setDateRange] = useState('0');
-  const [openDrawer, setOpenDrawer] = useState(false);
 
   const handleChangeTabs = (e, value) => {
     setDateRange(value);
-  };
-
-  // 開關編輯選單
-  const handleOpenDrawer = () => {
-    setOpenDrawer(!openDrawer);
   };
 
   const toDetailPage = () => {
@@ -33,13 +27,13 @@ const LoanInterest = () => {
 
   const renderEditList = () => (
     <ul className="noticeEditList downloadItemList">
-      <li>
+      <li onClick={() => closeDrawer()}>
         <span>
           下載 PDF
         </span>
         <img className="downloadImg" src={DownloadIcon} alt="" />
       </li>
-      <li>
+      <li onClick={() => closeDrawer()}>
         <span>
           下載 EXCEL
         </span>
@@ -47,6 +41,14 @@ const LoanInterest = () => {
       </li>
     </ul>
   );
+
+  // 開關編輯選單
+  const handleOpenDrawer = () => {
+    showDrawer(
+      '',
+      renderEditList(),
+    );
+  };
 
   return (
     <Layout title="繳款紀錄查詢">
@@ -95,11 +97,6 @@ const LoanInterest = () => {
             />
           </div>
         </div>
-        <BottomDrawer
-          isOpen={openDrawer}
-          onClose={handleOpenDrawer}
-          content={renderEditList()}
-        />
       </LoanInterestWrapper>
     </Layout>
   );

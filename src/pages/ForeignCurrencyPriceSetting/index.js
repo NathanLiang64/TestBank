@@ -1,9 +1,9 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { CurrencyInfo, dateFormatter, timeSecondFormatter } from 'utilities/Generator';
+import { showDrawer, closeDrawer } from 'utilities/MessageModal';
 
 /* Elements */
 import {
@@ -19,7 +19,6 @@ import {
 import { RadioGroup } from '@material-ui/core';
 import AddNewItem from 'components/AddNewItem';
 import SettingItem from 'components/SettingItem';
-import BottomDrawer from 'components/BottomDrawer';
 import Layout from 'components/Layout/Layout';
 // import { getAllNotices, addNotice, removeNotice } from './api';
 import {
@@ -54,8 +53,6 @@ const ForeignCurrencyPriceSetting = () => {
 
   const currencyType = watch('currencyType');
 
-  // const [model, setModel] = useState(null);
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState('');
   const [currencyInfo, setCurrencyInfo] = useState([]);
   const [currentTime, setCurrentTime] = useState('');
@@ -86,31 +83,6 @@ const ForeignCurrencyPriceSetting = () => {
     }
   };
 
-  // 新增外幣到價通知
-  const addPriceSetting = () => {
-    setDrawerTitle('add');
-    setValue('currencyType', 'USD');
-    setValue('priceType', '0');
-    setValue('price', '');
-    setDrawerOpen(true);
-  };
-
-  // 編輯外幣到價通知
-  const editPriceSetting = (data) => {
-    setDrawerTitle('update');
-    setCurrentSetting({
-      currency: data.currency,
-      price: data.price,
-      exchange_type: data.exchange_type,
-    });
-    setValue('currencyType', data.currency);
-    setValue('priceType', data.exchange_type.toString());
-    setValue('price', data.price);
-    const rate = currencyInfo.find((item) => item.ccyCd === data.currency).sellRate;
-    setCurrentRate(rate);
-    setDrawerOpen(true);
-  };
-
   // 刪除外幣到價通知
   const deletePriceSetting = async (data) => {
     console.log('刪除到價通知');
@@ -127,7 +99,7 @@ const ForeignCurrencyPriceSetting = () => {
   };
 
   const handleCloseDrawer = () => {
-    setDrawerOpen(false);
+    closeDrawer();
   };
 
   const onSubmit = async (data) => {
@@ -151,21 +123,6 @@ const ForeignCurrencyPriceSetting = () => {
     getAllPriceNotifications();
     handleCloseDrawer();
   };
-
-  const renderNotiList = () => (
-    notificationList.map((item) => {
-      const currency = CurrencyInfo.find((el) => el.code === item.currency);
-      return (
-        <SettingItem
-          key={item.createTime}
-          mainLable={`${currency.name} ${currency.symbol}`}
-          subLabel={`匯率：${item.price}`}
-          editClick={() => editPriceSetting(item)}
-          deleteClick={() => deletePriceSetting(item)}
-        />
-      );
-    })
-  );
 
   const renderForm = () => (
     <ForeignCurrencyPriceSettingWrapper className="drawerContainer">
@@ -245,13 +202,50 @@ const ForeignCurrencyPriceSetting = () => {
     </ForeignCurrencyPriceSettingWrapper>
   );
 
-  const renderDrawer = () => (
-    <BottomDrawer
-      title={drawerTitle === 'add' ? '新增外幣到價通知' : '編輯外幣到價通知'}
-      isOpen={drawerOpen}
-      onClose={handleCloseDrawer}
-      content={renderForm()}
-    />
+  // 新增外幣到價通知
+  const addPriceSetting = () => {
+    setDrawerTitle('add');
+    setValue('currencyType', 'USD');
+    setValue('priceType', '0');
+    setValue('price', '');
+    showDrawer(
+      '新增外幣到價通知',
+      renderForm(),
+    );
+  };
+
+  // 編輯外幣到價通知
+  const editPriceSetting = (data) => {
+    setDrawerTitle('update');
+    setCurrentSetting({
+      currency: data.currency,
+      price: data.price,
+      exchange_type: data.exchange_type,
+    });
+    setValue('currencyType', data.currency);
+    setValue('priceType', data.exchange_type.toString());
+    setValue('price', data.price);
+    const rate = currencyInfo.find((item) => item.ccyCd === data.currency).sellRate;
+    setCurrentRate(rate);
+    showDrawer(
+      '編輯外幣到價通知',
+      renderForm(),
+    );
+  };
+
+  const renderNotiList = () => (
+    notificationList.map((item) => {
+      const currency = CurrencyInfo.find((el) => el.code === item.currency);
+      return (
+        <SettingItem
+          key={item.createTime}
+          mainLable={`${currency.name} ${currency.symbol}`}
+          subLabel={`匯率：${item.price}`}
+          editClick={() => editPriceSetting(item)}
+          deleteClick={() => deletePriceSetting(item)}
+        />
+      );
+    })
   );
 
   useEffect(() => {
@@ -276,7 +270,6 @@ const ForeignCurrencyPriceSetting = () => {
           )
         }
         { renderNotiList() }
-        { renderDrawer() }
       </ForeignCurrencyPriceSettingWrapper>
     </Layout>
   );

@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useCheckLocation, usePageInfo } from 'hooks';
+import Layout from 'components/Layout/Layout';
+import { showDrawer, closeDrawer } from 'utilities/MessageModal';
 
 /* Elements */
 import {
@@ -15,7 +15,6 @@ import {
 import AddNewItem from 'components/AddNewItem';
 import SettingItem from 'components/SettingItem';
 import Accordion from 'components/Accordion';
-import BottomDrawer from 'components/BottomDrawer';
 import AccordionContent from './accordionContent';
 
 /* Styles */
@@ -54,21 +53,8 @@ const AutomaticBillPayment = () => {
     resolver: yupResolver(schema),
   });
 
-  const [drawerTitle, setDrawerTitle] = useState('');
-  const [drawerOpen, setDrawerOpen] = useState(false);
-
   const handleCloseDrawer = () => {
-    setDrawerOpen(false);
-  };
-
-  const addAutoBillPay = () => {
-    setDrawerTitle('新增自動扣繳');
-    setDrawerOpen(true);
-  };
-
-  const editAutoBillPay = () => {
-    setDrawerTitle('編輯自動扣繳');
-    setDrawerOpen(true);
+    closeDrawer();
   };
 
   const deleteAutoBillPay = () => {
@@ -79,24 +65,6 @@ const AutomaticBillPayment = () => {
     console.log(data);
     handleCloseDrawer();
   };
-
-  const renderAppliedAutoBill = () => appliedAutoBill.map((item) => (
-    <SettingItem
-      mainLable={item.cardNum}
-      subLabel={`扣款方式：${item.type} | 申請日：${item.date}`}
-      editClick={editAutoBillPay}
-      deleteClick={deleteAutoBillPay}
-    />
-  ));
-
-  const renderTodayAppliedAutoBill = () => todayAppliedAutoBill.map((item) => (
-    <SettingItem
-      mainLable={item.cardNum}
-      subLabel={`扣款方式：${item.type}`}
-      editClick={editAutoBillPay}
-      deleteClick={deleteAutoBillPay}
-    />
-  ));
 
   const renderForm = () => (
     <AutomaticBillPaymentWrapper className="drawerContainer">
@@ -140,42 +108,63 @@ const AutomaticBillPayment = () => {
     </AutomaticBillPaymentWrapper>
   );
 
-  const renderDrawer = () => (
-    <BottomDrawer
-      title={drawerTitle}
-      isOpen={drawerOpen}
-      onClose={handleCloseDrawer}
-      content={renderForm()}
-    />
-  );
+  const addAutoBillPay = () => {
+    showDrawer(
+      '新增自動扣繳',
+      renderForm(),
+    );
+  };
 
-  useCheckLocation();
-  usePageInfo('/api/automaticBillPayment');
+  const editAutoBillPay = () => {
+    showDrawer(
+      '編輯自動扣繳',
+      renderForm(),
+    );
+  };
+
+  const renderAppliedAutoBill = () => appliedAutoBill.map((item) => (
+    <SettingItem
+      mainLable={item.cardNum}
+      subLabel={`扣款方式：${item.type} | 申請日：${item.date}`}
+      editClick={editAutoBillPay}
+      deleteClick={deleteAutoBillPay}
+    />
+  ));
+
+  const renderTodayAppliedAutoBill = () => todayAppliedAutoBill.map((item) => (
+    <SettingItem
+      mainLable={item.cardNum}
+      subLabel={`扣款方式：${item.type}`}
+      editClick={editAutoBillPay}
+      deleteClick={deleteAutoBillPay}
+    />
+  ));
 
   return (
-    <AutomaticBillPaymentWrapper>
-      <section>
-        <AddNewItem onClick={addAutoBillPay} addLabel="新增自動扣繳" />
-      </section>
-      <section className="billBlock">
-        <div className="blockTitle">您已申辦自動扣繳區</div>
-        {
-          appliedAutoBill.length > 0
-            ? renderAppliedAutoBill() : (<div className="item noData">查無資料</div>)
-        }
-      </section>
-      <section className="billBlock">
-        <div className="blockTitle">您當日申辦自動扣繳區</div>
-        {
-          todayAppliedAutoBill.length > 0
-            ? renderTodayAppliedAutoBill() : (<div className="item noData">查無資料</div>)
-        }
-      </section>
-      <Accordion space="both">
-        <AccordionContent />
-      </Accordion>
-      { renderDrawer() }
-    </AutomaticBillPaymentWrapper>
+    <Layout title="自動扣繳申請">
+      <AutomaticBillPaymentWrapper>
+        <section>
+          <AddNewItem onClick={addAutoBillPay} addLabel="新增自動扣繳" />
+        </section>
+        <section className="billBlock">
+          <div className="blockTitle">您已申辦自動扣繳區</div>
+          {
+            appliedAutoBill.length > 0
+              ? renderAppliedAutoBill() : (<div className="item noData">查無資料</div>)
+          }
+        </section>
+        <section className="billBlock">
+          <div className="blockTitle">您當日申辦自動扣繳區</div>
+          {
+            todayAppliedAutoBill.length > 0
+              ? renderTodayAppliedAutoBill() : (<div className="item noData">查無資料</div>)
+          }
+        </section>
+        <Accordion space="both">
+          <AccordionContent />
+        </Accordion>
+      </AutomaticBillPaymentWrapper>
+    </Layout>
   );
 };
 
