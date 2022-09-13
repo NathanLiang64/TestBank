@@ -1,6 +1,6 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { startFunc } from 'utilities/AppScriptProxy';
+import { showDrawer, closeDrawer } from 'utilities/MessageModal';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -11,9 +11,7 @@ import {
   FEIBTabList,
   FEIBTab,
   FEIBTabPanel,
-  // FEIBBorderButton,
 } from 'components/elements';
-import BottomDrawer from 'components/BottomDrawer';
 import MessageItem from './messageItem';
 import {
   queryLastPush,
@@ -27,7 +25,6 @@ import {
 import NoticeWrapper from './notice.style';
 
 const Notice = () => {
-  const [openDrawer, setOpenDrawer] = useState(false);
   const [tabValue, setTabValue] = useState('A');
   const [allMessagesList, setAllMessagesList] = useState([]);
   const [pMessagesList, setPmessagesList] = useState([]);
@@ -62,11 +59,6 @@ const Notice = () => {
     setTabValue(type);
   };
 
-  // 開關編輯選單
-  const handleOpenDrawer = () => {
-    setOpenDrawer(!openDrawer);
-  };
-
   // 已讀單項訊息
   const readSpecMessage = async (msg) => {
     if (msg.status !== 'R') {
@@ -88,7 +80,7 @@ const Notice = () => {
     };
     await chgAllPushStatus(param);
     getNotices();
-    handleOpenDrawer();
+    closeDrawer();
   };
 
   // 刪除單項訊息
@@ -106,7 +98,7 @@ const Notice = () => {
       msgType: tabValue !== '0' ? tabValue : '',
     };
     await deleteAllPush(param);
-    handleOpenDrawer();
+    closeDrawer();
   };
 
   const renderMessagesList = (msgList) => msgList.map((item) => (
@@ -130,6 +122,14 @@ const Notice = () => {
       </li>
     </ul>
   );
+
+  // 開啟編輯選單
+  const handleOpenDrawer = () => {
+    showDrawer(
+      '',
+      renderEditList(),
+    );
+  };
 
   useEffect(() => {
     getNotices();
@@ -187,11 +187,6 @@ const Notice = () => {
               }
             </FEIBTabPanel>
           </FEIBTabContext>
-          <BottomDrawer
-            isOpen={openDrawer}
-            onClose={handleOpenDrawer}
-            content={renderEditList()}
-          />
         </div>
       </NoticeWrapper>
     </Layout>

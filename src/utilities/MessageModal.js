@@ -10,7 +10,7 @@ const closePopup = () => {
   store.dispatch(setModalVisible(false));
 };
 
-const closeDrawer = () => {
+export const closeDrawer = () => {
   store.dispatch(setDrawerVisible(false));
 };
 

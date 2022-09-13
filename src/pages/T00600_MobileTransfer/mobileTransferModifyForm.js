@@ -68,6 +68,7 @@ const MobileTransferModifyForm = ({ onClose, modifyData }) => {
         data,
       },
     );
+    onClose();
   };
 
   useEffect(() => {

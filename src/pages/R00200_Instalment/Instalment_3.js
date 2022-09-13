@@ -4,17 +4,14 @@ import { useHistory } from 'react-router';
 /* Elements */
 import successImg from 'assets/images/successImg.svg';
 import Layout from 'components/Layout/Layout';
-import BottomDrawer from 'components/BottomDrawer';
 import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
-import PasswordInput from 'components/PasswordInput';
 import Dialog from 'components/Dialog';
 
 /* Styles */
 import InstalmentWrapper from './instalment.style';
 
 const Instalment3 = () => {
-  const [openDrawer, setOpenDrawer] = useState(true);
   const [showResultDialog, setShowResultDialog] = useState(true);
 
   const staging = [
@@ -86,20 +83,6 @@ const Instalment3 = () => {
     </table>
   );
 
-  const renderPasswordArea = () => (
-    <PasswordInput
-      id="password"
-      name="password"
-    />
-  );
-
-  const renderBottomDrawer = () => (
-    <form onSubmit={() => {}}>
-      { renderPasswordArea() }
-      <FEIBButton type="submit">送出</FEIBButton>
-    </form>
-  );
-
   const ResultDialog = () => (
     <Dialog
       title=" "
@@ -152,12 +135,6 @@ const Instalment3 = () => {
             確認
           </FEIBButton>
         </form>
-        <BottomDrawer
-          isOpen={openDrawer}
-          onClose={() => setOpenDrawer(!openDrawer)}
-          content={() => renderBottomDrawer()}
-          title="輸入網銀密碼"
-        />
         <ResultDialog />
       </InstalmentWrapper>
     </Layout>

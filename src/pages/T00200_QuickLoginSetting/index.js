@@ -51,22 +51,27 @@ const QuickLoginSetting = () => {
 
   // 解除快登綁定
   const callAppDelQL = async (type) => {
-    const { result, message } = await delQL(type);
-    const isSuccess = result === 'true';
-    // 顯示解除綁定結果
-    showAnimationModal({
-      isSuccess,
-      successTitle: '解除成功',
-      successDesc: '',
-      errorTitle: '解除失敗',
-      errorCode: '',
-      errorDesc: message,
-    });
-    if (type === '1' && isSuccess) {
-      setIsBioActive(false);
-    }
-    if (type === '2' && isSuccess) {
-      setIsPatternActive(false);
+    const code = 0x20;
+    const rs = await transactionAuth(code);
+    console.log('交易驗證結果:', JSON.stringify(rs));
+    if (rs.result) {
+      const { result, message } = await delQL(type);
+      const isSuccess = result === 'true';
+      // 顯示解除綁定結果
+      showAnimationModal({
+        isSuccess,
+        successTitle: '解除成功',
+        successDesc: '',
+        errorTitle: '解除失敗',
+        errorCode: '',
+        errorDesc: message,
+      });
+      if (type === '1' && isSuccess) {
+        setIsBioActive(false);
+      }
+      if (type === '2' && isSuccess) {
+        setIsPatternActive(false);
+      }
     }
   };
 

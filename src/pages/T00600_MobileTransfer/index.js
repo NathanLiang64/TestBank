@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { customPopup } from 'utilities/MessageModal';
+import { customPopup, showDrawer, closeDrawer } from 'utilities/MessageModal';
 import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import AddNewItem from 'components/AddNewItem';
 import SettingItem from 'components/SettingItem';
-import BottomDrawer from 'components/BottomDrawer';
 import Layout from 'components/Layout/Layout';
 import MobileTransferModifyForm from './mobileTransferModifyForm';
 
@@ -18,7 +17,6 @@ import MobileTransferWrapper from './mobileTransfer.style';
 const MobileTransfer = () => {
   const history = useHistory();
 
-  // eslint-disable-next-line no-unused-vars
   const [mobileTransferData, setMobileTransferData] = useState([]);
   const [mobilesList, setMobilesList] = useState([]);
   const [modifyData, setModifyData] = useState({
@@ -27,7 +25,6 @@ const MobileTransfer = () => {
     status: '',
     isDefault: '',
   });
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [otpMobileNum, setOtpMobileNum] = useState('');
   // 新增手機號碼收款
   const addMobileTransferSetting = () => {
@@ -80,12 +77,6 @@ const MobileTransfer = () => {
     }
   };
 
-  // 編輯手機號碼收款
-  const editMobileTransferSetting = (data) => {
-    setModifyData(data);
-    setDrawerOpen(true);
-  };
-
   // 刪除手機號碼收款
   const deleteMobileTransferSetting = async (data) => {
     const { custName } = await fetchName();
@@ -104,7 +95,16 @@ const MobileTransfer = () => {
 
   // 關閉變更 drawer
   const handleCloseDrawer = () => {
-    setDrawerOpen(false);
+    closeDrawer();
+  };
+
+  // 編輯手機號碼收款
+  const editMobileTransferSetting = (data) => {
+    setModifyData(data);
+    showDrawer(
+      '手機號碼收款變更',
+      <MobileTransferModifyForm modifyData={modifyData} onClose={handleCloseDrawer} />,
+    );
   };
 
   // render 已設定的手機號碼收款項目
@@ -119,18 +119,6 @@ const MobileTransfer = () => {
       />
     ));
 
-  // 收款變更 drawer
-  const renderModifyDrawer = () => (
-    <BottomDrawer
-      title="手機號碼收款變更"
-      isOpen={drawerOpen}
-      onClose={handleCloseDrawer}
-      content={(
-        <MobileTransferModifyForm modifyData={modifyData} onClose={handleCloseDrawer} />
-      )}
-    />
-  );
-
   useEffect(() => {
     checkBindAndMobile();
   }, []);
@@ -140,7 +128,6 @@ const MobileTransfer = () => {
       <MobileTransferWrapper className="settingListContainer">
         <AddNewItem onClick={addMobileTransferSetting} addLabel="新增手機號碼收款設定" />
         { renderMobileTransferItems() }
-        { renderModifyDrawer() }
       </MobileTransferWrapper>
     </Layout>
   );
