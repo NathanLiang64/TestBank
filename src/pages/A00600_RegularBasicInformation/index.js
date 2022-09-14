@@ -111,6 +111,14 @@ const RegularBasicInformation = () => {
     dispatch(setIsOpen(true));
   };
 
+  // caculate action code
+  const getActionCode = (modifyData) => {
+    const jobCdCode = modifyData.jobCd === regularBasicData.jobcd ? 0 : 2;
+    const gradeCode = modifyData.grade === regularBasicData.grade ? 0 : 1;
+    const incomeCode = modifyData.inCome === regularBasicData.income ? 0 : 4;
+    return jobCdCode + gradeCode + incomeCode;
+  };
+
   // 更新基本資料
   const modifyPersonalData = async () => {
     const data = getValues();
@@ -119,7 +127,11 @@ const RegularBasicInformation = () => {
       grade: data.title,
       inCome: data.income,
     };
-    const modifyResponse = await updateRegularBasicInformation(modifyData);
+    const param = {
+      ...modifyData,
+      actionCode: getActionCode(modifyData),
+    };
+    const modifyResponse = await updateRegularBasicInformation(param);
     setResultDialog(modifyResponse);
   };
 
