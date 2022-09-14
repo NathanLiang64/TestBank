@@ -64,13 +64,13 @@ const BasicInformation = () => {
       cityCode: '',
     },
   ]);
-  const [originMobileNum, setOriginMobileNum] = useState('');
+  const [originPersonalData, setOriginPersonalData] = useState('');
 
   // 取得個人資料
   const getPersonalData = async (countyListResponse) => {
     const { code, data, message } = await getBasicInformation({});
     if (code === '0000') {
-      setOriginMobileNum(data.mobile);
+      setOriginPersonalData(data);
       reset({
         ...data,
       });
@@ -137,6 +137,22 @@ const BasicInformation = () => {
     dispatch(setIsOpen(true));
   };
 
+  // caculateActionCode
+  const getActionCode = () => {
+    const {
+      county, city, zipCode, addr, email, mobile,
+    } = getValues();
+    const addressCode = (
+      county === originPersonalData.county
+      && city === originPersonalData.city
+      && zipCode === originPersonalData.zipCode
+      && addr === originPersonalData.addr
+    ) ? 0 : 1;
+    const mobileCode = mobile === originPersonalData.mobile ? 0 : 2;
+    const mailCode = email === originPersonalData.email ? 0 : 4;
+    return addressCode + mobileCode + mailCode;
+  };
+
   // 更新個人資料
   const modifyPersonalData = async () => {
     const {
@@ -149,6 +165,7 @@ const BasicInformation = () => {
       addr,
       email,
       mobile,
+      actionCode: getActionCode(),
     };
     const modifyDataResponse = await modifyBasicInformation(param);
     console.log(modifyDataResponse);
@@ -159,7 +176,7 @@ const BasicInformation = () => {
   const onSubmit = async () => {
     const { mobile } = getValues();
     // 有變更手機號碼
-    if (mobile !== originMobileNum) {
+    if (mobile !== originPersonalData.mobile) {
       const authCode = 0x34;
       const jsRs = await transactionAuth(authCode, mobile);
       if (jsRs.result) {
