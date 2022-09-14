@@ -32,7 +32,7 @@ import TransferWrapper from './D00100.style';
 
 /**
  * 轉帳首頁
- * @param {*} { state } 是由轉帳確認頁(D001001)在 goBack 時再傳田來的 Model 資料。
+ * @param {*} { state } 是由轉帳確認頁(D001001)或轉帳結果頁(D001002)在 goBack 時再傳回來的 Model 資料。
  */
 const Transfer = (props) => {
   const { location } = props;
@@ -467,7 +467,7 @@ const Transfer = (props) => {
 
     setValue(idTransOut, {
       account: account.accountNo, // 轉出帳號
-      alias: account.alias, // 帳戶名稱，若有暱稱則會優先用暱稱
+      alias: account.alias, // 帳戶名稱，若有暱稱則會優先用暱稱; 會用在確認及執行這二頁。
       balance: account.balance, // 帳戶餘額
       freeTransfer: account.freeTransfer, // 免費跨轉次數
       freeTransferRemain: account.freeTransferRemain, // 免費跨轉剩餘次數

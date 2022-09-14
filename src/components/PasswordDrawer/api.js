@@ -12,16 +12,16 @@ export const getTransactionAuthMode = async (autoCode) => {
 
 /**
  * 單元功能要求 建立交易授權驗證，必要時會發送OTP驗證碼簡訊，並依 otpMode 決定發送閘道及手機門號。
- * @param {*} request {
- *   funcCode: 要求發送OTP的單元功能。 這個欄位由 APP 從 FunctionController 取得。
- *   authCode: 要求進行的驗證模式的代碼。
- *   mobile: 簡訊識別碼發送的手機門號。當綁定或變更門號時，因為需要確認手機號碼的正確性，所以要再驗OTP
- * }
- * @returns {
- *   key: 本次要求驗證的金鑰，用來檢核使用者輸入
- *   otpSmsId: OTP簡訊中的識別碼。
- *   otpMobile: 簡訊識別碼發送的手機門號。
- * }
+ * @param {{
+ *   funcCode: '要求發送OTP的單元功能；這個欄位由 APP 從 FunctionController 取得。'
+ *   authCode: '要求進行的驗證模式的代碼'
+ *   mobile: '簡訊識別碼發送的手機門號；當綁定或變更門號時，因為需要確認手機號碼的正確性，所以要再驗OTP'
+ * }} request
+ * @returns {Promise<{
+ *   key: '本次要求驗證的金鑰，用來檢核使用者輸入'
+ *   otpSmsId: 'OTP簡訊中的識別碼。'
+ *   otpMobile: '簡訊識別碼發送的手機門號。'
+ * }>}
  */
 export const createTransactionAuth = async (request) => {
   const response = await callAPI('/api/transactionAuth/v1/create', request);

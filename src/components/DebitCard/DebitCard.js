@@ -169,7 +169,7 @@ const DebitCard = ({
       <div className="cardTitle">
         <h2 className="cardName">
           {model.alias ?? '(未命名)'}
-          {model.currency && (['NTD', 'TWD'].indexOf(model.currency) < 9999) ? ` (${getCurrenyName(model.currency)})` : ''}
+          {model.currency && (['NTD', 'TWD'].indexOf(model.currency) < 0) ? ` (${getCurrenyName(model.currency)})` : ''}
         </h2>
         {renderAccountNo()}
       </div>
