@@ -151,7 +151,9 @@ const Transfer = (props) => {
 
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
-    loadAccountsList('MSC', setAccounts);
+    loadAccountsList('MSC', (accts) => {
+      setAccounts(accts.filter((acct) => acct.transable)); // 排除 transable = false 的帳戶。
+    });
 
     // 當啟動頁面時有提供 state 時，會在建立 model 時以 useState 的預設值填入。
     let keepData = state;

@@ -191,7 +191,7 @@ const C00400 = () => {
           onFunctionClick={handleFunctionClick}
           cardColor="orange"
           funcList={[
-            { fid: 'foreignCurrencyTransfer', title: '轉帳', enabled: (selectedAccount.balance > 0) },
+            { fid: 'foreignCurrencyTransfer', title: '轉帳', enabled: (selectedAccount.transable && selectedAccount.balance > 0) },
             { fid: 'exchange', title: '換匯', enabled: (selectedAccount.balance > 0) },
           ]}
           moreFuncs={[
