@@ -15,7 +15,6 @@ import {
   FEIBButton,
 } from 'components/elements';
 import Layout from 'components/Layout/Layout';
-import ConfirmButtons from 'components/ConfirmButtons';
 import Accordion from 'components/Accordion';
 import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
 
@@ -227,30 +226,41 @@ const RegularBasicInformation = () => {
             </Accordion>
           </div>
           <div>
-            <ConfirmButtons
-              mainButtonValue="確認"
-              subButtonValue="重新設定"
-              subButtonOnClick={resetForm}
-            />
             <FEIBButton
-              type="button"
-              $bgColor={theme.colors.background.cancel}
-              $color={theme.colors.text.dark}
-              onClick={async () => {
-                const data = getValues();
-                const modifyData = {
-                  jobCd: data.industry,
-                  grade: data.title,
-                  inCome: data.income,
-                  actionCode: 0,
-                };
-                await updateRegularBasicInformation(modifyData);
-                closeFunc();
-              }}
-              style={{ marginTop: '2rem' }}
+              type="submit"
             >
-              維持不變
+              確認
             </FEIBButton>
+            <div style={{ display: 'flex' }}>
+              <FEIBButton
+                type="button"
+                $bgColor={theme.colors.background.cancel}
+                $color={theme.colors.text.dark}
+                onClick={async () => {
+                  const data = getValues();
+                  const modifyData = {
+                    jobCd: data.industry,
+                    grade: data.title,
+                    inCome: data.income,
+                    actionCode: 0,
+                  };
+                  await updateRegularBasicInformation(modifyData);
+                  closeFunc();
+                }}
+                style={{ marginTop: '2rem', marginRight: '1rem' }}
+              >
+                維持不變
+              </FEIBButton>
+              <FEIBButton
+                type="button"
+                $bgColor={theme.colors.background.cancel}
+                $color={theme.colors.text.dark}
+                onClick={resetForm}
+                style={{ marginTop: '2rem', marginLeft: '1rem' }}
+              >
+                重新設定
+              </FEIBButton>
+            </div>
           </div>
         </form>
       </RegularBasicInformationWrapper>
