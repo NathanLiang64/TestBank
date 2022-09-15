@@ -1,4 +1,6 @@
-const AccordionContent = () => (
+/** @format */
+
+const R00200AccordionContent1 = () => (
   <>
     <ol>
       <li>
@@ -28,4 +30,4 @@ const AccordionContent = () => (
   </>
 );
 
-export default AccordionContent;
+export default R00200AccordionContent1;

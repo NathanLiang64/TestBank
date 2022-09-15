@@ -1,20 +1,36 @@
-/* eslint-disable object-curly-newline */
+/**
+ * /* eslint-disable object-curly-newline
+ *
+ * @format
+ */
+
 /* eslint-disable radix,no-restricted-globals */
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 // import { useHistory } from 'react-router';
-import { useDispatch } from 'react-redux';
-import { Controller, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import {useDispatch} from 'react-redux';
+import {Controller, useForm} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { setShowSpinner } from 'components/Spinner/stores/actions';
+import {setShowSpinner} from 'components/Spinner/stores/actions';
 import {
-  FEIBInput, FEIBErrorMessage, FEIBLinkButton, FEIBCheckbox, FEIBCheckboxLabel, FEIBIconButton,
+  FEIBInput,
+  FEIBErrorMessage,
+  FEIBLinkButton,
+  FEIBCheckbox,
+  FEIBCheckboxLabel,
+  FEIBIconButton,
 } from 'components/elements';
 import {
-  ArrowBackIcon, ArrowNextIcon, CheckboxCheckedIcon, CheckboxUncheckedIcon, FaceIdIcon, VisibilityIcon, VisibilityOffIcon,
+  ArrowBackIcon,
+  ArrowNextIcon,
+  CheckboxCheckedIcon,
+  CheckboxUncheckedIcon,
+  FaceIdIcon,
+  VisibilityIcon,
+  VisibilityOffIcon,
 } from 'assets/images/icons';
-import { goHome } from 'utilities/AppScriptProxy';
-import { accountValidation, identityValidation, passwordValidation } from 'utilities/validation';
+import {goHome} from 'utilities/AppScriptProxy';
+import {accountValidation, identityValidation, passwordValidation} from 'utilities/validation';
 import theme from 'themes/theme';
 import Logo from 'assets/images/logoTransparent.png';
 import BgImage from 'assets/images/loginBackground.png';
@@ -23,7 +39,7 @@ import LoginWrapper from './login.style';
 import FaceIdLoginModal from './faceIdLoginModal';
 import RegisterModal from './registerModal';
 // import { login, personalDataPreload, getInitData, getHomeData } from './login.api';
-import { login, getInitData, getAnnouncementData } from './login.api';
+import {login, getInitData, getAnnouncementData} from './login.api';
 
 const Login = () => {
   /**
@@ -35,11 +51,14 @@ const Login = () => {
     password: passwordValidation(),
   });
   const {
-    control, handleSubmit, setValue, formState: { errors },
+    control,
+    handleSubmit,
+    setValue,
+    formState: {errors},
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      identity: 'Y120409367', // Bankee台外數存(有很多明細資料)
+      identity: 'M197799277', // Bankee台外數存(有很多明細資料)
       // identity: 'B100000039', // Bankee台外數存、遠智授扣、交割帳戶
       account: '1qaz2wsx',
       password: 'feib1688',
@@ -80,7 +99,8 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     const isSuccess = await login(data);
-    if (isSuccess) { // 登入成功
+    if (isSuccess) {
+      // 登入成功
       // await personalDataPreload();
       // await getHomeData();
       // history.push('/');
@@ -96,14 +116,20 @@ const Login = () => {
           <span>Bankee 我們的社群銀行</span>
         </div>
 
-        <div className="formItems" style={{ width: '100%' }}>
+        <div className="formItems" style={{width: '100%'}}>
           <div>
             <Controller
               name="identity"
               control={control}
               defaultValue=""
-              render={({ field }) => (
-                <FEIBInput {...field} id="identity" name="identity" placeholder="身分證字號/手機號碼" onBlur={(e) => upperId(e)} />
+              render={({field}) => (
+                <FEIBInput
+                  {...field}
+                  id="identity"
+                  name="identity"
+                  placeholder="身分證字號/手機號碼"
+                  onBlur={(e) => upperId(e)}
+                />
               )}
             />
             <FEIBErrorMessage>{errors.identity?.message}</FEIBErrorMessage>
@@ -114,7 +140,7 @@ const Login = () => {
               name="account"
               control={control}
               defaultValue=""
-              render={({ field }) => (
+              render={({field}) => (
                 <FEIBInput
                   {...field}
                   id="account"
@@ -135,7 +161,7 @@ const Login = () => {
               name="password"
               control={control}
               defaultValue=""
-              render={({ field }) => (
+              render={({field}) => (
                 <FEIBInput
                   {...field}
                   id="password"
@@ -167,11 +193,7 @@ const Login = () => {
 
         <div className="controlButtons">
           <div className="login">
-            <FEIBIconButton
-              className="fastLogin"
-              $fontSize={2.4}
-              onClick={handleFaceIdLoginOpen}
-            >
+            <FEIBIconButton className="fastLogin" $fontSize={2.4} onClick={handleFaceIdLoginOpen}>
               <FaceIdIcon />
             </FEIBIconButton>
             <button type="submit">
@@ -181,7 +203,9 @@ const Login = () => {
           </div>
           <div className="signup">
             <span>還沒有帳號？</span>
-            <FEIBLinkButton $color={theme.colors.text.link} onClick={handleActionsOpen}>立即申請</FEIBLinkButton>
+            <FEIBLinkButton $color={theme.colors.text.link} onClick={handleActionsOpen}>
+              立即申請
+            </FEIBLinkButton>
           </div>
         </div>
         <img src={BgImage} alt="logo" className="backgroundImage" />

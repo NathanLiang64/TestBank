@@ -1,17 +1,21 @@
-import { useHistory } from 'react-router';
-import { useCheckLocation, usePageInfo } from 'hooks';
+/** @format */
+
+import {useHistory} from 'react-router';
+import {useCheckLocation, usePageInfo} from 'hooks';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-import { FEIBButton, FEIBRadioLabel, FEIBRadio } from 'components/elements';
+import {FEIBButton, FEIBRadioLabel, FEIBRadio} from 'components/elements';
 import Accordion from 'components/Accordion';
-import InstallmentTerms from './installmentTerms';
-import AccordionContent from './accordionContent';
+// Question: InstallmentTerms 與 R00200AccordionContent 內容相同
+// import InstallmentTerms from './installmentTerms';
+import R00200AccordionContent1 from './R00200_accordionContent_1';
+import R00200AccordionContent2 from './R00200_accordionContent_2';
 
 /* Styles */
-import InstalmentWrapper from './instalment.style';
+import InstalmentWrapper from './R00200.style';
 
-const Instalment2 = () => {
+const R00200_2 = () => {
   const stagingPercentage = '6%';
 
   useCheckLocation();
@@ -22,14 +26,12 @@ const Instalment2 = () => {
     const list = ['1 期', '3 期', '6 期', '9 期', '12 期'];
     return (
       <div className="selectList">
-        <div>
-          選擇晚點付期數
-        </div>
-        { list.map((item, index) => (
+        <div>選擇晚點付期數</div>
+        {list.map((item, index) => (
           <p>
             <FEIBRadioLabel value={index} control={<FEIBRadio />} label={item} />
           </p>
-        )) }
+        ))}
       </div>
     );
   };
@@ -40,22 +42,23 @@ const Instalment2 = () => {
         <form>
           <div>
             <div className="messageBox2">
-              <p style={{ width: '100%', textAlign: 'center' }}>
-                分期利率
-              </p>
-              <h2 className="titleText">{ stagingPercentage }</h2>
+              <p style={{width: '100%', textAlign: 'center'}}>分期利率</p>
+              <h2 className="titleText">{stagingPercentage}</h2>
             </div>
             {renderSelectList()}
+            {/* TODO: 晚點付約定條款 與 注意事項 之內容 */}
             <Accordion title="晚點付約定條款" space="both">
-              <InstallmentTerms />
+              {/* InstallmentTerms 與 R00200AccordionContent 內容相同 */}
+              {/* <InstallmentTerms /> */}
+              <R00200AccordionContent1 />
             </Accordion>
             <Accordion space="both">
-              <AccordionContent />
+              <R00200AccordionContent2 />
             </Accordion>
           </div>
           <FEIBButton
             onClick={() => {
-              history.push('/staging3');
+              history.push('/R002003');
             }}
           >
             同意條款並繼續
@@ -66,4 +69,4 @@ const Instalment2 = () => {
   );
 };
 
-export default Instalment2;
+export default R00200_2;
