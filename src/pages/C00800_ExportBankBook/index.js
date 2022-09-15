@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import * as yup from 'yup';
@@ -6,6 +6,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getEmail, sendBankBookMail } from 'pages/C00800_ExportBankBook/api';
 import { stringDateCodeFormatter } from 'utilities/Generator';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -30,6 +31,7 @@ import { getAccountsList } from './api';
 import ExportBankBookWrapper from './exportBankBook.style';
 
 const ExportBankBook = () => {
+  const dispatch = useDispatch();
   /**
    *- 資料驗證
    */
@@ -55,6 +57,14 @@ const ExportBankBook = () => {
   const [showDateRangeErrMsg, setShowDateRangeErrMsg] = useState(false);
   const [dateRangeErrorMessage, setDateRangeErrorMessage] = useState('');
 
+  // 取得 Email
+  const fetchEmail = async () => {
+    const { code, data } = await getEmail({});
+    if (code === '0000') {
+      setMail(data?.email || '');
+    }
+  };
+
   // 取得帳號清單
   const getAccounts = async () => {
     const response = await getAccountsList('MSFC'); // 帳戶類型 M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶
@@ -66,14 +76,7 @@ const ExportBankBook = () => {
       setAccountsList([]);
       setValue('account', '');
     }
-  };
-
-  // 取得 Email
-  const fetchEmail = async () => {
-    const { code, data } = await getEmail({});
-    if (code === '0000') {
-      setMail(data?.email || '');
-    }
+    return Promise.resolve(true);
   };
 
   const setDateRange = (rangeType) => {
@@ -140,9 +143,13 @@ const ExportBankBook = () => {
     }
   };
 
-  useEffect(() => {
-    getAccounts();
+  useEffect(async () => {
+    dispatch(setWaittingVisible(true));
+
+    await getAccounts();
     fetchEmail();
+
+    dispatch(setWaittingVisible(false));
   }, []);
 
   return (
