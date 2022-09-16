@@ -15,12 +15,13 @@ import {
   // FEIBInput,
   // FEIBErrorMessage,
 } from 'components/elements';
-import Dialog from 'components/Dialog';
+// import Dialog from 'components/Dialog';
 import PasswordInput from 'components/PasswordInput';
 import Accordion from 'components/Accordion';
-import ConfirmButtons from 'components/ConfirmButtons';
+// import ConfirmButtons from 'components/ConfirmButtons';
 
 /* Styles */
+import { showCustomPrompt } from 'utilities/MessageModal';
 import CardLessATMWrapper from './cardLessATM.style';
 
 import DealContent from './dealContent';
@@ -57,13 +58,13 @@ const CardLessATM = () => {
 
   // eslint-disable-next-line no-unused-vars
   const [newSiteReg, setNewSiteReg] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [dialogContent, setDialogContent] = useState('');
-  const [dialogButtons, setDialogButtons] = useState(null);
-  const [dialogCloseCallback, setDialogCloseCallback] = useState(() => () => setOpenDialog(false));
+  // const [openDialog, setOpenDialog] = useState(false);
+  // const [dialogContent, setDialogContent] = useState('');
+  // const [dialogButtons, setDialogButtons] = useState(null);
+  // const [dialogCloseCallback, setDialogCloseCallback] = useState(() => () => setOpenDialog(false));
 
   // 回上一個功能
-  const closeFunction = () => () => closeFunc();
+  // const closeFunction = () => () => closeFunc();
 
   // 跳轉到無卡提款申請頁
   const toWithdrawPage = () => {
@@ -72,13 +73,13 @@ const CardLessATM = () => {
   };
 
   // 設定 Dialog 內容
-  const generateDailog = (content, buttons, closeCallback) => {
-    setDialogCloseCallback(closeCallback);
-    setDialogContent(content);
-    setDialogButtons(buttons);
-    setOpenDialog(true);
-    switchLoading(false);
-  };
+  // const generateDailog = (content, buttons, closeCallback) => {
+  //   setDialogCloseCallback(closeCallback);
+  //   setDialogContent(content);
+  //   setDialogButtons(buttons);
+  //   setOpenDialog(true);
+  //   switchLoading(false);
+  // };
 
   // 檢查無卡提款狀態; 0=未申請, 1=已申請未開通, 2=已開通, 3=已註銷, 4=已失效, 5=其他
   const fetchCardlessStatus = async (param) => {
@@ -88,77 +89,40 @@ const CardLessATM = () => {
     setNewSiteReg(newSiteRegist);
     switch (cwdStatus) {
       case '1':
-        generateDailog(
-          '愛方便的您，怎麼少了無卡提款服務，快來啟用吧！',
-          (
-            <ConfirmButtons
-              mainButtonValue="確認"
-              mainButtonOnClick={() => setOpenDialog(false)}
-              subButtonValue="取消"
-              subButtonOnClick={closeFunction()}
-            />
-          ),
-          closeFunction,
-        );
+        await showCustomPrompt({message: '愛方便的您，怎麼少了無卡提款服務，快來啟用吧！', onCancel: () => closeFunc()});
         break;
-
       case '2':
         toWithdrawPage();
         break;
 
       case '4':
-        generateDailog(
-          message,
-          (
-            <FEIBButton onClick={closeFunction()}>確定</FEIBButton>
-          ),
-          closeFunction,
-        );
+        await showCustomPrompt({message, onOk: () => closeFunc(), onCancel: () => closeFunc()});
         break;
 
       default:
-        generateDailog(
-          message,
-          (
-            <FEIBButton onClick={closeFunction()}>確定</FEIBButton>
-          ),
-          closeFunction,
-        );
+        await showCustomPrompt({message, onOk: () => closeFunc(), onCancel: () => closeFunc()});
     }
   };
 
   // 檢查金融卡狀態；“01”=新申請 “02”=尚未開卡 “04”=已啟用 “05”=已掛失 “06”=已註銷 “07”=已銷戶 “08”=臨時掛失中 “09”=申請中
   const fetchCardStatus = async () => {
     switchLoading(true);
+
+    // TODO 因為沒有提供 cardStatus 資訊，所以 response 是 undefined，因此讀不到 message 造成 error
     const cardStatusResponse = await getCardStatus({});
     console.log('金融卡狀態', cardStatusResponse);
     const { cardStatus, message } = cardStatusResponse;
     switch (cardStatus) {
       case '02':
-        generateDailog(
-          message,
-          (
-            <ConfirmButtons
-              mainButtonValue="我要開卡"
-              mainButtonOnClick={() => console.log('跳轉到金融開卡頁')}
-              subButtonValue="取消"
-              subButtonOnClick={closeFunction()}
-            />
-          ),
-          closeFunction,
-        );
+        await showCustomPrompt({
+          message, okContent: '我要開卡', onOk: () => console.log('跳轉到金融開卡頁面'), onCancel: () => closeFunc(),
+        });
         break;
-
       case '04':
         fetchCardlessStatus({});
         break;
-
       default:
-        generateDailog(
-          message,
-          (<FEIBButton onClick={closeFunction()}>確定</FEIBButton>),
-          closeFunction,
-        );
+        await showCustomPrompt({message, onOk: () => closeFunc(), onCancel: () => closeFunc()});
         break;
     }
   };
@@ -167,44 +131,47 @@ const CardLessATM = () => {
   const activateWithdrawAndSetPwd = async (param) => {
     const authCode = 0x20;
     const jsRs = await transactionAuth(authCode);
+
     if (jsRs.result) {
       switchLoading(true);
       const activateResponse = await cardLessWithdrawActivate(param);
       const { message } = activateResponse;
 
       if (message) {
-        generateDailog(
-          message,
-          (
-            <FEIBButton
-              onClick={() => {
-                setOpenDialog(false);
-                closeFunc();
-              }}
-            >
-              確定
-            </FEIBButton>
-          ),
-          () => () => setOpenDialog(false),
-        );
+        await showCustomPrompt({ message, onOk: () => closeFunc });
+        // generateDailog(
+        //   message,
+        //   (
+        //     <FEIBButton
+        //       onClick={() => {
+        //         setOpenDialog(false);
+        //         closeFunc();
+        //       }}
+        //     >
+        //       確定
+        //     </FEIBButton>
+        //   ),
+        //   () => () => setOpenDialog(false),
+        // );
       } else {
-        generateDailog(
-          '已完成開通無卡提款服務！',
-          (
-            <FEIBButton
-              onClick={() => {
-                setOpenDialog(false);
-                toWithdrawPage();
-              }}
-            >
-              確定
-            </FEIBButton>
-          ),
-          () => () => {
-            setOpenDialog(false);
-            toWithdrawPage();
-          },
-        );
+        await showCustomPrompt({ message: '已完成開通無卡提款服務！', onOk: () => toWithdrawPage(), onCancel: () => toWithdrawPage() });
+        // generateDailog(
+        //   '已完成開通無卡提款服務！',
+        //   (
+        //     <FEIBButton
+        //       onClick={() => {
+        //         setOpenDialog(false);
+        //         toWithdrawPage();
+        //       }}
+        //     >
+        //       確定
+        //     </FEIBButton>
+        //   ),
+        //   () => () => {
+        //     setOpenDialog(false);
+        //     toWithdrawPage();
+        //   },
+        // );
       }
     }
   };
@@ -272,16 +239,16 @@ const CardLessATM = () => {
     </form>
   );
 
-  const renderDialog = () => (
-    <Dialog
-      isOpen={openDialog}
-      onClose={dialogCloseCallback}
-      content={<p>{dialogContent}</p>}
-      action={(
-        dialogButtons
-      )}
-    />
-  );
+  // const renderDialog = () => (
+  //   <Dialog
+  //     isOpen={openDialog}
+  //     onClose={dialogCloseCallback}
+  //     content={<p>{dialogContent}</p>}
+  //     action={(
+  //       dialogButtons
+  //     )}
+  //   />
+  // );
 
   useEffect(() => {
     fetchCardStatus();
@@ -291,7 +258,7 @@ const CardLessATM = () => {
     <Layout title="無卡提款">
       <CardLessATMWrapper>
         {renderPage()}
-        {renderDialog()}
+        {/* {renderDialog()} */}
       </CardLessATMWrapper>
     </Layout>
   );

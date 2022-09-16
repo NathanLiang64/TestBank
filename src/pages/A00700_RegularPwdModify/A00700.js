@@ -84,7 +84,7 @@ const RegularPwdModify = () => {
     }
   };
 
-  useEffect(() => {
+  useEffect(async () => {
     const message1 = (
       <>
         <p>親愛的客戶，您好：</p>
@@ -98,16 +98,18 @@ const RegularPwdModify = () => {
         <p>久未更新網銀密碼可能會有安全性風險</p>
       </>
     );
-    showCustomPrompt({
+
+    // 提醒久未變更密碼彈窗
+    await showCustomPrompt({
       message: message1,
-      onCancel: () => console.log('cancel'),
-    }).then((res) => {
-      if (!res) {
-        showCustomPrompt({
+      // 警告不變更密碼會有安全性問題
+      onCancel: async () => {
+        await showCustomPrompt({
           message: message2,
-          onCancel: () => console.log('cancel again'),
+          cancelContent: '取消',
           okContent: '維持不變',
           onOk: async () => {
+            // TODO: =====待調整=====
             const param = {
               actionCode: 2,
             };
@@ -115,7 +117,7 @@ const RegularPwdModify = () => {
             closeFunc();
           },
         });
-      }
+      },
     });
   }, []);
 
@@ -212,7 +214,6 @@ const RegularPwdModify = () => {
               subButtonValue="維持不變"
               mainButtonValue="儲存變更"
               subButtonOnClick={async () => {
-                // ！！！！ actionCode: 2 是什麼意思？
                 const param = {
                   actionCode: 2,
                 };

@@ -23,9 +23,9 @@ const C008001 = lazy(() => import('pages/C00800_ExportBankBook/exportBankBook_1'
 const D00100 = lazy(() => import('pages/D00100_NtdTransfer/D00100v2'));
 const D001001 = lazy(() => import('pages/D00100_NtdTransfer/D00100_1'));
 const D001002 = lazy(() => import('pages/D00100_NtdTransfer/D00100_2'));
-const D00300 = lazy(() => import('pages/D00300_CardLessATM'));
-const D003001 = lazy(() => import('pages/D00300_CardLessATM/cardLessATM_1'));
-const D003002 = lazy(() => import('pages/D00300_CardLessATM/cardLessATM_2'));
+const D00300 = lazy(() => import('pages/D00300_CardLessATM/D00300'));
+const D003001 = lazy(() => import('pages/D00300_CardLessATM/D003001'));
+const D003002 = lazy(() => import('pages/D00300_CardLessATM/D003002'));
 const D00400 = lazy(() => import('pages/D00400_CardLessWithDrawChgPwd'));
 const D00500 = lazy(() => import('pages/D00500_FrequentContacts/D00500'));
 const D00600 = lazy(() => import('pages/D00600_RegisteredContacts/D00600'));

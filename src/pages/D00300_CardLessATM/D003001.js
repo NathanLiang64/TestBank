@@ -4,6 +4,7 @@ import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getAccountSummary, cardLessWithdrawApply } from 'pages/D00300_CardLessATM/api';
+// eslint-disable-next-line no-unused-vars
 import { closeFunc, switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
 
 /* Elements */
@@ -11,13 +12,14 @@ import Layout from 'components/Layout/Layout';
 import {
   FEIBInput, FEIBInputLabel, FEIBButton, FEIBBorderButton, FEIBErrorMessage,
 } from 'components/elements';
-import Dialog from 'components/Dialog';
+// import Dialog from 'components/Dialog';
 import DebitCard from 'components/DebitCard/DebitCard';
 import Accordion from 'components/Accordion';
 import { AddCircleRounded, RemoveCircleRounded } from '@material-ui/icons';
 
 /* Styles */
 // import theme from 'themes/theme';
+import { showCustomPrompt } from 'utilities/MessageModal';
 import CardLessATMWrapper from './cardLessATM.style';
 
 const CardLessATM1 = () => {
@@ -46,8 +48,8 @@ const CardLessATM1 = () => {
 
   const amountArr = [1000, 2000, 3000, 5000, 10000, 20000];
 
-  const [openDialog, setOpenDialog] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  // const [openDialog, setOpenDialog] = useState(false);
+  // const [errorMessage, setErrorMessage] = useState('');
 
   // 跳轉結果頁
   const toResultPage = (data) => {
@@ -78,21 +80,24 @@ const CardLessATM1 = () => {
   };
 
   // 發生錯誤開啟 dialog，關閉 dialog 一律通知 app 關閉功能
-  const handleDialogOpen = (message) => {
-    setErrorMessage(message);
-    setOpenDialog(true);
-  };
+  // const handleDialogOpen = (message) => {
+  //   setErrorMessage(message);
+  //   setOpenDialog(true);
+  // };
 
   // 取得提款卡資訊
   const fetchAccountSummary = async () => {
     switchLoading(true);
+    // TODO 因為沒有提供 account 資訊，所以 response 是 undefined，因此讀不到 message 造成 error
     const summaryResponse = await getAccountSummary({ account: '' });
     console.log('取得提款帳號資訊', summaryResponse);
     const { message } = summaryResponse;
     if (!message) {
       setAccountSummary({ ...summaryResponse });
     } else {
-      handleDialogOpen(message);
+      // handleDialogOpen(message);
+      // TBD
+      showCustomPrompt({message, onOk: () => closeFunc()});
     }
     switchLoading(false);
   };
@@ -122,7 +127,8 @@ const CardLessATM1 = () => {
         console.log('提款結果', data);
         toResultPage(data);
       } else {
-        handleDialogOpen(message);
+        // handleDialogOpen(message);
+        showCustomPrompt({message, onOk: () => closeFunc()});
       }
     }
   };
@@ -133,7 +139,8 @@ const CardLessATM1 = () => {
       account: accountSummary.account,
     };
     if (data.withdrawAmount > accountSummary.balance) {
-      handleDialogOpen('提款金額不得大於帳戶餘額');
+      // handleDialogOpen('提款金額不得大於帳戶餘額');
+      showCustomPrompt({message: '提款金額不得大於帳戶餘額', onOk: () => closeFunc()});
     } else {
       requestCardlessWithdrawApply(param);
     }
@@ -213,18 +220,18 @@ const CardLessATM1 = () => {
     </form>
   );
 
-  const renderDialog = () => (
-    <Dialog
-      isOpen={openDialog}
-      onClose={() => setOpenDialog(false)}
-      content={<p>{errorMessage}</p>}
-      action={(
-        <FEIBButton onClick={() => closeFunc()}>
-          確定
-        </FEIBButton>
-      )}
-    />
-  );
+  // const renderDialog = () => (
+  //   <Dialog
+  //     isOpen={openDialog}
+  //     onClose={() => setOpenDialog(false)}
+  //     content={<p>{errorMessage}</p>}
+  //     action={(
+  //       <FEIBButton onClick={() => closeFunc()}>
+  //         確定
+  //       </FEIBButton>
+  //     )}
+  //   />
+  // );
 
   useEffect(() => {
     fetchAccountSummary();
@@ -234,7 +241,7 @@ const CardLessATM1 = () => {
     <Layout title="無卡提款">
       <CardLessATMWrapper>
         {renderWithdrawForm()}
-        {renderDialog()}
+        {/* {renderDialog()} */}
       </CardLessATMWrapper>
     </Layout>
   );
