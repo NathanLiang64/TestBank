@@ -1,20 +1,20 @@
 /** @format */
 
 // import {useState} from 'react';
-import {useHistory} from 'react-router';
+import { useHistory } from 'react-router';
 
 /* Elements */
 // TODO: 移除
 // import successImg from 'assets/images/successImg.svg';
 import Layout from 'components/Layout/Layout';
-import {FEIBButton} from 'components/elements';
+import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
 // TODO: 移除
 // import Dialog from 'components/Dialog';
 
 /* Styles */
 import theme from 'themes/theme';
-import {showInfo} from 'utilities/MessageModal';
+import { showInfo } from 'utilities/MessageModal';
 import InstalmentWrapper from './R00200.style';
 
 const R00200_3 = () => {
@@ -57,13 +57,13 @@ const R00200_3 = () => {
   );
 
   const stagingTable = () => (
-    <table style={{alignSelf: 'center', margin: '1rem'}}>
+    <table style={{ alignSelf: 'center', margin: '1rem' }}>
       <thead>
         <tr>
-          <td style={{color: theme.colors.primary.light}}>分期期數</td>
-          <td style={{color: theme.colors.primary.light}}>當期應繳本金</td>
-          <td style={{color: theme.colors.primary.light}}>分期利息</td>
-          <td style={{color: theme.colors.primary.light}}>當期應繳金額</td>
+          <td style={{ color: theme.colors.primary.light }}>分期期數</td>
+          <td style={{ color: theme.colors.primary.light }}>當期應繳本金</td>
+          <td style={{ color: theme.colors.primary.light }}>分期利息</td>
+          <td style={{ color: theme.colors.primary.light }}>當期應繳金額</td>
         </tr>
       </thead>
       <tbody>
@@ -117,9 +117,9 @@ const R00200_3 = () => {
             <div className="InstalmentWrapperText">各期繳款金額試算 (依實際帳單為準)</div>
             {ResultTable()}
             {stagingTable()}
-            <div style={{padding: 8}}>
-              <p style={{color: theme.colors.state.error}}>分期利息=本金餘額*(分期利率/12)</p>
-              <p style={{color: theme.colors.state.error}}>小數點後數字將四捨五入至整數位</p>
+            <div style={{ padding: 8 }}>
+              <p style={{ color: theme.colors.state.error }}>分期利息=本金餘額*(分期利率/12)</p>
+              <p style={{ color: theme.colors.state.error }}>小數點後數字將四捨五入至整數位</p>
             </div>
           </div>
           <FEIBButton

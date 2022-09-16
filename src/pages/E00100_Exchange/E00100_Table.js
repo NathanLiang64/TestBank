@@ -1,8 +1,8 @@
 /** @format */
 
-import {useEffect, useState} from 'react';
-import {getExchangeRateInfo} from 'pages/E00100_Exchange/api';
-import {dateFormatter, timeSecondFormatter} from 'utilities/Generator';
+import { useEffect, useState } from 'react';
+import { getExchangeRateInfo } from 'pages/E00100_Exchange/api';
+import { dateFormatter, timeSecondFormatter } from 'utilities/Generator';
 import styled from 'styled-components';
 
 const ExchangeTableWrapper = styled.div`
@@ -10,7 +10,7 @@ const ExchangeTableWrapper = styled.div`
     h2 {
       font-size: 1.4rem;
       line-height: 2.1rem;
-      color: ${({theme}) => theme.colors.text.light};
+      color: ${({ theme }) => theme.colors.text.light};
     }
   }
   table {
@@ -20,7 +20,7 @@ const ExchangeTableWrapper = styled.div`
           text-align: right;
           font-size: 1.2rem;
           line-height: 1.8rem;
-          color: ${({theme}) => theme.colors.primary.light};
+          color: ${({ theme }) => theme.colors.primary.light};
           &:first-child {
             text-align: left;
           }
@@ -33,7 +33,7 @@ const ExchangeTableWrapper = styled.div`
           text-align: right;
           font-size: 1.4rem;
           line-height: 2.1rem;
-          color: ${({theme}) => theme.colors.text.lightGray};
+          color: ${({ theme }) => theme.colors.text.lightGray};
           &:first-child {
             text-align: left;
           }
@@ -52,7 +52,7 @@ const E00100Table = () => {
     const dateStr = dateFormatter(now);
     const timeStr = timeSecondFormatter(now);
     setGetInfoStr(`${dateStr} ${timeStr}`);
-    const {code, data} = await getExchangeRateInfo({});
+    const { code, data } = await getExchangeRateInfo({});
     if (code === '0000') {
       setExchangeRate(data);
     }
@@ -74,7 +74,7 @@ const E00100Table = () => {
           </h2>
         </div>
       </section>
-      <table style={{margin: '1rem 0'}}>
+      <table style={{ margin: '1rem 0' }}>
         <thead>
           <tr>
             <td>幣別</td>

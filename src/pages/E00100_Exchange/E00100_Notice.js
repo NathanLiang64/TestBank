@@ -1,7 +1,7 @@
 /** @format */
 
 const E00100Notice = () => (
-  <ol style={{textAlign: 'justify'}}>
+  <ol style={{ textAlign: 'justify' }}>
     <li>
       本行臨櫃僅提供美金、日幣、人民幣、歐元及港幣之現鈔買賣，惟實際可兌換/提領之幣別、現鈔面額、限制及費用
       (存、提現鈔處理費)，依兌換/提領當時本行營業單位及相 關規定為準。

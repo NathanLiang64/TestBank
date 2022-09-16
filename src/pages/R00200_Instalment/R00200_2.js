@@ -1,11 +1,11 @@
 /** @format */
 
-import {useHistory} from 'react-router';
-import {useCheckLocation, usePageInfo} from 'hooks';
+import { useHistory } from 'react-router';
+import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-import {FEIBButton, FEIBRadioLabel, FEIBRadio} from 'components/elements';
+import { FEIBButton, FEIBRadioLabel, FEIBRadio } from 'components/elements';
 import Accordion from 'components/Accordion';
 // TODO: 移除
 // import InstallmentTerms from './installmentTerms';
@@ -42,7 +42,7 @@ const R00200_2 = () => {
         <form>
           <div>
             <div className="messageBox2">
-              <p style={{width: '100%', textAlign: 'center'}}>分期利率</p>
+              <p style={{ width: '100%', textAlign: 'center' }}>分期利率</p>
               <h2 className="titleText">{stagingPercentage}</h2>
             </div>
             {renderSelectList()}

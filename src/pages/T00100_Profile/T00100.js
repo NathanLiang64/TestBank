@@ -4,12 +4,12 @@
  * @format
  */
 
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import * as yup from 'yup';
-import {Controller, useForm} from 'react-hook-form';
-import {yupResolver} from '@hookform/resolvers/yup';
-import {startFunc} from 'utilities/AppScriptProxy';
-import {getNickName, updateNickName, uploadAvatar} from 'pages/T00100_Profile/api';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { startFunc } from 'utilities/AppScriptProxy';
+import { getNickName, updateNickName, uploadAvatar } from 'pages/T00100_Profile/api';
 
 /* Elements */
 // prettier-ignore
@@ -17,12 +17,12 @@ import {
   FEIBInput, FEIBInputLabel, FEIBErrorMessage,
 } from 'components/elements';
 import Layout from 'components/Layout/Layout';
-import {showCustomPrompt} from 'utilities/MessageModal';
+import { showCustomPrompt } from 'utilities/MessageModal';
 // TODO: 移除
 // import Dialog from 'components/Dialog';
 
 /* Styles */
-import {CreateRounded, KeyboardArrowRightRounded} from '@material-ui/icons';
+import { CreateRounded, KeyboardArrowRightRounded } from '@material-ui/icons';
 import Avatar from 'assets/images/avatar.png';
 import SettingList from './T00100_settingList';
 import ProfileWrapper from './T00100.style';
@@ -37,7 +37,7 @@ const T00100 = () => {
   const {
     handleSubmit,
     control,
-    formState: {errors},
+    formState: { errors },
     reset,
     setValue,
   } = useForm({
@@ -76,19 +76,19 @@ const T00100 = () => {
   const uploadAvatarImg = async (e) => {
     const file = e.target.files[0];
     if (!file) {
-      showCustomPrompt({title: '請選擇檔案'});
+      showCustomPrompt({ title: '請選擇檔案' });
       // TODO: 移除
       // openMessageDialog('請選擇檔案');
       return;
     }
     if (!file.type.includes('image')) {
-      showCustomPrompt({title: '檔案格式錯誤，僅限 JPG, JPEG, PNG 格式圖檔'});
+      showCustomPrompt({ title: '檔案格式錯誤，僅限 JPG, JPEG, PNG 格式圖檔' });
       // TODO: 移除
       // openMessageDialog('檔案格式錯誤，僅限 JPG, JPEG, PNG 格式圖檔');
       return;
     }
     if (file.size / 1024 > 1024) {
-      showCustomPrompt({title: '檔案大小必須小於 1024 KB'});
+      showCustomPrompt({ title: '檔案大小必須小於 1024 KB' });
       // TODO: 移除
       // openMessageDialog('檔案大小必須小於 1024 KB');
       return;
@@ -98,7 +98,7 @@ const T00100 = () => {
     const response = await uploadAvatar(formData);
     console.log(response);
     if (response === 'OK') {
-      showCustomPrompt({title: '上傳成功'});
+      showCustomPrompt({ title: '上傳成功' });
       // TODO: 移除
       // openMessageDialog('上傳成功');
       setAvatarUrl(
@@ -106,7 +106,7 @@ const T00100 = () => {
       );
     }
     if (response?.code) {
-      showCustomPrompt({title: `${response?.message}，錯誤碼：${response?.code}`});
+      showCustomPrompt({ title: `${response?.message}，錯誤碼：${response?.code}` });
       // TODO: 移除
       // openMessageDialog(`${response?.message}，錯誤碼：${response?.code}`);
     }
@@ -118,11 +118,11 @@ const T00100 = () => {
     // TODO: 移除
     // setShowChangeNickNameDialog(true);
     // eslint-disable-next-line no-use-before-define
-    showCustomPrompt({title: '編輯名稱', message: renderForm(), okContent: '完成'});
+    showCustomPrompt({ title: '編輯名稱', message: renderForm(), okContent: '完成' });
   };
 
   const fetchNickName = async () => {
-    const {code, data, message} = await getNickName({});
+    const { code, data, message } = await getNickName({});
     if (code === '0000') {
       setNickName(data.nickName || '');
       setUuid(data.uuid);
@@ -130,7 +130,7 @@ const T00100 = () => {
         `${process.env.REACT_APP_AVATAR_IMG_URL}/pf_${data.uuid}_b.jpg?timestamp=${Date.now()}`,
       );
     } else {
-      showCustomPrompt({title: `取得暱稱與大頭照發生錯誤(${code})：${message}`});
+      showCustomPrompt({ title: `取得暱稱與大頭照發生錯誤(${code})：${message}` });
       // TODO: 移除
       // openMessageDialog(`取得暱稱與大頭照發生錯誤(${code})：${message}`);
     }
@@ -157,13 +157,13 @@ const T00100 = () => {
   ));
 
   const renderForm = () => (
-    <form id="nickNameForm" onSubmit={handleSubmit(onSubmit)} style={{paddingBottom: '0'}}>
+    <form id="nickNameForm" onSubmit={handleSubmit(onSubmit)} style={{ paddingBottom: '0' }}>
       <FEIBInputLabel htmlFor="nickName">您的名稱</FEIBInputLabel>
       <Controller
         name="nickName"
         defaultValue=""
         control={control}
-        render={({field}) => (
+        render={({ field }) => (
           <FEIBInput
             {...field}
             type="text"

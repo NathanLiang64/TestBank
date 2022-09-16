@@ -1,12 +1,12 @@
 /** @format */
 
-import {useState, useEffect} from 'react';
-import {useHistory} from 'react-router';
-import {currencyZhGenerator} from 'utilities/Generator';
+import { useState, useEffect } from 'react';
+import { useHistory } from 'react-router';
+import { currencyZhGenerator } from 'utilities/Generator';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-import {FEIBButton} from 'components/elements';
+import { FEIBButton } from 'components/elements';
 import Accordion from 'components/Accordion';
 import ConfirmButtons from 'components/ConfirmButtons';
 import InformationList from 'components/InformationList';
@@ -15,7 +15,7 @@ import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 /* Styles */
 import ExchangeWrapper from './E00100.style';
 
-const E001002 = ({location}) => {
+const E001002 = ({ location }) => {
   const history = useHistory();
   const [isSuccess, setIsSuccess] = useState(true);
   const [exchangeResult, setExchangeResult] = useState({});
@@ -34,7 +34,7 @@ const E001002 = ({location}) => {
 
   useEffect(() => {
     if (location?.state) {
-      setExchangeResult({...location.state});
+      setExchangeResult({ ...location.state });
     }
     if (location?.state.code) {
       setIsSuccess(false);
@@ -96,9 +96,7 @@ const E001002 = ({location}) => {
               />
               <InformationList
                 title="轉換外幣幣別"
-                content={`${currencyZhGenerator(exchangeResult?.trfCcyCd)} ${
-                  exchangeResult?.trfCcyCd
-                }`}
+                content={`${currencyZhGenerator(exchangeResult?.trfCcyCd)} ${exchangeResult?.trfCcyCd}`}
               />
               <InformationList title="匯款性質分類" content={exchangeResult?.leglDesc} />
             </div>

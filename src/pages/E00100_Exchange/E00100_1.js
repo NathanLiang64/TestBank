@@ -1,10 +1,10 @@
 /** @format */
 
-import {useState, useEffect} from 'react';
-import {useHistory} from 'react-router';
-import {exchangeNtoF, exchangeFtoN} from 'pages/E00100_Exchange/api';
-import {toCurrency} from 'utilities/Generator';
-import {switchLoading, transactionAuth} from 'utilities/AppScriptProxy';
+import { useState, useEffect } from 'react';
+import { useHistory } from 'react-router';
+import { exchangeNtoF, exchangeFtoN } from 'pages/E00100_Exchange/api';
+import { toCurrency } from 'utilities/Generator';
+import { switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -17,7 +17,7 @@ import E00100Notice from './E00100_Notice';
 /* Styles */
 import ExchangeWrapper from './E00100.style';
 
-const E001001 = ({location}) => {
+const E001001 = ({ location }) => {
   const history = useHistory();
   const [confirmData, setConfirmData] = useState({});
 
@@ -28,7 +28,7 @@ const E001001 = ({location}) => {
     const jsRs = await transactionAuth(authCode);
     if (jsRs.result) {
       switchLoading(true);
-      const param = {...confirmData};
+      const param = { ...confirmData };
       delete param.outAccountAmount;
       let response;
       // 1: 台轉外
@@ -56,7 +56,7 @@ const E001001 = ({location}) => {
 
   useEffect(() => {
     if (location?.state) {
-      setConfirmData({...location?.state});
+      setConfirmData({ ...location?.state });
     }
   }, []);
 

@@ -1,15 +1,15 @@
 /** @format */
 
 // import {useEffect} from 'react';
-import {useHistory} from 'react-router';
-import {useCheckLocation, usePageInfo} from 'hooks';
+import { useHistory } from 'react-router';
+import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
 // TODO: 移除
 // import Dialog from 'components/Dialog';
-import {FEIBButton, FEIBRadio, FEIBRadioLabel} from 'components/elements';
-import {showError} from 'utilities/MessageModal';
+import { FEIBButton, FEIBRadio, FEIBRadioLabel } from 'components/elements';
+import { showError } from 'utilities/MessageModal';
 import Accordion from 'components/Accordion';
 import R00200AccordionContent2 from './R00200_accordionContent_2';
 
@@ -70,7 +70,7 @@ const R00200 = () => {
   return (
     <Layout title="晚點付">
       <InstalmentWrapper className="InstalmentWrapper" small>
-        <form onSubmit={() => {}}>
+        <form onSubmit={() => { }}>
           <div>
             <div className="InstalmentWrapperText">點選申請晚點付項目</div>
             {renderSelectList()}

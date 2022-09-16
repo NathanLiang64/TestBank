@@ -4,9 +4,9 @@
  * @format
  */
 
-import {useState, useEffect} from 'react';
-import {useHistory} from 'react-router';
-import {switchLoading} from 'utilities/AppScriptProxy';
+import { useState, useEffect } from 'react';
+import { useHistory } from 'react-router';
+import { switchLoading } from 'utilities/AppScriptProxy';
 import {
   isEmployee,
   getAccountsList,
@@ -28,16 +28,16 @@ import {
   FEIBErrorMessage,
 } from 'components/elements';
 import Layout from 'components/Layout/Layout';
-import {RadioGroup} from '@material-ui/core';
-import {Controller, useForm} from 'react-hook-form';
+import { RadioGroup } from '@material-ui/core';
+import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import {yupResolver} from '@hookform/resolvers/yup';
-import {numberToChinese, currencySymbolGenerator, toCurrency} from 'utilities/Generator';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { numberToChinese, currencySymbolGenerator, toCurrency } from 'utilities/Generator';
 // TODO: 移除
 // import Dialog from 'components/Dialog';
 import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
-import {showCustomPrompt, showInfo} from 'utilities/MessageModal';
+import { showCustomPrompt, showInfo } from 'utilities/MessageModal';
 import E00100Rules from './E00100_Rules';
 import E00100Notice from './E00100_Notice';
 import E00100Table from './E00100_Table';
@@ -70,7 +70,7 @@ const E00100 = () => {
   const {
     handleSubmit,
     control,
-    formState: {errors},
+    formState: { errors },
     watch,
     setValue,
     getValues,
@@ -193,7 +193,7 @@ const E00100 = () => {
   const handleExchangeTypeChange = (event) => {
     setValue('exchangeType', event.target.value);
     getEchgPropertyList(event.target.value);
-    const {inAccount, outAccount} = getValues();
+    const { inAccount, outAccount } = getValues();
     setValue('outAccount', inAccount);
     setValue('inAccount', outAccount);
   };
@@ -290,7 +290,7 @@ const E00100 = () => {
             ? getAmount('TWD')
             : Number(getAmount(selectedCurrency.ccyCd).replace(/,/gi, '')),
       };
-      history.push('/E001001', {...confirmData});
+      history.push('/E001001', { ...confirmData });
     } else {
       // TODO: 移除
       // handleSetDialog(response.message);
@@ -383,7 +383,7 @@ const E00100 = () => {
 
   return (
     <Layout title="外幣換匯">
-      <ExchangeWrapper style={{padding: '2.4rem 1.6rem 2.4rem 1.6rem'}}>
+      <ExchangeWrapper style={{ padding: '2.4rem 1.6rem 2.4rem 1.6rem' }}>
         <div className="borderBtnContainer">
           <FEIBBorderButton
             className="customSize"
@@ -405,14 +405,14 @@ const E00100 = () => {
               name="exchangeType"
               control={control}
               defaultValue="1"
-              render={({field}) => (
+              render={({ field }) => (
                 <RadioGroup
                   {...field}
                   aria-label="換匯種類"
                   id="exchangeType"
                   name="exchangeType"
                   defaultValue="1"
-                  style={{flexDirection: 'row', marginBottom: '.6rem'}}
+                  style={{ flexDirection: 'row', marginBottom: '.6rem' }}
                   onChange={handleExchangeTypeChange}
                 >
                   <FEIBRadioLabel value="1" control={<FEIBRadio />} label="新臺幣轉外幣" />
@@ -425,7 +425,7 @@ const E00100 = () => {
               name="outAccount"
               defaultValue=""
               control={control}
-              render={({field}) => (
+              render={({ field }) => (
                 <FEIBSelect
                   {...field}
                   id="outAccount"
@@ -448,7 +448,7 @@ const E00100 = () => {
               name="currency"
               defaultValue=""
               control={control}
-              render={({field}) => (
+              render={({ field }) => (
                 <FEIBSelect {...field} id="currency" name="currency" error={!!errors.currency}>
                   {currencyTypeList.map((item) => (
                     <FEIBOption key={item?.ccyCd} value={item?.ccyId}>
@@ -471,7 +471,7 @@ const E00100 = () => {
               name="inAccount"
               defaultValue=""
               control={control}
-              render={({field}) => (
+              render={({ field }) => (
                 <FEIBSelect {...field} id="inAccount" name="inAccount" error={!!errors.inAccount}>
                   {renderAccountOption(watch('exchangeType') === '2')}
                   {/*
@@ -488,21 +488,19 @@ const E00100 = () => {
               name="outType"
               control={control}
               defaultValue="1"
-              render={({field}) => (
+              render={({ field }) => (
                 <RadioGroup {...field} id="outType" name="outType" defaultValue="1">
                   <FEIBRadioLabel
                     className="outTypeRadioLabel"
                     value="1"
                     control={<FEIBRadio />}
-                    label={`希望${watch('exchangeType') === '2' ? '轉出' : '轉入'}${
-                      selectedCurrency?.ccyName || ''
-                    }`}
+                    label={`希望${watch('exchangeType') === '2' ? '轉出' : '轉入'}${selectedCurrency?.ccyName || ''}`}
                   />
                   <Controller
                     name="foreignBalance"
                     defaultValue=""
                     control={control}
-                    render={({balanceField}) => (
+                    render={({ balanceField }) => (
                       <div>
                         <FEIBInput
                           {...balanceField}
@@ -510,9 +508,7 @@ const E00100 = () => {
                           inputMode="numeric"
                           id="foreignBalance"
                           name="foreignBalance"
-                          placeholder={`請輸入${
-                            watch('exchangeType') === '2' ? '轉出' : '轉入'
-                          }金額`}
+                          placeholder={`請輸入${watch('exchangeType') === '2' ? '轉出' : '轉入'}金額`}
                           error={!!errors.foreignBalance}
                           disabled={watch('outType') !== '1'}
                           onChange={handleBalanceChange}
@@ -536,7 +532,7 @@ const E00100 = () => {
                     name="ntDollorBalance"
                     defaultValue=""
                     control={control}
-                    render={({balanceField}) => (
+                    render={({ balanceField }) => (
                       <div>
                         <FEIBInput
                           {...balanceField}
@@ -545,9 +541,7 @@ const E00100 = () => {
                           inputMode="numeric"
                           id="ntDollorBalance"
                           name="ntDollorBalance"
-                          placeholder={`請輸入${
-                            watch('exchangeType') === '2' ? '轉入' : '轉出'
-                          }金額`}
+                          placeholder={`請輸入${watch('exchangeType') === '2' ? '轉入' : '轉出'}金額`}
                           error={!!errors.ntDollorBalance}
                           disabled={watch('outType') !== '2'}
                           onChange={handleBalanceChange}
@@ -569,7 +563,7 @@ const E00100 = () => {
               name="property"
               defaultValue=""
               control={control}
-              render={({field}) => (
+              render={({ field }) => (
                 <FEIBSelect {...field} id="property" name="property" error={!!errors.property}>
                   {renderTrnsTypeList(propertiesList)}
                 </FEIBSelect>
@@ -581,7 +575,7 @@ const E00100 = () => {
               name="memo"
               defaultValue=""
               control={control}
-              render={({field}) => (
+              render={({ field }) => (
                 <FEIBInput
                   {...field}
                   autoComplete="off"
