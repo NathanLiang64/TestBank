@@ -5,13 +5,13 @@
  */
 
 /* eslint-disable radix,no-restricted-globals */
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 // import { useHistory } from 'react-router';
-import {useDispatch} from 'react-redux';
-import {Controller, useForm} from 'react-hook-form';
-import {yupResolver} from '@hookform/resolvers/yup';
+import { useDispatch } from 'react-redux';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import {setShowSpinner} from 'components/Spinner/stores/actions';
+import { setShowSpinner } from 'components/Spinner/stores/actions';
 import {
   FEIBInput,
   FEIBErrorMessage,
@@ -29,8 +29,8 @@ import {
   VisibilityIcon,
   VisibilityOffIcon,
 } from 'assets/images/icons';
-import {goHome} from 'utilities/AppScriptProxy';
-import {accountValidation, identityValidation, passwordValidation} from 'utilities/validation';
+import { goHome } from 'utilities/AppScriptProxy';
+import { accountValidation, identityValidation, passwordValidation } from 'utilities/validation';
 import theme from 'themes/theme';
 import Logo from 'assets/images/logoTransparent.png';
 import BgImage from 'assets/images/loginBackground.png';
@@ -39,7 +39,7 @@ import LoginWrapper from './login.style';
 import FaceIdLoginModal from './faceIdLoginModal';
 import RegisterModal from './registerModal';
 // import { login, personalDataPreload, getInitData, getHomeData } from './login.api';
-import {login, getInitData, getAnnouncementData} from './login.api';
+import { login, getInitData, getAnnouncementData } from './login.api';
 
 const Login = () => {
   /**
@@ -54,7 +54,7 @@ const Login = () => {
     control,
     handleSubmit,
     setValue,
-    formState: {errors},
+    formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -116,13 +116,13 @@ const Login = () => {
           <span>Bankee 我們的社群銀行</span>
         </div>
 
-        <div className="formItems" style={{width: '100%'}}>
+        <div className="formItems" style={{ width: '100%' }}>
           <div>
             <Controller
               name="identity"
               control={control}
               defaultValue=""
-              render={({field}) => (
+              render={({ field }) => (
                 <FEIBInput
                   {...field}
                   id="identity"
@@ -140,7 +140,7 @@ const Login = () => {
               name="account"
               control={control}
               defaultValue=""
-              render={({field}) => (
+              render={({ field }) => (
                 <FEIBInput
                   {...field}
                   id="account"
@@ -161,7 +161,7 @@ const Login = () => {
               name="password"
               control={control}
               defaultValue=""
-              render={({field}) => (
+              render={({ field }) => (
                 <FEIBInput
                   {...field}
                   id="password"
