@@ -1,78 +1,92 @@
-/* eslint-disable no-unused-vars */
-import { useState, useEffect } from 'react';
-import { useHistory } from 'react-router';
-import { closeFunc, switchLoading } from 'utilities/AppScriptProxy';
+/**
+ * /* eslint-disable no-unused-vars
+ *
+ * @format
+ */
+
+import {useState, useEffect} from 'react';
+import {useHistory} from 'react-router';
+import {switchLoading} from 'utilities/AppScriptProxy';
 import {
-  isEmployee, getAccountsList, getCcyList, getExchangePropertyList, getRate,
+  isEmployee,
+  getAccountsList,
+  getCcyList,
+  getExchangePropertyList,
+  getRate,
 } from 'pages/E00100_Exchange/api';
 
 /* Elements */
 import {
-  FEIBSelect, FEIBOption, FEIBInputLabel, FEIBInput, FEIBRadio, FEIBRadioLabel, FEIBBorderButton, FEIBButton, FEIBErrorMessage,
+  FEIBSelect,
+  FEIBOption,
+  FEIBInputLabel,
+  FEIBInput,
+  FEIBRadio,
+  FEIBRadioLabel,
+  FEIBBorderButton,
+  FEIBButton,
+  FEIBErrorMessage,
 } from 'components/elements';
 import Layout from 'components/Layout/Layout';
-import { RadioGroup } from '@material-ui/core';
-import { Controller, useForm } from 'react-hook-form';
+import {RadioGroup} from '@material-ui/core';
+import {Controller, useForm} from 'react-hook-form';
 import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { numberToChinese, currencySymbolGenerator, toCurrency } from 'utilities/Generator';
-import Dialog from 'components/Dialog';
+import {yupResolver} from '@hookform/resolvers/yup';
+import {numberToChinese, currencySymbolGenerator, toCurrency} from 'utilities/Generator';
+// TODO: 移除
+// import Dialog from 'components/Dialog';
 import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
-import ExchangeRules from './exchangeRules';
-import ExchangeNotice from './exchangeNotice';
-import ExchangeTable from './exchangeTable';
+import {showCustomPrompt, showInfo} from 'utilities/MessageModal';
+import E00100Rules from './E00100_Rules';
+import E00100Notice from './E00100_Notice';
+import E00100Table from './E00100_Table';
 
 /* Styles */
-import ExchangeWrapper from './exchange.style';
+import ExchangeWrapper from './E00100.style';
 
-const Exchange = () => {
+const E00100 = () => {
   const history = useHistory();
   /**
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    outAccount: yup
-      .string()
-      .required('請選擇轉出帳號'),
-    currency: yup
-      .string()
-      .required('請選擇換匯幣別'),
-    inAccount: yup
-      .string()
-      .required('請選擇轉入帳號'),
-    property: yup
-      .string()
-      .required('請選擇匯款性質'),
-    foreignBalance: yup
-      .string()
-      .when('outType', {
-        is: (val) => val === '1',
-        then: yup.string().required('請輸入金額'),
-        otherwise: yup.string().notRequired(),
-      }),
-    ntDollorBalance: yup
-      .string()
-      .when('outType', {
-        is: (val) => val === '2',
-        then: yup.string().required('請輸入金額'),
-        otherwise: yup.string().notRequired(),
-      }),
+    outAccount: yup.string().required('請選擇轉出帳號'),
+    currency: yup.string().required('請選擇換匯幣別'),
+    inAccount: yup.string().required('請選擇轉入帳號'),
+    property: yup.string().required('請選擇匯款性質'),
+    foreignBalance: yup.string().when('outType', {
+      is: (val) => val === '1',
+      then: yup.string().required('請輸入金額'),
+      otherwise: yup.string().notRequired(),
+    }),
+    ntDollorBalance: yup.string().when('outType', {
+      is: (val) => val === '2',
+      then: yup.string().required('請輸入金額'),
+      otherwise: yup.string().notRequired(),
+    }),
     memo: yup.string(),
   });
   const {
-    handleSubmit, control, formState: { errors }, watch, setValue, getValues,
+    handleSubmit,
+    control,
+    formState: {errors},
+    watch,
+    setValue,
+    getValues,
   } = useForm({
     resolver: yupResolver(schema),
     reValidateMode: 'onBlur',
   });
 
-  const [openDialog, setOpenDialog] = useState(false);
-  const [dialogMessage, setDialogMessage] = useState('');
-  const [isCloseFunc, setIsCloseFunc] = useState(false);
-  const [showTableDialog, setShowTableDialog] = useState(false);
+  // TODO: 移除
+  // const [openDialog, setOpenDialog] = useState(false);
+  // const [dialogMessage, setDialogMessage] = useState('');
+  // const [isCloseFunc, setIsCloseFunc] = useState(false);
+  // const [showTableDialog, setShowTableDialog] = useState(false);
   const [banker, setBanker] = useState({});
   const [accountsList, setAccountsList] = useState([]);
+  // TODO: 移除
   // const [ntdAccountsList, setNtdAccountsList] = useState([]);
   // const [frgnAccountsList, setFrgnAccountsList] = useState([]);
   const [currencyTypeList, setCurrencyTypeList] = useState([]);
@@ -81,20 +95,23 @@ const Exchange = () => {
   const [ntDollorStr, setNtDollorStr] = useState('');
   const [foreignDollorStr, setForeignDollorStr] = useState('');
 
+  // TODO: 移除
   // 設定訊息彈窗
-  const handleSetDialog = (msg, isCloseFun) => {
-    setDialogMessage(msg);
-    setIsCloseFunc(isCloseFun);
-    setOpenDialog(true);
-  };
+  // const handleSetDialog = (msg) => {
+  //   setDialogMessage(msg);
+  //   setIsCloseFunc(isCloseFun);
+  //   setOpenDialog(true);
+  //   showInfo(msg);
+  // };
 
+  // TODO: 移除
   // 處理訊息彈窗關閉
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    if (isCloseFunc) {
-      closeFunc();
-    }
-  };
+  // const handleCloseDialog = () => {
+  //   // setOpenDialog(false);
+  //   if (isCloseFunc) {
+  //     closeFunc();
+  //   }
+  // };
 
   // 查詢是否為行員
   const getIsEmployee = async () => {
@@ -151,7 +168,11 @@ const Exchange = () => {
       if (!targetValue) {
         setForeignDollorStr('');
       } else {
-        setForeignDollorStr(`${currencySymbolGenerator(selectedCurrency?.ccyCd)}${targetValue}${numberToChinese(targetValue)}`);
+        setForeignDollorStr(
+          `${currencySymbolGenerator(selectedCurrency?.ccyCd)}${targetValue}${numberToChinese(
+            targetValue,
+          )}`,
+        );
       }
     }
     if (targetName === 'ntDollorBalance') {
@@ -163,29 +184,33 @@ const Exchange = () => {
     }
   };
 
-  const handleTableToggle = () => {
-    setShowTableDialog((prev) => !prev);
-  };
+  // TODO: 移除
+  // const handleTableToggle = () => {
+  //   setShowTableDialog((prev) => !prev);
+  // };
 
   // 換匯種類變更
   const handleExchangeTypeChange = (event) => {
     setValue('exchangeType', event.target.value);
     getEchgPropertyList(event.target.value);
-    const { inAccount, outAccount } = getValues();
+    const {inAccount, outAccount} = getValues();
     setValue('outAccount', inAccount);
     setValue('inAccount', outAccount);
   };
 
   // 取得帳戶餘額
+  // prettier-ignore
   const getAmount = (currency) => accountsList.find((item) => (
     item.account === watch((currency === 'TWD') ? 'outAccount' : 'inAccount')
   ))?.details.find((item) => (item.currency === selectedCurrency.ccyCd))?.balance || '0';
 
+  // TODO: 移除
   // // 取得台幣帳戶餘額
   // const getNTDAmt = () => ntdAccountsList.find((item) => (
   //   watch('exchangeType') === '1' ? item.accountId === watch('outAccount') : item.accountId === watch('inAccount')
   // ))?.accountBalx;
 
+  // TODO: 移除
   // // 取得外幣帳戶餘額
   // const getFrgnAmt = () => frgnAccountsList.find((item) => (
   //   watch('exchangeType') === '1' ? item.accountId === watch('inAccount') : item.accountId === watch('outAccount')
@@ -237,7 +262,9 @@ const Exchange = () => {
     const trfAmt = outType === '1' ? foreignBalance : ntDollorBalance;
     const checkOverResult = checkOverAmt(trfAmt);
     if (checkOverResult) {
-      handleSetDialog('您輸入的金額已超過轉出帳號的餘額', false);
+      await showInfo('您輸入的金額已超過轉出帳號的餘額');
+      // TODO: 移除
+      // handleSetDialog('您輸入的金額已超過轉出帳號的餘額');
       return;
     }
     switchLoading(true);
@@ -258,11 +285,16 @@ const Exchange = () => {
         memo,
         leglCode: property,
         leglDesc: propertiesList.find((item) => item.leglCode === property).leglDesc,
-        outAccountAmount: exchangeType === '1' ? getAmount('TWD') : Number(getAmount(selectedCurrency.ccyCd).replace(/,/gi, '')),
+        outAccountAmount:
+          exchangeType === '1'
+            ? getAmount('TWD')
+            : Number(getAmount(selectedCurrency.ccyCd).replace(/,/gi, '')),
       };
-      history.push('/exchange1', { ...confirmData });
+      history.push('/E001001', {...confirmData});
     } else {
-      handleSetDialog(response.message, false);
+      // TODO: 移除
+      // handleSetDialog(response.message);
+      await showInfo(response.message);
     }
   };
 
@@ -275,33 +307,31 @@ const Exchange = () => {
     return toCurrency(Math.round(frgnAmt * selectedCurrency.sellRate) || 0);
   };
 
-  const ExchangeTableDialog = () => (
-    <Dialog
-      title="匯率"
-      isOpen={showTableDialog}
-      onClose={handleTableToggle}
-      content={(<ExchangeTable />)}
-      action={(
-        <FEIBButton onClick={handleTableToggle}>確定</FEIBButton>
-      )}
-    />
-  );
+  // TODO: 移除
+  // const ExchangeTableDialog = () => (
+  //   <Dialog
+  //     title="匯率"
+  //     isOpen={showTableDialog}
+  //     onClose={handleTableToggle}
+  //     content={<ExchangeTable />}
+  //     action={<FEIBButton onClick={handleTableToggle}>確定</FEIBButton>}
+  //   />
+  // );
 
-  const renderDialog = () => (
-    <Dialog
-      isOpen={openDialog}
-      onClose={handleCloseDialog}
-      content={<p>{ dialogMessage }</p>}
-      action={(
-        <FEIBButton onClick={handleCloseDialog}>確認</FEIBButton>
-      )}
-    />
-  );
+  // const renderDialog = () => (
+  //   <Dialog
+  //     isOpen={openDialog}
+  //     onClose={handleCloseDialog}
+  //     content={<p>{dialogMessage}</p>}
+  //     action={<FEIBButton onClick={handleCloseDialog}>確認</FEIBButton>}
+  //   />
+  // );
 
   /**
    * 列出帳戶清單。
    * @param {*} showTwdAccount 若為 true 則列出台幣帳戶清單，反之則列出外幣帳戶清單。
    */
+  // prettier-ignore
   const renderAccountOption = (showTwdAccount) => (
     accountsList
       .filter((acct) => acct.details.find((item) => showTwdAccount && item.currency === 'TWD'))
@@ -310,6 +340,7 @@ const Exchange = () => {
       ))
   );
 
+  // prettier-ignore
   const renderTrnsTypeList = (data) => (
     data.map((item) => (
       <FEIBOption key={item.leglCode} value={item.leglCode}>{item.leglDesc}</FEIBOption>
@@ -319,23 +350,16 @@ const Exchange = () => {
   const renderNTBlance = () => (
     <FEIBErrorMessage className="balance">
       可用餘額 NTD&nbsp;
-      {
-        toCurrency(getAmount('TWD') || 0)
-      }
+      {toCurrency(getAmount('TWD') || 0)}
     </FEIBErrorMessage>
   );
 
   const renderFrgnBalance = () => (
     <FEIBErrorMessage className="balance">
-      可用餘額
+      可用餘額 &nbsp;
+      {selectedCurrency.ccyCd}
       &nbsp;
-      {
-        selectedCurrency.ccyCd
-      }
-      &nbsp;
-      {
-        getAmount(selectedCurrency.ccyCd)
-      }
+      {getAmount(selectedCurrency.ccyCd)}
     </FEIBErrorMessage>
   );
 
@@ -359,9 +383,18 @@ const Exchange = () => {
 
   return (
     <Layout title="外幣換匯">
-      <ExchangeWrapper style={{ padding: '2.4rem 1.6rem 2.4rem 1.6rem' }}>
+      <ExchangeWrapper style={{padding: '2.4rem 1.6rem 2.4rem 1.6rem'}}>
         <div className="borderBtnContainer">
-          <FEIBBorderButton className="customSize" type="button" onClick={handleTableToggle}>
+          <FEIBBorderButton
+            className="customSize"
+            type="button"
+            // prettier-ignore
+            onClick={() => showCustomPrompt({
+              title: '匯率',
+              message: <E00100Table />,
+              okContent: '確定',
+            })}
+          >
             外匯匯率查詢
           </FEIBBorderButton>
         </div>
@@ -372,14 +405,14 @@ const Exchange = () => {
               name="exchangeType"
               control={control}
               defaultValue="1"
-              render={({ field }) => (
+              render={({field}) => (
                 <RadioGroup
                   {...field}
                   aria-label="換匯種類"
                   id="exchangeType"
                   name="exchangeType"
                   defaultValue="1"
-                  style={{ flexDirection: 'row', marginBottom: '.6rem' }}
+                  style={{flexDirection: 'row', marginBottom: '.6rem'}}
                   onChange={handleExchangeTypeChange}
                 >
                   <FEIBRadioLabel value="1" control={<FEIBRadio />} label="新臺幣轉外幣" />
@@ -392,14 +425,14 @@ const Exchange = () => {
               name="outAccount"
               defaultValue=""
               control={control}
-              render={({ field }) => (
+              render={({field}) => (
                 <FEIBSelect
                   {...field}
                   id="outAccount"
                   name="outAccount"
                   error={!!errors.outAccount}
                 >
-                  {(renderAccountOption(watch('exchangeType') === 1))}
+                  {renderAccountOption(watch('exchangeType') === 1)}
                   {/*
                     watch('exchangeType') === '1'
                       ? (renderAccountOption(accountsList, watch('exchangeType')))
@@ -409,42 +442,28 @@ const Exchange = () => {
               )}
             />
             <FEIBErrorMessage>{errors.outAccount?.message}</FEIBErrorMessage>
-            {
-              watch('exchangeType') === '1'
-                ? (renderNTBlance())
-                : (renderFrgnBalance())
-            }
+            {watch('exchangeType') === '1' ? renderNTBlance() : renderFrgnBalance()}
             <FEIBInputLabel>換匯幣別</FEIBInputLabel>
             <Controller
               name="currency"
               defaultValue=""
               control={control}
-              render={({ field }) => (
-                <FEIBSelect
-                  {...field}
-                  id="currency"
-                  name="currency"
-                  error={!!errors.currency}
-                >
-                  {
-                    currencyTypeList.map((item) => (
-                      <FEIBOption key={item?.ccyCd} value={item?.ccyId}>{ item?.ccyName }</FEIBOption>
-                    ))
-                  }
+              render={({field}) => (
+                <FEIBSelect {...field} id="currency" name="currency" error={!!errors.currency}>
+                  {currencyTypeList.map((item) => (
+                    <FEIBOption key={item?.ccyCd} value={item?.ccyId}>
+                      {item?.ccyName}
+                    </FEIBOption>
+                  ))}
                 </FEIBSelect>
               )}
             />
             <FEIBErrorMessage>{errors.currency?.message}</FEIBErrorMessage>
             <FEIBErrorMessage className="balance">
-              預估可換
+              預估可換 &nbsp;
+              {watch('exchangeType') === '1' ? selectedCurrency.ccyCd : 'NTD'}
               &nbsp;
-              {
-                watch('exchangeType') === '1' ? selectedCurrency.ccyCd : 'NTD'
-              }
-              &nbsp;
-              {
-                generateAvailibleAmount()
-              }
+              {generateAvailibleAmount()}
               （實際金額以交易結果為準）
             </FEIBErrorMessage>
             <FEIBInputLabel>轉入帳號</FEIBInputLabel>
@@ -452,14 +471,9 @@ const Exchange = () => {
               name="inAccount"
               defaultValue=""
               control={control}
-              render={({ field }) => (
-                <FEIBSelect
-                  {...field}
-                  id="inAccount"
-                  name="inAccount"
-                  error={!!errors.inAccount}
-                >
-                  {(renderAccountOption(watch('exchangeType') === '2'))}
+              render={({field}) => (
+                <FEIBSelect {...field} id="inAccount" name="inAccount" error={!!errors.inAccount}>
+                  {renderAccountOption(watch('exchangeType') === '2')}
                   {/*
                     watch('exchangeType') === '1'
                       ? (renderFrgnAccountOption(frgnAccountsList))
@@ -469,33 +483,26 @@ const Exchange = () => {
               )}
             />
             <FEIBErrorMessage>{errors.inAccount?.message}</FEIBErrorMessage>
-            {
-              watch('exchangeType') === '1'
-                ? (renderFrgnBalance())
-                : (renderNTBlance())
-            }
+            {watch('exchangeType') === '1' ? renderFrgnBalance() : renderNTBlance()}
             <Controller
               name="outType"
               control={control}
               defaultValue="1"
-              render={({ field }) => (
-                <RadioGroup
-                  {...field}
-                  id="outType"
-                  name="outType"
-                  defaultValue="1"
-                >
+              render={({field}) => (
+                <RadioGroup {...field} id="outType" name="outType" defaultValue="1">
                   <FEIBRadioLabel
                     className="outTypeRadioLabel"
                     value="1"
                     control={<FEIBRadio />}
-                    label={`希望${watch('exchangeType') === '2' ? '轉出' : '轉入'}${selectedCurrency?.ccyName || ''}`}
+                    label={`希望${watch('exchangeType') === '2' ? '轉出' : '轉入'}${
+                      selectedCurrency?.ccyName || ''
+                    }`}
                   />
                   <Controller
                     name="foreignBalance"
                     defaultValue=""
                     control={control}
-                    render={({ balanceField }) => (
+                    render={({balanceField}) => (
                       <div>
                         <FEIBInput
                           {...balanceField}
@@ -503,7 +510,9 @@ const Exchange = () => {
                           inputMode="numeric"
                           id="foreignBalance"
                           name="foreignBalance"
-                          placeholder={`請輸入${watch('exchangeType') === '2' ? '轉出' : '轉入'}金額`}
+                          placeholder={`請輸入${
+                            watch('exchangeType') === '2' ? '轉出' : '轉入'
+                          }金額`}
                           error={!!errors.foreignBalance}
                           disabled={watch('outType') !== '1'}
                           onChange={handleBalanceChange}
@@ -517,12 +526,17 @@ const Exchange = () => {
                     )}
                   />
                   <FEIBErrorMessage>{errors.foreignBalance?.message}</FEIBErrorMessage>
-                  <FEIBRadioLabel className="outTypeRadioLabel" value="2" control={<FEIBRadio />} label={`希望${watch('exchangeType') === '2' ? '轉入' : '轉出'}新臺幣`} />
+                  <FEIBRadioLabel
+                    className="outTypeRadioLabel"
+                    value="2"
+                    control={<FEIBRadio />}
+                    label={`希望${watch('exchangeType') === '2' ? '轉入' : '轉出'}新臺幣`}
+                  />
                   <Controller
                     name="ntDollorBalance"
                     defaultValue=""
                     control={control}
-                    render={({ balanceField }) => (
+                    render={({balanceField}) => (
                       <div>
                         <FEIBInput
                           {...balanceField}
@@ -531,7 +545,9 @@ const Exchange = () => {
                           inputMode="numeric"
                           id="ntDollorBalance"
                           name="ntDollorBalance"
-                          placeholder={`請輸入${watch('exchangeType') === '2' ? '轉入' : '轉出'}金額`}
+                          placeholder={`請輸入${
+                            watch('exchangeType') === '2' ? '轉入' : '轉出'
+                          }金額`}
                           error={!!errors.ntDollorBalance}
                           disabled={watch('outType') !== '2'}
                           onChange={handleBalanceChange}
@@ -553,14 +569,9 @@ const Exchange = () => {
               name="property"
               defaultValue=""
               control={control}
-              render={({ field }) => (
-                <FEIBSelect
-                  {...field}
-                  id="property"
-                  name="property"
-                  error={!!errors.property}
-                >
-                  { renderTrnsTypeList(propertiesList) }
+              render={({field}) => (
+                <FEIBSelect {...field} id="property" name="property" error={!!errors.property}>
+                  {renderTrnsTypeList(propertiesList)}
                 </FEIBSelect>
               )}
             />
@@ -570,7 +581,7 @@ const Exchange = () => {
               name="memo"
               defaultValue=""
               control={control}
-              render={({ field }) => (
+              render={({field}) => (
                 <FEIBInput
                   {...field}
                   autoComplete="off"
@@ -584,28 +595,23 @@ const Exchange = () => {
             />
             <FEIBErrorMessage>{errors.memo?.message}</FEIBErrorMessage>
             <Accordion title="外幣換匯規範" space="bottom">
-              <ExchangeRules />
+              <E00100Rules />
             </Accordion>
             <Accordion space="bottom">
-              <ExchangeNotice />
+              <E00100Notice />
             </Accordion>
-            {
-              banker.bankerCd && (<InfoArea>換匯匯率將依據本行員工優惠匯率進行交易</InfoArea>)
-            }
+            {banker.bankerCd && <InfoArea>換匯匯率將依據本行員工優惠匯率進行交易</InfoArea>}
             <div className="submitBtn">
-              <FEIBButton
-                type="submit"
-              >
-                同意條款並確認
-              </FEIBButton>
+              <FEIBButton type="submit">同意條款並確認</FEIBButton>
             </div>
           </section>
         </form>
-        <ExchangeTableDialog />
-        { renderDialog() }
+        {/* TODO: 移除 */}
+        {/* <ExchangeTableDialog /> */}
+        {/* {renderDialog()} */}
       </ExchangeWrapper>
     </Layout>
   );
 };
 
-export default Exchange;
+export default E00100;

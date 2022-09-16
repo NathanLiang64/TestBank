@@ -4,10 +4,12 @@
 import {useHistory} from 'react-router';
 
 /* Elements */
+// TODO: 移除
 // import successImg from 'assets/images/successImg.svg';
 import Layout from 'components/Layout/Layout';
 import {FEIBButton} from 'components/elements';
 import InformationList from 'components/InformationList';
+// TODO: 移除
 // import Dialog from 'components/Dialog';
 
 /* Styles */
@@ -16,6 +18,7 @@ import {showInfo} from 'utilities/MessageModal';
 import InstalmentWrapper from './R00200.style';
 
 const R00200_3 = () => {
+  // TODO: 移除
   // const [showResultDialog, setShowResultDialog] = useState(true);
   const dialogText = `您已完成 Bankee 信用卡
   晚點付申請`;
@@ -83,6 +86,7 @@ const R00200_3 = () => {
     </table>
   );
 
+  // TODO: 移除
   // const ResultDialog = () => (
   //   <Dialog
   //     title=" "
@@ -121,14 +125,16 @@ const R00200_3 = () => {
           <FEIBButton
             type="submit"
             onClick={() => {
+              // TODO: 移除
               // setShowResultDialog(true);
               showInfo(dialogText);
-              history.push('/R00200'); // Question: '/staging' 是否為R00200?
+              history.push('/R00200');
             }}
           >
             確認
           </FEIBButton>
         </form>
+        {/* TODO: 移除 */}
         {/* <ResultDialog /> */}
       </InstalmentWrapper>
     </Layout>

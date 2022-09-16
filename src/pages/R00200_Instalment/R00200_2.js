@@ -7,7 +7,7 @@ import {useCheckLocation, usePageInfo} from 'hooks';
 import Layout from 'components/Layout/Layout';
 import {FEIBButton, FEIBRadioLabel, FEIBRadio} from 'components/elements';
 import Accordion from 'components/Accordion';
-// Question: InstallmentTerms 與 R00200AccordionContent 內容相同
+// TODO: 移除
 // import InstallmentTerms from './installmentTerms';
 import R00200AccordionContent1 from './R00200_accordionContent_1';
 import R00200AccordionContent2 from './R00200_accordionContent_2';
@@ -48,7 +48,7 @@ const R00200_2 = () => {
             {renderSelectList()}
             {/* TODO: 晚點付約定條款 與 注意事項 之內容 */}
             <Accordion title="晚點付約定條款" space="both">
-              {/* InstallmentTerms 與 R00200AccordionContent 內容相同 */}
+              {/* TODO: 移除 */}
               {/* <InstallmentTerms /> */}
               <R00200AccordionContent1 />
             </Accordion>

@@ -6,26 +6,26 @@ import {useCheckLocation, usePageInfo} from 'hooks';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
+// TODO: 移除
 // import Dialog from 'components/Dialog';
 import {FEIBButton, FEIBRadio, FEIBRadioLabel} from 'components/elements';
 import {showError} from 'utilities/MessageModal';
 import Accordion from 'components/Accordion';
-import R00200AccordionContent1 from './R00200_accordionContent_1';
+import R00200AccordionContent2 from './R00200_accordionContent_2';
 
 /* Styles */
 import InstalmentWrapper from './R00200.style';
 
 const R00200 = () => {
-  // TODO: 這裡hardcode成一進來就會跳出無可分期彈窗
+  // TODO: 移除
   // const [showResultDialog, setShowResultDialog] = useState(true);
 
-  // const cardName = 'cardName'; // Question: 此為何用？
+  // TODO: 移除
+  // const cardName = 'cardName';
 
-  /* showError message: 單筆消費未達3000 */
+  /* showError 內容: 單筆消費未達3000 */
   const errorMessage = `您目前沒有可分期的消費
   (單筆消費限額需達3,000元以上)`;
-
-  // '您目前沒有可分期的消費\n\n(單筆消費限額需達3,000元以上)';
 
   useCheckLocation();
   usePageInfo('/api/instalment');
@@ -45,6 +45,7 @@ const R00200 = () => {
     );
   };
 
+  // TODO: 移除
   // const renderEditCardNameDialog = () => (
   //   <Dialog
   //     title="系統訊息"
@@ -74,7 +75,7 @@ const R00200 = () => {
             <div className="InstalmentWrapperText">點選申請晚點付項目</div>
             {renderSelectList()}
             <Accordion space="both">
-              <R00200AccordionContent1 />
+              <R00200AccordionContent2 />
             </Accordion>
           </div>
           <FEIBButton
@@ -87,6 +88,7 @@ const R00200 = () => {
           >
             下一步
           </FEIBButton>
+          {/* TODO: 移除 */}
           {/* {renderEditCardNameDialog(cardName)} */}
         </form>
       </InstalmentWrapper>
