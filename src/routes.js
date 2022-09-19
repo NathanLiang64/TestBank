@@ -84,9 +84,7 @@ const Deduct1 = lazy(() => import('pages/Deduct/deduct1'));
 const Deduct2 = lazy(() => import('pages/Deduct/deduct2'));
 const Deduct3 = lazy(() => import('pages/Deduct/deduct3'));
 const MoreTranscations = lazy(() => import('pages/MoreTranscations'));
-// prettier-ignore
 const ForeignCurrencyTransfer1 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer/foreignCurrencyTransfer_1'));
-// prettier-ignore
 const ForeignCurrencyTransfer2 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer/foreignCurrencyTransfer_2'));
 const ForeignCurrencyPriceSetting = lazy(() => import('pages/ForeignCurrencyPriceSetting'));
 const R002001 = lazy(() => import('pages/R00200_Instalment/R00200_1'));

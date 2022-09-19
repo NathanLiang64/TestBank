@@ -24,8 +24,14 @@ const R00200 = () => {
   // const cardName = 'cardName';
 
   /* showError 內容: 單筆消費未達3000 */
-  const errorMessage = `您目前沒有可分期的消費
-  (單筆消費限額需達3,000元以上)`;
+  // const errorMessage = `您目前沒有可分期的消費
+  // (單筆消費限額需達3,000元以上)`;
+  const errorMessage = (
+    <div style={{ textAlign: 'center' }}>
+      <p>您目前沒有可分期的消費</p>
+      <p>(單筆消費限額需達3,000元以上)</p>
+    </div>
+  );
 
   useCheckLocation();
   usePageInfo('/api/instalment');
@@ -81,9 +87,9 @@ const R00200 = () => {
           <FEIBButton
             type="submit"
             onClick={() => {
-              // TODO: 檢查有無符合條件，有則push(依照條件)、無則showError
+              // TODO: 是否在此檢查有無符合條件？（有則push(依照條件)、無則showError）
               showError(errorMessage);
-              history.push('/R002001');
+              history.push('/R002001'); // TODO: 未帶參數進下一頁
             }}
           >
             下一步

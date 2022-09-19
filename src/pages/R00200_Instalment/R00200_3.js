@@ -4,8 +4,7 @@
 import { useHistory } from 'react-router';
 
 /* Elements */
-// TODO: 移除
-// import successImg from 'assets/images/successImg.svg';
+import successImg from 'assets/images/successImg.svg';
 import Layout from 'components/Layout/Layout';
 import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
@@ -20,8 +19,6 @@ import InstalmentWrapper from './R00200.style';
 const R00200_3 = () => {
   // TODO: 移除
   // const [showResultDialog, setShowResultDialog] = useState(true);
-  const dialogText = `您已完成 Bankee 信用卡
-  晚點付申請`;
 
   // Debug: 以下為 hardcode
   const installmentTotal = '$10,000';
@@ -109,6 +106,19 @@ const R00200_3 = () => {
   //   />
   // );
 
+  const successMessage = (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <svg width="100" height="100">
+        <image xlinkHref={successImg} width="100" height="100" />
+      </svg>
+      <p style={{ fontSize: '2rem', color: theme.colors.secondary.brand, textAlign: 'center' }}>設定成功</p>
+      <div>
+        <p style={{ textAlign: 'center' }}>您已完成 Bankee 信用卡</p>
+        <p style={{ textAlign: 'center' }}>晚點付申請</p>
+      </div>
+    </div>
+  );
+
   return (
     <Layout title="晚點付 (總額)">
       <InstalmentWrapper className="InstalmentWrapper" small>
@@ -127,7 +137,7 @@ const R00200_3 = () => {
             onClick={() => {
               // TODO: 移除
               // setShowResultDialog(true);
-              showInfo(dialogText);
+              showInfo(successMessage);
               history.push('/R00200');
             }}
           >

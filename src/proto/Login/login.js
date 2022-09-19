@@ -1,9 +1,4 @@
-/**
- * /* eslint-disable object-curly-newline
- *
- * @format
- */
-
+/* eslint-disable object-curly-newline */
 /* eslint-disable radix,no-restricted-globals */
 import { useEffect, useState } from 'react';
 // import { useHistory } from 'react-router';
@@ -13,21 +8,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { setShowSpinner } from 'components/Spinner/stores/actions';
 import {
-  FEIBInput,
-  FEIBErrorMessage,
-  FEIBLinkButton,
-  FEIBCheckbox,
-  FEIBCheckboxLabel,
-  FEIBIconButton,
+  FEIBInput, FEIBErrorMessage, FEIBLinkButton, FEIBCheckbox, FEIBCheckboxLabel, FEIBIconButton,
 } from 'components/elements';
 import {
-  ArrowBackIcon,
-  ArrowNextIcon,
-  CheckboxCheckedIcon,
-  CheckboxUncheckedIcon,
-  FaceIdIcon,
-  VisibilityIcon,
-  VisibilityOffIcon,
+  ArrowBackIcon, ArrowNextIcon, CheckboxCheckedIcon, CheckboxUncheckedIcon, FaceIdIcon, VisibilityIcon, VisibilityOffIcon,
 } from 'assets/images/icons';
 import { goHome } from 'utilities/AppScriptProxy';
 import { accountValidation, identityValidation, passwordValidation } from 'utilities/validation';
@@ -51,10 +35,7 @@ const Login = () => {
     password: passwordValidation(),
   });
   const {
-    control,
-    handleSubmit,
-    setValue,
-    formState: { errors },
+    control, handleSubmit, setValue, formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -99,8 +80,7 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     const isSuccess = await login(data);
-    if (isSuccess) {
-      // 登入成功
+    if (isSuccess) { // 登入成功
       // await personalDataPreload();
       // await getHomeData();
       // history.push('/');
@@ -123,13 +103,7 @@ const Login = () => {
               control={control}
               defaultValue=""
               render={({ field }) => (
-                <FEIBInput
-                  {...field}
-                  id="identity"
-                  name="identity"
-                  placeholder="身分證字號/手機號碼"
-                  onBlur={(e) => upperId(e)}
-                />
+                <FEIBInput {...field} id="identity" name="identity" placeholder="身分證字號/手機號碼" onBlur={(e) => upperId(e)} />
               )}
             />
             <FEIBErrorMessage>{errors.identity?.message}</FEIBErrorMessage>
@@ -193,7 +167,11 @@ const Login = () => {
 
         <div className="controlButtons">
           <div className="login">
-            <FEIBIconButton className="fastLogin" $fontSize={2.4} onClick={handleFaceIdLoginOpen}>
+            <FEIBIconButton
+              className="fastLogin"
+              $fontSize={2.4}
+              onClick={handleFaceIdLoginOpen}
+            >
               <FaceIdIcon />
             </FEIBIconButton>
             <button type="submit">
@@ -203,9 +181,7 @@ const Login = () => {
           </div>
           <div className="signup">
             <span>還沒有帳號？</span>
-            <FEIBLinkButton $color={theme.colors.text.link} onClick={handleActionsOpen}>
-              立即申請
-            </FEIBLinkButton>
+            <FEIBLinkButton $color={theme.colors.text.link} onClick={handleActionsOpen}>立即申請</FEIBLinkButton>
           </div>
         </div>
         <img src={BgImage} alt="logo" className="backgroundImage" />

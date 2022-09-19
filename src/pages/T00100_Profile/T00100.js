@@ -12,7 +12,6 @@ import { startFunc } from 'utilities/AppScriptProxy';
 import { getNickName, updateNickName, uploadAvatar } from 'pages/T00100_Profile/api';
 
 /* Elements */
-// prettier-ignore
 import {
   FEIBInput, FEIBInputLabel, FEIBErrorMessage,
 } from 'components/elements';
@@ -148,7 +147,6 @@ const T00100 = () => {
     }
   };
 
-  // prettier-ignore
   const renderEntryList = () => SettingList.map(({ name, funcID }) => (
     <div className="entryList" key={name} onClick={() => startFunc(funcID)}>
       {name}
@@ -185,7 +183,6 @@ const T00100 = () => {
   //     onClose={() => setShowChangeNickNameDialog(false)}
   //     title="編輯名稱"
   //     content={renderForm()}
-  //     // prettier-ignore
   //     action={(
   //       <FEIBButton type="submit" form="nickNameForm">
   //         完成
