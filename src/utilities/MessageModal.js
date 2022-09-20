@@ -69,6 +69,7 @@ export const showCustomPrompt = async ({
   onCancel,
   okContent,
   cancelContent,
+  onClose, // Modal 右上角的 X 按鈕
   noDismiss, // 如果有需要接續 modal 得操作，可以設定為 true 避免點擊ok按鈕後，下個 modal 遭關閉。
 }) => {
   const promise = new Promise((resolve) => {
@@ -79,6 +80,7 @@ export const showCustomPrompt = async ({
       onCancel,
       okContent,
       cancelContent,
+      onClose,
       noDismiss: noDismiss ?? false,
     }));
     store.dispatch(setResult((value) => resolve(value)));

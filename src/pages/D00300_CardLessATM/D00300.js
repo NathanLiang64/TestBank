@@ -86,6 +86,7 @@ const CardLessATM = () => {
     const statusCodeResponse = await getCardlessStatus(param);
     console.log('無卡提款狀態', statusCodeResponse);
     const { cwdStatus, newSiteRegist, message } = statusCodeResponse;
+    // newSiteReg 目前沒有用處
     setNewSiteReg(newSiteRegist);
     switch (cwdStatus) {
       case '1':
@@ -94,7 +95,7 @@ const CardLessATM = () => {
       case '2':
         toWithdrawPage();
         break;
-
+      // cwdStatus = '4' 是什麼意思？
       case '4':
         await showCustomPrompt({message, onOk: () => closeFunc(), onCancel: () => closeFunc()});
         break;
@@ -114,15 +115,20 @@ const CardLessATM = () => {
     const { cardStatus, message } = cardStatusResponse;
     switch (cardStatus) {
       case '02':
+        // TODO 等待開卡頁面做好
         await showCustomPrompt({
-          message, okContent: '我要開卡', onOk: () => console.log('跳轉到金融開卡頁面'), onCancel: () => closeFunc(),
+          message,
+          okContent: '我要開卡',
+          onOk: () => console.log('跳轉到金融開卡頁面'),
+          onCancel: () => closeFunc(),
+          onClose: () => closeFunc(),
         });
         break;
       case '04':
         fetchCardlessStatus({});
         break;
       default:
-        await showCustomPrompt({message, onOk: () => closeFunc(), onCancel: () => closeFunc()});
+        await showCustomPrompt({message, onOk: () => closeFunc(), onClose: () => closeFunc()});
         break;
     }
   };
@@ -138,7 +144,12 @@ const CardLessATM = () => {
       const { message } = activateResponse;
 
       if (message) {
-        await showCustomPrompt({ message, onOk: () => closeFunc });
+        await showCustomPrompt({
+          message,
+          onOk: () => closeFunc(),
+          onCancel: () => closeFunc(),
+          onClose: () => closeFunc(),
+        });
         // generateDailog(
         //   message,
         //   (
@@ -154,7 +165,12 @@ const CardLessATM = () => {
         //   () => () => setOpenDialog(false),
         // );
       } else {
-        await showCustomPrompt({ message: '已完成開通無卡提款服務！', onOk: () => toWithdrawPage(), onCancel: () => toWithdrawPage() });
+        await showCustomPrompt({
+          message: '已完成開通無卡提款服務！',
+          onOk: () => toWithdrawPage(),
+          onCancel: () => toWithdrawPage(),
+          onClose: () => toWithdrawPage(),
+        });
         // generateDailog(
         //   '已完成開通無卡提款服務！',
         //   (

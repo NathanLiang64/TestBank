@@ -60,7 +60,6 @@ const ReserveTransferSearch = () => {
   // 取得帳號清單
   const fetchTransferOutAccounts = async () => {
     switchLoading(true);
-    // TODO
     const { data, code, message } = await getTransferOutAccounts({});
     if (code === '0000') {
       setCardsList(data.accounts);
@@ -178,6 +177,7 @@ const ReserveTransferSearch = () => {
       title: '預約轉帳',
       message: (<DetailContent contentData={{ data: currentReserveData, selectedAccount }} />),
       onOk: () => toConfirmPage(),
+      onClose: () => toConfirmPage(),
     });
   };
 

@@ -97,7 +97,7 @@ const CardLessATM1 = () => {
     } else {
       // handleDialogOpen(message);
       // TBD
-      showCustomPrompt({message, onOk: () => closeFunc()});
+      showCustomPrompt({message, onOk: () => closeFunc(), onClose: () => closeFunc()});
     }
     switchLoading(false);
   };
@@ -128,7 +128,7 @@ const CardLessATM1 = () => {
         toResultPage(data);
       } else {
         // handleDialogOpen(message);
-        showCustomPrompt({message, onOk: () => closeFunc()});
+        showCustomPrompt({message, onOk: () => closeFunc(), onClose: () => closeFunc()});
       }
     }
   };
@@ -140,7 +140,7 @@ const CardLessATM1 = () => {
     };
     if (data.withdrawAmount > accountSummary.balance) {
       // handleDialogOpen('提款金額不得大於帳戶餘額');
-      showCustomPrompt({message: '提款金額不得大於帳戶餘額', onOk: () => closeFunc()});
+      showCustomPrompt({message: '提款金額不得大於帳戶餘額'});
     } else {
       requestCardlessWithdrawApply(param);
     }
