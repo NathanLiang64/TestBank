@@ -11,10 +11,15 @@ import Layout from 'components/Layout/Layout';
 import { FEIBButton, FEIBRadio, FEIBRadioLabel } from 'components/elements';
 import { showError } from 'utilities/MessageModal';
 import Accordion from 'components/Accordion';
+import { RadioGroup } from '@material-ui/core';
 import R00200AccordionContent2 from './R00200_accordionContent_2';
 
 /* Styles */
 import InstalmentWrapper from './R00200.style';
+
+/**
+ * R00200 晚點付手頁
+ */
 
 const R00200 = () => {
   // TODO: 移除
@@ -37,16 +42,19 @@ const R00200 = () => {
   usePageInfo('/api/instalment');
   const history = useHistory();
 
-  // TODO: 現狀：只能選擇、不能取消；可複選
+  // TODO: 增加form驗證
   const renderSelectList = () => {
     const list = ['單筆', '總額'];
     return (
       <div className="selectList">
-        {list.map((item, index) => (
-          <p key={item}>
-            <FEIBRadioLabel value={index} control={<FEIBRadio />} label={item} />
-          </p>
-        ))}
+        <RadioGroup
+          id="installmentType"
+          name="installmentType"
+          defaultValue="1"
+        >
+          <FEIBRadioLabel value="1" control={<FEIBRadio />} label={list[0]} />
+          <FEIBRadioLabel value="2" control={<FEIBRadio />} label={list[1]} />
+        </RadioGroup>
       </div>
     );
   };

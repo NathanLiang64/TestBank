@@ -45,6 +45,10 @@ import E00100Table from './E00100_Table';
 /* Styles */
 import ExchangeWrapper from './E00100.style';
 
+/**
+ * E00100 外幣換匯首頁
+ */
+
 const E00100 = () => {
   const history = useHistory();
   /**
@@ -75,6 +79,12 @@ const E00100 = () => {
     setValue,
     getValues,
   } = useForm({
+    defaultValues: {
+      exchangeType: '1',
+      outType: '1',
+      foreignBalance: '',
+      ntDollorBalance: '',
+    },
     resolver: yupResolver(schema),
     reValidateMode: 'onBlur',
   });
@@ -199,7 +209,6 @@ const E00100 = () => {
   };
 
   // 取得帳戶餘額
-  // prettier-ignore
   const getAmount = (currency) => accountsList.find((item) => (
     item.account === watch((currency === 'TWD') ? 'outAccount' : 'inAccount')
   ))?.details.find((item) => (item.currency === selectedCurrency.ccyCd))?.balance || '0';
@@ -331,7 +340,6 @@ const E00100 = () => {
    * 列出帳戶清單。
    * @param {*} showTwdAccount 若為 true 則列出台幣帳戶清單，反之則列出外幣帳戶清單。
    */
-  // prettier-ignore
   const renderAccountOption = (showTwdAccount) => (
     accountsList
       .filter((acct) => acct.details.find((item) => showTwdAccount && item.currency === 'TWD'))
@@ -340,7 +348,6 @@ const E00100 = () => {
       ))
   );
 
-  // prettier-ignore
   const renderTrnsTypeList = (data) => (
     data.map((item) => (
       <FEIBOption key={item.leglCode} value={item.leglCode}>{item.leglDesc}</FEIBOption>
@@ -363,12 +370,13 @@ const E00100 = () => {
     </FEIBErrorMessage>
   );
 
-  useEffect(() => {
-    setValue('exchangeType', '1');
-    setValue('outType', '1');
-    setValue('foreignBalance', '');
-    setValue('ntDollorBalance', '');
-  }, []);
+  // TODO: 移除
+  // useEffect(() => {
+  //   setValue('exchangeType', '1');
+  //   setValue('outType', '1');
+  //   setValue('foreignBalance', '');
+  //   setValue('ntDollorBalance', '');
+  // }, []);
 
   useEffect(() => {
     getEchgPropertyList('1', true);
@@ -388,7 +396,6 @@ const E00100 = () => {
           <FEIBBorderButton
             className="customSize"
             type="button"
-            // prettier-ignore
             onClick={() => showCustomPrompt({
               title: '匯率',
               message: <E00100Table />,

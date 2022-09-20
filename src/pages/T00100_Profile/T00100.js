@@ -26,6 +26,10 @@ import Avatar from 'assets/images/avatar.png';
 import SettingList from './T00100_settingList';
 import ProfileWrapper from './T00100.style';
 
+/**
+ * T00100 個人化首頁
+ */
+
 const T00100 = () => {
   /**
    *- 資料驗證
