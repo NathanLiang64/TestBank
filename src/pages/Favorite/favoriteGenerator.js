@@ -17,30 +17,20 @@ import {
 } from 'assets/images/icons';
 
 export const blockBackgroundGenerator = (index) => {
-  switch (index) {
+  // 只有六種顏色背景
+  const remainder = index % 6;
+  switch (remainder) {
+    case 0:
+      return BlockPink;
     case 1:
-      return BlockPink;
+      return BlockYellow;
     case 2:
-      return BlockYellow;
+      return BlockBlue;
     case 3:
-      return BlockBlue;
+      return BlockOrange;
     case 4:
-      return BlockOrange;
+      return BlockGreen;
     case 5:
-      return BlockGreen;
-    case 6:
-      return BlockPurple;
-    case 7:
-      return BlockPink;
-    case 8:
-      return BlockYellow;
-    case 9:
-      return BlockBlue;
-    case 10:
-      return BlockOrange;
-    case 11:
-      return BlockGreen;
-    case 12:
       return BlockPurple;
     default:
       return null;

@@ -1,8 +1,8 @@
-/* eslint-disable */
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import BottomDrawer from 'components/BottomDrawer';
-import { getFavoriteList, updateFavoriteItem } from 'apis/favoriteApi';
+// eslint-disable-next-line no-unused-vars
+import { updateFavoriteItem } from 'apis/favoriteApi';
 import BlockEmpty from 'assets/images/favoriteBlock/blockEmpty.png';
 import { EditIcon, RemoveIcon } from 'assets/images/icons';
 import Favorite1 from './favorite_1';
@@ -10,6 +10,8 @@ import Favorite2 from './favorite_2';
 import { setFavoriteDrawer, setCustomFavoriteList } from './stores/actions';
 import { blockBackgroundGenerator, favIconGenerator } from './favoriteGenerator';
 import FavoriteDrawerWrapper from './favorite.style';
+
+import { deleteFavoriteItem, getFavoriteList } from './api';
 
 const Favorite = () => {
   const [pressTimer, setPressTimer] = useState(0);
@@ -21,6 +23,7 @@ const Favorite = () => {
 
   // 取得用戶我的最愛清單
   const updateFavoriteList = () => {
+    // Fix 改成 callAPI 方式進行 request
     getFavoriteList().then((response) => {
       if (response.code) return;
       dispatch(setCustomFavoriteList(response));
@@ -51,13 +54,14 @@ const Favorite = () => {
   };
 
   // 點擊移除按鈕
-  const handleClickRemoveBlock = (position) => {
-    const params = {
-      actKey: null,
-      position: position
-    };
+  const handleClickRemoveBlock = (actKey) => {
+    // const params = {
+    //   actKey: null,
+    //   position,
+    // };
 
-    updateFavoriteItem(params)
+    // Fix 改成 callAPI 方式進行 request
+    deleteFavoriteItem(actKey)
       .then((response) => {
         if (response.code) return;
         updateFavoriteList();
@@ -81,14 +85,18 @@ const Favorite = () => {
     >
       {
         block.actKey
-          ? (<>
-            { (showRemoveButton && block.actKey[0] !== 'Z') && (
-              <span className="removeButton" onClick={() => handleClickRemoveBlock(block.position)}><RemoveIcon /></span>
-            ) }
-            <img src={blockBackgroundGenerator(index + 1)} alt="block" />
-            {favIconGenerator(block.actKey)}
-            {block.name}
-          </>)
+          ? (
+            <>
+              { (showRemoveButton && block.actKey[0] !== 'Z') && (
+              <span className="removeButton" onClick={() => handleClickRemoveBlock(block.actKey)}><RemoveIcon /></span>
+              ) }
+              {/* Bug Fix index 可能不包含在 blockBackgroundGenerator */}
+              <img src={blockBackgroundGenerator(index)} alt="block" />
+              {/* TODO 目前 block.actKey 與 favIconGenerator 內的 case 對應不上 */}
+              {favIconGenerator(block.actKey)}
+              {block.name}
+            </>
+          )
           : <img src={block} alt="empty" />
       }
     </button>
@@ -100,8 +108,8 @@ const Favorite = () => {
     list.forEach((block) => {
       const position = parseInt(block.position, 10);
       // position + 2 -> 前 2 個是固定的、不可更動，從陣列第三筆開始排序
-      if (position < 0) blocks.push(block)
-      if (position >= 0) blocks[position + 2] = block
+      if (position < 0) blocks.push(block);
+      if (position >= 0) blocks[position + 2] = block;
     });
     for (let i = 0; i < 12; i++) {
       if (!blocks[i]) blocks[i] = BlockEmpty;
@@ -132,13 +140,16 @@ const Favorite = () => {
     }
   };
 
-  useEffect(() => updateFavoriteList(), []);
+  useEffect(() => {
+    updateFavoriteList();
+  }, []);
 
   return (
     <BottomDrawer
       noScrollable
       title={favoriteDrawer?.title}
-      isOpen={favoriteDrawer?.open}
+      // isOpen={favoriteDrawer?.open}
+      isOpen
       onClose={handleCloseDrawer}
       onBack={favoriteDrawer?.back}
       content={(
