@@ -38,7 +38,7 @@ const E001001 = lazy(() => import('pages/E00100_Exchange/exchange_1'));
 const E001002 = lazy(() => import('pages/E00100_Exchange/exchange_2'));
 const E00200 = lazy(() => import('pages/E00200_ExchangeRate'));
 const E00300 = lazy(() => import('pages/E00300_FinancialDepartments'));
-const L00200 = lazy(() => import('pages/L00200_Principle'));
+const L00200 = lazy(() => import('pages/L00200_Principal'));
 const L00100 = lazy(() => import('pages/L00100_Loan/L00100'));
 const L00100Detail = lazy(() => import('pages/L00100_Loan/Details'));
 const L00100Reward = lazy(() => import('pages/L00100_Loan/Rewards'));
