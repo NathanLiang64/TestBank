@@ -88,6 +88,7 @@ const ForeignCurrencyPriceSetting = lazy(() => import('pages/ForeignCurrencyPric
 const Instalment1 = lazy(() => import('pages/R00200_Instalment/Instalment_1'));
 const Instalment2 = lazy(() => import('pages/R00200_Instalment/Instalment_2'));
 const Instalment3 = lazy(() => import('pages/R00200_Instalment/Instalment_3'));
+const Favorite = lazy(() => import('pages/Favorite'));
 
 // TODO：支援開發及Prototype測試使用
 const Login = lazy(() => import('proto/Login/login'));
@@ -184,6 +185,7 @@ const routes = [
   { path: '/deduct1', exact: false, component: Deduct1 },
   { path: '/deduct2', exact: false, component: Deduct2 },
   { path: '/deduct3', exact: false, component: Deduct3 },
+  { path: '/favorite', exact: false, component: Favorite },
 
   // TODO：支援開發及Prototype測試使用
   { path: '/login', exact: false, component: Login },

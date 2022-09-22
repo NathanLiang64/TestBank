@@ -6,7 +6,10 @@ import { updateFavoriteItem } from 'apis/favoriteApi';
 import BlockEmpty from 'assets/images/favoriteBlock/blockEmpty.png';
 import { EditIcon, RemoveIcon } from 'assets/images/icons';
 import Favorite1 from './favorite_1';
+// eslint-disable-next-line no-unused-vars
 import Favorite2 from './favorite_2';
+// eslint-disable-next-line no-unused-vars
+import Favorite2New from './favorite_2_new';
 import { setFavoriteDrawer, setCustomFavoriteList } from './stores/actions';
 import { blockBackgroundGenerator, favIconGenerator } from './favoriteGenerator';
 import FavoriteDrawerWrapper from './favorite.style';
@@ -134,7 +137,7 @@ const Favorite = () => {
       case 'add':
         return <Favorite1 blockOrder={blockOrder} updateFavoriteList={updateFavoriteList} />;
       case 'edit':
-        return <Favorite2 updateFavoriteList={updateFavoriteList} />;
+        return <Favorite2New updateFavoriteList={updateFavoriteList} />;
       default:
         return defaultContent();
     }
