@@ -1,6 +1,8 @@
+/* eslint-disable no-use-before-define */
+import uuid from 'react-uuid';
 import { callAPI } from 'utilities/axios';
 
-import mockLoanSummary from './mockData/mockLoanSummary';
+// import mockLoanSummary from './mockData/mockLoanSummary';
 import mockLoanRewards from './mockData/mockRewards';
 import mockLoanDetails from './mockData/mockLoanDetails';
 
@@ -32,8 +34,53 @@ import mockLoanDetails from './mockData/mockLoanDetails';
  */
 export const getLoanSummary = async () => {
   // const response = await callAPI('/api/');
-  const response = await new Promise((resolve) => resolve({ data: mockLoanSummary }));
-  return response.data;
+  // const response = await new Promise((resolve) => resolve({ data: mockLoanSummary }));
+
+  const resSubSummary = await getSubSummary();
+
+  const startDate = async (param) => {
+    const subPaymentList = await getSubPayment(param);
+
+    return subPaymentList[0].startDate;
+  };
+  const endDate = async (param) => {
+    const subPaymentList = await getSubPayment(param);
+    return (parseInt(subPaymentList[0].startDate, 10) + 30000).toString();
+  };
+
+  const resSubPaymentSummary = await getSubPaymentHistory({
+    account: '03105000742426', // TODO: 假資料
+    subNo: '0001', // TODO: 假資料
+    startDate: await startDate({ account: '03105000742426', subNo: '0001' }), // TODO: 假資料
+    endDate: await endDate({ account: '03105000742426', subNo: '0001' }), // TODO: 假資料
+  });
+
+  const loanSummary = await resSubSummary.map((subSummary) => ({
+    alias: '-', // TODO: 假資料
+    accountNo: subSummary.account,
+    loanNo: subSummary.subNo,
+    balance: subSummary.balance,
+    currency: 'NTD',
+    bonusInfo: {
+      cycleTiming: subSummary.payDate,
+      interest: subSummary.payAmount,
+      rewards: '-', // TODO: 假資料
+      isJoinedRewardProgram: '', // TODO: 假資料
+      currency: 'NTD',
+    },
+    transactions: resSubPaymentSummary.map((subPaymentHistory) => ({
+      id: uuid(),
+      txnDate: subPaymentHistory.date,
+      amount: subPaymentHistory.amount,
+      balance: subPaymentHistory.balance,
+      currency: 'NTD',
+    })),
+  }));
+
+  console.log('L00100 getLoanSummary() loanSummary:', loanSummary);
+
+  // return response.data;
+  return await loanSummary;
 };
 
 /**
