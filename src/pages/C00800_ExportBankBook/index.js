@@ -120,6 +120,7 @@ const ExportBankBook = () => {
   };
 
   const onSubmit = async (data) => {
+    dispatch(setWaittingVisible(true));
     if (data.outType === '2') {
       const valid = checkDateRangePickerValid();
       if (!valid) {
@@ -136,6 +137,7 @@ const ExportBankBook = () => {
       pdfTemplateType: data.outType === '1' ? 1 : 3,
     };
     const response = await sendBankBookMail(param);
+    dispatch(setWaittingVisible(false));
     if (response?.data === 'Send mail success!') {
       history.push('/C008001', { data: { mail, success: true } });
     } else {
@@ -147,7 +149,7 @@ const ExportBankBook = () => {
     dispatch(setWaittingVisible(true));
 
     await getAccounts();
-    fetchEmail();
+    await fetchEmail();
 
     dispatch(setWaittingVisible(false));
   }, []);

@@ -81,6 +81,11 @@ function DateRangePicker(props) {
     myOnChange(dateRange);
   };
 
+  // props.value 變更時，同步更新元件的日期區間
+  useEffect(() => {
+    setDateRange(value);
+  }, [value]);
+
   return (
     <DateRangePickerWrapper>
       <FEIBInputLabel>{label || '自訂搜尋日期區間'}</FEIBInputLabel>
