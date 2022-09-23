@@ -5,32 +5,31 @@ import React from 'react';
 import { useController } from 'react-hook-form';
 // import "./CheckBox.css";
 
-export const CheckBoxField = ({
-  disabled, icon, setShowTip, label, ...props
+export const CheckBoxFieldNew = ({
+  disabledObj, icon, setShowTip, label, value, ...props
 }) => {
   const { field } = useController(props);
-  const {onChange, name, value} = field;
-  const onChangeHandler = () => {
-    if (disabled) {
-      setShowTip(true);
-    } else {
-      onChange(!value);
+  const onChangeHandler = (e) => {
+    if (disabledObj.disabled && disabledObj.message) {
+      setShowTip(disabledObj.message);
+    } else if (!disabledObj.disabled) {
+      field.onChange(e.target.checked ? value : false);
     }
   };
 
   return (
     <FavoriteBlockButtonStyle
-      className={`favoriteBlockButton ${value ? 'selected' : ''}`}
+      className={`favoriteBlockButton ${field.value ? 'selected' : ''}`}
     >
-      <label htmlFor={name} style={{width: '100%', height: '100%'}}>
+      <label htmlFor={field.name} style={{width: '100%', height: '100%'}}>
         {icon}
         <p>{label}</p>
         <input
           type="checkbox"
           onChange={onChangeHandler}
-          id={name}
+          id={field.name}
           style={{display: 'none'}}
-          checked={!!value}
+          checked={!!field.value}
         />
         <BlockSelectedIcon className="selectedIcon" />
       </label>

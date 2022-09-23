@@ -1,75 +1,59 @@
 import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import BottomDrawer from 'components/BottomDrawer';
-// eslint-disable-next-line no-unused-vars
-import { updateFavoriteItem } from 'apis/favoriteApi';
 import BlockEmpty from 'assets/images/favoriteBlock/blockEmpty.png';
 import { EditIcon, RemoveIcon } from 'assets/images/icons';
-import Favorite1 from './favorite_1';
-// eslint-disable-next-line no-unused-vars
-import Favorite2 from './favorite_2';
 // eslint-disable-next-line no-unused-vars
 import Favorite2New from './favorite_2_new';
-import { setFavoriteDrawer, setCustomFavoriteList } from './stores/actions';
-import { blockBackgroundGenerator, favIconGenerator } from './favoriteGenerator';
+// eslint-disable-next-line no-unused-vars
+import Favorite3 from './favorite_3';
+import { blockBackgroundGenerator, iconGenerator } from './favoriteGenerator';
 import FavoriteDrawerWrapper from './favorite.style';
 
 import { deleteFavoriteItem, getFavoriteList } from './api';
 
 const Favorite = () => {
+  const initialViewControl = {
+    title: '我的最愛',
+    content: 'home',
+    specifiedLocation: '',
+  };
+  const [viewControl, setViewControl] = useState(initialViewControl);
   const [pressTimer, setPressTimer] = useState(0);
-  const [blockOrder, setBlockOrder] = useState(0);
   const [showRemoveButton, setShowRemoveButton] = useState(false);
-  const favoriteDrawer = useSelector(({ favorite }) => favorite.favoriteDrawer);
-  const customFavoriteList = useSelector(({ favorite }) => favorite.customFavoriteList);
-  const dispatch = useDispatch();
+  const [favoriteList, setFavoriteList] = useState([]);
 
   // 取得用戶我的最愛清單
   const updateFavoriteList = () => {
-    // Fix 改成 callAPI 方式進行 request
     getFavoriteList().then((response) => {
       if (response.code) return;
-      dispatch(setCustomFavoriteList(response));
+      setFavoriteList(response);
     });
   };
 
   const handleCloseDrawer = () => {
     setShowRemoveButton(false);
-    dispatch(setFavoriteDrawer({ ...favoriteDrawer, open: false }));
   };
 
   const handleOpenView = (viewName, order) => {
-    setBlockOrder(order);
-    dispatch(setFavoriteDrawer({
-      ...favoriteDrawer,
+    setViewControl({
       title: viewName === 'add' ? '新增我的最愛' : '編輯我的最愛',
       content: viewName,
-      back: () => {
-        dispatch(setFavoriteDrawer({
-          ...favoriteDrawer,
-          title: '我的最愛',
-          content: '',
-          back: null,
-        }));
-      },
-    }));
+      specifiedLocation: order,
+    });
     setShowRemoveButton(false);
   };
 
-  // 點擊移除按鈕
-  const handleClickRemoveBlock = (actKey) => {
-    // const params = {
-    //   actKey: null,
-    //   position,
-    // };
+  // 回到我的最愛首頁
+  const back2MyFavorite = () => setViewControl(initialViewControl);
 
-    // Fix 改成 callAPI 方式進行 request
-    deleteFavoriteItem(actKey)
-      .then((response) => {
-        if (response.code) return;
-        updateFavoriteList();
-      })
-      .catch((error) => console.log('刪除最愛 err', error));
+  // 點擊移除按鈕
+  const handleClickRemoveBlock = async (actKey) => {
+    try {
+      await deleteFavoriteItem(actKey);
+      updateFavoriteList();
+    } catch (err) {
+      console.log('刪除最愛 err', err);
+    }
   };
 
   // 長按編輯
@@ -77,11 +61,11 @@ const Favorite = () => {
   const handleTouchStart = () => setPressTimer(setTimeout(handleEditBlock, 800));
   const handleTouchEnd = () => pressTimer && clearTimeout(pressTimer);
 
+  // 渲染我的最愛列表
   const renderBlocksElement = (blocks) => blocks.map((block, index) => (
     <button
       type="button"
       key={block.actKey || index - 2}
-      data-id={block.actKey}
       onTouchStart={block.actKey ? handleTouchStart : null}
       onTouchEnd={block.actKey ? handleTouchEnd : null}
       onClick={block.actKey ? null : () => handleOpenView('add', index - 2)}
@@ -90,13 +74,16 @@ const Favorite = () => {
         block.actKey
           ? (
             <>
-              { (showRemoveButton && block.actKey[0] !== 'Z') && (
-              <span className="removeButton" onClick={() => handleClickRemoveBlock(block.actKey)}><RemoveIcon /></span>
+              { (showRemoveButton && block.position >= 0) && (
+              <span
+                className="removeButton"
+                onClick={() => handleClickRemoveBlock(block.actKey)}
+              >
+                <RemoveIcon />
+              </span>
               ) }
-              {/* Bug Fix index 可能不包含在 blockBackgroundGenerator */}
               <img src={blockBackgroundGenerator(index)} alt="block" />
-              {/* TODO 目前 block.actKey 與 favIconGenerator 內的 case 對應不上 */}
-              {favIconGenerator(block.actKey)}
+              {iconGenerator(block.actKey)}
               {block.name}
             </>
           )
@@ -105,16 +92,18 @@ const Favorite = () => {
     </button>
   ));
 
-  // 排列已選的最愛功能項目，空欄位補上空白區塊
   const renderBlocks = (list) => {
     const blocks = [];
+    const blocksLength = 12;
+    // 排列已選的最愛功能項目，空欄位補上空白區塊
     list.forEach((block) => {
       const position = parseInt(block.position, 10);
-      // position + 2 -> 前 2 個是固定的、不可更動，從陣列第三筆開始排序
       if (position < 0) blocks.push(block);
+      // position + 2 -> 前 2 個是固定的、不可更動，從陣列第三筆開始排序
       if (position >= 0) blocks[position + 2] = block;
     });
-    for (let i = 0; i < 12; i++) {
+    // 空白區塊補上 imgage
+    for (let i = 0; i < blocksLength; i++) {
       if (!blocks[i]) blocks[i] = BlockEmpty;
     }
     return renderBlocksElement(blocks);
@@ -127,37 +116,46 @@ const Favorite = () => {
         <EditIcon />
       </button>
       <div className="favoriteArea">
-        { customFavoriteList.length ? renderBlocks(customFavoriteList) : null }
+        { favoriteList.length ? renderBlocks(favoriteList) : null }
       </div>
     </div>
   );
 
-  const drawerController = (content) => {
-    switch (content) {
-      case 'add':
-        return <Favorite1 blockOrder={blockOrder} updateFavoriteList={updateFavoriteList} />;
-      case 'edit':
-        return <Favorite2New updateFavoriteList={updateFavoriteList} />;
-      default:
-        return defaultContent();
-    }
+  const drawerController = () => {
+    if (viewControl.content === 'home') return defaultContent();
+    return (
+      <Favorite3
+        updateFavoriteList={updateFavoriteList}
+        back2MyFavorite={back2MyFavorite}
+        specifiedLocation={viewControl.specifiedLocation}
+        isEditAction={viewControl.content === 'edit'}
+        favoriteList={favoriteList}
+      />
+      // <Favorite2New
+      //   updateFavoriteList={updateFavoriteList}
+      //   back2MyFavorite={back2MyFavorite}
+      //   specifiedLocation={viewControl.specifiedLocation}
+      //   actionType={viewControl.content}
+      //   favoriteList={favoriteList}
+      // />
+    );
   };
 
   useEffect(() => {
     updateFavoriteList();
   }, []);
 
+  // console.log('ordered', favoriteList);
   return (
     <BottomDrawer
       noScrollable
-      title={favoriteDrawer?.title}
-      // isOpen={favoriteDrawer?.open}
+      title={viewControl.title}
       isOpen
       onClose={handleCloseDrawer}
-      onBack={favoriteDrawer?.back}
+      onBack={viewControl.content !== 'home' ? back2MyFavorite : null}
       content={(
         <FavoriteDrawerWrapper>
-          { drawerController(favoriteDrawer?.content) }
+          { drawerController() }
         </FavoriteDrawerWrapper>
       )}
     />
