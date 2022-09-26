@@ -4,7 +4,7 @@ import {lazy} from 'react';
 
 const A00400 = lazy(() => import('pages/A00400_Provisioning'));
 const A00600 = lazy(() => import('pages/A00600_RegularBasicInformation'));
-const A00700 = lazy(() => import('pages/A00700_RegularPwdModify'));
+const A00700 = lazy(() => import('pages/A00700_RegularPwdModify/A00700'));
 const B00300 = lazy(() => import('pages/B00300_Notice'));
 const B00600 = lazy(() => import('pages/B00600_More'));
 const C00100 = lazy(() => import('pages/C00100_AccountOverview/C00100'));
@@ -25,16 +25,16 @@ const C008001 = lazy(() => import('pages/C00800_ExportBankBook/exportBankBook_1'
 const D00100 = lazy(() => import('pages/D00100_NtdTransfer/D00100v2'));
 const D001001 = lazy(() => import('pages/D00100_NtdTransfer/D00100_1'));
 const D001002 = lazy(() => import('pages/D00100_NtdTransfer/D00100_2'));
-const D00300 = lazy(() => import('pages/D00300_CardLessATM'));
-const D003001 = lazy(() => import('pages/D00300_CardLessATM/cardLessATM_1'));
-const D003002 = lazy(() => import('pages/D00300_CardLessATM/cardLessATM_2'));
+const D00300 = lazy(() => import('pages/D00300_CardLessATM/D00300'));
+const D003001 = lazy(() => import('pages/D00300_CardLessATM/D00300_1'));
+const D003002 = lazy(() => import('pages/D00300_CardLessATM/D00300_2'));
 const D00400 = lazy(() => import('pages/D00400_CardLessWithDrawChgPwd'));
 const D00500 = lazy(() => import('pages/D00500_FrequentContacts/D00500'));
 const D00600 = lazy(() => import('pages/D00600_RegisteredContacts/D00600'));
 const D00700 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer'));
-const D00800 = lazy(() => import('pages/D00800_ReserveTransferSearch'));
-const D008001 = lazy(() => import('pages/D00800_ReserveTransferSearch/reserveTransferSearch_1'));
-const D008002 = lazy(() => import('pages/D00800_ReserveTransferSearch/reserveTransferSearch_2'));
+const D00800 = lazy(() => import('pages/D00800_ReserveTransferSearch/D00800'));
+const D008001 = lazy(() => import('pages/D00800_ReserveTransferSearch/D00800_1'));
+const D008002 = lazy(() => import('pages/D00800_ReserveTransferSearch/D00800_2'));
 const E00100 = lazy(() => import('pages/E00100_Exchange/E00100'));
 const E001001 = lazy(() => import('pages/E00100_Exchange/E00100_1'));
 const E001002 = lazy(() => import('pages/E00100_Exchange/E00100_2'));
@@ -67,6 +67,7 @@ const T006002 = lazy(() => import('pages/T00600_MobileTransfer/mobileTransfer_2'
 const T00700 = lazy(() => import('pages/T00700_BasicInformation'));
 const T00800 = lazy(() => import('pages/T00800_ChangeUserName'));
 const T00900 = lazy(() => import('pages/T00900_PwdModify'));
+const S00100 = lazy(() => import('pages/S00100_Favorite/S00100'));
 
 const LossReissue = lazy(() => import('pages/LossReissue'));
 const AccountMaintenance = lazy(() => import('pages/AccountMaintenance'));
@@ -154,6 +155,7 @@ const routes = [
   {path: '/R00500', exact: false, component: R00500},
   {path: '/R00600', exact: false, component: R00600},
   {path: '/R006001', exact: false, component: R006001},
+  {path: '/S00100', exact: true, component: S00100},
   {path: '/S00400', exact: true, component: S00400},
   {path: '/S00600', exact: false, component: S00600},
   {path: '/T00100', exact: false, component: T00100},

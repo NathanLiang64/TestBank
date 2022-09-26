@@ -9,6 +9,12 @@ export const getCardStatus = async (param) => {
 // 檢查無卡提款狀態 done
 export const getCardlessStatus = async (param) => {
   const response = await callAPI('/api/cardlessWD/getStatus', param);
+  // const response = {
+  //   data:
+  //   // { cwdStatus: '1', newSiteRegist: param, message: 'cwdStatus 1 message' },
+  //   // { cwdStatus: '2', newSiteRegist: param, message: 'cwdStatus 2 message' },
+  //   // { cwdStatus: '3', newSiteRegist: param, message: 'cwdStatus 3 message' },
+  // };
   return response.data;
 };
 

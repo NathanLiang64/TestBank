@@ -27,6 +27,7 @@ import DateRangePicker from 'components/DateRangePicker';
 import SuccessImage from 'assets/images/successIcon.png';
 import FailImage from 'assets/images/failIcon.png';
 import theme from 'themes/theme';
+import { showCustomPrompt } from 'utilities/MessageModal';
 import DetailContent from './detailContent';
 import ResultContent from './resultContent';
 
@@ -51,25 +52,10 @@ const ReserveTransferSearch = () => {
   const [tabValue, setTabValue] = useState('1');
   const [reserveDateRange, setReserveDateRange] = useState([new Date(new Date().setDate(new Date().getDate() + 1)), new Date(new Date().setFullYear(new Date().getFullYear() + 2))]);
   const [resultDateRange, setResultDateRange] = useState([new Date(new Date().setFullYear(new Date().getFullYear() - 2)), new Date()]);
-  const [showDetailDialog, setShowDetailDialog] = useState(false);
-  const [showResultDialog, setShowResultDialog] = useState(false);
   const [resultDialogData, setResultDialogData] = useState({});
   const [currentReserveData, setCurrentReserveData] = useState({});
   const [reserveDataList, setReserveDataList] = useState([]);
   const [resultDataList, setResultDataList] = useState([]);
-  const [dialogModal, setDialogModal] = useState({
-    open: false,
-    content: '',
-  });
-
-  // 關閉訊息彈窗
-  const closeDialog = () => {
-    setDialogModal({
-      open: false,
-      content: '',
-    });
-    closeFunc();
-  };
 
   // 取得帳號清單
   const fetchTransferOutAccounts = async () => {
@@ -80,10 +66,11 @@ const ReserveTransferSearch = () => {
       setSelectedAccount(data.accounts[0]);
       switchLoading(false);
     } else {
-      setDialogModal({
-        open: true,
-        content: `${message}(${code})`,
-      });
+      await showCustomPrompt({message});
+      // setDialogModal({
+      //   open: true,
+      //   content: `${message}(${code})`,
+      // });
       switchLoading(false);
       closeFunc();
     }
@@ -183,9 +170,15 @@ const ReserveTransferSearch = () => {
     </SwiperSlide>
   ));
 
-  const handleReserveDataDialogOpen = (data) => {
+  const handleReserveDataDialogOpen = async (data) => {
     setCurrentReserveData(data);
-    setShowDetailDialog(true);
+    // setShowDetailDialog(true);
+    await showCustomPrompt({
+      title: '預約轉帳',
+      message: (<DetailContent contentData={{ data: currentReserveData, selectedAccount }} />),
+      onOk: () => toConfirmPage(),
+      onClose: () => toConfirmPage(),
+    });
   };
 
   // 預約轉帳查詢列表
@@ -201,9 +194,13 @@ const ReserveTransferSearch = () => {
   ));
 
   // 打開結果彈窗
-  const handleOpenResultDialog = (data) => {
+  const handleOpenResultDialog = async (data) => {
     setResultDialogData(data);
-    setShowResultDialog(true);
+    // setShowResultDialog(true);
+    await showCustomPrompt({
+      title: '預約轉帳結果',
+      message: <ResultContent data={resultDialogData} selectedAccount={selectedAccount} />,
+    });
   };
 
   // 結果查詢列表
@@ -219,45 +216,45 @@ const ReserveTransferSearch = () => {
   ));
 
   // 預約轉帳明細彈窗
-  const renderDetailDialog = () => (
-    <Dialog
-      title="預約轉帳"
-      isOpen={showDetailDialog}
-      onClose={() => setShowDetailDialog(false)}
-      content={(<DetailContent contentData={{ data: currentReserveData, selectedAccount }} />)}
-      action={(
-        <FEIBButton
-          $color={theme.colors.text.dark}
-          $bgColor={theme.colors.background.cancel}
-          onClick={toConfirmPage}
-        >
-          取消交易
-        </FEIBButton>
-      )}
-    />
-  );
+  // const renderDetailDialog = () => (
+  //   <Dialog
+  //     title="預約轉帳"
+  //     isOpen={showDetailDialog}
+  //     onClose={() => setShowDetailDialog(false)}
+  //     content={(<DetailContent contentData={{ data: currentReserveData, selectedAccount }} />)}
+  //     action={(
+  //       <FEIBButton
+  //         $color={theme.colors.text.dark}
+  //         $bgColor={theme.colors.background.cancel}
+  //         onClick={toConfirmPage}
+  //       >
+  //         取消交易
+  //       </FEIBButton>
+  //     )}
+  //   />
+  // );
 
   // 轉帳結果明細彈窗
-  const renderResultDialog = () => (
-    <Dialog
-      title="預約轉帳結果"
-      isOpen={showResultDialog}
-      onClose={() => setShowResultDialog(false)}
-      content={(<ResultContent data={resultDialogData} selectedAccount={selectedAccount} />)}
-    />
-  );
+  // const renderResultDialog = () => (
+  //   <Dialog
+  //     title="預約轉帳結果"
+  //     isOpen={showResultDialog}
+  //     onClose={() => setShowResultDialog(false)}
+  //     content={(<ResultContent data={resultDialogData} selectedAccount={selectedAccount} />)}
+  //   />
+  // );
 
   // 訊息顯示窗
-  const renderDialog = () => (
-    <Dialog
-      isOpen={dialogModal.open}
-      onClose={closeDialog}
-      content={<p>{dialogModal.content}</p>}
-      action={(
-        <FEIBButton onClick={closeDialog}>確定</FEIBButton>
-      )}
-    />
-  );
+  // const renderDialog = () => (
+  //   <Dialog
+  //     isOpen={dialogModal.open}
+  //     onClose={closeDialog}
+  //     content={<p>{dialogModal.content}</p>}
+  //     action={(
+  //       <FEIBButton onClick={closeDialog}>確定</FEIBButton>
+  //     )}
+  //   />
+  // );
 
   // 取得帳號列表
   useEffect(() => {
@@ -353,9 +350,9 @@ const ReserveTransferSearch = () => {
             </FEIBTabPanel>
           </FEIBTabContext>
         </div>
-        {renderDetailDialog()}
+        {/* {renderDetailDialog()}
         {renderResultDialog()}
-        {renderDialog()}
+        {renderDialog()} */}
       </ReserveTransferSearchWrapper>
     </Layout>
   );
