@@ -5,6 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { fetchJobsCode, updateRegularBasicInformation } from 'pages/A00600_RegularBasicInformation/api';
 import { closeFunc } from 'utilities/AppScriptProxy';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 /* Elements */
 import {
@@ -65,19 +66,32 @@ const RegularBasicInformation = () => {
 
   // 取得職業別清單
   const getJobsCode = async () => {
+    dispatch(setWaittingVisible(true));
     const { code, message, data } = await fetchJobsCode({});
     if (code === '0000') {
       const {
-        grade, income, jobcd, gradeList, incomeList, jobList,
+        gradeList, incomeList, jobList,
       } = data;
+
       console.log(data);
+
       setGradeOptions(gradeList);
       setIncomeOptions(incomeList);
       setJobOptions(jobList);
-      setRegularBasicData({ grade, income, jobcd });
-      setValue('industry', jobList.findIndex((item) => item.code === jobcd) === -1 ? '' : jobcd);
-      setValue('title', gradeList.findIndex((item) => item.code === grade) === -1 ? '' : grade);
-      setValue('income', incomeList.findIndex((item) => item.code === income) === -1 ? '' : income);
+
+      const grade = gradeList.find((item) => item.code === data.grade)?.code || '';
+      const income = incomeList.find((item) => item.code === data.income)?.code || '';
+      const jobcd = jobList.find((item) => item.code === data.jobcd)?.code || '';
+
+      setRegularBasicData({
+        grade,
+        income,
+        jobcd,
+      });
+
+      setValue('industry', jobcd);
+      setValue('title', grade);
+      setValue('income', income);
     } else {
       dispatch(setCloseCallBack(() => closeFunc()));
       dispatch(setResultContent({
@@ -90,6 +104,7 @@ const RegularBasicInformation = () => {
       }));
       dispatch(setIsOpen(true));
     }
+    dispatch(setWaittingVisible(false));
   };
 
   // 設定結果彈窗
@@ -120,6 +135,7 @@ const RegularBasicInformation = () => {
 
   // 更新基本資料
   const modifyPersonalData = async () => {
+    dispatch(setWaittingVisible(true));
     const data = getValues();
     const modifyData = {
       jobCd: data.industry,
@@ -130,8 +146,10 @@ const RegularBasicInformation = () => {
       ...modifyData,
       actionCode: getActionCode(modifyData),
     };
+
     const modifyResponse = await updateRegularBasicInformation(param);
     setResultDialog(modifyResponse);
+    dispatch(setWaittingVisible(false));
   };
 
   // 點擊確認按鈕
@@ -228,39 +246,38 @@ const RegularBasicInformation = () => {
           <div>
             <FEIBButton
               type="submit"
+              style={{ marginBottom: '2.4rem' }}
             >
               確認
             </FEIBButton>
-            <div style={{ display: 'flex' }}>
-              <FEIBButton
-                type="button"
-                $bgColor={theme.colors.background.cancel}
-                $color={theme.colors.text.dark}
-                onClick={async () => {
-                  const data = getValues();
-                  const modifyData = {
-                    jobCd: data.industry,
-                    grade: data.title,
-                    inCome: data.income,
-                    actionCode: 0,
-                  };
-                  await updateRegularBasicInformation(modifyData);
-                  closeFunc();
-                }}
-                style={{ marginTop: '2rem', marginRight: '1rem' }}
-              >
-                維持不變
-              </FEIBButton>
-              <FEIBButton
-                type="button"
-                $bgColor={theme.colors.background.cancel}
-                $color={theme.colors.text.dark}
-                onClick={resetForm}
-                style={{ marginTop: '2rem', marginLeft: '1rem' }}
-              >
-                重新設定
-              </FEIBButton>
-            </div>
+            <FEIBButton
+              type="button"
+              $bgColor={theme.colors.background.cancel}
+              $color={theme.colors.text.dark}
+              onClick={async () => {
+                const data = getValues();
+                const modifyData = {
+                  jobCd: data.industry,
+                  grade: data.title,
+                  inCome: data.income,
+                  actionCode: 0,
+                };
+                await updateRegularBasicInformation(modifyData);
+                closeFunc();
+              }}
+              style={{ marginBottom: '2.4rem' }}
+            >
+              維持不變
+            </FEIBButton>
+            <FEIBButton
+              type="button"
+              $bgColor={theme.colors.background.cancel}
+              $color={theme.colors.text.dark}
+              onClick={resetForm}
+              style={{ marginBottom: '2.4rem' }}
+            >
+              重新設定
+            </FEIBButton>
           </div>
         </form>
       </RegularBasicInformationWrapper>

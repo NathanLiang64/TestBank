@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { showDrawer, closeDrawer } from 'utilities/MessageModal';
-
+import {
+  accountFormatter, toCurrency, stringDateCodeFormatter, dateFormatter,
+} from 'utilities/Generator';
+import { getSubPaymentHistory } from 'pages/L00100_Loan/api';
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import DebitCard from 'components/DebitCard/DebitCard';
@@ -12,17 +15,60 @@ import DownloadIcon from 'assets/images/icons/downloadIcon.svg';
 /* Styles */
 import LoanInterestWrapper from './loanInterest.style';
 
-const LoanInterest = () => {
+const LoanInterest = (props) => {
   const history = useHistory();
 
+  const [cardData, setCardData] = useState({});
   const [dateRange, setDateRange] = useState('0');
+  const [recordsList, setRecordsList] = useState([]);
+
+  const beforeSixMonth = stringDateCodeFormatter(new Date(new Date().setDate(new Date().getDate() - 180)));
+  const beforeOneYear = stringDateCodeFormatter(new Date(new Date().setDate(new Date().getDate() - 365)));
+  const beforeTwoYears = stringDateCodeFormatter(new Date(new Date().setDate(new Date().getDate() - (365 * 2))));
+  const beforeThreeYears = stringDateCodeFormatter(new Date(new Date().setDate(new Date().getDate() - (365 * 3))));
+  const endDate = stringDateCodeFormatter(new Date());
+
+  const getStartDate = (type) => {
+    switch (type) {
+      case '0':
+        return beforeSixMonth;
+
+      case '1':
+        return beforeOneYear;
+
+      case '2':
+        return beforeTwoYears;
+
+      case '3':
+        return beforeThreeYears;
+
+      default:
+        return beforeSixMonth;
+    }
+  };
+
+  // 查詢繳款紀錄
+  const getLoanInterestRecords = async (rangeType) => {
+    const param = {
+      account: cardData.accountNo,
+      subNo: cardData.loanNo,
+      startDate: getStartDate(rangeType),
+      endDate,
+    };
+
+    const histroyResponse = await getSubPaymentHistory(param);
+    if (histroyResponse) {
+      setRecordsList(histroyResponse);
+    }
+  };
 
   const handleChangeTabs = (e, value) => {
     setDateRange(value);
+    getLoanInterestRecords(value);
   };
 
-  const toDetailPage = () => {
-    history.push('/L003001');
+  const toDetailPage = (singleHistoryData) => {
+    history.push('/L003001', { singleHistoryData, cardData });
   };
 
   const renderEditList = () => (
@@ -50,17 +96,29 @@ const LoanInterest = () => {
     );
   };
 
+  useEffect(() => {
+    if (props?.location?.state?.card) {
+      setCardData(props?.location?.state?.card);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (cardData?.accountNo) {
+      getLoanInterestRecords(dateRange);
+    }
+  }, [cardData]);
+
   return (
-    <Layout title="繳款紀錄查詢">
+    <Layout title="繳款紀錄查詢" goBackFunc={() => history.goBack()}>
       <LoanInterestWrapper>
         <div className="cardArea">
           <DebitCard
-            branch="branch"
-            cardName="信貸"
-            account="04300499001234"
-            balance="20000000"
-            dollarSign="NTD"
-            transferTitle="跨轉優惠"
+            branch=""
+            cardName={cardData?.alias || ''}
+            account={`${accountFormatter(cardData?.accountNo || '')} ${cardData.loanNo}`}
+            balance={toCurrency(cardData?.balance || '')}
+            dollarSign={cardData?.currency || ''}
+            transferTitle=""
             color="lightPurple"
           />
         </div>
@@ -81,20 +139,17 @@ const LoanInterest = () => {
             </div>
           </div>
           <div className="recordsList">
-            <InformationTape
-              topLeft="還款金額"
-              topRight="$1,250"
-              bottomLeft="2021/12/31"
-              bottomRight="貸款餘額 $123,456,789"
-              onClick={toDetailPage}
-            />
-            <InformationTape
-              topLeft="還款金額"
-              topRight="$1,250"
-              bottomLeft="2021/12/31"
-              bottomRight="貸款餘額 $123,456,789"
-              onClick={toDetailPage}
-            />
+            {
+              recordsList.map((item) => (
+                <InformationTape
+                  topLeft="還款金額"
+                  topRight={`$${toCurrency(item.amount)}`}
+                  bottomLeft={`${dateFormatter(item.date)}`}
+                  bottomRight={`貸款餘額 $${toCurrency(item.balance)}`}
+                  onClick={() => toDetailPage(item)}
+                />
+              ))
+            }
           </div>
         </div>
       </LoanInterestWrapper>

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Layout from 'components/Layout';
 
-const PrincipleWrapper = styled(Layout)`
+const PrincipalWrapper = styled(Layout)`
   padding: 0;
 
   .sectionTop {
@@ -41,4 +41,4 @@ const PrincipleWrapper = styled(Layout)`
   }
 `;
 
-export default PrincipleWrapper;
+export default PrincipalWrapper;

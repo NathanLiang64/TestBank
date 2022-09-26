@@ -17,10 +17,10 @@ import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import InformationTape from 'components/InformationTape';
 import EmptyData from 'components/EmptyData';
 import {
-  accountFormatter, dateFormatter, stringToDate, currencySymbolGenerator,
+  accountFormatter, dateFormatter, stringToDate, currencySymbolGenerator, stringDateCodeFormatter,
 } from 'utilities/Generator';
 
-import { getLoanSummary, getContract } from './api';
+import { getLoanSummary, getContract, getSubPaymentHistory } from './api';
 // import { getLoanSummary, getContract, getStatment } from './api';
 import PageWrapper, { ContentWrapper } from './L00100.style';
 
@@ -76,8 +76,8 @@ const Page = () => {
   };
 
   const handleSearchClick = (accountNo) => {
-    // TODO 串接為物貸款應繳查詢頁
-    alert(`串接為物，查詢貸款號：${accountNo}`);
+    // 查詢應繳本息
+    history.push('/L00200', { accountNo });
   };
 
   /**
@@ -135,9 +135,20 @@ const Page = () => {
     */
   ]);
 
-  const handleSingleTransaction = (id) => {
-    // TODO 串接為物單筆應繳紀錄查詢頁
-    alert(`串接為物，查詢單筆繳款紀錄ID：${id}`);
+  const handleSingleTransaction = async (i, cardData) => {
+    dispatch(setWaittingVisible(true));
+    const param = {
+      account: cardData.accountNo,
+      subNo: cardData.loanNo,
+      startDate: stringDateCodeFormatter(new Date(new Date().setDate(new Date().getDate() - 30))),
+      endDate: stringDateCodeFormatter(new Date()),
+    };
+    const historyResponse = await getSubPaymentHistory(param);
+    dispatch(setWaittingVisible(false));
+    if (historyResponse) {
+      const singleHistoryData = historyResponse[i];
+      history.push('/L003001', { singleHistoryData, cardData });
+    }
   };
 
   const renderTransactions = (card) => {
@@ -154,7 +165,7 @@ const Page = () => {
         key={`${uid}-t${i}`}
         type="button"
         aria-label={`點擊查詢此筆紀錄，還款日:${dateFormatter(stringToDate(t.txnDate))}，金額：${currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}`}
-        onClick={() => handleSingleTransaction(t.id)}
+        onClick={() => handleSingleTransaction(i, card)}
         style={{ width: '100%' }}
       >
         <InformationTape
@@ -167,9 +178,8 @@ const Page = () => {
     ));
   };
 
-  const handleMoreTransactionsClick = (accountNo) => {
-    // TODO 串接為物繳款紀錄查詢頁
-    alert(`串接為物，查詢貸款號：${accountNo}`);
+  const handleMoreTransactionsClick = (card) => {
+    history.push('/L00300', { card });
   };
 
   /**
@@ -184,7 +194,7 @@ const Page = () => {
         <div>
           <div>{ renderTransactions(card) }</div>
           <div className="toolbar">
-            <button className="btn-icon" type="button" onClick={() => handleMoreTransactionsClick(card.accountNo)}>
+            <button className="btn-icon" type="button" onClick={() => handleMoreTransactionsClick(card)}>
               更多明細
               <ArrowNextIcon />
             </button>

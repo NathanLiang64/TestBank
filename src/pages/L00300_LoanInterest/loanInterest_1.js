@@ -1,3 +1,9 @@
+/* eslint-disable react/destructuring-assignment */
+import { useHistory } from 'react-router';
+import {
+  accountFormatter, toCurrency, dateFormatter,
+} from 'utilities/Generator';
+
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import DebitCard from 'components/DebitCard/DebitCard';
@@ -5,30 +11,22 @@ import DebitCard from 'components/DebitCard/DebitCard';
 /* Styles */
 import LoanInterestWrapper from './loanInterest.style';
 
-const LoanInterest = () => {
-  const data = {
-    date: '2021/12/31 ~ 2022/01/31',
-    type: '還本付息',
-    principalAndInterest: '$10,000',
-    interest: '$1,250',
-    overdue: '$0',
-    liquidatedDamages: '$0',
-    interestRate: '1.050%',
-    amountDue: '$12,500',
-    principal: '$1,272,963',
-  };
+const LoanInterest1 = (props) => {
+  const history = useHistory();
+  const cardData = props?.location?.state?.cardData;
+  const singleHistoryData = props?.location?.state?.singleHistoryData;
 
   return (
-    <Layout title="繳款紀錄查詢">
+    <Layout title="繳款紀錄查詢" goBackFunc={() => history.goBack()}>
       <LoanInterestWrapper>
         <div className="cardArea">
           <DebitCard
-            branch="branch"
-            cardName="信貸"
-            account="04300499001234"
-            balance="20000000"
-            dollarSign="NTD"
-            transferTitle="跨轉優惠"
+            branch=""
+            cardName={cardData?.alias || ''}
+            account={`${accountFormatter(cardData?.accountNo || '')} ${cardData.loanNo}`}
+            balance={toCurrency(cardData?.balance || '')}
+            dollarSign={cardData?.currency || ''}
+            transferTitle=""
             color="lightPurple"
           />
         </div>
@@ -36,39 +34,60 @@ const LoanInterest = () => {
           <ul className="detailUl">
             <li>
               <span>交易日</span>
-              <span>{ data.date }</span>
+              <span>{ dateFormatter(singleHistoryData?.date) }</span>
             </li>
             <li>
               <span>交易種類</span>
-              <span>{ data.type }</span>
+              <span>{ singleHistoryData?.type }</span>
             </li>
             <li>
               <span>攤還本金</span>
-              <span>{ data.principalAndInterest }</span>
+              <span>
+                $
+                { toCurrency(singleHistoryData?.splitPrincipal) }
+              </span>
             </li>
             <li>
               <span>利息</span>
-              <span>{ data.interest }</span>
+              <span>
+                $
+                { toCurrency(singleHistoryData?.interest) }
+              </span>
             </li>
             <li>
               <span>逾期息</span>
-              <span>{ data.overdue }</span>
+              <span>
+                $
+                { toCurrency(singleHistoryData?.overInterest) }
+              </span>
             </li>
             <li>
               <span>違約金</span>
-              <span>{ data.liquidatedDamages }</span>
+              <span>
+                $
+                { toCurrency(singleHistoryData?.defaultAmount) }
+              </span>
             </li>
             <li>
               <span>利率</span>
-              <span>{ data.interestRate }</span>
+              <span>
+                { singleHistoryData?.rate }
+                %
+              </span>
             </li>
             <li>
               <span>應繳金額</span>
-              <span>{ data.amountDue }</span>
+              <span>
+                $
+                { toCurrency(singleHistoryData?.amount) }
+              </span>
             </li>
             <li>
               <span>本金餘額</span>
-              <span>{ data.principal }</span>
+              <span>
+                $
+                { toCurrency(singleHistoryData?.balance) }
+              </span>
             </li>
           </ul>
         </div>
@@ -77,4 +96,4 @@ const LoanInterest = () => {
   );
 };
 
-export default LoanInterest;
+export default LoanInterest1;
