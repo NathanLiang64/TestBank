@@ -6,14 +6,14 @@ import { useController } from 'react-hook-form';
 // import "./CheckBox.css";
 
 export const CheckBoxField = ({
-  disabled, icon, setShowTip, label, ...props
+  disabledObj, icon, setShowTip, label, ...props
 }) => {
   const { field } = useController(props);
   const {onChange, name, value} = field;
   const onChangeHandler = () => {
-    if (disabled) {
-      setShowTip(true);
-    } else {
+    if (disabledObj.disabled && disabledObj.message) {
+      setShowTip(disabledObj.message);
+    } else if (!disabledObj.disabled) {
       onChange(!value);
     }
   };

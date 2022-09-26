@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import Layout from 'components/Layout/Layout';
 import FavoriteBlockButton from 'components/FavoriteBlockButton';
 import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
-import { iconGenerator } from 'pages/Favorite/favoriteGenerator';
+import { iconGenerator } from 'pages/S00100_Favorite/favoriteGenerator';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';

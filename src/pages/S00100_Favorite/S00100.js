@@ -2,10 +2,7 @@ import { useEffect, useState } from 'react';
 import BottomDrawer from 'components/BottomDrawer';
 import BlockEmpty from 'assets/images/favoriteBlock/blockEmpty.png';
 import { EditIcon, RemoveIcon } from 'assets/images/icons';
-// eslint-disable-next-line no-unused-vars
-import Favorite2New from './favorite_2_new';
-// eslint-disable-next-line no-unused-vars
-import Favorite3 from './favorite_3';
+import S00100_1 from './S00100_1';
 import { blockBackgroundGenerator, iconGenerator } from './favoriteGenerator';
 import FavoriteDrawerWrapper from './favorite.style';
 
@@ -102,8 +99,8 @@ const Favorite = () => {
       // position + 2 -> 前 2 個是固定的、不可更動，從陣列第三筆開始排序
       if (position >= 0) blocks[position + 2] = block;
     });
-    // 空白區塊補上 imgage
     for (let i = 0; i < blocksLength; i++) {
+      // 空白區塊補上 imgage
       if (!blocks[i]) blocks[i] = BlockEmpty;
     }
     return renderBlocksElement(blocks);
@@ -124,20 +121,13 @@ const Favorite = () => {
   const drawerController = () => {
     if (viewControl.content === 'home') return defaultContent();
     return (
-      <Favorite3
+      <S00100_1
         updateFavoriteList={updateFavoriteList}
         back2MyFavorite={back2MyFavorite}
         specifiedLocation={viewControl.specifiedLocation}
         isEditAction={viewControl.content === 'edit'}
         favoriteList={favoriteList}
       />
-      // <Favorite2New
-      //   updateFavoriteList={updateFavoriteList}
-      //   back2MyFavorite={back2MyFavorite}
-      //   specifiedLocation={viewControl.specifiedLocation}
-      //   actionType={viewControl.content}
-      //   favoriteList={favoriteList}
-      // />
     );
   };
 
@@ -145,7 +135,6 @@ const Favorite = () => {
     updateFavoriteList();
   }, []);
 
-  // console.log('ordered', favoriteList);
   return (
     <BottomDrawer
       noScrollable

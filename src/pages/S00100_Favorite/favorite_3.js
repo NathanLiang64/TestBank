@@ -68,6 +68,8 @@ const Favorite3 = ({
         }
         return acc;
       }, []);
+
+      console.log(updatedList);
       // // 更新我的最愛項目
       // await Promise.all(updatedList.map(({actKey, position}) => modifyFavoriteItem({actKey, position: parseInt(position, 10)})));
     } else {
@@ -79,8 +81,10 @@ const Favorite3 = ({
       const unorderedList = editedBlockList.filter((item) => item && !item.position);
       orderedList.forEach((el, index) => {
         if (!el) {
-          const [value] = unorderedList.splice(0, 1);
-          if (value) orderedList[index] = value.actKey;
+          // const [value] = unorderedList.splice(0, 1);
+          const shiftedValue = unorderedList.shift();
+          // if (value) orderedList[index] = value.actKey;
+          if (shiftedValue) orderedList[index] = shiftedValue.actKey;
         }
       });
       console.log(orderedList);
