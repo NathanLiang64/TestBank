@@ -1,6 +1,8 @@
+/* eslint-disable no-use-before-define */
+import uuid from 'react-uuid';
 import { callAPI } from 'utilities/axios';
 
-import mockLoanSummary from './mockData/mockLoanSummary';
+// import mockLoanSummary from './mockData/mockLoanSummary';
 import mockLoanRewards from './mockData/mockRewards';
 import mockLoanDetails from './mockData/mockLoanDetails';
 
@@ -32,8 +34,59 @@ import mockLoanDetails from './mockData/mockLoanDetails';
  */
 export const getLoanSummary = async () => {
   // const response = await callAPI('/api/');
-  const response = await new Promise((resolve) => resolve({ data: mockLoanSummary }));
-  return response.data;
+  // const response = await new Promise((resolve) => resolve({ data: mockLoanSummary }));
+
+  /* 取得此帳號所有貸款資料 */
+  const resSubSummary = await getSubSummary();
+
+  /* 取得查詢起始日 */
+  const startDate = async (param) => {
+    const subPaymentList = await getSubPayment(param);
+
+    return subPaymentList[0].startDate;
+  };
+
+  /* 取得查詢結束日，查詢區間為三年 */
+  const endDate = async (param) => {
+    const subPaymentList = await getSubPayment(param);
+    return (parseInt(subPaymentList[0].startDate, 10) + 30000).toString();
+  };
+
+  /* 根據貸款帳號、貸款分號、起始日、結束日取得分帳還款記錄 */
+  const resSubPaymentSummary = async (account, subNo) => await getSubPaymentHistory({
+    account,
+    subNo,
+    startDate: await startDate({ account, subNo }),
+    endDate: await endDate({ account, subNo }), //
+  });
+
+  /* 將回傳資料轉換成頁面資料結構 */
+  const loanSummary = await Promise.all(resSubSummary.map(async (subSummary) => ({
+    alias: '-', // TODO: 此階段不做
+    accountNo: subSummary.account,
+    loanNo: subSummary.subNo,
+    balance: subSummary.balance,
+    currency: 'NTD', // Debug: 假資料
+    bonusInfo: {
+      cycleTiming: subSummary.payDate,
+      interest: subSummary.payAmount,
+      rewards: '-', // TODO: 此階段不做
+      isJoinedRewardProgram: '-', // TODO: 此階段不做
+      currency: 'NTD', // Debug: 假資料
+    },
+    transactions: await resSubPaymentSummary(subSummary.account, subSummary.subNo).then((res) => res.map((subPaymentHistory) => ({ // Debug: account 029資料錯誤，測試使用此accout, subNo: '03105000742426', '0001'
+      id: uuid(),
+      txnDate: subPaymentHistory.date,
+      amount: subPaymentHistory.amount,
+      balance: subPaymentHistory.balance,
+      currency: 'NTD', // Debug: 假資料
+    }))),
+  })));
+
+  console.log('L00100 getLoanSummary() loanSummary:', loanSummary);
+
+  // return response.data;
+  return loanSummary;
 };
 
 /**

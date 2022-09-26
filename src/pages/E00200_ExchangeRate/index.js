@@ -1,6 +1,11 @@
-/* Elements */
+/**
+ * /* Elements
+ *
+ * @format
+ */
+
 import Layout from 'components/Layout/Layout';
-import ExchangeTable from 'pages/E00100_Exchange/exchangeTable';
+import E00100Table from 'pages/E00100_Exchange/E00100_Table';
 
 /* Styles */
 import ExchangeRateWrapper from './exchangeRate.style';
@@ -8,7 +13,7 @@ import ExchangeRateWrapper from './exchangeRate.style';
 const ExchangeRate = () => (
   <Layout title="匯率">
     <ExchangeRateWrapper>
-      <ExchangeTable />
+      <E00100Table />
     </ExchangeRateWrapper>
   </Layout>
 );

@@ -1,4 +1,6 @@
-const settingList = [
+/** @format */
+
+const T00100settingList = [
   {
     name: '快速登入設定',
     route: '/quickLoginSetting',
@@ -61,4 +63,4 @@ const settingList = [
   },
 ];
 
-export default settingList;
+export default T00100settingList;
