@@ -1,11 +1,15 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import BottomDrawer from 'components/BottomDrawer';
 import BlockEmpty from 'assets/images/favoriteBlock/blockEmpty.png';
 import { EditIcon, RemoveIcon } from 'assets/images/icons';
+import { showCustomPrompt } from 'utilities/MessageModal';
+import Layout from 'components/Layout/Layout';
+
 import S00100_1 from './S00100_1';
 import { blockBackgroundGenerator, iconGenerator } from './favoriteGenerator';
 import FavoriteDrawerWrapper from './favorite.style';
-
+import { generateTrimmedList } from './utils';
 import { deleteFavoriteItem, getFavoriteList } from './api';
 
 const Favorite = () => {
@@ -31,11 +35,10 @@ const Favorite = () => {
     setShowRemoveButton(false);
   };
 
-  const handleOpenView = (viewName, order) => {
+  const handleOpenView = (viewName) => {
     setViewControl({
       title: viewName === 'add' ? '新增我的最愛' : '編輯我的最愛',
       content: viewName,
-      specifiedLocation: order,
     });
     setShowRemoveButton(false);
   };
@@ -44,13 +47,17 @@ const Favorite = () => {
   const back2MyFavorite = () => setViewControl(initialViewControl);
 
   // 點擊移除按鈕
-  const handleClickRemoveBlock = async (actKey) => {
-    try {
-      await deleteFavoriteItem(actKey);
-      updateFavoriteList();
-    } catch (err) {
-      console.log('刪除最愛 err', err);
-    }
+  const handleClickRemoveBlock = async ({actKey, name}) => {
+    console.log('remove~');
+    await showCustomPrompt({
+      title: '刪除最愛',
+      message: `確定要刪除${name}`,
+      onOk: async () => {
+        await deleteFavoriteItem(actKey);
+        updateFavoriteList();
+      },
+      cancelContent: '取消',
+    });
   };
 
   // 長按編輯
@@ -74,7 +81,7 @@ const Favorite = () => {
               { (showRemoveButton && block.position >= 0) && (
               <span
                 className="removeButton"
-                onClick={() => handleClickRemoveBlock(block.actKey)}
+                onClick={() => handleClickRemoveBlock({actKey: block.actKey, name: block.name})}
               >
                 <RemoveIcon />
               </span>
@@ -90,20 +97,17 @@ const Favorite = () => {
   ));
 
   const renderBlocks = (list) => {
-    const blocks = [];
-    const blocksLength = 12;
-    // 排列已選的最愛功能項目，空欄位補上空白區塊
-    list.forEach((block) => {
+    const blocks = list.reduce((acc, block) => {
       const position = parseInt(block.position, 10);
-      if (position < 0) blocks.push(block);
+      if (position < 0) acc.push(block);
       // position + 2 -> 前 2 個是固定的、不可更動，從陣列第三筆開始排序
-      if (position >= 0) blocks[position + 2] = block;
-    });
-    for (let i = 0; i < blocksLength; i++) {
-      // 空白區塊補上 imgage
-      if (!blocks[i]) blocks[i] = BlockEmpty;
-    }
-    return renderBlocksElement(blocks);
+      if (position >= 0) acc[position + 2] = block;
+      return acc;
+    }, []);
+
+    // 排列已選的最愛功能項目，空欄位補上空白區塊
+    const trimmedList = generateTrimmedList(blocks, 12, BlockEmpty);
+    return renderBlocksElement(trimmedList);
   };
 
   const defaultContent = () => (
@@ -124,7 +128,6 @@ const Favorite = () => {
       <S00100_1
         updateFavoriteList={updateFavoriteList}
         back2MyFavorite={back2MyFavorite}
-        specifiedLocation={viewControl.specifiedLocation}
         isEditAction={viewControl.content === 'edit'}
         favoriteList={favoriteList}
       />
@@ -135,19 +138,24 @@ const Favorite = () => {
     updateFavoriteList();
   }, []);
 
+  // console.log('favoriteList', favoriteList);
+
   return (
-    <BottomDrawer
-      noScrollable
-      title={viewControl.title}
-      isOpen
-      onClose={handleCloseDrawer}
-      onBack={viewControl.content !== 'home' ? back2MyFavorite : null}
-      content={(
-        <FavoriteDrawerWrapper>
-          { drawerController() }
-        </FavoriteDrawerWrapper>
-      )}
-    />
+    <Layout>
+
+      <BottomDrawer
+        noScrollable
+        title={viewControl.title}
+        isOpen
+        onClose={handleCloseDrawer}
+        onBack={viewControl.content !== 'home' ? back2MyFavorite : null}
+        content={(
+          <FavoriteDrawerWrapper>
+            { drawerController() }
+          </FavoriteDrawerWrapper>
+        )}
+      />
+    </Layout>
   );
 };
 

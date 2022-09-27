@@ -51,7 +51,7 @@ export const getCreditCards = async () => {
    @param {
      "accountNo": 指定信用卡資訊，若未指定預設Bankee信用卡。
    }
-   @returns {
+   @returns {Promise{
      "type": "bankee" 或 "all"
      "accountNo": 卡號
      "currency": 幣別
@@ -65,7 +65,7 @@ export const getCreditCards = async () => {
      "creditUsed": 已使用額度
      "creditAvailable": 可使用額度
      "localCashCredit": 國內預借現金可使用額度
-     "foreignCashCredit": 國外預借現金可使用額度
+     "foreignCashCredit": 國外預借現金可使用額度}
    }
  */
 export const getCreditCardDetails = async (param) => {

@@ -28,6 +28,7 @@ const CreditCardPage = () => {
    * 頁面啟動，初始化
    */
   useEffect(async () => {
+    // TODO API
     dispatch(setWaittingVisible(true));
     const response = await getCreditCards();
     setPlans(response);
