@@ -95,6 +95,7 @@ const Nav = () => {
           <div onClick={() => startFunc('A00700')}>A00700 定期更新網銀密碼</div>
           <div onClick={() => startFunc('A00400')}>A00400 開通APP</div>
           <div onClick={() => startFunc('C00800')}>C00800 匯出存摺</div>
+          <div onClick={() => startFunc('D00300')}>D00300 無卡提款</div>
           <div onClick={() => startFunc('D00800')}>D00800 預約轉帳查詢</div>
           <div onClick={() => startFunc('B00300')}>B00300 訊息通知 - (施工中)</div>
           <div onClick={() => startFunc('S00400')}>S00400 訊息通知設定 - (施工中)</div>

@@ -26,14 +26,17 @@ const NoticeSetting = () => {
   });
 
   // 更新通知設定
-  const updateNotiSetting = async () => {
+  const updateNotiSetting = async (modelParam) => {
     const param = {
-      communityNotice: model.communityNotice ? 'Y' : 'N',
-      boardNotice: model.boardNotice ? 'Y' : 'N',
-      securityNotice: model.securityNotice ? 'Y' : 'N',
-      nightMuteNotice: model.nightMuteNotice ? 'Y' : 'N',
+      communityNotice: modelParam.communityNotice ? 'Y' : 'N',
+      boardNotice: modelParam.boardNotice ? 'Y' : 'N',
+      securityNotice: modelParam.securityNotice ? 'Y' : 'N',
+      nightMuteNotice: modelParam.nightMuteNotice ? 'Y' : 'N',
     };
-    await bindPushSetting(param);
+    const bindResponse = await bindPushSetting(param);
+    if (bindResponse) {
+      setModel({ ...modelParam });
+    }
   };
 
   useEffect(async () => {
@@ -44,7 +47,14 @@ const NoticeSetting = () => {
       // 尙未完成行動裝置綁定
       // TODO 詢是否立即綁定。
       await closeFunc();
-    } else setModel({ ...model, ...response });
+    } else {
+      setModel({
+        communityNotice: response.communityNotice === 'Y',
+        boardNotice: response.boardNotice === 'Y',
+        securityNotice: response.securityNotice === 'Y',
+        nightMuteNotice: response.nightMuteNotice === 'Y',
+      });
+    }
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -61,8 +71,11 @@ const NoticeSetting = () => {
             <FEIBSwitch
               checked={model.communityNotice}
               onChange={(e, checked) => {
-                model.communityNotice = checked;
-                updateNotiSetting();
+                const modelParam = {
+                  ...model,
+                  communityNotice: checked,
+                };
+                updateNotiSetting(modelParam);
               }}
             />
           </div>
@@ -76,8 +89,11 @@ const NoticeSetting = () => {
             <FEIBSwitch
               checked={model.boardNotice}
               onChange={(e, checked) => {
-                model.boardNotice = checked;
-                updateNotiSetting();
+                const modelParam = {
+                  ...model,
+                  boardNotice: checked,
+                };
+                updateNotiSetting(modelParam);
               }}
             />
           </div>
@@ -91,8 +107,11 @@ const NoticeSetting = () => {
             <FEIBSwitch
               checked={model.securityNotice}
               onChange={(e, checked) => {
-                model.securityNotice = checked;
-                updateNotiSetting();
+                const modelParam = {
+                  ...model,
+                  securityNotice: checked,
+                };
+                updateNotiSetting(modelParam);
               }}
             />
           </div>
@@ -122,8 +141,11 @@ const NoticeSetting = () => {
             <FEIBSwitch
               checked={model.nightMuteNotice}
               onChange={(e, checked) => {
-                model.nightMuteNotice = checked;
-                updateNotiSetting();
+                const modelParam = {
+                  ...model,
+                  nightMuteNotice: checked,
+                };
+                updateNotiSetting(modelParam);
               }}
             />
           </div>
