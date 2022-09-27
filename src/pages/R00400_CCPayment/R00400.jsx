@@ -10,9 +10,7 @@ import {
   accountFormatter,
   currencySymbolGenerator,
 } from 'utilities/Generator';
-import {
-  setModal, setModalVisible, setWaittingVisible,
-} from 'stores/reducers/ModalReducer';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import Theme from 'themes/theme';
 import Layout from 'components/Layout/Layout';
 import Main from 'components/Layout';
@@ -33,6 +31,7 @@ import {
   FEIBTabList,
   FEIBTab,
 } from 'components/elements';
+import { showCustomPrompt } from '../../utilities/MessageModal';
 
 import {
   getBills,
@@ -64,12 +63,14 @@ const Page = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const {
-    control, watch, handleSubmit, formState: { errors }, trigger, setValue,
+    control, watch, handleSubmit, formState: { errors }, trigger, setValue, getValues,
   } = useForm();
 
   const [paymentOption, setPaymentOption] = useState(PAYMENT_OPTION.INTERNAL);
   const [bills, setBills] = useState();
   const [terms, setTerms] = useState();
+
+  const idBankNo = 'bankId'; // 銀行代碼。
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
@@ -95,9 +96,9 @@ const Page = () => {
   const renderPaymentCode = async (amount) => {
     const response = await getPaymentCodes(amount);
     if (response?.type) {
-      dispatch(setModal({
+      await showCustomPrompt({
         title: '超商條碼繳款',
-        content: (
+        message: (
           <PopUpWrapper>
             <Badge label="應繳金額" value={currencySymbolGenerator(bills?.currency ?? 'NTD', amount)} />
             <p className="note">
@@ -115,9 +116,31 @@ const Page = () => {
             </Accordion>
           </PopUpWrapper>
         ),
-        onOk: false,
-      }));
-      dispatch(setModalVisible(true));
+        noDismiss: true,
+      });
+      // dispatch(setModal({
+      //   title: '超商條碼繳款',
+      //   content: (
+      //     <PopUpWrapper>
+      //       <Badge label="應繳金額" value={currencySymbolGenerator(bills?.currency ?? 'NTD', amount)} />
+      //       <p className="note">
+      //         適用商家：
+      //         <wbr />
+      //         四大超商（7-ELEVEN、全家、
+      //         <wbr />
+      //         萊爾富和OK MART）
+      //       </p>
+      //       <img src={response.image1} height="82" alt="" />
+      //       { response.image2 && <img src={response.image2} height="82" alt="" /> }
+      //       { response.image3 && <img src={response.image3} height="82" alt="" /> }
+      //       <Accordion title="注意事項" onClick={lazyLoadTerms}>
+      //         { getTermsFromOutsideModal() }
+      //       </Accordion>
+      //     </PopUpWrapper>
+      //   ),
+      //   onOk: false,
+      // }));
+      // dispatch(setModalVisible(true));
     }
   };
 
@@ -262,10 +285,12 @@ const Page = () => {
             { paymentOption === PAYMENT_OPTION.EXTERNAL && (
               <>
                 <BankCodeInput
+                  control={control}
+                  name={idBankNo}
                   id="bankCode"
                   setValue={setValue}
                   trigger={trigger}
-                  control={control}
+                  value={getValues(idBankNo)}
                   rules={{ required: true }}
                   errorMessage={errors?.bankCode && '請選擇銀行代碼'}
                 />

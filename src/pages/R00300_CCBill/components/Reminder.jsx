@@ -1,13 +1,14 @@
-import { useDispatch } from 'react-redux';
+// import { useDispatch } from 'react-redux';
 import uuid from 'react-uuid';
 import { CalendarIcon } from 'assets/images/icons';
 import { stringToDate } from 'utilities/Generator';
-import { setModal, setModalVisible } from 'stores/reducers/ModalReducer';
+// import { setModal, setModalVisible } from 'stores/reducers/ModalReducer';
 import { FEIBIconButton } from 'components/elements';
+import { showCustomPrompt } from 'utilities/MessageModal';
 import ReminderWrapper from './Reminder.style';
 
 const Reminder = ({ bills }) => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const renderReminderText = () => {
     const due = stringToDate(bills.billDate); // UTC時區
@@ -58,11 +59,14 @@ const Reminder = ({ bills }) => {
     document.body.removeChild(link);
   };
 
-  const handleCalendarClick = () => {
-    dispatch(setModal({
-      title: '系統訊息', content: '將帳單繳款提示加入手機行事曆？', okContent: '確認', onOk: () => downloadICS(),
-    }));
-    dispatch(setModalVisible(true));
+  const handleCalendarClick = async () => {
+    await showCustomPrompt({
+      title: '系統訊息', message: '將帳單繳款提示加入手機行事曆？', okContent: '確認', onOk: () => downloadICS(),
+    });
+    // dispatch(setModal({
+    //   title: '系統訊息', content: '將帳單繳款提示加入手機行事曆？', okContent: '確認', onOk: () => downloadICS(),
+    // }));
+    // dispatch(setModalVisible(true));
   };
 
   return (
