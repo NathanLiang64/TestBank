@@ -80,7 +80,7 @@ const Favorite2New = ({
   };
 
   // 點擊 tab 時
-  const handleChangeTabs = (event, value) => {
+  const handleChangeTabs = (_, value) => {
     const scrollTarget = sectionsRef.current.find((el) => el.className === value);
     scrollTarget.scrollIntoView({ behavior: 'smooth' });
   };
@@ -130,27 +130,22 @@ const Favorite2New = ({
 
       <div className="tipArea">
         <p>{`${isEditAction ? '您最多可以選取10項服務' : '請選取1項服務'}加入我的最愛!`}</p>
-
       </div>
 
       <form
         className="mainContent"
         ref={mainContentRef}
         onScroll={handleScrollContent}
-        onSubmit={handleSubmit(handleClickEditCompleted)}
       >
         { renderBlockGroup() }
-
         {isEditAction && (
         <BottomAction position={0}>
-          <button type="submit">
+          <button type="submit" onClick={handleSubmit(handleClickEditCompleted)}>
             {`編輯完成(${selectedLength})`}
           </button>
         </BottomAction>
-
         )}
       </form>
-
       { showTip && <SnackModal text="最愛已選滿" /> }
     </div>
   );

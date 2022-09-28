@@ -25,7 +25,7 @@ export const CheckBoxField = ({
   return (
     <FavoriteBlockButtonStyle
       className={value && !disabled ? 'selected' : ''}
-      disabled={disabled}
+      disabled={isEditAction ? false : disabled}
     >
       <label htmlFor={name} style={{width: '100%', height: '100%'}}>
         {iconGenerator(name.split('.')[1])}

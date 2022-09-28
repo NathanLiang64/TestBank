@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 const FavoriteDrawerWrapper = styled.div`
   margin-top: 2rem;
-  
+  margin-bottom:2rem;
   .defaultPage {
     display: flex;
     flex-direction: column;
@@ -31,7 +31,7 @@ const FavoriteDrawerWrapper = styled.div`
     margin-top: 1.6rem;
     margin-bottom: 4rem;
     width: 100%;
-    max-height: calc(96vh - 12.6rem);
+    height:65vh;
     overflow-y: auto;
     
     button {
@@ -63,7 +63,7 @@ const FavoriteDrawerWrapper = styled.div`
         position: absolute;
         top: .8rem;
         left: .8rem;
-        display: inline-flex;
+        display: flex;
         justify-content: center;
         align-items: center;
         border-radius: 50%;
@@ -74,7 +74,7 @@ const FavoriteDrawerWrapper = styled.div`
         transform-origin: center;
         
         .Icon {
-          margin-bottom: 0;
+          margin-bottom: .5rem;
           font-size: 1.6rem;
           color: ${({ theme }) => theme.colors.basic.white};
         }
@@ -101,7 +101,8 @@ const FavoriteDrawerWrapper = styled.div`
     }
     
     .mainContent {
-      max-height: calc(96vh - 12.6rem);
+      // max-height: calc(96vh - 12.6rem);
+      height:65vh;
       overflow-y: auto;
     }
     

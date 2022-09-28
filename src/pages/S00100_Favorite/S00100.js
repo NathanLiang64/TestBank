@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import BottomDrawer from 'components/BottomDrawer';
 import BlockEmpty from 'assets/images/favoriteBlock/blockEmpty.png';
@@ -6,6 +5,8 @@ import { EditIcon, RemoveIcon } from 'assets/images/icons';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import Layout from 'components/Layout/Layout';
 
+import { closeFunc } from 'utilities/AppScriptProxy';
+import { useHistory } from 'react-router';
 import S00100_1 from './S00100_1';
 import { blockBackgroundGenerator, iconGenerator } from './favoriteGenerator';
 import FavoriteDrawerWrapper from './favorite.style';
@@ -22,17 +23,22 @@ const Favorite = () => {
   const [pressTimer, setPressTimer] = useState(0);
   const [showRemoveButton, setShowRemoveButton] = useState(false);
   const [favoriteList, setFavoriteList] = useState([]);
+  const history = useHistory();
 
   // 取得用戶我的最愛清單
-  const updateFavoriteList = () => {
-    getFavoriteList().then((response) => {
-      if (response.code) return;
-      setFavoriteList(response);
-    });
+  const updateFavoriteList = async () => {
+    try {
+      const res = await getFavoriteList();
+      if (!res) throw new Error('updateFavortieList response is empty');
+      if (res) setFavoriteList(res);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleCloseDrawer = () => {
     setShowRemoveButton(false);
+    closeFunc();
   };
 
   const handleOpenView = (viewName) => {
@@ -48,10 +54,8 @@ const Favorite = () => {
 
   // 點擊移除按鈕
   const handleClickRemoveBlock = async ({actKey, name}) => {
-    console.log('remove~');
     await showCustomPrompt({
-      title: '刪除最愛',
-      message: `確定要刪除${name}`,
+      message: `確定要從我的最愛刪除 ${name} 嗎?`,
       onOk: async () => {
         await deleteFavoriteItem(actKey);
         updateFavoriteList();
@@ -72,7 +76,7 @@ const Favorite = () => {
       key={block.actKey || index - 2}
       onTouchStart={block.actKey ? handleTouchStart : null}
       onTouchEnd={block.actKey ? handleTouchEnd : null}
-      onClick={block.actKey ? null : () => handleOpenView('add', index - 2)}
+      onClick={block.actKey ? () => history.push(`/${block.actKey}`) : () => handleOpenView('add', index - 2)}
     >
       {
         block.actKey
@@ -134,15 +138,17 @@ const Favorite = () => {
     );
   };
 
+  const closeEditModeHandler = (e) => {
+    if (e.target.type === 'button') return;
+    if (showRemoveButton) setShowRemoveButton(false);
+  };
+
   useEffect(() => {
     updateFavoriteList();
   }, []);
 
-  // console.log('favoriteList', favoriteList);
-
   return (
     <Layout>
-
       <BottomDrawer
         noScrollable
         title={viewControl.title}
@@ -150,7 +156,7 @@ const Favorite = () => {
         onClose={handleCloseDrawer}
         onBack={viewControl.content !== 'home' ? back2MyFavorite : null}
         content={(
-          <FavoriteDrawerWrapper>
+          <FavoriteDrawerWrapper onClick={closeEditModeHandler}>
             { drawerController() }
           </FavoriteDrawerWrapper>
         )}
