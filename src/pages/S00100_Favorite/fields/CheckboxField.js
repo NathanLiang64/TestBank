@@ -5,18 +5,14 @@ import FavoriteBlockButtonStyle from 'components/FavoriteBlockButton/favoriteBlo
 import { useController } from 'react-hook-form';
 import { iconGenerator } from '../favoriteGenerator';
 
-// import "./CheckBox.css";
-
 export const CheckBoxField = ({
   disabled, isEditAction, immdlySubmit, setShowTip, label, ...props
 }) => {
   const { field } = useController(props);
   const {onChange, name, value} = field;
-
   const onChangeHandler = () => {
-    if (disabled) {
-      setShowTip(true);
-    } else {
+    if (disabled) setShowTip(true);
+    else {
       onChange(!value);
       if (!isEditAction) immdlySubmit();
     }

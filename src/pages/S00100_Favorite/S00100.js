@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import BottomDrawer from 'components/BottomDrawer';
 import BlockEmpty from 'assets/images/favoriteBlock/blockEmpty.png';
@@ -68,17 +69,26 @@ const Favorite = () => {
   const handleEditBlock = () => setShowRemoveButton(true);
   const handleTouchStart = () => setPressTimer(setTimeout(handleEditBlock, 800));
   const handleTouchEnd = () => pressTimer && clearTimeout(pressTimer);
+  // const hadnleBlockClick = (keyIsExisted)=>{
+  //   if(!keyIsExisted) return ()=>handleOpenView('add')
+  // }
 
   // 渲染我的最愛列表
-  const renderBlocksElement = (blocks) => blocks.map((block, index) => (
-    <button
-      type="button"
-      key={block.actKey || index - 2}
-      onTouchStart={block.actKey ? handleTouchStart : null}
-      onTouchEnd={block.actKey ? handleTouchEnd : null}
-      onClick={block.actKey ? () => history.push(`/${block.actKey}`) : () => handleOpenView('add', index - 2)}
-    >
-      {
+  const renderBlocksElement = (blocks) => blocks.map((block, index) => {
+    let handleBlockClick = () => handleOpenView('add', index - 2);
+    if (block.actKey) {
+      if (showRemoveButton) handleBlockClick = null;
+      else handleBlockClick = () => history.push(`/${block.actKey}`);
+    }
+    return (
+      <button
+        type="button"
+        key={block.actKey || index - 2}
+        onTouchStart={block.actKey ? handleTouchStart : null}
+        onTouchEnd={block.actKey ? handleTouchEnd : null}
+        onClick={handleBlockClick}
+      >
+        {
         block.actKey
           ? (
             <>
@@ -97,8 +107,9 @@ const Favorite = () => {
           )
           : <img src={block} alt="empty" />
       }
-    </button>
-  ));
+      </button>
+    );
+  });
 
   const renderBlocks = (list) => {
     const blocks = list.reduce((acc, block) => {
@@ -138,8 +149,9 @@ const Favorite = () => {
     );
   };
 
-  const closeEditModeHandler = (e) => {
-    if (e.target.type === 'button') return;
+  const closeEditModeHandler = (e, value) => {
+    const {nodeName} = e.target;
+    if (nodeName === 'BUTTON' || nodeName === 'svg') return;
     if (showRemoveButton) setShowRemoveButton(false);
   };
 
