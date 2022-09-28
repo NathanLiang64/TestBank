@@ -6,6 +6,7 @@ import {useForm} from 'react-hook-form';
 import BottomAction from 'components/BottomAction';
 import SnackModal from 'components/SnackModal';
 import { FEIBTab, FEIBTabContext, FEIBTabList } from 'components/elements';
+import { showCustomPrompt } from 'utilities/MessageModal';
 import { getFavoriteSettingList, modifyFavoriteItem } from './api';
 import { CheckBoxField } from './fields/CheckboxField';
 import {
@@ -71,12 +72,25 @@ const Favorite2New = ({
   const handleClickEditCompleted = async ({editedBlockList}) => {
     const orderedList = generateReorderList(favoriteList, editedBlockList);
     const trimmedList = generateTrimmedList(orderedList, 10, '');
-    await Promise.all(trimmedList.map((actKey, position) => (
-      modifyFavoriteItem({actKey, position: parseInt(position, 10)})
-    )));
-    // 送出修改後的名單，隨後再次更新最愛列表，並回到我的最愛首頁
-    await updateFavoriteList();
-    back2MyFavorite();
+
+    await showCustomPrompt({
+      message: '測試測試',
+      onOk: async () => {
+        await Promise.all(trimmedList.map((actKey, position) => (
+          modifyFavoriteItem({actKey, position: parseInt(position, 10)})
+        )));
+        // 送出修改後的名單，隨後再次更新最愛列表，並回到我的最愛首頁
+        await updateFavoriteList();
+        back2MyFavorite();
+      },
+      cancelContent: '取消',
+    });
+    // await Promise.all(trimmedList.map((actKey, position) => (
+    //   modifyFavoriteItem({actKey, position: parseInt(position, 10)})
+    // )));
+    // // 送出修改後的名單，隨後再次更新最愛列表，並回到我的最愛首頁
+    // await updateFavoriteList();
+    // back2MyFavorite();
   };
 
   // 點擊 tab 時
@@ -140,7 +154,11 @@ const Favorite2New = ({
         { renderBlockGroup() }
         {isEditAction && (
         <BottomAction position={0}>
-          <button type="submit" onClick={handleSubmit(handleClickEditCompleted)}>
+          <button
+            type="button"
+            style={{cursor: 'pointer'}}
+            onClick={handleSubmit(handleClickEditCompleted)}
+          >
             {`編輯完成(${selectedLength})`}
           </button>
         </BottomAction>

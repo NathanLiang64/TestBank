@@ -74,7 +74,9 @@ const FavoriteDrawerWrapper = styled.div`
         transform-origin: center;
         
         .Icon {
-          margin-bottom: .5rem;
+          margin-bottom: 0rem;
+          margin-top: 0.25rem;
+          height: 100%;
           font-size: 1.6rem;
           color: ${({ theme }) => theme.colors.basic.white};
         }
