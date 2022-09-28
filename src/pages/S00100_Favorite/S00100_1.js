@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, {
   useEffect, useRef, useState, useMemo,
 } from 'react';
@@ -5,15 +6,14 @@ import {useForm} from 'react-hook-form';
 import BottomAction from 'components/BottomAction';
 import SnackModal from 'components/SnackModal';
 import { FEIBTab, FEIBTabContext, FEIBTabList } from 'components/elements';
-import { iconGenerator } from './favoriteGenerator';
 import { getFavoriteSettingList, modifyFavoriteItem } from './api';
 import { CheckBoxField } from './fields/CheckboxField';
 import {
-  calcSelectedLength, extractGroupItems, filterAddItem, findExistedValue,
+  calcSelectedLength, extractGroupItems, generateReorderList, findExistedValue, generateTrimmedList,
 } from './utils';
 
 const Favorite2New = ({
-  favoriteList, updateFavoriteList, back2MyFavorite, specifiedLocation, isEditAction,
+  favoriteList, updateFavoriteList, back2MyFavorite, isEditAction,
 }) => {
   const [favoriteSettingList, setFavoriteSettingList] = useState([]);
   const [initialValues, setInitialValues] = useState({});
@@ -29,90 +29,18 @@ const Favorite2New = ({
   const watchedValues = watch('editedBlockList');
   const selectedLength = useMemo(() => calcSelectedLength(watchedValues), [watchedValues]);
 
-  // 最多可選取服務數量
-  const maxSelectedLength = useMemo(() => {
-    if (isEditAction) return 10;
-    return calcSelectedLength(initialValues) + 1;
-  }, [favoriteSettingList, initialValues]);
-
   const checkDisabled = (key) => {
     const alreadyExisted = findExistedValue(initialValues, key);
     const isSelected = findExistedValue(watchedValues, key);
-    const isMaximum = selectedLength >= maxSelectedLength;
+    const isMaximum = selectedLength >= 10;
     if (isEditAction) {
-      if (isMaximum && !isSelected) return {disabled: true, message: '最愛已選滿'};
-      return {disabled: false, message: ''};
+      if (isMaximum && !isSelected) return true;
+      return false;
     }
     // 當被點選的項目已存在於 initialValues 時，需要被 disabled
-    if (alreadyExisted) return {disabled: true, message: ''};
-    // 只有後來被勾選的項目才可以被允許勾選
-    if (isSelected) return {disabled: false, message: ''};
-    if (isMaximum) return {disabled: true, message: '已選取 1 項服務'};
-    return {disabled: false, message: ''};
+    if (alreadyExisted) return true;
+    return false;
   };
-
-  // 點擊編輯完成
-  const handleClickEditCompleted = async ({editedBlockList}) => {
-    const patchedList = [];
-    if (isEditAction) {
-      Object.keys(editedBlockList).forEach((key) => {
-        if (editedBlockList[key]) patchedList.push(key);
-      });
-      while (patchedList.length < 10) patchedList.push('');
-      await Promise.all(patchedList.map((actKey, position) => modifyFavoriteItem({actKey, position: parseInt(position, 10)})));
-    } else {
-      const existedList = favoriteList.filter((item) => item.position !== '-1');
-      const addedKey = filterAddItem(initialValues, editedBlockList);
-      if (addedKey) {
-        patchedList.push(...existedList);
-        patchedList.push({actKey: addedKey, position: specifiedLocation});
-      }
-      await Promise.all(patchedList.map(({actKey, position}) => modifyFavoriteItem({actKey, position: parseInt(position, 10)})));
-    }
-    // 送出修改後的名單，隨後再次更新最愛列表，並回到我的最愛首頁
-    await updateFavoriteList();
-    back2MyFavorite();
-  };
-
-  // 點擊 tab 時
-  const handleChangeTabs = (event, value) => {
-    const scrollTarget = sectionsRef.current.find((el) => el.className === value);
-    scrollTarget.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const handleScrollContent = () => {
-    const { scrollTop } = mainContentRef.current;
-    const currentSection = sectionsRef.current.find((el) => el.offsetTop >= scrollTop);
-    if (currentSection.className !== tabId) setTabId(currentSection.className);
-  };
-
-  const renderBlockGroup = () => favoriteSettingList.map(({groupKey, groupName, items}, index) => (
-    <section
-      ref={(el) => { sectionsRef.current[index] = el; }}
-      key={groupKey}
-      className={groupKey}
-    >
-      <h3 className="title">{groupName}</h3>
-      <div className="blockGroup">
-        {items.map(({actKey, name}) => (
-          <CheckBoxField
-            key={actKey}
-            control={control}
-            name={`editedBlockList.${actKey}`}
-            defaultValue={false}
-            label={name}
-            icon={iconGenerator(actKey)}
-            disabledObj={checkDisabled(actKey)}
-            setShowTip={setShowTip}
-          />
-        ))}
-      </div>
-    </section>
-  ));
-
-  const renderTabList = () => favoriteSettingList.map((group) => (
-    <FEIBTab key={group.groupKey} label={group.groupName} value={group.groupKey} />
-  ));
 
   // 拿取 favoriteSettingList
   useEffect(async () => {
@@ -139,6 +67,59 @@ const Favorite2New = ({
     reset({editedBlockList: initValue});
   }, [favoriteSettingList]);
 
+  // 點擊編輯完成
+  const handleClickEditCompleted = async ({editedBlockList}) => {
+    const orderedList = generateReorderList(favoriteList, editedBlockList);
+    const trimmedList = generateTrimmedList(orderedList, 10, '');
+    await Promise.all(trimmedList.map((actKey, position) => (
+      modifyFavoriteItem({actKey, position: parseInt(position, 10)})
+    )));
+    // 送出修改後的名單，隨後再次更新最愛列表，並回到我的最愛首頁
+    await updateFavoriteList();
+    back2MyFavorite();
+  };
+
+  // 點擊 tab 時
+  const handleChangeTabs = (_, value) => {
+    const scrollTarget = sectionsRef.current.find((el) => el.className === value);
+    scrollTarget.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleScrollContent = () => {
+    const { scrollTop } = mainContentRef.current;
+    const currentSection = sectionsRef.current.find((el) => el.offsetTop >= scrollTop);
+    if (currentSection.className !== tabId) setTabId(currentSection.className);
+  };
+
+  const renderBlockGroup = () => favoriteSettingList.map(({groupKey, groupName, items}, index) => (
+    <section
+      ref={(el) => { sectionsRef.current[index] = el; }}
+      key={groupKey}
+      className={groupKey}
+    >
+      <h3 className="title">{groupName}</h3>
+      <div className="blockGroup">
+        {items.map(({actKey, name}) => (
+          <CheckBoxField
+            key={actKey}
+            control={control}
+            name={`editedBlockList.${actKey}`}
+            defaultValue={false}
+            label={name}
+            disabled={checkDisabled(actKey)}
+            immdlySubmit={handleSubmit(handleClickEditCompleted)}
+            isEditAction={isEditAction}
+            setShowTip={setShowTip}
+          />
+        ))}
+      </div>
+    </section>
+  ));
+
+  const renderTabList = () => favoriteSettingList.map((group) => (
+    <FEIBTab key={group.groupKey} label={group.groupName} value={group.groupKey} />
+  ));
+
   return (
     <div className="editFavoritePage">
       <FEIBTabContext value={tabId}>
@@ -149,26 +130,53 @@ const Favorite2New = ({
 
       <div className="tipArea">
         <p>{`${isEditAction ? '您最多可以選取10項服務' : '請選取1項服務'}加入我的最愛!`}</p>
-
       </div>
 
       <form
         className="mainContent"
         ref={mainContentRef}
         onScroll={handleScrollContent}
-        onSubmit={handleSubmit(handleClickEditCompleted)}
       >
         { renderBlockGroup() }
+        {isEditAction && (
         <BottomAction position={0}>
-          <button type="submit">
-            {`${isEditAction ? '編輯' : '新增'}完成(${selectedLength})`}
+          <button type="submit" onClick={handleSubmit(handleClickEditCompleted)}>
+            {`編輯完成(${selectedLength})`}
           </button>
         </BottomAction>
+        )}
       </form>
-
-      { showTip && <SnackModal text={showTip} /> }
+      { showTip && <SnackModal text="最愛已選滿" /> }
     </div>
   );
 };
 
 export default Favorite2New;
+// ===============version2=================
+// const patchedList = [];
+// for (const key in editedBlockList) {
+//   if (editedBlockList[key]) patchedList.push(key);
+// }
+// while (patchedList.length < 10) patchedList.push('');
+
+// ===============version1=================
+// const patchedList = Array(10).fill(undefined);
+// const {orderedList, unorderdList} = filterAddItemNew(favoriteList, editedBlockList);
+// orderedList.forEach(({actKey, position}) => {
+//   patchedList[position] = actKey;
+// });
+
+// patchedList.forEach((el, index) => {
+//   if (!el && unorderdList.length) {
+//     patchedList[index] = unorderdList.shift();
+//   }
+// });
+
+// =====指定新增時 location=====
+// const existedList = favoriteList.filter((item) => item.position !== '-1');
+// const addedKey = filterAddItem(initialValues, editedBlockList);
+// if (addedKey) {
+//   patchedList.push(...existedList);
+//   patchedList.push({actKey: addedKey, position: specifiedLocation});
+// }
+// await Promise.all(patchedList.map(({actKey, position}) => modifyFavoriteItem({actKey, position: parseInt(position, 10)})));

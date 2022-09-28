@@ -25,7 +25,7 @@ import AccountCardWrapper from './CreditCard.style';
 * */
 
 const creditFormatter = (account) => (
-  account ? `${account.slice(0, 4)}-${account.slice(4, 8)}-${account.slice(8, 12)}-${account.slice(12, 16)}` : '-'
+  account ? `${account.slice(0, 4)}-****-****-${account.slice(12, 16)}` : '-'
 );
 
 const AccountCard = ({

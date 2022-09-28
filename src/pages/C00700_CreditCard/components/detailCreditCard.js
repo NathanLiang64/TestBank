@@ -223,6 +223,8 @@ const DetailCard = ({
     } else {
       dispatch(setWaittingVisible(true));
       errorMsg.style.visibility = 'hidden';
+
+      // TODO API;
       const response = await updateMemo({ id: index, memo: input.value });
       if (response) {
         const indexNumber = transactions.findIndex((element) => element.id === index);
