@@ -20,6 +20,8 @@ import {
   accountFormatter, dateFormatter, stringToDate, currencySymbolGenerator, stringDateCodeFormatter,
 } from 'utilities/Generator';
 
+import { showPrompt } from 'utilities/MessageModal';
+import { closeFunc } from 'utilities/AppScriptProxy';
 import { getLoanSummary, getContract, getSubPaymentHistory } from './api';
 // import { getLoanSummary, getContract, getStatment } from './api';
 import PageWrapper, { ContentWrapper } from './L00100.style';
@@ -34,10 +36,20 @@ const Page = () => {
   const dispatch = useDispatch();
   const [loans, setLoans] = useState();
 
+  /**
+   * 初始化貸款資料載入
+   */
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
     const response = await getLoanSummary();
-    setLoans(response);
+
+    // 若無資料，跳出彈窗後關閉頁面
+    if (response.length === 0) {
+      await showPrompt('您還沒有任何貸款記錄，請在系統關閉此功能後，立即申請。', () => closeFunc());
+    } else {
+      setLoans(response);
+    }
+
     dispatch(setWaittingVisible(false));
   }, []);
 
