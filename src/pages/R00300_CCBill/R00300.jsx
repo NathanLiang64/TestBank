@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
@@ -17,7 +18,7 @@ import Tray from './components/Tray';
 import PageWrapper from './R00300.style';
 
 /**
- * C00700 信用卡 帳單頁
+ * R00300 信用卡 帳單頁
  */
 const Page = () => {
   const history = useHistory();
@@ -30,7 +31,8 @@ const Page = () => {
     dispatch(setWaittingVisible(true));
     let accountNo;
     if (location.state && ('accountNo' in location.state)) accountNo = location.state.accountNo;
-    const response = await getBills({ accountNo });
+    const response = await getBills('202207');
+    console.log('R00300 getBills("202207") response:', response);
     setBills(response);
     dispatch(setWaittingVisible(false));
   }, []);

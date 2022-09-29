@@ -1,6 +1,7 @@
 // import { callAPI } from 'utilities/axios';
 
-import mockBills from './mockData/mockBills';
+import { checkCardBillStatus, queryCardBill, queryCardInfo } from 'pages/C00700_CreditCard/api';
+// import mockBills from './mockData/mockBills';
 import mockBillDetails from './mockData/mockBillDetails';
 import mockTransactions from './mockData/mockTransactions';
 import mockCreditCardTerms from './mockData/mockCreditCardTerms';
@@ -8,38 +9,45 @@ import mockCreditCardTerms from './mockData/mockCreditCardTerms';
 /**
  * 取得信用卡繳費單
    @param {
-     "accountNo": 指定信用卡帳單，若未指定預設Bankee信用卡。
-     "showAccounts": 指定使否需提供可轉出的帳戶列表，預設 false。
+     "period": 期別 (ex: 202207) (僅 queryCardBill 需要)
    }
    @returns {
-     "month": 本期月份。
-     "amount": 本期應繳金額，無帳單時為0。
-     "minAmount": 最低應繳金額
-     "billDate": 繳費截止日
-     "accountNo": 信用卡卡號，用於交易查詢
-     "currency": 幣值
-     "autoDeduct": 是否已設定自動扣繳
-     "accounts": [ 可轉出的帳戶
-       {
-         "accountNo": 帳號
-         "balance": 可用餘額
-       }, ...],
+     "month": 本期月份。 // period末兩位數
+     "amount": 本期應繳金額，無帳單時為0。 // queryCardBillRt.newBalance
+     "billDate": 繳費截止日 // queryCardInfoRt.payDueDate
+     "currency": 幣值 // 'NTD'
+     "autoDeduct": 是否已設定自動扣繳 // checkCardBillStatusRt.autoDeductStatus
    }
  */
 export const getBills = async (param) => {
   // const response = await callAPI('/api/', param);
-  const response = await new Promise((resolve) => resolve({ data: mockBills(param) }));
-  return response.data;
+  // const response = await new Promise((resolve) => resolve({ data: mockBills(param) }));
+
+  /* 自不同API取得data */
+  const queryCardBillRt = await queryCardBill(param);
+  const checkCardBillStatusRt = await checkCardBillStatus();
+  const queryCardInfoRt = await queryCardInfo();
+
+  /* 將回傳資料轉換成頁面資料結構 */
+  const bills = {
+    month: param,
+    amount: queryCardBillRt.data.newBalance,
+    billDate: queryCardInfoRt.data.payDueDate,
+    currency: 'NTD',
+    autoDeduct: checkCardBillStatusRt.data.autoDeductStatus,
+  };
+  return bills;
+  // return response.data;
 };
 
 /**
- * 取得信用卡交易明細
+ * 取得信用卡交易明細：白底card，在 <Transactions /> 呼叫
    TODO 目前先直接複製台幣交易明細，不知需否調整
    @param {
      accountNo: 帳號, ex: 00100100063106,
      custom: 文字檢索條件, ex: 退款.
-     startDate: 交易日期起日, ex: 20200101,
-     endDate: 交易日期迄日, ex: 20210731,
+     startDate: 交易日期起日, ex: 20200101, // 已從transactions傳入
+     endDate: 交易日期迄日, ex: 20210731, // 已從transactions傳入
      txnType: 摘要代碼: 1:跨轉、2:ATM、3:存款息、4:薪轉、5:付款儲存、6:自動扣繳, 可多筆,
      month: 起始月份，預設為最接近月底的日期為起始索引, ex: 202104,
      startIndex: 指定起始索引,
@@ -70,7 +78,7 @@ export const getTransactionDetails = async (request) => {
 };
 
 /**
- * 取得帳單資訊
+ * 取得帳單資訊：更多帳單資訊Accoridan
    @returns {
      "currency": 信用卡帳單幣別
      "amount": 本期應繳金額
