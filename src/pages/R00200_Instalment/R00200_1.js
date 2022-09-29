@@ -1,7 +1,11 @@
+/* eslint-disable no-unused-vars */
 /** @format */
 
 import { useState } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
+import * as yup from 'yup';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -15,35 +19,69 @@ const R00200_1 = () => {
   const [openDrawer, setOpenDrawer] = useState(true);
 
   const history = useHistory();
+  const location = useLocation();
 
-  const renderSelectList = () => {
-    // Debug: 以下為 hardcode
-    const list = [
-      { name: '中和環球', date: '消費日期：2021/06/15', cost: 3700 },
-      { name: 'SOGO 台北忠孝店', date: '消費日期：2021/06/15', cost: 8000 },
-      { name: '板橋大遠百', date: '消費日期：2021/06/15', cost: 10000 },
-      { name: '中和環球', date: '消費日期：2021/06/15', cost: 9000 },
-    ];
-    return (
-      <div className="selectList">
-        {list.map((item) => (
-          <p className="checkbox">
-            <FEIBCheckbox className="customPadding" />
-            <div style={{ flex: 1, padding: 8 }}>
-              <div style={{ flex: 1 }}>{item.name}</div>
-              <div style={{ flex: 1, color: theme.colors.text.light }}>{item.date}</div>
+  /* 資料驗證 */
+  const schema = yup.object().shape({
+    installmentItem: yup.array().min(1),
+  });
+  const {
+    control, handleSubmit, getValues, setValue,
+  } = useForm({
+    defaultValues: {
+      installmentItem: [],
+    },
+    resolver: yupResolver(schema),
+  });
+
+  const handleItemSelect = (checkedItem) => {
+    const { installmentItem: id } = getValues();
+
+    const newItems = id?.includes(checkedItem) ? id?.filter((item) => item !== checkedItem) : [...(id ?? []), checkedItem];
+
+    // console.log('R002001 handleItemSelect() selectedName: ', newItems);
+
+    setValue('installmentItem', newItems);
+    return newItems;
+  };
+
+  const renderSelectList = () => (
+    <div className="selectList">
+      {location.state.installmentData.map((item) => (
+        <Controller
+          key={location.state.installmentData.indexOf(item)}
+          name="installmentItem"
+          control={control}
+          render={() => (
+            <div className="checkbox">
+              <FEIBCheckbox
+                className="customPadding"
+                name={item.name}
+                onChange={() => handleItemSelect(item.id)}
+              />
+              <div style={{ flex: 1, padding: 8 }}>
+                <div style={{ flex: 1 }}>{item.name}</div>
+                <div style={{ flex: 1, color: theme.colors.text.light }}>{item.date}</div>
+              </div>
+              <div style={{ padding: 8 }}>{`$${item.cost}`}</div>
             </div>
-            <div style={{ padding: 8 }}>{`$${item.cost}`}</div>
-          </p>
-        ))}
-      </div>
-    );
+          )}
+        />
+      ))}
+    </div>
+  );
+
+  const handleOnSubmit = (data) => {
+    console.log('R002001 handleOnSubmit() data: ', data);
+
+    setOpenDrawer(!openDrawer);
+    history.push('/R002002'); // 帶 list.cost 總和到下一頁
   };
 
   return (
-    <Layout title="晚點付 (單筆)">
+    <Layout title={`晚點付 (${location.state.installmentType.installmentType === '1' ? '單筆' : '總額'})`}>
       <InstalmentWrapper className="InstalmentWrapper" small>
-        <form>
+        <form onSubmit={handleSubmit((data) => handleOnSubmit(data))}>
           <div>
             <div className="messageBox">
               <p style={{ width: '100%', textAlign: 'center' }}>勾選申請分期消費</p>
@@ -52,10 +90,7 @@ const R00200_1 = () => {
             {renderSelectList()}
           </div>
           <FEIBButton
-            onClick={() => {
-              setOpenDrawer(!openDrawer);
-              history.push('/R002002');
-            }}
+            type="submit"
           >
             下一步
           </FEIBButton>

@@ -2,11 +2,15 @@
 
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
+import * as yup from 'yup';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import { FEIBButton, FEIBRadioLabel, FEIBRadio } from 'components/elements';
 import Accordion from 'components/Accordion';
+import { RadioGroup } from '@material-ui/core';
 // TODO: 移除
 // import InstallmentTerms from './installmentTerms';
 import R00200AccordionContent1 from './R00200_accordionContent_1';
@@ -22,24 +26,49 @@ const R00200_2 = () => {
   usePageInfo('/api/instalment');
   const history = useHistory();
 
+  /* 資料驗證 */
+  const schema = yup.object().shape({
+    installmentNumber: yup.string().required('請選擇欲申請之晚點付期數'),
+  });
+  const { handleSubmit, control } = useForm({
+    defaultValues: {
+      installmentNumber: '1',
+    },
+    resolver: yupResolver(schema),
+  });
+
   const renderSelectList = () => {
     const list = ['1 期', '3 期', '6 期', '9 期', '12 期'];
     return (
       <div className="selectList">
         <div>選擇晚點付期數</div>
-        {list.map((item, index) => (
-          <p>
-            <FEIBRadioLabel value={index} control={<FEIBRadio />} label={item} />
-          </p>
-        ))}
+        <Controller
+          name="installmentNumber"
+          control={control}
+          render={({field}) => (
+            <RadioGroup
+              {...field}
+              value={field.value}
+            >
+              {list.map((item, index) => (
+                <FEIBRadioLabel key={item} value={(index + 1).toString()} control={<FEIBRadio />} label={item} />
+              ))}
+            </RadioGroup>
+          )}
+        />
       </div>
     );
+  };
+
+  const handleOnSubmit = (data) => {
+    console.log('R002002 handleOnSubmit() data: ', data);
+    history.push('/R002003');
   };
 
   return (
     <Layout title="晚點付 (總額)">
       <InstalmentWrapper className="InstalmentWrapper" small>
-        <form>
+        <form onSubmit={handleSubmit((data) => handleOnSubmit(data))}>
           <div>
             <div className="messageBox2">
               <p style={{ width: '100%', textAlign: 'center' }}>分期利率</p>
@@ -57,9 +86,10 @@ const R00200_2 = () => {
             </Accordion>
           </div>
           <FEIBButton
-            onClick={() => {
-              history.push('/R002003');
-            }}
+            type="submit"
+            // onClick={() => {
+            //   history.push('/R002003');
+            // }}
           >
             同意條款並繼續
           </FEIBButton>
