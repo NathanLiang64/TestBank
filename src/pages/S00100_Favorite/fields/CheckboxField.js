@@ -14,7 +14,6 @@ export const CheckBoxField = ({
     if (disabled) setShowTip(true);
     else {
       onChange(!value);
-      console.log(disabled);
       if (!isEditAction) immdlySubmit();
     }
   };

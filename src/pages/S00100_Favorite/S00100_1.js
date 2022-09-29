@@ -5,13 +5,20 @@ import React, {
 import {useForm} from 'react-hook-form';
 import BottomAction from 'components/BottomAction';
 import SnackModal from 'components/SnackModal';
-import { FEIBTab, FEIBTabContext, FEIBTabList } from 'components/elements';
+import {
+  FEIBTab, FEIBTabContext, FEIBTabList,
+} from 'components/elements';
 import { showCustomPrompt } from 'utilities/MessageModal';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { setModalVisible } from 'stores/reducers/ModalReducer';
+import { useDispatch } from 'react-redux';
 import { getFavoriteSettingList, modifyFavoriteItem } from './api';
 import { CheckBoxField } from './fields/CheckboxField';
 import {
   calcSelectedLength, extractGroupItems, generateReorderList, findExistedValue, generateTrimmedList,
 } from './utils';
+import { CardLessSettingFields } from './fields/cardLessSettingField';
+import { validationSchema } from './validationSchema';
 
 const Favorite2New = ({
   favoriteList, updateFavoriteList, back2MyFavorite, isEditAction,
@@ -22,14 +29,22 @@ const Favorite2New = ({
   const [showTip, setShowTip] = useState(false);
   const mainContentRef = useRef();
   const sectionsRef = useRef([]);
+  const dispatch = useDispatch();
 
-  // react-hook-form 設定
+  // 我的最愛表單
   const {
-    control, watch, reset, handleSubmit, formState,
+    control, watch, reset, handleSubmit,
   } = useForm();
   const watchedValues = watch('editedBlockList');
   const selectedLength = useMemo(() => calcSelectedLength(watchedValues), [watchedValues]);
 
+  // 無卡提款表單
+  const {
+    control: cardLessControl,
+    handleSubmit: cardLessHandleSubmit,
+  } = useForm({ defaultValues: {cardLessCredit: ''}, resolver: yupResolver(validationSchema) });
+
+  // 已選取 10 項不可被選取 & 新增模式下僅能選取未被加入的選項
   const checkDisabled = (key) => {
     const alreadyExisted = findExistedValue(initialValues, key);
     const isSelected = findExistedValue(watchedValues, key);
@@ -43,50 +58,45 @@ const Favorite2New = ({
     return false;
   };
 
-  // 拿取 favoriteSettingList
-  useEffect(async () => {
-    try {
-      const res = await getFavoriteSettingList();
-      if (Array.isArray(res) && res?.length) setFavoriteSettingList(res);
-    } catch (err) {
-      console.log('編輯我的最愛 err', err);
-    }
-  }, []);
-
-  //  當 Tip 出現後 1 秒將其取消
-  useEffect(() => {
-    let timer = null;
-    if (showTip) timer = setTimeout(() => setShowTip(false), 1000);
-    return () => clearTimeout(timer);
-  }, [showTip]);
-
-  // 更新 react-hook-form 的 defaultValues
-  useEffect(() => {
-    if (!favoriteSettingList.length) return;
-    const initValue = extractGroupItems(favoriteSettingList);
-    setInitialValues(initValue);
-    reset({editedBlockList: initValue});
-  }, [favoriteSettingList]);
-
-  // 點擊編輯完成
+  // 編輯完成送出表單
   const handleClickEditCompleted = async ({editedBlockList}) => {
-    console.log(editedBlockList);
-    await showCustomPrompt({
-      message: `formstate.isValid ${formState.isValid}`,
-      onOk: async () => {
+    const orderedList = generateReorderList(favoriteList, editedBlockList);
+    const trimmedList = generateTrimmedList(orderedList, 10, '');
+    if (trimmedList.includes('D00300')) {
+      await showCustomPrompt({
+        title: '無卡提款',
+        message: (
+          <form>
+            快速提領金額
+            <CardLessSettingFields name="cardLessCredit" control={cardLessControl} />
+          </form>
+        ),
+        onOk: cardLessHandleSubmit((values) => {
+          console.log('values', values);
+          dispatch(setModalVisible(false));
+          // await Promise.all(trimmedList.map((actKey, position) => (
+          //   modifyFavoriteItem({actKey, position: parseInt(position, 10)})
+          // )));
+          // // 送出修改後的名單，隨後再次更新最愛列表，並回到我的最愛首頁
+          // await updateFavoriteList();
+          // back2MyFavorite();
+        }),
+        onClose: () => {
+          if (isEditAction) return;
+          // 若是新增模式情況下，離開 modal 時需要取消勾選
+          reset({editedBlockList: initialValues});
+        },
+        noDismiss: true,
 
-      },
-      cancelContent: '取消',
-    });
-
-    // const orderedList = generateReorderList(favoriteList, editedBlockList);
-    // const trimmedList = generateTrimmedList(orderedList, 10, '');
-    // await Promise.all(trimmedList.map((actKey, position) => (
-    //   modifyFavoriteItem({actKey, position: parseInt(position, 10)})
-    // )));
-    // // 送出修改後的名單，隨後再次更新最愛列表，並回到我的最愛首頁
-    // await updateFavoriteList();
-    // back2MyFavorite();
+      });
+    } else {
+      // await Promise.all(trimmedList.map((actKey, position) => (
+      //   modifyFavoriteItem({actKey, position: parseInt(position, 10)})
+      // )));
+      // // 送出修改後的名單，隨後再次更新最愛列表，並回到我的最愛首頁
+      // await updateFavoriteList();
+      // back2MyFavorite();
+    }
   };
 
   // 點擊 tab 時
@@ -130,6 +140,31 @@ const Favorite2New = ({
     <FEIBTab key={group.groupKey} label={group.groupName} value={group.groupKey} />
   ));
 
+  // 拿取 favoriteSettingList
+  useEffect(async () => {
+    try {
+      const res = await getFavoriteSettingList();
+      if (Array.isArray(res) && res?.length) setFavoriteSettingList(res);
+    } catch (err) {
+      console.log('編輯我的最愛 err', err);
+    }
+  }, []);
+
+  //  當 Tip 出現後 1 秒將其取消
+  useEffect(() => {
+    let timer = null;
+    if (showTip) timer = setTimeout(() => setShowTip(false), 1000);
+    return () => clearTimeout(timer);
+  }, [showTip]);
+
+  // 更新 react-hook-form 的 defaultValues
+  useEffect(() => {
+    if (!favoriteSettingList.length) return;
+    const initValue = extractGroupItems(favoriteSettingList);
+    setInitialValues(initValue);
+    reset({editedBlockList: initValue});
+  }, [favoriteSettingList]);
+
   return (
     <div className="editFavoritePage">
       <FEIBTabContext value={tabId}>
@@ -154,7 +189,6 @@ const Favorite2New = ({
             type="button"
             style={{cursor: 'pointer'}}
             onClick={handleSubmit(handleClickEditCompleted)}
-            // onClick={() => console.log(formState.isValid)}
           >
             {`編輯完成(${selectedLength})`}
           </button>

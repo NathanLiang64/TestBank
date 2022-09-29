@@ -54,3 +54,30 @@ export const generateReorderList = (initialValues, editedBlockList) => {
   return [...defaultList, ...selectedList];
   // return { defaultList, selectedList };
 };
+
+export const reorder = (list, startIndex, endIndex) => {
+  const updatedItems = Array.from(list.items);
+  const [removed] = updatedItems.splice(startIndex, 1);
+  updatedItems.splice(endIndex, 0, removed);
+  return {...list, items: updatedItems};
+};
+
+export const move = (source, destination, droppableSource, droppableDestination) => {
+  const sourceClone = Array.from(source.items);
+  const destClone = Array.from(destination.items);
+  const [removed] = sourceClone.splice(droppableSource.index, 1);
+  destClone.splice(droppableDestination.index, 0, removed);
+  if (source.id === 'left') return [{...source, items: sourceClone}, {...destination, items: destClone}];
+  return [{...destination, items: destClone}, {...source, items: sourceClone}];
+};
+
+export const combineLeftAndRight = (left, right) => {
+  const leftList = Array.from(left);
+  const rightList = Array.from(right);
+  const arr = [];
+  while (leftList.length || rightList.length) {
+    arr.push(leftList.shift());
+    arr.push(rightList.shift());
+  }
+  return arr;
+};

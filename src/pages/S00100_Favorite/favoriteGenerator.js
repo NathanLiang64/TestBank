@@ -16,24 +16,44 @@ import {
   SocialIcon1, SocialIcon2, SocialIcon3,
 } from 'assets/images/icons';
 
-export const blockBackgroundGenerator = (index) => {
+export const blockBackgroundGenerator = (actKey) => {
   // 只有六種顏色背景
-  const remainder = index % 6;
-  switch (remainder) {
-    case 0:
+  // const remainder = index % 6;
+  // switch (remainder) {
+  //   case 0:
+  //     return BlockPink;
+  //   case 1:
+  //     return BlockYellow;
+  //   case 2:
+  //     return BlockBlue;
+  //   case 3:
+  //     return BlockOrange;
+  //   case 4:
+  //     return BlockGreen;
+  //   case 5:
+  //     return BlockPurple;
+  //   default:
+  //     return BlockBlue;
+  // }
+  switch (actKey[0]) {
+    case 'C':
       return BlockPink;
-    case 1:
+    case 'F':
       return BlockYellow;
-    case 2:
+    case 'D':
       return BlockBlue;
-    case 3:
+    case 'E':
       return BlockOrange;
-    case 4:
+    case 'R':
       return BlockGreen;
-    case 5:
+    case 'L':
       return BlockPurple;
+    case 'S':
+      return BlockPink;
+    case 'M':
+      return BlockYellow;
     default:
-      return null;
+      return BlockBlue;
   }
 };
 
