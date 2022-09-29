@@ -77,7 +77,6 @@ const Favorite = () => {
   // 點擊空白處離開編輯模式
   const handleCloseRemoveMode = async (e) => {
     if (viewControl.content !== 'remove') return;
-    console.log(e.target);
     if (e.target.className === 'dndItem' || e.target.nodeName === 'svg') return;
     const combinedList = combineLeftAndRight(dndList[0].items, dndList[1].items);
     const trimmedList = generateTrimmedList(combinedList, 10, '');
@@ -254,6 +253,11 @@ const Favorite = () => {
     setDndList([{id: 'left', items: left}, {id: 'right', items: right}]);
   }, [favoriteList, orderedList]);
 
+  const isEditOrAddMode = useMemo(() => {
+    if (viewControl.content === 'edit' || viewControl.content === 'add') return true;
+    return false;
+  }, [viewControl]);
+
   return (
     <Layout>
       <BottomDrawer
@@ -261,7 +265,7 @@ const Favorite = () => {
         title={viewControl.title}
         isOpen
         onClose={() => closeFunc()}
-        onBack={viewControl.content === 'edit' ? () => setViewControl(initialViewControl) : null}
+        onBack={isEditOrAddMode ? () => setViewControl(initialViewControl) : null}
         content={(
           <FavoriteDrawerWrapper onClick={handleCloseRemoveMode}>
             { drawerController() }

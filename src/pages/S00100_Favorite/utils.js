@@ -81,3 +81,12 @@ export const combineLeftAndRight = (left, right) => {
   }
   return arr;
 };
+
+// export const makeDrinks = (drinksName) => new Promise((resolve, reject) => {
+//   if (drinksName.includes('ironman')) {
+//     reject(new Error('error la'));
+//   }
+//   setTimeout(() => {
+//     resolve(`這是你點的${drinksName}`);
+//   }, 200);
+// });

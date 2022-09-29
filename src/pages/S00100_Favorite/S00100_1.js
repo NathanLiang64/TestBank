@@ -71,15 +71,15 @@ const Favorite2New = ({
             <CardLessSettingFields name="cardLessCredit" control={cardLessControl} />
           </form>
         ),
-        onOk: cardLessHandleSubmit((values) => {
+        onOk: cardLessHandleSubmit(async (values) => {
           console.log('values', values);
           dispatch(setModalVisible(false));
-          // await Promise.all(trimmedList.map((actKey, position) => (
-          //   modifyFavoriteItem({actKey, position: parseInt(position, 10)})
-          // )));
-          // // 送出修改後的名單，隨後再次更新最愛列表，並回到我的最愛首頁
-          // await updateFavoriteList();
-          // back2MyFavorite();
+          await Promise.all(trimmedList.map((actKey, position) => (
+            modifyFavoriteItem({actKey, position: parseInt(position, 10)})
+          )));
+          // 送出修改後的名單，隨後再次更新最愛列表，並回到我的最愛首頁
+          await updateFavoriteList();
+          back2MyFavorite();
         }),
         onClose: () => {
           if (isEditAction) return;
@@ -90,12 +90,26 @@ const Favorite2New = ({
 
       });
     } else {
-      // await Promise.all(trimmedList.map((actKey, position) => (
-      //   modifyFavoriteItem({actKey, position: parseInt(position, 10)})
-      // )));
-      // // 送出修改後的名單，隨後再次更新最愛列表，並回到我的最愛首頁
-      // await updateFavoriteList();
-      // back2MyFavorite();
+      try {
+        const res = await Promise.all(trimmedList.map((actKey, position) => (
+          modifyFavoriteItem({actKey, position: parseInt(position, 10)})
+        )));
+        await showCustomPrompt({
+          title: '測試測試',
+          message: JSON.stringify(res),
+          onOk: async () => {
+          },
+        });
+        await updateFavoriteList();
+        back2MyFavorite();
+      } catch (err) {
+        await showCustomPrompt({
+          title: '錯誤',
+          message: err.message,
+        });
+      }
+
+      // 送出修改後的名單，隨後再次更新最愛列表，並回到我的最愛首頁
     }
   };
 
