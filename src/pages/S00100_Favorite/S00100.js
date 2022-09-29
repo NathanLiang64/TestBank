@@ -69,9 +69,6 @@ const Favorite = () => {
   const handleEditBlock = () => setShowRemoveButton(true);
   const handleTouchStart = () => setPressTimer(setTimeout(handleEditBlock, 800));
   const handleTouchEnd = () => pressTimer && clearTimeout(pressTimer);
-  // const hadnleBlockClick = (keyIsExisted)=>{
-  //   if(!keyIsExisted) return ()=>handleOpenView('add')
-  // }
 
   // 渲染我的最愛列表
   const renderBlocksElement = (blocks) => blocks.map((block, index) => {
@@ -149,7 +146,7 @@ const Favorite = () => {
     );
   };
 
-  const closeEditModeHandler = (e, value) => {
+  const closeEditModeHandler = (e) => {
     const {nodeName} = e.target;
     if (nodeName === 'BUTTON' || nodeName === 'svg') return;
     if (showRemoveButton) setShowRemoveButton(false);

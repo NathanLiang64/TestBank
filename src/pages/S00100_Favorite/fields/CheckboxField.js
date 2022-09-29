@@ -14,6 +14,7 @@ export const CheckBoxField = ({
     if (disabled) setShowTip(true);
     else {
       onChange(!value);
+      console.log(disabled);
       if (!isEditAction) immdlySubmit();
     }
   };
@@ -23,15 +24,20 @@ export const CheckBoxField = ({
       className={value && !disabled ? 'selected' : ''}
       disabled={isEditAction ? false : disabled}
     >
-      <label htmlFor={name} style={{width: '100%', height: '100%'}}>
+      <label
+        htmlFor={name}
+        style={{
+          width: '100%', height: '100%', cursor: 'pointer', userSelect: 'none',
+        }}
+        onChange={onChangeHandler}
+        checked={!!value}
+      >
         {iconGenerator(name.split('.')[1])}
         <p>{label}</p>
         <input
           type="checkbox"
-          onChange={onChangeHandler}
           id={name}
           style={{display: 'none'}}
-          checked={!!value}
         />
         <BlockSelectedIcon className="selectedIcon" />
       </label>

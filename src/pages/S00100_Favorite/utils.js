@@ -51,7 +51,6 @@ export const generateReorderList = (initialValues, editedBlockList) => {
       }
     }
   }
-  console.log([...defaultList, ...selectedList]);
   return [...defaultList, ...selectedList];
   // return { defaultList, selectedList };
 };

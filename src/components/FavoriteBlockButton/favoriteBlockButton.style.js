@@ -6,6 +6,7 @@ const FavoriteBlockButtonStyle = styled.button.attrs({
   display: flex;
   flex-direction: column;
   align-items: center;
+  cursor:pointer;
   min-height: 9.6rem;
   padding: 1.6rem .4rem .8rem .4rem;
   border: ${({ $noBorder, theme }) => ($noBorder ? '0' : `.2rem solid ${theme.colors.background.lighterBlue}`)};

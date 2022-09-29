@@ -68,6 +68,7 @@ const T00700 = lazy(() => import('pages/T00700_BasicInformation'));
 const T00800 = lazy(() => import('pages/T00800_ChangeUserName'));
 const T00900 = lazy(() => import('pages/T00900_PwdModify'));
 const S00100 = lazy(() => import('pages/S00100_Favorite/S00100'));
+const FavoriteOld = lazy(() => import('pages/S00100_Favorite/FavoriteOld'));
 
 const LossReissue = lazy(() => import('pages/LossReissue'));
 const AccountMaintenance = lazy(() => import('pages/AccountMaintenance'));
@@ -156,6 +157,7 @@ const routes = [
   {path: '/R00600', exact: false, component: R00600},
   {path: '/R006001', exact: false, component: R006001},
   {path: '/S00100', exact: true, component: S00100},
+  {path: '/favoriteold', exact: true, component: FavoriteOld},
   {path: '/S00400', exact: true, component: S00400},
   {path: '/S00600', exact: false, component: S00600},
   {path: '/T00100', exact: false, component: T00100},

@@ -25,7 +25,7 @@ const Favorite2New = ({
 
   // react-hook-form 設定
   const {
-    control, watch, reset, handleSubmit,
+    control, watch, reset, handleSubmit, formState,
   } = useForm();
   const watchedValues = watch('editedBlockList');
   const selectedLength = useMemo(() => calcSelectedLength(watchedValues), [watchedValues]);
@@ -70,21 +70,17 @@ const Favorite2New = ({
 
   // 點擊編輯完成
   const handleClickEditCompleted = async ({editedBlockList}) => {
-    const orderedList = generateReorderList(favoriteList, editedBlockList);
-    const trimmedList = generateTrimmedList(orderedList, 10, '');
-
+    console.log(editedBlockList);
     await showCustomPrompt({
-      message: '測試測試',
+      message: `formstate.isValid ${formState.isValid}`,
       onOk: async () => {
-        await Promise.all(trimmedList.map((actKey, position) => (
-          modifyFavoriteItem({actKey, position: parseInt(position, 10)})
-        )));
-        // 送出修改後的名單，隨後再次更新最愛列表，並回到我的最愛首頁
-        await updateFavoriteList();
-        back2MyFavorite();
+
       },
       cancelContent: '取消',
     });
+
+    // const orderedList = generateReorderList(favoriteList, editedBlockList);
+    // const trimmedList = generateTrimmedList(orderedList, 10, '');
     // await Promise.all(trimmedList.map((actKey, position) => (
     //   modifyFavoriteItem({actKey, position: parseInt(position, 10)})
     // )));
@@ -158,6 +154,7 @@ const Favorite2New = ({
             type="button"
             style={{cursor: 'pointer'}}
             onClick={handleSubmit(handleClickEditCompleted)}
+            // onClick={() => console.log(formState.isValid)}
           >
             {`編輯完成(${selectedLength})`}
           </button>
@@ -170,31 +167,3 @@ const Favorite2New = ({
 };
 
 export default Favorite2New;
-// ===============version2=================
-// const patchedList = [];
-// for (const key in editedBlockList) {
-//   if (editedBlockList[key]) patchedList.push(key);
-// }
-// while (patchedList.length < 10) patchedList.push('');
-
-// ===============version1=================
-// const patchedList = Array(10).fill(undefined);
-// const {orderedList, unorderdList} = filterAddItemNew(favoriteList, editedBlockList);
-// orderedList.forEach(({actKey, position}) => {
-//   patchedList[position] = actKey;
-// });
-
-// patchedList.forEach((el, index) => {
-//   if (!el && unorderdList.length) {
-//     patchedList[index] = unorderdList.shift();
-//   }
-// });
-
-// =====指定新增時 location=====
-// const existedList = favoriteList.filter((item) => item.position !== '-1');
-// const addedKey = filterAddItem(initialValues, editedBlockList);
-// if (addedKey) {
-//   patchedList.push(...existedList);
-//   patchedList.push({actKey: addedKey, position: specifiedLocation});
-// }
-// await Promise.all(patchedList.map(({actKey, position}) => modifyFavoriteItem({actKey, position: parseInt(position, 10)})));
