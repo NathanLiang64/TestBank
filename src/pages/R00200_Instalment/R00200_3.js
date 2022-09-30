@@ -1,7 +1,7 @@
 /** @format */
 
 // import {useState} from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 
 /* Elements */
 import successImg from 'assets/images/successImg.svg';
@@ -17,12 +17,13 @@ import { showInfo } from 'utilities/MessageModal';
 import InstalmentWrapper from './R00200.style';
 
 const R00200_3 = () => {
+  const location = useLocation();
   // TODO: 移除
   // const [showResultDialog, setShowResultDialog] = useState(true);
 
+  const installmentTotal = `${location.state.installmentSum}`;
+  const installmentNumber = `${location.state.installmentNumber}期`;
   // Debug: 以下為 hardcode
-  const installmentTotal = '$10,000';
-  const installmentNumber = `${3}期`;
   const installmentRate = `${0}%`;
 
   // Debug: 以下為 hardcode
@@ -65,7 +66,7 @@ const R00200_3 = () => {
       </thead>
       <tbody>
         {staging.map((item) => (
-          <tr key={item.index}>
+          <tr key={staging.indexOf(item)}>
             <td>
               第 &nbsp;
               {item.installments}

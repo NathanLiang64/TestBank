@@ -1,6 +1,6 @@
 /** @format */
 
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
@@ -25,6 +25,7 @@ const R00200_2 = () => {
   useCheckLocation();
   usePageInfo('/api/instalment');
   const history = useHistory();
+  const location = useLocation();
 
   /* 資料驗證 */
   const schema = yup.object().shape({
@@ -62,7 +63,7 @@ const R00200_2 = () => {
 
   const handleOnSubmit = (data) => {
     console.log('R002002 handleOnSubmit() data: ', data);
-    history.push('/R002003');
+    history.push('/R002003', {installmentSum: location.state.sum, installmentNumber: data.installmentNumber});
   };
 
   return (

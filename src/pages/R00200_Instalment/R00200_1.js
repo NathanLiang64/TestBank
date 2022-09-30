@@ -74,8 +74,11 @@ const R00200_1 = () => {
   const handleOnSubmit = (data) => {
     console.log('R002001 handleOnSubmit() data: ', data);
 
+    // data裡記住的id對應的cost的總和
+    const costSum = data.installmentItem.map((id) => location.state.installmentData.find((item) => item.id === id).cost).reduce((partialSum, nextNumber) => partialSum + nextNumber, 0);
+
     setOpenDrawer(!openDrawer);
-    history.push('/R002002'); // 帶 list.cost 總和到下一頁
+    history.push('/R002002', {sum: costSum}); // 帶 list.cost 總和到下一頁
   };
 
   return (
