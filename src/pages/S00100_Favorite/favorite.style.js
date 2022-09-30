@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 const FavoriteDrawerWrapper = styled.div`
   margin-top: 2rem;
-  
+  margin-bottom:2rem;
   .defaultPage {
     display: flex;
     flex-direction: column;
@@ -31,7 +31,7 @@ const FavoriteDrawerWrapper = styled.div`
     margin-top: 1.6rem;
     margin-bottom: 4rem;
     width: 100%;
-    max-height: calc(96vh - 12.6rem);
+    height:65vh;
     overflow-y: auto;
     
     button {
@@ -48,6 +48,7 @@ const FavoriteDrawerWrapper = styled.div`
       
       img {
         position: absolute;
+        height:100%;
         top: 0;
         left: 0;
         z-index: -1;
@@ -63,7 +64,7 @@ const FavoriteDrawerWrapper = styled.div`
         position: absolute;
         top: .8rem;
         left: .8rem;
-        display: inline-flex;
+        display: flex;
         justify-content: center;
         align-items: center;
         border-radius: 50%;
@@ -74,12 +75,81 @@ const FavoriteDrawerWrapper = styled.div`
         transform-origin: center;
         
         .Icon {
-          margin-bottom: 0;
+          margin-bottom: 0rem;
+          margin-top: 0.25rem;
+          height: 100%;
           font-size: 1.6rem;
           color: ${({ theme }) => theme.colors.basic.white};
         }
       }
     }
+  }
+  .dndArea {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(8, 14.8rem);
+    grid-gap: 1.6rem;
+    margin-top: 1.6rem;
+    margin-bottom: 4rem;
+    width: 100%;
+    height:65vh;
+    overflow-y: auto;
+
+    .dndItemContainer{
+      min-height:74rem;
+    }
+
+    .dndItem {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-bottom:1.6rem;
+        padding: 0 1.2rem;
+        height: 14.8rem;
+        border-radius: .8rem;
+        font-size: 1.6rem;
+        color: ${({ theme }) => theme.colors.text.lightGray};
+        user-select: none;
+        
+        img {
+          position: absolute;
+          height:100%;
+          top: 0;
+          left: 0;
+          z-index: -1;
+        }
+        
+        .Icon {
+          margin-bottom: 1.2rem;
+          font-size: 3.2rem;
+          color: ${({ theme }) => theme.colors.text.lightGray};
+        }
+        
+        .removeButton {
+          position: absolute;
+          top: .8rem;
+          left: .8rem;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 50%;
+          width: 2.4rem;
+          height: 2.4rem;
+          background: ${({ theme }) => theme.colors.primary.light};
+          animation: scaleUp .4s backwards;
+          transform-origin: center;
+          
+          .Icon {
+            margin-bottom: 0rem;
+            margin-top: 0.25rem;
+            height: 100%;
+            font-size: 1.6rem;
+            color: ${({ theme }) => theme.colors.basic.white};
+          }
+        }
+      }
+    
   }
   
   @keyframes scaleUp {
@@ -101,7 +171,8 @@ const FavoriteDrawerWrapper = styled.div`
     }
     
     .mainContent {
-      max-height: calc(96vh - 12.6rem);
+      // max-height: calc(96vh - 12.6rem);
+      height:65vh;
       overflow-y: auto;
     }
     

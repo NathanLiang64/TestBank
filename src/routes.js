@@ -18,8 +18,8 @@ const C00600Edit = lazy(() => import('pages/C00600_DepositPlan/EditPage'));
 const C00600EditR = lazy(() => import('pages/C00600_DepositPlan/RestrictedEditPage'));
 const C00600Detail = lazy(() => import('pages/C00600_DepositPlan/DetailPage'));
 const C00700 = lazy(() => import('pages/C00700_CreditCard/C00700'));
-const C00700Detail = lazy(() => import('pages/C00700_CreditCard/Details'));
-const C00700Reward = lazy(() => import('pages/C00700_CreditCard/Rewards'));
+const C007001 = lazy(() => import('pages/C00700_CreditCard/C00700_1'));
+const C007002 = lazy(() => import('pages/C00700_CreditCard/C00700_2'));
 const C00800 = lazy(() => import('pages/C00800_ExportBankBook'));
 const C008001 = lazy(() => import('pages/C00800_ExportBankBook/exportBankBook_1'));
 const D00100 = lazy(() => import('pages/D00100_NtdTransfer/D00100v2'));
@@ -68,8 +68,9 @@ const T00700 = lazy(() => import('pages/T00700_BasicInformation'));
 const T00800 = lazy(() => import('pages/T00800_ChangeUserName'));
 const T00900 = lazy(() => import('pages/T00900_PwdModify'));
 const S00100 = lazy(() => import('pages/S00100_Favorite/S00100'));
+const FavoriteOld = lazy(() => import('pages/S00100_Favorite/FavoriteOld'));
 
-const LossReissue = lazy(() => import('pages/LossReissue'));
+const S00800 = lazy(() => import('pages/S00800_LossReissue/S00800'));
 const AccountMaintenance = lazy(() => import('pages/AccountMaintenance'));
 const BillPay = lazy(() => import('pages/BillPay'));
 const BillPay1 = lazy(() => import('pages/BillPay/billPay_1'));
@@ -114,8 +115,8 @@ const routes = [
   {path: '/C006004', exact: false, component: C00600Detail},
   {path: '/C006005', exact: false, component: C00600EditR},
   {path: '/C00700', exact: false, component: C00700},
-  {path: '/C007001', exact: false, component: C00700Detail},
-  {path: '/C007002', exact: false, component: C00700Reward},
+  {path: '/C007001', exact: false, component: C007001},
+  {path: '/C007002', exact: false, component: C007002},
   {path: '/C00800', exact: false, component: C00800},
   {path: '/C008001', exact: false, component: C008001},
   {path: '/D00100', exact: false, component: D00100},
@@ -156,6 +157,7 @@ const routes = [
   {path: '/R00600', exact: false, component: R00600},
   {path: '/R006001', exact: false, component: R006001},
   {path: '/S00100', exact: true, component: S00100},
+  {path: '/favoriteold', exact: true, component: FavoriteOld},
   {path: '/S00400', exact: true, component: S00400},
   {path: '/S00600', exact: false, component: S00600},
   {path: '/T00100', exact: false, component: T00100},
@@ -169,7 +171,7 @@ const routes = [
   {path: '/T00900', exact: false, component: T00900},
 
   // 缺 function id
-  {path: '/lossReissue', exact: false, component: LossReissue},
+  {path: '/S00800', exact: false, component: S00800},
   {path: '/accountMaintenance', exact: false, component: AccountMaintenance},
   {path: '/billPay', exact: true, component: BillPay},
   {path: '/billPay1', exact: false, component: BillPay1},

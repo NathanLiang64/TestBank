@@ -177,7 +177,7 @@ const BasicInformation = () => {
     const { mobile } = getValues();
     // 有變更手機號碼
     if (mobile !== originPersonalData.mobile) {
-      const authCode = 0x34;
+      const authCode = 0x36;
       const jsRs = await transactionAuth(authCode, mobile);
       if (jsRs.result) {
         modifyPersonalData();

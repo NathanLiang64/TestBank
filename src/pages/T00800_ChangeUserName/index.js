@@ -56,7 +56,7 @@ const ChangeUserName = () => {
 
   // 呼叫變更使用者代號 API
   const handleChangeUserName = async () => {
-    const authCode = 0x24;
+    const authCode = 0x26;
     const jsRs = await transactionAuth(authCode);
     if (jsRs.result) {
       switchLoading(true);
@@ -85,6 +85,7 @@ const ChangeUserName = () => {
           <div>
             <PasswordInput
               label="您的使用者代號"
+              placeholder="請輸入使用者代號(6-20位英數字)"
               id="userName"
               name="userName"
               control={control}
@@ -92,6 +93,7 @@ const ChangeUserName = () => {
             />
             <PasswordInput
               label="新的使用者代號"
+              placeholder="請輸入新的使用者代號(6-20位英數字)"
               id="newUserName"
               name="newUserName"
               control={control}
@@ -99,6 +101,7 @@ const ChangeUserName = () => {
             />
             <PasswordInput
               label="請確認新的使用者代號"
+              placeholder="請輸入新的使用者代號(6-20位英數字)"
               id="newUserNameCheck"
               name="newUserNameCheck"
               control={control}
