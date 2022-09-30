@@ -70,7 +70,7 @@ const T00900 = lazy(() => import('pages/T00900_PwdModify'));
 const S00100 = lazy(() => import('pages/S00100_Favorite/S00100'));
 const FavoriteOld = lazy(() => import('pages/S00100_Favorite/FavoriteOld'));
 
-const LossReissue = lazy(() => import('pages/LossReissue'));
+const S00800 = lazy(() => import('pages/S00800_LossReissue/S00800'));
 const AccountMaintenance = lazy(() => import('pages/AccountMaintenance'));
 const BillPay = lazy(() => import('pages/BillPay'));
 const BillPay1 = lazy(() => import('pages/BillPay/billPay_1'));
@@ -171,7 +171,7 @@ const routes = [
   {path: '/T00900', exact: false, component: T00900},
 
   // 缺 function id
-  {path: '/lossReissue', exact: false, component: LossReissue},
+  {path: '/S00800', exact: false, component: S00800},
   {path: '/accountMaintenance', exact: false, component: AccountMaintenance},
   {path: '/billPay', exact: true, component: BillPay},
   {path: '/billPay1', exact: false, component: BillPay1},
