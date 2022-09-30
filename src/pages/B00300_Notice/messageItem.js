@@ -28,11 +28,11 @@ const MessageItem = ({ item, deleteClick, readClick }) => {
       onClick={readClick}
     >
       <section>
-        <div className="notifyTitle">{ window.atob(item?.msgOutline) }</div>
+        <div className="notifyTitle">{ decodeURIComponent(escape(window.atob(item?.msgOutline))) }</div>
         <div className="notifyTime">{ item?.sendTime }</div>
       </section>
       <section className="notifyContent">
-        { window.atob(item.msgContent) }
+        { decodeURIComponent(escape(window.atob(item.msgContent))) }
       </section>
       <div
         className={`deleteBtn ${showActions ? '' : 'hide'}`}
