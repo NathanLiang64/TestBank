@@ -9,6 +9,7 @@ import Badge from 'components/Badge';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { currencySymbolGenerator } from 'utilities/Generator';
 
+import { getThisMonth } from 'utilities/MonthGenerator';
 import { getBills } from './api';
 import Reminder from './components/Reminder';
 import Transactions from './components/Transactions';
@@ -31,8 +32,9 @@ const Page = () => {
     dispatch(setWaittingVisible(true));
     let accountNo;
     if (location.state && ('accountNo' in location.state)) accountNo = location.state.accountNo;
-    const response = await getBills('202207');
-    console.log('R00300 getBills("202207") response:', response);
+
+    // const response = await getBills(getThisMonth()); // TODO: 抓系統時間（YYYYMM）作為此處參數傳入
+    const response = await getBills('202207'); // 測試時使用202207
     setBills(response);
     dispatch(setWaittingVisible(false));
   }, []);

@@ -2,8 +2,8 @@
 
 import { checkCardBillStatus, queryCardBill, queryCardInfo } from 'pages/C00700_CreditCard/api';
 // import mockBills from './mockData/mockBills';
-import mockBillDetails from './mockData/mockBillDetails';
-import mockTransactions from './mockData/mockTransactions';
+// import mockBillDetails from './mockData/mockBillDetails';
+// import mockTransactions from './mockData/mockTransactions';
 import mockCreditCardTerms from './mockData/mockCreditCardTerms';
 
 /**
@@ -15,7 +15,7 @@ import mockCreditCardTerms from './mockData/mockCreditCardTerms';
      "month": 本期月份。 // period末兩位數
      "amount": 本期應繳金額，無帳單時為0。 // queryCardBillRt.newBalance
      "billDate": 繳費截止日 // queryCardInfoRt.payDueDate
-     "currency": 幣值 // 'NTD'
+     "currency": 幣值 // 'TWD'
      "autoDeduct": 是否已設定自動扣繳 // checkCardBillStatusRt.autoDeductStatus
    }
  */
@@ -30,10 +30,10 @@ export const getBills = async (param) => {
 
   /* 將回傳資料轉換成頁面資料結構 */
   const bills = {
-    month: param,
+    month: parseInt(param.slice(-2), 10).toString(), // 只顯示月份，開頭不為0
     amount: queryCardBillRt.data.newBalance,
     billDate: queryCardInfoRt.data.payDueDate,
-    currency: 'NTD',
+    currency: 'TWD',
     autoDeduct: checkCardBillStatusRt.data.autoDeductStatus,
   };
   return bills;
@@ -42,64 +42,83 @@ export const getBills = async (param) => {
 
 /**
  * 取得信用卡交易明細：白底card，在 <Transactions /> 呼叫
-   TODO 目前先直接複製台幣交易明細，不知需否調整
    @param {
-     accountNo: 帳號, ex: 00100100063106,
-     custom: 文字檢索條件, ex: 退款.
-     startDate: 交易日期起日, ex: 20200101, // 已從transactions傳入
-     endDate: 交易日期迄日, ex: 20210731, // 已從transactions傳入
-     txnType: 摘要代碼: 1:跨轉、2:ATM、3:存款息、4:薪轉、5:付款儲存、6:自動扣繳, 可多筆,
-     month: 起始月份，預設為最接近月底的日期為起始索引, ex: 202104,
-     startIndex: 指定起始索引,
-     direct: 方向性.1:正向(新~舊)、2:反向(舊~新)、0:雙向方向性
-   }
+    "period": 期別 (ex: 202207) (僅 queryCardBill 需要)
+  }
    @returns {
-     "id": TODO 需要ID之類的識別碼
-     "index": 1,
-     "bizDate": "20220425",
-     "txnDate": "20220425",
-     "txnTime": 210156,
-     "description": "全家便利商店",
-     "memo": "備註最多7個字",
-     "targetMbrId": null,
-     "targetNickName": null,
-     "targetBank": "000",
-     "targetAcct": TODO 或許這個是卡號
-     "amount": 36000,
-     "balance": 386000,
-     "cdType": "d",
+     "txnDate": "20220425", // queryCardBillRt.detail[n].txDate
+     "description": "全家便利商店", // queryCardBillRt.detail[n].desc
+     "targetAcct": TODO 或許這個是卡號 // queryCardBillRt.detail[n].cardNo
+     "amount": 36000, // queryCardBillRt.detail[n].amount
      "currency": "TWD"
    }
  */
 export const getTransactionDetails = async (request) => {
   // const response = await callAPI('/api/', request);
-  const response = await new Promise((resolve) => resolve({ data: mockTransactions(request) }));
-  return response.data;
+  // const response = await new Promise((resolve) => resolve({ data: mockTransactions(request) }));
+
+  const queryCardBillRt = await queryCardBill(request);
+
+  /* 將回傳資料轉換成頁面資料結構 */
+  const transactionDetails = queryCardBillRt.data.details.map((detail) => ({
+    txnDate: detail.txDate,
+    description: detail.desc,
+    targetAcct: '1112223333444455', // TODO: detail.cardNo rt null，先塞假資料待處理完成後恢復
+    amount: detail.amount,
+    currency: 'TWD',
+  }));
+
+  return transactionDetails;
 };
 
 /**
  * 取得帳單資訊：更多帳單資訊Accoridan
+   @param {
+    "period": 期別 (ex: 202207) (僅 queryCardBill 需要)
+  }
    @returns {
-     "currency": 信用卡帳單幣別
-     "amount": 本期應繳金額
-     "minAmount": 最低應繳金額
-     "invoiceDate": 帳單結帳日
-     "billDate": 繳費截止日
-     "prevAmount": 上期應繳金額
-     "prevDeductedAmount": 已繳/退金額
-     "newAmount": 本期新增款項
-     "rate": 利息
-     "fine": 違約金
-     "credit": 循環信用額度
-     "creditAvailable": 循環信用本金餘額
-     "bindAccountNo": 自動扣款帳號
-     "deductAmount": 繳款截止日扣款金額
+     "currency": 信用卡帳單幣別 // 'TWD'
+     "amount": 本期應繳金額 // queryCardInfoRt.newBalance
+     "minAmount": 最低應繳金額 // queryCardInfoRt.minDueAmount
+     "invoiceDate": 帳單結帳日 // queryCardInfoRt.billClosingDate
+     "billDate": 繳費截止日 // queryCardInfoRt.payDueDate
+     "prevAmount": 上期應繳金額 // queryCardBill(期別-1, if期別===01: 期別=12).newBalance ('-')
+     "prevDeductedAmount": 已繳/退金額 // queryCardInfoRt.paidAmount
+     "newAmount": 本期新增款項 // '-'
+     "rate": 利息 // '-'
+     "fine": 違約金 // '-'
+     "credit": 循環信用額度 // '-'
+     "creditAvailable": 循環信用本金餘額 // '-'
+     "bindAccountNo": 自動扣款帳號 // '-'
+     "deductAmount": 繳款截止日扣款金額 // '-'
    }
  */
 export const getBillDetails = async () => {
   // Assume backend store Terms as escaped HTML...
-  const response = await new Promise((resolve) => resolve({ data: mockBillDetails }));
-  return response.data;
+  // const response = await new Promise((resolve) => resolve({ data: mockBillDetails }));
+
+  const queryCardInfoRt = await queryCardInfo();
+
+  /* 將回傳資料轉換成頁面資料結構 */
+  const billDetails = {
+    currency: 'TWD',
+    amount: queryCardInfoRt.data.newBalance,
+    minAmount: queryCardInfoRt.data.minDueAmount,
+    invoiceDate: queryCardInfoRt.data.billClosingDate,
+    billDate: queryCardInfoRt.data.payDueDate,
+    prevAmount: '-',
+    prevDeductedAmount: queryCardInfoRt.data.paidAmount,
+    newAmount: '-',
+    rate: '-',
+    fine: '-',
+    credit: '-',
+    creditAvailable: '-',
+    bindAccountNo: '-',
+    deductAmount: '-',
+  };
+
+  return billDetails;
+  // return response.data;
 };
 
 /**

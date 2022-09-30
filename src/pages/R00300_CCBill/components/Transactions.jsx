@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import uuid from 'react-uuid';
 
@@ -23,7 +24,8 @@ const Transactions = ({ bills, isExpanded, onExpandClick }) => {
     let log = backlogMap.get(selectedMonth);
     if (!log) {
       setIsLoading(true);
-      const response = await getTransactionDetails({ startDate: `${selectedMonth}01`, endDate: `${selectedMonth}31` });
+      // const response = await getTransactionDetails(getThisMonth()); // TODO: 抓系統時間（YYYYMM）作為此處參數傳入
+      const response = await getTransactionDetails('202207');
       backlogMap.set(selectedMonth, response);
       log = response;
     }
