@@ -10,6 +10,7 @@ const errorMessage = {
   passwordWrongLength: '您輸入的網銀密碼長度有誤，請重新輸入',
   passwordCannotSameCharacter: '「密碼」同一個字母或數字不可超過4次',
   passwordCannotConsecutive: '「密碼」連續字母或數字不可超過4位',
+  passwordCannotIncludesROCID: '「密碼」不能包含身分證號碼',
 
   // 二次確認密碼
   confirmPasswordRequired: '請再輸入一次新網銀密碼',
@@ -22,6 +23,9 @@ const errorMessage = {
   // 使用者代號
   userAccountRequired: '使用者代號尚未輸入，請重新檢查',
   userAccountWrongFormat: '輸入的使用者代號格式有誤，請重新檢查',
+  userAccountCannotSameCharacter: '使用者代號相同字母或數字不可超過4次',
+  userAccountCannotConsecutive: '使用者代號連續字母或數字不可超過4位',
+  userAccountCannotIncludesROCID: '輸入的使用者代號不能包含身分證號碼',
 
   // 二次確認使用者代號
   confirmUserAccountRequired: '請再輸入一次新的使用者代號',
@@ -209,6 +213,15 @@ const validateTextContinuous = (password) => {
   return !isRepeat;
 };
 
+/**
+ * 檢核字串是否包含身分證字號字串
+ *
+ * @param value
+ *            驗證的參數
+ * @return 檢核結果
+ */
+const validateIncludesROCID = (value) => !/[a-zA-Z][12]\d{8}/.test(value);
+
 /* ==================== 頁面驗證項目 ==================== */
 /**
  *- 共通驗證
@@ -227,6 +240,11 @@ export const passwordValidation = () => (
       'check-password-text-continuous',
       errorMessage.passwordCannotConsecutive,
       (value) => validateTextContinuous(value),
+    )
+    .test(
+      'check-password-includes-ROCID',
+      errorMessage.passwordCannotIncludesROCID,
+      (value) => validateIncludesROCID(value),
     )
 );
 
@@ -252,6 +270,21 @@ export const accountValidation = () => (
   yup.string()
     .required(errorMessage.userAccountRequired)
     .matches(/^[A-Za-z0-9]{6,20}$/, errorMessage.userAccountWrongFormat)
+    .test(
+      'check-user-account-text-repeat',
+      errorMessage.userAccountCannotSameCharacter,
+      (value) => validateTextRepeat(value),
+    )
+    .test(
+      'check-user-account-text-continuous',
+      errorMessage.userAccountCannotConsecutive,
+      (value) => validateTextContinuous(value),
+    )
+    .test(
+      'check-user-account-includes-ROCID',
+      errorMessage.userAccountCannotIncludesROCID,
+      (value) => validateIncludesROCID(value),
+    )
   // .min(6, errorMessage.userAccountWrongLength).max(20, errorMessage.userAccountWrongLength),
 );
 
