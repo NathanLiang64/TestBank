@@ -252,6 +252,7 @@ export const accountOverviewCardVarient = (type) => {
 };
 
 export const CurrencyInfo = [
+  // TODO NTD ? TWD ? 應統一才對！
   { code: 'NTD', name: '新台幣', symbol: '$', float: 0 },
   { code: 'TWD', name: '新台幣', symbol: '$', float: 0 },
   { code: 'USD', name: '美元', symbol: 'US$', float: 2 },
@@ -278,6 +279,16 @@ export const CurrencyInfo = [
 export const getCurrenyInfo = (currency = null) => {
   const ccyInfo = CurrencyInfo.find((ccy) => currency === null || ccy.code === currency);
   return ccyInfo;
+};
+
+/**
+ * 取得指定幣別的名稱。
+ * @param {String} currency 幣別代碼。
+ * @returns {String} 幣別的名稱, 當找不到指定幣別名稱時，以原代碼傳回。
+ */
+export const getCurrenyName = (currency) => {
+  const ccyInfo = getCurrenyInfo(currency);
+  return ccyInfo ? ccyInfo.name : currency;
 };
 
 // 貨幣單位文字轉為符號

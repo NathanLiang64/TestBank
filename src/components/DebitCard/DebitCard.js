@@ -8,7 +8,7 @@ import CopyTextIconButton from 'components/CopyTextIconButton';
 import { FEIBIconButton } from 'components/elements';
 import theme from 'themes/theme';
 import {
-  accountFormatter, accountTypeColorGenerator, currencySymbolGenerator,
+  accountFormatter, accountTypeColorGenerator, currencySymbolGenerator, getCurrenyName,
 } from 'utilities/Generator';
 import DebitCardBackground from 'assets/images/debitCardBackground.png';
 import { showDrawer } from 'utilities/MessageModal';
@@ -96,21 +96,23 @@ const DebitCard = ({
   const renderFunctions = (funcs, isHorizontal) => (
     <ul className={isHorizontal ? 'functionList' : null}>
       {funcs.map((func) => {
-        const enabled = (func.fid && (func.enabled === undefined || func.enabled));
-        const style = enabled ? null : { color: 'gray' };
-        const onClick = enabled ? () => {
-          dispatch(setDrawerVisible(false));
-          onFunctionClick(func.fid);
-        } : null;
+        if (!(func.hidden === true)) { // 必需指定為 true 才會隱藏。
+          const enabled = (func.fid && (func.enabled === undefined || func.enabled)); // 預設為 可用。
+          const style = enabled ? null : { color: 'gray' };
+          const onClick = enabled ? () => {
+            dispatch(setDrawerVisible(false));
+            onFunctionClick(func.fid);
+          } : null;
 
-        return (
-          <li key={uuid()} onClick={onClick}>
-            <p style={style}>
-              {func.icon ? iconGenerator(func.icon) : null}
-              {func.title}
-            </p>
-          </li>
-        );
+          return (
+            <li key={uuid()} onClick={onClick}>
+              <p style={style}>
+                {func.icon ? iconGenerator(func.icon) : null}
+                {func.title}
+              </p>
+            </li>
+          );
+        } return null;
       })}
     </ul>
   );
@@ -156,10 +158,6 @@ const DebitCard = ({
           <p className="branch">{model.branchName ?? ''}</p>
           <p className="account">{accountFormatter(model.accountNo)}</p>
           <CopyTextIconButton copyText={model.accountNo} />
-          <p className="account">{['NTD', 'TWD'].indexOf(model.currency) < 0 ? `(${model.currency})` : ''}</p>
-          <p className="account">
-            {model.currency && (['NTD', 'TWD'].indexOf(model.currency) < 0) ? `(${model.currency})` : ''}
-          </p>
         </>
       )}
     </div>
@@ -169,7 +167,10 @@ const DebitCard = ({
     <DebitCardWrapper className="debitCard" $cardColor={color ?? accountTypeColorGenerator(accountType)}>
       <img src={DebitCardBackground} alt="background" className="backgroundImage" />
       <div className="cardTitle">
-        <h2 className="cardName">{model.alias ?? '(未命名)'}</h2>
+        <h2 className="cardName">
+          {model.alias ?? '(未命名)'}
+          {model.currency && (['NTD', 'TWD'].indexOf(model.currency) < 0) ? ` (${getCurrenyName(model.currency)})` : ''}
+        </h2>
         {renderAccountNo()}
       </div>
       <div className={`cardBalance ${!isSmallCard ? 'grow' : ''}`}>

@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-max-props-per-line */
+/* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable no-use-before-define */
 /* eslint-disable object-curly-newline */
 import { useEffect, useState } from 'react';
@@ -8,7 +10,7 @@ import { useForm } from 'react-hook-form';
 import Layout from 'components/Layout/Layout';
 import AccountOverview from 'components/AccountOverview/AccountOverview';
 import DepositDetailPanel from 'components/DepositDetailPanel/depositDetailPanel';
-import { FEIBInputLabel, FEIBInput, FEIBErrorMessage } from 'components/elements';
+import { FEIBInputLabel, FEIBInput } from 'components/elements';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
@@ -31,6 +33,7 @@ const C00500 = () => {
   const { register, unregister, handleSubmit } = useForm();
 
   const [accounts, setAccounts] = useState();
+  const [selectedAccount, setSelectedAccount] = useState();
   const [selectedAccountIdx, setSelectedAccountIdx] = useState();
   const [transactions, setTransactions] = useState(new Map());
 
@@ -100,13 +103,14 @@ const C00500 = () => {
           ...account,
           ...info,
         };
-        setLocalData(AccountListCacheName, accounts);
         setAccounts([...accounts]); // 強制更新畫面。
       });
     }
     updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可)
+    setSelectedAccount(account);
   };
   useEffect(() => { handleAccountChanged(selectedAccountIdx); }, [selectedAccountIdx]);
+  useEffect(() => { setLocalData(AccountListCacheName, accounts); }, [accounts]);
 
   /**
    * 編輯帳戶名稱
@@ -120,14 +124,14 @@ const C00500 = () => {
     const body = (
       <>
         <FEIBInputLabel>新的帳戶名稱</FEIBInputLabel>
-        <FEIBInput defaultValue={name} autoFocus {...register('newName')} />
-        <FEIBErrorMessage $noSpacing />
+        <FEIBInput {...register('newName')} autoFocus
+          inputProps={{ maxLength: 10, placeholder: '請設定此帳戶的專屬名稱', defaultValue: name, autoComplete: 'off' }}
+        />
       </>
     );
     const onOk = (values) => {
-      const account = accounts[selectedAccountIdx];
-      account.alias = values.newName; // 變更卡片上的帳戶名稱
-      setAccountAlias(account.accountNo, account.alias);
+      selectedAccount.alias = values.newName; // 變更卡片上的帳戶名稱
+      setAccountAlias(selectedAccount.accountNo, selectedAccount.alias);
       setAccounts([...accounts]);
     };
     await customPopup('帳戶名稱編輯', body, handleSubmit(onOk));
@@ -140,26 +144,30 @@ const C00500 = () => {
   const handleFunctionClick = async (funcCode) => {
     let params = null;
     const model = { selectedAccountIdx };
-    const account = accounts[selectedAccountIdx];
     switch (funcCode) {
       case 'moreTranscations': // 更多明細
         params = {
-          ...account, // 直接提供帳戶摘要資訊就不用再下載。
+          ...selectedAccount, // 直接提供帳戶摘要資訊就不用再下載。
           cardColor: 'blue',
         };
         break;
+
       case 'D00100': // 轉帳
-        params = { transOut: account.accountNo };
+        params = { transOut: selectedAccount.accountNo };
         break;
+
       case 'E00100': // 換匯
-        params = { transOut: account.accountNo };
+        params = { transOut: selectedAccount.accountNo };
         break;
-      case 'DownloadDepositBookCover': // 存摺封面下載
-        downloadDepositBookCover(account.accountNo); // 預設檔名為「帳號-日期.pdf」，密碼：身分證號碼
+
+      case 'DownloadCover': // 存摺封面下載
+        downloadDepositBookCover(selectedAccount.accountNo); // 預設檔名為「帳號-日期.pdf」，密碼：身分證號碼
         return;
+
       case 'Rename': // 帳戶名稱編輯
-        showRenameDialog(account.alias);
+        showRenameDialog(selectedAccount.alias);
         return;
+
       default:
         break;
     }
@@ -170,7 +178,7 @@ const C00500 = () => {
   /**
    * 頁面輸出
    */
-  return accounts ? (
+  return selectedAccount ? (
     <Layout title="台幣交割帳戶">
       <PageWrapper small>
         <AccountOverview
@@ -180,17 +188,17 @@ const C00500 = () => {
           onFunctionClick={handleFunctionClick}
           cardColor="blue"
           funcList={[
-            { fid: 'D00100', title: '轉帳', enabled: (accounts[selectedAccountIdx]?.balance > 0) },
-            { fid: 'E00100', title: '換匯', enabled: (accounts[selectedAccountIdx]?.balance > 0) },
+            { fid: 'D00100', title: '轉帳', enabled: (selectedAccount.transable && selectedAccount.balance > 0) },
+            { fid: 'E00100', title: '換匯', enabled: (selectedAccount.balance > 0) },
           ]}
           moreFuncs={[
-            { fid: 'DownloadDepositBookCover', title: '存摺封面下載', icon: 'coverDownload' },
+            { fid: 'DownloadCover', title: '存摺封面下載', icon: 'coverDownload' },
             { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
           ]}
         />
 
         <DepositDetailPanel
-          details={transactions.get(accounts[selectedAccountIdx]?.accountNo)}
+          details={transactions.get(selectedAccount.accountNo)}
           onMoreFuncClick={() => handleFunctionClick('moreTranscations')}
         />
       </PageWrapper>

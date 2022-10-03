@@ -1,5 +1,5 @@
 import { callAPI } from 'utilities/axios';
-import { loadLocalData } from 'utilities/Generator';
+import { loadLocalData, dateToString } from 'utilities/Generator';
 
 /**
  * 取得所有分行清單。
@@ -139,4 +139,46 @@ export const getAccountExtraInfo = async (accountNo) => {
 export const createNtdTransfer = async (request) => {
   const response = await callAPI('/api/transfer/ntd/v1/create', request);
   return response.data;
+};
+
+/**
+ * 執行轉帳交易。
+ * @param {*} request
+ * @returns
+ */
+export const executeNtdTransfer = async (request) => {
+  const response = await callAPI('/api/transfer/ntd/v1/execute', request);
+  return response.data;
+};
+
+/**
+ * 將轉帳金額加標千分位符號及前置'$'.
+ */
+export const getDisplayAmount = (amount) => `$${new Intl.NumberFormat('en-US').format(amount)}`;
+
+/**
+ * 產生轉帳發生時間或區間的描述訊息。
+ */
+export const getTransDate = (model) => {
+  const { booking } = model;
+
+  if (!booking?.mode) return dateToString(new Date()); // 立即轉帳 用今天表示。
+
+  const { multiTimes, transDate, transRange } = booking;
+  if (multiTimes === '1') {
+    return `${dateToString(transDate)}`;
+  }
+  return `${dateToString(transRange[0])} ~ ${dateToString(transRange[1])}`;
+};
+
+/**
+ * 產生週期預約轉帳的描述訊息。
+ */
+export const getCycleDesc = (booking) => {
+  const cycleWeekly = ['日', '一', '二', '三', '四', '五', '六'];
+  const { cycleTiming } = booking;
+  if (booking.cycleMode === 1) {
+    return `每周${cycleWeekly[booking.cycleTiming]}`;
+  }
+  return `每個月${cycleTiming}號`;
 };
