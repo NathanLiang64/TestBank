@@ -20,7 +20,8 @@ import R00200AccordionContent2 from './R00200_accordionContent_2';
 import InstalmentWrapper from './R00200.style';
 
 const R00200_2 = () => {
-  const stagingPercentage = '6%';
+  // Debug: 以下為 hardcode
+  const stagingPercentage = '6';
 
   useCheckLocation();
   usePageInfo('/api/instalment');
@@ -63,7 +64,11 @@ const R00200_2 = () => {
 
   const handleOnSubmit = (data) => {
     console.log('R002002 handleOnSubmit() data: ', data);
-    history.push('/R002003', {installmentSum: location.state.sum, installmentNumber: data.installmentNumber});
+    history.push('/R002003', {
+      installmentSum: location.state.sum,
+      installmentNumber: data.installmentNumber,
+      installmentPercentage: stagingPercentage,
+    });
   };
 
   return (
@@ -73,7 +78,10 @@ const R00200_2 = () => {
           <div>
             <div className="messageBox2">
               <p style={{ width: '100%', textAlign: 'center' }}>分期利率</p>
-              <h2 className="titleText">{stagingPercentage}</h2>
+              <h2 className="titleText">
+                {stagingPercentage}
+                %
+              </h2>
             </div>
             {renderSelectList()}
             {/* TODO: 晚點付約定條款 與 注意事項 之內容 */}

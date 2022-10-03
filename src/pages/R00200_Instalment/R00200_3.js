@@ -24,7 +24,7 @@ const R00200_3 = () => {
   const installmentTotal = `${location.state.installmentSum}`;
   const installmentNumber = `${location.state.installmentNumber}期`;
   // Debug: 以下為 hardcode
-  const installmentRate = `${0}%`;
+  const installmentRate = `${location.state.installmentPercentage}%`;
 
   // Debug: 以下為 hardcode
   const staging = [

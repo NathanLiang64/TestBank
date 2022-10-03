@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /** @format */
 
 import { useState } from 'react';
@@ -38,8 +37,6 @@ const R00200_1 = () => {
     const { installmentItem: id } = getValues();
 
     const newItems = id?.includes(checkedItem) ? id?.filter((item) => item !== checkedItem) : [...(id ?? []), checkedItem];
-
-    // console.log('R002001 handleItemSelect() selectedName: ', newItems);
 
     setValue('installmentItem', newItems);
     return newItems;
