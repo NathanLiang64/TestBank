@@ -80,19 +80,19 @@ export const getTransactionDetails = async (request) => {
   }
    @returns {
      "currency": 信用卡帳單幣別 // 'NTD'
-     "amount": 本期應繳金額 // queryCardInfoRt.newBalance
-     "minAmount": 最低應繳金額 // queryCardInfoRt.minDueAmount
-     "invoiceDate": 帳單結帳日 // queryCardInfoRt.billClosingDate
-     "billDate": 繳費截止日 // queryCardInfoRt.payDueDate
-     "prevAmount": 上期應繳金額 // queryCardBill(期別-1, if期別===01: 期別=12).newBalance ('-')
-     "prevDeductedAmount": 已繳/退金額 // queryCardInfoRt.paidAmount
-     "newAmount": 本期新增款項 // '-'
-     "rate": 利息 // '-'
-     "fine": 違約金 // '-'
-     "credit": 循環信用額度 // '-'
-     "creditAvailable": 循環信用本金餘額 // '-'
-     "bindAccountNo": 自動扣款帳號 // '-'
-     "deductAmount": 繳款截止日扣款金額 // '-'
+     "amount": 本期應繳金額 // newBalance
+     "minAmount": 最低應繳金額 // minDueAmount
+     "invoiceDate": 帳單結帳日 // billClosingDate
+     "billDate": 繳費截止日 // payDueDate
+     "prevAmount": 上期應繳金額 // prevBalance
+     "prevDeductedAmount": 已繳/退金額 // paidRefundAmount
+     "newAmount": 本期新增款項 // newPurchaseAmount
+     "rate": 利息 // interestFee
+     "fine": 違約金 // cardPenalty
+     "credit": 循環信用額度 // revCreditLimit
+     "creditAvailable": 循環信用本金餘額 // revgCreditPrinBalance
+     "bindAccountNo": 自動扣款帳號 // autoPayAccount
+     "deductAmount": 繳款截止日扣款金額 // paidAmountOnDueDate
    }
  */
 export const getBillDetails = async (request) => {
