@@ -161,11 +161,8 @@ function Layout({
    * Drawer GoBack
    */
   const onDrawerGoBack = async () => {
-    if (drawerData.goBack) {
-      if ((await drawerData.goBack() === false)) return; // 取消 goBack 程序。
-    }
+    if ((await drawerData.goBack() === false)) return; // 取消 goBack 程序。
     dispatch(setDrawerVisible(false));
-    if (setResult) setResult(true); // 傳回視窗結束狀態。
   };
 
   /**
@@ -176,8 +173,14 @@ function Layout({
       if ((await drawerData.onClose() === false)) return; // 取消 Close 程序。
     }
     dispatch(setDrawerVisible(false));
-    if (setResult) setResult(false); // 傳回視窗結束狀態。
   };
+
+  /**
+   * 當 Drawer 關閉時，必需將 Result 設為 false, 才會結束 Promise
+   */
+  useEffect(() => {
+    if (showDrawer === false) setResult(false); // 傳回視窗結束狀態。
+  }, [showDrawer]);
 
   /**
    * 下方彈出抽屜 UI。
@@ -186,7 +189,7 @@ function Layout({
     <BottomDrawer
       title={drawerData.title}
       isOpen={showDrawer}
-      onBack={onDrawerGoBack}
+      onBack={drawerData.goBack ? onDrawerGoBack : null}
       onClose={onDrawerClose}
       content={drawerData.content}
       shouldAutoClose={drawerData.shouldAutoClose} // TODO 確認必要性。
