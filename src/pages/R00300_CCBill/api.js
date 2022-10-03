@@ -1,6 +1,8 @@
 // import { callAPI } from 'utilities/axios';
 
-import { checkCardBillStatus, queryCardBill, queryCardInfo } from 'pages/C00700_CreditCard/api';
+import {
+  checkCardBillStatus, getBillDetail, queryCardBill, queryCardInfo,
+} from 'pages/C00700_CreditCard/api';
 // import mockBills from './mockData/mockBills';
 // import mockBillDetails from './mockData/mockBillDetails';
 // import mockTransactions from './mockData/mockTransactions';
@@ -15,7 +17,7 @@ import mockCreditCardTerms from './mockData/mockCreditCardTerms';
      "month": 本期月份。 // period末兩位數
      "amount": 本期應繳金額，無帳單時為0。 // queryCardBillRt.newBalance
      "billDate": 繳費截止日 // queryCardInfoRt.payDueDate
-     "currency": 幣值 // 'TWD'
+     "currency": 幣值 // 'NTD'
      "autoDeduct": 是否已設定自動扣繳 // checkCardBillStatusRt.autoDeductStatus
    }
  */
@@ -33,7 +35,7 @@ export const getBills = async (param) => {
     month: parseInt(param.slice(-2), 10).toString(), // 只顯示月份，開頭不為0
     amount: queryCardBillRt.data.newBalance,
     billDate: queryCardInfoRt.data.payDueDate,
-    currency: 'TWD',
+    currency: 'NTD',
     autoDeduct: checkCardBillStatusRt.data.autoDeductStatus,
   };
   return bills;
@@ -50,7 +52,7 @@ export const getBills = async (param) => {
      "description": "全家便利商店", // queryCardBillRt.detail[n].desc
      "targetAcct": TODO 或許這個是卡號 // queryCardBillRt.detail[n].cardNo
      "amount": 36000, // queryCardBillRt.detail[n].amount
-     "currency": "TWD"
+     "currency": "NTD"
    }
  */
 export const getTransactionDetails = async (request) => {
@@ -65,7 +67,7 @@ export const getTransactionDetails = async (request) => {
     description: detail.desc,
     targetAcct: '1112223333444455', // TODO: detail.cardNo rt null，先塞假資料待處理完成後恢復
     amount: detail.amount,
-    currency: 'TWD',
+    currency: 'NTD',
   }));
 
   return transactionDetails;
@@ -74,10 +76,10 @@ export const getTransactionDetails = async (request) => {
 /**
  * 取得帳單資訊：更多帳單資訊Accoridan
    @param {
-    "period": 期別 (ex: 202207) (僅 queryCardBill 需要)
+    "period": 期別 (ex: 202207)
   }
    @returns {
-     "currency": 信用卡帳單幣別 // 'TWD'
+     "currency": 信用卡帳單幣別 // 'NTD'
      "amount": 本期應繳金額 // queryCardInfoRt.newBalance
      "minAmount": 最低應繳金額 // queryCardInfoRt.minDueAmount
      "invoiceDate": 帳單結帳日 // queryCardInfoRt.billClosingDate
@@ -93,28 +95,30 @@ export const getTransactionDetails = async (request) => {
      "deductAmount": 繳款截止日扣款金額 // '-'
    }
  */
-export const getBillDetails = async () => {
+export const getBillDetails = async (request) => {
   // Assume backend store Terms as escaped HTML...
   // const response = await new Promise((resolve) => resolve({ data: mockBillDetails }));
 
-  const queryCardInfoRt = await queryCardInfo();
+  // const billDetail = getBillDetails(request);
+  const billDetail = await getBillDetail(request);
+  console.log('R00300 getBillDetails() data:', billDetail.data);
 
   /* 將回傳資料轉換成頁面資料結構 */
   const billDetails = {
-    currency: 'TWD',
-    amount: queryCardInfoRt.data.newBalance,
-    minAmount: queryCardInfoRt.data.minDueAmount,
-    invoiceDate: queryCardInfoRt.data.billClosingDate,
-    billDate: queryCardInfoRt.data.payDueDate,
-    prevAmount: '-',
-    prevDeductedAmount: queryCardInfoRt.data.paidAmount,
-    newAmount: '-',
-    rate: '-',
-    fine: '-',
-    credit: '-',
-    creditAvailable: '-',
-    bindAccountNo: '-',
-    deductAmount: '-',
+    currency: 'NTD',
+    amount: billDetail.data.newBalance,
+    minAmount: billDetail.data.minDueAmount,
+    invoiceDate: billDetail.data.billClosingDate,
+    billDate: billDetail.data.payDueDate,
+    prevAmount: billDetail.data.prevBalance,
+    prevDeductedAmount: billDetail.data.paidRefundAmount,
+    newAmount: billDetail.data.newPurchaseAmount,
+    rate: billDetail.data.interestFee,
+    fine: billDetail.data.cardPenalty,
+    credit: billDetail.data.revCreditLimit,
+    creditAvailable: billDetail.data.revgCreditPrinBalance,
+    bindAccountNo: billDetail.data.autoPayAccount,
+    deductAmount: billDetail.data.paidAmountOnDueDate,
   };
 
   return billDetails;

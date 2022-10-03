@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import uuid from 'react-uuid';
 
@@ -8,6 +9,7 @@ import {
   accountFormatter, dateFormatter, stringToDate, currencySymbolGenerator,
 } from 'utilities/Generator';
 
+import { getThisMonth } from 'utilities/MonthGenerator';
 import { getBillDetails } from '../api';
 
 const BillDetails = () => {
@@ -69,7 +71,8 @@ const BillDetails = () => {
   ];
 
   const lazyLoadDetails = async () => {
-    if (!details) setDetails(await getBillDetails());
+    // if (!details) setDetails(await getBillDetails(getThisMonth())); // TODO: 抓系統時間（YYYYMM）作為此處參數傳入
+    if (!details) setDetails(await getBillDetails('202207')); // 測試時使用202207
   };
 
   return (
