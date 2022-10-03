@@ -22,24 +22,51 @@ const device = {
  */
 async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) {
   console.log(`\x1b[33mAPP-JS://${appJsName} \x1b[37m - Params = `, jsParams);
+
+  if (!window.AppJavaScriptCallback) {
+    window.AppJavaScriptCallback = {};
+    window.AppJavaScriptCallbackPromiseResolves = {};
+  }
+
+  /**
+   * 負責接收 APP JavaScript API callback 的共用方法。
+   * @param {*} value APP JavaScript API的傳回值。
+   */
+  const CallbackFunc = (jsToken, value) => {
+    console.log('*** Result from APP JavaScript : ', value);
+    let result;
+    try {
+      // 若是 JSON 格式，則以物件型態傳回。
+      result = JSON.parse(value);
+    } catch (ex) {
+      result = value;
+    }
+    window.AppJavaScriptCallbackPromiseResolves[jsToken](result);
+
+    delete window.AppJavaScriptCallbackPromiseResolves[jsToken];
+    delete window.AppJavaScriptCallback[jsToken];
+  };
+
   const promise = new Promise((resolve) => {
-    window.AppJavaScriptCallbackPromiseResolve = resolve;
+    const jsToken = `A${Math.floor(Math.random() * 100000000).toString().padStart(8, '0')}`; // 有千萬分之一的機率重覆。
+    window.AppJavaScriptCallback[jsToken] = (value) => CallbackFunc(jsToken, value);
+    window.AppJavaScriptCallbackPromiseResolves[jsToken] = resolve;
+    console.log('*** Call APP JavaScript : JS Token = ', jsToken, window.AppJavaScriptCallback);
+
     const request = {
       ...jsParams,
-      callback: (needCallback ? 'AppJavaScriptCallback' : null), // 此方法可提供所有WebView共用。
+      callback: (needCallback ? `AppJavaScriptCallback['${jsToken}']` : null), // 此方法可提供所有WebView共用。
     };
 
     if (device.ios()) {
       const msg = JSON.stringify({ name: appJsName, data: JSON.stringify(request) });
-      window.webkit.messageHandlers.jstoapp.postMessage(msg); // TODO 無效的 appJsName 的處理
+      window.webkit.messageHandlers.jstoapp.postMessage(msg);
     }
     else if (device.android()) {
-      const command = `window.jstoapp.${appJsName}('${JSON.stringify(request)}')`;
-      // eslint-disable-next-line no-eval
-      eval(command); // TODO 無效的 appJsName 的處理
+      window.jstoapp[appJsName](JSON.stringify(request));
     }
     else if (needCallback || webDevTest) {
-      window.AppJavaScriptCallback(webDevTest(request));
+      window.AppJavaScriptCallback[jsToken](webDevTest(request));
       return;
     }
     // else throw new Error('使用 Web 版未支援的 APP JavaScript 模擬方法(' + appJsName + ')');
@@ -201,7 +228,8 @@ async function loadFuncParams() {
       // 解析由 APP 傳回的資料, 只要有 keepData 就表示是由叫用的功能結束返回
       // 因此，要以 keepData 為單元功能的啟動參數。
       // 反之，表示是單元功能被啟動，此時才是以 funcParams 為單元功能的啟動參數。
-      params = JSON.parse(data.keepData ?? data.funcParams);
+      const dataStr = (data.keepData ?? data.funcParams);
+      params = (dataStr && dataStr.startsWith('{')) ? JSON.parse(dataStr) : null; // NOTE 只支援APP JS傳回JSON格式資料！
     }
 
     // 取得 Function 在 closeFunc 時提供的傳回值。
@@ -219,6 +247,7 @@ async function loadFuncParams() {
     console.log('>> Function 啟動參數 : ', params);
     return params;
   } catch (error) {
+    console.log('>> Function 啟動參數 ** ERROR ** : ', error);
     await showAlert(JSON.stringify(error));
     return error;
   }
