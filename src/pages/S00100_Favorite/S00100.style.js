@@ -60,28 +60,6 @@ const FavoriteDrawerWrapper = styled.div`
         color: ${({ theme }) => theme.colors.text.lightGray};
       }
       
-      .removeButton {
-        position: absolute;
-        top: .8rem;
-        left: .8rem;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 50%;
-        width: 2.4rem;
-        height: 2.4rem;
-        background: ${({ theme }) => theme.colors.primary.light};
-        animation: scaleUp .4s backwards;
-        transform-origin: center;
-        
-        .Icon {
-          margin-bottom: 0rem;
-          margin-top: 0.25rem;
-          height: 100%;
-          font-size: 1.6rem;
-          color: ${({ theme }) => theme.colors.basic.white};
-        }
-      }
     }
   }
   .dndArea {
@@ -140,12 +118,10 @@ const FavoriteDrawerWrapper = styled.div`
           animation: scaleUp .4s backwards;
           transform-origin: center;
           
-          .Icon {
-            margin-bottom: 0rem;
-            margin-top: 0.25rem;
-            height: 100%;
-            font-size: 1.6rem;
-            color: ${({ theme }) => theme.colors.basic.white};
+          svg{
+            width: 1.5em;
+            height: 1.5em;
+            color: white;
           }
         }
       }
