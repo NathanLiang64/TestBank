@@ -269,7 +269,7 @@ export const identityValidation = () => (
 export const accountValidation = () => (
   yup.string()
     .required(errorMessage.userAccountRequired)
-    .matches(/^[A-Za-z0-9]{6,20}$/, errorMessage.userAccountWrongFormat)
+    .matches(/^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+){6,20}$/, errorMessage.userAccountWrongFormat)
     .test(
       'check-user-account-text-repeat',
       errorMessage.userAccountCannotSameCharacter,

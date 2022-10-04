@@ -44,7 +44,13 @@ const processRequest = async (request) => {
   // 處理 JWT Request 加密；當通過 Login 驗證之後，所有 POST 全部都是使用 JWT 加密模式。
   else if (jwtToken) {
     const aes = await getAesKey();
-    request.data = JWTUtil.encryptJWTMessage(aes.aesKey, aes.iv, payload);
+    // 如果是上傳個人化設定 avatar 圖片
+    if (request.url.includes('uploadImagePF')) {
+      const jwtRq = JWTUtil.encryptJWTMessage(aes.aesKey, aes.iv, JSON.stringify({}));
+      request.data.append('jwtRq', JSON.stringify(jwtRq));
+    } else {
+      request.data = JWTUtil.encryptJWTMessage(aes.aesKey, aes.iv, payload);
+    }
   }
   // console.log(jwtToken);
   // console.log('%cRequest --> %o', 'color: Green;', request); // 列出完整的 Request 資訊。
