@@ -18,6 +18,7 @@ const InformationTapeWrapper = styled.div.attrs({
   }
   .dataContainer {
     flex-grow: 1;
+    width: 100%;
     .top, .bottom {
       display: flex;
       justify-content: space-between;
@@ -26,6 +27,9 @@ const InformationTapeWrapper = styled.div.attrs({
       font-size: 1.6rem;
       line-height: 2.4rem;
       color: ${({ theme }) => theme.colors.text.dark};
+      .left {
+        width: 80%;
+      }
     }
     .bottom {
       font-size: 1.2rem;
