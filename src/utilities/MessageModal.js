@@ -14,6 +14,11 @@ export const closeDrawer = () => {
   store.dispatch(setDrawerVisible(false));
 };
 
+/**
+ * 顯示「溫馨提醒」的Popup視窗。
+ * @param {*} message 視窗內容。
+ * @param {function} action 按下確定按鈕時的自訂處理程序。
+ */
 export const showPrompt = async (message, action) => {
   const promise = new Promise((resolve) => {
     store.dispatch(setModal({
@@ -30,6 +35,11 @@ export const showPrompt = async (message, action) => {
   return result;
 };
 
+/**
+ * 顯示「重要訊息」的Popup視窗。
+ * @param {*} message 視窗內容。
+ * @param {function} action 按下確定按鈕時的自訂處理程序。
+ */
 export const showError = async (message, action) => {
   const promise = new Promise((resolve) => {
     store.dispatch(setModal({
@@ -46,6 +56,11 @@ export const showError = async (message, action) => {
   return result;
 };
 
+/**
+ * 顯示「Bankee 通知」的Popup視窗。
+ * @param {*} message 視窗內容。
+ * @param {function} action 按下確定按鈕時的自訂處理程序。
+ */
 export const showInfo = async (message, action) => {
   const promise = new Promise((resolve) => {
     store.dispatch(setModal({
@@ -115,8 +130,8 @@ export const customPopup = async (title, message, onOk, onCancel, okContent, can
  * 在 Layout 下方彈出抽屜。
  * @param {*} title 上方的標題文字。
  * @param {*} content 要呈現的內容。
- * @param {*} goBack 當左上角 <- 返回按鈕。
- * @param {*} onClose 當右上角 X 按下時的處理方式。
+ * @param {function} goBack 當左上角 <- 返回按鈕。
+ * @param {function} onClose 當右上角 X 按下時的處理方式。
  */
 export const showDrawer = async (title, content, goBack, onClose) => {
   const promise = new Promise((resolve) => {

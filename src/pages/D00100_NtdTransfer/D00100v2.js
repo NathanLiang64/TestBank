@@ -32,7 +32,7 @@ import TransferWrapper from './D00100.style';
 
 /**
  * 轉帳首頁
- * @param {*} { state } 是由轉帳確認頁(D001001)在 goBack 時再傳田來的 Model 資料。
+ * @param {*} { state } 是由轉帳確認頁(D001001)或轉帳結果頁(D001002)在 goBack 時再傳回來的 Model 資料。
  */
 const Transfer = (props) => {
   const { location } = props;
@@ -151,7 +151,9 @@ const Transfer = (props) => {
 
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
-    loadAccountsList('MSC', setAccounts);
+    loadAccountsList('MSC', (accts) => {
+      setAccounts(accts.filter((acct) => acct.transable)); // 排除 transable = false 的帳戶。
+    });
 
     // 當啟動頁面時有提供 state 時，會在建立 model 時以 useState 的預設值填入。
     let keepData = state;
@@ -467,7 +469,7 @@ const Transfer = (props) => {
 
     setValue(idTransOut, {
       account: account.accountNo, // 轉出帳號
-      alias: account.alias, // 帳戶名稱，若有暱稱則會優先用暱稱
+      alias: account.alias, // 帳戶名稱，若有暱稱則會優先用暱稱; 會用在確認及執行這二頁。
       balance: account.balance, // 帳戶餘額
       freeTransfer: account.freeTransfer, // 免費跨轉次數
       freeTransferRemain: account.freeTransferRemain, // 免費跨轉剩餘次數

@@ -17,6 +17,18 @@ import {
 } from '../../stores/reducers/ModalReducer';
 import HeaderWrapper from './Header.style';
 
+/**
+ * 基本共用的頁面框架。
+ * @param {{
+    title: '{*} 頁面上方主標題',
+    children: '{*} 頁面內容',
+    goHome: '{boolean} 表示顯示右上方的 goHome 圖示',
+    goBack: '{boolean} 表示顯示左上方的 goBack 圖示',
+    goBackFunc: '{function} 當 goBack 按下時的自訂處理函數',
+    hasClearHeader: '{boolean} 將標題設為透明的，目前用於存錢計劃',
+  }} props
+ * @returns
+ */
 function Layout({
   title,
   children,
@@ -149,11 +161,8 @@ function Layout({
    * Drawer GoBack
    */
   const onDrawerGoBack = async () => {
-    if (drawerData.goBack) {
-      if ((await drawerData.goBack() === false)) return; // 取消 goBack 程序。
-    }
+    if ((await drawerData.goBack() === false)) return; // 取消 goBack 程序。
     dispatch(setDrawerVisible(false));
-    if (setResult) setResult(true); // 傳回視窗結束狀態。
   };
 
   /**
@@ -164,8 +173,14 @@ function Layout({
       if ((await drawerData.onClose() === false)) return; // 取消 Close 程序。
     }
     dispatch(setDrawerVisible(false));
-    if (setResult) setResult(false); // 傳回視窗結束狀態。
   };
+
+  /**
+   * 當 Drawer 關閉時，必需將 Result 設為 false, 才會結束 Promise
+   */
+  useEffect(() => {
+    if (showDrawer === false) setResult(false); // 傳回視窗結束狀態。
+  }, [showDrawer]);
 
   /**
    * 下方彈出抽屜 UI。
@@ -174,7 +189,7 @@ function Layout({
     <BottomDrawer
       title={drawerData.title}
       isOpen={showDrawer}
-      onBack={onDrawerGoBack}
+      onBack={drawerData.goBack ? onDrawerGoBack : null}
       onClose={onDrawerClose}
       content={drawerData.content}
       shouldAutoClose={drawerData.shouldAutoClose} // TODO 確認必要性。

@@ -33,7 +33,8 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
    * @param {*} value APP JavaScript API的傳回值。
    */
   const CallbackFunc = (jsToken, value) => {
-    console.log('*** Result from APP JavaScript : ', value);
+  // console.log('*** Result from APP JavaScript : ', value);
+
     let result;
     try {
       // 若是 JSON 格式，則以物件型態傳回。
@@ -51,7 +52,8 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
     const jsToken = `A${Math.floor(Math.random() * 100000000).toString().padStart(8, '0')}`; // 有千萬分之一的機率重覆。
     window.AppJavaScriptCallback[jsToken] = (value) => CallbackFunc(jsToken, value);
     window.AppJavaScriptCallbackPromiseResolves[jsToken] = resolve;
-    console.log('*** Call APP JavaScript : JS Token = ', jsToken, window.AppJavaScriptCallback);
+
+    // console.log('*** Call APP JavaScript : JS Token = ', jsToken, window.AppJavaScriptCallback);
 
     const request = {
       ...jsParams,
@@ -389,12 +391,8 @@ async function transactionAuth(authCode, otpMobile) {
   // return await callAppJavaScript('transactionAuth', data, true, appTransactionAuth);
 
   // DEBUG 在 APP 還沒完成交易驗證之前，先用 Web版進行測試。
-  let promiseResolve;
-  const promise = new Promise((resolve) => {
-    promiseResolve = resolve;
-  });
-  await appTransactionAuth({...data, callback: (result) => promiseResolve(result)});
-  return await promise;
+  const result = await appTransactionAuth(data);
+  return result;
 }
 
 /**
@@ -500,15 +498,15 @@ async function delQL(delType) {
  * @param request {
  *   authCode: 要求進行的驗證模式的代碼。
  *   otpMobile: 簡訊識別碼發送的手機門號。當綁定或變更門號時，因為需要確認手機號碼的正確性，所以要再驗OTP
- *   callback: { 要求進行驗證的來源 JavaScript 提供的 Callback JavaScript
+ * }
+ * @returns { 要求進行驗證的來源 JavaScript 提供的 Callback JavaScript
  *     result: 驗證結果(true/false)
  *     message: 驗證失敗狀況描述。
  *     netbankPwd: 因為之後叫用交易相關 API 時可能會需要用到，所以傳回 E2EE 加密後的密碼。
  *   }
- * }
  */
 async function appTransactionAuth(request) {
-  const { authCode, otpMobile, callback } = request;
+  const { authCode, otpMobile } = request;
 
   // 取得目前執行中的單元功能代碼，要求 Controller 發送或驗出時，皆需提供此參數。
   const funcCode = funcStack.peek()?.funcID ?? '/'; // 首頁因為沒有功能代碼，所以用'/'表示。
@@ -519,12 +517,11 @@ async function appTransactionAuth(request) {
   let allowedPWD = (authMode & 0x02) !== 0; // 表示需要通過 網銀密碼 驗證。
   const allowedOTP = (authMode & 0x04) !== 0; // 表示需要通過 OTP 驗證。
 
-  const failResult = (message) => callback({ result: false, message });
+  const failResult = (message) => ({ result: false, message });
 
   // NOTE 沒有 boundMID，但又限定只能使用 2FA 時；傳回 false 尚未進行行動裝置綁定，無法使用此功能！
   if (!authMode || authMode === 0x00) { // 當 authMode 為 null 時，表示有例外發生。
-    failResult('尚未完成行動裝置綁定，無法使用此功能！');
-    return;
+    return failResult('尚未完成行動裝置綁定，無法使用此功能！');
   }
 
   // 建立交易授權驗證。
@@ -534,8 +531,7 @@ async function appTransactionAuth(request) {
     otpMobile,
   });
   if (!txnAuth) { // createTransactionAuth 發生異常就結束。
-    failResult('無法建立交易授權驗證。');
-    return;
+    return failResult('無法建立交易授權驗證。');
   }
 
   // 進行雙因子驗證，呼叫 APP 進行驗證。
@@ -546,17 +542,19 @@ async function appTransactionAuth(request) {
 
     // NOTE 驗證成功(allowedPWD一定是false)但不用驗OTP，就直接傳回成功。
     //      若是驗證失敗或是還要驗OTP，就要開 Drawer 進行密碼或OTP驗證。
-    if (!allowedPWD && !allowedOTP) {
-      callback(rs);
-      return;
-    }
+    if (!allowedPWD && !allowedOTP) return rs;
   }
 
+  let result = null;
+  const onFinished = (value) => { result = value; };
+
   const body = (
-    <PasswordDrawer funcCode={funcCode} authData={txnAuth} inputPWD={allowedPWD} onFinished={callback} />
+    <PasswordDrawer funcCode={funcCode} authData={txnAuth} inputPWD={allowedPWD} onFinished={onFinished} />
   );
 
-  await showDrawer('交易授權驗證 (Web版)', body, null, () => failResult('使用者取消驗證。'));
+  await showDrawer('交易授權驗證 (Web版)', body, null, () => { result = failResult('使用者取消驗證。'); });
+
+  return result;
 }
 
 export {

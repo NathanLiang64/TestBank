@@ -1,3 +1,4 @@
+/* eslint-disable object-curly-newline */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
@@ -8,11 +9,14 @@ import { FEIBButton } from 'components/elements';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { transactionAuth } from 'utilities/AppScriptProxy';
-import { dateToString } from 'utilities/Generator';
 import { getBankCode } from 'components/BankCodeInput/api';
-import { createNtdTransfer } from './api';
+import { createNtdTransfer, getDisplayAmount, getTransDate, getCycleDesc } from './api';
 import TransferWrapper from './D00100.style';
 
+/**
+ * 轉帳確認頁
+ * @param {*} { state } 是由轉帳首頁(D00100)傳過來的 Model 資料。
+ */
 const TransferConfirm = (props) => {
   const { location } = props;
   const { state } = location;
@@ -35,83 +39,44 @@ const TransferConfirm = (props) => {
   /**
    * 初始化完成，關閉等待中狀態。
    */
-  useEffect(async () => {
-    if (model) dispatch(setWaittingVisible(false));
-  }, [model]);
+  useEffect(() => {
+    if (model && banks) {
+      // 取得銀行名稱。
+      const { bankName } = banks?.find((b) => b.bankNo === model.transIn.bank) ?? '';
+      model.transIn.bankName = bankName; // 因為下一頁也會用到，所以可以先存下來。
 
-  /**
-   * 將轉帳金額加標千分位符號及前置'$'.
-   */
-  const getDisplayAmount = (amount) => `$${new Intl.NumberFormat('en-US').format(amount)}`;
-
-  /**
-   * 取得銀行名稱。
-   */
-  const getBankName = (bankId) => {
-    const { bankName } = banks?.find((b) => b.bankNo === bankId) ?? '';
-    return `${bankName} (${bankId})`;
-  };
-
-  /**
-   * 產生轉帳發生時間或區間的描述訊息。
-   */
-  const getTransDate = () => {
-    const { booking } = model;
-
-    if (!booking?.mode) return dateToString(new Date()); // 立即轉帳 用今天表示。
-
-    const { multiTimes, transDate, transRange } = booking;
-    if (multiTimes === '1') {
-      return `${dateToString(transDate)}`;
+      dispatch(setWaittingVisible(false));
     }
-    return `${dateToString(transRange[0])} ~ ${dateToString(transRange[1])}`;
-  };
-
-  /**
-   * 產生週期預約轉帳的描述訊息。
-   */
-  const getCycleDesc = (booking) => {
-    const cycleWeekly = ['日', '一', '二', '三', '四', '五', '六'];
-    const { cycleTiming } = booking;
-    if (booking.cycleMode === 1) {
-      return `每周${cycleWeekly[booking.cycleTiming]}`;
-    }
-    return `每個月${cycleTiming}號`;
-  };
+  }, [model, banks]);
 
   /**
    * 執行轉帳程序，包含進行交易驗證。
    */
   const onConfirm = async () => {
-    const auth = await transactionAuth(0x3D); // NOTE 非約轉時 OTP 由 MBGW 發出。
-    if (auth.result) {
-      const { transOut, transIn } = model;
-      // 常用(freqAcct)/約定(regAcct) 帳號 的物件結構={ bankId, accountNo }
-      const quickAcct = [null, transIn.freqAcct, transIn.regAcct][transIn.type];
-      const request = {
-        transOut: transOut.account,
-        transIn: { // 約定帳號 不需要提供額外資訊，由 MBGW 判斷。
-          bank: quickAcct?.bankId ?? transIn.bank, // TODO 是否還要指定自行 或 他行？
-          account: quickAcct?.accountNo ?? transIn.account,
-        },
-        amount: parseInt(model.amount, 10),
-        booking: model.booking,
-        memo: model.memo,
-      };
-      delete request.booking.transTimes;
+    const { transOut, transIn } = model;
+    // 常用(freqAcct)/約定(regAcct) 帳號 的物件結構={ bankId, accountNo }
+    const quickAcct = [null, transIn.freqAcct, transIn.regAcct][transIn.type];
+    const request = {
+      transOut: transOut.account,
+      transIn: { // 約定帳號 不需要提供額外資訊，由 MBGW 判斷。
+        bank: quickAcct?.bankId ?? transIn.bank, // TODO 是否還要指定自行 或 他行？
+        account: quickAcct?.accountNo ?? transIn.account,
+      },
+      amount: parseInt(model.amount, 10),
+      booking: model.booking,
+      memo: model.memo,
+    };
+    delete request.booking.transTimes;
 
-      // 建立轉帳交易紀錄。
-      // response = {
-      //   "otpId": "20220912050649747",
-      //   "checkNum": "GFZL", 交易識別碼
-      //   "countdown": "120", 倒數秒數
-      //   "initialKey": "" MOTP app且非約轉才會回傳
-      // }
-      const response = await createNtdTransfer(request);
-      if (response) {
-        // TODO 進行交易驗證。
-
+    // 建立轉帳交易紀錄。
+    const response = await createNtdTransfer(request); // 非約轉時，會先由 MBGW 發出 OTP
+    console.log(response); // DEBUG
+    if (response) {
+      // 進行交易驗證，要求使用者輸入OTP、密碼、雙因子...等。
+      const auth = await transactionAuth(0x3D);
+      if (auth.result) {
         // TODO 顯示轉帳結果（含加入常用帳號）
+        history.push('/D001002', model);
       }
     }
   };
@@ -133,24 +98,24 @@ const TransferConfirm = (props) => {
         <section className="transferMainInfo">
           <p>轉出金額與轉入帳號</p>
           <h3 className="transferAmount">{getDisplayAmount(model.amount)}</h3>
-          <h3>{getBankName(model.transIn.bank)}</h3>
+          <h3>{`${model.transIn.bankName} (${model.transIn.bank})`}</h3>
           <h3>{model.transIn.account}</h3>
         </section>
         <hr />
         <section>
           <InformationList title="轉出帳號" content={model.transOut.account} remark={model.transOut.alias} />
 
-          <InformationList title="時間" content={getTransDate()} />
-          {model.mode === 1 && (
-          <InformationList
-            title="週期"
-            content={getCycleDesc(model.booking)}
-            remark={model.booking.multiTimes === '*' ? `預計轉帳${model.booking.transTimes}次` : ''}
-          />
+          <InformationList title="時間" content={getTransDate(model)} />
+          {model.booking.mode === 1 && model.booking.multiTimes === '*' && (
+            <InformationList
+              title="週期"
+              content={getCycleDesc(model.booking)}
+              remark={model.booking.multiTimes === '*' ? `預計轉帳${model.booking.transTimes}次` : ''}
+            />
           )}
 
           {/* NOTE model 手續費! 還沒轉出，如何顯示？ 9/8 數金：拿掉！ */}
-          {/* {model.mode === 0 && <InformationList title="手續費" content="$0" />} */}
+          {/* {model.booking.mode === 0 && <InformationList title="手續費" content="$0" />} */}
           <InformationList title="備註" content={model.memo} />
         </section>
         <hr />

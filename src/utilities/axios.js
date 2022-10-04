@@ -47,7 +47,7 @@ const processRequest = async (request) => {
     request.data = JWTUtil.encryptJWTMessage(aes.aesKey, aes.iv, payload);
   }
   // console.log(jwtToken);
-  // console.log(`%cRequest --> ${JSON.stringify(request)}`, 'color: Green;'); // 列出完整的 Request 資訊。
+  // console.log('%cRequest --> %o', 'color: Green;', request); // 列出完整的 Request 資訊。
   return request;
 };
 
@@ -138,7 +138,7 @@ instance.interceptors.response.use(
   async (ex) => {
     // 系統層錯誤！
     // 若是環境問題，則直接顯示；若是WebController未處理的錯誤，則另外處理。
-    console.log(`%cResponse Error --> ${JSON.stringify(ex)}`, 'color: Red;');
+    // console.log(`%cResponse Error --> ${ex}`, 'color: Red;');
     const { response } = ex;
     if (response) {
       console.log(`%cResponse Error --> ${JSON.stringify(response)}`, 'color: Red;');
