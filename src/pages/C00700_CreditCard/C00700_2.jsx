@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import uuid from 'react-uuid';
 
@@ -22,18 +22,15 @@ import PageWrapper from './Rewards.style';
  */
 const C007002 = () => {
   const history = useHistory();
-  const location = useLocation();
   const dispatch = useDispatch();
   const [rewards, setRewards] = useState();
   const [selectedMonth, setSelectedMonth] = useState(getThisMonth());
 
   useEffect(async () => {
-    // TODO API
     dispatch(setWaittingVisible(true));
-    let accountNo;
-    if (location.state && ('accountNo' in location.state)) accountNo = location.state.accountNo;
-    const response = await getRewards({ accountNo });
-    setRewards(response);
+    // TODO getRewards API 尚未有回傳資料
+    const response = await getRewards();
+    setRewards(response.data);
     dispatch(setWaittingVisible(false));
   }, []);
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
@@ -13,7 +14,8 @@ import Accordion from 'components/Accordion';
 import Loading from 'components/Loading';
 import CreditCard from 'components/CreditCard';
 
-import { getCreditCardDetails, getCreditCardTerms } from './api';
+// eslint-disable-next-line no-unused-vars
+import { getCreditCardTerms, queryCardInfo } from './api';
 import PageWrapper from './Details.style';
 import { getCardListing, getCreditListing } from './utils';
 
@@ -22,23 +24,20 @@ import { getCardListing, getCreditListing } from './utils';
  */
 const C007001 = () => {
   const history = useHistory();
-  const location = useLocation();
-  const dispatch = useDispatch();
-  const [details, setDetails] = useState();
+  const [cardInfo, setCardInfo] = useState();
   const [terms, setTerms] = useState();
+  const dispatch = useDispatch();
+
+  console.log(cardInfo);
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    let accountNo;
-    if (location.state && ('accountNo' in location.state)) accountNo = location.state.accountNo;
-    // TODO API
-    const detailResponse = await getCreditCardDetails({ accountNo });
-    console.log('detailResponse', detailResponse);
-    setDetails(detailResponse);
+    // Fix API queryCardInfo API 取代 getCreditCardDetails
+    const infoResponse = await queryCardInfo();
+    setCardInfo(infoResponse.data);
     dispatch(setWaittingVisible(false));
   }, []);
 
-  // TODO API
   const lazyLoadTerms = async () => {
     if (!terms) setTerms(await getCreditCardTerms());
   };
@@ -47,26 +46,28 @@ const C007001 = () => {
     <Layout title="信用卡資訊" goBackFunc={() => history.goBack()}>
       <Main>
         <PageWrapper>
-          {!!details && (
+          {!!cardInfo && (
           <>
             <div>
               <div>
                 <CreditCard
-                  cardName={details?.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
-                  accountNo={details?.accountNo}
+                  // cardInfo 尚無該資訊
+                  cardName="等待提供 cardName "
+                  // cardName={details?.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
+                  accountNo="等待提供 accountNo "
                   color="green"
                   annotation="已使用額度"
-                  balance={details?.creditUsed}
+                  balance={cardInfo?.usedCardLimit}
                 />
               </div>
             </div>
             <div>
-              {getCardListing(details).map((d) => <InformationList key={uuid()} {...d} />)}
+              {getCardListing(cardInfo).map((d) => <InformationList key={uuid()} {...d} />)}
               <hr />
             </div>
             <div className="heading">額度資訊</div>
             <div>
-              {getCreditListing(details).map((d) => <InformationList key={uuid()} {...d} />)}
+              {getCreditListing(cardInfo).map((d) => <InformationList key={uuid()} {...d} />)}
               <hr />
             </div>
           </>
@@ -75,7 +76,7 @@ const C007001 = () => {
           <Accordion className="mb-4" title="注意事項" onClick={lazyLoadTerms}>
             { terms ? parse(terms) : <Loading space="both" isCentered /> }
           </Accordion>
-          <FEIBButton onClick={() => history.push('/R00400', { accountNo: details.accountNo })}>繳費</FEIBButton>
+          <FEIBButton onClick={() => history.push('/R00400', { accountNo: 'todo accountNo' })}>繳費</FEIBButton>
         </PageWrapper>
       </Main>
     </Layout>

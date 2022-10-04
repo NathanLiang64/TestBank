@@ -1,6 +1,8 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
+import { useForm } from 'react-hook-form';
 import uuid from 'react-uuid';
 
 import {
@@ -12,20 +14,17 @@ import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReduce
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import ArrowNextButton from 'components/ArrowNextButton';
 
-import {
-  FEIBIconButton,
-  FEIBInputLabel,
-  FEIBInput,
-  FEIBErrorMessage,
-} from 'components/elements';
+import { FEIBIconButton } from 'components/elements';
 
 import { EditIcon } from 'assets/images/icons';
 import { showCustomPrompt } from 'utilities/MessageModal';
 
-import { updateMemo } from '../api';
+import { TextInputField } from 'components/Fields';
+import { updateMemo, updateTxnNotes, getTransactions } from '../api';
 
 // timeFormatter
 import DetailCardWrapper, { DetailDialogContentWrapper, DetailDialogErrorMsg, TableDialog} from './detailCreditCard.style';
+import { backInfo, levelInfo } from '../utils';
 
 /*
 * ==================== DetailCard 組件說明 ====================
@@ -51,10 +50,17 @@ const DetailCard = ({
   const [transactions, setTransactions] = useState([]);
   const dispatch = useDispatch();
   const history = useHistory();
+  // eslint-disable-next-line no-unused-vars
+  const {
+    control, handleSubmit, reset, getValues,
+  } = useForm();
   /**
    * 初始化
    */
-  useEffect(() => {
+  useEffect(async () => {
+    // TODO getTransactions API 待完成
+    const res = await getTransactions();
+    console.log('res', res);
     setTransactions(details);
   }, []);
 
@@ -74,41 +80,10 @@ const DetailCard = ({
     return '';
   };
 
-  // 回饋表格資訊
-  const backInfo = {
-    title: ['社群圈等級', '升級條件*', '國內/國外'],
-    body: [{
-      level: '4',
-      condition: '達60萬',
-      percentage: '1.20%/3%',
-    },
-    {
-      level: '3',
-      condition: '達24萬',
-      percentage: '1.20%/1.20%',
-    },
-    {
-      level: '2',
-      condition: '達8萬',
-      percentage: '1.00%/1.00%',
-    },
-    {
-      level: '1',
-      condition: '達2萬',
-      percentage: '0.60%/0.60%',
-    },
-    {
-      level: '0',
-      condition: '未達2萬',
-      percentage: '0.15%/0.15%',
-    },
-    ],
-  };
-
   // 刷卡回饋popup
   const showbackDialog = () => {
     showCustomPrompt({
-      title: '會員等級',
+      title: '國內外回饋',
       message: (
         <TableDialog>
           <table>
@@ -134,38 +109,13 @@ const DetailCard = ({
           <span className="remark"> ＊依個人Bankee數存月平均存款餘額核定等級 </span>
         </TableDialog>
       ),
-      noDismiss: true,
       okContent: '回信用卡首頁',
-      onOk: () => history.push('/C00700'),
     });
     dispatch(setModalVisible(true));
   };
 
   // 會員等級表格資訊
-  const levelInfo = {
-    title: ['社群圈等級', '升級條件*'],
-    body: [{
-      level: '4',
-      condition: '達60萬',
-    },
-    {
-      level: '3',
-      condition: '達24萬',
-    },
-    {
-      level: '2',
-      condition: '達8萬',
-    },
-    {
-      level: '1',
-      condition: '達2萬',
-    },
-    {
-      level: '0',
-      condition: '未達2萬',
-    },
-    ],
-  };
+
   // 會員等級popup
   const showlevelDialog = () => {
     showCustomPrompt({
@@ -194,9 +144,7 @@ const DetailCard = ({
           </span>
         </TableDialog>
       ),
-      noDismiss: true,
       okContent: '回信用卡首頁',
-      onOk: () => history.push('/C00700'),
     });
     dispatch(setModalVisible(true));
   };
@@ -236,66 +184,54 @@ const DetailCard = ({
   };
 
   //  提交memoText
-  const showMemoEditDialog = (memo, id) => {
+  const showMemoEditDialog = (memo = '', id) => {
     // 用form 驗證取得值memo
     showCustomPrompt({
       title: '編輯備註',
       message: (
-        <div id={uid} style={{ paddingBottom: '2.4rem' }}>
-          <FEIBInputLabel htmlFor="memo">備註說明</FEIBInputLabel>
-          <DetailDialogErrorMsg>
-            <FEIBInput
-              name="pwd"
-              placeholder="請輸入您的備註"
-              defaultValue={memo}
-            />
-            <FEIBErrorMessage className="errorMsg">
-              編輯最多七個字
-            </FEIBErrorMessage>
-          </DetailDialogErrorMsg>
-        </div>
+        <TextInputField labelName="備註說明" name={`notes.${id}`} defaultValue={memo} control={control} />
       ),
       noDismiss: true,
       okContent: '完成',
-      onOk: () => onSubmit(id),
+      onOk: handleSubmit((values) => {
+        console.log('values[id]', values.notes[id]);
+        // TODO 等待 getTransaction API 完成後進行 updateTxnNotes API 串接
+        dispatch(setModalVisible(false));
+      }),
+      onClose: () => {
+        const {notes} = getValues();
+        const resetValues = {...notes, [id]: memo};
+        reset({notes: resetValues});
+      },
     });
-    dispatch(setModalVisible(true));
   };
 
-  // 多餘7筆,就只輸出7筆
+  // 多餘3筆,就只輸出3筆
   const render = (lists, types) => {
-    const arr = [];
-    for (let i = 0; i < 3; i++) {
-      if (!lists[i]?.index) {
-        break;
-      } else {
-        const options = (
-          <DetailCardWrapper key={uuid()} data-index={lists[i].index} noShadow id={lists[i].id}>
-            <div className="description">
-              <h4>{lists[i].description}</h4>
-              <p>
-                {stringDateFormat(lists[i].bizDate)}
-                {types === 'all' ? ` | 卡-${creditNumberFormat(lists[i].targetAcct)}` : ''}
-              </p>
-            </div>
-            <div className="amount">
-              {/* 刷卡金額 */}
-              <h4>
-                {currencySymbolGenerator(lists[i].currency, lists[i].amount)}
-              </h4>
-              <div className="remark">
-                <span>{lists[i].memo}</span>
-                <FEIBIconButton $fontSize={1.6} onClick={() => showMemoEditDialog(lists[i].memo, lists[i].id)} className="badIcon">
-                  <EditIcon />
-                </FEIBIconButton>
-              </div>
-            </div>
-          </DetailCardWrapper>
-        );
-        arr.push(options);
-      }
-    }
-    return arr;
+    const arr = lists.slice(0, 3);
+    return arr.map((item, index) => (
+      <DetailCardWrapper key={uuid()} data-index={index} noShadow id={item.id}>
+        <div className="description">
+          <h4>{item.description}</h4>
+          <p>
+            {stringDateFormat(item.bizDate)}
+            {types === 'all' ? ` | 卡-${creditNumberFormat(item.targetAcct)}` : ''}
+          </p>
+        </div>
+        <div className="amount">
+          {/* 刷卡金額 */}
+          <h4>
+            {currencySymbolGenerator(item.currency, item.amount)}
+          </h4>
+          <div className="remark">
+            <span>{item.memo}</span>
+            <FEIBIconButton $fontSize={1.6} onClick={() => showMemoEditDialog(item.memo, item.id)} className="badIcon">
+              <EditIcon />
+            </FEIBIconButton>
+          </div>
+        </div>
+      </DetailCardWrapper>
+    ));
   };
 
   // 信用卡總明細列表
