@@ -1,8 +1,7 @@
-/* eslint-disable no-unused-vars */
 import React, {
   useEffect, useRef, useState, useMemo,
 } from 'react';
-import {useForm} from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import BottomAction from 'components/BottomAction';
 import SnackModal from 'components/SnackModal';
 import {
@@ -62,7 +61,10 @@ const Favorite2New = ({
   const handleClickEditCompleted = async ({editedBlockList}) => {
     const orderedList = generateReorderList(favoriteList, editedBlockList);
     const trimmedList = generateTrimmedList(orderedList, 10, '');
-    if (trimmedList.includes('D00300')) {
+    // 應該從 cardLess API 得知是否已有設定值，並以此決定是否要設置無卡提款
+    // 目前尚未拿到 cardless API，先透過是否已經存在無卡提款服務來避開
+    const alreadyExistedCardLess = findExistedValue(initialValues, 'D00300');
+    if (trimmedList.includes('D00300') && !alreadyExistedCardLess) {
       await showCustomPrompt({
         title: '無卡提款',
         message: (
@@ -72,6 +74,7 @@ const Favorite2New = ({
           </form>
         ),
         onOk: cardLessHandleSubmit(async (values) => {
+          // 待 無卡提款設定 API 開發完畢
           console.log('values', values);
           dispatch(setModalVisible(false));
           await Promise.all(trimmedList.map((actKey, position) => (
@@ -91,15 +94,9 @@ const Favorite2New = ({
       });
     } else {
       try {
-        const res = await Promise.all(trimmedList.map((actKey, position) => (
+        await Promise.all(trimmedList.map((actKey, position) => (
           modifyFavoriteItem({actKey, position: parseInt(position, 10)})
         )));
-        await showCustomPrompt({
-          title: '測試測試',
-          message: JSON.stringify(res),
-          onOk: async () => {
-          },
-        });
         await updateFavoriteList();
         back2MyFavorite();
       } catch (err) {
@@ -108,8 +105,6 @@ const Favorite2New = ({
           message: err.message,
         });
       }
-
-      // 送出修改後的名單，隨後再次更新最愛列表，並回到我的最愛首頁
     }
   };
 

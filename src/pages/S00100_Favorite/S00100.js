@@ -74,7 +74,7 @@ const Favorite = () => {
     });
   };
 
-  // 點擊空白處離開編輯模式
+  // 點擊空白處離開移除模式
   const handleCloseRemoveMode = async (e) => {
     if (viewControl.content !== 'remove') return;
     if (e.target.className === 'dndItem' || e.target.nodeName === 'svg') return;
@@ -138,13 +138,13 @@ const Favorite = () => {
         block.actKey
           ? (
             <>
-              <img src={blockBackgroundGenerator(block.actKey)} alt="block" />
+              <img src={blockBackgroundGenerator(block.position)} alt="block" />
               {iconGenerator(block.actKey)}
               {block.name}
             </>
           )
           : <img src={block} alt="empty" />
-      }
+        }
       </button>
     ));
   };
@@ -160,7 +160,7 @@ const Favorite = () => {
             className="dndItem"
             key={fixedItem.actKey}
           >
-            <img src={blockBackgroundGenerator(fixedItem.actKey)} alt="block" />
+            <img src={blockBackgroundGenerator(-1)} alt="block" />
             {iconGenerator(fixedItem.actKey)}
             {fixedItem.name}
           </div>
@@ -195,7 +195,7 @@ const Favorite = () => {
                        <RemoveIcon />
                      </span>
                      ) }
-                     <img src={blockBackgroundGenerator(item.actKey)} alt="block" />
+                     <img src={blockBackgroundGenerator(item.position)} alt="block" />
                      {iconGenerator(item.actKey)}
                      {item.name}
                    </div>
