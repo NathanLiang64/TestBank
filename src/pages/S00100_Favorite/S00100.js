@@ -10,7 +10,7 @@ import { useHistory } from 'react-router';
 import { RemoveRounded } from '@material-ui/icons';
 import S00100_1 from './S00100_1';
 import { blockBackgroundGenerator, iconGenerator } from './favoriteGenerator';
-import FavoriteDrawerWrapper from './S00100.style';
+import FavoriteDrawerWrapper, { DndItemContainer } from './S00100.style';
 import {
   generateTrimmedList, reorder, move, combineLeftAndRight,
 } from './utils';
@@ -121,7 +121,7 @@ const Favorite = () => {
   // 點擊空白處離開移除模式
   const handleCloseRemoveMode = async (e) => {
     if (viewControl.content !== 'remove') return;
-    if (e.target.className === 'dndItemContainer' || e.target.className === 'defaultPage') {
+    if (e.target.className === 'dndArea' || e.target.className === 'defaultPage') {
       setViewControl(initialViewControl);
     }
   };
@@ -177,9 +177,10 @@ const Favorite = () => {
      dndList.map((dndItem, parentIndex) => (
        <Droppable key={dndItem.id} droppableId={dndItem.id}>
          {(droppableProvided) => (
-           <div
+           <DndItemContainer
              className="dndItemContainer"
              ref={droppableProvided.innerRef}
+             containerLength={dndItem.items.length}
            >
              {dndItem.items.map((item, index) => (
                <Draggable
@@ -208,7 +209,7 @@ const Favorite = () => {
                </Draggable>
              ))}
              {droppableProvided.placeholder}
-           </div>
+           </DndItemContainer>
          )}
        </Droppable>
      ))

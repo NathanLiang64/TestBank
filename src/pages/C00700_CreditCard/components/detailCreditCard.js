@@ -60,7 +60,8 @@ const DetailCard = ({
 
   const updateTransactions = async () => {
     // TODO getTransactions API 待完成
-    const res = await getTransactions();
+    const res = await getTransactions({cardNo: '5242480022210703', dateBeg: '20220901', dateEnd: '20221001'});
+    // console.log('res', res);
     // setTransactions(res.data);
     setTransactions(details);
   };
@@ -152,19 +153,26 @@ const DetailCard = ({
         {arr.map((item, index) => (
           <DetailCardWrapper key={uuid()} data-index={index} noShadow id={item.id}>
             <div className="description">
-              <h4>{item.description}</h4>
+              <h4>
+                {item.description}
+                {/* {item.txName}  */}
+              </h4>
               <p>
                 {stringDateFormat(item.bizDate)}
-                {type === 'all' ? ` | 卡-${creditNumberFormat(item.targetAcct)}` : ''}
+                {/* {item.txDate} */}
+                {type === 'all' ? ` | 卡-${creditNumberFormat(item.targetAcct)} acct` : ''}
+                {/* 原資料沒有 targetAcct 需要透過上層props 提供 term 來判斷 */}
               </p>
             </div>
             <div className="amount">
               {/* 刷卡金額 */}
               <h4>
                 {currencySymbolGenerator(item.currency, item.amount)}
+                {/* {currencySymbolGenerator(item.currency, item.amount)} */}
               </h4>
               <div className="remark">
                 <span>{item.memo}</span>
+                {/* <span>{item.note}</span> */}
                 <FEIBIconButton $fontSize={1.6} onClick={() => showMemoEditDialog(item.memo, item.id)} className="badIcon">
                   <EditIcon />
                 </FEIBIconButton>
@@ -190,7 +198,7 @@ const DetailCard = ({
         )}
       </DetailDialogContentWrapper>
       {renderFunctionList()}
-      {details.length > 7 && <ArrowNextButton onClick={onClick}>更多明細</ArrowNextButton>}
+      {transactions.length > 7 && <ArrowNextButton onClick={onClick}>更多明細</ArrowNextButton>}
     </>
   );
 };
