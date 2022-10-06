@@ -161,9 +161,16 @@ export const getCards = async (request) => {
  *    dateBeg,  查詢起日 (西元YYYYMMDD)
  *    dateEnd,  查詢迄日 (西元YYYYMMDD)
  * }
- * @return
- *
- * TODO: 尚未完成
+ * @return [
+ *    {
+ *      txDate, 交易日期時間 (yyyymmddhhmmss)
+ *      amount, 消費金額
+ *      txName,
+ *      txKey,  交易鍵值
+ *      note,   備註
+ *    },
+ *    ...
+ * ]
  */
 export const getTransactions = async (request) => {
   const response = await callAPI('/api/card/v1/getTransactions', request);
