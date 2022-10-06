@@ -60,6 +60,7 @@ const S00400 = lazy(() => import('pages/S00400_NoticeSetting'));
 const S00600 = lazy(() => import('pages/S00600_QandA'));
 const T00100 = lazy(() => import('pages/T00100_Profile/T00100'));
 const T00200 = lazy(() => import('pages/T00200_QuickLoginSetting'));
+const T00300 = lazy(() => import('pages/T00300_NonDesignatedTransfer/T00300'));
 const T00400 = lazy(() => import('pages/T00400_CardLessSetting'));
 const T00600 = lazy(() => import('pages/T00600_MobileTransfer'));
 const T006001 = lazy(() => import('pages/T00600_MobileTransfer/mobileTransfer_1'));
@@ -165,6 +166,7 @@ const routes = [
   {path: '/T006001', exact: false, component: T006001},
   {path: '/T006002', exact: false, component: T006002},
   {path: '/T00200', exact: false, component: T00200},
+  {path: '/T00300', exact: false, component: T00300},
   {path: '/T00400', exact: false, component: T00400},
   {path: '/T00700', exact: false, component: T00700},
   {path: '/T00800', exact: false, component: T00800},
