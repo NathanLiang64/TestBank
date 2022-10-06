@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState, useMemo } from 'react';
 import BottomDrawer from 'components/BottomDrawer';
 import BlockEmpty from 'assets/images/favoriteBlock/blockEmpty.png';
@@ -54,7 +53,7 @@ const Favorite = () => {
       if (!res) throw new Error('updateFavortieList response is empty');
       setFavoriteList(res);
     } catch (err) {
-      console.log(err);
+      console.log('updateFavoriteList', err);
     }
   };
 
@@ -257,7 +256,7 @@ const Favorite = () => {
       else right.push(el);
     });
     setDndList([{id: 'left', items: left}, {id: 'right', items: right}]);
-  }, [favoriteList, orderedList]);
+  }, [orderedList]);
 
   return (
     <Layout>

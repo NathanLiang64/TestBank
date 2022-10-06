@@ -10,8 +10,10 @@ import CreditCard from 'components/CreditCard';
 
 import { CreditCardIcon5, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
 
-import { setDrawer, setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
+// eslint-disable-next-line no-unused-vars
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
+import { showCustomDrawer } from 'utilities/MessageModal';
 import DetailCreditCard from './components/detailCreditCard';
 import { getCards, getCreditCards } from './api';
 import SwiperCreditCard from './C00700.style';
@@ -99,14 +101,12 @@ const CreditCardPage = () => {
         ))}
       </ul>
     );
-    dispatch(setDrawer({ title: '', content: options, shouldAutoClose: true }));
-    dispatch(setDrawerVisible(true));
+    showCustomDrawer({ title: '', content: options });
   };
 
   // 信用卡卡號(產生上方內容的 slides)
   const renderSlides = () => {
     // if (!cardInfo || !cardInfo.cards.length) return null;
-    // console.log(plans);
     if (!plans || !plans.length) return null;
     return (
       plans.map((item) => (

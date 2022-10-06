@@ -1,4 +1,5 @@
 import { currencySymbolGenerator, dateFormatter, stringToDate } from 'utilities/Generator';
+import uuid from 'react-uuid';
 
 export const getCardListing = (d) => ([
   { title: '帳單結帳日', content: dateFormatter(stringToDate(d.billClosingDate)) },
@@ -71,3 +72,18 @@ export const levelInfo = {
   },
   ],
 };
+
+export const renderHead = (titles) => titles.map((title) => (
+  <th key={`${uuid()}-head`}>
+    {title}
+  </th>
+));
+
+export const renderBody = (bodys) => bodys.map((body) => (
+  <tr key={`${uuid()}-body`}>
+    <th>{body.level}</th>
+    <th>{body.condition}</th>
+    {body.percentage
+    && <th>{body.percentage}</th>}
+  </tr>
+));
