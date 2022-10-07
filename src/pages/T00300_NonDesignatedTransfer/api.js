@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-vars */
 import { mockT00300Data } from './mockData/mockT00300Data';
 
@@ -11,7 +12,7 @@ import { mockT00300Data } from './mockData/mockT00300Data';
  * }
  */
 export const getNonDesignatedTransferData = async () => {
-  const statusNo = 6;
+  const statusNo = 4;
   const result = await mockT00300Data(statusNo);
 
   console.log('T00300 api getNonDesignatedTransferData() result: ', {statusNo, result});
@@ -26,6 +27,22 @@ export const getNonDesignatedTransferData = async () => {
  * }
  */
 export const checkDeviceBindingStatus = async (param) => {
+  console.log('T00300 api checkDeviceBindingStatus() param: ', param);
   const result = param;
+  return result;
+};
+
+/**
+ * [測試]雙因子驗證：
+ * 未知是否包含在api中，api規格確認前使用此判斷製造情境
+ * @param {param} param number: 1: 通過, 0: 不通過, 2: 系統錯誤
+ * @returns number: 1: 通過, 0: 不通過, 2: 系統錯誤
+ */
+export const bifactorVerify = async (param) => {
+  console.log('T00300 api bifactorVerify() param: ', param);
+  const result = param === 0
+    ? {code: 0, msg: ''} : param === 1
+      ? {code: 1, msg: ''} : {code: 2, msg: 'Error 401'};
+
   return result;
 };

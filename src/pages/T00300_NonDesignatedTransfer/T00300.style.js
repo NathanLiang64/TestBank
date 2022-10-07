@@ -32,8 +32,6 @@ const T00300Wrapper = styled(Layout)`
         width: 3rem;
         height: 3rem;
     }
-
-    
   }
 `;
 

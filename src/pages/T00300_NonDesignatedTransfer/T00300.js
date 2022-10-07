@@ -4,23 +4,33 @@ import { useState, useEffect } from 'react';
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import {
-  FEIBSwitch,
-  FEIBSwitchLabel,
+  FEIBInput, FEIBInputLabel, FEIBSwitch, FEIBSwitchLabel,
 } from 'components/elements';
 import Accordion from 'components/Accordion';
 import theme from 'themes/theme';
 import EditIcon from 'assets/images/icons/editIcon.svg';
-import { showAnimationModal } from 'utilities/MessageModal';
-import { checkDeviceBindingStatus, getNonDesignatedTransferData } from './api';
+import { closeDrawer, showAnimationModal, showDrawer } from 'utilities/MessageModal';
+import { useHistory } from 'react-router';
+import { bifactorVerify, checkDeviceBindingStatus, getNonDesignatedTransferData } from './api';
 
 /* Styles */
 import T00300Wrapper from './T00300.style';
 import T00300AccordionContent from './T00300_accordionContent';
+import T00300DrawerContent from './T00300_drawerContent';
 
+/**
+ * T00300 非約轉設定
+ */
 const T00300 = () => {
   const [model, setModel] = useState({});
+  const history = useHistory();
 
-  /* 錯誤訊息 */
+  /**
+   * 錯誤訊息
+   * @param {code} code number (failureCode)
+   * @param {errMsg} errMsg string?
+   * @returns string
+   */
   const failureMessage = (code, errMsg) => {
     switch (code) {
       case 1: // 無裝置綁定
@@ -36,22 +46,140 @@ const T00300 = () => {
     }
   };
 
-  /* 申請流程 */
-  const handleApply = () => {
-    console.log('T00300 handleApply()');
+  /**
+   * 失敗畫面
+   * @param {code} code number (failureCode)
+   * @param {errMsg} errMsg string?
+   */
+  const onFailure = (code, errMsg) => {
+    console.log('T00300 onFailure() errMsg: ', errMsg);
+    showAnimationModal({
+      isSuccess: false,
+      errorTitle: '設定失敗',
+      errorDesc: failureMessage(code, errMsg),
+      onClose: history.replace('/T00300'),
+    });
   };
 
-  /* 註銷流程 */
-  const handleCancel = () => {
+  /**
+   * 成功畫面
+   */
+  const onSuccess = () => {
+    showAnimationModal({
+      isSuccess: true,
+      successTitle: '設定成功',
+      onClose: history.replace('/T00300'),
+    });
+  };
+
+  /**
+   * Bottom Drawer 確認按鈕行為
+   * @param {data} data {isEdit, data: {mobileNumber}}
+   */
+  const handleDrawerConfirm = async (data) => {
+    console.log('T00300 handleDrawerConfirm() data:', data);
+
+    if (!data.isEdit) {
+      // 申請流程：雙因子驗證
+      const result = await bifactorVerify(0);
+
+      if (result.code !== 1) {
+        /* 失敗頁面: 不通過 -> failureCode: 0, 其他原因 -> failureCode: 5 */
+        onFailure(result.code === 0 ? 2 : 5, result.msg);
+
+        return;
+      }
+
+      /* 成功頁面 */
+      onSuccess();
+    } else {
+      // 修改流程
+    }
+  };
+
+  const handleDrawerCancel = () => {
+    console.log('T00300 handleDrawerCancel()');
+    closeDrawer();
+  };
+
+  /**
+   * 非約轉交易門號 Drawer
+   * @param {isEdit} isEdit boolean: 非約轉交易門號 Drawer 內容
+   */
+  const mobileNumberSettingDrawer = (isEdit) => {
+    console.log('T00300 mobileNumberSettingDrawer()');
+
+    showDrawer(
+      '非約轉交易門號',
+      <T00300DrawerContent
+        isEdit={isEdit}
+        mobile={model.mobile}
+        handleConfirm={(data) => handleDrawerConfirm(data)}
+        handleCancel={() => handleDrawerCancel()}
+      />,
+    );
+  };
+
+  /**
+   * 申請流程
+   */
+  const handleApply = () => {
+    console.log('T00300 handleApply()');
+
+    /* 打開drawer：input 不可編輯 */
+    mobileNumberSettingDrawer(false);
+  };
+
+  /**
+   * 註銷流程
+   */
+  const handleCancel = async () => {
     console.log('T00300 handleCancel()');
+
+    /**
+     * 雙因子驗證
+     * 成功：成功頁面
+     * 失敗：failureCode: 2
+     */
+    const result = await bifactorVerify(true);
+
+    if (result.code !== 1) {
+      onFailure(result.code === 0 ? 2 : 5, result.msg);
+
+      return;
+    }
+    onSuccess();
   };
 
   /* 編輯流程 */
   const handleEdit = () => {
     console.log('T00300 handleEdit()');
+
+    /* 打開drawer：input 可編輯 */
+    mobileNumberSettingDrawer(true);
+
+    /**
+     * 雙因子驗證
+     * 成功：OTP驗證
+     * 失敗：failureCode: 2
+     */
+
+    /**
+     * OTP驗證
+     * 成功：MID驗證
+     * 失敗：failureCode: 3
+     */
+
+    /**
+     * MID驗證
+     * 成功：成功頁面
+     * 失敗：failureCode: 4
+     */
   };
 
-  /* 點擊開關 */
+  /**
+   * 點擊開關
+   */
   const handleSwitchOnTrigger = async () => {
     console.log('T00300 handleSwitchOnTrigger() checkDeviceBindingStatus(): ', await checkDeviceBindingStatus(model.QLStatus));
 
@@ -64,12 +192,7 @@ const T00300 = () => {
      */
     if (!await checkDeviceBindingStatus(model.QLStatus)) {
       // failureCode: 1, return
-      showAnimationModal({
-        isSuccess: false,
-        errorTitle: '設定失敗',
-        errorDesc: failureMessage(1),
-        onClose: () => {},
-      });
+      onFailure(1);
 
       return;
     }
@@ -83,7 +206,9 @@ const T00300 = () => {
     }
   };
 
-  /* 點擊鉛筆 */
+  /**
+   * 點擊鉛筆
+   */
   const handleEditOnClick = async () => {
     console.log('T00300 handleEditOnClick() checkDeviceBindingStatus(): ', await checkDeviceBindingStatus(model.QLStatus));
 
@@ -133,6 +258,7 @@ const T00300 = () => {
           />
         </div>
 
+        {/* 已開通非約轉功能則顯示電話號碼以及編輯按鈕 */}
         {model.originalStatus === 0 && (
         <div className="phone_number">
           <div className="text">
@@ -145,6 +271,7 @@ const T00300 = () => {
         </div>
         )}
 
+        {/* TODO: 使用條款內容確認 */}
         <Accordion title="使用條款" space="both">
           <T00300AccordionContent />
         </Accordion>
