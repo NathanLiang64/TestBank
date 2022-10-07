@@ -113,30 +113,6 @@ const T00100 = () => {
     }
   };
 
-  const showEditNickNameDialog = () => {
-    reset();
-    setValue('nickName', nickName);
-    // TODO: 移除
-    // setShowChangeNickNameDialog(true);
-    // eslint-disable-next-line no-use-before-define
-    showCustomPrompt({ title: '編輯名稱', message: renderForm(), okContent: '完成' });
-  };
-
-  const fetchNickName = async () => {
-    const { code, data, message } = await getNickName({});
-    if (code === '0000') {
-      setNickName(data.nickName || '');
-      setUuid(data.uuid);
-      setAvatarUrl(
-        `${process.env.REACT_APP_AVATAR_IMG_URL}/pf_${data.uuid}_b.jpg?timestamp=${Date.now()}`,
-      );
-    } else {
-      showCustomPrompt({ title: `取得暱稱與大頭照發生錯誤(${code})：${message}` });
-      // TODO: 移除
-      // openMessageDialog(`取得暱稱與大頭照發生錯誤(${code})：${message}`);
-    }
-  };
-
   const onSubmit = async (data) => {
     const param = {
       nickName: data.nickName,
@@ -148,13 +124,6 @@ const T00100 = () => {
       // setShowChangeNickNameDialog(false);
     }
   };
-
-  const renderEntryList = () => SettingList.map(({ name, funcID }) => (
-    <div className="entryList" key={name} onClick={() => startFunc(funcID)}>
-      {name}
-      <KeyboardArrowRightRounded />
-    </div>
-  ));
 
   const renderForm = () => (
     <form id="nickNameForm" onSubmit={handleSubmit(onSubmit)} style={{ paddingBottom: '0' }}>
@@ -177,6 +146,42 @@ const T00100 = () => {
       <FEIBErrorMessage>{errors.nickName?.message}</FEIBErrorMessage>
     </form>
   );
+
+  const showEditNickNameDialog = () => {
+    reset();
+    setValue('nickName', nickName);
+    // TODO: 移除
+    // setShowChangeNickNameDialog(true);
+    // eslint-disable-next-line no-use-before-define
+    showCustomPrompt({
+      title: '編輯名稱',
+      message: renderForm(),
+      okContent: '完成',
+      onOk: handleSubmit(onSubmit),
+    });
+  };
+
+  const fetchNickName = async () => {
+    const { code, data, message } = await getNickName({});
+    if (code === '0000') {
+      setNickName(data.nickName || '');
+      setUuid(data.uuid);
+      setAvatarUrl(
+        `${process.env.REACT_APP_AVATAR_IMG_URL}/pf_${data.uuid}_b.jpg?timestamp=${Date.now()}`,
+      );
+    } else {
+      showCustomPrompt({ title: `取得暱稱與大頭照發生錯誤(${code})：${message}` });
+      // TODO: 移除
+      // openMessageDialog(`取得暱稱與大頭照發生錯誤(${code})：${message}`);
+    }
+  };
+
+  const renderEntryList = () => SettingList.map(({ name, funcID }) => (
+    <div className="entryList" key={name} onClick={() => startFunc(funcID)}>
+      {name}
+      <KeyboardArrowRightRounded />
+    </div>
+  ));
 
   // TODO: 移除
   // const renderDialog = () => (

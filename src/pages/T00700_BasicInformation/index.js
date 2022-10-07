@@ -5,6 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { getCountyList, getBasicInformation, modifyBasicInformation } from 'pages/T00700_BasicInformation/api';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -73,6 +74,7 @@ const BasicInformation = () => {
       setOriginPersonalData(data);
       reset({
         ...data,
+        city: data.city.trim(),
       });
       const { county } = data;
       const countyData = county.split(' ')[1] || county;
@@ -83,10 +85,12 @@ const BasicInformation = () => {
     } else {
       console.log(code, message);
     }
+    dispatch(setWaittingVisible(false));
   };
 
   // 取得縣市列表
   const fetchCountyList = async () => {
+    dispatch(setWaittingVisible(true));
     const { code, data, message } = await getCountyList({});
     setAddressOptionsData(data);
     if (code === '0000') {
@@ -100,6 +104,7 @@ const BasicInformation = () => {
       getPersonalData(data);
     } else {
       console.log(code, message);
+      dispatch(setWaittingVisible(false));
     }
   };
 
@@ -167,9 +172,11 @@ const BasicInformation = () => {
       mobile,
       actionCode: getActionCode(),
     };
+    dispatch(setWaittingVisible(true));
     const modifyDataResponse = await modifyBasicInformation(param);
     console.log(modifyDataResponse);
     setResultDialog(modifyDataResponse);
+    dispatch(setWaittingVisible(false));
   };
 
   // 點擊儲存變更按鈕
