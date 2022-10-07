@@ -74,9 +74,7 @@ const Profile = () => {
       openMessageDialog('檔案大小必須小於 1024 KB');
       return;
     }
-    const formData = new FormData();
-    formData.append('file', file);
-    const response = await uploadAvatar(formData);
+    const response = await uploadAvatar(file);
     console.log(response);
     if (response === 'OK') {
       openMessageDialog('上傳成功');
