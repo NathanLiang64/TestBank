@@ -11,7 +11,7 @@ import Favorite1 from './favorite_1';
 import Favorite2 from './favorite_2';
 import { setFavoriteDrawer, setFavoriteList, setCustomFavoriteList } from './stores/actions';
 import { blockBackgroundGenerator, iconGenerator } from './favoriteGenerator';
-import FavoriteDrawerWrapper from './favorite.style';
+import FavoriteDrawerWrapper from './S00100.style';
 import { mockFavoriteList } from './mockData';
 
 const grid = 8;

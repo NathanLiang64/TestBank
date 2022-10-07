@@ -23,10 +23,12 @@ const processRequest = async (request) => {
   console.log('Request = ', request.data);
   if (request.method === 'get') return request;
 
-  const payload = JSON.stringify(request.data);
-
   const jwtToken = await getJwtToken();
   if (jwtToken) request.headers.authorization = `Bearer ${jwtToken}`;
+
+  if (request.headers['Content-Type'] === 'multipart/form-data') return request;
+
+  const payload = JSON.stringify(request.data);
 
   // 處理 JWE Request 加密；在完成 Login 之前，都是使用 JWE 加密模式。
   if (request.url.startsWith('/sm')) {
@@ -172,19 +174,20 @@ instance.interceptors.response.use(
  * @param {*} config AxiosRequestConfig
  * @returns
  */
-const userRequest = async (method, url, data = {}, config) => {
+export const userRequest = async (method, url, data = {}, config) => {
   instance.defaults.baseURL = (url.startsWith('/sm')) ? process.env.REACT_APP_SM_CTRL_URL : process.env.REACT_APP_URL;
   // console.log(instance.defaults.baseURL + url);
 
   method = method.toLowerCase();
+  const request = (config?.data ?? data); // 在 config 中宣告的 data 優先權高於參數指定值，原因是 FormData 是記在 config 中。
   let result = null;
   switch (method) {
     case 'get':
-      result = await instance.get(url, { params: data }, config);
+      result = await instance.get(url, { params: request }, config);
       break;
 
     case 'post':
-      result = await instance.post(url, data, config);
+      result = await instance.post(url, request, config);
       break;
 
     // case 'put':
@@ -278,4 +281,3 @@ export const download = async (url, request, filename) => {
 };
 
 export default userAxios();
-export { userRequest };

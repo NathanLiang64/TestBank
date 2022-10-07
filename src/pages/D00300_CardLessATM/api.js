@@ -30,7 +30,16 @@ export const cardLessWithdrawApply = async (param) => {
   return response.data;
 };
 
-// 開通無卡提款與設定無卡提款密碼 done
+/**
+ * 開通無卡提款服務 測試時須請ken幫忙協助reset無卡提款狀態
+ *
+ * @param token
+ * @return {
+ *    message: 回傳訊息 例如: 'E660: 申請不准'
+ *    chgPwMessage: 空白表示成功
+ * }
+ * @throws Exception
+ */
 export const cardLessWithdrawActivate = async (param) => {
   const response = await callAPI('/api/cardlessWD/activate', param);
   return response.data;

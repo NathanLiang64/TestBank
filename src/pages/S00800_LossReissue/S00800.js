@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -17,18 +18,22 @@ import LossReissueWrapper from './lossReissue.style';
 import {
   actionTextGenerator, cityOptions, statusTextGenerator, zoneOptions,
 } from './utils';
-import { validationSchema } from './validationSchema';
+import { validationSchema, generateSchema } from './validationSchema';
 
 const LossReissue = () => {
   const dispatch = useDispatch();
   const [debitCardInfo, setDebitCardInfo] = useState(null);
   const [currentFormValue, setCurrentFormValue] = useState({});
   const [actionText, setActionText] = useState('');
-
   const {
     control, handleSubmit, reset,
   } = useForm({
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(generateSchema(actionText)),
+    defaultValues: {
+      // ...目前尚未得知補發 api 需要帶哪些資訊，先預設 accountNo & addr
+      accountNo: '',
+      addr: '',
+    },
   });
 
   const updateDebitCardStatus = async () => {
@@ -44,17 +49,15 @@ const LossReissue = () => {
 
   // 執行掛失或補發
   const executeAction = async (values) => {
-    const { accountNo } = debitCardInfo;
-    const params = {accountNo, addr: values.addr};
     try {
       // 掛失
       if (actionText === '掛失') {
-        const res = await executeDebitCardReportLost(params);
-        if (res && res.code) throw new Error(`執行掛失失敗 ${res.code}`);
+        const res = await executeDebitCardReportLost({accountNo: values.accountNo});
+        if (!res || res.code) throw new Error(`執行掛失失敗 ${res.code}`);
       } else {
       // 補發
-        const res = await executeDebitCardReApply();
-        if (res && res.code) throw new Error(`執行補發失敗 ${res.code}`);
+        const res = await executeDebitCardReApply(values);
+        if (!res || res.code) throw new Error(`執行補發失敗 ${JSON.stringify(res)}`);
       }
       showCustomPrompt({
         message: (
@@ -88,11 +91,13 @@ const LossReissue = () => {
         <p>
           是否確認
           {actionText}
+          <br />
           {JSON.stringify(values)}
           ?
         </p>
       ),
       onOk: () => executeAction(values),
+      noDismiss: true,
     });
   };
 
@@ -151,8 +156,12 @@ const LossReissue = () => {
   // 提供 react-hook-form 預設值
   useEffect(() => {
     if (debitCardInfo) {
-      const {addr, addrZone, addrCity} = debitCardInfo;
-      const defaultValues = {addr, addrZone, addrCity};
+      const {
+        accountNo, addr, addrZone, addrCity,
+      } = debitCardInfo;
+      const defaultValues = {
+        addr, addrZone, addrCity, accountNo,
+      };
       reset(defaultValues);
       setCurrentFormValue(defaultValues);
     }

@@ -150,6 +150,25 @@ export const showDrawer = async (title, content, goBack, onClose) => {
   return result;
 };
 
+export const showCustomDrawer = async ({
+  title, content, goBack, onClose,
+}) => {
+  const promise = new Promise((resolve) => {
+    store.dispatch(setDrawer({
+      title,
+      content,
+      goBack,
+      onClose: onClose ?? closeDrawer,
+    }));
+    store.dispatch(setResult((value) => resolve(value)));
+    store.dispatch(setDrawerVisible(true));
+  });
+
+  // result 是由 AppJavaScriptCallback 接收，並嘗試用 JSON Parse 轉為物件，轉不成功則以原資料內容傳回。
+  const result = await promise;
+  return result;
+};
+
 export const showAnimationModal = async (content) => {
   store.dispatch(setAnimationModal({
     ...content,

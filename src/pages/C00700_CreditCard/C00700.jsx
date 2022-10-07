@@ -10,10 +10,12 @@ import CreditCard from 'components/CreditCard';
 
 import { CreditCardIcon5, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
 
-import { setDrawer, setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
+// eslint-disable-next-line no-unused-vars
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
+import { showCustomDrawer } from 'utilities/MessageModal';
 import DetailCreditCard from './components/detailCreditCard';
-import { getCreditCards } from './api';
+import { getCards, getCreditCards } from './api';
 import SwiperCreditCard from './C00700.style';
 
 /**
@@ -22,18 +24,23 @@ import SwiperCreditCard from './C00700.style';
 const CreditCardPage = () => {
   const history = useHistory();
   const [plans, setPlans] = useState();
+  // eslint-disable-next-line no-unused-vars
+  const [cards, setCards] = useState();
   const dispatch = useDispatch();
-
+  console.log('cards', cards);
   /**
    * 頁面啟動，初始化
    */
   useEffect(async () => {
     // TODO API
     dispatch(setWaittingVisible(true));
+    // getCards 應取代 getCreditCards，但目前 getCards 回傳資料不完全
     const response = await getCreditCards();
+    const cardResponse = await getCards();
     setPlans(response);
+    setCards(cardResponse.data);
     dispatch(setWaittingVisible(false));
-  });
+  }, []);
 
   /**
    * 執行指定的單元功能。
@@ -94,13 +101,13 @@ const CreditCardPage = () => {
         ))}
       </ul>
     );
-    dispatch(setDrawer({ title: '', content: options, shouldAutoClose: true }));
-    dispatch(setDrawerVisible(true));
+    showCustomDrawer({ title: '', content: options });
   };
 
   // 信用卡卡號(產生上方內容的 slides)
-  const renderSlides = (data) => {
-    if (!data || data.length === 0) return null;
+  const renderSlides = () => {
+    // if (!cardInfo || !cardInfo.cards.length) return null;
+    if (!plans || !plans.length) return null;
     return (
       plans.map((item) => (
         <SwiperCreditCard>
