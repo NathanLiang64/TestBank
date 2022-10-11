@@ -27,7 +27,7 @@ const CreditCardPage = () => {
   // eslint-disable-next-line no-unused-vars
   const [cards, setCards] = useState();
   const dispatch = useDispatch();
-  console.log('cards', cards);
+  // console.log('cards', cards);
   /**
    * 頁面啟動，初始化
    */

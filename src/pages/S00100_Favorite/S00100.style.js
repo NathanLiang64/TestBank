@@ -135,7 +135,7 @@ const FavoriteDrawerWrapper = styled.div`
     }
     
     .mainContent {
-      height:65vh;
+      height:60vh;
       overflow-y: auto;
       
       section {

@@ -60,7 +60,7 @@ const DetailCard = ({
 
   const updateTransactions = async () => {
     // TODO getTransactions API 待完成
-    const res = await getTransactions({cardNo: '5242480022210703', dateBeg: '20220901', dateEnd: '20221001'});
+    // const res = await getTransactions({cardNo: '5242480022210703', dateBeg: '20220901', dateEnd: '20221001'});
     // console.log('res', res);
     // setTransactions(res.data);
     setTransactions(details);

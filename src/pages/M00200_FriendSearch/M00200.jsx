@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
@@ -10,6 +11,8 @@ import Loading from 'components/Loading';
 import Avatar from 'components/Avatar';
 import {dateFormatter, stringToDate } from 'utilities/Generator';
 
+import EmptyData from 'components/EmptyData';
+import { closeFunc } from 'utilities/AppScriptProxy';
 import { getFriends } from './api';
 import PageWrapper from './M00200.style';
 
@@ -19,20 +22,20 @@ import PageWrapper from './M00200.style';
 const Page = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const [friends, setFriends] = useState();
+  const [friends, setFriends] = useState([]);
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    const response = await getFriends();
+    const response = await getFriends([]);
     setFriends(response);
     dispatch(setWaittingVisible(false));
   }, []);
 
   return (
-    <Layout title="好友查詢" goBackFunc={() => history.goBack()}>
+    <Layout title="好友查詢" goBackFunc={() => closeFunc()}>
       <Main>
-        <PageWrapper>
-          { friends ? (
+        { friends.length ? (
+          <PageWrapper>
             <ul className="friend-list">
               {friends.map((f) => (
                 <li key={uuid()}>
@@ -45,24 +48,24 @@ const Page = () => {
                     </div>
                     <div className="note">
                       {f.depositApproved && (
-                      <div>
-                        開戶：
-                        {dateFormatter(stringToDate(f.depositApproved))}
-                      </div>
+                        <div>
+                          開戶：
+                          {dateFormatter(stringToDate(f.depositApproved))}
+                        </div>
                       )}
                       {f.creditCardApproved && (
-                      <div>
-                        核卡：
-                        {dateFormatter(stringToDate(f.creditCardApproved))}
-                      </div>
+                        <div>
+                          核卡：
+                          {dateFormatter(stringToDate(f.creditCardApproved))}
+                        </div>
                       )}
                     </div>
                   </div>
                 </li>
               ))}
             </ul>
-          ) : <Loading space="both" isCentered /> }
-        </PageWrapper>
+          </PageWrapper>
+        ) : <EmptyData content="查無好友資料" />}
       </Main>
     </Layout>
   );

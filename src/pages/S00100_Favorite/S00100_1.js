@@ -9,7 +9,7 @@ import {
 } from 'components/elements';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { setModalVisible } from 'stores/reducers/ModalReducer';
+import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { useDispatch } from 'react-redux';
 import { DropdownField } from 'components/Fields';
 import { getFavoriteSettingList, modifyFavoriteItem } from './api';
@@ -56,6 +56,16 @@ const Favorite2New = ({
     return false;
   };
 
+  const patchAndRedirect = async (patchedList) => {
+    dispatch(setWaittingVisible(true));
+    await Promise.all(patchedList.map((actKey, position) => (
+      modifyFavoriteItem({actKey, position: parseInt(position, 10)})
+    )));
+    await updateFavoriteList();
+    dispatch(setWaittingVisible(false));
+    back2MyFavorite();
+  };
+
   // 編輯完成送出表單
   const onSubmit = async ({editedBlockList}) => {
     const orderedList = generateReorderList(favoriteList, editedBlockList);
@@ -77,25 +87,16 @@ const Favorite2New = ({
         onOk: cardLessHandleSubmit(async (values) => {
           console.log('values', values); // 待 無卡提款設定 API 開發完畢
           dispatch(setModalVisible(false));
-          await Promise.all(trimmedList.map((actKey, position) => (
-            modifyFavoriteItem({actKey, position: parseInt(position, 10)})
-          )));
-          await updateFavoriteList();
-          back2MyFavorite();
+          patchAndRedirect(trimmedList);
         }),
         onClose: () => {
           if (isEditAction) return;
           reset({editedBlockList: initialValues}); // 新增模式情況下，按下 X 按鈕時需要取消勾選
         },
         noDismiss: true,
-
       });
     } else {
-      await Promise.all(trimmedList.map((actKey, position) => (
-        modifyFavoriteItem({actKey, position: parseInt(position, 10)})
-      )));
-      await updateFavoriteList();
-      back2MyFavorite();
+      patchAndRedirect(trimmedList);
     }
   };
 

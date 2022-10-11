@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-use-before-define */
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
@@ -13,7 +14,7 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 // import { showPrompt } from 'utilities/MessageModal';
 import { startFunc } from 'utilities/AppScriptProxy';
 import { getMoreList } from './api';
-import MoreWrapper from './more.style';
+import MoreWrapper from './B00600.style';
 
 /**
  * B00600 更多單元功能
@@ -21,6 +22,7 @@ import MoreWrapper from './more.style';
 const More = () => {
   const dispatch = useDispatch();
   const funcListRef = useRef();
+  const groupsRef = useRef([]);
 
   const [funcGroups, setFuncGroups] = useState([]);
   const [currentGroup, setCurrentGroup] = useState();
@@ -52,9 +54,9 @@ const More = () => {
   /**
    * 當單元功能分類(Section)變更時，調整 TAB頁籤 底線位置。
    */
-  const handleChangeTabs = (event, value) => {
-    const target = document.querySelector(`.${value}`);
-    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  const handleChangeTabs = (_, value) => {
+    const scrollTarget = groupsRef.current.find((el) => el.className === value);
+    scrollTarget.scrollIntoView({ behavior: 'smooth' });
   };
 
   /**
@@ -62,28 +64,28 @@ const More = () => {
    */
   const handleScrollContent = () => {
     const { scrollTop } = funcListRef?.current;
-    const target = sectionPosition.find((section) => section.position >= scrollTop);
-    setCurrentGroup(target?.id);
+    const foundGroup = groupsRef.current.find((el) => el.offsetTop >= scrollTop);
+    if (foundGroup.className !== currentGroup) setCurrentGroup(foundGroup.className);
   };
 
   /**
    * 滾動單元功能清單時，以單元功能分類(Section)調整 TAB頁籤 底線位置。
    */
-  useEffect(() => {
-    if (funcListRef?.current) {
-      const categories = Array.from(funcListRef?.current?.children);
-      const groupPosition = categories.map((section) => (
-        { id: section.className, position: section.offsetTop }
-      ));
-      setSectionPosition(groupPosition);
-    }
-  }, [funcListRef?.current]);
+  // useEffect(() => {
+  //   if (funcListRef?.current) {
+  //     const categories = Array.from(funcListRef?.current?.children);
+  //     const groupPosition = categories.map((section) => (
+  //       { id: section.className, position: section.offsetTop }
+  //     ));
+  //     setSectionPosition(groupPosition);
+  //   }
+  // }, [funcListRef?.current]);
 
   /**
    * 顯示指定分類的單元功能項目清單。
    * @param {*} group
    */
-  const renderFuncGroup = (group) => {
+  const renderFuncGroup = (group, groupIndex) => {
     const doStartFunc = (funcCode) => {
       // TODO 不可執行的功能，例：純卡戶 執行 申請信用卡。
       // TODO 但 純卡戶 執行轉帳，則是由 Funciton Manager 提供資訊，由 Funciton Controller 詢問是否立即申請。
@@ -92,7 +94,11 @@ const More = () => {
 
     // TODO 加上「new」的圖示，可以用 上線時間 判斷，例：在一個月內都會出現。
     return (
-      <section key={group.groupKey} className={group.groupKey}>
+      <section
+        ref={(el) => { groupsRef.current[groupIndex] = el; }}
+        key={group.groupKey}
+        className={group.groupKey}
+      >
         <h3 className="title">{group.groupName}</h3>
         <div className="blockGroup">
           {
@@ -128,7 +134,7 @@ const More = () => {
         </FEIBTabContext>
         <div className="mainContent" ref={funcListRef} onScroll={handleScrollContent}>
           {
-            funcGroups.map((group) => (renderFuncGroup(group)))
+            funcGroups.map((group, groupIndex) => (renderFuncGroup(group, groupIndex)))
           }
         </div>
       </MoreWrapper>
