@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable object-curly-newline */
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
@@ -27,6 +28,7 @@ function AccountEditor({
   onFinished,
 }) {
   const [bankList, setBankList] = useState();
+  // eslint-disable-next-line no-unused-vars
   const [model, setModel] = useState(initData);
   const [confirmPage, setConfirmPage] = useState(false);
 
@@ -63,7 +65,7 @@ function AccountEditor({
   /**
    * 第一頁 - 選銀行及輸入帳號
    */
-  const Page1 = () => {
+  const renderPage1 = () => {
     const onSubmit = (values) => {
       setModel({
         ...model,
@@ -111,11 +113,12 @@ function AccountEditor({
   /**
    * 第二頁 - 輸入暱稱，編輯完成。
    */
-  const Page2 = () => {
+  const renderPage2 = () => {
     const onSubmit = (values) => {
       const newModel = {
         ...model,
-        ...values,
+        headshot: values.headshot,
+        nickName: values.nickName,
       };
       onFinished(newModel);
     };
@@ -156,7 +159,8 @@ function AccountEditor({
    */
   return (bankList) ? (
     <DrawerWrapper>
-      {confirmPage === false ? (<Page1 />) : (<Page2 />)}
+      {/* {confirmPage === false ? (<Page1 />) : (<Page2 />)} */}
+      {confirmPage === false ? renderPage1() : renderPage2()}
     </DrawerWrapper>
   ) : null;
 }

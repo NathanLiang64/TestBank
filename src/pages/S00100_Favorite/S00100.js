@@ -5,8 +5,7 @@ import { EditIcon } from 'assets/images/icons';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import Layout from 'components/Layout/Layout';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { closeFunc } from 'utilities/AppScriptProxy';
-import { useHistory } from 'react-router';
+import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 import { RemoveRounded } from '@material-ui/icons';
 import S00100_1 from './S00100_1';
 import { blockBackgroundGenerator, iconGenerator } from './favoriteGenerator';
@@ -25,7 +24,6 @@ const Favorite = () => {
   const [pressTimer, setPressTimer] = useState(0);
   const [favoriteList, setFavoriteList] = useState([]);
   const [dndList, setDndList] = useState([]);
-  const history = useHistory();
 
   const isEditOrAddMode = useMemo(() => {
     if (viewControl.content === 'edit' || viewControl.content === 'add') return true;
@@ -140,7 +138,7 @@ const Favorite = () => {
         key={block.actKey || index - 2}
         onTouchStart={block.actKey ? handleTouchStart : null}
         onTouchEnd={block.actKey ? handleTouchEnd : null}
-        onClick={block.actKey ? () => history.push(`/${block.actKey}`) : () => handleOpenView('add')}
+        onClick={block.actKey ? () => startFunc(block.actKey) : () => handleOpenView('add')}
       >
         {
         block.actKey

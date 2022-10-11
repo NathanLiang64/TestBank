@@ -6,7 +6,7 @@ const A00400 = lazy(() => import('pages/A00400_Provisioning'));
 const A00600 = lazy(() => import('pages/A00600_RegularBasicInformation'));
 const A00700 = lazy(() => import('pages/A00700_RegularPwdModify/A00700'));
 const B00300 = lazy(() => import('pages/B00300_Notice'));
-const B00600 = lazy(() => import('pages/B00600_More'));
+const B00600 = lazy(() => import('pages/B00600_More/B00600'));
 const C00100 = lazy(() => import('pages/C00100_AccountOverview/C00100'));
 const C00300 = lazy(() => import('pages/C00300_NtdDeposit/C00300'));
 const C00400 = lazy(() => import('pages/C00400_ForeignDeposit/C00400'));

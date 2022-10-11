@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from 'react';
 import Avatar from 'components/Avatar';
 import { DeleteIcon, EditIcon } from 'assets/images/icons';
@@ -34,36 +35,38 @@ const MemberAccountCard = ({
   /**
    * 初始化
    */
+
   useEffect(() => {
     // 當使用者在元件之外 Click 或準備拖曳時，關閉已開啟的「更多Panel」
     const handleClickOutside = (event) => {
+      if (!model.showMorePanel) return;
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-        setModel({...model, showMorePanel: false});
+        setModel((prevModel) => ({...prevModel, showMorePanel: false}));
       }
     };
 
     // 為了自動關閉「更多Panel」，監聽 click 及 touchstart 事件。
-    document.addEventListener('click', handleClickOutside, true);
+    // document.addEventListener('click', handleClickOutside, true);
     document.addEventListener('touchstart', handleClickOutside, true);
     return () => {
-      document.removeEventListener('click', handleClickOutside, true);
+    // document.removeEventListener('click', handleClickOutside, true);
       document.removeEventListener('touchstart', handleClickOutside, true);
     };
-  }, []);
+  }, [model.showMorePanel]);
 
   /**
    * 處理手指拖曳結束時「更多功能」的開啟或關閉。
    */
   const handleTouchEnd = () => {
     if (!model.endX) return; // 只有點一下時, 不會有 TouchMove 事件，所以不會有值。
-
     let newModel = null;
     const offset = model.endX - model.startX;
     // 當手指向左滑動一小段距離時，顯示「更多功能」。
     // eslint-disable-next-line object-curly-newline
     if (offset > 10) newModel = { ...model, showMorePanel: false, startX: null, endX: null };
     // 當手指向右滑動時，則關閉「更多功能」。
-    if (offset < -3) newModel = { ...model, showMorePanel: true };
+    // eslint-disable-next-line object-curly-newline
+    if (offset < -3) newModel = {...model, showMorePanel: true, startX: null, endX: null};
 
     // 強制更新畫面。
     if (newModel !== null) setModel(newModel);
@@ -77,9 +80,9 @@ const MemberAccountCard = ({
     if (!actions) return null;
 
     // 執行更多功能時，必需隱藏「更多功能」Panel
-    const onActionClick = (func) => {
-      setModel({ ...model, showMorePanel: false });
+    const onActionClick = async (func) => {
       if (func) func();
+      setModel((prevModel) => ({...prevModel, showMorePanel: false}));
     };
 
     return (
@@ -102,6 +105,13 @@ const MemberAccountCard = ({
     );
   };
 
+  const handleTouchStart = (e) => {
+    setModel((prevModel) => ({...prevModel, startX: e.targetTouches[0].pageX}));
+  };
+  const handleTouchMove = (e) => {
+    setModel((prevModel) => ({...prevModel, endX: e.targetTouches[0].pageX}));
+  };
+
   /**
    * 元件 HTML 輸出。
    */
@@ -110,25 +120,23 @@ const MemberAccountCard = ({
       ref={wrapperRef}
       $noBorder={noBorder}
       $selected={isSelected}
-      onTouchStart={(e) => { model.startX = e.targetTouches[0].pageX; }}
-      onTouchMove={(e) => { model.endX = e.targetTouches[0].pageX; }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onClick={model.showMorePanel ? null : onClick}
     >
-      <>
-        <Avatar small src={avatarSrc} name={name} />
-        <div className="memberInfo">
-          <div className="flex-auto">
-            <div className="title">
-              {name || '會員'}
-              {hasNewTag && (<div className="new-tag">New</div>)}
-            </div>
-            <div className="note">
-              {`${bankName}(${bankNo}) ${account}`}
-            </div>
+      <Avatar small src={avatarSrc} name={name} />
+      <div className="memberInfo">
+        <div className="flex-auto">
+          <div className="title">
+            {name || '會員'}
+            {hasNewTag && (<div className="new-tag">New</div>)}
+          </div>
+          <div className="note">
+            {`${bankName}(${bankNo}) ${account}`}
           </div>
         </div>
-      </>
+      </div>
 
       {/* 顯示更多選項（編輯、刪除 的事件處理）。 */}
       { renderMoreActionMenu(moreActions) }
