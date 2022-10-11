@@ -78,6 +78,7 @@ const FavoriteDrawerWrapper = styled.div`
         ${() => blockStyle}
         color: ${({ theme }) => theme.colors.text.lightGray};
         margin-bottom:1.6rem;
+        user-select:none;
         
         img {
           position: absolute;
