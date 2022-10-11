@@ -91,8 +91,8 @@ const LossReissue = () => {
         <p>
           是否確認
           {actionText}
-          <br />
-          {JSON.stringify(values)}
+          {/* <br />
+          {JSON.stringify(values)} */}
           ?
         </p>
       ),
