@@ -104,9 +104,12 @@ const Page = () => {
         orgAcctId: acctId,
       });
       if (successful) {
-        // TODO : mutate
-        // acct.isNew = false;
-        setAccounts(setLocalData(storageName, [...accounts])); // 強制更新清單。
+        const updatedAccount = accounts.slice();
+        const foundIndex = accounts.findIndex((account) => account.acctId === acct.acctId);
+        if (foundIndex !== -1) {
+          updatedAccount[foundIndex].isNew = false;
+        }
+        setAccounts(setLocalData(storageName, [...updatedAccount])); // 強制更新清單。
       }
       dispatch(setDrawerVisible(false));
     };
