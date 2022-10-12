@@ -13,14 +13,18 @@ export const updateNickName = async (param) => {
 };
 
 // 上傳 avatar
-export const uploadAvatar = async (param) => {
+export const uploadAvatar = async (imageData) => {
+  const data = new FormData();
+  data.append('file', imageData);
+
   const response = await callAPI(
     '/api/setting/member/uploadImagePF',
-    param,
+    null,
     {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+      data,
     },
   );
   return response.data;

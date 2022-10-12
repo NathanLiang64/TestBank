@@ -1,8 +1,7 @@
-/* eslint-disable no-unused-vars */
 import React, {
   useEffect, useRef, useState, useMemo,
 } from 'react';
-import {useForm} from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import BottomAction from 'components/BottomAction';
 import SnackModal from 'components/SnackModal';
 import {
@@ -10,14 +9,14 @@ import {
 } from 'components/elements';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { setModalVisible } from 'stores/reducers/ModalReducer';
+import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { useDispatch } from 'react-redux';
+import { DropdownField } from 'components/Fields';
 import { getFavoriteSettingList, modifyFavoriteItem } from './api';
-import { CheckBoxField } from './fields/CheckboxField';
+import { CustomCheckBoxField } from './fields/customCheckboxField';
 import {
-  calcSelectedLength, extractGroupItems, generateReorderList, findExistedValue, generateTrimmedList,
+  calcSelectedLength, extractGroupItems, generateReorderList, findExistedValue, generateTrimmedList, cardLessOptions,
 } from './utils';
-import { CardLessSettingFields } from './fields/cardLessSettingField';
 import { validationSchema } from './validationSchema';
 
 const Favorite2New = ({
@@ -50,66 +49,54 @@ const Favorite2New = ({
     const isSelected = findExistedValue(watchedValues, key);
     const isMaximum = selectedLength >= 10;
     if (isEditAction) {
-      if (isMaximum && !isSelected) return true;
+      if (isMaximum && !isSelected) return true; // 編輯模式: 超出數量無法被選取
       return false;
     }
-    // 當被點選的項目已存在於 initialValues 時，需要被 disabled
-    if (alreadyExisted) return true;
+    if (alreadyExisted) return true; // 新增模式: 項目若已存在於 initialValues，需要被 disabled
     return false;
   };
 
+  const patchAndRedirect = async (patchedList) => {
+    dispatch(setWaittingVisible(true));
+    await Promise.all(patchedList.map((actKey, position) => (
+      modifyFavoriteItem({actKey, position: parseInt(position, 10)})
+    )));
+    await updateFavoriteList();
+    dispatch(setWaittingVisible(false));
+    back2MyFavorite();
+  };
+
   // 編輯完成送出表單
-  const handleClickEditCompleted = async ({editedBlockList}) => {
+  const onSubmit = async ({editedBlockList}) => {
     const orderedList = generateReorderList(favoriteList, editedBlockList);
     const trimmedList = generateTrimmedList(orderedList, 10, '');
-    if (trimmedList.includes('D00300')) {
+    // 應該從 cardLess API 得知是否已有設定值，並以此決定是否要設置無卡提款
+    // 目前尚未拿到 cardless API，先透過是否已經存在無卡提款服務來避開
+    const alreadyExistedCardLess = findExistedValue(initialValues, 'D00300');
+    if (trimmedList.includes('D00300') && !alreadyExistedCardLess) {
       await showCustomPrompt({
         title: '無卡提款',
         message: (
-          <form>
-            快速提領金額
-            <CardLessSettingFields name="cardLessCredit" control={cardLessControl} />
-          </form>
+          <DropdownField
+            options={cardLessOptions}
+            labelName="快速提領金額"
+            name="cardLessCredit"
+            control={cardLessControl}
+          />
         ),
         onOk: cardLessHandleSubmit(async (values) => {
-          console.log('values', values);
+          console.log('values', values); // 待 無卡提款設定 API 開發完畢
           dispatch(setModalVisible(false));
-          await Promise.all(trimmedList.map((actKey, position) => (
-            modifyFavoriteItem({actKey, position: parseInt(position, 10)})
-          )));
-          // 送出修改後的名單，隨後再次更新最愛列表，並回到我的最愛首頁
-          await updateFavoriteList();
-          back2MyFavorite();
+          patchAndRedirect(trimmedList);
         }),
         onClose: () => {
           if (isEditAction) return;
-          // 若是新增模式情況下，離開 modal 時需要取消勾選
-          reset({editedBlockList: initialValues});
+          reset({editedBlockList: initialValues}); // 新增模式情況下，按下 X 按鈕時需要取消勾選
         },
         noDismiss: true,
-
       });
     } else {
-      try {
-        const res = await Promise.all(trimmedList.map((actKey, position) => (
-          modifyFavoriteItem({actKey, position: parseInt(position, 10)})
-        )));
-        await showCustomPrompt({
-          title: '測試測試',
-          message: JSON.stringify(res),
-          onOk: async () => {
-          },
-        });
-        await updateFavoriteList();
-        back2MyFavorite();
-      } catch (err) {
-        await showCustomPrompt({
-          title: '錯誤',
-          message: err.message,
-        });
-      }
-
-      // 送出修改後的名單，隨後再次更新最愛列表，並回到我的最愛首頁
+      patchAndRedirect(trimmedList);
     }
   };
 
@@ -134,14 +121,14 @@ const Favorite2New = ({
       <h3 className="title">{groupName}</h3>
       <div className="blockGroup">
         {items.map(({actKey, name}) => (
-          <CheckBoxField
+          <CustomCheckBoxField
             key={actKey}
             control={control}
             name={`editedBlockList.${actKey}`}
             defaultValue={false}
             label={name}
             disabled={checkDisabled(actKey)}
-            immdlySubmit={handleSubmit(handleClickEditCompleted)}
+            immdlySubmit={handleSubmit(onSubmit)}
             isEditAction={isEditAction}
             setShowTip={setShowTip}
           />
@@ -202,7 +189,7 @@ const Favorite2New = ({
           <button
             type="button"
             style={{cursor: 'pointer'}}
-            onClick={handleSubmit(handleClickEditCompleted)}
+            onClick={handleSubmit(onSubmit)}
           >
             {`編輯完成(${selectedLength})`}
           </button>

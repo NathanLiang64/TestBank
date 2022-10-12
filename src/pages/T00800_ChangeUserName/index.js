@@ -5,7 +5,8 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import e2ee from 'utilities/E2ee';
 import { changeUserName } from 'pages/T00800_ChangeUserName/api';
-import { closeFunc, switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
+import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 /* Elements */
 import {
@@ -59,15 +60,15 @@ const ChangeUserName = () => {
     const authCode = 0x26;
     const jsRs = await transactionAuth(authCode);
     if (jsRs.result) {
-      switchLoading(true);
       const param = {
         userName: e2ee(getValues('userName')),
         newUserName: e2ee(getValues('newUserName')),
         newUserNameCheck: e2ee(getValues('newUserNameCheck')),
       };
+      dispatch(setWaittingVisible(true));
       const changeUserNameResponse = await changeUserName(param);
       setResultDialog(changeUserNameResponse);
-      switchLoading(false);
+      dispatch(setWaittingVisible(false));
     }
   };
 

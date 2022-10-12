@@ -179,7 +179,7 @@ const RegularPwdModify = () => {
   useEffect(() => dispatch(setIsOpen(false)), []);
 
   return (
-    <Layout title="定期網銀密碼變更A00700" goBack={false} goHome={false}>
+    <Layout title="定期網銀密碼變更" goBack={false} goHome={false}>
       <RegularPwdModifyWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>

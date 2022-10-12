@@ -4,7 +4,8 @@ const MemberAccountCardWrapper = styled.div`
   display: flex;
   align-items: center;
   padding: 1.2rem .8rem;
-  overflow: hidden;
+  position:relative;
+  // overflow: hidden;
   border-bottom: ${({ $noBorder, theme }) => ($noBorder ? '' : `.1rem solid ${theme.colors.border.lighter}`)};
   &:first-child {
     border-top: ${({ $noBorder, theme }) => ($noBorder ? '' : `.1rem solid ${theme.colors.border.lighter}`)};
@@ -54,13 +55,18 @@ const MemberAccountCardWrapper = styled.div`
     display: flex;
     position: absolute;
     top: 0;
-    right: -100%;
-    height: 100%;
+    right:  0;
+    opacity:0;
+    transform: translateX(100%);
+    visibility:hidden;
+    height: 100% ;
     color: ${({ theme }) => theme.colors.basic.white};
     transition: all .3s ease-out;
-
+    
     &.show {
-      right: 0;
+      visibility:visible;
+      opacity:1;
+      transform: translateX(0%);
     }
 
     button {

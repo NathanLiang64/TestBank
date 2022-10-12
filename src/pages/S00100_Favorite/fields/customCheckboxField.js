@@ -5,7 +5,7 @@ import FavoriteBlockButtonStyle from 'components/FavoriteBlockButton/favoriteBlo
 import { useController } from 'react-hook-form';
 import { iconGenerator } from '../favoriteGenerator';
 
-export const CheckBoxField = ({
+export const CustomCheckBoxField = ({
   disabled, isEditAction, immdlySubmit, setShowTip, label, ...props
 }) => {
   const { field } = useController(props);

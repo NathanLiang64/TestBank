@@ -10,7 +10,7 @@ import { FEIBButton, FEIBIconButton } from 'components/elements';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import theme from 'themes/theme';
 import { ArrowBackIcon, HomeIcon } from 'assets/images/icons';
-import { goHome as goHomeFunc, closeFunc } from 'utilities/AppScriptProxy';
+import { goHome as goHomeFunc, closeFunc, switchLoading } from 'utilities/AppScriptProxy';
 import {
   setModalVisible, setWaittingVisible, setDrawerVisible, setAnimationModalVisible,
   setDialogVisible,
@@ -151,6 +151,7 @@ function Layout({
    */
   useEffect(async () => {
     // console.log('showWaitting -> ', waitting);
+    switchLoading(waitting);
     if (waitting) {
       dispatch(setDrawerVisible(false));
       dispatch(setModalVisible(false));

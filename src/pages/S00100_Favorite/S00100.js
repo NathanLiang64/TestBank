@@ -1,15 +1,15 @@
 import { useEffect, useState, useMemo } from 'react';
 import BottomDrawer from 'components/BottomDrawer';
 import BlockEmpty from 'assets/images/favoriteBlock/blockEmpty.png';
-import { EditIcon, RemoveIcon } from 'assets/images/icons';
+import { EditIcon } from 'assets/images/icons';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import Layout from 'components/Layout/Layout';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { closeFunc } from 'utilities/AppScriptProxy';
-import { useHistory } from 'react-router';
+import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
+import { RemoveRounded } from '@material-ui/icons';
 import S00100_1 from './S00100_1';
 import { blockBackgroundGenerator, iconGenerator } from './favoriteGenerator';
-import FavoriteDrawerWrapper from './favorite.style';
+import FavoriteDrawerWrapper, { DndItemContainer } from './S00100.style';
 import {
   generateTrimmedList, reorder, move, combineLeftAndRight,
 } from './utils';
@@ -24,7 +24,11 @@ const Favorite = () => {
   const [pressTimer, setPressTimer] = useState(0);
   const [favoriteList, setFavoriteList] = useState([]);
   const [dndList, setDndList] = useState([]);
-  const history = useHistory();
+
+  const isEditOrAddMode = useMemo(() => {
+    if (viewControl.content === 'edit' || viewControl.content === 'add') return true;
+    return false;
+  }, [viewControl]);
 
   // 產生有序的列表
   const orderedList = useMemo(() => {
@@ -45,9 +49,9 @@ const Favorite = () => {
     try {
       const res = await getFavoriteList();
       if (!res) throw new Error('updateFavortieList response is empty');
-      if (res) setFavoriteList(res);
+      setFavoriteList(res);
     } catch (err) {
-      console.log(err);
+      console.log('updateFavoriteList', err);
     }
   };
 
@@ -72,19 +76,6 @@ const Favorite = () => {
       },
       cancelContent: '取消',
     });
-  };
-
-  // 點擊空白處離開編輯模式
-  const handleCloseRemoveMode = async (e) => {
-    if (viewControl.content !== 'remove') return;
-    if (e.target.className === 'dndItem' || e.target.nodeName === 'svg') return;
-    const combinedList = combineLeftAndRight(dndList[0].items, dndList[1].items);
-    const trimmedList = generateTrimmedList(combinedList, 10, '');
-    await Promise.all(trimmedList.map((item, position) => (
-      modifyFavoriteItem({actKey: item.actKey || '', position: parseInt(position, 10)})
-    )));
-    await updateFavoriteList();
-    setViewControl(initialViewControl);
   };
 
   // 處理拖曳事件
@@ -115,7 +106,22 @@ const Favorite = () => {
         destination,
       );
     }
+
+    const combinedList = combineLeftAndRight(updatedDndList[0].items, updatedDndList[1].items);
+    const trimmedList = generateTrimmedList(combinedList, 10, '');
     setDndList(updatedDndList);
+    await Promise.all(trimmedList.map((item, position) => (
+      modifyFavoriteItem({actKey: item.actKey || '', position: parseInt(position, 10)})
+    )));
+    await updateFavoriteList();
+  };
+
+  // 點擊空白處離開移除模式
+  const handleCloseRemoveMode = async (e) => {
+    if (viewControl.content !== 'remove') return;
+    if (e.target.className === 'dndArea' || e.target.className === 'defaultPage') {
+      setViewControl(initialViewControl);
+    }
   };
 
   // 長按編輯
@@ -132,19 +138,19 @@ const Favorite = () => {
         key={block.actKey || index - 2}
         onTouchStart={block.actKey ? handleTouchStart : null}
         onTouchEnd={block.actKey ? handleTouchEnd : null}
-        onClick={block.actKey ? () => history.push(`/${block.actKey}`) : () => handleOpenView('add')}
+        onClick={block.actKey ? () => startFunc(block.actKey) : () => handleOpenView('add')}
       >
         {
         block.actKey
           ? (
             <>
-              <img src={blockBackgroundGenerator(block.actKey)} alt="block" />
+              <img src={blockBackgroundGenerator(index)} alt="block" />
               {iconGenerator(block.actKey)}
               {block.name}
             </>
           )
           : <img src={block} alt="empty" />
-      }
+        }
       </button>
     ));
   };
@@ -155,30 +161,30 @@ const Favorite = () => {
     const fixedList = favoriteList.filter((el) => el.position === '-1');
     return (
       <DragDropContext onDragEnd={handleOnDragEnd}>
-        {fixedList.map((fixedItem) => (
+        {fixedList.map((fixedItem, fixedIndex) => (
           <div
             className="dndItem"
             key={fixedItem.actKey}
           >
-            <img src={blockBackgroundGenerator(fixedItem.actKey)} alt="block" />
+            <img src={blockBackgroundGenerator(fixedIndex)} alt="block" />
             {iconGenerator(fixedItem.actKey)}
             {fixedItem.name}
           </div>
         ))}
         {
-     dndList.map((dndItem) => (
+     dndList.map((dndItem, parentIndex) => (
        <Droppable key={dndItem.id} droppableId={dndItem.id}>
          {(droppableProvided) => (
-           <div
+           <DndItemContainer
              className="dndItemContainer"
              ref={droppableProvided.innerRef}
+             containerLength={dndItem.items.length}
            >
              {dndItem.items.map((item, index) => (
                <Draggable
                  key={item.actKey}
                  draggableId={item.actKey}
                  index={index}
-                 isDragDisabled={item.position === '-1'}
                >
                  {(provided) => (
                    <div
@@ -187,15 +193,13 @@ const Favorite = () => {
                      {...provided.draggableProps}
                      {...provided.dragHandleProps}
                    >
-                     { (item.position >= 0) && (
                      <span
                        className="removeButton"
                        onClick={() => handleClickRemoveBlock({actKey: item.actKey, name: item.name})}
                      >
-                       <RemoveIcon />
+                       <RemoveRounded />
                      </span>
-                     ) }
-                     <img src={blockBackgroundGenerator(item.actKey)} alt="block" />
+                     <img src={blockBackgroundGenerator((2 * index) + (parentIndex + 2))} alt="block" />
                      {iconGenerator(item.actKey)}
                      {item.name}
                    </div>
@@ -203,7 +207,7 @@ const Favorite = () => {
                </Draggable>
              ))}
              {droppableProvided.placeholder}
-           </div>
+           </DndItemContainer>
          )}
        </Droppable>
      ))
@@ -251,12 +255,7 @@ const Favorite = () => {
       else right.push(el);
     });
     setDndList([{id: 'left', items: left}, {id: 'right', items: right}]);
-  }, [favoriteList, orderedList]);
-
-  const isEditOrAddMode = useMemo(() => {
-    if (viewControl.content === 'edit' || viewControl.content === 'add') return true;
-    return false;
-  }, [viewControl]);
+  }, [orderedList]);
 
   return (
     <Layout>

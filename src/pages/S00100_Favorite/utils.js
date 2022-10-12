@@ -18,7 +18,6 @@ export const extractGroupItems = (groups) => {
 };
 
 export const findExistedValue = (watchedValues, key) => {
-  // console.log(watc)
   for (const watchedKey in watchedValues) {
     if (watchedValues[watchedKey] && watchedKey === key) return true;
   }
@@ -40,10 +39,9 @@ export const generateTrimmedList = (list, maxLength, emptyValue) => {
 export const generateReorderList = (initialValues, editedBlockList) => {
   const defaultList = [];
   const selectedList = [];
-  // eslint-disable-next-line guard-for-in
   for (const key in editedBlockList) {
-    const foundedItem = initialValues.find((value) => value.actKey === key);
     if (editedBlockList[key]) {
+      const foundedItem = initialValues.find((value) => value.actKey === key);
       if (foundedItem) {
         defaultList[foundedItem.position] = foundedItem.actKey;
       } else {
@@ -52,7 +50,6 @@ export const generateReorderList = (initialValues, editedBlockList) => {
     }
   }
   return [...defaultList, ...selectedList];
-  // return { defaultList, selectedList };
 };
 
 export const reorder = (list, startIndex, endIndex) => {
@@ -82,11 +79,11 @@ export const combineLeftAndRight = (left, right) => {
   return arr;
 };
 
-// export const makeDrinks = (drinksName) => new Promise((resolve, reject) => {
-//   if (drinksName.includes('ironman')) {
-//     reject(new Error('error la'));
-//   }
-//   setTimeout(() => {
-//     resolve(`這是你點的${drinksName}`);
-//   }, 200);
-// });
+export const cardLessOptions = [
+  {label: '$1,000', value: 1000},
+  {label: '$2,000', value: 2000},
+  {label: '$3,000', value: 3000},
+  {label: '$5,000', value: 5000},
+  {label: '$10,000', value: 10000},
+  {label: '$20,000', value: 20000},
+];

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -31,6 +32,8 @@ const Page = () => {
 
   const storageName = 'FreqAccts';
 
+  console.log('accounts', accounts);
+
   /**
    *- 初始化
    */
@@ -53,7 +56,6 @@ const Page = () => {
 
     dispatch(setWaittingVisible(false));
   }, []);
-
   /**
    * 將選取的帳號傳回給叫用的單元功能，已知[轉帳]有使用。
    * @param {*} acct 選取的帳號。
@@ -95,7 +97,6 @@ const Page = () => {
    */
   const editAccount = async (acct) => {
     const { bankId, acctId } = acct; // 變更前 常用轉入帳戶-銀行代碼 及 帳號
-    // eslint-disable-next-line no-unused-vars
     const onFinished = async (newAcct) => {
       const successful = await updateFrequentAccount({
         ...newAcct,
@@ -103,9 +104,14 @@ const Page = () => {
         orgAcctId: acctId,
       });
       if (successful) {
-        acct.isNew = false;
-        setAccounts(setLocalData(storageName, [...accounts])); // 強制更新清單。
+        const updatedAccount = accounts.slice();
+        const foundIndex = accounts.findIndex((account) => account.acctId === acct.acctId);
+        if (foundIndex !== -1) {
+          updatedAccount[foundIndex].isNew = false;
+        }
+        setAccounts(setLocalData(storageName, [...updatedAccount])); // 強制更新清單。
       }
+      dispatch(setDrawerVisible(false));
     };
 
     await showDrawer('編輯常用帳號', (<AccountEditor initData={acct} onFinished={onFinished} />));
@@ -114,7 +120,7 @@ const Page = () => {
   /**
    * 處理UI流程：移除登記帳戶
    */
-  const removeAccount = (acct) => {
+  const removeAccount = async (acct) => {
     const onRemoveConfirm = async () => {
       const successful = await deleteFrequentAccount({ bankId: acct.bankId, acctId: acct.acctId });
       if (successful) {
@@ -123,7 +129,7 @@ const Page = () => {
       }
     };
 
-    showCustomPrompt({
+    await showCustomPrompt({
       title: '系統訊息',
       message: (<div style={{ textAlign: 'center' }}>您確定要刪除此帳號?</div>),
       okContent: '確定刪除',

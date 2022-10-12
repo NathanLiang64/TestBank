@@ -23,10 +23,12 @@ const processRequest = async (request) => {
   console.log('Request = ', request.data);
   if (request.method === 'get') return request;
 
-  const payload = JSON.stringify(request.data);
-
   const jwtToken = await getJwtToken();
   if (jwtToken) request.headers.authorization = `Bearer ${jwtToken}`;
+
+  if (request.headers['Content-Type'] === 'multipart/form-data') return request;
+
+  const payload = JSON.stringify(request.data);
 
   // 處理 JWE Request 加密；在完成 Login 之前，都是使用 JWE 加密模式。
   if (request.url.startsWith('/sm')) {
@@ -44,7 +46,13 @@ const processRequest = async (request) => {
   // 處理 JWT Request 加密；當通過 Login 驗證之後，所有 POST 全部都是使用 JWT 加密模式。
   else if (jwtToken) {
     const aes = await getAesKey();
-    request.data = JWTUtil.encryptJWTMessage(aes.aesKey, aes.iv, payload);
+    // 如果是上傳個人化設定 avatar 圖片
+    if (request.url.includes('uploadImagePF')) {
+      const jwtRq = JWTUtil.encryptJWTMessage(aes.aesKey, aes.iv, JSON.stringify({}));
+      request.data.append('jwtRq', JSON.stringify(jwtRq));
+    } else {
+      request.data = JWTUtil.encryptJWTMessage(aes.aesKey, aes.iv, payload);
+    }
   }
   // console.log(jwtToken);
   // console.log('%cRequest --> %o', 'color: Green;', request); // 列出完整的 Request 資訊。
@@ -166,19 +174,20 @@ instance.interceptors.response.use(
  * @param {*} config AxiosRequestConfig
  * @returns
  */
-const userRequest = async (method, url, data = {}, config) => {
+export const userRequest = async (method, url, data = {}, config) => {
   instance.defaults.baseURL = (url.startsWith('/sm')) ? process.env.REACT_APP_SM_CTRL_URL : process.env.REACT_APP_URL;
   // console.log(instance.defaults.baseURL + url);
 
   method = method.toLowerCase();
+  const request = (config?.data ?? data); // 在 config 中宣告的 data 優先權高於參數指定值，原因是 FormData 是記在 config 中。
   let result = null;
   switch (method) {
     case 'get':
-      result = await instance.get(url, { params: data }, config);
+      result = await instance.get(url, { params: request }, config);
       break;
 
     case 'post':
-      result = await instance.post(url, data, config);
+      result = await instance.post(url, request, config);
       break;
 
     // case 'put':
@@ -272,4 +281,3 @@ export const download = async (url, request, filename) => {
 };
 
 export default userAxios();
-export { userRequest };
