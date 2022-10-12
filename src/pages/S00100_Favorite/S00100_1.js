@@ -26,7 +26,6 @@ const Favorite2New = ({
   const [initialValues, setInitialValues] = useState({});
   const [tabId, setTabId] = useState('C');
   const [showTip, setShowTip] = useState(false);
-  const mainContentRef = useRef();
   const sectionsRef = useRef([]);
   const dispatch = useDispatch();
 
@@ -103,11 +102,11 @@ const Favorite2New = ({
   // 點擊 tab 時
   const handleChangeTabs = (_, value) => {
     const scrollTarget = sectionsRef.current.find((el) => el.className === value);
-    scrollTarget.scrollIntoView({ behavior: 'smooth' });
+    scrollTarget.scrollIntoView();
   };
 
-  const handleScrollContent = () => {
-    const { scrollTop } = mainContentRef.current;
+  const handleScrollContent = (event) => {
+    const { scrollTop } = event.target;
     const currentSection = sectionsRef.current.find((el) => el.offsetTop >= scrollTop);
     if (currentSection.className !== tabId) setTabId(currentSection.className);
   };
@@ -180,7 +179,6 @@ const Favorite2New = ({
 
       <form
         className="mainContent"
-        ref={mainContentRef}
         onScroll={handleScrollContent}
       >
         { renderBlockGroup() }
