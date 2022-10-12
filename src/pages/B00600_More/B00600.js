@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-use-before-define */
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -11,8 +9,8 @@ import { iconGenerator } from 'pages/S00100_Favorite/favoriteGenerator';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-// import { showPrompt } from 'utilities/MessageModal';
 import { startFunc } from 'utilities/AppScriptProxy';
+import EmptyData from 'components/EmptyData';
 import { getMoreList } from './api';
 import MoreWrapper from './B00600.style';
 
@@ -21,12 +19,9 @@ import MoreWrapper from './B00600.style';
  */
 const More = () => {
   const dispatch = useDispatch();
-  const funcListRef = useRef();
   const groupsRef = useRef([]);
-
   const [funcGroups, setFuncGroups] = useState([]);
   const [currentGroup, setCurrentGroup] = useState();
-  const [sectionPosition, setSectionPosition] = useState([]);
 
   /**
    * 頁面啟動，初始化
@@ -56,30 +51,20 @@ const More = () => {
    */
   const handleChangeTabs = (_, value) => {
     const scrollTarget = groupsRef.current.find((el) => el.className === value);
-    scrollTarget.scrollIntoView({ behavior: 'smooth' });
+    // scrollIntoView 會觸發 scroll 事件 (handleScrollContent)
+    // 若提供 {behavior:'smooth'} ，則會在此 function 被觸發後造成多次 re-render
+    // 會造成 handleScrollContent 判定異常，故這邊只給預設值，只 re-render 一次就好
+    scrollTarget.scrollIntoView();
   };
 
   /**
    * 滾動單元功能清單時，調整 TAB頁籤 底線位置。
    */
-  const handleScrollContent = () => {
-    const { scrollTop } = funcListRef?.current;
+  const handleScrollContent = (event) => {
+    const { scrollTop } = event.target;
     const foundGroup = groupsRef.current.find((el) => el.offsetTop >= scrollTop);
     if (foundGroup.className !== currentGroup) setCurrentGroup(foundGroup.className);
   };
-
-  /**
-   * 滾動單元功能清單時，以單元功能分類(Section)調整 TAB頁籤 底線位置。
-   */
-  // useEffect(() => {
-  //   if (funcListRef?.current) {
-  //     const categories = Array.from(funcListRef?.current?.children);
-  //     const groupPosition = categories.map((section) => (
-  //       { id: section.className, position: section.offsetTop }
-  //     ));
-  //     setSectionPosition(groupPosition);
-  //   }
-  // }, [funcListRef?.current]);
 
   /**
    * 顯示指定分類的單元功能項目清單。
@@ -123,20 +108,24 @@ const More = () => {
   return (
     <Layout title="更多">
       <MoreWrapper small>
-        <FEIBTabContext value={currentGroup}>
-          <FEIBTabList $size="small" onChange={handleChangeTabs}>
-            {
+        {funcGroups.length ? (
+          <>
+            <FEIBTabContext value={currentGroup}>
+              <FEIBTabList $size="small" onChange={handleChangeTabs}>
+                {
               funcGroups.map((group) => (
                 <FEIBTab key={group.groupKey} label={group.groupName} value={group.groupKey} />
               ))
             }
-          </FEIBTabList>
-        </FEIBTabContext>
-        <div className="mainContent" ref={funcListRef} onScroll={handleScrollContent}>
-          {
+              </FEIBTabList>
+            </FEIBTabContext>
+            <div className="mainContent" onScroll={handleScrollContent}>
+              {
             funcGroups.map((group, groupIndex) => (renderFuncGroup(group, groupIndex)))
           }
-        </div>
+            </div>
+          </>
+        ) : <EmptyData content="查無服務，請確認網路狀態" />}
       </MoreWrapper>
     </Layout>
   );
