@@ -75,6 +75,7 @@ const BasicInformation = () => {
       reset({
         ...data,
         city: data.city.trim(),
+        county: data.county.trim(),
       });
       const { county } = data;
       const countyData = county.split(' ')[1] || county;
