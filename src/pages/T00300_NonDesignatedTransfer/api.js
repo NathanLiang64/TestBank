@@ -12,7 +12,7 @@ import { mockT00300Data } from './mockData/mockT00300Data';
  * }
  */
 export const getNonDesignatedTransferData = async () => {
-  const statusNo = 4;
+  const statusNo = 6;
   const result = await mockT00300Data(statusNo);
 
   console.log('T00300 api getNonDesignatedTransferData() result: ', {statusNo, result});
@@ -43,6 +43,35 @@ export const bifactorVerify = async (param) => {
   const result = param === 0
     ? {code: 0, msg: ''} : param === 1
       ? {code: 1, msg: ''} : {code: 2, msg: 'Error 401'};
+
+  return result;
+};
+
+/**
+ * [測試]OTP驗證：
+ * @param {otpCode} param number，OTP驗證碼
+ * @returns {
+ * code: 0 | 1 | 2    驗證不通過 | 驗證通過 | 系統錯誤
+ * msg: ''            系統錯誤訊息
+ * }
+ */
+export const OTPVerify = async (param) => {
+  console.log('T00300 api OTPVerify() param: ', param);
+  const result = {code: 1, msg: ''};
+
+  return result;
+};
+
+/**
+ * [測試]OTP驗證：
+ * @param {}
+ * @returns {
+ * code: 0 | 1 | 2    驗證不通過 | 驗證通過 | 系統錯誤
+ * msg: ''            系統錯誤訊息
+ * }
+ */
+export const MIDVerify = async () => {
+  const result = {code: 1, msg: ''};
 
   return result;
 };

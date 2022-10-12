@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import styled from 'styled-components';
-import { FEIBInput, FEIBInputLabel } from 'components/elements';
+import { FEIBErrorMessage, FEIBInput, FEIBInputLabel } from 'components/elements';
 import ConfirmButtons from 'components/ConfirmButtons';
 
 const DrawerContentWrapper = styled.div`
@@ -37,9 +37,9 @@ const T00300DrawerContent = ({
    * 資料驗證
    */
   const schema = yup.object().shape({
-    mobileNumber: yup.string().required('請輸入門號'),
+    mobileNumber: yup.string().matches(/^[0-9]{10}$/, '請輸入正確的手機號碼').required('請輸入手機號碼'),
   });
-  const { handleSubmit, control } = useForm({
+  const { handleSubmit, control, formState: { errors } } = useForm({
     defaultValues: {
       mobileNumber: mobile,
     },
@@ -64,9 +64,12 @@ const T00300DrawerContent = ({
               {...field}
               disabled={!isEdit}
               value={field.value}
+              placeholder="請輸入手機號碼"
+              error={!!errors.mobileNumber}
             />
           )}
         />
+        <FEIBErrorMessage>{errors.mobileNumber?.message}</FEIBErrorMessage>
         <div className="hint_container">
           點選確認即同意進行非約定轉帳設定與
           <span className="hint_link_text">

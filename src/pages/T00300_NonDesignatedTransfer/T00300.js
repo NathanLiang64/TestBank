@@ -11,12 +11,15 @@ import theme from 'themes/theme';
 import EditIcon from 'assets/images/icons/editIcon.svg';
 import { closeDrawer, showAnimationModal, showDrawer } from 'utilities/MessageModal';
 import { useHistory } from 'react-router';
-import { bifactorVerify, checkDeviceBindingStatus, getNonDesignatedTransferData } from './api';
+import {
+  bifactorVerify, checkDeviceBindingStatus, getNonDesignatedTransferData, MIDVerify,
+} from './api';
 
 /* Styles */
 import T00300Wrapper from './T00300.style';
 import T00300AccordionContent from './T00300_accordionContent';
 import T00300DrawerContent from './T00300_drawerContent';
+import T00300OTPDrawerContent from './T00300_OTPDrawer';
 
 /**
  * T00300 非約轉設定
@@ -72,6 +75,37 @@ const T00300 = () => {
     });
   };
 
+  const handleOTPConfirmed = async (result) => {
+    console.log('T00300 handleOTPConfirmed() result: ', result);
+
+    /* OTP驗證 通過：MID驗證 ｜ 失敗：失敗畫面 */
+    if (result.code === 1) {
+      // MID驗證
+      const resultMID = await MIDVerify();
+      console.log('T00300 handleOTPConfirmed() resultMID: ', resultMID);
+
+      if (resultMID.code === 1) {
+        onSuccess();
+      } else {
+        onFailure(resultMID.code === 0 ? 4 : 5, result.msg);
+      }
+    } else {
+      // 失敗畫面
+      onFailure(result.code === 0 ? 3 : 5, result.msg);
+    }
+  };
+
+  /**
+   * OTP驗證Drawer
+   */
+  const OTPVerifyDrawer = () => {
+    console.log('T00300 OTPVerifyDrawer()');
+    showDrawer(
+      'OTP驗證',
+      <T00300OTPDrawerContent mobile={model.mobile} handleConfirm={handleOTPConfirmed} />,
+    );
+  };
+
   /**
    * Bottom Drawer 確認按鈕行為
    * @param {data} data {isEdit, data: {mobileNumber}}
@@ -93,7 +127,8 @@ const T00300 = () => {
       /* 成功頁面 */
       onSuccess();
     } else {
-      // 修改流程
+      // 修改流程：OTP 驗證
+      OTPVerifyDrawer();
     }
   };
 
@@ -157,24 +192,6 @@ const T00300 = () => {
 
     /* 打開drawer：input 可編輯 */
     mobileNumberSettingDrawer(true);
-
-    /**
-     * 雙因子驗證
-     * 成功：OTP驗證
-     * 失敗：failureCode: 2
-     */
-
-    /**
-     * OTP驗證
-     * 成功：MID驗證
-     * 失敗：failureCode: 3
-     */
-
-    /**
-     * MID驗證
-     * 成功：成功頁面
-     * 失敗：failureCode: 4
-     */
   };
 
   /**
