@@ -11,6 +11,7 @@ const errorMessage = {
   passwordCannotSameCharacter: '「密碼」同一個字母或數字不可超過4次',
   passwordCannotConsecutive: '「密碼」連續字母或數字不可超過4位',
   passwordCannotIncludesROCID: '「密碼」不能包含身分證號碼',
+  passwordCannotSameBetweenOld: '新密碼不可與原密碼相同',
 
   // 二次確認密碼
   confirmPasswordRequired: '請再輸入一次新網銀密碼',
@@ -26,6 +27,7 @@ const errorMessage = {
   userAccountCannotSameCharacter: '使用者代號相同字母或數字不可超過4次',
   userAccountCannotConsecutive: '使用者代號連續字母或數字不可超過4位',
   userAccountCannotIncludesROCID: '輸入的使用者代號不能包含身分證號碼',
+  userAccountCannotSameBetweenOld: '新使用者代號不可與原使用者代號相同',
 
   // 二次確認使用者代號
   confirmUserAccountRequired: '請再輸入一次新的使用者代號',
@@ -248,6 +250,29 @@ export const passwordValidation = () => (
     )
 );
 
+// 新密碼驗證
+export const newPasswordValidation = (passwordKeyName) => (
+  yup.string().matches(/^(?=.*[a-zA-Z]+)(?=.*[0-9]+)[a-zA-Z0-9]+$/, errorMessage.passwordIncludeEnglishAndNumber)
+    .required(errorMessage.passwordRequired).min(8, errorMessage.passwordWrongLength)
+    .max(20, errorMessage.passwordWrongLength)
+    .test(
+      'check-password-text-repeat',
+      errorMessage.passwordCannotSameCharacter,
+      (value) => validateTextRepeat(value),
+    )
+    .test(
+      'check-password-text-continuous',
+      errorMessage.passwordCannotConsecutive,
+      (value) => validateTextContinuous(value),
+    )
+    .test(
+      'check-password-includes-ROCID',
+      errorMessage.passwordCannotIncludesROCID,
+      (value) => validateIncludesROCID(value),
+    )
+    .notOneOf([yup.ref(passwordKeyName), null], errorMessage.passwordCannotSameBetweenOld)
+);
+
 // 二次確認網銀密碼
 export const confirmPasswordValidation = (passwordKeyName) => (
   yup.string()
@@ -286,6 +311,30 @@ export const accountValidation = () => (
       (value) => validateIncludesROCID(value),
     )
   // .min(6, errorMessage.userAccountWrongLength).max(20, errorMessage.userAccountWrongLength),
+);
+
+// 新使用者代號
+export const newAccountValidation = (accountKeyName) => (
+  yup.string()
+    .required(errorMessage.userAccountRequired)
+    .matches(/^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+){6,20}$/, errorMessage.userAccountWrongFormat)
+    .test(
+      'check-user-account-text-repeat',
+      errorMessage.userAccountCannotSameCharacter,
+      (value) => validateTextRepeat(value),
+    )
+    .test(
+      'check-user-account-text-continuous',
+      errorMessage.userAccountCannotConsecutive,
+      (value) => validateTextContinuous(value),
+    )
+    .test(
+      'check-user-account-includes-ROCID',
+      errorMessage.userAccountCannotIncludesROCID,
+      (value) => validateIncludesROCID(value),
+    )
+    .notOneOf([yup.ref(accountKeyName), null], errorMessage.userAccountCannotSameBetweenOld)
+// .min(6, errorMessage.userAccountWrongLength).max(20, errorMessage.userAccountWrongLength),
 );
 
 // 二次確認使用者代號

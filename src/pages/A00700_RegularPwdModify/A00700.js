@@ -14,7 +14,7 @@ import PasswordInput from 'components/PasswordInput';
 import ConfirmButtons from 'components/ConfirmButtons';
 import InfoArea from 'components/InfoArea';
 import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
-import { confirmPasswordValidation, passwordValidation } from 'utilities/validation';
+import { confirmPasswordValidation, newPasswordValidation, passwordValidation } from 'utilities/validation';
 import e2ee from 'utilities/E2ee';
 
 /* Styles */
@@ -30,7 +30,7 @@ const RegularPwdModify = () => {
    */
   const schema = yup.object().shape({
     password: passwordValidation(),
-    newPassword: passwordValidation(),
+    newPassword: newPasswordValidation('password'),
     newPasswordCheck: confirmPasswordValidation('newPassword'),
   });
   const {
