@@ -23,8 +23,8 @@ const T00100settingList = [
   // },
   {
     name: '非約定轉帳設定',
-    route: '',
-    funcID: '0',
+    route: '/T00300',
+    funcID: 'T00300',
   },
   {
     name: '無卡提款設定',
