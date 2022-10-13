@@ -96,7 +96,7 @@ export const queryOTP = async (request) => {
  *
  * @param token
  * @param rq {
- *    status: 申請狀態
+ *    status: 申請狀態 (01:申請,  02:註銷 , 03:密碼重製 , 04:變更手機號碼)
  *    mobile: 手機號碼
  * }
  * @return {
@@ -105,6 +105,6 @@ export const queryOTP = async (request) => {
  * }
  */
 export const updateOTP = async (request) => {
-  const response = await callAPI('/api/transfer/debit/v1/updateOTP"', request);
+  const response = await callAPI('/api/transfer/debit/v1/updateOTP', request);
   return response;
 };
