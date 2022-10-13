@@ -1,3 +1,4 @@
+import { useHistory } from 'react-router';
 import { useEffect, useState } from 'react';
 import { StarRounded } from '@material-ui/icons';
 
@@ -14,6 +15,9 @@ import { ArrowNextIcon } from 'assets/images/icons';
 import { getBonusPeriodList, getDepositPlus, getDepositPlusLevelList } from './api';
 import DepositPlusWrapper, { LevelDialogContentWrapper } from './depositPlus.style';
 
+/**
+ * DepositPlus 優惠利率額度
+ */
 const Deposit = () => {
   const [tabId, setTabId] = useState('');
   const [monthly, setMonthly] = useState([]);
@@ -21,11 +25,14 @@ const Deposit = () => {
   const [openLevelDialog, setOpenLevelDialog] = useState(false);
   const [depositPlusDetail, setDepositPlusDetail] = useState({});
 
-  const {
-    period, bonusDetail, summaryRate, summaryBonusQuota,
-  } = depositPlusDetail;
+  const history = useHistory();
 
-  const renderText = (value) => value || '-';
+  // const {
+  //   period, bonusDetail, summaryRate, summaryBonusQuota,
+  // } = depositPlusDetail;
+
+  /* 若無值，顯示0而非橫線 */
+  const renderText = (value) => value || '0';
 
   const renderLevelDialogContent = () => (
     <LevelDialogContentWrapper>
@@ -115,16 +122,16 @@ const Deposit = () => {
 
         <div className="mainArea">
           <span>
-            {`${renderText(period?.substr(0, 4))}/${renderText(period?.substr(4))} `}
+            {`${renderText(depositPlusDetail.period?.substr(0, 4))}/${renderText(depositPlusDetail.period?.substr(4))} `}
             優惠利率額度總計
           </span>
-          <h3>{`$${renderText(summaryBonusQuota)}`}</h3>
+          <h3>{`$${renderText(depositPlusDetail.summaryBonusQuota)}`}</h3>
         </div>
 
         <section className="detailArea">
           <div className="sectionTitle">
             <h3>活動明細</h3>
-            <button type="button" onClick={() => setOpenLevelDialog(true)}>
+            <button type="button" onClick={() => history.push('/depositPlusDetail', { bonusDetail: depositPlusDetail.bonusDetail, dialogContent: renderLevelDialogContent })}>
               各項活動說明
               <ArrowNextIcon />
             </button>
@@ -135,7 +142,18 @@ const Deposit = () => {
               <span>活動名稱/說明</span>
               <span>優惠定額上限</span>
             </li>
-            <li className="listBody">
+            {!!depositPlusDetail.bonusDetail && depositPlusDetail.bonusDetail.map((detail) => (
+              <li className="listBody" key={detail}>
+                <div>
+                  <p>{detail.promotionName}</p>
+                  <span>{detail.memo}</span>
+                </div>
+                <p className="limitPrice">
+                  {`$${renderText(detail.bonusQuota)}`}
+                </p>
+              </li>
+            ))}
+            {/* <li className="listBody">
               <div>
                 <p>社群圈優惠額度</p>
                 <span>依優惠額度等級</span>
@@ -143,18 +161,18 @@ const Deposit = () => {
               <p className="limitPrice">
                 {`$${bonusDetail?.length ? bonusDetail[0].bonusQuota : '-'}`}
               </p>
-            </li>
-            <li className="listBody">
+            </li> */}
+            {/* <li className="listBody">
               <div>
                 <p>
                   {`${renderText(summaryRate * 100)}% 通通有`}
                   <StarRounded className="starIcon" />
                 </p>
-                {/* TODO 改為「優惠到期日：」 */}
+                TODO 改為「優惠到期日：」
                 <span>優惠到期日：</span>
               </div>
               <p className="limitPrice">{`$${renderText(summaryBonusQuota)}`}</p>
-            </li>
+            </li> */}
           </ul>
 
           <div className="remarkArea">
@@ -166,7 +184,7 @@ const Deposit = () => {
 
         <Dialog
           isOpen={openLevelDialog}
-          title="優惠利率額度等級"
+          title="存款優惠利率額度等級表"
           onClose={() => setOpenLevelDialog(false)}
           content={renderLevelDialogContent()}
           action={<FEIBButton onClick={() => setOpenLevelDialog(false)}>確定</FEIBButton>}

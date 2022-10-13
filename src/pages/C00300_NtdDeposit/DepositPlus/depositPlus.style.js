@@ -135,5 +135,36 @@ const LevelDialogContentWrapper = styled.div`
   }
 `;
 
+const DepositPlusDetailWrapper = styled(Layout)`
+  background-color: ${({ theme }) => theme.colors.background.lighterBlue};
+  .activityCard {
+    margin: 0 -1.6rem 1rem -1.6rem;
+    padding: 1rem;
+    background-color: ${({ theme }) => theme.colors.basic.white};
+
+    .activityCard_upper {
+      padding: 1rem 1rem 2rem 1rem;
+      border-bottom: 1px solid ${({ theme }) => theme.colors.border.lightest};
+
+      display: flex;
+
+      .title {
+        margin-right: auto;
+      }
+      .detail {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        font-size: 90%;
+      }
+    }
+    .activityCard_lower {
+      padding: 2rem 1rem 1rem 1rem;
+      color: ${({ theme }) => theme.colors.text.light};
+    }
+  }
+`;
+
 export default DepositPlusWrapper;
 export { LevelDialogContentWrapper };
+export { DepositPlusDetailWrapper };
