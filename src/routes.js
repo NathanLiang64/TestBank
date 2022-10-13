@@ -58,6 +58,8 @@ const R00600 = lazy(() => import('pages/R00600_Adjustment'));
 const R006001 = lazy(() => import('pages/R00600_Adjustment/adjustment_1'));
 const S00400 = lazy(() => import('pages/S00400_NoticeSetting'));
 const S00600 = lazy(() => import('pages/S00600_QandA'));
+const S00700 = lazy(() => import('pages/S00700_DebitCardActive/S00700'));
+const S00800 = lazy(() => import('pages/S00800_LossReissue/S00800'));
 const T00100 = lazy(() => import('pages/T00100_Profile/T00100'));
 const T00200 = lazy(() => import('pages/T00200_QuickLoginSetting'));
 const T00300 = lazy(() => import('pages/T00300_NonDesignatedTransfer/T00300'));
@@ -69,9 +71,7 @@ const T00700 = lazy(() => import('pages/T00700_BasicInformation'));
 const T00800 = lazy(() => import('pages/T00800_ChangeUserName'));
 const T00900 = lazy(() => import('pages/T00900_PwdModify'));
 const S00100 = lazy(() => import('pages/S00100_Favorite/S00100'));
-const FavoriteOld = lazy(() => import('pages/S00100_Favorite/FavoriteOld'));
 
-const S00800 = lazy(() => import('pages/S00800_LossReissue/S00800'));
 const AccountMaintenance = lazy(() => import('pages/AccountMaintenance'));
 const BillPay = lazy(() => import('pages/BillPay'));
 const BillPay1 = lazy(() => import('pages/BillPay/billPay_1'));
@@ -158,9 +158,10 @@ const routes = [
   {path: '/R00600', exact: false, component: R00600},
   {path: '/R006001', exact: false, component: R006001},
   {path: '/S00100', exact: true, component: S00100},
-  {path: '/favoriteold', exact: true, component: FavoriteOld},
   {path: '/S00400', exact: true, component: S00400},
   {path: '/S00600', exact: false, component: S00600},
+  {path: '/S00700', exact: false, component: S00700},
+  {path: '/S00800', exact: false, component: S00800},
   {path: '/T00100', exact: false, component: T00100},
   {path: '/T00600', exact: false, component: T00600},
   {path: '/T006001', exact: false, component: T006001},
@@ -173,7 +174,6 @@ const routes = [
   {path: '/T00900', exact: false, component: T00900},
 
   // 缺 function id
-  {path: '/S00800', exact: false, component: S00800},
   {path: '/accountMaintenance', exact: false, component: AccountMaintenance},
   {path: '/billPay', exact: true, component: BillPay},
   {path: '/billPay1', exact: false, component: BillPay1},
