@@ -8,13 +8,17 @@ import { FEIBButton } from 'components/elements';
 import { CheckboxField, TextInputField } from 'components/Fields';
 import Layout from 'components/Layout/Layout';
 import personalSaveContent from 'pages/ProjectJ/personalSaveContent';
-import { closeFunc, getQLStatus, transactionAuth } from 'utilities/AppScriptProxy';
+import {
+  closeFunc, getQLStatus, startFunc, transactionAuth,
+} from 'utilities/AppScriptProxy';
 import { showAnimationModal, showCustomPrompt, showError } from 'utilities/MessageModal';
+import { useHistory } from 'react-router';
 import DebitCardActiveWrapper from './S00700.style';
 import { validationSchema } from './validationSchema';
 import { successDesc } from './utils';
 
 const S00700 = () => {
+  const history = useHistory();
   const {control, handleSubmit} = useForm({
     defaultValues: {
       accountNo: '11111111111111',
@@ -33,40 +37,31 @@ const S00700 = () => {
     } = await getQLStatus();
 
     if (result === 'true') {
-      // 未綁定
       if (QLStatus === '0') {
+        // 未綁定
         await showCustomPrompt({
           message: '無裝置綁定，請先進行裝置綁定設定或致電客服',
-          onOk: async () => {
-            try {
-              const auth = await transactionAuth(0x30); // 需通過 2FA 或 網銀密碼 驗證才能關閉計劃。
-              console.log('auuuuuuuuuuuuth', auth);
-              if (auth.result) {
-                showAnimationModal({
-                  isSuccess: true,
-                  successTitle: '金融卡設定結果',
-                  errorTitle: '金融卡設定結果',
-                  successDesc: successDesc(),
-                  errorDesc: <div>設定失敗</div>,
-                  onClose: () => closeFunc(),
-                });
-              } else {
-                closeFunc();
-              }
-            } catch (error) {
-              showAnimationModal({
-                isSuccess: false,
-                errorTitle: '驗證失敗',
-                errorDesc: '網路密碼驗證失敗，請重新執行或致電客服',
-                onClose: () => closeFunc(),
-              });
-            }
-          },
-          okContent: '若已綁定 (mockdata)，進行雙因子認證',
-
+        });
+      } else if (QLStatus === '3' || QLStatus === '4') {
+        // 已綁定但不同裝置
+        await showCustomPrompt({
+          message: '您已進行裝置綁定，請至原裝置解除綁定或致電客服',
         });
       } else {
-        console.log('yoyoyo');
+        const auth = await transactionAuth(0x30); // 需通過 2FA 或 網銀密碼 驗證才能進行金融卡開啟。
+        if (auth.result) {
+          // TODO 打金融卡啟用的API
+          const debitActiveResponse = {result: true, message: 'errorMessage'};
+          history.push(
+            '/S007001',
+            {
+              isSuccess: !!debitActiveResponse?.result,
+              successTitle: '設定成功',
+              errorTitle: '設定失敗',
+              errorDesc: debitActiveResponse?.message,
+            },
+          );
+        }
       }
     } else {
       // 回傳失敗

@@ -80,10 +80,11 @@ const Page = () => {
     const onFinished = async (newAcct) => {
       const successful = await addFrequentAccount(newAcct);
       if (successful) {
-        setAccounts(setLocalData(storageName, [{
+        const setData = await setLocalData(storageName, [{
           ...newAcct,
           isNew: true,
-        }, ...accounts]));
+        }, ...accounts]);
+        setAccounts(setData);
       }
       dispatch(setDrawerVisible(false));
     };
@@ -104,12 +105,12 @@ const Page = () => {
         orgAcctId: acctId,
       });
       if (successful) {
-        const updatedAccount = accounts.slice();
-        const foundIndex = accounts.findIndex((account) => account.acctId === acct.acctId);
-        if (foundIndex !== -1) {
-          updatedAccount[foundIndex].isNew = false;
-        }
-        setAccounts(setLocalData(storageName, [...updatedAccount])); // 強制更新清單。
+        const updatedAccount = accounts.map((account) => {
+          if (account.acctId === acct.acctId) return newAcct;
+          return account;
+        });
+        const setData = await setLocalData(storageName, updatedAccount);
+        setAccounts(setLocalData(storageName, setData)); // 強制更新清單。
       }
       dispatch(setDrawerVisible(false));
     };
