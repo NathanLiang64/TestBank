@@ -1,58 +1,89 @@
-/* eslint-disable no-unused-vars */
-import { useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router';
+import React from 'react';
+import { useLocation, useHistory } from 'react-router';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import { ArrowNextIcon } from 'assets/images/icons';
+import { showCustomPrompt } from 'utilities/MessageModal';
+import { getDepositPlusLevelList } from './api';
 
 /* Style */
-import { DepositPlusDetailWrapper } from './depositPlus.style';
-
-export const mockData = {
-  rate: '0.026',
-  bonusQuota: '0',
-  promotionType: 'A',
-  startDate: null,
-  endDate: null,
-  promotionName: '社群圈優惠額度*',
-  memo: '依優惠額度等級',
-  brief: '●適用優惠：社群圈存款月平均餘額之總額當月達到指定門檻，推薦人次月可享活存利率加碼優惠。<br>●備註：本專案優惠與標示*活動之優惠額度採擇優計算。<br><a href="" target="_blank">優惠額度等級表</a>',
-};
+import { DepositPlusDetailWrapper, LevelDialogContentWrapper } from './depositPlus.style';
 
 /**
  * DepositPlusDetail 各項活動說明
  */
 const DepositPlusDetail = () => {
-  console.log('C00300 DepositPlusDetail');
   const location = useLocation();
+  const history = useHistory();
 
-  const handleDetailOnClick = (detailText) => {
-    console.log('C00300 DepositPlusDetail handleDetailOnClick detailText: ', detailText);
+  const url26Pa = 'https://www.bankee.com.tw/event/26Pa/index.html';
 
+  const renderLevelDialogContent = (levelList) => (
+    <LevelDialogContentWrapper>
+      <table>
+        <caption>幣別：新臺幣（元）</caption>
+        <thead>
+          <tr>
+            <th>等級</th>
+            <th>
+              社群圈存款
+              <br />
+              月平均餘額之總額
+            </th>
+            <th>
+              推薦人個人
+              <br />
+              優惠利率存款額度
+            </th>
+          </tr>
+        </thead>
+        <tbody className="rowCenter1 rowRight2 rowRight3">
+          { levelList.map((item) => {
+            const { range, offlineDepositRange, plus } = item;
+            return (
+              <tr key={range}>
+                <td>{range}</td>
+                <td>{offlineDepositRange}</td>
+                <td>{plus}</td>
+              </tr>
+            );
+          }) }
+        </tbody>
+      </table>
+    </LevelDialogContentWrapper>
+  );
+
+  const handleDetailOnClick = async (detailText) => {
     if (detailText === '優惠額度等級表') {
-      console.log('C00300 DepositPlusDetail handleDetailOnClick: 顯示Dialog');
+      const { year } = location.state;
+      const levelList = await getDepositPlusLevelList({ year });
+      showCustomPrompt({
+        title: '存款優惠利率額度等級表',
+        message: renderLevelDialogContent(levelList),
+      });
     } else {
-      console.log('C00300 DepositPlusDetail handleDetailOnClick: 開啟網頁');
+      window.open(url26Pa, '_blank');
     }
   };
 
   const ActivityCard = (data) => {
-    console.log('C00300 DepositPlusDetail activityCard data: ', data);
     const { title, detail } = data;
 
-    const detailText = detail.split(/[><]/).slice(-3, -2)[0];
+    /* 取得連結文字 */
+    const detailText = detail.match(/">(.*?)<\/a>/g)[0].replace(/<\/?a>/g, '').replace(/">/g, '');
 
     return (
       <div className="activityCard">
         <div className="activityCard_upper">
           <div className="title">{title}</div>
-          <div className="detail" onClick={() => handleDetailOnClick(detailText)}>
+          <div className="detail" onClick={async () => await handleDetailOnClick(detailText)}>
             {detailText}
             <ArrowNextIcon />
           </div>
         </div>
         <div className="activityCard_lower">
+          {/* eslint-disable-next-line react/no-danger */}
           <div dangerouslySetInnerHTML={{__html: detail}} />
         </div>
       </div>
@@ -61,8 +92,13 @@ const DepositPlusDetail = () => {
 
   return (
     <DepositPlusDetailWrapper>
-      <Layout title="各項活動說明">
-        <ActivityCard title={mockData.promotionName} detail={mockData.brief} />
+      <Layout title="各項活動說明" goBackFunc={() => history.goBack()}>
+        <div>
+          各項活動說明
+          {location.state.bonusDetail.map((detail) => (
+            <ActivityCard key={detail} title={detail.promotionName} detail={detail.brief} />
+          ))}
+        </div>
       </Layout>
     </DepositPlusDetailWrapper>
   );

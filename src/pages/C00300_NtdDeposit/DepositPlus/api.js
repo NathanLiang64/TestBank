@@ -39,9 +39,9 @@ export const getDepositPlusLevelList = async (params) => {
  *  bonusDetail: [
  *    rate: string,
  *    bonusQuota: 優惠定額上限,
- *    promotionType: string (?),
- *    startDate: (?),
- *    endDate: (?),
+ *    promotionType: string,
+ *    startDate: string | null,
+ *    endDate: string | null,
  *    promotionName: 活動名稱,
  *    memo: 活動說明,
  *    brief: 各項活動說明之說明,

@@ -4,16 +4,16 @@ import { StarRounded } from '@material-ui/icons';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-import Dialog from 'components/Dialog';
+// import Dialog from 'components/Dialog';
 import {
-  FEIBButton, FEIBTab, FEIBTabContext, FEIBTabList,
+  FEIBTab, FEIBTabContext, FEIBTabList,
 } from 'components/elements';
 
 /* Reducers & JS functions */
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { ArrowNextIcon } from 'assets/images/icons';
 import { getBonusPeriodList, getDepositPlus, getDepositPlusLevelList } from './api';
-import DepositPlusWrapper, { LevelDialogContentWrapper } from './depositPlus.style';
+import DepositPlusWrapper from './depositPlus.style';
 
 /**
  * DepositPlus 優惠利率額度
@@ -22,52 +22,12 @@ const Deposit = () => {
   const [tabId, setTabId] = useState('');
   const [monthly, setMonthly] = useState([]);
   const [levelList, setLevelList] = useState([]);
-  const [openLevelDialog, setOpenLevelDialog] = useState(false);
   const [depositPlusDetail, setDepositPlusDetail] = useState({});
 
   const history = useHistory();
 
-  // const {
-  //   period, bonusDetail, summaryRate, summaryBonusQuota,
-  // } = depositPlusDetail;
-
   /* 若無值，顯示0而非橫線 */
   const renderText = (value) => value || '0';
-
-  const renderLevelDialogContent = () => (
-    <LevelDialogContentWrapper>
-      <table>
-        <caption>幣別：新臺幣（元）</caption>
-        <thead>
-          <tr>
-            <th>等級</th>
-            <th>
-              社群圈存款
-              <br />
-              月平均餘額之總額
-            </th>
-            <th>
-              推薦人個人
-              <br />
-              優惠利率存款額度
-            </th>
-          </tr>
-        </thead>
-        <tbody className="rowCenter1 rowRight2 rowRight3">
-          { levelList.map((item) => {
-            const { range, offlineDepositRange, plus } = item;
-            return (
-              <tr key={range}>
-                <td>{range}</td>
-                <td>{offlineDepositRange}</td>
-                <td>{plus}</td>
-              </tr>
-            );
-          }) }
-        </tbody>
-      </table>
-    </LevelDialogContentWrapper>
-  );
 
   const renderMonthlyTabs = (list) => list.map((month) => (
     <FEIBTab key={month} label={`${month.substr(4)}月`} value={month} />
@@ -80,6 +40,10 @@ const Deposit = () => {
       </FEIBTabList>
     </FEIBTabContext>
   );
+
+  const nextPage = () => {
+    history.push('/depositPlusDetail', { bonusDetail: depositPlusDetail.bonusDetail, year: tabId.substr(0, 4) });
+  };
 
   useCheckLocation();
   usePageInfo('/api/depositPlus');
@@ -113,7 +77,7 @@ const Deposit = () => {
       getDepositPlusLevelList({ year })
         .then((response) => setLevelList(response ?? []));
     }
-  }, [openLevelDialog, levelList.length]);
+  }, [levelList.length]);
 
   return (
     <Layout title="優惠利率額度">
@@ -131,7 +95,7 @@ const Deposit = () => {
         <section className="detailArea">
           <div className="sectionTitle">
             <h3>活動明細</h3>
-            <button type="button" onClick={() => history.push('/depositPlusDetail', { bonusDetail: depositPlusDetail.bonusDetail, dialogContent: renderLevelDialogContent })}>
+            <button type="button" onClick={() => nextPage()}>
               各項活動說明
               <ArrowNextIcon />
             </button>
@@ -153,26 +117,6 @@ const Deposit = () => {
                 </p>
               </li>
             ))}
-            {/* <li className="listBody">
-              <div>
-                <p>社群圈優惠額度</p>
-                <span>依優惠額度等級</span>
-              </div>
-              <p className="limitPrice">
-                {`$${bonusDetail?.length ? bonusDetail[0].bonusQuota : '-'}`}
-              </p>
-            </li> */}
-            {/* <li className="listBody">
-              <div>
-                <p>
-                  {`${renderText(summaryRate * 100)}% 通通有`}
-                  <StarRounded className="starIcon" />
-                </p>
-                TODO 改為「優惠到期日：」
-                <span>優惠到期日：</span>
-              </div>
-              <p className="limitPrice">{`$${renderText(summaryBonusQuota)}`}</p>
-            </li> */}
           </ul>
 
           <div className="remarkArea">
@@ -181,14 +125,6 @@ const Deposit = () => {
             <span>活動之優惠利率擇優計算</span>
           </div>
         </section>
-
-        <Dialog
-          isOpen={openLevelDialog}
-          title="存款優惠利率額度等級表"
-          onClose={() => setOpenLevelDialog(false)}
-          content={renderLevelDialogContent()}
-          action={<FEIBButton onClick={() => setOpenLevelDialog(false)}>確定</FEIBButton>}
-        />
       </DepositPlusWrapper>
     </Layout>
   );

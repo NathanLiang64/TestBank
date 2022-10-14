@@ -123,14 +123,30 @@ const DepositPlusWrapper = styled(Layout)`
 `;
 
 const LevelDialogContentWrapper = styled.div`
-
   table {
+    caption {
+      text-align: center;
+    }
+
+    thead {
+      tr {
+        th {
+          word-break: keep-all;
+          vertical-align: middle;
+        }
+        
+        th:nth-child(2) {
+          max-width: 12rem;
+        }
+      }
+    }
+    
     tbody {
       font-size: 1.2rem;
     }
-    
-    thead > tr > th:nth-child(2) {
-      max-width: 12rem;
+    tbody.rowRight2 > tr > td:nth-child(2),
+    tbody.rowRight2 > tr > td:nth-child(3) {
+      text-align: center;
     }
   }
 `;
