@@ -27,6 +27,7 @@ const Favorite2New = ({
   const [tabId, setTabId] = useState('C');
   const [showTip, setShowTip] = useState(false);
   const sectionsRef = useRef([]);
+  const mainContentRef = useRef();
   const dispatch = useDispatch();
 
   // 我的最愛表單
@@ -103,12 +104,23 @@ const Favorite2New = ({
   const handleChangeTabs = (_, value) => {
     const scrollTarget = sectionsRef.current.find((el) => el.className === value);
     scrollTarget.scrollIntoView();
+    const { scrollHeight, scrollTop, offsetHeight } = mainContentRef.current;
+    if ((scrollHeight === scrollTop + offsetHeight)) {
+      setTabId(value);
+    }
   };
 
   const handleScrollContent = (event) => {
-    const { scrollTop } = event.target;
-    const currentSection = sectionsRef.current.find((el) => el.offsetTop >= scrollTop);
-    if (currentSection.className !== tabId) setTabId(currentSection.className);
+    const { scrollHeight, scrollTop, offsetHeight } = event.target;
+    // const currentSection = sectionsRef.current.find((el) => el.offsetTop >= scrollTop);
+    if ((scrollHeight !== scrollTop + offsetHeight)) {
+      const foundSection = sectionsRef.current.find((el) => {
+        const top = el.offsetTop;
+        const bottom = el.offsetTop + el.offsetHeight;
+        return (scrollTop >= top && scrollTop < bottom);
+      });
+      if (foundSection && foundSection.className !== tabId) setTabId(foundSection.className);
+    }
   };
 
   const renderBlockGroup = () => favoriteSettingList.map(({groupKey, groupName, items}, index) => (
@@ -179,6 +191,7 @@ const Favorite2New = ({
 
       <form
         className="mainContent"
+        ref={mainContentRef}
         onScroll={handleScrollContent}
       >
         { renderBlockGroup() }

@@ -1,9 +1,11 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { FEIBButton, FEIBInputLabel, FEIBInput } from 'components/elements';
 import Badge from 'components/Badge';
 import Avatar from 'components/Avatar';
-import { accountFormatter } from 'utilities/Generator';
+import { accountFormatter, toHalfWidth } from 'utilities/Generator';
+// import AvatarField from 'components/Fields/avatarField';
 import { DrawerWrapper } from './D00600.style';
 
 /**
@@ -31,7 +33,7 @@ function AccountEditor({
    */
   const { control, handleSubmit, formState: { errors } } = useForm({
     mode: 'onSubmit',
-    defaultValues: initData,
+    defaultValues: {...initData, nickName: toHalfWidth(initData.nickName)},
   });
 
   /**
@@ -59,12 +61,13 @@ function AccountEditor({
         </Badge>
         <div className="flex-col">
           <div className="self-center">
-            <Avatar src={model.headshot} name={model.nickName} />
+            <Avatar src={model.headshot} name={model.nickName} control={control} formName="headshot" />
+            {/* <AvatarField src={model.headshot} name={model.nickName} control={control} formName="headshot" /> */}
           </div>
           <FEIBInputLabel htmlFor={idNickName}>暱稱</FEIBInputLabel>
           <Controller
             name={idNickName}
-            defaultValue={model.nickName}
+            // defaultValue={model.nickName}
             control={control}
             render={({ field }) => (
               <FEIBInput

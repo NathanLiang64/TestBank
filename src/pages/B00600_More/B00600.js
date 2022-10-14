@@ -1,4 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+/* eslint-disable no-unused-vars */
+import {
+  useState, useEffect, useRef, useMemo,
+} from 'react';
 import { useDispatch } from 'react-redux';
 
 /* Elements */
@@ -20,6 +23,7 @@ import MoreWrapper from './B00600.style';
 const More = () => {
   const dispatch = useDispatch();
   const groupsRef = useRef([]);
+  const mainContentRef = useRef();
   const [funcGroups, setFuncGroups] = useState([]);
   const [currentGroup, setCurrentGroup] = useState();
 
@@ -55,15 +59,27 @@ const More = () => {
     // 若提供 {behavior:'smooth'} ，則會在此 function 被觸發後造成多次 re-render
     // 會造成 handleScrollContent 判定異常，故這邊只給預設值，只 re-render 一次就好
     scrollTarget.scrollIntoView();
+    const { scrollHeight, scrollTop, offsetHeight } = mainContentRef.current;
+    if ((scrollHeight === scrollTop + offsetHeight)) {
+      setCurrentGroup(value);
+    }
   };
 
   /**
    * 滾動單元功能清單時，調整 TAB頁籤 底線位置。
    */
   const handleScrollContent = (event) => {
-    const { scrollTop } = event.target;
-    const foundGroup = groupsRef.current.find((el) => el.offsetTop >= scrollTop);
-    if (foundGroup.className !== currentGroup) setCurrentGroup(foundGroup.className);
+    const { scrollHeight, scrollTop, offsetHeight } = event.target;
+    if ((scrollHeight !== scrollTop + offsetHeight)) {
+      const foundGroup = groupsRef.current.find((el) => {
+        const top = el.offsetTop;
+        const bottom = el.offsetTop + el.offsetHeight;
+        return (scrollTop >= top && scrollTop < bottom);
+      });
+      if (foundGroup && foundGroup.className !== currentGroup) {
+        setCurrentGroup(foundGroup.className);
+      }
+    }
   };
 
   /**
@@ -102,6 +118,8 @@ const More = () => {
     );
   };
 
+  // console.log(isScrollToEnd);
+
   /**
    * 頁面輸出
    */
@@ -119,10 +137,10 @@ const More = () => {
             }
               </FEIBTabList>
             </FEIBTabContext>
-            <div className="mainContent" onScroll={handleScrollContent}>
+            <div className="mainContent" ref={mainContentRef} onScroll={handleScrollContent}>
               {
-            funcGroups.map((group, groupIndex) => (renderFuncGroup(group, groupIndex)))
-          }
+                funcGroups.map((group, groupIndex) => (renderFuncGroup(group, groupIndex)))
+              }
             </div>
           </>
         ) : <EmptyData content="查無服務，請確認網路狀態" />}

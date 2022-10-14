@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Avatar from 'components/Avatar';
 import { DeleteIcon, EditIcon } from 'assets/images/icons';
+import { toHalfWidth } from 'utilities/Generator';
 import MemberAccountCardWrapper from './memberAccountCard.style';
 
 /**
@@ -129,7 +130,9 @@ const MemberAccountCard = ({
       <div className="memberInfo">
         <div className="flex-auto">
           <div className="title">
-            {name || '會員'}
+            {/* 後端目前會回傳全型文字，暫以此方法將文字轉為半形 */}
+            {/* 後續需請後端修正回傳文字之格式 */}
+            {toHalfWidth(name) || '會員'}
             {hasNewTag && (<div className="new-tag">New</div>)}
           </div>
           <div className="note">
