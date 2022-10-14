@@ -1,5 +1,6 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-vars */
+import { callAPI } from 'utilities/axios';
 import { mockT00300Data } from './mockData/mockT00300Data';
 
 /**
@@ -74,4 +75,36 @@ export const MIDVerify = async () => {
   const result = {code: 1, msg: ''};
 
   return result;
+};
+
+/**
+ * 查詢非約轉設定狀態與非約轉手機號碼
+ *
+ * @param token
+ * @return {
+ *    status: 非約轉申請狀態 (0-未申請 , 1-已申請未開通 , 2-密碼逾期30日 , 3-已開通 , 4-已註銷 , 5-OTP啟用密碼錯誤鎖定 , 6-OTP交易密碼錯誤鎖定 , 7-其他)
+ *    mobile: 手機號碼
+ * }
+ */
+export const queryOTP = async (request) => {
+  const response = await callAPI('/api/transfer/debit/v1/queryOTP', request);
+  return response;
+};
+
+/**
+ * 更新非約轉狀態或非約轉手機號碼
+ *
+ * @param token
+ * @param rq {
+ *    status: 申請狀態 (01:申請,  02:註銷 , 03:密碼重製 , 04:變更手機號碼)
+ *    mobile: 手機號碼
+ * }
+ * @return {
+ *    code:   0000 表示成功
+ *    message: 訊息類別
+ * }
+ */
+export const updateOTP = async (request) => {
+  const response = await callAPI('/api/transfer/debit/v1/updateOTP', request);
+  return response;
 };

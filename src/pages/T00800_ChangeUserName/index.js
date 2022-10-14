@@ -15,7 +15,7 @@ import {
 import PasswordInput from 'components/PasswordInput';
 import Layout from 'components/Layout/Layout';
 import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
-import { accountValidation, confirmAccountValidation } from 'utilities/validation';
+import { accountValidation, newAccountValidation, confirmAccountValidation } from 'utilities/validation';
 
 /* Styles */
 import ChangeUserNameWrapper from './changeUserName.style';
@@ -27,7 +27,7 @@ const ChangeUserName = () => {
    */
   const schema = yup.object().shape({
     userName: accountValidation(),
-    newUserName: accountValidation(),
+    newUserName: newAccountValidation('userName'),
     newUserNameCheck: confirmAccountValidation('newUserName'),
   });
   const {

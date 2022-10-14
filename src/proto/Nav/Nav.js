@@ -44,6 +44,7 @@ const Nav = () => {
           <div onClick={() => startFunc('D00500')}>D00500 常用帳號管理</div>
           <div onClick={() => startFunc('D00600')}>D00600 約定帳號管理</div>
           <div onClick={() => startFunc('B00600')}>B00600 更多...</div>
+          <div onClick={() => startFunc('S00700')}>S00700 金融卡啟用</div>
 
           <div onClick={async () => console.log('*** Result from AppScriptProxy : ', await transactionAuth(0x26))}>
             基本資料變更-電子郵件(2FA / OTP)
