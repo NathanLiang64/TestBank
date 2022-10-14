@@ -35,6 +35,7 @@ const AccountCard = ({
   annotation,
   ariaLabel,
   children,
+  isShowAccoutNo = true,
 }) => (
   <AccountCardWrapper
     title={ariaLabel || cardName}
@@ -50,7 +51,7 @@ const AccountCard = ({
             %
           </div>
         </div>
-        <div>{accountNo && accountFormatter(accountNo)}</div>
+        {isShowAccoutNo && <div>{accountNo && accountFormatter(accountNo)}</div>}
         <div className="justify-between items-end">
           <div>{annotation}</div>
           <div className="balance">

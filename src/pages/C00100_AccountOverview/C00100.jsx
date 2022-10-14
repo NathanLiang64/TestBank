@@ -51,11 +51,11 @@ const AccountOverviewPage = () => {
     const slides = [];
 
     if (data?.assets && data.assets.length > 0) {
-      slides.push(<AccountCardList key={uuid()} data={data.assets} />);
+      slides.push(<AccountCardList key={uuid()} data={data.assets} isDebt={false} />);
     }
 
     if (data?.debts && data.debts.length > 0) {
-      slides.push(<AccountCardList key={uuid()} data={data.debts} />);
+      slides.push(<AccountCardList key={uuid()} data={data.debts} isDebt />);
     }
 
     return slides;

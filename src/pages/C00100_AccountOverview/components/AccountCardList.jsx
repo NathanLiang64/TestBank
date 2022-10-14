@@ -15,7 +15,7 @@ import AccountCardListWrapper from './AccountCardList.style';
  *   2. 依照spec，帳戶總覽不呈現社群帳本。
  * 最後，再依金額排序。
  */
-const AccountCardList = ({ data }) => {
+const AccountCardList = ({ data, isDebt }) => {
   const dispatch = useDispatch();
 
   // 累加帳戶金額
@@ -139,6 +139,7 @@ const AccountCardList = ({ data }) => {
               percent={totalBalance > 0 ? Math.round((account.balance / totalBalance) * 100) : 0} // TODO 可能因為捨進位問題，會不等於100
               annotation={annotation}
               hasShadow
+              isShowAccoutNo={!isDebt}
               {...account}
             />
           </button>
