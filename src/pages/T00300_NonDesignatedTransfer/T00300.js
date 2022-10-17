@@ -36,13 +36,15 @@ const T00300 = () => {
    */
   const failureMessage = (code, errMsg) => {
     switch (code) {
-      case 1: // 無裝置綁定
+      case '1_0': // 無裝置綁定
         return '無裝置綁定，請進行裝置綁定設定或致電客服。';
-      case 2: // 網銀密碼驗證失敗（驗證2次未過）
+      case '1_1': // 已裝置綁定
+        return '您已進行裝置綁定，請至原裝置解除綁定或致電客服';
+      case '2': // 網銀密碼驗證失敗（驗證2次未過）
         return '網銀密碼驗證失敗，請重新執行或致電客服。';
-      case 3: // 簡訊OTP驗證失敗（驗證3次未過）
+      case '3': // 簡訊OTP驗證失敗（驗證3次未過）
         return '簡訊OTP驗證失敗，請重新執行或致電客服。';
-      case 4: // MID驗證失敗（手機門號與SIM卡認證失敗）
+      case '4': // MID驗證失敗（手機門號與SIM卡認證失敗）
         return '手機門號與SIM卡認證失敗，請使用手機行動網路，重新執行或致電客服。';
       default: // 其他錯誤
         return `錯誤代碼: ${errMsg}，系統忙碌中，請重新執行或致電客服。`;
@@ -87,11 +89,11 @@ const T00300 = () => {
       if (resultMID.code === 1) {
         onSuccess();
       } else {
-        onFailure(resultMID.code === 0 ? 4 : 5, result.msg);
+        onFailure(resultMID.code === '0' ? '4' : '5', result.msg);
       }
     } else {
       // 失敗畫面
-      onFailure(result.code === 0 ? 3 : 5, result.msg);
+      onFailure(result.code === '0' ? '3' : '5', result.msg);
     }
   };
 
@@ -119,7 +121,7 @@ const T00300 = () => {
 
       if (result.code !== 1) {
         /* 失敗頁面: 不通過 -> failureCode: 0, 其他原因 -> failureCode: 5 */
-        onFailure(result.code === 0 ? 2 : 5, result.msg);
+        onFailure(result.code === '0' ? '2' : '5', result.msg);
 
         return;
       }
@@ -172,14 +174,14 @@ const T00300 = () => {
     console.log('T00300 handleCancel()');
 
     /**
-     * 雙因子驗證
+     * 雙因子驗證: verifyBio
      * 成功：成功頁面
      * 失敗：failureCode: 2
      */
     const result = await bifactorVerify(true);
 
     if (result.code !== 1) {
-      onFailure(result.code === 0 ? 2 : 5, result.msg);
+      onFailure(result.code === '0' ? '2' : '5', result.msg);
 
       return;
     }
@@ -198,19 +200,18 @@ const T00300 = () => {
    * 點擊開關
    */
   const handleSwitchOnTrigger = async () => {
-    console.log('T00300 handleSwitchOnTrigger() checkDeviceBindingStatus(): ', await checkDeviceBindingStatus(model.QLStatus));
+    console.log('T00300 handleSwitchOnTrigger() checkDeviceBindingStatus(): ', await checkDeviceBindingStatus());
 
     /**
      * 檢查裝置綁定狀態
-     * 否 -> failureCode: 1
+     * 否 -> failureCode: 1_0 | 1_1 | 5
      * 是 ->
      *  model.originalStatus === 0 -> Close流程
      *  其餘走 申請流程
      */
-    if (!await checkDeviceBindingStatus(model.QLStatus)) {
-      // failureCode: 1, return
-      onFailure(1);
-
+    const result = await checkDeviceBindingStatus();
+    if (!result.bindingStatus) {
+      onFailure(result.failureCode, result.message);
       return;
     }
 
@@ -227,23 +228,20 @@ const T00300 = () => {
    * 點擊鉛筆
    */
   const handleEditOnClick = async () => {
-    console.log('T00300 handleEditOnClick() checkDeviceBindingStatus(): ', await checkDeviceBindingStatus(model.QLStatus));
+    console.log('T00300 handleEditOnClick() checkDeviceBindingStatus(): ', await checkDeviceBindingStatus());
 
     /**
      * 檢查裝置綁定狀態
-     * 否 -> failureCode: 1
+     * 否 -> failureCode: 1_0 | 1_1 | 5
      * 是 ->
      *  走 編輯流程
      */
-    if (!await checkDeviceBindingStatus(model.QLStatus)) {
-      // failureCode: 1, return
-      showAnimationModal({
-        isSuccess: false,
-        errorTitle: '設定失敗',
-        errorDesc: failureMessage(1),
-        onClose: () => {},
-      });
+    const result = await checkDeviceBindingStatus();
+    if (!result.bindingStatus) {
+      onFailure(result.failureCode, result.message);
+      return;
     }
+
     // 編輯流程
     handleEdit();
   };

@@ -1,5 +1,7 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-vars */
+import { getQLStatus } from 'utilities/AppScriptProxy';
 import { callAPI } from 'utilities/axios';
 import { mockT00300Data } from './mockData/mockT00300Data';
 
@@ -14,27 +16,77 @@ import { mockT00300Data } from './mockData/mockT00300Data';
  */
 export const getNonDesignatedTransferData = async () => {
   const statusNo = 6;
-  const result = await mockT00300Data(statusNo);
+  const resultMock = await mockT00300Data(statusNo);
 
-  console.log('T00300 api getNonDesignatedTransferData() result: ', {statusNo, result});
-  return result;
+  const result = await queryOTP();
+  const custData = await getCustData();
+
+  console.log('T00300 api getNonDesignatedTransferData() result: ', {statusNo, result: resultMock});
+
+  console.log('T00300 api getNonDesignatedTransferData() queryOTP() rt: ', result.data);
+  console.log('T00300 api getNonDesignatedTransferData() custData() custData: ', custData.data);
+
+  const sysMobile = custData.data.mobile;
+
+  if (result.data.mobile === null) {
+    result.data.mobile = sysMobile;
+  }
+
+  return resultMock;
+};
+
+export const getCustData = async () => {
+  const response = await callAPI('/api/setting/custQuery');
+  return response;
 };
 
 /**
  * 確認裝置綁定狀態
- * @param {QLStatus} param true | false
+ * @param {token} token
  * @returns {
- *  bindingStatus    true | false 裝置綁定狀態
+ *  bindingStatus: true | false
+ *  failureCode: '1_0' | '1_1' | '5' | ''
+ *  message: ''
  * }
  */
 export const checkDeviceBindingStatus = async (param) => {
-  console.log('T00300 api checkDeviceBindingStatus() param: ', param);
-  const result = param;
-  return result;
+  console.log('T00300 api checkDeviceBindingStatus()');
+  // const result = param;
+
+  const {
+    result,
+    message,
+    QLStatus,
+    QLType,
+  } = await getQLStatus();
+
+  console.log('web取得綁定狀態結果', JSON.stringify({
+    result,
+    message,
+    QLStatus,
+    QLType,
+  }));
+
+  // 回傳成功
+  if (result === 'true') {
+    // 未綁定
+    if (QLStatus === '0') {
+      return {bindingStatus: false, failureCode: '1_0', message: ''};
+    }
+    // 已綁定帳號或裝置
+    if (QLStatus === '3' || QLStatus === '4') {
+      return {bindingStatus: false, failureCode: '1_1', message: ''};
+    }
+    return {result, QLStatus};
+  }
+
+  // 回傳失敗
+  console.log('T00300 checkDeviceBindingStatus: ', { result, message});
+  return {bindingStatus: result, failureCode: '5', message};
 };
 
 /**
- * [測試]雙因子驗證：
+ * [測試]雙因子驗證：verifyBio
  * 未知是否包含在api中，api規格確認前使用此判斷製造情境
  * @param {param} param number: 1: 通過, 0: 不通過, 2: 系統錯誤
  * @returns number: 1: 通過, 0: 不通過, 2: 系統錯誤
@@ -49,7 +101,7 @@ export const bifactorVerify = async (param) => {
 };
 
 /**
- * [測試]OTP驗證：
+ * [測試]OTP驗證：transactionAuth
  * @param {otpCode} param number，OTP驗證碼
  * @returns {
  * code: 0 | 1 | 2    驗證不通過 | 驗證通過 | 系統錯誤
@@ -64,7 +116,7 @@ export const OTPVerify = async (param) => {
 };
 
 /**
- * [測試]OTP驗證：
+ * [測試]MID驗證
  * @param {}
  * @returns {
  * code: 0 | 1 | 2    驗證不通過 | 驗證通過 | 系統錯誤
