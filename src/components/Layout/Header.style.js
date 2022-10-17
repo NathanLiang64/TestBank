@@ -9,6 +9,7 @@ const HeaderWrapper = styled.header`
   padding: .4rem;
   background: ${({ $isTransparent, theme }) => ($isTransparent ? 'transparent' : theme.colors.basic.white)};
   z-index: 1000;
+  user-select:none;
   
   .goBack,
   .goHome {

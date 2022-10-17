@@ -105,17 +105,17 @@ const Favorite2New = ({
     const scrollTarget = sectionsRef.current.find((el) => el.className === value);
     scrollTarget.scrollIntoView();
     const { scrollHeight, scrollTop, offsetHeight } = mainContentRef.current;
-    if ((scrollHeight === scrollTop + offsetHeight)) {
+    if ((scrollHeight - (scrollTop + offsetHeight) <= 1)) {
       setTabId(value);
     }
   };
 
   const handleScrollContent = (event) => {
     const { scrollHeight, scrollTop, offsetHeight } = event.target;
-    // const currentSection = sectionsRef.current.find((el) => el.offsetTop >= scrollTop);
-    if ((scrollHeight !== scrollTop + offsetHeight)) {
+
+    if (!(scrollHeight - (scrollTop + offsetHeight) <= 1)) {
       const foundSection = sectionsRef.current.find((el) => {
-        const top = el.offsetTop;
+        const top = el.offsetTop - 1;
         const bottom = el.offsetTop + el.offsetHeight;
         return (scrollTop >= top && scrollTop < bottom);
       });

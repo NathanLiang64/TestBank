@@ -21,6 +21,11 @@ const PageWrapper = styled.div`
 
     .Icon {
       font-size: 2rem;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: ${({ theme }) => theme.colors.basic.white};
     }
   }

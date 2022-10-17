@@ -46,7 +46,6 @@ const More = () => {
     }
     setFuncGroups(groups);
     setCurrentGroup((groups && groups.length) ? groups[0].groupKey : '');
-
     dispatch(setWaittingVisible(false));
   }, []);
 
@@ -60,7 +59,8 @@ const More = () => {
     // 會造成 handleScrollContent 判定異常，故這邊只給預設值，只 re-render 一次就好
     scrollTarget.scrollIntoView();
     const { scrollHeight, scrollTop, offsetHeight } = mainContentRef.current;
-    if ((scrollHeight === scrollTop + offsetHeight)) {
+    // 當誤差值小於 1 時 則判定為尚未捲動到最底部
+    if ((scrollHeight - (scrollTop + offsetHeight) <= 1)) {
       setCurrentGroup(value);
     }
   };
@@ -70,10 +70,12 @@ const More = () => {
    */
   const handleScrollContent = (event) => {
     const { scrollHeight, scrollTop, offsetHeight } = event.target;
-    if ((scrollHeight !== scrollTop + offsetHeight)) {
+
+    if (!(scrollHeight - (scrollTop + offsetHeight) <= 1)) {
       const foundGroup = groupsRef.current.find((el) => {
-        const top = el.offsetTop;
-        const bottom = el.offsetTop + el.offsetHeight;
+        // 設定 1 為誤差值，因為 scrollTo Func 不一定會捲動到 element 的 scrollTop 位置
+        const top = el.offsetTop - 1;
+        const bottom = top + el.offsetHeight;
         return (scrollTop >= top && scrollTop < bottom);
       });
       if (foundGroup && foundGroup.className !== currentGroup) {
@@ -117,8 +119,6 @@ const More = () => {
       </section>
     );
   };
-
-  // console.log(isScrollToEnd);
 
   /**
    * 頁面輸出
