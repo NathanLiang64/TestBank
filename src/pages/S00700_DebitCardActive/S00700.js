@@ -21,8 +21,8 @@ const S00700 = () => {
   const history = useHistory();
   const {control, handleSubmit} = useForm({
     defaultValues: {
-      accountNo: '11111111111111',
-      accountSn: '111111',
+      accountNo: '',
+      accountSn: '',
       termAgree: false,
     },
     resolver: yupResolver(validationSchema),
