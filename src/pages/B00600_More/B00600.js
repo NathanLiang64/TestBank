@@ -40,11 +40,11 @@ const More = () => {
     let groups;
     if (!funcItemsData) {
       groups = await getMoreList();
-      sessionStorage.setItem('funcItems', JSON.stringify(groups));
+      sessionStorage.setItem('funcItems', JSON.stringify(groups || []));
     } else {
       groups = JSON.parse(funcItemsData);
     }
-    setFuncGroups(groups);
+    setFuncGroups(groups || []);
     setCurrentGroup((groups && groups.length) ? groups[0].groupKey : '');
     dispatch(setWaittingVisible(false));
   }, []);

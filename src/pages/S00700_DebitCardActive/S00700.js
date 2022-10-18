@@ -9,13 +9,12 @@ import { CheckboxField, TextInputField } from 'components/Fields';
 import Layout from 'components/Layout/Layout';
 import personalSaveContent from 'pages/ProjectJ/personalSaveContent';
 import {
-  closeFunc, getQLStatus, startFunc, transactionAuth,
+  closeFunc, getQLStatus, transactionAuth,
 } from 'utilities/AppScriptProxy';
-import { showAnimationModal, showCustomPrompt, showError } from 'utilities/MessageModal';
+import { showCustomPrompt } from 'utilities/MessageModal';
 import { useHistory } from 'react-router';
 import DebitCardActiveWrapper from './S00700.style';
 import { validationSchema } from './validationSchema';
-import { successDesc } from './utils';
 
 const S00700 = () => {
   const history = useHistory();
@@ -23,7 +22,6 @@ const S00700 = () => {
     defaultValues: {
       accountNo: '',
       accountSn: '',
-      termAgree: false,
     },
     resolver: yupResolver(validationSchema),
   });
@@ -33,7 +31,6 @@ const S00700 = () => {
       result,
       message,
       QLStatus,
-      QLType,
     } = await getQLStatus();
 
     if (result === 'true') {
@@ -50,7 +47,7 @@ const S00700 = () => {
       } else {
         const auth = await transactionAuth(0x30); // 需通過 2FA 或 網銀密碼 驗證才能進行金融卡開啟。
         if (auth.result) {
-          // TODO 打金融卡啟用的API
+          // TODO 打金融卡啟用的API，先用 mockData 代替
           const debitActiveResponse = {result: true, message: 'errorMessage'};
           history.push(
             '/S007001',
@@ -75,21 +72,23 @@ const S00700 = () => {
         <form style={{ minHeight: 'initial' }} onSubmit={handleSubmit(submitHandler)}>
 
           <TextInputField
+            type="number"
             labelName="我的金融卡帳號"
             name="accountNo"
             placeholder="請輸入金融卡帳號(金融卡背面14碼數字)"
             control={control}
           />
           <TextInputField
+            type="number"
             labelName="我的金融卡序號"
             name="accountSn"
             placeholder="請輸入金融卡序號(金融卡背面右下角6碼數字)"
             control={control}
           />
-          <Accordion title="個人資料保護法告知事項" space="bottom">
+          {/* <Accordion title="個人資料保護法告知事項" space="bottom">
             {personalSaveContent()}
           </Accordion>
-          <CheckboxField label="我已同意並審閱個人資料保護法告知事項" name="termAgree" control={control} />
+          <CheckboxField label="我已同意並審閱個人資料保護法告知事項" name="termAgree" control={control} /> */}
           <FEIBButton type="submit">
             確認
           </FEIBButton>
