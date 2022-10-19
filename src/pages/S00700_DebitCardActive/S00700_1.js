@@ -28,17 +28,17 @@ const S007001 = () => {
     </SuccessDescWrapper>
   );
 
-  if (!state) history.goBack();
+  if (!state || !state.apiResponse) return history.goBack();
 
   return (
     <Layout title="金融卡啟用結果" goBackFunc={go2More}>
       <DebitCardActiveWrapper>
         <SuccessFailureAnimations
-          isSuccess={state.isSuccess}
-          successTitle={state.successTitle}
+          isSuccess={!!state.apiResponse.result}
+          successTitle="設定成功"
           successDesc={successDesc()}
-          errorTitle={state.errorTitle}
-          errorDesc={state.errorDesc}
+          errorTitle="設定失敗"
+          errorDesc={state.apiResponse.message}
         />
         <FEIBButton style={{marginTop: '1rem'}} onClick={go2More}>確認</FEIBButton>
       </DebitCardActiveWrapper>
