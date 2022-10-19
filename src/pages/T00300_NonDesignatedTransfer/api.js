@@ -1,24 +1,21 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-nested-ternary */
-/* eslint-disable no-unused-vars */
 import { getQLStatus } from 'utilities/AppScriptProxy';
 import { callAPI } from 'utilities/axios';
-import { mockT00300Data } from './mockData/mockT00300Data';
 
 /**
  * 取得用戶非約轉設定初始資料
  * @param token
- * @returns {
- *  status   '00' | ~ | '07' (00: 未申請、01: 已申請未開通、02: 密碼逾期30日、03: 已開通、04: 已註銷、05: OTP啟用密碼錯誤鎖定、06: OTP交易密碼錯誤鎖定、07: 其他)
- *  mobile           "10 digits number" (裝置門號：預設OTP號碼，如果沒有就帶入通訊門號)
- * }
+ * @returns {{
+ *  status: 非約轉狀態,
+ *  mobile: 裝置門號,
+ * }}
+ * status: 00-未申請、01-已申請未開通、02-密碼逾期30日、03-已開通、04-已註銷、05-OTP啟用密碼錯誤鎖定、06-OTP交易密碼錯誤鎖定、07-其他
+ * mobile: 預設OTP號碼，如果沒有就帶入通訊門號
  */
 export const getNonDesignatedTransferData = async () => {
   const result = await queryOTP();
-  const custData = await getCustData();
-
-  console.log('T00300 api getNonDesignatedTransferData() queryOTP() rt: ', result.data);
-  console.log('T00300 api getNonDesignatedTransferData() custData() custData: ', custData.data);
+  const custData = await callAPI('/api/setting/custQuery');
 
   const sysMobile = custData.data.mobile;
 
@@ -26,40 +23,26 @@ export const getNonDesignatedTransferData = async () => {
     result.data.mobile = sysMobile;
   }
 
-  console.log('T00300 api getNonDesignatedTransferData() result.data: ', result.data);
   return result.data;
-};
-
-export const getCustData = async () => {
-  const response = await callAPI('/api/setting/custQuery');
-  return response;
 };
 
 /**
  * 確認裝置綁定狀態
  * @param {token} token
- * @returns {
- *  bindingStatus: true | false
- *  failureCode: '1_0' | '1_1' | '5' | ''
- *  message: ''
- * }
+ * @returns {{
+ *  bindingStatus: 裝置是否正常綁定,
+ *  failureCode: 綁定失敗代碼,
+ *  message: 失敗訊息,
+ * }}
+ * bindingStatus: boolean,
+ * failureCode: '1_0'-未綁定、'1_1'-以綁定其他帳號或裝置、'6'-其他錯誤（系統錯誤）、''-正常綁定
  */
 export const checkDeviceBindingStatus = async () => {
-  console.log('T00300 api checkDeviceBindingStatus()');
-
   const {
     result,
     message,
     QLStatus,
-    QLType,
   } = await getQLStatus();
-
-  console.log('T00300 checkDeviceBindingStatus() getQLStatus(): ', JSON.stringify({
-    result,
-    message,
-    QLStatus,
-    QLType,
-  }));
 
   // 回傳成功
   if (result === 'true') {
@@ -76,19 +59,19 @@ export const checkDeviceBindingStatus = async () => {
 
   // 回傳失敗
   console.log('T00300 checkDeviceBindingStatus: ', { result, message});
-  return {bindingStatus: result, failureCode: '5', message};
+  return {bindingStatus: result, failureCode: '6', message};
 };
 
 /**
  * [測試]MID驗證
  * @param {}
  * @returns {
- * code: 0 | 1 | 2    驗證不通過 | 驗證通過 | 系統錯誤
+ * result: boolean    驗證通過 | 驗證不通過/系統錯誤
  * msg: ''            系統錯誤訊息
  * }
  */
 export const MIDVerify = async () => {
-  const result = {code: 1, msg: ''};
+  const result = {result: true, msg: ''};
 
   return result;
 };

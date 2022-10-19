@@ -90,37 +90,52 @@ const T00300 = () => {
     console.log('T00300 handleDrawerConfirm() data:', data);
 
     if (!data.isEdit) {
-      /* 申請流程：雙因子驗證 */
+      /* 開通流程：雙因子驗證? && 申請＋開通流程：雙因子驗證 */
       const result = await transactionAuth({ authCode: authCode2FA, otpMobile: model.mobile});
 
       if (!result) {
         /* 失敗頁面 */
         onFailure('5', result.message);
+      } else {
+        /* 驗證成功：更新資料至api */
+        const updateResult = await updateOTP({ status: module.status === '01' ? 'TODO: 開通' : '01', mobile: model.mobile });
 
-        return;
+        if (updateResult.code !== '0000') {
+        /* 失敗畫面 */
+          onFailure('5', updateResult.message);
+          return;
+        }
+
+        /* 成功頁面 */
+        onSuccess();
       }
-
-      /* 成功頁面 */
-      onSuccess();
     } else {
       /* 修改流程：雙因子＋OTP 驗證 */
-      const result = await transactionAuth({ authCode: authCode2FAOTP, otpMobile: model.mobile});
+      const result = await transactionAuth({ authCode: authCode2FAOTP, otpMobile: data.mobileNumber});
 
       if (!result) {
         /* 失敗頁面 */
         onFailure('5', result.message);
+      } else {
+        /* 成功: MID驗證 (TODO: 確認正確的MID驗證方式) */
+        const MIDResult = await MIDVerify();
+        if (MIDResult.result === false) {
+          /* 失敗頁面 */
+          onFailure('5', MIDResult.msg);
+        } else {
+          /* 驗證成功：更新資料至api */
+          const updateResult = await updateOTP({ status: '04', mobile: data.mobileNumber });
+
+          if (updateResult.code !== '0000') {
+            /* 失敗頁面 */
+            onFailure('5', result.message);
+            return;
+          }
+          /* 成功畫面 */
+          onSuccess();
+        }
       }
-
-      /* 成功: MID驗證 */
-
-      /* 成功畫面 */
-      onSuccess();
     }
-  };
-
-  const handleDrawerCancel = () => {
-    console.log('T00300 handleDrawerCancel()');
-    closeDrawer();
   };
 
   /**
@@ -136,7 +151,7 @@ const T00300 = () => {
         isEdit={isEdit}
         mobile={model.mobile}
         handleConfirm={(data) => handleDrawerConfirm(data)}
-        handleCancel={() => handleDrawerCancel()}
+        handleCancel={() => closeDrawer()}
       />,
     );
   };
@@ -178,7 +193,8 @@ const T00300 = () => {
      * 否 -> failureCode: 1_0 | 1_1 | 5
      * 是 ->
      *  model.status === '03' -> Close流程
-     *  其餘走 申請流程
+     *  model.status === '01 -> 開通流程
+     *  其餘走 申請+開通流程
      */
     const result = await checkDeviceBindingStatus();
     if (!result.bindingStatus) {
@@ -190,7 +206,7 @@ const T00300 = () => {
       /* 註銷流程 */
       handleCancel();
     } else {
-      /* 申請流程: 打開drawer (input-不可編輯) */
+      /* 開通 or 申請+開通流程: 打開drawer (input-不可編輯) */
       mobileNumberSettingDrawer(false);
     }
   };
