@@ -4,14 +4,12 @@ import { transactionAuth } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-import {
-  FEIBInput, FEIBInputLabel, FEIBSwitch, FEIBSwitchLabel,
-} from 'components/elements';
+import { FEIBSwitch, FEIBSwitchLabel } from 'components/elements';
 import Accordion from 'components/Accordion';
-import theme from 'themes/theme';
 import EditIcon from 'assets/images/icons/editIcon.svg';
 import { closeDrawer, showAnimationModal, showDrawer } from 'utilities/MessageModal';
 import { useHistory } from 'react-router';
+import theme from 'themes/theme';
 import {
   checkDeviceBindingStatus, getNonDesignatedTransferData, MIDVerify, updateOTP,
 } from './api';
@@ -91,7 +89,7 @@ const T00300 = () => {
 
     if (!data.isEdit) {
       /* 開通流程：雙因子驗證? && 申請＋開通流程：雙因子驗證 */
-      const result = await transactionAuth({ authCode: authCode2FA, otpMobile: model.mobile});
+      const result = await transactionAuth(authCode2FA, model.mobile);
 
       if (!result) {
         /* 失敗頁面 */
@@ -111,7 +109,7 @@ const T00300 = () => {
       }
     } else {
       /* 修改流程：雙因子＋OTP 驗證 */
-      const result = await transactionAuth({ authCode: authCode2FAOTP, otpMobile: data.mobileNumber});
+      const result = await transactionAuth(authCode2FAOTP, data.mobileNumber);
 
       if (!result) {
         /* 失敗頁面 */
@@ -163,7 +161,7 @@ const T00300 = () => {
     console.log('T00300 handleCancel()');
 
     /* 雙因子驗證 */
-    const result = await transactionAuth({ authCode: authCode2FA, otpMobile: model.mobile});
+    const result = await transactionAuth(authCode2FA, model.mobile);
 
     if (!result) {
       /* 失敗頁面 */
