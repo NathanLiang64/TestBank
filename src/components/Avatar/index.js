@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { EditIcon, PersonalIcon } from 'assets/images/icons';
+import { toHalfWidth } from 'utilities/Generator';
 import AvatarWrapper from './avatar.style';
 
 /*
@@ -16,16 +17,17 @@ const Avatar = ({
   const photoRef = useRef();
   const [photo, setPhoto] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [showDefault, setShowDefault] = useState(false);
 
   const handleClickEditButton = () => {
     photoRef.current.click();
   };
 
-  const renderPhoto = () => <img src={preview || src} alt={name || 'avatar'} />;
+  const renderPhoto = () => <img onError={() => setShowDefault(true)} src={preview || src} alt={name || 'avatar'} />;
 
   const renderDefaultBackground = () => (
     <div className="default">
-      { name ? <span>{name.substr(0, 1)}</span> : <PersonalIcon /> }
+      { name ? <span>{toHalfWidth(name.substr(0, 1))}</span> : <PersonalIcon /> }
     </div>
   );
 
@@ -54,7 +56,7 @@ const Avatar = ({
   return (
     <AvatarWrapper $small={small}>
       <div className="photo">
-        { (preview || src) ? renderPhoto() : renderDefaultBackground() }
+        { ((preview || src) && !showDefault) ? renderPhoto() : renderDefaultBackground() }
       </div>
       { !small && renderEditButton() }
     </AvatarWrapper>

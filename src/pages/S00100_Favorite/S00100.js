@@ -140,7 +140,7 @@ const Favorite = () => {
         key={block.actKey || index - 2}
         onTouchStart={block.actKey ? handleTouchStart : null}
         onTouchEnd={block.actKey ? handleTouchEnd : null}
-        onClick={block.actKey ? () => startFunc(block.actKey) : () => handleOpenView('add')}
+        onClick={block.actKey ? () => startFunc(block.actKey === 'B00200' ? 'M00100' : block.actKey) : () => handleOpenView('add')}
       >
         {
         block.actKey
