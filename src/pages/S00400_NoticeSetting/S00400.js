@@ -21,7 +21,10 @@ import {
 import NoticeSettingWrapper from './S00400.style';
 import S00400AccordionContent from './S00400_accordionContent';
 
-const NoticeSetting = () => {
+/**
+ * S00400 訊息通知設定
+ */
+const S00400 = () => {
   const dispatch = useDispatch();
 
   const [isPushBind, setIsPushBind] = useState(false);
@@ -32,7 +35,7 @@ const NoticeSetting = () => {
     nightMuteNotice: false,
   });
 
-  const authCodePWD2FA = '0x30';
+  const authCode = '0x30';
 
   // 更新通知設定
   const updateNotiSetting = async (modelParam) => {
@@ -61,7 +64,7 @@ const NoticeSetting = () => {
     console.log('S00400 handleTurnOnNotice');
 
     // 網銀密碼／雙因子驗證
-    const verifyResult = await transactionAuth(authCodePWD2FA);
+    const verifyResult = await transactionAuth(authCode);
     console.log('S00400 handlePushBind() verifyPWD/2FA', verifyResult);
 
     if (!verifyResult.result) {
@@ -82,7 +85,7 @@ const NoticeSetting = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
     const queryIsOnResponse = await queryPushBind();
-    if (queryIsOnResponse.code === '1111') { // DEBUG: mock回傳判斷
+    if (queryIsOnResponse.code === '1111') { // DEBUG: 回傳為mock
       showError('尙未完成行動裝置綁定!', async () => await closeFunc());
     }
     setIsPushBind(queryIsOnResponse.code === '0000');
@@ -203,8 +206,8 @@ const NoticeSetting = () => {
         </div>
         {!isPushBind && (
         <div className="term_container">
-          <Accordion space="bottom" className="accordion">
-            <S00400AccordionContent />
+          <Accordion className="accordion">
+            <S00400AccordionContent className="accordion_content" />
           </Accordion>
           <FEIBButton onClick={() => handlePushBind()}>
             同意條款並送出
@@ -217,4 +220,4 @@ const NoticeSetting = () => {
   );
 };
 
-export default NoticeSetting;
+export default S00400;

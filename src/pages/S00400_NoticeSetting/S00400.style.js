@@ -28,6 +28,23 @@ const NoticeSettingWrapper = styled(Layout)`
         }
       }
     }
+  .term_container {
+    height: 20rem;
+    padding: 0 0 1rem 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .accordion {
+      .collapseContent {
+        max-height: 8rem;
+      }
+      .accordion_content {
+        list-style-position: outside;
+      }
+    }
+  }
 `;
 
 export default NoticeSettingWrapper;

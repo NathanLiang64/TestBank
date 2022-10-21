@@ -1,6 +1,6 @@
-const S00400AccordionContent = () => (
+const S00400AccordionContent = (className) => (
   <>
-    <ol style={{ listStylePosition: 'outside' }}>
+    <ol className={className}>
       <li>
         本服務提供您設定各類訊息通知，讓您隨時接收個人帳務及專屬優惠訊息。
       </li>
