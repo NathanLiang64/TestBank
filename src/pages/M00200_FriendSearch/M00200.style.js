@@ -6,16 +6,17 @@ const PageWrapper = styled.div`
       border-bottom: 1px solid ${({ theme }) => theme.colors.border.lighter};
       padding: 1.2rem 0.8rem;
       display: flex;
-      gap: 1.2rem;
+      // gap: 1.2rem;
     }
 
     & > *:first-child {
       border-top: 1px solid ${({ theme }) => theme.colors.border.lighter};
     }
 
-    & > .flex-auto {
+    .flex-auto {
       flex: 1 1 auto;
       width: 100%;
+      margin-left:1.2rem;
     }
   }
 

@@ -18,35 +18,42 @@ const S00700 = () => {
     resolver: yupResolver(validationSchema),
   });
 
-  const checkQLStatus = async (QLStatus) => {
-    switch (QLStatus) {
-      case ('0'):
-        await showCustomPrompt({message: '無裝置綁定，請先進行裝置綁定設定或致電客服'});
-        return false;
-      case ('3'):
-        await showCustomPrompt({message: '該帳號已在其它裝置綁定'});
-        return false;
-      case ('4'):
-        await showCustomPrompt({message: '本裝置已綁定其他帳號'});
-        return false;
-      default:
-        return await transactionAuth(0x30); // 需通過 2FA 或 網銀密碼 驗證才能進行金融卡開啟。
-    }
-  };
+  // const checkQLStatus = async (QLStatus) => {
+  //   switch (QLStatus) {
+  //     case ('0'):
+  //       await showCustomPrompt({message: '無裝置綁定，請先進行裝置綁定設定或致電客服'});
+  //       return false;
+  //     case ('3'):
+  //       await showCustomPrompt({message: '該帳號已在其它裝置綁定'});
+  //       return false;
+  //     case ('4'):
+  //       await showCustomPrompt({message: '本裝置已綁定其他帳號'});
+  //       return false;
+  //     default:
+  //       return await transactionAuth(0x20); // 需通過 2FA 或 網銀密碼 驗證才能進行金融卡開啟。
+  //   }
+  // };
 
   const submitHandler = async (values) => {
-    const {result, message, QLStatus } = await getQLStatus();
+    // const {result, message, QLStatus } = await getQLStatus();
+    // if (result === 'true') {
+    //   const auth = await checkQLStatus(QLStatus);
+    //   if (auth && auth.result) {
+    //   // TODO 打金融卡啟用的API，先用 mockData 代替
+    //     const apiResponse = {result: true, message: 'errorMessage'};
+    //     history.push('/S007001', {apiResponse});
+    //   }
+    // } else {
+    //   // 回傳失敗
+    //   showCustomPrompt({message, onClose: () => closeFunc()});
+    // }
 
-    if (result === 'true') {
-      const auth = await checkQLStatus(QLStatus);
-      if (auth && auth.result) {
-        // TODO 打金融卡啟用的API，先用 mockData 代替
-        const apiResponse = {result: true, message: 'errorMessage'};
-        history.push('/S007001', {apiResponse});
-      }
-    } else {
-      // 回傳失敗
-      showCustomPrompt({message, onClose: () => closeFunc()});
+    // NOTE: transactionAuth 目前似乎會幫忙確認綁定狀態，不用另外打 getQLStatus()
+    const auth = await transactionAuth(0x20);
+    if (auth && auth.result) {
+      // TODO 打金融卡啟用的API，先用 mockData 代替
+      const apiResponse = {result: true, message: 'errorMessage'};
+      history.push('/S007001', {apiResponse});
     }
   };
 

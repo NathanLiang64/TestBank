@@ -79,12 +79,6 @@ const CardLessATM1 = () => {
     }
   };
 
-  // 發生錯誤開啟 dialog，關閉 dialog 一律通知 app 關閉功能
-  // const handleDialogOpen = (message) => {
-  //   setErrorMessage(message);
-  //   setOpenDialog(true);
-  // };
-
   // 取得提款卡資訊
   const fetchAccountSummary = async () => {
     switchLoading(true);
@@ -95,7 +89,6 @@ const CardLessATM1 = () => {
     if (!message) {
       setAccountSummary({ ...summaryResponse });
     } else {
-      // handleDialogOpen(message);
       // TBD
       showCustomPrompt({message, onOk: () => closeFunc(), onClose: () => closeFunc()});
     }
@@ -127,7 +120,6 @@ const CardLessATM1 = () => {
         console.log('提款結果', data);
         toResultPage(data);
       } else {
-        // handleDialogOpen(message);
         showCustomPrompt({message, onOk: () => closeFunc(), onClose: () => closeFunc()});
       }
     }
@@ -139,7 +131,6 @@ const CardLessATM1 = () => {
       account: accountSummary.account,
     };
     if (data.withdrawAmount > accountSummary.balance) {
-      // handleDialogOpen('提款金額不得大於帳戶餘額');
       showCustomPrompt({message: '提款金額不得大於帳戶餘額'});
     } else {
       requestCardlessWithdrawApply(param);

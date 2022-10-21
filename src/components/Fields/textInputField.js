@@ -7,12 +7,22 @@ export const TextInputField = ({
   labelName, type = 'text', placeholder, ...controlProps
 }) => {
   const {field, fieldState } = useController(controlProps);
-  const {onChange, value} = field;
+  const {
+    onChange, onBlur, value, name,
+  } = field;
 
   return (
     <>
-      <FEIBInputLabel htmlFor={field.name}>{labelName}</FEIBInputLabel>
-      <FEIBInput type={type} onChange={onChange} value={value} placeholder={placeholder || ''} />
+      <FEIBInputLabel htmlFor={name}>{labelName}</FEIBInputLabel>
+      <FEIBInput
+        onChange={onChange}
+        onBlur={onBlur}
+        value={value}
+        type={type}
+        id={name}
+        error={!!fieldState.error}
+        placeholder={placeholder || ''}
+      />
       <FEIBErrorMessage>{fieldState.error ? fieldState.error.message : ''}</FEIBErrorMessage>
     </>
 
