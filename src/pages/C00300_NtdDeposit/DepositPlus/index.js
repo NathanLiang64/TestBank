@@ -26,12 +26,24 @@ const Deposit = () => {
 
   const history = useHistory();
 
-  /* 若無值，顯示0而非橫線 */
-  const renderText = (value) => value || '0';
+  /* 若無值/值為NaN，顯示0而非橫線 */
+  const renderText = (value) => {
+    if (value === 'NaN') {
+      return '0';
+    }
+    return value || '0';
+  };
 
   const renderMonthlyTabs = (list) => list.map((month) => (
     <FEIBTab key={month} label={`${month.substr(4)}月`} value={month} />
   ));
+
+  /* 數字加千分號 */
+  const formatNumber = (number) => {
+    const internationalNumberFormat = new Intl.NumberFormat('en-US');
+
+    return internationalNumberFormat.format(parseInt(number, 10));
+  };
 
   const renderTabArea = (monthList) => (
     <FEIBTabContext value={tabId}>
@@ -89,7 +101,7 @@ const Deposit = () => {
             {`${renderText(depositPlusDetail.period?.substr(0, 4))}/${renderText(depositPlusDetail.period?.substr(4))} `}
             優惠利率額度總計
           </span>
-          <h3>{`$${renderText(depositPlusDetail.summaryBonusQuota)}`}</h3>
+          <h3>{`$${renderText(formatNumber(depositPlusDetail.summaryBonusQuota))}`}</h3>
         </div>
 
         <section className="detailArea">
@@ -113,7 +125,7 @@ const Deposit = () => {
                   <span>{detail.memo}</span>
                 </div>
                 <p className="limitPrice">
-                  {`$${renderText(detail.bonusQuota)}`}
+                  {`$${renderText(formatNumber(detail.bonusQuota))}`}
                 </p>
               </li>
             ))}
