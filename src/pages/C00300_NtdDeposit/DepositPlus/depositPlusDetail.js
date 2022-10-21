@@ -94,7 +94,6 @@ const DepositPlusDetail = () => {
     <DepositPlusDetailWrapper>
       <Layout title="各項活動說明" goBackFunc={() => history.goBack()}>
         <div>
-          各項活動說明
           {location.state.bonusDetail.map((detail) => (
             <ActivityCard key={detail} title={detail.promotionName} detail={detail.brief} />
           ))}
