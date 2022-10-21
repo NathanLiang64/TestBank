@@ -63,6 +63,15 @@ const FEIBInput = styled(MaterialInput).attrs(({
       color: ${({ theme }) => theme.colors.text.placeholder};
       opacity: 1;
     }
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0; 
+    }
+
+    &[type=number] {
+      -moz-appearance:textfield;
+    }
   }
 
   &.MuiInput-underline {

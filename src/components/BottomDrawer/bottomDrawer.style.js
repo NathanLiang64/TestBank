@@ -20,6 +20,7 @@ const DrawerWrapper = styled(MaterialDrawer).attrs({
     min-height: 4.8rem;
     padding-top: 1.6rem;
     padding-bottom: 2.4rem;
+    user-select:none;
     
     .title {
       font-size: 1.8rem;

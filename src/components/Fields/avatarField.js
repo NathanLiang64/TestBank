@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { useController } from 'react-hook-form';
 import { EditIcon, PersonalIcon } from 'assets/images/icons';
-import { toHalfWidth } from 'utilities/Generator';
-import AvatarWrapper from './avatar.style';
+import AvatarWrapper from '../Avatar/avatar.style';
 
 /*
 * ==================== Avatar 組件說明 ====================
@@ -11,23 +11,25 @@ import AvatarWrapper from './avatar.style';
 * 2. name -> 若無圖片時，可傳入用戶名稱，預設取首字為底
 * */
 
-const Avatar = ({
+const AvatarField = ({
   src, name, small, onPreview,
+  control,
+  formName,
 }) => {
   const photoRef = useRef();
   const [photo, setPhoto] = useState(null);
   const [preview, setPreview] = useState(null);
-  const [showDefault, setShowDefault] = useState(false);
+  const { field } = useController({control, name: formName});
 
   const handleClickEditButton = () => {
     photoRef.current.click();
   };
 
-  const renderPhoto = () => <img onError={() => setShowDefault(true)} src={preview || src} alt={name || 'avatar'} />;
+  const renderPhoto = () => <img src={preview || src} alt={name || 'avatar'} />;
 
   const renderDefaultBackground = () => (
     <div className="default">
-      { name ? <span>{toHalfWidth(name.substr(0, 1))}</span> : <PersonalIcon /> }
+      { name ? <span>{name.substr(0, 1)}</span> : <PersonalIcon /> }
     </div>
   );
 
@@ -39,7 +41,12 @@ const Avatar = ({
         type="file"
         accept="image/*"
         style={{ display: 'none' }}
-        onChange={(event) => setPhoto(event.target.files[0])}
+        onChange={(event) => {
+          if (event.currentTarget.files) {
+            setPhoto(event.target.files[0]);
+            field.onChange(event.currentTarget.files[0]);
+          }
+        }}
       />
     </div>
   );
@@ -56,11 +63,11 @@ const Avatar = ({
   return (
     <AvatarWrapper $small={small}>
       <div className="photo">
-        { ((preview || src) && !showDefault) ? renderPhoto() : renderDefaultBackground() }
+        { (preview || src) ? renderPhoto() : renderDefaultBackground() }
       </div>
       { !small && renderEditButton() }
     </AvatarWrapper>
   );
 };
 
-export default Avatar;
+export default AvatarField;

@@ -7,12 +7,16 @@ const AvatarWrapper = styled.div.attrs({
   margin-right: auto;
   
   .photo {
-    padding: ${({ $small }) => ($small ? '.2rem' : '.4rem')};
+    // padding: ${({ $small }) => ($small ? '.2rem' : '.4rem')};
     border-radius: 50%;
     width: ${({ $small }) => ($small ? '4.4rem' : '8.8rem')};
     height: ${({ $small }) => ($small ? '4.4rem' : '8.8rem')};
     background: ${({ theme }) => theme.colors.primary.gradient};
-    overflow: hidden;
+    // overflow: hidden;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
   }
   
   img, .default {
@@ -20,8 +24,8 @@ const AvatarWrapper = styled.div.attrs({
   }
   
   img {
-    width: 100%;
-    height: 100%;
+    width: 92%;
+    height: 92%;
     object-fit: cover;
   }
   
@@ -29,18 +33,29 @@ const AvatarWrapper = styled.div.attrs({
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: 100%;
+    // width: 100%;
+    // height: 100%;
+    width: 92%;
+    height: 92%;
     background: ${({ theme }) => theme.colors.background.lighterBlue};
 
     span {
       font-size: ${({ $small }) => ($small ? '2rem' : '3.6rem')};
       font-weight: 700;
       color: ${({ theme }) => theme.colors.primary.light};
-      padding-left: 0.2rem;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      // padding-left: 0.2rem;
       
       &.Icon {
-        top: -.2rem;
+        // top: -.2rem;
+        width:100%;
+        height:100%;
+        display:flex;
+        align-items:center;
+        justify-content:center;
         font-size: ${({ $small }) => ($small ? '2rem' : '3.2rem')};
       }
     }

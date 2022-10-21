@@ -119,7 +119,9 @@ const Favorite = () => {
   // 點擊空白處離開移除模式
   const handleCloseRemoveMode = async (e) => {
     if (viewControl.content !== 'remove') return;
-    if (e.target.className === 'dndArea' || e.target.className === 'defaultPage') {
+    if (e.target.classList.contains('dndArea')
+     || e.target.classList.contains('defaultPage')
+     || e.target.classList.contains('dndItemContainer')) {
       setViewControl(initialViewControl);
     }
   };
@@ -138,7 +140,7 @@ const Favorite = () => {
         key={block.actKey || index - 2}
         onTouchStart={block.actKey ? handleTouchStart : null}
         onTouchEnd={block.actKey ? handleTouchEnd : null}
-        onClick={block.actKey ? () => startFunc(block.actKey) : () => handleOpenView('add')}
+        onClick={block.actKey ? () => startFunc(block.actKey === 'B00200' ? 'M00100' : block.actKey) : () => handleOpenView('add')}
       >
         {
         block.actKey

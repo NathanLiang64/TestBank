@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import Main from 'components/Layout';
@@ -46,7 +47,7 @@ const Page = () => {
 
     // 若有指定帳號，則只取單一帳號的約定帳號清單。
     // TODO 未指定帳號時，應改用頁韱分類。
-    const accts = await loadLocalData(`${storageName}${bindAcct}`, () => getAllRegisteredAccount(bindAcct));
+    const accts = await loadLocalData(`${storageName}`, () => getAllRegisteredAccount(bindAcct));
     setAccounts(accts);
 
     dispatch(setWaittingVisible(false));
@@ -76,9 +77,15 @@ const Page = () => {
   const editAccount = async (acct) => {
     const onFinished = async (newAcct) => {
       const successful = await updateRegisteredAccount(newAcct);
+
       dispatch(setDrawerVisible(false));
       if (successful) {
-        setAccounts(setLocalData(`${storageName}${bindAccount}`, [...accounts])); // 強制更新清單。
+        const updatedAccounts = accounts.map((account) => {
+          if (account.acctId === newAcct.acctId) return newAcct;
+          return account;
+        });
+        const setData = await setLocalData(`${storageName}`, updatedAccounts);
+        setAccounts(setData); // 強制更新清單。
       }
     };
 

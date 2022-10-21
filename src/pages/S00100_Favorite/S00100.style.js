@@ -26,6 +26,7 @@ const blockStyle = `
 const FavoriteDrawerWrapper = styled.div`
   margin-top: 2rem;
   margin-bottom:2rem;
+  user-select:none;
   .defaultPage {
     display: flex;
     flex-direction: column;
@@ -96,8 +97,8 @@ const FavoriteDrawerWrapper = styled.div`
         
         .removeButton {
           position: absolute;
-          top: .8rem;
-          left: .8rem;
+          top: 1rem;
+          left: 1rem;
           display: flex;
           justify-content: center;
           align-items: center;

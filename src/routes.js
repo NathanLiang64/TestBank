@@ -59,6 +59,7 @@ const R006001 = lazy(() => import('pages/R00600_Adjustment/adjustment_1'));
 const S00400 = lazy(() => import('pages/S00400_NoticeSetting/S00400'));
 const S00600 = lazy(() => import('pages/S00600_QandA'));
 const S00700 = lazy(() => import('pages/S00700_DebitCardActive/S00700'));
+const S007001 = lazy(() => import('pages/S00700_DebitCardActive/S00700_1'));
 const S00800 = lazy(() => import('pages/S00800_LossReissue/S00800'));
 const T00100 = lazy(() => import('pages/T00100_Profile/T00100'));
 const T00200 = lazy(() => import('pages/T00200_QuickLoginSetting'));
@@ -162,6 +163,7 @@ const routes = [
   {path: '/S00400', exact: true, component: S00400},
   {path: '/S00600', exact: false, component: S00600},
   {path: '/S00700', exact: false, component: S00700},
+  {path: '/S007001', exact: false, component: S007001},
   {path: '/S00800', exact: false, component: S00800},
   {path: '/T00100', exact: false, component: T00100},
   {path: '/T00600', exact: false, component: T00600},

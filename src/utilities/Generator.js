@@ -367,3 +367,9 @@ export const loadLocalData = async (storeName, loadDataFunc) => {
 
   return data;
 };
+
+// 將全形文字轉為半形
+export const toHalfWidth = (str) => str.replace(
+  /[\uff01-\uff5e]/g,
+  (ch) => String.fromCharCode(ch.charCodeAt(0) - 0xfee0),
+);

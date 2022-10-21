@@ -40,7 +40,8 @@ const Page = () => {
               {friends.map((f) => (
                 <li key={uuid()}>
                   <div>
-                    <Avatar small src={f.friendUuid} name={f.friendName} />
+                    {/* <Avatar small src={f.friendUuid} name={f.friendName} /> */}
+                    <Avatar small src="https://runt-of-the-web.com/wordpress/wp-content/uploads/2013/05/shibe-meme-no.jpg" name={f.friendName} />
                   </div>
                   <div className="flex-auto">
                     <div className="title">
@@ -53,10 +54,10 @@ const Page = () => {
                           {dateFormatter(stringToDate(f.depositApproved))}
                         </div>
                       )}
-                      {f.creditCardApproved && (
+                      {f.depositApproved && (
                         <div>
                           核卡：
-                          {dateFormatter(stringToDate(f.creditCardApproved))}
+                          {dateFormatter(stringToDate(f.depositApproved))}
                         </div>
                       )}
                     </div>
