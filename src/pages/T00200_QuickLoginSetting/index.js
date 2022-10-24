@@ -55,7 +55,7 @@ const QuickLoginSetting = () => {
     const rs = await transactionAuth(code);
     console.log('交易驗證結果:', JSON.stringify(rs));
     if (rs.result) {
-      const { result, message } = await delQL(type);
+      const { result, message } = await delQL();
       const isSuccess = result === 'true';
       // 顯示解除綁定結果
       showAnimationModal({
