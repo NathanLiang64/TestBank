@@ -56,7 +56,7 @@ const R00400Result = lazy(() => import('pages/R00400_CCPayment/TransferResult'))
 const R00500 = lazy(() => import('pages/R00500_AutomaticBillPayment'));
 const R00600 = lazy(() => import('pages/R00600_Adjustment'));
 const R006001 = lazy(() => import('pages/R00600_Adjustment/adjustment_1'));
-const S00400 = lazy(() => import('pages/S00400_NoticeSetting'));
+const S00400 = lazy(() => import('pages/S00400_NoticeSetting/S00400'));
 const S00600 = lazy(() => import('pages/S00600_QandA'));
 const S00700 = lazy(() => import('pages/S00700_DebitCardActive/S00700'));
 const S007001 = lazy(() => import('pages/S00700_DebitCardActive/S00700_1'));

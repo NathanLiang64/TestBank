@@ -28,3 +28,35 @@ export const queryPushSetting = async () => {
   const response = await callAPI('/api/push/v1/queryPushSetting');
   return response.data;
 };
+
+/**
+ * 呼叫原生查詢推播通知功能開啟狀態[mock]
+ * @returns {{
+ *  code: 表開啟狀態
+ * }} code: '0000': 已開啟、1111: 未綁定裝置、'2222': 未開啟
+ */
+export const queryPushBind = async () => {
+  console.log('S00400 api queryIsNoticeOn(): 查詢推播通知功能開啟狀態');
+  const mockRes = {
+    code: '2222',
+  };
+
+  return mockRes;
+};
+
+/**
+ * aa
+ * @returns {{
+ *  code: '0000'為成功
+ *  message:
+ * }}
+ */
+export const updatePushBind = async () => {
+  console.log('S00400 api turnOnNoticeSetting(): 開啟設定');
+  const mockRes = {
+    code: '0000',
+    message: 'failed',
+  };
+
+  return mockRes;
+};
