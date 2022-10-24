@@ -19,7 +19,7 @@ import {
   transactionAuth,
 } from 'utilities/AppScriptProxy';
 import {
-  customPopup, showAnimationModal, showDrawer,
+  customPopup, showAnimationModal, showDrawer, showCustomPrompt,
 } from 'utilities/MessageModal';
 import { setDrawerVisible } from 'stores/reducers/ModalReducer';
 import { getQuickLoginInfo } from './api';
@@ -51,6 +51,10 @@ const QuickLoginSetting = () => {
 
   // 解除快登綁定
   const callAppDelQL = async (type) => {
+    customPopup(
+      '系統訊息',
+      '解除快速綁定 workflow 測試',
+    );
     const code = 0x20;
     const rs = await transactionAuth(code);
     console.log('交易驗證結果:', JSON.stringify(rs));
@@ -72,6 +76,13 @@ const QuickLoginSetting = () => {
       if (type === '2' && isSuccess) {
         setIsPatternActive(false);
       }
+    } else {
+      await showCustomPrompt({
+        message: `解除快速綁定交易驗證測試結果：${JSON.stringify(rs)}`,
+        onOk: () => closeFunc(),
+        onCancel: () => closeFunc(),
+        onClose: () => closeFunc(),
+      });
     }
   };
 
@@ -210,7 +221,7 @@ const QuickLoginSetting = () => {
   }, []);
 
   return (
-    <Layout title="快速登入設定">
+    <Layout title="快速登入設定test">
       <QuickLoginSettingWrapper>
         <div className="tip">設定後就能快速登入囉！（僅能擇一）</div>
         <div>
