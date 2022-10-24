@@ -152,20 +152,27 @@ const LevelDialogContentWrapper = styled.div`
 `;
 
 const DepositPlusDetailWrapper = styled(Layout)`
-  background-color: ${({ theme }) => theme.colors.background.lighterBlue};
+  background-color: ${({ theme }) => theme.colors.basic.white};
+
+  .activityCard:nth-child(1) {
+    border-top: 1rem solid ${({ theme }) => theme.colors.background.lighterBlue};
+  }
   .activityCard {
     margin: 0 -1.6rem 1rem -1.6rem;
     padding: 1rem;
     background-color: ${({ theme }) => theme.colors.basic.white};
+    border-bottom: 1rem solid ${({ theme }) => theme.colors.background.lighterBlue};
 
     .activityCard_upper {
-      padding: 1rem 1rem 2rem 1rem;
+      color: ${({ theme }) => theme.colors.text.dark};
+      padding: 1rem 0.5rem 2rem 0.5rem;
       border-bottom: 1px solid ${({ theme }) => theme.colors.border.lightest};
 
       display: flex;
 
       .title {
         margin-right: auto;
+        font-size: 120%;
       }
       .detail {
         display: flex;
@@ -175,8 +182,13 @@ const DepositPlusDetailWrapper = styled(Layout)`
       }
     }
     .activityCard_lower {
-      padding: 2rem 1rem 1rem 1rem;
-      color: ${({ theme }) => theme.colors.text.light};
+      padding: 2rem 0.5rem 1rem 0.5rem;
+
+      p {
+        color: ${({ theme }) => theme.colors.text.light};
+        font-size: 90%;
+        font-weight: 300;
+      }
     }
   }
 `;
