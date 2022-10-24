@@ -481,11 +481,8 @@ async function regQL(QLtype, pwdE2ee) {
  *  message: 駿證失敗狀況描述。
  * }
  */
-async function delQL(delType) {
-  const data = {
-    delType,
-  };
-  return await callAppJavaScript('delQL', data, true, () => {
+async function delQL() {
+  return await callAppJavaScript('delQL', null, true, () => {
     console.log('web 通知 APP 解除快登綁定');
     return {
       result: 'true',

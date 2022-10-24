@@ -39,13 +39,14 @@ const CardLessATM = () => {
 
   // 跳轉到無卡提款申請頁
   const toWithdrawPage = () => {
-    switchLoading(false);
     history.push('/D003001');
   };
 
   // 檢查無卡提款狀態; 0=未申請, 1=已申請未開通, 2=已開通, 3=已註銷, 4=已失效, 5=其他
   const fetchCardlessStatus = async (param) => {
+    switchLoading(true);
     const statusCodeResponse = await getCardlessStatus(param);
+    switchLoading(false);
     const { cwdStatus, newSiteRegist, message } = statusCodeResponse;
     // newSiteRegist 目前沒有用處
     setNewSiteReg(newSiteRegist);
@@ -56,9 +57,6 @@ const CardLessATM = () => {
       case '2':
         toWithdrawPage();
         break;
-      case '4':
-        await showCustomPrompt({message, onOk: () => closeFunc(), onCancel: () => closeFunc()});
-        break;
       default:
         await showCustomPrompt({message, onOk: () => closeFunc(), onCancel: () => closeFunc()});
     }
@@ -68,7 +66,7 @@ const CardLessATM = () => {
   const fetchCardStatus = async () => {
     switchLoading(true);
     const { cardStatus, message } = await getCardStatus();
-
+    switchLoading(false);
     switch (cardStatus) {
       case '02':
         await showCustomPrompt({
@@ -97,7 +95,6 @@ const CardLessATM = () => {
       switchLoading(true);
       const activateResponse = await cardLessWithdrawActivate(param);
       const { message } = activateResponse;
-
       if (message) {
         await showCustomPrompt({
           message,
@@ -113,6 +110,7 @@ const CardLessATM = () => {
           onClose: () => toWithdrawPage(),
         });
       }
+      switchLoading(false);
     }
   };
 
