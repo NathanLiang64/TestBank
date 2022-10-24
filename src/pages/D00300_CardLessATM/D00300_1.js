@@ -84,6 +84,7 @@ const CardLessATM1 = () => {
     switchLoading(true);
     // TODO 因為沒有提供 account 資訊，所以 response 是 undefined，因此讀不到 message 造成 error
     const summaryResponse = await getAccountSummary({ account: '' });
+    switchLoading(false);
     console.log('取得提款帳號資訊', summaryResponse);
     const { message } = summaryResponse;
     if (!message) {
@@ -92,7 +93,6 @@ const CardLessATM1 = () => {
       // TBD
       showCustomPrompt({message, onOk: () => closeFunc(), onClose: () => closeFunc()});
     }
-    switchLoading(false);
   };
 
   // 無卡提款交易
@@ -102,6 +102,7 @@ const CardLessATM1 = () => {
     if (jsRs.result) {
       switchLoading(true);
       const withdrawResponse = await cardLessWithdrawApply(param);
+      switchLoading(false);
       const { account, withdrawAmount } = param;
       const {
         seqNo, startDateTime, endDateTime, message,
@@ -113,8 +114,6 @@ const CardLessATM1 = () => {
         startDateTime,
         endDateTime,
       };
-
-      switchLoading(false);
 
       if (seqNo) {
         console.log('提款結果', data);

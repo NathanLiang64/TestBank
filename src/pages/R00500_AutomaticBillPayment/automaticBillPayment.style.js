@@ -2,13 +2,6 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const AutomaticBillPaymentWrapper = styled(Layout)`
-  &.drawerContainer {
-    margin-top: 0;
-    padding: 0 1.6rem 2.4rem;
-    button {
-      margin-top: 1.8rem;
-    }
-  }
   .billBlock {
     margin-top: 3.6rem;
     .blockTitle {

@@ -90,22 +90,23 @@ const Nav = () => {
 
         <div className="vj">
           <p style={{ color: '#9D7ADE' }}>** 唯物 **</p>
-          <div onClick={() => startFunc('T00200')}>T00200 快速登入設定</div>
           <div onClick={() => startFunc('A00400')}>A00400 開通APP</div>
           <div onClick={() => startFunc('A00600')}>A00600 定期更新基本個資</div>
           <div onClick={() => startFunc('A00700')}>A00700 定期更新網銀密碼</div>
           <div onClick={() => startFunc('A00400')}>A00400 開通APP</div>
+          <div onClick={() => startFunc('B00300')}>B00300 訊息通知 - (施工中)</div>
           <div onClick={() => startFunc('C00800')}>C00800 匯出存摺</div>
           <div onClick={() => startFunc('D00300')}>D00300 無卡提款</div>
+          <div onClick={() => startFunc('D00700')}>D00700 外幣轉外幣 - (施工中)</div>
           <div onClick={() => startFunc('D00800')}>D00800 預約轉帳查詢</div>
-          <div onClick={() => startFunc('B00300')}>B00300 訊息通知 - (施工中)</div>
-          <div onClick={() => startFunc('S00400')}>S00400 訊息通知設定 - (施工中)</div>
           <div onClick={() => startFunc('E00100')}>E00100 換匯 - (施工中)</div>
+          <div onClick={() => startFunc('L00300')}>L00300 繳款紀錄查詢 - (施工中)</div>
+          <div onClick={() => startFunc('R00500')}>R00500 自動扣繳 - (施工中)</div>
+          <div onClick={() => startFunc('S00400')}>S00400 訊息通知設定 - (施工中)</div>
           <div onClick={() => startFunc('T00100')}>T00100 個人化設定</div>
+          <div onClick={() => startFunc('T00200')}>T00200 快速登入設定</div>
           <div onClick={() => startFunc('T00600')}>T00600 手機號碼收款設定 - (施工中)</div>
           <div onClick={() => startFunc('T00700')}>T00700 基本資料變更 - (施工中)</div>
-          <div onClick={() => startFunc('D00700')}>D00700 外幣轉外幣 - (施工中)</div>
-          <div onClick={() => startFunc('L00300')}>L00300 繳款紀錄查詢 - (施工中)</div>
           <div onClick={() => startFunc('cardLessSetting')}>無 function code 無卡提款設定 - (完成切版)</div>
         </div>
 
