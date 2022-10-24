@@ -85,7 +85,7 @@ const DepositPlusWrapper = styled(Layout)`
 
           &.limitPrice {
             font-size: 1.8rem;
-            font-weight: 700;
+            font-weight: 300;
             color: ${({ theme }) => theme.colors.text.dark};
           }
 
