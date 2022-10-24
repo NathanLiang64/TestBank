@@ -29,7 +29,7 @@ const T00100settingList = [
   {
     name: '無卡提款設定',
     route: '/cardLessSetting',
-    funcID: 'D00300',
+    funcID: 'T00400',
   },
   {
     name: '行動金融憑證設定',
