@@ -51,13 +51,13 @@ const QuickLoginSetting = () => {
 
   // 解除快登綁定
   const callAppDelQL = async (type) => {
-    customPopup(
-      '系統訊息',
-      '解除快速綁定 workflow 測試',
-    );
     const code = 0x20;
     const rs = await transactionAuth(code);
     console.log('交易驗證結果:', JSON.stringify(rs));
+    customPopup(
+      '系統訊息',
+      `解除快速綁定交易驗證測試結果：${JSON.stringify(rs)}`,
+    );
     if (rs.result) {
       const { result, message } = await delQL();
       const isSuccess = result === 'true';
