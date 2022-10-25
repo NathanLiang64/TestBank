@@ -5,6 +5,7 @@ import yellow from 'assets/images/cardWatermarks/yellow.png';
 import blue from 'assets/images/cardWatermarks/blue.png';
 import green from 'assets/images/cardWatermarks/green.png';
 import lightPurple from 'assets/images/cardWatermarks/lightPurple.png';
+import orange from 'assets/images/cardWatermarks/orange.png';
 
 const getWatermark = (color) => {
   switch (color) {
@@ -12,6 +13,7 @@ const getWatermark = (color) => {
     case 'yellow': return yellow;
     case 'green': return green;
     case 'lightPurple': return lightPurple;
+    case 'orange': return orange;
     default:
     case 'purple': return purple;
   }

@@ -28,16 +28,17 @@ const AccountOverviewPage = () => {
   /**
    * 產生上方圓餅圖的 slides
    * 因為第一階段可能沒有負資產的功能，所以預設空陣列，仰賴後端回傳的資料，再將其加入陣列中。
+   * TODO: 空陣列時？
    */
   const renderSlides = (data) => {
     const slides = [];
 
     if (data?.assets && data.assets.length > 0) {
-      slides.push(<PieChart key={uuid()} label="正資產" data={data.assets} isCentered />);
+      slides.push(<PieChart key={uuid()} label="正資產" data={data.assets.sort((a, b) => b.balance - a.balance)} isCentered />);
     }
 
     if (data?.debts && data.debts.length > 0) {
-      slides.push(<PieChart key={uuid()} label="負資產" data={data.debts} isCentered />);
+      slides.push(<PieChart key={uuid()} label="負資產" data={data.debts.sort((a, b) => b.balance - a.balance)} isCentered />);
     }
 
     return slides;

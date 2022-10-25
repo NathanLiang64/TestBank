@@ -25,13 +25,13 @@ import AccountCardWrapper from './AccountCard.style';
 
 const AccountCard = ({
   type = 'M',
-  cardName = 'Title',
-  accountNo = '22244499991111',
-  balance = '200000',
+  cardName,
+  accountNo,
+  balance,
   color,
   hasShadow = false,
   dollarSign = 'NTD',
-  percent = '20',
+  percent,
   annotation,
   ariaLabel,
   children,
@@ -51,7 +51,7 @@ const AccountCard = ({
             %
           </div>
         </div>
-        {isShowAccoutNo && <div>{accountNo && accountFormatter(accountNo)}</div>}
+        <div style={{ visibility: isShowAccoutNo && !!accountNo ? 'visible' : 'hidden' }}>{accountFormatter(accountNo)}</div>
         <div className="justify-between items-end">
           <div>{annotation}</div>
           <div className="balance">
