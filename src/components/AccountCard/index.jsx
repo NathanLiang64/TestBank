@@ -21,6 +21,7 @@ import AccountCardWrapper from './AccountCard.style';
 * 9. annotation -> 金額旁的備註，如：以使用額度
 * 10.ariaLabel -> title for button，預設為 cardName
 * 11.children
+* 12. isShowAccoutNo -> boolean。是否顯示帳號，預設為true
 * */
 
 const AccountCard = ({

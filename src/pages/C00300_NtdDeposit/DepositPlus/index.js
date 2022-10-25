@@ -12,6 +12,7 @@ import {
 /* Reducers & JS functions */
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { ArrowNextIcon } from 'assets/images/icons';
+import { toCurrency } from 'utilities/Generator';
 import { getBonusPeriodList, getDepositPlus, getDepositPlusLevelList } from './api';
 import DepositPlusWrapper from './depositPlus.style';
 
@@ -37,13 +38,6 @@ const Deposit = () => {
   const renderMonthlyTabs = (list) => list.map((month) => (
     <FEIBTab key={month} label={`${month.substr(4)}月`} value={month} />
   ));
-
-  /* 數字加千分號 */
-  const formatNumber = (number) => {
-    const internationalNumberFormat = new Intl.NumberFormat('en-US');
-
-    return internationalNumberFormat.format(parseInt(number, 10));
-  };
 
   const renderTabArea = (monthList) => (
     <FEIBTabContext value={tabId}>
@@ -101,7 +95,7 @@ const Deposit = () => {
             {`${renderText(depositPlusDetail.period?.substr(0, 4))}/${renderText(depositPlusDetail.period?.substr(4))} `}
             優惠利率額度總計
           </span>
-          <h3>{`$${renderText(formatNumber(depositPlusDetail.summaryBonusQuota))}`}</h3>
+          <h3>{`$${renderText(toCurrency(parseInt(depositPlusDetail.summaryBonusQuota, 10)))}`}</h3>
         </div>
 
         <section className="detailArea">
@@ -125,7 +119,7 @@ const Deposit = () => {
                   <span>{detail.memo}</span>
                 </div>
                 <p className="limitPrice">
-                  {`$${renderText(formatNumber(detail.bonusQuota))}`}
+                  {`$${toCurrency(parseInt(detail.bonusQuota, 10))}`}
                 </p>
               </li>
             ))}
