@@ -340,6 +340,14 @@ const GlobalStyles = createGlobalStyle`
     white-space: nowrap;
     border-width: 0;
   }
+
+  .drawerContainer {
+    margin-top: 0;
+    padding: 0 1.6rem 2.4rem;
+    button {
+      margin-top: 1.8rem;
+    }
+  }
 `;
 
 export default GlobalStyles;

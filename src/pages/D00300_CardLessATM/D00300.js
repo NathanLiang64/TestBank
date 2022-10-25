@@ -111,6 +111,11 @@ const CardLessATM = () => {
         });
       }
       switchLoading(false);
+    } else {
+      showCustomPrompt({
+        message: '發生錯誤，無法進行交易驗證',
+        onOk: () => closeFunc(),
+      });
     }
   };
 
