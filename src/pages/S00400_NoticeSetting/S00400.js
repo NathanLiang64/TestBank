@@ -85,7 +85,7 @@ const S00400 = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
     const queryIsOnResponse = await queryPushBind();
-    if (queryIsOnResponse.code === '1111') { // DEBUG: 回傳為mock
+    if (queryIsOnResponse.code === '1111') { // DEBUG: mock回傳判斷
       showError('尙未完成行動裝置綁定!', async () => await closeFunc());
     }
     setIsPushBind(queryIsOnResponse.code === '0000');

@@ -30,10 +30,10 @@ export const queryPushSetting = async () => {
 };
 
 /**
- * 呼叫原生查詢推播通知功能開啟狀態[mock]
+ * 呼叫原生查詢推播通知功能開啟狀態 DEBUG: mock
  * @returns {{
- *  code: 表開啟狀態
- * }} code: '0000': 已開啟、1111: 未綁定裝置、'2222': 未開啟
+ *  code: string
+ * }} code: 表開啟狀態， '0000': 已開啟、1111: 未綁定裝置、'2222': 未開啟
  */
 export const queryPushBind = async () => {
   console.log('S00400 api queryIsNoticeOn(): 查詢推播通知功能開啟狀態');
@@ -45,11 +45,12 @@ export const queryPushBind = async () => {
 };
 
 /**
- * aa
+ * 更新推播通知綁定狀態 DEBUG: mock
  * @returns {{
- *  code: '0000'為成功
- *  message:
+ *  code: string,
+ *  message: string
  * }}
+ * code: '0000' 為成功
  */
 export const updatePushBind = async () => {
   console.log('S00400 api turnOnNoticeSetting(): 開啟設定');
