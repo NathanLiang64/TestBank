@@ -54,10 +54,10 @@ const Page = () => {
                           {dateFormatter(stringToDate(f.depositApproved))}
                         </div>
                       )}
-                      {f.depositApproved && (
+                      {f.creditCardApproved && (
                         <div>
                           核卡：
-                          {dateFormatter(stringToDate(f.depositApproved))}
+                          {dateFormatter(stringToDate(f.creditCardApproved))}
                         </div>
                       )}
                     </div>
