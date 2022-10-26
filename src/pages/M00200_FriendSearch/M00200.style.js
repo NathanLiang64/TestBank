@@ -16,7 +16,7 @@ const PageWrapper = styled.div`
     .flex-auto {
       flex: 1 1 auto;
       width: 100%;
-      margin-left:1.2rem;
+      margin-left: 1.2rem;
     }
   }
 
@@ -29,13 +29,11 @@ const PageWrapper = styled.div`
     font-size: 1.2rem;
     line-height: 1.8rem;
     color: ${({ theme }) => theme.colors.text.light};
-
     display: flex;
-    gap: 0.5em;
 
     & > *:not(:first-child)::before {
-      content: "|";
-      margin-right: 0.5em;
+      content: '|';
+      margin: 0 0.5rem;
     }
   }
 `;

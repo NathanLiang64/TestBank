@@ -7,14 +7,17 @@ import { useForm } from 'react-hook-form';
 import Layout from 'components/Layout/Layout';
 import Avatar from 'components/Avatar';
 import CopyTextIconButton from 'components/CopyTextIconButton';
-import { FEIBInput, FEIBInputLabel, FEIBButton, FEIBIconButton, FEIBTextarea } from 'components/elements';
+import { FEIBButton, FEIBIconButton } from 'components/elements';
 
 /* Reducers & JS functions */
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { customPopup } from 'utilities/MessageModal';
+import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { showCustomPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, shareMessage } from 'utilities/AppScriptProxy';
 import { ArrowNextIcon, EditIcon } from 'assets/images/icons';
-import theme from 'themes/theme';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { TextareaField, TextInputField } from 'components/Fields';
+import { useDispatch } from 'react-redux';
+import { currencySymbolGenerator } from 'utilities/Generator';
 import {
   getSummary,
   // TODO updateAvatar,
@@ -22,18 +25,22 @@ import {
   updateEssay,
 } from './api';
 import NetworkWrapper, { EssayWrapper } from './M00100.style';
+import { validationSchema } from './validationSchema';
 
 /**
  * 社群圈首頁
  */
 const CommunityPage = () => {
   const [summary, setSummary] = useState();
-
-  const { register, unregister, handleSubmit } = useForm();
+  const dispatch = useDispatch();
+  const { control, reset, handleSubmit } = useForm({
+    defaultValues: { nickname: '', essay: '' },
+    resolver: yupResolver(validationSchema),
+    mode: 'onChange',
+  });
   const renderText = (value) => ((value !== null) ? value : '-');
   const defaultEssay = '點擊「成為Bankee會員」申辦Bankee數位存款帳戶，享活存利率2.6%！';
   const shareMessageContent = () => `${summary?.essay ?? defaultEssay} ${process.env.REACT_APP_RECOMMEND_URL}${summary.memberNo}`;
-  const [textareaLength, setTextareaLength] = useState(0); // ???
 
   useEffect(async () => {
     setWaittingVisible(false);
@@ -54,7 +61,8 @@ const CommunityPage = () => {
       model.summary = await getSummary();
     }
     setSummary(model.summary);
-
+    const {nickname, essay} = model.summary;
+    reset({nickname, essay});
     setWaittingVisible(true);
   }, []);
 
@@ -62,67 +70,60 @@ const CommunityPage = () => {
    * 編輯暱稱
    */
   const showNicknameEditDialog = async () => {
-    // Note: 因為這個 Dialog 是動態產生的，所以一定要刪掉註冊的元件。
-    //       否則，下次註冊將失效，而且持續傳回最後一次的輪入值，而不會改變。
-    const fieldName = 'nickname';
-    unregister(fieldName, { keepDirty: true });
-
     const body = (
       <div id="nickNameForm" style={{ paddingBottom: '2.4rem' }}>
-        <FEIBInputLabel htmlFor="nickname">您的名稱</FEIBInputLabel>
-        <FEIBInput autoFocus {...register(fieldName)} defaultValue={summary.nickname} placeholder="請輸入您的名稱" />
+        <TextInputField
+          control={control}
+          name="nickname"
+          labelName="您的名稱"
+          placeholder="請輸入您的名稱"
+        />
       </div>
     );
-    const onOk = ({ nickname }) => {
-      if (!nickname) return;
+    const onOk = async ({ nickname }) => {
       setSummary({ ...summary, nickname }); // 變更暱稱(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
-      updateNickname(nickname);
+      await updateNickname(nickname);
+      dispatch(setModalVisible(false));
     };
-    await customPopup('暱稱', body, handleSubmit(onOk), null, '完成');
+
+    await showCustomPrompt({
+      titile: '暱稱',
+      message: body,
+      onOk: handleSubmit(onOk),
+      onClose: () => reset({ nickname: summary.nickname, essay: summary.essay }),
+      noDismiss: true,
+    });
   };
 
   /**
    * 編輯 您的分享文案
    */
   const showEssayEditDialog = async () => {
-    // Note: 因為這個 Dialog 是動態產生的，所以一定要刪掉註冊的元件。
-    //       否則，下次註冊將失效，而且持續傳回最後一次的輪入值，而不會改變。
-    const fieldName = 'essay';
-    unregister(fieldName, { keepDirty: true });
-    // TODO: 無法做到目前輸入長度的更新。
-    // const onInputChange = (e) => {
-    //   const length = e.target.textLength;
-    //   setTextareaLength(length);
-    // };
-
     const body = (
       <EssayWrapper>
-        <FEIBInputLabel htmlFor="essay">您的分享文案</FEIBInputLabel>
-        <FEIBTextarea
-          {...register(fieldName)}
-          defaultValue={summary.essay}
+        <TextareaField
+          control={control}
+          name="essay"
+          labelName="您的分享文案"
           placeholder="請輸入您的分享文案"
-          // onChange={onInputChange}
-          $borderColor={textareaLength > 200 && theme.colors.state.danger}
           rowsMin={3}
           rowsMax={10}
         />
-        <span className={`limitText ${textareaLength > 200 ? 'warningColor' : ''}`}>
-          { `字數限制（${textareaLength}/200）` }
-        </span>
       </EssayWrapper>
     );
-    const onOk = ({ essay }) => {
-      console.log('essay : "', essay, '"');
-      essay = `${essay?.trim()}`;
-      console.log('essay : "', essay, '"');
-      if (essay.length > 200) essay = essay.substring(0, essay.length); // 截掉超過的部份。
-      if (essay === defaultEssay || !essay.length) essay = null;
-      setSummary({ ...summary, essay }); // 變更分享文案(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
-      setTextareaLength(essay?.length);
-      updateEssay(essay);
+    const onOk = async ({ essay }) => {
+      const updatedEssay = `${essay?.trim()}`;
+      setSummary({ ...summary, essay: updatedEssay }); // 變更分享文案(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
+      await updateEssay(updatedEssay);
+      dispatch(setModalVisible(false));
     };
-    await customPopup('分享內容', body, handleSubmit(onOk), null, '完成');
+    await showCustomPrompt({
+      title: '分享內容',
+      message: body,
+      onOk: handleSubmit(onOk),
+      onClose: () => reset({nickname: summary.nickname, essay: summary.essay}),
+      noDismiss: true,
+    });
   };
 
   /**
@@ -139,7 +140,9 @@ const CommunityPage = () => {
               <EditIcon />
             </FEIBIconButton>
           </div>
-          <span className="level">{`等級 ${renderText(summary?.socailLevel)}`}</span>
+          <span className="level">
+            {`等級 ${renderText(summary?.socailLevel)}`}
+          </span>
         </div>
         <div className="contentCard promo">
           <div className="title">推薦好友加入社群圈</div>
@@ -147,21 +150,31 @@ const CommunityPage = () => {
             <div className="subTitle">我的推薦碼</div>
             <div className="code">
               <span>{renderText(summary?.memberNo)}</span>
-              <CopyTextIconButton copyText={summary?.memberNo || ''} displayMessage="已複製推薦碼" />
+              <CopyTextIconButton
+                copyText={summary?.memberNo || ''}
+                displayMessage="已複製推薦碼"
+              />
             </div>
           </div>
           <div className="subTitle shareTitle">分享內容</div>
           <div className="essay">
-            <span>{renderText(summary?.essay ? summary.essay : defaultEssay)}</span>
+            <span>
+              {renderText(summary?.essay ? summary.essay : defaultEssay)}
+            </span>
             <FEIBIconButton $fontSize={1.6} onClick={showEssayEditDialog}>
               <EditIcon />
             </FEIBIconButton>
           </div>
-          <FEIBButton onClick={() => shareMessage(shareMessageContent())}>分享推薦碼</FEIBButton>
+          <FEIBButton onClick={() => shareMessage(shareMessageContent())}>
+            分享推薦碼
+          </FEIBButton>
         </div>
         <div className="contentCard">
           <div className="title">
-            <div className="search" onClick={() => startFunc('M00200', null, { summary })}>
+            <div
+              className="search"
+              onClick={() => startFunc('M00200', null, { summary })}
+            >
               <span>查詢</span>
               <ArrowNextIcon />
             </div>
@@ -170,35 +183,49 @@ const CommunityPage = () => {
           <div className="overviewContent">
             <div className="overviewItem">
               <div className="subTitle">點擊人數</div>
-              <div className="num">{renderText(summary?.community.hitTimes)}</div>
+              <div className="num">
+                {renderText(summary?.community.hitTimes)}
+              </div>
             </div>
             <div className="overviewItem">
               <div className="subTitle">申請中人數</div>
-              <div className="num">{renderText(summary?.community.applying)}</div>
+              <div className="num">
+                {renderText(summary?.community.applying)}
+              </div>
             </div>
             <div className="overviewItem">
               <div className="subTitle">已核可人數</div>
-              <div className="num">{renderText(summary?.community.approved)}</div>
+              <div className="num">
+                {renderText(summary?.community.approved)}
+              </div>
             </div>
           </div>
         </div>
         <div className="contentCard">
           <div className="title">社群圈回饋</div>
           <div className="overviewContent twoColumn">
-            <div className="overviewItem" onClick={() => startFunc('depositPlus', null, { summary })}>
+            <div
+              className="overviewItem"
+              onClick={() => startFunc('depositPlus', null, { summary })}
+            >
               <div className="subTitle">
                 優惠存款額度
                 <ArrowNextIcon />
               </div>
-              <div className="num">{renderText(summary?.bonusInfo.amount)}</div>
+              {/* <div className="num">{renderText(summary?.bonusInfo.amount)}</div> */}
+              <div className="num">{`NT${currencySymbolGenerator('NTD', Math.abs(summary?.bonusInfo.amount))}`}</div>
             </div>
-            <div className="overviewItem" onClick={() => startFunc('C00700', null, { summary })}>
+            <div
+              className="overviewItem"
+              onClick={() => startFunc('C007002', null, { summary })}
+            >
               <div className="subTitle">
                 信用卡回饋
                 <ArrowNextIcon />
               </div>
               <div className="num">
-                {`NT$${renderText(summary?.bonusInfo.profit)}`}
+                {/* {`NT$${renderText(summary?.bonusInfo.profit)}`} */}
+                {`NT${currencySymbolGenerator('NTD', Math.abs(summary?.bonusInfo.profit))}`}
               </div>
             </div>
             {/* <div className="overviewItem"> */}
