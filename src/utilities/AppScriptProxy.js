@@ -408,7 +408,7 @@ async function verifyBio(authCode) {
   const data = {
     authCode,
   };
-  return await callAppJavaScript('verifyBio', data, true, () => ({ result: true })); // Call /v1/setBioResult
+  return await callAppJavaScript('chkQLfeature', data, true, () => ({ result: true })); // Call /v1/setBioResult
 }
 
 /**
