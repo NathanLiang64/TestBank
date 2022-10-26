@@ -59,7 +59,7 @@ const PieChart = ({
           {label}
           總額
         </div>
-        <div className="balance">{`${currencySymbolGenerator(dollarSign, totalBalance)}`}</div>
+        <div className={`balance ${currencySymbolGenerator(dollarSign, totalBalance).length > 12 && 'small'}`}>{`${currencySymbolGenerator(dollarSign, totalBalance)}`}</div>
       </div>
     </PieChartWrapper>
   );

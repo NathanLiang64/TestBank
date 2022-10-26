@@ -36,8 +36,11 @@ const PieChartWrapper = styled.div`
   .balance {
     color: ${({ theme }) => theme.colors.primary.dark};
     font-size: 2rem;
-    font-weight: 500;
+    font-weight: 400;
     line-height: 3rem;
+  }
+  .small {
+    font-size: 1.5rem;
   }
 
   canvas {

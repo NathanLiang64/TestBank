@@ -75,7 +75,11 @@ const AccountCardWrapper = styled.div`
   .balance {
     text-align: right;
     font-size: 3rem;
+    font-weight: 300;
     color: ${({ theme }) => theme.colors.text.darkGray};
+  }
+  .small {
+    font-size: 2.5rem;
   }
 
   .gap-4 { gap: 1rem; }
