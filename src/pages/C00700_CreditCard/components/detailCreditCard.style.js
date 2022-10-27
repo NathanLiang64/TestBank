@@ -98,7 +98,7 @@ const DetailCardWrapper = styled.div`
 
   .remark {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     align-items: center;
 
     span {
