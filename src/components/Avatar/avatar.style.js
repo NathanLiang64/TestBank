@@ -5,7 +5,7 @@ const AvatarWrapper = styled.div.attrs({
 })`
   margin-left: auto;
   margin-right: auto;
-  
+
   .photo {
     // padding: ${({ $small }) => ($small ? '.2rem' : '.4rem')};
     border-radius: 50%;
@@ -14,21 +14,22 @@ const AvatarWrapper = styled.div.attrs({
     background: ${({ theme }) => theme.colors.primary.gradient};
     // overflow: hidden;
 
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  
-  img, .default {
+
+  img,
+  .default {
     border-radius: 50%;
   }
-  
+
   img {
     width: 92%;
     height: 92%;
     object-fit: cover;
   }
-  
+
   .default {
     display: flex;
     justify-content: center;
@@ -48,14 +49,14 @@ const AvatarWrapper = styled.div.attrs({
       top: 50%;
       transform: translate(-50%, -50%);
       // padding-left: 0.2rem;
-      
+
       &.Icon {
         // top: -.2rem;
-        width:100%;
-        height:100%;
-        display:flex;
-        align-items:center;
-        justify-content:center;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         font-size: ${({ $small }) => ($small ? '2rem' : '3.2rem')};
       }
     }
@@ -76,12 +77,19 @@ const AvatarWrapper = styled.div.attrs({
     border-radius: 50%;
     width: 3.2rem;
     height: 3.2rem;
-    border: .2rem solid ${({ theme }) => theme.colors.basic.white};
+    border: 0.2rem solid ${({ theme }) => theme.colors.basic.white};
     background: ${({ theme }) => theme.colors.primary.light};
-    
+
     .Icon {
       font-size: 1.6rem;
       color: ${({ theme }) => theme.colors.basic.white};
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    input {
+      display: none;
     }
   }
 `;

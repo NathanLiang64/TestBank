@@ -1,10 +1,6 @@
 import React from 'react';
 import { useController } from 'react-hook-form';
-import {
-  FEIBInputLabel,
-  FEIBTextarea,
-  FEIBErrorMessage,
-} from 'components/elements';
+import { FEIBInputLabel, FEIBTextarea } from 'components/elements';
 import theme from 'themes/theme';
 
 export const TextareaField = ({
@@ -24,7 +20,7 @@ export const TextareaField = ({
     <>
       <FEIBInputLabel htmlFor={name}>{labelName}</FEIBInputLabel>
       <FEIBTextarea
-        onChange={onChange}
+        onChange={(e) => onChange(e.target.value.trim())}
         onBlur={onBlur}
         value={value}
         id={name}
@@ -38,10 +34,6 @@ export const TextareaField = ({
       >
         {`字數限制（${value.length}/${limit}）`}
       </span>
-
-      <FEIBErrorMessage>
-        {fieldState.error ? fieldState.error.message : ''}
-      </FEIBErrorMessage>
     </>
   );
 };

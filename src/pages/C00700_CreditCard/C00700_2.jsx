@@ -80,7 +80,7 @@ const C007002 = () => {
   };
 
   return (
-    <Layout title="信用卡 回饋" goBackFunc={() => history.goBack()}>
+    <Layout title="每月現金回饋" goBackFunc={() => history.goBack()}>
       <Main>
         <PageWrapper>
           <FEIBTabContext value={selectedMonth}>

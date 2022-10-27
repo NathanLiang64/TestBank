@@ -35,6 +35,7 @@ const Page = () => {
 
     // const response = await getBills(getThisMonth()); // TODO: 抓系統時間（YYYYMM）作為此處參數傳入
     const response = await getBills('202207'); // 測試時使用202207
+
     setBills(response);
     dispatch(setWaittingVisible(false));
   }, []);

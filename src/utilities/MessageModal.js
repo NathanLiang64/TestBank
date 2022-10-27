@@ -91,7 +91,8 @@ export const showCustomPrompt = async ({
     store.dispatch(setModal({
       title,
       content: message,
-      onOk: onOk ?? closePopup,
+      // onOk: onOk ?? closePopup,
+      onOk,
       onCancel,
       okContent,
       cancelContent,

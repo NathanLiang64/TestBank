@@ -13,6 +13,7 @@ import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
 import DownloadIcon from 'assets/images/icons/downloadIcon.svg';
 
 /* Styles */
+import EmptyData from 'components/EmptyData';
 import LoanInterestWrapper from './loanInterest.style';
 
 const LoanInterest = (props) => {
@@ -102,6 +103,7 @@ const LoanInterest = (props) => {
     }
   }, []);
 
+  // 進到該頁面時先 Query 近六個月的繳款紀錄
   useEffect(() => {
     if (cardData?.accountNo) {
       getLoanInterestRecords(dateRange);
@@ -115,7 +117,9 @@ const LoanInterest = (props) => {
           <DebitCard
             branch=""
             cardName={cardData?.alias || ''}
-            account={`${accountFormatter(cardData?.accountNo || '')} ${cardData.loanNo}`}
+            account={`${accountFormatter(cardData?.accountNo || '')} ${
+              cardData.loanNo
+            }`}
             balance={toCurrency(cardData?.balance || '')}
             dollarSign={cardData?.currency || ''}
             transferTitle=""
@@ -125,7 +129,12 @@ const LoanInterest = (props) => {
         <div className="contentArea">
           <div className="tools">
             <div className="iconContainer">
-              <img className="downloadImg" src={DownloadIcon} alt="" onClick={handleOpenDrawer} />
+              <img
+                className="downloadImg"
+                src={DownloadIcon}
+                alt=""
+                onClick={handleOpenDrawer}
+              />
             </div>
             <div className="tabsContainer">
               <FEIBTabContext value={dateRange}>
@@ -138,9 +147,9 @@ const LoanInterest = (props) => {
               </FEIBTabContext>
             </div>
           </div>
-          <div className="recordsList">
-            {
-              recordsList.map((item) => (
+          {recordsList.length ? (
+            <div className="recordsList">
+              {recordsList.map((item) => (
                 <InformationTape
                   topLeft="還款金額"
                   topRight={`$${toCurrency(item.amount)}`}
@@ -148,9 +157,11 @@ const LoanInterest = (props) => {
                   bottomRight={`貸款餘額 $${toCurrency(item.balance)}`}
                   onClick={() => toDetailPage(item)}
                 />
-              ))
-            }
-          </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyData content="搜尋條件無資料" />
+          )}
         </div>
       </LoanInterestWrapper>
     </Layout>

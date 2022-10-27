@@ -81,9 +81,9 @@ const CommunityPage = () => {
       </div>
     );
     const onOk = async ({ nickname }) => {
-      setSummary({ ...summary, nickname }); // 變更暱稱(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
-      await updateNickname(nickname);
       dispatch(setModalVisible(false));
+      await updateNickname(nickname);
+      setSummary({ ...summary, nickname }); // 變更暱稱(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
     };
 
     await showCustomPrompt({
@@ -112,10 +112,9 @@ const CommunityPage = () => {
       </EssayWrapper>
     );
     const onOk = async ({ essay }) => {
-      const updatedEssay = `${essay?.trim()}`;
-      setSummary({ ...summary, essay: updatedEssay }); // 變更分享文案(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
-      await updateEssay(updatedEssay);
       dispatch(setModalVisible(false));
+      setSummary({ ...summary, essay }); // 變更分享文案(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
+      await updateEssay(essay);
     };
     await showCustomPrompt({
       title: '分享內容',

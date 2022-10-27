@@ -1,19 +1,23 @@
 import styled from 'styled-components';
 
 const PageWrapper = styled.div`
-  padding-block: 4.4rem;
+  // padding-block: 4.4rem;
+  padding: 4.4rem 0;
 
   .bg-gray {
     background-color: ${({ theme }) => theme.colors.background.lighterBlue};
     padding: 1.6rem;
-    padding-block-end: 4.6rem;
+    // padding-block-end: 4.6rem;
+    padding-bottom: 4.6rem;
   }
 
   .txn-wrapper {
     background-color: ${({ theme }) => theme.colors.basic.white};
     padding-inline: 1.6rem;
-    margin-block-start: -3rem;
-    padding-block-start: 3rem;
+    // margin-block-start: -3rem;
+    // padding-block-start: 3rem;
+    margin-top: -3rem;
+    padding-top: 3rem;
     border-top-left-radius: 3rem;
     border-top-right-radius: 3rem;
   }
@@ -21,7 +25,8 @@ const PageWrapper = styled.div`
   .note {
     font-size: 1.4rem;
     color: ${({ theme }) => theme.colors.text.light};
-    margin-block-start: 1.6rem;
+    // margin-block-start: 1.6rem;
+    margin-top: 1.6rem;
     margin-inline: 1.6rem;
   }
 
