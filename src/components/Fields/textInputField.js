@@ -15,7 +15,7 @@ export const TextInputField = ({
     <>
       <FEIBInputLabel htmlFor={name}>{labelName}</FEIBInputLabel>
       <FEIBInput
-        onChange={onChange}
+        onChange={(e) => onChange(e.target.value.trim())}
         onBlur={onBlur}
         value={value}
         type={type}
@@ -23,8 +23,9 @@ export const TextInputField = ({
         error={!!fieldState.error}
         placeholder={placeholder || ''}
       />
-      <FEIBErrorMessage>{fieldState.error ? fieldState.error.message : ''}</FEIBErrorMessage>
+      <FEIBErrorMessage>
+        {fieldState.error ? fieldState.error.message : ''}
+      </FEIBErrorMessage>
     </>
-
   );
 };

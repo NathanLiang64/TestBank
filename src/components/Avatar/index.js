@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { EditIcon, PersonalIcon } from 'assets/images/icons';
 import { toHalfWidth } from 'utilities/Generator';
 import AvatarWrapper from './avatar.style';
@@ -14,14 +14,9 @@ import AvatarWrapper from './avatar.style';
 const Avatar = ({
   src, name, small, onPreview,
 }) => {
-  const photoRef = useRef();
   const [photo, setPhoto] = useState(null);
   const [preview, setPreview] = useState(null);
   const [showDefault, setShowDefault] = useState(false);
-
-  const handleClickEditButton = () => {
-    photoRef.current.click();
-  };
 
   const renderPhoto = () => <img onError={() => setShowDefault(true)} src={preview || src} alt={name || 'avatar'} />;
 
@@ -32,23 +27,22 @@ const Avatar = ({
   );
 
   const renderEditButton = () => (
-    <div className="editButton" onClick={handleClickEditButton}>
+    <label className="editButton" htmlFor="imageInput">
       <EditIcon />
       <input
-        ref={photoRef}
+        id="imageInput"
         type="file"
         accept="image/*"
-        style={{ display: 'none' }}
         onChange={(event) => setPhoto(event.target.files[0])}
       />
-    </div>
+    </label>
   );
 
   useEffect(() => {
     if (photo) {
       const reader = new FileReader();
-      reader.onloadend = () => setPreview(reader.result);
       reader.readAsDataURL(photo);
+      reader.onloadend = () => setPreview(reader.result);
       if (onPreview) onPreview(photo);
     }
   }, [photo]);

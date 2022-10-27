@@ -67,6 +67,7 @@ const Page = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
+    console.log('location.state', location.state);
     let accountNo;
     if (location.state && ('accountNo' in location.state)) accountNo = location.state.accountNo;
     const response = await getTransactions({
@@ -140,7 +141,7 @@ const Page = () => {
     };
     const options = (
       <DetailDialogErrorMsg className="remark">
-        <span>{memo}</span>
+        <span>{memo.trim()}</span>
         <FEIBIconButton $fontSize={1.6} onClick={() => EditDialog()} className="badIcon">
           <EditIcon />
         </FEIBIconButton>
@@ -157,7 +158,8 @@ const Page = () => {
             <CreditCard
               key={uuid()}
               cardName={card?.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
-              accountNo={card?.accountNo}
+              // accountNo={card?.accountNo}
+              accountNo={card?.type === 'bankee' ? card?.accountNo : ''}
               balance={card?.creditUsed}
               color="green"
               annotation="已使用額度"
@@ -182,9 +184,11 @@ const Page = () => {
           { isLoading && <Loading isCentered />}
           <div className="note">實際請款金額以帳單為準</div>
           <Loader isLoading={isLoading} fetchTransactions={fetchTransactions} />
-          <BottomAction>
-            <button type="button">晚點付</button>
-          </BottomAction>
+          {card?.type === 'bankee' ? (
+            <BottomAction position={0}>
+              <button type="button">晚點付</button>
+            </BottomAction>
+          ) : null}
         </PageWrapper>
       </MainScrollWrapper>
     </Layout>

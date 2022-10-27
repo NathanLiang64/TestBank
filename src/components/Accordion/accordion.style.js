@@ -34,6 +34,7 @@ const AccordionWrapper = styled.div`
     
     .Icon {
       font-size: 2rem;
+      height:100%;
     }
   }
 

@@ -20,6 +20,7 @@ import { EditIcon } from 'assets/images/icons';
 import { showCustomPrompt } from 'utilities/MessageModal';
 
 import { TextInputField } from 'components/Fields';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { updateMemo, updateTxnNotes, getTransactions } from '../api';
 
 // timeFormatter
@@ -27,6 +28,7 @@ import DetailCardWrapper, { DetailDialogContentWrapper, DetailDialogErrorMsg, Ta
 import {
   backInfo, levelInfo, renderBody, renderHead,
 } from '../utils';
+import { validationSchema } from './validationSchema';
 
 /*
 * ==================== DetailCard 組件說明 ====================
@@ -53,14 +55,18 @@ const DetailCard = ({
   // eslint-disable-next-line no-unused-vars
   const {
     control, handleSubmit, reset, getValues,
-  } = useForm();
+  } = useForm({
+    defaultValues: { notes: {} },
+    resolver: yupResolver(validationSchema),
+    mode: 'onChange',
+  });
   /**
    * 初始化
    */
 
   const updateTransactions = async () => {
     // TODO getTransactions API 待完成
-    // const res = await getTransactions({cardNo: '5242480022210703', dateBeg: '20220901', dateEnd: '20221001'});
+    // const res = await getTransactions({cardNo: '"5232870002930308"', dateBeg: '20220901', dateEnd: '20221025'});
     // console.log('res', res);
     // setTransactions(res.data);
     setTransactions(details);
@@ -98,7 +104,6 @@ const DetailCard = ({
           </span>
         </TableDialog>
       ),
-      okContent: '回信用卡首頁',
     });
   };
 
@@ -125,19 +130,26 @@ const DetailCard = ({
     showCustomPrompt({
       title: '編輯備註',
       message: (
-        <TextInputField labelName="備註說明" name={`notes.${id}`} defaultValue={memo} control={control} />
+        <TextInputField labelName="備註說明" name={`notes[${id}]`} control={control} />
       ),
       noDismiss: true,
       okContent: '完成',
-      onOk: handleSubmit(async (values) => {
-        console.log('values[id]', values.notes[id]);
+      onOk: handleSubmit(async ({notes}) => {
+        console.log('values[id]', notes[id]);
         // TODO 等待 getTransaction API 完成後進行 updateTxnNotes API 串接
         //  await updateTxnNotes({...values.notes[id]})
-        await updateTransactions();
+        setTransactions((prevState) => {
+          const updatedState = prevState.map((transaction) => {
+            if (transaction.id === id) return {...transaction, memo: notes[id]};
+            return transaction;
+          });
+          return updatedState;
+        });
         dispatch(setModalVisible(false));
       }),
       onClose: () => {
         const {notes} = getValues();
+        console.log('notes', notes);
         const resetValues = {...notes, [id]: memo};
         reset({notes: resetValues});
       },
@@ -168,7 +180,6 @@ const DetailCard = ({
               {/* 刷卡金額 */}
               <h4>
                 {currencySymbolGenerator(item.currency, item.amount)}
-                {/* {currencySymbolGenerator(item.currency, item.amount)} */}
               </h4>
               <div className="remark">
                 <span>{item.memo}</span>

@@ -98,7 +98,7 @@ const DetailCardWrapper = styled.div`
 
   .remark {
     display: flex;
-    justify-content: right;
+    justify-content: end;
     align-items: center;
 
     span {
@@ -149,13 +149,14 @@ const TableDialog = styled.div`
         padding-bottom: 0.8rem;
         font-weight: 500;
         width: 33.333333%;
+        font-size:1.4rem;
       }
     }
     tbody tr th {
       width: 33.333333%;
       padding-top: 0.4rem;
       padding-bottom: 0.4rem;
-      font-size: 1rem;
+      font-size: 1.4rem;
     }
   }
 
