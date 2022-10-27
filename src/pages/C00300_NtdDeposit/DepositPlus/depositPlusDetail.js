@@ -5,6 +5,7 @@ import { useLocation, useHistory } from 'react-router';
 import Layout from 'components/Layout/Layout';
 import { ArrowNextIcon } from 'assets/images/icons';
 import { showCustomPrompt } from 'utilities/MessageModal';
+import { handleLevelList } from 'utilities/Generator';
 import { getDepositPlusLevelList } from './api';
 
 /* Style */
@@ -18,81 +19,6 @@ const DepositPlusDetail = () => {
   const history = useHistory();
 
   const url26Pa = 'https://www.bankee.com.tw/event/26Pa/index.html';
-
-  /* 將數字中的0轉換為中文 */
-  const switchZhNumber = (numIndication) => {
-    // eslint-disable-next-line no-bitwise
-    const logedNum = (Math.log(numIndication) * Math.LOG10E + 1) | 0;
-    switch (logedNum) {
-      case 1:
-        return '千';
-      case 2:
-        return '萬';
-      case 3:
-        return '0萬';
-      case 4:
-        return '百萬';
-      case 5:
-        return '千萬';
-      default:
-        return '億';
-    }
-  };
-
-  /* 調整優惠列表中的數字顯示 */
-  const handleLevelList = (list) => list.map((item, index) => {
-    // 調整offlineDepositRange中數字
-    const offlineDepositRange = item.offlineDepositRange.replace(/,/g, '');
-    const offlineDepositRangeNum = {
-      firstNum: offlineDepositRange.match(/\d+/g)[0],
-      secondNum: offlineDepositRange.match(/\d+/g)[1],
-    };
-    const offlineDepositRangeDevidedByThousand = {
-      firstNum: parseInt(offlineDepositRangeNum.firstNum, 10) / 1000,
-      secondNum: parseInt(offlineDepositRangeNum.secondNum, 10) / 1000,
-    };
-    let offlineDepositRangeFinalRes = '';
-
-    if (index === 0) {
-      offlineDepositRangeFinalRes = `${offlineDepositRangeDevidedByThousand.firstNum
-        .toString()
-        .replace(/0/g, '')
-        + switchZhNumber(offlineDepositRangeDevidedByThousand.firstNum)
-      }元 (不含) 以下`;
-    } else if (index === 13) {
-      offlineDepositRangeFinalRes = `${offlineDepositRangeDevidedByThousand.firstNum
-        .toString()
-        .replace(/0/g, '')
-        + switchZhNumber(offlineDepositRangeDevidedByThousand.firstNum)
-      }元 (含) 以上`;
-    } else {
-      offlineDepositRangeFinalRes = `${offlineDepositRangeDevidedByThousand.firstNum
-        .toString()
-        .replace(/0/g, '')
-        + switchZhNumber(offlineDepositRangeDevidedByThousand.firstNum)
-      }元 (含) ~${
-        offlineDepositRangeDevidedByThousand.secondNum
-          .toString()
-          .replace(/0/g, '')
-      }${switchZhNumber(offlineDepositRangeDevidedByThousand.secondNum)
-      }元`;
-    }
-
-    // 調整plus中數字
-    const plus = item.offlineDepositRange.replace(/,/g, '');
-    const plusDevidedByThousand = parseInt(plus, 10) / 1000;
-    const plusFinalRes = `${plusDevidedByThousand.toString().replace(/0/g, '')
-      + switchZhNumber(plusDevidedByThousand)
-    }(含)`;
-
-    const newItem = {
-      ...item,
-      plus: plusFinalRes,
-      offlineDepositRange: offlineDepositRangeFinalRes,
-    };
-
-    return newItem;
-  });
 
   const renderLevelDialogContent = (levelList) => (
     <LevelDialogContentWrapper>
