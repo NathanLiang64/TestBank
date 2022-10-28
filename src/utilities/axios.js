@@ -253,19 +253,19 @@ export const download = async (url, request, filename) => {
   console.log(`\x1b[33mAPI :/${url}`);
   console.log('Request = ', request);
   const token = await getJwtToken();
-
   // Request Payload 加密
   const aes = await getAesKey();
   const encrypt = JWTUtil.encryptJWTMessage(aes.aesKey, aes.iv, JSON.stringify(request));
 
-  fetch(url, {
+  fetch(`${process.env.REACT_APP_URL}${url}`, {
     method: 'POST',
     headers: new Headers({
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     }),
     body: JSON.stringify(encrypt),
-  }).then((response) => response.blob())
+  })
+    .then((response) => response.blob())
     .then((file) => {
       console.log(file);
       const fileUrl = URL.createObjectURL(file);

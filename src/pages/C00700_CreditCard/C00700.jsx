@@ -9,11 +9,9 @@ import Main from 'components/Layout';
 import CreditCard from 'components/CreditCard';
 
 import { CreditCardIcon5, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
-
-// eslint-disable-next-line no-unused-vars
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-
 import { showCustomDrawer } from 'utilities/MessageModal';
+
 import DetailCreditCard from './components/detailCreditCard';
 import { getCards, getCreditCards } from './api';
 import SwiperCreditCard from './C00700.style';
@@ -27,7 +25,6 @@ const CreditCardPage = () => {
   // eslint-disable-next-line no-unused-vars
   const [cards, setCards] = useState();
   const dispatch = useDispatch();
-  // console.log('cards', cards);
   /**
    * 頁面啟動，初始化
    */

@@ -172,7 +172,7 @@ const DetailCard = ({
               <p>
                 {stringDateFormat(item.bizDate)}
                 {/* {item.txDate} */}
-                {type === 'all' ? ` | 卡-${creditNumberFormat(item.targetAcct)} acct` : ''}
+                {type === 'all' ? ` | 卡-${creditNumberFormat(item.targetAcct)}` : ''}
                 {/* 原資料沒有 targetAcct 需要透過上層props 提供 term 來判斷 */}
               </p>
             </div>
@@ -215,90 +215,3 @@ const DetailCard = ({
 };
 
 export default DetailCard;
-
-//  提交memoText
-// const onSubmit = async (index) => {
-//   const input = document.getElementById(uid).querySelector('input[name="pwd"]');
-//   const errorMsg = document.getElementById(uid).querySelector('.errorMsg');
-//   if (input.value.length > 7) {
-//     errorMsg.style.visibility = 'visible';
-//     input.parentElement.classList.add('errorBorder');
-//   } else {
-//     dispatch(setWaittingVisible(true));
-//     errorMsg.style.visibility = 'hidden';
-
-//     // TODO API;
-//     const response = await updateMemo({ id: index, memo: input.value });
-//     if (response) {
-//       const indexNumber = transactions.findIndex((element) => element.id === index);
-//       setTransactions(transactions[indexNumber].memo = input.value);
-//     }
-//     dispatch(setModalVisible(false));
-//     dispatch(setWaittingVisible(false));
-//   }
-// };
-
-// // 會員等級popup
-// const showlevelDialog = () => {
-//   showCustomPrompt({
-//     title: '會員等級',
-//     message: (
-//       <TableDialog>
-//         <table>
-//           <thead>
-//             <tr>
-//               { levelInfo.title.map((info) => (
-//                 <th key={`${uuid()}-header`}>{info}</th>
-//               )) }
-//             </tr>
-//           </thead>
-//           <tbody>
-//             { levelInfo.body.map((info) => (
-//               <tr key={`${uuid()}-body`}>
-//                 <th>{info.level}</th>
-//                 <th>{info.condition}</th>
-//               </tr>
-//             )) }
-//           </tbody>
-//         </table>
-//         <span className="remark">
-//           ＊依個人Bankee數存月平均存款餘額核定等級
-//         </span>
-//       </TableDialog>
-//     ),
-//     okContent: '回信用卡首頁',
-//   });
-// };
-
-// // 刷卡回饋popup
-// const showbackDialog = () => {
-//   showCustomPrompt({
-//     title: '國內外回饋',
-//     message: (
-//       <TableDialog>
-//         <table>
-//           <thead>
-//             <tr>
-//               { backInfo.title.map((info) => (
-//                 <th key={`${uuid()}-head`}>
-//                   {info}
-//                 </th>
-//               ))}
-//             </tr>
-//           </thead>
-//           <tbody>
-//             { backInfo.body.map((info) => (
-//               <tr key={`${uuid()}-body`}>
-//                 <th>{info.level}</th>
-//                 <th>{info.condition}</th>
-//                 <th>{info.percentage}</th>
-//               </tr>
-//             )) }
-//           </tbody>
-//         </table>
-//         <span className="remark"> ＊依個人Bankee數存月平均存款餘額核定等級 </span>
-//       </TableDialog>
-//     ),
-//     okContent: '回信用卡首頁',
-//   });
-// };
