@@ -2,37 +2,36 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const NetworkWrapper = styled(Layout)`
-  
   .infoContainer {
     display: flex;
     flex-direction: column;
     padding-bottom: 2.4rem;
-    
+
     .Avatar {
       margin-bottom: 1.2rem;
     }
-  
+
     .nickname {
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-bottom: .4rem;
-  
+      margin-bottom: 0.4rem;
+
       .name {
         color: ${({ theme }) => theme.colors.text.dark};
         font-size: 1.8rem;
         font-weight: 500;
       }
-      
+
       .MuiIconButton-root {
-        margin-left: -.4rem;
+        margin-left: -0.4rem;
       }
     }
-  
+
     .level {
       color: ${({ theme }) => theme.colors.primary.dark};
       text-align: center;
-    } 
+    }
   }
 
   .contentCard {
@@ -44,13 +43,13 @@ const NetworkWrapper = styled(Layout)`
       position: absolute;
       content: '';
       width: 100vw;
-      height: .8rem;
+      height: 0.8rem;
       background: ${({ theme }) => theme.colors.background.lighterBlue};
       transform: translate(-1.6rem, -3.2rem);
     }
 
     .Icon {
-      top: -.1rem;
+      top: -0.1rem;
       font-size: 1.6rem;
     }
 
@@ -64,7 +63,7 @@ const NetworkWrapper = styled(Layout)`
       align-items: center;
       color: ${({ theme }) => theme.colors.text.lightGray};
       font-size: 1.4rem;
-      margin-bottom: .8rem;
+      margin-bottom: 0.8rem;
     }
 
     .essay {
@@ -74,6 +73,10 @@ const NetworkWrapper = styled(Layout)`
       color: ${({ theme }) => theme.colors.text.light};
       margin-bottom: 2.4rem;
 
+      span {
+        word-break: break-all;
+      }
+      
       .MuiIconButton-root {
         position: absolute;
         top: -1rem;
@@ -84,28 +87,28 @@ const NetworkWrapper = styled(Layout)`
     .mainBlock {
       flex-direction: column;
       margin-bottom: 2.4rem;
-      
+
       .code {
         color: ${({ theme }) => theme.colors.primary.dark};
         font-size: 3rem;
         display: flex;
         font-weight: 500;
-        
+
         button {
           padding: 0 0 0 0.3rem;
           transform: translateY(-0.2rem);
-          
+
           svg {
             color: ${({ theme }) => theme.colors.primary.dark};
           }
         }
       }
     }
-    
+
     .search {
       position: absolute;
       font-weight: 400;
-      top: .1rem;
+      top: 0.1rem;
       right: 0;
       font-size: 1.4rem;
       display: flex;
@@ -116,7 +119,7 @@ const NetworkWrapper = styled(Layout)`
     .overviewContent {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      
+
       &.twoColumn {
         grid-template-columns: repeat(2, 1fr);
       }

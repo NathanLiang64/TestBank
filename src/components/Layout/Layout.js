@@ -115,20 +115,21 @@ function Layout({
         content={modalData.content}
         action={
           <>
-            {(modalData.onCancel || modalData.cancelContent)
-              ? (
-                <FEIBButton
-                  $bgColor={theme.colors.background.cancel}
-                  $color={theme.colors.text.dark}
-                  onClick={onModalCancel}
-                >
-                  {modalData.cancelContent ?? '取消'}
-                </FEIBButton>
-              )
-              : null}
-            <FEIBButton onClick={onModalOk}>
-              {modalData.okContent ?? '確認'}
-            </FEIBButton>
+            {modalData.onCancel || modalData.cancelContent ? (
+              <FEIBButton
+                $bgColor={theme.colors.background.cancel}
+                $color={theme.colors.text.dark}
+                onClick={onModalCancel}
+              >
+                {modalData.cancelContent ?? '取消'}
+              </FEIBButton>
+            ) : null}
+            {/*  若沒有給 onOk 則不出現確認按鈕 */}
+            {modalData.onOk ? (
+              <FEIBButton onClick={onModalOk}>
+                {modalData.okContent ?? '確認'}
+              </FEIBButton>
+            ) : null}
           </>
         }
       />

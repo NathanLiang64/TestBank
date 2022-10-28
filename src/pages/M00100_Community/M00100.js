@@ -17,7 +17,9 @@ import { ArrowNextIcon, EditIcon } from 'assets/images/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { TextareaField, TextInputField } from 'components/Fields';
 import { useDispatch } from 'react-redux';
-import { currencySymbolGenerator } from 'utilities/Generator';
+import {
+  switchZhNumber,
+} from 'utilities/Generator';
 import {
   getSummary,
   // TODO updateAvatar,
@@ -81,9 +83,9 @@ const CommunityPage = () => {
       </div>
     );
     const onOk = async ({ nickname }) => {
-      setSummary({ ...summary, nickname }); // 變更暱稱(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
-      await updateNickname(nickname);
       dispatch(setModalVisible(false));
+      await updateNickname(nickname);
+      setSummary({ ...summary, nickname }); // 變更暱稱(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
     };
 
     await showCustomPrompt({
@@ -112,10 +114,9 @@ const CommunityPage = () => {
       </EssayWrapper>
     );
     const onOk = async ({ essay }) => {
-      const updatedEssay = `${essay?.trim()}`;
-      setSummary({ ...summary, essay: updatedEssay }); // 變更分享文案(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
-      await updateEssay(updatedEssay);
       dispatch(setModalVisible(false));
+      setSummary({ ...summary, essay }); // 變更分享文案(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
+      await updateEssay(essay);
     };
     await showCustomPrompt({
       title: '分享內容',
@@ -124,6 +125,13 @@ const CommunityPage = () => {
       onClose: () => reset({nickname: summary.nickname, essay: summary.essay}),
       noDismiss: true,
     });
+  };
+
+  const transferNum2Chinese = (num) => {
+    if (!num) return `0${switchZhNumber(num / 1000)}元`;
+
+    return `${
+      (num / 1000).toString().replace(/0/g, '')}${switchZhNumber(num / 1000)}元`;
   };
 
   /**
@@ -213,7 +221,9 @@ const CommunityPage = () => {
                 <ArrowNextIcon />
               </div>
               {/* <div className="num">{renderText(summary?.bonusInfo.amount)}</div> */}
-              <div className="num">{`NT${currencySymbolGenerator('NTD', Math.abs(summary?.bonusInfo.amount))}`}</div>
+              <div className="num">
+                {`NT${transferNum2Chinese(summary?.bonusInfo.amount)}`}
+              </div>
             </div>
             <div
               className="overviewItem"
@@ -225,7 +235,7 @@ const CommunityPage = () => {
               </div>
               <div className="num">
                 {/* {`NT$${renderText(summary?.bonusInfo.profit)}`} */}
-                {`NT${currencySymbolGenerator('NTD', Math.abs(summary?.bonusInfo.profit))}`}
+                {`NT${transferNum2Chinese(summary?.bonusInfo.profit)}`}
               </div>
             </div>
             {/* <div className="overviewItem"> */}

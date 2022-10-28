@@ -42,6 +42,7 @@ const Transactions = ({ bills, isExpanded, onExpandClick }) => {
       ));
     }
     setDisplayList(list);
+
     setIsLoading(false);
   }, [selectedMonth, isExpanded]);
 

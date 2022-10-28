@@ -23,11 +23,11 @@ const InformationTape = ({
     <img src={img} alt="" style={{ display: img ? 'block' : 'none' }} />
     <div className="dataContainer">
       <div className="top">
-        <div className="left">{ topLeft }</div>
-        <div className="right">{ topRight }</div>
+        <div className="left">{ topLeft?.trim() }</div>
+        <div className="right">{ topRight?.trim() }</div>
       </div>
       <div className="bottom">
-        <div className="left">{ bottomLeft }</div>
+        <div className="left">{ bottomLeft?.trim() }</div>
         <div className="right">{ bottomRight }</div>
       </div>
     </div>

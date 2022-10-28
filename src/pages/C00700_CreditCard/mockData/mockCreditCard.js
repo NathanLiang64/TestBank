@@ -3,8 +3,8 @@ import uuid from 'react-uuid';
 const genTransactions = () => Array.from(Array(10)).map((_, i) => ({
   id: uuid(),
   index: i + 1,
-  bizDate: (20220425 + i).toString(),
-  txnDate: (20220425 + i).toString(),
+  bizDate: (20220425 - i).toString(),
+  txnDate: (20220425 - i).toString(),
   txnTime: 210156,
   description: '全家便利商店',
   memo: '',

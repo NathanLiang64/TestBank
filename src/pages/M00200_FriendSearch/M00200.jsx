@@ -9,7 +9,7 @@ import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import Loading from 'components/Loading';
 import Avatar from 'components/Avatar';
-import {dateFormatter, stringToDate } from 'utilities/Generator';
+import {dateFormatter, stringToDate, toHalfWidth } from 'utilities/Generator';
 
 import EmptyData from 'components/EmptyData';
 import { closeFunc } from 'utilities/AppScriptProxy';
@@ -45,7 +45,7 @@ const Page = () => {
                   </div>
                   <div className="flex-auto">
                     <div className="title">
-                      {f.friendName}
+                      {toHalfWidth(f.friendName)}
                     </div>
                     <div className="note">
                       {f.depositApproved && (

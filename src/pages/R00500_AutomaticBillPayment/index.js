@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -16,8 +17,8 @@ import {
   FEIBOption,
   FEIBButton,
   FEIBErrorMessage,
+  FEIBSwitch,
 } from 'components/elements';
-import AddNewItem from 'components/AddNewItem';
 import SettingItem from 'components/SettingItem';
 import Accordion from 'components/Accordion';
 import AccordionContent from './accordionContent';
@@ -29,6 +30,7 @@ import AutomaticBillPaymentWrapper from './automaticBillPayment.style';
 const AutomaticBillPayment = () => {
   const [appliedAutoBill, setAppliedAutoBill] = useState([]);
   const [accountsList, setAccountList] = useState([]);
+  const [active, setActive] = useState(false);
 
   /**
    *- 資料驗證
@@ -64,6 +66,9 @@ const AutomaticBillPayment = () => {
     switchLoading(false);
     if (response?.code === '0000') {
       setAppliedAutoBill(response.data);
+      if (response.data.length) {
+        setActive(true);
+      }
     } else {
       showCustomPrompt({ message: response?.message || '發生錯誤，無法取得自動扣繳資訊', onOk: () => closeFunc(), onClose: () => closeFunc() });
     }
@@ -91,9 +96,6 @@ const AutomaticBillPayment = () => {
     closeDrawer();
   };
 
-  const deleteAutoBillPay = () => {
-  };
-
   const onSubmit = async (data) => {
     const param = {
       ...data,
@@ -112,13 +114,40 @@ const AutomaticBillPayment = () => {
         errorCode: '',
         errorDesc: response.message,
       });
+      getAutoDebitData();
       handleCloseDrawer();
     }
   };
 
+  const addAutoBillPay = () => {
+    if (!active) {
+      showDrawer(
+        '新增自動扣繳',
+        (<AddForm />),
+      );
+    } else {
+      showCustomPrompt({
+        message: (
+          <div style={{ textAlign: 'center' }}>
+            您如欲取消自動扣繳
+            <br />
+            請洽客戶服務專線
+            <br />
+            (02)8073-1166
+          </div>
+        ),
+        onOk: () => {},
+      });
+    }
+  };
+
+  const handleApplyAutoBill = () => {
+    addAutoBillPay();
+  };
+
   useEffect(() => {
-    getAutoDebitData();
-    getAccountsArray();
+    // getAutoDebitData();
+    // getAccountsArray();
   }, []);
 
   const AddForm = () => (
@@ -163,47 +192,41 @@ const AutomaticBillPayment = () => {
           </FEIBSelect>
         )}
       />
+      <Accordion space="both" title="自動扣繳約定條款">
+        自動扣繳約定條款
+      </Accordion>
       <FEIBButton type="submit">同意條款並送出</FEIBButton>
     </form>
   );
-
-  const addAutoBillPay = () => {
-    showDrawer(
-      '新增自動扣繳',
-      (<AddForm />),
-    );
-  };
-
-  // const editAutoBillPay = () => {
-  //   showDrawer(
-  //     '編輯自動扣繳',
-  //     renderForm(),
-  //   );
-  // };
 
   const renderAppliedAutoBill = () => appliedAutoBill.map((item) => (
     <SettingItem
       key={item.account}
       mainLable={accountFormatter(item.account)}
       subLabel={`扣款方式：${item.isFullPay === '100' ? '應繳總金額' : '最低應繳金額'} | 狀態：${renderStatusText(item.status)}`}
-      // editClick={editAutoBillPay}
-      deleteClick={deleteAutoBillPay}
     />
   ));
 
   return (
     <Layout title="自動扣繳申請/查詢">
       <AutomaticBillPaymentWrapper>
-        <section>
-          <AddNewItem onClick={addAutoBillPay} addLabel="新增自動扣繳" />
-        </section>
-        <section className="billBlock">
-          <div className="blockTitle">您已申辦自動扣繳區</div>
-          {
-            appliedAutoBill.length > 0
-              ? renderAppliedAutoBill() : (<div className="item noData">查無資料</div>)
-          }
-        </section>
+        <div className="switchContainer">
+          <div className="labelContainer">
+            <p className="labelTxt">自動扣繳</p>
+          </div>
+          <FEIBSwitch
+            checked={active}
+            onClick={handleApplyAutoBill}
+          />
+        </div>
+        {
+          appliedAutoBill.length > 0 && (
+            <section className="billBlock">
+              <div className="blockTitle">您已申辦自動扣繳</div>
+              { renderAppliedAutoBill() }
+            </section>
+          )
+        }
         <Accordion space="both">
           <AccordionContent />
         </Accordion>
