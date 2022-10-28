@@ -375,72 +375,66 @@ export const toHalfWidth = (str) => str.replace(
 );
 
 // 將數字中的0轉換為中文
-export const switchZhNumber = (numIndication) => {
+export const switchZhNumber = (numIndication, isPlus) => {
+  // 計算位數
   // eslint-disable-next-line no-bitwise
   const logedNum = (Math.log(numIndication) * Math.LOG10E + 1) | 0;
+
+  // 依據位數判斷回傳數字級單位
   switch (logedNum) {
-    case 1:
-      return '千';
-    case 2:
-      return '萬';
-    case 3:
-      return '0萬';
-    case 4:
-      return '百萬';
-    case 5:
-      return '千萬';
+    case 4: // 千
+      return `${numIndication / 1000}千`;
+    case 5: // 萬
+      // eslint-disable-next-line no-case-declarations
+      const thousand = (numIndication % 10000) / 1000;
+      // eslint-disable-next-line no-case-declarations
+      const tenThousand = Math.floor(numIndication / 10000);
+      return `${tenThousand}萬${thousand !== 0 ? `${thousand}千` : ''}`;
+    case 6: // 十萬
+      return `${numIndication / 10000}萬`;
+    case 7: // 百萬
+      return isPlus
+        ? `${numIndication / 10000}萬`
+        : `${numIndication / 1000000}百萬`;
+    case 8: // 千萬
+      return `${numIndication / 10000000}千萬`;
+    case 9: // 億
+      return `${numIndication / 100000000}億`;
     default:
-      return '億';
+      return '';
   }
 };
 
 // 調整優惠列表中的數字顯示
 export const handleLevelList = (list) => list.map((item, index) => {
-  // 調整offlineDepositRange中數字
+  // offlineDepositRange
   const offlineDepositRange = item.offlineDepositRange.replace(/,/g, '');
   const offlineDepositRangeNum = {
     firstNum: offlineDepositRange.match(/\d+/g)[0],
     secondNum: offlineDepositRange.match(/\d+/g)[1],
   };
-  const offlineDepositRangeDevidedByThousand = {
-    firstNum: parseInt(offlineDepositRangeNum.firstNum, 10) / 1000,
-    secondNum: parseInt(offlineDepositRangeNum.secondNum, 10) / 1000,
+  const offlineDepositRangeInt = {
+    firstNum: parseInt(offlineDepositRangeNum.firstNum, 10),
+    secondNum: parseInt(offlineDepositRangeNum.secondNum, 10),
   };
   let offlineDepositRangeFinalRes = '';
 
   if (index === 0) {
-    offlineDepositRangeFinalRes = `${offlineDepositRangeDevidedByThousand.firstNum
-      .toString()
-      .replace(/0/g, '')
-      + switchZhNumber(offlineDepositRangeDevidedByThousand.firstNum)
-    }元 (不含) 以下`;
+    offlineDepositRangeFinalRes = `${switchZhNumber(offlineDepositRangeInt.firstNum, false)}(不含) 以下`;
   } else if (index === 13) {
-    offlineDepositRangeFinalRes = `${offlineDepositRangeDevidedByThousand.firstNum
-      .toString()
-      .replace(/0/g, '')
-      + switchZhNumber(offlineDepositRangeDevidedByThousand.firstNum)
-    }元 (含) 以上`;
+    offlineDepositRangeFinalRes = `${switchZhNumber(offlineDepositRangeInt.firstNum, false)}(含) 以上`;
   } else {
-    offlineDepositRangeFinalRes = `${offlineDepositRangeDevidedByThousand.firstNum
-      .toString()
-      .replace(/0/g, '')
-      + switchZhNumber(offlineDepositRangeDevidedByThousand.firstNum)
-    }元 (含) ~${
-      offlineDepositRangeDevidedByThousand.secondNum
-        .toString()
-        .replace(/0/g, '')
-    }${switchZhNumber(offlineDepositRangeDevidedByThousand.secondNum)
-    }元`;
+    offlineDepositRangeFinalRes = `${switchZhNumber(offlineDepositRangeInt.firstNum, false)
+    }(含) ~${
+      switchZhNumber(offlineDepositRangeInt.secondNum, false)}`;
   }
 
-  // 調整plus中數字 TODO: 針對有 50的狀況修改
-  const plus = item.offlineDepositRange.replace(/,/g, '');
-  const plusDevidedByThousand = parseInt(plus, 10) / 1000;
-  const plusFinalRes = `${plusDevidedByThousand.toString().replace(/0/g, '')
-    + switchZhNumber(plusDevidedByThousand)
-  }(含)`;
+  // plus
+  const plus = item.plus.replace(/,/g, '');
+  const plusFinalRes = parseInt(plus, 10) === 0
+    ? '0'
+    : `${switchZhNumber(parseInt(plus, 10), true)}(含)`;
 
-  // 更新數字格式後的資料
   const newItem = {
     ...item,
     plus: plusFinalRes,
