@@ -19,6 +19,9 @@ const SettingItem = ({
   const [showActions, setShowActions] = useState(false);
 
   const handleTouchStart = (event) => {
+    if (!editClick && !deleteClick) {
+      return;
+    }
     setStartX(event.targetTouches[0].clientX);
   };
 

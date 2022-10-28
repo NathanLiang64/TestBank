@@ -19,6 +19,7 @@ const AccordionWrapper = styled.div`
   background: ${({ theme }) => theme.colors.background.lighterBlue};
 
   button {
+    margin: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
