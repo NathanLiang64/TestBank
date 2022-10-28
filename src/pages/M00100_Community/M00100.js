@@ -17,7 +17,9 @@ import { ArrowNextIcon, EditIcon } from 'assets/images/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { TextareaField, TextInputField } from 'components/Fields';
 import { useDispatch } from 'react-redux';
-import { currencySymbolGenerator } from 'utilities/Generator';
+import {
+  switchZhNumber,
+} from 'utilities/Generator';
 import {
   getSummary,
   // TODO updateAvatar,
@@ -125,6 +127,13 @@ const CommunityPage = () => {
     });
   };
 
+  const transferNum2Chinese = (num) => {
+    if (!num) return `0${switchZhNumber(num / 1000)}元`;
+
+    return `${
+      (num / 1000).toString().replace(/0/g, '')}${switchZhNumber(num / 1000)}元`;
+  };
+
   /**
    * 頁面輸出
    */
@@ -212,7 +221,9 @@ const CommunityPage = () => {
                 <ArrowNextIcon />
               </div>
               {/* <div className="num">{renderText(summary?.bonusInfo.amount)}</div> */}
-              <div className="num">{`NT${currencySymbolGenerator('NTD', Math.abs(summary?.bonusInfo.amount))}`}</div>
+              <div className="num">
+                {`NT${transferNum2Chinese(summary?.bonusInfo.amount)}`}
+              </div>
             </div>
             <div
               className="overviewItem"
@@ -224,7 +235,7 @@ const CommunityPage = () => {
               </div>
               <div className="num">
                 {/* {`NT$${renderText(summary?.bonusInfo.profit)}`} */}
-                {`NT${currencySymbolGenerator('NTD', Math.abs(summary?.bonusInfo.profit))}`}
+                {`NT${transferNum2Chinese(summary?.bonusInfo.profit)}`}
               </div>
             </div>
             {/* <div className="overviewItem"> */}

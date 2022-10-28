@@ -379,6 +379,8 @@ export const switchZhNumber = (numIndication) => {
   // eslint-disable-next-line no-bitwise
   const logedNum = (Math.log(numIndication) * Math.LOG10E + 1) | 0;
   switch (logedNum) {
+    case 0:
+      return '';
     case 1:
       return '千';
     case 2:
