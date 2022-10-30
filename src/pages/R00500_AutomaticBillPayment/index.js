@@ -146,8 +146,8 @@ const AutomaticBillPayment = () => {
   };
 
   useEffect(() => {
-    // getAutoDebitData();
-    // getAccountsArray();
+    getAutoDebitData();
+    getAccountsArray();
   }, []);
 
   const AddForm = () => (
