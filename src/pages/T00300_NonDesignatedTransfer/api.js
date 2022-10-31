@@ -10,7 +10,7 @@ import { callAPI } from 'utilities/axios';
  *  status: 非約轉狀態,
  *  mobile: 裝置門號,
  * }}
- * status: 00-未申請、01-已申請未開通、02-密碼逾期30日、03-已開通、04-已註銷、05-OTP啟用密碼錯誤鎖定、06-OTP交易密碼錯誤鎖定、07-其他
+ * status: '00'-未申請、'01'-已申請未開通、'02'-密碼逾期30日、'03'-已開通、'04'-已註銷、'05'-OTP啟用密碼錯誤鎖定、'06'-OTP交易密碼錯誤鎖定、'07'-其他
  * mobile: 預設OTP號碼，如果沒有就帶入通訊門號
  */
 export const getNonDesignatedTransferData = async () => {
