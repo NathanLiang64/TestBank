@@ -38,7 +38,7 @@ import {
 const DepositPlanPage = () => {
   const history = useHistory(); // TODO 應該改用 startFunc
   const dispatch = useDispatch();
-  const [plans, setPlans] = useState();
+  const [plans, setPlans] = useState([]);
   const [subAccounts, setSubAccounts] = useState();
   const [totalSubAccountCount, setTotalSubAccountCount] = useState();
   const [swiperController, setSwipterController] = useState();
@@ -160,9 +160,8 @@ const DepositPlanPage = () => {
   const renderSlides = () => {
     const slides = Array.from({ length: 3 }, () => <EmptySlide key={uuid()} />);
 
-    let masterSlideIndex = null;
-
-    if (plans) {
+    if (plans.length) {
+      let masterSlideIndex = null;
       plans.forEach((p, i) => {
         if (p.isMaster) { masterSlideIndex = i; }
         slides[i] = (
@@ -177,8 +176,8 @@ const DepositPlanPage = () => {
       });
 
       if (masterSlideIndex !== null) {
-        const masterSlide = slides.splice(masterSlideIndex, 1)[0];
-        slides.splice(1, 0, masterSlide);
+        // 將向陣列中 index = masterSlideIndex 的項目調至 index = 1
+        [slides[masterSlideIndex], slides[1]] = [slides[1], slides[masterSlideIndex]];
       }
     }
     return slides;
@@ -212,9 +211,8 @@ const DepositPlanPage = () => {
       />
     ));
 
-    let masterSlideIndex = null;
-
-    if (plans) {
+    if (plans.length) {
+      let masterSlideIndex = null;
       plans.forEach((p, i) => {
         if (p.isMaster) { masterSlideIndex = i; }
         slides[i] = (
@@ -227,8 +225,7 @@ const DepositPlanPage = () => {
       });
 
       if (masterSlideIndex !== null) {
-        const masterSlide = slides.splice(masterSlideIndex, 1)[0];
-        slides.splice(1, 0, masterSlide);
+        [slides[masterSlideIndex], slides[1]] = [slides[1], slides[masterSlideIndex]];
       }
     }
     return slides;

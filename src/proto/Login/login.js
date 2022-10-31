@@ -42,7 +42,7 @@ const Login = () => {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      identity: 'F120994812', // Bankee台外數存(有很多明細資料)
+      identity: 'P151006031', // Bankee台外數存(有很多明細資料)
       // identity: 'B100000039', // Bankee台外數存、遠智授扣、交割帳戶
       account: '1qaz2wsx',
       password: 'feib1688',
