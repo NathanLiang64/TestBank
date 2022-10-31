@@ -78,18 +78,29 @@ export const generateCycleTimingOptions = (cycleMode) => {
   ));
 };
 
-export const generatebindAccountNoOptions = (subAccounts) => {
-  console.log('subAccounts', subAccounts);
+export const generatebindAccountNoOptions = (
+  subAccounts,
+  hasReachedMaxSubAccounts,
+) => {
   if (subAccounts.length === 0) {
     return [
-      {label: '無未綁定的子帳戶或已達8個子帳戶上限', value: '*', disabled: true},
+      {
+        label: '無未綁定的子帳戶或已達8個子帳戶上限',
+        value: '*',
+        disabled: true,
+      },
     ];
   }
-  const defaultValue = { label: '請選擇子帳號且不能修改', value: '*', disabled: true };
-  const transformedOptions = subAccounts.map(({ accountNo }) => ({
+  const defaultValue = {
+    label: '請選擇子帳號且不能修改',
+    value: '*',
+    disabled: true,
+  };
+  const options = subAccounts.map(({ accountNo }) => ({
     label: accountFormatter(accountNo),
     value: accountNo,
   }));
-  transformedOptions.unshift(defaultValue);
-  return transformedOptions;
+  options.unshift(defaultValue);
+  if (!hasReachedMaxSubAccounts) options.push({ label: '加開子帳戶', value: 'new' });
+  return options;
 };

@@ -8,6 +8,7 @@ export const AlertNoMainAccount = ({ onOk }) => {
     message: '您尚未持有Bankee存款帳戶',
     onOk,
     okContent: '現在就來申請吧!',
+    onClose: onOk,
   });
 };
 

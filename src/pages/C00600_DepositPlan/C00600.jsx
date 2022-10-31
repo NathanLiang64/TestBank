@@ -38,9 +38,10 @@ import {
 const DepositPlanPage = () => {
   const history = useHistory(); // TODO 應該改用 startFunc
   const dispatch = useDispatch();
-  const [plans, setPlans] = useState([]);
-  const [subAccounts, setSubAccounts] = useState();
-  const [totalSubAccountCount, setTotalSubAccountCount] = useState();
+  const [depositPlans, setDepositPlans] = useState();
+  // const [plans, setPlans] = useState([]);
+  // const [subAccounts, setSubAccounts] = useState();
+  // const [totalSubAccountCount, setTotalSubAccountCount] = useState();
   const [swiperController, setSwipterController] = useState();
 
   useEffect(async () => {
@@ -54,9 +55,10 @@ const DepositPlanPage = () => {
 
     const response = await getDepositPlans();
 
-    setPlans(response.plans);
-    setSubAccounts(response.subAccounts);
-    setTotalSubAccountCount(response.totalSubAccountCount);
+    setDepositPlans(response);
+    // setPlans(response.plans);
+    // setSubAccounts(response.subAccounts);
+    // setTotalSubAccountCount(response.totalSubAccountCount);
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -77,11 +79,18 @@ const DepositPlanPage = () => {
 
     if (response.result) {
       // 一併更新前端資料
-      setPlans(plans.map((p) => {
-        p.isMaster = false;
-        if (p.planId === plan.planId) p.isMaster = true;
-        return p;
-      }));
+      // setPlans(plans.map((p) => {
+      //   p.isMaster = false;
+      //   if (p.planId === plan.planId) p.isMaster = true;
+      //   return p;
+      // }));
+
+      setDepositPlans((prevPlans) => ({...prevPlans,
+        plans: prevPlans.map((p) => {
+          p.isMaster = false;
+          if (p.planId === plan.planId) p.isMaster = true;
+          return p;
+        })}));
 
       // 移動畫面顯示主要計畫
       if (swiperController) swiperController.slideTo(1);
@@ -160,9 +169,9 @@ const DepositPlanPage = () => {
   const renderSlides = () => {
     const slides = Array.from({ length: 3 }, () => <EmptySlide key={uuid()} />);
 
-    if (plans.length) {
+    if (depositPlans?.plans.length) {
       let masterSlideIndex = null;
-      plans.forEach((p, i) => {
+      depositPlans.plans.forEach((p, i) => {
         if (p.isMaster) { masterSlideIndex = i; }
         slides[i] = (
           <DepositPlanHeroSlide
@@ -187,7 +196,15 @@ const DepositPlanPage = () => {
    * 產生下方內容時會用的
    */
   const handleAddClick = () => {
-    startFunc('C006002', { plansLength: plans?.length, subAccounts, totalSubAccountCount });
+    // startFunc('C006002', { plansLength: plans?.length, subAccounts, totalSubAccountCount });
+    startFunc(
+      'C006002',
+      {
+        plansLength: depositPlans?.plans.length,
+        subAccounts: depositPlans.subAccounts,
+        totalSubAccountCount: depositPlans.totalSubAccountCount,
+      },
+    );
   };
 
   const handleShowDetailClick = (plan) => {
@@ -195,7 +212,7 @@ const DepositPlanPage = () => {
   };
 
   const shouldShowUnavailableSubAccountAlert = () => {
-    if ((totalSubAccountCount >= 8) && !(subAccounts?.length > 0)) AlertUnavailableSubAccount();
+    if ((depositPlans?.totalSubAccountCount >= 8) && !(depositPlans?.subAccounts.length > 0)) AlertUnavailableSubAccount();
   };
 
   /**
@@ -211,9 +228,9 @@ const DepositPlanPage = () => {
       />
     ));
 
-    if (plans.length) {
+    if (depositPlans?.plans.length) {
       let masterSlideIndex = null;
-      plans.forEach((p, i) => {
+      depositPlans.plans.forEach((p, i) => {
         if (p.isMaster) { masterSlideIndex = i; }
         slides[i] = (
           <DepositPlan
@@ -242,7 +259,7 @@ const DepositPlanPage = () => {
     const startParams = await loadFuncParams(); // Function Controller 提供的參數
     if (startParams && (typeof startParams === 'object')) {
       const accountNo = startParams.focusToAccountNo;
-      plans.forEach((p, i) => {
+      depositPlans.plans.forEach((p, i) => {
         if (p.bindAccountNo === accountNo) activeIndex = i;
       });
     }

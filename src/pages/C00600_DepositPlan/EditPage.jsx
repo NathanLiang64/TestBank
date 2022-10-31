@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useForm } from 'react-hook-form';
@@ -197,7 +196,7 @@ const DepositPlanEditPage = () => {
               <div>
                 {/* TODO: 加開子帳戶選項，若沒有子帳戶，應出現新增加開子帳戶的選項 */}
                 <DropdownField
-                  options={generatebindAccountNoOptions(location.state?.subAccounts || [])}
+                  options={generatebindAccountNoOptions(location.state?.subAccounts || [], location.state?.hasReachedMaxSubAccounts)}
                   name="bindAccountNo"
                   control={control}
                   labelName="選擇陪你存錢的帳號"

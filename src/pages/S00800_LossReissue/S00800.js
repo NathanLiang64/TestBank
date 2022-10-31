@@ -62,8 +62,8 @@ const LossReissue = () => {
           isSuccess={res && res.result}
           successTitle={`${actionText}設定成功`}
           errorTitle={`${actionText}設定失敗`}
-          successDesc={`狀態： (${debitCardInfo?.accountNo}) ${res.message}`}
-          errorDesc={`狀態： (${debitCardInfo?.accountNo}) ${res.message}`}
+          successDesc={`狀態： (${debitCardInfo?.account}) ${res.message}`}
+          errorDesc={`狀態： (${debitCardInfo?.account}) ${res.message}`}
         />
       ),
       onOk: () => updateDebitCardStatus(),
@@ -163,7 +163,7 @@ const LossReissue = () => {
             <li>
               <div className="blockLeft">
                 <p className="label debitCardStatusLabel">金融卡狀態</p>
-                <span className="content">{debitCardInfo?.accountNo || '-'}</span>
+                <span className="content">{debitCardInfo?.account || '-'}</span>
               </div>
               <div className="blockRight">
                 <h3 className="debitState">{debitCardInfo?.statusDesc}</h3>
