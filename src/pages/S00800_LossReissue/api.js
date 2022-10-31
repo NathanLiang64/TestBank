@@ -50,6 +50,6 @@ export const getStatus = async (params) => {
  * }
  */
 export const reIssueOrLost = async (params) => {
-  const response = await callAPI('/api/debit/card/v1/reIssue', params);
-  return response;
+  const response = await callAPI('/api/debit/card/v1/reIssueOrLost', params);
+  return response.data;
 };
