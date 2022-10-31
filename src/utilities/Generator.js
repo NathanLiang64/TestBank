@@ -401,45 +401,6 @@ export const switchZhNumber = (numIndication, isPlus) => {
     case 9: // 億
       return `${numIndication / 100000000}億`;
     default:
-      return '';
+      return '0';
   }
 };
-
-// 調整優惠列表中的數字顯示
-export const handleLevelList = (list) => list.map((item, index) => {
-  // offlineDepositRange
-  const offlineDepositRange = item.offlineDepositRange.replace(/,/g, '');
-  const offlineDepositRangeNum = {
-    firstNum: offlineDepositRange.match(/\d+/g)[0],
-    secondNum: offlineDepositRange.match(/\d+/g)[1],
-  };
-  const offlineDepositRangeInt = {
-    firstNum: parseInt(offlineDepositRangeNum.firstNum, 10),
-    secondNum: parseInt(offlineDepositRangeNum.secondNum, 10),
-  };
-  let offlineDepositRangeFinalRes = '';
-
-  if (index === 0) {
-    offlineDepositRangeFinalRes = `${switchZhNumber(offlineDepositRangeInt.firstNum, false)}(不含) 以下`;
-  } else if (index === 13) {
-    offlineDepositRangeFinalRes = `${switchZhNumber(offlineDepositRangeInt.firstNum, false)}(含) 以上`;
-  } else {
-    offlineDepositRangeFinalRes = `${switchZhNumber(offlineDepositRangeInt.firstNum, false)
-    }(含) ~${
-      switchZhNumber(offlineDepositRangeInt.secondNum, false)}`;
-  }
-
-  // plus
-  const plus = item.plus.replace(/,/g, '');
-  const plusFinalRes = parseInt(plus, 10) === 0
-    ? '0'
-    : `${switchZhNumber(parseInt(plus, 10), true)}(含)`;
-
-  const newItem = {
-    ...item,
-    plus: plusFinalRes,
-    offlineDepositRange: offlineDepositRangeFinalRes,
-  };
-
-  return newItem;
-});
