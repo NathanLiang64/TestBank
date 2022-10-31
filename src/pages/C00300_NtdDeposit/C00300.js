@@ -16,7 +16,7 @@ import { FEIBInputLabel, FEIBInput } from 'components/elements';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
-import { setLocalData } from 'utilities/Generator';
+import { setLocalData, switchZhNumber } from 'utilities/Generator';
 import { AccountListCacheName, getAccountExtraInfo, loadAccountsList } from 'pages/D00100_NtdTransfer/api';
 import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
 import {
@@ -153,7 +153,7 @@ const C00300 = () => {
             優惠利率額度
             <ArrowNextIcon />
           </h3>
-          <p>{bonusQuota}</p>
+          <p>{switchZhNumber(bonusQuota, false)}</p>
         </div>
       </div>
     );

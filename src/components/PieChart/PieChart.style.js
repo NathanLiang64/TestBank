@@ -23,9 +23,12 @@ const PieChartWrapper = styled.div`
     position: absolute;
     inset: 0;
     display: flex;
+    display: -webkit-flex;
     flex-direction: column;
     justify-content: center;
+    -webkit-justify-content: center;
     align-items: center;
+    -webkit-align-items: center;
   }
 
   .label {
