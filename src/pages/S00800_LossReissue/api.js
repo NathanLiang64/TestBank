@@ -30,6 +30,7 @@ import { callAPI } from 'utilities/axios';
  *    addrCity:     通訊地址(縣市)    g0101.ADR2-CT
  *    addrDistrict: 通訊地址(區)      g0101.ADR2-AR
  *    addrStreet:   通訊地址(街道路)   g0101.ADR2-RD
+ *    account:      台幣數存母帳號
  * }
  * @throws Exception
  *
