@@ -4,7 +4,12 @@ import {useController} from 'react-hook-form';
 import { FEIBInputLabel, FEIBInput, FEIBErrorMessage} from 'components/elements';
 
 export const TextInputField = ({
-  labelName, type = 'text', placeholder, ...controlProps
+  labelName,
+  type = 'text',
+  placeholder,
+  disabled,
+  $color,
+  ...controlProps
 }) => {
   const {field, fieldState } = useController(controlProps);
   const {
@@ -20,8 +25,10 @@ export const TextInputField = ({
         value={value}
         type={type}
         id={name}
+        disabled={disabled}
         error={!!fieldState.error}
         placeholder={placeholder || ''}
+        $color={$color}
       />
       <FEIBErrorMessage>
         {fieldState.error ? fieldState.error.message : ''}

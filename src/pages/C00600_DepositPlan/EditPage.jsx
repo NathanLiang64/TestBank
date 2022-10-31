@@ -1,27 +1,29 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
-
-import { Controller, useForm } from 'react-hook-form';
-import uuid from 'react-uuid';
+import { useForm } from 'react-hook-form';
 
 import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
-import {
-  FEIBButton, FEIBInputLabel, FEIBInput, FEIBSelect, FEIBOption, FEIBErrorMessage,
-} from 'components/elements';
+import { FEIBButton, FEIBErrorMessage } from 'components/elements';
 import Theme from 'themes/theme';
 import {
   toCurrency,
-  accountFormatter,
   stringDateCodeFormatter,
-  weekNumberToChinese,
   dateFormatter,
 } from 'utilities/Generator';
 
+import { DropdownField, TextInputField } from 'components/Fields';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { AlertProgramNoFound } from './utils/prompts';
-import { getDurationTuple } from './utils/common';
+import {
+  generatebindAccountNoOptions,
+  generateCycleModeOptions,
+  generateCycleTimingOptions, generateMonthOptions, getDurationTuple,
+} from './utils/common';
 import HeroWithEdit from './components/HeroWithEdit';
 import EditPageWrapper from './EditPage.style';
+import { generateValidationSchema } from './validationSchema';
 
 /**
  * C00600 存錢計畫 (新增) 編輯頁
@@ -29,54 +31,23 @@ import EditPageWrapper from './EditPage.style';
 const DepositPlanEditPage = () => {
   const history = useHistory();
   const location = useLocation();
-  const {
-    control, handleSubmit, watch, setValue, formState: { errors },
-  } = useForm();
-
-  const uid = Array.from({ length: 7}, () => uuid());
-  const [program, setProgram] = useState();
-  const [isRestrictedPromotion, setIsRestrictedPromotion] = useState(false);
-  const [subAccounts, setSubAccounts] = useState();
-  const [hasReachedMaxSubAccounts, setHasReachedMaxSubAccounts] = useState(false);
   const [newImageId, setNewImageId] = useState();
 
-  useEffect(() => {
-    if (location.state && ('program' in location.state)) {
-      setProgram(location.state.program);
-      setSubAccounts(location.state.subAccounts);
-      setHasReachedMaxSubAccounts(location.state.hasReachedMaxSubAccounts);
+  const {
+    control, handleSubmit, watch, reset,
+  } = useForm({
+    defaultValues: {
+      name: '',
+      cycleDuration: '',
+      cycleMode: '',
+      cycleTiming: '',
+      amount: '',
+      bindAccountNo: '',
+    },
+    resolver: yupResolver(generateValidationSchema(location.state?.program.amountRange.month.max)),
+  });
 
-      if (location.state.program.type > 0) setIsRestrictedPromotion(true);
-      if ('isRestrictedPromotion' in location.state) setIsRestrictedPromotion(location.state.isRestrictedPromotion);
-
-      // useState is async, isRestrictedPromotion may be unavaliable.
-      if (location.state.program.type > 0 || 'isRestrictedPromotion' in location.state) {
-        setValue('name', location.state.program.name, { shouldValidate: false });
-        setValue('cycleDuration', location.state.program?.cycleDuration ?? 4, { shouldValidate: false });
-        setValue('cycleMode', location.state.program?.cycleMode ?? 2, { shouldValidate: false });
-      }
-    } else {
-      // Guard: 此頁面接續上一頁的操作，意指若未在該情況下進入此頁為不正常操作。
-      AlertProgramNoFound({
-        onOk: () => history.push('/C006002'),
-        onCancel: () => history.goBack(),
-      });
-    }
-
-    // 當跳回此頁面時，填入先前的資訊
-    let backlog = sessionStorage.getItem('C006003');
-    if (backlog) {
-      backlog = JSON.parse(backlog);
-      setNewImageId(backlog.image);
-      setValue('name', backlog.name);
-      setValue('cycleDuration', backlog.cycleDuration);
-      setValue('cycleMode', backlog.cycleMode);
-      setValue('cycleTiming', backlog.cycleTiming);
-      setValue('amount', backlog.amount);
-      setValue('bindAccountNo', backlog.bindAccountNo);
-    }
-  }, []);
-
+  // const [hasReachedMaxSubAccounts, setHasReachedMaxSubAccounts] = useState(false);
   const getDefaultCycleTiming = (mode) => {
     if (mode === 1) return new Date().getDay();
     const date = new Date().getDate();
@@ -90,13 +61,14 @@ const DepositPlanEditPage = () => {
     return gm;
   };
 
-  const getRemainingBalance = (accountNo) => subAccounts?.find((a) => a.accountNo === accountNo)?.balance ?? 0;
+  const getRemainingBalance = (accountNo) => location.state?.subAccounts?.find((a) => a.accountNo === accountNo)?.balance ?? 0;
 
   const onSubmit = (data) => {
     const date = getDurationTuple(new Date(), data.cycleDuration, data.cycleMode, data.cycleTiming);
+    const {code, rate} = location.state.program;
     const payload = {
-      progCode: program.code,
-      image: newImageId ?? 1,
+      progCode: code,
+      imageId: newImageId ?? 1,
       name: data.name,
       startDate: stringDateCodeFormatter(date.begin),
       endDate: stringDateCodeFormatter(date.end),
@@ -107,7 +79,7 @@ const DepositPlanEditPage = () => {
       currentBalance: getRemainingBalance(data.bindAccountNo),
       goalAmount: getGoalAmount(data.amount, data.cycleDuration, data.cycleMode),
       extra: {
-        rate: program.rate,
+        rate,
         period: `${dateFormatter(new Date(), true)} ~ ${dateFormatter(date.end, true)}`,
         nextDeductionDate: dateFormatter(date.next, true),
       },
@@ -116,21 +88,45 @@ const DepositPlanEditPage = () => {
     history.push('/C006004', { isConfirmMode: true, payload });
   };
 
-  const renderSubAccountOptions = () => {
-    let options = [];
-    if (subAccounts) options = options.concat(subAccounts);
-    if (!hasReachedMaxSubAccounts) options.push({ accountNo: 'new', balance: 0 });
-    if (options.length === 0) return <FEIBOption value="*">無未綁定的子帳戶或已達8個子帳戶上限</FEIBOption>;
-    return options.map((a) => (
-      <FEIBOption key={uuid()} value={a.accountNo}>
-        {a.accountNo === 'new' ? '加開子帳戶' : accountFormatter(a.accountNo)}
-      </FEIBOption>
-    ));
-  };
+  useEffect(() => {
+    if (!location.state || !('program' in location.state)) {
+      AlertProgramNoFound({
+        onOk: () => history.push('/C006002'),
+        onCancel: () => history.goBack(),
+        onClose: () => history.goBack(),
+      });
+    } else if (location.state.program.type) {
+      reset({
+        name: location.state.program.name,
+        cycleDuration: location.state.program?.cycleDuration ?? 4,
+        cycleMode: location.state.program?.cycleMode ?? 2,
+        cycleTiming: getDefaultCycleTiming(location.state.program?.cycleMode),
+      });
+    }
 
-  const getInputColor = (e) => {
-    if (isRestrictedPromotion) return Theme.colors.text.lightGray;
-    if (e?.name) return Theme.colors.state.danger;
+    // 當跳回此頁面時，填入先前的資訊
+    let backlog = sessionStorage.getItem('C006003');
+    if (backlog) {
+      backlog = JSON.parse(backlog);
+      setNewImageId(backlog.imageId);
+      reset({...backlog});
+    }
+  }, []);
+
+  // const renderSubAccountOptions = () => {
+  //   let options = [];
+  //   if (subAccounts) options = options.concat(subAccounts);
+  //   if (!hasReachedMaxSubAccounts) options.push({ accountNo: 'new', balance: 0 });
+  //   if (options.length === 0) return <FEIBOption value="*">無未綁定的子帳戶或已達8個子帳戶上限</FEIBOption>;
+  //   return options.map((a) => (
+  //     <FEIBOption key={uuid()} value={a.accountNo}>
+  //       {a.accountNo === 'new' ? '加開子帳戶' : accountFormatter(a.accountNo)}
+  //     </FEIBOption>
+  //   ));
+  // };
+
+  const getInputColor = () => {
+    if (location.state?.program.type) return Theme.colors.text.lightGray;
     return Theme.colors.primary.brand;
   };
 
@@ -139,105 +135,44 @@ const DepositPlanEditPage = () => {
       <MainScrollWrapper>
         <EditPageWrapper>
           <form onSubmit={handleSubmit(onSubmit)}>
-
-            <HeroWithEdit
-              onChange={(id) => setNewImageId(id)}
-            />
+            <HeroWithEdit onChange={(id) => setNewImageId(id)} />
 
             <div className="flex">
-
               <div>
-                <FEIBInputLabel htmlFor={uid[1]}>為你的計畫命名吧</FEIBInputLabel>
-                <Controller
+                <TextInputField
                   name="name"
                   control={control}
-                  defaultValue={isRestrictedPromotion ? program.name : ''}
-                  rules={{ maxLength: 7, required: true }}
-                  render={({ field }) => (
-                    <FEIBInput
-                      id={uid[1]}
-                      error={!!(errors?.name)}
-                      $color={() => getInputColor(errors)}
-                      placeholder="請輸入7個以內的中英文字、數字或符號"
-                      disabled={isRestrictedPromotion}
-                      {...field}
-                    />
-                  )}
+                  labelName="為你的計畫命名吧"
+                  placeholder="請輸入7個以內的中英文字、數字或符號"
+                  disabled={!!location.state?.program.type}
+                  $color={getInputColor()}
                 />
-                <FEIBErrorMessage>
-                  {errors.name && <span>請輸入7個以內的中英文字、數字或符號</span>}
-                </FEIBErrorMessage>
               </div>
-
               <div>
-                <FEIBInputLabel htmlFor={uid[2]}>預計存錢區間</FEIBInputLabel>
-                <Controller
+                <DropdownField
+                  options={generateMonthOptions()}
                   name="cycleDuration"
                   control={control}
-                  defaultValue={program?.cycleDuration ?? 3}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <FEIBSelect
-                      id={uid[2]}
-                      disabled={isRestrictedPromotion}
-                      $color={isRestrictedPromotion ? Theme.colors.text.lightGray : Theme.colors.primary.brand}
-                      $iconColor={isRestrictedPromotion ? Theme.colors.text.placeholder : Theme.colors.primary.brand}
-                      {...field}
-                    >
-                      { Array.from({length: 22}, (_, i) => i + 3).map((v) => (
-                        <FEIBOption key={uuid()} value={v}>
-                          {v}
-                          個月
-                        </FEIBOption>
-                      ))}
-                    </FEIBSelect>
-                  )}
+                  labelName="預計存錢區間"
                 />
-                <FEIBErrorMessage />
               </div>
-
               <div className="col-2">
                 <div className="w-50">
-                  <FEIBInputLabel htmlFor={uid[3]}>存錢頻率</FEIBInputLabel>
-                  <Controller
+                  <DropdownField
+                    options={generateCycleModeOptions()}
                     name="cycleMode"
                     control={control}
-                    defaultValue={program?.cycleMode ?? 2}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <FEIBSelect
-                        id={uid[3]}
-                        disabled={isRestrictedPromotion}
-                        $color={isRestrictedPromotion ? Theme.colors.text.lightGray : Theme.colors.primary.brand}
-                        $iconColor={isRestrictedPromotion ? Theme.colors.text.placeholder : Theme.colors.primary.brand}
-                        {...field}
-                      >
-                        <FEIBOption value={1} disabled>每週</FEIBOption>
-                        <FEIBOption value={2}>每月</FEIBOption>
-                      </FEIBSelect>
-                    )}
+                    labelName="存錢頻率"
                   />
-                  <FEIBErrorMessage />
                 </div>
-
                 <div className="w-50">
-                  <FEIBInputLabel htmlFor={uid[4]}>週期</FEIBInputLabel>
-                  <Controller
+                  <DropdownField
+                    options={generateCycleTimingOptions(2)}
                     name="cycleTiming"
                     control={control}
-                    defaultValue={getDefaultCycleTiming(watch('cycleMode', 2))}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <FEIBSelect id={uid[4]} disabled={isRestrictedPromotion} {...field}>
-                        { watch('cycleMode', 2) === 1
-                          ? Array.from({length: 7}, (_, i) => i).map((v) => (
-                            <FEIBOption key={uuid()} value={v}>{`周${weekNumberToChinese(v === 0 ? 7 : v)}`}</FEIBOption>
-                          ))
-                          : Array.from({length: 28}, (_, i) => i + 1).map((v) => (
-                            <FEIBOption key={uuid()} value={v}>{`${v}號`}</FEIBOption>
-                          ))}
-                      </FEIBSelect>
-                    )}
+                    labelName="週期"
+                    shouldDisabled={!!location.state?.program.type}
+                    $color={getInputColor()}
                   />
                   <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
                     共
@@ -246,29 +181,12 @@ const DepositPlanEditPage = () => {
                   </FEIBErrorMessage>
                 </div>
               </div>
-
               <div>
-                <FEIBInputLabel htmlFor={uid[5]}>預計每期存錢金額</FEIBInputLabel>
-                <Controller
+                <TextInputField
                   name="amount"
                   control={control}
-                  defaultValue=""
-                  rules={{
-                    required: true,
-                    validate: (v) => {
-                      const amountRange = program.amountRange[watch('cycleMode', 2) === 1 ? 'week' : 'month'];
-                      return (v >= amountRange?.min ?? 10_000) && (v <= amountRange?.max ?? 9_000_000);
-                    },
-                  }}
-                  render={({ field }) => (
-                    <FEIBInput
-                      id={uid[5]}
-                      type="number"
-                      error={!!(errors?.amount)}
-                      $color={errors?.amount ? Theme.colors.state.danger : undefined}
-                      {...field}
-                    />
-                  )}
+                  labelName="預計每期存錢金額"
+                  type="number"
                 />
                 <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
                   {(watch('amount', 0) > 0) && `存款目標為 ${toCurrency(getGoalAmount(watch('amount', 0), watch('cycleDuration', 3), watch('cycleMode', 2)))}元`}
@@ -277,24 +195,14 @@ const DepositPlanEditPage = () => {
               </div>
 
               <div>
-                <FEIBInputLabel htmlFor={uid[6]}>選擇陪你存錢的帳號</FEIBInputLabel>
-                <Controller
+                {/* TODO: 加開子帳戶選項，若沒有子帳戶，應出現新增加開子帳戶的選項 */}
+                <DropdownField
+                  options={generatebindAccountNoOptions(location.state?.subAccounts || [])}
                   name="bindAccountNo"
                   control={control}
-                  defaultValue="*"
-                  rules={{ required: true, validate: (i) => i !== '*' }}
-                  render={({ field }) => (
-                    <FEIBSelect
-                      id={uid[6]}
-                      error={!!(errors?.bindAccountNo)}
-                      $color={watch('bindAccountNo') === '*' ? Theme.colors.text.placeholder : undefined}
-                      {...field}
-                    >
-                      <FEIBOption value="*" disabled>請選擇子帳號且不能修改</FEIBOption>
-                      { renderSubAccountOptions() }
-                    </FEIBSelect>
-                  )}
+                  labelName="選擇陪你存錢的帳號"
                 />
+
                 <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
                   { ((watch('bindAccountNo') !== '*') && (watch('bindAccountNo') !== 'new')) && `存款餘額為${getRemainingBalance(watch('bindAccountNo'))}元` }
                 </FEIBErrorMessage>

@@ -49,6 +49,12 @@ const Page = () => {
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState();
 
+  // eslint-disable-next-line no-unused-vars
+  const creditNumberFormat = (stringCredit) => {
+    if (stringCredit) return `${stringCredit.slice(-4)}`;
+    return '';
+  };
+
   const fetchTransactions = async () => {
     if (startDate <= limitDate) return;
     setIsLoading(true);
@@ -67,7 +73,6 @@ const Page = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    console.log('location.state', location.state);
     let accountNo;
     if (location.state && ('accountNo' in location.state)) accountNo = location.state.accountNo;
     const response = await getTransactions({
@@ -149,7 +154,7 @@ const Page = () => {
     );
     return options;
   };
-
+  console.log('card', card);
   return (
     <Layout title="信用卡即時消費明細" goBackFunc={() => history.goBack()}>
       <MainScrollWrapper>
@@ -158,7 +163,6 @@ const Page = () => {
             <CreditCard
               key={uuid()}
               cardName={card?.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
-              // accountNo={card?.accountNo}
               accountNo={card?.type === 'bankee' ? card?.accountNo : ''}
               balance={card?.creditUsed}
               color="green"
@@ -166,12 +170,12 @@ const Page = () => {
             />
           </div>
           <div className="txn-wrapper">
-            { transactions.length > 0 ? transactions.map((t, i) => (
+            { card && transactions.length > 0 ? transactions.map((t, i) => (
               <InformationTape
                 key={`${uid}-${i}`}
                 topLeft={t.description}
                 topRight={currencySymbolGenerator(t.currency ?? 'TWD', t.amount)}
-                bottomLeft={`${t.txnDate.slice(4, 6)}/${t.txnDate.slice(6, 8)}`}
+                bottomLeft={`${t.txnDate.slice(4, 6)}/${t.txnDate.slice(6, 8)}${card.type === 'all' ? ` | 卡-${creditNumberFormat(t.targetAcct)}` : ''}`}
                 bottomRight={showMemo(t.memo, t.id)}
                 noShadow
               />

@@ -28,7 +28,7 @@ const DepositPlanCreatePage = () => {
 
   const [programs, setPrograms] = useState();
   const [terms, setTerms] = useState();
-  const [subAccounts, setSubAccounts] = useState();
+  const [subAccounts, setSubAccounts] = useState([]);
   const [hasReachedMaxSubAccounts, setHasReachedMaxSubAccounts] = useState(false);
 
   useEffect(async () => {

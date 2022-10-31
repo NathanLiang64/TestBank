@@ -81,8 +81,8 @@ export const MIDVerify = async () => {
  *
  * @param token
  * @return {
- *    status: 非約轉申請狀態 (0-未申請 , 1-已申請未開通 , 2-密碼逾期30日 , 3-已開通 , 4-已註銷 , 5-OTP啟用密碼錯誤鎖定 , 6-OTP交易密碼錯誤鎖定 , 7-其他)
- *    mobile: 手機號碼
+ *    status: // 非約轉申請狀態 (00-未申請 , 01-已申請未開通 , 02-密碼逾期30日 , 03-已開通 , 04-已註銷 , 05-OTP啟用密碼錯誤鎖定 , 06-OTP交易密碼錯誤鎖定 , 07-其他)
+ *    mobile: // 手機號碼
  * }
  */
 export const queryOTP = async (request) => {
@@ -92,15 +92,16 @@ export const queryOTP = async (request) => {
 
 /**
  * 更新非約轉狀態或非約轉手機號碼
+ * 注意:
+ * 1.執行前需先呼叫 /api/transfe/debit/v1/queryOTP 獲得的非約轉申請狀態放在token
  *
  * @param token
  * @param rq {
- *    status: 申請狀態 (01:申請,  02:註銷 , 03:密碼重製 , 04:變更手機號碼)
  *    mobile: 手機號碼
  * }
  * @return {
- *    code:   0000 表示成功
- *    message: 訊息類別
+ *    code:     0000 表示成功
+ *    message:  訊息類別
  * }
  */
 export const updateOTP = async (request) => {

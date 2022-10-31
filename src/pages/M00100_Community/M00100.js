@@ -220,7 +220,6 @@ const CommunityPage = () => {
                 優惠存款額度
                 <ArrowNextIcon />
               </div>
-              {/* <div className="num">{renderText(summary?.bonusInfo.amount)}</div> */}
               <div className="num">
                 {`NT${transferNum2Chinese(summary?.bonusInfo.amount)}`}
               </div>
@@ -234,7 +233,6 @@ const CommunityPage = () => {
                 <ArrowNextIcon />
               </div>
               <div className="num">
-                {/* {`NT$${renderText(summary?.bonusInfo.profit)}`} */}
                 {`NT${transferNum2Chinese(summary?.bonusInfo.profit)}`}
               </div>
             </div>
