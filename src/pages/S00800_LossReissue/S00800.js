@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Layout from 'components/Layout/Layout';
@@ -13,35 +12,33 @@ import { closeFunc } from 'utilities/AppScriptProxy';
 import { useDispatch } from 'react-redux';
 import { setModalVisible } from 'stores/reducers/ModalReducer';
 
-import {
-  executeDebitCardReApply, getStatus, reIssue,
-} from './api';
+import {getStatus, reIssueOrLost} from './api';
 import LossReissueWrapper from './lossReissue.style';
 import {
-  actionTextGenerator, cityOptions, statusTextGenerator, zoneOptions,
+  actionTextGenerator, cityOptions, zoneOptions,
 } from './utils';
-import { validationSchema, generateSchema } from './validationSchema';
+import { generateSchema } from './validationSchema';
 
 const LossReissue = () => {
   const dispatch = useDispatch();
-  const [debitCardInfo, setDebitCardInfo] = useState(null);
+  const [debitCardInfo, setDebitCardInfo] = useState();
   const [currentFormValue, setCurrentFormValue] = useState({});
-  const [actionText, setActionText] = useState('');
+  const actionText = useMemo(() => actionTextGenerator(debitCardInfo?.status), [debitCardInfo]);
   const { control, handleSubmit, reset } = useForm({
     resolver: yupResolver(generateSchema(actionText)),
     defaultValues: {
-      // ...目前尚未得知補發 api 需要帶哪些資訊，先預設 accountNo & addr
+      // ...目前尚未得知補發 api 需要帶哪些資訊，先預設 addrDistrict
       addrDistrict: '',
       addrCity: '',
       addrStreet: '',
     },
   });
 
+  // 在 新申請(1) 或是 已銷戶(7) 的情況下不能進行掛失或補發
   const updateDebitCardStatus = async () => {
-    try {
-      const cardInfo = await getStatus();
-
-      if (cardInfo.status === '01' || cardInfo.status === '07') {
+    const cardInfo = await getStatus();
+    if (cardInfo) {
+      if (cardInfo.status === 1 || cardInfo.status === 7) {
         await showCustomPrompt({
           message: cardInfo.statusDesc,
           onOk: () => closeFunc(),
@@ -49,28 +46,16 @@ const LossReissue = () => {
         });
       }
 
-      const action = actionTextGenerator(cardInfo.cardStatus);
-      setActionText(action);
-
       setDebitCardInfo(cardInfo);
       const { addrCity, addrDistrict, addrStreet } = cardInfo;
       reset({ addrCity, addrDistrict, addrStreet });
       setCurrentFormValue({ addrCity, addrDistrict, addrStreet });
-    } catch (err) {
-      console.log('金融卡狀態 err', err);
     }
   };
 
   // 執行掛失或補發
   const executeAction = async (values) => {
-    let res = null;
-    if (actionText === '掛失') {
-      // 掛失
-      res = await reIssue();
-    } else {
-      // 補發
-      res = await executeDebitCardReApply(values);
-    }
+    const res = await reIssueOrLost(values);
     showCustomPrompt({
       message: (
         <SuccessFailureAnimations
@@ -88,13 +73,7 @@ const LossReissue = () => {
 
   const handleClickSubmitButton = (values) => {
     showCustomPrompt({
-      message: (
-        <p>
-          是否確認
-          {actionText}
-          ?
-        </p>
-      ),
+      message: `是否確認${actionText}?`,
       onOk: () => executeAction(values),
       noDismiss: true,
     });
@@ -178,7 +157,6 @@ const LossReissue = () => {
 
   return (
     <Layout title="金融卡掛失/補發">
-
       <LossReissueWrapper small>
         <div className="lossReissueContent">
           <ul className="mainBlock">
@@ -188,11 +166,10 @@ const LossReissue = () => {
                 <span className="content">{debitCardInfo?.accountNo || '-'}</span>
               </div>
               <div className="blockRight">
-                {/* <h3 className="debitState">{statusTextGenerator(debitCardInfo?.cardStatus)}</h3> */}
                 <h3 className="debitState">{debitCardInfo?.statusDesc}</h3>
               </div>
             </li>
-            {actionText === '補發' ? (
+            {actionText === '補發' && (
               <li>
                 <div className="blockLeft">
                   <p className="label">通訊地址</p>
@@ -204,7 +181,7 @@ const LossReissue = () => {
                   </button>
                 </div>
               </li>
-            ) : null}
+            )}
           </ul>
 
           {actionText === '補發' && (
@@ -225,12 +202,11 @@ const LossReissue = () => {
           </Accordion>
         </div>
 
-        {actionText ? (
+        {actionText && (
           <FEIBButton onClick={handleSubmit(handleClickSubmitButton)}>
-            { `${actionText}申請` }
+            {`${actionText}申請`}
           </FEIBButton>
-        ) : null}
-
+        )}
       </LossReissueWrapper>
     </Layout>
   );

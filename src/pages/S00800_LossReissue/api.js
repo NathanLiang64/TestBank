@@ -9,16 +9,16 @@ import { callAPI } from 'utilities/axios';
 // };
 
 // 執行金融卡掛失 (舊)
-export const executeDebitCardReportLost = async (params) => {
-  const response = await callAPI('/api/lossReissue/reportLost', params);
-  return response.data;
-};
+// export const executeDebitCardReportLost = async (params) => {
+//   const response = await callAPI('/api/lossReissue/reportLost', params);
+//   return response.data;
+// };
 
-// 執行金融卡補發
-export const executeDebitCardReApply = async (params) => {
-  const response = await callAPI('/api/lossReissue/reApply', params);
-  return response.data;
-};
+// 執行金融卡補發 (舊)
+// export const executeDebitCardReApply = async (params) => {
+//   const response = await callAPI('/api/lossReissue/reApply', params);
+//   return response.data;
+// };
 
 /**
  * 查詢金融卡的卡況
@@ -36,7 +36,7 @@ export const executeDebitCardReApply = async (params) => {
  */
 export const getStatus = async (params) => {
   const response = await callAPI('/api/debit/card/v1/getStatus', params);
-  return response;
+  return response.data;
 };
 
 /**
@@ -49,7 +49,7 @@ export const getStatus = async (params) => {
  *      message:  訊息
  * }
  */
-export const reIssue = async (params) => {
+export const reIssueOrLost = async (params) => {
   const response = await callAPI('/api/debit/card/v1/reIssue', params);
   return response;
 };
