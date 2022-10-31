@@ -83,7 +83,7 @@ export const ConfirmToTransferSubAccountBalance = ({ onOk, onCancel }) => {
   });
 };
 
-export const AlertProgramNoFound = ({ onOk, onCancel }) => {
+export const AlertProgramNoFound = ({ onOk, onCancel, onClose }) => {
   showCustomPrompt({
     title: '找不到計畫資訊',
     message: '可能是編輯中頁面刷新所導致，請重新建立。',
@@ -91,6 +91,7 @@ export const AlertProgramNoFound = ({ onOk, onCancel }) => {
     cancelContent: '回上一頁',
     onOk,
     onCancel,
+    onClose,
   });
 };
 
