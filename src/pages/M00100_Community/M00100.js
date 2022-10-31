@@ -214,11 +214,7 @@ const CommunityPage = () => {
                 <ArrowNextIcon />
               </div>
               <div className="num">
-                {`NT${
-                  summary?.bonusInfo.amount
-                    ? switchZhNumber(summary?.bonusInfo.amount)
-                    : '0'
-                }元`}
+                {`NT${switchZhNumber(summary?.bonusInfo.amount)}元`}
               </div>
             </div>
             <div
@@ -230,9 +226,7 @@ const CommunityPage = () => {
                 <ArrowNextIcon />
               </div>
               <div className="num">
-                {`NT${summary?.bonusInfo.profit ? switchZhNumber(
-                  summary?.bonusInfo.profit,
-                ) : '0'}元`}
+                {`NT${switchZhNumber(summary?.bonusInfo.profit)}元`}
               </div>
             </div>
             {/* <div className="overviewItem"> */}
