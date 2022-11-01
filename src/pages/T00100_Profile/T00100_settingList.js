@@ -31,21 +31,21 @@ const T00100settingList = [
     route: '/cardLessSetting',
     funcID: 'T00400',
   },
-  {
-    name: '行動金融憑證設定',
-    route: '',
-    funcID: '0',
-  },
+  // {
+  //   name: '行動金融憑證設定',
+  //   route: '',
+  //   funcID: '0',
+  // },
   {
     name: '基本資料變更',
     route: '/basicInformation',
     funcID: 'T00700',
   },
-  {
-    name: '手機號碼收款設定',
-    route: '/mobileTransfer',
-    funcID: 'T00600',
-  },
+  // {
+  //   name: '手機號碼收款設定',
+  //   route: '/mobileTransfer',
+  //   funcID: 'T00600',
+  // },
   {
     name: '使用者代號變更',
     route: '/changeUserName',

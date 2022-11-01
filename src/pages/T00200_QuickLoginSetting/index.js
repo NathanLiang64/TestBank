@@ -221,7 +221,7 @@ const QuickLoginSetting = () => {
   }, []);
 
   return (
-    <Layout title="快速登入設定test">
+    <Layout title="快速登入設定">
       <QuickLoginSettingWrapper>
         <div className="tip">設定後就能快速登入囉！（僅能擇一）</div>
         <div>
