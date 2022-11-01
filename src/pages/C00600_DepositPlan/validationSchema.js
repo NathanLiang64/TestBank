@@ -16,5 +16,5 @@ export const generateValidationSchema = (maxAmount) => yup.object().shape({
       maxAmount || 90000000,
       `每期最高金額為 $${maxAmount || 90000000}元`,
     ),
-  bindAccountNo: yup.string().required('請選擇陪你存錢的帳號'),
+  bindAccountNo: yup.string().required('請選擇帳號'),
 });

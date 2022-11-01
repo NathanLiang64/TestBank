@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Layout from 'components/Layout/Layout';
@@ -13,89 +12,68 @@ import { closeFunc } from 'utilities/AppScriptProxy';
 import { useDispatch } from 'react-redux';
 import { setModalVisible } from 'stores/reducers/ModalReducer';
 
-import { executeDebitCardReApply, executeDebitCardReportLost, getDebitCardStatus } from './api';
+import {getStatus, reIssueOrLost} from './api';
 import LossReissueWrapper from './lossReissue.style';
 import {
-  actionTextGenerator, cityOptions, statusTextGenerator, zoneOptions,
+  actionTextGenerator, cityOptions, zoneOptions,
 } from './utils';
-import { validationSchema, generateSchema } from './validationSchema';
+import { generateSchema } from './validationSchema';
 
 const LossReissue = () => {
   const dispatch = useDispatch();
-  const [debitCardInfo, setDebitCardInfo] = useState(null);
+  const [debitCardInfo, setDebitCardInfo] = useState();
   const [currentFormValue, setCurrentFormValue] = useState({});
-  const [actionText, setActionText] = useState('');
-  const {
-    control, handleSubmit, reset,
-  } = useForm({
+  const actionText = useMemo(() => actionTextGenerator(debitCardInfo?.status), [debitCardInfo]);
+  const { control, handleSubmit, reset } = useForm({
     resolver: yupResolver(generateSchema(actionText)),
     defaultValues: {
-      // ...目前尚未得知補發 api 需要帶哪些資訊，先預設 accountNo & addr
-      accountNo: '',
-      addr: '',
+      // ...目前尚未得知補發 api 需要帶哪些資訊，先預設 addrDistrict
+      addrDistrict: '',
+      addrCity: '',
+      addrStreet: '',
     },
   });
 
+  // 在 新申請(1) 或是 已銷戶(7) 的情況下不能進行掛失或補發
   const updateDebitCardStatus = async () => {
-    try {
-      const response = await getDebitCardStatus();
-      const {addr, addrCity, addrZone} = response;
-      setDebitCardInfo(response);
-      setCurrentFormValue({addr, addrCity, addrZone});
-    } catch (err) {
-      console.log('金融卡狀態 err', err);
+    const cardInfo = await getStatus();
+    if (cardInfo) {
+      if (cardInfo.status === 1 || cardInfo.status === 7) {
+        await showCustomPrompt({
+          message: cardInfo.statusDesc,
+          onOk: () => closeFunc(),
+          onClose: () => closeFunc(),
+        });
+      }
+
+      setDebitCardInfo(cardInfo);
+      const { addrCity, addrDistrict, addrStreet } = cardInfo;
+      reset({ addrCity, addrDistrict, addrStreet });
+      setCurrentFormValue({ addrCity, addrDistrict, addrStreet });
     }
   };
 
   // 執行掛失或補發
   const executeAction = async (values) => {
-    try {
-      // 掛失
-      if (actionText === '掛失') {
-        const res = await executeDebitCardReportLost({accountNo: values.accountNo});
-        if (!res || res.code) throw new Error(`執行掛失失敗 ${res.code}`);
-      } else {
-      // 補發
-        const res = await executeDebitCardReApply(values);
-        if (!res || res.code) throw new Error(`執行補發失敗 ${JSON.stringify(res)}`);
-      }
-      showCustomPrompt({
-        message: (
-          <SuccessFailureAnimations
-            isSuccess
-            successTitle="設定成功"
-            successDesc={`狀態：${actionText} (${debitCardInfo?.accountNo})`}
-          />
-        ),
-        onOk: () => updateDebitCardStatus(),
-        onclose: () => updateDebitCardStatus(),
-      });
-    } catch (error) {
-      showCustomPrompt({
-        message: (
-          <SuccessFailureAnimations
-            isSuccess={false}
-            errorTitle="設定失敗"
-            errorDesc={error.message}
-          />
-        ),
-        onOk: () => updateDebitCardStatus(),
-        onclose: () => updateDebitCardStatus(),
-      });
-    }
+    const res = await reIssueOrLost(values);
+    showCustomPrompt({
+      message: (
+        <SuccessFailureAnimations
+          isSuccess={res && res.result}
+          successTitle={`${actionText}設定成功`}
+          errorTitle={`${actionText}設定失敗`}
+          successDesc={`狀態： (${debitCardInfo?.account}) ${res.message}`}
+          errorDesc={`狀態： (${debitCardInfo?.account}) ${res.message}`}
+        />
+      ),
+      onOk: () => updateDebitCardStatus(),
+      onclose: () => updateDebitCardStatus(),
+    });
   };
 
   const handleClickSubmitButton = (values) => {
     showCustomPrompt({
-      message: (
-        <p>
-          是否確認
-          {actionText}
-          {/* <br />
-          {JSON.stringify(values)} */}
-          ?
-        </p>
-      ),
+      message: `是否確認${actionText}?`,
       onOk: () => executeAction(values),
       noDismiss: true,
     });
@@ -107,14 +85,28 @@ const LossReissue = () => {
       <div className="formContent">
         <div className="formElementGroup">
           <div>
-            <DropdownField labelName="縣市" options={cityOptions} name="addrCity" control={control} />
+            <DropdownField
+              labelName="縣市"
+              options={cityOptions}
+              name="addrCity"
+              control={control}
+            />
           </div>
           <div>
-            <DropdownField labelName="區域" options={zoneOptions} name="addrZone" control={control} />
+            <DropdownField
+              labelName="區域"
+              options={zoneOptions}
+              name="addrDistrict"
+              control={control}
+            />
           </div>
         </div>
         <div>
-          <TextInputField labelName="地址" name="addr" control={control} />
+          <TextInputField
+            labelName="地址"
+            name="addrStreet"
+            control={control}
+          />
         </div>
       </div>
     </form>
@@ -140,53 +132,48 @@ const LossReissue = () => {
     updateDebitCardStatus();
   }, []);
 
-  useEffect(() => {
-    if (debitCardInfo?.cardStatus === '01') {
-      showCustomPrompt({
-        message: '卡片狀態:新申請',
-        onOk: () => closeFunc(),
-        onClose: () => closeFunc(),
-      });
-    } else {
-      const action = actionTextGenerator(debitCardInfo?.cardStatus);
-      setActionText(action);
-    }
-  }, [debitCardInfo?.cardStatus]);
+  // useEffect(() => {
+  //   if (debitCardInfo?.cardStatus === '01') {
+  //     showCustomPrompt({
+  //       message: '卡片狀態:新申請',
+  //       onOk: () => closeFunc(),
+  //       onClose: () => closeFunc(),
+  //     });
+  //   } else {
+  //     const action = actionTextGenerator(debitCardInfo?.cardStatus);
+  //     setActionText(action);
+  //   }
+  // }, [debitCardInfo?.cardStatus]);
 
   // 提供 react-hook-form 預設值
-  useEffect(() => {
-    if (debitCardInfo) {
-      const {
-        accountNo, addr, addrZone, addrCity,
-      } = debitCardInfo;
-      const defaultValues = {
-        addr, addrZone, addrCity, accountNo,
-      };
-      reset(defaultValues);
-      setCurrentFormValue(defaultValues);
-    }
-  }, [debitCardInfo]);
+  // useEffect(() => {
+  //   if (debitCardInfo) {
+  //     const { addrDistrict, addrCity, addrStreet } = debitCardInfo;
+  //     const defaultValues = { addrDistrict, addrCity, addrStreet };
+  //     reset(defaultValues);
+  //     setCurrentFormValue(defaultValues);
+  //   }
+  // }, [debitCardInfo]);
 
   return (
     <Layout title="金融卡掛失/補發">
-
       <LossReissueWrapper small>
         <div className="lossReissueContent">
           <ul className="mainBlock">
             <li>
               <div className="blockLeft">
                 <p className="label debitCardStatusLabel">金融卡狀態</p>
-                <span className="content">{debitCardInfo?.accountNo || '-'}</span>
+                <span className="content">{debitCardInfo?.account || '-'}</span>
               </div>
               <div className="blockRight">
-                <h3 className="debitState">{statusTextGenerator(debitCardInfo?.cardStatus)}</h3>
+                <h3 className="debitState">{debitCardInfo?.statusDesc}</h3>
               </div>
             </li>
-            {actionText === '補發' ? (
+            {actionText === '補發' && (
               <li>
                 <div className="blockLeft">
                   <p className="label">通訊地址</p>
-                  <span className="content">{currentFormValue.addr || '-'}</span>
+                  <span className="content">{currentFormValue.addrStreet || '-'}</span>
                 </div>
                 <div className="blockRight">
                   <button type="button" onClick={handleClickEditAddress}>
@@ -194,7 +181,7 @@ const LossReissue = () => {
                   </button>
                 </div>
               </li>
-            ) : null}
+            )}
           </ul>
 
           {actionText === '補發' && (
@@ -215,90 +202,14 @@ const LossReissue = () => {
           </Accordion>
         </div>
 
-        {actionText ? (
+        {actionText && (
           <FEIBButton onClick={handleSubmit(handleClickSubmitButton)}>
-            { `${actionText}申請` }
+            {`${actionText}申請`}
           </FEIBButton>
-        ) : null}
-
+        )}
       </LossReissueWrapper>
     </Layout>
   );
 };
 
 export default LossReissue;
-
-// executeDebitCardReApply(params)
-//   .then((response) => {
-//     console.log('執行補發 response', response);
-//     showCustomPrompt({
-//       message: (
-//         <SuccessFailureAnimations
-//           isSuccess
-//           successTitle="設定成功"
-//           errorTitle="設定失敗"
-//           successDesc={`狀態：${actionText} (${debitCardInfo?.accountNo})`}
-//         />
-//       ),
-//       onOk: () => updateDebitCardStatus(),
-//       onclose: () => updateDebitCardStatus(),
-//     });
-//   }).catch((err) => console.log('執行補發 err', err));
-
-// const renderEditAddressContent = () => (
-//     <form>
-//       <div className="formContent">
-//         <div className="formElementGroup">
-//           <div>
-//             <FEIBInputLabel htmlFor="transactionFrequency">通訊地址</FEIBInputLabel>
-//             <Controller
-//               name="addrCity"
-//               control={control}
-//               defaultValue="1"
-//               render={({ field }) => {
-//                 const {onChange, value} = field;
-//                 return (
-//                   <FEIBSelect onChange={onChange} value={value} id="transactionFrequency" name="transactionFrequency">
-//                     <FEIBOption value="010">台北市</FEIBOption>
-//                     <FEIBOption value="020">新北市</FEIBOption>
-//                   </FEIBSelect>
-//                 );
-//               }}
-//             />
-//             <FEIBErrorMessage>{errors.city?.message}</FEIBErrorMessage>
-//           </div>
-//           <div>
-//             <Controller
-//               name="addrZone"
-//               control={control}
-//               defaultValue="1"
-//               render={({ field }) => {
-//                 const {onChange, value} = field;
-//                 return (
-//                   <FEIBSelect onChange={onChange} value={value} id="transactionCycle" name="transactionCycle">
-//                     <FEIBOption value="40820">大安區</FEIBOption>
-//                     <FEIBOption value="40821">信義區</FEIBOption>
-//                   </FEIBSelect>
-//                 );
-//               }}
-//             />
-//             <FEIBErrorMessage>{errors.district?.message}</FEIBErrorMessage>
-//           </div>
-//         </div>
-//         <div>
-//           <Controller
-//             name="addr"
-//             defaultValue={debitCardInfo?.addr}
-//             control={control}
-//             render={({ field }) => {
-//               const {onChange, value} = field;
-//               return (
-//                 <FEIBInput onChange={onChange} value={value} placeholder="請輸入" error={!!errors.address} />
-//               );
-//             }}
-//           />
-//           <FEIBErrorMessage>{errors.address?.message}</FEIBErrorMessage>
-//         </div>
-//       </div>
-//     </form>
-//   );

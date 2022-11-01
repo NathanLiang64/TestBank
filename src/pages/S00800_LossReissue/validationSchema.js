@@ -10,7 +10,7 @@ export const generateSchema = (actionText) => {
   let schema;
   if (actionText === '補發') {
     schema = yup.object().shape({
-      addr: addressValidation(),
+      addrStreet: addressValidation(),
     });
   } else {
     schema = yup.object().shape({});

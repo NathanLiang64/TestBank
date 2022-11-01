@@ -127,13 +127,6 @@ const CommunityPage = () => {
     });
   };
 
-  const transferNum2Chinese = (num) => {
-    if (!num) return `0${switchZhNumber(num / 1000)}元`;
-
-    return `${
-      (num / 1000).toString().replace(/0/g, '')}${switchZhNumber(num / 1000)}元`;
-  };
-
   /**
    * 頁面輸出
    */
@@ -221,7 +214,7 @@ const CommunityPage = () => {
                 <ArrowNextIcon />
               </div>
               <div className="num">
-                {`NT${transferNum2Chinese(summary?.bonusInfo.amount)}`}
+                {`NT${switchZhNumber(summary?.bonusInfo.amount)}元`}
               </div>
             </div>
             <div
@@ -233,7 +226,7 @@ const CommunityPage = () => {
                 <ArrowNextIcon />
               </div>
               <div className="num">
-                {`NT${transferNum2Chinese(summary?.bonusInfo.profit)}`}
+                {`NT${switchZhNumber(summary?.bonusInfo.profit)}元`}
               </div>
             </div>
             {/* <div className="overviewItem"> */}
