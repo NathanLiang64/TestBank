@@ -57,7 +57,7 @@ const AccountCardList = ({ data, isDebt }) => {
     mainList.push({
       type: 'F',
       accountNo: foreignAccounts[0].accountNo,
-      balance: accumulateBalance(foreignAccounts),
+      balance: accumulateBalance(foreignAccounts), // TODO: 金額為“轉換為台幣後”的加總，目前為數字直接加總
     });
 
     // 依金額從大到小排序。
@@ -98,7 +98,7 @@ const AccountCardList = ({ data, isDebt }) => {
   // 依金額從大到小排序。
   mainList.sort((a, b) => b.balance - a.balance);
 
-  // 產生下拉選單(子帳戶／外幣帳戶／貸款 / TODO: 證券S)
+  // 產生下拉選單(子帳戶／外幣帳戶／貸款 / 證券S)
   const renderSubAccountDrawer = (accounts, funcId) => {
     const subTotalBalance = accumulateBalance(accounts);
     return (

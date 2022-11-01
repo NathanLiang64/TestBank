@@ -53,12 +53,18 @@ const QuickLoginSettingWrapper = styled(Layout)`
     h1 {
       font-weight: bold;
       font-size: 1.8rem;
+      margin-left: 0.6rem;
     }
   }
   .agreeTip {
     padding: 0 1.6rem;
     margin-top: 2.4rem;
     margin-bottom: 1.6rem;
+    
+    p {
+      font-size: 1.2rem;
+      color: ${({ theme }) => theme.colors.text.light};
+    }
   }
 `;
 
