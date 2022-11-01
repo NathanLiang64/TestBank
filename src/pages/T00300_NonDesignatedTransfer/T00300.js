@@ -11,7 +11,7 @@ import { closeDrawer, showAnimationModal, showDrawer } from 'utilities/MessageMo
 import { useHistory } from 'react-router';
 import theme from 'themes/theme';
 import {
-  checkDeviceBindingStatus, getNonDesignatedTransferData, MIDVerify, updateOTP,
+  checkDeviceBindingStatus, getNonDesignatedTransferData, MIDVerify, queryOTP, updateOTP,
 } from './api';
 
 /* Styles */
@@ -96,7 +96,8 @@ const T00300 = () => {
         onFailure('5', result.message);
       } else {
         /* 驗證成功：更新資料至api */
-        const updateResult = await updateOTP({ status: module.status === '01' ? 'TODO: 開通' : '01', mobile: model.mobile });
+        await queryOTP();
+        const updateResult = await updateOTP({ mobile: model.mobile });
 
         if (updateResult.code !== '0000') {
         /* 失敗畫面 */
@@ -122,7 +123,8 @@ const T00300 = () => {
           onFailure('5', MIDResult.msg);
         } else {
           /* 驗證成功：更新資料至api */
-          const updateResult = await updateOTP({ status: '04', mobile: data.mobileNumber });
+          await queryOTP();
+          const updateResult = await updateOTP({ mobile: data.mobileNumber });
 
           if (updateResult.code !== '0000') {
             /* 失敗頁面 */
@@ -168,7 +170,8 @@ const T00300 = () => {
       onFailure('5', result.message);
     } else {
       /* 驗證成功：更新資料至api */
-      const updateResult = await updateOTP({ status: '02', mobile: model.mobile});
+      await queryOTP();
+      const updateResult = await updateOTP({ mobile: model.mobile});
 
       if (updateResult.code !== '0000') {
         /* 失敗頁面 */

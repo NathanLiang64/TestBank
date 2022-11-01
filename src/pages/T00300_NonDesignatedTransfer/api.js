@@ -63,7 +63,7 @@ export const checkDeviceBindingStatus = async () => {
 };
 
 /**
- * [測試]MID驗證
+ * MID驗證 DEBUG: mock
  * @param {}
  * @returns {
  * result: boolean    驗證通過 | 驗證不通過/系統錯誤
