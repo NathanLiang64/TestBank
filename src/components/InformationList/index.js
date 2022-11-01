@@ -9,6 +9,7 @@ import InformationListWrapper from './informationList.style';
 * 3. caption -> 顯示於左側內容文字下方的備註文字
 * 4. remark -> 顯示於右側內容文字下方的備註文字
 * 5. extra -> 顯示於右側內容文字之內
+* 6. textColor -> content顏色： text-dark | text-primary
 * */
 
 const InformationList = ({
@@ -17,11 +18,12 @@ const InformationList = ({
   caption,
   remark,
   extra,
+  textColor = 'text-dark',
 }) => (
   <InformationListWrapper>
     <div className="flex text-title">
       <div className="text-gray">{title}</div>
-      <div className="text-dark">
+      <div className={textColor}>
         {content}
         {extra && <span className="text-green">{extra}</span>}
       </div>

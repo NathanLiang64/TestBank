@@ -42,6 +42,10 @@ const InformationListWrapper = styled.div`
     color: ${({ theme }) => theme.colors.state.success};
     margin-inline-start: 1rem;
   }
+
+  .text-primary {
+    color: ${({ theme }) => theme.colors.primary.brand};
+  }
 `;
 
 export default InformationListWrapper;

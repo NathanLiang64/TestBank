@@ -270,25 +270,28 @@ const QuickLoginSetting = () => {
           (isBioActive || isPatternActive) && (
             <div className="bindingInfo">
               <h1>已登錄裝置</h1>
-              <InformationList title="啟用日期" content={bindingDate} />
-              <InformationList title="裝置型號" content={bindingDevice} />
+              <InformationList title="啟用日期" content={bindingDate} textColor="text-primary" />
+              <InformationList title="裝置型號" content={bindingDevice} textColor="text-primary" />
             </div>
           )
         }
         <div className="agreeTip">
           <p>提醒您：</p>
-          <p>(1)本服務須使用手機行動網路進行認證。</p>
-          <p>(2)啟用快速登入將同時進行裝置綁定，且同意以下使用條款。</p>
-          <p>(3)如需取消裝置綁定，請關閉快速登入設定或致電本行客服，謝謝。</p>
+          <p>(1)本服務須關閉WiFi，使用手機行動網路。</p>
+          <p>(2)啟用快速登入將同時進行APP裝置認證。</p>
+          <p>
+            (3)如需取消APP裝置認證，請關閉快速登入設定或致電本行客服。
+          </p>
         </div>
-        <Accordion title="使用條款">
+        <Accordion>
           <ol>
-            <li>本人同意與遠東商銀約定以本手機做為登入遠東商銀行動銀行APP時身分認證之用。爾後欲取消約定時，將由本人登入後至「服務設定&gt;圖形密碼登入設定/變更/取消」功能中設定。</li>
-            <li>為保障使用安全，本人以圖形密碼登入後僅查詢帳戶相關資料，如需執行交易類功能，將於交易過程中另行輸入網路銀行密碼。</li>
-            <li>圖形密碼登入連續三次錯誤時，系統將鎖住該功能，如欲重新使用，本人應於APP首頁以身分證字號、使用者代碼、網銀密碼登入後，進行解鎖。</li>
-            <li>圖形密碼請設定6~12個點(可重覆)。</li>
-            <li>本功能只提供本人之一台手機中設定，如於本人之其他手機中設定，則原手機設定將自動解除。</li>
-            <li>如果手機重置或重新安裝APP時，需要重新設定本功能。</li>
+            <li>每個帳號僅能認證一個行動裝置，請您確認目前使用的SIM卡門號為留存於本行之手機號碼，並具有上網功能。</li>
+            <li>進行SIM卡認證前，請您關閉WiFi並使用手機行動網路(4G/5G)連線；使用雙卡機者，請以上網使用的SIM卡進行驗證。</li>
+            <li>請您確認已關閉手機裝置的VPN、防火牆軟體服務。</li>
+            <li>如您的帳號要認證一個新的裝置，須先於原裝置解除認證，始能進行新手機裝置認證。</li>
+            <li>若於完成APP裝置認證後移除APP並重新安裝，則須請您再次進行APP手機裝置認證，方能使用相關功能。</li>
+            <li>請您確認擬啟用「APP裝置認證」之行動裝置僅由使用者本人使用，再啟用本服務，並請勿於已破解系統權限之行動裝置上使用本服務。提醒您應妥善保管行動裝置、勿交付他人使用，建議您啟用本服務前，應先設定行動裝置之「螢幕鎖定密碼」或「開機密碼」，以確保帳戶及交易安全。</li>
+            <li>啟用快速登入將同時進行APP裝置認證，如需取消裝置認證，請關閉快速登入設定或致電本行客服。</li>
           </ol>
         </Accordion>
       </QuickLoginSettingWrapper>
