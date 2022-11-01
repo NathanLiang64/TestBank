@@ -1,11 +1,5 @@
 import { callAPI } from 'utilities/axios';
 
-// 檢查金融卡卡狀態 done
-export const getCardStatus = async (param) => {
-  const response = await callAPI('/api/cardlessWD/atmCard/getStatus', param);
-  return response.data;
-};
-
 // 檢查無卡提款狀態 done
 export const getCardlessStatus = async (param) => {
   const response = await callAPI('/api/cardlessWD/getStatus', param);
@@ -15,7 +9,7 @@ export const getCardlessStatus = async (param) => {
   //   // { cwdStatus: '2', newSiteRegist: param, message: 'cwdStatus 2 message' },
   //   // { cwdStatus: '3', newSiteRegist: param, message: 'cwdStatus 3 message' },
   // };
-  return response.data;
+  return response;
 };
 
 // 取得提款卡資訊 done
