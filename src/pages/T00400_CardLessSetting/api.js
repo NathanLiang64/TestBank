@@ -30,5 +30,5 @@ export const getStatus = async (request) => {
  */
 export const activate = async (request) => {
   const response = await callAPI('/api/cardlessWD/activate', request);
-  return response;
+  return response.data;
 };
