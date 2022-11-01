@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useForm } from 'react-hook-form';
@@ -31,20 +32,20 @@ const DepositPlanEditPage = () => {
   const history = useHistory();
   const location = useLocation();
   const [newImageId, setNewImageId] = useState();
-
   const {
     control, handleSubmit, watch, reset,
   } = useForm({
     defaultValues: {
       name: '',
-      cycleDuration: '',
-      cycleMode: '',
+      cycleDuration: 3,
+      cycleMode: 2,
       cycleTiming: '',
-      amount: '',
+      amount: 0,
       bindAccountNo: '',
     },
     resolver: yupResolver(generateValidationSchema(location.state?.program.amountRange.month.max)),
   });
+  const [watchedDuration, watchedMode, watchedAmount, watchedAccount] = watch(['cycleDuration', 'cycleMode', 'amount', 'bindAccountNo']);
 
   // const [hasReachedMaxSubAccounts, setHasReachedMaxSubAccounts] = useState(false);
   const getDefaultCycleTiming = (mode) => {
@@ -175,7 +176,7 @@ const DepositPlanEditPage = () => {
                   />
                   <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
                     共
-                    {watch('cycleDuration', 3) * (watch('cycleMode', 2) === 1 ? 4 : 1)}
+                    {watchedDuration * (watchedMode === 1 ? 4 : 1)}
                     次
                   </FEIBErrorMessage>
                 </div>
@@ -188,7 +189,7 @@ const DepositPlanEditPage = () => {
                   type="number"
                 />
                 <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
-                  {(watch('amount', 0) > 0) && `存款目標為 ${toCurrency(getGoalAmount(watch('amount', 0), watch('cycleDuration', 3), watch('cycleMode', 2)))}元`}
+                  {(watchedAmount > 0) && `存款目標為 ${toCurrency(getGoalAmount(watchedAmount, watchedDuration, watchedMode))}元`}
                 </FEIBErrorMessage>
                 <div>金額最低＄10,000 元，最高＄90,000,000 元，以萬元為單位</div>
               </div>
@@ -203,7 +204,7 @@ const DepositPlanEditPage = () => {
                 />
 
                 <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
-                  { ((watch('bindAccountNo') !== '*') && (watch('bindAccountNo') !== 'new')) && `存款餘額為${getRemainingBalance(watch('bindAccountNo'))}元` }
+                  { ((watchedAccount !== '*') && (watchedAccount !== 'new')) && `存款餘額為${getRemainingBalance(watchedAccount)}元` }
                 </FEIBErrorMessage>
               </div>
 
