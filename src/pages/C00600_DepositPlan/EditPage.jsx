@@ -16,11 +16,12 @@ import {
 import { DropdownField, TextInputField } from 'components/Fields';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AlertProgramNoFound } from './utils/prompts';
+import { getDurationTuple} from './utils/common';
 import {
   generatebindAccountNoOptions,
   generateCycleModeOptions,
-  generateCycleTimingOptions, generateMonthOptions, getDurationTuple,
-} from './utils/common';
+  generateCycleTimingOptions, generateMonthOptions,
+} from './utils/options';
 import HeroWithEdit from './components/HeroWithEdit';
 import EditPageWrapper from './EditPage.style';
 import { generateValidationSchema } from './validationSchema';
@@ -37,17 +38,15 @@ const DepositPlanEditPage = () => {
   } = useForm({
     defaultValues: {
       name: '',
-      cycleDuration: 3,
+      cycleDuration: 4,
       cycleMode: 2,
       cycleTiming: '',
-      amount: 0,
       bindAccountNo: '',
     },
     resolver: yupResolver(generateValidationSchema(location.state?.program.amountRange.month.max)),
   });
   const [watchedDuration, watchedMode, watchedAmount, watchedAccount] = watch(['cycleDuration', 'cycleMode', 'amount', 'bindAccountNo']);
 
-  // const [hasReachedMaxSubAccounts, setHasReachedMaxSubAccounts] = useState(false);
   const getDefaultCycleTiming = (mode) => {
     if (mode === 1) return new Date().getDay();
     const date = new Date().getDate();
@@ -72,8 +71,8 @@ const DepositPlanEditPage = () => {
       name: data.name,
       startDate: stringDateCodeFormatter(date.begin),
       endDate: stringDateCodeFormatter(date.end),
-      cycleMode: data.cycleMode,
-      cycleTiming: data.cycleTiming,
+      cycleMode: parseInt(data.cycleMode, 10),
+      cycleTiming: parseInt(data.cycleTiming, 10),
       amount: data.amount,
       bindAccountNo: data.bindAccountNo === 'new' ? null : data.bindAccountNo,
       currentBalance: getRemainingBalance(data.bindAccountNo),
@@ -112,18 +111,6 @@ const DepositPlanEditPage = () => {
       reset({...backlog});
     }
   }, []);
-
-  // const renderSubAccountOptions = () => {
-  //   let options = [];
-  //   if (subAccounts) options = options.concat(subAccounts);
-  //   if (!hasReachedMaxSubAccounts) options.push({ accountNo: 'new', balance: 0 });
-  //   if (options.length === 0) return <FEIBOption value="*">無未綁定的子帳戶或已達8個子帳戶上限</FEIBOption>;
-  //   return options.map((a) => (
-  //     <FEIBOption key={uuid()} value={a.accountNo}>
-  //       {a.accountNo === 'new' ? '加開子帳戶' : accountFormatter(a.accountNo)}
-  //     </FEIBOption>
-  //   ));
-  // };
 
   const getInputColor = () => {
     if (location.state?.program.type) return Theme.colors.text.lightGray;

@@ -61,10 +61,10 @@ const HeroWithEdit = ({
       setNewImageId(0);
 
       const reader = new FileReader();
-      reader.addEventListener('load', (e) => {
-        sessionStorage.setItem('C00600-hero', e.target.result.split(';base64,')[1]);
-      }, false);
       reader.readAsDataURL(images[0]);
+      reader.onloadend = (e) => {
+        sessionStorage.setItem('C00600-hero', e.target.result.split(';base64,')[1]);
+      };
     }
   };
 

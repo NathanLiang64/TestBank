@@ -8,9 +8,7 @@ export const generateValidationSchema = (maxAmount) => yup.object().shape({
   cycleDuration: yup.string().required('請選擇存錢區間'),
   cycleMode: yup.string().required('請選擇存錢頻率'),
   cycleTiming: yup.string().required('請選擇週期'),
-  amount: yup
-    .number()
-    .required('請輸入每期存錢金額')
+  amount: yup.number().required('請輸入每期存錢金額')
     .min(10000, '每期最低金額為 $10,000元')
     .max(
       maxAmount || 90000000,
