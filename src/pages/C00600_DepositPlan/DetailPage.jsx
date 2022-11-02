@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable no-unused-vars */
+import { useState, useEffect, useRef} from 'react';
 import { useHistory, useLocation } from 'react-router';
 import uuid from 'react-uuid';
 
@@ -13,6 +14,7 @@ import {
   stringToDate,
   dateFormatter,
   weekNumberToChinese,
+  stringDateCodeFormatter,
 } from 'utilities/Generator';
 import { showAnimationModal, showError } from 'utilities/MessageModal';
 import { transactionAuth } from 'utilities/AppScriptProxy';
@@ -27,11 +29,13 @@ import DetailPageWrapper from './DetailPage.style';
 const DepositPlanDetailPage = () => {
   const history = useHistory();
   const location = useLocation();
+  const mainRef = useRef();
   const [mode, setMode] = useState(0);
   const [plan, setPlan] = useState();
   const [program, setProgram] = useState();
 
   useEffect(() => {
+    console.log('location.state', location.state);
     if (location.state && ('isConfirmMode' in location.state)) {
       // 資訊頁有二種使用情境：確認新增存錢計畫、閱覽存錢計畫資訊。
       if (location.state.isConfirmMode) {
@@ -70,7 +74,9 @@ const DepositPlanDetailPage = () => {
     }
 
     const payload = {...program};
-    payload.extra = undefined; // 清除不必要資訊。
+    // payload.extra = undefined; // 清除不必要資訊。
+    delete payload.extra;
+    delete payload.goalAmount;
 
     const response = await createDepositPlan(payload);
     if (response?.result) {
@@ -80,7 +86,8 @@ const DepositPlanDetailPage = () => {
       sessionStorage.removeItem('C006003'); // 清除暫存表單資料。
 
       // 建立成功後，將頁面滑至上方。
-      document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth'});
+      // document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth'});
+      mainRef.current.scrollTo({ top: 0, behavior: 'smooth'});
     } else {
       showAnimationModal({
         isSuccess: false,
@@ -104,7 +111,14 @@ const DepositPlanDetailPage = () => {
   const renderModeTimingString = (p) => p && (p.cycleMode === 1 ? `每週${weekNumberToChinese(p.cycleTiming === 0 ? 7 : p.cycleTiming)}` : `每月${p.cycleTiming}號`);
 
   const renderListItem = (list) => list.map((l) => (
-    <InformationList key={uuid()} title={l.label} content={l.value} caption={l.caption} remark={l.next} extra={typeof l.extra === 'function' && l.extra()} />
+    <InformationList
+      key={uuid()}
+      title={l.label}
+      content={l.value}
+      caption={l.caption}
+      remark={l.next}
+      extra={typeof l.extra === 'function' && l.extra()}
+    />
   ));
 
   const renderProgramDetails = () => {
@@ -119,9 +133,9 @@ const DepositPlanDetailPage = () => {
         value: dateFormatter(stringToDate(program?.startDate), true),
         caption: '下一筆扣款日',
         next: program?.extra.nextDeductionDate,
-        extra: () => (mode === 2 ? '扣款成功' : undefined),
+        extra: () => (mode === 2 && stringDateCodeFormatter(new Date()) === program?.startDate ? '扣款成功' : undefined),
       },
-      { label: '存錢帳號', value: accountFormatter(program?.bindAccountNo) },
+      { label: '存錢帳號', value: program?.bindAccountNo ? accountFormatter(program?.bindAccountNo) : '加開子帳戶' },
     ];
     return renderListItem(list);
   };
@@ -156,7 +170,7 @@ const DepositPlanDetailPage = () => {
 
   return (
     <Layout title={renderTitle()} goBackFunc={() => history.goBack()}>
-      <MainScrollWrapper>
+      <MainScrollWrapper ref={mainRef}>
         <DetailPageWrapper>
           { mode > 0 && (
             <div className="px-4">
