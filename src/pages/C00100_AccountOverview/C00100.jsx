@@ -52,13 +52,21 @@ const AccountOverviewPage = () => {
   /**
    * 產生上方圓餅圖的 slides
    * 因為第一階段可能沒有負資產的功能，所以預設空陣列，仰賴後端回傳的資料，再將其加入陣列中。
+   * 正資產子帳戶只顯示『存錢計畫』
    * TODO: 空陣列時？
    */
   const renderSlides = (data) => {
     const slides = [];
 
     if (data?.assets && data.assets.length > 0) {
-      slides.push(<PieChart key={uuid()} label="正資產" data={data.assets.sort((a, b) => b.balance - a.balance)} isCentered />);
+      // 正資產陣列移除子帳戶項目
+      const assetList = data.assets.filter((account) => account.type !== 'C');
+      // 子帳戶項目篩選只餘『存錢計畫』
+      const subAccounts = data.assets.filter((account) => account.type === 'C' && account.purpose === 2);
+      // 篩選後子項目加回正資產陣列
+      if (subAccounts.length > 0) assetList.push(...subAccounts);
+
+      slides.push(<PieChart key={uuid()} label="正資產" data={assetList.sort((a, b) => b.balance - a.balance)} isCentered />);
     }
 
     if (data?.debts && data.debts.length > 0) {

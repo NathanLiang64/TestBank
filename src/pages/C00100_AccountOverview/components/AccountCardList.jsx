@@ -58,6 +58,15 @@ const AccountCardList = ({ data, isDebt }) => {
     // 依金額從大到小排序。
     subAccounts.sort((a, b) => b.balance - a.balance);
   }
+  // 無『存錢計畫』顯示透明卡
+  if (subAccounts.length === 0) {
+    mainList.push({
+      type: 'C',
+      accountNo: null,
+      balance: 0,
+      isEmpty: true,
+    });
+  }
 
   // 外幣帳戶
   const foreignAccounts = data.filter((account) => account.type === 'F');
