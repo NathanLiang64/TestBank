@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
@@ -24,6 +25,29 @@ const AccountOverviewPage = () => {
     setAccounts(response);
     dispatch(setWaittingVisible(false));
   }, []);
+
+  // 檢查正資產陣列中的type，若缺少type即加一新物件至陣列
+  const addTypeObj = (arr, type) => {
+    // 檢查陣列中有無該type
+    const found = arr.some((item) => item.type === type);
+
+    // 若無符合該type的物件則新增一陣列物件
+    if (!found) {
+      arr.push({
+        balance: 0,
+        purpose: type === 'C' ? 2 : 0,
+        accountNo: null,
+        alias: '',
+        currency: 'TWD',
+        type,
+        isEmpty: true,
+      });
+    }
+
+    // 回傳新增後的整個陣列
+    return arr;
+  };
+  const checkAssets = (checkedArr) => ['M', 'F', 'S', 'C'].map((type) => addTypeObj(checkedArr, type)).at(-1);
 
   /**
    * 產生上方圓餅圖的 slides
@@ -52,7 +76,8 @@ const AccountOverviewPage = () => {
     const slides = [];
 
     if (data?.assets && data.assets.length > 0) {
-      slides.push(<AccountCardList key={uuid()} data={data.assets} isDebt={false} />);
+      const fullArr = checkAssets(data.assets);
+      slides.push(<AccountCardList key={uuid()} data={fullArr} isDebt={false} />);
     }
 
     if (data?.debts && data.debts.length > 0) {
