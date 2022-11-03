@@ -8,7 +8,7 @@ import {
 export const DropdownField = ({
   options,
   labelName,
-  shouldDisabled,
+  disabled,
   $color,
   ...controlProps
 }) => {
@@ -32,14 +32,15 @@ export const DropdownField = ({
       <FEIBSelect
         MenuProps={MenuProps}
         onChange={field.onChange}
+        onBlur={field.onBlur}
         id={field.name}
         name={field.name}
         value={field.value}
-        disabled={shouldDisabled}
+        disabled={disabled}
         $color={$color}
       >
-        {options.map(({ label, value, disabled }) => (
-          <FEIBOption key={label} value={value} disabled={disabled}>
+        {options.map(({ label, value, disabledOption }) => (
+          <FEIBOption key={label} value={value} disabled={disabledOption}>
             {label}
           </FEIBOption>
         ))}
