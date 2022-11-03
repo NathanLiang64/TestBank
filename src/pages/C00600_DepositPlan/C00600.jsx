@@ -1,12 +1,12 @@
 /* eslint-disable object-curly-newline */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
-import uuid from 'react-uuid';
 
 import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
 import SwiperLayout from 'components/SwiperLayout';
+
 import { setWaittingVisible, setDrawer, setDrawerVisible } from 'stores/reducers/ModalReducer';
 import { showAnimationModal, showError } from 'utilities/MessageModal';
 import {
@@ -39,26 +39,14 @@ const DepositPlanPage = () => {
   const history = useHistory(); // TODO 應該改用 startFunc
   const dispatch = useDispatch();
   const [depositPlans, setDepositPlans] = useState();
-  // const [plans, setPlans] = useState([]);
-  // const [subAccounts, setSubAccounts] = useState();
-  // const [totalSubAccountCount, setTotalSubAccountCount] = useState();
-  const [swiperController, setSwipterController] = useState();
-
+  const swiperRef = useRef();
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-
     // 檢查是否已申請主帳戶，「否」則到申請頁。
     const acctData = await getAccountSummary('M');
-    if (!acctData?.length) {
-      AlertNoMainAccount({onOk: closeFunc});
-    }
-
+    if (!acctData?.length) AlertNoMainAccount({onOk: closeFunc});
     const response = await getDepositPlans();
-
     setDepositPlans(response);
-    // setPlans(response.plans);
-    // setSubAccounts(response.subAccounts);
-    // setTotalSubAccountCount(response.totalSubAccountCount);
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -79,21 +67,15 @@ const DepositPlanPage = () => {
 
     if (response.result) {
       // 一併更新前端資料
-      // setPlans(plans.map((p) => {
-      //   p.isMaster = false;
-      //   if (p.planId === plan.planId) p.isMaster = true;
-      //   return p;
-      // }));
-
-      setDepositPlans((prevPlans) => ({...prevPlans,
-        plans: prevPlans.map((p) => {
+      setDepositPlans((prevState) => ({...prevState,
+        plans: prevState.plans.map((p) => {
           p.isMaster = false;
           if (p.planId === plan.planId) p.isMaster = true;
           return p;
         })}));
 
       // 移動畫面顯示主要計畫
-      if (swiperController) swiperController.slideTo(1);
+      if (swiperRef)swiperRef.current.swiper.slideTo(1);
     } else {
       AlertUpdateFail();
     }
@@ -167,7 +149,7 @@ const DepositPlanPage = () => {
    * 預設3張新增計畫頁，再替換成後端回傳的計畫，最後再把主要計畫移至中間。
    */
   const renderSlides = () => {
-    const slides = Array.from({ length: 3 }, () => <EmptySlide key={uuid()} />);
+    const slides = Array.from({ length: 3 }, (_, i) => <EmptySlide key={i} />);
 
     if (depositPlans?.plans.length) {
       let masterSlideIndex = null;
@@ -175,7 +157,7 @@ const DepositPlanPage = () => {
         if (p.isMaster) { masterSlideIndex = i; }
         slides[i] = (
           <DepositPlanHeroSlide
-            key={uuid()}
+            key={p.planId}
             accountNo={p.bindAccountNo}
             onMoreClicked={() => handleMoreClick(p)}
             onEditClicked={() => handleEditClick(p)}
@@ -196,15 +178,11 @@ const DepositPlanPage = () => {
    * 產生下方內容時會用的
    */
   const handleAddClick = () => {
-    // startFunc('C006002', { plansLength: plans?.length, subAccounts, totalSubAccountCount });
-    startFunc(
-      'C006002',
-      {
-        plansLength: depositPlans?.plans.length,
-        subAccounts: depositPlans.subAccounts,
-        totalSubAccountCount: depositPlans.totalSubAccountCount,
-      },
-    );
+    history.push('C006002', {
+      plansLength: depositPlans?.plans.length,
+      subAccounts: depositPlans.subAccounts,
+      totalSubAccountCount: depositPlans.totalSubAccountCount,
+    });
   };
 
   const handleShowDetailClick = (plan) => {
@@ -221,9 +199,9 @@ const DepositPlanPage = () => {
    * 預設3張新增計畫頁，再替換成後端回傳的計畫，最後再把主要計畫移至中間。
    */
   const renderContents = () => {
-    const slides = Array.from({ length: 3 }, () => (
+    const slides = Array.from({ length: 3 }, (_, i) => (
       <EmptyPlan
-        key={uuid()}
+        key={i}
         onAddClick={handleAddClick}
         onMount={shouldShowUnavailableSubAccountAlert}
       />
@@ -235,7 +213,7 @@ const DepositPlanPage = () => {
         if (p.isMaster) { masterSlideIndex = i; }
         slides[i] = (
           <DepositPlan
-            key={uuid()}
+            key={p.planId}
             onShowDetailClick={() => handleShowDetailClick(p)}
             {...p}
           />
@@ -265,9 +243,6 @@ const DepositPlanPage = () => {
       });
     }
     swiper.slideTo(activeIndex, 0);
-
-    // Side-effect: 因為設定主計畫後會重新排序，所以必須呼叫swiper切換頁面，故存起來。
-    if (!swiperController) setSwipterController(swiper);
   };
 
   /**
@@ -277,7 +252,11 @@ const DepositPlanPage = () => {
   return (
     <Layout title="存錢計畫" hasClearHeader goBackFunc={handleGoBackClick}>
       <MainScrollWrapper>
-        <SwiperLayout slides={renderSlides()} onAfterInit={focusToIntentedSlide}>
+        <SwiperLayout
+          ref={swiperRef}
+          slides={renderSlides()}
+          onAfterInit={focusToIntentedSlide}
+        >
           { renderContents() }
         </SwiperLayout>
       </MainScrollWrapper>
