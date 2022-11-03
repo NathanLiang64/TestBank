@@ -4,7 +4,7 @@ import FEIBButton from 'components/elements/FEIBButton';
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import ArrowNextButton from 'components/ArrowNextButton';
 import {
-  toThousandNotation, weekNumberToChinese, dateFormatter, stringToDate,
+  weekNumberToChinese, dateFormatter, stringToDate, switchZhNumber,
 } from 'utilities/Generator';
 
 import DepositPlanWrapper from './DepositPlan.style';
@@ -53,7 +53,7 @@ const DepositPlan = ({
   const bonusInfo = [
     { label: '適用利率', value: `${rate}%`},
     { label: `每${cycleMode === 1 ? '周' : '月'}存款日`, value: fancyCycleTimming()},
-    { label: '每次存款金額', value: toThousandNotation(amount)},
+    { label: '每次存款金額', value: switchZhNumber(amount)},
   ];
 
   return (
@@ -64,10 +64,20 @@ const DepositPlan = ({
           {stage.text}
         </InfoArea>
         <ProgressBar value={progressPercentage} />
-        {/* eslint-disable react/jsx-one-expression-per-line */}
-        <div>目前金額 <em>{toThousandNotation(currentBalance)}</em>/{toThousandNotation(goalAmount)}</div>
-        { endDate && <div>{dateFormatter(stringToDate(endDate))}到期</div>}
-        {/* eslint-enable react/jsx-one-expression-per-line */}
+        <div>
+          目前金額
+          {' '}
+          <em>{switchZhNumber(currentBalance)}</em>
+          /
+          {switchZhNumber(goalAmount)}
+        </div>
+        { endDate && (
+        <div>
+          {dateFormatter(stringToDate(endDate))}
+          到期
+        </div>
+        )}
+
       </div>
       {shouldShowButton ? (
         <>

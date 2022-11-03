@@ -1,20 +1,19 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
+import Theme from 'themes/theme';
 import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
 import { FEIBButton, FEIBErrorMessage } from 'components/elements';
-import Theme from 'themes/theme';
+import { DropdownField, TextInputField } from 'components/Fields';
 import {
   toCurrency,
   stringDateCodeFormatter,
   dateFormatter,
 } from 'utilities/Generator';
 
-import { DropdownField, TextInputField } from 'components/Fields';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { AlertProgramNoFound } from './utils/prompts';
 import { getDurationTuple} from './utils/common';
 import {
@@ -24,7 +23,7 @@ import {
 } from './utils/options';
 import HeroWithEdit from './components/HeroWithEdit';
 import EditPageWrapper from './EditPage.style';
-import { generateValidationSchema } from './validationSchema';
+import { generateEditSchema } from './validationSchema';
 
 /**
  * C00600 存錢計畫 (新增) 編輯頁
@@ -41,41 +40,45 @@ const DepositPlanEditPage = () => {
       cycleDuration: 4,
       cycleMode: 2,
       cycleTiming: '',
+      amount: '',
       bindAccountNo: '',
     },
-    resolver: yupResolver(generateValidationSchema(location.state?.program.amountRange.month.max)),
+    resolver: yupResolver(generateEditSchema(location.state?.program)),
   });
-  const [watchedDuration, watchedMode, watchedAmount, watchedAccount] = watch(['cycleDuration', 'cycleMode', 'amount', 'bindAccountNo']);
+  const {
+    cycleDuration, cycleMode, amount, bindAccountNo,
+  } = watch();
 
-  const getDefaultCycleTiming = (mode) => {
-    if (mode === 1) return new Date().getDay();
+  const getDefaultCycleTiming = () => {
     const date = new Date().getDate();
-    return (date < 28) ? date : 28;
+    return date < 28 ? date : 28;
   };
 
-  const getGoalAmount = (amount, cycle, mode) => {
+  const getGoalAmount = (cycleAmount, cycle, mode) => {
     const duration = mode === 1 ? 4 : 1;
-    const gm = amount * cycle * duration;
-    if (Number.isNaN(gm)) return 0;
-    return gm;
+    return parseInt(cycleAmount, 10) * cycle * duration;
   };
 
   const getRemainingBalance = (accountNo) => location.state?.subAccounts?.find((a) => a.accountNo === accountNo)?.balance ?? 0;
+  const getInputColor = (type) => (type ? Theme.colors.text.lightGray : Theme.colors.primary.brand);
 
   const onSubmit = (data) => {
     const date = getDurationTuple(new Date(), data.cycleDuration, data.cycleMode, data.cycleTiming);
     const {code, rate} = location.state.program;
+
     const payload = {
+      // createDepositPlan API Param
       progCode: code,
       imageId: newImageId ?? 1,
       name: data.name,
       startDate: stringDateCodeFormatter(date.begin),
       endDate: stringDateCodeFormatter(date.end),
-      cycleMode: parseInt(data.cycleMode, 10),
-      cycleTiming: parseInt(data.cycleTiming, 10),
+      cycleMode: data.cycleMode,
+      cycleTiming: data.cycleTiming,
       amount: data.amount,
       bindAccountNo: data.bindAccountNo === 'new' ? null : data.bindAccountNo,
       currentBalance: getRemainingBalance(data.bindAccountNo),
+      // 渲染需求
       goalAmount: getGoalAmount(data.amount, data.cycleDuration, data.cycleMode),
       extra: {
         rate,
@@ -97,9 +100,9 @@ const DepositPlanEditPage = () => {
     } else if (location.state.program.type) {
       reset({
         name: location.state.program.name,
-        cycleDuration: location.state.program?.cycleDuration ?? 4,
-        cycleMode: location.state.program?.cycleMode ?? 2,
-        cycleTiming: getDefaultCycleTiming(location.state.program?.cycleMode),
+        cycleDuration: 4,
+        cycleMode: 2,
+        cycleTiming: getDefaultCycleTiming(),
       });
     }
 
@@ -112,11 +115,11 @@ const DepositPlanEditPage = () => {
     }
   }, []);
 
-  const getInputColor = () => {
-    if (location.state?.program.type) return Theme.colors.text.lightGray;
-    return Theme.colors.primary.brand;
-  };
+  if (!location.state || !('program' in location.state)) {
+    return <Layout title="新增存錢計畫" hasClearHeader goBackFunc={() => history.goBack()} />;
+  }
 
+  const {program, subAccounts, hasReachedMaxSubAccounts} = location.state;
   return (
     <Layout title="新增存錢計畫" hasClearHeader goBackFunc={() => history.goBack()}>
       <MainScrollWrapper>
@@ -131,8 +134,8 @@ const DepositPlanEditPage = () => {
                   control={control}
                   labelName="為你的計畫命名吧"
                   placeholder="請輸入7個以內的中英文字、數字或符號"
-                  disabled={!!location.state?.program.type}
-                  $color={getInputColor()}
+                  disabled={!!program.type}
+                  $color={getInputColor(program.type)}
                 />
               </div>
               <div>
@@ -150,20 +153,22 @@ const DepositPlanEditPage = () => {
                     name="cycleMode"
                     control={control}
                     labelName="存錢頻率"
+                    shouldDisabled={!!program.type}
+                    $color={getInputColor(!!program.type)}
                   />
                 </div>
                 <div className="w-50">
                   <DropdownField
-                    options={generateCycleTimingOptions(2)}
+                    options={generateCycleTimingOptions(cycleMode)}
                     name="cycleTiming"
                     control={control}
                     labelName="週期"
-                    shouldDisabled={!!location.state?.program.type}
-                    $color={getInputColor()}
+                    shouldDisabled={!!program.type}
+                    $color={getInputColor(!!program.type)}
                   />
                   <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
                     共
-                    {watchedDuration * (watchedMode === 1 ? 4 : 1)}
+                    {cycleDuration * (cycleMode === 1 ? 4 : 1)}
                     次
                   </FEIBErrorMessage>
                 </div>
@@ -176,22 +181,20 @@ const DepositPlanEditPage = () => {
                   type="number"
                 />
                 <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
-                  {(watchedAmount > 0) && `存款目標為 ${toCurrency(getGoalAmount(watchedAmount, watchedDuration, watchedMode))}元`}
+                  {(amount > 0) && `存款目標為 ${toCurrency(getGoalAmount(amount, cycleDuration, cycleMode))}元`}
                 </FEIBErrorMessage>
                 <div>金額最低＄10,000 元，最高＄90,000,000 元，以萬元為單位</div>
               </div>
 
               <div>
-                {/* TODO: 加開子帳戶選項，若沒有子帳戶，應出現新增加開子帳戶的選項 */}
                 <DropdownField
-                  options={generatebindAccountNoOptions(location.state?.subAccounts || [], location.state?.hasReachedMaxSubAccounts)}
+                  options={generatebindAccountNoOptions(subAccounts, hasReachedMaxSubAccounts)}
                   name="bindAccountNo"
                   control={control}
                   labelName="選擇陪你存錢的帳號"
                 />
-
                 <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
-                  { ((watchedAccount !== '*') && (watchedAccount !== 'new')) && `存款餘額為${getRemainingBalance(watchedAccount)}元` }
+                  { ((bindAccountNo !== '*') && (bindAccountNo !== 'new')) && `存款餘額為${getRemainingBalance(bindAccountNo)}元` }
                 </FEIBErrorMessage>
               </div>
 

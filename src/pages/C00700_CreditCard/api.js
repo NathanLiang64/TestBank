@@ -174,7 +174,7 @@ export const getCards = async (request) => {
  */
 export const getTransactions = async (request) => {
   const response = await callAPI('/api/card/v1/getTransactions', request);
-  return response;
+  return response.data;
 };
 
 /**
@@ -197,7 +197,7 @@ export const getTransactions = async (request) => {
  */
 export const updateTxnNotes = async (param) => {
   const response = await callAPI('/api/card/v1/updateTxnNotes', param);
-  return response;
+  return response.data;
 };
 
 /**
