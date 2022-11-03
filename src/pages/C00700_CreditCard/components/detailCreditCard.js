@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import uuid from 'react-uuid';
 
 import {
-  currencySymbolGenerator,
+  currencySymbolGenerator, stringDateCodeFormatter,
 } from 'utilities/Generator';
 import { setModalVisible } from 'stores/reducers/ModalReducer';
 
@@ -21,7 +21,7 @@ import { showCustomPrompt } from 'utilities/MessageModal';
 
 import { TextInputField } from 'components/Fields';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { updateMemo, updateTxnNotes, getTransactions } from '../api';
+import { updateTxnNotes, getTransactions } from '../api';
 
 // timeFormatter
 import DetailCardWrapper, { DetailDialogContentWrapper, DetailDialogErrorMsg, TableDialog} from './detailCreditCard.style';
@@ -66,10 +66,15 @@ const DetailCard = ({
 
   const updateTransactions = async () => {
     // TODO getTransactions API 待完成
-    // const res = await getTransactions({cardNo: '"5232870002930308"', dateBeg: '20220901', dateEnd: '20221025'});
+
+    const today = new Date();
+    // 查詢當天至60天前的資料
+    const dateEnd = stringDateCodeFormatter(today);
+    const dateBeg = stringDateCodeFormatter(new Date(today - 86400 * 60 * 1000));
+    const res = await getTransactions({cardNo: account, dateBeg, dateEnd});
     // console.log('res', res);
     // setTransactions(res.data);
-    setTransactions(details);
+    setTransactions(res);
   };
 
   // Formatter
@@ -125,32 +130,46 @@ const DetailCard = ({
     },
   ]);
 
+  // {
+  //   txDate, 交易日期時間 (yyyymmddhhmmss)
+  //   amount, 消費金額
+  //   txName,
+  //   txKey,  交易鍵值
+  //   note,   備註
+  // },
+
   //  提交memoText
-  const showMemoEditDialog = (memo = '', id) => {
+  const showMemoEditDialog = ({
+    cardNo, note, txDate, txKey,
+  }) => {
     showCustomPrompt({
       title: '編輯備註',
       message: (
-        <TextInputField labelName="備註說明" name={`notes[${id}]`} control={control} />
+        <TextInputField labelName="備註說明" name={`notes[${txKey}]`} control={control} />
       ),
       noDismiss: true,
       okContent: '完成',
       onOk: handleSubmit(async ({notes}) => {
-        console.log('values[id]', notes[id]);
+        console.log('values[txKey]', notes[txKey]);
         // TODO 等待 getTransaction API 完成後進行 updateTxnNotes API 串接
-        //  await updateTxnNotes({...values.notes[id]})
-        setTransactions((prevState) => {
-          const updatedState = prevState.map((transaction) => {
-            if (transaction.id === id) return {...transaction, memo: notes[id]};
-            return transaction;
-          });
-          return updatedState;
+        const result = await updateTxnNotes({
+          cardNo, txDate, txKey, note: notes[txKey],
         });
+        if (result) {
+          setTransactions((prevState) => {
+            const updatedState = prevState.map((transaction) => {
+              if (transaction.txKey === txKey) return { ...transaction, note: notes[txKey] };
+              return transaction;
+            });
+            return updatedState;
+          });
+        }
         dispatch(setModalVisible(false));
       }),
       onClose: () => {
         const {notes} = getValues();
         console.log('notes', notes);
-        const resetValues = {...notes, [id]: memo};
+        const resetValues = {...notes, [txKey]: note};
         reset({notes: resetValues});
       },
     });
@@ -163,28 +182,29 @@ const DetailCard = ({
     return (
       <div style={{paddingTop: '2.5rem'}}>
         {arr.map((item, index) => (
-          <DetailCardWrapper key={uuid()} data-index={index} noShadow id={item.id}>
+          <DetailCardWrapper key={uuid()} data-index={index} noShadow id={item.txKey}>
             <div className="description">
               <h4>
-                {item.description}
-                {/* {item.txName}  */}
+                {/* {item.description} */}
+                {item.txName}
               </h4>
               <p>
-                {stringDateFormat(item.bizDate)}
-                {/* {item.txDate} */}
-                {type === 'all' ? ` | 卡-${creditNumberFormat(item.targetAcct)}` : ''}
+                {/* {stringDateFormat(item.bizDate)} */}
+                {item.txDate}
+                {/* {type === 'all' ? ` | 卡-${creditNumberFormat(item.targetAcct)}` : ''} */}
+                {type === 'all' && ` | 卡-${creditNumberFormat(item.cardNo)}`}
                 {/* 原資料沒有 targetAcct 需要透過上層props 提供 term 來判斷 */}
               </p>
             </div>
             <div className="amount">
               {/* 刷卡金額 */}
               <h4>
-                {currencySymbolGenerator(item.currency, item.amount)}
+                {currencySymbolGenerator('NTD', item.amount)}
               </h4>
               <div className="remark">
-                <span>{item.memo}</span>
-                {/* <span>{item.note}</span> */}
-                <FEIBIconButton $fontSize={1.6} onClick={() => showMemoEditDialog(item.memo, item.id)} className="badIcon">
+                {/* <span>{item.memo}</span> */}
+                <span>{item.note}</span>
+                <FEIBIconButton $fontSize={1.6} onClick={() => showMemoEditDialog(item)} className="badIcon">
                   <EditIcon />
                 </FEIBIconButton>
               </div>
@@ -209,7 +229,7 @@ const DetailCard = ({
         )}
       </DetailDialogContentWrapper>
       {renderFunctionList()}
-      {transactions.length > 7 && <ArrowNextButton onClick={onClick}>更多明細</ArrowNextButton>}
+      {transactions.length > 3 && <ArrowNextButton onClick={onClick}>更多明細</ArrowNextButton>}
     </>
   );
 };

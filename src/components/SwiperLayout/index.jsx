@@ -1,6 +1,6 @@
 /* eslint no-underscore-dangle: ["error", {"allow": ["_slides", "_children"] }] */
 
-import React, { useState } from 'react';
+import React, { useState, forwardRef } from 'react';
 import SwiperCore, { Pagination } from 'swiper/core';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import uuid from 'react-uuid';
@@ -32,8 +32,9 @@ const SwiperLayout = ({
   hasDivider = true,
   onSlideChange,
   ...swiperParameters
-}) => {
+}, ref) => {
   const [activeIndex, setActiveIndex] = useState(0);
+
   let _slides = slides ?? templateSlides;
   let _children = children ?? templateContents;
 
@@ -61,6 +62,7 @@ const SwiperLayout = ({
     <SwiperLayoutWrapper>
       <Swiper
         pagination
+        ref={ref}
         onSlideChange={handleSlideChange}
         {...swiperParameters}
       >
@@ -74,4 +76,4 @@ const SwiperLayout = ({
   );
 };
 
-export default SwiperLayout;
+export default forwardRef(SwiperLayout);

@@ -6,7 +6,7 @@ export const generateMonthOptions = () => Array.from({ length: 22 }, (_, i) => i
 }));
 
 export const generateCycleModeOptions = () => [
-  // { label: '每週', value: 1, disabled: true },
+  // { label: '每週', value: 1, disabledOption: true },
   { label: '每月', value: 2 },
 ];
 
@@ -37,7 +37,7 @@ export const generatebindAccountNoOptions = (
       {
         label: '無未綁定的子帳戶或已達8個子帳戶上限',
         value: '*',
-        disabled: true,
+        disabledOption: true,
       },
     ];
   }
@@ -45,7 +45,7 @@ export const generatebindAccountNoOptions = (
   const defaultValue = {
     label: '請選擇子帳號且不能修改',
     value: '*',
-    disabled: true,
+    disabledOption: true,
   };
   options.unshift(defaultValue);
   return options;
