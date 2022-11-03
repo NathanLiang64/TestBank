@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef} from 'react';
 import { useHistory, useLocation } from 'react-router';
 import uuid from 'react-uuid';
@@ -35,7 +34,6 @@ const DepositPlanDetailPage = () => {
   const [program, setProgram] = useState();
 
   useEffect(() => {
-    console.log('location.state', location.state);
     if (location.state && ('isConfirmMode' in location.state)) {
       // 資訊頁有二種使用情境：確認新增存錢計畫、閱覽存錢計畫資訊。
       if (location.state.isConfirmMode) {
@@ -53,15 +51,13 @@ const DepositPlanDetailPage = () => {
     }
   }, []);
 
-  const handleImageUpload = async (planId, imageId) => {
+  const handleImageUpload = async (planId) => {
     const payload = {
       planId,
-      image: imageId > 0 ? imageId : sessionStorage.getItem('C00600-hero'),
+      image: sessionStorage.getItem('C00600-hero'),
     };
 
-    const response = await updateDepositPlan(payload);
-    if (response.result) history.push('/C00600');
-    // 這邊沒有錯誤判斷，但不影響核心功能(不終止計畫的新增)，使用者可自行重新選圖。
+    await updateDepositPlan(payload);
 
     sessionStorage.removeItem('C00600-hero'); // 清除暫存背景圖。
   };
@@ -74,19 +70,18 @@ const DepositPlanDetailPage = () => {
     }
 
     const payload = {...program};
-    // payload.extra = undefined; // 清除不必要資訊。
     delete payload.extra;
     delete payload.goalAmount;
 
     const response = await createDepositPlan(payload);
     if (response?.result) {
+      // TODO: updateDepositPlan API 尚無法處理帶有 base64 的 image (會回傳錯誤訊息)，僅能先以預設圖片進行測試
       if (payload.imageId === 0) await handleImageUpload(response.planId);
       // 設定成 成功建立模式
       setMode(2);
       sessionStorage.removeItem('C006003'); // 清除暫存表單資料。
 
       // 建立成功後，將頁面滑至上方。
-      // document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth'});
       mainRef.current.scrollTo({ top: 0, behavior: 'smooth'});
     } else {
       showAnimationModal({
