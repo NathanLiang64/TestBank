@@ -59,7 +59,7 @@ const AccountCardList = ({ data, isDebt }) => {
     subAccounts.sort((a, b) => b.balance - a.balance);
   }
   // 無『存錢計畫』顯示透明卡
-  if (subAccounts.length === 0) {
+  if (subAccounts.length === 0 && !isDebt) {
     mainList.push({
       type: 'C',
       accountNo: null,
@@ -124,10 +124,13 @@ const AccountCardList = ({ data, isDebt }) => {
   // 負債的金額是負值，將金額轉正，以便後續處理。
   mainList.forEach((account) => { account.balance = Math.abs(account.balance); });
 
-  // 依金額從大到小排序。若金額相同，排序依照：正：台幣>外幣>證券>子帳號；負：信用卡>貸款
+  // 依金額從大到小排序。若金額相同且非同種卡片，排序依照：正：台幣>外幣>證券>子帳號；負：信用卡>貸款
   const handleSortMainList = (a, b) => {
     const orderArray = ['M', 'F', 'S', 'C', 'CC', 'L'];
     if (a.balance === b.balance) {
+      if (a.isEmpty || b.isEmpty) {
+        return b.isEmpty && orderArray.indexOf(a.type) - orderArray.indexOf(b.type);
+      }
       return orderArray.indexOf(a.type) - orderArray.indexOf(b.type);
     }
     return b.balance - a.balance;

@@ -5,6 +5,7 @@ import {lazy} from 'react';
 const A00400 = lazy(() => import('pages/A00400_Provisioning'));
 const A00600 = lazy(() => import('pages/A00600_RegularBasicInformation'));
 const A00700 = lazy(() => import('pages/A00700_RegularPwdModify/A00700'));
+const A00800 = lazy(() => import('pages/A00800_NonMemberRegister/A00800'));
 const B00300 = lazy(() => import('pages/B00300_Notice'));
 const B00600 = lazy(() => import('pages/B00600_More/B00600'));
 const C00100 = lazy(() => import('pages/C00100_AccountOverview/C00100'));
@@ -106,6 +107,7 @@ const routes = [
   {path: '/A00400', exact: false, component: A00400},
   {path: '/A00600', exact: false, component: A00600},
   {path: '/A00700', exact: false, component: A00700},
+  {path: '/A00800', exact: false, component: A00800},
   {path: '/B00300', exact: false, component: B00300},
   {path: '/B00600', exact: false, component: B00600},
   {path: '/C00100', exact: false, component: C00100},
