@@ -26,8 +26,8 @@ const T00300 = () => {
   const [model, setModel] = useState({});
   const history = useHistory();
 
-  const authCode2FA = '0x20';
-  const authCode2FAOTP = '0x2B';
+  const authCode2FA = 0x20;
+  const authCode2FAOTP = 0x2B;
 
   /**
    * 錯誤訊息

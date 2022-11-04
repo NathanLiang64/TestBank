@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 
 import * as yup from 'yup';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useController, useForm } from 'react-hook-form';
 
@@ -10,14 +10,15 @@ import Layout from 'components/Layout/Layout';
 import {
   FEIBInputLabel, FEIBInput, FEIBButton, FEIBRadio, FEIBRadioLabel, FEIBErrorMessage,
 } from 'components/elements';
-import { showError, showInfo } from 'utilities/MessageModal';
+import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import Accordion from 'components/Accordion';
 import { RadioGroup } from '@material-ui/core';
+import { goHome, transactionAuth } from 'utilities/AppScriptProxy';
 import A00800AccoridonContent from './A00800_AccoridonContent';
 
 /* Styles */
 import A00800Wrapper from './A00800.style';
-import { getOtp } from './api';
+import { memberRegister } from './api';
 
 /**
  * A00800 訪客註冊
@@ -25,6 +26,8 @@ import { getOtp } from './api';
 
 const A00800 = () => {
   const [isOtpPass, setIsOtpPass] = useState(false);
+  const [inviteToken, setInviteToken] = useState('');
+  const authCode = 0x03;
 
   /**
    * 資料驗證
@@ -33,8 +36,8 @@ const A00800 = () => {
     mobileNum: yup.string().min(10, '請輸入正確的手機號碼').max(10, '請輸入正確的手機號碼').required('請輸入手機號碼'),
   });
   const schema = yup.object().shape({
-    name: yup.string().required('請輸入姓名'),
-    email: yup.string().email('請輸入正確的Email').required('請輸入Email'),
+    name: yup.string().max(40, '姓名請勿超過5字元').required('請輸入姓名'),
+    email: yup.string().max(40, '電子郵件請勿超過40字元').email('請輸入正確的Email').required('請輸入Email'),
     password: yup.string().min(6, '請輸入6位數字密碼').max(6, '請輸入6位數字密碼').required('請輸入密碼'),
     passwordConfirm: yup.string().oneOf([yup.ref('password'), null], '密碼與確認密碼不相符').required('請再次輸入密碼'),
     agreeTerms: yup.string().required('請閱讀並同意使用條款'),
@@ -73,12 +76,9 @@ const A00800 = () => {
     );
   };
   const renderFormItem = ({
-    label, areaName, type, isTerm,
+    label, areaName, type, isTerm, placeHolder,
   }) => {
     const { field, fieldState } = useController({name: areaName, control });
-    // console.log('A00800 renderFormItem() label: ', {
-    //   label, areaName, field, fieldState,
-    // });
 
     return (
       <>
@@ -90,7 +90,7 @@ const A00800 = () => {
           <div className="form_item">
             <FEIBInputLabel>{label}</FEIBInputLabel>
             <div className="form_item_input">
-              <FEIBInput {...field} type={type} />
+              <FEIBInput {...field} type={type} placeholder={placeHolder} />
             </div>
           </div>
         )}
@@ -102,26 +102,56 @@ const A00800 = () => {
   /* OTP驗證電話號碼 */
   const handleVerifyMobileNum = async (data) => {
     console.log('A00800 handleVerifyMobileNum', {data});
-    const result = await getOtp(data);
-    // console.log('A00800 handleVerifyMobileNum', {result});
+    const result = await transactionAuth(authCode, data.mobileNum);
+    console.log('A00800 handleVerifyMobileNum', {result});
 
     setIsOtpPass(result.result === true);
   };
 
+  /* 註冊成功後跳轉 */
+  const handleSwitchPage = () => {
+    console.log('A00800');
+    if (inviteToken !== '') {
+      // TODO: 跳轉至邀請卡
+      return '';
+    }
+
+    return goHome();
+  };
+
   /* submit動作處理 */
-  const onSubmit = (data) => {
-    console.log('A00800 handleOnSubmit() data:', data);
+  const onSubmit = async (data) => {
+    console.log('A00800 handleOnSubmit() data:', {data, isOtpPass});
+    const regData = {
+      name: data.name,
+      email: data.email,
+      passwd: data.password,
+    };
 
     if (!isOtpPass) {
-      showError('請先進行OTP驗證');
+      showCustomPrompt({title: '請先進行手機號碼驗證'});
       return;
     }
 
-    showInfo('註冊成功！');
+    const result = await memberRegister(regData);
+
+    if (result.code !== '0000') {
+      showCustomPrompt({title: '註冊失敗！'});
+    }
+    /* 註冊成功：進入首頁 */
+    showCustomPrompt({
+      title: '註冊成功！',
+      onOk: () => handleSwitchPage(),
+      onClose: () => handleSwitchPage(),
+    });
   };
 
+  useEffect(async () => {
+    // TODO: 取得inviteToken(若有)
+  }, []);
+
   return (
-    <Layout title="訪客註冊">
+    <Layout title="訪客註冊" goHome={false}>
       <A00800Wrapper className="NonmemberWrapper">
         <div className="phone_input">
           <form onSubmit={handleSubmitMobile((data) => handleVerifyMobileNum(data))}>
@@ -134,7 +164,9 @@ const A00800 = () => {
         <form className="basic_data_form" onSubmit={handleSubmit((data) => onSubmit(data))}>
           {renderFormItem({label: '姓名', areaName: 'name', type: 'text'})}
           {renderFormItem({label: 'E-mail', areaName: 'email', type: 'email'})}
-          {renderFormItem({label: '密碼', areaName: 'password', type: 'password'})}
+          {renderFormItem({
+            label: '密碼', areaName: 'password', type: 'password', placeHolder: '六位數字',
+          })}
           {renderFormItem({label: '確認密碼', areaName: 'passwordConfirm', type: 'password'})}
 
           <Accordion space="top" title="個資保護法公告內容" className="accordion">
