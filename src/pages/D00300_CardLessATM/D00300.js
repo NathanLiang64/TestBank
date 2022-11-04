@@ -1,8 +1,6 @@
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
-import {
-  closeFunc, switchLoading,
-} from 'utilities/AppScriptProxy';
+import { closeFunc } from 'utilities/AppScriptProxy';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import { getCardlessStatus } from 'pages/D00300_CardLessATM/api';
 
@@ -22,9 +20,7 @@ const CardLessATM = () => {
 
   // 檢查無卡提款狀態; 0=未申請, 1=已申請未開通, 2=已開通, 3=已註銷, 4=已失效, 5=其他
   const fetchCardlessStatus = async (param) => {
-    switchLoading(true);
     const statusCodeResponse = await getCardlessStatus(param);
-    switchLoading(false);
     if (statusCodeResponse.code === '0000') {
       const { cwdStatus } = statusCodeResponse.data;
       const statusNumber = Number(cwdStatus);
@@ -36,9 +32,8 @@ const CardLessATM = () => {
         || statusNumber === 4
       ) {
         await showCustomPrompt({
-          message: '很抱歉，您尚未開通無卡提款功能',
+          message: '很抱歉，您尚未開通無卡提款功能，無法使用此功能',
           onOk: () => closeFunc(),
-          onClose: () => closeFunc(),
         });
         return;
       }
@@ -48,7 +43,10 @@ const CardLessATM = () => {
         toWithdrawPage();
       }
     } else {
-      closeFunc();
+      await showCustomPrompt({
+        message: '發生錯誤，暫時無法使用此功能',
+        onOk: () => closeFunc(),
+      });
     }
   };
 

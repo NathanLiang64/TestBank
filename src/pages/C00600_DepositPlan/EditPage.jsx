@@ -100,6 +100,7 @@ const DepositPlanEditPage = () => {
     } else if (location.state.program.type) {
       reset({
         name: location.state.program.name,
+        // TODO: location.state.program 應該包含 cycleDuration
         cycleDuration: 4,
         cycleMode: 2,
         cycleTiming: getDefaultCycleTiming(),
@@ -144,6 +145,8 @@ const DepositPlanEditPage = () => {
                   name="cycleDuration"
                   control={control}
                   labelName="預計存錢區間"
+                  disabled={!!program.type}
+                  $color={getInputColor(!!program.type)}
                 />
               </div>
               <div className="col-2">
@@ -153,7 +156,7 @@ const DepositPlanEditPage = () => {
                     name="cycleMode"
                     control={control}
                     labelName="存錢頻率"
-                    shouldDisabled={!!program.type}
+                    disabled={!!program.type}
                     $color={getInputColor(!!program.type)}
                   />
                 </div>
@@ -163,7 +166,7 @@ const DepositPlanEditPage = () => {
                     name="cycleTiming"
                     control={control}
                     labelName="週期"
-                    shouldDisabled={!!program.type}
+                    disabled={!!program.type}
                     $color={getInputColor(!!program.type)}
                   />
                   <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
