@@ -18,7 +18,15 @@ const DepositPlanTransactionPage = () => {
     // startParams: 要顯示明細的存錢計劃詳細資料，規格參照：api.js - getDepositPlans API
     const startParams = await loadFuncParams(); // Function Controller 提供的參數
     if (startParams && (typeof startParams === 'object')) {
-      setPlan(startParams);
+      const {plan: loadedPlan} = startParams;
+      setPlan(
+        {
+          ...loadedPlan,
+          accountNo: loadedPlan.bindAccountNo,
+          balance: loadedPlan.currentBalance,
+
+        },
+      );
     }
   }, []);
 

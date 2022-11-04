@@ -121,6 +121,7 @@ const DepositPlanEditPage = () => {
   }
 
   const {program, subAccounts, hasReachedMaxSubAccounts} = location.state;
+  console.log('program', program);
   return (
     <Layout title="新增存錢計畫" hasClearHeader goBackFunc={() => history.goBack()}>
       <MainScrollWrapper>
@@ -186,7 +187,7 @@ const DepositPlanEditPage = () => {
                 <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
                   {(amount > 0) && `存款目標為 ${toCurrency(getGoalAmount(amount, cycleDuration, cycleMode))}元`}
                 </FEIBErrorMessage>
-                <div>金額最低＄10,000 元，最高＄90,000,000 元，以萬元為單位</div>
+                <div>{`金額最低＄${toCurrency(program.amountRange.month.min)} 元，最高＄${toCurrency(program.amountRange.month.max)} 元，以萬元為單位`}</div>
               </div>
 
               <div>
