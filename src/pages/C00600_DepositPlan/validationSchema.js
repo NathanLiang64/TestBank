@@ -38,8 +38,8 @@ export const generateEditSchema = (program) => yup.object().shape({
       )}元`,
     )
     .test(
-      'inTenThousandBase',
-      '金額需以 1萬元 為增加單位',
+      'baseError',
+      '金額需以萬元為單位',
       (values) => !(values % 10000),
     ),
   bindAccountNo: yup.string().required('請選擇帳號'),

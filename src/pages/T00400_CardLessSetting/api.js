@@ -17,14 +17,15 @@ export const getStatus = async (request) => {
 
 /**
  * 開通無卡提款服務
- * 注意
- * 1. 需要在 JwtToken 中的 payload 放入參數名稱為 clwdNewPassword 的新密碼
- * 2. 需要先執行 /api/cardlessWD/getStatus 獲得卡況
+ * 注意:
+ * 1. 需要先執行 /api/cardlessWD/getStatus 獲得卡況
+ * TODO: 參數 newPassword 後續需處理加密問題
  *
- * @param JwtToken
+ * @param token
+ * @param newPassword
  * @return {
- *      message:        回傳訊息 例如: 'E660: 申請不准'
- *      chgPwMessage:   空白表示成功
+ *    message: 回傳訊息 例如: 'E660: 申請不准'
+ *    chgPwMessage: 空白表示成功
  * }
  * @throws Exception
  */

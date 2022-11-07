@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Layout from 'components/Layout/Layout';
 import AccountDetails from 'components/AccountDetails/accountDetails';
 import { loadFuncParams, closeFunc } from 'utilities/AppScriptProxy';
+import { stringDateCodeFormatter } from 'utilities/Generator';
 import { getTransactionDetails } from './api';
 
 /**
@@ -18,7 +19,15 @@ const DepositPlanTransactionPage = () => {
     // startParams: 要顯示明細的存錢計劃詳細資料，規格參照：api.js - getDepositPlans API
     const startParams = await loadFuncParams(); // Function Controller 提供的參數
     if (startParams && (typeof startParams === 'object')) {
-      setPlan(startParams);
+      const {plan: loadedPlan} = startParams;
+      setPlan(
+        {
+          ...loadedPlan,
+          accountNo: loadedPlan.bindAccountNo,
+          balance: loadedPlan.currentBalance,
+
+        },
+      );
     }
   }, []);
 
@@ -27,12 +36,14 @@ const DepositPlanTransactionPage = () => {
    * @param {*} conditions 查詢條件。
    */
   const updateTransactions = async (conditions) => {
+    const today = stringDateCodeFormatter(new Date());
+    const startDate = parseInt(today, 10) < parseInt(plan?.startDate, 10) ? today : plan?.startDate;
     const request = {
-      ...conditions,
       accountNo: plan?.bindAccountNo,
-      startDate: plan?.startDate,
+      startDate,
       endDate: plan?.endDate,
-      currency: 'TWD',
+      // currency: 'TWD',
+      ...conditions,
     };
 
     // 取得帳戶交易明細（三年內）

@@ -4,7 +4,7 @@ import FEIBButton from 'components/elements/FEIBButton';
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import ArrowNextButton from 'components/ArrowNextButton';
 import {
-  weekNumberToChinese, dateFormatter, stringToDate, switchZhNumber,
+  weekNumberToChinese, dateFormatter, stringToDate, switchZhNumber, toCurrency,
 } from 'utilities/Generator';
 
 import DepositPlanWrapper from './DepositPlan.style';
@@ -67,7 +67,9 @@ const DepositPlan = ({
         <div>
           目前金額
           {' '}
-          <em>{switchZhNumber(currentBalance)}</em>
+          {/* TODO 若存入的錢不是以萬元為單位時，格式會跑掉，需要確認後續的呈現方式 */}
+          {/* <em>{switchZhNumber(currentBalance)}</em> */}
+          <em>{toCurrency(currentBalance)}</em>
           /
           {switchZhNumber(goalAmount)}
         </div>
