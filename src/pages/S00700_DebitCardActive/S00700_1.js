@@ -34,11 +34,11 @@ const S007001 = () => {
     <Layout title="金融卡啟用結果" goBackFunc={go2More}>
       <DebitCardActiveWrapper>
         <SuccessFailureAnimations
-          isSuccess={!!state.apiResponse.result}
-          successTitle="設定成功"
+          isSuccess={!!(state.code === '0000')}
+          successTitle={`${state.cname} 設定成功`}
           successDesc={successDesc()}
-          errorTitle="設定失敗"
-          errorDesc={state.apiResponse.message}
+          errorTitle={`${state.cname} 設定失敗`}
+          errorDesc={state.message}
         />
         <FEIBButton style={{marginTop: '1rem'}} onClick={go2More}>確認</FEIBButton>
       </DebitCardActiveWrapper>

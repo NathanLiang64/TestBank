@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -10,52 +10,48 @@ import { closeFunc, getQLStatus, transactionAuth } from 'utilities/AppScriptProx
 import { showCustomPrompt } from 'utilities/MessageModal';
 import DebitCardActiveWrapper from './S00700.style';
 import { validationSchema } from './validationSchema';
+import { activate } from './api';
 
 const S00700 = () => {
   const history = useHistory();
-  const {control, handleSubmit} = useForm({
-    defaultValues: {accountNo: '', accountSn: '' },
+  const { control, handleSubmit } = useForm({
+    defaultValues: { actno: '', serial: '' },
     resolver: yupResolver(validationSchema),
   });
 
-  // const checkQLStatus = async (QLStatus) => {
-  //   switch (QLStatus) {
-  //     case ('0'):
-  //       await showCustomPrompt({message: '無裝置綁定，請先進行裝置綁定設定或致電客服'});
-  //       return false;
-  //     case ('3'):
-  //       await showCustomPrompt({message: '該帳號已在其它裝置綁定'});
-  //       return false;
-  //     case ('4'):
-  //       await showCustomPrompt({message: '本裝置已綁定其他帳號'});
-  //       return false;
-  //     default:
-  //       return await transactionAuth(0x20); // 需通過 2FA 或 網銀密碼 驗證才能進行金融卡開啟。
-  //   }
-  // };
-
-  const submitHandler = async (values) => {
-    // const {result, message, QLStatus } = await getQLStatus();
-    // if (result === 'true') {
-    //   const auth = await checkQLStatus(QLStatus);
-    //   if (auth && auth.result) {
-    //   // TODO 打金融卡啟用的API，先用 mockData 代替
-    //     const apiResponse = {result: true, message: 'errorMessage'};
-    //     history.push('/S007001', {apiResponse});
-    //   }
-    // } else {
-    //   // 回傳失敗
-    //   showCustomPrompt({message, onClose: () => closeFunc()});
-    // }
-
-    // NOTE: transactionAuth 目前似乎會幫忙確認綁定狀態，不用另外打 getQLStatus()
-    const auth = await transactionAuth(0x20);
-    if (auth && auth.result) {
-      // TODO 打金融卡啟用的API，先用 mockData 代替
-      const apiResponse = {result: true, message: 'errorMessage'};
-      history.push('/S007001', {apiResponse});
+  const checkQLStatus = (statusCode) => {
+    switch (statusCode) {
+      case '0':
+        return '無裝置綁定，請先進行裝置綁定設定或致電客服';
+      case '3':
+        return '該帳號已在其它裝置綁定';
+      case '4':
+        return '本裝置已綁定其他帳號';
+      default:
+        return null;
     }
   };
+
+  const submitHandler = async (values) => {
+    const auth = await transactionAuth(0x20);
+    if (auth && auth.result) {
+      const activateResponse = await activate({...values});
+      history.push('/S007001', {...activateResponse});
+    }
+  };
+
+  useEffect(async () => {
+    try {
+      let errorMessage = '';
+      const {QLStatus } = await getQLStatus();
+      errorMessage = checkQLStatus(QLStatus);
+      if (errorMessage) {
+        await showCustomPrompt({ message: errorMessage, onClose: closeFunc });
+      }
+    } catch (error) {
+      await showCustomPrompt({ message: error.message, onClose: closeFunc });
+    }
+  }, []);
 
   return (
     <Layout title="金融卡啟用">
@@ -64,14 +60,14 @@ const S00700 = () => {
           <TextInputField
             type="number"
             labelName="我的金融卡帳號"
-            name="accountNo"
+            name="actno"
             placeholder="請輸入金融卡帳號(金融卡背面14碼數字)"
             control={control}
           />
           <TextInputField
             type="number"
             labelName="我的金融卡序號"
-            name="accountSn"
+            name="serial"
             placeholder="請輸入金融卡序號(金融卡背面右下角6碼數字)"
             control={control}
           />
