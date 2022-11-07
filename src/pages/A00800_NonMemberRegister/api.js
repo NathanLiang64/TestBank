@@ -16,6 +16,7 @@ import { callAPI } from 'utilities/axios';
 export const memberRegister = async (data) => {
   console.log('A00800 api memberRegister - data: ', data);
   const {name, email, passwd} = data;
+  // TODO: API
 
   const result = {code: '0000'};
   return result;

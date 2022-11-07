@@ -29,18 +29,27 @@ const A00800 = () => {
   const [inviteToken, setInviteToken] = useState('');
   const authCode = 0x03;
 
+  // 驗證錯誤文字
+  const mobileError = (isEmpty) => `請輸入${!isEmpty && '正確的'}手機號碼`;
+  const nameError = (isEmpty) => (isEmpty ? '請輸入姓名' : '姓名請勿超過5字元');
+  const emailError = (isEmpty) => (isEmpty ? '請輸入Email' : '電子郵件請勿超過40字元');
+  const emailFormatError = '請輸入正確的Email';
+  const passwordError = (isEmpty) => (isEmpty ? '請輸入密碼' : '請輸入6位數字密碼');
+  const passwordConfirmError = (isEmpty) => (isEmpty ? '請再次輸入密碼' : '密碼與確認密碼不相符');
+  const termConfirmError = '請閱讀並同意使用條款';
+
   /**
    * 資料驗證
    */
   const mobileVerifySchema = yup.object().shape({
-    mobileNum: yup.string().min(10, '請輸入正確的手機號碼').max(10, '請輸入正確的手機號碼').required('請輸入手機號碼'),
+    mobileNum: yup.string().min(10, mobileError(false)).max(10, mobileError(false)).required(mobileError(true)),
   });
   const schema = yup.object().shape({
-    name: yup.string().max(40, '姓名請勿超過5字元').required('請輸入姓名'),
-    email: yup.string().max(40, '電子郵件請勿超過40字元').email('請輸入正確的Email').required('請輸入Email'),
-    password: yup.string().min(6, '請輸入6位數字密碼').max(6, '請輸入6位數字密碼').required('請輸入密碼'),
-    passwordConfirm: yup.string().oneOf([yup.ref('password'), null], '密碼與確認密碼不相符').required('請再次輸入密碼'),
-    agreeTerms: yup.string().required('請閱讀並同意使用條款'),
+    name: yup.string().max(40, nameError(false)).required(nameError(true)),
+    email: yup.string().max(40, emailError(false)).email(emailFormatError).required(emailError(true)),
+    password: yup.string().min(6, passwordError(false)).max(6, passwordError(false)).required(passwordError(true)),
+    passwordConfirm: yup.string().oneOf([yup.ref('password'), null], passwordConfirmError(false)).required(passwordConfirmError(true)),
+    agreeTerms: yup.string().required(termConfirmError),
   });
 
   const { control: controlMobile, handleSubmit: handleSubmitMobile} = useForm({
