@@ -35,7 +35,7 @@ const S00400 = () => {
     nightMuteNotice: false,
   });
 
-  const authCode = '0x30';
+  const authCode = 0x30;
 
   // 更新通知設定
   const updateNotiSetting = async (modelParam) => {

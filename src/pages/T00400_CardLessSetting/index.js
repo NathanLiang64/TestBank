@@ -7,7 +7,6 @@ import {
   startFunc, closeFunc, transactionAuth, switchLoading,
 } from 'utilities/AppScriptProxy';
 import { EditIcon } from 'assets/images/icons';
-import { showCustomPrompt } from 'utilities/MessageModal';
 
 import CardLessSettingWrapper from './cardLessSetting.style';
 
@@ -44,20 +43,6 @@ const CardLessSetting = () => {
     if (response.code === '0000') {
       const { cwdStatus, account } = response.data;
       const statusNumber = Number(cwdStatus);
-      // 已申請未開通
-      if (
-        statusNumber === 0
-        || statusNumber === 1
-        || statusNumber === 3
-        || statusNumber === 4
-      ) {
-        await showCustomPrompt({
-          message: '愛方便的您，怎麼少了無卡提款服務，快來啟用吧！',
-          onCancel: () => closeFunc(),
-          onClose: () => closeFunc(),
-        });
-        return;
-      }
 
       if (statusNumber === 2) {
         setBankAccount(account);

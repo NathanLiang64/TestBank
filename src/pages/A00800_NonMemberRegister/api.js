@@ -1,25 +1,18 @@
 /* eslint-disable no-unused-vars */
-import { transactionAuth } from 'utilities/AppScriptProxy';
 import { callAPI } from 'utilities/axios';
 
 /**
- * OTP驗證
+ * 訪客註冊資料送出
  * @param {{
- * phoneNumber: string,
- * }} phoneNumber 所輸入之電話號碼
+ * name: string,
+ * email: string,
+ * passwd: string,
+ * }} data 姓名、電子郵件、密碼
  * @returns {{
- * result: boolean,
- * }} 驗證結果
+ * code: string,
+ * message: string,
+ * }} 成功 — code: '0000'
  */
-export const getOtp = async (phoneNumber) => {
-  console.log('A00800 api getOtp - phoneNumber: ', phoneNumber);
-  // const authCode = '0x2B'; // OTP?
-  // const result = await transactionAuth(authCode, phoneNumber);
-  const result = {result: true};
-
-  return result;
-};
-
 export const memberRegister = async (data) => {
   console.log('A00800 api memberRegister - data: ', data);
   const {name, email, passwd} = data;

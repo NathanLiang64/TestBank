@@ -146,9 +146,6 @@ const QuickLoginSetting = () => {
       customPopup(
         '系統訊息',
         message,
-        () => {
-          closeFunc();
-        },
       );
     }
   };
@@ -208,9 +205,6 @@ const QuickLoginSetting = () => {
       customPopup(
         '系統訊息',
         message,
-        () => {
-          closeFunc();
-        },
       );
     }
   };
