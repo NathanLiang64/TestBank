@@ -40,16 +40,12 @@ const S00700 = () => {
     }
   };
 
+  // 確認裝置綁定情況
   useEffect(async () => {
-    try {
-      let errorMessage = '';
-      const {QLStatus } = await getQLStatus();
-      errorMessage = checkQLStatus(QLStatus);
-      if (errorMessage) {
-        await showCustomPrompt({ message: errorMessage, onClose: closeFunc });
-      }
-    } catch (error) {
-      await showCustomPrompt({ message: error.message, onClose: closeFunc });
+    const {QLStatus } = await getQLStatus();
+    const errorMessage = checkQLStatus(QLStatus);
+    if (errorMessage) {
+      await showCustomPrompt({ message: errorMessage, onClose: closeFunc });
     }
   }, []);
 

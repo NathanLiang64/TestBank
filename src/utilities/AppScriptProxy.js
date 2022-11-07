@@ -545,8 +545,7 @@ async function appTransactionAuth(request) {
   const onFinished = (value) => { result = value; };
 
   const body = (
-    // inputPWD 由 allowedPWD 暫時改為 true
-    <PasswordDrawer funcCode={funcCode} authData={txnAuth} inputPWD onFinished={onFinished} />
+    <PasswordDrawer funcCode={funcCode} authData={txnAuth} inputPWD={allowedPWD} onFinished={onFinished} />
   );
 
   await showDrawer('交易授權驗證 (Web版)', body, null, () => { result = failResult('使用者取消驗證。'); });
