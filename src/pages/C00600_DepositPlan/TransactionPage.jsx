@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Layout from 'components/Layout/Layout';
 import AccountDetails from 'components/AccountDetails/accountDetails';
 import { loadFuncParams, closeFunc } from 'utilities/AppScriptProxy';
+import { stringDateCodeFormatter } from 'utilities/Generator';
 import { getTransactionDetails } from './api';
 
 /**
@@ -35,12 +36,14 @@ const DepositPlanTransactionPage = () => {
    * @param {*} conditions 查詢條件。
    */
   const updateTransactions = async (conditions) => {
+    const today = stringDateCodeFormatter(new Date());
+    const startDate = parseInt(today, 10) < parseInt(plan?.startDate, 10) ? today : plan?.startDate;
     const request = {
-      ...conditions,
       accountNo: plan?.bindAccountNo,
-      startDate: plan?.startDate,
+      startDate,
       endDate: plan?.endDate,
-      currency: 'TWD',
+      // currency: 'TWD',
+      ...conditions,
     };
 
     // 取得帳戶交易明細（三年內）
