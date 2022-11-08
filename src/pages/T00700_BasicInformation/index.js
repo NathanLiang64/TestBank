@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
@@ -9,17 +10,11 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-import {
-  FEIBInputLabel,
-  FEIBInput,
-  FEIBSelect,
-  FEIBOption,
-  FEIBButton,
-  FEIBErrorMessage,
-} from 'components/elements';
+import {FEIBInputLabel, FEIBButton } from 'components/elements';
 import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
 
 /* Styles */
+import { DropdownField, TextInputField } from 'components/Fields';
 import BasicInformationWrapper from './basicInformation.style';
 
 const BasicInformation = () => {
@@ -47,42 +42,38 @@ const BasicInformation = () => {
       .required('請輸入通訊地址'),
   });
   const {
-    handleSubmit, control, formState: { errors }, reset, getValues, setValue,
+    handleSubmit, control, reset, watch,
   } = useForm({
     resolver: yupResolver(schema),
+    defaultValues: {
+      mobile: '',
+      email: '',
+      county: '',
+      city: '',
+      addr: '',
+    },
   });
 
   const [addressOptionsData, setAddressOptionsData] = useState([]);
-  const [countyOptions, setCountyOptions] = useState([
-    {
-      countyName: '',
-      countyCode: '',
-    },
-  ]);
-  const [cityOptions, setCityOptions] = useState([
-    {
-      cityName: '',
-      cityCode: '',
-    },
-  ]);
+  const [countyOptions, setCountyOptions] = useState([]);
+
   const [originPersonalData, setOriginPersonalData] = useState('');
 
   // 取得個人資料
-  const getPersonalData = async (countyListResponse) => {
-    const { code, data, message } = await getBasicInformation({});
+  const getPersonalData = async (options) => {
+    const { code, data, message } = await getBasicInformation();
     if (code === '0000') {
       setOriginPersonalData(data);
+      const foundCounty = options.find(({countyName}) => countyName === data.county.trim());
+      console.log('foundCounty', foundCounty);
+      const foundCity = foundCounty?.cities.find(
+        ({ cityName }) => cityName === data.city.trim(),
+      );
       reset({
         ...data,
-        city: data.city.trim(),
-        county: data.county.trim(),
+        county: foundCounty.countyCode,
+        city: foundCity.cityCode,
       });
-      const { county } = data;
-      const countyData = county.split(' ')[1] || county;
-      const countyItem = countyListResponse.find((item) => item.countyName === countyData);
-      if (countyItem) {
-        setCityOptions(countyItem.cities);
-      }
     } else {
       console.log(code, message);
     }
@@ -92,16 +83,11 @@ const BasicInformation = () => {
   // 取得縣市列表
   const fetchCountyList = async () => {
     dispatch(setWaittingVisible(true));
+    // 拿取縣市 & 鄉鎮區列表
     const { code, data, message } = await getCountyList({});
     setAddressOptionsData(data);
     if (code === '0000') {
-      const countyList = data.map((item) => (
-        {
-          countyName: item.countyName,
-          countyCode: item.countyCode,
-        }
-      ));
-      setCountyOptions(countyList);
+      setCountyOptions(data);
       getPersonalData(data);
     } else {
       console.log(code, message);
@@ -144,10 +130,10 @@ const BasicInformation = () => {
   };
 
   // caculateActionCode
-  const getActionCode = () => {
+  const getActionCode = (values) => {
     const {
       county, city, zipCode, addr, email, mobile,
-    } = getValues();
+    } = values;
     const addressCode = (
       county === originPersonalData.county
       && city === originPersonalData.city
@@ -160,18 +146,19 @@ const BasicInformation = () => {
   };
 
   // 更新個人資料
-  const modifyPersonalData = async () => {
+  const modifyPersonalData = async (values) => {
     const {
       county, city, zipCode, addr, email, mobile,
-    } = getValues();
+    } = values;
     const param = {
       county,
       city,
+      // zipCode 應該隨著 地址變動
       zipCode,
       addr,
       email,
       mobile,
-      actionCode: getActionCode(),
+      actionCode: getActionCode(values),
     };
     dispatch(setWaittingVisible(true));
     const modifyDataResponse = await modifyBasicInformation(param);
@@ -181,49 +168,48 @@ const BasicInformation = () => {
   };
 
   // 點擊儲存變更按鈕
-  const onSubmit = async () => {
-    const { mobile } = getValues();
+  const onSubmit = async (values) => {
+    console.log('values', values);
+    // if (values.mobile !== originPersonalData.mobile) {
     // 有變更手機號碼
-    if (mobile !== originPersonalData.mobile) {
-      const authCode = 0x36;
-      const jsRs = await transactionAuth(authCode, mobile);
-      if (jsRs.result) {
-        modifyPersonalData();
-      }
-      return;
-    }
-    // 無變更手機號碼
-    const authCode = 0x26;
-    const jsRs = await transactionAuth(authCode);
-    if (jsRs.result) {
-      modifyPersonalData();
-    }
-  };
-
-  // 彈性變更鄉鎮市區選單
-  const filterCityOptions = (county) => {
-    const { cities } = addressOptionsData.find((item) => item.countyName === county);
-    setCityOptions(cities);
-  };
-
-  // 縣市選單變更
-  const handleCountyChange = (e) => {
-    setValue('county', e.target.value);
-    filterCityOptions(e.target.value);
-  };
-
-  // 鄉鎮市區選單變更
-  const handleCityChange = (e) => {
-    setValue('city', e.target.value);
-    const { cityCode } = cityOptions.find((item) => item.cityName === e.target.value);
-    setValue('zipCode', cityCode);
+    //   const authCode = 0x36;
+    //   const jsRs = await transactionAuth(authCode, values.mobile);
+    //   if (jsRs.result) {
+    //     modifyPersonalData(values);
+    //   }
+    // } else {
+    //   // 無變更手機號碼
+    //   const authCode = 0x26;
+    //   const jsRs = await transactionAuth(authCode);
+    //   if (jsRs.result) {
+    //     modifyPersonalData(values);
+    //   }
+    // }
   };
 
   // 建立縣市選單
-  const renderCountyOptions = () => countyOptions.map((item) => (<FEIBOption value={item.countyName} key={item.countyCode}>{item.countyName}</FEIBOption>));
-
+  const generateCountyOptions = () => {
+    if (countyOptions.length) {
+      return countyOptions.map(({countyName, countyCode}) => ({
+        label: countyName,
+        value: countyCode,
+      }));
+    }
+    return [];
+  };
   // 建立鄉鎮市區選單
-  const renderCityOptions = () => cityOptions.map((item) => (<FEIBOption value={item.cityName} key={item.cityCode}>{item.cityName}</FEIBOption>));
+  const generateDistrictOptions = () => {
+    const watchedCountyCode = watch('county');
+    const foundDistrictOption = countyOptions.find(({countyCode}) => countyCode === watchedCountyCode);
+
+    if (foundDistrictOption) {
+      return foundDistrictOption.cities.map(({cityName, cityCode}) => ({
+        label: cityName,
+        value: cityCode,
+      }));
+    }
+    return [];
+  };
 
   useEffect(() => {
     dispatch(setIsOpen(false));
@@ -235,117 +221,46 @@ const BasicInformation = () => {
       <BasicInformationWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
-            <FEIBInputLabel>行動電話</FEIBInputLabel>
-            <Controller
+            <TextInputField
               name="mobile"
-              defaultValue=""
+              labelName="行動電話"
+              placeholder="請輸入行動電話"
               control={control}
-              render={({ field }) => (
-                <FEIBInput
-                  {...field}
-                  type="text"
-                  inputMode="tel"
-                  id="mobile"
-                  name="mobile"
-                  placeholder="請輸入行動電話"
-                  error={!!errors.mobile}
-                />
-              )}
             />
-            <FEIBErrorMessage>{errors.mobile?.message}</FEIBErrorMessage>
-            <FEIBInputLabel>電子信箱</FEIBInputLabel>
-            <Controller
+            <TextInputField
               name="email"
-              defaultValue=""
+              labelName="電子信箱"
+              placeholder="請輸入電子信箱"
               control={control}
-              render={({ field }) => (
-                <FEIBInput
-                  {...field}
-                  type="text"
-                  inputMode="email"
-                  id="email"
-                  name="email"
-                  placeholder="請輸入電子信箱"
-                  error={!!errors.email}
-                />
-              )}
             />
-            <FEIBErrorMessage>{errors.email?.message}</FEIBErrorMessage>
             <FEIBInputLabel>通訊地址</FEIBInputLabel>
             <div className="selectContainer">
               <div>
-                <Controller
+                <DropdownField
                   name="county"
-                  defaultValue=""
-                  control={control}
                   placeholder="請選擇縣市"
-                  render={({ field }) => (
-                    <FEIBSelect
-                      {...field}
-                      id="county"
-                      name="county"
-                      placeholder="請選擇縣市"
-                      error={!!errors.county}
-                      onChange={handleCountyChange}
-                    >
-                      <FEIBOption value="" disabled>請選擇縣市</FEIBOption>
-                      { renderCountyOptions() }
-                    </FEIBSelect>
-                  )}
+                  control={control}
+                  options={generateCountyOptions()}
                 />
-                <FEIBErrorMessage>{errors.county?.message}</FEIBErrorMessage>
               </div>
               <div>
-                <Controller
+                <DropdownField
                   name="city"
-                  defaultValue=""
+                  placeholder="請選擇縣市"
                   control={control}
-                  render={({ field }) => (
-                    <FEIBSelect
-                      {...field}
-                      id="city"
-                      name="city"
-                      error={!!errors.city}
-                      onChange={handleCityChange}
-                    >
-                      <FEIBOption value="" disabled>請選擇鄉鎮市區</FEIBOption>
-                      { renderCityOptions() }
-                    </FEIBSelect>
-                  )}
+                  options={generateDistrictOptions()}
                 />
-                <FEIBErrorMessage>{errors.city?.message}</FEIBErrorMessage>
+
               </div>
             </div>
-            <Controller
+            <TextInputField
               name="addr"
-              defaultValue=""
+              placeholder="請輸入通訊地址"
               control={control}
-              render={({ field }) => (
-                <FEIBInput
-                  {...field}
-                  type="text"
-                  inputMode="addr"
-                  id="addr"
-                  name="addr"
-                  placeholder="請輸入通訊地址"
-                  error={!!errors.addr}
-                />
-              )}
             />
-            <FEIBErrorMessage>{errors.addr?.message}</FEIBErrorMessage>
-            {/* <PasswordInput
-              label="網銀密碼"
-              id="password"
-              name="password"
-              control={control}
-              errorMessage={errors.password?.message}
-            /> */}
+
           </div>
-          <FEIBButton
-            type="submit"
-          >
-            儲存變更
-          </FEIBButton>
+          <FEIBButton type="submit">儲存變更</FEIBButton>
         </form>
       </BasicInformationWrapper>
     </Layout>
