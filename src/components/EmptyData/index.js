@@ -14,7 +14,7 @@ const EmptyData = ({
 }) => (
   <EmptyDataWrapper $color={color}>
     { icon && <EmptyDataIcon color={color || theme.colors.text.light} />}
-    <p>{content || '搜尋條件無資料'}</p>
+    <p>{content === undefined ? '搜尋條件無資料' : content}</p>
   </EmptyDataWrapper>
 );
 

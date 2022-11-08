@@ -4,7 +4,9 @@ import axios from 'axios';
 import { showError } from './MessageModal';
 import JWEUtil from './JWEUtil';
 import JWTUtil from './JWTUtil';
-import { getJwtToken, syncJwtToken, getAesKey } from './AppScriptProxy';
+import {
+  getJwtToken, syncJwtToken, getAesKey, closeFunc,
+} from './AppScriptProxy';
 
 // Axios instance
 const instance = axios.create({
@@ -118,7 +120,7 @@ const processResponse = async (response) => {
       await showError('因為您已閒置過久未操作系統，為考量資訊安全；銀行端已自動切斷您的連線。若您要繼續使用，請重新登入，造成您的不便敬請見諒。'); // TODO , () => closeFunc());
     } else {
       // eslint-disable-next-line react/jsx-one-expression-per-line
-      await showError((<p>*** {code} ***<br />{message}</p>));
+      await showError((<p>*** {code} ***<br />{message}</p>), closeFunc);
     }
   }
 

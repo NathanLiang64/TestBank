@@ -54,7 +54,7 @@ const DetailCard = ({
   const history = useHistory();
   // eslint-disable-next-line no-unused-vars
   const {
-    control, handleSubmit, reset, getValues,
+    control, handleSubmit, reset, getValues, watch,
   } = useForm({
     defaultValues: { notes: {} },
     resolver: yupResolver(validationSchema),
@@ -65,14 +65,16 @@ const DetailCard = ({
    */
 
   const updateTransactions = async () => {
-    // TODO getTransactions API 待完成
-
     const today = new Date();
-    // 查詢當天至60天前的資料
     const dateEnd = stringDateCodeFormatter(today);
+    // 查詢當天至60天前的資料
     const dateBeg = stringDateCodeFormatter(new Date(today - 86400 * 60 * 1000));
-    const res = await getTransactions({cardNo: account, dateBeg, dateEnd});
-    // console.log('res', res);
+    const res = await getTransactions({
+      cardNo: '5232870002109002',
+      dateBeg,
+      dateEnd,
+    });
+    console.log('res', res);
     // setTransactions(res.data);
     setTransactions(res);
   };
@@ -140,25 +142,28 @@ const DetailCard = ({
 
   //  提交memoText
   const showMemoEditDialog = ({
-    cardNo, note, txDate, txKey,
-  }) => {
+    note, txDate, txKey,
+  }, index) => {
     showCustomPrompt({
       title: '編輯備註',
       message: (
-        <TextInputField labelName="備註說明" name={`notes[${txKey}]`} control={control} />
+        <TextInputField labelName="備註說明" name={`notes[${index}]`} control={control} />
       ),
       noDismiss: true,
       okContent: '完成',
       onOk: handleSubmit(async ({notes}) => {
-        console.log('values[txKey]', notes[txKey]);
+        console.log('values[index]', notes[index]);
         // TODO 等待 getTransaction API 完成後進行 updateTxnNotes API 串接
         const result = await updateTxnNotes({
-          cardNo, txDate, txKey, note: notes[txKey],
+          cardNo: '5232870002109002',
+          txDate,
+          txKey,
+          note: notes[index],
         });
         if (result) {
           setTransactions((prevState) => {
             const updatedState = prevState.map((transaction) => {
-              if (transaction.txKey === txKey) return { ...transaction, note: notes[txKey] };
+              if (transaction.txKey === txKey) return { ...transaction, note: notes[index] };
               return transaction;
             });
             return updatedState;
@@ -169,7 +174,7 @@ const DetailCard = ({
       onClose: () => {
         const {notes} = getValues();
         console.log('notes', notes);
-        const resetValues = {...notes, [txKey]: note};
+        const resetValues = { ...notes, [index]: note };
         reset({notes: resetValues});
       },
     });
@@ -203,8 +208,8 @@ const DetailCard = ({
               </h4>
               <div className="remark">
                 {/* <span>{item.memo}</span> */}
-                <span>{item.note}</span>
-                <FEIBIconButton $fontSize={1.6} onClick={() => showMemoEditDialog(item)} className="badIcon">
+                <span>{watch('notes')[index]}</span>
+                <FEIBIconButton $fontSize={1.6} onClick={() => showMemoEditDialog(item, index)} className="badIcon">
                   <EditIcon />
                 </FEIBIconButton>
               </div>

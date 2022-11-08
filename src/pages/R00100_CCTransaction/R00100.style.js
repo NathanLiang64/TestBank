@@ -25,8 +25,7 @@ const PageWrapper = styled.div`
   .note {
     font-size: 1.4rem;
     color: ${({ theme }) => theme.colors.text.light};
-    // margin-block-start: 1.6rem;
-    // margin-inline: 1.6rem;
+    text-align:center;
     margin:2.8rem;
     margin-top: 1.6rem;
   }

@@ -24,11 +24,10 @@ import { getCardListing, getCreditListing } from './utils';
  */
 const C007001 = () => {
   const history = useHistory();
+  const location = useLocation();
   const [cardInfo, setCardInfo] = useState();
   const [terms, setTerms] = useState();
   const dispatch = useDispatch();
-
-  console.log(cardInfo);
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
@@ -30,9 +31,7 @@ const ChangeUserName = () => {
     newUserName: newAccountValidation('userName'),
     newUserNameCheck: confirmAccountValidation('newUserName'),
   });
-  const {
-    handleSubmit, control, formState: { errors }, getValues,
-  } = useForm({
+  const {handleSubmit, control, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
 
@@ -56,14 +55,14 @@ const ChangeUserName = () => {
   };
 
   // 呼叫變更使用者代號 API
-  const handleChangeUserName = async () => {
+  const handleChangeUserName = async ({userName, newUserName, newUserNameCheck}) => {
     const authCode = 0x26;
     const jsRs = await transactionAuth(authCode);
     if (jsRs.result) {
       const param = {
-        userName: e2ee(getValues('userName')),
-        newUserName: e2ee(getValues('newUserName')),
-        newUserNameCheck: e2ee(getValues('newUserNameCheck')),
+        userName: e2ee(userName),
+        newUserName: e2ee(newUserName),
+        newUserNameCheck: e2ee(newUserNameCheck),
       };
       dispatch(setWaittingVisible(true));
       const changeUserNameResponse = await changeUserName(param);
@@ -73,8 +72,8 @@ const ChangeUserName = () => {
   };
 
   // 點擊儲存變更按鈕，表單驗證
-  const onSubmit = () => {
-    handleChangeUserName();
+  const onSubmit = (values) => {
+    handleChangeUserName(values);
   };
 
   useEffect(() => dispatch(setIsOpen(false)), []);

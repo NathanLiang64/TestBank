@@ -29,20 +29,14 @@ const CreditCardPage = () => {
    * 頁面啟動，初始化
    */
   useEffect(async () => {
-    // TODO API
     dispatch(setWaittingVisible(true));
-    // getCards 應取代 getCreditCards，但目前 getCards 回傳資料不完全
+    // TODO : getCards 應取代 getCreditCards，但目前 getCards 回傳資料不完全
     const response = await getCreditCards();
     const cardResponse = await getCards();
     setPlans(response);
     setCards(cardResponse.data);
     dispatch(setWaittingVisible(false));
   }, []);
-
-  /**
-   * 執行指定的單元功能。
-   * @param {*} funcCode 功能代碼
-   */
 
   // render 功能列表
   const functionAllList = (item) => {

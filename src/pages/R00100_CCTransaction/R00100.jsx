@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint react/no-array-index-key: 0 */
 
 import { useState, useEffect } from 'react';
@@ -42,6 +43,7 @@ let backlog = [];
  * R00100 信用卡 即時消費明細
  */
 const Page = () => {
+  // TODO 表單透過 react-hook-form 重構
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -181,7 +183,7 @@ const Page = () => {
               />
             )) : (
               <div style={{ height: '20rem', marginTop: '6rem' }}>
-                <EmptyData />
+                <EmptyData content="" />
               </div>
             )}
           </div>
