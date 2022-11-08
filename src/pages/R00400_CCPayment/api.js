@@ -1,5 +1,4 @@
-// import { callAPI } from 'utilities/axios';
-
+import { callAPI } from 'utilities/axios';
 import mockBills from './mockData/mockBills';
 import mockBillDetails from './mockData/mockBillDetails';
 import mockCreditCardTerms from './mockData/mockCreditCardTerms';
@@ -103,4 +102,24 @@ export const getCreditCardTerms = async () => {
   // Assume backend store Terms as escaped HTML...
   const response = await new Promise((resolve) => resolve({ data: decodeURI(mockCreditCardTerms) }));
   return response.data;
+};
+
+/**
+ * 取得超商繳費Barcode資料
+ *
+ * @param token
+ * @param {
+ *    amount: 預計繳費金額
+ * }
+ * @return {
+ *    barcode1: Barcode 條碼 1
+ *    barcode2: Barcode 條碼 2
+ *    barcode3: Barcode 條碼 3
+ * }
+ * @throws Exception
+ *
+ */
+export const queryPayBarcode = async (request) => {
+  const response = await callAPI('/api/card/v1/queryPayBarcode', request);
+  return response;
 };
