@@ -13,7 +13,7 @@ import {
   CreditCardIcon1, CreditCardIcon2, CreditCardIcon3, CreditCardIcon4, CreditCardIcon5,
   LoanIcon1, LoanIcon2,
   HelperIcon1, HelperIcon2, HelperIcon3, HelperIcon4, HelperIcon5, HelperIcon6, HelperIcon7, HelperIcon8, HelperIcon9, HelperIcon10, HelperIcon11, HelperIcon12,
-  SocialIcon1, SocialIcon2, SocialIcon3,
+  SocialIcon1, SocialIcon2, SocialIcon3, MemberZoneIcon,
 } from 'assets/images/icons';
 
 export const blockBackgroundGenerator = (index) => {
@@ -41,8 +41,10 @@ export const iconGenerator = (name) => {
   switch (name) {
     case 'share':
       return <ShareIcon />;
-    case 'gift':
+    case 'N00100':
       return <GiftIcon />;
+    case 'N00200':
+      return <MemberZoneIcon />;
     case 'C00100':
       return <AccountIcon1 />;
     case 'C00300':
