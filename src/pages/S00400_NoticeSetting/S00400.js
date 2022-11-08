@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -12,9 +12,10 @@ import Accordion from 'components/Accordion';
 
 /* API */
 import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
-import { showError } from 'utilities/MessageModal';
+import { showCustomPrompt, showError } from 'utilities/MessageModal';
+import store from 'stores/store';
 import {
-  queryPushSetting, bindPushSetting, queryPushBind, updatePushBind,
+  queryPushSetting, bindPushSetting, queryPushBindMock, updatePushBindMock,
 } from './api';
 
 /* Styles */
@@ -46,7 +47,7 @@ const S00400 = () => {
       nightMuteNotice: modelParam.nightMuteNotice ? 'Y' : 'N',
     };
 
-    if (isPushBind) {
+    if (!isPushBind) {
       console.log('S00400 updateNotiSetting !isPushBind');
       const bindResponse = await bindPushSetting(param);
       if (bindResponse) {
@@ -59,7 +60,7 @@ const S00400 = () => {
     setModel({ ...modelParam });
   };
 
-  // 同意條款開啟通知設定
+  // 同意開啟通知設定
   const handlePushBind = async () => {
     console.log('S00400 handleTurnOnNotice');
 
@@ -74,7 +75,7 @@ const S00400 = () => {
     }
 
     console.log('S00400 handlePushBind() verifyPWD/2FA succeed');
-    const updatePushBindResult = await updatePushBind(); // DEBUG: mock回傳判斷
+    const updatePushBindResult = await updatePushBindMock(); // DEBUG: mock回傳判斷
     if (updatePushBindResult.code !== '0000') {
       await showError(updatePushBindResult.message);
       return;
@@ -84,11 +85,19 @@ const S00400 = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    const queryIsOnResponse = await queryPushBind();
-    if (queryIsOnResponse.code === '1111') { // DEBUG: mock回傳判斷
-      showError('尙未完成行動裝置綁定!', async () => await closeFunc());
+
+    /* 檢查有無同意過推播 */
+    const queryIsOnResponse = await queryPushBindMock(); // DEBUG: 回傳為mock
+    if (queryIsOnResponse === false) {
+      showCustomPrompt({
+        title: '系統訊息',
+        message: '您尚未設定「訊息通知」功能，是否立即設定？',
+        onOk: () => store.dispatch(setModalVisible(false)),
+        onCancel: () => closeFunc(),
+      });
     }
-    setIsPushBind(queryIsOnResponse.code === '0000');
+
+    setIsPushBind(true);
 
     const response = await queryPushSetting();
     setModel({
