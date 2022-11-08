@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
@@ -20,9 +21,9 @@ import {
 import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
 
 /* Styles */
-import BasicInformationWrapper from './basicInformation.style';
+import BasicInformationWrapper from './T00700.style';
 
-const BasicInformation = () => {
+const T00700 = () => {
   const dispatch = useDispatch();
   /**
    *- 資料驗證
@@ -183,20 +184,23 @@ const BasicInformation = () => {
   // 點擊儲存變更按鈕
   const onSubmit = async () => {
     const { mobile } = getValues();
+    console.log('mobiles:', { mobile, originPersonalData: originPersonalData.mobile });
     // 有變更手機號碼
     if (mobile !== originPersonalData.mobile) {
+      console.log('T00700 有變更手機號碼');
       const authCode = 0x36;
       const jsRs = await transactionAuth(authCode, mobile);
       if (jsRs.result) {
         modifyPersonalData();
       }
-      return;
-    }
-    // 無變更手機號碼
-    const authCode = 0x26;
-    const jsRs = await transactionAuth(authCode);
-    if (jsRs.result) {
-      modifyPersonalData();
+    } else {
+      // 無變更手機號碼
+      console.log('T00700 無變更手機號碼');
+      const authCode = 0x26;
+      const jsRs = await transactionAuth(authCode);
+      if (jsRs.result) {
+        modifyPersonalData();
+      }
     }
   };
 
@@ -352,4 +356,4 @@ const BasicInformation = () => {
   );
 };
 
-export default BasicInformation;
+export default T00700;

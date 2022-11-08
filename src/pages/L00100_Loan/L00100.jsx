@@ -45,7 +45,7 @@ const Page = () => {
 
     // 若無資料，跳出彈窗後關閉頁面
     if (response.length === 0) {
-      await showPrompt('您還沒有任何貸款記錄，請在系統關閉此功能後，立即申請。', () => closeFunc());
+      await showPrompt('您尚未擁有貸款，請在系統關閉此功能後，立即申請。', () => closeFunc());
     } else {
       setLoans(response);
     }
