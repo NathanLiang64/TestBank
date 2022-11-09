@@ -384,6 +384,7 @@ async function getJwtToken(force) {
  * }>}
  */
 async function transactionAuth(authCode, otpMobile) {
+  // eslint-disable-next-line no-unused-vars
   const data = {
     authCode,
     otpMobile,
@@ -391,8 +392,10 @@ async function transactionAuth(authCode, otpMobile) {
   // return await callAppJavaScript('transactionAuth', data, true, appTransactionAuth);
 
   // DEBUG 在 APP 還沒完成交易驗證之前，先用 Web版進行測試。
-  const result = await appTransactionAuth(data);
-  return result;
+  // 為了測試需求，交易驗證都 hardcode 回傳 true (需與後端配合)
+
+  // const result = await appTransactionAuth(data);
+  return {result: true};
 }
 
 /**
@@ -502,6 +505,7 @@ async function delQL() {
  *     netbankPwd: 因為之後叫用交易相關 API 時可能會需要用到，所以傳回 E2EE 加密後的密碼。
  *   }
  */
+// eslint-disable-next-line no-unused-vars
 async function appTransactionAuth(request) {
   const { authCode, otpMobile } = request;
 
