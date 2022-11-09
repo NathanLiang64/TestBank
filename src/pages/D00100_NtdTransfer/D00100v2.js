@@ -177,7 +177,7 @@ const Transfer = (props) => {
             return; // 避免 HookForm 在 reset 誤將 keepData 填入。
           } else {
             // 若還沒有選擇常用/約定帳號，而且原本也沒有值，則切回一般轉帳。
-            const { freqAcct, regAcct } = keepData.transIn;
+            const { freqAcct, regAcct } = keepData?.transIn;
             if (!freqAcct && !regAcct) keepData.transIn.type = 0;
             setSelectedAccountIdx(0);
           }

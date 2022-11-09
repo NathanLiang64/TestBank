@@ -16,6 +16,7 @@ import {
 } from 'assets/images/icons';
 import AccountEditor from 'pages/D00500_FrequentContacts/D00500_AccountEditor';
 import { addFrequentAccount } from 'pages/D00500_FrequentContacts/api';
+import { shareMessage } from 'utilities/AppScriptProxy';
 
 import { setWaittingVisible, setDrawerVisible } from 'stores/reducers/ModalReducer';
 import { showDrawer, showError, showInfo } from 'utilities/MessageModal';
@@ -55,8 +56,7 @@ const TransferResult = (props) => {
     console.log('==> 轉帳執行結果：', result);
 
     if (isSuccess) {
-      // TODO: Merge Code 異常
-      // model.transOut.balance -= model.amount - fee;
+      model.transOut.balance -= model.amount - result.fee;
       model.transOut.freeTransferRemain -= 1;
       // TODO 跨轉優惠、手續費、
       // TODO 需確認是否要寫回 LocalCache ？
@@ -144,7 +144,7 @@ const TransferResult = (props) => {
           </button>
           <div className="divider" />
           {/* TODO 將轉帳結果透過原生的分享功能發送出去 */}
-          <button type="button" onClick={showError('[社群通知]功能尚未完成！')}>
+          <button type="button" onClick={() => shareMessage('[社群通知]內容待規劃！')}>
             <ShareIcon />
             社群通知
           </button>
@@ -186,7 +186,6 @@ const TransferResult = (props) => {
         />
         { renderTransferResult() }
         { renderBottomAction(transferResult.isSuccess) }
-        {/* { openTransferDrawer && <TransferDrawer /> } */}
         { showSnapshotSuccess && (
           <SnackModal icon={<CameraIcon size={32} color={theme.colors.basic.white} />} text="截圖成功" />
         ) }
