@@ -168,10 +168,10 @@ const T00700 = () => {
     } else {
       // 無變更手機號碼
       const authCode = 0x26;
-      // const jsRs = await transactionAuth(authCode);
-      // if (jsRs.result) {
-      modifyPersonalData(values);
-      // }
+      const jsRs = await transactionAuth(authCode);
+      if (jsRs.result) {
+        modifyPersonalData(values);
+      }
     }
   };
 
