@@ -29,6 +29,7 @@ import { numberToChinese, setLocalData } from 'utilities/Generator';
 import { ChangeMemberIcon } from 'assets/images/icons';
 import { loadAccountsList, AccountListCacheName, getAccountExtraInfo } from './api';
 import TransferWrapper from './D00100.style';
+import D00100AccordionContent from './D00100_AccordionContent';
 
 /**
  * 轉帳首頁
@@ -654,16 +655,11 @@ const Transfer = (props) => {
           </form>
 
           <Accordion space="both">
-            <ul>
-              <li>對方收款帳號若為他行帳戶，您將自行負擔新臺幣15元之跨行轉帳手續費。</li>
-              <li>如有設定收款密碼，收款人收款時將會需要一組您設定的收款密碼，建議以其他管道提供收款密碼給收款人。</li>
-              <li>社群轉帳連結款項將於收款人收款時自您的帳戶中扣除，請確認您的帳戶可用餘額充足。</li>
-              <li>社群轉帳連結被領取金額將占用您非約定轉帳限額(臨櫃開立帳戶、一類及二類數位存款帳戶：每帳戶單筆5萬、當日10萬、當月累積不超過20萬。三類數位存款帳戶：每帳戶單筆1萬、當日3萬、當月累積不超過5萬。)，如您非約定轉帳限額已達上限，收款人將有無法收款的情況發生。</li>
-            </ul>
+            <D00100AccordionContent />
           </Accordion>
+          <p className="warningText">陌生電話先求證，轉帳匯款須謹慎</p>
           <div className="transferButtonArea">
             <FEIBButton onClick={handleSubmit(onSubmit)}>轉帳</FEIBButton>
-            <p className="notice">轉帳前多思考，避免被騙更苦惱</p>
           </div>
         </div>
       </TransferWrapper>

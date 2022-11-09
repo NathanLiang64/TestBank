@@ -7,9 +7,11 @@ import { toCurrency } from 'utilities/Generator';
 import Layout from 'components/Layout/Layout';
 
 /* Styles */
+import { showPrompt } from 'utilities/MessageModal';
+import { closeFunc } from 'utilities/AppScriptProxy';
 import PrincipalWrapper from './principal.style';
 
-const Principal = (props) => {
+const L00200 = (props) => {
   const history = useHistory();
   const [detaillist, setDetailList] = useState([]);
 
@@ -45,9 +47,16 @@ const Principal = (props) => {
     }
   };
 
-  useEffect(() => {
+  useEffect(async () => {
     if (props?.location?.state?.accountNo) {
       getSubNo(props?.location?.state?.accountNo);
+    } else {
+      const response = await getSubSummary();
+      if (response.length === 0) {
+        await showPrompt('您尚未擁有貸款，請在系統關閉此功能後，立即申請。', () => closeFunc());
+      } else {
+        getSubNo(response[0].account);
+      }
     }
   }, []);
 
@@ -56,7 +65,7 @@ const Principal = (props) => {
       <PrincipalWrapper>
         {
           detaillist.map((item) => (
-            <section className="sectionTop">
+            <section className="sectionTop" key={item}>
               <ul className="detailUl">
                 <li>
                   <span>本期應繳金額</span>
@@ -128,4 +137,4 @@ const Principal = (props) => {
   );
 };
 
-export default Principal;
+export default L00200;

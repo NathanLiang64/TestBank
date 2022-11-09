@@ -3,6 +3,7 @@ import uuid from 'react-uuid';
 import { callAPI } from 'utilities/axios';
 
 // import mockLoanSummary from './mockData/mockLoanSummary';
+import { showCustomPrompt } from 'utilities/MessageModal';
 import mockLoanRewards from './mockData/mockRewards';
 import mockLoanDetails from './mockData/mockLoanDetails';
 
@@ -162,7 +163,8 @@ export const getContract = async (param) => {
   }
   */
   const { accountNo, format } = param;
-  alert(`待串接API，下載合約貸款號：${accountNo}`, format === 1 ? '下載PDF' : '下載EXCEL');
+  // alert(`待串接API，下載合約貸款號：${accountNo}`, format === 1 ? '下載PDF' : '下載EXCEL');
+  await showCustomPrompt({title: '待串接API', message: `下載合約貸款號：${accountNo}：${format === 1 ? '下載PDF' : '下載EXCEL'}`});
 };
 
 /**
@@ -184,7 +186,8 @@ export const getStatment = async (param) => {
   }
   */
   const { accountNo, format } = param;
-  alert(`待串接API，下載證明貸款號：${accountNo}`, format === 1 ? '下載PDF' : '下載EXCEL');
+  // alert(`待串接API，下載證明貸款號：${accountNo}`, format === 1 ? '下載PDF' : '下載EXCEL');
+  await showCustomPrompt({title: '待串接API', message: `下載證明貸款號${accountNo}：${format === 1 ? '下載PDF' : '下載EXCEL'}`});
 };
 
 /**

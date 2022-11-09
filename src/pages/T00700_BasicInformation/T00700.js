@@ -16,9 +16,9 @@ import {FEIBInputLabel, FEIBButton } from 'components/elements';
 /* Styles */
 import { DropdownField, TextInputField } from 'components/Fields';
 import { showAnimationModal } from 'utilities/MessageModal';
-import BasicInformationWrapper from './basicInformation.style';
+import BasicInformationWrapper from './T00700.style';
 
-const BasicInformation = () => {
+const T00700 = () => {
   const dispatch = useDispatch();
   /**
    *- 資料驗證
@@ -256,4 +256,4 @@ const BasicInformation = () => {
   );
 };
 
-export default BasicInformation;
+export default T00700;

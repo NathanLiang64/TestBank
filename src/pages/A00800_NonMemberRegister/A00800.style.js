@@ -53,6 +53,13 @@ const A00800Wrapper = styled(Layout)`
         font-weight: 600;
         margin-bottom: 12px;
     }
+    .accoridon_content {
+        ul {
+            li {
+                list-style: none;
+            }
+        }
+    }
     .accordion {
         .collapseContent {
             max-height: 18rem;

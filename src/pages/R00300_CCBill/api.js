@@ -3,6 +3,7 @@
 import {
   checkCardBillStatus, getBillDetail, queryCardBill, queryCardInfo,
 } from 'pages/C00700_CreditCard/api';
+import { showCustomPrompt } from 'utilities/MessageModal';
 // import mockBills from './mockData/mockBills';
 // import mockBillDetails from './mockData/mockBillDetails';
 // import mockTransactions from './mockData/mockTransactions';
@@ -143,7 +144,12 @@ export const getInvoice = async (format) => {
     await downloadCSV('/api/deposit/v1/getDepositBook', request, `${filename}.csv`);
   }
   */
-  alert('待串接API', format === 1 ? '下載PDF' : '下載EXCEL');
+  // alert('待串接API', format === 1 ? '下載PDF' : '下載EXCEL');
+  await showCustomPrompt({
+    title: '待串接API',
+    message: `${format === 1 ? '下載PDF' : '下載EXCEL'}`,
+    noDismiss: true,
+  });
 };
 
 /**
