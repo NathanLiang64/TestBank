@@ -86,25 +86,22 @@ export const MIDVerify = async () => {
  * }
  */
 export const queryOTP = async (request) => {
-  const response = await callAPI('/api/transfer/debit/v1/queryOTP', request);
+  const response = await callAPI('/api/transfer/nonAgreed/v1/query', request);
   return response;
 };
 
 /**
- * 更新非約轉狀態或非約轉手機號碼
- * 注意:
- * 1.執行前需先呼叫 /api/transfe/debit/v1/queryOTP 獲得的非約轉申請狀態放在token
+ * 更新非約轉手機號碼
  *
  * @param token
- * @param rq {
- *    mobile: 手機號碼
- * }
+ * @param mobile 手機號碼
  * @return {
- *    code:     0000 表示成功
- *    message:  訊息類別
+ *    code: 0000 表示成功
+ *    message: 訊息類別
  * }
+ * @apiNote 執行前需先呼叫 /api/transfe/nonAgreed/v1/query 獲得的非約轉申請狀態API會放在token，不需要傳狀態參數。
  */
 export const updateOTP = async (request) => {
-  const response = await callAPI('/api/transfer/debit/v1/updateOTP', request);
+  const response = await callAPI('/api/transfer/nonAgreed/v1/update', request);
   return response;
 };

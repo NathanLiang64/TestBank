@@ -63,10 +63,8 @@ const C00400 = () => {
    */
   useEffect(async () => {
     if (!accounts) return;
-
     dispatch(setWaittingVisible(false));
     if (accounts.length === 0) {
-      console.log('showPrompt');
       await showPrompt('您還沒有任何外幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
     } else handleAccountChanged(selectedAccountIdx ?? 0);
   }, [accounts]);
@@ -94,7 +92,7 @@ const C00400 = () => {
    * 根據當前帳戶取得交易明細資料及優惠利率數字
    */
   const handleAccountChanged = async (acctIndex) => {
-    if (!accounts || accounts.length === 0) return; // 頁面初始化時，不需要進來。
+    if (!accounts || !accounts.length) return; // 頁面初始化時，不需要進來。
 
     const account = accounts[acctIndex];
     // 若還沒有取得 免費跨轉次數 則立即補上。
@@ -182,31 +180,54 @@ const C00400 = () => {
   /**
    * 頁面輸出
    */
+
   return (
     <Layout title="外幣活存">
       <PageWrapper small>
-        <AccountOverview
-          accounts={accounts}
-          defaultSlide={selectedAccountIdx}
-          onAccountChanged={setSelectedAccountIdx}
-          onFunctionClick={handleFunctionClick}
-          cardColor="orange"
-          funcList={[
-            { fid: 'foreignCurrencyTransfer', title: '轉帳', enabled: (selectedAccount?.transable && selectedAccount?.balance > 0) },
-            { fid: 'exchange', title: '換匯', enabled: (selectedAccount?.balance > 0) },
-          ]}
-          moreFuncs={[
-            // { fid: 'masterCardXB', title: 'MasterCard Send Cross Border', icon: 'temp' },
-            { fid: 'setMainAccount', title: '設定為主要外幣帳戶', icon: 'temp' },
-            { fid: 'E00100', title: '外幣到價通知', icon: 'temp' },
-            { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
-          ]}
-        />
+        {selectedAccount ? (
+          <>
+            <AccountOverview
+              accounts={accounts}
+              defaultSlide={selectedAccountIdx}
+              onAccountChanged={setSelectedAccountIdx}
+              onFunctionClick={handleFunctionClick}
+              cardColor="orange"
+              funcList={[
+                {
+                  fid: 'foreignCurrencyTransfer',
+                  title: '轉帳',
+                  enabled:
+                    selectedAccount.transable && selectedAccount.balance > 0,
+                },
+                {
+                  fid: 'exchange',
+                  title: '換匯',
+                  enabled: selectedAccount.balance > 0,
+                },
+              ]}
+              moreFuncs={[
+                // { fid: 'masterCardXB', title: 'MasterCard Send Cross Border', icon: 'temp' },
+                {
+                  fid: 'setMainAccount',
+                  title: '設定為主要外幣帳戶',
+                  icon: 'temp',
+                },
+                {
+                  // fid 需要改成 foreignCurrencyPriceSetting
+                  fid: 'E00100',
+                  title: '外幣到價通知',
+                  icon: 'foreignCurrencyPriceSetting',
+                },
+                { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
+              ]}
+            />
 
-        <DepositDetailPanel
-          details={transactions.get(selectedAccount?.accountNo)}
-          onMoreFuncClick={() => handleFunctionClick('moreTranscations')}
-        />
+            <DepositDetailPanel
+              details={transactions.get(selectedAccount.accountNo)}
+              onMoreFuncClick={() => handleFunctionClick('moreTranscations')}
+            />
+          </>
+        ) : null}
       </PageWrapper>
     </Layout>
   );

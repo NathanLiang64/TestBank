@@ -77,14 +77,14 @@ const LossReissueWrapper = styled(Layout)`
   }
 `;
 
-const LossReissueDialogWrapper = styled.div`
+export const LossReissueDialogWrapper = styled.div`
 
   p {
     text-align: center;
   }
 
   form {
-    padding-bottom: 0;
+    padding: 4rem 2rem;
   }
 
   .formElementGroup {
@@ -96,4 +96,3 @@ const LossReissueDialogWrapper = styled.div`
 `;
 
 export default LossReissueWrapper;
-export { LossReissueDialogWrapper };

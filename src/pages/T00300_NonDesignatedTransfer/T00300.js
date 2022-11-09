@@ -97,7 +97,7 @@ const T00300 = () => {
       } else {
         /* 驗證成功：更新資料至api */
         await queryOTP();
-        const updateResult = await updateOTP({ mobile: model.mobile });
+        const updateResult = await updateOTP(model.mobile);
 
         if (updateResult.code !== '0000') {
         /* 失敗畫面 */
@@ -124,7 +124,7 @@ const T00300 = () => {
         } else {
           /* 驗證成功：更新資料至api */
           await queryOTP();
-          const updateResult = await updateOTP({ mobile: data.mobileNumber });
+          const updateResult = await updateOTP(data.mobileNumber);
 
           if (updateResult.code !== '0000') {
             /* 失敗頁面 */
@@ -171,7 +171,7 @@ const T00300 = () => {
     } else {
       /* 驗證成功：更新資料至api */
       await queryOTP();
-      const updateResult = await updateOTP({ mobile: model.mobile});
+      const updateResult = await updateOTP(model.mobile);
 
       if (updateResult.code !== '0000') {
         /* 失敗頁面 */
