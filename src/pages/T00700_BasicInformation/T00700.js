@@ -114,7 +114,7 @@ const T00700 = () => {
       errorTitle: '設定失敗',
       errorCode,
       errorDesc,
-      onClose: result ? closeFunc : () => {},
+      onClose: result ? closeFunc : () => reset({...originPersonalData}),
     });
   };
 
