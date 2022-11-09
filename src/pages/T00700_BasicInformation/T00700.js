@@ -187,7 +187,6 @@ const T00700 = () => {
     console.log('mobiles:', { mobile, originPersonalData: originPersonalData.mobile });
     // 有變更手機號碼
     if (mobile !== originPersonalData.mobile) {
-      console.log('T00700 有變更手機號碼');
       const authCode = 0x36;
       const jsRs = await transactionAuth(authCode, mobile);
       if (jsRs.result) {
@@ -195,7 +194,6 @@ const T00700 = () => {
       }
     } else {
       // 無變更手機號碼
-      console.log('T00700 無變更手機號碼');
       const authCode = 0x26;
       const jsRs = await transactionAuth(authCode);
       if (jsRs.result) {
