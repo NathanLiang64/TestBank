@@ -27,6 +27,8 @@ const TransferConfirm = (props) => {
   const [model] = useState(state);
   const [banks, setBanks] = useState();
 
+  const authCode = () => (model.transIn.type === 2 ? 0x30 : 0x20);
+
   /**
    * 頁面初始化
    */
@@ -73,7 +75,7 @@ const TransferConfirm = (props) => {
     console.log(response); // DEBUG
     if (response) {
       // 進行交易驗證，要求使用者輸入OTP、密碼、雙因子...等。
-      const auth = await transactionAuth(0x3D);
+      const auth = await transactionAuth(authCode());
       if (auth.result) {
         // TODO 顯示轉帳結果（含加入常用帳號）
         history.push('/D001002', model);
