@@ -66,6 +66,7 @@ const C00400 = () => {
 
     dispatch(setWaittingVisible(false));
     if (accounts.length === 0) {
+      console.log('showPrompt');
       await showPrompt('您還沒有任何外幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
     } else handleAccountChanged(selectedAccountIdx ?? 0);
   }, [accounts]);
@@ -93,7 +94,7 @@ const C00400 = () => {
    * 根據當前帳戶取得交易明細資料及優惠利率數字
    */
   const handleAccountChanged = async (acctIndex) => {
-    if (!accounts) return; // 頁面初始化時，不需要進來。
+    if (!accounts || accounts.length === 0) return; // 頁面初始化時，不需要進來。
 
     const account = accounts[acctIndex];
     // 若還沒有取得 免費跨轉次數 則立即補上。
@@ -181,7 +182,7 @@ const C00400 = () => {
   /**
    * 頁面輸出
    */
-  return selectedAccount ? (
+  return (
     <Layout title="外幣活存">
       <PageWrapper small>
         <AccountOverview
@@ -191,8 +192,8 @@ const C00400 = () => {
           onFunctionClick={handleFunctionClick}
           cardColor="orange"
           funcList={[
-            { fid: 'foreignCurrencyTransfer', title: '轉帳', enabled: (selectedAccount.transable && selectedAccount.balance > 0) },
-            { fid: 'exchange', title: '換匯', enabled: (selectedAccount.balance > 0) },
+            { fid: 'foreignCurrencyTransfer', title: '轉帳', enabled: (selectedAccount?.transable && selectedAccount?.balance > 0) },
+            { fid: 'exchange', title: '換匯', enabled: (selectedAccount?.balance > 0) },
           ]}
           moreFuncs={[
             // { fid: 'masterCardXB', title: 'MasterCard Send Cross Border', icon: 'temp' },
@@ -203,12 +204,12 @@ const C00400 = () => {
         />
 
         <DepositDetailPanel
-          details={transactions.get(selectedAccount.accountNo)}
+          details={transactions.get(selectedAccount?.accountNo)}
           onMoreFuncClick={() => handleFunctionClick('moreTranscations')}
         />
       </PageWrapper>
     </Layout>
-  ) : null;
+  );
 };
 
 export default C00400;

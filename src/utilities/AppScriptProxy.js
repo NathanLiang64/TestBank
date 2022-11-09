@@ -21,7 +21,8 @@ const device = {
  * @returns
  */
 async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) {
-  console.log(`\x1b[33mAPP-JS://${appJsName} \x1b[37m - Params = `, jsParams);
+  const jsToken = `A${Math.floor(Math.random() * 100000000).toString().padStart(8, '0')}`; // 有千萬分之一的機率重覆。
+  console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Params = `, jsParams);
 
   if (!window.AppJavaScriptCallback) {
     window.AppJavaScriptCallback = {};
@@ -32,9 +33,7 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
    * 負責接收 APP JavaScript API callback 的共用方法。
    * @param {*} value APP JavaScript API的傳回值。
    */
-  const CallbackFunc = (jsToken, value) => {
-  // console.log('*** Result from APP JavaScript : ', value);
-
+  const CallbackFunc = (token, value) => {
     let result;
     try {
       // 若是 JSON 格式，則以物件型態傳回。
@@ -42,18 +41,15 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
     } catch (ex) {
       result = value;
     }
-    window.AppJavaScriptCallbackPromiseResolves[jsToken](result);
+    window.AppJavaScriptCallbackPromiseResolves[token](result);
 
-    delete window.AppJavaScriptCallbackPromiseResolves[jsToken];
-    delete window.AppJavaScriptCallback[jsToken];
+    delete window.AppJavaScriptCallbackPromiseResolves[token];
+    delete window.AppJavaScriptCallback[token];
   };
 
   const promise = new Promise((resolve) => {
-    const jsToken = `A${Math.floor(Math.random() * 100000000).toString().padStart(8, '0')}`; // 有千萬分之一的機率重覆。
     window.AppJavaScriptCallback[jsToken] = (value) => CallbackFunc(jsToken, value);
     window.AppJavaScriptCallbackPromiseResolves[jsToken] = resolve;
-
-    // console.log('*** Call APP JavaScript : JS Token = ', jsToken, window.AppJavaScriptCallback);
 
     const request = {
       ...jsParams,
@@ -68,7 +64,7 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
       window.jstoapp[appJsName](JSON.stringify(request));
     }
     else if (needCallback || webDevTest) {
-      window.AppJavaScriptCallback[jsToken](webDevTest(request));
+      window.AppJavaScriptCallback[jsToken](webDevTest ? webDevTest() : null);
       return;
     }
     // else throw new Error('使用 Web 版未支援的 APP JavaScript 模擬方法(' + appJsName + ')');
@@ -79,7 +75,7 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
 
   // result 是由 AppJavaScriptCallback 接收，並嘗試用 JSON Parse 轉為物件，轉不成功則以原資料內容傳回。
   const result = await promise;
-  console.log(`\x1b[33mAPP-JS://${appJsName} \x1b[37m - Result = `, result);
+  console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Result = `, result);
   return result;
 }
 
