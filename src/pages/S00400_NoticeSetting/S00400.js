@@ -97,7 +97,7 @@ const S00400 = () => {
       });
     }
 
-    setIsPushBind(true);
+    setIsPushBind(queryIsOnResponse);
 
     const response = await queryPushSetting();
     setModel({
