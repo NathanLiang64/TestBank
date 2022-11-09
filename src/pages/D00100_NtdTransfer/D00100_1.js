@@ -117,12 +117,12 @@ const TransferConfirm = (props) => {
           {/* NOTE model 手續費! 還沒轉出，如何顯示？ 9/8 數金：拿掉！ */}
           {/* {model.booking.mode === 0 && <InformationList title="手續費" content="$0" />} */}
           <InformationList title="備註" content={model.memo} />
+          <p className="warningText">陌生電話先求證，轉帳匯款須謹慎</p>
         </section>
         <hr />
         <section className="transferAction">
           <div className="transferButtonArea">
             <FEIBButton onClick={onConfirm}>確認</FEIBButton>
-            <p className="notice">轉帳前多思考，避免被騙更苦惱</p>
           </div>
         </section>
       </TransferWrapper>

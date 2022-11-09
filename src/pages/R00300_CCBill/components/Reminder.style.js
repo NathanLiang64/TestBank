@@ -1,7 +1,10 @@
 import styled from 'styled-components';
 
 const ReminderWrapper = styled.div`
-  display: flex;
+  // display: flex; // iOS safari v14.5以下不支援flex的gap屬性
+  // display: -webkit-flex;
+  display: grid;
+  grid-auto-flow: row;
   color: ${({ theme }) => theme.colors.text.light};
   margin-inline: auto;
   padding-inline: 4rem;
@@ -10,6 +13,7 @@ const ReminderWrapper = styled.div`
 
   .auto {
     flex: 1 1 auto;
+    -webkit-flex: 1 1 auto;
     width: fit-content;
   }
 

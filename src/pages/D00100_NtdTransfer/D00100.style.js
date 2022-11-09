@@ -164,6 +164,22 @@ const TransferWrapper = styled(Layout)`
     }
   }
 
+  .warningText {
+    color: ${({ theme }) => theme.colors.primary.dark};
+    text-align: center;
+    font-weight: 500;
+    font-size: 1.8rem;
+    margin: 1rem 0;
+  }
+
+  .accordionContent {
+    ul {
+      li {
+        list-style: none;
+      }
+    }
+  }
+
   // 轉帳確認頁
   &.transferConfirmPage,
     // 轉帳結果頁
