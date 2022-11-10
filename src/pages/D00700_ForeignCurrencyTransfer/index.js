@@ -147,7 +147,7 @@ const ForeignCurrencyTransfer = () => {
   }, []);
 
   return (
-    <Layout title="本行同幣別外幣轉帳">
+    <Layout title="轉帳">
       <ForeignCurrencyTransferWrapper>
         <div className="userCardArea">
           <Swiper
