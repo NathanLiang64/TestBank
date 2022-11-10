@@ -4,11 +4,14 @@ import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { FEIBButton, FEIBInputLabel, FEIBInput, FEIBErrorMessage } from 'components/elements';
+
+import { FEIBButton, FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBIconButton } from 'components/elements';
 import Badge from 'components/Badge';
 import Avatar from 'components/Avatar';
 import BankCodeInput from 'components/BankCodeInput';
 import { accountFormatter } from 'utilities/Generator';
+
+import { ArrowBackIcon, EditIcon } from 'assets/images/icons';
 import { getBankCode } from './api';
 import { DrawerWrapper } from './D00500.style';
 
@@ -127,7 +130,13 @@ function AccountEditor({
       <form className="flex-col" onSubmit={handleSubmit(onSubmit)}>
         <Badge>
           <div className="label">帳號</div>
-          <div className="text-blue">{`${model.bankName} ${accountFormatter(model.acctId)}`}</div>
+          <div className="text-blue">
+            {`${model.bankName} ${accountFormatter(model.acctId)}`}
+            <FEIBIconButton className="editButton" $fontSize={1.6} onClick={() => setConfirmPage(false)}>
+              <EditIcon onClick={() => setConfirmPage(false)} />
+            </FEIBIconButton>
+          </div>
+
         </Badge>
         <div className="flex-col">
           <div className="self-center">
@@ -150,7 +159,6 @@ function AccountEditor({
           />
           <FEIBButton type="submit">完成</FEIBButton>
         </div>
-        {/* <FEIBButton type="button" onClick={() => setConfirmPage(false)}>修改</FEIBButton> */}
       </form>
     );
   };
@@ -159,10 +167,14 @@ function AccountEditor({
    * HTML輸出。
    */
   return (bankList) ? (
+
     <DrawerWrapper>
-      {/* {confirmPage === false ? (<Page1 />) : (<Page2 />)} */}
+      <FEIBIconButton className="goBack" $fontSize={1.6} onClick={() => setConfirmPage(false)} $hide={!confirmPage}>
+        <ArrowBackIcon />
+      </FEIBIconButton>
       {confirmPage === false ? renderPage1() : renderPage2()}
     </DrawerWrapper>
+
   ) : null;
 }
 
