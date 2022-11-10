@@ -61,7 +61,7 @@ const TransferConfirm = (props) => {
     const request = {
       transOut: transOut.account,
       transIn: { // 約定帳號 不需要提供額外資訊，由 MBGW 判斷。
-        bank: quickAcct?.bankId ?? transIn.bank, // TODO 是否還要指定自行 或 他行？
+        bank: quickAcct?.bankId ?? transIn.bank,
         account: quickAcct?.accountNo ?? transIn.account,
       },
       amount: parseInt(model.amount, 10),
@@ -77,7 +77,7 @@ const TransferConfirm = (props) => {
       // 進行交易驗證，要求使用者輸入OTP、密碼、雙因子...等。
       const auth = await transactionAuth(authCode());
       if (auth.result) {
-        // TODO 顯示轉帳結果（含加入常用帳號）
+        // 顯示轉帳結果（含加入常用帳號）
         history.push('/D001002', model);
       }
     }

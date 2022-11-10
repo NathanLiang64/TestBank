@@ -1,8 +1,6 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import * as yup from 'yup';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { getCountyList, getBasicInformation, modifyBasicInformation } from 'pages/T00700_BasicInformation/api';
@@ -11,32 +9,19 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import {FEIBInputLabel, FEIBButton } from 'components/elements';
-// import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
+import { DropdownField, TextInputField } from 'components/Fields';
 
 /* Styles */
-import { DropdownField, TextInputField } from 'components/Fields';
 import { showAnimationModal } from 'utilities/MessageModal';
 import BasicInformationWrapper from './T00700.style';
+import { validationSchema } from './validationSchema';
 
 const T00700 = () => {
   const dispatch = useDispatch();
-  /**
-   *- 資料驗證
-   */
-  const schema = yup.object().shape({
-    mobile: yup
-      .string()
-      .required('請輸入行動電話')
-      .matches(/^09[0-9]{8}$/, '行動電話格式不符'),
-    email: yup.string().required('請輸入電子信箱').email('電子信箱格式不符'),
-    county: yup.string().required('請選擇縣市'),
-    city: yup.string().required('請選擇鄉鎮市區'),
-    addr: yup.string().required('請輸入通訊地址'),
-  });
   const {
     handleSubmit, control, reset, watch, getValues,
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(validationSchema),
     defaultValues: {
       mobile: '',
       email: '',
@@ -47,33 +32,31 @@ const T00700 = () => {
   });
 
   const watchedCountyName = watch('county');
-
-  const [addressOptionsData, setAddressOptionsData] = useState([]);
   const [countyOptions, setCountyOptions] = useState([]);
-
   const [originPersonalData, setOriginPersonalData] = useState('');
 
-  // 取得個人資料
-  const getPersonalData = async (options) => {
+  // 取得個人資料，並匯入表單
+  const getPersonalData = async () => {
     const { code, data, message } = await getBasicInformation();
     if (code === '0000') {
       setOriginPersonalData(data);
-      const foundCounty = options.find(
-        ({ countyName }) => countyName === data.county.trim(),
-      );
-      const foundCity = foundCounty?.cities.find(
-        ({ cityName }) => cityName === data.city.trim(),
-      );
-      console.log('foundCity', foundCity);
+      // const foundCounty = options.find(
+      //   ({ countyName }) => countyName === data.county.trim(),
+      // );
+      // const foundCity = foundCounty?.cities.find(
+      //   ({ cityName }) => cityName === data.city.trim(),
+      // );
+
       reset({
         ...data,
-        county: foundCounty.countyName,
-        city: foundCity.cityName,
+        // county: foundCounty.countyName,
+        county: data.county.trim(),
+        // city: foundCity.cityName,
+        city: data.city.triim(),
       });
     } else {
       console.log(code, message);
     }
-    dispatch(setWaittingVisible(false));
   };
 
   // 取得縣市列表
@@ -81,14 +64,13 @@ const T00700 = () => {
     dispatch(setWaittingVisible(true));
     // 拿取縣市 & 鄉鎮區列表
     const { code, data, message } = await getCountyList({});
-    setAddressOptionsData(data);
     if (code === '0000') {
       setCountyOptions(data);
-      getPersonalData(data);
+      getPersonalData();
     } else {
       console.log(code, message);
-      dispatch(setWaittingVisible(false));
     }
+    dispatch(setWaittingVisible(false));
   };
 
   // 設定結果彈窗
@@ -197,10 +179,12 @@ const T00700 = () => {
     return [];
   };
 
+  // 取得初始資料
   useEffect(() => {
     fetchCountyList();
   }, []);
 
+  // 當使用者改變 "county" 值時，需要將 "city" 值清空
   useEffect(() => {
     if (watchedCountyName !== originPersonalData.county) {
       reset({...getValues(), city: ''});

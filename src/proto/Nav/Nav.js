@@ -1,10 +1,12 @@
 /* eslint-disable object-curly-newline */
 /* eslint-disable arrow-body-style */
+import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { startFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 // import {
 //   getAllFrequentAccount,
 //   addFrequentAccount,
@@ -18,12 +20,19 @@ import NavWrapper from './Nav.style';
 
 const Nav = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
 
   useEffect(async () => {
+    dispatch(setWaittingVisible(true));
+
     const token = sessionStorage.getItem('jwtToken');
-    if (!token) {
+    if (token) {
+      await getHomeData();
+    } else {
       history.push('/login');
     }
+
+    dispatch(setWaittingVisible(false));
   }, []);
 
   // 登出
@@ -70,9 +79,7 @@ const Nav = () => {
             解除手機號碼收款綁定-執行
           </div> */}
 
-          <div onClick={() => getHomeData()}>SM-API://getHomeData</div>
           <div onClick={() => registerToken({ pushToken: '4fcd5d52dc5ba7208bac5758bb84d6ca7061f5abfe0bd54b684a9d1a6c3a7e49' })}>SM-API://registerToken</div>
-          {/* <div onClick={() => functionTrace({ date: '2022-07-05 14:40:20', functionCode: 'C00100', functionParams: '' })}>SM-API://functionTrace</div> */}
         </div>
 
         <div className="lexion">

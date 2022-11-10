@@ -14,14 +14,15 @@ import { DrawerWrapper } from './D00500.style';
 
 /**
  * 編輯/新增銀行帳號。
- * @param {*} initData {
- *   bankId: 常用轉入帳戶-銀行代碼
- *   acctId: 常用轉入帳戶-帳號
- *   bankName: 銀行名稱
- *   nickName: 暱稱
- *   headshot: 大頭照，只有常用轉入帳戶是Bankee會員才會有值。若為 null 表示沒有頭像。
- * }
- * @param {*} onFinished 完成編輯時的事件。
+ * @param {{
+ *   bankId: '常用轉入帳戶-銀行代碼'
+ *   acctId: '常用轉入帳戶-帳號'
+ *   bankName: '銀行名稱'
+ *   nickName: '暱稱'
+ *   headshot: '大頭照，只有常用轉入帳戶是Bankee會員才會有值。若為 null 表示沒有頭像。'
+ *   readonly: '這些預設資料不可變更，直接進到第二頁；但 bankId, acctId 必需有值。'
+ * }} initData
+ * @param {Function} onFinished 完成編輯時的事件。
  */
 function AccountEditor({
   initData,
@@ -30,7 +31,7 @@ function AccountEditor({
   const [bankList, setBankList] = useState();
   // eslint-disable-next-line no-unused-vars
   const [model, setModel] = useState(initData);
-  const [confirmPage, setConfirmPage] = useState(false);
+  const [confirmPage, setConfirmPage] = useState(initData?.readonly);
 
   // Form 欄位名稱。
   const idBankNo = 'bankId'; // 銀行代碼。
