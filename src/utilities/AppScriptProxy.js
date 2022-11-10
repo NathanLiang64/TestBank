@@ -4,8 +4,9 @@
 /* eslint-disable brace-style */
 import forge from 'node-forge';
 import PasswordDrawer from 'components/PasswordDrawer';
-import { getTransactionAuthMode, createTransactionAuth } from 'components/PasswordDrawer/api';
+import { getTransactionAuthMode, createTransactionAuth, transactionAuthVerify } from 'components/PasswordDrawer/api';
 import { customPopup, showDrawer, showError } from './MessageModal';
+import e2ee from './E2ee';
 
 const device = {
   ios: () => !(sessionStorage.getItem('webMode') === 'true') && /iPhone|iPad|iPod/i.test(navigator.userAgent),
@@ -388,10 +389,9 @@ async function transactionAuth(authCode, otpMobile) {
   // return await callAppJavaScript('transactionAuth', data, true, appTransactionAuth);
 
   // DEBUG 在 APP 還沒完成交易驗證之前，先用 Web版進行測試。
-  // 為了測試需求，交易驗證都 hardcode 回傳 true (需與後端配合)
 
-  // const result = await appTransactionAuth(data);
-  return {result: true};
+  const result = await appTransactionAuth(data);
+  return result;
 }
 
 /**
@@ -528,6 +528,15 @@ async function appTransactionAuth(request) {
   });
   if (!txnAuth) { // createTransactionAuth 發生異常就結束。
     return failResult('無法建立交易授權驗證。');
+  }
+
+  // DEBUG ByPass交易驗證
+  if (request) {
+    const otpCode = allowedOTP ? '123456' : null;
+    const netbankPwd = allowedPWD ? e2ee('password') : null;
+    const verifyRs = await transactionAuthVerify({ authKey: txnAuth.key, funcCode, netbankPwd, otpCode });
+    console.log(verifyRs);
+    return { result: true, message: null, netbankPwd };
   }
 
   // 進行雙因子驗證，呼叫 APP 進行驗證。
