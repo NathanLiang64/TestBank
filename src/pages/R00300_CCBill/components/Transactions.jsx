@@ -37,7 +37,7 @@ const Transactions = ({ bills, isExpanded, onExpandClick }) => {
           key={uuid()}
           topLeft={log[i].description}
           topRight={currencySymbolGenerator(log[i].currency ?? 'TWD', log[i].amount)}
-          bottomLeft={`${log[i].txnDate.slice(4, 6)}/${log[i].txnDate.slice(6, 8)} | 卡-${log[i].targetAcct.slice(-4)}`}
+          bottomLeft={`${log[i].txnDate} | 卡-${log[i].targetAcct.slice(-4)}`}
         />
       ));
     }

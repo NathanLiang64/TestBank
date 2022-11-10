@@ -1,7 +1,7 @@
 // import { callAPI } from 'utilities/axios';
 
 import {
-  checkCardBillStatus, getBillDetail, queryCardBill, queryCardInfo,
+  checkCardBillStatus, getBillDetail, queryCardBill,
 } from 'pages/C00700_CreditCard/api';
 import { showCustomPrompt } from 'utilities/MessageModal';
 // import mockBills from './mockData/mockBills';
@@ -20,6 +20,7 @@ import mockCreditCardTerms from './mockData/mockCreditCardTerms';
      "billDate": 繳費截止日 // queryCardInfoRt.payDueDate
      "currency": 幣值 // 'NTD'
      "autoDeduct": 是否已設定自動扣繳 // checkCardBillStatusRt.autoDeductStatus
+     "hintToPay": 繳費提示文字 // checkCardBillStatusRt.hintToPay
    }
  */
 export const getBills = async (param) => {
@@ -29,15 +30,16 @@ export const getBills = async (param) => {
   /* 自不同API取得data */
   const queryCardBillRt = await queryCardBill(param);
   const checkCardBillStatusRt = await checkCardBillStatus();
-  const queryCardInfoRt = await queryCardInfo();
+  const billDetail = await getBillDetail(param);
 
   /* 將回傳資料轉換成頁面資料結構 */
   const bills = {
     month: parseInt(param.slice(-2), 10).toString(), // 只顯示月份，開頭不為0
     amount: queryCardBillRt.data.newBalance,
-    billDate: queryCardInfoRt.data.payDueDate,
+    billDate: billDetail.data.payDueDate,
     currency: 'NTD',
     autoDeduct: checkCardBillStatusRt.data.autoDeductStatus,
+    hintToPay: checkCardBillStatusRt.data.hintToPay,
   };
   return bills;
   // return response.data;
@@ -102,7 +104,7 @@ export const getBillDetails = async (request) => {
 
   // const billDetail = getBillDetails(request);
   const billDetail = await getBillDetail(request);
-  console.log('R00300 getBillDetails() data:', billDetail.data);
+  // console.log('R00300 getBillDetails() data:', billDetail.data);
 
   /* 將回傳資料轉換成頁面資料結構 */
   const billDetails = {
