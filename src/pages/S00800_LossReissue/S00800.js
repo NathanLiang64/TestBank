@@ -55,7 +55,7 @@ const LossReissue = () => {
 
   // 執行掛失或補發
   const executeAction = async () => {
-    const auth = await transactionAuth(0x26);
+    const auth = await transactionAuth(0x28);
     if (auth && auth.result) {
       const res = await reIssueOrLost();
       showCustomPrompt({
@@ -76,7 +76,7 @@ const LossReissue = () => {
 
   const onSubmit = async (values) => {
     console.log(values);
-    // const auth = await transactionAuth(0x26);
+    // const auth = await transactionAuth(0x28);
     // if (auth && auth.result) {
     //   // TODO 修改地址 API
     // }
