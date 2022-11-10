@@ -9,6 +9,7 @@ import { FEIBButton } from 'components/elements';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { transactionAuth } from 'utilities/AppScriptProxy';
+import AuthCode from 'utilities/TxnAuthCode';
 import { getBankCode } from 'components/BankCodeInput/api';
 import { createNtdTransfer, getDisplayAmount, getTransDate, getCycleDesc } from './api';
 import TransferWrapper from './D00100.style';
@@ -73,7 +74,7 @@ const TransferConfirm = (props) => {
     console.log(response); // DEBUG
     if (response) {
       // 進行交易驗證，要求使用者輸入OTP、密碼、雙因子...等。
-      const auth = await transactionAuth(0x3D);
+      const auth = await transactionAuth(AuthCode.D00100);
       if (auth.result) {
         // 顯示轉帳結果（含加入常用帳號）
         history.push('/D001002', model);
