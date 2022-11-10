@@ -152,15 +152,22 @@ export const showDrawer = async (title, content, goBack, onClose) => {
 };
 
 export const showCustomDrawer = async ({
-  title, content, goBack, onClose,
+  title,
+  content,
+  goBack,
+  onClose,
+  noScrollable,
 }) => {
   const promise = new Promise((resolve) => {
-    store.dispatch(setDrawer({
-      title,
-      content,
-      goBack,
-      onClose: onClose ?? closeDrawer,
-    }));
+    store.dispatch(
+      setDrawer({
+        title,
+        content,
+        goBack,
+        onClose: onClose ?? closeDrawer,
+        noScrollable,
+      }),
+    );
     store.dispatch(setResult((value) => resolve(value)));
     store.dispatch(setDrawerVisible(true));
   });
