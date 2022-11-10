@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint react/no-array-index-key: 0 */
-
 import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
@@ -11,152 +8,131 @@ import { showCustomPrompt } from 'utilities/MessageModal';
 import { setWaittingVisible, setModalVisible} from 'stores/reducers/ModalReducer';
 import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
-import InformationTape from 'components/InformationTape';
 import BottomAction from 'components/BottomAction';
 import EmptyData from 'components/EmptyData';
-import Loading from 'components/Loading';
 import CreditCard from 'components/CreditCard';
-import {
-  FEIBIconButton,
-  FEIBInputLabel,
-  FEIBInput,
-  FEIBErrorMessage,
-} from 'components/elements';
+import {FEIBIconButton} from 'components/elements';
 
 import { EditIcon } from 'assets/images/icons';
-import { getBasicCCInfo, getTransactions, updateMemo } from './api';
+import { getTransactions, updateTxnNotes } from 'pages/C00700_CreditCard/api';
+import { TextInputField } from 'components/Fields';
+import DetailCardWrapper from 'pages/C00700_CreditCard/components/detailCreditCard.style';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { validationSchema } from 'pages/C00700_CreditCard/components/validationSchema';
 import PageWrapper, { DetailDialogErrorMsg } from './R00100.style';
-import Loader from './components/loader';
-
-const uid = uuid();
-const endDate = new Date();
-const startDate = new Date(endDate);
-const limitDate = new Date(endDate);
-startDate.setDate(endDate.getDate() - 14);
-limitDate.setDate(endDate.getDate() - 60);
-
-// 因為useState是async所以fetchTransactions時transactions有可能是空的
-// 因此利用 backlog 變數暫存
-let backlog = [];
 
 /**
  * R00100 信用卡 即時消費明細
  */
 const Page = () => {
-  // TODO 表單透過 react-hook-form 重構
+  const {
+    control, handleSubmit, reset, getValues,
+  } = useForm({
+    defaultValues: { notes: {} },
+    resolver: yupResolver(validationSchema),
+    mode: 'onChange',
+  });
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
-  const [card, setCard] = useState();
   const [transactions, setTransactions] = useState([]);
-  const [isLoading, setIsLoading] = useState();
 
-  // eslint-disable-next-line no-unused-vars
   const creditNumberFormat = (stringCredit) => {
     if (stringCredit) return `${stringCredit.slice(-4)}`;
     return '';
   };
 
-  const fetchTransactions = async () => {
-    if (startDate <= limitDate) return;
-    setIsLoading(true);
-    startDate.setDate(startDate.getDate() - 15);
-    endDate.setDate(endDate.getDate() - 15);
-
-    const response = await getTransactions({
-      accountNo: card?.accountNo,
-      startDate: stringDateCodeFormatter(startDate),
-      endDate: stringDateCodeFormatter(endDate),
-    });
-    backlog = backlog.concat(response);
-    setTransactions(backlog);
-    setIsLoading(false);
-  };
-
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    let accountNo;
-    if (location.state && ('accountNo' in location.state)) accountNo = location.state.accountNo;
-    const response = await getTransactions({
-      accountNo,
-      startDate: stringDateCodeFormatter(startDate),
-      endDate: stringDateCodeFormatter(endDate),
+
+    // eslint-disable-next-line no-unused-vars
+    const {accountNo} = location.state;
+    const today = new Date();
+    const dateEnd = stringDateCodeFormatter(today);
+    const dateBeg = stringDateCodeFormatter(new Date(today - 86400 * 60 * 1000)); // 查詢當天至60天前的資料
+    const res = await getTransactions({
+      // cardNo: accountNo,
+      cardNo: '5232870002109002', // hardcode
+      dateBeg,
+      dateEnd,
     });
-    backlog = backlog.concat(response);
-    setTransactions(backlog);
 
-    if (location.state && ('type' in location.state)) {
-      setCard({
-        type: location.state.type,
-        accountNo,
-        creditUsed: location.state.creditUsed,
-      });
-    } else {
-      setCard(await getBasicCCInfo(accountNo));
-    }
-
+    setTransactions(res);
     dispatch(setWaittingVisible(false));
   }, []);
 
   //  提交memoText
-  const onSubmit = async (index) => {
-    const input = document.getElementById(uid).querySelector('input[name="pwd"]');
-    const errorMsg = document.getElementById(uid).querySelector('.errorMsg');
-    if (input.value.length > 7) {
-      errorMsg.style.visibility = 'visible';
-      input.parentElement.classList.add('errorBorder');
-    } else {
-      dispatch(setWaittingVisible(true));
-      errorMsg.style.visibility = 'hidden';
-      const response = await updateMemo({ id: index, memo: input.value });
-      if (response) {
-        const tmp = backlog.slice();
-        const indexNumber = tmp.findIndex((element) => element.id === index);
-        tmp[indexNumber].memo = input.value;
-        backlog = tmp;
-        setTransactions(backlog);
-      }
-      dispatch(setModalVisible(false));
-      dispatch(setWaittingVisible(false));
-    }
+  const showMemoEditDialog = ({
+    note, txDate, txKey,
+  }, index) => {
+    showCustomPrompt({
+      title: '編輯備註',
+      message: (
+        <DetailDialogErrorMsg>
+          <TextInputField labelName="備註說明" name={`notes[${index}]`} control={control} />
+        </DetailDialogErrorMsg>
+      ),
+      noDismiss: true,
+      okContent: '完成',
+      onOk: handleSubmit(async ({notes}) => {
+        const updatedResponse = await updateTxnNotes({
+          cardNo: '5232870002109002', // TODO 等待 getTransaction API 完成後進行 updateTxnNotes API 串接
+          txDate,
+          txKey,
+          note: notes[index],
+        });
+        if (updatedResponse?.code === '0000') {
+          setTransactions((prevState) => {
+            const updatedState = prevState.map((transaction) => {
+              if (transaction.txKey === txKey) return { ...transaction, note: notes[index] };
+              return transaction;
+            });
+            return updatedState;
+          });
+        }
+        dispatch(setModalVisible(false));
+      }),
+      onClose: () => {
+        const resetValues = { ...getValues().notes, [index]: note };
+        reset({notes: resetValues});
+      },
+    });
   };
 
-  const showMemo = (memo, id) => {
-    const EditDialog = () => {
-      showCustomPrompt({
-        title: '編輯備註',
-        message: (
-          <div id={uid} style={{ paddingBottom: '2.4rem' }}>
-            <FEIBInputLabel htmlFor="memo">備註說明</FEIBInputLabel>
-            <DetailDialogErrorMsg>
-              <FEIBInput
-                name="pwd"
-                placeholder="請輸入您的備註"
-                defaultValue={memo}
-              />
-              <FEIBErrorMessage className="errorMsg">
-                編輯最多七個字
-              </FEIBErrorMessage>
-            </DetailDialogErrorMsg>
+  const renderFunctionList = () => (
+    <div style={{paddingTop: '2.5rem'}}>
+      {transactions.map((item, index) => (
+        <DetailCardWrapper key={uuid()} data-index={index} noShadow id={item.txKey}>
+          <div className="description">
+            <h4>
+              {item.txName}
+            </h4>
+            <p>
+              {item.txDate}
+              {location.state.type === 'all' && ` | 卡-${creditNumberFormat(item.cardNo)}`}
+              {/* 原資料沒有 targetAcct 需要透過上層props 提供 term 來判斷 */}
+            </p>
           </div>
-        ),
-        noDismiss: true,
-        okContent: '完成',
-        onOk: () => onSubmit(id),
-      });
-      dispatch(setModalVisible(true));
-    };
-    const options = (
-      <DetailDialogErrorMsg className="remark">
-        <span>{memo.trim()}</span>
-        <FEIBIconButton $fontSize={1.6} onClick={() => EditDialog()} className="badIcon">
-          <EditIcon />
-        </FEIBIconButton>
-      </DetailDialogErrorMsg>
-    );
-    return options;
-  };
-  console.log('card', card);
+          <div className="amount">
+            {/* 刷卡金額 */}
+            <h4>
+              {currencySymbolGenerator('NTD', item.amount)}
+            </h4>
+            <div className="remark">
+              <span>{item.note}</span>
+              <FEIBIconButton $fontSize={1.6} onClick={() => showMemoEditDialog(item, index)} className="badIcon">
+                <EditIcon />
+              </FEIBIconButton>
+            </div>
+          </div>
+        </DetailCardWrapper>
+      ))}
+    </div>
+  );
+
+  if (!location.state || !('type' in location.state)) history.goBack();
+
   return (
     <Layout title="信用卡即時消費明細" goBackFunc={() => history.goBack()}>
       <MainScrollWrapper>
@@ -164,33 +140,23 @@ const Page = () => {
           <div className="bg-gray">
             <CreditCard
               key={uuid()}
-              cardName={card?.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
-              accountNo={card?.type === 'bankee' ? card?.accountNo : ''}
-              balance={card?.creditUsed}
+              cardName={location.state.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
+              accountNo={location.state.type === 'bankee' ? location.state.accountNo : ''}
+              balance={location.state.creditUsed}
               color="green"
               annotation="已使用額度"
             />
           </div>
           <div className="txn-wrapper">
-            { card && transactions.length > 0 ? transactions.map((t, i) => (
-              <InformationTape
-                key={`${uid}-${i}`}
-                topLeft={t.description}
-                topRight={currencySymbolGenerator(t.currency ?? 'TWD', t.amount)}
-                bottomLeft={`${t.txnDate.slice(4, 6)}/${t.txnDate.slice(6, 8)}${card.type === 'all' ? ` | 卡-${creditNumberFormat(t.targetAcct)}` : ''}`}
-                bottomRight={showMemo(t.memo, t.id)}
-                noShadow
-              />
-            )) : (
+            { transactions.length ? renderFunctionList() : (
               <div style={{ height: '20rem', marginTop: '6rem' }}>
                 <EmptyData content="" />
               </div>
             )}
           </div>
-          { isLoading && <Loading isCentered />}
+
           <div className="note">實際請款金額以帳單為準</div>
-          <Loader isLoading={isLoading} fetchTransactions={fetchTransactions} />
-          {card?.type === 'bankee' ? (
+          {location.state.type === 'bankee' ? (
             <BottomAction position={0}>
               <button type="button">晚點付</button>
             </BottomAction>

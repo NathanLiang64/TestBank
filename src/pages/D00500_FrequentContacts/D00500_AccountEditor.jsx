@@ -1,11 +1,11 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable object-curly-newline */
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { FEIBButton, FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBIconButton } from 'components/elements';
+import {
+  FEIBButton, FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBIconButton,
+} from 'components/elements';
 import Badge from 'components/Badge';
 import Avatar from 'components/Avatar';
 import BankCodeInput from 'components/BankCodeInput';
@@ -32,9 +32,8 @@ function AccountEditor({
   onFinished,
 }) {
   const [bankList, setBankList] = useState();
-  // eslint-disable-next-line no-unused-vars
   const [model, setModel] = useState(initData);
-  const [confirmPage, setConfirmPage] = useState(initData?.readonly);
+  const [confirmPage, setConfirmPage] = useState(false);
 
   // Form 欄位名稱。
   const idBankNo = 'bankId'; // 銀行代碼。
@@ -52,7 +51,9 @@ function AccountEditor({
   /**
    * 表單
    */
-  const { control, getValues, handleSubmit, formState: { errors }, setValue, trigger } = useForm({
+  const {
+    control, getValues, handleSubmit, formState: { errors }, setValue, trigger,
+  } = useForm({
     mode: 'onSubmit',
     resolver: yupResolver(schema),
     defaultValues: initData,
