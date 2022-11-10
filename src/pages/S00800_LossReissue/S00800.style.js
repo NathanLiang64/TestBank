@@ -4,7 +4,7 @@ import Layout from 'components/Layout';
 const LossReissueWrapper = styled(Layout)`
   display: flex;
   flex-direction: column;
-  
+
   .lossReissueContent {
     flex-grow: 1;
   }
@@ -13,18 +13,26 @@ const LossReissueWrapper = styled(Layout)`
     margin-top: 2.4rem;
     margin-bottom: 4rem;
   }
-  
+
   .notice {
     margin-top: 2.4rem;
     padding: 0 1.6rem;
     font-size: 1.4rem;
-    color: ${({ theme }) => theme.colors.text.light};
+    
+    .section_1 {
+      color: ${({ theme }) => theme.colors.primary.dark};
+    }
+
+    .section_2 {
+      color: ${({ theme }) => theme.colors.text.light};
+    }
+    
   }
-  
+
   .point {
     color: ${({ theme }) => theme.colors.text.point};
   }
-  
+
   .mainBlock {
     display: flex;
     flex-direction: column;
@@ -34,26 +42,26 @@ const LossReissueWrapper = styled(Layout)`
     li {
       display: flex;
       align-items: center;
-      padding: 1.6rem .8rem;
+      padding: 1.6rem 0.8rem;
       width: 100%;
 
       &:not(:last-child) {
-        border-bottom: .1rem dashed ${({ theme }) => theme.colors.text.light};
+        border-bottom: 0.1rem dashed ${({ theme }) => theme.colors.text.light};
       }
-      
+
       .blockLeft {
         flex-grow: 1;
-        
+
         .label {
           font-weight: 500;
-          
+
           &.debitCardStatusLabel {
             color: ${({ theme }) => theme.colors.text.lightGray};
           }
         }
-        
+
         .content {
-          margin-top: .2rem;
+          margin-top: 0.2rem;
           display: inline-block;
           font-size: 1.2rem;
           line-height: 1.6;
@@ -64,11 +72,11 @@ const LossReissueWrapper = styled(Layout)`
       .blockRight {
         width: 7rem;
         text-align: right;
-        
+
         .debitState {
           color: ${({ theme }) => theme.colors.primary.dark};
         }
-        
+
         .Icon {
           font-size: 2rem;
         }
