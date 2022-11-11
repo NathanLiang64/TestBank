@@ -14,6 +14,7 @@ import Accordion from 'components/Accordion';
 import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import store from 'stores/store';
+import { AuthCode } from 'utilities/TxnAuthCode';
 import {
   queryPushSetting, bindPushSetting, queryPushBindMock, updatePushBindMock,
 } from './api';
@@ -35,8 +36,6 @@ const S00400 = () => {
     securityNotice: false,
     nightMuteNotice: false,
   });
-
-  const authCode = 0x30;
 
   // 更新通知設定
   const updateNotiSetting = async (modelParam) => {
@@ -65,7 +64,7 @@ const S00400 = () => {
     console.log('S00400 handleTurnOnNotice');
 
     // 網銀密碼／雙因子驗證
-    const verifyResult = await transactionAuth(authCode);
+    const verifyResult = await transactionAuth(AuthCode.S00400);
     console.log('S00400 handlePushBind() verifyPWD/2FA', verifyResult);
 
     if (!verifyResult.result) {
@@ -106,18 +105,6 @@ const S00400 = () => {
       securityNotice: response.securityNotice === 'Y',
       nightMuteNotice: response.nightMuteNotice === 'Y',
     });
-    // if (!response) {
-    //   // 尙未完成行動裝置綁定
-    //   // TODO 詢是否立即綁定。
-    //   await closeFunc();
-    // } else {
-    //   setModel({
-    //     communityNotice: response.communityNotice === 'Y',
-    //     boardNotice: response.boardNotice === 'Y',
-    //     securityNotice: response.securityNotice === 'Y',
-    //     nightMuteNotice: response.nightMuteNotice === 'Y',
-    //   });
-    // }
 
     dispatch(setWaittingVisible(false));
   }, []);

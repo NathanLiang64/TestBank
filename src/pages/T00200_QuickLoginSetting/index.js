@@ -22,6 +22,7 @@ import {
   customPopup, showAnimationModal, showDrawer, showCustomPrompt,
 } from 'utilities/MessageModal';
 import { setDrawerVisible } from 'stores/reducers/ModalReducer';
+import { AuthCode } from 'utilities/TxnAuthCode';
 import { getQuickLoginInfo } from './api';
 import DrawerContent from './drawerContent';
 
@@ -51,8 +52,7 @@ const QuickLoginSetting = () => {
 
   // 解除快登綁定
   const callAppDelQL = async (type) => {
-    const code = 0x20;
-    const rs = await transactionAuth(code);
+    const rs = await transactionAuth(AuthCode.T00200.UNSET);
     console.log('交易驗證結果:', JSON.stringify(rs));
     customPopup(
       '系統訊息',
@@ -186,8 +186,7 @@ const QuickLoginSetting = () => {
 
     // 設定綁定資料成功進行交易驗證
     if (result === 'true') {
-      const code = 0x11;
-      const rs = await transactionAuth(code, midPhone);
+      const rs = await transactionAuth(AuthCode.T00200.SET, midPhone);
       console.log('交易驗證結果:', JSON.stringify(rs));
       if (rs.result) {
         // 交易驗證成功，開啟綁定 drawer，點擊確認進行 MID 驗證
