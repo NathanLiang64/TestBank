@@ -8,32 +8,14 @@ import { showCustomPrompt } from 'utilities/MessageModal';
 import ReminderWrapper from './Reminder.style';
 
 const Reminder = ({ bills }) => {
-  // const dispatch = useDispatch();
-
-  // const renderReminderText = () => {
-  //   const due = stringToDate(bills.billDate); // UTC時區
-  //   const today = new Date(); // UTC時區
-
-  //   // 移除時間資訊，方便比對
-  //   today.setUTCHours(0);
-  //   today.setUTCMinutes(0);
-  //   today.setUTCSeconds(0);
-  //   today.setUTCMilliseconds(0);
-
-  //   const dueDateString = `每月${due.getDate()}日`;
-  //   const deltaDays = Math.ceil(Math.abs(due - today) / (1000 * 60 * 60 * 24));
-
-  //   // 逾截止日（當日）
-  //   if (today >= due) return bills.autoDeduct ? `${dueDateString}自動扣繳` : `繳款截止日：${dueDateString}`;
-
-  //   // 10天以上
-  //   if (deltaDays >= 10) return bills.autoDeduct ? `自動扣繳（${dueDateString}）尚有${deltaDays}天` : `繳款截止日（${dueDateString}）尚有${deltaDays}天`;
-
-  //   // 1-9天
-  //   return bills.autoDeduct
-  //     ? `自動扣繳（${dueDateString}）尚有${deltaDays}天，提醒您確認帳戶餘額！`
-  //     : `繳款截止日（${dueDateString}）尚有${deltaDays}天，提醒您於截止日前繳款`;
-  // };
+  const handleHintText = (text) => {
+    console.log('R00300 Reminder handleHintText ', {text});
+    if (text.match('提')) {
+      const textChanged = text.split('提');
+      return [textChanged[0], `提${textChanged[1]}`];
+    }
+    return [text];
+  };
 
   const downloadICS = () => {
     const context = [
@@ -63,17 +45,13 @@ const Reminder = ({ bills }) => {
     await showCustomPrompt({
       title: '系統訊息', message: '將帳單繳款提示加入手機行事曆？', okContent: '確認', onOk: () => downloadICS(),
     });
-    // dispatch(setModal({
-    //   title: '系統訊息', content: '將帳單繳款提示加入手機行事曆？', okContent: '確認', onOk: () => downloadICS(),
-    // }));
-    // dispatch(setModalVisible(true));
   };
 
   return (
     <ReminderWrapper>
       { bills && (
       <>
-        <div className="auto">{bills.hintToPay}</div>
+        <div className="auto">{handleHintText(bills.hintToPay).map((text) => (<p>{text}</p>))}</div>
         <FEIBIconButton $fontSize={2} className="badIcon" onClick={handleCalendarClick}>
           <CalendarIcon />
         </FEIBIconButton>
