@@ -12,9 +12,7 @@ import { showAnimationModal, showError } from 'utilities/MessageModal';
 import {
   AccountIcon11, AccountIcon12, CircleIcon, TransactionIcon1,
 } from 'assets/images/icons';
-import {
-  loadFuncParams, startFunc, closeFunc, transactionAuth,
-} from 'utilities/AppScriptProxy';
+import { loadFuncParams, closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
 
 import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
 import EmptySlide from './components/EmptySlide';
@@ -186,7 +184,7 @@ const DepositPlanPage = () => {
   };
 
   const handleShowDetailClick = (plan) => {
-    startFunc('C006001', { plan });
+    history.push('C006001', {plan});
   };
 
   const shouldShowUnavailableSubAccountAlert = () => {
