@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState} from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
@@ -10,8 +11,9 @@ import CreditCard from 'components/CreditCard';
 
 import { CreditCardIcon5, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { showCustomDrawer } from 'utilities/MessageModal';
+import { showCustomDrawer, showError } from 'utilities/MessageModal';
 
+import { closeFunc } from 'utilities/AppScriptProxy';
 import DetailCreditCard from './components/detailCreditCard';
 import { getCards, getCreditCards } from './api';
 import SwiperCreditCard from './C00700.style';
@@ -22,7 +24,6 @@ import SwiperCreditCard from './C00700.style';
 const CreditCardPage = () => {
   const history = useHistory();
   const [plans, setPlans] = useState();
-  // eslint-disable-next-line no-unused-vars
   const [cards, setCards] = useState();
   const dispatch = useDispatch();
   /**
@@ -32,7 +33,10 @@ const CreditCardPage = () => {
     dispatch(setWaittingVisible(true));
     // TODO : getCards 應取代 getCreditCards，但目前 getCards 回傳資料不完全
     const response = await getCreditCards();
-    const cardResponse = await getCards();
+    const cardResponse = await getCards(); // 若沒有信用卡資訊時，code 還會是0000嗎？
+    if (cardResponse.data.length) {
+      showError('您尚未持有Bankee信用卡', closeFunc);
+    }
     setPlans(response);
     setCards(cardResponse.data);
     dispatch(setWaittingVisible(false));

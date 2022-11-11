@@ -53,7 +53,7 @@ const CardLessATM = () => {
   };
 
   const onSubmit = async ({ withdrawPwd }) => {
-    activateWithdrawAndSetPwd({ clwdNewPassword: withdrawPwd });
+    activateWithdrawAndSetPwd(withdrawPwd);
   };
 
   const renderPage = () => (

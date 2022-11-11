@@ -142,14 +142,14 @@ const T00700 = () => {
   const onSubmit = async (values) => {
     if (values.mobile !== originPersonalData.mobile) {
     // 有變更手機號碼
-      const authCode = 0x36;
+      const authCode = 0x31;
       const jsRs = await transactionAuth(authCode, values.mobile);
       if (jsRs.result) {
         modifyPersonalData(values);
       }
     } else {
       // 無變更手機號碼
-      const authCode = 0x26;
+      const authCode = 0x28;
       const jsRs = await transactionAuth(authCode);
       if (jsRs.result) {
         modifyPersonalData(values);

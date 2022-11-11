@@ -27,7 +27,7 @@ const T00300 = () => {
   const history = useHistory();
 
   const authCode2FA = 0x20;
-  const authCode2FAOTP = 0x2B;
+  const authCode2FAOTP = 0x21;
 
   /**
    * 錯誤訊息
@@ -197,11 +197,12 @@ const T00300 = () => {
      *  model.status === '01 -> 開通流程
      *  其餘走 申請+開通流程
      */
-    const result = await checkDeviceBindingStatus();
-    if (!result.bindingStatus) {
-      onFailure(result.failureCode, result.message);
-      return;
-    }
+    // DEBUG 暫時跳過
+    // const result = await checkDeviceBindingStatus();
+    // if (!result.bindingStatus) {
+    //   onFailure(result.failureCode, result.message);
+    //   return;
+    // }
 
     if (model.status === '03') {
       /* 註銷流程 */

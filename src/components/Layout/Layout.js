@@ -194,6 +194,7 @@ function Layout({
       onBack={drawerData.goBack ? onDrawerGoBack : null}
       onClose={onDrawerClose}
       content={drawerData.content}
+      noScrollable={drawerData.noScrollable}
       shouldAutoClose={drawerData.shouldAutoClose} // TODO 確認必要性。
     />
   );

@@ -17,10 +17,11 @@ import ArrowNextButton from 'components/ArrowNextButton';
 import { FEIBIconButton } from 'components/elements';
 
 import { EditIcon } from 'assets/images/icons';
-import { showCustomPrompt } from 'utilities/MessageModal';
+import { showCustomPrompt, showError } from 'utilities/MessageModal';
 
 import { TextInputField } from 'components/Fields';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { closeFunc } from 'utilities/AppScriptProxy';
 import { updateTxnNotes, getTransactions } from '../api';
 
 // timeFormatter
@@ -70,12 +71,11 @@ const DetailCard = ({
     // 查詢當天至60天前的資料
     const dateBeg = stringDateCodeFormatter(new Date(today - 86400 * 60 * 1000));
     const res = await getTransactions({
+      // TODO 修改掉 hardcode cardNo
       cardNo: '5232870002109002',
       dateBeg,
       dateEnd,
     });
-    console.log('res', res);
-    // setTransactions(res.data);
     setTransactions(res);
   };
 
@@ -132,14 +132,6 @@ const DetailCard = ({
     },
   ]);
 
-  // {
-  //   txDate, 交易日期時間 (yyyymmddhhmmss)
-  //   amount, 消費金額
-  //   txName,
-  //   txKey,  交易鍵值
-  //   note,   備註
-  // },
-
   //  提交memoText
   const showMemoEditDialog = ({
     note, txDate, txKey,
@@ -152,15 +144,14 @@ const DetailCard = ({
       noDismiss: true,
       okContent: '完成',
       onOk: handleSubmit(async ({notes}) => {
-        console.log('values[index]', notes[index]);
-        // TODO 等待 getTransaction API 完成後進行 updateTxnNotes API 串接
-        const result = await updateTxnNotes({
-          cardNo: '5232870002109002',
+        const updatedResponse = await updateTxnNotes({
+          cardNo: '5232870002109002', // TODO 等待 getTransaction API 完成後進行 updateTxnNotes API 串接
           txDate,
           txKey,
           note: notes[index],
         });
-        if (result) {
+
+        if (updatedResponse?.code === '0000') {
           setTransactions((prevState) => {
             const updatedState = prevState.map((transaction) => {
               if (transaction.txKey === txKey) return { ...transaction, note: notes[index] };
@@ -190,13 +181,10 @@ const DetailCard = ({
           <DetailCardWrapper key={uuid()} data-index={index} noShadow id={item.txKey}>
             <div className="description">
               <h4>
-                {/* {item.description} */}
                 {item.txName}
               </h4>
               <p>
-                {/* {stringDateFormat(item.bizDate)} */}
                 {item.txDate}
-                {/* {type === 'all' ? ` | 卡-${creditNumberFormat(item.targetAcct)}` : ''} */}
                 {type === 'all' && ` | 卡-${creditNumberFormat(item.cardNo)}`}
                 {/* 原資料沒有 targetAcct 需要透過上層props 提供 term 來判斷 */}
               </p>
@@ -207,8 +195,7 @@ const DetailCard = ({
                 {currencySymbolGenerator('NTD', item.amount)}
               </h4>
               <div className="remark">
-                {/* <span>{item.memo}</span> */}
-                <span>{watch('notes')[index]}</span>
+                <span>{item.note}</span>
                 <FEIBIconButton $fontSize={1.6} onClick={() => showMemoEditDialog(item, index)} className="badIcon">
                   <EditIcon />
                 </FEIBIconButton>
@@ -235,6 +222,7 @@ const DetailCard = ({
       </DetailDialogContentWrapper>
       {renderFunctionList()}
       {transactions.length > 3 && <ArrowNextButton onClick={onClick}>更多明細</ArrowNextButton>}
+      {/* <ArrowNextButton onClick={onClick}>更多明細</ArrowNextButton> */}
     </>
   );
 };

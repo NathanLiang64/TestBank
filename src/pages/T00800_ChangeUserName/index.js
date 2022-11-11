@@ -56,7 +56,7 @@ const ChangeUserName = () => {
 
   // 呼叫變更使用者代號 API
   const handleChangeUserName = async ({userName, newUserName, newUserNameCheck}) => {
-    const authCode = 0x26;
+    const authCode = 0x28;
     const jsRs = await transactionAuth(authCode);
     if (jsRs.result) {
       const param = {
