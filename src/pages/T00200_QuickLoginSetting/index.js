@@ -186,7 +186,7 @@ const QuickLoginSetting = () => {
 
     // 設定綁定資料成功進行交易驗證
     if (result === 'true') {
-      const code = 0x17;
+      const code = 0x11;
       const rs = await transactionAuth(code, midPhone);
       console.log('交易驗證結果:', JSON.stringify(rs));
       if (rs.result) {
