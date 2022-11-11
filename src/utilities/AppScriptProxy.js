@@ -533,7 +533,7 @@ async function appTransactionAuth(request) {
   // DEBUG ByPass交易驗證
   if (request) {
     const otpCode = allowedOTP ? '123456' : null;
-    const netbankPwd = allowedPWD ? e2ee('password') : null;
+    const netbankPwd = allowedPWD ? e2ee('feib1688') : null;
     const verifyRs = await transactionAuthVerify({ authKey: txnAuth.key, funcCode, netbankPwd, otpCode });
     console.log(verifyRs);
     return { result: true, message: null, netbankPwd };

@@ -13,6 +13,7 @@ import { DropdownField, TextInputField } from 'components/Fields';
 
 /* Styles */
 import { showAnimationModal } from 'utilities/MessageModal';
+import { AuthCode } from 'utilities/TxnAuthCode';
 import BasicInformationWrapper from './T00700.style';
 import { validationSchema } from './validationSchema';
 
@@ -142,15 +143,13 @@ const T00700 = () => {
   const onSubmit = async (values) => {
     if (values.mobile !== originPersonalData.mobile) {
     // 有變更手機號碼
-      const authCode = 0x36;
-      const jsRs = await transactionAuth(authCode, values.mobile);
+      const jsRs = await transactionAuth(AuthCode.T00700.MOBILE, values.mobile);
       if (jsRs.result) {
         modifyPersonalData(values);
       }
     } else {
       // 無變更手機號碼
-      const authCode = 0x26;
-      const jsRs = await transactionAuth(authCode);
+      const jsRs = await transactionAuth(AuthCode.T00700.EMAIL);
       if (jsRs.result) {
         modifyPersonalData(values);
       }
