@@ -4,7 +4,7 @@
 /* ========= 通用函式 ========= */
 
 // 將數字轉為加上千分位符號的字串
-export const toCurrency = (number, float = 0) => {
+export const toCurrency = (number, float = 0, isShowDecimal = false) => {
   if (number === null) return '';
   if (number === '*') return '＊＊＊＊＊'; // 不顯示餘額。
 
@@ -13,6 +13,12 @@ export const toCurrency = (number, float = 0) => {
   if (float > 0) {
     amount = `${amount}.${(`${parts[1] ?? ''}000000`).substring(0, float)}`; // 將小數加回
   }
+
+  /* 如需顯示小數點，傳入isShowDecimal: true */
+  if (parts.length > 1 && isShowDecimal && parts[1] !== '00') {
+    amount = `${amount}.${parts[1]}`; // 將小數加回
+  }
+
   return amount;
 };
 
@@ -292,10 +298,11 @@ export const getCurrenyName = (currency) => {
 };
 
 // 貨幣單位文字轉為符號
-export const currencySymbolGenerator = (currency, amount = null) => {
+export const currencySymbolGenerator = (currency, amount = null, isShowDecimal = false) => {
   const ccyInfo = CurrencyInfo.find((ccy) => ccy.code === currency);
   if (ccyInfo) {
-    return ccyInfo.symbol + toCurrency(amount, ccyInfo.float);
+    console.log('currencySymbolGenerator:', {ccyInfo});
+    return ccyInfo.symbol + toCurrency(amount, ccyInfo.float, isShowDecimal);
   }
   return `$${amount ?? ''}`;
 };
