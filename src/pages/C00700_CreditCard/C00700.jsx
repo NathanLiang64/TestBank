@@ -10,7 +10,7 @@ import Main from 'components/Layout';
 import CreditCard from 'components/CreditCard';
 
 import { CreditCardIcon5, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showCustomDrawer, showError } from 'utilities/MessageModal';
 
 import { closeFunc } from 'utilities/AppScriptProxy';
@@ -89,7 +89,13 @@ const CreditCardPage = () => {
       <ul>
         {list.map((func) => (
           <li key={uuid()}>
-            <button type="button" onClick={() => history.push(func.fid, func?.param)}>
+            <button
+              type="button"
+              onClick={() => {
+                history.push(func.fid, func?.param);
+                dispatch(setDrawerVisible(false));
+              }}
+            >
               {func.icon}
               {func.title}
             </button>
