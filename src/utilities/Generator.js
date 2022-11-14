@@ -301,7 +301,6 @@ export const getCurrenyName = (currency) => {
 export const currencySymbolGenerator = (currency, amount = null, isShowDecimal = false) => {
   const ccyInfo = CurrencyInfo.find((ccy) => ccy.code === currency);
   if (ccyInfo) {
-    console.log('currencySymbolGenerator:', {ccyInfo});
     return ccyInfo.symbol + toCurrency(amount, ccyInfo.float, isShowDecimal);
   }
   return `$${amount ?? ''}`;

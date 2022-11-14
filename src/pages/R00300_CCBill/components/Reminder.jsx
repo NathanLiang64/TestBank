@@ -9,7 +9,6 @@ import ReminderWrapper from './Reminder.style';
 
 const Reminder = ({ bills }) => {
   const handleHintText = (text) => {
-    console.log('R00300 Reminder handleHintText ', {text});
     if (text.match('提')) {
       const textChanged = text.split('提');
       return [textChanged[0], `提${textChanged[1]}`];
@@ -26,7 +25,7 @@ const Reminder = ({ bills }) => {
       `UID:${uuid()}`,
       `DTSTAMP:${new Date().toISOString().replaceAll('-', '').replaceAll(':', '')
         .split('.')[0]}Z`,
-      `DTSTART;VALUE=DATE:${bills.billDate}`,
+      `DTSTART;VALUE=DATE:${parseInt(bills.billDate.replaceAll('/', ''), 10) + 19110000}`,
       'RRULE:FREQ=MONTHLY',
       'SUMMARY:Bankee信用卡繳款截止日',
       'END:VEVENT',
