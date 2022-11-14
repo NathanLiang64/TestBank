@@ -14,6 +14,7 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showCustomDrawer, showError } from 'utilities/MessageModal';
 
 import { closeFunc } from 'utilities/AppScriptProxy';
+import { FuncID } from 'utilities/FuncID';
 import DetailCreditCard from './components/detailCreditCard';
 import { getCards, getCreditCards } from './api';
 import SwiperCreditCard from './C00700.style';
@@ -81,7 +82,7 @@ const CreditCardPage = () => {
       {
         fid: '/C007001', icon: <CreditCardIcon6 />, title: '信用卡資訊', param: card,
       },
-      { fid: '/withholding', icon: <CreditCardIcon5 />, title: '自動扣繳' },
+      { fid: `/${FuncID.R00500}`, icon: <CreditCardIcon5 />, title: '自動扣繳' },
       { fid: '/C007002', icon: <CircleIcon />, title: '每月現金回饋' },
     ];
     const options = (
