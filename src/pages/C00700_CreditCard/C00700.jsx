@@ -59,7 +59,7 @@ const CreditCardPage = () => {
           func.fid
             ? (
               <li key={uuid()}>
-                <button type="button" onClick={() => history.push(func.fid, { accountNo: func.account })}>
+                <button type="button" onClick={() => startFunc(func.fid, { accountNo: func.account })}>
                   {func.title}
                 </button>
               </li>
@@ -141,7 +141,8 @@ const CreditCardPage = () => {
           <DetailCreditCard
             details={item.transactions}
             bonus={item?.bonusInfo}
-            onClick={() => history.push('R00100', item)}
+            // onClick={() => history.push('R00100', item)}
+            onClick={() => startFunc('R00100', item)}
             type={item.type}
             account={item.accountNo}
           />
@@ -151,7 +152,7 @@ const CreditCardPage = () => {
   };
 
   return (
-    <Layout title="信用卡" goBackFunc={() => history.goBack()}>
+    <Layout title="信用卡" goBackFunc={closeFunc}>
       <Main small>
         <SwiperLayout slides={renderSlides(plans)} hasDivider={false} slidesPerView={1.06}>
           {renderCreditList(plans)}
