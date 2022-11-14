@@ -10,10 +10,12 @@ import {
   FEIBTabList,
   FEIBTab,
 } from 'components/elements';
+import { defaultValues } from '../constants';
 
 export const TabField = ({
   options,
   labelName,
+  resetOnChange,
   ...controlProps
 }) => {
   const { field, fieldState } = useController(controlProps);
@@ -24,7 +26,10 @@ export const TabField = ({
         <FEIBTabList
           $size="small"
           $type="fized"
-          onChange={(_, id) => field.onChange(id)}
+          onChange={(_, id) => {
+            resetOnChange();
+            field.onChange(id);
+          }}
         >
           {options.map(({ label, value }) => (
             <FEIBTab label={label} value={value} />

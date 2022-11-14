@@ -13,16 +13,21 @@ export const RadioGroupField = ({
   options,
   labelName,
   disabled,
+  resetOnChange,
   ...controlProps
 }) => {
   const { field, fieldState } = useController(controlProps);
+
+  const onChangeHandler = (selectedValue) => {
+    resetOnChange();
+    field.onChange(selectedValue);
+  };
 
   return (
     <>
       <FEIBInputLabel htmlFor={field.name}>{labelName}</FEIBInputLabel>
       <RadioGroup
-        // MenuProps={MenuProps}
-        onChange={field.onChange}
+        onChange={onChangeHandler}
         onBlur={field.onBlur}
         id={field.name}
         name={field.name}
@@ -42,8 +47,9 @@ export const RadioGroupField = ({
       {/* <FEIBErrorMessage>
         {fieldState.error ? fieldState.error.message : ''}
       </FEIBErrorMessage> */}
-      {!!fieldState.error
-        && <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>}
+      {!!fieldState.error && (
+        <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>
+      )}
     </>
   );
 };

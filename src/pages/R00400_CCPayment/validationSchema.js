@@ -1,9 +1,10 @@
 import * as yup from 'yup';
+import { AMOUNT_OPTION } from './constants';
 
 export const generateValidationSchema = (bills) => yup.object().shape({
   paymentMethod: yup.string().required('請選擇繳款方式'),
   amountOptions: yup.string().required('請選擇繳款金額'),
-  customAmount: yup.number().when('amountOptions', (amountOptions, s) => (amountOptions === 'customized' && !!bills
+  customAmount: yup.number().when('amountOptions', (amountOptions, s) => (amountOptions === AMOUNT_OPTION.CUSTOM && !!bills
     ? s
       .required('請填入自訂金額')
       .typeError('請填入自訂金額')
@@ -27,7 +28,7 @@ export const generateValidationSchema = (bills) => yup.object().shape({
     .string()
     .when('paymentMethod', (method, s) => (method === 'external'
       ? s
-        .matches(/\d{12,16}/, '金融卡帳號由14個數字所組成')
+        .matches(/\d{12,16}/, '轉出帳號格式有誤，請重新檢查。')
         .required('請選擇轉出帳號')
       : s.nullable())),
 });
