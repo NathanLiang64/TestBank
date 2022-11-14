@@ -33,20 +33,14 @@ const S007001 = () => {
 
   if (!state) return history.goBack();
 
-  const isSuccess = true;
+  const isSuccess = state.code === '0000';
+
   return (
     <Layout title="金融卡啟用結果" goBackFunc={go2More}>
       <DebitCardActiveWrapper>
-        {/* <SuccessFailureAnimations
-          isSuccess={!!(state.code === '0000')}
-          successTitle={`${state.cname} 設定成功`}
-          successDesc={successDesc()}
-          errorTitle={`${state.cname} 設定失敗`}
-          errorDesc={state.message}
-        /> */}
         <ResultAnimation
           isSuccess={isSuccess}
-          subject={isSuccess ? '轉帳成功' : '轉帳失敗'}
+          subject={isSuccess ? '設定成功' : '設定失敗'}
           description={isSuccess ? successDesc() : state.message}
         />
         <FEIBButton style={{ marginTop: '1rem' }} onClick={go2More}>

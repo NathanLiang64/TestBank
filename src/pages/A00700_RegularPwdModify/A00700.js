@@ -102,12 +102,15 @@ const RegularPwdModify = () => {
     // 提醒久未變更密碼彈窗
     await showCustomPrompt({
       message: message1,
+      cancelContent: '維持不變',
+      okContent: '立即變更',
+      onOk: () => {},
       // 警告不變更密碼會有安全性問題
       onCancel: async () => {
         await showCustomPrompt({
           message: message2,
           cancelContent: '取消',
-          okContent: '維持不變',
+          okContent: '確認',
           onOk: async () => {
             // TODO: =====待調整=====
             const param = {

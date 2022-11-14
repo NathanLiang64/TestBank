@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
@@ -14,6 +15,7 @@ import { DropdownField, TextInputField } from 'components/Fields';
 /* Styles */
 import { showAnimationModal } from 'utilities/MessageModal';
 import { AuthCode } from 'utilities/TxnAuthCode';
+import { useLocationOptions } from 'hooks/useLocationOptions';
 import BasicInformationWrapper from './T00700.style';
 import { validationSchema } from './validationSchema';
 
@@ -33,50 +35,32 @@ const T00700 = () => {
   });
 
   const watchedCountyName = watch('county');
-  const [countyOptions, setCountyOptions] = useState([]);
+  const {countyOptions, districtOptions} = useLocationOptions(watchedCountyName);
   const [originPersonalData, setOriginPersonalData] = useState('');
-
-  // 取得個人資料，並匯入表單
-  const getPersonalData = async () => {
-    const { code, data, message } = await getBasicInformation();
-    if (code === '0000') {
-      setOriginPersonalData(data);
-      // const foundCounty = options.find(
-      //   ({ countyName }) => countyName === data.county.trim(),
-      // );
-      // const foundCity = foundCounty?.cities.find(
-      //   ({ cityName }) => cityName === data.city.trim(),
-      // );
-
-      reset({
-        ...data,
-        // county: foundCounty.countyName,
-        county: data.county.trim(),
-        // city: foundCity.cityName,
-        city: data.city.triim(),
-      });
-    } else {
-      console.log(code, message);
-    }
-  };
 
   // 取得縣市列表
   const fetchCountyList = async () => {
     dispatch(setWaittingVisible(true));
-    // 拿取縣市 & 鄉鎮區列表
-    const { code, data, message } = await getCountyList({});
+    // 取得個人資料，並匯入表單
+    const { code, data, message } = await getBasicInformation();
     if (code === '0000') {
-      setCountyOptions(data);
-      getPersonalData();
+      setOriginPersonalData(data);
+      reset({
+        ...data,
+        county: data.county.trim(),
+        city: data.city.trim(),
+      });
     } else {
       console.log(code, message);
     }
+
     dispatch(setWaittingVisible(false));
   };
 
   // 設定結果彈窗
   const setResultDialog = (response) => {
     // 設定成功時，reponse 應該包含 addr city county email  mobile zipCode
+    // TODO 尚未確定 modifyBasicInformation API 的回傳格式為何？
     const result = 'addr' in response
       && 'city' in response
       && 'county' in response
@@ -97,7 +81,7 @@ const T00700 = () => {
       errorTitle: '設定失敗',
       errorCode,
       errorDesc,
-      onClose: result ? closeFunc : () => reset({...originPersonalData}),
+      onClose: result ? closeFunc : () => reset({ ...originPersonalData }),
     });
   };
 
@@ -108,7 +92,7 @@ const T00700 = () => {
     } = values;
     const addressCode = county === originPersonalData.county
       && city === originPersonalData.city
-      && zipCode === originPersonalData.zipCode
+      // && zipCode === originPersonalData.zipCode
       && addr === originPersonalData.addr
       ? 0
       : 1;
@@ -126,7 +110,7 @@ const T00700 = () => {
       county,
       city,
       // 變動後的zipCode無法得知 ，不應該提供才對
-      zipCode,
+      // zipCode,
       addr,
       email,
       mobile,
@@ -134,7 +118,6 @@ const T00700 = () => {
     };
     dispatch(setWaittingVisible(true));
     const modifyDataResponse = await modifyBasicInformation(param);
-    console.log(modifyDataResponse);
     setResultDialog(modifyDataResponse);
     dispatch(setWaittingVisible(false));
   };
@@ -154,28 +137,6 @@ const T00700 = () => {
         modifyPersonalData(values);
       }
     }
-  };
-
-  // 建立縣市選單
-  const generateCountyOptions = () => {
-    if (countyOptions.length) {
-      return countyOptions.map(({ countyName }) => ({
-        label: countyName,
-        value: countyName,
-      }));
-    }
-    return [];
-  };
-  // 建立鄉鎮市區選單
-  const generateDistrictOptions = () => {
-    const foundDistrictOption = countyOptions.find(({ countyName }) => countyName === watchedCountyName);
-    if (foundDistrictOption) {
-      return foundDistrictOption.cities.map(({ cityName }) => ({
-        label: cityName,
-        value: cityName,
-      }));
-    }
-    return [];
   };
 
   // 取得初始資料
@@ -214,7 +175,7 @@ const T00700 = () => {
                   name="county"
                   placeholder="請選擇縣市"
                   control={control}
-                  options={generateCountyOptions()}
+                  options={countyOptions}
                 />
               </div>
               <div>
@@ -222,7 +183,7 @@ const T00700 = () => {
                   name="city"
                   placeholder="請選擇縣市"
                   control={control}
-                  options={generateDistrictOptions()}
+                  options={districtOptions}
                 />
               </div>
             </div>

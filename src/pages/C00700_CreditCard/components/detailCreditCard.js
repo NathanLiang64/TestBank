@@ -159,14 +159,16 @@ const DetailCard = ({
             });
             return updatedState;
           });
+        } else {
+          const resetValues = { ...getValues().notes, [index]: note };
+          reset({ notes: resetValues });
+          await showError(updatedResponse.message);
         }
         dispatch(setModalVisible(false));
       }),
       onClose: () => {
-        const {notes} = getValues();
-        console.log('notes', notes);
-        const resetValues = { ...notes, [index]: note };
-        reset({notes: resetValues});
+        const resetValues = { ...getValues().notes, [index]: note };
+        reset({ notes: resetValues });
       },
     });
   };

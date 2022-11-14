@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import uuid from 'react-uuid';
 
 import { currencySymbolGenerator, stringDateCodeFormatter } from 'utilities/Generator';
-import { showCustomPrompt } from 'utilities/MessageModal';
+import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import { setWaittingVisible, setModalVisible} from 'stores/reducers/ModalReducer';
 import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
@@ -90,6 +90,10 @@ const Page = () => {
             });
             return updatedState;
           });
+        } else {
+          const resetValues = { ...getValues().notes, [index]: note };
+          reset({notes: resetValues});
+          await showError(updatedResponse.message);
         }
         dispatch(setModalVisible(false));
       }),

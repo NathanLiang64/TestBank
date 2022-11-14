@@ -9,11 +9,11 @@ import { closeFunc } from 'utilities/AppScriptProxy';
 import { showError } from 'utilities/MessageModal';
 import { getCountyList } from 'pages/T00700_BasicInformation/api';
 
+import { useLocationOptions } from 'hooks/useLocationOptions';
 import { LossReissueDialogWrapper } from './S00800.style';
 import { validationSchema } from './validationSchema';
 
 export const S00800_1 = ({currentFormValue, onSubmit}) => {
-  const [countyOptions, setCountyOptions] = useState([]);
   const {
     control, handleSubmit, reset, watch, getValues,
   } = useForm({
@@ -22,39 +22,7 @@ export const S00800_1 = ({currentFormValue, onSubmit}) => {
   });
 
   const watchedCountyName = watch('county');
-
-  const generateCountyOptions = () => {
-    if (countyOptions.length) {
-      return countyOptions.map(({ countyName }) => ({
-        label: countyName,
-        value: countyName,
-      }));
-    }
-    return [];
-  };
-
-  const generateDistrictOptions = () => {
-    const foundDistrictOption = countyOptions.find(
-      ({ countyName }) => countyName === watchedCountyName,
-    );
-
-    if (foundDistrictOption) {
-      return foundDistrictOption.cities.map(({ cityName }) => ({
-        label: cityName,
-        value: cityName,
-      }));
-    }
-    return [];
-  };
-
-  useEffect(async () => {
-    const listResponse = await getCountyList();
-    if (listResponse.code === '0000') {
-      setCountyOptions(listResponse.data);
-    } else {
-      showError(listResponse.message, closeFunc);
-    }
-  }, []);
+  const { countyOptions, districtOptions } = useLocationOptions(watchedCountyName);
 
   useEffect(() => {
     if (watchedCountyName !== currentFormValue.county) {
@@ -70,14 +38,14 @@ export const S00800_1 = ({currentFormValue, onSubmit}) => {
           <div className="formElementGroup">
             <div>
               <DropdownField
-                options={generateCountyOptions()}
+                options={countyOptions}
                 name="county"
                 control={control}
               />
             </div>
             <div>
               <DropdownField
-                options={generateDistrictOptions()}
+                options={districtOptions}
                 name="city"
                 control={control}
               />
