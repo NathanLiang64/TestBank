@@ -13,7 +13,7 @@ import { CreditCardIcon5, CreditCardIcon6, CircleIcon } from 'assets/images/icon
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showCustomDrawer, showError } from 'utilities/MessageModal';
 
-import { closeFunc } from 'utilities/AppScriptProxy';
+import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
 import DetailCreditCard from './components/detailCreditCard';
 import { getCards, getCreditCards } from './api';
@@ -92,7 +92,11 @@ const CreditCardPage = () => {
             <button
               type="button"
               onClick={() => {
-                history.push(func.fid, func?.param);
+                if (func.fid.includes(FuncID.R00500)) {
+                  startFunc(FuncID.R00500);
+                } else {
+                  history.push(func.fid, func?.param);
+                }
                 dispatch(setDrawerVisible(false));
               }}
             >
