@@ -46,6 +46,7 @@ export const PromptShouldCloseDepositPlanOrNot = ({ endDate, onOk }) => {
     cancelContent: '我再想想',
     onOk,
     noDismiss: true,
+    showCloseButton: false,
   });
 };
 

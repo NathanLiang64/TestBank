@@ -86,19 +86,23 @@ export const showCustomPrompt = async ({
   cancelContent,
   onClose, // Modal 右上角的 X 按鈕
   noDismiss, // 如果有需要接續 modal 得操作，可以設定為 true 避免點擊ok按鈕後，下個 modal 遭關閉。
+  showCloseButton,
 }) => {
   const promise = new Promise((resolve) => {
-    store.dispatch(setModal({
-      title,
-      content: message,
-      // onOk: onOk ?? closePopup,
-      onOk,
-      onCancel,
-      okContent,
-      cancelContent,
-      onClose,
-      noDismiss: noDismiss ?? false,
-    }));
+    store.dispatch(
+      setModal({
+        title,
+        content: message,
+        // onOk: onOk ?? closePopup,
+        onOk,
+        onCancel,
+        okContent,
+        cancelContent,
+        onClose,
+        noDismiss: noDismiss ?? false,
+        showCloseButton: showCloseButton ?? true,
+      }),
+    );
     store.dispatch(setResult((value) => resolve(value)));
     store.dispatch(setModalVisible(true));
   });
@@ -157,6 +161,7 @@ export const showCustomDrawer = async ({
   goBack,
   onClose,
   noScrollable,
+  shouldAutoClose,
 }) => {
   const promise = new Promise((resolve) => {
     store.dispatch(
@@ -166,6 +171,7 @@ export const showCustomDrawer = async ({
         goBack,
         onClose: onClose ?? closeDrawer,
         noScrollable,
+        shouldAutoClose: shouldAutoClose ?? false,
       }),
     );
     store.dispatch(setResult((value) => resolve(value)));

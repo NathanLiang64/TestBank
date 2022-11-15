@@ -1,12 +1,12 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router';
 
 import Layout from 'components/Layout/Layout';
 import AccountDetails from 'components/AccountDetails/accountDetails';
-import { loadFuncParams, closeFunc } from 'utilities/AppScriptProxy';
-// eslint-disable-next-line no-unused-vars
+import { closeFunc } from 'utilities/AppScriptProxy';
 import { stringDateCodeFormatter } from 'utilities/Generator';
-import { useLocation } from 'react-router';
+import { showError } from 'utilities/MessageModal';
+
 import { getTransactionDetails } from './api';
 
 /**
@@ -14,31 +14,18 @@ import { getTransactionDetails } from './api';
  */
 const DepositPlanTransactionPage = () => {
   const [plan, setPlan] = useState(null);
-  const location = useLocation();
+  const {state} = useLocation();
 
-  /**
-   * 從別的頁面跳轉至此頁時，應指定所查詢的帳戶。
-   */
   useEffect(async () => {
-    // startParams: 要顯示明細的存錢計劃詳細資料，規格參照：api.js - getDepositPlans API
-    // const startParams = await loadFuncParams(); // Function Controller 提供的參數
-    // if (startParams && (typeof startParams === 'object')) {
-    //   const {plan: loadedPlan} = startParams;
-    //   setPlan(
-    //     {
-    //       ...loadedPlan,
-    //       accountNo: loadedPlan.bindAccountNo,
-    //       balance: loadedPlan.currentBalance,
-
-    //     },
-    //   );
-    // }
-    if (location.state.plan) {
+    // 從別的頁面跳轉至此頁時，應指定所查詢的帳戶。
+    if (state?.plan) {
       setPlan({
-        ...location.state.plan,
-        accountNo: location.state.plan.bindAccountNo,
-        balance: location.state.plan.currentBalance,
+        ...state.plan,
+        accountNo: state.plan.bindAccountNo,
+        balance: state.plan.currentBalance,
       });
+    } else {
+      showError('查無計畫', closeFunc);
     }
   }, []);
 
@@ -49,9 +36,8 @@ const DepositPlanTransactionPage = () => {
   const updateTransactions = async (conditions) => {
     const request = {
       accountNo: plan?.bindAccountNo,
-      startDate: plan?.startDate,
+      startDate: stringDateCodeFormatter(new Date(plan.createDate)), // 查詢啟示日為計畫建立的當天
       endDate: plan?.endDate,
-      // currency: 'TWD',
       ...conditions,
     };
 
@@ -59,8 +45,6 @@ const DepositPlanTransactionPage = () => {
     const transData = await getTransactionDetails(request);
     return transData;
   };
-
-  if (!location.state || !location.state.plan) closeFunc();
 
   return (
     <Layout title="存錢歷程" hasClearHeader goBackFunc={() => closeFunc()}>
