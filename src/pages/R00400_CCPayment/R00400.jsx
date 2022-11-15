@@ -1,10 +1,11 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import Barcode from 'react-barcode';
 import { useForm } from 'react-hook-form';
 import parse from 'html-react-parser';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import {
   accountFormatter,
@@ -20,11 +21,10 @@ import Loading from 'components/Loading';
 import { FEIBButton, FEIBErrorMessage } from 'components/elements';
 import { RadioGroupField } from 'components/Fields/radioGroupField';
 import { DropdownField, TextInputField } from 'components/Fields';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { closeFunc } from 'utilities/AppScriptProxy';
-import { getBillDetail } from 'pages/C00700_CreditCard/api';
 import BankCodeInputNew from 'components/BankCodeInputNew';
-import { showCustomPrompt, showError } from '../../utilities/MessageModal';
+import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
+import { getBillDetail } from 'pages/C00700_CreditCard/api';
+import { showCustomPrompt, showError } from 'utilities/MessageModal';
 
 import {
   getBills,
@@ -46,7 +46,6 @@ import {
  */
 const Page = () => {
   const history = useHistory();
-  const location = useLocation();
   const dispatch = useDispatch();
   const [bills, setBills] = useState();
   const [terms, setTerms] = useState();
@@ -61,15 +60,17 @@ const Page = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    let accountNo;
-    if (location.state && ('accountNo' in location.state)) accountNo = location.state.accountNo;
-    // 待串接 getBillDetail API
-    // const detailResponse = await getBillDetail();
-    const response = await getBills({ accountNo, showAccounts: true });
-    if (response) {
+
+    const funcParams = await loadFuncParams();
+
+    if (funcParams) {
+    // TODO 取得帳單資訊的 API 待確認..
+    // 是否需要帶入 accountNo 才可以取得 帳單資訊？
+      // const detailResponse = await getBillDetail();
+      const response = await getBills({ showAccounts: true });
       setBills(response);
     } else {
-      showError('找不到帳單資訊', closeFunc);
+      showError('您尚未持有 Bankee 信用卡', closeFunc);
     }
     dispatch(setWaittingVisible(false));
   }, []);
@@ -173,7 +174,7 @@ const Page = () => {
   };
 
   return (
-    <Layout title="繳款" goBackFunc={() => history.goBack()}>
+    <Layout title="繳款" goBackFunc={closeFunc}>
       <Main small>
         <PageWrapper>
           <Badge label={`${bills?.month}月應繳金額`} value={currencySymbolGenerator(bills?.currency ?? 'NTD', bills?.amount)} />

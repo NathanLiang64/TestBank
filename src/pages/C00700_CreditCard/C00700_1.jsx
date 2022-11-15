@@ -15,6 +15,8 @@ import Loading from 'components/Loading';
 import CreditCard from 'components/CreditCard';
 
 // eslint-disable-next-line no-unused-vars
+import { startFunc } from 'utilities/AppScriptProxy';
+import { showError } from 'utilities/MessageModal';
 import { getCreditCardTerms, queryCardInfo } from './api';
 import PageWrapper from './Details.style';
 import { getCardListing, getCreditListing } from './utils';
@@ -33,7 +35,11 @@ const C007001 = () => {
     dispatch(setWaittingVisible(true));
     // Fix API queryCardInfo API 取代 getCreditCardDetails
     const infoResponse = await queryCardInfo();
-    setCardInfo(infoResponse.data);
+    if (infoResponse.data) {
+      setCardInfo(infoResponse.data);
+    } else {
+      showError(infoResponse.message, history.goBack);
+    }
     dispatch(setWaittingVisible(false));
   }, []);
 
@@ -75,7 +81,7 @@ const C007001 = () => {
           <Accordion className="mb-4" title="注意事項" onClick={lazyLoadTerms}>
             { terms ? parse(terms) : <Loading space="both" isCentered /> }
           </Accordion>
-          <FEIBButton onClick={() => history.push('/R00400', { accountNo: 'todo accountNo' })}>繳費</FEIBButton>
+          <FEIBButton onClick={() => startFunc('/R00400', { accountNo: location.state.cardNo })}>繳費</FEIBButton>
         </PageWrapper>
       </Main>
     </Layout>
