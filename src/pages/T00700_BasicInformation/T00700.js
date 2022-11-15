@@ -44,11 +44,15 @@ const T00700 = () => {
     const { data, message } = await getBasicInformation();
     if (data) {
       setOriginPersonalData(data);
-
+      const {
+        email, mobile, addr, county, city,
+      } = data;
       reset({
-        ...data,
-        county: data.county.trim(),
-        city: data.city.trim(),
+        email,
+        mobile,
+        addr,
+        county: county.trim(),
+        city: city.trim(),
       });
     } else {
       showError(message, closeFunc);
@@ -59,28 +63,15 @@ const T00700 = () => {
 
   // 設定結果彈窗
   const setResultDialog = (response) => {
-    // 設定成功時，reponse 應該包含 addr city county email  mobile zipCode
-    // TODO 尚未確定 modifyBasicInformation API 的回傳格式為何？
-    const result = 'addr' in response
-      && 'city' in response
-      && 'county' in response
-      && 'email' in response
-      && 'mobile' in response
-      && 'zipCode' in response;
-    let errorCode = '';
-    let errorDesc = '';
-    if (!result) {
-      errorCode = response.code;
-      errorDesc = response.message;
-    }
+    const result = response.code === '0000';
 
     showAnimationModal({
       isSuccess: result,
       successTitle: '設定成功',
       successDesc: '基本資料變更成功',
       errorTitle: '設定失敗',
-      errorCode,
-      errorDesc,
+      errorCode: response.code,
+      errorDesc: response.message,
       onClose: result ? closeFunc : () => reset({ ...originPersonalData }),
     });
   };
@@ -88,11 +79,10 @@ const T00700 = () => {
   // caculateActionCode
   const getActionCode = (values) => {
     const {
-      county, city, zipCode, addr, email, mobile,
+      county, city, addr, email, mobile,
     } = values;
     const addressCode = county === originPersonalData.county
       && city === originPersonalData.city
-      // && zipCode === originPersonalData.zipCode
       && addr === originPersonalData.addr
       ? 0
       : 1;
@@ -103,17 +93,9 @@ const T00700 = () => {
 
   // 更新個人資料
   const modifyPersonalData = async (values) => {
-    const {
-      county, city, zipCode, addr, email, mobile,
-    } = values;
+    // TODO 尚未確定 modifyBasicInformation API 的回傳格式為何？
     const param = {
-      county,
-      city,
-      // 變動後的zipCode無法得知 ，不應該提供才對
-      // zipCode,
-      addr,
-      email,
-      mobile,
+      ...values,
       actionCode: getActionCode(values),
     };
     dispatch(setWaittingVisible(true));
@@ -147,8 +129,6 @@ const T00700 = () => {
   useEffect(() => {
     fetchCountyList();
   }, []);
-
-  // 當使用者改變 "county" 值時，需要將 "city" 值清空
 
   return (
     <Layout title="基本資料變更">
