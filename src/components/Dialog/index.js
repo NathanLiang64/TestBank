@@ -20,7 +20,7 @@ const Dialog = ({
   action,
   isOpen,
   onClose,
-  showCloseButton,
+  showCloseButton = true,
 }) => (
   <DialogWrapper
     open={isOpen}

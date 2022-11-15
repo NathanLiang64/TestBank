@@ -21,11 +21,14 @@ export const closeDrawer = () => {
  */
 export const showPrompt = async (message, action) => {
   const promise = new Promise((resolve) => {
-    store.dispatch(setModal({
-      title: '溫馨提醒',
-      content: message,
-      onOk: action ?? closePopup,
-    }));
+    store.dispatch(
+      setModal({
+        title: '溫馨提醒',
+        content: message,
+        onOk: action ?? closePopup,
+        showCloseButton: true,
+      }),
+    );
     store.dispatch(setResult((value) => resolve(value)));
     store.dispatch(setModalVisible(true));
   });
@@ -42,11 +45,14 @@ export const showPrompt = async (message, action) => {
  */
 export const showError = async (message, action) => {
   const promise = new Promise((resolve) => {
-    store.dispatch(setModal({
-      title: '重要訊息',
-      content: message,
-      onOk: action ?? closePopup,
-    }));
+    store.dispatch(
+      setModal({
+        title: '重要訊息',
+        content: message,
+        onOk: action ?? closePopup,
+        showCloseButton: true,
+      }),
+    );
     store.dispatch(setResult((value) => resolve(value)));
     store.dispatch(setModalVisible(true));
   });
@@ -63,11 +69,14 @@ export const showError = async (message, action) => {
  */
 export const showInfo = async (message, action) => {
   const promise = new Promise((resolve) => {
-    store.dispatch(setModal({
-      title: 'Bankee 通知',
-      content: message,
-      onOk: action ?? closePopup,
-    }));
+    store.dispatch(
+      setModal({
+        title: 'Bankee 通知',
+        content: message,
+        onOk: action ?? closePopup,
+        showCloseButton: true,
+      }),
+    );
     store.dispatch(setResult((value) => resolve(value)));
     store.dispatch(setModalVisible(true));
   });

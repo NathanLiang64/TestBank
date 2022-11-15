@@ -22,6 +22,7 @@ import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import { TextInputField } from 'components/Fields';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { closeFunc } from 'utilities/AppScriptProxy';
+import EmptyData from 'components/EmptyData';
 import { updateTxnNotes, getTransactions } from '../api';
 
 // timeFormatter
@@ -175,7 +176,13 @@ const DetailCard = ({
 
   // 信用卡總明細列表
   const renderFunctionList = () => {
-    if (!transactions.length) return null;
+    if (!transactions.length) {
+      return (
+        <div style={{marginTop: '10rem'}}>
+          <EmptyData content="查無信用卡交易明細" />
+        </div>
+      );
+    }
     const arr = transactions.slice(0, 3); // 至多只輸出三筆資料
 
     return (
