@@ -11,12 +11,16 @@ import DebitCard from 'components/DebitCard/DebitCard';
 import InformationTape from 'components/InformationTape';
 import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
 import DownloadIcon from 'assets/images/icons/downloadIcon.svg';
+import { loadFuncParams } from 'utilities/AppScriptProxy';
 
 /* Styles */
 import EmptyData from 'components/EmptyData';
 import LoanInterestWrapper from './loanInterest.style';
 
-const LoanInterest = (props) => {
+/**
+ * L00300 貸款 繳款紀錄
+ */
+const LoanInterest = () => {
   const history = useHistory();
 
   const [cardData, setCardData] = useState({});
@@ -97,9 +101,11 @@ const LoanInterest = (props) => {
     );
   };
 
-  useEffect(() => {
-    if (props?.location?.state?.card) {
-      setCardData(props?.location?.state?.card);
+  useEffect(async () => {
+    const startParams = await loadFuncParams();
+
+    if (startParams) {
+      setCardData(startParams.card);
     }
   }, []);
 
@@ -111,7 +117,7 @@ const LoanInterest = (props) => {
   }, [cardData]);
 
   return (
-    <Layout title="繳款紀錄查詢" goBackFunc={() => history.goBack()}>
+    <Layout title="繳款紀錄查詢">
       <LoanInterestWrapper>
         <div className="cardArea">
           <DebitCard
