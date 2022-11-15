@@ -3,6 +3,8 @@ import { useHistory, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
 import parse from 'html-react-parser';
 import uuid from 'react-uuid';
+import { startFunc } from 'utilities/AppScriptProxy';
+import { FuncID } from 'utilities/FuncID';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { FEIBButton } from 'components/elements';
@@ -89,7 +91,7 @@ const Page = () => {
           <Accordion className="mb-4" title="注意事項" onClick={lazyLoadTerms}>
             { terms ? parse(terms) : <Loading space="both" isCentered /> }
           </Accordion>
-          <FEIBButton onClick={() => history.push('/R00400', { accountNo: details.accountNo })}>繳費</FEIBButton>
+          <FEIBButton onClick={() => startFunc(FuncID.R00400, { accountNo: details.accountNo })}>繳費</FEIBButton>
         </PageWrapper>
       </Main>
     </Layout>
