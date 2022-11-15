@@ -12,7 +12,7 @@ import mockCreditCardTerms from './mockData/mockCreditCardTerms';
 /**
  * 取得信用卡繳費單
    @param {
-     "period": 期別 (ex: 202207) (僅 queryCardBill 需要)
+     "period": 期別 (ex: 202207) (queryCardBill, getBillDetail 需要)
    }
    @returns {
      "month": 本期月份。 // period末兩位數
@@ -53,7 +53,7 @@ export const getBills = async (param) => {
    @returns {
      "txnDate": "20220425", // queryCardBillRt.detail[n].txDate
      "description": "全家便利商店", // queryCardBillRt.detail[n].desc
-     "targetAcct": TODO 或許這個是卡號 // queryCardBillRt.detail[n].cardNo
+     "targetAcct": 卡號 // queryCardBillRt.detail[n].cardNo
      "amount": 36000, // queryCardBillRt.detail[n].amount
      "currency": "NTD"
    }

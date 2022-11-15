@@ -11,7 +11,7 @@ import CreditCard from 'components/CreditCard';
 
 import { CreditCardIcon5, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { showCustomDrawer, showError } from 'utilities/MessageModal';
+import { showCustomDrawer, showError, showPrompt } from 'utilities/MessageModal';
 
 import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
@@ -35,8 +35,8 @@ const CreditCardPage = () => {
     // TODO : getCards 應取代 getCreditCards，但目前 getCards 回傳資料不完全
     const response = await getCreditCards();
     const cardResponse = await getCards(); // 若沒有信用卡資訊時，code 還會是0000嗎？
-    if (cardResponse.data.length) {
-      showError('您尚未持有Bankee信用卡', closeFunc);
+    if (!cardResponse.data || cardResponse.data.card.length === 0) {
+      showPrompt('您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。', closeFunc);
     }
     setPlans(response);
     setCards(cardResponse.data);

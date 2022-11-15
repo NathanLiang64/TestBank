@@ -10,6 +10,9 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { currencySymbolGenerator } from 'utilities/Generator';
 
 import { getThisMonth } from 'utilities/MonthGenerator';
+import { getCards } from 'pages/C00700_CreditCard/api';
+import { showPrompt } from 'utilities/MessageModal';
+import { closeFunc } from 'utilities/AppScriptProxy';
 import { getBills } from './api';
 import Reminder from './components/Reminder';
 import Transactions from './components/Transactions';
@@ -30,11 +33,16 @@ const Page = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    let accountNo;
-    if (location.state && ('accountNo' in location.state)) accountNo = location.state.accountNo;
+    // let accountNo;
+    // if (location.state && ('accountNo' in location.state)) accountNo = location.state.accountNo;
 
     // const response = await getBills(getThisMonth()); // TODO: 抓系統時間（YYYYMM）作為此處參數傳入
-    const response = await getBills('202207'); // 測試時使用202207
+    const response = await getBills('202207'); // DEBUG: 測試時使用202207
+
+    // 無資料則跳出此功能
+    if (response.amount === null) {
+      showPrompt('您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。', closeFunc);
+    }
 
     setBills(response);
     dispatch(setWaittingVisible(false));
@@ -42,7 +50,7 @@ const Page = () => {
 
   const handleGoBack = () => {
     if (isExpanded) setIsExpanded(false);
-    else history.goBack();
+    else closeFunc();
   };
 
   return (
