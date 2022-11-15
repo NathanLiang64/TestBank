@@ -30,6 +30,8 @@ export const useLocationOptions = (watchedCountyName) => {
   }, [watchedCountyName, locationLists]);
 
   useEffect(async () => {
+    // TODO 可能需要加入 dispatch(setWaittingVisible(true/false))
+
     const { code, data } = await getCountyList({});
     if (code === '0000') {
       setLocationLists(data);

@@ -30,9 +30,9 @@ const creditFormatter = (account) => (
 
 const AccountCard = ({
   type = 'M',
-  cardName = 'Title',
-  accountNo = '2224449999111133',
-  balance = '200000',
+  cardName,
+  accountNo,
+  balance,
   color,
   dollarSign = 'NTD',
   annotation,
@@ -59,7 +59,8 @@ const AccountCard = ({
         <div className="justify-between items-center">
           <div>{annotation}</div>
           <div className="balance">
-            {`${currencySymbolGenerator(dollarSign, Math.abs(balance))}`}
+
+            {balance ? `${currencySymbolGenerator(dollarSign, Math.abs(balance))}` : '-'}
           </div>
         </div>
         <div className="w-full">{functionList}</div>
