@@ -7,13 +7,13 @@ import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
 import SwiperLayout from 'components/SwiperLayout';
 
-import { setWaittingVisible, setDrawer, setDrawerVisible } from 'stores/reducers/ModalReducer';
-import { showAnimationModal, showError } from 'utilities/MessageModal';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { showAnimationModal, showCustomDrawer, showError } from 'utilities/MessageModal';
 import {
   AccountIcon11, AccountIcon12, CircleIcon, TransactionIcon1,
 } from 'assets/images/icons';
-import { loadFuncParams, closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
-
+import { loadFuncParams, closeFunc, transactionAuth, startFunc } from 'utilities/AppScriptProxy';
+import {AuthCode} from 'utilities/TxnAuthCode';
 import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
 import EmptySlide from './components/EmptySlide';
 import EmptyPlan from './components/EmptyPlan';
@@ -79,20 +79,11 @@ const DepositPlanPage = () => {
     }
   };
 
-  const handleGoBackClick = () => {
-    const shouldBlockGoBack = document.querySelector('.blockGoBack');
-    if (shouldBlockGoBack) {
-      ConfirmNotToCloseDepositPlan();
-    } else {
-      closeFunc();
-    }
-  };
-
   const handleTerminatePlan = (plan) => {
     const confirmTermination = async () => {
-      const auth = await transactionAuth(0x30); // 需通過 2FA 或 網銀密碼 驗證才能關閉計劃。
-      if (!auth.result) {
-        await showError(auth.message);
+      const {result, message} = await transactionAuth(AuthCode.C00600); // 需通過 2FA 或 網銀密碼 驗證才能關閉計劃。
+      if (!result) {
+        await showError(message);
         return;
       }
 
@@ -110,6 +101,7 @@ const DepositPlanPage = () => {
         });
       }
     };
+
     PromptShouldCloseDepositPlanOrNot({ endDate: plan.endDate, onOk: () => confirmTermination()});
   };
 
@@ -120,7 +112,7 @@ const DepositPlanPage = () => {
       { icon: <AccountIcon12 />, title: '結束本計畫', onClick: handleTerminatePlan },
     ];
     if (plan.progInfo.type === 0) {
-      list.push({ icon: <TransactionIcon1 />, title: '轉帳', onClick: () => history.push('/D00100') });
+      list.push({ icon: <TransactionIcon1 />, title: '轉帳', onClick: () => startFunc('/D00100') });
     }
     const options = (
       <ul>
@@ -134,8 +126,8 @@ const DepositPlanPage = () => {
         ))}
       </ul>
     );
-    dispatch(setDrawer({ title: '', content: options, shouldAutoClose: true }));
-    dispatch(setDrawerVisible(true));
+
+    showCustomDrawer({content: options, shouldAutoClose: true});
   };
 
   const handleEditClick = (plan) => {
@@ -241,6 +233,15 @@ const DepositPlanPage = () => {
       });
     }
     swiper.slideTo(activeIndex, 0);
+  };
+
+  const handleGoBackClick = () => {
+    const shouldBlockGoBack = document.querySelector('.blockGoBack');
+    if (shouldBlockGoBack) {
+      ConfirmNotToCloseDepositPlan();
+    } else {
+      closeFunc();
+    }
   };
 
   /**

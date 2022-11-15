@@ -9,8 +9,8 @@ import Main from 'components/Layout';
 import CreditCard from 'components/CreditCard';
 
 import { CreditCardIcon5, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
-import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { showCustomDrawer, showError, showPrompt } from 'utilities/MessageModal';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { showCustomDrawer, showPrompt } from 'utilities/MessageModal';
 
 import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
@@ -24,6 +24,7 @@ import SwiperCreditCard from './C00700.style';
 const CreditCardPage = () => {
   const history = useHistory();
   const [cards, setCards] = useState([]);
+  const [usedCardLimit, setUsedCardLimit] = useState(0);
   const dispatch = useDispatch();
   /**
    * 頁面啟動，初始化
@@ -31,11 +32,12 @@ const CreditCardPage = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
     const cardResponse = await getCards(); // 若沒有信用卡資訊時，code 還會是0000嗎？
-    if (!cardResponse.data || cardResponse.data.card.length === 0) {
-      showPrompt('您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。', closeFunc);
+    if (!cardResponse.data || cardResponse.data.cards.length === 0) {
+      await showPrompt('您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。', closeFunc);
     }
 
     setCards(cardResponse.data.cards);
+    setUsedCardLimit(cardResponse.data.usedCardLimit);
     dispatch(setWaittingVisible(false));
   }, []);
 
@@ -82,7 +84,6 @@ const CreditCardPage = () => {
                 } else {
                   history.push(item.fid, item?.param);
                 }
-                dispatch(setDrawerVisible(false));
               }}
             >
               {item.icon}
@@ -92,12 +93,13 @@ const CreditCardPage = () => {
         ))}
       </ul>
     );
-    showCustomDrawer({ content: options });
+    showCustomDrawer({ content: options, shouldAutoClose: true });
   };
 
   // 信用卡卡號(產生上方內容的 slides)
   const renderSlides = () => {
     if (!cards.length) return null;
+
     return (
       cards.map((card) => (
         <SwiperCreditCard>
@@ -105,7 +107,7 @@ const CreditCardPage = () => {
             key={card.cardNo}
             cardName={card.isBankeeCard === 'Y' ? 'Bankee信用卡' : '所有信用卡'}
             accountNo={card.isBankeeCard === 'Y' && card.cardNo}
-            balance={card.usedCardLimit}
+            balance={usedCardLimit}
             color="green"
             annotation="已使用額度"
             onMoreClicked={() => handleMoreClick(card)}

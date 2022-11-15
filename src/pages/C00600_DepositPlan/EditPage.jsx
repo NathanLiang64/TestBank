@@ -121,7 +121,7 @@ const DepositPlanEditPage = () => {
   }
 
   const {program, subAccounts, hasReachedMaxSubAccounts} = location.state;
-  console.log('program', program);
+
   return (
     <Layout title="新增存錢計畫" hasClearHeader goBackFunc={() => history.goBack()}>
       <MainScrollWrapper>

@@ -46,6 +46,7 @@ export const PromptShouldCloseDepositPlanOrNot = ({ endDate, onOk }) => {
     cancelContent: '我再想想',
     onOk,
     noDismiss: true,
+    showCloseButton: false,
   });
 };
 
@@ -55,6 +56,7 @@ export const ConfirmDepositPlanHasBeenClosed = ({ email, onOk }) => {
     message: `本存錢計畫已結束，存錢計畫相關資訊及存錢歷程將匯出至留存信箱${email}`,
     okContent: '確認',
     onOk,
+    showCloseButton: false,
   });
 };
 

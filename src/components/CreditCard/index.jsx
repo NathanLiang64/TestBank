@@ -60,7 +60,7 @@ const AccountCard = ({
           <div>{annotation}</div>
           <div className="balance">
 
-            {balance ? `${currencySymbolGenerator(dollarSign, Math.abs(balance))}` : '-'}
+            {`${currencySymbolGenerator(dollarSign, Math.abs(balance))}`}
           </div>
         </div>
         <div className="w-full">{functionList}</div>
