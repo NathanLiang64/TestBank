@@ -5,11 +5,11 @@ const ReminderWrapper = styled.div`
   // display: -webkit-flex;
   display: grid;
   grid-auto-flow: column;
-  color: ${({ theme }) => theme.colors.text.light};
   margin-inline: auto;
   padding-inline: 4rem;
-  gap: 3rem;
+  gap: 2rem;
   min-height: 4.6rem;
+  max-width: 100%;
 
   .auto {
     flex: 1 1 auto;
@@ -20,6 +20,7 @@ const ReminderWrapper = styled.div`
       margin: 0;
       align-text: start;
       white-space: nowrap;
+      color: ${({ theme }) => theme.colors.text.light};
     }
   }
 

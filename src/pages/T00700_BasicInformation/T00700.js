@@ -13,7 +13,7 @@ import {FEIBInputLabel, FEIBButton } from 'components/elements';
 import { DropdownField, TextInputField } from 'components/Fields';
 
 /* Styles */
-import { showAnimationModal } from 'utilities/MessageModal';
+import { showAnimationModal, showError } from 'utilities/MessageModal';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { useLocationOptions } from 'hooks/useLocationOptions';
 import BasicInformationWrapper from './T00700.style';
@@ -22,7 +22,7 @@ import { validationSchema } from './validationSchema';
 const T00700 = () => {
   const dispatch = useDispatch();
   const {
-    handleSubmit, control, reset, watch, getValues,
+    handleSubmit, control, reset, watch,
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
@@ -34,24 +34,24 @@ const T00700 = () => {
     },
   });
 
-  const watchedCountyName = watch('county');
-  const {countyOptions, districtOptions} = useLocationOptions(watchedCountyName);
-  const [originPersonalData, setOriginPersonalData] = useState('');
+  const watchedValues = watch();
+  const { countyOptions, districtOptions } = useLocationOptions(watchedValues.county); // 取得縣市/鄉鎮區列表
+  const [originPersonalData, setOriginPersonalData] = useState();
 
-  // 取得縣市列表
   const fetchCountyList = async () => {
     dispatch(setWaittingVisible(true));
     // 取得個人資料，並匯入表單
-    const { code, data, message } = await getBasicInformation();
-    if (code === '0000') {
+    const { data, message } = await getBasicInformation();
+    if (data) {
       setOriginPersonalData(data);
+
       reset({
         ...data,
         county: data.county.trim(),
         city: data.city.trim(),
       });
     } else {
-      console.log(code, message);
+      showError(message, closeFunc);
     }
 
     dispatch(setWaittingVisible(false));
@@ -139,17 +139,16 @@ const T00700 = () => {
     }
   };
 
+  const resetOnCountyChange = () => {
+    reset({ ...watchedValues, city: '' });
+  };
+
   // 取得初始資料
   useEffect(() => {
     fetchCountyList();
   }, []);
 
   // 當使用者改變 "county" 值時，需要將 "city" 值清空
-  useEffect(() => {
-    if (watchedCountyName !== originPersonalData.county) {
-      reset({...getValues(), city: ''});
-    }
-  }, [watchedCountyName]);
 
   return (
     <Layout title="基本資料變更">
@@ -176,12 +175,13 @@ const T00700 = () => {
                   placeholder="請選擇縣市"
                   control={control}
                   options={countyOptions}
+                  resetOnChnage={resetOnCountyChange}
                 />
               </div>
               <div>
                 <DropdownField
                   name="city"
-                  placeholder="請選擇縣市"
+                  placeholder="請選擇鄉鎮市區"
                   control={control}
                   options={districtOptions}
                 />

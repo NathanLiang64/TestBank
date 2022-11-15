@@ -33,11 +33,12 @@ const Reminder = ({ bills }) => {
     ].join('\r\n');
     const blob = new Blob([context], { type: 'text/calendar;charset=utf-8' });
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.setAttribute('download', '提醒繳款.ics');
-    document.body.appendChild(link);
+    link.href = window.URL.createObjectURL(blob);
+    link.download = '提醒繳款.ics';
+    // link.setAttribute('download', '提醒繳款.ics');
+    // document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
+    // document.body.removeChild(link);
   };
 
   const handleCalendarClick = async () => {

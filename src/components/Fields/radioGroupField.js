@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import { useController } from 'react-hook-form';
 import {
@@ -19,7 +18,7 @@ export const RadioGroupField = ({
   const { field, fieldState } = useController(controlProps);
 
   const onChangeHandler = (selectedValue) => {
-    resetOnChange();
+    if (resetOnChange && typeof resetOnChange === 'function') resetOnChange();
     field.onChange(selectedValue);
   };
 
@@ -34,12 +33,11 @@ export const RadioGroupField = ({
         value={field.value}
         disabled={disabled}
       >
-        {options.map(({ label, value, disabledOption }) => (
+        {options.map(({ label, value }) => (
           <FEIBRadioLabel
             control={<FEIBRadio />}
             label={label}
             value={value.toString()}
-            // disabled={disabledOption}
           />
         ))}
       </RadioGroup>

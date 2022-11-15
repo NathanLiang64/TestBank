@@ -35,27 +35,20 @@ import { validationSchema } from './validationSchema';
 * ==================== DetailCard 組件說明 ====================
 * 信用卡交易明細組件
 * ==================== DetailCard 可傳參數 ====================
-* 1. type -> 卡片種類
-* 2. transactions -> 交易明細內容
-* 3. bonus -> 會員等級/回饋/回饋試算
-* 4. onClick -> 更多明細
-* 5. accountNo -> 現金回饋
+* 1. card -> 卡片資料
+* 2. onClick -> 更多明細
 * */
 
 const DetailCard = ({
-  type,
-  details,
-  bonus,
-  onClick,
-  account,
+  go2MoreDetails,
+  card,
 }) => {
   // 暫存明細資料
   const [transactions, setTransactions] = useState([]);
   const dispatch = useDispatch();
   const history = useHistory();
-  // eslint-disable-next-line no-unused-vars
   const {
-    control, handleSubmit, reset, getValues, watch,
+    control, handleSubmit, reset, getValues,
   } = useForm({
     defaultValues: { notes: {} },
     resolver: yupResolver(validationSchema),
@@ -71,8 +64,8 @@ const DetailCard = ({
     // 查詢當天至60天前的資料
     const dateBeg = stringDateCodeFormatter(new Date(today - 86400 * 60 * 1000));
     const res = await getTransactions({
-      // TODO 修改掉 hardcode cardNo
-      cardNo: '5232870002109002',
+      // cardNo: '5232870002109002', // 這個帳號有 transaction 資料
+      cardNo: card.cardNo,
       dateBeg,
       dateEnd,
     });
@@ -114,23 +107,30 @@ const DetailCard = ({
     });
   };
 
-  const bonusInfo = () => ([
+  const bonusInfo = () => [
     {
       label: '會員等級',
-      value: `${bonus.level}`,
+      value: `${card.memberLevel}`,
       iconType: 'Arrow',
-      onClick: () => { showDialog('會員等級', levelInfo); },
+      onClick: () => {
+        showDialog('會員等級', levelInfo);
+      },
     },
     {
       label: '國內/外回饋',
-      value: `${bonus.rewardLocalRate}/${bonus.rewardForeignRate}%`,
+      value: `${card.rewardsRateDomestic}/${card.rewardsRateOverseas}%`,
       iconType: 'Arrow',
-      onClick: () => { showDialog('國內外回饋', backInfo); },
+      onClick: () => {
+        showDialog('國內外回饋', backInfo);
+      },
     },
     {
-      label: '回饋試算', value: `${currencySymbolGenerator(bonus.currency)}${bonus.rewards}`, iconType: 'Arrow', onClick: () => history.push('/C007002', { accountNo: account }),
+      label: '回饋試算',
+      value: `${currencySymbolGenerator('TWD')}${card.rewardsAmount}`,
+      iconType: 'Arrow',
+      onClick: () => history.push('/C007002', { accountNo: card.cardNo }),
     },
-  ]);
+  ];
 
   //  提交memoText
   const showMemoEditDialog = ({
@@ -175,8 +175,9 @@ const DetailCard = ({
 
   // 信用卡總明細列表
   const renderFunctionList = () => {
+    if (!transactions.length) return null;
     const arr = transactions.slice(0, 3); // 至多只輸出三筆資料
-    if (!arr.length) return null;
+
     return (
       <div style={{paddingTop: '2.5rem'}}>
         {arr.map((item, index) => (
@@ -187,7 +188,7 @@ const DetailCard = ({
               </h4>
               <p>
                 {item.txDate}
-                {type === 'all' && ` | 卡-${creditNumberFormat(item.cardNo)}`}
+                {card.isBankeeCard === 'N' && ` | 卡-${creditNumberFormat(item.cardNo)}`}
                 {/* 原資料沒有 targetAcct 需要透過上層props 提供 term 來判斷 */}
               </p>
             </div>
@@ -216,14 +217,16 @@ const DetailCard = ({
   return (
     <>
       <DetailDialogContentWrapper>
-        { !!bonus && (
-        <div className="panel">
-          <ThreeColumnInfoPanel content={bonusInfo()} />
-        </div>
+        {card.isBankeeCard === 'Y' && (
+          <div className="panel">
+            <ThreeColumnInfoPanel content={bonusInfo()} />
+          </div>
         )}
       </DetailDialogContentWrapper>
       {renderFunctionList()}
-      {transactions.length > 3 && <ArrowNextButton onClick={onClick}>更多明細</ArrowNextButton>}
+      {transactions.length > 3 && (
+        <ArrowNextButton onClick={go2MoreDetails}>更多明細</ArrowNextButton>
+      )}
       {/* <ArrowNextButton onClick={onClick}>更多明細</ArrowNextButton> */}
     </>
   );
