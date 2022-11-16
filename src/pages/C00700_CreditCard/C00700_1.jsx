@@ -17,9 +17,10 @@ import CreditCard from 'components/CreditCard';
 import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import { FuncID } from 'utilities/FuncID';
+
 import { getCreditCardTerms, queryCardInfo } from './api';
-import PageWrapper from './Details.style';
 import { getCardListing, getCreditListing } from './utils';
+import { InfoPageWrapper } from './C00700.style';
 
 /**
  * C00700_1 信用卡 資訊
@@ -52,13 +53,13 @@ const C007001 = () => {
   return (
     <Layout title="信用卡資訊" goBackFunc={() => history.goBack()}>
       <Main>
-        <PageWrapper>
+        <InfoPageWrapper>
           {!!cardInfo && (
           <>
             <div>
               <div>
                 <CreditCard
-                  cardName={location.state.isBankeeCard ? 'Bankee信用卡' : '所有信用卡'}
+                  cardName={location.state.isBankeeCard === 'Y' ? 'Bankee信用卡' : '所有信用卡'}
                   accountNo={location.state.cardNo}
                   color="green"
                   annotation="已使用額度"
@@ -82,7 +83,7 @@ const C007001 = () => {
             { terms ? parse(terms) : <Loading space="both" isCentered /> }
           </Accordion>
           <FEIBButton onClick={() => startFunc(FuncID.R00400, { accountNo: location.state.cardNo })}>繳費</FEIBButton>
-        </PageWrapper>
+        </InfoPageWrapper>
       </Main>
     </Layout>
   );
