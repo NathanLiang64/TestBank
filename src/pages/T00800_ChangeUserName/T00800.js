@@ -19,7 +19,8 @@ import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialo
 import { accountValidation, newAccountValidation, confirmAccountValidation } from 'utilities/validation';
 
 /* Styles */
-import ChangeUserNameWrapper from './changeUserName.style';
+import { AuthCode } from 'utilities/TxnAuthCode';
+import ChangeUserNameWrapper from './T00800.style';
 
 const ChangeUserName = () => {
   const dispatch = useDispatch();
@@ -56,8 +57,7 @@ const ChangeUserName = () => {
 
   // 呼叫變更使用者代號 API
   const handleChangeUserName = async ({userName, newUserName, newUserNameCheck}) => {
-    const authCode = 0x28;
-    const jsRs = await transactionAuth(authCode);
+    const jsRs = await transactionAuth(AuthCode.T00800);
     if (jsRs.result) {
       const param = {
         userName: e2ee(userName),

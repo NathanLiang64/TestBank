@@ -71,7 +71,7 @@ const T00600 = lazy(() => import('pages/T00600_MobileTransfer'));
 const T006001 = lazy(() => import('pages/T00600_MobileTransfer/mobileTransfer_1'));
 const T006002 = lazy(() => import('pages/T00600_MobileTransfer/mobileTransfer_2'));
 const T00700 = lazy(() => import('pages/T00700_BasicInformation/T00700'));
-const T00800 = lazy(() => import('pages/T00800_ChangeUserName'));
+const T00800 = lazy(() => import('pages/T00800_ChangeUserName/T00800'));
 const T00900 = lazy(() => import('pages/T00900_PwdModify'));
 const S00100 = lazy(() => import('pages/S00100_Favorite/S00100'));
 
