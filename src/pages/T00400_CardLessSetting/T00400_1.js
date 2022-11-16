@@ -1,7 +1,7 @@
 import { useHistory } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 import { showAnimationModal } from 'utilities/MessageModal';
 
 /* Elements */
@@ -10,6 +10,9 @@ import Accordion from 'components/Accordion';
 import { FEIBButton } from 'components/elements';
 import { PasswordInputField } from 'components/Fields';
 
+import { AuthCode } from 'utilities/TxnAuthCode';
+import { useDispatch } from 'react-redux';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { activate } from './api';
 
 /* Styles */
@@ -30,15 +33,17 @@ const CardLessATM = () => {
   });
 
   const history = useHistory();
+  const dispatch = useDispatch();
 
   // 開通無卡提款與設定無卡提款密碼
   const activateWithdrawAndSetPwd = async (param) => {
-    const authCode = 0x20;
-    const jsRs = await transactionAuth(authCode);
+    const jsRs = await transactionAuth(AuthCode.T00400);
     if (jsRs.result) {
-      switchLoading(true);
+      // switchLoading(true);
+      dispatch(setWaittingVisible(true));
       const activateResponse = await activate(param);
-      switchLoading(false);
+      dispatch(setWaittingVisible(false));
+      // switchLoading(false);
       // 開通成功
       showAnimationModal({
         isSuccess: activateResponse.chgPwMessage === '',

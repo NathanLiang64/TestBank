@@ -8,6 +8,8 @@ import { EditIcon } from 'assets/images/icons';
 
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { AuthCode } from 'utilities/TxnAuthCode';
+import { FuncID } from 'utilities/FuncID';
 import CardLessSettingWrapper from './T00400.style';
 
 import { getStatus } from './api';
@@ -21,7 +23,7 @@ const CardLessSetting = () => {
   // 點擊 switch 檢查裝置綁定狀態
   const handleSwitchClick = async () => {
     if (!active) {
-      const authCode = 0x20;
+      const authCode = AuthCode.T00400;
       const jsRs = await transactionAuth(authCode);
 
       // 檢查成功跳轉設定無卡提款密碼頁
@@ -33,7 +35,7 @@ const CardLessSetting = () => {
 
   // 跳轉變更無卡提款密碼變更
   const toChangePwd = () => {
-    startFunc('D00400');
+    startFunc(FuncID.D00400);
   };
 
   // 檢查無卡提款狀態
