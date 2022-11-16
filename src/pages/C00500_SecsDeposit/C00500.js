@@ -19,6 +19,7 @@ import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
 import { setLocalData } from 'utilities/Generator';
 import { AccountListCacheName, getAccountExtraInfo, loadAccountsList } from 'pages/D00100_NtdTransfer/api';
+import { FuncID } from 'utilities/FuncID';
 import {
   getTransactions,
   downloadDepositBookCover,
@@ -46,7 +47,7 @@ const C00500 = () => {
 
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
-    loadAccountsList('S', setAccounts); // S=台幣交割帳戶
+    await loadAccountsList('S', setAccounts); // S=台幣交割帳戶
     const startParams = await loadFuncParams(); // Function Controller 提供的參數
     // 取得 Function Controller 提供的 keepData(model)
 
@@ -167,11 +168,11 @@ const C00500 = () => {
         };
         break;
 
-      case 'D00100': // 轉帳
+      case FuncID.D00100: // 轉帳
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case 'E00100': // 換匯
+      case FuncID.E00100: // 換匯
         params = { transOut: selectedAccount.accountNo };
         break;
 
@@ -193,10 +194,10 @@ const C00500 = () => {
   /**
    * 頁面輸出
    */
+
   console.log('accounts', accounts);
-  console.log('selectedAccount', selectedAccount);
   return (
-    <Layout title="台幣交割帳戶">
+    <Layout title="證券交割戶">
       <PageWrapper small>
         {selectedAccount ? (
           <>
@@ -207,11 +208,24 @@ const C00500 = () => {
               onFunctionClick={handleFunctionClick}
               cardColor="blue"
               funcList={[
-                { fid: 'D00100', title: '轉帳', enabled: (selectedAccount.transable && selectedAccount.balance > 0) },
-                { fid: 'E00100', title: '換匯', enabled: (selectedAccount.balance > 0) },
+                {
+                  fid: 'D00100',
+                  title: '轉帳',
+                  enabled:
+                    selectedAccount.transable && selectedAccount.balance > 0,
+                },
+                {
+                  fid: 'E00100',
+                  title: '換匯',
+                  enabled: selectedAccount.balance > 0,
+                },
               ]}
               moreFuncs={[
-                { fid: 'DownloadCover', title: '存摺封面下載', icon: 'coverDownload' },
+                {
+                  fid: 'DownloadCover',
+                  title: '存摺封面下載',
+                  icon: 'coverDownload',
+                },
                 { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
               ]}
             />
