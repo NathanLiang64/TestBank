@@ -115,7 +115,8 @@ const Nav = () => {
           <div onClick={() => startFunc('T00200')}>T00200 快速登入設定</div>
           <div onClick={() => startFunc('T00600')}>T00600 手機號碼收款設定 - (施工中)</div>
           <div onClick={() => startFunc('T00700')}>T00700 基本資料變更 - (施工中)</div>
-          <div onClick={() => startFunc('cardLessSetting')}>無 function code 無卡提款設定 - (完成切版)</div>
+          <div onClick={() => startFunc('T00400')}>T00400 無卡提款設定 - (施工中)</div>
+          {/* <div onClick={() => startFunc('cardLessSetting')}>無 function code 無卡提款設定 - (完成切版)</div> */}
         </div>
 
         {/* <div className="bankee">

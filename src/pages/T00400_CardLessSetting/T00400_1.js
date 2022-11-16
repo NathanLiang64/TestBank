@@ -13,7 +13,7 @@ import { PasswordInputField } from 'components/Fields';
 import { activate } from './api';
 
 /* Styles */
-import CardLessSettingWrapper from './cardLessSetting.style';
+import CardLessSettingWrapper from './T00400.style';
 import DealContent from './dealContent';
 import { validationSchema } from './validationSchema';
 
@@ -91,10 +91,8 @@ const CardLessATM = () => {
   );
 
   return (
-    <Layout title="無卡提款設定">
-      <CardLessSettingWrapper>
-        {renderPage()}
-      </CardLessSettingWrapper>
+    <Layout title="無卡提款設定" goBackFunc={() => history.goBack()}>
+      <CardLessSettingWrapper>{renderPage()}</CardLessSettingWrapper>
     </Layout>
   );
 };

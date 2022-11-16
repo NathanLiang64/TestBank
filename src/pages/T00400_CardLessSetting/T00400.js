@@ -3,16 +3,17 @@ import { useHistory } from 'react-router';
 import Layout from 'components/Layout/Layout';
 import Accordion from 'components/Accordion';
 import { FEIBSwitch } from 'components/elements';
-import {
-  startFunc, closeFunc, transactionAuth, switchLoading,
-} from 'utilities/AppScriptProxy';
+import {startFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { EditIcon } from 'assets/images/icons';
 
-import CardLessSettingWrapper from './cardLessSetting.style';
+import { useDispatch } from 'react-redux';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import CardLessSettingWrapper from './T00400.style';
 
 import { getStatus } from './api';
 
 const CardLessSetting = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
   const [active, setActive] = useState(false);
   const [bankAccount, setBankAccount] = useState('');
@@ -37,9 +38,8 @@ const CardLessSetting = () => {
 
   // 檢查無卡提款狀態
   const getCardlessStatus = async () => {
-    switchLoading(true);
+    dispatch(setWaittingVisible(true));
     const response = await getStatus();
-    switchLoading(false);
     if (response.code === '0000') {
       const { cwdStatus, account } = response.data;
       const statusNumber = Number(cwdStatus);
@@ -48,9 +48,8 @@ const CardLessSetting = () => {
         setBankAccount(account);
         setActive(true);
       }
-    } else {
-      closeFunc();
     }
+    dispatch(setWaittingVisible(false));
   };
 
   useEffect(() => {
