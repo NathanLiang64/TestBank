@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
 import parse from 'html-react-parser';
-import uuid from 'react-uuid';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { FEIBButton } from 'components/elements';
@@ -15,8 +14,9 @@ import Loading from 'components/Loading';
 import CreditCard from 'components/CreditCard';
 
 // eslint-disable-next-line no-unused-vars
-import { startFunc } from 'utilities/AppScriptProxy';
-import { showError } from 'utilities/MessageModal';
+import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
+import { showCustomPrompt, showError } from 'utilities/MessageModal';
+import { FuncID } from 'utilities/FuncID';
 import { getCreditCardTerms, queryCardInfo } from './api';
 import PageWrapper from './Details.style';
 import { getCardListing, getCreditListing } from './utils';
@@ -33,13 +33,15 @@ const C007001 = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    // Fix API queryCardInfo API 取代 getCreditCardDetails
     const infoResponse = await queryCardInfo();
     if (infoResponse.data) {
       setCardInfo(infoResponse.data);
-    } else {
-      showError(infoResponse.message, history.goBack);
     }
+
+    if (!location.state) {
+      showCustomPrompt({message: '查無信用卡資訊', onOk: closeFunc, onClose: closeFunc});
+    }
+
     dispatch(setWaittingVisible(false));
   }, []);
 
@@ -56,10 +58,8 @@ const C007001 = () => {
             <div>
               <div>
                 <CreditCard
-                  // cardInfo 尚無該資訊
-                  cardName="等待提供 cardName "
-                  // cardName={details?.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
-                  accountNo="等待提供 accountNo "
+                  cardName={location.state.isBankeeCard ? 'Bankee信用卡' : '所有信用卡'}
+                  accountNo={location.state.cardNo}
                   color="green"
                   annotation="已使用額度"
                   balance={cardInfo?.usedCardLimit}
@@ -67,12 +67,12 @@ const C007001 = () => {
               </div>
             </div>
             <div>
-              {getCardListing(cardInfo).map((d) => <InformationList key={uuid()} {...d} />)}
+              {getCardListing(cardInfo).map((d) => <InformationList key={d.key} {...d} />)}
               <hr />
             </div>
             <div className="heading">額度資訊</div>
             <div>
-              {getCreditListing(cardInfo).map((d) => <InformationList key={uuid()} {...d} />)}
+              {getCreditListing(cardInfo).map((d) => <InformationList key={d.key} {...d} />)}
               <hr />
             </div>
           </>
@@ -81,7 +81,7 @@ const C007001 = () => {
           <Accordion className="mb-4" title="注意事項" onClick={lazyLoadTerms}>
             { terms ? parse(terms) : <Loading space="both" isCentered /> }
           </Accordion>
-          <FEIBButton onClick={() => startFunc('/R00400', { accountNo: location.state.cardNo })}>繳費</FEIBButton>
+          <FEIBButton onClick={() => startFunc(FuncID.R00400, { accountNo: location.state.cardNo })}>繳費</FEIBButton>
         </PageWrapper>
       </Main>
     </Layout>
