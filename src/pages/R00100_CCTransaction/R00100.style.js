@@ -17,7 +17,7 @@ const PageWrapper = styled.div`
     // margin-block-start: -3rem;
     // padding-block-start: 3rem;
     margin-top: -3rem;
-    padding-top: 3rem;
+    // padding-top: 3rem;
     border-top-left-radius: 3rem;
     border-top-right-radius: 3rem;
   }

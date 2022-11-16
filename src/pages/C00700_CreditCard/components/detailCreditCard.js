@@ -3,32 +3,21 @@ import { useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import { useForm } from 'react-hook-form';
-import uuid from 'react-uuid';
+import { yupResolver } from '@hookform/resolvers/yup';
 
+import { setModalVisible } from 'stores/reducers/ModalReducer';
 import {
   currencySymbolGenerator, stringDateCodeFormatter,
 } from 'utilities/Generator';
-import { setModalVisible } from 'stores/reducers/ModalReducer';
-
-/* Elements */
+import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import ArrowNextButton from 'components/ArrowNextButton';
-
-import { FEIBIconButton } from 'components/elements';
-
-import { EditIcon } from 'assets/images/icons';
-import { showCustomPrompt, showError } from 'utilities/MessageModal';
-
 import { TextInputField } from 'components/Fields';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { closeFunc } from 'utilities/AppScriptProxy';
-import EmptyData from 'components/EmptyData';
-import { updateTxnNotes, getTransactions } from '../api';
 
-// timeFormatter
-import DetailCardWrapper, { DetailDialogContentWrapper, DetailDialogErrorMsg, TableDialog} from './detailCreditCard.style';
+import { updateTxnNotes, getTransactions } from '../api';
+import { DetailDialogContentWrapper, TableDialog} from './detailCreditCard.style';
 import {
-  backInfo, levelInfo, renderBody, renderHead,
+  backInfo, levelInfo, renderBody, renderHead, renderTransactionList,
 } from '../utils';
 import { validationSchema } from './validationSchema';
 
@@ -44,10 +33,10 @@ const DetailCard = ({
   go2MoreDetails,
   card,
 }) => {
-  // 暫存明細資料
   const [transactions, setTransactions] = useState([]);
   const dispatch = useDispatch();
   const history = useHistory();
+  const isBankeeCard = card.isBankeeCard === 'Y';
   const {
     control, handleSubmit, reset, getValues,
   } = useForm({
@@ -71,18 +60,6 @@ const DetailCard = ({
       dateEnd,
     });
     setTransactions(res);
-  };
-
-  // Formatter
-  // 將日期格式由 YYYYMMDD 字串轉為 MM/DD 字串
-  const stringDateFormat = (stringDate) => {
-    if (stringDate) return `${stringDate.slice(4, 6)}/${stringDate.slice(6, 8)}`;
-    return '';
-  };
-  // 信用卡號顯示後四碼
-  const creditNumberFormat = (stringCredit) => {
-    if (stringCredit) return `${stringCredit.slice(-4)}`;
-    return '';
   };
 
   const showDialog = (title, info) => {
@@ -146,7 +123,7 @@ const DetailCard = ({
       okContent: '完成',
       onOk: handleSubmit(async ({notes}) => {
         const updatedResponse = await updateTxnNotes({
-          cardNo: '5232870002109002', // TODO 等待 getTransaction API 完成後進行 updateTxnNotes API 串接
+          // cardNo: '5232870002109002', // API Bug: getTransaction API 回傳資料沒有 cardNo
           txDate,
           txKey,
           note: notes[index],
@@ -174,49 +151,6 @@ const DetailCard = ({
     });
   };
 
-  // 信用卡總明細列表
-  const renderFunctionList = () => {
-    if (!transactions.length) {
-      return (
-        <div style={{marginTop: '10rem'}}>
-          <EmptyData content="查無信用卡交易明細" />
-        </div>
-      );
-    }
-    const arr = transactions.slice(0, 3); // 至多只輸出三筆資料
-
-    return (
-      <div style={{paddingTop: '2.5rem'}}>
-        {arr.map((item, index) => (
-          <DetailCardWrapper key={uuid()} data-index={index} noShadow id={item.txKey}>
-            <div className="description">
-              <h4>
-                {item.txName}
-              </h4>
-              <p>
-                {item.txDate}
-                {card.isBankeeCard === 'N' && ` | 卡-${creditNumberFormat(item.cardNo)}`}
-                {/* 原資料沒有 targetAcct 需要透過上層props 提供 term 來判斷 */}
-              </p>
-            </div>
-            <div className="amount">
-              {/* 刷卡金額 */}
-              <h4>
-                {currencySymbolGenerator('NTD', item.amount)}
-              </h4>
-              <div className="remark">
-                <span>{item.note}</span>
-                <FEIBIconButton $fontSize={1.6} onClick={() => showMemoEditDialog(item, index)} className="badIcon">
-                  <EditIcon />
-                </FEIBIconButton>
-              </div>
-            </div>
-          </DetailCardWrapper>
-        ))}
-      </div>
-    );
-  };
-
   useEffect(() => {
     updateTransactions();
   }, []);
@@ -224,17 +158,22 @@ const DetailCard = ({
   return (
     <>
       <DetailDialogContentWrapper>
-        {card.isBankeeCard === 'Y' && (
+        {isBankeeCard && (
           <div className="panel">
             <ThreeColumnInfoPanel content={bonusInfo()} />
           </div>
         )}
       </DetailDialogContentWrapper>
-      {renderFunctionList()}
+      {renderTransactionList({
+        transactions,
+        showAll: false,
+        isBankeeCard,
+        showMemoEditDialog,
+      })}
       {transactions.length > 3 && (
         <ArrowNextButton onClick={go2MoreDetails}>更多明細</ArrowNextButton>
       )}
-      {/* <ArrowNextButton onClick={onClick}>更多明細</ArrowNextButton> */}
+      {/* <ArrowNextButton onClick={go2MoreDetails}>更多明細</ArrowNextButton> */}
     </>
   );
 };

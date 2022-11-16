@@ -65,7 +65,7 @@ const Page = () => {
 
     if (funcParams) {
     // TODO 取得帳單資訊的 API 待確認..
-    // 是否需要帶入 accountNo 才可以取得 帳單資訊？
+    // 是否需要帶入 cardNo 才可以取得 帳單資訊？
       // const detailResponse = await getBillDetail();
       const response = await getBills({ showAccounts: true });
       setBills(response);

@@ -1,26 +1,23 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import uuid from 'react-uuid';
 
-import { currencySymbolGenerator, stringDateCodeFormatter } from 'utilities/Generator';
+import { stringDateCodeFormatter } from 'utilities/Generator';
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import { setWaittingVisible, setModalVisible} from 'stores/reducers/ModalReducer';
 import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
 import BottomAction from 'components/BottomAction';
-import EmptyData from 'components/EmptyData';
 import CreditCard from 'components/CreditCard';
-import {FEIBIconButton} from 'components/elements';
 
-import { EditIcon } from 'assets/images/icons';
 import { getTransactions, updateTxnNotes } from 'pages/C00700_CreditCard/api';
 import { TextInputField } from 'components/Fields';
-import DetailCardWrapper from 'pages/C00700_CreditCard/components/detailCreditCard.style';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from 'pages/C00700_CreditCard/components/validationSchema';
-import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
+import { closeFunc, loadFuncParams, startFunc } from 'utilities/AppScriptProxy';
+import { FuncID } from 'utilities/FuncID';
+import { renderTransactionList } from 'pages/C00700_CreditCard/utils';
 import PageWrapper, { DetailDialogErrorMsg } from './R00100.style';
 
 /**
@@ -37,11 +34,7 @@ const R00100 = () => {
   const dispatch = useDispatch();
   const [cardInfo, setCardInfo] = useState();
   const [transactions, setTransactions] = useState([]);
-
-  const creditNumberFormat = (stringCredit) => {
-    if (stringCredit) return `${stringCredit.slice(-4)}`;
-    return '';
-  };
+  const isBankeeCard = cardInfo?.isBankeeCard === 'Y';
 
   //  提交memoText
   const showMemoEditDialog = ({
@@ -58,7 +51,7 @@ const R00100 = () => {
       okContent: '完成',
       onOk: handleSubmit(async ({notes}) => {
         const updatedResponse = await updateTxnNotes({
-          cardNo: '5232870002109002', // TODO 等待 getTransaction API 完成後進行 updateTxnNotes API 串接
+          // cardNo: '5232870002109002', // API Bug: getTransaction API 回傳資料沒有 cardNo
           txDate,
           txKey,
           note: notes[index],
@@ -85,58 +78,29 @@ const R00100 = () => {
     });
   };
 
-  const renderFunctionList = () => {
-    if (!transactions.length) return null;
-    return (
-      <div style={{paddingTop: '2.5rem'}}>
-        {transactions.map((item, index) => (
-          <DetailCardWrapper key={uuid()} data-index={index} noShadow id={item.txKey}>
-            <div className="description">
-              <h4>
-                {item.txName}
-              </h4>
-              <p>
-                {item.txDate}
-                {cardInfo?.type === 'all' && ` | 卡-${creditNumberFormat(item.cardNo)}`}
-                {/* 原資料沒有 targetAcct 需要透過上層props 提供 term 來判斷 */}
-              </p>
-            </div>
-            <div className="amount">
-              {/* 刷卡金額 */}
-              <h4>
-                {currencySymbolGenerator('NTD', item.amount)}
-              </h4>
-              <div className="remark">
-                <span>{item.note}</span>
-                <FEIBIconButton $fontSize={1.6} onClick={() => showMemoEditDialog(item, index)} className="badIcon">
-                  <EditIcon />
-                </FEIBIconButton>
-              </div>
-            </div>
-          </DetailCardWrapper>
-        ))}
-      </div>
-    );
-  };
-
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
     const funcParams = await loadFuncParams();
     if (funcParams) {
+      const {card, usedCardLimit} = funcParams;
       const today = new Date();
       const dateEnd = stringDateCodeFormatter(today);
       const dateBeg = stringDateCodeFormatter(new Date(today - 86400 * 60 * 1000)); // 查詢當天至60天前的資料
       const res = await getTransactions({
-        cardNo: funcParams.accountNo,
+        cardNo: card.cardNo,
         dateBeg,
         dateEnd,
       });
+      if (res) setTransactions(res);
 
-      setTransactions(res);
-      setCardInfo(funcParams);
+      setCardInfo({...card, usedCardLimit});
     } else {
-      showError('您尚未持有信用卡', closeFunc);
+      showCustomPrompt({
+        message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
+        onOk: closeFunc,
+        onClose: closeFunc,
+      });
     }
 
     dispatch(setWaittingVisible(false));
@@ -148,30 +112,30 @@ const R00100 = () => {
         <PageWrapper>
           <div className="bg-gray">
             <CreditCard
-              key={uuid()}
-              cardName={cardInfo?.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
-              accountNo={cardInfo?.type === 'bankee' ? cardInfo.accountNo : ''}
-              // cardName={cardInfo?.isBankeeCard === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
-              // accountNo={cardInfo?.isBankeeCard === 'bankee' ? cardInfo.accountNo : ''}
-              balance={cardInfo?.creditUsed}
+              cardName={isBankeeCard ? 'Bankee信用卡' : '所有信用卡'}
+              accountNo={isBankeeCard ? cardInfo.cardNo : ''}
+              balance={cardInfo?.usedCardLimit}
               color="green"
               annotation="已使用額度"
             />
           </div>
           <div className="txn-wrapper">
-            { transactions.length ? renderFunctionList() : (
-              <div style={{ height: '20rem', marginTop: '6rem' }}>
-                <EmptyData content="" />
-              </div>
-            )}
+            {/* renderTransactionList 與 C00700 的 detailCreditCards 共用 */}
+            {renderTransactionList({
+              transactions,
+              isBankeeCard,
+              showAll: true,
+              showMemoEditDialog,
+
+            })}
           </div>
 
           <div className="note">實際請款金額以帳單為準</div>
-          {cardInfo?.type === 'bankee' ? (
+          {isBankeeCard && (
             <BottomAction position={0}>
-              <button type="button">晚點付</button>
+              <button type="button" onClick={() => startFunc(FuncID.R00200, {cardNo: cardInfo.cardNo})}>晚點付</button>
             </BottomAction>
-          ) : null}
+          ) }
         </PageWrapper>
       </MainScrollWrapper>
     </Layout>

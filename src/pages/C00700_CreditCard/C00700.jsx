@@ -44,17 +44,17 @@ const CreditCardPage = () => {
   // render 功能列表
   const functionAllList = (item) => {
     const list = [
-      { fid: '/R00200', title: '晚點付', accountNo: item.cardNo },
-      { fid: '/R00300', title: '帳單', accountNo: item.cardNo },
-      { fid: '/R00400', title: '繳費', accountNo: item.cardNo },
+      { fid: FuncID.R00200, title: '晚點付', cardNo: item.cardNo },
+      { fid: FuncID.R00300, title: '帳單', cardNo: item.cardNo },
+      { fid: FuncID.R00400, title: '繳費', cardNo: item.cardNo },
     ];
     if (item.isBankeeCard === 'N') list.splice(0, 1);
 
     return (
       <ul className="functionList">
         { list.map((func) => (
-          <li key={func.accountNo}>
-            <button type="button" onClick={() => startFunc(func.fid, { accountNo: func.accountNo })}>
+          <li key={func.fid}>
+            <button type="button" onClick={() => startFunc(func.fid, { cardNo: func.cardNo })}>
               {func.title}
             </button>
           </li>
@@ -67,7 +67,13 @@ const CreditCardPage = () => {
   const handleMoreClick = (card) => {
     const list = [
       {
-        fid: '/C007001', icon: <CreditCardIcon6 />, title: '信用卡資訊', param: card,
+        fid: '/C007001',
+        icon: <CreditCardIcon6 />,
+        title: '信用卡資訊',
+        param: {
+          isBankeeCard: card.isBankeeCard === 'Y',
+          cardNo: card.cardNo,
+        },
       },
       { fid: `/${FuncID.R00500}`, icon: <CreditCardIcon5 />, title: '自動扣繳' },
       { fid: '/C007002', icon: <CircleIcon />, title: '每月現金回饋' },
@@ -124,7 +130,7 @@ const CreditCardPage = () => {
     return (
       cards.map((card) => (
         <div key={card.cardNo}>
-          <DetailCreditCard card={card} go2MoreDetails={() => startFunc('R00100', card)} />
+          <DetailCreditCard card={card} go2MoreDetails={() => startFunc('R00100', {card, usedCardLimit})} />
         </div>
       ))
     );
