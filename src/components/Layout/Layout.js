@@ -113,6 +113,7 @@ function Layout({
         isOpen={showModal || showDialog}
         onClose={onModalClose}
         content={modalData.content}
+        showCloseButton={modalData.showCloseButton}
         action={
           <>
             {modalData.onCancel || modalData.cancelContent ? (
@@ -194,6 +195,7 @@ function Layout({
       onBack={drawerData.goBack ? onDrawerGoBack : null}
       onClose={onDrawerClose}
       content={drawerData.content}
+      noScrollable={drawerData.noScrollable}
       shouldAutoClose={drawerData.shouldAutoClose} // TODO 確認必要性。
     />
   );

@@ -4,8 +4,9 @@
 /* eslint-disable brace-style */
 import forge from 'node-forge';
 import PasswordDrawer from 'components/PasswordDrawer';
-import { getTransactionAuthMode, createTransactionAuth } from 'components/PasswordDrawer/api';
+import { getTransactionAuthMode, createTransactionAuth, transactionAuthVerify } from 'components/PasswordDrawer/api';
 import { customPopup, showDrawer, showError } from './MessageModal';
+import e2ee from './E2ee';
 
 const device = {
   ios: () => !(sessionStorage.getItem('webMode') === 'true') && /iPhone|iPad|iPod/i.test(navigator.userAgent),
@@ -21,7 +22,8 @@ const device = {
  * @returns
  */
 async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) {
-  console.log(`\x1b[33mAPP-JS://${appJsName} \x1b[37m - Params = `, jsParams);
+  const jsToken = `A${Math.floor(Math.random() * 100000000).toString().padStart(8, '0')}`; // 有千萬分之一的機率重覆。
+  console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Params = `, jsParams);
 
   if (!window.AppJavaScriptCallback) {
     window.AppJavaScriptCallback = {};
@@ -32,9 +34,7 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
    * 負責接收 APP JavaScript API callback 的共用方法。
    * @param {*} value APP JavaScript API的傳回值。
    */
-  const CallbackFunc = (jsToken, value) => {
-  // console.log('*** Result from APP JavaScript : ', value);
-
+  const CallbackFunc = (token, value) => {
     let result;
     try {
       // 若是 JSON 格式，則以物件型態傳回。
@@ -42,18 +42,15 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
     } catch (ex) {
       result = value;
     }
-    window.AppJavaScriptCallbackPromiseResolves[jsToken](result);
+    window.AppJavaScriptCallbackPromiseResolves[token](result);
 
-    delete window.AppJavaScriptCallbackPromiseResolves[jsToken];
-    delete window.AppJavaScriptCallback[jsToken];
+    delete window.AppJavaScriptCallbackPromiseResolves[token];
+    delete window.AppJavaScriptCallback[token];
   };
 
   const promise = new Promise((resolve) => {
-    const jsToken = `A${Math.floor(Math.random() * 100000000).toString().padStart(8, '0')}`; // 有千萬分之一的機率重覆。
     window.AppJavaScriptCallback[jsToken] = (value) => CallbackFunc(jsToken, value);
     window.AppJavaScriptCallbackPromiseResolves[jsToken] = resolve;
-
-    // console.log('*** Call APP JavaScript : JS Token = ', jsToken, window.AppJavaScriptCallback);
 
     const request = {
       ...jsParams,
@@ -68,7 +65,7 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
       window.jstoapp[appJsName](JSON.stringify(request));
     }
     else if (needCallback || webDevTest) {
-      window.AppJavaScriptCallback[jsToken](webDevTest(request));
+      window.AppJavaScriptCallback[jsToken](webDevTest ? webDevTest() : null);
       return;
     }
     // else throw new Error('使用 Web 版未支援的 APP JavaScript 模擬方法(' + appJsName + ')');
@@ -79,7 +76,7 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
 
   // result 是由 AppJavaScriptCallback 接收，並嘗試用 JSON Parse 轉為物件，轉不成功則以原資料內容傳回。
   const result = await promise;
-  console.log(`\x1b[33mAPP-JS://${appJsName} \x1b[37m - Result = `, result);
+  console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Result = `, result);
   return result;
 }
 
@@ -384,6 +381,7 @@ async function getJwtToken(force) {
  * }>}
  */
 async function transactionAuth(authCode, otpMobile) {
+  // eslint-disable-next-line no-unused-vars
   const data = {
     authCode,
     otpMobile,
@@ -391,6 +389,7 @@ async function transactionAuth(authCode, otpMobile) {
   // return await callAppJavaScript('transactionAuth', data, true, appTransactionAuth);
 
   // DEBUG 在 APP 還沒完成交易驗證之前，先用 Web版進行測試。
+
   const result = await appTransactionAuth(data);
   return result;
 }
@@ -502,6 +501,7 @@ async function delQL() {
  *     netbankPwd: 因為之後叫用交易相關 API 時可能會需要用到，所以傳回 E2EE 加密後的密碼。
  *   }
  */
+// eslint-disable-next-line no-unused-vars
 async function appTransactionAuth(request) {
   const { authCode, otpMobile } = request;
 
@@ -528,6 +528,15 @@ async function appTransactionAuth(request) {
   });
   if (!txnAuth) { // createTransactionAuth 發生異常就結束。
     return failResult('無法建立交易授權驗證。');
+  }
+
+  // DEBUG ByPass交易驗證
+  if (request) {
+    const otpCode = allowedOTP ? '123456' : null;
+    const netbankPwd = allowedPWD ? e2ee('feib1688') : null;
+    const verifyRs = await transactionAuthVerify({ authKey: txnAuth.key, funcCode, netbankPwd, otpCode });
+    console.log(verifyRs);
+    return { result: true, message: null, netbankPwd };
   }
 
   // 進行雙因子驗證，呼叫 APP 進行驗證。

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import * as yup from 'yup';
@@ -81,17 +82,12 @@ const CardLessATM1 = () => {
 
   // 取得提款卡資訊
   const fetchAccountSummary = async () => {
-    switchLoading(true);
-    // TODO 因為沒有提供 account 資訊，所以 response 是 undefined，因此讀不到 message 造成 error
-    const summaryResponse = await getAccountSummary({ account: '' });
-    switchLoading(false);
-    console.log('取得提款帳號資訊', summaryResponse);
-    const { message } = summaryResponse;
-    if (!message) {
+    const summaryResponse = await getAccountSummary();
+
+    // console.log('取得提款帳號資訊', summaryResponse);
+    // const { message } = summaryResponse;
+    if (summaryResponse) {
       setAccountSummary({ ...summaryResponse });
-    } else {
-      // TBD
-      showCustomPrompt({message, onOk: () => closeFunc(), onClose: () => closeFunc()});
     }
   };
 

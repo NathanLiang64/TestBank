@@ -143,11 +143,17 @@ export const createNtdTransfer = async (request) => {
 
 /**
  * 執行轉帳交易。
- * @param {*} request
- * @returns
+ * @returns {{
+      isSuccess,
+      balance: 轉出後餘額,
+      fee: 手續費,
+      errorCode,
+      message,
+      // TODO payDate, SERVER交易序號, 交易識別碼
+ * }} 轉帳結果。
  */
-export const executeNtdTransfer = async (request) => {
-  const response = await callAPI('/api/transfer/ntd/v1/execute', request);
+export const executeNtdTransfer = async () => {
+  const response = await callAPI('/api/transfer/ntd/v1/execute');
   return response.data;
 };
 

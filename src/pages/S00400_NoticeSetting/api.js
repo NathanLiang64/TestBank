@@ -30,18 +30,18 @@ export const queryPushSetting = async () => {
 };
 
 /**
- * 呼叫原生查詢推播通知功能開啟狀態 DEBUG: mock
+ * 呼叫原生查詢推播通知功能同意狀態 DEBUG: mock
  * @returns {{
- *  code: string
- * }} code: 表開啟狀態， '0000': 已開啟、1111: 未綁定裝置、'2222': 未開啟
+ *  PushBindStatus: boolean
+ * }} PushBindStatus: 表是否同意
  */
-export const queryPushBind = async () => {
+export const queryPushBindMock = async () => {
   console.log('S00400 api queryIsNoticeOn(): 查詢推播通知功能開啟狀態');
   const mockRes = {
-    code: '2222',
+    PushBindStatus: false,
   };
 
-  return mockRes;
+  return mockRes.PushBindStatus;
 };
 
 /**
@@ -52,11 +52,11 @@ export const queryPushBind = async () => {
  * }}
  * code: '0000' 為成功
  */
-export const updatePushBind = async () => {
+export const updatePushBindMock = async () => {
   console.log('S00400 api turnOnNoticeSetting(): 開啟設定');
   const mockRes = {
     code: '0000',
-    message: 'failed',
+    message: '',
   };
 
   return mockRes;

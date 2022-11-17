@@ -4,7 +4,9 @@ import axios from 'axios';
 import { showError } from './MessageModal';
 import JWEUtil from './JWEUtil';
 import JWTUtil from './JWTUtil';
-import { getJwtToken, syncJwtToken, getAesKey } from './AppScriptProxy';
+import {
+  getJwtToken, syncJwtToken, getAesKey,
+} from './AppScriptProxy';
 
 // Axios instance
 const instance = axios.create({

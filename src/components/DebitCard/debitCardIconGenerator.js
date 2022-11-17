@@ -1,5 +1,5 @@
 import {
-  FixedDepositIcon, ExchangeIcon, CoverDownloadIcon, RadioUncheckedIcon, EditAccountIcon,
+  FixedDepositIcon, ExchangeIcon, CoverDownloadIcon, RadioUncheckedIcon, EditAccountIcon, AccountIcon15,
 } from 'assets/images/icons';
 
 export const iconGenerator = (name) => {
@@ -14,6 +14,8 @@ export const iconGenerator = (name) => {
       return <EditAccountIcon />;
     case 'temp':
       return <RadioUncheckedIcon />;
+    case 'foreignCurrencyPriceSetting':
+      return <AccountIcon15 />;
     default:
       return null;
   }

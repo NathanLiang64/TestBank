@@ -21,7 +21,7 @@ const E001002 = ({ location }) => {
   const [exchangeResult, setExchangeResult] = useState({});
 
   const toTradeDetailPage = () => {
-    history.push('/taiwanDollarAccountDetails');
+    history.push('/taiwanDollarAccountDetails');// TODO: 此頁尚無funcID
   };
 
   const toExchangePage = () => {
@@ -29,7 +29,7 @@ const E001002 = ({ location }) => {
   };
 
   const toPriceSettingPage = () => {
-    history.push('/foreignCurrencyPriceSetting');
+    history.push('/foreignCurrencyPriceSetting'); // TODO: 此頁尚無funcID
   };
 
   useEffect(() => {

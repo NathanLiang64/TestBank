@@ -16,6 +16,7 @@ import InfoArea from 'components/InfoArea';
 import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
 import { confirmPasswordValidation, newPasswordValidation, passwordValidation } from 'utilities/validation';
 import e2ee from 'utilities/E2ee';
+import { AuthCode } from 'utilities/TxnAuthCode';
 
 /* Styles */
 // import theme from 'themes/theme';
@@ -66,8 +67,8 @@ const RegularPwdModify = () => {
 
   // 點擊儲存變更，呼叫更新網銀密碼API
   const onSubmit = async () => {
-    const authCode = 0x26;
-    const jsRs = await transactionAuth(authCode);
+    // const authCode = 0x28;
+    const jsRs = await transactionAuth(AuthCode.A00700);
     if (jsRs.result) {
       switchLoading(true);
       const param = {

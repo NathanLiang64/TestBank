@@ -17,7 +17,7 @@ const PageWrapper = styled.div`
     // margin-block-start: -3rem;
     // padding-block-start: 3rem;
     margin-top: -3rem;
-    padding-top: 3rem;
+    // padding-top: 3rem;
     border-top-left-radius: 3rem;
     border-top-right-radius: 3rem;
   }
@@ -25,8 +25,7 @@ const PageWrapper = styled.div`
   .note {
     font-size: 1.4rem;
     color: ${({ theme }) => theme.colors.text.light};
-    // margin-block-start: 1.6rem;
-    // margin-inline: 1.6rem;
+    text-align:center;
     margin:2.8rem;
     margin-top: 1.6rem;
   }

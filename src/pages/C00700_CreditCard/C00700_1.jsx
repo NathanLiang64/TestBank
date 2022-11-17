@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
 import parse from 'html-react-parser';
-import uuid from 'react-uuid';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { FEIBButton } from 'components/elements';
@@ -15,26 +14,35 @@ import Loading from 'components/Loading';
 import CreditCard from 'components/CreditCard';
 
 // eslint-disable-next-line no-unused-vars
+import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
+import { showCustomPrompt, showError } from 'utilities/MessageModal';
+import { FuncID } from 'utilities/FuncID';
+
 import { getCreditCardTerms, queryCardInfo } from './api';
-import PageWrapper from './Details.style';
 import { getCardListing, getCreditListing } from './utils';
+import { InfoPageWrapper } from './C00700.style';
 
 /**
  * C00700_1 信用卡 資訊
  */
 const C007001 = () => {
   const history = useHistory();
+  const location = useLocation();
   const [cardInfo, setCardInfo] = useState();
   const [terms, setTerms] = useState();
   const dispatch = useDispatch();
 
-  console.log(cardInfo);
-
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    // Fix API queryCardInfo API 取代 getCreditCardDetails
     const infoResponse = await queryCardInfo();
-    setCardInfo(infoResponse.data);
+    if (infoResponse.data) {
+      setCardInfo(infoResponse.data);
+    }
+
+    if (!location.state) {
+      showCustomPrompt({message: '查無信用卡資訊', onOk: closeFunc, onClose: closeFunc});
+    }
+
     dispatch(setWaittingVisible(false));
   }, []);
 
@@ -45,16 +53,14 @@ const C007001 = () => {
   return (
     <Layout title="信用卡資訊" goBackFunc={() => history.goBack()}>
       <Main>
-        <PageWrapper>
+        <InfoPageWrapper>
           {!!cardInfo && (
           <>
             <div>
               <div>
                 <CreditCard
-                  // cardInfo 尚無該資訊
-                  cardName="等待提供 cardName "
-                  // cardName={details?.type === 'bankee' ? 'Bankee信用卡' : '所有信用卡'}
-                  accountNo="等待提供 accountNo "
+                  cardName={location.state.isBankeeCard === 'Y' ? 'Bankee信用卡' : '所有信用卡'}
+                  accountNo={location.state.cardNo}
                   color="green"
                   annotation="已使用額度"
                   balance={cardInfo?.usedCardLimit}
@@ -62,12 +68,12 @@ const C007001 = () => {
               </div>
             </div>
             <div>
-              {getCardListing(cardInfo).map((d) => <InformationList key={uuid()} {...d} />)}
+              {getCardListing(cardInfo).map((d) => <InformationList key={d.key} {...d} />)}
               <hr />
             </div>
             <div className="heading">額度資訊</div>
             <div>
-              {getCreditListing(cardInfo).map((d) => <InformationList key={uuid()} {...d} />)}
+              {getCreditListing(cardInfo).map((d) => <InformationList key={d.key} {...d} />)}
               <hr />
             </div>
           </>
@@ -76,8 +82,8 @@ const C007001 = () => {
           <Accordion className="mb-4" title="注意事項" onClick={lazyLoadTerms}>
             { terms ? parse(terms) : <Loading space="both" isCentered /> }
           </Accordion>
-          <FEIBButton onClick={() => history.push('/R00400', { accountNo: 'todo accountNo' })}>繳費</FEIBButton>
-        </PageWrapper>
+          <FEIBButton onClick={() => startFunc(FuncID.R00400, { accountNo: location.state.cardNo })}>繳費</FEIBButton>
+        </InfoPageWrapper>
       </Main>
     </Layout>
   );

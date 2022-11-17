@@ -60,13 +60,14 @@ const PasswordDrawer = ({
     const {otpCode} = data; // 使用者輸入的「驗證碼」。
     const netbankPwd = e2ee(data.password); // 使用者輸入的「網銀密碼」，還要再做 E2EE。
     const verifyRs = await transactionAuthVerify({ authKey: authData.key, funcCode, netbankPwd, otpCode });
+    // console.log(verifyRs);
     if (verifyRs?.result === true) {
       // 正常結果。
       // Note 因為之後叫用交易相關 API 時可能會需要用到，所以傳回 E2EE 加密後的 netbankPwd 值。
       onFinished({ result: true, message: null, netbankPwd });
       dispatch(setDrawerVisible(false));
     } else {
-      // TODO 處理密碼錯誤的情況，累計三次驗證失敗之後，就傳回驗證失敗
+      // TODO 處理密碼錯誤的情況，累計三次驗證失敗之後，就傳回驗證失敗; 否則不會結束Promise
       showAlert(verifyRs?.message); // NOTE 不能用 Layout 中的 Drawer，因為再跳出 Popup Window 後， Drawer 會立即關掉！
     }
   };

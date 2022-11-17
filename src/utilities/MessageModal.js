@@ -21,11 +21,14 @@ export const closeDrawer = () => {
  */
 export const showPrompt = async (message, action) => {
   const promise = new Promise((resolve) => {
-    store.dispatch(setModal({
-      title: '溫馨提醒',
-      content: message,
-      onOk: action ?? closePopup,
-    }));
+    store.dispatch(
+      setModal({
+        title: '溫馨提醒',
+        content: message,
+        onOk: action ?? closePopup,
+        showCloseButton: true,
+      }),
+    );
     store.dispatch(setResult((value) => resolve(value)));
     store.dispatch(setModalVisible(true));
   });
@@ -42,11 +45,14 @@ export const showPrompt = async (message, action) => {
  */
 export const showError = async (message, action) => {
   const promise = new Promise((resolve) => {
-    store.dispatch(setModal({
-      title: '重要訊息',
-      content: message,
-      onOk: action ?? closePopup,
-    }));
+    store.dispatch(
+      setModal({
+        title: '重要訊息',
+        content: message,
+        onOk: action ?? closePopup,
+        showCloseButton: true,
+      }),
+    );
     store.dispatch(setResult((value) => resolve(value)));
     store.dispatch(setModalVisible(true));
   });
@@ -63,11 +69,14 @@ export const showError = async (message, action) => {
  */
 export const showInfo = async (message, action) => {
   const promise = new Promise((resolve) => {
-    store.dispatch(setModal({
-      title: 'Bankee 通知',
-      content: message,
-      onOk: action ?? closePopup,
-    }));
+    store.dispatch(
+      setModal({
+        title: 'Bankee 通知',
+        content: message,
+        onOk: action ?? closePopup,
+        showCloseButton: true,
+      }),
+    );
     store.dispatch(setResult((value) => resolve(value)));
     store.dispatch(setModalVisible(true));
   });
@@ -86,19 +95,23 @@ export const showCustomPrompt = async ({
   cancelContent,
   onClose, // Modal 右上角的 X 按鈕
   noDismiss, // 如果有需要接續 modal 得操作，可以設定為 true 避免點擊ok按鈕後，下個 modal 遭關閉。
+  showCloseButton,
 }) => {
   const promise = new Promise((resolve) => {
-    store.dispatch(setModal({
-      title,
-      content: message,
-      // onOk: onOk ?? closePopup,
-      onOk,
-      onCancel,
-      okContent,
-      cancelContent,
-      onClose,
-      noDismiss: noDismiss ?? false,
-    }));
+    store.dispatch(
+      setModal({
+        title,
+        content: message,
+        // onOk: onOk ?? closePopup,
+        onOk,
+        onCancel,
+        okContent,
+        cancelContent,
+        onClose,
+        noDismiss: noDismiss ?? false,
+        showCloseButton: showCloseButton ?? true,
+      }),
+    );
     store.dispatch(setResult((value) => resolve(value)));
     store.dispatch(setModalVisible(true));
   });
@@ -152,15 +165,24 @@ export const showDrawer = async (title, content, goBack, onClose) => {
 };
 
 export const showCustomDrawer = async ({
-  title, content, goBack, onClose,
+  title,
+  content,
+  goBack,
+  onClose,
+  noScrollable,
+  shouldAutoClose,
 }) => {
   const promise = new Promise((resolve) => {
-    store.dispatch(setDrawer({
-      title,
-      content,
-      goBack,
-      onClose: onClose ?? closeDrawer,
-    }));
+    store.dispatch(
+      setDrawer({
+        title,
+        content,
+        goBack,
+        onClose: onClose ?? closeDrawer,
+        noScrollable,
+        shouldAutoClose: shouldAutoClose ?? false,
+      }),
+    );
     store.dispatch(setResult((value) => resolve(value)));
     store.dispatch(setDrawerVisible(true));
   });

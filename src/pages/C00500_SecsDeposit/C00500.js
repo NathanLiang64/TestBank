@@ -19,6 +19,7 @@ import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
 import { setLocalData } from 'utilities/Generator';
 import { AccountListCacheName, getAccountExtraInfo, loadAccountsList } from 'pages/D00100_NtdTransfer/api';
+import { FuncID } from 'utilities/FuncID';
 import {
   getTransactions,
   downloadDepositBookCover,
@@ -46,7 +47,7 @@ const C00500 = () => {
 
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
-    loadAccountsList('S', setAccounts); // S=台幣交割帳戶
+    await loadAccountsList('S', setAccounts); // S=台幣交割帳戶
     const startParams = await loadFuncParams(); // Function Controller 提供的參數
     // 取得 Function Controller 提供的 keepData(model)
 
@@ -76,24 +77,17 @@ const C00500 = () => {
     let txnDetails = transactions.get(accountNo);
     if (!txnDetails) {
       // 取得帳戶交易明細（三年內的前25筆即可）
-      try {
-        const transData = await getTransactions(accountNo);
-        txnDetails = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
-        if (transData.length > 0) {
-          // TODO 應該避免直接 mutate
-          // account.balance = txnDetails[0].balance; // 更新餘額。
-
-          setAccounts((prevAccts) => prevAccts.map((prevAcct) => {
-            if (prevAcct.accountNo === accountNo) return { ...prevAcct, balance: txnDetails[0].balance };
-            return prevAcct;
-          }));
-        }
-
-        transactions.set(accountNo, txnDetails);
-        setTransactions(new Map(transactions)); // 強制更新畫面。
-      } catch (error) {
-        console.log('errorrrrr', error);
+      const transData = await getTransactions(accountNo);
+      txnDetails = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
+      if (txnDetails.length > 0) {
+        setAccounts((prevAccts) => prevAccts.map((prevAcct) => {
+          if (prevAcct.accountNo === accountNo) return { ...prevAcct, balance: txnDetails[0].balance };
+          return prevAcct;
+        }));
       }
+
+      transactions.set(accountNo, txnDetails);
+      setTransactions(new Map(transactions)); // 強制更新畫面。
     }
   };
 
@@ -102,27 +96,10 @@ const C00500 = () => {
    */
   const handleAccountChanged = async (acctIndex) => {
     if (!accounts || !accounts.length) return; // 頁面初始化時，不需要進來。
+
     const account = accounts[acctIndex];
-    // 若還沒有取得 免費跨轉次數 則立即補上。
-    if (!account.freeTransfer) {
-      // TOOD async await method
-      // TODD 避免直接 mutate accounts
-      // getAccountExtraInfo(account.accountNo).then((info) => {
-      //   accounts[acctIndex] = {
-      //     ...account,
-      //     ...info,
-      //   };
-      //   setAccounts([...accounts]); // 強制更新畫面。
-      // });
-      const infoResponse = await getAccountExtraInfo(account.accountNo);
-      const newAccounts = accounts.map((acc, index) => (index === acctIndex ? { ...acc, ...infoResponse } : acc));
-      setAccounts(newAccounts);
-      updateTransactions(newAccounts); // 取得帳戶交易明細（三年內的前25筆即可)
-      setSelectedAccount(newAccounts);
-    } else {
-      updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可)
-      setSelectedAccount(account);
-    }
+    updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可)
+    setSelectedAccount(account);
   };
   useEffect(() => { handleAccountChanged(selectedAccountIdx); }, [selectedAccountIdx]);
   useEffect(() => { setLocalData(AccountListCacheName, accounts); }, [accounts]);
@@ -167,11 +144,11 @@ const C00500 = () => {
         };
         break;
 
-      case 'D00100': // 轉帳
+      case FuncID.D00100: // 轉帳
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case 'E00100': // 換匯
+      case FuncID.E00100: // 換匯
         params = { transOut: selectedAccount.accountNo };
         break;
 
@@ -193,10 +170,10 @@ const C00500 = () => {
   /**
    * 頁面輸出
    */
+
   console.log('accounts', accounts);
-  console.log('selectedAccount', selectedAccount);
   return (
-    <Layout title="台幣交割帳戶">
+    <Layout title="證券交割戶">
       <PageWrapper small>
         {selectedAccount ? (
           <>
@@ -207,11 +184,24 @@ const C00500 = () => {
               onFunctionClick={handleFunctionClick}
               cardColor="blue"
               funcList={[
-                { fid: 'D00100', title: '轉帳', enabled: (selectedAccount.transable && selectedAccount.balance > 0) },
-                { fid: 'E00100', title: '換匯', enabled: (selectedAccount.balance > 0) },
+                {
+                  fid: 'D00100',
+                  title: '轉帳',
+                  enabled:
+                    selectedAccount.transable && selectedAccount.balance > 0,
+                },
+                {
+                  fid: 'E00100',
+                  title: '換匯',
+                  enabled: selectedAccount.balance > 0,
+                },
               ]}
               moreFuncs={[
-                { fid: 'DownloadCover', title: '存摺封面下載', icon: 'coverDownload' },
+                {
+                  fid: 'DownloadCover',
+                  title: '存摺封面下載',
+                  icon: 'coverDownload',
+                },
                 { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
               ]}
             />

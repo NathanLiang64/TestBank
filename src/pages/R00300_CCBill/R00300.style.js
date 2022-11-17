@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 const PageWrapper = styled.div`
   display: flex;
+  display: -webkit-flex;
   flex-direction: column;
   // gap: 2rem;
   padding-bottom: 13.6rem;
@@ -10,13 +11,14 @@ const PageWrapper = styled.div`
   }
   .fixed-bottom {
     position: fixed;
-    bottom: 6rem;
+    bottom: 0rem;
     inset-inline: 0;
     text-align: center;
     background-color: ${({ theme }) => theme.colors.basic.white};
     color: ${({ theme }) => theme.colors.text.light};
     font-size: 1.4rem;
-    line-height: 2.1rem;
+    line-height: 4rem;
+    height: 8rem;
   }
 `;
 

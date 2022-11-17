@@ -20,6 +20,7 @@ const Dialog = ({
   action,
   isOpen,
   onClose,
+  showCloseButton = true,
 }) => (
   <DialogWrapper
     open={isOpen}
@@ -38,7 +39,7 @@ const Dialog = ({
         {action}
       </DialogActions>
     ) }
-    { onClose && (
+    { onClose && showCloseButton && (
       <FEIBIconButton
         className="closeIconButton"
         onClick={onClose}

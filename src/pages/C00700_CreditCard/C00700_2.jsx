@@ -15,7 +15,7 @@ import { currencySymbolGenerator } from 'utilities/Generator';
 import { getThisMonth, getMonthList } from 'utilities/MonthGenerator';
 
 import { getRewards } from './api';
-import PageWrapper from './Rewards.style';
+import { RewardPageWrapper } from './C00700.style';
 
 /**
  * C00700_2 信用卡 回饋
@@ -34,20 +34,19 @@ const C007002 = () => {
     dispatch(setWaittingVisible(false));
   }, []);
 
-  const sumAmount = (reward) => reward.card + reward.social + reward.point;
-
   const handleOnTabChange = (_, id) => {
     setSelectedMonth(id);
   };
 
   const renderSelectedReward = () => {
     if (!rewards) return null;
-    const selcetedReward = rewards.find((r) => r.date === selectedMonth);
-    return selcetedReward ? (
+    // TODO 不確定 getRewards 回傳的 period 是什麼格式，有測資時可能會出錯，後續需要修改
+    const foundReward = rewards.find((r) => r.period === selectedMonth);
+    return foundReward ? (
       <>
         <Badge
-          label={`${selcetedReward.date.slice(0, 4)}/${selcetedReward.date.slice(4, 6)} 回饋合計`}
-          value={currencySymbolGenerator(selcetedReward.currency ?? 'TWD', sumAmount(selcetedReward))}
+          label={`${foundReward.date.slice(0, 4)}/${foundReward.date.slice(4, 6)} 回饋合計`}
+          value={currencySymbolGenerator('TWD', foundReward.amount + foundReward.communityAmount)}
         />
         <table className="table">
           <thead>
@@ -59,11 +58,11 @@ const C007002 = () => {
           <tbody>
             <tr>
               <td>刷卡回饋</td>
-              <td>{currencySymbolGenerator(selcetedReward.currency ?? 'TWD', selcetedReward.card)}</td>
+              <td>{currencySymbolGenerator('TWD', foundReward.amount)}</td>
             </tr>
             <tr>
               <td>社群圈分潤</td>
-              <td>{currencySymbolGenerator(selcetedReward.currency ?? 'TWD', selcetedReward.point)}</td>
+              <td>{currencySymbolGenerator('TWD', foundReward.communityAmount)}</td>
             </tr>
           </tbody>
         </table>
@@ -82,7 +81,7 @@ const C007002 = () => {
   return (
     <Layout title="每月現金回饋" goBackFunc={() => history.goBack()}>
       <Main>
-        <PageWrapper>
+        <RewardPageWrapper>
           <FEIBTabContext value={selectedMonth}>
             <FEIBTabList $size="small" $type="fixed" onChange={handleOnTabChange}>
               { getMonthList().map((m) => <FEIBTab key={uuid()} label={`${m.slice(4, 6)}月`} value={m} />)}
@@ -90,7 +89,7 @@ const C007002 = () => {
           </FEIBTabContext>
           {renderSelectedReward()}
           <FEIBButton onClick={() => history.goBack()}>回信用卡首頁</FEIBButton>
-        </PageWrapper>
+        </RewardPageWrapper>
       </Main>
     </Layout>
   );

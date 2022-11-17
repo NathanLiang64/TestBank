@@ -5,12 +5,15 @@ import Layout from 'components/Layout/Layout';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import { useHistory, useLocation } from 'react-router';
 import { FEIBButton } from 'components/elements';
+import ResultAnimation from 'components/SuccessFailureAnimations/ResultAnimation';
 import DebitCardActiveWrapper, {SuccessDescWrapper} from './S00700.style';
 
 const S007001 = () => {
   const history = useHistory();
   const {state} = useLocation();
   const go2More = () => history.replace('/B00600');
+
+  // successDesc 內容是否應該由後端提供?
   const successDesc = () => (
     <SuccessDescWrapper>
       <div className="success_title">
@@ -28,19 +31,21 @@ const S007001 = () => {
     </SuccessDescWrapper>
   );
 
-  if (!state || !state.apiResponse) return history.goBack();
+  if (!state) return history.goBack();
+
+  const isSuccess = state.code === '0000';
 
   return (
     <Layout title="金融卡啟用結果" goBackFunc={go2More}>
       <DebitCardActiveWrapper>
-        <SuccessFailureAnimations
-          isSuccess={!!(state.code === '0000')}
-          successTitle={`${state.cname} 設定成功`}
-          successDesc={successDesc()}
-          errorTitle={`${state.cname} 設定失敗`}
-          errorDesc={state.message}
+        <ResultAnimation
+          isSuccess={isSuccess}
+          subject={isSuccess ? '設定成功' : '設定失敗'}
+          description={isSuccess ? successDesc() : state.message}
         />
-        <FEIBButton style={{marginTop: '1rem'}} onClick={go2More}>確認</FEIBButton>
+        <FEIBButton style={{ marginTop: '1rem' }} onClick={go2More}>
+          確認
+        </FEIBButton>
       </DebitCardActiveWrapper>
     </Layout>
   );

@@ -7,6 +7,13 @@ const AccountCardWrapper = styled.div`
   grid-auto-flow: row;
   gap: 1.2rem;
   padding: 1.6rem;
+
+  .warning_text {
+    color: ${({ theme }) => theme.colors.primary.dark};
+    text-align: center;
+    font-weight: 500;
+    font-size: 1.8rem;
+  }
 `;
 
 export default AccountCardWrapper;

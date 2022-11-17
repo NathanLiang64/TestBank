@@ -10,6 +10,7 @@ import { FEIBButton } from 'components/elements';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { getBankCode } from 'components/BankCodeInput/api';
+import { AuthCode } from 'utilities/TxnAuthCode';
 import { createNtdTransfer, getDisplayAmount, getTransDate, getCycleDesc } from './api';
 import TransferWrapper from './D00100.style';
 
@@ -59,7 +60,7 @@ const TransferConfirm = (props) => {
     const request = {
       transOut: transOut.account,
       transIn: { // 約定帳號 不需要提供額外資訊，由 MBGW 判斷。
-        bank: quickAcct?.bankId ?? transIn.bank, // TODO 是否還要指定自行 或 他行？
+        bank: quickAcct?.bankId ?? transIn.bank,
         account: quickAcct?.accountNo ?? transIn.account,
       },
       amount: parseInt(model.amount, 10),
@@ -73,9 +74,9 @@ const TransferConfirm = (props) => {
     console.log(response); // DEBUG
     if (response) {
       // 進行交易驗證，要求使用者輸入OTP、密碼、雙因子...等。
-      const auth = await transactionAuth(0x3D);
+      const auth = await transactionAuth(transIn.type === 2 ? AuthCode.D00100.REG : AuthCode.D00100.NONREG);
       if (auth.result) {
-        // TODO 顯示轉帳結果（含加入常用帳號）
+        // 顯示轉帳結果（含加入常用帳號）
         history.push('/D001002', model);
       }
     }
@@ -117,12 +118,12 @@ const TransferConfirm = (props) => {
           {/* NOTE model 手續費! 還沒轉出，如何顯示？ 9/8 數金：拿掉！ */}
           {/* {model.booking.mode === 0 && <InformationList title="手續費" content="$0" />} */}
           <InformationList title="備註" content={model.memo} />
+          <p className="warningText">陌生電話先求證，轉帳匯款須謹慎</p>
         </section>
         <hr />
         <section className="transferAction">
           <div className="transferButtonArea">
             <FEIBButton onClick={onConfirm}>確認</FEIBButton>
-            <p className="notice">轉帳前多思考，避免被騙更苦惱</p>
           </div>
         </section>
       </TransferWrapper>
