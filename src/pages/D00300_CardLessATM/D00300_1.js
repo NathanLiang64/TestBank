@@ -82,16 +82,13 @@ const CardLessATM1 = () => {
 
   // 取得提款卡資訊
   const fetchAccountSummary = async () => {
-    // const summaryResponse = await getAccountSummary();
+    const summaryResponse = await getAccountSummary();
 
     // console.log('取得提款帳號資訊', summaryResponse);
     // const { message } = summaryResponse;
-    // if (!message) {
-    //   setAccountSummary({ ...summaryResponse });
-    // } else {
-    //   // TBD
-    //   showCustomPrompt({message, onOk: () => closeFunc(), onClose: () => closeFunc()});
-    // }
+    if (summaryResponse) {
+      setAccountSummary({ ...summaryResponse });
+    }
   };
 
   // 無卡提款交易
