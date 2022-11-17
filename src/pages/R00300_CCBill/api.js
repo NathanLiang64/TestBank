@@ -34,7 +34,7 @@ export const getBills = async (param) => {
 
   /* 將回傳資料轉換成頁面資料結構 */
   const bills = {
-    month: parseInt(param.slice(-2), 10).toString(), // 只顯示月份，開頭不為0
+    month: param, // 只顯示月份，開頭不為0
     amount: queryCardBillRt.data.newBalance,
     billDate: billDetail.data.payDueDate,
     currency: 'NTD',
@@ -68,7 +68,7 @@ export const getTransactionDetails = async (request) => {
   const transactionDetails = queryCardBillRt.data.details.map((detail) => ({
     txnDate: detail.txDate,
     description: detail.desc,
-    targetAcct: '1112223333444455', // TODO: detail.cardNo rt null，先塞假資料待處理完成後恢復
+    targetAcct: detail.cardNo,
     amount: detail.amount,
     currency: 'NTD',
   }));

@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import uuid from 'react-uuid';
 
@@ -15,7 +14,9 @@ import TransactionsWrapper from './Transactions.style';
 
 const backlogMap = new Map();
 
-const Transactions = ({ bills, isExpanded, onExpandClick }) => {
+const Transactions = ({
+  bills, isExpanded, onExpandClick, handleChangeMonth,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [displayList, setDisplayList] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(getThisMonth());
@@ -24,8 +25,8 @@ const Transactions = ({ bills, isExpanded, onExpandClick }) => {
     let log = backlogMap.get(selectedMonth);
     if (!log) {
       setIsLoading(true);
-      // const response = await getTransactionDetails(getThisMonth()); // TODO: 抓系統時間（YYYYMM）作為此處參數傳入
-      const response = await getTransactionDetails('202207');
+      const response = await getTransactionDetails(selectedMonth);
+
       backlogMap.set(selectedMonth, response);
       log = response;
     }
@@ -37,7 +38,7 @@ const Transactions = ({ bills, isExpanded, onExpandClick }) => {
           key={uuid()}
           topLeft={log[i].description}
           topRight={currencySymbolGenerator(log[i].currency ?? 'TWD', log[i].amount)}
-          bottomLeft={`${log[i].txnDate} | 卡-${log[i].targetAcct.slice(-4)}`}
+          bottomLeft={(log[i].targetAcct) ? (`${log[i].txnDate} | 卡-${log[i].targetAcct.slice(-4)}`) : `${log[i].txnDate}`}
         />
       ));
     }
@@ -48,6 +49,7 @@ const Transactions = ({ bills, isExpanded, onExpandClick }) => {
 
   const handleOnTabChange = (_, id) => {
     setSelectedMonth(id);
+    handleChangeMonth(id); //
   };
 
   return (
