@@ -4,6 +4,7 @@ const ReminderWrapper = styled.div`
   // display: flex; // iOS safari v14.5以下不支援flex的gap屬性
   // display: -webkit-flex;
   display: grid;
+  justify-content: center;
   grid-auto-flow: column;
   margin-inline: auto;
   padding-inline: 4rem;
