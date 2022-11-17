@@ -34,7 +34,7 @@ export const getBills = async (param) => {
 
   /* 將回傳資料轉換成頁面資料結構 */
   const bills = {
-    month: parseInt(param.slice(-2), 10).toString(), // 只顯示月份，開頭不為0
+    month: param, // 只顯示月份，開頭不為0
     amount: queryCardBillRt.data.newBalance,
     billDate: billDetail.data.payDueDate,
     currency: 'NTD',
