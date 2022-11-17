@@ -15,7 +15,7 @@ import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
 import { currencySymbolGenerator } from 'utilities/Generator';
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
-import TransactionsList from 'components/TransactionsList';
+import CreditCardTxsList from 'components/CreditCardTxsList';
 import { getCards } from './api';
 import {SwiperCreditCard, DetailDialogContentWrapper, TableDialog} from './C00700.style';
 import {
@@ -182,7 +182,7 @@ const CreditCardPage = () => {
             </div>
             )}
           </DetailDialogContentWrapper>
-          <TransactionsList
+          <CreditCardTxsList
             showAll={false}
             card={card}
             go2MoreDetails={() => startFunc('R00100', {card, usedCardLimit})}

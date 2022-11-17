@@ -67,7 +67,6 @@ function AccountEditor({
           <FEIBInputLabel htmlFor={idNickName}>暱稱</FEIBInputLabel>
           <Controller
             name={idNickName}
-            // defaultValue={model.nickName}
             control={control}
             render={({ field }) => (
               <FEIBInput

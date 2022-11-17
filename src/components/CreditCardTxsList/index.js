@@ -19,7 +19,7 @@ import { FEIBIconButton } from 'components/elements';
 import { EditIcon } from 'assets/images/icons';
 import { updateTxnNotes, getTransactions } from './api';
 import { validationSchema } from './validationSchema';
-import DetailCardWrapper from './transactionsList.style';
+import DetailCardWrapper from './CreditCardTxsList.style';
 import { creditNumberFormat, stringDateFormat } from './utils';
 
 /*
@@ -31,7 +31,7 @@ import { creditNumberFormat, stringDateFormat } from './utils';
 * 3. showAll -> true:顯示所有交易明細, false: 只顯示前三筆
 * */
 
-const TransactionsList = ({
+const CreditCardTxsList = ({
   card,
   go2MoreDetails,
   showAll,
@@ -147,7 +147,7 @@ const TransactionsList = ({
     );
     const res = await getTransactions({
       // cardNo: '5232870002109002', // 這個帳號有 transaction 資料
-      cardNo: card.cardNo,
+      cardNo: card?.cardNo,
       dateBeg,
       dateEnd,
     });
@@ -169,4 +169,4 @@ const TransactionsList = ({
   );
 };
 
-export default TransactionsList;
+export default CreditCardTxsList;

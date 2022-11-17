@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -6,7 +5,7 @@ import { AddIcon } from 'assets/images/icons';
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
-import { showCustomDrawer, showCustomPrompt, showDrawer } from 'utilities/MessageModal';
+import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, closeFunc } from 'utilities/AppScriptProxy';
 import { loadLocalData, setLocalData } from 'utilities/Generator';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
@@ -31,8 +30,6 @@ const Page = () => {
   const [selectedAccount, setSelectedAccount] = useState();
 
   const storageName = 'FreqAccts';
-
-  console.log('accounts', accounts);
 
   /**
    *- 初始化
@@ -89,7 +86,6 @@ const Page = () => {
       dispatch(setDrawerVisible(false));
     };
 
-    // await showDrawer('新增常用帳號', (<AccountEditor onFinished={onFinished} />));
     await showCustomDrawer({
       title: '新增常用帳號',
       content: <AccountEditor onFinished={onFinished} />,
@@ -120,7 +116,6 @@ const Page = () => {
       dispatch(setDrawerVisible(false));
     };
 
-    // await showDrawer('編輯常用帳號', (<AccountEditor initData={acct} onFinished={onFinished} />));
     await showCustomDrawer({
       title: '編輯常用帳號',
       content: <AccountEditor initData={acct} onFinished={onFinished} />,

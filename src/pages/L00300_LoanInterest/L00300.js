@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { showDrawer, closeDrawer } from 'utilities/MessageModal';
+import { showDrawer, closeDrawer, showCustomPrompt } from 'utilities/MessageModal';
 import {
   accountFormatter, toCurrency, stringDateCodeFormatter, dateFormatter,
 } from 'utilities/Generator';
@@ -11,11 +11,11 @@ import DebitCard from 'components/DebitCard/DebitCard';
 import InformationTape from 'components/InformationTape';
 import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
 import DownloadIcon from 'assets/images/icons/downloadIcon.svg';
-import { loadFuncParams } from 'utilities/AppScriptProxy';
+import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
 
 /* Styles */
 import EmptyData from 'components/EmptyData';
-import LoanInterestWrapper from './loanInterest.style';
+import LoanInterestWrapper from './L00300.style';
 
 /**
  * L00300 貸款 繳款紀錄
@@ -104,8 +104,10 @@ const LoanInterest = () => {
   useEffect(async () => {
     const startParams = await loadFuncParams();
 
-    if (startParams) {
+    if (startParams?.card) {
       setCardData(startParams.card);
+    } else {
+      await showCustomPrompt({message: '參數錯誤', onOk: closeFunc, onClose: closeFunc});
     }
   }, []);
 
@@ -166,7 +168,7 @@ const LoanInterest = () => {
               ))}
             </div>
           ) : (
-            <EmptyData content="搜尋條件無資料" />
+            <EmptyData content="查無最近三年內的帳務往來資料" />
           )}
         </div>
       </LoanInterestWrapper>

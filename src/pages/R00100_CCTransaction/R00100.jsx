@@ -11,7 +11,7 @@ import CreditCard from 'components/CreditCard';
 
 import { closeFunc, loadFuncParams, startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
-import TransactionsList from 'components/TransactionsList';
+import CreditCardTxsList from 'components/CreditCardTxsList';
 import PageWrapper from './R00100.style';
 
 /**
@@ -55,7 +55,7 @@ const R00100 = () => {
           </div>
           <div className="txn-wrapper">
             {!!cardInfo && (
-            <TransactionsList showAll card={cardInfo} />
+            <CreditCardTxsList showAll card={cardInfo} />
             ) }
           </div>
 

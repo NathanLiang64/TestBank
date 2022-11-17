@@ -11,7 +11,7 @@ import Layout from 'components/Layout/Layout';
 import DebitCard from 'components/DebitCard/DebitCard';
 
 /* Styles */
-import LoanInterestWrapper from './loanInterest.style';
+import LoanInterestWrapper from './L00300.style';
 
 const L003001 = (props) => {
   const history = useHistory();

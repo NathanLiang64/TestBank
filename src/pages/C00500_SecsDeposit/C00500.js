@@ -77,24 +77,17 @@ const C00500 = () => {
     let txnDetails = transactions.get(accountNo);
     if (!txnDetails) {
       // 取得帳戶交易明細（三年內的前25筆即可）
-      try {
-        const transData = await getTransactions(accountNo);
-        txnDetails = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
-        if (transData.length > 0) {
-          // TODO 應該避免直接 mutate
-          // account.balance = txnDetails[0].balance; // 更新餘額。
-
-          setAccounts((prevAccts) => prevAccts.map((prevAcct) => {
-            if (prevAcct.accountNo === accountNo) return { ...prevAcct, balance: txnDetails[0].balance };
-            return prevAcct;
-          }));
-        }
-
-        transactions.set(accountNo, txnDetails);
-        setTransactions(new Map(transactions)); // 強制更新畫面。
-      } catch (error) {
-        console.log('errorrrrr', error);
+      const transData = await getTransactions(accountNo);
+      txnDetails = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
+      if (txnDetails.length > 0) {
+        setAccounts((prevAccts) => prevAccts.map((prevAcct) => {
+          if (prevAcct.accountNo === accountNo) return { ...prevAcct, balance: txnDetails[0].balance };
+          return prevAcct;
+        }));
       }
+
+      transactions.set(accountNo, txnDetails);
+      setTransactions(new Map(transactions)); // 強制更新畫面。
     }
   };
 
@@ -106,20 +99,11 @@ const C00500 = () => {
     const account = accounts[acctIndex];
     // 若還沒有取得 免費跨轉次數 則立即補上。
     if (!account.freeTransfer) {
-      // TOOD async await method
-      // TODD 避免直接 mutate accounts
-      // getAccountExtraInfo(account.accountNo).then((info) => {
-      //   accounts[acctIndex] = {
-      //     ...account,
-      //     ...info,
-      //   };
-      //   setAccounts([...accounts]); // 強制更新畫面。
-      // });
       const infoResponse = await getAccountExtraInfo(account.accountNo);
       const newAccounts = accounts.map((acc, index) => (index === acctIndex ? { ...acc, ...infoResponse } : acc));
       setAccounts(newAccounts);
-      updateTransactions(newAccounts); // 取得帳戶交易明細（三年內的前25筆即可)
-      setSelectedAccount(newAccounts);
+      updateTransactions(newAccounts[acctIndex]); // 取得帳戶交易明細（三年內的前25筆即可)
+      setSelectedAccount(newAccounts[acctIndex]);
     } else {
       updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可)
       setSelectedAccount(account);
