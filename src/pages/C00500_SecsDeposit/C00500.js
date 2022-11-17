@@ -96,18 +96,10 @@ const C00500 = () => {
    */
   const handleAccountChanged = async (acctIndex) => {
     if (!accounts || !accounts.length) return; // 頁面初始化時，不需要進來。
+
     const account = accounts[acctIndex];
-    // 若還沒有取得 免費跨轉次數 則立即補上。
-    if (!account.freeTransfer) {
-      const infoResponse = await getAccountExtraInfo(account.accountNo);
-      const newAccounts = accounts.map((acc, index) => (index === acctIndex ? { ...acc, ...infoResponse } : acc));
-      setAccounts(newAccounts);
-      updateTransactions(newAccounts[acctIndex]); // 取得帳戶交易明細（三年內的前25筆即可)
-      setSelectedAccount(newAccounts[acctIndex]);
-    } else {
-      updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可)
-      setSelectedAccount(account);
-    }
+    updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可)
+    setSelectedAccount(account);
   };
   useEffect(() => { handleAccountChanged(selectedAccountIdx); }, [selectedAccountIdx]);
   useEffect(() => { setLocalData(AccountListCacheName, accounts); }, [accounts]);
