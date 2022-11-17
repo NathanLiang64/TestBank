@@ -95,7 +95,7 @@ const CreditCardTxsList = ({
     if (!transactions.length) {
       return (
         <div style={{ marginTop: '10rem' }}>
-          <EmptyData content="查無信用卡交易明細" />
+          <EmptyData content="查無交易明細" />
         </div>
       );
     }
