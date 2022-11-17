@@ -1,12 +1,15 @@
 import { useEffect, useState, useMemo } from 'react';
-import BottomDrawer from 'components/BottomDrawer';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { RemoveRounded } from '@material-ui/icons';
+
 import BlockEmpty from 'assets/images/favoriteBlock/blockEmpty.png';
 import { EditIcon } from 'assets/images/icons';
-import { showCustomPrompt } from 'utilities/MessageModal';
+import BottomDrawer from 'components/BottomDrawer';
 import Layout from 'components/Layout/Layout';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { showCustomPrompt } from 'utilities/MessageModal';
 import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
-import { RemoveRounded } from '@material-ui/icons';
+import { FuncID } from 'utilities/FuncID';
+
 import S00100_1 from './S00100_1';
 import { blockBackgroundGenerator, iconGenerator } from './favoriteGenerator';
 import FavoriteDrawerWrapper, { DndItemContainer } from './S00100.style';
@@ -140,7 +143,7 @@ const Favorite = () => {
         key={block.actKey || index - 2}
         onTouchStart={block.actKey ? handleTouchStart : null}
         onTouchEnd={block.actKey ? handleTouchEnd : null}
-        onClick={block.actKey ? () => startFunc(block.actKey === 'B00200' ? 'M00100' : block.actKey) : () => handleOpenView('add')}
+        onClick={block.actKey ? () => startFunc(block.actKey === 'B00200' ? FuncID.M00100 : block.actKey) : () => handleOpenView('add')}
       >
         {
         block.actKey
