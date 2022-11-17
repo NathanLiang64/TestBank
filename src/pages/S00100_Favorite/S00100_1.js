@@ -12,6 +12,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { useDispatch } from 'react-redux';
 import { DropdownField } from 'components/Fields';
+import { FuncID } from 'utilities/FuncID';
 import { getFavoriteSettingList, modifyFavoriteItem } from './api';
 import { CustomCheckBoxField } from './fields/customCheckboxField';
 import {
@@ -72,8 +73,8 @@ const Favorite2New = ({
     const trimmedList = generateTrimmedList(orderedList, 10, '');
     // 應該從 cardLess API 得知是否已有設定值，並以此決定是否要設置無卡提款
     // 目前尚未拿到 cardless API，先透過是否已經存在無卡提款服務來避開
-    const alreadyExistedCardLess = findExistedValue(initialValues, 'D00300');
-    if (trimmedList.includes('D00300') && !alreadyExistedCardLess) {
+    const alreadyExistedCardLess = findExistedValue(initialValues, FuncID.D00300);
+    if (trimmedList.includes(FuncID.D00300) && !alreadyExistedCardLess) {
       await showCustomPrompt({
         title: '無卡提款',
         message: (
