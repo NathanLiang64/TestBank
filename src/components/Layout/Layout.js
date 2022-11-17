@@ -113,6 +113,7 @@ function Layout({
         isOpen={showModal || showDialog}
         onClose={onModalClose}
         content={modalData.content}
+        showCloseButton={modalData.showCloseButton}
         action={
           <>
             {modalData.onCancel || modalData.cancelContent ? (

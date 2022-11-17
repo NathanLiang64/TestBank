@@ -68,7 +68,7 @@ export const getTransactionDetails = async (request) => {
   const transactionDetails = queryCardBillRt.data.details.map((detail) => ({
     txnDate: detail.txDate,
     description: detail.desc,
-    targetAcct: '1112223333444455', // TODO: detail.cardNo rt null，先塞假資料待處理完成後恢復
+    targetAcct: detail.cardNo,
     amount: detail.amount,
     currency: 'NTD',
   }));

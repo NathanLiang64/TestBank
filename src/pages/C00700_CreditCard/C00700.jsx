@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState} from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
@@ -9,14 +8,19 @@ import Main from 'components/Layout';
 import CreditCard from 'components/CreditCard';
 
 import { CreditCardIcon5, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
-import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { showCustomDrawer, showError, showPrompt } from 'utilities/MessageModal';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { showCustomDrawer, showCustomPrompt, showPrompt } from 'utilities/MessageModal';
 
 import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
-import DetailCreditCard from './components/detailCreditCard';
-import { getCards, getCreditCards } from './api';
-import SwiperCreditCard from './C00700.style';
+import { currencySymbolGenerator } from 'utilities/Generator';
+import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
+import TransactionsList from 'components/TransactionsList';
+import { getCards } from './api';
+import {SwiperCreditCard, DetailDialogContentWrapper, TableDialog} from './C00700.style';
+import {
+  backInfo, levelInfo, renderBody, renderHead,
+} from './utils';
 
 /**
  * C00700 信用卡 首頁
@@ -24,6 +28,7 @@ import SwiperCreditCard from './C00700.style';
 const CreditCardPage = () => {
   const history = useHistory();
   const [cards, setCards] = useState([]);
+  const [usedCardLimit, setUsedCardLimit] = useState(0);
   const dispatch = useDispatch();
   /**
    * 頁面啟動，初始化
@@ -31,28 +36,29 @@ const CreditCardPage = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
     const cardResponse = await getCards(); // 若沒有信用卡資訊時，code 還會是0000嗎？
-    if (!cardResponse.data || cardResponse.data.card.length === 0) {
-      showPrompt('您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。', closeFunc);
+    if (!cardResponse.data || cardResponse.data.cards.length === 0) {
+      await showPrompt('您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。', closeFunc);
     }
 
     setCards(cardResponse.data.cards);
+    setUsedCardLimit(cardResponse.data.usedCardLimit);
     dispatch(setWaittingVisible(false));
   }, []);
 
   // render 功能列表
   const functionAllList = (item) => {
     const list = [
-      { fid: '/R00200', title: '晚點付', accountNo: item.cardNo },
-      { fid: '/R00300', title: '帳單', accountNo: item.cardNo },
-      { fid: '/R00400', title: '繳費', accountNo: item.cardNo },
+      { fid: FuncID.R00200, title: '晚點付', cardNo: item.cardNo },
+      { fid: FuncID.R00300, title: '帳單', cardNo: item.cardNo },
+      { fid: FuncID.R00400, title: '繳費', cardNo: item.cardNo },
     ];
     if (item.isBankeeCard === 'N') list.splice(0, 1);
 
     return (
       <ul className="functionList">
         { list.map((func) => (
-          <li key={func.accountNo}>
-            <button type="button" onClick={() => startFunc(func.fid, { accountNo: func.accountNo })}>
+          <li key={func.fid}>
+            <button type="button" onClick={() => startFunc(func.fid, { cardNo: func.cardNo })}>
               {func.title}
             </button>
           </li>
@@ -82,7 +88,6 @@ const CreditCardPage = () => {
                 } else {
                   history.push(item.fid, item?.param);
                 }
-                dispatch(setDrawerVisible(false));
               }}
             >
               {item.icon}
@@ -92,12 +97,13 @@ const CreditCardPage = () => {
         ))}
       </ul>
     );
-    showCustomDrawer({ content: options });
+    showCustomDrawer({ content: options, shouldAutoClose: true });
   };
 
   // 信用卡卡號(產生上方內容的 slides)
   const renderSlides = () => {
     if (!cards.length) return null;
+
     return (
       cards.map((card) => (
         <SwiperCreditCard>
@@ -105,7 +111,7 @@ const CreditCardPage = () => {
             key={card.cardNo}
             cardName={card.isBankeeCard === 'Y' ? 'Bankee信用卡' : '所有信用卡'}
             accountNo={card.isBankeeCard === 'Y' && card.cardNo}
-            balance={card.usedCardLimit}
+            balance={usedCardLimit}
             color="green"
             annotation="已使用額度"
             onMoreClicked={() => handleMoreClick(card)}
@@ -115,6 +121,53 @@ const CreditCardPage = () => {
       ))
     );
   };
+  const showDialog = (title, info) => {
+    showCustomPrompt({
+      title,
+      message: (
+        <TableDialog>
+          <table>
+            <thead>
+              <tr>
+                {renderHead(info.title)}
+              </tr>
+            </thead>
+            <tbody>
+              { renderBody(info.body)}
+            </tbody>
+          </table>
+          <span className="remark">
+            ＊依個人Bankee數存月平均存款餘額核定等級
+          </span>
+        </TableDialog>
+      ),
+    });
+  };
+
+  const bonusInfo = (card) => [
+    {
+      label: '會員等級',
+      value: `${card.memberLevel}`,
+      iconType: 'Arrow',
+      onClick: () => {
+        showDialog('會員等級', levelInfo);
+      },
+    },
+    {
+      label: '國內/外回饋',
+      value: `${card.rewardsRateDomestic}/${card.rewardsRateOverseas}%`,
+      iconType: 'Arrow',
+      onClick: () => {
+        showDialog('國內外回饋', backInfo);
+      },
+    },
+    {
+      label: '回饋試算',
+      value: `${currencySymbolGenerator('TWD')}${card.rewardsAmount}`,
+      iconType: 'Arrow',
+      onClick: () => history.push('/C007002', { accountNo: card.cardNo }),
+    },
+  ];
 
   // 信用卡明細總覽
   const renderCreditList = () => {
@@ -122,7 +175,18 @@ const CreditCardPage = () => {
     return (
       cards.map((card) => (
         <div key={card.cardNo}>
-          <DetailCreditCard card={card} go2MoreDetails={() => startFunc('R00100', card)} />
+          <DetailDialogContentWrapper>
+            {card.isBankeeCard === 'Y' && (
+            <div className="panel">
+              <ThreeColumnInfoPanel content={bonusInfo(card)} />
+            </div>
+            )}
+          </DetailDialogContentWrapper>
+          <TransactionsList
+            showAll={false}
+            card={card}
+            go2MoreDetails={() => startFunc('R00100', {card, usedCardLimit})}
+          />
         </div>
       ))
     );
