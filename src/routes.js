@@ -29,7 +29,7 @@ const D001002 = lazy(() => import('pages/D00100_NtdTransfer/D00100_2'));
 const D00300 = lazy(() => import('pages/D00300_CardLessATM/D00300'));
 const D003001 = lazy(() => import('pages/D00300_CardLessATM/D00300_1'));
 const D003002 = lazy(() => import('pages/D00300_CardLessATM/D00300_2'));
-const D00400 = lazy(() => import('pages/D00400_CardLessWithDrawChgPwd'));
+const D00400 = lazy(() => import('pages/D00400_CardLessWithDrawChgPwd/D00400'));
 const D00500 = lazy(() => import('pages/D00500_FrequentContacts/D00500'));
 const D00600 = lazy(() => import('pages/D00600_RegisteredContacts/D00600'));
 const D00700 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer'));

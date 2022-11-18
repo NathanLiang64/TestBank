@@ -5,6 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { fetchJobsCode, updateRegularBasicInformation } from 'pages/A00600_RegularBasicInformation/api';
 import { closeFunc } from 'utilities/AppScriptProxy';
+import { showAnimationModal } from 'utilities/MessageModal';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 /* Elements */
@@ -17,7 +18,6 @@ import {
 } from 'components/elements';
 import Layout from 'components/Layout/Layout';
 import Accordion from 'components/Accordion';
-import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
 
 /* Styles */
 import theme from 'themes/theme';
@@ -67,21 +67,21 @@ const RegularBasicInformation = () => {
   // 取得職業別清單
   const getJobsCode = async () => {
     dispatch(setWaittingVisible(true));
-    const { code, message, data } = await fetchJobsCode({});
-    if (code === '0000') {
+    const response = await fetchJobsCode({});
+    console.log(response);
+    dispatch(setWaittingVisible(false));
+    if (response) {
       const {
         gradeList, incomeList, jobList,
-      } = data;
-
-      console.log(data);
+      } = response;
 
       setGradeOptions(gradeList);
       setIncomeOptions(incomeList);
       setJobOptions(jobList);
 
-      const grade = gradeList.find((item) => item.code === data.grade)?.code || '';
-      const income = incomeList.find((item) => item.code === data.income)?.code || '';
-      const jobcd = jobList.find((item) => item.code === data.jobcd)?.code || '';
+      const grade = gradeList.find((item) => item.code === response.grade)?.code || '';
+      const income = incomeList.find((item) => item.code === response.income)?.code || '';
+      const jobcd = jobList.find((item) => item.code === response.jobcd)?.code || '';
 
       setRegularBasicData({
         grade,
@@ -92,37 +92,28 @@ const RegularBasicInformation = () => {
       setValue('industry', jobcd);
       setValue('title', grade);
       setValue('income', income);
-    } else {
-      dispatch(setCloseCallBack(() => closeFunc()));
-      dispatch(setResultContent({
-        isSuccess: false,
-        successTitle: '',
-        successDesc: '',
-        errorTitle: '發生錯誤',
-        errorCode: code,
-        errorDesc: message,
-      }));
-      dispatch(setIsOpen(true));
+      return;
     }
-    dispatch(setWaittingVisible(false));
+    showAnimationModal({
+      isSuccess: false,
+      errorTitle: '發生錯誤',
+      errorCode: '',
+      errorDesc: '',
+      onClose: () => closeFunc(),
+    });
   };
 
   // 設定結果彈窗
-  const setResultDialog = ({ code, message }) => {
-    if (code === '0000') {
-      dispatch(setCloseCallBack(() => closeFunc()));
-    } else {
-      dispatch(setCloseCallBack(() => {}));
-    }
-    dispatch(setResultContent({
-      isSuccess: code === '0000',
+  const setResultDialog = (response) => {
+    showAnimationModal({
+      isSuccess: response,
       successTitle: '設定成功',
       successDesc: '基本資料變更成功',
       errorTitle: '設定失敗',
-      errorCode: code,
-      errorDesc: message,
-    }));
-    dispatch(setIsOpen(true));
+      errorCode: '',
+      errorDesc: '',
+      onClose: () => closeFunc(),
+    });
   };
 
   // caculate action code
@@ -163,7 +154,6 @@ const RegularBasicInformation = () => {
   ));
 
   useEffect(() => {
-    dispatch(setIsOpen(false));
     getJobsCode();
   }, []);
 
