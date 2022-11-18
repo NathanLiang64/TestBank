@@ -8,7 +8,7 @@ import { getCardlessStatus } from 'pages/D00300_CardLessATM/api';
 import Layout from 'components/Layout/Layout';
 
 /* Styles */
-import CardLessATMWrapper from './cardLessATM.style';
+import CardLessATMWrapper from './D00300.style';
 
 const CardLessATM = () => {
   const history = useHistory();
@@ -19,28 +19,22 @@ const CardLessATM = () => {
   };
 
   // 檢查無卡提款狀態; 0=未申請, 1=已申請未開通, 2=已開通, 3=已註銷, 4=已失效, 5=其他
-  const fetchCardlessStatus = async (param) => {
-    const statusCodeResponse = await getCardlessStatus(param);
-    if (statusCodeResponse.code === '0000') {
-      const { cwdStatus } = statusCodeResponse.data;
+  const fetchCardlessStatus = async () => {
+    const {code, data} = await getCardlessStatus();
+    if (code === '0000') {
+      const { cwdStatus } = data;
       const statusNumber = Number(cwdStatus);
-      // 未開通
-      if (
-        statusNumber === 0
-        || statusNumber === 1
-        || statusNumber === 3
-        || statusNumber === 4
-      ) {
+
+      if (statusNumber === 2) {
+        // 已開通
+        toWithdrawPage();
+      } else {
+        // 未開通
         await showCustomPrompt({
           message: '很抱歉，您尚未開通無卡提款功能，無法使用此功能',
           onOk: () => closeFunc(),
+          onClose: () => closeFunc(),
         });
-        return;
-      }
-
-      // 已開通
-      if (statusNumber === 2) {
-        toWithdrawPage();
       }
     } else {
       await showCustomPrompt({
@@ -51,7 +45,7 @@ const CardLessATM = () => {
   };
 
   useEffect(() => {
-    fetchCardlessStatus({});
+    fetchCardlessStatus();
   }, []);
 
   return (
