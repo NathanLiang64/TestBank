@@ -1,16 +1,15 @@
-import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { changePwd } from 'pages/T00900_PwdModify/api';
 import { closeFunc, switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
+import { showAnimationModal } from 'utilities/MessageModal';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import {
   FEIBButton,
 } from 'components/elements';
-import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
 import PasswordInput from 'components/PasswordInput';
 import e2ee from 'utilities/E2ee';
 import { confirmPasswordValidation, newPasswordValidation, passwordValidation } from 'utilities/validation';
@@ -20,7 +19,6 @@ import { confirmPasswordValidation, newPasswordValidation, passwordValidation } 
 import PwdModifyWrapper from './pwdModify.style';
 
 const PwdModify = () => {
-  const dispatch = useDispatch();
   /**
    *- 資料驗證
    */
@@ -36,15 +34,9 @@ const PwdModify = () => {
   });
 
   // 設定結果彈窗
-  const setResultDialog = ({ code, message }) => {
-    const isSuccess = code === '0000';
-    if (isSuccess) {
-      dispatch(setCloseCallBack(() => closeFunc()));
-    } else {
-      dispatch(setCloseCallBack(() => {}));
-    }
-    dispatch(setResultContent({
-      isSuccess,
+  const setResultDialog = (response) => {
+    showAnimationModal({
+      isSuccess: response,
       successTitle: '設定成功',
       successDesc: (
         <>
@@ -53,14 +45,14 @@ const PwdModify = () => {
         </>
       ),
       errorTitle: '設定失敗',
-      errorCode: code,
-      errorDesc: message,
-    }));
-    dispatch(setIsOpen(true));
+      errorCode: '',
+      errorDesc: '',
+      onClose: () => closeFunc(),
+    });
   };
 
   // 呼叫變更網銀密碼 API
-  const handlePasswordModify = async () => {
+  const handlePwdModify = async () => {
     const authCode = 0x28;
     const jsRs = await transactionAuth(authCode);
     if (jsRs.result) {
@@ -79,7 +71,7 @@ const PwdModify = () => {
 
   // 點擊儲存變更按鈕，表單驗證
   const onSubmit = async () => {
-    handlePasswordModify();
+    handlePwdModify();
   };
 
   return (
