@@ -77,8 +77,8 @@ const RegularPwdModify = () => {
         newPasswordCheck: e2ee(getValues('newPasswordCheck')),
         actionCode: 1,
       };
-      const changePwdResponse = await renewPwd(param);
-      setResultDialog(changePwdResponse);
+      const modifyResponse = await renewPwd(param);
+      setResultDialog(modifyResponse);
       switchLoading(false);
     }
   };
