@@ -202,7 +202,7 @@ const S00400 = () => {
         </div>
         {!isPushBind && (
         <div className="term_container">
-          <Accordion className="accordion">
+          <Accordion className="accordion" space="both">
             <S00400AccordionContent className="accordion_content" />
           </Accordion>
           <FEIBButton onClick={() => handlePushBind()}>

@@ -4,6 +4,8 @@ import * as yup from 'yup';
 import { useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useController, useForm } from 'react-hook-form';
+import { goHome, transactionAuth } from 'utilities/AppScriptProxy';
+import uuid from 'react-uuid';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -13,18 +15,18 @@ import {
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import Accordion from 'components/Accordion';
 import { RadioGroup } from '@material-ui/core';
-import { goHome, transactionAuth } from 'utilities/AppScriptProxy';
+import { getKey, memberRegister } from './api';
 import A00800AccoridonContent from './A00800_AccoridonContent';
 
 /* Styles */
 import A00800Wrapper from './A00800.style';
-import { memberRegister } from './api';
 
 /**
  * A00800 訪客註冊
  */
 
 const A00800 = () => {
+  const [key, setKey] = useState('');
   const [isOtpPass, setIsOtpPass] = useState(false);
   const [inviteToken, setInviteToken] = useState('');
   const authCode = 0x03;
@@ -156,6 +158,12 @@ const A00800 = () => {
   };
 
   useEffect(async () => {
+    /* 取得初始資料 */
+    const getKeyRs = await getKey();
+
+    if (getKeyRs.code === '0000') {
+      setKey(getKeyRs);
+    }
     // TODO: 取得inviteToken(若有)
   }, []);
 
