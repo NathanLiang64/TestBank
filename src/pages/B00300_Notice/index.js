@@ -139,7 +139,7 @@ const Notice = () => {
   ));
 
   // 無通知內容顯示相應圖示及文字
-  const renderTabPanel = (list) => (list.length > 0 ? renderMessagesList(list) : <EmptyData content="沒有最新消息" />);
+  const renderTabPanel = (list) => (list.length > 0 ? renderMessagesList(list) : <div className="emptyData"><EmptyData content="沒有最新消息" /></div>);
 
   const renderEditList = () => (
     <ul className="noticeEditList">
@@ -186,9 +186,9 @@ const Notice = () => {
           </div>
           <FEIBTabContext value={tabValue}>
             <FEIBTabList $size="small" onChange={handleTabChange}>
-              {msgTypeList.map((type) => <FEIBTab label={type.label} value={type.value} />)}
+              {msgTypeList.map((type) => <FEIBTab key={type.value} label={type.label} value={type.value} />)}
             </FEIBTabList>
-            {msgTypeList.map((type) => <FEIBTabPanel value={type.value}>{renderTabPanel(type.list)}</FEIBTabPanel>)}
+            {msgTypeList.map((type) => <FEIBTabPanel key={type.value} value={type.value}>{renderTabPanel(type.list)}</FEIBTabPanel>)}
           </FEIBTabContext>
         </div>
       </NoticeWrapper>
