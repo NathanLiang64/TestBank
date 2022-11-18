@@ -8,6 +8,7 @@ import { TextInputField } from 'components/Fields';
 import Layout from 'components/Layout/Layout';
 import { closeFunc, getQLStatus, transactionAuth } from 'utilities/AppScriptProxy';
 import { showCustomPrompt } from 'utilities/MessageModal';
+import { AuthCode } from 'utilities/TxnAuthCode';
 import DebitCardActiveWrapper from './S00700.style';
 import { validationSchema } from './validationSchema';
 import { activate } from './api';
@@ -33,7 +34,7 @@ const S00700 = () => {
   };
 
   const submitHandler = async (values) => {
-    const auth = await transactionAuth(0x20);
+    const auth = await transactionAuth(AuthCode.S00700);
     if (auth && auth.result) {
       const activateResponse = await activate({...values});
       history.push('/S007001', {...activateResponse});
