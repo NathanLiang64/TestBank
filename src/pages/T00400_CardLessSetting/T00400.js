@@ -1,18 +1,20 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import Layout from 'components/Layout/Layout';
 import Accordion from 'components/Accordion';
 import { FEIBSwitch } from 'components/elements';
-import {startFunc, transactionAuth } from 'utilities/AppScriptProxy';
+import {getQLStatus, startFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { EditIcon } from 'assets/images/icons';
 
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { FuncID } from 'utilities/FuncID';
+import { showError } from 'utilities/MessageModal';
 import CardLessSettingWrapper from './T00400.style';
 
-import { getStatus } from './api';
+import { getStatus, activate } from './api';
 
 const CardLessSetting = () => {
   const dispatch = useDispatch();
@@ -20,15 +22,39 @@ const CardLessSetting = () => {
   const [active, setActive] = useState(false);
   const [bankAccount, setBankAccount] = useState('');
 
-  // 點擊 switch 檢查裝置綁定狀態
-  const handleSwitchClick = async () => {
-    if (!active) {
-      const authCode = AuthCode.T00400;
-      const jsRs = await transactionAuth(authCode);
+  const checkQLStatus = (status) => {
+    switch (status) {
+      case ('0'):
+        showError('裝置未綁定');
+        return false;
+      case ('3'):
+        showError('已在其它裝置綁定');
+        return false;
+      case ('4'):
+        showError('本裝置已綁定其他帳號');
+        return false;
+      default:
+        return true;
+    }
+  };
 
-      // 檢查成功跳轉設定無卡提款密碼頁
-      if (jsRs.result) {
-        history.push('/T004001');
+  // 點擊 switch 檢查裝置綁定狀態
+  const handleSwitchClick = async (e) => {
+    // 1. 確認裝置綁定狀態
+    const { QLStatus } = await getQLStatus();
+    const shouldContinue = checkQLStatus(QLStatus);
+    if (shouldContinue) {
+      // 2. 確認交易驗證
+      const {result} = await transactionAuth(AuthCode.T00400);
+      if (result) {
+        if (e.target.checked) {
+          // 開啟無卡提款
+          history.push('/T004001'); // 檢查成功跳轉設定無卡提款密碼頁
+        } else {
+          // 關閉無卡提款
+          const data = await activate();
+          if (data) setActive(false);
+        }
       }
     }
   };
