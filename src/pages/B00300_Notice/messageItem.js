@@ -15,8 +15,13 @@ const MessageItem = ({ item, deleteClick, readClick }) => {
   };
 
   const handleTouchEnd = () => {
-    const show = endX - startX < 0;
+    // 點擊時endX為0，亦排除
+    const show = endX - startX < 0 && endX !== 0;
     setShowActions(show);
+
+    // 清除前次紀錄狀態
+    setEndX(0);
+    setStartX(0);
   };
 
   return (

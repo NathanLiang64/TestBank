@@ -82,6 +82,9 @@ const Notice = () => {
     }
   };
 
+  // 如果有至少一個未讀，回傳true
+  const handleMarkItem = (list) => list.filter((item) => item.status !== 'R').length === 0;
+
   // 選擇通知類別
   const handleTabChange = (event, type) => {
     setTabValue(type);
@@ -186,7 +189,7 @@ const Notice = () => {
           </div>
           <FEIBTabContext value={tabValue}>
             <FEIBTabList $size="small" onChange={handleTabChange}>
-              {msgTypeList.map((type) => <FEIBTab key={type.value} label={type.label} value={type.value} />)}
+              {msgTypeList.map((type) => <FEIBTab key={type.value} label={type.label} value={type.value} className={handleMarkItem(type.list) ? '' : 'unReadTab'} />)}
             </FEIBTabList>
             {msgTypeList.map((type) => <FEIBTabPanel key={type.value} value={type.value}>{renderTabPanel(type.list)}</FEIBTabPanel>)}
           </FEIBTabContext>
