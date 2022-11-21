@@ -12,6 +12,7 @@ import {
   FEIBTab,
   FEIBTabPanel,
 } from 'components/elements';
+import EmptyData from 'components/EmptyData';
 import MessageItem from './messageItem';
 import {
   queryLastPush,
@@ -32,10 +33,37 @@ const Notice = () => {
   const [cMessagesList, setCmessagesList] = useState([]);
   const [sMessagesList, setSmessagesList] = useState([]);
 
+  // 通知類別及代碼
+  const msgTypeList = [
+    {
+      label: '帳務',
+      value: 'A',
+      list: aMessagesList,
+    },
+    {
+      label: '社群',
+      value: 'C',
+      list: cMessagesList,
+    },
+    {
+      label: '公告',
+      value: 'P',
+      list: pMessagesList,
+    },
+    {
+      label: '安全',
+      value: 'S',
+      list: sMessagesList,
+    },
+    {
+      label: '全部',
+      value: '0',
+      list: allMessagesList,
+    },
+  ];
+
   // 跳轉通知設定頁
-  const toSettingPage = () => {
-    startFunc('S00400');
-  };
+  const toSettingPage = () => startFunc('S00400');
 
   // 取得通知列表
   const getNotices = async () => {
@@ -110,6 +138,9 @@ const Notice = () => {
     />
   ));
 
+  // 無通知內容顯示相應圖示及文字
+  const renderTabPanel = (list) => (list.length > 0 ? renderMessagesList(list) : <div className="emptyData"><EmptyData content="沒有最新消息" /></div>);
+
   const renderEditList = () => (
     <ul className="noticeEditList">
       <li onClick={readAllMessages}>
@@ -155,37 +186,9 @@ const Notice = () => {
           </div>
           <FEIBTabContext value={tabValue}>
             <FEIBTabList $size="small" onChange={handleTabChange}>
-              <FEIBTab label="帳務" value="A" />
-              <FEIBTab label="社群" value="C" />
-              <FEIBTab label="公告" value="P" />
-              <FEIBTab label="安全" value="S" />
-              <FEIBTab label="全部" value="0" />
+              {msgTypeList.map((type) => <FEIBTab key={type.value} label={type.label} value={type.value} />)}
             </FEIBTabList>
-            <FEIBTabPanel value="A">
-              {
-                renderMessagesList(aMessagesList)
-              }
-            </FEIBTabPanel>
-            <FEIBTabPanel value="C">
-              {
-                renderMessagesList(cMessagesList)
-              }
-            </FEIBTabPanel>
-            <FEIBTabPanel value="P">
-              {
-                renderMessagesList(pMessagesList)
-              }
-            </FEIBTabPanel>
-            <FEIBTabPanel value="S">
-              {
-                renderMessagesList(sMessagesList)
-              }
-            </FEIBTabPanel>
-            <FEIBTabPanel value="0">
-              {
-                renderMessagesList(allMessagesList)
-              }
-            </FEIBTabPanel>
+            {msgTypeList.map((type) => <FEIBTabPanel key={type.value} value={type.value}>{renderTabPanel(type.list)}</FEIBTabPanel>)}
           </FEIBTabContext>
         </div>
       </NoticeWrapper>

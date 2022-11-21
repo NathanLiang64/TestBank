@@ -1,8 +1,7 @@
-/* eslint-disable no-unused-vars */
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 import { changeCardlessPwd } from 'pages/D00400_CardLessWithDrawChgPwd/api';
 
 /* Elements */
@@ -10,15 +9,13 @@ import Layout from 'components/Layout/Layout';
 import {
   FEIBButton,
 } from 'components/elements';
-import PasswordInput from 'components/PasswordInput';
 import Accordion from 'components/Accordion';
-// import { setIsOpen, setCloseCallBack, setResultContent } from 'pages/ResultDialog/stores/actions';
+import { PasswordInputField } from 'components/Fields';
 
 /* Styles */
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showAnimationModal } from 'utilities/MessageModal';
-import { PasswordInputField } from 'components/Fields';
 import CardLessATMWrapper from '../D00300_CardLessATM/D00300.style';
 import { validationSchema } from './validationSchema';
 
@@ -39,7 +36,7 @@ const CardLessWithDrawChgPwd = () => {
     const {result} = await transactionAuth(AuthCode.D00400);
     if (result) {
       dispatch(setWaittingVisible(true));
-      const {code, message } = await changeCardlessPwd(param);
+      const { code, message } = await changeCardlessPwd(param);
       dispatch(setWaittingVisible(false));
 
       showAnimationModal({

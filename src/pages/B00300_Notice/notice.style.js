@@ -31,6 +31,10 @@ const NoticeWrapper = styled(Layout)`
         }
       }
     }
+    .emptyData {
+      height: 20rem;
+      margin-top: 6rem;
+    }
     .MuiTabs-root::after {
       background: unset;
     }

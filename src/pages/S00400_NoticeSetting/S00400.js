@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
@@ -46,8 +47,7 @@ const S00400 = () => {
       nightMuteNotice: modelParam.nightMuteNotice ? 'Y' : 'N',
     };
 
-    if (!isPushBind) {
-      console.log('S00400 updateNotiSetting !isPushBind');
+    if (isPushBind) {
       const bindResponse = await bindPushSetting(param);
       if (bindResponse) {
         setModel({ ...modelParam });
@@ -87,6 +87,7 @@ const S00400 = () => {
 
     /* 檢查有無同意過推播 */
     const queryIsOnResponse = await queryPushBindMock(); // DEBUG: 回傳為mock
+    setIsPushBind(queryIsOnResponse);
     if (queryIsOnResponse === false) {
       showCustomPrompt({
         title: '系統訊息',
@@ -94,17 +95,22 @@ const S00400 = () => {
         onOk: () => store.dispatch(setModalVisible(false)),
         onCancel: () => closeFunc(),
       });
+
+      setModel({
+        communityNotice: true,
+        boardNotice: true,
+        securityNotice: true,
+        nightMuteNotice: true,
+      });
+    } else {
+      const response = await queryPushSetting();
+      setModel({
+        communityNotice: response.communityNotice === 'Y',
+        boardNotice: response.boardNotice === 'Y',
+        securityNotice: response.securityNotice === 'Y',
+        nightMuteNotice: response.nightMuteNotice === 'Y',
+      });
     }
-
-    setIsPushBind(queryIsOnResponse);
-
-    const response = await queryPushSetting();
-    setModel({
-      communityNotice: response.communityNotice === 'Y',
-      boardNotice: response.boardNotice === 'Y',
-      securityNotice: response.securityNotice === 'Y',
-      nightMuteNotice: response.nightMuteNotice === 'Y',
-    });
 
     dispatch(setWaittingVisible(false));
   }, []);
