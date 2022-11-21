@@ -186,7 +186,7 @@ const A00800 = () => {
           })}
           {renderFormItem({label: '確認密碼', areaName: 'passwordConfirm', type: 'password'})}
 
-          <Accordion space="top" title="個資保護法公告內容" className="accordion">
+          <Accordion space="both" title="個資保護法公告內容" className="accordion">
             <A00800AccoridonContent />
           </Accordion>
           <div className="term_agree">

@@ -134,10 +134,12 @@ const QuickLoginSetting = () => {
       }
       // 已綁定帳號或裝置
       if (QLStatus === '3' || QLStatus === '4') {
-        customPopup(
-          '已裝置綁定',
-          '您已進行裝置綁定，請至原裝置解除綁定或致電客服',
-        );
+        showCustomPrompt({
+          title: '已裝置綁定',
+          message: '您已進行裝置綁定，請至原裝置解除綁定或致電客服',
+          onOk: closeFunc,
+          onClose: closeFunc,
+        });
       }
     }
 

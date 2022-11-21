@@ -34,7 +34,7 @@ const DrawerContent = ({
       <span>
         APP裝置綁定使用條款
       </span>
-      ，並將與您的電信公司確認您的手機門號與 SIM 卡是否一致，若無請至本行更新手機門號，已完成裝置綁定。
+      ，並將與您的電信公司確認您的手機門號與 SIM 卡是否一致，若無請至本行更新手機門號，以完成裝置綁定。
     </div>
     <ConfirmButtons
       mainButtonValue="確認"

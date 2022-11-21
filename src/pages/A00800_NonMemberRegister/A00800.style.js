@@ -60,11 +60,6 @@ const A00800Wrapper = styled(Layout)`
             }
         }
     }
-    .accordion {
-        .collapseContent {
-            max-height: 18rem;
-        }
-    }
 `;
 
 export default A00800Wrapper;
