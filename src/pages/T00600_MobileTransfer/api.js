@@ -13,7 +13,7 @@ export const fetchName = async () => {
  *   account: 帳號,
  *   name:      帳戶名稱，若有暱稱則會優先用暱稱,
  *   transable: 已設約轉 或 同ID互轉(true/false)
- *   aggreedAcct: [{ // 約定帳號(多筆)
+ *   agreedAcct: [{ // 約定帳號(多筆)
  *        bank: 銀行代號 例如: 8050
  *        account: 約定帳號 例如: 0043009999999999
  *   },...]
