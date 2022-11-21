@@ -6,18 +6,12 @@ export const generateAmountOptions = (bills) => {
 
   return [
     {
-      label: `本期應繳金額 ${currencySymbolGenerator(
-        bills.currency ?? 'NTD',
-        bills.amount,
-      )}`,
-      value: bills.amount,
+      label: `本期應繳金額 ${currencySymbolGenerator('NTD', bills.newBalance)}`,
+      value: bills.newBalance,
     },
     {
-      label: `最低應繳金額 ${currencySymbolGenerator(
-        bills.currency ?? 'NTD',
-        bills.minAmount,
-      )}`,
-      value: bills.minAmount,
+      label: `最低應繳金額 ${currencySymbolGenerator('NTD', bills.minDueAmount)}`,
+      value: bills.minDueAmount,
     },
     {
       label: '自訂金額',
@@ -26,11 +20,11 @@ export const generateAmountOptions = (bills) => {
   ];
 };
 
-export const generateAccountNoOptions = (bills) => {
-  if (!bills) return [];
+export const generateAccountNoOptions = (accounts) => {
+  if (!accounts || !accounts.length) return [];
 
-  return bills.accounts.map((v) => ({
-    label: accountFormatter(v.accountNo),
-    value: v.accountNo,
+  return accounts.map((v) => ({
+    label: accountFormatter(v.account),
+    value: v.account,
   }));
 };

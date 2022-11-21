@@ -21,9 +21,6 @@ import DealContent from './dealContent';
 import { validationSchema } from './validationSchema';
 
 const CardLessATM = () => {
-  /**
-   *- 資料驗證
-   */
   const {handleSubmit, control } = useForm({
     defaultValues: {
       withdrawPwd: '',
@@ -37,21 +34,20 @@ const CardLessATM = () => {
 
   // 開通無卡提款與設定無卡提款密碼
   const activateWithdrawAndSetPwd = async (param) => {
-    const jsRs = await transactionAuth(AuthCode.T00400);
-    if (jsRs.result) {
-      // switchLoading(true);
+    const {result} = await transactionAuth(AuthCode.T00400);
+    if (result) {
       dispatch(setWaittingVisible(true));
-      const activateResponse = await activate(param);
+      const {message} = await activate(param);
       dispatch(setWaittingVisible(false));
-      // switchLoading(false);
-      // 開通成功
+
+      // 開通狀態顯示
       showAnimationModal({
-        isSuccess: activateResponse.chgPwMessage === '',
+        isSuccess: !message, // 若 message 不存在代表成功
         successTitle: '設定成功',
         successDesc: '',
         errorTitle: '設定失敗',
         errorCode: '',
-        errorDesc: activateResponse.message,
+        errorDesc: message,
         onClose: () => history.goBack(),
       });
     }
@@ -87,9 +83,7 @@ const CardLessATM = () => {
           </ul>
         </Accordion>
       </div>
-      <FEIBButton
-        type="submit"
-      >
+      <FEIBButton type="submit">
         同意條款並送出
       </FEIBButton>
     </form>
