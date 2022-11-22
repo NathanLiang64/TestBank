@@ -6,9 +6,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { FEIBButton } from 'components/elements';
 import { TextInputField } from 'components/Fields';
 import Layout from 'components/Layout/Layout';
-import { closeFunc, getQLStatus, transactionAuth } from 'utilities/AppScriptProxy';
+import {
+  closeFunc, getQLStatus, startFunc, transactionAuth,
+} from 'utilities/AppScriptProxy';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import { AuthCode } from 'utilities/TxnAuthCode';
+import { FuncID } from 'utilities/FuncID';
 import DebitCardActiveWrapper from './S00700.style';
 import { validationSchema } from './validationSchema';
 import { activate } from './api';
@@ -36,8 +39,10 @@ const S00700 = () => {
     if (errMessage) {
       await showCustomPrompt({
         message: errMessage,
-        onOk: closeFunc,
-        onClose: closeFunc,
+        okContent: '立即設定',
+        onOk: () => startFunc(FuncID.T00200),
+        onCancel: () => {},
+        onClose: () => {},
       });
     }
   }, []);

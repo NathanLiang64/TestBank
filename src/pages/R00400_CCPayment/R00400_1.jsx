@@ -13,6 +13,7 @@ import BottomAction from 'components/BottomAction';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import Accordion from 'components/Accordion';
 
+// import { closeFunc } from 'utilities/AppScriptProxy';
 import {
   getCreditCardTerms,
 } from './api';
@@ -31,6 +32,9 @@ const Page = () => {
     if (location.state && ('isSuccessful' in location.state)) {
       setResult(location.state);
     }
+    // else {
+    //   closeFunc();
+    // }
   }, []);
 
   const lazyLoadTerms = async () => {
@@ -71,6 +75,7 @@ const Page = () => {
             errorDesc="親愛的客戶，您好非約定轉帳超過當日轉帳限額，請重新執行交易，如有疑問，請與本行客戶服務中心聯繫。"
             errorSpace
           />
+          {/* TODO 是否能透過繳款資訊獲得 自動扣繳的資訊 */}
           { result?.isSuccessful && !(result?.autoDeduct) && (
             <>
               <div>

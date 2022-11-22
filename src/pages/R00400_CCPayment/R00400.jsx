@@ -58,18 +58,14 @@ const Page = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    // const funcParams = await loadFuncParams();
-
-    // if (funcParams) {
     const accountList = await getAccountsList('M'); // 拿取內部轉出帳號資訊
     const cardInfoResponse = await queryCardInfo(); // 拿取應繳金額資訊
     if (accountList && cardInfoResponse.data) {
       setInternalAccounts(accountList);
       setCardInfo(cardInfoResponse.data);
+    } else {
+      closeFunc();
     }
-    // } else {
-    //   showError('您尚未持有 Bankee 信用卡', closeFunc);
-    // }
     dispatch(setWaittingVisible(false));
   }, []);
 

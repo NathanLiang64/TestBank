@@ -9,7 +9,7 @@ export const getCardlessStatus = async (param) => {
   //   // { cwdStatus: '2', newSiteRegist: param, message: 'cwdStatus 2 message' },
   //   // { cwdStatus: '3', newSiteRegist: param, message: 'cwdStatus 3 message' },
   // };
-  return response;
+  return response.data;
 };
 
 // 取得提款卡資訊 done

@@ -38,7 +38,7 @@ const CardLessSetting = () => {
         // 若是 1.已申請未開通 或是 2.已開通 狀態時需要先進行交易驗證
         const { result } = await transactionAuth(AuthCode.T00400);
         if (result) {
-          const { message } = await activate();
+          const { message } = await activate('');
           // 無 message 出現代表成功執行
           if (!message) {
             setCardLessStatus((prevStatus) => (prevStatus === 2 ? 3 : 2));
@@ -83,7 +83,7 @@ const CardLessSetting = () => {
             </div>
           )}
         </div>
-        <Accordion title="使用條款" space="both">
+        <Accordion title="注意事項" space="both">
           <div className="dealContent">無卡提款設定服務條款</div>
         </Accordion>
       </CardLessSettingWrapper>
