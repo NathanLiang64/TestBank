@@ -33,7 +33,7 @@ const NoticeWrapper = styled(Layout)`
     }
     .emptyData {
       height: 20rem;
-      margin-top: 6rem;
+      margin-top: 20rem;
     }
     .MuiTabs-root::after {
       background: unset;
