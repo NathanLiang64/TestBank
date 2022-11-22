@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { startFunc } from 'utilities/AppScriptProxy';
-import { showDrawer, closeDrawer } from 'utilities/MessageModal';
+import {
+  showDrawer, closeDrawer, showCustomPrompt,
+} from 'utilities/MessageModal';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -13,6 +15,7 @@ import {
   FEIBTabPanel,
 } from 'components/elements';
 import EmptyData from 'components/EmptyData';
+import { FuncID } from 'utilities/FuncID';
 import MessageItem from './messageItem';
 import {
   queryLastPush,
@@ -79,6 +82,13 @@ const Notice = () => {
       setAmessagesList(aMsg);
       setCmessagesList(cMsg);
       setSmessagesList(sMsg);
+    } else {
+      showCustomPrompt({
+        message: '您尚未設定「訊息通知」功能，是否立即設定?',
+        okContent: '立即設定',
+        onOk: () => startFunc(FuncID.S00400),
+        cancelContent: '取消',
+      });
     }
   };
 

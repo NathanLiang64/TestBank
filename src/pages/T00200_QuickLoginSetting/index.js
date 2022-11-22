@@ -121,25 +121,42 @@ const QuickLoginSetting = () => {
     }));
     // 回傳成功
     if (result === 'true') {
-      // 未綁定
-      if (QLStatus === '0') {
-        setIsBioActive(false);
-        setIsPatternActive(false);
-      }
-      // 已綁定
-      if (QLStatus === '1' || QLStatus === '2') {
-        const status = QLType === '1';
-        setIsBioActive(status);
-        setIsPatternActive(!status);
-      }
-      // 已綁定帳號或裝置
-      if (QLStatus === '3' || QLStatus === '4') {
-        showCustomPrompt({
-          title: '已裝置綁定',
-          message: '您已進行裝置綁定，請至原裝置解除綁定或致電客服',
-          onOk: closeFunc,
-          onClose: closeFunc,
-        });
+      const status = QLType === '1';
+      switch (QLStatus) {
+        case '0':
+          // 未綁定
+          setIsBioActive(false);
+          setIsPatternActive(false);
+          break;
+        case '1' && '2':
+          // 已綁定
+          setIsBioActive(status);
+          setIsPatternActive(!status);
+          break;
+        case '3':
+          // 已在其它裝置綁定
+          showCustomPrompt({
+            title: 'APP裝置認證錯誤',
+            message: '您已於其他裝置啟用APP裝置認證，請點選「確認」立即綁定新裝置或致電客服(提醒:重新綁定後裝置自動失效)',
+            onOk: () => {},
+          });
+          break;
+        case '4':
+          // 本裝置已綁定其他帳號
+          showCustomPrompt({
+            title: 'APP裝置認證錯誤',
+            message: '本裝置已綁定他人帳號，請先解除原APP裝置認證或致電客服',
+            onOk: () => {},
+          });
+          break;
+        default:
+          // 同時為已在其它裝置綁定、本裝置已綁定其他帳號，優先後者
+          showCustomPrompt({
+            title: 'APP裝置認證錯誤',
+            message: '本裝置已綁定他人帳號，請先解除原APP裝置認證或致電客服',
+            onOk: () => {},
+          });
+          break;
       }
     }
 

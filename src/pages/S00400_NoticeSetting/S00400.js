@@ -93,6 +93,7 @@ const S00400 = () => {
         title: '系統訊息',
         message: '您尚未設定「訊息通知」功能，是否立即設定？',
         onOk: () => store.dispatch(setModalVisible(false)),
+        okContent: '立即設定',
         onCancel: () => closeFunc(),
       });
 
