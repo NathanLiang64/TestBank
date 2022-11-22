@@ -1,8 +1,6 @@
 import { Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
-// import Spinner from 'components/Spinner';
-import ResultDialog from 'pages/ResultDialog';
 import routes from 'routes';
 
 /* Store */
@@ -23,9 +21,7 @@ const App = () => (
           }
         </Switch>
       </Suspense>
-      <ResultDialog />
     </PersistGate>
-    {/* <Spinner /> */}
   </Provider>
 );
 export default App;

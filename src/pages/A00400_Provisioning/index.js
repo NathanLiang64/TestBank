@@ -1,6 +1,7 @@
 import { goHome } from 'utilities/AppScriptProxy';
 import { openhb } from 'pages/A00400_Provisioning/api';
 import { showAnimationModal } from 'utilities/MessageModal';
+
 /* Elements */
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
@@ -11,22 +12,15 @@ import ProvisioningWrapper from './provisioning.style';
 
 const Provisioning = () => {
   // 設定結果彈窗
-  const setResultDialog = ({ code, message }) => {
-    let errorCode = '';
-    let errorDesc = '';
-    const onClose = () => goHome();
-    if (code !== '0000') {
-      errorCode = code;
-      errorDesc = message;
-    }
+  const setResultDialog = (response) => {
     showAnimationModal({
-      isSuccess: code === '0000',
+      isSuccess: response,
       successTitle: '設定成功',
       successDesc: '',
       errorTitle: '設定失敗',
-      errorCode,
-      errorDesc,
-      onClose,
+      errorCode: '',
+      errorDesc: '',
+      onClose: () => goHome(),
     });
   };
 

@@ -64,7 +64,7 @@ const ForeignCurrencyTransfer = () => {
             ...detail,
             account: acc.account,
             name: acc.name,
-            aggreedAcct: acc.aggreedAcct,
+            agreedAcct: acc.agreedAcct,
           }
         ))).flat();
         console.log('帳戶清單', formatAccounts);
@@ -120,7 +120,7 @@ const ForeignCurrencyTransfer = () => {
     history.push('/foreignCurrencyTransfer1', confirmData);
   };
 
-  const renderAccountsOptions = () => currentAccount?.aggreedAcct?.map((item) => (
+  const renderAccountsOptions = () => currentAccount?.agreedAcct?.map((item) => (
     <FEIBOption key={Math.random()} value={item?.account}>{item?.account}</FEIBOption>
   ));
 
@@ -147,7 +147,7 @@ const ForeignCurrencyTransfer = () => {
   }, []);
 
   return (
-    <Layout title="本行同幣別外幣轉帳">
+    <Layout title="轉帳">
       <ForeignCurrencyTransferWrapper>
         <div className="userCardArea">
           <Swiper

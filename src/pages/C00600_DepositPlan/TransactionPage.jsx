@@ -1,9 +1,13 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router';
 
 import Layout from 'components/Layout/Layout';
 import AccountDetails from 'components/AccountDetails/accountDetails';
-import { loadFuncParams, closeFunc } from 'utilities/AppScriptProxy';
+import { closeFunc } from 'utilities/AppScriptProxy';
 import { stringDateCodeFormatter } from 'utilities/Generator';
+import { showError } from 'utilities/MessageModal';
+
 import { getTransactionDetails } from './api';
 
 /**
@@ -11,23 +15,18 @@ import { getTransactionDetails } from './api';
  */
 const DepositPlanTransactionPage = () => {
   const [plan, setPlan] = useState(null);
+  const {state} = useLocation();
 
-  /**
-   * 從別的頁面跳轉至此頁時，應指定所查詢的帳戶。
-   */
   useEffect(async () => {
-    // startParams: 要顯示明細的存錢計劃詳細資料，規格參照：api.js - getDepositPlans API
-    const startParams = await loadFuncParams(); // Function Controller 提供的參數
-    if (startParams && (typeof startParams === 'object')) {
-      const {plan: loadedPlan} = startParams;
-      setPlan(
-        {
-          ...loadedPlan,
-          accountNo: loadedPlan.bindAccountNo,
-          balance: loadedPlan.currentBalance,
-
-        },
-      );
+    // 從別的頁面跳轉至此頁時，應指定所查詢的帳戶。
+    if (state?.plan) {
+      setPlan({
+        ...state.plan,
+        accountNo: state.plan.bindAccountNo,
+        balance: state.plan.currentBalance,
+      });
+    } else {
+      showError('查無計畫', closeFunc);
     }
   }, []);
 
@@ -36,19 +35,20 @@ const DepositPlanTransactionPage = () => {
    * @param {*} conditions 查詢條件。
    */
   const updateTransactions = async (conditions) => {
-    const today = stringDateCodeFormatter(new Date());
-    const startDate = parseInt(today, 10) < parseInt(plan?.startDate, 10) ? today : plan?.startDate;
     const request = {
       accountNo: plan?.bindAccountNo,
-      startDate,
+      startDate: stringDateCodeFormatter(new Date(plan.createDate)), // 查詢啟示日為計畫建立的當天
       endDate: plan?.endDate,
-      // currency: 'TWD',
       ...conditions,
     };
 
     // 取得帳戶交易明細（三年內）
     const transData = await getTransactionDetails(request);
     return transData;
+
+    // 先暫時回傳 mockData 測試
+    // const mockData = { acctTxDtls, monthly: [], startIndex: 1 };
+    // return mockData;
   };
 
   return (

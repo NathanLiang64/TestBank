@@ -10,6 +10,7 @@ import EditIcon from 'assets/images/icons/editIcon.svg';
 import { closeDrawer, showAnimationModal, showDrawer } from 'utilities/MessageModal';
 import { useHistory } from 'react-router';
 import theme from 'themes/theme';
+import { AuthCode } from 'utilities/TxnAuthCode';
 import {
   checkDeviceBindingStatus, getNonDesignatedTransferData, MIDVerify, queryOTP, updateOTP,
 } from './api';
@@ -25,9 +26,6 @@ import T00300DrawerContent from './T00300_drawerContent';
 const T00300 = () => {
   const [model, setModel] = useState({});
   const history = useHistory();
-
-  const authCode2FA = 0x20;
-  const authCode2FAOTP = 0x2B;
 
   /**
    * 錯誤訊息
@@ -89,7 +87,7 @@ const T00300 = () => {
 
     if (!data.isEdit) {
       /* 開通流程：雙因子驗證? && 申請＋開通流程：雙因子驗證 */
-      const result = await transactionAuth(authCode2FA, model.mobile);
+      const result = await transactionAuth(AuthCode.T00300.APPLY, model.mobile);
 
       if (!result) {
         /* 失敗頁面 */
@@ -110,7 +108,7 @@ const T00300 = () => {
       }
     } else {
       /* 修改流程：雙因子＋OTP 驗證 */
-      const result = await transactionAuth(authCode2FAOTP, data.mobileNumber);
+      const result = await transactionAuth(AuthCode.T00300.EDIT, data.mobileNumber);
 
       if (!result) {
         /* 失敗頁面 */
@@ -163,7 +161,7 @@ const T00300 = () => {
     console.log('T00300 handleCancel()');
 
     /* 雙因子驗證 */
-    const result = await transactionAuth(authCode2FA, model.mobile);
+    const result = await transactionAuth(AuthCode.T00300.CLOSE, model.mobile);
 
     if (!result) {
       /* 失敗頁面 */
@@ -197,11 +195,12 @@ const T00300 = () => {
      *  model.status === '01 -> 開通流程
      *  其餘走 申請+開通流程
      */
-    const result = await checkDeviceBindingStatus();
-    if (!result.bindingStatus) {
-      onFailure(result.failureCode, result.message);
-      return;
-    }
+    // DEBUG 暫時跳過
+    // const result = await checkDeviceBindingStatus();
+    // if (!result.bindingStatus) {
+    //   onFailure(result.failureCode, result.message);
+    //   return;
+    // }
 
     if (model.status === '03') {
       /* 註銷流程 */

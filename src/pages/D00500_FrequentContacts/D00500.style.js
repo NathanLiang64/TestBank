@@ -51,12 +51,24 @@ const DrawerWrapper = styled.div`
 
   .self-center {
     align-self: center;
-  };
+  }
 
   .text-blue {
     color: ${({ theme }) => theme.colors.text.darker};
     margin-block-start: 1rem;
     text-align: center;
+
+    .editButton {
+      padding: 0;
+      padding-bottom: .5rem;
+      margin-left: 1rem;
+    }
+  }
+
+  .goBack {
+    position: absolute;
+    left: 1rem;
+    top: -6rem;
   }
 `;
 

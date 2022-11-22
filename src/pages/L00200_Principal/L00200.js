@@ -1,18 +1,19 @@
 import { useState, useEffect } from 'react';
-import { useHistory } from 'react-router';
 import { getSubSummary, getSubPayment } from 'pages/L00100_Loan/api';
 import { toCurrency } from 'utilities/Generator';
+import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
 
 /* Styles */
 import { showPrompt } from 'utilities/MessageModal';
-import { closeFunc } from 'utilities/AppScriptProxy';
 import PrincipalWrapper from './principal.style';
 
-const L00200 = (props) => {
-  const history = useHistory();
+/**
+ * L00200 貸款 應繳查詢
+ */
+const L00200 = () => {
   const [detaillist, setDetailList] = useState([]);
 
   const asyncForEach = async (array, callback) => {
@@ -48,8 +49,9 @@ const L00200 = (props) => {
   };
 
   useEffect(async () => {
-    if (props?.location?.state?.accountNo) {
-      getSubNo(props?.location?.state?.accountNo);
+    const startParams = await loadFuncParams();
+    if (startParams) {
+      getSubNo(startParams.accountNo);
     } else {
       const response = await getSubSummary();
       if (response.length === 0) {
@@ -61,7 +63,7 @@ const L00200 = (props) => {
   }, []);
 
   return (
-    <Layout title="應繳本息查詢" goBackFunc={() => history.goBack()}>
+    <Layout title="應繳本息查詢">
       <PrincipalWrapper>
         {
           detaillist.map((item) => (

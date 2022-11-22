@@ -21,7 +21,8 @@ import {
 } from 'utilities/Generator';
 
 import { showPrompt } from 'utilities/MessageModal';
-import { closeFunc } from 'utilities/AppScriptProxy';
+import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
+import { FuncID } from 'utilities/FuncID';
 import { getLoanSummary, getContract, getSubPaymentHistory } from './api';
 // import { getLoanSummary, getContract, getStatment } from './api';
 import PageWrapper, { ContentWrapper } from './L00100.style';
@@ -89,7 +90,7 @@ const Page = () => {
 
   const handleSearchClick = (accountNo) => {
     // 查詢應繳本息
-    history.push('/L00200', { accountNo });
+    startFunc(FuncID.L00200, { accountNo });
   };
 
   /**
@@ -159,7 +160,8 @@ const Page = () => {
     dispatch(setWaittingVisible(false));
     if (historyResponse) {
       const singleHistoryData = historyResponse[i];
-      history.push('/L003001', { singleHistoryData, cardData });
+      // history.push('/L003001', { singleHistoryData, cardData }); // TODO: 改用startFunc
+      startFunc(FuncID.L00300 + 1, { singleHistoryData, cardData });
     }
   };
 
@@ -191,7 +193,8 @@ const Page = () => {
   };
 
   const handleMoreTransactionsClick = (card) => {
-    history.push('/L00300', { card });
+    // history.push('/L00300', { card }); // TODO: 改用startFunc
+    startFunc(FuncID.L00300, { card });
   };
 
   /**
@@ -221,7 +224,7 @@ const Page = () => {
    * 只要提供相同數量的 slides 和 content，SwiperLayout會自動切換對應的內容。
    */
   return (
-    <Layout title="貸款" goBackFunc={() => history.goBack()}>
+    <Layout title="貸款">
       <MainScrollWrapper>
         <PageWrapper>
           <SwiperLayout slides={renderSlides(loans)} hasDivider={false} slidesPerView={1.1} spaceBetween={8} centeredSlides>

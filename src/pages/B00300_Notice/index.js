@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { startFunc } from 'utilities/AppScriptProxy';
-import { showDrawer, closeDrawer } from 'utilities/MessageModal';
+import {
+  showDrawer, closeDrawer, showCustomPrompt,
+} from 'utilities/MessageModal';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -12,6 +14,8 @@ import {
   FEIBTab,
   FEIBTabPanel,
 } from 'components/elements';
+import EmptyData from 'components/EmptyData';
+import { FuncID } from 'utilities/FuncID';
 import MessageItem from './messageItem';
 import {
   queryLastPush,
@@ -32,10 +36,37 @@ const Notice = () => {
   const [cMessagesList, setCmessagesList] = useState([]);
   const [sMessagesList, setSmessagesList] = useState([]);
 
+  // 通知類別及代碼
+  const msgTypeList = [
+    {
+      label: '帳務',
+      value: 'A',
+      list: aMessagesList,
+    },
+    {
+      label: '社群',
+      value: 'C',
+      list: cMessagesList,
+    },
+    {
+      label: '公告',
+      value: 'P',
+      list: pMessagesList,
+    },
+    {
+      label: '安全',
+      value: 'S',
+      list: sMessagesList,
+    },
+    {
+      label: '全部',
+      value: '0',
+      list: allMessagesList,
+    },
+  ];
+
   // 跳轉通知設定頁
-  const toSettingPage = () => {
-    startFunc('S00400');
-  };
+  const toSettingPage = () => startFunc('S00400');
 
   // 取得通知列表
   const getNotices = async () => {
@@ -51,8 +82,18 @@ const Notice = () => {
       setAmessagesList(aMsg);
       setCmessagesList(cMsg);
       setSmessagesList(sMsg);
+    } else {
+      showCustomPrompt({
+        message: '您尚未設定「訊息通知」功能，是否立即設定?',
+        okContent: '立即設定',
+        onOk: () => startFunc(FuncID.S00400),
+        cancelContent: '取消',
+      });
     }
   };
+
+  // 如果有至少一個未讀，回傳true
+  const handleMarkItem = (list) => list.filter((item) => item.status !== 'R').length === 0;
 
   // 選擇通知類別
   const handleTabChange = (event, type) => {
@@ -110,6 +151,9 @@ const Notice = () => {
     />
   ));
 
+  // 無通知內容顯示相應圖示及文字
+  const renderTabPanel = (list) => (list.length > 0 ? renderMessagesList(list) : <div className="emptyData"><EmptyData content="沒有最新消息" /></div>);
+
   const renderEditList = () => (
     <ul className="noticeEditList">
       <li onClick={readAllMessages}>
@@ -155,37 +199,9 @@ const Notice = () => {
           </div>
           <FEIBTabContext value={tabValue}>
             <FEIBTabList $size="small" onChange={handleTabChange}>
-              <FEIBTab label="帳務" value="A" />
-              <FEIBTab label="社群" value="C" />
-              <FEIBTab label="公告" value="P" />
-              <FEIBTab label="安全" value="S" />
-              <FEIBTab label="全部" value="0" />
+              {msgTypeList.map((type) => <FEIBTab key={type.value} label={type.label} value={type.value} className={handleMarkItem(type.list) ? '' : 'unReadTab'} />)}
             </FEIBTabList>
-            <FEIBTabPanel value="A">
-              {
-                renderMessagesList(aMessagesList)
-              }
-            </FEIBTabPanel>
-            <FEIBTabPanel value="C">
-              {
-                renderMessagesList(cMessagesList)
-              }
-            </FEIBTabPanel>
-            <FEIBTabPanel value="P">
-              {
-                renderMessagesList(pMessagesList)
-              }
-            </FEIBTabPanel>
-            <FEIBTabPanel value="S">
-              {
-                renderMessagesList(sMessagesList)
-              }
-            </FEIBTabPanel>
-            <FEIBTabPanel value="0">
-              {
-                renderMessagesList(allMessagesList)
-              }
-            </FEIBTabPanel>
+            {msgTypeList.map((type) => <FEIBTabPanel key={type.value} value={type.value}>{renderTabPanel(type.list)}</FEIBTabPanel>)}
           </FEIBTabContext>
         </div>
       </NoticeWrapper>

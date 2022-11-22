@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
@@ -14,6 +15,7 @@ import Accordion from 'components/Accordion';
 import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import store from 'stores/store';
+import { AuthCode } from 'utilities/TxnAuthCode';
 import {
   queryPushSetting, bindPushSetting, queryPushBindMock, updatePushBindMock,
 } from './api';
@@ -36,8 +38,6 @@ const S00400 = () => {
     nightMuteNotice: false,
   });
 
-  const authCode = 0x30;
-
   // 更新通知設定
   const updateNotiSetting = async (modelParam) => {
     const param = {
@@ -47,8 +47,7 @@ const S00400 = () => {
       nightMuteNotice: modelParam.nightMuteNotice ? 'Y' : 'N',
     };
 
-    if (!isPushBind) {
-      console.log('S00400 updateNotiSetting !isPushBind');
+    if (isPushBind) {
       const bindResponse = await bindPushSetting(param);
       if (bindResponse) {
         setModel({ ...modelParam });
@@ -65,7 +64,7 @@ const S00400 = () => {
     console.log('S00400 handleTurnOnNotice');
 
     // 網銀密碼／雙因子驗證
-    const verifyResult = await transactionAuth(authCode);
+    const verifyResult = await transactionAuth(AuthCode.S00400);
     console.log('S00400 handlePushBind() verifyPWD/2FA', verifyResult);
 
     if (!verifyResult.result) {
@@ -88,36 +87,31 @@ const S00400 = () => {
 
     /* 檢查有無同意過推播 */
     const queryIsOnResponse = await queryPushBindMock(); // DEBUG: 回傳為mock
+    setIsPushBind(queryIsOnResponse);
     if (queryIsOnResponse === false) {
       showCustomPrompt({
         title: '系統訊息',
         message: '您尚未設定「訊息通知」功能，是否立即設定？',
         onOk: () => store.dispatch(setModalVisible(false)),
+        okContent: '立即設定',
         onCancel: () => closeFunc(),
       });
+
+      setModel({
+        communityNotice: true,
+        boardNotice: true,
+        securityNotice: true,
+        nightMuteNotice: true,
+      });
+    } else {
+      const response = await queryPushSetting();
+      setModel({
+        communityNotice: response.communityNotice === 'Y',
+        boardNotice: response.boardNotice === 'Y',
+        securityNotice: response.securityNotice === 'Y',
+        nightMuteNotice: response.nightMuteNotice === 'Y',
+      });
     }
-
-    setIsPushBind(queryIsOnResponse);
-
-    const response = await queryPushSetting();
-    setModel({
-      communityNotice: response.communityNotice === 'Y',
-      boardNotice: response.boardNotice === 'Y',
-      securityNotice: response.securityNotice === 'Y',
-      nightMuteNotice: response.nightMuteNotice === 'Y',
-    });
-    // if (!response) {
-    //   // 尙未完成行動裝置綁定
-    //   // TODO 詢是否立即綁定。
-    //   await closeFunc();
-    // } else {
-    //   setModel({
-    //     communityNotice: response.communityNotice === 'Y',
-    //     boardNotice: response.boardNotice === 'Y',
-    //     securityNotice: response.securityNotice === 'Y',
-    //     nightMuteNotice: response.nightMuteNotice === 'Y',
-    //   });
-    // }
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -215,7 +209,7 @@ const S00400 = () => {
         </div>
         {!isPushBind && (
         <div className="term_container">
-          <Accordion className="accordion">
+          <Accordion className="accordion" space="both">
             <S00400AccordionContent className="accordion_content" />
           </Accordion>
           <FEIBButton onClick={() => handlePushBind()}>

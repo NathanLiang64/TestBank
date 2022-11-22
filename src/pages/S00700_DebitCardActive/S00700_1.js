@@ -6,15 +6,16 @@ import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import { useHistory, useLocation } from 'react-router';
 import { FEIBButton } from 'components/elements';
 import ResultAnimation from 'components/SuccessFailureAnimations/ResultAnimation';
+import { startFunc } from 'utilities/AppScriptProxy';
+import { FuncID } from 'utilities/FuncID';
 import DebitCardActiveWrapper, {SuccessDescWrapper} from './S00700.style';
 
 const S007001 = () => {
   const history = useHistory();
   const {state} = useLocation();
-  const go2More = () => history.replace('/B00600');
 
-  // successDesc 內容是否應該由後端提供?
   const successDesc = () => (
+    // successDesc 內容是否應該由後端提供?
     <SuccessDescWrapper>
       <div className="success_title">
         <h3>
@@ -27,29 +28,22 @@ const S007001 = () => {
         <br />
         為保障您的交易安全，請您盡速於全台任一ATM或Web ATM進行密碼變更。
       </div>
-
     </SuccessDescWrapper>
   );
 
   if (!state) return history.goBack();
 
-  const isSuccess = true;
+  const isSuccess = state.code === '0000';
+
   return (
-    <Layout title="金融卡啟用結果" goBackFunc={go2More}>
+    <Layout title="金融卡啟用結果" goBackFunc={() => startFunc(FuncID.B00600)}>
       <DebitCardActiveWrapper>
-        {/* <SuccessFailureAnimations
-          isSuccess={!!(state.code === '0000')}
-          successTitle={`${state.cname} 設定成功`}
-          successDesc={successDesc()}
-          errorTitle={`${state.cname} 設定失敗`}
-          errorDesc={state.message}
-        /> */}
         <ResultAnimation
           isSuccess={isSuccess}
-          subject={isSuccess ? '轉帳成功' : '轉帳失敗'}
+          subject={isSuccess ? '設定成功' : '設定失敗'}
           description={isSuccess ? successDesc() : state.message}
         />
-        <FEIBButton style={{ marginTop: '1rem' }} onClick={go2More}>
+        <FEIBButton style={{ marginTop: '1rem' }} onClick={() => startFunc(FuncID.B00600)}>
           確認
         </FEIBButton>
       </DebitCardActiveWrapper>

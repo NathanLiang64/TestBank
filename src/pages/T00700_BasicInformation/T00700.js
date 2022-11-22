@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
@@ -12,14 +13,16 @@ import {FEIBInputLabel, FEIBButton } from 'components/elements';
 import { DropdownField, TextInputField } from 'components/Fields';
 
 /* Styles */
-import { showAnimationModal } from 'utilities/MessageModal';
+import { showAnimationModal, showError } from 'utilities/MessageModal';
+import { AuthCode } from 'utilities/TxnAuthCode';
+import { useLocationOptions } from 'hooks/useLocationOptions';
 import BasicInformationWrapper from './T00700.style';
 import { validationSchema } from './validationSchema';
 
 const T00700 = () => {
   const dispatch = useDispatch();
   const {
-    handleSubmit, control, reset, watch, getValues,
+    handleSubmit, control, reset, watch,
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
@@ -31,83 +34,55 @@ const T00700 = () => {
     },
   });
 
-  const watchedCountyName = watch('county');
-  const [countyOptions, setCountyOptions] = useState([]);
-  const [originPersonalData, setOriginPersonalData] = useState('');
+  const watchedValues = watch();
+  const { countyOptions, districtOptions } = useLocationOptions(watchedValues.county); // 取得縣市/鄉鎮區列表
+  const [originPersonalData, setOriginPersonalData] = useState();
 
-  // 取得個人資料，並匯入表單
-  const getPersonalData = async () => {
-    const { code, data, message } = await getBasicInformation();
-    if (code === '0000') {
-      setOriginPersonalData(data);
-      // const foundCounty = options.find(
-      //   ({ countyName }) => countyName === data.county.trim(),
-      // );
-      // const foundCity = foundCounty?.cities.find(
-      //   ({ cityName }) => cityName === data.city.trim(),
-      // );
-
-      reset({
-        ...data,
-        // county: foundCounty.countyName,
-        county: data.county.trim(),
-        // city: foundCity.cityName,
-        city: data.city.triim(),
-      });
-    } else {
-      console.log(code, message);
-    }
-  };
-
-  // 取得縣市列表
   const fetchCountyList = async () => {
     dispatch(setWaittingVisible(true));
-    // 拿取縣市 & 鄉鎮區列表
-    const { code, data, message } = await getCountyList({});
-    if (code === '0000') {
-      setCountyOptions(data);
-      getPersonalData();
+    // 取得個人資料，並匯入表單
+    const { data, message } = await getBasicInformation();
+    if (data) {
+      setOriginPersonalData(data);
+      const {
+        email, mobile, addr, county, city,
+      } = data;
+      reset({
+        email,
+        mobile,
+        addr,
+        county: county.trim(),
+        city: city.trim(),
+      });
     } else {
-      console.log(code, message);
+      showError(message, closeFunc);
     }
+
     dispatch(setWaittingVisible(false));
   };
 
   // 設定結果彈窗
   const setResultDialog = (response) => {
-    // 設定成功時，reponse 應該包含 addr city county email  mobile zipCode
-    const result = 'addr' in response
-      && 'city' in response
-      && 'county' in response
-      && 'email' in response
-      && 'mobile' in response
-      && 'zipCode' in response;
-    let errorCode = '';
-    let errorDesc = '';
-    if (!result) {
-      errorCode = response.code;
-      errorDesc = response.message;
-    }
+    const result = response.code === '0000';
 
     showAnimationModal({
       isSuccess: result,
       successTitle: '設定成功',
       successDesc: '基本資料變更成功',
       errorTitle: '設定失敗',
-      errorCode,
-      errorDesc,
-      onClose: result ? closeFunc : () => reset({...originPersonalData}),
+      errorCode: response.code,
+      errorDesc: response.message,
+      onClose: result ? closeFunc : () => reset({ ...originPersonalData }),
     });
   };
 
   // caculateActionCode
   const getActionCode = (values) => {
     const {
-      county, city, zipCode, addr, email, mobile,
+      county, city, addr, email, mobile,
     } = values;
     const addressCode = county === originPersonalData.county
       && city === originPersonalData.city
-      && zipCode === originPersonalData.zipCode
       && addr === originPersonalData.addr
       ? 0
       : 1;
@@ -118,22 +93,13 @@ const T00700 = () => {
 
   // 更新個人資料
   const modifyPersonalData = async (values) => {
-    const {
-      county, city, zipCode, addr, email, mobile,
-    } = values;
+    // TODO 尚未確定 modifyBasicInformation API 的回傳格式為何？
     const param = {
-      county,
-      city,
-      // 變動後的zipCode無法得知 ，不應該提供才對
-      zipCode,
-      addr,
-      email,
-      mobile,
+      ...values,
       actionCode: getActionCode(values),
     };
     dispatch(setWaittingVisible(true));
     const modifyDataResponse = await modifyBasicInformation(param);
-    console.log(modifyDataResponse);
     setResultDialog(modifyDataResponse);
     dispatch(setWaittingVisible(false));
   };
@@ -142,54 +108,27 @@ const T00700 = () => {
   const onSubmit = async (values) => {
     if (values.mobile !== originPersonalData.mobile) {
     // 有變更手機號碼
-      const authCode = 0x36;
-      const jsRs = await transactionAuth(authCode, values.mobile);
+      const jsRs = await transactionAuth(AuthCode.T00700.MOBILE, values.mobile);
       if (jsRs.result) {
         modifyPersonalData(values);
       }
     } else {
       // 無變更手機號碼
-      const authCode = 0x26;
-      const jsRs = await transactionAuth(authCode);
+      const jsRs = await transactionAuth(AuthCode.T00700.EMAIL);
       if (jsRs.result) {
         modifyPersonalData(values);
       }
     }
   };
 
-  // 建立縣市選單
-  const generateCountyOptions = () => {
-    if (countyOptions.length) {
-      return countyOptions.map(({ countyName }) => ({
-        label: countyName,
-        value: countyName,
-      }));
-    }
-    return [];
-  };
-  // 建立鄉鎮市區選單
-  const generateDistrictOptions = () => {
-    const foundDistrictOption = countyOptions.find(({ countyName }) => countyName === watchedCountyName);
-    if (foundDistrictOption) {
-      return foundDistrictOption.cities.map(({ cityName }) => ({
-        label: cityName,
-        value: cityName,
-      }));
-    }
-    return [];
+  const resetOnCountyChange = () => {
+    reset({ ...watchedValues, city: '' });
   };
 
   // 取得初始資料
   useEffect(() => {
     fetchCountyList();
   }, []);
-
-  // 當使用者改變 "county" 值時，需要將 "city" 值清空
-  useEffect(() => {
-    if (watchedCountyName !== originPersonalData.county) {
-      reset({...getValues(), city: ''});
-    }
-  }, [watchedCountyName]);
 
   return (
     <Layout title="基本資料變更">
@@ -215,15 +154,16 @@ const T00700 = () => {
                   name="county"
                   placeholder="請選擇縣市"
                   control={control}
-                  options={generateCountyOptions()}
+                  options={countyOptions}
+                  resetOnChnage={resetOnCountyChange}
                 />
               </div>
               <div>
                 <DropdownField
                   name="city"
-                  placeholder="請選擇縣市"
+                  placeholder="請選擇鄉鎮市區"
                   control={control}
-                  options={generateDistrictOptions()}
+                  options={districtOptions}
                 />
               </div>
             </div>

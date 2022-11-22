@@ -2,6 +2,7 @@ import { useHistory } from 'react-router';
 
 import { CreditCardIcon3, DownloadIcon } from 'assets/images/icons';
 import BottomAction from 'components/BottomAction';
+import { FuncID } from 'utilities/FuncID';
 import { getInvoice } from '../api';
 import TrayWrapper from './Tray.style';
 
@@ -12,7 +13,7 @@ const Tray = ({ bills }) => {
     <TrayWrapper>
       <BottomAction className="badFlex" position={0}>
         { !(bills?.autoDeduct) && (
-        <button type="button" onClick={() => history.push('/R00400')}>
+        <button type="button" onClick={() => history.push(`/${FuncID.R00400}`)}>
           <CreditCardIcon3 />
           繳費
         </button>

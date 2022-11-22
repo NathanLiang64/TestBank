@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
+import Barcode from 'react-barcode';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useCheckLocation, usePageInfo, useBarcodeGenerator } from 'hooks';
+import { useCheckLocation, usePageInfo } from 'hooks';
 import DebitCard from 'components/DebitCard/DebitCard';
 import Dialog from 'components/Dialog';
 import PasswordInput from 'components/PasswordInput';
@@ -174,9 +175,13 @@ const BillPay = () => {
       <div className="place">
         <img src={FamilyMartImage} alt="FamilyMartImage" />
       </div>
-      { useBarcodeGenerator('5566778AG2') }
+
+      <Barcode value="5566778AG2" width={1.5} height={48} />
+      <Barcode value="998855465566771123" width={1.5} height={48} />
+      <Barcode value="70558X000003851" width={1.5} height={48} />
+      {/* { useBarcodeGenerator('5566778AG2') }
       { useBarcodeGenerator('998855465566771123') }
-      { useBarcodeGenerator('70558X000003851') }
+      { useBarcodeGenerator('70558X000003851') } */}
     </section>
   );
 

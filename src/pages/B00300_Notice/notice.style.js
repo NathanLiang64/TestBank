@@ -31,8 +31,25 @@ const NoticeWrapper = styled(Layout)`
         }
       }
     }
+    .emptyData {
+      height: 20rem;
+      margin-top: 20rem;
+    }
     .MuiTabs-root::after {
       background: unset;
+    }
+    .unReadTab {
+      &::after {
+        content: ' ';
+        position: absolute;
+        top: 0;
+        right: 0;
+  
+        width: .8rem;
+        height: .8rem;
+        border-radius: 50%;
+        background: ${({ theme }) => theme.colors.state.danger};
+      }
     }
     .notifyItem {
       padding: 2rem 3.4rem 2rem 2rem;

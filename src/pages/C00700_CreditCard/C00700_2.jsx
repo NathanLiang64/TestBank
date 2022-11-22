@@ -15,7 +15,7 @@ import { currencySymbolGenerator } from 'utilities/Generator';
 import { getThisMonth, getMonthList } from 'utilities/MonthGenerator';
 
 import { getRewards } from './api';
-import PageWrapper from './Rewards.style';
+import { RewardPageWrapper } from './C00700.style';
 
 /**
  * C00700_2 信用卡 回饋
@@ -81,7 +81,7 @@ const C007002 = () => {
   return (
     <Layout title="每月現金回饋" goBackFunc={() => history.goBack()}>
       <Main>
-        <PageWrapper>
+        <RewardPageWrapper>
           <FEIBTabContext value={selectedMonth}>
             <FEIBTabList $size="small" $type="fixed" onChange={handleOnTabChange}>
               { getMonthList().map((m) => <FEIBTab key={uuid()} label={`${m.slice(4, 6)}月`} value={m} />)}
@@ -89,7 +89,7 @@ const C007002 = () => {
           </FEIBTabContext>
           {renderSelectedReward()}
           <FEIBButton onClick={() => history.goBack()}>回信用卡首頁</FEIBButton>
-        </PageWrapper>
+        </RewardPageWrapper>
       </Main>
     </Layout>
   );

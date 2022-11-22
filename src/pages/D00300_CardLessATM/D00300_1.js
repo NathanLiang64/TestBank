@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import * as yup from 'yup';
@@ -12,15 +13,17 @@ import Layout from 'components/Layout/Layout';
 import {
   FEIBInput, FEIBInputLabel, FEIBButton, FEIBBorderButton, FEIBErrorMessage,
 } from 'components/elements';
-// import Dialog from 'components/Dialog';
 import DebitCard from 'components/DebitCard/DebitCard';
 import Accordion from 'components/Accordion';
 import { AddCircleRounded, RemoveCircleRounded } from '@material-ui/icons';
 
 /* Styles */
 // import theme from 'themes/theme';
-import { showCustomPrompt } from 'utilities/MessageModal';
-import CardLessATMWrapper from './cardLessATM.style';
+import { showCustomPrompt, showError } from 'utilities/MessageModal';
+import { AuthCode } from 'utilities/TxnAuthCode';
+import { useDispatch } from 'react-redux';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import CardLessATMWrapper from './D00300.style';
 
 const CardLessATM1 = () => {
   /**
@@ -30,8 +33,8 @@ const CardLessATM1 = () => {
     withdrawAmount: yup
       .string()
       .required('請輸入提款金額'),
-    // ...passwordValidation,
   });
+
   const {
     handleSubmit, control, formState: { errors }, setValue, clearErrors, getValues,
   } = useForm({
@@ -39,6 +42,7 @@ const CardLessATM1 = () => {
   });
 
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const [accountSummary, setAccountSummary] = useState({
     account: '',
@@ -47,9 +51,6 @@ const CardLessATM1 = () => {
   });
 
   const amountArr = [1000, 2000, 3000, 5000, 10000, 20000];
-
-  // const [openDialog, setOpenDialog] = useState(false);
-  // const [errorMessage, setErrorMessage] = useState('');
 
   // 跳轉結果頁
   const toResultPage = (data) => {
@@ -67,49 +68,36 @@ const CardLessATM1 = () => {
   const changeAmount = (type) => {
     const preAmount = getValues('withdrawAmount');
     if (type) {
-      if (preAmount >= 20000) {
-        return;
-      }
+      if (preAmount >= 20000) return;
       setValue('withdrawAmount', Number(preAmount) + 1000);
     } else {
-      if (preAmount <= 1000) {
-        return;
-      }
+      if (preAmount <= 1000) return;
       setValue('withdrawAmount', Number(preAmount) - 1000);
     }
   };
 
   // 取得提款卡資訊
   const fetchAccountSummary = async () => {
-    switchLoading(true);
-    // TODO 因為沒有提供 account 資訊，所以 response 是 undefined，因此讀不到 message 造成 error
-    const summaryResponse = await getAccountSummary({ account: '' });
-    switchLoading(false);
-    console.log('取得提款帳號資訊', summaryResponse);
-    const { message } = summaryResponse;
-    if (!message) {
-      setAccountSummary({ ...summaryResponse });
-    } else {
-      // TBD
-      showCustomPrompt({message, onOk: () => closeFunc(), onClose: () => closeFunc()});
-    }
+    dispatch(setWaittingVisible(true));
+
+    const data = await getAccountSummary();
+    if (data) setAccountSummary({ ...data });
+
+    dispatch(setWaittingVisible(false));
   };
 
   // 無卡提款交易
   const requestCardlessWithdrawApply = async (param) => {
-    const authCode = 0x20;
-    const jsRs = await transactionAuth(authCode);
-    if (jsRs.result) {
-      switchLoading(true);
-      const withdrawResponse = await cardLessWithdrawApply(param);
-      switchLoading(false);
-      const { account, withdrawAmount } = param;
+    const {result} = await transactionAuth(AuthCode.D00300);
+    if (result) {
       const {
         seqNo, startDateTime, endDateTime, message,
-      } = withdrawResponse;
+      } = await cardLessWithdrawApply(param);
+
+      const { account, withdrawAmount } = param;
       const data = {
-        withdrawalNo: seqNo,
-        amount: withdrawAmount,
+        seqNo,
+        withdrawAmount,
         account,
         startDateTime,
         endDateTime,
@@ -119,7 +107,9 @@ const CardLessATM1 = () => {
         console.log('提款結果', data);
         toResultPage(data);
       } else {
-        showCustomPrompt({message, onOk: () => closeFunc(), onClose: () => closeFunc()});
+        showCustomPrompt({
+          message, okContent: '確認', onOk: () => closeFunc(), onClose: () => closeFunc(),
+        });
       }
     }
   };
@@ -130,7 +120,7 @@ const CardLessATM1 = () => {
       account: accountSummary.account,
     };
     if (data.withdrawAmount > accountSummary.balance) {
-      showCustomPrompt({message: '提款金額不得大於帳戶餘額'});
+      showError('提款金額不得大於帳戶餘額');
     } else {
       requestCardlessWithdrawApply(param);
     }
@@ -210,19 +200,6 @@ const CardLessATM1 = () => {
     </form>
   );
 
-  // const renderDialog = () => (
-  //   <Dialog
-  //     isOpen={openDialog}
-  //     onClose={() => setOpenDialog(false)}
-  //     content={<p>{errorMessage}</p>}
-  //     action={(
-  //       <FEIBButton onClick={() => closeFunc()}>
-  //         確定
-  //       </FEIBButton>
-  //     )}
-  //   />
-  // );
-
   useEffect(() => {
     fetchAccountSummary();
   }, []);
@@ -231,7 +208,6 @@ const CardLessATM1 = () => {
     <Layout title="無卡提款">
       <CardLessATMWrapper>
         {renderWithdrawForm()}
-        {/* {renderDialog()} */}
       </CardLessATMWrapper>
     </Layout>
   );

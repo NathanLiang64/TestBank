@@ -10,6 +10,7 @@ export const DropdownField = ({
   labelName,
   disabled,
   $color,
+  resetOnChange,
   ...controlProps
 }) => {
   const {field, fieldState} = useController(controlProps);
@@ -26,12 +27,16 @@ export const DropdownField = ({
     getContentAnchorEl: null,
   };
 
+  const onChangeHandler = (selectedValue) => {
+    if (resetOnChange && typeof resetOnChange === 'function') resetOnChange();
+    field.onChange(selectedValue);
+  };
   return (
     <>
       <FEIBInputLabel htmlFor={field.name}>{labelName}</FEIBInputLabel>
       <FEIBSelect
         MenuProps={MenuProps}
-        onChange={field.onChange}
+        onChange={onChangeHandler}
         onBlur={field.onBlur}
         id={field.name}
         name={field.name}

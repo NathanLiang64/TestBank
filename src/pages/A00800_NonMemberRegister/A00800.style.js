@@ -22,7 +22,6 @@ const A00800Wrapper = styled(Layout)`
         flex-direction: column;
         justify-content: flex-start;
         padding-bottom: 0;
-        min-height: 90%;
     }
     .form_item {
         margin: 1rem 0;
@@ -40,9 +39,6 @@ const A00800Wrapper = styled(Layout)`
         width: 100%;
         display: flex;
         justify-content: center;
-
-        margin-top: auto;
-        margin-bottom: 1rem;
     }
     .form_button {
         margin-bottom: 2rem;
@@ -58,11 +54,6 @@ const A00800Wrapper = styled(Layout)`
             li {
                 list-style: none;
             }
-        }
-    }
-    .accordion {
-        .collapseContent {
-            max-height: 18rem;
         }
     }
 `;

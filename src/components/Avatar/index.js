@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { EditIcon, PersonalIcon } from 'assets/images/icons';
 import { toHalfWidth } from 'utilities/Generator';
@@ -14,8 +15,7 @@ import AvatarWrapper from './avatar.style';
 const Avatar = ({
   src, name, small, onPreview,
 }) => {
-  const [photo, setPhoto] = useState(null);
-  const [preview, setPreview] = useState(null);
+  const [preview, setPreview] = useState(null); // 上傳的照片轉成 base64 格式
   const [showDefault, setShowDefault] = useState(false);
 
   const renderPhoto = () => <img onError={() => setShowDefault(true)} src={preview || src} alt={name || 'avatar'} />;
@@ -26,6 +26,16 @@ const Avatar = ({
     </div>
   );
 
+  const onImgChangeHandler = (event) => {
+    const photo = event.target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(photo);
+    reader.onloadend = (e) => {
+      setPreview(e.currentTarget.result);
+    };
+    if (onPreview) onPreview(photo);
+  };
+
   const renderEditButton = () => (
     <label className="editButton" htmlFor="imageInput">
       <EditIcon />
@@ -33,19 +43,15 @@ const Avatar = ({
         id="imageInput"
         type="file"
         accept="image/*"
-        onChange={(event) => setPhoto(event.target.files[0])}
+        onChange={onImgChangeHandler}
       />
     </label>
   );
 
+  // 若 src 改變則再渲染一次
   useEffect(() => {
-    if (photo) {
-      const reader = new FileReader();
-      reader.readAsDataURL(photo);
-      reader.onloadend = () => setPreview(reader.result);
-      if (onPreview) onPreview(photo);
-    }
-  }, [photo]);
+    if (src) setShowDefault(false);
+  }, [src]);
 
   return (
     <AvatarWrapper $small={small}>

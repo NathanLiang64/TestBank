@@ -18,7 +18,7 @@ const ReserveTransferSearch1 = ({ location }) => {
   const goBack = () => history.goBack();
 
   const toResultPage = async () => {
-    const authCode = 0x30;
+    const authCode = 0x28;
     const jsRs = await transactionAuth(authCode);
     if (jsRs.result) {
       switchLoading(true);

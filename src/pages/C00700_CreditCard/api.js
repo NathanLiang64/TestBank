@@ -197,7 +197,7 @@ export const getTransactions = async (request) => {
  */
 export const updateTxnNotes = async (param) => {
   const response = await callAPI('/api/card/v1/updateTxnNotes', param);
-  return response.data;
+  return response;
 };
 
 /**
@@ -205,6 +205,7 @@ export const updateTxnNotes = async (param) => {
  * (信用卡子首頁_信用卡資訊)
  *
  * @param token
+ * @param cardNo bankee 卡號 或 空白表示不指定
  * @return {
  *    cardLimit:                   信用卡額度
  *    usedCardLimit:               已使用額度計算
@@ -219,7 +220,6 @@ export const updateTxnNotes = async (param) => {
  *    paidAmount:                  本期累積已繳金額
  * }
  *
- * TODO: 尚未有完整的測資，所以個電文先帶有測資的 id/帳號
  */
 export const queryCardInfo = async (request) => {
   const response = await callAPI('/api/card/v1/getCardSummary', request);

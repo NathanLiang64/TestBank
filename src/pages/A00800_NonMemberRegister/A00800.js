@@ -4,6 +4,8 @@ import * as yup from 'yup';
 import { useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useController, useForm } from 'react-hook-form';
+import { goHome, transactionAuth } from 'utilities/AppScriptProxy';
+import uuid from 'react-uuid';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -13,19 +15,17 @@ import {
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import Accordion from 'components/Accordion';
 import { RadioGroup } from '@material-ui/core';
-import { goHome, transactionAuth } from 'utilities/AppScriptProxy';
+import { getKey, memberRegister } from './api';
 import A00800AccoridonContent from './A00800_AccoridonContent';
 
 /* Styles */
 import A00800Wrapper from './A00800.style';
-import { memberRegister } from './api';
 
 /**
  * A00800 訪客註冊
  */
 
 const A00800 = () => {
-  const [isOtpPass, setIsOtpPass] = useState(false);
   const [inviteToken, setInviteToken] = useState('');
   const authCode = 0x03;
 
@@ -41,10 +41,8 @@ const A00800 = () => {
   /**
    * 資料驗證
    */
-  const mobileVerifySchema = yup.object().shape({
-    mobileNum: yup.string().min(10, mobileError(false)).max(10, mobileError(false)).required(mobileError(true)),
-  });
   const schema = yup.object().shape({
+    mobileNum: yup.string().min(10, mobileError(false)).max(10, mobileError(false)).required(mobileError(true)),
     name: yup.string().max(40, nameError(false)).required(nameError(true)),
     email: yup.string().max(40, emailError(false)).email(emailFormatError).required(emailError(true)),
     password: yup.string().min(6, passwordError(false)).max(6, passwordError(false)).required(passwordError(true)),
@@ -52,15 +50,9 @@ const A00800 = () => {
     agreeTerms: yup.string().required(termConfirmError),
   });
 
-  const { control: controlMobile, handleSubmit: handleSubmitMobile} = useForm({
-    defaultValues: {
-      mobileNum: '',
-    },
-    resolver: yupResolver(mobileVerifySchema),
-  });
-
   const { control, handleSubmit } = useForm({
     defaultValues: {
+      mobileNum: '',
       name: '',
       email: '',
       password: '',
@@ -71,19 +63,19 @@ const A00800 = () => {
   });
 
   /* input物件 */
-  const renderPhoneFormItem = () => {
-    const {field, fieldState} = useController({name: 'mobileNum', control: controlMobile});
+  // const renderPhoneFormItem = () => {
+  //   const {field, fieldState} = useController({name: 'mobileNum', control: controlMobile});
 
-    return (
-      <div className="form_item">
-        <FEIBInputLabel>手機號碼</FEIBInputLabel>
-        <div className="form_item_input">
-          <FEIBInput {...field} />
-          {fieldState.invalid && <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage> }
-        </div>
-      </div>
-    );
-  };
+  //   return (
+  //     <div className="form_item">
+  //       <FEIBInputLabel>手機號碼</FEIBInputLabel>
+  //       <div className="form_item_input">
+  //         <FEIBInput {...field} />
+  //         {fieldState.invalid && <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage> }
+  //       </div>
+  //     </div>
+  //   );
+  // };
   const renderFormItem = ({
     label, areaName, type, isTerm, placeHolder,
   }) => {
@@ -108,15 +100,6 @@ const A00800 = () => {
     );
   };
 
-  /* OTP驗證電話號碼 */
-  const handleVerifyMobileNum = async (data) => {
-    console.log('A00800 handleVerifyMobileNum', {data});
-    const result = await transactionAuth(authCode, data.mobileNum);
-    console.log('A00800 handleVerifyMobileNum', {result});
-
-    setIsOtpPass(result.result === true);
-  };
-
   /* 註冊成功後跳轉 */
   const handleSwitchPage = () => {
     console.log('A00800');
@@ -124,22 +107,23 @@ const A00800 = () => {
       // TODO: 跳轉至邀請卡
       return '';
     }
+    // 成功畫面
 
-    return goHome();
+    return '';
   };
 
   /* submit動作處理 */
   const onSubmit = async (data) => {
-    console.log('A00800 handleOnSubmit() data:', {data, isOtpPass});
+    console.log('A00800 handleOnSubmit() data:', {data});
+    const resultOtp = await transactionAuth(authCode, data.mobileNum);
     const regData = {
       name: data.name,
       email: data.email,
       passwd: data.password,
     };
-
-    if (!isOtpPass) {
-      showCustomPrompt({title: '請先進行手機號碼驗證'});
-      return;
+    console.log('A00800 onSubmit', { resultOtp });
+    if (!resultOtp) {
+      showCustomPrompt({title: 'OTP驗證失敗！'});
     }
 
     const result = await memberRegister(regData);
@@ -162,15 +146,8 @@ const A00800 = () => {
   return (
     <Layout title="訪客註冊" goHome={false}>
       <A00800Wrapper className="NonmemberWrapper">
-        <div className="phone_input">
-          <form onSubmit={handleSubmitMobile((data) => handleVerifyMobileNum(data))}>
-            {renderPhoneFormItem()}
-            <div className="phone_input_send">
-              <FEIBButton $width={11} $height={3.2} type="submit">傳送驗證碼</FEIBButton>
-            </div>
-          </form>
-        </div>
         <form className="basic_data_form" onSubmit={handleSubmit((data) => onSubmit(data))}>
+          {renderFormItem({label: '手機號碼', areaName: 'mobileNum', type: 'phone'})}
           {renderFormItem({label: '姓名', areaName: 'name', type: 'text'})}
           {renderFormItem({label: 'E-mail', areaName: 'email', type: 'email'})}
           {renderFormItem({
@@ -178,7 +155,7 @@ const A00800 = () => {
           })}
           {renderFormItem({label: '確認密碼', areaName: 'passwordConfirm', type: 'password'})}
 
-          <Accordion space="top" title="個資保護法公告內容" className="accordion">
+          <Accordion space="both" title="個資保護法公告內容" className="accordion">
             <A00800AccoridonContent />
           </Accordion>
           <div className="term_agree">

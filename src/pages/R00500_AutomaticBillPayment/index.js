@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Layout from 'components/Layout/Layout';
 import {
-  showDrawer, closeDrawer, showCustomPrompt, showAnimationModal,
+  showDrawer, closeDrawer, showCustomPrompt, showAnimationModal, showPrompt,
 } from 'utilities/MessageModal';
 import { closeFunc, switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
 import { accountFormatter } from 'utilities/Generator';
@@ -52,11 +52,12 @@ const AutomaticBillPayment = () => {
   // 取得帳號清單
   const getAccountsArray = async () => {
     const response = await getAccountsList();
-    if (response) {
-      const data = response.map((item) => item.account);
-      setAccountList(data);
-      setValue('account', data[0]);
+    if (!response || response.length === 0) {
+      showPrompt('您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。', closeFunc);
     }
+    const data = response.map((item) => item.account);
+    setAccountList(data);
+    setValue('account', data[0]);
   };
 
   // 查詢自動扣繳資訊

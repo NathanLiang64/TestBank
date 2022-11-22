@@ -123,3 +123,29 @@ export const queryPayBarcode = async (request) => {
   const response = await callAPI('/api/card/v1/queryPayBarcode', request);
   return response;
 };
+
+/**
+ * 查詢客戶信用卡帳單資訊
+ * (信用卡子首頁_信用卡資訊)
+ *
+ * @param token
+ * @param cardNo bankee 卡號 或 空白表示不指定
+ * @return {
+ *    cardLimit:                   信用卡額度
+ *    usedCardLimit:               已使用額度計算
+ *    availCardLimit:              可使用額度
+ *    cashAdvAvailLimitDomestic:   國內預借現金可用額度
+ *    cashAdvAvailLimitOverseas:   國外預借現金可用額度
+ *    billClosingDate:             帳單結帳日
+ *    payDueDate:                  本期繳款截止日
+ *    minDueAmount:                最低應繳金額
+ *    newBalance:                  本期應繳總額
+ *    lastPayDate:                 最近繳款日期
+ *    paidAmount:                  本期累積已繳金額
+ * }
+ *
+ */
+export const queryCardInfo = async (request) => {
+  const response = await callAPI('/api/card/v1/getCardSummary', request);
+  return response;
+};

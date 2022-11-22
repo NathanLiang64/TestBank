@@ -22,7 +22,7 @@ export const TextInputField = ({
       <FEIBInput
         onChange={(e) => onChange(e.target.value.trim())}
         onBlur={onBlur}
-        value={value}
+        value={value ?? ''}
         type={type}
         id={name}
         disabled={disabled}
