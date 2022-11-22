@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router';
 
@@ -44,6 +45,10 @@ const DepositPlanTransactionPage = () => {
     // 取得帳戶交易明細（三年內）
     const transData = await getTransactionDetails(request);
     return transData;
+
+    // 先暫時回傳 mockData 測試
+    // const mockData = { acctTxDtls, monthly: [], startIndex: 1 };
+    // return mockData;
   };
 
   return (

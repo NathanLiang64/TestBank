@@ -12,7 +12,7 @@ import { callAPI } from 'utilities/axios';
  */
 export const getStatus = async (request) => {
   const response = await callAPI('/api/cardlessWD/getStatus', request);
-  return response;
+  return response.data;
 };
 
 /**

@@ -4,33 +4,29 @@ import { useHistory } from 'react-router';
 import Layout from 'components/Layout/Layout';
 import Accordion from 'components/Accordion';
 import { FEIBSwitch } from 'components/elements';
-import {getQLStatus, startFunc, transactionAuth } from 'utilities/AppScriptProxy';
+import { startFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { EditIcon } from 'assets/images/icons';
 
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { FuncID } from 'utilities/FuncID';
-import { showError } from 'utilities/MessageModal';
+import { showAnimationModal, showCustomPrompt, showError } from 'utilities/MessageModal';
+import { useQLStatus } from 'hooks/useQLStatus';
 import CardLessSettingWrapper from './T00400.style';
 
 import { getStatus, activate } from './api';
-import { checkQLStatus } from './utils';
 
 const CardLessSetting = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const {QLResult, showMessage} = useQLStatus();// 確認裝置綁定狀態
   const [cardLessStatus, setCardLessStatus] = useState();
-  const [bankAccount, setBankAccount] = useState('');
-  const isEnable = cardLessStatus === 2;
+  const isEnable = cardLessStatus?.cwdStatus === '2';
 
-  // 點擊 switch 檢查裝置綁定狀態
   const handleSwitchClick = async () => {
-    // 1. 確認裝置綁定狀態
-    const { QLStatus } = await getQLStatus();
-    const shouldContinue = await checkQLStatus(QLStatus);
-
-    if (shouldContinue) {
+    if (QLResult) {
+      // 若已經綁定
       if (cardLessStatus === 0 || cardLessStatus === 3 || cardLessStatus === 4) {
         // 跳轉設定無卡提款密碼頁
         history.push('/T004001');
@@ -39,28 +35,33 @@ const CardLessSetting = () => {
         const { result } = await transactionAuth(AuthCode.T00400);
         if (result) {
           const { message } = await activate('');
-          // 無 message 出現代表成功執行
           if (!message) {
+            // 無 message 出現代表成功執行，並變更狀態
             setCardLessStatus((prevStatus) => (prevStatus === 2 ? 3 : 2));
-          } else {
-            showError(message);
           }
+
+          showAnimationModal({
+            isSuccess: !message,
+            successTitle: '設定成功',
+            errorTitle: '設定失敗',
+            errorDesc: message,
+          });
         }
       }
-    }
+    } else showMessage();
   };
 
-  // 檢查無卡提款狀態
+  const handlePwdChange = async () => {
+    if (QLResult) startFunc(FuncID.D00400);
+    else showMessage();
+  };
+
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    try {
-      const {data} = await getStatus();
-      const statusNumber = Number(data.cwdStatus);
-      setBankAccount(data.account);
-      setCardLessStatus(statusNumber);
-    } catch (err) {
-      console.log('getStatus error', err.mesage);
-    }
+
+    // 確認無卡提款開通狀態
+    const cardLessRes = await getStatus();
+    setCardLessStatus(cardLessRes);
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -72,12 +73,12 @@ const CardLessSetting = () => {
           <div className="switchContainer">
             <div className="labelContainer">
               <p className="labelTxt">無卡提款</p>
-              {isEnable && <p className="phoneNum">{bankAccount}</p>}
+              {isEnable && <p className="phoneNum">{cardLessStatus.account}</p>}
             </div>
             <FEIBSwitch checked={isEnable} onClick={handleSwitchClick} />
           </div>
           {isEnable && (
-            <div className="mainBlock toChangePwd" onClick={() => startFunc(FuncID.D00400)}>
+            <div className="mainBlock toChangePwd" onClick={handlePwdChange}>
               變更無卡提款密碼
               <EditIcon />
             </div>
