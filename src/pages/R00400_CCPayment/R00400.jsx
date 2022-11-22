@@ -7,10 +7,7 @@ import { useForm } from 'react-hook-form';
 import parse from 'html-react-parser';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import {
-  accountFormatter,
-  currencySymbolGenerator,
-} from 'utilities/Generator';
+import { currencySymbolGenerator } from 'utilities/Generator';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import Theme from 'themes/theme';
 import Layout from 'components/Layout/Layout';
@@ -23,14 +20,13 @@ import { RadioGroupField } from 'components/Fields/radioGroupField';
 import { DropdownField, TextInputField } from 'components/Fields';
 import BankCodeInputNew from 'components/BankCodeInputNew';
 import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
-import { getBillDetail } from 'pages/C00700_CreditCard/api';
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
 
+import { getAccountsList } from 'pages/T00600_MobileTransfer/api';
 import {
-  getBills,
   getCreditCardTerms,
   makePayment,
-  // eslint-disable-next-line no-unused-vars
+  queryCardInfo,
   queryPayBarcode,
 } from './api';
 import PageWrapper, { PopUpWrapper } from './R00400.style';
@@ -47,13 +43,14 @@ import {
 const Page = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const [bills, setBills] = useState();
+  const [cardInfo, setCardInfo] = useState();
+  const [internalAccounts, setInternalAccounts] = useState([]);
   const [terms, setTerms] = useState();
   const {
     control, watch, handleSubmit, reset,
   } = useForm({
     defaultValues,
-    resolver: yupResolver(generateValidationSchema(bills)),
+    resolver: yupResolver(generateValidationSchema(cardInfo)),
   });
 
   const watchedValues = watch();
@@ -61,16 +58,13 @@ const Page = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    const funcParams = await loadFuncParams();
-
-    if (funcParams) {
-    // TODO 取得帳單資訊的 API 待確認..
-    // 是否需要帶入 cardNo 才可以取得 帳單資訊？
-      // const detailResponse = await getBillDetail();
-      const response = await getBills({ showAccounts: true });
-      setBills(response);
+    const accountList = await getAccountsList('M'); // 拿取內部轉出帳號資訊
+    const cardInfoResponse = await queryCardInfo(); // 拿取應繳金額資訊
+    if (accountList && cardInfoResponse.data) {
+      setInternalAccounts(accountList);
+      setCardInfo(cardInfoResponse.data);
     } else {
-      showError('您尚未持有 Bankee 信用卡', closeFunc);
+      closeFunc();
     }
     dispatch(setWaittingVisible(false));
   }, []);
@@ -83,8 +77,9 @@ const Page = () => {
   const getTermsFromOutsideModal = () => (terms ? parse(terms) : <Loading space="both" isCentered />);
 
   const renderBalance = () => {
-    if (!bills || !watchedValues.accountNo) return null;
-    return `可用餘額 ${currencySymbolGenerator(bills.currency ?? 'NTD', bills.accounts.find((a) => a.accountNo === watchedValues.accountNo)?.balance)}元`;
+    if (!internalAccounts.length || !watchedValues.accountNo) return null;
+    const {details} = internalAccounts.find((a) => a.account === watchedValues.accountNo);
+    return `可用餘額 ${currencySymbolGenerator(details[0].currency, details[0].balance)}元`;
   };
 
   const renderPaymentCode = async (amount) => {
@@ -94,7 +89,7 @@ const Page = () => {
         title: '超商條碼繳款',
         message: (
           <PopUpWrapper>
-            <Badge label="應繳金額" value={currencySymbolGenerator(bills?.currency ?? 'NTD', amount)} />
+            <Badge label="應繳金額" value={currencySymbolGenerator(cardInfo?.newBalance ?? 'NTD', amount)} />
             <p className="note">
               適用商家：
               <wbr />
@@ -130,10 +125,10 @@ const Page = () => {
       case AMOUNT_OPTION.CUSTOM:
         return +customAmount;
       case AMOUNT_OPTION.MIN:
-        return bills.minAmount;
+        return cardInfo.minDueAmount;
       case AMOUNT_OPTION.ALL:
       default:
-        return bills.amount;
+        return cardInfo.newBalance;
     }
   };
 
@@ -173,11 +168,12 @@ const Page = () => {
     // history.push('R004001', { isSuccessful: !!response.result, autoDeduct: response.autoDeduct });
   };
 
+  console.log('internalAccounts', internalAccounts);
   return (
     <Layout title="繳款" goBackFunc={closeFunc}>
       <Main small>
         <PageWrapper>
-          <Badge label={`${bills?.month}月應繳金額`} value={currencySymbolGenerator(bills?.currency ?? 'NTD', bills?.amount)} />
+          <Badge label={`${cardInfo?.month}月應繳金額`} value={currencySymbolGenerator('NTD', cardInfo?.newBalance)} />
 
           <div className="badMargin">
             <TabField
@@ -194,7 +190,7 @@ const Page = () => {
               name="amountOptions"
               labelName="請選擇繳款金額"
               control={control}
-              options={generateAmountOptions(bills)}
+              options={generateAmountOptions(cardInfo)}
               resetOnChange={() => reset({...watchedValues, customAmount: null})}
 
             />
@@ -216,7 +212,7 @@ const Page = () => {
                 name="accountNo"
                 labelName="轉出帳號"
                 control={control}
-                options={generateAccountNoOptions(bills)}
+                options={generateAccountNoOptions(internalAccounts)}
               />
               <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
                 { renderBalance() }
@@ -249,7 +245,7 @@ const Page = () => {
             <FEIBButton
               className="mt-4"
               type="submit"
-              disabled={bills?.amount <= 0}
+              disabled={cardInfo?.newBalance <= 0}
             >
               {watchedValues.paymentMethod === PAYMENT_OPTION.EXTERNAL ? '同意並送出' : '確認送出'}
             </FEIBButton>

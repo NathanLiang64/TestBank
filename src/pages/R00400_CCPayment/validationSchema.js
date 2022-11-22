@@ -10,11 +10,11 @@ export const generateValidationSchema = (bills) => yup.object().shape({
       .typeError('請填入自訂金額')
       .max(
         // bills 應該要存在，若不存在的話，在 R00400 會直接導向首頁，讓使用者無法使用表單
-        bills?.amount || 10000000,
+        bills?.newBalance || 10000000,
         '繳款金額需介於最低應繳金額和本期應繳金額之間',
       )
       .min(
-        bills.minAmount || 10000000,
+        bills.minDueAmount || 10000000,
         '繳款金額需介於最低應繳金額和本期應繳金額之間',
       )
     : s.nullable())),

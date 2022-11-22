@@ -130,11 +130,15 @@ const CommunityPage = () => {
   /**
    * 頁面輸出
    */
+
   return (
     <Layout title="社群圈">
       <NetworkWrapper>
         <div className="infoContainer">
-          <Avatar src={summary?.avatar} name={summary?.nickname} />
+          <Avatar
+            src={`${process.env.REACT_APP_AVATAR_IMG_URL}/pf_${summary?.uuid}_b.jpg?timestamp=${Date.now()}`}
+            name={summary?.nickname}
+          />
           <div className="nickname">
             <span className="name">{renderText(summary?.nickname)}</span>
             <FEIBIconButton $fontSize={1.6} onClick={showNicknameEditDialog}>

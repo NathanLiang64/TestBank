@@ -17,6 +17,7 @@ export const AlertMainDepositPlanHasBeenSetAlready = () => {
     title: '設定為主要存錢計畫',
     message: '目前的計畫已設定為主要存錢計畫。',
     okContent: '了解!',
+    onOk: () => {},
   });
 };
 
@@ -25,6 +26,7 @@ export const AlertUnavailableSubAccount = () => {
     title: '新增存錢計畫',
     message: '目前沒有可作為綁定存錢計畫之子帳戶，請先關閉帳本後，或先完成已進行中的存錢計畫。',
     okContent: '現在就來申請吧!',
+    onOk: () => {},
   });
 };
 
@@ -72,6 +74,7 @@ export const ConfirmNotToCloseDepositPlan = () => {
     ),
     okContent: '回首頁',
     onOk: goHome,
+    showCloseButton: false,
   });
 };
 
@@ -125,5 +128,6 @@ export const AlertUpdateFail = () => {
     title: '更新存錢計畫',
     message: '更新失敗，請稍候重試。',
     okContent: '了解',
+    onOk: () => {},
   });
 };

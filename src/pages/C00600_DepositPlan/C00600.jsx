@@ -181,7 +181,7 @@ const DepositPlanPage = () => {
 
   const shouldShowUnavailableSubAccountAlert = () => {
     // totalSubAccount 若多於8組，且無可用的子帳戶時，
-    if ((depositPlans?.totalSubAccountCount >= 8) && !(depositPlans?.subAccounts.length > 0)) AlertUnavailableSubAccount();
+    if ((depositPlans?.totalSubAccountCount >= 8) && !(depositPlans?.subAccounts.length)) AlertUnavailableSubAccount();
   };
 
   /**

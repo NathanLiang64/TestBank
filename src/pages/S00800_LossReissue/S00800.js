@@ -11,6 +11,8 @@ import { showCustomDrawer, showCustomPrompt, showError } from 'utilities/Message
 import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 
+import { getBasicInformation } from 'pages/T00700_BasicInformation/api';
+import { AuthCode } from 'utilities/TxnAuthCode';
 import {getStatus, reIssueOrLost} from './api';
 import LossReissueWrapper from './S00800.style';
 import {actionTextGenerator} from './utils';
@@ -55,7 +57,9 @@ const LossReissue = () => {
 
   // 執行掛失或補發
   const executeAction = async () => {
-    const auth = await transactionAuth(0x28);
+    const {data} = await getBasicInformation();
+    const auth = await transactionAuth(AuthCode.S00800, data.mobile);
+
     if (auth && auth.result) {
       const res = await reIssueOrLost();
       showCustomPrompt({
@@ -76,7 +80,7 @@ const LossReissue = () => {
 
   const onSubmit = async (values) => {
     console.log(values);
-    // const auth = await transactionAuth(0x28);
+    // const auth = await transactionAuth(AuthCode.S00800);
     // if (auth && auth.result) {
     //   // TODO 修改地址 API
     // }
