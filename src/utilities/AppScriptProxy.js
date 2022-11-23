@@ -424,7 +424,7 @@ async function getQLStatus() {
     console.log('web 執行取得綁定狀態');
     return {
       result: 'true',
-      QLStatus: '0',
+      QLStatus: '4',
     };
   });
 }
@@ -562,6 +562,28 @@ async function appTransactionAuth(request) {
   return result;
 }
 
+/**
+ * 查詢訊息通知綁定狀態
+ * @param {{custId: string}} custId 身分證字號 由原生或webview傳?
+ * @returns {{PushBindStatus: boolean}} 狀態布林值
+ */
+async function queryPushBind(custId) {
+  return await callAppJavaScript('queryPushBind', {custId}, true, () => {
+    console.log('web 執行取得綁定狀態');
+    return {
+      PushBindStatus: true,
+    };
+  });
+}
+
+/**
+ * 更新訊息通知設定綁定狀態
+ * @param {{custId: string}} custId 身分證字號 由原生或webview傳?
+ */
+async function updatePushBind(custId) {
+  await callAppJavaScript('updatePushBind', {custId}, false);
+}
+
 export {
   goHome,
   startFunc,
@@ -580,4 +602,6 @@ export {
   regQLfeature,
   regQL,
   delQL,
+  queryPushBind,
+  updatePushBind,
 };
