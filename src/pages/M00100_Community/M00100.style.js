@@ -7,10 +7,6 @@ const NetworkWrapper = styled(Layout)`
     flex-direction: column;
     padding-bottom: 2.4rem;
 
-    .Avatar {
-      margin-bottom: 1.2rem;
-    }
-
     .nickname {
       display: flex;
       justify-content: center;

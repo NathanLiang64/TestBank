@@ -4,7 +4,7 @@ import { FuncID } from 'utilities/FuncID';
 import { showCustomPrompt } from 'utilities/MessageModal';
 
 export const useQLStatus = () => {
-  const [QLResult, setQLResult] = useState(false);
+  const [QLResult, setQLResult] = useState(true);
 
   useEffect(async () => {
     const { QLStatus } = await getQLStatus();
