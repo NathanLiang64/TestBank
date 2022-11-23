@@ -18,7 +18,10 @@ const Avatar = ({
   const [preview, setPreview] = useState(null); // 上傳的照片轉成 base64 格式
   const [showDefault, setShowDefault] = useState(false);
 
-  const renderPhoto = () => <img onError={() => setShowDefault(true)} src={preview || src} alt={name || 'avatar'} />;
+  const renderPhoto = () => {
+    console.log('renderphoto');
+    return <img onError={() => setShowDefault(true)} src={preview || src} alt={name || 'avatar'} />;
+  };
 
   const renderDefaultBackground = () => (
     <div className="default">
@@ -50,8 +53,8 @@ const Avatar = ({
 
   // 若 src 改變則再渲染一次
   useEffect(() => {
-    if (src) setShowDefault(false);
-  }, [src]);
+    if (src || preview) setShowDefault(false);
+  }, [src, preview]);
 
   return (
     <AvatarWrapper $small={small}>
