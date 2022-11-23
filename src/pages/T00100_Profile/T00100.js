@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * /* eslint-disable no-unused-vars
  *
@@ -22,7 +23,8 @@ import { showCustomPrompt } from 'utilities/MessageModal';
 
 /* Styles */
 import { CreateRounded, KeyboardArrowRightRounded } from '@material-ui/icons';
-import Avatar from 'assets/images/avatar.png';
+import defaultAvatar from 'assets/images/avatar.png';
+import Avatar from 'components/Avatar';
 import SettingList from './T00100_settingList';
 import ProfileWrapper from './T00100.style';
 
@@ -49,7 +51,7 @@ const T00100 = () => {
 
   const [nickName, setNickName] = useState('');
   const [uuid, setUuid] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState(Avatar);
+  const [avatarUrl, setAvatarUrl] = useState(defaultAvatar);
   // TODO: 移除
   // const [showChangeNickNameDialog, setShowChangeNickNameDialog] = useState(false);
   // const [dialogMessageModal, setDialogMessageModal] = useState({
@@ -216,7 +218,11 @@ const T00100 = () => {
   return (
     <Layout title="個人化設定">
       <ProfileWrapper>
-        <div className="avatarContainer">
+        <Avatar
+          src={avatarUrl}
+          name={nickName}
+        />
+        {/* <div className="avatarContainer">
           <img src={avatarUrl} onError={() => setAvatarUrl(Avatar)} alt="" key={avatarUrl} />
           <div className="penIconContainer">
             <div className="penIconBackground">
@@ -232,7 +238,7 @@ const T00100 = () => {
               onChange={uploadAvatarImg}
             />
           </label>
-        </div>
+        </div> */}
         <div className="nickName">
           <span>{nickName}</span>
           <CreateRounded onClick={showEditNickNameDialog} />

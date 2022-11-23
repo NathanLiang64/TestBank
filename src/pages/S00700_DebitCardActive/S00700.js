@@ -12,13 +12,14 @@ import {
 import { showCustomPrompt } from 'utilities/MessageModal';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { FuncID } from 'utilities/FuncID';
+import { useQLStatus } from 'hooks/useQLStatus';
 import DebitCardActiveWrapper from './S00700.style';
 import { validationSchema } from './validationSchema';
 import { activate } from './api';
-import { checkQLStatus } from './utils';
 
 const S00700 = () => {
   const history = useHistory();
+  const { QLResult, showMessage } = useQLStatus();
   const { control, handleSubmit } = useForm({
     defaultValues: { actno: '', serial: '' },
     resolver: yupResolver(validationSchema),
@@ -32,20 +33,9 @@ const S00700 = () => {
     }
   };
 
-  // 確認裝置綁定情況
-  useEffect(async () => {
-    const {QLStatus } = await getQLStatus();
-    const errMessage = checkQLStatus(QLStatus);
-    if (errMessage) {
-      await showCustomPrompt({
-        message: errMessage,
-        okContent: '立即設定',
-        onOk: () => startFunc(FuncID.T00200),
-        onCancel: () => {},
-        onClose: () => {},
-      });
-    }
-  }, []);
+  useEffect(() => {
+    if (!QLResult) showMessage();
+  }, [QLResult]);
 
   return (
     <Layout title="金融卡啟用">

@@ -11,9 +11,12 @@ import Layout from 'components/Layout/Layout';
 /* Styles */
 import { getStatus } from 'pages/S00800_LossReissue/api';
 import { FuncID } from 'utilities/FuncID';
+import { useDispatch } from 'react-redux';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import CardLessATMWrapper from './D00300.style';
 
 const CardLessATM = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
 
   // 跳轉到無卡提款申請頁
@@ -23,11 +26,13 @@ const CardLessATM = () => {
 
   // 檢查無卡提款狀態; 0=未申請, 1=已申請未開通, 2=已開通, 3=已註銷, 4=已失效, 5=其他
   const fetchCardlessStatus = async () => {
+    dispatch(setWaittingVisible(true));
+
     try {
       // 確認金融卡是否已經開卡?
       const {status} = await getStatus();
       if (status !== 4) {
-        showCustomPrompt({
+        await showCustomPrompt({
           message: '請先完成金融卡開卡以啟用無卡提款服務！',
           onOk: () => startFunc(FuncID.S00700),
           okContent: '立即開卡',
@@ -52,12 +57,13 @@ const CardLessATM = () => {
         }
       }
     } catch (err) {
-      showCustomPrompt({
+      await showCustomPrompt({
         message: '發生錯誤，暫時無法使用此功能',
         onOk: closeFunc,
         onClose: closeFunc,
       });
     }
+    dispatch(setWaittingVisible(false));
   };
 
   useEffect(() => {
