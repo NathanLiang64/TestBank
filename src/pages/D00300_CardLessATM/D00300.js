@@ -13,7 +13,6 @@ import { getStatus } from 'pages/S00800_LossReissue/api';
 import { FuncID } from 'utilities/FuncID';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import CardLessATMWrapper from './D00300.style';
 
 const CardLessATM = () => {
   const dispatch = useDispatch();
@@ -24,7 +23,6 @@ const CardLessATM = () => {
     history.push('/D003001');
   };
 
-  // 檢查無卡提款狀態; 0=未申請, 1=已申請未開通, 2=已開通, 3=已註銷, 4=已失效, 5=其他
   const fetchCardlessStatus = async () => {
     dispatch(setWaittingVisible(true));
 
@@ -40,15 +38,13 @@ const CardLessATM = () => {
           onClose: closeFunc,
         });
       } else {
-        // 確認無卡提款服務是否已開通?
+        // 檢查無卡提款狀態; 0=未申請, 1=已申請未開通, 2=已開通, 3=已註銷, 4=已失效, 5=其他
         const { cwdStatus } = await getCardlessStatus();
         const statusNumber = Number(cwdStatus);
 
         if (statusNumber === 2) {
-        // 已開通
           toWithdrawPage();
         } else {
-        // 未開通
           await showCustomPrompt({
             message: '愛方便的您, 怎能少了無卡提款服務, 快來啟用吧',
             onOk: () => startFunc(FuncID.T00400),
@@ -66,15 +62,9 @@ const CardLessATM = () => {
     dispatch(setWaittingVisible(false));
   };
 
-  useEffect(() => {
-    fetchCardlessStatus();
-  }, []);
+  useEffect(() => fetchCardlessStatus(), []);
 
-  return (
-    <Layout title="無卡提款">
-      <CardLessATMWrapper />
-    </Layout>
-  );
+  return <Layout title="無卡提款" />;
 };
 
 export default CardLessATM;
