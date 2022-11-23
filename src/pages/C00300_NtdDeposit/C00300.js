@@ -240,8 +240,18 @@ const C00300 = () => {
           onFunctionClick={handleFunctionClick}
           cardColor="purple"
           funcList={[
-            { fid: 'D00100', title: '轉帳', enabled: (selectedAccount.transable && selectedAccount.balance > 0) },
-            { fid: 'D00300', title: '無卡提款', enabled: (selectedAccount.balance > 0), hidden: (selectedAccount.acctType !== 'M') },
+            {
+              fid: 'D00100',
+              title: '轉帳',
+              enabled: (selectedAccount.transable && selectedAccount.balance > 0),
+              transable: selectedAccount.transable,
+            },
+            {
+              fid: 'D00300',
+              title: '無卡提款',
+              enabled: (selectedAccount.balance > 0),
+              hidden: (selectedAccount.acctType !== 'M'),
+            },
           ]}
           moreFuncs={[
             { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false },
