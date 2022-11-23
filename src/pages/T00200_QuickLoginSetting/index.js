@@ -128,7 +128,8 @@ const QuickLoginSetting = () => {
           setIsBioActive(false);
           setIsPatternActive(false);
           break;
-        case '1' && '2':
+        case '1':
+        case '2':
           // 已綁定
           setIsBioActive(status);
           setIsPatternActive(!status);

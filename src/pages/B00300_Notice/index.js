@@ -66,7 +66,7 @@ const Notice = () => {
   ];
 
   // 跳轉通知設定頁
-  const toSettingPage = () => startFunc('S00400');
+  const toSettingPage = () => startFunc(FuncID.S00400);
 
   // 取得通知列表
   const getNotices = async () => {
@@ -86,7 +86,7 @@ const Notice = () => {
       showCustomPrompt({
         message: '您尚未設定「訊息通知」功能，是否立即設定?',
         okContent: '立即設定',
-        onOk: () => startFunc(FuncID.S00400),
+        onOk: toSettingPage,
         cancelContent: '取消',
       });
     }
