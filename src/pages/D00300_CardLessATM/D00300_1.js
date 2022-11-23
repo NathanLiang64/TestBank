@@ -98,7 +98,7 @@ const CardLessATM1 = () => {
               account={accountSummary.account}
               balance={accountSummary.balance}
               withdrawMode
-              freeWithdraw={6}
+              freeWithdraw={6} // 目前 hardcode
               freeWithdrawRemain={parseInt(accountSummary.cwdhCnt, 10)}
               color="purple"
             />

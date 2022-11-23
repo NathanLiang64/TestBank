@@ -12,6 +12,18 @@ export const getCardlessStatus = async (param) => {
   return response.data;
 };
 
+/**
+ *
+ * @param token
+ * @return {
+ *    account: 帳戶代號
+ *    balance: 帳戶餘額
+ *    cwdhCnt: 跨提次數
+ *    tfrhCnt: 跨轉次數
+ * }
+ *
+ */
+
 // 取得提款卡資訊 done
 export const getAccountSummary = async (param) => {
   const response = await callAPI('/api/cardlessWD/deposit/getAccountSummary', param);
