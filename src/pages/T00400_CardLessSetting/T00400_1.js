@@ -22,10 +22,6 @@ import { validationSchema } from './validationSchema';
 
 const CardLessATM = () => {
   const {handleSubmit, control } = useForm({
-    defaultValues: {
-      withdrawPwd: '',
-      withdrawPwdCheck: '',
-    },
     resolver: yupResolver(validationSchema),
   });
 
