@@ -13,6 +13,7 @@ import { showCustomPrompt } from 'utilities/MessageModal';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { FuncID } from 'utilities/FuncID';
 import { useQLStatus } from 'hooks/useQLStatus';
+import { getStatus } from 'pages/S00800_LossReissue/api';
 import DebitCardActiveWrapper from './S00700.style';
 import { validationSchema } from './validationSchema';
 import { activate } from './api';
@@ -28,6 +29,7 @@ const S00700 = () => {
   const submitHandler = async (values) => {
     const auth = await transactionAuth(AuthCode.S00700);
     if (auth && auth.result) {
+      await getStatus(); // activate 之前需要先獲得卡況
       const activateResponse = await activate({...values});
       history.push('/S007001', {...activateResponse});
     }
