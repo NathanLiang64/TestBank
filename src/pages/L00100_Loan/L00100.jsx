@@ -160,7 +160,6 @@ const Page = () => {
     dispatch(setWaittingVisible(false));
     if (historyResponse) {
       const singleHistoryData = historyResponse[i];
-      // history.push('/L003001', { singleHistoryData, cardData }); // TODO: 改用startFunc
       startFunc(FuncID.L00300 + 1, { singleHistoryData, cardData });
     }
   };
@@ -193,7 +192,6 @@ const Page = () => {
   };
 
   const handleMoreTransactionsClick = (card) => {
-    // history.push('/L00300', { card }); // TODO: 改用startFunc
     startFunc(FuncID.L00300, { card });
   };
 
