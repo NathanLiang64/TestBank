@@ -18,10 +18,7 @@ const Avatar = ({
   const [preview, setPreview] = useState(null); // 上傳的照片轉成 base64 格式
   const [showDefault, setShowDefault] = useState(false);
 
-  const renderPhoto = () => {
-    console.log('renderphoto');
-    return <img onError={() => setShowDefault(true)} src={preview || src} alt={name || 'avatar'} />;
-  };
+  const renderPhoto = () => <img onError={() => setShowDefault(true)} src={preview || src} alt={name || 'avatar'} />;
 
   const renderDefaultBackground = () => (
     <div className="default">
@@ -29,14 +26,18 @@ const Avatar = ({
     </div>
   );
 
-  const onImgChangeHandler = (event) => {
+  const onImgChangeHandler = async (event) => {
     const photo = event.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(photo);
-    reader.onloadend = (e) => {
-      setPreview(e.currentTarget.result);
-    };
-    if (onPreview) onPreview(photo);
+    if (onPreview) {
+      const isSuccess = await onPreview(photo);
+      if (isSuccess) {
+        const reader = new FileReader();
+        reader.readAsDataURL(photo);
+        reader.onloadend = (e) => {
+          setPreview(e.currentTarget.result);
+        };
+      }
+    }
   };
 
   const renderEditButton = () => (

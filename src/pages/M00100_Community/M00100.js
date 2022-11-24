@@ -20,9 +20,9 @@ import { useDispatch } from 'react-redux';
 import {
   switchZhNumber,
 } from 'utilities/Generator';
+import { uploadAvatar } from 'pages/T00100_Profile/api';
 import {
   getSummary,
-  // TODO updateAvatar,
   updateNickname,
   updateEssay,
 } from './api';
@@ -138,6 +138,7 @@ const CommunityPage = () => {
           <Avatar
             src={`${process.env.REACT_APP_AVATAR_IMG_URL}/pf_${summary?.uuid}_b.jpg?timestamp=${Date.now()}`}
             name={summary?.nickname}
+            onPreview={uploadAvatar}
           />
           <div className="nickname">
             <span className="name">{renderText(summary?.nickname)}</span>
