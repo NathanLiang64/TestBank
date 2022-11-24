@@ -1,10 +1,10 @@
 import { callAPI } from 'utilities/axios';
 
-// 取得轉出帳號
-export const getTransferOutAccounts = async (param) => {
-  const response = await callAPI('/api/transfer/queryNtdTrAcct', param);
-  return response;
-};
+// 取得轉出帳號 ***棄用***
+// export const getTransferOutAccounts = async (param) => {
+//   const response = await callAPI('/api/transfer/queryNtdTrAcct', param);
+//   return response;
+// };
 
 // 查詢預約轉帳明細
 export const getReservedTransDetails = async (param) => {

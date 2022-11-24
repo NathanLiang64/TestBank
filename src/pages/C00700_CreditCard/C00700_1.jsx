@@ -34,7 +34,8 @@ const C007001 = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    const infoResponse = await queryCardInfo();
+
+    const infoResponse = await queryCardInfo('');
     if (infoResponse.data) {
       setCardInfo(infoResponse.data);
     }
