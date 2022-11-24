@@ -22,7 +22,8 @@ export const uploadAvatar = async (imageData) => {
     null,
     {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        // 'Content-Type': 'multipart/form-data',
+        'Content-Type': 'image/xyz',
       },
       data,
     },

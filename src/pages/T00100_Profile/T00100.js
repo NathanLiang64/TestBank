@@ -84,7 +84,7 @@ const T00100 = () => {
   return (
     <Layout title="個人化設定">
       <ProfileWrapper>
-        <Avatar src={avatarUrl} name={nickName} />
+        <Avatar src={avatarUrl} name={nickName} onPreview={uploadAvatar} />
         <div className="nickName">
           <span>{nickName}</span>
           <CreateRounded onClick={showEditNickNameDialog} />
