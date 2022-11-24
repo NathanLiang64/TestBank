@@ -53,25 +53,21 @@ const ReserveTransferSearch = () => {
   const [tabValue, setTabValue] = useState('1');
   const [reserveDateRange, setReserveDateRange] = useState([new Date(new Date().setDate(new Date().getDate() + 1)), new Date(new Date().setFullYear(new Date().getFullYear() + 2))]);
   const [resultDateRange, setResultDateRange] = useState([new Date(new Date().setFullYear(new Date().getFullYear() - 2)), new Date()]);
-  const [resultDialogData, setResultDialogData] = useState({});
-  const [currentReserveData, setCurrentReserveData] = useState({});
   const [reserveDataList, setReserveDataList] = useState([]);
   const [resultDataList, setResultDataList] = useState([]);
 
   // 取得帳號清單
   const fetchTransferOutAccounts = async () => {
     dispatch(setWaittingVisible(true));
-    const accounts = await getAccountSummary('MSC');
-    console.log('accounts', accounts);
 
+    const accounts = await getAccountSummary('MSC');
     setCardsList(accounts);
     setSelectedAccount(accounts[0]);
 
     dispatch(setWaittingVisible(false));
   };
 
-  const toConfirmPage = () => {
-    console.log({ ...currentReserveData, ...selectedAccount });
+  const toConfirmPage = (currentReserveData) => {
     history.push('/D008001', { ...currentReserveData, ...selectedAccount });
   };
 
@@ -99,7 +95,6 @@ const ReserveTransferSearch = () => {
 
   // 取得預約轉帳明細
   const fetchReservedTransDetails = async () => {
-    setReserveDataList([]);
     switchLoading(true);
     const param = {
       acctId: selectedAccount.acctId,
@@ -118,7 +113,6 @@ const ReserveTransferSearch = () => {
 
   // 取得預約轉帳結果
   const fetchResultTransDetails = async () => {
-    setResultDataList([]);
     switchLoading(true);
     const param = {
       acctId: selectedAccount.acctId,
@@ -165,12 +159,11 @@ const ReserveTransferSearch = () => {
   ));
 
   const handleReserveDataDialogOpen = async (data) => {
-    setCurrentReserveData(data);
     await showCustomPrompt({
       title: '預約轉帳',
-      message: (<DetailContent contentData={{ data: currentReserveData, selectedAccount }} />),
-      onOk: () => toConfirmPage(),
-      onClose: () => toConfirmPage(),
+      message: (<DetailContent contentData={{ data, selectedAccount }} />),
+      onOk: () => toConfirmPage(data),
+      onClose: () => toConfirmPage(data),
     });
   };
 
@@ -188,11 +181,9 @@ const ReserveTransferSearch = () => {
 
   // 打開結果彈窗
   const handleOpenResultDialog = async (data) => {
-    setResultDialogData(data);
-    // setShowResultDialog(true);
     await showCustomPrompt({
       title: '預約轉帳結果',
-      message: <ResultContent data={resultDialogData} selectedAccount={selectedAccount} />,
+      message: <ResultContent data={data} selectedAccount={selectedAccount} />,
     });
   };
 
@@ -216,26 +207,18 @@ const ReserveTransferSearch = () => {
   // 切換帳號搜尋預約明細
   useEffect(() => {
     if (selectedAccount) {
-      if (tabValue === '1') {
-        fetchReservedTransDetails();
-      }
-      if (tabValue === '2') {
-        fetchResultTransDetails();
-      }
+      if (tabValue === '1') fetchReservedTransDetails();
+      if (tabValue === '2') fetchResultTransDetails();
     }
   }, [selectedAccount]);
 
   // 時間切換搜尋預約明細
   useEffect(() => {
-    if (tabValue === '1' && selectedAccount) {
-      fetchReservedTransDetails();
-    }
+    if (tabValue === '1' && selectedAccount) fetchReservedTransDetails();
   }, [reserveDateRange]);
 
   useEffect(() => {
-    if (tabValue === '2' && selectedAccount) {
-      fetchResultTransDetails();
-    }
+    if (tabValue === '2' && selectedAccount) fetchResultTransDetails();
   }, [resultDateRange]);
 
   return (
