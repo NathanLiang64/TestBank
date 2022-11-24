@@ -104,7 +104,7 @@ const ReserveTransferSearch = () => {
     const param = {
       acctId: selectedAccount.acctId,
       ccycd: selectedAccount.ccyCd,
-      accountType: selectedAccount.acctType,
+      accountType: selectedAccount.acctType, // 不確定是否要給
       queryType: '3',
       sdate: dateFormatter(reserveDateRange[0]),
       edate: dateFormatter(reserveDateRange[1]),
@@ -166,7 +166,6 @@ const ReserveTransferSearch = () => {
 
   const handleReserveDataDialogOpen = async (data) => {
     setCurrentReserveData(data);
-    // setShowDetailDialog(true);
     await showCustomPrompt({
       title: '預約轉帳',
       message: (<DetailContent contentData={{ data: currentReserveData, selectedAccount }} />),
