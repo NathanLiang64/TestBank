@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React from 'react';
 import { BlockSelectedIcon } from 'assets/images/icons';
 import FavoriteBlockButtonStyle from 'components/FavoriteBlockButton/favoriteBlockButton.style';
@@ -28,8 +27,6 @@ export const CustomCheckBoxField = ({
         style={{
           width: '100%', height: '100%', cursor: 'pointer', userSelect: 'none',
         }}
-        onChange={onChangeHandler}
-        checked={!!value}
       >
         {iconGenerator(name.split('.')[1])}
         <p>{label}</p>
@@ -37,6 +34,8 @@ export const CustomCheckBoxField = ({
           type="checkbox"
           id={name}
           style={{display: 'none'}}
+          onChange={onChangeHandler}
+          checked={!!value}
         />
         <BlockSelectedIcon className="selectedIcon" />
       </label>
