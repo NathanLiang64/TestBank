@@ -564,11 +564,11 @@ async function appTransactionAuth(request) {
 
 /**
  * 查詢訊息通知綁定狀態
- * @param {{custId: string}} custId 身分證字號 由原生或webview傳?
+ * @param {}
  * @returns {{PushBindStatus: boolean}} 狀態布林值
  */
-async function queryPushBind(custId) {
-  return await callAppJavaScript('queryPushBind', {custId}, true, () => {
+async function queryPushBind() {
+  return await callAppJavaScript('queryPushBind', null, true, () => {
     console.log('web 執行取得綁定狀態');
     return {
       PushBindStatus: true,
@@ -578,10 +578,10 @@ async function queryPushBind(custId) {
 
 /**
  * 更新訊息通知設定綁定狀態
- * @param {{custId: string}} custId 身分證字號 由原生或webview傳?
+ * @param {}
  */
-async function updatePushBind(custId) {
-  await callAppJavaScript('updatePushBind', {custId}, false);
+async function updatePushBind() {
+  await callAppJavaScript('updatePushBind', null, false);
 }
 
 export {
