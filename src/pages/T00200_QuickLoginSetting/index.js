@@ -54,10 +54,10 @@ const QuickLoginSetting = () => {
   const callAppDelQL = async (type) => {
     const rs = await transactionAuth(AuthCode.T00200.UNSET);
     console.log('交易驗證結果:', JSON.stringify(rs));
-    customPopup(
-      '系統訊息',
-      `解除快速綁定交易驗證測試結果：${JSON.stringify(rs)}`,
-    );
+    // customPopup(
+    //   '系統訊息',
+    //   `解除快速綁定交易驗證測試結果：${JSON.stringify(rs)}`,
+    // );
     if (rs.result) {
       const { result, message } = await delQL();
       const isSuccess = result === 'true';
@@ -151,10 +151,10 @@ const QuickLoginSetting = () => {
           });
           break;
         default:
-          // 同時為已在其它裝置綁定、本裝置已綁定其他帳號，優先後者
+          // 同時為已在其它裝置綁定、本裝置已綁定其他帳號，優先前者
           showCustomPrompt({
             title: 'APP裝置認證錯誤',
-            message: '本裝置已綁定他人帳號，請先解除原APP裝置認證或致電客服',
+            message: '您已於其他裝置啟用APP裝置認證，請點選「確認」立即綁定新裝置或致電客服(提醒:重新綁定後裝置自動失效)',
             onOk: () => {},
           });
           break;
