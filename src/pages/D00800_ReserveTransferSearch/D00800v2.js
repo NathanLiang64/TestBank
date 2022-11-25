@@ -30,7 +30,9 @@ import ResultContent from './resultContent';
 import ReserveTransferSearchWrapper from './reserveTransferSearch.style';
 import { TabField } from './fields/tabField';
 import { DateRangePickerField } from './fields/dateRangePickerField';
-import { reserveDatePickerLimit, resultDatePickerLimit, tabOptions } from './constants';
+import {
+  defaultValues, reserveDatePickerLimit, resultDatePickerLimit, tabOptions,
+} from './constants';
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
@@ -38,40 +40,23 @@ SwiperCore.use([Pagination]);
 const D00800Draft = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-
-  const { control, handleSubmit, watch } = useForm({
-    defaultValues: {
-      tab: '1',
-      reserveDateRange: [
-        reserveDatePickerLimit.minDate,
-        reserveDatePickerLimit.maxDate,
-      ],
-      resultDateRange: [
-        resultDatePickerLimit.minDate,
-        resultDatePickerLimit.maxDate,
-      ]
-      ,
-    },
-  });
-  const watchedTab = watch('tab');
+  // defaultValues: {tab:切換頁數,reserveDateRange:[查詢預約起始日,查詢預約截止日],resultDateRange:[結果查詢起始日,結果查詢截止日] }
+  const { control, handleSubmit, watch } = useForm({ defaultValues });
 
   const [cardsList, setCardsList] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [reserveDataList, setReserveDataList] = useState([]);
   const [resultDataList, setResultDataList] = useState([]);
+  const watchedTab = watch('tab');
 
-  const onSearch = async ({
-    tab,
-    reserveDateRange,
-    resultDateRange,
-  }) => {
+  const onSearch = async ({ tab, reserveDateRange, resultDateRange }) => {
     const sdate = dateFormatter(tab === '1' ? reserveDateRange[0] : resultDateRange[0]);
     const edate = dateFormatter(tab === '1' ? reserveDateRange[1] : resultDateRange[1]);
 
     const param = {
       acctId: selectedAccount.acctId,
       ccycd: selectedAccount.ccyCd,
-      accountType: selectedAccount.acctType, // 不確定是否要給
+      acctType: selectedAccount.acctType, // 不確定是否要給 已經由 accountType 改成 acctType
       sdate,
       edate,
       // queryType: '3', // 這個是什麼?
@@ -124,7 +109,7 @@ const D00800Draft = () => {
       title: '預約轉帳',
       message: <DetailContent contentData={{ data, selectedAccount }} />,
       onOk: () => toConfirmPage(data),
-      onClose: () => toConfirmPage(data),
+      onCancel: () => {},
     });
   };
 
