@@ -25,18 +25,10 @@ const LossReissue = () => {
   const actionText = actionTextGenerator(debitCardInfo?.status);
 
   const updateDebitCardStatus = async () => {
+    dispatch(setWaittingVisible(true));
+
     const cardInfo = await getStatus();
-
     if (cardInfo) {
-      // 在 新申請(1) 或是 已銷戶(7) 的情況下不能進行掛失或補發
-      if (cardInfo.status === 1 || cardInfo.status === 7) {
-        await showCustomPrompt({
-          message: cardInfo.statusDesc,
-          onOk: () => closeFunc(),
-          onClose: () => closeFunc(),
-        });
-      }
-
       const formValue = {
         county: cardInfo.addrCity.trim(),
         city: cardInfo.addrDistrict.trim(),
@@ -47,11 +39,11 @@ const LossReissue = () => {
     } else {
       showError('Network Error', closeFunc);
     }
+
     dispatch(setWaittingVisible(false));
   };
 
   useEffect(() => {
-    dispatch(setWaittingVisible(true));
     updateDebitCardStatus();
   }, []);
 
@@ -152,7 +144,7 @@ const LossReissue = () => {
             </ol>
           </Accordion>
         </div>
-
+        {/* 在 新申請(1) 或是 已銷戶(7) 的情況下不能進行掛失或補發 */}
         {actionText && (
           <FEIBButton onClick={onActionConfirm}>{`${actionText}`}</FEIBButton>
         )}
