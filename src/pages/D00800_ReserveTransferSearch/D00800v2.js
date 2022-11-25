@@ -1,16 +1,13 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/no-array-index-key */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Pagination } from 'swiper/core';
 import { dateFormatter } from 'utilities/Generator';
-import {
-  getReservedTransDetails,
-  getResultTransDetails,
-} from 'pages/D00800_ReserveTransferSearch/api';
+import { useDispatch } from 'react-redux';
+import { useForm } from 'react-hook-form';
 
 /* Elements */
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import Layout from 'components/Layout/Layout';
 import { FEIBTabContext, FEIBTabPanel } from 'components/elements';
 import DebitCard from 'components/DebitCard/DebitCard';
@@ -18,15 +15,13 @@ import InformationTape from 'components/InformationTape';
 import EmptyData from 'components/EmptyData';
 import SuccessImage from 'assets/images/successIcon.png';
 import FailImage from 'assets/images/failIcon.png';
-import { showCustomPrompt } from 'utilities/MessageModal';
+import { getReservedTransDetails, getResultTransDetails } from 'pages/D00800_ReserveTransferSearch/api';
 import { getAccountSummary } from 'pages/C00600_DepositPlan/api';
-import { useDispatch } from 'react-redux';
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { useForm } from 'react-hook-form';
+import { showCustomPrompt } from 'utilities/MessageModal';
+
+import Loading from 'components/Loading';
 import DetailContent from './detailContent';
 import ResultContent from './resultContent';
-
-/* Style */
 import ReserveTransferSearchWrapper from './reserveTransferSearch.style';
 import { TabField } from './fields/tabField';
 import { DateRangePickerField } from './fields/dateRangePickerField';
@@ -47,6 +42,7 @@ const D00800Draft = () => {
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [reserveDataList, setReserveDataList] = useState([]);
   const [resultDataList, setResultDataList] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
   const watchedTab = watch('tab');
 
   const onSearch = async ({ tab, reserveDateRange, resultDateRange }) => {
@@ -62,6 +58,7 @@ const D00800Draft = () => {
       // queryType: '3', // 這個是什麼?
     };
 
+    setIsSearching(true);
     if (tab === '1') {
       const { data } = await getReservedTransDetails(param);
       setReserveDataList(data?.bookList);
@@ -70,6 +67,7 @@ const D00800Draft = () => {
       const { data } = await getResultTransDetails(param);
       setResultDataList(data?.bookList);
     }
+    setIsSearching(false);
   };
 
   // 取得帳號清單
@@ -90,10 +88,9 @@ const D00800Draft = () => {
   };
 
   // 轉出帳號卡片 swiper
-  const renderCard = () => cardsList.map((item, idx) => (
-    <SwiperSlide key={idx}>
+  const renderCard = () => cardsList.map((item) => (
+    <SwiperSlide key={item.acctId}>
       <DebitCard
-        key={item.acctId}
         branch={item.acctBranch}
         cardName={item.acctName || '--'}
         account={item.acctId}
@@ -115,6 +112,7 @@ const D00800Draft = () => {
 
   // 預約轉帳查詢列表
   const renderReserveTapes = () => {
+    if (isSearching) return <Loading space="both" isCentered />;
     if (!reserveDataList.length) {
       return (
         <div className="emptyConatiner">
@@ -122,9 +120,9 @@ const D00800Draft = () => {
         </div>
       );
     }
-    return reserveDataList.map((item, idx) => (
+    return reserveDataList.map((item) => (
       <InformationTape
-        key={idx}
+        key={item.inActNo}
         topLeft={`${item.inBank}-${item.inActNo}`}
         topRight={`$ ${item.amount}`}
         bottomLeft={`預約轉帳日：${item.payDate}`}
@@ -144,6 +142,7 @@ const D00800Draft = () => {
 
   // 結果查詢列表
   const renderResultTapes = () => {
+    if (isSearching) return <Loading space="both" isCentered />;
     if (!resultDataList.length) {
       return (
         <div className="emptyConatiner">
@@ -151,9 +150,9 @@ const D00800Draft = () => {
         </div>
       );
     }
-    return resultDataList.map((item, idx) => (
+    return resultDataList.map((item) => (
       <InformationTape
-        key={idx}
+        key={item.inActNo}
         img={item.stderrMsg ? FailImage : SuccessImage}
         topLeft={`${item.inActNo}`}
         topRight={`$ ${item.amount}`}
