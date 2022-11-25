@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable no-use-before-define */
@@ -161,7 +162,7 @@ const C00400 = () => {
         setMainCurrency(selectedAccount.accountNo, selectedAccount.currency);
         return;
 
-      case 'E00100': // 外幣到價通知
+      case 'foreignCurrencyPriceSetting': // 外幣到價通知
         break;
 
       case 'Rename': // 帳戶名稱編輯
@@ -214,8 +215,8 @@ const C00400 = () => {
                   icon: 'temp',
                 },
                 {
-                  // fid 需要改成 foreignCurrencyPriceSetting
-                  fid: 'E00100',
+                  // fid 需要改成 foreignCurrencyPriceSetting 的 FuncID
+                  fid: 'foreignCurrencyPriceSetting',
                   title: '外幣到價通知',
                   icon: 'foreignCurrencyPriceSetting',
                 },
