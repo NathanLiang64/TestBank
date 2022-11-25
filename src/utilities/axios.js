@@ -251,7 +251,7 @@ export const callAPI = async (url, request, config) => {
  * @param {*} request
  * @param {*} filename 輸出檔名。
  */
-export const download = async (url, request, filename) => {
+export const download = async (url, request) => {
   console.log(`\x1b[33mAPI :/${url}`);
   console.log('Request = ', request);
   const token = await getJwtToken();
@@ -274,7 +274,8 @@ export const download = async (url, request, filename) => {
 
       const a = document.createElement('a');
       a.href = fileUrl;
-      a.download = filename;
+      a.target = '_blank';
+      // a.download = filename; // 因使用者體驗因素，改外開瀏覽器方式取代下載
       a.click();
     })
     .catch((e) => {
