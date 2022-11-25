@@ -32,15 +32,16 @@ const Reminder = ({ bills }) => {
       'END:VCALENDAR',
     ].join('\r\n');
     const blob = new Blob([context], { type: 'text/calendar;charset=utf-8' });
-    // const link = document.createElement('a');
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = '提醒繳款.ics';
+    link.setAttribute('download', '提醒繳款.ics');
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-    window.open(`${URL.createObjectURL(blob)}`, '_blank'); // TODO: file name
-    // link.href = `${URL.createObjectURL(blob)}`;
-    // link.download = '提醒繳款.ics';
-    // link.setAttribute('download', '提醒繳款.ics');
-    // document.body.appendChild(link);
-    // link.click();
-    // document.body.removeChild(link);
+    URL.revokeObjectURL(blob);
   };
 
   const handleCalendarClick = async () => {
