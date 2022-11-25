@@ -131,8 +131,16 @@ const QuickLoginSetting = () => {
           setIsBioActive(status);
           setIsPatternActive(!status);
           break;
+        case '4':
+          // 本裝置已綁定其他帳號
+          showCustomPrompt({
+            title: 'APP裝置認證錯誤',
+            message: '本裝置已綁定他人帳號，請先解除原APP裝置認證或致電客服',
+            onOk: () => {},
+          });
+          break;
         default:
-          // 未綁定 | 已在其它裝置綁定 | 本裝置已綁定其他帳號
+          // 未綁定 | 已在其它裝置綁定
           setIsBioActive(false);
           setIsPatternActive(false);
           break;
