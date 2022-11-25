@@ -1,18 +1,13 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
-import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import uuid from 'react-uuid';
 
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
-import Loading from 'components/Loading';
 import Avatar from 'components/Avatar';
 import {dateFormatter, stringToDate, toHalfWidth } from 'utilities/Generator';
 
 import EmptyData from 'components/EmptyData';
-import { closeFunc } from 'utilities/AppScriptProxy';
 import { getFriends } from './api';
 import PageWrapper from './M00200.style';
 
@@ -20,7 +15,6 @@ import PageWrapper from './M00200.style';
  * M00200 好友查詢
  */
 const Page = () => {
-  const history = useHistory();
   const dispatch = useDispatch();
   const [friends, setFriends] = useState([]);
 
@@ -32,13 +26,13 @@ const Page = () => {
   }, []);
 
   return (
-    <Layout title="好友查詢" goBackFunc={() => closeFunc()}>
+    <Layout title="好友查詢">
       <Main>
         { friends.length ? (
           <PageWrapper>
             <ul className="friend-list">
               {friends.map((f) => (
-                <li key={uuid()}>
+                <li key={f.friendUuid}>
                   <div>
                     <Avatar
                       small
