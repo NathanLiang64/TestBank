@@ -26,7 +26,7 @@ const Page = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    const response = await getFriends([]);
+    const response = await getFriends();
     setFriends(response);
     dispatch(setWaittingVisible(false));
   }, []);
@@ -40,8 +40,11 @@ const Page = () => {
               {friends.map((f) => (
                 <li key={uuid()}>
                   <div>
-                    <Avatar small src={f.friendUuid} name={f.friendName} />
-                    {/* <Avatar small src="https://runt-of-the-web.com/wordpress/wp-content/uploads/2013/05/shibe-meme-no.jpg" name={f.friendName} /> */}
+                    <Avatar
+                      small
+                      src={`${process.env.REACT_APP_AVATAR_IMG_URL}/pf_${f.friendUuid}_b.jpg?timestamp=${Date.now()}`}
+                      name={f.friendName.trim()}
+                    />
                   </div>
                   <div className="flex-auto">
                     <div className="title">
