@@ -1,5 +1,3 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable object-curly-newline */
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -17,12 +15,10 @@ import { ArrowNextIcon, EditIcon } from 'assets/images/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { TextareaField, TextInputField } from 'components/Fields';
 import { useDispatch } from 'react-redux';
-import {
-  switchZhNumber,
-} from 'utilities/Generator';
+import { switchZhNumber } from 'utilities/Generator';
 import {
   getSummary,
-  // TODO updateAvatar,
+  updateAvatar,
   updateNickname,
   updateEssay,
 } from './api';
@@ -45,7 +41,7 @@ const CommunityPage = () => {
   const shareMessageContent = () => `${summary?.essay ?? defaultEssay} ${process.env.REACT_APP_RECOMMEND_URL}${summary.memberNo}`;
 
   useEffect(async () => {
-    setWaittingVisible(false);
+    dispatch(setWaittingVisible(true));
 
     const startParams = await loadFuncParams(); // Function Controller 提供的參數
     // 取得 Function Controller 提供的 keepData(model)
@@ -65,7 +61,8 @@ const CommunityPage = () => {
     setSummary(model.summary);
     const {nickname, essay} = model.summary;
     reset({nickname, essay});
-    setWaittingVisible(true);
+
+    dispatch(setWaittingVisible(false));
   }, []);
 
   /**
@@ -136,8 +133,10 @@ const CommunityPage = () => {
       <NetworkWrapper>
         <div className="infoContainer">
           <Avatar
-            src={`${process.env.REACT_APP_AVATAR_IMG_URL}/pf_${summary?.uuid}_b.jpg?timestamp=${Date.now()}`}
+            memberId={summary?.uuid}
             name={summary?.nickname}
+            editable
+            onNewPhotoLoaded={(newImg) => updateAvatar(newImg)}
           />
           <div className="nickname">
             <span className="name">{renderText(summary?.nickname)}</span>

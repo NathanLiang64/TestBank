@@ -106,7 +106,7 @@ const Page = () => {
               bankNo={acct.bankId}
               bankName={acct.bankName}
               account={acct.acctId}
-              avatarSrc={acct.headshot}
+              memberId={acct.headshot}
               isSelected={(acct.acctId === selectedAccount)}
               onClick={() => onAccountSelected(acct)} // 傳回值：選取的帳號。
               moreActions={[

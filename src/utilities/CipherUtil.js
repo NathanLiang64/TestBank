@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import CryptoJS from 'crypto-js';
 
+const { Buffer } = require('buffer');
 const forge = require('node-forge');
 // const crypto = require('crypto');
 

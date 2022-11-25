@@ -61,7 +61,8 @@ function AccountEditor({
         </Badge>
         <div className="flex-col">
           <div className="self-center">
-            <Avatar src={model.headshot} name={model.nickName} control={control} formName="headshot" />
+            {/* 不可變更常用帳號的人的大頭貼 */}
+            <Avatar editable={false} memberId={model.headshot} name={model.nickName} control={control} formName="headshot" />
             {/* <AvatarField src={model.headshot} name={model.nickName} control={control} formName="headshot" /> */}
           </div>
           <FEIBInputLabel htmlFor={idNickName}>暱稱</FEIBInputLabel>

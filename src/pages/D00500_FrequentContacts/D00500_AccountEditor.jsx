@@ -141,7 +141,8 @@ function AccountEditor({
         </Badge>
         <div className="flex-col">
           <div className="self-center">
-            <Avatar src={model.headshot} name={model.nickName} />
+            {/* 不可變更常用帳號的人的大頭貼 */}
+            <Avatar editable={false} memberId={model.headshot} name={model.nickName} />
           </div>
           <FEIBInputLabel htmlFor={idNickName}>暱稱</FEIBInputLabel>
           <Controller

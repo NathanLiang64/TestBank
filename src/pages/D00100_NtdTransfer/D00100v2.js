@@ -409,7 +409,7 @@ const Transfer = (props) => {
           <div className="memberAccountCardArea">
             {freqAcct ? (
               <MemberAccountCard
-                avatarSrc={freqAcct.memberId}
+                memberId={freqAcct.memberId}
                 name={freqAcct.accountName}
                 bankName={freqAcct.bankName}
                 bankNo={freqAcct.bankId}
@@ -429,7 +429,7 @@ const Transfer = (props) => {
           <div className="memberAccountCardArea">
             {regAcct ? (
               <MemberAccountCard
-                avatarSrc={regAcct.memberId}
+                memberId={regAcct.memberId}
                 name={regAcct.accountName}
                 bankName={regAcct.bankName}
                 bankNo={regAcct.bankId}

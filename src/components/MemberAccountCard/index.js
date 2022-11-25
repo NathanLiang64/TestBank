@@ -8,11 +8,11 @@ import MemberAccountCardWrapper from './memberAccountCard.style';
 /**
  * 包含了 Avatar 組合成一張會員帳號卡片
  * @param {*} hasNewTag 顯示NEW標籤
+ * @param {*} memberId 會員UUID
  * @param {*} name 會員名稱
  * @param {*} bankNo 銀行代碼
  * @param {*} bankName 銀行名稱
  * @param {*} account 會員帳號
- * @param {*} avatarSrc 會員頭像的圖片路徑
  * @param {*} noBorder 無框線
  * @param {*} isSelected 表示為已選取的狀態
  * @param {*} onClick 點擊會員帳號卡片事件 (選取時)
@@ -23,7 +23,7 @@ import MemberAccountCardWrapper from './memberAccountCard.style';
   }, ...]
  */
 const MemberAccountCard = ({
-  hasNewTag, name, bankNo, bankName, account, avatarSrc, noBorder,
+  hasNewTag, memberId, name, bankNo, bankName, account, noBorder,
   isSelected, onClick, moreActions,
 }) => {
   const wrapperRef = useRef(null);
@@ -126,7 +126,7 @@ const MemberAccountCard = ({
       onTouchEnd={handleTouchEnd}
       onClick={model.showMorePanel ? null : onClick}
     >
-      <Avatar small src={avatarSrc} name={name} />
+      <Avatar small memberId={memberId} name={name} />
       <div className="memberInfo">
         <div className="flex-auto">
           <div className="title">
