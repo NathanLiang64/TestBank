@@ -4,9 +4,6 @@ import DialogContentWrapper from './dialogContent.style';
 
 const DetailContent = ({ contentData: { data, selectedAccount } }) => (
   <DialogContentWrapper>
-    {
-      console.log(data)
-    }
     <div className="mainBlock">
       <div className="dataLabel">轉出金額與轉入帳號</div>
       <div className="balance">
@@ -22,7 +19,7 @@ const DetailContent = ({ contentData: { data, selectedAccount } }) => (
       <div className="account">{ data.inActNo }</div>
     </div>
     <div className="informationListContainer">
-      <InformationList title="轉出帳號" content={selectedAccount.accountId} remark={selectedAccount.showName} />
+      <InformationList title="轉出帳號" content={selectedAccount.acctId} remark={selectedAccount.acctName} />
       <InformationList title="預約轉帳日" content={data.payDate} />
       <InformationList title="週期" content={data.payDateWording} />
       {
@@ -32,7 +29,7 @@ const DetailContent = ({ contentData: { data, selectedAccount } }) => (
       {/* {
         data.chargeMode !== '1' && (<InformationList title="預約轉帳總金額" content="$200,000" />)
       } */}
-      <InformationList title="帳戶餘額" content={`$${toCurrency(selectedAccount.balance)}`} />
+      <InformationList title="帳戶餘額" content={`$${toCurrency(selectedAccount.acctBalx)}`} />
       <InformationList title="備註" content={data.memo} />
     </div>
   </DialogContentWrapper>

@@ -1,18 +1,13 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
-import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import uuid from 'react-uuid';
 
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
-import Loading from 'components/Loading';
 import Avatar from 'components/Avatar';
 import {dateFormatter, stringToDate, toHalfWidth } from 'utilities/Generator';
 
 import EmptyData from 'components/EmptyData';
-import { closeFunc } from 'utilities/AppScriptProxy';
 import { getFriends } from './api';
 import PageWrapper from './M00200.style';
 
@@ -20,28 +15,30 @@ import PageWrapper from './M00200.style';
  * M00200 好友查詢
  */
 const Page = () => {
-  const history = useHistory();
   const dispatch = useDispatch();
   const [friends, setFriends] = useState([]);
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    const response = await getFriends([]);
+    const response = await getFriends();
     setFriends(response);
     dispatch(setWaittingVisible(false));
   }, []);
 
   return (
-    <Layout title="好友查詢" goBackFunc={() => closeFunc()}>
+    <Layout title="好友查詢">
       <Main>
         { friends.length ? (
           <PageWrapper>
             <ul className="friend-list">
               {friends.map((f) => (
-                <li key={uuid()}>
+                <li key={f.friendUuid}>
                   <div>
-                    <Avatar small src={f.friendUuid} name={f.friendName} />
-                    {/* <Avatar small src="https://runt-of-the-web.com/wordpress/wp-content/uploads/2013/05/shibe-meme-no.jpg" name={f.friendName} /> */}
+                    <Avatar
+                      small
+                      src={`${process.env.REACT_APP_AVATAR_IMG_URL}/pf_${f.friendUuid}_b.jpg?timestamp=${Date.now()}`}
+                      name={f.friendName.trim()}
+                    />
                   </div>
                   <div className="flex-auto">
                     <div className="title">

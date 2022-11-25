@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { useController } from 'react-hook-form';
 import {
@@ -9,28 +10,26 @@ import {
 
 export const TabField = ({
   options,
-  labelName,
-  resetOnChange,
+  callback,
   ...controlProps
 }) => {
   const { field, fieldState } = useController(controlProps);
 
   return (
     <>
-      <FEIBTabContext value={field.value}>
-        <FEIBTabList
-          $size="small"
-          $type="fized"
-          onChange={(_, id) => {
-            if (resetOnChange)resetOnChange();
-            field.onChange(id);
-          }}
-        >
-          {options.map(({ label, value }) => (
-            <FEIBTab label={label} value={value} />
-          ))}
-        </FEIBTabList>
-      </FEIBTabContext>
+
+      <FEIBTabList
+        $size="small"
+        $type="fized"
+        onChange={(_, id) => {
+          field.onChange(id);
+          if (callback) callback();
+        }}
+      >
+        {options.map(({ label, value }) => (
+          <FEIBTab label={label} value={value} />
+        ))}
+      </FEIBTabList>
 
       {!!fieldState.error && (
         <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>
