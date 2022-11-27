@@ -36,66 +36,72 @@ export const accountFormatter = (account) => {
   return `${acct.slice(0, 3)}-${acct.slice(3, 6)}-${acct.slice(6)}`;
 };
 
-// 將日期格式轉為 YYYY/MM/DD 字串或 YYYY-MM-DD 字串 (傳入第 2 個參數，值為 truthy)
-export const dateFormatter = (date, dashType) => {
-  if (date) {
-    date = new Date(date);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    if (dashType) return `${year}-${month}-${day}`;
-    return `${year}/${month}/${day}`;
+/**
+ * 將日期字串轉為 Date 物件。
+ * @param {String} stringDate YYYYMMDD 或 YYYY/MM/DD 格式的日期字串。
+ * @param {String?} splitter 輸出日期字串的間隔字元。例：'/'
+ * @returns {Date} 若傳入空值，則傳回 NaN
+ */
+export const stringToDate = (stringDate, splitter) => {
+  if (stringDate) {
+    if (splitter) {
+      const parts = stringDate.split(splitter);
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+
+    if (stringDate.match(/^\d{8}$/)) {
+      const year = stringDate.substring(0, 4);
+      const month = stringDate.substring(4, 6);
+      const day = stringDate.substring(6, 8);
+
+      const date = new Date(year, month - 1, day);
+      return new Date(date);
+    }
+
+    return new Date(stringDate);
   }
-  return '';
+  return null;
 };
 
 /**
- * 將日期格式轉為 YYYYMMDD 字串。
- * @param {Date} date 要轉換的日期。
- * @param {String?} splitter 輸出日期字串的間隔字元。
+ * 將日期格式轉為字串。
+ * @param {Date|String} date 要轉換的日期物件或 yyyyMMdd格式字串。
+ * @param {String?} splitter 輸出日期字串的間隔字元。例：'/'
+ * @param {Boolean?} mmddOnly 表示不需要年的部份。
+ * @returns {String} 傳為以 splitter 為分隔字元的日期字串，例：2022/10/01
  */
-export const dateToString = (date, splitter) => {
+export const dateToString = (date, splitter, mmddOnly) => {
+  if (!(date instanceof Date)) {
+    date = stringToDate(date);
+  }
+
   const parts = [
     date.getFullYear(),
     (date.getMonth() + 1).toString().padStart(2, '0'),
     date.getDate().toString().padStart(2, '0'),
   ];
+  if (mmddOnly) parts.splice(0, 1); // 移除年。
+
   return parts.join(splitter ?? '/');
 };
 
-// 將日期格式轉為 YYYYMMDD 字串
-export const stringDateCodeFormatter = (date) => {
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  return `${year}${month}${day}`;
-};
-
-// 將日期格式由 YYYYMMDD 字串轉為 YYYY/MM/DD 字串
-export const stringDateFormatter = (stringDate) => {
-  if (stringDate) {
-    const dateArray = stringDate.split('');
-    dateArray.splice(4, 0, '/');
-    dateArray.splice(7, 0, '/');
-    return dateArray.join('');
-  }
-  return '';
-};
+// 將日期格式轉為 YYYY/MM/DD 字串或 YYYY-MM-DD 字串 (傳入第 2 個參數，值為 truthy)
+// eslint-disable-next-line no-unused-vars
+export const dateFormatter = (date, dashType) => dateToString(date, '-');
 
 /**
- * 將日期字串轉為 Date 物件。
- * @param {*} stringDate YYYYMMDD 或 YYYY/MM/DD 格式的日期字串。
- * @returns {Date} 轉換後的日期。
+ * 將日期格式轉為 YYYYMMDD 字串
+ * @param {Date} date 要轉換的日期。
+ * @returns {String}
  */
-export const stringToDate = (stringDate) => {
-  if (stringDate) {
-    if (stringDate.match(/^\d{8}$/)) {
-      return new Date(stringDateFormatter(stringDate));
-    }
-    return new Date(stringDate);
-  }
-  return null;
-};
+export const stringDateCodeFormatter = (date) => dateToString(date);
+
+/**
+ * 將日期格式由 YYYYMMDD 字串轉為 YYYY/MM/DD 字串
+ * @param {*} stringDate
+ * @returns {Date} 若傳入空值，則傳回 NaN
+ */
+export const stringDateFormatter = (stringDate) => dateToString(stringDate, '/');
 
 // 將時間格式轉為 HH:DD 字串
 export const timeFormatter = (time) => {
