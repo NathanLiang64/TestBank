@@ -22,7 +22,7 @@ import { DrawerWrapper } from './D00500.style';
  *   acctId: '常用轉入帳戶-帳號'
  *   bankName: '銀行名稱'
  *   nickName: '暱稱'
- *   headshot: '大頭照，只有常用轉入帳戶是Bankee會員才會有值。若為 null 表示沒有頭像。'
+ *   headshot: '代表圖檔的UUID，用來顯示大頭貼；若為 null 表示還沒有設定頭像。'
  *   readonly: '這些預設資料不可變更，直接進到第二頁；但 bankId, acctId 必需有值。'
  * }} initData
  * @param {Function} onFinished 完成編輯時的事件。

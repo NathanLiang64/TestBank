@@ -10,6 +10,7 @@ import { callAPI } from 'utilities/axios';
  *   bankName: 銀行名稱
  *   nickName: 暱稱
  *   email: 通知EMAIL
+ *   headshot: 代表圖檔的UUID，用來顯示大頭貼；若為 null 表示還沒有設定頭像。
  * }, ...]
  */
 export const getAllAgreedAccount = async (accountNo) => {
@@ -24,13 +25,14 @@ export const getAllAgreedAccount = async (accountNo) => {
  *   acctId: 約定轉入帳戶-帳號
  *   nickName: 新暱稱；若為空字串，則表示清除，若為null，則表示不變。
  *   email: 新通知EMAIL；若為空字串，則表示清除，若為null，則表示不變。
+ *   headshot: 代表圖檔的內容，使用 Base64 格式；若為 null 表示還沒有設定頭像。
  * }
  * @returns [{
  *   bankId: 約定轉入帳戶-銀行代碼
  *   acctId: 約定轉入帳戶-帳號
  *   nickName: 暱稱
  *   email: 通知EMAIL
- *   headshot: 大頭照，只有常用轉入帳戶是Bankee會員才會有值。若為 null 表示沒有頭像。
+ *   headshot: 代表圖檔的UUID，用來顯示大頭貼；若為 null 表示還沒有設定頭像。
  * }, ...]
  */
 export const updateAgreedAccount = async (request) => {

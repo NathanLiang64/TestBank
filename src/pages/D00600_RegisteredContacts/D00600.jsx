@@ -60,7 +60,7 @@ const Page = () => {
   const onAccountSelected = (acct) => {
     if (selectorMode) {
       const response = {
-        memberId: acct.headshot,
+        memberId: acct.memberId,
         accountName: acct.nickName,
         bankName: acct.bankName,
         bankId: acct.bankId,
@@ -106,7 +106,7 @@ const Page = () => {
               bankNo={acct.bankId}
               bankName={acct.bankName}
               account={acct.acctId}
-              memberId={acct.headshot}
+              memberId={acct.memberId}
               isSelected={(acct.acctId === selectedAccount)}
               onClick={() => onAccountSelected(acct)} // 傳回值：選取的帳號。
               moreActions={[
