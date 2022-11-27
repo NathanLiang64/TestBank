@@ -36,7 +36,7 @@ export const accountFormatter = (account) => {
   return `${acct.slice(0, 3)}-${acct.slice(3, 6)}-${acct.slice(6)}`;
 };
 
-const dateRule = /^((?<yTW>1\d\d|[789]\d)|(?<y>19\d\d|20\d\d))(?<m>[1-9]|0[1-9]|1[012])(?<d>[1-9]|0[1-9]|[12]\d|3[01])$/;
+const dateRule = /^((?<yTW>1\d\d|[789]\d)|(?<yyyy>19\d\d|20\d\d))(?<mm>[1-9]|0[1-9]|1[012])(?<dd>[1-9]|0[1-9]|[12]\d|3[01])$/;
 /**
  * 將日期字串轉為 Date 物件。
  * @param {String} stringDate YYYYMMDD 或 YYYY/MM/DD 格式的日期字串。
@@ -53,10 +53,10 @@ export const stringToDate = (stringDate, splitter) => {
     const matchs = stringDate.replace(/[^\d]/g, '').match(dateRule);
     if (matchs) {
       // yTWD = 民國年(7x~199)
-      const { yTWD, yyyy, mm, dd } = matchs.groups;
-      const year = yyyy ?? (parseInt(yTWD, 10) + 1911);
+      const { yTW, yyyy, mm, dd } = matchs.groups;
+      const year = yyyy ?? (parseInt(yTW, 10) + 1911);
 
-      const date = new Date(year, mm - 1, dd);
+      const date = new Date(year, (mm - 1), dd);
       return new Date(date);
     }
 
