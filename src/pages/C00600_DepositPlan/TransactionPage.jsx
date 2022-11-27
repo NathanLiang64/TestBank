@@ -5,7 +5,7 @@ import { useLocation } from 'react-router';
 import Layout from 'components/Layout/Layout';
 import AccountDetails from 'components/AccountDetails/accountDetails';
 import { closeFunc } from 'utilities/AppScriptProxy';
-import { stringDateCodeFormatter } from 'utilities/Generator';
+import { dateToYMD } from 'utilities/Generator';
 import { showError } from 'utilities/MessageModal';
 
 import { getTransactionDetails } from './api';
@@ -37,7 +37,7 @@ const DepositPlanTransactionPage = () => {
   const updateTransactions = async (conditions) => {
     const request = {
       accountNo: plan?.bindAccountNo,
-      startDate: stringDateCodeFormatter(new Date(plan.createDate)), // 查詢啟示日為計畫建立的當天
+      startDate: dateToYMD(plan.createDate), // 查詢啟示日為計畫建立的當天
       endDate: plan?.endDate,
       ...conditions,
     };

@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getEmail, sendBankBookMail } from 'pages/C00800_ExportBankBook/api';
-import { stringDateCodeFormatter } from 'utilities/Generator';
+import { dateToYMD } from 'utilities/Generator';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 /* Elements */
@@ -130,8 +130,8 @@ const ExportBankBook = () => {
     const param = {
       conditions: {
         accountNo: data.account,
-        startDate: stringDateCodeFormatter(exportDateRange[0]),
-        endDate: stringDateCodeFormatter(exportDateRange[1]),
+        startDate: dateToYMD(exportDateRange[0]),
+        endDate: dateToYMD(exportDateRange[1]),
       },
       fileType: 1,
       pdfTemplateType: data.outType === '1' ? 1 : 3,

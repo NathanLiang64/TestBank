@@ -4,7 +4,7 @@ import FEIBButton from 'components/elements/FEIBButton';
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import ArrowNextButton from 'components/ArrowNextButton';
 import {
-  weekNumberToChinese, dateFormatter, stringToDate, switchZhNumber, toCurrency,
+  weekNumberToChinese, dateToString, stringToDate, switchZhNumber, toCurrency,
 } from 'utilities/Generator';
 
 import DepositPlanWrapper from './DepositPlan.style';
@@ -75,7 +75,7 @@ const DepositPlan = ({
         </div>
         { endDate && (
         <div>
-          {dateFormatter(stringToDate(endDate))}
+          {dateToString(endDate)}
           到期
         </div>
         )}

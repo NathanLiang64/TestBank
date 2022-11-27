@@ -10,10 +10,9 @@ import { FEIBButton } from 'components/elements';
 import {
   currencySymbolGenerator,
   accountFormatter,
-  stringToDate,
-  dateFormatter,
+  dateToString,
   weekNumberToChinese,
-  stringDateCodeFormatter,
+  dateToYMD,
 } from 'utilities/Generator';
 import { showAnimationModal, showError } from 'utilities/MessageModal';
 import { transactionAuth } from 'utilities/AppScriptProxy';
@@ -127,10 +126,10 @@ const DepositPlanDetailPage = () => {
       {
         type: 'extra',
         label: '第一筆扣款日',
-        value: dateFormatter(stringToDate(program?.startDate), true),
+        value: dateToString(program?.startDate),
         caption: '下一筆扣款日',
         next: program?.extra.nextDeductionDate,
-        extra: () => (mode === 2 && stringDateCodeFormatter(new Date()) === program?.startDate ? '扣款成功' : undefined),
+        extra: () => (mode === 2 && dateToYMD() === program?.startDate ? '扣款成功' : undefined),
       },
       { label: '存錢帳號', value: program?.bindAccountNo ? accountFormatter(program?.bindAccountNo) : '加開子帳戶' },
     ];
@@ -141,10 +140,10 @@ const DepositPlanDetailPage = () => {
     const list = [
       { label: '存錢計畫名稱', value: plan?.name },
       { label: '存錢計畫之帳號', value: accountFormatter(plan?.bindAccountNo) },
-      { label: '存錢計畫起始日', value: dateFormatter(stringToDate(plan?.startDate), true) },
-      { label: '存錢計畫到期日', value: dateFormatter(stringToDate(plan?.endDate), true) },
+      { label: '存錢計畫起始日', value: dateToString(plan?.startDate) },
+      { label: '存錢計畫到期日', value: dateToString(plan?.endDate) },
       { label: '存錢週期', value: renderModeTimingString(plan) },
-      { label: '第一筆扣款日', value: dateFormatter(stringToDate(plan?.startDate), true) },
+      { label: '第一筆扣款日', value: dateToString(plan?.startDate) },
       { label: '目標金額', value: currencySymbolGenerator('NTD', plan?.goalAmount) },
       { label: '每期存款金額', value: currencySymbolGenerator('NTD', plan?.amount) },
       { label: '利率', value: `${plan?.progInfo.rate}% (牌告+計畫加碼利率)` },

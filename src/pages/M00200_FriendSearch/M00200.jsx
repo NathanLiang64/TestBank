@@ -6,7 +6,7 @@ import uuid from 'react-uuid';
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import Avatar from 'components/Avatar';
-import {dateFormatter, stringToDate, toHalfWidth } from 'utilities/Generator';
+import { dateToString, toHalfWidth } from 'utilities/Generator';
 
 import EmptyData from 'components/EmptyData';
 import { closeFunc } from 'utilities/AppScriptProxy';
@@ -46,13 +46,13 @@ const Page = () => {
                       {f.depositApproved && (
                         <div>
                           開戶：
-                          {dateFormatter(stringToDate(f.depositApproved))}
+                          {dateToString(f.depositApproved)}
                         </div>
                       )}
                       {f.creditCardApproved && (
                         <div>
                           核卡：
-                          {dateFormatter(stringToDate(f.creditCardApproved))}
+                          {dateToString(f.creditCardApproved)}
                         </div>
                       )}
                     </div>

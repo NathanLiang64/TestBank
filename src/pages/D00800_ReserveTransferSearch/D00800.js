@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Pagination } from 'swiper/core';
-import { dateFormatter } from 'utilities/Generator';
+import { dateToString } from 'utilities/Generator';
 import { switchLoading, closeFunc } from 'utilities/AppScriptProxy';
 import { getTransferOutAccounts, getReservedTransDetails, getResultTransDetails } from 'pages/D00800_ReserveTransferSearch/api';
 
@@ -112,8 +112,8 @@ const ReserveTransferSearch = () => {
       ccycd: selectedAccount.ccyCd,
       accountType: selectedAccount.accountType,
       queryType: '3',
-      sdate: dateFormatter(reserveDateRange[0]),
-      edate: dateFormatter(reserveDateRange[1]),
+      sdate: dateToString(reserveDateRange[0]),
+      edate: dateToString(reserveDateRange[1]),
     };
     const { code, data } = await getReservedTransDetails(param);
     if (code === '0000') {
@@ -131,8 +131,8 @@ const ReserveTransferSearch = () => {
       ccycd: selectedAccount.ccyCd,
       accountType: selectedAccount.accountType,
       // queryType: '3',
-      sdate: dateFormatter(resultDateRange[0]),
-      edate: dateFormatter(resultDateRange[1]),
+      sdate: dateToString(resultDateRange[0]),
+      edate: dateToString(resultDateRange[1]),
     };
     const { code, data } = await getResultTransDetails(param);
     if (code === '0000') {

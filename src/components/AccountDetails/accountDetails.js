@@ -13,7 +13,7 @@ import {
 import Loading from 'components/Loading';
 import { setDrawerVisible } from 'stores/reducers/ModalReducer';
 import { showDrawer } from 'utilities/MessageModal';
-import { stringDateFormatter } from 'utilities/Generator';
+import { dateToString } from 'utilities/Generator';
 import { CrossCircleIcon, DownloadIcon, SearchIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
 import { getDepositBook } from './api';
@@ -233,7 +233,7 @@ const AccountDetails = ({
     if (!cond || !cond.startDate) return null; // 沒有設定查詢日期區間，就不顯示。
     return (
       <div className="searchCondition">
-        <p>{`${stringDateFormatter(cond.startDate)} ~ ${stringDateFormatter(cond.endDate)}`}</p>
+        <p>{`${dateToString(cond.startDate)} ~ ${dateToString(cond.endDate)}`}</p>
         <FEIBIconButton onClick={() => resetView()}>
           <CrossCircleIcon />
         </FEIBIconButton>

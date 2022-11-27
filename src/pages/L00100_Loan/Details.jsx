@@ -11,7 +11,7 @@ import Layout from 'components/Layout/Layout';
 import AccountCard from 'components/AccountCard';
 import InformationList from 'components/InformationList';
 import {
-  accountFormatter, dateFormatter, stringToDate, currencySymbolGenerator,
+  accountFormatter, dateToString, currencySymbolGenerator,
 } from 'utilities/Generator';
 
 import { getLoanDetails } from './api';
@@ -41,7 +41,7 @@ const Page = () => {
     { title: '貸款帳號', content: accountFormatter(d.accountNo) },
     { title: '貸款分號', content: d.loanNo },
     { title: '貸款類別', content: d.loanType },
-    { title: '貸款期限', content: `${dateFormatter(stringToDate(d.startDate))}~${dateFormatter(stringToDate(d.endDate))}` },
+    { title: '貸款期限', content: `${dateToString(d.startDate)}~${dateToString(d.endDate)}` },
     { title: '每期還款日', content: `每月${d.cycleTiming}日` },
     { title: '貸款金額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.loanAmount) },
     { title: '貸款利率', content: `${d.rate}%` },

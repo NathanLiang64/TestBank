@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { getExchangeRateInfo } from 'pages/E00100_Exchange/api';
-import { dateFormatter, timeSecondFormatter } from 'utilities/Generator';
+import { dateToString, timeSecondFormatter } from 'utilities/Generator';
 import styled from 'styled-components';
 
 const ExchangeTableWrapper = styled.div`
@@ -49,7 +49,7 @@ const E00100Table = () => {
 
   const getExchangeRate = async () => {
     const now = Date.now();
-    const dateStr = dateFormatter(now);
+    const dateStr = dateToString(now);
     const timeStr = timeSecondFormatter(now);
     setGetInfoStr(`${dateStr} ${timeStr}`);
     const { code, data } = await getExchangeRateInfo({});

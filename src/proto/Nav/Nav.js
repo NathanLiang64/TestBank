@@ -7,13 +7,6 @@ import { startFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-// import {
-//   getAllFrequentAccount,
-//   addFrequentAccount,
-//   updateFrequentAccount,
-//   deleteFrequentAccount,
-// } from 'pages/D00500_FrequentContacts/api';
-// import { getAllAgreedAccount, updateAgreedAccount } from 'pages/D00600_RegisteredContacts/api';
 import { logout, getHomeData, registerToken } from './Nav.api';
 
 import NavWrapper from './Nav.style';

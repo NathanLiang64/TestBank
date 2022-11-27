@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import uuid from 'react-uuid';
 
@@ -6,10 +5,9 @@ import InformationList from 'components/InformationList';
 import Accordion from 'components/Accordion';
 import Loading from 'components/Loading';
 import {
-  accountFormatter, dateFormatter, stringToDate, currencySymbolGenerator,
+  accountFormatter, dateToString, currencySymbolGenerator,
 } from 'utilities/Generator';
 
-import { getThisMonth } from 'utilities/MonthGenerator';
 import { getBillDetails } from '../api';
 
 const BillDetails = () => {
@@ -26,11 +24,11 @@ const BillDetails = () => {
     },
     {
       title: '帳單結帳日',
-      content: dateFormatter(stringToDate(d.invoiceDate)),
+      content: dateToString(d.invoiceDate),
     },
     {
       title: '繳費截止日',
-      content: dateFormatter(stringToDate(d.billDate)),
+      content: dateToString(d.billDate),
     },
     {
       title: '上期應繳金額',

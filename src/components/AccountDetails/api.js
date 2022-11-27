@@ -1,5 +1,5 @@
 import { download } from 'utilities/axios';
-import { stringDateCodeFormatter } from 'utilities/Generator';
+import { dateToYMD } from 'utilities/Generator';
 
 /**
  * 下載交易明細清單
@@ -8,7 +8,7 @@ import { stringDateCodeFormatter } from 'utilities/Generator';
  * @returns 數位存摺
  */
 export const getDepositBook = async (fileType, conditions) => {
-  const today = stringDateCodeFormatter(new Date()); // 今天 yyyyMMdd
+  const today = dateToYMD(); // 今天 yyyyMMdd
   const filename = `${conditions.accountNo}-${today}`;
   const request = {
     conditions,

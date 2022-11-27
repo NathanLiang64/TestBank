@@ -63,7 +63,7 @@ const ForeignCurrencyTransfer = () => {
             ...detail,
             account: acc.account,
             name: acc.name,
-            agreedAcct: null, // NOTE 只有在第一次取約轉帳號時，才會透過API取得清單。
+            agreedAccts: null, // NOTE 只有在第一次取約轉帳號時，才會透過API取得清單。
           }
         ))).flat();
         console.log('帳戶清單', formatAccounts);
