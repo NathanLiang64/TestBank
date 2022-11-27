@@ -20,7 +20,10 @@ const Nav = () => {
 
     const token = sessionStorage.getItem('jwtToken');
     if (token) {
-      await getHomeData();
+      if (sessionStorage.getItem('HomeDataLoaded') === null) {
+        await getHomeData();
+        sessionStorage.setItem('HomeDataLoaded', 'Y');
+      }
     } else {
       history.push('/login');
     }

@@ -134,7 +134,7 @@ function AccountEditor({
           <div className="text-blue">
             {`${model.bankName} ${accountFormatter(model.acctId)}`}
             <FEIBIconButton className="editButton" $fontSize={1.6} onClick={() => setConfirmPage(false)}>
-              <EditIcon onClick={() => setConfirmPage(false)} />
+              <EditIcon />
             </FEIBIconButton>
           </div>
 
@@ -142,7 +142,7 @@ function AccountEditor({
         <div className="flex-col">
           <div className="self-center">
             {/* 不可變更常用帳號的人的大頭貼 */}
-            <Avatar editable={false} memberId={model.headshot} name={model.nickName} />
+            <Avatar editable memberId={model.headshot} name={model.nickName} />
           </div>
           <FEIBInputLabel htmlFor={idNickName}>暱稱</FEIBInputLabel>
           <Controller
