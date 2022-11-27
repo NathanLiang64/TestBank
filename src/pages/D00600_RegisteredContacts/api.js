@@ -12,8 +12,8 @@ import { callAPI } from 'utilities/axios';
  *   email: 通知EMAIL
  * }, ...]
  */
-export const getAllRegisteredAccount = async (accountNo) => {
-  const response = await callAPI('/api/transfer/registeredAccount/v1/getAll', { accountNo });
+export const getAllAgreedAccount = async (accountNo) => {
+  const response = await callAPI('/api/transfer/agreedAccount/v1/getAll', { accountNo });
   return response.data;
 };
 
@@ -33,7 +33,7 @@ export const getAllRegisteredAccount = async (accountNo) => {
  *   headshot: 大頭照，只有常用轉入帳戶是Bankee會員才會有值。若為 null 表示沒有頭像。
  * }, ...]
  */
-export const updateRegisteredAccount = async (request) => {
-  const response = await callAPI('/api/transfer/registeredAccount/v1/update', request);
+export const updateAgreedAccount = async (request) => {
+  const response = await callAPI('/api/transfer/agreedAccount/v1/update', request);
   return response.data;
 };
