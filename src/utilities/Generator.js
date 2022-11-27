@@ -1,5 +1,6 @@
 /* eslint-disable object-curly-newline */
 /* eslint-disable import/prefer-default-export */
+import { callAPI } from 'utilities/axios';
 
 /* ========= 通用函式 ========= */
 
@@ -375,7 +376,7 @@ export const loadLocalData = async (storeName, loadDataFunc) => {
 };
 
 // 將全形文字轉為半形
-export const toHalfWidth = (str) => str.replace(
+export const toHalfWidth = (str) => str?.replace(
   /[\uff01-\uff5e]/g,
   (ch) => String.fromCharCode(ch.charCodeAt(0) - 0xfee0),
 );
@@ -409,4 +410,19 @@ export const switchZhNumber = (numIndication, isPlus) => {
     default:
       return '0';
   }
+};
+
+/**
+ * 查詢銀行代碼
+ * @returns {Promise<[{
+ *  bankNo: 銀行代碼,
+ *  bankName: 銀行名稱
+ * }]>} 銀行代碼清單。
+ */
+export const getBankCode = async () => {
+  const banks = await loadLocalData('BankList', async () => {
+    const response = await callAPI('/api/transfer/queryBank');
+    return response.data;
+  });
+  return banks;
 };

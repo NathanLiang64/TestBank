@@ -1,4 +1,5 @@
 import { callAPI } from 'utilities/axios';
+import { getBankCode } from 'utilities/Generator';
 
 /**
  * 查詢指定轉出帳號約定轉入帳號清單。
@@ -15,7 +16,13 @@ import { callAPI } from 'utilities/axios';
  */
 export const getAllAgreedAccount = async (accountNo) => {
   const response = await callAPI('/api/transfer/agreedAccount/v1/getAll', { accountNo });
-  return response.data;
+  const bankList = await getBankCode();
+  const data = response.data?.map((item) => ({
+    ...item,
+    bankName: (bankList?.find((b) => b.bankNo === item.bankId)?.bankName ?? ''),
+  }));
+  console.log(data);
+  return data;
 };
 
 /**
