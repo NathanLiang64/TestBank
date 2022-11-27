@@ -132,7 +132,7 @@ const ForeignCurrencyTransfer = () => {
     }
 
     return accounts.map((item) => (
-      <FEIBOption key={Math.random()} value={item?.account}>{item?.account}</FEIBOption>
+      <FEIBOption key={Math.random()} value={item?.acctId}>{item?.acctId}</FEIBOption>
     ));
   };
 

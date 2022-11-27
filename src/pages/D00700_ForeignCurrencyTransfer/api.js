@@ -21,10 +21,10 @@ export const getAccountsList = async (acctTypes) => {
 /**
  * 查詢約定轉入帳號清單。
  * @param {*} accountNo 要查詢的帳號。
- * @returns {[{
- *   banke: 銀行代號
- *   account: 約定帳號
- * }]}
+ * @returns {Promise<[{
+ *   bankId: 約定轉入帳戶銀行代碼
+ *   acctId: 約定轉入帳戶帳號
+ * }]>}
  */
 export const getAgreedAccounts = async (accountNo) => {
   const response = await callAPI('/api/transfer/agreedAccount/v1/getAll', { accountNo });
