@@ -76,14 +76,15 @@ const QuickLoginSetting = () => {
       if (type === '2' && isSuccess) {
         setIsPatternActive(false);
       }
-    } else {
-      await showCustomPrompt({
-        message: `解除快速綁定交易驗證測試結果：${JSON.stringify(rs)}`,
-        onOk: () => closeFunc(),
-        onCancel: () => closeFunc(),
-        onClose: () => closeFunc(),
-      });
     }
+    // else {
+    //   await showCustomPrompt({
+    //     message: `解除快速綁定交易驗證測試結果：${JSON.stringify(rs)}`,
+    //     onOk: () => closeFunc(),
+    //     onCancel: () => closeFunc(),
+    //     onClose: () => closeFunc(),
+    //   });
+    // }
   };
 
   // 檢查綁定狀態
@@ -119,28 +120,16 @@ const QuickLoginSetting = () => {
       QLStatus,
       QLType,
     }));
+
     // 回傳成功
     if (result === 'true') {
       const status = QLType === '1';
       switch (QLStatus) {
-        case '0':
-          // 未綁定
-          setIsBioActive(false);
-          setIsPatternActive(false);
-          break;
         case '1':
         case '2':
           // 已綁定
           setIsBioActive(status);
           setIsPatternActive(!status);
-          break;
-        case '3':
-          // 已在其它裝置綁定
-          showCustomPrompt({
-            title: 'APP裝置認證錯誤',
-            message: '您已於其他裝置啟用APP裝置認證，請點選「確認」立即綁定新裝置或致電客服(提醒:重新綁定後裝置自動失效)',
-            onOk: () => {},
-          });
           break;
         case '4':
           // 本裝置已綁定其他帳號
@@ -151,12 +140,9 @@ const QuickLoginSetting = () => {
           });
           break;
         default:
-          // 同時為已在其它裝置綁定、本裝置已綁定其他帳號，優先前者
-          showCustomPrompt({
-            title: 'APP裝置認證錯誤',
-            message: '您已於其他裝置啟用APP裝置認證，請點選「確認」立即綁定新裝置或致電客服(提醒:重新綁定後裝置自動失效)',
-            onOk: () => {},
-          });
+          // 未綁定 | 已在其它裝置綁定
+          setIsBioActive(false);
+          setIsPatternActive(false);
           break;
       }
     }
