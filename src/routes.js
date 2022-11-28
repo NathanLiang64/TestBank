@@ -13,11 +13,11 @@ const C00300 = lazy(() => import('pages/C00300_NtdDeposit/C00300'));
 const C00400 = lazy(() => import('pages/C00400_ForeignDeposit/C00400'));
 const C00500 = lazy(() => import('pages/C00500_SecsDeposit/C00500'));
 const C00600 = lazy(() => import('pages/C00600_DepositPlan/C00600'));
-const C00600Transaction = lazy(() => import('pages/C00600_DepositPlan/TransactionPage'));
-const C00600Create = lazy(() => import('pages/C00600_DepositPlan/CreatePage'));
-const C00600Edit = lazy(() => import('pages/C00600_DepositPlan/EditPage'));
-const C00600EditR = lazy(() => import('pages/C00600_DepositPlan/RestrictedEditPage'));
-const C00600Detail = lazy(() => import('pages/C00600_DepositPlan/DetailPage'));
+const C006001 = lazy(() => import('pages/C00600_DepositPlan/C00600_1'));
+const C006002 = lazy(() => import('pages/C00600_DepositPlan/C00600_2'));
+const C006003 = lazy(() => import('pages/C00600_DepositPlan/C00600_3'));
+const C006004 = lazy(() => import('pages/C00600_DepositPlan/C00600_4'));
+const C006005 = lazy(() => import('pages/C00600_DepositPlan/C00600_5'));
 const C00700 = lazy(() => import('pages/C00700_CreditCard/C00700'));
 const C007001 = lazy(() => import('pages/C00700_CreditCard/C00700_1'));
 const C007002 = lazy(() => import('pages/C00700_CreditCard/C00700_2'));
@@ -115,11 +115,11 @@ const routes = [
   {path: '/C00400', exact: false, component: C00400},
   {path: '/C00500', exact: false, component: C00500},
   {path: '/C00600', exact: false, component: C00600},
-  {path: '/C006001', exact: false, component: C00600Transaction},
-  {path: '/C006002', exact: false, component: C00600Create},
-  {path: '/C006003', exact: false, component: C00600Edit},
-  {path: '/C006004', exact: false, component: C00600Detail},
-  {path: '/C006005', exact: false, component: C00600EditR},
+  {path: '/C006001', exact: false, component: C006001},
+  {path: '/C006002', exact: false, component: C006002},
+  {path: '/C006003', exact: false, component: C006003},
+  {path: '/C006004', exact: false, component: C006004},
+  {path: '/C006005', exact: false, component: C006005},
   {path: '/C00700', exact: false, component: C00700},
   {path: '/C007001', exact: false, component: C007001},
   {path: '/C007002', exact: false, component: C007002},

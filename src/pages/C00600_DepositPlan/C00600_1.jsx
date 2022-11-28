@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 
 import Layout from 'components/Layout/Layout';
 import AccountDetails from 'components/AccountDetails/accountDetails';
@@ -15,6 +15,7 @@ import { getTransactionDetails } from './api';
  */
 const DepositPlanTransactionPage = () => {
   const [plan, setPlan] = useState(null);
+  const history = useHistory();
   const {state} = useLocation();
 
   useEffect(async () => {
@@ -52,7 +53,7 @@ const DepositPlanTransactionPage = () => {
   };
 
   return (
-    <Layout title="存錢歷程" hasClearHeader goBackFunc={() => closeFunc()}>
+    <Layout title="存錢歷程" hasClearHeader goBackFunc={() => history.goBack()}>
       {plan ? (
         <AccountDetails
           selectedAccount={plan}

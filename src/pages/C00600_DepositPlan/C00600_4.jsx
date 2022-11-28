@@ -21,7 +21,7 @@ import { transactionAuth } from 'utilities/AppScriptProxy';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { createDepositPlan, updateDepositPlan } from './api';
 import { AlertInvalidEntry, ConfirmToTransferSubAccountBalance } from './utils/prompts';
-import DetailPageWrapper from './DetailPage.style';
+import { DetailPageWrapper } from './C00600.style';
 
 /**
  * C00600 存錢計畫 資訊頁
