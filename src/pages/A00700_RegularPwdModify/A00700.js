@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect } from 'react';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
@@ -22,7 +23,8 @@ const RegularPwdModify = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    password: passwordValidation(),
+    // password: passwordValidation(),
+    password: yup.string().required('請輸入您的網銀密碼'),
     newPassword: newPasswordValidation('password'),
     newPasswordCheck: confirmPasswordValidation('newPassword'),
   });
@@ -63,8 +65,8 @@ const RegularPwdModify = () => {
         newPasswordCheck: e2ee(getValues('newPasswordCheck')),
         actionCode: 1,
       };
-      const changePwdResponse = await renewPwd(param);
-      setResultDialog(changePwdResponse);
+      const response = await renewPwd(param);
+      setResultDialog(response);
       switchLoading(false);
     }
   };

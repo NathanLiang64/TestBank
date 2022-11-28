@@ -11,7 +11,7 @@ import {
   accountFormatter, accountTypeColorGenerator, currencySymbolGenerator, getCurrenyName,
 } from 'utilities/Generator';
 import DebitCardBackground from 'assets/images/debitCardBackground.png';
-import { showDrawer } from 'utilities/MessageModal';
+import { showCustomPrompt, showDrawer } from 'utilities/MessageModal';
 import { setDrawerVisible } from 'stores/reducers/ModalReducer';
 import { iconGenerator } from './debitCardIconGenerator';
 import DebitCardWrapper from './debitCard.style';
@@ -88,6 +88,22 @@ const DebitCard = ({
     </FEIBIconButton>
   );
 
+  // 判斷不可用原因彈窗的顯示文字
+  const handleNonEnabledMessage = (title, transable) => {
+    switch (title) {
+      case '換匯':
+        return '帳戶餘額為0，無法進行換匯';
+      case '轉帳':
+        if (transable === false) {
+          return '帳戶無轉帳功能，無法進行轉帳';
+        }
+        return '帳戶餘額為0，無法進行轉帳';
+      case '無卡提款':
+        return '帳戶餘額為0，無法進行無卡提款';
+      default:
+        return '';
+    }
+  };
   /**
    * 顯示功能清單。
    * @param {[*]} funcs 功能清單。
@@ -98,15 +114,14 @@ const DebitCard = ({
       {funcs.map((func) => {
         if (!(func.hidden === true)) { // 必需指定為 true 才會隱藏。
           const enabled = (func.fid && (func.enabled === undefined || func.enabled)); // 預設為 可用。
-          const style = enabled ? null : { color: 'gray' };
           const onClick = enabled ? () => {
             dispatch(setDrawerVisible(false));
             onFunctionClick(func.fid);
-          } : null;
+          } : () => showCustomPrompt({message: handleNonEnabledMessage(func.title, func.transable), onOk: () => {}});
 
           return (
             <li key={uuid()} onClick={onClick}>
-              <p style={style}>
+              <p>
                 {func.icon ? iconGenerator(func.icon) : null}
                 {func.title}
               </p>

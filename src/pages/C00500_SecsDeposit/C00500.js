@@ -188,7 +188,7 @@ const C00500 = () => {
                   fid: 'D00100',
                   title: '轉帳',
                   enabled:
-                    selectedAccount.transable && selectedAccount.balance > 0,
+                  selectedAccount.transable && selectedAccount.balance > 0,
                 },
                 {
                   fid: 'E00100',

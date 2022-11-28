@@ -1,17 +1,10 @@
 import * as yup from 'yup';
 
 export const validationSchema = yup.object().shape({
-  withdrawPwd: yup
-    .string()
-    .required('請輸入提款密碼')
-    .min(4, '提款密碼須為 4-12 位數字')
-    .max(12, '提款密碼須為 4-12 位數字')
-    .matches(/^[0-9]*$/, '提款密碼僅能使用數字'),
-  withdrawPwdCheck: yup
-    .string()
-    .required('請再輸入一次提款密碼')
-    .min(4, '提款密碼須為 4-12 位數字')
-    .max(12, '提款密碼須為 4-12 位數字')
-    .matches(/^[0-9]*$/, '提款密碼僅能使用數字')
-    .oneOf([yup.ref('withdrawPwd'), null], '兩次輸入的提款密碼必須相同'),
+  withdrawAmount: yup
+    .number()
+    .max(20000, '提款金額上限為$20,000')
+    .min(1000, '請輸入提款金額')
+    .required('請輸入提款金額'),
+  account: yup.string().required('無帳戶資訊'),
 });

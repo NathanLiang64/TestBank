@@ -562,6 +562,28 @@ async function appTransactionAuth(request) {
   return result;
 }
 
+/**
+ * 查詢訊息通知綁定狀態
+ * @param {}
+ * @returns {{PushBindStatus: boolean}} 狀態布林值
+ */
+async function queryPushBind() {
+  return await callAppJavaScript('queryPushBind', null, true, () => {
+    console.log('web 執行取得綁定狀態');
+    return {
+      PushBindStatus: true,
+    };
+  });
+}
+
+/**
+ * 更新訊息通知設定綁定狀態
+ * @param {}
+ */
+async function updatePushBind() {
+  await callAppJavaScript('updatePushBind', null, false);
+}
+
 export {
   goHome,
   startFunc,
@@ -580,4 +602,6 @@ export {
   regQLfeature,
   regQL,
   delQL,
+  queryPushBind,
+  updatePushBind,
 };

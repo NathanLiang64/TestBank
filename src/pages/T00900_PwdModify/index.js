@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -23,7 +24,7 @@ const PwdModify = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    password: passwordValidation(),
+    password: yup.string().required('請輸入您的網銀密碼'),
     newPassword: newPasswordValidation('password'),
     newPasswordCheck: confirmPasswordValidation('newPassword'),
   });

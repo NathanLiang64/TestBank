@@ -12,7 +12,9 @@ import {
 import Accordion from 'components/Accordion';
 
 /* API */
-import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
+import {
+  closeFunc, queryPushBind, transactionAuth, updatePushBind,
+} from 'utilities/AppScriptProxy';
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import store from 'stores/store';
 import { AuthCode } from 'utilities/TxnAuthCode';
@@ -74,11 +76,12 @@ const S00400 = () => {
     }
 
     console.log('S00400 handlePushBind() verifyPWD/2FA succeed');
-    const updatePushBindResult = await updatePushBindMock(); // DEBUG: mock回傳判斷
-    if (updatePushBindResult.code !== '0000') {
-      await showError(updatePushBindResult.message);
-      return;
-    }
+    await updatePushBind();
+    // const updatePushBindResult = await updatePushBindMock();
+    // if (updatePushBindResult.code !== '0000') {
+    //   await showError(updatePushBindResult.message);
+    //   return;
+    // }
     setIsPushBind(true);
   };
 
@@ -86,9 +89,9 @@ const S00400 = () => {
     dispatch(setWaittingVisible(true));
 
     /* 檢查有無同意過推播 */
-    const queryIsOnResponse = await queryPushBindMock(); // DEBUG: 回傳為mock
-    setIsPushBind(queryIsOnResponse);
-    if (queryIsOnResponse === false) {
+    const queryIsOnResponse = await queryPushBind();
+    setIsPushBind(queryIsOnResponse.PushBindStatus);
+    if (queryIsOnResponse.PushBindStatus === false) {
       showCustomPrompt({
         title: '系統訊息',
         message: '您尚未設定「訊息通知」功能，是否立即設定？',

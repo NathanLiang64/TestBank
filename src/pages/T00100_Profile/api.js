@@ -3,7 +3,7 @@ import { callAPI } from 'utilities/axios';
 // 取得使用者暱稱 done
 export const getNickName = async (param) => {
   const response = await callAPI('/api/setting/member/getInfo', param);
-  return response;
+  return response.data;
 };
 
 // 更新使用者暱稱 done

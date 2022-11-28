@@ -24,7 +24,7 @@ const DialogContent = ({ data, selectedAccount }) => (
       <div className="account">{data?.inActNo}</div>
     </div>
     <div className="informationListContainer">
-      <InformationList title="轉出帳號" content={selectedAccount.accountId} remark={selectedAccount.showName} />
+      <InformationList title="轉出帳號" content={selectedAccount.acctId} remark={selectedAccount.acctName} />
       <InformationList title="時間" content={data.trnsDate} />
     </div>
   </DialogContentWrapper>

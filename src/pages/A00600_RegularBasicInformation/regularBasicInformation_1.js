@@ -7,8 +7,7 @@ import {
 } from 'components/elements';
 import Accordion from 'components/Accordion';
 import InformationList from 'components/InformationList';
-// import PasswordInput from 'components/PasswordInput';
-// import { passwordValidation } from 'utilities/validation';
+
 /* Styles */
 import RegularBasicInformationWrapper from './regularBasicInformation.style';
 
