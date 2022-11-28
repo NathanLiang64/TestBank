@@ -13,7 +13,7 @@ import {
 } from 'utilities/Generator';
 
 import HeroWithEdit from './components/HeroWithEdit';
-import EditPageWrapper from './EditPage.style';
+import { EditPageWrapper } from './C00600.style';
 import { AlertInvalidEntry, AlertUpdateFail } from './utils/prompts';
 import { generateCycleModeOptions, generateCycleTimingOptions } from './utils/options';
 import { updateDepositPlan } from './api';

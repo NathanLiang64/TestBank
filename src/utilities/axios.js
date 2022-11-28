@@ -272,11 +272,12 @@ export const download = async (url, request) => {
       console.log(file);
       const fileUrl = URL.createObjectURL(file);
 
-      const a = document.createElement('a');
-      a.href = fileUrl;
-      a.target = '_blank';
+      window.open(fileUrl, '_blank');
+      // const a = document.createElement('a');
+      // a.href = fileUrl;
+      // a.target = '_blank';
       // a.download = filename; // 因使用者體驗因素，改外開瀏覽器方式取代下載
-      a.click();
+      // a.click();
     })
     .catch((e) => {
       console.log(e);

@@ -22,7 +22,7 @@ import {
   generateCycleTimingOptions, generateMonthOptions,
 } from './utils/options';
 import HeroWithEdit from './components/HeroWithEdit';
-import EditPageWrapper from './EditPage.style';
+import { EditPageWrapper } from './C00600.style';
 import { generateEditSchema } from './validationSchema';
 
 /**
