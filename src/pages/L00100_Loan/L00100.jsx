@@ -57,9 +57,9 @@ const Page = () => {
   /**
    * 產生上方卡片會用到的
    */
-  const handleMoreClick = (accountNo) => {
+  const handleMoreClick = (accountNo, loanNo) => {
     const list = [
-      { icon: <CircleIcon />, title: '貸款資訊', onClick: () => { history.push('/L001002', { accountNo }); } },
+      { icon: <CircleIcon />, title: '貸款資訊', onClick: () => { history.push('/L001002', { actno: accountNo, sqno: loanNo }); } },
       /*
       { icon: <CircleIcon />, title: '部分貸款', onClick: () => {} },
       { icon: <CircleIcon />, title: '全部貸款', onClick: () => {} },
@@ -106,7 +106,7 @@ const Page = () => {
             <div>{card.alias ?? '貸款'}</div>
             <div>{`${accountFormatter(card.accountNo)} (${card.loanNo})`}</div>
           </div>
-          <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.accountNo)}>
+          <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.accountNo, card.loanNo)}>
             <MoreIcon />
           </FEIBIconButton>
         </div>
