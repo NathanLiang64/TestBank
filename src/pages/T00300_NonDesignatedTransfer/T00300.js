@@ -12,7 +12,7 @@ import { useHistory } from 'react-router';
 import theme from 'themes/theme';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import {
-  checkDeviceBindingStatus, getNonDesignatedTransferData, MIDVerify, queryOTP, updateOTP,
+  checkDeviceBindingStatus, getNonDesignatedTransferData, queryOTP, updateOTP,
 } from './api';
 
 /* Styles */
