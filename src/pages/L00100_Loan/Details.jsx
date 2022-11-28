@@ -43,12 +43,12 @@ const Page = () => {
     { title: '貸款類別', content: d.loanType },
     { title: '貸款期限', content: `${dateFormatter(stringToDate(d.startDate))}~${dateFormatter(stringToDate(d.endDate))}` },
     { title: '每期還款日', content: `每月${d.cycleTiming}日` },
-    { title: '貸款金額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.loanAmount) },
+    { title: '初貸金額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.loanAmount) },
     { title: '貸款利率', content: `${d.rate}%` },
     { title: '貸款餘額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.loanBalance) },
     { title: '已繳期數', content: `${d.periodPaid}期` },
     { title: '剩餘期數', content: `${d.periodRemain}期` },
-    { title: '最初撥貸金額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.initialAmount) },
+    // { title: '最初撥貸金額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.initialAmount) },
   ]);
 
   return (

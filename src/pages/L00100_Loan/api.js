@@ -75,7 +75,7 @@ export const getLoanSummary = async () => {
       isJoinedRewardProgram: '-', // TODO: 此階段不做
       currency: 'NTD', // Debug: 假資料
     },
-    transactions: await resSubPaymentSummary(subSummary.account, subSummary.subNo).then((res) => res.map((subPaymentHistory) => ({ // Debug: account 029資料錯誤，測試使用此accout, subNo: '03105000742426', '0001'
+    transactions: await resSubPaymentSummary(subSummary.account, subSummary.subNo).then((res) => res.map((subPaymentHistory) => ({
       id: uuid(),
       txnDate: subPaymentHistory.date,
       amount: subPaymentHistory.amount,
