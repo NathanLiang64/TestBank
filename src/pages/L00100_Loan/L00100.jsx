@@ -103,7 +103,7 @@ const Page = () => {
       <AccountCard type="L" key={`${uid}-c${i}`}>
         <div className="justify-between items-start">
           <div>
-            <div>{card.alias ?? '貸款'}</div>
+            <div>{card.type}</div>
             <div>{`${accountFormatter(card.accountNo)} (${card.loanNo})`}</div>
           </div>
           <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.accountNo, card.loanNo)}>

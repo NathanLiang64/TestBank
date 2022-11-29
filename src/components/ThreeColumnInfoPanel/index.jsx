@@ -16,7 +16,7 @@ const ThreeColumnInfoPanel = ({ isLoading, content, children }) => (
             {info.label}
             {info.onClick && (info.iconType === 'switch' ? <SwitchIcon /> : <ArrowNextIcon />)}
           </h3>
-          <div className="value">{info.value}</div>
+          <div className={info.value.length > 5 ? 'smallValue' : 'value'}>{info.value}</div>
         </Component>
       );
     }) : children)}

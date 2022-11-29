@@ -47,7 +47,7 @@ const Page = () => {
   const getListing = (d) => ([
     { title: '貸款帳號', content: accountFormatter(param?.actno) },
     { title: '貸款分號', content: param?.sqno },
-    { title: '貸款類別', content: '-' }, // TODO: 主機尚未提供，先空著
+    // { title: '貸款類別', content: '-' }, // TODO: 主機尚未提供，先隱藏
     { title: '貸款期限', content: `${dateFormatter(stringToDate(d.startDate))}~${dateFormatter(stringToDate(d.dueDate))}` },
     { title: '每期還款日', content: `每月${d.dateToPay}日` },
     { title: '初貸金額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.txAmt) },
@@ -63,7 +63,7 @@ const Page = () => {
         <PageWrapper>
           <AccountCard type="L">
             {/* TODO: 貸款別名 */}
-            <div>{details?.alias ?? '信貸'}</div>
+            <div>{details?.type}</div>
             <div>{`${param?.actno} (${param?.sqno})`}</div>
             <div className="justify-between items-center gap-4">
               <div className="text-14">貸款餘額</div>

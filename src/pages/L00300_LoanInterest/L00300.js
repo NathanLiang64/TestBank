@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useHistory } from 'react-router';
 import { showDrawer, closeDrawer, showCustomPrompt } from 'utilities/MessageModal';
 import {
   accountFormatter, toCurrency, stringDateCodeFormatter, dateFormatter,
@@ -11,18 +10,17 @@ import DebitCard from 'components/DebitCard/DebitCard';
 import InformationTape from 'components/InformationTape';
 import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
 import DownloadIcon from 'assets/images/icons/downloadIcon.svg';
-import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
+import { closeFunc, loadFuncParams, startFunc } from 'utilities/AppScriptProxy';
 
 /* Styles */
 import EmptyData from 'components/EmptyData';
+import { FuncID } from 'utilities/FuncID';
 import LoanInterestWrapper from './L00300.style';
 
 /**
  * L00300 貸款 繳款紀錄
  */
 const LoanInterest = () => {
-  const history = useHistory();
-
   const [cardData, setCardData] = useState({});
   const [dateRange, setDateRange] = useState('0');
   const [recordsList, setRecordsList] = useState([]);
@@ -73,7 +71,7 @@ const LoanInterest = () => {
   };
 
   const toDetailPage = (singleHistoryData) => {
-    history.push('/L003001', { singleHistoryData, cardData });
+    startFunc(FuncID.L00300 + 1, { singleHistoryData, cardData });
   };
 
   const renderEditList = () => (
