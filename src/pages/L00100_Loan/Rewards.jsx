@@ -12,7 +12,7 @@ import Badge from 'components/Badge';
 import InformationList from 'components/InformationList';
 import EmptyData from 'components/EmptyData';
 import {
-  dateFormatter, stringToDate, currencySymbolGenerator,
+  dateToString, currencySymbolGenerator,
 } from 'utilities/Generator';
 
 import { getLoanRewards } from './api';
@@ -41,7 +41,7 @@ const Page = () => {
   const renderTransactions = (transactions) => transactions.map((t, i) => (
     <li key={`${uid}-${i}`}>
       <InformationList
-        title={dateFormatter(stringToDate(t.txnDate))}
+        title={dateToString(t.txnDate)}
         content={t.isSuccess ? `利息金額 ${currencySymbolGenerator(t.currency ?? 'TWD', t.amount)}` : '當日扣款失敗'}
         remark={t.isSuccess ? `${t.rate}%利息 ${currencySymbolGenerator(t.currency ?? 'TWD', Math.round(t.amount * (t.rate / 100)))}` : <span className="text-red">挑戰失敗</span>}
       />

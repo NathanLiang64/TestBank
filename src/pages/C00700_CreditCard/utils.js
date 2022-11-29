@@ -1,13 +1,13 @@
-import { currencySymbolGenerator, dateFormatter, stringToDate } from 'utilities/Generator';
+import { currencySymbolGenerator, dateToString } from 'utilities/Generator';
 import uuid from 'react-uuid';
 
 export const getCardListing = (d) => ([
-  { key: '01', title: '帳單結帳日', content: dateFormatter(stringToDate(d.billClosingDate)) },
-  { key: '02', title: '繳費截止日', content: dateFormatter(stringToDate(d.payDueDate)) },
+  { key: '01', title: '帳單結帳日', content: dateToString(d.billClosingDate) },
+  { key: '02', title: '繳費截止日', content: dateToString(d.payDueDate) },
   { key: '03', title: '本期應繳金額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.newBalance) },
   { key: '04', title: '最低應繳金額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.minDueAmount) },
   { key: '05', title: '本期累積已繳金額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.paidAmount) },
-  { key: '06', title: '最近繳費日', content: dateFormatter(stringToDate(d.lastPayDate)) },
+  { key: '06', title: '最近繳費日', content: dateToString(d.lastPayDate) },
 ]);
 
 export const getCreditListing = (d) => ([

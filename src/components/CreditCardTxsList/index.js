@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { setModalVisible } from 'stores/reducers/ModalReducer';
 import {
-  currencySymbolGenerator, stringDateCodeFormatter,
+  currencySymbolGenerator, dateToYMD,
 } from 'utilities/Generator';
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import ArrowNextButton from 'components/ArrowNextButton';
@@ -140,10 +140,10 @@ const CreditCardTxsList = ({
 
   const updateTransactions = async () => {
     const today = new Date();
-    const dateEnd = stringDateCodeFormatter(today);
+    const dateEnd = dateToYMD();
     // 查詢當天至60天前的資料
-    const dateBeg = stringDateCodeFormatter(
-      new Date(today - 86400 * 60 * 1000),
+    const dateBeg = dateToYMD(
+      new Date(today.setMonth(today.getMonth() - 2)),
     );
     const res = await getTransactions({
       // cardNo: '5232870002109002', // 這個帳號有 transaction 資料

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { CurrencyInfo, dateFormatter, timeSecondFormatter } from 'utilities/Generator';
+import { CurrencyInfo, dateToString, timeSecondFormatter } from 'utilities/Generator';
 import { showDrawer, closeDrawer } from 'utilities/MessageModal';
 
 /* Elements */
@@ -67,7 +67,7 @@ const ForeignCurrencyPriceSetting = () => {
     if (!response?.code) {
       setCurrencyInfo(response);
       const now = Date.now();
-      const dateStr = dateFormatter(now);
+      const dateStr = dateToString(now);
       const timeStr = timeSecondFormatter(now);
       setCurrentTime(`${dateStr} ${timeStr}`);
       setCurrentRate(response[0].sellRate);

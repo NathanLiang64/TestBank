@@ -1,11 +1,9 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { FEIBButton, FEIBInputLabel, FEIBInput } from 'components/elements';
 import Badge from 'components/Badge';
 import Avatar from 'components/Avatar';
 import { accountFormatter, toHalfWidth } from 'utilities/Generator';
-// import AvatarField from 'components/Fields/avatarField';
 import { DrawerWrapper } from './D00600.style';
 
 /**
@@ -15,7 +13,7 @@ import { DrawerWrapper } from './D00600.style';
  *   acctId: 常用轉入帳戶-帳號
  *   bankName: 銀行名稱
  *   nickName: 暱稱
- *   headshot: 大頭照，只有常用轉入帳戶是Bankee會員才會有值。若為 null 表示沒有頭像。
+ *   headshot: 代表圖檔的UUID，用來顯示大頭貼；若為 null 表示還沒有設定頭像。
  * }
  * @param {*} onFinished 完成編輯時的事件。
  */
@@ -61,8 +59,8 @@ function AccountEditor({
         </Badge>
         <div className="flex-col">
           <div className="self-center">
-            <Avatar src={model.headshot} name={model.nickName} control={control} formName="headshot" />
-            {/* <AvatarField src={model.headshot} name={model.nickName} control={control} formName="headshot" /> */}
+            {/* 不可變更常用帳號的人的大頭貼 */}
+            <Avatar editable={false} memberId={model.headshot} name={model.nickName} control={control} />
           </div>
           <FEIBInputLabel htmlFor={idNickName}>暱稱</FEIBInputLabel>
           <Controller

@@ -4,8 +4,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { CreateRounded, KeyboardArrowRightRounded } from '@material-ui/icons';
 
 /* Elements */
-// eslint-disable-next-line no-unused-vars
-import { getNickName, updateNickName, uploadAvatar } from 'pages/T00100_Profile/api';
 import Layout from 'components/Layout/Layout';
 import Avatar from 'components/Avatar';
 import { TextInputField } from 'components/Fields';
@@ -17,11 +15,11 @@ import defaultAvatar from 'assets/images/avatar.png';
 import SettingList from './T00100_settingList';
 import ProfileWrapper from './T00100.style';
 import { validationSchema } from './validationSchema';
+import { getNickName, updateNickName, uploadAvatar } from './api';
 
 /**
  * T00100 個人化首頁
  */
-
 const T00100 = () => {
   const {
     handleSubmit,
@@ -33,7 +31,7 @@ const T00100 = () => {
   });
 
   const [nickName, setNickName] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState(defaultAvatar);
+  const [memberId, setMemberId] = useState();
 
   const onSubmit = async (values) => {
     const response = await updateNickName(values);
@@ -57,19 +55,6 @@ const T00100 = () => {
     });
   };
 
-  const fetchNickName = async () => {
-    const { code, data, message } = await getNickName();
-    if (code === '0000') {
-      setNickName(data.nickName);
-      reset({nickName: data.nickName});
-      setAvatarUrl(
-        `${process.env.REACT_APP_AVATAR_IMG_URL}/pf_${data.uuid}_b.jpg?timestamp=${Date.now()}`,
-      );
-    } else {
-      showCustomPrompt({ title: `取得暱稱與大頭照發生錯誤(${code})：${message}` });
-    }
-  };
-
   const renderEntryList = () => SettingList.map(({ name, funcID }) => (
     <div className="entryList" key={name} onClick={() => startFunc(funcID)}>
       {name}
@@ -77,14 +62,17 @@ const T00100 = () => {
     </div>
   ));
 
-  useEffect(() => {
-    fetchNickName();
+  useEffect(async () => {
+    const data = await getNickName();
+    setNickName(data.nickName);
+    reset({nickName: data.nickName});
+    setMemberId(data.uuid);
   }, []);
 
   return (
     <Layout title="個人化設定">
       <ProfileWrapper>
-        <Avatar src={avatarUrl} name={nickName} onPreview={uploadAvatar} />
+        <Avatar memberId={memberId} name={nickName} onNewPhotoLoaded={uploadAvatar} defaultImage={defaultAvatar} />
         <div className="nickName">
           <span>{nickName}</span>
           <CreateRounded onClick={showEditNickNameDialog} />
