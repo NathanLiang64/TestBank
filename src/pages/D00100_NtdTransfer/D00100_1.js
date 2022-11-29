@@ -25,7 +25,7 @@ const TransferConfirm = (props) => {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const [model] = useState(state);
+  const [model, setModel] = useState(state);
   const [banks, setBanks] = useState();
 
   /**
@@ -44,11 +44,12 @@ const TransferConfirm = (props) => {
     if (model && banks) {
       // 取得銀行名稱。
       const { bankName } = banks?.find((b) => b.bankNo === model.transIn.bank) ?? '';
-      model.transIn.bankName = bankName; // 因為下一頁也會用到，所以可以先存下來。
-
+      // Fix 避免直接 mutate model
+      // model.transIn.bankName = bankName; // 因為下一頁也會用到，所以可以先存下來。
+      setModel((prevModel) => ({...prevModel, transIn: {...prevModel.transIn, bankName}}));
       dispatch(setWaittingVisible(false));
     }
-  }, [model, banks]);
+  }, [banks]);
 
   /**
    * 執行轉帳程序，包含進行交易驗證。
