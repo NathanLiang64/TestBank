@@ -69,7 +69,7 @@ const DepositPlanEditPage = () => {
     const payload = {
       // createDepositPlan API Param
       progCode: code,
-      imageId: newImageId ?? 1,
+      imageId: newImageId ?? 1, // TODO 應改為提醒使用者尚未選取圖片。
       name: data.name,
       startDate: dateToYMD(date.begin),
       endDate: dateToYMD(date.end),
