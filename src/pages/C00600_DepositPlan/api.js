@@ -59,7 +59,7 @@ export const getTransactionDetails = async (request) => {
  * @returns {object}
  {
     plans: [{ // 進行中的計劃數量
-      planId, // 計劃代碼（UUID 型式），可以用來取得圖片。 直接組合 URL/images/dp/plans.planId.jpg
+      planId, // 計劃代碼（UUID 型式），可以用來取得圖片。 直接組合 URL/{planId}.jpg
       progInfo: { // 存錢計劃適用方案(Program)資訊
         code: 代碼，應跟優利的代碼一致。
         type: 類型：0.基本方案, 1.行銷活動方案.

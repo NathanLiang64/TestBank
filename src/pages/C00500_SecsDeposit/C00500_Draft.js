@@ -214,7 +214,6 @@ const C00500Modified = () => {
                   enabled:
                     selectedAccount.transable
                     && selectedAccount.balance > 0,
-                  transable: selectedAccount.transable,
                 },
                 {
                   fid: 'E00100',

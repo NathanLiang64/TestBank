@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import {
-  accountFormatter, toCurrency, dateFormatter, stringToDate,
+  accountFormatter, toCurrency, dateToString,
 } from 'utilities/Generator';
 import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
 
@@ -58,7 +58,7 @@ const L003001 = (props) => {
           <ul className="detailUl">
             <li>
               <span>交易日</span>
-              <span>{ dateFormatter(stringToDate(model.singleHistoryData?.date)) }</span>
+              <span>{ dateToString(model.singleHistoryData?.date) }</span>
             </li>
             <li>
               <span>交易種類</span>

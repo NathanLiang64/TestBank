@@ -179,9 +179,6 @@ const BillPay = () => {
       <Barcode value="5566778AG2" width={1.5} height={48} />
       <Barcode value="998855465566771123" width={1.5} height={48} />
       <Barcode value="70558X000003851" width={1.5} height={48} />
-      {/* { useBarcodeGenerator('5566778AG2') }
-      { useBarcodeGenerator('998855465566771123') }
-      { useBarcodeGenerator('70558X000003851') } */}
     </section>
   );
 

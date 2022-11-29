@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { showDrawer, closeDrawer, showCustomPrompt } from 'utilities/MessageModal';
 import {
-  accountFormatter, toCurrency, stringDateCodeFormatter, dateFormatter,
+  accountFormatter, toCurrency, dateToYMD, dateToString,
 } from 'utilities/Generator';
 import { getSubPaymentHistory } from 'pages/L00100_Loan/api';
 /* Elements */
@@ -25,29 +25,19 @@ const LoanInterest = () => {
   const [dateRange, setDateRange] = useState('0');
   const [recordsList, setRecordsList] = useState([]);
 
-  const beforeSixMonth = stringDateCodeFormatter(new Date(new Date().setDate(new Date().getDate() - 180)));
-  const beforeOneYear = stringDateCodeFormatter(new Date(new Date().setDate(new Date().getDate() - 365)));
-  const beforeTwoYears = stringDateCodeFormatter(new Date(new Date().setDate(new Date().getDate() - (365 * 2))));
-  const beforeThreeYears = stringDateCodeFormatter(new Date(new Date().setDate(new Date().getDate() - (365 * 3))));
-  const endDate = stringDateCodeFormatter(new Date());
-
   const getStartDate = (type) => {
+    let months;
     switch (type) {
+      case '1': months = 12; break;
+      case '2': months = 24; break;
+      case '3': months = 36; break;
       case '0':
-        return beforeSixMonth;
-
-      case '1':
-        return beforeOneYear;
-
-      case '2':
-        return beforeTwoYears;
-
-      case '3':
-        return beforeThreeYears;
-
       default:
-        return beforeSixMonth;
+        months = 6; break;
     }
+
+    const today = new Date();
+    return new Date(today.setMonth(today.getMonth() - months));
   };
 
   // 查詢繳款紀錄
@@ -55,8 +45,8 @@ const LoanInterest = () => {
     const param = {
       account: cardData.accountNo,
       subNo: cardData.loanNo,
-      startDate: getStartDate(rangeType),
-      endDate,
+      startDate: dateToYMD(getStartDate(rangeType)),
+      endDate: dateToYMD(),
     };
 
     const histroyResponse = await getSubPaymentHistory(param);
@@ -159,7 +149,7 @@ const LoanInterest = () => {
                 <InformationTape
                   topLeft="還款金額"
                   topRight={`$${toCurrency(item.amount)}`}
-                  bottomLeft={`${dateFormatter(item.date)}`}
+                  bottomLeft={`${dateToString(item.date)}`}
                   bottomRight={`貸款餘額 $${toCurrency(item.balance)}`}
                   onClick={() => toDetailPage(item)}
                 />

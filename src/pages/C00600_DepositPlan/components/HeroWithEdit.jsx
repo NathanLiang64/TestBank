@@ -28,7 +28,7 @@ const HeroWithEdit = ({
     switch (newImageId) {
       case 0:
         if (imageSrc) return imageSrc;
-        return `${process.env.REACT_APP_URL}/images/dp/plans.${planId}.jpg`;
+        return `${process.env.REACT_APP_DEPOSIT_PLAN_IMG_URL}/${planId}.jpg`;
       case 2:
         return BG2;
       case 3:

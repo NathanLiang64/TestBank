@@ -24,7 +24,7 @@ export const getBankCode = async (params) => {
  *   bankName: 銀行名稱
  *   nickName: 暱稱
  *   email: 通知EMAIL
- *   headshot: 大頭照，只有常用轉入帳戶是Bankee會員才會有值。若為 null 表示沒有頭像。
+ *   headshot: 代表圖檔的UUID，用來顯示大頭貼；若為 null 表示還沒有設定頭像。
  * }, ...]
  */
 export const getAllFrequentAccount = async () => {
@@ -39,6 +39,7 @@ export const getAllFrequentAccount = async () => {
  *   acctId: 常用轉入帳戶-帳號
  *   nickName: 新暱稱；可為空值
  *   email: 新通知EMAIL；可為空值
+ *   headshot: 代表圖檔的內容，使用 Base64 格式；若為 null 表示還沒有設定頭像。
  * }
  * @returns {
  *   bankId: 常用轉入帳戶-銀行代碼
@@ -46,7 +47,7 @@ export const getAllFrequentAccount = async () => {
  *   bankName: 銀行名稱
  *   nickName: 暱稱
  *   email: 通知EMAIL
- *   headshot: 大頭照，只有常用轉入帳戶是Bankee會員才會有值。若為 null 表示沒有頭像。
+ *   headshot: 代表圖檔的UUID，用來顯示大頭貼；若為 null 表示還沒有設定頭像。
  * }
  */
 export const addFrequentAccount = async (account) => {
@@ -63,6 +64,7 @@ export const addFrequentAccount = async (account) => {
  *   email: 新通知EMAIL；可為空值
  *   orgBankId: 變更前 常用轉入帳戶-銀行代碼，未變更也需要有值。
  *   orgAcctId: 變更前 常用轉入帳戶-帳號，未變更也需要有值。
+ *   headshot: 代表圖檔的內容，使用 Base64 格式；若為 null 表示還沒有設定頭像。
  * }
  * @returns {
  *   bankId: 常用轉入帳戶-銀行代碼
@@ -70,7 +72,7 @@ export const addFrequentAccount = async (account) => {
  *   bankName: 銀行名稱
  *   nickName: 暱稱
  *   email: 通知EMAIL
- *   headshot: 大頭照，只有常用轉入帳戶是Bankee會員才會有值。若為 null 表示沒有頭像。
+ *   headshot: 代表圖檔的UUID，用來顯示大頭貼；若為 null 表示還沒有設定頭像。
  * }
  */
 export const updateFrequentAccount = async (account) => {
@@ -90,7 +92,7 @@ export const updateFrequentAccount = async (account) => {
  *   bankName: 銀行名稱
  *   nickName: 暱稱
  *   email: 通知EMAIL
- *   headshot: 大頭照，只有常用轉入帳戶是Bankee會員才會有值。若為 null 表示沒有頭像。
+ *   headshot: 代表圖檔的UUID，用來顯示大頭貼；若為 null 表示還沒有設定頭像。
  * }
  */
 export const deleteFrequentAccount = async (request) => {

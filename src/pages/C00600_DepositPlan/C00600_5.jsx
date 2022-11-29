@@ -9,7 +9,7 @@ import { MainScrollWrapper } from 'components/Layout';
 import { FEIBButton} from 'components/elements';
 import { DropdownField, TextInputField } from 'components/Fields';
 import {
-  toCurrency, accountFormatter, dateFormatter, stringToDate,
+  toCurrency, accountFormatter, dateToString,
 } from 'utilities/Generator';
 
 import HeroWithEdit from './components/HeroWithEdit';
@@ -44,8 +44,8 @@ const DepositPlanEditPage = () => {
   const [isRestrictedPromotion, setIsRestrictedPromotion] = useState(false);
 
   const getDuration = (startDate, endDate) => {
-    const begin = dateFormatter(stringToDate(startDate), true);
-    const end = dateFormatter(stringToDate(endDate), true);
+    const begin = dateToString(startDate);
+    const end = dateToString(endDate);
     return `${begin} ~ ${end}`;
   };
 

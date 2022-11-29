@@ -40,10 +40,11 @@ export const getFriends = async () => {
 
 /**
  * 更新大頭貼
+ * @param {String} newImg 新的大頭貼影像，內容為 Base64 字串。
  * @returns
  */
-export const updateAvatar = async (avatar) => {
-  const response = await callAPI('/api/community/v1/updateAvatar', avatar);
+export const updateAvatar = async (newImg) => {
+  const response = await callAPI('/api/community/v1/updateAvatar', newImg);
   return response.data;
 };
 

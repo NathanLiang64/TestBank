@@ -85,15 +85,13 @@ const C00300 = () => {
     if (!txnDetails) {
       // 取得帳戶交易明細（三年內的前25筆即可）
       const transData = await getTransactions(accountNo);
-      if (transData) {
-        txnDetails = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
-        if (transData.length > 0) {
-          account.balance = txnDetails[0].balance; // 更新餘額。
-        }
-
-        transactions.set(accountNo, txnDetails);
-        setTransactions(new Map(transactions)); // 強制更新畫面。
+      txnDetails = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
+      if (transData.length > 0) {
+        account.balance = txnDetails[0].balance; // 更新餘額。
       }
+
+      transactions.set(accountNo, txnDetails);
+      setTransactions(new Map(transactions)); // 強制更新畫面。
     }
   };
 
@@ -242,18 +240,8 @@ const C00300 = () => {
           onFunctionClick={handleFunctionClick}
           cardColor="purple"
           funcList={[
-            {
-              fid: 'D00100',
-              title: '轉帳',
-              enabled: (selectedAccount.transable && selectedAccount.balance > 0),
-              transable: selectedAccount.transable,
-            },
-            {
-              fid: 'D00300',
-              title: '無卡提款',
-              enabled: (selectedAccount.balance > 0),
-              hidden: (selectedAccount.acctType !== 'M'),
-            },
+            { fid: 'D00100', title: '轉帳', enabled: (selectedAccount.transable && selectedAccount.balance > 0) },
+            { fid: 'D00300', title: '無卡提款', enabled: (selectedAccount.balance > 0), hidden: (selectedAccount.acctType !== 'M') },
           ]}
           moreFuncs={[
             { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false },

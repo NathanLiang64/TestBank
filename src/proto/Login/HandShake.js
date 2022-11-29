@@ -1,5 +1,4 @@
 import uuid from 'react-uuid';
-import Cookies from 'js-cookie';
 import CipherUtil from 'utilities/CipherUtil';
 import { userRequest, callAPI } from 'utilities/axios';
 
@@ -40,7 +39,6 @@ const handshake = async () => {
   if (preloadRs.code === '0000') {
     const { jwtToken } = preloadRs.data;
     sessionStorage.setItem('jwtToken', jwtToken);
-    Cookies.set('jwtToken', jwtToken);
   } else {
     alert(`Hand shake fail! ${preloadRs.message}`);
   }

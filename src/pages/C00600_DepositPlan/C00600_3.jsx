@@ -10,8 +10,8 @@ import { FEIBButton, FEIBErrorMessage } from 'components/elements';
 import { DropdownField, TextInputField } from 'components/Fields';
 import {
   toCurrency,
-  stringDateCodeFormatter,
-  dateFormatter,
+  dateToYMD,
+  dateToString,
 } from 'utilities/Generator';
 
 import { AlertProgramNoFound } from './utils/prompts';
@@ -71,8 +71,8 @@ const DepositPlanEditPage = () => {
       progCode: code,
       imageId: newImageId ?? 1,
       name: data.name,
-      startDate: stringDateCodeFormatter(date.begin),
-      endDate: stringDateCodeFormatter(date.end),
+      startDate: dateToYMD(date.begin),
+      endDate: dateToYMD(date.end),
       cycleMode: data.cycleMode,
       cycleTiming: data.cycleTiming,
       amount: data.amount,
@@ -82,8 +82,8 @@ const DepositPlanEditPage = () => {
       goalAmount: getGoalAmount(data.amount, data.cycleDuration, data.cycleMode),
       extra: {
         rate,
-        period: `${dateFormatter(new Date(), true)} ~ ${dateFormatter(date.end, true)}`,
-        nextDeductionDate: dateFormatter(date.next, true),
+        period: `${dateToString(new Date())} ~ ${dateToString(date.end)}`,
+        nextDeductionDate: dateToString(date.next),
       },
     };
     sessionStorage.setItem('C006003', JSON.stringify(data));
