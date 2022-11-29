@@ -173,7 +173,10 @@ const Page = () => {
       );
     }
 
-    return card.transactions.slice(0, 3).map((t, i) => (
+    // transactions 依照日期排序（大 -> 小）
+    const sortedTransactions = card.transactions.sort((a, b) => parseInt(b.txnDate, 10) - parseInt(a.txnDate, 10));
+
+    return sortedTransactions.slice(0, 3).map((t, i) => (
       <button
         key={`${uid}-t${i}`}
         type="button"
