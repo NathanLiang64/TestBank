@@ -57,7 +57,7 @@ const DepositPlanDetailPage = () => {
       image: sessionStorage.getItem('C00600-hero'),
     };
 
-    updateDepositPlan(payload);
+    await updateDepositPlan(payload);
 
     sessionStorage.removeItem('C00600-hero'); // 清除暫存背景圖。
   };
