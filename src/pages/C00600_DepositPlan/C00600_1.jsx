@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 
@@ -38,7 +37,8 @@ const DepositPlanTransactionPage = () => {
   const updateTransactions = async (conditions) => {
     const request = {
       accountNo: plan?.bindAccountNo,
-      startDate: dateToYMD(plan.createDate), // 查詢啟示日為計畫建立的當天
+      // TODO plan 內的 createDate 格式為 '2022-11-28T05:49:11Z'，應該請後端修改成與 endDate 相同格式(YYYYMMDD)
+      startDate: dateToYMD(new Date(plan.createDate)), // 查詢起始日為計畫建立的當天
       endDate: plan?.endDate,
       ...conditions,
     };
@@ -46,10 +46,6 @@ const DepositPlanTransactionPage = () => {
     // 取得帳戶交易明細（三年內）
     const transData = await getTransactionDetails(request);
     return transData;
-
-    // 先暫時回傳 mockData 測試
-    // const mockData = { acctTxDtls, monthly: [], startIndex: 1 };
-    // return mockData;
   };
 
   return (

@@ -63,7 +63,7 @@ const DepositPlanDetailPage = () => {
   };
 
   const handleCreate = async () => {
-    const auth = await transactionAuth(AuthCode.C00600); // 需通過 2FA 或 網銀密碼 驗證才能建立計劃。
+    const auth = await transactionAuth(AuthCode.C00600); // 需通過 2FA 驗證才能建立計劃。
     if (!auth.result) {
       await showError(auth.message);
       return;
@@ -72,7 +72,7 @@ const DepositPlanDetailPage = () => {
     const payload = {...program};
     delete payload.extra;
     delete payload.goalAmount;
-    // dispatch(setWattingVisible(true))
+
     const response = await createDepositPlan(payload);
     if (response?.result) {
       // TODO: updateDepositPlan API 尚無法處理帶有 base64 的 image (會回傳錯誤訊息)，僅能先以預設圖片進行測試
@@ -92,7 +92,6 @@ const DepositPlanDetailPage = () => {
         onClose: () => history.goBack(),
       });
     }
-    // dispatch(setWattingVisible(false))
   };
 
   const handleConfirm = async () => {
