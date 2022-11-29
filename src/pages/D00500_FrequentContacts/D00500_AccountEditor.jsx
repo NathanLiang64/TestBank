@@ -22,7 +22,7 @@ import { DrawerWrapper } from './D00500.style';
  *   acctId: '常用轉入帳戶-帳號'
  *   bankName: '銀行名稱'
  *   nickName: '暱稱'
- *   headshot: '大頭照，只有常用轉入帳戶是Bankee會員才會有值。若為 null 表示沒有頭像。'
+ *   headshot: '代表圖檔的UUID，用來顯示大頭貼；若為 null 表示還沒有設定頭像。'
  *   readonly: '這些預設資料不可變更，直接進到第二頁；但 bankId, acctId 必需有值。'
  * }} initData
  * @param {Function} onFinished 完成編輯時的事件。
@@ -134,14 +134,15 @@ function AccountEditor({
           <div className="text-blue">
             {`${model.bankName} ${accountFormatter(model.acctId)}`}
             <FEIBIconButton className="editButton" $fontSize={1.6} onClick={() => setConfirmPage(false)}>
-              <EditIcon onClick={() => setConfirmPage(false)} />
+              <EditIcon />
             </FEIBIconButton>
           </div>
 
         </Badge>
         <div className="flex-col">
           <div className="self-center">
-            <Avatar src={model.headshot} name={model.nickName} />
+            {/* 不可變更常用帳號的人的大頭貼 */}
+            <Avatar editable memberId={model.headshot} name={model.nickName} />
           </div>
           <FEIBInputLabel htmlFor={idNickName}>暱稱</FEIBInputLabel>
           <Controller

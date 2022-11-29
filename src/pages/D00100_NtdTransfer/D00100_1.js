@@ -9,7 +9,7 @@ import { FEIBButton } from 'components/elements';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { transactionAuth } from 'utilities/AppScriptProxy';
-import { getBankCode } from 'components/BankCodeInput/api';
+import { getBankCode } from 'utilities/Generator';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { createNtdTransfer, getDisplayAmount, getTransDate, getCycleDesc } from './api';
 import TransferWrapper from './D00100.style';

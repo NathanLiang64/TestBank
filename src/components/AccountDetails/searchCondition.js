@@ -6,7 +6,7 @@ import ConfirmButtons from 'components/ConfirmButtons';
 import {
   FEIBInput, FEIBInputLabel, FEIBTab, FEIBTabContext, FEIBTabList,
 } from 'components/elements';
-import { stringDateCodeFormatter, stringToDate, stringDateFormatter } from 'utilities/Generator';
+import { dateToString, stringToDate } from 'utilities/Generator';
 import SearchConditionWrapper from './searchCondition.style';
 
 const SearchCondition = ({
@@ -67,8 +67,8 @@ const SearchCondition = ({
 
   useEffect(() => {
     const mode = autoDateTabId;
-    const today = (mode === '0') ? null : stringDateCodeFormatter(new Date());
-    const startDate = (mode === '0') ? null : stringDateCodeFormatter(computedStartDate(autoDateTabId));
+    const today = (mode === '0') ? null : dateToString(new Date());
+    const startDate = (mode === '0') ? null : dateToString(computedStartDate(autoDateTabId));
     setNewCondition({
       ...newCondition,
       mode, // 查詢模式(0.自訂, 1.近6個月, 2.近1年, 3.近2年, 4.近3年)
@@ -80,8 +80,8 @@ const SearchCondition = ({
   const handleClickDateRangePicker = (range) => {
     setNewCondition({
       ...newCondition,
-      startDate: stringDateCodeFormatter(range[0]), // 轉為 YYYYMMDD
-      endDate: stringDateCodeFormatter(range[1]),
+      startDate: dateToString(range[0], ''), // 轉為 YYYYMMDD
+      endDate: dateToString(range[1], ''),
     });
   };
 
@@ -105,7 +105,7 @@ const SearchCondition = ({
         </div>
       ) : (
         <div className="autoDateArea">
-          <p>{`${stringDateFormatter(newCondition?.startDate)} ~ ${stringDateFormatter(newCondition?.endDate)}`}</p>
+          <p>{`${dateToString(newCondition?.startDate)} ~ ${dateToString(newCondition?.endDate)}`}</p>
         </div>
       ) }
     </FEIBTabContext>

@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -9,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { numberToChinese, currencySymbolGenerator } from 'utilities/Generator';
 import { transferAmountValidation } from 'utilities/validation';
 import { customPopup } from 'utilities/MessageModal';
-import { getAccountsList, getExchangePropertyList } from 'pages/D00700_ForeignCurrencyTransfer/api';
+import { getAccountsList, getAgreedAccounts, getExchangePropertyList } from 'pages/D00700_ForeignCurrencyTransfer/api';
 import { closeFunc } from 'utilities/AppScriptProxy';
 /* Elements */
 import Accordion from 'components/Accordion';
@@ -64,7 +63,7 @@ const ForeignCurrencyTransfer = () => {
             ...detail,
             account: acc.account,
             name: acc.name,
-            agreedAcct: acc.agreedAcct,
+            agreedAccts: null, // NOTE 只有在第一次取約轉帳號時，才會透過API取得清單。
           }
         ))).flat();
         console.log('帳戶清單', formatAccounts);
@@ -120,9 +119,22 @@ const ForeignCurrencyTransfer = () => {
     history.push('/foreignCurrencyTransfer1', confirmData);
   };
 
-  const renderAccountsOptions = () => currentAccount?.agreedAcct?.map((item) => (
-    <FEIBOption key={Math.random()} value={item?.account}>{item?.account}</FEIBOption>
-  ));
+  /**
+   * 更新約轉帳號清單。
+   */
+  const renderAccountsOptions = async () => {
+    if (!currentAccount) return null;
+    // 取得 約轉帳號清單。
+    let accounts = currentAccount.agreedAccts;
+    if (!accounts) {
+      accounts = await getAgreedAccounts(currentAccount.account);
+      currentAccount.agreedAccts = accounts;
+    }
+
+    return accounts.map((item) => (
+      <FEIBOption key={Math.random()} value={item?.acctId}>{item?.acctId}</FEIBOption>
+    ));
+  };
 
   // render 交易性質選項
   const renderTransOptions = () => transTypeOptions.map((option) => (

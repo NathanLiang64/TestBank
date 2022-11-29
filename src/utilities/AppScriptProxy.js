@@ -424,7 +424,7 @@ async function getQLStatus() {
     console.log('web 執行取得綁定狀態');
     return {
       result: 'true',
-      QLStatus: '4',
+      QLStatus: '0',
     };
   });
 }

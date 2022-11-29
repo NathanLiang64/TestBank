@@ -54,26 +54,12 @@ export const checkDeviceBindingStatus = async () => {
     if (QLStatus === '3' || QLStatus === '4') {
       return {bindingStatus: false, failureCode: '1_1', message: ''};
     }
-    return {result, QLStatus};
+    return {bindingStatus: true};
   }
 
   // 回傳失敗
   console.log('T00300 checkDeviceBindingStatus: ', { result, message});
   return {bindingStatus: result, failureCode: '6', message};
-};
-
-/**
- * MID驗證 DEBUG: mock
- * @param {}
- * @returns {
- * result: boolean    驗證通過 | 驗證不通過/系統錯誤
- * msg: ''            系統錯誤訊息
- * }
- */
-export const MIDVerify = async () => {
-  const result = {result: true, msg: ''};
-
-  return result;
 };
 
 /**

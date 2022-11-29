@@ -12,7 +12,7 @@ import { useHistory } from 'react-router';
 import theme from 'themes/theme';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import {
-  checkDeviceBindingStatus, getNonDesignatedTransferData, MIDVerify, queryOTP, updateOTP,
+  checkDeviceBindingStatus, getNonDesignatedTransferData, queryOTP, updateOTP,
 } from './api';
 
 /* Styles */
@@ -58,7 +58,6 @@ const T00300 = () => {
    * @param {errMsg} errMsg string?
    */
   const onFailure = (code, errMsg) => {
-    console.log('T00300 onFailure() errMsg: ', errMsg);
     showAnimationModal({
       isSuccess: false,
       errorTitle: '設定失敗',
@@ -80,15 +79,12 @@ const T00300 = () => {
 
   /**
    * Bottom Drawer 確認按鈕行為
-   * @param {data} data {isEdit, data: {mobileNumber}}
+   * @param {data} data: {isEdit, data: {mobileNumber}}
    */
   const handleDrawerConfirm = async (data) => {
-    console.log('T00300 handleDrawerConfirm() data:', data);
-
     if (!data.isEdit) {
       /* 開通流程：雙因子驗證? && 申請＋開通流程：雙因子驗證 */
       const result = await transactionAuth(AuthCode.T00300.APPLY, model.mobile);
-
       if (!result) {
         /* 失敗頁面 */
         onFailure('5', result.message);
@@ -97,41 +93,35 @@ const T00300 = () => {
         await queryOTP();
         const updateResult = await updateOTP(model.mobile);
 
-        if (updateResult.code !== '0000') {
-        /* 失敗畫面 */
-          onFailure('5', updateResult.message);
+        if (updateResult.code === '0000') {
+          /* 成功頁面 */
+          onSuccess();
           return;
         }
 
-        /* 成功頁面 */
-        onSuccess();
+        /* 失敗畫面 */
+        onFailure('5', updateResult.message);
       }
     } else {
       /* 修改流程：雙因子＋OTP 驗證 */
-      const result = await transactionAuth(AuthCode.T00300.EDIT, data.mobileNumber);
+      const result = await transactionAuth(AuthCode.T00300.EDIT, data.data.mobileNumber);
+      console.log('transactionAuth res: ', result);
 
       if (!result) {
         /* 失敗頁面 */
         onFailure('5', result.message);
       } else {
-        /* 成功: MID驗證 (TODO: 確認正確的MID驗證方式) */
-        const MIDResult = await MIDVerify();
-        if (MIDResult.result === false) {
-          /* 失敗頁面 */
-          onFailure('5', MIDResult.msg);
-        } else {
-          /* 驗證成功：更新資料至api */
-          await queryOTP();
-          const updateResult = await updateOTP(data.mobileNumber);
+        /* 驗證成功：更新資料至api */
+        await queryOTP();
+        const updateResult = await updateOTP(data.data.mobileNumber);
 
-          if (updateResult.code !== '0000') {
-            /* 失敗頁面 */
-            onFailure('5', result.message);
-            return;
-          }
+        if (updateResult.code === '0000') {
           /* 成功畫面 */
           onSuccess();
+          return;
         }
+        /* 失敗頁面 */
+        onFailure('5', result.message);
       }
     }
   };
@@ -141,8 +131,6 @@ const T00300 = () => {
    * @param {isEdit} isEdit boolean: 非約轉交易門號 Drawer 內容
    */
   const mobileNumberSettingDrawer = (isEdit) => {
-    console.log('T00300 mobileNumberSettingDrawer()');
-
     showDrawer(
       '非約轉交易門號',
       <T00300DrawerContent
@@ -158,12 +146,11 @@ const T00300 = () => {
    * 註銷流程
    */
   const handleCancel = async () => {
-    console.log('T00300 handleCancel()');
-
     /* 雙因子驗證 */
     const result = await transactionAuth(AuthCode.T00300.CLOSE, model.mobile);
+    console.log('transactionAuth res: ', result);
 
-    if (!result) {
+    if (result === false) {
       /* 失敗頁面 */
       onFailure('5', result.message);
     } else {
@@ -171,13 +158,14 @@ const T00300 = () => {
       await queryOTP();
       const updateResult = await updateOTP(model.mobile);
 
-      if (updateResult.code !== '0000') {
-        /* 失敗頁面 */
-        onFailure('5', updateResult.message);
-      }
+      console.log({updateResult});
 
-      /* 成功頁面 */
-      onSuccess();
+      if (updateResult.code === '0000') {
+        /* 成功頁面 */
+        onSuccess();
+      }
+      /* 失敗頁面 */
+      onFailure('5', updateResult.message);
     }
   };
 
@@ -185,8 +173,6 @@ const T00300 = () => {
    * 點擊開關
    */
   const handleSwitchOnTrigger = async () => {
-    console.log('T00300 handleSwitchOnTrigger() checkDeviceBindingStatus(): ', await checkDeviceBindingStatus());
-
     /**
      * 檢查裝置綁定狀態
      * 否 -> failureCode: 1_0 | 1_1 | 5
@@ -195,18 +181,18 @@ const T00300 = () => {
      *  model.status === '01 -> 開通流程
      *  其餘走 申請+開通流程
      */
-    // DEBUG 暫時跳過
-    // const result = await checkDeviceBindingStatus();
-    // if (!result.bindingStatus) {
-    //   onFailure(result.failureCode, result.message);
-    //   return;
-    // }
+    const result = await checkDeviceBindingStatus();
+    if (!result.bindingStatus) {
+      onFailure(result.failureCode, result.message);
+      return;
+    }
 
     if (model.status === '03') {
       /* 註銷流程 */
       handleCancel();
     } else {
       /* 開通 or 申請+開通流程: 打開drawer (input-不可編輯) */
+      console.log('handleSwitchOnTrigger(): ', {status: model.status});
       mobileNumberSettingDrawer(false);
     }
   };
@@ -215,8 +201,6 @@ const T00300 = () => {
    * 點擊鉛筆
    */
   const handleEditOnClick = async () => {
-    console.log('T00300 handleEditOnClick() checkDeviceBindingStatus(): ', await checkDeviceBindingStatus());
-
     /**
      * 檢查裝置綁定狀態
      * 否 -> failureCode: 1_0 | 1_1 | 5
@@ -238,7 +222,6 @@ const T00300 = () => {
     // 自api取得初始資料
     const rtData = await getNonDesignatedTransferData();
 
-    console.log('T00300 useEffect rtData: ', rtData);
     // 取得之資料儲存至 model state
     setModel(rtData);
   }, []);

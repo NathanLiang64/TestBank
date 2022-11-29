@@ -3,7 +3,7 @@ import { useController } from 'react-hook-form';
 import { DateRangePicker as KeyboardDateRangePicker } from 'react-date-range';
 import { Button } from '@material-ui/core';
 import { FEIBInputLabel, FEIBInput } from 'components/elements';
-import { dateFormatter, stringToDate } from 'utilities/Generator';
+import { dateToString, stringToDate } from 'utilities/Generator';
 import { CalendarIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
 import DateRangePickerWrapper from './dateRangePicker.style';
@@ -54,7 +54,7 @@ function DateRangePicker(props) {
 
   useEffect(() => {
     if (dateRange && dateRange.length === 2 && dateRange[0] && dateRange[1]) {
-      setDisplayText(`${dateFormatter(dateRange[0])} - ${dateFormatter(dateRange[1])}`);
+      setDisplayText(`${dateToString(dateRange[0])} - ${dateToString(dateRange[1])}`);
       setSelectionRange({
         ...selectionRange,
         startDate: dateRange[0],

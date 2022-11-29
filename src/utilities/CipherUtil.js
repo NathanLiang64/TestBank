@@ -1,6 +1,9 @@
 /* eslint-disable class-methods-use-this */
+import CryptoJS from 'crypto-js';
+
+const { Buffer } = require('buffer');
 const forge = require('node-forge');
-const crypto = require('crypto');
+// const crypto = require('crypto');
 
 class CipherUtil {
   /**
@@ -141,7 +144,9 @@ class CipherUtil {
    * @param {*} message
    */
   encryptHMAC(aesKey, message) {
-    return crypto.createHmac('sha256', aesKey).update(message).digest('base64');
+    // return crypto.createHmac('sha256', aesKey).update(message).digest('base64');
+    const hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, aesKey);
+    return hmac.update(message).finalize().toString(CryptoJS.enc.Base64);
   }
 }
 

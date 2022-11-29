@@ -8,7 +8,7 @@ import { showDrawer } from 'utilities/MessageModal';
 import { loadFuncParams, closeFunc } from 'utilities/AppScriptProxy';
 import { loadLocalData, setLocalData } from 'utilities/Generator';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { getAllRegisteredAccount, updateRegisteredAccount } from './api';
+import { getAllAgreedAccount, updateAgreedAccount } from './api';
 import AccountEditor from './D00600_AccountEditor';
 import PageWrapper from './D00600.style';
 
@@ -47,7 +47,7 @@ const Page = () => {
 
     // 若有指定帳號，則只取單一帳號的約定帳號清單。
     // TODO 未指定帳號時，應改用頁韱分類。
-    const accts = await loadLocalData(`${storageName}`, () => getAllRegisteredAccount(bindAcct));
+    const accts = await loadLocalData(`${storageName}`, () => getAllAgreedAccount(bindAcct));
     setAccounts(accts);
 
     dispatch(setWaittingVisible(false));
@@ -60,7 +60,7 @@ const Page = () => {
   const onAccountSelected = (acct) => {
     if (selectorMode) {
       const response = {
-        memberId: acct.headshot,
+        memberId: acct.memberId,
         accountName: acct.nickName,
         bankName: acct.bankName,
         bankId: acct.bankId,
@@ -76,7 +76,7 @@ const Page = () => {
    */
   const editAccount = async (acct) => {
     const onFinished = async (newAcct) => {
-      const successful = await updateRegisteredAccount(newAcct);
+      const successful = await updateAgreedAccount(newAcct);
 
       dispatch(setDrawerVisible(false));
       if (successful) {
@@ -106,7 +106,7 @@ const Page = () => {
               bankNo={acct.bankId}
               bankName={acct.bankName}
               account={acct.acctId}
-              avatarSrc={acct.headshot}
+              memberId={acct.memberId}
               isSelected={(acct.acctId === selectedAccount)}
               onClick={() => onAccountSelected(acct)} // 傳回值：選取的帳號。
               moreActions={[

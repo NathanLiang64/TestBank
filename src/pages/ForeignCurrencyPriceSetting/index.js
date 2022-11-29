@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { CurrencyInfo, dateFormatter, timeSecondFormatter } from 'utilities/Generator';
+import { CurrencyInfo, dateToString, timeSecondFormatter } from 'utilities/Generator';
 import { showDrawer, closeDrawer } from 'utilities/MessageModal';
 
 /* Elements */
@@ -50,13 +50,16 @@ const ForeignCurrencyPriceSetting = () => {
 
   // 取得外幣列表
   const getCurrencyInfo = async () => {
-    const response = await getCcyList();
-    setCurrencyInfo(response);
-    const now = Date.now();
-    const dateStr = dateFormatter(now);
-    const timeStr = timeSecondFormatter(now);
-    setCurrentTime(`${dateStr} ${timeStr}`);
-    setCurrentRate(response[0].sellRate);
+    const response = await getCcyList({});
+    console.log(response);
+    if (!response?.code) {
+      setCurrencyInfo(response);
+      const now = Date.now();
+      const dateStr = dateToString(now);
+      const timeStr = timeSecondFormatter(now);
+      setCurrentTime(`${dateStr} ${timeStr}`);
+      setCurrentRate(response[0].sellRate);
+    }
   };
 
   // 取得所有已設定外幣到價通知列表

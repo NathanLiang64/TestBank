@@ -11,10 +11,10 @@ import Layout from 'components/Layout/Layout';
 import AccountCard from 'components/AccountCard';
 import InformationList from 'components/InformationList';
 import {
-  accountFormatter, dateFormatter, stringToDate, currencySymbolGenerator,
+  accountFormatter, dateToString, currencySymbolGenerator,
 } from 'utilities/Generator';
 
-import { getLoanDetails } from './api';
+import { getInfo } from './api';
 import PageWrapper from './Details.style';
 
 const uid = uuid();
@@ -26,13 +26,20 @@ const Page = () => {
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
+  const [param, setParam] = useState({});
   const [details, setDetails] = useState();
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    let accountNo;
-    if (location.state && ('accountNo' in location.state)) accountNo = location.state.accountNo;
-    const response = await getLoanDetails({ accountNo });
+    let actno;
+    let sqno;
+    if (location.state && ('actno' in location.state) && ('sqno' in location.state)) {
+      actno = location.state.actno;
+      sqno = location.state.sqno;
+      setParam({actno, sqno});
+    }
+    const response = await getInfo({actno, sqno});
+    // const response = await getLoanDetails({ accountNo: actno });
     setDetails(response);
     dispatch(setWaittingVisible(false));
   }, []);
@@ -41,14 +48,13 @@ const Page = () => {
     { title: '貸款帳號', content: accountFormatter(d.accountNo) },
     { title: '貸款分號', content: d.loanNo },
     { title: '貸款類別', content: d.loanType },
-    { title: '貸款期限', content: `${dateFormatter(stringToDate(d.startDate))}~${dateFormatter(stringToDate(d.endDate))}` },
+    { title: '貸款期限', content: `${dateToString(d.startDate)}~${dateToString(d.endDate)}` },
     { title: '每期還款日', content: `每月${d.cycleTiming}日` },
     { title: '貸款金額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.loanAmount) },
     { title: '貸款利率', content: `${d.rate}%` },
     { title: '貸款餘額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.loanBalance) },
     { title: '已繳期數', content: `${d.periodPaid}期` },
-    { title: '剩餘期數', content: `${d.periodRemain}期` },
-    { title: '最初撥貸金額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.initialAmount) },
+    { title: '剩餘期數', content: `${d.periodRemaining}期` },
   ]);
 
   return (
@@ -56,12 +62,13 @@ const Page = () => {
       <Main small>
         <PageWrapper>
           <AccountCard type="L">
-            <div>{details?.alias}</div>
-            <div>{`${details?.accountNo} (${details?.loanNo})`}</div>
+            {/* TODO: 貸款別名 */}
+            <div>{details?.alias ?? '信貸'}</div>
+            <div>{`${param?.actno} (${param?.sqno})`}</div>
             <div className="justify-between items-center gap-4">
               <div className="text-14">貸款餘額</div>
               <div className="balance">
-                {`${currencySymbolGenerator(details?.currency ?? 'NTD', details?.loanAmount ?? 0)}`}
+                {`${currencySymbolGenerator(details?.currency ?? 'NTD', details?.txAmt ?? 0)}`}
               </div>
             </div>
           </AccountCard>

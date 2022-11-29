@@ -1,5 +1,6 @@
 /* eslint-disable object-curly-newline */
 /* eslint-disable import/prefer-default-export */
+import { callAPI } from 'utilities/axios';
 
 /* ========= 通用函式 ========= */
 
@@ -36,66 +37,66 @@ export const accountFormatter = (account) => {
   return `${acct.slice(0, 3)}-${acct.slice(3, 6)}-${acct.slice(6)}`;
 };
 
-// 將日期格式轉為 YYYY/MM/DD 字串或 YYYY-MM-DD 字串 (傳入第 2 個參數，值為 truthy)
-export const dateFormatter = (date, dashType) => {
-  if (date) {
-    date = new Date(date);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    if (dashType) return `${year}-${month}-${day}`;
-    return `${year}/${month}/${day}`;
+const dateRule = /^((?<yTW>1\d\d|[789]\d)|(?<yyyy>19\d\d|20\d\d))(?<mm>[1-9]|0[1-9]|1[012])(?<dd>[1-9]|0[1-9]|[12]\d|3[01])$/;
+/**
+ * 將日期字串轉為 Date 物件。
+ * @param {String} stringDate YYYYMMDD 或 YYYY/MM/DD 格式的日期字串。
+ * @param {String?} splitter 輸出日期字串的間隔字元。例：'/'
+ * @returns {Date} 若傳入空值，則傳回 null
+ */
+export const stringToDate = (stringDate, splitter) => {
+  if (stringDate) {
+    if (splitter) {
+      const parts = stringDate.split(splitter);
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+
+    const matchs = stringDate.replace(/[^\d]/g, '').match(dateRule);
+    if (matchs) {
+      // yTWD = 民國年(7x~199)
+      const { yTW, yyyy, mm, dd } = matchs.groups;
+      const year = yyyy ?? (parseInt(yTW, 10) + 1911);
+
+      const date = new Date(year, (mm - 1), dd);
+      return new Date(date);
+    }
+
+    console.error('日期字串無法轉換為 Date 物件 : ', stringDate);
   }
-  return '';
+  return null;
 };
 
 /**
- * 將日期格式轉為 YYYYMMDD 字串。
- * @param {Date} date 要轉換的日期。
- * @param {String?} splitter 輸出日期字串的間隔字元。
+ * 將日期格式轉為字串，預設格式為 yyyy/MM/dd。
+ * @param {Date|String} date 要轉換的日期物件或 yyyyMMdd格式字串。
+ * @param {String?} splitter 輸出日期字串的間隔字元，預設值為'/'。若要轉換為 yyyyMMdd 則將此參數設為空字串。
+ * @param {Boolean?} mmddOnly 表示不需要年的部份。
+ * @returns {String} 傳為以 splitter 為分隔字元的日期字串，例：2022/10/01
  */
-export const dateToString = (date, splitter) => {
+export const dateToString = (date, splitter, mmddOnly) => {
+  if (!date) return '';
+
+  if (!(date instanceof Date)) {
+    date = stringToDate(date);
+    if (!date) return '';
+  }
+
   const parts = [
     date.getFullYear(),
     (date.getMonth() + 1).toString().padStart(2, '0'),
     date.getDate().toString().padStart(2, '0'),
   ];
+  if (mmddOnly) parts.splice(0, 1); // 移除年。
+
   return parts.join(splitter ?? '/');
 };
 
-// 將日期格式轉為 YYYYMMDD 字串
-export const stringDateCodeFormatter = (date) => {
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  return `${year}${month}${day}`;
-};
-
-// 將日期格式由 YYYYMMDD 字串轉為 YYYY/MM/DD 字串
-export const stringDateFormatter = (stringDate) => {
-  if (stringDate) {
-    const dateArray = stringDate.split('');
-    dateArray.splice(4, 0, '/');
-    dateArray.splice(7, 0, '/');
-    return dateArray.join('');
-  }
-  return '';
-};
-
 /**
- * 將日期字串轉為 Date 物件。
- * @param {*} stringDate YYYYMMDD 或 YYYY/MM/DD 格式的日期字串。
- * @returns {Date} 轉換後的日期。
+ * 將日期轉為 YYYYMMDD 字串
+ * @param {Date} date 要轉換的日期；若為 null 則以 Today 為預設值。
+ * @returns {String}
  */
-export const stringToDate = (stringDate) => {
-  if (stringDate) {
-    if (stringDate.match(/^\d{8}$/)) {
-      return new Date(stringDateFormatter(stringDate));
-    }
-    return new Date(stringDate);
-  }
-  return null;
-};
+export const dateToYMD = (date) => dateToString(date ?? new Date(), '');
 
 // 將時間格式轉為 HH:DD 字串
 export const timeFormatter = (time) => {
@@ -375,7 +376,7 @@ export const loadLocalData = async (storeName, loadDataFunc) => {
 };
 
 // 將全形文字轉為半形
-export const toHalfWidth = (str) => str.replace(
+export const toHalfWidth = (str) => str?.replace(
   /[\uff01-\uff5e]/g,
   (ch) => String.fromCharCode(ch.charCodeAt(0) - 0xfee0),
 );
@@ -409,4 +410,19 @@ export const switchZhNumber = (numIndication, isPlus) => {
     default:
       return '0';
   }
+};
+
+/**
+ * 查詢銀行代碼
+ * @returns {Promise<[{
+ *  bankNo: 銀行代碼,
+ *  bankName: 銀行名稱
+ * }]>} 銀行代碼清單。
+ */
+export const getBankCode = async () => {
+  const banks = await loadLocalData('BankList', async () => {
+    const response = await callAPI('/api/transfer/queryBank');
+    return response.data;
+  });
+  return banks;
 };

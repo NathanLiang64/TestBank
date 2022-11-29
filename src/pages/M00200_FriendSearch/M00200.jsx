@@ -5,7 +5,7 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import Avatar from 'components/Avatar';
-import {dateFormatter, stringToDate, toHalfWidth } from 'utilities/Generator';
+import { dateToString, toHalfWidth } from 'utilities/Generator';
 
 import EmptyData from 'components/EmptyData';
 import { getFriends } from './api';
@@ -34,11 +34,7 @@ const Page = () => {
               {friends.map((f) => (
                 <li key={f.friendUuid}>
                   <div>
-                    <Avatar
-                      small
-                      src={`${process.env.REACT_APP_AVATAR_IMG_URL}/pf_${f.friendUuid}_b.jpg?timestamp=${Date.now()}`}
-                      name={f.friendName.trim()}
-                    />
+                    <Avatar small memberId={f.friendUuid} name={f.friendName} />
                   </div>
                   <div className="flex-auto">
                     <div className="title">
@@ -48,13 +44,13 @@ const Page = () => {
                       {f.depositApproved && (
                         <div>
                           開戶：
-                          {dateFormatter(stringToDate(f.depositApproved))}
+                          {dateToString(f.depositApproved)}
                         </div>
                       )}
                       {f.creditCardApproved && (
                         <div>
                           核卡：
-                          {dateFormatter(stringToDate(f.creditCardApproved))}
+                          {dateToString(f.creditCardApproved)}
                         </div>
                       )}
                     </div>

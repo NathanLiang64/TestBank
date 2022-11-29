@@ -5,7 +5,7 @@ import { callAPI } from 'utilities/axios';
 // import mockLoanSummary from './mockData/mockLoanSummary';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import mockLoanRewards from './mockData/mockRewards';
-import mockLoanDetails from './mockData/mockLoanDetails';
+// import mockLoanDetails from './mockData/mockLoanDetails';
 
 /**
  * 貸款首頁 - 取得貸款資訊和還款紀錄
@@ -75,7 +75,7 @@ export const getLoanSummary = async () => {
       isJoinedRewardProgram: '-', // TODO: 此階段不做
       currency: 'NTD', // Debug: 假資料
     },
-    transactions: await resSubPaymentSummary(subSummary.account, subSummary.subNo).then((res) => res.map((subPaymentHistory) => ({ // Debug: account 029資料錯誤，測試使用此accout, subNo: '03105000742426', '0001'
+    transactions: await resSubPaymentSummary(subSummary.account, subSummary.subNo).then((res) => res.map((subPaymentHistory) => ({
       id: uuid(),
       txnDate: subPaymentHistory.date,
       amount: subPaymentHistory.amount,
@@ -116,33 +116,33 @@ export const getLoanRewards = async (param) => {
   return response.data;
 };
 
-/**
- * 貸款資訊 - 取得貸款資訊
-   @param {
-     accountNo: 指定貸款帳號
-   }
-   @returns {
-     alias: 貸款別名
-     accountNo: 貸款帳號
-     loanNo: 貸款分號
-     loanType: 貸款類別
-     startDate: 貸款開始日
-     endDate: 貸款結束日
-     cycleTiming: 每期還款日，回傳數字1~28
-     loanAmount: 貸款金額
-     rate: 貸款利率
-     loanBalance: 貸款餘額
-     periodPaid: 已繳期數
-     periodRemain: 剩餘期數
-     initialAmount: 最初撥貸金額
-     currency: 幣別
-   },
- */
-export const getLoanDetails = async (param) => {
-  // const response = await callAPI('/api/');
-  const response = await new Promise((resolve) => resolve({ data: mockLoanDetails(param) }));
-  return response.data;
-};
+// /**
+//  * 貸款資訊 - 取得貸款資訊
+//    @param {
+//      accountNo: 指定貸款帳號
+//    }
+//    @returns {
+//      alias: 貸款別名
+//      accountNo: 貸款帳號
+//      loanNo: 貸款分號
+//      loanType: 貸款類別
+//      startDate: 貸款開始日
+//      endDate: 貸款結束日
+//      cycleTiming: 每期還款日，回傳數字1~28
+//      loanAmount: 貸款金額
+//      rate: 貸款利率
+//      loanBalance: 貸款餘額
+//      periodPaid: 已繳期數
+//      periodRemain: 剩餘期數
+//      initialAmount: 最初撥貸金額
+//      currency: 幣別
+//    },
+//  */
+// export const getLoanDetails = async (param) => {
+//   // const response = await callAPI('/api/');
+//   const response = await new Promise((resolve) => resolve({ data: mockLoanDetails(param) }));
+//   return response.data;
+// };
 
 /**
  * 下載合約
@@ -261,5 +261,27 @@ export const getSubPaymentHistory = async (param) => {
  */
 export const getSubPayment = async (param) => {
   const response = await callAPI('/api/loan/v1/getSubPayment', param);
+  return response.data;
+};
+
+/**
+ * 貸款資訊查詢
+ * @param {{
+ * actno: 放款帳號
+ * sqno: 分號
+ * }} param
+ * @returns {{
+ * dueDate: 貸款期限
+ * dateToPay: 每期還款(日期)
+ * txAmt: 初貸金額
+ * rate: 貸款利率
+ * loanBalance: 貸款餘額
+ * periodPaid: 已繳期數
+ * periodRemaining: 剩餘期數
+ * }}
+ */
+export const getInfo = async (param) => {
+  const response = await callAPI('/api/loan/v1/getInfo', param);
+
   return response.data;
 };

@@ -7,10 +7,6 @@ import { callAPI } from 'utilities/axios';
  *   account: 帳號,
  *   name:      帳戶名稱，若有暱稱則會優先用暱稱,
  *   transable: 已設約轉 或 同ID互轉(true/false)
- *   agreedAcct: [{ // 約定帳號(多筆)
- *        bank: 銀行代號 例如: 8050
- *        account: 約定帳號 例如: 0043009999999999
- *   },...]
  *   details: [{ // 外幣多幣別時有多筆
  *        balance: 帳戶餘額(非即時資訊)
  *        currency: 幣別代碼,
@@ -19,6 +15,19 @@ import { callAPI } from 'utilities/axios';
  */
 export const getAccountsList = async (acctTypes) => {
   const response = await callAPI('/api/deposit/v1/getAccounts', acctTypes);
+  return response.data;
+};
+
+/**
+ * 查詢約定轉入帳號清單。
+ * @param {*} accountNo 要查詢的帳號。
+ * @returns {Promise<[{
+ *   bankId: 約定轉入帳戶銀行代碼
+ *   acctId: 約定轉入帳戶帳號
+ * }]>}
+ */
+export const getAgreedAccounts = async (accountNo) => {
+  const response = await callAPI('/api/transfer/agreedAccount/v1/getAll', { accountNo });
   return response.data;
 };
 

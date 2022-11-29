@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Pagination } from 'swiper/core';
-import { dateFormatter } from 'utilities/Generator';
+import { dateToString } from 'utilities/Generator';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
@@ -46,8 +46,8 @@ const D00800Draft = () => {
   const watchedTab = watch('tab');
 
   const onSearch = async ({ tab, reserveDateRange, resultDateRange }) => {
-    const sdate = dateFormatter(tab === '1' ? reserveDateRange[0] : resultDateRange[0]);
-    const edate = dateFormatter(tab === '1' ? reserveDateRange[1] : resultDateRange[1]);
+    const sdate = dateToString(tab === '1' ? reserveDateRange[0] : resultDateRange[0]);
+    const edate = dateToString(tab === '1' ? reserveDateRange[1] : resultDateRange[1]);
 
     const param = {
       acctId: selectedAccount.acctId,

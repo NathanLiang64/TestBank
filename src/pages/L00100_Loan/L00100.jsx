@@ -17,7 +17,7 @@ import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import InformationTape from 'components/InformationTape';
 import EmptyData from 'components/EmptyData';
 import {
-  accountFormatter, dateFormatter, stringToDate, currencySymbolGenerator, stringDateCodeFormatter,
+  accountFormatter, dateToString, currencySymbolGenerator, dateToYMD,
 } from 'utilities/Generator';
 
 import { showPrompt } from 'utilities/MessageModal';
@@ -57,9 +57,9 @@ const Page = () => {
   /**
    * 產生上方卡片會用到的
    */
-  const handleMoreClick = (accountNo) => {
+  const handleMoreClick = (accountNo, loanNo) => {
     const list = [
-      { icon: <CircleIcon />, title: '貸款資訊', onClick: () => { history.push('/L001002', { accountNo }); } },
+      { icon: <CircleIcon />, title: '貸款資訊', onClick: () => { history.push('/L001002', { actno: accountNo, sqno: loanNo }); } },
       /*
       { icon: <CircleIcon />, title: '部分貸款', onClick: () => {} },
       { icon: <CircleIcon />, title: '全部貸款', onClick: () => {} },
@@ -106,7 +106,7 @@ const Page = () => {
             <div>{card.alias ?? '貸款'}</div>
             <div>{`${accountFormatter(card.accountNo)} (${card.loanNo})`}</div>
           </div>
-          <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.accountNo)}>
+          <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.accountNo, card.loanNo)}>
             <MoreIcon />
           </FEIBIconButton>
         </div>
@@ -153,8 +153,8 @@ const Page = () => {
     const param = {
       account: cardData.accountNo,
       subNo: cardData.loanNo,
-      startDate: stringDateCodeFormatter(new Date(new Date().setDate(new Date().getDate() - 30))),
-      endDate: stringDateCodeFormatter(new Date()),
+      startDate: dateToYMD(new Date(new Date().setDate(new Date().getDate() - 30))),
+      endDate: dateToYMD(),
     };
     const historyResponse = await getSubPaymentHistory(param);
     dispatch(setWaittingVisible(false));
@@ -177,13 +177,13 @@ const Page = () => {
       <button
         key={`${uid}-t${i}`}
         type="button"
-        aria-label={`點擊查詢此筆紀錄，還款日:${dateFormatter(stringToDate(t.txnDate))}，金額：${currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}`}
+        aria-label={`點擊查詢此筆紀錄，還款日:${dateToString(t.txnDate)}，金額：${currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}`}
         onClick={() => handleSingleTransaction(i, card)}
         style={{ width: '100%' }}
       >
         <InformationTape
           topLeft="還款金額"
-          bottomLeft={dateFormatter(stringToDate(t.txnDate))}
+          bottomLeft={dateToString(t.txnDate)}
           topRight={currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}
           bottomRight={`貸款餘額 ${currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}`}
         />
