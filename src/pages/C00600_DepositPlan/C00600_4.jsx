@@ -96,9 +96,8 @@ const DepositPlanDetailPage = () => {
     // dispatch(setWattingVisible(false))
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (program.currentBalance > 0) {
-      // 如果所選的子帳戶有餘額，要提示用戶自動轉帳。這裡假設同支API會後端會自動處理。
       ConfirmToTransferSubAccountBalance({ onOk: () => handleCreate(), onCancel: () => history.goBack() });
     } else {
       handleCreate();

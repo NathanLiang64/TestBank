@@ -19,6 +19,7 @@ import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
 import { setLocalData, switchZhNumber } from 'utilities/Generator';
 import { AccountListCacheName, getAccountExtraInfo, loadAccountsList } from 'pages/D00100_NtdTransfer/api';
 import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
+import { useHistory } from 'react-router';
 import {
   getTransactions,
   downloadDepositBookCover,
@@ -31,6 +32,7 @@ import PageWrapper from './C00300.style';
  */
 const C00300 = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { register, unregister, handleSubmit } = useForm();
 
   const [accounts, setAccounts] = useState();
@@ -102,7 +104,6 @@ const C00300 = () => {
    */
   const handleAccountChanged = async (acctIndex) => {
     if (!accounts) return; // 頁面初始化時，不需要進來。
-
     const account = accounts[acctIndex];
     // 若還沒有取得 免費跨轉次數 則立即補上。
     if (!account.freeTransfer) {
@@ -199,7 +200,9 @@ const C00300 = () => {
           ...selectedAccount, // 直接提供帳戶摘要資訊就不用再下載。
           cardColor: 'purple',
         };
-        break;
+        // Todo moreTransactions 目前是一個 module，但是沒有專屬 FuncId，改以 push 導向
+        history.push('/moreTranscations', params);
+        return;
 
       case 'D00100': // 轉帳
         params = { transOut: selectedAccount.accountNo };

@@ -100,8 +100,7 @@ const DepositPlanEditPage = () => {
     } else if (location.state.program.type) {
       reset({
         name: location.state.program.name,
-        // TODO: location.state.program 應該包含 cycleDuration
-        cycleDuration: 4,
+        cycleDuration: location.state.program.period ?? 4,
         cycleMode: 2,
         cycleTiming: getDefaultCycleTiming(),
       });

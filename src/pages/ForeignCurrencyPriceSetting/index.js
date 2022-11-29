@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { CurrencyInfo, dateFormatter, timeSecondFormatter } from 'utilities/Generator';
 import { showDrawer, closeDrawer } from 'utilities/MessageModal';
@@ -31,24 +30,13 @@ import {
 
 /* Styles */
 import ForeignCurrencyPriceSettingWrapper from './foreignCurrencyPriceSetting.style';
+import { validationSchema } from './validationSchema';
 
 const ForeignCurrencyPriceSetting = () => {
-  /**
-   *- 資料驗證
-   */
-  const schema = yup.object().shape({
-    currencyType: yup
-      .string()
-      .required('請選擇幣別'),
-    price: yup
-      .number()
-      .typeError('匯率須為數字')
-      .positive('匯率必須大於 0'),
-  });
   const {
     handleSubmit, control, formState: { errors }, watch, setValue,
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(validationSchema),
   });
 
   const currencyType = watch('currencyType');
@@ -62,25 +50,19 @@ const ForeignCurrencyPriceSetting = () => {
 
   // 取得外幣列表
   const getCurrencyInfo = async () => {
-    const response = await getCcyList({});
-    console.log(response);
-    if (!response?.code) {
-      setCurrencyInfo(response);
-      const now = Date.now();
-      const dateStr = dateFormatter(now);
-      const timeStr = timeSecondFormatter(now);
-      setCurrentTime(`${dateStr} ${timeStr}`);
-      setCurrentRate(response[0].sellRate);
-    }
+    const response = await getCcyList();
+    setCurrencyInfo(response);
+    const now = Date.now();
+    const dateStr = dateFormatter(now);
+    const timeStr = timeSecondFormatter(now);
+    setCurrentTime(`${dateStr} ${timeStr}`);
+    setCurrentRate(response[0].sellRate);
   };
 
   // 取得所有已設定外幣到價通知列表
   const getAllPriceNotifications = async () => {
     const response = await getAllNotices();
-    if (!response?.code) {
-      console.log(response);
-      setNotificationList(response);
-    }
+    setNotificationList(response);
   };
 
   // 刪除外幣到價通知
