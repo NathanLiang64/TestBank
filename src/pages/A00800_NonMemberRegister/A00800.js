@@ -16,7 +16,7 @@ import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import Accordion from 'components/Accordion';
 import { RadioGroup } from '@material-ui/core';
 import { AuthCode } from 'utilities/TxnAuthCode';
-import { getKey, memberRegister } from './api';
+import { memberRegister } from './api';
 import A00800AccoridonContent from './A00800_AccoridonContent';
 
 /* Styles */
@@ -62,20 +62,6 @@ const A00800 = () => {
     resolver: yupResolver(schema),
   });
 
-  /* input物件 */
-  // const renderPhoneFormItem = () => {
-  //   const {field, fieldState} = useController({name: 'mobileNum', control: controlMobile});
-
-  //   return (
-  //     <div className="form_item">
-  //       <FEIBInputLabel>手機號碼</FEIBInputLabel>
-  //       <div className="form_item_input">
-  //         <FEIBInput {...field} />
-  //         {fieldState.invalid && <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage> }
-  //       </div>
-  //     </div>
-  //   );
-  // };
   const renderFormItem = ({
     label, areaName, type, isTerm, placeHolder,
   }) => {
