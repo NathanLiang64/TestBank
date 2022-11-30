@@ -27,7 +27,7 @@ export const TabField = ({
           }}
         >
           {options.map(({ label, value }) => (
-            <FEIBTab label={label} value={value} />
+            <FEIBTab key={value} label={label} value={value} />
           ))}
         </FEIBTabList>
       </FEIBTabContext>

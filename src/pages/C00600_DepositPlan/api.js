@@ -99,6 +99,7 @@ export const getDepositPlans = async () => {
  *   type: 類型：0.基本方案, 1.行銷活動方案.
  *   name: 名稱
  *   rate: 計息利率，例: 0.6；僅供顯示用，不會拿來計息。
+ *   period: 期數，基本方案時為 0
  *   description: 詳細說明。
  *   amountRange: {
  *      week: { 存入週期（1.每周）時，的上下限金額。例：{ min: 100, max: 50000 }
@@ -144,6 +145,20 @@ export const createDepositPlan = async (request) => {
   //    3. subAccounts.count must > 0
   // 沒有可用(建)子帳戶時，則提示「*****」
   const response = await callAPI('/api/depositPlan/v1/create', request);
+  return response.data;
+};
+
+/**
+ * 執行轉存錢計劃建立。
+ * @returns {Promise{
+ *   result: Boolean,
+ *   message: String
+ * }}
+ *- result: 驗證結果(true/false)
+ *- message: 驗證失敗狀況描述。
+ */
+export const createConfirm = async () => {
+  const response = await callAPI('/api/depositPlan/v1/createConfirm');
   return response.data;
 };
 

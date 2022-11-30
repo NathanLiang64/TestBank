@@ -34,7 +34,7 @@ const TransferResult = (props) => {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const [model] = useState(state);
+  const [model, setModel] = useState(state);
   const [transferResult, setTransferResult] = useState(state);
   const [showSnapshotSuccess, setShowSnapshotSuccess] = useState();
 
@@ -56,10 +56,20 @@ const TransferResult = (props) => {
     console.log('==> 轉帳執行結果：', result);
 
     if (isSuccess) {
-      model.transOut.balance -= model.amount - result.fee;
-      model.transOut.freeTransferRemain -= 1;
       // TODO 跨轉優惠、手續費、
       // TODO 需確認是否要寫回 LocalCache ？
+      setModel((prevModel) => {
+        const updatedBalance = prevModel.transOut.balance - (prevModel.amount - result.fee);
+        const updatedFreeTransferRemain = prevModel.transOut.freeTransferRemain - 1;
+        return {
+          ...prevModel,
+          transOut: {
+            ...prevModel.transOut,
+            balance: updatedBalance,
+            freeTransferRemain: updatedFreeTransferRemain,
+          },
+        };
+      });
     }
   }, []);
 
