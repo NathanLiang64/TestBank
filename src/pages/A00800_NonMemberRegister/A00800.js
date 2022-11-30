@@ -120,23 +120,26 @@ const A00800 = () => {
       name: data.name,
       email: data.email,
       passwd: data.password,
+      mobile: data.mobileNum,
     };
-    console.log('A00800 onSubmit', { resultOtp });
-    if (!resultOtp) {
-      showCustomPrompt({title: 'OTP驗證失敗！'});
+
+    if (resultOtp.result === true) {
+      /* 驗證成功：呼叫註冊 */
+      const result = await memberRegister(regData);
+
+      if (result.code === '0000') {
+        /* 註冊成功：進入首頁 */
+        showCustomPrompt({
+          title: '註冊成功！',
+          onOk: () => handleSwitchPage(),
+          onClose: () => handleSwitchPage(),
+        });
+      }
+
+      showCustomPrompt({title: '註冊失敗！', message: result.message});
     }
 
-    const result = await memberRegister(regData);
-
-    if (result.code !== '0000') {
-      showCustomPrompt({title: '註冊失敗！'});
-    }
-    /* 註冊成功：進入首頁 */
-    showCustomPrompt({
-      title: '註冊成功！',
-      onOk: () => handleSwitchPage(),
-      onClose: () => handleSwitchPage(),
-    });
+    showCustomPrompt({title: 'OTP驗證失敗！'});
   };
 
   useEffect(async () => {
