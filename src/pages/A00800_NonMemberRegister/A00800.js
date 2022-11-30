@@ -15,6 +15,7 @@ import {
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import Accordion from 'components/Accordion';
 import { RadioGroup } from '@material-ui/core';
+import { AuthCode } from 'utilities/TxnAuthCode';
 import { getKey, memberRegister } from './api';
 import A00800AccoridonContent from './A00800_AccoridonContent';
 
@@ -27,7 +28,6 @@ import A00800Wrapper from './A00800.style';
 
 const A00800 = () => {
   const [inviteToken, setInviteToken] = useState('');
-  const authCode = 0x03;
 
   // 驗證錯誤文字
   const mobileError = (isEmpty) => `請輸入${!isEmpty && '正確的'}手機號碼`;
@@ -115,7 +115,7 @@ const A00800 = () => {
   /* submit動作處理 */
   const onSubmit = async (data) => {
     console.log('A00800 handleOnSubmit() data:', {data});
-    const resultOtp = await transactionAuth(authCode, data.mobileNum);
+    const resultOtp = await transactionAuth(AuthCode.A00800, data.mobileNum);
     const regData = {
       name: data.name,
       email: data.email,
