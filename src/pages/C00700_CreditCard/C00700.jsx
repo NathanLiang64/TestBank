@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState} from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
@@ -27,7 +28,8 @@ import {
  */
 const CreditCardPage = () => {
   const history = useHistory();
-  const [cards, setCards] = useState([]);
+  // const [cards, setCards] = useState([]);
+  const [newCardsSet, setNewCardsSet] = useState([]);
   const [usedCardLimit, setUsedCardLimit] = useState(0);
   const dispatch = useDispatch();
   /**
@@ -40,7 +42,28 @@ const CreditCardPage = () => {
       await showPrompt('您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。', closeFunc);
     }
 
-    setCards(cardResponse.data.cards);
+    // 這邊要將 cardResponse 重新建構成
+    // {
+    //  isBankeeCard:boolean,
+    //  cards:{cardNo:string}[],
+    //  ...rest (只有 bankee 信用卡有的優惠資訊)
+    //  } []
+
+    const data = cardResponse.data.cards.reduce((acc, cur) => {
+      const {isBankeeCard, cardNo, ...rest} = cur;
+      if (isBankeeCard === 'Y') {
+        acc[0] = {...rest, isBankeeCard, cards: [{cardNo}]};
+      } else if (isBankeeCard === 'N') {
+        if (!acc[1]) acc[1] = {...rest, isBankeeCard, cards: [{cardNo}]};
+        else acc[1].cards.push({cardNo});
+        // else acc[1].push({...cur});
+      }
+      return acc;
+    }, []);
+
+    setNewCardsSet(data);
+    // setCards(cardResponse.data.cards);
+
     setUsedCardLimit(cardResponse.data.usedCardLimit);
     dispatch(setWaittingVisible(false));
   }, []);
@@ -48,9 +71,9 @@ const CreditCardPage = () => {
   // render 功能列表
   const functionAllList = (item) => {
     const list = [
-      { fid: FuncID.R00200, title: '晚點付', cardNo: item.cardNo },
-      { fid: FuncID.R00300, title: '帳單', cardNo: item.cardNo },
-      { fid: FuncID.R00400, title: '繳費', cardNo: item.cardNo },
+      { fid: FuncID.R00200, title: '晚點付', cardNo: item.isBankeeCard === 'Y' ? item.cards[0].cardNo : '' },
+      { fid: FuncID.R00300, title: '帳單', cardNo: item.cards[0].cardNo },
+      { fid: FuncID.R00400, title: '繳費', cardNo: item.cards[0].cardNo },
     ];
     if (item.isBankeeCard === 'N') list.splice(0, 1);
 
@@ -102,20 +125,21 @@ const CreditCardPage = () => {
 
   // 信用卡卡號(產生上方內容的 slides)
   const renderSlides = () => {
-    if (!cards.length) return null;
+    // if (!cards.length) return null;
+    if (!newCardsSet.length) return null;
 
     return (
-      cards.map((card) => (
+      newCardsSet.map((cardSet) => (
         <SwiperCreditCard>
           <CreditCard
-            key={card.cardNo}
-            cardName={card.isBankeeCard === 'Y' ? 'Bankee信用卡' : '所有信用卡'}
-            accountNo={card.isBankeeCard === 'Y' && card.cardNo}
+            key={cardSet.cards[0].cardNo} // newCardSet.cards[0].cardNo
+            cardName={cardSet.isBankeeCard === 'Y' ? 'Bankee信用卡' : '所有信用卡'}
+            accountNo={cardSet.isBankeeCard === 'Y' && cardSet.cards[0].cardNo}// newCardSet.cards[0].cardNo
             balance={usedCardLimit}
             color="green"
             annotation="已使用額度"
-            onMoreClicked={() => handleMoreClick(card)}
-            functionList={functionAllList(card)}
+            onMoreClicked={() => handleMoreClick(cardSet)}
+            functionList={functionAllList(cardSet)}
           />
         </SwiperCreditCard>
       ))
@@ -171,27 +195,29 @@ const CreditCardPage = () => {
 
   // 信用卡明細總覽
   const renderCreditList = () => {
-    if (!cards.length) return null;
+    // if (!cards.length) return null;
+    if (!newCardsSet.length) return null;
     return (
-      cards.map((card) => (
-        <div key={card.cardNo}>
+      newCardsSet.map((cardSet) => (
+        <div key={cardSet.cards[0].cardNo}>
           <DetailDialogContentWrapper>
-            {card.isBankeeCard === 'Y' && (
+            {cardSet.isBankeeCard === 'Y' && (
             <div className="panel">
-              <ThreeColumnInfoPanel content={bonusInfo(card)} />
+              <ThreeColumnInfoPanel content={bonusInfo(cardSet)} />
             </div>
             )}
           </DetailDialogContentWrapper>
           <CreditCardTxsList
             showAll={false}
-            card={card}
-            go2MoreDetails={() => startFunc('R00100', {card, usedCardLimit})}
+            card={cardSet}
+            go2MoreDetails={() => startFunc('R00100', {cardSet, usedCardLimit})}
           />
         </div>
       ))
     );
   };
 
+  // console.log('newCardsSet', newCardsSet);
   return (
     <Layout title="信用卡" goBackFunc={closeFunc}>
       <Main small>
