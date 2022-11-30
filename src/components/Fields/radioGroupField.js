@@ -35,6 +35,7 @@ export const RadioGroupField = ({
       >
         {options.map(({ label, value }) => (
           <FEIBRadioLabel
+            key={value}
             control={<FEIBRadio />}
             label={label}
             value={value.toString()}

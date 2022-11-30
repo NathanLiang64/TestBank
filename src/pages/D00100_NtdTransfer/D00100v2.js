@@ -26,7 +26,7 @@ import MemberAccountCard from 'components/MemberAccountCard';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showError, showInfo, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
-import { numberToChinese, setLocalData } from 'utilities/Generator';
+import { dateToString, numberToChinese, setLocalData } from 'utilities/Generator';
 import { ChangeMemberIcon } from 'assets/images/icons';
 import { loadAccountsList, AccountListCacheName, getAccountExtraInfo } from './api';
 import TransferWrapper from './D00100.style';
@@ -285,10 +285,15 @@ const Transfer = (props) => {
       await showInfo('您指定的交易時間範圍內，並不會有任何轉帳交易發生！請重新調整交易時間範圍、交易頻率或週期。');
       setFocus(idTransRange);
     }
+
+    // 當轉帳類型選取立即時，並沒有將 transDate 變成當日，因此在這邊做修正
+    const updatedTransDate = newModel.booking.mode === 0 ? dateToString(new Date()) : newModel.booking.transDate;
+
     const param = {
       ...newModel,
       booking: {
         ...newModel.booking,
+        transDate: updatedTransDate,
         transTimes, // 預約轉帳次數。
       },
     };
