@@ -214,6 +214,23 @@ const QuickLoginSetting = () => {
     }
   };
 
+  // 變更圖形辨識
+  const handleChangePattern = async () => {
+    console.log('T00200 handleChangePattern');
+
+    const res = await transactionAuth(AuthCode.T00200.MODIFY);
+
+    if (res.result === true) {
+      // 成功
+
+    }
+    // 失敗
+    customPopup(
+      '系統訊息',
+      res.message,
+    );
+  };
+
   useEffect(() => {
     fetchQLStatus();
     fetchLoginBindingInfo();
@@ -257,7 +274,7 @@ const QuickLoginSetting = () => {
               )}
               label="圖形辨識設定"
             />
-            <div className={`mainBlock ${!isPatternActive && 'hide'}`} onClick={() => {}}>
+            <div className={`mainBlock ${!isPatternActive && 'hide'}`} onClick={() => handleChangePattern()}>
               <div className="text">
                 圖形辨識變更
               </div>
