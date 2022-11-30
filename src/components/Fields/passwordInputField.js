@@ -52,11 +52,15 @@ export const PasswordInputField = ({
         $icon={showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
         $iconFontSize={2}
         $iconOnClick={handleClickShowPassword}
+        $space="bottom"
       />
 
-      <FEIBErrorMessage>
+      {/* <FEIBErrorMessage>
         {fieldState.error ? fieldState.error.message : ''}
-      </FEIBErrorMessage>
+      </FEIBErrorMessage> */}
+      {!!fieldState.error && (
+        <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>
+      )}
     </>
   );
 };

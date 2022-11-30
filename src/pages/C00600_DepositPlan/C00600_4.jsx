@@ -57,13 +57,13 @@ const DepositPlanDetailPage = () => {
       image: sessionStorage.getItem('C00600-hero'),
     };
 
-    updateDepositPlan(payload);
+    await updateDepositPlan(payload);
 
     sessionStorage.removeItem('C00600-hero'); // 清除暫存背景圖。
   };
 
   const handleCreate = async () => {
-    const auth = await transactionAuth(AuthCode.C00600); // 需通過 2FA 或 網銀密碼 驗證才能建立計劃。
+    const auth = await transactionAuth(AuthCode.C00600); // 需通過 2FA 驗證才能建立計劃。
     if (!auth.result) {
       await showError(auth.message);
       return;
@@ -72,7 +72,7 @@ const DepositPlanDetailPage = () => {
     const payload = {...program};
     delete payload.extra;
     delete payload.goalAmount;
-    // dispatch(setWattingVisible(true))
+
     const response = await createDepositPlan(payload);
     if (response?.result) {
       // TODO: updateDepositPlan API 尚無法處理帶有 base64 的 image (會回傳錯誤訊息)，僅能先以預設圖片進行測試
@@ -92,12 +92,10 @@ const DepositPlanDetailPage = () => {
         onClose: () => history.goBack(),
       });
     }
-    // dispatch(setWattingVisible(false))
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (program.currentBalance > 0) {
-      // 如果所選的子帳戶有餘額，要提示用戶自動轉帳。這裡假設同支API會後端會自動處理。
       ConfirmToTransferSubAccountBalance({ onOk: () => handleCreate(), onCancel: () => history.goBack() });
     } else {
       handleCreate();

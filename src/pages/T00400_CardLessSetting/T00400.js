@@ -23,6 +23,14 @@ const CardLessSetting = () => {
   const [cardLessStatus, setCardLessStatus] = useState();
   const isEnable = cardLessStatus?.cwdStatus === '2';
 
+  const getCardlessStatus = async () => {
+    dispatch(setWaittingVisible(true));
+    // 確認無卡提款開通狀態
+    const cardLessRes = await getStatus();
+    setCardLessStatus(cardLessRes);
+    dispatch(setWaittingVisible(false));
+  };
+
   const handleSwitchClick = async () => {
     if (QLResult) {
     // 若已經綁定
@@ -36,38 +44,23 @@ const CardLessSetting = () => {
         const { result } = await transactionAuth(AuthCode.T00400);
         if (result) {
           const activateRes = await activate('');
-          // 無 message 出現代表成功執行，並變更狀態
-
-          setCardLessStatus((prevStatus) => {
-            const updatedCwdStatus = prevStatus.cwdStatus === '2' ? '3' : '2';
-            return {...prevStatus, cwdStatus: updatedCwdStatus};
-          });
-
           showAnimationModal({
             isSuccess: !!activateRes,
             successTitle: '設定成功',
             errorTitle: '設定失敗',
             errorDesc: '設定失敗',
           });
+          await getCardlessStatus();
         }
         dispatch(setWaittingVisible(false));
       }
     } else showMessage();
   };
 
-  const handlePwdChange = async () => {
-    if (QLResult) startFunc(FuncID.D00400);
-    else showMessage();
-  };
+  const handlePwdChange = () => (QLResult ? startFunc(FuncID.D00400) : showMessage());
 
-  useEffect(async () => {
-    dispatch(setWaittingVisible(true));
-
-    // 確認無卡提款開通狀態
-    const cardLessRes = await getStatus();
-    setCardLessStatus(cardLessRes);
-
-    dispatch(setWaittingVisible(false));
+  useEffect(() => {
+    getCardlessStatus();
   }, []);
 
   return (

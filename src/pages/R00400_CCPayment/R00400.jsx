@@ -173,7 +173,10 @@ const Page = () => {
     <Layout title="繳款" goBackFunc={closeFunc}>
       <Main small>
         <PageWrapper>
-          <Badge label={`${cardInfo?.month}月應繳金額`} value={currencySymbolGenerator('NTD', cardInfo?.newBalance)} />
+          <Badge
+            label={`${parseInt(cardInfo?.billClosingDate.slice(5, 7), 10)}月應繳金額`}
+            value={currencySymbolGenerator('NTD', cardInfo?.newBalance)}
+          />
 
           <div className="badMargin">
             <TabField

@@ -42,6 +42,7 @@ export const DropdownField = ({
         name={field.name}
         value={field.value}
         disabled={disabled}
+        $space="bottom"
         $color={$color}
       >
         {options.map(({ label, value, disabledOption }) => (
@@ -51,11 +52,11 @@ export const DropdownField = ({
         ))}
       </FEIBSelect>
 
-      <FEIBErrorMessage>
+      {/* <FEIBErrorMessage>
         {fieldState.error ? fieldState.error.message : ''}
-      </FEIBErrorMessage>
-      {/* {!!fieldState.error
-        && <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>} */}
+      </FEIBErrorMessage> */}
+      {!!fieldState.error
+        && <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>}
     </>
   );
 };
