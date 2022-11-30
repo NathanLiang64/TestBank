@@ -150,7 +150,7 @@ export const createDepositPlan = async (request) => {
 
 /**
  * 執行轉存錢計劃建立。
- * @returns {{
+ * @returns {Promise{
  *   result: Boolean,
  *   message: String
  * }}

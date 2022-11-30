@@ -65,9 +65,10 @@ const DepositPlanEditPage = () => {
   const onSubmit = (data) => {
     const date = getDurationTuple(new Date(), data.cycleDuration, data.cycleMode, data.cycleTiming);
     const {code, rate} = location.state.program;
-
+    // if (newImageId === undefined) showError('請選擇圖片');
+    // else {
     const payload = {
-      // createDepositPlan API Param
+      // =====建立存錢計畫所需參數=====
       progCode: code,
       imageId: newImageId ?? 1, // TODO 應改為提醒使用者尚未選取圖片。
       name: data.name,
@@ -78,7 +79,7 @@ const DepositPlanEditPage = () => {
       amount: data.amount,
       bindAccountNo: data.bindAccountNo === 'new' ? null : data.bindAccountNo,
       currentBalance: getRemainingBalance(data.bindAccountNo),
-      // 渲染需求
+      // =====渲染需求參數=====
       goalAmount: getGoalAmount(data.amount, data.cycleDuration, data.cycleMode),
       extra: {
         rate,
@@ -88,6 +89,7 @@ const DepositPlanEditPage = () => {
     };
     sessionStorage.setItem('C006003', JSON.stringify(data));
     history.push('/C006004', { isConfirmMode: true, payload });
+    // }
   };
 
   useEffect(() => {

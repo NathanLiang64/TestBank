@@ -81,7 +81,8 @@ export const ConfirmNotToCloseDepositPlan = () => {
 export const ConfirmToTransferSubAccountBalance = ({ onOk, onCancel }) => {
   showCustomPrompt({
     title: '新增存錢計畫',
-    message: '欲作為存錢計畫之子帳戶餘額須為0，是否立即將您子帳戶之餘額轉入Bankee主帳戶。',
+    // message: '欲作為存錢計畫之子帳戶餘額須為0，是否立即將您子帳戶之餘額轉入Bankee主帳戶。',
+    message: '欲作為存錢計畫之子帳戶餘額須為0，請先將您子帳戶之餘額轉入Bankee主帳戶。',
     okContent: '立即轉帳',
     cancelContent: '我再想想',
     onOk,

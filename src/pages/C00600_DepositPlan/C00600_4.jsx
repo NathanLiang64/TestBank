@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef} from 'react';
 import { useHistory, useLocation } from 'react-router';
 import uuid from 'react-uuid';
@@ -15,11 +14,12 @@ import {
   weekNumberToChinese,
   dateToYMD,
 } from 'utilities/Generator';
-import { showAnimationModal, showError } from 'utilities/MessageModal';
-import { transactionAuth } from 'utilities/AppScriptProxy';
+import { closeFunc, startFunc, transactionAuth } from 'utilities/AppScriptProxy';
 
 import { AuthCode } from 'utilities/TxnAuthCode';
-import { createDepositPlan, updateDepositPlan } from './api';
+import { showAnimationModal } from 'utilities/MessageModal';
+import { FuncID } from 'utilities/FuncID';
+import { createConfirm, createDepositPlan, updateDepositPlan } from './api';
 import { AlertInvalidEntry, ConfirmToTransferSubAccountBalance } from './utils/prompts';
 import { DetailPageWrapper } from './C00600.style';
 
@@ -64,35 +64,34 @@ const DepositPlanDetailPage = () => {
   };
 
   const handleCreate = async () => {
-    // const auth = await transactionAuth(AuthCode.C00600); // 需通過 2FA 或 網銀密碼 驗證才能建立計劃。
-    // if (!auth.result) {
-    //   await showError(auth.message);
-    //   return;
-    // }
+    const {extra, goalAmount, ...payload} = program;
 
-    const payload = {...program};
-    delete payload.extra;
-    delete payload.goalAmount;
+    // 11.30 目前後端設定是 transactionAuth 之後才可以進行 createDepositPlan
+    // 否則會被判定惡意行為，這部分還需要等待後端進行調整
 
+    // Step 1. 執行 存錢計畫建立
     const response = await createDepositPlan(payload);
-    if (response?.result) {
-      // TODO 執行 transactionAuth, 成功後再執行 createConfirm
+    if (!response?.result) return;
+
+    // Step 2. 再執行 transactionAuth
+    const auth = await transactionAuth(AuthCode.C00600); // 需通過 2FA 或 網銀密碼 驗證才能建立計劃。
+    if (!auth.result) return;
+
+    // Step 3. 成功後再執行 createConfirm
+    const confirm = await createConfirm();
+
+    if (confirm.result) {
       // 驗證成功之後，若 imageId=0 再上傳自訂的影像。
-
       if (payload.imageId === 0) await handleImageUpload(response.planId);
-      // 設定成 成功建立模式
-      setMode(2);
+      setMode(2);// 設定成 成功建立模式
       sessionStorage.removeItem('C006003'); // 清除暫存表單資料。
-
-      // 建立成功後，將頁面滑至上方。
-      mainRef.current.scrollTo({ top: 0, behavior: 'smooth'});
+      mainRef.current.scrollTo({ top: 0, behavior: 'smooth'});// 建立成功後，將頁面滑至上方。
     } else {
       showAnimationModal({
         isSuccess: false,
         errorTitle: '設定失敗',
-        errorCode: 'E341', // TODO
-        errorDesc: '親愛的客戶，因建立計畫失敗，請重新執行交易，如有疑問，請與本行客戶服務中心聯繫。',
-        onClose: () => history.goBack(),
+        errorDesc: confirm.message,
+        onClose: () => closeFunc(),
       });
     }
   };
@@ -101,7 +100,7 @@ const DepositPlanDetailPage = () => {
     if (program.currentBalance > 0) {
       // 如果所選的子帳戶有餘額，要提示用戶自動轉帳。
       // TODO 要求使用者自己將餘額轉出。 onOk: () => handleCreate() 應修正！
-      ConfirmToTransferSubAccountBalance({ onOk: () => handleCreate(), onCancel: () => history.goBack() });
+      ConfirmToTransferSubAccountBalance({ onOk: () => startFunc(FuncID.D00100), onCancel: closeFunc });
     } else {
       handleCreate();
     }
