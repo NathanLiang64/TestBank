@@ -14,16 +14,13 @@ export const CheckboxField = ({
   return (
     <>
       <FEIBCheckboxLabel
-        control={(
-          <FEIBCheckbox
-            onChange={onChange}
-            value={value}
-          />
-          )}
+        control={<FEIBCheckbox onChange={onChange} value={value} />}
         label={label}
       />
-      <FEIBErrorMessage>{fieldState.error ? fieldState.error.message : ''}</FEIBErrorMessage>
+      {/* <FEIBErrorMessage>{fieldState.error ? fieldState.error.message : ''}</FEIBErrorMessage> */}
+      {!!fieldState.error && (
+        <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>
+      )}
     </>
-
   );
 };

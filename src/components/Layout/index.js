@@ -28,7 +28,7 @@ export default Layout;
 * */
 
 export const MainScrollWrapper = styled.main`
-  height: calc(100vh - 4.4rem);
+  height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
 `;

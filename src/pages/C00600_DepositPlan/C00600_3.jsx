@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Theme from 'themes/theme';
 import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
-import { FEIBButton, FEIBErrorMessage } from 'components/elements';
+import { FEIBButton, FEIBHintMessage } from 'components/elements';
 import { DropdownField, TextInputField } from 'components/Fields';
 import {
   toCurrency,
@@ -14,7 +14,7 @@ import {
   dateToString,
 } from 'utilities/Generator';
 
-import { AlertProgramNoFound } from './utils/prompts';
+import { closeFunc } from 'utilities/AppScriptProxy';
 import { getDurationTuple} from './utils/common';
 import {
   generatebindAccountNoOptions,
@@ -91,13 +91,8 @@ const DepositPlanEditPage = () => {
   };
 
   useEffect(() => {
-    if (!location.state || !('program' in location.state)) {
-      AlertProgramNoFound({
-        onOk: () => history.push('/C006002'),
-        onCancel: () => history.goBack(),
-        onClose: () => history.goBack(),
-      });
-    } else if (location.state.program.type) {
+    // 如果是專案型計畫，將資料傳入 form 中
+    if (location.state.program.type) {
       reset({
         name: location.state.program.name,
         cycleDuration: location.state.program.period ?? 4,
@@ -115,9 +110,8 @@ const DepositPlanEditPage = () => {
     }
   }, []);
 
-  if (!location.state || !('program' in location.state)) {
-    return <Layout title="新增存錢計畫" hasClearHeader goBackFunc={() => history.goBack()} />;
-  }
+  // 如果 location.state 不存在，屬於不正常行為，直接關閉該服務
+  if (!location.state || !('program' in location.state)) return closeFunc();
 
   const {program, subAccounts, hasReachedMaxSubAccounts} = location.state;
 
@@ -169,11 +163,11 @@ const DepositPlanEditPage = () => {
                     disabled={!!program.type}
                     $color={getInputColor(!!program.type)}
                   />
-                  <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
+                  <FEIBHintMessage>
                     共
                     {cycleDuration * (cycleMode === 1 ? 4 : 1)}
                     次
-                  </FEIBErrorMessage>
+                  </FEIBHintMessage>
                 </div>
               </div>
               <div>
@@ -183,9 +177,9 @@ const DepositPlanEditPage = () => {
                   labelName="預計每期存錢金額"
                   type="number"
                 />
-                <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
+                <FEIBHintMessage>
                   {(amount > 0) && `存款目標為 ${toCurrency(getGoalAmount(amount, cycleDuration, cycleMode))}元`}
-                </FEIBErrorMessage>
+                </FEIBHintMessage>
                 <div>{`金額最低＄${toCurrency(program.amountRange.month.min)} 元，最高＄${toCurrency(program.amountRange.month.max)} 元，以萬元為單位`}</div>
               </div>
 
@@ -196,9 +190,9 @@ const DepositPlanEditPage = () => {
                   control={control}
                   labelName="選擇陪你存錢的帳號"
                 />
-                <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
-                  { ((bindAccountNo !== '*') && (bindAccountNo !== 'new')) && `存款餘額為${getRemainingBalance(bindAccountNo)}元` }
-                </FEIBErrorMessage>
+                <FEIBHintMessage>
+                  { ((bindAccountNo !== '*') && (bindAccountNo !== 'new')) && `存款餘額為 ${toCurrency(getRemainingBalance(bindAccountNo))}元` }
+                </FEIBHintMessage>
               </div>
 
               <FEIBButton type="submit">確認</FEIBButton>

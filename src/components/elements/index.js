@@ -21,6 +21,7 @@ import FEIBTabContext from './FEIBTabContext';
 import FEIBTabList from './FEIBTabList';
 import FEIBDatePicker from './FEIBDatePicker';
 import FEIBErrorMessage from './FEIBErrorMessage';
+import FEIBHintMessage from './FEIBHintMessage';
 
 /*
 * elements 入口文件，元件統一由此匯出
@@ -50,4 +51,5 @@ export {
   FEIBTabList,
   FEIBDatePicker,
   FEIBErrorMessage,
+  FEIBHintMessage,
 };

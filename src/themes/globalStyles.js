@@ -261,7 +261,7 @@ const GlobalStyles = createGlobalStyle`
     flex-direction: column;
     justify-content: space-between;
     min-height: 100%;
-    padding-bottom: 4rem;
+    // padding-bottom: 4rem;
   }
 
   .lighterBlueLine {
