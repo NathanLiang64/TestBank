@@ -1,8 +1,5 @@
-// import { callAPI } from 'utilities/axios';
+import { callAPI } from 'utilities/axios';
 
-import {
-  checkCardBillStatus, getBillDetail, queryCardBill,
-} from 'pages/C00700_CreditCard/api';
 import { showCustomPrompt } from 'utilities/MessageModal';
 // import mockBills from './mockData/mockBills';
 // import mockBillDetails from './mockData/mockBillDetails';
@@ -28,9 +25,9 @@ export const getBills = async (param) => {
   // const response = await new Promise((resolve) => resolve({ data: mockBills(param) }));
 
   /* 自不同API取得data */
-  const queryCardBillRt = await queryCardBill(param);
-  const checkCardBillStatusRt = await checkCardBillStatus();
-  const billDetail = await getBillDetail(param);
+  const queryCardBillRt = await callAPI('/api/card/v1/getBillSummary', param);
+  const checkCardBillStatusRt = await callAPI('/api/card/v1/getBillDeducStatus');
+  const billDetail = await callAPI('/api/card/v1/getBillDetail', param);
 
   /* 將回傳資料轉換成頁面資料結構 */
   const bills = {
@@ -62,7 +59,7 @@ export const getTransactionDetails = async (request) => {
   // const response = await callAPI('/api/', request);
   // const response = await new Promise((resolve) => resolve({ data: mockTransactions(request) }));
 
-  const queryCardBillRt = await queryCardBill(request);
+  const queryCardBillRt = await callAPI('/api/card/v1/getBillSummary', request);
 
   /* 將回傳資料轉換成頁面資料結構 */
   const transactionDetails = queryCardBillRt.data.details.map((detail) => ({
@@ -102,9 +99,7 @@ export const getBillDetails = async (request) => {
   // Assume backend store Terms as escaped HTML...
   // const response = await new Promise((resolve) => resolve({ data: mockBillDetails }));
 
-  // const billDetail = getBillDetails(request);
-  const billDetail = await getBillDetail(request);
-  // console.log('R00300 getBillDetails() data:', billDetail.data);
+  const billDetail = await callAPI('/api/card/v1/getBillDetail', request);
 
   /* 將回傳資料轉換成頁面資料結構 */
   const billDetails = {
