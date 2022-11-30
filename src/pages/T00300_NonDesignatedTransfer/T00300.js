@@ -229,32 +229,33 @@ const T00300 = () => {
   return (
     <Layout title="非約轉設定">
       <T00300Wrapper>
-        <div className="setting_switch">
-          <FEIBSwitchLabel
-            control={(
-              <FEIBSwitch
-                checked={model.status === '03'}
-                disabled={false}
-                onChange={handleSwitchOnTrigger}
-              />
+        <div className="info_container">
+          <div className="setting_switch">
+            <FEIBSwitchLabel
+              control={(
+                <FEIBSwitch
+                  checked={model.status === '03'}
+                  disabled={false}
+                  onChange={handleSwitchOnTrigger}
+                />
             )}
-            label="非約定轉帳設定"
-            $color={theme.colors.text.lightGray}
-          />
-        </div>
+              label="非約定轉帳設定"
+            />
+          </div>
 
-        {/* 已開通非約轉功能則顯示電話號碼以及編輯按鈕 */}
-        {model.status === '03' && (
-        <div className="phone_number">
-          <div className="text">
-            <p>手機號碼</p>
-            <p className="mobile_number_text">{model.mobile}</p>
+          {/* 已開通非約轉功能則顯示電話號碼以及編輯按鈕 */}
+          {model.status === '03' && (
+          <div className="phone_number">
+            <div className="text">
+              <p>手機號碼</p>
+              <p className="mobile_number_text">{model.mobile}</p>
+            </div>
+            <div className="edit" onClick={handleEditOnClick}>
+              <img src={EditIcon} alt="" />
+            </div>
           </div>
-          <div className="edit" onClick={handleEditOnClick}>
-            <img src={EditIcon} alt="" />
-          </div>
+          )}
         </div>
-        )}
 
         {/* TODO: 使用條款內容確認 */}
         <Accordion title="使用條款" space="both">

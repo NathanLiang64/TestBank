@@ -103,7 +103,7 @@ const Page = () => {
       <AccountCard type="L" key={`${uid}-c${i}`}>
         <div className="justify-between items-start">
           <div>
-            <div>{card.alias ?? '貸款'}</div>
+            <div>{card.type}</div>
             <div>{`${accountFormatter(card.accountNo)} (${card.loanNo})`}</div>
           </div>
           <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.accountNo, card.loanNo)}>
@@ -173,7 +173,10 @@ const Page = () => {
       );
     }
 
-    return card.transactions.slice(0, 3).map((t, i) => (
+    // transactions 依照日期排序（大 -> 小）
+    const sortedTransactions = card.transactions.sort((a, b) => parseInt(b.txnDate, 10) - parseInt(a.txnDate, 10));
+
+    return sortedTransactions.slice(0, 3).map((t, i) => (
       <button
         key={`${uid}-t${i}`}
         type="button"

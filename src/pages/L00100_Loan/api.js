@@ -11,7 +11,7 @@ import mockLoanRewards from './mockData/mockRewards';
  * 貸款首頁 - 取得貸款資訊和還款紀錄
    @returns [
    {
-     alias: 貸款別名
+     type: 貸款別名
      accountNo: 卡號
      loanNo: 貸款分號
      balance: 貸款餘額
@@ -63,14 +63,14 @@ export const getLoanSummary = async () => {
 
   /* 將回傳資料轉換成頁面資料結構 */
   const loanSummary = await Promise.all(resSubSummary.map(async (subSummary) => ({
-    alias: '-', // TODO: 此階段不做
+    type: '信貸', // TODO: 貸款種類主機尚未提供，先暫填『信貸』
     accountNo: subSummary.account,
     loanNo: subSummary.subNo,
-    balance: subSummary.balance,
+    balance: parseFloat(subSummary.balance),
     currency: 'NTD', // Debug: 假資料
     bonusInfo: {
       cycleTiming: subSummary.payDate,
-      interest: subSummary.payAmount,
+      interest: parseFloat(subSummary.payAmount),
       rewards: '-', // TODO: 此階段不做
       isJoinedRewardProgram: '-', // TODO: 此階段不做
       currency: 'NTD', // Debug: 假資料
@@ -78,8 +78,8 @@ export const getLoanSummary = async () => {
     transactions: await resSubPaymentSummary(subSummary.account, subSummary.subNo).then((res) => res.map((subPaymentHistory) => ({
       id: uuid(),
       txnDate: subPaymentHistory.date,
-      amount: subPaymentHistory.amount,
-      balance: subPaymentHistory.balance,
+      amount: parseFloat(subPaymentHistory.amount),
+      balance: parseFloat(subPaymentHistory.balance),
       currency: 'NTD', // Debug: 假資料
     }))),
   })));
@@ -278,10 +278,16 @@ export const getSubPayment = async (param) => {
  * loanBalance: 貸款餘額
  * periodPaid: 已繳期數
  * periodRemaining: 剩餘期數
+ * type: 貸款類別 //TODO 主機尚未提供
  * }}
  */
 export const getInfo = async (param) => {
   const response = await callAPI('/api/loan/v1/getInfo', param);
 
-  return response.data;
+  const loadDetail = {
+    type: '信貸',
+    ...response.data,
+  };
+
+  return loadDetail;
 };

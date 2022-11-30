@@ -33,7 +33,8 @@ const LoanInterestWrapper = styled(Layout)`
     .tools {
       background: ${({ theme }) => theme.colors.basic.white};
       position: sticky;
-      top: 0;
+      top: -1.6rem;
+      padding-top: 1.6rem;
       z-index: 1;
     }
 

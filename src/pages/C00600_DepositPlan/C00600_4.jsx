@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef} from 'react';
 import { useHistory, useLocation } from 'react-router';
 import uuid from 'react-uuid';
@@ -63,11 +64,11 @@ const DepositPlanDetailPage = () => {
   };
 
   const handleCreate = async () => {
-    const auth = await transactionAuth(AuthCode.C00600); // 需通過 2FA 驗證才能建立計劃。
-    if (!auth.result) {
-      await showError(auth.message);
-      return;
-    }
+    // const auth = await transactionAuth(AuthCode.C00600); // 需通過 2FA 或 網銀密碼 驗證才能建立計劃。
+    // if (!auth.result) {
+    //   await showError(auth.message);
+    //   return;
+    // }
 
     const payload = {...program};
     delete payload.extra;
@@ -75,7 +76,9 @@ const DepositPlanDetailPage = () => {
 
     const response = await createDepositPlan(payload);
     if (response?.result) {
-      // TODO: updateDepositPlan API 尚無法處理帶有 base64 的 image (會回傳錯誤訊息)，僅能先以預設圖片進行測試
+      // TODO 執行 transactionAuth, 成功後再執行 createConfirm
+      // 驗證成功之後，若 imageId=0 再上傳自訂的影像。
+
       if (payload.imageId === 0) await handleImageUpload(response.planId);
       // 設定成 成功建立模式
       setMode(2);
@@ -96,6 +99,8 @@ const DepositPlanDetailPage = () => {
 
   const handleConfirm = async () => {
     if (program.currentBalance > 0) {
+      // 如果所選的子帳戶有餘額，要提示用戶自動轉帳。
+      // TODO 要求使用者自己將餘額轉出。 onOk: () => handleCreate() 應修正！
       ConfirmToTransferSubAccountBalance({ onOk: () => handleCreate(), onCancel: () => history.goBack() });
     } else {
       handleCreate();

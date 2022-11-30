@@ -7,6 +7,7 @@ const InformationTapeWrapper = styled.div.attrs({
   box-shadow: ${({ $noShadow }) => ($noShadow ? '0' : '0 .4rem 1rem rgba(0, 0, 0, .12);')};
   border-radius: .6rem;
   display: flex;
+  display: -webkit-flex;
   justfy-content: space-between;
   align-items: center;
   margin-bottom: 1.2rem;
@@ -21,6 +22,7 @@ const InformationTapeWrapper = styled.div.attrs({
     width: 100%;
     .top, .bottom {
       display: flex;
+      display: -webkit-flex;
       justify-content: space-between;
     }
     .top {
@@ -29,6 +31,7 @@ const InformationTapeWrapper = styled.div.attrs({
       color: ${({ theme }) => theme.colors.text.dark};
       .left {
         width: 80%;
+        text-align: start;
       }
     }
     .bottom {

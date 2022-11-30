@@ -15,7 +15,7 @@ import LoanInterestWrapper from './L00300.style';
 
 const L003001 = (props) => {
   const history = useHistory();
-  const [model, setModel] = useState({});
+  const [model, setModel] = useState();
 
   useEffect(async () => {
     const startParams = await loadFuncParams();
@@ -41,12 +41,13 @@ const L003001 = (props) => {
 
   return (
     <Layout title="繳款紀錄查詢" goBackFunc={handleGoBack}>
+      {model && (
       <LoanInterestWrapper>
         <div className="cardArea">
           <DebitCard
             branch=""
             cardName={model.cardData?.alias || ''}
-            account={`${accountFormatter(model.cardData?.accountNo || '')} ${model.cardData.loanNo}`}
+            account={`${accountFormatter(model.cardData?.accountNo || '')} ${model.cardData?.loanNo || ''}`}
             balance={toCurrency(model.cardData?.balance || '')}
             dollarSign={model.cardData?.currency || ''}
             transferTitle=""
@@ -115,6 +116,7 @@ const L003001 = (props) => {
           </ul>
         </div>
       </LoanInterestWrapper>
+      )}
     </Layout>
   );
 };

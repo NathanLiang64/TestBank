@@ -45,12 +45,12 @@ const Page = () => {
   }, []);
 
   const getListing = (d) => ([
-    { title: '貸款帳號', content: accountFormatter(d.accountNo) },
+    { title: '貸款帳號', content: accountFormatter(d.actno) },
     { title: '貸款分號', content: d.loanNo },
-    { title: '貸款類別', content: d.loanType },
-    { title: '貸款期限', content: `${dateToString(d.startDate)}~${dateToString(d.endDate)}` },
-    { title: '每期還款日', content: `每月${d.cycleTiming}日` },
-    { title: '貸款金額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.loanAmount) },
+    // { title: '貸款類別', content: d.loanType },
+    { title: '貸款期限', content: `${dateToString(d.startDate)}~${dateToString(d.dueDate)}` },
+    { title: '每期還款日', content: `每月${d.dateToPay}日` },
+    { title: '貸款金額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.txAmt) },
     { title: '貸款利率', content: `${d.rate}%` },
     { title: '貸款餘額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.loanBalance) },
     { title: '已繳期數', content: `${d.periodPaid}期` },
@@ -63,7 +63,7 @@ const Page = () => {
         <PageWrapper>
           <AccountCard type="L">
             {/* TODO: 貸款別名 */}
-            <div>{details?.alias ?? '信貸'}</div>
+            <div>{details?.type}</div>
             <div>{`${param?.actno} (${param?.sqno})`}</div>
             <div className="justify-between items-center gap-4">
               <div className="text-14">貸款餘額</div>
