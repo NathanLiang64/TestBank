@@ -5,9 +5,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { setModalVisible } from 'stores/reducers/ModalReducer';
-import {
-  currencySymbolGenerator, dateToYMD,
-} from 'utilities/Generator';
+import { currencySymbolGenerator } from 'utilities/Generator';
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import ArrowNextButton from 'components/ArrowNextButton';
 import { TextInputField } from 'components/Fields';
@@ -20,7 +18,7 @@ import { EditIcon } from 'assets/images/icons';
 import { updateTxnNotes, getTransactions } from './api';
 import { validationSchema } from './validationSchema';
 import DetailCardWrapper from './CreditCardTxsList.style';
-import { creditNumberFormat, stringDateFormat } from './utils';
+import { creditNumberFormat, getTransactionPromise, stringDateFormat } from './utils';
 
 /*
 * ==================== TransactionsList 組件說明 ====================
@@ -38,7 +36,7 @@ const CreditCardTxsList = ({
 }) => {
   const [transactions, setTransactions] = useState([]);
   const dispatch = useDispatch();
-  const isBankeeCard = card.isBankeeCard === 'Y';
+
   const {
     control, handleSubmit, reset, getValues,
   } = useForm({
@@ -48,7 +46,9 @@ const CreditCardTxsList = ({
   });
 
   //  提交memoText
-  const showMemoEditDialog = ({ note, txDate, txKey }, index) => {
+  const showMemoEditDialog = ({
+    note, txDate, txKey, cardNo,
+  }, index) => {
     showCustomPrompt({
       title: '編輯備註',
       message: (
@@ -62,8 +62,8 @@ const CreditCardTxsList = ({
       okContent: '完成',
       onOk: handleSubmit(async ({ notes }) => {
         const updatedResponse = await updateTxnNotes({
-          // cardNo: '5232870002109002', // API Bug: getTransaction API 回傳資料沒有 cardNo
-          txDate,
+          cardNo,
+          txDate: stringDateFormat(txDate),
           txKey,
           note: notes[index],
         });
@@ -114,12 +114,11 @@ const CreditCardTxsList = ({
               <h4>{transaction.txName}</h4>
               <p>
                 {stringDateFormat(transaction.txDate)}
-                {!isBankeeCard
+                {!card.isBankeeCard
                   && ` | 卡-${creditNumberFormat(transaction.cardNo)}`}
               </p>
             </div>
             <div className="amount">
-              {/* 刷卡金額 */}
               <h4>{currencySymbolGenerator('NTD', transaction.amount)}</h4>
               <div className="remark">
                 <span>{transaction.note}</span>
@@ -138,24 +137,17 @@ const CreditCardTxsList = ({
     );
   };
 
-  const updateTransactions = async () => {
-    const today = new Date();
-    const dateEnd = dateToYMD();
-    // 查詢當天至60天前的資料
-    const dateBeg = dateToYMD(
-      new Date(today.setMonth(today.getMonth() - 2)),
+  // 查詢交易明細
+  useEffect(async () => {
+    const transactionsArray = await Promise.all(
+      card.cards.map(({cardNo}) => getTransactionPromise(cardNo)),
     );
-    const res = await getTransactions({
-      // cardNo: '5232870002109002', // 這個帳號有 transaction 資料
-      cardNo: card?.cardNo,
-      dateBeg,
-      dateEnd,
-    });
-    setTransactions(res);
-  };
+    const concatedTransactions = transactionsArray.reduce((acc, cur) => {
+      const newArr = acc.concat(cur);
+      return newArr;
+    }, []);
 
-  useEffect(() => {
-    updateTransactions();
+    setTransactions(concatedTransactions);
   }, []);
 
   return (

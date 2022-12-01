@@ -20,7 +20,6 @@ import PageWrapper from './R00100.style';
 const R00100 = () => {
   const dispatch = useDispatch();
   const [cardInfo, setCardInfo] = useState();
-  const isBankeeCard = cardInfo?.isBankeeCard === 'Y';
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
@@ -46,8 +45,8 @@ const R00100 = () => {
         <PageWrapper>
           <div className="bg-gray">
             <CreditCard
-              cardName={isBankeeCard ? 'Bankee信用卡' : '所有信用卡'}
-              accountNo={isBankeeCard ? cardInfo.cardNo : ''}
+              cardName={cardInfo?.isBankeeCard ? 'Bankee信用卡' : '所有信用卡'}
+              accountNo={cardInfo?.isBankeeCard ? cardInfo.cardNo : ''}
               balance={cardInfo?.usedCardLimit}
               color="green"
               annotation="已使用額度"
@@ -60,7 +59,7 @@ const R00100 = () => {
           </div>
 
           <div className="note">實際請款金額以帳單為準</div>
-          {isBankeeCard && (
+          {cardInfo?.isBankeeCard && (
             <BottomAction position={0}>
               <button type="button" onClick={() => startFunc(FuncID.R00200, {cardNo: cardInfo.cardNo})}>晚點付</button>
             </BottomAction>
