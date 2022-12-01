@@ -62,7 +62,6 @@ const Page = () => {
       <Main small>
         <PageWrapper>
           <AccountCard type="L">
-            {/* TODO: 貸款別名 */}
             <div>{details?.type}</div>
             <div>{`${param?.actno} (${param?.sqno})`}</div>
             <div className="justify-between items-center gap-4">

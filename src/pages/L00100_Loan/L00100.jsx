@@ -24,7 +24,6 @@ import { showPrompt } from 'utilities/MessageModal';
 import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
 import { getLoanSummary, getContract, getSubPaymentHistory } from './api';
-// import { getLoanSummary, getContract, getStatment } from './api';
 import PageWrapper, { ContentWrapper } from './L00100.style';
 
 const uid = uuid();

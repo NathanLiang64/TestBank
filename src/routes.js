@@ -63,7 +63,7 @@ const S00700 = lazy(() => import('pages/S00700_DebitCardActive/S00700'));
 const S007001 = lazy(() => import('pages/S00700_DebitCardActive/S00700_1'));
 const S00800 = lazy(() => import('pages/S00800_LossReissue/S00800'));
 const T00100 = lazy(() => import('pages/T00100_Profile/T00100'));
-const T00200 = lazy(() => import('pages/T00200_QuickLoginSetting'));
+const T00200 = lazy(() => import('pages/T00200_QuickLoginSetting/T00200'));
 const T00300 = lazy(() => import('pages/T00300_NonDesignatedTransfer/T00300'));
 const T00400 = lazy(() => import('pages/T00400_CardLessSetting/T00400'));
 const T004001 = lazy(() => import('pages/T00400_CardLessSetting/T00400_1'));
