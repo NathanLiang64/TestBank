@@ -67,12 +67,12 @@ const T00200 = lazy(() => import('pages/T00200_QuickLoginSetting/T00200'));
 const T00300 = lazy(() => import('pages/T00300_NonDesignatedTransfer/T00300'));
 const T00400 = lazy(() => import('pages/T00400_CardLessSetting/T00400'));
 const T004001 = lazy(() => import('pages/T00400_CardLessSetting/T00400_1'));
-const T00600 = lazy(() => import('pages/T00600_MobileTransfer'));
-const T006001 = lazy(() => import('pages/T00600_MobileTransfer/mobileTransfer_1'));
-const T006002 = lazy(() => import('pages/T00600_MobileTransfer/mobileTransfer_2'));
+const T00600 = lazy(() => import('pages/T00600_MobileTransfer/T00600'));
+const T006001 = lazy(() => import('pages/T00600_MobileTransfer/T00600_1'));
+const T006002 = lazy(() => import('pages/T00600_MobileTransfer/T00600_2'));
 const T00700 = lazy(() => import('pages/T00700_BasicInformation/T00700'));
 const T00800 = lazy(() => import('pages/T00800_ChangeUserName/T00800'));
-const T00900 = lazy(() => import('pages/T00900_PwdModify'));
+const T00900 = lazy(() => import('pages/T00900_PwdModify/T00900'));
 const S00100 = lazy(() => import('pages/S00100_Favorite/S00100'));
 
 const AccountMaintenance = lazy(() => import('pages/AccountMaintenance'));
