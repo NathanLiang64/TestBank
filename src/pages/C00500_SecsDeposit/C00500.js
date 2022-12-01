@@ -102,7 +102,6 @@ const C00500 = () => {
     setSelectedAccount(account);
   };
   useEffect(() => { handleAccountChanged(selectedAccountIdx); }, [selectedAccountIdx]);
-  useEffect(() => { setLocalData(AccountListCacheName, accounts); }, [accounts]);
 
   /**
    * 編輯帳戶名稱

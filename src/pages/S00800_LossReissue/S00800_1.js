@@ -1,13 +1,9 @@
-/* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {useForm} from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { FEIBButton, FEIBInputLabel } from 'components/elements';
 import { DropdownField, TextInputField } from 'components/Fields';
-import { closeFunc } from 'utilities/AppScriptProxy';
-import { showError } from 'utilities/MessageModal';
-import { getCountyList } from 'pages/T00700_BasicInformation/api';
 
 import { useLocationOptions } from 'hooks/useLocationOptions';
 import { LossReissueDialogWrapper } from './S00800.style';

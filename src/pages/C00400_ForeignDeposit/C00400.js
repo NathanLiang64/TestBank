@@ -46,7 +46,7 @@ const C00400 = () => {
 
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
-    loadAccountsList('F', setAccounts); // F=外幣帳戶
+    await loadAccountsList('F', setAccounts); // F=外幣帳戶
 
     const startParams = await loadFuncParams(); // Function Controller 提供的參數
     // 取得 Function Controller 提供的 keepData(model)
@@ -100,7 +100,6 @@ const C00400 = () => {
     setSelectedAccount(account);
   };
   useEffect(() => { handleAccountChanged(selectedAccountIdx); }, [selectedAccountIdx]);
-  useEffect(() => { setLocalData(AccountListCacheName, accounts); }, [accounts]);
 
   /**
    * 編輯帳戶名稱

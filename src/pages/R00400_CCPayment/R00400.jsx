@@ -7,27 +7,24 @@ import { useForm } from 'react-hook-form';
 import parse from 'html-react-parser';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { currencySymbolGenerator } from 'utilities/Generator';
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import Theme from 'themes/theme';
-import Layout from 'components/Layout/Layout';
-import Main from 'components/Layout';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { currencySymbolGenerator } from 'utilities/Generator';
+import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
+import { showCustomPrompt } from 'utilities/MessageModal';
 import Badge from 'components/Badge';
-import Accordion from 'components/Accordion';
+import Main from 'components/Layout';
 import Loading from 'components/Loading';
+import Accordion from 'components/Accordion';
+import Layout from 'components/Layout/Layout';
+import BankCodeInputNew from 'components/BankCodeInputNew';
+import { DropdownField, TextInputField } from 'components/Fields';
 import { FEIBButton, FEIBErrorMessage } from 'components/elements';
 import { RadioGroupField } from 'components/Fields/radioGroupField';
-import { DropdownField, TextInputField } from 'components/Fields';
-import BankCodeInputNew from 'components/BankCodeInputNew';
-import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
-import { showCustomPrompt, showError } from 'utilities/MessageModal';
 
 import { getAccountsList } from 'pages/T00600_MobileTransfer/api';
 import {
-  getCreditCardTerms,
-  makePayment,
-  queryCardInfo,
-  queryPayBarcode,
+  getCreditCardTerms, payCardFee, queryCardInfo, queryPayBarcode,
 } from './api';
 import PageWrapper, { PopUpWrapper } from './R00400.style';
 import { generateAmountOptions, generateAccountNoOptions } from './utils';
@@ -44,6 +41,7 @@ const Page = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const [cardInfo, setCardInfo] = useState();
+  const [cardNo, setCardNo] = useState();
   const [internalAccounts, setInternalAccounts] = useState([]);
   const [terms, setTerms] = useState();
   const {
@@ -58,11 +56,14 @@ const Page = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
+    const params = await loadFuncParams(); // Function 啟動參數
+    // TODO 後續改以 loadAccountList 取得
     const accountList = await getAccountsList('M'); // 拿取內部轉出帳號資訊
-    const cardInfoResponse = await queryCardInfo(''); // 拿取應繳金額資訊
+    const cardInfoResponse = await queryCardInfo(params.cardNo); // 拿取應繳金額資訊
     if (accountList && cardInfoResponse.data) {
       setInternalAccounts(accountList);
       setCardInfo(cardInfoResponse.data);
+      setCardNo(params.cardNo);
     } else {
       closeFunc();
     }
@@ -133,42 +134,25 @@ const Page = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log('values', data);
+    if (data.paymentMethod === PAYMENT_OPTION.INTERNAL) {
+      const payload = {
+        amount: getAmount(data),
+        account: data.accountNo,
+        cardNo,
+      };
+      const {code} = await payCardFee(payload);
+      if (code) history.push('R004001', { isSuccessful: code === '0000' });
+    }
 
-    showCustomPrompt({title: '訊息', message: '待串接信用卡繳費API'});
-    // let payload;
-    // switch (data.paymentMethod) {
-    //   case PAYMENT_OPTION.CSTORE:
-    //     payload = {
-    //       amount: getAmount(data),
-    //     };
-    //     break;
-    //   case PAYMENT_OPTION.EXTERNAL:
-    //     payload = {
-    //       amount: getAmount(data),
-    //       acctBranch: data.bankCode.bankNo,
-    //       acctId: data.extAccountNo,
-    //     };
-    //     break;
-    //   case PAYMENT_OPTION.INTERNAL:
-    //   default:
-    //     payload = {
-    //       amount: getAmount(data),
-    //       acctBranch: data.accountNo.slice(0, 3),
-    //       acctId: data.accountNo,
-    //     };
-    // }
+    if (data.paymentMethod === PAYMENT_OPTION.EXTERNAL) {
+      showCustomPrompt({message: 'TODO 他行帳戶繳費API'});
+    }
 
-    // if (data.paymentMethod === PAYMENT_OPTION.CSTORE) {
-    //   renderPaymentCode(payload.amount);
-    //   return;
-    // }
-
-    // const response = await makePayment(payload);
-    // history.push('R004001', { isSuccessful: !!response.result, autoDeduct: response.autoDeduct });
+    if (data.paymentMethod === PAYMENT_OPTION.CSTORE) {
+      renderPaymentCode(getAmount(data));
+    }
   };
 
-  console.log('internalAccounts', internalAccounts);
   return (
     <Layout title="繳款" goBackFunc={closeFunc}>
       <Main small>
@@ -195,7 +179,6 @@ const Page = () => {
               control={control}
               options={generateAmountOptions(cardInfo)}
               resetOnChange={() => reset({...watchedValues, customAmount: null})}
-
             />
 
             <div className="ml-4">

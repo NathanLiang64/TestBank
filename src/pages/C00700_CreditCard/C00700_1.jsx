@@ -32,18 +32,15 @@ const C007001 = () => {
   const [cardInfo, setCardInfo] = useState();
   const [terms, setTerms] = useState();
   const dispatch = useDispatch();
+  const cardNo = location.state?.isBankeeCard ? location.state.cards[0].cardNo : '';
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    if (!location.state) {
-      showCustomPrompt({message: '查無信用卡資訊', onOk: closeFunc, onClose: closeFunc});
-    }
+    if (!location.state) showCustomPrompt({message: '查無信用卡資訊', onOk: closeFunc, onClose: closeFunc});
 
-    const infoResponse = await queryCardInfo(location.state.isBankeeCard ? location.state.cards[0].cardNo : '');
-    if (infoResponse.data) {
-      setCardInfo(infoResponse.data);
-    }
+    const infoResponse = await queryCardInfo(cardNo);
+    if (infoResponse.data) setCardInfo(infoResponse.data);
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -62,7 +59,7 @@ const C007001 = () => {
               <div>
                 <CreditCard
                   cardName={location.state.isBankeeCard ? 'Bankee信用卡' : '所有信用卡'}
-                  accountNo={location.state.cards[0].cardNo}
+                  accountNo={cardNo}
                   color="green"
                   annotation="已使用額度"
                   balance={cardInfo?.usedCardLimit}
@@ -84,7 +81,7 @@ const C007001 = () => {
           <Accordion className="mb-4" title="注意事項" onClick={lazyLoadTerms}>
             { terms ? parse(terms) : <Loading space="both" isCentered /> }
           </Accordion>
-          <FEIBButton onClick={() => startFunc(FuncID.R00400, { accountNo: location.state.cards[0].cardNo })}>繳費</FEIBButton>
+          <FEIBButton onClick={() => startFunc(FuncID.R00400, { cardNo })}>繳費</FEIBButton>
         </InfoPageWrapper>
       </Main>
     </Layout>

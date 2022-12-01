@@ -78,9 +78,9 @@ const CreditCardPage = () => {
   // 信用卡卡面右上角的功能列表
   const functionAllList = (item) => {
     const list = [
-      { fid: FuncID.R00200, title: '晚點付', cardNo: item.isBankeeCard ? item.cards[0].cardNo : '' },
+      { fid: FuncID.R00200, title: '晚點付', cardNo: item.cards[0].cardNo },
       { fid: FuncID.R00300, title: '帳單', cardNo: item.cards[0].cardNo },
-      { fid: FuncID.R00400, title: '繳費', cardNo: item.cards[0].cardNo },
+      { fid: FuncID.R00400, title: '繳費', cardNo: item.isBankeeCard ? item.cards[0].cardNo : '' },
     ];
     if (!item.isBankeeCard) list.splice(0, 1);
 
