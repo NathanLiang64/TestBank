@@ -40,7 +40,7 @@ const C007001 = () => {
       showCustomPrompt({message: '查無信用卡資訊', onOk: closeFunc, onClose: closeFunc});
     }
 
-    const infoResponse = await queryCardInfo(location.state.isBankeeCard === 'Y' ? location.state.cards[0].cardNo : '');
+    const infoResponse = await queryCardInfo(location.state.isBankeeCard ? location.state.cards[0].cardNo : '');
     if (infoResponse.data) {
       setCardInfo(infoResponse.data);
     }
@@ -61,7 +61,7 @@ const C007001 = () => {
             <div>
               <div>
                 <CreditCard
-                  cardName={location.state.isBankeeCard === 'Y' ? 'Bankee信用卡' : '所有信用卡'}
+                  cardName={location.state.isBankeeCard ? 'Bankee信用卡' : '所有信用卡'}
                   accountNo={location.state.cards[0].cardNo}
                   color="green"
                   annotation="已使用額度"

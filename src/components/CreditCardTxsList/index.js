@@ -5,9 +5,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { setModalVisible } from 'stores/reducers/ModalReducer';
-import {
-  currencySymbolGenerator, dateToYMD,
-} from 'utilities/Generator';
+import { currencySymbolGenerator } from 'utilities/Generator';
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import ArrowNextButton from 'components/ArrowNextButton';
 import { TextInputField } from 'components/Fields';
@@ -38,7 +36,7 @@ const CreditCardTxsList = ({
 }) => {
   const [transactions, setTransactions] = useState([]);
   const dispatch = useDispatch();
-  const isBankeeCard = card.isBankeeCard === 'Y';
+
   const {
     control, handleSubmit, reset, getValues,
   } = useForm({
@@ -116,7 +114,7 @@ const CreditCardTxsList = ({
               <h4>{transaction.txName}</h4>
               <p>
                 {stringDateFormat(transaction.txDate)}
-                {!isBankeeCard
+                {!card.isBankeeCard
                   && ` | 卡-${creditNumberFormat(transaction.cardNo)}`}
               </p>
             </div>
