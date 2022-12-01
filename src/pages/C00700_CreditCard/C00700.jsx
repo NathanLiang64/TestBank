@@ -60,15 +60,10 @@ const CreditCardPage = () => {
         if (acc.length) {
           const foundIndex = acc.findIndex((item) => !item.isBankeeCard);
           if (foundIndex >= 0) acc[foundIndex].cards.push({cardNo});
+          else acc.push({ isBankeeCard: false, cards: [{cardNo}]});
         } else acc.push({ isBankeeCard: false, cards: [{cardNo}]});
       }
 
-      // if (isBankeeCard === 'Y') {
-      //   acc[0] = {...rest, isBankeeCard: true, cards: [{cardNo}]};
-      // } else if (isBankeeCard === 'N') {
-      //   if (!acc[1]) acc[1] = { isBankeeCard: false, cards: [{cardNo}]};
-      //   else acc[1].cards.push({cardNo});
-      // }
       return acc;
     }, []);
 
