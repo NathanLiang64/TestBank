@@ -51,7 +51,7 @@ const CreditCardPage = () => {
     //     rewardsAmount: number|null;
     //   }[]
 
-    const data = cardRes.data.cards.reduce((acc, cur) => {
+    const modifiedCards = cardRes.data.cards.reduce((acc, cur) => {
       const {isBankeeCard, cardNo, ...rest} = cur;
 
       if (isBankeeCard === 'Y') {
@@ -68,9 +68,10 @@ const CreditCardPage = () => {
     }, []);
 
     // 若第一個項目是 「所有信用卡」，則將順序對調
-    if (data.length === 2 && !data[0].isBankeeCard) [data[0], data[1]] = [data[1], data[0]];
-
-    setCardsInfo(data);
+    if (modifiedCards.length === 2 && !modifiedCards[0].isBankeeCard) {
+      [modifiedCards[0], modifiedCards[1]] = [modifiedCards[1], modifiedCards[0]];
+    }
+    setCardsInfo(modifiedCards);
     setUsedCardLimit(cardRes.data.usedCardLimit);
     dispatch(setWaittingVisible(false));
   }, []);
@@ -204,11 +205,13 @@ const CreditCardPage = () => {
             </div>
             )}
           </DetailDialogContentWrapper>
-          <CreditCardTxsList
-            showAll={false}
-            card={cardSet}
-            go2MoreDetails={() => startFunc('R00100', {cardSet, usedCardLimit})}
-          />
+          <div style={{minHeight: '20rem'}}>
+            <CreditCardTxsList
+              showAll={false}
+              card={cardSet}
+              go2MoreDetails={() => startFunc('R00100', {cardSet, usedCardLimit})}
+            />
+          </div>
         </div>
       ))
     );

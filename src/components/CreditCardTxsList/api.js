@@ -47,5 +47,5 @@ export const getTransactions = async (request) => {
  */
 export const updateTxnNotes = async (param) => {
   const response = await callAPI('/api/card/v1/updateTxnNotes', param);
-  return response;
+  return response.data;
 };

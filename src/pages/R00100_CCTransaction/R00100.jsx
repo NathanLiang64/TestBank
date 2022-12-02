@@ -13,6 +13,7 @@ import { closeFunc, loadFuncParams, startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
 import CreditCardTxsList from 'components/CreditCardTxsList';
 import PageWrapper from './R00100.style';
+import { getBankeeCard } from './api';
 
 /**
  * R00100 信用卡 即時消費明細
@@ -29,11 +30,15 @@ const R00100 = () => {
       const {card, usedCardLimit} = funcParams;
       setCardInfo({...card, usedCardLimit});
     } else {
-      showCustomPrompt({
-        message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
-        onOk: closeFunc,
-        onClose: closeFunc,
-      });
+      const bankeeCardInfo = await getBankeeCard();
+      if (!bankeeCardInfo.cards.length) {
+        await showCustomPrompt({
+          message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
+          onOk: closeFunc,
+          onClose: closeFunc,
+        });
+      }
+      setCardInfo(bankeeCardInfo);
     }
 
     dispatch(setWaittingVisible(false));
@@ -46,7 +51,7 @@ const R00100 = () => {
           <div className="bg-gray">
             <CreditCard
               cardName={cardInfo?.isBankeeCard ? 'Bankee信用卡' : '所有信用卡'}
-              accountNo={cardInfo?.isBankeeCard ? cardInfo.cardNo : ''}
+              accountNo={cardInfo?.isBankeeCard ? cardInfo.cards[0].cardNo : ''}
               balance={cardInfo?.usedCardLimit}
               color="green"
               annotation="已使用額度"
@@ -57,8 +62,8 @@ const R00100 = () => {
             <CreditCardTxsList showAll card={cardInfo} />
             ) }
           </div>
-
           <div className="note">實際請款金額以帳單為準</div>
+
           {cardInfo?.isBankeeCard && (
             <BottomAction position={0}>
               <button type="button" onClick={() => startFunc(FuncID.R00200, {cardNo: cardInfo.cardNo})}>晚點付</button>
