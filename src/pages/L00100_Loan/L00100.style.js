@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const PageWrapper = styled.div`
-  padding-block: 5.4rem 6rem;
+  padding-top: 5.4rem;
 
   .toolbar {
     width: fit-content;

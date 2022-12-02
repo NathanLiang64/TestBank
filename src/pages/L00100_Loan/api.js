@@ -58,12 +58,12 @@ export const getLoanSummary = async () => {
     account,
     subNo,
     startDate: await startDate({ account, subNo }),
-    endDate: await endDate({ account, subNo }), //
+    endDate: await endDate({ account, subNo }),
   });
 
   /* 將回傳資料轉換成頁面資料結構 */
   const loanSummary = await Promise.all(resSubSummary.map(async (subSummary) => ({
-    type: '信貸', // TODO: 貸款種類主機尚未提供，先暫填『信貸』
+    loanType: '信貸', // TODO: 貸款種類主機尚未提供，先暫填『信貸』
     accountNo: subSummary.account,
     loanNo: subSummary.subNo,
     balance: parseFloat(subSummary.balance),
@@ -77,6 +77,7 @@ export const getLoanSummary = async () => {
     },
     transactions: await resSubPaymentSummary(subSummary.account, subSummary.subNo).then((res) => res.map((subPaymentHistory) => ({
       id: uuid(),
+      type: subPaymentHistory.type,
       txnDate: subPaymentHistory.date,
       amount: parseFloat(subPaymentHistory.amount),
       balance: parseFloat(subPaymentHistory.balance),
@@ -271,7 +272,8 @@ export const getSubPayment = async (param) => {
  * subNo: 分號
  * }} param
  * @returns {{
- * dueDate: 貸款期限
+ * begDate: 貸款起日
+ * endDate: 貸款迄日
  * dateToPay: 每期還款(日期)
  * txAmt: 初貸金額
  * rate: 貸款利率

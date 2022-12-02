@@ -33,8 +33,7 @@ const ThreeColumnInfoPanelWrapper = styled.div`
     color: ${({ theme }) => theme.colors.primary.light};
   }
   .smallValue {
-    white-space: nowrap;
-    font-size: 1.4rem;
+    font-size: 1.7rem;
     color: ${({ theme }) => theme.colors.primary.light};
   }
 

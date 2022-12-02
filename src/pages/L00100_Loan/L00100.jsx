@@ -25,6 +25,7 @@ import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
 import { getLoanSummary, getContract, getSubPaymentHistory } from './api';
 import PageWrapper, { ContentWrapper } from './L00100.style';
+import { PaymentType } from './paymentType';
 
 const uid = uuid();
 
@@ -102,7 +103,7 @@ const Page = () => {
       <AccountCard type="L" key={`${uid}-c${i}`}>
         <div className="justify-between items-start">
           <div>
-            <div>{card.type}</div>
+            <div>{card.loanType}</div>
             <div>{`${accountFormatter(card.accountNo)} (${card.loanNo})`}</div>
           </div>
           <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.accountNo, card.loanNo)}>
@@ -184,7 +185,7 @@ const Page = () => {
         style={{ width: '100%' }}
       >
         <InformationTape
-          topLeft="還款金額"
+          topLeft={PaymentType[t.type]}
           bottomLeft={dateToString(t.txnDate)}
           topRight={currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}
           bottomRight={`貸款餘額 ${currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}`}
