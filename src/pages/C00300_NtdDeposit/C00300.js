@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable no-use-before-define */
@@ -117,7 +118,6 @@ const C00300 = () => {
     setSelectedAccount(account);
   };
   useEffect(() => { handleAccountChanged(selectedAccountIdx); }, [selectedAccountIdx]);
-  useEffect(() => { setLocalData(AccountListCacheName, accounts); }, [accounts]);
 
   /**
    * 顯示 優存(利率/利息)資訊

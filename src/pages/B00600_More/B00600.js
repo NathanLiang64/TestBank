@@ -1,10 +1,9 @@
-/* eslint-disable no-unused-vars */
-import {
-  useState, useEffect, useRef, useMemo,
-} from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 /* Elements */
+import { startFunc } from 'utilities/AppScriptProxy';
+import EmptyData from 'components/EmptyData';
 import Layout from 'components/Layout/Layout';
 import FavoriteBlockButton from 'components/FavoriteBlockButton';
 import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
@@ -12,10 +11,9 @@ import { iconGenerator } from 'pages/S00100_Favorite/favoriteGenerator';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { startFunc } from 'utilities/AppScriptProxy';
-import EmptyData from 'components/EmptyData';
 import { getMoreList } from './api';
 import MoreWrapper from './B00600.style';
+// import B00600AplFxProxy from './B00600_AplFxProxy';
 
 /**
  * B00600 更多單元功能
@@ -41,9 +39,8 @@ const More = () => {
     if (!funcItemsData) {
       groups = await getMoreList();
       sessionStorage.setItem('funcItems', JSON.stringify(groups || []));
-    } else {
-      groups = JSON.parse(funcItemsData);
-    }
+    } else groups = JSON.parse(funcItemsData);
+
     setFuncGroups(groups || []);
     setCurrentGroup((groups && groups.length) ? groups[0].groupKey : '');
     dispatch(setWaittingVisible(false));
