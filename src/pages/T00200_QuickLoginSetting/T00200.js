@@ -23,6 +23,7 @@ import {
 } from 'utilities/MessageModal';
 import { setDrawerVisible } from 'stores/reducers/ModalReducer';
 import { AuthCode } from 'utilities/TxnAuthCode';
+import store from 'stores/store';
 import { getQuickLoginInfo } from './api';
 import DrawerContent from './drawerContent';
 
@@ -202,6 +203,7 @@ const QuickLoginSetting = () => {
           <DrawerContent
             midPhone={midPhone}
             confirmClick={() => callAppBindRegQL(type, rs?.netbankPwd)}
+            cancelClick={() => store.dispatch(setDrawerVisible(false))}
           />,
         );
       }
