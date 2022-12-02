@@ -31,26 +31,26 @@ const Page = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    let actno;
-    let sqno;
-    if (location.state && ('actno' in location.state) && ('sqno' in location.state)) {
-      actno = location.state.actno;
-      sqno = location.state.sqno;
-      setParam({actno, sqno});
+    let account;
+    let subNo;
+    if (location.state && ('account' in location.state) && ('subNo' in location.state)) {
+      account = location.state.account;
+      subNo = location.state.subNo;
+      setParam({account, subNo});
     }
-    const response = await getInfo({actno, sqno});
+    const response = await getInfo({account, subNo});
     // const response = await getLoanDetails({ accountNo: actno });
     setDetails(response);
     dispatch(setWaittingVisible(false));
   }, []);
 
   const getListing = (d) => ([
-    { title: '貸款帳號', content: accountFormatter(d.actno) },
-    { title: '貸款分號', content: d.loanNo },
+    { title: '貸款帳號', content: accountFormatter(param.account) },
+    { title: '貸款分號', content: param.subNo },
     // { title: '貸款類別', content: d.loanType },
-    { title: '貸款期限', content: `${dateToString(d.startDate)}~${dateToString(d.dueDate)}` },
+    { title: '貸款期限', content: `${dateToString(d.dueDate)}` },
     { title: '每期還款日', content: `每月${d.dateToPay}日` },
-    { title: '貸款金額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.txAmt) },
+    { title: '初貸金額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.txAmt) },
     { title: '貸款利率', content: `${d.rate}%` },
     { title: '貸款餘額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.loanBalance) },
     { title: '已繳期數', content: `${d.periodPaid}期` },
@@ -62,9 +62,8 @@ const Page = () => {
       <Main small>
         <PageWrapper>
           <AccountCard type="L">
-            {/* TODO: 貸款別名 */}
             <div>{details?.type}</div>
-            <div>{`${param?.actno} (${param?.sqno})`}</div>
+            <div>{`${param?.account} (${param?.subNo})`}</div>
             <div className="justify-between items-center gap-4">
               <div className="text-14">貸款餘額</div>
               <div className="balance">

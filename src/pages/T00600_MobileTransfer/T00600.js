@@ -7,14 +7,15 @@ import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 import AddNewItem from 'components/AddNewItem';
 import SettingItem from 'components/SettingItem';
 import Layout from 'components/Layout/Layout';
-import MobileTransferModifyForm from './mobileTransferModifyForm';
+import { FuncID } from 'utilities/FuncID';
+import T00600ModifyForm from './T00600_ModifyForm';
 
 import { fetchMobiles, fetchName } from './api';
 
 /* Styles */
-import MobileTransferWrapper from './mobileTransfer.style';
+import MobileTransferWrapper from './T00600.style';
 
-const MobileTransfer = () => {
+const T00600 = () => {
   const history = useHistory();
 
   const [mobileTransferData, setMobileTransferData] = useState([]);
@@ -35,7 +36,7 @@ const MobileTransfer = () => {
       );
       return;
     }
-    history.push('/mobileTransfer1', { otpMobileNum });
+    history.push('/T006001', { otpMobileNum });
   };
 
   // 檢查是否設定快速登入、基本資料是否有手機號碼
@@ -51,7 +52,7 @@ const MobileTransfer = () => {
       customPopup(
         '系統訊息',
         '為符合手機號碼轉帳相關規範，請至設定>指紋辨識/臉部辨識/圖形密碼登入設定，進行快速登入綁定，造成不便，敬請見諒。',
-        () => startFunc('T00200'),
+        () => startFunc(FuncID.T00200),
         closeFunc,
       );
       return;
@@ -61,7 +62,7 @@ const MobileTransfer = () => {
       customPopup(
         '系統訊息',
         '您尚未於本行留存手機號碼，請先前往「基本資料變更」頁留存，再進設定。',
-        () => startFunc('T00700'),
+        () => startFunc(FuncID.T00700),
         closeFunc,
         '前往留存',
       );
@@ -71,7 +72,7 @@ const MobileTransfer = () => {
       customPopup(
         '系統訊息',
         '您尚未設定「手機號碼收款」功能，是否立即進行設定？',
-        () => history.push('/mobileTransfer1', { otpMobileNum: otpMobile }),
+        () => history.push('/T006001', { otpMobileNum: otpMobile }),
         closeFunc,
       );
     }
@@ -81,7 +82,7 @@ const MobileTransfer = () => {
   const deleteMobileTransferSetting = async (data) => {
     const { custName } = await fetchName();
     history.push(
-      '/mobileTransfer2',
+      '/T006002',
       {
         type: 'delete',
         isModify: true,
@@ -103,7 +104,7 @@ const MobileTransfer = () => {
     setModifyData(data);
     showDrawer(
       '手機號碼收款變更',
-      <MobileTransferModifyForm modifyData={modifyData} onClose={handleCloseDrawer} />,
+      <T00600ModifyForm modifyData={modifyData} onClose={handleCloseDrawer} />,
     );
   };
 
@@ -133,4 +134,4 @@ const MobileTransfer = () => {
   );
 };
 
-export default MobileTransfer;
+export default T00600;

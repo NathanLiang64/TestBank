@@ -24,7 +24,6 @@ import { showPrompt } from 'utilities/MessageModal';
 import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
 import { getLoanSummary, getContract, getSubPaymentHistory } from './api';
-// import { getLoanSummary, getContract, getStatment } from './api';
 import PageWrapper, { ContentWrapper } from './L00100.style';
 
 const uid = uuid();
@@ -59,7 +58,7 @@ const Page = () => {
    */
   const handleMoreClick = (accountNo, loanNo) => {
     const list = [
-      { icon: <CircleIcon />, title: '貸款資訊', onClick: () => { history.push('/L001002', { actno: accountNo, sqno: loanNo }); } },
+      { icon: <CircleIcon />, title: '貸款資訊', onClick: () => { history.push('/L001002', { account: accountNo, subNo: loanNo }); } },
       /*
       { icon: <CircleIcon />, title: '部分貸款', onClick: () => {} },
       { icon: <CircleIcon />, title: '全部貸款', onClick: () => {} },

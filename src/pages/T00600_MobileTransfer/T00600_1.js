@@ -21,9 +21,9 @@ import DealContent from './dealContent';
 import { fetchName, getAccountsList, fetchMobiles } from './api';
 
 /* Styles */
-import MobileTransferWrapper from './mobileTransfer.style';
+import MobileTransferWrapper from './T00600.style';
 
-const MobileTransfer1 = ({ location }) => {
+const T006001 = ({ location }) => {
   const history = useHistory();
   /**
    *- 資料驗證
@@ -85,7 +85,7 @@ const MobileTransfer1 = ({ location }) => {
     };
     console.log(data);
     history.push(
-      '/mobileTransfer2',
+      '/T006002',
       {
         type: 'add',
         isModify: false,
@@ -211,4 +211,4 @@ const MobileTransfer1 = ({ location }) => {
   );
 };
 
-export default MobileTransfer1;
+export default T006001;

@@ -10,11 +10,11 @@ import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
 
 /* Styles */
-import MobileTransferWrapper from './mobileTransfer.style';
+import MobileTransferWrapper from './T00600.style';
 
 import { createMobileNo, editMobileNo, unbindMobileNo } from './api';
 
-const MobileTransfer2 = ({ location }) => {
+const T006002 = ({ location }) => {
   const history = useHistory();
   const [dealCode, setDealCode] = useState('');
   const [dealType, setDealType] = useState('');
@@ -161,4 +161,4 @@ const MobileTransfer2 = ({ location }) => {
   );
 };
 
-export default MobileTransfer2;
+export default T006002;

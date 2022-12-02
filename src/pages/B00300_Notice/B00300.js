@@ -26,7 +26,7 @@ import {
 } from './api';
 
 /* Styles */
-import NoticeWrapper from './notice.style';
+import NoticeWrapper from './B00300.style';
 
 const Notice = () => {
   const [tabValue, setTabValue] = useState('A');
