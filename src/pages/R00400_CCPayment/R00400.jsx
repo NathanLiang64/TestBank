@@ -10,7 +10,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Theme from 'themes/theme';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { currencySymbolGenerator } from 'utilities/Generator';
-import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
+import { closeFunc, loadFuncParams, transactionAuth } from 'utilities/AppScriptProxy';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import Badge from 'components/Badge';
 import Main from 'components/Layout';
@@ -23,6 +23,7 @@ import { FEIBButton, FEIBErrorMessage } from 'components/elements';
 import { RadioGroupField } from 'components/Fields/radioGroupField';
 
 import { getAccountsList } from 'pages/T00600_MobileTransfer/api';
+import { AuthCode } from 'utilities/TxnAuthCode';
 import {
   getCreditCardTerms, payCardFee, queryCardInfo, queryPayBarcode,
 } from './api';
@@ -52,7 +53,7 @@ const Page = () => {
   });
 
   const watchedValues = watch();
-
+  // console.log(watchedValues);
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
@@ -60,19 +61,17 @@ const Page = () => {
     // TODO 後續改以 loadAccountList 取得
     const accountList = await getAccountsList('M'); // 拿取內部轉出帳號資訊
     const cardInfoResponse = await queryCardInfo(params.cardNo); // 拿取應繳金額資訊
-    if (accountList && cardInfoResponse.data) {
+    const termsResponse = await getCreditCardTerms();
+    if (accountList && cardInfoResponse) {
       setInternalAccounts(accountList);
-      setCardInfo(cardInfoResponse.data);
+      setCardInfo(cardInfoResponse);
       setCardNo(params.cardNo);
+      setTerms(termsResponse);
     } else {
       closeFunc();
     }
     dispatch(setWaittingVisible(false));
   }, []);
-
-  const lazyLoadTerms = async () => {
-    if (!terms) setTerms(await getCreditCardTerms());
-  };
 
   // 包在 Modal 裡的元件無法取得 terms 必數（不同scope），所以 arrow function call:
   const getTermsFromOutsideModal = () => (terms ? parse(terms) : <Loading space="both" isCentered />);
@@ -84,8 +83,8 @@ const Page = () => {
   };
 
   const renderPaymentCode = async (amount) => {
-    const response = await queryPayBarcode(amount);
-    if (response.data) {
+    const payBarCodeRes = await queryPayBarcode(amount);
+    if (payBarCodeRes) {
       await showCustomPrompt({
         title: '超商條碼繳款',
         message: (
@@ -99,16 +98,16 @@ const Page = () => {
               萊爾富和OK MART）
             </p>
 
-            {Object.keys(response.data).map((key, index) => (
+            {Object.keys(payBarCodeRes).map((key) => (
               <Barcode
-                key={response.data[key]}
-                value={response.data[key]}
+                key={payBarCodeRes[key]}
+                value={payBarCodeRes[key]}
                 width={1.5}
                 height={48}
               />
             ))}
 
-            <Accordion title="注意事項" onClick={lazyLoadTerms}>
+            <Accordion title="注意事項">
               { getTermsFromOutsideModal() }
             </Accordion>
           </PopUpWrapper>
@@ -118,13 +117,10 @@ const Page = () => {
     }
   };
 
-  const getAmount = (data) => {
-    const {
-      amountOption, customAmount,
-    } = data;
-    switch (amountOption) {
+  const getAmount = ({ amountOptions, customAmount }) => {
+    switch (amountOptions) {
       case AMOUNT_OPTION.CUSTOM:
-        return +customAmount;
+        return customAmount;
       case AMOUNT_OPTION.MIN:
         return cardInfo.minDueAmount;
       case AMOUNT_OPTION.ALL:
@@ -140,8 +136,11 @@ const Page = () => {
         account: data.accountNo,
         cardNo,
       };
-      const {code} = await payCardFee(payload);
-      if (code) history.push('R004001', { isSuccessful: code === '0000' });
+      const {result} = await transactionAuth(AuthCode.R00400);
+      if (result) {
+        const payResult = await payCardFee(payload);
+        if (payResult) history.push('R004001', { payResult, account: data.accountNo });
+      }
     }
 
     if (data.paymentMethod === PAYMENT_OPTION.EXTERNAL) {
@@ -223,8 +222,8 @@ const Page = () => {
             )}
 
             { watchedValues.paymentMethod !== PAYMENT_OPTION.INTERNAL && (
-              <Accordion title="注意事項" onClick={lazyLoadTerms}>
-                { terms ? parse(terms) : <Loading space="both" isCentered /> }
+              <Accordion title="注意事項">
+                {getTermsFromOutsideModal()}
               </Accordion>
             )}
 
