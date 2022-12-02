@@ -58,7 +58,7 @@ const Page = () => {
    */
   const handleMoreClick = (accountNo, loanNo) => {
     const list = [
-      { icon: <CircleIcon />, title: '貸款資訊', onClick: () => { history.push('/L001002', { actno: accountNo, sqno: loanNo }); } },
+      { icon: <CircleIcon />, title: '貸款資訊', onClick: () => { history.push('/L001002', { account: accountNo, subNo: loanNo }); } },
       /*
       { icon: <CircleIcon />, title: '部分貸款', onClick: () => {} },
       { icon: <CircleIcon />, title: '全部貸款', onClick: () => {} },

@@ -267,8 +267,8 @@ export const getSubPayment = async (param) => {
 /**
  * 貸款資訊查詢
  * @param {{
- * actno: 放款帳號
- * sqno: 分號
+ * account: 放款帳號
+ * subNo: 分號
  * }} param
  * @returns {{
  * dueDate: 貸款期限
