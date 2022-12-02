@@ -84,10 +84,10 @@ const T00300 = () => {
   const handleDrawerConfirm = async (data) => {
     if (!data.isEdit) {
       /* 開通流程：雙因子驗證? && 申請＋開通流程：雙因子驗證 */
-      const result = await transactionAuth(AuthCode.T00300.APPLY, model.mobile);
-      if (!result) {
+      const transRes = await transactionAuth(AuthCode.T00300.APPLY, model.mobile);
+      if (transRes.result !== true) {
         /* 失敗頁面 */
-        onFailure('5', result.message);
+        onFailure('5', transRes.message);
       } else {
         /* 驗證成功：更新資料至api */
         await queryOTP();
@@ -104,12 +104,12 @@ const T00300 = () => {
       }
     } else {
       /* 修改流程：雙因子＋OTP 驗證 */
-      const result = await transactionAuth(AuthCode.T00300.EDIT, data.data.mobileNumber);
-      console.log('transactionAuth res: ', result);
+      const transRes = await transactionAuth(AuthCode.T00300.EDIT, data.data.mobileNumber);
+      console.log('transactionAuth res: ', transRes);
 
-      if (!result) {
+      if (transRes.result !== true) {
         /* 失敗頁面 */
-        onFailure('5', result.message);
+        onFailure('5', transRes.message);
       } else {
         /* 驗證成功：更新資料至api */
         await queryOTP();
@@ -121,7 +121,7 @@ const T00300 = () => {
           return;
         }
         /* 失敗頁面 */
-        onFailure('5', result.message);
+        onFailure('5', transRes.message);
       }
     }
   };
