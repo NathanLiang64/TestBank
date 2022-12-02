@@ -1,16 +1,19 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
-import { transactionAuth } from 'utilities/AppScriptProxy';
+import { startFunc, transactionAuth } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import { FEIBSwitch, FEIBSwitchLabel } from 'components/elements';
 import Accordion from 'components/Accordion';
 import EditIcon from 'assets/images/icons/editIcon.svg';
-import { closeDrawer, showAnimationModal, showDrawer } from 'utilities/MessageModal';
+import {
+  closeDrawer, showAnimationModal, showCustomPrompt, showDrawer,
+} from 'utilities/MessageModal';
 import { useHistory } from 'react-router';
 import theme from 'themes/theme';
 import { AuthCode } from 'utilities/TxnAuthCode';
+import { FuncID } from 'utilities/FuncID';
 import {
   checkDeviceBindingStatus, getNonDesignatedTransferData, queryOTP, updateOTP,
 } from './api';
@@ -58,11 +61,12 @@ const T00300 = () => {
    * @param {errMsg} errMsg string?
    */
   const onFailure = (code, errMsg) => {
-    showAnimationModal({
-      isSuccess: false,
-      errorTitle: '設定失敗',
-      errorDesc: failureMessage(code, errMsg),
-      onClose: history.replace('/T00300'),
+    showCustomPrompt({
+      title: '設定失敗',
+      message: failureMessage(code, errMsg),
+      onCancel: () => history.replace('/T00300'),
+      onClose: () => history.replace('/T00300'),
+      onOk: code === '1_0' ? () => startFunc(FuncID.T00200) : () => history.replace('/T00300'),
     });
   };
 

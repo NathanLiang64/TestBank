@@ -9,7 +9,7 @@ const T00300Wrapper = styled(Layout)`
     padding: 1rem 0rem;
   }
   .setting_switch {
-    height: 10rem;
+    height: 6rem;
     display: flex;
     background-color: ${({theme}) => theme.colors.basic.white};
     padding-left: 2rem;
@@ -19,6 +19,7 @@ const T00300Wrapper = styled(Layout)`
     height: 12rem;
     width: 100%;
     padding: 2rem;
+    margin-top: 2rem;
     background-color: ${({theme}) => theme.colors.background.lighterBlue};
     border-radius: .8rem;
     display: flex;
