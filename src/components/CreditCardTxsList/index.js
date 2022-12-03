@@ -17,7 +17,7 @@ import { FEIBIconButton } from 'components/elements';
 import { EditIcon } from 'assets/images/icons';
 import { updateTxnNotes, getTransactions } from './api';
 import { validationSchema } from './validationSchema';
-import DetailCardWrapper from './creditCardTxsList.style';
+import DetailCardWrapper from './CreditCardTxsList.style';
 import { creditNumberFormat, getTransactionPromise, stringDateFormat } from './utils';
 import { MemoEditForm } from './memoEditForm';
 

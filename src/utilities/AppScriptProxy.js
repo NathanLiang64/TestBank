@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-bitwise */
 /* eslint-disable object-curly-newline */
 /* eslint-disable no-use-before-define */
@@ -12,6 +13,24 @@ const device = {
   ios: () => !(sessionStorage.getItem('webMode') === 'true') && /iPhone|iPad|iPod/i.test(navigator.userAgent),
   android: () => !(sessionStorage.getItem('webMode') === 'true') && /Android/i.test(navigator.userAgent),
 };
+
+/**
+ * 取得目前運行的作業系統代碼。
+ * @returns {Number} 1.iOS, 2.Android, 3.其他
+ */
+function getOsType() {
+  if (device.ios) return 1;
+  if (device.android) return 2;
+  return 3;
+}
+
+/**
+ * 取得系統執行的硬體設備名稱。
+ * @returns "MacIntel", "Win32", "Linux x86_64", "Linux x86_64"...
+ */
+function getPlatform() {
+  return navigator.platform;
+}
 
 /**
  * 執行 APP 提供的 JavaScript（ jstoapp ）
@@ -189,6 +208,12 @@ async function closeFunc(response) {
       // 表示返回由 WebView 啟動的單元功能或頁面，例：從「更多」啟動了某項單元功能，當此單元功能關閉時，就會進到這裡。
       window.location.pathname = `${rootPath}${startItem.funcID}`; // keepData 存入 localStorage 'funcParams'
     } else {
+      // 若是在登入前，無前一頁可以返回時，則一律回到 Login 頁。
+      if (sessionStorage.getItem('isLogin') !== '1') {
+        window.location.pathname = `${rootPath}login`;
+        return;
+      }
+
       // 雖然 Web端的 funcStack 已經空了，但有可能要返回的功能是由 APP 啟動的；所以，要先詢問 APP 是否有正在執行中的單元功能。
       const appJsRs = await callAppJavaScript('getActiveFuncID', null, true); // 取得 APP 目前的 FuncID
       if (appJsRs) {
@@ -381,7 +406,6 @@ async function getJwtToken(force) {
  * }>}
  */
 async function transactionAuth(authCode, otpMobile) {
-  // eslint-disable-next-line no-unused-vars
   const data = {
     authCode,
     otpMobile,
@@ -585,6 +609,8 @@ async function updatePushBind() {
 }
 
 export {
+  getOsType,
+  getPlatform,
   goHome,
   startFunc,
   closeFunc,
