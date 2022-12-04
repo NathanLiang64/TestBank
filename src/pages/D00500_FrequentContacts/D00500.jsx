@@ -75,10 +75,11 @@ const Page = () => {
    */
   const addnewAccount = async () => {
     const onFinished = async (newAcct) => {
-      const successful = await addFrequentAccount(newAcct);
-      if (successful) {
+      const headshotId = await addFrequentAccount(newAcct);
+      if (headshotId) {
         const setData = await setLocalData(storageName, [{
           ...newAcct,
+          headshot: headshotId,
           isNew: true,
         }, ...accounts]);
         setAccounts(setData);

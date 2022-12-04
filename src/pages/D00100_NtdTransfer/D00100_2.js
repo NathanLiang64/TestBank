@@ -120,14 +120,20 @@ const TransferResult = (props) => {
    */
   const createRepeatableAccount = async () => {
     const onFinished = async (newAcct) => {
-      const successful = await addFrequentAccount(newAcct);
-      if (successful) {
+      const headshotId = await addFrequentAccount(newAcct);
+      if (headshotId) {
         const message = '這個帳號已加入您的常用帳號名單中嚕！';
         await showInfo(message, () => dispatch(setDrawerVisible(false)));
       }
     };
 
-    await showDrawer('新增常用帳號', (<AccountEditor onFinished={onFinished} />));
+    // 給 AccountEditor 預設值，且直接進到設定暱稱。
+    const acctData = {
+      bankId: model.transIn.bank, // '常用轉入帳戶-銀行代碼',
+      acctId: model.transIn.account, // '常用轉入帳戶-帳號',
+    };
+
+    await showDrawer('新增常用帳號', (<AccountEditor initData={acctData} onFinished={onFinished} />));
   };
 
   /**
