@@ -1,3 +1,4 @@
+import { getCallerFunc } from 'utilities/AppScriptProxy';
 import { callAPI } from 'utilities/axios';
 import { dateToString } from 'utilities/Generator';
 
@@ -42,20 +43,23 @@ export const getAccountExtraInfo = async (accountNo) => {
  * @returns {*}
  */
 export const createNtdTransfer = async (request) => {
-  const response = await callAPI('/api/transfer/ntd/v1/create', request);
+  const response = await callAPI('/api/transfer/ntd/v1/create', {
+    ...request,
+    callerFunc: getCallerFunc(), // 啟用轉帳功能的 FuncCode, 例: 從台幣首頁叫轉帳時，應傳入C00300
+  });
   return response.data;
 };
 
 /**
  * 執行轉帳交易。
- * @returns {{
+ * @returns {Promise<{
       isSuccess,
       balance: 轉出後餘額,
       fee: 手續費,
       errorCode,
       message,
       // TODO payDate, SERVER交易序號, 交易識別碼
- * }} 轉帳結果。
+   }>} 轉帳結果。
  */
 export const executeNtdTransfer = async () => {
   const response = await callAPI('/api/transfer/ntd/v1/execute');

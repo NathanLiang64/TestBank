@@ -128,6 +128,16 @@ const funcStack = {
 };
 
 /**
+ * 取得啟動目前單元功能的功能代碼。
+ */
+function getCallerFunc() {
+  const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
+  if (stack.length <= 1) return null;
+
+  return stack[stack.length - 2].funcID;
+}
+
+/**
  * 網頁通知APP跳轉至首頁
  */
 async function goHome() {
@@ -212,7 +222,7 @@ async function closeFunc(response) {
 async function loadFuncParams() {
   try {
     const funcItem = funcStack.peek(); // 因為功能已經啟動，所以用 peek 取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
-    const isFunction = !funcItem || (/^[A-Z]\d{5}$/.test(funcItem.funcID)); // 表示 funcID 是由 Function Controller 控制的單元功能。
+    const isFunction = !funcItem || (/^[A-Z]\d{5}$/.test(funcItem.funcID)); // 表示 funcID 不是一般頁面，而是由 Function Controller 控制的單元功能。
 
     const webGetFuncParams = () => {
       const params = localStorage.getItem('funcParams');
@@ -585,6 +595,7 @@ async function updatePushBind() {
 }
 
 export {
+  getCallerFunc,
   goHome,
   startFunc,
   closeFunc,
