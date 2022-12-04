@@ -10,10 +10,10 @@ import {
 import Badge from 'components/Badge';
 import Avatar from 'components/Avatar';
 import BankCodeInput from 'components/BankCodeInput';
+import { getBankCode } from 'utilities/CacheData';
 import { accountFormatter } from 'utilities/Generator';
 
 import { ArrowBackIcon, EditIcon } from 'assets/images/icons';
-import { getBankCode } from './api';
 import { DrawerWrapper } from './D00500.style';
 
 /**

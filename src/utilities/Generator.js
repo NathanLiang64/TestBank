@@ -1,6 +1,5 @@
 /* eslint-disable object-curly-newline */
 /* eslint-disable import/prefer-default-export */
-import { callAPI } from 'utilities/axios';
 
 /* ========= 通用函式 ========= */
 
@@ -330,51 +329,6 @@ export const hideName = (name) => {
   return firstCharacter + others.join('') + lastCharacter;
 };
 
-/**
- * 更新本地 SessionStoreage 中的資料。
- * @param {*} storeName 存在 SessionStoreage 時使用的名稱。
- * @param {*} newData 要存入的新資料；若為 null 將在 SessionStoreage 中清除此項目。
- * @returns
- */
-export const setLocalData = async (storeName, newData) => {
-  if (newData) {
-    sessionStorage.setItem(storeName, JSON.stringify(newData));
-  } else {
-    sessionStorage.removeItem(storeName);
-  }
-  return newData;
-};
-
-/**
- * 載入本地 SessionStoreage 中的資料。
- * @param {*} storeName 存在 SessionStoreage 時使用的名稱。
- * @param {*} loadDataFunc 當 SessionStoreage 沒有資料時，可以透過這個方法取得 預設值。
- * @returns {Promise<*>} 存在 SessionStoreage 中的資料。
- */
-export const loadLocalData = async (storeName, loadDataFunc) => {
-  let data = sessionStorage.getItem(storeName);
-  try {
-    data = JSON.parse(data);
-  } catch (ex) {
-    sessionStorage.removeItem(storeName);
-    data = null;
-  }
-
-  if (!data && loadDataFunc) {
-    const result = loadDataFunc();
-    if (result instanceof Promise) {
-      await result.then((response) => {
-        setLocalData(storeName, response); // 暫存入以減少API叫用
-        data = response;
-      });
-    } else {
-      data = result;
-    }
-  }
-
-  return data;
-};
-
 // 將全形文字轉為半形
 export const toHalfWidth = (str) => str?.replace(
   /[\uff01-\uff5e]/g,
@@ -410,19 +364,4 @@ export const switchZhNumber = (numIndication, isPlus) => {
     default:
       return '0';
   }
-};
-
-/**
- * 查詢銀行代碼
- * @returns {Promise<[{
- *  bankNo: 銀行代碼,
- *  bankName: 銀行名稱
- * }]>} 銀行代碼清單。
- */
-export const getBankCode = async () => {
-  const banks = await loadLocalData('BankList', async () => {
-    const response = await callAPI('/api/transfer/queryBank');
-    return response.data;
-  });
-  return banks;
 };

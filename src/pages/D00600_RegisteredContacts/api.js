@@ -1,5 +1,5 @@
 import { callAPI } from 'utilities/axios';
-import { getBankCode } from 'utilities/Generator';
+import { getBankCode } from 'utilities/CacheData';
 
 /**
  * 查詢指定轉出帳號約定轉入帳號清單。

@@ -17,8 +17,7 @@ import { FEIBInputLabel, FEIBInput } from 'components/elements';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
-import { setLocalData } from 'utilities/Generator';
-import { AccountListCacheName, getAccountExtraInfo, loadAccountsList } from 'pages/D00100_NtdTransfer/api';
+import { getAccountsList } from 'utilities/CacheData';
 import { FuncID } from 'utilities/FuncID';
 import {
   getTransactions,
@@ -47,7 +46,7 @@ const C00500 = () => {
 
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
-    await loadAccountsList('S', setAccounts); // S=台幣交割帳戶
+    await getAccountsList('S', setAccounts); // S=台幣交割帳戶
     const startParams = await loadFuncParams(); // Function Controller 提供的參數
     // 取得 Function Controller 提供的 keepData(model)
 
@@ -102,7 +101,6 @@ const C00500 = () => {
     setSelectedAccount(account);
   };
   useEffect(() => { handleAccountChanged(selectedAccountIdx); }, [selectedAccountIdx]);
-  useEffect(() => { setLocalData(AccountListCacheName, accounts); }, [accounts]);
 
   /**
    * 編輯帳戶名稱

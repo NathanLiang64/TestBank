@@ -25,9 +25,10 @@ import MemberAccountCard from 'components/MemberAccountCard';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showError, showInfo, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
-import { numberToChinese, setLocalData } from 'utilities/Generator';
+import { numberToChinese } from 'utilities/Generator';
+import { getAccountsList } from 'utilities/CacheData';
 import { ChangeMemberIcon } from 'assets/images/icons';
-import { loadAccountsList, AccountListCacheName, getAccountExtraInfo } from './api';
+import { getAccountExtraInfo } from './api';
 import TransferWrapper from './D00100.style';
 import D00100AccordionContent from './D00100_AccordionContent';
 
@@ -152,7 +153,7 @@ const Transfer = (props) => {
 
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
-    loadAccountsList('MSC', (accts) => {
+    getAccountsList('MSC', (accts) => {
       setAccounts(accts.filter((acct) => acct.transable)); // 排除 transable = false 的帳戶。
     });
 
@@ -465,7 +466,6 @@ const Transfer = (props) => {
         ...account,
         ...info,
       };
-      setLocalData(AccountListCacheName, accounts);
     }
 
     setValue(idTransOut, {

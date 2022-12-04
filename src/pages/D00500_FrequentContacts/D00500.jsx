@@ -7,7 +7,7 @@ import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
 import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, closeFunc } from 'utilities/AppScriptProxy';
-import { loadLocalData, setLocalData } from 'utilities/Generator';
+import { loadLocalData, setLocalData } from 'utilities/CacheData';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import {
