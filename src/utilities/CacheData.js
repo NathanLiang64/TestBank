@@ -152,3 +152,8 @@ export const getAccountsList = async (acctTypes, onDataLoaded) => {
     onDataLoaded(accounts);
   });
 };
+
+/**
+ * 清除帳號基本資料快取，直到下次使用 getAccountsList 時再重新載入。
+ */
+export const resetAccountsList = () => setLocalData('Accounts', null);

@@ -3,14 +3,14 @@
 import { useState } from 'react';
 import { useController } from 'react-hook-form';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import { createTheme } from '@material-ui/core';
+import { createMuiTheme } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
 import zhTW from 'date-fns/locale/zh-TW';
 import { ThemeProvider } from '@material-ui/styles';
 import theme from 'themes/theme';
 import FEIBDatePicker from './FEIBDatePicker';
 
-const materialTheme = createTheme({
+const materialTheme = createMuiTheme({
   overrides: {
     MuiFormControlRoot: {
       background: 'red',

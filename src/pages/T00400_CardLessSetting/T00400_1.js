@@ -22,6 +22,10 @@ import { validationSchema } from './validationSchema';
 
 const CardLessATM = () => {
   const {handleSubmit, control } = useForm({
+    defaultValues: {
+      withdrawPwd: '',
+      withdrawPwdCheck: '',
+    },
     resolver: yupResolver(validationSchema),
   });
 
@@ -33,19 +37,17 @@ const CardLessATM = () => {
     const {result} = await transactionAuth(AuthCode.T00400);
     if (result) {
       dispatch(setWaittingVisible(true));
-      const {message} = await activate(param);
-      dispatch(setWaittingVisible(false));
+      const activateRes = await activate(param);
 
       // 開通狀態顯示
       showAnimationModal({
-        isSuccess: !message, // 若 message 不存在代表成功
+        isSuccess: !!activateRes,
         successTitle: '設定成功',
-        successDesc: '',
         errorTitle: '設定失敗',
-        errorCode: '',
-        errorDesc: message,
+        errorDesc: '設定失敗',
         onClose: () => history.goBack(),
       });
+      dispatch(setWaittingVisible(false));
     }
   };
 

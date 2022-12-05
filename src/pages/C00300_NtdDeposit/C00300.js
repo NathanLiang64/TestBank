@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable no-use-before-define */
@@ -17,9 +18,10 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
 import { switchZhNumber } from 'utilities/Generator';
-import { getAccountsList } from 'utilities/CacheData';
+import { getAccountsList, resetAccountsList } from 'utilities/CacheData';
 import { getAccountExtraInfo } from 'pages/D00100_NtdTransfer/api';
 import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
+import { useHistory } from 'react-router';
 import {
   getTransactions,
   downloadDepositBookCover,
@@ -32,6 +34,7 @@ import PageWrapper from './C00300.style';
  */
 const C00300 = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { register, unregister, handleSubmit } = useForm();
 
   const [accounts, setAccounts] = useState();
@@ -101,7 +104,6 @@ const C00300 = () => {
    */
   const handleAccountChanged = async (acctIndex) => {
     if (!accounts) return; // 頁面初始化時，不需要進來。
-
     const account = accounts[acctIndex];
     // 若還沒有取得 免費跨轉次數 則立即補上。
     if (!account.freeTransfer) {
@@ -180,6 +182,8 @@ const C00300 = () => {
       selectedAccount.alias = values.newName; // 變更卡片上的帳戶名稱
       setAccountAlias(selectedAccount.accountNo, selectedAccount.alias);
       setAccounts([...accounts]);
+
+      resetAccountsList(); // 清除帳號基本資料快取，直到下次使用 getAccountsList 時再重新載入。
     };
     await customPopup('帳戶名稱編輯', body, handleSubmit(onOk));
   };
@@ -197,7 +201,9 @@ const C00300 = () => {
           ...selectedAccount, // 直接提供帳戶摘要資訊就不用再下載。
           cardColor: 'purple',
         };
-        break;
+        // Todo moreTransactions 目前是一個 module，但是沒有專屬 FuncId，改以 push 導向
+        history.push('/moreTranscations', params);
+        return;
 
       case 'D00100': // 轉帳
         params = { transOut: selectedAccount.accountNo };

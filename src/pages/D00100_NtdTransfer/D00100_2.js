@@ -20,7 +20,7 @@ import { shareMessage } from 'utilities/AppScriptProxy';
 
 import { setWaittingVisible, setDrawerVisible } from 'stores/reducers/ModalReducer';
 import { showDrawer, showError, showInfo } from 'utilities/MessageModal';
-import { executeNtdTransfer, getDisplayAmount, getCycleDesc, getTransDate } from './api';
+import { getDisplayAmount, getCycleDesc, getTransDate } from './api';
 import TransferWrapper from './D00100.style';
 
 /**
@@ -35,7 +35,6 @@ const TransferResult = (props) => {
   const dispatch = useDispatch();
 
   const [model] = useState(state);
-  const [transferResult, setTransferResult] = useState(state);
   const [showSnapshotSuccess, setShowSnapshotSuccess] = useState();
 
   /**
@@ -43,24 +42,6 @@ const TransferResult = (props) => {
    */
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-
-    // TODO 執行轉帳交易。
-    const result = await executeNtdTransfer();
-    const isSuccess = (result.code === '0000'); // Debug 假設！
-    setTransferResult({
-      isSuccess,
-      errorCode: null,
-      message: result.message, // 錯誤訊息
-      fee: 0, // TODO 手續費
-    });
-    console.log('==> 轉帳執行結果：', result);
-
-    if (isSuccess) {
-      model.transOut.balance -= model.amount - result.fee;
-      model.transOut.freeTransferRemain -= 1;
-      // TODO 跨轉優惠、手續費、
-      // TODO 需確認是否要寫回 LocalCache ？
-    }
   }, []);
 
   /**
@@ -68,7 +49,7 @@ const TransferResult = (props) => {
    */
   useEffect(async () => {
     if (model) dispatch(setWaittingVisible(false));
-  }, [transferResult]);
+  }, [model]);
 
   /**
    * 顯示轉帳結果。
@@ -107,7 +88,7 @@ const TransferResult = (props) => {
         <Accordion title="詳細交易" space="bottom">
           <InformationList title="帳戶餘額" content={`$${model.transOut.balance}`} remark={model.transOut.alias} />
           {model.booking.mode === 0 && (
-            <InformationList title="手續費" content={`$${transferResult.fee}`} remark={`跨轉優惠:剩餘${model.transOut.freeTransferRemain}次`} />
+            <InformationList title="手續費" content={`$${model.result.fee}`} remark={`跨轉優惠:剩餘${model.transOut.freeTransferRemain}次`} />
           )}
           <InformationList title="備註" content={model.memo} />
         </Accordion>
@@ -181,17 +162,17 @@ const TransferResult = (props) => {
   /**
    * 頁面輸出。
    */
-  return transferResult ? (
+  return model ? (
     <Layout goBack={false}>
       <TransferWrapper className="transferResultPage">
         <ResultAnimation
-          isSuccess={transferResult.isSuccess}
-          subject={transferResult.isSuccess ? '轉帳成功' : '轉帳失敗'}
-          descHeader={transferResult.errorCode}
-          description={transferResult.message}
+          isSuccess={model.result.isSuccess}
+          subject={model.result.isSuccess ? '轉帳成功' : '轉帳失敗'}
+          descHeader={model.result.errorCode}
+          description={model.result.message}
         />
         { renderTransferResult() }
-        { renderBottomAction(transferResult.isSuccess) }
+        { renderBottomAction(model.result.isSuccess) }
         { showSnapshotSuccess && (
           <SnackModal icon={<CameraIcon size={32} color={theme.colors.basic.white} />} text="截圖成功" />
         ) }

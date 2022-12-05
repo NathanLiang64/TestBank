@@ -280,20 +280,21 @@ const Transfer = (props) => {
 
     // idCycleTime 防呆，調整起始日期
     const transTimes = checkTransDate(booking);
-    if (transTimes <= 0) {
+    if (booking.mode === 1 || transTimes <= 0) { // 若立即轉帳則不需要檢查。
       await showInfo('您指定的交易時間範圍內，並不會有任何轉帳交易發生！請重新調整交易時間範圍、交易頻率或週期。');
       setFocus(idTransRange);
-      return;
     }
 
-    // 進行轉帳確認。
-    history.push('/D001001', {
+    const param = {
       ...newModel,
       booking: {
         ...newModel.booking,
         transTimes, // 預約轉帳次數。
       },
-    });
+    };
+
+    // 進行轉帳確認。
+    history.push('/D001001', param);
   };
 
   /**
@@ -301,6 +302,8 @@ const Transfer = (props) => {
    * @returns 預估的轉帳次數。
    */
   const checkTransDate = (booking) => {
+    if (booking.multiTimes === '1') return 1;
+
     // transRange: 轉帳日期區間，multiTimes='*'時。
     // cycleMode: 交易頻率: 1.每周, 2.每月
     // cycleTiming: 交易週期: 〔 0~6: 周日~周六 〕或〔 1~28: 每月1~31 〕

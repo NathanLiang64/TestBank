@@ -1,16 +1,16 @@
 import styled from 'styled-components';
 
 const PageWrapper = styled.div`
-  padding-block: 4.4rem 6rem;
+  padding-top: 5.4rem;
 
   .toolbar {
-    display: flex;
-    justify-content: end;
-    width: 100%;
+    width: fit-content;
+    margin-left: auto;
   }
 
   .btn-icon {
     display: flex;
+    display: -webkit-flex;
     justify-content: center;
     align-items: center;
     font-size: 1.4rem;
@@ -20,6 +20,7 @@ const PageWrapper = styled.div`
 
 const ContentWrapper = styled.div`
   display: flex;
+  display: -webkit-flex;
   flex-direction: column;
   gap: 2.5rem;
   padding-inline: 1.6rem;

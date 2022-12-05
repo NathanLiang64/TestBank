@@ -1,8 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 
 import Themes from 'themes/theme';
-import { setDrawer, setDrawerVisible } from 'stores/reducers/ModalReducer';
 import FEIBRoundButton from 'components/elements/FEIBRoundButton';
 import { AccountIcon10, EditIcon } from 'assets/images/icons';
 
@@ -13,6 +11,7 @@ import BG4 from 'assets/images/deposit-plan/hero-4@2x.jpg';
 import BG5 from 'assets/images/deposit-plan/hero-5@2x.jpg';
 import BG6 from 'assets/images/deposit-plan/hero-6@2x.jpg';
 
+import { showCustomDrawer } from 'utilities/MessageModal';
 import HeroWithEditWrapper from './HeroWithEdit.style';
 
 const HeroWithEdit = ({
@@ -22,7 +21,6 @@ const HeroWithEdit = ({
   const [imageSrc, setImageSrc] = useState();
   const [newImageId, setNewImageId] = useState();
   const [isDirty, setIsDirty] = useState(false);
-  const dispatch = useDispatch();
 
   const imgSrc = () => {
     switch (newImageId) {
@@ -63,7 +61,7 @@ const HeroWithEdit = ({
       const reader = new FileReader();
       reader.readAsDataURL(images[0]);
       reader.onloadend = (e) => {
-        sessionStorage.setItem('C00600-hero', e.target.result.split(';base64,')[1]);
+        sessionStorage.setItem('C00600-hero', e.currentTarget.result);
       };
     }
   };
@@ -98,8 +96,7 @@ const HeroWithEdit = ({
         ))}
       </ul>
     );
-    dispatch(setDrawer({ title: '', content: options, shouldAutoClose: true }));
-    dispatch(setDrawerVisible(true));
+    showCustomDrawer({ title: '', content: options, shouldAutoClose: true });
   };
 
   return (

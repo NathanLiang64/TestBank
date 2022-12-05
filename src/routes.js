@@ -6,18 +6,18 @@ const A00400 = lazy(() => import('pages/A00400_Provisioning'));
 const A00600 = lazy(() => import('pages/A00600_RegularBasicInformation'));
 const A00700 = lazy(() => import('pages/A00700_RegularPwdModify/A00700'));
 const A00800 = lazy(() => import('pages/A00800_NonMemberRegister/A00800'));
-const B00300 = lazy(() => import('pages/B00300_Notice'));
+const B00300 = lazy(() => import('pages/B00300_Notice/B00300'));
 const B00600 = lazy(() => import('pages/B00600_More/B00600'));
 const C00100 = lazy(() => import('pages/C00100_AccountOverview/C00100'));
 const C00300 = lazy(() => import('pages/C00300_NtdDeposit/C00300'));
 const C00400 = lazy(() => import('pages/C00400_ForeignDeposit/C00400'));
 const C00500 = lazy(() => import('pages/C00500_SecsDeposit/C00500'));
 const C00600 = lazy(() => import('pages/C00600_DepositPlan/C00600'));
-const C00600Transaction = lazy(() => import('pages/C00600_DepositPlan/TransactionPage'));
-const C00600Create = lazy(() => import('pages/C00600_DepositPlan/CreatePage'));
-const C00600Edit = lazy(() => import('pages/C00600_DepositPlan/EditPage'));
-const C00600EditR = lazy(() => import('pages/C00600_DepositPlan/RestrictedEditPage'));
-const C00600Detail = lazy(() => import('pages/C00600_DepositPlan/DetailPage'));
+const C006001 = lazy(() => import('pages/C00600_DepositPlan/C00600_1'));
+const C006002 = lazy(() => import('pages/C00600_DepositPlan/C00600_2'));
+const C006003 = lazy(() => import('pages/C00600_DepositPlan/C00600_3'));
+const C006004 = lazy(() => import('pages/C00600_DepositPlan/C00600_4'));
+const C006005 = lazy(() => import('pages/C00600_DepositPlan/C00600_5'));
 const C00700 = lazy(() => import('pages/C00700_CreditCard/C00700'));
 const C007001 = lazy(() => import('pages/C00700_CreditCard/C00700_1'));
 const C007002 = lazy(() => import('pages/C00700_CreditCard/C00700_2'));
@@ -63,16 +63,16 @@ const S00700 = lazy(() => import('pages/S00700_DebitCardActive/S00700'));
 const S007001 = lazy(() => import('pages/S00700_DebitCardActive/S00700_1'));
 const S00800 = lazy(() => import('pages/S00800_LossReissue/S00800'));
 const T00100 = lazy(() => import('pages/T00100_Profile/T00100'));
-const T00200 = lazy(() => import('pages/T00200_QuickLoginSetting'));
+const T00200 = lazy(() => import('pages/T00200_QuickLoginSetting/T00200'));
 const T00300 = lazy(() => import('pages/T00300_NonDesignatedTransfer/T00300'));
 const T00400 = lazy(() => import('pages/T00400_CardLessSetting/T00400'));
 const T004001 = lazy(() => import('pages/T00400_CardLessSetting/T00400_1'));
-const T00600 = lazy(() => import('pages/T00600_MobileTransfer'));
-const T006001 = lazy(() => import('pages/T00600_MobileTransfer/mobileTransfer_1'));
-const T006002 = lazy(() => import('pages/T00600_MobileTransfer/mobileTransfer_2'));
+const T00600 = lazy(() => import('pages/T00600_MobileTransfer/T00600'));
+const T006001 = lazy(() => import('pages/T00600_MobileTransfer/T00600_1'));
+const T006002 = lazy(() => import('pages/T00600_MobileTransfer/T00600_2'));
 const T00700 = lazy(() => import('pages/T00700_BasicInformation/T00700'));
 const T00800 = lazy(() => import('pages/T00800_ChangeUserName/T00800'));
-const T00900 = lazy(() => import('pages/T00900_PwdModify'));
+const T00900 = lazy(() => import('pages/T00900_PwdModify/T00900'));
 const S00100 = lazy(() => import('pages/S00100_Favorite/S00100'));
 
 const AccountMaintenance = lazy(() => import('pages/AccountMaintenance'));
@@ -115,11 +115,11 @@ const routes = [
   {path: '/C00400', exact: false, component: C00400},
   {path: '/C00500', exact: false, component: C00500},
   {path: '/C00600', exact: false, component: C00600},
-  {path: '/C006001', exact: false, component: C00600Transaction},
-  {path: '/C006002', exact: false, component: C00600Create},
-  {path: '/C006003', exact: false, component: C00600Edit},
-  {path: '/C006004', exact: false, component: C00600Detail},
-  {path: '/C006005', exact: false, component: C00600EditR},
+  {path: '/C006001', exact: false, component: C006001},
+  {path: '/C006002', exact: false, component: C006002},
+  {path: '/C006003', exact: false, component: C006003},
+  {path: '/C006004', exact: false, component: C006004},
+  {path: '/C006005', exact: false, component: C006005},
   {path: '/C00700', exact: false, component: C00700},
   {path: '/C007001', exact: false, component: C007001},
   {path: '/C007002', exact: false, component: C007002},

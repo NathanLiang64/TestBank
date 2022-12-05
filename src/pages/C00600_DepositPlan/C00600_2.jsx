@@ -18,7 +18,7 @@ import Loading from 'components/Loading';
 import { closeFunc } from 'utilities/AppScriptProxy';
 
 import { yupResolver } from '@hookform/resolvers/yup';
-import CreatePageWrapper from './CreatePage.style';
+import { CreatePageWrapper } from './C00600.style';
 import { getDepositPlans, getDepositPlanProgram, getDepositPlanTerms } from './api';
 import { AlertReachedMaxPlans } from './utils/prompts';
 import { createSchema } from './validationSchema';

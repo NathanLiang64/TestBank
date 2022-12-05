@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import Layout from 'components/Layout/Layout';
@@ -11,7 +10,7 @@ import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { FuncID } from 'utilities/FuncID';
-import { showAnimationModal, showCustomPrompt, showError } from 'utilities/MessageModal';
+import { showAnimationModal } from 'utilities/MessageModal';
 import { useQLStatus } from 'hooks/useQLStatus';
 import CardLessSettingWrapper from './T00400.style';
 
@@ -24,47 +23,44 @@ const CardLessSetting = () => {
   const [cardLessStatus, setCardLessStatus] = useState();
   const isEnable = cardLessStatus?.cwdStatus === '2';
 
+  const getCardlessStatus = async () => {
+    dispatch(setWaittingVisible(true));
+    // 確認無卡提款開通狀態
+    const cardLessRes = await getStatus();
+    setCardLessStatus(cardLessRes);
+    dispatch(setWaittingVisible(false));
+  };
+
   const handleSwitchClick = async () => {
     if (QLResult) {
-      // 若已經綁定
+    // 若已經綁定
       const {cwdStatus} = cardLessStatus;
       if (cwdStatus === '0' || cwdStatus === '3' || cwdStatus === '4') {
-        // 跳轉設定無卡提款密碼頁
+      // 跳轉設定無卡提款密碼頁
         history.push('/T004001');
       } else {
-        // 若是 1.已申請未開通 或是 2.已開通 狀態時需要先進行交易驗證
+      // 若是 1.已申請未開通 或是 2.已開通 狀態時需要先進行交易驗證
         dispatch(setWaittingVisible(true));
         const { result } = await transactionAuth(AuthCode.T00400);
         if (result) {
           const activateRes = await activate('');
-          // 無 message 出現代表成功執行，並變更狀態
-          if (activateRes) setCardLessStatus((prevStatus) => (prevStatus === 2 ? 3 : 2));
-
           showAnimationModal({
             isSuccess: !!activateRes,
             successTitle: '設定成功',
             errorTitle: '設定失敗',
             errorDesc: '設定失敗',
           });
+          await getCardlessStatus();
         }
         dispatch(setWaittingVisible(false));
       }
     } else showMessage();
   };
 
-  const handlePwdChange = async () => {
-    if (QLResult) startFunc(FuncID.D00400);
-    else showMessage();
-  };
+  const handlePwdChange = () => (QLResult ? startFunc(FuncID.D00400) : showMessage());
 
-  useEffect(async () => {
-    dispatch(setWaittingVisible(true));
-
-    // 確認無卡提款開通狀態
-    const cardLessRes = await getStatus();
-    setCardLessStatus(cardLessRes);
-
-    dispatch(setWaittingVisible(false));
+  useEffect(() => {
+    getCardlessStatus();
   }, []);
 
   return (

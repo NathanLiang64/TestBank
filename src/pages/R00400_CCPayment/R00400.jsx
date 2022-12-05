@@ -7,27 +7,25 @@ import { useForm } from 'react-hook-form';
 import parse from 'html-react-parser';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { currencySymbolGenerator } from 'utilities/Generator';
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import Theme from 'themes/theme';
-import Layout from 'components/Layout/Layout';
-import Main from 'components/Layout';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { currencySymbolGenerator } from 'utilities/Generator';
+import { closeFunc, loadFuncParams, transactionAuth } from 'utilities/AppScriptProxy';
+import { showCustomPrompt } from 'utilities/MessageModal';
 import Badge from 'components/Badge';
-import Accordion from 'components/Accordion';
+import Main from 'components/Layout';
 import Loading from 'components/Loading';
+import Accordion from 'components/Accordion';
+import Layout from 'components/Layout/Layout';
+import BankCodeInputNew from 'components/BankCodeInputNew';
+import { DropdownField, TextInputField } from 'components/Fields';
 import { FEIBButton, FEIBErrorMessage } from 'components/elements';
 import { RadioGroupField } from 'components/Fields/radioGroupField';
-import { DropdownField, TextInputField } from 'components/Fields';
-import BankCodeInputNew from 'components/BankCodeInputNew';
-import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
-import { showCustomPrompt, showError } from 'utilities/MessageModal';
 
 import { getAccountsList } from 'pages/T00600_MobileTransfer/api';
+import { AuthCode } from 'utilities/TxnAuthCode';
 import {
-  getCreditCardTerms,
-  makePayment,
-  queryCardInfo,
-  queryPayBarcode,
+  getCreditCardTerms, payCardFee, queryCardInfo, queryPayBarcode,
 } from './api';
 import PageWrapper, { PopUpWrapper } from './R00400.style';
 import { generateAmountOptions, generateAccountNoOptions } from './utils';
@@ -44,6 +42,7 @@ const Page = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const [cardInfo, setCardInfo] = useState();
+  const [cardNo, setCardNo] = useState();
   const [internalAccounts, setInternalAccounts] = useState([]);
   const [terms, setTerms] = useState();
   const {
@@ -54,24 +53,25 @@ const Page = () => {
   });
 
   const watchedValues = watch();
-
+  // console.log(watchedValues);
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
+    const params = await loadFuncParams(); // Function 啟動參數
+    // TODO 後續改以 loadAccountList 取得
     const accountList = await getAccountsList('M'); // 拿取內部轉出帳號資訊
-    const cardInfoResponse = await queryCardInfo(''); // 拿取應繳金額資訊
-    if (accountList && cardInfoResponse.data) {
+    const cardInfoResponse = await queryCardInfo(params.cardNo); // 拿取應繳金額資訊
+    const termsResponse = await getCreditCardTerms();
+    if (accountList && cardInfoResponse) {
       setInternalAccounts(accountList);
-      setCardInfo(cardInfoResponse.data);
+      setCardInfo(cardInfoResponse);
+      setCardNo(params.cardNo);
+      setTerms(termsResponse);
     } else {
       closeFunc();
     }
     dispatch(setWaittingVisible(false));
   }, []);
-
-  const lazyLoadTerms = async () => {
-    if (!terms) setTerms(await getCreditCardTerms());
-  };
 
   // 包在 Modal 裡的元件無法取得 terms 必數（不同scope），所以 arrow function call:
   const getTermsFromOutsideModal = () => (terms ? parse(terms) : <Loading space="both" isCentered />);
@@ -83,8 +83,8 @@ const Page = () => {
   };
 
   const renderPaymentCode = async (amount) => {
-    const response = await queryPayBarcode(amount);
-    if (response.data) {
+    const payBarCodeRes = await queryPayBarcode(amount);
+    if (payBarCodeRes) {
       await showCustomPrompt({
         title: '超商條碼繳款',
         message: (
@@ -98,16 +98,16 @@ const Page = () => {
               萊爾富和OK MART）
             </p>
 
-            {Object.keys(response.data).map((key, index) => (
+            {Object.keys(payBarCodeRes).map((key) => (
               <Barcode
-                key={response.data[key]}
-                value={response.data[key]}
+                key={payBarCodeRes[key]}
+                value={payBarCodeRes[key]}
                 width={1.5}
                 height={48}
               />
             ))}
 
-            <Accordion title="注意事項" onClick={lazyLoadTerms}>
+            <Accordion title="注意事項">
               { getTermsFromOutsideModal() }
             </Accordion>
           </PopUpWrapper>
@@ -117,13 +117,10 @@ const Page = () => {
     }
   };
 
-  const getAmount = (data) => {
-    const {
-      amountOption, customAmount,
-    } = data;
-    switch (amountOption) {
+  const getAmount = ({ amountOptions, customAmount }) => {
+    switch (amountOptions) {
       case AMOUNT_OPTION.CUSTOM:
-        return +customAmount;
+        return customAmount;
       case AMOUNT_OPTION.MIN:
         return cardInfo.minDueAmount;
       case AMOUNT_OPTION.ALL:
@@ -133,47 +130,36 @@ const Page = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log('values', data);
+    if (data.paymentMethod === PAYMENT_OPTION.INTERNAL) {
+      const payload = {
+        amount: getAmount(data),
+        account: data.accountNo,
+        cardNo,
+      };
+      const {result} = await transactionAuth(AuthCode.R00400);
+      if (result) {
+        const payResult = await payCardFee(payload);
+        if (payResult) history.push('R004001', { payResult, account: data.accountNo });
+      }
+    }
 
-    showCustomPrompt({title: '訊息', message: '待串接信用卡繳費API'});
-    // let payload;
-    // switch (data.paymentMethod) {
-    //   case PAYMENT_OPTION.CSTORE:
-    //     payload = {
-    //       amount: getAmount(data),
-    //     };
-    //     break;
-    //   case PAYMENT_OPTION.EXTERNAL:
-    //     payload = {
-    //       amount: getAmount(data),
-    //       acctBranch: data.bankCode.bankNo,
-    //       acctId: data.extAccountNo,
-    //     };
-    //     break;
-    //   case PAYMENT_OPTION.INTERNAL:
-    //   default:
-    //     payload = {
-    //       amount: getAmount(data),
-    //       acctBranch: data.accountNo.slice(0, 3),
-    //       acctId: data.accountNo,
-    //     };
-    // }
+    if (data.paymentMethod === PAYMENT_OPTION.EXTERNAL) {
+      showCustomPrompt({message: 'TODO 他行帳戶繳費API'});
+    }
 
-    // if (data.paymentMethod === PAYMENT_OPTION.CSTORE) {
-    //   renderPaymentCode(payload.amount);
-    //   return;
-    // }
-
-    // const response = await makePayment(payload);
-    // history.push('R004001', { isSuccessful: !!response.result, autoDeduct: response.autoDeduct });
+    if (data.paymentMethod === PAYMENT_OPTION.CSTORE) {
+      renderPaymentCode(getAmount(data));
+    }
   };
 
-  console.log('internalAccounts', internalAccounts);
   return (
     <Layout title="繳款" goBackFunc={closeFunc}>
       <Main small>
         <PageWrapper>
-          <Badge label={`${cardInfo?.month}月應繳金額`} value={currencySymbolGenerator('NTD', cardInfo?.newBalance)} />
+          <Badge
+            label={`${parseInt(cardInfo?.billClosingDate.slice(5, 7), 10)}月應繳金額`}
+            value={currencySymbolGenerator('NTD', cardInfo?.newBalance)}
+          />
 
           <div className="badMargin">
             <TabField
@@ -192,7 +178,6 @@ const Page = () => {
               control={control}
               options={generateAmountOptions(cardInfo)}
               resetOnChange={() => reset({...watchedValues, customAmount: null})}
-
             />
 
             <div className="ml-4">
@@ -237,8 +222,8 @@ const Page = () => {
             )}
 
             { watchedValues.paymentMethod !== PAYMENT_OPTION.INTERNAL && (
-              <Accordion title="注意事項" onClick={lazyLoadTerms}>
-                { terms ? parse(terms) : <Loading space="both" isCentered /> }
+              <Accordion title="注意事項">
+                {getTermsFromOutsideModal()}
               </Accordion>
             )}
 

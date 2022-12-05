@@ -3,15 +3,14 @@ import { AMOUNT_OPTION } from './constants';
 
 export const generateAmountOptions = (bills) => {
   if (!bills) return [];
-
   return [
     {
       label: `本期應繳金額 ${currencySymbolGenerator('NTD', bills.newBalance)}`,
-      value: bills.newBalance,
+      value: AMOUNT_OPTION.ALL,
     },
     {
       label: `最低應繳金額 ${currencySymbolGenerator('NTD', bills.minDueAmount)}`,
-      value: bills.minDueAmount,
+      value: AMOUNT_OPTION.MIN,
     },
     {
       label: '自訂金額',

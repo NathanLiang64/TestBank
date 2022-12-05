@@ -3,21 +3,25 @@ import Layout from 'components/Layout';
 
 const T00300Wrapper = styled(Layout)`
   padding: 2.4rem 1.6rem;
+  .info_container {
+    border-top: 1px solid ${({theme}) => theme.colors.border.light};
+    border-bottom: 1px solid ${({theme}) => theme.colors.border.light};
+    padding: 1rem 0rem;
+  }
   .setting_switch {
-    height: 10rem;
+    height: 6rem;
     display: flex;
-    background-color: ${({theme}) => theme.colors.background.lighterBlue};
+    background-color: ${({theme}) => theme.colors.basic.white};
     padding-left: 2rem;
     align-items: center;
-    border-radius: .8rem .8rem 0 0;
-    border-bottom: 1.5px dashed ${({theme}) => theme.colors.border.light};
   }
   .phone_number {
     height: 12rem;
+    width: 100%;
     padding: 2rem;
+    margin-top: 2rem;
     background-color: ${({theme}) => theme.colors.background.lighterBlue};
-    border-radius: 0 0 .8rem .8rem;
-
+    border-radius: .8rem;
     display: flex;
     align-items: center;
     justify-content: space-between;

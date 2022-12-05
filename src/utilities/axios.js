@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable brace-style */
 import axios from 'axios';
-import { showError } from './MessageModal';
+import { showCustomPrompt, showError } from './MessageModal';
 import JWEUtil from './JWEUtil';
 import JWTUtil from './JWTUtil';
 import {
@@ -263,14 +263,19 @@ export const download = async (url, request) => {
   })
     .then((response) => response.blob())
     .then((file) => {
-      console.log(file);
       const fileUrl = URL.createObjectURL(file);
 
-      const a = document.createElement('a');
-      a.href = fileUrl;
-      a.target = '_blank';
+      const handle = window.open(fileUrl);
+
+      showCustomPrompt({
+        message: `${fileUrl} ${handle?.closed}`,
+      });
+
+      // const a = document.createElement('a');
+      // a.href = fileUrl;
+      // a.target = '_blank';
       // a.download = filename; // 因使用者體驗因素，改外開瀏覽器方式取代下載
-      a.click();
+      // a.click();
     })
     .catch((e) => {
       console.log(e);

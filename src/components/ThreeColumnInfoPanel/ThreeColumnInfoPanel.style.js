@@ -10,6 +10,9 @@ const ThreeColumnInfoPanelWrapper = styled.div`
   & > * {
     flex: 1 1 33%;
     text-align: center;
+    height: 100%;
+
+    display: grid;
   }
 
   .label {
@@ -25,7 +28,12 @@ const ThreeColumnInfoPanelWrapper = styled.div`
   }
 
   .value {
+    white-space: nowrap;
     font-size: 2rem;
+    color: ${({ theme }) => theme.colors.primary.light};
+  }
+  .smallValue {
+    font-size: 1.7rem;
     color: ${({ theme }) => theme.colors.primary.light};
   }
 

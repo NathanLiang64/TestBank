@@ -63,25 +63,16 @@ const S00400 = () => {
 
   // 同意開啟通知設定
   const handlePushBind = async () => {
-    console.log('S00400 handleTurnOnNotice');
-
     // 網銀密碼／雙因子驗證
     const verifyResult = await transactionAuth(AuthCode.S00400);
-    console.log('S00400 handlePushBind() verifyPWD/2FA', verifyResult);
 
     if (!verifyResult.result) {
-      console.log('S00400 handlePushBind() verifyPWD/2FA failed message: ', verifyResult);
       await showError(verifyResult.message);
       return;
     }
 
-    console.log('S00400 handlePushBind() verifyPWD/2FA succeed');
     await updatePushBind();
-    // const updatePushBindResult = await updatePushBindMock();
-    // if (updatePushBindResult.code !== '0000') {
-    //   await showError(updatePushBindResult.message);
-    //   return;
-    // }
+
     setIsPushBind(true);
   };
 

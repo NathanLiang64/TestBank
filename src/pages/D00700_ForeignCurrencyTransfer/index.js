@@ -34,6 +34,8 @@ const ForeignCurrencyTransfer = () => {
   // 帳號清單
   const [accountsList, setAccountsList] = useState([]);
   const [mixBalanceStr, setMixBalanceStr] = useState('');
+  // 帳戶清單選項
+  const [accountListOption, setAccountListOption] = useState();
   /**
    *- 資料驗證
    */
@@ -158,6 +160,11 @@ const ForeignCurrencyTransfer = () => {
     getTransTypeOptions();
   }, []);
 
+  useEffect(async () => {
+    const accountListOpt = await renderAccountsOptions();
+    setAccountListOption(accountListOpt);
+  }, [currentAccount]);
+
   return (
     <Layout title="轉帳">
       <ForeignCurrencyTransferWrapper>
@@ -188,9 +195,7 @@ const ForeignCurrencyTransfer = () => {
                   error={!!errors.account}
                 >
                   <FEIBOption value="" disabled>請選擇轉入帳號</FEIBOption>
-                  {
-                    renderAccountsOptions()
-                  }
+                  {accountListOption}
                 </FEIBSelect>
               )}
             />

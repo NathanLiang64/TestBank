@@ -19,9 +19,9 @@ import Accordion from 'components/Accordion';
 import { fetchName } from './api';
 
 /* Styles */
-import MobileTransferWrapper from './mobileTransfer.style';
+import MobileTransferWrapper from './T00600.style';
 
-const MobileTransferModifyForm = ({ onClose, modifyData }) => {
+const T00600ModifyForm = ({ onClose, modifyData }) => {
   const history = useHistory();
   /**
    *- 資料驗證
@@ -173,4 +173,4 @@ const MobileTransferModifyForm = ({ onClose, modifyData }) => {
   );
 };
 
-export default MobileTransferModifyForm;
+export default T00600ModifyForm;

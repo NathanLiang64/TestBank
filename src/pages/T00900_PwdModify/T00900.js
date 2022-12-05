@@ -17,7 +17,7 @@ import { confirmPasswordValidation, newPasswordValidation, passwordValidation } 
 
 /* Styles */
 // import theme from 'themes/theme';
-import PwdModifyWrapper from './pwdModify.style';
+import PwdModifyWrapper from './T00900.style';
 
 const PwdModify = () => {
   /**

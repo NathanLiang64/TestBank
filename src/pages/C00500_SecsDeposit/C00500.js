@@ -17,7 +17,7 @@ import { FEIBInputLabel, FEIBInput } from 'components/elements';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
-import { getAccountsList } from 'utilities/CacheData';
+import { getAccountsList, resetAccountsList } from 'utilities/CacheData';
 import { FuncID } from 'utilities/FuncID';
 import {
   getTransactions,
@@ -123,6 +123,8 @@ const C00500 = () => {
       selectedAccount.alias = values.newName; // 變更卡片上的帳戶名稱
       setAccountAlias(selectedAccount.accountNo, selectedAccount.alias);
       setAccounts([...accounts]);
+
+      resetAccountsList(); // 清除帳號基本資料快取，直到下次使用 getAccountsList 時再重新載入。
     };
     await customPopup('帳戶名稱編輯', body, handleSubmit(onOk));
   };

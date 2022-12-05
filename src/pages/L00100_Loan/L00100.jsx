@@ -24,8 +24,8 @@ import { showPrompt } from 'utilities/MessageModal';
 import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
 import { getLoanSummary, getContract, getSubPaymentHistory } from './api';
-// import { getLoanSummary, getContract, getStatment } from './api';
 import PageWrapper, { ContentWrapper } from './L00100.style';
+import { PaymentType } from './paymentType';
 
 const uid = uuid();
 
@@ -57,9 +57,9 @@ const Page = () => {
   /**
    * 產生上方卡片會用到的
    */
-  const handleMoreClick = (accountNo) => {
+  const handleMoreClick = (accountNo, loanNo) => {
     const list = [
-      { icon: <CircleIcon />, title: '貸款資訊', onClick: () => { history.push('/L001002', { accountNo }); } },
+      { icon: <CircleIcon />, title: '貸款資訊', onClick: () => { history.push('/L001002', { account: accountNo, subNo: loanNo }); } },
       /*
       { icon: <CircleIcon />, title: '部分貸款', onClick: () => {} },
       { icon: <CircleIcon />, title: '全部貸款', onClick: () => {} },
@@ -103,10 +103,10 @@ const Page = () => {
       <AccountCard type="L" key={`${uid}-c${i}`}>
         <div className="justify-between items-start">
           <div>
-            <div>{card.alias ?? '貸款'}</div>
+            <div>{card.loanType}</div>
             <div>{`${accountFormatter(card.accountNo)} (${card.loanNo})`}</div>
           </div>
-          <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.accountNo)}>
+          <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.accountNo, card.loanNo)}>
             <MoreIcon />
           </FEIBIconButton>
         </div>
@@ -173,7 +173,10 @@ const Page = () => {
       );
     }
 
-    return card.transactions.slice(0, 3).map((t, i) => (
+    // transactions 依照日期排序（大 -> 小）
+    const sortedTransactions = card.transactions.sort((a, b) => parseInt(b.txnDate, 10) - parseInt(a.txnDate, 10));
+
+    return sortedTransactions.slice(0, 3).map((t, i) => (
       <button
         key={`${uid}-t${i}`}
         type="button"
@@ -182,7 +185,7 @@ const Page = () => {
         style={{ width: '100%' }}
       >
         <InformationTape
-          topLeft="還款金額"
+          topLeft={PaymentType[t.type]}
           bottomLeft={dateToString(t.txnDate)}
           topRight={currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}
           bottomRight={`貸款餘額 ${currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}`}

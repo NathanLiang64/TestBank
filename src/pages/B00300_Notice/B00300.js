@@ -26,7 +26,7 @@ import {
 } from './api';
 
 /* Styles */
-import NoticeWrapper from './notice.style';
+import NoticeWrapper from './B00300.style';
 
 const Notice = () => {
   const [tabValue, setTabValue] = useState('A');
@@ -82,7 +82,7 @@ const Notice = () => {
       setAmessagesList(aMsg);
       setCmessagesList(cMsg);
       setSmessagesList(sMsg);
-    } else {
+    } else { // TODO: 應判斷專屬於“未設定訊息通知功能”的代號再顯示此彈窗，不應所有錯誤／例外皆顯示此彈窗
       showCustomPrompt({
         message: '您尚未設定「訊息通知」功能，是否立即設定?',
         okContent: '立即設定',

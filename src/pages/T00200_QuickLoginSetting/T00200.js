@@ -23,11 +23,13 @@ import {
 } from 'utilities/MessageModal';
 import { setDrawerVisible } from 'stores/reducers/ModalReducer';
 import { AuthCode } from 'utilities/TxnAuthCode';
+import store from 'stores/store';
 import { getQuickLoginInfo } from './api';
 import DrawerContent from './drawerContent';
 
 /* Styles */
-import QuickLoginSettingWrapper from './quickLoginSetting.style';
+import QuickLoginSettingWrapper from './T00200.style';
+import T00200AccordionContent from './T00200_accordionContent';
 
 const QuickLoginSetting = () => {
   const [isBioActive, setIsBioActive] = useState(false);
@@ -201,6 +203,7 @@ const QuickLoginSetting = () => {
           <DrawerContent
             midPhone={midPhone}
             confirmClick={() => callAppBindRegQL(type, rs?.netbankPwd)}
+            cancelClick={() => store.dispatch(setDrawerVisible(false))}
           />,
         );
       }
@@ -210,6 +213,23 @@ const QuickLoginSetting = () => {
       customPopup(
         '系統訊息',
         message,
+      );
+    }
+  };
+
+  // 變更圖形辨識
+  const handleChangePattern = async () => {
+    console.log('T00200 handleChangePattern');
+
+    const res = await transactionAuth(AuthCode.T00200.MODIFY, midPhone);
+
+    if (res.result === true) {
+      // 成功
+    } else {
+      // 失敗
+      customPopup(
+        '系統訊息',
+        res.message,
       );
     }
   };
@@ -257,7 +277,7 @@ const QuickLoginSetting = () => {
               )}
               label="圖形辨識設定"
             />
-            <div className={`mainBlock ${!isPatternActive && 'hide'}`} onClick={() => {}}>
+            <div className={`mainBlock ${!isPatternActive && 'hide'}`} onClick={() => handleChangePattern()}>
               <div className="text">
                 圖形辨識變更
               </div>
@@ -283,15 +303,7 @@ const QuickLoginSetting = () => {
           </p>
         </div>
         <Accordion>
-          <ol>
-            <li>每個帳號僅能認證一個行動裝置，請您確認目前使用的SIM卡門號為留存於本行之手機號碼，並具有上網功能。</li>
-            <li>進行SIM卡認證前，請您關閉WiFi並使用手機行動網路(4G/5G)連線；使用雙卡機者，請以上網使用的SIM卡進行驗證。</li>
-            <li>請您確認已關閉手機裝置的VPN、防火牆軟體服務。</li>
-            <li>如您的帳號要認證一個新的裝置，須先於原裝置解除認證，始能進行新手機裝置認證。</li>
-            <li>若於完成APP裝置認證後移除APP並重新安裝，則須請您再次進行APP手機裝置認證，方能使用相關功能。</li>
-            <li>請您確認擬啟用「APP裝置認證」之行動裝置僅由使用者本人使用，再啟用本服務，並請勿於已破解系統權限之行動裝置上使用本服務。提醒您應妥善保管行動裝置、勿交付他人使用，建議您啟用本服務前，應先設定行動裝置之「螢幕鎖定密碼」或「開機密碼」，以確保帳戶及交易安全。</li>
-            <li>啟用快速登入將同時進行APP裝置認證，如需取消裝置認證，請關閉快速登入設定或致電本行客服。</li>
-          </ol>
+          <T00200AccordionContent />
         </Accordion>
       </QuickLoginSettingWrapper>
     </Layout>

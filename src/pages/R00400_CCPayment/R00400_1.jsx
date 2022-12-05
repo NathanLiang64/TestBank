@@ -2,21 +2,18 @@ import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import parse from 'html-react-parser';
 
-import {
-  PhoneIcon, TransactionIcon,
-} from 'assets/images/icons';
-import { FEIBSwitch } from 'components/elements';
-import Layout from 'components/Layout/Layout';
 import Main from 'components/Layout';
 import Loading from 'components/Loading';
-import BottomAction from 'components/BottomAction';
-import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import Accordion from 'components/Accordion';
+import Layout from 'components/Layout/Layout';
+import { FEIBSwitch } from 'components/elements';
+import BottomAction from 'components/BottomAction';
+import { PhoneIcon, TransactionIcon } from 'assets/images/icons';
+import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
+import { FuncID } from 'utilities/FuncID';
+import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 
-// import { closeFunc } from 'utilities/AppScriptProxy';
-import {
-  getCreditCardTerms,
-} from './api';
+import { getAutoDebits, getCreditCardTerms } from './api';
 import PageWrapper from './TransferResult.style';
 
 /**
@@ -25,26 +22,13 @@ import PageWrapper from './TransferResult.style';
 const Page = () => {
   const history = useHistory();
   const location = useLocation();
-  const [result, setResult] = useState();
+  const [autoDebitInfo, setAutoDebitInfo] = useState();
   const [terms, setTerms] = useState();
 
-  useEffect(async () => {
-    if (location.state && ('isSuccessful' in location.state)) {
-      setResult(location.state);
-    }
-    // else {
-    //   closeFunc();
-    // }
-  }, []);
-
-  const lazyLoadTerms = async () => {
-    if (!terms) setTerms(await getCreditCardTerms());
-  };
-
-  const renderBottomAction = (success) => (
+  const renderBottomAction = (isSuccess) => (
     <BottomAction position={0}>
-      { success ? (
-        <button type="button" onClick={() => history.push('/C00700')}>
+      { isSuccess ? (
+        <button type="button" onClick={() => startFunc(FuncID.C00700)}>
           回信用卡首頁
         </button>
       ) : (
@@ -63,43 +47,68 @@ const Page = () => {
     </BottomAction>
   );
 
+  const renderAutoDebitInfo = (isSuccess) => {
+    if (!isSuccess) return null;
+
+    // TODO 改成 switch模式
+    if (!autoDebitInfo || autoDebitInfo.status !== '2') {
+      return (
+        <>
+          <div>
+            <div className="mb-2 text-gray">您尚未申請自動扣繳</div>
+            <div className="deduct">
+              <div>自動扣繳</div>
+              <FEIBSwitch onChange={() => history.push('/R00500')} />
+            </div>
+          </div>
+          <Accordion title="注意事項">
+            { terms ? parse(terms) : <Loading space="both" isCentered /> }
+          </Accordion>
+        </>
+      );
+    }
+
+    return (
+      <div className="auto text-gray">
+        <div>您已申請自動扣繳</div>
+        <button type="button" onClick={() => history.push('/R00500')}>
+          <i className="circle" />
+          設定自動扣繳
+        </button>
+      </div>
+    );
+  };
+
+  // 拿取「信用卡自動扣繳資訊」 以及 「信用卡注意事項」
+  useEffect(async () => {
+    const autoDebitsRes = await getAutoDebits();
+    if (autoDebitsRes && autoDebitsRes.length) {
+      const foundAutoDebit = autoDebitsRes.find((debit) => debit.account === location.state.account);
+      setAutoDebitInfo(foundAutoDebit);
+    }
+
+    const cardTermsRes = await getCreditCardTerms();
+    setTerms(cardTermsRes);
+  }, []);
+
+  // ===== Guard，若沒有 location.state 屬於不正常操作，直接結束本服務 =====
+  if (!location.state) return closeFunc();
+  const { payResult: {code, message} } = location.state;
+  const isSuccess = code === '0000';
   return (
     <Layout title="轉帳結果" goBackFunc={() => history.goBack()}>
       <Main>
         <PageWrapper>
           <SuccessFailureAnimations
-            isSuccess={result?.isSuccessful}
+            isSuccess={isSuccess}
             successTitle="繳款成功"
             errorTitle="繳款失敗"
-            errorCode="E341"
-            errorDesc="親愛的客戶，您好非約定轉帳超過當日轉帳限額，請重新執行交易，如有疑問，請與本行客戶服務中心聯繫。"
+            errorCode={code}
+            errorDesc={message}
             errorSpace
           />
-          {/* TODO 是否能透過繳款資訊獲得 自動扣繳的資訊 */}
-          { result?.isSuccessful && !(result?.autoDeduct) && (
-            <>
-              <div>
-                <div className="mb-2 text-gray">您尚未申請自動扣繳</div>
-                <div className="deduct">
-                  <div>自動扣繳</div>
-                  <FEIBSwitch onChange={() => history.push('/R00500')} />
-                </div>
-              </div>
-              <Accordion title="注意事項" onClick={lazyLoadTerms}>
-                { terms ? parse(terms) : <Loading space="both" isCentered /> }
-              </Accordion>
-            </>
-          )}
-          { result?.isSuccessful && result?.autoDeduct && (
-            <div className="auto text-gray">
-              <div>您已申請自動扣繳</div>
-              <button type="button" onClick={() => history.push('/R00500')}>
-                <i className="circle" />
-                設定自動扣繳
-              </button>
-            </div>
-          )}
-          { renderBottomAction(result?.isSuccessful) }
+          {renderAutoDebitInfo(isSuccess)}
+          { renderBottomAction(isSuccess) }
         </PageWrapper>
       </Main>
     </Layout>

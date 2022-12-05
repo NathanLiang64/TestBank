@@ -29,10 +29,14 @@ export const TextInputField = ({
         error={!!fieldState.error}
         placeholder={placeholder || ''}
         $color={$color}
+        $space="bottom"
       />
-      <FEIBErrorMessage>
+      {/* <FEIBErrorMessage>
         {fieldState.error ? fieldState.error.message : ''}
-      </FEIBErrorMessage>
+      </FEIBErrorMessage> */}
+      {!!fieldState.error && (
+        <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>
+      )}
     </>
   );
 };

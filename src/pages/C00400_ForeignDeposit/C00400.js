@@ -16,8 +16,7 @@ import { FEIBInputLabel, FEIBInput } from 'components/elements';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
-import { getAccountsList } from 'utilities/CacheData';
-import { getAccountExtraInfo } from 'pages/D00100_NtdTransfer/api';
+import { getAccountsList, resetAccountsList } from 'utilities/CacheData';
 import {
   getTransactions,
   setAccountAlias,
@@ -42,7 +41,6 @@ const C00400 = () => {
    */
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
     getAccountsList('F', setAccounts); // F=外幣帳戶
@@ -95,16 +93,6 @@ const C00400 = () => {
     if (!accounts || !accounts.length) return; // 頁面初始化時，不需要進來。
 
     const account = accounts[acctIndex];
-    // 若還沒有取得 免費跨轉次數 則立即補上。
-    if (!account.freeTransfer) {
-      getAccountExtraInfo(account.accountNo).then((info) => {
-        accounts[acctIndex] = {
-          ...account,
-          ...info,
-        };
-        setAccounts([...accounts]); // 強制更新畫面。
-      });
-    }
     updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可)
     setSelectedAccount(account);
   };
@@ -131,6 +119,8 @@ const C00400 = () => {
       selectedAccount.alias = values.newName; // 變更卡片上的帳戶名稱
       setAccountAlias(selectedAccount.accountNo, selectedAccount.alias);
       setAccounts([...accounts]);
+
+      resetAccountsList(); // 清除帳號基本資料快取，直到下次使用 getAccountsList 時再重新載入。
     };
     await customPopup('帳戶名稱編輯', body, handleSubmit(onOk));
   };
@@ -160,7 +150,7 @@ const C00400 = () => {
         setMainCurrency(selectedAccount.accountNo, selectedAccount.currency);
         return;
 
-      case 'E00100': // 外幣到價通知
+      case 'foreignCurrencyPriceSetting': // 外幣到價通知
         break;
 
       case 'Rename': // 帳戶名稱編輯
@@ -212,8 +202,8 @@ const C00400 = () => {
                   icon: 'temp',
                 },
                 {
-                  // fid 需要改成 foreignCurrencyPriceSetting
-                  fid: 'E00100',
+                  // fid 需要改成 foreignCurrencyPriceSetting 的 FuncID
+                  fid: 'foreignCurrencyPriceSetting',
                   title: '外幣到價通知',
                   icon: 'foreignCurrencyPriceSetting',
                 },

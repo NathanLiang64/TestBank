@@ -13,7 +13,8 @@ import {
 import {
   ArrowBackIcon, ArrowNextIcon, CheckboxCheckedIcon, CheckboxUncheckedIcon, FaceIdIcon, VisibilityIcon, VisibilityOffIcon,
 } from 'assets/images/icons';
-import { goHome } from 'utilities/AppScriptProxy';
+import { FuncID } from 'utilities/FuncID';
+import { goHome, startFunc } from 'utilities/AppScriptProxy';
 import { accountValidation, identityValidation, passwordValidation } from 'utilities/validation';
 import theme from 'themes/theme';
 import Logo from 'assets/images/logoTransparent.png';
@@ -21,8 +22,7 @@ import BgImage from 'assets/images/loginBackground.png';
 import HandShake from './HandShake';
 import LoginWrapper from './login.style';
 import FaceIdLoginModal from './faceIdLoginModal';
-import RegisterModal from './registerModal';
-// import { login, personalDataPreload, getInitData, getHomeData } from './login.api';
+// import RegisterModal from './registerModal';
 import { login, getInitData, getAnnouncementData } from './login.api';
 
 const Login = () => {
@@ -51,7 +51,7 @@ const Login = () => {
   const [showUserId, setShowUserId] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showFaceIdLogin, setShowFaceIdLogin] = useState(false);
-  const [showActions, setShowActions] = useState(false);
+  // const [showActions, setShowActions] = useState(false);
 
   const dispatch = useDispatch();
   // const history = useHistory();
@@ -77,15 +77,14 @@ const Login = () => {
   };
 
   const handleActionsOpen = () => {
-    setShowActions(!showActions);
+    // setShowActions(!showActions);
+    startFunc(FuncID.A00800);
   };
 
   const onSubmit = async (data) => {
     const isSuccess = await login(data);
     if (isSuccess) { // 登入成功
-      // await personalDataPreload();
-      // await getHomeData();
-      // history.push('/');
+      sessionStorage.setItem('isLogin', '1');
       goHome();
     }
   };
@@ -189,7 +188,7 @@ const Login = () => {
         <img src={BgImage} alt="logo" className="backgroundImage" />
       </form>
       <FaceIdLoginModal show={showFaceIdLogin} close={handleFaceIdLoginOpen} />
-      <RegisterModal show={showActions} close={handleActionsOpen} />
+      {/* <RegisterModal show={showActions} close={handleActionsOpen} /> */}
     </LoginWrapper>
   );
 };
