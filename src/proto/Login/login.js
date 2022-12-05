@@ -42,7 +42,7 @@ const Login = () => {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      identity: 'N124587453', // NOTE 勿簽入預設值，請留在自己的開發環境上！
+      identity: '', // NOTE 勿簽入預設值，請留在自己的開發環境上！
       account: '1qaz2wsx',
       password: 'feib1688',
     },
