@@ -179,7 +179,7 @@ const D00800Draft = () => {
     ];
 
     return panelOptions.map((option) => (
-      <FEIBTabPanel value={option.tabValue}>
+      <FEIBTabPanel key={option.tabValue} value={option.tabValue}>
         <DateRangePickerField
           {...option.datePickerLimit}
           control={control}
