@@ -4,8 +4,8 @@ import Layout from 'components/Layout';
 const T00300Wrapper = styled(Layout)`
   padding: 2.4rem 1.6rem;
   .info_container {
-    border-top: 1px solid ${({theme}) => theme.colors.border.light};
-    border-bottom: 1px solid ${({theme}) => theme.colors.border.light};
+    border-top: 1px solid ${({ theme }) => theme.colors.text.placeholder};
+    border-bottom: 1px solid ${({ theme }) => theme.colors.text.placeholder};
     padding: 1rem 0rem;
   }
   .setting_switch {

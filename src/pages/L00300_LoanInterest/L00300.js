@@ -3,7 +3,7 @@ import { showDrawer, closeDrawer, showCustomPrompt } from 'utilities/MessageModa
 import {
   accountFormatter, toCurrency, dateToYMD, dateToString,
 } from 'utilities/Generator';
-import { getSubPaymentHistory } from 'pages/L00100_Loan/api';
+
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import DebitCard from 'components/DebitCard/DebitCard';
@@ -11,10 +11,13 @@ import InformationTape from 'components/InformationTape';
 import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
 import DownloadIcon from 'assets/images/icons/downloadIcon.svg';
 import { closeFunc, loadFuncParams, startFunc } from 'utilities/AppScriptProxy';
-
-/* Styles */
 import EmptyData from 'components/EmptyData';
 import { FuncID } from 'utilities/FuncID';
+
+import { PaymentType } from 'utilities/LoanPaymentType';
+import { getSubPaymentHistory } from './api';
+
+/* Styles */
 import LoanInterestWrapper from './L00300.style';
 
 /**
@@ -147,7 +150,8 @@ const LoanInterest = () => {
             <div className="recordsList">
               {recordsList.map((item) => (
                 <InformationTape
-                  topLeft="還款金額"
+                  key={recordsList.indexOf(item)}
+                  topLeft={PaymentType[item.type]}
                   topRight={`$${toCurrency(item.amount)}`}
                   bottomLeft={`${dateToString(item.date)}`}
                   bottomRight={`貸款餘額 $${toCurrency(item.balance)}`}
