@@ -18,7 +18,7 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
 import { setLocalData } from 'utilities/Generator';
-import { AccountListCacheName, getAccountExtraInfo, loadAccountsList } from 'pages/D00100_NtdTransfer/api';
+import { AccountListCacheName, loadAccountsList } from 'pages/D00100_NtdTransfer/api';
 import {
   getTransactions,
   setAccountAlias,
@@ -208,7 +208,7 @@ const C00400 = () => {
                 {
                   // fid 需要改成 foreignCurrencyPriceSetting 的 FuncID
                   fid: 'foreignCurrencyPriceSetting',
-                  title: '外幣到價通知',
+                  title: '外幣到價通知設定',
                   icon: 'foreignCurrencyPriceSetting',
                 },
                 { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
