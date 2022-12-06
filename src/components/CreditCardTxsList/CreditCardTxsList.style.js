@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const DetailCardWrapper = styled.div`
+export const DetailCardWrapper = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 1.2rem;
@@ -116,58 +116,3 @@ const DetailCardWrapper = styled.div`
     }
   }
 `;
-
-const DetailDialogContentWrapper = styled.div`
-.panel {
-  padding-top: 2.5rem;
-}
-`;
-
-const DetailDialogErrorMsg = styled.div`
-.errorMsg {
-  visibility:hidden;
-}
-.errorBorder{
-  &:before,
-  &:hover:not(.Mui-disabled):before {
-    border-color:#FF5F5F !important;
-  }
-}
-
-`;
-
-const TableDialog = styled.div`
-  text-align: center;
-  table {
-    font-size: 1.2rem;
-    
-    thead {
-      border-bottom:0.1rem solid #F3F3F3;
-
-      tr th {
-        padding-top: 0.6rem;
-        padding-bottom: 0.8rem;
-        font-weight: 500;
-        width: 33.333333%;
-        font-size:1.4rem;
-      }
-    }
-    tbody tr th {
-      width: 33.333333%;
-      padding-top: 0.4rem;
-      padding-bottom: 0.4rem;
-      font-size: 1.4rem;
-    }
-  }
-
-  .remark  {
-    font-weight: 500;
-    color: ${({ theme }) => theme.colors.text.light};
-    font-size: 1.1rem;
-    padding-top: 0.4rem;
-    margin-left: -0.65rem;
-  }
-`;
-
-export default DetailCardWrapper;
-export { DetailDialogContentWrapper, DetailDialogErrorMsg, TableDialog };

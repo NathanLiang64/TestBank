@@ -12,13 +12,13 @@ import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import { FuncID } from 'utilities/FuncID';
 import { currencySymbolGenerator } from 'utilities/Generator';
 import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
-import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
+import { showCustomDrawer, showCustomPrompt, showError } from 'utilities/MessageModal';
 import { CreditCardIcon5, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
-import { getCards } from './api';
+import { getCards, getTransactionPromise, updateTxnNotes } from './api';
 import {
-  backInfo, levelInfo, renderBody, renderHead,
+  backInfo, generateTwoCardsArray, levelInfo, renderBody, renderHead,
 } from './utils';
 import {SwiperCreditCard, DetailDialogContentWrapper, TableDialog} from './C00700.style';
 
@@ -29,52 +29,39 @@ const CreditCardPage = () => {
   const history = useHistory();
   const [cardsInfo, setCardsInfo] = useState([]);
   const [usedCardLimit, setUsedCardLimit] = useState();
+  const [transactionMap, setTransactionMap] = useState({});
   const dispatch = useDispatch();
 
-  // 拿取信用卡資訊
-  useEffect(async () => {
-    dispatch(setWaittingVisible(true));
-    const cardRes = await getCards();
-    if (!cardRes.data.cards.length) {
-      await showCustomPrompt({
-        message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
-        onClose: closeFunc,
+  console.log('transactionMap', transactionMap);
+
+  const fetchTransactions = async (cards, currentIndex) => {
+    const transactionsArray = await Promise.all(
+      cards.map(({ cardNo }) => getTransactionPromise(cardNo)),
+    );
+
+    const flattedTransactions = transactionsArray.flat();
+    setTransactionMap((prevMap) => ({...prevMap, [currentIndex]: flattedTransactions}));
+  };
+
+  // 滑動卡片的 Handler
+  const onSlideChange = async (swiper) => {
+    if (transactionMap[swiper.activeIndex]) return;
+    const currentCards = cardsInfo[swiper.activeIndex].cards;
+    fetchTransactions(currentCards, swiper.activeIndex);
+  };
+
+  // 編輯信用卡明細備註的 Handler
+  const onTxnNotesEdit = async (payload, isBankeeCard) => {
+    const {result } = await updateTxnNotes(payload);
+    // updateTxNotes 成功才更新畫面
+    if (result) {
+      setTransactionMap((prevMap) => {
+        const key = isBankeeCard ? 0 : 1;
+        const foundCard = prevMap[key];
+        return {...prevMap, [key]: {...foundCard, note: payload.note}};
       });
-    }
-    // 拿到 cardRes.data.cards 後，將其結構轉成
-    //   {
-    //     isBankeeCard: boolean;
-    //     cards: { cardNo: string }[];
-    //     memberLevel: number|null;
-    //     rewardsRateDomestic: number|null;
-    //     rewardsRateOverseas: number|null;
-    //     rewardsAmount: number|null;
-    //   }[]
-
-    const modifiedCards = cardRes.data.cards.reduce((acc, cur) => {
-      const {isBankeeCard, cardNo, ...rest} = cur;
-
-      if (isBankeeCard === 'Y') {
-        acc.push({...rest, isBankeeCard: true, cards: [{cardNo}]});
-      } else if (isBankeeCard === 'N') {
-        if (acc.length) {
-          const foundIndex = acc.findIndex((item) => !item.isBankeeCard);
-          if (foundIndex >= 0) acc[foundIndex].cards.push({cardNo});
-          else acc.push({ isBankeeCard: false, cards: [{cardNo}]});
-        } else acc.push({ isBankeeCard: false, cards: [{cardNo}]});
-      }
-
-      return acc;
-    }, []);
-
-    // 若第一個項目是 「所有信用卡」，則將順序對調
-    if (modifiedCards.length === 2 && !modifiedCards[0].isBankeeCard) {
-      [modifiedCards[0], modifiedCards[1]] = [modifiedCards[1], modifiedCards[0]];
-    }
-    setCardsInfo(modifiedCards);
-    setUsedCardLimit(cardRes.data.usedCardLimit);
-    dispatch(setWaittingVisible(false));
-  }, []);
+    } else showError('編輯備註失敗');
+  };
 
   // 信用卡卡面右上角的功能列表
   const functionAllList = (item) => {
@@ -148,6 +135,7 @@ const CreditCardPage = () => {
       ))
     );
   };
+
   const showDialog = (title, info) => {
     showCustomPrompt({
       title,
@@ -196,20 +184,22 @@ const CreditCardPage = () => {
   const renderCreditList = () => {
     if (!cardsInfo.length) return null;
     return (
-      cardsInfo.map((cardSet) => (
-        <div key={cardSet.cards[0].cardNo}>
+      cardsInfo.map((cardInfo, index) => (
+        <div key={cardInfo.cards[0].cardNo}>
           <DetailDialogContentWrapper>
-            {cardSet.isBankeeCard && (
+            {cardInfo.isBankeeCard && (
             <div className="panel">
-              <ThreeColumnInfoPanel content={bonusInfo(cardSet)} />
+              <ThreeColumnInfoPanel content={bonusInfo(cardInfo)} />
             </div>
             )}
           </DetailDialogContentWrapper>
           <div style={{minHeight: '20rem'}}>
             <CreditCardTxsList
               showAll={false}
-              card={cardSet}
-              go2MoreDetails={() => startFunc('R00100', {cardSet, usedCardLimit})}
+              card={cardInfo}
+              go2MoreDetails={() => startFunc('R00100', {card: cardInfo, usedCardLimit})}
+              transactions={transactionMap[index]}
+              onTxnNotesEdit={onTxnNotesEdit}
             />
           </div>
         </div>
@@ -217,10 +207,28 @@ const CreditCardPage = () => {
     );
   };
 
+  // 拿取信用卡資訊 & 第一張卡面的交易明細
+  useEffect(async () => {
+    dispatch(setWaittingVisible(true));
+    const {cards, usedCardLimit: limit} = await getCards();
+    if (cards.length) {
+      const transferedCards = generateTwoCardsArray(cards);
+      fetchTransactions(transferedCards[0].cards, 0);
+      setCardsInfo(transferedCards);
+      setUsedCardLimit(limit);
+    } else {
+      await showCustomPrompt({
+        message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
+        onClose: closeFunc,
+      });
+    }
+    dispatch(setWaittingVisible(false));
+  }, []);
+
   return (
     <Layout title="信用卡" goBackFunc={closeFunc}>
       <Main small>
-        <SwiperLayout slides={renderSlides()} hasDivider={false} slidesPerView={1.06}>
+        <SwiperLayout slides={renderSlides()} onSlideChange={onSlideChange} hasDivider={false} slidesPerView={1.06}>
           {renderCreditList()}
         </SwiperLayout>
       </Main>

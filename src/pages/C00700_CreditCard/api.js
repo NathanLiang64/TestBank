@@ -1,4 +1,5 @@
 import { callAPI } from 'utilities/axios';
+import { dateToYMD } from 'utilities/Generator';
 
 import mockCreditCardTerms from './mockData/mockCreditCardTerms';
 
@@ -37,7 +38,7 @@ export const getCreditCardTerms = async () => {
  */
 export const getCards = async (request) => {
   const response = await callAPI('/api/card/v1/getCards', request);
-  return response;
+  return response.data;
 };
 
 /**
@@ -247,3 +248,21 @@ export const setAutoDebit = async (request) => {
   const response = await callAPI('/api/card/v1/setAutoDebit', request);
   return response;
 };
+
+export const getTransactionPromise = (cardNo) => new Promise((resolve) => {
+  const today = new Date();
+  const dateBeg = dateToYMD(new Date(today.setMonth(today.getMonth() - 2))); // 查詢當天至60天前的資料
+  const dateEnd = dateToYMD();
+  const payload = { cardNo, dateBeg, dateEnd };
+  getTransactions(payload).then((transactions) => {
+    if (!transactions.length) resolve([]);
+    else {
+      // 將回傳的資料加入 cardNo 以利後續畫面渲染與編輯
+      const newTransactions = transactions.map((transaction) => ({
+        ...transaction,
+        cardNo,
+      }));
+      resolve(newTransactions);
+    }
+  });
+});
