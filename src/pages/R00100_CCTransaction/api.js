@@ -27,6 +27,7 @@ export const getBankeeCard = async (request) => {
   const {
     data: { cards, usedCardLimit },
   } = await callAPI('/api/card/v1/getCards', request);
-  const {cardNo, isBankeeCard} = cards.find((card) => card.isBankeeCard === 'Y');
-  return { cards: [{ cardNo }], usedCardLimit, isBankeeCard: isBankeeCard === 'Y' };
+  const bankeeCard = cards.find((card) => card.isBankeeCard === 'Y');
+  if (!bankeeCard) return null;
+  return { cards: [{ cardNo: bankeeCard.cardNo }], usedCardLimit, isBankeeCard: bankeeCard.isBankeeCard === 'Y' };
 };
