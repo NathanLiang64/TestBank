@@ -2,16 +2,14 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { toCurrency } from 'utilities/Generator';
 
-/* Elements */
+import Accordion from 'components/Accordion';
+import Layout from 'components/Layout/Layout';
 import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
-import Accordion from 'components/Accordion';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
-import Layout from 'components/Layout/Layout';
-
-/* Styles */
 import AddPersonIcon from 'assets/images/addPersonIcon.svg';
-import ReserveTransferSearchWrapper from './reserveTransferSearch.style';
+
+import { ReserveTransferSearchWrapper } from './D00800.style';
 
 const ReserveTransferSearch2 = ({ location }) => {
   const history = useHistory();

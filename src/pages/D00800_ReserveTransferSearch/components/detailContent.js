@@ -1,6 +1,6 @@
 import { toCurrency } from 'utilities/Generator';
 import InformationList from 'components/InformationList';
-import DialogContentWrapper from './dialogContent.style';
+import { DialogContentWrapper } from '../D00800.style';
 
 const DetailContent = ({ contentData: { data, selectedAccount } }) => (
   <DialogContentWrapper>

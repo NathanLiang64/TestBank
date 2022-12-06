@@ -1,7 +1,8 @@
 import styled from 'styled-components';
+
 import Layout from 'components/Layout';
 
-const ReserveTransferSearchWrapper = styled(Layout)`
+export const ReserveTransferSearchWrapper = styled(Layout)`
   padding: 0;
   &.searchResult {
     background: ${({ theme }) => theme.colors.background.lighterBlue};
@@ -16,10 +17,11 @@ const ReserveTransferSearchWrapper = styled(Layout)`
     }
   }
   .line {
-    height: .8rem;
+    height: 0.8rem;
     background: ${({ theme }) => theme.colors.background.lighterBlue};
   }
-  .confrimDataContainer, .resultDataContainer {
+  .confrimDataContainer,
+  .resultDataContainer {
     padding: 2.4rem 0;
     text-align: center;
     .dataLabel {
@@ -53,13 +55,13 @@ const ReserveTransferSearchWrapper = styled(Layout)`
   .cardArea {
     width: 100vw;
     padding-top: 1.6rem;
-    
+
     .swiper-container {
       padding-bottom: 1.6rem;
     }
-    
+
     .swiper-pagination {
-      left: -.8rem;
+      left: -0.8rem;
     }
   }
   .searchResultContainer {
@@ -77,7 +79,7 @@ const ReserveTransferSearchWrapper = styled(Layout)`
       svg {
         width: 2.745rem;
         height: 2.745rem;
-        margin-right: .8rem;
+        margin-right: 0.8rem;
         color: ${({ theme }) => theme.colors.text.dark};
       }
       label {
@@ -144,10 +146,10 @@ const ReserveTransferSearchWrapper = styled(Layout)`
       font-size: 1.4rem;
       line-height: 2.1rem;
       font-weight: 400;
-      margin-top: .8rem;
+      margin-top: 0.8rem;
       img {
         width: 1.6rem;
-        margin-right: .4rem;
+        margin-right: 0.4rem;
       }
     }
   }
@@ -156,4 +158,57 @@ const ReserveTransferSearchWrapper = styled(Layout)`
   }
 `;
 
-export default ReserveTransferSearchWrapper;
+export const DialogContentWrapper = styled.div`
+  .resultContainer {
+    .stateContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 2.4rem;
+      .stateImage {
+        width: 14.4rem;
+      }
+      .stateContent {
+        font-size: 2.4rem;
+        font-weight: 400;
+        line-height: 3.6rem;
+        &.success {
+          color: ${({ theme }) => theme.colors.secondary.brand};
+        }
+        &.fail {
+          color: ${({ theme }) => theme.colors.state.error};
+        }
+      }
+    }
+    .msgLabel {
+      color: ${({ theme }) => theme.colors.text.lightGray};
+      text-align: center;
+      margin-bottom: 1.6rem;
+    }
+  }
+  .mainBlock {
+    padding: 1.6rem 1.2rem;
+    flex-direction: column;
+    margin-bottom: 1.6rem;
+    .dataLabel {
+      font-size: 1.4rem
+      line-height: 2.1rem;
+      color: ${({ theme }) => theme.colors.text.lightGray};
+      margin-bottom: 1.2rem;
+    }
+    .balance {
+      font-size: 2.4rem;
+      font-weight: 600;
+      line-height: 3.6rem;
+      color: ${({ theme }) => theme.colors.primary.dark};
+      margin-bottom: 1.2rem;
+    }
+    .account {
+      font-size: 2.4rem;
+      font-weight: 400;
+      line-height: 3.6rem;
+      color: ${({ theme }) => theme.colors.primary.dark};
+    }
+  }
+`;

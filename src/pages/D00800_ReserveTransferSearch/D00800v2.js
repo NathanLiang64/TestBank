@@ -1,29 +1,28 @@
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
+import { useForm } from 'react-hook-form';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Pagination } from 'swiper/core';
-import { dateToString } from 'utilities/Generator';
-import { useDispatch } from 'react-redux';
-import { useForm } from 'react-hook-form';
 
-/* Elements */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import Loading from 'components/Loading';
+import EmptyData from 'components/EmptyData';
 import Layout from 'components/Layout/Layout';
-import { FEIBTabContext, FEIBTabPanel } from 'components/elements';
 import DebitCard from 'components/DebitCard/DebitCard';
 import InformationTape from 'components/InformationTape';
-import EmptyData from 'components/EmptyData';
-import SuccessImage from 'assets/images/successIcon.png';
+import { FEIBTabContext, FEIBTabPanel } from 'components/elements';
 import FailImage from 'assets/images/failIcon.png';
-import { getReservedTransDetails, getResultTransDetails } from 'pages/D00800_ReserveTransferSearch/api';
-import { getAccountSummary } from 'pages/C00600_DepositPlan/api';
+import SuccessImage from 'assets/images/successIcon.png';
+import { dateToString } from 'utilities/Generator';
 import { showCustomPrompt } from 'utilities/MessageModal';
+import { getAccountSummary } from 'pages/C00600_DepositPlan/api';
+import { getReservedTransDetails, getResultTransDetails } from 'pages/D00800_ReserveTransferSearch/api';
 
-import Loading from 'components/Loading';
-import DetailContent from './detailContent';
-import ResultContent from './resultContent';
-import ReserveTransferSearchWrapper from './reserveTransferSearch.style';
 import { TabField } from './fields/tabField';
+import DetailContent from './components/detailContent';
+import ResultContent from './components/resultContent';
+import { ReserveTransferSearchWrapper } from './D00800.style';
 import { DateRangePickerField } from './fields/dateRangePickerField';
 import {
   defaultValues, reserveDatePickerLimit, resultDatePickerLimit, tabOptions,
@@ -35,7 +34,6 @@ SwiperCore.use([Pagination]);
 const D00800Draft = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  // defaultValues: {tab:切換頁數,reserveDateRange:[查詢預約起始日,查詢預約截止日],resultDateRange:[結果查詢起始日,結果查詢截止日] }
   const { control, handleSubmit, watch } = useForm({ defaultValues });
 
   const [cardsList, setCardsList] = useState([]);
@@ -178,15 +176,15 @@ const D00800Draft = () => {
       },
     ];
 
-    return panelOptions.map((option) => (
-      <FEIBTabPanel key={option.tabValue} value={option.tabValue}>
+    return panelOptions.map((panel) => (
+      <FEIBTabPanel key={panel.tabValue} value={panel.tabValue}>
         <DateRangePickerField
-          {...option.datePickerLimit}
+          {...panel.datePickerLimit}
           control={control}
           callback={handleSubmit(onSearch)}
-          name={option.formName}
+          name={panel.formName}
         />
-        {option.renderMethod()}
+        {panel.renderMethod()}
       </FEIBTabPanel>
     ));
   };
