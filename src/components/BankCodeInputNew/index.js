@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { FEIBErrorMessage, FEIBInput, FEIBInputLabel } from 'components/elements';
 import { ListIcon } from 'assets/images/icons';
 import { useController } from 'react-hook-form';
-import { getBankCode } from 'utilities/Generator';
+import { getBankCode } from 'utilities/CacheData';
 import BankCode from './bankSelector';
 
 /*

@@ -6,7 +6,7 @@ import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
 import { showDrawer } from 'utilities/MessageModal';
 import { loadFuncParams, closeFunc } from 'utilities/AppScriptProxy';
-import { loadLocalData, setLocalData } from 'utilities/Generator';
+import { loadLocalData, setLocalData } from 'utilities/CacheData';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { getAllAgreedAccount, updateAgreedAccount } from './api';
 import AccountEditor from './D00600_AccountEditor';

@@ -17,8 +17,9 @@ import { FEIBInputLabel, FEIBInput } from 'components/elements';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
-import { setLocalData, switchZhNumber } from 'utilities/Generator';
-import { AccountListCacheName, getAccountExtraInfo, loadAccountsList } from 'pages/D00100_NtdTransfer/api';
+import { switchZhNumber } from 'utilities/Generator';
+import { getAccountsList, resetAccountsList } from 'utilities/CacheData';
+import { getAccountExtraInfo } from 'pages/D00100_NtdTransfer/api';
 import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
 import { useHistory } from 'react-router';
 import {
@@ -52,7 +53,7 @@ const C00300 = () => {
 
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
-    loadAccountsList('MC', setAccounts); // M=台幣主帳戶、C=台幣子帳戶
+    getAccountsList('MC', setAccounts); // M=台幣主帳戶、C=台幣子帳戶
 
     const startParams = await loadFuncParams(); // Function Controller 提供的參數
     // 取得 Function Controller 提供的 keepData(model)
@@ -181,6 +182,8 @@ const C00300 = () => {
       selectedAccount.alias = values.newName; // 變更卡片上的帳戶名稱
       setAccountAlias(selectedAccount.accountNo, selectedAccount.alias);
       setAccounts([...accounts]);
+
+      resetAccountsList(); // 清除帳號基本資料快取，直到下次使用 getAccountsList 時再重新載入。
     };
     await customPopup('帳戶名稱編輯', body, handleSubmit(onOk));
   };

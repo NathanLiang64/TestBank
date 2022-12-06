@@ -7,7 +7,7 @@ import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
 import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, closeFunc } from 'utilities/AppScriptProxy';
-import { loadLocalData, setLocalData } from 'utilities/Generator';
+import { loadLocalData, setLocalData } from 'utilities/CacheData';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import {
@@ -75,10 +75,11 @@ const Page = () => {
    */
   const addnewAccount = async () => {
     const onFinished = async (newAcct) => {
-      const successful = await addFrequentAccount(newAcct);
-      if (successful) {
+      const headshotId = await addFrequentAccount(newAcct);
+      if (headshotId) {
         const setData = await setLocalData(storageName, [{
           ...newAcct,
+          headshot: headshotId,
           isNew: true,
         }, ...accounts]);
         setAccounts(setData);
