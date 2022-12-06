@@ -9,6 +9,7 @@ export const TextInputField = ({
   placeholder,
   disabled,
   $color,
+  fontSize = 1.6,
   ...controlProps
 }) => {
   const {field, fieldState } = useController(controlProps);
@@ -30,6 +31,7 @@ export const TextInputField = ({
         placeholder={placeholder || ''}
         $color={$color}
         $space="bottom"
+        $fontSize={fontSize}
       />
       {/* <FEIBErrorMessage>
         {fieldState.error ? fieldState.error.message : ''}
