@@ -179,6 +179,11 @@ const TransferWrapper = styled(Layout)`
       }
     }
   }
+  .accordionContentWarning {
+    color: ${({ theme }) => theme.colors.text.dark};
+    font-size: 1.5rem;
+    margin: 1.2rem 0;
+  }
 
   // 轉帳確認頁
   &.transferConfirmPage,
