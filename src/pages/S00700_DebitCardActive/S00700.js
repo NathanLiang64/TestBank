@@ -49,6 +49,7 @@ const S00700 = () => {
             name="actno"
             placeholder="請輸入金融卡帳號(金融卡背面14碼數字)"
             control={control}
+            fontSize={1.5}
           />
           <TextInputField
             type="number"
@@ -56,6 +57,7 @@ const S00700 = () => {
             name="serial"
             placeholder="請輸入金融卡序號(金融卡背面右下角6碼數字)"
             control={control}
+            fontSize={1.5}
           />
           <FEIBButton type="submit">確認</FEIBButton>
         </form>
