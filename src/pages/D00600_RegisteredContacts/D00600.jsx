@@ -84,8 +84,8 @@ const Page = () => {
           if (account.acctId === newAcct.acctId) return newAcct;
           return account;
         });
-        const setData = await setLocalData(`${storageName}`, updatedAccounts);
-        setAccounts(setData); // 強制更新清單。
+        setAccounts(updatedAccounts);
+        setLocalData(storageName, null); // 強制下次進入後更新清單。
       }
     };
 
