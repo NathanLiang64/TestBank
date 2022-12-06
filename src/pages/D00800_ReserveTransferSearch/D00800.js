@@ -28,11 +28,12 @@ import { showCustomPrompt } from 'utilities/MessageModal';
 import { getAccountSummary } from 'pages/C00600_DepositPlan/api'; // TODO 要維持單元功能的獨性，不要耦合
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import DetailContent from './detailContent';
-import ResultContent from './resultContent';
+import DetailContent from './components/detailContent';
+import ResultContent from './components/resultContent';
 
 /* Style */
-import ReserveTransferSearchWrapper from './reserveTransferSearch.style';
+// import ReserveTransferSearchWrapper from './reserveTransferSearch.style';
+import { ReserveTransferSearchWrapper } from './D00800.style';
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);

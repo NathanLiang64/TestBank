@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -21,6 +20,7 @@ import { getBankeeCard } from './api';
 const R00100 = () => {
   const dispatch = useDispatch();
   const [cardInfo, setCardInfo] = useState();
+  const go2Instalment = () => startFunc(FuncID.R00200, {cardNo: cardInfo.cardNo});
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
@@ -30,15 +30,15 @@ const R00100 = () => {
       const {card, usedCardLimit} = funcParams;
       setCardInfo({...card, usedCardLimit});
     } else {
-      const bankeeCardInfo = await getBankeeCard();
-      if (!bankeeCardInfo.cards.length) {
+      const bankeeCardInfo = await getBankeeCard(); // 若從更多 (B00600) 頁面進入，會先確認有沒有 bankee 信用卡，
+      if (bankeeCardInfo) setCardInfo(bankeeCardInfo); // 若有 bankee 信用卡，則將其卡號作為搜尋交易明細的 default 值
+      else {
         await showCustomPrompt({
           message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
           onOk: closeFunc,
           onClose: closeFunc,
         });
       }
-      setCardInfo(bankeeCardInfo);
     }
 
     dispatch(setWaittingVisible(false));
@@ -66,7 +66,7 @@ const R00100 = () => {
 
           {cardInfo?.isBankeeCard && (
             <BottomAction position={0}>
-              <button type="button" onClick={() => startFunc(FuncID.R00200, {cardNo: cardInfo.cardNo})}>晚點付</button>
+              <button type="button" onClick={go2Instalment}>晚點付</button>
             </BottomAction>
           ) }
         </PageWrapper>

@@ -1,4 +1,4 @@
-const AccordionContent = () => (
+export const AccordionContent = () => (
   <>
     <ol>
       <li>
@@ -28,4 +28,12 @@ const AccordionContent = () => (
   </>
 );
 
-export default AccordionContent;
+export const CancelAutoBillAlert = () => (
+  <div style={{ textAlign: 'center' }}>
+    您如欲取消自動扣繳
+    <br />
+    請洽客戶服務專線
+    <br />
+    (02)8073-1166
+  </div>
+);

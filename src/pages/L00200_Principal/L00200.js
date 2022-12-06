@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { getSubSummary, getSubPayment } from 'pages/L00100_Loan/api';
 import { toCurrency } from 'utilities/Generator';
 import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
 
@@ -8,6 +7,7 @@ import Layout from 'components/Layout/Layout';
 
 /* Styles */
 import { showPrompt } from 'utilities/MessageModal';
+import { getSubSummary, getSubPayment } from './api';
 import PrincipalWrapper from './principal.style';
 
 /**

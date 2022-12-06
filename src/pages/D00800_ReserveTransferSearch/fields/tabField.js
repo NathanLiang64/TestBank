@@ -20,14 +20,14 @@ export const TabField = ({
 
       <FEIBTabList
         $size="small"
-        $type="fized"
+        $type="fixed"
         onChange={(_, id) => {
           field.onChange(id);
           if (callback) callback();
         }}
       >
         {options.map(({ label, value }) => (
-          <FEIBTab label={label} value={value} />
+          <FEIBTab key={value} label={label} value={value} />
         ))}
       </FEIBTabList>
 
