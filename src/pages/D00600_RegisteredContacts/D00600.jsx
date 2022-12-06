@@ -5,10 +5,10 @@ import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
 import { showDrawer } from 'utilities/MessageModal';
-import { loadFuncParams, closeFunc } from 'utilities/AppScriptProxy';
+import { loadFuncParams, closeFunc, getCallerFunc } from 'utilities/AppScriptProxy';
 import { loadLocalData, setLocalData } from 'utilities/CacheData';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { getAllAgreedAccount, updateAgreedAccount } from './api';
+import { getAgreedAccount, updateAgreedAccount } from './api';
 import AccountEditor from './D00600_AccountEditor';
 import PageWrapper from './D00600.style';
 
@@ -19,7 +19,7 @@ const Page = () => {
   const dispatch = useDispatch();
   const [selectorMode, setSelectorMode] = useState();
   const [bindAccount, setBindAccount] = useState([]);
-  const [accounts, setAccounts] = useState([]);
+  const [accounts, setAccounts] = useState();
   const [selectedAccount, setSelectedAccount] = useState();
 
   const storageName = 'RegAccts';
@@ -47,7 +47,8 @@ const Page = () => {
 
     // 若有指定帳號，則只取單一帳號的約定帳號清單。
     // TODO 未指定帳號時，應改用頁韱分類。
-    const accts = await loadLocalData(`${storageName}`, () => getAllAgreedAccount(bindAcct));
+    setLocalData(storageName, null); // 強制下次進入後更新清單。 // TODO 不能只記某一個帳戶的約定帳號清單。
+    const accts = await loadLocalData(storageName, () => getAgreedAccount(bindAcct));
     setAccounts(accts);
 
     dispatch(setWaittingVisible(false));
@@ -99,7 +100,8 @@ const Page = () => {
     <Layout title="約定帳號管理">
       <Main small>
         <PageWrapper>
-          {accounts?.map((acct) => (
+          {/* 非選取模式時，不需要列出同ID互轉的帳號 */}
+          {accounts?.filter((acct) => (acct.selectorMode || !acct.isSelf)).map((acct) => (
             <MemberAccountCard
               key={acct.acctId}
               name={acct.nickName}
@@ -109,7 +111,7 @@ const Page = () => {
               memberId={acct.memberId}
               isSelected={(acct.acctId === selectedAccount)}
               onClick={() => onAccountSelected(acct)} // 傳回值：選取的帳號。
-              moreActions={[
+              moreActions={acct.isSelf ? null : [ // 不可編輯自己的帳號。（因為是由同ID互轉建立的）
                 { lable: '編輯', type: 'edit', onClick: () => editAccount(acct) },
               ]}
             />
