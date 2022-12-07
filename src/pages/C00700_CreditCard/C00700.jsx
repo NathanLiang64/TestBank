@@ -12,7 +12,7 @@ import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import { FuncID } from 'utilities/FuncID';
 import { currencySymbolGenerator } from 'utilities/Generator';
 import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
-import { showCustomDrawer, showCustomPrompt, showError } from 'utilities/MessageModal';
+import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
 import { CreditCardIcon5, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
@@ -32,8 +32,6 @@ const CreditCardPage = () => {
   const [transactionMap, setTransactionMap] = useState({});
   const dispatch = useDispatch();
 
-  console.log('transactionMap', transactionMap);
-
   const fetchTransactions = async (cards, currentIndex) => {
     const transactionsArray = await Promise.all(
       cards.map(({ cardNo }) => getTransactionPromise(cardNo)),
@@ -43,7 +41,7 @@ const CreditCardPage = () => {
     setTransactionMap((prevMap) => ({...prevMap, [currentIndex]: flattedTransactions}));
   };
 
-  // 滑動卡片的 Handler
+  // 滑動卡片時，拿取當下信用卡的交易明細
   const onSlideChange = async (swiper) => {
     if (transactionMap[swiper.activeIndex]) return;
     const currentCards = cardsInfo[swiper.activeIndex].cards;
@@ -52,15 +50,14 @@ const CreditCardPage = () => {
 
   // 編輯信用卡明細備註的 Handler
   const onTxnNotesEdit = async (payload, isBankeeCard) => {
-    const {result } = await updateTxnNotes(payload);
-    // updateTxNotes 成功才更新畫面
-    if (result) {
-      setTransactionMap((prevMap) => {
-        const key = isBankeeCard ? 0 : 1;
-        const foundCard = prevMap[key];
-        return {...prevMap, [key]: {...foundCard, note: payload.note}};
-      });
-    } else showError('編輯備註失敗');
+    const { result } = await updateTxnNotes(payload);
+    if (!result) return;
+    // updateTxNotes API 打成功才更新畫面
+    setTransactionMap((prevMap) => {
+      const key = isBankeeCard ? 0 : 1;
+      const foundCard = prevMap[key];
+      return {...prevMap, [key]: {...foundCard, note: payload.note}};
+    });
   };
 
   // 信用卡卡面右上角的功能列表

@@ -98,5 +98,5 @@ export const getTransactionPromise = (cardNo) => new Promise((resolve) => {
  */
 export const updateTxnNotes = async (param) => {
   const response = await callAPI('/api/card/v1/updateTxnNotes', param);
-  return response;
+  return response.data;
 };

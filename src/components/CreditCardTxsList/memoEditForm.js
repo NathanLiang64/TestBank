@@ -1,10 +1,8 @@
-/* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import Loading from 'components/Loading';
 import { FEIBButton } from 'components/elements';
 import { TextInputField } from 'components/Fields';
 import { setModalVisible } from 'stores/reducers/ModalReducer';
@@ -17,7 +15,6 @@ export const MemoEditForm = ({
   onTxnNotesEdit,
 }) => {
   const dispatch = useDispatch();
-  const [isUpdating, setIsUpdating] = useState(false);
   const { control, handleSubmit, unregister } = useForm({
     defaultValues,
     resolver: yupResolver(validationSchema),
@@ -29,16 +26,14 @@ export const MemoEditForm = ({
     const payload = {
       cardNo, txDate, txKey, note,
     };
+
     // console.log('payload', payload);
-    setIsUpdating(true);
-    onTxnNotesEdit(payload, isBankeeCard);
-    setIsUpdating(false);
+    await onTxnNotesEdit(payload, isBankeeCard);
     dispatch(setModalVisible(false));
   };
 
   useEffect(() => () => unregister('note'), []);
 
-  if (isUpdating) return <Loading space="both" isCentered />;
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <TextInputField labelName="備註說明" name="note" control={control} />
