@@ -69,7 +69,7 @@ const CardLessSetting = () => {
         <div className="controlContainer">
           <div className="switchContainer">
             <div className="labelContainer">
-              <p className="labelTxt">無卡提款</p>
+              <p>無卡提款</p>
               {isEnable && <p className="phoneNum">{cardLessStatus.account}</p>}
             </div>
             <FEIBSwitch checked={isEnable} onClick={handleSwitchClick} />

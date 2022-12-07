@@ -28,9 +28,6 @@ const CardLessSettingWrapper = styled(Layout)`
       display: flex;
       flex-direction: column;
       justify-content: center;
-      .labelTxt {
-        color: ${({ theme }) => theme.colors.text.lightGray};
-      }
       .phoneNum {
         color: ${({ theme }) => theme.colors.text.light};
       }
