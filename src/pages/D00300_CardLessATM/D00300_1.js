@@ -51,21 +51,14 @@ const CardLessATM1 = () => {
       const { account, withdrawAmount } = param;
       const data = {
         seqNo,
-        withdrawAmount,
-        account,
         startDateTime,
         endDateTime,
+        withdrawAmount,
+        account,
       };
 
-      if (seqNo) {
-        console.log('提款結果', data);
-        // 跳轉結果頁
-        history.push('/D003002', { data });
-      } else {
-        showCustomPrompt({
-          message, okContent: '確認', onOk: () => closeFunc(), onClose: () => closeFunc(),
-        });
-      }
+      if (seqNo) history.push('/D003002', { data });
+      else showCustomPrompt({ message, onOk: closeFunc, onClose: closeFunc });
     }
   };
 

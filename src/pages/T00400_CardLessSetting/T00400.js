@@ -33,7 +33,7 @@ const CardLessSetting = () => {
     setCardLessStatus(cardLessRes);
 
     // 取得母帳戶的資訊。
-    setAccount(await getAccountsList('M')[0]);
+    await getAccountsList('M', (accounts) => setAccount(accounts[0]));
 
     dispatch(setWaittingVisible(false));
   };
