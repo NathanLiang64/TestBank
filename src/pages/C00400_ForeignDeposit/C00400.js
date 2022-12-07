@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable no-use-before-define */
@@ -17,8 +16,7 @@ import { FEIBInputLabel, FEIBInput } from 'components/elements';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
-import { setLocalData } from 'utilities/Generator';
-import { AccountListCacheName, getAccountExtraInfo, loadAccountsList } from 'pages/D00100_NtdTransfer/api';
+import { getAccountsList, resetAccountsList } from 'utilities/CacheData';
 import {
   getTransactions,
   setAccountAlias,
@@ -45,7 +43,7 @@ const C00400 = () => {
     dispatch(setWaittingVisible(true));
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
-    await loadAccountsList('F', setAccounts); // F=外幣帳戶
+    getAccountsList('F', setAccounts); // F=外幣帳戶
 
     const startParams = await loadFuncParams(); // Function Controller 提供的參數
     // 取得 Function Controller 提供的 keepData(model)
@@ -117,14 +115,12 @@ const C00400 = () => {
         />
       </>
     );
-    const onOk = async (values) => {
+    const onOk = (values) => {
       selectedAccount.alias = values.newName; // 變更卡片上的帳戶名稱
-      await setAccountAlias(selectedAccount.accountNo, selectedAccount.alias);
+      setAccountAlias(selectedAccount.accountNo, selectedAccount.alias);
+      setAccounts([...accounts]);
 
-      //  先清除 cache
-      setLocalData(AccountListCacheName); //
-      //  在進行更新
-      await loadAccountsList('F', setAccounts); // F=外幣帳戶
+      resetAccountsList(); // 清除帳號基本資料快取，直到下次使用 getAccountsList 時再重新載入。
     };
     await customPopup('帳戶名稱編輯', body, handleSubmit(onOk));
   };

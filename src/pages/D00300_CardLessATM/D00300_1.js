@@ -11,8 +11,9 @@ import DebitCard from 'components/DebitCard/DebitCard';
 import Accordion from 'components/Accordion';
 import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
+import { getAccountsList } from 'utilities/CacheData';
 import { AuthCode } from 'utilities/TxnAuthCode';
-import { getAccountSummary, cardLessWithdrawApply } from 'pages/D00300_CardLessATM/api';
+import { cardLessWithdrawApply, getAccountExtraInfo } from './api';
 
 import CardLessATMWrapper from './D00300.style';
 import { CustomInputSelectorField } from './fields/CustomInputSelectorField';
@@ -35,7 +36,8 @@ const CardLessATM1 = () => {
   const [accountSummary, setAccountSummary] = useState({
     account: '',
     balance: 0,
-    cwdhCnt: '06',
+    wdTimes: 0,
+    wdRemain: 0,
   });
 
   // 無卡提款交易
@@ -79,11 +81,17 @@ const CardLessATM1 = () => {
     dispatch(setWaittingVisible(true));
 
     // 取得提款卡資訊
-    const data = await getAccountSummary();
-    if (data) {
-      setAccountSummary({ ...data });
-      reset({...defaultValues, account: data.account});
-    }
+    getAccountsList('M', async (accounts) => {
+      const acct = accounts[0];
+      const extraInfo = await getAccountExtraInfo();
+      setAccountSummary({
+        account: acct.accountNo,
+        balance: acct.balance,
+        wdTimes: extraInfo.freeWithdraw,
+        wdRemain: extraInfo.freeWithdrawRemain,
+      });
+      reset({...defaultValues, account: acct.accountNo});
+    });
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -98,8 +106,8 @@ const CardLessATM1 = () => {
               account={accountSummary.account}
               balance={accountSummary.balance}
               withdrawMode
-              freeWithdraw={6} // 目前 hardcode
-              freeWithdrawRemain={parseInt(accountSummary.cwdhCnt, 10)}
+              freeWithdraw={accountSummary.wdTimes}
+              freeWithdrawRemain={accountSummary.wdRemain}
               color="purple"
             />
             <CustomInputSelectorField

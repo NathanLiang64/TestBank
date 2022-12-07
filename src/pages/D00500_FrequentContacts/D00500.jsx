@@ -7,7 +7,7 @@ import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
 import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, closeFunc } from 'utilities/AppScriptProxy';
-import { loadLocalData, setLocalData } from 'utilities/Generator';
+import { loadLocalData, setLocalData } from 'utilities/CacheData';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import {
@@ -75,13 +75,16 @@ const Page = () => {
    */
   const addnewAccount = async () => {
     const onFinished = async (newAcct) => {
-      const successful = await addFrequentAccount(newAcct);
-      if (successful) {
-        const setData = await setLocalData(storageName, [{
+      const headshotId = await addFrequentAccount(newAcct);
+      if (headshotId) {
+        const newAccount = {
           ...newAcct,
+          headshot: headshotId,
           isNew: true,
-        }, ...accounts]);
-        setAccounts(setData);
+        };
+        const tmpCards = [newAccount, ...accounts];
+        setAccounts(tmpCards);
+        setLocalData(storageName, null); // 強制下次進入後更新清單。
       }
       dispatch(setDrawerVisible(false));
     };
@@ -106,12 +109,12 @@ const Page = () => {
         orgAcctId: acctId,
       });
       if (successful) {
-        const updatedAccount = accounts.map((account) => {
+        const tmpCards = accounts.map((account) => {
           if (account.acctId === acct.acctId) return newAcct;
           return account;
         });
-        const setData = await setLocalData(storageName, updatedAccount);
-        setAccounts(setLocalData(storageName, setData)); // 強制更新清單。
+        setAccounts(tmpCards);
+        setLocalData(storageName, null); // 強制下次進入後更新清單。
       }
       dispatch(setDrawerVisible(false));
     };
@@ -131,7 +134,8 @@ const Page = () => {
       const successful = await deleteFrequentAccount({ bankId: acct.bankId, acctId: acct.acctId });
       if (successful) {
         const tmpCards = accounts.filter((c) => c.acctId !== acct.acctId);
-        setAccounts(setLocalData(storageName, tmpCards));
+        setAccounts(tmpCards);
+        setLocalData(storageName, null); // 強制下次進入後更新清單。
       }
     };
 
