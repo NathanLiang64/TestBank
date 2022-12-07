@@ -20,7 +20,7 @@ import { shareMessage } from 'utilities/AppScriptProxy';
 
 import { setWaittingVisible, setDrawerVisible } from 'stores/reducers/ModalReducer';
 import { showDrawer, showError, showInfo } from 'utilities/MessageModal';
-import { executeNtdTransfer, getDisplayAmount, getCycleDesc, getTransDate } from './api';
+import { getDisplayAmount, getCycleDesc, getTransDate } from './api';
 import TransferWrapper from './D00100.style';
 
 /**
@@ -34,8 +34,7 @@ const TransferResult = (props) => {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const [model, setModel] = useState(state);
-  const [transferResult, setTransferResult] = useState(state);
+  const [model] = useState(state);
   const [showSnapshotSuccess, setShowSnapshotSuccess] = useState();
 
   /**
@@ -43,34 +42,6 @@ const TransferResult = (props) => {
    */
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-
-    // TODO 執行轉帳交易。
-    const result = await executeNtdTransfer();
-    const isSuccess = (result.code === '0000'); // Debug 假設！
-    setTransferResult({
-      isSuccess,
-      errorCode: null,
-      message: result.message, // 錯誤訊息
-      fee: 0, // TODO 手續費
-    });
-    console.log('==> 轉帳執行結果：', result);
-
-    if (isSuccess) {
-      // TODO 跨轉優惠、手續費、
-      // TODO 需確認是否要寫回 LocalCache ？
-      setModel((prevModel) => {
-        const updatedBalance = prevModel.transOut.balance - (prevModel.amount - result.fee);
-        const updatedFreeTransferRemain = prevModel.transOut.freeTransferRemain - 1;
-        return {
-          ...prevModel,
-          transOut: {
-            ...prevModel.transOut,
-            balance: updatedBalance,
-            freeTransferRemain: updatedFreeTransferRemain,
-          },
-        };
-      });
-    }
   }, []);
 
   /**
@@ -78,7 +49,7 @@ const TransferResult = (props) => {
    */
   useEffect(async () => {
     if (model) dispatch(setWaittingVisible(false));
-  }, [transferResult]);
+  }, [model]);
 
   /**
    * 顯示轉帳結果。
@@ -117,7 +88,7 @@ const TransferResult = (props) => {
         <Accordion title="詳細交易" space="bottom">
           <InformationList title="帳戶餘額" content={`$${model.transOut.balance}`} remark={model.transOut.alias} />
           {model.booking.mode === 0 && (
-            <InformationList title="手續費" content={`$${transferResult.fee}`} remark={`跨轉優惠:剩餘${model.transOut.freeTransferRemain}次`} />
+            <InformationList title="手續費" content={`$${model.result.fee}`} remark={`跨轉優惠:剩餘${model.transOut.freeTransferRemain}次`} />
           )}
           <InformationList title="備註" content={model.memo} />
         </Accordion>
@@ -130,14 +101,20 @@ const TransferResult = (props) => {
    */
   const createRepeatableAccount = async () => {
     const onFinished = async (newAcct) => {
-      const successful = await addFrequentAccount(newAcct);
-      if (successful) {
+      const headshotId = await addFrequentAccount(newAcct);
+      if (headshotId) {
         const message = '這個帳號已加入您的常用帳號名單中嚕！';
         await showInfo(message, () => dispatch(setDrawerVisible(false)));
       }
     };
 
-    await showDrawer('新增常用帳號', (<AccountEditor onFinished={onFinished} />));
+    // 給 AccountEditor 預設值，且直接進到設定暱稱。
+    const acctData = {
+      bankId: model.transIn.bank, // '常用轉入帳戶-銀行代碼',
+      acctId: model.transIn.account, // '常用轉入帳戶-帳號',
+    };
+
+    await showDrawer('新增常用帳號', (<AccountEditor initData={acctData} onFinished={onFinished} />));
   };
 
   /**
@@ -185,17 +162,17 @@ const TransferResult = (props) => {
   /**
    * 頁面輸出。
    */
-  return transferResult ? (
+  return model ? (
     <Layout goBack={false}>
       <TransferWrapper className="transferResultPage">
         <ResultAnimation
-          isSuccess={transferResult.isSuccess}
-          subject={transferResult.isSuccess ? '轉帳成功' : '轉帳失敗'}
-          descHeader={transferResult.errorCode}
-          description={transferResult.message}
+          isSuccess={model.result.isSuccess}
+          subject={model.result.isSuccess ? '轉帳成功' : '轉帳失敗'}
+          descHeader={model.result.errorCode}
+          description={model.result.message}
         />
         { renderTransferResult() }
-        { renderBottomAction(transferResult.isSuccess) }
+        { renderBottomAction(model.result.isSuccess) }
         { showSnapshotSuccess && (
           <SnackModal icon={<CameraIcon size={32} color={theme.colors.basic.white} />} text="截圖成功" />
         ) }

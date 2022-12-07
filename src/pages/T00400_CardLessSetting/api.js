@@ -4,10 +4,7 @@ import { callAPI } from 'utilities/axios';
  * 取得無卡提款狀態
  *
  * @param JwtToken
- * @return {
- *    cwdStatus:  無卡提款狀態   0-未申請 1-已申請未開通 2-已開通 3-已註銷 4-已失效 5-其他
- *    account:    台幣數存母帳號
- * }
+ * @return {Promise<String>} 無卡提款狀態。 0-未申請 1-已申請未開通 2-已開通 3-已註銷 4-已失效 5-其他
  * @throws Exception
  */
 export const getStatus = async (request) => {

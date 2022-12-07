@@ -14,9 +14,7 @@ import {
   customPopup, showCustomDrawer, showCustomPrompt, showPrompt,
 } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
-import { setLocalData } from 'utilities/Generator';
 import {
-  AccountListCacheName,
   getAccountExtraInfo,
   loadAccountsList,
 } from 'pages/D00100_NtdTransfer/api';
@@ -189,7 +187,6 @@ const C00500Modified = () => {
     } else {
       handleAccountChanged(selectedAccountIdx ?? 0);
       reset({newName: accounts[selectedAccountIdx].alias});
-      setLocalData(AccountListCacheName, accounts); // 將 accounts cached
     }
   }, [accounts, selectedAccountIdx]);
 

@@ -3,7 +3,7 @@ import BankCode from 'components/BankCodeInput/bankSelector';
 import { FEIBErrorMessage, FEIBInput, FEIBInputLabel } from 'components/elements';
 import { ListIcon } from 'assets/images/icons';
 import { Controller } from 'react-hook-form';
-import { getBankCode } from 'utilities/Generator';
+import { getBankCode } from 'utilities/CacheData';
 
 /*
 * ================== BankCodeInput 組件說明 ==================

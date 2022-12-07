@@ -1,14 +1,13 @@
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
+import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
+import { showCustomPrompt } from 'utilities/MessageModal';
 
 import Layout from 'components/Layout/Layout';
 import { FuncID } from 'utilities/FuncID';
-import { showCustomPrompt } from 'utilities/MessageModal';
-import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-
-import {getStatus, getCardlessStatus} from './api';
+import { getStatus, getCardlessWdStatus } from './api';
 
 const CardLessATM = () => {
   const dispatch = useDispatch();
@@ -30,7 +29,7 @@ const CardLessATM = () => {
       });
     } else {
     // 檢查無卡提款狀態; 0=未申請, 1=已申請未開通, 2=已開通, 3=已註銷, 4=已失效, 5=其他
-      const { cwdStatus } = await getCardlessStatus();
+      const { cwdStatus } = await getCardlessWdStatus();
       const statusNumber = Number(cwdStatus);
 
       if (statusNumber === 2) history.push('/D003001');
