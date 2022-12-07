@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
@@ -41,6 +42,8 @@ const D00800Draft = () => {
   const [reserveDataList, setReserveDataList] = useState([]);
   const [resultDataList, setResultDataList] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  // const [reserveMap, setReserveMap] = useState();
+  // const [resultMap, setResultMap] = useState();
   const watchedTab = watch('tab');
 
   const onSearch = async ({ tab, reserveDateRange, resultDateRange }) => {
@@ -104,7 +107,8 @@ const D00800Draft = () => {
       title: '預約轉帳',
       message: <DetailContent contentData={{ data, selectedAccount }} />,
       onOk: () => toConfirmPage(data),
-      onCancel: () => {},
+      okContent: '取消交易',
+      // onCancel: () => {},
     });
   };
 
