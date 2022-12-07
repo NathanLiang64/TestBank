@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
@@ -17,9 +16,8 @@ import FailImage from 'assets/images/failIcon.png';
 import SuccessImage from 'assets/images/successIcon.png';
 import { currencySymbolGenerator, dateToString } from 'utilities/Generator';
 import { showCustomPrompt } from 'utilities/MessageModal';
-import { getAccountSummary } from 'pages/C00600_DepositPlan/api';
-import { getReservedTransDetails, getResultTransDetails } from 'pages/D00800_ReserveTransferSearch/api';
 
+import { closeFunc } from 'utilities/AppScriptProxy';
 import { TabField } from './fields/tabField';
 import DetailContent from './components/detailContent';
 import ResultContent from './components/resultContent';
@@ -28,6 +26,7 @@ import { DateRangePickerField } from './fields/dateRangePickerField';
 import {
   defaultValues, reserveDatePickerLimit, resultDatePickerLimit, tabOptions,
 } from './constants';
+import { getReservedTransDetails, getResultTransDetails, getAccountSummary} from './api';
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
@@ -35,40 +34,37 @@ SwiperCore.use([Pagination]);
 const D00800Draft = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { control, handleSubmit, watch } = useForm({ defaultValues });
-
-  const [cardsList, setCardsList] = useState([]);
+  const [accountsList, setAccountsList] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
-  const [reserveDataList, setReserveDataList] = useState([]);
-  const [resultDataList, setResultDataList] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
-  // const [reserveMap, setReserveMap] = useState();
-  // const [resultMap, setResultMap] = useState();
+  const [searchList, setSearchList] = useState({
+    reserve: undefined,
+    result: undefined,
+  });
+  const { control, handleSubmit, watch } = useForm({ defaultValues });
   const watchedTab = watch('tab');
 
   const onSearch = async ({ tab, reserveDateRange, resultDateRange }) => {
     const sdate = dateToString(tab === '1' ? reserveDateRange[0] : resultDateRange[0]);
     const edate = dateToString(tab === '1' ? reserveDateRange[1] : resultDateRange[1]);
-
+    const {acctId, ccycd, accountType} = selectedAccount;
     const param = {
-      acctId: selectedAccount.acctId,
-      ccycd: selectedAccount.ccyCd,
-      accountType: selectedAccount.acctType, // 不確定是否要給 已經由 accountType 改成 acctType
-      sdate,
-      edate,
-      queryType: 3, // 1:網路預約 2:臨櫃預約 3:網銀預約+臨櫃預約 4:存錢計畫預約
+      acctId, ccycd, accountType, sdate, edate, queryType: 3,
     };
 
-    setIsSearching(true);
     if (tab === '1') {
-      const { data } = await getReservedTransDetails(param);
-      setReserveDataList(data?.bookList);
+      const { bookList } = await getReservedTransDetails(param);
+      setSearchList((prevSearchList) => ({
+        ...prevSearchList,
+        reserve: { ...prevSearchList.reserve, [selectedAccount.acctId]: bookList},
+      }));
     }
     if (tab === '2') {
-      const { data } = await getResultTransDetails(param);
-      setResultDataList(data?.bookList);
+      const { bookList } = await getResultTransDetails(param);
+      setSearchList((prevSearchList) => ({
+        ...prevSearchList,
+        result: { ...prevSearchList.result, [selectedAccount.acctId]: bookList },
+      }));
     }
-    setIsSearching(false);
   };
 
   // 取得帳號清單
@@ -76,27 +72,27 @@ const D00800Draft = () => {
     dispatch(setWaittingVisible(true));
 
     const accounts = await getAccountSummary('MSC');
-    if (accounts) {
-      setCardsList(accounts);
+    if (accounts.length) {
+      setAccountsList(accounts);
       setSelectedAccount(accounts[0]);
-    }
+    } else showCustomPrompt({message: '無帳戶資訊', onClose: closeFunc});
 
     dispatch(setWaittingVisible(false));
   };
 
-  const toConfirmPage = (currentReserveData) => {
-    history.push('/D008001', { ...currentReserveData, ...selectedAccount });
+  const toConfirmPage = (reserveData) => {
+    history.push('/D008001', { ...reserveData, ...selectedAccount });
   };
 
   // 轉出帳號卡片 swiper
-  const renderCard = () => cardsList.map((item) => (
+  const renderCard = () => accountsList.map((item) => (
     <SwiperSlide key={item.acctId}>
       <DebitCard
         branch={item.acctBranch}
         cardName={item.acctName || '--'}
         account={item.acctId}
         balance={item.acctBalx}
-        dollarSign={item.ccyCd}
+        dollarSign={item.ccycd}
         color="purple"
       />
     </SwiperSlide>
@@ -114,15 +110,17 @@ const D00800Draft = () => {
 
   // 預約轉帳查詢列表
   const renderReserveTapes = () => {
-    if (isSearching) return <Loading space="both" isCentered />;
-    if (!reserveDataList.length) {
+    const { reserve } = searchList;
+    if (!reserve || !reserve[selectedAccount.acctId]) return <Loading space="both" isCentered />;
+    if (!reserve[selectedAccount.acctId].length) {
       return (
         <div className="emptyConatiner">
           <EmptyData />
         </div>
       );
     }
-    return reserveDataList.map((item) => (
+
+    return reserve[selectedAccount.acctId].map((item) => (
       <InformationTape
         key={item.inActNo}
         topLeft={`${item.inBank}-${item.inActNo}`}
@@ -144,15 +142,17 @@ const D00800Draft = () => {
 
   // 結果查詢列表
   const renderResultTapes = () => {
-    if (isSearching) return <Loading space="both" isCentered />;
-    if (!resultDataList.length) {
+    const { result } = searchList;
+    if (!result || !result[selectedAccount.acctId]) return <Loading space="both" isCentered />;
+    if (!result[selectedAccount.acctId].length) {
       return (
         <div className="emptyConatiner">
           <EmptyData />
         </div>
       );
     }
-    return resultDataList.map((item) => (
+
+    return result[selectedAccount.acctId].map((item) => (
       <InformationTape
         key={item.inActNo}
         img={item.stderrMsg ? FailImage : SuccessImage}
@@ -193,18 +193,23 @@ const D00800Draft = () => {
     ));
   };
 
-  const handleChangeSlide = ({ activeIndex }) => setSelectedAccount(cardsList[activeIndex]);
+  const handleChangeSlide = ({ activeIndex }) => setSelectedAccount(accountsList[activeIndex]);
 
   // 取得帳號列表
   useEffect(() => {
     fetchTransferOutAccounts();
   }, []);
 
-  // 切換帳號搜尋預約明細
+  // 切換帳號或是切換Tab的時候搜尋預約明細
   useEffect(() => {
-    if (selectedAccount) handleSubmit(onSearch)();
-  }, [selectedAccount]);
+    if (!selectedAccount) return;
+    const searchObj = watchedTab === '1' ? searchList.reserve : searchList.result;
+    const selectedAcctId = selectedAccount.acctId;
+    if (searchObj && searchObj[selectedAcctId]) return;
+    handleSubmit(onSearch)();
+  }, [selectedAccount, watchedTab]);
 
+  console.log('searchList', searchList);
   return (
     <Layout title="預約轉帳查詢/取消">
       <ReserveTransferSearchWrapper className="searchResult">
@@ -224,7 +229,6 @@ const D00800Draft = () => {
             <TabField
               control={control}
               name="tab"
-              callback={handleSubmit(onSearch)}
               options={tabOptions}
             />
             {renderTabPanels()}
