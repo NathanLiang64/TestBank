@@ -39,6 +39,9 @@ const EmailConfirmWrapper = styled(Layout)`
       }
     }
   }
+  .hide {
+    display: none;
+  }
 `;
 
 export default EmailConfirmWrapper;
