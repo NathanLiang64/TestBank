@@ -77,12 +77,14 @@ const Page = () => {
     const onFinished = async (newAcct) => {
       const headshotId = await addFrequentAccount(newAcct);
       if (headshotId) {
-        const setData = await setLocalData(storageName, [{
+        const newAccount = {
           ...newAcct,
           headshot: headshotId,
           isNew: true,
-        }, ...accounts]);
-        setAccounts(setData);
+        };
+        const tmpCards = [newAccount, ...accounts];
+        setAccounts(tmpCards);
+        setLocalData(storageName, null); // 強制下次進入後更新清單。
       }
       dispatch(setDrawerVisible(false));
     };
@@ -107,12 +109,12 @@ const Page = () => {
         orgAcctId: acctId,
       });
       if (successful) {
-        const updatedAccount = accounts.map((account) => {
+        const tmpCards = accounts.map((account) => {
           if (account.acctId === acct.acctId) return newAcct;
           return account;
         });
-        const setData = await setLocalData(storageName, updatedAccount);
-        setAccounts(setLocalData(storageName, setData)); // 強制更新清單。
+        setAccounts(tmpCards);
+        setLocalData(storageName, null); // 強制下次進入後更新清單。
       }
       dispatch(setDrawerVisible(false));
     };
@@ -132,7 +134,8 @@ const Page = () => {
       const successful = await deleteFrequentAccount({ bankId: acct.bankId, acctId: acct.acctId });
       if (successful) {
         const tmpCards = accounts.filter((c) => c.acctId !== acct.acctId);
-        setAccounts(setLocalData(storageName, tmpCards));
+        setAccounts(tmpCards);
+        setLocalData(storageName, null); // 強制下次進入後更新清單。
       }
     };
 

@@ -148,6 +148,7 @@ const funcStack = {
 
 /**
  * 取得啟動目前單元功能的功能代碼。
+ * @returns {String} 功能代碼。
  */
 function getCallerFunc() {
   const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');

@@ -14,7 +14,7 @@ import InformationTape from 'components/InformationTape';
 import { FEIBTabContext, FEIBTabPanel } from 'components/elements';
 import FailImage from 'assets/images/failIcon.png';
 import SuccessImage from 'assets/images/successIcon.png';
-import { dateToString } from 'utilities/Generator';
+import { currencySymbolGenerator, dateToString } from 'utilities/Generator';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import { getAccountSummary } from 'pages/C00600_DepositPlan/api';
 import { getReservedTransDetails, getResultTransDetails } from 'pages/D00800_ReserveTransferSearch/api';
@@ -50,10 +50,10 @@ const D00800Draft = () => {
     const param = {
       acctId: selectedAccount.acctId,
       ccycd: selectedAccount.ccyCd,
-      acctType: selectedAccount.acctType, // 不確定是否要給 已經由 accountType 改成 acctType
+      accountType: selectedAccount.acctType, // 不確定是否要給 已經由 accountType 改成 acctType
       sdate,
       edate,
-      // queryType: '3', // 這個是什麼?
+      queryType: 3, // 1:網路預約 2:臨櫃預約 3:網銀預約+臨櫃預約 4:存錢計畫預約
     };
 
     setIsSearching(true);
@@ -122,7 +122,7 @@ const D00800Draft = () => {
       <InformationTape
         key={item.inActNo}
         topLeft={`${item.inBank}-${item.inActNo}`}
-        topRight={`$ ${item.amount}`}
+        topRight={currencySymbolGenerator('TWD', item.amount)}
         bottomLeft={`預約轉帳日：${item.payDate}`}
         bottomRight={item.type}
         onClick={() => handleReserveDataDialogOpen(item)}
@@ -153,7 +153,7 @@ const D00800Draft = () => {
         key={item.inActNo}
         img={item.stderrMsg ? FailImage : SuccessImage}
         topLeft={`${item.inActNo}`}
-        topRight={`$ ${item.amount}`}
+        topRight={currencySymbolGenerator('TWD', item.amount)}
         bottomLeft={`交易日期：${item.trnsDate}`}
         onClick={() => handleOpenResultDialog(item)}
       />

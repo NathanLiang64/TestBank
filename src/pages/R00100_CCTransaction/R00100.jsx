@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { showCustomPrompt } from 'utilities/MessageModal';
+import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
@@ -12,7 +12,7 @@ import { closeFunc, loadFuncParams, startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
 import CreditCardTxsList from 'components/CreditCardTxsList';
 import PageWrapper from './R00100.style';
-import { getBankeeCard } from './api';
+import { getBankeeCard, getTransactionPromise, updateTxnNotes } from './api';
 
 /**
  * R00100 信用卡 即時消費明細
@@ -20,26 +20,52 @@ import { getBankeeCard } from './api';
 const R00100 = () => {
   const dispatch = useDispatch();
   const [cardInfo, setCardInfo] = useState();
+  const [transactions, setTransactions] = useState();
   const go2Instalment = () => startFunc(FuncID.R00200, {cardNo: cardInfo.cardNo});
+
+  const fetchTransactions = async (cards) => {
+    const transactionsArray = await Promise.all(
+      cards.map(({ cardNo }) => getTransactionPromise(cardNo)),
+    );
+    const flattedTransactions = transactionsArray.flat();
+    setTransactions(flattedTransactions);
+  };
+
+  // 編輯信用卡明細備註的 Handler
+  const onTxnNotesEdit = async (payload) => {
+    const { result } = await updateTxnNotes(payload);
+    if (result) {
+      setTransactions((prevTrans) => prevTrans.map((tran) => {
+        // TODO 目前測資回傳 txKey 為空字串，故加入 txDate 一起作為搜尋條件
+        const {txDate, txKey, note} = payload;
+        if (tran.txDate === txDate && tran.txKey === txKey) return {...tran, note};
+        return tran;
+      }));
+    } else showError('編輯備註失敗');
+  };
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-
+    let fetchedCardInfo = null;
     const funcParams = await loadFuncParams();
+
     if (funcParams) {
-      const {card, usedCardLimit} = funcParams;
-      setCardInfo({...card, usedCardLimit});
+      fetchedCardInfo = {...funcParams.card, usedCardLimit: funcParams.usedCardLimit};
     } else {
-      const bankeeCardInfo = await getBankeeCard(); // 若從更多 (B00600) 頁面進入，會先確認有沒有 bankee 信用卡，
-      if (bankeeCardInfo) setCardInfo(bankeeCardInfo); // 若有 bankee 信用卡，則將其卡號作為搜尋交易明細的 default 值
-      else {
-        await showCustomPrompt({
-          message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
-          onOk: closeFunc,
-          onClose: closeFunc,
-        });
-      }
+      // 若從更多 (B00600) 頁面進入，會先確認有沒有 bankee 信用卡，
+      const bankeeCardInfo = await getBankeeCard();
+      if (bankeeCardInfo) fetchedCardInfo = bankeeCardInfo;
     }
+
+    if (!fetchedCardInfo) {
+      await showCustomPrompt({
+        message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
+        onOk: closeFunc,
+        onClose: closeFunc,
+      });
+    }
+    fetchTransactions(fetchedCardInfo.cards);
+    setCardInfo(fetchedCardInfo);
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -59,11 +85,15 @@ const R00100 = () => {
           </div>
           <div className="txn-wrapper">
             {!!cardInfo && (
-            <CreditCardTxsList showAll card={cardInfo} />
+            <CreditCardTxsList
+              showAll
+              card={cardInfo}
+              transactions={transactions}
+              onTxnNotesEdit={onTxnNotesEdit}
+            />
             ) }
           </div>
           <div className="note">實際請款金額以帳單為準</div>
-
           {cardInfo?.isBankeeCard && (
             <BottomAction position={0}>
               <button type="button" onClick={go2Instalment}>晚點付</button>

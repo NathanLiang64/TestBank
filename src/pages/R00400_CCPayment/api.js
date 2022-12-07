@@ -88,8 +88,8 @@ export const payCardFee = async (request) => {
  *    status    狀態 1 申請 2 生效 3 取消 4 退件 5 待生效   IVR9019.DEDUCT-STATUS
  * }
  *
- * TODO: 尚未有完整的測資，accountId 先固定帶 A123014281
  */
+
 export const getAutoDebits = async (request) => {
   const response = await callAPI('/api/card/v1/getAutoDebits', request);
   return response.data;

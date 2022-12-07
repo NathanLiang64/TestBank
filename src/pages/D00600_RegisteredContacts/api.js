@@ -12,10 +12,11 @@ import { getBankCode } from 'utilities/CacheData';
  *   nickName: 暱稱
  *   email: 通知EMAIL
  *   headshot: 代表圖檔的UUID，用來顯示大頭貼；若為 null 表示還沒有設定頭像。
+ *   isSelf: 表示這是自己在本行的其他帳戶。
  * }, ...]
  */
-export const getAllAgreedAccount = async (accountNo) => {
-  const response = await callAPI('/api/transfer/agreedAccount/v1/getAll', { accountNo });
+export const getAgreedAccount = async (accountNo) => {
+  const response = await callAPI('/api/transfer/agreedAccount/v1/get', { accountNo });
   const bankList = await getBankCode();
   const data = response.data?.map((item) => ({
     ...item,

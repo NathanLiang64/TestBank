@@ -204,7 +204,7 @@ const C00400 = () => {
                 {
                   // fid 需要改成 foreignCurrencyPriceSetting 的 FuncID
                   fid: 'foreignCurrencyPriceSetting',
-                  title: '外幣到價通知',
+                  title: '外幣到價通知設定',
                   icon: 'foreignCurrencyPriceSetting',
                 },
                 { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },

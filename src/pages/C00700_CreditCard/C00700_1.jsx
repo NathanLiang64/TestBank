@@ -1,22 +1,18 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
 import parse from 'html-react-parser';
 
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { FEIBButton } from 'components/elements';
 import Main from 'components/Layout';
-import Layout from 'components/Layout/Layout';
-import InformationList from 'components/InformationList';
-import Accordion from 'components/Accordion';
 import Loading from 'components/Loading';
+import Accordion from 'components/Accordion';
+import Layout from 'components/Layout/Layout';
 import CreditCard from 'components/CreditCard';
-
-// eslint-disable-next-line no-unused-vars
-import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
-import { showCustomPrompt, showError } from 'utilities/MessageModal';
+import { FEIBButton } from 'components/elements';
+import InformationList from 'components/InformationList';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { FuncID } from 'utilities/FuncID';
+import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 
 import { getCreditCardTerms, queryCardInfo } from './api';
 import { getCardListing, getCreditListing } from './utils';
@@ -29,18 +25,16 @@ const C007001 = () => {
   // TODO location.state 參數可以被 refactor
   const history = useHistory();
   const location = useLocation();
+  const dispatch = useDispatch();
   const [cardInfo, setCardInfo] = useState();
   const [terms, setTerms] = useState();
-  const dispatch = useDispatch();
   const cardNo = location.state?.isBankeeCard ? location.state.cards[0].cardNo : '';
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    if (!location.state) showCustomPrompt({message: '查無信用卡資訊', onOk: closeFunc, onClose: closeFunc});
-
-    const infoResponse = await queryCardInfo(cardNo);
-    if (infoResponse.data) setCardInfo(infoResponse.data);
+    const cardInfoRes = await queryCardInfo(cardNo);
+    setCardInfo(cardInfoRes);
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -49,6 +43,8 @@ const C007001 = () => {
     if (!terms) setTerms(await getCreditCardTerms());
   };
 
+  // 如果 location.state 不存在，屬於不正常行為，直接關閉該服務
+  if (!location.state) return closeFunc();
   return (
     <Layout title="信用卡資訊" goBackFunc={() => history.goBack()}>
       <Main>

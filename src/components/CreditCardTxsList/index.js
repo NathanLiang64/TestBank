@@ -1,25 +1,16 @@
-/* eslint-disable no-unused-vars */
-import { useEffect, useState} from 'react';
-import { useDispatch } from 'react-redux';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
 import uuid from 'react-uuid';
 
+import { EditIcon } from 'assets/images/icons';
 import Loading from 'components/Loading';
 import EmptyData from 'components/EmptyData';
-import { TextInputField } from 'components/Fields';
-import ArrowNextButton from 'components/ArrowNextButton';
-import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { currencySymbolGenerator } from 'utilities/Generator';
-import { showCustomPrompt, showError } from 'utilities/MessageModal';
-
 import { FEIBIconButton } from 'components/elements';
-import { EditIcon } from 'assets/images/icons';
-import { updateTxnNotes, getTransactions } from './api';
-import { validationSchema } from './validationSchema';
-import DetailCardWrapper from './CreditCardTxsList.style';
-import { creditNumberFormat, getTransactionPromise, stringDateFormat } from './utils';
+import ArrowNextButton from 'components/ArrowNextButton';
+import { showCustomPrompt } from 'utilities/MessageModal';
+import { currencySymbolGenerator } from 'utilities/Generator';
+
 import { MemoEditForm } from './memoEditForm';
+import { DetailCardWrapper } from './cardTxsList.style';
+import { creditNumberFormat, stringDateFormat } from './utils';
 
 /*
 * ==================== TransactionsList 組件說明 ====================
@@ -28,27 +19,17 @@ import { MemoEditForm } from './memoEditForm';
 * 1. card -> 卡片資料
 * 2. go2MoreDetails -> 更多明細
 * 3. showAll -> true:顯示所有交易明細, false: 只顯示前三筆
+* 4. transactions -> 交易明細列表
+* 5. onTxnNotesEdit -> 編輯交易明細的 handler
 * */
 
 const CreditCardTxsList = ({
   card,
   go2MoreDetails,
   showAll,
+  transactions,
+  onTxnNotesEdit,
 }) => {
-  const [transactions, setTransactions] = useState();
-
-  const updateTransactions = async () => {
-    const transactionsArray = await Promise.all(
-      card.cards.map(({ cardNo }) => getTransactionPromise(cardNo)),
-    );
-    const concatedTransactions = transactionsArray.reduce((acc, cur) => {
-      const newArr = acc.concat(cur);
-      return newArr;
-    }, []);
-
-    setTransactions(concatedTransactions);
-  };
-
   //  提交memoText
   const showMemoEditDialog = async (transaction) => {
     await showCustomPrompt({
@@ -56,7 +37,8 @@ const CreditCardTxsList = ({
       message: (
         <MemoEditForm
           defaultValues={transaction}
-          updateTransactions={updateTransactions}
+          isBankeeCard={card.isBankeeCard}
+          onTxnNotesEdit={onTxnNotesEdit}
         />
       ),
     });
@@ -71,7 +53,7 @@ const CreditCardTxsList = ({
     return (
       <div style={{ paddingTop: '2.5rem' }}>
         {transArr.map((transaction, index) => (
-          // TODO key 應該改成 transaction.txKey
+          // TODO key 應該改成 transaction.txKey，但目前後端回傳的 txKey 是空值
           <DetailCardWrapper key={uuid()} noShadow>
             <div className="description">
               <h4>{transaction.txName}</h4>
@@ -87,7 +69,7 @@ const CreditCardTxsList = ({
                 <span>{transaction.note}</span>
                 <FEIBIconButton
                   $fontSize={1.6}
-                  onClick={() => showMemoEditDialog(transaction, index)}
+                  onClick={() => showMemoEditDialog(transaction, index)} // TODO 確認是否有需要 index
                   className="badIcon"
                 >
                   <EditIcon />
@@ -99,11 +81,6 @@ const CreditCardTxsList = ({
       </div>
     );
   };
-
-  useEffect(() => {
-    // 查詢交易明細
-    updateTransactions();
-  }, []);
 
   return (
     <>
