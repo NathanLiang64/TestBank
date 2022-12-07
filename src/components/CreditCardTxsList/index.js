@@ -9,7 +9,7 @@ import { showCustomPrompt } from 'utilities/MessageModal';
 import { currencySymbolGenerator } from 'utilities/Generator';
 
 import { MemoEditForm } from './memoEditForm';
-import { DetailCardWrapper } from './creditCardTxsList.style';
+import { DetailCardWrapper } from './cardTxsList.style';
 import { creditNumberFormat, stringDateFormat } from './utils';
 
 /*
