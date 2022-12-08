@@ -1,16 +1,14 @@
 import { useHistory } from 'react-router';
-import { toCurrency } from 'utilities/Generator';
-import { cancelReserveTransfer } from 'pages/D00800_ReserveTransferSearch/api';
-import { switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
 
-/* Elements */
+import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
 import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
-import Accordion from 'components/Accordion';
+import { toCurrency } from 'utilities/Generator';
+import { switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
+import { cancelReserveTransfer } from 'pages/D00800_ReserveTransferSearch/api';
 
-/* Styles */
-import ReserveTransferSearchWrapper from './reserveTransferSearch.style';
+import { ReserveTransferSearchWrapper } from './D00800.style';
 
 const ReserveTransferSearch1 = ({ location }) => {
   const history = useHistory();

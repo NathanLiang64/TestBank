@@ -14,14 +14,13 @@ export const resultDatePickerLimit = {
 };
 
 export const defaultValues = {
-  tab: '1',
+  tab: '1', // 切換頁數
   reserveDateRange: [
-    reserveDatePickerLimit.minDate,
-    reserveDatePickerLimit.maxDate,
+    reserveDatePickerLimit.minDate, // 查詢預約起始日
+    reserveDatePickerLimit.maxDate, // 查詢預約截止日
   ],
   resultDateRange: [
-    resultDatePickerLimit.minDate,
-    resultDatePickerLimit.maxDate,
-  ]
-  ,
+    resultDatePickerLimit.minDate, // 結果查詢起始日
+    resultDatePickerLimit.maxDate, // 結果查詢截止日
+  ],
 };

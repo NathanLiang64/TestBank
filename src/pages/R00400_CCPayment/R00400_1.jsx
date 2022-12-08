@@ -92,7 +92,7 @@ const Page = () => {
   }, []);
 
   // ===== Guard，若沒有 location.state 屬於不正常操作，直接結束本服務 =====
-  if (!location.state) return closeFunc();
+  if (!location.state || !('payResult' in location.state)) return closeFunc();
   const { payResult: {code, message} } = location.state;
   const isSuccess = code === '0000';
   return (

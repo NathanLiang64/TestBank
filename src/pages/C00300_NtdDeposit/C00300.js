@@ -236,37 +236,42 @@ const C00300 = () => {
   /**
    * 頁面輸出
    */
-  return selectedAccount ? (
+  return (
     <Layout title="台幣活存">
       <PageWrapper small>
-        <AccountOverview
-          accounts={accounts}
-          defaultSlide={selectedAccountIdx}
-          onAccountChanged={setSelectedAccountIdx}
-          onFunctionClick={handleFunctionClick}
-          cardColor="purple"
-          funcList={[
-            { fid: 'D00100', title: '轉帳', enabled: (selectedAccount.transable && selectedAccount.balance > 0) },
-            { fid: 'D00300', title: '無卡提款', enabled: (selectedAccount.balance > 0), hidden: (selectedAccount.acctType !== 'M') },
-          ]}
-          moreFuncs={[
-            { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false },
-            { fid: 'E00100', title: '換匯', icon: 'exchange', enabled: (selectedAccount.balance > 0) },
-            { fid: 'DownloadCover', title: '存摺封面下載', icon: 'coverDownload' },
-            { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
-          ]}
-        />
+        {selectedAccount
+          ? (
+            <>
+              <AccountOverview
+                accounts={accounts}
+                defaultSlide={selectedAccountIdx}
+                onAccountChanged={setSelectedAccountIdx}
+                onFunctionClick={handleFunctionClick}
+                cardColor="purple"
+                funcList={[
+                  { fid: 'D00100', title: '轉帳', enabled: (selectedAccount.transable && selectedAccount.balance > 0) },
+                  { fid: 'D00300', title: '無卡提款', enabled: (selectedAccount.balance > 0), hidden: (selectedAccount.acctType !== 'M') },
+                ]}
+                moreFuncs={[
+                  { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false },
+                  { fid: 'E00100', title: '換匯', icon: 'exchange', enabled: (selectedAccount.balance > 0) },
+                  { fid: 'DownloadCover', title: '存摺封面下載', icon: 'coverDownload' },
+                  { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
+                ]}
+              />
 
-        {/* 顯示 優惠利率資訊面版 */}
-        { renderBonusInfoPanel() }
+              {/* 顯示 優惠利率資訊面版 */}
+              { renderBonusInfoPanel() }
 
-        <DepositDetailPanel
-          details={transactions.get(selectedAccount.accountNo)}
-          onMoreFuncClick={() => handleFunctionClick('moreTranscations')}
-        />
+              <DepositDetailPanel
+                details={transactions.get(selectedAccount.accountNo)}
+                onMoreFuncClick={() => handleFunctionClick('moreTranscations')}
+              />
+            </>
+          ) : null}
       </PageWrapper>
     </Layout>
-  ) : null;
+  );
 };
 
 export default C00300;

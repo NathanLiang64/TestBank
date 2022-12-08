@@ -25,7 +25,7 @@ import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
 import { getLoanSummary, getContract, getSubPaymentHistory } from './api';
 import PageWrapper, { ContentWrapper } from './L00100.style';
-import { PaymentType } from './paymentType';
+import { PaymentType } from '../../utilities/LoanPaymentType';
 
 const uid = uuid();
 

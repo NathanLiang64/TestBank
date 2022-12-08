@@ -1,7 +1,5 @@
 /* eslint-disable no-unused-vars */
-/** @format */
 
-// import {useEffect} from 'react';
 import { useHistory } from 'react-router';
 import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
@@ -10,8 +8,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-// TODO: 移除
-// import Dialog from 'components/Dialog';
 import { FEIBButton, FEIBRadio, FEIBRadioLabel } from 'components/elements';
 import { showError } from 'utilities/MessageModal';
 import Accordion from 'components/Accordion';
@@ -26,12 +22,6 @@ import InstalmentWrapper from './R00200.style';
  */
 
 const R00200 = () => {
-  // TODO: 移除
-  // const [showResultDialog, setShowResultDialog] = useState(true);
-
-  // TODO: 移除
-  // const cardName = 'cardName';
-
   /* showError 內容: 單筆消費未達3000 */
   const errorMessage = (
     <div style={{ textAlign: 'center' }}>
@@ -77,28 +67,6 @@ const R00200 = () => {
     );
   };
 
-  // TODO: 移除
-  // const renderEditCardNameDialog = () => (
-  //   <Dialog
-  //     title="系統訊息"
-  //     isOpen={showResultDialog}
-  //     onClose={() => setShowResultDialog(false)}
-  //     content={
-  //       <>
-  //         <p style={{width: '100%', textAlign: 'center'}}>
-  //           您目前沒有可分期的消費
-  //         </p>
-  //         <p style={{width: '100%', textAlign: 'center'}}>
-  //           (單筆消費限額需達3,000元以上)
-  //         </p>
-  //       </>
-  //     }
-  //     action={
-  //       <FEIBButton onClick={() => setShowResultDialog(false)}>確定</FEIBButton>
-  //     }
-  //   />
-  // );
-
   const handleOnSubmit = (data) => {
     console.log('R00200 handleOnSubmit() data: ', data);
 
@@ -138,8 +106,6 @@ const R00200 = () => {
           <FEIBButton type="submit">
             下一步
           </FEIBButton>
-          {/* TODO: 移除 */}
-          {/* {renderEditCardNameDialog(cardName)} */}
         </form>
       </InstalmentWrapper>
     </Layout>
