@@ -1,6 +1,5 @@
 /** @format */
 
-// import {useState} from 'react';
 import { useHistory, useLocation } from 'react-router';
 
 /* Elements */
@@ -8,18 +7,16 @@ import successImg from 'assets/images/successImg.svg';
 import Layout from 'components/Layout/Layout';
 import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
-// TODO: 移除
-// import Dialog from 'components/Dialog';
 
 /* Styles */
 import theme from 'themes/theme';
 import { showInfo } from 'utilities/MessageModal';
 import InstalmentWrapper from './R00200.style';
-
+/**
+ * R002003 晚點付 (單筆/總額_分期設定確認)
+ */
 const R00200_3 = () => {
   const location = useLocation();
-  // TODO: 移除
-  // const [showResultDialog, setShowResultDialog] = useState(true);
 
   const installmentTotal = `${location.state.installmentSum}`;
   const installmentNumber = `${location.state.installmentNumber}期`;
@@ -84,29 +81,6 @@ const R00200_3 = () => {
     </table>
   );
 
-  // TODO: 移除
-  // const ResultDialog = () => (
-  //   <Dialog
-  //     title=" "
-  //     isOpen={showResultDialog}
-  //     onClose={() => setShowResultDialog(false)}
-  //     // prettier-ignore
-  //     content={(
-  //       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-  //         <svg width="100" height="100">
-  //           <image xlinkHref={successImg} width="100" height="100" />
-  //         </svg>
-  //         <p style={{fontSize: '2rem', color: theme.colors.secondary.brand, textAlign: 'center'}}>設定成功</p>
-  //         <div>
-  //           <p style={{textAlign: 'center'}}>您已完成 Bankee 信用卡</p>
-  //           <p style={{textAlign: 'center'}}>晚點付申請</p>
-  //         </div>
-  //       </div>
-  //     )}
-  //     action={<FEIBButton onClick={() => {}}>確定</FEIBButton>}
-  //   />
-  // );
-
   const successMessage = (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <svg width="100" height="100">
@@ -136,8 +110,6 @@ const R00200_3 = () => {
           <FEIBButton
             type="submit"
             onClick={() => {
-              // TODO: 移除
-              // setShowResultDialog(true);
               showInfo(successMessage);
               history.push('/R00200');
             }}
@@ -145,8 +117,6 @@ const R00200_3 = () => {
             確認
           </FEIBButton>
         </form>
-        {/* TODO: 移除 */}
-        {/* <ResultDialog /> */}
       </InstalmentWrapper>
     </Layout>
   );
