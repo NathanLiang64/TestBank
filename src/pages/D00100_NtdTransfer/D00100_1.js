@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable object-curly-newline */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
@@ -9,9 +10,9 @@ import { FEIBButton } from 'components/elements';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { transactionAuth } from 'utilities/AppScriptProxy';
-import { getBankCode } from 'utilities/Generator';
+import { getBankCode } from 'utilities/CacheData';
 import { AuthCode } from 'utilities/TxnAuthCode';
-import { createNtdTransfer, getDisplayAmount, getTransDate, getCycleDesc } from './api';
+import { createNtdTransfer, getDisplayAmount, getTransDate, getCycleDesc, executeNtdTransfer } from './api';
 import TransferWrapper from './D00100.style';
 
 /**
@@ -25,7 +26,7 @@ const TransferConfirm = (props) => {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const [model, setModel] = useState(state);
+  const [model] = useState(state);
   const [banks, setBanks] = useState();
 
   /**
@@ -44,12 +45,11 @@ const TransferConfirm = (props) => {
     if (model && banks) {
       // 取得銀行名稱。
       const { bankName } = banks?.find((b) => b.bankNo === model.transIn.bank) ?? '';
-      // Fix 避免直接 mutate model
-      // model.transIn.bankName = bankName; // 因為下一頁也會用到，所以可以先存下來。
-      setModel((prevModel) => ({...prevModel, transIn: {...prevModel.transIn, bankName}}));
+      model.transIn.bankName = bankName; // 因為下一頁也會用到，所以可以先存下來。
+
       dispatch(setWaittingVisible(false));
     }
-  }, [banks]);
+  }, [model, banks]);
 
   /**
    * 執行轉帳程序，包含進行交易驗證。
@@ -77,9 +77,36 @@ const TransferConfirm = (props) => {
       // 進行交易驗證，要求使用者輸入OTP、密碼、雙因子...等。
       const auth = await transactionAuth(transIn.type === 2 ? AuthCode.D00100.REG : AuthCode.D00100.NONREG);
       if (auth.result) {
+        const result = await executeTransfer();
         // 顯示轉帳結果（含加入常用帳號）
-        history.push('/D001002', model);
+        const param = {...model, result};
+        history.push('/D001002', param);
       }
+    }
+  };
+
+  /**
+   * 執行轉帳交易。
+   */
+  const executeTransfer = async () => {
+    // TODO 顯示交易授權中，請稍候...
+    const executeRs = await executeNtdTransfer();
+    console.log('==> 轉帳執行結果：', executeRs);
+
+    const result = {
+      isSuccess: (executeRs.code === '0000'), // Debug 假設！
+      errorCode: executeRs.code,
+      message: executeRs.message, // 錯誤訊息
+      fee: executeRs.fee, // 手續費
+      isCrossBank: (model.transIn.bank !== '805' && executeRs.fee === 0), // 跨轉轉帳
+      fiscCode: executeRs.fiscCode, // 財金序號(跨轉才有)
+    };
+
+    if (result.isSuccess) {
+      model.transOut.balance -= (model.amount - executeRs.fee);
+      if (result.isCrossBank) model.transOut.freeTransferRemain -= 1; // 跨轉優惠次數
+
+      // TODO 跨轉優惠次數、餘額 是否要寫回 LocalCache ？
     }
   };
 

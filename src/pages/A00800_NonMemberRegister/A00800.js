@@ -1,18 +1,17 @@
-/* eslint-disable no-unused-vars */
-
 import * as yup from 'yup';
 import { useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useController, useForm } from 'react-hook-form';
-import { goHome, transactionAuth } from 'utilities/AppScriptProxy';
-import uuid from 'react-uuid';
+import {
+  closeFunc, getOsType, getPlatform, transactionAuth,
+} from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import {
   FEIBInputLabel, FEIBInput, FEIBButton, FEIBRadio, FEIBRadioLabel, FEIBErrorMessage,
 } from 'components/elements';
-import { showCustomPrompt, showError } from 'utilities/MessageModal';
+import { showCustomPrompt } from 'utilities/MessageModal';
 import Accordion from 'components/Accordion';
 import { RadioGroup } from '@material-ui/core';
 import { AuthCode } from 'utilities/TxnAuthCode';
@@ -27,6 +26,7 @@ import A00800Wrapper from './A00800.style';
  */
 
 const A00800 = () => {
+  // eslint-disable-next-line no-unused-vars
   const [inviteToken, setInviteToken] = useState('');
 
   // 驗證錯誤文字
@@ -101,31 +101,30 @@ const A00800 = () => {
   /* submit動作處理 */
   const onSubmit = async (data) => {
     console.log('A00800 handleOnSubmit() data:', {data});
-    const resultOtp = await transactionAuth(AuthCode.A00800, data.mobileNum);
+    const authResult = await transactionAuth(AuthCode.A00800, data.mobileNum);
     const regData = {
       name: data.name,
       email: data.email,
       passwd: data.password,
       mobile: data.mobileNum,
+      osType: getOsType(), // 1.iOS, 2.Android, 3.其他
+      platform: getPlatform(),
     };
 
-    if (resultOtp.result === true) {
+    if (authResult.result === true) {
       /* 驗證成功：呼叫註冊 */
       const result = await memberRegister(regData);
+      console.log(result); // accessToken 或 memberId 可能可以用來跳轉至邀請卡
 
-      if (result.code === '0000') {
-        /* 註冊成功：進入首頁 */
-        showCustomPrompt({
+      /* 註冊成功：進入首頁 */
+      if (result) {
+        await showCustomPrompt({
           title: '註冊成功！',
           onOk: () => handleSwitchPage(),
           onClose: () => handleSwitchPage(),
         });
       }
-
-      showCustomPrompt({title: '註冊失敗！', message: result.message});
     }
-
-    showCustomPrompt({title: 'OTP驗證失敗！'});
   };
 
   useEffect(async () => {
@@ -133,7 +132,7 @@ const A00800 = () => {
   }, []);
 
   return (
-    <Layout title="訪客註冊" goHome={false}>
+    <Layout title="訪客註冊" goHome={false} goBackFunc={closeFunc}>
       <A00800Wrapper className="NonmemberWrapper">
         <form className="basic_data_form" onSubmit={handleSubmit((data) => onSubmit(data))}>
           {renderFormItem({label: '手機號碼', areaName: 'mobileNum', type: 'phone'})}

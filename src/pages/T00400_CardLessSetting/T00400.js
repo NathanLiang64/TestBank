@@ -11,6 +11,7 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { FuncID } from 'utilities/FuncID';
 import { showAnimationModal } from 'utilities/MessageModal';
+import { getAccountsList } from 'utilities/CacheData';
 import { useQLStatus } from 'hooks/useQLStatus';
 import CardLessSettingWrapper from './T00400.style';
 
@@ -19,22 +20,30 @@ import { getStatus, activate } from './api';
 const CardLessSetting = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+
   const {QLResult, showMessage} = useQLStatus();// 確認裝置綁定狀態
   const [cardLessStatus, setCardLessStatus] = useState();
-  const isEnable = cardLessStatus?.cwdStatus === '2';
+  const [account, setAccount] = useState();
+  const [isEnable, setEnable] = useState();
 
-  const getCardlessStatus = async () => {
+  useEffect(async () => {
     dispatch(setWaittingVisible(true));
+
     // 確認無卡提款開通狀態
     const cardLessRes = await getStatus();
     setCardLessStatus(cardLessRes);
+    setEnable(cardLessRes === '2');
+
+    // 取得母帳戶的資訊。
+    getAccountsList('M', (accounts) => setAccount(accounts[0]));
+
     dispatch(setWaittingVisible(false));
-  };
+  }, []);
 
   const handleSwitchClick = async () => {
     if (QLResult) {
     // 若已經綁定
-      const {cwdStatus} = cardLessStatus;
+      const cwdStatus = cardLessStatus;
       if (cwdStatus === '0' || cwdStatus === '3' || cwdStatus === '4') {
       // 跳轉設定無卡提款密碼頁
         history.push('/T004001');
@@ -50,7 +59,9 @@ const CardLessSetting = () => {
             errorTitle: '設定失敗',
             errorDesc: '設定失敗',
           });
-          await getCardlessStatus();
+
+          setCardLessStatus('2');
+          setEnable(true);
         }
         dispatch(setWaittingVisible(false));
       }
@@ -59,10 +70,6 @@ const CardLessSetting = () => {
 
   const handlePwdChange = () => (QLResult ? startFunc(FuncID.D00400) : showMessage());
 
-  useEffect(() => {
-    getCardlessStatus();
-  }, []);
-
   return (
     <Layout title="無卡提款設定">
       <CardLessSettingWrapper>
@@ -70,7 +77,7 @@ const CardLessSetting = () => {
           <div className="switchContainer">
             <div className="labelContainer">
               <p className="labelTxt">無卡提款</p>
-              {isEnable && <p className="phoneNum">{cardLessStatus.account}</p>}
+              {isEnable && <p className="phoneNum">{account?.accountNo}</p>}
             </div>
             <FEIBSwitch checked={isEnable} onClick={handleSwitchClick} />
           </div>

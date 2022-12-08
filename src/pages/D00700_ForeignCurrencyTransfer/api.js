@@ -27,7 +27,7 @@ export const getAccountsList = async (acctTypes) => {
  * }]>}
  */
 export const getAgreedAccounts = async (accountNo) => {
-  const response = await callAPI('/api/transfer/agreedAccount/v1/getAll', { accountNo });
+  const response = await callAPI('/api/transfer/agreedAccount/v1/get', { accountNo });
   return response.data;
 };
 

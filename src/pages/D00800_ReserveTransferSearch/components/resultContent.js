@@ -2,7 +2,7 @@ import InformationList from 'components/InformationList';
 import SuccessImage from 'assets/images/stateSuccess.svg';
 import ErrorImage from 'assets/images/stateError.svg';
 import { toCurrency } from 'utilities/Generator';
-import DialogContentWrapper from './dialogContent.style';
+import { DialogContentWrapper } from '../D00800.style';
 
 const DialogContent = ({ data, selectedAccount }) => (
   <DialogContentWrapper>

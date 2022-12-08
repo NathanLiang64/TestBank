@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
@@ -9,10 +10,10 @@ import {
 import Badge from 'components/Badge';
 import Avatar from 'components/Avatar';
 import BankCodeInput from 'components/BankCodeInput';
+import { getBankCode } from 'utilities/CacheData';
 import { accountFormatter } from 'utilities/Generator';
 
 import { ArrowBackIcon, EditIcon } from 'assets/images/icons';
-import { getBankCode } from './api';
 import { DrawerWrapper } from './D00500.style';
 
 /**
@@ -23,17 +24,16 @@ import { DrawerWrapper } from './D00500.style';
  *   bankName: '銀行名稱'
  *   nickName: '暱稱'
  *   headshot: '代表圖檔的UUID，用來顯示大頭貼；若為 null 表示還沒有設定頭像。'
- *   readonly: '這些預設資料不可變更，直接進到第二頁；但 bankId, acctId 必需有值。'
  * }} initData
  * @param {Function} onFinished 完成編輯時的事件。
  */
 function AccountEditor({
-  initData,
+  initData, // 有預設 acctId 時，會直接開在第二頁，而且不能回到第一頁！
   onFinished,
 }) {
   const [bankList, setBankList] = useState();
   const [model, setModel] = useState(initData);
-  const [confirmPage, setConfirmPage] = useState(false);
+  const [confirmPage, setConfirmPage] = useState();
 
   // Form 欄位名稱。
   const idBankNo = 'bankId'; // 銀行代碼。
@@ -65,54 +65,61 @@ function AccountEditor({
   useEffect(async () => {
     const banks = await getBankCode();
     setBankList(banks);
+
+    // NOTE 若有指定初始值，則直接進到第二頁。 D00100_2會用到！
+    if (initData?.acctId) {
+      onPage1Submit(initData);
+    }
   }, []);
 
   /**
    * 第一頁 - 選銀行及輸入帳號
    */
-  const renderPage1 = () => {
-    const onSubmit = (values) => {
-      setModel({
-        ...model,
-        ...values,
-        bankName: bankList.find((b) => b.bankNo === getValues(idBankNo)).bankName, // 保留選取銀行的名稱
-      });
-      setConfirmPage(true);
-    };
-    return (
-      <form className="flex-col" onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <BankCodeInput
-            control={control}
-            name={idBankNo}
-            setValue={setValue}
-            trigger={trigger}
-            value={getValues(idBankNo)}
-            errorMessage={errors.bankId?.message}
-          />
-        </div>
-        <div>
-          <FEIBInputLabel htmlFor={idAcctNo}>帳號</FEIBInputLabel>
-          <Controller
-            control={control}
-            name={idAcctNo}
-            value={model.acctId}
-            render={({ field }) => (
-              <FEIBInput
-                {...field}
-                inputMode="numeric"
-                placeholder="請輸入常用的銀行帳號"
-                inputProps={{ maxLength: 14, autoComplete: 'off' }}
-                error={!!errors?.acctId} // 畫紅底線
-              />
-            )}
-          />
-          <FEIBErrorMessage>{errors.acctId?.message}</FEIBErrorMessage>
-        </div>
+  const renderPage1 = () => (
+    <form className="flex-col" onSubmit={handleSubmit(onPage1Submit)}>
+      <div>
+        <BankCodeInput
+          control={control}
+          name={idBankNo}
+          setValue={setValue}
+          trigger={trigger}
+          value={getValues(idBankNo)}
+          errorMessage={errors.bankId?.message}
+        />
+      </div>
+      <div>
+        <FEIBInputLabel htmlFor={idAcctNo}>帳號</FEIBInputLabel>
+        <Controller
+          control={control}
+          name={idAcctNo}
+          value={model.acctId}
+          render={({ field }) => (
+            <FEIBInput
+              {...field}
+              inputMode="numeric"
+              placeholder="請輸入常用的銀行帳號"
+              inputProps={{ maxLength: 14, autoComplete: 'off' }}
+              error={!!errors?.acctId}
+            />
+          )}
+        />
+        <FEIBErrorMessage>{errors.acctId?.message}</FEIBErrorMessage>
+      </div>
 
-        <FEIBButton type="submit">下一步</FEIBButton>
-      </form>
-    );
+      <FEIBButton type="submit">下一步</FEIBButton>
+    </form>
+  );
+
+  const onPage1Submit = (values) => {
+    setModel({
+      ...model,
+      ...values,
+      bankName: bankList.find((b) => b.bankNo === getValues(idBankNo)).bankName, // 保留選取銀行的名稱
+    });
+
+    // TODO 檢查是否已是存在的帳號，若是則 Alert 用戶，會以 Update 方式更新原常用帳號的 暱稱/大頭貼。
+
+    setConfirmPage(true);
   };
 
   /**
@@ -171,10 +178,10 @@ function AccountEditor({
   return (bankList) ? (
 
     <DrawerWrapper>
-      <FEIBIconButton className="goBack" $fontSize={1.6} onClick={() => setConfirmPage(false)} $hide={!confirmPage}>
+      <FEIBIconButton className="goBack" $fontSize={1.6} onClick={() => setConfirmPage(false)} $hide={!confirmPage || initData?.acctId}>
         <ArrowBackIcon />
       </FEIBIconButton>
-      {confirmPage === false ? renderPage1() : renderPage2()}
+      {confirmPage ? renderPage2() : renderPage1()}
     </DrawerWrapper>
 
   ) : null;

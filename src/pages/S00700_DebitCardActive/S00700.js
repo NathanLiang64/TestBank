@@ -1,22 +1,19 @@
-/* eslint-disable no-unused-vars */
 import React, {useEffect} from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import { yupResolver } from '@hookform/resolvers/yup';
+
+import { useQLStatus } from 'hooks/useQLStatus';
+import Layout from 'components/Layout/Layout';
 import { FEIBButton } from 'components/elements';
 import { TextInputField } from 'components/Fields';
-import Layout from 'components/Layout/Layout';
-import {
-  closeFunc, getQLStatus, startFunc, transactionAuth,
-} from 'utilities/AppScriptProxy';
-import { showCustomPrompt } from 'utilities/MessageModal';
 import { AuthCode } from 'utilities/TxnAuthCode';
-import { FuncID } from 'utilities/FuncID';
-import { useQLStatus } from 'hooks/useQLStatus';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 import { getStatus } from 'pages/S00800_LossReissue/api';
+
+import { activate } from './api';
 import DebitCardActiveWrapper from './S00700.style';
 import { validationSchema } from './validationSchema';
-import { activate } from './api';
 
 const S00700 = () => {
   const history = useHistory();
@@ -49,6 +46,7 @@ const S00700 = () => {
             name="actno"
             placeholder="請輸入金融卡帳號(金融卡背面14碼數字)"
             control={control}
+            fontSize={1.5}
           />
           <TextInputField
             type="number"
@@ -56,6 +54,7 @@ const S00700 = () => {
             name="serial"
             placeholder="請輸入金融卡序號(金融卡背面右下角6碼數字)"
             control={control}
+            fontSize={1.5}
           />
           <FEIBButton type="submit">確認</FEIBButton>
         </form>
