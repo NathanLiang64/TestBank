@@ -34,9 +34,6 @@ import mockLoanRewards from './mockData/mockRewards';
     }, ...]
  */
 export const getLoanSummary = async () => {
-  // const response = await callAPI('/api/');
-  // const response = await new Promise((resolve) => resolve({ data: mockLoanSummary }));
-
   /* 取得此帳號所有貸款資料 */
   const resSubSummary = await getSubSummary();
 
@@ -85,9 +82,6 @@ export const getLoanSummary = async () => {
     }))),
   })));
 
-  console.log('L00100 getLoanSummary() loanSummary:', loanSummary);
-
-  // return response.data;
   return loanSummary;
 };
 
@@ -116,34 +110,6 @@ export const getLoanRewards = async (param) => {
   const response = await new Promise((resolve) => resolve({ data: mockLoanRewards(param) }));
   return response.data;
 };
-
-// /**
-//  * 貸款資訊 - 取得貸款資訊
-//    @param {
-//      accountNo: 指定貸款帳號
-//    }
-//    @returns {
-//      alias: 貸款別名
-//      accountNo: 貸款帳號
-//      loanNo: 貸款分號
-//      loanType: 貸款類別
-//      startDate: 貸款開始日
-//      endDate: 貸款結束日
-//      cycleTiming: 每期還款日，回傳數字1~28
-//      loanAmount: 貸款金額
-//      rate: 貸款利率
-//      loanBalance: 貸款餘額
-//      periodPaid: 已繳期數
-//      periodRemain: 剩餘期數
-//      initialAmount: 最初撥貸金額
-//      currency: 幣別
-//    },
-//  */
-// export const getLoanDetails = async (param) => {
-//   // const response = await callAPI('/api/');
-//   const response = await new Promise((resolve) => resolve({ data: mockLoanDetails(param) }));
-//   return response.data;
-// };
 
 /**
  * 下載合約
