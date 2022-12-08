@@ -137,7 +137,7 @@ const loadAccountsList = async () => {
  * }]>} 帳號基本資料。
  */
 export const getAccountsList = async (acctTypes, onDataLoaded) => {
-  loadLocalData('Accounts', loadAccountsList).then((data) => {
+  const result = await loadLocalData('Accounts', loadAccountsList).then((data) => {
     const accounts = data.filter((account) => acctTypes.indexOf(account.acctType) >= 0)
       // NOTE 外幣帳號的架構跟台幣不一樣。
       // 要把一個帳戶、多個幣別 展開成 多個帳戶 的型式呈現。
@@ -149,8 +149,10 @@ export const getAccountsList = async (acctTypes, onDataLoaded) => {
           return acct;
         })))
       .flat();
-    onDataLoaded(accounts);
+    if (onDataLoaded) onDataLoaded(accounts);
+    return accounts;
   });
+  return result;
 };
 
 /**
