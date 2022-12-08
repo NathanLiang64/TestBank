@@ -30,7 +30,7 @@ const processRequest = async (request) => {
 
   if (request.headers['Content-Type'] === 'multipart/form-data') return request;
 
-  const payload = JSON.stringify(request.data);
+  const payload = request.data ? JSON.stringify(request.data) : '';
 
   // 處理 JWE Request 加密；在完成 Login 之前，都是使用 JWE 加密模式。
   if (request.url.startsWith('/sm')) {
@@ -170,7 +170,7 @@ instance.interceptors.response.use(
  * @param {*} config AxiosRequestConfig
  * @returns
  */
-export const userRequest = async (method, url, data = {}, config) => {
+export const userRequest = async (method, url, data, config) => {
   instance.defaults.baseURL = (url.startsWith('/sm')) ? process.env.REACT_APP_SM_CTRL_URL : process.env.REACT_APP_URL;
   // console.log(instance.defaults.baseURL + url);
 
