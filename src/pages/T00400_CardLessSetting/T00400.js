@@ -20,23 +20,25 @@ import { getStatus, activate } from './api';
 const CardLessSetting = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+
   const {QLResult, showMessage} = useQLStatus();// 確認裝置綁定狀態
   const [cardLessStatus, setCardLessStatus] = useState();
   const [account, setAccount] = useState();
-  const isEnable = cardLessStatus?.cwdStatus === '2';
+  const [isEnable, setEnable] = useState();
 
-  const getCardlessStatus = async () => {
+  useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
     // 確認無卡提款開通狀態
     const cardLessRes = await getStatus();
     setCardLessStatus(cardLessRes);
+    setEnable(cardLessRes === '2');
 
     // 取得母帳戶的資訊。
-    await getAccountsList('M', (accounts) => setAccount(accounts[0]));
+    getAccountsList('M', (accounts) => setAccount(accounts[0]));
 
     dispatch(setWaittingVisible(false));
-  };
+  }, []);
 
   const handleSwitchClick = async () => {
     if (QLResult) {
@@ -57,7 +59,9 @@ const CardLessSetting = () => {
             errorTitle: '設定失敗',
             errorDesc: '設定失敗',
           });
-          await getCardlessStatus();
+
+          setCardLessStatus('2');
+          setEnable(true);
         }
         dispatch(setWaittingVisible(false));
       }
@@ -66,18 +70,14 @@ const CardLessSetting = () => {
 
   const handlePwdChange = () => (QLResult ? startFunc(FuncID.D00400) : showMessage());
 
-  useEffect(() => {
-    getCardlessStatus();
-  }, []);
-
   return (
     <Layout title="無卡提款設定">
       <CardLessSettingWrapper>
         <div className="controlContainer">
           <div className="switchContainer">
             <div className="labelContainer">
-              <p>無卡提款</p>
-              {isEnable && <p className="phoneNum">{account.accountNo}</p>}
+              <p className="labelTxt">無卡提款</p>
+              {isEnable && <p className="phoneNum">{account?.accountNo}</p>}
             </div>
             <FEIBSwitch checked={isEnable} onClick={handleSwitchClick} />
           </div>
