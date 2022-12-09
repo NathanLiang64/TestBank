@@ -238,7 +238,7 @@ export const getSubPayment = async (param) => {
  * subNo: 分號
  * }} param
  * @returns {{
- * begDate: 貸款起日
+ * startDate: 貸款起日
  * endDate: 貸款迄日
  * dateToPay: 每期還款(日期)
  * txAmt: 初貸金額
