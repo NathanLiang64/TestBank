@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import uuid from 'react-uuid';
 
@@ -9,7 +10,7 @@ import EmptyData from 'components/EmptyData';
 import { currencySymbolGenerator } from 'utilities/Generator';
 import { getThisMonth, getMonthList } from 'utilities/MonthGenerator';
 
-import { getTransactionDetails } from '../api';
+import { getTransactionDetails } from '../utils';
 import TransactionsWrapper from './Transactions.style';
 
 const backlogMap = new Map();

@@ -6,13 +6,13 @@ import { FuncID } from 'utilities/FuncID';
 import { getInvoice } from '../api';
 import TrayWrapper from './Tray.style';
 
-const Tray = ({ bills }) => {
+const Tray = ({ deductInfo }) => {
   const history = useHistory();
 
   return (
     <TrayWrapper>
       <BottomAction className="badFlex" position={0}>
-        { !(bills?.autoDeduct) && (
+        { (deductInfo?.autoDeduct === 0) && (
         <button type="button" onClick={() => history.push(`/${FuncID.R00400}`)}>
           <CreditCardIcon3 />
           繳費

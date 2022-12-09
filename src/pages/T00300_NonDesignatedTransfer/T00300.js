@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
-import { useState, useEffect } from 'react';
-import { startFunc, transactionAuth } from 'utilities/AppScriptProxy';
+import { useDispatch } from 'react-redux';
+import { useState } from 'react';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -8,15 +7,12 @@ import { FEIBSwitch, FEIBSwitchLabel } from 'components/elements';
 import Accordion from 'components/Accordion';
 import EditIcon from 'assets/images/icons/editIcon.svg';
 import {
-  closeDrawer, showAnimationModal, showCustomPrompt, showDrawer,
+  closeDrawer, showAnimationModal, showDrawer,
 } from 'utilities/MessageModal';
-import { useHistory } from 'react-router';
-import theme from 'themes/theme';
 import { AuthCode } from 'utilities/TxnAuthCode';
-import { FuncID } from 'utilities/FuncID';
-import {
-  checkDeviceBindingStatus, getNonDesignatedTransferData, queryOTP, updateOTP,
-} from './api';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { getQLStatus, transactionAuth } from 'utilities/AppScriptProxy';
+import { getSettingInfo, changeStatus } from './api';
 
 /* Styles */
 import T00300Wrapper from './T00300.style';
@@ -27,219 +23,127 @@ import T00300DrawerContent from './T00300_drawerContent';
  * T00300 非約轉設定
  */
 const T00300 = () => {
+  const dispatch = useDispatch();
+
   const [model, setModel] = useState({});
-  const history = useHistory();
 
-  /**
-   * 錯誤訊息
-   * @param {code} code number (failureCode)
-   * @param {errMsg} errMsg string?
-   * @returns string
-   */
-  const failureMessage = (code, errMsg) => {
-    switch (code) {
-      case '1_0': // 無裝置綁定
-        return '無裝置綁定，請進行裝置綁定設定或致電客服。';
-      case '1_1': // 已裝置綁定
-        return '您已進行裝置綁定，請至原裝置解除綁定或致電客服。';
-      case '2': // 網銀密碼驗證失敗（驗證2次未過）
-        return '網銀密碼驗證失敗，請重新執行或致電客服。';
-      case '3': // 簡訊OTP驗證失敗（驗證3次未過）
-        return '簡訊OTP驗證失敗，請重新執行或致電客服。';
-      case '4': // MID驗證失敗（手機門號與SIM卡認證失敗）
-        return '手機門號與SIM卡認證失敗，請使用手機行動網路，重新執行或致電客服。';
-      case '5': // 無法判斷錯誤代碼，直接顯示錯誤訊息
-        return errMsg;
-      default: // 其他錯誤
-        return `錯誤代碼: ${errMsg}，系統忙碌中，請重新執行或致電客服。`;
+  const isUnlock = (model?.status !== '01'); // 表示已開通非約轉, '01'表示尚未開通
+  const isBound = (model?.status === '03'); // 表示已綁定非約轉手機號碼
+
+  const authAndChangeStatus = async (authCode, newMobile) => {
+    const transRes = await transactionAuth(authCode, newMobile);
+    if (transRes.result === true) {
+      const newStatus = await changeStatus(newMobile);
+      if (newStatus) {
+        model.status = newStatus;
+        setModel({...model}); // 更新畫面。
+
+        // 顯示成功畫面
+        await showAnimationModal({
+          isSuccess: true,
+          successTitle: '設定成功',
+        });
+        return true;
+      }
     }
-  };
-
-  /**
-   * 失敗畫面
-   * @param {code} code number (failureCode)
-   * @param {errMsg} errMsg string?
-   */
-  const onFailure = (code, errMsg) => {
-    showCustomPrompt({
-      title: '設定失敗',
-      message: failureMessage(code, errMsg),
-      onCancel: () => history.replace('/T00300'),
-      onClose: () => history.replace('/T00300'),
-      onOk: code === '1_0' ? () => startFunc(FuncID.T00200) : () => history.replace('/T00300'),
-    });
-  };
-
-  /**
-   * 成功畫面
-   */
-  const onSuccess = () => {
-    showAnimationModal({
-      isSuccess: true,
-      successTitle: '設定成功',
-      onClose: history.replace('/T00300'),
-    });
+    return false;
   };
 
   /**
    * Bottom Drawer 確認按鈕行為
-   * @param {data} data: {isEdit, data: {mobileNumber}}
+   * @param {Promise<String>} newMobile 新的綁定手機號碼。
    */
-  const handleDrawerConfirm = async (data) => {
-    if (!data.isEdit) {
-      /* 開通流程：雙因子驗證? && 申請＋開通流程：雙因子驗證 */
-      const transRes = await transactionAuth(AuthCode.T00300.APPLY, model.mobile);
-      if (transRes.result !== true) {
-        /* 失敗頁面 */
-        onFailure('5', transRes.message);
-      } else {
-        /* 驗證成功：更新資料至api */
-        await queryOTP();
-        const updateResult = await updateOTP(model.mobile);
-
-        if (updateResult.code === '0000') {
-          /* 成功頁面 */
-          onSuccess();
-          return;
-        }
-
-        /* 失敗畫面 */
-        onFailure('5', updateResult.message);
+  const handleDrawerConfirm = async (newMobile) => {
+    let isSuccess;
+    if (isUnlock && model.status !== '04') {
+      if (newMobile !== model.mobile) {
+        isSuccess = await authAndChangeStatus(AuthCode.T00300.EDIT, newMobile); // status =03, 不變
       }
     } else {
-      /* 修改流程：雙因子＋OTP 驗證 */
-      const transRes = await transactionAuth(AuthCode.T00300.EDIT, data.data.mobileNumber);
-      console.log('transactionAuth res: ', transRes);
-
-      if (transRes.result !== true) {
-        /* 失敗頁面 */
-        onFailure('5', transRes.message);
-      } else {
-        /* 驗證成功：更新資料至api */
-        await queryOTP();
-        const updateResult = await updateOTP(data.data.mobileNumber);
-
-        if (updateResult.code === '0000') {
-          /* 成功畫面 */
-          onSuccess();
-          return;
-        }
-        /* 失敗頁面 */
-        onFailure('5', transRes.message);
-      }
+      isSuccess = await authAndChangeStatus(AuthCode.T00300.APPLY, newMobile); // status 由 01 變為 03
     }
+
+    if (isSuccess) {
+      model.mobile = newMobile;
+      setModel({...model}); // 更新畫面。
+    }
+    closeDrawer();
   };
 
   /**
    * 非約轉交易門號 Drawer
-   * @param {isEdit} isEdit boolean: 非約轉交易門號 Drawer 內容
+   * @param {Promise<Boolean>} isEdit 表示可以修改非約轉交易門號。
    */
-  const mobileNumberSettingDrawer = (isEdit) => {
-    showDrawer(
+  const showSettingDrawer = async (isEdit) => {
+    await showDrawer(
       '非約轉交易門號',
       <T00300DrawerContent
-        isEdit={isEdit}
+        readonly={!isEdit}
         mobile={model.mobile}
-        handleConfirm={(data) => handleDrawerConfirm(data)}
-        handleCancel={() => closeDrawer()}
+        onConfirm={handleDrawerConfirm}
+        onCancel={closeDrawer}
       />,
     );
   };
 
   /**
-   * 註銷流程
-   */
-  const handleCancel = async () => {
-    /* 雙因子驗證 */
-    const result = await transactionAuth(AuthCode.T00300.CLOSE, model.mobile);
-    console.log('transactionAuth res: ', result);
-
-    if (result === false) {
-      /* 失敗頁面 */
-      onFailure('5', result.message);
-    } else {
-      /* 驗證成功：更新資料至api */
-      await queryOTP();
-      const updateResult = await updateOTP(model.mobile);
-
-      console.log({updateResult});
-
-      if (updateResult.code === '0000') {
-        /* 成功頁面 */
-        onSuccess();
-      }
-      /* 失敗頁面 */
-      onFailure('5', updateResult.message);
-    }
-  };
-
-  /**
-   * 點擊開關
+   * 切換綁定狀態。
    */
   const handleSwitchOnTrigger = async () => {
-    /**
-     * 檢查裝置綁定狀態
-     * 否 -> failureCode: 1_0 | 1_1 | 5
-     * 是 ->
-     *  model.status === '03' -> Close流程
-     *  model.status === '01 -> 開通流程
-     *  其餘走 申請+開通流程
-     */
-    const result = await checkDeviceBindingStatus();
-    if (!result.bindingStatus) {
-      onFailure(result.failureCode, result.message);
-      return;
-    }
-
-    if (model.status === '03') {
-      /* 註銷流程 */
-      handleCancel();
+    if (!isBound) {
+      // 開通 or 申請+開通流程
+      // 若原狀態為 01.未開發 則表示第一次開通，只有此情況下不可變更綁定門號。
+      // 完成綁定門號開通後，status=3.已開通；之後的開關切換就是狀態3/4的互換。
+      showSettingDrawer(isUnlock); // status 由 01/04 變為 03.開通
     } else {
-      /* 開通 or 申請+開通流程: 打開drawer (input-不可編輯) */
-      console.log('handleSwitchOnTrigger(): ', {status: model.status});
-      mobileNumberSettingDrawer(false);
+      /* 取消綁定(即：4.註銷) */
+      await authAndChangeStatus(AuthCode.T00300.CLOSE); // status 由 03 變為 04.註銷
     }
+    setModel({...model}); // 更新畫面。
   };
 
   /**
-   * 點擊鉛筆
+   * 檢查是否可以開啟這個頁面。
+   * @returns {Promise<String>} 傳回驗證結果的錯誤訊息；若是正確無誤時，需傳回 null
    */
-  const handleEditOnClick = async () => {
-    /**
-     * 檢查裝置綁定狀態
-     * 否 -> failureCode: 1_0 | 1_1 | 5
-     * 是 ->
-     *  走 編輯流程
-     */
-    const result = await checkDeviceBindingStatus();
-    if (!result.bindingStatus) {
-      onFailure(result.failureCode, result.message);
-      return;
-    }
+  const inspector = async () => {
+    dispatch(setWaittingVisible(true));
+    let error;
+    // 確認裝置綁定狀態
+    const deviceBinding = await getQLStatus();
+    if (deviceBinding.result === 'true' && deviceBinding.QLStatus === '1') {
+      // 查詢非約轉設定狀態與綁定的手機號碼。
+      const settingInfo = await getSettingInfo();
+      // if (settingInfo.status === ???) // TODO 那些狀態下就不能進行設定？
+      setModel(settingInfo);
+      error = null;
+    } else {
+      // TODO 統一處理！
+      // 1. 顯示訊息，2.設定按鈕名稱及功能
 
-    /* 編輯流程: 打開drawer (input-可編輯) */
-    mobileNumberSettingDrawer(true);
+      // 顯示錯誤訊息後，立即關閉功能。
+      switch (deviceBinding.QLStatus) {
+        case '0': error = '無裝置綁定，請進行裝置綁定設定或致電客服。'; break;
+        case '2': error = '???'; break; // 已裝置綁定 但鎖住！
+        case '3':
+        case '4': error = '您已進行裝置綁定，請至原裝置解除綁定或致電客服。'; break;
+        default: error = `${deviceBinding.message}，系統忙碌中，請重新執行或致電客服。`; break;
+      }
+    }
+    dispatch(setWaittingVisible(false));
+    return error;
   };
 
-  /* 初始化資料 */
-  useEffect(async () => {
-    // 自api取得初始資料
-    const rtData = await getNonDesignatedTransferData();
-
-    // 取得之資料儲存至 model state
-    setModel(rtData);
-  }, []);
-
+  // console.log('===> ', {...model, isUnlock, isBound }); // DEBUG
   return (
-    <Layout title="非約轉設定">
+    <Layout title="非約轉設定" inspector={inspector}>
       <T00300Wrapper>
         <div className="info_container">
           <div className="setting_switch">
             <FEIBSwitchLabel
               control={(
                 <FEIBSwitch
-                  checked={model.status === '03'}
-                  disabled={false}
+                  checked={isBound}
                   onChange={handleSwitchOnTrigger}
                 />
             )}
@@ -248,15 +152,18 @@ const T00300 = () => {
           </div>
 
           {/* 已開通非約轉功能則顯示電話號碼以及編輯按鈕 */}
-          {model.status === '03' && (
+          {isBound && (
           <div className="phone_number">
             <div className="text">
               <p>手機號碼</p>
               <p className="mobile_number_text">{model.mobile}</p>
             </div>
-            <div className="edit" onClick={handleEditOnClick}>
-              <img src={EditIcon} alt="" />
-            </div>
+            {/* 未開通前，不可變更綁定的手機號碼 */}
+            {isUnlock && (
+              <div className="edit" onClick={() => showSettingDrawer(true)}>
+                <img src={EditIcon} alt="" />
+              </div>
+            )}
           </div>
           )}
         </div>

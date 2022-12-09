@@ -26,12 +26,13 @@ const DrawerContentWrapper = styled.div`
 `;
 /**
    * 非約轉交易門號 Drawer 內容
-   * @param {isEdit} isEdit input可／不可 編輯、hint文字顯示
-   * @param {mobile} mobile model.mobile
-   * @returns drawer content
+   * @param {{
+   *   readonly: 表示唯讀狀態,
+   *   mobile: 預設的手機號碼,
+   * }}
    */
 const T00300DrawerContent = ({
-  isEdit, mobile, handleConfirm, handleCancel,
+  readonly, mobile, onConfirm, onCancel,
 }) => {
   /**
    * 資料驗證
@@ -46,10 +47,10 @@ const T00300DrawerContent = ({
     resolver: yupResolver(schema),
   });
 
-  const onConfirmClick = (data) => {
-    console.log('T00300 T00300DrawerContent() data: ', data);
+  const onConfirmClick = (values) => {
+    console.log('T00300 T00300DrawerContent() data: ', values);
 
-    handleConfirm({isEdit, data});
+    onConfirm(values.mobileNumber);
   };
 
   return (
@@ -62,7 +63,7 @@ const T00300DrawerContent = ({
           render={({field}) => (
             <FEIBInput
               {...field}
-              disabled={!isEdit}
+              disabled={readonly}
               value={field.value}
               placeholder="請輸入手機號碼"
               error={!!errors.mobileNumber}
@@ -75,7 +76,7 @@ const T00300DrawerContent = ({
           <span className="hint_link_text">
             非約定轉帳使用條款
           </span>
-          {!isEdit
+          {readonly
             ? (<>，以完成非約定轉帳設定。</>)
             : (<>並將與您的電信公司確認您的手機門號與SIM卡是否一致，若無請更新手機門號，以完成非約定轉帳門號異動設定。</>)}
         </div>
@@ -83,9 +84,9 @@ const T00300DrawerContent = ({
         <div className="btns">
           <ConfirmButtons
             mainButtonValue="確認"
-            mainButtonOnClick={handleSubmit((data) => onConfirmClick(data))}
+            mainButtonOnClick={handleSubmit(onConfirmClick)}
             subButtonValue="取消"
-            subButtonOnClick={handleCancel}
+            subButtonOnClick={onCancel}
           />
         </div>
       </div>

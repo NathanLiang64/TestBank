@@ -4,6 +4,7 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable brace-style */
 import forge from 'node-forge';
+import { Buffer } from 'buffer';
 import PasswordDrawer from 'components/PasswordDrawer';
 import { getTransactionAuthMode, createTransactionAuth, transactionAuthVerify } from 'components/PasswordDrawer/api';
 import { customPopup, showDrawer, showError } from './MessageModal';
@@ -456,10 +457,10 @@ async function verifyBio(authCode) {
  */
 async function getQLStatus() {
   return await callAppJavaScript('getQLStatus', null, true, () => {
-    console.log('web 執行取得綁定狀態');
+    const testData = getJwtTokenTestData();
     return {
       result: 'true',
-      QLStatus: '0',
+      QLStatus: testData.mid ? '1' : '0',
     };
   });
 }
@@ -618,6 +619,20 @@ async function queryPushBind() {
 async function updatePushBind() {
   await callAppJavaScript('updatePushBind', null, false);
 }
+
+/**
+ * // DEBUG 取出 jwtToken payload 的內容。
+ */
+const getJwtTokenTestData = () => {
+  const jwtToken = sessionStorage.getItem('jwtToken');
+  if (jwtToken) {
+    const jwtClaimJson = Buffer.from(jwtToken.split('.')[1], 'base64');
+    const { webData } = JSON.parse(String.fromCharCode(...jwtClaimJson));
+    console.log('** JWT Token Test Data ：', webData);
+    return webData;
+  }
+  return null;
+};
 
 export {
   getCallerFunc,

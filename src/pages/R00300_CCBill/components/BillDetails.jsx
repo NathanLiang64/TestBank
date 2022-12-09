@@ -1,4 +1,4 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 import uuid from 'react-uuid';
 
 import InformationList from 'components/InformationList';
@@ -8,74 +8,71 @@ import {
   accountFormatter, dateToString, currencySymbolGenerator,
 } from 'utilities/Generator';
 
-import { getBillDetails } from '../api';
-
-const BillDetails = () => {
-  const [details, setDetails] = useState();
+const BillDetails = ({bills}) => {
+  // const [bills, setDetails] = useState();
 
   const getBillDetailList = (d) => [
     {
       title: '本期應繳金額',
-      content: currencySymbolGenerator(d.currency ?? 'NTD', d.amount),
+      content: currencySymbolGenerator(d.currency ?? 'NTD', d.newBalance),
     },
     {
       title: '最低應繳金額',
-      content: currencySymbolGenerator(d.currency ?? 'NTD', d.minAmount),
+      content: currencySymbolGenerator(d.currency ?? 'NTD', d.minDueAmount),
     },
     {
       title: '帳單結帳日',
-      content: dateToString(d.invoiceDate),
+      content: dateToString(d.billClosingDate),
     },
     {
       title: '繳費截止日',
-      content: dateToString(d.billDate),
+      content: dateToString(d.payDueDate),
     },
     {
       title: '上期應繳金額',
-      content: currencySymbolGenerator(d.currency ?? 'NTD', d.prevAmount),
+      content: currencySymbolGenerator(d.currency ?? 'NTD', d.prevBalance),
     },
     {
       title: '已繳/退金額',
-      content: currencySymbolGenerator(d.currency ?? 'NTD', d.prevDeductedAmount),
+      content: currencySymbolGenerator(d.currency ?? 'NTD', d.paidRefundAmount),
     },
     {
       title: '本期新增款項',
-      content: currencySymbolGenerator(d.currency ?? 'NTD', d.newAmount),
+      content: currencySymbolGenerator(d.currency ?? 'NTD', d.newPurchaseAmount),
     },
     {
       title: '利息',
-      content: currencySymbolGenerator(d.currency ?? 'NTD', d.rate),
+      content: currencySymbolGenerator(d.currency ?? 'NTD', d.interestFee),
     },
     {
       title: '違約金',
-      content: currencySymbolGenerator(d.currency ?? 'NTD', d.fine),
+      content: currencySymbolGenerator(d.currency ?? 'NTD', d.cardPenalty),
     },
     {
       title: '循環信用額度',
-      content: currencySymbolGenerator(d.currency ?? 'NTD', d.credit),
+      content: currencySymbolGenerator(d.currency ?? 'NTD', d.revCreditLimit),
     },
     {
       title: '循環信用本金餘額',
-      content: currencySymbolGenerator(d.currency ?? 'NTD', d.creditAvailable),
+      content: currencySymbolGenerator(d.currency ?? 'NTD', d.revgCreditPrinBalance),
     },
     {
       title: '自動扣款帳號',
-      content: accountFormatter(d.bindAccountNo),
+      content: accountFormatter(d.autoPayAccount),
     },
     {
       title: '繳款截止日扣款金額',
-      content: currencySymbolGenerator(d.currency ?? 'NTD', d.deductAmount),
+      content: currencySymbolGenerator(d.currency ?? 'NTD', d.paidAmountOnDueDate),
     },
   ];
 
-  const lazyLoadDetails = async () => {
-    // if (!details) setDetails(await getBillDetails(getThisMonth())); // TODO: 抓系統時間（YYYYMM）作為此處參數傳入
-    if (!details) setDetails(await getBillDetails('202207')); // 測試時使用202207
-  };
+  // const lazyLoadDetails = async () => {
+  //   if (!bills) setDetails(await getBillDetail(getThisMonth()));
+  // };
 
   return (
-    <Accordion title="更多帳單資訊" onClick={lazyLoadDetails}>
-      { details ? getBillDetailList(details).map((d) => (
+    <Accordion title="更多帳單資訊" onClick={bills}>
+      { bills ? getBillDetailList(bills).map((d) => (
         <InformationList key={uuid()} {...d} />
       )) : <Loading space="both" isCentered /> }
     </Accordion>

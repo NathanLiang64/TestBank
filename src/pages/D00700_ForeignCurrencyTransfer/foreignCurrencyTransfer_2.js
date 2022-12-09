@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { closeFunc } from 'utilities/AppScriptProxy';
+import { useDispatch } from 'react-redux';
 import { accountFormatter, currencySymbolGenerator } from 'utilities/Generator';
 
 /* Elements */
@@ -7,63 +7,108 @@ import Layout from 'components/Layout/Layout';
 import Accordion from 'components/Accordion';
 import BottomAction from 'components/BottomAction';
 import InformationList from 'components/InformationList';
-import { FEIBButton } from 'components/elements';
+import SnackModal from 'components/SnackModal';
+import theme from 'themes/theme';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
+import { CameraIcon } from 'assets/images/icons';
 import {
   CameraAltOutlined, ShareOutlined,
 } from '@material-ui/icons';
 
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+
 /* Styles */
 import ForeignCurrencyTransferWrapper from './foreignCurrencyTransfer.style';
+import { transferFtoF2 } from './api';
 
 const ForeignCurrencyTransfer2 = ({ location }) => {
-  const isSuccess = true;
-  const [resultData, setResultData] = useState({});
+  const dispatch = useDispatch();
 
-  const toTransferPage = () => {
-    closeFunc();
-  };
+  const [model, setModel] = useState(location.state);
+  const [transferResult, setTransferResult] = useState({});
+  const [showSnapshotSuccess, setShowSnapshotSuccess] = useState();
 
-  useEffect(() => {
-    setResultData(location.state);
+  /**
+   * 頁面初始化
+   */
+  useEffect(async () => {
+    dispatch(setWaittingVisible(true));
+
+    const result = await transferFtoF2();
+    const isSuccess = (result?.code === '0000'); // Debug 假設！
+    await setTransferResult({
+      isSuccess,
+      errorCode: result?.code,
+      message: result?.message, // 錯誤訊息
+    });
+    console.log('==> 轉帳執行結果：', result);
+    console.log('==> transferResult：', transferResult);
+    if (isSuccess) {
+      console.log('==> isSuccess：', isSuccess);
+      setModel((prevModel) => {
+        const updatedBalance = result.acctBalance;
+        return {
+          ...prevModel,
+          transOut: {
+            ...prevModel.transOut,
+            balance: updatedBalance,
+          },
+        };
+      });
+    }
+    console.log('==> model：', model);
   }, []);
+
+  /**
+   * 初始化完成，關閉等待中狀態。
+   */
+  useEffect(async () => {
+    console.log('==> (66)transferResult：', transferResult);
+    if (transferResult) dispatch(setWaittingVisible(false));
+  }, [transferResult]);
+
+  const handleClickScreenshot = () => {
+    // TODO 透過原生功能進行截圖。
+    setShowSnapshotSuccess(true);
+    setTimeout(() => setShowSnapshotSuccess(false), 1000); // 1 秒後自動關閉。
+  };
 
   return (
     <Layout title="外幣轉帳結果">
-      <ForeignCurrencyTransferWrapper className={isSuccess ? 'confirmAndResult' : 'confirmAndResult fail'}>
-        <SuccessFailureAnimations isSuccess={isSuccess} successTitle="轉帳成功" errorTitle="轉帳失敗" />
+      <ForeignCurrencyTransferWrapper className={transferResult.isSuccess ? 'confirmAndResult' : 'confirmAndResult fail'}>
+        <SuccessFailureAnimations isSuccess={transferResult.isSuccess} successTitle="轉帳成功" errorTitle="轉帳失敗" />
         {
-          isSuccess && (
+          transferResult.isSuccess && (
             <>
               <div className="confrimDataContainer">
                 <div className="dataLabel">轉出金額與轉入帳號</div>
                 <div className="balance">
                   {
-                    currencySymbolGenerator(resultData?.inCcyCd)
+                    currencySymbolGenerator(model?.inCcyCd)
                   }
                   {
-                    resultData?.inAmt
+                    model?.inAmt
                   }
                 </div>
                 <div className="accountInfo">遠東商銀(805)</div>
-                <div className="accountInfo">{ accountFormatter(resultData?.inAcct) }</div>
+                <div className="accountInfo">{ accountFormatter(model?.inAcct) }</div>
               </div>
               <div className="line" />
               <div className="infoListContainer">
                 <div>
-                  <InformationList title="轉出帳號" content={accountFormatter(resultData?.outAcct)} />
-                  <InformationList title="時間" content={resultData?.dateStr} />
+                  <InformationList title="轉出帳號" content={accountFormatter(model?.outAcct)} />
+                  <InformationList title="時間" content={model?.dateStr} />
                 </div>
                 <div style={{ marginBottom: '8rem' }}>
                   <Accordion title="詳細交易">
-                    <InformationList title="帳戶餘額" content={`${currencySymbolGenerator(resultData?.outCcyCd)}${resultData?.acctBalance}`} />
-                    <InformationList title="匯款性質分類" content={resultData?.leglDesc} />
-                    <InformationList title="備註" content={resultData?.memo} />
+                    <InformationList title="帳戶餘額" content={`${currencySymbolGenerator(model?.outCcyCd)}${model?.transOut?.balance}`} />
+                    <InformationList title="匯款性質分類" content={model?.leglDesc} />
+                    <InformationList title="備註" content={model?.memo} />
                   </Accordion>
                 </div>
               </div>
               <BottomAction position={0}>
-                <button type="button" onClick={() => console.log('call 原生截圖')}>
+                <button type="button" onClick={handleClickScreenshot}>
                   <CameraAltOutlined />
                   畫面截圖
                 </button>
@@ -76,13 +121,9 @@ const ForeignCurrencyTransfer2 = ({ location }) => {
             </>
           )
         }
-        {
-          !isSuccess && (
-            <div className="btnContainer">
-              <FEIBButton onClick={toTransferPage}>確認</FEIBButton>
-            </div>
-          )
-        }
+        { showSnapshotSuccess && (
+          <SnackModal icon={<CameraIcon size={32} color={theme.colors.basic.white} />} text="截圖成功" />
+        ) }
       </ForeignCurrencyTransferWrapper>
     </Layout>
   );
