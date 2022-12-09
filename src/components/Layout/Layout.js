@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-indent */
 /* eslint-disable react/jsx-wrap-multilines */
 import PropTypes from 'prop-types';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Loading from 'components/Loading';
 import Dialog from 'components/Dialog';
@@ -11,6 +11,7 @@ import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import theme from 'themes/theme';
 import { ArrowBackIcon, HomeIcon } from 'assets/images/icons';
 import { goHome as goHomeFunc, closeFunc, switchLoading } from 'utilities/AppScriptProxy';
+import { showError } from 'utilities/MessageModal';
 import {
   setModalVisible, setWaittingVisible, setDrawerVisible, setAnimationModalVisible,
   setDialogVisible,
@@ -25,6 +26,7 @@ import HeaderWrapper from './Header.style';
     goHome: '{boolean} 表示顯示右上方的 goHome 圖示',
     goBack: '{boolean} 表示顯示左上方的 goBack 圖示',
     goBackFunc: '{function} 當 goBack 按下時的自訂處理函數',
+    inspector: '檢查是否符合資格；若不是傳回 true 則立即執行 goBackFunc 或 closeFunc',
     hasClearHeader: '{boolean} 將標題設為透明的，目前用於存錢計劃',
   }} props
  * @returns
@@ -35,6 +37,7 @@ function Layout({
   goHome = true,
   goBack = true,
   goBackFunc,
+  inspector,
   hasClearHeader,
 }) {
   const dispatch = useDispatch();
@@ -224,9 +227,28 @@ function Layout({
   );
 
   //
+  // 檢查是否可以開啟這個頁面。
+  //
+  const [isPassed, setPassed] = useState();
+  useEffect(async () => {
+    let pass = true; // 若未設 inspector，則預設為檢查通過。
+    if (inspector) {
+      const errMesg = await inspector();
+      // console.log(errMesg);
+      pass = (errMesg === null);
+      if (errMesg) {
+        setPassed(errMesg); // 顯示等待中
+        await showError(errMesg, (goBackFunc ?? closeFunc)); // 檢查不通過，立即關閉。
+        return;
+      }
+    }
+    setPassed(pass === true); // 必須是 true/false, 否則會一直顯示等待中的畫面。
+  }, []);
+
+  //
   // 頁面外框
   //
-  if (!waitting) {
+  if (!waitting && isPassed === true) { // 在 isPassed 還沒有值之前，永遠顯不等待中的畫面。
     return (
       <div>
         <HeaderWrapper $isTransparent={hasClearHeader}>
@@ -249,7 +271,16 @@ function Layout({
       </div>
     );
   }
-  return <Loading isFullscreen />;
+
+  return (
+  <div>
+    {isPassed === null ? (
+      <Loading isFullscreen />
+    ) : (
+      <MessageModal />
+    )}
+  </div>
+  );
 }
 
 Layout.propTypes = {
@@ -258,6 +289,7 @@ Layout.propTypes = {
   goHome: PropTypes.bool,
   goBack: PropTypes.bool,
   goBackFunc: PropTypes.func,
+  inspector: PropTypes.func,
 };
 
 Layout.defaultProps = {
@@ -266,6 +298,7 @@ Layout.defaultProps = {
   goHome: true,
   goBack: true,
   goBackFunc: null,
+  inspector: null,
 };
 
 export default Layout;

@@ -61,3 +61,31 @@ export const transferFtoF = async (param) => {
   const response = await callAPI('/api/foreign/v1/transfer', param);
   return response.data;
 };
+
+/**
+ * 外幣轉帳。（限定約轉，未設有約定轉入帳號者，將無法使用）
+ * @param {*} param {
+ *   ...(很多)
+ * }
+ * @returns {
+ *   ...(很多)
+ * }
+ */
+export const transferFtoFCreate = async (param) => {
+  const response = await callAPI('/api/foreign/transfer/v1/create', param);
+  return response.data;
+};
+
+/**
+ * 外幣轉帳。（限定約轉，未設有約定轉入帳號者，將無法使用）
+ * @param {*} param {
+ *   ...(很多)
+ * }
+ * @returns {
+ *   ...(很多)
+ * }
+ */
+export const transferFtoF2 = async (param) => {
+  const response = await callAPI('/api/foreign/transfer/v1/execute', param);
+  return response.data;
+};
