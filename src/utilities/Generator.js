@@ -14,7 +14,7 @@ export const toCurrency = (number, float = 0, isShowDecimal = false) => {
     amount = `${amount}.${(`${parts[1] ?? ''}000000`).substring(0, float)}`; // 將小數加回
   }
 
-  /* 如需顯示小數點，傳入isShowDecimal: true */
+  /* 如台幣帳戶需顯示小數點，傳入isShowDecimal: true */
   if (parts.length > 1 && isShowDecimal && parts[1] !== '00') {
     amount = `${amount}.${parts[1]}`; // 將小數加回
   }
