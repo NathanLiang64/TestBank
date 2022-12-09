@@ -50,6 +50,7 @@ const R00200 = () => {
   };
 
   useEffect(async () => {
+    // TODO 目前不確定 晚點付 要打哪一支 API 取得應繳資訊，先以 queryCardBill 進行測試
     const { newBalance } = await queryCardBill(getThisMonth());
     reset({ newBalance, installmentType: '1' });
   }, []);

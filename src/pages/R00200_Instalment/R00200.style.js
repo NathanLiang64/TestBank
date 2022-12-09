@@ -21,7 +21,6 @@ const InstalmentWrapper = styled(Layout)`
 
   .MuiFormGroup-root {
     label {
-      display: block;
       margin: 0;
 
       .left-section {

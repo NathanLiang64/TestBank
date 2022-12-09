@@ -22,6 +22,7 @@ const FEIBRadioLabel = styled(MaterialRadioLabel)`
   // Label position
   .MuiFormControlLabel-label {
     margin-left: -.2rem;
+    flex: 1;
   }
 
   // Icon font size
