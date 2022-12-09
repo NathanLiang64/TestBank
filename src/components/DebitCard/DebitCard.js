@@ -184,23 +184,32 @@ const DebitCard = ({
       className="debitCard"
       $cardColor={color ?? accountTypeColorGenerator(accountType)}
     >
-      <img src={DebitCardBackground} alt="background" className="backgroundImage" />
+      <img
+        src={DebitCardBackground}
+        alt="background"
+        className="backgroundImage"
+      />
       <div className="cardTitle">
         <h2 className="cardName">
           {model.alias ?? '(未命名)'}
-          {model.currency && (['NTD', 'TWD'].indexOf(model.currency) < 0) ? ` (${getCurrenyName(model.currency)})` : ''}
+          {model.currency && ['NTD', 'TWD'].indexOf(model.currency) < 0
+            ? ` (${getCurrenyName(model.currency)})`
+            : ''}
         </h2>
         {renderAccountNo()}
       </div>
       <div className={`cardBalance ${!isSmallCard ? 'grow' : ''}`}>
-        { !hideIcon && renderEyeIconButton() }
+        {!hideIcon && renderEyeIconButton()}
         <h3 className="balance">
-          {`${currencySymbolGenerator(model.currency, (showBalance ? (model.balance ?? '---') : '*'), true)}`}
+          {`${currencySymbolGenerator(
+            model.currency,
+            showBalance ? model.balance ?? '---' : '*',
+          )}`}
         </h3>
       </div>
-      { renderFreeTransferInfo() }
-      { functionList && renderFunctions(functionList, true) }
-      { moreList && renderMoreIconButton() }
+      {renderFreeTransferInfo()}
+      {functionList && renderFunctions(functionList, true)}
+      {moreList && renderMoreIconButton()}
     </DebitCardWrapper>
   );
 };
