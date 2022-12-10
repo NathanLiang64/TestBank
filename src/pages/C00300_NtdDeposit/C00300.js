@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable no-use-before-define */
@@ -21,7 +20,6 @@ import { switchZhNumber } from 'utilities/Generator';
 import { getAccountsList, resetAccountsList } from 'utilities/CacheData';
 import { getAccountExtraInfo } from 'pages/D00100_NtdTransfer/api';
 import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
-import { useHistory } from 'react-router';
 import {
   getTransactions,
   downloadDepositBookCover,
@@ -34,7 +32,6 @@ import PageWrapper from './C00300.style';
  */
 const C00300 = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
   const { register, unregister, handleSubmit } = useForm();
 
   const [accounts, setAccounts] = useState();
@@ -95,8 +92,8 @@ const C00300 = () => {
       }
 
       transactions.set(accountNo, txnDetails);
-      setTransactions(new Map(transactions)); // 強制更新畫面。
     }
+    setTransactions(new Map(transactions)); // 強制更新畫面。
   };
 
   /**
@@ -105,16 +102,27 @@ const C00300 = () => {
   const handleAccountChanged = async (acctIndex) => {
     if (!accounts) return; // 頁面初始化時，不需要進來。
     const account = accounts[acctIndex];
+
+    // 避免重覆下載明細及免費跨轉次數資料。
+    if (account.accountNo === selectedAccount?.accountNo) return;
+
     // 若還沒有取得 免費跨轉次數 則立即補上。
     if (!account.freeTransfer) {
+      console.log(account.freeTransfer, !account.freeTransfer);
       getAccountExtraInfo(account.accountNo).then((info) => {
-        accounts[acctIndex] = {
+        const renewAcct = {
           ...account,
           ...info,
         };
-        setAccounts([...accounts]); // 強制更新畫面。
+        accounts[acctIndex] = renewAcct;
+
+        // 因為非同步執行API時，會因為API太慢傳回，而此時User又切換帳號，導致將資料顯示到下一個帳號中。
+        if (account.accountNo === selectedAccount?.accountNo) {
+          setSelectedAccount(renewAcct); // 更新免費跨轉次數
+        }
       });
     }
+
     updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可)
     setSelectedAccount(account);
   };
