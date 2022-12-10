@@ -34,6 +34,20 @@ function getPlatform() {
 }
 
 /**
+ * 篩掉不要顯示的 APP JS Script log
+ * @param {*} appJsName APP提供的JavaScript funciton名稱。
+ */
+function showLog(appJsName) {
+  switch (appJsName) {
+    case 'onLoading':
+    case 'setAuthdata':
+      return false;
+
+    default: return true;
+  }
+}
+
+/**
  * 執行 APP 提供的 JavaScript（ jstoapp ）
  * @param {*} appJsName APP提供的JavaScript funciton名稱。
  * @param {*} jsParams JavaScript的執行參數。
@@ -43,7 +57,7 @@ function getPlatform() {
  */
 async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) {
   const jsToken = `A${Math.floor(Math.random() * 100000000).toString().padStart(8, '0')}`; // 有千萬分之一的機率重覆。
-  console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Params = `, jsParams);
+  if (showLog(appJsName)) console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Params = `, jsParams);
 
   if (!window.AppJavaScriptCallback) {
     window.AppJavaScriptCallback = {};
@@ -96,7 +110,7 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
 
   // result 是由 AppJavaScriptCallback 接收，並嘗試用 JSON Parse 轉為物件，轉不成功則以原資料內容傳回。
   const result = await promise;
-  console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Result = `, result);
+  if (showLog(appJsName)) console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Result = `, result);
   return result;
 }
 
@@ -600,7 +614,6 @@ async function appTransactionAuth(request) {
 
 /**
  * 查詢訊息通知綁定狀態
- * @param {}
  * @returns {{PushBindStatus: boolean}} 狀態布林值
  */
 async function queryPushBind() {
@@ -609,6 +622,18 @@ async function queryPushBind() {
     return {
       PushBindStatus: true,
     };
+  });
+}
+
+/**
+ * 通知 APP 強制登出。
+ * @param {String} reasonCode 登出原因代碼。
+ * @param {String} message 登出原因。
+ * 通常只有在 Timeout 或嚴重錯誤時才會發生。
+ */
+function forceLogout(reasonCode, message) {
+  callAppJavaScript('forceLogout', { reason: reasonCode, message }, false, () => {
+    document.location.href = '/login';
   });
 }
 
@@ -657,4 +682,5 @@ export {
   delQL,
   queryPushBind,
   updatePushBind,
+  forceLogout,
 };
