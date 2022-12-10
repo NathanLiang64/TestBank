@@ -109,7 +109,7 @@ export const showCustomPrompt = async ({
         cancelContent,
         onClose: onClose ?? (showCloseButton ?? onCancel ?? onOk), // showCloseButton時，預設為onCancel或onOk
         noDismiss: noDismiss ?? false,
-        showCloseButton: showCloseButton ?? !!onClose, // 有宣告onClose，就視同要顯示。
+        showCloseButton: showCloseButton ?? true,
       }),
     );
     store.dispatch(setResult((value) => resolve(value)));

@@ -206,10 +206,10 @@ async function startFunc(funcID, funcParams, keepData) {
   const isFunction = (/^[A-Z]\d{5}$/.test(funcID));
   if (isFunction) {
     await callAppJavaScript('startFunc', data, false, () => {
-      window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcID}`;
+      window.location.pathname = `/${funcID}`;
     });
   } else {
-    window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcID}`;
+    window.location.pathname = `/${funcID}`;
   }
 }
 
