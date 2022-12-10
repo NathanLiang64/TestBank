@@ -16,7 +16,7 @@ import { FEIBInputLabel, FEIBInput } from 'components/elements';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
-import { switchZhNumber } from 'utilities/Generator';
+import { switchZhNumber, toCurrency } from 'utilities/Generator';
 import { getAccountsList, resetAccountsList } from 'utilities/CacheData';
 import { getAccountExtraInfo } from 'pages/D00100_NtdTransfer/api';
 import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
@@ -117,7 +117,7 @@ const C00300 = () => {
         accounts[acctIndex] = renewAcct;
 
         // 因為非同步執行API時，會因為API太慢傳回，而此時User又切換帳號，導致將資料顯示到下一個帳號中。
-        if (account.accountNo === selectedAccount?.accountNo) {
+        if (!selectedAccount || account.accountNo === selectedAccount?.accountNo) {
           setSelectedAccount(renewAcct); // 更新免費跨轉次數
         }
       });
@@ -142,7 +142,7 @@ const C00300 = () => {
     }
 
     const value1 = bonusRate ? `${bonusRate * 100}%` : '-';
-    const value2 = interest ? `$${interest}` : '-';
+    const value2 = interest ? `$${toCurrency(interest)}` : '-';
     return (
       <div className="interestRatePanel">
         <div className="panelItem">
@@ -209,7 +209,6 @@ const C00300 = () => {
           ...selectedAccount, // 直接提供帳戶摘要資訊就不用再下載。
           cardColor: 'purple',
         };
-        startFunc('/moreTranscations', params, model);
         return;
 
       case 'D00100': // 轉帳
@@ -272,7 +271,7 @@ const C00300 = () => {
 
               <DepositDetailPanel
                 details={transactions.get(selectedAccount.accountNo)}
-                onMoreFuncClick={() => handleFunctionClick('moreTranscations')}
+                onMoreFuncClick={() => handleFunctionClick('/moreTranscations')}
               />
             </>
           ) : null}
