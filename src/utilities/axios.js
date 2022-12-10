@@ -110,7 +110,7 @@ const processResponse = async (response) => {
     const { message } = response.data;
     // TODO: 導向API失敗的例外處理的頁面！
     console.log(`\x1b[31m${response.config.url} - Exception = (\x1b[33m${code}\x1b[31m) ${message}`);
-    if (code === 'ISG0001') {
+    if (code === 'ISG0001' || code === 'WEBCTL0101') {
       await showError('因為您已閒置過久未操作系統，為考量資訊安全；銀行端已自動切斷您的連線。若您要繼續使用，請重新登入，造成您的不便敬請見諒。', () => {
         // 理論上不會發生，但若 APP 沒控好，就有可能
         forceLogout('402', 'The ISG session has expired');

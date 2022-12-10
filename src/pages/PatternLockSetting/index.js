@@ -19,7 +19,9 @@ import PatternLockSetting2 from './patternLockSetting_2';
 import { setIsActive, setIsResultSuccess, setType } from './stores/actions';
 import { getActiveState } from './mockData';
 
-// const { init } = patternLockSettingApi;
+/**
+ * 圖形密碼 // NOTE 將來可能用的到，先不刪！
+ */
 const PatternLockSetting = () => {
   /**
    *- 資料驗證
