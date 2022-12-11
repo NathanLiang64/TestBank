@@ -18,7 +18,7 @@ import PageWrapper from './D00600.style';
 const Page = () => {
   const dispatch = useDispatch();
   const [selectorMode, setSelectorMode] = useState();
-  const [bindAccount, setBindAccount] = useState([]);
+  const [bindAccount, setBindAccount] = useState();
   const [accounts, setAccounts] = useState();
   const [selectedAccount, setSelectedAccount] = useState();
 
