@@ -57,26 +57,32 @@ const C00300 = () => {
         await showPrompt('您還沒有任何台幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
       } else {
         setAccounts(items);
-
-        /* model: {
-             selectedAccount: 預設帳號
-             showRate: 優存(利率/利息)資訊 顯示模式
-           }
-         */
-        const startParams = await loadFuncParams(); // Function Controller 提供的參數
-        // 取得 Function Controller 提供的 keepData(model)
-        if (startParams && (typeof startParams === 'object')) {
-          const index = items.findIndex((acc) => acc.accountNo === startParams.selectedAccount);
-          setSelectedAccountIdx(index);
-          setShowRate(startParams.showRate);
-        } else {
-          setSelectedAccountIdx(0);
-          setShowRate(true);
-        }
+        await processStartParams(items);
         dispatch(setWaittingVisible(false));
       }
     });
   }, []);
+
+  /**
+   * 處理 Function Controller 提供的啟動參數。
+   * @param {[*]} accts
+   */
+  const processStartParams = async (accts) => {
+    // startParams: {
+    //   defaultAccount: 預設帳號
+    //   showRate: 優存(利率/利息)資訊 顯示模式
+    // }
+    const startParams = await loadFuncParams();
+    // 取得 Function Controller 提供的 keepData(model)
+    if (startParams && (typeof startParams === 'object')) {
+      const index = accts.findIndex((acc) => acc.accountNo === startParams.defaultAccount);
+      setSelectedAccountIdx(index);
+      setShowRate(startParams.showRate);
+    } else {
+      setSelectedAccountIdx(0);
+      setShowRate(true);
+    }
+  };
 
   /**
    * 更新帳戶交易明細清單。
@@ -197,7 +203,7 @@ const C00300 = () => {
    */
   const handleFunctionClick = async (funcCode) => {
     let params = null;
-    const model = { selectedAccount: selectedAccount.accountNo, showRate };
+    const model = { defaultAccount: selectedAccount.accountNo, showRate };
     switch (funcCode) {
       case 'moreTranscations': // 更多明細
         params = {
@@ -250,8 +256,8 @@ const C00300 = () => {
                 onFunctionClick={handleFunctionClick}
                 cardColor="purple"
                 funcList={[
-                  { fid: 'D00100', title: '轉帳', enabled: (selectedAccount.transable && selectedAccount.balance > 0) },
-                  { fid: 'D00300', title: '無卡提款', enabled: (selectedAccount.balance > 0), hidden: (selectedAccount.acctType !== 'M') },
+                  { fid: 'D00100', title: '轉帳', enabled: (selectedAccount.transable) },
+                  { fid: 'D00300', title: '無卡提款', hidden: (selectedAccount.acctType !== 'M') },
                 ]}
                 moreFuncs={[
                   { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false },
