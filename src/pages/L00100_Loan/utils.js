@@ -6,13 +6,13 @@ const handleSubPaymentHistory = async (account, subNo) => {
   const startDate = async (param) => {
     const subPaymentList = await getSubPayment(param);
 
-    return subPaymentList[0].begDate;
+    return subPaymentList[0].startDate;
   };
 
   /* 取得查詢結束日，查詢區間為三年 */
   const endDate = async (param) => {
     const subPaymentList = await getSubPayment(param);
-    return (parseInt(subPaymentList[0].begDate, 10) + 30000).toString();
+    return (parseInt(subPaymentList[0].startDate, 10) + 30000).toString();
   };
 
   /* 根據貸款帳號、貸款分號、起始日、結束日取得分帳還款記錄 */
