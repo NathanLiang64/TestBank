@@ -1,6 +1,6 @@
 /* eslint react/no-array-index-key: 0 */
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import uuid from 'react-uuid';
@@ -20,10 +20,10 @@ import {
   accountFormatter, dateToString, currencySymbolGenerator, dateToYMD,
 } from 'utilities/Generator';
 
-import { showPrompt } from 'utilities/MessageModal';
-import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
+import { startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
-import { getLoanSummary, getContract, getSubPaymentHistory } from './api';
+import { getSubSummary, getContract, getSubPaymentHistory } from './api';
+import { getLoanSummary } from './utils';
 import PageWrapper, { ContentWrapper } from './L00100.style';
 import { PaymentType } from '../../utilities/LoanPaymentType';
 
@@ -36,23 +36,6 @@ const Page = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const [loans, setLoans] = useState();
-
-  /**
-   * 初始化貸款資料載入
-   */
-  useEffect(async () => {
-    dispatch(setWaittingVisible(true));
-    const response = await getLoanSummary();
-
-    // 若無資料，跳出彈窗後關閉頁面
-    if (response.length === 0) {
-      await showPrompt('您尚未擁有貸款，請在系統關閉此功能後，立即申請。', () => closeFunc());
-    } else {
-      setLoans(response);
-    }
-
-    dispatch(setWaittingVisible(false));
-  }, []);
 
   /**
    * 產生上方卡片會用到的
@@ -195,7 +178,7 @@ const Page = () => {
             topLeft={isCorrect ? `${PaymentType[typeCode]}(更正交易)` : `${PaymentType[typeCode]}`}
             bottomLeft={dateToString(t.txnDate)}
             topRight={currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}
-            bottomRight={`貸款餘額 ${currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}`}
+            bottomRight={`貸款餘額 ${currencySymbolGenerator(t.currency ?? 'NTD', t.balance)}`}
           />
         </button>
       );
@@ -229,11 +212,33 @@ const Page = () => {
   };
 
   /**
+   * 檢查是否可以開啟這個頁面。
+   * @returns {Promise<String>} 傳回驗證結果的錯誤訊息；若是正確無誤時，需傳回 null
+   */
+  const inspector = async () => {
+    dispatch(setWaittingVisible(true));
+    let error;
+
+    // 分帳應繳摘要資訊
+    const subSummaryRes = await getSubSummary();
+
+    if (subSummaryRes.length !== 0) {
+      error = null;
+      setLoans(await getLoanSummary());
+    } else {
+      error = '您尚未擁有貸款，請在系統關閉此功能後，立即申請。';
+    }
+
+    dispatch(setWaittingVisible(false));
+    return error;
+  };
+
+  /**
    * 產生頁面
    * 只要提供相同數量的 slides 和 content，SwiperLayout會自動切換對應的內容。
    */
   return (
-    <Layout title="貸款">
+    <Layout title="貸款" inspector={inspector}>
       <MainScrollWrapper>
         <PageWrapper>
           <SwiperLayout slides={renderSlides(loans)} hasDivider={false} slidesPerView={1.1} spaceBetween={8} centeredSlides>

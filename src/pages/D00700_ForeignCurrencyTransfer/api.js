@@ -35,8 +35,7 @@ export const getAgreedAccounts = async (accountNo) => {
  * 取得外幣交易性質別清單。
  * WebView：E00100換匯
  * @param request {
- *   trnsType, // 交易類別 - 空白:全查 1:台轉外 2:外轉台 3:外幣同幣別
- *   action, // 1:即時、2:預約(不支援快取)
+ *   trnsType, // 交易類別 - 空白:全查 1:不區分 2:台外互轉 3:同幣別互轉
  * }
  * @returns [{
  *   leglCode: 性質別代碼,

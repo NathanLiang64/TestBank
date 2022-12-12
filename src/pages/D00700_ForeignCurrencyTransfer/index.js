@@ -83,7 +83,7 @@ const ForeignCurrencyTransfer = () => {
 
   // 取得交易性質
   const getTransTypeOptions = async () => {
-    const options = await getExchangePropertyList({ trnsType: 3, action: 1 });
+    const options = await getExchangePropertyList({ trnsType: 3 });
     console.log('交易性質', options);
     if (Array.isArray(options)) {
       setTransTypeOptions(options);
