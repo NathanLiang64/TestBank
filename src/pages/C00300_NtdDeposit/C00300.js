@@ -201,9 +201,7 @@ const C00300 = () => {
           ...selectedAccount, // 直接提供帳戶摘要資訊就不用再下載。
           cardColor: 'purple',
         };
-        // Todo moreTransactions 目前是一個 module，但是沒有專屬 FuncId，改以 push 導向
-        history.push('/moreTranscations', params);
-        return;
+        break;
 
       case 'D00100': // 轉帳
         params = { transOut: selectedAccount.accountNo };
