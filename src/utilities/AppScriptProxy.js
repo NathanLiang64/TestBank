@@ -240,10 +240,10 @@ async function startFunc(funcID, funcParams, keepData) {
   const isFunction = (/^[A-Z]\d{5}$/.test(funcID));
   if (isFunction) {
     await callAppJavaScript('startFunc', data, false, () => {
-      window.location.pathname = `/${funcID}`;
+      window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcID}`;
     });
   } else {
-    window.location.pathname = `/${funcID}`;
+    window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcID}`;
   }
 }
 
@@ -266,11 +266,11 @@ async function closeFunc(response) {
     // 當 funcStack.pop 不出項目時，表示可能是由 APP 先啟動了某項功能（例：首頁卡片或是下方MenuBar）
     if (startItem) {
       // 表示返回由 WebView 啟動的單元功能或頁面，例：從「更多」啟動了某項單元功能，當此單元功能關閉時，就會進到這裡。
-      window.location.pathname = `/${startItem.funcID}`; // keepData 存入 localStorage 'funcParams'
+      window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${startItem.funcID}`; // keepData 存入 localStorage 'funcParams'
     } else {
       // 若是在登入前，無前一頁可以返回時，則一律回到 Login 頁。
       if (sessionStorage.getItem('isLogin') !== '1') {
-        window.location.pathname = '/login';
+        window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/login`;
         return;
       }
 
@@ -278,8 +278,8 @@ async function closeFunc(response) {
       const appJsRs = await callAppJavaScript('getActiveFuncID', null, true); // 取得 APP 目前的 FuncID
       if (appJsRs) {
         // 例：首頁卡片 啟動 存錢計劃，當 存錢計劃 選擇返回前一功能時，就會進到這裡。（因為此時的 funcStack 是空的）
-        window.location.pathname = `${appJsRs.funcID}`;
-      } else window.location.pathname = '/';
+        window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${appJsRs.funcID}`;
+      } else window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/`;
     }
   };
 
