@@ -53,6 +53,7 @@ const R00100 = () => {
       fetchedCardInfo = {...funcParams.card, usedCardLimit: funcParams.usedCardLimit};
     } else {
       // 若從更多 (B00600) 頁面進入，會先確認有沒有 bankee 信用卡，
+      // 查詢的交易明細就會預設以 bankee 信用卡為主
       const bankeeCardInfo = await getBankeeCard();
       if (bankeeCardInfo) fetchedCardInfo = bankeeCardInfo;
     }

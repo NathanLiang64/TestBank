@@ -76,7 +76,8 @@ const Avatar = ({
     const imgData = sessionStorage.getItem(`Avator_${memberId}`);
     if (imgData) setPreview(imgData);
     if (memberId) {
-      const defaultSrc = `${process.env.REACT_APP_AVATAR_URL}/${memberId}.jpg`;
+      // meberId 之後還需要加上 _s.jpg
+      const defaultSrc = `${process.env.REACT_APP_AVATAR_URL}/${memberId}_s.jpg`;
       setSrc(defaultSrc);
     }
 

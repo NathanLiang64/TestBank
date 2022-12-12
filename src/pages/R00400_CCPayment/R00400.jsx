@@ -60,6 +60,7 @@ const Page = () => {
     const params = await loadFuncParams(); // Function 啟動參數
     // TODO 後續改以 loadAccountList 取得
     const accountList = await getAccountsList('M'); // 拿取內部轉出帳號資訊
+    // TODO 若從更多 (B00600) 頁面進入，查詢的 cardInfo 會是空字串，是否需要預設為 bankee 信用卡
     const cardInfoResponse = await queryCardInfo(params.cardNo); // 拿取應繳金額資訊
     const termsResponse = await getCreditCardTerms();
     if (accountList && cardInfoResponse) {
