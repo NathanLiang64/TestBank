@@ -20,56 +20,23 @@ export const getCreditListing = (d) => ([
 
 export const backInfo = {
   title: ['社群圈等級', '升級條件*', '國內/國外'],
-  body: [{
-    level: '4',
-    condition: '達60萬',
-    percentage: '1.20%/3%',
-  },
-  {
-    level: '3',
-    condition: '達24萬',
-    percentage: '1.20%/1.20%',
-  },
-  {
-    level: '2',
-    condition: '達8萬',
-    percentage: '1.00%/1.00%',
-  },
-  {
-    level: '1',
-    condition: '達2萬',
-    percentage: '0.60%/0.60%',
-  },
-  {
-    level: '0',
-    condition: '未達2萬',
-    percentage: '0.15%/0.15%',
-  },
+  body: [
+    { level: '4', condition: '達60萬', percentage: '1.20%/3%' },
+    { level: '3', condition: '達24萬', percentage: '1.20%/1.20%' },
+    { level: '2', condition: '達8萬', percentage: '1.00%/1.00%' },
+    { level: '1', condition: '達2萬', percentage: '0.60%/0.60%' },
+    { level: '0', condition: '未達2萬', percentage: '0.15%/0.15%' },
   ],
 };
 
 export const levelInfo = {
   title: ['社群圈等級', '升級條件*'],
-  body: [{
-    level: '4',
-    condition: '達60萬',
-  },
-  {
-    level: '3',
-    condition: '達24萬',
-  },
-  {
-    level: '2',
-    condition: '達8萬',
-  },
-  {
-    level: '1',
-    condition: '達2萬',
-  },
-  {
-    level: '0',
-    condition: '未達2萬',
-  },
+  body: [
+    { level: '4', condition: '達60萬' },
+    { level: '3', condition: '達24萬' },
+    { level: '2', condition: '達8萬' },
+    { level: '1', condition: '達2萬' },
+    { level: '0', condition: '未達2萬' },
   ],
 };
 
@@ -87,16 +54,6 @@ export const renderBody = (bodys) => bodys.map((body) => (
     && <th>{body.percentage}</th>}
   </tr>
 ));
-
-// 拿到 cardRes.data.cards 後，將其結構轉成
-//   {
-//     isBankeeCard: boolean;
-//     cards: { cardNo: string }[];
-//     memberLevel: number|null;
-//     rewardsRateDomestic: number|null;
-//     rewardsRateOverseas: number|null;
-//     rewardsAmount: number|null;
-//   }[]
 
 /**
  * 將從 getCards API 拿到的資料作轉換

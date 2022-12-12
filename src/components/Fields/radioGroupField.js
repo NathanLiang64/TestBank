@@ -13,6 +13,7 @@ export const RadioGroupField = ({
   labelName,
   disabled,
   resetOnChange,
+  hideDefaultButton,
   ...controlProps
 }) => {
   const { field, fieldState } = useController(controlProps);
@@ -22,30 +23,32 @@ export const RadioGroupField = ({
     field.onChange(selectedValue);
   };
 
+  // eslint-disable-next-line no-unused-vars
+  const radioStyle = { display: hideDefaultButton ? 'none' : 'inline-flex' };
+
   return (
     <>
-      <FEIBInputLabel htmlFor={field.name}>{labelName}</FEIBInputLabel>
+      {labelName && (
+        <FEIBInputLabel htmlFor={field.name}>{labelName}</FEIBInputLabel>
+      )}
+
       <RadioGroup
         onChange={onChangeHandler}
         onBlur={field.onBlur}
         id={field.name}
         name={field.name}
         value={field.value}
-        disabled={disabled}
       >
         {options.map(({ label, value }) => (
           <FEIBRadioLabel
             key={value}
-            control={<FEIBRadio />}
+            control={<FEIBRadio style={radioStyle} disabled={disabled} />}
             label={label}
             value={value.toString()}
           />
         ))}
       </RadioGroup>
 
-      {/* <FEIBErrorMessage>
-        {fieldState.error ? fieldState.error.message : ''}
-      </FEIBErrorMessage> */}
       {!!fieldState.error && (
         <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>
       )}

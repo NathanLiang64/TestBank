@@ -1,13 +1,10 @@
-// import { useDispatch } from 'react-redux';
 import uuid from 'react-uuid';
 import { CalendarIcon } from 'assets/images/icons';
-// import { stringToDate } from 'utilities/Generator';
-// import { setModal, setModalVisible } from 'stores/reducers/ModalReducer';
 import { FEIBIconButton } from 'components/elements';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import ReminderWrapper from './Reminder.style';
 
-const Reminder = ({ bills }) => {
+const Reminder = ({ bills, deductInfo }) => {
   const handleHintText = (text) => {
     if (text.match('提')) {
       const textChanged = text.split('提');
@@ -25,7 +22,7 @@ const Reminder = ({ bills }) => {
       `UID:${uuid()}`,
       `DTSTAMP:${new Date().toISOString().replaceAll('-', '').replaceAll(':', '')
         .split('.')[0]}Z`,
-      `DTSTART;VALUE=DATE:${parseInt(bills.billDate.replaceAll('/', ''), 10) + 19110000}`,
+      `DTSTART;VALUE=DATE:${parseInt(bills.payDueDate.replaceAll('/', ''), 10) + 19110000}`,
       'RRULE:FREQ=MONTHLY',
       'SUMMARY:Bankee信用卡繳款截止日',
       'END:VEVENT',
@@ -56,7 +53,7 @@ const Reminder = ({ bills }) => {
     <ReminderWrapper>
       { bills && (
       <>
-        <div className="auto">{handleHintText(bills.hintToPay).map((text) => (<p key={text}>{text}</p>))}</div>
+        <div className="auto">{handleHintText(deductInfo.hintToPay).map((text) => (<p key={text}>{text}</p>))}</div>
         <FEIBIconButton $fontSize={2} className="badIcon" onClick={handleCalendarClick}>
           <CalendarIcon />
         </FEIBIconButton>

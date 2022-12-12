@@ -176,22 +176,30 @@ const Page = () => {
     // transactions 依照日期排序（大 -> 小）
     const sortedTransactions = card.transactions.sort((a, b) => parseInt(b.txnDate, 10) - parseInt(a.txnDate, 10));
 
-    return sortedTransactions.slice(0, 3).map((t, i) => (
-      <button
-        key={`${uid}-t${i}`}
-        type="button"
-        aria-label={`點擊查詢此筆紀錄，還款日:${dateToString(t.txnDate)}，金額：${currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}`}
-        onClick={() => handleSingleTransaction(i, card)}
-        style={{ width: '100%' }}
-      >
-        <InformationTape
-          topLeft={PaymentType[t.type]}
-          bottomLeft={dateToString(t.txnDate)}
-          topRight={currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}
-          bottomRight={`貸款餘額 ${currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}`}
-        />
-      </button>
-    ));
+    return sortedTransactions.slice(0, 3).map((t, i) => {
+      const isCorrect = t.type.match('更正-') !== null;
+      let typeCode = t.type;
+      if (isCorrect) {
+        typeCode = t.type.substring(3);
+      }
+
+      return (
+        <button
+          key={`${uid}-t${i}`}
+          type="button"
+          aria-label={`點擊查詢此筆紀錄，還款日:${dateToString(t.txnDate)}，金額：${currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}`}
+          onClick={() => handleSingleTransaction(i, card)}
+          style={{ width: '100%' }}
+        >
+          <InformationTape
+            topLeft={isCorrect ? `${PaymentType[typeCode]}(更正交易)` : `${PaymentType[typeCode]}`}
+            bottomLeft={dateToString(t.txnDate)}
+            topRight={currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}
+            bottomRight={`貸款餘額 ${currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}`}
+          />
+        </button>
+      );
+    });
   };
 
   const handleMoreTransactionsClick = (card) => {
