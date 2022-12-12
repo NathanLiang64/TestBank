@@ -1,9 +1,8 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable no-use-before-define */
 /* eslint-disable object-curly-newline */
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
@@ -17,11 +16,10 @@ import { FEIBInputLabel, FEIBInput } from 'components/elements';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
-import { switchZhNumber } from 'utilities/Generator';
+import { switchZhNumber, toCurrency } from 'utilities/Generator';
 import { getAccountsList, resetAccountsList } from 'utilities/CacheData';
 import { getAccountExtraInfo } from 'pages/D00100_NtdTransfer/api';
 import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
-import { useHistory } from 'react-router';
 import {
   getTransactions,
   downloadDepositBookCover,
@@ -34,13 +32,14 @@ import PageWrapper from './C00300.style';
  */
 const C00300 = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+
   const { register, unregister, handleSubmit } = useForm();
 
   const [accounts, setAccounts] = useState();
-  const [selectedAccount, setSelectedAccount] = useState();
   const [selectedAccountIdx, setSelectedAccountIdx] = useState();
-  const [transactions, setTransactions] = useState(new Map());
+
+  const selectedAccount = accounts ? accounts[selectedAccountIdx ?? 0] : null;
 
   // 優存(利率/利息)資訊 顯示模式（true.優惠利率, false.累積利息)
   const [showRate, setShowRate] = useState();
@@ -53,72 +52,81 @@ const C00300 = () => {
 
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
-    getAccountsList('MC', setAccounts); // M=台幣主帳戶、C=台幣子帳戶
+    getAccountsList('MC', async (items) => { // M=台幣主帳戶、C=台幣子帳戶
+      if (items.length === 0) {
+        await showPrompt('您還沒有任何台幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
+      } else {
+        setAccounts(items);
+        await processStartParams(items);
+        dispatch(setWaittingVisible(false));
+      }
+    });
+  }, []);
 
-    const startParams = await loadFuncParams(); // Function Controller 提供的參數
+  /**
+   * 處理 Function Controller 提供的啟動參數。
+   * @param {[*]} accts
+   */
+  const processStartParams = async (accts) => {
+    // startParams: {
+    //   defaultAccount: 預設帳號
+    //   showRate: 優存(利率/利息)資訊 顯示模式
+    // }
+    const startParams = await loadFuncParams();
     // 取得 Function Controller 提供的 keepData(model)
-    let keepData = null;
     if (startParams && (typeof startParams === 'object')) {
-      keepData = startParams;
-      setSelectedAccountIdx(keepData.selectedAccountIdx);
-      setShowRate(keepData.showRate);
+      const index = accts.findIndex((acc) => acc.accountNo === startParams.defaultAccount);
+      setSelectedAccountIdx(index);
+      setShowRate(startParams.showRate);
     } else {
       setSelectedAccountIdx(0);
       setShowRate(true);
     }
-  }, []);
-
-  /**
-   * 初始化帳戶卡資料載入。
-   */
-  useEffect(async () => {
-    if (!accounts) return;
-
-    dispatch(setWaittingVisible(false));
-    if (accounts.length === 0) {
-      await showPrompt('您還沒有任何台幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
-    } else handleAccountChanged(selectedAccountIdx ?? 0);
-  }, [accounts]);
-
-  /**
-   * 更新帳戶交易明細清單
-   */
-  const updateTransactions = async (account) => {
-    const { accountNo } = account;
-    let txnDetails = transactions.get(accountNo);
-    if (!txnDetails) {
-      // 取得帳戶交易明細（三年內的前25筆即可）
-      const transData = await getTransactions(accountNo);
-      txnDetails = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
-      if (transData.length > 0) {
-        account.balance = txnDetails[0].balance; // 更新餘額。
-      }
-
-      transactions.set(accountNo, txnDetails);
-      setTransactions(new Map(transactions)); // 強制更新畫面。
-    }
   };
 
   /**
-   * 根據當前帳戶取得交易明細資料及優惠利率數字
+   * 更新帳戶交易明細清單。
+   * @returns 需有傳回明細清單供顯示。
    */
-  const handleAccountChanged = async (acctIndex) => {
-    if (!accounts) return; // 頁面初始化時，不需要進來。
-    const account = accounts[acctIndex];
-    // 若還沒有取得 免費跨轉次數 則立即補上。
-    if (!account.freeTransfer) {
+  const loadTransactions = (account) => {
+    const { txnDetails } = account;
+    if (!account.isLoadingTxn) {
+      account.isLoadingTxn = true; // 避免因為非同步執行造成的重覆下載
+      if (!txnDetails) {
+        // 取得帳戶交易明細（三年內的前25筆即可）
+        getTransactions(account.accountNo).then((transData) => {
+          const details = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
+          account.txnDetails = details;
+
+          // 更新餘額。
+          if (transData.length > 0) account.balance = details[0].balance;
+
+          delete account.isLoadingTxn; // 載入完成才能清掉旗標！
+          forceUpdate();
+        });
+      }
+    }
+    return txnDetails;
+  };
+
+  /**
+   * 下載 優存(利率/利息)資訊
+   */
+  const loadExtraInfo = (account) => {
+    if (!account.isLoadingExtra) {
+      account.isLoadingExtra = true; // 避免因為非同步執行造成的重覆下載
       getAccountExtraInfo(account.accountNo).then((info) => {
-        accounts[acctIndex] = {
-          ...account,
-          ...info,
-        };
-        setAccounts([...accounts]); // 強制更新畫面。
+        account.freeTransferRemain = info.freeTransferRemain;
+        account.freeWithdrawRemain = info.freeWithdrawRemain;
+        account.bonusQuota = info.bonusQuota;
+        account.bonusRate = info.bonusRate;
+        account.interest = info.interest;
+
+        delete account.isLoadingExtra; // 載入完成才能清掉旗標！
+        forceUpdate();
       });
     }
-    updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可)
-    setSelectedAccount(account);
   };
-  useEffect(() => { handleAccountChanged(selectedAccountIdx); }, [selectedAccountIdx]);
 
   /**
    * 顯示 優存(利率/利息)資訊
@@ -126,20 +134,21 @@ const C00300 = () => {
   const renderBonusInfoPanel = () => {
     if (!selectedAccount) return null;
 
-    const { freeWithdraw, freeTransfer, bonusQuota, bonusRate, interest } = selectedAccount;
-    if (!freeTransfer) {
+    const { freeWithdrawRemain, freeTransferRemain, bonusQuota, bonusRate, interest } = selectedAccount;
+    if (!freeTransferRemain) {
+      loadExtraInfo(selectedAccount);
       return (
         <div style={{ lineHeight: '5.28833rem', textAlign: 'center', marginBottom: '1.6rem' }}>載入中...</div>
       );
     }
 
     const value1 = bonusRate ? `${bonusRate * 100}%` : '-';
-    const value2 = interest ? `$${interest}` : '-';
+    const value2 = (interest >= 0) ? `$${toCurrency(interest)}` : '-';
     return (
       <div className="interestRatePanel">
         <div className="panelItem">
           <h3>免費跨提/轉</h3>
-          <p>{`${freeWithdraw}/${freeTransfer}`}</p>
+          <p>{`${freeWithdrawRemain}/${freeTransferRemain}`}</p>
         </div>
         <div className="panelItem" onClick={() => setShowRate(!showRate)}>
           <h3>
@@ -181,7 +190,7 @@ const C00300 = () => {
     const onOk = (values) => {
       selectedAccount.alias = values.newName; // 變更卡片上的帳戶名稱
       setAccountAlias(selectedAccount.accountNo, selectedAccount.alias);
-      setAccounts([...accounts]);
+      forceUpdate();
 
       resetAccountsList(); // 清除帳號基本資料快取，直到下次使用 getAccountsList 時再重新載入。
     };
@@ -194,16 +203,14 @@ const C00300 = () => {
    */
   const handleFunctionClick = async (funcCode) => {
     let params = null;
-    const model = { selectedAccountIdx, showRate };
+    const model = { defaultAccount: selectedAccount.accountNo, showRate };
     switch (funcCode) {
       case 'moreTranscations': // 更多明細
         params = {
           ...selectedAccount, // 直接提供帳戶摘要資訊就不用再下載。
           cardColor: 'purple',
         };
-        // Todo moreTransactions 目前是一個 module，但是沒有專屬 FuncId，改以 push 導向
-        history.push('/moreTranscations', params);
-        return;
+        break;
 
       case 'D00100': // 轉帳
         params = { transOut: selectedAccount.accountNo };
@@ -249,8 +256,8 @@ const C00300 = () => {
                 onFunctionClick={handleFunctionClick}
                 cardColor="purple"
                 funcList={[
-                  { fid: 'D00100', title: '轉帳', enabled: (selectedAccount.transable && selectedAccount.balance > 0) },
-                  { fid: 'D00300', title: '無卡提款', enabled: (selectedAccount.balance > 0), hidden: (selectedAccount.acctType !== 'M') },
+                  { fid: 'D00100', title: '轉帳', enabled: (selectedAccount.transable) },
+                  { fid: 'D00300', title: '無卡提款', hidden: (selectedAccount.acctType !== 'M') },
                 ]}
                 moreFuncs={[
                   { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false },
@@ -264,7 +271,7 @@ const C00300 = () => {
               { renderBonusInfoPanel() }
 
               <DepositDetailPanel
-                details={transactions.get(selectedAccount.accountNo)}
+                details={loadTransactions(selectedAccount)}
                 onMoreFuncClick={() => handleFunctionClick('moreTranscations')}
               />
             </>

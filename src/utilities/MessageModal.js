@@ -107,7 +107,7 @@ export const showCustomPrompt = async ({
         onCancel,
         okContent,
         cancelContent,
-        onClose,
+        onClose: onClose ?? (showCloseButton ?? onCancel ?? onOk), // showCloseButton時，預設為onCancel或onOk
         noDismiss: noDismiss ?? false,
         showCloseButton: showCloseButton ?? true,
       }),

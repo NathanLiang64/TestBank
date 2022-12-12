@@ -1,6 +1,7 @@
 import uuid from 'react-uuid';
 import CipherUtil from 'utilities/CipherUtil';
 import { userRequest, callAPI } from 'utilities/axios';
+import { getOsType } from 'utilities/AppScriptProxy';
 
 // 裝置開啟時去呼叫
 const handshake = async () => {
@@ -21,9 +22,10 @@ const handshake = async () => {
     txnId: `WVIEW_${uuid()}`,
     // deviceId: null,
     deviceId: uuid(),
-    osType: 0,
-    osVersion: '15.5',
-    appVersion: '1.0.11',
+    // NOTE 用不用的 deviceId 可以進行「已在不同手機做過綁定」的情境。
+    osType: getOsType() - 1,
+    osVersion: '16.1.1',
+    appVersion: '1.0.26',
     encK: aesKey,
     iv,
     rsaPubK: publicKey,

@@ -40,7 +40,11 @@ export const getAccountExtraInfo = async (accountNo) => {
       }
       memo: 備註
     }} request
- * @returns {*}
+ * @returns {Promise<{
+    result: 表示是否成功建立台幣轉帳交易記錄
+    message: 紀錄無法成功建立的原因
+    isAgreedTxn: 表示約定轉帳的旗標
+   }>}
  */
 export const createNtdTransfer = async (request) => {
   const response = await callAPI('/api/transfer/ntd/v1/create', {
@@ -56,9 +60,9 @@ export const createNtdTransfer = async (request) => {
       isSuccess,
       balance: 轉出後餘額,
       fee: 手續費,
+      fiscCode: 財金序號_跨轉才有,
       errorCode,
-      message,
-      // TODO payDate, SERVER交易序號, 交易識別碼
+      message: 錯誤訊息,
    }>} 轉帳結果。
  */
 export const executeNtdTransfer = async () => {

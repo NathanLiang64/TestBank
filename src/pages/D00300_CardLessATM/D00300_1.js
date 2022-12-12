@@ -22,10 +22,9 @@ import { validationSchema } from './validationSchema';
 const CardLessATM1 = () => {
   const defaultValues = {
     withdrawAmount: 0,
-    account: '',
   };
 
-  const {handleSubmit, control, reset } = useForm({
+  const {handleSubmit, control } = useForm({
     defaultValues,
     resolver: yupResolver(validationSchema),
   });
@@ -76,14 +75,21 @@ const CardLessATM1 = () => {
     // 取得提款卡資訊
     getAccountsList('M', async (accounts) => {
       const acct = accounts[0];
-      const extraInfo = await getAccountExtraInfo();
+      // 以非同步 先顯示帳號及餘額
+      setAccountSummary({
+        ...accountSummary,
+        account: acct.accountNo,
+        balance: acct.balance,
+      });
+
+      // 跨轉優惠資訊取回後再更新。
+      const extraInfo = await getAccountExtraInfo(acct.accountNo);
       setAccountSummary({
         account: acct.accountNo,
         balance: acct.balance,
         wdTimes: extraInfo.freeWithdraw,
         wdRemain: extraInfo.freeWithdrawRemain,
       });
-      reset({...defaultValues, account: acct.accountNo});
     });
 
     dispatch(setWaittingVisible(false));

@@ -11,6 +11,7 @@ import { FEIBButton } from 'components/elements';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { getBankCode } from 'utilities/CacheData';
+import { showError } from 'utilities/MessageModal';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { createNtdTransfer, getDisplayAmount, getTransDate, getCycleDesc, executeNtdTransfer } from './api';
 import TransferWrapper from './D00100.style';
@@ -71,22 +72,36 @@ const TransferConfirm = (props) => {
     delete request.booking.transTimes;
 
     // 建立轉帳交易紀錄。
-    const response = await createNtdTransfer(request); // 非約轉時，會先由 MBGW 發出 OTP
+    const response = await createNtdTransfer(request);
     console.log(response); // DEBUG
-    if (response) {
+    if (response.result) {
       // 進行交易驗證，要求使用者輸入OTP、密碼、雙因子...等。
-      const auth = await transactionAuth(transIn.type === 2 ? AuthCode.D00100.REG : AuthCode.D00100.NONREG);
+      transIn.type = response.isAgreedTxn; // 以 Server端傳回的約轉帳號旗標為準。
+      const authCode = (response.isAgreedTxn) ? AuthCode.D00100.REG : AuthCode.D00100.NONREG;
+      const auth = await transactionAuth(authCode);
       if (auth.result) {
         const result = await executeTransfer();
         // 顯示轉帳結果（含加入常用帳號）
         const param = {...model, result};
         history.push('/D001002', param);
       }
+    } else {
+      // 顯示失敗原因，並回到前一頁；若是嚴重錯誤，會在 axios 就處理掉了。
+      await showError(response.message, goBack);
     }
   };
 
   /**
    * 執行轉帳交易。
+   * @returns {Promise<{
+      isSuccess,
+      balance: 轉出後餘額,
+      fee: 手續費,
+      isCrossBank: 表示跨轉轉帳,
+      fiscCode: 財金序號_跨轉才有,
+      errorCode,
+      message: 錯誤訊息,
+   }>} 轉帳結果。
    */
   const executeTransfer = async () => {
     // TODO 顯示交易授權中，請稍候...
@@ -94,12 +109,8 @@ const TransferConfirm = (props) => {
     console.log('==> 轉帳執行結果：', executeRs);
 
     const result = {
-      isSuccess: (executeRs.code === '0000'), // Debug 假設！
-      errorCode: executeRs.code,
-      message: executeRs.message, // 錯誤訊息
-      fee: executeRs.fee, // 手續費
-      isCrossBank: (model.transIn.bank !== '805' && executeRs.fee === 0), // 跨轉轉帳
-      fiscCode: executeRs.fiscCode, // 財金序號(跨轉才有)
+      ...executeRs,
+      isCrossBank: (model.transIn.bank !== '805' && executeRs.fee === 0), // 表示跨轉轉帳
     };
 
     if (result.isSuccess) {
@@ -108,6 +119,8 @@ const TransferConfirm = (props) => {
 
       // TODO 跨轉優惠次數、餘額 是否要寫回 LocalCache ？
     }
+
+    return result;
   };
 
   /**

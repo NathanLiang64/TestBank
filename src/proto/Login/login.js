@@ -1,12 +1,9 @@
 /* eslint-disable object-curly-newline */
 /* eslint-disable radix,no-restricted-globals */
 import { useEffect, useState } from 'react';
-// import { useHistory } from 'react-router';
-import { useDispatch } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { setShowSpinner } from 'components/Spinner/stores/actions';
 import {
   FEIBInput, FEIBErrorMessage, FEIBLinkButton, FEIBCheckbox, FEIBCheckboxLabel, FEIBIconButton,
 } from 'components/elements';
@@ -22,7 +19,6 @@ import BgImage from 'assets/images/loginBackground.png';
 import HandShake from './HandShake';
 import LoginWrapper from './login.style';
 import FaceIdLoginModal from './faceIdLoginModal';
-// import RegisterModal from './registerModal';
 import { login, getInitData, getAnnouncementData } from './login.api';
 
 const Login = () => {
@@ -48,20 +44,17 @@ const Login = () => {
     },
   });
 
+  const [loginable, setLoginable] = useState();
   const [showUserId, setShowUserId] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showFaceIdLogin, setShowFaceIdLogin] = useState(false);
-  // const [showActions, setShowActions] = useState(false);
-
-  const dispatch = useDispatch();
-  // const history = useHistory();
 
   useEffect(async () => {
     await HandShake();
     await getInitData();
     await getAnnouncementData();
 
-    dispatch(setShowSpinner(false));
+    setLoginable(true);
   }, []);
 
   const upperId = (e) => {
@@ -76,17 +69,14 @@ const Login = () => {
     setShowFaceIdLogin(!showFaceIdLogin);
   };
 
-  const handleActionsOpen = () => {
-    // setShowActions(!showActions);
-    startFunc(FuncID.A00800);
-  };
-
   const onSubmit = async (data) => {
+    setLoginable(false);
     const isSuccess = await login(data);
     if (isSuccess) { // 登入成功
       sessionStorage.setItem('isLogin', '1');
       goHome();
     }
+    setLoginable(true);
   };
 
   return (
@@ -175,20 +165,21 @@ const Login = () => {
             >
               <FaceIdIcon />
             </FEIBIconButton>
-            <button type="submit">
+            <button disabled={!loginable} type="submit">
               登入
               <ArrowBackIcon />
             </button>
           </div>
           <div className="signup">
             <span>還沒有帳號？</span>
-            <FEIBLinkButton $color={theme.colors.text.link} onClick={handleActionsOpen}>立即申請</FEIBLinkButton>
+            <FEIBLinkButton $color={theme.colors.text.link} onClick={() => startFunc(FuncID.A00800)}>
+              立即申請
+            </FEIBLinkButton>
           </div>
         </div>
         <img src={BgImage} alt="logo" className="backgroundImage" />
       </form>
       <FaceIdLoginModal show={showFaceIdLogin} close={handleFaceIdLoginOpen} />
-      {/* <RegisterModal show={showActions} close={handleActionsOpen} /> */}
     </LoginWrapper>
   );
 };

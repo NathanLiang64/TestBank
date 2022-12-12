@@ -34,6 +34,20 @@ function getPlatform() {
 }
 
 /**
+ * 篩掉不要顯示的 APP JS Script log
+ * @param {*} appJsName APP提供的JavaScript funciton名稱。
+ */
+function showLog(appJsName) {
+  switch (appJsName) {
+    case 'onLoading':
+    case 'setAuthdata':
+      return false;
+
+    default: return true;
+  }
+}
+
+/**
  * 執行 APP 提供的 JavaScript（ jstoapp ）
  * @param {*} appJsName APP提供的JavaScript funciton名稱。
  * @param {*} jsParams JavaScript的執行參數。
@@ -43,7 +57,7 @@ function getPlatform() {
  */
 async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) {
   const jsToken = `A${Math.floor(Math.random() * 100000000).toString().padStart(8, '0')}`; // 有千萬分之一的機率重覆。
-  console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Params = `, jsParams);
+  if (showLog(appJsName)) console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Params = `, jsParams);
 
   if (!window.AppJavaScriptCallback) {
     window.AppJavaScriptCallback = {};
@@ -96,7 +110,7 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
 
   // result 是由 AppJavaScriptCallback 接收，並嘗試用 JSON Parse 轉為物件，轉不成功則以原資料內容傳回。
   const result = await promise;
-  console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Result = `, result);
+  if (showLog(appJsName)) console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Result = `, result);
   return result;
 }
 
@@ -104,46 +118,80 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
  * Web版 Function Controller
  */
 const funcStack = {
+  /**
+   * 從 localStorage 取出功能執行堆疊，並轉為 Array 物件後傳回。
+   * @returns {Array} 功能執行堆疊
+   */
+  getStack: () => JSON.parse(localStorage.getItem('funcStack') ?? '[]'),
+
+  update: (stack) => localStorage.setItem('funcStack', JSON.stringify(stack)),
+  /** 清空 功能執行堆疊，適用於 goHome 功能。 */
+  clear: () => funcStack.update([]),
+
+  /**
+   * 將指定功能置入 功能執行堆疊 最後一個項目。
+   * @param {{
+   *   funcID: '單元功能代碼。',
+   *   funcParams: '提共給啟動的單元功能的參數，被啟動的單元功能是透過 loadFuncParams() 取回。',
+   *   keepData: '當啟動的單元功能結束後，返回原功能啟動時取回的資料。',
+   * }} startItem 要執行的功能。
+   */
   push: (startItem) => {
     console.log('Start Function : ', startItem);
-
-    const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
+    const stack = funcStack.getStack();
     stack.push(startItem);
-    localStorage.setItem('funcStack', JSON.stringify(stack));
+    funcStack.update(stack);
 
-    // 寫入 Function 啟動參數。
-    const params = startItem.funcParams ? { funcParams: startItem.funcParams, keepData: null } : null;
-    localStorage.setItem('funcParams', (JSON.stringify(params) ?? null));
+    // 寫入 Function 啟動參數，提供元功能在啟動後，可以透過 loadFuncParams() 取得。
+    // NOTE keepData 必需是 null，才不會在 loadFuncParams() 誤判，因為 keepData 有值時優先當啟動參數。
+    const params = startItem.funcParams ? JSON.stringify({ funcParams: startItem.funcParams, keepData: null }) : null;
+    localStorage.setItem('funcParams', params);
   },
+
+  /**
+   * 取出 功能執行堆疊 的最後一個項目，並從堆疊中移出。
+   * @returns {{
+   *   funcID: '單元功能代碼。',
+   *   funcParams: '提共給啟動的單元功能的參數，被啟動的單元功能是透過 loadFuncParams() 取回。',
+   *   keepData: '當啟動的單元功能結束後，返回原功能啟動時取回的資料。',
+   * }} 目前正在執行中的功能啟動資訊。
+   */
   pop: () => {
     localStorage.removeItem('funcParams');
 
-    const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
+    const stack = funcStack.getStack();
     if (stack.length === 0) return null;
 
     const closedItem = stack[stack.length - 1];
-    // console.log('POP -> Closed Item : ', closedItem);
-
     stack.pop();
-    localStorage.setItem('funcStack', JSON.stringify(stack));
+    funcStack.update(stack);
 
     // 寫入 Function 啟動參數。
     const startItem = stack[stack.length - 1];
     if (closedItem) {
-      const params = { funcParams: startItem?.funcParams, keepData: closedItem.keepData };
+      const params = {
+        funcParams: startItem?.funcParams,
+        keepData: closedItem.keepData,
+      };
       localStorage.setItem('funcParams', JSON.stringify(params));
       console.log('Close Function and Back to (', startItem?.funcID ?? 'Home', ')', params);
     }
 
     return startItem;
   },
+
+  /**
+   * 取得 功能執行堆疊 最後一個項目，但不會從堆疊中移出。
+   * @returns {{
+   *   funcID: '單元功能代碼。',
+   *   funcParams: '提共給啟動的單元功能的參數，被啟動的單元功能是透過 loadFuncParams() 取回。',
+   *   keepData: '當啟動的單元功能結束後，返回原功能啟動時取回的資料。',
+   * }} 目前正在執行中的功能啟動資訊。
+   */
   peek: () => {
-    const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
+    const stack = funcStack.getStack();
     const lastItem = stack[stack.length - 1];
     return lastItem;
-  },
-  clear: () => {
-    localStorage.setItem('funcStack', '[]');
   },
 };
 
@@ -152,7 +200,7 @@ const funcStack = {
  * @returns {String} 功能代碼。
  */
 function getCallerFunc() {
-  const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
+  const stack = funcStack.getStack();
   if (stack.length <= 1) return null;
 
   return stack[stack.length - 2].funcID;
@@ -176,15 +224,15 @@ async function goHome() {
  */
 async function startFunc(funcID, funcParams, keepData) {
   if (!funcID) {
-    showError('此功能尚未完成！');
+    await showError('此功能尚未完成！');
     return;
   }
 
   funcID = funcID.replace(/^\/*/, ''); // 移掉前置的 '/' 符號,
   const data = {
     funcID,
-    funcParams: JSON.stringify(funcParams),
-    keepData: JSON.stringify(keepData),
+    funcParams: JSON.stringify(funcParams), // 要先轉 JSON 字串是為了配合 APP JavaScript
+    keepData: JSON.stringify(keepData), // 要先轉 JSON 字串是為了配合 APP JavaScript
   };
   funcStack.push(data);
 
@@ -192,21 +240,22 @@ async function startFunc(funcID, funcParams, keepData) {
   const isFunction = (/^[A-Z]\d{5}$/.test(funcID));
   if (isFunction) {
     await callAppJavaScript('startFunc', data, false, () => {
-      window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcID}`;
+      window.location.pathname = `/${funcID}`;
     });
   } else {
-    window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcID}`;
+    window.location.pathname = `/${funcID}`;
   }
 }
 
 /**
- * 觸發APP返回上一頁功能
- * @param {*} response 傳回值，會暫存在 SessionStorate("FuncRs") 中。
+ * 觸發APP返回上一頁功能，並將指定的資料透過 loadFuncParams() 傳回給啟動目前功能的單元功能。
+ * @param {*} response 傳回值，會暫存在 SessionStorate("funcResp") 中。
  */
 async function closeFunc(response) {
-  // NOTE 必需排除 event 物件。
-  if (response && (!response.target && !response.type)) {
-    sessionStorage.setItem('FuncRs', JSON.stringify(response));
+  // 將要傳回給前一功能（啟動目前功能的單元功能）的資料 存入 sessionStorage[funcResp]
+  // 再由 loadFuncParams() 取出，放在啟動參數的 response 參數中。
+  if (response && (!response.target && !response.type)) { // NOTE event物件會被誤判為傳回值，所以必需排除。
+    sessionStorage.setItem('funcResp', JSON.stringify(response));
   }
 
   const closeItem = funcStack.peek(); // 因為 funcStack 還沒 pop，所以用 peek 還以取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
@@ -214,15 +263,14 @@ async function closeFunc(response) {
 
   const startItem = funcStack.pop();
   const webCloseFunc = async () => {
-    const rootPath = `${process.env.REACT_APP_ROUTER_BASE}/`;
     // 當 funcStack.pop 不出項目時，表示可能是由 APP 先啟動了某項功能（例：首頁卡片或是下方MenuBar）
     if (startItem) {
       // 表示返回由 WebView 啟動的單元功能或頁面，例：從「更多」啟動了某項單元功能，當此單元功能關閉時，就會進到這裡。
-      window.location.pathname = `${rootPath}${startItem.funcID}`; // keepData 存入 localStorage 'funcParams'
+      window.location.pathname = `/${startItem.funcID}`; // keepData 存入 localStorage 'funcParams'
     } else {
       // 若是在登入前，無前一頁可以返回時，則一律回到 Login 頁。
       if (sessionStorage.getItem('isLogin') !== '1') {
-        window.location.pathname = `${rootPath}login`;
+        window.location.pathname = '/login';
         return;
       }
 
@@ -230,8 +278,8 @@ async function closeFunc(response) {
       const appJsRs = await callAppJavaScript('getActiveFuncID', null, true); // 取得 APP 目前的 FuncID
       if (appJsRs) {
         // 例：首頁卡片 啟動 存錢計劃，當 存錢計劃 選擇返回前一功能時，就會進到這裡。（因為此時的 funcStack 是空的）
-        window.location.pathname = `${rootPath}${appJsRs.funcID}`;
-      } else window.location.pathname = rootPath;
+        window.location.pathname = `${appJsRs.funcID}`;
+      } else window.location.pathname = '/';
     }
   };
 
@@ -244,13 +292,20 @@ async function closeFunc(response) {
 
 /**
  * 取得 APP Function Controller 提供的功能啟動參數。
- * @returns 若參數當時是以 JSON 物件儲存，則同樣會轉成物件傳回。
+ * @returns {Promise<{
+ *   params: '被啟動時的 funcParams 或是啟動下一個功能時，要求 startFunc 暫存的 keepData。 這裡的 params 並不是一個物件',
+ *   response: '前一功能的傳回的資料',
+ * }>} 若參數當時是以 JSON 物件儲存，則同樣會轉成物件傳回。
  */
 async function loadFuncParams() {
   try {
     const funcItem = funcStack.peek(); // 因為功能已經啟動，所以用 peek 取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
     const isFunction = !funcItem || (/^[A-Z]\d{5}$/.test(funcItem.funcID)); // 表示 funcID 不是一般頁面，而是由 Function Controller 控制的單元功能。
 
+    /**
+     * 取得儲存於 localStorage 的啟動參數。此功能是為了提供一般頁面或Web版Function Contoller用。
+     * @returns {{ funcParams, keepData }}
+     */
     const webGetFuncParams = () => {
       const params = localStorage.getItem('funcParams');
       if (!params || params === 'null') return null;
@@ -258,6 +313,7 @@ async function loadFuncParams() {
       return params;
     };
 
+    // 一般頁面 則不可向 APP 的 Function Controller 取資料。
     const data = isFunction ? (await callAppJavaScript('getPagedata', null, true, webGetFuncParams)) : webGetFuncParams();
     let params = null;
     if (data && data !== 'undefined') {
@@ -269,14 +325,11 @@ async function loadFuncParams() {
     }
 
     // 取得 Function 在 closeFunc 時提供的傳回值。
-    const response = sessionStorage.getItem('FuncRs');
-    console.log('>> Function 傳回值 : ', response);
-    sessionStorage.removeItem('FuncRs');
+    const response = sessionStorage.getItem('funcResp');
+    sessionStorage.removeItem('funcResp');
     if (response) {
-      params = {
-        ...params,
-        response: JSON.parse(response),
-      };
+      console.log('>> 前一單元功能的 傳回值 : ', response);
+      params.response = JSON.parse(response);
     }
 
     // await showAlert(`>> Function 啟動參數 : ${JSON.stringify(params)}`);
@@ -291,7 +344,7 @@ async function loadFuncParams() {
 
 /**
  * 開啟/關閉APP Loading等待畫面
- * @param {boolean} visible
+ * @param {Promise<boolean>} visible
  */
 async function switchLoading(visible) {
   const data = { open: visible ? 'Y' : 'N' };
@@ -600,7 +653,6 @@ async function appTransactionAuth(request) {
 
 /**
  * 查詢訊息通知綁定狀態
- * @param {}
  * @returns {{PushBindStatus: boolean}} 狀態布林值
  */
 async function queryPushBind() {
@@ -609,6 +661,18 @@ async function queryPushBind() {
     return {
       PushBindStatus: true,
     };
+  });
+}
+
+/**
+ * 通知 APP 強制登出。
+ * @param {String} reasonCode 登出原因代碼。
+ * @param {String} message 登出原因。
+ * 通常只有在 Timeout 或嚴重錯誤時才會發生。
+ */
+function forceLogout(reasonCode, message) {
+  callAppJavaScript('forceLogout', { reason: reasonCode, message }, false, () => {
+    document.location.href = '/login';
   });
 }
 
@@ -657,4 +721,5 @@ export {
   delQL,
   queryPushBind,
   updatePushBind,
+  forceLogout,
 };

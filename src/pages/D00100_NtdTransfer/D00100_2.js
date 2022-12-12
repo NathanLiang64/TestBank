@@ -86,8 +86,9 @@ const TransferResult = (props) => {
       </section>
       <section className="transactionDetailArea">
         <Accordion title="詳細交易" space="bottom">
+          {/* model.result.fiscCode 財金序號(跨轉才有) */}
           <InformationList title="帳戶餘額" content={`$${model.transOut.balance}`} remark={model.transOut.alias} />
-          {model.booking.mode === 0 && (
+          {model.booking.mode === 0 && model.result.isCrossBank && (
             <InformationList title="手續費" content={`$${model.result.fee}`} remark={`跨轉優惠:剩餘${model.transOut.freeTransferRemain}次`} />
           )}
           <InformationList title="備註" content={model.memo} />

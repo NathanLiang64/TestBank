@@ -3,23 +3,27 @@
 
 /* ========= 通用函式 ========= */
 
-// 將數字轉為加上千分位符號的字串
-export const toCurrency = (number, float = 0, isShowDecimal = false) => {
+/**
+ * 將數字轉為加上千分位符號的字串
+ * @param {Number} amount 金額，可以有小數
+ * @param {Number?} float 小數位數，會捨位或補零
+ * @param {Boolean?} showFloat 強制顯示小數部份，不受 float 的小數位數限制。
+ */
+export const toCurrency = (number, float = 0, showFloat = false) => {
   if (number === null) return '';
   if (number === '*') return '＊＊＊＊＊'; // 不顯示餘額。
 
-  const parts = number.toString().split('.') ?? ['0', '']; // 預設為'0'
-  let amount = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','); // 取出整數加上千分位','
-  if (float > 0) {
-    amount = `${amount}.${(`${parts[1] ?? ''}000000`).substring(0, float)}`; // 將小數加回
-  }
+  const parts = number.toString().split('.') ?? ['0']; // 預設為'0'
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','); // 取出整數加上千分位','
 
   /* 如台幣帳戶需顯示小數點，傳入isShowDecimal: true */
-  if (parts.length > 1 && isShowDecimal && parts[1] !== '00') {
-    amount = `${amount}.${parts[1]}`; // 將小數加回
-  }
+  if (showFloat && parts[1]) float = parts[1].length;
 
-  return amount;
+  if (float > 0) {
+    parts[1] = `${parts[1] ?? ''}000000`.substring(0, float); // 小數位數補齊
+  } else parts.splice(1, 1); // 不要顯示小數時，就把小數的數值刪掉。
+
+  return parts.join('.');
 };
 
 // 將數字轉為「千」或「萬」，假設數字大於「千」，小於「千萬」
@@ -297,13 +301,19 @@ export const getCurrenyName = (currency) => {
   return ccyInfo ? ccyInfo.name : currency;
 };
 
-// 貨幣單位文字轉為符號
-export const currencySymbolGenerator = (currency, amount = null, isShowDecimal = false) => {
+/**
+ * 貨幣單位文字轉為符號
+ * @param {String} currency 幣別代碼，例：TWD
+ * @param {Number} amount 金額，可以有小數
+ * @param {Boolean?} showFloat 強制顯示小數部份，不受各幣別內定的小數位數限制。
+ */
+export const currencySymbolGenerator = (currency, amount, showFloat = false) => {
   const ccyInfo = CurrencyInfo.find((ccy) => ccy.code === currency);
+  const amtStr = toCurrency(amount, ccyInfo?.float, showFloat) ?? '';
   if (ccyInfo) {
-    return ccyInfo.symbol + toCurrency(amount, ccyInfo.float, isShowDecimal);
+    return ccyInfo.symbol + amtStr;
   }
-  return `$${amount ?? ''}`;
+  return amtStr;
 };
 
 // 貨幣單位英文轉華文

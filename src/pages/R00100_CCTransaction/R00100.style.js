@@ -1,29 +1,29 @@
 import styled from 'styled-components';
 
 const PageWrapper = styled.div`
-  // padding-block: 4.4rem;
   padding: 4.4rem 0;
   height: 100%;
   .bg-gray {
     background-color: ${({ theme }) => theme.colors.background.lighterBlue};
     padding: 1.6rem;
-    // padding-block-end: 4.6rem;
     padding-bottom: 4.6rem;
   }
 
   .txn-wrapper {
     background-color: ${({ theme }) => theme.colors.basic.white};
-    padding-inline: 1.6rem;
+    padding: 0 1.6rem 10rem;
     margin-top: -3rem;
-    height: 70%;
     border-top-left-radius: 3rem;
     border-top-right-radius: 3rem;
   }
 
   .note {
+    left: 50%;
+    bottom: 7rem;
+    transform: translate(-50%, -100%);
     font-size: 1.4rem;
     color: ${({ theme }) => theme.colors.text.light};
-    text-align:center;
+    text-align: center;
   }
 
   .loader {
