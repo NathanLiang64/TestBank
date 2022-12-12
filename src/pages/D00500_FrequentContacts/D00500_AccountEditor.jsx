@@ -148,8 +148,8 @@ function AccountEditor({
         </Badge>
         <div className="flex-col">
           <div className="self-center">
-            {/* 不可變更常用帳號的人的大頭貼 */}
-            <Avatar editable memberId={model.headshot} name={model.nickName} />
+            {/* 可變更常用帳號的人的大頭貼 */}
+            <Avatar editable memberId={model.headshot} onNewPhotoLoaded={(headshot) => setValue('headshot', headshot)} name={model.nickName} />
           </div>
           <FEIBInputLabel htmlFor={idNickName}>暱稱</FEIBInputLabel>
           <Controller
