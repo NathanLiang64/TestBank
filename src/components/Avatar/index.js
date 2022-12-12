@@ -76,8 +76,8 @@ const Avatar = ({
     const imgData = sessionStorage.getItem(`Avator_${memberId}`);
     if (imgData) setPreview(imgData);
     if (memberId) {
-      // 12/12 修改 meberId 目前之前還需要加上 pf_
-      const defaultSrc = `${process.env.REACT_APP_AVATAR_URL}/pf_${memberId}_s.jpg`;
+      // meberId 之後還需要加上 _s.jpg
+      const defaultSrc = `${process.env.REACT_APP_AVATAR_URL}/${memberId}_s.jpg`;
       setSrc(defaultSrc);
     }
 
