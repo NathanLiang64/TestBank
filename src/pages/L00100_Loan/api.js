@@ -82,7 +82,7 @@ export const getStatment = async (param) => {
  *      account       放款帳號 (每人在遠銀只有一個)
  *      subNo         分帳序號 (每次貸款一個序號)    L0003.sqno
  *      balance       貸放餘額                      L0003.actbal
- *      payDate       應繳日期                      L0101.CNIRDT
+ *      dayToPay       應繳日期                      L0101.CNIRDT
  *      payAmount     應繳本息                      L0101.ISTPRT
  *      debitAccount  扣款帳號                      L0101.PAYACTNO
  *    }...
@@ -157,7 +157,7 @@ export const getSubPayment = async (param) => {
  * @returns {{
  * startDate: 貸款起日
  * endDate: 貸款迄日
- * dateToPay: 每期還款(日期)
+ * dayToPay: 每期還款(日期)
  * txAmt: 初貸金額
  * rate: 貸款利率
  * loanBalance: 貸款餘額
