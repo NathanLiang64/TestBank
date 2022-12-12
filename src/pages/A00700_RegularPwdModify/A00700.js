@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { switchLoading, transactionAuth, closeFunc } from 'utilities/AppScriptProxy';
+import { transactionAuth, closeFunc } from 'utilities/AppScriptProxy';
 import { renewPwd } from 'pages/A00700_RegularPwdModify/api';
 import { showCustomPrompt, showAnimationModal } from 'utilities/MessageModal';
 
@@ -16,6 +16,9 @@ import { confirmPasswordValidation, newPasswordValidation, passwordValidation } 
 import e2ee from 'utilities/E2ee';
 
 /* Styles */
+import { AuthCode } from 'utilities/TxnAuthCode';
+import { useDispatch } from 'react-redux';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import RegularPwdModifyWrapper from './regularPwdModify.style';
 
 const RegularPwdModify = () => {
@@ -34,6 +37,8 @@ const RegularPwdModify = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
+
+  const dispatch = useDispatch();
 
   // 設定結果彈窗
   const setResultDialog = (response) => {
@@ -55,10 +60,10 @@ const RegularPwdModify = () => {
 
   // 點擊儲存變更，呼叫更新網銀密碼API
   const onSubmit = async () => {
-    const authCode = 0x24;
-    const jsRs = await transactionAuth(authCode);
+    // TOOD 待修正 react-hook-form 行為
+    const jsRs = await transactionAuth(AuthCode.A00700);
     if (jsRs.result) {
-      switchLoading(true);
+      dispatch(setWaittingVisible(true));
       const param = {
         password: e2ee(getValues('password')),
         newPassword: e2ee(getValues('newPassword')),
@@ -66,8 +71,8 @@ const RegularPwdModify = () => {
         actionCode: 1,
       };
       const response = await renewPwd(param);
+      dispatch(setWaittingVisible(false));
       setResultDialog(response);
-      switchLoading(false);
     }
   };
 
