@@ -23,10 +23,11 @@ const DateRangePickerWrapper = styled.div`
     flex-direction: column;
     align-items: center;
     position: fixed;
-    width: 100%;
+    width: 90%;
+    // width: 100%;
     top: 50%;
     left: 50%;
-    padding: 0 2.4rem;
+    // padding: 0 2.4rem;
     transform: translate(-50%, -50%);
     z-index: 20;
   }
