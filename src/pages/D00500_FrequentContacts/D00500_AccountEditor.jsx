@@ -31,7 +31,7 @@ function AccountEditor({
   initData, // 有預設 acctId 時，會直接開在第二頁，而且不能回到第一頁！
   onFinished,
 }) {
-  const [bankList, setBankList] = useState();
+  const [bankList, setBankList] = useState([]);
   const [model, setModel] = useState(initData);
   const [confirmPage, setConfirmPage] = useState();
 
