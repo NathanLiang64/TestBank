@@ -202,7 +202,6 @@ const C00400 = () => {
                   icon: 'temp',
                 },
                 {
-                  // fid 需要改成 foreignCurrencyPriceSetting 的 FuncID
                   fid: 'foreignCurrencyPriceSetting',
                   title: '外幣到價通知設定',
                   icon: 'foreignCurrencyPriceSetting',
