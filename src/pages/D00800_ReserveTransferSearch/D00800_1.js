@@ -9,18 +9,21 @@ import { currencySymbolGenerator, toCurrency } from 'utilities/Generator';
 import { switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
 import { cancelReserveTransfer } from 'pages/D00800_ReserveTransferSearch/api';
 
+import { AuthCode } from 'utilities/TxnAuthCode';
+import { useDispatch } from 'react-redux';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { ReserveTransferSearchWrapper } from './D00800.style';
 
 const ReserveTransferSearch1 = ({ location }) => {
   const history = useHistory();
-
+  const dispatch = useDispatch();
   const goBack = () => history.goBack();
 
   const toResultPage = async () => {
-    const authCode = 0x28;
-    const jsRs = await transactionAuth(authCode);
+    const jsRs = await transactionAuth(AuthCode.D00800);
     if (jsRs.result) {
-      switchLoading(true);
+      // switchLoading(true);
+      dispatch(setWaittingVisible(true));
       const {
         trnsDate, accountId, seqNo, source,
       } = location.state;
@@ -28,7 +31,8 @@ const ReserveTransferSearch1 = ({ location }) => {
         trnsDate, acctId: accountId, seqNo, queryType: source,
       };
       const { code, message } = await cancelReserveTransfer(data);
-      switchLoading(false);
+      // switchLoading(false);
+      dispatch(setWaittingVisible(false));
       if (code === '0000') {
         history.push('/D008002', { ...location.state });
       } else {
