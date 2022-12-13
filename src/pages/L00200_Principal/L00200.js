@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { toCurrency } from 'utilities/Generator';
+import { dateToString, toCurrency } from 'utilities/Generator';
 import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
 
 /* Elements */
@@ -83,9 +83,9 @@ const L00200 = () => {
                 <li>
                   <span>計息期間</span>
                   <span>
-                    { item.startDate}
+                    { dateToString(item.startDate) }
                     ~
-                    { item.endDate }
+                    { dateToString(item.endDate) }
                   </span>
                 </li>
                 <li>

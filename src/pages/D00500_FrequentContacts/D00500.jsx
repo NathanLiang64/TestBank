@@ -110,7 +110,7 @@ const Page = () => {
       });
       if (successful) {
         const tmpCards = accounts.map((account) => {
-          if (account.acctId === acct.acctId) return newAcct;
+          if (account.acctId === acct.acctId) return {headshot: account.headshot, ...newAcct};
           return account;
         });
         setAccounts(tmpCards);
