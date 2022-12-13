@@ -72,7 +72,7 @@ const T00100 = () => {
   return (
     <Layout title="個人化設定">
       <ProfileWrapper>
-        <Avatar editable memberId={memberId} name={nickName} onNewPhotoLoaded={uploadAvatar} defaultImage={defaultAvatar} />
+        <Avatar memberId={memberId} name={nickName} onNewPhotoLoaded={uploadAvatar} defaultImage={defaultAvatar} />
         <div className="nickName">
           <span>{nickName}</span>
           <CreateRounded onClick={showEditNickNameDialog} />
