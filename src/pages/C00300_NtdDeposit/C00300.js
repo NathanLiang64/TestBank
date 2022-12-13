@@ -203,6 +203,8 @@ const C00300 = () => {
    */
   const handleFunctionClick = async (funcCode) => {
     let params = null;
+    // TEST 測試外開 pdf
+    let url = null;
     const model = { defaultAccount: selectedAccount.accountNo, showRate };
     switch (funcCode) {
       case 'moreTranscations': // 更多明細
@@ -225,8 +227,10 @@ const C00300 = () => {
         break;
 
       case 'DownloadCover': // 存摺封面下載
-        downloadDepositBookCover(selectedAccount.accountNo); // 預設檔名為「帳號-日期.pdf」，密碼：身分證號碼
-        return;
+        // TEST 測試外開 pdf
+        url = await downloadDepositBookCover(selectedAccount.accountNo); // 預設檔名為「帳號-日期.pdf」，密碼：身分證號碼
+        break;
+        // return;
 
       case 'Rename': // 帳戶名稱編輯
         showRenameDialog(selectedAccount.alias);
@@ -237,7 +241,8 @@ const C00300 = () => {
         break;
     }
 
-    startFunc(funcCode, params, model);
+    if (url) window.open(url);
+    else startFunc(funcCode, params, model);
   };
 
   /**

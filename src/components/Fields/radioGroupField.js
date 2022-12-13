@@ -12,14 +12,12 @@ export const RadioGroupField = ({
   options,
   labelName,
   disabled,
-  resetOnChange,
   hideDefaultButton,
   ...controlProps
 }) => {
   const { field, fieldState } = useController(controlProps);
 
   const onChangeHandler = (selectedValue) => {
-    if (resetOnChange && typeof resetOnChange === 'function') resetOnChange();
     field.onChange(selectedValue);
   };
 

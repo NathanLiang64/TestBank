@@ -16,6 +16,8 @@ import {
 } from 'utilities/MessageModal';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
+import uuid from 'react-uuid';
+// eslint-disable-next-line no-unused-vars
 import { CancelAutoBillAlert, AccordionContent } from './utils';
 import {
   getAutoDebits, setAutoDebit, getAccountsList, getCards,
@@ -30,7 +32,9 @@ const AutomaticBillPayment = () => {
   const active = !!appliedAutoBill.length;
   const dispatch = useDispatch();
 
-  const {handleSubmit, control, reset } = useForm({
+  const {
+    handleSubmit, control, reset,
+  } = useForm({
     defaultValues: {
       account: '',
       isFullPay: '',
@@ -52,14 +56,14 @@ const AutomaticBillPayment = () => {
 
   // 取得帳號清單
   const getAccountsArray = async () => {
-    // TODO 後續改以 loadAccountList 去拿
+    // TODO 後續改以 utilities/CacheDataget/AccountsList 去拿
     const accountsListRes = await getAccountsList();
     if (!accountsListRes.length) return;
 
     const options = accountsListRes.map((item) => ({label: item.account, value: item.account}));
     setAccountOptions(options);
     // TODO 如何去判斷 options 內哪一個帳戶屬於 bankee 母帳戶
-    reset({account: options[0].value});
+    reset((formValues) => ({...formValues, account: options[0].value}));
   };
 
   // 查詢自動扣繳資訊
@@ -134,7 +138,7 @@ const AutomaticBillPayment = () => {
 
   const renderAppliedAutoBill = () => appliedAutoBill.map((item) => (
     <SettingItem
-      key={item.account}
+      key={uuid()}
       mainLable={accountFormatter(item.account)}
       subLabel={`扣款方式：${item.isFullPay === '100' ? '應繳總金額' : '最低應繳金額'} | 狀態：${renderStatusText(item.status)}`}
     />

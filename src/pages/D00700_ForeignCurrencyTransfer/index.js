@@ -213,14 +213,14 @@ const ForeignCurrencyTransfer = () => {
                     inputMode="numeric"
                     id="balance"
                     name="balance"
-                    placeholder={`${currencySymbolGenerator(currentAccount.currency)}0（零元）`}
+                    placeholder={`${currencySymbolGenerator(currentAccount.currency, 0)}（零元）`}
                     error={!!errors.balance}
                     onChange={(event) => {
                       setValue('balance', event.target.value);
                       if (!event.target.value) {
                         setMixBalanceStr('');
                       } else {
-                        setMixBalanceStr(`${currencySymbolGenerator(currentAccount.currency)}${event.target.value}${numberToChinese(event.target.value)}`);
+                        setMixBalanceStr(`${currencySymbolGenerator(currentAccount.currency, event.target.value)}${numberToChinese(event.target.value)}`);
                       }
                     }}
                     inputProps={{
