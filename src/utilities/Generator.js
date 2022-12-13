@@ -10,7 +10,7 @@
  * @param {Boolean?} showFloat 強制顯示小數部份，不受 float 的小數位數限制。
  */
 export const toCurrency = (number, float = 0, showFloat = false) => {
-  if (number === null) return '';
+  if (number === null || number === undefined) return '';
   if (number === '*') return '＊＊＊＊＊'; // 不顯示餘額。
 
   const parts = number.toString().split('.') ?? ['0']; // 預設為'0'
