@@ -53,7 +53,7 @@ const Page = () => {
   });
 
   const watchedValues = watch();
-  // console.log(watchedValues);
+  console.log(watchedValues);
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
@@ -73,6 +73,11 @@ const Page = () => {
     }
     dispatch(setWaittingVisible(false));
   }, []);
+
+  // 繳款金額選項改變時，清空自訂金額的值
+  useEffect(() => {
+    if (watchedValues.amountOptions) reset((formValues) => ({...formValues, customAmount: null}));
+  }, [watchedValues.amountOptions]);
 
   // 包在 Modal 裡的元件無法取得 terms 必數（不同scope），所以 arrow function call:
   const getTermsFromOutsideModal = () => (terms ? parse(terms) : <Loading space="both" isCentered />);
@@ -167,7 +172,6 @@ const Page = () => {
               name="paymentMethod"
               control={control}
               options={paymentMethodOptions}
-              resetOnChange={() => reset({...defaultValues})}
             />
           </div>
 
@@ -178,7 +182,6 @@ const Page = () => {
               labelName="請選擇繳款金額"
               control={control}
               options={generateAmountOptions(cardInfo)}
-              resetOnChange={() => reset({...watchedValues, customAmount: null})}
             />
 
             <div className="ml-4">

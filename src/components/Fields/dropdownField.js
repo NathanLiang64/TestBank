@@ -10,7 +10,6 @@ export const DropdownField = ({
   labelName,
   disabled,
   $color,
-  resetOnChange,
   ...controlProps
 }) => {
   const {field, fieldState} = useController(controlProps);
@@ -28,7 +27,6 @@ export const DropdownField = ({
   };
 
   const onChangeHandler = (selectedValue) => {
-    if (resetOnChange && typeof resetOnChange === 'function') resetOnChange();
     field.onChange(selectedValue);
   };
   return (

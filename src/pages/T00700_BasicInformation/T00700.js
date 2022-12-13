@@ -48,11 +48,7 @@ const T00700 = () => {
         email, mobile, addr, county, city,
       } = data;
       reset({
-        email,
-        mobile,
-        addr,
-        county: county.trim(),
-        city: city.trim(),
+        email, mobile, addr, county: county.trim(), city: city.trim(),
       });
     } else {
       showError(message, closeFunc);
@@ -121,14 +117,15 @@ const T00700 = () => {
     }
   };
 
-  const resetOnCountyChange = () => {
-    reset({ ...watchedValues, city: '' });
-  };
-
   // 取得初始資料
   useEffect(() => {
     fetchCountyList();
   }, []);
+
+  // 當 county 改變時，city 要被清空
+  useEffect(() => {
+    if (watchedValues.county) reset((formValues) => ({...formValues, city: ''}));
+  }, [watchedValues.county]);
 
   return (
     <Layout title="基本資料變更">
@@ -155,7 +152,6 @@ const T00700 = () => {
                   placeholder="請選擇縣市"
                   control={control}
                   options={countyOptions}
-                  resetOnChnage={resetOnCountyChange}
                 />
               </div>
               <div>

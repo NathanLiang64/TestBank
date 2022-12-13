@@ -61,7 +61,7 @@ export const EditPageWrapper = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1.6rem;
-    margin: 2.4rem 1.6rem;
+    margin: 2.4rem 1.6rem 1rem;
   }
 
   .col-2 {
