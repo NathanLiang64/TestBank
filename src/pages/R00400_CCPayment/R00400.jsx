@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
@@ -22,9 +21,10 @@ import { DropdownField, TextInputField } from 'components/Fields';
 import { FEIBButton, FEIBErrorMessage } from 'components/elements';
 import { RadioGroupField } from 'components/Fields/radioGroupField';
 
-import { getAccountsList } from 'pages/T00600_MobileTransfer/api';
 import { AuthCode } from 'utilities/TxnAuthCode';
+import { getAccountsList } from 'utilities/CacheData';
 import {
+  getBankeeCard,
   getCreditCardTerms, payCardFee, queryCardInfo, queryPayBarcode,
 } from './api';
 import PageWrapper, { PopUpWrapper } from './R00400.style';
@@ -53,24 +53,34 @@ const Page = () => {
   });
 
   const watchedValues = watch();
-  console.log(watchedValues);
+
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
+    let defaultCardNo = null;
 
-    const params = await loadFuncParams(); // Function 啟動參數
-    // TODO 後續改以 loadAccountList 取得
-    const accountList = await getAccountsList('M'); // 拿取內部轉出帳號資訊
-    // TODO 若從更多 (B00600) 頁面進入，查詢的 cardInfo 會是空字串，是否需要預設為 bankee 信用卡
-    const cardInfoResponse = await queryCardInfo(params.cardNo); // 拿取應繳金額資訊
-    const termsResponse = await getCreditCardTerms();
-    if (accountList && cardInfoResponse) {
-      setInternalAccounts(accountList);
-      setCardInfo(cardInfoResponse);
-      setCardNo(params.cardNo);
-      setTerms(termsResponse);
+    const funcParams = await loadFuncParams(); // Function 啟動參數
+    if (funcParams) {
+      defaultCardNo = funcParams.cardNo;
     } else {
-      closeFunc();
+      // 若從更多 (B00600) 頁面進入，查詢的交易明細就會預設以 bankee 信用卡為主
+      const bankeeCardInfo = await getBankeeCard();
+      if (bankeeCardInfo) defaultCardNo = bankeeCardInfo.cards[0].cardNo;
+      else {
+        await showCustomPrompt({
+          message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
+          onClose: closeFunc,
+        });
+      }
     }
+
+    getAccountsList('M', setInternalAccounts); // 拿取本行母帳號列表
+    const cardInfoResponse = await queryCardInfo(defaultCardNo); // 拿取應繳金額資訊
+    const termsResponse = await getCreditCardTerms(); // 目前是 mockData...
+
+    setCardNo(defaultCardNo);
+    setCardInfo(cardInfoResponse);
+    setTerms(termsResponse);
+
     dispatch(setWaittingVisible(false));
   }, []);
 
@@ -84,8 +94,8 @@ const Page = () => {
 
   const renderBalance = () => {
     if (!internalAccounts.length || !watchedValues.accountNo) return null;
-    const {details} = internalAccounts.find((a) => a.account === watchedValues.accountNo);
-    return `可用餘額 ${currencySymbolGenerator(details[0].currency, details[0].balance)}元`;
+    const foundAccount = internalAccounts.find((a) => a.accountNo === watchedValues.accountNo);
+    return `可用餘額 ${currencySymbolGenerator(foundAccount.currency, foundAccount.balance)}元`;
   };
 
   const renderPaymentCode = async (amount) => {
