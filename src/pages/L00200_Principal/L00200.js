@@ -90,7 +90,10 @@ const L00200 = () => {
                 </li>
                 <li>
                   <span>利率%</span>
-                  <span>{ item.rate }</span>
+                  <span>
+                    { item.rate }
+                    %
+                  </span>
                 </li>
                 <li>
                   <span>計息本金</span>
