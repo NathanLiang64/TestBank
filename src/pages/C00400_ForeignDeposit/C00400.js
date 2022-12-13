@@ -116,9 +116,13 @@ const C00400 = () => {
       </>
     );
     const onOk = (values) => {
-      selectedAccount.alias = values.newName; // 變更卡片上的帳戶名稱
+      const aliasChangedAccounts = accounts.map((account) => ({
+        ...account,
+        alias: values.newName,
+      })); // 變更所有卡片上的帳戶名稱
+
       setAccountAlias(selectedAccount.accountNo, selectedAccount.alias);
-      setAccounts([...accounts]);
+      setAccounts(aliasChangedAccounts);
 
       resetAccountsList(); // 清除帳號基本資料快取，直到下次使用 getAccountsList 時再重新載入。
     };
