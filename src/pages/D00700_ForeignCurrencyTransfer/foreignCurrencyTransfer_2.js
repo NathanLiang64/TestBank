@@ -19,7 +19,7 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 /* Styles */
 import ForeignCurrencyTransferWrapper from './foreignCurrencyTransfer.style';
-import { transferFtoF2 } from './api';
+import { executeTransfer } from './api';
 
 const ForeignCurrencyTransfer2 = ({ location }) => {
   const dispatch = useDispatch();
@@ -34,7 +34,7 @@ const ForeignCurrencyTransfer2 = ({ location }) => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    const result = await transferFtoF2();
+    const result = await executeTransfer();
     const isSuccess = (result?.code === '0000'); // Debug 假設！
     await setTransferResult({
       isSuccess,

@@ -62,7 +62,7 @@ export const transferFtoF = async (param) => {
 };
 
 /**
- * 外幣轉帳。（限定約轉，未設有約定轉入帳號者，將無法使用）
+ * 建立外幣轉帳。（限定約轉，未設有約定轉入帳號者，將無法使用）
  * @param {*} param {
  *   ...(很多)
  * }
@@ -70,13 +70,13 @@ export const transferFtoF = async (param) => {
  *   ...(很多)
  * }
  */
-export const transferFtoFCreate = async (param) => {
+export const createTransfer = async (param) => {
   const response = await callAPI('/api/foreign/transfer/v1/create', param);
   return response.data;
 };
 
 /**
- * 外幣轉帳。（限定約轉，未設有約定轉入帳號者，將無法使用）
+ * 執行外幣轉帳。（限定約轉，未設有約定轉入帳號者，將無法使用）
  * @param {*} param {
  *   ...(很多)
  * }
@@ -84,7 +84,7 @@ export const transferFtoFCreate = async (param) => {
  *   ...(很多)
  * }
  */
-export const transferFtoF2 = async (param) => {
+export const executeTransfer = async (param) => {
   const response = await callAPI('/api/foreign/transfer/v1/execute', param);
   return response.data;
 };
