@@ -8,6 +8,7 @@ import { showDrawer } from 'utilities/MessageModal';
 import { loadFuncParams, closeFunc, getCallerFunc } from 'utilities/AppScriptProxy';
 import { loadLocalData, setLocalData } from 'utilities/CacheData';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
+import uuid from 'react-uuid';
 import { getAgreedAccount, updateAgreedAccount } from './api';
 import AccountEditor from './D00600_AccountEditor';
 import PageWrapper from './D00600.style';
@@ -81,8 +82,9 @@ const Page = () => {
 
       dispatch(setDrawerVisible(false));
       if (successful) {
+        const {headshot, ...rest} = newAcct;
         const updatedAccounts = accounts.map((account) => {
-          if (account.acctId === newAcct.acctId) return newAcct;
+          if (account.acctId === newAcct.acctId) return {...rest, headshot: account.headshot}; // account中headshot值為memberId
           return account;
         });
         setAccounts(updatedAccounts);
@@ -103,7 +105,7 @@ const Page = () => {
           {/* 非選取模式時，不需要列出同ID互轉的帳號 */}
           {accounts?.filter((acct) => (acct.selectorMode || !acct.isSelf)).map((acct) => (
             <MemberAccountCard
-              key={acct.acctId}
+              key={uuid()} // key值每次編輯後皆改變，以觸發react重新渲染
               name={acct.nickName}
               bankNo={acct.bankId}
               bankName={acct.bankName}

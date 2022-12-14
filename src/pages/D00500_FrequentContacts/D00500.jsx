@@ -10,6 +10,7 @@ import { loadFuncParams, closeFunc } from 'utilities/AppScriptProxy';
 import { loadLocalData, setLocalData } from 'utilities/CacheData';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 
+import uuid from 'react-uuid';
 import {
   getAllFrequentAccount,
   addFrequentAccount,
@@ -84,6 +85,7 @@ const Page = () => {
         };
         const tmpCards = [newAccount, ...accounts];
         setAccounts(tmpCards);
+        sessionStorage.setItem(`Avator_${headshotId}`, newAcct.headshot); // 新增的大頭照以正確格式存進session
         setLocalData(storageName, null); // 強制下次進入後更新清單。
       }
       dispatch(setDrawerVisible(false));
@@ -111,8 +113,7 @@ const Page = () => {
       if (successful) {
         const {headshot, ...rest} = newAcct;
         const tmpCards = accounts.map((account) => {
-          console.log('D00500 editAccount', {account});
-          if (account.acctId === acct.acctId) return {...rest, headshot: account.headshot};
+          if (account.acctId === acct.acctId) return {...rest, headshot: account.headshot}; // account中headshot值為memberId
           return account;
         });
         setAccounts(tmpCards);
@@ -165,7 +166,7 @@ const Page = () => {
           </button>
           {accounts?.map((acct) => (
             <MemberAccountCard
-              key={acct.acctId}
+              key={uuid()} // key值每次編輯後皆改變，以觸發react重新渲染
               name={acct.nickName}
               bankNo={acct.bankId}
               bankName={acct.bankName}
