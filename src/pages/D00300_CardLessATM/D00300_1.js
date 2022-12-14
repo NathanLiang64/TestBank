@@ -83,16 +83,17 @@ const CardLessATM1 = () => {
       });
 
       // 跨轉優惠資訊取回後再更新。
-      const extraInfo = await getAccountExtraInfo(acct.accountNo);
-      setAccountSummary({
-        account: acct.accountNo,
-        balance: acct.balance,
-        wdTimes: extraInfo.freeWithdraw,
-        wdRemain: extraInfo.freeWithdrawRemain,
+      getAccountExtraInfo(acct.accountNo).then((extraInfo) => {
+        setAccountSummary({
+          account: acct.accountNo,
+          balance: acct.balance,
+          wdTimes: extraInfo.freeWithdraw,
+          wdRemain: extraInfo.freeWithdrawRemain,
+        });
       });
-    });
 
-    dispatch(setWaittingVisible(false));
+      dispatch(setWaittingVisible(false));
+    });
   }, []);
 
   return (
