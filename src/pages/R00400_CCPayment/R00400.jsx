@@ -16,7 +16,7 @@ import Main from 'components/Layout';
 import Loading from 'components/Loading';
 import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
-import BankCodeInputNew from 'components/BankCodeInputNew';
+import BankCodeInputField from 'pages/R00400_CCPayment/fields/BankCodeInputField';
 import { DropdownField, TextInputField } from 'components/Fields';
 import { FEIBButton, FEIBErrorMessage } from 'components/elements';
 import { RadioGroupField } from 'components/Fields/radioGroupField';
@@ -29,7 +29,7 @@ import {
 } from './api';
 import PageWrapper, { PopUpWrapper } from './R00400.style';
 import { generateAmountOptions, generateAccountNoOptions } from './utils';
-import { TabField } from './tabField/tabField';
+import { TabField } from './fields/TabField/tabField';
 import { generateValidationSchema } from './validationSchema';
 import {
   AMOUNT_OPTION, paymentMethodOptions, PAYMENT_OPTION, defaultValues,
@@ -98,7 +98,7 @@ const Page = () => {
     return `可用餘額 ${currencySymbolGenerator(foundAccount.currency, foundAccount.balance)}元`;
   };
 
-  const renderPaymentCode = async (amount) => {
+  const renderBarCode = async (amount) => {
     const payBarCodeRes = await queryPayBarcode(amount);
     if (payBarCodeRes) {
       await showCustomPrompt({
@@ -164,7 +164,7 @@ const Page = () => {
     }
 
     if (data.paymentMethod === PAYMENT_OPTION.CSTORE) {
-      renderPaymentCode(getAmount(data));
+      renderBarCode(getAmount(data));
     }
   };
 
@@ -221,10 +221,9 @@ const Page = () => {
 
             { watchedValues.paymentMethod === PAYMENT_OPTION.EXTERNAL && (
               <>
-                <BankCodeInputNew
+                <BankCodeInputField
                   control={control}
                   name="bankId"
-                  labelName
                 />
                 <TextInputField
                   name="extAccountNo"

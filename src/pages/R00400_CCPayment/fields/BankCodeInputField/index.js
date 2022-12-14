@@ -11,16 +11,11 @@ import BankCode from './bankSelector';
 * BankCodeInput 組件封裝了 Input 和 BankCode 清單
 * ================== BankCodeInput 可傳參數 ==================
 * *** 所有參數皆供表單驗證與取值用 ***
-* 1. id -> Input 的 id、name、Controller 的 name 均會代入此參數
-*    此組件將根據上述 4 種不同狀態而產生不同的樣式色彩，預設為 "error"
-* 2. control -> 傳入 react-hook-form 的 control 參數
-* 3. setValue -> 傳入 react-hook-form 的 setValue 參數
-* 4. trigger -> 傳入 react-hook-form 的 trigger 參數
-* 5. errorMessage -> 表單驗證的錯誤訊息
-* 6. value -> 若原先就有 value 值，可傳入，若無則預設為帶有 2 個空字串的物件
+* 1. readonly -> 是否可選擇
+* 2. controlProps -> 包含 react-hook-form 的參數，ex: {control, name, defaultValues:optional,.... }
 * */
 
-const BankCodeInputNew = ({
+const BankCodeInputField = ({
   readonly,
   ...controlProps
 }) => {
@@ -71,4 +66,4 @@ const BankCodeInputNew = ({
   );
 };
 
-export default BankCodeInputNew;
+export default BankCodeInputField;
