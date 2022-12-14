@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
-import { toCurrency } from 'utilities/Generator';
+import { dateToString, toCurrency } from 'utilities/Generator';
 import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
+import { showPrompt } from 'utilities/MessageModal';
+
+import { getSubSummary, getSubPayment } from './api';
 
 /* Styles */
-import { showPrompt } from 'utilities/MessageModal';
-import { getSubSummary, getSubPayment } from './api';
 import PrincipalWrapper from './principal.style';
 
 /**
@@ -15,13 +16,6 @@ import PrincipalWrapper from './principal.style';
  */
 const L00200 = () => {
   const [detaillist, setDetailList] = useState([]);
-
-  const asyncForEach = async (array, callback) => {
-    for (let index = 0; index < array.length; index++) {
-      // eslint-disable-next-line no-await-in-loop
-      await callback(array[index], index, array);
-    }
-  };
 
   // 查詢應繳本息資訊
   const getPrincipalData = async (subNoData) => {
@@ -39,25 +33,16 @@ const L00200 = () => {
     }
   };
 
-  // 取得貸款分號
-  const getSubNo = async (accountNo) => {
-    const subNoResponse = await getSubSummary({});
-    if (subNoResponse) {
-      const validSubNoList = subNoResponse.filter((item) => item.account === accountNo);
-      asyncForEach(validSubNoList, getPrincipalData);
-    }
-  };
-
   useEffect(async () => {
     const startParams = await loadFuncParams();
     if (startParams) {
-      getSubNo(startParams.accountNo);
+      getPrincipalData(startParams);
     } else {
       const response = await getSubSummary();
-      if (response.length === 0) {
+      if (!response) {
         await showPrompt('您尚未擁有貸款，請在系統關閉此功能後，立即申請。', () => closeFunc());
       } else {
-        getSubNo(response[0].account);
+        getPrincipalData({ account: response[0].account, subNo: response[0].subNo });
       }
     }
   }, []);
@@ -83,14 +68,17 @@ const L00200 = () => {
                 <li>
                   <span>計息期間</span>
                   <span>
-                    { item.startDate}
+                    { dateToString(item.startDate) }
                     ~
-                    { item.endDate }
+                    { dateToString(item.endDate) }
                   </span>
                 </li>
                 <li>
                   <span>利率%</span>
-                  <span>{ item.rate }</span>
+                  <span>
+                    { item.rate }
+                    %
+                  </span>
                 </li>
                 <li>
                   <span>計息本金</span>

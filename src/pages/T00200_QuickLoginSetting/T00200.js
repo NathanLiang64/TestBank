@@ -116,12 +116,16 @@ const QuickLoginSetting = () => {
       QLStatus,
       QLType,
     } = await getQLStatus();
-    console.log('web取得綁定狀態結果', JSON.stringify({
-      result,
-      message,
-      QLStatus,
-      QLType,
-    }));
+    // TODO: 下為測試用彈窗，正式上線前移除
+    showCustomPrompt({
+      title: '綁定狀態結果(測試用彈窗)',
+      message: JSON.stringify({
+        result,
+        message,
+        QLStatus,
+        QLType,
+      }),
+    });
 
     // 回傳成功
     if (result === 'true') {
@@ -219,18 +223,10 @@ const QuickLoginSetting = () => {
 
   // 變更圖形辨識
   const handleChangePattern = async () => {
-    console.log('T00200 handleChangePattern');
-
     const res = await transactionAuth(AuthCode.T00200.MODIFY, midPhone);
 
-    if (res.result === true) {
-      // 成功
-    } else {
-      // 失敗
-      customPopup(
-        '系統訊息',
-        res.message,
-      );
+    if (res.result) {
+      // 交易驗證成功
     }
   };
 

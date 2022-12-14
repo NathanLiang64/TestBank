@@ -71,9 +71,9 @@ const Page = () => {
     dispatch(setDrawerVisible(true));
   };
 
-  const handleSearchClick = (accountNo) => {
+  const handleSearchClick = (account, subNo) => {
     // 查詢應繳本息
-    startFunc(FuncID.L00200, { accountNo });
+    startFunc(FuncID.L00200, { account, subNo });
   };
 
   /**
@@ -98,7 +98,7 @@ const Page = () => {
           <div className="balance">{currencySymbolGenerator(card.currency ?? 'NTD', card.balance)}</div>
         </div>
         <div className="justify-end gap-6 mt-4 divider">
-          <button type="button" className="text-16" onClick={() => handleSearchClick(card.accountNo)}>本期應繳查詢</button>
+          <button type="button" className="text-16" onClick={() => handleSearchClick(card.accountNo, card.loanNo)}>本期應繳查詢</button>
         </div>
       </AccountCard>
     ));
@@ -107,16 +107,16 @@ const Page = () => {
   /**
    * 產生下方資訊會用到的
    */
-  const renderBonusContents = (info, accountNo) => ([
+  const renderBonusContents = (info, accountNo, subNo) => ([
     {
       label: '應繳款日',
       value: `每月${info.cycleTiming}日`,
-      onClick: () => handleSearchClick(accountNo),
+      onClick: () => handleSearchClick(accountNo, subNo),
     },
     {
       label: '應繳本息',
       value: currencySymbolGenerator(info.currency ?? 'NTD', info.interest),
-      onClick: () => handleSearchClick(accountNo),
+      onClick: () => handleSearchClick(accountNo, subNo),
     },
     {
       label: '可能回饋',
@@ -197,7 +197,7 @@ const Page = () => {
 
     return cards.map((card, i) => (
       <ContentWrapper key={`${uid}-a${i}`}>
-        <ThreeColumnInfoPanel content={renderBonusContents(card.bonusInfo, card.accountNo)} />
+        <ThreeColumnInfoPanel content={renderBonusContents(card.bonusInfo, card.accountNo, card.loanNo)} />
         <div>
           <div>{ renderTransactions(card) }</div>
           <div className="toolbar">

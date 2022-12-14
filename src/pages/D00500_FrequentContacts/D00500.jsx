@@ -109,8 +109,10 @@ const Page = () => {
         orgAcctId: acctId,
       });
       if (successful) {
+        const {headshot, ...rest} = newAcct;
         const tmpCards = accounts.map((account) => {
-          if (account.acctId === acct.acctId) return newAcct;
+          console.log('D00500 editAccount', {account});
+          if (account.acctId === acct.acctId) return {...rest, headshot: account.headshot};
           return account;
         });
         setAccounts(tmpCards);
