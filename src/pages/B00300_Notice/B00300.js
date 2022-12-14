@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { startFunc } from 'utilities/AppScriptProxy';
+import { closeFunc, queryPushBind, startFunc } from 'utilities/AppScriptProxy';
 import {
   showDrawer, closeDrawer, showCustomPrompt,
 } from 'utilities/MessageModal';
@@ -82,13 +82,6 @@ const Notice = () => {
       setAmessagesList(aMsg);
       setCmessagesList(cMsg);
       setSmessagesList(sMsg);
-    } else { // TODO: 應判斷專屬於“未設定訊息通知功能”的代號再顯示此彈窗，不應所有錯誤／例外皆顯示此彈窗
-      showCustomPrompt({
-        message: '您尚未設定「訊息通知」功能，是否立即設定?',
-        okContent: '立即設定',
-        onOk: toSettingPage,
-        cancelContent: '取消',
-      });
     }
   };
 
@@ -175,8 +168,19 @@ const Notice = () => {
     );
   };
 
-  useEffect(() => {
-    getNotices();
+  useEffect(async () => {
+    const { PushBindStatus } = await queryPushBind();
+
+    if (PushBindStatus) {
+      getNotices();
+    } else {
+      showCustomPrompt({
+        message: '您尚未同意 訊息通知功能，請先同意閱讀條款後再進行設定。',
+        okContent: '立即設定',
+        onOk: toSettingPage,
+        onClose: closeFunc,
+      });
+    }
   }, []);
 
   return (
