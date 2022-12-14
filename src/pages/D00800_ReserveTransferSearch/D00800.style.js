@@ -6,6 +6,8 @@ export const ReserveTransferSearchWrapper = styled(Layout)`
   padding: 0;
   &.searchResult {
     background: ${({ theme }) => theme.colors.background.lighterBlue};
+    display: flex;
+    flex-direction: column;
   }
   &.resultFail {
     display: flex;
@@ -66,7 +68,7 @@ export const ReserveTransferSearchWrapper = styled(Layout)`
   }
   .searchResultContainer {
     background: ${({ theme }) => theme.colors.basic.white};
-    min-height: calc(100% - 20.8rem);
+    flex: 1;
     padding: 2.4rem 1.6rem 0;
     border-radius: 3rem 3rem 0 0;
     .MuiTabs-root {

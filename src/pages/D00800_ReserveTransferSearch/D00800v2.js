@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Pagination } from 'swiper/core';
 
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import Loading from 'components/Loading';
 import EmptyData from 'components/EmptyData';
 import Layout from 'components/Layout/Layout';
@@ -18,6 +16,7 @@ import { currencySymbolGenerator, dateToString } from 'utilities/Generator';
 import { showCustomPrompt } from 'utilities/MessageModal';
 
 import { closeFunc } from 'utilities/AppScriptProxy';
+import { getAccountsList } from 'utilities/CacheData';
 import { TabField } from './fields/tabField';
 import DetailContent from './components/detailContent';
 import ResultContent from './components/resultContent';
@@ -26,16 +25,16 @@ import { DateRangePickerField } from './fields/dateRangePickerField';
 import {
   defaultValues, reserveDatePickerLimit, resultDatePickerLimit, tabOptions,
 } from './constants';
-import { getReservedTransDetails, getResultTransDetails, getAccountSummary} from './api';
+import { getReservedTransDetails, getResultTransDetails } from './api';
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
 
 const D00800Draft = () => {
-  const dispatch = useDispatch();
   const history = useHistory();
   const [accountsList, setAccountsList] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
+  const [isSearching, setIsSearching] = useState(false);
   const [searchList, setSearchList] = useState({
     reserve: undefined,
     result: undefined,
@@ -48,9 +47,10 @@ const D00800Draft = () => {
     const edate = dateToString(tab === '1' ? reserveDateRange[1] : resultDateRange[1]);
     const {acctId, ccycd, accountType} = selectedAccount;
     const param = {
+      // QUESTION 目前 hardcode queryType = 3 ，意即只查詢網銀預約+臨櫃預約
       acctId, ccycd, accountType, sdate, edate, queryType: 3,
     };
-
+    setIsSearching(true);
     if (tab === '1') {
       const { bookList } = await getReservedTransDetails(param);
       setSearchList((prevSearchList) => ({
@@ -65,19 +65,25 @@ const D00800Draft = () => {
         result: { ...prevSearchList.result, [selectedAccount.acctId]: bookList },
       }));
     }
+    setIsSearching(false);
   };
 
   // 取得帳號清單
   const fetchTransferOutAccounts = async () => {
-    dispatch(setWaittingVisible(true));
+    getAccountsList('MSC', async (accts) => {
+      if (!accts.length) showCustomPrompt({ message: '無帳戶資訊', onClose: closeFunc });
+      const newAccts = accts.map((acct) => ({
+        acctBranch: acct.branchName, // 分行代碼
+        acctName: acct.alias, // 帳戶名稱或暱稱
+        acctId: acct.accountNo, // 帳號
+        accountType: acct.acctType, // 帳號類別
+        acctBalx: acct.balance, // 帳戶餘額
+        ccycd: acct.currency, // 幣別代碼
+      }));
 
-    const accounts = await getAccountSummary('MSC');
-    if (accounts.length) {
-      setAccountsList(accounts);
-      setSelectedAccount(accounts[0]);
-    } else showCustomPrompt({message: '無帳戶資訊', onClose: closeFunc});
-
-    dispatch(setWaittingVisible(false));
+      setAccountsList(newAccts);
+      setSelectedAccount(newAccts[0]);
+    });
   };
 
   const toConfirmPage = (reserveData) => {
@@ -104,14 +110,15 @@ const D00800Draft = () => {
       message: <DetailContent contentData={{ data, selectedAccount }} />,
       onOk: () => toConfirmPage(data),
       okContent: '取消交易',
-      // onCancel: () => {},
+      onClose: () => {},
     });
   };
 
   // 預約轉帳查詢列表
   const renderReserveTapes = () => {
     const { reserve } = searchList;
-    if (!reserve || !reserve[selectedAccount.acctId]) return <Loading space="both" isCentered />;
+    if (!reserve || !reserve[selectedAccount.acctId] || isSearching) return <Loading space="both" isCentered />;
+
     if (!reserve[selectedAccount.acctId].length) {
       return (
         <div className="emptyConatiner">
@@ -125,7 +132,7 @@ const D00800Draft = () => {
         key={item.inActNo}
         topLeft={`${item.inBank}-${item.inActNo}`}
         topRight={currencySymbolGenerator('TWD', item.amount)}
-        bottomLeft={`預約轉帳日：${item.payDate}`}
+        bottomLeft={`預約轉帳日：${dateToString(item.payDate)}`}
         bottomRight={item.type}
         onClick={() => handleReserveDataDialogOpen(item)}
       />
@@ -143,7 +150,7 @@ const D00800Draft = () => {
   // 結果查詢列表
   const renderResultTapes = () => {
     const { result } = searchList;
-    if (!result || !result[selectedAccount.acctId]) return <Loading space="both" isCentered />;
+    if (!result || !result[selectedAccount.acctId] || isSearching) return <Loading space="both" isCentered />;
     if (!result[selectedAccount.acctId].length) {
       return (
         <div className="emptyConatiner">
@@ -209,7 +216,6 @@ const D00800Draft = () => {
     handleSubmit(onSearch)();
   }, [selectedAccount, watchedTab]);
 
-  console.log('searchList', searchList);
   return (
     <Layout title="預約轉帳查詢/取消">
       <ReserveTransferSearchWrapper className="searchResult">
