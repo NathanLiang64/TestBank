@@ -1,19 +1,18 @@
-/* eslint-disable no-use-before-define */
 /* eslint-disable object-curly-newline */
-import { useState, useEffect } from 'react';
+/* eslint-disable no-use-before-define */
+import { useEffect, useReducer } from 'react';
 import { useHistory } from 'react-router';
-import { useDispatch } from 'react-redux';
 
 import Layout from 'components/Layout/Layout';
 import InformationList from 'components/InformationList';
 import { FEIBButton } from 'components/elements';
 
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { getBankCode } from 'utilities/CacheData';
 import { showError } from 'utilities/MessageModal';
 import { AuthCode } from 'utilities/TxnAuthCode';
-import { createNtdTransfer, getDisplayAmount, getTransDate, getCycleDesc, executeNtdTransfer } from './api';
+import { createNtdTransfer, executeNtdTransfer } from './api';
+import { getTransInData, getDisplayAmount, getTransDate, getCycleDesc } from './util';
 import TransferWrapper from './D00100.style';
 
 /**
@@ -25,45 +24,35 @@ const TransferConfirm = (props) => {
   const { state } = location;
 
   const history = useHistory();
-  const dispatch = useDispatch();
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
-  const [model] = useState(state);
-  const [banks, setBanks] = useState();
+  const model = state;
+  const transInData = getTransInData(model.transIn);
 
   /**
    * 頁面初始化
    */
   useEffect(async () => {
-    dispatch(setWaittingVisible(true));
-
-    setBanks(await getBankCode());
+    getBankCode().then((items) => {
+      if (model) {
+        // 取得銀行名稱。
+        const { bankName } = items.find((b) => b.bankNo === model.transIn.bank) ?? '';
+        model.transIn.bankName = bankName; // 因為下一頁也會用到，所以可以先存下來。
+        forceUpdate();
+      }
+    });
   }, []);
-
-  /**
-   * 初始化完成，關閉等待中狀態。
-   */
-  useEffect(() => {
-    if (model && banks) {
-      // 取得銀行名稱。
-      const { bankName } = banks?.find((b) => b.bankNo === model.transIn.bank) ?? '';
-      model.transIn.bankName = bankName; // 因為下一頁也會用到，所以可以先存下來。
-
-      dispatch(setWaittingVisible(false));
-    }
-  }, [model, banks]);
 
   /**
    * 執行轉帳程序，包含進行交易驗證。
    */
   const onConfirm = async () => {
     const { transOut, transIn } = model;
-    // 常用(freqAcct)/約定(regAcct) 帳號 的物件結構={ bankId, accountNo }
-    const quickAcct = [null, transIn.freqAcct, transIn.regAcct][transIn.type];
     const request = {
       transOut: transOut.account,
-      transIn: { // 約定帳號 不需要提供額外資訊，由 MBGW 判斷。
-        bank: quickAcct?.bankId ?? transIn.bank,
-        account: quickAcct?.accountNo ?? transIn.account,
+      transIn: { // 不需要額外指出是否為約定轉號，由 Controller 判斷，並傳回。
+        bank: transInData.bank,
+        account: transInData.account,
       },
       amount: parseInt(model.amount, 10),
       booking: model.booking,
@@ -73,10 +62,12 @@ const TransferConfirm = (props) => {
 
     // 建立轉帳交易紀錄。
     const response = await createNtdTransfer(request);
-    console.log(response); // DEBUG
     if (response.result) {
+      // 以 Server端傳回的約轉帳號旗標為準。
+      if (response.isAgreedTxn) transIn.type = 2;
+      else transIn.type = (transIn.freqAcct ? 1 : 0);
+
       // 進行交易驗證，要求使用者輸入OTP、密碼、雙因子...等。
-      transIn.type = response.isAgreedTxn; // 以 Server端傳回的約轉帳號旗標為準。
       const authCode = (response.isAgreedTxn) ? AuthCode.D00100.REG : AuthCode.D00100.NONREG;
       const auth = await transactionAuth(authCode);
       if (auth.result) {
@@ -94,14 +85,14 @@ const TransferConfirm = (props) => {
   /**
    * 執行轉帳交易。
    * @returns {Promise<{
-      isSuccess,
-      balance: 轉出後餘額,
-      fee: 手續費,
-      isCrossBank: 表示跨轉轉帳,
-      fiscCode: 財金序號_跨轉才有,
-      errorCode,
-      message: 錯誤訊息,
-   }>} 轉帳結果。
+   *    isSuccess,
+   *    balance: 轉出後餘額,
+   *    fee: 手續費,
+   *    isCrossBank: 表示跨轉轉帳,
+   *    fiscCode: 財金序號_跨轉才有,
+   *    errorCode,
+   *    message: 錯誤訊息,
+   * }>} 轉帳結果。
    */
   const executeTransfer = async () => {
     // TODO 顯示交易授權中，請稍候...
@@ -110,7 +101,7 @@ const TransferConfirm = (props) => {
 
     const result = {
       ...executeRs,
-      isCrossBank: (model.transIn.bank !== '805' && executeRs.fee === 0), // 表示跨轉轉帳
+      isCrossBank: (transInData.bank !== '805' && executeRs.fee === 0), // 表示跨轉轉帳
     };
 
     if (result.isSuccess) {
@@ -133,21 +124,22 @@ const TransferConfirm = (props) => {
   /**
    * 頁面輸出。
    */
-  return model ? (
+  return (
     <Layout title="轉帳確認" goBackFunc={goBack}>
       <TransferWrapper className="transferConfirmPage">
         <hr />
         <section className="transferMainInfo">
           <p>轉出金額與轉入帳號</p>
           <h3 className="transferAmount">{getDisplayAmount(model.amount)}</h3>
-          <h3>{`${model.transIn.bankName} (${model.transIn.bank})`}</h3>
-          <h3>{model.transIn.account}</h3>
+          <h3>{`${transInData.bankName} (${transInData.bank})`}</h3>
+          <h3>{transInData.account}</h3>
+          {transInData.accountName && (<h4>{`< ${transInData.accountName} >`}</h4>)}
         </section>
         <hr />
         <section>
           <InformationList title="轉出帳號" content={model.transOut.account} remark={model.transOut.alias} />
 
-          <InformationList title="時間" content={getTransDate(model)} />
+          <InformationList title="時間" content={getTransDate(model.booking)} />
           {model.booking.mode === 1 && model.booking.multiTimes === '*' && (
             <InformationList
               title="週期"
@@ -156,8 +148,6 @@ const TransferConfirm = (props) => {
             />
           )}
 
-          {/* NOTE model 手續費! 還沒轉出，如何顯示？ 9/8 數金：拿掉！ */}
-          {/* {model.booking.mode === 0 && <InformationList title="手續費" content="$0" />} */}
           <InformationList title="備註" content={model.memo} />
           <p className="warningText">陌生電話先求證，轉帳匯款須謹慎</p>
         </section>
@@ -169,7 +159,7 @@ const TransferConfirm = (props) => {
         </section>
       </TransferWrapper>
     </Layout>
-  ) : null;
+  );
 };
 
 export default TransferConfirm;

@@ -61,7 +61,6 @@ const Transfer = (props) => {
   };
 
   // Form 欄位名稱。
-  const idTransOut = 'transOut';
   const idTransIn = 'transIn';
   const idTransType = 'transIn.type';
   const idTransInBank = 'transIn.bank';
@@ -111,6 +110,7 @@ const Transfer = (props) => {
       transOut: {
         account: null, // 轉出帳號
         balance: null, // 帳戶餘額
+        alias: null, // TODO 帳戶別名
         freeTransfer: null, // 免費跨轉次數
         freeTransferRemain: null, // 免費跨轉剩餘次數
       },
@@ -166,6 +166,8 @@ const Transfer = (props) => {
         // 將 Model 資料填入 UI Form 的對應欄位。
         if (mData) {
           setModel(mData);
+          setSelectedAccountIdx(mData.selectedAccountIdx); // Swiper 切回原本的 Slide
+
           reset(mData);
         } else {
           setSelectedAccountIdx(0);
@@ -184,23 +186,15 @@ const Transfer = (props) => {
     const params = await loadFuncParams();
 
     // 未經由 Function Controller 取得資料時，延用原本的 model
-    if (!params) return model;
+    if (!params) return getValues();
 
     // 有 response 表示是從 D00500/D00600 返回，response 是傳回值；而 params 就是當時的 model
     if (params.response) {
       if (params.transIn.type === 1) params.transIn.freqAcct = params.response;
       if (params.transIn.type === 2) params.transIn.regAcct = params.response;
-      // Swiper 切回原本的 Slide
-      // selectedAccountIdx 在 startFunc 前寫入 model 一起保存(暫存)，所以取回後就從 model 中移除。
-      setSelectedAccountIdx(params.selectedAccountIdx);
-      delete params.selectedAccountIdx;
       delete params.response;
       return params;
     }
-
-    // 從其他功能(C00300)啟動轉帳時提供的參數。
-    // { transOut: 預設轉出帳號 }
-    setStartFuncParams(params); // 為了鎖住欄位，所以要另外保存下來。
 
     return await convertStartParamsToModel(accts, params);
   };
@@ -212,6 +206,7 @@ const Transfer = (props) => {
    * @returns {Promise<*>} 包含 startFunc 提供的參數的 Model 物件。
    */
   const convertStartParamsToModel = async (accts, params) => {
+    let initModel;
     const transOutAccount = params.transOut ?? '';
     // 若啟動參數有指定預設帳號(transOut)時，則不能切換轉出帳號，只保留此帳號卡。
     // 若未指定時，則維持所有帳號供使用者選擇。
@@ -222,21 +217,23 @@ const Transfer = (props) => {
         await showError(`您的帳戶中並沒有指定的轉出帳號(${transOutAccount})，請洽客服人員。`, () => closeFunc());
         return null;
       }
-      setSelectedAccountIdx(index);
 
-      // 將只有帳號字串，改為 model 的 transIn 物件。
-      params.transOut = { account: params.transOut };
+      // 從其他功能(C00300)啟動轉帳時提供的參數。
+      // { transOut: 預設轉出帳號 }
+      setStartFuncParams(params); // 為了鎖住欄位，所以要另外保存下來。
+
+      initModel = getValues(); // 雖然此時Form並沒有資料，但可以為傳回的 Model 建立屬性，使UI不會出錯
+      initModel.selectedAccountIdx = index;
+
+      // 將只有帳號字串，改為 model 的 transOut 物件。
+      initModel.transOut.account = transOutAccount;
+    } else {
+      // 從 D00500/D00600 返回時，才會進這段邏輯。
+      const {transIn} = params;
+      if (!transIn.freqAcct && !transIn.regAcct) transIn.type = 0;
+      initModel = params;
     }
-
-    return {
-      ...getValues(), // 雖然此時Form並沒有資料，但可以為傳回的 Model 建立屬性，使UI不會出錯。
-      ...params,
-      transIn: {
-        ...params.transIn,
-        type: 0,
-        bank: params.transIn?.bank ?? (params.transIn?.account ? '805' : ''), // 尚有指定帳號、沒有銀行代碼使；預設為遠銀.
-      },
-    };
+    return initModel;
   };
 
   /**
@@ -246,6 +243,7 @@ const Transfer = (props) => {
     const newModel = {
       ...model,
       ...values,
+      transOut: model.transOut, // NOTE 因為在切換帳戶卡時，會取得餘額等資訊。
     };
     const { amount, booking } = newModel;
 
@@ -270,6 +268,7 @@ const Transfer = (props) => {
         ...newModel.booking,
         transTimes, // 預約轉帳次數。
       },
+      selectedAccountIdx,
     };
 
     // 進行轉帳確認。
@@ -327,10 +326,10 @@ const Transfer = (props) => {
     const type = parseInt(selectType, 10);
     setValue(idTransType, type);
 
-    const values = getValues();
+    const { transIn } = getValues();
     // 尚未指定常用/約定轉入對象時，自動開啟選擇常用/約定轉入對象的功能。
     let funcId = null;
-    const { freqAcct, regAcct } = values.transIn;
+    const { freqAcct, regAcct } = transIn;
     if (type === 1 && (!freqAcct || !e)) funcId = 'D00500';
     if (type === 2 && (!regAcct || !e)) funcId = 'D00600';
     if (funcId !== null) {
@@ -338,16 +337,13 @@ const Transfer = (props) => {
       const params = {
         selectorMode: true, // 隱藏 Home 圖示
         defaultAccount: selectAccount?.accountNo,
-        bindAccount: values?.transOut.account, // 提供給 D00600 只列出此帳號設定的約轉帳號清單。
+        bindAccount: model.transOut.account, // 提供給 D00600 只列出此帳號設定的約轉帳號清單。
       };
-      const newModel = {
-        ...model,
-        ...values,
-        selectedAccountIdx, // 用在返回時將 Swiper 切回目前帳號
-      };
+      model.transIn = transIn;
+      model.selectedAccountIdx = selectedAccountIdx; // 用在返回時將 Swiper 切回目前帳號
 
       dispatch(setWaittingVisible(true));
-      await startFunc(funcId, params, newModel);
+      await startFunc(funcId, params, model);
     }
   };
 
@@ -442,8 +438,13 @@ const Transfer = (props) => {
     if (!account.isLoadingExtra) {
       account.isLoadingExtra = true; // 避免因為非同步執行造成的重覆下載
       getAccountExtraInfo(account.accountNo).then((info) => {
-        account.freeTransfer = info.freeTransfer;
-        account.freeTransferRemain = info.freeTransferRemain;
+        model.transOut = {
+          ...model.transOut,
+          freeTransfer: account.freeTransfer = info.freeTransfer,
+          freeTransferRemain: account.freeTransferRemain = info.freeTransferRemain,
+        };
+
+        // TODO Update Accounts cache
 
         delete account.isLoadingExtra; // 載入完成才能清掉旗標！
         forceUpdate();
@@ -458,16 +459,14 @@ const Transfer = (props) => {
     const account = accounts?.at(selectedAccountIdx);
     if (!account) return; // 頁面初始化時，不需要進來。
 
-    // 若還沒有取得 免費跨轉次數 則立即補上。
-    if (!account.freeTransfer) loadExtraInfo(account);
-
-    setValue(idTransOut, {
+    model.transOut = {
       account: account.accountNo, // 轉出帳號
       alias: account.alias, // 帳戶名稱，若有暱稱則會優先用暱稱; 會用在確認及執行這二頁。
       balance: account.balance, // 帳戶餘額
-      freeTransfer: account.freeTransfer, // 免費跨轉次數
-      freeTransferRemain: account.freeTransferRemain, // 免費跨轉剩餘次數
-    });
+    };
+
+    // 若還沒有取得 免費跨轉次數 則立即補上。
+    if (!model.transOut.freeTransfer) loadExtraInfo(account);
 
     // 單筆轉帳限額 (用於設置至轉出金額驗證規則)
     // dgType = 帳戶類別('  '.非數存帳號, '11'.臨櫃數存昇級一般, '12'.一之二類, ' 2'.二類, '32'.三之二類)
@@ -496,7 +495,7 @@ const Transfer = (props) => {
    */
   return accounts ? (
     <Layout title="台幣轉帳">
-      <TransferWrapper $insufficient={getValues(idTransOut).balance <= 0}>
+      <TransferWrapper $insufficient={model?.balance <= 0}>
         <AccountOverview
           transferMode
           accounts={accounts}
@@ -504,7 +503,7 @@ const Transfer = (props) => {
           onAccountChanged={setSelectedAccountIdx}
         />
 
-        {/* {watch(idTransOut).balance <= 0 ? (<p className="insufficient">(帳戶餘額不足)</p>) : null} */}
+        {/* {model?.balance <= 0 ? (<p className="insufficient">(帳戶餘額不足)</p>) : null} */}
         <div className="transferServicesArea">
           <form>
             <FEIBTabContext value={String(watch(idTransType))}>

@@ -249,7 +249,10 @@ export const callAPI = async (url, request, config) => {
   //   // console.log('finally: {}', rs);
   // });
 
-  return response;
+  return {
+    ...response,
+    isSuccess: (response?.code === '0000'),
+  };
 };
 
 /**

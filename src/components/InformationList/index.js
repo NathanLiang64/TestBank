@@ -21,6 +21,8 @@ const InformationList = ({
   textColor = 'text-dark',
 }) => (
   <InformationListWrapper>
+    {/* 沒有 remark 時，將主要內容對齊下方 */}
+    {!remark && (<div className="flex text-remark" />)}
     <div className="flex text-title">
       <div className="text-gray">{title}</div>
       <div className={textColor}>
@@ -28,10 +30,12 @@ const InformationList = ({
         {extra && <span className="text-green">{extra}</span>}
       </div>
     </div>
-    <div className="flex text-remark">
-      <div className="text-light">{caption}</div>
-      <div className="text-light">{remark}</div>
-    </div>
+    {remark && (
+      <div className="flex text-remark">
+        <div className="text-light">{caption}</div>
+        <div className="text-light">{remark}</div>
+      </div>
+    )}
   </InformationListWrapper>
 );
 

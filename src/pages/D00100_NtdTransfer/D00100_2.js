@@ -18,9 +18,9 @@ import AccountEditor from 'pages/D00500_FrequentContacts/D00500_AccountEditor';
 import { addFrequentAccount } from 'pages/D00500_FrequentContacts/api';
 import { shareMessage } from 'utilities/AppScriptProxy';
 
-import { setWaittingVisible, setDrawerVisible } from 'stores/reducers/ModalReducer';
+import { setDrawerVisible } from 'stores/reducers/ModalReducer';
 import { showDrawer, showError, showInfo } from 'utilities/MessageModal';
-import { getDisplayAmount, getCycleDesc, getTransDate } from './api';
+import { getTransInData, getDisplayAmount, getTransDate, getCycleDesc } from './util';
 import TransferWrapper from './D00100.style';
 
 /**
@@ -34,22 +34,16 @@ const TransferResult = (props) => {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const [model] = useState(state);
+  const model = state;
+  const transInData = getTransInData(model.transIn);
   const [showSnapshotSuccess, setShowSnapshotSuccess] = useState();
 
   /**
    * 頁面初始化
    */
   useEffect(async () => {
-    dispatch(setWaittingVisible(true));
-  }, []);
 
-  /**
-   * 初始化完成，關閉等待中狀態。
-   */
-  useEffect(async () => {
-    if (model) dispatch(setWaittingVisible(false));
-  }, [model]);
+  }, []);
 
   /**
    * 顯示轉帳結果。
@@ -59,8 +53,8 @@ const TransferResult = (props) => {
       <section className="transferMainInfo">
         <p>轉出金額與轉入帳號</p>
         <h3 className="transferAmount">{getDisplayAmount(model.amount)}</h3>
-        <h3>{`${model.transIn.bankName} (${model.transIn.bank})`}</h3>
-        <h3>{model.transIn.account}</h3>
+        <h3>{`${transInData.bankName} (${transInData.bank})`}</h3>
+        <h3>{transInData.account}</h3>
         {/* 只有「一般轉帳」才需要加入常用帳號 */}
         {model.transIn.type === 0 && (
           <button type="button">
@@ -78,7 +72,7 @@ const TransferResult = (props) => {
         />
         {/* 只有「預約轉帳」才需要出現 */}
         {model.booking.mode === 1 && (
-          <InformationList title="時間" content={getTransDate(model)} />
+          <InformationList title="時間" content={getTransDate(model.booking)} />
         )}
         {model.booking.mode === 1 && model.booking.multiTimes === '*' && (
           <InformationList title="週期" content={getCycleDesc(model.booking)} remark={`預計轉帳${model.booking.transTimes}次`} />
@@ -111,8 +105,8 @@ const TransferResult = (props) => {
 
     // 給 AccountEditor 預設值，且直接進到設定暱稱。
     const acctData = {
-      bankId: model.transIn.bank, // '常用轉入帳戶-銀行代碼',
-      acctId: model.transIn.account, // '常用轉入帳戶-帳號',
+      bankId: transInData.bank, // '常用轉入帳戶-銀行代碼',
+      acctId: transInData.account, // '常用轉入帳戶-帳號',
     };
 
     await showDrawer('新增常用帳號', (<AccountEditor initData={acctData} onFinished={onFinished} />));
@@ -120,7 +114,7 @@ const TransferResult = (props) => {
 
   /**
    * 顯示下方功能按鈕，依轉帳結果而有不同輸出。
-   * @param {boolean} mode 轉帳結果
+   * @param {boolean} mode 表示轉帳結果成功與否的旗標。
    */
   const renderBottomAction = (mode) => (
     <BottomAction>
@@ -131,7 +125,7 @@ const TransferResult = (props) => {
             畫面截圖
           </button>
           <div className="divider" />
-          {/* TODO 將轉帳結果透過原生的分享功能發送出去 */}
+          {/* 將轉帳結果透過原生的分享功能發送出去 */}
           <button type="button" onClick={() => shareMessage('[社群通知]內容待規劃！')}>
             <ShareIcon />
             社群通知
@@ -140,12 +134,18 @@ const TransferResult = (props) => {
       ) : (
         <>
           {/* TODO 透過原生撥客服電話，但要先詢問使用者（撥客服、智能客服、LINE */}
-          <button type="button" onClick={showError('[聯絡客服]功能尚未完成！')}>
+          <button type="button" onClick={() => showError('[聯絡客服]功能尚未完成！')}>
             <PhoneIcon />
             聯絡客服
           </button>
           <div className="divider" />
-          <button type="button" onClick={() => history.replace('/D00100', model)}>
+          <button
+            type="button"
+            onClick={() => {
+              delete model.result;
+              history.replace('/D00100', model);
+            }}
+          >
             <TransactionIcon />
             重新轉帳
           </button>
@@ -155,7 +155,7 @@ const TransferResult = (props) => {
   );
 
   const handleClickScreenshot = () => {
-    // TODO 透過原生功能進行截圖。
+    // TODO 透過原生 或 ReactJS 功能進行截圖。
     setShowSnapshotSuccess(true);
     setTimeout(() => setShowSnapshotSuccess(false), 1000); // 1 秒後自動關閉。
   };
@@ -163,7 +163,7 @@ const TransferResult = (props) => {
   /**
    * 頁面輸出。
    */
-  return model ? (
+  return (
     <Layout goBack={false}>
       <TransferWrapper className="transferResultPage">
         <ResultAnimation
@@ -179,7 +179,7 @@ const TransferResult = (props) => {
         ) }
       </TransferWrapper>
     </Layout>
-  ) : null;
+  );
 };
 
 export default TransferResult;
