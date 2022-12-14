@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
 
@@ -159,11 +160,12 @@ const T00300 = () => {
               <p className="mobile_number_text">{model.mobile}</p>
             </div>
             {/* 未開通前，不可變更綁定的手機號碼 */}
-            {isUnlock && (
+            {/* 暫時隱藏編輯按鈕 */}
+            {/* {isUnlock && (
               <div className="edit" onClick={() => showSettingDrawer(true)}>
                 <img src={EditIcon} alt="" />
               </div>
-            )}
+            )} */}
           </div>
           )}
         </div>

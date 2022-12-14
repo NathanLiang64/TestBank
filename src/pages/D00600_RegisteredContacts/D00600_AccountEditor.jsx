@@ -29,7 +29,9 @@ function AccountEditor({
   /**
    * 表單
    */
-  const { control, handleSubmit, formState: { errors } } = useForm({
+  const {
+    control, handleSubmit, setValue, formState: { errors },
+  } = useForm({
     mode: 'onSubmit',
     defaultValues: {...initData, nickName: toHalfWidth(initData.nickName)},
   });
@@ -48,6 +50,7 @@ function AccountEditor({
       const newModel = {
         ...model,
         ...values,
+        headshot: values.headshot,
       };
       onFinished(newModel);
     };
@@ -59,8 +62,8 @@ function AccountEditor({
         </Badge>
         <div className="flex-col">
           <div className="self-center">
-            {/* 不可變更常用帳號的人的大頭貼 */}
-            <Avatar editable={false} memberId={model.headshot} name={model.nickName} control={control} />
+            {/* 可變更約定帳號的人的大頭貼 */}
+            <Avatar editable memberId={model.headshot} name={model.nickName} onNewPhotoLoaded={(headshot) => setValue('headshot', headshot)} />
           </div>
           <FEIBInputLabel htmlFor={idNickName}>暱稱</FEIBInputLabel>
           <Controller

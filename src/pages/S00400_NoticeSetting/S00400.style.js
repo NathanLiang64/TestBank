@@ -3,7 +3,7 @@ import Layout from 'components/Layout';
 
 const NoticeSettingWrapper = styled(Layout)`
     .settingItem {
-      padding: 2.6rem .8rem;
+      padding: 1.2rem .8rem;
       display: flex;
       align-items: center;
       justify-content: space-between;

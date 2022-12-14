@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -11,14 +11,16 @@ import { AuthCode } from 'utilities/TxnAuthCode';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { getStatus } from 'pages/S00800_LossReissue/api';
 
+import { getAccountsList } from 'utilities/CacheData';
 import { activate } from './api';
 import DebitCardActiveWrapper from './S00700.style';
 import { validationSchema } from './validationSchema';
 
 const S00700 = () => {
   const history = useHistory();
+  const [account, setAccount] = useState();
   const { QLResult, showMessage } = useQLStatus();
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, setValue } = useForm({
     defaultValues: { actno: '', serial: '' },
     resolver: yupResolver(validationSchema),
   });
@@ -36,6 +38,14 @@ const S00700 = () => {
     if (!QLResult) showMessage();
   }, [QLResult]);
 
+  // 我的金融卡帳號欄位自動帶入金融卡台幣主帳號
+  useEffect(() => {
+    getAccountsList('M', setAccount);
+    if (account) {
+      setValue('actno', account[0].accountNo);
+    }
+  }, [account]);
+
   return (
     <Layout title="金融卡啟用">
       <DebitCardActiveWrapper>
@@ -44,9 +54,9 @@ const S00700 = () => {
             type="number"
             labelName="我的金融卡帳號"
             name="actno"
-            placeholder="請輸入金融卡帳號(金融卡背面14碼數字)"
             control={control}
             fontSize={1.5}
+            disabled
           />
           <TextInputField
             type="number"

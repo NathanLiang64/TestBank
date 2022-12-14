@@ -31,7 +31,7 @@ function AccountEditor({
   initData, // 有預設 acctId 時，會直接開在第二頁，而且不能回到第一頁！
   onFinished,
 }) {
-  const [bankList, setBankList] = useState();
+  const [bankList, setBankList] = useState([]);
   const [model, setModel] = useState(initData);
   const [confirmPage, setConfirmPage] = useState();
 
@@ -65,12 +65,15 @@ function AccountEditor({
   useEffect(async () => {
     const banks = await getBankCode();
     setBankList(banks);
+  }, []);
 
+  // 取得完整banklist後再檢查有無初始值
+  useEffect(() => {
     // NOTE 若有指定初始值，則直接進到第二頁。 D00100_2會用到！
-    if (initData?.acctId) {
+    if (bankList.length && initData?.acctId) {
       onPage1Submit(initData);
     }
-  }, []);
+  }, [bankList.length]);
 
   /**
    * 第一頁 - 選銀行及輸入帳號
@@ -96,6 +99,7 @@ function AccountEditor({
           render={({ field }) => (
             <FEIBInput
               {...field}
+              type="number"
               inputMode="numeric"
               placeholder="請輸入常用的銀行帳號"
               inputProps={{ maxLength: 14, autoComplete: 'off' }}
@@ -148,8 +152,8 @@ function AccountEditor({
         </Badge>
         <div className="flex-col">
           <div className="self-center">
-            {/* 不可變更常用帳號的人的大頭貼 */}
-            <Avatar editable memberId={model.headshot} name={model.nickName} />
+            {/* 可變更常用帳號的人的大頭貼 */}
+            <Avatar editable memberId={model.headshot} onNewPhotoLoaded={(headshot) => setValue('headshot', headshot)} name={model.nickName} />
           </div>
           <FEIBInputLabel htmlFor={idNickName}>暱稱</FEIBInputLabel>
           <Controller
@@ -175,7 +179,7 @@ function AccountEditor({
   /**
    * HTML輸出。
    */
-  return (bankList) ? (
+  return (bankList.length) ? (
 
     <DrawerWrapper>
       <FEIBIconButton className="goBack" $fontSize={1.6} onClick={() => setConfirmPage(false)} $hide={!confirmPage || initData?.acctId}>

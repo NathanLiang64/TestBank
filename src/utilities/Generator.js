@@ -10,7 +10,7 @@
  * @param {Boolean?} showFloat 強制顯示小數部份，不受 float 的小數位數限制。
  */
 export const toCurrency = (number, float = 0, showFloat = false) => {
-  if (number === null) return '';
+  if (number === null || number === undefined) return '';
   if (number === '*') return '＊＊＊＊＊'; // 不顯示餘額。
 
   const parts = number.toString().split('.') ?? ['0']; // 預設為'0'
@@ -263,22 +263,23 @@ export const accountOverviewCardVarient = (type) => {
 
 export const CurrencyInfo = [
   // TODO NTD ? TWD ? 應統一才對！
+  // #884 卡片上金額前方顯示幣別"符號"，不需顯示英文
   { code: 'NTD', name: '新台幣', symbol: '$', float: 0 },
   { code: 'TWD', name: '新台幣', symbol: '$', float: 0 },
-  { code: 'USD', name: '美元', symbol: 'US$', float: 2 },
+  { code: 'USD', name: '美元', symbol: '$', float: 2 },
   { code: 'GBP', name: '英鎊', symbol: '£', float: 2 },
-  { code: 'HKD', name: '港幣', symbol: 'HK$', float: 2 },
+  { code: 'HKD', name: '港幣', symbol: '$', float: 2 },
   { code: 'CHF', name: '瑞士法郎', symbol: 'Fr', float: 2 },
-  { code: 'AUD', name: '澳幣', symbol: 'A$', float: 2 },
-  { code: 'SGD', name: '新加坡幣', symbol: 'S$', float: 2 },
+  { code: 'AUD', name: '澳幣', symbol: '$', float: 2 },
+  { code: 'SGD', name: '新加坡幣', symbol: '$', float: 2 },
   { code: 'JPY', name: '日幣', symbol: '¥', float: 0 },
-  { code: 'CAD', name: '加幣', symbol: 'CAN$', float: 2 },
+  { code: 'CAD', name: '加幣', symbol: '$', float: 2 },
   { code: 'THB', name: '泰幣', symbol: '฿', float: 0 },
   { code: 'ZAR', name: '南非幣', symbol: 'R', float: 2 },
   { code: 'PLN', name: '波蘭幣', symbol: 'zł', float: 2 },
-  { code: 'CNY', name: '人民幣', symbol: 'RMB¥', float: 0 },
+  { code: 'CNY', name: '人民幣', symbol: '¥', float: 0 },
   { code: 'EUR', name: '歐元', symbol: '€', float: 2 },
-  { code: 'NZD', name: '紐西蘭幣', symbol: 'NZ$', float: 2 },
+  { code: 'NZD', name: '紐西蘭幣', symbol: '$', float: 2 },
 ];
 
 /**

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { exchangeNtoF, exchangeFtoN } from 'pages/E00100_Exchange/api';
 import { toCurrency } from 'utilities/Generator';
-import { switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -12,22 +12,27 @@ import Accordion from 'components/Accordion';
 import ConfirmButtons from 'components/ConfirmButtons';
 import InformationList from 'components/InformationList';
 import CountDown from 'components/CountDown';
-import E00100Notice from './E00100_Notice';
 
 /* Styles */
+import { AuthCode } from 'utilities/TxnAuthCode';
+import { useDispatch } from 'react-redux';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import ExchangeWrapper from './E00100.style';
+import E00100Notice from './E00100_Notice';
 
 const E001001 = ({ location }) => {
   const history = useHistory();
+  const dispatch = useDispatch();
   const [confirmData, setConfirmData] = useState({});
 
   const goBack = () => history.goBack();
 
   const handleNextStep = async () => {
-    const authCode = 0x30;
-    const jsRs = await transactionAuth(authCode);
+    // const authCode = 0x30;
+    const jsRs = await transactionAuth(AuthCode.E00100.F_TWD);
     if (jsRs.result) {
-      switchLoading(true);
+      // switchLoading(true);
+      dispatch(setWaittingVisible(true));
       const param = { ...confirmData };
       delete param.outAccountAmount;
       let response;
@@ -39,7 +44,8 @@ const E001001 = ({ location }) => {
       if (confirmData?.trnsType === '2') {
         response = await exchangeFtoN(param);
       }
-      switchLoading(false);
+      dispatch(setWaittingVisible(false));
+      // switchLoading(false);
       history.push('/E001002', {
         ...response,
         memo: confirmData?.memo,

@@ -28,9 +28,10 @@ const Reminder = ({ bills, deductInfo }) => {
       'END:VEVENT',
       'END:VCALENDAR',
     ].join('\r\n');
-    const blob = new Blob([context], { type: 'text/calendar;charset=utf-8' });
+    const blob = new Blob([context]);
+    const file = new File([blob], '提醒繳款.ics', { type: 'text/calendar;charset=utf-8' });
 
-    window.open(URL.createObjectURL(blob), '_blank');
+    window.open(window.URL.createObjectURL(file), '_blank');
     // const link = document.createElement('a');
     // link.href = URL.createObjectURL(blob);
     // link.download = '提醒繳款.ics';
@@ -40,7 +41,7 @@ const Reminder = ({ bills, deductInfo }) => {
     // link.click();
     // document.body.removeChild(link);
 
-    URL.revokeObjectURL(blob);
+    URL.revokeObjectURL(file);
   };
 
   const handleCalendarClick = async () => {
@@ -51,7 +52,7 @@ const Reminder = ({ bills, deductInfo }) => {
 
   return (
     <ReminderWrapper>
-      { bills && (
+      { deductInfo && (
       <>
         <div className="auto">{handleHintText(deductInfo.hintToPay).map((text) => (<p key={text}>{text}</p>))}</div>
         <FEIBIconButton $fontSize={2} className="badIcon" onClick={handleCalendarClick}>

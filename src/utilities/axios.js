@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable brace-style */
 import axios from 'axios';
-import { showCustomPrompt, showError } from './MessageModal';
+import { showError } from './MessageModal';
 import JWEUtil from './JWEUtil';
 import JWTUtil from './JWTUtil';
 import {
@@ -269,7 +269,7 @@ export const download = async (url, request) => {
   const aes = await getAesKey();
   const encrypt = JWTUtil.encryptJWTMessage(aes.aesKey, aes.iv, JSON.stringify(request));
 
-  fetch(`${process.env.REACT_APP_URL}${url}`, {
+  return fetch(`${process.env.REACT_APP_URL}${url}`, {
     method: 'POST',
     headers: new Headers({
       Authorization: `Bearer ${token}`,
@@ -281,17 +281,12 @@ export const download = async (url, request) => {
     .then((file) => {
       const fileUrl = URL.createObjectURL(file);
 
-      const handle = window.open(fileUrl);
-
-      showCustomPrompt({
-        message: `${fileUrl} ${handle?.closed}`,
-      });
-
       // const a = document.createElement('a');
       // a.href = fileUrl;
       // a.target = '_blank';
       // a.download = filename; // 因使用者體驗因素，改外開瀏覽器方式取代下載
       // a.click();
+      return fileUrl;
     })
     .catch((e) => {
       console.log(e);

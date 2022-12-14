@@ -6,7 +6,6 @@
 
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { switchLoading } from 'utilities/AppScriptProxy';
 import {
   isEmployee,
   getAccountsList,
@@ -38,6 +37,8 @@ import { numberToChinese, currencySymbolGenerator, toCurrency } from 'utilities/
 import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
 import { showCustomPrompt, showInfo } from 'utilities/MessageModal';
+import { useDispatch } from 'react-redux';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import E00100Rules from './E00100_Rules';
 import E00100Notice from './E00100_Notice';
 import E00100Table from './E00100_Table';
@@ -51,6 +52,7 @@ import ExchangeWrapper from './E00100.style';
 
 const E00100 = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
   /**
    *- 資料驗證
    */
@@ -276,7 +278,8 @@ const E00100 = () => {
       // handleSetDialog('您輸入的金額已超過轉出帳號的餘額');
       return;
     }
-    switchLoading(true);
+    // switchLoading(true);
+    dispatch(setWaittingVisible(true));
     const param = {
       trnsType: exchangeType,
       outAcct: outAccount,
@@ -287,7 +290,8 @@ const E00100 = () => {
       bankerCd: banker?.bankerCd || '',
     };
     const response = await getRate(param);
-    switchLoading(false);
+    dispatch(setWaittingVisible(false));
+    // switchLoading(false);
     if (!response.message) {
       const confirmData = {
         ...response,

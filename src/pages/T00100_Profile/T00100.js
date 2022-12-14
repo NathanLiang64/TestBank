@@ -9,7 +9,7 @@ import Avatar from 'components/Avatar';
 import { TextInputField } from 'components/Fields';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import { startFunc } from 'utilities/AppScriptProxy';
-import defaultAvatar from 'assets/images/avatar.png';
+import defaultAvatar from 'assets/images/avatarImage.png';
 
 /* Styles */
 import SettingList from './T00100_settingList';

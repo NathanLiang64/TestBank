@@ -36,7 +36,8 @@ export const getTransactions = async (accountNo) => {
 export const downloadDepositBookCover = async (accountNo, currency = 'TWD') => {
   const today = dateToYMD(); // 今天 yyyyMMdd
   const filename = `${accountNo}-${today}.pdf`;
-  await download('/api/deposit/v1/getDepositBookCover', { accountNo, currency }, filename);
+  // TEST 測試回傳 URL 並在 clickHandler 內執行 window.open(url)
+  return await download('/api/deposit/v1/getDepositBookCover', { accountNo, currency }, filename);
 };
 
 /**

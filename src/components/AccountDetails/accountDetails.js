@@ -407,7 +407,8 @@ const AccountDetails = ({
         { renderMonthTabs(monthes) }
 
         {/* TODO transactionDetail 的 height: 500, maxHeight: 500 不應該是固定值 */}
-        <div className="transactionDetail" ref={txnDetailsRef} style={{ height: 500, maxHeight: 500, overflowY: 'scroll' }}>
+        {/* #882 拿掉 height: 500, maxHeight: 500 進行測試  */}
+        <div className="transactionDetail" ref={txnDetailsRef} style={{ overflowY: 'scroll' }}>
           { renderDetailCards(transactions) ?? <EmptyData /> }
           { isLoading && <Loading space="both" isCentered /> }
         </div>

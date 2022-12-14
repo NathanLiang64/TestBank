@@ -94,3 +94,28 @@ export const getAutoDebits = async (request) => {
   const response = await callAPI('/api/card/v1/getAutoDebits', request);
   return response.data;
 };
+
+/**
+ * 查詢客戶的 Bankee 信用卡
+ *
+ * @param token
+ * @return {
+ * usedCardLimit, // 已使用額度
+ * isBankeeCard, // true/false
+ * cards [
+ *      {
+ *        cardNo, // 卡號
+ *      },
+ *    ]
+ * }
+ *
+ */
+
+export const getBankeeCard = async (request) => {
+  const {
+    data: { cards, usedCardLimit },
+  } = await callAPI('/api/card/v1/getCards', request);
+  const bankeeCard = cards.find((card) => card.isBankeeCard === 'Y');
+  if (!bankeeCard) return null;
+  return { cards: [{ cardNo: bankeeCard.cardNo }], usedCardLimit, isBankeeCard: true };
+};

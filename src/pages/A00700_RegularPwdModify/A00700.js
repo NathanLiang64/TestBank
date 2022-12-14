@@ -1,38 +1,33 @@
-/* eslint-disable no-unused-vars */
 import { useEffect } from 'react';
-import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { switchLoading, transactionAuth, closeFunc } from 'utilities/AppScriptProxy';
+import { transactionAuth, closeFunc } from 'utilities/AppScriptProxy';
 import { renewPwd } from 'pages/A00700_RegularPwdModify/api';
 import { showCustomPrompt, showAnimationModal } from 'utilities/MessageModal';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-import PasswordInput from 'components/PasswordInput';
 import ConfirmButtons from 'components/ConfirmButtons';
 import InfoArea from 'components/InfoArea';
-import { confirmPasswordValidation, newPasswordValidation, passwordValidation } from 'utilities/validation';
 import e2ee from 'utilities/E2ee';
 
 /* Styles */
+import { AuthCode } from 'utilities/TxnAuthCode';
+import { useDispatch } from 'react-redux';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { PasswordInputField } from 'components/Fields';
 import RegularPwdModifyWrapper from './regularPwdModify.style';
+import { validationSchema } from './validationSchema';
 
 const RegularPwdModify = () => {
-  /**
-   *- 資料驗證
-   */
-  const schema = yup.object().shape({
-    // password: passwordValidation(),
-    password: yup.string().required('請輸入您的網銀密碼'),
-    newPassword: newPasswordValidation('password'),
-    newPasswordCheck: confirmPasswordValidation('newPassword'),
-  });
-  const {
-    handleSubmit, control, formState: { errors }, getValues,
-    // handleSubmit, control, formState: { errors },
-  } = useForm({
-    resolver: yupResolver(schema),
+  const dispatch = useDispatch();
+  const { handleSubmit, control } = useForm({
+    defaultValues: {
+      password: '',
+      newPassword: '',
+      newPasswordCheck: '',
+    },
+    resolver: yupResolver(validationSchema),
   });
 
   // 設定結果彈窗
@@ -54,21 +49,26 @@ const RegularPwdModify = () => {
   };
 
   // 點擊儲存變更，呼叫更新網銀密碼API
-  const onSubmit = async () => {
-    const authCode = 0x24;
-    const jsRs = await transactionAuth(authCode);
+  const onSubmit = async ({ password, newPassword, newPasswordCheck }) => {
+    const jsRs = await transactionAuth(AuthCode.A00700);
     if (jsRs.result) {
-      switchLoading(true);
+      dispatch(setWaittingVisible(true));
       const param = {
-        password: e2ee(getValues('password')),
-        newPassword: e2ee(getValues('newPassword')),
-        newPasswordCheck: e2ee(getValues('newPasswordCheck')),
+        password: e2ee(password),
+        newPassword: e2ee(newPassword),
+        newPasswordCheck: e2ee(newPasswordCheck),
         actionCode: 1,
       };
       const response = await renewPwd(param);
+      dispatch(setWaittingVisible(false));
       setResultDialog(response);
-      switchLoading(false);
     }
+  };
+
+  // 不變更密碼，並且離開此頁面
+  const remainSamePwd = async () => {
+    await renewPwd({ actionCode: 2 });
+    closeFunc();
   };
 
   useEffect(async () => {
@@ -98,14 +98,7 @@ const RegularPwdModify = () => {
           message: message2,
           cancelContent: '取消',
           okContent: '確認',
-          onOk: async () => {
-            // TODO: =====待調整=====
-            const param = {
-              actionCode: 2,
-            };
-            await renewPwd(param);
-            closeFunc();
-          },
+          onOk: remainSamePwd,
         });
       },
     });
@@ -116,51 +109,33 @@ const RegularPwdModify = () => {
       <RegularPwdModifyWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
-            <PasswordInput
-              label="您的網銀密碼"
-              id="password"
+            <PasswordInputField
+              labelName="您的網銀密碼"
               name="password"
               control={control}
-              errorMessage={errors.password?.message}
             />
-            <PasswordInput
-              label="新的網銀密碼"
-              id="newPassword"
+            <PasswordInputField
+              labelName="新的網銀密碼"
               name="newPassword"
               control={control}
-              errorMessage={errors.newPassword?.message}
             />
-            <PasswordInput
-              label="請確認新的網銀密碼"
-              id="newPasswordCheck"
+            <PasswordInputField
+              labelName="請確認新的網銀密碼"
               name="newPasswordCheck"
               control={control}
-              errorMessage={errors.newPasswordCheck?.message}
             />
           </div>
           <div>
             <InfoArea space="bottom">
               *定期進行密碼以及個資更新以確保帳號安全
             </InfoArea>
-            {/* <FEIBButton type="submit">儲存變更</FEIBButton> */}
             <ConfirmButtons
               subButtonValue="維持不變"
               mainButtonValue="儲存變更"
-              subButtonOnClick={async () => {
-                const param = {
-                  actionCode: 2,
-                };
-                await renewPwd(param);
-                closeFunc();
-              }}
-              // mainButtonOnClick={() => {
-              //   setShowNotiDialog(false);
-              // }}
+              subButtonOnClick={remainSamePwd}
             />
           </div>
         </form>
-        {/* { renderNotiDialog() }
-        { renderWarningDialog() } */}
       </RegularPwdModifyWrapper>
     </Layout>
   );

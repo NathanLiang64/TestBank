@@ -8,7 +8,7 @@ import { transactionAuth } from 'utilities/AppScriptProxy';
 import Layout from 'components/Layout/Layout';
 import InformationList from 'components/InformationList';
 import { FEIBButton } from 'components/elements';
-import { transferFtoFCreate } from './api';
+import { createTransfer } from './api';
 
 /* Styles */
 import ForeignCurrencyTransferWrapper from './foreignCurrencyTransfer.style';
@@ -22,7 +22,7 @@ const ForeignCurrencyTransfer1 = ({ location }) => {
     const code = 0x30;
     const rs = await transactionAuth(code);
     if (rs?.result) {
-      const response = await transferFtoFCreate(confirmData);
+      const response = await createTransfer(confirmData);
       history.push('/foreignCurrencyTransfer2', confirmData);
     }
   };

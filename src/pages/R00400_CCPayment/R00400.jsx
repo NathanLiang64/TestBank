@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
@@ -17,19 +16,20 @@ import Main from 'components/Layout';
 import Loading from 'components/Loading';
 import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
-import BankCodeInputNew from 'components/BankCodeInputNew';
+import BankCodeInputField from 'pages/R00400_CCPayment/fields/BankCodeInputField';
 import { DropdownField, TextInputField } from 'components/Fields';
 import { FEIBButton, FEIBErrorMessage } from 'components/elements';
 import { RadioGroupField } from 'components/Fields/radioGroupField';
 
-import { getAccountsList } from 'pages/T00600_MobileTransfer/api';
 import { AuthCode } from 'utilities/TxnAuthCode';
+import { getAccountsList } from 'utilities/CacheData';
 import {
+  getBankeeCard,
   getCreditCardTerms, payCardFee, queryCardInfo, queryPayBarcode,
 } from './api';
 import PageWrapper, { PopUpWrapper } from './R00400.style';
 import { generateAmountOptions, generateAccountNoOptions } from './utils';
-import { TabField } from './tabField/tabField';
+import { TabField } from './fields/TabField/tabField';
 import { generateValidationSchema } from './validationSchema';
 import {
   AMOUNT_OPTION, paymentMethodOptions, PAYMENT_OPTION, defaultValues,
@@ -53,36 +53,52 @@ const Page = () => {
   });
 
   const watchedValues = watch();
-  // console.log(watchedValues);
+
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
+    let defaultCardNo = null;
 
-    const params = await loadFuncParams(); // Function 啟動參數
-    // TODO 後續改以 loadAccountList 取得
-    const accountList = await getAccountsList('M'); // 拿取內部轉出帳號資訊
-    const cardInfoResponse = await queryCardInfo(params.cardNo); // 拿取應繳金額資訊
-    const termsResponse = await getCreditCardTerms();
-    if (accountList && cardInfoResponse) {
-      setInternalAccounts(accountList);
-      setCardInfo(cardInfoResponse);
-      setCardNo(params.cardNo);
-      setTerms(termsResponse);
+    const funcParams = await loadFuncParams(); // Function 啟動參數
+    if (funcParams) {
+      defaultCardNo = funcParams.cardNo;
     } else {
-      closeFunc();
+      // 若從更多 (B00600) 頁面進入，查詢的交易明細就會預設以 bankee 信用卡為主
+      const bankeeCardInfo = await getBankeeCard();
+      if (bankeeCardInfo) defaultCardNo = bankeeCardInfo.cards[0].cardNo;
+      else {
+        await showCustomPrompt({
+          message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
+          onClose: closeFunc,
+        });
+      }
     }
+
+    getAccountsList('M', setInternalAccounts); // 拿取本行母帳號列表
+    const cardInfoResponse = await queryCardInfo(defaultCardNo); // 拿取應繳金額資訊
+    const termsResponse = await getCreditCardTerms(); // 目前是 mockData...
+
+    setCardNo(defaultCardNo);
+    setCardInfo(cardInfoResponse);
+    setTerms(termsResponse);
+
     dispatch(setWaittingVisible(false));
   }, []);
+
+  // 繳款金額選項改變時，清空自訂金額的值
+  useEffect(() => {
+    if (watchedValues.amountOptions) reset((formValues) => ({...formValues, customAmount: null}));
+  }, [watchedValues.amountOptions]);
 
   // 包在 Modal 裡的元件無法取得 terms 必數（不同scope），所以 arrow function call:
   const getTermsFromOutsideModal = () => (terms ? parse(terms) : <Loading space="both" isCentered />);
 
   const renderBalance = () => {
     if (!internalAccounts.length || !watchedValues.accountNo) return null;
-    const {details} = internalAccounts.find((a) => a.account === watchedValues.accountNo);
-    return `可用餘額 ${currencySymbolGenerator(details[0].currency, details[0].balance)}元`;
+    const foundAccount = internalAccounts.find((a) => a.accountNo === watchedValues.accountNo);
+    return `可用餘額 ${currencySymbolGenerator(foundAccount.currency, foundAccount.balance)}元`;
   };
 
-  const renderPaymentCode = async (amount) => {
+  const renderBarCode = async (amount) => {
     const payBarCodeRes = await queryPayBarcode(amount);
     if (payBarCodeRes) {
       await showCustomPrompt({
@@ -148,7 +164,7 @@ const Page = () => {
     }
 
     if (data.paymentMethod === PAYMENT_OPTION.CSTORE) {
-      renderPaymentCode(getAmount(data));
+      renderBarCode(getAmount(data));
     }
   };
 
@@ -166,7 +182,6 @@ const Page = () => {
               name="paymentMethod"
               control={control}
               options={paymentMethodOptions}
-              resetOnChange={() => reset({...defaultValues})}
             />
           </div>
 
@@ -177,7 +192,6 @@ const Page = () => {
               labelName="請選擇繳款金額"
               control={control}
               options={generateAmountOptions(cardInfo)}
-              resetOnChange={() => reset({...watchedValues, customAmount: null})}
             />
 
             <div className="ml-4">
@@ -207,10 +221,9 @@ const Page = () => {
 
             { watchedValues.paymentMethod === PAYMENT_OPTION.EXTERNAL && (
               <>
-                <BankCodeInputNew
+                <BankCodeInputField
                   control={control}
                   name="bankId"
-                  labelName
                 />
                 <TextInputField
                   name="extAccountNo"

@@ -88,7 +88,7 @@ const Avatar = ({
       <div className="photo">
         { ((preview || src) && !showDefault) ? renderPhoto() : renderDefaultBackground() }
       </div>
-      { (editable === null || editable) && !small && renderEditButton() }
+      { editable !== false && !small && renderEditButton() }
     </AvatarWrapper>
   );
 };

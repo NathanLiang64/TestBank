@@ -10,6 +10,7 @@ import CreditCardTxsList from 'components/CreditCardTxsList';
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 
 import { FuncID } from 'utilities/FuncID';
+// eslint-disable-next-line no-unused-vars
 import { currencySymbolGenerator } from 'utilities/Generator';
 import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
@@ -171,7 +172,7 @@ const CreditCardPage = () => {
     },
     {
       label: '回饋試算',
-      value: `${currencySymbolGenerator('TWD')}${bankeeCard.rewardsAmount}`,
+      value: currencySymbolGenerator('TWD', bankeeCard.rewardsAmount),
       iconType: 'Arrow',
       onClick: () => history.push('/C007002', { accountNo: bankeeCard.cardNo }),
     },

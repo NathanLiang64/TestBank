@@ -10,7 +10,6 @@ import {
 export const TabField = ({
   options,
   labelName,
-  resetOnChange,
   ...controlProps
 }) => {
   const { field, fieldState } = useController(controlProps);
@@ -20,9 +19,8 @@ export const TabField = ({
       <FEIBTabContext value={field.value}>
         <FEIBTabList
           $size="small"
-          $type="fized"
+          $type="fixed"
           onChange={(_, id) => {
-            if (resetOnChange)resetOnChange();
             field.onChange(id);
           }}
         >
