@@ -60,7 +60,7 @@ const CommunityPage = () => {
     }
     setSummary(model.summary);
     const {nickname, essay} = model.summary;
-    reset({nickname, essay});
+    reset({nickname, essay: essay ?? ''});
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -119,7 +119,7 @@ const CommunityPage = () => {
       title: '分享內容',
       message: body,
       onOk: handleSubmit(onOk),
-      onClose: () => reset({nickname: summary.nickname, essay: summary.essay}),
+      onClose: () => reset({nickname: summary.nickname, essay: summary.essay ?? ''}),
       noDismiss: true,
     });
   };
