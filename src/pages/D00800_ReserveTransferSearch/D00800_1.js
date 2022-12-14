@@ -5,7 +5,7 @@ import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
 import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
-import { currencySymbolGenerator, toCurrency } from 'utilities/Generator';
+import { currencySymbolGenerator, dateToString, toCurrency } from 'utilities/Generator';
 import { switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
 import { cancelReserveTransfer } from 'pages/D00800_ReserveTransferSearch/api';
 
@@ -66,7 +66,7 @@ const ReserveTransferSearch1 = ({ location }) => {
           />
           <InformationList
             title="預約轉帳日"
-            content={location.state?.payDate}
+            content={dateToString(location.state?.payDate)}
           />
           {location.state?.chargeMode === '1' ? (
             <InformationList title="週期" content="單次" remark="" />
@@ -81,7 +81,9 @@ const ReserveTransferSearch1 = ({ location }) => {
             || location.state?.chargeMode === 'M') && (
             <InformationList
               title="期間"
-              content={`${location.state?.payDate}~${location.state?.payDateEnd}`}
+              content={`${dateToString(location.state?.payDate)}~${dateToString(
+                location.state?.payDateEnd,
+              )}`}
             />
           )}
         </section>
@@ -96,7 +98,10 @@ const ReserveTransferSearch1 = ({ location }) => {
             } */}
             <InformationList
               title="帳戶餘額"
-              content={`${currencySymbolGenerator('TWD', location.state?.acctBalx)}`}
+              content={`${currencySymbolGenerator(
+                'TWD',
+                location.state?.acctBalx,
+              )}`}
               remark={location.state?.showName}
             />
             <InformationList title="備註" content={location.state?.memo} />

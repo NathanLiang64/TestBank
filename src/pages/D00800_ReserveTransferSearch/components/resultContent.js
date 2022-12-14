@@ -1,7 +1,7 @@
 import InformationList from 'components/InformationList';
 import SuccessImage from 'assets/images/stateSuccess.svg';
 import ErrorImage from 'assets/images/stateError.svg';
-import { toCurrency } from 'utilities/Generator';
+import { dateToString, toCurrency } from 'utilities/Generator';
 import { DialogContentWrapper } from '../D00800.style';
 
 const DialogContent = ({ data, selectedAccount }) => (
@@ -25,7 +25,7 @@ const DialogContent = ({ data, selectedAccount }) => (
     </div>
     <div className="informationListContainer">
       <InformationList title="轉出帳號" content={selectedAccount.acctId} remark={selectedAccount.acctName} />
-      <InformationList title="時間" content={data.trnsDate} />
+      <InformationList title="時間" content={dateToString(data.trnsDate)} />
     </div>
   </DialogContentWrapper>
 );
