@@ -88,7 +88,8 @@ export const ReserveTransferSearchWrapper = styled(Layout)`
         display: none;
       }
       > div {
-        width: 100%;
+        // width: 100%;
+        flex:1;
         .MuiInputBase-root {
           .MuiInput-input {
             color: ${({ theme }) => theme.colors.primary.light};

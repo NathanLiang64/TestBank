@@ -16,71 +16,72 @@ import SuccessImage from 'assets/images/successIcon.png';
 import { currencySymbolGenerator, dateToString } from 'utilities/Generator';
 import { showCustomPrompt } from 'utilities/MessageModal';
 
-import { closeFunc } from 'utilities/AppScriptProxy';
+// import { closeFunc } from 'utilities/AppScriptProxy';
 import { getAccountsList } from 'utilities/CacheData';
+import SearchIcon from '@material-ui/icons/Search';
+
+import DateRangePicker from 'components/DateRangePicker';
 import { TabField } from './fields/tabField';
 import DetailContent from './components/detailContent';
 import ResultContent from './components/resultContent';
 import { ReserveTransferSearchWrapper } from './D00800.style';
-import { DateRangePickerField } from './fields/dateRangePickerField';
 import {
-  defaultValues, reserveDatePickerLimit, resultDatePickerLimit, tabOptions,
+  defaultValues, tabOptions, RESERVE_DATE_RANGE, TAB, RESULT_DATE_RANGE, panelOptions,
 } from './constants';
 import { getReservedTransDetails, getResultTransDetails } from './api';
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
 
-const D00800Draft = () => {
+const D00800 = () => {
   const history = useHistory();
   const [accountsList, setAccountsList] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchList, setSearchList] = useState({
-    reserve: undefined,
-    result: undefined,
-  });
-  const { control, handleSubmit, watch } = useForm({ defaultValues });
-  const watchedTab = watch('tab');
-  const [currentReserveRange, currentResultRange] = watch(['reserveDateRange', 'resultDateRange']);
+  const [searchList, setSearchList] = useState({ reserve: {}, result: {}});
+  const {control, handleSubmit, watch } = useForm({ defaultValues });
+  const [curTab, curReserveRange, curResultRange] = watch([TAB, RESERVE_DATE_RANGE, RESULT_DATE_RANGE]);
+  const currentValue = {
+    sdate: dateToString(curTab === '1' ? curReserveRange[0] : curResultRange[0]),
+    edate: dateToString(curTab === '1' ? curReserveRange[1] : curResultRange[1]),
+    searchObj: curTab === '1' ? searchList.reserve : searchList.result,
+  };
 
   const onSearch = async ({ tab, reserveDateRange, resultDateRange }) => {
     const sdate = dateToString(tab === '1' ? reserveDateRange[0] : resultDateRange[0]);
     const edate = dateToString(tab === '1' ? reserveDateRange[1] : resultDateRange[1]);
-    const {acctId, ccycd, accountType} = selectedAccount;
+    const { acctId, ccycd, accountType } = selectedAccount;
     const param = {
-      // QUESTION 目前 hardcode queryType = 3 ，意即只查詢網銀預約+臨櫃預約
-      acctId, ccycd, accountType, sdate, edate, queryType: 3,
+      acctId,
+      ccycd,
+      accountType,
+      sdate,
+      edate,
+      queryType: 3, // QUESTION 目前 hardcode queryType = 3 ，意即只查詢網銀預約+臨櫃預約
     };
-    console.log('param', param);
-    setIsSearching(true);
-    if (tab === '1') {
-      const { bookList } = await getReservedTransDetails(param);
-      setSearchList((prevSearchList) => ({
-        ...prevSearchList,
-        reserve: {
-          ...prevSearchList.reserve,
-          [`${selectedAccount.acctId}_${sdate}_${edate}`]: bookList,
-        },
-      }));
-    }
-    if (tab === '2') {
-      const { bookList } = await getResultTransDetails(param);
-      setSearchList((prevSearchList) => ({
-        ...prevSearchList,
-        result: {
-          ...prevSearchList.result,
-          [`${selectedAccount.acctId}_${sdate}_${edate}`]: bookList,
-        },
-      }));
-    }
-    setIsSearching(false);
+
+    const type = tab === '1' ? 'reserve' : 'result';
+
+    // 不同帳號的 reservedTransDetails 與 getResultTransDetails 回傳的資料結構不一樣.... 後續需請後端更正
+    // let detailsRes = null;
+    // if (tab === '1') {
+    //   const {bookList} = await getReservedTransDetails(param);
+    //   detailsRes = bookList;
+    // } else {
+    //   const transDetailsArray = await getResultTransDetails(param);
+    //   detailsRes = transDetailsArray;
+    // }
+
+    const { bookList } = tab === '1' ? await getReservedTransDetails(param) : await getResultTransDetails(param);
+
+    setSearchList((prevSearchList) => ({
+      ...prevSearchList,
+      [type]: { ...prevSearchList[type], [`${acctId}_${sdate}_${edate}`]: bookList },
+    }));
   };
 
   // 取得帳號清單
   const fetchTransferOutAccounts = async () => {
-    getAccountsList('MSC', async (accts) => {
-      if (!accts.length) showCustomPrompt({ message: '無帳戶資訊', onClose: closeFunc });
+    const accountsListRes = await getAccountsList('MSC', async (accts) => {
       const newAccts = accts.map((acct) => ({
         acctBranch: acct.branchName, // 分行代碼
         acctName: acct.alias, // 帳戶名稱或暱稱
@@ -89,10 +90,11 @@ const D00800Draft = () => {
         acctBalx: acct.balance, // 帳戶餘額
         ccycd: acct.currency, // 幣別代碼
       }));
-
       setAccountsList(newAccts);
       setSelectedAccount(newAccts[0]);
     });
+
+    return accountsListRes.length ? null : '查無帳戶資訊';
   };
 
   const toConfirmPage = (reserveData) => {
@@ -122,36 +124,6 @@ const D00800Draft = () => {
       onClose: () => {},
     });
   };
-
-  // 預約轉帳查詢列表
-  const renderReserveTapes = () => {
-    const { reserve } = searchList;
-
-    const sdate = dateToString(currentReserveRange[0]);
-    const edate = dateToString(currentReserveRange[1]);
-    if (!reserve || !selectedAccount || !reserve[`${selectedAccount.acctId}_${sdate}_${edate}`] || isSearching) return <Loading space="both" isCentered />;
-    const list = reserve[`${selectedAccount.acctId}_${sdate}_${edate}`];
-
-    if (!list.length) {
-      return (
-        <div className="emptyConatiner">
-          <EmptyData />
-        </div>
-      );
-    }
-
-    return list.map((item) => (
-      <InformationTape
-        key={item.inActNo}
-        topLeft={`${item.inBank}-${item.inActNo}`}
-        topRight={currencySymbolGenerator('TWD', item.amount)}
-        bottomLeft={`預約轉帳日：${dateToString(item.payDate)}`}
-        bottomRight={item.type}
-        onClick={() => handleReserveDataDialogOpen(item)}
-      />
-    ));
-  };
-
   // 打開結果彈窗
   const handleOpenResultDialog = async (data) => {
     await showCustomPrompt({
@@ -160,88 +132,63 @@ const D00800Draft = () => {
     });
   };
 
-  // 結果查詢列表
-  const renderResultTapes = () => {
-    const { result } = searchList;
-    const sdate = dateToString(currentResultRange[0]);
-    const edate = dateToString(currentResultRange[1]);
-    if (!result || !selectedAccount || !result[`${selectedAccount.acctId}_${sdate}_${edate}`] || isSearching) { return <Loading space="both" isCentered />; }
-    const list = result[`${selectedAccount.acctId}_${sdate}_${edate}`];
+  // 預約轉帳查詢列表
+  const renderSearchList = (tabValue) => {
+    const { searchObj, sdate, edate } = currentValue;
+    const key = `${selectedAccount?.acctId}_${sdate}_${edate}`;
+    const list = searchObj[key];
 
+    if (!selectedAccount?.acctId || !list) return <Loading space="both" isCentered />;
     if (!list.length) return <div className="emptyConatiner"><EmptyData /></div>;
 
+    const showImg = (stderrMsg) => {
+      if (tabValue === '1') return undefined;
+      return stderrMsg ? FailImage : SuccessImage;
+    };
     return list.map((item) => (
       <InformationTape
         key={item.inActNo}
-        img={item.stderrMsg ? FailImage : SuccessImage}
-        topLeft={`${item.inActNo}`}
+        topLeft={tabValue === '1' ? `${item.inBank}-${item.inActNo}` : `${item.inActNo}`}
         topRight={currencySymbolGenerator('TWD', item.amount)}
-        bottomLeft={`交易日期：${item.trnsDate}`}
-        onClick={() => handleOpenResultDialog(item)}
+        bottomLeft={tabValue === '1' ? `預約轉帳日：${dateToString(item.payDate)}` : `交易日期：${item.trnsDate}`}
+        bottomRight={tabValue === '1' ? item.type : undefined}
+        onClick={tabValue === '1' ? () => handleReserveDataDialogOpen(item) : () => handleOpenResultDialog(item)}
+        img={showImg(item.stderrMsg)}
       />
     ));
   };
 
-  const renderTabPanels = () => {
-    const panelOptions = [
-      {
-        tabValue: '1',
-        datePickerLimit: reserveDatePickerLimit,
-        formName: 'reserveDateRange',
-        renderMethod: renderReserveTapes,
-      },
-      {
-        tabValue: '2',
-        datePickerLimit: resultDatePickerLimit,
-        formName: 'resultDateRange',
-        renderMethod: renderResultTapes,
-      },
-    ];
-
-    return panelOptions.map((panel) => (
-      <FEIBTabPanel key={panel.tabValue} value={panel.tabValue}>
-        <DateRangePickerField
-          {...panel.datePickerLimit}
-          control={control}
-          name={panel.formName}
-        />
-        {panel.renderMethod()}
-      </FEIBTabPanel>
-    ));
-  };
+  const renderTabPanels = () => panelOptions.map((panel) => (
+    <FEIBTabPanel key={panel.tabValue} value={panel.tabValue}>
+      <div className="searchDateRange">
+        <SearchIcon />
+        <div>
+          <DateRangePicker // 本身也可以是 Field
+            {...panel.datePickerLimit}
+            control={control}
+            name={panel.formName}
+            label=" "
+            value={watch(panel.formName)}
+          />
+        </div>
+      </div>
+      {renderSearchList(panel.tabValue)}
+    </FEIBTabPanel>
+  ));
 
   const handleChangeSlide = ({ activeIndex }) => setSelectedAccount(accountsList[activeIndex]);
 
-  // 取得帳號列表
-  useEffect(() => {
-    fetchTransferOutAccounts();
-  }, []);
-
-  // 切換帳號或是切換Tab的時候搜尋預約明細
+  // 切換帳號/Tab/日期範圍時 會檢查 searchList 有無特定的 key，若沒有就執行搜尋
   useEffect(() => {
     if (!selectedAccount) return;
-    const searchObj = watchedTab === '1' ? searchList.reserve : searchList.result;
-    const sdate = dateToString(watchedTab === '1' ? currentReserveRange[0] : currentResultRange[0]);
-    const edate = dateToString(watchedTab === '1' ? currentReserveRange[1] : currentResultRange[1]);
+    const { searchObj, sdate, edate } = currentValue;
     const key = `${selectedAccount.acctId}_${sdate}_${edate}`;
-    if (searchObj && searchObj[key]) return;
-    handleSubmit(onSearch)();
-  }, [selectedAccount, watchedTab, currentReserveRange, currentResultRange]);
-
-  // useEffect(() => {
-  //   if (!selectedAccount) return;
-  //   // const searchObj = watchedTab === '1' ? searchList.reserve : searchList.result;
-  //   // const sdate = dateToString(watchedTab === '1' ? currentReserveRange[0] : currentResultRange[0]);
-  //   // const edate = dateToString(watchedTab === '1' ? currentReserveRange[1] : currentResultRange[1]);
-  //   // const key = `${selectedAccount.acctId}_${sdate}_${edate}`;
-  //   // if (searchObj && searchObj[key]) return;
-  //   handleSubmit(onSearch)();
-  // }, [currentReserveRange, currentResultRange]);
+    if (!searchObj[key]) handleSubmit(onSearch)();
+  }, [selectedAccount, curTab, curReserveRange, curResultRange]);
 
   console.log('searchList', searchList);
-  // Bug To Fix 切換日期後再次切換帳號時，不會重新搜尋，待調整
   return (
-    <Layout title="預約轉帳查詢/取消">
+    <Layout title="預約轉帳查詢/取消" inspector={fetchTransferOutAccounts}>
       <ReserveTransferSearchWrapper className="searchResult">
         <div className="cardArea">
           <Swiper
@@ -255,12 +202,8 @@ const D00800Draft = () => {
           </Swiper>
         </div>
         <div className="searchResultContainer">
-          <FEIBTabContext value={watchedTab}>
-            <TabField
-              control={control}
-              name="tab"
-              options={tabOptions}
-            />
+          <FEIBTabContext value={curTab}>
+            <TabField control={control} name="tab" options={tabOptions} />
             {renderTabPanels()}
           </FEIBTabContext>
         </div>
@@ -269,4 +212,4 @@ const D00800Draft = () => {
   );
 };
 
-export default D00800Draft;
+export default D00800;
