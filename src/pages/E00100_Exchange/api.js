@@ -13,7 +13,7 @@ import { callAPI } from 'utilities/axios';
   ]
 */
 export const getExchangeRateInfo = async (param) => {
-  const response = await callAPI('/api/frgn/queryRrateInfo', param);
+  const response = await callAPI('/api/frgn/queryRateInfo', param);
   return response;
 };
 
@@ -43,19 +43,13 @@ export const getAccountsList = async () => {
 
 // 取得可交易幣別
 export const getCcyList = async (param) => {
-  const response = await callAPI('/api/frgn/qserviceTrfiCcy', param);
+  const response = await callAPI('/api/foreign/v1/queryRealUniRate', param);
   return response.data;
 };
 
 // 取得外幣交易性質列表
 export const getExchangePropertyList = async (param) => {
-  const response = await callAPI('/api/frgn/leglTypeQ', param);
-  return response.data;
-};
-
-// 外幣交易匯率取得
-export const getRate = async (param) => {
-  const response = await callAPI('/api/frgn/rateGet', param);
+  const response = await callAPI('/api/foreign/v1/getTransactionType', param);
   return response.data;
 };
 
