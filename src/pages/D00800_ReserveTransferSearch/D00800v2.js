@@ -62,15 +62,6 @@ const D00800 = () => {
     const type = tab === '1' ? 'reserve' : 'result';
 
     // 不同帳號的 reservedTransDetails 與 getResultTransDetails 回傳的資料結構不一樣.... 後續需請後端更正
-    // let detailsRes = null;
-    // if (tab === '1') {
-    //   const {bookList} = await getReservedTransDetails(param);
-    //   detailsRes = bookList;
-    // } else {
-    //   const transDetailsArray = await getResultTransDetails(param);
-    //   detailsRes = transDetailsArray;
-    // }
-
     const { bookList } = tab === '1' ? await getReservedTransDetails(param) : await getResultTransDetails(param);
 
     setSearchList((prevSearchList) => ({
@@ -186,7 +177,7 @@ const D00800 = () => {
     if (!searchObj[key]) handleSubmit(onSearch)();
   }, [selectedAccount, curTab, curReserveRange, curResultRange]);
 
-  console.log('searchList', searchList);
+  console.log('selectedAccount', selectedAccount);
   return (
     <Layout title="預約轉帳查詢/取消" inspector={fetchTransferOutAccounts}>
       <ReserveTransferSearchWrapper className="searchResult">
