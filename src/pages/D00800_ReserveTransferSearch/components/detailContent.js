@@ -32,7 +32,9 @@ const DetailContent = ({ contentData: { data, selectedAccount } }) => (
       {data.chargeMode !== '1' && (
         <InformationList
           title="期間"
-          content={`${dateToString(data.payDate)}~${dateToString(data.payDateEnd)}`}
+          content={`${dateToString(data.payDate)}~${dateToString(
+            data.payDateEnd,
+          )}`}
         />
       )}
       <InformationList
@@ -45,7 +47,9 @@ const DetailContent = ({ contentData: { data, selectedAccount } }) => (
       <InformationList
         title="帳戶餘額"
         content={`$${toCurrency(selectedAccount.acctBalx)}`}
+        remark={selectedAccount.acctName}
       />
+
       <InformationList title="備註" content={data.memo} />
     </div>
   </DialogContentWrapper>
