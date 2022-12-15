@@ -7,7 +7,7 @@ import ClearIcon from 'assets/images/icons/clearIcon.svg';
 import DateRangePicker from 'components/DateRangePicker';
 
 export const DateRangePickerField = ({
-  minDate, maxDate, callback, ...controlProps
+  minDate, maxDate, ...controlProps
 }) => {
   const {field, fieldState} = useController(controlProps);
   const {onChange, name, value} = field;
@@ -23,7 +23,6 @@ export const DateRangePickerField = ({
           label=" "
           onChange={(range) => {
             onChange(range);
-            if (callback)callback();
           }}
         />
         <img

@@ -11,16 +11,13 @@ const PageWrapper = styled.div`
 
   .txn-wrapper {
     background-color: ${({ theme }) => theme.colors.basic.white};
-    padding: 0 1.6rem 10rem;
+    padding: 0 1.6rem 8rem;
     margin-top: -3rem;
     border-top-left-radius: 3rem;
     border-top-right-radius: 3rem;
   }
 
   .note {
-    left: 50%;
-    bottom: 7rem;
-    transform: translate(-50%, -100%);
     font-size: 1.4rem;
     color: ${({ theme }) => theme.colors.text.light};
     text-align: center;

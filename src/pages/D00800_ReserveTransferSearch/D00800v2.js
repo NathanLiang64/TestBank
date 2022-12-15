@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useForm } from 'react-hook-form';
@@ -41,6 +42,7 @@ const D00800Draft = () => {
   });
   const { control, handleSubmit, watch } = useForm({ defaultValues });
   const watchedTab = watch('tab');
+  const [currentReserveRange, currentResultRange] = watch(['reserveDateRange', 'resultDateRange']);
 
   const onSearch = async ({ tab, reserveDateRange, resultDateRange }) => {
     const sdate = dateToString(tab === '1' ? reserveDateRange[0] : resultDateRange[0]);
@@ -50,19 +52,26 @@ const D00800Draft = () => {
       // QUESTION 目前 hardcode queryType = 3 ，意即只查詢網銀預約+臨櫃預約
       acctId, ccycd, accountType, sdate, edate, queryType: 3,
     };
+    console.log('param', param);
     setIsSearching(true);
     if (tab === '1') {
       const { bookList } = await getReservedTransDetails(param);
       setSearchList((prevSearchList) => ({
         ...prevSearchList,
-        reserve: { ...prevSearchList.reserve, [selectedAccount.acctId]: bookList},
+        reserve: {
+          ...prevSearchList.reserve,
+          [`${selectedAccount.acctId}_${sdate}_${edate}`]: bookList,
+        },
       }));
     }
     if (tab === '2') {
       const { bookList } = await getResultTransDetails(param);
       setSearchList((prevSearchList) => ({
         ...prevSearchList,
-        result: { ...prevSearchList.result, [selectedAccount.acctId]: bookList },
+        result: {
+          ...prevSearchList.result,
+          [`${selectedAccount.acctId}_${sdate}_${edate}`]: bookList,
+        },
       }));
     }
     setIsSearching(false);
@@ -117,9 +126,13 @@ const D00800Draft = () => {
   // 預約轉帳查詢列表
   const renderReserveTapes = () => {
     const { reserve } = searchList;
-    if (!reserve || !reserve[selectedAccount.acctId] || isSearching) return <Loading space="both" isCentered />;
 
-    if (!reserve[selectedAccount.acctId].length) {
+    const sdate = dateToString(currentReserveRange[0]);
+    const edate = dateToString(currentReserveRange[1]);
+    if (!reserve || !selectedAccount || !reserve[`${selectedAccount.acctId}_${sdate}_${edate}`] || isSearching) return <Loading space="both" isCentered />;
+    const list = reserve[`${selectedAccount.acctId}_${sdate}_${edate}`];
+
+    if (!list.length) {
       return (
         <div className="emptyConatiner">
           <EmptyData />
@@ -127,7 +140,7 @@ const D00800Draft = () => {
       );
     }
 
-    return reserve[selectedAccount.acctId].map((item) => (
+    return list.map((item) => (
       <InformationTape
         key={item.inActNo}
         topLeft={`${item.inBank}-${item.inActNo}`}
@@ -150,16 +163,14 @@ const D00800Draft = () => {
   // 結果查詢列表
   const renderResultTapes = () => {
     const { result } = searchList;
-    if (!result || !result[selectedAccount.acctId] || isSearching) return <Loading space="both" isCentered />;
-    if (!result[selectedAccount.acctId].length) {
-      return (
-        <div className="emptyConatiner">
-          <EmptyData />
-        </div>
-      );
-    }
+    const sdate = dateToString(currentResultRange[0]);
+    const edate = dateToString(currentResultRange[1]);
+    if (!result || !selectedAccount || !result[`${selectedAccount.acctId}_${sdate}_${edate}`] || isSearching) { return <Loading space="both" isCentered />; }
+    const list = result[`${selectedAccount.acctId}_${sdate}_${edate}`];
 
-    return result[selectedAccount.acctId].map((item) => (
+    if (!list.length) return <div className="emptyConatiner"><EmptyData /></div>;
+
+    return list.map((item) => (
       <InformationTape
         key={item.inActNo}
         img={item.stderrMsg ? FailImage : SuccessImage}
@@ -192,7 +203,6 @@ const D00800Draft = () => {
         <DateRangePickerField
           {...panel.datePickerLimit}
           control={control}
-          callback={handleSubmit(onSearch)}
           name={panel.formName}
         />
         {panel.renderMethod()}
@@ -211,11 +221,24 @@ const D00800Draft = () => {
   useEffect(() => {
     if (!selectedAccount) return;
     const searchObj = watchedTab === '1' ? searchList.reserve : searchList.result;
-    const selectedAcctId = selectedAccount.acctId;
-    if (searchObj && searchObj[selectedAcctId]) return;
+    const sdate = dateToString(watchedTab === '1' ? currentReserveRange[0] : currentResultRange[0]);
+    const edate = dateToString(watchedTab === '1' ? currentReserveRange[1] : currentResultRange[1]);
+    const key = `${selectedAccount.acctId}_${sdate}_${edate}`;
+    if (searchObj && searchObj[key]) return;
     handleSubmit(onSearch)();
-  }, [selectedAccount, watchedTab]);
+  }, [selectedAccount, watchedTab, currentReserveRange, currentResultRange]);
 
+  // useEffect(() => {
+  //   if (!selectedAccount) return;
+  //   // const searchObj = watchedTab === '1' ? searchList.reserve : searchList.result;
+  //   // const sdate = dateToString(watchedTab === '1' ? currentReserveRange[0] : currentResultRange[0]);
+  //   // const edate = dateToString(watchedTab === '1' ? currentReserveRange[1] : currentResultRange[1]);
+  //   // const key = `${selectedAccount.acctId}_${sdate}_${edate}`;
+  //   // if (searchObj && searchObj[key]) return;
+  //   handleSubmit(onSearch)();
+  // }, [currentReserveRange, currentResultRange]);
+
+  console.log('searchList', searchList);
   // Bug To Fix 切換日期後再次切換帳號時，不會重新搜尋，待調整
   return (
     <Layout title="預約轉帳查詢/取消">

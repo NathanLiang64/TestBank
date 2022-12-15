@@ -93,8 +93,8 @@ const R00100 = () => {
               onTxnNotesEdit={onTxnNotesEdit}
             />
             ) }
+            {!!transactions?.length && (<div className="note">實際請款金額以帳單為準</div>)}
           </div>
-          <div className="note">實際請款金額以帳單為準</div>
           {cardInfo?.isBankeeCard && (
             <BottomAction position={0}>
               <button type="button" onClick={go2Instalment}>晚點付</button>
