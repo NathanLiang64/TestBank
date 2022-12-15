@@ -16,7 +16,7 @@ import { getQLStatus, transactionAuth } from 'utilities/AppScriptProxy';
 import { getSettingInfo, changeStatus } from './api';
 
 /* Styles */
-import T00300Wrapper from './T00300.style';
+import { T00300Wrapper } from './T00300.style';
 import T00300AccordionContent from './T00300_accordionContent';
 import T00300DrawerContent from './T00300_drawerContent';
 

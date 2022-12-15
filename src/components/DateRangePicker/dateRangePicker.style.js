@@ -12,8 +12,10 @@ const DateRangePickerWrapper = styled.div`
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    // width: 100%;
+    // height: 100%;
+    width: 100vw;
+    height: 100vh;
     background: ${({ theme }) => theme.colors.background.mask};
     z-index: 10;
   }
@@ -22,7 +24,8 @@ const DateRangePickerWrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: fixed;
+    // position: fixed;
+    position: absolute;
     width: 90%;
     // width: 100%;
     top: 50%;

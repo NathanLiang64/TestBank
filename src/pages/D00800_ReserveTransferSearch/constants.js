@@ -13,14 +13,31 @@ export const resultDatePickerLimit = {
   maxDate: new Date(),
 };
 
+export const TAB = 'tab';
+export const RESERVE_DATE_RANGE = 'reserveDateRange';
+export const RESULT_DATE_RANGE = 'resultDateRange';
+
 export const defaultValues = {
-  tab: '1', // 切換頁數
-  reserveDateRange: [
+  [TAB]: '1', // 切換頁數
+  [RESERVE_DATE_RANGE]: [
     reserveDatePickerLimit.minDate, // 查詢預約起始日
     reserveDatePickerLimit.maxDate, // 查詢預約截止日
   ],
-  resultDateRange: [
+  [RESULT_DATE_RANGE]: [
     resultDatePickerLimit.minDate, // 結果查詢起始日
     resultDatePickerLimit.maxDate, // 結果查詢截止日
   ],
 };
+
+export const panelOptions = [
+  {
+    tabValue: '1',
+    datePickerLimit: reserveDatePickerLimit,
+    formName: RESERVE_DATE_RANGE,
+  },
+  {
+    tabValue: '2',
+    datePickerLimit: resultDatePickerLimit,
+    formName: RESULT_DATE_RANGE,
+  },
+];

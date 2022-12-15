@@ -11,7 +11,7 @@ import {
   getAccountsList,
   getCcyList,
   getExchangePropertyList,
-  getRate,
+  getExchangeRateInfo,
 } from 'pages/E00100_Exchange/api';
 
 /* Elements */
@@ -145,10 +145,10 @@ const E00100 = () => {
 
   // 取得可交易幣別清單
   const fetchCcyList = async () => {
-    const response = await getCcyList({});
+    const response = await getCcyList({ currency: '' });
     if (response?.length) {
       setCurrencyTypeList(response);
-      setValue('currency', response[0].ccyId);
+      setValue('currency', response[0].Currency);
     }
   };
 
@@ -289,7 +289,7 @@ const E00100 = () => {
       trfAmt,
       bankerCd: banker?.bankerCd || '',
     };
-    const response = await getRate(param);
+    const response = await getExchangeRateInfo(param);
     dispatch(setWaittingVisible(false));
     // switchLoading(false);
     if (!response.message) {
@@ -387,7 +387,7 @@ const E00100 = () => {
   }, []);
 
   useEffect(() => {
-    const selCcy = currencyTypeList.find((item) => item?.ccyId === watch('currency'));
+    const selCcy = currencyTypeList.find((item) => item?.Currency === watch('currency'));
     if (selCcy) {
       setSelectedCurrency(selCcy);
     }
@@ -443,7 +443,7 @@ const E00100 = () => {
                   name="outAccount"
                   error={!!errors.outAccount}
                 >
-                  {renderAccountOption(watch('exchangeType') === 1)}
+                  {renderAccountOption(watch('exchangeType') === '1')}
                   {/*
                     watch('exchangeType') === '1'
                       ? (renderAccountOption(accountsList, watch('exchangeType')))
@@ -462,8 +462,9 @@ const E00100 = () => {
               render={({ field }) => (
                 <FEIBSelect {...field} id="currency" name="currency" error={!!errors.currency}>
                   {currencyTypeList.map((item) => (
-                    <FEIBOption key={item?.ccyCd} value={item?.ccyId}>
-                      {item?.ccyName}
+                    <FEIBOption key={item?.Currency} value={item?.Currency}>
+                      {item?.CurrencyName}
+                      {item?.Currency}
                     </FEIBOption>
                   ))}
                 </FEIBSelect>

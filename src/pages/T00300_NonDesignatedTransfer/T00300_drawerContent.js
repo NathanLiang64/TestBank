@@ -6,24 +6,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import styled from 'styled-components';
 import { FEIBErrorMessage, FEIBInput, FEIBInputLabel } from 'components/elements';
 import ConfirmButtons from 'components/ConfirmButtons';
+import { DrawerContentWrapper } from './T00300.style';
 
-const DrawerContentWrapper = styled.div`
-  padding: 1rem;
-
-  .hint_container {
-    margin: 2rem 0 4rem 0;
-    color: ${({theme}) => theme.colors.text.dark};
-    font-size: 14px;
-
-    .hint_link_text {
-      color: ${({theme}) => theme.colors.text.light};
-    }
-  }
-
-  .btns {
-    margin: 2rem 0;
-  }
-`;
 /**
    * 非約轉交易門號 Drawer 內容
    * @param {{

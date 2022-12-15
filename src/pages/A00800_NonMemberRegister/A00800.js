@@ -81,12 +81,12 @@ const A00800 = () => {
             </div>
           </div>
         )}
-        {fieldState.invalid && <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage> }
+        {fieldState.error && <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>}
       </>
     );
   };
 
-  /* 註冊成功後跳轉 */
+  /* TODO: 註冊成功後跳轉 */
   const handleSwitchPage = () => {
     console.log('A00800');
     if (inviteToken !== '') {
@@ -100,7 +100,6 @@ const A00800 = () => {
 
   /* submit動作處理 */
   const onSubmit = async (data) => {
-    console.log('A00800 handleOnSubmit() data:', {data});
     const authResult = await transactionAuth(AuthCode.A00800, data.mobileNum);
     const regData = {
       name: data.name,

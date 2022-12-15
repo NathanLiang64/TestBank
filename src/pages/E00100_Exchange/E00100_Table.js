@@ -48,7 +48,7 @@ const E00100Table = () => {
   const [exchangeRate, setExchangeRate] = useState([]);
 
   const getExchangeRate = async () => {
-    const now = Date.now();
+    const now = new Date();
     const dateStr = dateToString(now);
     const timeStr = timeSecondFormatter(now);
     setGetInfoStr(`${dateStr} ${timeStr}`);

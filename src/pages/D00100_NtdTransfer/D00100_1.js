@@ -149,7 +149,7 @@ const TransferConfirm = (props) => {
           )}
 
           <InformationList title="備註" content={model.memo} />
-          <p className="warningText">陌生電話先求證，轉帳匯款須謹慎</p>
+          <p className="warningText">陌生電話先求證，轉帳交易須謹慎</p>
         </section>
         <hr />
         <section className="transferAction">
