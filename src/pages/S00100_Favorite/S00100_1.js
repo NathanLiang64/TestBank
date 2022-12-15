@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, {
   useEffect, useRef, useState, useMemo,
 } from 'react';
@@ -13,7 +14,7 @@ import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReduce
 import { useDispatch } from 'react-redux';
 import { DropdownField } from 'components/Fields';
 import { FuncID } from 'utilities/FuncID';
-import { getFavoriteSettingList, modifyFavoriteItem } from './api';
+import { getFavoriteSettingList, modifyFavoriteItem, deleteFavoriteItem } from './api';
 import { CustomCheckBoxField } from './fields/customCheckboxField';
 import {
   calcSelectedLength, extractGroupItems, generateReorderList, findExistedValue, generateTrimmedList, cardLessOptions,
@@ -30,6 +31,34 @@ const Favorite2New = ({
   const sectionsRef = useRef([]);
   const mainContentRef = useRef();
   const dispatch = useDispatch();
+
+  const trueArray = useMemo(() => ({ checkedArray: [] }), []);
+
+  // for real-time update checked item length 
+  const [checkedArrayLength, setcheckedArrayLength] = useState(0);
+  useEffect(() => {
+    
+    setcheckedArrayLength(trueArray.checkedArray.length);
+  });
+
+  // record the already checked items that before enter edit page
+  const alreadyCheckedItemBeforeEdit = useMemo(() => ([]), []);
+  useEffect(() => {
+
+    // console.log('======== favoriteList========');
+    // console.log(favoriteList);
+    // console.log('=============================');
+
+
+    favoriteList.map((obj, index) => {
+
+          alreadyCheckedItemBeforeEdit.push(obj['actKey']);
+    });
+    
+    // console.log('======== alreadyCheckedItemBeforeEdit ===========');
+    // console.log(alreadyCheckedItemBeforeEdit);
+    // console.log('=================================================');
+  }, []);
 
   // 我的最愛表單
   const {
@@ -57,18 +86,63 @@ const Favorite2New = ({
     return false;
   };
 
-  const patchAndRedirect = async (patchedList) => {
+  const patchAndRedirect = async (patchedList=[]) => {
     dispatch(setWaittingVisible(true));
-    await Promise.all(patchedList.map((actKey, position) => (
-      modifyFavoriteItem({actKey, position: parseInt(position, 10)})
-    )));
+
+    /* for debug    
+    console.log('================= checked items =====================');
+    console.log(trueArray.checkedArray);
+    console.log('=====================================================');
+
+    console.log('========== already checked items before edit ========');
+    console.log(alreadyCheckedItemBeforeEdit);
+    console.log('=====================================================');
+    */
+
+    // reset all items, skip 2 default items
+    alreadyCheckedItemBeforeEdit.shift();
+    alreadyCheckedItemBeforeEdit.shift();
+    await Promise.all(
+      alreadyCheckedItemBeforeEdit.map((actKey, position) => {
+ 
+          return deleteFavoriteItem(actKey);
+      }),
+    );
+
+    // re-add all checked items
+    await Promise.all(
+      trueArray.checkedArray.map((actKey, position) => {
+
+            return modifyFavoriteItem({ actKey, position: parseInt(position, 10) })
+      }),
+    );
+
+    // refresh list
     await updateFavoriteList();
+
     dispatch(setWaittingVisible(false));
     back2MyFavorite();
   };
 
   // 編輯完成送出表單
-  const onSubmit = async ({editedBlockList}) => {
+  const onSubmit = async ({ editedBlockList }) => {
+
+    /* for debug  
+    console.log('=========== for debug ==================');
+    console.log(JSON.stringify(trueArray.checkedArray));
+    console.log(JSON.stringify(favoriteList));
+    console.log(JSON.stringify(editedBlockList));
+    console.log('========================================');
+    */
+
+    // generate new editedBlockList
+    const tmp = {}; 
+    for (const [key, value] of Object.entries(editedBlockList)) {
+      tmp[key] = (trueArray.checkedArray.indexOf(key) === -1 ) ? false : true;
+    }
+    editedBlockList = JSON.parse(JSON.stringify(tmp));
+
+
     const orderedList = generateReorderList(favoriteList, editedBlockList);
     const trimmedList = generateTrimmedList(orderedList, 10, '');
     // 應該從 cardLess API 得知是否已有設定值，並以此決定是否要設置無卡提款
@@ -88,7 +162,9 @@ const Favorite2New = ({
         onOk: cardLessHandleSubmit(async (values) => {
           console.log('values', values); // 待 無卡提款設定 API 開發完畢
           dispatch(setModalVisible(false));
-          patchAndRedirect(trimmedList);
+
+          // patchAndRedirect(trimmedList); //原寫法棄用
+          patchAndRedirect();
         }),
         onClose: () => {
           if (isEditAction) return;
@@ -97,7 +173,9 @@ const Favorite2New = ({
         noDismiss: true,
       });
     } else {
-      patchAndRedirect(trimmedList);
+
+      // patchAndRedirect(trimmedList); //原寫法棄用
+      patchAndRedirect();
     }
   };
 
@@ -143,6 +221,9 @@ const Favorite2New = ({
             immdlySubmit={handleSubmit(onSubmit)}
             isEditAction={isEditAction}
             setShowTip={setShowTip}
+            checkedArray={trueArray.checkedArray}
+            actKey={actKey}
+            changeCallback={(checkedSize) => {setcheckedArrayLength(checkedSize)}}
           />
         ))}
       </div>
@@ -174,6 +255,20 @@ const Favorite2New = ({
   useEffect(() => {
     if (!favoriteSettingList.length) return;
     const initValue = extractGroupItems(favoriteSettingList);
+
+    for (const key in initValue) {
+      if (initValue[key]) {
+        trueArray.checkedArray.push(key);
+      }
+    }
+
+    /* for debug
+    console.log('======================');
+    console.log(JSON.stringify(initValue));
+    console.log(JSON.stringify(trueArray.checkedArray));
+    console.log('======================');
+    */
+
     setInitialValues(initValue);
     reset({editedBlockList: initValue});
   }, [favoriteSettingList]);
@@ -195,17 +290,19 @@ const Favorite2New = ({
         ref={mainContentRef}
         onScroll={handleScrollContent}
       >
-        { renderBlockGroup() }
-        {isEditAction && (
-        <BottomAction position={0}>
-          <button
-            type="button"
-            style={{cursor: 'pointer'}}
-            onClick={handleSubmit(onSubmit)}
-          >
-            {`編輯完成(${selectedLength})`}
-          </button>
-        </BottomAction>
+        {renderBlockGroup()}
+        {
+          // isEditAction && 
+          (
+          <BottomAction position={0}>
+            <button
+              type="button"
+              style={{ cursor: 'pointer' }}
+              onClick={handleSubmit(onSubmit)}
+            >
+              {`編輯完成(${checkedArrayLength})`}
+            </button>
+          </BottomAction>
         )}
       </form>
       { showTip && <SnackModal text="最愛已選滿" /> }
