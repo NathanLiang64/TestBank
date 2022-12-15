@@ -648,7 +648,7 @@ const Transfer = (props) => {
           <Accordion space="both">
             <D00100AccordionContent />
           </Accordion>
-          <p className="warningText">陌生電話先求證，轉帳匯款須謹慎</p>
+          <p className="warningText">陌生電話先求證，轉帳交易須謹慎</p>
           <div className="transferButtonArea">
             <FEIBButton onClick={handleSubmit(onSubmit)}>轉帳</FEIBButton>
           </div>

@@ -84,11 +84,10 @@ const S00400 = () => {
     setIsPushBind(queryIsOnResponse.PushBindStatus);
     if (queryIsOnResponse.PushBindStatus === false) {
       showCustomPrompt({
-        title: '系統訊息',
-        message: '您尚未設定「訊息通知」功能，是否立即設定？',
+        message: '您尚未同意「訊息通知使用條款」，請於設定完成後點選「同意」，立即開啟訊息通知功能。',
         onOk: () => store.dispatch(setModalVisible(false)),
-        okContent: '立即設定',
-        onCancel: () => closeFunc(),
+        okContent: '確認',
+        showCloseButton: false,
       });
 
       setModel({

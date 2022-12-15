@@ -272,7 +272,7 @@ const AccountCardList = ({ data, isDebt }) => {
           </button>
         );
       })}
-      {!isDebt && <p className="warning_text">陌生電話先求證，轉帳匯款須謹慎</p>}
+      {!isDebt && <p className="warning_text">陌生電話先求證，轉帳交易須謹慎</p>}
     </AccountCardListWrapper>
   );
 };
