@@ -1,3 +1,6 @@
+/* eslint-disable no-use-before-define */
+import { setBanks, setBranches, setAccounts } from 'stores/reducers/CacheReducer';
+import store from 'stores/store';
 import { callAPI } from 'utilities/axios';
 
 /**
@@ -53,10 +56,12 @@ export const loadLocalData = async (storeName, loadDataFunc) => {
  * }]>} 銀行代碼清單。
  */
 export const getBankCode = async () => {
-  const banks = await loadLocalData('BankList', async () => {
+  let {banks} = store.getState()?.CacheReducer;
+  if (!banks) {
     const response = await callAPI('/api/transfer/queryBank');
-    return response.data;
-  });
+    banks = response.data;
+    store.dispatch(setBanks(banks));
+  }
   return banks;
 };
 
@@ -69,10 +74,12 @@ export const getBankCode = async () => {
    }]>} 分行清單。
  */
 export const getBranchCode = async () => {
-  const branches = await loadLocalData('BranchList', async () => {
+  let {branches} = store.getState()?.CacheReducer;
+  if (!branches) {
     const response = await callAPI('/api/v1/getAllBranches');
-    return response.data;
-  });
+    branches = response.data;
+    store.dispatch(setBranches(branches));
+  }
   return branches;
 };
 
@@ -137,22 +144,82 @@ const loadAccountsList = async () => {
  * }]>} 帳號基本資料。
  */
 export const getAccountsList = async (acctTypes, onDataLoaded) => {
-  const result = await loadLocalData('Accounts', loadAccountsList).then((data) => {
-    const accounts = data.filter((account) => acctTypes.indexOf(account.acctType) >= 0)
-      // NOTE 外幣帳號的架構跟台幣不一樣。
-      // 要把一個帳戶、多個幣別 展開成 多個帳戶 的型式呈現。
-      .map((account) => (!account.details // 若是從 sessionStorage 取出的值，就沒有 details，所以直接傳回即可。
-        ? account
-        : account.details.map((detail) => {
-          const acct = { ...account, ...detail};
-          delete acct.details;
-          return acct;
-        })))
-      .flat();
-    if (onDataLoaded) onDataLoaded(accounts);
-    return accounts;
-  });
-  return result;
+  let {accounts} = store.getState()?.CacheReducer;
+  if (!accounts) {
+    accounts = await loadAccountsList();
+    store.dispatch(setAccounts(accounts)); // 保存所有的帳號資料。
+  }
+
+  const result = accounts.filter((account) => acctTypes.indexOf(account.acctType) >= 0)
+    // NOTE 外幣帳號的架構跟台幣不一樣。
+    // 要把一個帳戶、多個幣別 展開成 多個帳戶 的型式呈現。
+    .map((account) => (!account.details // 若是從 sessionStorage 取出的值，就沒有 details，所以直接傳回即可。
+      ? account
+      : account.details.map((detail) => {
+        const acct = { ...account, ...detail};
+        delete acct.details;
+        return acct;
+      })))
+    .flat();
+  if (onDataLoaded) onDataLoaded(result);
+};
+
+/**
+ * 取得取得免費跨提/跨轉次數、數存優惠利率及資訊
+ * @param {String} accountNo 存款帳號
+ * @param {Function} foreUpdate
+ * @param {Boolean} foreUpdate
+ * @returns {Promise<{
+ *   freeWithdraw: 免費跨提總次數
+ *   freeWithdrawRemain: 免費跨提剩餘次數
+ *   freeTransfer: 免費跨轉總次數
+ *   freeTransferRemain: 免費跨轉剩餘次數
+ *   bonusQuota: 優惠利率額度
+ *   bonusRate: 優惠利率
+ *   interest: 累積利息
+ * }>} 優惠資訊
+ */
+export const getAccountBonus = async (accountNo, onDataLoaded, foreUpdate) => {
+  let {accounts} = store.getState()?.CacheReducer;
+  if (!accounts) {
+    accounts = await loadAccountsList();
+    store.dispatch(setAccounts(accounts)); // 保存所有的帳號資料。
+  }
+
+  let bonus;
+  const index = accounts.findIndex((account) => account.accountNo === accountNo);
+  if (index >= 0) {
+    bonus = accounts[index].bonus;
+    if ((!bonus || foreUpdate) && !bonus?.isLoading) {
+      accounts[index].bonus = { isLoading: true };
+      store.dispatch(setAccounts(accounts));
+
+      const response = await callAPI('/api/depositPlus/v1/getBonusInfo', accountNo);
+      bonus = response.data;
+
+      accounts[index].bonus = bonus;
+      store.dispatch(setAccounts(accounts));
+    }
+  }
+  if (onDataLoaded) onDataLoaded(bonus);
+};
+
+/**
+ * 將更新後的存款帳號物件存入 Redux
+ * @param {*} newAccount
+ */
+export const updateAccount = async (newAccount) => {
+  let {accounts} = store.getState()?.CacheReducer;
+  if (!accounts) {
+    accounts = await loadAccountsList();
+    store.dispatch(setAccounts(accounts)); // 保存所有的帳號資料。
+  }
+
+  const index = accounts.findIndex((account) => account.accountNo === newAccount.accountNo);
+  if (index >= 0) {
+    accounts[index] = newAccount;
+    store.dispatch(setAccounts(accounts));
+  }
 };
 
 /**
