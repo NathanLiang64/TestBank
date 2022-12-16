@@ -283,7 +283,8 @@ export const download = async (url, request) => {
 
       const a = document.createElement('a');
       a.href = fileUrl;
-      // a.target = '_blank';  // 測試若不外開是否可執行
+      a.rel = 'noreferrer noopener';
+      a.target = '_blank'; // 測試若不外開是否可執行
       // a.download = filename; // 因使用者體驗因素，改外開瀏覽器方式取代下載
       a.click();
     })
