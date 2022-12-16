@@ -163,15 +163,11 @@ const Transfer = (props) => {
         setAccounts(accts);
         // 從 D00100_1 返回時會以 state 傳回原 model
         const mData = (state || await processStartParams(accts));
-        // 將 Model 資料填入 UI Form 的對應欄位。
-        if (mData) {
           setModel(mData);
-          setSelectedAccountIdx(mData.selectedAccountIdx); // Swiper 切回原本的 Slide
+        setSelectedAccountIdx(mData.selectedAccountIdx ?? 0); // Swiper 切回原本的 Slide
 
+        // 將 Model 資料填入 UI Form 的對應欄位。
           reset(mData);
-        } else {
-          setSelectedAccountIdx(0);
-        }
         dispatch(setWaittingVisible(false));
       }
     });
@@ -257,9 +253,10 @@ const Transfer = (props) => {
 
     // idCycleTime 防呆，調整起始日期
     const transTimes = checkTransDate(booking);
-    if (booking.mode === 1 || transTimes <= 0) { // 若立即轉帳則不需要檢查。
+    if (booking.mode === 1 && transTimes <= 0) { // 若立即轉帳則不需要檢查。
       await showInfo('您指定的交易時間範圍內，並不會有任何轉帳交易發生！請重新調整交易時間範圍、交易頻率或週期。');
       setFocus(idTransRange);
+      return;
     }
 
     const param = {
@@ -270,6 +267,7 @@ const Transfer = (props) => {
       },
       selectedAccountIdx,
     };
+    setModel(param);
 
     // 進行轉帳確認。
     history.push('/D001001', param);
