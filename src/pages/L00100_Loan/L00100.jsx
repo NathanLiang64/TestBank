@@ -186,7 +186,7 @@ const Page = () => {
   };
 
   const handleMoreTransactionsClick = (card) => {
-    startFunc(FuncID.L00300, { card });
+    startFunc(FuncID.L00300, { card }, { card }); // 經原生查L00300需取keepData，故此處同時補上keepData
   };
 
   /**
