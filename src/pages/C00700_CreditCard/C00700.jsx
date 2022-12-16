@@ -10,7 +10,6 @@ import CreditCardTxsList from 'components/CreditCardTxsList';
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 
 import { FuncID } from 'utilities/FuncID';
-// eslint-disable-next-line no-unused-vars
 import { currencySymbolGenerator } from 'utilities/Generator';
 import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
@@ -56,15 +55,13 @@ const CreditCardPage = () => {
     // updateTxNotes API 打成功才更新畫面
     setTransactionMap((prevMap) => {
       const key = isBankeeCard ? 0 : 1;
-      // const foundCards= prevMap[key];
-      const updatedCards = prevMap[key].map((card) => {
-        if (card.txKey === payload.txKey) return {...card, note: payload.note};
-        return card;
-      });
+      const updatedCards = prevMap[key].map((card) => (
+        card.txKey === payload.txKey ? {...card, note: payload.note} : card));
+
       return {...prevMap, [key]: updatedCards};
     });
   };
-  console.log('transactionMap', transactionMap);
+
   // 信用卡卡面右上角的功能列表
   const functionAllList = (item) => {
     const list = [
@@ -199,7 +196,7 @@ const CreditCardPage = () => {
             <CreditCardTxsList
               showAll={false}
               card={cardInfo}
-              go2MoreDetails={() => startFunc('R00100', {card: cardInfo, usedCardLimit})}
+              go2MoreDetails={() => startFunc(FuncID.R00100, {card: cardInfo, usedCardLimit})}
               transactions={transactionMap[index]}
               onTxnNotesEdit={onTxnNotesEdit}
             />
