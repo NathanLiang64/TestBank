@@ -163,11 +163,11 @@ const Transfer = (props) => {
         setAccounts(accts);
         // 從 D00100_1 返回時會以 state 傳回原 model
         const mData = (state || await processStartParams(accts));
-          setModel(mData);
+        setModel(mData);
         setSelectedAccountIdx(mData.selectedAccountIdx ?? 0); // Swiper 切回原本的 Slide
 
         // 將 Model 資料填入 UI Form 的對應欄位。
-          reset(mData);
+        reset(mData);
         dispatch(setWaittingVisible(false));
       }
     });

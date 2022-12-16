@@ -95,13 +95,12 @@ const LoanInterest = () => {
   useEffect(async () => {
     const startParams = await loadFuncParams();
 
-    if (startParams?.card) {
-      console.log('L00300 useEffect', {startParams});
+    if (startParams) {
       setCardData(startParams.card);
     } else {
       await showCustomPrompt({
         title: '參數錯誤',
-        message: `startParams: ${JSON.stringify(startParams)}`,
+        message: `funcParams: ${JSON.stringify(startParams)}`,
         onOk: closeFunc,
         onClose: closeFunc,
       });
