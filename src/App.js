@@ -5,8 +5,7 @@ import routes from 'routes';
 
 /* Store */
 import { PersistGate } from 'redux-persist/integration/react';
-import { persistor } from 'stores/store';
-import store from './stores/store';
+import store, { persistor } from './stores/store';
 
 const App = () => (
   <Provider store={store}>

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 import { persistStore, persistReducer } from 'redux-persist';
 import hardSet from 'redux-persist/lib/stateReconciler/hardSet';
@@ -7,8 +7,17 @@ import sessionStorage from 'redux-persist/es/storage/session'; // sessionStorage
 import createTransform from 'redux-persist/es/createTransform';
 import CryptoJS from 'crypto-js';
 import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
-import reducer from './reducers/index';
-import CipherUtil from '../utilities/CipherUtil';
+import CipherUtil from 'utilities/CipherUtil';
+
+import ModalReducer from './reducers/ModalReducer';
+import CacheReducer from './reducers/CacheReducer';
+// import { reducers as patternLockSettingReducer } from 'pages/PatternLockSetting/stores';
+
+const reducer = combineReducers({
+  ModalReducer,
+  CacheReducer,
+  // patternLockSetting: patternLockSettingReducer, // NOTE 將來可能用的到，先不刪！
+});
 
 /**
  *- 創建store

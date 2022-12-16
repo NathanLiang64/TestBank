@@ -1,13 +1,10 @@
-import {
-  SET_MODAL,
-  SET_MODAL_VISIBLE,
-  SET_DRAWER,
-  SET_DRAWER_VISIBLE,
-  SET_WAITTING_VISIBLE,
-  REST_ALL,
-  SET_ANIMATION_MODAL_VISIBLE,
-  SET_ANIMATION_MODAL,
-} from '../constant';
+const SET_MODAL = 'setModal';
+const SET_MODAL_VISIBLE = 'setModalVisible';
+const SET_DRAWER = 'setDrawer';
+const SET_DRAWER_VISIBLE = 'setDrawerVisible';
+const SET_WAITTING_VISIBLE = 'setWaittingVisible';
+const SET_ANIMATION_MODAL_VISIBLE = 'setAnimationModalVisible';
+const SET_ANIMATION_MODAL = 'setAnimationModal';
 
 const initialState = {
   setResult: (value) => value,
@@ -83,8 +80,6 @@ export default function ModalReducer(state = initialState, action) {
     case SET_ANIMATION_MODAL:
       return { ...state, animationModal: data };
 
-    case REST_ALL:
-      return initialState;
 
     default:
       return state;
