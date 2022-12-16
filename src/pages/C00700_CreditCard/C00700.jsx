@@ -56,11 +56,15 @@ const CreditCardPage = () => {
     // updateTxNotes API 打成功才更新畫面
     setTransactionMap((prevMap) => {
       const key = isBankeeCard ? 0 : 1;
-      const foundCard = prevMap[key];
-      return {...prevMap, [key]: {...foundCard, note: payload.note}};
+      // const foundCards= prevMap[key];
+      const updatedCards = prevMap[key].map((card) => {
+        if (card.txKey === payload.txKey) return {...card, note: payload.note};
+        return card;
+      });
+      return {...prevMap, [key]: updatedCards};
     });
   };
-
+  console.log('transactionMap', transactionMap);
   // 信用卡卡面右上角的功能列表
   const functionAllList = (item) => {
     const list = [
