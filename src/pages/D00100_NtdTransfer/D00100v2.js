@@ -26,9 +26,8 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showError, showInfo, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
 import { numberToChinese } from 'utilities/Generator';
-import { getAccountsList } from 'utilities/CacheData';
+import { getAccountBonus, getAccountsList } from 'utilities/CacheData';
 import { ChangeMemberIcon } from 'assets/images/icons';
-import { getAccountExtraInfo } from './api';
 import TransferWrapper from './D00100.style';
 import D00100AccordionContent from './D00100_AccordionContent';
 
@@ -163,11 +162,11 @@ const Transfer = (props) => {
         setAccounts(accts);
         // 從 D00100_1 返回時會以 state 傳回原 model
         const mData = (state || await processStartParams(accts));
-          setModel(mData);
+        setModel(mData);
         setSelectedAccountIdx(mData.selectedAccountIdx ?? 0); // Swiper 切回原本的 Slide
 
         // 將 Model 資料填入 UI Form 的對應欄位。
-          reset(mData);
+        reset(mData);
         dispatch(setWaittingVisible(false));
       }
     });
@@ -430,27 +429,6 @@ const Transfer = (props) => {
   };
 
   /**
-   * 下載 優存(利率/利息)資訊
-   */
-  const loadExtraInfo = (account) => {
-    if (!account.isLoadingExtra) {
-      account.isLoadingExtra = true; // 避免因為非同步執行造成的重覆下載
-      getAccountExtraInfo(account.accountNo).then((info) => {
-        model.transOut = {
-          ...model.transOut,
-          freeTransfer: account.freeTransfer = info.freeTransfer,
-          freeTransferRemain: account.freeTransferRemain = info.freeTransferRemain,
-        };
-
-        // TODO Update Accounts cache
-
-        delete account.isLoadingExtra; // 載入完成才能清掉旗標！
-        forceUpdate();
-      });
-    }
-  };
-
-  /**
    * 切換帳戶卡，變更 HookForm 轉出帳號相關資料，以及轉帳額度。
    */
   useEffect(() => {
@@ -464,7 +442,18 @@ const Transfer = (props) => {
     };
 
     // 若還沒有取得 免費跨轉次數 則立即補上。
-    if (!model.transOut.freeTransfer) loadExtraInfo(account);
+    if (!model.transOut.freeTransfer) {
+      // 下載 優存(利率/利息)資訊
+      getAccountBonus(account.accountNo, (info) => {
+        model.transOut = {
+          ...model.transOut,
+          freeTransfer: account.freeTransfer = info.freeTransfer,
+          freeTransferRemain: account.freeTransferRemain = info.freeTransferRemain,
+        };
+
+        forceUpdate();
+      });
+    }
 
     // 單筆轉帳限額 (用於設置至轉出金額驗證規則)
     // dgType = 帳戶類別('  '.非數存帳號, '11'.臨櫃數存昇級一般, '12'.一之二類, ' 2'.二類, '32'.三之二類)
