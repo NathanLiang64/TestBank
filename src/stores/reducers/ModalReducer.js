@@ -80,7 +80,6 @@ export default function ModalReducer(state = initialState, action) {
     case SET_ANIMATION_MODAL:
       return { ...state, animationModal: data };
 
-
     default:
       return state;
   }

@@ -15,7 +15,7 @@ import { ArrowNextIcon, EditIcon } from 'assets/images/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { TextareaField, TextInputField } from 'components/Fields';
 import { useDispatch } from 'react-redux';
-import { switchZhNumber } from 'utilities/Generator';
+import { switchZhNumber, toCurrency } from 'utilities/Generator';
 import {
   getSummary,
   updateAvatar,
@@ -229,7 +229,7 @@ const CommunityPage = () => {
                 <ArrowNextIcon />
               </div>
               <div className="num">
-                {`NT$${switchZhNumber(summary?.bonusInfo.profit)}`}
+                {`NT$${toCurrency(summary?.bonusInfo.profit)}`}
               </div>
             </div>
             {/* <div className="overviewItem"> */}

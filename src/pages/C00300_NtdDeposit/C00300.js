@@ -17,7 +17,7 @@ import { FEIBInputLabel, FEIBInput } from 'components/elements';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
-import { switchZhNumber, toCurrency } from 'utilities/Generator';
+import { switchZhNumber, currencySymbolGenerator } from 'utilities/Generator';
 import { getAccountsList, getAccountBonus, updateAccount } from 'utilities/CacheData';
 import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
 import {
@@ -135,7 +135,7 @@ const C00300 = () => {
       freeWithdrawRemain: null, freeTransferRemain: null, bonusQuota: null, bonusRate: null, interest: null, // 預設值
     };
     const value1 = bonusRate ? `${bonusRate * 100}%` : '-';
-    const value2 = (interest >= 0) ? `$${toCurrency(interest)}` : '-';
+    const value2 = (interest >= 0) ? `$${currencySymbolGenerator(interest)}` : '-';
     return (
       <div className="interestRatePanel">
         <div className="panelItem">

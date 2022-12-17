@@ -3,37 +3,6 @@
 
 /* ========= 通用函式 ========= */
 
-/**
- * 將數字轉為加上千分位符號的字串
- * @param {Number} amount 金額，可以有小數
- * @param {Number?} float 小數位數，會捨位或補零
- * @param {Boolean?} showFloat 強制顯示小數部份，不受 float 的小數位數限制。
- */
-export const toCurrency = (number, float = 0, showFloat = false) => {
-  if (number === null || number === undefined) return '';
-  if (number === '*') return '＊＊＊＊＊'; // 不顯示餘額。
-
-  const parts = number.toString().split('.') ?? ['0']; // 預設為'0'
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','); // 取出整數加上千分位','
-
-  /* 如台幣帳戶需顯示小數點，傳入isShowDecimal: true */
-  if (showFloat && parts[1]) float = parts[1].length;
-
-  if (float > 0) {
-    parts[1] = `${parts[1] ?? ''}000000`.substring(0, float); // 小數位數補齊
-  } else parts.splice(1, 1); // 不要顯示小數時，就把小數的數值刪掉。
-
-  return parts.join('.');
-};
-
-// 將數字轉為「千」或「萬」，假設數字大於「千」，小於「千萬」
-// 例：1000 -> 1千    10000 -> 1萬    1000000 -> 100萬
-// 特例：999 -> 1千    10000000 -> 1,000萬
-export const toThousandNotation = (number) => {
-  const isTenThousand = Math.floor(number / 1000) >= 10;
-  return isTenThousand ? `${toCurrency(number / 10000)}萬` : `${Math.round(number / 1000)}千`;
-};
-
 // 將帳號轉為指定字數間帶有分隔符 (-) 之顯示方式
 export const accountFormatter = (account) => {
   const acct = account ?? '00000000000000';
@@ -210,8 +179,8 @@ export const numberToChinese = (num) => {
 };
 
 // 帳戶科目別對應的存款卡顏色
-export const accountTypeColorGenerator = (currency) => {
-  switch (currency) {
+export const accountTypeColorGenerator = (type) => {
+  switch (type) {
     case '001': // 活期存款
       return '';
     case '003': // 行員存款
@@ -284,11 +253,16 @@ export const CurrencyInfo = [
 
 /**
  * 取得指定幣別的（代碼、名稱、符號、小數位數）資訊。
- * @param {string} currency 貨幣代碼；可為空值，表示所有貨幣。
- * @return 指定幣別資訊；若未指定則傳回所有幣別資訊。
+ * @param {String} ccyCode 貨幣代碼；可為空值，表示所有貨幣。
+ * @return {{
+ *   code: '幣別代碼',
+ *   name: '幣別名稱',
+ *   symbol: '代表符號',
+ *   float: '小數位數',
+ * }} 指定幣別資訊；若未指定則傳回所有幣別資訊。
  */
-export const getCurrenyInfo = (currency = null) => {
-  const ccyInfo = CurrencyInfo.find((ccy) => currency === null || ccy.code === currency);
+export const getCurrenyInfo = (ccyCode) => {
+  const ccyInfo = CurrencyInfo.find((ccy) => ccy.code === ccyCode);
   return ccyInfo;
 };
 
@@ -300,6 +274,29 @@ export const getCurrenyInfo = (currency = null) => {
 export const getCurrenyName = (currency) => {
   const ccyInfo = getCurrenyInfo(currency);
   return ccyInfo ? ccyInfo.name : currency;
+};
+
+/**
+ * 將數字轉為加上千分位符號的字串
+ * @param {Number} amount 金額，可以有小數
+ * @param {Number?} float 小數位數，會捨位或補零
+ * @param {Boolean?} showFloat 強制顯示小數部份，不受 float 的小數位數限制。
+ */
+export const toCurrency = (number, float = 0, showFloat = false) => {
+  if (number === null || number === undefined) return '';
+  if (number === '*') return '＊＊＊＊＊'; // 不顯示餘額。
+
+  const parts = number.toString().split('.') ?? ['0']; // 預設為'0'
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','); // 取出整數加上千分位','
+
+  /* 如台幣帳戶需顯示小數點，傳入isShowDecimal: true */
+  if (showFloat && parts[1]) float = parts[1].length;
+
+  if (float > 0) {
+    parts[1] = `${parts[1] ?? ''}000000`.substring(0, float); // 小數位數補齊
+  } else parts.splice(1, 1); // 不要顯示小數時，就把小數的數值刪掉。
+
+  return parts.join('.');
 };
 
 /**
@@ -317,30 +314,10 @@ export const currencySymbolGenerator = (currency, amount, showFloat = false) => 
   return amtStr;
 };
 
-// 貨幣單位英文轉華文
-export const currencyZhGenerator = (currency) => {
-  const ccyInfo = CurrencyInfo[currency];
-  return ccyInfo?.name ?? currency;
-};
-
-// 姓名隱碼化，王小明 -> 王Ｏ明
-export const hideName = (name) => {
-  if (!name) return;
-
-  /* eslint-disable consistent-return */
-  const nameLength = name.length;
-  const firstCharacter = name.substr(0, 1);
-
-  if (nameLength < 2) return firstCharacter;
-  if (nameLength < 3) return `${firstCharacter}Ｏ`;
-
-  const lastCharacter = name.substr(nameLength - 1, 1);
-  const others = [];
-  for (let i = 0; i < name.length - 2; i++) others.push('Ｏ');
-  return firstCharacter + others.join('') + lastCharacter;
-};
-
-// 將全形文字轉為半形
+/**
+ * 將全形文字轉為半形
+ * @param {*} str
+ */
 export const toHalfWidth = (str) => str?.replace(
   /[\uff01-\uff5e]/g,
   (ch) => String.fromCharCode(ch.charCodeAt(0) - 0xfee0),
