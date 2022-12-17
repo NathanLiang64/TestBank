@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { currencyZhGenerator } from 'utilities/Generator';
+import { getCurrenyInfo } from 'utilities/Generator';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -16,9 +16,11 @@ import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import ExchangeWrapper from './E00100.style';
 
 const E001002 = ({ location }) => {
+  const {state} = location;
   const history = useHistory();
+
   const [isSuccess, setIsSuccess] = useState(true);
-  const [exchangeResult, setExchangeResult] = useState({});
+  const [exchangeResult] = useState(state);
 
   const toTradeDetailPage = () => {
     history.push('/taiwanDollarAccountDetails');// TODO: 此頁尚無funcID
@@ -33,10 +35,7 @@ const E001002 = ({ location }) => {
   };
 
   useEffect(() => {
-    if (location?.state) {
-      setExchangeResult({ ...location.state });
-    }
-    if (location?.state.code) {
+    if (location?.state.code) { // ??? 有 Code 就是 失敗？
       setIsSuccess(false);
     }
   }, []);
@@ -50,35 +49,35 @@ const E001002 = ({ location }) => {
             successTitle="外幣換匯成功"
             errorTitle="外幣換匯失敗"
           />
-          {isSuccess && (
+          {isSuccess && exchangeResult && (
             <div className="infoData">
               <div className="label">
                 轉換
-                {exchangeResult?.trnsType === '1' ? '外幣' : '台幣'}
+                {exchangeResult.trnsType === '1' ? '外幣' : '台幣'}
               </div>
               {/* prettier-ignore */}
               <div className="foreignCurrency">
-                {exchangeResult?.inCcyCd}
+                {exchangeResult.inCcyCd}
                 $
-                {exchangeResult?.inAmt}
+                {exchangeResult.inAmt}
               </div>
               {/* prettier-ignore */}
               <div className="changeNT">
                 折合
-                {exchangeResult?.trnsType === '1' ? '台幣' : '外幣'}
+                {exchangeResult.trnsType === '1' ? '台幣' : '外幣'}
                 ：
-                {exchangeResult?.outCcyCd}
+                {exchangeResult.outCcyCd}
                 $
-                {exchangeResult?.outAmt}
+                {exchangeResult.outAmt}
               </div>
               <div className="exchangeRate">
                 換匯匯率：
-                {exchangeResult?.rate}
+                {exchangeResult.rate}
               </div>
-              {exchangeResult?.bankerCd && <div className="employee">員工優惠匯率</div>}
+              {exchangeResult.bankerCd && <div className="employee">員工優惠匯率</div>}
               <div className="label into">轉入帳號</div>
               {/* <div className="accountData">遠東商銀(805)</div> */}
-              <div className="accountData">{exchangeResult?.inAcct}</div>
+              <div className="accountData">{exchangeResult.inAcct}</div>
               <div className="priceNotiSetting" onClick={toPriceSettingPage}>
                 外幣到價通知設定
               </div>
@@ -86,23 +85,23 @@ const E001002 = ({ location }) => {
           )}
           {!isSuccess && <FEIBButton onClick={toExchangePage}>確認</FEIBButton>}
         </div>
-        {isSuccess && (
+        {isSuccess && exchangeResult && (
           <div className="infoSection">
             <div>
-              <InformationList title="轉出帳號" content={exchangeResult?.outAcct} />
+              <InformationList title="轉出帳號" content={exchangeResult.outAcct} />
               <InformationList
                 title="換匯種類"
-                content={exchangeResult?.trnsType === '1' ? '台幣轉外幣' : '外幣轉台幣'}
+                content={exchangeResult.trnsType === '1' ? '台幣轉外幣' : '外幣轉台幣'}
               />
               <InformationList
                 title="轉換外幣幣別"
-                content={`${currencyZhGenerator(exchangeResult?.trfCcyCd)} ${exchangeResult?.trfCcyCd}`}
+                content={`${getCurrenyInfo(exchangeResult.trfCcyCd)?.name} ${exchangeResult.trfCcyCd}`}
               />
-              <InformationList title="匯款性質分類" content={exchangeResult?.leglDesc} />
+              <InformationList title="匯款性質分類" content={exchangeResult.leglDesc} />
             </div>
             <Accordion className="exchangeAccordion" title="詳細交易" space="both" open>
-              <InformationList title="帳戶餘額" content={`$${exchangeResult?.avBal}`} />
-              <InformationList title="備註" content={exchangeResult?.memo} />
+              <InformationList title="帳戶餘額" content={`$${exchangeResult.avBal}`} />
+              <InformationList title="備註" content={exchangeResult.memo} />
             </Accordion>
             <div className="confirmBtns">
               <ConfirmButtons

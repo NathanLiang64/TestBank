@@ -139,7 +139,7 @@ const C00500Modified = () => {
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case FuncID.E00100: // 換匯
+      case FuncID.E00100_換匯: // 換匯
         params = { transOut: selectedAccount.accountNo };
         break;
 

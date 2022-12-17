@@ -17,6 +17,7 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
 import { getAccountsList, resetAccountsList } from 'utilities/CacheData';
+import { FuncID } from 'utilities/FuncID';
 import {
   getTransactions,
   setAccountAlias,
@@ -145,8 +146,8 @@ const C00400 = () => {
         break;
 
       case 'foreignCurrencyTransfer': // 轉帳
-      case 'exchange': // 換匯
-        params = model; // 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。
+      case FuncID.E00100_換匯: // 換匯
+        params = model; // TODO 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。
         break;
 
       case 'setMainAccount': // 設定為主要外幣帳戶
@@ -193,7 +194,7 @@ const C00400 = () => {
                     selectedAccount.transable && selectedAccount.balance > 0,
                 },
                 {
-                  fid: 'exchange',
+                  fid: FuncID.E00100_換匯,
                   title: '換匯',
                   enabled: selectedAccount.balance > 0,
                 },
