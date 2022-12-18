@@ -25,9 +25,11 @@ const MoreTranscations = () => {
     // 以啟動參數(預設帳號)
     const model = await loadFuncParams();
     setAccount(model);
-
-    dispatch(setWaittingVisible(false));
   }, []);
+
+  useEffect(() => {
+    if (account) dispatch(setWaittingVisible(false));
+  }, [account]);
 
   /**
    * 更新帳戶交易明細清單

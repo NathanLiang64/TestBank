@@ -115,11 +115,15 @@ const C00300 = () => {
   /**
    * 下載 優存(利率/利息)資訊
    */
-  const loadExtraInfo = (account) => {
-    getAccountBonus(account.accountNo, (info) => {
-      account.bonus = info;
-      forceUpdate();
-    });
+  const loadExtraInfo = async (account) => {
+    if (!account.bonus || !account.bonus.loading) {
+      account.bonus = { loading: true };
+      getAccountBonus(account.accountNo, (info) => {
+        account.bonus = info;
+        forceUpdate();
+        delete account.bonus.loading;
+      });
+    }
   };
 
   /**
@@ -135,7 +139,7 @@ const C00300 = () => {
       freeWithdrawRemain: null, freeTransferRemain: null, bonusQuota: null, bonusRate: null, interest: null, // 預設值
     };
     const value1 = bonusRate ? `${bonusRate * 100}%` : '-';
-    const value2 = (interest >= 0) ? `$${currencySymbolGenerator(interest)}` : '-';
+    const value2 = (interest > 0) ? `$${currencySymbolGenerator(interest)}` : '-';
     return (
       <div className="interestRatePanel">
         <div className="panelItem">
@@ -253,7 +257,7 @@ const C00300 = () => {
                 onFunctionClick={handleFunctionClick}
                 cardColor="purple"
                 funcList={[
-                  { fid: 'D00100', title: '轉帳', enabled: (selectedAccount.transable) },
+                  { fid: 'D00100', title: '轉帳' },
                   { fid: 'D00300', title: '無卡提款', hidden: (selectedAccount.acctType !== 'M') },
                 ]}
                 moreFuncs={[

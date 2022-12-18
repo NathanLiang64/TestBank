@@ -300,7 +300,10 @@ async function closeFunc(response) {
 async function loadFuncParams() {
   try {
     const funcItem = funcStack.peek(); // 因為功能已經啟動，所以用 peek 取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
-    const isFunction = !funcItem || (/^[A-Z]\d{5}$/.test(funcItem.funcID)); // 表示 funcID 不是一般頁面，而是由 Function Controller 控制的單元功能。
+
+    // 表示 funcID 不是一般頁面，而是由 Function Controller 控制的單元功能。
+    // NOTE 這種判斷方式，非常容易誤判！只有「一個大寫字母＋5個數字」的功能代碼才算是單元功能。
+    const isFunction = !funcItem || (/^[A-Z]\d{5}$/.test(funcItem.funcID));
 
     /**
      * 取得儲存於 localStorage 的啟動參數。此功能是為了提供一般頁面或Web版Function Contoller用。

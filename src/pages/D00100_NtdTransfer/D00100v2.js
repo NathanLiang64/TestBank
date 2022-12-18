@@ -482,7 +482,7 @@ const Transfer = (props) => {
    */
   return accounts ? (
     <Layout title="台幣轉帳">
-      <TransferWrapper $insufficient={model?.balance <= 0}>
+      <TransferWrapper $insufficient={!model?.transOut.balance || model?.$sizetransOut.balance <= 0}>
         <AccountOverview
           transferMode
           accounts={accounts}
@@ -490,7 +490,7 @@ const Transfer = (props) => {
           onAccountChanged={setSelectedAccountIdx}
         />
 
-        {/* {model?.balance <= 0 ? (<p className="insufficient">(帳戶餘額不足)</p>) : null} */}
+        {/* {model?.transOut.balance <= 0 ? (<p className="insufficient">(帳戶餘額不足)</p>) : null} */}
         <div className="transferServicesArea">
           <form>
             <FEIBTabContext value={String(watch(idTransType))}>

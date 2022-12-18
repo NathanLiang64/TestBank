@@ -70,22 +70,31 @@ export const dateToString = (date, splitter, mmddOnly) => {
  */
 export const dateToYMD = (date) => dateToString(date ?? new Date(), '');
 
-// 將時間格式轉為 HH:DD 字串
-export const timeFormatter = (time) => {
-  time = new Date(time);
-  const hour = time.getHours().toString().padStart(2, '0');
-  const minute = time.getMinutes().toString().padStart(2, '0');
-  return `${hour}:${minute}`;
+/**
+ * 將全數字的時間字串，轉為 HH:mm:ss 字串
+ * @param {Date|String} time 全數字的時間字串，例：'235959'
+ */
+export const timeToString = (time) => {
+  if (!time) return '';
+
+  // 將 Date 轉為日期字串。
+  if (time instanceof Date) {
+    time = time.toTimeString(); // 輸出：'17:20:15 GMT+0800 (台北標準時間)'
+  }
+
+  time = time.substring(0, 8).replace(/[^0-9]/g, ''); // 去掉非數字的部份。
+  const hour = time.substring(0, 2);
+  const min = time.substring(2, 4);
+  const sec = time.substring(4, 6);
+
+  return `${hour}:${min}:${sec}`;
 };
 
-// 將時間格式轉為 HH:DD:SS 字串
-export const timeSecondFormatter = (time) => {
-  time = new Date(time);
-  const hour = time.getHours().toString().padStart(2, '0');
-  const minute = time.getMinutes().toString().padStart(2, '0');
-  const seconds = time.getSeconds().toString().padStart(2, '0');
-  return `${hour}:${minute}:${seconds}`;
-};
+/**
+ * 將 Date 轉為 yyyy/MM/dd HH:mm:ss 字串.
+ * @param {Date} date
+ */
+export const datetimeToString = (date) => `${dateToString(date)} ${timeToString(date)}`;
 
 // 將秒數轉為 MM:SS 字串
 export const countdownTimerFormatter = (count) => {

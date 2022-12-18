@@ -67,8 +67,8 @@ const SearchCondition = ({
 
   useEffect(() => {
     const mode = autoDateTabId;
-    const today = (mode === '0') ? null : dateToString(new Date());
-    const startDate = (mode === '0') ? null : dateToString(computedStartDate(autoDateTabId));
+    const today = (mode === '0') ? null : dateToString(new Date(), '');
+    const startDate = (mode === '0') ? null : dateToString(computedStartDate(autoDateTabId), '');
     setNewCondition({
       ...newCondition,
       mode, // 查詢模式(0.自訂, 1.近6個月, 2.近1年, 3.近2年, 4.近3年)

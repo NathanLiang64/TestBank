@@ -2,7 +2,7 @@ import { ArrowBack, ArrowForward } from '@material-ui/icons';
 import InformationList from 'components/InformationList';
 import { customPopup } from 'utilities/MessageModal';
 import {
-  timeFormatter, currencySymbolGenerator, dateToString, toHalfWidth,
+  currencySymbolGenerator, dateToString, toHalfWidth, timeToString,
 } from 'utilities/Generator';
 import { DetailsDefaultAvatarIcon } from 'assets/images/icons';
 import DetailCardWrapper, { DetailDialogContentWrapper } from './detailCard.style';
@@ -50,9 +50,6 @@ const DetailCard = ({
   balance,
   invert,
 }) => {
-  // Formatter
-  txnTime = timeFormatter(new Date(txnTime));
-
   /**
    * 取得大頭貼。
    * @returns 會員大頭貼；非會員則傳回 null。
@@ -113,7 +110,7 @@ const DetailCard = ({
           </p>
           {invert && (<p className="mainBlockTitle">[更正交易]</p>)}
         </div>
-        <InformationList title="交易時間" content={`${dateToString(txnDate, '/')} ${txnTime}`} />
+        <InformationList title="交易時間" content={`${dateToString(txnDate, '/')} ${timeToString(txnTime)}`} />
         <InformationList title="帳務日期" content={dateToString(bizDate, '/')} />
         {targetAcct && (
           <InformationList
