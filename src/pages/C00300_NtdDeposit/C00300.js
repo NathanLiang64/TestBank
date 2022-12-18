@@ -19,6 +19,7 @@ import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
 import { switchZhNumber, currencySymbolGenerator } from 'utilities/Generator';
 import { getAccountsList, getAccountBonus, updateAccount } from 'utilities/CacheData';
+import { FuncID } from 'utilities/FuncID';
 import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
 import {
   getTransactions,
@@ -213,7 +214,7 @@ const C00300 = () => {
         };
         break;
 
-      case 'D00100': // 轉帳
+      case FuncID.D00100_台幣轉帳:
         params = { transOut: selectedAccount.accountNo };
         break;
 
@@ -221,7 +222,7 @@ const C00300 = () => {
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case 'E00100': // 換匯 // TODO 帶參數過去
+      case FuncID.E00100_換匯: // TODO 帶參數過去
         params = { transOut: selectedAccount.accountNo };
         break;
 
@@ -257,12 +258,12 @@ const C00300 = () => {
                 onFunctionClick={handleFunctionClick}
                 cardColor="purple"
                 funcList={[
-                  { fid: 'D00100', title: '轉帳' },
+                  { fid: FuncID.D00100_台幣轉帳, title: '轉帳' },
                   { fid: 'D00300', title: '無卡提款', hidden: (selectedAccount.acctType !== 'M') },
                 ]}
                 moreFuncs={[
                   { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false },
-                  { fid: 'E00100', title: '換匯', icon: 'exchange', enabled: (selectedAccount.balance > 0) },
+                  { fid: FuncID.E00100_換匯, title: '換匯', icon: 'exchange', enabled: (selectedAccount.balance > 0) },
                   { fid: 'DownloadCover', title: '存摺封面下載', icon: 'coverDownload' },
                   { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
                 ]}

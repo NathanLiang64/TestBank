@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { startFunc, transactionAuth } from 'utilities/AppScriptProxy';
+import { FuncID } from 'utilities/FuncID';
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
@@ -41,7 +42,7 @@ const Nav = () => {
     <Layout title="測試功能首頁" goBack={false} goHome={false}>
       <NavWrapper>
         <div className="bankee">
-          <div onClick={() => startFunc('D00100')}>D00100 轉帳 - (施工中)</div>
+          <div onClick={() => startFunc(FuncID.D00100_台幣轉帳)}>D00100 轉帳 - (施工中)</div>
           <div onClick={() => startFunc('C00300')}>C00300 台幣存款首頁</div>
           <div onClick={() => startFunc('C00400')}>C00400 外幣存款首頁</div>
           <div onClick={() => startFunc('C00500')}>C00500 交割帳戶首頁</div>
@@ -103,7 +104,7 @@ const Nav = () => {
           <div onClick={() => startFunc('D00300')}>D00300 無卡提款</div>
           <div onClick={() => startFunc('D00700')}>D00700 外幣轉外幣 - (施工中)</div>
           <div onClick={() => startFunc('D00800')}>D00800 預約轉帳查詢</div>
-          <div onClick={() => startFunc('E00100')}>E00100 換匯 - (施工中)</div>
+          <div onClick={() => startFunc(FuncID.E00100_換匯)}>E00100 換匯 - (施工中)</div>
           <div onClick={() => startFunc('L00300')}>L00300 繳款紀錄查詢 - (施工中)</div>
           <div onClick={() => startFunc('R00500')}>R00500 自動扣繳 - (施工中)</div>
           <div onClick={() => startFunc('S00400')}>S00400 訊息通知設定 - (施工中)</div>

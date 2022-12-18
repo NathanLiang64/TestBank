@@ -185,13 +185,13 @@ const C00500 = () => {
               cardColor="blue"
               funcList={[
                 {
-                  fid: 'D00100',
+                  fid: FuncID.D00100_台幣轉帳,
                   title: '轉帳',
                   enabled:
                   selectedAccount.transable && selectedAccount.balance > 0,
                 },
                 {
-                  fid: 'E00100',
+                  fid: FuncID.E00100_換匯,
                   title: '換匯',
                   enabled: selectedAccount.balance > 0,
                 },

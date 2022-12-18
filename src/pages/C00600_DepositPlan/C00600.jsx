@@ -13,6 +13,7 @@ import {
   AccountIcon11, AccountIcon12, CircleIcon, TransactionIcon1,
 } from 'assets/images/icons';
 import { loadFuncParams, closeFunc, transactionAuth, startFunc } from 'utilities/AppScriptProxy';
+import { FuncID } from 'utilities/FuncID';
 import {AuthCode} from 'utilities/TxnAuthCode';
 import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
 import EmptySlide from './components/EmptySlide';
@@ -112,7 +113,7 @@ const DepositPlanPage = () => {
       { icon: <AccountIcon12 />, title: '結束本計畫', onClick: handleTerminatePlan },
     ];
     if (plan.progInfo.type === 0) {
-      list.push({ icon: <TransactionIcon1 />, title: '轉帳', onClick: () => startFunc('/D00100') });
+      list.push({ icon: <TransactionIcon1 />, title: '轉帳', onClick: () => startFunc(FuncID.D00100_台幣轉帳) });
     }
     const options = (
       <ul>
