@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/jsx-max-props-per-line */
-/* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable no-use-before-define */
 /* eslint-disable object-curly-newline */
 import { useEffect, useReducer, useState } from 'react';
@@ -67,7 +64,6 @@ const C00300 = () => {
   /**
    * 處理 Function Controller 提供的啟動參數。
    * @param {[*]} accts
-   * @returns {Promise<Number>} SelectedAccountIdx 的值。
    */
   const processStartParams = async (accts) => {
     // startParams: {
@@ -76,16 +72,14 @@ const C00300 = () => {
     // }
     const startParams = await loadFuncParams();
     // 取得 Function Controller 提供的 keepData(model)
-    if (startParams && (typeof startParams === 'object')) {
+    if (startParams && (startParams instanceof Object)) {
       const index = accts.findIndex((acc) => acc.accountNo === startParams.defaultAccount);
       setSelectedAccountIdx(index);
       setShowRate(startParams.showRate);
-      return index;
+    } else {
+      setSelectedAccountIdx(0);
+      setShowRate(true);
     }
-
-    setSelectedAccountIdx(0);
-    setShowRate(true);
-    return 0;
   };
 
   /**
@@ -179,7 +173,9 @@ const C00300 = () => {
     const body = (
       <>
         <FEIBInputLabel>新的帳戶名稱</FEIBInputLabel>
-        <FEIBInput {...register('newName')} autoFocus
+        <FEIBInput
+          {...register('newName')}
+          autoFocus
           inputProps={{ maxLength: 10, placeholder: '請設定此帳戶的專屬名稱', defaultValue: name, autoComplete: 'off' }}
         />
       </>
@@ -205,7 +201,7 @@ const C00300 = () => {
   const handleFunctionClick = async (funcCode) => {
     let params = null;
 
-    const model = { defaultAccount: selectedAccount.accountNo, showRate };
+    const keepData = { defaultAccount: selectedAccount.accountNo, showRate };
     switch (funcCode) {
       case 'moreTranscations': // 更多明細
         params = {
@@ -239,7 +235,7 @@ const C00300 = () => {
         break;
     }
 
-    startFunc(funcCode, params, model);
+    startFunc(funcCode, params, keepData);
   };
 
   /**

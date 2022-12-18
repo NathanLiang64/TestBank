@@ -158,7 +158,7 @@ const Transfer = (props) => {
       if (items.length === 0) {
         await showPrompt('您還沒有任何台幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
       } else {
-        const accts = items.filter((acct) => acct.transable); // 排除 transable = false 的帳戶。
+        const accts = items; // TODO .filter((acct) => acct.transable); // 排除 transable = false 的帳戶。
         setAccounts(accts);
         // 從 D00100_1 返回時會以 state 傳回原 model
         const mData = (state || await processStartParams(accts));
@@ -480,9 +480,9 @@ const Transfer = (props) => {
   /**
    * 輸出頁面
    */
-  return accounts ? (
+  return (
     <Layout title="台幣轉帳">
-      <TransferWrapper $insufficient={!model?.transOut.balance || model?.$sizetransOut.balance <= 0}>
+      <TransferWrapper $insufficient={!model?.transOut?.balance || model?.transOut?.balance <= 0}>
         <AccountOverview
           transferMode
           accounts={accounts}
@@ -505,6 +505,7 @@ const Transfer = (props) => {
               {/* 轉入帳戶區(一般轉帳) */}
               <FEIBTabPanel value="0">
                 {/* 當 startFuncParams 有預設轉入帳號時，不允許變更 */}
+                {/* // BUG BankCodeInput 在餘額為零時，仍可以選取 */}
                 <BankCodeInput control={control} name={idTransInBank} value={getValues(idTransInBank)} setValue={setValue} trigger={trigger}
                   readonly={startFuncParams?.transIn?.bank}
                   errorMessage={errors?.transIn?.bank?.message}
@@ -574,6 +575,7 @@ const Transfer = (props) => {
                     </>
                   ) : (
                     <div className="dateRangePickerArea">
+                      {/* // BUG 確認頁返回後，未顯示值，但 model 有資料。 */}
                       <DateRangePicker control={control} name={idTransRange} label="交易時間" {...datePickerLimit} defaultValue={getValues(idTransRange)} />
                       <FEIBErrorMessage>{errors.booking?.transRange?.message}</FEIBErrorMessage>
 
@@ -642,7 +644,7 @@ const Transfer = (props) => {
         </div>
       </TransferWrapper>
     </Layout>
-  ) : null;
+  );
 };
 
 export default Transfer;
