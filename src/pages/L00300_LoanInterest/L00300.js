@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { showDrawer, closeDrawer, showCustomPrompt } from 'utilities/MessageModal';
+import { showDrawer, closeDrawer } from 'utilities/MessageModal';
 import {
   accountFormatter, toCurrency, dateToYMD, dateToString,
 } from 'utilities/Generator';
@@ -10,7 +10,7 @@ import DebitCard from 'components/DebitCard/DebitCard';
 import InformationTape from 'components/InformationTape';
 import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
 import DownloadIcon from 'assets/images/icons/downloadIcon.svg';
-import { closeFunc, loadFuncParams, startFunc } from 'utilities/AppScriptProxy';
+import { loadFuncParams, startFunc } from 'utilities/AppScriptProxy';
 import EmptyData from 'components/EmptyData';
 import { FuncID } from 'utilities/FuncID';
 
@@ -64,7 +64,7 @@ const LoanInterest = () => {
   };
 
   const toDetailPage = (singleHistoryData) => {
-    startFunc(FuncID.L00300 + 1, { singleHistoryData, cardData });
+    startFunc(`${FuncID.L00300}1`, { singleHistoryData, cardData });
   };
 
   const renderEditList = () => (
@@ -95,10 +95,8 @@ const LoanInterest = () => {
   useEffect(async () => {
     const startParams = await loadFuncParams();
 
-    if (startParams?.card) {
+    if (startParams) {
       setCardData(startParams.card);
-    } else {
-      await showCustomPrompt({message: '參數錯誤', onOk: closeFunc, onClose: closeFunc});
     }
   }, []);
 

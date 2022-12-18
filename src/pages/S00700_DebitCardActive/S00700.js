@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -18,9 +18,8 @@ import { validationSchema } from './validationSchema';
 
 const S00700 = () => {
   const history = useHistory();
-  const [account, setAccount] = useState();
   const { QLResult, showMessage } = useQLStatus();
-  const { control, handleSubmit, setValue } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     defaultValues: { actno: '', serial: '' },
     resolver: yupResolver(validationSchema),
   });
@@ -40,11 +39,8 @@ const S00700 = () => {
 
   // 我的金融卡帳號欄位自動帶入金融卡台幣主帳號
   useEffect(() => {
-    getAccountsList('M', setAccount);
-    if (account) {
-      setValue('actno', account[0].accountNo);
-    }
-  }, [account]);
+    getAccountsList('M', (accounts) => reset((formValues) => ({...formValues, actno: accounts[0].accountNo})));
+  }, []);
 
   return (
     <Layout title="金融卡啟用">
@@ -55,7 +51,7 @@ const S00700 = () => {
             labelName="我的金融卡帳號"
             name="actno"
             control={control}
-            fontSize={1.5}
+            // fontSize={1.5}
             disabled
           />
           <TextInputField
@@ -64,7 +60,7 @@ const S00700 = () => {
             name="serial"
             placeholder="請輸入金融卡序號(金融卡背面右下角6碼數字)"
             control={control}
-            fontSize={1.5}
+            // fontSize={1.5}
           />
           <FEIBButton type="submit">確認</FEIBButton>
         </form>

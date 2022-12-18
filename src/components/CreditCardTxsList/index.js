@@ -1,5 +1,3 @@
-import uuid from 'react-uuid';
-
 import { EditIcon } from 'assets/images/icons';
 import Loading from 'components/Loading';
 import EmptyData from 'components/EmptyData';
@@ -31,8 +29,8 @@ const CreditCardTxsList = ({
   onTxnNotesEdit,
 }) => {
   //  提交memoText
-  const showMemoEditDialog = async (transaction) => {
-    await showCustomPrompt({
+  const showMemoEditDialog = (transaction) => {
+    showCustomPrompt({
       title: '編輯備註',
       message: (
         <MemoEditForm
@@ -52,9 +50,8 @@ const CreditCardTxsList = ({
     const transArr = showAll ? transactions : transactions.slice(0, 3); // 至多只輸出三筆資料
     return (
       <div style={{ paddingTop: '2.5rem' }}>
-        {transArr.map((transaction, index) => (
-          // TODO key 應該改成 transaction.txKey，但目前後端回傳的 txKey 是空值
-          <DetailCardWrapper key={uuid()} noShadow>
+        {transArr.map((transaction) => (
+          <DetailCardWrapper key={transaction.txKey} noShadow>
             <div className="description">
               <h4>{transaction.txName}</h4>
               <p>
@@ -69,7 +66,7 @@ const CreditCardTxsList = ({
                 <span>{transaction.note}</span>
                 <FEIBIconButton
                   $fontSize={1.6}
-                  onClick={() => showMemoEditDialog(transaction, index)} // TODO 確認是否有需要 index
+                  onClick={() => showMemoEditDialog(transaction)}
                   className="badIcon"
                 >
                   <EditIcon />
