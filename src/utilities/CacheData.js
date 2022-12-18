@@ -1,52 +1,6 @@
-/* eslint-disable no-use-before-define */
 import { setBanks, setBranches, setAccounts } from 'stores/reducers/CacheReducer';
 import store from 'stores/store';
 import { callAPI } from 'utilities/axios';
-
-/**
- * 更新本地 SessionStoreage 中的資料。
- * @param {*} storeName 存在 SessionStoreage 時使用的名稱。
- * @param {*} newData 要存入的新資料；若為 null 將在 SessionStoreage 中清除此項目。
- * @returns
- */
-export const setLocalData = async (storeName, newData) => {
-  if (newData) {
-    sessionStorage.setItem(storeName, JSON.stringify(newData));
-  } else {
-    sessionStorage.removeItem(storeName);
-  }
-  return newData;
-};
-
-/**
- * 載入本地 SessionStoreage 中的資料。
- * @param {*} storeName 存在 SessionStoreage 時使用的名稱。
- * @param {*} loadDataFunc 當 SessionStoreage 沒有資料時，可以透過這個方法取得 預設值。
- * @returns {Promise<*>} 存在 SessionStoreage 中的資料。
- */
-export const loadLocalData = async (storeName, loadDataFunc) => {
-  let data = sessionStorage.getItem(storeName);
-  try {
-    data = JSON.parse(data);
-  } catch (ex) {
-    sessionStorage.removeItem(storeName);
-    data = null;
-  }
-
-  if (!data && loadDataFunc) {
-    const result = loadDataFunc();
-    if (result instanceof Promise) {
-      await result.then((response) => {
-        setLocalData(storeName, response); // 暫存入以減少API叫用
-        data = response;
-      });
-    } else {
-      data = result;
-    }
-  }
-
-  return data;
-};
 
 /**
  * 查詢銀行代碼
@@ -221,8 +175,3 @@ export const updateAccount = async (newAccount) => {
     store.dispatch(setAccounts(accounts));
   }
 };
-
-/**
- * 清除帳號基本資料快取，直到下次使用 getAccountsList 時再重新載入。
- */
-export const resetAccountsList = () => setLocalData('Accounts', null);
