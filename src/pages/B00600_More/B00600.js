@@ -13,7 +13,6 @@ import { iconGenerator } from 'pages/S00100_Favorite/favoriteGenerator';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { getMoreList } from './api';
 import MoreWrapper from './B00600.style';
-// import B00600AplFxProxy from './B00600_AplFxProxy';
 
 /**
  * B00600 更多單元功能

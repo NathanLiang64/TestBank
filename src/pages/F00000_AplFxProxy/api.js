@@ -1,7 +1,7 @@
 import { callAPI } from 'utilities/axios';
 
 /**
- * 建立台幣轉帳交易，需再完成交易確認才會真的執行轉帳。
+ * 根據申請類別拿取 sse 字串
  * @param {{    prod: '申請代號',  }} request
  * @returns {Promise<{   sse: 'encode 的個資', }>}
  */
