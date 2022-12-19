@@ -8,7 +8,7 @@ import InformationList from 'components/InformationList';
 import { FEIBButton } from 'components/elements';
 
 import { transactionAuth } from 'utilities/AppScriptProxy';
-import { getBankCode } from 'utilities/CacheData';
+import { getAccountsList, getBankCode, updateAccount } from 'utilities/CacheData';
 import { showError } from 'utilities/MessageModal';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { createNtdTransfer, executeNtdTransfer } from './api';
@@ -105,10 +105,22 @@ const TransferConfirm = (props) => {
     };
 
     if (result.isSuccess) {
-      model.transOut.balance -= (model.amount - executeRs.fee);
+      if (result.balance !== (model.transOut.balance - model.amount - executeRs.fee)) alert(`餘額不一致：${model.transOut.balance - model.amount - executeRs.fee}`); // DEBUG
+      model.transOut.balance = executeRs.balance;
       if (result.isCrossBank) model.transOut.freeTransferRemain -= 1; // 跨轉優惠次數
 
-      // TODO 跨轉優惠次數、餘額 是否要寫回 LocalCache ？
+      // 更新快取（跨轉優惠次數、餘額）
+      getAccountsList('MSC', async (accounts) => {
+        const account = accounts.find((acc) => acc.accountNo === model.transOut.account);
+        updateAccount({
+          ...account,
+          balance: executeRs.balance, // 更新 餘額
+          bonus: {
+            ...account.bonus,
+            freeTransferRemain: model.transOut.freeTransferRemain, // 更新 跨轉優惠次數
+          },
+        });
+      });
     }
 
     return result;

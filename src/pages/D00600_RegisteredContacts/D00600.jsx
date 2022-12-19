@@ -1,15 +1,16 @@
-/* eslint-disable no-unused-vars */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useReducer } from 'react';
 import { useDispatch } from 'react-redux';
+import uuid from 'react-uuid';
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
 import { showDrawer } from 'utilities/MessageModal';
-import { loadFuncParams, closeFunc, getCallerFunc } from 'utilities/AppScriptProxy';
-import { loadLocalData, setLocalData } from 'utilities/CacheData';
+import { loadFuncParams, closeFunc } from 'utilities/AppScriptProxy';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
-import uuid from 'react-uuid';
-import { getAgreedAccount, updateAgreedAccount } from './api';
+import {
+  getAgreedAccount,
+  updateAgreedAccount,
+} from './api';
 import AccountEditor from './D00600_AccountEditor';
 import PageWrapper from './D00600.style';
 
@@ -18,12 +19,12 @@ import PageWrapper from './D00600.style';
  */
 const Page = () => {
   const dispatch = useDispatch();
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+
   const [selectorMode, setSelectorMode] = useState();
   const [bindAccount, setBindAccount] = useState();
   const [accounts, setAccounts] = useState();
   const [selectedAccount, setSelectedAccount] = useState();
-
-  const storageName = 'RegAccts';
 
   /**
    *- 初始化
@@ -31,7 +32,6 @@ const Page = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    let bindAcct = null;
     // Function Controller 提供的參數
     // startParams = {
     //   selectorMode: true, 表示選取帳號模式，啟用時要隱藏 Home 圖示。
@@ -39,20 +39,22 @@ const Page = () => {
     //   bindAccount: 只列出此帳號設定的約轉帳號清單。
     // };
     const startParams = await loadFuncParams();
-    if (startParams) {
-      bindAcct = startParams?.bindAccount;
-      setBindAccount(bindAcct);
-      setSelectorMode(startParams.selectorMode ?? false);
-      setSelectedAccount(startParams?.defaultAccount);
-    }
+    const bindAcct = startParams?.bindAccount;
 
     // 若有指定帳號，則只取單一帳號的約定帳號清單。
     // TODO 未指定帳號時，應改用頁韱分類。
-    setLocalData(storageName, null); // 強制下次進入後更新清單。 // TODO 不能只記某一個帳戶的約定帳號清單。
-    const accts = await loadLocalData(storageName, () => getAgreedAccount(bindAcct));
-    setAccounts(accts);
+    getAgreedAccount(bindAcct).then(async (accts) => {
+      // TODO 還要加上同ID互轉的帳號, 必需 同幣別。
+      setAccounts(accts);
 
-    dispatch(setWaittingVisible(false));
+      if (startParams) {
+        setBindAccount(bindAcct);
+        setSelectorMode(startParams.selectorMode ?? false);
+        setSelectedAccount(startParams?.defaultAccount);
+      }
+
+      dispatch(setWaittingVisible(false));
+    });
   }, []);
 
   /**
@@ -62,7 +64,7 @@ const Page = () => {
   const onAccountSelected = (acct) => {
     if (selectorMode) {
       const response = {
-        memberId: acct.memberId,
+        memberId: acct.headshot,
         accountName: acct.nickName,
         bankName: acct.bankName,
         bankId: acct.bankId,
@@ -78,18 +80,11 @@ const Page = () => {
    */
   const editAccount = async (acct) => {
     const onFinished = async (newAcct) => {
-      const successful = await updateAgreedAccount(newAcct);
-
       dispatch(setDrawerVisible(false));
-      if (successful) {
-        const {headshot, ...rest} = newAcct;
-        const updatedAccounts = accounts.map((account) => {
-          if (account.acctId === newAcct.acctId) return {...rest, headshot: account.headshot}; // account中headshot值為memberId
-          return account;
-        });
-        setAccounts(updatedAccounts);
-        setLocalData(storageName, null); // 強制下次進入後更新清單。
-      }
+
+      const newAccounts = await updateAgreedAccount(bindAccount, newAcct);
+      setAccounts(newAccounts);
+      forceUpdate();
     };
 
     await showDrawer('編輯約定帳號', (<AccountEditor initData={acct} onFinished={onFinished} />));
@@ -110,7 +105,7 @@ const Page = () => {
               bankNo={acct.bankId}
               bankName={acct.bankName}
               account={acct.acctId}
-              memberId={acct.memberId}
+              memberId={acct.headshot}
               isSelected={(acct.acctId === selectedAccount)}
               onClick={() => onAccountSelected(acct)} // 傳回值：選取的帳號。
               moreActions={acct.isSelf ? null : [ // 不可編輯自己的帳號。（因為是由同ID互轉建立的）

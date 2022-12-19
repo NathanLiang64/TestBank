@@ -26,9 +26,8 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showError, showInfo, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
 import { numberToChinese } from 'utilities/Generator';
-import { getAccountsList } from 'utilities/CacheData';
+import { getAccountBonus, getAccountsList } from 'utilities/CacheData';
 import { ChangeMemberIcon } from 'assets/images/icons';
-import { getAccountExtraInfo } from './api';
 import TransferWrapper from './D00100.style';
 import D00100AccordionContent from './D00100_AccordionContent';
 
@@ -159,7 +158,7 @@ const Transfer = (props) => {
       if (items.length === 0) {
         await showPrompt('您還沒有任何台幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
       } else {
-        const accts = items.filter((acct) => acct.transable); // 排除 transable = false 的帳戶。
+        const accts = items; // TODO .filter((acct) => acct.transable); // 排除 transable = false 的帳戶。
         setAccounts(accts);
         // 從 D00100_1 返回時會以 state 傳回原 model
         const mData = (state || await processStartParams(accts));
@@ -387,7 +386,7 @@ const Transfer = (props) => {
           <div className="memberAccountCardArea">
             {freqAcct && (
               <MemberAccountCard
-                memberId={freqAcct.memberId}
+                memberId={freqAcct.headshot}
                 name={freqAcct.accountName}
                 bankName={freqAcct.bankName}
                 bankNo={freqAcct.bankId}
@@ -407,7 +406,7 @@ const Transfer = (props) => {
           <div className="memberAccountCardArea">
             {regAcct && (
               <MemberAccountCard
-                memberId={regAcct.memberId}
+                memberId={regAcct.headshot}
                 name={regAcct.accountName}
                 bankName={regAcct.bankName}
                 bankNo={regAcct.bankId}
@@ -430,27 +429,6 @@ const Transfer = (props) => {
   };
 
   /**
-   * 下載 優存(利率/利息)資訊
-   */
-  const loadExtraInfo = (account) => {
-    if (!account.isLoadingExtra) {
-      account.isLoadingExtra = true; // 避免因為非同步執行造成的重覆下載
-      getAccountExtraInfo(account.accountNo).then((info) => {
-        model.transOut = {
-          ...model.transOut,
-          freeTransfer: account.freeTransfer = info.freeTransfer,
-          freeTransferRemain: account.freeTransferRemain = info.freeTransferRemain,
-        };
-
-        // TODO Update Accounts cache
-
-        delete account.isLoadingExtra; // 載入完成才能清掉旗標！
-        forceUpdate();
-      });
-    }
-  };
-
-  /**
    * 切換帳戶卡，變更 HookForm 轉出帳號相關資料，以及轉帳額度。
    */
   useEffect(() => {
@@ -464,7 +442,18 @@ const Transfer = (props) => {
     };
 
     // 若還沒有取得 免費跨轉次數 則立即補上。
-    if (!model.transOut.freeTransfer) loadExtraInfo(account);
+    if (!model.transOut.freeTransfer) {
+      // 下載 優存(利率/利息)資訊
+      getAccountBonus(account.accountNo, (info) => {
+        model.transOut = {
+          ...model.transOut,
+          freeTransfer: account.freeTransfer = info.freeTransfer,
+          freeTransferRemain: account.freeTransferRemain = info.freeTransferRemain,
+        };
+
+        forceUpdate();
+      });
+    }
 
     // 單筆轉帳限額 (用於設置至轉出金額驗證規則)
     // dgType = 帳戶類別('  '.非數存帳號, '11'.臨櫃數存昇級一般, '12'.一之二類, ' 2'.二類, '32'.三之二類)
@@ -491,9 +480,9 @@ const Transfer = (props) => {
   /**
    * 輸出頁面
    */
-  return accounts ? (
+  return (
     <Layout title="台幣轉帳">
-      <TransferWrapper $insufficient={model?.balance <= 0}>
+      <TransferWrapper $insufficient={!model?.transOut?.balance || model?.transOut?.balance <= 0}>
         <AccountOverview
           transferMode
           accounts={accounts}
@@ -501,7 +490,7 @@ const Transfer = (props) => {
           onAccountChanged={setSelectedAccountIdx}
         />
 
-        {/* {model?.balance <= 0 ? (<p className="insufficient">(帳戶餘額不足)</p>) : null} */}
+        {/* {model?.transOut.balance <= 0 ? (<p className="insufficient">(帳戶餘額不足)</p>) : null} */}
         <div className="transferServicesArea">
           <form>
             <FEIBTabContext value={String(watch(idTransType))}>
@@ -516,6 +505,7 @@ const Transfer = (props) => {
               {/* 轉入帳戶區(一般轉帳) */}
               <FEIBTabPanel value="0">
                 {/* 當 startFuncParams 有預設轉入帳號時，不允許變更 */}
+                {/* // BUG BankCodeInput 在餘額為零時，仍可以選取 */}
                 <BankCodeInput control={control} name={idTransInBank} value={getValues(idTransInBank)} setValue={setValue} trigger={trigger}
                   readonly={startFuncParams?.transIn?.bank}
                   errorMessage={errors?.transIn?.bank?.message}
@@ -585,6 +575,7 @@ const Transfer = (props) => {
                     </>
                   ) : (
                     <div className="dateRangePickerArea">
+                      {/* // BUG 確認頁返回後，未顯示值，但 model 有資料。 */}
                       <DateRangePicker control={control} name={idTransRange} label="交易時間" {...datePickerLimit} defaultValue={getValues(idTransRange)} />
                       <FEIBErrorMessage>{errors.booking?.transRange?.message}</FEIBErrorMessage>
 
@@ -653,7 +644,7 @@ const Transfer = (props) => {
         </div>
       </TransferWrapper>
     </Layout>
-  ) : null;
+  );
 };
 
 export default Transfer;

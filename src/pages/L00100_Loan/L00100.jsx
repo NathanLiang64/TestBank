@@ -143,7 +143,7 @@ const Page = () => {
     dispatch(setWaittingVisible(false));
     if (historyResponse) {
       const singleHistoryData = historyResponse.data[i];
-      startFunc(FuncID.L00300 + 1, { singleHistoryData, cardData });
+      startFunc(`${FuncID.L00300}1`, { singleHistoryData, cardData });
     }
   };
 
@@ -186,7 +186,7 @@ const Page = () => {
   };
 
   const handleMoreTransactionsClick = (card) => {
-    startFunc(FuncID.L00300, { card });
+    startFunc(FuncID.L00300, { card }); // TODO 需明確定義 card 的內容！
   };
 
   /**

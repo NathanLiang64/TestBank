@@ -2,16 +2,17 @@ import { Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import routes from 'routes';
+import Loading from 'components/Loading';
 
 /* Store */
 import { PersistGate } from 'redux-persist/integration/react';
-import { persistor } from 'stores/store';
-import store from './stores/store';
+import store, { persistor } from './stores/store';
 
 const App = () => (
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <Suspense fallback={<div>載入中....</div>}>
+      {/* 切換 Route 過程中，顯示的等待畫面 */}
+      <Suspense fallback={<Loading isFullscreen />}>
         <Switch>
           {
             routes.map((route) => {

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { getExchangeRateInfo } from 'pages/E00100_Exchange/api';
-import { dateToString, timeSecondFormatter } from 'utilities/Generator';
+import { datetimeToString } from 'utilities/Generator';
 import styled from 'styled-components';
 
 const ExchangeTableWrapper = styled.div`
@@ -44,14 +44,9 @@ const ExchangeTableWrapper = styled.div`
 `;
 
 const E00100Table = () => {
-  const [getInfoStr, setGetInfoStr] = useState('');
   const [exchangeRate, setExchangeRate] = useState([]);
 
   const getExchangeRate = async () => {
-    const now = new Date();
-    const dateStr = dateToString(now);
-    const timeStr = timeSecondFormatter(now);
-    setGetInfoStr(`${dateStr} ${timeStr}`);
     const { code, data } = await getExchangeRateInfo({});
     if (code === '0000') {
       setExchangeRate(data);
@@ -68,7 +63,7 @@ const E00100Table = () => {
         <div className="describe">
           <h2>
             查詢時間：
-            {getInfoStr}
+            {datetimeToString(new Date())}
             <br />
             本匯率僅供參考，實際匯率以本行交易時之匯率為準。
           </h2>

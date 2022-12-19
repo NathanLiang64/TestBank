@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-max-props-per-line */
-/* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable no-use-before-define */
 /* eslint-disable object-curly-newline */
 import { useEffect, useReducer, useState } from 'react';
@@ -16,9 +14,9 @@ import { FEIBInputLabel, FEIBInput } from 'components/elements';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
-import { switchZhNumber, toCurrency } from 'utilities/Generator';
-import { getAccountsList, resetAccountsList } from 'utilities/CacheData';
-import { getAccountExtraInfo } from 'pages/D00100_NtdTransfer/api';
+import { switchZhNumber, currencySymbolGenerator } from 'utilities/Generator';
+import { getAccountsList, getAccountBonus, updateAccount } from 'utilities/CacheData';
+import { FuncID } from 'utilities/FuncID';
 import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
 import {
   getTransactions,
@@ -74,7 +72,7 @@ const C00300 = () => {
     // }
     const startParams = await loadFuncParams();
     // 取得 Function Controller 提供的 keepData(model)
-    if (startParams && (typeof startParams === 'object')) {
+    if (startParams && (startParams instanceof Object)) {
       const index = accts.findIndex((acc) => acc.accountNo === startParams.defaultAccount);
       setSelectedAccountIdx(index);
       setShowRate(startParams.showRate);
@@ -112,18 +110,13 @@ const C00300 = () => {
   /**
    * 下載 優存(利率/利息)資訊
    */
-  const loadExtraInfo = (account) => {
-    if (!account.isLoadingExtra) {
-      account.isLoadingExtra = true; // 避免因為非同步執行造成的重覆下載
-      getAccountExtraInfo(account.accountNo).then((info) => {
-        account.freeTransferRemain = info.freeTransferRemain;
-        account.freeWithdrawRemain = info.freeWithdrawRemain;
-        account.bonusQuota = info.bonusQuota;
-        account.bonusRate = info.bonusRate;
-        account.interest = info.interest;
-
-        delete account.isLoadingExtra; // 載入完成才能清掉旗標！
+  const loadExtraInfo = async (account) => {
+    if (!account.bonus || !account.bonus.loading) {
+      account.bonus = { loading: true };
+      getAccountBonus(account.accountNo, (info) => {
+        account.bonus = info;
         forceUpdate();
+        delete account.bonus.loading;
       });
     }
   };
@@ -134,21 +127,19 @@ const C00300 = () => {
   const renderBonusInfoPanel = () => {
     if (!selectedAccount) return null;
 
-    const { freeWithdrawRemain, freeTransferRemain, bonusQuota, bonusRate, interest } = selectedAccount;
-    if (!freeTransferRemain) {
-      loadExtraInfo(selectedAccount);
-      return (
-        <div style={{ lineHeight: '5.28833rem', textAlign: 'center', marginBottom: '1.6rem' }}>載入中...</div>
-      );
-    }
+    const { bonus } = selectedAccount;
+    if (!bonus) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
 
+    const { freeWithdrawRemain, freeTransferRemain, bonusQuota, bonusRate, interest } = bonus ?? {
+      freeWithdrawRemain: null, freeTransferRemain: null, bonusQuota: null, bonusRate: null, interest: null, // 預設值
+    };
     const value1 = bonusRate ? `${bonusRate * 100}%` : '-';
-    const value2 = (interest >= 0) ? `$${toCurrency(interest)}` : '-';
+    const value2 = (interest > 0) ? `$${currencySymbolGenerator(interest)}` : '-';
     return (
       <div className="interestRatePanel">
         <div className="panelItem">
           <h3>免費跨提/轉</h3>
-          <p>{`${freeWithdrawRemain}/${freeTransferRemain}`}</p>
+          <p>{`${freeWithdrawRemain ?? '-'}/${freeTransferRemain ?? '-'}`}</p>
         </div>
         <div className="panelItem" onClick={() => setShowRate(!showRate)}>
           <h3>
@@ -182,7 +173,9 @@ const C00300 = () => {
     const body = (
       <>
         <FEIBInputLabel>新的帳戶名稱</FEIBInputLabel>
-        <FEIBInput {...register('newName')} autoFocus
+        <FEIBInput
+          {...register('newName')}
+          autoFocus
           inputProps={{ maxLength: 10, placeholder: '請設定此帳戶的專屬名稱', defaultValue: name, autoComplete: 'off' }}
         />
       </>
@@ -192,7 +185,11 @@ const C00300 = () => {
       setAccountAlias(selectedAccount.accountNo, selectedAccount.alias);
       forceUpdate();
 
-      resetAccountsList(); // 清除帳號基本資料快取，直到下次使用 getAccountsList 時再重新載入。
+      // NOTE 明細資料不需要存入Cache，下次進入C00300時才會更新。
+      const newAccount = {...selectedAccount};
+      delete newAccount.isLoadingTxn;
+      delete newAccount.txnDetails;
+      updateAccount(newAccount);
     };
     await customPopup('帳戶名稱編輯', body, handleSubmit(onOk));
   };
@@ -204,7 +201,7 @@ const C00300 = () => {
   const handleFunctionClick = async (funcCode) => {
     let params = null;
 
-    const model = { defaultAccount: selectedAccount.accountNo, showRate };
+    const keepData = { defaultAccount: selectedAccount.accountNo, showRate };
     switch (funcCode) {
       case 'moreTranscations': // 更多明細
         params = {
@@ -213,7 +210,7 @@ const C00300 = () => {
         };
         break;
 
-      case 'D00100': // 轉帳
+      case FuncID.D00100_台幣轉帳:
         params = { transOut: selectedAccount.accountNo };
         break;
 
@@ -221,7 +218,7 @@ const C00300 = () => {
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case 'E00100': // 換匯 // TODO 帶參數過去
+      case FuncID.E00100_換匯: // TODO 帶參數過去
         params = { transOut: selectedAccount.accountNo };
         break;
 
@@ -238,7 +235,7 @@ const C00300 = () => {
         break;
     }
 
-    startFunc(funcCode, params, model);
+    startFunc(funcCode, params, keepData);
   };
 
   /**
@@ -257,12 +254,12 @@ const C00300 = () => {
                 onFunctionClick={handleFunctionClick}
                 cardColor="purple"
                 funcList={[
-                  { fid: 'D00100', title: '轉帳', enabled: (selectedAccount.transable) },
+                  { fid: FuncID.D00100_台幣轉帳, title: '轉帳' },
                   { fid: 'D00300', title: '無卡提款', hidden: (selectedAccount.acctType !== 'M') },
                 ]}
                 moreFuncs={[
                   { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false },
-                  { fid: 'E00100', title: '換匯', icon: 'exchange', enabled: (selectedAccount.balance > 0) },
+                  { fid: FuncID.E00100_換匯, title: '換匯', icon: 'exchange', enabled: (selectedAccount.balance > 0) },
                   { fid: 'DownloadCover', title: '存摺封面下載', icon: 'coverDownload' },
                   { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
                 ]}

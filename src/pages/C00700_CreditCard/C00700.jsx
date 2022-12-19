@@ -60,8 +60,8 @@ const CreditCardPage = () => {
     setTransactionMap((prevMap) => {
       const key = isBankeeCard ? 0 : 1;
       const updatedCards = prevMap[key].map((card) => (
-        card.txKey === payload.txKey ? {...card, note: payload.note} : card));
-
+        card.txKey === payload.txKey ? {...card, note: payload.note} : card
+      ));
       return {...prevMap, [key]: updatedCards};
     });
   };

@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react';
-import { closeFunc, queryPushBind, startFunc } from 'utilities/AppScriptProxy';
-import {
-  showDrawer, closeDrawer, showCustomPrompt,
-} from 'utilities/MessageModal';
+import { useState } from 'react';
+import { queryPushBind, startFunc } from 'utilities/AppScriptProxy';
+import { showDrawer, closeDrawer } from 'utilities/MessageModal';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -168,23 +166,23 @@ const Notice = () => {
     );
   };
 
-  useEffect(async () => {
+  /**
+   * 檢查是否可以開啟這個頁面。
+   * @returns {Promise<String>} 傳回驗證結果的錯誤訊息；若是正確無誤時，需傳回 null
+   */
+  const inspector = async () => {
+    // 確認訊息通知是否同意
     const { PushBindStatus } = await queryPushBind();
-
     if (PushBindStatus) {
-      getNotices();
+      await getNotices();
     } else {
-      showCustomPrompt({
-        message: '您尚未同意 訊息通知功能，請先同意閱讀條款後再進行設定。',
-        okContent: '立即設定',
-        onOk: toSettingPage,
-        onClose: closeFunc,
-      });
+      // 未綁定直接轉至訊息通知設定頁面
+      startFunc(FuncID.S00400);
     }
-  }, []);
+  };
 
   return (
-    <Layout title="訊息通知">
+    <Layout title="訊息通知" inspector={inspector}>
       <NoticeWrapper>
         <div className="lighterBlueLine" />
         <div className="noticeContainer">
