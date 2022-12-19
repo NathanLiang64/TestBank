@@ -46,7 +46,7 @@ const L003001 = (props) => {
         <div className="cardArea">
           <DebitCard
             branch=""
-            cardName={model.cardData?.alias || ''}
+            cardName={model.cardData?.alias || '信貸'}
             account={`${accountFormatter(model.cardData?.accountNo || '')} ${model.cardData?.loanNo || ''}`}
             balance={toCurrency(model.cardData?.balance || '')}
             dollarSign={model.cardData?.currency || ''}

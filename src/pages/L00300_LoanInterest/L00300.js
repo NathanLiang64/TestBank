@@ -113,7 +113,7 @@ const LoanInterest = () => {
         <div className="cardArea">
           <DebitCard
             branch=""
-            cardName={cardData?.alias || ''}
+            cardName={cardData?.alias || '信貸'}
             account={`${accountFormatter(cardData?.accountNo || '')} ${
               cardData.loanNo
             }`}
