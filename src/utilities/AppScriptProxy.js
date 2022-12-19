@@ -231,8 +231,8 @@ async function startFunc(funcID, funcParams, keepData) {
   funcID = funcID.replace(/^\/*/, ''); // 移掉前置的 '/' 符號,
   const data = {
     funcID,
-    funcParams: JSON.stringify(funcParams), // 要先轉 JSON 字串是為了配合 APP JavaScript
-    keepData: JSON.stringify(keepData), // 要先轉 JSON 字串是為了配合 APP JavaScript
+    funcParams: funcParams ? JSON.stringify(funcParams) : null, // 要先轉 JSON 字串是為了配合 APP JavaScript
+    keepData: keepData ? JSON.stringify(keepData) : null, // 要先轉 JSON 字串是為了配合 APP JavaScript
   };
   funcStack.push(data);
 
@@ -300,7 +300,10 @@ async function closeFunc(response) {
 async function loadFuncParams() {
   try {
     const funcItem = funcStack.peek(); // 因為功能已經啟動，所以用 peek 取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
-    const isFunction = !funcItem || (/^[A-Z]\d{5}$/.test(funcItem.funcID)); // 表示 funcID 不是一般頁面，而是由 Function Controller 控制的單元功能。
+
+    // 表示 funcID 不是一般頁面，而是由 Function Controller 控制的單元功能。
+    // NOTE 這種判斷方式，非常容易誤判！只有「一個大寫字母＋5個數字」的功能代碼才算是單元功能。
+    const isFunction = !funcItem || (/^[A-Z]\d{5}$/.test(funcItem.funcID));
 
     /**
      * 取得儲存於 localStorage 的啟動參數。此功能是為了提供一般頁面或Web版Function Contoller用。
@@ -320,7 +323,8 @@ async function loadFuncParams() {
       // 解析由 APP 傳回的資料, 只要有 keepData 就表示是由叫用的功能結束返回
       // 因此，要以 keepData 為單元功能的啟動參數。
       // 反之，表示是單元功能被啟動，此時才是以 funcParams 為單元功能的啟動參數。
-      const dataStr = (data.keepData ?? data.funcParams);
+      const keepData = (data.keepData && data.keepData !== '') ? data.keepData : null;
+      const dataStr = (keepData ?? data.funcParams);
       params = (dataStr && dataStr.startsWith('{')) ? JSON.parse(dataStr) : null; // NOTE 只支援APP JS傳回JSON格式資料！
     }
 
@@ -329,6 +333,7 @@ async function loadFuncParams() {
     sessionStorage.removeItem('funcResp');
     if (response) {
       console.log('>> 前一單元功能的 傳回值 : ', response);
+      if (!params) params = {};
       params.response = JSON.parse(response);
     }
 

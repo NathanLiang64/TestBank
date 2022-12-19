@@ -185,7 +185,7 @@ function Layout({
    * 當 Drawer 關閉時，必需將 Result 設為 false, 才會結束 Promise
    */
   useEffect(() => {
-    if (showDrawer === false) setResult(false); // 傳回視窗結束狀態。
+    if (showDrawer === false && setResult) setResult(false); // 傳回視窗結束狀態。
   }, [showDrawer]);
 
   /**

@@ -93,7 +93,7 @@ export const ReserveTransferSearchWrapper = styled(Layout)`
         .MuiInputBase-root {
           .MuiInput-input {
             color: ${({ theme }) => theme.colors.primary.light};
-            font-size: 1.4rem;
+            // font-size: 1.4rem;
           }
         }
         .MuiInput-underline {

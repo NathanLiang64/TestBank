@@ -362,21 +362,9 @@ const AccountDetails = ({
         >
           {({ isVisible }) => (
             <DetailCard
+              {...item}
               id={item.txnDate.substr(0, 6)}
-              index={item.index}
               inView={isVisible ? 'Y' : 'N'}
-              title={item.description}
-              type={item.cdType}
-              txnDate={item.txnDate}
-              time={item.txnTime}
-              bizDate={item.bizDate}
-              targetBank={item.targetBank}
-              targetAccount={item.targetAcct}
-              targetMemberId={item.targetMbrID}
-              targetMemberName={item.targetNickName}
-              dollarSign={item.currency}
-              amount={item.amount}
-              balance={item.balance}
               noShadow
             />
           )}

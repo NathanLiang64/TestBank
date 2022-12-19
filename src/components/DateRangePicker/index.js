@@ -42,7 +42,7 @@ function DateRangePicker(props) {
     if (myValue?.length) {
       let range = myValue;
       let startDate = myValue[0];
-      if (typeof startDate === 'string') { // 為了相容台外幣明細
+      if (startDate?.constructor === String) { // 為了相容台外幣明細查詢
         if (!startDate) return; // 當沒有設定日期時，維持「自訂搜尋日期區間」為空白。
         startDate = stringToDate(startDate);
         const endDate = stringToDate(myValue[1]) ?? startDate;

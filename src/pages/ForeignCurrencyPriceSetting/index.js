@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { CurrencyInfo, dateToString, timeSecondFormatter } from 'utilities/Generator';
+import { CurrencyInfo, datetimeToString } from 'utilities/Generator';
 import { showCustomDrawer } from 'utilities/MessageModal';
 
 import AddNewItem from 'components/AddNewItem';
@@ -14,7 +14,7 @@ const ForeignCurrencyPriceSetting = () => {
   const [currencyInfo, setCurrencyInfo] = useState([]);
   const [notificationList, setNotificationList] = useState([]);
   const priceTypeOptions = [{label: '現金匯率', value: '0'}, {label: '即期匯率', value: '1'}];
-  const currentTime = `${dateToString(new Date())} ${timeSecondFormatter(new Date())}`;
+  const currentTime = datetimeToString(new Date());
   const currencyOptions = useMemo(() => {
     if (!currencyInfo.length) return [];
     return currencyInfo.map(({ccyCd, ccyName}) => ({label: ccyName, value: ccyCd}));

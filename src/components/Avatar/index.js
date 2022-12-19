@@ -55,7 +55,7 @@ const Avatar = ({
       // 將使用者指定的新圖片回傳給使用此元件的程式。
       if (onNewPhotoLoaded) onNewPhotoLoaded(imgData);
 
-      sessionStorage.setItem(`Avator_${memberId}`, imgData);
+      if (memberId) sessionStorage.setItem(`Avator_${memberId}`, imgData);
     };
   };
 
@@ -73,13 +73,14 @@ const Avatar = ({
 
   useEffect(() => {
     // 從本地 Cache 取出圖像。
-    const imgData = sessionStorage.getItem(`Avator_${memberId}`);
-    if (imgData) setPreview(imgData);
     if (memberId) {
-      const defaultSrc = `${process.env.REACT_APP_AVATAR_URL}/${memberId}.jpg`;
-      setSrc(defaultSrc);
+      const imgData = sessionStorage.getItem(`Avator_${memberId}`);
+      if (imgData) setPreview(imgData);
+      if (memberId) {
+        const defaultSrc = `${process.env.REACT_APP_AVATAR_URL}/${memberId}.jpg`;
+        setSrc(defaultSrc);
+      }
     }
-
     setShowDefault(!memberId);
   }, [memberId]);
 

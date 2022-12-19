@@ -16,7 +16,7 @@ import {
 } from 'assets/images/icons';
 import AccountEditor from 'pages/D00500_FrequentContacts/D00500_AccountEditor';
 import { addFrequentAccount } from 'pages/D00500_FrequentContacts/api';
-import { shareMessage } from 'utilities/AppScriptProxy';
+import { closeFunc, shareMessage } from 'utilities/AppScriptProxy';
 
 import { setDrawerVisible } from 'stores/reducers/ModalReducer';
 import { showDrawer, showError, showInfo } from 'utilities/MessageModal';
@@ -164,7 +164,7 @@ const TransferResult = (props) => {
    * 頁面輸出。
    */
   return (
-    <Layout goBack={false}>
+    <Layout goBackFunc={closeFunc}>
       <TransferWrapper className="transferResultPage">
         <ResultAnimation
           isSuccess={model.result.isSuccess}

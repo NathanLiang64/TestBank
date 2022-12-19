@@ -139,7 +139,7 @@ const C00500Modified = () => {
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case FuncID.E00100: // 換匯
+      case FuncID.E00100_換匯: // 換匯
         params = { transOut: selectedAccount.accountNo };
         break;
 
@@ -206,14 +206,14 @@ const C00500Modified = () => {
               cardColor="blue"
               funcList={[
                 {
-                  fid: 'D00100',
+                  fid: FuncID.D00100_台幣轉帳,
                   title: '轉帳',
                   enabled:
                     selectedAccount.transable
                     && selectedAccount.balance > 0,
                 },
                 {
-                  fid: 'E00100',
+                  fid: FuncID.E00100_換匯,
                   title: '換匯',
                   enabled: selectedAccount.balance > 0,
                 },

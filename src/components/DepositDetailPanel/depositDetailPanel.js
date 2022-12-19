@@ -36,21 +36,7 @@ const DepositDetailPanel = ({
 
     return (
       list.map((txnInfo) => (
-        <DetailCard
-          key={txnInfo.index}
-          title={txnInfo.description}
-          type={txnInfo.cdType}
-          txnDate={txnInfo.txnDate}
-          time={txnInfo.txnTime}
-          bizDate={txnInfo.bizDate}
-          targetBank={txnInfo.targetBank}
-          targetAccount={txnInfo.targetAcct}
-          targetMemberId={txnInfo.targetMbrID}
-          targetMemberName={txnInfo.targetNickName}
-          dollarSign={txnInfo.currency}
-          amount={txnInfo.amount}
-          balance={txnInfo.balance}
-        />
+        <DetailCard {...txnInfo} key={txnInfo.index} />
       ))
     );
   };

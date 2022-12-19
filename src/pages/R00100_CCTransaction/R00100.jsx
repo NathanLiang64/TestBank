@@ -33,15 +33,11 @@ const R00100 = () => {
 
   // 編輯信用卡明細備註的 Handler
   const onTxnNotesEdit = async (payload) => {
-    const { result } = await updateTxnNotes(payload);
+    const { result, message } = await updateTxnNotes(payload);
     if (result) {
-      setTransactions((prevTrans) => prevTrans.map((tran) => {
-        // TODO 目前測資回傳 txKey 為空字串，故加入 txDate 一起作為搜尋條件
-        const {txDate, txKey, note} = payload;
-        if (tran.txDate === txDate && tran.txKey === txKey) return {...tran, note};
-        return tran;
-      }));
-    } else showError('編輯備註失敗');
+      setTransactions((prevTrans) => prevTrans.map((tran) => (
+        tran.txKey === payload.txKey ? {...tran, note: payload.note} : tran)));
+    } else showError(message);
   };
 
   useEffect(async () => {

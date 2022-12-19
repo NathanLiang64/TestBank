@@ -1,3 +1,4 @@
+import { FuncID } from 'utilities/FuncID';
 import BlockPink from 'assets/images/favoriteBlock/blockPink.svg';
 import BlockYellow from 'assets/images/favoriteBlock/blockYellow.svg';
 import BlockBlue from 'assets/images/favoriteBlock/blockBlue.svg';
@@ -75,7 +76,7 @@ export const iconGenerator = (name) => {
       return <ApplyIcon4 />;
     case 'F00400':
       return <ApplyIcon5 />;
-    case 'D00100':
+    case FuncID.D00100_台幣轉帳:
       return <TransactionIcon1 />;
     case 'D00700':
       return <TransactionIcon2 />;
@@ -91,7 +92,7 @@ export const iconGenerator = (name) => {
       return <TransactionIcon7 />;
     case 'D00600':
       return <TransactionIcon8 />;
-    case 'E00100':
+    case FuncID.E00100_換匯:
       return <InvestIcon1 />;
     case 'E00200':
       return <InvestIcon2 />;

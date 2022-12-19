@@ -35,7 +35,7 @@ const T00100 = () => {
 
   const onSubmit = async (values) => {
     const response = await updateNickName(values);
-    if (typeof response === 'string') setNickName(values.nickName);
+    if (response?.constructor === String) setNickName(values.nickName);
   };
 
   const showEditNickNameDialog = () => {
