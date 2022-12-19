@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
@@ -13,14 +12,12 @@ import Accordion from 'components/Accordion';
 
 /* API */
 import {
-  closeFunc, queryPushBind, transactionAuth, updatePushBind,
+  queryPushBind, transactionAuth, updatePushBind,
 } from 'utilities/AppScriptProxy';
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import store from 'stores/store';
 import { AuthCode } from 'utilities/TxnAuthCode';
-import {
-  queryPushSetting, bindPushSetting, queryPushBindMock, updatePushBindMock,
-} from './api';
+import { queryPushSetting, bindPushSetting } from './api';
 
 /* Styles */
 import NoticeSettingWrapper from './S00400.style';
@@ -81,7 +78,6 @@ const S00400 = () => {
 
     /* 檢查有無同意過推播 */
     const queryIsOnResponse = await queryPushBind();
-    setIsPushBind(queryIsOnResponse.PushBindStatus);
     if (queryIsOnResponse.PushBindStatus === false) {
       showCustomPrompt({
         message: '您尚未同意「訊息通知使用條款」，請於設定完成後點選「同意」，立即開啟訊息通知功能。',
@@ -106,6 +102,7 @@ const S00400 = () => {
       });
     }
 
+    setIsPushBind(queryIsOnResponse.PushBindStatus);
     dispatch(setWaittingVisible(false));
   }, []);
 
@@ -166,18 +163,6 @@ const S00400 = () => {
             />
           </div>
         </div>
-        {/* <div className="settingItem">
-          <div className="settingLabel">
-            <span className="main">外幣到價通知</span>
-            <span className="sub">美金/澳幣/日圓</span>
-          </div>
-          <div className="switchItem">
-            <FEIBSwitch
-              checked={foreignCurrencyNoti}
-              onChange={() => handleSwitchChange('foreignCurrency')}
-            />
-          </div>
-        </div> */}
         <div className="settingItem">
           <div className="settingLabel">
             <span className="main">夜間通知靜音</span>
