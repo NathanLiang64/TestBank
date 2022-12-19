@@ -51,17 +51,16 @@ const S00700 = () => {
             labelName="我的金融卡帳號"
             name="actno"
             control={control}
-            // fontSize={1.5}
             disabled
           />
           <TextInputField
             type="number"
             labelName="我的金融卡序號"
             name="serial"
-            placeholder="請輸入金融卡序號(金融卡背面右下角6碼數字)"
+            placeholder="請輸入金融卡序號"
             control={control}
-            // fontSize={1.5}
           />
+          <p className="hint_text">金融卡背面右下角6碼數字</p>
           <FEIBButton type="submit">確認</FEIBButton>
         </form>
       </DebitCardActiveWrapper>

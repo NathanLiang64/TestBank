@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useDispatch } from 'react-redux';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -13,6 +13,7 @@ import {
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { getQLStatus, transactionAuth } from 'utilities/AppScriptProxy';
+import { useQLStatus } from 'hooks/useQLStatus';
 import { getSettingInfo, changeStatus } from './api';
 
 /* Styles */
@@ -25,6 +26,7 @@ import T00300DrawerContent from './T00300_drawerContent';
  */
 const T00300 = () => {
   const dispatch = useDispatch();
+  const {QLResult, showMessage} = useQLStatus(); // 確認裝置綁定狀態(比照無卡提款設定)
 
   const [model, setModel] = useState({});
 
@@ -91,53 +93,34 @@ const T00300 = () => {
    * 切換綁定狀態。
    */
   const handleSwitchOnTrigger = async () => {
-    if (!isBound) {
-      // 開通 or 申請+開通流程
-      // 若原狀態為 01.未開發 則表示第一次開通，只有此情況下不可變更綁定門號。
-      // 完成綁定門號開通後，status=3.已開通；之後的開關切換就是狀態3/4的互換。
-      showSettingDrawer(isUnlock); // status 由 01/04 變為 03.開通
-    } else {
-      /* 取消綁定(即：4.註銷) */
-      await authAndChangeStatus(AuthCode.T00300.CLOSE); // status 由 03 變為 04.註銷
-    }
-    setModel({...model}); // 更新畫面。
+    if (QLResult) { // 點擊switch時檢查裝置綁定
+      if (!isBound) {
+        // 開通 or 申請+開通流程
+        // 若原狀態為 01.未開發 則表示第一次開通，只有此情況下不可變更綁定門號。
+        // 完成綁定門號開通後，status=3.已開通；之後的開關切換就是狀態3/4的互換。
+        showSettingDrawer(isUnlock); // status 由 01/04 變為 03.開通
+      } else {
+        /* 取消綁定(即：4.註銷) */
+        await authAndChangeStatus(AuthCode.T00300.CLOSE); // status 由 03 變為 04.註銷
+      }
+      setModel({...model}); // 更新畫面。
+    } else showMessage();
   };
 
   /**
-   * 檢查是否可以開啟這個頁面。
-   * @returns {Promise<String>} 傳回驗證結果的錯誤訊息；若是正確無誤時，需傳回 null
+   * 取得初始資料
    */
-  const inspector = async () => {
+  useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    let error;
-    // 確認裝置綁定狀態
-    const deviceBinding = await getQLStatus();
-    if (deviceBinding.result === 'true' && deviceBinding.QLStatus === '1') {
-      // 查詢非約轉設定狀態與綁定的手機號碼。
-      const settingInfo = await getSettingInfo();
-      // if (settingInfo.status === ???) // TODO 那些狀態下就不能進行設定？
-      setModel(settingInfo);
-      error = null;
-    } else {
-      // TODO 統一處理！
-      // 1. 顯示訊息，2.設定按鈕名稱及功能
+    const settingInfo = await getSettingInfo();
+    // if (settingInfo.status === ???) // TODO 那些狀態下就不能進行設定？
+    setModel(settingInfo);
 
-      // 顯示錯誤訊息後，立即關閉功能。
-      switch (deviceBinding.QLStatus) {
-        case '0': error = '無裝置綁定，請進行裝置綁定設定或致電客服。'; break;
-        case '2': error = '???'; break; // 已裝置綁定 但鎖住！
-        case '3':
-        case '4': error = '您已進行裝置綁定，請至原裝置解除綁定或致電客服。'; break;
-        default: error = `${deviceBinding.message}，系統忙碌中，請重新執行或致電客服。`; break;
-      }
-    }
     dispatch(setWaittingVisible(false));
-    return error;
-  };
+  }, []);
 
-  // console.log('===> ', {...model, isUnlock, isBound }); // DEBUG
   return (
-    <Layout title="非約轉設定" inspector={inspector}>
+    <Layout title="非約轉設定">
       <T00300Wrapper>
         <div className="info_container">
           <div className="setting_switch">
