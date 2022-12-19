@@ -35,8 +35,11 @@ const BankCodeInput = ({
   /**
    *- 初始化
    */
-  useEffect(async () => {
+  useEffect(() => {
     getBankCode().then((banks) => setBankList(banks));
+    // D00500_AccountEditor 會渲染此 Component 的瞬間馬上 unmount，
+    // getBankCode 屬於 asynchronous，若 unmount 會造成 memory leaks，故在此新增 teardown function
+    return () => setBankList(null);
   }, []);
 
   /**

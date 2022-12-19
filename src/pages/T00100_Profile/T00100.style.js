@@ -57,7 +57,7 @@ const ProfileWrapper = styled(Layout)`
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 3.2rem;
+    margin: 2rem 0;
 
     span {
       color: ${({ theme }) => theme.colors.text.dark};

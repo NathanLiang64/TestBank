@@ -5,7 +5,7 @@ const AvatarWrapper = styled.div.attrs({
 })`
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 1.2rem;
+  
   width: fit-content;
   .photo {
     // padding: ${({ $small }) => ($small ? '.2rem' : '.4rem')};
