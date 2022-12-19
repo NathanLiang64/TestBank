@@ -23,12 +23,13 @@ const R00100 = () => {
   const [transactions, setTransactions] = useState();
   const go2Instalment = () => startFunc(FuncID.R00200, {cardNo: cardInfo.cardNo});
 
-  const fetchTransactions = async (cards) => {
+  const getTransactions = async (cards) => {
     const transactionsArray = await Promise.all(
       cards.map(({ cardNo }) => getTransactionPromise(cardNo)),
     );
     const flattedTransactions = transactionsArray.flat();
-    setTransactions(flattedTransactions);
+    // setTransactions(flattedTransactions);
+    return flattedTransactions;
   };
 
   // 編輯信用卡明細備註的 Handler
@@ -43,27 +44,28 @@ const R00100 = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
     let fetchedCardInfo = null;
+    let fetchedTransactions = null;
     const funcParams = await loadFuncParams();
 
     if (funcParams) {
       fetchedCardInfo = {...funcParams.card, usedCardLimit: funcParams.usedCardLimit};
+      fetchedTransactions = funcParams.transactions;
     } else {
-      // 若從更多 (B00600) 頁面進入，會先確認有沒有 bankee 信用卡，
-      // 查詢的交易明細就會預設以 bankee 信用卡為主
+      // 若從更多 (B00600) 頁面進入，會先確認有沒有 bankee 信用卡，查詢的交易明細就會預設以 bankee 信用卡為主
       const bankeeCardInfo = await getBankeeCard();
       if (bankeeCardInfo) fetchedCardInfo = bankeeCardInfo;
+      if (!fetchedCardInfo) {
+        await showCustomPrompt({
+          message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
+          onOk: closeFunc,
+          onClose: closeFunc,
+        });
+      }
+      fetchedTransactions = await getTransactions(fetchedCardInfo.cards);
     }
 
-    if (!fetchedCardInfo) {
-      await showCustomPrompt({
-        message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
-        onOk: closeFunc,
-        onClose: closeFunc,
-      });
-    }
-    fetchTransactions(fetchedCardInfo.cards);
     setCardInfo(fetchedCardInfo);
-
+    setTransactions(fetchedTransactions);
     dispatch(setWaittingVisible(false));
   }, []);
 
