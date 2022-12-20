@@ -10,6 +10,11 @@ const DepositDetailPanelWrapper = styled.div`
     flex-grow: 1;
     margin-bottom: 1.6rem;
 
+    .emptyDataContainer {
+      width: 100%;
+      height: 50vh;
+    }
+
     .moreButton {
       display: inline-flex;
       justify-content: center;

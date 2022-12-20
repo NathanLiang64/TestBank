@@ -134,7 +134,7 @@ const C00300 = () => {
       freeWithdrawRemain: null, freeTransferRemain: null, bonusQuota: null, bonusRate: null, interest: null, // 預設值
     };
     const value1 = bonusRate ? `${bonusRate * 100}%` : '-';
-    const value2 = (interest > 0) ? `$${currencySymbolGenerator(interest)}` : '-';
+    const value2 = (interest > 0) ? `${currencySymbolGenerator('TWD', interest)}` : '0';
     return (
       <div className="interestRatePanel">
         <div className="panelItem">
@@ -258,7 +258,7 @@ const C00300 = () => {
                   { fid: 'D00300', title: '無卡提款', hidden: (selectedAccount.acctType !== 'M') },
                 ]}
                 moreFuncs={[
-                  { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false },
+                  // { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false }, // TODO: 此階段隱藏
                   { fid: FuncID.E00100_換匯, title: '換匯', icon: 'exchange', enabled: (selectedAccount.balance > 0) },
                   { fid: 'DownloadCover', title: '存摺封面下載', icon: 'coverDownload' },
                   { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },

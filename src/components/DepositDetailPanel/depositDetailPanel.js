@@ -17,27 +17,21 @@ const DepositDetailPanel = ({
 
     if (!details.length) {
       return (
-        <div style={{ height: 500, width: '100%' }}>
+        // EmptyData圖樣在下方畫面中視覺上應垂直置中 style={{ height: 300, width: '100%' }}
+        <div className="emptyDataContainer">
           <EmptyData content="查無最近三年內的帳務往來資料" />
         </div>
       );
     }
 
-    // 計算可顯示的明細項目數量。
-    const yPos = detailsRef?.current?.getBoundingClientRect()?.y;
-    const detailAreaHeight = yPos ? window.innerHeight - yPos : 430; // 如果沒有，預設顯示 5 筆
-
-    // 根據剩餘高度計算要顯示的卡片數量，計算裝置可容納的交易明細卡片數量
+    // 可顯示明細數量限制為三筆
     const list = [];
-    const computedCount = Math.floor((detailAreaHeight - 30) / 80);
-    for (let i = 0; (i < computedCount && i < details.length); i++) {
+    for (let i = 0; (i < 3 && i < details.length); i++) {
       list.push(details[i]);
     }
 
     return (
-      list.map((txnInfo) => (
-        <DetailCard {...txnInfo} key={txnInfo.index} />
-      ))
+      list.map((txnInfo) => <DetailCard {...txnInfo} key={txnInfo.index} />)
     );
   };
 

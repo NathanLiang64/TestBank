@@ -46,6 +46,14 @@ const InformationListWrapper = styled.div`
   .text-primary {
     color: ${({ theme }) => theme.colors.primary.brand};
   }
+
+  .text-nowrap {
+    white-space: nowrap;
+  }
+
+  .text-align-end {
+    text-align: end;
+  }
 `;
 
 export default InformationListWrapper;

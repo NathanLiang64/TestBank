@@ -1,6 +1,7 @@
 import { useHistory } from 'react-router';
 import { useEffect, useState } from 'react';
 import { StarRounded } from '@material-ui/icons';
+import { getThisMonth } from 'utilities/MonthGenerator';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -58,6 +59,7 @@ const Deposit = () => {
     getBonusPeriodList({})
       .then((response) => {
         const sortedMonthly = response?.sort((a, b) => b - a);
+        if (!response.length) sortedMonthly.push(getThisMonth()); // 如果沒有回傳資料，顯示系統年月
         setMonthly(sortedMonthly);
         setTabId(sortedMonthly[0]);
       });
@@ -92,7 +94,8 @@ const Deposit = () => {
 
         <div className="mainArea">
           <span>
-            {`${renderText(depositPlusDetail.period?.substr(0, 4))}/${renderText(depositPlusDetail.period?.substr(4))} `}
+            {/* 如果沒有回傳資料，顯示系統年月 */}
+            {depositPlusDetail.period !== undefined && `${!depositPlusDetail.period ? monthly[0].substr(0, 4) : depositPlusDetail.period.substr(0, 4)}/${!depositPlusDetail.period ? monthly[0].substr(4) : depositPlusDetail.period.substr(4)}`}
             優惠利率額度總計
           </span>
           <h3>{`$${renderText(toCurrency(parseInt(depositPlusDetail.summaryBonusQuota, 10)))}`}</h3>

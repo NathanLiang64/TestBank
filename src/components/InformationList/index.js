@@ -24,8 +24,9 @@ const InformationList = ({
     {/* 沒有 remark 時，將主要內容對齊下方 */}
     {!remark && (<div className="flex text-remark" />)}
     <div className="flex text-title">
-      <div className="text-gray">{title}</div>
-      <div className={textColor}>
+      {/* 強制標題灰字不換行、內容靠右對齊 */}
+      <div className="text-gray text-nowrap">{title}</div>
+      <div className={`${textColor} text-align-end`}>
         {content}
         {extra && <span className="text-green">{extra}</span>}
       </div>
