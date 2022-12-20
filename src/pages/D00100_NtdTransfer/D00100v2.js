@@ -24,7 +24,9 @@ import MemberAccountCard from 'components/MemberAccountCard';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showError, showInfo, showPrompt } from 'utilities/MessageModal';
-import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
+import {
+  loadFuncParams, startFunc, closeFunc,
+} from 'utilities/AppScriptProxy';
 import { numberToChinese } from 'utilities/Generator';
 import { getAccountBonus, getAccountsList } from 'utilities/CacheData';
 import { ChangeMemberIcon } from 'assets/images/icons';
@@ -166,7 +168,9 @@ const Transfer = (props) => {
         setSelectedAccountIdx(mData.selectedAccountIdx ?? 0); // Swiper 切回原本的 Slide
 
         // 將 Model 資料填入 UI Form 的對應欄位。
-        reset(mData);
+        // reset(mData);
+        // 使用前值 formValues 避免所有 defaultValues 都被 mData 覆蓋掉
+        reset((formValues) => ({...formValues, ...mData}));
         dispatch(setWaittingVisible(false));
       }
     });
@@ -205,7 +209,7 @@ const Transfer = (props) => {
     const transOutAccount = params.transOut ?? '';
     // 若啟動參數有指定預設帳號(transOut)時，則不能切換轉出帳號，只保留此帳號卡。
     // 若未指定時，則維持所有帳號供使用者選擇。
-    if (transOutAccount.constructor === String) { // NOTE 用建構式來判斷資料型別！
+    if (transOutAccount.constructor === String && !!transOutAccount) { // NOTE 用建構式來判斷資料型別！
       const index = accts.findIndex((acct) => acct.accountNo === transOutAccount);
       if (index < 0) {
         // 查無指定的轉帳帳號，立即返回closeFunc。
@@ -223,7 +227,7 @@ const Transfer = (props) => {
       // 將只有帳號字串，改為 model 的 transOut 物件。
       initModel.transOut.account = transOutAccount;
     } else {
-      // 從 D00500/D00600 返回時，才會進這段邏輯。
+      // 從 QRCode/D00500/D00600 返回時，才會進這段邏輯。
       const {transIn} = params;
       if (!transIn.freqAcct && !transIn.regAcct) transIn.type = 0;
       initModel = params;
@@ -505,8 +509,7 @@ const Transfer = (props) => {
 
               {/* 轉入帳戶區(一般轉帳) */}
               <FEIBTabPanel value="0">
-                {/* 當 startFuncParams 有預設轉入帳號時，不允許變更 */}
-                {/* 在餘額為零時，不允許變更 */}
+                {/* 當 startFuncParams 有預設轉入帳號 或 帳戶餘額為零時，不允許變更 */}
                 <BankCodeInput control={control} name={idTransInBank} value={getValues(idTransInBank)} setValue={setValue} trigger={trigger}
                   readonly={startFuncParams?.transIn?.bank || !accounts?.at(selectedAccountIdx)?.balance}
                   errorMessage={errors?.transIn?.bank?.message}

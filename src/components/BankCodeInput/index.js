@@ -4,6 +4,7 @@ import { FEIBErrorMessage, FEIBInput, FEIBInputLabel } from 'components/elements
 import { ListIcon } from 'assets/images/icons';
 import { Controller } from 'react-hook-form';
 import { getBankCode } from 'utilities/CacheData';
+import Loading from 'components/Loading';
 
 /*
 * ================== BankCodeInput 組件說明 ==================
@@ -45,8 +46,13 @@ const BankCodeInput = ({
   /**
    * HTML輸出。
    */
+
+  //  在 bankList 還沒準備好之前，不應該出現 Input 欄位給使用者點擊，
+  // 因為 bankList 此時還是 undefined，會造成 JavaScript Crash
+  if (!bankList) return <Loading space="bottom" isCentered />;
+
   return (
-    <div style={{ pointerEvents: (readonly ? 'none' : 'auto') }}>
+    <div style={{ pointerEvents: readonly ? 'none' : 'auto' }}>
       <Controller
         control={control}
         name={name}
@@ -57,7 +63,9 @@ const BankCodeInput = ({
             <FEIBInput
               {...field}
               placeholder="請選擇"
-              value={`${value ?? ''} ${bankList?.find((b) => b.bankNo === value)?.bankName ?? ''}`}
+              value={`${value ?? ''} ${
+                bankList?.find((b) => b.bankNo === value)?.bankName ?? ''
+              }`}
               $icon={<ListIcon />}
               $iconFontSize={2.4}
               $iconOnClick={() => setShowSelector(true)}
