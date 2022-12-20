@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useHistory } from 'react-router';
 import { useEffect, useState } from 'react';
 import { StarRounded } from '@material-ui/icons';
@@ -5,7 +6,6 @@ import { getThisMonth } from 'utilities/MonthGenerator';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-// import Dialog from 'components/Dialog';
 import {
   FEIBTab, FEIBTabContext, FEIBTabList,
 } from 'components/elements';
@@ -47,6 +47,8 @@ const Deposit = () => {
       </FEIBTabList>
     </FEIBTabContext>
   );
+
+  const isRenderActivityStar = (name) => name.includes('*');
 
   const nextPage = () => {
     history.push('/depositPlusDetail', { bonusDetail: depositPlusDetail.bonusDetail, year: tabId.substr(0, 4) });
@@ -118,7 +120,10 @@ const Deposit = () => {
             {!!depositPlusDetail.bonusDetail && depositPlusDetail.bonusDetail.map((detail) => (
               <li className="listBody" key={detail}>
                 <div>
-                  <p>{detail.promotionName}</p>
+                  <p>
+                    {detail.promotionName.replace('*', '')}
+                    <span>{detail.promotionName.includes('*') && <StarRounded className="starIcon" />}</span>
+                  </p>
                   <span>{detail.memo}</span>
                 </div>
                 <p className="limitPrice">

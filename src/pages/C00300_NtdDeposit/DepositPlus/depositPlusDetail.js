@@ -117,12 +117,13 @@ const DepositPlusDetail = () => {
     /* 移除<a>，將字串依換行符號切成字串陣列，移除所有'●' */
     const aTagRemovedDetail = detail.replace(/<a(.*?)<\/a>/g, '').replaceAll('●', '');
 
+    /* 以<br>分隔成陣列 */
     const detailList = aTagRemovedDetail.split('<br>');
 
     return (
       <div className="activityCard">
         <div className="activityCard_upper">
-          <div className="title">{title}</div>
+          <div className="title">{title.replace('*', '')}</div>
           <div className="detail" onClick={async () => await handleDetailOnClick(detailLinkText)}>
             {detailLinkText}
             <ArrowNextIcon />
