@@ -10,7 +10,7 @@ const LoanInterestWrapper = styled(Layout)`
     width: 100vw;
     height: 14.1rem;
     transform: translateX(-1.6rem);
-    padding: .8rem 1.6rem;
+    padding: 1.2rem 1.6rem;
 
     .debitCard {
       margin-bottom: 0;

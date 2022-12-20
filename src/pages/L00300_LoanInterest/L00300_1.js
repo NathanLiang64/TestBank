@@ -1,9 +1,7 @@
 /* eslint-disable react/destructuring-assignment */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import {
-  accountFormatter, toCurrency, dateToString,
-} from 'utilities/Generator';
+import { toCurrency, dateToString, handleLoanTypeToTitle } from 'utilities/Generator';
 import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
 
 /* Elements */
@@ -43,11 +41,12 @@ const L003001 = (props) => {
     <Layout title="繳款紀錄查詢" goBackFunc={handleGoBack}>
       {model && (
       <LoanInterestWrapper>
+        {console.log('L003001 model', model)}
         <div className="cardArea">
           <DebitCard
             branch=""
-            cardName={model.cardData?.alias || '信貸'}
-            account={`${accountFormatter(model.cardData?.accountNo || '')} ${model.cardData?.loanNo || ''}`}
+            cardName={handleLoanTypeToTitle(model.singleHistoryData?.type)}
+            account={`${model.cardData?.accountNo || ''} ${model.cardData?.loanNo || ''}`}
             balance={toCurrency(model.cardData?.balance || '')}
             dollarSign={model.cardData?.currency || ''}
             transferTitle=""

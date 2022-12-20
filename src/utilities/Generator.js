@@ -1,6 +1,8 @@
 /* eslint-disable object-curly-newline */
 /* eslint-disable import/prefer-default-export */
 
+import { PaymentType } from './LoanPaymentType';
+
 /* ========= 通用函式 ========= */
 
 // 將帳號轉為指定字數間帶有分隔符 (-) 之顯示方式
@@ -361,4 +363,15 @@ export const switchZhNumber = (numIndication, isPlus) => {
     default:
       return '0';
   }
+};
+
+export const handleLoanTypeToTitle = (type) => {
+  const isCorrect = type.match('更正-') !== null;
+  let typeCode = type;
+
+  if (isCorrect) {
+    typeCode = type.substring(3);
+  }
+
+  return isCorrect ? `${PaymentType[typeCode]}(更正交易)` : `${PaymentType[typeCode]}`;
 };

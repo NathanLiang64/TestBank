@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { showDrawer, closeDrawer } from 'utilities/MessageModal';
 import {
-  accountFormatter, toCurrency, dateToYMD, dateToString,
+  toCurrency, dateToYMD, dateToString, handleLoanTypeToTitle,
 } from 'utilities/Generator';
 
 /* Elements */
@@ -13,8 +13,6 @@ import DownloadIcon from 'assets/images/icons/downloadIcon.svg';
 import { loadFuncParams, startFunc } from 'utilities/AppScriptProxy';
 import EmptyData from 'components/EmptyData';
 import { FuncID } from 'utilities/FuncID';
-
-import { PaymentType } from 'utilities/LoanPaymentType';
 import { getSubPaymentHistory } from './api';
 
 /* Styles */
@@ -114,7 +112,7 @@ const LoanInterest = () => {
           <DebitCard
             branch=""
             cardName={cardData?.alias || '信貸'}
-            account={`${accountFormatter(cardData?.accountNo || '')} ${
+            account={`${cardData?.accountNo || ''} ${
               cardData.loanNo
             }`}
             balance={toCurrency(cardData?.balance || '')}
@@ -146,23 +144,16 @@ const LoanInterest = () => {
           </div>
           {recordsList.length ? (
             <div className="recordsList">
-              {recordsList.map((item) => {
-                const isCorrect = item.type.match('更正-') !== null;
-                let typeCode = item.type;
-                if (isCorrect) {
-                  typeCode = item.type.substring(3);
-                }
-                return (
-                  <InformationTape
-                    key={recordsList.indexOf(item)}
-                    topLeft={isCorrect ? `${PaymentType[typeCode]}(更正交易)` : `${PaymentType[typeCode]}`}
-                    topRight={`$${toCurrency(item.amount)}`}
-                    bottomLeft={`${dateToString(item.date)}`}
-                    bottomRight={`貸款餘額 $${toCurrency(item.balance)}`}
-                    onClick={() => toDetailPage(item)}
-                  />
-                );
-              })}
+              {recordsList.map((item) => (
+                <InformationTape
+                  key={recordsList.indexOf(item)}
+                  topLeft={handleLoanTypeToTitle(item.type)}
+                  topRight={`$${toCurrency(item.amount)}`}
+                  bottomLeft={`${dateToString(item.date)}`}
+                  bottomRight={`貸款餘額 $${toCurrency(item.balance)}`}
+                  onClick={() => toDetailPage(item)}
+                />
+              ))}
             </div>
           ) : (
             <EmptyData content="查無最近三年內的帳務往來資料" />

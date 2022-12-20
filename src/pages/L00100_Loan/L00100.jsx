@@ -17,7 +17,7 @@ import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import InformationTape from 'components/InformationTape';
 import EmptyData from 'components/EmptyData';
 import {
-  accountFormatter, dateToString, currencySymbolGenerator, dateToYMD,
+  accountFormatter, dateToString, currencySymbolGenerator, dateToYMD, handleLoanTypeToTitle,
 } from 'utilities/Generator';
 
 import { startFunc } from 'utilities/AppScriptProxy';
@@ -25,12 +25,12 @@ import { FuncID } from 'utilities/FuncID';
 import { getSubSummary, getContract, getSubPaymentHistory } from './api';
 import { getLoanSummary } from './utils';
 import PageWrapper, { ContentWrapper } from './L00100.style';
-import { PaymentType } from '../../utilities/LoanPaymentType';
 
 const uid = uuid();
 
 /**
  * L00100 貸款 首頁
+ * TODO: 調整架構，下方卡片應lazy loading
  */
 const Page = () => {
   const history = useHistory();
@@ -159,30 +159,22 @@ const Page = () => {
     // transactions 依照日期排序（大 -> 小）
     const sortedTransactions = card.transactions.sort((a, b) => parseInt(b.txnDate, 10) - parseInt(a.txnDate, 10));
 
-    return sortedTransactions.slice(0, 3).map((t, i) => {
-      const isCorrect = t.type.match('更正-') !== null;
-      let typeCode = t.type;
-      if (isCorrect) {
-        typeCode = t.type.substring(3);
-      }
-
-      return (
-        <button
-          key={`${uid}-t${i}`}
-          type="button"
-          aria-label={`點擊查詢此筆紀錄，還款日:${dateToString(t.txnDate)}，金額：${currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}`}
-          onClick={() => handleSingleTransaction(i, card)}
-          style={{ width: '100%' }}
-        >
-          <InformationTape
-            topLeft={isCorrect ? `${PaymentType[typeCode]}(更正交易)` : `${PaymentType[typeCode]}`}
-            bottomLeft={dateToString(t.txnDate)}
-            topRight={currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}
-            bottomRight={`貸款餘額 ${currencySymbolGenerator(t.currency ?? 'NTD', t.balance)}`}
-          />
-        </button>
-      );
-    });
+    return sortedTransactions.slice(0, 3).map((t, i) => (
+      <button
+        key={`${uid}-t${i}`}
+        type="button"
+        aria-label={`點擊查詢此筆紀錄，還款日:${dateToString(t.txnDate)}，金額：${currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}`}
+        onClick={() => handleSingleTransaction(i, card)}
+        style={{ width: '100%' }}
+      >
+        <InformationTape
+          topLeft={handleLoanTypeToTitle(t.type)}
+          bottomLeft={dateToString(t.txnDate)}
+          topRight={currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}
+          bottomRight={`貸款餘額 ${currencySymbolGenerator(t.currency ?? 'NTD', t.balance)}`}
+        />
+      </button>
+    ));
   };
 
   const handleMoreTransactionsClick = (card) => {
