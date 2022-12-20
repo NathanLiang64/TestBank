@@ -72,7 +72,9 @@ const D00800 = () => {
 
   // 取得帳號清單
   const fetchTransferOutAccounts = async () => {
-    const accountsListRes = await getAccountsList('MSC', async (accts) => {
+    let accountsListRes;
+    await getAccountsList('MSC', async (accts) => {
+      console.log('accts', accts);
       const newAccts = accts.map((acct) => ({
         acctBranch: acct.branchName, // 分行代碼
         acctName: acct.alias, // 帳戶名稱或暱稱
@@ -82,9 +84,10 @@ const D00800 = () => {
         ccycd: acct.currency, // 幣別代碼
       }));
       setAccountsList(newAccts);
+      accountsListRes = newAccts;
       setSelectedAccount(newAccts[0]);
     });
-
+    // TODO 若無 MSC 類別的帳戶，要給什麼提示訊息給使用者
     return accountsListRes.length ? null : '查無帳戶資訊';
   };
 

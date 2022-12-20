@@ -116,7 +116,7 @@ const Transfer = (props) => {
       transIn: { // 轉入帳戶
         type: 0, // 0.一般轉帳, 1.常用轉帳, 2.約定轉帳, 3.社群轉帳
         bank: undefined, // 轉入帳戶的銀行
-        account: undefined, // 轉入帳戶的帳號
+        account: '', // 轉入帳戶的帳號
         freqAcct: undefined, // 目前選擇的 常用帳號
         regAcct: undefined, // 目前選擇的 約定帳號
       },
@@ -130,7 +130,7 @@ const Transfer = (props) => {
         cycleTiming: 0, // 交易週期: 〔 0~6: 周日~周六 〕或〔 1~31: 每月1~31〕, 月底(29/30/31)會加警示。
         transTimes: 0, // 預約轉帳次數。 【註】在 onSubmit 時計算並寫入。
       },
-      memo: undefined, // 備註
+      memo: '', // 備註
     },
   });
 
@@ -480,6 +480,7 @@ const Transfer = (props) => {
   /**
    * 輸出頁面
    */
+
   return (
     <Layout title="台幣轉帳">
       <TransferWrapper $insufficient={!model?.transOut?.balance || model?.transOut?.balance <= 0}>
@@ -505,14 +506,14 @@ const Transfer = (props) => {
               {/* 轉入帳戶區(一般轉帳) */}
               <FEIBTabPanel value="0">
                 {/* 當 startFuncParams 有預設轉入帳號時，不允許變更 */}
-                {/* // BUG BankCodeInput 在餘額為零時，仍可以選取 */}
+                {/* 在餘額為零時，不允許變更 */}
                 <BankCodeInput control={control} name={idTransInBank} value={getValues(idTransInBank)} setValue={setValue} trigger={trigger}
-                  readonly={startFuncParams?.transIn?.bank}
+                  readonly={startFuncParams?.transIn?.bank || !accounts?.at(selectedAccountIdx)?.balance}
                   errorMessage={errors?.transIn?.bank?.message}
                 />
                 <div>
                   <FEIBInputLabel htmlFor={idTransInAcct}>轉入帳號</FEIBInputLabel>
-                  <Controller control={control} name={idTransInAcct} defaultValue={getValues(idTransInAcct)}
+                  <Controller control={control} name={idTransInAcct}
                     render={({ field }) => (
                       // 當 startFuncParams 有預設轉入帳號時，不允許變更
                       <FEIBInput {...field} placeholder="請輸入" inputMode="numeric" error={!!errors?.transIn?.account}
@@ -530,7 +531,7 @@ const Transfer = (props) => {
             {/* 轉帳金額 */}
             <div className="customSpace">
               <FEIBInputLabel htmlFor={idAmount}>金額</FEIBInputLabel>
-              <Controller control={control} name={idAmount} defaultValue={getValues(idAmount)}
+              <Controller control={control} name={idAmount}
                 render={({ field }) => (
                   <div>
                     {/* 當 startFuncParams 有預設轉帳金額時，不允許變更 */}
@@ -548,7 +549,7 @@ const Transfer = (props) => {
             {/* 轉帳類型(0.立即轉帳, 1.預約轉帳) */}
             <div className="transferMode">
               <FEIBInputLabel>轉帳類型</FEIBInputLabel>
-              <Controller control={control} name={idMode} defaultValue={getValues(idMode)}
+              <Controller control={control} name={idMode}
                 render={({ field }) => (
                   <RadioGroup {...field} row aria-label="轉帳類型" name={idMode} onChange={(e) => setValue(idMode, parseInt(e.target.value, 10))}>
                     <FEIBRadioLabel value={0} control={<FEIBRadio />} label="立即" className="customWidth" />
@@ -559,7 +560,7 @@ const Transfer = (props) => {
               {(watch(idMode) === 1) ? (
                 <div className="reserveOption">
                   <FEIBInputLabel htmlFor={idMultiTimes}>轉帳次數</FEIBInputLabel>
-                  <Controller control={control} name={idMultiTimes} defaultValue={getValues(idMultiTimes)}
+                  <Controller control={control} name={idMultiTimes}
                     render={({ field }) => (
                       <FEIBSelect {...field} name={idMultiTimes}>
                         <FEIBOption value="1">一次</FEIBOption>
@@ -570,20 +571,20 @@ const Transfer = (props) => {
                   {watch(idMultiTimes) === '1' ? (
                     <>
                       <FEIBInputLabel className="datePickerLabel">交易時間</FEIBInputLabel>
-                      <DatePicker control={control} name={idTransDate} {...datePickerLimit} defaultValue={getValues(idTransDate)} />
+                      <DatePicker control={control} name={idTransDate} {...datePickerLimit} />
                       <FEIBErrorMessage>{errors.booking?.transDate?.message}</FEIBErrorMessage>
                     </>
                   ) : (
                     <div className="dateRangePickerArea">
                       {/* // BUG 確認頁返回後，未顯示值，但 model 有資料。 */}
-                      <DateRangePicker control={control} name={idTransRange} label="交易時間" {...datePickerLimit} defaultValue={getValues(idTransRange)} />
+                      <DateRangePicker control={control} name={idTransRange} label="交易時間" {...datePickerLimit} />
                       <FEIBErrorMessage>{errors.booking?.transRange?.message}</FEIBErrorMessage>
 
                       {/* 設定交易頻率(1.每周, 2.每月)及交易週期 */}
                       <div className="reserveMoreOption">
                         <div>
                           <FEIBInputLabel htmlFor={idCycleMode}>交易頻率</FEIBInputLabel>
-                          <Controller control={control} name={idCycleMode} defaultValue={getValues(idCycleMode)}
+                          <Controller control={control} name={idCycleMode}
                             render={({ field }) => (
                               <FEIBSelect {...field} name={idCycleMode}>
                                 <FEIBOption value={1}>每週</FEIBOption>
@@ -595,7 +596,7 @@ const Transfer = (props) => {
                         </div>
                         <div>
                           <FEIBInputLabel htmlFor={idCycleTime}>交易週期</FEIBInputLabel>
-                          <Controller control={control} name={idCycleTime} defaultValue={getValues(idCycleTime)}
+                          <Controller control={control} name={idCycleTime}
                             render={({ field }) => (
                               <FEIBSelect {...field} name={idCycleTime}>
                                 {[cycleWeekly, cycleMonthly][getValues(idCycleMode) - 1].map((s, n) => {
@@ -625,7 +626,7 @@ const Transfer = (props) => {
             {/* 備註 */}
             <div>
               <FEIBInputLabel htmlFor={idMemo}>備註</FEIBInputLabel>
-              <Controller control={control} name={idMemo} defaultValue={getValues(idMemo)}
+              <Controller control={control} name={idMemo}
                 render={({ field }) => (
                   <FEIBInput {...field} placeholder="請輸入" inputProps={{ maxLength: 20, autoComplete: 'off' }} />
                 )}

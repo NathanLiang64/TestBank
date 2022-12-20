@@ -83,7 +83,8 @@ function DateRangePicker(props) {
 
   // props.value 變更時，同步更新元件的日期區間
   useEffect(() => {
-    setDateRange(value);
+    // value 有值時才變更 DateRange，沒有意義且會造成錯誤
+    if (value)setDateRange(value);
   }, [value]);
 
   return (

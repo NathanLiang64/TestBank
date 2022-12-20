@@ -11,7 +11,7 @@ import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 
 import { FuncID } from 'utilities/FuncID';
 import { currencySymbolGenerator } from 'utilities/Generator';
-import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
+import { closeFunc, loadFuncParams, startFunc } from 'utilities/AppScriptProxy';
 import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
 import { CreditCardIcon5, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
@@ -31,6 +31,10 @@ const CreditCardPage = () => {
   const [usedCardLimit, setUsedCardLimit] = useState();
   const [transactionMap, setTransactionMap] = useState({});
   const dispatch = useDispatch();
+
+  const go2Func = (funcId, params) => {
+    startFunc(funcId, params, {transactionMap, cardsInfo, usedCardLimit});
+  };
 
   const fetchTransactions = async (cards, currentIndex) => {
     const transactionsArray = await Promise.all(
@@ -75,7 +79,7 @@ const CreditCardPage = () => {
       <ul className="functionList">
         { list.map((func) => (
           <li key={func.fid}>
-            <button type="button" onClick={() => startFunc(func.fid, { cardNo: func.cardNo })}>
+            <button type="button" onClick={() => go2Func(func.fid, { cardNo: func.cardNo })}>
               {func.title}
             </button>
           </li>
@@ -100,7 +104,7 @@ const CreditCardPage = () => {
             <button
               type="button"
               onClick={() => {
-                if (item.fid.includes(FuncID.R00500)) startFunc(item.fid);
+                if (item.fid.includes(FuncID.R00500)) go2Func(item.fid, null);
                 else history.push(item.fid, item?.param);
               }}
             >
@@ -196,7 +200,7 @@ const CreditCardPage = () => {
             <CreditCardTxsList
               showAll={false}
               card={cardInfo}
-              go2MoreDetails={() => startFunc(FuncID.R00100, {card: cardInfo, usedCardLimit})}
+              go2MoreDetails={() => go2Func(FuncID.R00100, {card: cardInfo, usedCardLimit, transactions: transactionMap[index]})}
               transactions={transactionMap[index]}
               onTxnNotesEdit={onTxnNotesEdit}
             />
@@ -209,17 +213,24 @@ const CreditCardPage = () => {
   // 拿取信用卡資訊 & 第一張卡面的交易明細
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    const {cards, usedCardLimit: limit} = await getCards();
-    if (cards.length) {
-      const transferedCards = generateTwoCardsArray(cards);
-      fetchTransactions(transferedCards[0].cards, 0);
-      setCardsInfo(transferedCards);
-      setUsedCardLimit(limit);
+    const keepData = await loadFuncParams();
+    if (keepData) {
+      setTransactionMap(keepData.transactionMap);
+      setCardsInfo(keepData.cardsInfo);
+      setUsedCardLimit(keepData.usedCardLimit);
     } else {
-      await showCustomPrompt({
-        message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
-        onClose: closeFunc,
-      });
+      const {cards, usedCardLimit: limit} = await getCards();
+      if (cards.length) {
+        const transferedCards = generateTwoCardsArray(cards);
+        fetchTransactions(transferedCards[0].cards, 0);
+        setCardsInfo(transferedCards);
+        setUsedCardLimit(limit);
+      } else {
+        await showCustomPrompt({
+          message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
+          onClose: closeFunc,
+        });
+      }
     }
     dispatch(setWaittingVisible(false));
   }, []);
