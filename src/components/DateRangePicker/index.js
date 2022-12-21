@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useReducer } from 'react';
 import { useController } from 'react-hook-form';
 import { DateRangePicker as KeyboardDateRangePicker } from 'react-date-range';
 import { Button } from '@material-ui/core';
@@ -28,15 +28,19 @@ function DateRangePicker(props) {
   const myOnChange = field.onChange;
   const myValue = field.value;
 
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+
   const [showDatePicker, setShowDatePicker] = useState();
-  const [displayText, setDisplayText] = useState();
-  const [dateRange, setDateRange] = useState();
   const defaultRange = {
     startDate: (value ? value[0] : null) ?? new Date(),
     endDate: (value ? value[1] : null) ?? new Date(),
     key: 'selection',
   };
-  const [selectionRange, setSelectionRange] = useState(defaultRange);
+  const [model] = useState({
+    range: null,
+    displayText: null,
+    selectionRange: defaultRange,
+  });
 
   useEffect(() => {
     if (myValue?.length) {
@@ -48,22 +52,30 @@ function DateRangePicker(props) {
         const endDate = stringToDate(myValue[1]) ?? startDate;
         range = [startDate, endDate];
       }
+      // eslint-disable-next-line no-use-before-define
       setDateRange(range);
-    } else setDateRange([null, null]);
+    }
   }, []);
 
-  useEffect(() => {
-    if (dateRange && dateRange.length === 2 && dateRange[0] && dateRange[1]) {
-      setDisplayText(`${dateToString(dateRange[0])} - ${dateToString(dateRange[1])}`);
-      setSelectionRange({
-        ...selectionRange,
-        startDate: dateRange[0],
-        endDate: dateRange[1],
-      });
+  /**
+   *
+   * @param {[Date]} range
+   */
+  const setDateRange = (range) => {
+    if (!range) return; // 初始時，會在 range 無值時被觸發！還沒找到原因
+
+    const startDate = range[0];
+    const endDate = range[1];
+    if (range && range.length === 2 && startDate && endDate) {
+      model.range = [startDate, endDate];
+      model.displayText = `${dateToString(startDate)} - ${dateToString(endDate)}`;
+      model.selectionRange.startDate = startDate;
+      model.selectionRange.endDate = endDate;
     } else {
-      setDisplayText(null);
+      model.displayText = null;
     }
-  }, [dateRange]);
+    forceUpdate();
+  };
 
   const onSelectChanged = (ranges) => {
     const { startDate, endDate } = ranges.selection;
@@ -73,18 +85,17 @@ function DateRangePicker(props) {
   const onCancel = () => {
     setShowDatePicker(false);
     setDateRange(myValue);
-    setSelectionRange(defaultRange); // NOTE 必需清除，否則在 value 沒有值時，取消再進來仍會保留原本的設計範圍。
+    model.selectionRange = defaultRange; // NOTE 必需清除，否則在 value 沒有值時，取消再進來仍會保留原本的設計範圍。
   };
 
   const onConfirm = () => {
     setShowDatePicker(false);
-    myOnChange(dateRange);
+    myOnChange(model.range);
   };
 
   // props.value 變更時，同步更新元件的日期區間
   useEffect(() => {
-    // value 有值時才變更 DateRange，沒有意義且會造成錯誤
-    if (value)setDateRange(value);
+    if (value && value.length === 2 && value[0] && value[1]) setDateRange(value);
   }, [value]);
 
   return (
@@ -92,7 +103,7 @@ function DateRangePicker(props) {
       <FEIBInputLabel>{label || '自訂搜尋日期區間'}</FEIBInputLabel>
       <FEIBInput
         placeholder="請選擇"
-        value={displayText ?? ''}
+        value={model?.displayText ?? ''}
         $icon={<CalendarIcon />}
         $iconFontSize={2.4}
         readOnly
@@ -105,7 +116,7 @@ function DateRangePicker(props) {
               minDate={minDate}
               maxDate={maxDate}
               rangeColors={[theme.colors.primary.light]}
-              ranges={[selectionRange]}
+              ranges={[model?.selectionRange]}
               onChange={onSelectChanged}
               startDatePlaceholder="起始日期"
               endDatePlaceholder="結束日期"
@@ -113,7 +124,7 @@ function DateRangePicker(props) {
             />
             <div className="buttons">
               <Button className="cancel" onClick={onCancel}>取消</Button>
-              <Button className="apply" disabled={!dateRange} onClick={onConfirm}> 確定 </Button>
+              <Button className="apply" disabled={!model?.range} onClick={onConfirm}> 確定 </Button>
             </div>
           </div>
         </div>

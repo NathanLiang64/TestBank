@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useReducer } from 'react';
 import { useForm } from 'react-hook-form';
 import DateRangePicker from 'components/DateRangePicker';
 import CheckboxButton from 'components/CheckboxButton';
@@ -12,12 +12,13 @@ import SearchConditionWrapper from './searchCondition.style';
 const SearchCondition = ({
   condition, onSearch, onCancel,
 }) => {
-  const [newCondition, setNewCondition] = useState(condition);
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+
+  const [newCondition] = useState({...condition});
   const datePickerLimit = { // 用來限制設定選擇日期時的範圍。
     minDate: new Date(new Date().setFullYear(new Date().getFullYear() - 3)), // 三年內。
     maxDate: new Date(),
   };
-  const [autoDateTabId, setAutoDateTabId] = useState(condition.mode ?? '0');
 
   const defaultKeywords = [
     { id: 1, title: '跨轉' },
@@ -32,84 +33,59 @@ const SearchCondition = ({
 
   // 點擊查詢按鈕後傳送資料
   const handleClickSearchButton = async (data) => {
-    if (data.customKeyword) {
-      onSearch({
-        ...newCondition,
-        custom: data.customKeyword,
-      });
-    } else {
-      onSearch(newCondition);
-    }
+    newCondition.custom = data.customKeyword;
+    onSearch(newCondition);
   };
-
-  const computedStartDate = (mode) => {
-    const date = new Date();
-    // eslint-disable-next-line default-case
-    switch (mode) {
-      case '1':
-        // 計算 6 個月前的日期
-        date.setMonth(date.getMonth() - 6);
-        break;
-      case '2':
-        // 計算 1 年前的日期
-        date.setFullYear(date.getFullYear() - 1);
-        break;
-      case '3':
-        // 計算 2 年前的日期
-        date.setFullYear(date.getFullYear() - 2);
-        break;
-      case '4':
-        // 計算 3 年前的日期
-        date.setFullYear(date.getFullYear() - 3);
-    }
-    return date;
-  };
-
-  useEffect(() => {
-    const mode = autoDateTabId;
-    const today = (mode === '0') ? null : dateToString(new Date(), '');
-    const startDate = (mode === '0') ? null : dateToString(computedStartDate(autoDateTabId), '');
-    setNewCondition({
-      ...newCondition,
-      mode, // 查詢模式(0.自訂, 1.近6個月, 2.近1年, 3.近2年, 4.近3年)
-      startDate, // 轉為 YYYYMMDD
-      endDate: today,
-    });
-  }, [autoDateTabId]);
 
   const handleClickDateRangePicker = (range) => {
-    setNewCondition({
-      ...newCondition,
-      startDate: dateToString(range[0], ''), // 轉為 YYYYMMDD
-      endDate: dateToString(range[1], ''),
-    });
+    newCondition.startDate = dateToString(range[0], ''); // 轉為 YYYYMMDD
+    newCondition.endDate = dateToString(dateToString(range[1], ''));
   };
 
-  const renderTabs = () => (
-    // TODO 存款明細查詢-限三年內、存錢計劃-限計劃起始當日（而且還要精確到時間）
-    <FEIBTabContext value={autoDateTabId}>
-      <FEIBTabList onChange={(event, id) => setAutoDateTabId(id)} $size="small" $type="fixed">
-        <FEIBTab label="自訂" value="0" />
-        <FEIBTab label="近六個月" value="1" />
-        <FEIBTab label="近一年" value="2" />
-        <FEIBTab label="近兩年" value="3" />
-        <FEIBTab label="近三年" value="4" />
-      </FEIBTabList>
-      { newCondition.mode === '0' ? (
-        <div className="dateRangePickerArea">
-          <DateRangePicker
-            {...datePickerLimit}
-            value={[stringToDate(newCondition?.startDate), stringToDate(newCondition?.endDate)]} // DateRangePicker 需要 Date 型別。
-            onChange={handleClickDateRangePicker}
-          />
-        </div>
-      ) : (
-        <div className="autoDateArea">
-          <p>{`${dateToString(newCondition?.startDate)} ~ ${dateToString(newCondition?.endDate)}`}</p>
-        </div>
-      ) }
-    </FEIBTabContext>
-  );
+  const renderTabs = () => {
+    let startDate;
+    let endDate;
+    if (!newCondition.mode) newCondition.mode = '0';
+    if (newCondition.mode === '0') {
+      startDate = stringToDate(newCondition?.startDate); // 轉為 Date 型別。
+      endDate = stringToDate(newCondition?.endDate);
+    } else {
+      endDate = new Date();
+      startDate = new Date();
+      startDate.setMonth(startDate.getMonth() - [6, 12, 24, 36][newCondition.mode - '1']);
+    }
+
+    const setAutoDateTabId = (mode) => {
+      newCondition.mode = mode;
+      forceUpdate();
+    };
+
+    return (
+      // TODO 存款明細查詢-限三年內、存錢計劃-限計劃起始當日（而且還要精確到時間）
+      <FEIBTabContext value={newCondition.mode}>
+        <FEIBTabList onChange={(event, id) => setAutoDateTabId(id)} $size="small" $type="fixed">
+          <FEIBTab label="自訂" value="0" />
+          <FEIBTab label="近六個月" value="1" />
+          <FEIBTab label="近一年" value="2" />
+          <FEIBTab label="近兩年" value="3" />
+          <FEIBTab label="近三年" value="4" />
+        </FEIBTabList>
+        { newCondition.mode === '0' ? (
+          <div className="dateRangePickerArea">
+            <DateRangePicker
+              {...datePickerLimit}
+              value={[startDate, endDate]} // DateRangePicker 需要 Date 型別。
+              onChange={handleClickDateRangePicker}
+            />
+          </div>
+        ) : (
+          <div className="autoDateArea">
+            <p>{`${dateToString(startDate)} ~ ${dateToString(endDate)}`}</p>
+          </div>
+        ) }
+      </FEIBTabContext>
+    );
+  };
 
   /**
    * 顯示 預設查詢關鍵字清單。
@@ -125,10 +101,8 @@ const SearchCondition = ({
         const index = selectedItems.indexOf(keyId);
         selectedItems.splice(index, 1);
       }
-      setNewCondition({
-        ...newCondition,
-        txnType: selectedItems.join(','), // 重建預設查詢關鍵字代碼清單。 TODO：確認要不要加','
-      });
+      newCondition.txnType = selectedItems.length ? selectedItems.join(',') : null; // 重建預設查詢關鍵字代碼清單。
+      forceUpdate();
     };
     // 檢查目前的關鍵字是否已被使用者選取。
     const isSelected = (keyId) => {
