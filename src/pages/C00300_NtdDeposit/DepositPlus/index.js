@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useHistory } from 'react-router';
 import { useEffect, useState } from 'react';
 import { StarRounded } from '@material-ui/icons';
@@ -47,8 +46,6 @@ const Deposit = () => {
       </FEIBTabList>
     </FEIBTabContext>
   );
-
-  const isRenderActivityStar = (name) => name.includes('*');
 
   const nextPage = () => {
     history.push('/depositPlusDetail', { bonusDetail: depositPlusDetail.bonusDetail, year: tabId.substr(0, 4) });
