@@ -18,8 +18,8 @@ const AplFxProxy = () => {
     const destUrl = `${process.env.REACT_APP_APLFX_URL}prod=${prod}&sse=${sse}`;
 
     window.open(destUrl, '_blank');
-    console.log(window.location);
-    // closeFunc();
+
+    closeFunc();
   }, []);
 
   return (

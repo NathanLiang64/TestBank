@@ -133,6 +133,7 @@ const T00700 = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
             <TextInputField
+              type="number"
               name="mobile"
               labelName="行動電話"
               placeholder="請輸入行動電話"
