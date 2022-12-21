@@ -48,7 +48,7 @@ export const stringToDate = (stringDate, splitter) => {
  * @returns {String} 傳為以 splitter 為分隔字元的日期字串，例：2022/10/01
  */
 export const dateToString = (date, splitter, mmddOnly) => {
-  if (!date) return '';
+  if (!date) return null; // TODO 若呼叫端直接顯示，可能會出現 'null' 的情況！
 
   if (!(date instanceof Date)) {
     date = stringToDate(date);

@@ -129,6 +129,7 @@ const Page = () => {
       okContent: '確定刪除',
       onOk: onRemoveConfirm,
       cancelContent: '我再想想',
+      onCancel: () => {},
     });
   };
 

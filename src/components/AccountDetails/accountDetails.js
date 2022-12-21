@@ -13,7 +13,7 @@ import {
 import Loading from 'components/Loading';
 import { setDrawerVisible } from 'stores/reducers/ModalReducer';
 import { showDrawer } from 'utilities/MessageModal';
-import { dateToString } from 'utilities/Generator';
+import { dateToString, stringToDate } from 'utilities/Generator';
 import { CrossCircleIcon, DownloadIcon, SearchIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
 import { getDepositBook } from './api';
@@ -79,7 +79,12 @@ const AccountDetails = ({
   const loadTransition = async (cond) => {
     setIsLoading(true);
 
-    const response = await onSearch(cond);
+    const dateRange = getDateRange(cond);
+    const response = await onSearch({
+      ...cond,
+      startDate: dateToString(dateRange.startDate, ''),
+      endDate: dateToString(dateRange.endDate, ''),
+    });
     if (response) {
       const { acctTxDtls } = response;
 
@@ -225,15 +230,33 @@ const AccountDetails = ({
     </div>
   );
 
+  const getDateRange = (cond) => {
+    let startDate = null;
+    let endDate = null;
+    if (cond?.mode) {
+      if (cond.mode === '0') {
+        startDate = stringToDate(cond?.startDate); // 轉為 Date 型別。
+        endDate = stringToDate(cond?.endDate);
+      } else {
+        endDate = new Date();
+        startDate = new Date();
+        startDate.setMonth(startDate.getMonth() - [6, 12, 24, 36][cond.mode - '1']);
+      }
+    }
+    return { startDate, endDate };
+  };
+
   /**
    * 顯示 查詢日期區間
    * @param {*} cond 目前的查詢條件。
    */
   const renderSearchBarText = (cond) => {
-    if (!cond || !cond.startDate) return null; // 沒有設定查詢日期區間，就不顯示。
+    if (!cond || (cond.mode === '0' && !cond.startDate) || cond.mode !== '0') return null; // 沒有設定查詢日期區間，就不顯示。
+    const dateRange = getDateRange(cond);
+
     return (
       <div className="searchCondition">
-        <p>{`${dateToString(cond.startDate)} ~ ${dateToString(cond.endDate)}`}</p>
+        <p>{`${dateToString(dateRange.startDate)} ~ ${dateToString(dateRange.endDate)}`}</p>
         <FEIBIconButton onClick={() => resetView()}>
           <CrossCircleIcon />
         </FEIBIconButton>
