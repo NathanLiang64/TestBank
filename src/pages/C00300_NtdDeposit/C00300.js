@@ -123,6 +123,7 @@ const C00300 = () => {
 
   /**
    * 顯示 優存(利率/利息)資訊
+   * TODO: 是否改用ThreeColumnInfoPanel?
    */
   const renderBonusInfoPanel = () => {
     if (!selectedAccount) return null;

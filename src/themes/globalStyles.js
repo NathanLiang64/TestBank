@@ -348,6 +348,12 @@ const GlobalStyles = createGlobalStyle`
       margin-top: 1.8rem;
     }
   }
+  // TODO: 針對 螢幕寬度<340px者 做RWD：縮小所有字體至1rem相當於8px (最小符合到280px: Galaxy Fold)
+  // @media (max-width:336px) {
+  //   html{
+  //     font-size: 50%;
+  //   }
+  // }
 `;
 
 export default GlobalStyles;
