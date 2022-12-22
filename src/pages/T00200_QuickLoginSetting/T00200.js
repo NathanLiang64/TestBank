@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -21,7 +22,7 @@ import {
 import {
   customPopup, showAnimationModal, showDrawer, showCustomPrompt,
 } from 'utilities/MessageModal';
-import { setDrawerVisible } from 'stores/reducers/ModalReducer';
+import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import store from 'stores/store';
 import { getQuickLoginInfo } from './api';
@@ -37,6 +38,8 @@ const QuickLoginSetting = () => {
   const [bindingDate, setBindingDate] = useState('');
   const [bindingDevice, setBindingDevice] = useState('');
   const [midPhone, setMidPhone] = useState('');
+
+  const dispatch = useDispatch();
 
   // 取得綁定資訊
   const fetchLoginBindingInfo = async () => {
@@ -79,14 +82,6 @@ const QuickLoginSetting = () => {
         setIsPatternActive(false);
       }
     }
-    // else {
-    //   await showCustomPrompt({
-    //     message: `解除快速綁定交易驗證測試結果：${JSON.stringify(rs)}`,
-    //     onOk: () => closeFunc(),
-    //     onCancel: () => closeFunc(),
-    //     onClose: () => closeFunc(),
-    //   });
-    // }
   };
 
   // 檢查綁定狀態
@@ -230,9 +225,13 @@ const QuickLoginSetting = () => {
     }
   };
 
-  useEffect(() => {
-    fetchQLStatus();
-    fetchLoginBindingInfo();
+  useEffect(async () => {
+    dispatch(setWaittingVisible(true));
+
+    await fetchQLStatus();
+    await fetchLoginBindingInfo();
+
+    dispatch(setWaittingVisible(false));
   }, []);
 
   return (
