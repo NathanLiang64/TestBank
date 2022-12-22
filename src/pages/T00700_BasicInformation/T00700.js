@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 import { getCountyList, getBasicInformation, modifyBasicInformation } from 'pages/T00700_BasicInformation/api';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
@@ -16,11 +16,13 @@ import { DropdownField, TextInputField } from 'components/Fields';
 import { showAnimationModal, showError } from 'utilities/MessageModal';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { useLocationOptions } from 'hooks/useLocationOptions';
+import { useNavigation } from 'hooks/useNavigation';
 import BasicInformationWrapper from './T00700.style';
 import { validationSchema } from './validationSchema';
 
 const T00700 = () => {
   const dispatch = useDispatch();
+  const { closeFunc } = useNavigation();
   const {
     handleSubmit, control, reset, watch,
   } = useForm({

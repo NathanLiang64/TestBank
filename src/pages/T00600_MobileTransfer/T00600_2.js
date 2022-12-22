@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { transactionAuth, closeFunc } from 'utilities/AppScriptProxy';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 import { showAnimationModal } from 'utilities/MessageModal';
 
 /* Elements */
@@ -10,12 +10,14 @@ import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
 
 /* Styles */
+import { useNavigation } from 'hooks/useNavigation';
 import MobileTransferWrapper from './T00600.style';
 
 import { createMobileNo, editMobileNo, unbindMobileNo } from './api';
 
 const T006002 = ({ location }) => {
   const history = useHistory();
+  const { closeFunc } = useNavigation();
   const [dealCode, setDealCode] = useState('');
   const [dealType, setDealType] = useState('');
   const [isModifyConfirmPage, setIsModifyConfirmPage] = useState(true);

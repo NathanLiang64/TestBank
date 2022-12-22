@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useController, useForm } from 'react-hook-form';
 import {
-  closeFunc, getOsType, getPlatform, transactionAuth,
+  getOsType, getPlatform, transactionAuth,
 } from 'utilities/AppScriptProxy';
 
 /* Elements */
@@ -15,6 +15,7 @@ import { showCustomPrompt } from 'utilities/MessageModal';
 import Accordion from 'components/Accordion';
 import { RadioGroup } from '@material-ui/core';
 import { AuthCode } from 'utilities/TxnAuthCode';
+import { useNavigation } from 'hooks/useNavigation';
 import { memberRegister } from './api';
 import A00800AccoridonContent from './A00800_AccoridonContent';
 
@@ -28,6 +29,7 @@ import A00800Wrapper from './A00800.style';
 const A00800 = () => {
   // eslint-disable-next-line no-unused-vars
   const [inviteToken, setInviteToken] = useState('');
+  const { closeFunc } = useNavigation();
 
   // 驗證錯誤文字
   const mobileError = (isEmpty) => `請輸入${!isEmpty && '正確的'}手機號碼`;

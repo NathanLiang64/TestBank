@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { queryPushBind, startFunc } from 'utilities/AppScriptProxy';
+import { queryPushBind } from 'utilities/AppScriptProxy';
 import { showDrawer, closeDrawer } from 'utilities/MessageModal';
 
 /* Elements */
@@ -14,6 +14,7 @@ import {
 } from 'components/elements';
 import EmptyData from 'components/EmptyData';
 import { FuncID } from 'utilities/FuncID';
+import { useNavigation } from 'hooks/useNavigation';
 import MessageItem from './messageItem';
 import {
   queryLastPush,
@@ -33,6 +34,7 @@ const Notice = () => {
   const [aMessagesList, setAmessagesList] = useState([]);
   const [cMessagesList, setCmessagesList] = useState([]);
   const [sMessagesList, setSmessagesList] = useState([]);
+  const {startFunc} = useNavigation();
 
   // 通知類別及代碼
   const msgTypeList = [

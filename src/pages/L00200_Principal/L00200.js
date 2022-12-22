@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { dateToString, toCurrency } from 'utilities/Generator';
-import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
+import { loadFuncParams } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import { showPrompt } from 'utilities/MessageModal';
 
+import { useNavigation } from 'hooks/useNavigation';
 import { getSubSummary, getSubPayment } from './api';
 
 /* Styles */
@@ -16,7 +17,7 @@ import PrincipalWrapper from './principal.style';
  */
 const L00200 = () => {
   const [detaillist, setDetailList] = useState([]);
-
+  const { closeFunc } = useNavigation();
   // 查詢應繳本息資訊
   const getPrincipalData = async (subNoData) => {
     const param = {

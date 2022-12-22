@@ -14,11 +14,12 @@ import {
   weekNumberToChinese,
   dateToYMD,
 } from 'utilities/Generator';
-import { closeFunc, startFunc, transactionAuth } from 'utilities/AppScriptProxy';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { showAnimationModal } from 'utilities/MessageModal';
 import { FuncID } from 'utilities/FuncID';
+import { useNavigation } from 'hooks/useNavigation';
 import { createConfirm, createDepositPlan, updateDepositPlan } from './api';
 import { AlertInvalidEntry, ConfirmToTransferSubAccountBalance } from './utils/prompts';
 import { DetailPageWrapper } from './C00600.style';
@@ -28,6 +29,7 @@ import { DetailPageWrapper } from './C00600.style';
  */
 const DepositPlanDetailPage = () => {
   const history = useHistory();
+  const {startFunc, closeFunc, goHome} = useNavigation();
   const location = useLocation();
   const mainRef = useRef();
   const [mode, setMode] = useState(0);
@@ -48,7 +50,7 @@ const DepositPlanDetailPage = () => {
       }
     } else {
       // Guard: 此頁面接續上一頁的操作，意指若未在該情況下進入此頁為不正常操作。
-      AlertInvalidEntry({ onBack: () => history.goBack() });
+      AlertInvalidEntry({ goBack: () => history.goBack(), goHome });
     }
   }, []);
 

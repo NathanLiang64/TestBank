@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import e2ee from 'utilities/E2ee';
-import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { PasswordInputField } from 'components/Fields';
 import { FEIBButton } from 'components/elements';
@@ -12,6 +12,7 @@ import { changeUserName } from 'pages/T00800_ChangeUserName/api';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import { showAnimationModal } from 'utilities/MessageModal';
+import { useNavigation } from 'hooks/useNavigation';
 import ChangeUserNameWrapper from './T00800.style';
 import { validationSchema } from './validationSchema';
 
@@ -20,7 +21,7 @@ import { validationSchema } from './validationSchema';
  */
 const ChangeUserName = () => {
   const dispatch = useDispatch();
-
+  const { closeFunc } = useNavigation();
   const { handleSubmit, control } = useForm({
     defaultValues: {
       userName: '',

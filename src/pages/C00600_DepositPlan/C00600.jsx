@@ -12,10 +12,11 @@ import { showAnimationModal, showCustomDrawer, showError } from 'utilities/Messa
 import {
   AccountIcon11, AccountIcon12, CircleIcon, TransactionIcon1,
 } from 'assets/images/icons';
-import { loadFuncParams, closeFunc, transactionAuth, startFunc } from 'utilities/AppScriptProxy';
+import { loadFuncParams, transactionAuth } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
 import {AuthCode} from 'utilities/TxnAuthCode';
 import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
+import { useNavigation } from 'hooks/useNavigation';
 import EmptySlide from './components/EmptySlide';
 import EmptyPlan from './components/EmptyPlan';
 import DepositPlan from './components/DepositPlan';
@@ -37,6 +38,7 @@ import {
 const DepositPlanPage = () => {
   const history = useHistory(); // TODO 應該改用 startFunc
   const dispatch = useDispatch();
+  const {startFunc, closeFunc, goHome} = useNavigation();
   const [depositPlans, setDepositPlans] = useState();
   const swiperRef = useRef();
   useEffect(async () => {
@@ -239,7 +241,7 @@ const DepositPlanPage = () => {
   const handleGoBackClick = () => {
     const shouldBlockGoBack = document.querySelector('.blockGoBack');
     if (shouldBlockGoBack) {
-      ConfirmNotToCloseDepositPlan();
+      ConfirmNotToCloseDepositPlan(goHome);
     } else {
       closeFunc();
     }

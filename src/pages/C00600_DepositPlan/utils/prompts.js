@@ -1,6 +1,5 @@
 import { showCustomPrompt } from 'utilities/MessageModal';
 import { stringToDate } from 'utilities/Generator';
-import { goHome } from 'utilities/AppScriptProxy';
 
 export const AlertNoMainAccount = ({ onOk }) => {
   showCustomPrompt({
@@ -62,7 +61,7 @@ export const ConfirmDepositPlanHasBeenClosed = ({ email, onOk }) => {
   });
 };
 
-export const ConfirmNotToCloseDepositPlan = () => {
+export const ConfirmNotToCloseDepositPlan = (goHome) => {
   showCustomPrompt({
     title: '暫不結束計畫',
     message: (
@@ -102,7 +101,7 @@ export const AlertProgramNoFound = ({ onOk, onCancel, onClose }) => {
   });
 };
 
-export const AlertInvalidEntry = ({ goBack }) => {
+export const AlertInvalidEntry = ({ goBack, goHome }) => {
   showCustomPrompt({
     title: '系統錯誤',
     message: '本頁為操作流程之分頁，不應獨立造訪，請回上一頁。',
@@ -113,7 +112,7 @@ export const AlertInvalidEntry = ({ goBack }) => {
   });
 };
 
-export const AlertReachedMaxPlans = ({ goBack }) => {
+export const AlertReachedMaxPlans = ({ goBack, goHome }) => {
   showCustomPrompt({
     title: '新增存錢計畫',
     message: '您已建立（最多）3個存錢計畫。',

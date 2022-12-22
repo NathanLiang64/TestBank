@@ -10,9 +10,10 @@ import DebitCard from 'components/DebitCard/DebitCard';
 import InformationTape from 'components/InformationTape';
 import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
 import DownloadIcon from 'assets/images/icons/downloadIcon.svg';
-import { loadFuncParams, startFunc } from 'utilities/AppScriptProxy';
+import { loadFuncParams } from 'utilities/AppScriptProxy';
 import EmptyData from 'components/EmptyData';
 import { FuncID } from 'utilities/FuncID';
+import { useNavigation } from 'hooks/useNavigation';
 import { getSubPaymentHistory } from './api';
 
 /* Styles */
@@ -25,6 +26,7 @@ const LoanInterest = () => {
   const [cardData, setCardData] = useState({});
   const [dateRange, setDateRange] = useState('0');
   const [recordsList, setRecordsList] = useState([]);
+  const { startFunc } = useNavigation();
 
   const getStartDate = (type) => {
     let months;

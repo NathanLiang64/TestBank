@@ -11,11 +11,11 @@ import {
   ArrowBackIcon, ArrowNextIcon, CheckboxCheckedIcon, CheckboxUncheckedIcon, FaceIdIcon, VisibilityIcon, VisibilityOffIcon,
 } from 'assets/images/icons';
 import { FuncID } from 'utilities/FuncID';
-import { goHome, startFunc } from 'utilities/AppScriptProxy';
 import { accountValidation, identityValidation, passwordValidation } from 'utilities/validation';
 import theme from 'themes/theme';
 import Logo from 'assets/images/logoTransparent.png';
 import BgImage from 'assets/images/loginBackground.png';
+import { useNavigation } from 'hooks/useNavigation';
 import HandShake from './HandShake';
 import LoginWrapper from './login.style';
 import FaceIdLoginModal from './faceIdLoginModal';
@@ -43,7 +43,7 @@ const Login = () => {
       password: 'feib1688',
     },
   });
-
+  const {startFunc, goHome} = useNavigation();
   const [loginable, setLoginable] = useState();
   const [showUserId, setShowUserId] = useState(false);
   const [showPassword, setShowPassword] = useState(false);

@@ -5,8 +5,9 @@ import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
 import { showDrawer } from 'utilities/MessageModal';
-import { loadFuncParams, closeFunc } from 'utilities/AppScriptProxy';
+import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { useNavigation } from 'hooks/useNavigation';
 import {
   getAgreedAccount,
   updateAgreedAccount,
@@ -19,6 +20,7 @@ import PageWrapper from './D00600.style';
  */
 const Page = () => {
   const dispatch = useDispatch();
+  const { closeFunc } = useNavigation();
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const [selectorMode, setSelectorMode] = useState();

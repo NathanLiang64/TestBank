@@ -1,15 +1,15 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect } from 'react';
 
 import Loading from 'components/Loading';
 
 import Layout from 'components/Layout/Layout';
-import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
 import { useLocation } from 'react-router';
+import { useNavigation } from 'hooks/useNavigation';
 import { getSSE } from './api';
 
 const AplFxProxy = () => {
   const {search} = useLocation();
+  const { closeFunc } = useNavigation();
 
   useEffect(async () => {
     const prod = search.split('=')[1];

@@ -20,8 +20,8 @@ import {
   accountFormatter, dateToString, currencySymbolGenerator, dateToYMD, handleLoanTypeToTitle,
 } from 'utilities/Generator';
 
-import { startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
+import { useNavigation } from 'hooks/useNavigation';
 import { getSubSummary, getContract, getSubPaymentHistory } from './api';
 import { getLoanSummary } from './utils';
 import PageWrapper, { ContentWrapper } from './L00100.style';
@@ -35,6 +35,7 @@ const uid = uuid();
 const Page = () => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const {startFunc} = useNavigation();
   const [loans, setLoans] = useState();
 
   /**

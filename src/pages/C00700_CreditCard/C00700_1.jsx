@@ -12,8 +12,8 @@ import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { FuncID } from 'utilities/FuncID';
-import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 
+import { useNavigation } from 'hooks/useNavigation';
 import { getCreditCardTerms, queryCardInfo } from './api';
 import { getCardListing, getCreditListing } from './utils';
 import { InfoPageWrapper } from './C00700.style';
@@ -26,6 +26,7 @@ const C007001 = () => {
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
+  const {startFunc, closeFunc} = useNavigation();
   const [cardInfo, setCardInfo] = useState();
   const [terms, setTerms] = useState();
   const cardNo = location.state?.isBankeeCard ? location.state.cards[0].cardNo : '';

@@ -9,7 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Theme from 'themes/theme';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { currencySymbolGenerator } from 'utilities/Generator';
-import { closeFunc, loadFuncParams, transactionAuth } from 'utilities/AppScriptProxy';
+import { loadFuncParams, transactionAuth } from 'utilities/AppScriptProxy';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import Badge from 'components/Badge';
 import Main from 'components/Layout';
@@ -23,6 +23,7 @@ import { RadioGroupField } from 'components/Fields/radioGroupField';
 
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { getAccountsList } from 'utilities/CacheData';
+import { useNavigation } from 'hooks/useNavigation';
 import {
   getBankeeCard,
   getCreditCardTerms, payCardFee, queryCardInfo, queryPayBarcode,
@@ -41,6 +42,7 @@ import {
 const Page = () => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const { closeFunc } = useNavigation();
   const [cardInfo, setCardInfo] = useState();
   const [cardNo, setCardNo] = useState();
   const [internalAccounts, setInternalAccounts] = useState([]);

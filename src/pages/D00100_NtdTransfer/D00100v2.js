@@ -24,12 +24,11 @@ import MemberAccountCard from 'components/MemberAccountCard';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showError, showInfo, showPrompt } from 'utilities/MessageModal';
-import {
-  loadFuncParams, startFunc, closeFunc,
-} from 'utilities/AppScriptProxy';
+import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { numberToChinese } from 'utilities/Generator';
 import { getAccountBonus, getAccountsList } from 'utilities/CacheData';
 import { ChangeMemberIcon } from 'assets/images/icons';
+import { useNavigation } from 'hooks/useNavigation';
 import TransferWrapper from './D00100.style';
 import D00100AccordionContent from './D00100_AccordionContent';
 
@@ -40,6 +39,7 @@ import D00100AccordionContent from './D00100_AccordionContent';
 const Transfer = (props) => {
   const { location } = props;
   const { state } = location;
+  const {startFunc, closeFunc} = useNavigation();
 
   const history = useHistory();
   const dispatch = useDispatch();

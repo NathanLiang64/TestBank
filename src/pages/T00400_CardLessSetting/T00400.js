@@ -3,7 +3,7 @@ import { useHistory } from 'react-router';
 import Layout from 'components/Layout/Layout';
 import Accordion from 'components/Accordion';
 import { FEIBSwitch } from 'components/elements';
-import { startFunc, transactionAuth } from 'utilities/AppScriptProxy';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 import { EditIcon } from 'assets/images/icons';
 
 import { useDispatch } from 'react-redux';
@@ -13,12 +13,14 @@ import { FuncID } from 'utilities/FuncID';
 import { showAnimationModal } from 'utilities/MessageModal';
 import { getAccountsList } from 'utilities/CacheData';
 import { useQLStatus } from 'hooks/useQLStatus';
+import { useNavigation } from 'hooks/useNavigation';
 import CardLessSettingWrapper from './T00400.style';
 
 import { getStatus, activate } from './api';
 
 const CardLessSetting = () => {
   const dispatch = useDispatch();
+  const { startFunc } = useNavigation();
   const history = useHistory();
 
   const {QLResult, showMessage} = useQLStatus();// 確認裝置綁定狀態

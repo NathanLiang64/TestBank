@@ -15,9 +15,9 @@ import {
   FEIBButton, FEIBRadioLabel, FEIBRadio, FEIBErrorMessage,
 } from 'components/elements';
 import Loading from 'components/Loading';
-import { closeFunc } from 'utilities/AppScriptProxy';
 
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useNavigation } from 'hooks/useNavigation';
 import { CreatePageWrapper } from './C00600.style';
 import { getDepositPlans, getDepositPlanProgram, getDepositPlanTerms } from './api';
 import { AlertReachedMaxPlans } from './utils/prompts';
@@ -28,6 +28,7 @@ import { createSchema } from './validationSchema';
  */
 const DepositPlanCreatePage = () => {
   const dispatch = useDispatch();
+  const { closeFunc, goHome } = useNavigation();
   const history = useHistory();
   const { control, handleSubmit, formState: { errors } } = useForm(
     {
@@ -48,7 +49,7 @@ const DepositPlanCreatePage = () => {
     if (response) {
       const {plans, subAccounts: accounts, totalSubAccountCount} = response;
       // Guard: 存錢計畫首頁最多就三個計畫，意指若未在該情況下進入此頁為不正常操作。
-      if (plans.length >= 3) AlertReachedMaxPlans({ goBack: () => closeFunc() });
+      if (plans.length >= 3) AlertReachedMaxPlans({ goBack: () => closeFunc(), goHome });
       setSubAccounts(accounts);
       setHasReachedMaxSubAccounts(totalSubAccountCount >= 8);
     }

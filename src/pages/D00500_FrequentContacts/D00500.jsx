@@ -5,9 +5,10 @@ import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
 import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
-import { loadFuncParams, closeFunc } from 'utilities/AppScriptProxy';
+import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { AddIcon } from 'assets/images/icons';
+import { useNavigation } from 'hooks/useNavigation';
 import {
   getFrequentAccount,
   addFrequentAccount,
@@ -23,6 +24,7 @@ import PageWrapper from './D00500.style';
 const Page = () => {
   const dispatch = useDispatch();
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const {closeFunc} = useNavigation();
 
   const [selectorMode, setSelectorMode] = useState();
   const [accounts, setAccounts] = useState([]);

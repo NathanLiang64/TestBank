@@ -10,12 +10,13 @@ import { FEIBButton, FEIBIconButton } from 'components/elements';
 /* Reducers & JS functions */
 import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showCustomPrompt } from 'utilities/MessageModal';
-import { loadFuncParams, startFunc, shareMessage } from 'utilities/AppScriptProxy';
+import { loadFuncParams, shareMessage } from 'utilities/AppScriptProxy';
 import { ArrowNextIcon, EditIcon } from 'assets/images/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { TextareaField, TextInputField } from 'components/Fields';
 import { useDispatch } from 'react-redux';
 import { switchZhNumber, toCurrency } from 'utilities/Generator';
+import { useNavigation } from 'hooks/useNavigation';
 import {
   getSummary,
   updateAvatar,
@@ -31,6 +32,7 @@ import { validationSchema } from './validationSchema';
 const CommunityPage = () => {
   const [summary, setSummary] = useState();
   const dispatch = useDispatch();
+  const { startFunc } = useNavigation();
   const { control, reset, handleSubmit } = useForm({
     defaultValues: { nickname: '', essay: '' },
     resolver: yupResolver(validationSchema),

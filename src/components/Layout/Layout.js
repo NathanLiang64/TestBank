@@ -10,8 +10,9 @@ import { FEIBButton, FEIBIconButton } from 'components/elements';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import theme from 'themes/theme';
 import { ArrowBackIcon, HomeIcon } from 'assets/images/icons';
-import { goHome as goHomeFunc, closeFunc, switchLoading } from 'utilities/AppScriptProxy';
+import { switchLoading } from 'utilities/AppScriptProxy';
 import { showError } from 'utilities/MessageModal';
+import { useNavigation } from 'hooks/useNavigation';
 import {
   setModalVisible, setWaittingVisible, setDrawerVisible, setAnimationModalVisible,
   setDialogVisible,
@@ -41,7 +42,7 @@ function Layout({
   hasClearHeader,
 }) {
   const dispatch = useDispatch();
-
+  const { closeFunc, goHome: goHomeFunc } = useNavigation();
   //
   // 處理 Popup視窗、 等待中 及 Drawer。
   //

@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { getQLStatus, startFunc } from 'utilities/AppScriptProxy';
+import { getQLStatus } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
 import { showCustomPrompt } from 'utilities/MessageModal';
+import { useNavigation } from './useNavigation';
 
 export const useQLStatus = () => {
   const [QLResult, setQLResult] = useState(true);
+  const {startFunc} = useNavigation();
 
   useEffect(async () => {
     const { QLStatus } = await getQLStatus();
