@@ -33,8 +33,8 @@ const C00500 = () => {
   const { register, unregister, handleSubmit } = useForm();
 
   const [selectedAccountIdx, setSelectedAccountIdx] = useState();
+  const [accounts, setAccounts] = useState();
 
-  let accounts;
   const selectedAccount = accounts ? accounts[selectedAccountIdx ?? 0] : null;
 
   /**
@@ -49,7 +49,7 @@ const C00500 = () => {
       if (items.length === 0) {
         await showPrompt('您還沒有任何證券交割的存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
       } else {
-        accounts = items;
+        setAccounts(items);
         await processStartParams(items);
         dispatch(setWaittingVisible(false));
       }
@@ -64,7 +64,7 @@ const C00500 = () => {
     // startParams: {
     //   defaultAccount: 預設帳號
     // }
-    const startParams = await loadFuncParams();
+    const startParams = await loadFuncParams(); // null
     // 取得 Function Controller 提供的 keepData(model)
     if (startParams && (startParams instanceof Object)) {
       const index = accts.findIndex((acc) => acc.accountNo === startParams.defaultAccount);
