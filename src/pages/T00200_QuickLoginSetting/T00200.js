@@ -25,6 +25,7 @@ import {
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import store from 'stores/store';
+import { dateToString } from 'utilities/Generator';
 import { getQuickLoginInfo } from './api';
 import DrawerContent from './drawerContent';
 
@@ -284,7 +285,7 @@ const QuickLoginSetting = () => {
           (isBioActive || isPatternActive) && (
             <div className="bindingInfo">
               <h1>已登錄裝置</h1>
-              <InformationList title="啟用日期" content={bindingDate} textColor="text-primary" />
+              <InformationList title="啟用日期" content={dateToString(bindingDate)} textColor="text-primary" />
               <InformationList title="裝置型號" content={bindingDevice} textColor="text-primary" />
             </div>
           )
