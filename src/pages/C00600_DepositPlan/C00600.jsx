@@ -16,11 +16,12 @@ import { loadFuncParams, closeFunc, transactionAuth, startFunc } from 'utilities
 import { FuncID } from 'utilities/FuncID';
 import {AuthCode} from 'utilities/TxnAuthCode';
 import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
+import { getAccountsList } from 'utilities/CacheData';
 import EmptySlide from './components/EmptySlide';
 import EmptyPlan from './components/EmptyPlan';
 import DepositPlan from './components/DepositPlan';
 
-import { getDepositPlans, updateDepositPlan, closeDepositPlan, getAccountSummary } from './api';
+import { getDepositPlans, updateDepositPlan, closeDepositPlan } from './api';
 import {
   AlertUpdateFail,
   AlertNoMainAccount,
@@ -42,10 +43,14 @@ const DepositPlanPage = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
     // 檢查是否已申請主帳戶，「否」則到申請頁。
-    const acctData = await getAccountSummary('M');
-    if (!acctData?.length) AlertNoMainAccount({onOk: closeFunc});
-    const response = await getDepositPlans();
-    setDepositPlans(response);
+    // Fix getAccountSummary 替換成 getAccountList
+    getAccountsList('M', async (items) => { // M=台幣主帳戶、C=台幣子帳戶
+      if (!items.length) AlertNoMainAccount({onOk: closeFunc});
+      else {
+        const response = await getDepositPlans();
+        setDepositPlans(response);
+      }
+    });
 
     dispatch(setWaittingVisible(false));
   }, []);

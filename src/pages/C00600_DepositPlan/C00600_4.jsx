@@ -100,7 +100,7 @@ const DepositPlanDetailPage = () => {
     if (program.currentBalance > 0) {
       // 如果所選的子帳戶有餘額，要提示用戶自動轉帳。
       // TODO 要求使用者自己將餘額轉出。 onOk: () => handleCreate() 應修正！
-      ConfirmToTransferSubAccountBalance({ onOk: () => startFunc(FuncID.D00100), onCancel: closeFunc });
+      ConfirmToTransferSubAccountBalance({ onOk: () => startFunc(FuncID.D00100_台幣轉帳, {transOut: program.bindAccountNo}), onCancel: closeFunc });
     } else {
       handleCreate();
     }
@@ -166,6 +166,7 @@ const DepositPlanDetailPage = () => {
     }
   };
 
+  console.log('program', program);
   return (
     <Layout title={renderTitle()} goBackFunc={() => history.goBack()}>
       <MainScrollWrapper ref={mainRef}>

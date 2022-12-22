@@ -20,7 +20,6 @@ const HeroWithEdit = ({
   const imageInput = useRef();
   const [imageSrc, setImageSrc] = useState();
   const [newImageId, setNewImageId] = useState();
-  const [isDirty, setIsDirty] = useState(false);
 
   const imgSrc = () => {
     switch (newImageId) {
@@ -44,24 +43,29 @@ const HeroWithEdit = ({
   };
 
   useEffect(() => {
-    if (imageId) setNewImageId(imageId);
+    if (typeof imageId === 'number') {
+      setNewImageId(imageId);
+      if (imageId === 0) {
+        const base64 = sessionStorage.getItem('C00600-hero');
+        if (base64) setImageSrc(base64);
+      }
+    }
   }, [imageId]);
 
   useEffect(() => {
-    if (isDirty) onChange(newImageId);
+    onChange(newImageId);
   }, [newImageId]);
 
   const handleOnImageChange = (event) => {
     const images = event.target.files;
     if (images.length > 0) {
-      setImageSrc(URL.createObjectURL(images[0]));
-      setIsDirty(true);
-      setNewImageId(0);
-
       const reader = new FileReader();
       reader.readAsDataURL(images[0]);
       reader.onloadend = (e) => {
         sessionStorage.setItem('C00600-hero', e.currentTarget.result);
+        setImageSrc(e.currentTarget.result);
+        setNewImageId(0);
+        onChange(0);
       };
     }
   };
@@ -70,7 +74,6 @@ const HeroWithEdit = ({
     if (func.id === 0) {
       imageInput.current.click();
     } else {
-      setIsDirty(true);
       setNewImageId(func.id);
     }
   };
