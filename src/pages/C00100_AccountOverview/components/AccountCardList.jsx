@@ -155,6 +155,9 @@ const AccountCardList = ({ data, isDebt }) => {
               sAccStartFunc(card, cardColor);
               return;
             }
+            if (card.type === 'F') {
+              startFunc(funcId, { defaultCurrency: card.currency });
+            }
             startFunc(funcId, { focusToAccountNo: card.accountNo }); // TODO 從 存錢計畫 返回時的處理。
           };
 

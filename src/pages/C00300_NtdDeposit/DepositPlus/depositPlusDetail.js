@@ -22,7 +22,7 @@ const DepositPlusDetail = () => {
 
   // 調整優惠列表中的數字顯示
   const handleLevelList = (list) => list.map((item, index) => {
-  // offlineDepositRange
+    /* offlineDepositRange: 社群圈存款月平均餘額之總額數字 */
     const offlineDepositRange = item.offlineDepositRange.replace(/,/g, '');
     const offlineDepositRangeNum = {
       firstNum: offlineDepositRange.match(/\d+/g)[0],
@@ -44,7 +44,7 @@ const DepositPlusDetail = () => {
         switchZhNumber(offlineDepositRangeInt.secondNum, false)}`;
     }
 
-    // plus
+    /* plus: 推薦人個人優惠利率存款額度數字 */
     const plus = item.plus.replace(/,/g, '');
     const plusFinalRes = parseInt(plus, 10) === 0
       ? '0'

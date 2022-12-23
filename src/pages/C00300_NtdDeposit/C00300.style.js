@@ -12,43 +12,8 @@ const PageWrapper = styled(Layout)`
   height: 100vh;
   overflow: auto;
 
-  .interestRatePanel {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: baseline;
+  .panel {
     margin-bottom: 1.6rem;
-    
-    .panelItem {
-      text-align: center;
-      letter-spacing: .1rem;
-      width: 30%;
-      
-      h3 {
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 1.3rem;
-        white-space: nowrap;
-        color: ${({ theme }) => theme.colors.text.lightGray};
-        
-        .Icon {
-          top: -.2rem;
-          font-size: 1.6rem;
-          
-          &.switchIcon {
-            margin-left: .2rem;
-          }
-        }
-      }
-      
-      p {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 2rem;
-        color: ${({ theme }) => theme.colors.primary.light};
-      }
-    }
   }
 `;
 

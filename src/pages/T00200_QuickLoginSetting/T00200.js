@@ -113,7 +113,7 @@ const QuickLoginSetting = () => {
       QLType,
     } = await getQLStatus();
     // TODO: 下為測試用彈窗，正式上線前移除
-    showCustomPrompt({
+    await showCustomPrompt({
       title: '綁定狀態結果(測試用彈窗)',
       message: JSON.stringify({
         result,
