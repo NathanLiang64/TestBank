@@ -17,53 +17,18 @@
 
   <build>
    <!-- 設定war檔名稱 -->
-	<finalName>${project.artifactId}-${project.version}${current.time}</finalName>
-      <plugins>
-      <!-- war 檔名稱用 -->
-        <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>build-helper-maven-plugin</artifactId>
-            <version>1.9.1</version>
-            <executions>
-                <execution>
-                    <id>timestamp-property</id>
-                    <goals>
-                        <goal>timestamp-property</goal>
-                    </goals>
-                </execution>
-            </executions>
-            <configuration>
-                <name>current.time</name>
-                <pattern>.MMdd-HHmm</pattern>
-                <timeZone>GMT+8</timeZone>
-            </configuration>
-        </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>3.3.1</version>
-        <configuration>
-          <webResources>
-            <resource>
-              <directory>${npm.output.directory}</directory>
-            </resource>
-          </webResources>
-          <webXml>${basedir}/web.xml</webXml>
-        </configuration>
-      </plugin>
+	<finalName>app2-webview</finalName>
+    <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.0</version>
         <executions>
           <!-- 此處因jenkins的執行環境不一定有安裝node.js所以都註解掉 -->
-          <!-- 透過npm下載套件 -->
-          <!-- <execution>
+          <!-- 透過npm下載套件  mvn exec:exec -Dexec.args="-a <an argument> -b <another argument>" -->
+          <!--
+          <execution>
             <id>npm install (initialize)</id>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <phase>initialize</phase>
             <configuration>
               <executable>npm</executable>
               <arguments>
@@ -71,6 +36,7 @@
               </arguments>
             </configuration>
           </execution>
+          
           <execution>
             <id>npm install (clean)</id>
             <goals>
