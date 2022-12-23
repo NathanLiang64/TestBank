@@ -273,13 +273,15 @@ function Layout({
   }
 
   return (
-  <div>
-    {isPassed === null ? (
+    <div>
+      {/* watting 在 true 的情況下, 會因為沒有傳入 inspector 時，isPassed 變成 true，導致無法進到 Loading */}
+      {/* 因此在這邊額外加入 waitting 進行判定 */}
+    {isPassed === null || isPassed === undefined || waitting ? (
       <Loading isFullscreen />
     ) : (
       <MessageModal />
     )}
-  </div>
+    </div>
   );
 }
 

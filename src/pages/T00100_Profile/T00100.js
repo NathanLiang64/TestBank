@@ -12,6 +12,8 @@ import { startFunc } from 'utilities/AppScriptProxy';
 import defaultAvatar from 'assets/images/avatarImage.png';
 
 /* Styles */
+import { useDispatch } from 'react-redux';
+import { setModalVisible } from 'stores/reducers/ModalReducer';
 import SettingList from './T00100_settingList';
 import ProfileWrapper from './T00100.style';
 import { validationSchema } from './validationSchema';
@@ -32,8 +34,10 @@ const T00100 = () => {
 
   const [nickName, setNickName] = useState('');
   const [memberId, setMemberId] = useState();
+  const dispatch = useDispatch();
 
   const onSubmit = async (values) => {
+    dispatch(setModalVisible(false));
     const response = await updateNickName(values);
     if (response?.constructor === String) setNickName(values.nickName);
   };
@@ -45,13 +49,14 @@ const T00100 = () => {
         <TextInputField
           name="nickName"
           control={control}
-          inputProp={{ placeholder: '請輸入您的名稱' }}
+          inputProps={{ maxLength: 20, placeholder: '請輸入您的名稱' }}
           labelName="您的名稱"
         />
       ),
       okContent: '完成',
       onOk: handleSubmit(onSubmit),
       onClose: () => reset({ nickName }),
+      noDismiss: true,
     });
   };
 
