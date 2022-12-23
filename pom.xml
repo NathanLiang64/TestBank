@@ -16,63 +16,15 @@
   </properties>
 
   <build>
-   <!-- 設定war檔名稱 -->
-	<finalName>app2-webview</finalName>
+    <!-- 設定war檔名稱 -->
+	  <finalName>app2-webview</finalName>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <version>3.1.0</version>
-        <executions>
-          <!-- 此處因jenkins的執行環境不一定有安裝node.js所以都註解掉 -->
-          <!-- 透過npm下載套件  mvn exec:exec -Dexec.args="-a <an argument> -b <another argument>" -->
-          <!--
-          <execution>
-            <id>npm install (initialize)</id>
-            <configuration>
-              <executable>npm</executable>
-              <arguments>
-                <argument>install</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          
-          <execution>
-            <id>npm install (clean)</id>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <phase>pre-clean</phase>
-            <configuration>
-              <executable>npm</executable>
-              <arguments>
-                <argument>install</argument>
-              </arguments>
-            </configuration>
-          </execution> -->            
-          <!-- <execution>
-            <id>npm run build (compile)</id>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <phase>compile</phase>
-            <configuration>
-              <executable>npm</executable>
-              <arguments>
-                <argument>run</argument>
-                <argument>build</argument>
-              </arguments>
-            </configuration>
-          </execution> -->
-        </executions>
-        <configuration>
-          <environmentVariables>
-            <CI>false</CI>
-            <NPM_CONFIG_PREFIX>${basedir}/npm</NPM_CONFIG_PREFIX>
-            <NPM_CONFIG_CACHE>${NPM_CONFIG_PREFIX}/cache</NPM_CONFIG_CACHE>
-            <NPM_CONFIG_TMP>${project.build.directory}/npmtmp</NPM_CONFIG_TMP>
-          </environmentVariables>
-        </configuration>
+        <!-- mvn exec:exec -D exec.executable="npm" -D exec.args="install" -->
+        <!-- mvn exec:exec -D exec.executable="npm" -D exec.args="run build"-->
       </plugin>
     </plugins>
   </build>
