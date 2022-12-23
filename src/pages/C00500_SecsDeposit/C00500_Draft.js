@@ -100,7 +100,8 @@ const C00500Modified = () => {
           name="newName"
           control={control}
           labelName="新的帳戶名稱"
-          placeholder="請設定此帳戶的專屬名稱"
+          inputProps={{ placeholder: '請設定此帳戶的專屬名稱' }}
+
         />
       </>
     );

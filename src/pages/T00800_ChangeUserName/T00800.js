@@ -65,19 +65,19 @@ const ChangeUserName = () => {
               name="userName"
               control={control}
               labelName="您的使用者代號"
-              placeholder="請輸入使用者代號(6-20位英數字)"
+              inputProps={{ placeholder: '請輸入使用者代號(6-20位英數字)', autoComplete: 'off' }}
             />
             <PasswordInputField
               name="newUserName"
               control={control}
               labelName="新的使用者代號"
-              placeholder="請輸入新的使用者代號(6-20位英數字)"
+              inputProps={{ placeholder: '請輸入新的使用者代號(6-20位英數字)', autoComplete: 'off' }}
             />
             <PasswordInputField
               name="newUserNameCheck"
               control={control}
               labelName="請確認新的使用者代號"
-              placeholder="請輸入新的使用者代號(6-20位英數字)"
+              inputProps={{ placeholder: '請再輸入新的使用者代號(6-20位英數字)', autoComplete: 'off' }}
             />
           </div>
           <FEIBButton type="submit">儲存變更</FEIBButton>

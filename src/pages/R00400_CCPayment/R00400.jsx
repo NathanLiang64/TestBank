@@ -199,8 +199,7 @@ const Page = () => {
                 type="number"
                 control={control}
                 name="customAmount"
-                placeholder="請輸入金額"
-                disabled={watch('amountOptions') !== AMOUNT_OPTION.CUSTOM}
+                inputProps={{inputMode: 'numeric', placeholder: '請輸入金額', disabled: watch('amountOptions') !== AMOUNT_OPTION.CUSTOM}}
                 $color={watchedValues.amountOptions !== AMOUNT_OPTION.CUSTOM ? Theme.colors.text.placeholder : Theme.colors.primary.brand}
               />
             </div>
@@ -228,8 +227,9 @@ const Page = () => {
                 <TextInputField
                   name="extAccountNo"
                   labelName="轉出帳號"
+                  type="number"
                   control={control}
-                  placeholder="請輸入轉出帳號"
+                  inputProps={{maxLength: 14, inputMode: 'numeric', placeholder: '請輸入轉出帳號'}}
                 />
               </>
             )}

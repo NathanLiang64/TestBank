@@ -51,13 +51,15 @@ const S00700 = () => {
             labelName="我的金融卡帳號"
             name="actno"
             control={control}
-            disabled
+            inputProps={{maxLength: 14, inputMode: 'numeric', disable: true}}
+
           />
           <TextInputField
             type="number"
             labelName="我的金融卡序號"
             name="serial"
             placeholder="請輸入金融卡序號"
+            inputProps={{maxLength: 6, inputMode: 'numeric'}}
             control={control}
           />
           <p className="hint_text">金融卡背面右下角6碼數字</p>

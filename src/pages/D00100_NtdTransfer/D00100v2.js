@@ -519,8 +519,10 @@ const Transfer = (props) => {
                   <Controller control={control} name={idTransInAcct}
                     render={({ field }) => (
                       // 當 startFuncParams 有預設轉入帳號時，不允許變更
-                      <FEIBInput type="number" {...field} placeholder="請輸入" inputMode="numeric" error={!!errors?.transIn?.account}
-                        inputProps={{ maxLength: 14, autoComplete: 'off', disabled: startFuncParams?.transIn?.account }}
+                      <FEIBInput type="number" {...field} placeholder="請輸入" error={!!errors?.transIn?.account}
+                        inputProps={{
+                          maxLength: 14, autoComplete: 'off', disabled: startFuncParams?.transIn?.account, inputMode: 'numeric',
+                        }}
                       />
                     )}
                   />
@@ -538,8 +540,10 @@ const Transfer = (props) => {
                 render={({ field }) => (
                   <div>
                     {/* 當 startFuncParams 有預設轉帳金額時，不允許變更 */}
-                    <FEIBInput {...field} placeholder="$0（零元）" inputMode="numeric" error={!!errors?.amount}
-                      inputProps={{ maxLength: 9, autoComplete: 'off', disabled: startFuncParams?.amount }}
+                    <FEIBInput {...field} placeholder="$0（零元）" error={!!errors?.amount}
+                      inputProps={{
+                        maxLength: 9, autoComplete: 'off', disabled: startFuncParams?.amount, inputMode: 'numeric',
+                      }}
                     />
                     <div className="balanceLayout">{amountText}</div>
                   </div>

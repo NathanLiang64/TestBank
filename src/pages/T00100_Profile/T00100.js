@@ -45,7 +45,7 @@ const T00100 = () => {
         <TextInputField
           name="nickName"
           control={control}
-          placeholder="請輸入您的名稱"
+          inputProp={{ placeholder: '請輸入您的名稱' }}
           labelName="您的名稱"
         />
       ),

@@ -101,8 +101,7 @@ const DepositPlanEditPage = () => {
                   name="name"
                   control={control}
                   labelName="為你的計畫命名吧"
-                  placeholder="請輸入7個以內的中英文字、數字或符號"
-                  disabled={isRestrictedPromotion}
+                  inputProps={{ maxLength: 7, placeholder: '請輸入7個以內的中英文字、數字或符號', disabled: isRestrictedPromotion }}
                   $color={isRestrictedPromotion ? Theme.colors.text.lightGray : Theme.colors.primary.brand}
                 />
               </div>
@@ -113,7 +112,7 @@ const DepositPlanEditPage = () => {
                   control={control}
                   labelName="預計存錢區間"
                   $color={Theme.colors.text.lightGray}
-                  disabled
+                  inputProps={{disabled: true}}
                 />
               </div>
 
@@ -124,7 +123,7 @@ const DepositPlanEditPage = () => {
                     name="cycleMode"
                     control={control}
                     labelName="存錢頻率"
-                    disabled
+                    inputProps={{disabled: true}}
                     $color={Theme.colors.text.lightGray}
                   />
                 </div>
@@ -135,7 +134,7 @@ const DepositPlanEditPage = () => {
                     name="cycleTiming"
                     control={control}
                     labelName="週期"
-                    disabled
+                    inputProps={{disabled: true}}
                     $color={Theme.colors.text.lightGray}
                   />
                 </div>
@@ -147,7 +146,7 @@ const DepositPlanEditPage = () => {
                   control={control}
                   labelName="預計每期存錢金額"
                   $color={Theme.colors.text.lightGray}
-                  disabled
+                  inputProps={{disabled: true}}
                 />
               </div>
 
@@ -157,7 +156,7 @@ const DepositPlanEditPage = () => {
                   control={control}
                   labelName="選擇陪你存錢的帳號"
                   $color={Theme.colors.text.lightGray}
-                  disabled
+                  inputProps={{disabled: true}}
                 />
               </div>
 

@@ -131,8 +131,7 @@ const DepositPlanEditPage = () => {
                   name="name"
                   control={control}
                   labelName="為你的計畫命名吧"
-                  placeholder="請輸入7個以內的中英文字、數字或符號"
-                  disabled={!!program.type}
+                  inputProps={{ maxLength: 7, placeholder: '請輸入7個以內的中英文字、數字或符號', disabled: !!program.type }}
                   $color={getInputColor(program.type)}
                 />
               </div>
@@ -142,7 +141,7 @@ const DepositPlanEditPage = () => {
                   name="cycleDuration"
                   control={control}
                   labelName="預計存錢區間"
-                  disabled={!!program.type}
+                  inputProps={{disabled: !!program.type}}
                   $color={getInputColor(!!program.type)}
                 />
               </div>
@@ -153,7 +152,7 @@ const DepositPlanEditPage = () => {
                     name="cycleMode"
                     control={control}
                     labelName="存錢頻率"
-                    disabled={!!program.type}
+                    inputProps={{disabled: !!program.type}}
                     $color={getInputColor(!!program.type)}
                   />
                 </div>
@@ -163,7 +162,7 @@ const DepositPlanEditPage = () => {
                     name="cycleTiming"
                     control={control}
                     labelName="週期"
-                    disabled={!!program.type}
+                    inputProps={{disabled: !!program.type}}
                     $color={getInputColor(!!program.type)}
                   />
                   <FEIBHintMessage>
@@ -179,6 +178,7 @@ const DepositPlanEditPage = () => {
                   control={control}
                   labelName="預計每期存錢金額"
                   type="number"
+                  inputProps={{inputMode: 'numeric'}}
                 />
                 <FEIBHintMessage>
                   {(amount > 0) && `存款目標為 ${toCurrency(getGoalAmount(amount, cycleDuration, cycleMode))}元`}

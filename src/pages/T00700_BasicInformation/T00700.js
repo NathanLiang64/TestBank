@@ -136,13 +136,14 @@ const T00700 = () => {
               type="number"
               name="mobile"
               labelName="行動電話"
-              placeholder="請輸入行動電話"
+              inputProps={{placeholder: '請輸入行動電話', inputMode: 'numeric'}}
               control={control}
             />
             <TextInputField
               name="email"
+              type="email"
               labelName="電子信箱"
-              placeholder="請輸入電子信箱"
+              inputProps={{placeholder: '請輸入電子信箱'}}
               control={control}
             />
             <FEIBInputLabel>通訊地址</FEIBInputLabel>
@@ -150,7 +151,7 @@ const T00700 = () => {
               <div>
                 <DropdownField
                   name="county"
-                  placeholder="請選擇縣市"
+                  inputProps={{placeholder: '請選擇縣市'}}
                   control={control}
                   options={countyOptions}
                 />
@@ -158,7 +159,7 @@ const T00700 = () => {
               <div>
                 <DropdownField
                   name="city"
-                  placeholder="請選擇鄉鎮市區"
+                  inputProps={{placeholder: '請選擇鄉鎮市區'}}
                   control={control}
                   options={districtOptions}
                 />
@@ -166,7 +167,7 @@ const T00700 = () => {
             </div>
             <TextInputField
               name="addr"
-              placeholder="請輸入通訊地址"
+              inputProps={{placeholder: '請輸入通訊地址'}}
               control={control}
             />
           </div>

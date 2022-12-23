@@ -14,7 +14,6 @@ export const CustomInputSelectorField = ({
   labelName,
   type = 'text',
   placeholder,
-  disabled,
   $color,
   ...controlProps
 }) => {
@@ -36,7 +35,6 @@ export const CustomInputSelectorField = ({
         value={value || ''}
         type="number"
         id={name}
-        disabled={disabled}
         error={!!fieldState.error}
         placeholder={placeholder || ''}
         $color={$color}

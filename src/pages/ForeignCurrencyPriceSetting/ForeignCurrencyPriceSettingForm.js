@@ -61,7 +61,7 @@ const ForeignCurrencyPriceSettingForm = ({
           name="price"
           control={control}
           labelName="通知匯率"
-          placeholder="請輸入匯率"
+          inputProps={{ placeholder: '請輸入匯率' }}
           type="number"
         />
 
