@@ -16,6 +16,7 @@
     "chart.js": "^3.7.1",
     "crypto-js": "^4.0.0",
     "date-fns": "^2.29.3",
+    "env-cmd": "^10.1.0",
     "html-react-parser": "^1.2.8",
     "http-proxy-middleware": "^2.0.0",
     "lottie-react": "^2.3.1",
@@ -41,6 +42,7 @@
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
     "reset-css": "^5.0.1",
+    "save": "^2.9.0",
     "styled-components": "^5.3.0",
     "swiper": "^6.6.2",
     "web-vitals": "^1.1.2",
@@ -48,6 +50,7 @@
   },
   "scripts": {
     "start": "PORT=3006 react-scripts start",
+    "build:sit": "env-cmd -f .env.sit react-scripts build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
