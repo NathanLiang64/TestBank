@@ -39,6 +39,7 @@ const S00400 = () => {
 
   // 更新通知設定
   const updateNotiSetting = async (modelParam) => {
+    dispatch(setWaittingVisible(true));
     const param = {
       communityNotice: modelParam.communityNotice ? 'Y' : 'N',
       boardNotice: modelParam.boardNotice ? 'Y' : 'N',
@@ -56,6 +57,7 @@ const S00400 = () => {
     }
 
     setModel({ ...modelParam });
+    dispatch(setWaittingVisible(false));
   };
 
   // 同意開啟通知設定

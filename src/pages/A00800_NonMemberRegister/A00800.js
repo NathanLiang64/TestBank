@@ -15,6 +15,8 @@ import { showCustomPrompt } from 'utilities/MessageModal';
 import Accordion from 'components/Accordion';
 import { RadioGroup } from '@material-ui/core';
 import { AuthCode } from 'utilities/TxnAuthCode';
+import { useDispatch } from 'react-redux';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { memberRegister } from './api';
 import A00800AccoridonContent from './A00800_AccoridonContent';
 
@@ -28,7 +30,7 @@ import A00800Wrapper from './A00800.style';
 const A00800 = () => {
   // eslint-disable-next-line no-unused-vars
   const [inviteToken, setInviteToken] = useState('');
-
+  const dispatch = useDispatch();
   // 驗證錯誤文字
   const mobileError = (isEmpty) => `請輸入${!isEmpty && '正確的'}手機號碼`;
   const nameError = (isEmpty) => (isEmpty ? '請輸入姓名' : '姓名請勿超過5字元');
@@ -100,6 +102,7 @@ const A00800 = () => {
 
   /* submit動作處理 */
   const onSubmit = async (data) => {
+    dispatch(setWaittingVisible(true));
     const authResult = await transactionAuth(AuthCode.A00800, data.mobileNum);
     const regData = {
       name: data.name,
@@ -124,6 +127,7 @@ const A00800 = () => {
         });
       }
     }
+    dispatch(setWaittingVisible(false));
   };
 
   useEffect(async () => {

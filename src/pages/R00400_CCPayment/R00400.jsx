@@ -45,6 +45,7 @@ const Page = () => {
   const [cardNo, setCardNo] = useState();
   const [internalAccounts, setInternalAccounts] = useState([]);
   const [terms, setTerms] = useState();
+
   const {
     control, watch, handleSubmit, reset,
   } = useForm({
@@ -146,6 +147,9 @@ const Page = () => {
   };
 
   const onSubmit = async (data) => {
+    dispatch(setWaittingVisible(true));
+
+    // ===== 本行帳戶繳費 =====
     if (data.paymentMethod === PAYMENT_OPTION.INTERNAL) {
       const payload = {
         amount: getAmount(data),
@@ -159,13 +163,17 @@ const Page = () => {
       }
     }
 
+    // ===== 他行帳戶繳費 =====
     if (data.paymentMethod === PAYMENT_OPTION.EXTERNAL) {
       showCustomPrompt({message: 'TODO 他行帳戶繳費API'});
     }
 
+    // ===== 超商條碼繳費 =====
     if (data.paymentMethod === PAYMENT_OPTION.CSTORE) {
       renderBarCode(getAmount(data));
     }
+
+    dispatch(setWaittingVisible(false));
   };
 
   return (

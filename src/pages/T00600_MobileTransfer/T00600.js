@@ -8,6 +8,8 @@ import AddNewItem from 'components/AddNewItem';
 import SettingItem from 'components/SettingItem';
 import Layout from 'components/Layout/Layout';
 import { FuncID } from 'utilities/FuncID';
+import { useDispatch } from 'react-redux';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import T00600ModifyForm from './T00600_ModifyForm';
 
 import { fetchMobiles, fetchName } from './api';
@@ -17,7 +19,7 @@ import MobileTransferWrapper from './T00600.style';
 
 const T00600 = () => {
   const history = useHistory();
-
+  const dispatch = useDispatch();
   const [mobileTransferData, setMobileTransferData] = useState([]);
   const [mobilesList, setMobilesList] = useState([]);
   const [modifyData, setModifyData] = useState({
@@ -80,7 +82,9 @@ const T00600 = () => {
 
   // 刪除手機號碼收款
   const deleteMobileTransferSetting = async (data) => {
+    dispatch(setWaittingVisible(true));
     const { custName } = await fetchName();
+    dispatch(setWaittingVisible(false));
     history.push(
       '/T006002',
       {

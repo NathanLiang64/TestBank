@@ -19,6 +19,8 @@ import { closeFunc, startFunc, transactionAuth } from 'utilities/AppScriptProxy'
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { showAnimationModal } from 'utilities/MessageModal';
 import { FuncID } from 'utilities/FuncID';
+import { useDispatch } from 'react-redux';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { createConfirm, createDepositPlan, updateDepositPlan } from './api';
 import { AlertInvalidEntry, ConfirmToTransferSubAccountBalance } from './utils/prompts';
 import { DetailPageWrapper } from './C00600.style';
@@ -29,6 +31,7 @@ import { DetailPageWrapper } from './C00600.style';
 const DepositPlanDetailPage = () => {
   const history = useHistory();
   const location = useLocation();
+  const dispatch = useDispatch();
   const mainRef = useRef();
   const [mode, setMode] = useState(0);
   const [plan, setPlan] = useState();
@@ -64,6 +67,7 @@ const DepositPlanDetailPage = () => {
   };
 
   const handleCreate = async () => {
+    dispatch(setWaittingVisible(true));
     const {extra, goalAmount, ...payload} = program;
 
     // 11.30 目前後端設定是 transactionAuth 之後才可以進行 createDepositPlan
@@ -94,6 +98,8 @@ const DepositPlanDetailPage = () => {
         onClose: () => closeFunc(),
       });
     }
+
+    dispatch(setWaittingVisible(false));
   };
 
   const handleConfirm = async () => {

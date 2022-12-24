@@ -32,6 +32,7 @@ const ChangeUserName = () => {
 
   // 點擊儲存變更按鈕，表單驗證 呼叫變更使用者代號 API
   const onSubmit = async ({ userName, newUserName, newUserNameCheck }) => {
+    dispatch(setWaittingVisible(true));
     const jsRs = await transactionAuth(AuthCode.T00800);
     if (jsRs.result) {
       const param = {
@@ -39,7 +40,7 @@ const ChangeUserName = () => {
         newUserName: e2ee(newUserName),
         newUserNameCheck: e2ee(newUserNameCheck),
       };
-      dispatch(setWaittingVisible(true));
+
       const { code, message } = await changeUserName(param);
 
       showAnimationModal({

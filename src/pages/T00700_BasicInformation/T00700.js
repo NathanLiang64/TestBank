@@ -34,8 +34,8 @@ const T00700 = () => {
     },
   });
 
-  const watchedValues = watch();
-  const { countyOptions, districtOptions } = useLocationOptions(watchedValues.county); // 取得縣市/鄉鎮區列表
+  const [watchedCounty, watchedCity] = watch(['county', 'city']);
+  const { countyOptions, districtOptions } = useLocationOptions(watchedCounty); // 取得縣市/鄉鎮區列表
   const [originPersonalData, setOriginPersonalData] = useState();
 
   const fetchCountyList = async () => {
@@ -124,8 +124,10 @@ const T00700 = () => {
 
   // 當 county 改變時，city 要被清空
   useEffect(() => {
-    if (watchedValues.county) reset((formValues) => ({...formValues, city: ''}));
-  }, [watchedValues.county]);
+    // 如果 county 被更換後，原 city 值不存在於 districtOptions 內部，就 reset city
+    const isExisted = districtOptions.find(({value}) => value === watchedCity);
+    if (watchedCity && !isExisted) reset((formValues) => ({ ...formValues, city: '' }));
+  }, [watchedCounty]);
 
   return (
     <Layout title="基本資料變更">

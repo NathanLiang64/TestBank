@@ -11,6 +11,8 @@ import { transactionAuth } from 'utilities/AppScriptProxy';
 import { getAccountsList, getBankCode, updateAccount } from 'utilities/CacheData';
 import { showError } from 'utilities/MessageModal';
 import { AuthCode } from 'utilities/TxnAuthCode';
+import { useDispatch } from 'react-redux';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { createNtdTransfer, executeNtdTransfer } from './api';
 import { getTransInData, getDisplayAmount, getTransDate, getCycleDesc } from './util';
 import TransferWrapper from './D00100.style';
@@ -25,6 +27,7 @@ const TransferConfirm = (props) => {
 
   const history = useHistory();
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const dispatch = useDispatch();
 
   const model = state;
   const transInData = getTransInData(model.transIn);
@@ -61,6 +64,8 @@ const TransferConfirm = (props) => {
     delete request.booking.transTimes;
 
     // 建立轉帳交易紀錄。
+    dispatch(setWaittingVisible(true));
+
     const response = await createNtdTransfer(request);
     if (response.result) {
       // 以 Server端傳回的約轉帳號旗標為準。
@@ -80,6 +85,7 @@ const TransferConfirm = (props) => {
       // 顯示失敗原因，並回到前一頁；若是嚴重錯誤，會在 axios 就處理掉了。
       await showError(response.message, goBack);
     }
+    dispatch(setWaittingVisible(false));
   };
 
   /**

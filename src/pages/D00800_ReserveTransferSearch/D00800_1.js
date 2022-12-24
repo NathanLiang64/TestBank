@@ -20,10 +20,9 @@ const ReserveTransferSearch1 = ({ location }) => {
   const goBack = () => history.goBack();
 
   const toResultPage = async () => {
+    dispatch(setWaittingVisible(true));
     const jsRs = await transactionAuth(AuthCode.D00800);
     if (jsRs.result) {
-      // switchLoading(true);
-      dispatch(setWaittingVisible(true));
       const {
         trnsDate, accountId, seqNo, source,
       } = location.state;
@@ -31,7 +30,7 @@ const ReserveTransferSearch1 = ({ location }) => {
         trnsDate, acctId: accountId, seqNo, queryType: source,
       };
       const { code, message } = await cancelReserveTransfer(data);
-      // switchLoading(false);
+
       dispatch(setWaittingVisible(false));
       if (code === '0000') {
         history.push('/D008002', { ...location.state });

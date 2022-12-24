@@ -11,20 +11,20 @@ import { validationSchema } from './validationSchema';
 
 export const S00800_1 = ({currentFormValue, onSubmit}) => {
   const {
-    control, handleSubmit, reset, watch, getValues,
+    control, handleSubmit, reset, watch,
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: currentFormValue,
   });
 
-  const watchedCountyName = watch('county');
-  const { countyOptions, districtOptions } = useLocationOptions(watchedCountyName);
+  const [watchedCounty, watchedCity] = watch(['county', 'city']);
+  const { countyOptions, districtOptions } = useLocationOptions(watchedCounty);
 
   useEffect(() => {
-    if (watchedCountyName !== currentFormValue.county) {
-      reset({ ...getValues(), city: '' });
-    }
-  }, [watchedCountyName]);
+    // 如果 county 被更換後，原 city 值不存在於 districtOptions 內部，就 reset city
+    const isExisted = districtOptions.find(({value}) => value === watchedCity);
+    if (watchedCity && !isExisted) reset((formValues) => ({ ...formValues, city: '' }));
+  }, [watchedCounty]);
 
   return (
     <LossReissueDialogWrapper>

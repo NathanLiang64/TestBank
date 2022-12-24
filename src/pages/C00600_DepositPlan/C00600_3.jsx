@@ -194,7 +194,7 @@ const DepositPlanEditPage = () => {
                   labelName="選擇陪你存錢的帳號"
                 />
                 <FEIBHintMessage>
-                  { ((bindAccountNo !== '*') && (bindAccountNo !== 'new')) && `存款餘額為 ${toCurrency(getRemainingBalance(bindAccountNo))}元` }
+                  { ((bindAccountNo !== '*') && (bindAccountNo !== 'new') && !!bindAccountNo) && `存款餘額為 ${toCurrency(getRemainingBalance(bindAccountNo))}元` }
                 </FEIBHintMessage>
               </div>
 

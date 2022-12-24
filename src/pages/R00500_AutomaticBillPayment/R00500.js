@@ -7,7 +7,7 @@ import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
 import SettingItem from 'components/SettingItem';
 import { DropdownField } from 'components/Fields';
-import { FEIBButton, FEIBSwitch} from 'components/elements';
+import { FEIBButton, FEIBSwitch, FEIBSwitchLabel} from 'components/elements';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { accountFormatter } from 'utilities/Generator';
 import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
@@ -91,9 +91,10 @@ const AutomaticBillPayment = () => {
   };
 
   const onSubmit = async (values) => {
+    dispatch(setWaittingVisible(true));
     const auth = await transactionAuth(AuthCode.R00500);
     if (auth.result) {
-      const {result, message} = await setAutoDebit(values);
+      const { result, message } = await setAutoDebit(values);
       showAnimationModal({
         isSuccess: result,
         successTitle: '設定成功',
@@ -101,9 +102,10 @@ const AutomaticBillPayment = () => {
         successDesc: message,
         errorDesc: message,
       });
-      getAutoDebitData();
+      getAutoDebitData(); // TODO 可改為直接變動 appliedAutoBill 不再打一次 API
       closeDrawer();
     }
+    dispatch(setWaittingVisible(false));
   };
 
   const handleApplyAutoBill = () => {
@@ -156,19 +158,17 @@ const AutomaticBillPayment = () => {
     <Layout title="自動扣繳申請/查詢">
       <AutomaticBillPaymentWrapper>
         <div className="switchContainer">
-          <div className="labelContainer">
-            <p className="labelTxt">自動扣繳</p>
-          </div>
-          <FEIBSwitch checked={active} onClick={handleApplyAutoBill} />
+          <FEIBSwitchLabel
+            control={<FEIBSwitch checked={active} onClick={handleApplyAutoBill} />}
+            label="自動扣繳"
+          />
         </div>
-        {
-          active && (
-            <section className="billBlock">
-              <div className="blockTitle">您已申辦自動扣繳</div>
-              { renderAppliedAutoBill() }
-            </section>
-          )
-        }
+        {active && (
+          <section className="billBlock">
+            <div className="blockTitle">您已申辦自動扣繳</div>
+            {renderAppliedAutoBill()}
+          </section>
+        )}
         <Accordion space="both">
           <AccordionContent />
         </Accordion>
