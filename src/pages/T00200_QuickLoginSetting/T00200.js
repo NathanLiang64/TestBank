@@ -1,5 +1,5 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -12,16 +12,15 @@ import InformationList from 'components/InformationList';
 import { EditRounded } from '@material-ui/icons';
 import {
   getQLStatus,
-  regQLfeature,
-  regQL,
-  delQL,
-  closeFunc,
+  createQuickLogin,
+  verifyQuickLogin,
+  removeQuickLogin,
   transactionAuth,
 } from 'utilities/AppScriptProxy';
 import {
-  customPopup, showAnimationModal, showDrawer, showCustomPrompt,
+  customPopup, showAnimationModal, showDrawer, showCustomPrompt, showError,
 } from 'utilities/MessageModal';
-import { setDrawerVisible } from 'stores/reducers/ModalReducer';
+import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import store from 'stores/store';
 import { getQuickLoginInfo } from './api';
@@ -32,11 +31,18 @@ import QuickLoginSettingWrapper from './T00200.style';
 import T00200AccordionContent from './T00200_accordionContent';
 
 const QuickLoginSetting = () => {
+  const dispatch = useDispatch();
+
   const [isBioActive, setIsBioActive] = useState(false);
   const [isPatternActive, setIsPatternActive] = useState(false);
   const [bindingDate, setBindingDate] = useState('');
   const [bindingDevice, setBindingDevice] = useState('');
   const [midPhone, setMidPhone] = useState('');
+
+  /** 生物辨識模式代碼 */
+  const BioIdentiy = '1';
+  /** 圖形辨識模式代碼 */
+  const Pattern = '2';
 
   // 取得綁定資訊
   const fetchLoginBindingInfo = async () => {
@@ -50,10 +56,14 @@ const QuickLoginSetting = () => {
     if (midPhoneNo) {
       setMidPhone(midPhoneNo);
     }
+    return midPhoneNo;
   };
 
-  // 解除快登綁定
-  const callAppDelQL = async (type) => {
+  /**
+   * 解除快登綁定
+   * @param {*} type 快登所使用驗證方式。(1. 生物辨識, 2.圖形辨識)
+   */
+  const removeSetting = async (type) => {
     const rs = await transactionAuth(AuthCode.T00200.UNSET);
     console.log('交易驗證結果:', JSON.stringify(rs));
     // customPopup(
@@ -61,8 +71,16 @@ const QuickLoginSetting = () => {
     //   `解除快速綁定交易驗證測試結果：${JSON.stringify(rs)}`,
     // );
     if (rs.result) {
-      const { result, message } = await delQL();
-      const isSuccess = result === 'true';
+      const { result, message } = await removeQuickLogin();
+      const isSuccess = result;
+      if (isSuccess) {
+        if (type === BioIdentiy) {
+          setIsBioActive(false);
+        } else { // if (type === Pattern) {
+          setIsPatternActive(false);
+        }
+      }
+
       // 顯示解除綁定結果
       showAnimationModal({
         isSuccess,
@@ -72,12 +90,6 @@ const QuickLoginSetting = () => {
         errorCode: '',
         errorDesc: message,
       });
-      if (type === '1' && isSuccess) {
-        setIsBioActive(false);
-      }
-      if (type === '2' && isSuccess) {
-        setIsPatternActive(false);
-      }
     }
     // else {
     //   await showCustomPrompt({
@@ -116,20 +128,15 @@ const QuickLoginSetting = () => {
       QLStatus,
       QLType,
     } = await getQLStatus();
-    // TODO: 下為測試用彈窗，正式上線前移除
-    showCustomPrompt({
-      title: '綁定狀態結果(測試用彈窗)',
-      message: JSON.stringify({
-        result,
-        message,
-        QLStatus,
-        QLType,
-      }),
-    });
+
+    if (result === false) {
+      await showError(message);
+      return;
+    }
 
     // 回傳成功
-    if (result === 'true') {
-      const status = QLType === '1';
+    if (result) {
+      const status = QLType === BioIdentiy;
       switch (QLStatus) {
         case '1':
         case '2':
@@ -152,21 +159,25 @@ const QuickLoginSetting = () => {
           break;
       }
     }
-
-    // 回傳失敗
-    if (result === 'false') {
-      customPopup(
-        '系統訊息',
-        message,
-      );
-    }
   };
 
-  // 進行裝置綁定
-  const callAppBindRegQL = async (type, pwd) => {
+  /**
+   * 驗證設定結果並進行裝置認證，以完成綁定作業。
+   * @param {*} type 快登所使用驗證方式。(1. 生物辨識, 2.圖形辨識)
+   * @param {*} pwd 通過交易驗證後取得的密碼，此密碼已做過 E2EE 加密。
+   */
+  const verifySettingAndMID = async (type, pwd) => {
     // 通知 app 執行綁頂
-    const { result, message } = await regQL(type, pwd);
-    const isSuccess = result === 'true';
+    const { result, message } = await verifyQuickLogin(type, pwd);
+    const isSuccess = result;
+    // 設定 Switch 狀態
+    if (type === BioIdentiy) {
+      setIsBioActive(isSuccess);
+    } else { // if (type === Pattern) {
+      setIsPatternActive(isSuccess);
+    }
+    fetchLoginBindingInfo();
+
     // 顯示綁定結果
     showAnimationModal({
       isSuccess,
@@ -176,44 +187,38 @@ const QuickLoginSetting = () => {
       errorCode: '',
       errorDesc: message,
     });
-
     setDrawerVisible(false);
-
-    // 設定 Switch 狀態
-    if (type === '1') {
-      setIsBioActive(isSuccess);
-    }
-    if (type === '2') {
-      setIsPatternActive(isSuccess);
-    }
-    fetchLoginBindingInfo();
   };
 
-  // 設定生物或圖形辨識, 1: 生物辨識, 2: 圖形辨識
-  const callAppSetBioOrPattern = async (type) => {
+  /**
+   * 要求使用者以指定的驗證方式進行快登設定。
+   * @param {*} type 快登所使用驗證方式。(1. 生物辨識, 2.圖形辨識)
+   */
+  const startSetting = async (type) => {
     const isBinded = checkSettingStatus();
     if (isBinded) return;
-    const { result, message } = await regQLfeature(type);
+    const { result, message } = await createQuickLogin(type);
     console.log('設定快登資料結果:', JSON.stringify(result));
 
     // 設定綁定資料成功進行交易驗證
-    if (result === 'true') {
+    if (result) {
       const rs = await transactionAuth(AuthCode.T00200.SET, midPhone);
       console.log('交易驗證結果:', JSON.stringify(rs));
       if (rs.result) {
         // 交易驗證成功，開啟綁定 drawer，點擊確認進行 MID 驗證
+        // NOTE 通過 MID 驗證才算是真正完成快登設定，目前二者是綁在一起的！
         showDrawer(
           'APP 手機裝置綁定',
           <DrawerContent
             midPhone={midPhone}
-            confirmClick={() => callAppBindRegQL(type, rs?.netbankPwd)}
+            confirmClick={() => verifySettingAndMID(type, rs.netbankPwd)}
             cancelClick={() => store.dispatch(setDrawerVisible(false))}
           />,
         );
       }
     }
 
-    if (result === 'false') {
+    if (result === false) {
       customPopup(
         '系統訊息',
         message,
@@ -221,18 +226,23 @@ const QuickLoginSetting = () => {
     }
   };
 
-  // 變更圖形辨識
+  // TODO 變更圖形辨識
   const handleChangePattern = async () => {
-    const res = await transactionAuth(AuthCode.T00200.MODIFY, midPhone);
+    const res = await transactionAuth(AuthCode.T00200.MODIFY);
 
     if (res.result) {
       // 交易驗證成功
     }
   };
 
-  useEffect(() => {
+  useEffect(async () => {
+    dispatch(setWaittingVisible(true));
     fetchQLStatus();
-    fetchLoginBindingInfo();
+    const midPhoneNo = await fetchLoginBindingInfo();
+    if (!midPhoneNo) {
+      // TODO 若沒有 非約轉 及 CIF 門號，應詢問使用者是否立即進行「基本資料變更」的手機號碼設定。
+    }
+    dispatch(setWaittingVisible(false));
   }, []);
 
   return (
@@ -247,9 +257,9 @@ const QuickLoginSetting = () => {
                   checked={isBioActive}
                   onClick={() => {
                     if (isBioActive) {
-                      callAppDelQL('1');
+                      removeSetting(BioIdentiy);
                     } else {
-                      callAppSetBioOrPattern('1');
+                      startSetting(BioIdentiy);
                     }
                   }}
                 />
@@ -264,9 +274,9 @@ const QuickLoginSetting = () => {
                   checked={isPatternActive}
                   onClick={() => {
                     if (isPatternActive) {
-                      callAppDelQL('2');
+                      removeSetting(Pattern);
                     } else {
-                      callAppSetBioOrPattern('2');
+                      startSetting(Pattern);
                     }
                   }}
                 />
@@ -292,7 +302,7 @@ const QuickLoginSetting = () => {
         }
         <div className="agreeTip">
           <p>提醒您：</p>
-          <p>(1)本服務須關閉WiFi，使用手機行動網路。</p>
+          <p>(1)本服務須關閉Wi-Fi，使用手機行動網路。</p>
           <p>(2)啟用快速登入將同時進行APP裝置認證。</p>
           <p>
             (3)如需取消APP裝置認證，請關閉快速登入設定或致電本行客服。

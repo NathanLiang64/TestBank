@@ -536,63 +536,77 @@ async function getQLStatus() {
 }
 
 /**
- * 設定快登認證資料
- * @param {*} QLtype 快登裝置綁定所使用驗證方式(type->1:生物辨識/2:圖形辨識)
+ * 通知 APP 依 authType 指定的類型要求使用者進行快登設定。
+ * @param {*} authType 快登所使用驗證方式。(1. 生物辨識, 2.圖形辨識)
  * @returns {
  *  result: 驗證結果(true/false)。
  *  message: 駿證失敗狀況描述。
  * }
  */
-async function regQLfeature(QLtype) {
+async function createQuickLogin(authType) {
   const data = {
-    QLtype,
+    QLtype: authType,
   };
-  return await callAppJavaScript('regQLfeature', data, true, () => {
-    console.log('web 通知 APP 設定快登資料');
-    return {
-      result: 'true',
-    };
-  });
+  const appRs = await callAppJavaScript('regQLfeature', data, true, () => ({ result: true }));
+  if (appRs.result === true) {
+    const apiRs = await callAPI('/auth/quickLogin/v1/create', { authType });
+    if (!apiRs.isSuccess) {
+      return {
+        result: false,
+        message: apiRs.message,
+      };
+    }
+  }
+  return appRs;
 }
 
+// TODO 應改由 Controller 來做，對 APP 只是「通知」。
 /**
  * 綁定快登裝置
- * @param {*} QLtype 快登裝置綁定所使用驗證方式(type->1:生物辨識/2:圖形辨識)
+ * @param {*} authType 快登所使用驗證方式。(1. 生物辨識, 2.圖形辨識)
  * @param {*} pwdE2ee E2EE加密後的密碼
- * @param {*} midToken 由 Controller 提供的 MID Login 取得的 Auth Token
  * @returns {
  *  result: 驗證結果(true/false)。
  *  message: 駿證失敗狀況描述。
  * }
  */
-async function regQL(QLtype, pwdE2ee) {
+async function verifyQuickLogin(authType, pwdE2ee) {
   const data = {
-    QLtype,
+    QLtype: authType,
     pwdE2ee,
   };
-  return await callAppJavaScript('regQL', data, true, () => {
-    console.log('web 通知 APP 綁定快登資料');
-    return {
-      result: 'true',
-    };
-  });
+  const appRs = await callAppJavaScript('regQL', data, true, () => ({ result: true }));
+  if (appRs.result === true) {
+    const apiRs = await callAPI('/auth/quickLogin/v1/bind');
+    if (!apiRs.isSuccess) {
+      return {
+        result: false,
+        message: apiRs.message,
+      };
+    }
+  }
+  return appRs;
 }
 
 /**
  * 解除快登綁定
- * @param {*} delQL 快登裝置綁定所使用驗證方式(type->1:生物辨識/2:圖形辨識)
  * @returns {
  *  result: 驗證結果(true/false)。
  *  message: 駿證失敗狀況描述。
  * }
  */
-async function delQL() {
-  return await callAppJavaScript('delQL', null, true, () => {
-    console.log('web 通知 APP 解除快登綁定');
-    return {
-      result: 'true',
-    };
-  });
+async function removeQuickLogin() {
+  const appRs = await callAppJavaScript('delQL', null, true, () => ({ result: true }));
+  if (appRs.result === true) {
+    const apiRs = await callAPI('/auth/quickLogin/v1/unbind');
+    if (!apiRs.isSuccess) {
+      return {
+        result: false,
+        message: apiRs.message,
+      };
+    }
+  }
+  return appRs;
 }
 
 /**
@@ -737,9 +751,9 @@ export {
   transactionAuth,
   shareMessage,
   getQLStatus,
-  regQLfeature,
-  regQL,
-  delQL,
+  createQuickLogin,
+  verifyQuickLogin,
+  removeQuickLogin,
   queryPushBind,
   updatePushBind,
   forceLogout,
