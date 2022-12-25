@@ -8,6 +8,8 @@ import { Buffer } from 'buffer';
 import PasswordDrawer from 'components/PasswordDrawer';
 import { getTransactionAuthMode, createTransactionAuth, transactionAuthVerify } from 'components/PasswordDrawer/api';
 import { customPopup, showDrawer, showError } from './MessageModal';
+// eslint-disable-next-line import/no-cycle
+import { callAPI } from './axios';
 import e2ee from './E2ee';
 
 const device = {
@@ -73,6 +75,9 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
     try {
       // 若是 JSON 格式，則以物件型態傳回。
       result = JSON.parse(value);
+      // NOTE 以下奇怪作法是為了配合 APP-JS
+      if (result.result === 'true') result.result = true;
+      if (result.result === 'false') result.result = false;
     } catch (ex) {
       result = value;
     }
@@ -494,14 +499,20 @@ async function transactionAuth(authCode, otpMobile) {
  * @returns {
  *   result: 驗證結果(true/false)。
  *   message: 驗證失敗狀況描述。
- *   netbankPwd: 因為之後叫用交易相關 API 時可能會需要用到，所以傳回 E2EE 加密後的密碼。
  * }
  */
-async function verifyBio(authCode) {
+async function verifyBio(authKey) {
   const data = {
-    authCode,
+    authCode: authKey,
   };
-  return await callAppJavaScript('chkQLfeature', data, true, () => ({ result: true })); // Call /v1/setBioResult
+  return await callAppJavaScript('chkQLfeature', data, true, async () => {
+    // DEBUG
+    // 傳回：累計驗證次數；若為 -1 表示使用者取消。
+    const apiRs = await callAPI('/api/transactionAuth/v1/setBioResult', { authKey, success: true });
+    return {
+      result: (apiRs.data <= 3),
+    };
+  });
 }
 
 /**
@@ -517,8 +528,9 @@ async function getQLStatus() {
   return await callAppJavaScript('getQLStatus', null, true, () => {
     const testData = getJwtTokenTestData();
     return {
-      result: 'true',
+      result: true,
       QLStatus: testData.mid ? '1' : '0',
+      QLType: '1', // TODO testData.qlMode,
     };
   });
 }
@@ -624,24 +636,28 @@ async function appTransactionAuth(request) {
     return failResult('無法建立交易授權驗證。');
   }
 
-  // DEBUG ByPass交易驗證
-  if (request) {
-    const otpCode = allowedOTP ? '123456' : null;
-    const netbankPwd = allowedPWD ? e2ee('feib1688') : null;
-    const verifyRs = await transactionAuthVerify({ authKey: txnAuth.key, funcCode, netbankPwd, otpCode });
-    console.log(verifyRs);
-    return { result: true, message: null, netbankPwd };
-  }
+  // // DEBUG ByPass交易驗證
+  // if (request) {
+  //   const otpCode = allowedOTP ? '123456' : null;
+  //   const netbankPwd = allowedPWD ? e2ee('feib1688') : null;
+  //   const verifyRs = await transactionAuthVerify({ authKey: txnAuth.key, funcCode, netbankPwd, otpCode });
+  //   console.log(verifyRs);
+  //   return { result: true, message: null, netbankPwd };
+  // }
 
   // 進行雙因子驗證，呼叫 APP 進行驗證。
   if (allowed2FA) {
-    const rs = await verifyBio(txnAuth.key); // 若生物辨識三次不通過 或是 使用者取消，才會傳回 false！
+    // NOTE 由原生處理：若生物辨識三次不通過 或是 使用者取消，才會傳回 false！
+    const rs = await verifyBio(txnAuth.key);
     // 因為已綁MID，所以 密碼 也可以當第二因子；因此改用密碼驗證。
     if (rs.result === false) allowedPWD = true;
 
     // NOTE 驗證成功(allowedPWD一定是false)但不用驗OTP，就直接傳回成功。
     //      若是驗證失敗或是還要驗OTP，就要開 Drawer 進行密碼或OTP驗證。
-    if (!allowedPWD && !allowedOTP) return rs;
+    if (!allowedPWD && !allowedOTP) {
+      const verifyRs = await transactionAuthVerify({ authKey: txnAuth.key, funcCode });
+      return verifyRs;
+    }
   }
 
   let result = null;
