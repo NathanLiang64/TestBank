@@ -9,6 +9,14 @@ const PageWrapper = styled.div`
   .text-red {
     color: ${({ theme }) => theme.colors.state.error};
   }
+
+  .emptydata-wrapper {
+    width: 100%;
+    height: 30vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 `;
 
 export default PageWrapper;

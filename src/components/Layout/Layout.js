@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-indent */
 /* eslint-disable react/jsx-wrap-multilines */
 import PropTypes from 'prop-types';
@@ -156,7 +157,7 @@ function Layout({
    */
   useEffect(async () => {
     // console.log('showWaitting -> ', waitting);
-    switchLoading(waitting);
+    // switchLoading(waitting); // 關掉的情況下還是會有loading畫面，不確定這一行用意為何
     if (waitting) {
       dispatch(setDrawerVisible(false));
       dispatch(setModalVisible(false));

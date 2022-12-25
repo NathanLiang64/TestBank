@@ -23,6 +23,7 @@ import {
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import store from 'stores/store';
+import { dateToString } from 'utilities/Generator';
 import { getQuickLoginInfo } from './api';
 import DrawerContent from './drawerContent';
 
@@ -91,14 +92,6 @@ const QuickLoginSetting = () => {
         errorDesc: message,
       });
     }
-    // else {
-    //   await showCustomPrompt({
-    //     message: `解除快速綁定交易驗證測試結果：${JSON.stringify(rs)}`,
-    //     onOk: () => closeFunc(),
-    //     onCancel: () => closeFunc(),
-    //     onClose: () => closeFunc(),
-    //   });
-    // }
   };
 
   // 檢查綁定狀態
@@ -237,7 +230,7 @@ const QuickLoginSetting = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    fetchQLStatus();
+    await fetchQLStatus();
     const midPhoneNo = await fetchLoginBindingInfo();
     if (!midPhoneNo) {
       // TODO 若沒有 非約轉 及 CIF 門號，應詢問使用者是否立即進行「基本資料變更」的手機號碼設定。
@@ -295,7 +288,7 @@ const QuickLoginSetting = () => {
           (isBioActive || isPatternActive) && (
             <div className="bindingInfo">
               <h1>已登錄裝置</h1>
-              <InformationList title="啟用日期" content={bindingDate} textColor="text-primary" />
+              <InformationList title="啟用日期" content={dateToString(bindingDate)} textColor="text-primary" />
               <InformationList title="裝置型號" content={bindingDevice} textColor="text-primary" />
             </div>
           )

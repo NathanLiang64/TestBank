@@ -61,13 +61,14 @@ const C00400 = () => {
    * @param {[*]} accts
    */
   const processStartParams = async (accts) => {
+    /* 所有外幣帳戶只有一個帳號，使用幣別區分index */
     // startParams: {
-    //   defaultAccount: 預設帳號
+    //   defaultCurrency: 預設幣別
     // }
     const startParams = await loadFuncParams();
     // 取得 Function Controller 提供的 keepData(model)
     if (startParams && (startParams instanceof Object)) {
-      const index = accts.findIndex((acc) => acc.accountNo === startParams.defaultAccount);
+      const index = accts.findIndex((acc) => acc.currency === startParams.defaultCurrency);
       setSelectedAccountIdx(index);
     } else {
       setSelectedAccountIdx(0);

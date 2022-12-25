@@ -17,7 +17,7 @@ import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
 import { switchZhNumber, currencySymbolGenerator } from 'utilities/Generator';
 import { getAccountsList, getAccountBonus, updateAccount } from 'utilities/CacheData';
 import { FuncID } from 'utilities/FuncID';
-import { ArrowNextIcon, SwitchIcon } from 'assets/images/icons';
+import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import {
   getTransactions,
   downloadDepositBookCover,
@@ -135,28 +135,29 @@ const C00300 = () => {
     };
     const value1 = bonusRate ? `${bonusRate * 100}%` : '-';
     const value2 = (interest > 0) ? `${currencySymbolGenerator('TWD', interest)}` : '0';
-    return (
-      <div className="interestRatePanel">
-        <div className="panelItem">
-          <h3>免費跨提/轉</h3>
-          <p>{`${freeWithdrawRemain ?? '-'}/${freeTransferRemain ?? '-'}`}</p>
-        </div>
-        <div className="panelItem" onClick={() => setShowRate(!showRate)}>
-          <h3>
-            {showRate ? '優惠利率' : '累積利息'}
-            <SwitchIcon className="switchIcon" />
-          </h3>
-          <p>{showRate ? value1 : value2 }</p>
-        </div>
 
-        {/* 用 startFunc 執行 depositPlus ，將 model 存入 keepData 返回時就不用再重 Load */}
-        <div className="panelItem" onClick={() => handleFunctionClick('depositPlus')}>
-          <h3>
-            優惠利率額度
-            <ArrowNextIcon />
-          </h3>
-          <p>{switchZhNumber(bonusQuota, false)}</p>
-        </div>
+    const panelContent = [
+      {
+        label: '免費跨提/轉',
+        value: `${freeWithdrawRemain ?? '-'}/${freeTransferRemain ?? '-'}`,
+        iconType: 'Arrow',
+      },
+      {
+        label: `${showRate ? '優惠利率' : '累積利息'}`,
+        value: `${showRate ? value1 : value2}`,
+        iconType: 'switch',
+        onClick: () => setShowRate(!showRate),
+      },
+      {
+        label: '優惠利率額度',
+        value: `${switchZhNumber(bonusQuota, false)}`,
+        iconType: 'Arrow',
+        onClick: () => handleFunctionClick('depositPlus'),
+      },
+    ];
+    return (
+      <div className="panel">
+        <ThreeColumnInfoPanel content={panelContent} />
       </div>
     );
   };
