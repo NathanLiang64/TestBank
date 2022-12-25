@@ -22,7 +22,7 @@ const CardLessSetting = () => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const {QLResult, showMessage} = useQLStatus();// 確認裝置綁定狀態
+  const {QLResult, showUnbondedMsg} = useQLStatus();// 確認裝置綁定狀態
   const [cardLessStatus, setCardLessStatus] = useState();
   const [account, setAccount] = useState();
   const [isEnable, setEnable] = useState();
@@ -66,10 +66,10 @@ const CardLessSetting = () => {
         }
         dispatch(setWaittingVisible(false));
       }
-    } else showMessage();
+    } else showUnbondedMsg();
   };
 
-  const handlePwdChange = () => (QLResult ? startFunc(FuncID.D00400) : showMessage());
+  const handlePwdChange = () => (QLResult ? startFunc(FuncID.D00400) : showUnbondedMsg());
 
   return (
     <Layout title="無卡提款設定">

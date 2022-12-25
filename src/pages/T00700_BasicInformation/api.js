@@ -16,7 +16,7 @@ import { callAPI } from 'utilities/axios';
  */
 export const getCountyList = async (param) => {
   const response = await callAPI('/api/setting/queryCounty', param);
-  return response;
+  return response.data;
 };
 
 /**

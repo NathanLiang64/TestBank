@@ -8,8 +8,8 @@ import {
 export const DropdownField = ({
   options,
   labelName,
-  disabled,
   $color,
+  inputProps,
   ...controlProps
 }) => {
   const {field, fieldState} = useController(controlProps);
@@ -34,12 +34,13 @@ export const DropdownField = ({
       <FEIBInputLabel htmlFor={field.name}>{labelName}</FEIBInputLabel>
       <FEIBSelect
         MenuProps={MenuProps}
+        inputProps={inputProps}
         onChange={onChangeHandler}
         onBlur={field.onBlur}
         id={field.name}
         name={field.name}
         value={field.value}
-        disabled={disabled}
+        // disabled={disabled}
         $space="bottom"
         $color={$color}
       >

@@ -105,7 +105,7 @@ const Adjustment = () => {
             render={({ field }) => (
               <FEIBInput
                 {...field}
-                type="text"
+                type="number"
                 inputMode="numeric"
                 id="creditAmount"
                 name="creditAmount"

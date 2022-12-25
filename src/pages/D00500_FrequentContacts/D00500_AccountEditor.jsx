@@ -100,9 +100,8 @@ function AccountEditor({
             <FEIBInput
               {...field}
               type="number"
-              inputMode="numeric"
               placeholder="請輸入常用的銀行帳號"
-              inputProps={{ maxLength: 14, autoComplete: 'off' }}
+              inputProps={{ maxLength: 14, autoComplete: 'off', inputMode: 'numeric' }}
               error={!!errors?.acctId}
             />
           )}

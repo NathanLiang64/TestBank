@@ -95,9 +95,12 @@ const DepositPlanCreatePage = () => {
                   </RadioGroup>
                 )}
               />
+              {errors.code && (
               <FEIBErrorMessage>
-                {errors.code && errors.code.message}
+                {errors.code.message}
               </FEIBErrorMessage>
+
+              )}
             </fieldset>
 
             <Accordion title="服務條款" className="terms" onClick={lazyLoadTerms}>

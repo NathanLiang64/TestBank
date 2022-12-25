@@ -1,6 +1,6 @@
 import { showCustomPrompt } from 'utilities/MessageModal';
 import { stringToDate } from 'utilities/Generator';
-import { goHome } from 'utilities/AppScriptProxy';
+import { closeFunc, goHome } from 'utilities/AppScriptProxy';
 
 export const AlertNoMainAccount = ({ onOk }) => {
   showCustomPrompt({
@@ -8,7 +8,8 @@ export const AlertNoMainAccount = ({ onOk }) => {
     message: '您尚未持有Bankee存款帳戶',
     onOk,
     okContent: '現在就來申請吧!',
-    onClose: onOk,
+    onCancel: closeFunc,
+    onClose: closeFunc,
   });
 };
 

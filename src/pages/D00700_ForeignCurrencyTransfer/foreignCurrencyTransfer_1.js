@@ -8,21 +8,26 @@ import { transactionAuth } from 'utilities/AppScriptProxy';
 import Layout from 'components/Layout/Layout';
 import InformationList from 'components/InformationList';
 import { FEIBButton } from 'components/elements';
-import { createTransfer } from './api';
 
 /* Styles */
+import { AuthCode } from 'utilities/TxnAuthCode';
+import { useDispatch } from 'react-redux';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import ForeignCurrencyTransferWrapper from './foreignCurrencyTransfer.style';
+import { createTransfer } from './api';
 
 const ForeignCurrencyTransfer1 = ({ location }) => {
   const history = useHistory();
+  const dispatch = useDispatch();
   const [confirmData, setConfirmData] = useState({});
 
   // 確認進行轉帳
   const applyTransfer = async () => {
-    const code = 0x30;
-    const rs = await transactionAuth(code);
+    dispatch(setWaittingVisible(true));
+    const rs = await transactionAuth(AuthCode.D00700);
     if (rs?.result) {
       const response = await createTransfer(confirmData);
+      dispatch(setWaittingVisible(false));
       history.push('/foreignCurrencyTransfer2', confirmData);
     }
   };

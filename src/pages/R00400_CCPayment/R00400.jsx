@@ -45,6 +45,7 @@ const Page = () => {
   const [cardNo, setCardNo] = useState();
   const [internalAccounts, setInternalAccounts] = useState([]);
   const [terms, setTerms] = useState();
+
   const {
     control, watch, handleSubmit, reset,
   } = useForm({
@@ -146,6 +147,9 @@ const Page = () => {
   };
 
   const onSubmit = async (data) => {
+    dispatch(setWaittingVisible(true));
+
+    // ===== 本行帳戶繳費 =====
     if (data.paymentMethod === PAYMENT_OPTION.INTERNAL) {
       const payload = {
         amount: getAmount(data),
@@ -159,13 +163,17 @@ const Page = () => {
       }
     }
 
+    // ===== 他行帳戶繳費 =====
     if (data.paymentMethod === PAYMENT_OPTION.EXTERNAL) {
       showCustomPrompt({message: 'TODO 他行帳戶繳費API'});
     }
 
+    // ===== 超商條碼繳費 =====
     if (data.paymentMethod === PAYMENT_OPTION.CSTORE) {
       renderBarCode(getAmount(data));
     }
+
+    dispatch(setWaittingVisible(false));
   };
 
   return (
@@ -199,8 +207,7 @@ const Page = () => {
                 type="number"
                 control={control}
                 name="customAmount"
-                placeholder="請輸入金額"
-                disabled={watch('amountOptions') !== AMOUNT_OPTION.CUSTOM}
+                inputProps={{inputMode: 'numeric', placeholder: '請輸入金額', disabled: watch('amountOptions') !== AMOUNT_OPTION.CUSTOM}}
                 $color={watchedValues.amountOptions !== AMOUNT_OPTION.CUSTOM ? Theme.colors.text.placeholder : Theme.colors.primary.brand}
               />
             </div>
@@ -228,8 +235,9 @@ const Page = () => {
                 <TextInputField
                   name="extAccountNo"
                   labelName="轉出帳號"
+                  type="number"
                   control={control}
-                  placeholder="請輸入轉出帳號"
+                  inputProps={{maxLength: 14, inputMode: 'numeric', placeholder: '請輸入轉出帳號'}}
                 />
               </>
             )}

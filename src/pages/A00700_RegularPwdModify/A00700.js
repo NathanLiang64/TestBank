@@ -31,8 +31,8 @@ const RegularPwdModify = () => {
   });
 
   // 設定結果彈窗
-  const setResultDialog = (response) => {
-    showAnimationModal({
+  const setResultDialog = async (response) => {
+    await showAnimationModal({
       isSuccess: response,
       successTitle: '設定成功',
       successDesc: (
@@ -50,9 +50,9 @@ const RegularPwdModify = () => {
 
   // 點擊儲存變更，呼叫更新網銀密碼API
   const onSubmit = async ({ password, newPassword, newPasswordCheck }) => {
+    dispatch(setWaittingVisible(true));
     const jsRs = await transactionAuth(AuthCode.A00700);
     if (jsRs.result) {
-      dispatch(setWaittingVisible(true));
       const param = {
         password: e2ee(password),
         newPassword: e2ee(newPassword),
@@ -60,15 +60,17 @@ const RegularPwdModify = () => {
         actionCode: 1,
       };
       const response = await renewPwd(param);
-      dispatch(setWaittingVisible(false));
-      setResultDialog(response);
+      await setResultDialog(response);
     }
+    dispatch(setWaittingVisible(false));
   };
 
   // 不變更密碼，並且離開此頁面
   const remainSamePwd = async () => {
+    dispatch(setWaittingVisible(true));
     await renewPwd({ actionCode: 2 });
     closeFunc();
+    dispatch(setWaittingVisible(false));
   };
 
   useEffect(async () => {
@@ -113,16 +115,19 @@ const RegularPwdModify = () => {
               labelName="您的網銀密碼"
               name="password"
               control={control}
+              inputProps={{autoComplete: 'off'}}
             />
             <PasswordInputField
               labelName="新的網銀密碼"
               name="newPassword"
               control={control}
+              inputProps={{autoComplete: 'off'}}
             />
             <PasswordInputField
               labelName="請確認新的網銀密碼"
               name="newPasswordCheck"
               control={control}
+              inputProps={{autoComplete: 'off'}}
             />
           </div>
           <div>

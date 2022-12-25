@@ -32,6 +32,7 @@ const ChangeUserName = () => {
 
   // 點擊儲存變更按鈕，表單驗證 呼叫變更使用者代號 API
   const onSubmit = async ({ userName, newUserName, newUserNameCheck }) => {
+    dispatch(setWaittingVisible(true));
     const jsRs = await transactionAuth(AuthCode.T00800);
     if (jsRs.result) {
       const param = {
@@ -39,7 +40,7 @@ const ChangeUserName = () => {
         newUserName: e2ee(newUserName),
         newUserNameCheck: e2ee(newUserNameCheck),
       };
-      dispatch(setWaittingVisible(true));
+
       const { code, message } = await changeUserName(param);
 
       showAnimationModal({
@@ -65,19 +66,19 @@ const ChangeUserName = () => {
               name="userName"
               control={control}
               labelName="您的使用者代號"
-              placeholder="請輸入使用者代號(6-20位英數字)"
+              inputProps={{ placeholder: '請輸入使用者代號(6-20位英數字)', autoComplete: 'off' }}
             />
             <PasswordInputField
               name="newUserName"
               control={control}
               labelName="新的使用者代號"
-              placeholder="請輸入新的使用者代號(6-20位英數字)"
+              inputProps={{ placeholder: '請輸入新的使用者代號(6-20位英數字)', autoComplete: 'off' }}
             />
             <PasswordInputField
               name="newUserNameCheck"
               control={control}
               labelName="請確認新的使用者代號"
-              placeholder="請輸入新的使用者代號(6-20位英數字)"
+              inputProps={{ placeholder: '請再輸入新的使用者代號(6-20位英數字)', autoComplete: 'off' }}
             />
           </div>
           <FEIBButton type="submit">儲存變更</FEIBButton>

@@ -34,8 +34,8 @@ const T00700 = () => {
     },
   });
 
-  const watchedValues = watch();
-  const { countyOptions, districtOptions } = useLocationOptions(watchedValues.county); // 取得縣市/鄉鎮區列表
+  const [watchedCounty, watchedCity] = watch(['county', 'city']);
+  const { countyOptions, districtOptions } = useLocationOptions(watchedCounty); // 取得縣市/鄉鎮區列表
   const [originPersonalData, setOriginPersonalData] = useState();
 
   const fetchCountyList = async () => {
@@ -124,8 +124,10 @@ const T00700 = () => {
 
   // 當 county 改變時，city 要被清空
   useEffect(() => {
-    if (watchedValues.county) reset((formValues) => ({...formValues, city: ''}));
-  }, [watchedValues.county]);
+    // 如果 county 被更換後，原 city 值不存在於 districtOptions 內部，就 reset city
+    const isExisted = districtOptions.find(({value}) => value === watchedCity);
+    if (watchedCity && !isExisted) reset((formValues) => ({ ...formValues, city: '' }));
+  }, [watchedCounty]);
 
   return (
     <Layout title="基本資料變更">
@@ -133,15 +135,17 @@ const T00700 = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
             <TextInputField
+              type="number"
               name="mobile"
               labelName="行動電話"
-              placeholder="請輸入行動電話"
+              inputProps={{placeholder: '請輸入行動電話', inputMode: 'numeric'}}
               control={control}
             />
             <TextInputField
               name="email"
+              type="email"
               labelName="電子信箱"
-              placeholder="請輸入電子信箱"
+              inputProps={{placeholder: '請輸入電子信箱'}}
               control={control}
             />
             <FEIBInputLabel>通訊地址</FEIBInputLabel>
@@ -149,7 +153,7 @@ const T00700 = () => {
               <div>
                 <DropdownField
                   name="county"
-                  placeholder="請選擇縣市"
+                  inputProps={{placeholder: '請選擇縣市'}}
                   control={control}
                   options={countyOptions}
                 />
@@ -157,7 +161,7 @@ const T00700 = () => {
               <div>
                 <DropdownField
                   name="city"
-                  placeholder="請選擇鄉鎮市區"
+                  inputProps={{placeholder: '請選擇鄉鎮市區'}}
                   control={control}
                   options={districtOptions}
                 />
@@ -165,7 +169,7 @@ const T00700 = () => {
             </div>
             <TextInputField
               name="addr"
-              placeholder="請輸入通訊地址"
+              inputProps={{placeholder: '請輸入通訊地址'}}
               control={control}
             />
           </div>

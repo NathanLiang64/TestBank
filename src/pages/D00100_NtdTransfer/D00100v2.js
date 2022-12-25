@@ -81,12 +81,12 @@ const Transfer = (props) => {
   const schema = yup.object().shape({
     transIn: yup.object().shape({
       type: yup.number().min(0).max(3).required(),
-      bank: yup.string().when('type', (type, s) => ((type === 0) ? s.required() : s.nullable())),
-      account: yup.string().when('type', (type, s) => ((type === 0) ? s.required().min(10).max(14) : s.nullable())),
+      bank: yup.string().when('type', (type, s) => ((type === 0) ? s.required('請選擇銀行代碼') : s.nullable())),
+      account: yup.string().when('type', (type, s) => ((type === 0) ? s.required('請輸入轉入帳號').min(10, '銀行帳號必定是由10~14個數字所組成').max(14, '銀行帳號必定是由10~14個數字所組成') : s.nullable())),
       freqAcct: yup.object().when('type', (type, s) => ((type === 1) ? s.required() : s.nullable())),
       regAcct: yup.object().when('type', (type, s) => ((type === 2) ? s.required() : s.nullable())),
     }),
-    amount: yup.string().required(),
+    amount: yup.string().required('請輸入轉帳金額'),
     booking: yup.object().shape({
       mode: yup.number().min(0).max(1).required(),
       multiTimes: yup.string().required().length(1).oneOf(['1', '*']),
@@ -519,8 +519,14 @@ const Transfer = (props) => {
                   <Controller control={control} name={idTransInAcct}
                     render={({ field }) => (
                       // 當 startFuncParams 有預設轉入帳號時，不允許變更
-                      <FEIBInput {...field} placeholder="請輸入" inputMode="numeric" error={!!errors?.transIn?.account}
-                        inputProps={{ maxLength: 14, autoComplete: 'off', disabled: startFuncParams?.transIn?.account }}
+                      <FEIBInput type="number" {...field} error={!!errors?.transIn?.account}
+                        inputProps={{
+                          placeholder: '請輸入',
+                          maxLength: 14,
+                          autoComplete: 'off',
+                          disabled: startFuncParams?.transIn?.account,
+                          inputMode: 'numeric',
+                        }}
                       />
                     )}
                   />
@@ -538,8 +544,10 @@ const Transfer = (props) => {
                 render={({ field }) => (
                   <div>
                     {/* 當 startFuncParams 有預設轉帳金額時，不允許變更 */}
-                    <FEIBInput {...field} placeholder="$0（零元）" inputMode="numeric" error={!!errors?.amount}
-                      inputProps={{ maxLength: 9, autoComplete: 'off', disabled: startFuncParams?.amount }}
+                    <FEIBInput {...field} placeholder="$0（零元）" error={!!errors?.amount}
+                      inputProps={{
+                        maxLength: 9, autoComplete: 'off', disabled: startFuncParams?.amount, inputMode: 'numeric',
+                      }}
                     />
                     <div className="balanceLayout">{amountText}</div>
                   </div>
