@@ -134,7 +134,7 @@ const C00300 = () => {
       freeWithdrawRemain: null, freeTransferRemain: null, bonusQuota: null, bonusRate: null, interest: null, // 預設值
     };
     const value1 = bonusRate ? `${bonusRate * 100}%` : '-';
-    const value2 = (interest > 0) ? `${currencySymbolGenerator('TWD', interest)}` : '0';
+    const value2 = (interest > 0) ? `${currencySymbolGenerator('NTD', interest)}` : '0';
 
     const panelContent = [
       {

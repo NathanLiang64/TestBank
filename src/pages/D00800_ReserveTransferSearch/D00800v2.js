@@ -143,7 +143,7 @@ const D00800 = () => {
       <InformationTape
         key={item.inActNo}
         topLeft={tabValue === '1' ? `${item.inBank}-${item.inActNo}` : `${item.inActNo}`}
-        topRight={currencySymbolGenerator('TWD', parseFloat(item.amount))}
+        topRight={currencySymbolGenerator('NTD', parseFloat(item.amount))}
         bottomLeft={tabValue === '1' ? `預約轉帳日：${dateToString(item.payDate)}` : `交易日期：${item.trnsDate}`}
         bottomRight={tabValue === '1' ? item.type : undefined}
         onClick={tabValue === '1' ? () => handleReserveDataDialogOpen(item) : () => handleOpenResultDialog(item)}

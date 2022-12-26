@@ -46,7 +46,7 @@ const C007002 = () => {
       <>
         <Badge
           label={`${foundReward.date.slice(0, 4)}/${foundReward.date.slice(4, 6)} 回饋合計`}
-          value={currencySymbolGenerator('TWD', foundReward.amount + foundReward.communityAmount)}
+          value={currencySymbolGenerator('NTD', foundReward.amount + foundReward.communityAmount)}
         />
         <table className="table">
           <thead>
@@ -58,11 +58,11 @@ const C007002 = () => {
           <tbody>
             <tr>
               <td>刷卡回饋</td>
-              <td>{currencySymbolGenerator('TWD', foundReward.amount)}</td>
+              <td>{currencySymbolGenerator('NTD', foundReward.amount)}</td>
             </tr>
             <tr>
               <td>社群圈分潤</td>
-              <td>{currencySymbolGenerator('TWD', foundReward.communityAmount)}</td>
+              <td>{currencySymbolGenerator('NTD', foundReward.communityAmount)}</td>
             </tr>
           </tbody>
         </table>

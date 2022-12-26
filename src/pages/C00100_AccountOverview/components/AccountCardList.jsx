@@ -121,7 +121,7 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
         purpose: 0,
         accountNo: null,
         alias: '',
-        currency: 'TWD',
+        currency: 'NTD',
         type,
         isEmpty: true,
       });

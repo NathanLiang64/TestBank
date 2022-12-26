@@ -39,7 +39,7 @@ const R00200_1 = () => {
         </div>
       </div>
       <div className="right-section">
-        {currencySymbolGenerator('TWD', detail.cost)}
+        {currencySymbolGenerator('NTD', detail.cost)}
       </div>
     </div>
   );
