@@ -36,7 +36,6 @@ const Page = () => {
     dispatch(setWaittingVisible(true));
     const deductRt = await getBillDeducStatus();
     const billsRt = await getBillDetail(currentMonth);
-    console.log('R00300', {billsRt});
 
     setDeductInfo(deductRt);
     setBills(billsRt);

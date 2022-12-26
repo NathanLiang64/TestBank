@@ -52,6 +52,14 @@ const LoanInterestWrapper = styled(Layout)`
       }
     }
 
+    .emptydata-wrapper {
+      width: 100%;
+      height: 30vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
     .detailUl {
       padding: 1.6rem;
       li {

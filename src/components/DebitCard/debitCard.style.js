@@ -34,6 +34,8 @@ const DebitCardWrapper = styled.div`
       .account {
         font-size: 1.5rem;
         color: ${({ theme }) => theme.colors.text.lightGray};
+        white-space: nowrap;
+        flex: 1;
       }
       
       .branch {

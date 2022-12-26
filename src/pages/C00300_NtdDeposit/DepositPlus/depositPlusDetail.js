@@ -22,7 +22,7 @@ const DepositPlusDetail = () => {
 
   // 調整優惠列表中的數字顯示
   const handleLevelList = (list) => list.map((item, index) => {
-  // offlineDepositRange
+    /* offlineDepositRange: 社群圈存款月平均餘額之總額數字 */
     const offlineDepositRange = item.offlineDepositRange.replace(/,/g, '');
     const offlineDepositRangeNum = {
       firstNum: offlineDepositRange.match(/\d+/g)[0],
@@ -44,7 +44,7 @@ const DepositPlusDetail = () => {
         switchZhNumber(offlineDepositRangeInt.secondNum, false)}`;
     }
 
-    // plus
+    /* plus: 推薦人個人優惠利率存款額度數字 */
     const plus = item.plus.replace(/,/g, '');
     const plusFinalRes = parseInt(plus, 10) === 0
       ? '0'
@@ -117,12 +117,13 @@ const DepositPlusDetail = () => {
     /* 移除<a>，將字串依換行符號切成字串陣列，移除所有'●' */
     const aTagRemovedDetail = detail.replace(/<a(.*?)<\/a>/g, '').replaceAll('●', '');
 
+    /* 以<br>分隔成陣列 */
     const detailList = aTagRemovedDetail.split('<br>');
 
     return (
       <div className="activityCard">
         <div className="activityCard_upper">
-          <div className="title">{title}</div>
+          <div className="title">{title.replace('*', '')}</div>
           <div className="detail" onClick={async () => await handleDetailOnClick(detailLinkText)}>
             {detailLinkText}
             <ArrowNextIcon />

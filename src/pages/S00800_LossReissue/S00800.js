@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -13,6 +12,7 @@ import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReduc
 
 import { getBasicInformation } from 'pages/T00700_BasicInformation/api';
 import { AuthCode } from 'utilities/TxnAuthCode';
+import { accountFormatter } from 'utilities/Generator';
 import {getStatus, reIssueOrLost} from './api';
 import LossReissueWrapper from './S00800.style';
 import {actionTextGenerator} from './utils';
@@ -108,7 +108,7 @@ const LossReissue = () => {
             <li>
               <div className="blockLeft">
                 <p className="label debitCardStatusLabel">金融卡狀態</p>
-                <span className="content">{debitCardInfo?.account || '-'}</span>
+                <span className="content">{accountFormatter(debitCardInfo?.account) || '-'}</span>
               </div>
               <div className="blockRight">
                 <h3 className="debitState">{debitCardInfo?.statusDesc}</h3>

@@ -157,7 +157,11 @@ export const ReserveTransferSearchWrapper = styled(Layout)`
     }
   }
   .emptyConatiner {
-    padding-top: 50%;
+    width: 100%;
+    height: 30vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 `;
 

@@ -13,6 +13,7 @@ import { FuncID } from 'utilities/FuncID';
 import { showAnimationModal } from 'utilities/MessageModal';
 import { getAccountsList } from 'utilities/CacheData';
 import { useQLStatus } from 'hooks/useQLStatus';
+import { accountFormatter } from 'utilities/Generator';
 import CardLessSettingWrapper from './T00400.style';
 
 import { getStatus, activate } from './api';
@@ -77,7 +78,7 @@ const CardLessSetting = () => {
           <div className="switchContainer">
             <div className="labelContainer">
               <p className="labelTxt">無卡提款</p>
-              {isEnable && <p className="phoneNum">{account?.accountNo}</p>}
+              {isEnable && <p className="phoneNum">{accountFormatter(account?.accountNo)}</p>}
             </div>
             <FEIBSwitch checked={isEnable} onClick={handleSwitchClick} />
           </div>

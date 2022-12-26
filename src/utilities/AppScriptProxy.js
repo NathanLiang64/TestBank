@@ -8,6 +8,8 @@ import { Buffer } from 'buffer';
 import PasswordDrawer from 'components/PasswordDrawer';
 import { getTransactionAuthMode, createTransactionAuth, transactionAuthVerify } from 'components/PasswordDrawer/api';
 import { customPopup, showDrawer, showError } from './MessageModal';
+// eslint-disable-next-line import/no-cycle
+import { callAPI } from './axios';
 import e2ee from './E2ee';
 
 const device = {
@@ -73,6 +75,9 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
     try {
       // 若是 JSON 格式，則以物件型態傳回。
       result = JSON.parse(value);
+      // NOTE 以下奇怪作法是為了配合 APP-JS
+      if (result.result === 'true') result.result = true;
+      if (result.result === 'false') result.result = false;
     } catch (ex) {
       result = value;
     }
@@ -494,14 +499,20 @@ async function transactionAuth(authCode, otpMobile) {
  * @returns {
  *   result: 驗證結果(true/false)。
  *   message: 驗證失敗狀況描述。
- *   netbankPwd: 因為之後叫用交易相關 API 時可能會需要用到，所以傳回 E2EE 加密後的密碼。
  * }
  */
-async function verifyBio(authCode) {
+async function verifyBio(authKey) {
   const data = {
-    authCode,
+    authCode: authKey,
   };
-  return await callAppJavaScript('chkQLfeature', data, true, () => ({ result: true })); // Call /v1/setBioResult
+  return await callAppJavaScript('chkQLfeature', data, true, async () => {
+    // DEBUG
+    // 傳回：累計驗證次數；若為 -1 表示使用者取消。
+    const apiRs = await callAPI('/api/transactionAuth/v1/setBioResult', { authKey, success: true });
+    return {
+      result: (apiRs.data <= 3),
+    };
+  });
 }
 
 /**
@@ -517,70 +528,85 @@ async function getQLStatus() {
   return await callAppJavaScript('getQLStatus', null, true, () => {
     const testData = getJwtTokenTestData();
     return {
-      result: 'true',
+      result: true,
       QLStatus: testData.mid ? '1' : '0',
+      QLType: '1', // TODO testData.qlMode,
     };
   });
 }
 
 /**
- * 設定快登認證資料
- * @param {*} QLtype 快登裝置綁定所使用驗證方式(type->1:生物辨識/2:圖形辨識)
+ * 通知 APP 依 authType 指定的類型要求使用者進行快登設定。
+ * @param {*} authType 快登所使用驗證方式。(1. 生物辨識, 2.圖形辨識)
  * @returns {
  *  result: 驗證結果(true/false)。
  *  message: 駿證失敗狀況描述。
  * }
  */
-async function regQLfeature(QLtype) {
+async function createQuickLogin(authType) {
   const data = {
-    QLtype,
+    QLtype: authType,
   };
-  return await callAppJavaScript('regQLfeature', data, true, () => {
-    console.log('web 通知 APP 設定快登資料');
-    return {
-      result: 'true',
-    };
-  });
+  const appRs = await callAppJavaScript('regQLfeature', data, true, () => ({ result: true }));
+  if (appRs.result === true) {
+    const apiRs = await callAPI('/auth/quickLogin/v1/create', { authType });
+    if (!apiRs.isSuccess) {
+      return {
+        result: false,
+        message: apiRs.message,
+      };
+    }
+  }
+  return appRs;
 }
 
+// TODO 應改由 Controller 來做，對 APP 只是「通知」。
 /**
  * 綁定快登裝置
- * @param {*} QLtype 快登裝置綁定所使用驗證方式(type->1:生物辨識/2:圖形辨識)
+ * @param {*} authType 快登所使用驗證方式。(1. 生物辨識, 2.圖形辨識)
  * @param {*} pwdE2ee E2EE加密後的密碼
- * @param {*} midToken 由 Controller 提供的 MID Login 取得的 Auth Token
  * @returns {
  *  result: 驗證結果(true/false)。
  *  message: 駿證失敗狀況描述。
  * }
  */
-async function regQL(QLtype, pwdE2ee) {
+async function verifyQuickLogin(authType, pwdE2ee) {
   const data = {
-    QLtype,
+    QLtype: authType,
     pwdE2ee,
   };
-  return await callAppJavaScript('regQL', data, true, () => {
-    console.log('web 通知 APP 綁定快登資料');
-    return {
-      result: 'true',
-    };
-  });
+  const appRs = await callAppJavaScript('regQL', data, true, () => ({ result: true }));
+  if (appRs.result === true) {
+    const apiRs = await callAPI('/auth/quickLogin/v1/bind');
+    if (!apiRs.isSuccess) {
+      return {
+        result: false,
+        message: apiRs.message,
+      };
+    }
+  }
+  return appRs;
 }
 
 /**
  * 解除快登綁定
- * @param {*} delQL 快登裝置綁定所使用驗證方式(type->1:生物辨識/2:圖形辨識)
  * @returns {
  *  result: 驗證結果(true/false)。
  *  message: 駿證失敗狀況描述。
  * }
  */
-async function delQL() {
-  return await callAppJavaScript('delQL', null, true, () => {
-    console.log('web 通知 APP 解除快登綁定');
-    return {
-      result: 'true',
-    };
-  });
+async function removeQuickLogin() {
+  const appRs = await callAppJavaScript('delQL', null, true, () => ({ result: true }));
+  if (appRs.result === true) {
+    const apiRs = await callAPI('/auth/quickLogin/v1/unbind');
+    if (!apiRs.isSuccess) {
+      return {
+        result: false,
+        message: apiRs.message,
+      };
+    }
+  }
+  return appRs;
 }
 
 /**
@@ -624,24 +650,28 @@ async function appTransactionAuth(request) {
     return failResult('無法建立交易授權驗證。');
   }
 
-  // DEBUG ByPass交易驗證
-  if (request) {
-    const otpCode = allowedOTP ? '123456' : null;
-    const netbankPwd = allowedPWD ? e2ee('feib1688') : null;
-    const verifyRs = await transactionAuthVerify({ authKey: txnAuth.key, funcCode, netbankPwd, otpCode });
-    console.log(verifyRs);
-    return { result: true, message: null, netbankPwd };
-  }
+  // // DEBUG ByPass交易驗證
+  // if (request) {
+  //   const otpCode = allowedOTP ? '123456' : null;
+  //   const netbankPwd = allowedPWD ? e2ee('feib1688') : null;
+  //   const verifyRs = await transactionAuthVerify({ authKey: txnAuth.key, funcCode, netbankPwd, otpCode });
+  //   console.log(verifyRs);
+  //   return { result: true, message: null, netbankPwd };
+  // }
 
   // 進行雙因子驗證，呼叫 APP 進行驗證。
   if (allowed2FA) {
-    const rs = await verifyBio(txnAuth.key); // 若生物辨識三次不通過 或是 使用者取消，才會傳回 false！
+    // NOTE 由原生處理：若生物辨識三次不通過 或是 使用者取消，才會傳回 false！
+    const rs = await verifyBio(txnAuth.key);
     // 因為已綁MID，所以 密碼 也可以當第二因子；因此改用密碼驗證。
     if (rs.result === false) allowedPWD = true;
 
     // NOTE 驗證成功(allowedPWD一定是false)但不用驗OTP，就直接傳回成功。
     //      若是驗證失敗或是還要驗OTP，就要開 Drawer 進行密碼或OTP驗證。
-    if (!allowedPWD && !allowedOTP) return rs;
+    if (!allowedPWD && !allowedOTP) {
+      const verifyRs = await transactionAuthVerify({ authKey: txnAuth.key, funcCode });
+      return verifyRs;
+    }
   }
 
   let result = null;
@@ -721,9 +751,9 @@ export {
   transactionAuth,
   shareMessage,
   getQLStatus,
-  regQLfeature,
-  regQL,
-  delQL,
+  createQuickLogin,
+  verifyQuickLogin,
+  removeQuickLogin,
   queryPushBind,
   updatePushBind,
   forceLogout,
