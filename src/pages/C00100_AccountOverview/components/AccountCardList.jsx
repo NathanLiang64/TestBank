@@ -1,9 +1,5 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-nested-ternary */
 import uuid from 'react-uuid';
-// import { useDispatch } from 'react-redux';
-// import { setDrawer, setDrawerVisible } from 'stores/reducers/ModalReducer';
-
 import AccountCard from 'components/AccountCard';
 import { accountOverviewCardVarient, getCurrenyInfo } from 'utilities/Generator';
 import { startFunc } from 'utilities/AppScriptProxy';
@@ -21,9 +17,9 @@ import AccountCardGrey from './AccountCardGrey';
  *   2. 依照spec，帳戶總覽不呈現社群帳本。
  * 最後，再依金額排序。
  */
-const AccountCardList = ({ data, isDebt }) => {
-  // const dispatch = useDispatch();
-  const sApplyUrl = 'https://bankeesit.feib.com.tw/aplfx/D2022110211818?utm_source=OSC01';
+const AccountCardList = ({ data, isDebt, necessaryType }) => {
+  // TODO: 開啟申請頁面調整至與B00600申請項目相同行為(startFunc(funcID))
+  const sApplyFuncId = 'https://bankeesit.feib.com.tw/aplfx/D2022110211818?utm_source=OSC01';
   const fApplyUrl = 'https://bankeesit.feib.com.tw/aplfx/D2022110211819';
   const ccApplyUrl = 'https://appbankee-t.feib.com.tw/bankee_apply/CardApply/CardApply_1';
   const lApplyUrl = 'https://bankeesit.feib.com.tw/aplfx/D2022110111798';
@@ -40,8 +36,8 @@ const AccountCardList = ({ data, isDebt }) => {
   // 累加帳戶金額
   const accumulateBalance = (list) => list.reduce((accumulate, item) => accumulate + Math.abs(item.balance), 0);
 
-  // 子帳戶、外幣帳戶、貸款、證券、信用卡除外
-  const mainList = data.filter((account) => account.type !== 'C' && account.type !== 'F' && account.type !== 'L' && account.type !== 'S' && account.type !== 'CC');
+  // 主帳戶：每個帳號必有唯一主帳戶
+  const mainList = data.filter((account) => account.type === 'M');
 
   // 子帳戶，且 只有『存錢計畫』
   const subAccounts = data.filter((account) => account.type === 'C' && account.purpose === 2);
@@ -50,20 +46,10 @@ const AccountCardList = ({ data, isDebt }) => {
       type: 'C',
       accountNo: null,
       balance: accumulateBalance(subAccounts),
-      isEmpty: !!subAccounts[0].isEmpty,
     });
 
     // 依金額從大到小排序。
     subAccounts.sort((a, b) => b.balance - a.balance);
-  }
-  // 無『存錢計畫』顯示透明卡
-  if (subAccounts.length === 0 && !isDebt) {
-    mainList.push({
-      type: 'C',
-      accountNo: null,
-      balance: 0,
-      isEmpty: true,
-    });
   }
 
   // 外幣帳戶
@@ -73,7 +59,6 @@ const AccountCardList = ({ data, isDebt }) => {
       type: 'F',
       accountNo: foreignAccounts[0].accountNo,
       balance: accumulateBalance(foreignAccounts), // TODO: 金額為“轉換為台幣後”的加總，目前為數字直接加總
-      isEmpty: !!foreignAccounts[0].isEmpty,
     });
 
     // 依金額從大到小排序。
@@ -87,13 +72,12 @@ const AccountCardList = ({ data, isDebt }) => {
       type: 'S',
       accountNo: null,
       balance: accumulateBalance(stockAccounts),
-      isEmpty: !!stockAccounts[0].isEmpty,
     });
 
     stockAccounts.sort((a, b) => b.balance - a.balance);
   }
 
-  // 貸款
+  // 貸款: 金額不為0則顯示彩卡
   const loanAccounts = data.filter((account) => account.type === 'L');
   if (loanAccounts.length > 0) {
     mainList.push({
@@ -107,7 +91,7 @@ const AccountCardList = ({ data, isDebt }) => {
     loanAccounts.sort((a, b) => b.balance - a.balance);
   }
 
-  // 信用卡（檢查金額
+  // 信用卡: 金額不為0則顯示彩卡
   const ccAccounts = data.filter((account) => account.type === 'CC');
   if (ccAccounts.length > 0) {
     mainList.push(...ccAccounts.map((account) => ({
@@ -122,18 +106,44 @@ const AccountCardList = ({ data, isDebt }) => {
   // 負債的金額是負值，將金額轉正，以便後續處理。
   mainList.forEach((account) => { account.balance = Math.abs(account.balance); });
 
-  // 依金額從大到小排序。若金額相同且非同種卡片，排序依照：正：台幣>外幣>證券>子帳號；負：信用卡>貸款
-  const handleSortMainList = (a, b) => {
-    const orderArray = ['M', 'F', 'S', 'C', 'CC', 'L'];
-    if (a.balance === b.balance) {
-      if (a.isEmpty || b.isEmpty) {
-        return b.isEmpty && orderArray.indexOf(a.type) - orderArray.indexOf(b.type);
-      }
-      return orderArray.indexOf(a.type) - orderArray.indexOf(b.type);
+  /**
+   * 主陣列依金額從大到小排序，若金額相同且非同種卡片，排序依照：
+   * 正：台幣>外幣>證券>子帳號
+   * 負：信用卡>貸款
+   */
+  // 檢查mainList中有無所有需要的type，無則加入
+  const checkType = () => necessaryType.map((type) => {
+    const found = mainList.some((item) => item.type === type);
+
+    if (!found) {
+      mainList.push({
+        balance: 0,
+        purpose: 0,
+        accountNo: null,
+        alias: '',
+        currency: 'TWD',
+        type,
+        isEmpty: true,
+      });
     }
+
+    return mainList;
+  }).at(-1);
+  // 排列補齊type後的list
+  checkType().sort((a, b) => {
+    if (a.balance === b.balance) {
+      // 有特定key且為true的話排後面，且依照key的value的順序排序
+      if (a.isEmpty || b.isEmpty) {
+        return (
+          b.isEmpty && necessaryType.indexOf(a.type) - necessaryType.indexOf(b.type)
+        );
+      }
+      // 依照value的順序排序（依照necessaryType陣列順序）
+      return necessaryType.indexOf(a.type) - necessaryType.indexOf(b.type);
+    }
+    // 依照大小排序
     return b.balance - a.balance;
-  };
-  mainList.sort((a, b) => handleSortMainList(a, b));
+  });
 
   // 產生下拉選單(子帳戶／外幣帳戶／貸款 / 證券)
   const renderSubAccountDrawer = (accounts, funcId) => {
@@ -152,11 +162,11 @@ const AccountCardList = ({ data, isDebt }) => {
           const cardColor = accountOverviewCardVarient(card.type);
           const onClick = () => {
             if (card.type === 'S') {
-              sAccStartFunc(card, cardColor);
+              sAccStartFunc(card, cardColor); // 前往證券帳戶明細
               return;
             }
             if (card.type === 'F') {
-              startFunc(funcId, { defaultCurrency: card.currency });
+              startFunc(funcId, { defaultCurrency: card.currency }); // 前往外幣帳戶總覽之指定幣別
             }
             startFunc(funcId, { focusToAccountNo: card.accountNo }); // TODO 從 存錢計畫 返回時的處理。
           };
@@ -220,10 +230,9 @@ const AccountCardList = ({ data, isDebt }) => {
             funcID = FuncID.C00400;
             onClick = () => (account.isEmpty ? window.open(fApplyUrl, '_newtab') : foreignAccounts.length === 1 ? startFunc(funcID) : showDrawer('選擇帳戶', renderSubAccountDrawer(foreignAccounts, funcID)));
             break;
-          case 'S': // 證券戶
+          case 'S': // 證券戶 數量為1時不開drawer
             cardName = '證券交割戶';
-            // 證券S 數量為1時不開drawer
-            onClick = () => (account.isEmpty ? window.open(sApplyUrl, '_newtab') : stockAccounts.length === 1 ? sAccStartFunc(stockAccounts[0], cardInfo.color) : showDrawer('選擇帳戶', renderSubAccountDrawer(stockAccounts)));
+            onClick = () => (account.isEmpty ? window.open(sApplyFuncId, '_newtab') : stockAccounts.length === 1 ? sAccStartFunc(stockAccounts[0], cardInfo.color) : showDrawer('選擇帳戶', renderSubAccountDrawer(stockAccounts)));
             break;
 
           case 'C': // 子帳戶 數量為1時不開drawer
