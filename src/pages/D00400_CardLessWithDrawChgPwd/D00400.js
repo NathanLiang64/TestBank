@@ -33,12 +33,10 @@ const CardLessWithDrawChgPwd = () => {
 
   // 設定無卡提款密碼
   const changePwdHandler = async (param) => {
+    dispatch(setWaittingVisible(true));
     const {result} = await transactionAuth(AuthCode.D00400);
     if (result) {
-      dispatch(setWaittingVisible(true));
       const { code, message } = await changeCardlessPwd(param);
-      dispatch(setWaittingVisible(false));
-
       showAnimationModal({
         isSuccess: code === '0000',
         successTitle: '設定成功',
@@ -48,6 +46,7 @@ const CardLessWithDrawChgPwd = () => {
         errorDesc: message,
       });
     }
+    dispatch(setWaittingVisible(false));
   };
 
   const onSubmit = async (data) => {
@@ -64,19 +63,19 @@ const CardLessWithDrawChgPwd = () => {
         <PasswordInputField
           labelName="舊提款密碼"
           name="oldPassword"
-          placeholder="請輸入舊提款密碼(4-12位數字)"
+          inputProps={{ placeholder: '請輸入舊提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off'}}
           control={control}
         />
         <PasswordInputField
           labelName="新提款密碼"
           name="newPassword"
-          placeholder="請輸入新提款密碼(4-12位數字)"
+          inputProps={{ placeholder: '請輸入新提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off' }}
           control={control}
         />
         <PasswordInputField
           labelName="確認新提款密碼"
           name="newPasswordConfirm"
-          placeholder="請再輸入一次新提款密碼(4-12位數字)"
+          inputProps={{ placeholder: '請再輸入一次新提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off' }}
           control={control}
         />
         <Accordion space="both">

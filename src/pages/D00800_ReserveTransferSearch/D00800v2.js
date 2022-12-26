@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useForm } from 'react-hook-form';
@@ -16,7 +15,6 @@ import SuccessImage from 'assets/images/successIcon.png';
 import { currencySymbolGenerator, dateToString } from 'utilities/Generator';
 import { showCustomPrompt } from 'utilities/MessageModal';
 
-// import { closeFunc } from 'utilities/AppScriptProxy';
 import { getAccountsList } from 'utilities/CacheData';
 import SearchIcon from '@material-ui/icons/Search';
 
@@ -56,12 +54,12 @@ const D00800 = () => {
       accountType,
       sdate,
       edate,
-      queryType: 3, // QUESTION 目前 hardcode queryType = 3 ，意即只查詢網銀預約+臨櫃預約
+      queryType: 3, // ??? 目前 hardcode queryType = 3 ，意即只查詢網銀預約+臨櫃預約
     };
 
     const type = tab === '1' ? 'reserve' : 'result';
 
-    // 不同帳號的 reservedTransDetails 與 getResultTransDetails 回傳的資料結構不一樣.... 後續需請後端更正
+    // ??? 不同帳號的 reservedTransDetails 與 getResultTransDetails 回傳的資料結構不一樣.... 後續需請後端更正
     const { bookList } = tab === '1' ? await getReservedTransDetails(param) : await getResultTransDetails(param);
 
     setSearchList((prevSearchList) => ({

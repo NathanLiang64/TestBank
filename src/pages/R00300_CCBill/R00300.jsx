@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getThisMonth } from 'utilities/MonthGenerator';
-import { closeFunc } from 'utilities/AppScriptProxy';
 import { currencySymbolGenerator } from 'utilities/Generator';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
@@ -10,6 +9,7 @@ import Layout from 'components/Layout/Layout';
 import Main from 'components/Layout';
 import Badge from 'components/Badge';
 import Accordion from 'components/Accordion';
+import { useNavigation } from 'hooks/useNavigation';
 import AccordionContent from './components/AccordionContent';
 import Reminder from './components/Reminder';
 import Transactions from './components/Transactions';
@@ -27,6 +27,7 @@ import PageWrapper from './R00300.style';
  */
 const Page = () => {
   const dispatch = useDispatch();
+  const { closeFunc } = useNavigation();
   const [currentMonth, setCurrentMonth] = useState(getThisMonth());
   const [bills, setBills] = useState();
   const [deductInfo, setDeductInfo] = useState();

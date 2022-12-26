@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 /* Elements */
-import { startFunc } from 'utilities/AppScriptProxy';
 import EmptyData from 'components/EmptyData';
 import Layout from 'components/Layout/Layout';
 import FavoriteBlockButton from 'components/FavoriteBlockButton';
@@ -11,6 +10,7 @@ import { iconGenerator } from 'pages/S00100_Favorite/favoriteGenerator';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { useNavigation } from 'hooks/useNavigation';
 import { getMoreList } from './api';
 import MoreWrapper from './B00600.style';
 
@@ -19,6 +19,7 @@ import MoreWrapper from './B00600.style';
  */
 const More = () => {
   const dispatch = useDispatch();
+  const {startFunc} = useNavigation();
   const groupsRef = useRef([]);
   const mainContentRef = useRef();
   const [funcGroups, setFuncGroups] = useState([]);

@@ -2,10 +2,10 @@
 import uuid from 'react-uuid';
 import AccountCard from 'components/AccountCard';
 import { accountOverviewCardVarient, getCurrenyInfo } from 'utilities/Generator';
-import { startFunc } from 'utilities/AppScriptProxy';
 
 import { showDrawer } from 'utilities/MessageModal';
 import { FuncID } from 'utilities/FuncID';
+import { useNavigation } from 'hooks/useNavigation';
 import AccountCardListWrapper from './AccountCardList.style';
 import AccountCardGrey from './AccountCardGrey';
 
@@ -18,8 +18,9 @@ import AccountCardGrey from './AccountCardGrey';
  * 最後，再依金額排序。
  */
 const AccountCardList = ({ data, isDebt, necessaryType }) => {
-  // TODO: 開啟申請頁面調整至與B00600申請項目相同行為(startFunc(funcID))
-  const sApplyFuncId = 'https://bankeesit.feib.com.tw/aplfx/D2022110211818?utm_source=OSC01';
+  // const dispatch = useDispatch();
+  const {startFunc} = useNavigation();
+  const sApplyUrl = 'https://bankeesit.feib.com.tw/aplfx/D2022110211818?utm_source=OSC01';
   const fApplyUrl = 'https://bankeesit.feib.com.tw/aplfx/D2022110211819';
   const ccApplyUrl = 'https://appbankee-t.feib.com.tw/bankee_apply/CardApply/CardApply_1';
   const lApplyUrl = 'https://bankeesit.feib.com.tw/aplfx/D2022110111798';
@@ -232,7 +233,7 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
             break;
           case 'S': // 證券戶 數量為1時不開drawer
             cardName = '證券交割戶';
-            onClick = () => (account.isEmpty ? window.open(sApplyFuncId, '_newtab') : stockAccounts.length === 1 ? sAccStartFunc(stockAccounts[0], cardInfo.color) : showDrawer('選擇帳戶', renderSubAccountDrawer(stockAccounts)));
+            onClick = () => (account.isEmpty ? window.open(sApplyUrl, '_newtab') : stockAccounts.length === 1 ? sAccStartFunc(stockAccounts[0], cardInfo.color) : showDrawer('選擇帳戶', renderSubAccountDrawer(stockAccounts)));
             break;
 
           case 'C': // 子帳戶 數量為1時不開drawer

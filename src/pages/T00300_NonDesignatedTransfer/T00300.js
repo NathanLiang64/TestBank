@@ -26,7 +26,7 @@ import T00300DrawerContent from './T00300_drawerContent';
  */
 const T00300 = () => {
   const dispatch = useDispatch();
-  const {QLResult, showMessage} = useQLStatus(); // 確認裝置綁定狀態(比照無卡提款設定)
+  const {QLResult, showUnbondedMsg} = useQLStatus(); // 確認裝置綁定狀態(比照無卡提款設定)
 
   const [model, setModel] = useState({});
 
@@ -93,6 +93,10 @@ const T00300 = () => {
    * 切換綁定狀態。
    */
   const handleSwitchOnTrigger = async () => {
+    // ??? For UX 因素，使用者可能會想要看到 switch 切換的過程
+    // 後續可改為 disabling switch 避免 double click，待討論
+    // 這邊先暫時以 loading 方式來避免 double click
+    dispatch(setWaittingVisible(true));
     if (QLResult) { // 點擊switch時檢查裝置綁定
       if (!isBound) {
         // 開通 or 申請+開通流程
@@ -104,7 +108,8 @@ const T00300 = () => {
         await authAndChangeStatus(AuthCode.T00300.CLOSE); // status 由 03 變為 04.註銷
       }
       setModel({...model}); // 更新畫面。
-    } else showMessage();
+    } else showUnbondedMsg();
+    dispatch(setWaittingVisible(false));
   };
 
   /**

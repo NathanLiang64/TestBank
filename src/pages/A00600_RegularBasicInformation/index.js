@@ -4,7 +4,6 @@ import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { fetchJobsCode, updateRegularBasicInformation } from 'pages/A00600_RegularBasicInformation/api';
-import { closeFunc } from 'utilities/AppScriptProxy';
 import { showAnimationModal } from 'utilities/MessageModal';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
@@ -21,10 +20,12 @@ import Accordion from 'components/Accordion';
 
 /* Styles */
 import theme from 'themes/theme';
+import { useNavigation } from 'hooks/useNavigation';
 import RegularBasicInformationWrapper from './regularBasicInformation.style';
 
 const RegularBasicInformation = () => {
   const dispatch = useDispatch();
+  const { closeFunc } = useNavigation();
   /**
    *- 資料驗證
    */

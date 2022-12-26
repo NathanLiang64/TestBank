@@ -2,17 +2,19 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { toCurrency, dateToString, handleLoanTypeToTitle } from 'utilities/Generator';
-import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
+import { loadFuncParams } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import DebitCard from 'components/DebitCard/DebitCard';
 
 /* Styles */
+import { useNavigation } from 'hooks/useNavigation';
 import LoanInterestWrapper from './L00300.style';
 
 const L003001 = (props) => {
   const history = useHistory();
+  const { closeFunc } = useNavigation();
   const [model, setModel] = useState();
 
   useEffect(async () => {

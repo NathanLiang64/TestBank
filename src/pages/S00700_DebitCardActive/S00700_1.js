@@ -6,12 +6,13 @@ import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import { useHistory, useLocation } from 'react-router';
 import { FEIBButton } from 'components/elements';
 import ResultAnimation from 'components/SuccessFailureAnimations/ResultAnimation';
-import { startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
+import { useNavigation } from 'hooks/useNavigation';
 import DebitCardActiveWrapper, {SuccessDescWrapper} from './S00700.style';
 
 const S007001 = () => {
   const history = useHistory();
+  const { startFunc } = useNavigation();
   const {state} = useLocation();
 
   const successDesc = () => (

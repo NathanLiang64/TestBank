@@ -9,10 +9,11 @@ import Layout from 'components/Layout/Layout';
 import { FEIBButton} from 'components/elements';
 import DebitCard from 'components/DebitCard/DebitCard';
 import Accordion from 'components/Accordion';
-import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import { getAccountsList } from 'utilities/CacheData';
 import { AuthCode } from 'utilities/TxnAuthCode';
+import { useNavigation } from 'hooks/useNavigation';
 import { cardLessWithdrawApply, getAccountExtraInfo } from './api';
 
 import CardLessATMWrapper from './D00300.style';
@@ -23,7 +24,6 @@ const CardLessATM1 = () => {
   const defaultValues = {
     withdrawAmount: 0,
   };
-
   const {handleSubmit, control } = useForm({
     defaultValues,
     resolver: yupResolver(validationSchema),
@@ -31,6 +31,7 @@ const CardLessATM1 = () => {
 
   const history = useHistory();
   const dispatch = useDispatch();
+  const { closeFunc } = useNavigation();
 
   const [accountSummary, setAccountSummary] = useState({
     account: '',
@@ -41,6 +42,7 @@ const CardLessATM1 = () => {
 
   // 無卡提款交易
   const requestCardlessWithdrawApply = async (param) => {
+    dispatch(setWaittingVisible(true));
     const {result} = await transactionAuth(AuthCode.D00300);
     if (result) {
       const {
@@ -55,7 +57,7 @@ const CardLessATM1 = () => {
         withdrawAmount,
         account,
       };
-
+      dispatch(setWaittingVisible(false));
       if (seqNo) history.push('/D003002', { data });
       else showCustomPrompt({ message, onOk: closeFunc, onClose: closeFunc });
     }

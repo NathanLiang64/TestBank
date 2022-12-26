@@ -18,9 +18,9 @@ import { FEIBInput, FEIBInputLabel, FEIBErrorMessage } from 'components/elements
 
 export const PasswordInputField = ({
   labelName,
-  placeholder,
   color,
   borderColor,
+  inputProps,
   ...formProps
 }) => {
   const {field, fieldState} = useController(formProps);
@@ -40,7 +40,8 @@ export const PasswordInputField = ({
       </FEIBInputLabel>
 
       <FEIBInput
-        placeholder={placeholder || '請輸入網銀密碼(8-20位英數字)'}
+        // placeholder={placeholder || '請輸入網銀密碼(8-20位英數字)'}
+        inputProps={inputProps}
         type={showPassword ? 'text' : 'password'}
         id={name}
         onChange={onChange}

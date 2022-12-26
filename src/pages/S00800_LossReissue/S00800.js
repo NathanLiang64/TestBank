@@ -7,11 +7,12 @@ import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import { FEIBButton } from 'components/elements';
 import { EditIcon } from 'assets/images/icons';
 import { showCustomDrawer, showCustomPrompt, showError } from 'utilities/MessageModal';
-import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import { getBasicInformation } from 'pages/T00700_BasicInformation/api';
 import { AuthCode } from 'utilities/TxnAuthCode';
+import { useNavigation } from 'hooks/useNavigation';
 import { accountFormatter } from 'utilities/Generator';
 import {getStatus, reIssueOrLost} from './api';
 import LossReissueWrapper from './S00800.style';
@@ -20,6 +21,7 @@ import { S00800_1 } from './S00800_1';
 
 const LossReissue = () => {
   const dispatch = useDispatch();
+  const { closeFunc } = useNavigation();
   const [debitCardInfo, setDebitCardInfo] = useState();
   const [currentFormValue, setCurrentFormValue] = useState({});
   const actionText = actionTextGenerator(debitCardInfo?.status);
@@ -49,6 +51,7 @@ const LossReissue = () => {
 
   // 執行掛失或補發
   const executeAction = async () => {
+    dispatch(setWaittingVisible(true));
     const {data} = await getBasicInformation();
     const auth = await transactionAuth(AuthCode.S00800, data.mobile);
 
@@ -68,10 +71,12 @@ const LossReissue = () => {
         onclose: () => updateDebitCardStatus(),
       });
     }
+
+    dispatch(setWaittingVisible(false));
   };
 
   const onSubmit = async (values) => {
-    console.log(values);
+    dispatch(setWaittingVisible(true));
     // const auth = await transactionAuth(AuthCode.S00800);
     // if (auth && auth.result) {
     //   // TODO 修改地址 API
@@ -79,6 +84,7 @@ const LossReissue = () => {
 
     setCurrentFormValue({...values});
     dispatch(setDrawerVisible(false));
+    dispatch(setWaittingVisible(false));
   };
 
   const handleClickEditAddress = () => {
