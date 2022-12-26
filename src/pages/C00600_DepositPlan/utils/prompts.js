@@ -1,13 +1,14 @@
 import { showCustomPrompt } from 'utilities/MessageModal';
 import { stringToDate } from 'utilities/Generator';
 
-export const AlertNoMainAccount = ({ onOk }) => {
+export const AlertNoMainAccount = ({ onOk, closeFunc}) => {
   showCustomPrompt({
     title: '新增存錢計畫',
     message: '您尚未持有Bankee存款帳戶',
     onOk,
     okContent: '現在就來申請吧!',
-    onClose: onOk,
+    onCancel: closeFunc,
+    onClose: closeFunc,
   });
 };
 

@@ -211,7 +211,6 @@ const ForeignCurrencyTransfer = () => {
                   <FEIBInput
                     {...field}
                     type="text"
-                    inputMode="numeric"
                     id="balance"
                     name="balance"
                     placeholder={`${currencySymbolGenerator(currentAccount.currency, 0)}（零元）`}
@@ -227,6 +226,7 @@ const ForeignCurrencyTransfer = () => {
                     inputProps={{
                       maxLength: 9,
                       autoComplete: 'off',
+                      inputMode: 'numeric',
                     }}
                   />
                   <div className="balanceLayout">{mixBalanceStr}</div>
@@ -265,6 +265,7 @@ const ForeignCurrencyTransfer = () => {
                   type="text"
                   id="memo"
                   name="memo"
+                  inputProps={{ maxLength: 20, autoComplete: 'off' }}
                   placeholder="請輸入"
                   error={!!errors.memo}
                 />

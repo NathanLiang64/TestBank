@@ -13,7 +13,7 @@ export const useQLStatus = () => {
     setQLResult(QLStatus === '2' || QLStatus === '1');
   }, []);
 
-  const showMessage = () => {
+  const showUnbondedMsg = () => {
     showCustomPrompt({
       message: '無裝置認證，請先進行「APP裝置認證(快速登入設定)」，或致電客服。',
       okContent: '立即設定',
@@ -23,5 +23,5 @@ export const useQLStatus = () => {
     });
   };
 
-  return { QLResult, showMessage };
+  return { QLResult, showUnbondedMsg };
 };

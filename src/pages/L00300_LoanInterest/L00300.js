@@ -158,7 +158,9 @@ const LoanInterest = () => {
               ))}
             </div>
           ) : (
-            <EmptyData content="查無最近三年內的帳務往來資料" />
+            <div className="emptydata-wrapper">
+              <EmptyData content="查無最近三年內的帳務往來資料" />
+            </div>
           )}
         </div>
       </LoanInterestWrapper>

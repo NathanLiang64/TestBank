@@ -151,7 +151,7 @@ const Page = () => {
   const renderTransactions = (card) => {
     if (card?.transactions?.length <= 0) {
       return (
-        <div style={{ height: '20rem', marginTop: '6rem' }}>
+        <div className="emptydata-wrapper">
           <EmptyData />
         </div>
       );

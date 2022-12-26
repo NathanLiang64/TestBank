@@ -5,7 +5,6 @@ import { getThisMonth } from 'utilities/MonthGenerator';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-// import Dialog from 'components/Dialog';
 import {
   FEIBTab, FEIBTabContext, FEIBTabList,
 } from 'components/elements';
@@ -118,7 +117,10 @@ const Deposit = () => {
             {!!depositPlusDetail.bonusDetail && depositPlusDetail.bonusDetail.map((detail) => (
               <li className="listBody" key={detail}>
                 <div>
-                  <p>{detail.promotionName}</p>
+                  <p>
+                    {detail.promotionName.replace('*', '')}
+                    <span>{detail.promotionName.includes('*') && <StarRounded className="starIcon" />}</span>
+                  </p>
                   <span>{detail.memo}</span>
                 </div>
                 <p className="limitPrice">

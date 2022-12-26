@@ -6,7 +6,7 @@ import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
 import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
-import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { AddIcon } from 'assets/images/icons';
 import { useNavigation } from 'hooks/useNavigation';
 import {
@@ -76,9 +76,10 @@ const Page = () => {
    */
   const addnewAccount = async () => {
     const onFinished = async (newAcct) => {
-      dispatch(setDrawerVisible(false));
+      dispatch(setWaittingVisible(true));
 
       const newAccounts = await addFrequentAccount(newAcct);
+      dispatch(setWaittingVisible(false));
       setAccounts(newAccounts);
       forceUpdate();
     };
@@ -97,13 +98,14 @@ const Page = () => {
   const editAccount = async (acct) => {
     const { bankId, acctId } = acct; // 變更前 常用轉入帳戶-銀行代碼 及 帳號
     const onFinished = async (newAcct) => {
-      dispatch(setDrawerVisible(false));
-
+      // dispatch(setDrawerVisible(false));
+      dispatch(setWaittingVisible(true));
       const condition = {
         orgBankId: bankId,
         orgAcctId: acctId,
       };
       const newAccounts = await updateFrequentAccount(newAcct, condition);
+      dispatch(setWaittingVisible(false));
       setAccounts(newAccounts);
       forceUpdate();
     };

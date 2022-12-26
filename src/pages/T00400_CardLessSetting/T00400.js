@@ -14,6 +14,7 @@ import { showAnimationModal } from 'utilities/MessageModal';
 import { getAccountsList } from 'utilities/CacheData';
 import { useQLStatus } from 'hooks/useQLStatus';
 import { useNavigation } from 'hooks/useNavigation';
+import { accountFormatter } from 'utilities/Generator';
 import CardLessSettingWrapper from './T00400.style';
 
 import { getStatus, activate } from './api';
@@ -23,7 +24,7 @@ const CardLessSetting = () => {
   const { startFunc } = useNavigation();
   const history = useHistory();
 
-  const {QLResult, showMessage} = useQLStatus();// 確認裝置綁定狀態
+  const {QLResult, showUnbondedMsg} = useQLStatus();// 確認裝置綁定狀態
   const [cardLessStatus, setCardLessStatus] = useState();
   const [account, setAccount] = useState();
   const [isEnable, setEnable] = useState();
@@ -67,10 +68,10 @@ const CardLessSetting = () => {
         }
         dispatch(setWaittingVisible(false));
       }
-    } else showMessage();
+    } else showUnbondedMsg();
   };
 
-  const handlePwdChange = () => (QLResult ? startFunc(FuncID.D00400) : showMessage());
+  const handlePwdChange = () => (QLResult ? startFunc(FuncID.D00400) : showUnbondedMsg());
 
   return (
     <Layout title="無卡提款設定">
@@ -79,7 +80,7 @@ const CardLessSetting = () => {
           <div className="switchContainer">
             <div className="labelContainer">
               <p className="labelTxt">無卡提款</p>
-              {isEnable && <p className="phoneNum">{account?.accountNo}</p>}
+              {isEnable && <p className="phoneNum">{accountFormatter(account?.accountNo)}</p>}
             </div>
             <FEIBSwitch checked={isEnable} onClick={handleSwitchClick} />
           </div>

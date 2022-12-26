@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-nested-ternary */
 import uuid from 'react-uuid';
 // import { useDispatch } from 'react-redux';
@@ -30,15 +31,11 @@ const AccountCardList = ({ data, isDebt }) => {
 
   // 證券 start function
   const sAccStartFunc = (account, cardColor) => {
-    startFunc('moreTranscations', {
-      acctBalx: account.balance,
-      accBranch: account.accountNo.slice(0, 3),
-      acctId: account.accountNo,
-      acctName: account.alias,
-      acctType: account.type,
-      ccyCd: account.currency,
+    const functionParam = {
+      ...account,
       cardColor,
-    });
+    };
+    startFunc('moreTranscations', functionParam);
   };
 
   // 累加帳戶金額
@@ -159,6 +156,9 @@ const AccountCardList = ({ data, isDebt }) => {
               sAccStartFunc(card, cardColor);
               return;
             }
+            if (card.type === 'F') {
+              startFunc(funcId, { defaultCurrency: card.currency });
+            }
             startFunc(funcId, { focusToAccountNo: card.accountNo }); // TODO 從 存錢計畫 返回時的處理。
           };
 
@@ -224,7 +224,7 @@ const AccountCardList = ({ data, isDebt }) => {
           case 'S': // 證券戶
             cardName = '證券交割戶';
             // 證券S 數量為1時不開drawer
-            onClick = () => (account.isEmpty ? window.open(sApplyUrl, '_newtab') : stockAccounts.length === 1 ? sAccStartFunc(account, cardInfo.color) : showDrawer('選擇帳戶', renderSubAccountDrawer(stockAccounts)));
+            onClick = () => (account.isEmpty ? window.open(sApplyUrl, '_newtab') : stockAccounts.length === 1 ? sAccStartFunc(stockAccounts[0], cardInfo.color) : showDrawer('選擇帳戶', renderSubAccountDrawer(stockAccounts)));
             break;
 
           case 'C': // 子帳戶 數量為1時不開drawer

@@ -8,9 +8,11 @@ import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
 import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
-
+import { AuthCode } from 'utilities/TxnAuthCode';
 /* Styles */
 import { useNavigation } from 'hooks/useNavigation';
+import { useDispatch } from 'react-redux';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import MobileTransferWrapper from './T00600.style';
 
 import { createMobileNo, editMobileNo, unbindMobileNo } from './api';
@@ -28,6 +30,7 @@ const T006002 = ({ location }) => {
     account: '',
     userName: '',
   });
+  const dispatch = useDispatch();
 
   const setDealTypeContent = (type) => {
     setDealCode(type);
@@ -84,9 +87,9 @@ const T006002 = ({ location }) => {
 
   const modifyMobileTransferData = async (event) => {
     event.preventDefault();
-
+    dispatch(setWaittingVisible(true));
     // 透過 APP 發送及驗證 OTP，並傳回結果。
-    const result = await transactionAuth(0x23, location.state.otpMobileNum);
+    const result = await transactionAuth(AuthCode.T00600, location.state.otpMobileNum);
     console.log(result);
     if (result?.result) {
       const { account, isDefault, mobile } = confirmData;
@@ -117,6 +120,7 @@ const T006002 = ({ location }) => {
         }
       }
     }
+    dispatch(setWaittingVisible(false));
   };
 
   // 回上一頁

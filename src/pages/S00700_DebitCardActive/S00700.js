@@ -12,29 +12,34 @@ import { transactionAuth } from 'utilities/AppScriptProxy';
 import { getStatus } from 'pages/S00800_LossReissue/api';
 
 import { getAccountsList } from 'utilities/CacheData';
+import { useDispatch } from 'react-redux';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { activate } from './api';
 import DebitCardActiveWrapper from './S00700.style';
 import { validationSchema } from './validationSchema';
 
 const S00700 = () => {
   const history = useHistory();
-  const { QLResult, showMessage } = useQLStatus();
+  const { QLResult, showUnbondedMsg } = useQLStatus();
+  const dispatch = useDispatch();
   const { control, handleSubmit, reset } = useForm({
     defaultValues: { actno: '', serial: '' },
     resolver: yupResolver(validationSchema),
   });
 
   const submitHandler = async (values) => {
+    dispatch(setWaittingVisible(true));
     const auth = await transactionAuth(AuthCode.S00700);
     if (auth && auth.result) {
       await getStatus(); // activate 之前需要先獲得卡況
       const activateResponse = await activate({...values});
       history.push('/S007001', {...activateResponse});
     }
+    dispatch(setWaittingVisible(false));
   };
 
   useEffect(() => {
-    if (!QLResult) showMessage();
+    if (!QLResult) showUnbondedMsg();
   }, [QLResult]);
 
   // 我的金融卡帳號欄位自動帶入金融卡台幣主帳號
@@ -47,17 +52,17 @@ const S00700 = () => {
       <DebitCardActiveWrapper>
         <form style={{ minHeight: 'initial' }} onSubmit={handleSubmit(submitHandler)}>
           <TextInputField
-            type="number"
             labelName="我的金融卡帳號"
             name="actno"
             control={control}
-            disabled
+            inputProps={{maxLength: 14, inputMode: 'numeric', disabled: true}}
+
           />
           <TextInputField
-            type="number"
             labelName="我的金融卡序號"
             name="serial"
             placeholder="請輸入金融卡序號"
+            inputProps={{maxLength: 6, inputMode: 'numeric'}}
             control={control}
           />
           <p className="hint_text">金融卡背面右下角6碼數字</p>

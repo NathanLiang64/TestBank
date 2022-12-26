@@ -76,7 +76,7 @@ const R00200_1 = () => {
               )}
             />
           </div>
-          <FEIBButton type="submit">下一步</FEIBButton>
+          <FEIBButton style={{marginTop: '2rem'}} type="submit">下一步</FEIBButton>
         </form>
       </InstalmentWrapper>
     </Layout>

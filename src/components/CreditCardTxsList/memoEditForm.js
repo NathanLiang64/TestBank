@@ -36,7 +36,7 @@ export const MemoEditForm = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <TextInputField labelName="備註說明" name="note" control={control} />
+      <TextInputField labelName="備註說明" name="note" control={control} inputProps={{maxLength: 7}} />
       <FEIBButton>完成</FEIBButton>
     </form>
   );

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-indent */
 /* eslint-disable react/jsx-wrap-multilines */
 import PropTypes from 'prop-types';
@@ -157,7 +158,7 @@ function Layout({
    */
   useEffect(async () => {
     // console.log('showWaitting -> ', waitting);
-    switchLoading(waitting);
+    // switchLoading(waitting); // 關掉的情況下還是會有loading畫面，不確定這一行用意為何
     if (waitting) {
       dispatch(setDrawerVisible(false));
       dispatch(setModalVisible(false));
@@ -274,13 +275,15 @@ function Layout({
   }
 
   return (
-  <div>
-    {isPassed === null ? (
+    <div>
+      {/* watting 在 true 的情況下, 會因為沒有傳入 inspector 時，isPassed 變成 true，導致無法進到 Loading */}
+      {/* 因此在這邊額外加入 waitting 進行判定 */}
+    {isPassed === null || isPassed === undefined || waitting ? (
       <Loading isFullscreen />
     ) : (
       <MessageModal />
     )}
-  </div>
+    </div>
   );
 }
 

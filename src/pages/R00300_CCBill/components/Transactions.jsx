@@ -77,7 +77,7 @@ const Transactions = ({
 
             </>
           ) : (
-            <div style={{ height: '20rem', marginTop: '6rem' }}>
+            <div className="emptydata-wrapper">
               <EmptyData />
             </div>
           )}

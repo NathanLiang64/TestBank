@@ -2,20 +2,18 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const AutomaticBillPaymentWrapper = styled(Layout)`
-.switchContainer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: ${({ theme }) => theme.colors.background.lighterBlue};
-  border-radius: .8rem;
-  height: 6rem;
-  padding: 0 1.2rem;
-  .labelContainer {
-    .labelTxt {
+  .switchContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: ${({ theme }) => theme.colors.background.lighterBlue};
+    border-radius: 0.8rem;
+    height: 6rem;
+    padding: 0 1.2rem;
+    .MuiFormControlLabel-label {
       color: ${({ theme }) => theme.colors.text.lightGray};
     }
   }
-}
   .billBlock {
     margin-top: 3.6rem;
     .blockTitle {

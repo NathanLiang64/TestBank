@@ -17,6 +17,14 @@ const TransactionWrapper = styled.div`
     font-size: 1.4rem;
     width: fit-content;
   }
+
+  .emptydata-wrapper {
+    width: 100%;
+    height: 30vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 `;
 
 export default TransactionWrapper;

@@ -77,7 +77,7 @@ const CommunityPage = () => {
           control={control}
           name="nickname"
           labelName="您的名稱"
-          placeholder="請輸入您的名稱"
+          inputProps={{ maxLength: 20, placeholder: '請輸入您的名稱' }}
         />
       </div>
     );

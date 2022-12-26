@@ -44,7 +44,16 @@ const PasswordDrawer = ({
     otpCode: authData.otpSmsId ? otpCodeValidation() : null,
     password: inputPWD ? passwordValidation() : null,
   });
-  const { handleSubmit, control, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
+  const { handleSubmit, control, setValue, formState: { errors }, setError } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      otpCode: authData?.otpCode, // DEBUG 測試時才有值
+      password: 'feib1688', // DEBUG
+    },
+  });
+  const idOtpCode = 'otpCode';
+  const idPassword = 'password';
+
   const [resendDisabled, setResendDisabled] = useState(true);
   const [replayCountDown, setReplayCountDown] = useState(false);
 
@@ -61,14 +70,27 @@ const PasswordDrawer = ({
     const netbankPwd = e2ee(data.password); // 使用者輸入的「網銀密碼」，還要再做 E2EE。
     const verifyRs = await transactionAuthVerify({ authKey: authData.key, funcCode, netbankPwd, otpCode });
     // console.log(verifyRs);
-    if (verifyRs?.result === true) {
+    const {code, result, message} = verifyRs;
+    if (result === true) {
       // 正常結果。
       // Note 因為之後叫用交易相關 API 時可能會需要用到，所以傳回 E2EE 加密後的 netbankPwd 值。
       onFinished({ result: true, message: null, netbankPwd });
       dispatch(setDrawerVisible(false));
     } else {
-      // TODO 處理密碼錯誤的情況，累計三次驗證失敗之後，就傳回驗證失敗; 否則不會結束Promise
-      showAlert(verifyRs?.message); // NOTE 不能用 Layout 中的 Drawer，因為再跳出 Popup Window 後， Drawer 會立即關掉！
+      // eslint-disable-next-line no-lonely-if
+      if (code === 'PE01' || code === 'PE02') { // 前二次密碼錯誤，還不需要登出。
+        // TODO 處理密碼錯誤的情況，累計三次驗證失敗之後，就傳回驗證失敗; 否則不會結束Promise
+        setValue(idPassword, null);
+        setError(idPassword, message);
+        await showAlert(message); // NOTE 不能在 Layout 的 Drawer 再跳出 Popup，因為二者無法同時出現，Drawer 會立即關掉！
+      } else if (code === 'OE01' || code === 'OE02') { // 前二次OTP錯誤，還不需
+        setValue(idOtpCode, null);
+        setError(idOtpCode, message);
+        await showAlert(message); // NOTE 不能用 Layout 的 Drawer 再跳出 Popup，因為二者無法同時出現，Drawer 會立即關掉！
+      } else {
+        onFinished({ result: false, message });
+        dispatch(setDrawerVisible(false));
+      }
     }
   };
 
@@ -96,15 +118,15 @@ const PasswordDrawer = ({
       {/* eslint-disable-next-line react/jsx-one-expression-per-line */}
       <FEIBInputLabel>一次性 OTP 驗證 (發送門號：{`${authData.otpMobile}`})</FEIBInputLabel>
       <Controller
-        name="otpCode"
+        name={idOtpCode}
         defaultValue=""
         control={control}
         render={({ field }) => (
           <FEIBInput
             {...field}
             type="text"
-            id="otpCode"
-            name="otpCode"
+            id={idOtpCode}
+            name={idOtpCode}
             placeholder="請輸入驗證碼"
             error={!!errors.otpCode}
             startAdornment={<p className="prefixCode">{`${authData.otpSmsId}`}</p>}
@@ -117,8 +139,8 @@ const PasswordDrawer = ({
 
   const renderPasswordArea = () => (
     <PasswordInput
-      id="password"
-      name="password"
+      id={idPassword}
+      name={idPassword}
       control={control}
       errorMessage={errors.password?.message}
     />

@@ -6,7 +6,7 @@ import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
 import { showDrawer } from 'utilities/MessageModal';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
-import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { useNavigation } from 'hooks/useNavigation';
 import {
   getAgreedAccount,
@@ -82,9 +82,10 @@ const Page = () => {
    */
   const editAccount = async (acct) => {
     const onFinished = async (newAcct) => {
-      dispatch(setDrawerVisible(false));
+      dispatch(setWaittingVisible(true));
 
       const newAccounts = await updateAgreedAccount(bindAccount, newAcct);
+      dispatch(setWaittingVisible(false));
       setAccounts(newAccounts);
       forceUpdate();
     };
