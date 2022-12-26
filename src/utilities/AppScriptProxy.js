@@ -707,7 +707,7 @@ async function queryPushBind() {
  */
 function forceLogout(reasonCode, message) {
   callAppJavaScript('forceLogout', { reason: reasonCode, message }, false, () => {
-    document.location.href = '/login';
+    window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/login`;
   });
 }
 

@@ -97,7 +97,10 @@ const C00300 = () => {
           account.txnDetails = details;
 
           // 更新餘額。
-          if (transData.length > 0) account.balance = details[0].balance;
+          if (transData.length > 0) {
+            account.balance = details[0].balance;
+            updateAccount(account);
+          }
 
           delete account.isLoadingTxn; // 載入完成才能清掉旗標！
           forceUpdate();
