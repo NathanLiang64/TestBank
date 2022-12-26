@@ -102,6 +102,7 @@ const T00700 = () => {
 
   // 點擊儲存變更按鈕
   const onSubmit = async (values) => {
+    dispatch(setWaittingVisible(true));
     if (values.mobile !== originPersonalData.mobile) {
     // 有變更手機號碼
       const jsRs = await transactionAuth(AuthCode.T00700.MOBILE, values.mobile);
@@ -115,6 +116,7 @@ const T00700 = () => {
         modifyPersonalData(values);
       }
     }
+    dispatch(setWaittingVisible(false));
   };
 
   // 取得初始資料
@@ -135,7 +137,6 @@ const T00700 = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
             <TextInputField
-              type="number"
               name="mobile"
               labelName="行動電話"
               inputProps={{placeholder: '請輸入行動電話', inputMode: 'numeric'}}

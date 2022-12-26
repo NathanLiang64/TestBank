@@ -519,7 +519,7 @@ const Transfer = (props) => {
                   <Controller control={control} name={idTransInAcct}
                     render={({ field }) => (
                       // 當 startFuncParams 有預設轉入帳號時，不允許變更
-                      <FEIBInput type="number" {...field} error={!!errors?.transIn?.account}
+                      <FEIBInput type="text" {...field} error={!!errors?.transIn?.account}
                         inputProps={{
                           placeholder: '請輸入',
                           maxLength: 14,

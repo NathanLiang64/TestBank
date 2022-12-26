@@ -31,7 +31,7 @@ export const useLocationOptions = (watchedCountyName) => {
 
   useEffect(async () => {
     const countyListRes = await getCountyList();
-    setLocationLists(countyListRes);
+    if (countyListRes) setLocationLists(countyListRes);
   }, []);
 
   return {

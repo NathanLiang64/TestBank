@@ -52,7 +52,6 @@ const S00700 = () => {
       <DebitCardActiveWrapper>
         <form style={{ minHeight: 'initial' }} onSubmit={handleSubmit(submitHandler)}>
           <TextInputField
-            type="number"
             labelName="我的金融卡帳號"
             name="actno"
             control={control}
@@ -60,7 +59,6 @@ const S00700 = () => {
 
           />
           <TextInputField
-            type="number"
             labelName="我的金融卡序號"
             name="serial"
             placeholder="請輸入金融卡序號"

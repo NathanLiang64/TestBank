@@ -235,7 +235,6 @@ const Page = () => {
                 <TextInputField
                   name="extAccountNo"
                   labelName="轉出帳號"
-                  type="number"
                   control={control}
                   inputProps={{maxLength: 14, inputMode: 'numeric', placeholder: '請輸入轉出帳號'}}
                 />
