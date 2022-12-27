@@ -1,28 +1,34 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {useForm} from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { FEIBButton, FEIBInputLabel } from 'components/elements';
 import { DropdownField, TextInputField } from 'components/Fields';
 
-import { useLocationOptions } from 'hooks/useLocationOptions';
+import { localCities, localCounties } from 'utilities/locationOptions';
 import { LossReissueDialogWrapper } from './S00800.style';
 import { validationSchema } from './validationSchema';
 
-export const S00800_1 = ({currentFormValue, onSubmit}) => {
+export const AddressEditor = ({currentFormValue, onSubmit}) => {
+  const {code: county} = localCounties.find(({name}) => currentFormValue.county.trim() === name);
+  const {code: city} = localCities[county].find(({name}) => currentFormValue.city.trim() === name);
   const {
     control, handleSubmit, reset, watch,
   } = useForm({
     resolver: yupResolver(validationSchema),
-    defaultValues: currentFormValue,
+    defaultValues: {...currentFormValue, county, city},
   });
 
   const [watchedCounty, watchedCity] = watch(['county', 'city']);
-  const { countyOptions, districtOptions } = useLocationOptions(watchedCounty);
+  const countyOptions = localCounties.map(({ name, code }) => ({ label: name, value: code }));
+  const cityOptions = useMemo(() => {
+    if (!watchedCounty) return [];
+    return localCities[watchedCounty].map(({ name, code }) => ({ label: name, value: code }));
+  }, [watchedCounty]);
 
   useEffect(() => {
     // 如果 county 被更換後，原 city 值不存在於 districtOptions 內部，就 reset city
-    const isExisted = districtOptions.find(({value}) => value === watchedCity);
+    const isExisted = cityOptions.find(({value}) => value === watchedCity);
     if (watchedCity && !isExisted) reset((formValues) => ({ ...formValues, city: '' }));
   }, [watchedCounty]);
 
@@ -41,7 +47,7 @@ export const S00800_1 = ({currentFormValue, onSubmit}) => {
             </div>
             <div>
               <DropdownField
-                options={districtOptions}
+                options={cityOptions}
                 name="city"
                 control={control}
               />

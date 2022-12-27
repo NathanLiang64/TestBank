@@ -17,7 +17,7 @@ import { accountFormatter } from 'utilities/Generator';
 import {getStatus, reIssueOrLost} from './api';
 import LossReissueWrapper from './S00800.style';
 import {actionTextGenerator} from './utils';
-import { S00800_1 } from './S00800_1';
+import { AddressEditor } from './S00800_AddressEditor';
 
 const LossReissue = () => {
   const dispatch = useDispatch();
@@ -90,7 +90,7 @@ const LossReissue = () => {
   const handleClickEditAddress = () => {
     showCustomDrawer({
       title: '通訊地址',
-      content: <S00800_1 currentFormValue={currentFormValue} onSubmit={onSubmit} />,
+      content: <AddressEditor currentFormValue={currentFormValue} onSubmit={onSubmit} />,
     });
   };
 

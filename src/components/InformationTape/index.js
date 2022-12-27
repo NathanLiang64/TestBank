@@ -8,6 +8,7 @@ import InformationTapeWrapper from './informationTape.style';
 * 2. content -> 顯示於右側內容文字，與標題同水平高度
 * 3. remark -> 顯示於右側內容文字下方的備註文字
 * 4. noShadow -> 卡片不帶陰影樣式
+* 5. customHeader -> 若有特殊的 Header 想要顯示，可提供 customHeader 取代 img
 * */
 
 const InformationTape = ({
@@ -18,9 +19,13 @@ const InformationTape = ({
   bottomRight,
   onClick,
   noShadow,
+  customHeader,
+  className,
 }) => (
-  <InformationTapeWrapper onClick={onClick} $noShadow={noShadow}>
-    <img src={img} alt="" style={{ display: img ? 'block' : 'none' }} />
+  <InformationTapeWrapper className={className} onClick={onClick} $noShadow={noShadow}>
+    {customHeader || (
+      <img src={img} alt="" style={{ display: img ? 'block' : 'none' }} />
+    )}
     <div className="dataContainer">
       <div className="top">
         <div className="left">{ topLeft?.trim() }</div>

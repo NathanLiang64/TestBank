@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { getCountyList } from 'pages/T00700_BasicInformation/api';
 
+// NOTE ========== 已棄用，暫時保留待刪除 ==========
 export const useLocationOptions = (watchedCountyName) => {
   const [locationLists, setLocationLists] = useState([]);
 
