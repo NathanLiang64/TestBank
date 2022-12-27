@@ -41,7 +41,7 @@ const Deposit = () => {
 
   const renderTabArea = (monthList) => (
     <FEIBTabContext value={tabId}>
-      <FEIBTabList onChange={(event, id) => setTabId(id)} $size="small" className="tabList">
+      <FEIBTabList onChange={(event, id) => setTabId(id)} $size="small" className="tabList" $isSingleTab={monthList.length === 1}>
         { renderMonthlyTabs(monthList) }
       </FEIBTabList>
     </FEIBTabContext>

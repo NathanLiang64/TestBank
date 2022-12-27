@@ -242,10 +242,11 @@ export const accountOverviewCardVarient = (type) => {
 };
 
 export const CurrencyInfo = [
-  // 台幣統一使用NTD
+  // 前端台幣統一使用NTD，後端回傳可能包含TWD/NTD
   // 除 台幣、日圓 外皆取小數點後兩位數
   // #884 卡片上金額前方顯示幣別"符號"，不需顯示英文
   { code: 'NTD', name: '新台幣', symbol: '$', float: 0 },
+  { code: 'TWD', name: '新台幣', symbol: '$', float: 0 },
   { code: 'USD', name: '美元', symbol: '$', float: 2 },
   { code: 'GBP', name: '英鎊', symbol: '£', float: 2 },
   { code: 'HKD', name: '港幣', symbol: '$', float: 2 },

@@ -33,7 +33,7 @@ const A00800 = () => {
   const { closeFunc } = useNavigation();
 
   const dispatch = useDispatch();
-  // 驗證錯誤文字
+  // 驗證錯誤文字 (文字依照1.0)
   const mobileError = (isEmpty) => `請輸入${!isEmpty && '正確的'}手機號碼`;
   const nameError = (isEmpty) => (isEmpty ? '請輸入姓名' : '姓名請勿超過5字元');
   const emailError = (isEmpty) => (isEmpty ? '請輸入Email' : '電子郵件請勿超過40字元');
