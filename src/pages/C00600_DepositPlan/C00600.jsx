@@ -41,11 +41,11 @@ const DepositPlanPage = () => {
   const swiperRef = useRef();
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    // 檢查是否已申請主帳戶，「否」則到申請頁。
-    const acctData = await getAccountSummary('M');
-    if (!acctData?.length) AlertNoMainAccount({onOk: closeFunc});
-    const response = await getDepositPlans();
-    setDepositPlans(response);
+    const accounts = await getAccountSummary('M');
+    if (accounts.length) {
+      const response = await getDepositPlans();
+      setDepositPlans(response);
+    } else AlertNoMainAccount({onOk: () => startFunc('F00100'), closeFunc});
 
     dispatch(setWaittingVisible(false));
   }, []);

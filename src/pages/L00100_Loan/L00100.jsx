@@ -20,22 +20,41 @@ import {
   accountFormatter, dateToString, currencySymbolGenerator, dateToYMD, handleLoanTypeToTitle,
 } from 'utilities/Generator';
 
-import { startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
 import { getSubSummary, getContract, getSubPaymentHistory } from './api';
-import { getLoanSummary } from './utils';
+import { handleSubPaymentHistory } from './utils';
 import PageWrapper, { ContentWrapper } from './L00100.style';
 
 const uid = uuid();
 
 /**
  * L00100 貸款 首頁
- * TODO: 調整架構，下方卡片應lazy loading
  */
 const Page = () => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const {startFunc} = useNavigation();
+
   const [loans, setLoans] = useState();
+  const [detailMap, setDetailMap] = useState({});
+
+  // 依照currentIndex取得當筆貸款的交易紀錄
+  const fetchDetailMap = async (account, subNo, currentIndex) => {
+    const currentLoanDetail = await handleSubPaymentHistory(account, subNo);
+
+    setDetailMap((prevMap) => ({
+      ...prevMap,
+      [currentIndex]: currentLoanDetail,
+    }));
+  };
+
+  // 滑動卡片時，拿取當下貸款的交易紀錄
+  const onSlideChange = async (swiper) => {
+    if (detailMap[swiper.activeIndex]) return;
+    const currentLoan = loans[swiper.activeIndex];
+
+    fetchDetailMap(currentLoan.account, currentLoan.subNo, swiper.activeIndex);
+  };
 
   /**
    * 產生上方卡片會用到的
@@ -87,9 +106,9 @@ const Page = () => {
         <div className="justify-between items-start">
           <div>
             <div>{card.loanType}</div>
-            <div>{`${accountFormatter(card.accountNo)} (${card.loanNo})`}</div>
+            <div>{`${accountFormatter(card.account)} (${card.subNo})`}</div>
           </div>
-          <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.accountNo, card.loanNo)}>
+          <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.account, card.subNo)}>
             <MoreIcon />
           </FEIBIconButton>
         </div>
@@ -98,7 +117,7 @@ const Page = () => {
           <div className="balance">{currencySymbolGenerator(card.currency ?? 'NTD', card.balance)}</div>
         </div>
         <div className="justify-end gap-6 mt-4 divider">
-          <button type="button" className="text-16" onClick={() => handleSearchClick(card.accountNo, card.loanNo)}>本期應繳查詢</button>
+          <button type="button" className="text-16" onClick={() => handleSearchClick(card.account, card.subNo)}>本期應繳查詢</button>
         </div>
       </AccountCard>
     ));
@@ -107,16 +126,16 @@ const Page = () => {
   /**
    * 產生下方資訊會用到的
    */
-  const renderBonusContents = (info, accountNo, subNo) => ([
+  const renderBonusContents = (loan) => ([
     {
       label: '應繳款日',
-      value: `每月${info.cycleTiming}日`,
-      onClick: () => handleSearchClick(accountNo, subNo),
+      value: `每月${loan.dayToPay}日`,
+      onClick: () => handleSearchClick(loan.account, loan.subNo),
     },
     {
       label: '應繳本息',
-      value: currencySymbolGenerator(info.currency ?? 'NTD', info.interest),
-      onClick: () => handleSearchClick(accountNo, subNo),
+      value: currencySymbolGenerator(loan.currency ?? 'NTD', loan.payAmount),
+      onClick: () => handleSearchClick(loan.account, loan.subNo),
     },
     {
       label: '可能回饋',
@@ -143,12 +162,12 @@ const Page = () => {
     dispatch(setWaittingVisible(false));
     if (historyResponse) {
       const singleHistoryData = historyResponse.data[i];
-      startFunc(`${FuncID.L00300}1`, { singleHistoryData, cardData });
+      startFunc(`${FuncID.L00300}1`, { singleHistoryData, cardData }); // TODO:參數內容調整
     }
   };
 
-  const renderTransactions = (card) => {
-    if (card?.transactions?.length <= 0) {
+  const renderTransactions = (detail) => {
+    if (!detail || detail.length === 0) {
       return (
         <div className="emptydata-wrapper">
           <EmptyData />
@@ -157,14 +176,14 @@ const Page = () => {
     }
 
     // transactions 依照日期排序（大 -> 小）
-    const sortedTransactions = card.transactions.sort((a, b) => parseInt(b.txnDate, 10) - parseInt(a.txnDate, 10));
+    const sortedTransactions = detail.sort((a, b) => parseInt(b.txnDate, 10) - parseInt(a.txnDate, 10));
 
     return sortedTransactions.slice(0, 3).map((t, i) => (
       <button
         key={`${uid}-t${i}`}
         type="button"
         aria-label={`點擊查詢此筆紀錄，還款日:${dateToString(t.txnDate)}，金額：${currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}`}
-        onClick={() => handleSingleTransaction(i, card)}
+        onClick={() => handleSingleTransaction(i, detail)}
         style={{ width: '100%' }}
       >
         <InformationTape
@@ -184,19 +203,22 @@ const Page = () => {
   /**
    * 產生下方交易資訊的 slides
    */
-  const renderContents = (cards) => {
-    if (!cards || cards?.length === 0) return [];
+  const renderContents = () => {
+    if (!loans || loans?.length === 0) return [];
 
-    return cards.map((card, i) => (
+    return loans.map((loan, i) => (
       <ContentWrapper key={`${uid}-a${i}`}>
-        <ThreeColumnInfoPanel content={renderBonusContents(card.bonusInfo, card.accountNo, card.loanNo)} />
+        <ThreeColumnInfoPanel content={renderBonusContents(loan)} />
+
         <div>
-          <div>{ renderTransactions(card) }</div>
+          <div>{renderTransactions(detailMap[i])}</div>
           <div className="toolbar">
-            <button className="btn-icon" type="button" onClick={() => handleMoreTransactionsClick(card)}>
+            {detailMap[i] && detailMap[i].length > 0 && (
+            <button className="btn-icon" type="button" onClick={() => handleMoreTransactionsClick(loan)}>
               更多明細
               <ArrowNextIcon />
             </button>
+            )}
           </div>
         </div>
       </ContentWrapper>
@@ -216,7 +238,8 @@ const Page = () => {
 
     if (subSummaryRes.length !== 0) {
       error = null;
-      setLoans(await getLoanSummary());
+      setLoans(subSummaryRes);
+      fetchDetailMap(subSummaryRes.account, subSummaryRes.subNo, 0);
     } else {
       error = '您尚未擁有貸款，請在系統關閉此功能後，立即申請。';
     }
@@ -225,16 +248,12 @@ const Page = () => {
     return error;
   };
 
-  /**
-   * 產生頁面
-   * 只要提供相同數量的 slides 和 content，SwiperLayout會自動切換對應的內容。
-   */
   return (
     <Layout title="貸款" inspector={inspector}>
       <MainScrollWrapper>
         <PageWrapper>
-          <SwiperLayout slides={renderSlides(loans)} hasDivider={false} slidesPerView={1.1} spaceBetween={8} centeredSlides>
-            { renderContents(loans) }
+          <SwiperLayout slides={renderSlides(loans)} hasDivider={false} slidesPerView={1.1} spaceBetween={8} centeredSlides onSlideChange={onSlideChange}>
+            {renderContents()}
           </SwiperLayout>
         </PageWrapper>
       </MainScrollWrapper>
