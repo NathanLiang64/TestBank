@@ -47,7 +47,7 @@ const AccountOverviewPage = () => {
     // 回傳新增後的整個陣列
     return arr;
   };
-  const checkAssets = (checkedArr) => ['M', 'F', 'S', 'C'].map((type) => addTypeObj(checkedArr, type)).at(-1);
+  const checkAssets = (checkedArr) => ['M', 'F', 'S', 'C'].map((type) => addTypeObj(checkedArr, type)).pop();
 
   /**
    * 產生上方圓餅圖的 slides

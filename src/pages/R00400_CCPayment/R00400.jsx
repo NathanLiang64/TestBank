@@ -238,7 +238,7 @@ const Page = () => {
                   name="extAccountNo"
                   labelName="轉出帳號"
                   control={control}
-                  inputProps={{maxLength: 14, inputMode: 'numeric', placeholder: '請輸入轉出帳號'}}
+                  inputProps={{maxLength: 16, inputMode: 'numeric', placeholder: '請輸入轉出帳號'}}
                 />
               </>
             )}

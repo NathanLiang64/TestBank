@@ -71,7 +71,7 @@ const CreditCardPage = () => {
   // 信用卡卡面右上角的功能列表
   const functionAllList = (item) => {
     const list = [
-      { fid: FuncID.R00200, title: '晚點付', cardNo: item.cards[0].cardNo },
+      { fid: FuncID.R00200, title: '晚點付' },
       { fid: FuncID.R00300, title: '帳單', cardNo: item.cards[0].cardNo },
       { fid: FuncID.R00400, title: '繳費', cardNo: item.isBankeeCard ? item.cards[0].cardNo : '' },
     ];
@@ -79,10 +79,10 @@ const CreditCardPage = () => {
 
     return (
       <ul className="functionList">
-        { list.map((func) => (
-          <li key={func.fid}>
-            <button type="button" onClick={() => go2Func(func.fid, { cardNo: func.cardNo })}>
-              {func.title}
+        { list.map(({fid, title, cardNo}) => (
+          <li key={fid}>
+            <button type="button" onClick={() => go2Func(fid, cardNo ? {cardNo} : null)}>
+              {title}
             </button>
           </li>
         ))}

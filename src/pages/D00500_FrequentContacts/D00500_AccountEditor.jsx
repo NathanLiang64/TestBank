@@ -45,7 +45,7 @@ function AccountEditor({
    */
   const schema = yup.object().shape({
     bankId: yup.string().required('請選擇銀行'),
-    acctId: yup.string().required('請輸入帳號').matches(/^(\d{10,14})?$/, '銀行帳號必定是由10~14個數字所組成'),
+    acctId: yup.string().required('請輸入帳號').matches(/^(\d{10,16})?$/, '銀行帳號必定是由10~16個數字所組成'),
   });
 
   /**
@@ -101,7 +101,7 @@ function AccountEditor({
               {...field}
               type="text"
               placeholder="請輸入常用的銀行帳號"
-              inputProps={{ maxLength: 14, autoComplete: 'off', inputMode: 'numeric' }}
+              inputProps={{ maxLength: 16, autoComplete: 'off', inputMode: 'numeric' }}
               error={!!errors?.acctId}
             />
           )}

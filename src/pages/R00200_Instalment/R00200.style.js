@@ -82,6 +82,37 @@ const InstalmentWrapper = styled(Layout)`
       font-size: 3.6rem;
     }
   }
+
+  .staging-table {
+    margin: 1rem auto;
+    thead,tbody{
+      td {
+        font-size: 1.4rem;
+        text-align: right;
+        vertical-align: middle;
+        .principalText {
+          font-size: 1.2rem;
+          color: ${({ theme }) => theme.colors.text.light};
+        }
+      }
+    } 
+    
+    thead {
+      td {
+        font-size: 1.2rem;
+        color: ${({ theme }) => theme.colors.primary.light};
+      }
+    }
+  }
+
+  .formula-hint {
+    padding: .8rem;
+    font-size: 1.2rem;
+    p {
+      color:${({ theme }) => theme.colors.state.error}
+    }
+  }
+
 `;
 
 export default InstalmentWrapper;
