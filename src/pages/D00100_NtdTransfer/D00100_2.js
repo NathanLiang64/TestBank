@@ -18,7 +18,7 @@ import AccountEditor from 'pages/D00500_FrequentContacts/D00500_AccountEditor';
 import { addFrequentAccount } from 'pages/D00500_FrequentContacts/api';
 import { shareMessage } from 'utilities/AppScriptProxy';
 
-import { setDrawerVisible } from 'stores/reducers/ModalReducer';
+import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showDrawer, showError, showInfo } from 'utilities/MessageModal';
 import { useNavigation } from 'hooks/useNavigation';
 import { getTransInData, getDisplayAmount, getTransDate, getCycleDesc } from './util';
@@ -98,7 +98,9 @@ const TransferResult = (props) => {
    */
   const createRepeatableAccount = async () => {
     const onFinished = async (newAcct) => {
+      dispatch(setWaittingVisible(true));
       const headshotId = await addFrequentAccount(newAcct);
+      dispatch(setWaittingVisible(false));
       if (headshotId) {
         const message = '這個帳號已加入您的常用帳號名單中嚕！';
         await showInfo(message, () => dispatch(setDrawerVisible(false)));
@@ -174,7 +176,7 @@ const TransferResult = (props) => {
           descHeader={model.result.errorCode}
           description={model.result.message}
         />
-        { renderTransferResult() }
+        { model.result.isSuccess && renderTransferResult() }
         { renderBottomAction(model.result.isSuccess) }
         { showSnapshotSuccess && (
           <SnackModal icon={<CameraIcon size={32} color={theme.colors.basic.white} />} text="截圖成功" />
