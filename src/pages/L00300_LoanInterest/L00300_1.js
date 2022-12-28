@@ -1,6 +1,5 @@
 /* eslint-disable react/destructuring-assignment */
 import { useState, useEffect } from 'react';
-import { useHistory } from 'react-router';
 import { toCurrency, dateToString, handleLoanTypeToTitle } from 'utilities/Generator';
 import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
 
@@ -11,42 +10,23 @@ import DebitCard from 'components/DebitCard/DebitCard';
 /* Styles */
 import LoanInterestWrapper from './L00300.style';
 
-const L003001 = (props) => {
-  const history = useHistory();
+const L003001 = () => {
   const [model, setModel] = useState();
 
   useEffect(async () => {
     const startParams = await loadFuncParams();
-
-    if (startParams) {
-      setModel(startParams);
-    } else {
-      setModel({
-        cardData: props?.location?.state?.cardData,
-        singleHistoryData: props?.location?.state?.singleHistoryData,
-      });
-    }
+    if (startParams) setModel(startParams);
   }, []);
 
-  const handleGoBack = async () => {
-    const startParams = await loadFuncParams();
-    if (startParams) {
-      closeFunc();
-    } else {
-      history.goBack();
-    }
-  };
-
   return (
-    <Layout title="繳款紀錄查詢" goBackFunc={handleGoBack}>
+    <Layout title="繳款紀錄查詢">
       {model && (
       <LoanInterestWrapper>
-        {console.log('L003001 model', model)}
         <div className="cardArea">
           <DebitCard
             branch=""
             cardName={handleLoanTypeToTitle(model.singleHistoryData?.type)}
-            account={`${model.cardData?.accountNo || ''} ${model.cardData?.loanNo || ''}`}
+            account={`${model.cardData?.account || ''} ${model.cardData?.subNo || ''}`}
             balance={toCurrency(model.cardData?.balance || '')}
             dollarSign={model.cardData?.currency || ''}
             transferTitle=""

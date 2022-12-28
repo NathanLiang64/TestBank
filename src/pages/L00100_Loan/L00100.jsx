@@ -1,5 +1,4 @@
 /* eslint react/no-array-index-key: 0 */
-
 import { useState } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
@@ -17,11 +16,12 @@ import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import InformationTape from 'components/InformationTape';
 import EmptyData from 'components/EmptyData';
 import {
-  accountFormatter, dateToString, currencySymbolGenerator, dateToYMD, handleLoanTypeToTitle,
+  accountFormatter, dateToString, currencySymbolGenerator, handleLoanTypeToTitle,
 } from 'utilities/Generator';
 
 import { FuncID } from 'utilities/FuncID';
-import { getSubSummary, getContract, getSubPaymentHistory } from './api';
+import { useNavigation } from 'hooks/useNavigation';
+import { getSubSummary, getContract } from './api';
 import { handleSubPaymentHistory } from './utils';
 import PageWrapper, { ContentWrapper } from './L00100.style';
 
@@ -59,14 +59,14 @@ const Page = () => {
   /**
    * 產生上方卡片會用到的
    */
-  const handleMoreClick = (accountNo, loanNo) => {
+  const handleMoreClick = (account, subNo) => {
     const list = [
-      { icon: <CircleIcon />, title: '貸款資訊', onClick: () => { history.push('/L001002', { account: accountNo, subNo: loanNo }); } },
+      { icon: <CircleIcon />, title: '貸款資訊', onClick: () => { history.push('/L001002', { account, subNo }); } },
       /*
       { icon: <CircleIcon />, title: '部分貸款', onClick: () => {} },
       { icon: <CircleIcon />, title: '全部貸款', onClick: () => {} },
       */
-      { icon: <CircleIcon />, title: '合約下載', onClick: () => { getContract({ accountNo, format: 1 }); } },
+      { icon: <CircleIcon />, title: '合約下載', onClick: () => { getContract({ account, format: 1 }); } },
       /*
       { icon: <CircleIcon />, title: '清償證明下載', onClick: () => { getStatment({ accountNo, format: 1 }); } },
       */
@@ -90,10 +90,8 @@ const Page = () => {
     dispatch(setDrawerVisible(true));
   };
 
-  const handleSearchClick = (account, subNo) => {
-    // 查詢應繳本息
-    startFunc(FuncID.L00200, { account, subNo });
-  };
+  // 前往查詢應繳本息頁面
+  const handleSearchClick = (account, subNo) => startFunc(FuncID.L00200, { account, subNo });
 
   /**
    * 產生上方卡片的 slides
@@ -150,23 +148,13 @@ const Page = () => {
     */
   ]);
 
-  const handleSingleTransaction = async (i, cardData) => {
-    dispatch(setWaittingVisible(true));
-    const param = {
-      account: cardData.accountNo,
-      subNo: cardData.loanNo,
-      startDate: dateToYMD(new Date(new Date().setDate(new Date().getDate() - 30))),
-      endDate: dateToYMD(),
-    };
-    const historyResponse = await getSubPaymentHistory(param);
-    dispatch(setWaittingVisible(false));
-    if (historyResponse) {
-      const singleHistoryData = historyResponse.data[i];
-      startFunc(`${FuncID.L00300}1`, { singleHistoryData, cardData }); // TODO:參數內容調整
+  const handleSingleTransaction = async (i, detail, loan) => {
+    if (detail) {
+      startFunc(`${FuncID.L00300}1`, { singleHistoryData: detail[i], cardData: loan });
     }
   };
 
-  const renderTransactions = (detail) => {
+  const renderTransactions = (detail, loan) => {
     if (!detail || detail.length === 0) {
       return (
         <div className="emptydata-wrapper">
@@ -183,7 +171,7 @@ const Page = () => {
         key={`${uid}-t${i}`}
         type="button"
         aria-label={`點擊查詢此筆紀錄，還款日:${dateToString(t.txnDate)}，金額：${currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}`}
-        onClick={() => handleSingleTransaction(i, detail)}
+        onClick={() => handleSingleTransaction(i, detail, loan)}
         style={{ width: '100%' }}
       >
         <InformationTape
@@ -196,9 +184,7 @@ const Page = () => {
     ));
   };
 
-  const handleMoreTransactionsClick = (card) => {
-    startFunc(FuncID.L00300, { card }); // TODO 需明確定義 card 的內容！
-  };
+  const handleMoreTransactionsClick = (loan) => startFunc(FuncID.L00300, { loan });
 
   /**
    * 產生下方交易資訊的 slides
@@ -211,7 +197,7 @@ const Page = () => {
         <ThreeColumnInfoPanel content={renderBonusContents(loan)} />
 
         <div>
-          <div>{renderTransactions(detailMap[i])}</div>
+          <div>{renderTransactions(detailMap[i], loan)}</div>
           <div className="toolbar">
             {detailMap[i] && detailMap[i].length > 0 && (
             <button className="btn-icon" type="button" onClick={() => handleMoreTransactionsClick(loan)}>
