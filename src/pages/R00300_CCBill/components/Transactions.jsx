@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import uuid from 'react-uuid';
 
@@ -65,7 +64,6 @@ const Transactions = ({
           { displayList?.length > 0 ? (
             <>
               { isLoading ? <Loading space="both" isCentered /> : displayList }
-
               { !isExpanded && (
               <div className="toolbar">
                 <button type="button" className="btn-icon" onClick={() => onExpandClick()}>
@@ -74,7 +72,6 @@ const Transactions = ({
                 </button>
               </div>
               )}
-
             </>
           ) : (
             <div className="emptydata-wrapper">

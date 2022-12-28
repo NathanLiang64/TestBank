@@ -19,7 +19,7 @@ import { addFrequentAccount } from 'pages/D00500_FrequentContacts/api';
 import { shareMessage } from 'utilities/AppScriptProxy';
 
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { showDrawer, showError, showInfo } from 'utilities/MessageModal';
+import { showDrawer, showInfo } from 'utilities/MessageModal';
 import { useNavigation } from 'hooks/useNavigation';
 import { getTransInData, getDisplayAmount, getTransDate, getCycleDesc } from './util';
 import TransferWrapper from './D00100.style';
@@ -116,6 +116,13 @@ const TransferResult = (props) => {
     await showDrawer('新增常用帳號', (<AccountEditor initData={acctData} onFinished={onFinished} />));
   };
 
+  /* 呼叫裝置開啟 通話(02-80731166)/取消 介面 */
+  const callServiceTel = () => {
+    const link = document.createElement('a');
+    link.href = 'tel:0280731166';
+    link.click();
+  };
+
   /**
    * 顯示下方功能按鈕，依轉帳結果而有不同輸出。
    * @param {boolean} mode 表示轉帳結果成功與否的旗標。
@@ -137,8 +144,8 @@ const TransferResult = (props) => {
         </>
       ) : (
         <>
-          {/* TODO 透過原生撥客服電話，但要先詢問使用者（撥客服、智能客服、LINE */}
-          <button type="button" onClick={() => showError('[聯絡客服]功能尚未完成！')}>
+          {/* 透過原生撥客服電話，但要先詢問使用者（撥客服、智能客服、LINE */}
+          <button type="button" onClick={() => callServiceTel()}>
             <PhoneIcon />
             聯絡客服
           </button>
@@ -168,7 +175,7 @@ const TransferResult = (props) => {
    * 頁面輸出。
    */
   return (
-    <Layout goBackFunc={closeFunc}>
+    <Layout title="轉帳結果" goBackFunc={closeFunc}>
       <TransferWrapper className="transferResultPage">
         <ResultAnimation
           isSuccess={model.result.isSuccess}
