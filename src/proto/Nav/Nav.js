@@ -3,11 +3,12 @@
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { startFunc, transactionAuth } from 'utilities/AppScriptProxy';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { useNavigation } from 'hooks/useNavigation';
 import { logout, getHomeData, registerToken } from './Nav.api';
 
 import NavWrapper from './Nav.style';
@@ -15,6 +16,7 @@ import NavWrapper from './Nav.style';
 const Nav = () => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const { startFunc } = useNavigation();
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));

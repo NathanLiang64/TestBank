@@ -57,3 +57,21 @@ export const R00200AccordionContent2 = () => (
     </ol>
   </>
 );
+
+// ★備註說明:
+//   依與作業部核簽之分期設定表。
+//   各分期換算之每月利率如下:
+//   1期:年化利率0%(每月利率0%)
+//   3期:年化利率0%(每月利率0%)
+//   6期:年化利率6%(每月利率0.29%)
+//   9期:年化利率9%(每月利率0.42%)
+//  12期:年化利率12%(每月利率0.55%)
+
+export const interestRateMap = {
+  // { 期數:月利率 }
+  1: {monthlyRate: 0, annualRate: 0},
+  3: {monthlyRate: 0, annualRate: 0},
+  6: {monthlyRate: 0.29, annualRate: 6},
+  9: {monthlyRate: 0.42, annualRate: 9},
+  12: {monthlyRate: 0.55, annualRate: 12},
+};

@@ -24,12 +24,11 @@ import MemberAccountCard from 'components/MemberAccountCard';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showError, showInfo, showPrompt } from 'utilities/MessageModal';
-import {
-  loadFuncParams, startFunc, closeFunc,
-} from 'utilities/AppScriptProxy';
+import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { numberToChinese } from 'utilities/Generator';
 import { getAccountBonus, getAccountsList } from 'utilities/CacheData';
 import { ChangeMemberIcon } from 'assets/images/icons';
+import { useNavigation } from 'hooks/useNavigation';
 import TransferWrapper from './D00100.style';
 import D00100AccordionContent from './D00100_AccordionContent';
 
@@ -40,6 +39,7 @@ import D00100AccordionContent from './D00100_AccordionContent';
 const Transfer = (props) => {
   const { location } = props;
   const { state } = location;
+  const {startFunc, closeFunc} = useNavigation();
 
   const history = useHistory();
   const dispatch = useDispatch();
@@ -82,7 +82,7 @@ const Transfer = (props) => {
     transIn: yup.object().shape({
       type: yup.number().min(0).max(3).required(),
       bank: yup.string().when('type', (type, s) => ((type === 0) ? s.required('請選擇銀行代碼') : s.nullable())),
-      account: yup.string().when('type', (type, s) => ((type === 0) ? s.required('請輸入轉入帳號').min(10, '銀行帳號必定是由10~14個數字所組成').max(14, '銀行帳號必定是由10~14個數字所組成') : s.nullable())),
+      account: yup.string().when('type', (type, s) => ((type === 0) ? s.required('請輸入轉入帳號').min(10, '銀行帳號必定是由10~16個數字所組成').max(16, '銀行帳號必定是由10~16個數字所組成') : s.nullable())),
       freqAcct: yup.object().when('type', (type, s) => ((type === 1) ? s.required() : s.nullable())),
       regAcct: yup.object().when('type', (type, s) => ((type === 2) ? s.required() : s.nullable())),
     }),
@@ -436,9 +436,8 @@ const Transfer = (props) => {
    * 切換帳戶卡，變更 HookForm 轉出帳號相關資料，以及轉帳額度。
    */
   useEffect(() => {
-    const account = accounts?.at(selectedAccountIdx);
-    if (!account) return; // 頁面初始化時，不需要進來。
-
+    if (!accounts) return; // 頁面初始化時，不需要進來。
+    const account = accounts[selectedAccountIdx];
     model.transOut = {
       account: account.accountNo, // 轉出帳號
       alias: account.alias, // 帳戶名稱，若有暱稱則會優先用暱稱; 會用在確認及執行這二頁。
@@ -511,7 +510,9 @@ const Transfer = (props) => {
               <FEIBTabPanel value="0">
                 {/* 當 startFuncParams 有預設轉入帳號 或 帳戶餘額為零時，不允許變更 */}
                 <BankCodeInput control={control} name={idTransInBank} value={getValues(idTransInBank)} setValue={setValue} trigger={trigger}
-                  readonly={startFuncParams?.transIn?.bank || !accounts?.at(selectedAccountIdx)?.balance}
+                // 測試把 array.at 語法改成 accounts[selectedAccountIdx]
+                  // readonly={startFuncParams?.transIn?.bank || !accounts?.at(selectedAccountIdx)?.balance}
+                  readonly={startFuncParams?.transIn?.bank || !accounts || !accounts[selectedAccountIdx]?.balance}
                   errorMessage={errors?.transIn?.bank?.message}
                 />
                 <div>
@@ -519,10 +520,10 @@ const Transfer = (props) => {
                   <Controller control={control} name={idTransInAcct}
                     render={({ field }) => (
                       // 當 startFuncParams 有預設轉入帳號時，不允許變更
-                      <FEIBInput type="number" {...field} error={!!errors?.transIn?.account}
+                      <FEIBInput type="text" {...field} error={!!errors?.transIn?.account}
                         inputProps={{
                           placeholder: '請輸入',
-                          maxLength: 14,
+                          maxLength: 16,
                           autoComplete: 'off',
                           disabled: startFuncParams?.transIn?.account,
                           inputMode: 'numeric',

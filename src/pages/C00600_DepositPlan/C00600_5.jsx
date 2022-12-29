@@ -12,6 +12,7 @@ import {
   toCurrency, accountFormatter, dateToString,
 } from 'utilities/Generator';
 
+import { useNavigation } from 'hooks/useNavigation';
 import HeroWithEdit from './components/HeroWithEdit';
 import { EditPageWrapper } from './C00600.style';
 import { AlertInvalidEntry, AlertUpdateFail } from './utils/prompts';
@@ -24,6 +25,7 @@ import { generateRestirctedEditSchema } from './validationSchema';
  */
 const DepositPlanEditPage = () => {
   const history = useHistory();
+  const { goHome } = useNavigation();
   const location = useLocation();
   const {control, handleSubmit, reset } = useForm(
     {
@@ -65,7 +67,7 @@ const DepositPlanEditPage = () => {
       });
     } else {
       // Guard: 此頁面接續上一頁的操作，意指若未在該情況下進入此頁為不正常操作。
-      AlertInvalidEntry({ onBack: () => history.goBack() });
+      AlertInvalidEntry({ goBack: () => history.goBack(), goHome });
     }
   }, []);
 

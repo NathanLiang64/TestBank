@@ -10,7 +10,7 @@ import { DropdownField } from 'components/Fields';
 import { FEIBButton, FEIBSwitch, FEIBSwitchLabel} from 'components/elements';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { accountFormatter } from 'utilities/Generator';
-import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 import {
   showDrawer, closeDrawer, showCustomPrompt, showAnimationModal,
 } from 'utilities/MessageModal';
@@ -18,6 +18,7 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import uuid from 'react-uuid';
 // eslint-disable-next-line no-unused-vars
+import { useNavigation } from 'hooks/useNavigation';
 import { CancelAutoBillAlert, AccordionContent } from './utils';
 import {
   getAutoDebits, setAutoDebit, getAccountsList, getCards,
@@ -26,6 +27,7 @@ import AutomaticBillPaymentWrapper from './R00500.style';
 import { validationSchema } from './validationSchema';
 
 const AutomaticBillPayment = () => {
+  const { closeFunc } = useNavigation();
   const [appliedAutoBill, setAppliedAutoBill] = useState([]);
   const [accountOptions, setAccountOptions] = useState([]);
   const isFullPayOptions = [{label: '應繳總金額', value: 'Y'}, {label: '最低應繳金額', value: 'N'}];

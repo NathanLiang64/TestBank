@@ -28,7 +28,7 @@ export const generateValidationSchema = (bills) => yup.object().shape({
     .string()
     .when('paymentMethod', (method, s) => (method === 'external'
       ? s
-        .matches(/\d{12,16}/, '轉出帳號格式有誤，請重新檢查。')
+        .matches(/\d{10,16}/, '轉出帳號格式有誤，請重新檢查。')
         .required('請選擇轉出帳號')
       : s.nullable())),
 });

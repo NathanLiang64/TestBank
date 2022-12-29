@@ -1,16 +1,17 @@
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
-import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 import { showCustomPrompt } from 'utilities/MessageModal';
 
 import Layout from 'components/Layout/Layout';
 import { FuncID } from 'utilities/FuncID';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { useNavigation } from 'hooks/useNavigation';
 import { getStatus, getCardlessWdStatus } from './api';
 
 const CardLessATM = () => {
   const dispatch = useDispatch();
+  const { startFunc, closeFunc } = useNavigation();
   const history = useHistory();
 
   // 確認金融卡卡況以及無卡提款狀態

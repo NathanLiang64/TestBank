@@ -13,9 +13,10 @@ import { FEIBInputLabel, FEIBInput } from 'components/elements';
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
-import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
+import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { getAccountsList, updateAccount } from 'utilities/CacheData';
 import { FuncID } from 'utilities/FuncID';
+import { useNavigation } from 'hooks/useNavigation';
 import {
   getTransactions,
   downloadDepositBookCover,
@@ -28,6 +29,7 @@ import PageWrapper from './C00500.style';
  */
 const C00500 = () => {
   const dispatch = useDispatch();
+  const { startFunc, closeFunc } = useNavigation();
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const { register, unregister, handleSubmit } = useForm();

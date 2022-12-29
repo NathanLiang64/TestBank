@@ -1,27 +1,85 @@
 import { callAPI } from 'utilities/axios';
 
 /**
- * 查詢客戶信用卡帳單資訊
+ * 查詢已申請分期資料
  *
- * @author danny
- * @Date 2022/09/27
- * @param token
- * @param period 期別 (ex: 202212)
- * }
- * @return {
- *    newBalance,
- *    details [
- *      {
- *        txDate,   交易日期時間 (yyyymmddhhmmss)
- *        cardNo,   卡號
- *        desc,     消費項目說明
- *        amount,   消費金額
- *      },
- *      ...
- *    ]
- * }
+ * @return {Promise<{
+ *    newInstRestraintFlag: '分期約定書註記(新)'
+ *    items:{ applType: '分期方案' }[]
+ *  }>}
  */
-export const queryCardBill = async (request) => {
-  const response = await callAPI('/api/card/v1/getBillSummary', request);
+export const queryInstallment = async (request) => {
+  const response = await callAPI('/api/card/installment/query', request);
+  return response.data;
+};
+
+/**
+ * 設定分期
+ *
+ * @param {{
+ *   applType: '分期方案 G: 單筆 , H: 總額'
+ *   purchDate: '消費日期 yyyyMMdd'
+ *   purchAmount: '消費金額'
+ *   authCode: '授權號碼'
+ *   totTerm: '總期數'
+ * }[]} request
+ */
+export const updateInstallment = async (request) => {
+  const response = await callAPI('/api/card/installment/update', request);
+  return response.data;
+};
+
+/**
+ * 設定分期約定書註記
+ *
+ * @param {{
+ *   instRestraintFlagNew: '分期約定書註記(新) "B"或空白 空白時不異動分期約定書註記(新)'
+ * }} request
+ */
+export const setInstallmentFlag = async (request) => {
+  const response = await callAPI('/api/card/installment/setFlag', request);
+  return response.data;
+};
+
+/**
+ * 查詢分期總約定書註記
+ *
+ * @returns {Promise<{
+ *   newInstRestraintFlag, // 分期約定書註記(新)
+ * }>}
+ */
+export const getInstallmentFlag = async (request) => {
+  const response = await callAPI('/api/card/installment/getFlag', request);
+  return response.data;
+};
+
+/**
+ * 查詢指定交易的明細
+ *
+ * @param {String} request  // 序號
+ * @returns {Promise<{
+ *   purchDate, // 消費日期
+ *   purchAmount, // 消費金額
+ *   authCode, // 授權號碼
+ *   storeName, // 商店名稱
+ * }>}
+ */
+export const getTxnDtl = async (request) => {
+  const response = await callAPI('/api/card/installment/getAvailTxnDtl', request);
+  return response.data;
+};
+
+/**
+ * 查詢可做分期的交易 (已篩選掉已申請分期的項目)
+ *
+ * @returns {Promise<{
+ *   purchDate, // 消費日期
+ *   purchAmount, // 消費金額
+ *   authCode, // 授權號碼
+ *   storeName, // 商店名稱
+ * }[]>}
+ */
+export const getTxn = async (request) => {
+  const response = await callAPI('/api/card/installment/getAvailTxn', request);
   return response.data;
 };

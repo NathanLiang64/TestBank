@@ -106,10 +106,10 @@ const Adjustment = () => {
               <FEIBInput
                 {...field}
                 type="number"
-                inputMode="numeric"
                 id="creditAmount"
                 name="creditAmount"
                 placeholder="請輸入申請額度"
+                inputProps={{inputMode: 'numeric'}}
                 error={!!errors.creditAmount}
               />
             )}

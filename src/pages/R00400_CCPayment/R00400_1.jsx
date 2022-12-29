@@ -11,8 +11,8 @@ import BottomAction from 'components/BottomAction';
 import { PhoneIcon, TransactionIcon } from 'assets/images/icons';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import { FuncID } from 'utilities/FuncID';
-import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 
+import { useNavigation } from 'hooks/useNavigation';
 import { getAutoDebits, getCreditCardTerms } from './api';
 import PageWrapper from './TransferResult.style';
 
@@ -22,6 +22,7 @@ import PageWrapper from './TransferResult.style';
 const Page = () => {
   const history = useHistory();
   const location = useLocation();
+  const {startFunc, closeFunc} = useNavigation();
   const [autoDebitInfo, setAutoDebitInfo] = useState();
   const [terms, setTerms] = useState();
 

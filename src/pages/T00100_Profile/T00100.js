@@ -8,10 +8,10 @@ import Layout from 'components/Layout/Layout';
 import Avatar from 'components/Avatar';
 import { TextInputField } from 'components/Fields';
 import { showCustomPrompt } from 'utilities/MessageModal';
-import { startFunc } from 'utilities/AppScriptProxy';
 import defaultAvatar from 'assets/images/avatarImage.png';
 
 /* Styles */
+import { useNavigation } from 'hooks/useNavigation';
 import { useDispatch } from 'react-redux';
 import { setModalVisible } from 'stores/reducers/ModalReducer';
 import SettingList from './T00100_settingList';
@@ -32,6 +32,7 @@ const T00100 = () => {
     resolver: yupResolver(validationSchema),
   });
 
+  const { startFunc } = useNavigation();
   const [nickName, setNickName] = useState('');
   const [memberId, setMemberId] = useState();
   const dispatch = useDispatch();

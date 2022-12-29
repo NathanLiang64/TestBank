@@ -37,13 +37,25 @@ const InstalmentWrapper = styled(Layout)`
     }
   }
 
-  .checkbox {
-    margin: 0.8rem 0 0.8rem 0;
-    padding: 1rem;
-    border-radius: 0.8rem;
-    box-shadow: 0px 4px 10px 0px #0000001f;
-    display: flex;
-    justify-content: space-between;
+  .InformationTape {
+    &.checkedtape {
+      border: ${({ theme }) => `1px solid ${theme.colors.primary.dark}`};
+    }
+    border: 1px solid transparent;
+    .checkbox {
+      pointer-events: none;
+      .Icon {
+        width: auto;
+        height: auto;
+        color: ${({ theme }) => theme.colors.text.dark};
+      }
+  
+      &.Mui-checked {
+        .Icon {
+          color: ${({ theme }) => theme.colors.primary.dark};
+        }
+      }
+    }
   }
 
   .messageBox {
@@ -60,15 +72,44 @@ const InstalmentWrapper = styled(Layout)`
     padding: 2rem;
     margin: 1rem;
 
-    p{
+    p {
       width: 100%;
       text-align: center;
     }
-    
     .titleText {
       color: ${({ theme }) => theme.colors.primary.light};
       text-align: center;
       font-size: 3.6rem;
+    }
+  }
+
+  .staging-table {
+    margin: 1rem auto;
+    thead,tbody{
+      td {
+        font-size: 1.4rem;
+        text-align: right;
+        vertical-align: middle;
+        .principalText {
+          font-size: 1.2rem;
+          color: ${({ theme }) => theme.colors.text.light};
+        }
+      }
+    } 
+    
+    thead {
+      td {
+        font-size: 1.2rem;
+        color: ${({ theme }) => theme.colors.primary.light};
+      }
+    }
+  }
+
+  .formula-hint {
+    padding: .8rem;
+    font-size: 1.2rem;
+    p {
+      color:${({ theme }) => theme.colors.state.error}
     }
   }
 

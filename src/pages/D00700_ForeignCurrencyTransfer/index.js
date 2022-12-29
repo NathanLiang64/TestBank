@@ -9,7 +9,6 @@ import { numberToChinese, currencySymbolGenerator } from 'utilities/Generator';
 import { transferAmountValidation } from 'utilities/validation';
 import { customPopup } from 'utilities/MessageModal';
 import { getAccountsList, getAgreedAccounts, getExchangePropertyList } from 'pages/D00700_ForeignCurrencyTransfer/api';
-import { closeFunc } from 'utilities/AppScriptProxy';
 /* Elements */
 import Accordion from 'components/Accordion';
 import DebitCard from 'components/DebitCard/DebitCard';
@@ -20,6 +19,7 @@ import Layout from 'components/Layout/Layout';
 import NoteContent from 'pages/D00700_ForeignCurrencyTransfer/noteContent';
 
 /* Styles */
+import { useNavigation } from 'hooks/useNavigation';
 import ForeignCurrencyTransferWrapper from './foreignCurrencyTransfer.style';
 
 /* Swiper modules */
@@ -27,6 +27,7 @@ SwiperCore.use([Pagination]);
 
 const ForeignCurrencyTransfer = () => {
   const history = useHistory();
+  const { closeFunc } = useNavigation();
   // 交易性質清單
   const [transTypeOptions, setTransTypeOptions] = useState([]);
   // 已選的帳號選單

@@ -1,4 +1,3 @@
-import { goHome } from 'utilities/AppScriptProxy';
 import { openhb } from 'pages/A00400_Provisioning/api';
 import { showAnimationModal } from 'utilities/MessageModal';
 
@@ -8,9 +7,11 @@ import Layout from 'components/Layout/Layout';
 import Accordion from 'components/Accordion';
 
 /* Styles */
+import { useNavigation } from 'hooks/useNavigation';
 import ProvisioningWrapper from './provisioning.style';
 
 const Provisioning = () => {
+  const { goHome } = useNavigation();
   // 設定結果彈窗
   const setResultDialog = (response) => {
     showAnimationModal({

@@ -1,26 +1,51 @@
-// eslint-disable-next-line no-unused-vars
 import React from 'react';
 import { useController } from 'react-hook-form';
 import {
-  FEIBCheckbox, FEIBCheckboxLabel, FEIBErrorMessage,
+  FEIBInputLabel,
+  FEIBErrorMessage,
+  FEIBCheckbox,
+  FEIBCheckboxLabel,
 } from 'components/elements';
 
+// 若有特殊樣式的 checkbox 要取代原本的 checkbox，可以將 hideFaultCheckbox = true ，並以
 export const CheckboxField = ({
-  disabled, label, ...props
+  options,
+  labelName,
+  disabled,
+  hideDefaultCheckbox,
+  ...controlProps
 }) => {
-  const { field, fieldState} = useController(props);
-  const {onChange, value} = field;
+  const { field, fieldState } = useController(controlProps);
+
+  //
+  const inputLabelStyle = {
+    flex: hideDefaultCheckbox ? '1' : 'none',
+    order: hideDefaultCheckbox ? '0' : '1',
+  };
+  const checkboxLableStyle = { display: hideDefaultCheckbox ? 'none' : 'inline-flex' };
 
   return (
-    <>
+    <div style={{ display: 'flex', alignItems: 'center', marginLeft: '1rem' }}>
+      {labelName && (
+        <FEIBInputLabel style={inputLabelStyle} checked htmlFor={field.name}>
+          {labelName}
+        </FEIBInputLabel>
+      )}
+
       <FEIBCheckboxLabel
-        control={<FEIBCheckbox onChange={onChange} value={value} />}
-        label={label}
+        style={checkboxLableStyle}
+        control={(
+          <FEIBCheckbox
+            onChange={field.onChange}
+            id={field.name}
+            disabled={disabled}
+          />
+        )}
       />
-      {/* <FEIBErrorMessage>{fieldState.error ? fieldState.error.message : ''}</FEIBErrorMessage> */}
+
       {!!fieldState.error && (
         <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>
       )}
-    </>
+    </div>
   );
 };

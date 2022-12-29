@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { customPopup, showDrawer, closeDrawer } from 'utilities/MessageModal';
-import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import AddNewItem from 'components/AddNewItem';
 import SettingItem from 'components/SettingItem';
 import Layout from 'components/Layout/Layout';
 import { FuncID } from 'utilities/FuncID';
+import { useNavigation } from 'hooks/useNavigation';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import T00600ModifyForm from './T00600_ModifyForm';
@@ -19,6 +19,7 @@ import MobileTransferWrapper from './T00600.style';
 
 const T00600 = () => {
   const history = useHistory();
+  const { startFunc, closeFunc } = useNavigation();
   const dispatch = useDispatch();
   const [mobileTransferData, setMobileTransferData] = useState([]);
   const [mobilesList, setMobilesList] = useState([]);

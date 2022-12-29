@@ -14,7 +14,7 @@ import {
   dateToString,
 } from 'utilities/Generator';
 
-import { closeFunc } from 'utilities/AppScriptProxy';
+import { useNavigation } from 'hooks/useNavigation';
 import { getDurationTuple} from './utils/common';
 import {
   generatebindAccountNoOptions,
@@ -30,6 +30,7 @@ import { generateEditSchema } from './validationSchema';
  */
 const DepositPlanEditPage = () => {
   const history = useHistory();
+  const { closeFunc } = useNavigation();
   const location = useLocation();
   const [newImageId, setNewImageId] = useState();
   const {

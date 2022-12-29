@@ -1,5 +1,3 @@
-import { closeFunc } from 'utilities/AppScriptProxy';
-
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import {
@@ -8,9 +6,11 @@ import {
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 
 /* Styles */
+import { useNavigation } from 'hooks/useNavigation';
 import ExportBankBookWrapper from './exportBankBook.style';
 
 const ExportBankBook1 = ({ location }) => {
+  const { closeFunc } = useNavigation();
   const toMorePage = (e) => {
     e.preventDefault();
     closeFunc();

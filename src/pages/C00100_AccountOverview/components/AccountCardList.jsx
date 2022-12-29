@@ -6,10 +6,10 @@ import uuid from 'react-uuid';
 
 import AccountCard from 'components/AccountCard';
 import { accountOverviewCardVarient, getCurrenyInfo } from 'utilities/Generator';
-import { startFunc } from 'utilities/AppScriptProxy';
 
 import { showDrawer } from 'utilities/MessageModal';
 import { FuncID } from 'utilities/FuncID';
+import { useNavigation } from 'hooks/useNavigation';
 import AccountCardListWrapper from './AccountCardList.style';
 import AccountCardGrey from './AccountCardGrey';
 
@@ -23,6 +23,7 @@ import AccountCardGrey from './AccountCardGrey';
  */
 const AccountCardList = ({ data, isDebt }) => {
   // const dispatch = useDispatch();
+  const {startFunc} = useNavigation();
   const sApplyUrl = 'https://bankeesit.feib.com.tw/aplfx/D2022110211818?utm_source=OSC01';
   const fApplyUrl = 'https://bankeesit.feib.com.tw/aplfx/D2022110211819';
   const ccApplyUrl = 'https://appbankee-t.feib.com.tw/bankee_apply/CardApply/CardApply_1';

@@ -7,19 +7,21 @@ import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import { FEIBButton } from 'components/elements';
 import { EditIcon } from 'assets/images/icons';
 import { showCustomDrawer, showCustomPrompt, showError } from 'utilities/MessageModal';
-import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import { getBasicInformation } from 'pages/T00700_BasicInformation/api';
 import { AuthCode } from 'utilities/TxnAuthCode';
+import { useNavigation } from 'hooks/useNavigation';
 import { accountFormatter } from 'utilities/Generator';
 import {getStatus, reIssueOrLost} from './api';
 import LossReissueWrapper from './S00800.style';
 import {actionTextGenerator} from './utils';
-import { S00800_1 } from './S00800_1';
+import { AddressEditor } from './S00800_AddressEditor';
 
 const LossReissue = () => {
   const dispatch = useDispatch();
+  const { closeFunc } = useNavigation();
   const [debitCardInfo, setDebitCardInfo] = useState();
   const [currentFormValue, setCurrentFormValue] = useState({});
   const actionText = actionTextGenerator(debitCardInfo?.status);
@@ -88,7 +90,7 @@ const LossReissue = () => {
   const handleClickEditAddress = () => {
     showCustomDrawer({
       title: '通訊地址',
-      content: <S00800_1 currentFormValue={currentFormValue} onSubmit={onSubmit} />,
+      content: <AddressEditor currentFormValue={currentFormValue} onSubmit={onSubmit} />,
     });
   };
 

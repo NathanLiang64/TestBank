@@ -11,13 +11,13 @@ import {
 import {
   AccountIcon11, AccountIcon12, CircleIcon, TransactionIcon1,
 } from 'assets/images/icons';
-import {
-  loadFuncParams, closeFunc, transactionAuth, startFunc,
-} from 'utilities/AppScriptProxy';
+import { loadFuncParams, transactionAuth } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
 import {AuthCode} from 'utilities/TxnAuthCode';
 import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
+import { useNavigation } from 'hooks/useNavigation';
 import { useDispatch } from 'react-redux';
+
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import EmptySlide from './components/EmptySlide';
 import EmptyPlan from './components/EmptyPlan';
@@ -41,8 +41,9 @@ import {
  */
 const DepositPlanPage = () => {
   const history = useHistory(); // TODO 應該改用 startFunc
-  const [depositPlans, setDepositPlans] = useState();
   const dispatch = useDispatch();
+  const {startFunc, closeFunc, goHome} = useNavigation();
+  const [depositPlans, setDepositPlans] = useState();
   const swiperRef = useRef();
 
   // const inspector = () => new Promise((resolve) => {
@@ -114,7 +115,7 @@ const DepositPlanPage = () => {
         planId: plan.planId,
       });
       if ('email' in response) {
-        ConfirmDepositPlanHasBeenClosed({ email: response.email, onOk: () => history.push('/') });
+        ConfirmDepositPlanHasBeenClosed({ email: response.email, onOk: () => goHome() });
       } else {
         showAnimationModal({
           isSuccess: false,
@@ -191,7 +192,7 @@ const DepositPlanPage = () => {
    * 產生下方內容時會用的
    */
   const handleAddClick = () => {
-    history.push('C006002', {
+    history.push('/C006002', {
       plansLength: depositPlans?.plans.length,
       subAccounts: depositPlans.subAccounts,
       totalSubAccountCount: depositPlans.totalSubAccountCount,
@@ -199,7 +200,7 @@ const DepositPlanPage = () => {
   };
 
   const handleShowDetailClick = (plan) => {
-    history.push('C006001', {plan});
+    history.push('/C006001', {plan});
   };
 
   const shouldShowUnavailableSubAccountAlert = () => {
@@ -261,7 +262,7 @@ const DepositPlanPage = () => {
   const handleGoBackClick = () => {
     const shouldBlockGoBack = document.querySelector('.blockGoBack');
     if (shouldBlockGoBack) {
-      ConfirmNotToCloseDepositPlan();
+      ConfirmNotToCloseDepositPlan(goHome);
     } else {
       closeFunc();
     }

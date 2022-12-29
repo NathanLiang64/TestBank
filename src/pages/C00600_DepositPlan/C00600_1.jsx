@@ -3,10 +3,11 @@ import { useHistory, useLocation } from 'react-router';
 
 import Layout from 'components/Layout/Layout';
 import AccountDetails from 'components/AccountDetails/accountDetails';
-import { closeFunc } from 'utilities/AppScriptProxy';
+
 import { dateToYMD } from 'utilities/Generator';
 import { showError } from 'utilities/MessageModal';
 
+import { useNavigation } from 'hooks/useNavigation';
 import { getTransactionDetails } from './api';
 
 /**
@@ -15,6 +16,7 @@ import { getTransactionDetails } from './api';
 const DepositPlanTransactionPage = () => {
   const [plan, setPlan] = useState(null);
   const history = useHistory();
+  const { closeFunc } = useNavigation();
   const {state} = useLocation();
 
   useEffect(async () => {

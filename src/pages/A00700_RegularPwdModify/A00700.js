@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { transactionAuth, closeFunc } from 'utilities/AppScriptProxy';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 import { renewPwd } from 'pages/A00700_RegularPwdModify/api';
 import { showCustomPrompt, showAnimationModal } from 'utilities/MessageModal';
 
@@ -16,11 +16,13 @@ import { AuthCode } from 'utilities/TxnAuthCode';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { PasswordInputField } from 'components/Fields';
+import { useNavigation } from 'hooks/useNavigation';
 import RegularPwdModifyWrapper from './regularPwdModify.style';
 import { validationSchema } from './validationSchema';
 
 const RegularPwdModify = () => {
   const dispatch = useDispatch();
+  const { closeFunc } = useNavigation();
   const { handleSubmit, control } = useForm({
     defaultValues: {
       password: '',
