@@ -59,7 +59,7 @@ export const useNavigation = () => {
         history.push(`/${startItem.funcID}`);
       } else {
         // 若是在登入前，無前一頁可以返回時，則一律回到 Login 頁。
-        if (sessionStorage.getItem('isLogin') !== '1') {
+        if (sessionStorage.getItem('webMode') === 'true' && sessionStorage.getItem('isLogin') !== '1') {
           history.push('/login');
           return;
         }
