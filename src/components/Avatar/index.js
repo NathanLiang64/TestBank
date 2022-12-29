@@ -1,7 +1,12 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { EditIcon, PersonalIcon } from 'assets/images/icons';
 import { toHalfWidth } from 'utilities/Generator';
 import { FEIBErrorMessage } from 'components/elements';
+import { showCustomPrompt } from 'utilities/MessageModal';
+import { useDispatch } from 'react-redux';
+import { setDialogVisible } from 'stores/reducers/ModalReducer';
+import { CropContainer } from 'components/CropContainer';
 import AvatarWrapper from './avatar.style';
 
 /**
@@ -28,6 +33,7 @@ const Avatar = ({
   const [preview, setPreview] = useState(null); // 上傳的照片轉成 base64 格式
   const [showDefault, setShowDefault] = useState(false);
   const [uploadErrMsg, setUploadErrMsg] = useState('');
+  const dispatch = useDispatch();
   const renderPhoto = () => (
     <img
       src={preview || src}
@@ -54,24 +60,43 @@ const Avatar = ({
       return;
     }
 
+    const renderCropContainer = (url, onUploadHandler) => <CropContainer url={url} onUploadHandler={onUploadHandler} />;
+    const url = URL.createObjectURL(photo);
+    // console.log(url);
     // TODO 是否在前端進行圖像壓縮，待確認
 
-    const reader = new FileReader();
-    reader.readAsDataURL(photo);
-    reader.onloadend = (e) => {
-      // TODO 一律轉為 jpg 格式。
-      const imgData = e.currentTarget.result;
-
-      setPreview(imgData);
+    const onUploadHandler = (data) => {
+      setPreview(data);
       setShowDefault(false);
-
-      // 將使用者指定的新圖片回傳給使用此元件的程式。
-      if (onNewPhotoLoaded) onNewPhotoLoaded(imgData);
-
-      if (memberId) sessionStorage.setItem(`Avator_${memberId}`, imgData);
+      if (onNewPhotoLoaded) onNewPhotoLoaded(data);
+      if (memberId) sessionStorage.setItem(`Avator_${memberId}`, data);
+      console.log(memberId);
     };
+
+    dispatch(setDialogVisible(true));
+    showCustomPrompt({
+      message: renderCropContainer(url, onUploadHandler),
+      onClose: () => dispatch(setDialogVisible(false)),
+      noDismiss: true,
+    });
+
+    // const reader = new FileReader();
+    // reader.readAsDataURL(photo);
+    // reader.onloadend = (e) => {
+    //   // TODO 一律轉為 jpg 格式。
+    //   const imgData = e.currentTarget.result;
+
+    //   setPreview(imgData);
+    //   setShowDefault(false);
+
+    //   // 將使用者指定的新圖片回傳給使用此元件的程式。
+    //   if (onNewPhotoLoaded) onNewPhotoLoaded(imgData);
+
+    //   if (memberId) sessionStorage.setItem(`Avator_${memberId}`, imgData);
+    // };
     setUploadErrMsg('');
   };
+  console.log('preview', preview);
 
   const renderEditButton = () => (
     <label className="editButton" htmlFor="imageInput">
