@@ -19,9 +19,9 @@ const S007001 = () => {
     // successDesc 內容是否應該由後端提供?
     <SuccessDescWrapper>
       <div className="success_title">
-        <h3>
-          預設密碼：
-        </h3>
+
+        預設密碼：
+
         <div>民國出生年月日後6位數字</div>
       </div>
       <div className="success_detail">

@@ -98,6 +98,7 @@ const LossReissue = () => {
     showCustomPrompt({
       message: `是否確認${actionText}?`,
       onOk: () => executeAction(),
+      onClose: () => {},
       noDismiss: true,
     });
   };

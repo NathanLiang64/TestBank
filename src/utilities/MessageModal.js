@@ -95,7 +95,7 @@ export const showCustomPrompt = async ({
   cancelContent,
   onClose, // Modal 右上角的 X 按鈕
   noDismiss, // 如果有需要接續 modal 得操作，可以設定為 true 避免點擊ok按鈕後，下個 modal 遭關閉。
-  showCloseButton,
+  showCloseButton = true, // 若不給 showClosedButton 則預設為 true
 }) => {
   const promise = new Promise((resolve) => {
     store.dispatch(
@@ -107,9 +107,9 @@ export const showCustomPrompt = async ({
         onCancel,
         okContent,
         cancelContent,
-        onClose: onClose ?? (showCloseButton ?? onCancel ?? onOk), // showCloseButton時，預設為onCancel或onOk
+        onClose: onClose ?? (showCloseButton && onCancel) ?? onOk, // showCloseButton時，預設為onCancel或onOk
         noDismiss: noDismiss ?? false,
-        showCloseButton: showCloseButton ?? true,
+        showCloseButton,
       }),
     );
     store.dispatch(setResult((value) => resolve(value)));

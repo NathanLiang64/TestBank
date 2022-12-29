@@ -67,6 +67,7 @@ const Page = () => {
     } else {
       // 若從更多 (B00600) 頁面進入，查詢的交易明細就會預設以 bankee 信用卡為主
       const bankeeCardInfo = await getBankeeCard();
+      console.log('bankeeCardInfo', bankeeCardInfo);
       if (bankeeCardInfo) defaultCardNo = bankeeCardInfo.cards[0].cardNo;
       else {
         await showCustomPrompt({

@@ -41,7 +41,7 @@ const SuccessFailureAnimationsWrapper = styled.div`
     text-align: center;
     
     &.horizontalSpacing {
-      padding: 0 3.2rem;
+      padding: 0 2rem;
     }
 
     .errorCode {
