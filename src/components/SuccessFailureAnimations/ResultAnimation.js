@@ -52,8 +52,8 @@ const ResultAnimation = ({
       </h3>
       { (descHeader || description) ? (
         <section className={`errorInfo ${errorSpace ? 'horizontalSpacing' : ''}`}>
-          { descHeader ? (<p className="errorCode">{(isSuccess ? '' : '錯誤代碼：') + descHeader}</p>) : null }
-          { description ? (<p className="errorText">{description}</p>) : null }
+          { descHeader ? (<div className="errorCode">{(isSuccess ? '' : '錯誤代碼：') + descHeader}</div>) : null }
+          { description ? (<div className="errorText">{description}</div>) : null }
         </section>
       ) : null }
     </SuccessFailureAnimationsWrapper>

@@ -8,9 +8,10 @@ import { MainScrollWrapper } from 'components/Layout';
 import BottomAction from 'components/BottomAction';
 import CreditCard from 'components/CreditCard';
 
-import { closeFunc, loadFuncParams, startFunc } from 'utilities/AppScriptProxy';
+import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
 import CreditCardTxsList from 'components/CreditCardTxsList';
+import { useNavigation } from 'hooks/useNavigation';
 import PageWrapper from './R00100.style';
 import { getBankeeCard, getTransactionPromise, updateTxnNotes } from './api';
 
@@ -20,6 +21,7 @@ import { getBankeeCard, getTransactionPromise, updateTxnNotes } from './api';
 const R00100 = () => {
   const dispatch = useDispatch();
   const [cardInfo, setCardInfo] = useState();
+  const {startFunc, closeFunc} = useNavigation();
   const [transactions, setTransactions] = useState();
   const go2Instalment = () => startFunc(FuncID.R00200, {cardNo: cardInfo.cardNo});
 

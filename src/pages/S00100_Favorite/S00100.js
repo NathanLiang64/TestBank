@@ -8,7 +8,6 @@ import { EditIcon } from 'assets/images/icons';
 import BottomDrawer from 'components/BottomDrawer';
 import Layout from 'components/Layout/Layout';
 import { showCustomPrompt } from 'utilities/MessageModal';
-import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
 
 import S00100_1 from './S00100_1';
@@ -18,12 +17,15 @@ import {
   generateTrimmedList, reorder, move, combineLeftAndRight,
 } from './utils';
 import { deleteFavoriteItem, getFavoriteList, modifyFavoriteItem } from './api';
+import { useNavigation } from 'hooks/useNavigation';
 
 const Favorite = () => {
+
   const initialViewControl = {
     title: '我的最愛',
     content: 'home',
   };
+  const { startFunc, closeFunc } = useNavigation();
   const [viewControl, setViewControl] = useState(initialViewControl);
   const [pressTimer, setPressTimer] = useState(0);
   const [favoriteList, setFavoriteList] = useState([]);

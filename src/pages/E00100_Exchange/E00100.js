@@ -517,7 +517,6 @@ const E00100 = () => {
                         <FEIBInput
                           {...balanceField}
                           type="number"
-                          inputMode="numeric"
                           id="foreignBalance"
                           name="foreignBalance"
                           placeholder={`請輸入${watch('exchangeType') === '2' ? '轉出' : '轉入'}金額`}
@@ -527,6 +526,7 @@ const E00100 = () => {
                           inputProps={{
                             maxLength: 9,
                             autoComplete: 'off',
+                            inputMode: 'numeric',
                           }}
                         />
                         <div className="balanceLayout">{foreignDollorStr}</div>
@@ -550,7 +550,6 @@ const E00100 = () => {
                           {...balanceField}
                           autoComplete="off"
                           type="number"
-                          inputMode="numeric"
                           id="ntDollorBalance"
                           name="ntDollorBalance"
                           placeholder={`請輸入${watch('exchangeType') === '2' ? '轉入' : '轉出'}金額`}
@@ -560,6 +559,7 @@ const E00100 = () => {
                           inputProps={{
                             maxLength: 9,
                             autoComplete: 'off',
+                            inputMode: 'numeric',
                           }}
                         />
                         <div className="balanceLayout">{ntDollorStr}</div>
@@ -595,6 +595,7 @@ const E00100 = () => {
                   id="memo"
                   name="memo"
                   placeholder="請輸入備註"
+                  inputProps={{maxLength: 20}}
                   error={!!errors.memo}
                 />
               )}

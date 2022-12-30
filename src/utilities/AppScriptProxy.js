@@ -8,6 +8,8 @@ import { Buffer } from 'buffer';
 import PasswordDrawer from 'components/PasswordDrawer';
 import { getTransactionAuthMode, createTransactionAuth, transactionAuthVerify } from 'components/PasswordDrawer/api';
 import { customPopup, showDrawer, showError } from './MessageModal';
+// eslint-disable-next-line import/no-cycle
+import { callAPI } from './axios';
 import e2ee from './E2ee';
 
 const device = {
@@ -55,7 +57,7 @@ function showLog(appJsName) {
  * @param {*} webDevTest Web開發測試時的執行方法。(Option)
  * @returns
  */
-async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) {
+export async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) {
   const jsToken = `A${Math.floor(Math.random() * 100000000).toString().padStart(8, '0')}`; // 有千萬分之一的機率重覆。
   if (showLog(appJsName)) console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Params = `, jsParams);
 
@@ -73,6 +75,9 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
     try {
       // 若是 JSON 格式，則以物件型態傳回。
       result = JSON.parse(value);
+      // NOTE 以下奇怪作法是為了配合 APP-JS
+      if (result.result === 'true') result.result = true;
+      if (result.result === 'false') result.result = false;
     } catch (ex) {
       result = value;
     }
@@ -117,7 +122,7 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
 /**
  * Web版 Function Controller
  */
-const funcStack = {
+export const funcStack = {
   /**
    * 從 localStorage 取出功能執行堆疊，並轉為 Array 物件後傳回。
    * @returns {Array} 功能執行堆疊
@@ -206,89 +211,89 @@ function getCallerFunc() {
   return stack[stack.length - 2].funcID;
 }
 
-/**
- * 網頁通知APP跳轉至首頁
- */
-async function goHome() {
-  funcStack.clear();
-  await callAppJavaScript('goHome', null, false, () => {
-    startFunc('/');
-  });
-}
+// /**
+//  * 網頁通知APP跳轉至首頁
+//  */
+// async function goHome() {
+//   funcStack.clear();
+//   await callAppJavaScript('goHome', null, false, () => {
+//     startFunc('/');
+//   });
+// }
 
-/**
- * 網頁通知APP跳轉指定功能
- * @param {*} funcID 單元功能代碼。
- * @param {*} funcParams 提共給啟動的單元功能的參數，被啟動的單元功能是透過 loadFuncParams() 取回。
- * @param {*} keepData 當啟動的單元功能結束後，返回原功能啟動時取回的資料。
- */
-async function startFunc(funcID, funcParams, keepData) {
-  if (!funcID) {
-    await showError('此功能尚未完成！');
-    return;
-  }
+// /**
+//  * 網頁通知APP跳轉指定功能
+//  * @param {*} funcID 單元功能代碼。
+//  * @param {*} funcParams 提共給啟動的單元功能的參數，被啟動的單元功能是透過 loadFuncParams() 取回。
+//  * @param {*} keepData 當啟動的單元功能結束後，返回原功能啟動時取回的資料。
+//  */
+// async function startFunc(funcID, funcParams, keepData) {
+//   if (!funcID) {
+//     await showError('此功能尚未完成！');
+//     return;
+//   }
 
-  funcID = funcID.replace(/^\/*/, ''); // 移掉前置的 '/' 符號,
-  const data = {
-    funcID,
-    funcParams: funcParams ? JSON.stringify(funcParams) : null, // 要先轉 JSON 字串是為了配合 APP JavaScript
-    keepData: keepData ? JSON.stringify(keepData) : null, // 要先轉 JSON 字串是為了配合 APP JavaScript
-  };
-  funcStack.push(data);
+//   funcID = funcID.replace(/^\/*/, ''); // 移掉前置的 '/' 符號,
+//   const data = {
+//     funcID,
+//     funcParams: funcParams ? JSON.stringify(funcParams) : null, // 要先轉 JSON 字串是為了配合 APP JavaScript
+//     keepData: keepData ? JSON.stringify(keepData) : null, // 要先轉 JSON 字串是為了配合 APP JavaScript
+//   };
+//   funcStack.push(data);
 
-  // 只要不是 A00100 這種格式的頁面，一律視為 WebPage 而不透過 APP 的 Function Controller 轉導。
-  const isFunction = (/^[A-Z]\d{5}$/.test(funcID));
-  if (isFunction) {
-    await callAppJavaScript('startFunc', data, false, () => {
-      window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcID}`;
-    });
-  } else {
-    window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcID}`;
-  }
-}
+//   // 只要不是 A00100 這種格式的頁面，一律視為 WebPage 而不透過 APP 的 Function Controller 轉導。
+//   const isFunction = (/^[A-Z]\d{5}$/.test(funcID));
+//   if (isFunction) {
+//     await callAppJavaScript('startFunc', data, false, () => {
+//       window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcID}`;
+//     });
+//   } else {
+//     window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcID}`;
+//   }
+// }
 
-/**
- * 觸發APP返回上一頁功能，並將指定的資料透過 loadFuncParams() 傳回給啟動目前功能的單元功能。
- * @param {*} response 傳回值，會暫存在 SessionStorate("funcResp") 中。
- */
-async function closeFunc(response) {
-  // 將要傳回給前一功能（啟動目前功能的單元功能）的資料 存入 sessionStorage[funcResp]
-  // 再由 loadFuncParams() 取出，放在啟動參數的 response 參數中。
-  if (response && (!response.target && !response.type)) { // NOTE event物件會被誤判為傳回值，所以必需排除。
-    sessionStorage.setItem('funcResp', JSON.stringify(response));
-  }
+// /**
+//  * 觸發APP返回上一頁功能，並將指定的資料透過 loadFuncParams() 傳回給啟動目前功能的單元功能。
+//  * @param {*} response 傳回值，會暫存在 SessionStorate("funcResp") 中。
+//  */
+// async function closeFunc(response) {
+//   // 將要傳回給前一功能（啟動目前功能的單元功能）的資料 存入 sessionStorage[funcResp]
+//   // 再由 loadFuncParams() 取出，放在啟動參數的 response 參數中。
+//   if (response && (!response.target && !response.type)) { // NOTE event物件會被誤判為傳回值，所以必需排除。
+//     sessionStorage.setItem('funcResp', JSON.stringify(response));
+//   }
 
-  const closeItem = funcStack.peek(); // 因為 funcStack 還沒 pop，所以用 peek 還以取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
-  const isFunction = !closeItem || (/^[A-Z]\d{5}$/.test(closeItem.funcID)); // 表示 funcID 是由 Function Controller 控制的單元功能。
+//   const closeItem = funcStack.peek(); // 因為 funcStack 還沒 pop，所以用 peek 還以取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
+//   const isFunction = !closeItem || (/^[A-Z]\d{5}$/.test(closeItem.funcID)); // 表示 funcID 是由 Function Controller 控制的單元功能。
 
-  const startItem = funcStack.pop();
-  const webCloseFunc = async () => {
-    // 當 funcStack.pop 不出項目時，表示可能是由 APP 先啟動了某項功能（例：首頁卡片或是下方MenuBar）
-    if (startItem) {
-      // 表示返回由 WebView 啟動的單元功能或頁面，例：從「更多」啟動了某項單元功能，當此單元功能關閉時，就會進到這裡。
-      window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${startItem.funcID}`; // keepData 存入 localStorage 'funcParams'
-    } else {
-      // 若是在登入前，無前一頁可以返回時，則一律回到 Login 頁。
-      if (sessionStorage.getItem('isLogin') !== '1') {
-        window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/login`;
-        return;
-      }
+//   const startItem = funcStack.pop();
+//   const webCloseFunc = async () => {
+//     // 當 funcStack.pop 不出項目時，表示可能是由 APP 先啟動了某項功能（例：首頁卡片或是下方MenuBar）
+//     if (startItem) {
+//       // 表示返回由 WebView 啟動的單元功能或頁面，例：從「更多」啟動了某項單元功能，當此單元功能關閉時，就會進到這裡。
+//       window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${startItem.funcID}`; // keepData 存入 localStorage 'funcParams'
+//     } else {
+//       // 若是在登入前，無前一頁可以返回時，則一律回到 Login 頁。
+//       if (sessionStorage.getItem('isLogin') !== '1') {
+//         window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/login`;
+//         return;
+//       }
 
-      // 雖然 Web端的 funcStack 已經空了，但有可能要返回的功能是由 APP 啟動的；所以，要先詢問 APP 是否有正在執行中的單元功能。
-      const appJsRs = await callAppJavaScript('getActiveFuncID', null, true); // 取得 APP 目前的 FuncID
-      if (appJsRs) {
-        // 例：首頁卡片 啟動 存錢計劃，當 存錢計劃 選擇返回前一功能時，就會進到這裡。（因為此時的 funcStack 是空的）
-        window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${appJsRs.funcID}`;
-      } else window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/`;
-    }
-  };
+//       // 雖然 Web端的 funcStack 已經空了，但有可能要返回的功能是由 APP 啟動的；所以，要先詢問 APP 是否有正在執行中的單元功能。
+//       const appJsRs = await callAppJavaScript('getActiveFuncID', null, true); // 取得 APP 目前的 FuncID
+//       if (appJsRs) {
+//         // 例：首頁卡片 啟動 存錢計劃，當 存錢計劃 選擇返回前一功能時，就會進到這裡。（因為此時的 funcStack 是空的）
+//         window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${appJsRs.funcID}`;
+//       } else window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/`;
+//     }
+//   };
 
-  if (isFunction) {
-    await callAppJavaScript('closeFunc', null, false, webCloseFunc);
-  } else {
-    await webCloseFunc();
-  }
-}
+//   if (isFunction) {
+//     await callAppJavaScript('closeFunc', null, false, webCloseFunc);
+//   } else {
+//     await webCloseFunc();
+//   }
+// }
 
 /**
  * 取得 APP Function Controller 提供的功能啟動參數。
@@ -494,14 +499,20 @@ async function transactionAuth(authCode, otpMobile) {
  * @returns {
  *   result: 驗證結果(true/false)。
  *   message: 驗證失敗狀況描述。
- *   netbankPwd: 因為之後叫用交易相關 API 時可能會需要用到，所以傳回 E2EE 加密後的密碼。
  * }
  */
-async function verifyBio(authCode) {
+async function verifyBio(authKey) {
   const data = {
-    authCode,
+    authCode: authKey,
   };
-  return await callAppJavaScript('chkQLfeature', data, true, () => ({ result: true })); // Call /v1/setBioResult
+  return await callAppJavaScript('chkQLfeature', data, true, async () => {
+    // DEBUG
+    // 傳回：累計驗證次數；若為 -1 表示使用者取消。
+    const apiRs = await callAPI('/api/transactionAuth/v1/setBioResult', { authKey, success: true });
+    return {
+      result: (apiRs.data <= 3),
+    };
+  });
 }
 
 /**
@@ -517,70 +528,85 @@ async function getQLStatus() {
   return await callAppJavaScript('getQLStatus', null, true, () => {
     const testData = getJwtTokenTestData();
     return {
-      result: 'true',
+      result: true,
       QLStatus: testData.mid ? '1' : '0',
+      QLType: '1', // TODO testData.qlMode,
     };
   });
 }
 
 /**
- * 設定快登認證資料
- * @param {*} QLtype 快登裝置綁定所使用驗證方式(type->1:生物辨識/2:圖形辨識)
+ * 通知 APP 依 authType 指定的類型要求使用者進行快登設定。
+ * @param {*} authType 快登所使用驗證方式。(1. 生物辨識, 2.圖形辨識)
  * @returns {
  *  result: 驗證結果(true/false)。
  *  message: 駿證失敗狀況描述。
  * }
  */
-async function regQLfeature(QLtype) {
+async function createQuickLogin(authType) {
   const data = {
-    QLtype,
+    QLtype: authType,
   };
-  return await callAppJavaScript('regQLfeature', data, true, () => {
-    console.log('web 通知 APP 設定快登資料');
-    return {
-      result: 'true',
-    };
-  });
+  const appRs = await callAppJavaScript('regQLfeature', data, true, () => ({ result: true }));
+  if (appRs.result === true) {
+    const apiRs = await callAPI('/auth/quickLogin/v1/create', { authType });
+    if (!apiRs.isSuccess) {
+      return {
+        result: false,
+        message: apiRs.message,
+      };
+    }
+  }
+  return appRs;
 }
 
+// TODO 應改由 Controller 來做，對 APP 只是「通知」。
 /**
  * 綁定快登裝置
- * @param {*} QLtype 快登裝置綁定所使用驗證方式(type->1:生物辨識/2:圖形辨識)
+ * @param {*} authType 快登所使用驗證方式。(1. 生物辨識, 2.圖形辨識)
  * @param {*} pwdE2ee E2EE加密後的密碼
- * @param {*} midToken 由 Controller 提供的 MID Login 取得的 Auth Token
  * @returns {
  *  result: 驗證結果(true/false)。
  *  message: 駿證失敗狀況描述。
  * }
  */
-async function regQL(QLtype, pwdE2ee) {
+async function verifyQuickLogin(authType, pwdE2ee) {
   const data = {
-    QLtype,
+    QLtype: authType,
     pwdE2ee,
   };
-  return await callAppJavaScript('regQL', data, true, () => {
-    console.log('web 通知 APP 綁定快登資料');
-    return {
-      result: 'true',
-    };
-  });
+  const appRs = await callAppJavaScript('regQL', data, true, () => ({ result: true }));
+  if (appRs.result === true) {
+    const apiRs = await callAPI('/auth/quickLogin/v1/bind');
+    if (!apiRs.isSuccess) {
+      return {
+        result: false,
+        message: apiRs.message,
+      };
+    }
+  }
+  return appRs;
 }
 
 /**
  * 解除快登綁定
- * @param {*} delQL 快登裝置綁定所使用驗證方式(type->1:生物辨識/2:圖形辨識)
  * @returns {
  *  result: 驗證結果(true/false)。
  *  message: 駿證失敗狀況描述。
  * }
  */
-async function delQL() {
-  return await callAppJavaScript('delQL', null, true, () => {
-    console.log('web 通知 APP 解除快登綁定');
-    return {
-      result: 'true',
-    };
-  });
+async function removeQuickLogin() {
+  const appRs = await callAppJavaScript('delQL', null, true, () => ({ result: true }));
+  if (appRs.result === true) {
+    const apiRs = await callAPI('/auth/quickLogin/v1/unbind');
+    if (!apiRs.isSuccess) {
+      return {
+        result: false,
+        message: apiRs.message,
+      };
+    }
+  }
+  return appRs;
 }
 
 /**
@@ -624,24 +650,28 @@ async function appTransactionAuth(request) {
     return failResult('無法建立交易授權驗證。');
   }
 
-  // DEBUG ByPass交易驗證
-  if (request) {
-    const otpCode = allowedOTP ? '123456' : null;
-    const netbankPwd = allowedPWD ? e2ee('feib1688') : null;
-    const verifyRs = await transactionAuthVerify({ authKey: txnAuth.key, funcCode, netbankPwd, otpCode });
-    console.log(verifyRs);
-    return { result: true, message: null, netbankPwd };
-  }
+  // // DEBUG ByPass交易驗證
+  // if (request) {
+  //   const otpCode = allowedOTP ? '123456' : null;
+  //   const netbankPwd = allowedPWD ? e2ee('feib1688') : null;
+  //   const verifyRs = await transactionAuthVerify({ authKey: txnAuth.key, funcCode, netbankPwd, otpCode });
+  //   console.log(verifyRs);
+  //   return { result: true, message: null, netbankPwd };
+  // }
 
   // 進行雙因子驗證，呼叫 APP 進行驗證。
   if (allowed2FA) {
-    const rs = await verifyBio(txnAuth.key); // 若生物辨識三次不通過 或是 使用者取消，才會傳回 false！
+    // NOTE 由原生處理：若生物辨識三次不通過 或是 使用者取消，才會傳回 false！
+    const rs = await verifyBio(txnAuth.key);
     // 因為已綁MID，所以 密碼 也可以當第二因子；因此改用密碼驗證。
     if (rs.result === false) allowedPWD = true;
 
     // NOTE 驗證成功(allowedPWD一定是false)但不用驗OTP，就直接傳回成功。
     //      若是驗證失敗或是還要驗OTP，就要開 Drawer 進行密碼或OTP驗證。
-    if (!allowedPWD && !allowedOTP) return rs;
+    if (!allowedPWD && !allowedOTP) {
+      const verifyRs = await transactionAuthVerify({ authKey: txnAuth.key, funcCode });
+      return verifyRs;
+    }
   }
 
   let result = null;
@@ -707,9 +737,9 @@ export {
   getCallerFunc,
   getOsType,
   getPlatform,
-  goHome,
-  startFunc,
-  closeFunc,
+  // goHome,
+  // startFunc,
+  // closeFunc,
   loadFuncParams,
   switchLoading,
   doOCR,
@@ -721,9 +751,9 @@ export {
   transactionAuth,
   shareMessage,
   getQLStatus,
-  regQLfeature,
-  regQL,
-  delQL,
+  createQuickLogin,
+  verifyQuickLogin,
+  removeQuickLogin,
   queryPushBind,
   updatePushBind,
   forceLogout,

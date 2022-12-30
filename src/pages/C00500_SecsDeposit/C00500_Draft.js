@@ -13,13 +13,14 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import {
   customPopup, showCustomDrawer, showCustomPrompt, showPrompt,
 } from 'utilities/MessageModal';
-import { loadFuncParams, startFunc, closeFunc } from 'utilities/AppScriptProxy';
+import { loadFuncParams } from 'utilities/AppScriptProxy';
 import {
   getAccountExtraInfo,
   loadAccountsList,
 } from 'pages/D00100_NtdTransfer/api';
 import { FuncID } from 'utilities/FuncID';
 import { TextInputField } from 'components/Fields';
+import { useNavigation } from 'hooks/useNavigation';
 import {
   getTransactions,
   downloadDepositBookCover,
@@ -32,6 +33,7 @@ import PageWrapper from './C00500.style';
  */
 const C00500Modified = () => {
   const dispatch = useDispatch();
+  const { startFunc, closeFunc } = useNavigation();
   const [accounts, setAccounts] = useState();
   const [selectedAccountIdx, setSelectedAccountIdx] = useState(0);
   const [transactions, setTransactions] = useState([]);
@@ -100,7 +102,8 @@ const C00500Modified = () => {
           name="newName"
           control={control}
           labelName="新的帳戶名稱"
-          placeholder="請設定此帳戶的專屬名稱"
+          inputProps={{ placeholder: '請設定此帳戶的專屬名稱' }}
+
         />
       </>
     );

@@ -1,5 +1,3 @@
-import { closeFunc } from 'utilities/AppScriptProxy';
-
 /* Elements */
 import {
   FEIBButton,
@@ -10,9 +8,11 @@ import InformationList from 'components/InformationList';
 import Layout from 'components/Layout/Layout';
 
 /* Styles */
+import { useNavigation } from 'hooks/useNavigation';
 import CardLessATMWrapper from './D00300.style';
 
 const CardLessATM2 = ({ location }) => {
+  const { closeFunc } = useNavigation();
   const formatAmount = (amount) => new Intl.NumberFormat('zh-TW', { style: 'currency', currency: 'TWD', minimumFractionDigits: 0 }).format(amount);
 
   // Guard: 若導向過來的 param 不包含 data 則關閉該服務 (正常操作程序下不容易發生，但仍應防止)

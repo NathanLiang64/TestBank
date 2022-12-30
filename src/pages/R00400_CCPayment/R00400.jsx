@@ -9,7 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Theme from 'themes/theme';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { currencySymbolGenerator } from 'utilities/Generator';
-import { closeFunc, loadFuncParams, transactionAuth } from 'utilities/AppScriptProxy';
+import { loadFuncParams, transactionAuth } from 'utilities/AppScriptProxy';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import Badge from 'components/Badge';
 import Main from 'components/Layout';
@@ -23,6 +23,7 @@ import { RadioGroupField } from 'components/Fields/radioGroupField';
 
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { getAccountsList } from 'utilities/CacheData';
+import { useNavigation } from 'hooks/useNavigation';
 import {
   getBankeeCard,
   getCreditCardTerms, payCardFee, queryCardInfo, queryPayBarcode,
@@ -41,10 +42,12 @@ import {
 const Page = () => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const { closeFunc } = useNavigation();
   const [cardInfo, setCardInfo] = useState();
   const [cardNo, setCardNo] = useState();
   const [internalAccounts, setInternalAccounts] = useState([]);
   const [terms, setTerms] = useState();
+
   const {
     control, watch, handleSubmit, reset,
   } = useForm({
@@ -64,6 +67,7 @@ const Page = () => {
     } else {
       // 若從更多 (B00600) 頁面進入，查詢的交易明細就會預設以 bankee 信用卡為主
       const bankeeCardInfo = await getBankeeCard();
+      console.log('bankeeCardInfo', bankeeCardInfo);
       if (bankeeCardInfo) defaultCardNo = bankeeCardInfo.cards[0].cardNo;
       else {
         await showCustomPrompt({
@@ -146,6 +150,9 @@ const Page = () => {
   };
 
   const onSubmit = async (data) => {
+    dispatch(setWaittingVisible(true));
+
+    // ===== 本行帳戶繳費 =====
     if (data.paymentMethod === PAYMENT_OPTION.INTERNAL) {
       const payload = {
         amount: getAmount(data),
@@ -159,13 +166,17 @@ const Page = () => {
       }
     }
 
+    // ===== 他行帳戶繳費 =====
     if (data.paymentMethod === PAYMENT_OPTION.EXTERNAL) {
       showCustomPrompt({message: 'TODO 他行帳戶繳費API'});
     }
 
+    // ===== 超商條碼繳費 =====
     if (data.paymentMethod === PAYMENT_OPTION.CSTORE) {
       renderBarCode(getAmount(data));
     }
+
+    dispatch(setWaittingVisible(false));
   };
 
   return (
@@ -199,8 +210,7 @@ const Page = () => {
                 type="number"
                 control={control}
                 name="customAmount"
-                placeholder="請輸入金額"
-                disabled={watch('amountOptions') !== AMOUNT_OPTION.CUSTOM}
+                inputProps={{inputMode: 'numeric', placeholder: '請輸入金額', disabled: watch('amountOptions') !== AMOUNT_OPTION.CUSTOM}}
                 $color={watchedValues.amountOptions !== AMOUNT_OPTION.CUSTOM ? Theme.colors.text.placeholder : Theme.colors.primary.brand}
               />
             </div>
@@ -229,7 +239,7 @@ const Page = () => {
                   name="extAccountNo"
                   labelName="轉出帳號"
                   control={control}
-                  placeholder="請輸入轉出帳號"
+                  inputProps={{maxLength: 16, inputMode: 'numeric', placeholder: '請輸入轉出帳號'}}
                 />
               </>
             )}

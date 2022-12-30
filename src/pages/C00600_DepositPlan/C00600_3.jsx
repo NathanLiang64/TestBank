@@ -14,7 +14,7 @@ import {
   dateToString,
 } from 'utilities/Generator';
 
-import { closeFunc } from 'utilities/AppScriptProxy';
+import { useNavigation } from 'hooks/useNavigation';
 import { getDurationTuple} from './utils/common';
 import {
   generatebindAccountNoOptions,
@@ -30,6 +30,7 @@ import { generateEditSchema } from './validationSchema';
  */
 const DepositPlanEditPage = () => {
   const history = useHistory();
+  const { closeFunc } = useNavigation();
   const location = useLocation();
   const [newImageId, setNewImageId] = useState();
   const {
@@ -87,7 +88,7 @@ const DepositPlanEditPage = () => {
         nextDeductionDate: dateToString(date.next),
       },
     };
-    sessionStorage.setItem('C006003', JSON.stringify(data));
+    sessionStorage.setItem('C006003', JSON.stringify({...data, imageId: newImageId}));
     history.push('/C006004', { isConfirmMode: true, payload });
     // }
   };
@@ -95,12 +96,13 @@ const DepositPlanEditPage = () => {
   useEffect(() => {
     // 如果是專案型計畫，將資料傳入 form 中
     if (location.state.program.type) {
-      reset({
+      reset((formValues) => ({
+        ...formValues,
         name: location.state.program.name,
         cycleDuration: location.state.program.period ?? 4,
         cycleMode: 2,
         cycleTiming: getDefaultCycleTiming(),
-      });
+      }));
     }
 
     // 當跳回此頁面時，填入先前的資訊
@@ -122,7 +124,7 @@ const DepositPlanEditPage = () => {
       <MainScrollWrapper>
         <EditPageWrapper>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <HeroWithEdit onChange={(id) => setNewImageId(id)} />
+            <HeroWithEdit imageId={newImageId} onChange={(id) => setNewImageId(id)} />
 
             <div className="flex">
               <div>
@@ -130,8 +132,7 @@ const DepositPlanEditPage = () => {
                   name="name"
                   control={control}
                   labelName="為你的計畫命名吧"
-                  placeholder="請輸入7個以內的中英文字、數字或符號"
-                  disabled={!!program.type}
+                  inputProps={{ maxLength: 7, placeholder: '請輸入7個以內的中英文字、數字或符號', disabled: !!program.type }}
                   $color={getInputColor(program.type)}
                 />
               </div>
@@ -141,7 +142,7 @@ const DepositPlanEditPage = () => {
                   name="cycleDuration"
                   control={control}
                   labelName="預計存錢區間"
-                  disabled={!!program.type}
+                  inputProps={{disabled: !!program.type}}
                   $color={getInputColor(!!program.type)}
                 />
               </div>
@@ -152,7 +153,7 @@ const DepositPlanEditPage = () => {
                     name="cycleMode"
                     control={control}
                     labelName="存錢頻率"
-                    disabled={!!program.type}
+                    inputProps={{disabled: !!program.type}}
                     $color={getInputColor(!!program.type)}
                   />
                 </div>
@@ -162,7 +163,7 @@ const DepositPlanEditPage = () => {
                     name="cycleTiming"
                     control={control}
                     labelName="週期"
-                    disabled={!!program.type}
+                    inputProps={{disabled: !!program.type}}
                     $color={getInputColor(!!program.type)}
                   />
                   <FEIBHintMessage>
@@ -178,6 +179,7 @@ const DepositPlanEditPage = () => {
                   control={control}
                   labelName="預計每期存錢金額"
                   type="number"
+                  inputProps={{inputMode: 'numeric'}}
                 />
                 <FEIBHintMessage>
                   {(amount > 0) && `存款目標為 ${toCurrency(getGoalAmount(amount, cycleDuration, cycleMode))}元`}
@@ -193,7 +195,7 @@ const DepositPlanEditPage = () => {
                   labelName="選擇陪你存錢的帳號"
                 />
                 <FEIBHintMessage>
-                  { ((bindAccountNo !== '*') && (bindAccountNo !== 'new')) && `存款餘額為 ${toCurrency(getRemainingBalance(bindAccountNo))}元` }
+                  { ((bindAccountNo !== '*') && (bindAccountNo !== 'new') && !!bindAccountNo) && `存款餘額為 ${toCurrency(getRemainingBalance(bindAccountNo))}元` }
                 </FEIBHintMessage>
               </div>
 

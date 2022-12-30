@@ -51,13 +51,13 @@ const SuccessFailureAnimations = ({
     <section className={`errorInfo ${errorSpace ? 'horizontalSpacing' : ''}`}>
       {
         code && (
-          <p className="errorCode">
+          <div className="errorCode">
             錯誤代碼：
             {code}
-          </p>
+          </div>
         )
       }
-      <p className="errorText">{desc}</p>
+      <div className="errorText">{desc}</div>
     </section>
   );
 

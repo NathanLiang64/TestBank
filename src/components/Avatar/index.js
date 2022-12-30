@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { EditIcon, PersonalIcon } from 'assets/images/icons';
 import { toHalfWidth } from 'utilities/Generator';
+import { FEIBErrorMessage } from 'components/elements';
 import AvatarWrapper from './avatar.style';
 
 /**
@@ -26,7 +27,7 @@ const Avatar = ({
   const [src, setSrc] = useState(); // 會員頭像的圖片路徑。
   const [preview, setPreview] = useState(null); // 上傳的照片轉成 base64 格式
   const [showDefault, setShowDefault] = useState(false);
-
+  const [uploadErrMsg, setUploadErrMsg] = useState('');
   const renderPhoto = () => (
     <img
       src={preview || src}
@@ -43,6 +44,18 @@ const Avatar = ({
 
   const onImgChangeHandler = async (event) => {
     const photo = event.target.files[0];
+    if (photo.type !== 'image/jpeg') {
+      setUploadErrMsg('上傳之影像規格限定 JPG 或 JPEG 格式');
+      return;
+    }
+
+    if (photo.size / (1024 * 1204) > 8) {
+      setUploadErrMsg('檔案大小不得大於 8 MB');
+      return;
+    }
+
+    // TODO 是否在前端進行圖像壓縮，待確認
+
     const reader = new FileReader();
     reader.readAsDataURL(photo);
     reader.onloadend = (e) => {
@@ -57,6 +70,7 @@ const Avatar = ({
 
       if (memberId) sessionStorage.setItem(`Avator_${memberId}`, imgData);
     };
+    setUploadErrMsg('');
   };
 
   const renderEditButton = () => (
@@ -88,8 +102,9 @@ const Avatar = ({
     <AvatarWrapper $small={small}>
       <div className="photo">
         { ((preview || src) && !showDefault) ? renderPhoto() : renderDefaultBackground() }
+        { editable !== false && !small && renderEditButton() }
       </div>
-      { editable !== false && !small && renderEditButton() }
+      {!!uploadErrMsg && <FEIBErrorMessage>{uploadErrMsg}</FEIBErrorMessage>}
     </AvatarWrapper>
   );
 };

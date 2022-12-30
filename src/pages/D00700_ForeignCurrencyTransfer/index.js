@@ -9,7 +9,6 @@ import { numberToChinese, currencySymbolGenerator } from 'utilities/Generator';
 import { transferAmountValidation } from 'utilities/validation';
 import { customPopup } from 'utilities/MessageModal';
 import { getAccountsList, getAgreedAccounts, getExchangePropertyList } from 'pages/D00700_ForeignCurrencyTransfer/api';
-import { closeFunc } from 'utilities/AppScriptProxy';
 /* Elements */
 import Accordion from 'components/Accordion';
 import DebitCard from 'components/DebitCard/DebitCard';
@@ -20,6 +19,7 @@ import Layout from 'components/Layout/Layout';
 import NoteContent from 'pages/D00700_ForeignCurrencyTransfer/noteContent';
 
 /* Styles */
+import { useNavigation } from 'hooks/useNavigation';
 import ForeignCurrencyTransferWrapper from './foreignCurrencyTransfer.style';
 
 /* Swiper modules */
@@ -27,6 +27,7 @@ SwiperCore.use([Pagination]);
 
 const ForeignCurrencyTransfer = () => {
   const history = useHistory();
+  const { closeFunc } = useNavigation();
   // 交易性質清單
   const [transTypeOptions, setTransTypeOptions] = useState([]);
   // 已選的帳號選單
@@ -210,7 +211,6 @@ const ForeignCurrencyTransfer = () => {
                   <FEIBInput
                     {...field}
                     type="text"
-                    inputMode="numeric"
                     id="balance"
                     name="balance"
                     placeholder={`${currencySymbolGenerator(currentAccount.currency, 0)}（零元）`}
@@ -226,6 +226,7 @@ const ForeignCurrencyTransfer = () => {
                     inputProps={{
                       maxLength: 9,
                       autoComplete: 'off',
+                      inputMode: 'numeric',
                     }}
                   />
                   <div className="balanceLayout">{mixBalanceStr}</div>
@@ -264,6 +265,7 @@ const ForeignCurrencyTransfer = () => {
                   type="text"
                   id="memo"
                   name="memo"
+                  inputProps={{ maxLength: 20, autoComplete: 'off' }}
                   placeholder="請輸入"
                   error={!!errors.memo}
                 />

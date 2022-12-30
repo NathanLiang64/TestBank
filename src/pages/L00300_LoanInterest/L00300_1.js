@@ -1,7 +1,7 @@
 /* eslint-disable react/destructuring-assignment */
 import { useState, useEffect } from 'react';
 import { toCurrency, dateToString, handleLoanTypeToTitle } from 'utilities/Generator';
-import { closeFunc, loadFuncParams } from 'utilities/AppScriptProxy';
+import { loadFuncParams } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';

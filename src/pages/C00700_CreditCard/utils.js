@@ -58,7 +58,10 @@ export const renderBody = (bodys) => bodys.map((body) => (
 /**
  * 將從 getCards API 拿到的資料作轉換
  *
- * @param cards
+ * @param {{
+ *        cardNo, // 卡號
+ *        isBankeeCard, // 專案代號
+ *      }[]} cardsArr  // 卡片陣列
  * @return {
  *    isBankeeCard:    true/false
  *    cards: [ {cardNo //卡號 }, ...]
@@ -70,12 +73,12 @@ export const renderBody = (bodys) => bodys.map((body) => (
  *
  */
 
-export const generateTwoCardsArray = (cardsFromApi) => {
+export const generateTwoCardsArray = (cardsArr) => {
   const base = [
     { isBankeeCard: true, cards: [] },
     { isBankeeCard: false, cards: [] },
   ];
-  const modifiedCards = cardsFromApi.reduce((acc, cur) => {
+  const modifiedCards = cardsArr.reduce((acc, cur) => {
     const { isBankeeCard, cardNo, ...rest } = cur;
     if (isBankeeCard === 'Y') {
       acc[0] = { ...acc[0], cards: [{ cardNo }], ...rest };

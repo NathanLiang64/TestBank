@@ -6,10 +6,9 @@ import { FEIBInputLabel, FEIBInput, FEIBErrorMessage} from 'components/elements'
 export const TextInputField = ({
   labelName,
   type = 'text',
-  placeholder,
-  disabled,
   $color,
   fontSize = 1.6,
+  inputProps,
   ...controlProps
 }) => {
   const {field, fieldState } = useController(controlProps);
@@ -21,14 +20,13 @@ export const TextInputField = ({
     <>
       <FEIBInputLabel htmlFor={name}>{labelName}</FEIBInputLabel>
       <FEIBInput
+        inputProps={inputProps}
         onChange={(e) => onChange(e.target.value.trim())}
         onBlur={onBlur}
         value={value ?? ''}
         type={type}
         id={name}
-        disabled={disabled}
         error={!!fieldState.error}
-        placeholder={placeholder || ''}
         $color={$color}
         $space="bottom"
         $fontSize={fontSize}

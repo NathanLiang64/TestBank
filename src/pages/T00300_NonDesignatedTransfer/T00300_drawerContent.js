@@ -50,6 +50,7 @@ const T00300DrawerContent = ({
               disabled={readonly}
               value={field.value}
               placeholder="請輸入手機號碼"
+              inputProps={{inputMode: 'numeric'}}
               error={!!errors.mobileNumber}
             />
           )}

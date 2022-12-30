@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { getCountyList } from 'pages/T00700_BasicInformation/api';
 
+// NOTE ========== 已棄用，暫時保留待刪除 ==========
 export const useLocationOptions = (watchedCountyName) => {
   const [locationLists, setLocationLists] = useState([]);
 
@@ -15,7 +16,7 @@ export const useLocationOptions = (watchedCountyName) => {
     return [];
   }, [locationLists]);
 
-  // 建立鄉鎮市區選單
+  // 鄉鎮市區選單
   const districtOptions = useMemo(() => {
     const foundDistrictOption = locationLists.find(
       ({ countyName }) => countyName === watchedCountyName,
@@ -30,12 +31,8 @@ export const useLocationOptions = (watchedCountyName) => {
   }, [watchedCountyName, locationLists]);
 
   useEffect(async () => {
-    // TODO 可能需要加入 dispatch(setWaittingVisible(true/false))
-
-    const { code, data } = await getCountyList({});
-    if (code === '0000') {
-      setLocationLists(data);
-    }
+    const countyListRes = await getCountyList();
+    if (countyListRes) setLocationLists(countyListRes);
   }, []);
 
   return {

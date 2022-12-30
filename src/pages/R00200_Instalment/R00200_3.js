@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /** @format */
 
 import { useHistory, useLocation } from 'react-router';
@@ -10,32 +11,34 @@ import InformationList from 'components/InformationList';
 
 /* Styles */
 import theme from 'themes/theme';
-import { showInfo } from 'utilities/MessageModal';
+import { showAnimationModal, showInfo } from 'utilities/MessageModal';
+import { useNavigation } from 'hooks/useNavigation';
+import { useDispatch } from 'react-redux';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import InstalmentWrapper from './R00200.style';
+import { updateInstallment } from './api';
+import { interestRateMap } from './utils';
 /**
  * R002003 晚點付 (單筆/總額_分期設定確認)
  */
 const R00200_3 = () => {
-  const location = useLocation();
+  const {state} = useLocation();
+  const {goHome} = useNavigation();
+  const dispatch = useDispatch();
 
-  const installmentTotal = `${location.state.installmentSum}`;
-  const installmentNumber = `${location.state.installmentNumber}期`;
-  // Debug: 以下為 hardcode
-  const installmentRate = `${location.state.installmentPercentage}%`;
-
-  // Debug: 以下為 hardcode
+  // NOTE 以下為 hardcode
   const staging = [
     {
       installments: '1',
-      principalPayable: 3334,
-      principalPayableText: '(首期金額)',
+      principal: 3334,
+      principalText: '(首期金額)',
       interest: 0,
       amountDue: 3334,
     },
     {
       installments: '2~3',
-      principalPayable: 3334,
-      principalPayableText: '(每期金額)',
+      principal: 3334,
+      principalText: '(每期金額)',
       interest: 0,
       amountDue: 3334,
     },
@@ -45,33 +48,42 @@ const R00200_3 = () => {
 
   const ResultTable = () => (
     <>
-      <InformationList title="分期總額" content={installmentTotal} />
-      <InformationList title="申請分期期數" content={installmentNumber} />
-      <InformationList title="分期利率" content={installmentRate} />
+      <InformationList title="分期總額" content={state.installmentAmount} />
+      <InformationList title="申請分期期數" content={state.totTerm} />
+      <InformationList title="分期利率" content="待提供" />
     </>
   );
 
+  const calculateInstallment = (installmentAmount, totTerm) => {
+    const {monthlyRate, annualRate} = interestRateMap[totTerm];
+    // ??? installmentAmount * rate..... 需要公式
+    return [
+      {
+        term: '第N期', principal: '應繳本金', principalText: '應繳本金補充文字', interest: '分期利息', amountDue: '應繳金額',
+      },
+    ];
+  };
+
   const stagingTable = () => (
-    <table style={{ alignSelf: 'center', margin: '1rem' }}>
+    <table className="staging-table">
       <thead>
         <tr>
-          <td style={{ color: theme.colors.primary.light }}>分期期數</td>
-          <td style={{ color: theme.colors.primary.light }}>當期應繳本金</td>
-          <td style={{ color: theme.colors.primary.light }}>分期利息</td>
-          <td style={{ color: theme.colors.primary.light }}>當期應繳金額</td>
+          <td>分期期數</td>
+          <td>當期應繳本金</td>
+          <td>分期利息</td>
+          <td>當期應繳金額</td>
         </tr>
       </thead>
       <tbody>
+        {/* 計算公式待確認 */}
         {staging.map((item) => (
-          <tr key={staging.indexOf(item)}>
+          <tr key={item.installments}>
             <td>
-              第 &nbsp;
-              {item.installments}
-              &nbsp; 期
+              {`第${item.installments}期`}
             </td>
             <td>
-              <p>{item.principalPayable}</p>
-              <p>{item.principalPayableText}</p>
+              <p>{item.principal}</p>
+              <p className="principalText">{item.principalText}</p>
             </td>
             <td>{item.interest}</td>
             <td>{item.amountDue}</td>
@@ -81,40 +93,38 @@ const R00200_3 = () => {
     </table>
   );
 
-  const successMessage = (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <svg width="100" height="100">
-        <image xlinkHref={successImg} width="100" height="100" />
-      </svg>
-      <p style={{ fontSize: '2rem', color: theme.colors.secondary.brand, textAlign: 'center' }}>設定成功</p>
-      <div>
-        <p style={{ textAlign: 'center' }}>您已完成 Bankee 信用卡</p>
-        <p style={{ textAlign: 'center' }}>晚點付申請</p>
-      </div>
-    </div>
-  );
+  const onClickHandler = async () => {
+    if (state.readOnly) history.goBack();
+    else {
+      dispatch(setWaittingVisible(true));
+      const res = await updateInstallment(state.param); // 回傳資料待確認
+      if (res) {
+        showAnimationModal({
+          isSuccess: true,
+          successTitle: '設定成功',
+          successDesc: '您已完成Bankee信用卡晚點付申請',
+        });
+      }
+      dispatch(setWaittingVisible(false));
+    }
+  };
 
+  // if (!state) goHome();
   return (
     <Layout title="晚點付 (總額)">
       <InstalmentWrapper className="InstalmentWrapper" small>
         <form>
           <div>
             <div className="InstalmentWrapperText">各期繳款金額試算 (依實際帳單為準)</div>
-            {ResultTable()}
+            {/* {ResultTable()} */}
             {stagingTable()}
-            <div style={{ padding: 8 }}>
-              <p style={{ color: theme.colors.state.error }}>分期利息=本金餘額*(分期利率/12)</p>
-              <p style={{ color: theme.colors.state.error }}>小數點後數字將四捨五入至整數位</p>
+            <div className="formula-hint">
+              <p>分期利息=本金餘額*(分期利率/12)</p>
+              <p>小數點後數字將四捨五入至整數位</p>
             </div>
           </div>
-          <FEIBButton
-            type="submit"
-            onClick={() => {
-              showInfo(successMessage);
-              history.push('/R00200');
-            }}
-          >
-            確認
+          <FEIBButton type="submit" onClick={onClickHandler}>
+            {state.readOnly ? '返回' : '確認'}
           </FEIBButton>
         </form>
       </InstalmentWrapper>

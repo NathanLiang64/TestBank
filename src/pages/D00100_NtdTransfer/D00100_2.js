@@ -16,10 +16,11 @@ import {
 } from 'assets/images/icons';
 import AccountEditor from 'pages/D00500_FrequentContacts/D00500_AccountEditor';
 import { addFrequentAccount } from 'pages/D00500_FrequentContacts/api';
-import { closeFunc, shareMessage } from 'utilities/AppScriptProxy';
+import { shareMessage } from 'utilities/AppScriptProxy';
 
 import { setDrawerVisible } from 'stores/reducers/ModalReducer';
 import { showDrawer, showError, showInfo } from 'utilities/MessageModal';
+import { useNavigation } from 'hooks/useNavigation';
 import { getTransInData, getDisplayAmount, getTransDate, getCycleDesc } from './util';
 import TransferWrapper from './D00100.style';
 
@@ -33,6 +34,7 @@ const TransferResult = (props) => {
 
   const history = useHistory();
   const dispatch = useDispatch();
+  const { closeFunc } = useNavigation();
 
   const model = state;
   const transInData = getTransInData(model.transIn);
@@ -117,7 +119,7 @@ const TransferResult = (props) => {
    * @param {boolean} mode 表示轉帳結果成功與否的旗標。
    */
   const renderBottomAction = (mode) => (
-    <BottomAction>
+    <BottomAction position={0}>
       {mode ? (
         <>
           <button type="button" onClick={handleClickScreenshot}>

@@ -3,33 +3,36 @@ import styled from 'styled-components';
 const MemberAccountCardWrapper = styled.div`
   display: flex;
   align-items: center;
-  padding: 1.2rem .8rem;
-  position:relative;
+  padding: 1.2rem 0.8rem;
+  position: relative;
   // overflow: hidden;
   border-bottom: ${({ $noBorder, theme }) => ($noBorder ? '' : `.1rem solid ${theme.colors.border.lighter}`)};
   &:first-child {
     border-top: ${({ $noBorder, theme }) => ($noBorder ? '' : `.1rem solid ${theme.colors.border.lighter}`)};
   }
   background-color: ${({ $selected, theme }) => ($selected ? theme.colors.state.selected : '')};
-  
+
   .Avatar {
     margin-left: unset;
     margin-right: unset;
   }
-  
+
   .memberInfo {
     margin-left: 1.2rem;
 
     .title {
       font-size: 1.8rem;
-      line-height: 2.7rem;
+      // line-height: 2.7rem;
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
       color: ${({ $selected, theme }) => ($selected ? theme.colors.text.white : '')};
     }
 
     .new-tag {
       display: inline-block;
       margin-inline-start: 0.5rem;
-      padding-inline: 0.8rem;
+      padding-inline: 0.5rem;
       font-size: 1.2rem;
       font-weight: 400;
       vertical-align: text-bottom;
@@ -43,7 +46,7 @@ const MemberAccountCardWrapper = styled.div`
       color: ${({ $selected, theme }) => ($selected ? theme.colors.text.white : theme.colors.text.light)};
     }
   }
-  
+
   .changeMemberButton {
     position: absolute;
     top: 50%;
@@ -55,17 +58,17 @@ const MemberAccountCardWrapper = styled.div`
     display: flex;
     position: absolute;
     top: 0;
-    right:  0;
-    opacity:0;
+    right: 0;
+    opacity: 0;
     transform: translateX(100%);
-    visibility:hidden;
-    height: 100% ;
+    visibility: hidden;
+    height: 100%;
     color: ${({ theme }) => theme.colors.basic.white};
-    transition: all .3s ease-out;
-    
+    transition: all 0.3s ease-out;
+
     &.show {
-      visibility:visible;
-      opacity:1;
+      visibility: visible;
+      opacity: 1;
       transform: translateX(0%);
     }
 
@@ -84,7 +87,7 @@ const MemberAccountCardWrapper = styled.div`
       }
 
       .Icon {
-        margin-bottom: .4rem;
+        margin-bottom: 0.4rem;
         font-size: 2rem;
         color: white;
       }

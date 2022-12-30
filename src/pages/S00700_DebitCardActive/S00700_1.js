@@ -6,21 +6,22 @@ import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import { useHistory, useLocation } from 'react-router';
 import { FEIBButton } from 'components/elements';
 import ResultAnimation from 'components/SuccessFailureAnimations/ResultAnimation';
-import { startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
+import { useNavigation } from 'hooks/useNavigation';
 import DebitCardActiveWrapper, {SuccessDescWrapper} from './S00700.style';
 
 const S007001 = () => {
   const history = useHistory();
+  const { startFunc } = useNavigation();
   const {state} = useLocation();
 
   const successDesc = () => (
     // successDesc 內容是否應該由後端提供?
     <SuccessDescWrapper>
       <div className="success_title">
-        <h3>
-          預設密碼：
-        </h3>
+
+        預設密碼：
+
         <div>民國出生年月日後6位數字</div>
       </div>
       <div className="success_detail">

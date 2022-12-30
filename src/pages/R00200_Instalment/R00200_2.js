@@ -1,36 +1,41 @@
-/* eslint-disable no-unused-vars */
-/** @format */
-
 import { useHistory, useLocation } from 'react-router';
-import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useNavigation } from 'hooks/useNavigation';
 
 /* Elements */
-import Layout from 'components/Layout/Layout';
-import { FEIBButton, FEIBRadioLabel, FEIBRadio } from 'components/elements';
 import Accordion from 'components/Accordion';
-import { RadioGroup } from '@material-ui/core';
-
+import Layout from 'components/Layout/Layout';
+import { FEIBButton } from 'components/elements';
 import { RadioGroupField } from 'components/Fields/radioGroupField';
-import { R00200AccordionContent1, R00200AccordionContent2 } from './utils';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+
 /* Styles */
+import { interestRateMap, R00200AccordionContent1, R00200AccordionContent2 } from './utils';
 import InstalmentWrapper from './R00200.style';
-import { installmentNumberSchema } from './validationSchema';
+import { setInstallmentFlag } from './api';
 
 /**
  * R002002 晚點付 (單筆/總額_選擇期數&約定同意書)
  */
+
 const R00200_2 = () => {
   // TOOD: 目前利率是 hardcode
-  const stagingPercentage = '6';
+
   const history = useHistory();
-  const location = useLocation();
+  const {state} = useLocation();
+  const dispatch = useDispatch();
+  const {goHome} = useNavigation();
+
+  const schema = yup.object().shape({
+    installmentNumber: yup.string().required('請選擇欲申請之晚點付期數'),
+  });
 
   const { handleSubmit, control } = useForm({
-    defaultValues: { installmentNumber: '1' },
-    resolver: yupResolver(installmentNumberSchema),
+    defaultValues: { totTerm: '1' },
+    resolver: yupResolver(schema),
   });
 
   const options = [
@@ -40,35 +45,37 @@ const R00200_2 = () => {
     {label: '9期', value: '9'},
     {label: '12期', value: '12'}];
 
-  const onSubmit = (data) => {
-    console.log('R002002 handleOnSubmit() data: ', data);
-    // history.push('/R002003', {
-    //   installmentSum: location.state.sum,
-    //   installmentNumber: data.installmentNumber,
-    //   installmentPercentage: stagingPercentage,
-    // });
+  const onSubmit = async ({totTerm}) => {
+    const {applType, selectedTransactions} = state;
+    const param = selectedTransactions.map(({purchDate, purchAmount, authCode}) => ({
+      purchDate,
+      purchAmount,
+      authCode,
+      applType,
+      totTerm,
+    }));
+
+    dispatch(setWaittingVisible(true));
+    if (!state.newInstRestraintFlag) await setInstallmentFlag({instRestraintFlagNew: true});
+    dispatch(setWaittingVisible(false));
+
+    // eslint-disable-next-line no-return-assign
+    const installmentAmount = selectedTransactions.reduce((acc, cur) => acc += cur, 0);
+    history.push('R002003', {
+      applType, installmentAmount, totTerm, param,
+    });
   };
 
-  // ★備註說明:
-  //   依與作業部核簽之分期設定表。
-  //   各分期換算之每月利率如下:
-  //   1期:年化利率0%(每月利率0%)
-  //   3期:年化利率0%(每月利率0%)
-  //   6期:年化利率6%(每月利率0.29%)
-  //   9期:年化利率9%(每月利率0.42%)
-  // 12期:年化利率12%(每月利率0.55%)
-
+  if (!state) return goHome();
   return (
-    // For 測試需求 目前 title＝總額
-    <Layout title="晚點付 (總額)">
+    <Layout title={`晚點付 (${state.applType === 'H' ? '總額' : '單筆'})`}>
       <InstalmentWrapper className="InstalmentWrapper" small>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
             <div className="messageBox2">
               <p>分期利率</p>
               <h2 className="titleText">
-                {stagingPercentage}
-                %
+                {`${interestRateMap[state.totTerm].annualRate}%`}
               </h2>
             </div>
             <RadioGroupField

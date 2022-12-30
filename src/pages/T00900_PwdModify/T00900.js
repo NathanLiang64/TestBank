@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { changePwd } from 'pages/T00900_PwdModify/api';
-import { closeFunc, transactionAuth } from 'utilities/AppScriptProxy';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 import { showAnimationModal } from 'utilities/MessageModal';
 
 /* Elements */
@@ -13,11 +13,13 @@ import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { PasswordInputField } from 'components/Fields';
 import { AuthCode } from 'utilities/TxnAuthCode';
+import { useNavigation } from 'hooks/useNavigation';
 import PwdModifyWrapper from './T00900.style';
 import { validationSchema } from './validationSchema';
 
 const PwdModify = () => {
   const dispatch = useDispatch();
+  const { closeFunc } = useNavigation();
   const {handleSubmit, control } = useForm({
     defaultValues: {
       password: '',
@@ -76,16 +78,19 @@ const PwdModify = () => {
               labelName="您的網銀密碼"
               name="password"
               control={control}
+              inputProps={{autoComplete: 'off'}}
             />
             <PasswordInputField
               labelName="新的網銀密碼"
               name="newPassword"
               control={control}
+              inputProps={{autoComplete: 'off'}}
             />
             <PasswordInputField
               labelName="請確認新的網銀密碼"
               name="newPasswordCheck"
               control={control}
+              inputProps={{autoComplete: 'off'}}
             />
           </div>
           <FEIBButton type="submit">儲存變更</FEIBButton>

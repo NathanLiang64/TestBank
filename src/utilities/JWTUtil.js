@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import CipherUtil from './CipherUtil';
 
-const assert = require('assert');
+// const assert = require('assert');
 
 class JWTUtil {
   /**
@@ -31,7 +31,8 @@ class JWTUtil {
     try {
       const request = CipherUtil.decryptAES(aesKey, iv, message);
       const hmac = CipherUtil.encryptHMAC(aesKey, request);
-      assert.strictEqual(hmac, mac);
+      if (hmac !== mac) alert('JWT Mac 錯誤！');
+      // assert.strictEqual(hmac, mac);
       const json = JSON.parse(request);
       return json;
     } catch (ex) {
