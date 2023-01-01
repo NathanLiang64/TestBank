@@ -11,10 +11,10 @@ import DebitCard from 'components/DebitCard/DebitCard';
 import Accordion from 'components/Accordion';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
-import { getAccountsList } from 'utilities/CacheData';
+import { getAccountBonus, getAccountsList } from 'utilities/CacheData';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { useNavigation } from 'hooks/useNavigation';
-import { cardLessWithdrawApply, getAccountExtraInfo } from './api';
+import { cardLessWithdrawApply } from './api';
 
 import CardLessATMWrapper from './D00300.style';
 import { CustomInputSelectorField } from './fields/CustomInputSelectorField';
@@ -85,7 +85,7 @@ const CardLessATM1 = () => {
       });
 
       // 跨轉優惠資訊取回後再更新。
-      getAccountExtraInfo(acct.accountNo).then((extraInfo) => {
+      getAccountBonus(acct.accountNo, (extraInfo) => {
         setAccountSummary({
           account: acct.accountNo,
           balance: acct.balance,

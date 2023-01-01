@@ -17,7 +17,7 @@ import { accountFormatter } from 'utilities/Generator';
 import {getStatus, reIssueOrLost} from './api';
 import LossReissueWrapper from './S00800.style';
 import {actionTextGenerator} from './utils';
-import { AddressEditor } from './S00800_addressEditor';
+import { AddressEditor } from './S00800_AddressEditor';
 
 const LossReissue = () => {
   const dispatch = useDispatch();

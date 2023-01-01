@@ -14,10 +14,8 @@ import {
   customPopup, showCustomDrawer, showCustomPrompt, showPrompt,
 } from 'utilities/MessageModal';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
-import {
-  getAccountExtraInfo,
-  loadAccountsList,
-} from 'pages/D00100_NtdTransfer/api';
+import { loadAccountsList } from 'pages/D00100_NtdTransfer/api';
+import { getAccountBonus } from 'utilities/CacheData';
 import { FuncID } from 'utilities/FuncID';
 import { TextInputField } from 'components/Fields';
 import { useNavigation } from 'hooks/useNavigation';
@@ -79,13 +77,11 @@ const C00500Modified = () => {
 
     // 若還沒有取得 免費跨轉次數 則立即補上。
     if (!account.freeTransfer) {
-      const extraInfo = await getAccountExtraInfo(account.accountNo);
-
-      if (extraInfo) {
+      await getAccountBonus(account.accountNo, (extraInfo) => {
         const newAccounts = accounts.map((acc, index) => (index === acctIndex ? { ...acc, ...extraInfo } : acc));
         setAccounts(newAccounts);
         updateTransactions(newAccounts[acctIndex]); // 取得帳戶交易明細（三年內的前25筆即可)
-      }
+      });
     } else {
       updateTransactions(account); // 取得帳戶交易明細（三年內的前25筆即可)
     }
