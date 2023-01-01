@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* Elements */
 import {
   FEIBButton,
@@ -6,9 +7,10 @@ import Accordion from 'components/Accordion';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import InformationList from 'components/InformationList';
 import Layout from 'components/Layout/Layout';
+import { useNavigation } from 'hooks/useNavigation';
+import { accountFormatter, dateToString, timeToString } from 'utilities/Generator';
 
 /* Styles */
-import { useNavigation } from 'hooks/useNavigation';
 import CardLessATMWrapper from './D00300.style';
 
 const CardLessATM2 = ({ location }) => {
@@ -21,6 +23,14 @@ const CardLessATM2 = ({ location }) => {
   const {
     seqNo, startDateTime, endDateTime, withdrawAmount, account,
   } = location.state.data;
+
+  // 將 '0yTWMMDD hhmmss' 字串轉為 'YYYY/MM/DD hh:mm:ss' 格式
+  const dateTimeFormat = (dateTimeString) => {
+    const dateStr = parseInt(dateTimeString.split(' ')[0], 10).toString(); // TODO: 請後端回傳民國年字串第一位不要補0?
+    const timeStr = dateTimeString.split(' ')[1];
+
+    return `${dateToString(dateStr)} ${timeToString(timeStr)}`;
+  };
 
   return (
     <Layout title="無卡提款結果">
@@ -44,14 +54,14 @@ const CardLessATM2 = ({ location }) => {
           </div>
           <div className="withdrawalInfo">
             請您於
-            <span>{endDateTime}</span>
+            <span>{dateTimeFormat(endDateTime)}</span>
             前至本行或他行有提供無卡提款功能之 ATM 完成提款！
           </div>
         </div>
         <div className="section2">
-          <InformationList title="申請時間" content={startDateTime} />
+          <InformationList title="申請時間" content={dateTimeFormat(startDateTime)} />
           <InformationList title="交易類型" content="無卡提款" />
-          <InformationList title="提款帳號" content={account} />
+          <InformationList title="提款帳號" content={accountFormatter(account)} />
           <Accordion space="both" open>
             <ul>
               <li>本交易限時15分鐘內有效，請於交易有效時間內，至本行提供無卡提款功能之ATM完成提款。若逾時請重新申請。(實際交易有效時間以本行系統時間為準)。</li>

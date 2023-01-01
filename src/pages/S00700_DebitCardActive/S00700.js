@@ -32,8 +32,9 @@ const S00700 = () => {
     const auth = await transactionAuth(AuthCode.S00700);
     if (auth && auth.result) {
       await getStatus(); // activate 之前需要先獲得卡況
-      const activateResponse = await activate({...values});
-      history.push('/S007001', {...activateResponse});
+      const activateResult = await activate({...values});
+      if (!activateResult) return;
+      history.push('/S007001', {...activateResult});
     }
     dispatch(setWaittingVisible(false));
   };

@@ -1,19 +1,18 @@
 import * as yup from 'yup';
 import { useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useController, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import {
   getOsType, getPlatform, transactionAuth,
 } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-import {
-  FEIBInputLabel, FEIBInput, FEIBButton, FEIBRadio, FEIBRadioLabel, FEIBErrorMessage,
-} from 'components/elements';
+import { FEIBButton } from 'components/elements';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import Accordion from 'components/Accordion';
-import { RadioGroup } from '@material-ui/core';
+import { RadioGroupField } from 'components/Fields/radioGroupField';
+import { TextInputField } from 'components/Fields';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { useNavigation } from 'hooks/useNavigation';
 import { useDispatch } from 'react-redux';
@@ -32,9 +31,9 @@ const A00800 = () => {
   // eslint-disable-next-line no-unused-vars
   const [inviteToken, setInviteToken] = useState('');
   const { closeFunc } = useNavigation();
-
   const dispatch = useDispatch();
-  // 驗證錯誤文字
+
+  // 驗證錯誤文字 (文字依照1.0)
   const mobileError = (isEmpty) => `請輸入${!isEmpty && '正確的'}手機號碼`;
   const nameError = (isEmpty) => (isEmpty ? '請輸入姓名' : '姓名請勿超過5字元');
   const emailError = (isEmpty) => (isEmpty ? '請輸入Email' : '電子郵件請勿超過40字元');
@@ -44,7 +43,7 @@ const A00800 = () => {
   const termConfirmError = '請閱讀並同意使用條款';
 
   /**
-   * 資料驗證
+   * 資料驗證 (規則依照1.0)
    */
   const schema = yup.object().shape({
     mobileNum: yup.string().min(10, mobileError(false)).max(10, mobileError(false)).required(mobileError(true)),
@@ -62,34 +61,10 @@ const A00800 = () => {
       email: '',
       password: '',
       passwordConfirm: '',
-      agreeTerms: 'false',
+      agreeTerms: '',
     },
     resolver: yupResolver(schema),
   });
-
-  const renderFormItem = ({
-    label, areaName, type, isTerm, placeHolder,
-  }) => {
-    const { field, fieldState } = useController({name: areaName, control });
-
-    return (
-      <>
-        {isTerm ? (
-          <RadioGroup {...field} value={field.value}>
-            <FEIBRadioLabel value="true" control={<FEIBRadio />} label="本人已閱讀並同意上述條款" />
-          </RadioGroup>
-        ) : (
-          <div className="form_item">
-            <FEIBInputLabel>{label}</FEIBInputLabel>
-            <div className="form_item_input">
-              <FEIBInput {...field} type={type} placeholder={placeHolder} />
-            </div>
-          </div>
-        )}
-        {fieldState.error && <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>}
-      </>
-    );
-  };
 
   /* TODO: 註冊成功後跳轉 */
   const handleSwitchPage = () => {
@@ -141,19 +116,17 @@ const A00800 = () => {
     <Layout title="訪客註冊" goHome={false} goBackFunc={closeFunc}>
       <A00800Wrapper className="NonmemberWrapper">
         <form className="basic_data_form" onSubmit={handleSubmit((data) => onSubmit(data))}>
-          {renderFormItem({label: '手機號碼', areaName: 'mobileNum', type: 'phone'})}
-          {renderFormItem({label: '姓名', areaName: 'name', type: 'text'})}
-          {renderFormItem({label: 'E-mail', areaName: 'email', type: 'email'})}
-          {renderFormItem({
-            label: '密碼', areaName: 'password', type: 'password', placeHolder: '六位數字',
-          })}
-          {renderFormItem({label: '確認密碼', areaName: 'passwordConfirm', type: 'password'})}
+          <TextInputField labelName="手機號碼" type="tel" name="mobileNum" control={control} />
+          <TextInputField labelName="姓名" type="text" name="name" control={control} />
+          <TextInputField labelName="E-mail" type="email" name="email" control={control} />
+          <TextInputField labelName="密碼" type="password" name="password" control={control} placeholder="六位數字" />
+          <TextInputField labelName="確認密碼" type="password" name="passwordConfirm" control={control} />
 
           <Accordion space="both" title="個資保護法公告內容" className="accordion">
             <A00800AccoridonContent />
           </Accordion>
           <div className="term_agree">
-            {renderFormItem({areaName: 'agreeTerms', isTerm: true})}
+            <RadioGroupField control={control} name="agreeTerms" options={[{label: '本人已閱讀並同意上述條款', value: 'true'}]} />
           </div>
 
           <FEIBButton className="form_button" type="submit">確定</FEIBButton>

@@ -60,13 +60,17 @@ const CardLessATM = () => {
       <div>
         <PasswordInputField
           labelName="提款密碼"
-          inputProps={{placeholder: '請輸入提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off'}}
+          inputProps={{
+            maxLength: 12, placeholder: '請輸入提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off',
+          }}
           name="withdrawPwd"
           control={control}
         />
         <PasswordInputField
           labelName="確認提款密碼"
-          inputProps={{placeholder: '請再輸入一次提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off'}}
+          inputProps={{
+            maxLength: 12, placeholder: '請再輸入一次提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off',
+          }}
           name="withdrawPwdCheck"
           control={control}
         />

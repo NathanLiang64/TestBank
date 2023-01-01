@@ -81,7 +81,7 @@ const CreditCardPage = () => {
       <ul className="functionList">
         { list.map(({fid, title, cardNo}) => (
           <li key={fid}>
-            <button type="button" onClick={() => go2Func(fid, cardNo ? {cardNo} : null)}>
+            <button type="button" onClick={() => go2Func(fid, cardNo !== undefined ? {cardNo} : null)}>
               {title}
             </button>
           </li>

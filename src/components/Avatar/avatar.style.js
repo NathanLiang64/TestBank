@@ -3,17 +3,17 @@ import styled from 'styled-components';
 const AvatarWrapper = styled.div.attrs({
   className: 'Avatar',
 })`
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   
   width: fit-content;
   .photo {
-    // padding: ${({ $small }) => ($small ? '.2rem' : '.4rem')};
     border-radius: 50%;
     width: ${({ $small }) => ($small ? '4.4rem' : '8.8rem')};
     height: ${({ $small }) => ($small ? '4.4rem' : '8.8rem')};
     background: ${({ theme }) => theme.colors.primary.gradient};
-    // overflow: hidden;
 
     display: flex;
     align-items: center;
@@ -35,8 +35,6 @@ const AvatarWrapper = styled.div.attrs({
     display: flex;
     justify-content: center;
     align-items: center;
-    // width: 100%;
-    // height: 100%;
     width: 92%;
     height: 92%;
     background: ${({ theme }) => theme.colors.background.lighterBlue};
@@ -52,7 +50,6 @@ const AvatarWrapper = styled.div.attrs({
       // padding-left: 0.2rem;
 
       &.Icon {
-        // top: -.2rem;
         width: 100%;
         height: 100%;
         display: flex;

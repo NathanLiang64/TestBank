@@ -329,10 +329,10 @@ export const currencySymbolGenerator = (currency, amount, showFloat = false) => 
  * 將全形文字轉為半形
  * @param {*} str
  */
-export const toHalfWidth = (str) => str?.replace(
+export const toHalfWidth = (str) => (str ? str.replace(
   /[\uff01-\uff5e]/g,
   (ch) => String.fromCharCode(ch.charCodeAt(0) - 0xfee0),
-);
+) : '');
 
 // 將數字中的0轉換為中文
 export const switchZhNumber = (numIndication, isPlus) => {

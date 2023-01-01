@@ -24,7 +24,7 @@ const CardLessATM1 = () => {
   const defaultValues = {
     withdrawAmount: 0,
   };
-  const {handleSubmit, control } = useForm({
+  const {handleSubmit, control, reset } = useForm({
     defaultValues,
     resolver: yupResolver(validationSchema),
   });
@@ -94,6 +94,7 @@ const CardLessATM1 = () => {
         });
       });
 
+      reset((formValues) => ({...formValues, account: acct.accountNo}));
       dispatch(setWaittingVisible(false));
     });
   }, []);

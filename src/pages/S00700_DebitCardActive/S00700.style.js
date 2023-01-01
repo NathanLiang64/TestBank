@@ -23,16 +23,14 @@ export const SuccessDescWrapper = styled.div`
     }
     .success_title{
         display:flex;
-        align_items:center;
+        align-items:center;
+        color:${({theme}) => theme.colors.primary.brand};
+        white-space: nowrap;
+        font-size: 1.6rem;
         
-        h3{
-            color:${({theme}) => theme.colors.primary.brand};
-            white-space: nowrap;
-            font-size: 16px;
-        }
         div{
-            font-size: 16px;
-            color:red
+            color:red;
+            white-space: normal;
         }      
     }
 

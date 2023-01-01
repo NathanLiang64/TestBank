@@ -119,7 +119,7 @@ const TransferResult = (props) => {
    * @param {boolean} mode 表示轉帳結果成功與否的旗標。
    */
   const renderBottomAction = (mode) => (
-    <BottomAction>
+    <BottomAction position={0}>
       {mode ? (
         <>
           <button type="button" onClick={handleClickScreenshot}>

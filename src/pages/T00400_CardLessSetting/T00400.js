@@ -62,9 +62,8 @@ const CardLessSetting = () => {
             errorTitle: '設定失敗',
             errorDesc: '設定失敗',
           });
-
-          setCardLessStatus('2');
-          setEnable(true);
+          setCardLessStatus('3'); // 註銷成功後狀態代碼為 3-已註銷
+          setEnable(false);
         }
         dispatch(setWaittingVisible(false));
       }
