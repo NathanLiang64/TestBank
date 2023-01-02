@@ -68,8 +68,6 @@ const T00600 = () => {
     const {
       bindQuickLogin, bindTxnOtpMobile, bindings, mobiles,
     } = await fetchMobiles({ tokenStatus: 1 });
-    setMobileTransferData(bindings);
-    setMobilesList(mobiles || []);
     // 檢查是否綁定快速登入
     if (!bindQuickLogin) {
       await customPopup(
@@ -90,9 +88,15 @@ const T00600 = () => {
         closeFunc,
         '前往留存',
       );
-      return;
     }
-    if (bindings && bindings.length === 0) {
+
+    setMobilesList(mobiles || []);
+    setMobileTransferData(bindings);
+  };
+
+  // Note 不能跟 setMobilesList 在同一個方法中，否則 getModel 會取不到 mobilesList 的值。
+  useEffect(async () => {
+    if (mobileTransferData && mobileTransferData.length === 0) {
       await customPopup(
         '系統訊息',
         '您尚未設定「手機號碼收款」功能，是否立即進行設定？',
@@ -100,7 +104,7 @@ const T00600 = () => {
         closeFunc,
       );
     }
-  };
+  }, [mobileTransferData]);
 
   // 刪除手機號碼收款
   const deleteMobileTransferSetting = async (data) => {

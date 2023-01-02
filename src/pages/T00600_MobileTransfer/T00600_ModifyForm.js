@@ -108,6 +108,7 @@ const T00600ModifyForm = ({ onClose, modifyData }) => {
                   name="mobile"
                   placeholder="請選擇手機號碼"
                   error={!!errors.mobile}
+                  disabled
                 >
                   {
                     modifyData.mobilesList.map((item) => (
@@ -148,6 +149,7 @@ const T00600ModifyForm = ({ onClose, modifyData }) => {
                 <FEIBSwitch
                   checked={accountDefault}
                   onChange={() => setAccountDefault(!accountDefault)}
+                  disabled
                 />
               )}
               label="設定為「預設收款帳戶」"

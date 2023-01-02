@@ -67,40 +67,29 @@ const T006002 = ({ location }) => {
 
   const modifyMobileTransferData = async (event) => {
     event.preventDefault();
-    dispatch(setWaittingVisible(true));
     // 透過 APP 發送及驗證 OTP，並傳回結果。
     const result = await transactionAuth(AuthCode.T00600, confirmData.mobile);
-    console.log(result);
     if (result?.result) {
-      const { account, isDefault, mobile } = confirmData;
-      const param = {
-        account,
-        mobile,
-        isDefault: isDefault ? 'Y' : 'N',
-        otpCode: result.otpCode,
-      };
+      dispatch(setWaittingVisible(true));
+      const { account, isDefault } = confirmData;
       // 新增設定
       if (!isModifyConfirmPage) {
-        const response = await createMobileNo(param);
+        const response = await createMobileNo({ account, isDefault });
         setResultDialog(response);
       }
       // 編輯或取消設定
       if (isModifyConfirmPage) {
         if (type === 'edit') {
-          const editResponse = await editMobileNo(param);
+          const editResponse = await editMobileNo(account);
           setResultDialog(editResponse);
         }
         if (type === 'delete') {
-          const deleteParam = {
-            mobile,
-            otpCode: result.data,
-          };
-          const deleteResponse = await unbindMobileNo(deleteParam);
+          const deleteResponse = await unbindMobileNo();
           setResultDialog(deleteResponse);
         }
       }
+      dispatch(setWaittingVisible(false));
     }
-    dispatch(setWaittingVisible(false));
   };
 
   // 回上一頁

@@ -43,7 +43,7 @@ export const fetchMobiles = async () => {
  * 手機號碼收款設定新增
  * @param request {
  *   account: 綁定的銀行帳號,
- *   isDefault: 是否(Y/N)做為預設收款手機號碼
+ *   isDefault: 是否做為預設收款手機號碼
  * }
  * @returns true:成功, false:失敗。
  */
@@ -54,14 +54,11 @@ export const createMobileNo = async (param) => {
 
 /**
  * 更新手機號碼收款設定
- * @param request {
- *   account: 綁定的銀行帳號,
- *   isDefault: 是否(Y/N)做為預設收款手機號碼
- * }
+ * @param {String} account 綁定的銀行帳號
  * @returns true:成功, false:失敗。
  */
-export const editMobileNo = async (param) => {
-  const response = await callAPI('/api/mobileAccount/v1/update', param);
+export const editMobileNo = async (account) => {
+  const response = await callAPI('/api/mobileAccount/v1/update', account);
   return response.data;
 };
 
