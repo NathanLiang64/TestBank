@@ -113,7 +113,7 @@ const T006002 = ({ location }) => {
           <div className={`confirmDataContainer lighterBlueLine ${isModifyConfirmPage && 'modifyConfirmPage'}`}>
             <div>
               <InformationList title="交易種類" content={getDealTypeContent(type)} />
-              <InformationList title="姓名" content={confirmData.userName} />
+              <InformationList title="姓名" content={confirmData.custName || ''} />
               <InformationList title="手機號碼" content={confirmData.mobile} />
               <InformationList title="收款帳號" content={accountFormatter(confirmData.account)} />
               <InformationList title="預設收款帳戶" content={confirmData.isDefault ? '是' : '否'} />

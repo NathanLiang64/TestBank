@@ -1,8 +1,11 @@
+/* eslint-disable object-curly-newline */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { getAccountsList } from 'utilities/CacheData';
+import { accountFormatter } from 'utilities/Generator';
 
 /* Elements */
 import {
@@ -16,53 +19,36 @@ import {
 } from 'components/elements';
 import ConfirmButtons from 'components/ConfirmButtons';
 import Accordion from 'components/Accordion';
-import { fetchName } from './api';
 
 /* Styles */
 import MobileTransferWrapper from './T00600.style';
 
 const T00600ModifyForm = ({ onClose, modifyData }) => {
   const history = useHistory();
+
+  const [accountList, setAccountList] = useState([]);
+  const [accountDefault, setAccountDefault] = useState(true);
+
   /**
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    userName: yup
-      .string()
-      .required('請輸入姓名'),
-    mobile: yup
-      .string()
-      .required('請選擇手機號碼'),
-    account: yup
-      .string()
-      .required('請選擇收款帳號'),
+    custName: yup.string().required('請輸入姓名'),
+    mobile: yup.string().required('請選擇手機號碼'),
+    account: yup.string().required('請選擇收款帳號'),
   });
-  const {
-    handleSubmit, control, formState: { errors }, setValue,
-  } = useForm({
+  const { handleSubmit, control, formState: { errors }, reset } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const [accountDefault, setAccountDefault] = useState(true);
-
-  // 取得姓名
-  const getUserName = async () => {
-    const { custName } = await fetchName();
-    setValue('userName', custName || '');
-  };
-
-  const switchAccountDefault = () => {
-    setAccountDefault(!accountDefault);
-  };
-
-  const onSubmit = async (formData) => {
+  const onSubmit = (formData) => {
     const data = {
       isDefault: accountDefault,
       ...formData,
     };
+    // BUG 因為編輯是用 Drawer，而確認頁卻是獨立 Page，所以二者相衝突！
     history.push(
-      '/mobileTransfer2',
-      {
+      '/T006002', {
         type: 'edit',
         isModify: true,
         data,
@@ -71,14 +57,20 @@ const T00600ModifyForm = ({ onClose, modifyData }) => {
     onClose();
   };
 
-  useEffect(() => {
-    getUserName();
-    const {
-      account, mobile, isDefault,
-    } = modifyData;
-    setValue('account', account);
-    setValue('mobile', mobile);
-    setAccountDefault(isDefault);
+  useEffect(async () => {
+    modifyData.mobilesList.splice(0, 0, modifyData.mobile); // 可用的手機門號
+    await getAccountsList('MSC', (accounts) => { // 帳戶類型 M:母帳戶, S:證券戶, C:子帳戶
+      const account = accounts.filter((acct) => acct.accountNo === modifyData.account);
+      modifyData.accountList.splice(0, 0, account); // 可用的帳號
+      setAccountList(accounts);
+    });
+
+    reset({
+      custName: modifyData.custName,
+      mobile: modifyData.mobile,
+      account: modifyData.account,
+    });
+    setAccountDefault(modifyData.isDefault);
   }, []);
 
   return (
@@ -88,20 +80,21 @@ const T00600ModifyForm = ({ onClose, modifyData }) => {
           <div>
             <FEIBInputLabel>姓名</FEIBInputLabel>
             <Controller
-              name="userName"
+              name="custName"
               control={control}
               render={({ field }) => (
                 <FEIBInput
                   {...field}
                   type="text"
-                  id="userName"
-                  name="userName"
+                  id="custName"
+                  name="custName"
                   placeholder="請輸入姓名"
-                  error={!!errors.userName}
+                  error={!!errors.custName}
+                  disabled
                 />
               )}
             />
-            <FEIBErrorMessage>{errors.userName?.message}</FEIBErrorMessage>
+            <FEIBErrorMessage>{errors.custName?.message}</FEIBErrorMessage>
             <FEIBInputLabel>手機號碼</FEIBInputLabel>
             <Controller
               name="mobile"
@@ -116,9 +109,11 @@ const T00600ModifyForm = ({ onClose, modifyData }) => {
                   placeholder="請選擇手機號碼"
                   error={!!errors.mobile}
                 >
-                  <FEIBOption value="" disabled>請選擇手機號碼</FEIBOption>
-                  <FEIBOption value="0988392726">0988392726</FEIBOption>
-                  <FEIBOption value="0988392899">0988392899</FEIBOption>
+                  {
+                    modifyData.mobilesList.map((item) => (
+                      <FEIBOption value={item} key={item}>{item}</FEIBOption>
+                    ))
+                  }
                 </FEIBSelect>
               )}
             />
@@ -137,9 +132,13 @@ const T00600ModifyForm = ({ onClose, modifyData }) => {
                   placeholder="請選擇收款帳號"
                   error={!!errors.account}
                 >
-                  <FEIBOption value="" disabled>請選擇收款帳號</FEIBOption>
-                  <FEIBOption value="00300400326306">00300400326306</FEIBOption>
-                  <FEIBOption value="00300400326307">00300400326307</FEIBOption>
+                  {
+                    accountList.map((item) => (
+                      <FEIBOption value={item.accountNo} key={item.accountNo}>
+                        {`${accountFormatter(item.accountNo)}  ${item.alias}`}
+                      </FEIBOption>
+                    ))
+                  }
                 </FEIBSelect>
               )}
             />
@@ -148,7 +147,7 @@ const T00600ModifyForm = ({ onClose, modifyData }) => {
               control={(
                 <FEIBSwitch
                   checked={accountDefault}
-                  onChange={switchAccountDefault}
+                  onChange={() => setAccountDefault(!accountDefault)}
                 />
               )}
               label="設定為「預設收款帳戶」"

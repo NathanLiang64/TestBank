@@ -4,7 +4,6 @@ import { useHistory } from 'react-router';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { getAccountsList } from 'utilities/CacheData';
 import { accountFormatter } from 'utilities/Generator';
 
 /* Elements */
@@ -21,13 +20,12 @@ import {
 import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
 import DealContent from './dealContent';
-import { fetchName } from './api';
 
 /* Styles */
 import MobileTransferWrapper from './T00600.style';
 
 const T006001 = ({ location }) => {
-  const { mobiles } = location.state;
+  const { custName, mobilesList, accountList } = location.state;
 
   const history = useHistory();
 
@@ -43,24 +41,9 @@ const T006001 = ({ location }) => {
   });
 
   const [accountDefault, setAccountDefault] = useState(true);
-  const [accountList, setAccountList] = useState([]);
 
   const switchAccountDefault = () => {
     setAccountDefault(!accountDefault);
-  };
-
-  // 取得姓名
-  const getUserName = async () => {
-    const { custName } = await fetchName();
-    setValue('userName', custName || '');
-  };
-
-  // 取得收款帳號
-  const getAccounts = async () => {
-    getAccountsList('MSC', (accounts) => { // 帳戶類型 M:母帳戶, S:證券戶, C:子帳戶
-      setAccountList(accounts);
-      setValue('account', accounts[0].accountNo);
-    });
   };
 
   // 新增收款設定
@@ -82,9 +65,8 @@ const T006001 = ({ location }) => {
   const goBack = () => history.goBack();
 
   useEffect(() => {
-    getUserName();
-    if (mobiles && mobiles.length) setValue('mobile', mobiles[0]);
-    getAccounts();
+    setValue('custName', custName);
+    if (mobilesList && mobilesList.length) setValue('mobile', mobilesList[0]);
   }, []);
 
   return (
@@ -104,21 +86,21 @@ const T006001 = ({ location }) => {
             <div>
               <FEIBInputLabel>姓名</FEIBInputLabel>
               <Controller
-                name="userName"
+                name="custName"
                 control={control}
                 render={({ field }) => (
                   <FEIBInput
                     {...field}
                     type="text"
-                    id="userName"
-                    name="userName"
+                    id="custName"
+                    name="custName"
                     placeholder="請輸入姓名"
-                    error={!!errors.userName}
+                    error={!!errors.custName}
                     disabled
                   />
                 )}
               />
-              <FEIBErrorMessage>{errors.userName?.message}</FEIBErrorMessage>
+              <FEIBErrorMessage>{errors.custName?.message}</FEIBErrorMessage>
               <FEIBInputLabel>手機號碼</FEIBInputLabel>
               <Controller
                 name="mobile"
@@ -134,7 +116,7 @@ const T006001 = ({ location }) => {
                     error={!!errors.mobile}
                   >
                     {
-                      mobiles.map((item) => (
+                      mobilesList?.map((item) => (
                         <FEIBOption value={item} key={item}>{item}</FEIBOption>
                       ))
                     }
@@ -157,7 +139,7 @@ const T006001 = ({ location }) => {
                     error={!!errors.account}
                   >
                     {
-                      accountList.map((item) => (
+                      accountList?.map((item) => (
                         <FEIBOption value={item.accountNo} key={item.accountNo}>
                           {`${accountFormatter(item.accountNo)}  ${item.alias}`}
                         </FEIBOption>

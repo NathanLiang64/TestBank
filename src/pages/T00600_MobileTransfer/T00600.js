@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { customPopup, showDrawer, closeDrawer } from 'utilities/MessageModal';
+import { getAccountsList } from 'utilities/CacheData';
+import { accountFormatter } from 'utilities/Generator';
 
 /* Elements */
 import AddNewItem from 'components/AddNewItem';
@@ -12,11 +14,14 @@ import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import T00600ModifyForm from './T00600_ModifyForm';
 
-import { fetchMobiles, fetchName } from './api';
+import { fetchMobiles, getProfile } from './api';
 
 /* Styles */
 import MobileTransferWrapper from './T00600.style';
 
+/**
+ * 手機號碼收款設定
+ */
 const T00600 = () => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -24,12 +29,27 @@ const T00600 = () => {
   const { startFunc, closeFunc } = useNavigation();
   const [mobileTransferData, setMobileTransferData] = useState([]);
   const [mobilesList, setMobilesList] = useState([]);
-  const [modifyData, setModifyData] = useState({
-    mobile: '',
-    account: '',
-    status: '',
-    isDefault: '',
-  });
+
+  const [model, setModel] = useState();
+  const getModel = async () => {
+    if (!model) {
+      dispatch(setWaittingVisible(true));
+      const profile = await getProfile();
+      const modelData = {
+        custName: profile.custName,
+        mobilesList,
+        // eslint-disable-next-line arrow-body-style
+        accountList: await getAccountsList('MSC', (accts) => { // 帳戶類型 M:母帳戶, S:證券戶, C:子帳戶
+          // 排除已綁定的帳號
+          return accts.filter((acct) => !mobileTransferData.find((bindInfo) => bindInfo.account === acct.accountNo));
+        }),
+      };
+      setModel(modelData);
+      dispatch(setWaittingVisible(false));
+      return modelData;
+    }
+    return model;
+  };
 
   // 新增手機號碼收款
   const addMobileTransferSetting = async () => {
@@ -39,7 +59,7 @@ const T00600 = () => {
         '您在本行留存的手機號碼皆已設定，請先取消， 再進行設定。',
       );
     } else {
-      history.push('/T006001', { mobiles: mobilesList });
+      history.push('/T006001', await getModel());
     }
   };
 
@@ -48,7 +68,7 @@ const T00600 = () => {
     const {
       bindQuickLogin, bindTxnOtpMobile, bindings, mobiles,
     } = await fetchMobiles({ tokenStatus: 1 });
-    setMobileTransferData(bindings || []);
+    setMobileTransferData(bindings);
     setMobilesList(mobiles || []);
     // 檢查是否綁定快速登入
     if (!bindQuickLogin) {
@@ -76,7 +96,7 @@ const T00600 = () => {
       await customPopup(
         '系統訊息',
         '您尚未設定「手機號碼收款」功能，是否立即進行設定？',
-        () => history.push('/T006001', { mobiles }),
+        async () => history.push('/T006001', await getModel()),
         closeFunc,
       );
     }
@@ -84,47 +104,43 @@ const T00600 = () => {
 
   // 刪除手機號碼收款
   const deleteMobileTransferSetting = async (data) => {
-    dispatch(setWaittingVisible(true));
-    const { custName } = await fetchName();
-    dispatch(setWaittingVisible(false));
     history.push(
-      '/T006002',
-      {
+      '/T006002', {
         type: 'delete',
         isModify: true,
         data: {
-          userName: custName || '',
+          custName: (await getModel()).custName,
           ...data,
         },
       },
     );
   };
 
-  // 關閉變更 drawer
-  const handleCloseDrawer = () => {
-    closeDrawer();
-  };
-
   // 編輯手機號碼收款
   const editMobileTransferSetting = async (data) => {
-    setModifyData(data);
+    const modifyData = {
+      ...await getModel(),
+      ...data,
+    };
     await showDrawer(
       '手機號碼收款變更',
-      <T00600ModifyForm modifyData={modifyData} onClose={handleCloseDrawer} />,
+      <T00600ModifyForm modifyData={modifyData} onClose={closeDrawer} />,
     );
+    // TODO 更新所有畫面資料。
   };
 
   // render 已設定的手機號碼收款項目
-  const renderMobileTransferItems = () => mobileTransferData
-    .map((item) => (
+  const renderMobileTransferItems = () => (
+    mobileTransferData.map((item) => (
       <SettingItem
         key={item.mobile}
         mainLable={item.mobile}
-        subLabel={`${item.isDefault ? '預設收款帳戶' : '非預設收款帳戶'} ${item.account}`}
+        subLabel={`${item.isDefault ? '預設收款帳戶' : '非預設收款帳戶'} ${accountFormatter(item.account)}`}
         editClick={() => editMobileTransferSetting(item)}
         deleteClick={() => deleteMobileTransferSetting(item)}
       />
-    ));
+    ))
+  );
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
