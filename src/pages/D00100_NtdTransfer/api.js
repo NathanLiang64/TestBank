@@ -49,6 +49,6 @@ export const executeNtdTransfer = async () => {
   const response = await callAPI('/api/transfer/ntd/v1/execute');
   return {
     ...response.data,
-    isSuccess: (response.isSuccess && response.data.errorCode === ''),
+    isSuccess: (response.isSuccess && !response.data.errorCode),
   };
 };

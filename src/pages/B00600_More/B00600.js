@@ -36,10 +36,12 @@ const More = () => {
 
     // 首次加載時取得用戶所有外幣的存款帳戶摘要資訊
     let groups;
-    if (!funcItemsData) {
+    if (!funcItemsData || funcItemsData.length === 0) {
       groups = await getMoreList();
-      sessionStorage.setItem('funcItems', JSON.stringify(groups || []));
-    } else groups = JSON.parse(funcItemsData);
+      if (groups) sessionStorage.setItem('funcItems', JSON.stringify(groups));
+    } else {
+      groups = JSON.parse(funcItemsData);
+    }
 
     setFuncGroups(groups || []);
     setCurrentGroup((groups && groups.length) ? groups[0].groupKey : '');

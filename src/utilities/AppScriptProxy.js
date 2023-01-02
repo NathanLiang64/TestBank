@@ -664,7 +664,8 @@ async function appTransactionAuth(request) {
     // NOTE 由原生處理：若生物辨識三次不通過 或是 使用者取消，才會傳回 false！
     const rs = await verifyBio(txnAuth.key);
     // 因為已綁MID，所以 密碼 也可以當第二因子；因此改用密碼驗證。
-    if (rs.result === false) allowedPWD = true;
+    // 所以，快登因子驗證失敗可改用密碼，成功就不需要再驗密碼了。
+    allowedPWD = (rs.result !== true);
 
     // NOTE 驗證成功(allowedPWD一定是false)但不用驗OTP，就直接傳回成功。
     //      若是驗證失敗或是還要驗OTP，就要開 Drawer 進行密碼或OTP驗證。
