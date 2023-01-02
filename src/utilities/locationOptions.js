@@ -23,6 +23,44 @@ export const localCounties = [
   { code: 'Z', name: '連江縣', id: '09007000' },
 ];
 
+/**
+ * 尋找指定縣市名稱的資料。
+ * @param {String} searchKey 要尋找的縣市名稱或代碼。
+ * @returns {{
+ *   code: String,
+ *   name: String,
+ *   id: String,
+ * }}
+ */
+export const findCounty = (searchKey) => {
+  const targetName = searchKey.trim().replace('台', '臺');
+  const code = searchKey.match(/[A-Z]/)?.at(0);
+  const result = localCounties.find((county) => (code && code === county.code) || (targetName === county.name));
+  if (!result) {
+    return null; // {code: '', name: '', id: ''};
+  }
+  return result;
+};
+
+/**
+ * 尋找指定鄉鎮市區名稱的資料。
+ * @param {String} searchKey 要尋找的鄉鎮市區名稱或代碼。
+ * @returns {{
+*   code: String,
+*   name: String,
+*   id: String,
+* }}
+*/
+export const findCity = (countyCode, searchKey) => {
+  const targetName = searchKey.trim();
+  const code = searchKey.match(/[A-Z]\d{2}/)?.at(0);
+  // eslint-disable-next-line no-use-before-define
+  const result = localCities[countyCode]?.find((city) => (code && code === city.code) || (targetName === city.name));
+  if (result) return result;
+
+  return null; // {code: '', name: '', id: ''};
+};
+
 export const localCities = {
   A: [
     { code: 'A01', name: '松山區', id: '63000010' },

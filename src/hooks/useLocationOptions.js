@@ -1,9 +1,26 @@
 import { useEffect, useState, useMemo } from 'react';
-import { getCountyList } from 'pages/T00700_BasicInformation/api';
+import { callAPI } from 'utilities/axios';
 
 // NOTE ========== 已棄用，暫時保留待刪除 ==========
 export const useLocationOptions = (watchedCountyName) => {
   const [locationLists, setLocationLists] = useState([]);
+
+  /**
+   * 縣市鄉鎮資料
+   * @returns {[{
+   *   countyName: String, // 縣市名稱
+   *   countyCode: String, // 縣市代碼
+   *   cities: [{
+   *     cityName: String, // 鄉鎮名稱
+   *     cityCode: String, // 鄉鎮代碼
+   *   }], // 鄉鎮市清單
+   * }]
+   * }
+   */
+  const getCountyList = async () => {
+    const response = await callAPI('/api/setting/queryCounty');
+    return response.data;
+  };
 
   // 縣市選單
   const countyOptions = useMemo(() => {
