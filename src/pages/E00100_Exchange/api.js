@@ -36,10 +36,21 @@ export const isEmployee = async (param) => {
  *   }, ...]
  * }, ...]
  */
-export const getAccountsList = async () => {
-  const response = await callAPI('/api/deposit/v1/getAccounts');
+export const getAccountsList = async (acctTypes) => {
+  const response = await callAPI('/api/deposit/v1/getAccounts', acctTypes);
   return response.data;
 };
+
+// Booking: '20.68000';
+// CashAskRate: '0.00000';
+// CashBidRate: '0.00000';
+// Currency: 'AUD';
+// CurrencyName: '澳幣';
+// DataType: 'REAL';
+// QueryDate: '20221230';
+// SpotAskRate: '20.84000'; // 客戶 台轉外
+// SpotBidRate: '20.51000'; // 客戶 外轉台
+// UpdateDateTime: '2022-12-29T15:44:11.957';
 
 // 取得可交易幣別
 export const getCcyList = async (param) => {

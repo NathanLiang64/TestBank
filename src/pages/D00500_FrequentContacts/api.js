@@ -45,8 +45,14 @@ export const addFrequentAccount = async (account) => {
   const response = await callAPI('/api/transfer/frequentAccount/v1/add', account);
   const headshotId = response.data;
 
+  /**
+   * NOTE : 改透過 getFrequentAccount 取得常用帳號清單 (若已經拿過清單，資料會從 redux 取得，若無則打 API 並回傳)
+   * 若直接透過 CacheReducer 拿取清單的話，在轉帳完成要新增常用帳號的情境下(D00100_2)，freqAccts 可能會是空值
+   */
+
   // 將新帳號加入快取。
-  const {freqAccts} = store.getState()?.CacheReducer;
+  // const {freqAccts} = store.getState()?.CacheReducer;
+  const freqAccts = await getFrequentAccount();
   const newAccount = {
     ...account,
     headshot: headshotId,
