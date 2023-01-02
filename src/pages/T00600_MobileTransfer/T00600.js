@@ -19,8 +19,9 @@ import MobileTransferWrapper from './T00600.style';
 
 const T00600 = () => {
   const history = useHistory();
-  const { startFunc, closeFunc } = useNavigation();
   const dispatch = useDispatch();
+
+  const { startFunc, closeFunc } = useNavigation();
   const [mobileTransferData, setMobileTransferData] = useState([]);
   const [mobilesList, setMobilesList] = useState([]);
   const [modifyData, setModifyData] = useState({
@@ -29,40 +30,40 @@ const T00600 = () => {
     status: '',
     isDefault: '',
   });
-  const [otpMobileNum, setOtpMobileNum] = useState('');
+
   // 新增手機號碼收款
-  const addMobileTransferSetting = () => {
+  const addMobileTransferSetting = async () => {
     if (mobilesList.length === 0) {
-      customPopup(
+      await customPopup(
         '系統訊息',
         '您在本行留存的手機號碼皆已設定，請先取消， 再進行設定。',
       );
-      return;
+    } else {
+      history.push('/T006001', { mobiles: mobilesList });
     }
-    history.push('/T006001', { otpMobileNum });
   };
 
   // 檢查是否設定快速登入、基本資料是否有手機號碼
   const checkBindAndMobile = async () => {
     const {
-      bindQuickLogin, bindTxnOtpMobile, bindings, mobiles, otpMobile,
+      bindQuickLogin, bindTxnOtpMobile, bindings, mobiles,
     } = await fetchMobiles({ tokenStatus: 1 });
     setMobileTransferData(bindings || []);
     setMobilesList(mobiles || []);
-    setOtpMobileNum(otpMobile);
     // 檢查是否綁定快速登入
-    if (bindQuickLogin === 'N') {
-      customPopup(
+    if (!bindQuickLogin) {
+      await customPopup(
         '系統訊息',
         '為符合手機號碼轉帳相關規範，請至設定>指紋辨識/臉部辨識/圖形密碼登入設定，進行快速登入綁定，造成不便，敬請見諒。',
         () => startFunc(FuncID.T00200),
         closeFunc,
+        '立即設定',
       );
       return;
     }
     // 檢查是否留存手機號碼
-    if (bindTxnOtpMobile === 'N') {
-      customPopup(
+    if (!bindTxnOtpMobile) {
+      await customPopup(
         '系統訊息',
         '您尚未於本行留存手機號碼，請先前往「基本資料變更」頁留存，再進設定。',
         () => startFunc(FuncID.T00700),
@@ -72,10 +73,10 @@ const T00600 = () => {
       return;
     }
     if (bindings && bindings.length === 0) {
-      customPopup(
+      await customPopup(
         '系統訊息',
         '您尚未設定「手機號碼收款」功能，是否立即進行設定？',
-        () => history.push('/T006001', { otpMobileNum: otpMobile }),
+        () => history.push('/T006001', { mobiles }),
         closeFunc,
       );
     }
@@ -105,9 +106,9 @@ const T00600 = () => {
   };
 
   // 編輯手機號碼收款
-  const editMobileTransferSetting = (data) => {
+  const editMobileTransferSetting = async (data) => {
     setModifyData(data);
-    showDrawer(
+    await showDrawer(
       '手機號碼收款變更',
       <T00600ModifyForm modifyData={modifyData} onClose={handleCloseDrawer} />,
     );
@@ -125,8 +126,10 @@ const T00600 = () => {
       />
     ));
 
-  useEffect(() => {
-    checkBindAndMobile();
+  useEffect(async () => {
+    dispatch(setWaittingVisible(true));
+    await checkBindAndMobile();
+    dispatch(setWaittingVisible(false));
   }, []);
 
   return (
