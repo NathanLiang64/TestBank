@@ -10,11 +10,10 @@ import { showCustomDrawer, showCustomPrompt, showError } from 'utilities/Message
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 
-import { getBasicInformation } from 'pages/T00700_BasicInformation/api';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { useNavigation } from 'hooks/useNavigation';
 import { accountFormatter } from 'utilities/Generator';
-import {getStatus, reIssueOrLost} from './api';
+import { getProfile, getStatus, reIssueOrLost} from './api';
 import LossReissueWrapper from './S00800.style';
 import {actionTextGenerator} from './utils';
 import { AddressEditor } from './S00800_AddressEditor';
@@ -52,7 +51,7 @@ const LossReissue = () => {
   // 執行掛失或補發
   const executeAction = async () => {
     dispatch(setWaittingVisible(true));
-    const {data} = await getBasicInformation();
+    const {data} = await getProfile();
     const auth = await transactionAuth(AuthCode.S00800, data.mobile);
 
     if (auth && auth.result) {

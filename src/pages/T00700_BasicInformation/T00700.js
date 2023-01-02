@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { transactionAuth } from 'utilities/AppScriptProxy';
-import { getBasicInformation, modifyBasicInformation } from 'pages/T00700_BasicInformation/api';
+import { getProfile, modifyBasicInformation } from 'pages/T00700_BasicInformation/api';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 /* Elements */
@@ -50,7 +50,7 @@ const T00700 = () => {
 
   const fetchCountyList = async () => {
     // 取得個人資料，並匯入表單
-    const data = await getBasicInformation();
+    const data = await getProfile();
     if (data) {
       setOriginPersonalData(data);
       const {

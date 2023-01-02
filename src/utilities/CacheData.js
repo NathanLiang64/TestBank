@@ -115,7 +115,8 @@ export const getAccountsList = async (acctTypes, onDataLoaded) => {
         return acct;
       })))
     .flat();
-  if (onDataLoaded) onDataLoaded(result);
+  if (onDataLoaded) return onDataLoaded(result);
+  return result;
 };
 
 /**

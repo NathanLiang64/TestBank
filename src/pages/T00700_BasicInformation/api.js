@@ -14,8 +14,8 @@ import { callAPI } from 'utilities/axios';
  *    userData, //年收入,職稱,行業
  * }>}
  */
-export const getBasicInformation = async () => {
-  const response = await callAPI('/api/setting/custQuery');
+export const getProfile = async () => {
+  const response = await callAPI('/api/setting/v1/getProfile');
   return response.data;
 };
 
