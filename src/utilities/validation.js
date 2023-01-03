@@ -391,7 +391,7 @@ export const otpCodeValidation = () => (
 export const addressValidation = () => (
   yup.string()
     .required(errorMessage.addressRequired)
-    .matches(/^[a-zA-Z0-9_\u4e00-\u9fa5]+$/, errorMessage.addressWrongFormat)
+    .matches(/^[a-zA-Z0-9_\u4e00-\u9fa5 ]+$/, errorMessage.addressWrongFormat)
 );
 
 // 無卡提款密碼驗證

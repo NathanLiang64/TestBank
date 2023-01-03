@@ -1,25 +1,6 @@
 import { callAPI } from 'utilities/axios';
 
 /**
- * 縣市鄉鎮資料
- *
- * @param token
- * @return {
- *    countyName     縣市名稱
- *    countyCode     縣市代碼
- *    cities: [{
- *        cityName   鄉鎮名稱
- *        cityCode   鄉鎮代碼
- *    }...]
- * }
- * @throws Exception
- */
-export const getCountyList = async (param) => {
-  const response = await callAPI('/api/setting/queryCounty', param);
-  return response.data;
-};
-
-/**
  * 個人基本資料查詢
  * @param token
  * @return {
@@ -37,7 +18,7 @@ export const getCountyList = async (param) => {
  */
 export const getBasicInformation = async (param) => {
   const response = await callAPI('/api/setting/custQuery', param);
-  return response;
+  return response.data;
 };
 
 /**

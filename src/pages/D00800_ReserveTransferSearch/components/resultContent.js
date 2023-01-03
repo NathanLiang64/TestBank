@@ -8,6 +8,7 @@ const DialogContent = ({ data, selectedAccount }) => (
   <DialogContentWrapper>
     <div className="resultContainer">
       <div className="stateContainer">
+        {/* TODO 尚無法得知 result 的資料為何，先給 stderrMsg  */}
         <img className="stateImage" src={data.stderrMsg ? ErrorImage : SuccessImage} alt="" />
         <div className={`stateContent ${data.stderrMsg ? 'fail' : 'success'}`}>
           { data.stderrMsg ? '轉帳失敗' : '轉帳成功'}
@@ -19,13 +20,14 @@ const DialogContent = ({ data, selectedAccount }) => (
       <div className="dataLabel">轉出金額與轉入帳號</div>
       <div className="balance">
         $
-        {toCurrency(data?.amount)}
+        {toCurrency(data?.transferAmount)}
       </div>
-      <div className="account">{data?.inActNo}</div>
+      <div className="account">{data?.accountNo}</div>
     </div>
     <div className="informationListContainer">
       <InformationList title="轉出帳號" content={selectedAccount.acctId} remark={selectedAccount.acctName} />
-      <InformationList title="時間" content={dateToString(data.trnsDate)} />
+      {/* TODO 尚無法得知 result 的資料為何，先回傳 rgDay */}
+      <InformationList title="時間" content={dateToString(data.rgDay)} />
     </div>
   </DialogContentWrapper>
 );

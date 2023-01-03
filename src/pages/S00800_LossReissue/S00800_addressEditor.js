@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useMemo } from 'react';
+import * as yup from 'yup';
 import {useForm} from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -6,17 +8,21 @@ import { FEIBButton, FEIBInputLabel } from 'components/elements';
 import { DropdownField, TextInputField } from 'components/Fields';
 
 import { localCities, localCounties } from 'utilities/locationOptions';
+import { addressValidation } from 'utilities/validation';
 import { LossReissueDialogWrapper } from './S00800.style';
-import { validationSchema } from './validationSchema';
 
-export const AddressEditor = ({currentFormValue, onSubmit}) => {
-  const {code: county} = localCounties.find(({name}) => currentFormValue.county.trim() === name);
-  const {code: city} = localCities[county].find(({name}) => currentFormValue.city.trim() === name);
+export const AddressEditor = ({addressValue, onSubmit}) => {
   const {
     control, handleSubmit, reset, watch,
   } = useForm({
-    resolver: yupResolver(validationSchema),
-    defaultValues: {...currentFormValue, county, city},
+    resolver: yupResolver(
+      yup.object().shape({
+        county: yup.string().required('請選擇縣市'),
+        city: yup.string().required('請選擇鄉鎮市區'),
+        addr: addressValidation(),
+      }),
+    ),
+    defaultValues: addressValue,
   });
 
   const [watchedCounty, watchedCity] = watch(['county', 'city']);

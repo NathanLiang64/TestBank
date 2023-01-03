@@ -39,32 +39,29 @@ const D00800 = () => {
   const {control, handleSubmit, watch } = useForm({ defaultValues });
   const [curTab, curReserveRange, curResultRange] = watch([TAB, RESERVE_DATE_RANGE, RESULT_DATE_RANGE]);
   const currentValue = {
-    sdate: dateToString(curTab === '1' ? curReserveRange[0] : curResultRange[0]),
-    edate: dateToString(curTab === '1' ? curReserveRange[1] : curResultRange[1]),
+    startDay: dateToString(curTab === '1' ? curReserveRange[0] : curResultRange[0], ''),
+    endDay: dateToString(curTab === '1' ? curReserveRange[1] : curResultRange[1], ''),
     searchObj: curTab === '1' ? searchList.reserve : searchList.result,
   };
 
   const onSearch = async ({ tab, reserveDateRange, resultDateRange }) => {
-    const sdate = dateToString(tab === '1' ? reserveDateRange[0] : resultDateRange[0]);
-    const edate = dateToString(tab === '1' ? reserveDateRange[1] : resultDateRange[1]);
-    const { acctId, ccycd, accountType } = selectedAccount;
+    const startDay = dateToString(tab === '1' ? reserveDateRange[0] : resultDateRange[0], '');
+    const endDay = dateToString(tab === '1' ? reserveDateRange[1] : resultDateRange[1], '');
+    const { acctId } = selectedAccount;
     const param = {
-      acctId,
-      ccycd,
-      accountType,
-      sdate,
-      edate,
-      queryType: 3, // ??? 目前 hardcode queryType = 3 ，意即只查詢網銀預約+臨櫃預約
+      accountNo: acctId,
+      startDay,
+      endDay,
     };
 
     const type = tab === '1' ? 'reserve' : 'result';
 
     // ??? 不同帳號的 reservedTransDetails 與 getResultTransDetails 回傳的資料結構不一樣.... 後續需請後端更正
-    const { bookList } = tab === '1' ? await getReservedTransDetails(param) : await getResultTransDetails(param);
+    const detailsRes = tab === '1' ? await getReservedTransDetails(param) : await getResultTransDetails(param);
 
     setSearchList((prevSearchList) => ({
       ...prevSearchList,
-      [type]: { ...prevSearchList[type], [`${acctId}_${sdate}_${edate}`]: bookList },
+      [type]: { ...prevSearchList[type], [`${acctId}_${startDay}_${endDay}`]: detailsRes },
     }));
   };
 
@@ -107,10 +104,10 @@ const D00800 = () => {
     </SwiperSlide>
   ));
 
-  const handleReserveDataDialogOpen = async (data) => {
+  const handleReserveDataDialog = async (data) => {
     await showCustomPrompt({
       title: '預約轉帳',
-      message: <DetailContent contentData={{ data, selectedAccount }} />,
+      message: <DetailContent data={data} selectedAccount={selectedAccount} />,
       onOk: () => toConfirmPage(data),
       okContent: '取消交易',
       onClose: () => {},
@@ -126,8 +123,8 @@ const D00800 = () => {
 
   // 預約轉帳查詢列表
   const renderSearchList = (tabValue) => {
-    const { searchObj, sdate, edate } = currentValue;
-    const key = `${selectedAccount?.acctId}_${sdate}_${edate}`;
+    const { searchObj, startDay, endDay } = currentValue;
+    const key = `${selectedAccount?.acctId}_${startDay}_${endDay}`;
     const list = searchObj[key];
 
     if (!selectedAccount?.acctId || !list) return <Loading space="both" isCentered />;
@@ -139,12 +136,13 @@ const D00800 = () => {
     };
     return list.map((item) => (
       <InformationTape
-        key={item.inActNo}
-        topLeft={tabValue === '1' ? `${item.inBank}-${item.inActNo}` : `${item.inActNo}`}
-        topRight={currencySymbolGenerator('TWD', parseFloat(item.amount))}
-        bottomLeft={tabValue === '1' ? `預約轉帳日：${dateToString(item.payDate)}` : `交易日期：${item.trnsDate}`}
-        bottomRight={tabValue === '1' ? item.type : undefined}
-        onClick={tabValue === '1' ? () => handleReserveDataDialogOpen(item) : () => handleOpenResultDialog(item)}
+        key={item.seqno}
+        topLeft={`${item.receiveBank}-${item.receiveAccountNo}`}
+        topRight={currencySymbolGenerator('TWD', parseFloat(item.transferAmount))}
+        bottomLeft={`${tabValue === '1' ? '預約轉帳日' : '交易日期'}:${dateToString(item.rgDay)}`} // TODO 若是週期，需要顯示每週星期幾 or 每月幾號
+        // eslint-disable-next-line no-nested-ternary
+        bottomRight={tabValue === '1' ? (item.cycle === 'D' ? '單筆' : '週期') : 'undefined'}
+        onClick={tabValue === '1' ? () => handleReserveDataDialog(item) : () => handleOpenResultDialog(item)}
         img={showImg(item.stderrMsg)}
       />
     ));
@@ -173,12 +171,11 @@ const D00800 = () => {
   // 切換帳號/Tab/日期範圍時 會檢查 searchList 有無特定的 key，若沒有就執行搜尋
   useEffect(() => {
     if (!selectedAccount) return;
-    const { searchObj, sdate, edate } = currentValue;
-    const key = `${selectedAccount.acctId}_${sdate}_${edate}`;
+    const { searchObj, startDay, endDay } = currentValue;
+    const key = `${selectedAccount.acctId}_${startDay}_${endDay}`;
     if (!searchObj[key]) handleSubmit(onSearch)();
   }, [selectedAccount, curTab, curReserveRange, curResultRange]);
 
-  console.log('selectedAccount', selectedAccount);
   return (
     <Layout title="預約轉帳查詢/取消" inspector={fetchTransferOutAccounts}>
       <ReserveTransferSearchWrapper className="searchResult">

@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { transactionAuth } from 'utilities/AppScriptProxy';
-import { getCountyList, getBasicInformation, modifyBasicInformation } from 'pages/T00700_BasicInformation/api';
+import { getBasicInformation, modifyBasicInformation } from 'pages/T00700_BasicInformation/api';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 /* Elements */
@@ -15,7 +15,6 @@ import { DropdownField, TextInputField } from 'components/Fields';
 /* Styles */
 import { showAnimationModal, showError } from 'utilities/MessageModal';
 import { AuthCode } from 'utilities/TxnAuthCode';
-// import { useLocationOptions } from 'hooks/useLocationOptions';
 import { useNavigation } from 'hooks/useNavigation';
 import { localCounties, localCities } from 'utilities/locationOptions';
 import BasicInformationWrapper from './T00700.style';
@@ -42,29 +41,23 @@ const T00700 = () => {
   const [originPersonalData, setOriginPersonalData] = useState();
   const countyOptions = localCounties.map(({name, code}) => ({label: name, value: code}));
   const cityOptions = useMemo(() => {
-    if (!watchedCounty) return [];
+    if (!watchedCounty || !localCities[watchedCounty]) return [];
     return localCities[watchedCounty].map(({ name, code }) => ({ label: name, value: code }));
   }, [watchedCounty]);
 
   const fetchCountyList = async () => {
     dispatch(setWaittingVisible(true));
     // 取得個人資料，並匯入表單
-    const { data, message } = await getBasicInformation();
-    if (data) {
-      setOriginPersonalData(data);
-      const {
-        email, mobile, addr, county, city,
-      } = data;
-      // NOTE 目前收到的 county & city 是縣市名稱，因爲編輯資料 API 所需的 Param 為代號
-      // 因此在這邊做轉換再放入表單中，接收與發送的格式是否統一待討論...
-      const {code: countyCode} = localCounties.find(({name}) => county.trim() === name);
-      const {code: cityCode} = localCities[countyCode].find(({name}) => city.trim() === name);
-      reset({
-        email, mobile, addr, county: countyCode, city: cityCode,
-      });
-    } else {
-      showError(message, closeFunc);
-    }
+    const basicInfo = await getBasicInformation();
+
+    setOriginPersonalData(basicInfo);
+    const {
+      email, mobile, addr, county, city,
+    } = basicInfo;
+
+    reset({
+      email, mobile, addr, county, city,
+    });
 
     dispatch(setWaittingVisible(false));
   };
@@ -101,7 +94,6 @@ const T00700 = () => {
 
   // 更新個人資料
   const modifyPersonalData = async (values) => {
-    // TODO 尚未確定 modifyBasicInformation API 的回傳格式為何？
     const param = {
       ...values,
       actionCode: getActionCode(values),

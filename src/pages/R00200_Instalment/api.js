@@ -16,13 +16,13 @@ export const queryInstallment = async (request) => {
 /**
  * 設定分期
  *
- * @param {{
+ * @param {[{
  *   applType: '分期方案 G: 單筆 , H: 總額'
  *   purchDate: '消費日期 yyyyMMdd'
  *   purchAmount: '消費金額'
  *   authCode: '授權號碼'
  *   totTerm: '總期數'
- * }[]} request
+ * }]} request
  */
 export const updateInstallment = async (request) => {
   const response = await callAPI('/api/card/installment/update', request);
@@ -81,5 +81,27 @@ export const getTxnDtl = async (request) => {
  */
 export const getTxn = async (request) => {
   const response = await callAPI('/api/card/installment/getAvailTxn', request);
+  return response.data;
+};
+
+/**
+ * 分期付款試算
+ *
+ * @param {{
+ *  applType,     // 分期方案 G:單筆, H:總額
+ *  purchDate,    // 消費日期 yyyyMMdd
+ *  purchAmount,  // 消費金額
+ *  authCode,     // 授權號碼
+ *  totTerm,      // 總期數
+ * }} request  // 序號
+ * @returns {Promise<{
+ *   purchDate, // 消費日期
+ *   purchAmount, // 消費金額
+ *   authCode, // 授權號碼
+ *   storeName, // 商店名稱
+ * }>}
+ */
+export const getPreCalc = async (request) => {
+  const response = await callAPI('/api/card/installment/preCalc', request);
   return response.data;
 };
