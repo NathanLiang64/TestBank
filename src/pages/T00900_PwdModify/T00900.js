@@ -18,6 +18,7 @@ import PwdModifyWrapper from './T00900.style';
 import { validationSchema } from './validationSchema';
 
 const PwdModify = () => {
+  const placeholderText = '請輸入網銀密碼（8-20位英數字）';
   const dispatch = useDispatch();
   const { closeFunc } = useNavigation();
   const {handleSubmit, control } = useForm({
@@ -78,19 +79,19 @@ const PwdModify = () => {
               labelName="您的網銀密碼"
               name="password"
               control={control}
-              inputProps={{autoComplete: 'off'}}
+              inputProps={{autoComplete: 'off', placeholder: placeholderText, maxLength: 20}}
             />
             <PasswordInputField
               labelName="新的網銀密碼"
               name="newPassword"
               control={control}
-              inputProps={{autoComplete: 'off'}}
+              inputProps={{autoComplete: 'off', placeholder: placeholderText, maxLength: 20}}
             />
             <PasswordInputField
               labelName="請確認新的網銀密碼"
               name="newPasswordCheck"
               control={control}
-              inputProps={{autoComplete: 'off'}}
+              inputProps={{autoComplete: 'off', placeholder: placeholderText, maxLength: 20}}
             />
           </div>
           <FEIBButton type="submit">儲存變更</FEIBButton>

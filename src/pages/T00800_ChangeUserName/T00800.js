@@ -20,6 +20,7 @@ import { validationSchema } from './validationSchema';
  * T00800 使用者代號變更
  */
 const ChangeUserName = () => {
+  const placeholderText = '請輸入使用者代號（6-20位英數字）';
   const dispatch = useDispatch();
   const { closeFunc } = useNavigation();
   const { handleSubmit, control } = useForm({
@@ -67,19 +68,19 @@ const ChangeUserName = () => {
               name="userName"
               control={control}
               labelName="您的使用者代號"
-              inputProps={{ placeholder: '請輸入使用者代號(6-20位英數字)', autoComplete: 'off' }}
+              inputProps={{ placeholder: placeholderText, autoComplete: 'off', maxLength: 20 }}
             />
             <PasswordInputField
               name="newUserName"
               control={control}
               labelName="新的使用者代號"
-              inputProps={{ placeholder: '請輸入新的使用者代號(6-20位英數字)', autoComplete: 'off' }}
+              inputProps={{ placeholder: placeholderText, autoComplete: 'off', maxLength: 20 }}
             />
             <PasswordInputField
               name="newUserNameCheck"
               control={control}
               labelName="請確認新的使用者代號"
-              inputProps={{ placeholder: '請再輸入新的使用者代號(6-20位英數字)', autoComplete: 'off' }}
+              inputProps={{ placeholder: placeholderText, autoComplete: 'off', maxLength: 20 }}
             />
           </div>
           <FEIBButton type="submit">儲存變更</FEIBButton>

@@ -234,13 +234,13 @@ const AccountDetails = ({
     let startDate = null;
     let endDate = null;
     if (cond?.mode) {
-      if (cond.mode === '0') {
+      if (cond.mode === '0' && cond.startDate) {
         startDate = stringToDate(cond?.startDate); // 轉為 Date 型別。
         endDate = stringToDate(cond?.endDate);
       } else {
         endDate = new Date();
         startDate = new Date();
-        startDate.setMonth(startDate.getMonth() - [6, 12, 24, 36][cond.mode - '1']);
+        startDate.setMonth(startDate.getMonth() - [36, 6, 12, 24, 36][cond.mode]);
       }
     }
     return { startDate, endDate };
@@ -251,7 +251,8 @@ const AccountDetails = ({
    * @param {*} cond 目前的查詢條件。
    */
   const renderSearchBarText = (cond) => {
-    if (!cond || (cond.mode === '0' && !cond.startDate) || cond.mode !== '0') return null; // 沒有設定查詢日期區間，就不顯示。
+    // 尚未開始查詢，就不顯示
+    if (!cond || cond.mode === undefined) return null;
     const dateRange = getDateRange(cond);
 
     return (

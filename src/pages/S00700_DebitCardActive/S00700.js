@@ -66,7 +66,7 @@ const S00700 = () => {
             inputProps={{maxLength: 6, inputMode: 'numeric'}}
             control={control}
           />
-          <p className="hint_text">金融卡背面右下角6碼數字</p>
+          <p className="hint_text">金融卡序號為金融卡背面右下角6碼數字</p>
           <FEIBButton type="submit">確認</FEIBButton>
         </form>
       </DebitCardActiveWrapper>
