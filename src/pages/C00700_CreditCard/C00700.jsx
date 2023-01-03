@@ -179,7 +179,7 @@ const CreditCardPage = () => {
     },
     {
       label: '回饋試算',
-      value: currencySymbolGenerator('TWD', bankeeCard.rewardsAmount),
+      value: currencySymbolGenerator('NTD', bankeeCard.rewardsAmount),
       iconType: 'Arrow',
       onClick: () => history.push('/C007002', { accountNo: bankeeCard.cardNo }),
     },

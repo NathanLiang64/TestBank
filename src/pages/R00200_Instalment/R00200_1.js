@@ -32,21 +32,24 @@ const R00200_1 = () => {
   });
   const watchedValue = watch('installmentItem');
 
-  const renderInstallmentRadioButton = (txn) => (
-    <InformationTape
-      className={`${watchedValue[txn.authCode] ? 'checkedtape' : ''}`}
-      topLeft={txn.storeName}
-      bottomLeft={`消費日期:${dateToString(txn.purchDate)}`}
-      topRight={currencySymbolGenerator('TWD', txn.purchAmount)}
-      checked={!!watchedValue[txn.authCode]}
-      customHeader={(
-        <FEIBCheckbox
-          $iconColor={theme.colors.text.light}
-          className="checkbox"
-          checked={!!watchedValue[txn.authCode]}
-        />
-      )}
-    />
+  const renderInstallmentRadioButton = (detail) => (
+    <div className="checkbox">
+      <FEIBCheckbox
+        className="customPadding"
+        name={detail.name}
+        checked={detail.value === watchedValue}
+      />
+      <div className="left-section">
+        <div className="name">{detail.name}</div>
+        <div className="date">
+          消費日期：
+          {detail.date}
+        </div>
+      </div>
+      <div className="right-section">
+        {currencySymbolGenerator('NTD', detail.cost)}
+      </div>
+    </div>
   );
 
   const generateOptions = () => state.availableTxns.map((txn) => ({

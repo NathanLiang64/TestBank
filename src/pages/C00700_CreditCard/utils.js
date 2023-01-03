@@ -4,18 +4,18 @@ import uuid from 'react-uuid';
 export const getCardListing = (d) => ([
   { key: '01', title: '帳單結帳日', content: dateToString(d.billClosingDate) },
   { key: '02', title: '繳費截止日', content: dateToString(d.payDueDate) },
-  { key: '03', title: '本期應繳金額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.newBalance) },
-  { key: '04', title: '最低應繳金額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.minDueAmount) },
-  { key: '05', title: '本期累積已繳金額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.paidAmount) },
+  { key: '03', title: '本期應繳金額', content: currencySymbolGenerator(d.currency ?? 'NTD', d.newBalance) },
+  { key: '04', title: '最低應繳金額', content: currencySymbolGenerator(d.currency ?? 'NTD', d.minDueAmount) },
+  { key: '05', title: '本期累積已繳金額', content: currencySymbolGenerator(d.currency ?? 'NTD', d.paidAmount) },
   { key: '06', title: '最近繳費日', content: dateToString(d.lastPayDate) },
 ]);
 
 export const getCreditListing = (d) => ([
-  { key: '01', title: '你的信用卡額度', content: currencySymbolGenerator(d.currency ?? 'TWD', d.cardLimit) },
-  { key: '02', title: '已使用額度', content: currencySymbolGenerator(d.currency ?? 'TWD', d.usedCardLimit) },
-  { key: '03', title: '可使用額度', content: currencySymbolGenerator(d.currency ?? 'TWD', d.availCardLimit) },
-  { key: '04', title: '國內預借現金可使用額度', content: currencySymbolGenerator(d.currency ?? 'TWD', d.cashAdvAvailLimitDomestic) },
-  { key: '05', title: '國外預借現金可使用額度', content: currencySymbolGenerator(d.currency ?? 'TWD', d.cashAdvAvailLimitOverseas) },
+  { key: '01', title: '你的信用卡額度', content: currencySymbolGenerator(d.currency ?? 'NTD', d.cardLimit) },
+  { key: '02', title: '已使用額度', content: currencySymbolGenerator(d.currency ?? 'NTD', d.usedCardLimit) },
+  { key: '03', title: '可使用額度', content: currencySymbolGenerator(d.currency ?? 'NTD', d.availCardLimit) },
+  { key: '04', title: '國內預借現金可使用額度', content: currencySymbolGenerator(d.currency ?? 'NTD', d.cashAdvAvailLimitDomestic) },
+  { key: '05', title: '國外預借現金可使用額度', content: currencySymbolGenerator(d.currency ?? 'NTD', d.cashAdvAvailLimitOverseas) },
 ]);
 
 export const backInfo = {

@@ -18,8 +18,8 @@ import AccountEditor from 'pages/D00500_FrequentContacts/D00500_AccountEditor';
 import { addFrequentAccount } from 'pages/D00500_FrequentContacts/api';
 import { shareMessage } from 'utilities/AppScriptProxy';
 
-import { setDrawerVisible } from 'stores/reducers/ModalReducer';
-import { showDrawer, showError, showInfo } from 'utilities/MessageModal';
+import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { showDrawer, showInfo } from 'utilities/MessageModal';
 import { useNavigation } from 'hooks/useNavigation';
 import { getTransInData, getDisplayAmount, getTransDate, getCycleDesc } from './util';
 import TransferWrapper from './D00100.style';
@@ -98,7 +98,9 @@ const TransferResult = (props) => {
    */
   const createRepeatableAccount = async () => {
     const onFinished = async (newAcct) => {
+      dispatch(setWaittingVisible(true));
       const headshotId = await addFrequentAccount(newAcct);
+      dispatch(setWaittingVisible(false));
       if (headshotId) {
         const message = '這個帳號已加入您的常用帳號名單中嚕！';
         await showInfo(message, () => dispatch(setDrawerVisible(false)));
@@ -112,6 +114,13 @@ const TransferResult = (props) => {
     };
 
     await showDrawer('新增常用帳號', (<AccountEditor initData={acctData} onFinished={onFinished} />));
+  };
+
+  /* 呼叫裝置開啟 通話(02-80731166)/取消 介面 */
+  const callServiceTel = () => {
+    const link = document.createElement('a');
+    link.href = 'tel:0280731166';
+    link.click();
   };
 
   /**
@@ -135,8 +144,8 @@ const TransferResult = (props) => {
         </>
       ) : (
         <>
-          {/* TODO 透過原生撥客服電話，但要先詢問使用者（撥客服、智能客服、LINE */}
-          <button type="button" onClick={() => showError('[聯絡客服]功能尚未完成！')}>
+          {/* 透過原生撥客服電話，但要先詢問使用者（撥客服、智能客服、LINE */}
+          <button type="button" onClick={() => callServiceTel()}>
             <PhoneIcon />
             聯絡客服
           </button>
@@ -166,7 +175,7 @@ const TransferResult = (props) => {
    * 頁面輸出。
    */
   return (
-    <Layout goBackFunc={closeFunc}>
+    <Layout title="轉帳結果" goBackFunc={closeFunc}>
       <TransferWrapper className="transferResultPage">
         <ResultAnimation
           isSuccess={model.result.isSuccess}
@@ -174,7 +183,7 @@ const TransferResult = (props) => {
           descHeader={model.result.errorCode}
           description={model.result.message}
         />
-        { renderTransferResult() }
+        { model.result.isSuccess && renderTransferResult() }
         { renderBottomAction(model.result.isSuccess) }
         { showSnapshotSuccess && (
           <SnackModal icon={<CameraIcon size={32} color={theme.colors.basic.white} />} text="截圖成功" />
