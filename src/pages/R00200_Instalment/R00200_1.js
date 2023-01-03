@@ -5,11 +5,9 @@ import { useHistory, useLocation } from 'react-router';
 
 import Layout from 'components/Layout/Layout';
 import { FEIBButton, FEIBCheckbox } from 'components/elements';
-import { currencySymbolGenerator, dateToString } from 'utilities/Generator';
+import { currencySymbolGenerator } from 'utilities/Generator';
 
-import InformationTape from 'components/InformationTape';
 import { CheckboxField } from 'components/Fields';
-import theme from 'themes/theme';
 import { useNavigation } from 'hooks/useNavigation';
 import InstalmentWrapper from './R00200.style';
 

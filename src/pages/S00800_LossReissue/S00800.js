@@ -18,25 +18,41 @@ import LossReissueWrapper from './S00800.style';
 import {actionTextGenerator} from './utils';
 import { AddressEditor } from './S00800_AddressEditor';
 
+/**
+ * 金融卡掛失/補發
+ */
 const LossReissue = () => {
   const dispatch = useDispatch();
   const { closeFunc } = useNavigation();
-  const [debitCardInfo, setDebitCardInfo] = useState();
+  const [debitCardInfo, setDebitCardInfo] = useState({
+    accountNo: '-',
+    actionText: '',
+    statusDesc: '',
+  });
   const [currentFormValue, setCurrentFormValue] = useState({});
-  const actionText = actionTextGenerator(debitCardInfo?.status);
 
   const updateDebitCardStatus = async () => {
     dispatch(setWaittingVisible(true));
 
     const cardInfo = await getStatus();
     if (cardInfo) {
-      const formValue = {
-        county: cardInfo.addrCity.trim(),
-        city: cardInfo.addrDistrict.trim(),
-        addr: cardInfo.addrStreet,
-      };
-      setCurrentFormValue(formValue);
-      setDebitCardInfo(cardInfo);
+      // 只有 5.掛失 或 6.註銷 才需要用到地址。
+      const reissue = (cardInfo.status === 5 || cardInfo.status === 6);
+      if (reissue) {
+        setCurrentFormValue({
+          county: cardInfo.addrCity.trim(),
+          city: cardInfo.addrDistrict.trim(),
+          addr: cardInfo.addrStreet,
+        });
+      }
+      setDebitCardInfo({
+        accountNo: accountFormatter(cardInfo.account),
+        actionText: actionTextGenerator(cardInfo.status),
+        status: cardInfo.status,
+        statusDesc: cardInfo.statusDesc,
+        reissue, // 表示可以進行補發，所以需要地址資訊。
+        islost: (cardInfo.status === 2 || cardInfo.status === 4 || cardInfo.status === 8), // 表示可掛失
+      });
     } else {
       showError('Network Error', closeFunc);
     }
@@ -60,10 +76,10 @@ const LossReissue = () => {
         message: (
           <SuccessFailureAnimations
             isSuccess={res && res.result}
-            successTitle={`${actionText}設定成功`}
-            errorTitle={`${actionText}設定失敗`}
-            successDesc={`狀態： (${debitCardInfo?.account}) ${res.message}`}
-            errorDesc={`狀態： (${debitCardInfo?.account}) ${res.message}`}
+            successTitle={`${debitCardInfo.actionText}設定成功`}
+            errorTitle={`${debitCardInfo.actionText}設定失敗`}
+            successDesc={`狀態： (${debitCardInfo.accountNo}) ${res.message}`}
+            errorDesc={`狀態： (${debitCardInfo.accountNo}) ${res.message}`}
           />
         ),
         onOk: () => updateDebitCardStatus(),
@@ -95,7 +111,7 @@ const LossReissue = () => {
 
   const onActionConfirm = () => {
     showCustomPrompt({
-      message: `是否確認${actionText}?`,
+      message: `是否確認${debitCardInfo.actionText}?`,
       onOk: () => executeAction(),
       onClose: () => {},
       noDismiss: true,
@@ -110,13 +126,13 @@ const LossReissue = () => {
             <li>
               <div className="blockLeft">
                 <p className="label debitCardStatusLabel">金融卡狀態</p>
-                <span className="content">{accountFormatter(debitCardInfo?.account) || '-'}</span>
+                <span className="content">{debitCardInfo.accountNo}</span>
               </div>
               <div className="blockRight">
-                <h3 className="debitState">{debitCardInfo?.statusDesc}</h3>
+                <h3 className="debitState">{debitCardInfo.statusDesc}</h3>
               </div>
             </li>
-            {actionText === '補發' && (
+            {debitCardInfo.reissue && (
             <li>
               <div className="blockLeft">
                 <p className="label">通訊地址</p>
@@ -133,7 +149,7 @@ const LossReissue = () => {
             )}
           </ul>
 
-          {actionText === '補發' && (
+          {debitCardInfo.reissue && (
             <div className="notice">
               <p className="section_1">提醒您：金融卡補發將收取新臺幣150元(包含手續費100元及郵寄掛號費用50元)，將由您的Bankee存款帳戶中自動扣除。請確認您的存款帳戶餘額至少有150元。</p>
               <br />
@@ -151,8 +167,8 @@ const LossReissue = () => {
           </Accordion>
         </div>
         {/* 在 新申請(1) 或是 已銷戶(7) 的情況下不能進行掛失或補發 */}
-        {actionText && (
-          <FEIBButton onClick={onActionConfirm}>{`${actionText}`}</FEIBButton>
+        {(debitCardInfo.reissue || debitCardInfo.islost) && (
+          <FEIBButton onClick={onActionConfirm}>{`${debitCardInfo.actionText}`}</FEIBButton>
         )}
       </LossReissueWrapper>
     </Layout>
