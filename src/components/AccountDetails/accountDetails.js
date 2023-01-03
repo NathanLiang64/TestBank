@@ -257,7 +257,6 @@ const AccountDetails = ({
   const renderSearchBarText = (cond) => {
     // 尚未開始查詢，就不顯示
     if (!cond || cond.mode === undefined) return null;
-
     const dateRange = getDateRange(cond);
 
     return (

@@ -93,6 +93,7 @@ const TransferResult = (props) => {
     const onFinished = async (newAcct) => {
       dispatch(setWaittingVisible(true));
       const headshotId = await addFrequentAccount(newAcct);
+      dispatch(setWaittingVisible(false));
       if (headshotId) {
         const message = '這個帳號已加入您的常用帳號名單中嚕！';
         await showInfo(message, () => dispatch(setDrawerVisible(false)));
@@ -110,6 +111,7 @@ const TransferResult = (props) => {
     await showDrawer('新增常用帳號', (<AccountEditor initData={acctData} onFinished={onFinished} />));
   };
 
+  /* 呼叫裝置開啟 通話(02-80731166)/取消 介面 */
   const callServiceTel = () => {
     const link = document.createElement('a');
     link.href = 'tel:0280731166';
@@ -137,7 +139,7 @@ const TransferResult = (props) => {
         </>
       ) : (
         <>
-          {/* TODO 透過原生撥客服電話，但要先詢問使用者（撥客服、智能客服、LINE */}
+          {/* 透過原生撥客服電話，但要先詢問使用者（撥客服、智能客服、LINE */}
           <button type="button" onClick={() => callServiceTel()}>
             <PhoneIcon />
             聯絡客服
@@ -176,7 +178,7 @@ const TransferResult = (props) => {
           descHeader={model.result.errorCode}
           description={model.result.message}
         />
-        {model.result.isSuccess && renderTransferResult() }
+        { model.result.isSuccess && renderTransferResult() }
         { renderBottomAction(model.result.isSuccess) }
         { showSnapshotSuccess && (
           <SnackModal icon={<CameraIcon size={32} color={theme.colors.basic.white} />} text="截圖成功" />

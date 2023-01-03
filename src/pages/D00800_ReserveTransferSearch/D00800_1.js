@@ -48,7 +48,7 @@ const ReserveTransferSearch1 = ({ location }) => {
         <section className="confrimDataContainer lighterBlueLine">
           <div className="dataLabel">轉出金額與轉入帳號</div>
           <div className="balance">
-            {currencySymbolGenerator('TWD', location.state?.amount)}
+            {currencySymbolGenerator('NTD', location.state?.amount)}
           </div>
           <div className="accountInfo">
             {location.state?.inBankName}
@@ -99,7 +99,7 @@ const ReserveTransferSearch1 = ({ location }) => {
             <InformationList
               title="帳戶餘額"
               content={`${currencySymbolGenerator(
-                'TWD',
+                'NTD',
                 location.state?.acctBalx,
               )}`}
               remark={location.state?.showName}

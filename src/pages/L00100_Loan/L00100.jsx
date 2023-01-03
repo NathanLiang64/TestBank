@@ -34,6 +34,7 @@ const Page = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const {startFunc} = useNavigation();
+
   const [loans, setLoans] = useState();
   const [detailMap, setDetailMap] = useState({});
 

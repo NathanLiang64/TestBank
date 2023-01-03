@@ -23,7 +23,7 @@ import { dateToYMD } from 'utilities/Generator';
     }
  */
 export const getTransactions = async (accountNo) => {
-  const response = await callAPI('/api/deposit/v1/getTransactions', { accountNo, currency: 'TWD' });
+  const response = await callAPI('/api/deposit/v1/getTransactions', { accountNo, currency: 'NTD' });
   return response.data;
 };
 
@@ -33,7 +33,7 @@ export const getTransactions = async (accountNo) => {
  * @param {*} currency 幣別代碼，預設為台幣(TWD)
  * @returns 存摺封面
  */
-export const downloadDepositBookCover = async (accountNo, currency = 'TWD') => {
+export const downloadDepositBookCover = async (accountNo, currency = 'NTD') => {
   const today = dateToYMD(); // 今天 yyyyMMdd
   const filename = `${accountNo}-${today}.pdf`;
   await download('/api/deposit/v1/getDepositBookCover', { accountNo, currency }, filename);

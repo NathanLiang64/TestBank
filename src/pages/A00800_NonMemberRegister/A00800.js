@@ -31,8 +31,8 @@ const A00800 = () => {
   // eslint-disable-next-line no-unused-vars
   const [inviteToken, setInviteToken] = useState('');
   const { closeFunc } = useNavigation();
-  const dispatch = useDispatch();
 
+  const dispatch = useDispatch();
   // 驗證錯誤文字 (文字依照1.0)
   const mobileError = (isEmpty) => `請輸入${!isEmpty && '正確的'}手機號碼`;
   const nameError = (isEmpty) => (isEmpty ? '請輸入姓名' : '姓名請勿超過5字元');

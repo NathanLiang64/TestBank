@@ -15,7 +15,7 @@ import CardLessATMWrapper from './D00300.style';
 
 const CardLessATM2 = ({ location }) => {
   const { closeFunc } = useNavigation();
-  const formatAmount = (amount) => new Intl.NumberFormat('zh-TW', { style: 'currency', currency: 'TWD', minimumFractionDigits: 0 }).format(amount);
+  const formatAmount = (amount) => new Intl.NumberFormat('zh-TW', { style: 'currency', currency: 'NTD', minimumFractionDigits: 0 }).format(amount);
 
   // Guard: 若導向過來的 param 不包含 data 則關閉該服務 (正常操作程序下不容易發生，但仍應防止)
   if (!location.state?.data) return closeFunc();

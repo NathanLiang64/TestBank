@@ -39,7 +39,7 @@ const MoreTranscations = () => {
     const request = {
       ...conditions,
       accountNo: account.accountNo,
-      currency: account.currency ?? 'TWD',
+      currency: account.currency ?? 'NTD',
     };
 
     // 取得帳戶交易明細（三年內）
