@@ -27,7 +27,8 @@ const ReserveTransferSearch1 = ({ location }) => {
         trnsDate, accountId, seqNo, source,
       } = location.state;
       const data = {
-        trnsDate, acctId: accountId, seqNo, queryType: source,
+        // BUG Request內容錯誤！
+        trnsDate, accountNo: accountId, seqNo, queryType: source,
       };
       const { code, message } = await cancelReserveTransfer(data);
 

@@ -1,11 +1,10 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/no-array-index-key */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Pagination } from 'swiper/core';
-import { dateToString } from 'utilities/Generator';
-import { switchLoading, closeFunc } from 'utilities/AppScriptProxy';
+import { dateToTwYMD } from 'utilities/Generator';
+import { switchLoading } from 'utilities/AppScriptProxy';
 import { getReservedTransDetails, getResultTransDetails } from 'pages/D00800_ReserveTransferSearch/api';
 
 /* Elements */
@@ -102,9 +101,10 @@ const ReserveTransferSearch = () => {
       ccycd: selectedAccount.ccyCd,
       accountType: selectedAccount.acctType, // 不確定是否要給
       queryType: '3',
-      sdate: dateToString(reserveDateRange[0]),
-      edate: dateToString(reserveDateRange[1]),
+      sdate: dateToTwYMD(reserveDateRange[0]),
+      edate: dateToTwYMD(reserveDateRange[1]),
     };
+    console.log(reserveDateRange, dateToTwYMD(reserveDateRange[0]));
     const { code, data } = await getReservedTransDetails(param);
     if (code === '0000') {
       setReserveDataList(data?.bookList);
@@ -120,8 +120,8 @@ const ReserveTransferSearch = () => {
       ccycd: selectedAccount.ccyCd,
       accountType: selectedAccount.acctType, // 不確定是否要給
       // queryType: '3',
-      sdate: dateToString(resultDateRange[0]),
-      edate: dateToString(resultDateRange[1]),
+      sdate: dateToTwYMD(resultDateRange[0]),
+      edate: dateToTwYMD(resultDateRange[1]),
     };
     const { code, data } = await getResultTransDetails(param);
     if (code === '0000') {

@@ -73,6 +73,25 @@ export const dateToString = (date, splitter, mmddOnly) => {
 export const dateToYMD = (date) => dateToString(date ?? new Date(), '');
 
 /**
+ * 將日期轉為 民國年YYYMMDD 字串
+ * @param {Date} date 要轉換的日期；若為 null 則以 Today 為預設值。
+ * @param {String} splitter 年月日間隔字元。
+ * @returns {String}
+ */
+export const dateToTwYMD = (date, splitter = '') => {
+  if (date) {
+    const parts = [
+      date.getFullYear() - 1911,
+      (date.getMonth() + 1).toString().padStart(2, '0'),
+      date.getDate().toString().padStart(2, '0'),
+    ];
+
+    return parts.join(splitter ?? '/');
+  }
+  return null;
+};
+
+/**
  * 將全數字的時間字串，轉為 HH:mm:ss 字串
  * @param {Date|String} time 全數字的時間字串，例：'235959'
  */

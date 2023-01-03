@@ -9,17 +9,11 @@ import { callAPI } from 'utilities/axios';
 /**
  * 查詢客戶信用卡帳單資訊
  * (信用卡子首頁_信用卡資訊)
- *
- * @param token
  * @param {
- *    acctId:             帳號
- *    ccycd:              幣別代碼
- *    accountType:        帳號類別
- *    queryType:          查詢種類 無值：網路預約(for行動銀行)1:網路預約2:臨櫃預約3:網銀預約+臨櫃預約4:存錢計畫預約
- *    sdate:              查詢起始日 YYYY/MM/DD
- *    edate:              查詢截止日 YYYY/MM/DD
+ *    accountNo: 帳號
+ *    startDay: 查詢起始日 YYYYMMDD
+ *    endDay: 查詢截止日 YYYYMMDD
  * }
- *
  */
 // 查詢預約轉帳明細
 export const getReservedTransDetails = async (param) => {

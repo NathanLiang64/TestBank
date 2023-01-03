@@ -12,7 +12,7 @@ import InformationTape from 'components/InformationTape';
 import { FEIBTabContext, FEIBTabPanel } from 'components/elements';
 import FailImage from 'assets/images/failIcon.png';
 import SuccessImage from 'assets/images/successIcon.png';
-import { currencySymbolGenerator, dateToString } from 'utilities/Generator';
+import { currencySymbolGenerator, dateToString, dateToYMD } from 'utilities/Generator';
 import { showCustomPrompt } from 'utilities/MessageModal';
 
 import { getAccountsList } from 'utilities/CacheData';
@@ -39,21 +39,21 @@ const D00800 = () => {
   const {control, handleSubmit, watch } = useForm({ defaultValues });
   const [curTab, curReserveRange, curResultRange] = watch([TAB, RESERVE_DATE_RANGE, RESULT_DATE_RANGE]);
   const currentValue = {
-    sdate: dateToString(curTab === '1' ? curReserveRange[0] : curResultRange[0]),
-    edate: dateToString(curTab === '1' ? curReserveRange[1] : curResultRange[1]),
+    sdate: dateToYMD(curTab === '1' ? curReserveRange[0] : curResultRange[0]),
+    edate: dateToYMD(curTab === '1' ? curReserveRange[1] : curResultRange[1]),
     searchObj: curTab === '1' ? searchList.reserve : searchList.result,
   };
 
   const onSearch = async ({ tab, reserveDateRange, resultDateRange }) => {
-    const sdate = dateToString(tab === '1' ? reserveDateRange[0] : resultDateRange[0]);
-    const edate = dateToString(tab === '1' ? reserveDateRange[1] : resultDateRange[1]);
+    const startDay = dateToYMD(tab === '1' ? reserveDateRange[0] : resultDateRange[0]);
+    const endDay = dateToYMD(tab === '1' ? reserveDateRange[1] : resultDateRange[1]);
     const { acctId, ccycd, accountType } = selectedAccount;
     const param = {
-      acctId,
+      accountNo: acctId,
       ccycd,
       accountType,
-      sdate,
-      edate,
+      startDay,
+      endDay,
       queryType: 3, // ??? 目前 hardcode queryType = 3 ，意即只查詢網銀預約+臨櫃預約
     };
 
@@ -64,7 +64,7 @@ const D00800 = () => {
 
     setSearchList((prevSearchList) => ({
       ...prevSearchList,
-      [type]: { ...prevSearchList[type], [`${acctId}_${sdate}_${edate}`]: bookList },
+      [type]: { ...prevSearchList[type], [`${acctId}_${startDay}_${endDay}`]: bookList },
     }));
   };
 
