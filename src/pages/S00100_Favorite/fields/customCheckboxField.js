@@ -1,5 +1,7 @@
 /* eslint-disable */
-import React from 'react';
+import React, {
+  useEffect
+} from 'react';
 import { BlockSelectedIcon } from 'assets/images/icons';
 import FavoriteBlockButtonStyle from 'components/FavoriteBlockButton/favoriteBlockButton.style';
 import { useController } from 'react-hook-form';
@@ -11,98 +13,135 @@ export const CustomCheckBoxField = ({
   immdlySubmit,
   setShowTip,
   label,
-  checkedArray,
   actKey,
   changeCallback,
+  doSubmit,
+  usedPostions,// 是上一層 (S00100_1)傳過來的 reference, 用來記錄已勾選的項目, 用來在 S00100_1提交表單時使用
   ...props
 }) => {
   const { field } = useController(props);
   const { onChange, name, value } = field;
-  const onChangeHandler = (event) => {
-    const changedActKey = event.target.getAttribute('data-actkey');
 
-    // 若 checkedArray 裡已存有勾選項目, 就先刪除掉 以方便後續處理
-    const changedIndex = checkedArray.indexOf(changedActKey);
-    if (changedIndex !== -1) {
-      checkedArray.splice(changedIndex, 1);
-    }
+  const getRealCheckedCount = () => {
 
-    // 把已勾選的項目存進 checkedArray
-    const ele = document.getElementById(`favoriteBlockButton.${changedActKey}`);
-
-    if ( ele.getAttribute('class').indexOf('selected') === -1 ) {
-
-        if (checkedArray.length < 10) { 
-            
-          checkedArray.push(changedActKey);
-
-          ele.setAttribute('class', ele.getAttribute('class') + ' selected' );
-
-          event.target.checked = true;
-
-        }else{
-
-          event.target.checked = false;
-        }
-      
-    }else{
-
-        const classRemoveSelected = ele.getAttribute('class').replace(' selected', ' ');
-
-        ele.setAttribute('class', classRemoveSelected);
-    }
-   
-    if (checkedArray.length >= 10) {// 假如已選滿 10個, 停用未選項目的按鈕功能 並 顯示已滿提示
-      let index;
-      const list = document.getElementsByClassName('favorite_btn');
-
-      for (index = 0; index < list.length; ++index) {
-        if ( list[index].getAttribute('class').indexOf('selected') === -1 ) {
-
-          list[index].setAttribute('disabled', 'disabled');
-        }
+    let realArrayCount = 0;
+    for (let i = 0; i < 10; i++) {
+      if(typeof usedPostions[i] !== 'undefined'){
+        realArrayCount++;
       }
-      setShowTip(true);
-
-    } else {// 假如未選滿, 啟用全部停用項目的按鈕功能 並 取消已滿提示
-      let index;
-      const list = document.getElementsByClassName('favorite_btn');
-
-      for (index = 0; index < list.length; ++index) {
-        if ( list[index].getAttribute('disabled') === 'disabled' ) {
-
-          list[index].removeAttribute('disabled');
-        }
-      }
-      setShowTip(false);
     }
 
-    // 觸發下方欄 "編輯完成(數字)" 的改變
-    changeCallback(checkedArray.length);
-
-    /* for debug
-    console.log('========= checkbox changed ============');
-    console.log(changedActKey);
-    console.log(checkedArray);
-    console.log('=======================================');
-    */
+    return realArrayCount;
   };
 
-  // let fSize = checkedArray.length;
-  // console.log('fSize');
-  // console.log(fSize);
+  useEffect(() => {
+    
+    
+    changeCallback(getRealCheckedCount());
+    
+  }, []);
 
-  // 針對已存在於 checkedArray 的項目, 做項目按鈕的反紫處理,
+  const onChangeHandler = (event) => {
+    
+    const changedActKey = event.target.getAttribute('data-actkey');
+
+    const ele = document.getElementById(`favoriteBlockButton.${changedActKey}`);
+    
+    if( !isEditAction ){// 新增模式
+
+      // 新增模式下僅能選取未被加入的選項
+      if ( ele.getAttribute('class').indexOf('selected') === -1 ) {
+
+        ele.setAttribute('class', ele.getAttribute('class') + ' selected' );
+
+        doSubmit();
+      }
+
+    }else{// 編輯模式
+
+console.log(usedPostions);
+console.log( usedPostions.indexOf(changedActKey));
+      
+     
+
+      // 把使用者已勾選的項目存進 
+      if ( ele.getAttribute('class').indexOf('selected') === -1 ) {
+
+          if (getRealCheckedCount() < 10) { 
+
+            // 從先前的空位開始塞
+            for (let i = 0; i < 10; i++) {
+
+                if(typeof usedPostions[i] === 'undefined'){
+                    usedPostions[i] = changedActKey;
+                    break;
+                }
+            };
+              
+            ele.setAttribute('class', ele.getAttribute('class') + ' selected' );
+          }
+        
+      }else{
+
+          // 若已存有勾選項目, 就刪除掉
+          if( usedPostions.indexOf(changedActKey) !== -1 ){
+
+            delete usedPostions[usedPostions.indexOf(changedActKey)];
+          }
+
+          const classRemoveSelected = ele.getAttribute('class').replace(' selected', ' ');
+
+          ele.setAttribute('class', classRemoveSelected);
+      }
+
+
+      // 假如使用者已選滿 10個, 停用未選項目的按鈕功能 並 顯示已滿提示
+      if (getRealCheckedCount() >= 10) {
+        let index;
+        const list = document.getElementsByClassName('favorite_btn');
+
+        for (index = 0; index < list.length; ++index) {
+          if ( list[index].getAttribute('class').indexOf('selected') === -1 ) {
+
+            list[index].setAttribute('disabled', 'disabled');
+          }
+        }
+        setShowTip(true);
+
+      } else {// 假如未選滿, 啟用所有 disabled項目的按鈕功能 並 取消已滿提示
+        let index;
+        const list = document.getElementsByClassName('favorite_btn');
+
+        for (index = 0; index < list.length; ++index) {
+          if ( list[index].getAttribute('disabled') === 'disabled' ) {
+
+            list[index].removeAttribute('disabled');
+          }
+        }
+        setShowTip(false);
+      }
+
+      // 觸發下方欄 "編輯完成(數字)" 括號內數字的改變更新
+      changeCallback(getRealCheckedCount());
+    }
+  };
+
+
+  // 透過設定class屬性, 針對已存在於 checkedArray 的項目, 做項目按鈕的反紫處理,
   // class參數: selected = 反紫, disabled = 反白
-  let classValue = checkedArray.indexOf(actKey) !== -1 ? 'selected' : '';
+  let classValue = usedPostions.indexOf(actKey) !== -1 ? 'selected' : '';
   classValue += ' favorite_btn';
+
+
 
   return (
     <FavoriteBlockButtonStyle
       id={`favoriteBlockButton.${actKey}`}
       data-actkey={actKey}
       className={classValue}
-      disabled={(checkedArray.indexOf(actKey) === -1 && checkedArray.length == 10) ? 'disabled' : ''}
+      disabled={(() => {
+        return (getRealCheckedCount() >=  10 && usedPostions.indexOf(actKey) === -1 ) ? 'disabled' : '';
+      })()}
     >
       <label
         htmlFor={name}
@@ -120,7 +159,7 @@ export const CustomCheckBoxField = ({
           onChange={onChangeHandler}
           checked={!!value}
         />
-        <BlockSelectedIcon className="selectedIcon" />
+        {isEditAction && (<BlockSelectedIcon className="selectedIcon" />)}
       </label>
     </FavoriteBlockButtonStyle>
 

@@ -22,7 +22,7 @@ import {
 import { validationSchema } from './validationSchema';
 
 const Favorite2New = ({
-  favoriteList, updateFavoriteList, back2MyFavorite, isEditAction,
+  favoriteList, back2MyFavorite, isEditAction, addPoposition
 }) => {
   const [favoriteSettingList, setFavoriteSettingList] = useState([]);
   const [initialValues, setInitialValues] = useState({});
@@ -32,28 +32,47 @@ const Favorite2New = ({
   const mainContentRef = useRef();
   const dispatch = useDispatch();
 
-  const trueArray = useMemo(() => ({ checkedArray: [] }), []);
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    return () => { 
+      mountedRef.current = false
+    }
+  }, []);
 
-  // for real-time update checked item length 
+  // 為了在使用者勾選項目變動時, 即時更新下方欄位的編輯完成括號裡的數字
   const [checkedArrayLength, setcheckedArrayLength] = useState(0);
-  useEffect(() => {
-    
-    setcheckedArrayLength(trueArray.checkedArray.length);
-  });
+ 
 
-  // record the already checked items that before enter edit page
+  // 在進入編輯頁面時, 將使用者先前就已加入最愛的項目先紀錄下來, 用於提交清單時 RESET 這些項目
   const alreadyCheckedItemBeforeEdit = useMemo(() => ([]), []);
+  const usedPostions = useMemo(() => ([]), []);
+  const hasExistedCardLess = useRef(false); 
+
   useEffect(() => {
 
-    // console.log('======== favoriteList========');
-    // console.log(favoriteList);
-    // console.log('=============================');
+    console.log('======== favoriteList========');
+    console.log(favoriteList);
+    console.log('=============================');
 
+    hasExistedCardLess.current = false;
 
     favoriteList.map((obj, index) => {
 
           alreadyCheckedItemBeforeEdit.push(obj['actKey']);
+
+          if( obj['actKey'] == FuncID.D00300 ){
+            hasExistedCardLess.current = true;
+          }
+
+
+          if( obj['position'] != -1 ){ 
+            usedPostions[obj['position']] = obj['actKey'];
+          }
     });
+
+    console.log('======== usedPostions========');
+    console.log(usedPostions);
+    console.log('=============================');
     
     // console.log('======== alreadyCheckedItemBeforeEdit ===========');
     // console.log(alreadyCheckedItemBeforeEdit);
@@ -71,6 +90,7 @@ const Favorite2New = ({
   const {
     control: cardLessControl,
     handleSubmit: cardLessHandleSubmit,
+    formState: { errors }
   } = useForm({ defaultValues: {cardLessCredit: ''}, resolver: yupResolver(validationSchema) });
 
   // 已選取 10 項不可被選取 & 新增模式下僅能選取未被加入的選項
@@ -86,95 +106,96 @@ const Favorite2New = ({
     return false;
   };
 
-  const patchAndRedirect = async (patchedList=[]) => {
+                
+  const patchOneAndRedirect = async (actKey, addPoposition) => {
     dispatch(setWaittingVisible(true));
 
-    /* for debug    
-    console.log('================= checked items =====================');
-    console.log(trueArray.checkedArray);
-    console.log('=====================================================');
-
-    console.log('========== already checked items before edit ========');
-    console.log(alreadyCheckedItemBeforeEdit);
-    console.log('=====================================================');
-    */
-
-    // reset all items, skip 2 default items
-    alreadyCheckedItemBeforeEdit.shift();
-    alreadyCheckedItemBeforeEdit.shift();
-    await Promise.all(
-      alreadyCheckedItemBeforeEdit.map((actKey, position) => {
- 
-          return deleteFavoriteItem(actKey);
-      }),
-    );
-
-    // re-add all checked items
-    await Promise.all(
-      trueArray.checkedArray.map((actKey, position) => {
-
-            return modifyFavoriteItem({ actKey, position: parseInt(position, 10) })
-      }),
-    );
-
-    // refresh list
-    await updateFavoriteList();
+    await modifyFavoriteItem({ actKey, position: parseInt(addPoposition, 10) });
 
     dispatch(setWaittingVisible(false));
     back2MyFavorite();
   };
 
-  // 編輯完成送出表單
-  const onSubmit = async ({ editedBlockList }) => {
 
-    /* for debug  
-    console.log('=========== for debug ==================');
-    console.log(JSON.stringify(trueArray.checkedArray));
-    console.log(JSON.stringify(favoriteList));
-    console.log(JSON.stringify(editedBlockList));
-    console.log('========================================');
-    */
+  const patchAndRedirect = async (patchedList=[]) => {
+    dispatch(setWaittingVisible(true));
 
-    // generate new editedBlockList
-    const tmp = {}; 
-    for (const [key, value] of Object.entries(editedBlockList)) {
-      tmp[key] = (trueArray.checkedArray.indexOf(key) === -1 ) ? false : true;
-    }
-    editedBlockList = JSON.parse(JSON.stringify(tmp));
+    const itemsSkipFixTwo = JSON.parse(JSON.stringify(alreadyCheckedItemBeforeEdit)).splice(2);
 
+    // 判斷編輯頁的勾選項目如果沒變動就不重新 submit
+    // if( JSON.stringify(trueArray.checkedArray) != JSON.stringify(itemsSkipFixTwo) ){
 
-    const orderedList = generateReorderList(favoriteList, editedBlockList);
-    const trimmedList = generateTrimmedList(orderedList, 10, '');
-    // 應該從 cardLess API 得知是否已有設定值，並以此決定是否要設置無卡提款
-    // 目前尚未拿到 cardless API，先透過是否已經存在無卡提款服務來避開
-    const alreadyExistedCardLess = findExistedValue(initialValues, FuncID.D00300);
-    if (trimmedList.includes(FuncID.D00300) && !alreadyExistedCardLess) {
-      await showCustomPrompt({
-        title: '無卡提款',
-        message: (
-          <DropdownField
-            options={cardLessOptions}
-            labelName="快速提領金額"
-            name="cardLessCredit"
-            control={cardLessControl}
-          />
-        ),
-        onOk: cardLessHandleSubmit(async (values) => {
-          console.log('values', values); // 待 無卡提款設定 API 開發完畢
-          dispatch(setModalVisible(false));
-
-          // patchAndRedirect(trimmedList); //原寫法棄用
-          patchAndRedirect();
+      // RESET 使用者在進入編輯頁面時 就已加入最愛的項目, 除了預設寫死的前 2 個項目
+      alreadyCheckedItemBeforeEdit.shift();
+      alreadyCheckedItemBeforeEdit.shift();
+      await Promise.all(
+        alreadyCheckedItemBeforeEdit.map((actKey, position) => {
+   
+            return deleteFavoriteItem(actKey);
         }),
-        onClose: () => {
-          if (isEditAction) return;
-          reset({editedBlockList: initialValues}); // 新增模式情況下，按下 X 按鈕時需要取消勾選
-        },
-        noDismiss: true,
-      });
-    } else {
+      );
 
-      // patchAndRedirect(trimmedList); //原寫法棄用
+      // 加入所有勾選的項目
+      await Promise.all(
+        usedPostions.map((actKey, position) => {
+
+              return modifyFavoriteItem({ actKey, position: parseInt(position, 10) })
+        }),
+      );
+    // }
+
+    dispatch(setWaittingVisible(false));
+    back2MyFavorite();
+  };
+
+  const handleCardlessSubmit = (okCallback) => {
+    showCustomPrompt({
+      title: '無卡提款',
+      message: (
+        <DropdownField
+          options={cardLessOptions}
+          labelName="快速提領金額"
+          name="cardLessCredit"
+          control={cardLessControl}
+        />
+      ),
+      onOk:cardLessHandleSubmit(async (values) => {
+        console.log('values', values); // 待 無卡提款設定 API 開發完畢
+
+        dispatch(setModalVisible(false));
+
+        // patchAndRedirect(trimmedList); //原寫法棄用
+
+        // if( isEditAction ){
+
+        //   patchAndRedirect();
+        // }else{
+
+        //   patchOneAndRedirect(actKey, addPoposition);
+        // }
+        
+        okCallback();
+      }),
+      onClose: () => {
+        if (isEditAction) return;
+        back2MyFavorite(); // 新增模式情況下，按下 X 按鈕時 回到上一頁
+      },
+      noDismiss: true,
+    });
+  };
+
+  // 編輯完成送出表單
+  const onSubmit = ({ editedBlockList }) => {
+
+    if( usedPostions.indexOf(FuncID.D00300) !== -1 && !hasExistedCardLess.current ){
+
+      handleCardlessSubmit(() => {
+                    
+        patchAndRedirect();
+      });
+
+    }else{
+
       patchAndRedirect();
     }
   };
@@ -212,6 +233,23 @@ const Favorite2New = ({
       <div className="blockGroup">
         {items.map(({actKey, name}) => (
           <CustomCheckBoxField
+            doSubmit={() => {
+
+              if( !isEditAction ){
+
+                if( actKey == FuncID.D00300 ){
+
+                  handleCardlessSubmit(() => {
+
+                    patchOneAndRedirect(actKey, addPoposition);
+                  });
+
+                }else{
+
+                  patchOneAndRedirect(actKey, addPoposition);
+                }
+              }
+            }}
             key={actKey}
             control={control}
             name={`editedBlockList.${actKey}`}
@@ -221,7 +259,7 @@ const Favorite2New = ({
             immdlySubmit={handleSubmit(onSubmit)}
             isEditAction={isEditAction}
             setShowTip={setShowTip}
-            checkedArray={trueArray.checkedArray}
+            usedPostions={usedPostions}
             actKey={actKey}
             changeCallback={(checkedSize) => {setcheckedArrayLength(checkedSize)}}
           />
@@ -237,7 +275,12 @@ const Favorite2New = ({
   // 拿取 favoriteSettingList
   useEffect(async () => {
     try {
+
       const res = await getFavoriteSettingList();
+
+      // mountedRef is used here to indicate if the component is still mounted. And if so, continue the async call to update component state, otherwise, skip them.
+      if (!mountedRef.current) return null;
+      
       if (Array.isArray(res) && res?.length) setFavoriteSettingList(res);
     } catch (err) {
       console.log('編輯我的最愛 err', err);
@@ -256,18 +299,7 @@ const Favorite2New = ({
     if (!favoriteSettingList.length) return;
     const initValue = extractGroupItems(favoriteSettingList);
 
-    for (const key in initValue) {
-      if (initValue[key]) {
-        trueArray.checkedArray.push(key);
-      }
-    }
-
-    /* for debug
-    console.log('======================');
-    console.log(JSON.stringify(initValue));
-    console.log(JSON.stringify(trueArray.checkedArray));
-    console.log('======================');
-    */
+    
 
     setInitialValues(initValue);
     reset({editedBlockList: initValue});
@@ -292,7 +324,7 @@ const Favorite2New = ({
       >
         {renderBlockGroup()}
         {
-          // isEditAction && 
+          isEditAction && 
           (
           <BottomAction position={0}>
             <button

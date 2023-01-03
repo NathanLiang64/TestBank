@@ -11,6 +11,7 @@ import { showCustomPrompt } from 'utilities/MessageModal';
 import { closeFunc, startFunc } from 'utilities/AppScriptProxy';
 import { FuncID } from 'utilities/FuncID';
 
+
 import S00100_1 from './S00100_1';
 import { blockBackgroundGenerator, iconGenerator } from './favoriteGenerator';
 import FavoriteDrawerWrapper, { DndItemContainer } from './S00100.style';
@@ -19,307 +20,636 @@ import {
 } from './utils';
 import { deleteFavoriteItem, getFavoriteList, modifyFavoriteItem } from './api';
 
+const triggerEvent = (values) => {
+  
+    const event = new CustomEvent('triggerEvent_S00100', {
+      detail: values
+    });
+
+    document.dispatchEvent( event ) ;
+};
+
 const Favorite = () => {
-  const initialViewControl = {
-    title: '我的最愛',
-    content: 'home',
-  };
-  const [viewControl, setViewControl] = useState(initialViewControl);
+  
+  const [cardLessMoneyLabel, setCardLessMoneyLabel] = useState('');
   const [pressTimer, setPressTimer] = useState(0);
-  const [favoriteList, setFavoriteList] = useState([]);
-  const [dndList, setDndList] = useState([]);
 
-  const isEditOrAddMode = useMemo(() => {
-    if (viewControl.content === 'edit' || viewControl.content === 'add') return true;
-    return false;
-  }, [viewControl]);
+  const [viewComponentMain, setViewComponentMain] = useState('');
+  const [viewCloseBtnFunction, setViewCloseBtnFunction] = useState(() => {});
+  const [viewTitle, setViewTitle] = useState('我的最愛');
 
-  // 產生有序的列表
-  const orderedList = useMemo(() => {
-    if (!favoriteList.length) return [];
-    const blocks = favoriteList.reduce((acc, block) => {
-      const position = parseInt(block.position, 10);
-      // position + 2 -> 前 2 個是固定的，從陣列第三筆開始排序
-      if (position < 0) acc.push(block);
-      if (position >= 0) acc[position + 2] = block;
-      return acc;
-    }, []);
-    const trimmedList = generateTrimmedList(blocks, 12, BlockEmpty);
-    return trimmedList;
-  }, [favoriteList]);
-
-  // 取得用戶我的最愛清單
-  const updateFavoriteList = async () => {
-    try {
-      const res = await getFavoriteList();
-      if (!res) throw new Error('updateFavortieList response is empty');
-      setFavoriteList(res);
-    } catch (err) {
-      console.log('updateFavoriteList', err);
-    }
-  };
-
-  // 控制顯示畫面
-  const handleOpenView = (viewName) => {
-    let title = '新增我的最愛';
-    if (viewName === 'edit') title = '編輯我的最愛';
-    if (viewName === 'remove') title = '移除我的最愛';
-    setViewControl({
-      title,
-      content: viewName,
-    });
-  };
-
-
-  // handle all the items remove
-  const memoValues = useMemo(() => ({ needDelArray: [] }), []);
-
-  useEffect(() => {
-
-    const checkItemsRemoveTimer = setInterval(() => {
-
-      // for debug
-      // console.log(`ready_remove_actKey: ${memoValues.needDelArray}`);
-
-      // IIFE
-      const handleRemoveItems = (async function(){
-
-        let actKey = '';
-        let handleCount = 0;
-
-        while(true){
-
-          if(memoValues.needDelArray.length == 0 ){
-
-            if( handleCount > 0 ){
-              updateFavoriteList();
-            }
-
-            return false;
-          }
-
-          actKey = memoValues.needDelArray.shift();
-
-          if( actKey !== 'undefined' ){
-            await deleteFavoriteItem(actKey);
-
-            handleCount++;
-          }
-        }
-      }());
-
-    }, 500);
-
-    return () => {// page did unmount's callback
-
-      clearInterval(checkItemsRemoveTimer);
-    };
-  }, []);
-
-  // 點擊移除按鈕
-  const handleClickRemoveBlock = async ({actKey, name}) => {
-
-    await showCustomPrompt({
-      message: `確定要從我的最愛刪除 ${name} 嗎?`,
-      onOk: () => {
-        memoValues.needDelArray.push(actKey);
-      },
-      cancelContent: '取消',
-    });
-  };
-
-  // 處理拖曳事件
-  const handleOnDragEnd = async (result) => {
-    const { source, destination } = result;
-    if (!destination) return;
-
-    let updatedDndList;
-    if (source.droppableId === destination.droppableId) {
-      const foundList = dndList.find(({id}) => id === source.droppableId);
-      const reorderedList = reorder(
-        foundList,
-        source.index,
-        destination.index,
-      );
-      updatedDndList = dndList.reduce((acc, cur) => {
-        if (cur.id === reorderedList.id) acc.push(reorderedList);
-        else acc.push(cur);
-        return acc;
-      }, []);
-    } else {
-      const sourceList = dndList.find(({id}) => id === source.droppableId);
-      const destinationList = dndList.find(({id}) => id === destination.droppableId);
-      updatedDndList = move(
-        sourceList,
-        destinationList,
-        source,
-        destination,
-      );
-    }
-
-    const combinedList = combineLeftAndRight(updatedDndList[0].items, updatedDndList[1].items);
-    const trimmedList = generateTrimmedList(combinedList, 10, '');
-    setDndList(updatedDndList);
-    await Promise.all(trimmedList.map((item, position) => (
-      modifyFavoriteItem({actKey: item.actKey || '', position: parseInt(position, 10)})
-    )));
-    await updateFavoriteList();
-  };
-
-  // 點擊空白處離開移除模式
-  const handleCloseRemoveMode = async (e) => {
-    if (viewControl.content !== 'remove') return;
-    if (e.target.classList.contains('dndArea')
-     || e.target.classList.contains('defaultPage')
-     || e.target.classList.contains('dndItemContainer')) {
-      setViewControl(initialViewControl);
-    }
-  };
 
   // 長按編輯
-  const handleEditBlock = () => handleOpenView('remove');
+  const handleEditBlock = () => triggerEvent({eventName:'renderDndFavoriteList'});
   const handleTouchStart = () => setPressTimer(setTimeout(handleEditBlock, 800));
   const handleTouchEnd = () => pressTimer && clearTimeout(pressTimer);
 
-  // 渲染我的最愛列表
-  const renderBlocksElement = () => {
-    if (!orderedList.length) return null;
-    return orderedList.map((block, index) => (
-      <button
-        type="button"
-        key={block.actKey || index - 2}
-        onTouchStart={block.actKey ? handleTouchStart : null}
-        onTouchEnd={block.actKey ? handleTouchEnd : null}
-        onClick={block.actKey ? () => startFunc(block.actKey === 'B00200' ? FuncID.M00100 : block.actKey) : () => handleOpenView('add')}
-      >
-        {
-        block.actKey
-          ? (
-            <>
-              <img src={blockBackgroundGenerator(index)} alt="block" />
-              {iconGenerator(block.actKey)}
-              {block.name}
-            </>
-          )
-          : <img src={block} alt="empty" />
-        }
-      </button>
-    ));
-  };
 
-  // 渲染移除模式可拖曳的列表
-  const renderDndBlocksElement = () => {
-    if (!dndList.length || !favoriteList.length) return null;
-    const fixedList = favoriteList.filter((el) => el.position === '-1');
-    return (
-      <DragDropContext onDragEnd={handleOnDragEnd}>
-        {fixedList.map((fixedItem, fixedIndex) => (
-          <div
-            className="dndItem"
-            key={fixedItem.actKey}
-          >
-            <img src={blockBackgroundGenerator(fixedIndex)} alt="block" />
-            {iconGenerator(fixedItem.actKey)}
-            {fixedItem.name}
+
+  useMemo(() => {
+
+    let memoFavoriteList = [];
+
+    const memoArray = {
+      left: [], 
+      right:[] 
+    };
+
+    const controller = (() => {
+
+      const deepCopy = value => JSON.parse(JSON.stringify(value));
+
+      const emptyBlock = (position) => {
+
+        return {
+          "actKey": "emptyBlock_"+ btoa(Math.random().toString()).substring(10,16),
+          "alterMsg": null,
+          "groupType": null,
+          "icon": null,
+          "isFavorite": null,
+          "name": "",
+          "position": `${position}`,
+          "url": BlockEmpty
+        }
+      };
+
+      const componentMain = (className = 'favoriteArea', renderData = []) => {
+
+        let ele = null;
+
+        if( className == 'dndArea' ){
+
+          ele = DndBlocksElement(memoFavoriteList, renderData);
+
+        }else{
+
+          ele = blockElement(renderData);
+        }
+
+        return (<div className="defaultPage">
+          <button type="button" className="editButton" onClick={() => { triggerEvent({eventName:'editFavorite'}) }}>
+            編輯
+            <EditIcon />
+          </button>
+          <div className={className}>
+            {ele}
           </div>
-        ))}
-        {
-     dndList.map((dndItem, parentIndex) => (
-       <Droppable key={dndItem.id} droppableId={dndItem.id}>
-         {(droppableProvided) => (
-           <DndItemContainer
-             className="dndItemContainer"
-             ref={droppableProvided.innerRef}
-             containerLength={dndItem.items.length}
-           >
-             {dndItem.items.map((item, index) => (
-               <Draggable
-                 key={item.actKey}
-                 draggableId={item.actKey}
-                 index={index}
-               >
-                 {(provided) => (
-                   <div
-                     className="dndItem"
-                     ref={provided.innerRef}
-                     {...provided.draggableProps}
-                     {...provided.dragHandleProps}
-                   >
-                     <span
-                       className="removeButton"
-                       onClick={() => handleClickRemoveBlock({actKey: item.actKey, name: item.name})}
-                     >
-                       <RemoveRounded />
-                     </span>
-                     <img src={blockBackgroundGenerator((2 * index) + (parentIndex + 2))} alt="block" />
-                     {iconGenerator(item.actKey)}
-                     {item.name}
-                   </div>
-                 )}
-               </Draggable>
-             ))}
-             {droppableProvided.placeholder}
-           </DndItemContainer>
-         )}
-       </Droppable>
-     ))
+        </div>);
+      };
+
+      // 點擊空白處離開移除模式
+      const handleCloseRemoveMode = async () => {
+
+        if( document.querySelector(".dndArea") === null ){
+
+          return;
         }
-      </DragDropContext>
-    );
-  };
 
-  const drawerController = () => {
-    const {content} = viewControl;
-    if (content === 'edit' || content === 'add') {
-      return (
-        <S00100_1
-          updateFavoriteList={updateFavoriteList}
-          back2MyFavorite={() => setViewControl(initialViewControl)}
-          isEditAction={viewControl.content === 'edit'}
-          favoriteList={favoriteList}
-        />
-      );
-    }
-    return (
-      <div className="defaultPage">
-        <button type="button" className="editButton" onClick={() => handleOpenView('edit')}>
-          編輯
-          <EditIcon />
-        </button>
-        <div className={content === 'remove' ? 'dndArea' : 'favoriteArea'}>
-          {content === 'remove' ? renderDndBlocksElement() : renderBlocksElement()}
-        </div>
-      </div>
-    );
-  };
+        const list = [];
 
-  useEffect(() => {
-    updateFavoriteList();
+        const copyLeftSideItems = deepCopy(memoArray.left);
+        const copyRightSideItems = deepCopy(memoArray.right);
+
+        for (let i = 0; i < 10; i++) {
+
+          let data = (i%2 == 0) ? copyLeftSideItems.shift() : copyRightSideItems.shift();
+
+          data.position = i;
+
+          list[i] = data;
+        };
+        
+        setViewComponentMain(componentMain('favoriteArea', [
+            {
+              "actKey": "B00200",
+              "name": "推薦碼分享",
+              "url": null,
+              "icon": null,
+              "groupType": null,
+              "alterMsg": null,
+              "isFavorite": null,
+              "position": "-1"
+            },
+            {
+              "actKey": "B00500",
+              "name": "優惠",
+              "url": null,
+              "icon": null,
+              "groupType": null,
+              "alterMsg": null,
+              "isFavorite": null,
+              "position": "-1"
+            }
+          ].concat(list)));
+      };
+
+      // 處理拖曳事件
+      const handleOnDragEnd = async (event) => {
+
+        const beforeUpdateArraySideLeft = [];
+        const beforeUpdateArraySideRight = [];
+        const alreadyCheckedItemBeforeEdit = [];
+
+        memoArray.right.map((ele) => {
+
+          beforeUpdateArraySideRight.push(ele.actKey);
+
+          if( ele.actKey.indexOf('emptyBlock_') === -1 ){
+
+            alreadyCheckedItemBeforeEdit.push(ele.actKey);
+          }
+        });
+
+        memoArray.left.map((ele) => {
+
+          beforeUpdateArraySideLeft.push(ele.actKey);
+
+          if( ele.actKey.indexOf('emptyBlock_') === -1 ){
+
+            alreadyCheckedItemBeforeEdit.push(ele.actKey);
+          }
+        });
+
+        if( event.destination == null ){
+          return;
+        }
+
+        //  判斷從哪邊拖到哪邊
+        if( event.source.droppableId == 'left' ){
+
+          beforeUpdateArraySideLeft.splice(event.source.index, 1);
+        }else{
+
+          beforeUpdateArraySideRight.splice(event.source.index, 1);
+        }
+
+        if( event.destination.droppableId == 'left' ){
+
+          //  item into arr at the specified index
+          beforeUpdateArraySideLeft.splice(event.destination.index, 0, event.draggableId);
+        }else{
+
+          beforeUpdateArraySideRight.splice(event.destination.index, 0, event.draggableId);
+        }
+
+
+        // 取得先前選取的全部項目
+        const eleTmp = {};
+
+        const draggableList = memoFavoriteList.filter((el) => el.position !== '-1' && !!el.actKey);
+        draggableList.forEach((el, index) => {
+          eleTmp[el.actKey] = el;
+        });
+
+        const emptyBlock = (key) => {
+
+          return {
+            "actKey": key,
+            "alterMsg": null,
+            "groupType": null,
+            "icon": null,
+            "isFavorite": null,
+            "name": "",
+            "position": "",
+            "url": BlockEmpty
+          }
+        };
+
+
+        const left = [];
+        const right = [];
+        beforeUpdateArraySideLeft.map((actKey, i) => {
+         
+            if( actKey.indexOf('emptyBlock_') !== -1 ){
+
+              left[i] = emptyBlock(actKey);
+
+            }else{
+
+              left[i] = eleTmp[actKey];
+            }
+        });
+        beforeUpdateArraySideRight.map((actKey, i) => {
+
+            if( actKey.indexOf('emptyBlock_') !== -1 ){
+
+              right[i] = emptyBlock(actKey);
+              
+            }else{
+
+              right[i] = eleTmp[actKey];
+            }
+        });
+
+
+        // 確認左邊右邊 只要有單邊超過5個 就排到另一邊 
+        if(right.length > 5){
+
+          let a = right.pop();
+          left.push(a);
+
+        }
+        if(left.length > 5){
+
+          let a = left.pop();
+          right.push(a);
+        }
+
+
+        // set correct position
+        let j = 0;
+        for (let i = 0; i < 10; i++) {
+
+          if(i%2 == 0){
+
+            left[j].position = i;
+
+          }else{
+
+            right[j].position = i;
+
+            j++;
+          }  
+        };
+
+
+        memoArray.left = deepCopy(left);
+        memoArray.right = deepCopy(right);
+
+        setViewComponentMain(componentMain('dndArea', [{id: 'left', items: left}, {id: 'right', items: right}]));
+
+        await Promise.all(
+          alreadyCheckedItemBeforeEdit.map((actKey) => {
+
+              return deleteFavoriteItem(actKey);
+          }),
+        );
+
+
+        const copyLeftItems = deepCopy(left);
+        const copyRightItems = deepCopy(right);
+
+
+        const toModify = [];
+
+        for (let i = 0; i < 10; i++) {
+
+          let data = (i%2 == 0) ? copyLeftItems.shift() : copyRightItems.shift();
+
+          toModify[i] = data;
+        };
+
+
+        await Promise.all(toModify.map((item, position) => (
+          modifyFavoriteItem({actKey: item.actKey || '', position: parseInt(position, 10)})
+        )));
+
+      };
+
+      // 渲染移除模式可拖曳的列表
+      const DndBlocksElement = (favoriteList, dndList) => {
+
+        const fixedList = favoriteList.filter((el) => el.position === '-1');
+
+        return (
+          <DragDropContext onDragEnd={ (event) => {triggerEvent({eventName:'handleOnDragEnd', params: event})} }>
+            {fixedList.map((fixedItem, fixedIndex) => (
+              <div
+                className="dndItem"
+                key={fixedItem.actKey}
+              >
+                <img src={blockBackgroundGenerator(fixedIndex)} alt="block" />
+                {iconGenerator(fixedItem.actKey)}
+                {fixedItem.name}
+              </div>
+            ))}
+            {
+         dndList.map((dndItem, parentIndex) => (
+           <Droppable key={dndItem.id} droppableId={dndItem.id}>
+             {(droppableProvided) => (
+               <DndItemContainer
+                 className="dndItemContainer"
+                 data-containerside={dndItem.id}
+                 ref={droppableProvided.innerRef}
+                 containerLength={dndItem.items.length}
+               >
+                 {dndItem.items.map((item, index) => (
+                   <Draggable
+                     key={item.actKey}
+                     draggableId={item.actKey}
+                     index={index}
+                   >
+                     {(provided) => (
+                       <div
+                         className="dndItem"
+                         ref={provided.innerRef}
+                         {...provided.draggableProps}
+                         {...provided.dragHandleProps}
+                       >
+                        {item.actKey.indexOf('emptyBlock_') !== -1 ?   
+                          (<img src={BlockEmpty} alt="block" />) :
+                          (<>
+                          <span
+                           className="removeButton"
+                           onClick={() => {
+                  
+                            const left = deepCopy(memoArray.left);
+                            const right = deepCopy(memoArray.right);
+
+                            // replace empty block at position
+                            let j = 0;
+                            for (let i = 0; i < 10; i++) {
+
+                              if(i%2 == 0){
+
+                                if( i == item.position ) left[j] = emptyBlock(i);
+
+                              }else{
+
+                                if( i == item.position ) right[j] = emptyBlock(i);
+
+                                j++;
+                              }  
+                            };
+
+                            showCustomPrompt({
+                              message: `確定要從我的最愛刪除 ${item.name} 嗎?`,
+                              onOk: async () => {
+
+                                memoArray.left = deepCopy(left);
+                                memoArray.right = deepCopy(right);
+
+                                await deleteFavoriteItem(item.actKey);
+
+                                setViewComponentMain(componentMain('dndArea', [{id: 'left', items: left}, {id: 'right', items: right}]));
+                              },
+                              cancelContent: '取消',
+                            });
+                            
+                           }}
+                         >
+                           <RemoveRounded />
+                         </span>
+                         <img src={blockBackgroundGenerator((2 * index) + (parentIndex + 2))} alt="block" />
+                         {iconGenerator(item.actKey)}
+                         {item.name}
+                            </>)
+                        }
+                        
+                       </div>
+                     )}
+                   </Draggable>
+                 ))}
+                 {droppableProvided.placeholder}
+               </DndItemContainer>
+             )}
+           </Droppable>
+         ))
+            }
+          </DragDropContext>
+        );
+      };
+
+      // 渲染我的最愛列表
+      const blockElement = (favoriteList) => {
+
+        let cardLessLabel = '';
+        let list = [];
+
+        const hasItemBlockArray = [];
+
+        favoriteList.map((block) => {
+
+            if(block.position !== '-1' && block.actKey.indexOf('emptyBlock_') === -1 ){
+
+              hasItemBlockArray[block.position] = block;
+            }
+        });
+
+        const fixedList = favoriteList.filter((el) => el.position === '-1');
+
+        fixedList.map((fixedItem, fixedIndex) => {
+
+          list.push(
+            <button
+                type="button"
+                key={fixedItem.actKey}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+                onClick={() => startFunc(fixedItem.actKey === 'B00200' ? FuncID.M00100 : fixedItem.actKey)}
+              >
+            <>
+              <img src={blockBackgroundGenerator(fixedIndex)} alt="block" />
+              {iconGenerator(fixedItem.actKey)}
+              <span>
+                {fixedItem.name}
+              </span>
+            </>
+            </button>);
+        });
+
+        for (let i = 0; i < 10; i++) {
+
+          if( typeof hasItemBlockArray[i] !== 'undefined' ){
+
+            let block = hasItemBlockArray[i];
+
+            if( block.actKey == FuncID.D00300 ){// 用來顯示無卡存摺 的 設定金額
+              cardLessLabel = (<span>
+                  <br/>
+                  {cardLessMoneyLabel}
+                </span>);
+            }
+
+            list.push(
+              <button
+                  type="button"
+                  key={block.actKey}
+                  onTouchStart={handleTouchStart}
+                  onTouchEnd={handleTouchEnd}
+                  onClick={() => startFunc(block.actKey === 'B00200' ? FuncID.M00100 : block.actKey)}
+                >
+              <>
+                <img src={blockBackgroundGenerator(i+2)} alt="block" />
+                {iconGenerator(block.actKey)}
+                <span>
+                  {block.name}
+                  {cardLessLabel}
+                </span>
+              </>
+              </button>);
+
+          }else{
+
+            list.push(
+              <button
+                  type="button"
+                  key={i - 2}
+                  onTouchStart={null}
+                  onTouchEnd={null}
+                  onClick={() => {
+
+                    triggerEvent({eventName:'addFavorite', params:{position:i}}) ;
+                  }}
+                >
+                <img src={BlockEmpty} alt="empty" />
+              </button>
+           );
+          }
+        };
+
+        return list;
+      };
+ 
+      const renderFavoriteList = async () => {
+
+        const rows = await getFavoriteList();
+
+        memoFavoriteList = deepCopy(rows);
+
+        setViewCloseBtnFunction(() => {return () => {
+          closeFunc()
+        }});
+
+        setViewComponentMain(componentMain('favoriteArea', rows));
+      };
+
+      
+
+      const renderDndFavoriteList = async () => {
+
+        const rows = await getFavoriteList();
+
+        memoFavoriteList = deepCopy(rows);
+
+        const left = [];
+        const right = [];
+        const draggableList = rows.filter((el) => el.position !== '-1' && !!el.actKey);
+   
+        draggableList.map((el, index) => {
+          if(el.position % 2 == 0){
+
+            left[Math.floor(el.position/2)] = el;
+          }else{
+
+            right[Math.floor(el.position/2)] = el;
+          }
+        });
+
+
+        for (let i = 0; i < 5; i++) {
+          if( typeof left[i] === 'undefined' ){
+
+            left[i] = emptyBlock(i*2);
+          }
+        };
+
+        for (let i = 0; i < 5; i++) {
+          if( typeof right[i] === 'undefined' ){
+
+            right[i] = emptyBlock(i*2+1);
+          }
+        };
+
+        memoArray.left = deepCopy(left);
+        memoArray.right = deepCopy(right);
+
+        setViewComponentMain(componentMain('dndArea', [{id: 'left', items: left}, {id: 'right', items: right}]));
+      };
+
+      const addFavorite = async ({position}) => {
+
+        try {
+
+          const res = await getFavoriteList();
+          if (!res) throw new Error('getFavoriteList response is empty');
+
+          setViewComponentMain(
+            <S00100_1
+              addPoposition={position} 
+              back2MyFavorite={() => { triggerEvent({eventName:'renderFavoriteList'}) }}
+              isEditAction={false}
+              favoriteList={res} />
+          );
+
+          setViewCloseBtnFunction(() => {return () => {
+              triggerEvent({eventName:'renderFavoriteList'});
+          }});
+
+        } catch (err) {
+          console.log('getFavoriteList', err);
+        }
+      };
+
+      const editFavorite = async () => {
+
+        try {
+
+          const res = await getFavoriteList();
+          if (!res) throw new Error('getFavoriteList response is empty');
+
+          setViewComponentMain(
+            <S00100_1
+              back2MyFavorite={() => { triggerEvent({eventName:'renderFavoriteList'}) }}
+              isEditAction={true}
+              favoriteList={res} />
+          );
+
+          setViewCloseBtnFunction(() => {return () => {
+              triggerEvent({eventName:'renderFavoriteList'});
+          }});
+
+        } catch (err) {
+          console.log('getFavoriteList', err);
+        }
+      };
+
+
+      return {
+        renderFavoriteList : renderFavoriteList,
+        renderDndFavoriteList : renderDndFavoriteList,
+        handleOnDragEnd : handleOnDragEnd,
+        handleCloseRemoveMode : handleCloseRemoveMode,
+        addFavorite : addFavorite,
+        editFavorite : editFavorite,
+      };
+    })();
+
+    document.addEventListener('triggerEvent_S00100', (e) => {
+
+      const {eventName, params} = e.detail;
+
+      if(typeof controller[eventName] == 'undefined'){
+
+        alert('no controller');
+        return;
+      }
+
+      if( params == 'undefined'){
+        params = {};
+      }
+
+      controller[eventName](params);
+    }); 
+
   }, []);
 
   useEffect(() => {
-    if (!orderedList.length) return;
-    const left = [];
-    const right = [];
-    const draggableList = orderedList.filter((el) => el.position !== '-1' && !!el.actKey);
-    draggableList.forEach((el, index) => {
-      if (!(index % 2)) left.push(el);
-      else right.push(el);
-    });
-    setDndList([{id: 'left', items: left}, {id: 'right', items: right}]);
-  }, [orderedList]);
+
+    triggerEvent({eventName:'renderFavoriteList'}) ;
+  }, []);
 
   return (
     <Layout>
       <BottomDrawer
         noScrollable
-        title={viewControl.title}
+        title={viewTitle}
         isOpen
-        onClose={() => closeFunc()}
-        onBack={isEditOrAddMode ? () => setViewControl(initialViewControl) : null}
+        onClose={viewCloseBtnFunction}
+        onBack={null}
         content={(
-          <FavoriteDrawerWrapper onClick={handleCloseRemoveMode}>
-            { drawerController() }
+          <FavoriteDrawerWrapper onClick={() => {triggerEvent({eventName:'handleCloseRemoveMode'})}}>
+            {viewComponentMain}
           </FavoriteDrawerWrapper>
         )}
       />
