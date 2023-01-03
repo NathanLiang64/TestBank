@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useForm } from 'react-hook-form';
@@ -12,10 +13,10 @@ import InformationTape from 'components/InformationTape';
 import { FEIBTabContext, FEIBTabPanel } from 'components/elements';
 import FailImage from 'assets/images/failIcon.png';
 import SuccessImage from 'assets/images/successIcon.png';
-import { currencySymbolGenerator, dateToString } from 'utilities/Generator';
+import { currencySymbolGenerator, dateToString, dateToYMD } from 'utilities/Generator';
 import { showCustomPrompt } from 'utilities/MessageModal';
 
-import { getAccountsList } from 'utilities/CacheData';
+import { getAccountsList, getBankCode } from 'utilities/CacheData';
 import SearchIcon from '@material-ui/icons/Search';
 
 import DateRangePicker from 'components/DateRangePicker';
@@ -36,6 +37,7 @@ const D00800 = () => {
   const [accountsList, setAccountsList] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [searchList, setSearchList] = useState({ reserve: {}, result: {}});
+  const [banks, setBanks] = useState();
   const {control, handleSubmit, watch } = useForm({ defaultValues });
   const [curTab, curReserveRange, curResultRange] = watch([TAB, RESERVE_DATE_RANGE, RESULT_DATE_RANGE]);
   const currentValue = {
@@ -45,69 +47,69 @@ const D00800 = () => {
   };
 
   const onSearch = async ({ tab, reserveDateRange, resultDateRange }) => {
-    const startDay = dateToString(tab === '1' ? reserveDateRange[0] : resultDateRange[0], '');
-    const endDay = dateToString(tab === '1' ? reserveDateRange[1] : resultDateRange[1], '');
-    const { acctId } = selectedAccount;
-    const param = {
-      accountNo: acctId,
-      startDay,
-      endDay,
-    };
-
-    const type = tab === '1' ? 'reserve' : 'result';
+    const startDay = dateToYMD(tab === '1' ? reserveDateRange[0] : resultDateRange[0]);
+    const endDay = dateToYMD(tab === '1' ? reserveDateRange[1] : resultDateRange[1]);
+    const { accountNo } = selectedAccount;
+    const param = { accountNo, startDay, endDay };
 
     // ??? 不同帳號的 reservedTransDetails 與 getResultTransDetails 回傳的資料結構不一樣.... 後續需請後端更正
+    const type = tab === '1' ? 'reserve' : 'result';
     const detailsRes = tab === '1' ? await getReservedTransDetails(param) : await getResultTransDetails(param);
-
     setSearchList((prevSearchList) => ({
       ...prevSearchList,
-      [type]: { ...prevSearchList[type], [`${acctId}_${startDay}_${endDay}`]: detailsRes },
+      [type]: { ...prevSearchList[type], [`${accountNo}_${startDay}_${endDay}`]: detailsRes },
     }));
+
+    if (banks) return;
+    const bankCodeRes = await getBankCode();
+    setBanks(bankCodeRes);
   };
 
   // 取得帳號清單
   const fetchTransferOutAccounts = async () => {
     let accountsListRes;
     await getAccountsList('MSC', async (accts) => {
-      console.log('accts', accts);
-      const newAccts = accts.map((acct) => ({
-        acctBranch: acct.branchName, // 分行代碼
-        acctName: acct.alias, // 帳戶名稱或暱稱
-        acctId: acct.accountNo, // 帳號
-        accountType: acct.acctType, // 帳號類別
-        acctBalx: acct.balance, // 帳戶餘額
-        ccycd: acct.currency, // 幣別代碼
-      }));
-      setAccountsList(newAccts);
-      accountsListRes = newAccts;
-      setSelectedAccount(newAccts[0]);
+      setAccountsList(accts);
+      accountsListRes = accts;
+      setSelectedAccount(accts[0]);
     });
     // TODO 若無 MSC 類別的帳戶，要給什麼提示訊息給使用者
     return accountsListRes.length ? null : '查無帳戶資訊';
   };
 
-  const toConfirmPage = (reserveData) => {
-    history.push('/D008001', { ...reserveData, ...selectedAccount });
+  const findBankName = (receiveBank) => {
+    if (!banks) return '';
+    const { bankName } = banks.find(
+      ({ bankNo }) => bankNo === receiveBank,
+    );
+    return bankName ?? '';
+  };
+
+  const toConfirmPage = (data) => {
+    const bankName = findBankName(data.receiveBank);
+    const reserveData = {...data, bankName};
+    history.push('/D008001', { reserveData, selectedAccount });
   };
 
   // 轉出帳號卡片 swiper
   const renderCard = () => accountsList.map((item) => (
-    <SwiperSlide key={item.acctId}>
+    <SwiperSlide key={item.accountNo}>
       <DebitCard
-        branch={item.acctBranch}
-        cardName={item.acctName || '--'}
-        account={item.acctId}
-        balance={item.acctBalx}
-        dollarSign={item.ccycd}
+        branch={item.branchName}
+        cardName={item.alias || '--'}
+        account={item.accountNo}
+        balance={item.balance}
+        dollarSign={item.currency}
         color="purple"
       />
     </SwiperSlide>
   ));
 
   const handleReserveDataDialog = async (data) => {
-    await showCustomPrompt({
+    const bankName = findBankName(data.receiveBank);
+    showCustomPrompt({
       title: '預約轉帳',
-      message: <DetailContent data={data} selectedAccount={selectedAccount} />,
+      message: <DetailContent reserveData={{...data, bankName}} selectedAccount={selectedAccount} />,
       onOk: () => toConfirmPage(data),
       okContent: '取消交易',
       onClose: () => {},
@@ -117,17 +119,16 @@ const D00800 = () => {
   const handleOpenResultDialog = async (data) => {
     await showCustomPrompt({
       title: '預約轉帳結果',
-      message: <ResultContent data={data} selectedAccount={selectedAccount} />,
+      message: <ResultContent resultData={data} selectedAccount={selectedAccount} />,
     });
   };
 
   // 預約轉帳查詢列表
   const renderSearchList = (tabValue) => {
     const { searchObj, startDay, endDay } = currentValue;
-    const key = `${selectedAccount?.acctId}_${startDay}_${endDay}`;
+    const key = `${selectedAccount?.accountNo}_${startDay}_${endDay}`;
     const list = searchObj[key];
-
-    if (!selectedAccount?.acctId || !list) return <Loading space="both" isCentered />;
+    if (!selectedAccount?.accountNo || !list || !banks) return <Loading space="both" isCentered />;
     if (!list.length) return <div className="emptyConatiner"><EmptyData /></div>;
 
     const showImg = (stderrMsg) => {
@@ -138,12 +139,16 @@ const D00800 = () => {
       <InformationTape
         key={item.seqno}
         topLeft={`${item.receiveBank}-${item.receiveAccountNo}`}
-        topRight={currencySymbolGenerator('TWD', parseFloat(item.transferAmount))}
-        bottomLeft={`${tabValue === '1' ? '預約轉帳日' : '交易日期'}:${dateToString(item.rgDay)}`} // TODO 若是週期，需要顯示每週星期幾 or 每月幾號
+        topRight={currencySymbolGenerator('NTD', parseFloat(item.transferAmount))}
+        bottomLeft={`${tabValue === '1' ? '預約轉帳日' : '交易日期'} : ${dateToString(item.rgDay)}`}
         // eslint-disable-next-line no-nested-ternary
-        bottomRight={tabValue === '1' ? (item.cycle === 'D' ? '單筆' : '週期') : 'undefined'}
-        onClick={tabValue === '1' ? () => handleReserveDataDialog(item) : () => handleOpenResultDialog(item)}
-        img={showImg(item.stderrMsg)}
+        bottomRight={tabValue === '1' ? item.cycle === 'D' ? '單筆' : '週期' : undefined}
+        onClick={
+          tabValue === '1'
+            ? () => handleReserveDataDialog(item)
+            : () => handleOpenResultDialog(item)
+        }
+        img={showImg(item.stderrMsg)} // TODO 待確認「結果查詢」的資料結構
       />
     ));
   };
@@ -172,7 +177,7 @@ const D00800 = () => {
   useEffect(() => {
     if (!selectedAccount) return;
     const { searchObj, startDay, endDay } = currentValue;
-    const key = `${selectedAccount.acctId}_${startDay}_${endDay}`;
+    const key = `${selectedAccount.accountNo}_${startDay}_${endDay}`;
     if (!searchObj[key]) handleSubmit(onSearch)();
   }, [selectedAccount, curTab, curReserveRange, curResultRange]);
 
