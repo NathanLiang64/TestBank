@@ -74,7 +74,7 @@ const D00800 = () => {
       setSelectedAccount(accts[0]);
     });
     // TODO 若無 MSC 類別的帳戶，要給什麼提示訊息給使用者
-    return accountsListRes.length ? null : '查無帳戶資訊';
+    return accountsListRes.length ? null : '您還沒有任何台幣存款帳戶。';
   };
 
   const findBankName = (receiveBank) => {

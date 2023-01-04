@@ -21,7 +21,7 @@ const AplFxProxy = () => {
     const url = `${process.env.REACT_APP_APLFX_URL}prod=${prod}&sse=${sse}`;
     setTargetURL(url);
     const opener = window.open(url, '_blank');
-    if (opener) closeFunc();
+    if (opener) closeFunc(); // BUG 有外開瀏覽器但是沒有產生 opener
     else setOpeningFail(true);
   }, []);
 
@@ -39,7 +39,7 @@ const AplFxProxy = () => {
       前往申請平台
     </p>
   );
-
+  // TODO title 應該改成申請類別的名稱
   return (
     <Layout title="更多">
       <AplFxProxyWrapper>

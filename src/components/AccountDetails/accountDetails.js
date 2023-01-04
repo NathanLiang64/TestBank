@@ -378,7 +378,9 @@ const AccountDetails = ({
    * @param {*} items 查詢結果的明細資料。
    */
   const renderDetailCards = (items) => {
-    if (!items || items.length === 0) return null;
+    if (isLoading) return <Loading space="both" isCentered />;
+    if (!items) return null;
+    if (!items.length) return <EmptyData />;
 
     return (
       items.map((item) => (
@@ -425,8 +427,7 @@ const AccountDetails = ({
         {/* TODO transactionDetail 的 height: 500, maxHeight: 500 不應該是固定值 */}
         {/* #882 拿掉 height: 500, maxHeight: 500 進行測試  */}
         <div className="transactionDetail" ref={txnDetailsRef} style={{ overflowY: 'scroll' }}>
-          { renderDetailCards(transactions) ?? <EmptyData /> }
-          { isLoading && <Loading space="both" isCentered /> }
+          { renderDetailCards(transactions) }
         </div>
       </div>
     </AccountDetailsWrapper>
