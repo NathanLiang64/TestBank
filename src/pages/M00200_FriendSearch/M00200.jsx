@@ -28,8 +28,8 @@ const Page = () => {
   return (
     <Layout title="好友查詢">
       <Main>
-        { friends.length ? (
-          <PageWrapper>
+        <PageWrapper>
+          { friends.length ? (
             <ul className="friend-list">
               {friends.map((f) => (
                 <li key={f.friendUuid}>
@@ -42,24 +42,24 @@ const Page = () => {
                     </div>
                     <div className="note">
                       {f.depositApproved && (
-                        <div>
-                          開戶：
-                          {dateToString(f.depositApproved)}
-                        </div>
+                      <div>
+                        開戶：
+                        {dateToString(f.depositApproved)}
+                      </div>
                       )}
                       {f.creditCardApproved && (
-                        <div>
-                          核卡：
-                          {dateToString(f.creditCardApproved)}
-                        </div>
+                      <div>
+                        核卡：
+                        {dateToString(f.creditCardApproved)}
+                      </div>
                       )}
                     </div>
                   </div>
                 </li>
               ))}
             </ul>
-          </PageWrapper>
-        ) : <EmptyData content="查無好友資料" />}
+          ) : <div className="empty-data-wrapper"><EmptyData content="查無好友資料" /></div>}
+        </PageWrapper>
       </Main>
     </Layout>
   );

@@ -519,7 +519,7 @@ async function verifyBio(authKey) {
  * 查詢快速登入綁定狀態
  * @returns {
  *  result: 驗證結果(true/false)。
- *  message: 駿證失敗狀況描述。
+ *  message: 驗證失敗狀況描述。
  *  QLStatus: 本裝置快速登入綁定狀態：(result為true時有值) 0：未綁定 1：已正常綁定 2：綁定但已鎖定 3：已在其它裝置綁定 4：本裝置已綁定其他帳號
  *  QLType: 快登裝置綁定所使用驗證方式(正常綁定狀態有值) (type->1:生物辨識/2:圖形辨識)
  * }
@@ -540,7 +540,7 @@ async function getQLStatus() {
  * @param {*} authType 快登所使用驗證方式。(1. 生物辨識, 2.圖形辨識)
  * @returns {
  *  result: 驗證結果(true/false)。
- *  message: 駿證失敗狀況描述。
+ *  message: 驗證失敗狀況描述。
  * }
  */
 async function createQuickLogin(authType) {
@@ -567,7 +567,7 @@ async function createQuickLogin(authType) {
  * @param {*} pwdE2ee E2EE加密後的密碼
  * @returns {
  *  result: 驗證結果(true/false)。
- *  message: 駿證失敗狀況描述。
+ *  message: 驗證失敗狀況描述。
  * }
  */
 async function verifyQuickLogin(authType, pwdE2ee) {
@@ -592,7 +592,7 @@ async function verifyQuickLogin(authType, pwdE2ee) {
  * 解除快登綁定
  * @returns {
  *  result: 驗證結果(true/false)。
- *  message: 駿證失敗狀況描述。
+ *  message: 驗證失敗狀況描述。
  * }
  */
 async function removeQuickLogin() {
@@ -607,6 +607,20 @@ async function removeQuickLogin() {
     }
   }
   return appRs;
+}
+
+/**
+ * 異動圖形辨識圖形資料
+ * @returns {
+ *  result: 驗證結果(true/false)。
+ *  message: 驗證失敗狀況描述。
+ * }
+ */
+async function changePattern() {
+  return await callAppJavaScript('changePattern', null, true, () => ({
+    result: true,
+    message: '',
+  }));
 }
 
 /**
@@ -755,6 +769,7 @@ export {
   createQuickLogin,
   verifyQuickLogin,
   removeQuickLogin,
+  changePattern,
   queryPushBind,
   updatePushBind,
   forceLogout,
