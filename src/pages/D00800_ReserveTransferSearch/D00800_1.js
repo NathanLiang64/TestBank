@@ -1,115 +1,80 @@
-/* eslint-disable no-unused-vars */
+import { useState } from 'react';
 import { useHistory } from 'react-router';
 
-import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
 import { FEIBButton } from 'components/elements';
-import InformationList from 'components/InformationList';
-import { currencySymbolGenerator, dateToString, toCurrency } from 'utilities/Generator';
-import { switchLoading, transactionAuth } from 'utilities/AppScriptProxy';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 import { cancelReserveTransfer } from 'pages/D00800_ReserveTransferSearch/api';
 
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { useNavigation } from 'hooks/useNavigation';
+import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
+import { FuncID } from 'utilities/FuncID';
 import { ReserveTransferSearchWrapper } from './D00800.style';
+import { renderFooter, renderHeader, renderBody} from './utils';
 
 const ReserveTransferSearch1 = ({ location }) => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const {closeFunc} = useNavigation();
+  const [cancelResult, setCancelResult] = useState();
   const goBack = () => history.goBack();
 
-  const toResultPage = async () => {
-    dispatch(setWaittingVisible(true));
-    const jsRs = await transactionAuth(AuthCode.D00800);
-    if (jsRs.result) {
-      const {
-        trnsDate, accountId, seqNo, source,
-      } = location.state;
-      const data = {
-        // BUG Request內容錯誤！
-        trnsDate, accountNo: accountId, seqNo, queryType: source,
-      };
-      const { code, message } = await cancelReserveTransfer(data);
-
-      dispatch(setWaittingVisible(false));
-      if (code === '0000') {
-        history.push('/D008002', { ...location.state });
-      } else {
-        history.push('/D008002', { code, message });
+  const onConfirmHandler = async () => {
+    if (!cancelResult) {
+      // 執行取消預約轉帳
+      dispatch(setWaittingVisible(true));
+      const {result} = await transactionAuth(AuthCode.D00800);
+      if (result) {
+        const { reserveData } = location.state;
+        delete reserveData.txCd;
+        delete reserveData.bankName;
+        delete reserveData.dscpt1;
+        const res = await cancelReserveTransfer(reserveData);
+        // 基本上若 code!=='0000' 的情況下，底層就會跳出錯誤
+        setCancelResult(res);
       }
+      dispatch(setWaittingVisible(false));
+    } else {
+      // 已經執行過取消，導向子首頁
+      history.push(FuncID.D00800);
     }
   };
 
-  console.log('location.state', location.state);
+  if (!location.state) closeFunc();
+  const {reserveData, selectedAccount} = location.state;
   return (
     <Layout title="取消預約轉帳" goBackFunc={goBack}>
       <ReserveTransferSearchWrapper>
-        <section className="confrimDataContainer lighterBlueLine">
-          <div className="dataLabel">轉出金額與轉入帳號</div>
-          <div className="balance">
-            {currencySymbolGenerator('NTD', location.state?.amount)}
-          </div>
-          <div className="accountInfo">
-            {location.state?.inBankName}
-            (
-            {location.state?.inBank}
-            )
-          </div>
-          <div className="accountInfo">{location.state?.inActNo}</div>
-        </section>
-        <section className="informationListContainer">
-          <InformationList
-            title="轉出帳號"
-            content={location.state?.acctId}
-            remark={location.state?.showName}
+        {!!cancelResult && (
+          <SuccessFailureAnimations
+            isSuccess={cancelResult.code === '0000'}
+            successTitle="設定成功"
+            errorTitle="設定失敗"
+            errorDesc={cancelResult.message}
           />
-          <InformationList
-            title="預約轉帳日"
-            content={dateToString(location.state?.payDate)}
-          />
-          {location.state?.chargeMode === '1' ? (
-            <InformationList title="週期" content="單次" remark="" />
-          ) : (
-            <InformationList
-              title="週期"
-              content={location.state?.payDateWording}
-              remark=""
-            />
-          )}
-          {(location.state?.chargeMode === 'W'
-            || location.state?.chargeMode === 'M') && (
-            <InformationList
-              title="期間"
-              content={`${dateToString(location.state?.payDate)}~${dateToString(
-                location.state?.payDateEnd,
-              )}`}
-            />
-          )}
-        </section>
-        <section className="accordionContainer">
-          <Accordion title="詳細交易" space="bottom">
-            <InformationList
-              title="預約設定日"
-              content={location.state?.trnsDate}
-            />
-            {/* {
-              location.state?.bookType === '2' && (<InformationList title="預約轉帳總金額" content="$200,000" />)
-            } */}
-            <InformationList
-              title="帳戶餘額"
-              content={`${currencySymbolGenerator(
-                'NTD',
-                location.state?.acctBalx,
-              )}`}
-              remark={location.state?.showName}
-            />
-            <InformationList title="備註" content={location.state?.memo} />
-          </Accordion>
-        </section>
-        <section className="buttonContainer">
-          <FEIBButton onClick={toResultPage}>確認取消</FEIBButton>
-        </section>
+        )}
+        {/* 當尚未執行取消或是取消成功的情況下才顯示 */}
+        {(!cancelResult || cancelResult.code === '0000') && (
+        <>
+          <section className="confrimDataContainer lighterBlueLine">
+            {renderHeader(reserveData)}
+          </section>
+          <section className="informationListContainer">
+            {renderBody(reserveData, selectedAccount)}
+          </section>
+          <section className="accordionContainer">
+            {renderFooter(reserveData, selectedAccount)}
+          </section>
+        </>
+        )}
+
+        <FEIBButton className="buttonContainer" onClick={onConfirmHandler}>
+          { cancelResult ? '確認' : '確認取消'}
+        </FEIBButton>
+
       </ReserveTransferSearchWrapper>
     </Layout>
   );

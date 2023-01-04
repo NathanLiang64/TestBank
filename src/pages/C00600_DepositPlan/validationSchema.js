@@ -1,10 +1,6 @@
 import { toCurrency } from 'utilities/Generator';
 import * as yup from 'yup';
 
-export const createSchema = yup.object().shape({
-  code: yup.string().required('請選擇計畫'),
-});
-
 export const generateEditSchema = (program) => yup.object().shape({
   name: program?.type
     ? yup.string().required('請輸入計畫名稱')

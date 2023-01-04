@@ -27,6 +27,31 @@ export const getResultTransDetails = async (param) => {
   return response.data;
 };
 
+/** *
+ * 取消預約轉帳
+ *
+ * @param token *
+ * @param  {{
+ *  rgday:            "登錄日期"
+ *  startDay:         "約定起日"
+ *  endDay:           "約定迄日"
+ *  cycle:            "週期"
+ *  cycleNo:          "周期代碼 1=000 W=001~007: M=001~031"
+ *  receiveBank:      "轉入銀行"
+ *  receiveAccountNo: "轉入帳號"
+ *  seqno:            "流水號 - 註銷時才需 帶入 VU3電文資料"
+ *  remark:           "轉帳備註"
+ *  accountNo:        "BANKEE帳號"
+ *  transferAmount:   "轉帳金額"
+ * } } param
+ *
+ * @return {Promise<{
+ *    msgLen: '訊息長度'
+ *    mtype:  '訊息類別'
+ *    msgNo:  '訊息編號'
+ *  }>}
+ */
+
 // 取消預約轉帳交易
 export const cancelReserveTransfer = async (param) => {
   const response = callAPI('/api/transfer/reserved/cancel', param);
