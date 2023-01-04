@@ -13,9 +13,8 @@ import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReduc
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { useNavigation } from 'hooks/useNavigation';
 import { accountFormatter } from 'utilities/Generator';
-import { getProfile, getStatus, reIssueOrLost} from './api';
+import { updateProfile, getStatus, reissueOrLost } from './api';
 import LossReissueWrapper from './S00800.style';
-import {actionTextGenerator} from './utils';
 import { AddressEditor } from './S00800_AddressEditor';
 
 /**
@@ -36,23 +35,27 @@ const LossReissue = () => {
 
     const cardInfo = await getStatus();
     if (cardInfo) {
+      const model = {
+        accountNo: accountFormatter(cardInfo.account),
+        actionText: '',
+        status: cardInfo.status,
+        statusDesc: cardInfo.statusDesc,
+        reissue: (cardInfo.status === 5 || cardInfo.status === 6), // 表示可以進行補發，所以需要地址資訊。
+        islost: (cardInfo.status === 2 || cardInfo.status === 4 || cardInfo.status === 8), // 表示可掛失
+      };
+      if (model.islost) model.actionText = '掛失';
+      if (model.reissue) model.actionText = '補發';
+
       // 只有 5.掛失 或 6.註銷 才需要用到地址。
-      const reissue = (cardInfo.status === 5 || cardInfo.status === 6);
-      if (reissue) {
+      if (model.reissue) {
         setCurrentFormValue({
           county: cardInfo.addrCity.trim(),
           city: cardInfo.addrDistrict.trim(),
           addr: cardInfo.addrStreet,
         });
       }
-      setDebitCardInfo({
-        accountNo: accountFormatter(cardInfo.account),
-        actionText: actionTextGenerator(cardInfo.status),
-        status: cardInfo.status,
-        statusDesc: cardInfo.statusDesc,
-        reissue, // 表示可以進行補發，所以需要地址資訊。
-        islost: (cardInfo.status === 2 || cardInfo.status === 4 || cardInfo.status === 8), // 表示可掛失
-      });
+
+      setDebitCardInfo(model);
     } else {
       showError('Network Error', closeFunc);
     }
@@ -67,12 +70,11 @@ const LossReissue = () => {
   // 執行掛失或補發
   const executeAction = async () => {
     dispatch(setWaittingVisible(true));
-    const {data} = await getProfile();
-    const auth = await transactionAuth(AuthCode.S00800, data.mobile);
+    const auth = await transactionAuth(AuthCode.S00800);
 
     if (auth && auth.result) {
-      const res = await reIssueOrLost();
-      showCustomPrompt({
+      const res = await reissueOrLost();
+      await showCustomPrompt({
         message: (
           <SuccessFailureAnimations
             isSuccess={res && res.result}
@@ -91,26 +93,31 @@ const LossReissue = () => {
   };
 
   const onSubmit = async (values) => {
-    dispatch(setWaittingVisible(true));
-    // const auth = await transactionAuth(AuthCode.S00800);
-    // if (auth && auth.result) {
-    //   // TODO 修改地址 API
-    // }
+    const auth = await transactionAuth(AuthCode.S00800);
+    if (auth && auth.result) {
+      dispatch(setWaittingVisible(true));
+      // 修改地址
+      await updateProfile({
+        county: values.addrCity,
+        city: values.addrDistrict,
+        addr: values.addrStreet,
+      });
+      dispatch(setWaittingVisible(false));
+    }
 
     setCurrentFormValue({...values});
     dispatch(setDrawerVisible(false));
-    dispatch(setWaittingVisible(false));
   };
 
-  const handleClickEditAddress = () => {
-    showCustomDrawer({
+  const handleClickEditAddress = async () => {
+    await showCustomDrawer({
       title: '通訊地址',
       content: <AddressEditor currentFormValue={currentFormValue} onSubmit={onSubmit} />,
     });
   };
 
-  const onActionConfirm = () => {
-    showCustomPrompt({
+  const onActionConfirm = async () => {
+    await showCustomPrompt({
       message: `是否確認${debitCardInfo.actionText}?`,
       onOk: () => executeAction(),
       onClose: () => {},

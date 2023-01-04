@@ -1,21 +1,22 @@
 import { callAPI } from 'utilities/axios';
 
 /**
- * 個人基本資料查詢
+ * 個人基本資料變更
+ * @param {{
+ *    mobile:   手機
+ *    email:    email
+ *    zipCode:  郵遞區號
+ *    county:   縣市
+ *    city:     鄉鎮市區
+ *    addr:     地址
+ * }} param
  * @returns {Promist<{
- *    custName, // 中文姓名
- *    mobile, // 手機
- *    email, // 電子郵件
- *    birthday, // 生日
- *    zipCode, // 郵遞區號
- *    county, // 寄送地址 - 城市
- *    city, //寄送地址 - 地區
- *    addr, //寄送地址 - 道路
- *    userData, //年收入,職稱,行業
+ *   errCode, // 若為空值表示成功
+ *   message,
  * }>}
  */
-export const getProfile = async () => {
-  const response = await callAPI('/api/setting/v1/getProfile');
+export const updateProfile = async (param) => {
+  const response = await callAPI('/api/setting/v1/updateProfile', param);
   return response.data;
 };
 
@@ -49,7 +50,7 @@ export const getStatus = async (params) => {
  *      message:  訊息
  * }
  */
-export const reIssueOrLost = async (params) => {
+export const reissueOrLost = async (params) => {
   const response = await callAPI('/api/debit/card/v1/reIssueOrLost', params);
   return response.data;
 };
