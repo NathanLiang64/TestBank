@@ -44,42 +44,45 @@ const T00700 = () => {
   const [originPersonalData, setOriginPersonalData] = useState();
   const countyOptions = localCounties.map(({name, code}) => ({label: name, value: code}));
   const cityOptions = useMemo(() => {
-    if (!watchedCounty) return [];
-    return localCities[watchedCounty].map(({name, code}) => ({ label: name, value: code}));
+    if (!watchedCounty || !localCities[watchedCounty]) return [];
+    return localCities[watchedCounty].map(({ name, code }) => ({ label: name, value: code }));
   }, [watchedCounty]);
 
   const fetchCountyList = async () => {
     // 取得個人資料，並匯入表單
-    const data = await getProfile();
-    if (data) {
-      setOriginPersonalData(data);
-      const {
-        email, mobile, addr, county, city,
-      } = data;
-      // NOTE 目前收到的 county & city 是縣市名稱，因爲編輯資料 API 所需的 Param 為代號
-      // 因此在這邊做轉換再放入表單中，接收與發送的格式是否統一待討論...
-      const countyInfo = findCounty(county);
-      const cityInfo = findCity(countyInfo?.code, city);
-      reset({
-        email, mobile, addr, county: countyInfo?.code, city: cityInfo?.code,
-      });
-    }
+    const basicInfo = await getProfile();
+
+    setOriginPersonalData(basicInfo);
+    const {
+      email, mobile, addr, county, city,
+    } = basicInfo;
+
+    reset({
+      email, mobile, addr, county, city,
+    });
+  };
+
+  // 設定結果彈窗
+  const setResultDialog = async (response) => {
+    const result = response.code === '0000';
+
+    await showAnimationModal({
+      isSuccess: result,
+      successTitle: '設定成功',
+      successDesc: '基本資料變更成功',
+      errorTitle: '設定失敗',
+      errorCode: response.code,
+      errorDesc: response.message,
+      onClose: result ? closeFunc : () => reset({ ...originPersonalData }), // BUG 成功後，不應該自動關閉
+    });
   };
 
   // 更新個人資料
   const modifyPersonalData = async (values) => {
-    const response = await modifyBasicInformation(values);
-    const isSuccess = !response.errCode;
-
-    await showAnimationModal({
-      isSuccess,
-      successTitle: '設定成功',
-      successDesc: '基本資料變更成功',
-      errorTitle: '設定失敗',
-      errorCode: response.errCode,
-      errorDesc: response.message,
-      onClose: isSuccess ? closeFunc : () => reset({ ...originPersonalData }), // BUG 成功後，不應該自動關閉
-    });
+    dispatch(setWaittingVisible(true));
+    const modifyDataResponse = await modifyBasicInformation(values);
+    setResultDialog(modifyDataResponse);
+    dispatch(setWaittingVisible(false));
   };
 
   // 點擊儲存變更按鈕

@@ -1,3 +1,4 @@
+import { addressValidation } from 'utilities/validation';
 import * as yup from 'yup';
 
 export const validationSchema = yup.object().shape({
@@ -8,5 +9,5 @@ export const validationSchema = yup.object().shape({
   email: yup.string().required('請輸入電子信箱').email('電子信箱格式不符'),
   county: yup.string().required('請選擇縣市'),
   city: yup.string().required('請選擇鄉鎮市區'),
-  addr: yup.string().required('請輸入通訊地址'),
+  addr: addressValidation(),
 });

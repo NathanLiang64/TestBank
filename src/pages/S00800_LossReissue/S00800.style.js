@@ -6,7 +6,7 @@ const LossReissueWrapper = styled(Layout)`
   flex-direction: column;
 
   .lossReissueContent {
-    flex-grow: 1;
+    // flex-grow: 1; //下方會留白
   }
 
   .Button {
