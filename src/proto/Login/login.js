@@ -1,7 +1,7 @@
 /* eslint-disable object-curly-newline */
 /* eslint-disable radix,no-restricted-globals */
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -50,7 +50,6 @@ const Login = () => {
   const {startFunc, goHome} = useNavigation();
   const [loadedInitData, setInitDataLoaded] = useState();
   const [loadedAnnounce, setAnnounceLoaded] = useState();
-  // const [loginable, setLoginable] = useState();
   const [showUserId, setShowUserId] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showFaceIdLogin, setShowFaceIdLogin] = useState(false);
@@ -59,8 +58,6 @@ const Login = () => {
     await HandShake();
     getInitData().then(() => setInitDataLoaded(true));
     getAnnouncementData().then(() => setAnnounceLoaded(true));
-
-    // setLoginable(true);
   }, []);
 
   const upperId = (e) => {

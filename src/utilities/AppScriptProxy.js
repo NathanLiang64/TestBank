@@ -368,8 +368,7 @@ async function getJwtToken(force) {
       // NOTE 不應該為 null, 不論是 result 或 auth；所以，只要取不到 Token 就表示還沒有登入，立即登出。
       jwtToken = sessionStorage.getItem('jwtToken');
       if (!jwtToken) {
-        const funcID = funcStack.peek() ? funcStack.peek().funcID : window.location.pathname.substring(1);
-        await forceLogout(401, '尚未登入', funcID);
+        await forceLogout(401, '尚未登入', true);
       }
     } else {
       sessionStorage.setItem('jwtToken', jwtToken); // 每次收到 Response 時，就會寫入 sessionStorage
@@ -629,13 +628,15 @@ async function queryPushBind() {
  * 通知 APP 強制登出。
  * @param {String} reasonCode 登出原因代碼。
  * @param {String} message 登出原因。
+ * @param {Boolean} autoStart
  * 通常只有在 Timeout 或嚴重錯誤時才會發生。
  */
-async function forceLogout(reasonCode, message, funcId) {
+async function forceLogout(reasonCode, message, autoStart) {
   await callAppJavaScript('logout', { reason: reasonCode, message }, false, () => {
-    if (window.location.pathname !== '/login') {
-      window.location.search = funcId ? `?fid=${funcId}` : ''; // 登入後立即啟動的功能。
-      window.location.href = `${process.env.REACT_APP_ROUTER_BASE}/login`;
+    if (autoStart && !window.location.pathname.startsWith('/login')) {
+      const funcId = funcStack.peek() ? funcStack.peek().funcID : window.location.pathname.substring(1);
+      const search = funcId ? `/${funcId}` : ''; // 登入後立即啟動的功能。
+      window.location.href = `${process.env.REACT_APP_ROUTER_BASE}/login${search}`;
     }
   });
 }
