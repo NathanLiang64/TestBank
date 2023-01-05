@@ -14,7 +14,7 @@ const DetailContent = ({ reserveData, selectedAccount }) => (
         title="預約設定日"
         content={dateToString(reserveData.rgDay)}
       />
-      {reserveData.cycle !== 'D' && (
+      {reserveData.isMulti && (
         <InformationList title="預約轉帳總金額" content="待提供" />
       )}
 

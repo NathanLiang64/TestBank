@@ -15,7 +15,6 @@ import { DropdownField, TextInputField } from 'components/Fields';
 /* Styles */
 import { showAnimationModal } from 'utilities/MessageModal';
 import { AuthCode } from 'utilities/TxnAuthCode';
-import { useNavigation } from 'hooks/useNavigation';
 import { localCounties, localCities, findCounty, findCity } from 'utilities/locationOptions';
 import BasicInformationWrapper from './T00700.style';
 import { validationSchema } from './validationSchema';
@@ -25,7 +24,6 @@ import { validationSchema } from './validationSchema';
  */
 const T00700 = () => {
   const dispatch = useDispatch();
-  const { closeFunc } = useNavigation();
   const {
     handleSubmit, control, reset, watch,
   } = useForm({
@@ -42,10 +40,21 @@ const T00700 = () => {
   const [watchedCounty, watchedCity] = watch(['county', 'city']);
 
   const [originPersonalData, setOriginPersonalData] = useState();
-  const countyOptions = localCounties.map(({name, code}) => ({label: name, value: code}));
+  const countyOptions = localCounties.map(({name}) => ({label: name, value: name}));
   const cityOptions = useMemo(() => {
-    if (!watchedCounty || !localCities[watchedCounty]) return [];
-    return localCities[watchedCounty].map(({ name, code }) => ({ label: name, value: code }));
+    if (!watchedCounty) return [];
+    const foundCounty = findCounty(watchedCounty);
+    if (foundCounty) {
+      return localCities[foundCounty.code].map(({ name }) => ({
+        label: name,
+        value: name,
+      }));
+    }
+    // NOTE 目前後端傳過來的 city 以及 county 很亂，
+    // 如果 foundCounty 不存在，代表後端傳過來的 county 是錯的，無法在 localCounties 找到
+    // 因此把 county 以及 city 兩個欄位清空，要求使用者再選一次
+    reset((formValues) => ({...formValues, county: '', city: ''}));
+    return [];
   }, [watchedCounty]);
 
   const fetchCountyList = async () => {
@@ -73,7 +82,7 @@ const T00700 = () => {
       errorTitle: '設定失敗',
       errorCode: response.code,
       errorDesc: response.message,
-      onClose: result ? closeFunc : () => reset({ ...originPersonalData }), // BUG 成功後，不應該自動關閉
+      onClose: result ? () => {} : () => reset({ ...originPersonalData }),
     });
   };
 
@@ -81,8 +90,8 @@ const T00700 = () => {
   const modifyPersonalData = async (values) => {
     dispatch(setWaittingVisible(true));
     const modifyDataResponse = await modifyBasicInformation(values);
-    setResultDialog(modifyDataResponse);
     dispatch(setWaittingVisible(false));
+    setResultDialog(modifyDataResponse);
   };
 
   // 點擊儲存變更按鈕
@@ -95,17 +104,17 @@ const T00700 = () => {
 
     dispatch(setWaittingVisible(true));
     const jsRs = await transactionAuth(autoCode, values.mobile);
+    dispatch(setWaittingVisible(false));
     if (jsRs.result) {
       const county = findCounty(values.county);
-      const city = findCity(county.code, values.city);
+      const {zipCode} = findCity(county.code, values.city);
+
       const rqData = {
         ...values,
-        county: county.name,
-        city: city.name,
+        zipCode: `${zipCode}00`, // 原 zipCode是三碼，帶過去要五碼，故補齊
       };
       modifyPersonalData(rqData);
     }
-    dispatch(setWaittingVisible(false));
   };
 
   // 取得初始資料
