@@ -2,9 +2,7 @@ import * as yup from 'yup';
 import { useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import {
-  getOsType, getPlatform, transactionAuth,
-} from 'utilities/AppScriptProxy';
+import { getOsType, transactionAuth } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -88,7 +86,7 @@ const A00800 = () => {
       passwd: data.password,
       mobile: data.mobileNum,
       osType: getOsType(), // 1.iOS, 2.Android, 3.其他
-      platform: getPlatform(),
+      platform: navigator.platform, // 取得系統執行的硬體設備名稱。例："MacIntel", "Win32", "Linux x86_64", "Linux x86_64"...
     };
 
     if (authResult.result === true) {
