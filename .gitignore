@@ -8,7 +8,6 @@
 # testing
 /coverage
 /storybook-static
-src/proto/Login/login.js
 
 # production
 /build
