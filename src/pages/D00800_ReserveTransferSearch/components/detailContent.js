@@ -1,8 +1,13 @@
-import { dateToString, toCurrency, weekNumberToChinese } from 'utilities/Generator';
+import {
+  accountFormatter, dateToString, toCurrency, weekNumberToChinese,
+} from 'utilities/Generator';
 import InformationList from 'components/InformationList';
+import { getBankCode } from 'utilities/CacheData';
+import { useEffect, useState } from 'react';
 import { DialogContentWrapper } from '../D00800.style';
 
 const DetailContent = ({ data, selectedAccount }) => {
+  const [receiveBankName, setReceiveBankName] = useState('');
   const generatePeriodText = () => {
     switch (data.cycle) {
       case ('W'):
@@ -15,6 +20,19 @@ const DetailContent = ({ data, selectedAccount }) => {
   };
 
   const durationText = `${dateToString(data.startDay)}~${dateToString(data.endDay)}`;
+
+  // 取得銀行名稱
+  const getBankName = async (receiveBank) => {
+    getBankCode().then((items) => {
+      const { bankName } = items.find((b) => b.bankNo === receiveBank) ?? '';
+      setReceiveBankName(bankName);
+    });
+  };
+
+  useEffect(() => {
+    getBankName(data.receiveBank);
+  }, []);
+
   return (
     <DialogContentWrapper>
       <div className="mainBlock">
@@ -24,17 +42,20 @@ const DetailContent = ({ data, selectedAccount }) => {
           {data.transferAmount}
         </div>
         <div className="account">
-          {data.receiveBank}
+          {receiveBankName}
           (
-          {data.receiveAccountNo}
+          {data.receiveBank}
           )
+        </div>
+        <div className="account">
+          {data.receiveAccountNo}
         </div>
         <div className="account">{data.inActNo}</div>
       </div>
       <div className="informationListContainer">
         <InformationList
           title="轉出帳號"
-          content={selectedAccount.acctId}
+          content={accountFormatter(selectedAccount.acctId)}
           remark={selectedAccount.acctName}
         />
         <InformationList

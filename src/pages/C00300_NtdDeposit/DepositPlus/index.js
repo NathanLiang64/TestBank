@@ -103,10 +103,12 @@ const Deposit = () => {
         <section className="detailArea">
           <div className="sectionTitle">
             <h3>活動明細</h3>
+            {!!depositPlusDetail.bonusDetail && (
             <button type="button" onClick={() => nextPage()}>
               各項活動說明
               <ArrowNextIcon />
             </button>
+            )}
           </div>
 
           <ul className="detailList">
