@@ -45,17 +45,13 @@ const C00500 = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
-    // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
-    getAccountsList('S', async (items) => { // M=台幣主帳戶、C=台幣子帳戶
-      if (items.length === 0) {
-        await showPrompt('您還沒有任何證券交割的存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
-      } else {
-        setAccounts(items);
-        await processStartParams(items);
-        dispatch(setWaittingVisible(false));
-      }
-    });
+    const accts = await getAccountsList('S');
+    if (accts.length) {
+      setAccounts(accts);
+      await processStartParams(accts);
+    } else showPrompt('您還沒有任何證券交割的存款帳戶，請在系統關閉此功能後，立即申請。', closeFunc);
+
+    dispatch(setWaittingVisible(false));
   }, []);
 
   /**

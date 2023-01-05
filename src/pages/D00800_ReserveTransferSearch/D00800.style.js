@@ -43,6 +43,7 @@ export const ReserveTransferSearchWrapper = styled(Layout)`
       font-size: 2.4rem;
       color: ${({ theme }) => theme.colors.primary.dark};
       line-height: 3.6rem;
+      text-align: center;
     }
   }
   .informationListContainer {
@@ -52,7 +53,7 @@ export const ReserveTransferSearchWrapper = styled(Layout)`
     padding: 1.6rem;
   }
   .buttonContainer {
-    margin-bottom: 4rem;
+    margin: 2rem auto;
   }
   .cardArea {
     width: 100vw;
@@ -89,7 +90,7 @@ export const ReserveTransferSearchWrapper = styled(Layout)`
       }
       > div {
         // width: 100%;
-        flex:1;
+        flex: 1;
         .MuiInputBase-root {
           .MuiInput-input {
             color: ${({ theme }) => theme.colors.primary.light};
@@ -211,10 +212,11 @@ export const DialogContentWrapper = styled.div`
       color: ${({ theme }) => theme.colors.primary.dark};
       margin-bottom: 1.2rem;
     }
-    .account {
+    .accountInfo {
       font-size: 2.4rem;
       font-weight: 400;
       line-height: 3.6rem;
+      text-align: center;
       color: ${({ theme }) => theme.colors.primary.dark};
     }
   }

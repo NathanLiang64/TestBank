@@ -43,6 +43,7 @@ function showLog(appJsName) {
   switch (appJsName) {
     case 'onLoading':
     case 'setAuthdata':
+    case 'getAPPAuthdata':
       return false;
 
     default: return true;
@@ -72,15 +73,20 @@ export async function callAppJavaScript(appJsName, jsParams, needCallback, webDe
    */
   const CallbackFunc = (token, value) => {
     let result;
-    try {
-      // 若是 JSON 格式，則以物件型態傳回。
-      result = JSON.parse(value);
-      // NOTE 以下奇怪作法是為了配合 APP-JS
-      if (result.result === 'true') result.result = true;
-      if (result.result === 'false') result.result = false;
-    } catch (ex) {
+    if (value instanceof Object) {
       result = value;
+    } else {
+      try {
+        // 若是 JSON 格式，則以物件型態傳回。
+        result = JSON.parse(value);
+      } catch (ex) {
+        result = value;
+      }
     }
+
+    // NOTE 以下奇怪作法是為了配合 APP-JS
+    if (result.result === 'true') result.result = true;
+    if (result.result === 'false') result.result = false;
     window.AppJavaScriptCallbackPromiseResolves[token](result);
 
     delete window.AppJavaScriptCallbackPromiseResolves[token];
@@ -452,16 +458,17 @@ async function syncJwtToken(jwtToken) {
  * @returns 最新的 JwtToken
  */
 async function getJwtToken(force) {
-  let jwtToken = sessionStorage.getItem('jwtToken'); // 每次收到 Response 時，就會寫入 sessionStorage
+  let jwtToken = null;
   if (!jwtToken || force) {
     // 從 APP 取得 JWT Token，並存入 sessionStorage 給之後的 WebView 功能使用。
     const result = await callAppJavaScript('getAPPAuthdata', null, true, () => null); // 傳回值： {"auth":""}
     jwtToken = result?.auth; // NOTE 不應該為 null, 不論是 result 或 auth。
     if (jwtToken) {
-      sessionStorage.setItem('jwtToken', jwtToken);
+      sessionStorage.setItem('jwtToken', jwtToken); // 每次收到 Response 時，就會寫入 sessionStorage
     } else {
-      sessionStorage.removeItem('jwtToken');
-      console.log('\x1b[31m*** WARNING *** getJwtToken 取得的 JWT Token 為空值！');
+      // sessionStorage.removeItem('jwtToken');
+      // console.log('\x1b[31m*** WARNING *** getJwtToken 取得的 JWT Token 為空值！');
+      jwtToken = sessionStorage.getItem('jwtToken');
     }
   }
   // console.log(`\x1b[32m[JWT] \x1b[92m${jwtToken}`);
@@ -503,7 +510,7 @@ async function transactionAuth(authCode, otpMobile) {
  */
 async function verifyBio(authKey) {
   const data = {
-    authCode: authKey,
+    AuthKey: authKey,
   };
   return await callAppJavaScript('chkQLfeature', data, true, async () => {
     // DEBUG

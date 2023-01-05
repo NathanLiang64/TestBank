@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { Controller, useForm } from 'react-hook-form';
+import * as yup from 'yup';
 import uuid from 'react-uuid';
 import parse from 'html-react-parser';
 import { RadioGroup } from '@material-ui/core';
@@ -12,16 +13,17 @@ import Layout from 'components/Layout/Layout';
 import Main from 'components/Layout';
 import Accordion from 'components/Accordion';
 import {
-  FEIBButton, FEIBRadioLabel, FEIBRadio, FEIBErrorMessage,
+  FEIBButton, FEIBRadioLabel, FEIBRadio, FEIBErrorMessage, FEIBCheckbox,
 } from 'components/elements';
 import Loading from 'components/Loading';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigation } from 'hooks/useNavigation';
+import { FuncID } from 'utilities/FuncID';
+import { RadioGroupField } from 'components/Fields/radioGroupField';
 import { CreatePageWrapper } from './C00600.style';
-import { getDepositPlans, getDepositPlanProgram, getDepositPlanTerms } from './api';
+import { getDepositPlanProgram, getDepositPlanTerms } from './api';
 import { AlertReachedMaxPlans } from './utils/prompts';
-import { createSchema } from './validationSchema';
 
 /**
  * C00600 存錢計畫 新增頁
@@ -30,30 +32,26 @@ const DepositPlanCreatePage = () => {
   const dispatch = useDispatch();
   const { closeFunc, goHome } = useNavigation();
   const history = useHistory();
-  const { control, handleSubmit, formState: { errors } } = useForm(
+  const {
+    control, handleSubmit, formState: {errors},
+  } = useForm(
     {
       defaultValues: {code: ''},
-      resolver: yupResolver(createSchema),
+      resolver: yupResolver(yup.object().shape({
+        code: yup.string().required('請選擇計畫'),
+      })),
     },
   );
-
+  const {state} = useLocation();
   const [programs, setPrograms] = useState();
   const [terms, setTerms] = useState();
-  const [subAccounts, setSubAccounts] = useState([]);
-  const [hasReachedMaxSubAccounts, setHasReachedMaxSubAccounts] = useState(false);
+  if (!state || !state.depositPlans) closeFunc();// GURARD 如果 state/state.depositPlans 不存在，在這一行就結束了
+  const {depositPlans} = state;
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-
-    const response = await getDepositPlans();
-    if (response) {
-      const {plans, subAccounts: accounts, totalSubAccountCount} = response;
-      // Guard: 存錢計畫首頁最多就三個計畫，意指若未在該情況下進入此頁為不正常操作。
-      if (plans.length >= 3) AlertReachedMaxPlans({ goBack: () => closeFunc(), goHome });
-      setSubAccounts(accounts);
-      setHasReachedMaxSubAccounts(totalSubAccountCount >= 8);
-    }
-
+    // Guard: 存錢計畫首頁最多就三個計畫，意指若未在該情況下進入此頁為不正常操作。
+    if (depositPlans.plans.length >= 3) AlertReachedMaxPlans({ goBack: closeFunc, goHome });
     const programResponse = await getDepositPlanProgram();
     setPrograms(programResponse);
     dispatch(setWaittingVisible(false));
@@ -68,13 +66,15 @@ const DepositPlanCreatePage = () => {
     sessionStorage.removeItem('C00600-hero'); // 清除暫存背景圖。
 
     const program = programs.find((p) => p.code === code);
+    const {subAccounts, totalSubAccountCount} = depositPlans;
+    const hasReachedMaxSubAccounts = totalSubAccountCount >= 8;
     history.push('/C006003', {
       program, subAccounts, hasReachedMaxSubAccounts,
     });
   };
 
   return (
-    <Layout title="新增存錢計畫" goBackFunc={() => history.goBack()}>
+    <Layout title="新增存錢計畫" goBackFunc={() => history.replace(FuncID.C00600, {depositPlans})}>
       <Main>
         <CreatePageWrapper>
           <form className="flex" onSubmit={handleSubmit(onSubmit)}>
