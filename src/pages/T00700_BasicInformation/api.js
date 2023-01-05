@@ -36,5 +36,5 @@ export const getProfile = async () => {
  */
 export const modifyBasicInformation = async (param) => {
   const response = await callAPI('/api/setting/v1/updateProfile', param);
-  return response.data;
+  return response;
 };
