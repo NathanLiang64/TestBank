@@ -219,6 +219,7 @@ const routes = [
 
   // TODO：支援開發及Prototype測試使用
   {path: '/login/:fid', exact: false, component: Login},
+  {path: '/login', exact: false, component: Login},
   {path: '/', exact: true, component: Nav},
   // --------------------------------
 ];
