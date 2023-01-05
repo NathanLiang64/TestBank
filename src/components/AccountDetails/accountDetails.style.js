@@ -34,6 +34,14 @@ const AccountDetailsWrapper = styled(MainScrollWrapper)`
     padding: 0 .4rem;
     height: 100%;
     overflow-y: auto;
+
+    .emptyDataWrapper {
+      width: 100%;
+      height: 40vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
 
   .searchBar {
