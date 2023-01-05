@@ -503,7 +503,7 @@ async function transactionAuth(authCode, otpMobile) {
  */
 async function verifyBio(authKey) {
   const data = {
-    authCode: authKey,
+    AuthKey: authKey,
   };
   return await callAppJavaScript('chkQLfeature', data, true, async () => {
     // DEBUG
