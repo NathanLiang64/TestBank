@@ -85,8 +85,10 @@ export async function callAppJavaScript(appJsName, jsParams, needCallback, webDe
     }
 
     // NOTE 以下奇怪作法是為了配合 APP-JS
-    if (result.result === 'true') result.result = true;
-    if (result.result === 'false') result.result = false;
+    if (result) {
+      if (result.result === 'true') result.result = true;
+      if (result.result === 'false') result.result = false;
+    }
     window.AppJavaScriptCallbackPromiseResolves[token](result);
 
     delete window.AppJavaScriptCallbackPromiseResolves[token];
@@ -461,7 +463,7 @@ async function getJwtToken(force) {
   let jwtToken = null;
   if (!jwtToken || force) {
     // 從 APP 取得 JWT Token，並存入 sessionStorage 給之後的 WebView 功能使用。
-    const result = await callAppJavaScript('getAPPAuthdata', null, true, () => null); // 傳回值： {"auth":""}
+    const result = await callAppJavaScript('getAPPAuthdata', null, true); // 傳回值： {"auth":""}
     jwtToken = result?.auth; // NOTE 不應該為 null, 不論是 result 或 auth。
     if (jwtToken) {
       sessionStorage.setItem('jwtToken', jwtToken); // 每次收到 Response 時，就會寫入 sessionStorage
@@ -728,7 +730,7 @@ async function queryPushBind() {
  * 通常只有在 Timeout 或嚴重錯誤時才會發生。
  */
 function forceLogout(reasonCode, message) {
-  callAppJavaScript('forceLogout', { reason: reasonCode, message }, false, () => {
+  callAppJavaScript('logout', { reason: reasonCode, message }, false, () => {
     window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/login`;
   });
 }
