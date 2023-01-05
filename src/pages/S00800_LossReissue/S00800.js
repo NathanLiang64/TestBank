@@ -6,14 +6,13 @@ import Accordion from 'components/Accordion';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import { FEIBButton } from 'components/elements';
 import { EditIcon } from 'assets/images/icons';
-import { showCustomDrawer, showCustomPrompt, showError } from 'utilities/MessageModal';
+import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import { AuthCode } from 'utilities/TxnAuthCode';
-import { useNavigation } from 'hooks/useNavigation';
 import { accountFormatter } from 'utilities/Generator';
-import { localCounties, localCities } from 'utilities/locationOptions';
+import { findCounty, findCity } from 'utilities/locationOptions';
 import { updateProfile, getStatus, reissueOrLost } from './api';
 import LossReissueWrapper from './S00800.style';
 import { AddressEditor } from './S00800_AddressEditor';
@@ -23,7 +22,6 @@ import { AddressEditor } from './S00800_AddressEditor';
  */
 const LossReissue = () => {
   const dispatch = useDispatch();
-  const { closeFunc } = useNavigation();
   const [debitCardInfo, setDebitCardInfo] = useState({
     accountNo: '-',
     actionText: '',
@@ -39,9 +37,10 @@ const LossReissue = () => {
 
   const addressText = useMemo(() => {
     if (!addressValue) return '';
-    const county = localCounties.find(({code}) => code === addressValue.county);
-    const city = localCities[county.code].find(({code}) => code === addressValue.city);
-    return `${county.name}${city.name}${addressValue.addr}`;
+    const county = findCounty(addressValue.county);
+    const city = county ? findCity(county.code, addressValue.city) : '';
+    if (county && city) return `${county.name}${city.name}${addressValue.addr}`;
+    return `${addressValue.addr}`;
   }, [addressValue]);
 
   const updateDebitCardStatus = async () => {
@@ -71,8 +70,6 @@ const LossReissue = () => {
       }
 
       setDebitCardInfo(model);
-    } else {
-      showError('Network Error', closeFunc);
     }
 
     dispatch(setWaittingVisible(false));
@@ -82,9 +79,12 @@ const LossReissue = () => {
   const executeAction = async () => {
     dispatch(setWaittingVisible(true));
     const auth = await transactionAuth(AuthCode.S00800);
+    dispatch(setWaittingVisible(false));
 
     if (auth && auth.result) {
+      dispatch(setWaittingVisible(true));
       const res = await reissueOrLost();
+      dispatch(setWaittingVisible(false));
       await showCustomPrompt({
         message: (
           <SuccessFailureAnimations
@@ -99,25 +99,23 @@ const LossReissue = () => {
         onclose: () => updateDebitCardStatus(),
       });
     }
-
-    dispatch(setWaittingVisible(false));
   };
 
   const handleClickEditAddress = async () => {
     const onSubmit = async (values) => {
+      const { county, city } = values;
+      const {code} = findCounty(county);
+      const {zipCode} = findCity(code, city);
+
       const auth = await transactionAuth(AuthCode.S00800);
       if (auth && auth.result) {
         dispatch(setWaittingVisible(true));
         // 修改地址
-        await updateProfile({
-          county: values.addrCity,
-          city: values.addrDistrict,
-          addr: values.addrStreet,
-        });
+        await updateProfile({...values, zipCode: `${zipCode}00` });
+        setAddressValue({...values});
         dispatch(setWaittingVisible(false));
       }
 
-      setAddressValue({...values});
       dispatch(setDrawerVisible(false));
     };
 

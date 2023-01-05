@@ -8,14 +8,14 @@ const generatePeriodText = ({cycle, cycleNo}) => {
       return `每週星期${weekNumberToChinese(Number(cycleNo))}`;
     case 'M':
       return `每月${Number(cycleNo)}號`;
-    case 'D':
+    case '1':
     default:
       return '單次';
   }
 };
 const generatePeriodHint = (cycle) => {
   switch (cycle) {
-    case 'D':
+    case '1':
       return '';
     case 'W':
     case 'M':
@@ -52,7 +52,7 @@ export const renderBody = (reserveData, selectedAccount) => (
       content={generatePeriodText(reserveData)}
       remark={generatePeriodHint(reserveData.cycle)}
     />
-    {reserveData.cycle !== 'D' && (
+    {reserveData.isMulti && (
       <InformationList
         title="期間"
         content={`${dateToString(reserveData.startDay)}~${dateToString(
@@ -69,7 +69,7 @@ export const renderFooter = (reserveData, selectedAccount) => (
       title="預約設定日"
       content={dateToString(reserveData.rgDay)}
     />
-    {reserveData.cycle !== 'D' && (
+    {reserveData.isMulti && (
       <InformationList
         title="預約轉帳總金額"
         content="待提供"

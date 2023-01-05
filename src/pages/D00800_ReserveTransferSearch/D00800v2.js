@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useForm } from 'react-hook-form';
@@ -55,9 +54,14 @@ const D00800 = () => {
     // ??? 不同帳號的 reservedTransDetails 與 getResultTransDetails 回傳的資料結構不一樣.... 後續需請後端更正
     const type = tab === '1' ? 'reserve' : 'result';
     const detailsRes = tab === '1' ? await getReservedTransDetails(param) : await getResultTransDetails(param);
+    const updatedDetailsRes = detailsRes.map((res) => {
+      if (res.cycle) return {...res, isMulti: res.cycle !== '1'};
+      return res;
+    });
+
     setSearchList((prevSearchList) => ({
       ...prevSearchList,
-      [type]: { ...prevSearchList[type], [`${accountNo}_${startDay}_${endDay}`]: detailsRes },
+      [type]: { ...prevSearchList[type], [`${accountNo}_${startDay}_${endDay}`]: updatedDetailsRes },
     }));
 
     if (banks) return;
@@ -131,23 +135,24 @@ const D00800 = () => {
     if (!selectedAccount?.accountNo || !list || !banks) return <Loading space="both" isCentered />;
     if (!list.length) return <div className="emptyConatiner"><EmptyData /></div>;
 
+    const isReserveTab = tabValue === '1';
+    const onTapeClick = (item) => (isReserveTab
+      ? () => handleReserveDataDialog(item)
+      : () => handleOpenResultDialog(item));
     const showImg = (stderrMsg) => {
-      if (tabValue === '1') return undefined;
+      if (isReserveTab) return undefined;
       return stderrMsg ? FailImage : SuccessImage;
     };
+
     return list.map((item) => (
       <InformationTape
         key={item.seqno}
         topLeft={`${item.receiveBank}-${item.receiveAccountNo}`}
         topRight={currencySymbolGenerator('NTD', parseFloat(item.transferAmount))}
-        bottomLeft={`${tabValue === '1' ? '預約轉帳日' : '交易日期'} : ${dateToString(item.rgDay)}`}
+        bottomLeft={`${isReserveTab ? '預約轉帳日' : '交易日期'} : ${dateToString(item.rgDay)}`}
         // eslint-disable-next-line no-nested-ternary
-        bottomRight={tabValue === '1' ? item.cycle === 'D' ? '單筆' : '週期' : undefined}
-        onClick={
-          tabValue === '1'
-            ? () => handleReserveDataDialog(item)
-            : () => handleOpenResultDialog(item)
-        }
+        bottomRight={isReserveTab ? item.isMulti ? '週期' : '單筆' : undefined}
+        onClick={onTapeClick(item)}
         img={showImg(item.stderrMsg)} // TODO 待確認「結果查詢」的資料結構
       />
     ));

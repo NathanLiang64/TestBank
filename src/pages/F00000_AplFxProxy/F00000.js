@@ -12,17 +12,15 @@ import { AplFxProxyWrapper } from './F00000.style';
 const AplFxProxy = () => {
   const {search} = useLocation();
   const [targetURL, setTargetURL] = useState();
-  const [openingFail, setOpeningFail] = useState(false);
   const { closeFunc } = useNavigation();
 
   useEffect(async () => {
     const prod = search.split('=')[1];
     const { sse } = await getSSE({ prod });
     const url = `${process.env.REACT_APP_APLFX_URL}prod=${prod}&sse=${sse}`;
-    setTargetURL(url);
-    const opener = window.open(url, '_blank');
-    if (opener) closeFunc(); // BUG 有外開瀏覽器但是沒有產生 opener
-    else setOpeningFail(true);
+    const windowOpener = window.open(url, '_blank');
+    if (windowOpener) closeFunc(); // BUG ios 有外開瀏覽器但是沒有產生 opener
+    else setTargetURL(url);
   }, []);
 
   const renderHintMessage = () => (
@@ -44,7 +42,7 @@ const AplFxProxy = () => {
     <Layout title="更多">
       <AplFxProxyWrapper>
         {/* 若外開失敗 (沒有產生 opener)，則提示使用者點選連結 */}
-        {openingFail && targetURL ? (
+        { targetURL ? (
           renderHintMessage()
         ) : (
           <Loading space="both" isFullscreen isCentered />

@@ -29,9 +29,11 @@ const ReserveTransferSearch1 = ({ location }) => {
       const {result} = await transactionAuth(AuthCode.D00800);
       if (result) {
         const { reserveData } = location.state;
+        // 不確定沒刪除的話，API 是否會成功，先把不需帶過去的 property 刪掉
         delete reserveData.txCd;
         delete reserveData.bankName;
         delete reserveData.dscpt1;
+        delete reserveData.isMulti;
         const res = await cancelReserveTransfer(reserveData);
         // 基本上若 code!=='0000' 的情況下，底層就會跳出錯誤
         setCancelResult(res);
