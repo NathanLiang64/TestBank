@@ -15,6 +15,7 @@ import FEIBIconButton from 'components/elements/FEIBIconButton';
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import InformationTape from 'components/InformationTape';
 import EmptyData from 'components/EmptyData';
+import Loading from 'components/Loading';
 import {
   accountFormatter, dateToString, currencySymbolGenerator, handleLoanTypeToTitle,
 } from 'utilities/Generator';
@@ -155,13 +156,8 @@ const Page = () => {
   };
 
   const renderTransactions = (detail, loan) => {
-    if (!detail || detail.length === 0) {
-      return (
-        <div className="emptydata-wrapper">
-          <EmptyData />
-        </div>
-      );
-    }
+    if (!detail) return <Loading space="both" isCentered />;
+    if (!detail.length) return <div className="emptydata-wrapper"><EmptyData /></div>;
 
     // transactions 依照日期排序（大 -> 小）
     const sortedTransactions = detail.sort((a, b) => parseInt(b.txnDate, 10) - parseInt(a.txnDate, 10));
@@ -225,7 +221,7 @@ const Page = () => {
     if (subSummaryRes.length !== 0) {
       error = null;
       setLoans(subSummaryRes);
-      fetchDetailMap(subSummaryRes.account, subSummaryRes.subNo, 0);
+      fetchDetailMap(subSummaryRes[0].account, subSummaryRes[0].subNo, 0);
     } else {
       error = '您尚未擁有貸款，請在系統關閉此功能後，立即申請。';
     }

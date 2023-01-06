@@ -1,5 +1,5 @@
 import { download } from 'utilities/axios';
-import { dateToYMD } from 'utilities/Generator';
+// import { dateToYMD } from 'utilities/Generator';
 
 /**
  * 下載交易明細清單
@@ -8,12 +8,10 @@ import { dateToYMD } from 'utilities/Generator';
  * @returns 數位存摺
  */
 export const getDepositBook = async (fileType, conditions) => {
-  const today = dateToYMD(); // 今天 yyyyMMdd
-  const filename = `${conditions.accountNo}-${today}`;
   const request = {
     conditions,
     fileType,
     pdfTemplateType: 2, // Pdf版型, 1:只有封面(可參考PdfTemplateType), 2:只有內容, 3:完整內容
   };
-  await download('/api/deposit/v1/getDepositBook', request, `${filename}.csv`);
+  await download('/api/deposit/v1/getDepositBook', request);
 };

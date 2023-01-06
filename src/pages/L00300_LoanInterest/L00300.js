@@ -12,6 +12,7 @@ import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
 import DownloadIcon from 'assets/images/icons/downloadIcon.svg';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
 import EmptyData from 'components/EmptyData';
+import Loading from 'components/Loading';
 import { FuncID } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import { getSubPaymentHistory } from './api';
@@ -25,7 +26,7 @@ import LoanInterestWrapper from './L00300.style';
 const LoanInterest = () => {
   const [cardData, setCardData] = useState({});
   const [dateRange, setDateRange] = useState('0');
-  const [recordsList, setRecordsList] = useState([]);
+  const [recordsList, setRecordsList] = useState();
   const { startFunc } = useNavigation();
 
   const getStartDate = (type) => {
@@ -53,7 +54,7 @@ const LoanInterest = () => {
     };
 
     const histroyResponse = await getSubPaymentHistory(param);
-    if (histroyResponse) setRecordsList(histroyResponse.data);
+    if (histroyResponse) setRecordsList(histroyResponse);
   };
 
   const handleChangeTabs = (e, value) => {
@@ -62,6 +63,26 @@ const LoanInterest = () => {
   };
 
   const toDetailPage = (singleHistoryData) => startFunc(`${FuncID.L00300}1`, { singleHistoryData, cardData });
+
+  const renderRecordList = () => {
+    if (!recordsList) return <Loading space="both" isCentered />;
+    if (!recordsList.length) return <div className="emptydata-wrapper"><EmptyData content="查無最近三年內的帳務往來資料" /></div>;
+
+    return (
+      <div className="recordsList">
+        {recordsList.map((item) => (
+          <InformationTape
+            key={recordsList.indexOf(item)}
+            topLeft={handleLoanTypeToTitle(item.type)}
+            topRight={`$${toCurrency(item.amount)}`}
+            bottomLeft={`${dateToString(item.date)}`}
+            bottomRight={`貸款餘額 $${toCurrency(item.balance)}`}
+            onClick={() => toDetailPage(item)}
+          />
+        ))}
+      </div>
+    );
+  };
 
   const renderEditList = () => (
     <ul className="noticeEditList downloadItemList">
@@ -135,24 +156,7 @@ const LoanInterest = () => {
               </FEIBTabContext>
             </div>
           </div>
-          {recordsList.length ? (
-            <div className="recordsList">
-              {recordsList.map((item) => (
-                <InformationTape
-                  key={recordsList.indexOf(item)}
-                  topLeft={handleLoanTypeToTitle(item.type)}
-                  topRight={`$${toCurrency(item.amount)}`}
-                  bottomLeft={`${dateToString(item.date)}`}
-                  bottomRight={`貸款餘額 $${toCurrency(item.balance)}`}
-                  onClick={() => toDetailPage(item)}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="emptydata-wrapper">
-              <EmptyData content="查無最近三年內的帳務往來資料" />
-            </div>
-          )}
+          {renderRecordList()}
         </div>
       </LoanInterestWrapper>
     </Layout>
