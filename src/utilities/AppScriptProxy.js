@@ -1,20 +1,16 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-bitwise */
-/* eslint-disable object-curly-newline */
 /* eslint-disable no-use-before-define */
-/* eslint-disable brace-style */
 import forge from 'node-forge';
 import { Buffer } from 'buffer';
 import PasswordDrawer from 'components/PasswordDrawer';
 import { getTransactionAuthMode, createTransactionAuth, transactionAuthVerify } from 'components/PasswordDrawer/api';
-import { customPopup, showDrawer, showError } from './MessageModal';
+import { customPopup, showDrawer } from './MessageModal';
 // eslint-disable-next-line import/no-cycle
 import { callAPI } from './axios';
-import e2ee from './E2ee';
 
 const device = {
-  ios: () => !(sessionStorage.getItem('webMode') === 'true') && /iPhone|iPad|iPod/i.test(navigator.userAgent),
-  android: () => !(sessionStorage.getItem('webMode') === 'true') && /Android/i.test(navigator.userAgent),
+  ios: () => window.webkit && /iPhone|iPad|iPod/i.test(navigator.userAgent),
+  android: () => window.jstoapp && /Android/i.test(navigator.userAgent),
 };
 
 /**
@@ -28,14 +24,6 @@ function getOsType() {
 }
 
 /**
- * 取得系統執行的硬體設備名稱。
- * @returns "MacIntel", "Win32", "Linux x86_64", "Linux x86_64"...
- */
-function getPlatform() {
-  return navigator.platform;
-}
-
-/**
  * 篩掉不要顯示的 APP JS Script log
  * @param {*} appJsName APP提供的JavaScript funciton名稱。
  */
@@ -43,6 +31,7 @@ function showLog(appJsName) {
   switch (appJsName) {
     case 'onLoading':
     case 'setAuthdata':
+    case 'getAPPAuthdata':
       return false;
 
     default: return true;
@@ -71,15 +60,19 @@ export async function callAppJavaScript(appJsName, jsParams, needCallback, webDe
    * @param {*} value APP JavaScript API的傳回值。
    */
   const CallbackFunc = (token, value) => {
-    let result;
-    try {
-      // 若是 JSON 格式，則以物件型態傳回。
-      result = JSON.parse(value);
-      // NOTE 以下奇怪作法是為了配合 APP-JS
+    let result = value;
+    if (!(value instanceof Object)) {
+      try {
+        result = JSON.parse(value);
+      } catch {
+        result = value;
+      }
+    }
+
+    // NOTE 以下奇怪作法是為了配合 APP-JS
+    if (result) {
       if (result.result === 'true') result.result = true;
       if (result.result === 'false') result.result = false;
-    } catch (ex) {
-      result = value;
     }
     window.AppJavaScriptCallbackPromiseResolves[token](result);
 
@@ -99,11 +92,9 @@ export async function callAppJavaScript(appJsName, jsParams, needCallback, webDe
     if (device.ios()) {
       const msg = JSON.stringify({ name: appJsName, data: JSON.stringify(request) });
       window.webkit.messageHandlers.jstoapp.postMessage(msg);
-    }
-    else if (device.android()) {
+    } else if (device.android()) {
       window.jstoapp[appJsName](JSON.stringify(request));
-    }
-    else if (needCallback || webDevTest) {
+    } else if (needCallback || webDevTest) {
       window.AppJavaScriptCallback[jsToken](webDevTest ? webDevTest() : null);
       return;
     }
@@ -210,90 +201,6 @@ function getCallerFunc() {
 
   return stack[stack.length - 2].funcID;
 }
-
-// /**
-//  * 網頁通知APP跳轉至首頁
-//  */
-// async function goHome() {
-//   funcStack.clear();
-//   await callAppJavaScript('goHome', null, false, () => {
-//     startFunc('/');
-//   });
-// }
-
-// /**
-//  * 網頁通知APP跳轉指定功能
-//  * @param {*} funcID 單元功能代碼。
-//  * @param {*} funcParams 提共給啟動的單元功能的參數，被啟動的單元功能是透過 loadFuncParams() 取回。
-//  * @param {*} keepData 當啟動的單元功能結束後，返回原功能啟動時取回的資料。
-//  */
-// async function startFunc(funcID, funcParams, keepData) {
-//   if (!funcID) {
-//     await showError('此功能尚未完成！');
-//     return;
-//   }
-
-//   funcID = funcID.replace(/^\/*/, ''); // 移掉前置的 '/' 符號,
-//   const data = {
-//     funcID,
-//     funcParams: funcParams ? JSON.stringify(funcParams) : null, // 要先轉 JSON 字串是為了配合 APP JavaScript
-//     keepData: keepData ? JSON.stringify(keepData) : null, // 要先轉 JSON 字串是為了配合 APP JavaScript
-//   };
-//   funcStack.push(data);
-
-//   // 只要不是 A00100 這種格式的頁面，一律視為 WebPage 而不透過 APP 的 Function Controller 轉導。
-//   const isFunction = (/^[A-Z]\d{5}$/.test(funcID));
-//   if (isFunction) {
-//     await callAppJavaScript('startFunc', data, false, () => {
-//       window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcID}`;
-//     });
-//   } else {
-//     window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${funcID}`;
-//   }
-// }
-
-// /**
-//  * 觸發APP返回上一頁功能，並將指定的資料透過 loadFuncParams() 傳回給啟動目前功能的單元功能。
-//  * @param {*} response 傳回值，會暫存在 SessionStorate("funcResp") 中。
-//  */
-// async function closeFunc(response) {
-//   // 將要傳回給前一功能（啟動目前功能的單元功能）的資料 存入 sessionStorage[funcResp]
-//   // 再由 loadFuncParams() 取出，放在啟動參數的 response 參數中。
-//   if (response && (!response.target && !response.type)) { // NOTE event物件會被誤判為傳回值，所以必需排除。
-//     sessionStorage.setItem('funcResp', JSON.stringify(response));
-//   }
-
-//   const closeItem = funcStack.peek(); // 因為 funcStack 還沒 pop，所以用 peek 還以取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
-//   const isFunction = !closeItem || (/^[A-Z]\d{5}$/.test(closeItem.funcID)); // 表示 funcID 是由 Function Controller 控制的單元功能。
-
-//   const startItem = funcStack.pop();
-//   const webCloseFunc = async () => {
-//     // 當 funcStack.pop 不出項目時，表示可能是由 APP 先啟動了某項功能（例：首頁卡片或是下方MenuBar）
-//     if (startItem) {
-//       // 表示返回由 WebView 啟動的單元功能或頁面，例：從「更多」啟動了某項單元功能，當此單元功能關閉時，就會進到這裡。
-//       window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${startItem.funcID}`; // keepData 存入 localStorage 'funcParams'
-//     } else {
-//       // 若是在登入前，無前一頁可以返回時，則一律回到 Login 頁。
-//       if (sessionStorage.getItem('isLogin') !== '1') {
-//         window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/login`;
-//         return;
-//       }
-
-//       // 雖然 Web端的 funcStack 已經空了，但有可能要返回的功能是由 APP 啟動的；所以，要先詢問 APP 是否有正在執行中的單元功能。
-//       const appJsRs = await callAppJavaScript('getActiveFuncID', null, true); // 取得 APP 目前的 FuncID
-//       if (appJsRs) {
-//         // 例：首頁卡片 啟動 存錢計劃，當 存錢計劃 選擇返回前一功能時，就會進到這裡。（因為此時的 funcStack 是空的）
-//         window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/${appJsRs.funcID}`;
-//       } else window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/`;
-//     }
-//   };
-
-//   if (isFunction) {
-//     await callAppJavaScript('closeFunc', null, false, webCloseFunc);
-//   } else {
-//     await webCloseFunc();
-//   }
-// }
 
 /**
  * 取得 APP Function Controller 提供的功能啟動參數。
@@ -452,16 +359,19 @@ async function syncJwtToken(jwtToken) {
  * @returns 最新的 JwtToken
  */
 async function getJwtToken(force) {
-  let jwtToken = sessionStorage.getItem('jwtToken'); // 每次收到 Response 時，就會寫入 sessionStorage
+  let jwtToken = null;
   if (!jwtToken || force) {
     // 從 APP 取得 JWT Token，並存入 sessionStorage 給之後的 WebView 功能使用。
-    const result = await callAppJavaScript('getAPPAuthdata', null, true, () => null); // 傳回值： {"auth":""}
-    jwtToken = result?.auth; // NOTE 不應該為 null, 不論是 result 或 auth。
-    if (jwtToken) {
-      sessionStorage.setItem('jwtToken', jwtToken);
+    const result = await callAppJavaScript('getAPPAuthdata', null, true); // 傳回值： {"auth":""}
+    jwtToken = result?.auth;
+    if (!jwtToken) {
+      // NOTE 不應該為 null, 不論是 result 或 auth；所以，只要取不到 Token 就表示還沒有登入，立即登出。
+      jwtToken = sessionStorage.getItem('jwtToken');
+      if (!jwtToken) {
+        await forceLogout(401, '尚未登入', true);
+      }
     } else {
-      sessionStorage.removeItem('jwtToken');
-      console.log('\x1b[31m*** WARNING *** getJwtToken 取得的 JWT Token 為空值！');
+      sessionStorage.setItem('jwtToken', jwtToken); // 每次收到 Response 時，就會寫入 sessionStorage
     }
   }
   // console.log(`\x1b[32m[JWT] \x1b[92m${jwtToken}`);
@@ -503,7 +413,7 @@ async function transactionAuth(authCode, otpMobile) {
  */
 async function verifyBio(authKey) {
   const data = {
-    authCode: authKey,
+    AuthKey: authKey,
   };
   return await callAppJavaScript('chkQLfeature', data, true, async () => {
     // DEBUG
@@ -519,7 +429,7 @@ async function verifyBio(authKey) {
  * 查詢快速登入綁定狀態
  * @returns {
  *  result: 驗證結果(true/false)。
- *  message: 駿證失敗狀況描述。
+ *  message: 驗證失敗狀況描述。
  *  QLStatus: 本裝置快速登入綁定狀態：(result為true時有值) 0：未綁定 1：已正常綁定 2：綁定但已鎖定 3：已在其它裝置綁定 4：本裝置已綁定其他帳號
  *  QLType: 快登裝置綁定所使用驗證方式(正常綁定狀態有值) (type->1:生物辨識/2:圖形辨識)
  * }
@@ -540,7 +450,7 @@ async function getQLStatus() {
  * @param {*} authType 快登所使用驗證方式。(1. 生物辨識, 2.圖形辨識)
  * @returns {
  *  result: 驗證結果(true/false)。
- *  message: 駿證失敗狀況描述。
+ *  message: 驗證失敗狀況描述。
  * }
  */
 async function createQuickLogin(authType) {
@@ -567,7 +477,7 @@ async function createQuickLogin(authType) {
  * @param {*} pwdE2ee E2EE加密後的密碼
  * @returns {
  *  result: 驗證結果(true/false)。
- *  message: 駿證失敗狀況描述。
+ *  message: 驗證失敗狀況描述。
  * }
  */
 async function verifyQuickLogin(authType, pwdE2ee) {
@@ -592,7 +502,7 @@ async function verifyQuickLogin(authType, pwdE2ee) {
  * 解除快登綁定
  * @returns {
  *  result: 驗證結果(true/false)。
- *  message: 駿證失敗狀況描述。
+ *  message: 驗證失敗狀況描述。
  * }
  */
 async function removeQuickLogin() {
@@ -607,6 +517,20 @@ async function removeQuickLogin() {
     }
   }
   return appRs;
+}
+
+/**
+ * 異動圖形辨識圖形資料
+ * @returns {
+ *  result: 驗證結果(true/false)。
+ *  message: 驗證失敗狀況描述。
+ * }
+ */
+async function changePattern() {
+  return await callAppJavaScript('changePattern', null, true, () => ({
+    result: true,
+    message: '',
+  }));
 }
 
 /**
@@ -704,11 +628,16 @@ async function queryPushBind() {
  * 通知 APP 強制登出。
  * @param {String} reasonCode 登出原因代碼。
  * @param {String} message 登出原因。
+ * @param {Boolean} autoStart
  * 通常只有在 Timeout 或嚴重錯誤時才會發生。
  */
-function forceLogout(reasonCode, message) {
-  callAppJavaScript('forceLogout', { reason: reasonCode, message }, false, () => {
-    window.location.pathname = `${process.env.REACT_APP_ROUTER_BASE}/login`;
+async function forceLogout(reasonCode, message, autoStart) {
+  await callAppJavaScript('logout', { reason: reasonCode, message }, false, () => {
+    if (autoStart && !window.location.pathname.startsWith('/login')) {
+      const funcId = funcStack.peek() ? funcStack.peek().funcID : window.location.pathname.substring(1);
+      const search = funcId ? `/${funcId}` : ''; // 登入後立即啟動的功能。
+      window.location.href = `${process.env.REACT_APP_ROUTER_BASE}/login${search}`;
+    }
   });
 }
 
@@ -737,10 +666,6 @@ const getJwtTokenTestData = () => {
 export {
   getCallerFunc,
   getOsType,
-  getPlatform,
-  // goHome,
-  // startFunc,
-  // closeFunc,
   loadFuncParams,
   switchLoading,
   doOCR,
@@ -755,6 +680,7 @@ export {
   createQuickLogin,
   verifyQuickLogin,
   removeQuickLogin,
+  changePattern,
   queryPushBind,
   updatePushBind,
   forceLogout,
