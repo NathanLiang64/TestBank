@@ -14,7 +14,7 @@ import { callAPI } from 'utilities/axios';
 */
 export const getExchangeRateInfo = async (param) => {
   const response = await callAPI('/api/frgn/queryRateInfo', param);
-  return response;
+  return response.data;
 };
 
 // 查詢是否為行員

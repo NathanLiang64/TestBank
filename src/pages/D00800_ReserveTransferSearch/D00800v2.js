@@ -54,19 +54,21 @@ const D00800 = () => {
     // ??? 不同帳號的 reservedTransDetails 與 getResultTransDetails 回傳的資料結構不一樣.... 後續需請後端更正
     const type = tab === '1' ? 'reserve' : 'result';
     const detailsRes = tab === '1' ? await getReservedTransDetails(param) : await getResultTransDetails(param);
+
+    const bankCodeList = await getBankCode(); // 只有第一次拿取是非同步
+    if (!banks) setBanks(bankCodeList);
+
+    // detailsRes 新增 isMulti & bankName
     const updatedDetailsRes = detailsRes.map((res) => {
-      if (res.cycle) return {...res, isMulti: res.cycle !== '1'};
-      return res;
+      const { bankName } = banks.find(({ bankNo }) => bankNo === res.receiveBank);
+      if (res.cycle) return {...res, isMulti: res.cycle !== '1', bankName};
+      return {...res, bankName};
     });
 
     setSearchList((prevSearchList) => ({
       ...prevSearchList,
       [type]: { ...prevSearchList[type], [`${accountNo}_${startDay}_${endDay}`]: updatedDetailsRes },
     }));
-
-    if (banks) return;
-    const bankCodeRes = await getBankCode();
-    setBanks(bankCodeRes);
   };
 
   // 取得帳號清單
@@ -81,18 +83,8 @@ const D00800 = () => {
     return accountsListRes.length ? null : '您還沒有任何台幣存款帳戶。';
   };
 
-  const findBankName = (receiveBank) => {
-    if (!banks) return '';
-    const { bankName } = banks.find(
-      ({ bankNo }) => bankNo === receiveBank,
-    );
-    return bankName ?? '';
-  };
-
   const toConfirmPage = (data) => {
-    const bankName = findBankName(data.receiveBank);
-    const reserveData = {...data, bankName};
-    history.push('/D008001', { reserveData, selectedAccount });
+    history.push('/D008001', { reserveData: data, selectedAccount });
   };
 
   // 轉出帳號卡片 swiper
@@ -109,21 +101,27 @@ const D00800 = () => {
     </SwiperSlide>
   ));
 
-  const handleReserveDataDialog = async (data) => {
-    const bankName = findBankName(data.receiveBank);
+  const openReserveDialog = async (data) => {
     showCustomPrompt({
       title: '預約轉帳',
-      message: <DetailContent reserveData={{...data, bankName}} selectedAccount={selectedAccount} />,
+      message: (
+        <DetailContent
+          reserveData={data}
+          selectedAccount={selectedAccount}
+        />
+      ),
       onOk: () => toConfirmPage(data),
       okContent: '取消交易',
       onClose: () => {},
     });
   };
   // 打開結果彈窗
-  const handleOpenResultDialog = async (data) => {
+  const openResultDiaglog = async (data) => {
     await showCustomPrompt({
       title: '預約轉帳結果',
-      message: <ResultContent resultData={data} selectedAccount={selectedAccount} />,
+      message: (
+        <ResultContent resultData={data} selectedAccount={selectedAccount} />
+      ),
     });
   };
 
@@ -136,9 +134,7 @@ const D00800 = () => {
     if (!list.length) return <div className="emptyConatiner"><EmptyData /></div>;
 
     const isReserveTab = tabValue === '1';
-    const onTapeClick = (item) => (isReserveTab
-      ? () => handleReserveDataDialog(item)
-      : () => handleOpenResultDialog(item));
+    const onTapeClick = (item) => (isReserveTab ? () => openReserveDialog(item) : () => openResultDiaglog(item));
     const showImg = (stderrMsg) => {
       if (isReserveTab) return undefined;
       return stderrMsg ? FailImage : SuccessImage;
@@ -149,7 +145,7 @@ const D00800 = () => {
         key={item.seqno}
         topLeft={`${item.receiveBank}-${item.receiveAccountNo}`}
         topRight={currencySymbolGenerator('NTD', parseFloat(item.transferAmount))}
-        bottomLeft={`${isReserveTab ? '預約轉帳日' : '交易日期'} : ${dateToString(item.rgDay)}`}
+        bottomLeft={`${isReserveTab ? '預約轉帳日' : '交易日期'} : 待提供`} // BUG rgDay 是設定日不是轉帳日
         // eslint-disable-next-line no-nested-ternary
         bottomRight={isReserveTab ? item.isMulti ? '週期' : '單筆' : undefined}
         onClick={onTapeClick(item)}

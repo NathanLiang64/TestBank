@@ -17,7 +17,7 @@ import { callAPI } from 'utilities/axios';
  */
 export const updateProfile = async (param) => {
   const response = await callAPI('/api/setting/v1/updateProfile', param);
-  return response.data;
+  return response;
 };
 
 /**

@@ -4,13 +4,12 @@ import Layout from 'components/Layout';
 /** background: ${({ theme }) => theme.colors.background.lighterBlue}; */
 const InstalmentWrapper = styled(Layout)`
   background: ${({ theme }) => theme.colors.background.white};
-  padding: 16;
 
-  .InstalmentWrapper {
+  &.InstalmentWrapper{
     .InstalmentWrapperText {
-      font-size: 1.8rem;
-      color: ${({ theme }) => theme.colors.text.lightGray};
-    }
+     font-size: 1.4rem;
+     color: ${({ theme }) => theme.colors.text.dark};
+   }
   }
 
   .closeIconButton {
@@ -49,7 +48,7 @@ const InstalmentWrapper = styled(Layout)`
         height: auto;
         color: ${({ theme }) => theme.colors.text.dark};
       }
-  
+
       &.Mui-checked {
         .Icon {
           color: ${({ theme }) => theme.colors.primary.dark};
@@ -85,7 +84,8 @@ const InstalmentWrapper = styled(Layout)`
 
   .staging-table {
     margin: 1rem auto;
-    thead,tbody{
+    thead,
+    tbody {
       td {
         font-size: 1.4rem;
         text-align: right;
@@ -95,8 +95,8 @@ const InstalmentWrapper = styled(Layout)`
           color: ${({ theme }) => theme.colors.text.light};
         }
       }
-    } 
-    
+    }
+
     thead {
       td {
         font-size: 1.2rem;
@@ -106,13 +106,16 @@ const InstalmentWrapper = styled(Layout)`
   }
 
   .formula-hint {
-    padding: .8rem;
-    font-size: 1.2rem;
     p {
-      color:${({ theme }) => theme.colors.state.error}
+      font-size: 1.2rem;
+      color: ${({ theme }) => theme.colors.state.error};
     }
   }
 
+  .note {
+    font-size: 1.2rem;
+    color: ${({ theme }) => theme.colors.text.light};
+  }
 `;
 
 export default InstalmentWrapper;

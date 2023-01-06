@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 import { useState, useEffect, useMemo } from 'react';
 import { useHistory } from 'react-router';
 import {
@@ -79,7 +77,6 @@ const E00100 = () => {
   const [banker, setBanker] = useState({});
   const [accountsList, setAccountsList] = useState([]);
   const [currencyTypeList, setCurrencyTypeList] = useState([]);
-  // const [propertiesList, setPropertiesList] = useState([]);
   const [propertyList, setPropertyList] = useState({});
 
   const {
@@ -150,7 +147,7 @@ const E00100 = () => {
       trfAmt, // 目前是帶字串過去，是否應該帶數字?
       bankerCd: banker?.bankerCd || '',
     };
-    const response = await getExchangeRateInfo(param); // API 待確認
+    const response = await getExchangeRateInfo(param); // ??? API 規格待確認
     dispatch(setWaittingVisible(false));
 
     if (!response.message) {
@@ -220,7 +217,7 @@ const E00100 = () => {
     if (type === 'transOut') isNTD = exchangeType === '1';
     else if (type === 'transIn') isNTD = exchangeType === '2';
     return (
-      <FEIBHintMessage className="balance" style={{position: 'absolute', right: '0'}}>
+      <FEIBHintMessage className="balance">
         可用餘額
         &nbsp;
         {isNTD ? 'NTD' : currency}
@@ -232,6 +229,7 @@ const E00100 = () => {
 
   useEffect(async () => {
     // 取得交易性質列表
+    dispatch(setWaittingVisible(true));
     let propList;
     if (!propertyList[exchangeType]) {
       propList = await getExchangePropertyList({ trnsType: exchangeType, action: '1' });
@@ -255,7 +253,7 @@ const E00100 = () => {
         outAccount: availableAccts[0]?.account ?? '', // BUG  第一個不一定是台幣帳戶
       }));
     }
-
+    dispatch(setWaittingVisible(false));
     // exchangeType 改變時，轉出/轉入帳號 ＆ 匯款性質欄位需要變更
     if (property && !propertyOptions.find((opt) => opt.value === property)) {
       reset((formValues) => ({
@@ -266,8 +264,8 @@ const E00100 = () => {
       }));
     }
     // outType 改變時，清空 foreignBalance 以及 ntDollorBalance 欄位
-    if (outType === '1' && ntDollorBalance) reset((formValues) => ({...formValues, ntDollorBalance: null}));
-    if (outType === '2' && foreignBalance) reset((formValues) => ({ ...formValues, foreignBalance: null }));
+    if (outType === '1' && ntDollorBalance) reset((formValues) => ({...formValues, ntDollorBalance: ''}));
+    if (outType === '2' && foreignBalance) reset((formValues) => ({ ...formValues, foreignBalance: '' }));
   }, [exchangeType, outType]);
 
   return (
@@ -286,11 +284,7 @@ const E00100 = () => {
             外匯匯率查詢
           </FEIBBorderButton>
         </div>
-        <form
-          autoComplete="off"
-          onSubmit={handleSubmit(onSubmit)}
-          style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
-        >
+        <form autoComplete="off" onSubmit={handleSubmit(onSubmit)} style={{ gap: '2rem' }}>
           <section>
             <RadioGroupField
               row
@@ -319,7 +313,7 @@ const E00100 = () => {
               labelName="換匯幣別"
               options={currencyTypeOptions}
             />
-            <FEIBHintMessage className="balance" style={{position: 'absolute', right: '0'}}>
+            <FEIBHintMessage className="balance">
               預估可換 &nbsp;
               {exchangeType === '1' ? currency : 'NTD'}
               &nbsp;
@@ -412,10 +406,10 @@ const E00100 = () => {
               inputProps={{ maxLength: 20 }}
             />
           </section>
-          <Accordion title="外幣換匯規範" space="bottom">
+          <Accordion title="外幣換匯規範">
             <E00100Rules />
           </Accordion>
-          <Accordion space="bottom">
+          <Accordion>
             <E00100Notice />
           </Accordion>
           {banker.bankerCd && (

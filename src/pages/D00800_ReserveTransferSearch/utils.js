@@ -24,17 +24,17 @@ const generatePeriodHint = (cycle) => {
   }
 };
 
-export const renderHeader = (reserveData) => (
+export const renderHeader = (data) => (
   <>
     <div className="dataLabel">轉出金額與轉入帳號</div>
     <div className="balance">
-      {currencySymbolGenerator('NTD', reserveData?.transferAmount)}
+      {currencySymbolGenerator('NTD', data?.transferAmount)}
     </div>
     <div className="accountInfo">
       <div>
-        {`${reserveData.bankName}(${reserveData?.receiveBank})`}
+        {`${data.bankName}(${data?.receiveBank})`}
       </div>
-      {reserveData?.receiveAccountNo}
+      {data?.receiveAccountNo}
     </div>
   </>
 );
