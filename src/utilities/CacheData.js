@@ -16,11 +16,15 @@ const loadCacheData = async () => {
     // Result = {result: true, strCachedata: "", message: ""}
     const appCache = await callAppJavaScript('getCacheData', null, true);
     if (appCache) {
-      // console.log('**** getCacheData : ', appCache);
-      const cacheData = JSON.parse(appCache.strCachedata);
-      // console.log('**** getCacheData.strCachedata : ', cacheData);
-      store.dispatch(setAllCacheData(cacheData));
-      return cacheData;
+      try {
+        console.log('**** getCacheData : ', appCache);
+        const cacheData = JSON.parse(appCache.strCachedata);
+        console.log('**** getCacheData.strCachedata : ', cacheData);
+        store.dispatch(setAllCacheData(cacheData));
+        return cacheData;
+      } catch (ex) {
+        console.log('**** getCacheData Excption : ', ex);
+      }
     }
   }
 
