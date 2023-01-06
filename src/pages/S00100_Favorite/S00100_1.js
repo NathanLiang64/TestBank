@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, {
-  useEffect, useRef, useState, useMemo,
+  useEffect, useRef, useState, useMemo, useContext
 } from 'react';
 import { useForm } from 'react-hook-form';
 import BottomAction from 'components/BottomAction';
@@ -18,26 +18,34 @@ import { getFavoriteSettingList, modifyFavoriteItem, deleteFavoriteItem } from '
 import { CustomCheckBoxField } from './fields/customCheckboxField';
 import {
   calcSelectedLength, extractGroupItems, generateReorderList, findExistedValue, generateTrimmedList, cardLessOptions,
+  EventContext
 } from './utils';
 import { validationSchema } from './validationSchema';
 
 const Favorite2New = ({
-  favoriteList, back2MyFavorite, isEditAction, addPoposition
+  favoriteList, isEditAction, addPoposition
 }) => {
   const [favoriteSettingList, setFavoriteSettingList] = useState([]);
-  const [initialValues, setInitialValues] = useState({});
   const [tabId, setTabId] = useState('C');
   const [showTip, setShowTip] = useState(false);
   const sectionsRef = useRef([]);
   const mainContentRef = useRef();
   const dispatch = useDispatch();
 
+  // 這是用來防止元件已經umount, 卻有umonut前仍未執行的事件在等待執行的情況發生
   const mountedRef = useRef(true);
   useEffect(() => {
     return () => { 
       mountedRef.current = false
     }
   }, []);
+
+
+  // 這個HOOK是專門設計來讓模組內所有子元件共享事件, 用來取代callback function當props傳來傳去的做法
+  // shareEvent: 用來監聽觸發
+  // callShareEvent: 用來觸發
+  const {shareEvent, callShareEvent} = useContext(EventContext);
+
 
   // 為了在使用者勾選項目變動時, 即時更新下方欄位的編輯完成括號裡的數字
   const [checkedArrayLength, setcheckedArrayLength] = useState(0);
@@ -50,9 +58,9 @@ const Favorite2New = ({
 
   useEffect(() => {
 
-    console.log('======== favoriteList========');
-    console.log(favoriteList);
-    console.log('=============================');
+    // console.log('======== favoriteList========');
+    // console.log(favoriteList);
+    // console.log('=============================');
 
     hasExistedCardLess.current = false;
 
@@ -70,9 +78,9 @@ const Favorite2New = ({
           }
     });
 
-    console.log('======== usedPostions========');
-    console.log(usedPostions);
-    console.log('=============================');
+    // console.log('======== usedPostions========');
+    // console.log(usedPostions);
+    // console.log('=============================');
     
     // console.log('======== alreadyCheckedItemBeforeEdit ===========');
     // console.log(alreadyCheckedItemBeforeEdit);
@@ -93,27 +101,13 @@ const Favorite2New = ({
     formState: { errors }
   } = useForm({ defaultValues: {cardLessCredit: ''}, resolver: yupResolver(validationSchema) });
 
-  // 已選取 10 項不可被選取 & 新增模式下僅能選取未被加入的選項
-  const checkDisabled = (key) => {
-    const alreadyExisted = findExistedValue(initialValues, key);
-    const isSelected = findExistedValue(watchedValues, key);
-    const isMaximum = selectedLength >= 10;
-    if (isEditAction) {
-      if (isMaximum && !isSelected) return true; // 編輯模式: 超出數量無法被選取
-      return false;
-    }
-    if (alreadyExisted) return true; // 新增模式: 項目若已存在於 initialValues，需要被 disabled
-    return false;
-  };
-
                 
   const patchOneAndRedirect = async (actKey, addPoposition) => {
-    dispatch(setWaittingVisible(true));
 
     await modifyFavoriteItem({ actKey, position: parseInt(addPoposition, 10) });
 
-    dispatch(setWaittingVisible(false));
-    back2MyFavorite();
+    // 觸發S00100頁面的數字的back2MyFavorite事件
+    callShareEvent(['S00100_back2MyFavorite']);
   };
 
 
@@ -145,7 +139,9 @@ const Favorite2New = ({
     // }
 
     dispatch(setWaittingVisible(false));
-    back2MyFavorite();
+
+    // 觸發S00100頁面的數字的back2MyFavorite事件
+    callShareEvent(['S00100_back2MyFavorite']);
   };
 
   const handleCardlessSubmit = (okCallback) => {
@@ -163,22 +159,14 @@ const Favorite2New = ({
         console.log('values', values); // 待 無卡提款設定 API 開發完畢
 
         dispatch(setModalVisible(false));
-
-        // patchAndRedirect(trimmedList); //原寫法棄用
-
-        // if( isEditAction ){
-
-        //   patchAndRedirect();
-        // }else{
-
-        //   patchOneAndRedirect(actKey, addPoposition);
-        // }
         
         okCallback();
       }),
       onClose: () => {
         if (isEditAction) return;
-        back2MyFavorite(); // 新增模式情況下，按下 X 按鈕時 回到上一頁
+
+        // 觸發S00100頁面的數字的back2MyFavorite事件
+        callShareEvent(['S00100_back2MyFavorite']);// 新增模式情況下，按下 X 按鈕時 回到上一頁
       },
       noDismiss: true,
     });
@@ -233,35 +221,15 @@ const Favorite2New = ({
       <div className="blockGroup">
         {items.map(({actKey, name}) => (
           <CustomCheckBoxField
-            doSubmit={() => {
-
-              if( !isEditAction ){
-
-                if( actKey == FuncID.D00300 ){
-
-                  handleCardlessSubmit(() => {
-
-                    patchOneAndRedirect(actKey, addPoposition);
-                  });
-
-                }else{
-
-                  patchOneAndRedirect(actKey, addPoposition);
-                }
-              }
-            }}
             key={actKey}
             control={control}
             name={`editedBlockList.${actKey}`}
             defaultValue={false}
             label={name}
-            disabled={checkDisabled(actKey)}
-            immdlySubmit={handleSubmit(onSubmit)}
             isEditAction={isEditAction}
             setShowTip={setShowTip}
             usedPostions={usedPostions}
             actKey={actKey}
-            changeCallback={(checkedSize) => {setcheckedArrayLength(checkedSize)}}
           />
         ))}
       </div>
@@ -271,6 +239,18 @@ const Favorite2New = ({
   const renderTabList = () => favoriteSettingList.map((group) => (
     <FEIBTab key={group.groupKey} label={group.groupName} value={group.groupKey} />
   ));
+
+  // 跳白畫面0.5s 防止多次點擊
+  const preventMultiSubmit = (callback) => {
+
+    (async () => {
+      callback();
+      
+      dispatch(setWaittingVisible(true));
+      await new Promise(resolve => setTimeout(resolve, 500));
+      dispatch(setWaittingVisible(false));
+    })();
+  };
 
   // 拿取 favoriteSettingList
   useEffect(async () => {
@@ -294,16 +274,45 @@ const Favorite2New = ({
     return () => clearTimeout(timer);
   }, [showTip]);
 
-  // 更新 react-hook-form 的 defaultValues
+
+  // 監聽模組內其他頁面的跨頁面事件呼叫
   useEffect(() => {
-    if (!favoriteSettingList.length) return;
-    const initValue = extractGroupItems(favoriteSettingList);
+ 
+    const [type, params] = shareEvent;
+   
+    switch(type){
 
-    
+      case 'S00100_1_doSubmit' : 
 
-    setInitialValues(initValue);
-    reset({editedBlockList: initValue});
-  }, [favoriteSettingList]);
+        const actKey = params;
+
+        if( !isEditAction ){
+
+          if( actKey == FuncID.D00300 ){
+
+            handleCardlessSubmit(() => {
+
+              preventMultiSubmit(() => {
+                patchOneAndRedirect(actKey, addPoposition);
+              });
+            });
+
+          }else{
+
+            preventMultiSubmit(() => {
+              patchOneAndRedirect(actKey, addPoposition);
+            });
+          }
+        }
+        break;
+
+      case 'S00100_1_setCheckedSize' : 
+
+        setcheckedArrayLength(params);
+        break;
+    }
+ 
+  }, [shareEvent]);
 
   return (
     <div className="editFavoritePage">

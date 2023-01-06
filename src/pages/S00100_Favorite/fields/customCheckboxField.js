@@ -1,24 +1,27 @@
 /* eslint-disable */
 import React, {
-  useEffect
+  useEffect, useContext
 } from 'react';
 import { BlockSelectedIcon } from 'assets/images/icons';
 import FavoriteBlockButtonStyle from 'components/FavoriteBlockButton/favoriteBlockButton.style';
 import { useController } from 'react-hook-form';
 import { iconGenerator } from '../favoriteGenerator';
+import { EventContext } from '../utils';
 
 export const CustomCheckBoxField = ({
-  disabled,
   isEditAction,
-  immdlySubmit,
   setShowTip,
   label,
   actKey,
-  changeCallback,
-  doSubmit,
   usedPostions,// 是上一層 (S00100_1)傳過來的 reference, 用來記錄已勾選的項目, 用來在 S00100_1提交表單時使用
   ...props
 }) => {
+
+  // 這個HOOK是專門設計來讓模組內所有子元件共享事件, 用來取代callback function當props傳來傳去的做法
+  // shareEvent: 用來監聽觸發
+  // callShareEvent: 用來觸發
+  const {shareEvent, callShareEvent} = useContext(EventContext);
+
   const { field } = useController(props);
   const { onChange, name, value } = field;
 
@@ -34,13 +37,6 @@ export const CustomCheckBoxField = ({
     return realArrayCount;
   };
 
-  useEffect(() => {
-    
-    
-    changeCallback(getRealCheckedCount());
-    
-  }, []);
-
   const onChangeHandler = (event) => {
     
     const changedActKey = event.target.getAttribute('data-actkey');
@@ -54,22 +50,20 @@ export const CustomCheckBoxField = ({
 
         ele.setAttribute('class', ele.getAttribute('class') + ' selected' );
 
-        doSubmit();
+        callShareEvent(['S00100_1_doSubmit', changedActKey]);
       }
 
     }else{// 編輯模式
 
-console.log(usedPostions);
-console.log( usedPostions.indexOf(changedActKey));
-      
-     
+      // console.log(usedPostions);
+      // console.log( usedPostions.indexOf(changedActKey));
 
       // 把使用者已勾選的項目存進 
       if ( ele.getAttribute('class').indexOf('selected') === -1 ) {
 
           if (getRealCheckedCount() < 10) { 
 
-            // 從先前的空位開始塞
+            // 依序從前面的空位開始塞
             for (let i = 0; i < 10; i++) {
 
                 if(typeof usedPostions[i] === 'undefined'){
@@ -122,26 +116,30 @@ console.log( usedPostions.indexOf(changedActKey));
       }
 
       // 觸發下方欄 "編輯完成(數字)" 括號內數字的改變更新
-      changeCallback(getRealCheckedCount());
+      callShareEvent(['S00100_1_setCheckedSize', getRealCheckedCount()]);
     }
   };
 
-
-  // 透過設定class屬性, 針對已存在於 checkedArray 的項目, 做項目按鈕的反紫處理,
-  // class參數: selected = 反紫, disabled = 反白
-  let classValue = usedPostions.indexOf(actKey) !== -1 ? 'selected' : '';
-  classValue += ' favorite_btn';
-
-
+  useEffect(() => {
+    
+    // 觸發S00100_1頁面的數字的改變更新
+    callShareEvent(['S00100_1_setCheckedSize', getRealCheckedCount()]);
+    
+  }, []);
 
   return (
     <FavoriteBlockButtonStyle
       id={`favoriteBlockButton.${actKey}`}
       data-actkey={actKey}
-      className={classValue}
-      disabled={(() => {
-        return (getRealCheckedCount() >=  10 && usedPostions.indexOf(actKey) === -1 ) ? 'disabled' : '';
+      className={(() => {
+
+        // 透過設定class屬性, 針對已存在於 checkedArray 的項目, 做項目按鈕的反紫處理,
+        // class參數: selected = 反紫, disabled = 反白
+        let classValue = usedPostions.indexOf(actKey) !== -1 ? 'selected' : '';
+        return `${classValue} favorite_btn`;
+
       })()}
+      disabled={ (getRealCheckedCount() >=  10 && usedPostions.indexOf(actKey) === -1 ) ? 'disabled' : '' }
     >
       <label
         htmlFor={name}
