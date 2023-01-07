@@ -3,10 +3,8 @@ import { useEffect, useState } from 'react';
 import { EditIcon, PersonalIcon } from 'assets/images/icons';
 import { toHalfWidth } from 'utilities/Generator';
 import { FEIBErrorMessage } from 'components/elements';
-import { showCustomPrompt } from 'utilities/MessageModal';
-import { useDispatch } from 'react-redux';
-import { setDialogVisible } from 'stores/reducers/ModalReducer';
 import { CropContainer } from 'components/CropContainer';
+import Dialog from 'components/Dialog';
 import AvatarWrapper from './avatar.style';
 
 /**
@@ -30,10 +28,10 @@ const Avatar = ({
   memberId, name, small, editable, onNewPhotoLoaded, defaultImage,
 }) => {
   const [src, setSrc] = useState(); // 會員頭像的圖片路徑。
-  const [preview, setPreview] = useState(null); // 上傳的照片轉成 base64 格式
+  const [preview, setPreview] = useState(null); // 經過裁剪的照片 (base64 格式)
+  const [uploadSrc, setUploadSrc] = useState(null); // 尚未裁剪的照片 (url 格式)
   const [showDefault, setShowDefault] = useState(false);
   const [uploadErrMsg, setUploadErrMsg] = useState('');
-  const dispatch = useDispatch();
   const renderPhoto = () => (
     <img
       src={preview || src}
@@ -48,6 +46,16 @@ const Avatar = ({
     </div>
   );
 
+  const onUploadHandler = async (data) => {
+    setPreview(data);
+    setShowDefault(false);
+    if (onNewPhotoLoaded) {
+      await onNewPhotoLoaded(data);
+      setUploadSrc(null);
+      if (memberId) sessionStorage.setItem(`Avator_${memberId}`, data);
+    }
+  };
+
   const onImgChangeHandler = async (event) => {
     const photo = event.target.files[0];
     if (photo.type !== 'image/jpeg') {
@@ -60,43 +68,12 @@ const Avatar = ({
       return;
     }
 
-    const renderCropContainer = (url, onUploadHandler) => <CropContainer url={url} onUploadHandler={onUploadHandler} />;
     const url = URL.createObjectURL(photo);
-    // console.log(url);
-    // TODO 是否在前端進行圖像壓縮，待確認
+    setUploadSrc(url);
+    // NOTE 目前後端有進行品質壓縮處理，前端目前沒做
 
-    const onUploadHandler = (data) => {
-      setPreview(data);
-      setShowDefault(false);
-      if (onNewPhotoLoaded) onNewPhotoLoaded(data);
-      if (memberId) sessionStorage.setItem(`Avator_${memberId}`, data);
-      console.log(memberId);
-    };
-
-    dispatch(setDialogVisible(true));
-    showCustomPrompt({
-      message: renderCropContainer(url, onUploadHandler),
-      onClose: () => dispatch(setDialogVisible(false)),
-      noDismiss: true,
-    });
-
-    // const reader = new FileReader();
-    // reader.readAsDataURL(photo);
-    // reader.onloadend = (e) => {
-    //   // TODO 一律轉為 jpg 格式。
-    //   const imgData = e.currentTarget.result;
-
-    //   setPreview(imgData);
-    //   setShowDefault(false);
-
-    //   // 將使用者指定的新圖片回傳給使用此元件的程式。
-    //   if (onNewPhotoLoaded) onNewPhotoLoaded(imgData);
-
-    //   if (memberId) sessionStorage.setItem(`Avator_${memberId}`, imgData);
-    // };
     setUploadErrMsg('');
   };
-  console.log('preview', preview);
 
   const renderEditButton = () => (
     <label className="editButton" htmlFor="imageInput">
@@ -126,10 +103,22 @@ const Avatar = ({
   return (
     <AvatarWrapper $small={small}>
       <div className="photo">
-        { ((preview || src) && !showDefault) ? renderPhoto() : renderDefaultBackground() }
-        { editable !== false && !small && renderEditButton() }
+        {(preview || src) && !showDefault
+          ? renderPhoto()
+          : renderDefaultBackground()}
+        {editable !== false && !small && renderEditButton()}
       </div>
       {!!uploadErrMsg && <FEIBErrorMessage>{uploadErrMsg}</FEIBErrorMessage>}
+      {/* 這邊沒有使用 showPrompt 方式顯示 Dialog，因爲會與已經存在的 Modal 衝突 (ex: D00500/D00600 頁面) */}
+      <Dialog
+        title="裁剪上傳的圖片"
+        isOpen={!!uploadSrc}
+        onClose={() => setUploadSrc(null)}
+        content={
+          <CropContainer url={uploadSrc} onUploadHandler={onUploadHandler} aspect={1 / 1} />
+        }
+        showCloseButton
+      />
     </AvatarWrapper>
   );
 };

@@ -14,10 +14,6 @@ import { getBankCode } from 'utilities/CacheData';
 import { accountFormatter } from 'utilities/Generator';
 
 import { ArrowBackIcon, EditIcon } from 'assets/images/icons';
-import { showCustomPrompt } from 'utilities/MessageModal';
-import { useDispatch } from 'react-redux';
-import { setDialogVisible } from 'stores/reducers/ModalReducer';
-import { CropContainer } from 'components/CropContainer';
 import { DrawerWrapper } from './D00500.style';
 /**
  * 編輯/新增銀行帳號。
@@ -35,7 +31,6 @@ function AccountEditor({
   onFinished,
 }) {
   const [bankList, setBankList] = useState([]);
-  const dispatch = useDispatch();
   const [model, setModel] = useState(initData);
   const [confirmPage, setConfirmPage] = useState();
 
@@ -142,12 +137,6 @@ function AccountEditor({
       onFinished(newModel);
     };
 
-    const cropModal = () => (
-
-      <CropContainer />
-
-    );
-
     return (
       <form className="flex-col" onSubmit={handleSubmit(onSubmit)}>
         <Badge>
@@ -164,16 +153,6 @@ function AccountEditor({
           <div className="self-center">
             {/* 可變更常用帳號的人的大頭貼 */}
             <Avatar editable memberId={model.headshot} onNewPhotoLoaded={(headshot) => setValue('headshot', headshot)} name={model.nickName} />
-            <button
-              type="button"
-              onClick={() => {
-                dispatch(setDialogVisible(true));
-                showCustomPrompt({message: cropModal(), onClose: () => dispatch(setDialogVisible(false))});
-              }}
-            >
-              click me please
-
-            </button>
           </div>
           <FEIBInputLabel htmlFor={idNickName}>暱稱</FEIBInputLabel>
           <Controller

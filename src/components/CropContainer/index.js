@@ -1,56 +1,56 @@
 import { FEIBButton } from 'components/elements';
+import Loading from 'components/Loading';
 import React, { useCallback, useState } from 'react';
 import Cropper from 'react-easy-crop';
+import { CropContainerWrapper } from './cropContainer.style';
 import getCroppedImg from './utils';
-// import './styles.css';
 
-export const CropContainer = ({ url, onUploadHandler }) => {
+/**
+ * code source  https://codesandbox.io/s/q8q1mnr01w
+ * 若要擴充功能，可詳細參考 https://www.npmjs.com/package/react-easy-crop 的文件
+ */
+
+export const CropContainer = ({ url, onUploadHandler, aspect }) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const [isUploading, setIsUploading] = useState(false);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const onCropComplete = useCallback((_croppedArea, croppedPixels) => {
     setCroppedAreaPixels(croppedPixels);
   }, []);
 
-  const showCroppedImage = useCallback(async () => {
+  const onUpload = useCallback(async () => {
     try {
+      setIsUploading(true);
       const croppedImage = await getCroppedImg(url, croppedAreaPixels);
-      console.log('donee', { croppedImage });
-      //   setCroppedImage(croppedImage)
-      onUploadHandler(croppedImage);
+      await onUploadHandler(croppedImage);
+      setIsUploading(false);
     } catch (e) {
       console.error(e);
     }
   }, [croppedAreaPixels]);
 
   return (
-    <div style={{ height: '50vh' }}>
-      <Cropper
-        image={url}
-        crop={crop}
-        zoom={zoom}
-        aspect={1 / 1}
-        onCropChange={setCrop}
-        onCropComplete={onCropComplete}
-        onZoomChange={setZoom}
-      />
-
-      <FEIBButton onClick={showCroppedImage}>確認</FEIBButton>
-
-      {/* <div className="controls">
-        <input
-          type="range"
-          value={zoom}
-          min={1}
-          max={3}
-          step={0.1}
-          aria-labelledby="Zoom"
-          onChange={(e) => {
-            setZoom(e.target.value);
-          }}
-          className="zoom-range"
-        />
-      </div> */}
-    </div>
+    <CropContainerWrapper>
+      {!isUploading ? (
+        <>
+          <div className="container">
+            <Cropper
+              image={url}
+              crop={crop}
+              zoom={zoom}
+              aspect={aspect} // crop 的長寬比例
+              cropShape="round" // 圓形的 crop
+              onCropChange={setCrop}
+              onCropComplete={onCropComplete}
+              onZoomChange={setZoom}
+            />
+          </div>
+          <FEIBButton onClick={onUpload}>確認</FEIBButton>
+        </>
+      ) : (
+        <Loading space="both" isCentered />
+      )}
+    </CropContainerWrapper>
   );
 };

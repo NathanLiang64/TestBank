@@ -7,7 +7,8 @@ export const createImage = (url) => new Promise((resolve, reject) => {
 });
 
 /**
- * This function was adapted from the one in the ReadMe of https://github.com/DominicTobias/react-image-crop
+ * code source  https://codesandbox.io/s/q8q1mnr01w
+ * 若要擴充功能，可詳細參考 https://www.npmjs.com/package/react-easy-crop 的文件
  */
 export default async function getCroppedImg(
   imageSrc,
