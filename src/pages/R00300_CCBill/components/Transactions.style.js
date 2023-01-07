@@ -17,7 +17,7 @@ const TransactionWrapper = styled.div`
 
   .emptydata-wrapper {
     width: 100%;
-    height: 40vh;
+    height: 30vh;
     display: flex;
     justify-content: center;
     align-items: center;

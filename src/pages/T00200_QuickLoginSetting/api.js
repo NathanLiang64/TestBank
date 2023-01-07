@@ -1,3 +1,4 @@
+/* eslint-disable arrow-body-style */
 import { callAPI } from 'utilities/axios';
 
 /**
@@ -12,4 +13,9 @@ import { callAPI } from 'utilities/axios';
 export const getQuickLoginInfo = async () => {
   const response = await callAPI('/api/setting/v1/quickLoginBoundInfo', {});
   return response.data;
+  // return {
+  //   boundDate: '20221231',
+  //   boundDevice: 'iPhone 13',
+  //   midPhoneNo: '0905123456',
+  // };
 };

@@ -3,13 +3,16 @@ import Layout from 'components/Layout';
 
 const BasicInformationWrapper = styled(Layout)`
   .selectContainer {
-    display: grid;
-    grid-auto-flow: column;
-    grid-column-gap: 2rem;
-
+    display: flex;
     div {
       width: 100%;
       flex-grow: 1;
+      &:first-child {
+        margin-right: 1rem;
+      }
+      &:last-child {
+        margin-left: 1rem;
+      }
     }
   }
 `;

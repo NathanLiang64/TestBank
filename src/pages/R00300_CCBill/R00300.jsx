@@ -29,39 +29,24 @@ const Page = () => {
   const dispatch = useDispatch();
   const { closeFunc } = useNavigation();
   const [currentMonth, setCurrentMonth] = useState(getThisMonth());
-  const [billsMap, setBillsMap] = useState({});
+  const [bills, setBills] = useState();
   const [deductInfo, setDeductInfo] = useState();
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // 依照所選月份取得帳單資料並儲存在map中
-  const fetchBillsMap = async (month) => {
-    const currentBills = await getBillDetail(month);
-
-    setBillsMap((prevMap) => ({
-      ...prevMap,
-      [month]: currentBills,
-    }));
-  };
-
-  // 切換頁籤時，拿取當下月份的帳單資料
-  const onMonthChange = async (selectedMonth) => {
-    setCurrentMonth(selectedMonth);
-
-    if (billsMap[selectedMonth]) return;
-    fetchBillsMap(selectedMonth);
-  };
-
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    fetchBillsMap(currentMonth);
+    const deductRt = await getBillDeducStatus();
+    const billsRt = await getBillDetail(currentMonth);
+
+    setDeductInfo(deductRt);
+    setBills(billsRt);
     dispatch(setWaittingVisible(false));
   }, []);
 
-  // 繳款期限資訊使用lazy loading
-  useEffect(async () => {
-    const deductRt = await getBillDeducStatus();
-    setDeductInfo(deductRt);
-  }, []);
+  const handleChangeMonth = async (selected) => {
+    setCurrentMonth(selected);
+    setBills(await getBillDetail(selected));
+  };
 
   const handleGoBack = () => {
     if (isExpanded) setIsExpanded(false);
@@ -74,18 +59,18 @@ const Page = () => {
         <PageWrapper>
           <Badge
             label={`${parseInt(currentMonth.slice(-2), 10).toString()}月應繳金額`}
-            value={currencySymbolGenerator(billsMap[currentMonth]?.currency ?? 'NTD', billsMap[currentMonth]?.newBalance ?? 0)}
+            value={currencySymbolGenerator(bills?.currency ?? 'NTD', bills?.newBalance ?? 0)}
           />
-          {!!deductInfo && <Reminder bills={billsMap[currentMonth]} deductInfo={deductInfo} />}
+          <Reminder bills={bills} deductInfo={deductInfo} />
           <Transactions
-            bills={billsMap[currentMonth]}
+            bills={bills}
             isExpanded={isExpanded}
             onExpandClick={() => setIsExpanded(true)}
-            handleChangeMonth={onMonthChange}
+            handleChangeMonth={handleChangeMonth}
           />
-          { billsMap[currentMonth]?.newBalance > 0 && (
+          { bills?.newBalance > 0 && (
             <>
-              <BillDetails bills={billsMap[currentMonth]} />
+              <BillDetails bills={bills} />
               <Accordion>
                 <AccordionContent />
               </Accordion>
