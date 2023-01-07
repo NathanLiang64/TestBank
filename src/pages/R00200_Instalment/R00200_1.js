@@ -5,11 +5,9 @@ import { useHistory, useLocation } from 'react-router';
 
 import Layout from 'components/Layout/Layout';
 import { FEIBButton, FEIBCheckbox } from 'components/elements';
-import { currencySymbolGenerator, dateToString } from 'utilities/Generator';
+import { currencySymbolGenerator } from 'utilities/Generator';
 
-import InformationTape from 'components/InformationTape';
 import { CheckboxField } from 'components/Fields';
-import theme from 'themes/theme';
 import { useNavigation } from 'hooks/useNavigation';
 import InstalmentWrapper from './R00200.style';
 
@@ -22,31 +20,35 @@ const R00200_1 = () => {
   const history = useHistory();
   const { state } = useLocation();
   const { goHome } = useNavigation();
-  const schema = yup.object().shape({
-    applType: yup.string().required('請選擇欲申請之晚點付項目'),
-  });
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: { installmentItem: {} },
-    resolver: yupResolver(schema),
+    resolver: yupResolver(
+      yup.object().shape({
+        applType: yup.string().required('請選擇欲申請之晚點付項目'),
+      }),
+    ),
   });
   const watchedValue = watch('installmentItem');
 
-  const renderInstallmentRadioButton = (txn) => (
-    <InformationTape
-      className={`${watchedValue[txn.authCode] ? 'checkedtape' : ''}`}
-      topLeft={txn.storeName}
-      bottomLeft={`消費日期:${dateToString(txn.purchDate)}`}
-      topRight={currencySymbolGenerator('TWD', txn.purchAmount)}
-      checked={!!watchedValue[txn.authCode]}
-      customHeader={(
-        <FEIBCheckbox
-          $iconColor={theme.colors.text.light}
-          className="checkbox"
-          checked={!!watchedValue[txn.authCode]}
-        />
-      )}
-    />
+  const renderInstallmentRadioButton = (detail) => (
+    <div className="checkbox">
+      <FEIBCheckbox
+        className="customPadding"
+        name={detail.name}
+        checked={detail.value === watchedValue}
+      />
+      <div className="left-section">
+        <div className="name">{detail.name}</div>
+        <div className="date">
+          消費日期：
+          {detail.date}
+        </div>
+      </div>
+      <div className="right-section">
+        {currencySymbolGenerator('NTD', detail.cost)}
+      </div>
+    </div>
   );
 
   const generateOptions = () => state.availableTxns.map((txn) => ({

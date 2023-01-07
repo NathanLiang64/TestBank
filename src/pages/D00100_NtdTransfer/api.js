@@ -2,24 +2,6 @@ import { getCallerFunc } from 'utilities/AppScriptProxy';
 import { callAPI } from 'utilities/axios';
 
 /**
- * 取得取得免費跨提/跨轉次數、數存優惠利率及資訊
- * @param {String} accountNo 存款帳號
- * @returns {Promise<{
-*   freeWithdraw: 免費跨提總次數
- *   freeWithdrawRemain: 免費跨提剩餘次數
- *   freeTransfer: 免費跨轉總次數
- *   freeTransferRemain: 免費跨轉剩餘次數
- *   bonusQuota: 優惠利率額度
- *   bonusRate: 優惠利率
- *   interest: 累積利息
- * }>} 優惠資訊
- */
-export const getAccountExtraInfo = async (accountNo) => {
-  const response = await callAPI('/api/depositPlus/v1/getBonusInfo', accountNo);
-  return response.data;
-};
-
-/**
  * 建立台幣轉帳交易，需再完成交易確認才會真的執行轉帳。
  * @param {{
  *   transOut: '轉出帳號',
@@ -67,6 +49,6 @@ export const executeNtdTransfer = async () => {
   const response = await callAPI('/api/transfer/ntd/v1/execute');
   return {
     ...response.data,
-    isSuccess: (response.isSuccess && response.data.errorCode === ''),
+    isSuccess: (response.isSuccess && !response.data.errorCode),
   };
 };

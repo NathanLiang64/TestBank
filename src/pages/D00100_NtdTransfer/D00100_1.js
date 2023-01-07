@@ -61,7 +61,6 @@ const TransferConfirm = (props) => {
       booking: model.booking,
       memo: model.memo,
     };
-    delete request.booking.transTimes;
 
     // 建立轉帳交易紀錄。
     dispatch(setWaittingVisible(true));

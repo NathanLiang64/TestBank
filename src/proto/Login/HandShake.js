@@ -7,7 +7,6 @@ import { getOsType } from 'utilities/AppScriptProxy';
 const handshake = async () => {
   localStorage.clear();
   sessionStorage.clear();
-  sessionStorage.setItem('webMode', true);
 
   const { privateKey, publicKey } = CipherUtil.generateRSA();
   const aesKey = CipherUtil.generateKey(256); // 使用JWT模式時，Request/Response Payload 的加解密金鑰，採用 AES256。
@@ -20,8 +19,8 @@ const handshake = async () => {
 
   const message = {
     txnId: `WVIEW_${uuid()}`,
-    // deviceId: null,
-    deviceId: uuid(),
+    deviceId: '18157973-686F-4ACC-8EF1-4D034040A898',
+    // deviceId: uuid(),
     // NOTE 用不用的 deviceId 可以進行「已在不同手機做過綁定」的情境。
     osType: getOsType() - 1,
     osVersion: '16.1.1',

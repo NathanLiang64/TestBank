@@ -16,6 +16,7 @@ import {
   verifyQuickLogin,
   removeQuickLogin,
   transactionAuth,
+  changePattern,
 } from 'utilities/AppScriptProxy';
 import {
   customPopup, showAnimationModal, showDrawer, showCustomPrompt, showError,
@@ -219,12 +220,25 @@ const QuickLoginSetting = () => {
     }
   };
 
-  // TODO 變更圖形辨識
+  /**
+   * 變更圖形辨識
+   */
   const handleChangePattern = async () => {
     const res = await transactionAuth(AuthCode.T00200.MODIFY);
+    console.log('交易驗證結果:', JSON.stringify(res));
 
     if (res.result) {
       // 交易驗證成功
+      const {result, message} = await changePattern();
+      // 顯示綁定結果
+      showAnimationModal({
+        isSuccess: result,
+        successTitle: '設定成功',
+        successDesc: '',
+        errorTitle: '設定失敗',
+        errorCode: '',
+        errorDesc: message,
+      });
     }
   };
 

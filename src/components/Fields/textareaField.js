@@ -26,8 +26,8 @@ export const TextareaField = ({
         id={name}
         placeholder={placeholder || ''}
         $borderColor={!!fieldState.error && theme.colors.state.danger}
-        rowsMin={3}
-        rowsMax={10}
+        minRows={3}
+        maxRows={10}
       />
       <span
         className={`limitText ${value.length > limit ? 'warningColor' : ''}`}

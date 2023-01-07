@@ -9,8 +9,6 @@ import {
 } from 'utilities/Generator';
 
 const BillDetails = ({bills}) => {
-  // const [bills, setDetails] = useState();
-
   const getBillDetailList = (d) => [
     {
       title: '本期應繳金額',
@@ -65,10 +63,6 @@ const BillDetails = ({bills}) => {
       content: currencySymbolGenerator(d.currency ?? 'NTD', d.paidAmountOnDueDate),
     },
   ];
-
-  // const lazyLoadDetails = async () => {
-  //   if (!bills) setDetails(await getBillDetail(getThisMonth()));
-  // };
 
   return (
     <Accordion title="更多帳單資訊" onClick={bills}>

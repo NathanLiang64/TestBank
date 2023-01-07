@@ -99,7 +99,10 @@ const C00300 = () => {
           account.txnDetails = details;
 
           // 更新餘額。
-          if (transData.length > 0) account.balance = details[0].balance;
+          if (transData.length > 0) {
+            account.balance = details[0].balance;
+            updateAccount(account);
+          }
 
           delete account.isLoadingTxn; // 載入完成才能清掉旗標！
           forceUpdate();
@@ -136,7 +139,7 @@ const C00300 = () => {
       freeWithdrawRemain: null, freeTransferRemain: null, bonusQuota: null, bonusRate: null, interest: null, // 預設值
     };
     const value1 = bonusRate ? `${bonusRate * 100}%` : '-';
-    const value2 = (interest > 0) ? `${currencySymbolGenerator('TWD', interest)}` : '0';
+    const value2 = (interest > 0) ? `${currencySymbolGenerator('NTD', interest)}` : '0';
 
     const panelContent = [
       {

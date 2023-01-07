@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import {useController} from 'react-hook-form';
 import { FEIBInputLabel, FEIBInput, FEIBErrorMessage} from 'components/elements';
@@ -17,7 +16,8 @@ export const TextInputField = ({
   } = field;
 
   return (
-    <>
+    // TODO style移至css
+    <div style={{ margin: '0 0 2rem 0' }}>
       <FEIBInputLabel htmlFor={name}>{labelName}</FEIBInputLabel>
       <FEIBInput
         inputProps={inputProps}
@@ -28,15 +28,20 @@ export const TextInputField = ({
         id={name}
         error={!!fieldState.error}
         $color={$color}
-        $space="bottom"
         $fontSize={fontSize}
       />
-      {/* <FEIBErrorMessage>
-        {fieldState.error ? fieldState.error.message : ''}
-      </FEIBErrorMessage> */}
+
       {!!fieldState.error && (
-        <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>
+        <FEIBErrorMessage
+          style={{
+            margin: 0,
+            position: 'absolute',
+            right: 0,
+          }}
+        >
+          {fieldState.error.message}
+        </FEIBErrorMessage>
       )}
-    </>
+    </div>
   );
 };

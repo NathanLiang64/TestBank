@@ -34,13 +34,13 @@ export const PasswordInputField = ({
   };
 
   return (
-    <>
+    // TODO style移至css
+    <div style={{ margin: '0 0 2rem 0' }}>
       <FEIBInputLabel htmlFor={name} $color={color}>
         {labelName || '網銀密碼'}
       </FEIBInputLabel>
 
       <FEIBInput
-        // placeholder={placeholder || '請輸入網銀密碼(8-20位英數字)'}
         inputProps={inputProps}
         type={showPassword ? 'text' : 'password'}
         id={name}
@@ -53,15 +53,19 @@ export const PasswordInputField = ({
         $icon={showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
         $iconFontSize={2}
         $iconOnClick={handleClickShowPassword}
-        $space="bottom"
       />
 
-      {/* <FEIBErrorMessage>
-        {fieldState.error ? fieldState.error.message : ''}
-      </FEIBErrorMessage> */}
       {!!fieldState.error && (
-        <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>
+        <FEIBErrorMessage
+          style={{
+            margin: 0,
+            position: 'absolute',
+            right: 0,
+          }}
+        >
+          {fieldState.error.message}
+        </FEIBErrorMessage>
       )}
-    </>
+    </div>
   );
 };

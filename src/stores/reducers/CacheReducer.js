@@ -9,6 +9,7 @@ const cacheData = {
 export default function CacheReducer(state = cacheData, action) {
   const { type, data } = action;
   switch (type) {
+    case 'setAll': return { ...state, ...data };
     case 'setBanks': return { ...state, banks: data };
     case 'setBranches': return { ...state, branches: data };
     case 'setAccounts': return { ...state, accounts: data };
@@ -19,6 +20,8 @@ export default function CacheReducer(state = cacheData, action) {
       return state;
   }
 }
+
+export function setAllCacheData(data) { return { type: 'setAll', data }; }
 
 export function setBanks(data) { return { type: 'setBanks', data }; }
 

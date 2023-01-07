@@ -132,7 +132,7 @@ const MemberAccountCard = ({
           <div className="title">
             {/* TODO 後端目前會回傳全型文字，暫以此方法將文字轉為半形 */}
             {/* 後續需請後端修正回傳文字之格式 */}
-            {toHalfWidth(name) || '會員 <-- 不是會員！'}
+            {toHalfWidth(name) || '(未命名)'}
             {hasNewTag && (<div className="new-tag">New</div>)}
           </div>
           <div className="note">

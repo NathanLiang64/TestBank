@@ -9,17 +9,11 @@ import { callAPI } from 'utilities/axios';
 /**
  * 查詢客戶信用卡帳單資訊
  * (信用卡子首頁_信用卡資訊)
- *
- * @param token
  * @param {
- *    acctId:             帳號
- *    ccycd:              幣別代碼
- *    accountType:        帳號類別
- *    queryType:          查詢種類 無值：網路預約(for行動銀行)1:網路預約2:臨櫃預約3:網銀預約+臨櫃預約4:存錢計畫預約
- *    sdate:              查詢起始日 YYYY/MM/DD
- *    edate:              查詢截止日 YYYY/MM/DD
+ *    accountNo: 帳號
+ *    startDay: 查詢起始日 YYYYMMDD
+ *    endDay: 查詢截止日 YYYYMMDD
  * }
- *
  */
 // 查詢預約轉帳明細
 export const getReservedTransDetails = async (param) => {
@@ -32,6 +26,31 @@ export const getResultTransDetails = async (param) => {
   const response = await callAPI('/api/transfer/reserved/resultDetails', param);
   return response.data;
 };
+
+/** *
+ * 取消預約轉帳
+ *
+ * @param token *
+ * @param  {{
+ *  rgday:            "登錄日期"
+ *  startDay:         "約定起日"
+ *  endDay:           "約定迄日"
+ *  cycle:            "週期"
+ *  cycleNo:          "周期代碼 1=000 W=001~007: M=001~031"
+ *  receiveBank:      "轉入銀行"
+ *  receiveAccountNo: "轉入帳號"
+ *  seqno:            "流水號 - 註銷時才需 帶入 VU3電文資料"
+ *  remark:           "轉帳備註"
+ *  accountNo:        "BANKEE帳號"
+ *  transferAmount:   "轉帳金額"
+ * } } param
+ *
+ * @return {Promise<{
+ *    msgLen: '訊息長度'
+ *    mtype:  '訊息類別'
+ *    msgNo:  '訊息編號'
+ *  }>}
+ */
 
 // 取消預約轉帳交易
 export const cancelReserveTransfer = async (param) => {

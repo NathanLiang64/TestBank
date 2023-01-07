@@ -1,10 +1,10 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable object-curly-newline */
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { transactionAuth } from 'utilities/AppScriptProxy';
-import { getCountyList, getBasicInformation, modifyBasicInformation } from 'pages/T00700_BasicInformation/api';
+import { getProfile, modifyBasicInformation } from 'pages/T00700_BasicInformation/api';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 /* Elements */
@@ -13,17 +13,17 @@ import {FEIBInputLabel, FEIBButton } from 'components/elements';
 import { DropdownField, TextInputField } from 'components/Fields';
 
 /* Styles */
-import { showAnimationModal, showError } from 'utilities/MessageModal';
+import { showAnimationModal } from 'utilities/MessageModal';
 import { AuthCode } from 'utilities/TxnAuthCode';
-// import { useLocationOptions } from 'hooks/useLocationOptions';
-import { useNavigation } from 'hooks/useNavigation';
-import { localCounties, localCities } from 'utilities/locationOptions';
+import { localCounties, localCities, findCounty, findCity } from 'utilities/locationOptions';
 import BasicInformationWrapper from './T00700.style';
 import { validationSchema } from './validationSchema';
 
+/**
+ * 基本資料變更
+ */
 const T00700 = () => {
   const dispatch = useDispatch();
-  const { closeFunc } = useNavigation();
   const {
     handleSubmit, control, reset, watch,
   } = useForm({
@@ -40,100 +40,88 @@ const T00700 = () => {
   const [watchedCounty, watchedCity] = watch(['county', 'city']);
 
   const [originPersonalData, setOriginPersonalData] = useState();
-  const countyOptions = localCounties.map(({name, code}) => ({label: name, value: code}));
+  const countyOptions = localCounties.map(({name}) => ({label: name, value: name}));
   const cityOptions = useMemo(() => {
     if (!watchedCounty) return [];
-    return localCities[watchedCounty].map(({ name, code }) => ({ label: name, value: code }));
+    const foundCounty = findCounty(watchedCounty);
+    if (foundCounty) {
+      return localCities[foundCounty.code].map(({ name }) => ({
+        label: name,
+        value: name,
+      }));
+    }
+    // NOTE 目前後端傳過來的 city 以及 county 很亂，
+    // 如果 foundCounty 不存在，代表後端傳過來的 county 是錯的，無法在 localCounties 找到
+    // 因此把 county 以及 city 兩個欄位清空，要求使用者再選一次
+    reset((formValues) => ({...formValues, county: '', city: ''}));
+    return [];
   }, [watchedCounty]);
 
   const fetchCountyList = async () => {
-    dispatch(setWaittingVisible(true));
     // 取得個人資料，並匯入表單
-    const { data, message } = await getBasicInformation();
-    if (data) {
-      setOriginPersonalData(data);
-      const {
-        email, mobile, addr, county, city,
-      } = data;
-      // NOTE 目前收到的 county & city 是縣市名稱，因爲編輯資料 API 所需的 Param 為代號
-      // 因此在這邊做轉換再放入表單中，接收與發送的格式是否統一待討論...
-      const {code: countyCode} = localCounties.find(({name}) => county.trim() === name);
-      const {code: cityCode} = localCities[countyCode].find(({name}) => city.trim() === name);
-      reset({
-        email, mobile, addr, county: countyCode, city: cityCode,
-      });
-    } else {
-      showError(message, closeFunc);
-    }
+    const basicInfo = await getProfile();
 
-    dispatch(setWaittingVisible(false));
+    setOriginPersonalData(basicInfo);
+    const {
+      email, mobile, addr, county, city,
+    } = basicInfo;
+
+    reset({
+      email, mobile, addr, county, city,
+    });
   };
 
   // 設定結果彈窗
-  const setResultDialog = (response) => {
+  const setResultDialog = async (response) => {
     const result = response.code === '0000';
 
-    showAnimationModal({
+    await showAnimationModal({
       isSuccess: result,
       successTitle: '設定成功',
       successDesc: '基本資料變更成功',
       errorTitle: '設定失敗',
       errorCode: response.code,
       errorDesc: response.message,
-      onClose: result ? closeFunc : () => reset({ ...originPersonalData }),
+      onClose: result ? () => {} : () => reset({ ...originPersonalData }),
     });
-  };
-
-  // caculateActionCode
-  const getActionCode = (values) => {
-    const {
-      county, city, addr, email, mobile,
-    } = values;
-    const addressCode = county === originPersonalData.county
-      && city === originPersonalData.city
-      && addr === originPersonalData.addr
-      ? 0
-      : 1;
-    const mobileCode = mobile === originPersonalData.mobile ? 0 : 2;
-    const mailCode = email === originPersonalData.email ? 0 : 4;
-    return addressCode + mobileCode + mailCode;
   };
 
   // 更新個人資料
   const modifyPersonalData = async (values) => {
-    // TODO 尚未確定 modifyBasicInformation API 的回傳格式為何？
-    const param = {
-      ...values,
-      actionCode: getActionCode(values),
-    };
     dispatch(setWaittingVisible(true));
-    const modifyDataResponse = await modifyBasicInformation(param);
-    setResultDialog(modifyDataResponse);
+    const modifyDataResponse = await modifyBasicInformation(values);
     dispatch(setWaittingVisible(false));
+    setResultDialog(modifyDataResponse);
   };
 
   // 點擊儲存變更按鈕
   const onSubmit = async (values) => {
-    dispatch(setWaittingVisible(true));
+    let autoCode = AuthCode.T00700.EMAIL; // 預設：無變更手機號碼
     if (values.mobile !== originPersonalData.mobile) {
-    // 有變更手機號碼
-      const jsRs = await transactionAuth(AuthCode.T00700.MOBILE, values.mobile);
-      if (jsRs.result) {
-        modifyPersonalData(values);
-      }
-    } else {
-      // 無變更手機號碼
-      const jsRs = await transactionAuth(AuthCode.T00700.EMAIL);
-      if (jsRs.result) {
-        modifyPersonalData(values);
-      }
+      // eslint-disable-next-line no-bitwise
+      autoCode |= AuthCode.T00700.MOBILE; // 有變更手機號碼時；可使用密碼驗證(+0x10)，並且需要驗新門號(+0x01)
     }
+
+    dispatch(setWaittingVisible(true));
+    const jsRs = await transactionAuth(autoCode, values.mobile);
     dispatch(setWaittingVisible(false));
+    if (jsRs.result) {
+      const county = findCounty(values.county);
+      const {zipCode} = findCity(county.code, values.city);
+
+      const rqData = {
+        ...values,
+        zipCode: `${zipCode}00`, // 原 zipCode是三碼，帶過去要五碼，故補齊
+      };
+      modifyPersonalData(rqData);
+    }
   };
 
   // 取得初始資料
-  useEffect(() => {
-    fetchCountyList();
+  useEffect(async () => {
+    dispatch(setWaittingVisible(true));
+    await fetchCountyList();
+    dispatch(setWaittingVisible(false));
   }, []);
 
   // 當 county 改變時，city 要被清空

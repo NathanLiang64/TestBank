@@ -4,8 +4,8 @@ import { useHistory } from 'react-router';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { getEmail, sendBankBookMail } from 'pages/C00800_ExportBankBook/api';
-import { dateToYMD } from 'utilities/Generator';
+import { accountFormatter, dateToYMD } from 'utilities/Generator';
+import { getAccountsList } from 'utilities/CacheData';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 /* Elements */
@@ -25,7 +25,7 @@ import DateRangePicker from 'components/DateRangePicker';
 import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
 import AccordionContent from './accordionContent';
-import { getAccountsList } from './api';
+import { getProfile, sendBankBookMail } from './api';
 
 /* Styles */
 import ExportBankBookWrapper from './exportBankBook.style';
@@ -51,33 +51,11 @@ const ExportBankBook = () => {
     minDate: new Date(new Date().setFullYear(new Date().getFullYear() - 3)),
     maxDate: new Date(),
   };
-  const [accountsList, setAccountsList] = useState([]);
+  const [accountList, setAccountList] = useState([]);
   const [mail, setMail] = useState('');
   const [exportDateRange, setExportDateRange] = useState([new Date(), new Date()]);
   const [showDateRangeErrMsg, setShowDateRangeErrMsg] = useState(false);
   const [dateRangeErrorMessage, setDateRangeErrorMessage] = useState('');
-
-  // 取得 Email
-  const fetchEmail = async () => {
-    const { code, data } = await getEmail({});
-    if (code === '0000') {
-      setMail(data?.email || '');
-    }
-  };
-
-  // 取得帳號清單
-  const getAccounts = async () => {
-    const response = await getAccountsList('MSFC'); // 帳戶類型 M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶
-    if (response?.length > 0) {
-      const accounts = response.map((item) => item.acctNo);
-      setAccountsList(accounts);
-      setValue('account', accounts[0]);
-    } else {
-      setAccountsList([]);
-      setValue('account', '');
-    }
-    return Promise.resolve(true);
-  };
 
   const setDateRange = (rangeType) => {
     let startDate;
@@ -148,8 +126,15 @@ const ExportBankBook = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    await getAccounts();
-    await fetchEmail();
+    // 取得帳號清單
+    getAccountsList('MSFC', (accounts) => { // 帳戶類型 M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶
+      setAccountList(accounts);
+      setValue('account', accounts[0].accountNo);
+    });
+
+    // 取得 Email
+    const { email } = await getProfile();
+    setMail(email || '');
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -175,8 +160,10 @@ const ExportBankBook = () => {
                 >
                   <FEIBOption value="" disabled>請選擇匯出帳戶</FEIBOption>
                   {
-                    accountsList.map((item) => (
-                      <FEIBOption key={item} value={item}>{item}</FEIBOption>
+                    accountList.map((item) => (
+                      <FEIBOption value={item.accountNo} key={item.accountNo}>
+                        {`${accountFormatter(item.accountNo)}  ${item.alias}`}
+                      </FEIBOption>
                     ))
                   }
                 </FEIBSelect>

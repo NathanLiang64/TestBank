@@ -35,8 +35,7 @@ const D00600 = lazy(() => import('pages/D00600_RegisteredContacts/D00600'));
 const D00700 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer'));
 const D00800 = lazy(() => import('pages/D00800_ReserveTransferSearch/D00800v2'));
 const D008001 = lazy(() => import('pages/D00800_ReserveTransferSearch/D00800_1'));
-const D008002 = lazy(() => import('pages/D00800_ReserveTransferSearch/D00800_2'));
-const E00100 = lazy(() => import('pages/E00100_Exchange/E00100'));
+const E00100 = lazy(() => import('pages/E00100_Exchange/E00100v2'));
 const E001001 = lazy(() => import('pages/E00100_Exchange/E00100_1'));
 const E001002 = lazy(() => import('pages/E00100_Exchange/E00100_2'));
 const E00200 = lazy(() => import('pages/E00200_ExchangeRate'));
@@ -138,7 +137,6 @@ const routes = [
   {path: '/D00700', exact: false, component: D00700},
   {path: '/D00800', exact: false, component: D00800},
   {path: '/D008001', exact: false, component: D008001},
-  {path: '/D008002', exact: false, component: D008002},
   {path: '/E00100', exact: false, component: E00100},
   {path: '/E001001', exact: false, component: E001001},
   {path: '/E001002', exact: false, component: E001002},
@@ -220,6 +218,7 @@ const routes = [
   {path: '/deduct3', exact: false, component: Deduct3},
 
   // TODO：支援開發及Prototype測試使用
+  {path: '/login/:fid', exact: false, component: Login},
   {path: '/login', exact: false, component: Login},
   {path: '/', exact: true, component: Nav},
   // --------------------------------

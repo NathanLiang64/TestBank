@@ -58,7 +58,7 @@ const DetailCard = ({
     if (!targetMbrId) return null;
 
     // 先從 sessionStorage 取出第一次下載的影像。
-    const cacheId = `s${targetMbrId}`;
+    const cacheId = `Avator_${targetMbrId}`;
     let cacheImg = sessionStorage.getItem(cacheId);
     if (cacheImg === null) {
       // 第一次下載影像，會存入 sessionStorage 以減少 Server端的傳輸流量。

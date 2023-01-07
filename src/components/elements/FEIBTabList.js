@@ -7,6 +7,8 @@ import { TabList as MaterialTabList } from '@material-ui/lab';
 *    預設不傳入參數為常規大小，可輸入 "small" 字串
 * 2. $type -> TabList 型態
 *    預設不傳為常規，可傳入 "fixed" 字串，未選取的 Tab 也帶有底線顏色
+* 3. $isSingleTab -> Tab只有一個時傳入true，使該Tab置中顯示
+*    預設不傳為常規，可輸入boolean
 * */
 
 const FEIBTabList = styled(MaterialTabList).attrs({
@@ -50,6 +52,7 @@ const FEIBTabList = styled(MaterialTabList).attrs({
         }
         .MuiTabs-scroller {
           height: 3rem;
+          justify-content: center;
         }
         .MuiTab-root {
           min-width: 5rem;
@@ -64,6 +67,14 @@ const FEIBTabList = styled(MaterialTabList).attrs({
           font-size: 1.6rem;
         }
       `)
+  )}
+
+  ${({$isSingleTab}) => (
+    $isSingleTab === true && (`
+      .MuiTabs-flexContainer {
+        justify-content: center;
+      }
+    `)
   )}
 `;
 

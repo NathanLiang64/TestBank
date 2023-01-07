@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useHistory } from 'react-router';
-import { callAppJavaScript, funcStack } from 'utilities/AppScriptProxy';
+import { callAppJavaScript, funcStack, getOsType } from 'utilities/AppScriptProxy';
 import { showError } from 'utilities/MessageModal';
 
 export const useNavigation = () => {
@@ -59,7 +59,7 @@ export const useNavigation = () => {
         history.push(`/${startItem.funcID}`);
       } else {
         // 若是在登入前，無前一頁可以返回時，則一律回到 Login 頁。
-        if (sessionStorage.getItem('isLogin') !== '1') {
+        if (getOsType() === 3 && sessionStorage.getItem('isLogin') !== '1') {
           history.push('/login');
           return;
         }

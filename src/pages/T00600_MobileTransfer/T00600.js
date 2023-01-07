@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { customPopup, showDrawer, closeDrawer } from 'utilities/MessageModal';
+import { getAccountsList } from 'utilities/CacheData';
+import { accountFormatter } from 'utilities/Generator';
 
 /* Elements */
 import AddNewItem from 'components/AddNewItem';
@@ -12,121 +14,142 @@ import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import T00600ModifyForm from './T00600_ModifyForm';
 
-import { fetchMobiles, fetchName } from './api';
+import { fetchMobiles, getProfile } from './api';
 
 /* Styles */
 import MobileTransferWrapper from './T00600.style';
 
+/**
+ * 手機號碼收款設定
+ */
 const T00600 = () => {
   const history = useHistory();
-  const { startFunc, closeFunc } = useNavigation();
   const dispatch = useDispatch();
+
+  const { startFunc, closeFunc } = useNavigation();
   const [mobileTransferData, setMobileTransferData] = useState([]);
   const [mobilesList, setMobilesList] = useState([]);
-  const [modifyData, setModifyData] = useState({
-    mobile: '',
-    account: '',
-    status: '',
-    isDefault: '',
-  });
-  const [otpMobileNum, setOtpMobileNum] = useState('');
+
+  const [model, setModel] = useState();
+  const getModel = async () => {
+    if (!model) {
+      dispatch(setWaittingVisible(true));
+      const profile = await getProfile();
+      const modelData = {
+        custName: profile.custName,
+        mobilesList,
+        // eslint-disable-next-line arrow-body-style
+        accountList: await getAccountsList('MSC', (accts) => { // 帳戶類型 M:母帳戶, S:證券戶, C:子帳戶
+          // 排除已綁定的帳號
+          return accts.filter((acct) => !mobileTransferData.find((bindInfo) => bindInfo.account === acct.accountNo));
+        }),
+      };
+      setModel(modelData);
+      dispatch(setWaittingVisible(false));
+      return modelData;
+    }
+    return model;
+  };
+
   // 新增手機號碼收款
-  const addMobileTransferSetting = () => {
+  const addMobileTransferSetting = async () => {
     if (mobilesList.length === 0) {
-      customPopup(
+      await customPopup(
         '系統訊息',
         '您在本行留存的手機號碼皆已設定，請先取消， 再進行設定。',
       );
-      return;
+    } else {
+      history.push('/T006001', await getModel());
     }
-    history.push('/T006001', { otpMobileNum });
   };
 
   // 檢查是否設定快速登入、基本資料是否有手機號碼
   const checkBindAndMobile = async () => {
     const {
-      bindQuickLogin, bindTxnOtpMobile, bindings, mobiles, otpMobile,
+      bindQuickLogin, bindTxnOtpMobile, bindings, mobiles,
     } = await fetchMobiles({ tokenStatus: 1 });
-    setMobileTransferData(bindings || []);
-    setMobilesList(mobiles || []);
-    setOtpMobileNum(otpMobile);
     // 檢查是否綁定快速登入
-    if (bindQuickLogin === 'N') {
-      customPopup(
+    if (!bindQuickLogin) {
+      await customPopup(
         '系統訊息',
         '為符合手機號碼轉帳相關規範，請至設定>指紋辨識/臉部辨識/圖形密碼登入設定，進行快速登入綁定，造成不便，敬請見諒。',
         () => startFunc(FuncID.T00200),
         closeFunc,
+        '立即設定',
       );
       return;
     }
     // 檢查是否留存手機號碼
-    if (bindTxnOtpMobile === 'N') {
-      customPopup(
+    if (!bindTxnOtpMobile) {
+      await customPopup(
         '系統訊息',
         '您尚未於本行留存手機號碼，請先前往「基本資料變更」頁留存，再進設定。',
         () => startFunc(FuncID.T00700),
         closeFunc,
         '前往留存',
       );
-      return;
     }
-    if (bindings && bindings.length === 0) {
-      customPopup(
+
+    setMobilesList(mobiles || []);
+    setMobileTransferData(bindings);
+  };
+
+  // Note 不能跟 setMobilesList 在同一個方法中，否則 getModel 會取不到 mobilesList 的值。
+  useEffect(async () => {
+    if (mobileTransferData && mobileTransferData.length === 0) {
+      await customPopup(
         '系統訊息',
         '您尚未設定「手機號碼收款」功能，是否立即進行設定？',
-        () => history.push('/T006001', { otpMobileNum: otpMobile }),
+        async () => history.push('/T006001', await getModel()),
         closeFunc,
       );
     }
-  };
+  }, [mobileTransferData]);
 
   // 刪除手機號碼收款
   const deleteMobileTransferSetting = async (data) => {
-    dispatch(setWaittingVisible(true));
-    const { custName } = await fetchName();
-    dispatch(setWaittingVisible(false));
     history.push(
-      '/T006002',
-      {
+      '/T006002', {
         type: 'delete',
         isModify: true,
         data: {
-          userName: custName || '',
+          custName: (await getModel()).custName,
           ...data,
         },
       },
     );
   };
 
-  // 關閉變更 drawer
-  const handleCloseDrawer = () => {
-    closeDrawer();
-  };
-
   // 編輯手機號碼收款
-  const editMobileTransferSetting = (data) => {
-    setModifyData(data);
-    showDrawer(
+  const editMobileTransferSetting = async (data) => {
+    const modifyData = {
+      ...await getModel(),
+      ...data,
+    };
+    await showDrawer(
       '手機號碼收款變更',
-      <T00600ModifyForm modifyData={modifyData} onClose={handleCloseDrawer} />,
+      <T00600ModifyForm modifyData={modifyData} onClose={closeDrawer} />,
     );
+    // TODO 更新所有畫面資料。
   };
 
   // render 已設定的手機號碼收款項目
-  const renderMobileTransferItems = () => mobileTransferData
-    .map((item) => (
+  const renderMobileTransferItems = () => (
+    mobileTransferData.map((item) => (
       <SettingItem
         key={item.mobile}
         mainLable={item.mobile}
-        subLabel={`${item.isDefault ? '預設收款帳戶' : '非預設收款帳戶'} ${item.account}`}
+        subLabel={`${item.isDefault ? '預設收款帳戶' : '非預設收款帳戶'} ${accountFormatter(item.account)}`}
         editClick={() => editMobileTransferSetting(item)}
         deleteClick={() => deleteMobileTransferSetting(item)}
       />
-    ));
+    ))
+  );
 
-  useEffect(() => {
-    checkBindAndMobile();
+  useEffect(async () => {
+    dispatch(setWaittingVisible(true));
+    await checkBindAndMobile();
+    dispatch(setWaittingVisible(false));
   }, []);
 
   return (

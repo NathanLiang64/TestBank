@@ -12,7 +12,7 @@ const Tray = ({ deductInfo }) => {
   return (
     <TrayWrapper>
       <BottomAction className="badFlex" position={0}>
-        { (deductInfo?.autoDeduct === 0) && (
+        { (deductInfo?.autoDeductStatus === '0') && (
         <button type="button" onClick={() => history.push(`/${FuncID.R00400}`)}>
           <CreditCardIcon3 />
           繳費

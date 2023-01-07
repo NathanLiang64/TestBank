@@ -4,7 +4,6 @@ const PageWrapper = styled.div`
   display: flex;
   display: -webkit-flex;
   flex-direction: column;
-  // gap: 2rem;
   padding-bottom: 13.6rem;
   & > div {
     margin-bottom: 2rem;

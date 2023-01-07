@@ -13,6 +13,7 @@ export const RadioGroupField = ({
   labelName,
   disabled,
   hideDefaultButton,
+  row = false,
   ...controlProps
 }) => {
   const { field, fieldState } = useController(controlProps);
@@ -33,6 +34,7 @@ export const RadioGroupField = ({
       <RadioGroup
         onChange={onChangeHandler}
         onBlur={field.onBlur}
+        style={{flexDirection: row ? 'row' : 'column'}}
         id={field.name}
         name={field.name}
         value={field.value}

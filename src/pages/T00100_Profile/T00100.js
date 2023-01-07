@@ -17,7 +17,7 @@ import { setModalVisible } from 'stores/reducers/ModalReducer';
 import SettingList from './T00100_settingList';
 import ProfileWrapper from './T00100.style';
 import { validationSchema } from './validationSchema';
-import { getNickName, updateNickName, uploadAvatar } from './api';
+import { getNickname, updateNickname, uploadAvatar } from './api';
 
 /**
  * T00100 個人化首頁
@@ -28,19 +28,19 @@ const T00100 = () => {
     control,
     reset,
   } = useForm({
-    defaultValues: {nickName: ''},
+    defaultValues: {nickname: ''},
     resolver: yupResolver(validationSchema),
   });
 
   const { startFunc } = useNavigation();
-  const [nickName, setNickName] = useState('');
+  const [nickname, setNickname] = useState('');
   const [memberId, setMemberId] = useState();
   const dispatch = useDispatch();
 
   const onSubmit = async (values) => {
     dispatch(setModalVisible(false));
-    const response = await updateNickName(values);
-    if (response?.constructor === String) setNickName(values.nickName);
+    await updateNickname(values.nickname);
+    setNickname(values.nickname);
   };
 
   const showEditNickNameDialog = () => {
@@ -48,7 +48,7 @@ const T00100 = () => {
       title: '編輯名稱',
       message: (
         <TextInputField
-          name="nickName"
+          name="nickname"
           control={control}
           inputProps={{ maxLength: 20, placeholder: '請輸入您的名稱' }}
           labelName="您的名稱"
@@ -56,7 +56,7 @@ const T00100 = () => {
       ),
       okContent: '完成',
       onOk: handleSubmit(onSubmit),
-      onClose: () => reset({ nickName }),
+      onClose: () => reset({ nickname }),
       noDismiss: true,
     });
   };
@@ -69,18 +69,18 @@ const T00100 = () => {
   ));
 
   useEffect(async () => {
-    const data = await getNickName();
-    setNickName(data.nickName);
-    reset({nickName: data.nickName});
+    const data = await getNickname();
+    setNickname(data.nickname);
+    reset({nickname: data.nickname});
     setMemberId(data.uuid);
   }, []);
 
   return (
     <Layout title="個人化設定">
       <ProfileWrapper>
-        <Avatar memberId={memberId} name={nickName} onNewPhotoLoaded={uploadAvatar} defaultImage={defaultAvatar} />
-        <div className="nickName">
-          <span>{nickName}</span>
+        <Avatar memberId={memberId} name={nickname} onNewPhotoLoaded={uploadAvatar} defaultImage={defaultAvatar} />
+        <div className="nickname">
+          <span>{nickname}</span>
           <CreateRounded onClick={showEditNickNameDialog} />
         </div>
         {renderEntryList()}

@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import {useController} from 'react-hook-form';
 import {
@@ -51,11 +50,18 @@ export const DropdownField = ({
         ))}
       </FEIBSelect>
 
-      {/* <FEIBErrorMessage>
-        {fieldState.error ? fieldState.error.message : ''}
-      </FEIBErrorMessage> */}
-      {!!fieldState.error
-        && <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>}
+      {!!fieldState.error && (
+        <FEIBErrorMessage
+          style={{
+            margin: 0,
+            position: 'absolute',
+            right: 0,
+            bottom: 0,
+          }}
+        >
+          {fieldState.error.message}
+        </FEIBErrorMessage>
+      )}
     </>
   );
 };

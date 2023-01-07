@@ -1,6 +1,7 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable brace-style */
 import axios from 'axios';
+// import { useNavigation } from 'hooks/useNavigation';
 import { showError } from './MessageModal';
 import JWEUtil from './JWEUtil';
 import JWTUtil from './JWTUtil';
@@ -108,6 +109,7 @@ const processResponse = async (response) => {
   }
 
   if (code !== '0000') {
+    // const { closeFunc } = useNavigation(); // BUG Error: Invalid hook call.
     const { message } = response.data;
     // TODO: 導向API失敗的例外處理的頁面！
     console.log(`\x1b[31m${response.config.url} - Exception = (\x1b[33m${code}\x1b[31m) ${message}`);
@@ -120,13 +122,15 @@ const processResponse = async (response) => {
         });
         break;
 
+      case 'WEBCTL9003': // 此功能無法在登入前使用。
       case 'WEBCTL0102': // 密碼錯太多次，鎖住帳號並強制登出
-        await showError(message, () => forceLogout('403', '密碼驗證失敗次數已超出容許上限，請使用登入頁密碼欄位下方「忘記帳號或密碼」功能重新設定。'));
+        await showError(message, () => forceLogout('403', message, true));
         break;
 
+      case 'WEBCTL1006': // 尚未通過交易授權驗證，無法執行此項服務。
       default:
         // eslint-disable-next-line react/jsx-one-expression-per-line
-        await showError((<p>*** {code} ***<br />{message}</p>));
+        await showError((<p>*** {code} ***<br />{message}</p>)); // , closeFunc);
         break;
     }
   }
@@ -134,7 +138,7 @@ const processResponse = async (response) => {
   console.log(`\x1b[33m${response.config.url} \x1b[37m - Response = `, response.data);
 
   // 傳回 未加密 或 解密後 的資料
-  response.data.isSuccess = (code === '0000');
+  response.data.isSuccess = (code === '0000'); // TODO 錯誤處理，不能讓錯誤發生之後仍繼續執行。
   return response;
 };
 
@@ -154,35 +158,28 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   processResponse,
   async (ex) => {
+    console.log('\x1b[31mResponse Error --> ', ex);
     // 系統層錯誤！
     // 若是環境問題，則直接顯示；若是WebController未處理的錯誤，則另外處理。
-    // console.log(`%cResponse Error --> ${ex}`, 'color: Red;');
     const { response } = ex;
-    if (response) {
-      console.log(`%cResponse Error --> ${JSON.stringify(response)}`, 'color: Red;');
-      console.error(response.data);
-      let errMesg;
-      switch (response.status) {
-        case 401: // The Token has expired
-          // 理論上不會發生，但若 APP 沒控好，就有可能
-          forceLogout('401', 'The Token has expired');
-          break;
+    switch (response.status) {
+      case 401: // The Token has expired
+        // 理論上不會發生，但若 APP 沒控好，就有可能
+        await showError('因為您已閒置過久未操作系統，為考量資訊安全；銀行端已自動切斷您的連線。若您要繼續使用，請重新登入，造成您的不便敬請見諒。', () => {
+          forceLogout(response.status, ex.message, true);
+        });
+        return Promise.reject(ex);
 
-        default:
-          // TODO: Hold住畫面，再 Reload 一次。
-          errMesg = `主機忙碌中，請通知客服人員或稍後再試。訊息代碼：(${response.status})`; // TODO: 目前沒有 status 這個值。
-      }
-      await showError(errMesg); // TODO: 目前沒有 status 這個值。
+      case 500: // Server Error
+      default:
+        break;
     }
+
+    // const { closeFunc } = useNavigation(); // BUG Error: Invalid hook call.
+    const errMesg = `主機忙碌中，請通知客服人員或稍後再試。訊息代碼：(${response.status})`; // TODO: 目前沒有 status 這個值。
+    await showError(errMesg); // , closeFunc);
+
     return Promise.reject(ex);
-    /*
-    // 成功發出 request 但沒收到 response
-    if (!window.navigator.onLine) {
-      // TODO : 。。。
-    }
-    // 其它問題，例如跨域或程式問題
-    return Promise.reject(ex);
-    */
   },
 );
 
@@ -235,35 +232,13 @@ export const callAPI = async (url, request, config) => {
   let response = null;
   await userRequest('post', url, request, config)
     .then(async (rs) => {
-      response = rs.data;
-      // 只需傳回 WebController 傳回的部份，其他由 axios 額外附加的屬性則不傳回。
-      const { code, message } = rs.data;
-      if (code !== '0000') {
-        switch (code) {
-          case 'WEBCTL1006':
-            await showError(message, () => {
-              document.location.href = `${process.env.REACT_APP_ROUTER_BASE}/login`;
-            });
-            break;
-
-          default:
-            // await showError(message);
-            break;
-        }
-      }
+      response = rs.data; // 只需傳回 WebController 傳回的部份，其他由 axios 額外附加的屬性則不傳回。
     })
     .catch((err) => {
       response = err;
     });
-  // // eslint-disable-next-line no-unused-vars
-  // .finally((rs) => {
-  //   // console.log('finally: {}', rs);
-  // });
 
-  return {
-    ...response,
-    isSuccess: (response?.code === '0000'),
-  };
+  return response;
 };
 
 /**

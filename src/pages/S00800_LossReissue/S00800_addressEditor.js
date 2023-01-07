@@ -1,29 +1,47 @@
 import React, { useEffect, useMemo } from 'react';
+import * as yup from 'yup';
 import {useForm} from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { FEIBButton, FEIBInputLabel } from 'components/elements';
 import { DropdownField, TextInputField } from 'components/Fields';
 
-import { localCities, localCounties } from 'utilities/locationOptions';
+import {
+  findCounty, localCities, localCounties,
+} from 'utilities/locationOptions';
+import { addressValidation } from 'utilities/validation';
 import { LossReissueDialogWrapper } from './S00800.style';
-import { validationSchema } from './validationSchema';
 
-export const AddressEditor = ({currentFormValue, onSubmit}) => {
-  const {code: county} = localCounties.find(({name}) => currentFormValue.county.trim() === name);
-  const {code: city} = localCities[county].find(({name}) => currentFormValue.city.trim() === name);
+export const AddressEditor = ({addressValue, onSubmit}) => {
   const {
     control, handleSubmit, reset, watch,
   } = useForm({
-    resolver: yupResolver(validationSchema),
-    defaultValues: {...currentFormValue, county, city},
+    resolver: yupResolver(
+      yup.object().shape({
+        county: yup.string().required('請選擇縣市'),
+        city: yup.string().required('請選擇鄉鎮市區'),
+        addr: addressValidation(),
+      }),
+    ),
+    defaultValues: addressValue,
   });
 
   const [watchedCounty, watchedCity] = watch(['county', 'city']);
-  const countyOptions = localCounties.map(({ name, code }) => ({ label: name, value: code }));
+  const countyOptions = localCounties.map(({ name }) => ({ label: name, value: name }));
   const cityOptions = useMemo(() => {
     if (!watchedCounty) return [];
-    return localCities[watchedCounty].map(({ name, code }) => ({ label: name, value: code }));
+    const foundCounty = findCounty(watchedCounty);
+    if (foundCounty) {
+      return localCities[foundCounty.code].map(({ name }) => ({
+        label: name,
+        value: name,
+      }));
+    }
+    // NOTE 目前後端傳過來的 city 以及 county 很亂，
+    // 如果 foundCounty 不存在，代表後端傳過來的 county 是錯的，無法在 localCounties 找到
+    // 因此把 county 以及 city 兩個欄位清空，要求使用者再選一次
+    reset((formValues) => ({ ...formValues, county: '', city: '' }));
+    return [];
   }, [watchedCounty]);
 
   useEffect(() => {

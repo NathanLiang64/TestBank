@@ -1,6 +1,7 @@
 /* eslint-disable object-curly-newline */
 /* eslint-disable radix,no-restricted-globals */
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -22,6 +23,8 @@ import FaceIdLoginModal from './faceIdLoginModal';
 import { login, getInitData, getAnnouncementData } from './login.api';
 
 const Login = () => {
+  const { fid } = useParams(); // 取得url所帶功能代碼
+
   /**
    *- 資料驗證
    */
@@ -38,23 +41,23 @@ const Login = () => {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      identity: '', // NOTE 勿簽入預設值，請留在自己的開發環境上！
+      identity: 'A177656673',
+      // identity: 'Y120409367', // NOTE 勿簽入預設值，請留在自己的開發環境上！
       account: '1qaz2wsx',
       password: 'feib1688',
     },
   });
   const {startFunc, goHome} = useNavigation();
-  const [loginable, setLoginable] = useState();
+  const [loadedInitData, setInitDataLoaded] = useState();
+  const [loadedAnnounce, setAnnounceLoaded] = useState();
   const [showUserId, setShowUserId] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showFaceIdLogin, setShowFaceIdLogin] = useState(false);
 
   useEffect(async () => {
     await HandShake();
-    await getInitData();
-    await getAnnouncementData();
-
-    setLoginable(true);
+    getInitData().then(() => setInitDataLoaded(true));
+    getAnnouncementData().then(() => setAnnounceLoaded(true));
   }, []);
 
   const upperId = (e) => {
@@ -70,13 +73,15 @@ const Login = () => {
   };
 
   const onSubmit = async (data) => {
-    setLoginable(false);
+    setInitDataLoaded(false);
     const isSuccess = await login(data);
     if (isSuccess) { // 登入成功
       sessionStorage.setItem('isLogin', '1');
-      goHome();
+      if (fid) {
+        startFunc(fid);
+      } else goHome();
     }
-    setLoginable(true);
+    setInitDataLoaded(true);
   };
 
   return (
@@ -165,7 +170,7 @@ const Login = () => {
             >
               <FaceIdIcon />
             </FEIBIconButton>
-            <button disabled={!loginable} type="submit">
+            <button disabled={!loadedInitData && !loadedAnnounce} type="submit">
               登入
               <ArrowBackIcon />
             </button>

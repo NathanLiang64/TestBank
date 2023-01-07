@@ -29,6 +29,6 @@ export default function mockTransactions(param) {
     amount: Math.random() * 29_990 + 10,
     balance: 386000,
     cdType: 'cc',
-    currency: 'TWD',
+    currency: 'NTD',
   }));
 }

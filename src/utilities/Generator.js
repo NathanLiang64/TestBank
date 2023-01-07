@@ -73,6 +73,25 @@ export const dateToString = (date, splitter, mmddOnly) => {
 export const dateToYMD = (date) => dateToString(date ?? new Date(), '');
 
 /**
+ * 將日期轉為 民國年YYYMMDD 字串
+ * @param {Date} date 要轉換的日期；若為 null 則以 Today 為預設值。
+ * @param {String} splitter 年月日間隔字元。
+ * @returns {String}
+ */
+export const dateToTwYMD = (date, splitter = '') => {
+  if (date) {
+    const parts = [
+      date.getFullYear() - 1911,
+      (date.getMonth() + 1).toString().padStart(2, '0'),
+      date.getDate().toString().padStart(2, '0'),
+    ];
+
+    return parts.join(splitter ?? '/');
+  }
+  return null;
+};
+
+/**
  * 將全數字的時間字串，轉為 HH:mm:ss 字串
  * @param {Date|String} time 全數字的時間字串，例：'235959'
  */
@@ -242,7 +261,8 @@ export const accountOverviewCardVarient = (type) => {
 };
 
 export const CurrencyInfo = [
-  // TODO NTD ? TWD ? 應統一才對！
+  // 前端台幣統一使用NTD，後端回傳可能包含TWD/NTD
+  // 除 台幣、日圓 外皆取小數點後兩位數
   // #884 卡片上金額前方顯示幣別"符號"，不需顯示英文
   { code: 'NTD', name: '新台幣', symbol: '$', float: 0 },
   { code: 'TWD', name: '新台幣', symbol: '$', float: 0 },
@@ -254,10 +274,10 @@ export const CurrencyInfo = [
   { code: 'SGD', name: '新加坡幣', symbol: '$', float: 2 },
   { code: 'JPY', name: '日幣', symbol: '¥', float: 0 },
   { code: 'CAD', name: '加幣', symbol: '$', float: 2 },
-  { code: 'THB', name: '泰幣', symbol: '฿', float: 0 },
+  { code: 'THB', name: '泰幣', symbol: '฿', float: 2 },
   { code: 'ZAR', name: '南非幣', symbol: 'R', float: 2 },
   { code: 'PLN', name: '波蘭幣', symbol: 'zł', float: 2 },
-  { code: 'CNY', name: '人民幣', symbol: '¥', float: 0 },
+  { code: 'CNY', name: '人民幣', symbol: '¥', float: 2 },
   { code: 'EUR', name: '歐元', symbol: '€', float: 2 },
   { code: 'NZD', name: '紐西蘭幣', symbol: '$', float: 2 },
 ];

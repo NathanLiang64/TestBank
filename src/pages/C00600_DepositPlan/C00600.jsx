@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 import { useRef, useState, useEffect } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 
 import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
@@ -19,13 +20,12 @@ import { useNavigation } from 'hooks/useNavigation';
 import { useDispatch } from 'react-redux';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { getAccountsList } from 'utilities/CacheData';
 import EmptySlide from './components/EmptySlide';
 import EmptyPlan from './components/EmptyPlan';
 import DepositPlan from './components/DepositPlan';
 
-import {
-  getDepositPlans, updateDepositPlan, closeDepositPlan, getAccountSummary,
-} from './api';
+import {getDepositPlans, updateDepositPlan, closeDepositPlan } from './api';
 import {
   AlertUpdateFail,
   AlertNoMainAccount,
@@ -42,31 +42,23 @@ import {
 const DepositPlanPage = () => {
   const history = useHistory(); // TODO 應該改用 startFunc
   const dispatch = useDispatch();
+  const location = useLocation();
   const {startFunc, closeFunc, goHome} = useNavigation();
   const [depositPlans, setDepositPlans] = useState();
   const swiperRef = useRef();
-
-  // const inspector = () => new Promise((resolve) => {
-  //   getAccountsList('M', async (items) => { // M=台幣主帳戶、C=台幣子帳戶
-  //     if (items.length) {
-  //       const response = await getDepositPlans();
-  //       setDepositPlans(response);
-  //       resolve(null);
-  //     } else {
-  //       resolve('您尚未持有 Bankee 存款帳戶');
-  //     }
-  //   });
-  // });
 
   // 查無主帳戶的情況下，需要跳出 popup 詢問使用者是否要導向申請頁面，
   // 若有主帳戶再查詢是否有存錢計畫
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    const accounts = await getAccountSummary('M');
+    const accounts = await getAccountsList('M');
     if (accounts.length) {
-      const response = await getDepositPlans();
-      setDepositPlans(response);
-    } else AlertNoMainAccount({onOk: () => startFunc('F00100')});
+      if (location.state?.depositPlans) setDepositPlans(location.state?.depositPlans);
+      else {
+        const response = await getDepositPlans();
+        setDepositPlans(response);
+      }
+    } else AlertNoMainAccount({onOk: () => startFunc('F00100'), closeFunc});
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -192,15 +184,11 @@ const DepositPlanPage = () => {
    * 產生下方內容時會用的
    */
   const handleAddClick = () => {
-    history.push('/C006002', {
-      plansLength: depositPlans?.plans.length,
-      subAccounts: depositPlans.subAccounts,
-      totalSubAccountCount: depositPlans.totalSubAccountCount,
-    });
+    history.push('/C006002', {depositPlans });
   };
 
   const handleShowDetailClick = (plan) => {
-    history.push('/C006001', {plan});
+    history.push('/C006001', {plan, depositPlans});
   };
 
   const shouldShowUnavailableSubAccountAlert = () => {
@@ -272,7 +260,7 @@ const DepositPlanPage = () => {
    * 產生頁面
    * 只要提供相同數量的 slides 和 content，SwiperLayout會自動切換對應的內容。
    */
-
+  console.log('location.state', location.state);
   return (
     <Layout title="存錢計畫" hasClearHeader goBackFunc={handleGoBackClick}>
       <MainScrollWrapper>

@@ -8,6 +8,7 @@ import { showDrawer } from 'utilities/MessageModal';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { useNavigation } from 'hooks/useNavigation';
+import EmptyData from 'components/EmptyData';
 import {
   getAgreedAccount,
   updateAgreedAccount,
@@ -93,6 +94,29 @@ const Page = () => {
     await showDrawer('編輯約定帳號', (<AccountEditor initData={acct} onFinished={onFinished} />));
   };
 
+  const renderMemberCards = () => {
+    if (!accounts) return null;
+    // 非選取模式時，不需要列出同ID互轉的帳號
+    const filteredAccounts = accounts?.filter((acct) => (selectorMode || !acct.isSelf));
+    if (!filteredAccounts.length) return <EmptyData content="查無約定帳號" />;
+    return filteredAccounts.map((acct) => (
+      <MemberAccountCard
+        key={uuid()} // key值每次編輯後皆改變，以觸發react重新渲染
+        name={acct.nickName}
+        bankNo={acct.bankId}
+        bankName={acct.bankName}
+        account={acct.acctId}
+        memberId={acct.headshot}
+        isSelected={(acct.acctId === selectedAccount)}
+        onClick={() => onAccountSelected(acct)} // 傳回值：選取的帳號。
+        moreActions={acct.isSelf ? null : [ // 不可編輯自己的帳號。（因為是由同ID互轉建立的）
+          { lable: '編輯', type: 'edit', onClick: () => editAccount(acct) },
+        ]}
+      />
+
+    ));
+  };
+
   /**
    * 顯示帳戶列表
    */
@@ -100,22 +124,7 @@ const Page = () => {
     <Layout title="約定帳號管理">
       <Main small>
         <PageWrapper>
-          {/* 非選取模式時，不需要列出同ID互轉的帳號 */}
-          {accounts?.filter((acct) => (acct.selectorMode || !acct.isSelf)).map((acct) => (
-            <MemberAccountCard
-              key={uuid()} // key值每次編輯後皆改變，以觸發react重新渲染
-              name={acct.nickName}
-              bankNo={acct.bankId}
-              bankName={acct.bankName}
-              account={acct.acctId}
-              memberId={acct.headshot}
-              isSelected={(acct.acctId === selectedAccount)}
-              onClick={() => onAccountSelected(acct)} // 傳回值：選取的帳號。
-              moreActions={acct.isSelf ? null : [ // 不可編輯自己的帳號。（因為是由同ID互轉建立的）
-                { lable: '編輯', type: 'edit', onClick: () => editAccount(acct) },
-              ]}
-            />
-          )) }
+          {renderMemberCards()}
         </PageWrapper>
       </Main>
     </Layout>

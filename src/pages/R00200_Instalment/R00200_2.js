@@ -22,7 +22,7 @@ import { setInstallmentFlag } from './api';
  */
 
 const R00200_2 = () => {
-  // TOOD: 目前利率是 hardcode
+  // 目前利率是 hardcode
 
   const history = useHistory();
   const {state} = useLocation();

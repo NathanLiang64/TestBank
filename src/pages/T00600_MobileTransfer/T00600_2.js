@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useHistory } from 'react-router';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { showAnimationModal } from 'utilities/MessageModal';
+import { accountFormatter } from 'utilities/Generator';
 
 /* Elements */
 import { FEIBButton } from 'components/elements';
@@ -18,37 +19,25 @@ import MobileTransferWrapper from './T00600.style';
 import { createMobileNo, editMobileNo, unbindMobileNo } from './api';
 
 const T006002 = ({ location }) => {
+  const { type, isModify, data } = location.state;
+
   const history = useHistory();
-  const { closeFunc } = useNavigation();
-  const [dealCode, setDealCode] = useState('');
-  const [dealType, setDealType] = useState('');
-  const [isModifyConfirmPage, setIsModifyConfirmPage] = useState(true);
-  const [confirmData, setConfirmData] = useState({
-    id: 0,
-    mobile: '',
-    isDefault: false,
-    account: '',
-    userName: '',
-  });
   const dispatch = useDispatch();
 
-  const setDealTypeContent = (type) => {
-    setDealCode(type);
-    switch (type) {
-      case 'edit':
-        setDealType('手機號碼收款變更');
-        break;
-      case 'delete':
-        setDealType('手機號碼收款取消');
-        break;
-      default:
-        setDealType('手機號碼收款設定');
-        break;
+  const { closeFunc } = useNavigation();
+  const [isModifyConfirmPage] = useState(isModify);
+  const [confirmData] = useState(data);
+
+  const getDealTypeContent = (txnType) => {
+    switch (txnType) {
+      case 'edit': return '手機號碼收款變更';
+      case 'delete': return '手機號碼收款取消';
+      default: return '手機號碼收款設定';
     }
   };
 
   const getSuccessDesc = () => {
-    if (dealCode === 'delete') {
+    if (type === 'delete') {
       return '';
     }
     return (
@@ -63,18 +52,9 @@ const T006002 = ({ location }) => {
     );
   };
 
-  // 關閉結果彈窗
-  // const handleCloseResultDialog = () => {
-  //   if (dealCode === 'delete' || dealCode === 'edit') {
-  //     history.go(-1);
-  //   } else {
-  //     history.go(-1);
-  //   }
-  // };
-
   // 設定結果彈窗
-  const setResultDialog = (response) => {
-    showAnimationModal({
+  const setResultDialog = async (response) => {
+    await showAnimationModal({
       isSuccess: response,
       successTitle: '設定成功',
       successDesc: getSuccessDesc(),
@@ -87,51 +67,33 @@ const T006002 = ({ location }) => {
 
   const modifyMobileTransferData = async (event) => {
     event.preventDefault();
-    dispatch(setWaittingVisible(true));
     // 透過 APP 發送及驗證 OTP，並傳回結果。
-    const result = await transactionAuth(AuthCode.T00600, location.state.otpMobileNum);
-    console.log(result);
+    const result = await transactionAuth(AuthCode.T00600, confirmData.mobile);
     if (result?.result) {
-      const { account, isDefault, mobile } = confirmData;
-      const param = {
-        account,
-        mobile,
-        isDefault: isDefault ? 'Y' : 'N',
-        otpCode: result.otpCode,
-      };
+      dispatch(setWaittingVisible(true));
+      const { account, isDefault } = confirmData;
       // 新增設定
       if (!isModifyConfirmPage) {
-        const response = await createMobileNo(param);
+        const response = await createMobileNo({ account, isDefault });
         setResultDialog(response);
       }
       // 編輯或取消設定
       if (isModifyConfirmPage) {
-        if (dealType === 'edit') {
-          const editResponse = await editMobileNo(param);
+        if (type === 'edit') {
+          const editResponse = await editMobileNo(account);
           setResultDialog(editResponse);
         }
-        if (dealType === 'delete') {
-          const deleteParam = {
-            mobile,
-            otpCode: result.data,
-          };
-          const deleteResponse = await unbindMobileNo(deleteParam);
+        if (type === 'delete') {
+          const deleteResponse = await unbindMobileNo();
           setResultDialog(deleteResponse);
         }
       }
+      dispatch(setWaittingVisible(false));
     }
-    dispatch(setWaittingVisible(false));
   };
 
   // 回上一頁
   const goBack = () => history.goBack();
-
-  useEffect(() => {
-    const { type, isModify, data } = location.state;
-    setDealTypeContent(type);
-    setIsModifyConfirmPage(isModify);
-    setConfirmData(data);
-  }, []);
 
   return (
     <Layout title="資料確認" goBackFunc={goBack}>
@@ -139,10 +101,10 @@ const T006002 = ({ location }) => {
         <form>
           <div className={`confirmDataContainer lighterBlueLine ${isModifyConfirmPage && 'modifyConfirmPage'}`}>
             <div>
-              <InformationList title="交易種類" content={dealType} />
-              <InformationList title="姓名" content={confirmData.userName} />
+              <InformationList title="交易種類" content={getDealTypeContent(type)} />
+              <InformationList title="姓名" content={confirmData.custName || ''} />
               <InformationList title="手機號碼" content={confirmData.mobile} />
-              <InformationList title="收款帳號" content={confirmData.account} />
+              <InformationList title="收款帳號" content={accountFormatter(confirmData.account)} />
               <InformationList title="預設收款帳戶" content={confirmData.isDefault ? '是' : '否'} />
             </div>
             {

@@ -1,8 +1,10 @@
+/* eslint-disable object-curly-newline */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { accountFormatter } from 'utilities/Generator';
 
 /* Elements */
 import {
@@ -18,93 +20,53 @@ import {
 import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
 import DealContent from './dealContent';
-import { fetchName, getAccountsList, fetchMobiles } from './api';
 
 /* Styles */
 import MobileTransferWrapper from './T00600.style';
 
 const T006001 = ({ location }) => {
+  const { custName, mobilesList, accountList } = location.state;
+
   const history = useHistory();
+
   /**
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    mobile: yup
-      .string()
-      .required('請選擇手機號碼'),
-    account: yup
-      .string()
-      .required('請選擇收款帳號'),
+    mobile: yup.string().required('請選擇手機號碼'),
+    account: yup.string().required('請選擇收款帳號'),
   });
-  const {
-    handleSubmit, control, formState: { errors }, setValue,
-  } = useForm({
+  const { handleSubmit, control, formState: { errors }, setValue } = useForm({
     resolver: yupResolver(schema),
   });
 
   const [accountDefault, setAccountDefault] = useState(true);
-  const [mobileList, setMobileList] = useState([]);
-  const [accountList, setAccountList] = useState([]);
 
   const switchAccountDefault = () => {
     setAccountDefault(!accountDefault);
   };
 
-  // 取得姓名
-  const getUserName = async () => {
-    const { custName } = await fetchName();
-    setValue('userName', custName || '');
-  };
-
-  // 取得手機號碼
-  const getMobiles = async () => {
-    const { mobiles } = await fetchMobiles({ tokenStatus: 1 });
-    const isArr = Array.isArray(mobiles);
-    if (isArr) {
-      setMobileList(mobiles);
-      setValue('mobile', mobiles[0]);
-    }
-  };
-
-  // 取得收款帳號
-  const getAccounts = async () => {
-    const response = await getAccountsList('MCS'); // 帳戶類型 M:母帳戶, S:證券戶, C:子帳戶
-    if (Array.isArray(response)) {
-      const accounts = response.map((item) => item.account);
-      setAccountList(accounts);
-      setValue('account', accounts[0]);
-    }
-  };
-
   // 新增收款設定
   const onSubmit = (formData) => {
-    // eslint-disable-next-line no-console
     const data = {
       isDefault: accountDefault,
       ...formData,
     };
-    console.log(data);
     history.push(
       '/T006002',
       {
         type: 'add',
         isModify: false,
         data,
-        otpMobileNum: location.state.otpMobileNum,
       },
     );
   };
 
   const goBack = () => history.goBack();
 
-  const renderOptions = (data) => data.map((item) => (
-    <FEIBOption value={item} key={item}>{item}</FEIBOption>
-  ));
-
   useEffect(() => {
-    getUserName();
-    getMobiles();
-    getAccounts();
+    setValue('custName', custName);
+    if (mobilesList && mobilesList.length) setValue('mobile', mobilesList[0]);
   }, []);
 
   return (
@@ -124,21 +86,21 @@ const T006001 = ({ location }) => {
             <div>
               <FEIBInputLabel>姓名</FEIBInputLabel>
               <Controller
-                name="userName"
+                name="custName"
                 control={control}
                 render={({ field }) => (
                   <FEIBInput
                     {...field}
                     type="text"
-                    id="userName"
-                    name="userName"
+                    id="custName"
+                    name="custName"
                     placeholder="請輸入姓名"
-                    error={!!errors.userName}
+                    error={!!errors.custName}
                     disabled
                   />
                 )}
               />
-              <FEIBErrorMessage>{errors.userName?.message}</FEIBErrorMessage>
+              <FEIBErrorMessage>{errors.custName?.message}</FEIBErrorMessage>
               <FEIBInputLabel>手機號碼</FEIBInputLabel>
               <Controller
                 name="mobile"
@@ -153,9 +115,10 @@ const T006001 = ({ location }) => {
                     placeholder="請選擇手機號碼"
                     error={!!errors.mobile}
                   >
-                    {/* <FEIBOption value="" disabled>請選擇手機號碼</FEIBOption> */}
                     {
-                      renderOptions(mobileList)
+                      mobilesList?.map((item) => (
+                        <FEIBOption value={item} key={item}>{item}</FEIBOption>
+                      ))
                     }
                   </FEIBSelect>
                 )}
@@ -175,9 +138,12 @@ const T006001 = ({ location }) => {
                     placeholder="請選擇收款帳號"
                     error={!!errors.account}
                   >
-                    {/* <FEIBOption value="" disabled>請選擇收款帳號</FEIBOption> */}
                     {
-                      renderOptions(accountList)
+                      accountList?.map((item) => (
+                        <FEIBOption value={item.accountNo} key={item.accountNo}>
+                          {`${accountFormatter(item.accountNo)}  ${item.alias}`}
+                        </FEIBOption>
+                      ))
                     }
                   </FEIBSelect>
                 )}

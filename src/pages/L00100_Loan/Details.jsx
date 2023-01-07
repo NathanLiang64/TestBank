@@ -50,9 +50,9 @@ const Page = () => {
     // { title: '貸款類別', content: d.loanType }, TODO: 主機未有資料，暫隱藏
     { title: '貸款期限', content: `${dateToString(d.startDate)}~${dateToString(d.endDate)}` },
     { title: '每期還款日', content: `每月${d.dayToPay}日` },
-    { title: '初貸金額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.txAmt) },
+    { title: '初貸金額', content: currencySymbolGenerator(d.currency ?? 'NTD', d.txAmt) },
     { title: '貸款利率', content: `${d.rate}%` },
-    { title: '貸款餘額', content: currencySymbolGenerator(d.currency ?? 'TWD', d.loanBalance) },
+    { title: '貸款餘額', content: currencySymbolGenerator(d.currency ?? 'NTD', d.loanBalance) },
     { title: '已繳期數', content: `${d.periodPaid}期` },
     { title: '剩餘期數', content: `${d.periodRemaining}期` },
   ]);
