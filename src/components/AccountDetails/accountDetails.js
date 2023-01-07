@@ -380,7 +380,7 @@ const AccountDetails = ({
   const renderDetailCards = (items) => {
     if (isLoading) return <Loading space="both" isCentered />;
     if (!items) return null;
-    if (!items.length) return <EmptyData />;
+    if (!items.length) return <div className="emptyDataWrapper"><EmptyData /></div>;
 
     return (
       items.map((item) => (
