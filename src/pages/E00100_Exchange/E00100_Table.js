@@ -47,10 +47,8 @@ const E00100Table = () => {
   const [exchangeRate, setExchangeRate] = useState([]);
 
   const getExchangeRate = async () => {
-    const { code, data } = await getExchangeRateInfo({});
-    if (code === '0000') {
-      setExchangeRate(data);
-    }
+    const data = await getExchangeRateInfo({});
+    setExchangeRate(data);
   };
 
   useEffect(() => {

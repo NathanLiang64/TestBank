@@ -73,16 +73,16 @@ const T00700 = () => {
 
   // 設定結果彈窗
   const setResultDialog = async (response) => {
-    const result = response.code === '0000';
+    const { isSuccess, code, message } = response;
 
     await showAnimationModal({
-      isSuccess: result,
+      isSuccess,
       successTitle: '設定成功',
       successDesc: '基本資料變更成功',
       errorTitle: '設定失敗',
-      errorCode: response.code,
-      errorDesc: response.message,
-      onClose: result ? () => {} : () => reset({ ...originPersonalData }),
+      errorCode: code,
+      errorDesc: message,
+      onClose: isSuccess ? () => {} : () => reset({ ...originPersonalData }),
     });
   };
 

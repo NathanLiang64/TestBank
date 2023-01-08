@@ -53,9 +53,9 @@ const T006002 = ({ location }) => {
   };
 
   // 設定結果彈窗
-  const setResultDialog = async (response) => {
+  const setResultDialog = async (isSuccess) => {
     await showAnimationModal({
-      isSuccess: response,
+      isSuccess,
       successTitle: '設定成功',
       successDesc: getSuccessDesc(),
       errorTitle: '設定失敗',

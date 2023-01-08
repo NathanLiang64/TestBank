@@ -10,8 +10,8 @@ const FinancialDepartments = () => {
   const [bankList, setBankList] = useState([]);
 
   const getStores = async () => {
-    const { code, data } = await getFinanceStore({});
-    if (code === '0000') {
+    const { isSuccess, data } = await getFinanceStore({});
+    if (isSuccess) {
       setBankList(data);
     }
   };

@@ -70,8 +70,8 @@ const Notice = () => {
 
   // 取得通知列表
   const getNotices = async () => {
-    const { code, data } = await queryLastPush();
-    if (code === '0000') {
+    const data = await queryLastPush();
+    if (data) {
       const allMsg = data;
       const pMsg = data.filter((item) => item.msgType === 'P');
       const aMsg = data.filter((item) => item.msgType === 'A');
