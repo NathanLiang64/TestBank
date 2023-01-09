@@ -20,13 +20,14 @@ const R00200_1 = () => {
   const history = useHistory();
   const { state } = useLocation();
   const { goHome } = useNavigation();
-  const schema = yup.object().shape({
-    applType: yup.string().required('請選擇欲申請之晚點付項目'),
-  });
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: { installmentItem: {} },
-    resolver: yupResolver(schema),
+    resolver: yupResolver(
+      yup.object().shape({
+        applType: yup.string().required('請選擇欲申請之晚點付項目'),
+      }),
+    ),
   });
   const watchedValue = watch('installmentItem');
 

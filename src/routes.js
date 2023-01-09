@@ -35,7 +35,7 @@ const D00600 = lazy(() => import('pages/D00600_RegisteredContacts/D00600'));
 const D00700 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer'));
 const D00800 = lazy(() => import('pages/D00800_ReserveTransferSearch/D00800v2'));
 const D008001 = lazy(() => import('pages/D00800_ReserveTransferSearch/D00800_1'));
-const E00100 = lazy(() => import('pages/E00100_Exchange/E00100'));
+const E00100 = lazy(() => import('pages/E00100_Exchange/E00100v2'));
 const E001001 = lazy(() => import('pages/E00100_Exchange/E00100_1'));
 const E001002 = lazy(() => import('pages/E00100_Exchange/E00100_2'));
 const E00200 = lazy(() => import('pages/E00200_ExchangeRate'));

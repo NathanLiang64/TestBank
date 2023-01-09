@@ -9,6 +9,7 @@ import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { AddIcon } from 'assets/images/icons';
 import { useNavigation } from 'hooks/useNavigation';
+import EmptyData from 'components/EmptyData';
 import {
   getFrequentAccount,
   addFrequentAccount,
@@ -137,6 +138,28 @@ const Page = () => {
     });
   };
 
+  const renderMemberCards = () => {
+    if (!accounts) return null;
+    if (!accounts.length) return <EmptyData content="查無常用帳號" />;
+    return accounts?.map((acct) => (
+      <MemberAccountCard
+        key={uuid()} // key值每次編輯後皆改變，以觸發react重新渲染
+        name={acct.nickName}
+        bankNo={acct.bankId}
+        bankName={acct.bankName}
+        account={acct.acctId}
+        memberId={acct.headshot}
+        hasNewTag={acct.isNew}
+        isSelected={(acct.acctId === selectedAccount)}
+        onClick={() => onAccountSelected(acct)} // 傳回值：選取的帳號。
+        moreActions={[
+          { lable: '編輯', type: 'edit', onClick: () => editAccount(acct) },
+          { lable: '刪除', type: 'delete', onClick: () => removeAccount(acct) },
+        ]}
+      />
+    ));
+  };
+
   /**
    * 顯示帳戶列表
    */
@@ -150,23 +173,7 @@ const Page = () => {
             </div>
             <span className="addMemberButtonText">新增常用帳號</span>
           </button>
-          {accounts?.map((acct) => (
-            <MemberAccountCard
-              key={uuid()} // key值每次編輯後皆改變，以觸發react重新渲染
-              name={acct.nickName}
-              bankNo={acct.bankId}
-              bankName={acct.bankName}
-              account={acct.acctId}
-              memberId={acct.headshot}
-              hasNewTag={acct.isNew}
-              isSelected={(acct.acctId === selectedAccount)}
-              onClick={() => onAccountSelected(acct)} // 傳回值：選取的帳號。
-              moreActions={[
-                { lable: '編輯', type: 'edit', onClick: () => editAccount(acct) },
-                { lable: '刪除', type: 'delete', onClick: () => removeAccount(acct) },
-              ]}
-            />
-          )) }
+          {renderMemberCards()}
         </PageWrapper>
       </Main>
     </Layout>

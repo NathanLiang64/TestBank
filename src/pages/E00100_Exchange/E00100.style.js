@@ -7,7 +7,7 @@ const ExchangeWrapper = styled(Layout)`
       min-height: unset;
       padding-left: 1.2rem;
       padding-right: 1.2rem;
-      padding-bottom: .1rem;
+      padding-bottom: 0.1rem;
       width: unset;
       height: 2.5rem;
       font-size: 1.4rem;
@@ -15,12 +15,13 @@ const ExchangeWrapper = styled(Layout)`
     }
   }
   &.confirmPage {
-    padding: .8rem 1.6rem 0rem 1.6rem;
+    padding: 0.8rem 1.6rem 0rem 1.6rem;
   }
   &.finishPage {
     padding: 0 1.6rem 0rem 1.6rem;
   }
-  &.confirmPage, &.finishPage {
+  &.confirmPage,
+  &.finishPage {
     background: ${({ theme }) => theme.colors.background.lighterBlue};
     .infoSection {
       left: -1.6rem;
@@ -28,7 +29,7 @@ const ExchangeWrapper = styled(Layout)`
       width: 100vw;
       padding: 2.4rem 1.6rem;
       text-align: center;
-      margin-bottom: .8rem;
+      margin-bottom: 0.8rem;
       &.resultFail {
         min-height: 100%;
         display: flex;
@@ -51,10 +52,10 @@ const ExchangeWrapper = styled(Layout)`
         .label {
           color: ${({ theme }) => theme.colors.text.lightGray};
           font-size: 16px;
-          margin-bottom: .4rem;
+          margin-bottom: 0.4rem;
         }
         .label.into {
-          margin: 1.6rem 0 .6rem;
+          margin: 1.6rem 0 0.6rem;
         }
         .foreignCurrency {
           color: ${({ theme }) => theme.colors.primary.dark};
@@ -63,7 +64,8 @@ const ExchangeWrapper = styled(Layout)`
           line-height: 3.6rem;
           margin-bottom: 1.2rem;
         }
-        .changeNT, .exchangeRate {
+        .changeNT,
+        .exchangeRate {
           color: ${({ theme }) => theme.colors.primary.dark};
           font-size: 1.8rem;
           line-height: 2.7rem;
@@ -79,7 +81,7 @@ const ExchangeWrapper = styled(Layout)`
           font-weight: 400;
         }
         .priceNotiSetting {
-          margin-top: .8rem;
+          margin-top: 0.8rem;
           font-size: 1.4rem;
           line-height: 2.1rem;
           color: ${({ theme }) => theme.colors.text.dark};
@@ -110,12 +112,12 @@ const ExchangeWrapper = styled(Layout)`
       color: ${({ theme }) => theme.colors.text.point};
     }
   }
-  .MuiFormHelperText-root.Mui-error {
+  .MuiFormHelperText-root {
     &.balance {
+      margin: 0;
       position: absolute;
+      left: 0;
       color: ${({ theme }) => theme.colors.text.mediumGray};
-      text-align: left;
-      transform: translateY(calc(-100% - 1.6rem));
     }
   }
   .exchangeTypeLabel {
@@ -133,9 +135,10 @@ const ExchangeWrapper = styled(Layout)`
   }
   .confirmBtns {
     padding-top: 1.2rem;
-    padding-bottom: .8rem;
+    padding-bottom: 0.8rem;
   }
-  #foreignBalance, #ntDollorBalance {
+  #foreignBalance,
+  #ntDollorBalance {
     color: transparent;
   }
 `;

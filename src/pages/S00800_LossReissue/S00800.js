@@ -111,8 +111,10 @@ const LossReissue = () => {
       if (auth && auth.result) {
         dispatch(setWaittingVisible(true));
         // 修改地址
-        await updateProfile({...values, zipCode: `${zipCode}00` });
-        setAddressValue({...values});
+        const response = await updateProfile({...values, zipCode: `${zipCode}00` });
+        if (response.code === '0000') {
+          setAddressValue({...values});
+        }
         dispatch(setWaittingVisible(false));
       }
 

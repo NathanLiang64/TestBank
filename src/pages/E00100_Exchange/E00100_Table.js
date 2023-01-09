@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { getExchangeRateInfo } from 'pages/E00100_Exchange/api';
 import { datetimeToString } from 'utilities/Generator';
 import styled from 'styled-components';
+import Loading from 'components/Loading';
 
 const ExchangeTableWrapper = styled.div`
   .describe {
@@ -46,27 +47,10 @@ const ExchangeTableWrapper = styled.div`
 const E00100Table = () => {
   const [exchangeRate, setExchangeRate] = useState([]);
 
-  const getExchangeRate = async () => {
-    const data = await getExchangeRateInfo({});
-    setExchangeRate(data);
-  };
+  const renderExchangeRate = () => {
+    if (!exchangeRate.length) return <Loading space="both" isCentered />;
 
-  useEffect(() => {
-    getExchangeRate();
-  }, []);
-
-  return (
-    <ExchangeTableWrapper>
-      <section>
-        <div className="describe">
-          <h2>
-            查詢時間：
-            {datetimeToString(new Date())}
-            <br />
-            本匯率僅供參考，實際匯率以本行交易時之匯率為準。
-          </h2>
-        </div>
-      </section>
+    return (
       <table style={{ margin: '1rem 0' }}>
         <thead>
           <tr>
@@ -89,6 +73,28 @@ const E00100Table = () => {
           ))}
         </tbody>
       </table>
+    );
+  };
+
+  // 拿取外匯匯率
+  useEffect(async () => {
+    const exchangeRateRes = await getExchangeRateInfo({});
+    setExchangeRate(exchangeRateRes);
+  }, []);
+
+  return (
+    <ExchangeTableWrapper>
+      <section>
+        <div className="describe">
+          <h2>
+            查詢時間：
+            {datetimeToString(new Date())}
+            <br />
+            本匯率僅供參考，實際匯率以本行交易時之匯率為準。
+          </h2>
+        </div>
+        {renderExchangeRate()}
+      </section>
     </ExchangeTableWrapper>
   );
 };

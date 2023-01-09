@@ -94,7 +94,7 @@ const R00200_3 = () => {
   );
 
   const onClickHandler = async () => {
-    if (state.readOnly) history.goBack();
+    if (state?.readOnly) history.goBack();
     else {
       dispatch(setWaittingVisible(true));
       const res = await updateInstallment(state.param); // 回傳資料待確認
@@ -113,18 +113,17 @@ const R00200_3 = () => {
   return (
     <Layout title="晚點付 (總額)">
       <InstalmentWrapper className="InstalmentWrapper" small>
-        <form>
-          <div>
-            <div className="InstalmentWrapperText">各期繳款金額試算 (依實際帳單為準)</div>
-            {/* {ResultTable()} */}
-            {stagingTable()}
-            <div className="formula-hint">
-              <p>分期利息=本金餘額*(分期利率/12)</p>
-              <p>小數點後數字將四捨五入至整數位</p>
-            </div>
+        <form style={{gap: '2rem'}}>
+          <div className="InstalmentWrapperText">各期繳款金額試算 (依實際帳單為準)</div>
+          {/* {ResultTable()} */}
+          {stagingTable()}
+          <div className="formula-hint">
+            <p>分期利息=本金餘額*(分期利率/12)</p>
+            <p>小數點後數字將四捨五入至整數位</p>
           </div>
+          <div className="note">實際請款金額以帳單為準</div>
           <FEIBButton type="submit" onClick={onClickHandler}>
-            {state.readOnly ? '返回' : '確認'}
+            {state?.readOnly ? '返回' : '確認'}
           </FEIBButton>
         </form>
       </InstalmentWrapper>

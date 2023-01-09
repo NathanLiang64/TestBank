@@ -49,7 +49,7 @@ import ExchangeWrapper from './E00100.style';
 /**
  * E00100 外幣換匯首頁
  */
-
+// ************************** 有 Bug 待棄用 & 亂 **************************
 const E00100 = () => {
   const history = useHistory();
   const dispatch = useDispatch();

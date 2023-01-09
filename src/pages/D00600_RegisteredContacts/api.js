@@ -12,6 +12,7 @@ import store from 'stores/store';
  *   bankName: '銀行名稱'
  *   nickName: '暱稱'
  *   email: '通知EMAIL'
+ *   isSelf: '是否為本行自己的其他帳戶'
  *   headshot: '代表圖檔的UUID，用來顯示大頭貼；若為 null 表示還沒有設定頭像。'
  * }]>} 約定轉入帳號清單。
  */
