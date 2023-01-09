@@ -460,12 +460,10 @@ async function createQuickLogin(authType) {
   const appRs = await callAppJavaScript('regQLfeature', data, true, () => ({ result: true }));
   if (appRs.result === true) {
     const apiRs = await callAPI('/auth/quickLogin/v1/create', { authType });
-    if (!apiRs.isSuccess) {
-      return {
-        result: false,
-        message: apiRs.message,
-      };
-    }
+    return {
+      result: apiRs.isSuccess,
+      message: apiRs.message,
+    };
   }
   return appRs;
 }
@@ -488,12 +486,10 @@ async function verifyQuickLogin(authType, pwdE2ee) {
   const appRs = await callAppJavaScript('regQL', data, true, () => ({ result: true }));
   if (appRs.result === true) {
     const apiRs = await callAPI('/auth/quickLogin/v1/bind');
-    if (!apiRs.isSuccess) {
-      return {
-        result: false,
-        message: apiRs.message,
-      };
-    }
+    return {
+      result: apiRs.isSuccess,
+      message: apiRs.message,
+    };
   }
   return appRs;
 }
@@ -509,12 +505,10 @@ async function removeQuickLogin() {
   const appRs = await callAppJavaScript('delQL', null, true, () => ({ result: true }));
   if (appRs.result === true) {
     const apiRs = await callAPI('/auth/quickLogin/v1/unbind');
-    if (!apiRs.isSuccess) {
-      return {
-        result: false,
-        message: apiRs.message,
-      };
-    }
+    return {
+      result: apiRs.isSuccess,
+      message: apiRs.message,
+    };
   }
   return appRs;
 }
