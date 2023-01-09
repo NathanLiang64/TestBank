@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -20,10 +20,9 @@ import { validationSchema } from './validationSchema';
 const S00700 = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-
-  const [accountNo, setAccountNo] = useState();
   const { QLResult, showUnbondedMsg } = useQLStatus();
-  const { control, handleSubmit } = useForm({
+
+  const { control, handleSubmit, reset } = useForm({
     defaultValues: { accountNo: '', serial: '' },
     resolver: yupResolver(validationSchema),
   });
@@ -44,26 +43,23 @@ const S00700 = () => {
     if (!QLResult) showUnbondedMsg();
   }, [QLResult]);
 
-  // 我的金融卡帳號欄位自動帶入金融卡台幣主帳號
-  useEffect(() => {
-    // getAccountsList('M', (accounts) => reset((formValues) => ({...formValues, accountNo: accounts[0].accountNo})));
-  }, []);
-
   /**
    * 檢查是否可以開啟這個頁面。
    * @returns {Promise<String>} 傳回驗證結果的錯誤訊息；若是正確無誤時，需傳回 null
    */
   const inspector = async () => {
     const {status, statusDesc, account} = await getStatus();
-    if (status === 2) {
-      // TODO 卡片狀態必需為 製卡(2) 才能進行金融卡啟用。請確認顯示訊息！
-      return `卡片狀態為(${statusDesc})。請確認顯示訊息！`;
+    if (status !== 2) {
+      return `卡片狀態為(${statusDesc})，不需進行金融卡啟用。`;
     }
-    setAccountNo(account); // 我的金融卡帳號欄位自動帶入金融卡台幣主帳號 // TODO 帶到 Input 中
+
+    reset((formValues) => ({
+      ...formValues,
+      accountNo: account, // 我的金融卡帳號欄位自動帶入金融卡台幣主帳號
+    }));
     return null;
   };
 
-  console.log(accountNo);
   return (
     <Layout title="金融卡啟用" inspector={inspector}>
       <DebitCardActiveWrapper>
@@ -72,7 +68,7 @@ const S00700 = () => {
             labelName="我的金融卡帳號"
             name="accountNo"
             control={control}
-            inputProps={{maxLength: 14, inputMode: 'numeric', disabled: true}}
+            inputProps={{disabled: true}}
           />
           <TextInputField
             labelName="我的金融卡序號"
