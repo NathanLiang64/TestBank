@@ -23,7 +23,7 @@ const S00700 = () => {
   const { QLResult, showUnbondedMsg } = useQLStatus();
   const dispatch = useDispatch();
   const { control, handleSubmit, reset } = useForm({
-    defaultValues: { actno: '', serial: '' },
+    defaultValues: { accountNo: '', serial: '' },
     resolver: yupResolver(validationSchema),
   });
 
@@ -31,10 +31,10 @@ const S00700 = () => {
     dispatch(setWaittingVisible(true));
     const auth = await transactionAuth(AuthCode.S00700);
     if (auth && auth.result) {
-      await getStatus(); // activate 之前需要先獲得卡況
       const activateResult = await activate({...values});
-      if (!activateResult) return;
-      history.push('/S007001', {...activateResult});
+      if (activateResult) {
+        history.push('/S007001', activateResult);
+      }
     }
     dispatch(setWaittingVisible(false));
   };
@@ -45,19 +45,27 @@ const S00700 = () => {
 
   // 我的金融卡帳號欄位自動帶入金融卡台幣主帳號
   useEffect(() => {
-    getAccountsList('M', (accounts) => reset((formValues) => ({...formValues, actno: accounts[0].accountNo})));
+    getAccountsList('M', (accounts) => reset((formValues) => ({...formValues, accountNo: accounts[0].accountNo})));
   }, []);
 
+  // 卡片啟用：限卡況為 02-製卡
+  const inspector = async () => {
+    const status = await getStatus();
+    if (status !== 2) {
+      // TODO 卡片狀態必需為 製卡(2) 才能進行金融卡啟用。請確認顯示訊息！
+    }
+    return (status === 2);
+  };
+
   return (
-    <Layout title="金融卡啟用">
+    <Layout title="金融卡啟用" inspector={inspector}>
       <DebitCardActiveWrapper>
         <form style={{ minHeight: 'initial' }} onSubmit={handleSubmit(submitHandler)}>
           <TextInputField
             labelName="我的金融卡帳號"
-            name="actno"
+            name="accountNo"
             control={control}
             inputProps={{maxLength: 14, inputMode: 'numeric', disabled: true}}
-
           />
           <TextInputField
             labelName="我的金融卡序號"
