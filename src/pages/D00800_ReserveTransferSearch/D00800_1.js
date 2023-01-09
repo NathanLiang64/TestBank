@@ -52,14 +52,14 @@ const ReserveTransferSearch1 = ({ location }) => {
       <ReserveTransferSearchWrapper>
         {!!cancelResult && (
           <SuccessFailureAnimations
-            isSuccess={cancelResult.code === '0000'}
+            isSuccess={cancelResult.isSuccess}
             successTitle="設定成功"
             errorTitle="設定失敗"
             errorDesc={cancelResult.message}
           />
         )}
         {/* 當尚未執行取消或是取消成功的情況下才顯示 */}
-        {(!cancelResult || cancelResult.code === '0000') && (
+        {(!cancelResult || cancelResult.isSuccess) && (
         <>
           <section className="confrimDataContainer lighterBlueLine">
             {renderHeader(reserveData)}

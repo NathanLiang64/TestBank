@@ -1,5 +1,4 @@
 import { callAPI, download } from 'utilities/axios';
-import { dateToYMD } from 'utilities/Generator';
 
 /**
  * 取得當前所選帳號之交易明細
@@ -34,9 +33,7 @@ export const getTransactions = async (accountNo) => {
  * @returns 存摺封面
  */
 export const downloadDepositBookCover = async (accountNo, currency = 'NTD') => {
-  const today = dateToYMD(); // 今天 yyyyMMdd
-  const filename = `${accountNo}-${today}.pdf`;
-  await download('/api/deposit/v1/getDepositBookCover', { accountNo, currency }, filename);
+  await download('/api/deposit/v1/getDepositBookCover', { accountNo, currency });
 };
 
 /**

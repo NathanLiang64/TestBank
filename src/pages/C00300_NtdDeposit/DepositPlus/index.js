@@ -12,7 +12,7 @@ import {
 /* Reducers & JS functions */
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { ArrowNextIcon } from 'assets/images/icons';
-import { toCurrency } from 'utilities/Generator';
+import { currencySymbolGenerator } from 'utilities/Generator';
 import { getBonusPeriodList, getDepositPlus, getDepositPlusLevelList } from './api';
 import DepositPlusWrapper from './depositPlus.style';
 
@@ -26,14 +26,6 @@ const Deposit = () => {
   const [depositPlusDetail, setDepositPlusDetail] = useState({});
 
   const history = useHistory();
-
-  /* 若無值/值為NaN，顯示0而非橫線 */
-  const renderText = (value) => {
-    if (value === 'NaN') {
-      return '0';
-    }
-    return value || '0';
-  };
 
   const renderMonthlyTabs = (list) => list.map((month) => (
     <FEIBTab key={month} label={`${month.substr(4)}月`} value={month} />
@@ -94,16 +86,17 @@ const Deposit = () => {
         <div className="mainArea">
           <span>
             {/* 如果沒有回傳資料，顯示系統年月 */}
-            {depositPlusDetail.period !== undefined && `${!depositPlusDetail.period ? monthly[0].substr(0, 4) : depositPlusDetail.period.substr(0, 4)}/${!depositPlusDetail.period ? monthly[0].substr(4) : depositPlusDetail.period.substr(4)}`}
+            {!!depositPlusDetail.period && `${!depositPlusDetail.period ? monthly[0].substr(0, 4) : depositPlusDetail.period.substr(0, 4)}/${!depositPlusDetail.period ? monthly[0].substr(4) : depositPlusDetail.period.substr(4)}`}
             優惠利率額度總計
           </span>
-          <h3>{`$${renderText(toCurrency(parseInt(depositPlusDetail.summaryBonusQuota, 10)))}`}</h3>
+          {!!depositPlusDetail.summaryBonusQuota && <h3>{currencySymbolGenerator('NTD', parseInt(depositPlusDetail.summaryBonusQuota, 10))}</h3>}
         </div>
 
+        {!!depositPlusDetail.bonusDetail && (
         <section className="detailArea">
           <div className="sectionTitle">
             <h3>活動明細</h3>
-            {!!depositPlusDetail.bonusDetail && (
+            {depositPlusDetail.bonusDetail.length !== 0 && (
             <button type="button" onClick={() => nextPage()}>
               各項活動說明
               <ArrowNextIcon />
@@ -116,17 +109,18 @@ const Deposit = () => {
               <span>活動名稱/說明</span>
               <span>優惠定額上限</span>
             </li>
-            {!!depositPlusDetail.bonusDetail && depositPlusDetail.bonusDetail.map((detail) => (
+            {depositPlusDetail.bonusDetail.map((detail) => (
               <li className="listBody" key={detail}>
                 <div>
                   <p>
+                    {/* 藉promotionName字串中有無"*"判斷是否顯示starIcon */}
                     {detail.promotionName.replace('*', '')}
                     <span>{detail.promotionName.includes('*') && <StarRounded className="starIcon" />}</span>
                   </p>
                   <span>{detail.memo}</span>
                 </div>
                 <p className="limitPrice">
-                  {`$${toCurrency(parseInt(detail.bonusQuota, 10))}`}
+                  {currencySymbolGenerator('NTD', parseInt(detail.bonusQuota, 10))}
                 </p>
               </li>
             ))}
@@ -138,6 +132,7 @@ const Deposit = () => {
             <span>活動之優惠利率擇優計算</span>
           </div>
         </section>
+        )}
       </DepositPlusWrapper>
     </Layout>
   );

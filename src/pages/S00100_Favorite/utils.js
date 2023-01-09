@@ -1,3 +1,7 @@
+import { createContext } from 'react';
+
+export const EventContext = createContext();
+
 export const calcSelectedLength = (list) => {
   let count = 0;
   for (const key in list) {

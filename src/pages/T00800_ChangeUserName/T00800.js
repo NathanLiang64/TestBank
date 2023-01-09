@@ -43,14 +43,14 @@ const ChangeUserName = () => {
         newUserNameCheck: e2ee(newUserNameCheck),
       };
 
-      const { code, message } = await changeUserName(param);
+      const { isSuccess, code, message } = await changeUserName(param);
 
       showAnimationModal({
-        isSuccess: code === '0000',
+        isSuccess,
         successTitle: '設定成功',
         successDesc: '您已成功變更使用者代號',
         errorTitle: '設定失敗',
-        errorCode: code, // TODO
+        errorCode: code,
         errorDesc: message,
         onClose: closeFunc,
       });

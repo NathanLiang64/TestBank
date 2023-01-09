@@ -36,9 +36,9 @@ const CardLessWithDrawChgPwd = () => {
     dispatch(setWaittingVisible(true));
     const {result} = await transactionAuth(AuthCode.D00400);
     if (result) {
-      const { code, message } = await changeCardlessPwd(param);
+      const { isSuccess, code, message } = await changeCardlessPwd(param);
       showAnimationModal({
-        isSuccess: code === '0000',
+        isSuccess,
         successTitle: '設定成功',
         errorTitle: '設定失敗',
         successDesc: '您的無卡提款密碼變更成功囉！',

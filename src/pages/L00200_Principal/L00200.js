@@ -26,11 +26,13 @@ const L00200 = () => {
     };
     const principalResponse = await getSubPayment(param);
     if (principalResponse?.length > 0) {
-      const result = {
+      const newDetailList = principalResponse.map((item) => ({
         ...param,
-        ...principalResponse[0],
-      };
-      setDetailList([...detaillist, result]);
+        ...item,
+      }));
+
+      const sortedNewDetailList = newDetailList.sort((a, b) => parseInt(b.endDate, 10) - parseInt(a.endDate, 10));
+      setDetailList(sortedNewDetailList);
     }
   };
 
@@ -53,7 +55,7 @@ const L00200 = () => {
       <PrincipalWrapper>
         {
           detaillist.map((item) => (
-            <section className="sectionTop" key={item}>
+            <section className="sectionTop" key={detaillist.indexOf(item)}>
               <ul className="detailUl">
                 <li>
                   <span>本期應繳金額</span>

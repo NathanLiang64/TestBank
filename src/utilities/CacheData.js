@@ -29,7 +29,6 @@ const loadCacheData = async () => {
   }
 
   const data = store.getState()?.CacheReducer;
-  console.log('**** CacheReducer : ', data);
   return data;
 };
 

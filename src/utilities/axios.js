@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-one-expression-per-line */
 /* eslint-disable no-use-before-define */
 /* eslint-disable brace-style */
 import axios from 'axios';
@@ -138,7 +139,7 @@ const processResponse = async (response) => {
   console.log(`\x1b[33m${response.config.url} \x1b[37m - Response = `, response.data);
 
   // 傳回 未加密 或 解密後 的資料
-  response.data.isSuccess = (code === '0000'); // TODO 錯誤處理，不能讓錯誤發生之後仍繼續執行。
+  response.isSuccess = (code === '0000'); // TODO 錯誤處理，不能讓錯誤發生之後仍繼續執行。
   return response;
 };
 
@@ -176,7 +177,14 @@ instance.interceptors.response.use(
     }
 
     // const { closeFunc } = useNavigation(); // BUG Error: Invalid hook call.
-    const errMesg = `主機忙碌中，請通知客服人員或稍後再試。訊息代碼：(${response.status})`; // TODO: 目前沒有 status 這個值。
+    const errMesg = (
+      <p>
+        主機忙碌中，請通知客服人員或稍後再試。訊息代碼：({response.status})
+        <br />
+        {/* DEBUG */}
+        原因：{response.data.message}
+      </p>
+    );
     await showError(errMesg); // , closeFunc);
 
     return Promise.reject(ex);
@@ -248,35 +256,12 @@ export const callAPI = async (url, request, config) => {
  * @param {*} filename 輸出檔名。
  */
 export const download = async (url, request) => {
-  console.log(`\x1b[33mAPI :/${url}`);
-  console.log('Request = ', request);
-  const token = await getJwtToken();
-  // Request Payload 加密
-  const aes = await getAesKey();
-  const encrypt = JWTUtil.encryptJWTMessage(aes.aesKey, aes.iv, JSON.stringify(request));
+  const response = await callAPI(url, request);
 
-  return fetch(`${process.env.REACT_APP_URL}${url}`, {
-    method: 'POST',
-    headers: new Headers({
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    }),
-    body: JSON.stringify(encrypt),
-  })
-    .then((response) => response.blob())
-    .then((file) => {
-      const fileUrl = URL.createObjectURL(file);
-
-      const a = document.createElement('a');
-      a.href = fileUrl;
-      a.rel = 'noreferrer noopener';
-      a.target = '_blank'; // 測試若不外開是否可執行
-      // a.download = filename; // 因使用者體驗因素，改外開瀏覽器方式取代下載
-      a.click();
-    })
-    .catch((e) => {
-      console.log(e);
-    });
+  const { filename } = response.data;
+  const fileUrl = `https://bankeesit.feib.com.tw/doc/${filename}`; // BASE_URL domain 與大頭照相同，但img -> doc
+  console.log('download', {fileUrl});
+  window.open(fileUrl, '_blank');
 };
 
 export default userAxios();
