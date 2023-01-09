@@ -104,11 +104,13 @@ const DetailCard = ({
     const body = (
       <DetailDialogContentWrapper>
         <div className="mainBlock">
-          <p className="mainBlockTitle">{`${toHalfWidth(description)} ${memo ?? ''}`}</p>
+          <p className="mainBlockTitle">
+            {`${toHalfWidth(description)} ${memo ?? ''}`}
+            {invert && ' (更正交易)'}
+          </p>
           <p className="mainBlockAmount">
             {`${cdType === 'c' ? '- ' : ''}${currencySymbolGenerator(currency, amount)}`}
           </p>
-          {invert && (<p className="mainBlockTitle">[更正交易]</p>)}
         </div>
         <InformationList title="交易時間" content={`${dateToString(txnDate, '/')} ${timeToString(txnTime)}`} />
         <InformationList title="帳務日期" content={dateToString(bizDate, '/')} />
@@ -140,12 +142,14 @@ const DetailCard = ({
           { renderTypeIcon() }
         </div>
         <div className="description">
-          <h4>{`${toHalfWidth(description)} ${memo ?? ''}`}</h4>
+          <h4>
+            {`${toHalfWidth(description)} ${memo ?? ''}`}
+            {invert && ' (更正交易)'}
+          </h4>
           <p>{txnDescription()}</p>
         </div>
         <div className="amount">
           <h4>
-            {invert && '[更正交易] '}
             {cdType === 'c' && '- '}
             {currencySymbolGenerator(currency, amount)}
           </h4>
