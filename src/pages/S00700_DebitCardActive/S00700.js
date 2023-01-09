@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -11,7 +11,6 @@ import { AuthCode } from 'utilities/TxnAuthCode';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { getStatus } from 'pages/S00800_LossReissue/api';
 
-import { getAccountsList } from 'utilities/CacheData';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { activate } from './api';
@@ -19,10 +18,12 @@ import DebitCardActiveWrapper from './S00700.style';
 import { validationSchema } from './validationSchema';
 
 const S00700 = () => {
-  const history = useHistory();
-  const { QLResult, showUnbondedMsg } = useQLStatus();
   const dispatch = useDispatch();
-  const { control, handleSubmit, reset } = useForm({
+  const history = useHistory();
+
+  const [accountNo, setAccountNo] = useState();
+  const { QLResult, showUnbondedMsg } = useQLStatus();
+  const { control, handleSubmit } = useForm({
     defaultValues: { accountNo: '', serial: '' },
     resolver: yupResolver(validationSchema),
   });
@@ -45,18 +46,24 @@ const S00700 = () => {
 
   // 我的金融卡帳號欄位自動帶入金融卡台幣主帳號
   useEffect(() => {
-    getAccountsList('M', (accounts) => reset((formValues) => ({...formValues, accountNo: accounts[0].accountNo})));
+    // getAccountsList('M', (accounts) => reset((formValues) => ({...formValues, accountNo: accounts[0].accountNo})));
   }, []);
 
-  // 卡片啟用：限卡況為 02-製卡
+  /**
+   * 檢查是否可以開啟這個頁面。
+   * @returns {Promise<String>} 傳回驗證結果的錯誤訊息；若是正確無誤時，需傳回 null
+   */
   const inspector = async () => {
-    const status = await getStatus();
-    if (status !== 2) {
+    const {status, statusDesc, account} = await getStatus();
+    if (status === 2) {
       // TODO 卡片狀態必需為 製卡(2) 才能進行金融卡啟用。請確認顯示訊息！
+      return `卡片狀態為(${statusDesc})。請確認顯示訊息！`;
     }
-    return (status === 2);
+    setAccountNo(account); // 我的金融卡帳號欄位自動帶入金融卡台幣主帳號 // TODO 帶到 Input 中
+    return null;
   };
 
+  console.log(accountNo);
   return (
     <Layout title="金融卡啟用" inspector={inspector}>
       <DebitCardActiveWrapper>
