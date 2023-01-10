@@ -21,6 +21,7 @@ import { shareMessage } from 'utilities/AppScriptProxy';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showDrawer, showInfo } from 'utilities/MessageModal';
 import { useNavigation } from 'hooks/useNavigation';
+import { toCurrency } from 'utilities/Generator';
 import { getTransInData, getDisplayAmount, getTransDate, getCycleDesc } from './util';
 import TransferWrapper from './D00100.style';
 
@@ -76,7 +77,7 @@ const TransferResult = (props) => {
       <section className="transactionDetailArea">
         <Accordion title="詳細交易" space="bottom">
           {/* model.result.fiscCode 財金序號(跨轉才有) */}
-          <InformationList title="帳戶餘額" content={`$${model.transOut.balance}`} remark={model.transOut.alias} />
+          <InformationList title="帳戶餘額" content={`$${toCurrency(model.transOut.balance)}`} remark={model.transOut.alias} />
           {model.booking.mode === 0 && model.result.isCrossBank && (
             <InformationList title="手續費" content={`$${model.result.fee}`} remark={`跨轉優惠:剩餘${model.transOut.freeTransferRemain}次`} />
           )}

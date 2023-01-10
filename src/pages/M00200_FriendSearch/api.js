@@ -7,7 +7,7 @@ import { callAPI } from 'utilities/axios';
  *   friendUuid: 好友大頭貼
  *   friendName: 好友姓名
  *   creditCardApproved: 核卡完成日期
- *   depositApproved: Bankee台幣開戶完成日期
+ *   depositApproved: Bankee臺幣開戶完成日期
  * }, ...]
  */
 export const getFriends = async () => {

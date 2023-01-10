@@ -27,7 +27,7 @@ import {
 import PageWrapper from './C00300.style';
 
 /**
- * C00300 台幣帳戶首頁
+ * C00300 臺幣帳戶首頁
  */
 const C00300 = () => {
   const dispatch = useDispatch();
@@ -52,9 +52,9 @@ const C00300 = () => {
 
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
-    getAccountsList('MC', async (items) => { // M=台幣主帳戶、C=台幣子帳戶
+    getAccountsList('MC', async (items) => { // M=臺幣主帳戶、C=臺幣子帳戶
       if (items.length === 0) {
-        await showPrompt('您還沒有任何台幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
+        await showPrompt('您還沒有任臺幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
       } else {
         setAccounts(items);
         await processStartParams(items);
@@ -216,7 +216,7 @@ const C00300 = () => {
         };
         break;
 
-      case FuncID.D00100_台幣轉帳:
+      case FuncID.D00100_臺幣轉帳:
         params = { transOut: selectedAccount.accountNo };
         break;
 
@@ -248,7 +248,7 @@ const C00300 = () => {
    * 頁面輸出
    */
   return (
-    <Layout title="台幣活存">
+    <Layout title="臺幣活存">
       <PageWrapper small>
         {selectedAccount
           ? (
@@ -260,7 +260,7 @@ const C00300 = () => {
                 onFunctionClick={handleFunctionClick}
                 cardColor="purple"
                 funcList={[
-                  { fid: FuncID.D00100_台幣轉帳, title: '轉帳' },
+                  { fid: FuncID.D00100_臺幣轉帳, title: '轉帳' },
                   { fid: 'D00300', title: '無卡提款', hidden: (selectedAccount.acctType !== 'M') },
                 ]}
                 moreFuncs={[
