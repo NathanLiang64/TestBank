@@ -14,7 +14,7 @@ import Layout from 'components/Layout/Layout';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { numberToChinese, currencySymbolGenerator, toCurrency } from 'utilities/Generator';
+import { toCurrency } from 'utilities/Generator';
 import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
 import { showCustomPrompt, showInfo } from 'utilities/MessageModal';
@@ -40,6 +40,7 @@ const E00100 = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
+    exchangeType: yup.string().required('請選擇換匯種類'),
     outAccount: yup.string().required('請選擇轉出帳號'),
     currency: yup.string().required('請選擇換匯幣別'),
     inAccount: yup.string().required('請選擇轉入帳號'),
@@ -60,7 +61,7 @@ const E00100 = () => {
     handleSubmit, control, watch, reset,
   } = useForm({
     defaultValues: {
-      exchangeType: '1',
+      exchangeType: '',
       outType: '1',
       foreignBalance: '',
       ntDollorBalance: '',
@@ -243,6 +244,7 @@ const E00100 = () => {
       const defaultCurrency = await fetchCcyList();
       // 取得帳戶列表，並篩選出有約定的帳戶
       const accountListRes = await getAccountsList('MSF');
+      //  TODO 依文件說明，先不用過濾 transable ，直接跳出 modal 提示使用者該帳號沒有設定約定才對
       const availableAccts = accountListRes.filter(({ transable }) => !!transable);
       setAccountsList(availableAccts);
 
@@ -284,7 +286,11 @@ const E00100 = () => {
             外匯匯率查詢
           </FEIBBorderButton>
         </div>
-        <form autoComplete="off" onSubmit={handleSubmit(onSubmit)} style={{ gap: '2rem' }}>
+        <form
+          autoComplete="off"
+          onSubmit={handleSubmit(onSubmit)}
+          style={{ gap: '2rem' }}
+        >
           <section>
             <RadioGroupField
               row
@@ -348,15 +354,9 @@ const E00100 = () => {
                         }金額`}
                         name="foreignBalance"
                         control={control}
+                        currency={currency}
+                        inputProps={{ disabled: outType === '2' }}
                       />
-                      <div
-                        className="balanceLayout"
-                        style={{ top: 'auto', bottom: '2rem' }}
-                      >
-                        {`${currencySymbolGenerator(
-                          currency,
-                        )}${foreignBalance}${numberToChinese(foreignBalance)}`}
-                      </div>
                     </>
                   ),
                   value: '1',
@@ -373,13 +373,9 @@ const E00100 = () => {
                         }金額`}
                         name="ntDollorBalance"
                         control={control}
+                        currency="NTD"
+                        inputProps={{ disabled: outType === '1' }}
                       />
-                      <div
-                        className="balanceLayout"
-                        style={{ top: 'auto', bottom: '2rem' }}
-                      >
-                        {`$${ntDollorBalance}${numberToChinese(ntDollorBalance)}`}
-                      </div>
                     </>
                   ),
                   value: '2',

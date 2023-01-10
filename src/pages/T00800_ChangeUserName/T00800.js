@@ -63,26 +63,24 @@ const ChangeUserName = () => {
     <Layout title="使用者代號變更">
       <ChangeUserNameWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            <PasswordInputField
-              name="userName"
-              control={control}
-              labelName="您的使用者代號"
-              inputProps={{ placeholder: placeholderText, autoComplete: 'off', maxLength: 20 }}
-            />
-            <PasswordInputField
-              name="newUserName"
-              control={control}
-              labelName="新的使用者代號"
-              inputProps={{ placeholder: placeholderText, autoComplete: 'off', maxLength: 20 }}
-            />
-            <PasswordInputField
-              name="newUserNameCheck"
-              control={control}
-              labelName="請確認新的使用者代號"
-              inputProps={{ placeholder: placeholderText, autoComplete: 'off', maxLength: 20 }}
-            />
-          </div>
+          <PasswordInputField
+            name="userName"
+            control={control}
+            labelName="您的使用者代號"
+            inputProps={{ placeholder: placeholderText, autoComplete: 'off', maxLength: 20 }}
+          />
+          <PasswordInputField
+            name="newUserName"
+            control={control}
+            labelName="新的使用者代號"
+            inputProps={{ placeholder: placeholderText, autoComplete: 'off', maxLength: 20 }}
+          />
+          <PasswordInputField
+            name="newUserNameCheck"
+            control={control}
+            labelName="請確認新的使用者代號"
+            inputProps={{ placeholder: placeholderText, autoComplete: 'off', maxLength: 20 }}
+          />
           <FEIBButton type="submit">儲存變更</FEIBButton>
         </form>
       </ChangeUserNameWrapper>

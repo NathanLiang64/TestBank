@@ -2,17 +2,15 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const BasicInformationWrapper = styled(Layout)`
+  form {
+    gap: 2rem;
+  }
+
   .selectContainer {
     display: flex;
+    gap: 1.8rem;
     div {
-      width: 100%;
       flex-grow: 1;
-      &:first-child {
-        margin-right: 1rem;
-      }
-      &:last-child {
-        margin-left: 1rem;
-      }
     }
   }
 `;

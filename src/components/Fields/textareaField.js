@@ -2,6 +2,7 @@ import React from 'react';
 import { useController } from 'react-hook-form';
 import { FEIBInputLabel, FEIBTextarea } from 'components/elements';
 import theme from 'themes/theme';
+import { TextareaFieldWrapper } from './fields.style';
 
 export const TextareaField = ({
   labelName,
@@ -17,7 +18,7 @@ export const TextareaField = ({
   } = field;
 
   return (
-    <>
+    <TextareaFieldWrapper showError={!!(value.length > limit)}>
       <FEIBInputLabel htmlFor={name}>{labelName}</FEIBInputLabel>
       <FEIBTextarea
         onChange={(e) => onChange(e.target.value.trim())}
@@ -29,11 +30,9 @@ export const TextareaField = ({
         minRows={3}
         maxRows={10}
       />
-      <span
-        className={`limitText ${value.length > limit ? 'warningColor' : ''}`}
-      >
+      <span className="limitText">
         {`字數限制（${value.length}/${limit}）`}
       </span>
-    </>
+    </TextareaFieldWrapper>
   );
 };

@@ -1,6 +1,8 @@
 import React from 'react';
 import {useController} from 'react-hook-form';
 import { FEIBInputLabel, FEIBInput, FEIBErrorMessage} from 'components/elements';
+import { currencySymbolGenerator, numberToChinese } from 'utilities/Generator';
+import { TextInputFieldWrapper } from './fields.style';
 
 export const TextInputField = ({
   labelName,
@@ -8,6 +10,7 @@ export const TextInputField = ({
   $color,
   fontSize = 1.6,
   inputProps,
+  currency,
   ...controlProps
 }) => {
   const {field, fieldState } = useController(controlProps);
@@ -16,8 +19,7 @@ export const TextInputField = ({
   } = field;
 
   return (
-    // TODO style移至css
-    <div style={{ margin: '0 0 2rem 0' }}>
+    <TextInputFieldWrapper currencyType={!!currency}>
       <FEIBInputLabel htmlFor={name}>{labelName}</FEIBInputLabel>
       <FEIBInput
         inputProps={inputProps}
@@ -32,16 +34,18 @@ export const TextInputField = ({
       />
 
       {!!fieldState.error && (
-        <FEIBErrorMessage
-          style={{
-            margin: 0,
-            position: 'absolute',
-            right: 0,
-          }}
-        >
-          {fieldState.error.message}
-        </FEIBErrorMessage>
+        <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>
       )}
-    </div>
+
+      {currency && (
+        <div className="balanceLayout">
+          {`${currencySymbolGenerator(
+            currency,
+            value ?? 0,
+            false,
+          )} ${numberToChinese(value)}`}
+        </div>
+      )}
+    </TextInputFieldWrapper>
   );
 };

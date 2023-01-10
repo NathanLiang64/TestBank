@@ -60,7 +60,7 @@ export const EditPageWrapper = styled.div`
   .flex {
     display: flex;
     flex-direction: column;
-    gap: 1.6rem;
+    gap: 2rem;
     margin: 2.4rem 1.6rem 1rem;
   }
 
@@ -73,6 +73,17 @@ export const EditPageWrapper = styled.div`
   .w-50 {
     flex: 1 1 auto;
     width: 50%;
+  }
+
+  .hint-message {
+    left: 0;
+    bottom: 0;
+    transform: translateY(0%);
+    text-align: left;
+  }
+
+  .amount-limit {
+    font-size: 1.4rem;
   }
 `;
 

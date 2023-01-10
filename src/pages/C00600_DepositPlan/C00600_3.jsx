@@ -127,25 +127,24 @@ const DepositPlanEditPage = () => {
             <HeroWithEdit imageId={newImageId} onChange={(id) => setNewImageId(id)} />
 
             <div className="flex">
-              <div>
-                <TextInputField
-                  name="name"
-                  control={control}
-                  labelName="為你的計畫命名吧"
-                  inputProps={{ maxLength: 7, placeholder: '請輸入7個以內的中英文字、數字或符號', disabled: !!program.type }}
-                  $color={getInputColor(program.type)}
-                />
-              </div>
-              <div>
-                <DropdownField
-                  options={generateMonthOptions()}
-                  name="cycleDuration"
-                  control={control}
-                  labelName="預計存錢區間"
-                  inputProps={{disabled: !!program.type}}
-                  $color={getInputColor(!!program.type)}
-                />
-              </div>
+
+              <TextInputField
+                name="name"
+                control={control}
+                labelName="為你的計畫命名吧"
+                inputProps={{ maxLength: 7, placeholder: '請輸入7個以內的中英文字、數字或符號', disabled: !!program.type }}
+                $color={getInputColor(program.type)}
+              />
+
+              <DropdownField
+                options={generateMonthOptions()}
+                name="cycleDuration"
+                control={control}
+                labelName="預計存錢區間"
+                inputProps={{disabled: !!program.type}}
+                $color={getInputColor(!!program.type)}
+              />
+
               <div className="col-2">
                 <div className="w-50">
                   <DropdownField
@@ -166,7 +165,7 @@ const DepositPlanEditPage = () => {
                     inputProps={{disabled: !!program.type}}
                     $color={getInputColor(!!program.type)}
                   />
-                  <FEIBHintMessage>
+                  <FEIBHintMessage className="hint-message">
                     共
                     {cycleDuration * (cycleMode === 1 ? 4 : 1)}
                     次
@@ -178,14 +177,15 @@ const DepositPlanEditPage = () => {
                   name="amount"
                   control={control}
                   labelName="預計每期存錢金額"
-                  type="number"
                   inputProps={{inputMode: 'numeric'}}
+                  currency="NTD"
                 />
-                <FEIBHintMessage>
+                <FEIBHintMessage className="hint-message">
                   {(amount > 0) && `存款目標為 ${toCurrency(getGoalAmount(amount, cycleDuration, cycleMode))}元`}
                 </FEIBHintMessage>
-                <div>{`金額最低＄${toCurrency(program.amountRange.month.min)} 元，最高＄${toCurrency(program.amountRange.month.max)} 元，以萬元為單位`}</div>
               </div>
+
+              <div className="amount-limit">{`金額最低＄${toCurrency(program.amountRange.month.min)} 元，最高＄${toCurrency(program.amountRange.month.max)} 元，以萬元為單位`}</div>
 
               <div>
                 <DropdownField
@@ -194,7 +194,7 @@ const DepositPlanEditPage = () => {
                   control={control}
                   labelName="選擇陪你存錢的帳號"
                 />
-                <FEIBHintMessage>
+                <FEIBHintMessage className="hint-message">
                   { ((bindAccountNo !== '*') && (bindAccountNo !== 'new') && !!bindAccountNo) && `存款餘額為 ${toCurrency(getRemainingBalance(bindAccountNo))}元` }
                 </FEIBHintMessage>
               </div>

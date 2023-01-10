@@ -19,6 +19,7 @@ const A00800Wrapper = styled(Layout)`
     }
     .basic_data_form {
         display: flex;
+        gap: 2rem;
         flex-direction: column;
         justify-content: flex-start;
         padding-bottom: 0;
