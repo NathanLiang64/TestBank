@@ -110,7 +110,7 @@ const Deposit = () => {
               <span>優惠定額上限</span>
             </li>
             {depositPlusDetail.bonusDetail.map((detail) => (
-              <li className="listBody" key={detail}>
+              <li className="listBody" key={depositPlusDetail.bonusDetail.indexOf(detail)}>
                 <div>
                   <p>
                     {/* 藉promotionName字串中有無"*"判斷是否顯示starIcon */}

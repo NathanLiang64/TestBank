@@ -100,12 +100,12 @@ const DetailCard = ({
   };
 
   const renderDetailDialog = () => {
-    const title = (cdType === 'c' ? '轉出' : '轉入'); // TODO 不是只有轉入、轉出
+    const title = toHalfWidth(description);
     const body = (
       <DetailDialogContentWrapper>
         <div className="mainBlock">
           <p className="mainBlockTitle">
-            {`${toHalfWidth(description)} ${memo ?? ''}`}
+            {`${memo ?? ''}`}
             {invert && ' (更正交易)'}
           </p>
           <p className="mainBlockAmount">
@@ -143,7 +143,7 @@ const DetailCard = ({
         </div>
         <div className="description">
           <h4>
-            {`${toHalfWidth(description)} ${memo ?? ''}`}
+            {`${toHalfWidth(description)}`}
             {invert && ' (更正交易)'}
           </h4>
           <p>{txnDescription()}</p>
