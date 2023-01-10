@@ -111,6 +111,16 @@ const TransferResult = (props) => {
     await showDrawer('新增常用帳號', (<AccountEditor initData={acctData} onFinished={onFinished} />));
   };
 
+  /**
+   * 將轉帳結果透過原生的分享功能發送出去
+   */
+  const sendMessage = () => {
+    const {transOut, amount, result} = model;
+    const {accountName} = result;
+    const account = transOut.account.substring(9);
+    shareMessage(`Hi,${accountName}透過Bankee轉帳NTD${getDisplayAmount(amount)}給您，帳號末5碼為${account}`);
+  };
+
   /* 呼叫裝置開啟 通話(02-80731166)/取消 介面 */
   const callServiceTel = () => {
     const link = document.createElement('a');
@@ -132,7 +142,7 @@ const TransferResult = (props) => {
           </button>
           <div className="divider" />
           {/* 將轉帳結果透過原生的分享功能發送出去 */}
-          <button type="button" onClick={() => shareMessage('[社群通知]內容待規劃！')}>
+          <button type="button" onClick={sendMessage}>
             <ShareIcon />
             社群通知
           </button>
