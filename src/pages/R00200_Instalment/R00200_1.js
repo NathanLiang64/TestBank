@@ -26,6 +26,7 @@ const R00200_1 = () => {
     resolver: yupResolver(
       yup.object().shape({
         applType: yup.string().required('請選擇欲申請之晚點付項目'),
+        // TODO installmentItem 內部必須有值
       }),
     ),
   });

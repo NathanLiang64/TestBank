@@ -378,28 +378,31 @@ const AccountDetails = ({
    * @param {*} items 查詢結果的明細資料。
    */
   const renderDetailCards = (items) => {
-    if (isLoading) return <Loading space="both" isCentered />;
+    if (isLoading && !items) return <Loading space="both" isCentered />;
     if (!items) return null;
     if (!items.length) return <EmptyData />;
 
     return (
-      items.map((item) => (
-        <VisibilitySensor
-          key={item.index}
-          onChange={(isVisible) => onDetailCardVisibilityChange(item.index, isVisible)}
-          containment={txnDetailsRef.current}
-          partialVisibility
-        >
-          {({ isVisible }) => (
-            <DetailCard
-              {...item}
-              id={item.txnDate.substr(0, 6)}
-              inView={isVisible ? 'Y' : 'N'}
-              noShadow
-            />
-          )}
-        </VisibilitySensor>
-      ))
+      <>
+        {items.map((item) => (
+          <VisibilitySensor
+            key={item.index}
+            onChange={(isVisible) => onDetailCardVisibilityChange(item.index, isVisible)}
+            containment={txnDetailsRef.current}
+            partialVisibility
+          >
+            {({ isVisible }) => (
+              <DetailCard
+                {...item}
+                id={item.txnDate.substr(0, 6)}
+                inView={isVisible ? 'Y' : 'N'}
+                noShadow
+              />
+            )}
+          </VisibilitySensor>
+        ))}
+        {isLoading && <Loading space="both" isCentered />}
+      </>
     );
   };
 

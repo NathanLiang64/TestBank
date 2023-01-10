@@ -2,25 +2,27 @@ import InformationList from 'components/InformationList';
 import Accordion from 'components/Accordion';
 import { currencySymbolGenerator, dateToString, weekNumberToChinese } from 'utilities/Generator';
 
-const generatePeriodText = ({cycle, cycleNo}) => {
+export const generatePeriodText = ({cycle, cycleNo}) => {
   switch (cycle) {
     case 'W':
       return `每週星期${weekNumberToChinese(Number(cycleNo))}`;
     case 'M':
-      return `每月${Number(cycleNo)}號`;
+      return `每個月${Number(cycleNo)}號`;
     case '1':
     default:
       return '單次';
   }
 };
-const generatePeriodHint = (cycle) => {
+const generatePeriodHint = ({
+  cycle, totCnt, successCnt, failureCnt,
+}) => {
   switch (cycle) {
     case '1':
       return '';
     case 'W':
     case 'M':
     default:
-      return '待提供: 預計轉帳次數 成功次數 失敗次數';
+      return `預計轉帳${totCnt}次 | 成功${successCnt}次 | 失敗${failureCnt}次`;
   }
 };
 
@@ -32,9 +34,9 @@ export const renderHeader = (data) => (
     </div>
     <div className="accountInfo">
       <div>
-        {`${data.bankName}(${data?.receiveBank})`}
+        {`${data.bankName}(${data.receiveBank})`}
       </div>
-      {data?.receiveAccountNo}
+      {data.receiveAccountNo}
     </div>
   </>
 );
@@ -46,11 +48,11 @@ export const renderBody = (reserveData, selectedAccount) => (
       content={selectedAccount?.accountNo}
       remark={selectedAccount?.alias}
     />
-    <InformationList title="預約轉帳日" content="待提供" />
+    <InformationList title="預約轉帳日" content={dateToString(reserveData.nextBookDate)} />
     <InformationList
       title="週期"
       content={generatePeriodText(reserveData)}
-      remark={generatePeriodHint(reserveData.cycle)}
+      remark={generatePeriodHint(reserveData)}
     />
     {reserveData.isMulti && (
       <InformationList

@@ -27,6 +27,7 @@ import {
   defaultValues, tabOptions, RESERVE_DATE_RANGE, TAB, RESULT_DATE_RANGE, panelOptions,
 } from './constants';
 import { getReservedTransDetails, getResultTransDetails } from './api';
+import { generatePeriodText } from './utils';
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
@@ -55,13 +56,13 @@ const D00800 = () => {
     const type = tab === '1' ? 'reserve' : 'result';
     const detailsRes = tab === '1' ? await getReservedTransDetails(param) : await getResultTransDetails(param);
 
-    const bankCodeList = await getBankCode(); // 只有第一次拿取是非同步
+    const bankCodeList = await getBankCode(); // 若 redux 內沒有資料，會是非同步
     if (!banks) setBanks(bankCodeList);
 
-    // detailsRes 新增 isMulti & bankName
+    // detailsRes 新增 periodic & bankName
     const updatedDetailsRes = detailsRes.map((res) => {
-      const { bankName } = banks.find(({ bankNo }) => bankNo === res.receiveBank);
-      if (res.cycle) return {...res, isMulti: res.cycle !== '1', bankName};
+      const { bankName } = bankCodeList.find(({ bankNo }) => bankNo === res.receiveBank);
+      if (res.cycle) return {...res, periodic: res.cycle !== '1', bankName};
       return {...res, bankName};
     });
 
@@ -130,6 +131,7 @@ const D00800 = () => {
     const { searchObj, startDay, endDay } = currentValue;
     const key = `${selectedAccount?.accountNo}_${startDay}_${endDay}`;
     const list = searchObj[key];
+
     if (!selectedAccount?.accountNo || !list || !banks) return <Loading space="both" isCentered />;
     if (!list.length) return <div className="emptyConatiner"><EmptyData /></div>;
 
@@ -140,16 +142,21 @@ const D00800 = () => {
       return stderrMsg ? FailImage : SuccessImage;
     };
 
+    const generateTransDate = (data) => {
+      if (!isReserveTab) return `交易日期 : ${dateToString(data.runday)}`; // 「預約轉帳結果」的交易日
+      if (data.periodic) return `預約轉帳日 : ${generatePeriodText(data)}`; // 「週期性預約交易」的預約轉帳日
+      return `預約轉帳日 : ${dateToString(data.nextBookDate)}`; // 「單次預約交易」的預約轉帳日
+    };
     return list.map((item) => (
       <InformationTape
         key={item.seqno}
         topLeft={`${item.receiveBank}-${item.receiveAccountNo}`}
         topRight={currencySymbolGenerator('NTD', parseFloat(item.transferAmount))}
-        bottomLeft={`${isReserveTab ? '預約轉帳日' : '交易日期'} : 待提供`} // BUG rgDay 是設定日不是轉帳日
+        bottomLeft={generateTransDate(item)}
         // eslint-disable-next-line no-nested-ternary
-        bottomRight={isReserveTab ? item.isMulti ? '週期' : '單筆' : undefined}
+        bottomRight={isReserveTab ? (item.periodic ? '週期' : '單筆') : undefined}
         onClick={onTapeClick(item)}
-        img={showImg(item.stderrMsg)} // TODO 待確認「結果查詢」的資料結構
+        img={showImg(item.stderrMsg)}
       />
     ));
   };

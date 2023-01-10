@@ -26,7 +26,7 @@ export const queryInstallment = async (request) => {
  */
 export const updateInstallment = async (request) => {
   const response = await callAPI('/api/card/installment/update', request);
-  return response.data;
+  return response;
 };
 
 /**
@@ -87,13 +87,12 @@ export const getTxn = async (request) => {
 /**
  * 分期付款試算
  *
- * @param {{
- *  applType,     // 分期方案 G:單筆, H:總額
+ * @param {[{
  *  purchDate,    // 消費日期 yyyyMMdd
  *  purchAmount,  // 消費金額
  *  authCode,     // 授權號碼
  *  totTerm,      // 總期數
- * }} request  // 序號
+ * }]} request  // 序號
  * @returns {Promise<{
  *   purchDate, // 消費日期
  *   purchAmount, // 消費金額
