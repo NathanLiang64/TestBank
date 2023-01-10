@@ -36,13 +36,6 @@ const PageWrapper = styled.div`
       margin: 0 0.5rem;
     }
   }
-
-  .empty-data-wrapper {
-    height: 50vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
 `;
 
 export default PageWrapper;

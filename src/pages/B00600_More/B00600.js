@@ -142,7 +142,7 @@ const More = () => {
               }
             </div>
           </>
-        ) : <EmptyData content="查無服務，請確認網路狀態" />}
+        ) : <EmptyData content="查無服務，請確認網路狀態" height="50vh" />}
       </MoreWrapper>
     </Layout>
   );

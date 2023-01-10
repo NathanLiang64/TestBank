@@ -26,14 +26,6 @@ const ContentWrapper = styled.div`
   padding-inline: 1.6rem;
   padding-bottom: 6rem;
   margin-top: 2.5rem;
-
-  .emptydata-wrapper {
-    width: 100%;
-    height: 30vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
 `;
 
 export default PageWrapper;

@@ -145,7 +145,7 @@ const Notice = () => {
   ));
 
   // 無通知內容顯示相應圖示及文字
-  const renderTabPanel = (list) => (list.length > 0 ? renderMessagesList(list) : <div className="emptyData"><EmptyData content="沒有最新消息" /></div>);
+  const renderTabPanel = (list) => (list.length > 0 ? renderMessagesList(list) : <EmptyData content="沒有最新消息" height="20rem" />);
 
   const renderEditList = () => (
     <ul className="noticeEditList">

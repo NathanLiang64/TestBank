@@ -74,9 +74,7 @@ const Transactions = ({
               )}
             </>
           ) : (
-            <div className="emptydata-wrapper">
-              <EmptyData />
-            </div>
+            <EmptyData height="30vh" />
           )}
         </>
       ) : <Loading space="both" isCentered /> }
