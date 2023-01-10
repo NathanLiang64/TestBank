@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useController } from 'react-hook-form';
 import { VisibilityIcon, VisibilityOffIcon } from 'assets/images/icons';
 import { FEIBInput, FEIBInputLabel, FEIBErrorMessage } from 'components/elements';
+import { TextInputFieldWrapper } from './fields.style';
 
 /*
 * ==================== PasswordInput 組件說明 ====================
@@ -34,8 +35,7 @@ export const PasswordInputField = ({
   };
 
   return (
-    // TODO style移至css
-    <div style={{ margin: '0 0 2rem 0' }}>
+    <TextInputFieldWrapper>
       <FEIBInputLabel htmlFor={name} $color={color}>
         {labelName || '網銀密碼'}
       </FEIBInputLabel>
@@ -56,16 +56,8 @@ export const PasswordInputField = ({
       />
 
       {!!fieldState.error && (
-        <FEIBErrorMessage
-          style={{
-            margin: 0,
-            position: 'absolute',
-            right: 0,
-          }}
-        >
-          {fieldState.error.message}
-        </FEIBErrorMessage>
+        <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>
       )}
-    </div>
+    </TextInputFieldWrapper>
   );
 };

@@ -216,7 +216,7 @@ const E00100 = () => {
   ))?.details.find((item) => (item.currency === selectedCurrency.ccyCd))?.balance || '0';
 
   // TODO: 移除
-  // // 取得台幣帳戶餘額
+  // // 取得臺幣帳戶餘額
   // const getNTDAmt = () => ntdAccountsList.find((item) => (
   //   watch('exchangeType') === '1' ? item.accountId === watch('outAccount') : item.accountId === watch('inAccount')
   // ))?.accountBalx;
@@ -236,7 +236,7 @@ const E00100 = () => {
     const isNTD = watch('outType') === '2';
     const ntAmt = getAmount('NTD');
     const frgnAmt = Number(getAmount(selectedCurrency.ccyCd).replace(/,/gi, ''));
-    // 如果是台轉外，檢查是否超過台幣餘額
+    // 如果是台轉外，檢查是否超過臺幣餘額
     if (exchangeType === 'n2f') {
       if (isNTD) {
         return amt > ntAmt;
@@ -342,7 +342,7 @@ const E00100 = () => {
 
   /**
    * 列出帳戶清單。
-   * @param {*} showTwdAccount 若為 true 則列出台幣帳戶清單，反之則列出外幣帳戶清單。
+   * @param {*} showTwdAccount 若為 true 則列出臺幣帳戶清單，反之則列出外幣帳戶清單。
    */
   const renderAccountOption = (showTwdAccount) => (
     accountsList

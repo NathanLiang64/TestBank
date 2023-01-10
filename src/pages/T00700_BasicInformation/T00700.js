@@ -135,48 +135,46 @@ const T00700 = () => {
     <Layout title="基本資料變更">
       <BasicInformationWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
+
+          <TextInputField
+            name="mobile"
+            labelName="行動電話"
+            inputProps={{
+              placeholder: '請輸入行動電話',
+              inputMode: 'numeric',
+            }}
+            control={control}
+          />
+          <TextInputField
+            name="email"
+            type="email"
+            labelName="電子信箱"
+            inputProps={{ placeholder: '請輸入電子信箱' }}
+            control={control}
+          />
           <div>
-            <TextInputField
-              name="mobile"
-              labelName="行動電話"
-              inputProps={{
-                placeholder: '請輸入行動電話',
-                inputMode: 'numeric',
-              }}
-              control={control}
-            />
-            <TextInputField
-              name="email"
-              type="email"
-              labelName="電子信箱"
-              inputProps={{ placeholder: '請輸入電子信箱' }}
-              control={control}
-            />
             <FEIBInputLabel>通訊地址</FEIBInputLabel>
             <div className="selectContainer">
-              <div>
-                <DropdownField
-                  name="county"
-                  inputProps={{ placeholder: '請選擇縣市' }}
-                  control={control}
-                  options={countyOptions}
-                />
-              </div>
-              <div>
-                <DropdownField
-                  name="city"
-                  inputProps={{ placeholder: '請選擇鄉鎮市區' }}
-                  control={control}
-                  options={cityOptions}
-                />
-              </div>
+              <DropdownField
+                name="county"
+                inputProps={{ placeholder: '請選擇縣市' }}
+                control={control}
+                options={countyOptions}
+              />
+              <DropdownField
+                name="city"
+                inputProps={{ placeholder: '請選擇鄉鎮市區' }}
+                control={control}
+                options={cityOptions}
+              />
             </div>
-            <TextInputField
-              name="addr"
-              inputProps={{ placeholder: '請輸入通訊地址' }}
-              control={control}
-            />
           </div>
+          <TextInputField
+            name="addr"
+            inputProps={{ placeholder: '請輸入通訊地址' }}
+            control={control}
+          />
+
           <FEIBButton type="submit">儲存變更</FEIBButton>
         </form>
       </BasicInformationWrapper>

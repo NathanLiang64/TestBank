@@ -26,8 +26,8 @@
   - 搖一搖 QRCode 轉帳 (ShakeShake) - 聖森
   - QRCode 轉帳 (QRCodeTransfer) - 聖森
   - E2EE 加密 - 聖森
-  - 台幣帳戶 (TaiwanDollarAccount) - 聖森
-  - 台幣帳戶交易明細 (含明細搜尋) (TaiwanDollarAccountDetails) - 聖森
+  - 臺幣帳戶 (TaiwanDollarAccount) - 聖森
+  - 臺幣帳戶交易明細 (含明細搜尋) (TaiwanDollarAccountDetails) - 聖森
   - 外幣帳戶 (ForeignCurrencyAccount) - 聖森
   - 外幣帳戶交易明細 (含明細搜尋) (ForeignCurrencyAccountDetails) - 聖森
   - 證券交割戶 (TradingAccount) - 聖森

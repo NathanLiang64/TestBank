@@ -2,10 +2,12 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const DebitCardActiveWrapper = styled(Layout)`
+  form {
+    gap: 2rem;
     .hint_text {
-        margin-bottom: 2rem;
-        font-size: 1.4rem;
+      font-size: 1.4rem;
     }
+  }
 `;
 
 export default DebitCardActiveWrapper;

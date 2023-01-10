@@ -30,7 +30,7 @@ const R00200_2 = () => {
   const {goHome} = useNavigation();
 
   const schema = yup.object().shape({
-    installmentNumber: yup.string().required('請選擇欲申請之晚點付期數'),
+    totTerm: yup.string().required('請選擇欲申請之晚點付期數'),
   });
 
   const { handleSubmit, control } = useForm({
@@ -86,7 +86,7 @@ const R00200_2 = () => {
               )}
               control={control}
               options={options}
-              name="installmentNumber"
+              name="totTerm"
             />
             {/* TODO: 晚點付約定條款 與 注意事項 之內容 */}
             <Accordion title="晚點付約定條款" space="both">

@@ -129,25 +129,4 @@ const NetworkWrapper = styled(Layout)`
   }
 `;
 
-const EssayWrapper = styled.form`
-  padding-bottom: 2.4rem;
-  
-  #essay {
-    margin-top: .8rem;
-  }
-  
-  .limitText {
-    display: block;
-    text-align: right;
-    font-size: 1.2rem;
-    line-height: 1.6;
-    color: ${({ theme }) => theme.colors.text.dark};
-    
-    &.warningColor {
-      color: ${({ theme }) => theme.colors.state.danger};
-    }
-  }
-`;
-
 export default NetworkWrapper;
-export { EssayWrapper };

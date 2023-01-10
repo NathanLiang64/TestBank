@@ -112,26 +112,26 @@ const RegularPwdModify = () => {
     <Layout title="定期網銀密碼變更" goBack={false} goHome={false}>
       <RegularPwdModifyWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            <PasswordInputField
-              labelName="您的網銀密碼"
-              name="password"
-              control={control}
-              inputProps={{autoComplete: 'off'}}
-            />
-            <PasswordInputField
-              labelName="新的網銀密碼"
-              name="newPassword"
-              control={control}
-              inputProps={{autoComplete: 'off'}}
-            />
-            <PasswordInputField
-              labelName="請確認新的網銀密碼"
-              name="newPasswordCheck"
-              control={control}
-              inputProps={{autoComplete: 'off'}}
-            />
-          </div>
+
+          <PasswordInputField
+            labelName="您的網銀密碼"
+            name="password"
+            control={control}
+            inputProps={{autoComplete: 'off'}}
+          />
+          <PasswordInputField
+            labelName="新的網銀密碼"
+            name="newPassword"
+            control={control}
+            inputProps={{autoComplete: 'off'}}
+          />
+          <PasswordInputField
+            labelName="請確認新的網銀密碼"
+            name="newPasswordCheck"
+            control={control}
+            inputProps={{autoComplete: 'off'}}
+          />
+
           <div>
             <InfoArea space="bottom">
               *定期進行密碼以及個資更新以確保帳號安全

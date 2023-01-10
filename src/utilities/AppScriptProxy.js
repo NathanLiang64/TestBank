@@ -436,9 +436,9 @@ async function verifyBio(authKey) {
   const rs = await callAppJavaScript('chkQLfeature', data, true, async () => { // TODO APP-JS 增加傳回 exception！
     // DEBUG
     // 傳回：累計驗證次數；若為 -1 表示使用者取消。
-    const apiRs = await callAPI('/api/transactionAuth/v1/setBioResult', { authKey, success: false });
+    const apiRs = await callAPI('/api/transactionAuth/v1/setBioResult', { authKey, success: true });
     return {
-      result: false, // apiRs.isSuccess ? (apiRs.data <= 3) : false,
+      result: apiRs.isSuccess ? (apiRs.data <= 3) : false,
       message: apiRs.message,
       exception: apiRs.isSuccess ? null : apiRs.code,
     };

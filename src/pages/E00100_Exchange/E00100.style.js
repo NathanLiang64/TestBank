@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const ExchangeWrapper = styled(Layout)`
+  
   .borderBtnContainer {
     .customSize {
       min-height: unset;
@@ -115,8 +116,10 @@ const ExchangeWrapper = styled(Layout)`
   .MuiFormHelperText-root {
     &.balance {
       margin: 0;
-      position: absolute;
       left: 0;
+      bottom: 0;
+      transform: translateY(0%);
+      text-align: left;
       color: ${({ theme }) => theme.colors.text.mediumGray};
     }
   }
@@ -137,9 +140,10 @@ const ExchangeWrapper = styled(Layout)`
     padding-top: 1.2rem;
     padding-bottom: 0.8rem;
   }
-  #foreignBalance,
-  #ntDollorBalance {
-    color: transparent;
+
+  #property {
+    display: block; // 底層設定是 display 是 inline ，會造成 text-overflow: ellipsis 無效，暫時這邊做覆蓋，後面再做全域調整
+    padding-bottom: 0;
   }
 `;
 

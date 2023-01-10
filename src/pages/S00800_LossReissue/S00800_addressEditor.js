@@ -71,10 +71,9 @@ export const AddressEditor = ({addressValue, onSubmit}) => {
               />
             </div>
           </div>
-          <div>
-            <TextInputField labelName="地址" name="addr" control={control} />
-          </div>
+
         </div>
+        <TextInputField labelName="地址" name="addr" control={control} />
         <FEIBButton onClick={handleSubmit(onSubmit)}>確認</FEIBButton>
       </form>
     </LossReissueDialogWrapper>

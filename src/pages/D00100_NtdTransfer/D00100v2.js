@@ -156,9 +156,9 @@ const Transfer = (props) => {
 
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
-    getAccountsList('MSC', async (items) => { // M=台幣主帳戶、C=台幣子帳戶
+    getAccountsList('MSC', async (items) => { // M=臺幣主帳戶、C=臺幣子帳戶
       if (items.length === 0) {
-        await showPrompt('您還沒有任何台幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
+        await showPrompt('您還沒有任何臺幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
       } else {
         const accts = items; // TODO .filter((acct) => acct.transable); // 排除 transable = false 的帳戶。
         setAccounts(accts);
@@ -485,7 +485,7 @@ const Transfer = (props) => {
    */
 
   return (
-    <Layout title="台幣轉帳">
+    <Layout title="臺幣轉帳">
       <TransferWrapper $insufficient={!model?.transOut?.balance || model?.transOut?.balance <= 0}>
         <AccountOverview
           transferMode

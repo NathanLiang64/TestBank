@@ -76,7 +76,7 @@ export const iconGenerator = (name) => {
       return <ApplyIcon4 />;
     case 'F00400':
       return <ApplyIcon5 />;
-    case FuncID.D00100_台幣轉帳:
+    case FuncID.D00100_臺幣轉帳:
       return <TransactionIcon1 />;
     case 'D00700':
       return <TransactionIcon2 />;

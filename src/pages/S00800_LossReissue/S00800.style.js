@@ -86,21 +86,22 @@ const LossReissueWrapper = styled(Layout)`
 `;
 
 export const LossReissueDialogWrapper = styled.div`
-
   p {
     text-align: center;
   }
 
   form {
+    gap: 2rem;
     padding: 4rem 2rem;
   }
 
   .formElementGroup {
-    display: grid;
-    align-items: flex-end;
-    grid-template-columns: repeat(2, 1fr);
-    grid-column-gap: 1.6rem;
- }
+    display: flex;
+    gap: 1.8rem;
+    div {
+      flex-grow: 1;
+    }
+  }
 `;
 
 export default LossReissueWrapper;

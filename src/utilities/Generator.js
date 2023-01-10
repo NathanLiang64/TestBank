@@ -261,11 +261,11 @@ export const accountOverviewCardVarient = (type) => {
 };
 
 export const CurrencyInfo = [
-  // 前端台幣統一使用NTD，後端回傳可能包含TWD/NTD
-  // 除 台幣、日圓 外皆取小數點後兩位數
+  // 前端臺幣統一使用NTD，後端回傳可能包含TWD/NTD
+  // 除 臺幣、日圓 外皆取小數點後兩位數
   // #884 卡片上金額前方顯示幣別"符號"，不需顯示英文
-  { code: 'NTD', name: '新台幣', symbol: '$', float: 0 },
-  { code: 'TWD', name: '新台幣', symbol: '$', float: 0 },
+  { code: 'NTD', name: '新臺幣', symbol: '$', float: 0 },
+  { code: 'TWD', name: '新臺幣', symbol: '$', float: 0 },
   { code: 'USD', name: '美元', symbol: '$', float: 2 },
   { code: 'GBP', name: '英鎊', symbol: '£', float: 2 },
   { code: 'HKD', name: '港幣', symbol: '$', float: 2 },
@@ -320,7 +320,7 @@ export const toCurrency = (number, float = 0, showFloat = false) => {
   const parts = number.toString().split('.') ?? ['0']; // 預設為'0'
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','); // 取出整數加上千分位','
 
-  /* 如台幣帳戶需顯示小數點，傳入isShowDecimal: true */
+  /* 如臺幣帳戶需顯示小數點，傳入isShowDecimal: true */
   if (showFloat && parts[1]) float = parts[1].length;
 
   if (float > 0) {

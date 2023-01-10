@@ -14,7 +14,7 @@ import Layout from 'components/Layout/Layout';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { numberToChinese, currencySymbolGenerator, toCurrency } from 'utilities/Generator';
+import { toCurrency } from 'utilities/Generator';
 import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
 import { showCustomPrompt, showInfo } from 'utilities/MessageModal';
@@ -40,6 +40,7 @@ const E00100 = () => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
+    exchangeType: yup.string().required('請選擇換匯種類'),
     outAccount: yup.string().required('請選擇轉出帳號'),
     currency: yup.string().required('請選擇換匯幣別'),
     inAccount: yup.string().required('請選擇轉入帳號'),
@@ -60,7 +61,7 @@ const E00100 = () => {
     handleSubmit, control, watch, reset,
   } = useForm({
     defaultValues: {
-      exchangeType: '1',
+      exchangeType: '',
       outType: '1',
       foreignBalance: '',
       ntDollorBalance: '',
@@ -101,7 +102,7 @@ const E00100 = () => {
     return response[0].Currency;
   };
 
-  // 台幣/外幣帳戶餘額
+  // 臺幣/外幣帳戶餘額
   const balance = useMemo(() => {
     const isTWD2Frgn = exchangeType === '1';
     const twdAccount = accountsList.find(({account}) => account === (isTWD2Frgn ? outAccount : inAccount));
@@ -114,14 +115,14 @@ const E00100 = () => {
   // 檢查是否超出餘額
   const checkOverAmt = (data) => {
     const amt = Number(data);
-    // 判斷是 1. 外幣視角 or 2.新台幣視角
+    // 判斷是 1. 外幣視角 or 2.新臺幣視角
     const frgn2Ntd = outType === '2';
-    // 如果是台幣轉外幣，檢查是否超過台幣帳戶的餘額
+    // 如果是臺幣轉外幣，檢查是否超過臺幣帳戶的餘額
     // TODO 待確認 SpotAskRate 與  SpotBidRate 是否正確
     if (exchangeType === '1') {
       return frgn2Ntd ? amt > balance.twd : amt > balance.twd / selectedCurrency.SpotAskRate;
     }
-    // 如果是外幣轉台幣，檢查是否超過外幣帳戶的餘額
+    // 如果是外幣轉臺幣，檢查是否超過外幣帳戶的餘額
     if (exchangeType === '2') {
       return frgn2Ntd ? amt / selectedCurrency.SpotBidRate > balance.frgn : amt > balance.frgn;
     }
@@ -174,14 +175,14 @@ const E00100 = () => {
   // 轉出/轉入的帳號選項
   const accountOptions = useMemo(() => {
     const generateOpts = (arr) => arr.map((item) => ({ label: item.account, value: item.account }));
-    // 先判斷目前是 台幣轉外幣 或是 外幣轉台幣
+    // 先判斷目前是 臺幣轉外幣 或是 外幣轉臺幣
     const isNtd2Frgn = exchangeType === '1';
-    // 若為台幣轉外幣，轉出帳號必須是台幣帳戶，反之則為外幣帳戶
+    // 若為臺幣轉外幣，轉出帳號必須是臺幣帳戶，反之則為外幣帳戶
     const outAcctList = accountsList.filter(({ details }) => {
       if (!details) return false;
       return details.find((item) => (isNtd2Frgn ? item.currency === 'TWD' : item.currency !== 'TWD'));
     });
-    // 若為台幣轉外幣，轉入帳號必須是外幣帳戶，反之則為台幣帳戶
+    // 若為臺幣轉外幣，轉入帳號必須是外幣帳戶，反之則為臺幣帳戶
     const inAcctList = accountsList.filter(({ details }) => {
       if (!details) return false;
       return details.find((item) => (!isNtd2Frgn ? item.currency === 'TWD' : item.currency !== 'TWD'));
@@ -243,6 +244,7 @@ const E00100 = () => {
       const defaultCurrency = await fetchCcyList();
       // 取得帳戶列表，並篩選出有約定的帳戶
       const accountListRes = await getAccountsList('MSF');
+      //  TODO 依文件說明，先不用過濾 transable ，直接跳出 modal 提示使用者該帳號沒有設定約定才對
       const availableAccts = accountListRes.filter(({ transable }) => !!transable);
       setAccountsList(availableAccts);
 
@@ -250,7 +252,7 @@ const E00100 = () => {
         ...formValues,
         property: propList[0].leglCode,
         currency: defaultCurrency,
-        outAccount: availableAccts[0]?.account ?? '', // BUG  第一個不一定是台幣帳戶
+        outAccount: availableAccts[0]?.account ?? '', // BUG  第一個可能不一定是臺幣帳戶
       }));
     }
     dispatch(setWaittingVisible(false));
@@ -284,7 +286,11 @@ const E00100 = () => {
             外匯匯率查詢
           </FEIBBorderButton>
         </div>
-        <form autoComplete="off" onSubmit={handleSubmit(onSubmit)} style={{ gap: '2rem' }}>
+        <form
+          autoComplete="off"
+          onSubmit={handleSubmit(onSubmit)}
+          style={{ gap: '2rem' }}
+        >
           <section>
             <RadioGroupField
               row
@@ -348,15 +354,9 @@ const E00100 = () => {
                         }金額`}
                         name="foreignBalance"
                         control={control}
+                        currency={currency}
+                        inputProps={{ disabled: outType === '2' }}
                       />
-                      <div
-                        className="balanceLayout"
-                        style={{ top: 'auto', bottom: '2rem' }}
-                      >
-                        {`${currencySymbolGenerator(
-                          currency,
-                        )}${foreignBalance}${numberToChinese(foreignBalance)}`}
-                      </div>
                     </>
                   ),
                   value: '1',
@@ -373,13 +373,9 @@ const E00100 = () => {
                         }金額`}
                         name="ntDollorBalance"
                         control={control}
+                        currency="NTD"
+                        inputProps={{ disabled: outType === '1' }}
                       />
-                      <div
-                        className="balanceLayout"
-                        style={{ top: 'auto', bottom: '2rem' }}
-                      >
-                        {`$${ntDollorBalance}${numberToChinese(ntDollorBalance)}`}
-                      </div>
                     </>
                   ),
                   value: '2',
