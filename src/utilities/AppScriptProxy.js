@@ -118,9 +118,17 @@ export const funcStack = {
    * 從 localStorage 取出功能執行堆疊，並轉為 Array 物件後傳回。
    * @returns {Array} 功能執行堆疊
    */
-  getStack: () => JSON.parse(localStorage.getItem('funcStack') ?? '[]'),
+  getStack: () => {
+    const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
+    if (stack.length === 0 && getOsType() !== 3) {
+      const currentFunc = sessionStorage.getItem('currentFunc');
+      if (currentFunc) stack.push({ funcID: currentFunc });
+    }
+    return stack;
+  },
 
   update: (stack) => localStorage.setItem('funcStack', JSON.stringify(stack)),
+
   /** 清空 功能執行堆疊，適用於 goHome 功能。 */
   clear: () => funcStack.update([]),
 
@@ -544,7 +552,8 @@ async function appTransactionAuth(request) {
   const { authCode, otpMobile } = request;
 
   // 取得目前執行中的單元功能代碼，要求 Controller 發送或驗出時，皆需提供此參數。
-  const funcCode = funcStack.peek()?.funcID ?? '/'; // 首頁因為沒有功能代碼，所以用'/'表示。
+  const funcCode = funcStack.peek()?.funcID ?? sessionStorage.getItem('currentFunc');
+
   // 取得需要使用者輸入驗證的項目。
   const authMode = await getTransactionAuthMode(authCode); // 要驗 2FA 還是密碼，要以 create 時的為準。
   const allowed2FA = (authMode & 0x01) !== 0; // 表示需要通過 生物辨識或圖形鎖 驗證。
