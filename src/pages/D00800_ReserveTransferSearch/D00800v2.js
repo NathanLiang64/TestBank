@@ -131,7 +131,7 @@ const D00800 = () => {
     const key = `${selectedAccount?.accountNo}_${startDay}_${endDay}`;
     const list = searchObj[key];
     if (!selectedAccount?.accountNo || !list || !banks) return <Loading space="both" isCentered />;
-    if (!list.length) return <div className="emptyConatiner"><EmptyData /></div>;
+    if (!list.length) return <EmptyData height="30vh" />;
 
     const isReserveTab = tabValue === '1';
     const onTapeClick = (item) => (isReserveTab ? () => openReserveDialog(item) : () => openResultDiaglog(item));

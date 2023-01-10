@@ -98,7 +98,7 @@ const Page = () => {
     if (!accounts) return null;
     // 非選取模式時，不需要列出同ID互轉的帳號
     const filteredAccounts = accounts?.filter((acct) => (selectorMode || !acct.isSelf));
-    if (!filteredAccounts.length) return <EmptyData content="查無約定帳號" />;
+    if (!filteredAccounts.length) return <EmptyData content="查無約定帳號" height="70vh" />;
     return filteredAccounts.map((acct) => (
       <MemberAccountCard
         key={uuid()} // key值每次編輯後皆改變，以觸發react重新渲染

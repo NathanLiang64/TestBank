@@ -66,7 +66,7 @@ const LoanInterest = () => {
 
   const renderRecordList = () => {
     if (!recordsList) return <Loading space="both" isCentered />;
-    if (!recordsList.length) return <div className="emptydata-wrapper"><EmptyData content="查無最近三年內的帳務往來資料" /></div>;
+    if (!recordsList.length) return <EmptyData content="查無最近三年內的帳務往來資料" height="30vh" />;
 
     return (
       <div className="recordsList">

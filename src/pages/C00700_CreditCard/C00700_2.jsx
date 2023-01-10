@@ -72,9 +72,7 @@ const C007002 = () => {
         </div>
       </>
     ) : (
-      <div style={{ height: '20rem', marginTop: '6rem' }}>
-        <EmptyData />
-      </div>
+      <EmptyData height="20rem" />
     );
   };
 

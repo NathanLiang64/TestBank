@@ -58,7 +58,7 @@ const Page = () => {
                 </li>
               ))}
             </ul>
-          ) : <div className="empty-data-wrapper"><EmptyData content="查無好友資料" /></div>}
+          ) : <EmptyData content="查無好友資料" height="50vh" />}
         </PageWrapper>
       </Main>
     </Layout>

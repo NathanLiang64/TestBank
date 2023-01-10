@@ -64,9 +64,7 @@ const Page = () => {
               </ul>
             </div>
           ) : (
-            <div className="emptydata-wrapper">
-              <EmptyData />
-            </div>
+            <EmptyData height="30vh" />
           ) }
         </PageWrapper>
       </Main>

@@ -157,7 +157,7 @@ const Page = () => {
 
   const renderTransactions = (detail, loan) => {
     if (!detail) return <Loading space="both" isCentered />;
-    if (!detail.length) return <div className="emptydata-wrapper"><EmptyData /></div>;
+    if (!detail.length) return <EmptyData height="30vh" />;
 
     // transactions 依照日期排序（大 -> 小）
     const sortedTransactions = detail.sort((a, b) => parseInt(b.txnDate, 10) - parseInt(a.txnDate, 10));
