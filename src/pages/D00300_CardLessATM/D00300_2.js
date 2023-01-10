@@ -24,9 +24,9 @@ const CardLessATM2 = ({ location }) => {
     seqNo, startDateTime, endDateTime, withdrawAmount, account,
   } = location.state.data;
 
-  // 將 '0yTWMMDD hhmmss' 字串轉為 'YYYY/MM/DD hh:mm:ss' 格式
+  // 將 'YYYYMMDD hhmmss' 字串轉為 'YYYY/MM/DD hh:mm:ss' 格式
   const dateTimeFormat = (dateTimeString) => {
-    const dateStr = parseInt(dateTimeString.split(' ')[0], 10).toString(); // TODO: 請後端回傳民國年字串第一位不要補0?
+    const dateStr = dateTimeString.split(' ')[0];
     const timeStr = dateTimeString.split(' ')[1];
 
     return `${dateToString(dateStr)} ${timeToString(timeStr)}`;

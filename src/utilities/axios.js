@@ -109,6 +109,11 @@ const processResponse = async (response) => {
     }
   }
 
+  response.data = {
+    ...response.data,
+    isSuccess: (code === '0000'), // TODO 錯誤處理，不能讓錯誤發生之後仍繼續執行。
+  };
+
   if (code !== '0000') {
     // const { closeFunc } = useNavigation(); // BUG Error: Invalid hook call.
     const { message } = response.data;
@@ -139,7 +144,6 @@ const processResponse = async (response) => {
   console.log(`\x1b[33m${response.config.url} \x1b[37m - Response = `, response.data);
 
   // 傳回 未加密 或 解密後 的資料
-  response.isSuccess = (code === '0000'); // TODO 錯誤處理，不能讓錯誤發生之後仍繼續執行。
   return response;
 };
 
