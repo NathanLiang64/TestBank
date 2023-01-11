@@ -33,7 +33,7 @@ const D00400 = lazy(() => import('pages/D00400_CardLessWithDrawChgPwd/D00400'));
 const D00500 = lazy(() => import('pages/D00500_FrequentContacts/D00500'));
 const D00600 = lazy(() => import('pages/D00600_RegisteredContacts/D00600'));
 const D00700 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer'));
-const D00800 = lazy(() => import('pages/D00800_ReserveTransferSearch/D00800v2'));
+const D00800 = lazy(() => import('pages/D00800_ReserveTransferSearch/D00800'));
 const D008001 = lazy(() => import('pages/D00800_ReserveTransferSearch/D00800_1'));
 const E00100 = lazy(() => import('pages/E00100_Exchange/E00100v2'));
 const E001001 = lazy(() => import('pages/E00100_Exchange/E00100_1'));

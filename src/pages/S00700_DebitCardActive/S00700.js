@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
+import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { useQLStatus } from 'hooks/useQLStatus';
@@ -15,7 +16,6 @@ import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { activate } from './api';
 import DebitCardActiveWrapper from './S00700.style';
-import { validationSchema } from './validationSchema';
 
 const S00700 = () => {
   const dispatch = useDispatch();
@@ -24,14 +24,19 @@ const S00700 = () => {
 
   const { control, handleSubmit, reset } = useForm({
     defaultValues: { accountNo: '', serial: '' },
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(
+      yup.object().shape({
+        accountNo: yup.string().required('請輸入金融卡帳號').matches(/^(\d{14})?$/, '金融卡帳號由14個數字所組成'),
+        serial: yup.string().required('請輸入金融卡序號').matches(/^(\d{6})?$/, '金融卡序號由6個數字所組成'),
+      }),
+    ),
   });
 
-  const submitHandler = async (values) => {
+  const submitHandler = async ({serial}) => {
     dispatch(setWaittingVisible(true));
     const auth = await transactionAuth(AuthCode.S00700);
     if (auth && auth.result) {
-      const activateResult = await activate({...values});
+      const activateResult = await activate({serial});
       if (activateResult) {
         history.push('/S007001', activateResult);
       }
@@ -68,6 +73,7 @@ const S00700 = () => {
             labelName="我的金融卡帳號"
             name="accountNo"
             control={control}
+            // NOTE : ios 遇到 disabled 的欄位，會將欄位內的 opacity 調低，因此字體看起來顏色會變淡
             inputProps={{disabled: true}}
           />
           <TextInputField

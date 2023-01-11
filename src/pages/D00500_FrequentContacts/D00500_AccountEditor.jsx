@@ -15,7 +15,6 @@ import { accountFormatter } from 'utilities/Generator';
 
 import { ArrowBackIcon, EditIcon } from 'assets/images/icons';
 import { DrawerWrapper } from './D00500.style';
-
 /**
  * 編輯/新增銀行帳號。
  * @param {{
@@ -137,6 +136,7 @@ function AccountEditor({
       };
       onFinished(newModel);
     };
+
     return (
       <form className="flex-col" onSubmit={handleSubmit(onSubmit)}>
         <Badge>
