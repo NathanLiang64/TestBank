@@ -1,22 +1,9 @@
-import styled from 'styled-components';
 import { FEIBInput, FEIBInputLabel } from 'components/elements';
 import ConfirmButtons from 'components/ConfirmButtons';
+import Accordion from 'components/Accordion';
 
-const DrawerContentWrapper = styled.div`
-  padding: 1rem;
-  .noticeWording {
-    margin-bottom: 2.4rem;
-    padding: 1.6rem 1.2rem;
-    border-radius: .8rem;
-    background: ${({ theme }) => theme.colors.background.lighterBlue};
-    color: ${({ theme }) => theme.colors.text.light};
-  }
-
-  .agreeWording {
-    margin: 2.4rem 0;
-    color: ${({ theme }) => theme.colors.text.dark};
-  }
-`;
+/* style */
+import { DrawerContentWrapper } from './T00200.style';
 
 const DrawerContent = ({
   confirmClick,
@@ -24,17 +11,25 @@ const DrawerContent = ({
   midPhone,
 }) => (
   <DrawerContentWrapper>
-    <div className="noticeWording">
-      為保障您的交易安全，將為您進行裝置綁定，以啟用快速登入
-    </div>
-    <FEIBInputLabel>請問您目前使用裝置搭配的門號？</FEIBInputLabel>
+    <FEIBInputLabel>請確認您目前設定之手機門號，與您使用之SIM卡門號一致。</FEIBInputLabel>
     <FEIBInput value={midPhone} disabled />
     <div className="agreeWording">
-      點選確認即同意進行裝置綁定與
-      <span>
-        APP裝置綁定使用條款
-      </span>
-      ，並將與您的電信公司確認您的手機門號與 SIM 卡是否一致，若無請至本行更新手機門號，以完成裝置綁定。
+      <p>
+        本服務係透過臺灣網路認證股份有限公司提供之裝置確認服務(SIM卡認證)，並將與您的電信公司確認您的手機門號與SIM卡門號是否一致，若否則請至本行更新手機號碼，以完成APP裝置認證，點選確認即閱讀並同意
+        <span>利用行動電話號碼辦理身分驗證服務條款</span>
+        。
+      </p>
+      <p>
+        為保障您的交易安全，將為您進行裝置認證，以啟用快速登入，點選確認即閱讀並同意
+        <span>快速登入設定條款</span>
+      </p>
+      {/* TODO: 下方2條款內容待提供。 */}
+      <Accordion title="利用行動電話號碼辦理身分驗證服務條款" space="both">
+        條款內容
+      </Accordion>
+      <Accordion title="快速登入設定條款" space="both">
+        條款內容
+      </Accordion>
     </div>
     <ConfirmButtons
       mainButtonValue="確認"

@@ -45,9 +45,9 @@ const A00800Wrapper = styled(Layout)`
     }
 
     .accoridon_title {
-        font-size: 18px;
+        font-size: 1.4rem;
         font-weight: 600;
-        margin-bottom: 12px;
+        margin-bottom: 1.2rem;
     }
     .accoridon_content {
         ul {

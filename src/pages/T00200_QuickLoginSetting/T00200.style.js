@@ -68,4 +68,31 @@ const QuickLoginSettingWrapper = styled(Layout)`
   }
 `;
 
+export const DrawerContentWrapper = styled.div`
+  padding: 1rem;
+  .noticeWording {
+    margin-bottom: 2.4rem;
+    padding: 1.6rem 1.2rem;
+    border-radius: .8rem;
+    background: ${({ theme }) => theme.colors.background.lighterBlue};
+    color: ${({ theme }) => theme.colors.text.light};
+  }
+
+  .agreeWording {
+    margin: 2.4rem 0;
+    font-size: 1.3rem;
+    color: ${({ theme }) => theme.colors.text.dark};
+
+    p {
+      margin-bottom: 1rem;
+    }
+
+    span {
+      color: ${({ theme }) => theme.colors.text.lightGray};
+    }
+  }
+
+  
+`;
+
 export default QuickLoginSettingWrapper;

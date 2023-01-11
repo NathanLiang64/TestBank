@@ -202,7 +202,7 @@ const QuickLoginSetting = () => {
         // 交易驗證成功，開啟綁定 drawer，點擊確認進行 MID 驗證
         // NOTE 通過 MID 驗證才算是真正完成快登設定，目前二者是綁在一起的！
         showDrawer(
-          'APP 手機裝置綁定',
+          'APP裝置認證',
           <DrawerContent
             midPhone={midPhone}
             confirmClick={() => verifySettingAndMID(type, rs.netbankPwd)}
