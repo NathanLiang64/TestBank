@@ -1,8 +1,6 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-/* eslint-disable no-use-before-define */
 /* eslint-disable brace-style */
 import axios from 'axios';
-// import { useNavigation } from 'hooks/useNavigation';
 import { showError } from './MessageModal';
 import JWEUtil from './JWEUtil';
 import JWTUtil from './JWTUtil';
@@ -37,7 +35,7 @@ const processRequest = async (request) => {
 
   // 處理 JWE Request 加密；在完成 Login 之前，都是使用 JWE 加密模式。
   if (request.url.startsWith('/sm')) {
-    if (request.url.startsWith('/smJwe/')) { // TODO request.url.startsWith('//auth/')
+    if (request.url.startsWith('/smJwe/')) {
       const serverPKey = sessionStorage.getItem('serverPKey');
       request.data = JWEUtil.encryptJWEMessage(serverPKey, payload);
     } else {
@@ -53,8 +51,6 @@ const processRequest = async (request) => {
     const aes = await getAesKey();
     request.data = JWTUtil.encryptJWTMessage(aes.aesKey, aes.iv, payload);
   }
-  // console.log(jwtToken);
-  // console.log('%cRequest --> %o', 'color: Green;', request); // 列出完整的 Request 資訊。
   return request;
 };
 
@@ -64,22 +60,15 @@ const processRequest = async (request) => {
  * @returns
  */
 const processResponse = async (response) => {
-  // console.log('%cResponse --> \n%c%o', 'color: Yellow;', 'color: Green;', response);
-  // console.log(`jwtToken=${response.data.jwtToken}`);
   // eslint-disable-next-line object-curly-newline
   const { code, data, mac, jwtToken } = response.data; // 不論成功或失敗，都一定會更新 jwtToken
 
   let rqJwtToken; // 來查是否發出的Request有沒有加密
   const headerAuth = response.config.headers.authorization; // 用Request時所使用的 jwtToken 來判斷是否有使用 JWT
   if (headerAuth && headerAuth.startsWith('Bearer ')) {
-    // eslint-disable-next-line prefer-destructuring
-    rqJwtToken = headerAuth.split(' ')[1];
+    rqJwtToken = headerAuth.substring('Bearer '.length);
 
-    // console.log(`\x1b[32m[New JWT] \x1b[92m${jwtToken}`);
-    if (!jwtToken) console.log(`\x1b[31m*** WARNING *** ${response.config.url} 將 JWT Token 設為空值！`, response);
-    else {
-      await syncJwtToken(jwtToken); // BUG! 可能因為多執行緒而錯亂
-    }
+    syncJwtToken(jwtToken); // BUG! 可能因為多執行緒而錯亂
   }
 
   const encData = data ?? response.data.encData; // 為相容 SM
@@ -93,13 +82,10 @@ const processResponse = async (response) => {
     }
     // 處理 JWT Response 解密；若Request時沒有使用jwtToken，或例外發生時，傳回的資料都不會加密。
     else if (rqJwtToken) {
-      // console.log('*** Start JWT Decode ***');
       const aes = await getAesKey();
-      // console.log(aes, encData);
       resultData = JWTUtil.decryptJWTMessage(aes.aesKey, aes.iv, encData, mac);
     }
 
-    // console.log(`Response Data(解密後) --> ${JSON.stringify(resultData)}`);
     if (resultData) {
       response.data = {
         code,
@@ -115,7 +101,6 @@ const processResponse = async (response) => {
   };
 
   if (code !== '0000') {
-    // const { closeFunc } = useNavigation(); // BUG Error: Invalid hook call.
     const { message } = response.data;
     // TODO: 導向API失敗的例外處理的頁面！
     console.log(`\x1b[31m${response.config.url} - Exception = (\x1b[33m${code}\x1b[31m) ${message}`);
@@ -135,8 +120,7 @@ const processResponse = async (response) => {
 
       case 'WEBCTL1006': // 尚未通過交易授權驗證，無法執行此項服務。
       default:
-        // eslint-disable-next-line react/jsx-one-expression-per-line
-        await showError((<p>*** {code} ***<br />{message}</p>)); // , closeFunc);
+        await showError((<p>*** {code} ***<br />{message}</p>));
         break;
     }
   }
@@ -162,6 +146,7 @@ instance.interceptors.request.use(
 );
 instance.interceptors.response.use(
   processResponse,
+
   async (ex) => {
     console.log('\x1b[31mResponse Error --> ', ex);
     // 系統層錯誤！
@@ -180,16 +165,15 @@ instance.interceptors.response.use(
         break;
     }
 
-    // const { closeFunc } = useNavigation(); // BUG Error: Invalid hook call.
     const errMesg = (
       <p>
         主機忙碌中，請通知客服人員或稍後再試。訊息代碼：({response.status})
         <br />
-        {/* DEBUG */}
+        {/* DEBUG 為了知道錯誤發生原因，所以在開發階段把問題顯示出來！ 上正式版要移除... */}
         原因：{response.data.message}
       </p>
     );
-    await showError(errMesg); // , closeFunc);
+    await showError(errMesg, 2);
 
     return Promise.reject(ex);
   },
@@ -205,7 +189,6 @@ instance.interceptors.response.use(
  */
 export const userRequest = async (method, url, data, config) => {
   instance.defaults.baseURL = (url.startsWith('/sm')) ? process.env.REACT_APP_SM_CTRL_URL : process.env.REACT_APP_URL;
-  // console.log(instance.defaults.baseURL + url);
 
   method = method.toLowerCase();
   const request = (config?.data ?? data); // 在 config 中宣告的 data 優先權高於參數指定值，原因是 FormData 是記在 config 中。
@@ -263,7 +246,7 @@ export const download = async (url, request) => {
   const response = await callAPI(url, request);
 
   const { filename } = response.data;
-  const fileUrl = `https://bankeesit.feib.com.tw/doc/${filename}`; // BASE_URL domain 與大頭照相同，但img -> doc
+  const fileUrl = `${process.env.REACT_APP_DOCUMENT_URL}/${filename}`;
   console.log('download', {fileUrl});
   window.open(fileUrl, '_blank');
 };

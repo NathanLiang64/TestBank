@@ -10,6 +10,7 @@ import { FEIBButton, FEIBIconButton } from 'components/elements';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import theme from 'themes/theme';
 import { ArrowBackIcon, HomeIcon } from 'assets/images/icons';
+import { forceLogout } from 'utilities/AppScriptProxy';
 import { showError } from 'utilities/MessageModal';
 import { useNavigation } from 'hooks/useNavigation';
 import {
@@ -82,6 +83,23 @@ function Layout({
     dispatch(setModalVisible(false));
     dispatch(setDialogVisible(false));
     if (setResult) setResult(true); // 傳回視窗結束狀態。
+
+    // exceptionActionMode - 1.執行Layout.goBack, 2.執行closeFunc, 3.執行forceLogout, 其他.關閉Popup
+    if (modalData.exceptionActionMode) {
+      // eslint-disable-next-line default-case
+      switch (modalData.exceptionActionMode) {
+        case 1: // 執行Layout.goBack
+          if (goBackFunc) await goBackFunc();
+          else closeFunc();
+          break;
+        case 2: // 執行closeFunc
+          closeFunc();
+          break;
+        case 3: // 執行forceLogout
+          await forceLogout();
+          break;
+      }
+    }
   };
 
   //

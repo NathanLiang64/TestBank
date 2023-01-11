@@ -41,16 +41,19 @@ export const showPrompt = async (message, action) => {
 /**
  * 顯示「重要訊息」的Popup視窗。
  * @param {*} message 視窗內容。
- * @param {function} action 按下確定按鈕時的自訂處理程序。
+ * @param {Function|Number} action 表示按下確定按鈕的動作代碼。預設關閉Popup，若是數字（1.執行Layout.goBack, 2.執行closeFunc, 3.執行forceLogout, 其他.關閉Popup）
  */
 export const showError = async (message, action) => {
+  const actionFunc = (action && action.constructor === Function) ? action : closePopup;
+  const exActionMode = (!actionFunc) ? Number.parseInt(action, 10) : null;
   const promise = new Promise((resolve) => {
     store.dispatch(
       setModal({
         title: '重要訊息',
         content: message,
-        onOk: action ?? closePopup,
-        showCloseButton: true,
+        onOk: actionFunc,
+        showCloseButton: false,
+        exceptionActionMode: exActionMode,
       }),
     );
     store.dispatch(setResult((value) => resolve(value)));

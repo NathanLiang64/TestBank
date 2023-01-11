@@ -362,7 +362,7 @@ async function syncJwtToken(jwtToken) {
     sessionStorage.setItem('jwtToken', jwtToken);
   } else {
     sessionStorage.removeItem('jwtToken');
-    console.log('\x1b[31m*** WARNING *** syncJwtToken 將 JWT Token 設為空值！');
+    console.log('\x1b[31m*** WARNING *** JWT Token 被設為空值！');
   }
 
   const data = { auth: jwtToken };
@@ -444,7 +444,7 @@ async function verifyBio(authKey) {
     };
   });
 
-  if (!rs.exception) throw new Error(rs.message);
+  if (rs.exception) throw new Error(rs.message);
   return rs;
 }
 
