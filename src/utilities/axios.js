@@ -170,7 +170,7 @@ instance.interceptors.response.use(
         主機忙碌中，請通知客服人員或稍後再試。訊息代碼：({response.status})
         <br />
         {/* DEBUG 為了知道錯誤發生原因，所以在開發階段把問題顯示出來！ 上正式版要移除... */}
-        原因：{response.data.message}
+        原因：{ex.message}
       </p>
     );
     await showError(errMesg, 2);

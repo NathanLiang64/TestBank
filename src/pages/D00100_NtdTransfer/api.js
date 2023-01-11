@@ -41,7 +41,6 @@ export const createNtdTransfer = async (request) => {
  *    balance: 轉出後餘額,
  *    fee: 手續費,
  *    fiscCode: '財金序號 跨轉才有',
- *    maxWithdraw: 最高可提領額,
  *    accountName: 戶名,
  *    errorCode,
  *    message: 錯誤訊息,

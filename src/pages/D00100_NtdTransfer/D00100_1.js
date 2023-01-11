@@ -68,8 +68,15 @@ const TransferConfirm = (props) => {
     const response = await createNtdTransfer(request);
     if (response.result) {
       // 以 Server端傳回的約轉帳號旗標為準。
-      if (response.isAgreedTxn) transIn.type = 2;
-      else transIn.type = (transIn.freqAcct ? 1 : 0);
+      if (response.isAgreedTxn && transIn.type !== 2) {
+        model.transIn.type = 2;
+        // 找出目前轉出帳號的所有約定轉入帳號中，與目前轉出帳號相符者；存入 model.transIn.regAcct 使畫面正確顯示。
+        model.transIn.regAcct = {
+          bankId: transIn.bank,
+          bankName: transIn.bankName,
+          accountNo: transIn.account,
+        };
+      } else transIn.type = (transIn.freqAcct ? 1 : 0);
 
       // 進行交易驗證，要求使用者輸入OTP、密碼、雙因子...等。
       const authCode = (response.isAgreedTxn) ? AuthCode.D00100.REG : AuthCode.D00100.NONREG;
