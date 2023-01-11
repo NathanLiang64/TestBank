@@ -82,6 +82,12 @@ const Avatar = ({
         id="imageInput"
         type="file"
         accept="image/*"
+        // NOTE : 若重複選擇同一個檔案，在 Chrome 瀏覽器中將不會在觸發 onChange 事件，因此透過以下方式清空
+        // FYI: https://stackoverflow.com/questions/12030686/html-input-file-selection-event-not-firing-upon-selecting-the-same-file
+        onClick={(e) => {
+          e.target.value = '';
+          setUploadSrc('');
+        }}
         onChange={onImgChangeHandler}
       />
     </label>

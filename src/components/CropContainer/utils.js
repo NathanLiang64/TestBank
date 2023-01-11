@@ -15,7 +15,6 @@ export default async function getCroppedImg(
   pixelCrop,
 ) {
   const image = await createImage(imageSrc);
-  console.log('image', image);
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
 
@@ -44,6 +43,15 @@ export default async function getCroppedImg(
   // paste generated rotate image at the top left corner
   ctx.putImageData(data, 0, 0);
 
-  // As Base64 string
-  return canvas.toDataURL('image/jpeg');
+  // 壓縮 base64 格式照片
+  let quality = 0.6; // 若不給的話 chrome 瀏覽器 default 是 0.92
+  let base64 = canvas.toDataURL('image/jpeg', quality);
+
+  // 因為要確保圖片壓縮到想要的容量,若壓到 200 kb 以下或是已經收斂的情況 (quality ~ 0)，則停止迴圈並回傳 base64
+  while (base64.length / 1024 > 200 && quality >= 0.05) {
+    quality -= 0.05;
+    base64 = canvas.toDataURL('image/jpeg', quality);
+    // console.log(`${base64.length / 1024}kb, quality: ${quality}`);
+  }
+  return base64;
 }
