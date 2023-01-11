@@ -444,7 +444,7 @@ async function verifyBio(authKey) {
     };
   });
 
-  if (rs.exception !== null) throw new Error(rs.message);
+  if (!rs.exception) throw new Error(rs.message);
   return rs;
 }
 
