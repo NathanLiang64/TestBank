@@ -9,8 +9,8 @@ const DialogContent = ({ resultData, selectedAccount }) => (
     <div className="resultContainer">
       <div className="stateContainer">
         <SuccessFailureAnimations
-          isSuccess={resultData.result === 'ok'}
-          successTitle={resultData.result === 'ok' ? '轉帳成功' : '轉帳失敗'}
+          isSuccess={resultData.result === 'OK'}
+          successTitle={resultData.result === 'OK' ? '轉帳成功' : '轉帳失敗'}
           errorDesc={resultData.result}
         />
       </div>

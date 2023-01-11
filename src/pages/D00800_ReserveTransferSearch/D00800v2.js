@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -27,6 +27,7 @@ import {
   defaultValues, tabOptions, RESERVE_DATE_RANGE, TAB, RESULT_DATE_RANGE, panelOptions,
 } from './constants';
 import { getReservedTransDetails, getResultTransDetails } from './api';
+import { generatePeriodText } from './utils';
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
@@ -39,11 +40,14 @@ const D00800 = () => {
   const [banks, setBanks] = useState();
   const {control, handleSubmit, watch } = useForm({ defaultValues });
   const [curTab, curReserveRange, curResultRange] = watch([TAB, RESERVE_DATE_RANGE, RESULT_DATE_RANGE]);
-  const currentValue = {
-    startDay: dateToString(curTab === '1' ? curReserveRange[0] : curResultRange[0], ''),
-    endDay: dateToString(curTab === '1' ? curReserveRange[1] : curResultRange[1], ''),
-    searchObj: curTab === '1' ? searchList.reserve : searchList.result,
-  };
+
+  const currentList = useMemo(() => {
+    const startDay = dateToString(curTab === '1' ? curReserveRange[0] : curResultRange[0], '');
+    const endDay = dateToString(curTab === '1' ? curReserveRange[1] : curResultRange[1], '');
+    const searchObj = curTab === '1' ? searchList.reserve : searchList.result;
+    const key = `${selectedAccount?.accountNo}_${startDay}_${endDay}`;
+    return searchObj[key];
+  }, [curTab, curReserveRange, curResultRange, searchList, selectedAccount]);
 
   const onSearch = async ({ tab, reserveDateRange, resultDateRange }) => {
     const startDay = dateToYMD(tab === '1' ? reserveDateRange[0] : resultDateRange[0]);
@@ -55,20 +59,22 @@ const D00800 = () => {
     const type = tab === '1' ? 'reserve' : 'result';
     const detailsRes = tab === '1' ? await getReservedTransDetails(param) : await getResultTransDetails(param);
 
-    const bankCodeList = await getBankCode(); // 只有第一次拿取是非同步
-    if (!banks) setBanks(bankCodeList);
+    if (detailsRes) {
+      const bankCodeList = await getBankCode(); // 若 redux 內沒有資料，會是非同步
+      if (!banks) setBanks(bankCodeList);
 
-    // detailsRes 新增 isMulti & bankName
-    const updatedDetailsRes = detailsRes.map((res) => {
-      const { bankName } = banks.find(({ bankNo }) => bankNo === res.receiveBank);
-      if (res.cycle) return {...res, isMulti: res.cycle !== '1', bankName};
-      return {...res, bankName};
-    });
+      // detailsRes 加入 periodic & bankName properties
+      const updatedDetailsRes = detailsRes.map((res) => {
+        const { bankName } = bankCodeList.find(({ bankNo }) => bankNo === res.receiveBank);
+        if (res.cycle) return {...res, periodic: res.cycle !== '1', bankName};
+        return {...res, bankName};
+      });
 
-    setSearchList((prevSearchList) => ({
-      ...prevSearchList,
-      [type]: { ...prevSearchList[type], [`${accountNo}_${startDay}_${endDay}`]: updatedDetailsRes },
-    }));
+      setSearchList((prevSearchList) => ({
+        ...prevSearchList,
+        [type]: { ...prevSearchList[type], [`${accountNo}_${startDay}_${endDay}`]: updatedDetailsRes },
+      }));
+    }
   };
 
   // 取得帳號清單
@@ -80,7 +86,7 @@ const D00800 = () => {
       setSelectedAccount(accts[0]);
     });
     // TODO 若無 MSC 類別的帳戶，要給什麼提示訊息給使用者
-    return accountsListRes.length ? null : '您還沒有任何台幣存款帳戶。';
+    return accountsListRes.length ? null : '您還沒有任何臺幣存款帳戶。';
   };
 
   const toConfirmPage = (data) => {
@@ -127,29 +133,31 @@ const D00800 = () => {
 
   // 預約轉帳查詢列表
   const renderSearchList = (tabValue) => {
-    const { searchObj, startDay, endDay } = currentValue;
-    const key = `${selectedAccount?.accountNo}_${startDay}_${endDay}`;
-    const list = searchObj[key];
-    if (!selectedAccount?.accountNo || !list || !banks) return <Loading space="both" isCentered />;
-    if (!list.length) return <EmptyData height="30vh" />;
+    if (!selectedAccount?.accountNo || !currentList || !banks) return <Loading space="both" isCentered />;
+    if (!currentList.length) return <div className="emptyConatiner"><EmptyData /></div>;
 
     const isReserveTab = tabValue === '1';
     const onTapeClick = (item) => (isReserveTab ? () => openReserveDialog(item) : () => openResultDiaglog(item));
-    const showImg = (stderrMsg) => {
+    const showImg = (result) => {
       if (isReserveTab) return undefined;
-      return stderrMsg ? FailImage : SuccessImage;
+      return result === 'OK' ? SuccessImage : FailImage;
     };
 
-    return list.map((item) => (
+    const generateTransDate = (data) => {
+      if (!isReserveTab) return `交易日期 : ${dateToString(data.runday)}`; // 「預約轉帳結果」的交易日
+      if (data.periodic) return `預約轉帳日 : ${generatePeriodText(data)}`; // 「週期性預約交易」的預約轉帳日
+      return `預約轉帳日 : ${dateToString(data.nextBookDate)}`; // 「單次預約交易」的預約轉帳日
+    };
+    return currentList.map((item) => (
       <InformationTape
         key={item.seqno}
         topLeft={`${item.receiveBank}-${item.receiveAccountNo}`}
         topRight={currencySymbolGenerator('NTD', parseFloat(item.transferAmount))}
-        bottomLeft={`${isReserveTab ? '預約轉帳日' : '交易日期'} : 待提供`} // BUG rgDay 是設定日不是轉帳日
+        bottomLeft={generateTransDate(item)}
         // eslint-disable-next-line no-nested-ternary
-        bottomRight={isReserveTab ? item.isMulti ? '週期' : '單筆' : undefined}
+        bottomRight={isReserveTab ? (item.periodic ? '週期' : '單筆') : undefined}
         onClick={onTapeClick(item)}
-        img={showImg(item.stderrMsg)} // TODO 待確認「結果查詢」的資料結構
+        img={showImg(item.result)}
       />
     ));
   };
@@ -177,9 +185,7 @@ const D00800 = () => {
   // 切換帳號/Tab/日期範圍時 會檢查 searchList 有無特定的 key，若沒有就執行搜尋
   useEffect(() => {
     if (!selectedAccount) return;
-    const { searchObj, startDay, endDay } = currentValue;
-    const key = `${selectedAccount.accountNo}_${startDay}_${endDay}`;
-    if (!searchObj[key]) handleSubmit(onSearch)();
+    if (!currentList) handleSubmit(onSearch)();
   }, [selectedAccount, curTab, curReserveRange, curResultRange]);
 
   return (

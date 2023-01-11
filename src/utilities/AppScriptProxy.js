@@ -60,24 +60,28 @@ export async function callAppJavaScript(appJsName, jsParams, needCallback, webDe
    * @param {*} value APP JavaScript API的傳回值。
    */
   const CallbackFunc = (token, value) => {
-    let result = value;
+    const resolve = window.AppJavaScriptCallbackPromiseResolves[token];
+    delete window.AppJavaScriptCallbackPromiseResolves[token];
+    delete window.AppJavaScriptCallback[token];
+
+    let response = value;
     if (!(value instanceof Object)) {
       try {
-        result = JSON.parse(value);
+        response = JSON.parse(value);
       } catch {
-        result = value;
+        response = value;
       }
     }
 
     // NOTE 以下奇怪作法是為了配合 APP-JS
-    if (result) {
-      if (result.result === 'true') result.result = true;
-      if (result.result === 'false') result.result = false;
+    if (response) {
+      if (response.result === 'true') response.result = true;
+      if (response.result === 'false') response.result = false;
+      if (response.result === 'null') response.result = null;
+      if (response.exception === 'null' || response.exception?.trim() === '') response.exception = null;
     }
-    window.AppJavaScriptCallbackPromiseResolves[token](result);
 
-    delete window.AppJavaScriptCallbackPromiseResolves[token];
-    delete window.AppJavaScriptCallback[token];
+    resolve(response);
   };
 
   const promise = new Promise((resolve) => {
@@ -104,10 +108,15 @@ export async function callAppJavaScript(appJsName, jsParams, needCallback, webDe
     if (!needCallback) resolve(null);
   });
 
-  // result 是由 AppJavaScriptCallback 接收，並嘗試用 JSON Parse 轉為物件，轉不成功則以原資料內容傳回。
-  const result = await promise;
-  if (showLog(appJsName)) console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Result = `, result);
-  return result;
+  // response 是由 AppJavaScriptCallback 接收，並嘗試用 JSON Parse 轉為物件，轉不成功則以原資料內容傳回。
+  const response = await promise;
+
+  if (response?.exception) {
+    throw new Error(response.message);
+  }
+
+  if (showLog(appJsName)) console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Response = `, response);
+  return response;
 }
 
 /**
@@ -118,9 +127,17 @@ export const funcStack = {
    * 從 localStorage 取出功能執行堆疊，並轉為 Array 物件後傳回。
    * @returns {Array} 功能執行堆疊
    */
-  getStack: () => JSON.parse(localStorage.getItem('funcStack') ?? '[]'),
+  getStack: () => {
+    const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
+    if (stack.length === 0 && getOsType() !== 3) {
+      const currentFunc = sessionStorage.getItem('currentFunc');
+      if (currentFunc) stack.push({ funcID: currentFunc });
+    }
+    return stack;
+  },
 
   update: (stack) => localStorage.setItem('funcStack', JSON.stringify(stack)),
+
   /** 清空 功能執行堆疊，適用於 goHome 功能。 */
   clear: () => funcStack.update([]),
 
@@ -408,21 +425,27 @@ async function transactionAuth(authCode, otpMobile) {
  * @param {*} authKey 建立授權驗證時傳回的金鑰，用來檢核使用者輸入。
  * @returns {
  *   result: 驗證結果(true/false)。
- *   message: 驗證失敗狀況描述。
+ *   message: 驗證失敗或Exception狀況描述。
+ *   exception: 若不是 null 或空字串，則表示有例外。
  * }
  */
 async function verifyBio(authKey) {
   const data = {
     AuthKey: authKey,
   };
-  return await callAppJavaScript('chkQLfeature', data, true, async () => {
+  const rs = await callAppJavaScript('chkQLfeature', data, true, async () => { // TODO APP-JS 增加傳回 exception！
     // DEBUG
     // 傳回：累計驗證次數；若為 -1 表示使用者取消。
     const apiRs = await callAPI('/api/transactionAuth/v1/setBioResult', { authKey, success: true });
     return {
-      result: (apiRs.data <= 3),
+      result: apiRs.isSuccess ? (apiRs.data <= 3) : false,
+      message: apiRs.message,
+      exception: apiRs.isSuccess ? null : apiRs.code,
     };
   });
+
+  if (!rs.exception) throw new Error(rs.message);
+  return rs;
 }
 
 /**
@@ -544,7 +567,8 @@ async function appTransactionAuth(request) {
   const { authCode, otpMobile } = request;
 
   // 取得目前執行中的單元功能代碼，要求 Controller 發送或驗出時，皆需提供此參數。
-  const funcCode = funcStack.peek()?.funcID ?? '/'; // 首頁因為沒有功能代碼，所以用'/'表示。
+  const funcCode = funcStack.peek()?.funcID ?? sessionStorage.getItem('currentFunc');
+
   // 取得需要使用者輸入驗證的項目。
   const authMode = await getTransactionAuthMode(authCode); // 要驗 2FA 還是密碼，要以 create 時的為準。
   const allowed2FA = (authMode & 0x01) !== 0; // 表示需要通過 生物辨識或圖形鎖 驗證。
@@ -568,22 +592,17 @@ async function appTransactionAuth(request) {
     return failResult('無法建立交易授權驗證。');
   }
 
-  // // DEBUG ByPass交易驗證
-  // if (request) {
-  //   const otpCode = allowedOTP ? '123456' : null;
-  //   const netbankPwd = allowedPWD ? e2ee('feib1688') : null;
-  //   const verifyRs = await transactionAuthVerify({ authKey: txnAuth.key, funcCode, netbankPwd, otpCode });
-  //   console.log(verifyRs);
-  //   return { result: true, message: null, netbankPwd };
-  // }
-
   // 進行雙因子驗證，呼叫 APP 進行驗證。
   if (allowed2FA) {
     // NOTE 由原生處理：若生物辨識三次不通過 或是 使用者取消，才會傳回 false！
-    const rs = await verifyBio(txnAuth.key);
-    // 因為已綁MID，所以 密碼 也可以當第二因子；因此改用密碼驗證。
-    // 所以，快登因子驗證失敗可改用密碼，成功就不需要再驗密碼了。
-    allowedPWD = (rs.result !== true);
+    try {
+      const rs = await verifyBio(txnAuth.key);
+      // 因為已綁MID，所以 密碼 也可以當第二因子；因此改用密碼驗證。
+      // 所以，快登因子驗證失敗可改用密碼，成功就不需要再驗密碼了。
+      allowedPWD = (rs.result !== true);
+    } catch (ex) {
+      return failResult(ex);
+    }
 
     // NOTE 驗證成功(allowedPWD一定是false)但不用驗OTP，就直接傳回成功。
     //      若是驗證失敗或是還要驗OTP，就要開 Drawer 進行密碼或OTP驗證。

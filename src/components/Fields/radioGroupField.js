@@ -7,6 +7,7 @@ import {
   FEIBRadioLabel,
 } from 'components/elements';
 import { RadioGroup } from '@material-ui/core';
+import { RadioGroupFieldWrapper } from './fields.style';
 
 export const RadioGroupField = ({
   options,
@@ -26,7 +27,7 @@ export const RadioGroupField = ({
   const radioStyle = { display: hideDefaultButton ? 'none' : 'inline-flex' };
 
   return (
-    <>
+    <RadioGroupFieldWrapper row={row}>
       {labelName && (
         <FEIBInputLabel htmlFor={field.name}>{labelName}</FEIBInputLabel>
       )}
@@ -34,7 +35,6 @@ export const RadioGroupField = ({
       <RadioGroup
         onChange={onChangeHandler}
         onBlur={field.onBlur}
-        style={{flexDirection: row ? 'row' : 'column'}}
         id={field.name}
         name={field.name}
         value={field.value}
@@ -52,6 +52,6 @@ export const RadioGroupField = ({
       {!!fieldState.error && (
         <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>
       )}
-    </>
+    </RadioGroupFieldWrapper>
   );
 };

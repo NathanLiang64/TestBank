@@ -59,7 +59,7 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
     mainList.push({
       type: 'F',
       accountNo: foreignAccounts[0].accountNo,
-      balance: accumulateBalance(foreignAccounts), // TODO: 金額為“轉換為台幣後”的加總，目前為數字直接加總
+      balance: accumulateBalance(foreignAccounts), // TODO: 金額為“轉換為臺幣後”的加總，目前為數字直接加總
     });
 
     // 依金額從大到小排序。
@@ -109,7 +109,7 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
 
   /**
    * 主陣列依金額從大到小排序，若金額相同且非同種卡片，排序依照：
-   * 正：台幣>外幣>證券>子帳號
+   * 正：臺幣>外幣>證券>子帳號
    * 負：信用卡>貸款
    */
   // 檢查mainList中有無所有需要的type，無則加入

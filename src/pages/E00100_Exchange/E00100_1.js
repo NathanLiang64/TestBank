@@ -83,7 +83,7 @@ const E001001 = ({ location }) => {
           <div className="infoData">
             <div className="label">
               轉換
-              {confirmData?.trnsType === '1' ? '外幣' : '台幣'}
+              {confirmData?.trnsType === '1' ? '外幣' : '臺幣'}
             </div>
             <div className="foreignCurrency">
               {`${confirmData?.inCcyCd} $${confirmData?.inAmt}`}
@@ -91,7 +91,7 @@ const E001001 = ({ location }) => {
             {/* prettier-ignore */}
             <div className="changeNT">
               折合
-              {confirmData?.trnsType === '1' ? '台幣' : '外幣'}
+              {confirmData?.trnsType === '1' ? '臺幣' : '外幣'}
               ：
               {confirmData?.outCcyCd}
               $
@@ -101,7 +101,9 @@ const E001001 = ({ location }) => {
               換匯匯率：
               {confirmData?.rate}
             </div>
-            {confirmData?.bankerCd && <div className="employee">員工優惠匯率</div>}
+            {confirmData?.bankerCd && (
+              <div className="employee">員工優惠匯率</div>
+            )}
             <div className="label into">轉入帳號</div>
             {/* <div className="accountData">遠東商銀(805)</div> */}
             <div className="accountData">{confirmData?.inAcct}</div>
@@ -112,7 +114,9 @@ const E001001 = ({ location }) => {
             <InformationList title="轉出帳號" content={confirmData?.outAcct} />
             <InformationList
               title="換匯種類"
-              content={confirmData?.trnsType === '1' ? '台幣轉外幣' : '外幣轉台幣'}
+              content={
+                confirmData?.trnsType === '1' ? '臺幣轉外幣' : '外幣轉臺幣'
+              }
             />
             <InformationList
               title="轉換外幣幣別"
@@ -122,17 +126,31 @@ const E001001 = ({ location }) => {
                   : `${confirmData?.outCcyName} ${confirmData?.outCcyCd}`
               }
             />
-            <InformationList title="匯款性質分類" content={confirmData?.leglDesc} />
+            <InformationList
+              title="匯款性質分類"
+              content={confirmData?.leglDesc}
+            />
           </div>
-          <Accordion className="exchangeAccordion" title="詳細交易" space="both" open>
-            <InformationList title="帳戶餘額" content={`$${generateAccountAmt()}`} />
+          <Accordion
+            className="exchangeAccordion"
+            title="詳細交易"
+            space="both"
+            open
+          >
+            <InformationList
+              title="帳戶餘額"
+              content={`$${generateAccountAmt()}`}
+            />
             <InformationList title="備註" content={confirmData?.memo} />
           </Accordion>
           <Accordion space="bottom">
             <E00100Notice />
           </Accordion>
           <div className="confirmBtns">
-            <ConfirmButtons mainButtonOnClick={handleNextStep} subButtonOnClick={goBack} />
+            <ConfirmButtons
+              mainButtonOnClick={handleNextStep}
+              subButtonOnClick={goBack}
+            />
           </div>
         </div>
       </ExchangeWrapper>

@@ -1,15 +1,16 @@
-import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { useHistory, useLocation } from 'react-router';
 
 import Layout from 'components/Layout/Layout';
 import { FEIBButton, FEIBCheckbox } from 'components/elements';
-import { currencySymbolGenerator } from 'utilities/Generator';
-
+import { currencySymbolGenerator, dateToString } from 'utilities/Generator';
+import InformationTape from 'components/InformationTape';
 import { CheckboxField } from 'components/Fields';
 import { useNavigation } from 'hooks/useNavigation';
+import { showPrompt } from 'utilities/MessageModal';
 import InstalmentWrapper from './R00200.style';
+
+// import { mockLists } from './mockData/installmentItemOptions';
 
 /**
  * R002001  晚點付 (單筆_勾選分期消費項目)
@@ -23,42 +24,35 @@ const R00200_1 = () => {
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: { installmentItem: {} },
-    resolver: yupResolver(
-      yup.object().shape({
-        applType: yup.string().required('請選擇欲申請之晚點付項目'),
-      }),
-    ),
   });
   const watchedValue = watch('installmentItem');
 
   const renderInstallmentRadioButton = (detail) => (
-    <div className="checkbox">
-      <FEIBCheckbox
-        className="customPadding"
-        name={detail.name}
-        checked={detail.value === watchedValue}
-      />
-      <div className="left-section">
-        <div className="name">{detail.name}</div>
-        <div className="date">
-          消費日期：
-          {detail.date}
-        </div>
-      </div>
-      <div className="right-section">
-        {currencySymbolGenerator('NTD', detail.cost)}
-      </div>
-    </div>
+    <InformationTape
+      className={watchedValue[detail.authCode] ? 'checkedtape' : ''}
+      customHeader={(
+        <FEIBCheckbox
+          className="checkbox"
+          name={detail.authCode}
+          checked={!!watchedValue[detail.authCode]}
+        />
+      )}
+      topLeft={detail.storeName}
+      topRight={currencySymbolGenerator('NTD', detail.purchAmount)}
+      bottomLeft={` 消費日期：${dateToString(detail.purchDate)}`}
+    />
   );
 
+  // const generateOptions = () => mockLists.map((txn) => ({
   const generateOptions = () => state.availableTxns.map((txn) => ({
     label: renderInstallmentRadioButton(txn),
     value: txn.authCode,
   }));
 
   const onSubmit = ({ installmentItem }) => {
+    // const selectedTxns = mockLists.filter((txn) => !!installmentItem[txn.authCode]);
     const selectedTxns = state.availableTxns.filter((txn) => !!installmentItem[txn.authCode]);
-
+    if (!selectedTxns.length) showPrompt('請選擇要分期的項目');
     history.push('/R002002', {
       applType: 'G',
       selectedTxns,
@@ -67,6 +61,7 @@ const R00200_1 = () => {
   };
 
   if (!state) goHome();
+
   return (
     <Layout title="晚點付 (單筆)">
       <InstalmentWrapper className="InstalmentWrapper" small>

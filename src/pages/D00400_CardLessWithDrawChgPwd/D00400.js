@@ -16,8 +16,8 @@ import { PasswordInputField } from 'components/Fields';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showAnimationModal } from 'utilities/MessageModal';
-import CardLessATMWrapper from '../D00300_CardLessATM/D00300.style';
 import { validationSchema } from './validationSchema';
+import CardLessWithDrawChgPwdWrapper from './D00400.style';
 
 const CardLessWithDrawChgPwd = () => {
   const dispatch = useDispatch();
@@ -59,48 +59,46 @@ const CardLessWithDrawChgPwd = () => {
 
   const renderForm = () => (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div>
-        <PasswordInputField
-          labelName="舊提款密碼"
-          name="oldPassword"
-          inputProps={{
-            maxLength: 12, placeholder: '請輸入舊提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off',
-          }}
-          control={control}
-        />
-        <PasswordInputField
-          labelName="新提款密碼"
-          name="newPassword"
-          inputProps={{
-            maxLength: 12, placeholder: '請輸入新提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off',
-          }}
-          control={control}
-        />
-        <PasswordInputField
-          labelName="確認新提款密碼"
-          name="newPasswordConfirm"
-          inputProps={{
-            maxLength: 12, placeholder: '請再輸入一次新提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off',
-          }}
-          control={control}
-        />
-        <Accordion space="both">
-          <ul>
-            <li>
-              提醒您應注意密碼之設置及使用，不宜使用與您個人資料有關或具連續性、重複性或規則性之號碼為密碼，且不得將上開交易驗證資訊以任何方式使第三人知悉獲得以知悉，以確保交易安全。
-            </li>
-          </ul>
-        </Accordion>
-      </div>
+      <PasswordInputField
+        labelName="舊提款密碼"
+        name="oldPassword"
+        inputProps={{
+          maxLength: 12, placeholder: '請輸入舊提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off',
+        }}
+        control={control}
+      />
+      <PasswordInputField
+        labelName="新提款密碼"
+        name="newPassword"
+        inputProps={{
+          maxLength: 12, placeholder: '請輸入新提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off',
+        }}
+        control={control}
+      />
+      <PasswordInputField
+        labelName="確認新提款密碼"
+        name="newPasswordConfirm"
+        inputProps={{
+          maxLength: 12, placeholder: '請再輸入一次新提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off',
+        }}
+        control={control}
+      />
+      <Accordion space="both">
+        <ul>
+          <li>
+            提醒您應注意密碼之設置及使用，不宜使用與您個人資料有關或具連續性、重複性或規則性之號碼為密碼，且不得將上開交易驗證資訊以任何方式使第三人知悉獲得以知悉，以確保交易安全。
+          </li>
+        </ul>
+      </Accordion>
       <FEIBButton type="submit">確認</FEIBButton>
     </form>
   );
 
   return (
     <Layout title="變更無卡提款密碼">
-      <CardLessATMWrapper>
+      <CardLessWithDrawChgPwdWrapper>
         {renderForm()}
-      </CardLessATMWrapper>
+      </CardLessWithDrawChgPwdWrapper>
     </Layout>
   );
 };

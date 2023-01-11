@@ -23,7 +23,7 @@ import {
   updateNickname,
   updateEssay,
 } from './api';
-import NetworkWrapper, { EssayWrapper } from './M00100.style';
+import NetworkWrapper from './M00100.style';
 import { validationSchema } from './validationSchema';
 
 /**
@@ -103,16 +103,14 @@ const CommunityPage = () => {
    */
   const showEssayEditDialog = async () => {
     const body = (
-      <EssayWrapper>
-        <TextareaField
-          control={control}
-          name="essay"
-          labelName="您的分享文案"
-          placeholder="請輸入您的分享文案"
-          rowsMin={3}
-          rowsMax={10}
-        />
-      </EssayWrapper>
+      <TextareaField
+        control={control}
+        name="essay"
+        labelName="您的分享文案"
+        placeholder="請輸入您的分享文案"
+        rowsMin={3}
+        rowsMax={10}
+      />
     );
     const onOk = async ({ essay }) => {
       dispatch(setModalVisible(false));

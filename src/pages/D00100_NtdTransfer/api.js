@@ -2,7 +2,7 @@ import { getCallerFunc } from 'utilities/AppScriptProxy';
 import { callAPI } from 'utilities/axios';
 
 /**
- * 建立台幣轉帳交易，需再完成交易確認才會真的執行轉帳。
+ * 建立臺幣轉帳交易，需再完成交易確認才會真的執行轉帳。
  * @param {{
  *   transOut: '轉出帳號',
  *   transIn: {
@@ -21,7 +21,7 @@ import { callAPI } from 'utilities/axios';
  *   memo: '備註',
  * }} request
  * @returns {Promise<{
- *   result: '表示是否成功建立台幣轉帳交易記錄',
+ *   result: '表示是否成功建立臺幣轉帳交易記錄',
  *   message: '紀錄無法成功建立的原因',
  *   isAgreedTxn: '表示約定轉帳的旗標',
  * }>}
@@ -29,7 +29,7 @@ import { callAPI } from 'utilities/axios';
 export const createNtdTransfer = async (request) => {
   const response = await callAPI('/api/transfer/ntd/v1/create', {
     ...request,
-    callerFunc: getCallerFunc(), // 啟用轉帳功能的 FuncCode, 例: 從台幣首頁叫轉帳時，應傳入C00300
+    callerFunc: getCallerFunc(), // 啟用轉帳功能的 FuncCode, 例: 從臺幣首頁叫轉帳時，應傳入C00300
   });
   return response.data;
 };
@@ -40,7 +40,9 @@ export const createNtdTransfer = async (request) => {
  *    isSuccess,
  *    balance: 轉出後餘額,
  *    fee: 手續費,
- *    fiscCode: 財金序號_跨轉才有,
+ *    fiscCode: '財金序號 跨轉才有',
+ *    maxWithdraw: 最高可提領額,
+ *    accountName: 戶名,
  *    errorCode,
  *    message: 錯誤訊息,
  * }>} 轉帳結果。

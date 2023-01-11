@@ -33,7 +33,7 @@ const ReserveTransferSearch1 = ({ location }) => {
         delete reserveData.txCd;
         delete reserveData.bankName;
         delete reserveData.dscpt1;
-        delete reserveData.isMulti;
+        delete reserveData.periodic;
         const res = await cancelReserveTransfer(reserveData);
         // 基本上若 code!=='0000' 的情況下，底層就會跳出錯誤
         setCancelResult(res);

@@ -55,7 +55,7 @@ const S00700 = () => {
 
     reset((formValues) => ({
       ...formValues,
-      accountNo: account, // 我的金融卡帳號欄位自動帶入金融卡台幣主帳號
+      accountNo: account, // 我的金融卡帳號欄位自動帶入金融卡臺幣主帳號
     }));
     return null;
   };

@@ -13,10 +13,7 @@ const FEIBTextarea = styled(TextareaAutosize)`
   color: ${({ $color, theme }) => $color || theme.colors.primary.dark};
   width: 100%;
   border-radius: .6rem;
-  border-color: ${({ $borderColor, theme }) => {
-    console.log($borderColor, theme);
-    return $borderColor || theme.colors.border.light;
-  }};
+  border-color: ${({ $borderColor, theme }) => $borderColor || theme.colors.border.light};
   font-size: 1.6rem;
   line-height: 2.4rem;
   padding: .8rem;

@@ -128,7 +128,7 @@ const DepositPlanPage = () => {
       { icon: <AccountIcon12 />, title: '結束本計畫', onClick: handleTerminatePlan },
     ];
     if (plan.progInfo.type === 0) {
-      list.push({ icon: <TransactionIcon1 />, title: '轉帳', onClick: () => startFunc(FuncID.D00100_台幣轉帳) });
+      list.push({ icon: <TransactionIcon1 />, title: '轉帳', onClick: () => startFunc(FuncID.D00100_臺幣轉帳) });
     }
     const options = (
       <ul>

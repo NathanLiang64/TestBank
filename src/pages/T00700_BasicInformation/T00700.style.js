@@ -2,13 +2,14 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const BasicInformationWrapper = styled(Layout)`
-  .selectContainer {
-    display: grid;
-    grid-auto-flow: column;
-    grid-column-gap: 2rem;
+  form {
+    gap: 2rem;
+  }
 
+  .selectContainer {
+    display: flex;
+    gap: 1.8rem;
     div {
-      width: 100%;
       flex-grow: 1;
     }
   }

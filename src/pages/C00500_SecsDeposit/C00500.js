@@ -25,7 +25,7 @@ import {
 import PageWrapper from './C00500.style';
 
 /**
- * C00500 台幣交割帳戶首頁
+ * C00500 臺幣交割帳戶首頁
  */
 const C00500 = () => {
   const dispatch = useDispatch();
@@ -145,7 +145,7 @@ const C00500 = () => {
         };
         break;
 
-      case FuncID.D00100_台幣轉帳: // 轉帳
+      case FuncID.D00100_臺幣轉帳: // 轉帳
         params = { transOut: selectedAccount.accountNo };
         break;
 
@@ -183,7 +183,7 @@ const C00500 = () => {
               onFunctionClick={handleFunctionClick}
               cardColor="blue"
               funcList={[
-                { fid: FuncID.D00100_台幣轉帳, title: '轉帳' },
+                { fid: FuncID.D00100_臺幣轉帳, title: '轉帳' },
                 {
                   fid: FuncID.E00100_換匯,
                   title: '換匯',

@@ -3,6 +3,7 @@ import {useController} from 'react-hook-form';
 import {
   FEIBOption, FEIBSelect, FEIBInputLabel, FEIBErrorMessage,
 } from 'components/elements';
+import { DropdownFieldWrapper } from './fields.style';
 
 export const DropdownField = ({
   options,
@@ -29,7 +30,7 @@ export const DropdownField = ({
     field.onChange(selectedValue);
   };
   return (
-    <>
+    <DropdownFieldWrapper>
       <FEIBInputLabel htmlFor={field.name}>{labelName}</FEIBInputLabel>
       <FEIBSelect
         MenuProps={MenuProps}
@@ -39,8 +40,6 @@ export const DropdownField = ({
         id={field.name}
         name={field.name}
         value={field.value}
-        // disabled={disabled}
-        $space="bottom"
         $color={$color}
       >
         {options.map(({ label, value, disabledOption }) => (
@@ -62,6 +61,6 @@ export const DropdownField = ({
           {fieldState.error.message}
         </FEIBErrorMessage>
       )}
-    </>
+    </DropdownFieldWrapper>
   );
 };

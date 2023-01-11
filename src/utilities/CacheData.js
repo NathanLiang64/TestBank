@@ -135,7 +135,7 @@ export const getAccountsList = async (acctTypes, onDataLoaded) => {
   }
 
   const result = accounts.filter((account) => acctTypes.indexOf(account.acctType) >= 0)
-    // NOTE 外幣帳號的架構跟台幣不一樣。
+    // NOTE 外幣帳號的架構跟臺幣不一樣。
     // 要把一個帳戶、多個幣別 展開成 多個帳戶 的型式呈現。
     .map((account) => (!account.details // 若是從 sessionStorage 取出的值，就沒有 details，所以直接傳回即可。
       ? account

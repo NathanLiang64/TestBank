@@ -74,26 +74,24 @@ const PwdModify = () => {
     <Layout title="網銀密碼變更">
       <PwdModifyWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            <PasswordInputField
-              labelName="您的網銀密碼"
-              name="password"
-              control={control}
-              inputProps={{autoComplete: 'off', placeholder: placeholderText, maxLength: 20}}
-            />
-            <PasswordInputField
-              labelName="新的網銀密碼"
-              name="newPassword"
-              control={control}
-              inputProps={{autoComplete: 'off', placeholder: placeholderText, maxLength: 20}}
-            />
-            <PasswordInputField
-              labelName="請確認新的網銀密碼"
-              name="newPasswordCheck"
-              control={control}
-              inputProps={{autoComplete: 'off', placeholder: placeholderText, maxLength: 20}}
-            />
-          </div>
+          <PasswordInputField
+            labelName="您的網銀密碼"
+            name="password"
+            control={control}
+            inputProps={{autoComplete: 'off', placeholder: placeholderText, maxLength: 20}}
+          />
+          <PasswordInputField
+            labelName="新的網銀密碼"
+            name="newPassword"
+            control={control}
+            inputProps={{autoComplete: 'off', placeholder: placeholderText, maxLength: 20}}
+          />
+          <PasswordInputField
+            labelName="請確認新的網銀密碼"
+            name="newPasswordCheck"
+            control={control}
+            inputProps={{autoComplete: 'off', placeholder: placeholderText, maxLength: 20}}
+          />
           <FEIBButton type="submit">儲存變更</FEIBButton>
         </form>
       </PwdModifyWrapper>
