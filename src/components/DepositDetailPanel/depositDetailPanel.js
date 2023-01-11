@@ -21,14 +21,21 @@ const DepositDetailPanel = ({
       );
     }
 
-    // 可顯示明細數量限制為三筆
+    // 計算可顯示的明細項目數量。
+    const yPos = detailsRef?.current?.getBoundingClientRect()?.y;
+    const detailAreaHeight = yPos ? window.innerHeight - yPos : 430; // 如果沒有，預設顯示 5 筆
+
+    // 根據剩餘高度計算要顯示的卡片數量，計算裝置可容納的交易明細卡片數量
     const list = [];
-    for (let i = 0; (i < 3 && i < details.length); i++) {
+    const computedCount = Math.floor((detailAreaHeight - 30) / 80);
+    for (let i = 0; (i < computedCount && i < details.length); i++) {
       list.push(details[i]);
     }
 
     return (
-      list.map((txnInfo) => <DetailCard {...txnInfo} key={txnInfo.index} />)
+      list.map((txnInfo) => (
+        <DetailCard {...txnInfo} key={txnInfo.index} />
+      ))
     );
   };
 

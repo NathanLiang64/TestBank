@@ -33,14 +33,15 @@ const CommunityPage = () => {
   const [summary, setSummary] = useState();
   const dispatch = useDispatch();
   const { startFunc } = useNavigation();
-  const { control, reset, handleSubmit } = useForm({
-    defaultValues: { nickname: '', essay: '' },
-    resolver: yupResolver(validationSchema),
-    mode: 'onChange',
-  });
   const renderText = (value) => ((value !== null) ? value : '-');
   const defaultEssay = '點擊「成為Bankee會員」申辦Bankee數位存款帳戶，享活存利率2.6%！';
   const shareMessageContent = () => `${summary?.essay ?? defaultEssay} ${process.env.REACT_APP_RECOMMEND_URL}${summary.memberNo}`;
+
+  const { control, reset, handleSubmit } = useForm({
+    defaultValues: { nickname: '', essay: defaultEssay },
+    resolver: yupResolver(validationSchema),
+    mode: 'onChange',
+  });
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
@@ -62,7 +63,7 @@ const CommunityPage = () => {
     }
     setSummary(model.summary);
     const {nickname, essay} = model.summary;
-    reset({nickname, essay: essay ?? ''});
+    reset({nickname, essay: essay ?? defaultEssay}); // 點選社群圈"編輯"分享內容時，應該顯示預設文字
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -85,6 +86,7 @@ const CommunityPage = () => {
       dispatch(setModalVisible(false));
       await updateNickname(nickname);
       setSummary({ ...summary, nickname }); // 變更暱稱(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
+      reset({ nickname, essay: summary.essay });
     };
 
     await showCustomPrompt({
@@ -112,14 +114,16 @@ const CommunityPage = () => {
     );
     const onOk = async ({ essay }) => {
       dispatch(setModalVisible(false));
-      setSummary({ ...summary, essay }); // 變更分享文案(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
-      await updateEssay(essay);
+      const renewEssay = essay !== '' ? essay : defaultEssay;
+      setSummary({ ...summary, essay: renewEssay }); // 變更分享文案(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
+      await updateEssay(renewEssay);
+      reset({nickname: summary.nickname, essay: renewEssay}); // 重設預設文字為所輸入之文字，若user清空文字則顯示defaultEssay
     };
     await showCustomPrompt({
       title: '分享內容',
       message: body,
       onOk: handleSubmit(onOk),
-      onClose: () => reset({nickname: summary.nickname, essay: summary.essay ?? ''}),
+      onClose: () => reset({nickname: summary.nickname, essay: summary.essay ?? defaultEssay}),
       noDismiss: true,
     });
   };
