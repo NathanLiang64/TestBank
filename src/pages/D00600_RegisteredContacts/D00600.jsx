@@ -46,8 +46,11 @@ const Page = () => {
 
     // 若有指定帳號，則只取單一帳號的約定帳號清單。
     // TODO 未指定帳號時，應改用頁韱分類。
-    getAgreedAccount(bindAcct).then(async (accts) => {
-      // TODO 還要加上同ID互轉的帳號, 必需 同幣別。
+    const request = {
+      accountNo: bindAcct,
+      includeSelf: (startParams.selectorMode ?? false), // 還要加上同ID互轉的帳號, 必需 同幣別。
+    };
+    getAgreedAccount(request).then(async (accts) => {
       setAccounts(accts);
 
       if (startParams) {

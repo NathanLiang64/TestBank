@@ -5,7 +5,10 @@ import store from 'stores/store';
 
 /**
  * 查詢指定轉出帳號約定轉入帳號清單。
- * @param {String} accountNo 要查詢約定轉入帳號清單的帳號。
+ * @param {{
+ *   accountNo: String, // 要查詢約定轉入帳號清單的帳號。
+ *   includeSelf: Boolean, // 表示傳回清單要包含同ID互轉的帳號。
+ * }} request
  * @returns {Promise<[{
  *   bankId: '約定轉入帳戶-銀行代碼'
  *   acctId: '約定轉入帳戶-帳號'
@@ -16,12 +19,13 @@ import store from 'stores/store';
  *   headshot: '代表圖檔的UUID，用來顯示大頭貼；若為 null 表示還沒有設定頭像。'
  * }]>} 約定轉入帳號清單。
  */
-export const getAgreedAccount = async (accountNo) => {
+export const getAgreedAccount = async (request) => {
   let {agreAccts} = store.getState()?.CacheReducer;
   if (!agreAccts) agreAccts = [];
 
+  const {accountNo} = request;
   if (!agreAccts[accountNo]) {
-    const response = await callAPI('/api/transfer/agreedAccount/v1/get', { accountNo });
+    const response = await callAPI('/api/transfer/agreedAccount/v1/get', request);
     const bankList = await getBankCode();
     agreAccts[accountNo] = response.data?.map((item) => ({
       ...item,
