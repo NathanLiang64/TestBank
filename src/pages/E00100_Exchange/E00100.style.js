@@ -141,10 +141,6 @@ const ExchangeWrapper = styled(Layout)`
     padding-bottom: 0.8rem;
   }
 
-  #property {
-    display: block; // 底層設定是 display 是 inline ，會造成 text-overflow: ellipsis 無效，暫時這邊做覆蓋，後面再做全域調整
-    padding-bottom: 0;
-  }
 `;
 
 export default ExchangeWrapper;

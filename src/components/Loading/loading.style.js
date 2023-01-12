@@ -24,7 +24,7 @@ const LoadingWrapper = styled.div`
   `}
 
   ${({ $isCentered }) => $isCentered && `
-    margin-inline: auto;
+    margin: 0 auto;
     width: min-content;
   `}
 

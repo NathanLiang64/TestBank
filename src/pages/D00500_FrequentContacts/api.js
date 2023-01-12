@@ -42,17 +42,18 @@ export const getFrequentAccount = async () => {
  * }]} 傳回刪除指定項目後的清單。
  */
 export const addFrequentAccount = async (account) => {
-  const response = await callAPI('/api/transfer/frequentAccount/v1/add', account);
-  const headshotId = response.data;
-
   /**
    * NOTE : 改透過 getFrequentAccount 取得常用帳號清單 (若已經拿過清單，資料會從 redux 取得，若無則打 API 並回傳)
    * 若直接透過 CacheReducer 拿取清單的話，在轉帳完成要新增常用帳號的情境下(D00100_2)，freqAccts 可能會是空值
    */
-
-  // 將新帳號加入快取。
   // const {freqAccts} = store.getState()?.CacheReducer;
   const freqAccts = await getFrequentAccount();
+  const response = await callAPI('/api/transfer/frequentAccount/v1/add', account);
+  // 如果新增失敗，則回傳原來的 freqAccts
+  if (!response.isSuccess) return freqAccts;
+  const headshotId = response.data;
+
+  // 將新帳號加入快取。
   const newAccount = {
     ...account,
     headshot: headshotId,
@@ -94,11 +95,14 @@ export const updateFrequentAccount = async (newAccount, condition) => {
     ...condition,
   };
   delete request.bankName;
+  // const {freqAccts} = store.getState()?.CacheReducer;
+  const freqAccts = await getFrequentAccount();
   const response = await callAPI('/api/transfer/frequentAccount/v1/update', request);
+  // 如果編輯失敗，則回傳原來的 freqAccts
+  if (!response.isSuccess) return freqAccts;
   const headshotId = response.data;
 
   // 更新常用轉入帳號快取。
-  const {freqAccts} = store.getState()?.CacheReducer;
   const index = freqAccts.findIndex((account) => account.bankId === condition.orgBankId && account.acctId === condition.orgAcctId);
   const account = freqAccts[index];
   if (isChangeAccount) account.bankId = newAccount.bankId;

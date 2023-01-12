@@ -40,8 +40,10 @@ const FEIBSelect = styled(MaterialSelect).attrs({
   width: 100%;
   
   .MuiSelect-select {
-    display: inline-flex;
-    align-items: center;
+    // display: inline-flex; // inline-flex 會造成 text-overflow: ellipsis 無效
+    // align-items: center;
+    display: block; 
+    line-height: 1;
     color: ${({ theme, $color }) => $color || theme.colors.primary.dark};
   }
   

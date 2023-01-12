@@ -58,12 +58,20 @@ function AccountEditor({
     defaultValues: initData,
   });
 
+  const fetchBankCode = async () => {
+    const banks = await getBankCode();
+    setBankList(banks);
+  };
+
   /**
    *- 初始化
    */
-  useEffect(async () => {
-    const banks = await getBankCode();
-    setBankList(banks);
+  useEffect(() => {
+    fetchBankCode();
+    return () => {
+      setModel(null);
+      setConfirmPage(false);
+    };
   }, []);
 
   // 取得完整banklist後再檢查有無初始值

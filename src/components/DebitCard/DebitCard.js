@@ -166,7 +166,7 @@ const DebitCard = ({
     <DebitCardWrapper
       balanceLength={String(model.balance).length}
       className="debitCard"
-      $cardColor={color ?? accountTypeColorGenerator(accountType)}
+      $cardColor={color ?? accountTypeColorGenerator(model.acctType ?? accountType)}
     >
       <img src={DebitCardBackground} alt="background" className="backgroundImage" />
       <div className="cardTitle">
