@@ -1,6 +1,8 @@
 import InformationList from 'components/InformationList';
 import Accordion from 'components/Accordion';
-import { currencySymbolGenerator, dateToString, weekNumberToChinese } from 'utilities/Generator';
+import {
+  currencySymbolGenerator, dateToString, toCurrency, weekNumberToChinese,
+} from 'utilities/Generator';
 
 export const generatePeriodText = ({cycle, cycleNo}) => {
   switch (cycle) {
@@ -48,13 +50,16 @@ export const renderBody = (reserveData, selectedAccount) => (
       content={selectedAccount?.accountNo}
       remark={selectedAccount?.alias}
     />
-    <InformationList title="預約轉帳日" content={dateToString(reserveData.nextBookDate)} />
+    <InformationList
+      title="預約轉帳日"
+      content={dateToString(reserveData.nextBookDate)}
+    />
     <InformationList
       title="週期"
       content={generatePeriodText(reserveData)}
       remark={generatePeriodHint(reserveData)}
     />
-    {reserveData.isMulti && (
+    {reserveData.periodic && (
       <InformationList
         title="期間"
         content={`${dateToString(reserveData.startDay)}~${dateToString(
@@ -71,10 +76,12 @@ export const renderFooter = (reserveData, selectedAccount) => (
       title="預約設定日"
       content={dateToString(reserveData.rgDay)}
     />
-    {reserveData.isMulti && (
+    {reserveData.periodic && (
       <InformationList
         title="預約轉帳總金額"
-        content="待提供"
+        content={`$${toCurrency(
+          reserveData.transferAmount * reserveData.totCnt,
+        )}`}
       />
     )}
     <InformationList

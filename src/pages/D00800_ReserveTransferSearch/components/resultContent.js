@@ -22,7 +22,7 @@ const DialogContent = ({ resultData, selectedAccount }) => (
         content={selectedAccount.accountNo}
         remark={selectedAccount.alias}
       />
-      <InformationList title="時間" content={dateToString(resultData.runday)} />
+      <InformationList title="時間" content={dateToString(resultData.runDay)} />
     </div>
   </DialogContentWrapper>
 );

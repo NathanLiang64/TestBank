@@ -4,7 +4,7 @@ import uuid from 'react-uuid';
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
-import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
+import { showCustomDrawer, showCustomPrompt, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { AddIcon } from 'assets/images/icons';
@@ -77,12 +77,16 @@ const Page = () => {
    */
   const addnewAccount = async () => {
     const onFinished = async (newAcct) => {
-      dispatch(setWaittingVisible(true));
-
-      const newAccounts = await addFrequentAccount(newAcct);
-      dispatch(setWaittingVisible(false));
-      setAccounts(newAccounts);
-      forceUpdate();
+      // 檢查新增的帳號是否已經存在於列表
+      const repeatedAcct = accounts.find(({bankId, acctId}) => newAcct.bankId === bankId && newAcct.acctId === acctId);
+      if (repeatedAcct) showPrompt('此帳號資料已存在');
+      else {
+        dispatch(setWaittingVisible(true));
+        const newAccounts = await addFrequentAccount(newAcct);
+        dispatch(setWaittingVisible(false));
+        setAccounts(newAccounts);
+        forceUpdate();
+      }
     };
 
     await showCustomDrawer({
@@ -97,18 +101,25 @@ const Page = () => {
    * @param {*} acct 變更前資料。
    */
   const editAccount = async (acct) => {
-    const { bankId, acctId } = acct; // 變更前 常用轉入帳戶-銀行代碼 及 帳號
     const onFinished = async (newAcct) => {
-      // dispatch(setDrawerVisible(false));
-      dispatch(setWaittingVisible(true));
-      const condition = {
-        orgBankId: bankId,
-        orgAcctId: acctId,
-      };
-      const newAccounts = await updateFrequentAccount(newAcct, condition);
-      dispatch(setWaittingVisible(false));
-      setAccounts(newAccounts);
-      forceUpdate();
+      // 檢查編輯後的帳號是否已經存在於列表
+      const repeatedAcct = accounts.find(({ bankId, acctId }) => (
+        (acct.bankId !== bankId || acct.acctId !== acctId)
+          && bankId === newAcct.bankId
+          && acctId === newAcct.acctId
+      ));
+      if (repeatedAcct) showPrompt('此帳號資料已存在');
+      else {
+        dispatch(setWaittingVisible(true));
+        const condition = {
+          orgBankId: acct.bankId,
+          orgAcctId: acct.acctId,
+        };
+        const newAccounts = await updateFrequentAccount(newAcct, condition);
+        dispatch(setWaittingVisible(false));
+        setAccounts(newAccounts);
+        forceUpdate();
+      }
     };
 
     await showCustomDrawer({

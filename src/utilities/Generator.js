@@ -215,9 +215,14 @@ export const accountTypeColorGenerator = (type) => {
       return '';
     case '003': // 行員存款
       return '';
+    case 'M': // 台幣母帳戶
+    case 'C': // 台幣子帳戶
     case '004': // 活期儲蓄存款
       return 'purple';
+    case 'F': // 外幣帳戶
     case '007': // 外幣存款
+      return 'orange';
+    case 'S': // 證券戶
       return 'blue';
     case '010': // 定存 (010 科目別包含台外幣定存)
       return '';

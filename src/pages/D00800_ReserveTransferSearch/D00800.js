@@ -19,6 +19,7 @@ import { getAccountsList, getBankCode } from 'utilities/CacheData';
 import SearchIcon from '@material-ui/icons/Search';
 
 import DateRangePicker from 'components/DateRangePicker';
+import uuid from 'react-uuid';
 import { TabField } from './fields/tabField';
 import DetailContent from './components/detailContent';
 import ResultContent from './components/resultContent';
@@ -144,13 +145,13 @@ const D00800 = () => {
     };
 
     const generateTransDate = (data) => {
-      if (!isReserveTab) return `交易日期 : ${dateToString(data.runday)}`; // 「預約轉帳結果」的交易日
+      if (!isReserveTab) return `交易日期 : ${dateToString(data.runDay)}`; // 「預約轉帳結果」的交易日
       if (data.periodic) return `預約轉帳日 : ${generatePeriodText(data)}`; // 「週期性預約交易」的預約轉帳日
       return `預約轉帳日 : ${dateToString(data.nextBookDate)}`; // 「單次預約交易」的預約轉帳日
     };
     return currentList.map((item) => (
       <InformationTape
-        key={item.seqno}
+        key={uuid()} // TODO 拿後端回傳的資訊替代
         topLeft={`${item.receiveBank}-${item.receiveAccountNo}`}
         topRight={currencySymbolGenerator('NTD', parseFloat(item.transferAmount))}
         bottomLeft={generateTransDate(item)}

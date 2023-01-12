@@ -42,7 +42,7 @@ const Avatar = ({
 
   const renderDefaultBackground = () => (
     <div className="default">
-      { name ? <span>{toHalfWidth(name.substring(0, 1))}</span> : <PersonalIcon /> }
+      { name ? <span>{toHalfWidth(name.trim().substring(0, 1))}</span> : <PersonalIcon /> }
     </div>
   );
 

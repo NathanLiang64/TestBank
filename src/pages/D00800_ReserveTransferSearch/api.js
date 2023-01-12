@@ -7,13 +7,32 @@ import { callAPI } from 'utilities/axios';
 // };
 
 /**
- * 查詢客戶信用卡帳單資訊
- * (信用卡子首頁_信用卡資訊)
- * @param {
+ *
+ *
+ * @param {{
  *    accountNo: 帳號
- *    startDay: 查詢起始日 YYYYMMDD
- *    endDay: 查詢截止日 YYYYMMDD
- * }
+ *    startDay: 查詢起始日 // YYYYMMDD
+ *    endDay: 查詢截止日 // YYYYMMDD
+ * }}param
+ * @return {<Promise>{
+ * accountNo: 帳號
+ * cycle: 週期 // "1":單次 "M":每週 "M":每月
+ * cycleNo: 頻率 // 每週星期 {cycleNo} 或是 每月 {cycleNo} 號
+ * rgDay: 預約設定日
+ * startDay: 預約起始日
+ * endDay: 預約結束日
+ * nextBookDate: 下個預約轉帳日
+ * totCnt: 轉帳總次數
+ * successCnt: 目前轉帳成功次數
+ * failureCnt: 目前轉帳失敗次數
+ * receiveBank: 入帳銀行代碼
+ * receiveAccountNo: 入帳帳號
+ * transferAmount: 交易金額
+ * remark: 備註
+ * seqno: 序號
+ * descpt1: 待確認
+ * txCd: 待確認
+ * }}
  */
 // 查詢預約轉帳明細
 export const getReservedTransDetails = async (param) => {
@@ -21,9 +40,24 @@ export const getReservedTransDetails = async (param) => {
   return response.data;
 };
 
+/**
+ *
+ *
+ * @param {{
+ *    accountNo: 帳號
+ *    startDay: 查詢起始日 // YYYYMMDD
+ *    endDay: 查詢截止日 // YYYYMMDD
+ * }}param
+ * @return {<Promise>{
+ * receiveBank: 入帳銀行代碼
+ * receiveAccountNo: 入帳帳號
+ * transferAmount: 交易金額
+ * runDay: 交易日
+ * }}
+ */
 // 查詢預約轉帳結果明細
 export const getResultTransDetails = async (param) => {
-  const response = await callAPI('/api/transfer/reserved/resultDetails', param);
+  const response = await callAPI('/api/transfer/reserved/transResults', param);
   return response.data;
 };
 

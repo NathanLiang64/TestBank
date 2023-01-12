@@ -18,7 +18,7 @@ const ExportBankBookWrapper = styled(Layout)`
         min-height: unset;
         padding-left: 1.2rem;
         padding-right: 1.2rem;
-        padding-bottom: .1rem;
+        padding-bottom: 0.1rem;
         width: unset;
         height: 2.8rem;
         font-size: 1.4rem;
