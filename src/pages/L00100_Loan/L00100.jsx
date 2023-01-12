@@ -22,7 +22,7 @@ import {
 
 import { FuncID } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
-import { getSubSummary, getContract } from './api';
+import { getSubSummary } from './api';
 import { handleSubPaymentHistory } from './utils';
 import PageWrapper, { ContentWrapper } from './L00100.style';
 
@@ -66,9 +66,7 @@ const Page = () => {
       /*
       { icon: <CircleIcon />, title: '部分貸款', onClick: () => {} },
       { icon: <CircleIcon />, title: '全部貸款', onClick: () => {} },
-      */
       { icon: <CircleIcon />, title: '合約下載', onClick: () => { getContract({ account, format: 1 }); } },
-      /*
       { icon: <CircleIcon />, title: '清償證明下載', onClick: () => { getStatment({ accountNo, format: 1 }); } },
       */
     ];

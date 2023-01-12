@@ -45,10 +45,11 @@ const AutomaticBillPayment = () => {
     resolver: yupResolver(validationSchema),
   });
 
-  // 確認有無信用卡
+  // 確認有無Bankee信用卡
   const getCardsData = async () => {
     const cardRes = await getCards();
-    if (!cardRes.cards.length) {
+    const bankeeCards = cardRes.cards.filter((card) => card.isBankeeCard === 'Y');
+    if (!bankeeCards.length) {
       showCustomPrompt({
         message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
         onClose: closeFunc,
@@ -121,18 +122,20 @@ const AutomaticBillPayment = () => {
 
   const AddForm = () => (
     <form onSubmit={handleSubmit(onSubmit)} className="drawerContainer">
-      <DropdownField
-        labelName="扣款帳號"
-        name="account"
-        control={control}
-        options={accountOptions}
-      />
-      <DropdownField
-        labelName="扣款方式"
-        name="isFullPay"
-        control={control}
-        options={isFullPayOptions}
-      />
+      <div style={{ display: 'grid', gridGap: '2rem'}}>
+        <DropdownField
+          labelName="扣款帳號"
+          name="account"
+          control={control}
+          options={accountOptions}
+        />
+        <DropdownField
+          labelName="扣款方式"
+          name="isFullPay"
+          control={control}
+          options={isFullPayOptions}
+        />
+      </div>
       <Accordion space="both" title="自動扣繳約定條款">
         自動扣繳約定條款
       </Accordion>

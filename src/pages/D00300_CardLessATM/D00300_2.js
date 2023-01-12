@@ -62,7 +62,7 @@ const CardLessATM2 = ({ location }) => {
           <InformationList title="申請時間" content={dateTimeFormat(startDateTime)} />
           <InformationList title="交易類型" content="無卡提款" />
           <InformationList title="提款帳號" content={accountFormatter(account)} />
-          <Accordion space="both" open>
+          <Accordion space="both">
             <ul>
               <li>本交易限時15分鐘內有效，請於交易有效時間內，至本行提供無卡提款功能之ATM完成提款。若逾時請重新申請。(實際交易有效時間以本行系統時間為準)。</li>
               <li>

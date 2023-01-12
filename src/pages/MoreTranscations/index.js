@@ -57,6 +57,7 @@ const MoreTranscations = () => {
           <AccountDetails
             selectedAccount={account}
             onSearch={updateTransactions}
+            hideCopyIcon
           />
         ) : null}
       </div>

@@ -141,7 +141,7 @@ const DepositPlusDetail = () => {
       <Layout title="各項活動說明" goBackFunc={() => history.goBack()}>
         <div>
           {location.state.bonusDetail.map((detail) => (
-            <ActivityCard key={detail} title={detail.promotionName} detail={detail.brief} />
+            <ActivityCard key={location.state.bonusDetail.indexOf(detail)} title={detail.promotionName} detail={detail.brief} />
           ))}
         </div>
       </Layout>

@@ -80,7 +80,7 @@ export const DrawerContentWrapper = styled.div`
 
   .agreeWording {
     margin: 2.4rem 0;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     color: ${({ theme }) => theme.colors.text.dark};
 
     p {

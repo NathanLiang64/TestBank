@@ -45,6 +45,10 @@ const DebitCardWrapper = styled.div`
       .account {
         font-weight: 500;
       }
+
+      .noDisplay {
+        display: none;
+      }
     }
   }
 

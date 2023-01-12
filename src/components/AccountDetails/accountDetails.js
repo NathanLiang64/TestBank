@@ -25,7 +25,7 @@ import AccountDetailsWrapper, { DownloadDrawerWrapper } from './accountDetails.s
  * mode=1 -> C00600
  */
 const AccountDetails = ({
-  selectedAccount, onSearch, mode = 0,
+  selectedAccount, onSearch, mode = 0, hideCopyIcon = false,
 }) => {
   const dispatch = useDispatch();
 
@@ -226,6 +226,7 @@ const AccountDetails = ({
         balance={account.balance}
         dollarSign={account.currency}
         color={account.cardColor}
+        hideCopyIcon={hideCopyIcon}
       />
     </div>
   );
@@ -292,7 +293,7 @@ const AccountDetails = ({
     return (
       <div className="tabsArea">
         <FEIBTabContext value={currMonth ?? items[0]}>
-          <FEIBTabList onChange={(event, id) => setCurrMonth(id)} $size="small" className="tabList">
+          <FEIBTabList onChange={(event, id) => setCurrMonth(id)} $size="small" className="tabList" $isSingleTab={items.length === 1}>
             { items.map((month) => (
               <FEIBTab
                 key={month}
