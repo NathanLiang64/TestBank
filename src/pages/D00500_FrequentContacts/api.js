@@ -1,6 +1,7 @@
 import { callAPI } from 'utilities/axios';
 import { setFreqAccts } from 'stores/reducers/CacheReducer';
 import store from 'stores/store';
+import { getBankCode } from 'utilities/CacheData';
 
 /**
  * 查詢用戶自設的常用轉入帳號清單。
@@ -101,12 +102,16 @@ export const updateFrequentAccount = async (newAccount, condition) => {
   // 如果編輯失敗，則回傳原來的 freqAccts
   if (!response.isSuccess) return freqAccts;
   const headshotId = response.data;
-
   // 更新常用轉入帳號快取。
   const index = freqAccts.findIndex((account) => account.bankId === condition.orgBankId && account.acctId === condition.orgAcctId);
   const account = freqAccts[index];
-  if (isChangeAccount) account.bankId = newAccount.bankId;
-  if (isChangeAccount) account.acctId = newAccount.acctId;
+  if (isChangeAccount) {
+    const bankCodes = await getBankCode();
+    const foundBank = bankCodes.find(({bankNo}) => bankNo === newAccount.bankId);
+    if (foundBank) account.bankName = foundBank.bankName;
+    account.bankId = newAccount.bankId;
+    account.acctId = newAccount.acctId;
+  }
   if (newAccount.nickName) account.nickName = newAccount.nickName;
   if (newAccount.email) account.email = newAccount.email;
   if (newAccount.headshot) account.headshot = headshotId;

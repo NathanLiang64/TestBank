@@ -262,10 +262,11 @@ const C00300 = () => {
                 funcList={[
                   { fid: FuncID.D00100_臺幣轉帳, title: '轉帳' },
                   { fid: 'D00300', title: '無卡提款', hidden: (selectedAccount.acctType !== 'M') },
+                  { fid: FuncID.E00100_換匯, title: '換匯', hidden: (selectedAccount.balance <= 0) },
                 ]}
                 moreFuncs={[
                   // { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false }, // TODO: 此階段隱藏
-                  { fid: FuncID.E00100_換匯, title: '換匯', icon: 'exchange', enabled: (selectedAccount.balance > 0) },
+                  // { fid: FuncID.E00100_換匯, title: '換匯', icon: 'exchange', enabled: (selectedAccount.balance > 0) },
                   { fid: 'DownloadCover', title: '存摺封面下載', icon: 'coverDownload' },
                   { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
                 ]}
