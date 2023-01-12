@@ -157,9 +157,7 @@ const T00300 = () => {
           </div>
           )}
         </div>
-
-        {/* TODO: 使用條款內容確認 */}
-        <Accordion title="使用條款" space="both">
+        <Accordion space="both">
           <T00300AccordionContent />
         </Accordion>
       </T00300Wrapper>

@@ -36,6 +36,7 @@ import DebitCardWrapper from './debitCard.style';
 * 12.moreDefault -> 是否顯示更多功能清單，預設為顯示
 * 13.dollarSign -> 貨幣符號，預設為 '$'
 * 14.color -> 卡片顏色，預設紫色
+* 15. hideCopyIcon -> true時隱藏複製帳號按鈕，預設為false
 * */
 
 const DebitCard = ({
@@ -58,6 +59,7 @@ const DebitCard = ({
   freeWithdrawRemain,
   dollarSign,
   hideIcon,
+  hideCopyIcon = false,
 }) => {
   const dispatch = useDispatch();
   const model = accountObj ?? {
@@ -154,9 +156,11 @@ const DebitCard = ({
       ) : (
         <>
           {/* 將分行代碼轉為分行名稱 */}
-          <p className="branch">{model.branchName ?? ''}</p>
-          <p className="account">{accountFormatter(model.accountNo)}</p>
-          <CopyTextIconButton copyText={model.accountNo} />
+          <p>
+            <span className={model.branchName ? 'branch' : 'noDisplay'}>{model.branchName}</span>
+            <span className="account">{accountFormatter(model.accountNo)}</span>
+          </p>
+          {!hideCopyIcon && <CopyTextIconButton copyText={model.accountNo} />}
         </>
       )}
     </div>

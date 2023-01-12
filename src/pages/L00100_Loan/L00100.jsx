@@ -1,5 +1,5 @@
 /* eslint react/no-array-index-key: 0 */
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import uuid from 'react-uuid';
@@ -22,7 +22,7 @@ import {
 
 import { FuncID } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
-import { getSubSummary, getContract } from './api';
+import { getSubSummary } from './api';
 import { handleSubPaymentHistory } from './utils';
 import PageWrapper, { ContentWrapper } from './L00100.style';
 
@@ -32,6 +32,7 @@ const uid = uuid();
  * L00100 貸款 首頁
  */
 const Page = () => {
+  const detailsRef = useRef();
   const history = useHistory();
   const dispatch = useDispatch();
   const {startFunc} = useNavigation();
@@ -66,9 +67,7 @@ const Page = () => {
       /*
       { icon: <CircleIcon />, title: '部分貸款', onClick: () => {} },
       { icon: <CircleIcon />, title: '全部貸款', onClick: () => {} },
-      */
       { icon: <CircleIcon />, title: '合約下載', onClick: () => { getContract({ account, format: 1 }); } },
-      /*
       { icon: <CircleIcon />, title: '清償證明下載', onClick: () => { getStatment({ accountNo, format: 1 }); } },
       */
     ];
@@ -162,7 +161,20 @@ const Page = () => {
     // transactions 依照日期排序（大 -> 小）
     const sortedTransactions = detail.sort((a, b) => parseInt(b.txnDate, 10) - parseInt(a.txnDate, 10));
 
-    return sortedTransactions.slice(0, 3).map((t, i) => (
+    // TODO: 計算顯示明細數量方法寫成公用方法
+
+    // 計算可顯示的明細項目數量。
+    const yPos = detailsRef?.current?.getBoundingClientRect()?.y;
+    const detailAreaHeight = yPos ? window.innerHeight - yPos : 430; // 如果沒有，預設顯示 5 筆
+
+    // 根據剩餘高度計算要顯示的卡片數量，計算裝置可容納的交易明細卡片數量
+    const list = [];
+    const computedCount = Math.floor((detailAreaHeight - 30) / 80);
+    for (let i = 0; (i < computedCount && i < sortedTransactions.length); i++) {
+      list.push(sortedTransactions[i]);
+    }
+
+    return list.map((t, i) => (
       <button
         key={`${uid}-t${i}`}
         type="button"
@@ -192,7 +204,7 @@ const Page = () => {
       <ContentWrapper key={`${uid}-a${i}`}>
         <ThreeColumnInfoPanel content={renderBonusContents(loan)} />
 
-        <div>
+        <div ref={detailsRef}>
           <div>{renderTransactions(detailMap[i], loan)}</div>
           <div className="toolbar">
             {detailMap[i] && detailMap[i].length > 0 && (

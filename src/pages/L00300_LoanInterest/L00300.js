@@ -15,7 +15,7 @@ import EmptyData from 'components/EmptyData';
 import Loading from 'components/Loading';
 import { FuncID } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
-import { getSubPaymentHistory } from './api';
+import { downloadPaymentHistory, getSubPaymentHistory } from './api';
 
 /* Styles */
 import LoanInterestWrapper from './L00300.style';
@@ -84,29 +84,41 @@ const LoanInterest = () => {
     );
   };
 
-  const renderEditList = () => (
-    <ul className="noticeEditList downloadItemList">
-      <li onClick={() => closeDrawer()}>
-        <span>
-          下載 PDF
-        </span>
-        <img className="downloadImg" src={DownloadIcon} alt="" />
-      </li>
-      <li onClick={() => closeDrawer()}>
-        <span>
-          下載 EXCEL
-        </span>
-        <img className="downloadImg" src={DownloadIcon} alt="" />
-      </li>
-    </ul>
-  );
-
   // 開關編輯選單
   const handleOpenDrawer = () => {
-    showDrawer(
-      '',
-      renderEditList(),
+    /**
+     * 下載交易明細清單
+     * @param {*} fileType 下載檔案類型, 1:PDF, 2:EXCEL(CSV)
+     */
+    const handleDownloadDetails = (fileType) => {
+      const param = {
+        account: cardData.account,
+        subNo: cardData.subNo,
+        startDate: dateToYMD(getStartDate(dateRange)),
+        endDate: dateToYMD(),
+      };
+      downloadPaymentHistory({param, fileType});
+
+      closeDrawer();
+    };
+
+    const renderEditList = (
+      <ul className="noticeEditList downloadItemList">
+        <li onClick={() => handleDownloadDetails(1)}>
+          <span>
+            下載 PDF
+          </span>
+          <img className="downloadImg" src={DownloadIcon} alt="" />
+        </li>
+        <li onClick={() => handleDownloadDetails(2)}>
+          <span>
+            下載 EXCEL
+          </span>
+          <img className="downloadImg" src={DownloadIcon} alt="" />
+        </li>
+      </ul>
     );
+    showDrawer('', renderEditList);
   };
 
   useEffect(async () => {
@@ -133,6 +145,7 @@ const LoanInterest = () => {
             dollarSign={cardData?.currency || ''}
             transferTitle=""
             color="lightPurple"
+            hideCopyIcon
           />
         </div>
         <div className="contentArea">
