@@ -1,4 +1,4 @@
-import { callAPI } from 'utilities/axios';
+import { callAPI, download } from 'utilities/axios';
 
 /**
  * 查詢分帳還款紀錄
@@ -27,4 +27,38 @@ import { callAPI } from 'utilities/axios';
 export const getSubPaymentHistory = async (param) => {
   const response = await callAPI('/api/loan/v1/getSubPaymentHistory', param);
   return response.data;
+};
+
+/**
+ * 下載繳款紀錄 PDF & Excel
+ *
+ * @param token
+ * @param rq
+ * {
+ *  account: 放款帳號(每人一個) ex: 02905000006466
+ *  subNo: 分帳序號 ex: 0001
+ *  startDate: 查詢起日 (西元年 20220131) 統一用西元年
+ *  endDate: 查詢迄日 (西元年 20220228) 統一用西元年
+ * }
+ *
+ * @return
+ * {
+ *  filename: 檔案名稱 (例如: "776f367b57b14ddb894f9912f67ece11.pdf")
+ * }
+ * "下載繳款紀錄PDF": /api/loan/v1/downloadPaymentHistory.pdf
+ * "下載繳款紀錄Excel": /api/loan/v1/downloadPaymentHistory.xlsx
+*/
+export const downloadPaymentHistory = async ({param, fileType}) => {
+  let downloadUrl;
+
+  switch (fileType) {
+    case 1:
+      downloadUrl = '/api/loan/v1/downloadPaymentHistory.pdf';
+      break;
+    default:
+      downloadUrl = '/api/loan/v1/downloadPaymentHistory.xlsx';
+      break;
+  }
+
+  await download(downloadUrl, param);
 };

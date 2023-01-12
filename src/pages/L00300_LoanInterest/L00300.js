@@ -15,7 +15,7 @@ import EmptyData from 'components/EmptyData';
 import Loading from 'components/Loading';
 import { FuncID } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
-import { getSubPaymentHistory } from './api';
+import { downloadPaymentHistory, getSubPaymentHistory } from './api';
 
 /* Styles */
 import LoanInterestWrapper from './L00300.style';
@@ -91,8 +91,13 @@ const LoanInterest = () => {
      * @param {*} fileType 下載檔案類型, 1:PDF, 2:EXCEL(CSV)
      */
     const handleDownloadDetails = (fileType) => {
-      console.log('L00300 handleOpenDrawer handleDownloadDetails', fileType === 1 ? 'PDF' : 'EXCEL');
-      // TODO: 下載檔案URL
+      const param = {
+        account: cardData.account,
+        subNo: cardData.subNo,
+        startDate: dateToYMD(getStartDate(dateRange)),
+        endDate: dateToYMD(),
+      };
+      downloadPaymentHistory({param, fileType});
 
       closeDrawer();
     };
@@ -140,6 +145,7 @@ const LoanInterest = () => {
             dollarSign={cardData?.currency || ''}
             transferTitle=""
             color="lightPurple"
+            hideCopyIcon
           />
         </div>
         <div className="contentArea">
