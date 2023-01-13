@@ -56,8 +56,8 @@ const CreditCardPage = () => {
 
   // 編輯信用卡明細備註的 Handler
   const onTxnNotesEdit = async (payload, isBankeeCard) => {
-    const { result } = await updateTxnNotes(payload);
-    if (!result) return;
+    const { isSuccess } = await updateTxnNotes(payload);
+    if (!isSuccess) return;
     // updateTxNotes API 打成功才更新畫面
     setTransactionMap((prevMap) => {
       const key = isBankeeCard ? 0 : 1;
@@ -198,15 +198,13 @@ const CreditCardPage = () => {
             </div>
             )}
           </DetailDialogContentWrapper>
-          <div style={{minHeight: '20rem'}}>
-            <CreditCardTxsList
-              showAll={false}
-              card={cardInfo}
-              go2MoreDetails={() => go2Func(FuncID.R00100, {card: cardInfo, usedCardLimit, transactions: transactionMap[index]})}
-              transactions={transactionMap[index]}
-              onTxnNotesEdit={onTxnNotesEdit}
-            />
-          </div>
+
+          <CreditCardTxsList
+            card={cardInfo}
+            onMoreFuncClick={() => go2Func(FuncID.R00100, {card: cardInfo, usedCardLimit, transactions: transactionMap[index]})}
+            transactions={transactionMap[index]}
+            onTxnNotesEdit={onTxnNotesEdit}
+          />
         </div>
       ))
     );
@@ -217,6 +215,7 @@ const CreditCardPage = () => {
     dispatch(setWaittingVisible(true));
     const keepData = await loadFuncParams();
     if (keepData) {
+      // Bug 若在 R00100 修改備註再回來，這邊的備註不會被更新，是否連交易紀錄也要被快取?
       setTransactionMap(keepData.transactionMap);
       setCardsInfo(keepData.cardsInfo);
       setUsedCardLimit(keepData.usedCardLimit);

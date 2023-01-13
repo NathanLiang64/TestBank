@@ -66,10 +66,9 @@ const TransferResult = (props) => {
           content={`*********${model.transOut.account.substring(9)}`}
           remark={model.transOut.alias}
         />
-        {/* 只有「預約轉帳」才需要出現 */}
-        {model.booking.mode === 1 && (
-          <InformationList title="時間" content={getTransDate(model.booking)} />
-        )}
+        {/* 只有「預約轉帳」才需要出現 -> 目前需求是都要顯示 */}
+        <InformationList title="時間" content={getTransDate(model.booking)} />
+
         {model.booking.mode === 1 && model.booking.multiTimes === '*' && (
           <InformationList title="週期" content={getCycleDesc(model.booking)} remark={`預計轉帳${model.booking.transTimes}次`} />
         )}
@@ -77,15 +76,27 @@ const TransferResult = (props) => {
       <section className="transactionDetailArea">
         <Accordion title="詳細交易" space="bottom">
           {/* model.result.fiscCode 財金序號(跨轉才有) */}
-          <InformationList title="帳戶餘額" content={`$${toCurrency(model.transOut.balance)}`} remark={model.transOut.alias} />
-          {model.booking.mode === 0 && model.result.isCrossBank && (
-            <InformationList title="手續費" content={`$${model.result.fee}`} remark={`跨轉優惠:剩餘${model.transOut.freeTransferRemain}次`} />
-          )}
+          <InformationList
+            title="帳戶餘額"
+            content={`$${toCurrency(model.transOut.balance)}`}
+            remark={model.transOut.alias}
+          />
+          {/* 目前需求: 無論是否為跨行轉帳，都顯示手續費 */}
+          <InformationList
+            title="手續費"
+            content={`$${model.result.fee}`}
+            remark={model.result.isCrossBank ? `跨轉優惠:剩餘${model.transOut.freeTransferRemain}次` : ''}
+          />
           <InformationList title="備註" content={model.memo} />
         </Accordion>
       </section>
     </>
   );
+
+  const showExistedInfo = async () => {
+    const message = '這個帳號已加入您的常用帳號名單中嚕！';
+    await showInfo(message, () => dispatch(setDrawerVisible(false)));
+  };
 
   /**
    * 處理UI流程：新增帳戶
@@ -93,13 +104,10 @@ const TransferResult = (props) => {
   const createRepeatableAccount = async () => {
     const onFinished = async (newAcct) => {
       dispatch(setWaittingVisible(true));
-      const headshotId = await addFrequentAccount(newAcct);
+      const freqAccts = await addFrequentAccount(newAcct);
       dispatch(setWaittingVisible(false));
-      if (headshotId) {
-        const message = '這個帳號已加入您的常用帳號名單中嚕！';
-        await showInfo(message, () => dispatch(setDrawerVisible(false)));
-      }
-      dispatch(setWaittingVisible(false));
+      // 如果新增已存在的帳號，freqAccts 會是 null
+      if (freqAccts) showExistedInfo();
     };
 
     // 給 AccountEditor 預設值，且直接進到設定暱稱。
@@ -112,7 +120,10 @@ const TransferResult = (props) => {
     await showDrawer('新增常用帳號', (<AccountEditor initData={acctData} onFinished={onFinished} />));
   };
 
-  /* 呼叫裝置開啟 通話(02-80731166)/取消 介面 */
+  /**
+   * 呼叫裝置開啟 通話(02-80731166)/取消 介面
+   * Bug : 因非 http/https 開頭的 href 會導致 android 無法運作，待討論是否交給原生執行
+   */
   const callServiceTel = () => {
     const link = document.createElement('a');
     link.href = 'tel:0280731166';

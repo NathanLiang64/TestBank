@@ -1,7 +1,7 @@
 import { callAPI } from 'utilities/axios';
 import { setFreqAccts } from 'stores/reducers/CacheReducer';
 import store from 'stores/store';
-import { getBankCode } from 'utilities/CacheData';
+import { showPrompt } from 'utilities/MessageModal';
 
 /**
  * 查詢用戶自設的常用轉入帳號清單。
@@ -49,6 +49,14 @@ export const addFrequentAccount = async (account) => {
    */
   // const {freqAccts} = store.getState()?.CacheReducer;
   const freqAccts = await getFrequentAccount();
+  // 先檢查要加入的帳號是否已經存在於 freqAccts 內
+  const existedAcct = freqAccts.find(
+    ({ bankId, acctId }) => bankId === account.bankId && acctId === account.acctId,
+  );
+  if (existedAcct) {
+    await showPrompt('此帳號資料已存在');
+    return null;
+  }
   const response = await callAPI('/api/transfer/frequentAccount/v1/add', account);
   // 如果新增失敗，則回傳原來的 freqAccts
   if (!response.isSuccess) return freqAccts;
@@ -90,14 +98,22 @@ export const addFrequentAccount = async (account) => {
  * }]} 傳回刪更新後的清單。
  */
 export const updateFrequentAccount = async (newAccount, condition) => {
+  const freqAccts = await getFrequentAccount();
+  const repeatedAcct = freqAccts.find(
+    ({ bankId, acctId }) => (condition.orgBankId !== bankId || condition.orgAcctId !== acctId)
+      && bankId === newAccount.bankId
+      && acctId === newAccount.acctId,
+  );
+  if (repeatedAcct) {
+    await showPrompt('此帳號資料已存在');
+    return null;
+  }
   const isChangeAccount = (newAccount.bankId !== condition.orgBankId || newAccount.acctId !== condition.orgAcctId);
   const request = {
     ...newAccount,
     ...condition,
   };
   delete request.bankName;
-  // const {freqAccts} = store.getState()?.CacheReducer;
-  const freqAccts = await getFrequentAccount();
   const response = await callAPI('/api/transfer/frequentAccount/v1/update', request);
   // 如果編輯失敗，則回傳原來的 freqAccts
   if (!response.isSuccess) return freqAccts;
@@ -106,12 +122,10 @@ export const updateFrequentAccount = async (newAccount, condition) => {
   const index = freqAccts.findIndex((account) => account.bankId === condition.orgBankId && account.acctId === condition.orgAcctId);
   const account = freqAccts[index];
   if (isChangeAccount) {
-    const bankCodes = await getBankCode();
-    const foundBank = bankCodes.find(({bankNo}) => bankNo === newAccount.bankId);
-    if (foundBank) account.bankName = foundBank.bankName;
     account.bankId = newAccount.bankId;
     account.acctId = newAccount.acctId;
   }
+  if (newAccount.bankName) account.bankName = newAccount.bankName;
   if (newAccount.nickName) account.nickName = newAccount.nickName;
   if (newAccount.email) account.email = newAccount.email;
   if (newAccount.headshot) account.headshot = headshotId;

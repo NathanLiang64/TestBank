@@ -30,7 +30,6 @@ const R00100 = () => {
       cards.map(({ cardNo }) => getTransactionPromise(cardNo)),
     );
     const flattedTransactions = transactionsArray.flat();
-    // setTransactions(flattedTransactions);
     return flattedTransactions;
   };
 
@@ -48,7 +47,6 @@ const R00100 = () => {
     let fetchedCardInfo = null;
     let fetchedTransactions = null;
     const funcParams = await loadFuncParams();
-
     if (funcParams) {
       fetchedCardInfo = {...funcParams.card, usedCardLimit: funcParams.usedCardLimit};
       fetchedTransactions = funcParams.transactions;
@@ -87,7 +85,6 @@ const R00100 = () => {
           <div className="txn-wrapper">
             {!!cardInfo && (
             <CreditCardTxsList
-              showAll
               card={cardInfo}
               transactions={transactions}
               onTxnNotesEdit={onTxnNotesEdit}
