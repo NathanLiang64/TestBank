@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 
@@ -6,13 +5,12 @@ import { useEffect, useState } from 'react';
 import Layout from 'components/Layout/Layout';
 import { FEIBSwitch, FEIBSwitchLabel } from 'components/elements';
 import Accordion from 'components/Accordion';
-import EditIcon from 'assets/images/icons/editIcon.svg';
 import {
   closeDrawer, showAnimationModal, showDrawer,
 } from 'utilities/MessageModal';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { getQLStatus, transactionAuth } from 'utilities/AppScriptProxy';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 import { useQLStatus } from 'hooks/useQLStatus';
 import { getSettingInfo, changeStatus } from './api';
 
@@ -30,8 +28,8 @@ const T00300 = () => {
 
   const [model, setModel] = useState({});
 
-  const isUnlock = (model?.status !== '01'); // 表示已開通非約轉, '01'表示尚未開通
-  const isBound = (model?.status === '03'); // 表示已綁定非約轉手機號碼
+  const isUnlock = (model?.status !== 1); // 表示已開通非約轉, 1.表示尚未開通
+  const isBound = (model?.status === 3); // 表示已綁定非約轉手機號碼
 
   const authAndChangeStatus = async (authCode, newMobile) => {
     const transRes = await transactionAuth(authCode, newMobile);
@@ -58,12 +56,12 @@ const T00300 = () => {
    */
   const handleDrawerConfirm = async (newMobile) => {
     let isSuccess;
-    if (isUnlock && model.status !== '04') {
+    if (isUnlock && model.status !== 4) {
       if (newMobile !== model.mobile) {
-        isSuccess = await authAndChangeStatus(AuthCode.T00300.EDIT, newMobile); // status =03, 不變
+        isSuccess = await authAndChangeStatus(AuthCode.T00300.EDIT, newMobile); // status = 3, 不變
       }
     } else {
-      isSuccess = await authAndChangeStatus(AuthCode.T00300.APPLY, newMobile); // status 由 01 變為 03
+      isSuccess = await authAndChangeStatus(AuthCode.T00300.APPLY, newMobile); // status 由 1 變為 3
     }
 
     if (isSuccess) {
@@ -100,12 +98,12 @@ const T00300 = () => {
     if (QLResult) { // 點擊switch時檢查裝置綁定
       if (!isBound) {
         // 開通 or 申請+開通流程
-        // 若原狀態為 01.未開發 則表示第一次開通，只有此情況下不可變更綁定門號。
+        // 若原狀態為 1.未開發 則表示第一次開通，只有此情況下不可變更綁定門號。
         // 完成綁定門號開通後，status=3.已開通；之後的開關切換就是狀態3/4的互換。
-        showSettingDrawer(isUnlock); // status 由 01/04 變為 03.開通
+        showSettingDrawer(isUnlock); // status 由 1,4 變為 3.開通
       } else {
         /* 取消綁定(即：4.註銷) */
-        await authAndChangeStatus(AuthCode.T00300.CLOSE); // status 由 03 變為 04.註銷
+        await authAndChangeStatus(AuthCode.T00300.CLOSE); // status 由 3 變為 4.註銷
       }
       setModel({...model}); // 更新畫面。
     } else showUnbondedMsg();
