@@ -120,13 +120,6 @@ export const CustomCheckBoxField = ({
     }
   };
 
-  useEffect(() => {
-    
-    // 觸發S00100_1頁面的數字的改變更新
-    callShareEvent(['S00100_1_setCheckedSize', getRealCheckedCount()]);
-    
-  }, []);
-
   return (
     <FavoriteBlockButtonStyle
       id={`favoriteBlockButton.${actKey}`}

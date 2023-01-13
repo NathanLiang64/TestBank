@@ -14,7 +14,7 @@ import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReduce
 import { useDispatch } from 'react-redux';
 import { DropdownField } from 'components/Fields';
 import { FuncID } from 'utilities/FuncID';
-import { getFavoriteSettingList, modifyFavoriteItem, deleteFavoriteItem } from './api';
+import { getFavoriteList, modifyFavoriteItem, deleteFavoriteItem } from './api';
 import { CustomCheckBoxField } from './fields/customCheckboxField';
 import {
   calcSelectedLength, extractGroupItems, generateReorderList, findExistedValue, generateTrimmedList, cardLessOptions,
@@ -23,24 +23,15 @@ import {
 import { validationSchema } from './validationSchema';
 
 const Favorite2New = ({
-  favoriteList, isEditAction, addPoposition
+  favoriteList, isEditAction, addPoposition, favoriteSettingList
 }) => {
-  const [favoriteSettingList, setFavoriteSettingList] = useState([]);
   const [tabId, setTabId] = useState('C');
   const [showTip, setShowTip] = useState(false);
   const sectionsRef = useRef([]);
   const mainContentRef = useRef();
   const dispatch = useDispatch();
 
-  // 這是用來防止元件已經umount, 卻有umonut前仍未執行的事件在等待執行的情況發生
-  const mountedRef = useRef(true);
-  useEffect(() => {
-    return () => { 
-      mountedRef.current = false
-    }
-  }, []);
-
-
+ 
   // 這個HOOK是專門設計來讓模組內所有子元件共享事件, 用來取代callback function當props傳來傳去的做法
   // shareEvent: 用來監聽觸發
   // callShareEvent: 用來觸發
@@ -78,6 +69,9 @@ const Favorite2New = ({
           }
     });
 
+    // 更新下方欄位的編輯完成括號裡的數字
+    setcheckedArrayLength( alreadyCheckedItemBeforeEdit.length - 2 );
+
     // console.log('======== usedPostions========');
     // console.log(usedPostions);
     // console.log('=============================');
@@ -106,6 +100,17 @@ const Favorite2New = ({
 
     await modifyFavoriteItem({ actKey, position: parseInt(addPoposition, 10) });
 
+    const rows = await getFavoriteList();
+
+    // 在處理好無卡提款跳窗後 把跳窗關掉
+    if( actKey == FuncID.D00300 ){
+
+      dispatch(setModalVisible(false));
+    }
+
+    // 將項目更新的結果 傳回S00100頁面 更新list cache
+    callShareEvent(['S00100_updateMemoFavoriteList', rows]);
+
     // 觸發S00100頁面的數字的back2MyFavorite事件
     callShareEvent(['S00100_back2MyFavorite']);
   };
@@ -129,16 +134,35 @@ const Favorite2New = ({
         }),
       );
 
+      let isAddCardless = false;
+
       // 加入所有勾選的項目
       await Promise.all(
         usedPostions.map((actKey, position) => {
 
-              return modifyFavoriteItem({ actKey, position: parseInt(position, 10) })
+          if( actKey == FuncID.D00300 ){
+    
+            isAddCardless = true;
+          }
+
+          return modifyFavoriteItem({ actKey, position: parseInt(position, 10) })
         }),
       );
+
+      const rows = await getFavoriteList();
+
+      // 將項目更新的結果 傳回S00100頁面 更新list cache
+      callShareEvent(['S00100_updateMemoFavoriteList', rows]);
     // }
 
     dispatch(setWaittingVisible(false));
+
+
+    // 在處理好無卡提款跳窗後 把跳窗關掉
+    if( isAddCardless ){
+      
+      dispatch(setModalVisible(false));
+    }
 
     // 觸發S00100頁面的數字的back2MyFavorite事件
     callShareEvent(['S00100_back2MyFavorite']);
@@ -157,8 +181,6 @@ const Favorite2New = ({
       ),
       onOk:cardLessHandleSubmit(async (values) => {
         console.log('values', values); // 待 無卡提款設定 API 開發完畢
-
-        dispatch(setModalVisible(false));
         
         okCallback();
       }),
@@ -251,21 +273,6 @@ const Favorite2New = ({
       dispatch(setWaittingVisible(false));
     })();
   };
-
-  // 拿取 favoriteSettingList
-  useEffect(async () => {
-    try {
-
-      const res = await getFavoriteSettingList();
-
-      // mountedRef is used here to indicate if the component is still mounted. And if so, continue the async call to update component state, otherwise, skip them.
-      if (!mountedRef.current) return null;
-      
-      if (Array.isArray(res) && res?.length) setFavoriteSettingList(res);
-    } catch (err) {
-      console.log('編輯我的最愛 err', err);
-    }
-  }, []);
 
   //  當 Tip 出現後 1 秒將其取消
   useEffect(() => {
