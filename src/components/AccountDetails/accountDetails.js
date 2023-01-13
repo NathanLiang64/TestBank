@@ -187,7 +187,12 @@ const AccountDetails = ({
     const handleDownloadDetails = (fileType) => {
       // dispatch(setWaittingVisible(true)); // BUG : 打開、再關閉後，查詢條件會被清掉。
       dispatch(setDrawerVisible(false));
-      getDepositBook(fileType, condition);
+      const dateAdjustedCondition = {
+        ...condition,
+        endDate: dateToString(condition.endDate, ''),
+        startDate: dateToString(condition.startDate, ''),
+      };
+      getDepositBook(fileType, dateAdjustedCondition);
       // dispatch(setWaittingVisible(false));
     };
 

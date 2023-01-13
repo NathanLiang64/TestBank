@@ -80,10 +80,15 @@ const DetailCardWrapper = styled.div`
     }
   }
 
+  .description {
+    word-wrap: break-word;
+  }
+
   .amount {
     text-align: right;
-    position: absolute;
+    margin-left: auto;
     right: 1.2rem;
+    min-width: 6.5rem;
     
     h4 {
       font-weight: 500;
