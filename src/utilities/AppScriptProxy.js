@@ -465,7 +465,7 @@ async function getQLStatus() {
     return {
       result: true,
       QLStatus: testData.mid ? '1' : '0',
-      QLType: `${testData.qlMode ?? 1}`,
+      QLType: `${(testData.qlMode ?? 0) + 1}`,
     };
   });
 }

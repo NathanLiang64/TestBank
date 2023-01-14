@@ -43,8 +43,10 @@ export const getBankCode = async () => {
   let {banks} = await loadCacheData();
   if (!banks) {
     const response = await callAPI('/api/transfer/queryBank');
-    banks = response.data;
-    store.dispatch(setBanks(banks));
+    if (response.isSuccess) {
+      banks = response.data;
+      store.dispatch(setBanks(banks));
+    }
   }
   return banks;
 };
@@ -61,8 +63,10 @@ export const getBranchCode = async () => {
   let {branches} = await loadCacheData();
   if (!branches) {
     const response = await callAPI('/api/v1/getAllBranches');
-    branches = response.data;
-    store.dispatch(setBranches(branches));
+    if (response.isSuccess) {
+      branches = response.data;
+      store.dispatch(setBranches(branches));
+    }
   }
   return branches;
 };
@@ -95,10 +99,11 @@ const loadAccountsList = async () => {
   const Promise1 = callAPI('/api/deposit/v1/getAccounts', 'MSFC');
   const Promise2 = getBranchCode();
   return await Promise.allSettled([Promise1, Promise2]).then((result) => {
-    const accounts = result[0].value.data;
-    const branches = result[1].value;
+    if (!result[0].value.isSuccess) return null;
 
+    const accounts = result[0].value.data;
     return accounts.map((acct) => {
+      const branches = result[1].value;
       const branchId = acct.account.substring(0, 3);
       return {
         acctType: acct.acctType,

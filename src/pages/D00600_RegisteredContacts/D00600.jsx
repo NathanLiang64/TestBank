@@ -48,7 +48,7 @@ const Page = () => {
     // TODO 未指定帳號時，應改用頁韱分類。
     const request = {
       accountNo: bindAcct,
-      includeSelf: (startParams.selectorMode ?? false), // 還要加上同ID互轉的帳號, 必需 同幣別。
+      includeSelf: (startParams?.selectorMode ?? false), // 還要加上同ID互轉的帳號, 必需 同幣別。
     };
     getAgreedAccount(request).then(async (accts) => {
       setAccounts(accts);

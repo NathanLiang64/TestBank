@@ -2,7 +2,7 @@ import { callAPI } from 'utilities/axios';
 
 /**
  * 檢查無卡提款狀態
- * @returns {Promisr<String>} 無卡提款狀態。 0-未申請 1-已申請未開通 2-已開通 3-已註銷 4-已失效 5-其他
+ * @returns {Promisr<Number>} 無卡提款狀態。 0-未申請 1-已申請未開通 2-已開通 3-已註銷 4-已失效 5-其他
  */
 export const getCardlessWdStatus = async () => {
   const response = await callAPI('/api/cardlessWD/getStatus');
@@ -23,7 +23,6 @@ export const cardLessWithdrawApply = async (param) => {
  *    message: 回傳訊息 例如: 'E660: 申請不准'
  *    chgPwMessage: 空白表示成功
  * }
- * @throws Exception
  */
 export const cardLessWithdrawActivate = async (param) => {
   const response = await callAPI('/api/cardlessWD/activate', param);
@@ -42,7 +41,6 @@ export const cardLessWithdrawActivate = async (param) => {
  *    addrStreet:   通訊地址(街道路)   g0101.ADR2-RD
  *    account:      臺幣數存母帳號
  * }
- * @throws Exception
  *
  */
 export const getStatus = async (params) => {
