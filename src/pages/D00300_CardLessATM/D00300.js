@@ -36,7 +36,9 @@ const CardLessATM = () => {
         await showCustomPrompt({
           message: '愛方便的您, 怎能少了無卡提款服務, 快來啟用吧',
           onOk: () => startFunc(FuncID.T00400),
-          showCloseButton: true,
+          onCancel: closeFunc,
+          cancelContent: '下次再啟用',
+          showCloseButton: false,
         });
       }
     }

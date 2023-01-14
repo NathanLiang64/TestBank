@@ -113,6 +113,7 @@ const processResponse = async (response) => {
         });
         break;
 
+      case 'WEBCTL0100': // 以此帳號已在其他系統登入
       case 'WEBCTL9003': // 此功能無法在登入前使用。
       case 'WEBCTL0102': // 密碼錯太多次，鎖住帳號並強制登出
         await showError(message, () => forceLogout('403', message, true));
@@ -158,22 +159,22 @@ instance.interceptors.response.use(
         await showError('因為您已閒置過久未操作系統，為考量資訊安全；銀行端已自動切斷您的連線。若您要繼續使用，請重新登入，造成您的不便敬請見諒。', () => {
           forceLogout(response.status, ex.message, true);
         });
-        return Promise.reject(ex);
+        break;
 
       case 500: // Server Error
-      default:
+      default: {
+        const errMesg = (
+          <p>
+            主機忙碌中，請通知客服人員或稍後再試。訊息代碼：({response.status})
+            <br />
+            {/* DEBUG 為了知道錯誤發生原因，所以在開發階段把問題顯示出來！ 上正式版要移除... */}
+            原因：{ex.message}
+          </p>
+        );
+        await showError(errMesg, 2);
         break;
+      }
     }
-
-    const errMesg = (
-      <p>
-        主機忙碌中，請通知客服人員或稍後再試。訊息代碼：({response.status})
-        <br />
-        {/* DEBUG 為了知道錯誤發生原因，所以在開發階段把問題顯示出來！ 上正式版要移除... */}
-        原因：{ex.message}
-      </p>
-    );
-    await showError(errMesg, 2);
 
     return Promise.reject(ex);
   },

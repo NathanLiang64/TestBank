@@ -67,7 +67,6 @@ const QuickLoginSetting = () => {
    */
   const removeSetting = async (type) => {
     const rs = await transactionAuth(AuthCode.T00200.UNSET);
-    console.log('交易驗證結果:', JSON.stringify(rs));
     // customPopup(
     //   '系統訊息',
     //   `解除快速綁定交易驗證測試結果：${JSON.stringify(rs)}`,
@@ -192,12 +191,10 @@ const QuickLoginSetting = () => {
     const isBinded = checkSettingStatus();
     if (isBinded) return;
     const { result, message } = await createQuickLogin(type);
-    console.log('設定快登資料結果:', JSON.stringify(result));
 
     // 設定綁定資料成功進行交易驗證
     if (result) {
       const rs = await transactionAuth(AuthCode.T00200.SET, midPhone);
-      console.log('交易驗證結果:', JSON.stringify(rs));
       if (rs.result) {
         // 交易驗證成功，開啟綁定 drawer，點擊確認進行 MID 驗證
         // NOTE 通過 MID 驗證才算是真正完成快登設定，目前二者是綁在一起的！
@@ -225,8 +222,6 @@ const QuickLoginSetting = () => {
    */
   const handleChangePattern = async () => {
     const res = await transactionAuth(AuthCode.T00200.MODIFY);
-    console.log('交易驗證結果:', JSON.stringify(res));
-
     if (res.result) {
       // 交易驗證成功
       const {result, message} = await changePattern();

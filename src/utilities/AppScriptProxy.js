@@ -8,19 +8,19 @@ import { customPopup, showDrawer } from './MessageModal';
 // eslint-disable-next-line import/no-cycle
 import { callAPI } from './axios';
 
-const device = {
-  ios: () => window.webkit && /iPhone|iPad|iPod/i.test(navigator.userAgent),
-  android: () => window.jstoapp && /Android/i.test(navigator.userAgent),
-};
-
 /**
  * 取得目前運行的作業系統代碼。
- * @returns {Number} 1.iOS, 2.Android, 3.其他
+ * @param {Boolean} allowWebMode 表示傳回
+ * @returns {Number} 1.iOS, 2.Android, 3.Web, 4.其他
  */
-function getOsType() {
-  if (device.ios) return 1;
-  if (device.android) return 2;
-  return 3;
+function getOsType(allowWebMode) {
+  if (allowWebMode && !window.webkit & !window.jstoapp) return 3;
+
+  if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) return 1;
+  if (/Android/i.test(navigator.userAgent)) return 2;
+
+  // 未知的平台
+  return 4;
 }
 
 /**
@@ -93,16 +93,18 @@ export async function callAppJavaScript(appJsName, jsParams, needCallback, webDe
       callback: (needCallback ? `AppJavaScriptCallback['${jsToken}']` : null), // 此方法可提供所有WebView共用。
     };
 
-    if (device.ios()) {
-      const msg = JSON.stringify({ name: appJsName, data: JSON.stringify(request) });
-      window.webkit.messageHandlers.jstoapp.postMessage(msg);
-    } else if (device.android()) {
-      window.jstoapp[appJsName](JSON.stringify(request));
-    } else if (needCallback || webDevTest) {
-      window.AppJavaScriptCallback[jsToken](webDevTest ? webDevTest() : null);
-      return;
+    switch (getOsType(true)) {
+      case 1: // 1.iOS
+        window.webkit.messageHandlers.jstoapp.postMessage(JSON.stringify({ name: appJsName, data: JSON.stringify(request) }));
+        break;
+      case 2: // 2.Android
+        window.jstoapp[appJsName](JSON.stringify(request));
+        break;
+      default: // 3.其他
+        window.AppJavaScriptCallback[jsToken](webDevTest ? webDevTest() : null);
+        return;
+        // else throw new Error('使用 Web 版未支援的 APP JavaScript 模擬方法(' + appJsName + ')');
     }
-    // else throw new Error('使用 Web 版未支援的 APP JavaScript 模擬方法(' + appJsName + ')');
 
     // 若不需要從 APP 取得傳回值，就直接結束。
     if (!needCallback) resolve(null);
@@ -129,7 +131,7 @@ export const funcStack = {
    */
   getStack: () => {
     const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
-    if (stack.length === 0 && getOsType() !== 3) {
+    if (stack.length === 0 && getOsType(true) !== 3) {
       const currentFunc = sessionStorage.getItem('currentFunc');
       if (currentFunc) stack.push({ funcID: currentFunc });
     }
@@ -463,7 +465,7 @@ async function getQLStatus() {
     return {
       result: true,
       QLStatus: testData.mid ? '1' : '0',
-      QLType: '1', // TODO testData.qlMode,
+      QLType: `${testData.qlMode ?? 1}`,
     };
   });
 }
@@ -646,7 +648,7 @@ async function queryPushBind() {
  */
 async function forceLogout(reasonCode, message, autoStart) {
   await callAppJavaScript('logout', { reason: reasonCode, message }, false, () => {
-    if (autoStart && !window.location.pathname.startsWith('/login')) {
+    if (!(autoStart && window.location.pathname.startsWith('/login'))) {
       const funcId = funcStack.peek() ? funcStack.peek().funcID : window.location.pathname.substring(1);
       const search = funcId ? `/${funcId}` : ''; // 登入後立即啟動的功能。
       window.location.href = `${process.env.REACT_APP_ROUTER_BASE}/login${search}`;
