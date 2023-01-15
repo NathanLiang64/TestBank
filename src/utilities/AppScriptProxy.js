@@ -615,12 +615,21 @@ async function storeData(key, value) {
  * @returns {Promise<{Object}>} 儲存在 APP 資料字典中的值。
  */
 async function restoreData(key, remove) {
-  return await callAppJavaScript('getStorageData', {key, remove}, true, () => {
-    const valueStr = sessionStorage.getItem(key);
+  const data = await callAppJavaScript('getStorageData', {key, remove}, true, () => {
+    const value = sessionStorage.getItem(key);
     if (remove) sessionStorage.removeItem(key);
 
-    return JSON.parse(valueStr ?? 'null');
+    return {
+      value,
+      result: true,
+      message: '',
+    };
   });
+
+  if (data && data.result) {
+    return JSON.parse(data.value ?? 'null');
+  }
+  return null;
 }
 
 /**

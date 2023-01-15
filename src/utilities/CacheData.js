@@ -1,6 +1,8 @@
 import { setBanks, setBranches, setAccounts } from 'stores/reducers/CacheReducer';
 import store from 'stores/store';
 import { callAPI } from 'utilities/axios';
+import BankData from 'assets/data/BankData.json';
+import BranchData from 'assets/data/BranchData.json';
 import { restoreCache } from './AppScriptProxy';
 
 /**
@@ -13,11 +15,13 @@ import { restoreCache } from './AppScriptProxy';
 export const getBankCode = async () => {
   let {banks} = await restoreCache();
   if (!banks) {
-    const response = await callAPI('/api/transfer/queryBank');
-    if (response.isSuccess) {
-      banks = response.data;
-      store.dispatch(setBanks(banks));
-    }
+    banks = BankData.banks;
+    // TODO 取得 BankData.version 之後的異動資料。
+    // const response = await callAPI('/api/transfer/queryBank');
+    // if (response.isSuccess) {
+    //   banks = response.data;
+    // }
+    store.dispatch(setBanks(banks));
   }
   return banks;
 };
@@ -33,11 +37,13 @@ export const getBankCode = async () => {
 export const getBranchCode = async () => {
   let {branches} = await restoreCache();
   if (!branches) {
-    const response = await callAPI('/api/v1/getAllBranches');
-    if (response.isSuccess) {
-      branches = response.data;
-      store.dispatch(setBranches(branches));
-    }
+    branches = BranchData.branches;
+    // TODO 取得 BranchData.version 之後的異動資料。
+    // const response = await callAPI('/api/v1/getAllBranches');
+    // if (response.isSuccess) {
+    //   branches = response.data;
+    // }
+    store.dispatch(setBranches(branches));
   }
   return branches;
 };
@@ -113,7 +119,7 @@ export const getAccountsList = async (acctTypes, onDataLoaded) => {
   const result = accounts.filter((account) => acctTypes.indexOf(account.acctType) >= 0)
     // NOTE 外幣帳號的架構跟臺幣不一樣。
     // 要把一個帳戶、多個幣別 展開成 多個帳戶 的型式呈現。
-    .map((account) => (!account.details // 若是從 sessionStorage 取出的值，就沒有 details，所以直接傳回即可。
+    .map((account) => (!account.details // 若是從 APP-DD 取出的值，就沒有 details，所以直接傳回即可。
       ? account
       : account.details.map((detail) => {
         const acct = { ...account, ...detail};

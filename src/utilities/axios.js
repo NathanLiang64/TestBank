@@ -113,6 +113,7 @@ const processResponse = async (response) => {
         });
         break;
 
+      case 'ISG0306-E003': // MBGW 回覆逾時
       case 'WEBCTL0100': // 以此帳號已在其他系統登入
       case 'WEBCTL9003': // 此功能無法在登入前使用。
       case 'WEBCTL0102': // 密碼錯太多次，鎖住帳號並強制登出

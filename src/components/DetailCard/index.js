@@ -58,11 +58,11 @@ const DetailCard = ({
   const getAvator = async () => {
     if (!targetMbrId) return null;
 
-    // 先從 sessionStorage 取出第一次下載的影像。
+    // 先從 APP-DD 取出第一次下載的影像。
     const cacheId = `Avator_${targetMbrId}`;
     let cacheImg = await restoreData(cacheId);
     if (cacheImg === null) {
-      // 第一次下載影像，會存入 sessionStorage 以減少 Server端的傳輸流量。
+      // 第一次下載影像，會存入 APP-DD 以減少 Server端的傳輸流量。
       const url = `${process.env.REACT_APP_AVATAR_URL}/${targetMbrId}_s.jpg`;
       cacheImg = url; // DEBUG
 

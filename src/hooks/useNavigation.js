@@ -41,10 +41,9 @@ export const useNavigation = () => {
    * @param {*} response 傳回值，會暫存在 SessionStorate("funcResp") 中。
    */
   const closeFunc = async (response) => {
-    // 將要傳回給前一功能（啟動目前功能的單元功能）的資料 存入 sessionStorage[funcResp]
+    // 將要傳回給前一功能（啟動目前功能的單元功能）的資料 存入 APP-DD[funcResp]
     // 再由 loadFuncParams() 取出，放在啟動參數的 response 參數中。
-    if (response && !response.target && !response.type) {
-      // NOTE event物件會被誤判為傳回值，所以必需排除。
+    if (response && !response.target && !response.type) { // NOTE event物件會被誤判為傳回值，所以必需排除。
       storeData('funcResp', response);
     }
 
