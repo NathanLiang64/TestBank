@@ -1,6 +1,6 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable object-curly-newline */
 import { useHistory } from 'react-router';
-import { callAppJavaScript, funcStack, getOsType } from 'utilities/AppScriptProxy';
+import { callAppJavaScript, funcStack, getOsType, storeData } from 'utilities/AppScriptProxy';
 import { showError } from 'utilities/MessageModal';
 
 export const useNavigation = () => {
@@ -45,7 +45,7 @@ export const useNavigation = () => {
     // 再由 loadFuncParams() 取出，放在啟動參數的 response 參數中。
     if (response && !response.target && !response.type) {
       // NOTE event物件會被誤判為傳回值，所以必需排除。
-      sessionStorage.setItem('funcResp', JSON.stringify(response));
+      storeData('funcResp', response);
     }
 
     const closeItem = funcStack.peek(); // 因為 funcStack 還沒 pop，所以用 peek 還以取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
@@ -59,7 +59,7 @@ export const useNavigation = () => {
         history.push(`/${startItem.funcID}`);
       } else {
         // 若是在登入前，無前一頁可以返回時，則一律回到 Login 頁。
-        if (getOsType(true) === 3 && sessionStorage.getItem('isLogin') !== '1') {
+        if (getOsType(true) === 3) {
           history.push('/login');
           return;
         }
@@ -67,7 +67,7 @@ export const useNavigation = () => {
         // 雖然 Web端的 funcStack 已經空了，但有可能要返回的功能是由 APP 啟動的；所以，要先詢問 APP 是否有正在執行中的單元功能。
         const appJsRs = await callAppJavaScript('getActiveFuncID', null, true); // 取得 APP 目前的 FuncID
         if (appJsRs) {
-          // 例：首頁卡片 啟動 存錢計劃，當 存錢計劃 選擇返回前一功能時，就會進到這裡。（因為此時的 funcStack 是空的）
+          // 例：從首頁卡片啟動[存錢計劃]，當[存錢計劃]選擇返回前一功能時，就會進到這裡。（因為此時的 funcStack 是空的）
           history.push(`/${appJsRs.funcID}`);
         } else { history.push('/'); }
       }

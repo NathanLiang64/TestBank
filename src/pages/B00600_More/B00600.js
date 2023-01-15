@@ -11,6 +11,7 @@ import { iconGenerator } from 'pages/S00100_Favorite/favoriteGenerator';
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { useNavigation } from 'hooks/useNavigation';
+import { storeData, restoreData } from 'utilities/AppScriptProxy';
 import { getMoreList } from './api';
 import MoreWrapper from './B00600.style';
 
@@ -32,15 +33,15 @@ const More = () => {
     dispatch(setWaittingVisible(true));
 
     // 取得 Function Controller 提供的 keepDdata(model)
-    const funcItemsData = sessionStorage.getItem('funcItems');
+    const funcItemsData = await restoreData('funcItems');
 
     // 首次加載時取得用戶所有外幣的存款帳戶摘要資訊
     let groups;
     if (!funcItemsData || funcItemsData.length === 0) {
       groups = await getMoreList();
-      if (groups) sessionStorage.setItem('funcItems', JSON.stringify(groups));
+      if (groups) storeData('funcItems', groups);
     } else {
-      groups = JSON.parse(funcItemsData);
+      groups = funcItemsData;
     }
 
     setFuncGroups(groups || []);

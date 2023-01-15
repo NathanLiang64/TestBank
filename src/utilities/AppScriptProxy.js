@@ -2,6 +2,8 @@
 /* eslint-disable no-use-before-define */
 import forge from 'node-forge';
 import { Buffer } from 'buffer';
+import store from 'stores/store';
+import { setAllCacheData } from 'stores/reducers/CacheReducer';
 import PasswordDrawer from 'components/PasswordDrawer';
 import { getTransactionAuthMode, createTransactionAuth, transactionAuthVerify } from 'components/PasswordDrawer/api';
 import { customPopup, showDrawer } from './MessageModal';
@@ -32,6 +34,8 @@ function showLog(appJsName) {
     case 'onLoading':
     case 'setAuthdata':
     case 'getAPPAuthdata':
+    case 'getStorageData':
+    case 'setStorageData':
       return false;
 
     default: return true;
@@ -46,7 +50,8 @@ function showLog(appJsName) {
  * @param {*} webDevTest Web開發測試時的執行方法。(Option)
  * @returns
  */
-export async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) {
+export // NOTE 為了提供 useNavigation 使用
+async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) {
   const jsToken = `A${Math.floor(Math.random() * 100000000).toString().padStart(8, '0')}`; // 有千萬分之一的機率重覆。
   if (showLog(appJsName)) console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Params = `, jsParams);
 
@@ -260,15 +265,13 @@ async function loadFuncParams() {
     }
 
     // 取得 Function 在 closeFunc 時提供的傳回值。
-    const response = sessionStorage.getItem('funcResp');
-    sessionStorage.removeItem('funcResp');
+    const response = await restoreData('funcResp', true);
     if (response) {
       console.log('>> 前一單元功能的 傳回值 : ', response);
       if (!params) params = {};
-      params.response = JSON.parse(response);
+      params.response = response;
     }
 
-    // await showAlert(`>> Function 啟動參數 : ${JSON.stringify(params)}`);
     console.log('>> Function 啟動參數 : ', params);
     return params;
   } catch (error) {
@@ -553,6 +556,74 @@ async function changePattern() {
 }
 
 /**
+ * 還原 APP 在關閉 WebView 之前所保存的 CacheReducer 中的資料。
+ */
+async function restoreCache() {
+  if (!window.setCacheData) {
+    window.setCacheData = () => {
+      const data = store.getState()?.CacheReducer;
+      const cacheData = JSON.stringify(data);
+      return cacheData;
+    };
+
+    // Result = {result: true, strCachedata: "", message: ""}
+    const appCache = await callAppJavaScript('getCacheData', null, true);
+    if (appCache) {
+      try {
+        console.log('**** getCacheData : ', appCache);
+        const cacheData = JSON.parse(appCache.strCachedata);
+        console.log('**** getCacheData.strCachedata : ', cacheData);
+        store.dispatch(setAllCacheData(cacheData));
+        return cacheData;
+      } catch (ex) {
+        console.log('**** getCacheData Excption : ', ex);
+      }
+    }
+  }
+
+  const data = store.getState()?.CacheReducer;
+  return data;
+}
+
+/**
+ * 將資料存入 APP 資料字典。
+ * @param {String} key 要儲存資料的key值
+ * @param {Object} value 要儲存資料key值所對應的value值
+ * @returns {Promise<{
+ *   result: Boolean,
+ *   message: String,
+ * }>} {
+ *   result: 驗證結果(true/false)。
+ *   message: 驗證失敗狀況描述。
+ * }
+ */
+async function storeData(key, value) {
+  const valueStr = JSON.stringify(value ?? null);
+  return await callAppJavaScript('setStorageData', {key, value: valueStr}, true, () => {
+    sessionStorage.setItem(key, valueStr);
+    return {
+      result: true,
+      message: '',
+    };
+  });
+}
+
+/**
+ * 從 APP 資料字典取回資料，但資料項目不會清除。
+ * @param {String} key 要取出的資料key值
+ * @param {Boolean} remove 表示在取出後將此筆資料從 APP 資料字典中刪除
+ * @returns {Promise<{Object}>} 儲存在 APP 資料字典中的值。
+ */
+async function restoreData(key, remove) {
+  return await callAppJavaScript('getStorageData', {key, remove}, true, () => {
+    const valueStr = sessionStorage.getItem(key);
+    if (remove) sessionStorage.removeItem(key);
+
+    return JSON.parse(valueStr ?? 'null');
+  });
+}
+
+/**
  * 模擬 APP 要求使用者進行交易授權驗證。
  * @param request {
  *   authCode: 要求進行的驗證模式的代碼。
@@ -698,5 +769,8 @@ export {
   changePattern,
   queryPushBind,
   updatePushBind,
+  restoreCache,
+  storeData,
+  restoreData,
   forceLogout,
 };

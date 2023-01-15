@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-indent */
 /* eslint-disable react/jsx-wrap-multilines */
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
@@ -286,11 +285,11 @@ function Layout({
         </HeaderWrapper>
 
         <div>
-            {waitting ? null : children}
-            <Drawer />
-            <MessageModal />
-            <AnimationModal />
-            {overPanel}
+          {children}
+          <Drawer />
+          <MessageModal />
+          <AnimationModal />
+          {overPanel}
         </div>
       </div>
     );
@@ -300,11 +299,12 @@ function Layout({
     <div>
       {/* watting 在 true 的情況下, 會因為沒有傳入 inspector 時，isPassed 變成 true，導致無法進到 Loading */}
       {/* 因此在這邊額外加入 waitting 進行判定 */}
-    {isPassed === null || isPassed === undefined || waitting ? (
-      <Loading isFullscreen />
-    ) : (
-      <MessageModal />
-    )}
+      {isPassed === null || isPassed === undefined || waitting ? (
+        // TODO 美化成原生等待畫面的背景！
+        <Loading isFullscreen />
+      ) : (
+        <MessageModal />
+      )}
     </div>
   );
 }

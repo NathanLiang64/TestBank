@@ -4,6 +4,7 @@ import { customPopup } from 'utilities/MessageModal';
 import {
   currencySymbolGenerator, dateToString, toHalfWidth, timeToString,
 } from 'utilities/Generator';
+import { storeData, restoreData } from 'utilities/AppScriptProxy';
 import { DetailsDefaultAvatarIcon } from 'assets/images/icons';
 import DetailCardWrapper, { DetailDialogContentWrapper } from './detailCard.style';
 
@@ -54,12 +55,12 @@ const DetailCard = ({
    * 取得大頭貼。
    * @returns 會員大頭貼；非會員則傳回 null。
    */
-  const getAvator = () => {
+  const getAvator = async () => {
     if (!targetMbrId) return null;
 
     // 先從 sessionStorage 取出第一次下載的影像。
     const cacheId = `Avator_${targetMbrId}`;
-    let cacheImg = sessionStorage.getItem(cacheId);
+    let cacheImg = await restoreData(cacheId);
     if (cacheImg === null) {
       // 第一次下載影像，會存入 sessionStorage 以減少 Server端的傳輸流量。
       const url = `${process.env.REACT_APP_AVATAR_URL}/${targetMbrId}_s.jpg`;
@@ -67,7 +68,7 @@ const DetailCard = ({
 
       // TODO 從 url 取得影像內容(應為 Base64 格式字串)。
 
-      sessionStorage.setItem(cacheId, cacheImg);
+      storeData(cacheId, cacheImg);
     }
     return cacheImg;
   };

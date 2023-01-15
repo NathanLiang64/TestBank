@@ -1,36 +1,7 @@
-import {
-  setAllCacheData, setBanks, setBranches, setAccounts,
-} from 'stores/reducers/CacheReducer';
+import { setBanks, setBranches, setAccounts } from 'stores/reducers/CacheReducer';
 import store from 'stores/store';
 import { callAPI } from 'utilities/axios';
-import { callAppJavaScript } from './AppScriptProxy';
-
-const loadCacheData = async () => {
-  if (!window.setCacheData) {
-    window.setCacheData = () => {
-      const data = store.getState()?.CacheReducer;
-      const cacheData = JSON.stringify(data);
-      return cacheData;
-    };
-
-    // Result = {result: true, strCachedata: "", message: ""}
-    const appCache = await callAppJavaScript('getCacheData', null, true);
-    if (appCache) {
-      try {
-        console.log('**** getCacheData : ', appCache);
-        const cacheData = JSON.parse(appCache.strCachedata);
-        console.log('**** getCacheData.strCachedata : ', cacheData);
-        store.dispatch(setAllCacheData(cacheData));
-        return cacheData;
-      } catch (ex) {
-        console.log('**** getCacheData Excption : ', ex);
-      }
-    }
-  }
-
-  const data = store.getState()?.CacheReducer;
-  return data;
-};
+import { restoreCache } from './AppScriptProxy';
 
 /**
  * 查詢銀行代碼
@@ -40,7 +11,7 @@ const loadCacheData = async () => {
  * }]>} 銀行代碼清單。
  */
 export const getBankCode = async () => {
-  let {banks} = await loadCacheData();
+  let {banks} = await restoreCache();
   if (!banks) {
     const response = await callAPI('/api/transfer/queryBank');
     if (response.isSuccess) {
@@ -60,7 +31,7 @@ export const getBankCode = async () => {
    }]>} 分行清單。
  */
 export const getBranchCode = async () => {
-  let {branches} = await loadCacheData();
+  let {branches} = await restoreCache();
   if (!branches) {
     const response = await callAPI('/api/v1/getAllBranches');
     if (response.isSuccess) {
@@ -133,7 +104,7 @@ const loadAccountsList = async () => {
  * }]>} 帳號基本資料。
  */
 export const getAccountsList = async (acctTypes, onDataLoaded) => {
-  let {accounts} = await loadCacheData();
+  let {accounts} = await restoreCache();
   if (!accounts) {
     accounts = await loadAccountsList();
     store.dispatch(setAccounts(accounts)); // 保存所有的帳號資料。
@@ -170,7 +141,7 @@ export const getAccountsList = async (acctTypes, onDataLoaded) => {
  * }>} 優惠資訊
  */
 export const getAccountBonus = async (accountNo, onDataLoaded, foreUpdate) => {
-  let {accounts} = await loadCacheData();
+  let {accounts} = await restoreCache();
   if (!accounts) {
     accounts = await loadAccountsList();
     store.dispatch(setAccounts(accounts)); // 保存所有的帳號資料。
@@ -199,7 +170,7 @@ export const getAccountBonus = async (accountNo, onDataLoaded, foreUpdate) => {
  * @param {*} newAccount
  */
 export const updateAccount = async (newAccount) => {
-  let {accounts} = await loadCacheData();
+  let {accounts} = await restoreCache();
   if (!accounts) {
     accounts = await loadAccountsList();
     store.dispatch(setAccounts(accounts)); // 保存所有的帳號資料。

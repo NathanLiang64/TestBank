@@ -81,6 +81,9 @@ const C00300 = () => {
     } else {
       setSelectedAccountIdx(0);
       setShowRate(true);
+
+      // 只要是重新登入，而不是從呼叫的功能返回（例：轉帳），就清掉交易明細快取。
+      accts.forEach((acc) => delete acc.txnDetails);
     }
   };
 

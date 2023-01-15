@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { EditIcon, PersonalIcon } from 'assets/images/icons';
+import { storeData, restoreData } from 'utilities/AppScriptProxy';
 import { toHalfWidth } from 'utilities/Generator';
 import { FEIBErrorMessage } from 'components/elements';
 import { CropContainer } from 'components/CropContainer';
@@ -52,7 +53,7 @@ const Avatar = ({
     if (onNewPhotoLoaded) {
       await onNewPhotoLoaded(data);
       setUploadSrc(null);
-      if (memberId) sessionStorage.setItem(`Avator_${memberId}`, data);
+      if (memberId) storeData(`Avator_${memberId}`, data);
     }
   };
 
@@ -93,10 +94,10 @@ const Avatar = ({
     </label>
   );
 
-  useEffect(() => {
+  useEffect(async () => {
     // 從本地 Cache 取出圖像。
     if (memberId) {
-      const imgData = sessionStorage.getItem(`Avator_${memberId}`);
+      const imgData = await restoreData(`Avator_${memberId}`);
       if (imgData) setPreview(imgData);
       if (memberId) {
         const defaultSrc = `${process.env.REACT_APP_AVATAR_URL}/${memberId}.jpg`;
