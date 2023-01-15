@@ -21,22 +21,32 @@ const InformationTape = ({
   noShadow,
   customHeader,
   className,
-}) => (
-  <InformationTapeWrapper className={className} onClick={onClick} $noShadow={noShadow}>
-    {customHeader || (
-      <img src={img} alt="" style={{ display: img ? 'block' : 'none' }} />
-    )}
-    <div className="dataContainer">
-      <div className="top">
-        <div className="left">{ topLeft?.trim() }</div>
-        <div className="right">{ topRight?.trim() }</div>
+}) => {
+  const renderContent = (content) => {
+    if (typeof content === 'string') return content.trim();
+    return content;
+  };
+  return (
+    <InformationTapeWrapper
+      className={className}
+      onClick={onClick}
+      $noShadow={noShadow}
+    >
+      {customHeader || (
+        <img src={img} alt="" style={{ display: img ? 'block' : 'none' }} />
+      )}
+      <div className="dataContainer">
+        <div className="top">
+          <div className="left">{renderContent(topLeft)}</div>
+          <div className="right">{renderContent(topRight)}</div>
+        </div>
+        <div className="bottom">
+          <div className="left">{renderContent(bottomLeft)}</div>
+          <div className="right">{renderContent(bottomRight)}</div>
+        </div>
       </div>
-      <div className="bottom">
-        <div className="left">{ bottomLeft?.trim() }</div>
-        <div className="right">{ bottomRight }</div>
-      </div>
-    </div>
-  </InformationTapeWrapper>
-);
+    </InformationTapeWrapper>
+  );
+};
 
 export default InformationTape;

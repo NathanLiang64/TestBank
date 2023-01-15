@@ -20,6 +20,7 @@ import SearchIcon from '@material-ui/icons/Search';
 
 import DateRangePicker from 'components/DateRangePicker';
 import uuid from 'react-uuid';
+import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { TabField } from './fields/tabField';
 import DetailContent from './components/detailContent';
 import ResultContent from './components/resultContent';
@@ -84,7 +85,9 @@ const D00800 = () => {
     await getAccountsList('MSC', async (accts) => {
       setAccountsList(accts);
       accountsListRes = accts;
-      setSelectedAccount(accts[0]);
+      const params = await loadFuncParams();
+      if (params) setSelectedAccount(params.selectedAccount);
+      else setSelectedAccount(accts[0]);
     });
     // TODO 若無 MSC 類別的帳戶，要給什麼提示訊息給使用者
     return accountsListRes.length ? null : '您還沒有任何臺幣存款帳戶。';
@@ -183,6 +186,12 @@ const D00800 = () => {
 
   const handleChangeSlide = ({ activeIndex }) => setSelectedAccount(accountsList[activeIndex]);
 
+  const focusToIntentedSlide = async (swiper) => {
+    let activeIndex = 0; // 預設第一項
+    activeIndex = accountsList.findIndex(({accountNo}) => accountNo === selectedAccount.accountNo);
+    swiper.slideTo(activeIndex, 0);
+  };
+
   // 切換帳號/Tab/日期範圍時 會檢查 searchList 有無特定的 key，若沒有就執行搜尋
   useEffect(() => {
     if (!selectedAccount) return;
@@ -199,6 +208,7 @@ const D00800 = () => {
             centeredSlides
             pagination
             onSlideChange={handleChangeSlide}
+            onAfterInit={focusToIntentedSlide}
           >
             {renderCard()}
           </Swiper>

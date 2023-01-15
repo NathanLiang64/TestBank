@@ -21,7 +21,6 @@ import { useNavigation } from 'hooks/useNavigation';
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import {
   getTransactions,
-  downloadDepositBookCover,
   setAccountAlias,
 } from './api';
 import PageWrapper from './C00300.style';
@@ -90,6 +89,7 @@ const C00300 = () => {
   /**
    * 更新帳戶交易明細清單。
    * @returns 需有傳回明細清單供顯示。
+   * TODO : 在該頁面開啟的情況下接收轉帳，會因為 account.txnDetails 已被 cached，導致無法再次刷新
    */
   const loadTransactions = (account) => {
     const { txnDetails } = account;
@@ -102,7 +102,7 @@ const C00300 = () => {
           account.txnDetails = details;
 
           // 更新餘額。
-          if (transData.length > 0) {
+          if (transData.acctTxDtls.length > 0) { // 原本是 transData.length，應該是誤 key
             account.balance = details[0].balance;
             updateAccount(account);
           }
@@ -231,9 +231,13 @@ const C00300 = () => {
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case 'DownloadCover': // 存摺封面下載
-        downloadDepositBookCover(selectedAccount.accountNo); // 預設檔名為「帳號-日期.pdf」，密碼：身分證號碼
-        return;
+      case FuncID.C00800: // 匯出存摺
+        params = { accountNo: selectedAccount.accountNo }; // TODO 直接帶入台幣帳號
+        break;
+
+      case FuncID.D00800: // 匯出存摺
+        params = { selectedAccount }; // TODO 直接帶入台幣帳號
+        break;
 
       case 'Rename': // 帳戶名稱編輯
         showRenameDialog(selectedAccount.alias);
@@ -264,13 +268,13 @@ const C00300 = () => {
                 cardColor="purple"
                 funcList={[
                   { fid: FuncID.D00100_臺幣轉帳, title: '轉帳' },
+                  { fid: FuncID.E00100_換匯, title: '換匯' },
                   { fid: 'D00300', title: '無卡提款', hidden: (selectedAccount.acctType !== 'M') },
-                  { fid: FuncID.E00100_換匯, title: '換匯', hidden: (selectedAccount.balance <= 0) },
                 ]}
                 moreFuncs={[
                   // { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false }, // TODO: 此階段隱藏
-                  // { fid: FuncID.E00100_換匯, title: '換匯', icon: 'exchange', enabled: (selectedAccount.balance > 0) },
-                  { fid: 'DownloadCover', title: '存摺封面下載', icon: 'coverDownload' },
+                  { fid: FuncID.D00800, title: '預約轉帳查詢/取消', icon: 'reserve' },
+                  { fid: FuncID.C00800, title: '匯出存摺', icon: 'coverDownload' },
                   { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
                 ]}
               />

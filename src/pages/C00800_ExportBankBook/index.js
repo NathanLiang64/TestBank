@@ -24,6 +24,7 @@ import { RadioGroup } from '@material-ui/core';
 import DateRangePicker from 'components/DateRangePicker';
 import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
+import { loadFuncParams } from 'utilities/AppScriptProxy';
 import AccordionContent from './accordionContent';
 import { getProfile, sendBankBookMail } from './api';
 
@@ -127,9 +128,11 @@ const ExportBankBook = () => {
     dispatch(setWaittingVisible(true));
 
     // 取得帳號清單 (只匯出台幣相關帳戶)
-    getAccountsList('MSC', (accounts) => { // 帳戶類型 M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶
+    getAccountsList('MSC', async (accounts) => { // 帳戶類型 M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶
       setAccountList(accounts);
-      setValue('account', accounts[0].accountNo);
+      const params = await loadFuncParams();
+      if (params) setValue('account', params.accountNo);
+      else setValue('account', accounts[0].accountNo);
     });
 
     // 取得 Email

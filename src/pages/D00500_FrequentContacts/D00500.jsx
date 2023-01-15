@@ -4,7 +4,7 @@ import uuid from 'react-uuid';
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
-import { showCustomDrawer, showCustomPrompt, showPrompt } from 'utilities/MessageModal';
+import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { AddIcon } from 'assets/images/icons';
@@ -77,13 +77,10 @@ const Page = () => {
    */
   const addnewAccount = async () => {
     const onFinished = async (newAcct) => {
-      // 檢查新增的帳號是否已經存在於列表
-      const repeatedAcct = accounts.find(({bankId, acctId}) => newAcct.bankId === bankId && newAcct.acctId === acctId);
-      if (repeatedAcct) showPrompt('此帳號資料已存在');
-      else {
-        dispatch(setWaittingVisible(true));
-        const newAccounts = await addFrequentAccount(newAcct);
-        dispatch(setWaittingVisible(false));
+      dispatch(setWaittingVisible(true));
+      const newAccounts = await addFrequentAccount(newAcct);
+      dispatch(setWaittingVisible(false));
+      if (newAccounts) {
         setAccounts(newAccounts);
         forceUpdate();
       }
@@ -102,21 +99,14 @@ const Page = () => {
    */
   const editAccount = async (acct) => {
     const onFinished = async (newAcct) => {
-      // 檢查編輯後的帳號是否已經存在於列表
-      const repeatedAcct = accounts.find(({ bankId, acctId }) => (
-        (acct.bankId !== bankId || acct.acctId !== acctId)
-          && bankId === newAcct.bankId
-          && acctId === newAcct.acctId
-      ));
-      if (repeatedAcct) showPrompt('此帳號資料已存在');
-      else {
-        dispatch(setWaittingVisible(true));
-        const condition = {
-          orgBankId: acct.bankId,
-          orgAcctId: acct.acctId,
-        };
-        const newAccounts = await updateFrequentAccount(newAcct, condition);
-        dispatch(setWaittingVisible(false));
+      const condition = {
+        orgBankId: acct.bankId,
+        orgAcctId: acct.acctId,
+      };
+      dispatch(setWaittingVisible(true));
+      const newAccounts = await updateFrequentAccount(newAcct, condition);
+      dispatch(setWaittingVisible(false));
+      if (newAccounts) {
         setAccounts(newAccounts);
         forceUpdate();
       }
