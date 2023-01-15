@@ -1,4 +1,5 @@
-import { useRef } from 'react';
+/* eslint-disable no-unused-vars */
+import { useRef, useEffect, useState } from 'react';
 import DetailCard from 'components/DetailCard';
 import Loading from 'components/Loading';
 import EmptyData from 'components/EmptyData';
@@ -8,6 +9,11 @@ import DepositDetailPanelWrapper from './depositDetailPanel.style';
 const DepositDetailPanel = ({
   details, onMoreFuncClick,
 }) => {
+  const getWindowHeight = () => {
+    const height = window.innerHeight;
+    return height;
+  };
+  const [windowHeight, setWindowHeight] = useState(getWindowHeight());
   const detailsRef = useRef();
 
   const renderDetailCardList = () => {
@@ -38,6 +44,13 @@ const DepositDetailPanel = ({
       ))
     );
   };
+
+  useEffect(() => {
+    const handleResize = () => setWindowHeight(getWindowHeight());
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <DepositDetailPanelWrapper>
