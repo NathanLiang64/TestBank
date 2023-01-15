@@ -9,6 +9,7 @@ import BottomDrawer from 'components/BottomDrawer';
 import Layout from 'components/Layout/Layout';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import { FuncID } from 'utilities/FuncID';
+import { useNavigation } from 'hooks/useNavigation';
 
 import S00100_1 from './S00100_1';
 import { blockBackgroundGenerator, iconGenerator } from './favoriteGenerator';
@@ -16,8 +17,8 @@ import FavoriteDrawerWrapper, { DndItemContainer } from './S00100.style';
 import {
   generateTrimmedList, reorder, move, combineLeftAndRight, EventContext
 } from './utils';
-import { deleteFavoriteItem, getFavoriteList, modifyFavoriteItem } from './api';
-import { useNavigation } from 'hooks/useNavigation';
+import { deleteFavoriteItem, getFavoriteList, modifyFavoriteItem, getFavoriteSettingList } from './api';
+
 
 // 用來觸發 EventCenter 中介層的方法
 const triggerEvent = (values) => {
@@ -72,7 +73,15 @@ const Favorite = () => {
   // 內部所有變數不會因page的任何re-render出現無法預期的重置及更新
   useMemo(() => {
 
+    let memoIsClickRemove = false;
+    let memoIsAnyItemMove = false;
+    let memoCheckedItemsBeforeDnd = [];
+
+    // list cache
+    let hasLoadedFavoriteList = false;
+    let hasLoadedFavoriteSettingList = false;
     let memoFavoriteList = [];
+    let memoFavoriteSettingList = [];
 
     const memoArray = {
       left: [], 
@@ -104,18 +113,64 @@ const Favorite = () => {
       const handleTouchEnd = () => pressTimer && clearTimeout(pressTimer);
 
 
+      // 處理拖曳後的結果, 呼叫API把結果存起來
+      const saveResultAfterDnd = async (callback) => {
+
+        if( !memoIsAnyItemMove ){// 判斷若沒有作任何更動, 就不呼叫API
+
+          if( typeof callback === "function" ){
+
+            callback();
+          }
+          
+          return;
+        }
+
+        memoCheckedItemsBeforeDnd = [];
+        memoIsAnyItemMove = false;
+
+
+        const copyLeftSideItems = deepCopy(memoArray.left);
+        const copyRightSideItems = deepCopy(memoArray.right);
+
+        const toModify = sideDataToOrderList(copyLeftSideItems, copyRightSideItems);
+
+        // 後面這一段是用來呼叫API, 刪除所有操作前已選取的項目, 再更新上新的結果
+        await Promise.all(
+          memoCheckedItemsBeforeDnd.map((actKey) => {
+
+              return deleteFavoriteItem(actKey);
+          }),
+        );
+
+        await Promise.all(toModify.map((item) => (
+          modifyFavoriteItem({actKey: item.actKey || '', position: parseInt(item.position, 10)})
+        )));
+
+        memoFavoriteList = deepCopy(toModify);
+        
+
+        if( typeof callback === "function" ){
+
+          callback();
+        }
+      };
+
       // 點擊空白處離開移除模式
       const handleCloseRemoveMode = async () => {
 
-        if( document.querySelector(".dndArea") === null ){
+        if( memoIsClickRemove || document.querySelector(".dndArea") === null ){
 
           return;
         }
 
-        const list = [];
-
         const copyLeftSideItems = deepCopy(memoArray.left);
         const copyRightSideItems = deepCopy(memoArray.right);
+
+        saveResultAfterDnd();
+
+
+        const list = [];
 
         for (let i = 0; i < 10; i++) {
 
@@ -155,7 +210,6 @@ const Favorite = () => {
 
         const beforeUpdateArraySideLeft = [];
         const beforeUpdateArraySideRight = [];
-        const alreadyCheckedItemBeforeEdit = [];
 
         memoArray.right.map((ele) => {
 
@@ -163,7 +217,7 @@ const Favorite = () => {
 
           if( ele.actKey.indexOf('emptyBlock_') === -1 ){
 
-            alreadyCheckedItemBeforeEdit.push(ele.actKey);
+            memoCheckedItemsBeforeDnd.push(ele.actKey);
           }
         });
 
@@ -173,7 +227,7 @@ const Favorite = () => {
 
           if( ele.actKey.indexOf('emptyBlock_') === -1 ){
 
-            alreadyCheckedItemBeforeEdit.push(ele.actKey);
+            memoCheckedItemsBeforeDnd.push(ele.actKey);
           }
         });
 
@@ -285,32 +339,36 @@ const Favorite = () => {
         setViewComponentMain(<MainComponent className={'dndArea'} renderData={[{id: 'left', items: left}, {id: 'right', items: right}]} />);
 
 
-        // 後面這一段是用來呼叫API, 刪除所有操作前已選取的項目, 再更新上新的結果
-        await Promise.all(
-          alreadyCheckedItemBeforeEdit.map((actKey) => {
+        memoIsAnyItemMove = true;
+      };
 
-              return deleteFavoriteItem(actKey);
-          }),
-        );
+      const sideDataToOrderList = (left, right) => {
 
-        const toModify = [];
+        const orderList = deepCopy(memoFavoriteList);
         const copyLeftItems = deepCopy(left);
         const copyRightItems = deepCopy(right);
+
+        orderList.splice(2);
 
         for (let i = 0; i < 10; i++) {
 
           let data = (i%2 == 0) ? copyLeftItems.shift() : copyRightItems.shift();
 
-          toModify[i] = data;
+          if(data.actKey.indexOf('emptyBlock_') === -1){
+
+            orderList.push(data);
+          }
         };
 
-        await Promise.all(toModify.map((item, position) => (
-          modifyFavoriteItem({actKey: item.actKey || '', position: parseInt(position, 10)})
-        )));
+        return orderList;
       };
 
       // 處理刪除事件
       const removeItem = (position, name, actKey) => {
+
+        // 避免點擊刪除按鈕的時候, 也觸發到"點擊空白處離開移除模式"
+        memoIsClickRemove = true;
+
         const left = deepCopy(memoArray.left);
         const right = deepCopy(memoArray.right);
 
@@ -337,12 +395,24 @@ const Favorite = () => {
             memoArray.left = deepCopy(left);
             memoArray.right = deepCopy(right);
 
+            // 將更動後的結果存回list快取
+            const orderList = sideDataToOrderList(left,right);
+            memoFavoriteList = deepCopy(orderList.filter(item => item.actKey != actKey));
+
+
             await deleteFavoriteItem(actKey);
 
             setViewComponentMain(<MainComponent className={'dndArea'} renderData={[{id: 'left', items: left}, {id: 'right', items: right}]} />);
           },
           cancelContent: '取消',
         });
+
+        // 避免點擊刪除按鈕的時候, 也觸發到"點擊空白處離開移除模式"
+        (async () => {
+          await new Promise(resolve => setTimeout(resolve, 1000));// sleep 1 sec
+
+          memoIsClickRemove = false;
+        })(); 
       };
 
       // 我的最愛主元件, 用來切換普通模式 / 拖拉模式
@@ -537,28 +607,52 @@ const Favorite = () => {
       // 渲染我的最愛列表
       const renderFavoriteList = async () => {
 
-        const rows = await getFavoriteList();
+        try {
 
-        memoFavoriteList = deepCopy(rows);
+          let data = [];
 
-        setViewComponentMain(<MainComponent className={'favoriteArea'} renderData={rows} />);
+          // 判斷如有呼叫過API, 就把list cache起來, 節省成本
+          if( hasLoadedFavoriteList === false ){
 
-        // 設定點擊關閉的處理事件
-        setViewCloseBtnFunction(() => {return () => {
-          closeFunc()
-        }});
+            const rows = await getFavoriteList();
+
+            memoFavoriteList = deepCopy(rows);
+
+            hasLoadedFavoriteList = true;
+          }
+
+          data = deepCopy(memoFavoriteList);
+
+          setViewComponentMain(<MainComponent className={'favoriteArea'} renderData={data} />);
+
+          // 設定點擊關閉的處理事件
+          setViewCloseBtnFunction(() => {return () => {
+
+            if( document.querySelector(".dndArea") !== null ){
+
+              // 在已拖拉更動的情況下, 如果沒有回到普通模式就點擊右上方X離開, 也要將結果存起來
+              saveResultAfterDnd(() => {
+
+                closeFunc();
+              });
+            }else{
+
+              closeFunc();
+            }
+            
+          }});
+
+        } catch (err) {
+          console.log('getFavoriteList', err);
+        }
       };
 
       // 渲染移除模式可拖曳的列表
       const renderDndFavoriteList = async () => {
 
-        const rows = await getFavoriteList();
-
-        memoFavoriteList = deepCopy(rows);
-
         const left = [];
         const right = [];
-        const draggableList = rows.filter((el) => el.position !== '-1' && !!el.actKey);
+        const draggableList = memoFavoriteList.filter((el) => el.position !== '-1' && !!el.actKey);
    
         draggableList.map((el, index) => {
           if(el.position % 2 == 0){
@@ -596,14 +690,23 @@ const Favorite = () => {
 
         try {
 
-          const res = await getFavoriteList();
-          if (!res) throw new Error('getFavoriteList response is empty');
+          // 判斷如有呼叫過API, 就把list cache起來, 節省成本
+          if( hasLoadedFavoriteSettingList === false ){
+
+            const res = await getFavoriteSettingList();
+            if (!res) throw new Error('getFavoriteSettingList response is empty');
+
+            memoFavoriteSettingList = deepCopy(res);
+
+            hasLoadedFavoriteSettingList = true;
+          }
 
           setViewComponentMain(
             <S00100_1
               addPoposition={position} 
               isEditAction={false}
-              favoriteList={res} />
+              favoriteList={ deepCopy(memoFavoriteList) } 
+              favoriteSettingList={ deepCopy(memoFavoriteSettingList) } />
           );
 
           // 設定點擊關閉的處理事件
@@ -619,15 +722,30 @@ const Favorite = () => {
       // 渲染編輯我的最愛畫面
       const editFavorite = async () => {
 
+        // 在拖曳模式下, 不進入編輯頁
+        if( document.querySelector(".dndArea") !== null ){
+
+          return;
+        }
+
         try {
 
-          const res = await getFavoriteList();
-          if (!res) throw new Error('getFavoriteList response is empty');
+          // 判斷如有呼叫過API, 就把list cache起來, 節省成本
+          if( hasLoadedFavoriteSettingList === false ){
+
+            const res = await getFavoriteSettingList();
+            if (!res) throw new Error('getFavoriteSettingList response is empty');
+
+            memoFavoriteSettingList = deepCopy(res);
+
+            hasLoadedFavoriteSettingList = true;
+          }
 
           setViewComponentMain(
             <S00100_1
               isEditAction={true}
-              favoriteList={res} />
+              favoriteList={ deepCopy(memoFavoriteList) } 
+              favoriteSettingList={ deepCopy(memoFavoriteSettingList) } />
           );
 
           // 設定點擊關閉的處理事件
@@ -640,6 +758,12 @@ const Favorite = () => {
         }
       };
 
+      // 更新cache memoFavoriteList
+      const updateMemoFavoriteList = (updatedData) => {
+
+        memoFavoriteList = deepCopy(updatedData);
+      };
+
 
       // 開放讓 triggerEvent 存取的中介層方法
       return {
@@ -649,6 +773,7 @@ const Favorite = () => {
         handleCloseRemoveMode : handleCloseRemoveMode,
         addFavorite : addFavorite,
         editFavorite : editFavorite,
+        updateMemoFavoriteList : updateMemoFavoriteList
       };
     })();
     
@@ -676,6 +801,11 @@ const Favorite = () => {
       case 'S00100_back2MyFavorite' : 
 
         triggerEvent({eventName:'renderFavoriteList'});
+        break;
+
+      case 'S00100_updateMemoFavoriteList' : 
+
+        triggerEvent({eventName:'updateMemoFavoriteList', params: params});
         break;
     }
  
