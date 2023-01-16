@@ -106,6 +106,7 @@ const processResponse = async (response) => {
     console.log(`\x1b[31m${response.config.url} - Exception = (\x1b[33m${code}\x1b[31m) ${message}`);
     switch (code) {
       case 'ISG0001':
+      case 'Err1003': // 隨想 Token 過期
       case 'WEBCTL0101':
         await showError('因為您已閒置過久未操作系統，為考量資訊安全；銀行端已自動切斷您的連線。若您要繼續使用，請重新登入，造成您的不便敬請見諒。', () => {
           // 理論上不會發生，但若 APP 沒控好，就有可能
@@ -114,6 +115,7 @@ const processResponse = async (response) => {
         break;
 
       case 'ISG0306-E003': // MBGW 回覆逾時
+      case 'ISG0306-E089': // MBGW 以此帳號已在其他系統登入
       case 'WEBCTL0100': // 以此帳號已在其他系統登入
       case 'WEBCTL9003': // 此功能無法在登入前使用。
       case 'WEBCTL0102': // 密碼錯太多次，鎖住帳號並強制登出
