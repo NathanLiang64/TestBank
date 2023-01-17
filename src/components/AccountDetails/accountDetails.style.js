@@ -23,7 +23,7 @@ const AccountDetailsWrapper = styled(MainScrollWrapper)`
   }
 
   .inquiryArea {
-    padding: 1.6rem;
+    padding: 0 .5rem;
     border-top-left-radius: 3rem;
     border-top-right-radius: 3rem;
     width: 100%;

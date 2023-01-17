@@ -1,6 +1,6 @@
 import { FEIBInput, FEIBInputLabel } from 'components/elements';
 import ConfirmButtons from 'components/ConfirmButtons';
-import Accordion from 'components/Accordion';
+// import Accordion from 'components/Accordion';
 
 /* style */
 import { DrawerContentWrapper } from './T00200.style';
@@ -23,13 +23,12 @@ const DrawerContent = ({
         為保障您的交易安全，將為您進行裝置認證，以啟用快速登入，點選確認即閱讀並同意
         <span>快速登入設定條款</span>
       </p>
-      {/* TODO: 下方2條款內容待提供。 */}
-      <Accordion title="利用行動電話號碼辦理身分驗證服務條款" space="both">
+      {/* <Accordion title="利用行動電話號碼辦理身分驗證服務條款" space="both">
         條款內容
       </Accordion>
       <Accordion title="快速登入設定條款" space="both">
         條款內容
-      </Accordion>
+      </Accordion> */}
     </div>
     <ConfirmButtons
       mainButtonValue="確認"

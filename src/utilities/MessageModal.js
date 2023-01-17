@@ -44,7 +44,9 @@ export const showPrompt = async (message, action) => {
  * @param {Function|Number} action 表示按下確定按鈕的動作代碼。預設關閉Popup，若是數字（1.執行Layout.goBack, 2.執行closeFunc, 3.執行forceLogout, 其他.關閉Popup）
  */
 export const showError = async (message, action) => {
-  const actionFunc = (action && action.constructor === Function) ? action : closePopup;
+  // NOTE : action.constructor === Function 無法運作，可能拿到 TypeScript 的 Interface，故改用 typeof
+  // const actionFunc = (action && action.constructor === Function) ? action : closePopup;
+  const actionFunc = (action && typeof action === 'function') ? action : closePopup;
   const exActionMode = (!actionFunc) ? Number.parseInt(action, 10) : null;
   const promise = new Promise((resolve) => {
     store.dispatch(

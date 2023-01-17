@@ -46,7 +46,7 @@ const C00300 = () => {
   /**
    * 頁面啟動，初始化
    */
-  useEffect(async () => {
+  useEffect(() => {
     dispatch(setWaittingVisible(true));
 
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。

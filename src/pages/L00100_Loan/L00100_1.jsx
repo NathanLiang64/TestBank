@@ -16,12 +16,12 @@ import {
 } from 'utilities/Generator';
 
 import { getLoanRewards } from './api';
-import PageWrapper from './Rewards.style';
+import { RewardPageWrapper } from './L00100.style';
 
 const uid = uuid();
 
 /**
- * L00100 貸款 可能回饋頁
+ * L00100_1 貸款 可能回饋頁
  */
 const Page = () => {
   const history = useHistory();
@@ -51,7 +51,7 @@ const Page = () => {
   return (
     <Layout title="可能回饋" goBackFunc={() => history.goBack()}>
       <Main small>
-        <PageWrapper>
+        <RewardPageWrapper>
           <Badge
             label={rewards?.isJoinedRewardProgram ? '回饋累計' : '您尚未參加挑戰'}
             value={rewards?.isJoinedRewardProgram ? currencySymbolGenerator(rewards?.currency ?? 'NTD', rewards?.rewards ?? 0) : '-'}
@@ -66,7 +66,7 @@ const Page = () => {
           ) : (
             <EmptyData height="30vh" />
           ) }
-        </PageWrapper>
+        </RewardPageWrapper>
       </Main>
     </Layout>
   );

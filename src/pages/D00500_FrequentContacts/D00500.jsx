@@ -142,7 +142,7 @@ const Page = () => {
   const renderMemberCards = () => {
     if (!accounts) return null;
     if (!accounts.length) return <EmptyData content="查無常用帳號" height="70vh" />;
-    return accounts?.map((acct) => (
+    return accounts.map((acct) => (
       <MemberAccountCard
         key={uuid()} // key值每次編輯後皆改變，以觸發react重新渲染
         name={acct.nickName}

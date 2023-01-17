@@ -4,14 +4,13 @@ import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import uuid from 'react-uuid';
 
-import { setDrawer, setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
-import { CircleIcon, MoreIcon, ArrowNextIcon } from 'assets/images/icons';
+import { ArrowNextIcon } from 'assets/images/icons';
 import { MainScrollWrapper } from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import SwiperLayout from 'components/SwiperLayout';
 import AccountCard from 'components/AccountCard';
-import FEIBIconButton from 'components/elements/FEIBIconButton';
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import InformationTape from 'components/InformationTape';
 import EmptyData from 'components/EmptyData';
@@ -61,34 +60,34 @@ const Page = () => {
   /**
    * 產生上方卡片會用到的
    */
-  const handleMoreClick = (account, subNo) => {
-    const list = [
-      { icon: <CircleIcon />, title: '貸款資訊', onClick: () => { history.push('/L001002', { account, subNo }); } },
-      /*
-      { icon: <CircleIcon />, title: '部分貸款', onClick: () => {} },
-      { icon: <CircleIcon />, title: '全部貸款', onClick: () => {} },
-      { icon: <CircleIcon />, title: '合約下載', onClick: () => { getContract({ account, format: 1 }); } },
-      { icon: <CircleIcon />, title: '清償證明下載', onClick: () => { getStatment({ accountNo, format: 1 }); } },
-      */
-    ];
-    dispatch(setDrawer({
-      title: '',
-      content: (
-        <ul>
-          {list.map((func) => (
-            <li key={func.title}>
-              <button type="button" onClick={func.onClick}>
-                {func.icon}
-                {func.title}
-              </button>
-            </li>
-          ))}
-        </ul>
-      ),
-      shouldAutoClose: true,
-    }));
-    dispatch(setDrawerVisible(true));
-  };
+  // const handleMoreClick = (account, subNo) => {
+  //   const list = [
+  //     { icon: <CircleIcon />, title: '貸款資訊', onClick: () => { history.push('/L001002', { account, subNo }); } },
+  //     /*
+  //     { icon: <CircleIcon />, title: '部分貸款', onClick: () => {} },
+  //     { icon: <CircleIcon />, title: '全部貸款', onClick: () => {} },
+  //     { icon: <CircleIcon />, title: '合約下載', onClick: () => { getContract({ account, format: 1 }); } },
+  //     { icon: <CircleIcon />, title: '清償證明下載', onClick: () => { getStatment({ accountNo, format: 1 }); } },
+  //     */
+  //   ];
+  //   dispatch(setDrawer({
+  //     title: '',
+  //     content: (
+  //       <ul>
+  //         {list.map((func) => (
+  //           <li key={func.title}>
+  //             <button type="button" onClick={func.onClick}>
+  //               {func.icon}
+  //               {func.title}
+  //             </button>
+  //           </li>
+  //         ))}
+  //       </ul>
+  //     ),
+  //     shouldAutoClose: true,
+  //   }));
+  //   dispatch(setDrawerVisible(true));
+  // };
 
   // 前往查詢應繳本息頁面
   const handleSearchClick = (account, subNo) => startFunc(FuncID.L00200, { account, subNo });
@@ -103,19 +102,19 @@ const Page = () => {
       <AccountCard type="L" key={`${uid}-c${i}`}>
         <div className="justify-between items-start">
           <div>
-            <div>{card.loanType}</div>
+            {/* 目前還沒有 loanType 資料，暫時以信用貸款顯示 */}
+            <div>{card.loanType ?? '信用貸款'}</div>
             <div>{`${accountFormatter(card.account)} (${card.subNo})`}</div>
           </div>
-          <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.account, card.subNo)}>
+          {/* <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.account, card.subNo)}>
             <MoreIcon />
-          </FEIBIconButton>
+          </FEIBIconButton> */}
         </div>
         <div className="justify-end items-baseline gap-4">
-          <div>貸款餘額</div>
           <div className="balance">{currencySymbolGenerator(card.currency ?? 'NTD', card.balance)}</div>
         </div>
         <div className="justify-end gap-6 mt-4 divider">
-          <button type="button" className="text-16" onClick={() => handleSearchClick(card.account, card.subNo)}>本期應繳查詢</button>
+          <button type="button" className="text-16" onClick={() => history.push('/L001002', { account: card.account, subNo: card.subNo })}>貸款資訊</button>
         </div>
       </AccountCard>
     ));
@@ -128,7 +127,6 @@ const Page = () => {
     {
       label: '應繳款日',
       value: `每月${loan.dayToPay}日`,
-      onClick: () => handleSearchClick(loan.account, loan.subNo),
     },
     {
       label: '應繳本息',

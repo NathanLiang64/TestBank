@@ -43,8 +43,8 @@ const E00300 = lazy(() => import('pages/E00300_FinancialDepartments'));
 const F00000 = lazy(() => import('pages/F00000_AplFxProxy/F00000'));
 const L00200 = lazy(() => import('pages/L00200_Principal/L00200'));
 const L00100 = lazy(() => import('pages/L00100_Loan/L00100'));
-const L00100Detail = lazy(() => import('pages/L00100_Loan/Details'));
-const L00100Reward = lazy(() => import('pages/L00100_Loan/Rewards'));
+const L001002 = lazy(() => import('pages/L00100_Loan/L00100_2'));
+const L001001 = lazy(() => import('pages/L00100_Loan/L00100_1'));
 const L00300 = lazy(() => import('pages/L00300_LoanInterest/L00300'));
 const L003001 = lazy(() => import('pages/L00300_LoanInterest/L00300_1'));
 const M00100 = lazy(() => import('pages/M00100_Community/M00100'));
@@ -145,8 +145,8 @@ const routes = [
   {path: '/F00000', exact: false, component: F00000},
   {path: '/L00200', exact: false, component: L00200},
   {path: '/L00100', exact: false, component: L00100},
-  {path: '/L001001', exact: false, component: L00100Reward},
-  {path: '/L001002', exact: false, component: L00100Detail},
+  {path: '/L001001', exact: false, component: L001001},
+  {path: '/L001002', exact: false, component: L001002},
   {path: '/L00300', exact: false, component: L00300},
   {path: '/L003001', exact: false, component: L003001},
   {path: '/M00100', exact: false, component: M00100},

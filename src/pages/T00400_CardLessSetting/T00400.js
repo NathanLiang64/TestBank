@@ -35,7 +35,7 @@ const CardLessSetting = () => {
     // 確認無卡提款開通狀態
     const cardLessRes = await getStatus();
     setCardLessStatus(cardLessRes);
-    setEnable(cardLessRes === '2');
+    setEnable(cardLessRes === 2);
 
     // 取得母帳戶的資訊。
     getAccountsList('M', (accounts) => setAccount(accounts[0]));
@@ -47,11 +47,11 @@ const CardLessSetting = () => {
     if (QLResult) {
     // 若已經綁定
       const cwdStatus = cardLessStatus;
-      if (cwdStatus === '0' || cwdStatus === '3' || cwdStatus === '4') {
-      // 跳轉設定無卡提款密碼頁
+      if (cwdStatus !== 2) {
+        // 非已開通狀態，跳轉設定無卡提款密碼頁
         history.push('/T004001');
       } else {
-      // 若是 1.已申請未開通 或是 2.已開通 狀態時需要先進行交易驗證
+        // 已開通狀態
         dispatch(setWaittingVisible(true));
         const { result } = await transactionAuth(AuthCode.T00400);
         if (result) {
@@ -62,7 +62,7 @@ const CardLessSetting = () => {
             errorTitle: '設定失敗',
             errorDesc: '設定失敗',
           });
-          setCardLessStatus('3'); // 註銷成功後狀態代碼為 3-已註銷
+          setCardLessStatus(3); // 註銷成功後狀態代碼為 3-已註銷
           setEnable(false);
         }
         dispatch(setWaittingVisible(false));

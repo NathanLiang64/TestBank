@@ -46,7 +46,7 @@ const DetailCard = ({
   targetBank,
   targetAcct,
   targetMbrId,
-  targetNickName,
+  // targetNickName,
   amount,
   balance,
   invert,
@@ -95,7 +95,7 @@ const DetailCard = ({
    */
   const txnDescription = () => {
     const date = dateToString(txnDate, '/', true);
-    if (targetNickName) return `${date} | ${targetNickName}`;
+    if (memo) return `${date} | ${memo}`;
     if (targetAcct) return `${date} - ${targetAcct}`; // NOTE 交易對象帳號很難格式化！
     return date;
   };

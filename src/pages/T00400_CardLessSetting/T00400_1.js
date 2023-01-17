@@ -57,40 +57,40 @@ const CardLessATM = () => {
 
   const renderPage = () => (
     <form id="withdrawPwdForm" onSubmit={handleSubmit(onSubmit)}>
-      <div>
-        <PasswordInputField
-          labelName="提款密碼"
-          inputProps={{
-            maxLength: 12,
-            placeholder: '請輸入提款密碼(4-12位數字)',
-            inputMode: 'numeric',
-            autoComplete: 'off',
-          }}
-          name="withdrawPwd"
-          control={control}
-        />
-        <PasswordInputField
-          labelName="確認提款密碼"
-          inputProps={{
-            maxLength: 12,
-            placeholder: '請再輸入一次提款密碼(4-12位數字)',
-            inputMode: 'numeric',
-            autoComplete: 'off',
-          }}
-          name="withdrawPwdCheck"
-          control={control}
-        />
-        <Accordion title="無卡提款約定事項" space="both">
-          <DealContent />
-        </Accordion>
-        <Accordion space="bottom">
-          <ul>
-            <li>
-              提醒您應注意密碼之設置及使用，不宜使用與您個人資料有關或具連續性、重複性或規則性之號碼為密碼，且不得將上開交易驗證資訊以任何方式使第三人知悉獲得以知悉，以確保交易安全。
-            </li>
-          </ul>
-        </Accordion>
-      </div>
+
+      <PasswordInputField
+        labelName="提款密碼"
+        inputProps={{
+          maxLength: 12,
+          placeholder: '請輸入提款密碼(4-12位數字)',
+          inputMode: 'numeric',
+          autoComplete: 'off',
+        }}
+        name="withdrawPwd"
+        control={control}
+      />
+      <PasswordInputField
+        labelName="確認提款密碼"
+        inputProps={{
+          maxLength: 12,
+          placeholder: '請再輸入一次提款密碼(4-12位數字)',
+          inputMode: 'numeric',
+          autoComplete: 'off',
+        }}
+        name="withdrawPwdCheck"
+        control={control}
+      />
+      <Accordion title="無卡提款約定事項">
+        <DealContent />
+      </Accordion>
+      <Accordion>
+        <ul>
+          <li>
+            提醒您應注意密碼之設置及使用，不宜使用與您個人資料有關或具連續性、重複性或規則性之號碼為密碼，且不得將上開交易驗證資訊以任何方式使第三人知悉獲得以知悉，以確保交易安全。
+          </li>
+        </ul>
+      </Accordion>
+
       <FEIBButton type="submit">同意條款並送出</FEIBButton>
     </form>
   );

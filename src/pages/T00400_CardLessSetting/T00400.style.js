@@ -33,6 +33,10 @@ const CardLessSettingWrapper = styled(Layout)`
       }
     }
   }
+
+  #withdrawPwdForm {
+    gap: 2rem;
+  }
 `;
 
 export default CardLessSettingWrapper;

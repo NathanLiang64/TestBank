@@ -15,12 +15,12 @@ import {
 } from 'utilities/Generator';
 
 import { getInfo } from './api';
-import PageWrapper from './Details.style';
+import { DetailPageWrapper } from './L00100.style';
 
 const uid = uuid();
 
 /**
- * L00100 貸款 資訊頁
+ * L00100_2 貸款 資訊頁
  */
 const Page = () => {
   const history = useHistory();
@@ -60,7 +60,7 @@ const Page = () => {
   return (
     <Layout title="貸款資訊" goBackFunc={() => history.goBack()}>
       <Main small>
-        <PageWrapper>
+        <DetailPageWrapper>
           <AccountCard type="L">
             <div>{details?.type}</div>
             <div>{`${param?.account} (${param?.subNo})`}</div>
@@ -78,7 +78,7 @@ const Page = () => {
             <hr />
           </div>
           <p className="remark">提早結清：12個月內結清，收取3%提前還款手續費；超過第12個月起提前還款收取0%手續費。</p>
-        </PageWrapper>
+        </DetailPageWrapper>
       </Main>
     </Layout>
   );
