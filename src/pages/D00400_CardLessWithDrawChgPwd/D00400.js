@@ -2,7 +2,7 @@ import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { transactionAuth } from 'utilities/AppScriptProxy';
-import { changeCardlessPwd } from 'pages/D00400_CardLessWithDrawChgPwd/api';
+import { changeCardlessPwd, getCardlessWdStatus } from 'pages/D00400_CardLessWithDrawChgPwd/api';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -15,13 +15,16 @@ import { PasswordInputField } from 'components/Fields';
 /* Styles */
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { showAnimationModal } from 'utilities/MessageModal';
+import { showAnimationModal, showCustomPrompt } from 'utilities/MessageModal';
+import { useEffect } from 'react';
+import { useNavigation } from 'hooks/useNavigation';
+import { FuncID } from 'utilities/FuncID';
 import { validationSchema } from './validationSchema';
 import CardLessWithDrawChgPwdWrapper from './D00400.style';
 
 const CardLessWithDrawChgPwd = () => {
   const dispatch = useDispatch();
-
+  const { startFunc, closeFunc } = useNavigation();
   const { handleSubmit, control } = useForm({
     defaultValues: {
       oldPassword: '',
@@ -79,7 +82,7 @@ const CardLessWithDrawChgPwd = () => {
         labelName="確認新提款密碼"
         name="newPasswordConfirm"
         inputProps={{
-          maxLength: 12, placeholder: '請再輸入一次新提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off',
+          maxLength: 12, placeholder: '請確認新提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off',
         }}
         control={control}
       />
@@ -93,6 +96,21 @@ const CardLessWithDrawChgPwd = () => {
       <FEIBButton type="submit">確認</FEIBButton>
     </form>
   );
+
+  useEffect(async () => {
+    // 需檢核是否已啟用無卡提款設定，如果沒有啟用則須出現提示
+    dispatch(setWaittingVisible(true));
+    const status = await getCardlessWdStatus();
+    dispatch(setWaittingVisible(false));
+    if (status !== 2) {
+      showCustomPrompt({
+        message: '請先進行「無卡提款設定」，或致電客服',
+        onOk: () => startFunc(FuncID.T00400),
+        okContent: '立即設定',
+        onCancel: closeFunc,
+      });
+    }
+  }, []);
 
   return (
     <Layout title="變更無卡提款密碼">

@@ -38,6 +38,7 @@ const D00800 = () => {
   const history = useHistory();
   const [accountsList, setAccountsList] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
+  const [defaultSlide, setDefaultSlide] = useState(0);
   const [searchList, setSearchList] = useState({ reserve: {}, result: {}});
   const [banks, setBanks] = useState();
   const {control, handleSubmit, watch } = useForm({ defaultValues });
@@ -86,8 +87,11 @@ const D00800 = () => {
       setAccountsList(accts);
       accountsListRes = accts;
       const params = await loadFuncParams();
-      if (params) setSelectedAccount(params.selectedAccount);
-      else setSelectedAccount(accts[0]);
+      if (params) {
+        setSelectedAccount(params.selectedAccount);
+        const foundIndex = accts.findIndex(({accountNo}) => accountNo === params.selectedAccount.accountNo);
+        setDefaultSlide(foundIndex);
+      } else setSelectedAccount(accts[0]);
     });
     // TODO 若無 MSC 類別的帳戶，要給什麼提示訊息給使用者
     return accountsListRes.length ? null : '您還沒有任何臺幣存款帳戶。';
@@ -186,12 +190,6 @@ const D00800 = () => {
 
   const handleChangeSlide = ({ activeIndex }) => setSelectedAccount(accountsList[activeIndex]);
 
-  const focusToIntentedSlide = async (swiper) => {
-    let activeIndex = 0; // 預設第一項
-    activeIndex = accountsList.findIndex(({accountNo}) => accountNo === selectedAccount.accountNo);
-    swiper.slideTo(activeIndex, 0);
-  };
-
   // 切換帳號/Tab/日期範圍時 會檢查 searchList 有無特定的 key，若沒有就執行搜尋
   useEffect(() => {
     if (!selectedAccount) return;
@@ -208,7 +206,7 @@ const D00800 = () => {
             centeredSlides
             pagination
             onSlideChange={handleChangeSlide}
-            onAfterInit={focusToIntentedSlide}
+            initialSlide={defaultSlide}
           >
             {renderCard()}
           </Swiper>

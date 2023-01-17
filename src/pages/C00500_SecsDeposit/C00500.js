@@ -17,11 +17,7 @@ import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { getAccountsList, updateAccount } from 'utilities/CacheData';
 import { FuncID } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
-import {
-  getTransactions,
-  downloadDepositBookCover,
-  setAccountAlias,
-} from './api';
+import { getTransactions, setAccountAlias } from './api';
 import PageWrapper from './C00500.style';
 
 /**
@@ -155,10 +151,12 @@ const C00500 = () => {
       case FuncID.E00100_換匯: // 換匯
         params = { transOut: selectedAccount.accountNo };
         break;
-
-      case 'DownloadCover': // 存摺封面下載
-        downloadDepositBookCover(selectedAccount.accountNo); // 預設檔名為「帳號-日期.pdf」，密碼：身分證號碼
-        return;
+      case FuncID.C00800: // 匯出存摺
+        params = { accountNo: selectedAccount.accountNo }; // TODO 直接帶入台幣帳號
+        break;
+      case FuncID.D00800: // 匯出存摺
+        params = { selectedAccount }; // TODO 直接帶入台幣帳號
+        break;
 
       case 'Rename': // 帳戶名稱編輯
         showRenameDialog(selectedAccount.alias);
@@ -194,11 +192,8 @@ const C00500 = () => {
                 },
               ]}
               moreFuncs={[
-                {
-                  fid: 'DownloadCover',
-                  title: '存摺封面下載',
-                  icon: 'coverDownload',
-                },
+                { fid: FuncID.D00800, title: '預約轉帳查詢/取消', icon: 'reserve' },
+                { fid: FuncID.C00800, title: '匯出存摺', icon: 'coverDownload' },
                 { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
               ]}
             />

@@ -80,9 +80,9 @@ const C00300 = () => {
     } else {
       setSelectedAccountIdx(0);
       setShowRate(true);
-
       // 只要是重新登入，而不是從呼叫的功能返回（例：轉帳），就清掉交易明細快取。
       accts.forEach((acc) => delete acc.txnDetails);
+      forceUpdate();
     }
   };
 
@@ -94,20 +94,20 @@ const C00300 = () => {
   const loadTransactions = (account) => {
     const { txnDetails } = account;
     if (!account.isLoadingTxn) {
-      account.isLoadingTxn = true; // 避免因為非同步執行造成的重覆下載
       if (!txnDetails) {
+        account.isLoadingTxn = true; // 避免因為非同步執行造成的重覆下載
         // 取得帳戶交易明細（三年內的前25筆即可）
         getTransactions(account.accountNo).then((transData) => {
           const details = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
           account.txnDetails = details;
 
           // 更新餘額。
-          if (transData.acctTxDtls.length > 0) { // 原本是 transData.length，應該是誤 key
+          if (transData.acctTxDtls.length > 0) {
             account.balance = details[0].balance;
-            updateAccount(account);
           }
 
           delete account.isLoadingTxn; // 載入完成才能清掉旗標！
+          updateAccount(account);
           forceUpdate();
         });
       }
@@ -223,7 +223,7 @@ const C00300 = () => {
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case 'D00300': // 無卡提款，只有母帳號才可以使用。 // TODO 帶參數過去
+      case FuncID.D00300: // 無卡提款，只有母帳號才可以使用。 // TODO 帶參數過去
         params = { transOut: selectedAccount.accountNo };
         break;
 
@@ -269,7 +269,7 @@ const C00300 = () => {
                 funcList={[
                   { fid: FuncID.D00100_臺幣轉帳, title: '轉帳' },
                   { fid: FuncID.E00100_換匯, title: '換匯' },
-                  { fid: 'D00300', title: '無卡提款', hidden: (selectedAccount.acctType !== 'M') },
+                  { fid: FuncID.D00300, title: '無卡提款', hidden: (selectedAccount.acctType !== 'M') },
                 ]}
                 moreFuncs={[
                   // { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false }, // TODO: 此階段隱藏

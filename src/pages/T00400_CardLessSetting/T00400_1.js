@@ -61,7 +61,10 @@ const CardLessATM = () => {
         <PasswordInputField
           labelName="提款密碼"
           inputProps={{
-            maxLength: 12, placeholder: '請輸入提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off',
+            maxLength: 12,
+            placeholder: '請輸入提款密碼(4-12位數字)',
+            inputMode: 'numeric',
+            autoComplete: 'off',
           }}
           name="withdrawPwd"
           control={control}
@@ -69,7 +72,10 @@ const CardLessATM = () => {
         <PasswordInputField
           labelName="確認提款密碼"
           inputProps={{
-            maxLength: 12, placeholder: '請再輸入一次提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off',
+            maxLength: 12,
+            placeholder: '請再輸入一次提款密碼(4-12位數字)',
+            inputMode: 'numeric',
+            autoComplete: 'off',
           }}
           name="withdrawPwdCheck"
           control={control}
@@ -79,15 +85,13 @@ const CardLessATM = () => {
         </Accordion>
         <Accordion space="bottom">
           <ul>
-            <li>本交易限時15分鐘內有效，請於交易有效時間內，至本行提供無卡提款功能之ATM完成提款。若逾時請重新申請。(實際交易有效時間以本行系統時間為準)。</li>
-            <li>提醒您，ATM提款時請務必確認您的存款餘額是否足夠，避免提款失敗。 </li>
-            <li>無卡提款密碼連續錯誤3次，即鎖住服務，須重新申請服務。</li>
+            <li>
+              提醒您應注意密碼之設置及使用，不宜使用與您個人資料有關或具連續性、重複性或規則性之號碼為密碼，且不得將上開交易驗證資訊以任何方式使第三人知悉獲得以知悉，以確保交易安全。
+            </li>
           </ul>
         </Accordion>
       </div>
-      <FEIBButton type="submit">
-        同意條款並送出
-      </FEIBButton>
+      <FEIBButton type="submit">同意條款並送出</FEIBButton>
     </form>
   );
 

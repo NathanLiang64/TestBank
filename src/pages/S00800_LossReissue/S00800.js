@@ -37,10 +37,8 @@ const LossReissue = () => {
 
   const addressText = useMemo(() => {
     if (!addressValue) return '';
-    const county = findCounty(addressValue.county);
-    const city = county ? findCity(county.code, addressValue.city) : '';
-    if (county && city) return `${county.name}${city.name}${addressValue.addr}`;
-    return `${addressValue.addr}`;
+    const {county, city, addr} = addressValue;
+    return `${county}${city}${addr}`;
   }, [addressValue]);
 
   const updateDebitCardStatus = async () => {
@@ -61,10 +59,13 @@ const LossReissue = () => {
       if (model.reissue) model.actionText = '補發';
 
       // 只有 5.掛失 或 6.註銷 才需要用到地址。
+      const county = findCounty(cardInfo.addrCity.trim());
+      const city = findCity(county.code, cardInfo.addrDistrict.trim());
+
       if (model.reissue) {
         setAddressValue({
-          county: cardInfo.addrCity.trim(),
-          city: cardInfo.addrDistrict.trim(),
+          county: county?.name ?? '',
+          city: city?.name ?? '',
           addr: cardInfo.addrStreet,
         });
       }

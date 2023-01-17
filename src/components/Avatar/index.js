@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { EditIcon, PersonalIcon } from 'assets/images/icons';
 import { storeData, restoreData } from 'utilities/AppScriptProxy';
@@ -59,10 +58,6 @@ const Avatar = ({
 
   const onImgChangeHandler = async (event) => {
     const photo = event.target.files[0];
-    if (photo.type !== 'image/jpeg') {
-      setUploadErrMsg('上傳之影像規格限定 JPG 或 JPEG 格式');
-      return;
-    }
 
     if (photo.size / (1024 * 1204) > 8) {
       setUploadErrMsg('檔案大小不得大於 8 MB');
@@ -71,7 +66,6 @@ const Avatar = ({
 
     const url = URL.createObjectURL(photo);
     setUploadSrc(url);
-    // NOTE 目前後端有進行品質壓縮處理，前端目前沒做
 
     setUploadErrMsg('');
   };

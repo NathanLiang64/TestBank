@@ -15,7 +15,7 @@ import { restoreCache } from './AppScriptProxy';
 export const getBankCode = async () => {
   let {banks} = await restoreCache();
   if (!banks) {
-    banks = BankData.banks;
+    banks = BankData.data;
     // TODO 取得 BankData.version 之後的異動資料。
     // const response = await callAPI('/api/transfer/queryBank');
     // if (response.isSuccess) {
@@ -37,7 +37,7 @@ export const getBankCode = async () => {
 export const getBranchCode = async () => {
   let {branches} = await restoreCache();
   if (!branches) {
-    branches = BranchData.branches;
+    branches = BranchData.data;
     // TODO 取得 BranchData.version 之後的異動資料。
     // const response = await callAPI('/api/v1/getAllBranches');
     // if (response.isSuccess) {

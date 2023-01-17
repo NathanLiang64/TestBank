@@ -118,7 +118,7 @@ const DepositPlanPage = () => {
       }
     };
 
-    PromptShouldCloseDepositPlanOrNot({ endDate: plan.endDate, onOk: () => confirmTermination()});
+    PromptShouldCloseDepositPlanOrNot({ endDate: plan.endDate, onOk: confirmTermination, type: plan.progInfo.type});
   };
 
   const handleMoreClick = (plan) => {
@@ -217,6 +217,7 @@ const DepositPlanPage = () => {
           <DepositPlan
             key={p.planId}
             onShowDetailClick={() => handleShowDetailClick(p)}
+            onTerminatePlanClick={() => handleTerminatePlan(p)} // TODO 待測試
             {...p}
           />
         );
