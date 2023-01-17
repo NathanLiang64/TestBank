@@ -60,6 +60,7 @@ const C00300 = () => {
         dispatch(setWaittingVisible(false));
       }
     });
+    return () => setAccounts(null);
   }, []);
 
   /**

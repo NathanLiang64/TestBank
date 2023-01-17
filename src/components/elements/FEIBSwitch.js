@@ -1,13 +1,14 @@
 import styled from 'styled-components';
 import { Switch as MaterialSwitch } from '@material-ui/core';
 import theme from 'themes/theme';
+import { useSelector } from 'react-redux';
 
 /*
 * ==================== FEIBSwitch 可用選項 ====================
 * 1. $color -> switch 顏色
 *    可傳入各類型格式色碼，同步套用到 thumb, track, drop
 * */
-const FEIBSwitch = styled(MaterialSwitch)`
+const StyledSwitch = styled(MaterialSwitch)`
   &.MuiSwitch-root {
     padding: .35rem;
     .MuiSwitch-track {
@@ -32,7 +33,18 @@ const FEIBSwitch = styled(MaterialSwitch)`
       background-color: #34C759;
       opacity: 1;
     }
+    &.Mui-disabled + .MuiSwitch-track {
+      background-color: black;
+      opacity: .12;
+    }
   }  
 `;
+
+const FEIBSwitch = (props) => {
+  const buttonDisabled = useSelector(
+    (state) => state.ModalReducer.buttonDisabled,
+  );
+  return <StyledSwitch disabled={buttonDisabled} {...props} />;
+};
 
 export default FEIBSwitch;

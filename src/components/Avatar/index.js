@@ -88,7 +88,7 @@ const Avatar = ({
     </label>
   );
 
-  useEffect(async () => {
+  const processDefaultImage = async () => {
     // 從本地 Cache 取出圖像。
     if (memberId) {
       const imgData = await restoreData(`Avator_${memberId}`);
@@ -99,6 +99,15 @@ const Avatar = ({
       }
     }
     setShowDefault(!memberId);
+  };
+
+  useEffect(() => {
+    processDefaultImage();
+    return () => {
+      setPreview(null);
+      setSrc(null);
+      setShowDefault(false);
+    };
   }, [memberId]);
 
   return (

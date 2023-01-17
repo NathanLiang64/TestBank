@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useRef, useEffect, useState } from 'react';
 import DetailCard from 'components/DetailCard';
 import Loading from 'components/Loading';
@@ -9,11 +8,7 @@ import DepositDetailPanelWrapper from './depositDetailPanel.style';
 const DepositDetailPanel = ({
   details, onMoreFuncClick,
 }) => {
-  const getWindowHeight = () => {
-    const height = window.innerHeight;
-    return height;
-  };
-  const [windowHeight, setWindowHeight] = useState(getWindowHeight());
+  const [windowHeight, setWindowHeight] = useState();
   const detailsRef = useRef();
 
   const renderDetailCardList = () => {
@@ -26,10 +21,9 @@ const DepositDetailPanel = ({
         <EmptyData content="查無最近三年內的帳務往來資料" />
       );
     }
-
     // 計算可顯示的明細項目數量。
     const yPos = detailsRef?.current?.getBoundingClientRect()?.y;
-    const detailAreaHeight = yPos ? window.innerHeight - yPos : 430; // 如果沒有，預設顯示 5 筆
+    const detailAreaHeight = yPos ? windowHeight - yPos : 430; // 如果沒有，預設顯示 5 筆
 
     // 根據剩餘高度計算要顯示的卡片數量，計算裝置可容納的交易明細卡片數量
     const list = [];
@@ -46,9 +40,9 @@ const DepositDetailPanel = ({
   };
 
   useEffect(() => {
-    const handleResize = () => setWindowHeight(getWindowHeight());
-
+    const handleResize = () => setWindowHeight(window.innerHeight);
     window.addEventListener('resize', handleResize);
+    setWindowHeight(window.innerHeight);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -56,8 +50,8 @@ const DepositDetailPanel = ({
     <DepositDetailPanelWrapper>
       <div className="transactionDetail" ref={detailsRef}>
         {/* 顯示 最近交易明細 */}
-        { renderDetailCardList() }
-        { details?.length > 0 && (
+        {renderDetailCardList()}
+        {details?.length > 0 && (
           <div className="moreButton" onClick={onMoreFuncClick}>
             更多明細
             <ArrowNextIcon />
