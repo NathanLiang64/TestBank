@@ -1,6 +1,8 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 /* eslint-disable brace-style */
 import axios from 'axios';
+import store from 'stores/store';
+import { setButtonDisabled } from 'stores/reducers/ModalReducer';
 import { showError } from './MessageModal';
 import JWEUtil from './JWEUtil';
 import JWTUtil from './JWTUtil';
@@ -24,6 +26,7 @@ const userAxios = () => instance;
 const processRequest = async (request) => {
   console.log(`\x1b[33mAPI : ${request.method.toUpperCase()} /${request.url}`);
   console.log('Request = ', request.data);
+  store.dispatch(setButtonDisabled(true));
   if (request.method === 'get') return request;
 
   const jwtToken = await getJwtToken();
@@ -62,7 +65,7 @@ const processRequest = async (request) => {
 const processResponse = async (response) => {
   // eslint-disable-next-line object-curly-newline
   const { code, data, mac, jwtToken } = response.data; // 不論成功或失敗，都一定會更新 jwtToken
-
+  store.dispatch(setButtonDisabled(false));
   let rqJwtToken; // 來查是否發出的Request有沒有加密
   const headerAuth = response.config.headers.authorization; // 用Request時所使用的 jwtToken 來判斷是否有使用 JWT
   if (headerAuth && headerAuth.startsWith('Bearer ')) {
@@ -144,6 +147,7 @@ instance.interceptors.request.use(
   (ex) => {
     // 系統層錯誤！
     // 若是環境問題，則直接顯示；若是WebController未處理的錯誤，則另外處理。
+    store.dispatch(setButtonDisabled(false));
     console.log('\x1b[31mRequest Error --> ', ex);
     Promise.reject(ex);
   },
@@ -155,6 +159,7 @@ instance.interceptors.response.use(
     console.log('\x1b[31mResponse Error --> ', ex);
     // 系統層錯誤！
     // 若是環境問題，則直接顯示；若是WebController未處理的錯誤，則另外處理。
+    store.dispatch(setButtonDisabled(false));
     const { response } = ex;
     switch (response.status) {
       case 401: // The Token has expired

@@ -5,6 +5,7 @@ const SET_DRAWER_VISIBLE = 'setDrawerVisible';
 const SET_WAITTING_VISIBLE = 'setWaittingVisible';
 const SET_ANIMATION_MODAL_VISIBLE = 'setAnimationModalVisible';
 const SET_ANIMATION_MODAL = 'setAnimationModal';
+const SET_BUTTON_DISABLED = 'setButtonDisabled';
 
 const initialState = {
   setResult: (value) => value,
@@ -45,6 +46,7 @@ const initialState = {
     onClose: null, // Drawer 右上角 X 按下時的處理方式。
   },
   overPanel: null,
+  buttonDisabled: false,
 };
 
 export default function ModalReducer(state = initialState, action) {
@@ -79,7 +81,8 @@ export default function ModalReducer(state = initialState, action) {
 
     case SET_ANIMATION_MODAL:
       return { ...state, animationModal: data };
-
+    case SET_BUTTON_DISABLED:
+      return { ...state, buttonDisabled: data };
     default:
       return state;
   }
@@ -151,6 +154,13 @@ export function setAnimationModal(data) {
 export function setOverPanel(data) {
   return {
     type: 'setOverPanel',
+    data,
+  };
+}
+
+export function setButtonDisabled(data) {
+  return {
+    type: SET_BUTTON_DISABLED,
     data,
   };
 }

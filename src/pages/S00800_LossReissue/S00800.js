@@ -58,11 +58,10 @@ const LossReissue = () => {
       if (model.islost) model.actionText = '掛失';
       if (model.reissue) model.actionText = '補發';
 
-      // 只有 5.掛失 或 6.註銷 才需要用到地址。
-      const county = findCounty(cardInfo.addrCity.trim());
-      const city = findCity(county.code, cardInfo.addrDistrict.trim());
-
       if (model.reissue) {
+        // 只有 5.掛失 或 6.註銷 才需要用到地址。
+        const county = findCounty(cardInfo.addrCity.trim());
+        const city = findCity(county.code, cardInfo.addrDistrict.trim());
         setAddressValue({
           county: county?.name ?? '',
           city: city?.name ?? '',
