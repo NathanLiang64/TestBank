@@ -1,7 +1,6 @@
 /* eslint-disable no-bitwise */
 /* eslint-disable no-use-before-define */
 import forge from 'node-forge';
-import { Buffer } from 'buffer';
 import store from 'stores/store';
 import { setAllCacheData } from 'stores/reducers/CacheReducer';
 import PasswordDrawer from 'components/PasswordDrawer';
@@ -134,14 +133,7 @@ export const funcStack = {
    * 從 localStorage 取出功能執行堆疊，並轉為 Array 物件後傳回。
    * @returns {Array} 功能執行堆疊
    */
-  getStack: () => {
-    const stack = JSON.parse(localStorage.getItem('funcStack') ?? '[]');
-    if (stack.length === 0 && getOsType(true) !== 3) {
-      const currentFunc = sessionStorage.getItem('currentFunc');
-      if (currentFunc) stack.push({ funcID: currentFunc });
-    }
-    return stack;
-  },
+  getStack: () => JSON.parse(localStorage.getItem('funcStack') ?? '[]'),
 
   update: (stack) => localStorage.setItem('funcStack', JSON.stringify(stack)),
 
@@ -455,22 +447,29 @@ async function verifyBio(authKey) {
 
 /**
  * 查詢快速登入綁定狀態
- * @returns {
- *  result: 驗證結果(true/false)。
- *  message: 驗證失敗狀況描述。
- *  QLStatus: 本裝置快速登入綁定狀態：(result為true時有值) 0：未綁定 1：已正常綁定 2：綁定但已鎖定 3：已在其它裝置綁定 4：本裝置已綁定其他帳號
- *  QLType: 快登裝置綁定所使用驗證方式(正常綁定狀態有值) (type->1:生物辨識/2:圖形辨識)
- * }
+ * @returns {Promise<{
+ *  result: '驗證結果(true/false)。'
+ *  message: '驗證失敗狀況描述。'
+ *  QLStatus: '本裝置快速登入綁定狀態：(result為true時有值) 0：未綁定 1：已正常綁定 2：綁定但已鎖定 3：已在其它裝置綁定 4：本裝置已綁定其他帳號'
+ *  QLType: '快登裝置綁定所使用驗證方式(正常綁定狀態有值) (type->1:生物辨識/2:圖形辨識)'
+ * }>}
  */
 async function getQLStatus() {
-  return await callAppJavaScript('getQLStatus', null, true, () => {
-    const testData = getJwtTokenTestData();
+  const appRs = await callAppJavaScript('getQLStatus', null, true, async () => {
+    const response = await callAPI('/api/setting/v1/quickLoginBoundInfo');
+    const testData = response.data;
     return {
       result: true,
-      QLStatus: testData.mid ? '1' : '0',
-      QLType: `${(testData.qlMode ?? 0) + 1}`,
+      QLStatus: `${testData.status}`,
+      QLType: `${testData.boundType}`,
     };
   });
+
+  return {
+    ...appRs,
+    QLStatus: parseInt(appRs.QLStatus, 10),
+    QLType: parseInt(appRs.QLType, 10),
+  };
 }
 
 /**
@@ -483,7 +482,7 @@ async function getQLStatus() {
  */
 async function createQuickLogin(authType) {
   const data = {
-    QLtype: authType,
+    QLtype: `${authType}`,
   };
   const appRs = await callAppJavaScript('regQLfeature', data, true, () => ({ result: true }));
   if (appRs.result === true) {
@@ -508,7 +507,7 @@ async function createQuickLogin(authType) {
  */
 async function verifyQuickLogin(authType, pwdE2ee) {
   const data = {
-    QLtype: authType,
+    QLtype: `${authType}`,
     pwdE2ee,
   };
   const appRs = await callAppJavaScript('regQL', data, true, () => ({ result: true }));
@@ -649,7 +648,9 @@ async function appTransactionAuth(request) {
   const { authCode, otpMobile } = request;
 
   // 取得目前執行中的單元功能代碼，要求 Controller 發送或驗出時，皆需提供此參數。
-  const funcCode = funcStack.peek()?.funcID ?? sessionStorage.getItem('currentFunc');
+  // 必以 APP 記錄的執行中單元功能代碼為準。
+  const appJsRs = await callAppJavaScript('getActiveFuncID', null, true);
+  const funcCode = (appJsRs) ? appJsRs.funcID : funcStack.peek()?.funcID;
 
   // 取得需要使用者輸入驗證的項目。
   const authMode = await getTransactionAuthMode(authCode); // 要驗 2FA 還是密碼，要以 create 時的為準。
@@ -743,20 +744,6 @@ async function forceLogout(reasonCode, message, autoStart) {
 async function updatePushBind() {
   await callAppJavaScript('updatePushBind', null, false);
 }
-
-/**
- * // DEBUG 取出 jwtToken payload 的內容。
- */
-const getJwtTokenTestData = () => {
-  const jwtToken = sessionStorage.getItem('jwtToken');
-  if (jwtToken) {
-    const jwtClaimJson = Buffer.from(jwtToken.split('.')[1], 'base64');
-    const { webData } = JSON.parse(String.fromCharCode(...jwtClaimJson));
-    console.log('** JWT Token Test Data ：', webData);
-    return webData;
-  }
-  return null;
-};
 
 export {
   getCallerFunc,

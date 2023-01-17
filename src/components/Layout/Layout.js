@@ -248,12 +248,6 @@ function Layout({
   //
   const [isPassed, setPassed] = useState();
   useEffect(async () => {
-    // 取得目前啟動的功能代碼。 功能代碼格式：[A-Z][0-9]{5}[1-9]?
-    // 主要是為了支援APP首頁啟動功能時，Web版Function Controller沒有記錄，導致第一個功能無法通過交易驗證的問題。
-    const urlParth = window.location.pathname;
-    const funcCode = urlParth.match(/\/(?<FuncID>\w\d{5})[1-9]?$|\?.*/)?.groups.FuncID;
-    sessionStorage.setItem('currentFunc', funcCode);
-
     let pass = true; // 若未設 inspector，則預設為檢查通過。
     if (inspector) {
       const errMesg = await inspector();

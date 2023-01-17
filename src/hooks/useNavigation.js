@@ -75,6 +75,7 @@ export const useNavigation = () => {
     if (isFunction) {
       await callAppJavaScript('closeFunc', null, false, webCloseFunc);
     } else {
+      // 不是單元功能時，表示關閉的是Web端自行管理的頁面。
       await webCloseFunc();
     }
   };

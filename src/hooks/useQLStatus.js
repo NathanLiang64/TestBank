@@ -10,7 +10,7 @@ export const useQLStatus = () => {
 
   useEffect(async () => {
     const { QLStatus } = await getQLStatus();
-    setQLResult(QLStatus === '2' || QLStatus === '1');
+    setQLResult(QLStatus === 2 || QLStatus === 1);
   }, []);
 
   const showUnbondedMsg = () => {
