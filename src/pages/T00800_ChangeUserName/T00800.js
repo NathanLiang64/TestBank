@@ -36,6 +36,7 @@ const ChangeUserName = () => {
   const onSubmit = async ({ userName, newUserName, newUserNameCheck }) => {
     dispatch(setWaittingVisible(true));
     const jsRs = await transactionAuth(AuthCode.T00800);
+    dispatch(setWaittingVisible(false));
     if (jsRs.result) {
       const param = {
         userName: e2ee(userName),
@@ -43,7 +44,9 @@ const ChangeUserName = () => {
         newUserNameCheck: e2ee(newUserNameCheck),
       };
 
+      dispatch(setWaittingVisible(true));
       const { isSuccess, code, message } = await changeUserName(param);
+      dispatch(setWaittingVisible(false));
 
       showAnimationModal({
         isSuccess,
@@ -54,8 +57,6 @@ const ChangeUserName = () => {
         errorDesc: message,
         onClose: closeFunc,
       });
-
-      dispatch(setWaittingVisible(false));
     }
   };
 

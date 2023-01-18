@@ -327,6 +327,7 @@ export const toCurrency = (number, float = 0, showFloat = false) => {
 
   /* 如臺幣帳戶需顯示小數點，傳入isShowDecimal: true */
   if (showFloat && parts[1]) float = parts[1].length;
+  else if (showFloat && !parts[1]) float = 2; // number 是整數但仍需要顯示小數點的情境
 
   if (float > 0) {
     parts[1] = `${parts[1] ?? ''}000000`.substring(0, float); // 小數位數補齊

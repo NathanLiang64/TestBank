@@ -168,7 +168,6 @@ const DebitCard = ({
 
   return (
     <DebitCardWrapper
-      balanceLength={String(model.balance).length}
       className="debitCard"
       $cardColor={color ?? accountTypeColorGenerator(model.acctType ?? accountType)}
     >

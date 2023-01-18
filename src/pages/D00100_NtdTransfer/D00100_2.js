@@ -16,7 +16,7 @@ import {
 } from 'assets/images/icons';
 import AccountEditor from 'pages/D00500_FrequentContacts/D00500_AccountEditor';
 import { addFrequentAccount } from 'pages/D00500_FrequentContacts/api';
-import { shareMessage } from 'utilities/AppScriptProxy';
+import { dialTel, shareMessage } from 'utilities/AppScriptProxy';
 
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showDrawer, showInfo } from 'utilities/MessageModal';
@@ -132,12 +132,9 @@ const TransferResult = (props) => {
 
   /**
    * 呼叫裝置開啟 通話(02-80731166)/取消 介面
-   * Bug : 因非 http/https 開頭的 href 會導致 android 無法運作，待討論是否交給原生執行
    */
   const callServiceTel = () => {
-    const link = document.createElement('a');
-    link.href = 'tel:0280731166';
-    link.click();
+    dialTel({ url: 'tel:0280731166' });
   };
 
   /**

@@ -67,7 +67,7 @@ const DebitCardWrapper = styled.div`
     }
 
     .balance {
-      font-size: ${(({balanceLength}) => (balanceLength >= 9 ? '2.2rem' : '2.8rem'))};
+      font-size: 2.8rem;
       font-weight: 500;
       letter-spacing: .05rem;
       color: ${({ theme }) => theme.colors.text.darkGray};

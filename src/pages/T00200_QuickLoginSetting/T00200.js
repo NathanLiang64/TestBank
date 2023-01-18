@@ -24,6 +24,7 @@ import {
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { dateToString } from 'utilities/Generator';
+import { useNavigation } from 'hooks/useNavigation';
 import { getQuickLoginInfo } from './api';
 import DrawerContent from './drawerContent';
 
@@ -33,6 +34,7 @@ import T00200AccordionContent from './T00200_accordionContent';
 
 const QuickLoginSetting = () => {
   const dispatch = useDispatch();
+  const {closeFunc} = useNavigation();
 
   const [model, setModel] = useState({
     status: 0,
@@ -181,13 +183,13 @@ const QuickLoginSetting = () => {
     dispatch(setWaittingVisible(true));
     getQLStatus(); // 要先查才能驗證？？？
     const apiRs = await fetchLoginBindingInfo();
-    if (!apiRs) {
+    if (apiRs) {
       if (apiRs.status === 4) {
         // 本裝置已綁定其他帳號
         await showCustomPrompt({
           title: 'APP裝置認證錯誤',
           message: '本裝置已綁定他人帳號，請先解除原APP裝置認證或致電客服',
-          onOk: () => {},
+          onOk: closeFunc,
         });
       }
       if (!apiRs.midMobile) {

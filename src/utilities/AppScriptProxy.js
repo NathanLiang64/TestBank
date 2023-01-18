@@ -745,6 +745,19 @@ async function updatePushBind() {
   await callAppJavaScript('updatePushBind', null, false);
 }
 
+/**
+ * 透過原生撥電話
+ * @param {{
+ *  url: String
+ * }}param // param: {url: 'tel:02xxxxxxxx'}
+ */
+async function dialTel(param) {
+  await callAppJavaScript('actionDial', param, false, () => {
+    // 測試版的分享功能。
+    customPopup('撥電話功能 (測試版)', JSON.stringify(param));
+  });
+}
+
 export {
   getCallerFunc,
   getOsType,
@@ -769,4 +782,5 @@ export {
   storeData,
   restoreData,
   forceLogout,
+  dialTel,
 };
