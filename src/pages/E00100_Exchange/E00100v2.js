@@ -14,14 +14,14 @@ import Layout from 'components/Layout/Layout';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { toCurrency } from 'utilities/Generator';
+import { toCurrency, getCurrenyInfo } from 'utilities/Generator';
 import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
 import { showCustomPrompt, showInfo } from 'utilities/MessageModal';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { RadioGroupField } from 'components/Fields/radioGroupField';
-import { DropdownField, TextInputField } from 'components/Fields';
+import { CurrencyInputField, DropdownField, TextInputField } from 'components/Fields';
 import E00100Rules from './E00100_Rules';
 import E00100Notice from './E00100_Notice';
 import E00100Table from './E00100_Table';
@@ -345,7 +345,7 @@ const E00100 = () => {
                 {
                   label: (
                     <>
-                      <TextInputField
+                      <CurrencyInputField
                         labelName={`希望${
                           exchangeType === '2' ? '轉出' : '轉入'
                         }${selectedCurrency?.CurrencyName || ''}`}
@@ -354,8 +354,11 @@ const E00100 = () => {
                         }金額`}
                         name="foreignBalance"
                         control={control}
-                        currency={currency}
-                        inputProps={{ disabled: outType === '2' }}
+                        symbol={getCurrenyInfo(currency)?.symbol}
+                        inputProps={{
+                          disabled: outType === '2',
+                          inputMode: 'numeric',
+                        }}
                       />
                     </>
                   ),
@@ -364,7 +367,7 @@ const E00100 = () => {
                 {
                   label: (
                     <>
-                      <TextInputField
+                      <CurrencyInputField
                         labelName={`希望${
                           exchangeType === '2' ? '轉入' : '轉出'
                         }新臺幣`}
@@ -373,8 +376,10 @@ const E00100 = () => {
                         }金額`}
                         name="ntDollorBalance"
                         control={control}
-                        currency="NTD"
-                        inputProps={{ disabled: outType === '1' }}
+                        inputProps={{
+                          disabled: outType === '1',
+                          inputMode: 'numeric',
+                        }}
                       />
                     </>
                   ),

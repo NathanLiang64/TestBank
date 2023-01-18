@@ -1,7 +1,9 @@
 /* eslint-disable react/jsx-max-props-per-line */
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable no-use-before-define */
-import React, { useEffect, useReducer, useState } from 'react';
+import React, {
+  useCallback, useEffect, useReducer, useState,
+} from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
@@ -13,7 +15,7 @@ import Layout from 'components/Layout/Layout';
 import {
   FEIBTabContext, FEIBTabList, FEIBTab, FEIBTabPanel,
   FEIBInputLabel, FEIBInput, FEIBErrorMessage,
-  FEIBButton, FEIBRadioLabel, FEIBRadio, FEIBSelect, FEIBOption,
+  FEIBButton, FEIBRadioLabel, FEIBRadio, FEIBSelect, FEIBOption, FEIBHintMessage,
 } from 'components/elements';
 import AccountOverview from 'components/AccountOverview/AccountOverview';
 import DatePicker from 'components/DatePicker';
@@ -25,10 +27,11 @@ import MemberAccountCard from 'components/MemberAccountCard';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showError, showInfo, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
-import { numberToChinese } from 'utilities/Generator';
 import { getAccountBonus, getAccountsList } from 'utilities/CacheData';
 import { ChangeMemberIcon } from 'assets/images/icons';
 import { useNavigation } from 'hooks/useNavigation';
+import CurrencyInput from 'react-currency-input-field';
+import { numberToChinese } from 'utilities/Generator';
 import TransferWrapper from './D00100.style';
 import D00100AccordionContent from './D00100_AccordionContent';
 
@@ -48,7 +51,6 @@ const Transfer = (props) => {
   const [model, setModel] = useState();
   const [accounts, setAccounts] = useState();
   const [selectedAccountIdx, setSelectedAccountIdx] = useState();
-  const [amountText, setAmountText] = useState(); // 轉帳金額的輸出文字。
   const [tranferQuota, setTranferQuota] = useState([10000, 30000, 50000]); // 目前帳戶的轉帳限額。
 
   const transTypes = ['一般轉帳', '常用轉帳', '約定轉帳', '社群轉帳'];
@@ -370,10 +372,8 @@ const Transfer = (props) => {
     const newValue = formater.format(number);
     if (newValue !== '0') {
       setValue(idAmount, parseInt(number, 10));
-      setAmountText(`$${newValue} ${numberToChinese(amount)}`);
     } else {
       setValue(idAmount, '');
-      setAmountText(null);
     }
   }, [watch(idAmount)]);
 
@@ -479,6 +479,18 @@ const Transfer = (props) => {
     }
     return null;
   };
+  const CurrencyInputCustom = useCallback((prop) => {
+    const { inputRef, ...other } = prop;
+    return (
+      <CurrencyInput
+        {...other}
+        ref={(ref) => {
+          inputRef(ref ? ref.inputElement : null);
+        }}
+        prefix="$"
+      />
+    );
+  }, []);
 
   /**
    * 輸出頁面
@@ -502,7 +514,7 @@ const Transfer = (props) => {
                 {/* 0.一般轉帳, 1.常用轉帳, 2.約定轉帳, 3.社群轉帳 */}
                 {transTypes.map((name, n) => (
                   // 當 startFuncParams 有預設轉入帳號時，不允許變更。
-                  <FEIBTab key={name} label={name} value={String(n)} disabled={((n !== 0 && startFuncParams?.transIn?.account) || n === 3)} />
+                  <FEIBTab key={name} label={name} value={String(n)} disabled={(n !== 0 && startFuncParams?.transIn?.account) || n === 3} />
                 ))}
               </FEIBTabList>
 
@@ -510,7 +522,7 @@ const Transfer = (props) => {
               <FEIBTabPanel value="0">
                 {/* 當 startFuncParams 有預設轉入帳號 或 帳戶餘額為零時，不允許變更 */}
                 <BankCodeInput control={control} name={idTransInBank} value={getValues(idTransInBank)} setValue={setValue} trigger={trigger}
-                // 測試把 array.at 語法改成 accounts[selectedAccountIdx]
+                  // 測試把 array.at 語法改成 accounts[selectedAccountIdx]
                   // readonly={startFuncParams?.transIn?.bank || !accounts?.at(selectedAccountIdx)?.balance}
                   readonly={startFuncParams?.transIn?.bank || !accounts || !accounts[selectedAccountIdx]?.balance}
                   errorMessage={errors?.transIn?.bank?.message}
@@ -545,16 +557,24 @@ const Transfer = (props) => {
                 render={({ field }) => (
                   <div>
                     {/* 當 startFuncParams 有預設轉帳金額時，不允許變更 */}
-                    <FEIBInput {...field} placeholder="$0（零元）" error={!!errors?.amount}
+                    <FEIBInput
+                      {...field}
+                      error={!!errors?.amount}
+                      type="text"
                       inputProps={{
-                        maxLength: 9, autoComplete: 'off', disabled: startFuncParams?.amount, inputMode: 'numeric',
+                        placeholder: '請輸入金額',
+                        maxLength: 9,
+                        autoComplete: 'off',
+                        disabled: startFuncParams?.amount,
+                        inputMode: 'numeric',
                       }}
+                      inputComponent={CurrencyInputCustom}
                     />
-                    <div className="balanceLayout">{amountText}</div>
                   </div>
                 )}
               />
               <FEIBErrorMessage>{errors.amount?.message}</FEIBErrorMessage>
+              <FEIBHintMessage className="hint">{numberToChinese(watch(idAmount))}</FEIBHintMessage>
               {showTranferQuota()}
             </div>
 
@@ -569,7 +589,7 @@ const Transfer = (props) => {
                   </RadioGroup>
                 )}
               />
-              {(watch(idMode) === 1) ? (
+              {watch(idMode) === 1 ? (
                 <div className="reserveOption">
                   <FEIBInputLabel htmlFor={idMultiTimes}>轉帳次數</FEIBInputLabel>
                   <Controller control={control} name={idMultiTimes}
@@ -631,7 +651,7 @@ const Transfer = (props) => {
                 </div>
               ) : (
                 // 為了保持與備註間的間距。
-                <p style={{ height: '1.8rem'}} />
+                <p style={{ height: '1.8rem' }} />
               )}
             </div>
 
@@ -640,7 +660,11 @@ const Transfer = (props) => {
               <FEIBInputLabel htmlFor={idMemo}>備註</FEIBInputLabel>
               <Controller control={control} name={idMemo}
                 render={({ field }) => (
-                  <FEIBInput {...field} placeholder="請輸入" inputProps={{ maxLength: 20, autoComplete: 'off' }} />
+                  <FEIBInput
+                    {...field}
+                    placeholder="請輸入"
+                    inputProps={{ maxLength: 20, autoComplete: 'off' }}
+                  />
                 )}
               />
               <FEIBErrorMessage />

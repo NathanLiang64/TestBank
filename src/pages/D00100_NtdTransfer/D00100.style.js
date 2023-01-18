@@ -76,12 +76,12 @@ const TransferWrapper = styled(Layout)`
   .customSpace {
     .MuiFormHelperText-root {
       margin-bottom: 0;
+      &.hint{
+      text-align:left;
+      }
     }
 
-    .MuiInputBase-input {
-      //width: 26%;
-      color: transparent;
-    }
+
 
     .adornment {
       margin-right: .4rem;

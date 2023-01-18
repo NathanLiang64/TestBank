@@ -51,12 +51,18 @@ const Page = () => {
       includeSelf: (startParams?.selectorMode ?? false), // 還要加上同ID互轉的帳號, 必需 同幣別。
     };
     getAgreedAccount(request).then(async (accts) => {
-      setAccounts(accts);
-
       if (startParams) {
+        // NOTE 選取模式時，從轉帳頁面進來時，要排除「非該轉帳頁面幣別」的帳號 (ex: 從臺幣轉帳進來只能選取臺幣類型的常用帳號)
+        const isForeignType = bindAcct.substring(3, 6) === '007'; // '007' 外幣帳戶 , '004' 台幣帳戶
+        const selectedModeAccts = accts.filter((acct) => acct.isForeign === isForeignType); // TOOD 待測試
+        setAccounts(selectedModeAccts);
         setBindAccount(bindAcct);
         setSelectorMode(startParams.selectorMode ?? false);
         setSelectedAccount(startParams?.defaultAccount);
+      } else {
+        // NOTE 非選取模式時，不需要列出同ID互轉的帳號
+        const nonSelectedModeAccts = accts.filter(({isSelf}) => !isSelf);
+        setAccounts(nonSelectedModeAccts);
       }
 
       dispatch(setWaittingVisible(false));
@@ -99,10 +105,8 @@ const Page = () => {
 
   const renderMemberCards = () => {
     if (!accounts) return null;
-    // 非選取模式時，不需要列出同ID互轉的帳號
-    const filteredAccounts = accounts?.filter((acct) => (selectorMode || !acct.isSelf));
-    if (!filteredAccounts.length) return <EmptyData content="查無約定帳號" height="70vh" />;
-    return filteredAccounts.map((acct) => (
+    if (!accounts.length) return <EmptyData content="查無約定帳號" height="70vh" />;
+    return accounts.map((acct) => (
       <MemberAccountCard
         key={uuid()} // key值每次編輯後皆改變，以觸發react重新渲染
         name={acct.nickName}

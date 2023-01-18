@@ -12,43 +12,42 @@ import { AplFxProxyWrapper } from './F00000.style';
 const AplFxProxy = () => {
   const {search} = useLocation();
   const [targetURL, setTargetURL] = useState();
-  const { closeFunc } = useNavigation();
+  const [SSEToken, setSSEToken] = useState();
 
-  useEffect(async () => {
+  const fetchSSE = async () => {
     const prod = search.split('=')[1];
     const { sse } = await getSSE({ prod });
+    setSSEToken(sse);
     const url = `${process.env.REACT_APP_APLFX_URL}prod=${prod}&sse=${sse}`;
-    const windowOpener = window.open(url, '_blank');
-    if (windowOpener) closeFunc(); // BUG ios 有外開瀏覽器但是沒有產生 opener
-    else setTargetURL(url);
+    const windowOpener = window.open(url, '_self');
+    if (!windowOpener) setTargetURL(url);
+  };
+
+  useEffect(() => {
+    fetchSSE();
   }, []);
 
   const renderHintMessage = () => (
     <p className="hint-message">
       若未導向，請點擊此
-      <a
-        href={targetURL}
-        target="_blank"
-        onClick={() => closeFunc()}
-        rel="noreferrer noopener"
-      >
-        連結
-      </a>
+      <a href={targetURL} target="_self">連結</a>
       前往申請平台
     </p>
   );
-  // TODO title 應該改成申請類別的名稱
+
   return (
-    <Layout title="更多">
-      <AplFxProxyWrapper>
-        {/* 若外開失敗 (沒有產生 opener)，則提示使用者點選連結 */}
-        { targetURL ? (
-          renderHintMessage()
-        ) : (
-          <Loading space="both" isFullscreen isCentered />
-        )}
-      </AplFxProxyWrapper>
-    </Layout>
+    <AplFxProxyWrapper>
+      {/* 若外開失敗 (沒有產生 opener)，則提示使用者點選連結 */}
+      { targetURL ? (
+        renderHintMessage()
+      ) : (
+        <Loading space="both" isFullscreen isCentered />
+      )}
+      <div className="token">
+        SSETOKEN:
+        {SSEToken}
+      </div>
+    </AplFxProxyWrapper>
   );
 };
 

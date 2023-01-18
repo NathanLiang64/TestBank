@@ -1,11 +1,6 @@
 import styled from 'styled-components';
 
 export const TextInputFieldWrapper = styled.div`
-  .MuiInput-input {
-    color: ${({ currencyType, theme }) => (currencyType ? 'transparent' : theme.colors.primary.dark)};
-    caret-color: ${({ currencyType, theme }) => (currencyType ? 'transparent' : theme.colors.primary.dark)};
-  }
-
   .balanceLayout {
     top: auto;
     bottom: 0;

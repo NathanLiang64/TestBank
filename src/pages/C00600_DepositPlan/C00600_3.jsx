@@ -7,7 +7,7 @@ import Theme from 'themes/theme';
 import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
 import { FEIBButton, FEIBHintMessage } from 'components/elements';
-import { DropdownField, TextInputField } from 'components/Fields';
+import { CurrencyInputField, DropdownField, TextInputField } from 'components/Fields';
 import {
   toCurrency,
   dateToYMD,
@@ -173,12 +173,11 @@ const DepositPlanEditPage = () => {
                 </div>
               </div>
               <div>
-                <TextInputField
+                <CurrencyInputField
                   name="amount"
                   control={control}
                   labelName="預計每期存錢金額"
                   inputProps={{inputMode: 'numeric'}}
-                  currency="NTD"
                 />
                 <FEIBHintMessage className="hint-message">
                   {(amount > 0) && `存款目標為 ${toCurrency(getGoalAmount(amount, cycleDuration, cycleMode))}元`}
