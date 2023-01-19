@@ -6,7 +6,7 @@ import React, {
 } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useController } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { RadioGroup } from '@material-ui/core';
@@ -124,7 +124,7 @@ const Transfer = (props) => {
         freqAcct: undefined, // 目前選擇的 常用帳號
         regAcct: undefined, // 目前選擇的 約定帳號
       },
-      amount: undefined, // 轉出金額
+      amount: '', // 轉出金額
       booking: { // 「預約轉帳」資訊
         mode: 0, // 0.立即轉帳, 1.預約轉帳
         multiTimes: '1', // 1.單次, *.多次
@@ -256,6 +256,8 @@ const Transfer = (props) => {
       return;
     }
 
+    // 轉入約定帳號的限額檢查
+
     // idCycleTime 防呆，調整起始日期
     const transTimes = checkTransDate(booking);
     if (booking.mode === 1 && transTimes <= 0) { // 若立即轉帳則不需要檢查。
@@ -361,23 +363,6 @@ const Transfer = (props) => {
   }, [watch(idCycleMode)]);
 
   /**
-   * 調整輸出金額顯示格式。
-   */
-  useEffect(() => {
-    // 金額加千分號
-    const { amount } = getValues();
-
-    const number = amount ? amount.toString().replace(/[^\d]/g, '') : ''; // 將所有(g)非數字(^\d)字元，全部移除。
-    const formater = new Intl.NumberFormat('en-US');
-    const newValue = formater.format(number);
-    if (newValue !== '0') {
-      setValue(idAmount, parseInt(number, 10));
-    } else {
-      setValue(idAmount, '');
-    }
-  }, [watch(idAmount)]);
-
-  /**
    * 轉入帳戶區(常用/約定/社群轉帳)
    */
   const TransInAccountSelector = () => {
@@ -479,8 +464,10 @@ const Transfer = (props) => {
     }
     return null;
   };
+
   const CurrencyInputCustom = useCallback((prop) => {
     const { inputRef, ...other } = prop;
+    const {field: {onChange}} = useController({name: idAmount, control});
     return (
       <CurrencyInput
         {...other}
@@ -488,6 +475,7 @@ const Transfer = (props) => {
           inputRef(ref ? ref.inputElement : null);
         }}
         prefix="$"
+        onValueChange={(e) => onChange(e ?? '')}
       />
     );
   }, []);
@@ -558,9 +546,9 @@ const Transfer = (props) => {
                   <div>
                     {/* 當 startFuncParams 有預設轉帳金額時，不允許變更 */}
                     <FEIBInput
-                      {...field}
+                      // {...field}
+                      value={field.value}
                       error={!!errors?.amount}
-                      type="text"
                       inputProps={{
                         placeholder: '請輸入金額',
                         maxLength: 9,
@@ -574,7 +562,7 @@ const Transfer = (props) => {
                 )}
               />
               <FEIBErrorMessage>{errors.amount?.message}</FEIBErrorMessage>
-              <FEIBHintMessage className="hint">{numberToChinese(watch(idAmount))}</FEIBHintMessage>
+              <FEIBHintMessage className="hint">{numberToChinese(watch(idAmount) ?? '')}</FEIBHintMessage>
               {showTranferQuota()}
             </div>
 

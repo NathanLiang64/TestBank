@@ -1,10 +1,6 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { useController } from 'react-hook-form';
-import {
-  FEIBInputLabel,
-  FEIBInput,
-  FEIBErrorMessage,
-} from 'components/elements';
+import { FEIBInputLabel, FEIBInput, FEIBErrorMessage } from 'components/elements';
 import CurrencyInput from 'react-currency-input-field';
 import { TextInputFieldWrapper } from './fields.style';
 
@@ -27,32 +23,19 @@ export const CurrencyInputField = ({
     return (
       <CurrencyInput
         {...other}
-        ref={(ref) => {
-          inputRef(ref ? ref.inputElement : null);
-        }}
+        ref={(ref) => inputRef(ref ? ref.inputElement : null)}
         prefix={symbol ?? '$'}
+        onValueChange={(e) => onChange(e ?? '')}
+        onBlur={onBlur}
       />
     );
   }, []);
-
-  useEffect(() => {
-    const number = field.value ? field.value.toString().replace(/[^\d]/g, '') : ''; // 將所有(g)非數字(^\d)字元，全部移除。
-    const formater = new Intl.NumberFormat('en-US');
-    const newValue = formater.format(number);
-    if (newValue !== '0') {
-      field.onChange(parseInt(number, 10));
-    } else {
-      field.onChange('');
-    }
-  }, [field.value]);
 
   return (
     <TextInputFieldWrapper>
       <FEIBInputLabel htmlFor={name}>{labelName}</FEIBInputLabel>
       <FEIBInput
         inputProps={inputProps}
-        onChange={onChange}
-        onBlur={onBlur}
         value={value ?? ''}
         id={name}
         error={!!fieldState.error}
@@ -62,9 +45,8 @@ export const CurrencyInputField = ({
       />
 
       {!!fieldState.error && (
-      <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>
+        <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>
       )}
-
     </TextInputFieldWrapper>
   );
 };

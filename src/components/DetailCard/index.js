@@ -43,7 +43,7 @@ const DetailCard = ({
   txnTime,
   bizDate,
   currency,
-  targetBank,
+  // targetBank,
   targetAcct,
   targetMbrId,
   // targetNickName,
@@ -106,7 +106,7 @@ const DetailCard = ({
       <DetailDialogContentWrapper>
         <div className="mainBlock">
           <p className="mainBlockTitle">
-            {`${memo ?? ''}`}
+            {/* {`${memo ?? ''}`} */}
             {invert && ' (更正交易)'}
           </p>
           <p className="mainBlockAmount">
@@ -115,12 +115,8 @@ const DetailCard = ({
         </div>
         <InformationList title="交易時間" content={`${dateToString(txnDate, '/')} ${timeToString(txnTime)}`} />
         <InformationList title="帳務日期" content={dateToString(bizDate, '/')} />
-        {targetAcct && (
-          <InformationList
-            title="帳號"
-            content={(targetBank ? `(${targetBank}) ` : '') + targetAcct}
-          />
-        )}
+        <InformationList title="備註" content={memo || targetAcct} />
+
       </DetailDialogContentWrapper>
     );
 
