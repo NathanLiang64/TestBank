@@ -6,7 +6,10 @@ import Layout from 'components/Layout/Layout';
 import { getSSE } from './api';
 import { AplFxProxyWrapper } from './F00000.style';
 
-// NOTE 這邊作為申請平台導向用途，完成連結外開後隨即返回前一個服務
+/**
+ * 申請平台啟動頁面。
+ * 透過 /F00000/產品代碼 啟動申請項目，例： /F00000/Ca 申請信用卡。
+ */
 const AplFxProxy = () => {
   const { prod } = useParams(); // 取得url所帶功能代碼
   const [targetURL, setTargetURL] = useState();

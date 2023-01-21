@@ -17,7 +17,10 @@ export const useNavigation = () => {
       return;
     }
 
+    // 只要不是 A00100 這種格式的頁面，一律視為 WebPage 而不透過 APP 的 Function Controller 轉導。
+    const isFunction = /^[A-Z]\d{5}$/.test(funcID);
     funcID = funcID.replace(/^\/*/, ''); // 移掉前置的 '/' 符號,
+
     const data = {
       funcID,
       funcParams: funcParams ? JSON.stringify(funcParams) : null, // 要先轉 JSON 字串是為了配合 APP JavaScript
@@ -25,12 +28,36 @@ export const useNavigation = () => {
     };
     funcStack.push(data);
 
-    // 只要不是 A00100 這種格式的頁面，一律視為 WebPage 而不透過 APP 的 Function Controller 轉導。
-    const isFunction = /^[A-Z]\d{5}$/.test(funcID);
+    // 只要不是單元功能，一律視為 WebPage 而不透過 APP 的 Function Controller 轉導。
     if (isFunction) {
-      await callAppJavaScript('startFunc', data, false, () => {
-        history.push(`/${funcID}`);
+      const appJsRs = await callAppJavaScript('startFunc', data, true, () => {
+        // 只要是 Fxxxxx 以 F 開頭的功能代碼，就是外開功能，不需納入 Function Controller 管理。
+        // TODO 這是暫時的做法，因為 WebView 並不知道那些功能是需要外開，只有 APP Function Controller 才知道。
+        const isOpenExternalBrowser = funcID.startsWith('F');
+        if (isOpenExternalBrowser) {
+          funcStack.pop(); // 外開功能，不需納入 funcStack 管理，因為新開的功能沒有 Back 回原功能的需要。
+          // NOTE 重要關念！
+          //      功能代碼 與 Route所定義的 URL 無直接關係，目前雖然二者看起來是一致的，但URL是在DB中定義
+          //      所以在Web端模擬時，用 HardCode URL才能進行測試
+          let url;
+          switch (funcID) {
+            case 'F00100': url = 'F00000/DEPOSIT'; break; // 申請台幣數存
+            case 'F00200': url = 'F00000/S01a'; break; // 申請證券交割戶
+            case 'F00300': url = 'F00000/Fa'; break; // 申請外幣數存
+            case 'F00400': url = 'F00000/La'; break; // 申請貸款
+            case 'F00500': url = 'F00000/Ca'; break; // 申請信用卡
+            default:
+              alert(`無效的功能代碼: ${funcID}`);
+              return { result: false }; // 無效的功能代碼，不外開直接結束。
+          }
+          // TODO 提示用戶要外開，詢問同意。
+          window.open(`http://localhost:3006/${url}`, '_blank');
+        } else history.push(`/${funcID}`);
+        return {
+          result: !isOpenExternalBrowser,
+        };
       });
+      console.log('******>> startFunc 傳回值：', appJsRs);
     } else {
       history.push(`/${funcID}`);
     }
