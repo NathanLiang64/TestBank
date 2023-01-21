@@ -76,7 +76,11 @@ const C00400 = () => {
       setSelectedAccountIdx(0);
 
       // 只要是重新登入，而不是從呼叫的功能返回（例：轉帳），就清掉交易明細快取。
-      accts.forEach((acc) => delete acc.txnDetails);
+      accts.forEach((acc) => {
+        delete acc.isLoadingTxn; // 可能因為在載入中就關閉功能，而導致此旗標未被清除。
+        delete acc.txnDetails;
+      });
+      forceUpdate(); // 因為在執行此方法前，已經先 setAccounts 輸出到畫面上了，所以需要再刷一次畫面。
     }
   };
 

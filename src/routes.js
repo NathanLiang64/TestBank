@@ -142,7 +142,7 @@ const routes = [
   {path: '/E001002', exact: false, component: E001002},
   {path: '/E00200', exact: false, component: E00200},
   {path: '/E00300', exact: false, component: E00300},
-  {path: '/F00000', exact: false, component: F00000},
+  {path: '/F00000/:prod', exact: false, component: F00000},
   {path: '/L00200', exact: false, component: L00200},
   {path: '/L00100', exact: false, component: L00100},
   {path: '/L001001', exact: false, component: L001001},

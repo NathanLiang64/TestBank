@@ -9,7 +9,7 @@ import { callAPI } from 'utilities/axios';
  *   boundType: Number,
  *   midMobile: String,
  * }>}
- * - status: 表示已綁定的旗標(0.停用, 1.正常. 2.鎖定中)
+ * - status: 表示已綁定的旗標(0,未綁定 1,已正常綁定 2,綁定但已鎖定 3,已在其它裝置綁定 4,本裝置已綁定其他帳號)
  * - boundDate: 綁定日期，例: 20221231；若未綁定，則不會有此欄位
  * - boundDevice: 綁定手機型號，例: iPhone 13；若未綁定，則不會有此欄位
  * - boundType: 快登種類 (1.生物辨識, 2.圖形辨識)；若未綁定，則不會有此欄位
