@@ -51,15 +51,15 @@ const RegularPwdModify = () => {
   };
 
   // 點擊儲存變更，呼叫更新網銀密碼API
-  const onSubmit = async ({ password, newPassword, newPasswordCheck }) => {
+  const onSubmit = async ({ password, newPassword }) => {
     dispatch(setWaittingVisible(true));
     const jsRs = await transactionAuth(AuthCode.A00700);
     if (jsRs.result) {
       const param = {
         password: e2ee(password),
         newPassword: e2ee(newPassword),
-        newPasswordCheck: e2ee(newPasswordCheck),
-        actionCode: 1,
+        // newPasswordCheck: e2ee(newPasswordCheck),
+        // actionCode: 1,
       };
       const response = await renewPwd(param);
       await setResultDialog(response);
@@ -70,7 +70,11 @@ const RegularPwdModify = () => {
   // 不變更密碼，並且離開此頁面
   const remainSamePwd = async () => {
     dispatch(setWaittingVisible(true));
-    await renewPwd({ actionCode: 2 });
+    await renewPwd({
+      password: null,
+      newPassword: null,
+      // actionCode: 2
+    });
     closeFunc();
     dispatch(setWaittingVisible(false));
   };

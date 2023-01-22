@@ -20,7 +20,7 @@ import { callAPI } from 'utilities/axios';
  * }
  */
 export const getSummary = async () => {
-  const response = await callAPI('/api/community/v1/getSummary');
+  const response = await callAPI('/community/v1/getSummary');
   return response.data;
 };
 
@@ -34,7 +34,7 @@ export const getSummary = async () => {
  * }, ...]
  */
 export const getFriends = async () => {
-  const response = await callAPI('/api/community/v1/getFriends');
+  const response = await callAPI('/community/v1/getFriends');
   return response.data;
 };
 
@@ -44,7 +44,7 @@ export const getFriends = async () => {
  * @returns
  */
 export const updateAvatar = async (newImg) => {
-  const response = await callAPI('/api/community/v1/updateAvatar', newImg);
+  const response = await callAPI('/personal/v1/uploadAvatar', newImg);
   return response.data;
 };
 
@@ -53,7 +53,7 @@ export const updateAvatar = async (newImg) => {
  * @returns
  */
 export const updateNickname = async (nickname) => {
-  const response = await callAPI('/api/community/v1/updateNickname', nickname);
+  const response = await callAPI('/personal/v1/setNickname', nickname);
   return response.data;
 };
 
@@ -62,6 +62,6 @@ export const updateNickname = async (nickname) => {
  * @returns
  */
 export const updateEssay = async (content) => {
-  const response = await callAPI('/api/community/v1/updateEssay', content);
+  const response = await callAPI('/community/v1/updateEssay', content);
   return response.data;
 };

@@ -6,7 +6,7 @@ import { callAPI } from 'utilities/axios';
  * @returns 驗證項目旗標。(0x01:生物辨識或圖形鎖, 0x02:網銀密碼)
  */
 export const getTransactionAuthMode = async (autoCode) => {
-  const response = await callAPI('/api/transactionAuth/v1/getAuthMode', autoCode);
+  const response = await callAPI('/security/v1/getAuthMode', autoCode);
   return response.data;
 };
 
@@ -24,7 +24,7 @@ export const getTransactionAuthMode = async (autoCode) => {
  * }>}
  */
 export const createTransactionAuth = async (request) => {
-  const response = await callAPI('/api/transactionAuth/v1/create', request);
+  const response = await callAPI('/security/v1/create', request);
   return response.data;
 };
 
@@ -43,6 +43,6 @@ export const createTransactionAuth = async (request) => {
  * }
  */
 export const transactionAuthVerify = async (request) => {
-  const response = await callAPI('/api/transactionAuth/v1/verify', request);
+  const response = await callAPI('/security/v1/verify', request);
   return response.data;
 };

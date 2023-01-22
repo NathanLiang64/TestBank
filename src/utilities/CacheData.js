@@ -17,7 +17,7 @@ export const getBankCode = async () => {
   if (!banks) {
     banks = BankData.data;
     // TODO 取得 BankData.version 之後的異動資料。
-    // const response = await callAPI('/api/transfer/queryBank');
+    // const response = await callAPI('/common/v1/queryBank');
     // if (response.isSuccess) {
     //   banks = response.data;
     // }
@@ -39,7 +39,7 @@ export const getBranchCode = async () => {
   if (!branches) {
     branches = BranchData.data;
     // TODO 取得 BranchData.version 之後的異動資料。
-    // const response = await callAPI('/api/v1/getAllBranches');
+    // const response = await callAPI('/common/v1/getAllBranches');
     // if (response.isSuccess) {
     //   branches = response.data;
     // }

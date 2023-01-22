@@ -49,15 +49,14 @@ const PwdModify = () => {
   };
 
   // 呼叫變更網銀密碼 API
-  const handlePwdModify = async ({password, newPassword, newPasswordCheck}) => {
+  const handlePwdModify = async ({password, newPassword}) => {
     const jsRs = await transactionAuth(AuthCode.T00900);
     if (jsRs.result) {
       dispatch(setWaittingVisible(true));
       const param = {
         password: e2ee(password),
         newPassword: e2ee(newPassword),
-        newPasswordCheck: e2ee(newPasswordCheck),
-        actionCode: 1,
+        // newPasswordCheck: e2ee(newPasswordCheck),
       };
       const changePwdResponse = await changePwd(param);
       dispatch(setWaittingVisible(false));

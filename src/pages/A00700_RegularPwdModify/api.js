@@ -1,23 +1,14 @@
 import { callAPI } from 'utilities/axios';
 
-// /**
-//  * 更新密碼
-//  *
-//  * 因為驗證關係，更新密碼使用此API
-//  *
-//  * @param JwtToken
-//  * @param PwdChgRq {
-//  *    password:         舊網銀密碼
-//  *    newPassword:      新網銀密碼
-//  *    newPasswordCheck: 新網銀密碼確認
-//  *    actionCode:       欲執行動作,I:新增;D:刪除單筆;A:全部刪除;M:維護
-//  * }
-//  * @return PwdChgRs{
-//  *    custName:
-//  * }
-//  * @throws Exception
-//  */
-export const renewPwd = async (param) => {
-  const response = await callAPI('/api/setting/renewPwd', param);
+/**
+ * 定期更新網銀密碼
+ * @param {{
+ *   password, // 舊網銀密碼
+ *   newPassword, // 新網銀密碼
+ * }} request 若二個欄位均為 null 表示不變更。
+ * @returns
+ */
+export const renewPwd = async (request) => {
+  const response = await callAPI('/auth/v1/renewPassword', request);
   return response.data;
 };

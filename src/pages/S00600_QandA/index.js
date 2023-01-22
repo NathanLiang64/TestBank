@@ -34,7 +34,7 @@ const QandA = () => {
   }, []);
 
   useEffect(async () => {
-    const data = (tabValue) ? await getQASubCategory({ cat: tabValue }) : null;
+    const data = (tabValue) ? await getQASubCategory(tabValue) : null;
     setCategoryData(data);
   }, [tabValue]);
 

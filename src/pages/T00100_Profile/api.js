@@ -27,7 +27,7 @@ export const getNickname = async () => {
    *   }
    * }
    */
-  const response = await callAPI('/api/community/v1/getSummary');
+  const response = await callAPI('/community/v1/getSummary');
   return {
     uuid: response.data.uuid,
     nickname: response.data.nickname,
@@ -38,7 +38,7 @@ export const getNickname = async () => {
  * 更新䁥稱
  */
 export const updateNickname = async (nickname) => {
-  const response = await callAPI('/api/community/v1/updateNickname', nickname);
+  const response = await callAPI('/personal/v1/setNickname', nickname);
   return response.data;
 };
 
@@ -48,6 +48,6 @@ export const updateNickname = async (nickname) => {
  * @returns
  */
 export const uploadAvatar = async (newImg) => {
-  const response = await callAPI('/api/community/v1/uploadAvatar', newImg);
+  const response = await callAPI('/personal/v1/uploadAvatar', newImg);
   return response.data;
 };

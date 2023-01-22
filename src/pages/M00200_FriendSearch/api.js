@@ -11,6 +11,6 @@ import { callAPI } from 'utilities/axios';
  * }, ...]
  */
 export const getFriends = async () => {
-  const response = await callAPI('/api/community/v1/getFriends');
+  const response = await callAPI('/community/v1/getFriends');
   return response.data;
 };

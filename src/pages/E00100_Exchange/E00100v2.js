@@ -207,6 +207,7 @@ const E00100 = () => {
   const propertyOptions = useMemo(() => {
     if (!propertyList[exchangeType]) return [];
     return propertyList[exchangeType].map((item) => ({
+      key: item.leglCode,
       label: item.leglDesc,
       value: item.leglCode,
     }));

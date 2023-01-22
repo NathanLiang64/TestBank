@@ -18,8 +18,8 @@ export const getExchangeRateInfo = async (param) => {
 };
 
 // 查詢是否為行員
-export const isEmployee = async (param) => {
-  const response = await callAPI('/api/queryFundGroup', param);
+export const isEmployee = async () => {
+  const response = await callAPI('/personal/v1/queryFundGroup');
   return response.data;
 };
 

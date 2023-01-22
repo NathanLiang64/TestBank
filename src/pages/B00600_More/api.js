@@ -15,6 +15,6 @@ import { callAPI } from 'utilities/axios';
  * }, ...]
  */
 export const getMoreList = async () => {
-  const response = await callAPI('/api/menu/getFunctionList');
+  const response = await callAPI('/function/v1/getFunctionList');
   return response.data;
 };
