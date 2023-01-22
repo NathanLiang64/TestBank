@@ -32,7 +32,7 @@ const Deposit = () => {
 
   // 依照所選月份取得資料並儲存在map中
   const fetchDepositPlusDetailMap = async (month) => {
-    const currentDepositPlusDetail = await getDepositPlus({dateRange: month});
+    const currentDepositPlusDetail = await getDepositPlus(month);
 
     setDepositPlusDetailMap((prevMap) => ({
       ...prevMap,
@@ -68,7 +68,7 @@ const Deposit = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    const response = await getBonusPeriodList({});
+    const response = await getBonusPeriodList();
     const sortedMonthly = response?.sort((a, b) => b - a);
     if (!response.length) sortedMonthly.push(getThisMonth()); // 如果沒有回傳資料，顯示系統年月
     setMonthly(sortedMonthly);
@@ -82,7 +82,7 @@ const Deposit = () => {
     const year = `${tabId.substr(0, 4)}`;
     // 如果已有資料則不再重複撈取資料
     if (!levelList.length) {
-      const response = await getDepositPlusLevelList({ year });
+      const response = await getDepositPlusLevelList(year);
       setLevelList(response ?? []);
     }
   }, [levelList.length]);
