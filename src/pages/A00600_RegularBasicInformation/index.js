@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { fetchJobsCode, updateRegularBasicInformation } from 'pages/A00600_RegularBasicInformation/api';
+import { getCifData, updateRegularBasicInformation } from 'pages/A00600_RegularBasicInformation/api';
 import { showAnimationModal } from 'utilities/MessageModal';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
@@ -21,6 +21,7 @@ import Accordion from 'components/Accordion';
 /* Styles */
 import theme from 'themes/theme';
 import { useNavigation } from 'hooks/useNavigation';
+import { gradeList, incomeList, jobList } from './listData';
 import RegularBasicInformationWrapper from './regularBasicInformation.style';
 
 const RegularBasicInformation = () => {
@@ -67,41 +68,24 @@ const RegularBasicInformation = () => {
 
   // 取得職業別清單
   const getJobsCode = async () => {
-    dispatch(setWaittingVisible(true));
-    const response = await fetchJobsCode({});
-    console.log(response);
-    dispatch(setWaittingVisible(false));
-    if (response) {
-      const {
-        gradeList, incomeList, jobList,
-      } = response;
+    setGradeOptions(gradeList);
+    setIncomeOptions(incomeList);
+    setJobOptions(jobList);
 
-      setGradeOptions(gradeList);
-      setIncomeOptions(incomeList);
-      setJobOptions(jobList);
+    const cif = await getCifData();
+    const grade = gradeList.find((item) => item.code === cif.grade)?.code || '';
+    const income = incomeList.find((item) => item.code === cif.income)?.code || '';
+    const jobcd = jobList.find((item) => item.code === cif.jobCode)?.code || '';
 
-      const grade = gradeList.find((item) => item.code === response.grade)?.code || '';
-      const income = incomeList.find((item) => item.code === response.income)?.code || '';
-      const jobcd = jobList.find((item) => item.code === response.jobcd)?.code || '';
-
-      setRegularBasicData({
-        grade,
-        income,
-        jobcd,
-      });
-
-      setValue('industry', jobcd);
-      setValue('title', grade);
-      setValue('income', income);
-      return;
-    }
-    showAnimationModal({
-      isSuccess: false,
-      errorTitle: '發生錯誤',
-      errorCode: '',
-      errorDesc: '',
-      onClose: () => closeFunc(),
+    setRegularBasicData({
+      grade,
+      income,
+      jobcd,
     });
+
+    setValue('industry', jobcd);
+    setValue('title', grade);
+    setValue('income', income);
   };
 
   // 設定結果彈窗

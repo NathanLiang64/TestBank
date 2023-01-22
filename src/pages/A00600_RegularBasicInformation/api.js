@@ -1,8 +1,15 @@
 import { callAPI } from 'utilities/axios';
 
-// 取得職業別清單
-export const fetchJobsCode = async (param) => {
-  const response = await callAPI('/api/setting/queryJobCode', param);
+/**
+ * 取得CIF資料。
+ * @returns {Promise<{
+ *   jobCode,
+ *   grade,
+ *   income,
+ * }>}
+ */
+export const getCifData = async () => {
+  const response = await callAPI('/personal/v1/getCifData', 'A');
   return response.data;
 };
 
