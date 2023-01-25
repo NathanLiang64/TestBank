@@ -1,9 +1,22 @@
 import { callAPI } from 'utilities/axios';
 
-// email 發送數位存摺
-export const sendBankBookMail = async (param) => {
-  const response = await callAPI('/api/deposit/v1/sendAcctTxDtl', param);
-  return response;
+/**
+ * 以E-Mail寄送數位存摺
+ * @param {Boolean} coverOnly 表示僅匯出存簿封面
+ * @param {{
+ *   accountNo: String,
+ *   startDate: String, // yyyyMMdd
+ *   endDate: String, // yyyyMMdd
+ * }} conditions
+ * @returns {Promise<Boolean>} 表示 E-Mail 發送成功與否的旗標。
+ */
+export const sendBankbook = async (coverOnly, conditions) => {
+  const request = {
+    contentType: (coverOnly ? 1 : 3), // 檔案內容(1.封面、3.完整,包含封面及交易明細)
+    ...conditions,
+  };
+  const response = await callAPI('/deposit/account/v1/sendBankbook', request);
+  return response.data;
 };
 
 /**
@@ -17,10 +30,9 @@ export const sendBankBookMail = async (param) => {
  *    county, // 寄送地址 - 城市
  *    city, //寄送地址 - 地區
  *    addr, //寄送地址 - 道路
- *    userData, //年收入,職稱,行業
  * }>}
  */
 export const getProfile = async () => {
-  const response = await callAPI('/api/setting/v1/getProfile');
+  const response = await callAPI('/personal/v1/getProfile');
   return response.data;
 };

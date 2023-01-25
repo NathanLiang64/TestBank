@@ -2,7 +2,6 @@ import { callAPI } from 'utilities/axios';
 
 /**
  * 查詢匯率行情
-  @param { }
   @returns [
     {
       ccyname: 外幣幣別,
@@ -12,15 +11,18 @@ import { callAPI } from 'utilities/axios';
     }
   ]
 */
-export const getExchangeRateInfo = async (param) => {
-  const response = await callAPI('/api/frgn/queryRateInfo', param);
+export const getExchangeRateInfo = async () => {
+  const response = await callAPI('/api/frgn/queryRateInfo');
   return response.data;
 };
 
-// 查詢是否為行員
+/**
+ * 查詢是否為行員
+ * @returns {Promise<Boolean>} 是否為本行員工
+ */
 export const isEmployee = async () => {
   const response = await callAPI('/personal/v1/queryFundGroup');
-  return response.data;
+  return response.data.isEmployee;
 };
 
 /**

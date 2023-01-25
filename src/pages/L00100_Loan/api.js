@@ -39,13 +39,8 @@ export const getLoanRewards = async (param) => {
    }
  */
 export const getContract = async (param) => {
-  /* TODO
-  if (fileType === 1) {
-    await downloadPDF('/api/deposit/v1/getDepositBook', request, `${filename}.pdf`);
-  } else if (fileType === 2) {
-    await downloadCSV('/api/deposit/v1/getDepositBook', request, `${filename}.csv`);
-  }
-  */
+  // TODO 下載合約
+
   const { accountNo, format } = param;
   // alert(`待串接API，下載合約貸款號：${accountNo}`, format === 1 ? '下載PDF' : '下載EXCEL');
   await showCustomPrompt({title: '待串接API', message: `下載合約貸款號：${accountNo}：${format === 1 ? '下載PDF' : '下載EXCEL'}`});
@@ -62,13 +57,8 @@ export const getContract = async (param) => {
    }
  */
 export const getStatment = async (param) => {
-  /* TODO
-  if (fileType === 1) {
-    await downloadPDF('/api/deposit/v1/getDepositBook', request, `${filename}.pdf`);
-  } else if (fileType === 2) {
-    await downloadCSV('/api/deposit/v1/getDepositBook', request, `${filename}.csv`);
-  }
-  */
+  // TODO 下載清償證明
+
   const { accountNo, format } = param;
   // alert(`待串接API，下載證明貸款號：${accountNo}`, format === 1 ? '下載PDF' : '下載EXCEL');
   await showCustomPrompt({title: '待串接API', message: `下載證明貸款號${accountNo}：${format === 1 ? '下載PDF' : '下載EXCEL'}`});

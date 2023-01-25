@@ -91,8 +91,8 @@ const LossReissue = () => {
             isSuccess={res && res.result}
             successTitle={`${debitCardInfo.actionText}設定成功`}
             errorTitle={`${debitCardInfo.actionText}設定失敗`}
-            successDesc={`狀態： (${debitCardInfo.accountNo}) ${res.message}`}
-            errorDesc={`狀態： (${debitCardInfo.accountNo}) ${res.message}`}
+            successDesc=""
+            errorDesc={`原因： ${res.message}`}
           />
         ),
         onOk: () => updateDebitCardStatus(),
@@ -112,7 +112,7 @@ const LossReissue = () => {
         dispatch(setWaittingVisible(true));
         // 修改地址
         const response = await updateProfile({...values, zipCode: `${zipCode}00` });
-        if (response.code === '0000') {
+        if (response.isSuccess) {
           setAddressValue({...values});
         }
         dispatch(setWaittingVisible(false));

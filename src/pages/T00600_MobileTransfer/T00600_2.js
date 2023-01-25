@@ -74,7 +74,7 @@ const T006002 = ({ location }) => {
       const { account, isDefault } = confirmData;
       // 新增設定
       if (!isModifyConfirmPage) {
-        const response = await createMobileNo({ account, isDefault });
+        const response = await createMobileNo({ accountNo: account, isDefault });
         setResultDialog(response);
       }
       // 編輯或取消設定

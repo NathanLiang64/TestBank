@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { getCifData, updateRegularBasicInformation } from 'pages/A00600_RegularBasicInformation/api';
+import { getProfile, updateProfile } from 'pages/A00600_RegularBasicInformation/api';
 import { showAnimationModal } from 'utilities/MessageModal';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
@@ -72,7 +72,7 @@ const RegularBasicInformation = () => {
     setIncomeOptions(incomeList);
     setJobOptions(jobList);
 
-    const cif = await getCifData();
+    const cif = await getProfile();
     const grade = gradeList.find((item) => item.code === cif.grade)?.code || '';
     const income = incomeList.find((item) => item.code === cif.income)?.code || '';
     const jobcd = jobList.find((item) => item.code === cif.jobCode)?.code || '';
@@ -90,23 +90,17 @@ const RegularBasicInformation = () => {
 
   // 設定結果彈窗
   const setResultDialog = (response) => {
+    const { isSuccess, code, message } = response;
+
     showAnimationModal({
-      isSuccess: response,
+      isSuccess,
       successTitle: '設定成功',
       successDesc: '基本資料變更成功',
       errorTitle: '設定失敗',
-      errorCode: '',
-      errorDesc: '',
+      errorCode: code,
+      errorDesc: message,
       onClose: () => closeFunc(),
     });
-  };
-
-  // caculate action code
-  const getActionCode = (modifyData) => {
-    const jobCdCode = modifyData.jobCd === regularBasicData.jobcd ? 0 : 2;
-    const gradeCode = modifyData.grade === regularBasicData.grade ? 0 : 1;
-    const incomeCode = modifyData.inCome === regularBasicData.income ? 0 : 4;
-    return jobCdCode + gradeCode + incomeCode;
   };
 
   // 更新基本資料
@@ -114,16 +108,12 @@ const RegularBasicInformation = () => {
     dispatch(setWaittingVisible(true));
     const data = getValues();
     const modifyData = {
-      jobCd: data.industry,
+      jobCode: data.industry,
       grade: data.title,
-      inCome: data.income,
-    };
-    const param = {
-      ...modifyData,
-      actionCode: getActionCode(modifyData),
+      income: data.income,
     };
 
-    const modifyResponse = await updateRegularBasicInformation(param);
+    const modifyResponse = await updateProfile(modifyData);
     setResultDialog(modifyResponse);
     dispatch(setWaittingVisible(false));
   };
@@ -230,14 +220,13 @@ const RegularBasicInformation = () => {
               $bgColor={theme.colors.background.cancel}
               $color={theme.colors.text.dark}
               onClick={async () => {
-                const data = getValues();
+                // 維持不變時，所有欄位均給 null 即可。
                 const modifyData = {
-                  jobCd: data.industry,
-                  grade: data.title,
-                  inCome: data.income,
-                  actionCode: 0,
+                  jobCode: null,
+                  grade: null,
+                  income: null,
                 };
-                await updateRegularBasicInformation(modifyData);
+                await updateProfile(modifyData);
                 closeFunc();
               }}
               style={{ marginBottom: '2.4rem' }}

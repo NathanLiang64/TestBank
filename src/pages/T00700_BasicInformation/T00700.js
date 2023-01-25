@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { transactionAuth } from 'utilities/AppScriptProxy';
-import { getProfile, modifyBasicInformation } from 'pages/T00700_BasicInformation/api';
+import { getProfile, updateProfile } from 'pages/T00700_BasicInformation/api';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 /* Elements */
@@ -89,21 +89,21 @@ const T00700 = () => {
   // 更新個人資料
   const modifyPersonalData = async (values) => {
     dispatch(setWaittingVisible(true));
-    const modifyDataResponse = await modifyBasicInformation(values);
+    const modifyDataResponse = await updateProfile(values);
     dispatch(setWaittingVisible(false));
     setResultDialog(modifyDataResponse);
   };
 
   // 點擊儲存變更按鈕
   const onSubmit = async (values) => {
-    let autoCode = AuthCode.T00700.EMAIL; // 預設：無變更手機號碼
+    let authCode = AuthCode.T00700.EMAIL; // 預設：無變更手機號碼
     if (values.mobile !== originPersonalData.mobile) {
       // eslint-disable-next-line no-bitwise
-      autoCode |= AuthCode.T00700.MOBILE; // 有變更手機號碼時；可使用密碼驗證(+0x10)，並且需要驗新門號(+0x01)
+      authCode |= AuthCode.T00700.MOBILE; // 有變更手機號碼時；可使用密碼驗證(+0x10)，並且需要驗新門號(+0x01)
     }
 
     dispatch(setWaittingVisible(true));
-    const jsRs = await transactionAuth(autoCode, values.mobile);
+    const jsRs = await transactionAuth(authCode, values.mobile);
     dispatch(setWaittingVisible(false));
     if (jsRs.result) {
       const county = findCounty(values.county);

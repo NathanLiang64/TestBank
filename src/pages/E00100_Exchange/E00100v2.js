@@ -75,7 +75,7 @@ const E00100 = () => {
     reValidateMode: 'onBlur',
   });
 
-  const [banker, setBanker] = useState({});
+  const [banker, setBanker] = useState(false);
   const [accountsList, setAccountsList] = useState([]);
   const [currencyTypeList, setCurrencyTypeList] = useState([]);
   const [propertyList, setPropertyList] = useState({});
@@ -91,8 +91,8 @@ const E00100 = () => {
 
   // 查詢是否為行員
   const getIsEmployee = async () => {
-    const response = await isEmployee({});
-    if (response.bankerCd) setBanker(response);
+    const isBanker = await isEmployee();
+    if (isBanker) setBanker(isBanker);
   };
 
   // 取得可交易幣別清單
@@ -139,26 +139,29 @@ const E00100 = () => {
     }
 
     dispatch(setWaittingVisible(true));
-    const param = {
-      trnsType: values.exchangeType,
-      outAcct: values.outAccount,
-      inAcct: values.inAccount,
-      ccyCd: values.currency,
-      trfCcyCd: values.outType === '1' ? values.currency : 'NTD',
-      trfAmt, // 目前是帶字串過去，是否應該帶數字?
-      bankerCd: banker?.bankerCd || '',
-    };
-    const response = await getExchangeRateInfo(param); // ??? API 規格待確認
+    const response = await getExchangeRateInfo(); // BUG 這是取匯率清單，並不是取得換匯掛號的傳回資訊！
     dispatch(setWaittingVisible(false));
 
     if (!response.message) {
+      const model = {
+        trnsType: values.exchangeType,
+        outAcct: values.outAccount,
+        inAcct: values.inAccount,
+        ccyCd: values.currency,
+        trfCcyCd: values.outType === '1' ? values.currency : 'NTD',
+        trfAmt, // 目前是帶字串過去，是否應該帶數字?
+        isEmployee: banker, // TODO 由 Conotroller 從 token 中取出。
+      };
+
       const confirmData = {
+        ...model,
         ...response,
         memo: values.memo,
         leglCode: values.property,
         leglDesc: propertyList.find((item) => item.leglCode === values.property).leglDesc,
         outAccountAmount: exchangeType === '1' ? balance.twd : balance.frgn,
       };
+
       history.push('/E001001', { ...confirmData });
     } else {
       await showInfo(response.message);
@@ -414,7 +417,7 @@ const E00100 = () => {
           <Accordion>
             <E00100Notice />
           </Accordion>
-          {banker.bankerCd && (
+          {banker && (
             <InfoArea>換匯匯率將依據本行員工優惠匯率進行交易</InfoArea>
           )}
           <div className="submitBtn">

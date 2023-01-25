@@ -11,11 +11,10 @@ import { callAPI } from 'utilities/axios';
  *    county, // 寄送地址 - 城市
  *    city, //寄送地址 - 地區
  *    addr, //寄送地址 - 道路
- *    userData, //年收入,職稱,行業
  * }>}
  */
 export const getProfile = async () => {
-  const response = await callAPI('/api/setting/v1/getProfile');
+  const response = await callAPI('/personal/v1/getProfile');
   return response.data;
 };
 
@@ -42,23 +41,23 @@ export const fetchMobiles = async () => {
 /**
  * 手機號碼收款設定新增
  * @param request {
- *   account: 綁定的銀行帳號,
+ *   accountNo: 綁定的銀行帳號,
  *   isDefault: 是否做為預設收款手機號碼
- * }
+ * } request
  * @returns true:成功, false:失敗。
  */
-export const createMobileNo = async (param) => {
-  const response = await callAPI('/api/mobileAccount/v1/create', param);
+export const createMobileNo = async (request) => {
+  const response = await callAPI('/api/mobileAccount/v1/create', request);
   return response.data;
 };
 
 /**
  * 更新手機號碼收款設定
- * @param {String} account 綁定的銀行帳號
+ * @param {String} accountNo 綁定的銀行帳號
  * @returns true:成功, false:失敗。
  */
-export const editMobileNo = async (account) => {
-  const response = await callAPI('/api/mobileAccount/v1/update', account);
+export const editMobileNo = async (accountNo) => {
+  const response = await callAPI('/api/mobileAccount/v1/update', { accountNo });
   return response.data;
 };
 

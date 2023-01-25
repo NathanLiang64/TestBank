@@ -1,6 +1,19 @@
 import { callAPI, download } from 'utilities/axios';
 
 /**
+ * 取得帳戶餘額及未出帳利息。
+ * @param {String} accountNo 存款帳號
+ * @returns {Promise<{
+ *   balance: 目前的帳戶的餘額
+ *   interest: 結算後的利息
+ * }>}
+ */
+export const getInterest = async (accountNo) => {
+  const response = await callAPI('/deposit/account/v1/getInterest', { accountNo });
+  return response.data;
+};
+
+/**
  * 取得當前所選帳號之交易明細
  * @param {*} accountNo 存款帳號, ex: 00100100063106
  * @returns 帳戶往來明細清單
@@ -28,18 +41,17 @@ export const getTransactions = async (accountNo) => {
 
 /**
  * 下載存摺封面
- * @param {*} accountNo 存款帳號
- * @param {*} currency 幣別代碼，預設為臺幣(TWD)
+ * @param {String} accountNo 存款帳號
  * @returns 存摺封面
  */
-export const downloadDepositBookCover = async (accountNo, currency = 'NTD') => {
-  await download('/api/deposit/v1/getDepositBookCover', { accountNo, currency });
+export const downloadDepositBookCover = async (accountNo) => {
+  await download('/deposit/account/v1/getBankbookCover', { accountNo });
 };
 
 /**
  * 設定存款帳戶別名
- * @param {*} accountNo 存款帳號
- * @param {*} alias 帳戶別名；若為空值，則會恢復原始帳戶名稱
+ * @param {String} accountNo 存款帳號
+ * @param {String} alias 帳戶別名；若為空值，則會恢復原始帳戶名稱
  * @returns
  */
 export const setAccountAlias = async (accountNo, alias) => {

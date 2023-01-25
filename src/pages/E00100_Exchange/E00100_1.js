@@ -49,7 +49,7 @@ const E001001 = ({ location }) => {
       history.push('/E001002', {
         ...response,
         memo: confirmData?.memo,
-        bankerCd: confirmData?.bankerCd,
+        isEmployee: confirmData?.isEmployee,
       });
     }
   };
@@ -101,7 +101,7 @@ const E001001 = ({ location }) => {
               換匯匯率：
               {confirmData?.rate}
             </div>
-            {confirmData?.bankerCd && (
+            {confirmData?.isEmployee && (
               <div className="employee">員工優惠匯率</div>
             )}
             <div className="label into">轉入帳號</div>

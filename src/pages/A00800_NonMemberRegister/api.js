@@ -14,6 +14,6 @@ import { callAPI } from 'utilities/axios';
  * }
  */
 export const memberRegister = async (param) => {
-  const result = await callAPI('/api/ledger/memberRegister', param);
+  const result = await callAPI('/fintech/ledger/memberRegister', param);
   return result.data;
 };

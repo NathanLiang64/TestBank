@@ -29,11 +29,10 @@ export const getTransactions = async (accountNo) => {
 /**
  * 下載存摺封面
  * @param {*} accountNo 存款帳號
- * @param {*} currency 幣別代碼，預設為臺幣(TWD)
  * @returns 存摺封面
  */
-export const downloadDepositBookCover = async (accountNo, currency = 'NTD') => {
-  await download('/api/deposit/v1/getDepositBookCover', { accountNo, currency });
+export const downloadDepositBookCover = async (accountNo) => {
+  await download('/deposit/account/v1/getBankbookCover', { accountNo });
 };
 
 /**

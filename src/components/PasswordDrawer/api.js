@@ -2,11 +2,11 @@ import { callAPI } from 'utilities/axios';
 
 /**
  * 取得需要使用者輸入驗證的項目。
- * @param {*} autoCode 要求進行的驗證模式的代碼。
+ * @param {*} authCode 要求進行的驗證模式的代碼。
  * @returns 驗證項目旗標。(0x01:生物辨識或圖形鎖, 0x02:網銀密碼)
  */
-export const getTransactionAuthMode = async (autoCode) => {
-  const response = await callAPI('/security/v1/getAuthMode', autoCode);
+export const getTransactionAuthMode = async (authCode) => {
+  const response = await callAPI('/security/v1/getAuthMode', authCode);
   return response.data;
 };
 

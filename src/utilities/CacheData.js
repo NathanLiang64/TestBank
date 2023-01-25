@@ -51,10 +51,11 @@ export const getBranchCode = async () => {
 /**
  * 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
  * @return {Promise<[{
- *   acctType: 帳戶類型 // M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶
+ *   acctType: 帳戶類型           // M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶
  *   accountNo: 帳號,
  *   branchName: 分行名稱,
- *   balance: 帳戶餘額(, // NOTE 餘額「非即時」資訊
+ *   balance: 帳戶餘額,           // NOTE 餘額「非即時」資訊
+ *   interest: 累積利息,          // NOTE 當值為 undefined 時才會載入。
  *   currency: 幣別代碼,
  *   alias: 帳戶名稱，若有暱稱則會優先用暱稱,
  *   dgType: 帳戶類別('  '.非數存帳號, '11'.臨櫃數存昇級一般, '12'.一之二類, ' 2'.二類, '32'.三之二類)
@@ -102,7 +103,8 @@ const loadAccountsList = async () => {
  *   acctType: 帳戶類型 // M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶,
  *   accountNo: 帳號,
  *   branchName: 分行名稱,
- *   balance: 帳戶餘額, // NOTE 餘額「非即時」資訊
+ *   balance: 帳戶餘額,           // NOTE 餘額「非即時」資訊
+ *   interest: 累積利息,          // NOTE 當值為 undefined 時才會載入。
  *   currency: 幣別代碼,
  *   alias: 帳戶名稱 // 若有暱稱則會優先用暱稱,
  *   dgType: 帳戶類別 // ('  '.非數存帳號, '11'.臨櫃數存昇級一般, '12'.一之二類, ' 2'.二類, '32'.三之二類)
@@ -143,7 +145,6 @@ export const getAccountsList = async (acctTypes, onDataLoaded) => {
  *   freeTransferRemain: 免費跨轉剩餘次數
  *   bonusQuota: 優惠利率額度
  *   bonusRate: 優惠利率
- *   interest: 累積利息
  * }>} 優惠資訊
  */
 export const getAccountBonus = async (accountNo, onDataLoaded, foreUpdate) => {
@@ -161,7 +162,7 @@ export const getAccountBonus = async (accountNo, onDataLoaded, foreUpdate) => {
       accounts[index].bonus = { isLoading: true };
       store.dispatch(setAccounts(accounts));
 
-      const response = await callAPI('/api/depositPlus/v1/getBonusInfo', accountNo);
+      const response = await callAPI('/deposit/account/v1/getBonusInfo', { accountNo });
       bonus = response.data;
 
       accounts[index].bonus = bonus;

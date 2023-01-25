@@ -11,11 +11,10 @@ import { callAPI } from 'utilities/axios';
  *    county, // 寄送地址 - 城市
  *    city, //寄送地址 - 地區
  *    addr, //寄送地址 - 道路
- *    userData, //年收入,職稱,行業
  * }>}
  */
 export const getProfile = async () => {
-  const response = await callAPI('/api/setting/v1/getProfile');
+  const response = await callAPI('/personal/v1/getProfile');
   return response.data;
 };
 
@@ -28,13 +27,10 @@ export const getProfile = async () => {
  *    county:   縣市
  *    city:     鄉鎮市區
  *    addr:     地址
- * }} param
- * @returns {Promist<{
- *   errCode, // 若為空值表示成功
- *   message,
- * }>}
+ * }} cifData
+* @returns {Promise<{ isSuccess, code, message }>} 更新成功與否的旗標。
  */
-export const modifyBasicInformation = async (param) => {
-  const response = await callAPI('/api/setting/v1/updateProfile', param);
+export const updateProfile = async (cifData) => {
+  const response = await callAPI('/personal/v1/updateProfile', { mode: 2, ...cifData });
   return response;
 };

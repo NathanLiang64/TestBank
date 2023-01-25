@@ -3,20 +3,15 @@ import { callAPI } from 'utilities/axios';
 /**
  * 個人基本資料變更
  * @param {{
- *    mobile:   手機
- *    email:    email
  *    zipCode:  郵遞區號
  *    county:   縣市
  *    city:     鄉鎮市區
  *    addr:     地址
- * }} param
- * @returns {Promist<{
- *   errCode, // 若為空值表示成功
- *   message,
- * }>}
+ * }} cifData
+* @returns {Promise<{ isSuccess, code, message }>} 更新成功與否的旗標。
  */
-export const updateProfile = async (param) => {
-  const response = await callAPI('/api/setting/v1/updateProfile', param);
+export const updateProfile = async (cifData) => {
+  const response = await callAPI('/personal/v1/updateProfile', { mode: 3, ...cifData });
   return response;
 };
 

@@ -26,7 +26,7 @@ import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
 import AccordionContent from './accordionContent';
-import { getProfile, sendBankBookMail } from './api';
+import { getProfile, sendBankbook } from './api';
 
 /* Styles */
 import ExportBankBookWrapper from './exportBankBook.style';
@@ -99,29 +99,19 @@ const ExportBankBook = () => {
   };
 
   const onSubmit = async (data) => {
-    dispatch(setWaittingVisible(true));
-    if (data.outType === '2') {
-      const valid = checkDateRangePickerValid();
-      if (!valid) {
-        return;
-      }
-    }
-    const param = {
-      conditions: {
-        accountNo: data.account,
-        startDate: dateToYMD(exportDateRange[0]),
-        endDate: dateToYMD(exportDateRange[1]),
-      },
-      fileType: 1,
-      pdfTemplateType: data.outType === '1' ? 1 : 3,
+    if (data.outType === '2' && checkDateRangePickerValid() === false) return;
+
+    const coverOnly = (data.outType === '1');
+    const conditions = {
+      accountNo: data.account,
+      startDate: dateToYMD(exportDateRange[0]),
+      endDate: dateToYMD(exportDateRange[1]),
     };
-    const response = await sendBankBookMail(param);
+    dispatch(setWaittingVisible(true));
+    const isSuccess = await sendBankbook(coverOnly, conditions);
     dispatch(setWaittingVisible(false));
-    if (response?.data === 'Send mail success!') {
-      history.push('/C008001', { data: { mail, success: true } });
-    } else {
-      history.push('/C008001', { data: { success: false } });
-    }
+
+    history.push('/C008001', { data: { mail, success: isSuccess } });
   };
 
   useEffect(async () => {

@@ -78,7 +78,7 @@ const Login = () => {
       sessionStorage.setItem('isLogin', '1');
       if (fid) {
         startFunc(fid);
-      } else goHome();
+      } else await goHome();
     }
     setInitDataLoaded(true);
   };

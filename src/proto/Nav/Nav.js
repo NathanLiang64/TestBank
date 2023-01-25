@@ -6,8 +6,8 @@ import Layout from 'components/Layout/Layout';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { useNavigation } from 'hooks/useNavigation';
 import { forceLogout } from 'utilities/AppScriptProxy';
-import { getHomeData, registerToken } from './Nav.api';
 
+import { assetSummary, getAssetSummaryValues, registerToken } from './Nav.api';
 import NavWrapper from './Nav.style';
 
 const Nav = () => {
@@ -19,19 +19,25 @@ const Nav = () => {
 
     const token = sessionStorage.getItem('jwtToken');
     if (token) {
-      if (sessionStorage.getItem('HomeDataLoaded') === null) {
-        // pushToken 可透過 GET https://bankeesit.feib.com.tw/ords/db1/app/bankee2app/DeviceBindingByCustId?custId=A120000000 取得
-        const Promise1 = registerToken({ pushToken: '878161cad9c7f9b9aa246a2672bd0af545e49849703e6ed23899847c01ca2503' });
-        const Promise2 = getHomeData();
-        await Promise.allSettled([Promise1, Promise2]).then(() => {
-          sessionStorage.setItem('HomeDataLoaded', 'Y');
-        });
-      }
+      // NOTE 要每次執行，因為在單元功能執行中可能會變更引用的內容。
+      // await getHomeData();
+      await assetSummary();
     } else {
       forceLogout();
     }
 
     dispatch(setWaittingVisible(false));
+
+    // NOTE 只有在登入後的初始化 getAssetSummary 一次，將資料寫回DB及Token中。
+    if (sessionStorage.getItem('HomeDataLoaded') === null) {
+      sessionStorage.setItem('HomeDataLoaded', 'Y');
+      // 用非同步取得 getAssetSummary 的初始值。
+      getAssetSummaryValues().then(() => {
+        // pushToken 可透過 GET https://bankeesit.feib.com.tw/ords/db1/app/bankee2app/DeviceBindingByCustId?custId=A120000000 取得
+        registerToken({ pushToken: '878161cad9c7f9b9aa246a2672bd0af545e49849703e6ed23899847c01ca2503' });
+        // getBanner()
+      });
+    }
   }, []);
 
   return (
@@ -49,6 +55,8 @@ const Nav = () => {
           <div onClick={() => startFunc('T00100')}>T00100 個人化設定</div>
           <div onClick={() => startFunc(FuncID.S00100_我的最愛)}>S00100 我的最愛</div>
           <div onClick={() => startFunc(FuncID.E00100_換匯)}>E00100 換匯 - (施工中)</div>
+          <div onClick={() => startFunc(FuncID.A00600)}>A00600 定期更新個資</div>
+          <div onClick={() => startFunc(FuncID.A00700)}>A00700 定期更新密碼</div>
         </div>
 
         <FEIBButton onClick={forceLogout}>登出</FEIBButton>

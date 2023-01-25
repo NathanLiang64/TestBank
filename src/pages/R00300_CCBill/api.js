@@ -84,13 +84,8 @@ export const getBillDeducStatus = async (request) => {
    }
  */
 export const getInvoice = async (format) => {
-  /* TODO
-  if (fileType === 1) {
-    await downloadPDF('/api/deposit/v1/getDepositBook', request, `${filename}.pdf`);
-  } else if (fileType === 2) {
-    await downloadCSV('/api/deposit/v1/getDepositBook', request, `${filename}.csv`);
-  }
-  */
+  // TODO 下載帳單
+
   await showCustomPrompt({
     title: '待串接API',
     message: `${format === 1 ? '下載PDF' : '下載EXCEL'}`,

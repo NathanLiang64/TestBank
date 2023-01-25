@@ -96,7 +96,7 @@ const E00100 = () => {
   // const [dialogMessage, setDialogMessage] = useState('');
   // const [isCloseFunc, setIsCloseFunc] = useState(false);
   // const [showTableDialog, setShowTableDialog] = useState(false);
-  const [banker, setBanker] = useState({});
+  const [banker, setBanker] = useState(false);
   const [accountsList, setAccountsList] = useState([]);
   // TODO: 移除
   // const [ntdAccountsList, setNtdAccountsList] = useState([]);
@@ -125,13 +125,13 @@ const E00100 = () => {
   //   }
   // };
 
-  // 查詢是否為行員
-  const getIsEmployee = async () => {
-    const response = await isEmployee({});
-    if (response.bankerCd) {
-      setBanker(response);
-    }
-  };
+  // // 查詢是否為行員
+  // const getIsEmployee = async () => {
+  //   const response = await isEmployee();
+  //   if (response.isEmployee) {
+  //     setBanker(response);
+  //   }
+  // };
 
   // 查詢所有帳戶資料
   const fetchAccountsList = async () => {
@@ -167,7 +167,7 @@ const E00100 = () => {
         // getNtdAccountsList();
         // getFcAccountsList();
         fetchCcyList();
-        getIsEmployee();
+        // getIsEmployee();
       }
     }
   };
@@ -287,7 +287,7 @@ const E00100 = () => {
       ccyCd: selectedCurrency.ccyCd,
       trfCcyCd: outType === '1' ? selectedCurrency.ccyCd : 'NTD',
       trfAmt,
-      bankerCd: banker?.bankerCd || '',
+      isEmployee: banker, // TODO 由 Conotroller 從 token 中取出。
     };
     const response = await getExchangeRateInfo(param);
     dispatch(setWaittingVisible(false));
@@ -382,7 +382,8 @@ const E00100 = () => {
   //   setValue('ntDollorBalance', '');
   // }, []);
 
-  useEffect(() => {
+  useEffect(async () => {
+    setBanker(await isEmployee()); // 查詢是否為行員
     getEchgPropertyList('1', true);
   }, []);
 
@@ -607,7 +608,7 @@ const E00100 = () => {
             <Accordion space="bottom">
               <E00100Notice />
             </Accordion>
-            {banker.bankerCd && <InfoArea>換匯匯率將依據本行員工優惠匯率進行交易</InfoArea>}
+            {banker && <InfoArea>換匯匯率將依據本行員工優惠匯率進行交易</InfoArea>}
             <div className="submitBtn">
               <FEIBButton type="submit">同意條款並確認</FEIBButton>
             </div>

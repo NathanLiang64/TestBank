@@ -20,6 +20,7 @@ import { FuncID } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import {
+  getInterest,
   getTransactions,
   setAccountAlias,
 } from './api';
@@ -139,14 +140,29 @@ const C00300 = () => {
   const renderBonusInfoPanel = () => {
     if (!selectedAccount) return null;
 
-    const { bonus } = selectedAccount;
-    if (!bonus) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
+    const { accountNo, bonus } = selectedAccount;
+    if (!bonus || !bonus.freeTransferRemain) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
 
-    const { freeWithdrawRemain, freeTransferRemain, bonusQuota, bonusRate, interest } = bonus ?? {
-      freeWithdrawRemain: null, freeTransferRemain: null, bonusQuota: null, bonusRate: null, interest: null, // 預設值
+    const { freeWithdrawRemain, freeTransferRemain, bonusQuota, bonusRate } = bonus ?? {
+      freeWithdrawRemain: null, freeTransferRemain: null, bonusQuota: null, bonusRate: null, // 預設值
     };
-    const value1 = bonusRate ? `${bonusRate * 100}%` : '-';
-    const value2 = (interest > 0) ? `${currencySymbolGenerator('NTD', interest)}` : '0';
+
+    // 優存(利率/利息)資訊
+    let col2Title;
+    let col2Value;
+    if (showRate) {
+      col2Title = '優惠利率';
+      col2Value = bonusRate ? `${bonusRate * 100}%` : '-';
+    } else {
+      col2Title = '累積利息';
+      if (selectedAccount.interest === undefined) {
+        getInterest(accountNo).then((apiRs) => {
+          selectedAccount.interest = apiRs.interest;
+          forceUpdate();
+        });
+      }
+      col2Value = (selectedAccount.interest > 0) ? `${currencySymbolGenerator('NTD', selectedAccount.interest)}` : '0';
+    }
 
     const panelContent = [
       {
@@ -155,8 +171,8 @@ const C00300 = () => {
         iconType: 'Arrow',
       },
       {
-        label: `${showRate ? '優惠利率' : '累積利息'}`,
-        value: `${showRate ? value1 : value2}`,
+        label: col2Title,
+        value: col2Value,
         iconType: 'switch',
         onClick: () => setShowRate(!showRate),
       },
@@ -167,6 +183,7 @@ const C00300 = () => {
         onClick: () => handleFunctionClick('depositPlus'),
       },
     ];
+
     return (
       <div className="panel">
         <ThreeColumnInfoPanel content={panelContent} />

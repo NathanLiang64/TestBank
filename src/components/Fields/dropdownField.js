@@ -1,3 +1,4 @@
+/* eslint-disable object-curly-newline */
 import React from 'react';
 import {useController} from 'react-hook-form';
 import {
@@ -42,8 +43,8 @@ export const DropdownField = ({
         value={field.value}
         $color={$color}
       >
-        {options.map(({ label, value, disabledOption }) => (
-          <FEIBOption key={label} value={value} disabled={disabledOption}>
+        {options.map(({ key, label, value, disabledOption }) => (
+          <FEIBOption key={key ?? label} value={value} disabled={disabledOption}>
             {label}
           </FEIBOption>
         ))}

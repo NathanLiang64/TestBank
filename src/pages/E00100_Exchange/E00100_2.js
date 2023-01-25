@@ -74,7 +74,7 @@ const E001002 = ({ location }) => {
                 換匯匯率：
                 {exchangeResult.rate}
               </div>
-              {exchangeResult.bankerCd && (
+              {exchangeResult.isEmployee && (
                 <div className="employee">員工優惠匯率</div>
               )}
               <div className="label into">轉入帳號</div>
