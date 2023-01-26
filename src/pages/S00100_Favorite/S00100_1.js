@@ -1,6 +1,7 @@
-/* eslint-disable */
+/* eslint-disable no-unused-vars */
+// /* eslint-disable */
 import React, {
-  useEffect, useRef, useState, useMemo, useContext
+  useEffect, useRef, useState, useMemo, useContext,
 } from 'react';
 import { useForm } from 'react-hook-form';
 import BottomAction from 'components/BottomAction';
@@ -14,16 +15,18 @@ import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReduce
 import { useDispatch } from 'react-redux';
 import { DropdownField } from 'components/Fields';
 import { FuncID } from 'utilities/FuncID';
-import { getFavoriteList, modifyFavoriteItem, deleteFavoriteItem } from './api';
+import {
+  getMyFunc, setMyFunc, modifyFavoriteItem, deleteFavoriteItem,
+} from './api';
 import { CustomCheckBoxField } from './fields/customCheckboxField';
 import {
   calcSelectedLength, extractGroupItems, generateReorderList, findExistedValue, generateTrimmedList, cardLessOptions,
-  EventContext
+  EventContext,
 } from './utils';
 import { validationSchema } from './validationSchema';
 
 const Favorite2New = ({
-  favoriteList, isEditAction, addPoposition, favoriteSettingList
+  favoriteList, isEditAction, addPoposition, favoriteSettingList,
 }) => {
   const [tabId, setTabId] = useState('C');
   const [showTip, setShowTip] = useState(false);
@@ -31,51 +34,45 @@ const Favorite2New = ({
   const mainContentRef = useRef();
   const dispatch = useDispatch();
 
- 
   // 這個HOOK是專門設計來讓模組內所有子元件共享事件, 用來取代callback function當props傳來傳去的做法
   // shareEvent: 用來監聽觸發
   // callShareEvent: 用來觸發
   const {shareEvent, callShareEvent} = useContext(EventContext);
 
-
   // 為了在使用者勾選項目變動時, 即時更新下方欄位的編輯完成括號裡的數字
   const [checkedArrayLength, setcheckedArrayLength] = useState(0);
- 
 
   // 在進入編輯頁面時, 將使用者先前就已加入最愛的項目先紀錄下來, 用於提交清單時 RESET 這些項目
   const alreadyCheckedItemBeforeEdit = useMemo(() => ([]), []);
   const usedPostions = useMemo(() => ([]), []);
-  const hasExistedCardLess = useRef(false); 
+  const hasExistedCardLess = useRef(false);
 
   useEffect(() => {
-
     // console.log('======== favoriteList========');
     // console.log(favoriteList);
     // console.log('=============================');
 
     hasExistedCardLess.current = false;
 
-    favoriteList.map((obj, index) => {
+    favoriteList.forEach((obj, index) => {
+      alreadyCheckedItemBeforeEdit.push(obj.funcCode);
 
-          alreadyCheckedItemBeforeEdit.push(obj['actKey']);
+      if (obj.funcCode === FuncID.D00300) {
+        hasExistedCardLess.current = true;
+      }
 
-          if( obj['actKey'] == FuncID.D00300 ){
-            hasExistedCardLess.current = true;
-          }
-
-
-          if( obj['position'] != -1 ){ 
-            usedPostions[obj['position']] = obj['actKey'];
-          }
+      if (obj.position !== -1) {
+        usedPostions[obj.position] = obj.funcCode;
+      }
     });
 
     // 更新下方欄位的編輯完成括號裡的數字
-    setcheckedArrayLength( alreadyCheckedItemBeforeEdit.length - 2 );
+    setcheckedArrayLength(alreadyCheckedItemBeforeEdit.length - 2);
 
     // console.log('======== usedPostions========');
     // console.log(usedPostions);
     // console.log('=============================');
-    
+
     // console.log('======== alreadyCheckedItemBeforeEdit ===========');
     // console.log(alreadyCheckedItemBeforeEdit);
     // console.log('=================================================');
@@ -92,19 +89,16 @@ const Favorite2New = ({
   const {
     control: cardLessControl,
     handleSubmit: cardLessHandleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm({ defaultValues: {cardLessCredit: ''}, resolver: yupResolver(validationSchema) });
 
-                
-  const patchOneAndRedirect = async (actKey, addPoposition) => {
+  const patchOneAndRedirect = async (funcCode, position) => {
+    await modifyFavoriteItem({ funcCode, position });
 
-    await modifyFavoriteItem({ actKey, position: parseInt(addPoposition, 10) });
-
-    const rows = await getFavoriteList();
+    const rows = await getMyFunc();
 
     // 在處理好無卡提款跳窗後 把跳窗關掉
-    if( actKey == FuncID.D00300 ){
-
+    if (funcCode === FuncID.D00300) {
       dispatch(setModalVisible(false));
     }
 
@@ -115,8 +109,7 @@ const Favorite2New = ({
     callShareEvent(['S00100_back2MyFavorite']);
   };
 
-
-  const patchAndRedirect = async (patchedList=[]) => {
+  const patchAndRedirect = async (patchedList = []) => {
     dispatch(setWaittingVisible(true));
 
     const itemsSkipFixTwo = JSON.parse(JSON.stringify(alreadyCheckedItemBeforeEdit)).splice(2);
@@ -124,43 +117,42 @@ const Favorite2New = ({
     // 判斷編輯頁的勾選項目如果沒變動就不重新 submit
     // if( JSON.stringify(trueArray.checkedArray) != JSON.stringify(itemsSkipFixTwo) ){
 
-      // RESET 使用者在進入編輯頁面時 就已加入最愛的項目, 除了預設寫死的前 2 個項目
-      alreadyCheckedItemBeforeEdit.shift();
-      alreadyCheckedItemBeforeEdit.shift();
-      await Promise.all(
-        alreadyCheckedItemBeforeEdit.map((actKey, position) => {
-   
-            return deleteFavoriteItem(actKey);
-        }),
-      );
+    const changedItems = [];
 
-      let isAddCardless = false;
+    // RESET 使用者在進入編輯頁面時 就已加入最愛的項目, 除了預設寫死的前 2 個項目
+    alreadyCheckedItemBeforeEdit.shift();
+    alreadyCheckedItemBeforeEdit.shift();
+    await Promise.all(
+      alreadyCheckedItemBeforeEdit.map((funcCode, position) => deleteFavoriteItem(funcCode)),
+    );
 
-      // 加入所有勾選的項目
-      await Promise.all(
-        usedPostions.map((actKey, position) => {
+    let isAddCardless = false;
 
-          if( actKey == FuncID.D00300 ){
-    
-            isAddCardless = true;
-          }
+    // 加入所有勾選的項目
+    // await Promise.all(
+    //   usedPostions.map((funcCode, position) => {
+    //     if (funcCode === FuncID.D00300) {
+    //       isAddCardless = true;
+    //     }
+    const addItems = usedPostions.map((funcCode, position) => {
+      if (funcCode === FuncID.D00300) isAddCardless = true;
+      return {funcCode, position};
+    });
+    await setMyFunc(addItems);
+    //     return modifyFavoriteItem({ funcCode, position });
+    //   }),
+    // );
 
-          return modifyFavoriteItem({ actKey, position: parseInt(position, 10) })
-        }),
-      );
+    const rows = await getMyFunc();
 
-      const rows = await getFavoriteList();
-
-      // 將項目更新的結果 傳回S00100頁面 更新list cache
-      callShareEvent(['S00100_updateMemoFavoriteList', rows]);
+    // 將項目更新的結果 傳回S00100頁面 更新list cache
+    callShareEvent(['S00100_updateMemoFavoriteList', rows]);
     // }
 
     dispatch(setWaittingVisible(false));
 
-
     // 在處理好無卡提款跳窗後 把跳窗關掉
-    if( isAddCardless ){
-      
+    if (isAddCardless) {
       dispatch(setModalVisible(false));
     }
 
@@ -179,9 +171,9 @@ const Favorite2New = ({
           control={cardLessControl}
         />
       ),
-      onOk:cardLessHandleSubmit(async (values) => {
+      onOk: cardLessHandleSubmit(async (values) => {
         console.log('values', values); // 待 無卡提款設定 API 開發完畢
-        
+
         okCallback();
       }),
       onClose: () => {
@@ -196,16 +188,12 @@ const Favorite2New = ({
 
   // 編輯完成送出表單
   const onSubmit = ({ editedBlockList }) => {
-
-    if( usedPostions.indexOf(FuncID.D00300) !== -1 && !hasExistedCardLess.current ){
-
+    if (usedPostions.indexOf(FuncID.D00300) !== -1 && !hasExistedCardLess.current) {
+      // TODO 不是在Submit時才要求輸入金額，是在選取當下。
       handleCardlessSubmit(() => {
-                    
         patchAndRedirect();
       });
-
-    }else{
-
+    } else {
       patchAndRedirect();
     }
   };
@@ -241,17 +229,17 @@ const Favorite2New = ({
     >
       <h3 className="title">{groupName}</h3>
       <div className="blockGroup">
-        {items.map(({actKey, name}) => (
+        {items.map(({funcCode, name}) => (
           <CustomCheckBoxField
-            key={actKey}
+            key={funcCode}
             control={control}
-            name={`editedBlockList.${actKey}`}
+            name={`editedBlockList.${funcCode}`}
             defaultValue={false}
             label={name}
             isEditAction={isEditAction}
             setShowTip={setShowTip}
             usedPostions={usedPostions}
-            actKey={actKey}
+            funcCode={funcCode}
           />
         ))}
       </div>
@@ -264,12 +252,11 @@ const Favorite2New = ({
 
   // 跳白畫面0.5s 防止多次點擊
   const preventMultiSubmit = (callback) => {
-
     (async () => {
       callback();
-      
+
       dispatch(setWaittingVisible(true));
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       dispatch(setWaittingVisible(false));
     })();
   };
@@ -281,44 +268,36 @@ const Favorite2New = ({
     return () => clearTimeout(timer);
   }, [showTip]);
 
-
   // 監聽模組內其他頁面的跨頁面事件呼叫
   useEffect(() => {
- 
     const [type, params] = shareEvent;
-   
-    switch(type){
 
-      case 'S00100_1_doSubmit' : 
+    // eslint-disable-next-line default-case
+    switch (type) {
+      case 'S00100_1_doSubmit': {
+        const funcCode = params;
 
-        const actKey = params;
-
-        if( !isEditAction ){
-
-          if( actKey == FuncID.D00300 ){
-
+        if (!isEditAction) {
+          if (funcCode === FuncID.D00300) {
             handleCardlessSubmit(() => {
-
               preventMultiSubmit(() => {
-                patchOneAndRedirect(actKey, addPoposition);
+                patchOneAndRedirect(funcCode, addPoposition);
               });
             });
-
-          }else{
-
+          } else {
             preventMultiSubmit(() => {
-              patchOneAndRedirect(actKey, addPoposition);
+              patchOneAndRedirect(funcCode, addPoposition);
             });
           }
         }
         break;
+      }
 
-      case 'S00100_1_setCheckedSize' : 
+      case 'S00100_1_setCheckedSize':
 
         setcheckedArrayLength(params);
         break;
     }
- 
   }, [shareEvent]);
 
   return (
@@ -340,8 +319,8 @@ const Favorite2New = ({
       >
         {renderBlockGroup()}
         {
-          isEditAction && 
-          (
+          isEditAction
+          && (
           <BottomAction position={0}>
             <button
               type="button"
@@ -351,7 +330,8 @@ const Favorite2New = ({
               {`編輯完成(${checkedArrayLength})`}
             </button>
           </BottomAction>
-        )}
+          )
+}
       </form>
       { showTip && <SnackModal text="最愛已選滿" /> }
     </div>

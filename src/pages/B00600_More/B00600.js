@@ -107,10 +107,10 @@ const More = () => {
           {
             group.items.map((item) => (
               <FavoriteBlockButton
-                key={item.actKey}
-                icon={iconGenerator(item.actKey)}
+                key={item.funcCode}
+                icon={iconGenerator(item.funcCode)}
                 label={item.name}
-                onClick={() => doStartFunc(item.actKey)}
+                onClick={() => doStartFunc(item.funcCode)}
                 noBorder
               />
             ))

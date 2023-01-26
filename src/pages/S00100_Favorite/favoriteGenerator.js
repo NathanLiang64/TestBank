@@ -150,8 +150,8 @@ export const iconGenerator = (name) => {
 };
 
 // TODO: 金融助手 Icons 設計稿有修改
-export const favIconGenerator = (actKey) => {
-  switch (actKey) {
+export const favIconGenerator = (funcCode) => {
+  switch (funcCode) {
     // 預設
     case 'Z01':
       return <ShareIcon />;

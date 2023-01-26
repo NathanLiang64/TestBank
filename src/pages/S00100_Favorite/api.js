@@ -1,76 +1,78 @@
 import { callAPI } from 'utilities/axios';
 
 /**
- * (我的最愛)取得提供設定的項目選單
- * @return{
- *   groupKey:  群組代碼
- *   groupName: 群組名稱
- *   items {
- *      actKey:     功能代碼
- *      name:       功能名稱
- *      url:        連結
- *      icon:       圖示
- *      groupType:  權限參數
- *      alterMsg:   顯示用訊息
- *      isFavorite: 是否已經設為我的最愛
- *      position:   位置資訊
- *   },...
- * }
- * @throws Exception
+ * 取得可提供用戶選擇加入最愛的單元功能清單
+ * @returns {Promise<{
+ *   groupKey: String, // 群組代碼
+ *   groupName: String, // 群組名稱
+ *   items: [{
+ *     funcCode: String, // 功能代碼
+ *     name: String, // 功能名稱
+ *     url: String, // 連結
+ *     icon: String, // 圖示
+ *     alterMsg: String, // 顯示用訊息
+ *     isFavorItem: Boolean, // 表示此功能是我的最愛中的選項。
+ *     isFavorite: Number, // xxx 是否已經設為我的最愛 (刪除; 因為目前只傳回 0/1 沒太大幫助)
+ *     position: Number, // 用戶在我的最愛清單中的排列順序(0~11)
+ *     locked: Boolean, // 表示是不可異動的功能 (推薦碼分享、優惠)
+ *   }] // 單元功能清單
+ * }>}
  */
-export const getFavoriteSettingList = async () => {
-  const response = await callAPI('/api/menu/favoriteFunc/v1/setting');
+export const getAllFunc = async () => {
+  const response = await callAPI('/function/favorites/v1/getAllFunc');
   return response.data;
 };
+
 /**
- * (我的最愛)取得已設定的項目清單(最多12個)
- * @return{
- *   actKey:    功能代碼
- *   name:      功能名稱
- *   url:       連結
- *   icon:      圖示
- *   groupType: 權限參數
- *   alterMsg:  顯示用訊息
- *   isFavorite:是否已經設為我的最愛
- *   position:  位置資訊
- * }
- * @throws Exception
+ * 取得目前用戶設定的所有最愛單元功能清單。
+ * @returns {Promise<{
+ *   funcCode: String, // 功能代碼
+ *   name: String, // 功能名稱
+ *   url: String, // 連結
+ *   icon: String, // 圖示
+ *   alterMsg: String, // 顯示用訊息
+ *   isFavorItem: Boolean, // 表示此功能是我的最愛中的選項。
+ *   isFavorite: Number, // xxx 是否已經設為我的最愛 (刪除; 因為目前只傳回 0/1 沒太大幫助)
+ *   position: Number, // 用戶在我的最愛清單中的排列順序(0~11)
+ *   locked: Boolean, // 表示是不可異動的功能 (推薦碼分享、優惠)
+ * }>}
  */
-export const getFavoriteList = async () => {
-  const response = await callAPI('/api/menu/favoriteFunc/v1/getAll');
+export const getMyFunc = async () => {
+  const response = await callAPI('/function/favorites/v1/getMyFunc');
   return response.data;
 };
+
 /**
- * (我的最愛)新增/更新已設定的項目清單
- * @param {
- *   actKey:    功能代碼
- *   position:  位置資訊
- *   otherDesc: 其他資訊 // TODO otherDesc尚未加入ORDS API中
- *   }
- * @returns {
- *   result:  true/false
- *   message: 回傳訊息
- *   actKey:  功能代碼
- *   }
- * @throws Exception
- * 已存在清單中的項目更新位置，沒有的項目則新增
+ * 新增或刪除指定用戶的最愛的單元功能。
+ * @param {[{
+ *   funcCode: String, // 功能代碼
+ *   position: Number, // 用戶在我的最愛清單中的排列順序(0~11)，若此欄位的值為 null 表示刪除。
+ *   params： String, // 執行此功能時的啟動參數
+ * }]} settings 有異動的功能的設定資訊。
  */
-export const modifyFavoriteItem = async (request) => {
-  const response = await callAPI('/api/menu/favoriteFunc/v1/modify', request);
+export const setMyFunc = async (settings) => {
+  const response = await callAPI('/function/favorites/v1/setMyFunc', settings);
   return response.data;
 };
+
 /**
-* (我的最愛)移除清單中的項目
-* @param actKey: 功能代碼
-* @returns{
-*     result:   true/false
-*     message:  回傳訊息
-*     actKey:   功能代碼
-*   }
-* ORDS API的刪除功能是用 [actKey=null + position的值] 來判斷要刪除的功能，這API轉成前端直接傳actKey來指定刪除的功能
-* @throws Exception
-*/
-export const deleteFavoriteItem = async (request) => {
-  const response = await callAPI('/api/menu/favoriteFunc/v1/remove', request);
-  return response.data;
-};
+ * 新增/更新已設定的項目清單
+ * @param {String} funcCode 功能代碼
+ * @param {Number} position 用戶在我的最愛清單中的排列順序(0~11)，若此欄位的值為 null 表示刪除。
+ * @param {String} params 執行此功能時的啟動參數
+ */
+export const modifyFavoriteItem = async (funcCode, position, params) => setMyFunc({
+  funcCode,
+  position,
+  params,
+});
+
+/**
+ * 移除清單中的項目
+ * @param {String} funcCode 功能代碼
+ */
+export const deleteFavoriteItem = async (funcCode) => setMyFunc({
+  funcCode,
+  position: null,
+  params: null,
+});

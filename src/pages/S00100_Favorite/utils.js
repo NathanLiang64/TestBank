@@ -14,7 +14,7 @@ export const extractGroupItems = (groups) => {
   const initialValues = groups.reduce((acc, group) => {
     group.items.forEach((item) => {
       const isFavorite = !!parseInt(item.isFavorite, 10);
-      acc[item.actKey] = isFavorite;
+      acc[item.funcCode] = isFavorite;
     });
     return acc;
   }, {});
@@ -45,9 +45,9 @@ export const generateReorderList = (initialValues, editedBlockList) => {
   const selectedList = [];
   for (const key in editedBlockList) {
     if (editedBlockList[key]) {
-      const foundedItem = initialValues.find((value) => value.actKey === key);
+      const foundedItem = initialValues.find((value) => value.funcCode === key);
       if (foundedItem) {
-        defaultList[foundedItem.position] = foundedItem.actKey;
+        defaultList[foundedItem.position] = foundedItem.funcCode;
       } else {
         selectedList.push(key);
       }
