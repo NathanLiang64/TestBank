@@ -5,7 +5,7 @@ import {
   RadioUncheckedIcon,
   EditAccountIcon,
   AccountIcon15,
-  HelperIcon6,
+  D008,
 } from 'assets/images/icons';
 
 export const iconGenerator = (name) => {
@@ -21,7 +21,7 @@ export const iconGenerator = (name) => {
     case 'temp':
       return <RadioUncheckedIcon />;
     case 'reserve':
-      return <HelperIcon6 />;
+      return <D008 />;
     case 'foreignCurrencyPriceSetting':
       return <AccountIcon15 />;
     default:

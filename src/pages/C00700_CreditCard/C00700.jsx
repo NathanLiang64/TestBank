@@ -13,7 +13,7 @@ import { FuncID } from 'utilities/FuncID';
 import { currencySymbolGenerator } from 'utilities/Generator';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
-import { CreditCardIcon5, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
+import { R005, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import { useNavigation } from 'hooks/useNavigation';
@@ -96,7 +96,7 @@ const CreditCardPage = () => {
       {
         fid: '/C007001', icon: <CreditCardIcon6 />, title: '信用卡資訊', param: card,
       },
-      { fid: `/${FuncID.R00500}`, icon: <CreditCardIcon5 />, title: '自動扣繳' },
+      { fid: `/${FuncID.R00500}`, icon: <R005 />, title: '自動扣繳' },
       { fid: '/C007002', icon: <CircleIcon />, title: '每月現金回饋' },
     ];
     const options = (

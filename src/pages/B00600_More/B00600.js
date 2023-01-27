@@ -6,7 +6,7 @@ import EmptyData from 'components/EmptyData';
 import Layout from 'components/Layout/Layout';
 import FavoriteBlockButton from 'components/FavoriteBlockButton';
 import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
-import { iconGenerator } from 'pages/S00100_Favorite/favoriteGenerator';
+import { FuncIcons } from 'assets/images/icons';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
@@ -105,15 +105,18 @@ const More = () => {
         <h3 className="title">{group.groupName}</h3>
         <div className="blockGroup">
           {
-            group.items.map((item) => (
-              <FavoriteBlockButton
-                key={item.funcCode}
-                icon={iconGenerator(item.funcCode)}
-                label={item.name}
-                onClick={() => doStartFunc(item.funcCode)}
-                noBorder
-              />
-            ))
+            group.items.map((item) => {
+              const Icon = (props) => FuncIcons[item.funcCode.substring(0, 4)](props);
+              return (
+                <FavoriteBlockButton
+                  key={item.funcCode}
+                  icon={Icon()}
+                  label={item.name}
+                  onClick={() => doStartFunc(item.funcCode)}
+                  noBorder
+                />
+              );
+            })
           }
         </div>
       </section>

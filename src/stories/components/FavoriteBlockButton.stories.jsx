@@ -1,5 +1,5 @@
 import FavoriteBlockButton from 'components/FavoriteBlockButton';
-import { AccountIcon1 } from 'assets/images/icons';
+import { C001 } from 'assets/images/icons';
 
 export default {
   title: 'components/FavoriteBlockButton',
@@ -23,5 +23,5 @@ const Template = (args) => (
 export const Primary = Template.bind({});
 Primary.args = {
   label: '帳戶總覽',
-  icon: <AccountIcon1 />,
+  icon: <C001 />,
 };
