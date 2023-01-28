@@ -54,6 +54,7 @@ const Nav = () => {
           <div onClick={() => startFunc('B00600')}>B00600 更多...</div>
           <div onClick={() => startFunc('T00100')}>T00100 個人化設定</div>
           <div onClick={() => startFunc(FuncID.S00100_我的最愛)}>S00100 我的最愛</div>
+          <div onClick={() => startFunc(FuncID.S00101_我的最愛v2)}>S00101 我的最愛v2</div>
           <div onClick={() => startFunc(FuncID.E00100_換匯)}>E00100 換匯 - (施工中)</div>
           <div onClick={() => startFunc(FuncID.A00600)}>A00600 定期更新個資</div>
           <div onClick={() => startFunc(FuncID.A00700)}>A00700 定期更新密碼</div>

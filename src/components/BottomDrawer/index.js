@@ -59,12 +59,11 @@ const BottomDrawer = ({
       <div className="drawerTitle">
         { !!onBack && renderBackButton(onBack) }
         <h3 className="title">{title}</h3>
-        <FEIBIconButton
-          className="closeButton"
-          onClick={onClose}
-        >
-          <CrossIcon />
-        </FEIBIconButton>
+        { !!onClose && (
+          <FEIBIconButton className="closeButton" onClick={onClose}>
+            <CrossIcon />
+          </FEIBIconButton>
+        )}
       </div>
       <div className="content" onClick={handleClickBubble}>
         {content}

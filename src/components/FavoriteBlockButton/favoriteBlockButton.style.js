@@ -27,6 +27,9 @@ const FavoriteBlockButtonStyle = styled.button.attrs({
   }
   
   &:disabled {
+    pointer-events: none;
+    touch-action: none;
+
     p, .Icon {
       color: ${({ theme }) => theme.colors.text.light};
       opacity: .8;
