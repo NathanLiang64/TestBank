@@ -16,7 +16,7 @@ import { useDispatch } from 'react-redux';
 import { DropdownField } from 'components/Fields';
 import { FuncID } from 'utilities/FuncID';
 import {
-  getMyFunc, setMyFunc, modifyFavoriteItem, deleteFavoriteItem,
+  getMyFuncs, saveMyFuncs, modifyFavoriteItem, deleteFavoriteItem,
 } from './api';
 import { CustomCheckBoxField } from './fields/customCheckboxField';
 import {
@@ -95,7 +95,7 @@ const Favorite2New = ({
   const patchOneAndRedirect = async (funcCode, position) => {
     await modifyFavoriteItem({ funcCode, position });
 
-    const rows = await getMyFunc();
+    const rows = await getMyFuncs();
 
     // 在處理好無卡提款跳窗後 把跳窗關掉
     if (funcCode === FuncID.D00300_無卡提款) {
@@ -138,12 +138,12 @@ const Favorite2New = ({
       if (funcCode === FuncID.D00300_無卡提款) isAddCardless = true;
       return {funcCode, position};
     });
-    await setMyFunc(addItems);
+    await saveMyFuncs(addItems);
     //     return modifyFavoriteItem({ funcCode, position });
     //   }),
     // );
 
-    const rows = await getMyFunc();
+    const rows = await getMyFuncs();
 
     // 將項目更新的結果 傳回S00100頁面 更新list cache
     callShareEvent(['S00100_updateMemoFavoriteList', rows]);

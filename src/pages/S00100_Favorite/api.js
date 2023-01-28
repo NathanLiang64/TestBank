@@ -37,8 +37,8 @@ export const getAllFunc = async () => {
  *   locked: Boolean, // 表示是不可異動的功能 (推薦碼分享、優惠)
  * }>}
  */
-export const getMyFunc = async () => {
-  const response = await callAPI('/function/favorites/v1/getMyFunc');
+export const getMyFuncs = async () => {
+  const response = await callAPI('/function/favorites/v1/getMyFuncs');
   return response.data;
 };
 
@@ -50,8 +50,8 @@ export const getMyFunc = async () => {
  *   params： String, // 執行此功能時的啟動參數
  * }]} settings 有異動的功能的設定資訊。
  */
-export const setMyFunc = async (settings) => {
-  const response = await callAPI('/function/favorites/v1/setMyFunc', settings);
+export const saveMyFuncs = async (settings) => {
+  const response = await callAPI('/function/favorites/v1/saveMyFuncs', settings);
   return response.data;
 };
 
@@ -61,7 +61,7 @@ export const setMyFunc = async (settings) => {
  * @param {Number} position 用戶在我的最愛清單中的排列順序(0~11)，若此欄位的值為 null 表示刪除。
  * @param {String} params 執行此功能時的啟動參數
  */
-export const modifyFavoriteItem = async (funcCode, position, params) => setMyFunc({
+export const modifyFavoriteItem = async (funcCode, position, params) => saveMyFuncs({
   funcCode,
   position,
   params,
@@ -71,7 +71,7 @@ export const modifyFavoriteItem = async (funcCode, position, params) => setMyFun
  * 移除清單中的項目
  * @param {String} funcCode 功能代碼
  */
-export const deleteFavoriteItem = async (funcCode) => setMyFunc({
+export const deleteFavoriteItem = async (funcCode) => saveMyFuncs({
   funcCode,
   position: null,
   params: null,

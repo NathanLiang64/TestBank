@@ -111,7 +111,7 @@ export const CustomCheckBoxField = ({
         // class參數: selected = 反紫, disabled = 反白
         const classValue = usedPostions.indexOf(funcCode) !== -1 ? 'selected' : '';
         return `${classValue} favorite_btn`;
-      })()}
+      })()} // NOTE ??? 寫啥！
       disabled={(getRealCheckedCount() >= 10 && usedPostions.indexOf(funcCode) === -1) ? 'disabled' : ''}
     >
       <label

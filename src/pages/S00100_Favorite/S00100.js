@@ -16,13 +16,13 @@ import { FuncID } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 
 import S00100_1 from './S00100_1';
-import { blockBackgroundGenerator, iconGenerator } from './favoriteGenerator';
+import { getFuncButtonBackground, iconGenerator } from './favoriteGenerator';
 import FavoriteDrawerWrapper, { DndItemContainer } from './S00100.style';
 import {
   generateTrimmedList, reorder, move, combineLeftAndRight, EventContext,
 } from './utils';
 import {
-  getAllFunc, getMyFunc, setMyFunc, modifyFavoriteItem, deleteFavoriteItem,
+  getAllFunc, getMyFuncs, saveMyFuncs, modifyFavoriteItem, deleteFavoriteItem,
 } from './api';
 
 // 用來觸發 EventCenter 中介層的方法
@@ -360,7 +360,8 @@ const Favorite = () => {
 
         let ele = null;
 
-        if (className === 'dndArea') {
+        // NOTE 不需要用這種做法，控制 Draggable.isDragDisabled 即可。
+        if (className === 'dndArea') { // NOTE className 是 UI元件 使用的，不應一個變數做二種用途；這也是一種耦合。
           ele = <DndBlocksElements favoriteList={memoFavoriteList} dndList={renderData} />;
         } else {
           ele = <BlockElements favoriteList={renderData} />;
@@ -390,7 +391,7 @@ const Favorite = () => {
                 className="dndItem"
                 key={fixedItem.funcCode}
               >
-                <img src={blockBackgroundGenerator(fixedIndex)} alt="block" />
+                <img src={getFuncButtonBackground(fixedIndex)} alt="block" />
                 {iconGenerator(fixedItem.funcCode)}
                 {fixedItem.name}
               </div>
@@ -431,7 +432,7 @@ const Favorite = () => {
                                >
                                  <RemoveRounded />
                                </span>
-                               <img src={blockBackgroundGenerator((2 * index) + (parentIndex + 2))} alt="block" />
+                               <img src={getFuncButtonBackground((2 * index) + (parentIndex + 2))} alt="block" />
                                {iconGenerator(item.funcCode)}
                                {item.name}
                              </>
@@ -473,7 +474,7 @@ const Favorite = () => {
             onClick={handleClick}
           >
             <>
-              { imgIndex !== null ? <img src={blockBackgroundGenerator(imgIndex)} alt="block" /> : <img src={BlockEmpty} alt="empty" /> }
+              { imgIndex !== null ? <img src={getFuncButtonBackground(imgIndex)} alt="block" /> : <img src={BlockEmpty} alt="empty" /> }
               { imgIndex !== null ? iconGenerator(funcCode) : '' }
               { itemName !== null ? (
                 <span>
@@ -550,7 +551,7 @@ const Favorite = () => {
 
           // 判斷如有呼叫過API, 就把list cache起來, 節省成本
           if (hasLoadedFavoriteList === false) {
-            const rows = await getMyFunc();
+            const rows = await getMyFuncs();
 
             memoFavoriteList = deepCopy(rows);
 
@@ -714,13 +715,13 @@ const Favorite = () => {
     const [type, params] = shareEvent;
 
     // eslint-disable-next-line default-case
-    switch (type) {
+    switch (type) { // NOTE type 是HardCode，只要有大小寫的錯誤，不易
       case 'S00100_back2MyFavorite':
 
         triggerEvent({eventName: 'renderFavoriteList'});
         break;
 
-      case 'S00100_updateMemoFavoriteList':
+      case 'S00100_updateMemoFavoriteList': // NOTE 從 S00100_1 發出！造成不同頁面的流程耦合，不是好做法
 
         triggerEvent({eventName: 'updateMemoFavoriteList', params});
         break;

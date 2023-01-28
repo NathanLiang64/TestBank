@@ -18,7 +18,7 @@ import {
   M001, M002, M003, N002,
 } from 'assets/images/icons';
 
-export const blockBackgroundGenerator = (index) => {
+export const getFuncButtonBackground = (index) => {
   // 只有六種顏色背景
   const remainder = index % 6;
   switch (remainder) {
