@@ -108,6 +108,7 @@ const routes = [
   {path: '/A00600', exact: false, component: A00600},
   {path: '/A00700', exact: false, component: A00700},
   {path: '/A00800', exact: false, component: A00800},
+  {path: '/B00200', exact: false, component: M00100}, // NOTE DB定義的分享與WebView不一致！應修正DB
   {path: '/B00300', exact: false, component: B00300},
   {path: '/B00600', exact: false, component: B00600},
   {path: '/C00100', exact: false, component: C00100},

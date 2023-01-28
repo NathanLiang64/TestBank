@@ -244,7 +244,7 @@ const C00300 = () => {
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case FuncID.D00300: // 無卡提款，只有母帳號才可以使用。 // TODO 帶參數過去
+      case FuncID.D00300_無卡提款: // 無卡提款，只有母帳號才可以使用。 // TODO 帶參數過去
         params = { transOut: selectedAccount.accountNo };
         break;
 
@@ -290,7 +290,7 @@ const C00300 = () => {
                 funcList={[
                   { fid: FuncID.D00100_臺幣轉帳, title: '轉帳' },
                   { fid: FuncID.E00100_換匯, title: '換匯' },
-                  { fid: FuncID.D00300, title: '無卡提款', hidden: (selectedAccount.acctType !== 'M') },
+                  { fid: FuncID.D00300_無卡提款, title: '無卡提款', hidden: (selectedAccount.acctType !== 'M') },
                 ]}
                 moreFuncs={[
                   // { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false }, // TODO: 此階段隱藏

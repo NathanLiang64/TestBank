@@ -12,7 +12,7 @@ import BottomAction from 'components/BottomAction';
 import SnackModal from 'components/SnackModal';
 import theme from 'themes/theme';
 import {
-  AddMemberIcon, CameraIcon, PhoneIcon, ShareIcon, TransactionIcon,
+  AddMemberIcon, CameraIcon, PhoneIcon, B002, TransactionIcon,
 } from 'assets/images/icons';
 import AccountEditor from 'pages/D00500_FrequentContacts/D00500_AccountEditor';
 import { addFrequentAccount } from 'pages/D00500_FrequentContacts/api';
@@ -152,7 +152,7 @@ const TransferResult = (props) => {
           <div className="divider" />
           {/* 將轉帳結果透過原生的分享功能發送出去 */}
           <button type="button" onClick={sendMessage}>
-            <ShareIcon />
+            <B002 />
             社群通知
           </button>
         </>

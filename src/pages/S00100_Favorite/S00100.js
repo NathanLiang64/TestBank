@@ -456,7 +456,7 @@ const Favorite = () => {
       }) => {
         let cardLessLabel = '';
 
-        if (funcCode === FuncID.D00300) { // 用來顯示無卡存摺 的 設定金額
+        if (funcCode === FuncID.D00300_無卡提款) { // 用來顯示無卡存摺 的 設定金額
           cardLessLabel = (
             <span>
               <br />

@@ -106,7 +106,7 @@ const More = () => {
         <div className="blockGroup">
           {
             group.items.map((item) => {
-              const Icon = (props) => FuncIcons[item.funcCode.substring(0, 4)](props);
+              const Icon = FuncIcons[item.funcCode.substring(0, 4)];
               return (
                 <FavoriteBlockButton
                   key={item.funcCode}

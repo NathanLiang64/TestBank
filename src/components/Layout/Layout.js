@@ -57,7 +57,7 @@ function Layout({
   // 關閉 Popup視窗。
   const onModalClose = async () => {
     if (modalData.onClose) {
-      modalData.onClose();
+      if ((await modalData.onClose() === false)) return; // 取消 Cancel 程序。
     }
     dispatch(setModalVisible(false));
     // dispatch(setWaittingVisible(false));
@@ -146,7 +146,7 @@ function Layout({
               </FEIBButton>
             ) : null}
             {/*  若沒有給 onOk 則不出現確認按鈕 */}
-            {modalData.onOk ? (
+            {(modalData.onOk || modalData.okContent) ? (
               <FEIBButton onClick={onModalOk}>
                 {modalData.okContent ?? '確認'}
               </FEIBButton>

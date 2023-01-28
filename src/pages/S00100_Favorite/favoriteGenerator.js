@@ -6,8 +6,8 @@ import BlockOrange from 'assets/images/favoriteBlock/blockOrange.svg';
 import BlockGreen from 'assets/images/favoriteBlock/blockGreen.svg';
 import BlockPurple from 'assets/images/favoriteBlock/blockPurple.svg';
 import {
-  ShareIcon, AccountIcon8,
-  N001,
+  B002, AccountIcon8,
+  B005,
   C001, C003, C004, C005, C009, C006, C002, C008, C010,
   F001, F003, F002, F005, F004,
   D001, D007, D002, D003, D004, D009, D005, D006,
@@ -39,8 +39,8 @@ export const blockBackgroundGenerator = (index) => {
  */
 export const iconGenerator = (funcCode) => {
   switch (funcCode) {
-    case 'share': return <ShareIcon />;
-    case 'N00100': return <N001 />;
+    case 'share': return <B002 />;
+    case 'N00100': return <B005 />;
     case 'N00200': return <N002 />;
     case 'C00100': return <C001 />;
     case 'C00300': return <C003 />;
