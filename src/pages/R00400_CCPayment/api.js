@@ -27,7 +27,7 @@ export const getCreditCardTerms = async () => {
  *
  */
 export const queryPayBarcode = async (request) => {
-  const response = await callAPI('/api/card/v1/queryPayBarcode', request);
+  const response = await callAPI('/creditCard/v1/queryPayBarcode', request);
   return response.data;
 };
 
@@ -53,7 +53,7 @@ export const queryPayBarcode = async (request) => {
  *
  */
 export const queryCardInfo = async (request) => {
-  const response = await callAPI('/api/card/v1/getCardSummary', request);
+  const response = await callAPI('/creditCard/v1/getCardSummary', request);
   return response.data;
 };
 
@@ -72,7 +72,7 @@ export const queryCardInfo = async (request) => {
  * }
  */
 export const payCardFee = async (request) => {
-  const response = await callAPI('/api/card/v1/payCardFee', request);
+  const response = await callAPI('/creditCard/v1/payCardFee', request);
   return response;
 };
 
@@ -91,7 +91,7 @@ export const payCardFee = async (request) => {
  */
 
 export const getAutoDebits = async (request) => {
-  const response = await callAPI('/api/card/v1/getAutoDebits', request);
+  const response = await callAPI('/creditCard/v1/getAutoDebits', request);
   return response.data;
 };
 
@@ -114,7 +114,7 @@ export const getAutoDebits = async (request) => {
 export const getBankeeCard = async (request) => {
   const {
     data: { cards, usedCardLimit },
-  } = await callAPI('/api/card/v1/getCards', request);
+  } = await callAPI('/creditCard/v1/getCards', request);
   const bankeeCard = cards.find((card) => card.isBankeeCard === 'Y');
   if (!bankeeCard) return null;
   return { cards: [{ cardNo: bankeeCard.cardNo }], usedCardLimit, isBankeeCard: true };

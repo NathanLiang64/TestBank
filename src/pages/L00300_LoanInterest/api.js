@@ -25,7 +25,7 @@ import { callAPI, download } from 'utilities/axios';
  *
  */
 export const getSubPaymentHistory = async (param) => {
-  const response = await callAPI('/api/loan/v1/getSubPaymentHistory', param);
+  const response = await callAPI('/loan/v1/getSubPaymentHistory', param);
   return response.data;
 };
 
@@ -45,18 +45,18 @@ export const getSubPaymentHistory = async (param) => {
  * {
  *  filename: 檔案名稱 (例如: "776f367b57b14ddb894f9912f67ece11.pdf")
  * }
- * "下載繳款紀錄PDF": /api/loan/v1/downloadPaymentHistory.pdf
- * "下載繳款紀錄Excel": /api/loan/v1/downloadPaymentHistory.xlsx
+ * "下載繳款紀錄PDF": /loan/v1/downloadPaymentHistory.pdf
+ * "下載繳款紀錄Excel": /loan/v1/downloadPaymentHistory.xlsx
 */
 export const downloadPaymentHistory = async ({param, fileType}) => {
   let downloadUrl;
 
   switch (fileType) {
     case 1:
-      downloadUrl = '/api/loan/v1/downloadPaymentHistory.pdf';
+      downloadUrl = '/loan/v1/downloadPaymentHistory.pdf';
       break;
     default:
-      downloadUrl = '/api/loan/v1/downloadPaymentHistory.xlsx';
+      downloadUrl = '/loan/v1/downloadPaymentHistory.xlsx';
       break;
   }
 

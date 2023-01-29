@@ -23,7 +23,7 @@ import { showCustomPrompt } from 'utilities/MessageModal';
  * }
  */
 export const getBillSummary = async (request) => {
-  const response = await callAPI('/api/card/v1/getBillSummary', request);
+  const response = await callAPI('/creditCard/v1/getBillSummary', request);
   return response.data;
 };
 
@@ -51,7 +51,7 @@ export const getBillSummary = async (request) => {
  * }
  */
 export const getBillDetail = async (request) => {
-  const response = await callAPI('/api/card/v1/getBillDetail', request);
+  const response = await callAPI('/creditCard/v1/getBillDetail', request);
   return response.data;
 };
 
@@ -69,7 +69,7 @@ export const getBillDetail = async (request) => {
  * TODO: 尚未有完整的測資，所以個電文先帶有測資的 id/帳號
  */
 export const getBillDeducStatus = async (request) => {
-  const response = await callAPI('/api/card/v1/getBillDeducStatus', request);
+  const response = await callAPI('/creditCard/v1/getBillDeducStatus', request);
   return response.data;
 };
 

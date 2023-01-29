@@ -12,7 +12,7 @@ import { callAPI } from 'utilities/axios';
   ]
 */
 export const getExchangeRateInfo = async () => {
-  const response = await callAPI('/api/frgn/queryRateInfo');
+  const response = await callAPI('/deposit/foreign/queryRateInfo');
   return response.data;
 };
 
@@ -39,7 +39,7 @@ export const isEmployee = async () => {
  * }, ...]
  */
 export const getAccountsList = async (acctTypes) => {
-  const response = await callAPI('/api/deposit/v1/getAccounts', acctTypes);
+  const response = await callAPI('/deposit/account/v1/getAccounts', acctTypes);
   return response.data;
 };
 
@@ -56,24 +56,24 @@ export const getAccountsList = async (acctTypes) => {
 
 // 取得可交易幣別
 export const getCcyList = async (param) => {
-  const response = await callAPI('/api/foreign/v1/queryRealUniRate', param);
+  const response = await callAPI('/deposit/foreign/v1/queryRealUniRate', param);
   return response.data;
 };
 
 // 取得外幣交易性質列表
 export const getExchangePropertyList = async (param) => {
-  const response = await callAPI('/api/foreign/v1/getTransactionType', param);
+  const response = await callAPI('/deposit/foreign/v1/getTransactionType', param);
   return response.data;
 };
 
 // 外幣換匯 N2F
 export const exchangeNtoF = async (param) => {
-  const response = await callAPI('/api/frgn/exchN2f', param);
+  const response = await callAPI('/deposit/foreign/exchN2f', param);
   return response.data;
 };
 
 // 外幣換匯 F2N
 export const exchangeFtoN = async (param) => {
-  const response = await callAPI('/api/frgn/exchF2n', param);
+  const response = await callAPI('/deposit/foreign/exchF2n', param);
   return response.data;
 };

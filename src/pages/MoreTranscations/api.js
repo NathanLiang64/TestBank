@@ -31,6 +31,6 @@ import { callAPI } from 'utilities/axios';
     }
  */
 export const getTransactions = async (request) => {
-  const response = await callAPI('/api/deposit/v1/getTransactions', request);
+  const response = await callAPI('/deposit/account/v1/getTransactions', request);
   return response.data;
 };

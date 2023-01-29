@@ -15,7 +15,7 @@ import { callAPI } from 'utilities/axios';
  * TODO: 尚未有完整的測資，accountId 先固定帶 A123014281
  */
 export const getAutoDebits = async (request) => {
-  const response = await callAPI('/api/card/v1/getAutoDebits', request);
+  const response = await callAPI('/creditCard/v1/getAutoDebits', request);
   return response.data;
 };
 
@@ -35,7 +35,7 @@ export const getAutoDebits = async (request) => {
  *
  */
 export const setAutoDebit = async (request) => {
-  const response = await callAPI('/api/card/v1/setAutoDebit', request);
+  const response = await callAPI('/creditCard/v1/setAutoDebit', request);
   return response.data;
 };
 
@@ -53,7 +53,7 @@ export const setAutoDebit = async (request) => {
  * }, ...]
  */
 export const getAccountsList = async () => {
-  const response = await callAPI('/api/deposit/v1/getAccounts', 'M');
+  const response = await callAPI('/deposit/account/v1/getAccounts', 'M');
   // return response.data.map((acct) => ({ acctNo: acct.account }));
   return response.data;
 };
@@ -82,6 +82,6 @@ export const getAccountsList = async () => {
  * TODO: 尚未有完整的測資，所以個電文先帶有測資的 id/帳號
  */
 export const getCards = async (request) => {
-  const response = await callAPI('/api/card/v1/getCards', request);
+  const response = await callAPI('/creditCard/v1/getCards', request);
   return response.data;
 };

@@ -18,7 +18,7 @@ export const useLocationOptions = (watchedCountyName) => {
    * }
    */
   const getCountyList = async () => {
-    const response = await callAPI('/api/setting/queryCounty');
+    const response = await callAPI('/common/queryCounty');
     return response.data;
   };
 

@@ -6,6 +6,6 @@ import { callAPI } from 'utilities/axios';
  * @returns {Promise<{   sse: 'encode 的個資', }>}
  */
 export const getSSE = async (request) => {
-  const response = await callAPI('/api/app2apply/v1/getSSE', request);
+  const response = await callAPI('/service/aplfx/v1/getSSE', request);
   return response.data;
 };

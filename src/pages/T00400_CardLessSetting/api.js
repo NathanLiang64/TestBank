@@ -6,14 +6,14 @@ import { callAPI } from 'utilities/axios';
  * @throws Exception
  */
 export const getStatus = async () => {
-  const response = await callAPI('/api/cardlessWD/getStatus');
+  const response = await callAPI('/deposit/withdraw/getStatus');
   return response.data;
 };
 
 /**
  * 開通/註銷 無卡提款服務
  * 注意:
- * 1. 需要先執行 /api/cardlessWD/getStatus 獲得卡況
+ * 1. 需要先執行 /deposit/withdraw/getStatus 獲得卡況
  * TODO: 參數 newPassword 後續需處理加密問題
  * 2.  無卡提款狀態為 0, 3, 4，執行 [申請加開通] / 無卡提款狀態為 2，執行 [註銷]  / 無卡提款狀態為 1 ，執行 [開通]
  *
@@ -26,6 +26,6 @@ export const getStatus = async () => {
  * @throws Exception
  */
 export const activate = async (request) => {
-  const response = await callAPI('/api/cardlessWD/activate', request);
+  const response = await callAPI('/deposit/withdraw/activate', request);
   return response.data;
 };

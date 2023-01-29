@@ -35,7 +35,7 @@ export const getInterest = async (accountNo) => {
     }
  */
 export const getTransactions = async (accountNo) => {
-  const response = await callAPI('/api/deposit/v1/getTransactions', { accountNo, currency: 'NTD' });
+  const response = await callAPI('/deposit/account/v1/getTransactions', { accountNo, currency: 'NTD' });
   return response.data;
 };
 
@@ -55,6 +55,6 @@ export const downloadDepositBookCover = async (accountNo) => {
  * @returns
  */
 export const setAccountAlias = async (accountNo, alias) => {
-  const response = await callAPI('/api/deposit/v1/setAccountAlias', { accountNo, alias });
+  const response = await callAPI('/deposit/account/v1/setAccountAlias', { accountNo, alias });
   return response.data;
 };

@@ -22,7 +22,7 @@ import { callAPI } from 'utilities/axios';
  *
  */
 export const getSubPayment = async (param) => {
-  const response = await callAPI('/api/loan/v1/getSubPayment', param);
+  const response = await callAPI('/loan/v1/getSubPayment', param);
   return response.data;
 };
 
@@ -41,6 +41,6 @@ export const getSubPayment = async (param) => {
  * ]
  */
 export const getSubSummary = async (request) => {
-  const response = await callAPI('/api/loan/v1/getSubSummary', request);
+  const response = await callAPI('/loan/v1/getSubSummary', request);
   return response.data;
 };

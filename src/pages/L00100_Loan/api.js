@@ -23,7 +23,6 @@ import mockLoanRewards from './mockData/mockRewards';
    }
  */
 export const getLoanRewards = async (param) => {
-  // const response = await callAPI('/api/');
   const response = await new Promise((resolve) => resolve({ data: mockLoanRewards(param) }));
   return response.data;
 };
@@ -79,7 +78,7 @@ export const getStatment = async (param) => {
  * ]
  */
 export const getSubSummary = async (request) => {
-  const response = await callAPI('/api/loan/v1/getSubSummary', request);
+  const response = await callAPI('/loan/v1/getSubSummary', request);
   return response.data;
 };
 
@@ -108,7 +107,7 @@ export const getSubSummary = async (request) => {
  *
  */
 export const getSubPaymentHistory = async (param) => {
-  const response = await callAPI('/api/loan/v1/getSubPaymentHistory', param);
+  const response = await callAPI('/loan/v1/getSubPaymentHistory', param);
   return response;
 };
 
@@ -134,7 +133,7 @@ export const getSubPaymentHistory = async (param) => {
  *
  */
 export const getSubPayment = async (param) => {
-  const response = await callAPI('/api/loan/v1/getSubPayment', param);
+  const response = await callAPI('/loan/v1/getSubPayment', param);
   return response.data;
 };
 
@@ -157,7 +156,7 @@ export const getSubPayment = async (param) => {
  * }}
  */
 export const getInfo = async (param) => {
-  const response = await callAPI('/api/loan/v1/getInfo', param);
+  const response = await callAPI('/loan/v1/getInfo', param);
 
   const loadDetail = {
     type: '信貸',

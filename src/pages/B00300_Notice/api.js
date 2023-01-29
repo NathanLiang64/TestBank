@@ -13,7 +13,7 @@ import { callAPI } from 'utilities/axios';
  * }, ...]
  */
 export const queryLastPush = async () => {
-  const response = await callAPI('/api/push/v1/queryLastPush');
+  const response = await callAPI('/client/v1/queryLastPush');
   return response;
 };
 
@@ -23,7 +23,7 @@ export const queryLastPush = async () => {
  * @return
  */
 export const chgPushStatus = async (msgId) => {
-  const response = await callAPI('/api/push/v1/chgPushStatus', msgId);
+  const response = await callAPI('/client/v1/chgPushStatus', msgId);
   return response.data;
 };
 
@@ -33,7 +33,7 @@ export const chgPushStatus = async (msgId) => {
  * @return
  */
 export const deletePush = async (msgId) => {
-  const response = await callAPI('/api/push/v1/deletePush', msgId);
+  const response = await callAPI('/client/v1/deletePush', msgId);
   return response.data;
 };
 
@@ -43,7 +43,7 @@ export const deletePush = async (msgId) => {
  * @return
  */
 export const chgAllPushStatus = async (msgType) => {
-  const response = await callAPI('/api/push/v1/chgAllPushStatus', msgType);
+  const response = await callAPI('/client/v1/chgAllPushStatus', msgType);
   return response.data;
 };
 
@@ -53,6 +53,6 @@ export const chgAllPushStatus = async (msgType) => {
  * @return
  */
 export const deleteAllPush = async (msgType) => {
-  const response = await callAPI('/api/push/v1/deleteAllPush', msgType);
+  const response = await callAPI('/client/v1/deleteAllPush', msgType);
   return response.data;
 };

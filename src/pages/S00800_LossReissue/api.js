@@ -31,7 +31,7 @@ export const updateProfile = async (cifData) => {
  *
  */
 export const getStatus = async (params) => {
-  const response = await callAPI('/api/debit/card/v1/getStatus', params);
+  const response = await callAPI('/deposit/withdraw/card/v1/getStatus', params);
   return response.data;
 };
 
@@ -46,6 +46,6 @@ export const getStatus = async (params) => {
  * }
  */
 export const reissueOrLost = async (params) => {
-  const response = await callAPI('/api/debit/card/v1/reIssueOrLost', params);
+  const response = await callAPI('/deposit/withdraw/card/v1/reIssueOrLost', params);
   return response.data;
 };

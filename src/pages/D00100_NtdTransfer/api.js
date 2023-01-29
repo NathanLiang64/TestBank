@@ -27,7 +27,7 @@ import { callAPI } from 'utilities/axios';
  * }>}
  */
 export const createNtdTransfer = async (request) => {
-  const response = await callAPI('/api/transfer/ntd/v1/create', {
+  const response = await callAPI('/deposit/transfer/ntd/v1/create', {
     ...request,
     callerFunc: getCallerFunc(), // 啟用轉帳功能的 FuncCode, 例: 從臺幣首頁叫轉帳時，應傳入C00300
   });
@@ -47,7 +47,7 @@ export const createNtdTransfer = async (request) => {
  * }>} 轉帳結果。
  */
 export const executeNtdTransfer = async () => {
-  const response = await callAPI('/api/transfer/ntd/v1/execute');
+  const response = await callAPI('/deposit/transfer/ntd/v1/execute');
   return {
     ...response.data,
     isSuccess: (response.isSuccess && !response.data.errorCode),

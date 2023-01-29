@@ -10,7 +10,7 @@ import { callAPI } from 'utilities/axios';
  * }]
  */
 export const getAllNotices = async () => {
-  const response = await callAPI('/api/frgn/v1/getAllNotices');
+  const response = await callAPI('/deposit/foreign/v1/getAllNotices');
   return response.data;
 };
 
@@ -23,7 +23,7 @@ export const getAllNotices = async () => {
  * }
  */
 export const addNotice = async (notice) => {
-  const response = await callAPI('/api/frgn/v1/addNoticeItem', notice);
+  const response = await callAPI('/deposit/foreign/v1/addNoticeItem', notice);
   return response.data;
 };
 
@@ -36,7 +36,7 @@ export const addNotice = async (notice) => {
  * }
  */
 export const removeNotice = async (notice) => {
-  const response = await callAPI('/api/frgn/v1/removeNoticeItem', notice);
+  const response = await callAPI('/deposit/foreign/v1/removeNoticeItem', notice);
   return response.data;
 };
 
@@ -52,6 +52,6 @@ export const updateNotice = async (oldNotice, newNotice) => {
 
 // 取得可交易幣別
 export const getCcyList = async (param) => {
-  const response = await callAPI('/api/frgn/qserviceTrfiCcy', param);
+  const response = await callAPI('/deposit/foreign/qserviceTrfiCcy', param);
   return response.data;
 };

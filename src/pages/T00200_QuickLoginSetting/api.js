@@ -16,6 +16,6 @@ import { callAPI } from 'utilities/axios';
  * - midMobile: 若已綁定，則為 MID 認證時所使用的手機門號；反之，就是可用來進行MID認證的手機門號。
  */
 export const getQuickLoginInfo = async () => {
-  const response = await callAPI('/api/setting/v1/quickLoginBoundInfo');
+  const response = await callAPI('/auth/v1/quickLoginBoundInfo');
   return response.data;
 };

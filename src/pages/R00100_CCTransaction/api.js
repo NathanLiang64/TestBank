@@ -24,7 +24,7 @@ import { dateToYMD } from 'utilities/Generator';
  * ]
  */
 export const getTransactions = async (request) => {
-  const response = await callAPI('/api/card/v1/getTransactions', request);
+  const response = await callAPI('/creditCard/v1/getTransactions', request);
   return response.data;
 };
 
@@ -48,7 +48,7 @@ export const getTransactions = async (request) => {
 export const getBankeeCard = async (request) => {
   const {
     data: { cards, usedCardLimit },
-  } = await callAPI('/api/card/v1/getCards', request);
+  } = await callAPI('/creditCard/v1/getCards', request);
   const bankeeCard = cards.find((card) => card.isBankeeCard === 'Y');
   if (!bankeeCard) return null;
   return { cards: [{ cardNo: bankeeCard.cardNo }], usedCardLimit, isBankeeCard: true };
@@ -91,6 +91,6 @@ export const getTransactionPromise = (cardNo) => new Promise((resolve) => {
  *
  */
 export const updateTxnNotes = async (param) => {
-  const response = await callAPI('/api/card/v1/updateTxnNotes', param);
+  const response = await callAPI('/creditCard/v1/updateTxnNotes', param);
   return response.data;
 };

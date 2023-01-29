@@ -37,7 +37,7 @@ export const getCreditCardTerms = async () => {
  * TODO: 尚未有完整的測資，所以個電文先帶有測資的 id/帳號
  */
 export const getCards = async (request) => {
-  const response = await callAPI('/api/card/v1/getCards', request);
+  const response = await callAPI('/creditCard/v1/getCards', request);
   return response.data;
 };
 
@@ -64,7 +64,7 @@ export const getCards = async (request) => {
  * ]
  */
 export const getTransactions = async (request) => {
-  const response = await callAPI('/api/card/v1/getTransactions', request);
+  const response = await callAPI('/creditCard/v1/getTransactions', request);
   return response.data;
 };
 
@@ -87,7 +87,7 @@ export const getTransactions = async (request) => {
  *
  */
 export const updateTxnNotes = async (param) => {
-  const response = await callAPI('/api/card/v1/updateTxnNotes', param);
+  const response = await callAPI('/creditCard/v1/updateTxnNotes', param);
   return response;
 };
 
@@ -113,7 +113,7 @@ export const updateTxnNotes = async (param) => {
  *
  */
 export const queryCardInfo = async (request) => {
-  const response = await callAPI('/api/card/v1/getCardSummary', request);
+  const response = await callAPI('/creditCard/v1/getCardSummary', request);
   return response.data;
 };
 
@@ -134,7 +134,7 @@ export const queryCardInfo = async (request) => {
  * ]
  */
 export const getRewards = async (request) => {
-  const response = await callAPI('/api/card/v1/getRewards', request);
+  const response = await callAPI('/creditCard/v1/getRewards', request);
   return response;
 };
 
@@ -160,7 +160,7 @@ export const getRewards = async (request) => {
  * }
  */
 export const queryCardBill = async (request) => {
-  const response = await callAPI('/api/card/v1/getBillSummary', request);
+  const response = await callAPI('/creditCard/v1/getBillSummary', request);
   return response;
 };
 
@@ -178,7 +178,7 @@ export const queryCardBill = async (request) => {
  * TODO: 尚未有完整的測資，所以個電文先帶有測資的 id/帳號
  */
 export const checkCardBillStatus = async (request) => {
-  const response = await callAPI('/api/card/v1/getBillDeducStatus', request);
+  const response = await callAPI('/creditCard/v1/getBillDeducStatus', request);
   return response;
 };
 
@@ -206,7 +206,7 @@ export const checkCardBillStatus = async (request) => {
  * }
  */
 export const getBillDetail = async (request) => {
-  const response = await callAPI('/api/card/v1/getBillDetail', request);
+  const response = await callAPI('/creditCard/v1/getBillDetail', request);
   return response;
 };
 
@@ -225,7 +225,7 @@ export const getBillDetail = async (request) => {
  * TODO: 尚未有完整的測資，accountId 先固定帶 A123014281
  */
 export const getAutoDebits = async (request) => {
-  const response = await callAPI('/api/card/v1/getAutoDebits', request);
+  const response = await callAPI('/creditCard/v1/getAutoDebits', request);
   return response;
 };
 
@@ -245,7 +245,7 @@ export const getAutoDebits = async (request) => {
  *
  */
 export const setAutoDebit = async (request) => {
-  const response = await callAPI('/api/card/v1/setAutoDebit', request);
+  const response = await callAPI('/creditCard/v1/setAutoDebit', request);
   return response;
 };
 

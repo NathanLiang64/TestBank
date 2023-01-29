@@ -11,7 +11,7 @@ import { callAPI } from 'utilities/axios';
  * @returns
  */
 export const bindPushSetting = async (request) => {
-  const response = await callAPI('/api/push/v1/bindPushSetting', request);
+  const response = await callAPI('/client/v1/bindPushSetting', request);
   return response.data;
 };
 
@@ -25,6 +25,6 @@ export const bindPushSetting = async (request) => {
  * }
  */
 export const queryPushSetting = async () => {
-  const response = await callAPI('/api/push/v1/queryPushSetting');
+  const response = await callAPI('/client/v1/queryPushSetting');
   return response.data;
 };

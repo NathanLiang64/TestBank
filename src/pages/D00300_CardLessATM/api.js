@@ -5,13 +5,13 @@ import { callAPI } from 'utilities/axios';
  * @returns {Promisr<Number>} 無卡提款狀態。 0-未申請 1-已申請未開通 2-已開通 3-已註銷 4-已失效 5-其他
  */
 export const getCardlessWdStatus = async () => {
-  const response = await callAPI('/api/cardlessWD/getStatus');
+  const response = await callAPI('/deposit/withdraw/getStatus');
   return response.data;
 };
 
 // 申請無卡提款 done
 export const cardLessWithdrawApply = async (param) => {
-  const response = await callAPI('/api/cardlessWD/withdrawal', param);
+  const response = await callAPI('/deposit/withdraw/withdrawal', param);
   return response.data;
 };
 
@@ -25,7 +25,7 @@ export const cardLessWithdrawApply = async (param) => {
  * }
  */
 export const cardLessWithdrawActivate = async (param) => {
-  const response = await callAPI('/api/cardlessWD/activate', param);
+  const response = await callAPI('/deposit/withdraw/activate', param);
   return response.data;
 };
 
@@ -44,6 +44,6 @@ export const cardLessWithdrawActivate = async (param) => {
  *
  */
 export const getStatus = async (params) => {
-  const response = await callAPI('/api/debit/card/v1/getStatus', params);
+  const response = await callAPI('/deposit/withdraw/card/v1/getStatus', params);
   return response.data;
 };

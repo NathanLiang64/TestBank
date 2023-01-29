@@ -3,7 +3,7 @@ import { callAPI } from 'utilities/axios';
 /**
  * 金融卡啟用服務
  * 注意:
- * 1. 需要先執行 /api/debit/card/v1/getStatus 獲得卡況
+ * 1. 需要先執行 /deposit/withdraw/card/v1/getStatus 獲得卡況
  *
  * @param {{
  *   serial: 卡片序號
@@ -16,6 +16,6 @@ import { callAPI } from 'utilities/axios';
  */
 
 export const activate = async (request) => {
-  const response = await callAPI('/api/debit/card/v1/activate', request);
+  const response = await callAPI('/deposit/withdraw/card/v1/activate', request);
   return response;
 };

@@ -8,7 +8,7 @@ import mockTerms from './terms';
  * @returns 存款帳戶資訊。
  */
 export const getAccountSummary = async (acctTypes) => {
-  const response = await callAPI('/api/deposit/v1/getAccountSummary', acctTypes);
+  const response = await callAPI('/deposit/account/v1/getAccountSummary', acctTypes);
   return response.data.map((acct) => ({
     acctBranch: acct.branch, // 分行代碼
     acctName: acct.name, // 帳戶名稱或暱稱
@@ -50,7 +50,7 @@ export const getAccountSummary = async (acctTypes) => {
     }
  */
 export const getTransactionDetails = async (request) => {
-  const response = await callAPI('/api/deposit/v1/getTransactions', request);
+  const response = await callAPI('/deposit/account/v1/getTransactions', request);
   return response.data;
 };
 

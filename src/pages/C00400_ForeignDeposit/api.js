@@ -6,7 +6,7 @@ import { callAPI } from 'utilities/axios';
  * @param {*} request currency 存款幣別
  */
 export const getTransactions = async (accountNo, currency) => {
-  const response = await callAPI('/api/deposit/v1/getTransactions', { accountNo, currency });
+  const response = await callAPI('/deposit/account/v1/getTransactions', { accountNo, currency });
   return response.data;
 };
 
@@ -17,7 +17,7 @@ export const getTransactions = async (accountNo, currency) => {
  * @returns
  */
 export const setAccountAlias = async (accountNo, alias) => {
-  const response = await callAPI('/api/deposit/v1/setAccountAlias', { accountNo, alias });
+  const response = await callAPI('/deposit/account/v1/setAccountAlias', { accountNo, alias });
   return response.data;
 };
 
@@ -28,6 +28,6 @@ export const setAccountAlias = async (accountNo, alias) => {
  * @returns
  */
 export const setMainCurrency = async (accountNo, currency) => {
-  const response = await callAPI('/api/deposit/v1/setMainCurrency', { accountNo, currency });
+  const response = await callAPI('/deposit/foreign/v1/setMainCurrency', { accountNo, currency });
   return response.data;
 };

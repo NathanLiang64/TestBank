@@ -25,7 +25,7 @@ export const getAgreedAccount = async (request) => {
 
   const {accountNo} = request;
   if (!agreAccts[accountNo]) {
-    const response = await callAPI('/api/transfer/agreedAccount/v1/get', request);
+    const response = await callAPI('/deposit/transfer/agreedAccount/v1/get', request);
     const bankList = await getBankCode();
     agreAccts[accountNo] = response.data?.map((item) => ({
       ...item,
@@ -49,7 +49,7 @@ export const getAgreedAccount = async (request) => {
  * @returns {Promise<String>} 代表圖檔的UUID，用來顯示大頭貼；若為 null 表示還沒有設定頭像。
  */
 export const updateAgreedAccount = async (accountNo, request) => {
-  const response = await callAPI('/api/transfer/agreedAccount/v1/update', request);
+  const response = await callAPI('/deposit/transfer/agreedAccount/v1/update', request);
   const headshotId = response.data;
 
   // 更新約定轉入帳號快取。

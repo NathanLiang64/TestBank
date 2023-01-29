@@ -456,7 +456,7 @@ async function verifyBio(authKey) {
  */
 async function getQLStatus() {
   const appRs = await callAppJavaScript('getQLStatus', null, true, async () => {
-    const response = await callAPI('/api/setting/v1/quickLoginBoundInfo');
+    const response = await callAPI('/auth/v1/quickLoginBoundInfo');
     const testData = response.data;
     return {
       result: true,

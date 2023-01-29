@@ -17,7 +17,7 @@ import { showPrompt } from 'utilities/MessageModal';
 export const getFrequentAccount = async () => {
   let {freqAccts} = store.getState()?.CacheReducer;
   if (!freqAccts) {
-    const response = await callAPI('/api/transfer/frequentAccount/v1/getAll');
+    const response = await callAPI('/deposit/transfer/frequentAccount/v1/getAll');
     freqAccts = response.data;
     store.dispatch(setFreqAccts(freqAccts));
   }
@@ -57,7 +57,7 @@ export const addFrequentAccount = async (account) => {
     await showPrompt('此帳號資料已存在');
     return null;
   }
-  const response = await callAPI('/api/transfer/frequentAccount/v1/add', account);
+  const response = await callAPI('/deposit/transfer/frequentAccount/v1/add', account);
   // 如果新增失敗，則回傳原來的 freqAccts
   if (!response.isSuccess) return freqAccts;
   const headshotId = response.data;
@@ -114,7 +114,7 @@ export const updateFrequentAccount = async (newAccount, condition) => {
     ...condition,
   };
   delete request.bankName;
-  const response = await callAPI('/api/transfer/frequentAccount/v1/update', request);
+  const response = await callAPI('/deposit/transfer/frequentAccount/v1/update', request);
   // 如果編輯失敗，則回傳原來的 freqAccts
   if (!response.isSuccess) return freqAccts;
   const headshotId = response.data;
@@ -156,7 +156,7 @@ export const deleteFrequentAccount = (condition) => {
   freqAccts.splice(index, 1);
   store.dispatch(setFreqAccts(freqAccts));
 
-  callAPI('/api/transfer/frequentAccount/v1/delete', condition);
+  callAPI('/deposit/transfer/frequentAccount/v1/delete', condition);
 
   return freqAccts;
 };

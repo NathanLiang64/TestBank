@@ -63,7 +63,7 @@ export const getBranchCode = async () => {
  * }]>} 帳號基本資料。
  */
 const loadAccountsList = async () => {
-  // API /api/deposit/v1/getAccounts Response [{
+  // API /deposit/account/v1/getAccounts Response [{
   //   acctType: 帳戶類型 // M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶
   //   account: 帳號,
   //   name: 帳戶名稱，若有暱稱則會優先用暱稱,
@@ -74,7 +74,7 @@ const loadAccountsList = async () => {
   //        currency: 幣別代碼,
   //   }]
   // }]
-  const Promise1 = callAPI('/api/deposit/v1/getAccounts', 'MSFC');
+  const Promise1 = callAPI('/deposit/account/v1/getAccounts', 'MSFC');
   const Promise2 = getBranchCode();
   return await Promise.allSettled([Promise1, Promise2]).then((result) => {
     if (!result[0].value.isSuccess) return null;

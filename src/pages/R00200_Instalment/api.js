@@ -9,7 +9,7 @@ import { callAPI } from 'utilities/axios';
  *  }>}
  */
 export const queryInstallment = async (request) => {
-  const response = await callAPI('/api/card/installment/query', request);
+  const response = await callAPI('/creditCard/installment/query', request);
   return response.data;
 };
 
@@ -25,7 +25,7 @@ export const queryInstallment = async (request) => {
  * }]} request
  */
 export const updateInstallment = async (request) => {
-  const response = await callAPI('/api/card/installment/update', request);
+  const response = await callAPI('/creditCard/installment/update', request);
   return response;
 };
 
@@ -37,7 +37,7 @@ export const updateInstallment = async (request) => {
  * }} request
  */
 export const setInstallmentFlag = async (request) => {
-  const response = await callAPI('/api/card/installment/setFlag', request);
+  const response = await callAPI('/creditCard/installment/setFlag', request);
   return response.data;
 };
 
@@ -49,7 +49,7 @@ export const setInstallmentFlag = async (request) => {
  * }>}
  */
 export const getInstallmentFlag = async (request) => {
-  const response = await callAPI('/api/card/installment/getFlag', request);
+  const response = await callAPI('/creditCard/installment/getFlag', request);
   return response.data;
 };
 
@@ -65,7 +65,7 @@ export const getInstallmentFlag = async (request) => {
  * }>}
  */
 export const getTxnDtl = async (request) => {
-  const response = await callAPI('/api/card/installment/getAvailTxnDtl', request);
+  const response = await callAPI('/creditCard/installment/getAvailTxnDtl', request);
   return response.data;
 };
 
@@ -80,7 +80,7 @@ export const getTxnDtl = async (request) => {
  * }[]>}
  */
 export const getTxn = async (request) => {
-  const response = await callAPI('/api/card/installment/getAvailTxn', request);
+  const response = await callAPI('/creditCard/installment/getAvailTxn', request);
   return response.data;
 };
 
@@ -101,6 +101,6 @@ export const getTxn = async (request) => {
  * }>}
  */
 export const getPreCalc = async (request) => {
-  const response = await callAPI('/api/card/installment/preCalc', request);
+  const response = await callAPI('/creditCard/installment/preCalc', request);
   return response.data;
 };

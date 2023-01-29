@@ -10,7 +10,7 @@ import { callAPI } from 'utilities/axios';
  * - mobile: 預設為非約轉OTP門號；若尚未設有非約轉OTP門號時，則傳回CIF門號。
  */
 export const getSettingInfo = async () => {
-  const response = await callAPI('/api/transfer/nonAgreed/v1/getSettingInfo');
+  const response = await callAPI('/deposit/transfer/nonAgreed/v1/getSettingInfo');
   return response.data;
 };
 
@@ -20,6 +20,6 @@ export const getSettingInfo = async () => {
  * @returns {Promise<Integer>} status: 非約轉設定狀態
  */
 export const changeStatus = async (mobile) => {
-  const response = await callAPI('/api/transfer/nonAgreed/v1/changeStatus', mobile);
+  const response = await callAPI('/deposit/transfer/nonAgreed/v1/changeStatus', mobile);
   return response.data;
 };

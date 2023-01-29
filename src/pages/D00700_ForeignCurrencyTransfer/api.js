@@ -14,7 +14,7 @@ import { callAPI } from 'utilities/axios';
  * }, ...]
  */
 export const getAccountsList = async (acctTypes) => {
-  const response = await callAPI('/api/deposit/v1/getAccounts', acctTypes);
+  const response = await callAPI('/deposit/account/v1/getAccounts', acctTypes);
   return response.data;
 };
 
@@ -27,7 +27,7 @@ export const getAccountsList = async (acctTypes) => {
  * }]>}
  */
 export const getAgreedAccounts = async (accountNo) => {
-  const response = await callAPI('/api/transfer/agreedAccount/v1/get', { accountNo });
+  const response = await callAPI('/deposit/transfer/agreedAccount/v1/get', { accountNo });
   return response.data;
 };
 
@@ -43,7 +43,7 @@ export const getAgreedAccounts = async (accountNo) => {
  * }, ...]
  */
 export const getExchangePropertyList = async (param) => {
-  const response = await callAPI('/api/foreign/v1/getTransactionType', param);
+  const response = await callAPI('/deposit/foreign/v1/getTransactionType', param);
   return response.data;
 };
 
@@ -57,7 +57,7 @@ export const getExchangePropertyList = async (param) => {
  * }
  */
 export const transferFtoF = async (param) => {
-  const response = await callAPI('/api/foreign/v1/transfer', param);
+  const response = await callAPI('/deposit/foreign/v1/transfer', param);
   return response.data;
 };
 
@@ -71,7 +71,7 @@ export const transferFtoF = async (param) => {
  * }
  */
 export const createTransfer = async (param) => {
-  const response = await callAPI('/api/foreign/transfer/v1/create', param);
+  const response = await callAPI('/deposit/foreign/transfer/v1/create', param);
   return response.data;
 };
 
@@ -85,6 +85,6 @@ export const createTransfer = async (param) => {
  * }
  */
 export const executeTransfer = async (param) => {
-  const response = await callAPI('/api/foreign/transfer/v1/execute', param);
+  const response = await callAPI('/deposit/foreign/transfer/v1/execute', param);
   return response.data;
 };

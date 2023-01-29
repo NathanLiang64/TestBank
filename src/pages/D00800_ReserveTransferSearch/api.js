@@ -2,7 +2,7 @@ import { callAPI } from 'utilities/axios';
 
 // 取得轉出帳號 ***棄用***
 // export const getTransferOutAccounts = async (param) => {
-//   const response = await callAPI('/api/transfer/queryNtdTrAcct', param);
+//   const response = await callAPI('/deposit/transfer/queryNtdTrAcct', param);
 //   return response;
 // };
 
@@ -36,7 +36,7 @@ import { callAPI } from 'utilities/axios';
  */
 // 查詢預約轉帳明細
 export const getReservedTransDetails = async (param) => {
-  const response = await callAPI('/api/transfer/reserved/transDetails', param);
+  const response = await callAPI('/deposit/transfer/reserved/transDetails', param);
   return response.data;
 };
 
@@ -57,7 +57,7 @@ export const getReservedTransDetails = async (param) => {
  */
 // 查詢預約轉帳結果明細
 export const getResultTransDetails = async (param) => {
-  const response = await callAPI('/api/transfer/reserved/transResults', param);
+  const response = await callAPI('/deposit/transfer/reserved/transResults', param);
   return response.data;
 };
 
@@ -88,7 +88,7 @@ export const getResultTransDetails = async (param) => {
 
 // 取消預約轉帳交易
 export const cancelReserveTransfer = async (param) => {
-  const response = callAPI('/api/transfer/reserved/cancel', param);
+  const response = callAPI('/deposit/transfer/reserved/cancel', param);
   return response;
 };
 
@@ -98,7 +98,7 @@ export const cancelReserveTransfer = async (param) => {
  * @returns 存款帳戶資訊。
  */
 export const getAccountSummary = async (acctTypes) => {
-  const response = await callAPI('/api/deposit/v1/getAccountSummary', acctTypes);
+  const response = await callAPI('/deposit/account/v1/getAccountSummary', acctTypes);
   return response.data.map((acct) => ({
     acctBranch: acct.branch, // 分行代碼
     acctName: acct.name, // 帳戶名稱或暱稱

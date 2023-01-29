@@ -34,7 +34,7 @@ export const getProfile = async () => {
  * }
  */
 export const fetchMobiles = async () => {
-  const response = await callAPI('/api/mobileAccount/v1/getBindingSummary');
+  const response = await callAPI('/deposit/account/mPayee/v1/getBindingSummary');
   return response.data;
 };
 
@@ -47,7 +47,7 @@ export const fetchMobiles = async () => {
  * @returns true:成功, false:失敗。
  */
 export const createMobileNo = async (request) => {
-  const response = await callAPI('/api/mobileAccount/v1/create', request);
+  const response = await callAPI('/deposit/account/mPayee/v1/create', request);
   return response.data;
 };
 
@@ -57,7 +57,7 @@ export const createMobileNo = async (request) => {
  * @returns true:成功, false:失敗。
  */
 export const editMobileNo = async (accountNo) => {
-  const response = await callAPI('/api/mobileAccount/v1/update', { accountNo });
+  const response = await callAPI('/deposit/account/mPayee/v1/update', { accountNo });
   return response.data;
 };
 
@@ -66,6 +66,6 @@ export const editMobileNo = async (accountNo) => {
  * @returns true:成功, false:失敗。
  */
 export const unbindMobileNo = async () => {
-  const response = await callAPI('/api/mobileAccount/v1/unbind');
+  const response = await callAPI('/deposit/account/mPayee/v1/unbind');
   return response.data;
 };
