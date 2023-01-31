@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { queryPushBind } from 'utilities/AppScriptProxy';
 import { showDrawer, closeDrawer } from 'utilities/MessageModal';
 
@@ -70,7 +70,7 @@ const Notice = () => {
 
   // 取得通知列表
   const getNotices = async () => {
-    const data = await queryLastPush();
+    const { data } = await queryLastPush();
     if (data) {
       const allMsg = data;
       const pMsg = data.filter((item) => item.msgType === 'P');
@@ -86,7 +86,7 @@ const Notice = () => {
   };
 
   // 如果有至少一個未讀，回傳true
-  const handleMarkItem = (list) => list.filter((item) => item.status !== 'R').length === 0;
+  const isMarkItem = (list) => list.filter((item) => item.status !== 'R').length === 0;
 
   // 選擇通知類別
   const handleTabChange = (event, type) => {
@@ -145,7 +145,7 @@ const Notice = () => {
   ));
 
   // 無通知內容顯示相應圖示及文字
-  const renderTabPanel = (list) => (list.length > 0 ? renderMessagesList(list) : <EmptyData content="沒有最新消息" height="20rem" />);
+  const renderTabPanel = (list) => (list.length > 0 ? renderMessagesList(list) : <EmptyData content="沒有最新消息" height="50rem" />);
 
   const renderEditList = () => (
     <ul className="noticeEditList">
@@ -172,7 +172,7 @@ const Notice = () => {
    * 檢查是否可以開啟這個頁面。
    * @returns {Promise<String>} 傳回驗證結果的錯誤訊息；若是正確無誤時，需傳回 null
    */
-  const inspector = async () => {
+  useEffect(async () => {
     // 確認訊息通知是否同意
     const { PushBindStatus } = await queryPushBind();
     if (PushBindStatus) {
@@ -181,10 +181,10 @@ const Notice = () => {
       // 未綁定直接轉至訊息通知設定頁面
       startFunc(FuncID.S00400);
     }
-  };
+  }, []);
 
   return (
-    <Layout title="訊息通知" inspector={inspector}>
+    <Layout title="訊息通知">
       <NoticeWrapper>
         <div className="lighterBlueLine" />
         <div className="noticeContainer">
@@ -203,7 +203,7 @@ const Notice = () => {
           </div>
           <FEIBTabContext value={tabValue}>
             <FEIBTabList $size="small" onChange={handleTabChange}>
-              {msgTypeList.map((type) => <FEIBTab key={type.value} label={type.label} value={type.value} className={handleMarkItem(type.list) ? '' : 'unReadTab'} />)}
+              {msgTypeList.map((type) => <FEIBTab key={type.value} label={type.label} value={type.value} className={isMarkItem(type.list) ? '' : 'unReadTab'} />)}
             </FEIBTabList>
             {msgTypeList.map((type) => <FEIBTabPanel key={type.value} value={type.value}>{renderTabPanel(type.list)}</FEIBTabPanel>)}
           </FEIBTabContext>

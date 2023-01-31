@@ -122,9 +122,8 @@ const Deposit = () => {
                 <li className="listBody" key={depositPlusDetailMap[tabId].bonusDetail.indexOf(detail)}>
                   <div>
                     <p>
-                      {/* 藉promotionName字串中有無"*"判斷是否顯示starIcon */}
-                      {detail.promotionName.replace('*', '')}
-                      <span>{detail.promotionName.includes('*') && <StarRounded className="starIcon" />}</span>
+                      {detail.promotionName}
+                      <span>{detail.isStar && <StarRounded className="starIcon" />}</span>
                     </p>
                     <span>{detail.memo}</span>
                   </div>

@@ -101,19 +101,22 @@ const D00800 = () => {
     history.push('/D008001', { reserveData: data, selectedAccount });
   };
 
-  // 轉出帳號卡片 swiper
-  const renderCard = () => accountsList.map((item) => (
-    <SwiperSlide key={item.accountNo}>
-      <DebitCard
-        branch={item.branchName}
-        cardName={item.alias || '--'}
-        account={item.accountNo}
-        balance={item.balance}
-        dollarSign={item.currency}
-        color="purple"
-      />
-    </SwiperSlide>
-  ));
+  // 轉出帳號卡片 swiper，卡片顏色由acctType決定
+  const renderCard = () => accountsList.map((item) => {
+    const accountObj = {
+      branchName: item.branchName,
+      alias: item.alias || '--',
+      accountNo: item.accountNo,
+      balance: item.balance,
+      currency: item.currency,
+      acctType: item.acctType,
+    };
+    return (
+      <SwiperSlide key={item.accountNo}>
+        <DebitCard accountObj={accountObj} />
+      </SwiperSlide>
+    );
+  });
 
   const openReserveDialog = async (data) => {
     showCustomPrompt({

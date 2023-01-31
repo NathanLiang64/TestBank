@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-use-before-define */
 /* eslint-disable object-curly-newline */
 import { useEffect, useState, useReducer } from 'react';
@@ -9,12 +10,13 @@ import Layout from 'components/Layout/Layout';
 import AccountOverview from 'components/AccountOverview/AccountOverview';
 import DepositDetailPanel from 'components/DepositDetailPanel/depositDetailPanel';
 import { FEIBInputLabel, FEIBInput } from 'components/elements';
+import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
-import { getAccountsList, updateAccount } from 'utilities/CacheData';
+import { getAccountsList, getAccountBonus, updateAccount } from 'utilities/CacheData';
 import { FuncID } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import {
@@ -36,6 +38,10 @@ const C00400 = () => {
 
   const [accounts, setAccounts] = useState();
   const [selectedAccountIdx, setSelectedAccountIdx] = useState();
+  // 參考買/賣價顯示模式 (true.買價, false.賣價)
+  const [showBuyPrice, setShowBuyPrice] = useState(true);
+  // 利率顯示模式 (true.目前利率, false.累積利息)
+  const [showRate, setShowRate] = useState(true);
 
   const selectedAccount = accounts ? accounts[selectedAccountIdx ?? 0] : null;
 
@@ -82,6 +88,83 @@ const C00400 = () => {
       });
       forceUpdate(); // 因為在執行此方法前，已經先 setAccounts 輸出到畫面上了，所以需要再刷一次畫面。
     }
+  };
+
+  /**
+     * 下載 優存(利率/利息)資訊
+     */
+  const loadExtraInfo = async (account) => {
+    if (!account.bonus || !account.bonus.loading) {
+      account.bonus = { loading: true };
+      getAccountBonus(account.accountNo, (info) => {
+        account.bonus = info;
+        forceUpdate();
+        delete account.bonus.loading;
+      });
+    }
+  };
+  /**
+   * 顯示 優存(利率/利息)資訊
+   */
+  const renderBonusInfoPanel = () => {
+    if (!selectedAccount) return null;
+    const { accountNo, bonus } = selectedAccount;
+
+    if (!bonus || !bonus.bonusRate) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
+
+    // 取得 參考買價、參考賣價、優惠利率、優惠利率額度(暫時固定顯示0) TODO 缺：參考買價、參考賣價
+    const { bonusRate } = bonus ?? { bonusRate: null, // 預設值
+    };
+
+    /* column 1 標題/數值 */
+    let col1Title;
+    let col1Value;
+    if (showBuyPrice) {
+      col1Title = '參考買價';
+      col1Value = 'buyPrice';
+    } else {
+      col1Title = '參考賣價';
+      col1Value = 'sellPrice';
+    }
+
+    /* column 2 標題/數值 */
+    let col2Title;
+    let col2Value;
+    if (showRate) {
+      col2Title = '目前利率';
+      // col2Value = 'cRate';
+      col2Value = bonusRate ? `${bonusRate * 100}%` : '-';
+    } else {
+      col2Title = '累積利息';
+      col2Value = 'sumRate'; // TODO: 自api取累積利率
+    }
+
+    const panelContent = [
+      {
+        label: col1Title,
+        value: col1Value,
+        iconType: 'switch',
+        onClick: () => setShowBuyPrice(!showBuyPrice),
+      },
+      {
+        label: col2Title,
+        value: col2Value,
+        iconType: 'switch',
+        onClick: () => setShowRate(!showRate),
+      },
+      {
+        label: '優惠利率額度',
+        value: '0', // TODO 暫時固定顯示0
+        iconType: 'Arrow',
+        onClick: () => {},
+      },
+    ];
+
+    return (
+      <div className="panel">
+        <ThreeColumnInfoPanel content={panelContent} />
+      </div>
+    );
   };
 
   /**
@@ -233,6 +316,9 @@ const C00400 = () => {
                 { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
               ]}
             />
+
+            {/* 顯示 優惠利率資訊面版 */}
+            {renderBonusInfoPanel()}
 
             <DepositDetailPanel
               details={loadTransactions(selectedAccount)}

@@ -17,7 +17,7 @@ const AccountOverviewWrapper = styled.div`
     // }
 
     .singleAccount {
-      padding: 0 2.6rem;
+      padding: 0 1rem;
     }
   }
 `;

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-use-before-define */
 /* eslint-disable object-curly-newline */
 import { useEffect, useReducer, useState } from 'react';
@@ -9,12 +10,13 @@ import Layout from 'components/Layout/Layout';
 import AccountOverview from 'components/AccountOverview/AccountOverview';
 import DepositDetailPanel from 'components/DepositDetailPanel/depositDetailPanel';
 import { FEIBInputLabel, FEIBInput } from 'components/elements';
+import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
-import { getAccountsList, updateAccount } from 'utilities/CacheData';
+import { getAccountsList, getAccountBonus, updateAccount } from 'utilities/CacheData';
 import { FuncID } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import { getTransactions, setAccountAlias } from './api';
@@ -32,6 +34,9 @@ const C00500 = () => {
 
   const [selectedAccountIdx, setSelectedAccountIdx] = useState();
   const [accounts, setAccounts] = useState();
+
+  // 優存(利率/利息)資訊 顯示模式（true.目前利率, false.累積利息)
+  const [showRate, setShowRate] = useState(true);
 
   const selectedAccount = accounts ? accounts[selectedAccountIdx ?? 0] : null;
 
@@ -73,6 +78,70 @@ const C00500 = () => {
       });
       forceUpdate(); // 因為在執行此方法前，已經先 setAccounts 輸出到畫面上了，所以需要再刷一次畫面。
     }
+  };
+
+  /**
+   * 下載 優存(利率/利息)資訊
+   */
+  const loadExtraInfo = async (account) => {
+    if (!account.bonus || !account.bonus.loading) {
+      account.bonus = { loading: true };
+      getAccountBonus(account.accountNo, (info) => {
+        account.bonus = info;
+        forceUpdate();
+        delete account.bonus.loading;
+      });
+    }
+  };
+  /**
+   * 顯示 優存資訊
+   */
+  const renderBonusInfoPanel = () => {
+    if (!selectedAccount) return null;
+    const { accountNo, bonus } = selectedAccount;
+    if (!bonus || !bonus.freeTransferRemain) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
+
+    // 取得 免費跨提、免費跨轉、目前利率、優惠利率額度(暫時固定顯示0)
+    const { freeWithdrawRemain, freeTransferRemain, bonusRate } = bonus ?? {
+      freeWithdrawRemain: null, freeTransferRemain: null, bonusQuota: null, bonusRate: null, // 預設值
+    };
+
+    /* column 2 標題/數值 */
+    let col2Title;
+    let col2Value;
+    if (showRate) {
+      col2Title = '目前利率';
+      col2Value = bonusRate ? `${bonusRate * 100}%` : '-';
+    } else {
+      col2Title = '累積利息';
+      col2Value = 'sumRate'; // TODO: 自api取累積利率
+    }
+
+    const panelContent = [
+      {
+        label: '免費跨提/轉',
+        value: `${freeWithdrawRemain ?? '-'}/${freeTransferRemain ?? '-'}`,
+        iconType: 'Arrow',
+      },
+      {
+        label: col2Title,
+        value: col2Value,
+        iconType: 'switch',
+        onClick: () => setShowRate(!showRate),
+      },
+      {
+        label: '優惠利率額度',
+        value: '0', // TODO 暫時固定顯示0
+        iconType: 'Arrow',
+        onClick: () => {},
+      },
+    ];
+
+    return (
+      <div className="panel">
+        <ThreeColumnInfoPanel content={panelContent} />
+      </div>
+    );
   };
 
   /**
@@ -201,6 +270,9 @@ const C00500 = () => {
                 { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
               ]}
             />
+
+            {/* 顯示 優惠利率資訊面版 */}
+            {renderBonusInfoPanel()}
 
             <DepositDetailPanel
               details={loadTransactions(selectedAccount)}
