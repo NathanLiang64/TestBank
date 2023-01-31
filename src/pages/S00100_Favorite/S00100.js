@@ -165,7 +165,7 @@ const Favorite = () => {
           className="favoriteArea"
           renderData={[
             {
-              funcCode: 'B00200',
+              funcCode: FuncID.B00200,
               name: '推薦碼分享',
               url: null,
               icon: null,
@@ -174,7 +174,7 @@ const Favorite = () => {
               position: '-1',
             },
             {
-              funcCode: 'B00500',
+              funcCode: FuncID.B00500,
               name: '優惠',
               url: null,
               icon: null,
