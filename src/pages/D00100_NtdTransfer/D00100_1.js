@@ -57,7 +57,7 @@ const TransferConfirm = (props) => {
         bank: transInData.bank,
         account: transInData.account,
       },
-      amount: parseInt(model.amount, 10),
+      amount: model.amount,
       booking: model.booking,
       memo: model.memo,
     };
@@ -157,7 +157,7 @@ const TransferConfirm = (props) => {
           <h3 className="transferAmount">{getDisplayAmount(model.amount)}</h3>
           <h3>{`${transInData.bankName} (${transInData.bank})`}</h3>
           <h3>{transInData.account}</h3>
-          {transInData.accountName && (<h4>{`< ${transInData.accountName} >`}</h4>)}
+          {transInData.accountName && (<h4>{transInData.accountName}</h4>)}
         </section>
         <hr />
         <section>

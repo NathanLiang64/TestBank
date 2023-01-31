@@ -84,11 +84,15 @@ const Transfer = (props) => {
     transIn: yup.object().shape({
       type: yup.number().min(0).max(3).required(),
       bank: yup.string().when('type', (type, s) => ((type === 0) ? s.required('請選擇銀行代碼') : s.nullable())),
-      account: yup.string().when('type', (type, s) => ((type === 0) ? s.required('請輸入轉入帳號').min(10, '銀行帳號必定是由10~16個數字所組成').max(16, '銀行帳號必定是由10~16個數字所組成') : s.nullable())),
-      freqAcct: yup.object().when('type', (type, s) => ((type === 1) ? s.required() : s.nullable())),
+      account: yup.string().when('type', (type, s) => ((type === 0)
+        ? s.required('請輸入轉入帳號').min(10, '銀行帳號必定是由10~16個數字所組成')
+          .max(16, '銀行帳號必定是由10~16個數字所組成').notOneOf([model?.transOut.account], '轉入與轉出帳號不可相同') : s.nullable())),
+      freqAcct: yup.object().when('type', (type, s) => ((type === 1) ? s.shape({
+        accountNo: yup.string().notOneOf([model?.transOut.account], '轉入與轉出帳號不可相同'),
+      }) : s.nullable())),
       regAcct: yup.object().when('type', (type, s) => ((type === 2) ? s.required() : s.nullable())),
     }),
-    amount: yup.string().required('請輸入轉帳金額'),
+    amount: yup.number().moreThan(0, '請輸入轉帳金額').required('請輸入轉帳金額').typeError('請輸入轉帳金額'),
     booking: yup.object().shape({
       mode: yup.number().min(0).max(1).required(),
       multiTimes: yup.string().required().length(1).oneOf(['1', '*']),
@@ -387,6 +391,7 @@ const Transfer = (props) => {
               <ChangeMemberIcon />
             </div>
           </div>
+          <FEIBErrorMessage>{errors.transIn?.freqAcct?.accountNo.message}</FEIBErrorMessage>
         </FEIBTabPanel>
 
         {/* 2.約定轉帳頁籤 */}
@@ -491,7 +496,10 @@ const Transfer = (props) => {
           transferMode
           accounts={accounts}
           defaultSlide={selectedAccountIdx}
-          onAccountChanged={setSelectedAccountIdx}
+          onAccountChanged={(index) => {
+            setSelectedAccountIdx(index);
+            trigger();
+          }}
         />
 
         {/* {model?.transOut.balance <= 0 ? (<p className="insufficient">(帳戶餘額不足)</p>) : null} */}

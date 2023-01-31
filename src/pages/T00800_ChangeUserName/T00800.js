@@ -1,4 +1,3 @@
-import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -9,7 +8,6 @@ import { PasswordInputField } from 'components/Fields';
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
 import { changeUserName } from 'pages/T00800_ChangeUserName/api';
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import { showAnimationModal } from 'utilities/MessageModal';
 import { useNavigation } from 'hooks/useNavigation';
@@ -21,22 +19,16 @@ import { validationSchema } from './validationSchema';
  */
 const ChangeUserName = () => {
   const placeholderText = '請輸入使用者代號（6-20位英數字）';
-  const dispatch = useDispatch();
   const { closeFunc } = useNavigation();
   const { handleSubmit, control } = useForm({
-    defaultValues: {
-      userName: '',
-      newUserName: '',
-      newUserNameCheck: '',
-    },
+    defaultValues: { userName: '', newUserName: '', newUserNameCheck: '' },
     resolver: yupResolver(validationSchema),
   });
 
   // 點擊儲存變更按鈕，表單驗證 呼叫變更使用者代號 API
   const onSubmit = async ({ userName, newUserName }) => {
-    dispatch(setWaittingVisible(true));
     const jsRs = await transactionAuth(AuthCode.T00800);
-    dispatch(setWaittingVisible(false));
+
     if (jsRs.result) {
       const param = {
         userName: e2ee(userName),
@@ -44,9 +36,7 @@ const ChangeUserName = () => {
         // newUserNameCheck: e2ee(newUserNameCheck),
       };
 
-      dispatch(setWaittingVisible(true));
       const { isSuccess, code, message } = await changeUserName(param);
-      dispatch(setWaittingVisible(false));
 
       showAnimationModal({
         isSuccess,

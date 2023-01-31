@@ -9,8 +9,6 @@ import Layout from 'components/Layout/Layout';
 import { FEIBButton } from 'components/elements';
 import e2ee from 'utilities/E2ee';
 
-import { useDispatch } from 'react-redux';
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { PasswordInputField } from 'components/Fields';
 import { AuthCode } from 'utilities/TxnAuthCode';
 import { useNavigation } from 'hooks/useNavigation';
@@ -19,54 +17,37 @@ import { validationSchema } from './validationSchema';
 
 const PwdModify = () => {
   const placeholderText = '請輸入網銀密碼（8-20位英數字）';
-  const dispatch = useDispatch();
   const { closeFunc } = useNavigation();
   const {handleSubmit, control } = useForm({
-    defaultValues: {
-      password: '',
-      newPassword: '',
-      newPasswordCheck: '',
-    },
+    defaultValues: { password: '', newPassword: '', newPasswordCheck: '' },
     resolver: yupResolver(validationSchema),
   });
 
-  // 設定結果彈窗
-  const setResultDialog = (response) => {
-    showAnimationModal({
-      isSuccess: response,
-      successTitle: '設定成功',
-      successDesc: (
-        <>
-          <p>您的網銀密碼已變更成功囉！</p>
-          <p>下次請使用新設定之密碼進行登入</p>
-        </>
-      ),
-      errorTitle: '設定失敗',
-      errorCode: '',
-      errorDesc: '',
-      onClose: () => closeFunc(),
-    });
-  };
-
-  // 呼叫變更網銀密碼 API
-  const handlePwdModify = async ({password, newPassword}) => {
+  // 點擊儲存變更按鈕，表單驗證
+  const onSubmit = async ({ password, newPassword }) => {
     const jsRs = await transactionAuth(AuthCode.T00900);
     if (jsRs.result) {
-      dispatch(setWaittingVisible(true));
       const param = {
         password: e2ee(password),
         newPassword: e2ee(newPassword),
-        // newPasswordCheck: e2ee(newPasswordCheck),
       };
-      const changePwdResponse = await changePwd(param);
-      dispatch(setWaittingVisible(false));
-      setResultDialog(changePwdResponse);
-    }
-  };
+      const { isSuccess, code, message } = await changePwd(param);
 
-  // 點擊儲存變更按鈕，表單驗證
-  const onSubmit = async (values) => {
-    handlePwdModify(values);
+      showAnimationModal({
+        isSuccess,
+        successTitle: '設定成功',
+        successDesc: (
+          <>
+            <p>您的網銀密碼已變更成功囉！</p>
+            <p>下次請使用新設定之密碼進行登入</p>
+          </>
+        ),
+        errorTitle: '設定失敗',
+        errorCode: code,
+        errorDesc: message,
+        onClose: closeFunc,
+      });
+    }
   };
 
   return (

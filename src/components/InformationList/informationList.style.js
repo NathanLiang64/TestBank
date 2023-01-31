@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 const InformationListWrapper = styled.div`
   padding: 1.6rem 0.8rem;
-  border-bottom: .1rem dashed ${({ theme }) => theme.colors.text.light};
+  border-bottom: 0.1rem dashed ${({ theme }) => theme.colors.text.light};
 
   &:last-child {
     border-bottom: 0;
@@ -27,24 +27,24 @@ const InformationListWrapper = styled.div`
   }
 
   .text-gray {
-    color: ${({ theme }) => theme.colors.text.lightGray};
+    color: ${({ theme }) => theme.colors.text.lightGray} !important;
   }
 
   .text-dark {
-    color: ${({ theme }) => theme.colors.text.dark};
+    color: ${({ theme }) => theme.colors.text.dark} !important;
   }
 
   .text-light {
-    color: ${({ theme }) => theme.colors.text.light};
+    color: ${({ theme }) => theme.colors.text.light} !important;
   }
 
   .text-green {
-    color: ${({ theme }) => theme.colors.state.success};
+    color: ${({ theme }) => theme.colors.state.success} !important;
     margin-inline-start: 1rem;
   }
 
   .text-primary {
-    color: ${({ theme }) => theme.colors.primary.brand};
+    color: ${({ theme }) => theme.colors.primary.brand} !important;
   }
 
   .text-nowrap {

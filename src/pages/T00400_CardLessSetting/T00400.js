@@ -27,7 +27,7 @@ const CardLessSetting = () => {
   const {QLResult, showUnbondedMsg} = useQLStatus();// 確認裝置綁定狀態
   const [cardLessStatus, setCardLessStatus] = useState();
   const [account, setAccount] = useState();
-  const [isEnable, setEnable] = useState();
+  const [isEnable, setEnable] = useState(false);
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
