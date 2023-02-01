@@ -1,7 +1,6 @@
 import { useHistory } from 'react-router';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { StarRounded } from '@material-ui/icons';
 import { getThisMonth } from 'utilities/MonthGenerator';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
@@ -123,7 +122,6 @@ const Deposit = () => {
                   <div>
                     <p>
                       {detail.promotionName}
-                      <span>{detail.isStar && <StarRounded className="starIcon" />}</span>
                     </p>
                     <span>{detail.memo}</span>
                   </div>
@@ -134,11 +132,7 @@ const Deposit = () => {
               ))}
             </ul>
 
-            <div className="remarkArea">
-              <span>標示</span>
-              <StarRounded className="starIcon" />
-              <span>活動之優惠利率擇優計算</span>
-            </div>
+            <div className="remarkArea">標示⭐️活動之優惠利率擇優計算</div>
           </section>
         )}
       </DepositPlusWrapper>

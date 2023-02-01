@@ -103,15 +103,14 @@ const DepositPlusDetail = () => {
     return (
       <div className="activityCard">
         <div className="activityCard_upper">
-          <div className="title">{promotionName}</div>
+          <div className="title">{promotionName.replace('⭐️', '')}</div>
           <div className="detail" onClick={() => handleDetailOnClick(detailLinkText, detailUrl)}>
             {detailLinkText}
             <ArrowNextIcon />
           </div>
         </div>
-        <div className="activityCard_lower">
-          {brief.map((item) => <p key={item}>{item}</p>)}
-        </div>
+        {/* eslint-disable-next-line react/no-danger */}
+        <div className="activityCard_lower" dangerouslySetInnerHTML={{__html: brief}} />
       </div>
     );
   };

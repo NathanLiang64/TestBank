@@ -183,12 +183,9 @@ const DepositPlusDetailWrapper = styled(Layout)`
     }
     .activityCard_lower {
       padding: 2rem 0.5rem 1rem 0.5rem;
-
-      p {
-        color: ${({ theme }) => theme.colors.text.light};
-        font-size: 90%;
-        font-weight: 300;
-      }
+      color: ${({ theme }) => theme.colors.text.light};
+      font-size: 90%;
+      font-weight: 300;
     }
   }
 `;
