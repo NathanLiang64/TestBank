@@ -141,7 +141,9 @@ const C00300 = () => {
     if (!selectedAccount) return null;
 
     const { accountNo, bonus } = selectedAccount;
-    if (!bonus || !bonus.freeTransferRemain) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
+    // NOTE bonus.freeTransferRemain === 0 時會觸發 loadExtraInfo function
+    // if (!bonus || !bonus.freeTransferRemain) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
+    if (!bonus) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
 
     const { freeWithdrawRemain, freeTransferRemain, bonusQuota, bonusRate } = bonus ?? {
       freeWithdrawRemain: null, freeTransferRemain: null, bonusQuota: null, bonusRate: null, // 預設值

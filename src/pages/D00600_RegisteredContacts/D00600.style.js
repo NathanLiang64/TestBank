@@ -30,6 +30,14 @@ const PageWrapper = styled.div`
     font-size: 1.6rem;
     color: ${({ theme }) => theme.colors.primary.light};
   }
+
+  .dropdownContainer{
+    margin: 1rem 0;
+  }
+
+  .hide{
+    display:none;
+  }
 `;
 
 const DrawerWrapper = styled.div`

@@ -1,10 +1,5 @@
-/** @format */
-
-import { useEffect, useState } from 'react';
-import { getExchangeRateInfo } from 'pages/E00100_Exchange/api';
 import { datetimeToString } from 'utilities/Generator';
 import styled from 'styled-components';
-import Loading from 'components/Loading';
 
 const ExchangeTableWrapper = styled.div`
   .describe {
@@ -44,43 +39,31 @@ const ExchangeTableWrapper = styled.div`
   }
 `;
 
-const E00100Table = () => {
-  const [exchangeRate, setExchangeRate] = useState([]);
-
-  const renderExchangeRate = () => {
-    if (!exchangeRate.length) return <Loading space="both" isCentered />;
-
-    return (
-      <table style={{ margin: '1rem 0' }}>
-        <thead>
-          <tr>
-            <td>幣別</td>
-            <td>即期買入</td>
-            <td>即期賣出</td>
-          </tr>
-        </thead>
-        <tbody>
-          {exchangeRate.map((item) => (
-            <tr key={item.ccycd}>
-              <td>
-                {item.ccyname}
+const E00100Table = ({exchangeRate}) => {
+  const renderExchangeRate = () => (
+    <table style={{ margin: '1rem 0' }}>
+      <thead>
+        <tr>
+          <td>幣別</td>
+          <td>即期買入</td>
+          <td>即期賣出</td>
+        </tr>
+      </thead>
+      <tbody>
+        {exchangeRate.map((item) => (
+          <tr key={item.ccycd}>
+            <td>
+              {item.ccyname}
                 &nbsp;
-                {item.ccycd}
-              </td>
-              <td>{item.brate}</td>
-              <td>{item.srate}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  };
-
-  // 拿取外匯匯率
-  useEffect(async () => {
-    const exchangeRateRes = await getExchangeRateInfo({});
-    setExchangeRate(exchangeRateRes);
-  }, []);
+              {item.ccycd}
+            </td>
+            <td>{item.brate}</td>
+            <td>{item.srate}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 
   return (
     <ExchangeTableWrapper>
