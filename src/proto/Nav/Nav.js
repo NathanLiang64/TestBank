@@ -45,14 +45,14 @@ const Nav = () => {
       <NavWrapper>
         <div className="bankee">
           <div onClick={() => startFunc(FuncID.D00100_臺幣轉帳)}>D00100 轉帳</div>
-          <div onClick={() => startFunc('C00300')}>C00300 台幣存款首頁</div>
-          <div onClick={() => startFunc('C00400')}>C00400 外幣存款首頁</div>
-          <div onClick={() => startFunc('C00500')}>C00500 交割帳戶首頁</div>
-          <div onClick={() => startFunc('M00100')}>M00100 社群圈首頁</div>
-          <div onClick={() => startFunc('D00500')}>D00500 常用帳號管理</div>
-          <div onClick={() => startFunc('D00600')}>D00600 約定帳號管理</div>
-          <div onClick={() => startFunc('B00600')}>B00600 更多...</div>
-          <div onClick={() => startFunc('T00100')}>T00100 個人化設定</div>
+          <div onClick={() => startFunc(FuncID.C00300)}>C00300 台幣存款首頁</div>
+          <div onClick={() => startFunc(FuncID.C00400)}>C00400 外幣存款首頁</div>
+          <div onClick={() => startFunc(FuncID.C00500)}>C00500 交割帳戶首頁</div>
+          <div onClick={() => startFunc(FuncID.M00100)}>M00100 社群圈首頁</div>
+          <div onClick={() => startFunc(FuncID.D00500)}>D00500 常用帳號管理</div>
+          <div onClick={() => startFunc(FuncID.D00600)}>D00600 約定帳號管理</div>
+          <div onClick={() => startFunc(FuncID.B00600)}>B00600 更多...</div>
+          <div onClick={() => startFunc(FuncID.T00100)}>T00100 個人化設定</div>
           <div onClick={() => startFunc(FuncID.S00100_我的最愛)}>S00100 我的最愛</div>
           <div onClick={() => startFunc(FuncID.S00101_我的最愛v2)}>S00101 我的最愛v2</div>
           <div onClick={() => startFunc(FuncID.E00100_換匯)}>E00100 換匯 - (施工中)</div>

@@ -18,8 +18,8 @@ export const useNavigation = () => {
       return;
     }
 
-    // 只要不是 A00100 這種格式的頁面，一律視為 WebPage 而不透過 APP 的 Function Controller 轉導。
-    const isFunction = /^[A-Z]\d{5}$/.test(funcID);
+    // 只要不是 A001 這種格式的頁面，一律視為 WebPage 而不透過 APP 的 Function Controller 轉導。
+    const isFunction = /^[A-Z]\d{3}$/.test(funcID);
     funcID = funcID.replace(/^\/*/, ''); // 移掉前置的 '/' 符號,
 
     const data = {
@@ -53,7 +53,7 @@ export const useNavigation = () => {
           }
           // TODO 提示用戶要外開，詢問同意。
           window.open(`http://localhost:3006/${url}`, '_blank');
-        } else history.push(`/${funcID}`);
+        } else history.push(`/${funcID}00`);
         return {
           result: !isOpenExternalBrowser,
         };
@@ -76,14 +76,15 @@ export const useNavigation = () => {
     }
 
     const closeItem = funcStack.peek(); // 因為 funcStack 還沒 pop，所以用 peek 還以取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
-    const isFunction = !closeItem || /^[A-Z]\d{5}$/.test(closeItem.funcID); // 表示 funcID 是由 Function Controller 控制的單元功能。
+    const isFunction = !closeItem || /^[A-Z]\d{3}$/.test(closeItem.funcID); // 表示 funcID 是由 Function Controller 控制的單元功能。
 
     const startItem = funcStack.pop();
+    const isStartItemFunction = !startItem || /^[A-Z]\d{3}$/.test(startItem.funcID);
     const webCloseFunc = async () => {
       // 當 funcStack.pop 不出項目時，表示可能是由 APP 先啟動了某項功能（例：首頁卡片或是下方MenuBar）
       if (startItem) {
         // 表示返回由 WebView 啟動的單元功能或頁面，例：從「更多」啟動了某項單元功能，當此單元功能關閉時，就會進到這裡。
-        history.push(`/${startItem.funcID}`);
+        history.push(`/${startItem.funcID}${isStartItemFunction ? '00' : ''}`);
       } else {
         // 若是在登入前，無前一頁可以返回時，則一律回到 Login 頁。
         if (getOsType(true) === 3) {
