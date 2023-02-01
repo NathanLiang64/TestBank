@@ -3,7 +3,9 @@ import Layout from 'components/Layout';
 
 const DebitCardActiveWrapper = styled(Layout)`
   form {
-    gap: 2rem;
+    display: grid;
+    align-content: flex-start;
+    grid-gap: 2rem;
     .hint_text {
       font-size: 1.4rem;
     }

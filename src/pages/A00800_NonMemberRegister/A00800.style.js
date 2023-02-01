@@ -18,11 +18,9 @@ const A00800Wrapper = styled(Layout)`
         }
     }
     .basic_data_form {
-        display: flex;
-        gap: 2rem;
-        flex-direction: column;
-        justify-content: flex-start;
-        padding-bottom: 0;
+        display: grid;
+        align-content: flex-start;
+        grid-gap: 2rem;
     }
     .form_item {
         margin: 1rem 0;

@@ -171,7 +171,7 @@ const R00200_3 = () => {
   return (
     <Layout title="晚點付 (總額)">
       <InstalmentWrapper className="InstalmentWrapper" small>
-        <form style={{gap: '2rem'}}>
+        <form style={{ display: 'grid', alignContent: 'flex-start', gridGap: '2rem' }}>
           <div className="InstalmentWrapperText">各期繳款金額試算 (依實際帳單為準)</div>
           {/* 只有申請單筆分期付款才需要顯示試算表 */}
           {preCalc && preCalcTable()}

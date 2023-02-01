@@ -3,7 +3,9 @@ import Layout from 'components/Layout';
 
 const BasicInformationWrapper = styled(Layout)`
   form {
-    gap: 2rem;
+    display: grid;
+    align-content: flex-start;
+    grid-gap: 2rem;
   }
 
   .selectContainer {

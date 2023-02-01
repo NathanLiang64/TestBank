@@ -35,7 +35,9 @@ const CardLessSettingWrapper = styled(Layout)`
   }
 
   #withdrawPwdForm {
-    gap: 2rem;
+    display: grid;
+    align-content: flex-start;
+    grid-gap: 2rem;
   }
 `;
 

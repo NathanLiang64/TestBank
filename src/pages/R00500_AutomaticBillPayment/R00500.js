@@ -122,7 +122,7 @@ const AutomaticBillPayment = () => {
 
   const AddForm = () => (
     <form onSubmit={handleSubmit(onSubmit)} className="drawerContainer">
-      <div style={{ display: 'grid', gridGap: '2rem'}}>
+      <div style={{ display: 'grid', alignContent: 'flex-start', gridGap: '2rem' }}>
         <DropdownField
           labelName="扣款帳號"
           name="account"
