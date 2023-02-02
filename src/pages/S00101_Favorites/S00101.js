@@ -1,6 +1,9 @@
+/* eslint-disable consistent-return */
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
-import { useEffect, useReducer, useState } from 'react';
+import {
+  useEffect, useReducer, useState, useRef,
+} from 'react';
 import { useDispatch } from 'react-redux';
 import { RemoveRounded } from '@material-ui/icons';
 import uuid from 'react-uuid';
@@ -130,6 +133,7 @@ const S00101 = () => {
     const {func} = btnModel;
     const isFixed = (!dragMode || func === null || func.locked); // 空格及固定項 均不可移動！
     const isEmpty = (func === null);
+    const isClickRemoveNow = useRef(0);// 用來判斷在點擊移除項目時, 不同時觸發"點擊空白處離開拖曳模式"  0.未點擊移除項目時, 1.點擊移除項目時
 
     const executeFunc = () => {
       if (!dragMode) {
@@ -141,11 +145,15 @@ const S00101 = () => {
       }
     };
 
-    // BUG 不會解發 Click 事件！
-    const removeFunc = (e) => {
-      e.preventDefault(); // 避免觸發 executeFunc Click 事件
+    const removeFunc = () => {
+      isClickRemoveNow.current = 1;
+
       btnModel.func = null;
       forceUpdate();
+
+      setTimeout(() => {
+        isClickRemoveNow.current = 0;
+      }, 1000);
     };
 
     const handleStartDrag = (e) => {
@@ -159,9 +167,6 @@ const S00101 = () => {
           e.preventDefault(); // 避免觸發 Click 事件
           setDragMode(true);
         }
-      } else if (pressTime < 300) {
-        e.preventDefault(); // 避免觸發 Click 事件
-        setDragMode(false);
       }
     };
 
@@ -176,7 +181,16 @@ const S00101 = () => {
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             //
-            onClick={() => executeFunc(index)}
+            onClick={() => {
+              if (isClickRemoveNow.current === 1) {
+                return;
+              }
+
+              if (!dragMode && isClickRemoveNow.current === 0) {
+                return executeFunc(index);
+              }
+              setDragMode(false);
+            }}
             // 監控長按事件，以開啟拖曳模式。
             onTouchStart={handleStartDrag}
             onTouchEnd={handleEndDrag}
