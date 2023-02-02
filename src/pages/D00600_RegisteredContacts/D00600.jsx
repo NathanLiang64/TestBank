@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import uuid from 'react-uuid';
 import Main from 'components/Layout';
@@ -23,7 +23,6 @@ import PageWrapper from './D00600.style';
 const Page = () => {
   const dispatch = useDispatch();
   const { closeFunc } = useNavigation();
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const [isFetching, setIsFetching] = useState(false);
   const [accounts, setAccounts] = useState();
@@ -34,7 +33,7 @@ const Page = () => {
   });
 
   const { control, reset, watch } = useForm({ defaultValues: { account: ''} });
-  const account = watch('account');
+  const account = watch('account'); // 欲查詢的活存帳號
 
   /**
    *- 初始化
@@ -47,7 +46,6 @@ const Page = () => {
       await showPrompt('您還沒有任臺幣、外幣存款帳戶，請在系統關閉此功能後，立即申請。', closeFunc);
       return;
     }
-    const acctOptions = accountsList.map((acct) => ({label: `${acct.accountNo} ${acct.alias}`, value: acct.accountNo}));
     // Function Controller 提供的參數
     // startParams = {
     //   selectorMode: true, 表示選取帳號模式，啟用時要隱藏 Home 圖示。
@@ -57,18 +55,29 @@ const Page = () => {
     const startParams = await loadFuncParams();
 
     // 若有指定帳號，則只取單一帳號的約定帳號清單。若無指定帳號，則以 acctOptions 中的第一個項目為預設帳號。
-    reset({account: startParams?.bindAccount ?? acctOptions[0].value});
+    const acctOptions = accountsList.map((acct) => ({label: `${acct.accountNo} ${acct.alias}`, value: acct.accountNo}));
     setModel((prevModel) => ({
       ...prevModel,
       selectorMode: startParams?.selectorMode ?? false,
-      selectedAccount: startParams?.defaultAccount ?? '',
+      selectedAccount: startParams?.defaultAccount ?? {},
       accountOptions: acctOptions,
     }));
+    reset({account: startParams?.bindAccount ?? acctOptions[0].value});
 
     dispatch(setWaittingVisible(false));
   }, []);
 
-  // 使用者在下拉選單指定帳號後，觸發查詢指定帳號下的約定轉入帳號清單
+  const accountsFilter = (accts) => {
+    if (model.selectorMode) {
+      // NOTE 選取模式時，從轉帳頁面進來時，要排除「非同幣別」的帳號 (ex: 從臺幣轉帳進來只能選取臺幣類型的常用帳號)
+      const isForeignType = account.substring(3, 6) === '007'; // '007' 外幣帳戶 , '004' 台幣帳戶
+      return accts.filter((acct) => acct.isForeign === isForeignType);
+    }
+    // NOTE 非選取模式時，不需要列出同ID互轉的帳號
+    return accts.filter((acct) => !acct.isSelf);
+  };
+
+  // 活存帳號選項改變時，查詢活存帳號下的約定轉入帳號清單
   useEffect(() => {
     if (model.accountOptions.length && account) {
       const request = {
@@ -77,14 +86,8 @@ const Page = () => {
       };
       setIsFetching(true);
       getAgreedAccount(request).then((accts) => {
-        if (model.selectorMode) {
-          // NOTE 選取模式時，從轉帳頁面進來時，要排除「非同幣別」的帳號 (ex: 從臺幣轉帳進來只能選取臺幣類型的常用帳號)
-          const isForeignType = account.substring(3, 6) === '007'; // '007' 外幣帳戶 , '004' 台幣帳戶
-          setAccounts(accts.filter((acct) => acct.isForeign === isForeignType));
-        } else {
-          // NOTE 非選取模式時，不需要列出同ID互轉的帳號
-          setAccounts(accts.filter((acct) => !acct.isSelf));
-        }
+        const filteredAccounts = accountsFilter(accts);
+        setAccounts(filteredAccounts);
         setIsFetching(false);
       });
     }
@@ -114,11 +117,10 @@ const Page = () => {
   const editAccount = async (acct) => {
     const onFinished = async (newAcct) => {
       dispatch(setWaittingVisible(true));
-
       const newAccounts = await updateAgreedAccount(account, newAcct);
       dispatch(setWaittingVisible(false));
-      setAccounts(newAccounts);
-      forceUpdate();
+      const filteredAccounts = accountsFilter(newAccounts);
+      setAccounts(filteredAccounts);
     };
 
     await showDrawer('編輯約定帳號', (<AccountEditor initData={acct} onFinished={onFinished} />));
@@ -135,7 +137,7 @@ const Page = () => {
         bankName={acct.bankName}
         account={acct.acctId}
         memberId={acct.headshot}
-        isSelected={(acct.acctId === model.selectedAccount)}
+        isSelected={(acct.acctId === model.selectedAccount.accountNo && acct.bankId === model.selectedAccount.bankId)}
         onClick={() => onAccountSelected(acct)} // 傳回值：選取的帳號。
         moreActions={acct.isSelf ? null : [ // 不可編輯自己的帳號。（因為是由同ID互轉建立的）
           { lable: '編輯', type: 'edit', onClick: () => editAccount(acct) },

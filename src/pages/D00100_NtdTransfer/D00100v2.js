@@ -51,7 +51,7 @@ const Transfer = (props) => {
   const [model, setModel] = useState();
   const [accounts, setAccounts] = useState();
   const [selectedAccountIdx, setSelectedAccountIdx] = useState();
-  const [tranferQuota, setTranferQuota] = useState([10000, 30000, 50000]); // 目前帳戶的轉帳限額。
+  const [tranferQuota, setTranferQuota] = useState([10000, 30000, 50000]); // TODO quota 需要依照 API 回傳值決定
 
   const transTypes = ['一般轉帳', '常用轉帳', '約定轉帳', '社群轉帳'];
   const cycleWeekly = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
@@ -345,7 +345,7 @@ const Transfer = (props) => {
       const selectAccount = (type === 1) ? freqAcct : regAcct; // 指定預設為已選取狀態的帳號
       const params = {
         selectorMode: true, // 隱藏 Home 圖示
-        defaultAccount: selectAccount?.accountNo,
+        defaultAccount: {accountNo: selectAccount?.accountNo, bankId: selectAccount?.bankId},
         bindAccount: model.transOut.account, // 提供給 D00600 只列出此帳號設定的約轉帳號清單。
       };
       model.transIn = transIn;
@@ -400,7 +400,7 @@ const Transfer = (props) => {
           <div className="memberAccountCardArea">
             {regAcct && (
               <MemberAccountCard
-                memberId={regAcct.headshot}
+                memberId={regAcct.memberId}
                 name={regAcct.accountName}
                 bankName={regAcct.bankName}
                 bankNo={regAcct.bankId}

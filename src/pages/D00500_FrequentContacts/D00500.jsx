@@ -151,7 +151,7 @@ const Page = () => {
         account={acct.acctId}
         memberId={acct.headshot}
         hasNewTag={acct.isNew}
-        isSelected={(acct.acctId === selectedAccount)}
+        isSelected={(acct.acctId === selectedAccount?.accountNo && acct.bankId === selectedAccount?.bankId)}
         onClick={() => onAccountSelected(acct)} // 傳回值：選取的帳號。
         moreActions={[
           { lable: '編輯', type: 'edit', onClick: () => editAccount(acct) },
