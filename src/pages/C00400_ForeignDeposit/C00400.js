@@ -110,10 +110,10 @@ const C00400 = () => {
     if (!selectedAccount) return null;
     const { accountNo, bonus } = selectedAccount;
 
-    if (!bonus || !bonus.bonusRate) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
+    if (!bonus) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
 
     // 取得 參考買價、參考賣價、優惠利率、優惠利率額度(暫時固定顯示0) TODO 缺：參考買價、參考賣價
-    const { bonusRate } = bonus ?? { bonusRate: null, // 預設值
+    const { bonusRate, bonusQuota } = bonus ?? { bonusRate: null, // 預設值
     };
 
     /* column 1 標題/數值 */

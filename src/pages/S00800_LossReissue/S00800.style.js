@@ -70,7 +70,7 @@ const LossReissueWrapper = styled(Layout)`
       }
 
       .blockRight {
-        width: 7rem;
+        white-space: nowrap;
         text-align: right;
 
         .debitState {

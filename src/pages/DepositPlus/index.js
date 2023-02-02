@@ -14,8 +14,9 @@ import {
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { ArrowNextIcon } from 'assets/images/icons';
 import { currencySymbolGenerator } from 'utilities/Generator';
-import { getBonusPeriodList, getDepositPlus, getDepositPlusLevelList } from './api';
+import { getBonusPeriodList, getDepositPlusLevelList } from './api';
 import DepositPlusWrapper from './depositPlus.style';
+import { getDepositPlus } from './utils';
 
 /**
  * DepositPlus 優惠利率額度

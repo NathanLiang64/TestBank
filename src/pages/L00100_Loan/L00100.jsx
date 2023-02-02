@@ -200,8 +200,9 @@ const Page = () => {
 
     return loans.map((loan, i) => (
       <ContentWrapper key={`${uid}-a${i}`}>
-        <ThreeColumnInfoPanel content={renderBonusContents(loan)} />
-
+        <div className="panel">
+          <ThreeColumnInfoPanel content={renderBonusContents(loan)} />
+        </div>
         <div ref={detailsRef}>
           <div>{renderTransactions(detailMap[i], loan)}</div>
           <div className="toolbar">
@@ -244,7 +245,7 @@ const Page = () => {
     <Layout title="貸款" inspector={inspector}>
       <MainScrollWrapper>
         <PageWrapper>
-          <SwiperLayout slides={renderSlides(loans)} hasDivider={false} slidesPerView={1.1} spaceBetween={8} centeredSlides onSlideChange={onSlideChange}>
+          <SwiperLayout slides={renderSlides(loans)} hasDivider={false} slidesPerView={loans?.length === 1 ? 1.06 : 1.14} spaceBetween={8} centeredSlides onSlideChange={onSlideChange}>
             {renderContents()}
           </SwiperLayout>
         </PageWrapper>

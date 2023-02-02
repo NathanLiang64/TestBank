@@ -99,10 +99,10 @@ const C00500 = () => {
   const renderBonusInfoPanel = () => {
     if (!selectedAccount) return null;
     const { accountNo, bonus } = selectedAccount;
-    if (!bonus || !bonus.freeTransferRemain) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
+    if (!bonus) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
 
     // 取得 免費跨提、免費跨轉、目前利率、優惠利率額度(暫時固定顯示0)
-    const { freeWithdrawRemain, freeTransferRemain, bonusRate } = bonus ?? {
+    const { freeWithdrawRemain, freeTransferRemain, bonusRate, bonusQuota } = bonus ?? {
       freeWithdrawRemain: null, freeTransferRemain: null, bonusQuota: null, bonusRate: null, // 預設值
     };
 

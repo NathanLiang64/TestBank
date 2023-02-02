@@ -43,6 +43,7 @@ const D00800 = () => {
   const [banks, setBanks] = useState();
   const {control, handleSubmit, watch } = useForm({ defaultValues });
   const [curTab, curReserveRange, curResultRange] = watch([TAB, RESERVE_DATE_RANGE, RESULT_DATE_RANGE]);
+  const isSingleCard = accountsList.length === 1; // 單張卡時卡片寬度需與首頁卡片寬度相同
 
   const currentList = useMemo(() => {
     const startDay = dateToString(curTab === '1' ? curReserveRange[0] : curResultRange[0], '');
@@ -204,7 +205,7 @@ const D00800 = () => {
       <ReserveTransferSearchWrapper className="searchResult">
         <div className="cardArea">
           <Swiper
-            slidesPerView={1.14}
+            slidesPerView={isSingleCard ? 1.06 : 1.14}
             spaceBetween={8}
             centeredSlides
             pagination
