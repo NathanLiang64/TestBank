@@ -16,7 +16,7 @@ import {
 } from 'assets/images/icons';
 import AccountEditor from 'pages/D00500_FrequentContacts/D00500_AccountEditor';
 import { addFrequentAccount } from 'pages/D00500_FrequentContacts/api';
-import { dialTel, shareMessage } from 'utilities/AppScriptProxy';
+import { dialTel, screenShot, shareMessage } from 'utilities/AppScriptProxy';
 
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showDrawer, showInfo } from 'utilities/MessageModal';
@@ -186,6 +186,7 @@ const TransferResult = (props) => {
 
   const handleClickScreenshot = () => {
     // TODO 透過原生 或 ReactJS 功能進行截圖。
+    screenShot();
     setShowSnapshotSuccess(true);
     setTimeout(() => setShowSnapshotSuccess(false), 1000); // 1 秒後自動關閉。
   };

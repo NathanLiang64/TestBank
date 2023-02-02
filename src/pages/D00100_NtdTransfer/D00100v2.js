@@ -86,9 +86,16 @@ const Transfer = (props) => {
       bank: yup.string().when('type', (type, s) => ((type === 0) ? s.required('請選擇銀行代碼') : s.nullable())),
       account: yup.string().when('type', (type, s) => ((type === 0)
         ? s.required('請輸入轉入帳號').min(10, '銀行帳號必定是由10~16個數字所組成')
-          .max(16, '銀行帳號必定是由10~16個數字所組成').notOneOf([model?.transOut.account], '轉入與轉出帳號不可相同') : s.nullable())),
+          .max(16, '銀行帳號必定是由10~16個數字所組成').when('bank', {
+            is: (val) => val === '805',
+            then: yup.string().notOneOf([model?.transOut.account], '轉入與轉出帳號不可相同'),
+          }) : s.nullable())),
       freqAcct: yup.object().when('type', (type, s) => ((type === 1) ? s.shape({
-        accountNo: yup.string().notOneOf([model?.transOut.account], '轉入與轉出帳號不可相同'),
+        bankId: yup.string().required(),
+        accountNo: yup.string().when('bankId', {
+          is: (val) => val === '805',
+          then: yup.string().notOneOf([model?.transOut.account], '轉入與轉出帳號不可相同'),
+        }),
       }) : s.nullable())),
       regAcct: yup.object().when('type', (type, s) => ((type === 2) ? s.required() : s.nullable())),
     }),
@@ -461,8 +468,8 @@ const Transfer = (props) => {
    * 單筆轉帳限額 (用於設置至轉出金額驗證規則)
    */
   const showTranferQuota = () => {
-    const { transIn } = getValues;
-    if (transIn?.type !== '2') {
+    const transInType = getValues(idTransType);
+    if (transInType !== 2) {
       const formater = new Intl.NumberFormat('en-US');
       const quota = tranferQuota.map((q) => formater.format(q)).join('/');
       return (<p className="notice">{`單筆/當日/當月非約定轉帳剩餘額度: ${quota}`}</p>);
