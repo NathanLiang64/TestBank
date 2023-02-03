@@ -13,7 +13,7 @@ import {
   FEIBTabPanel,
 } from 'components/elements';
 import EmptyData from 'components/EmptyData';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import MessageItem from './messageItem';
 import {
@@ -66,7 +66,7 @@ const Notice = () => {
   ];
 
   // 跳轉通知設定頁
-  const toSettingPage = () => startFunc(FuncID.S00400);
+  const toSettingPage = () => startFunc(Func.S00400.id);
 
   // 取得通知列表
   const getNotices = async () => {
@@ -179,7 +179,7 @@ const Notice = () => {
       await getNotices();
     } else {
       // 未綁定直接轉至訊息通知設定頁面
-      startFunc(FuncID.S00400);
+      startFunc(Func.S00400.id);
     }
   }, []);
 

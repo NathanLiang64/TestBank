@@ -10,12 +10,12 @@ import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 
-import { AuthCode } from 'utilities/TxnAuthCode';
+import { Func } from 'utilities/FuncID';
 import { accountFormatter } from 'utilities/Generator';
 import { findCounty, findCity } from 'utilities/locationOptions';
 import { updateProfile, getStatus, reissueOrLost } from './api';
 import LossReissueWrapper from './S00800.style';
-import { AddressEditor } from './S00800_AddressEditor';
+import { AddressEditor } from './S00800_addressEditor';
 
 /**
  * 金融卡掛失/補發
@@ -78,7 +78,7 @@ const LossReissue = () => {
   // 執行掛失或補發
   const executeAction = async () => {
     dispatch(setWaittingVisible(true));
-    const auth = await transactionAuth(AuthCode.S00800);
+    const auth = await transactionAuth(Func.S00800.authCode);
     dispatch(setWaittingVisible(false));
 
     if (auth && auth.result) {
@@ -107,7 +107,7 @@ const LossReissue = () => {
       const {code} = findCounty(county);
       const {zipCode} = findCity(code, city);
 
-      const auth = await transactionAuth(AuthCode.S00800);
+      const auth = await transactionAuth(Func.S00800.authCode);
       if (auth && auth.result) {
         dispatch(setWaittingVisible(true));
         // 修改地址

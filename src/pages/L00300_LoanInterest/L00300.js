@@ -13,7 +13,6 @@ import DownloadIcon from 'assets/images/icons/downloadIcon.svg';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
 import EmptyData from 'components/EmptyData';
 import Loading from 'components/Loading';
-import { FuncID } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import { downloadPaymentHistory, getSubPaymentHistory } from './api';
 
@@ -62,7 +61,7 @@ const LoanInterest = () => {
     getLoanInterestRecords(value);
   };
 
-  const toDetailPage = (singleHistoryData) => startFunc(`${FuncID.L00300}1`, { singleHistoryData, cardData });
+  const toDetailPage = (singleHistoryData) => startFunc('L003001', { singleHistoryData, cardData });
 
   const renderRecordList = () => {
     if (!recordsList) return <Loading space="both" isCentered />;

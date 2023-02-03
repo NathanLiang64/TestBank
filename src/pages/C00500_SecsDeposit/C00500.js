@@ -17,7 +17,7 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { getAccountsList, getAccountBonus, updateAccount } from 'utilities/CacheData';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import { getTransactions, setAccountAlias } from './api';
 import PageWrapper from './C00500.style';
@@ -217,17 +217,17 @@ const C00500 = () => {
         };
         break;
 
-      case FuncID.D00100_臺幣轉帳: // 轉帳
+      case Func.D00100_臺幣轉帳.id: // 轉帳
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case FuncID.E00100_換匯: // 換匯
+      case Func.E00100_換匯.id: // 換匯
         params = { transOut: selectedAccount.accountNo };
         break;
-      case FuncID.C00800: // 匯出存摺
+      case Func.C00800.id: // 匯出存摺
         params = { accountNo: selectedAccount.accountNo }; // TODO 直接帶入台幣帳號
         break;
-      case FuncID.D00800: // 匯出存摺
+      case Func.D00800.id: // 匯出存摺
         params = { selectedAccount }; // TODO 直接帶入台幣帳號
         break;
 
@@ -257,16 +257,16 @@ const C00500 = () => {
               onFunctionClick={handleFunctionClick}
               cardColor="blue"
               funcList={[
-                { fid: FuncID.D00100_臺幣轉帳, title: '轉帳' },
+                { fid: Func.D00100_臺幣轉帳.id, title: '轉帳' },
                 {
-                  fid: FuncID.E00100_換匯,
+                  fid: Func.E00100_換匯.id,
                   title: '換匯',
                   enabled: selectedAccount.balance > 0,
                 },
               ]}
               moreFuncs={[
-                { fid: FuncID.D00800, title: '預約轉帳查詢/取消', icon: 'reserve' },
-                { fid: FuncID.C00800, title: '匯出存摺', icon: 'coverDownload' },
+                { fid: Func.D00800.id, title: '預約轉帳查詢/取消', icon: 'reserve' },
+                { fid: Func.C00800.id, title: '匯出存摺', icon: 'coverDownload' },
                 { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
               ]}
             />

@@ -1,7 +1,7 @@
 import { useNavigation } from 'hooks/useNavigation';
 import { R004, DownloadIcon } from 'assets/images/icons';
 import BottomAction from 'components/BottomAction';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import { getInvoice } from '../api';
 import TrayWrapper from './Tray.style';
 
@@ -12,7 +12,7 @@ const Tray = ({ deductInfo }) => {
     <TrayWrapper>
       <BottomAction className="badFlex" position={0}>
         { (deductInfo?.autoDeductStatus === '0') && (
-        <button type="button" onClick={() => startFunc(FuncID.R00400)}>
+        <button type="button" onClick={() => startFunc(Func.R00400.id)}>
           <R004 />
           繳費
         </button>

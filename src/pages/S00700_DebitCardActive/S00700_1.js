@@ -6,7 +6,7 @@ import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import { useHistory, useLocation } from 'react-router';
 import { FEIBButton } from 'components/elements';
 import ResultAnimation from 'components/SuccessFailureAnimations/ResultAnimation';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import DebitCardActiveWrapper, {SuccessDescWrapper} from './S00700.style';
 
@@ -35,14 +35,14 @@ const S007001 = () => {
   if (!state) return history.goBack();
 
   return (
-    <Layout title="金融卡啟用結果" goBackFunc={() => startFunc(FuncID.B00600)}>
+    <Layout title="金融卡啟用結果" goBackFunc={() => startFunc(Func.B00600.id)}>
       <DebitCardActiveWrapper>
         <ResultAnimation
           isSuccess={state.isSuccess}
           subject={state.isSuccess ? '設定成功' : '設定失敗'}
           description={state.isSuccess ? successDesc() : state.message}
         />
-        <FEIBButton style={{ marginTop: '1rem' }} onClick={() => startFunc(FuncID.B00600)}>
+        <FEIBButton style={{ marginTop: '1rem' }} onClick={() => startFunc(Func.B00600.id)}>
           確認
         </FEIBButton>
       </DebitCardActiveWrapper>

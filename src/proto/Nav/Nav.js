@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
@@ -44,20 +44,20 @@ const Nav = () => {
     <Layout title="測試功能首頁" goBack={false} goHome={false}>
       <NavWrapper>
         <div className="bankee">
-          <div onClick={() => startFunc(FuncID.D00100_臺幣轉帳)}>D00100 轉帳</div>
-          <div onClick={() => startFunc(FuncID.C00300)}>C00300 台幣存款首頁</div>
-          <div onClick={() => startFunc(FuncID.C00400)}>C00400 外幣存款首頁</div>
-          <div onClick={() => startFunc(FuncID.C00500)}>C00500 交割帳戶首頁</div>
-          <div onClick={() => startFunc(FuncID.M00100)}>M00100 社群圈首頁</div>
-          <div onClick={() => startFunc(FuncID.D00500)}>D00500 常用帳號管理</div>
-          <div onClick={() => startFunc(FuncID.D00600)}>D00600 約定帳號管理</div>
-          <div onClick={() => startFunc(FuncID.B00600)}>B00600 更多...</div>
-          <div onClick={() => startFunc(FuncID.T00100)}>T00100 個人化設定</div>
-          <div onClick={() => startFunc(FuncID.S00100_我的最愛)}>S00100 我的最愛</div>
-          <div onClick={() => startFunc(FuncID.S00101_我的最愛v2)}>S00101 我的最愛v2</div>
-          <div onClick={() => startFunc(FuncID.E00100_換匯)}>E00100 換匯 - (施工中)</div>
-          <div onClick={() => startFunc(FuncID.A00600)}>A00600 定期更新個資</div>
-          <div onClick={() => startFunc(FuncID.A00700)}>A00700 定期更新密碼</div>
+          <div onClick={() => startFunc(Func.D00100_臺幣轉帳.id)}>D00100 轉帳</div>
+          <div onClick={() => startFunc(Func.C00300.id)}>C00300 台幣存款首頁</div>
+          <div onClick={() => startFunc(Func.C00400.id)}>C00400 外幣存款首頁</div>
+          <div onClick={() => startFunc(Func.C00500.id)}>C00500 交割帳戶首頁</div>
+          <div onClick={() => startFunc(Func.M00100.id)}>M00100 社群圈首頁</div>
+          <div onClick={() => startFunc(Func.D00500.id)}>D00500 常用帳號管理</div>
+          <div onClick={() => startFunc(Func.D00600.id)}>D00600 約定帳號管理</div>
+          <div onClick={() => startFunc(Func.B00600.id)}>B00600 更多...</div>
+          <div onClick={() => startFunc(Func.T00100.id)}>T00100 個人化設定</div>
+          <div onClick={() => startFunc(Func.S00100_我的最愛.id)}>S00100 我的最愛</div>
+          <div onClick={() => startFunc(Func.S00101_我的最愛v2.id)}>S00101 我的最愛v2</div>
+          <div onClick={() => startFunc(Func.E00100_換匯.id)}>E00100 換匯 - (施工中)</div>
+          <div onClick={() => startFunc(Func.A00600.id)}>A00600 定期更新個資</div>
+          <div onClick={() => startFunc(Func.A00700.id)}>A00700 定期更新密碼</div>
         </div>
 
         <FEIBButton onClick={forceLogout}>登出</FEIBButton>

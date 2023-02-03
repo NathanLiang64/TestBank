@@ -13,7 +13,7 @@ import BottomAction from 'components/BottomAction';
 import SnackModal from 'components/SnackModal';
 import FavoriteBlockButtonStyle from 'components/FavoriteBlockButton/favoriteBlockButton.style';
 import { FuncIcons, BlockSelectedIcon } from 'assets/images/icons';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 
 import D00300Wrapper from './D003_Support/D00300.style';
 import { AmountSetting } from './D003_Support/AmountSetting';
@@ -156,7 +156,7 @@ const S00101_1 = ({
 
     const handleFuncClick = async () => {
       // 設定無卡提款預設金額（即:執行參數)
-      if (funcCode === FuncID.D00300_無卡提款) {
+      if (funcCode === Func.D00300_無卡提款.id) {
         if (mode === 1 || (mode === 2 && !isSelected)) {
           const amountSet = await setCarlessWDparams(model); // 設定執行參數（即:金額)
           if (!amountSet) return;

@@ -12,7 +12,7 @@ import { EditIcon } from 'assets/images/icons';
 import BottomDrawer from 'components/BottomDrawer';
 import Layout from 'components/Layout/Layout';
 import { showCustomPrompt } from 'utilities/MessageModal';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 
 import S00100_1 from './S00100_1';
@@ -165,7 +165,7 @@ const Favorite = () => {
           className="favoriteArea"
           renderData={[
             {
-              funcCode: FuncID.B00200,
+              funcCode: Func.B00200.id,
               name: '推薦碼分享',
               url: null,
               icon: null,
@@ -174,7 +174,7 @@ const Favorite = () => {
               position: '-1',
             },
             {
-              funcCode: FuncID.B00500,
+              funcCode: Func.B00500.id,
               name: '優惠',
               url: null,
               icon: null,
@@ -457,7 +457,7 @@ const Favorite = () => {
       }) => {
         let cardLessLabel = '';
 
-        if (funcCode === FuncID.D00300_無卡提款) { // 用來顯示無卡存摺 的 設定金額
+        if (funcCode === Func.D00300_無卡提款.id) { // 用來顯示無卡存摺 的 設定金額
           cardLessLabel = (
             <span>
               <br />
@@ -510,7 +510,7 @@ const Favorite = () => {
             imgIndex={fixedIndex}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
-            handleClick={() => startFunc(fixedItem.funcCode === 'B00200' ? FuncID.M00100 : fixedItem.funcCode)}
+            handleClick={() => startFunc(fixedItem.funcCode === 'B002' ? Func.M00100.id : fixedItem.funcCode)}
           />);
         });
 
@@ -526,7 +526,7 @@ const Favorite = () => {
               imgIndex={i + 2}
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
-              handleClick={() => startFunc(block.funcCode === 'B00200' ? FuncID.M00100 : block.funcCode)}
+              handleClick={() => startFunc(block.funcCode === 'B002' ? Func.M00100.id : block.funcCode)}
             />);
           } else { // 未加入最愛的項目區塊
             list.push(<BlockComponent

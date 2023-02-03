@@ -1,7 +1,7 @@
 /* eslint-disable object-curly-newline */
 import { useHistory } from 'react-router';
 import { callAppJavaScript, funcStack, getOsType, storeData } from 'utilities/AppScriptProxy';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import { showError } from 'utilities/MessageModal';
 
 export const useNavigation = () => {
@@ -42,11 +42,11 @@ export const useNavigation = () => {
           //      所以在Web端模擬時，用 HardCode URL才能進行測試
           let url;
           switch (funcID) {
-            case FuncID.F00100: url = 'F00000/DEPOSIT'; break; // 申請台幣數存
-            case FuncID.F00200: url = 'F00000/S01a'; break; // 申請證券交割戶
-            case FuncID.F00300: url = 'F00000/Fa'; break; // 申請外幣數存
-            case FuncID.F00400: url = 'F00000/La'; break; // 申請貸款
-            case FuncID.F00500: url = 'F00000/Ca'; break; // 申請信用卡
+            case Func.F00100.id: url = 'F00000/DEPOSIT'; break; // 申請台幣數存
+            case Func.F00200.id: url = 'F00000/S01a'; break; // 申請證券交割戶
+            case Func.F00300.id: url = 'F00000/Fa'; break; // 申請外幣數存
+            case Func.F00400.id: url = 'F00000/La'; break; // 申請貸款
+            case Func.F00500.id: url = 'F00000/Ca'; break; // 申請信用卡
             default:
               alert(`無效的功能代碼: ${funcID}`);
               return { result: false }; // 無效的功能代碼，不外開直接結束。

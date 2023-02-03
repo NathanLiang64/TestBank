@@ -6,6 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { getProfile, updateProfile } from 'pages/T00700_BasicInformation/api';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { Func } from 'utilities/FuncID';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -14,7 +15,6 @@ import { DropdownField, TextInputField } from 'components/Fields';
 
 /* Styles */
 import { showAnimationModal } from 'utilities/MessageModal';
-import { AuthCode } from 'utilities/TxnAuthCode';
 import { localCounties, localCities, findCounty, findCity } from 'utilities/locationOptions';
 import BasicInformationWrapper from './T00700.style';
 import { validationSchema } from './validationSchema';
@@ -96,10 +96,10 @@ const T00700 = () => {
 
   // 點擊儲存變更按鈕
   const onSubmit = async (values) => {
-    let authCode = AuthCode.T00700.EMAIL; // 預設：無變更手機號碼
+    let authCode = Func.T00700.authCode.EMAIL; // 預設：無變更手機號碼
     if (values.mobile !== originPersonalData.mobile) {
       // eslint-disable-next-line no-bitwise
-      authCode |= AuthCode.T00700.MOBILE; // 有變更手機號碼時；可使用密碼驗證(+0x10)，並且需要驗新門號(+0x01)
+      authCode |= Func.T00700.authCode.MOBILE; // 有變更手機號碼時；可使用密碼驗證(+0x10)，並且需要驗新門號(+0x01)
     }
 
     dispatch(setWaittingVisible(true));

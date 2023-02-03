@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getQLStatus } from 'utilities/AppScriptProxy';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import { useNavigation } from './useNavigation';
 
@@ -17,7 +17,7 @@ export const useQLStatus = () => {
     showCustomPrompt({
       message: '無裝置認證，請先進行「APP裝置認證(快速登入設定)」，或致電客服。',
       okContent: '立即設定',
-      onOk: () => startFunc(FuncID.T00200),
+      onOk: () => startFunc(Func.T00200.id),
       onCancel: () => {},
 
     });

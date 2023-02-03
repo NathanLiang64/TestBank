@@ -3,6 +3,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { changePwd } from 'pages/T00900_PwdModify/api';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { showAnimationModal } from 'utilities/MessageModal';
+import { Func } from 'utilities/FuncID';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -12,7 +13,6 @@ import e2ee from 'utilities/E2ee';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { PasswordInputField } from 'components/Fields';
-import { AuthCode } from 'utilities/TxnAuthCode';
 import { useNavigation } from 'hooks/useNavigation';
 import PwdModifyWrapper from './T00900.style';
 import { validationSchema } from './validationSchema';
@@ -50,7 +50,7 @@ const PwdModify = () => {
 
   // 呼叫變更網銀密碼 API
   const handlePwdModify = async ({password, newPassword}) => {
-    const jsRs = await transactionAuth(AuthCode.T00900);
+    const jsRs = await transactionAuth(Func.T00900.authCode);
     if (jsRs.result) {
       dispatch(setWaittingVisible(true));
       const param = {

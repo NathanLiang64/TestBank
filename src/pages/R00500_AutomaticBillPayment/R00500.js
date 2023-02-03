@@ -8,7 +8,7 @@ import Layout from 'components/Layout/Layout';
 import SettingItem from 'components/SettingItem';
 import { DropdownField } from 'components/Fields';
 import { FEIBButton, FEIBSwitch, FEIBSwitchLabel} from 'components/elements';
-import { AuthCode } from 'utilities/TxnAuthCode';
+import { Func } from 'utilities/FuncID';
 import { accountFormatter } from 'utilities/Generator';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import {
@@ -17,7 +17,6 @@ import {
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import uuid from 'react-uuid';
-// eslint-disable-next-line no-unused-vars
 import { useNavigation } from 'hooks/useNavigation';
 import { CancelAutoBillAlert, AccordionContent } from './utils';
 import {
@@ -95,7 +94,7 @@ const AutomaticBillPayment = () => {
 
   const onSubmit = async (values) => {
     dispatch(setWaittingVisible(true));
-    const auth = await transactionAuth(AuthCode.R00500);
+    const auth = await transactionAuth(Func.R00500.authCode);
     if (auth.result) {
       const { result, message } = await setAutoDebit(values);
       showAnimationModal({

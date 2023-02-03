@@ -17,7 +17,7 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { getAccountsList, getAccountBonus, updateAccount } from 'utilities/CacheData';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import {
   getTransactions,
@@ -249,7 +249,7 @@ const C00400 = () => {
         break;
 
       case 'foreignCurrencyTransfer': // 轉帳
-      case FuncID.E00100_換匯: // 換匯
+      case Func.E00100_換匯.id: // 換匯
         params = keepData; // TODO 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。
         break;
 
@@ -296,7 +296,7 @@ const C00400 = () => {
                     selectedAccount.transable && selectedAccount.balance > 0,
                 },
                 {
-                  fid: FuncID.E00100_換匯,
+                  fid: Func.E00100_換匯.id,
                   title: '換匯',
                   enabled: selectedAccount.balance > 0,
                 },

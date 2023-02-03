@@ -32,7 +32,7 @@ import { ChangeMemberIcon } from 'assets/images/icons';
 import { useNavigation } from 'hooks/useNavigation';
 import CurrencyInput from 'react-currency-input-field';
 import { numberToChinese } from 'utilities/Generator';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import TransferWrapper from './D00100.style';
 import D00100AccordionContent from './D00100_AccordionContent';
 
@@ -336,8 +336,8 @@ const Transfer = (props) => {
     // 尚未指定常用/約定轉入對象時，自動開啟選擇常用/約定轉入對象的功能。
     let funcId = null;
     const { freqAcct, regAcct } = transIn;
-    if (type === 1 && (!freqAcct || !e)) funcId = FuncID.D00500;
-    if (type === 2 && (!regAcct || !e)) funcId = FuncID.D00600;
+    if (type === 1 && (!freqAcct || !e)) funcId = Func.D00500.id;
+    if (type === 2 && (!regAcct || !e)) funcId = Func.D00600.id;
     if (funcId !== null) {
       const selectAccount = (type === 1) ? freqAcct : regAcct; // 指定預設為已選取狀態的帳號
       const params = {

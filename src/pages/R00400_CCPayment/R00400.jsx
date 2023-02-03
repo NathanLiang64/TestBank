@@ -20,8 +20,7 @@ import BankCodeInputField from 'pages/R00400_CCPayment/fields/BankCodeInputField
 import { DropdownField, TextInputField } from 'components/Fields';
 import { FEIBButton, FEIBErrorMessage } from 'components/elements';
 import { RadioGroupField } from 'components/Fields/radioGroupField';
-
-import { AuthCode } from 'utilities/TxnAuthCode';
+import { Func } from 'utilities/FuncID';
 import { getAccountsList } from 'utilities/CacheData';
 import { useNavigation } from 'hooks/useNavigation';
 import {
@@ -159,7 +158,7 @@ const Page = () => {
         account: data.accountNo,
         cardNo,
       };
-      const {result} = await transactionAuth(AuthCode.R00400);
+      const {result} = await transactionAuth(Func.R00400.authCode);
       if (result) {
         const payResult = await payCardFee(payload);
         if (payResult) history.push('R004001', { payResult, account: data.accountNo });

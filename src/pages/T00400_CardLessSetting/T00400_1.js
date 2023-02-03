@@ -10,7 +10,7 @@ import Accordion from 'components/Accordion';
 import { FEIBButton } from 'components/elements';
 import { PasswordInputField } from 'components/Fields';
 
-import { AuthCode } from 'utilities/TxnAuthCode';
+import { Func } from 'utilities/FuncID';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { activate } from './api';
@@ -34,7 +34,7 @@ const CardLessATM = () => {
 
   // 開通無卡提款與設定無卡提款密碼
   const activateWithdrawAndSetPwd = async (param) => {
-    const {result} = await transactionAuth(AuthCode.T00400);
+    const {result} = await transactionAuth(Func.T00400.authCode);
     if (result) {
       dispatch(setWaittingVisible(true));
       const activateRes = await activate(param);

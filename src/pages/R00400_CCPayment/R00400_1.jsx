@@ -10,7 +10,7 @@ import { FEIBSwitch } from 'components/elements';
 import BottomAction from 'components/BottomAction';
 import { PhoneIcon, TransactionIcon } from 'assets/images/icons';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 
 import { useNavigation } from 'hooks/useNavigation';
 import { getAutoDebits, getCreditCardTerms } from './api';
@@ -29,7 +29,7 @@ const Page = () => {
   const renderBottomAction = (isSuccess) => (
     <BottomAction position={0}>
       { isSuccess ? (
-        <button type="button" onClick={() => startFunc(FuncID.C00700)}>
+        <button type="button" onClick={() => startFunc(Func.C00700.id)}>
           回信用卡首頁
         </button>
       ) : (

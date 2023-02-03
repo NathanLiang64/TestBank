@@ -11,7 +11,7 @@ import CreditCard from 'components/CreditCard';
 import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 
 import { useNavigation } from 'hooks/useNavigation';
 import { getCreditCardTerms, queryCardInfo } from './api';
@@ -78,7 +78,7 @@ const C007001 = () => {
           <Accordion className="mb-4" title="注意事項" onClick={lazyLoadTerms}>
             { terms ? parse(terms) : <Loading space="both" isCentered /> }
           </Accordion>
-          <FEIBButton onClick={() => startFunc(FuncID.R00400, { cardNo })}>繳費</FEIBButton>
+          <FEIBButton onClick={() => startFunc(Func.R00400.id, { cardNo })}>繳費</FEIBButton>
         </InfoPageWrapper>
       </Main>
     </Layout>

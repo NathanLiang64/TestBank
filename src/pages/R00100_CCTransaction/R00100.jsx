@@ -9,7 +9,7 @@ import BottomAction from 'components/BottomAction';
 import CreditCard from 'components/CreditCard';
 
 import { loadFuncParams } from 'utilities/AppScriptProxy';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import CreditCardTxsList from 'components/CreditCardTxsList';
 import { useNavigation } from 'hooks/useNavigation';
 import PageWrapper from './R00100.style';
@@ -23,7 +23,7 @@ const R00100 = () => {
   const [cardInfo, setCardInfo] = useState();
   const {startFunc, closeFunc} = useNavigation();
   const [transactions, setTransactions] = useState();
-  const go2Instalment = () => startFunc(FuncID.R00200, {cardNo: cardInfo.cardNo});
+  const go2Instalment = () => startFunc(Func.R00200.id, {cardNo: cardInfo.cardNo});
 
   const getTransactions = async (cards) => {
     const transactionsArray = await Promise.all(
