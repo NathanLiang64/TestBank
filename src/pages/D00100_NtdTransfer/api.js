@@ -1,5 +1,7 @@
+import { getAgreedAccount } from 'pages/D00600_RegisteredContacts/api';
 import { getCallerFunc } from 'utilities/AppScriptProxy';
 import { callAPI } from 'utilities/axios';
+import { isDifferentAccount } from './util';
 
 /**
  * 建立臺幣轉帳交易，需再完成交易確認才會真的執行轉帳。
@@ -52,4 +54,25 @@ export const executeNtdTransfer = async () => {
     ...response.data,
     isSuccess: (response.isSuccess && !response.data.errorCode),
   };
+};
+
+// 檢查轉入的帳號是否為約定帳號
+export const checkIsAgreedAccount = async (accountNo, transIn) => {
+  const request = {
+    accountNo,
+    includeSelf: true,
+  };
+
+  const agreedAccounts = await getAgreedAccount(request);
+  const {
+    bank, type, freqAcct, account,
+  } = transIn;
+  const isAgreedAccount = agreedAccounts.length
+        && agreedAccounts.find(
+          ({ acctId, bankId }) => (!isDifferentAccount(acctId, account)
+              && bankId === bank && type === 0)
+            || (!isDifferentAccount(acctId, freqAcct?.accountNo)
+              && bankId === freqAcct?.bankId && type === 1),
+        );
+  return isAgreedAccount;
 };
