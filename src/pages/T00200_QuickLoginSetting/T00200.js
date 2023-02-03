@@ -43,8 +43,10 @@ const QuickLoginSetting = () => {
     boundType: undefined,
     midMobile: null,
   });
-  const isBioActive = (model.status !== 0 && model.boundType === 1);
-  const isPatternActive = (model.status !== 0 && model.boundType === 2);
+
+  // 僅 1,已正常綁定 2,綁定但已鎖定 需標示為active
+  const isBioActive = (model.status === 1 || model.status === 2) && model.boundType === 1;
+  const isPatternActive = (model.status === 1 || model.status === 2) && model.boundType === 2;
 
   /** 生物辨識模式代碼 */
   const BioIdentiy = 1;
@@ -247,7 +249,8 @@ const QuickLoginSetting = () => {
           </div>
         </div>
         {
-          (model.status !== 0) && (
+          // 僅 1,已正常綁定 2,綁定但已鎖定 需顯示資訊
+          (model.status === 1 || model.status === 2) && (
             <div className="bindingInfo">
               <h1>已登錄裝置</h1>
               <InformationList title="啟用日期" content={dateToString(model.boundDate)} textColor="text-primary" />

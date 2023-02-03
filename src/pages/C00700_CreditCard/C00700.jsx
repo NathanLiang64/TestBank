@@ -239,7 +239,7 @@ const CreditCardPage = () => {
   return (
     <Layout title="信用卡" goBackFunc={closeFunc}>
       <Main small>
-        <SwiperLayout slides={renderSlides()} onSlideChange={onSlideChange} hasDivider={false} slidesPerView={1.06}>
+        <SwiperLayout slides={renderSlides()} onSlideChange={onSlideChange} hasDivider={false} slidesPerView={cardsInfo.lengh === 1 ? 1 : 1.06}>
           {renderCreditList()}
         </SwiperLayout>
       </Main>

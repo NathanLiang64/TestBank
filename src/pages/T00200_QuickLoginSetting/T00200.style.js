@@ -87,7 +87,7 @@ export const DrawerContentWrapper = styled.div`
       margin-bottom: 1rem;
     }
 
-    span {
+    a {
       color: ${({ theme }) => theme.colors.text.lightGray};
     }
   }

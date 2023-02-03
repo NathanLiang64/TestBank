@@ -165,6 +165,14 @@ export const getAccountBonus = async (accountNo, onDataLoaded, foreUpdate) => {
       const response = await callAPI('/deposit/account/v1/getBonusInfo', { accountNo });
       bonus = response.data;
 
+      // bonusQuota, bonusRate 由 取得社群圈摘要資訊 api 中取得: bonusInfo.amount, bonusInfo.rate
+      const resSummary = await callAPI('/community/v1/getSummary');
+      bonus = {
+        ...bonus,
+        bonusQuota: resSummary.data.amount,
+        bonusRate: resSummary.data.rate,
+      };
+
       accounts[index].bonus = bonus;
       store.dispatch(setAccounts(accounts));
     }

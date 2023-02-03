@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
-import parse from 'html-react-parser';
+// import parse from 'html-react-parser';
 
 import Main from 'components/Layout';
-import Loading from 'components/Loading';
+// import Loading from 'components/Loading';
 import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
 import CreditCard from 'components/CreditCard';
@@ -76,7 +76,12 @@ const C007001 = () => {
           )}
 
           <Accordion className="mb-4" title="注意事項" onClick={lazyLoadTerms}>
-            { terms ? parse(terms) : <Loading space="both" isCentered /> }
+            {/* { terms ? parse(terms) : <Loading space="both" isCentered /> } */}
+            <ol>
+              <li>本額度僅供線上參考，本行保留交易授權與否之權利，正確消費金額請依月結帳單為準</li>
+              <li>臨時額度調高不可用預借現金等交易</li>
+              <li>若針對特定卡片已設定單獨卡片額度，欲查詢卡片可用額度，請洽本行客服中心轉接專人查詢</li>
+            </ol>
           </Accordion>
           <FEIBButton onClick={() => startFunc(Func.R00400.id, { cardNo })}>繳費</FEIBButton>
         </InfoPageWrapper>

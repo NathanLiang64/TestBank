@@ -155,8 +155,6 @@ const C00400 = () => {
       {
         label: '優惠利率額度',
         value: '0', // TODO 暫時固定顯示0
-        iconType: 'Arrow',
-        onClick: () => {},
       },
     ];
 
