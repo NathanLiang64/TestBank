@@ -96,7 +96,7 @@ const CreditCardPage = () => {
       {
         fid: '/C007001', icon: <CreditCardIcon6 />, title: '信用卡資訊', param: card,
       },
-      { fid: `/${Func.R00500.id}`, icon: <R005 />, title: '自動扣繳' },
+      { fid: `${Func.R00500.id}`, icon: <R005 />, title: '自動扣繳' },
       { fid: '/C007002', icon: <CircleIcon />, title: '每月現金回饋' },
     ];
     const options = (
@@ -239,7 +239,7 @@ const CreditCardPage = () => {
   return (
     <Layout title="信用卡" goBackFunc={closeFunc}>
       <Main small>
-        <SwiperLayout slides={renderSlides()} onSlideChange={onSlideChange} hasDivider={false} slidesPerView={cardsInfo.lengh === 1 ? 1 : 1.06}>
+        <SwiperLayout slides={renderSlides()} onSlideChange={onSlideChange} hasDivider={false} slidesPerView={cardsInfo.lengh === 1 ? 1.14 : 1.06}>
           {renderCreditList()}
         </SwiperLayout>
       </Main>

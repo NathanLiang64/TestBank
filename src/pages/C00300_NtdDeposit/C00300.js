@@ -151,7 +151,7 @@ const C00300 = () => {
     let col2Title;
     let col2Value;
     if (showRate) {
-      col2Title = '優惠利率';
+      col2Title = '目前利率';
       col2Value = bonusRate ? `${bonusRate * 100}%` : '-';
     } else {
       col2Title = '累積利息';

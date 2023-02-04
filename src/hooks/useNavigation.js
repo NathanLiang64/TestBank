@@ -1,11 +1,96 @@
 /* eslint-disable object-curly-newline */
 import { useHistory } from 'react-router';
 import { callAppJavaScript, funcStack, getOsType, storeData } from 'utilities/AppScriptProxy';
+import { callAPI } from 'utilities/axios';
+import { getAccountsList } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
-import { showError } from 'utilities/MessageModal';
+import { showCustomPrompt, showError } from 'utilities/MessageModal';
 
 export const useNavigation = () => {
   const history = useHistory();
+
+  /**
+   * 無法進入目標畫面時所顯示之彈窗
+   */
+  const handleShowPrompt = async (type) => {
+    let errMsg;
+    switch (type) {
+      case 'M':
+        errMsg = {
+          message: 'Bankee臺幣數存',
+          link: `${process.env.REACT_APP_APLFX_URL}prod=Ta`,
+        };
+        break;
+      case 'F':
+        errMsg = {
+          message: 'Bankee外幣數存',
+          link: `${process.env.REACT_APP_APLFX_URL}prod=Ta`,
+        };
+        break;
+      case 'S':
+        errMsg = {
+          message: 'Bankee證券交割帳戶',
+          link: `${process.env.REACT_APP_APLFX_URL}prod=S01a`,
+        };
+        break;
+      case 'CC':
+        errMsg = {
+          message: 'Bankee信用卡',
+          link: `${process.env.REACT_APP_APLFX_URL}prod=Ca`,
+        };
+        break;
+      case 'L':
+        errMsg = {
+          message: 'Bankee貸款',
+          link: `${process.env.REACT_APP_APLFX_URL}prod=La`,
+        };
+        break;
+      default:
+        break;
+    }
+
+    await showCustomPrompt({
+      title: '溫馨提醒',
+      message: `您尚未擁有${errMsg.message}，是否立即申請？`,
+      okContent: '立即申請',
+      onOk: () => window.open(errMsg.link, '_blank'),
+      cancelContent: '我再想想',
+    });
+  };
+
+  /**
+   * 檢查是否可以進入目標頁面
+   */
+  const isEnterFunc = async (funcKeyName) => {
+    let isEnter = false;
+    const requiredList = Func[funcKeyName].required;
+
+    const accountListLength = (type) => getAccountsList(type, async (items) => items.length);
+    const deptAccounts = await callAPI('/personal/v1/assetSummaryValues');
+
+    if (requiredList.length === 0) isEnter = true;
+
+    requiredList.forEach(async (type) => {
+      switch (type) {
+        case 'M':
+        case 'S':
+        case 'F':
+          if (await accountListLength(type) > 0) isEnter = true;
+          break;
+        case 'CC':
+          if (deptAccounts.data.credit_cardno !== '') isEnter = true;
+          break;
+        case 'L':
+          if (deptAccounts.data.loan_account !== '') isEnter = true;
+          break;
+        default:
+          break;
+      }
+    });
+    if (isEnter === false) await handleShowPrompt(requiredList[0]);
+    return isEnter;
+  };
+
   /**
    * 網頁通知APP跳轉指定功能
    * @param {*} funcID 單元功能代碼。
@@ -31,6 +116,11 @@ export const useNavigation = () => {
 
     // 只要不是單元功能，一律視為 WebPage 而不透過 APP 的 Function Controller 轉導。
     if (isFunction) {
+      // 檢查是否可以進入頁面
+      const funcKeyName = Object.keys(Func).find((key) => Func[key].id === funcID);
+      const isEnter = await isEnterFunc(funcKeyName);
+      if (!isEnter) return;
+
       const appJsRs = await callAppJavaScript('startFunc', data, true, () => {
         // 只要是 Fxxxxx 以 F 開頭的功能代碼，就是外開功能，不需納入 Function Controller 管理。
         // TODO 這是暫時的做法，因為 WebView 並不知道那些功能是需要外開，只有 APP Function Controller 才知道。

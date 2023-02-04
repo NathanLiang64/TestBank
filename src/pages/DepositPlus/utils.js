@@ -53,6 +53,5 @@ export const getDepositPlus = async (month) => {
     })),
   };
 
-  console.log('🅱️ DepositPlus utils getDepositPlus()', modifiedRes);
   return modifiedRes;
 };
