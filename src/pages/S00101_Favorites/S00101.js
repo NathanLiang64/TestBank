@@ -29,6 +29,7 @@ const S00101 = () => {
 
   const MAX_FUNC_COUNT = 12; // 預設最多 12 個項目。
   const [model] = useState({
+    lockedFuncs: 0, // 預設(固定)的功能數量。
     myFuncs: Array(MAX_FUNC_COUNT),
     selectedIndex: null, // 記錄在非拖曳模式中，所要執行的空按鈕，提供單選模式時使用。
     startTouch: NaN, // 記錄長按事件的開始時間
@@ -55,6 +56,7 @@ const S00101 = () => {
       // 將之前保存的功能還原。
       funcs.forEach((func) => {
         myFuncs[func.position].func = func;
+        if (func.locked) model.lockedFuncs += 1; // 無留預設功能數量，在儲存前計算自選功能相對位置時使用。
       });
       forceUpdate();
     }).finally(() => {
@@ -64,7 +66,7 @@ const S00101 = () => {
 
   /**
    * 主畫面。
-   * @ param {{items}} items 畫面上所有功能按鈕的資訊。
+   * @param {{items}} items 畫面上所有功能按鈕的資訊。
    */
   const MainView = ({items}) => {
     let isLeftSide;
@@ -207,7 +209,7 @@ const S00101 = () => {
    * @param {Number} mode 單選模式。（0.一般操作, 1.單選模式, 2.多選模式）
    */
   const renderSelector = (mode) => {
-    if (!funcPool) getAllFunc().then((funcs) => setFuncPool(funcs));
+    if (!funcPool) getAllFunc().then((funcs) => setFuncPool(funcs)); // 在收到 API 傳回值後，會再重刷一遍
 
     const {myFuncs, selectedIndex} = model;
     const onFinish = (result) => {
@@ -229,15 +231,15 @@ const S00101 = () => {
         });
 
         myFuncs.filter((item) => !item.func).forEach((item) => {
-          // 只要是否包含在目前選集中的項目，都屬於新增項目。
+          // 只要不是包含在目前選集中的項目，都屬於新增項目。
           const newItem = result.find((f) => !myFuncs.find((m) => m.func?.funcCode === f.funcCode));
           if (newItem) item.func = {...newItem};
         });
       }
 
       // 將 myFuncs 調整後的結果寫回DB
-      const request = myFuncs.filter(({func}) => func).map(({func}, index) => ({
-        position: index,
+      const request = myFuncs.filter(({func}) => func).map(({func}) => ({
+        position: func.position - model.lockedFuncs,
         funcCode: func.funcCode,
         params: func.params,
       }));
@@ -247,6 +249,7 @@ const S00101 = () => {
       setSelectionMode(0);
     };
 
+    // 還沒載入完成之前，先顯示等待中；等收到 API 傳回資料重刷時，再結束等待，開啟選擇畫面。
     if (!funcPool) dispatch(setWaittingVisible(true));
     else {
       dispatch(setWaittingVisible(false));
