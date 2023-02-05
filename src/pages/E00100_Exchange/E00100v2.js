@@ -293,7 +293,7 @@ const E00100 = () => {
         <form
           autoComplete="off"
           onSubmit={handleSubmit(onSubmit)}
-          style={{ gap: '2rem' }}
+          style={{ display: 'grid', alignContent: 'flex-start', gridGap: '2rem' }}
         >
           <section>
             <RadioGroupField

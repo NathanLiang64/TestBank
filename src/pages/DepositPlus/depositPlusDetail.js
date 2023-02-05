@@ -18,9 +18,6 @@ const DepositPlusDetail = () => {
   const location = useLocation();
   const history = useHistory();
 
-  // TODO 不可 HardCode ！
-  const url26Pa = 'https://www.bankee.com.tw/event/26Pa/index.html';
-
   // 調整優惠列表中的數字顯示
   const handleLevelList = (list) => list.map((item, index) => {
     const {baseAmount, maxAmount, quota} = item;
@@ -81,7 +78,7 @@ const DepositPlusDetail = () => {
     </LevelDialogContentWrapper>
   );
 
-  const handleDetailOnClick = async (detailText) => {
+  const handleDetailOnClick = async (detailText, url) => {
     if (detailText === '優惠額度等級表') {
       const { year } = location.state;
       const levelList = await getDepositPlusLevelList(year);
@@ -91,34 +88,29 @@ const DepositPlusDetail = () => {
         message: renderLevelDialogContent(adjustedLevelList),
       });
     } else {
-      window.open(url26Pa, '_blank');
+      window.open(url, '_blank');
     }
   };
 
   const ActivityCard = (data) => {
-    const { title, detail } = data;
+    const { detail } = data;
 
-    /* 取得連結文字 */
-    const detailLinkText = detail.match(/">(.*?)<\/a>/g)[0].replace(/<\/?a>/g, '').replace(/">/g, '');
-
-    /* 移除<a>，將字串依換行符號切成字串陣列，移除所有'●' */
-    const aTagRemovedDetail = detail.replace(/<a(.*?)<\/a>/g, '').replaceAll('●', '');
-
-    /* 以<br>分隔成陣列 */
-    const detailList = aTagRemovedDetail.split('<br>');
+    /* 取得標題、內容、按鈕文字、外開網頁url */
+    const {
+      promotionName, detailLinkText, detailUrl, brief,
+    } = detail;
 
     return (
       <div className="activityCard">
         <div className="activityCard_upper">
-          <div className="title">{title.replace('*', '')}</div>
-          <div className="detail" onClick={() => handleDetailOnClick(detailLinkText)}>
+          <div className="title">{promotionName.replace('⭐️', '')}</div>
+          <div className="detail" onClick={() => handleDetailOnClick(detailLinkText, detailUrl)}>
             {detailLinkText}
             <ArrowNextIcon />
           </div>
         </div>
-        <div className="activityCard_lower">
-          {detailList.map((item) => <p key={item}>{item}</p>)}
-        </div>
+        {/* eslint-disable-next-line react/no-danger */}
+        <div className="activityCard_lower" dangerouslySetInnerHTML={{__html: brief}} />
       </div>
     );
   };
@@ -128,7 +120,7 @@ const DepositPlusDetail = () => {
       <Layout title="各項活動說明" goBackFunc={() => history.goBack()}>
         <div>
           {location.state.bonusDetail.map((detail) => (
-            <ActivityCard key={location.state.bonusDetail.indexOf(detail)} title={detail.promotionName} detail={detail.brief} />
+            <ActivityCard key={location.state.bonusDetail.indexOf(detail)} detail={detail} />
           ))}
         </div>
       </Layout>

@@ -1,23 +1,23 @@
 /* eslint-disable no-unused-vars */
 /** @format */
+import { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
+import { useNavigation } from 'hooks/useNavigation';
+import { useDispatch } from 'react-redux';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
+import { Func } from 'utilities/FuncID';
+import { transactionAuth } from 'utilities/AppScriptProxy';
+import { toCurrency } from 'utilities/Generator';
 
 /* Styles */
 import { showAnimationModal } from 'utilities/MessageModal';
-import { useNavigation } from 'hooks/useNavigation';
-import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { useEffect, useState } from 'react';
-import { toCurrency } from 'utilities/Generator';
-import { transactionAuth } from 'utilities/AppScriptProxy';
-import { AuthCode } from 'utilities/TxnAuthCode';
-import InstalmentWrapper from './R00200.style';
 import { getPreCalc, updateInstallment } from './api';
+import InstalmentWrapper from './R00200.style';
 
 /**
  * R002003 晚點付 (單筆/總額_分期設定確認)
@@ -135,7 +135,7 @@ const R00200_3 = () => {
     if (state?.readOnly) history.goBack();
     else {
       dispatch(setWaittingVisible(true));
-      const auth = await transactionAuth(AuthCode.R00200);
+      const auth = await transactionAuth(Func.R00200.authCode);
       dispatch(setWaittingVisible(false));
       if (auth && auth.result) {
         dispatch(setWaittingVisible(true));
@@ -171,7 +171,7 @@ const R00200_3 = () => {
   return (
     <Layout title="晚點付 (總額)">
       <InstalmentWrapper className="InstalmentWrapper" small>
-        <form style={{gap: '2rem'}}>
+        <form style={{ display: 'grid', alignContent: 'flex-start', gridGap: '2rem' }}>
           <div className="InstalmentWrapperText">各期繳款金額試算 (依實際帳單為準)</div>
           {/* 只有申請單筆分期付款才需要顯示試算表 */}
           {preCalc && preCalcTable()}

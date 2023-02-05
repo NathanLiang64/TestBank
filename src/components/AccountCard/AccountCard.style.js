@@ -23,7 +23,7 @@ const AccountCardWrapper = styled.div`
   display: flex;
   justify-content: flex-begen;
   flex-direction: column;
-  gap: 0.7rem;
+  // gap: 0.7rem;
   background-color: ${({ theme, $cardColor }) => theme.colors.card[$cardColor]};
   background-image: url(${({ $cardColor }) => getWatermark($cardColor)});
   background-position: right top;

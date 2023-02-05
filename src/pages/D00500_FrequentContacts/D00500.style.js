@@ -38,15 +38,15 @@ const PageWrapper = styled.div`
 `;
 
 const DrawerWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2.4rem;
+  display: grid;
+  align-content: flex-start;
+  grid-gap: 2.4rem;
   padding: 0 1.6rem 2.4rem;
 
   .flex-col {
-    display: flex;
-    flex-direction: column;
-    gap: 2.4rem;
+    display: grid;
+    align-content: flex-start;
+    grid-gap: 2.4rem;
   }
 
   .self-center {

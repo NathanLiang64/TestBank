@@ -8,7 +8,7 @@ import { useQLStatus } from 'hooks/useQLStatus';
 import Layout from 'components/Layout/Layout';
 import { FEIBButton } from 'components/elements';
 import { TextInputField } from 'components/Fields';
-import { AuthCode } from 'utilities/TxnAuthCode';
+import { Func } from 'utilities/FuncID';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { getStatus } from 'pages/S00800_LossReissue/api';
 
@@ -34,7 +34,7 @@ const S00700 = () => {
 
   const submitHandler = async ({serial}) => {
     dispatch(setWaittingVisible(true));
-    const auth = await transactionAuth(AuthCode.S00700);
+    const auth = await transactionAuth(Func.S00700.authCode);
     if (auth && auth.result) {
       const activateResult = await activate({serial});
       if (activateResult) {

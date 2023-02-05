@@ -10,9 +10,9 @@ import Layout from 'components/Layout/Layout';
 import ConfirmButtons from 'components/ConfirmButtons';
 import InfoArea from 'components/InfoArea';
 import e2ee from 'utilities/E2ee';
+import { Func } from 'utilities/FuncID';
 
 /* Styles */
-import { AuthCode } from 'utilities/TxnAuthCode';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { PasswordInputField } from 'components/Fields';
@@ -53,7 +53,7 @@ const RegularPwdModify = () => {
   // 點擊儲存變更，呼叫更新網銀密碼API
   const onSubmit = async ({ password, newPassword }) => {
     dispatch(setWaittingVisible(true));
-    const jsRs = await transactionAuth(AuthCode.A00700);
+    const jsRs = await transactionAuth(Func.A00700.authCode);
     if (jsRs.result) {
       const param = {
         password: e2ee(password),

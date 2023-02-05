@@ -9,6 +9,10 @@ const PageWrapper = styled(Layout)`
   padding-left: 0;
   padding-right: 0; 
 
+  .panel {
+    margin-bottom: 1.6rem;
+  }
+
   .interestRatePanel {
     display: flex;
     justify-content: space-between;

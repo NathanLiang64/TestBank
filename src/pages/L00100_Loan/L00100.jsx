@@ -19,7 +19,7 @@ import {
   accountFormatter, dateToString, currencySymbolGenerator, handleLoanTypeToTitle,
 } from 'utilities/Generator';
 
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import { getSubSummary } from './api';
 import { handleSubPaymentHistory } from './utils';
@@ -90,7 +90,7 @@ const Page = () => {
   // };
 
   // 前往查詢應繳本息頁面
-  const handleSearchClick = (account, subNo) => startFunc(FuncID.L00200, { account, subNo });
+  const handleSearchClick = (account, subNo) => startFunc(Func.L00200.id, { account, subNo });
 
   /**
    * 產生上方卡片的 slides
@@ -148,7 +148,7 @@ const Page = () => {
 
   const handleSingleTransaction = async (i, detail, loan) => {
     if (detail) {
-      startFunc(`${FuncID.L00300}1`, { singleHistoryData: detail[i], cardData: loan });
+      startFunc('L003001', { singleHistoryData: detail[i], cardData: loan });
     }
   };
 
@@ -190,7 +190,7 @@ const Page = () => {
     ));
   };
 
-  const handleMoreTransactionsClick = (loan) => startFunc(FuncID.L00300, { loan });
+  const handleMoreTransactionsClick = (loan) => startFunc(Func.L00300.id, { loan });
 
   /**
    * 產生下方交易資訊的 slides
@@ -200,8 +200,9 @@ const Page = () => {
 
     return loans.map((loan, i) => (
       <ContentWrapper key={`${uid}-a${i}`}>
-        <ThreeColumnInfoPanel content={renderBonusContents(loan)} />
-
+        <div className="panel">
+          <ThreeColumnInfoPanel content={renderBonusContents(loan)} />
+        </div>
         <div ref={detailsRef}>
           <div>{renderTransactions(detailMap[i], loan)}</div>
           <div className="toolbar">
@@ -244,7 +245,7 @@ const Page = () => {
     <Layout title="貸款" inspector={inspector}>
       <MainScrollWrapper>
         <PageWrapper>
-          <SwiperLayout slides={renderSlides(loans)} hasDivider={false} slidesPerView={1.1} spaceBetween={8} centeredSlides onSlideChange={onSlideChange}>
+          <SwiperLayout slides={renderSlides(loans)} hasDivider={false} slidesPerView={loans?.length === 1 ? 1.06 : 1.14} spaceBetween={8} centeredSlides onSlideChange={onSlideChange}>
             {renderContents()}
           </SwiperLayout>
         </PageWrapper>

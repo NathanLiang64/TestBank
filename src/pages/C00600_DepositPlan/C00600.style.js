@@ -4,9 +4,9 @@ export const CreatePageWrapper = styled.div`
   margin-bottom: 3.2rem;
 
   .flex {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+    display: grid;
+    align-content: flex-start;
+    grid-gap: 2rem;
     width: 100%;
   }
 

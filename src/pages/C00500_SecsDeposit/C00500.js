@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-use-before-define */
 /* eslint-disable object-curly-newline */
 import { useEffect, useReducer, useState } from 'react';
@@ -9,13 +10,14 @@ import Layout from 'components/Layout/Layout';
 import AccountOverview from 'components/AccountOverview/AccountOverview';
 import DepositDetailPanel from 'components/DepositDetailPanel/depositDetailPanel';
 import { FEIBInputLabel, FEIBInput } from 'components/elements';
+import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
-import { getAccountsList, updateAccount } from 'utilities/CacheData';
-import { FuncID } from 'utilities/FuncID';
+import { getAccountsList, getAccountBonus, updateAccount } from 'utilities/CacheData';
+import { Func } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import { getTransactions, setAccountAlias } from './api';
 import PageWrapper from './C00500.style';
@@ -32,6 +34,9 @@ const C00500 = () => {
 
   const [selectedAccountIdx, setSelectedAccountIdx] = useState();
   const [accounts, setAccounts] = useState();
+
+  // 優存(利率/利息)資訊 顯示模式（true.目前利率, false.累積利息)
+  const [showRate, setShowRate] = useState(true);
 
   const selectedAccount = accounts ? accounts[selectedAccountIdx ?? 0] : null;
 
@@ -73,6 +78,67 @@ const C00500 = () => {
       });
       forceUpdate(); // 因為在執行此方法前，已經先 setAccounts 輸出到畫面上了，所以需要再刷一次畫面。
     }
+  };
+
+  /**
+   * 下載 優存(利率/利息)資訊
+   */
+  const loadExtraInfo = async (account) => {
+    if (!account.bonus || !account.bonus.loading) {
+      account.bonus = { loading: true };
+      getAccountBonus(account.accountNo, (info) => {
+        account.bonus = info;
+        forceUpdate();
+        delete account.bonus.loading;
+      });
+    }
+  };
+  /**
+   * 顯示 優存資訊
+   */
+  const renderBonusInfoPanel = () => {
+    if (!selectedAccount) return null;
+    const { accountNo, bonus } = selectedAccount;
+    if (!bonus) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
+
+    // 取得 免費跨提、免費跨轉、目前利率、優惠利率額度(暫時固定顯示0)
+    const { freeWithdrawRemain, freeTransferRemain, bonusRate, bonusQuota } = bonus ?? {
+      freeWithdrawRemain: null, freeTransferRemain: null, bonusQuota: null, bonusRate: null, // 預設值
+    };
+
+    /* column 2 標題/數值 */
+    let col2Title;
+    let col2Value;
+    if (showRate) {
+      col2Title = '目前利率';
+      col2Value = bonusRate ? `${bonusRate * 100}%` : '-';
+    } else {
+      col2Title = '累積利息';
+      col2Value = 'sumRate'; // TODO: 自api取累積利率
+    }
+
+    const panelContent = [
+      {
+        label: '免費跨提/轉',
+        value: `${freeWithdrawRemain ?? '-'}/${freeTransferRemain ?? '-'}`,
+      },
+      {
+        label: col2Title,
+        value: col2Value,
+        iconType: 'switch',
+        onClick: () => setShowRate(!showRate),
+      },
+      {
+        label: '優惠利率額度',
+        value: '0', // TODO 暫時固定顯示0
+      },
+    ];
+
+    return (
+      <div className="panel">
+        <ThreeColumnInfoPanel content={panelContent} />
+      </div>
+    );
   };
 
   /**
@@ -148,17 +214,17 @@ const C00500 = () => {
         };
         break;
 
-      case FuncID.D00100_臺幣轉帳: // 轉帳
+      case Func.D00100_臺幣轉帳.id: // 轉帳
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case FuncID.E00100_換匯: // 換匯
+      case Func.E00100_換匯.id: // 換匯
         params = { transOut: selectedAccount.accountNo };
         break;
-      case FuncID.C00800: // 匯出存摺
+      case Func.C00800.id: // 匯出存摺
         params = { accountNo: selectedAccount.accountNo }; // TODO 直接帶入台幣帳號
         break;
-      case FuncID.D00800: // 匯出存摺
+      case Func.D00800.id: // 匯出存摺
         params = { selectedAccount }; // TODO 直接帶入台幣帳號
         break;
 
@@ -188,19 +254,22 @@ const C00500 = () => {
               onFunctionClick={handleFunctionClick}
               cardColor="blue"
               funcList={[
-                { fid: FuncID.D00100_臺幣轉帳, title: '轉帳' },
+                { fid: Func.D00100_臺幣轉帳.id, title: '轉帳' },
                 {
-                  fid: FuncID.E00100_換匯,
+                  fid: Func.E00100_換匯.id,
                   title: '換匯',
                   enabled: selectedAccount.balance > 0,
                 },
               ]}
               moreFuncs={[
-                { fid: FuncID.D00800, title: '預約轉帳查詢/取消', icon: 'reserve' },
-                { fid: FuncID.C00800, title: '匯出存摺', icon: 'coverDownload' },
+                { fid: Func.D00800.id, title: '預約轉帳查詢/取消', icon: 'reserve' },
+                { fid: Func.C00800.id, title: '匯出存摺', icon: 'coverDownload' },
                 { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
               ]}
             />
+
+            {/* 顯示 優惠利率資訊面版 */}
+            {renderBonusInfoPanel()}
 
             <DepositDetailPanel
               details={loadTransactions(selectedAccount)}

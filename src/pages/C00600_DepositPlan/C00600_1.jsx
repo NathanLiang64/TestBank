@@ -8,7 +8,7 @@ import { dateToYMD } from 'utilities/Generator';
 import { showError } from 'utilities/MessageModal';
 
 import { useNavigation } from 'hooks/useNavigation';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import { getTransactionDetails } from './api';
 
 /**
@@ -52,7 +52,7 @@ const DepositPlanTransactionPage = () => {
   };
 
   return (
-    <Layout title="存錢歷程" hasClearHeader goBackFunc={() => history.replace(FuncID.C00600, {depositPlans: state.depositPlans})}>
+    <Layout title="存錢歷程" hasClearHeader goBackFunc={() => history.replace(Func.C00600.id, {depositPlans: state.depositPlans})}>
       {plan ? (
         <AccountDetails
           selectedAccount={plan}

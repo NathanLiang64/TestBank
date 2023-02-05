@@ -37,6 +37,7 @@ const ForeignCurrencyTransfer = () => {
   const [mixBalanceStr, setMixBalanceStr] = useState('');
   // 帳戶清單選項
   const [accountListOption, setAccountListOption] = useState();
+  const isSingleCard = accountsList.length === 1; // 單張卡時卡片寬度需與首頁卡片寬度相同
   /**
    *- 資料驗證
    */
@@ -171,7 +172,7 @@ const ForeignCurrencyTransfer = () => {
       <ForeignCurrencyTransferWrapper>
         <div className="userCardArea">
           <Swiper
-            slidesPerView={1.14}
+            slidesPerView={isSingleCard ? 1.06 : 1.14}
             spaceBetween={8}
             centeredSlides
             pagination

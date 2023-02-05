@@ -9,7 +9,7 @@ import SwiperLayout from 'components/SwiperLayout';
 import CreditCardTxsList from 'components/CreditCardTxsList';
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import { currencySymbolGenerator } from 'utilities/Generator';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
@@ -71,9 +71,9 @@ const CreditCardPage = () => {
   // 信用卡卡面右上角的功能列表
   const functionAllList = (item) => {
     const list = [
-      { fid: FuncID.R00200, title: '晚點付' },
-      { fid: FuncID.R00300, title: '帳單', cardNo: item.cards[0].cardNo },
-      { fid: FuncID.R00400, title: '繳費', cardNo: item.isBankeeCard ? item.cards[0].cardNo : '' },
+      { fid: Func.R00200.id, title: '晚點付' },
+      { fid: Func.R00300.id, title: '帳單', cardNo: item.cards[0].cardNo },
+      { fid: Func.R00400.id, title: '繳費', cardNo: item.isBankeeCard ? item.cards[0].cardNo : '' },
     ];
     if (!item.isBankeeCard) list.splice(0, 1);
 
@@ -96,7 +96,7 @@ const CreditCardPage = () => {
       {
         fid: '/C007001', icon: <CreditCardIcon6 />, title: '信用卡資訊', param: card,
       },
-      { fid: `/${FuncID.R00500}`, icon: <R005 />, title: '自動扣繳' },
+      { fid: `${Func.R00500.id}`, icon: <R005 />, title: '自動扣繳' },
       { fid: '/C007002', icon: <CircleIcon />, title: '每月現金回饋' },
     ];
     const options = (
@@ -106,7 +106,7 @@ const CreditCardPage = () => {
             <button
               type="button"
               onClick={() => {
-                if (item.fid.includes(FuncID.R00500)) go2Func(item.fid, null);
+                if (item.fid.includes(Func.R00500.id)) go2Func(item.fid, null);
                 else history.push(item.fid, item?.param);
               }}
             >
@@ -201,7 +201,7 @@ const CreditCardPage = () => {
 
           <CreditCardTxsList
             card={cardInfo}
-            onMoreFuncClick={() => go2Func(FuncID.R00100, {card: cardInfo, usedCardLimit, transactions: transactionMap[index]})}
+            onMoreFuncClick={() => go2Func(Func.R00100.id, {card: cardInfo, usedCardLimit, transactions: transactionMap[index]})}
             transactions={transactionMap[index]}
             onTxnNotesEdit={onTxnNotesEdit}
           />
@@ -239,7 +239,7 @@ const CreditCardPage = () => {
   return (
     <Layout title="信用卡" goBackFunc={closeFunc}>
       <Main small>
-        <SwiperLayout slides={renderSlides()} onSlideChange={onSlideChange} hasDivider={false} slidesPerView={1.06}>
+        <SwiperLayout slides={renderSlides()} onSlideChange={onSlideChange} hasDivider={false} slidesPerView={cardsInfo.lengh === 1 ? 1.14 : 1.06}>
           {renderCreditList()}
         </SwiperLayout>
       </Main>

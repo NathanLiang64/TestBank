@@ -10,7 +10,7 @@ import { FEIBButton } from 'components/elements';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { getAccountsList, getBankCode, updateAccount } from 'utilities/CacheData';
 import { showError } from 'utilities/MessageModal';
-import { AuthCode } from 'utilities/TxnAuthCode';
+import { Func } from 'utilities/FuncID';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { createNtdTransfer, executeNtdTransfer } from './api';
@@ -79,7 +79,7 @@ const TransferConfirm = (props) => {
       } else transIn.type = (transIn.freqAcct ? 1 : 0);
 
       // 進行交易驗證，要求使用者輸入OTP、密碼、雙因子...等。
-      const authCode = (response.isAgreedTxn) ? AuthCode.D00100.REG : AuthCode.D00100.NONREG;
+      const authCode = (response.isAgreedTxn) ? Func.D00100_臺幣轉帳.authCode.REG : Func.D00100_臺幣轉帳.authCode.NONREG;
       const auth = await transactionAuth(authCode);
       if (auth.result) {
         const result = await executeTransfer();

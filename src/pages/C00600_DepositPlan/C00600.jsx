@@ -13,8 +13,7 @@ import {
   AccountIcon11, AccountIcon12, CircleIcon, D001,
 } from 'assets/images/icons';
 import { loadFuncParams, transactionAuth } from 'utilities/AppScriptProxy';
-import { FuncID } from 'utilities/FuncID';
-import {AuthCode} from 'utilities/TxnAuthCode';
+import { Func } from 'utilities/FuncID';
 import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
 import { useNavigation } from 'hooks/useNavigation';
 import { useDispatch } from 'react-redux';
@@ -97,7 +96,7 @@ const DepositPlanPage = () => {
 
   const handleTerminatePlan = (plan) => {
     const confirmTermination = async () => {
-      const {result, message} = await transactionAuth(AuthCode.C00600); // 需通過 2FA 或 網銀密碼 驗證才能關閉計劃。
+      const {result, message} = await transactionAuth(Func.C00600.authCode); // 需通過 2FA 或 網銀密碼 驗證才能關閉計劃。
       if (!result) {
         await showError(message);
         return;
@@ -128,7 +127,7 @@ const DepositPlanPage = () => {
       { icon: <AccountIcon12 />, title: '結束本計畫', onClick: handleTerminatePlan },
     ];
     if (plan.progInfo.type === 0) {
-      list.push({ icon: <D001 />, title: '轉帳', onClick: () => startFunc(FuncID.D00100_臺幣轉帳) });
+      list.push({ icon: <D001 />, title: '轉帳', onClick: () => startFunc(Func.D00100_臺幣轉帳.id) });
     }
     const options = (
       <ul>

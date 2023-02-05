@@ -6,12 +6,11 @@ import { FEIBButton } from 'components/elements';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { cancelReserveTransfer } from 'pages/D00800_ReserveTransferSearch/api';
 
-import { AuthCode } from 'utilities/TxnAuthCode';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { useNavigation } from 'hooks/useNavigation';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import { ReserveTransferSearchWrapper } from './D00800.style';
 import { renderFooter, renderHeader, renderBody} from './utils';
 
@@ -26,7 +25,7 @@ const ReserveTransferSearch1 = ({ location }) => {
     if (!cancelResult) {
       // 執行取消預約轉帳
       dispatch(setWaittingVisible(true));
-      const {result} = await transactionAuth(AuthCode.D00800);
+      const {result} = await transactionAuth(Func.D00800.authCode);
       if (result) {
         const { reserveData } = location.state;
         // 不確定沒刪除的話，API 是否會成功，先把不需帶過去的 property 刪掉
@@ -41,7 +40,7 @@ const ReserveTransferSearch1 = ({ location }) => {
       dispatch(setWaittingVisible(false));
     } else {
       // 已經執行過取消，導向子首頁
-      history.push(FuncID.D00800);
+      history.push('D00800');
     }
   };
 

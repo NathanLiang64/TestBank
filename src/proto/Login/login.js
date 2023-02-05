@@ -11,7 +11,7 @@ import {
 import {
   ArrowBackIcon, ArrowNextIcon, CheckboxCheckedIcon, CheckboxUncheckedIcon, FaceIdIcon, VisibilityIcon, VisibilityOffIcon,
 } from 'assets/images/icons';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import { accountValidation, identityValidation, passwordValidation } from 'utilities/validation';
 import theme from 'themes/theme';
 import Logo from 'assets/images/logoTransparent.png';
@@ -176,7 +176,7 @@ const Login = () => {
           </div>
           <div className="signup">
             <span>還沒有帳號？</span>
-            <FEIBLinkButton $color={theme.colors.text.link} onClick={() => startFunc(FuncID.A00800)}>
+            <FEIBLinkButton $color={theme.colors.text.link} onClick={() => startFunc(Func.A00800.id)}>
               立即申請
             </FEIBLinkButton>
           </div>

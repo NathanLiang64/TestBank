@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { accountFormatter, currencySymbolGenerator } from 'utilities/Generator';
 import { transactionAuth } from 'utilities/AppScriptProxy';
+import { Func } from 'utilities/FuncID';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -10,7 +11,6 @@ import InformationList from 'components/InformationList';
 import { FEIBButton } from 'components/elements';
 
 /* Styles */
-import { AuthCode } from 'utilities/TxnAuthCode';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import ForeignCurrencyTransferWrapper from './foreignCurrencyTransfer.style';
@@ -24,7 +24,7 @@ const ForeignCurrencyTransfer1 = ({ location }) => {
   // 確認進行轉帳
   const applyTransfer = async () => {
     dispatch(setWaittingVisible(true));
-    const rs = await transactionAuth(AuthCode.D00700);
+    const rs = await transactionAuth(Func.D00700.authCode);
     if (rs?.result) {
       const response = await createTransfer(confirmData);
       dispatch(setWaittingVisible(false));

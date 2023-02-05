@@ -8,7 +8,8 @@ export const SwiperCreditCard = styled.div`
 
 export const DetailDialogContentWrapper = styled.div`
   .panel {
-    padding-top: 2.5rem;
+    padding-top: .5rem;
+    padding-bottom: 1.6rem;
   }
 `;
 

@@ -40,7 +40,7 @@ export const MemoEditForm = ({
   useEffect(() => () => unregister('note'), []);
 
   return (
-    <form style={{gap: '2rem'}} onSubmit={handleSubmit(onSubmit)}>
+    <form style={{ display: 'grid', alignContent: 'flex-start', gridGap: '2rem' }} onSubmit={handleSubmit(onSubmit)}>
       <TextInputField labelName="備註說明" name="note" control={control} inputProps={{maxLength: 7}} />
       <FEIBButton>完成</FEIBButton>
     </form>

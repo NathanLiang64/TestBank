@@ -21,7 +21,7 @@ const AccountCardWrapper = styled.div`
   display: flex;
   justify-content: flex-begen;
   flex-direction: column;
-  gap: 0.7rem;
+  // gap: 0.7rem;
   background-color: ${({ theme, $cardColor }) => theme.colors.card[$cardColor]};
   background-image: url(${({ $cardColor }) => getWatermark($cardColor)});
   background-position: right top;
@@ -68,6 +68,9 @@ const AccountCardWrapper = styled.div`
   .functionList{
     display: flex;
     justify-content: flex-end;
+    button {
+      padding: 0;
+    }
     
     li {
       padding: .4rem 1.2rem;

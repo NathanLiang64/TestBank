@@ -16,7 +16,7 @@ import {
 } from 'utilities/AppScriptProxy';
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import store from 'stores/store';
-import { AuthCode } from 'utilities/TxnAuthCode';
+import { Func } from 'utilities/FuncID';
 import { queryPushSetting, bindPushSetting } from './api';
 
 /* Styles */
@@ -63,7 +63,7 @@ const S00400 = () => {
   // 同意開啟通知設定
   const handlePushBind = async () => {
     // 網銀密碼／雙因子驗證
-    const verifyResult = await transactionAuth(AuthCode.S00400);
+    const verifyResult = await transactionAuth(Func.S00400.authCode);
 
     if (!verifyResult.result) {
       await showError(verifyResult.message);

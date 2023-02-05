@@ -70,7 +70,7 @@ const LossReissueWrapper = styled(Layout)`
       }
 
       .blockRight {
-        width: 7rem;
+        white-space: nowrap;
         text-align: right;
 
         .debitState {
@@ -91,13 +91,15 @@ export const LossReissueDialogWrapper = styled.div`
   }
 
   form {
-    gap: 2rem;
+    display: grid;
+    align-content: flex-start;
+    grid-gap: 2rem;
     padding: 4rem 2rem;
   }
 
   .formElementGroup {
     display: flex;
-    gap: 1.8rem;
+    gap: 1.8rem; // TODO 確認改動不會影響版面後再更改為grid
     div {
       flex-grow: 1;
     }
