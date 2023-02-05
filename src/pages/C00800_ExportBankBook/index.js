@@ -118,7 +118,7 @@ const ExportBankBook = () => {
     dispatch(setWaittingVisible(true));
 
     // 取得帳號清單 (只匯出台幣相關帳戶)
-    getAccountsList('MSC', async (accounts) => { // 帳戶類型 M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶
+    getAccountsList('MSC', async (accounts) => { // 帳戶類型 M:母帳戶, S:證券戶, C:子帳戶
       setAccountList(accounts);
       const params = await loadFuncParams();
       if (params) setValue('account', params.accountNo);

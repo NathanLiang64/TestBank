@@ -26,6 +26,7 @@ export const showPrompt = async (message, action) => {
         title: '溫馨提醒',
         content: message,
         onOk: action ?? closePopup,
+        onClose: action ?? closePopup,
         showCloseButton: true,
       }),
     );

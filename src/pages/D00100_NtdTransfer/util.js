@@ -46,3 +46,22 @@ export const getCycleDesc = (booking) => {
   }
   return `每個月${cycleTiming}號`;
 };
+
+/**
+ * 帳號前綴可能會有補0/未補0的情況，透過此方式把帳號都補到16位再做比對
+ */
+export const isDifferentAccount = (acct1, acct2) => {
+  const fillAcct = (acct) => {
+    if (!acct) return '';
+    const acctArr = acct.split('');
+    if (acctArr.length !== 16) {
+      const loopTime = 16 - acctArr.length;
+      for (let i = 0; i < loopTime; i++) {
+        acctArr.unshift('0');
+      }
+    }
+    return acctArr.join('');
+  };
+
+  return fillAcct(acct1) !== fillAcct(acct2);
+};

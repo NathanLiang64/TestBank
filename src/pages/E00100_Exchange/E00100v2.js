@@ -61,7 +61,7 @@ const E00100 = () => {
     handleSubmit, control, watch, reset,
   } = useForm({
     defaultValues: {
-      exchangeType: '',
+      exchangeType: '1',
       outType: '1',
       foreignBalance: '',
       ntDollorBalance: '',
@@ -79,6 +79,7 @@ const E00100 = () => {
   const [accountsList, setAccountsList] = useState([]);
   const [currencyTypeList, setCurrencyTypeList] = useState([]);
   const [propertyList, setPropertyList] = useState({});
+  const [exchangeRate, setExchangeRate] = useState([]);
 
   const {
     currency, exchangeType, inAccount, outAccount, outType, ntDollorBalance, foreignBalance, property,
@@ -176,6 +177,7 @@ const E00100 = () => {
   };
 
   // 轉出/轉入的帳號選項
+  // Bug 轉入選項需要是轉出帳號的約定帳號
   const accountOptions = useMemo(() => {
     const generateOpts = (arr) => arr.map((item) => ({ label: item.account, value: item.account }));
     // 先判斷目前是 臺幣轉外幣 或是 外幣轉臺幣
@@ -232,6 +234,21 @@ const E00100 = () => {
     );
   };
 
+  const onExchangeRateButtonClick = async () => {
+    let rate = [];
+
+    if (!exchangeRate.length) {
+      rate = await getExchangeRateInfo({});
+      setExchangeRate(rate);
+    } else rate = exchangeRate;
+
+    showCustomPrompt({
+      title: '匯率',
+      message: <E00100Table exchangeRate={rate} />,
+      okContent: '確定',
+    });
+  };
+
   useEffect(async () => {
     // 取得交易性質列表
     dispatch(setWaittingVisible(true));
@@ -248,15 +265,14 @@ const E00100 = () => {
       const defaultCurrency = await fetchCcyList();
       // 取得帳戶列表，並篩選出有約定的帳戶
       const accountListRes = await getAccountsList('MSF');
-      //  TODO 依文件說明，先不用過濾 transable ，直接跳出 modal 提示使用者該帳號沒有設定約定才對
-      const availableAccts = accountListRes.filter(({ transable }) => !!transable);
-      setAccountsList(availableAccts);
+      const transableAccountList = accountListRes.filter(({transable}) => !!transable);
+      setAccountsList(transableAccountList);
 
       reset((formValues) => ({
         ...formValues,
         property: propList[0].leglCode,
         currency: defaultCurrency,
-        outAccount: availableAccts[0]?.account ?? '', // BUG  第一個可能不一定是臺幣帳戶
+        outAccount: transableAccountList[0]?.account ?? '', // BUG  第一個可能不一定是臺幣帳戶
       }));
     }
     dispatch(setWaittingVisible(false));
@@ -274,6 +290,26 @@ const E00100 = () => {
     if (outType === '2' && foreignBalance) reset((formValues) => ({ ...formValues, foreignBalance: '' }));
   }, [exchangeType, outType]);
 
+  // TODO 確認轉出帳號是否有可換匯的約定帳號
+  // useEffect(() => {
+  //   if (outAccount) {
+  //     const foundAccount = accountsList.find(({ account }) => account === outAccount);
+  //     // 進入此頁後同一個轉出帳號只要出現過1次提示，則不再出現，重新進入此頁則重新計算。
+  //     if (!(outAccount in transableObj)) {
+  //       setTransableObj((prevObj) => ({ ...prevObj, [outAccount]: foundAccount.transable }));
+  //       // 若選擇的轉出帳號 trasnable ===false，需要提示使用者該帳號沒有可換匯的約定帳號
+  //       if (!foundAccount.transable) {
+  //         showCustomPrompt({
+  //           message: '該帳號目前尚未擁有可進行換匯的約定轉帳帳號，請先進行約定本人轉帳帳號後，再進行換匯。',
+  //           onOk: () => window.open('https://eauth.feib.com.tw/AccountAgreement/sameId/index', '_blank'), // 可能會無法打開，且連結是否應該 hardcode 待確認
+  //           okContent: '立即設定',
+  //           onCancel: () => {},
+  //         });
+  //       }
+  //     }
+  //   }
+  // }, [outAccount, accountsList]);
+
   return (
     <Layout title="外幣換匯">
       <ExchangeWrapper style={{ padding: '2.4rem 1.6rem 2.4rem 1.6rem' }}>
@@ -281,11 +317,7 @@ const E00100 = () => {
           <FEIBBorderButton
             className="customSize"
             type="button"
-            onClick={() => showCustomPrompt({
-              title: '匯率',
-              message: <E00100Table />,
-              okContent: '確定',
-            })}
+            onClick={onExchangeRateButtonClick}
           >
             外匯匯率查詢
           </FEIBBorderButton>

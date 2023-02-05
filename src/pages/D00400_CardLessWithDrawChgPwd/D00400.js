@@ -24,12 +24,9 @@ import CardLessWithDrawChgPwdWrapper from './D00400.style';
 const CardLessWithDrawChgPwd = () => {
   const dispatch = useDispatch();
   const { startFunc, closeFunc } = useNavigation();
-  const { handleSubmit, control } = useForm({
-    defaultValues: {
-      oldPassword: '',
-      newPassword: '',
-      newPasswordConfirm: '',
-    },
+  const defaultValues = { oldPassword: '', newPassword: '', newPasswordConfirm: ''};
+  const { handleSubmit, control, reset } = useForm({
+    defaultValues,
     resolver: yupResolver(validationSchema),
   });
 
@@ -47,6 +44,7 @@ const CardLessWithDrawChgPwd = () => {
         errorCode: code,
         errorDesc: message,
       });
+      if (isSuccess) reset(defaultValues);
     }
     dispatch(setWaittingVisible(false));
   };

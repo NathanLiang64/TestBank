@@ -25,16 +25,21 @@ import BankCodeInput from 'components/BankCodeInput';
 import MemberAccountCard from 'components/MemberAccountCard';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { showError, showInfo, showPrompt } from 'utilities/MessageModal';
-import { loadFuncParams } from 'utilities/AppScriptProxy';
+import {
+  showCustomPrompt, showError, showInfo, showPrompt,
+} from 'utilities/MessageModal';
+import { loadFuncParams, getQLStatus } from 'utilities/AppScriptProxy';
 import { getAccountBonus, getAccountsList } from 'utilities/CacheData';
 import { ChangeMemberIcon } from 'assets/images/icons';
 import { useNavigation } from 'hooks/useNavigation';
 import CurrencyInput from 'react-currency-input-field';
 import { numberToChinese } from 'utilities/Generator';
+import { getSettingInfo } from 'pages/T00300_NonDesignatedTransfer/api';
 import { Func } from 'utilities/FuncID';
 import TransferWrapper from './D00100.style';
 import D00100AccordionContent from './D00100_AccordionContent';
+import { isDifferentAccount } from './util';
+import { checkIsAgreedAccount } from './api';
 
 /**
  * 轉帳首頁
@@ -52,7 +57,7 @@ const Transfer = (props) => {
   const [model, setModel] = useState();
   const [accounts, setAccounts] = useState();
   const [selectedAccountIdx, setSelectedAccountIdx] = useState();
-  const [tranferQuota, setTranferQuota] = useState([10000, 30000, 50000]); // 目前帳戶的轉帳限額。
+  const [tranferQuota, setTranferQuota] = useState([10000, 30000, 50000]); // TODO quota 需要依照 API 回傳值決定
 
   const transTypes = ['一般轉帳', '常用轉帳', '約定轉帳', '社群轉帳'];
   const cycleWeekly = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
@@ -85,11 +90,22 @@ const Transfer = (props) => {
     transIn: yup.object().shape({
       type: yup.number().min(0).max(3).required(),
       bank: yup.string().when('type', (type, s) => ((type === 0) ? s.required('請選擇銀行代碼') : s.nullable())),
-      account: yup.string().when('type', (type, s) => ((type === 0) ? s.required('請輸入轉入帳號').min(10, '銀行帳號必定是由10~16個數字所組成').max(16, '銀行帳號必定是由10~16個數字所組成') : s.nullable())),
-      freqAcct: yup.object().when('type', (type, s) => ((type === 1) ? s.required() : s.nullable())),
+      account: yup.string().when('type', (type, s) => ((type === 0)
+        ? s.required('請輸入轉入帳號').min(10, '銀行帳號必定是由10~16個數字所組成')
+          .max(16, '銀行帳號必定是由10~16個數字所組成').when('bank', {
+            is: (val) => val === '805',
+            then: yup.string().test('isDifferent', '轉入與轉出帳號不可相同', (value) => isDifferentAccount(value, model?.transOut.account)),
+          }) : s.nullable())),
+      freqAcct: yup.object().when('type', (type, s) => ((type === 1) ? s.shape({
+        bankId: yup.string().required(),
+        accountNo: yup.string().when('bankId', {
+          is: (val) => val === '805',
+          then: yup.string().test('isDifferent', '轉入與轉出帳號不可相同', (value) => isDifferentAccount(value, model?.transOut.account)),
+        }),
+      }) : s.nullable())),
       regAcct: yup.object().when('type', (type, s) => ((type === 2) ? s.required() : s.nullable())),
     }),
-    amount: yup.string().required('請輸入轉帳金額'),
+    amount: yup.number().moreThan(0, '請輸入轉帳金額').required('請輸入轉帳金額').typeError('請輸入轉帳金額'),
     booking: yup.object().shape({
       mode: yup.number().min(0).max(1).required(),
       multiTimes: yup.string().required().length(1).oneOf(['1', '*']),
@@ -160,7 +176,7 @@ const Transfer = (props) => {
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
     getAccountsList('MSC', async (items) => { // M=臺幣主帳戶、C=臺幣子帳戶
-      if (items.length === 0) {
+      if (items.length === 0) { // TODO 後續不需要此項檢查，因為在 startFunc 之前就會先檢查
         await showPrompt('您還沒有任何臺幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
       } else {
         const accts = items; // TODO .filter((acct) => acct.transable); // 排除 transable = false 的帳戶。
@@ -249,15 +265,59 @@ const Transfer = (props) => {
     };
     const { amount, booking } = newModel;
 
-    // 單筆轉帳限額檢查
-    if (amount > tranferQuota[0]) {
-      const quota = new Intl.NumberFormat('en-US').format(tranferQuota[0]);
-      await showInfo(`您的轉帳金額已超過單筆轉帳限額(${quota})上限；若您需要提高轉帳額度，可透過自然人憑證完成帳戶升級成【一類帳戶】。`);
-      setFocus(idAmount);
-      return;
+    /**
+     * ======== 檢查規則 ========
+     * 選擇約定帳號 Tab 時，
+     * 1. 檢查 idCycleTime
+     *
+     * 選擇一般轉帳/常用帳號 Tab 時，需確認
+     *  1. 轉入帳號是否為「非約定帳號」，若確認非約定帳號則進行下方檢查
+     *      1-1 檢查是否裝置綁定
+     *      1-2 檢查是否有非約轉功能
+     *      1-3 檢查是否超過單筆限額
+     *  2. 檢查 idCycleTime
+     */
+
+    // 若選擇非約定轉帳（transIn.type!==2)時
+    if (newModel.transIn.type !== 2) {
+      // 檢查流程 1. 仍需檢查轉入帳號是否屬於約定帳號;
+      const isAgreedAccount = await checkIsAgreedAccount(newModel.transOut.account, newModel.transIn);
+
+      if (!isAgreedAccount) {
+        // 檢查流程 1-1. 檢查裝置綁定狀態
+        const { QLStatus } = await getQLStatus();
+        if (QLStatus !== 1 || QLStatus !== 2) {
+          showCustomPrompt({
+            message: '無裝置認證，請先進行「APP裝置認證(快速登入設定)」，或致電客服。',
+            okContent: '立即設定',
+            onOk: () => startFunc(Func.T00200.id), // BUG 待修正成 Func.T00200.id
+            onCancel: () => {},
+          });
+          return;
+        }
+
+        // 檢查流程 1-2. 再檢查是否有設定非約轉
+        const { status } = await getSettingInfo(); // NOTE 是否將該資訊進行 cache?
+        if (status !== 3) {
+          showCustomPrompt({
+            message: '無權限，請先進行「非約定轉帳設定」，或致電客服。',
+            okContent: '立即設定',
+            onOk: () => startFunc(Func.T00300.id),
+            onCancel: () => {},
+          });
+          return;
+        }
+        // 檢查流程 1-3. 單筆轉帳限額檢查
+        if (amount > tranferQuota[0]) {
+          const quota = new Intl.NumberFormat('en-US').format(tranferQuota[0]);
+          await showInfo(`您的轉帳金額已超過單筆轉帳限額(${quota})上限；若您需要提高轉帳額度，可透過自然人憑證完成帳戶升級成【一類帳戶】。`);
+          setFocus(idAmount);
+          return;
+        }
+      }
     }
 
-    // 轉入約定帳號的限額檢查
+    // TODO 轉入約定帳號的限額檢查
 
     // idCycleTime 防呆，調整起始日期
     const transTimes = checkTransDate(booking);
@@ -342,7 +402,7 @@ const Transfer = (props) => {
       const selectAccount = (type === 1) ? freqAcct : regAcct; // 指定預設為已選取狀態的帳號
       const params = {
         selectorMode: true, // 隱藏 Home 圖示
-        defaultAccount: selectAccount?.accountNo,
+        defaultAccount: {accountNo: selectAccount?.accountNo, bankId: selectAccount?.bankId},
         bindAccount: model.transOut.account, // 提供給 D00600 只列出此帳號設定的約轉帳號清單。
       };
       model.transIn = transIn;
@@ -388,6 +448,7 @@ const Transfer = (props) => {
               <ChangeMemberIcon />
             </div>
           </div>
+          <FEIBErrorMessage>{errors.transIn?.freqAcct?.accountNo.message}</FEIBErrorMessage>
         </FEIBTabPanel>
 
         {/* 2.約定轉帳頁籤 */}
@@ -396,7 +457,7 @@ const Transfer = (props) => {
           <div className="memberAccountCardArea">
             {regAcct && (
               <MemberAccountCard
-                memberId={regAcct.headshot}
+                memberId={regAcct.memberId}
                 name={regAcct.accountName}
                 bankName={regAcct.bankName}
                 bankNo={regAcct.bankId}
@@ -457,8 +518,8 @@ const Transfer = (props) => {
    * 單筆轉帳限額 (用於設置至轉出金額驗證規則)
    */
   const showTranferQuota = () => {
-    const { transIn } = getValues;
-    if (transIn?.type !== '2') {
+    const transInType = getValues(idTransType);
+    if (transInType !== 2) {
       const formater = new Intl.NumberFormat('en-US');
       const quota = tranferQuota.map((q) => formater.format(q)).join('/');
       return (<p className="notice">{`單筆/當日/當月非約定轉帳剩餘額度: ${quota}`}</p>);
@@ -492,7 +553,10 @@ const Transfer = (props) => {
           transferMode
           accounts={accounts}
           defaultSlide={selectedAccountIdx}
-          onAccountChanged={setSelectedAccountIdx}
+          onAccountChanged={(index) => {
+            setSelectedAccountIdx(index);
+            trigger();
+          }}
         />
 
         {/* {model?.transOut.balance <= 0 ? (<p className="insufficient">(帳戶餘額不足)</p>) : null} */}
@@ -597,7 +661,6 @@ const Transfer = (props) => {
                     </>
                   ) : (
                     <div className="dateRangePickerArea">
-                      {/* // BUG 確認頁返回後，未顯示值，但 model 有資料。 */}
                       <DateRangePicker control={control} name={idTransRange} label="交易時間" {...datePickerLimit} />
                       <FEIBErrorMessage>{errors.booking?.transRange?.message}</FEIBErrorMessage>
 

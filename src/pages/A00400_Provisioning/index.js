@@ -81,6 +81,7 @@ const Provisioning = () => {
             <br />
             <p>
               其他未盡事宜，請參閱本行「個人資料保護法告知事項」:
+              {/* TODO 目前連結為 hardcode，後需是否從後端拿取待討論 */}
               <a
                 href="https://www.feib.com.tw/detail?id=325"
                 target="_blank"
@@ -92,6 +93,7 @@ const Provisioning = () => {
             <br />
             <p>
               如有疑慮，請洽本行客服專線:
+              {/* TODO 目前連結為 hardcode，後需是否從後端拿取待討論 */}
               <a href="https://www.feib.com.tw/tel" target="_blank" rel="noreferrer">
                 https://www.feib.com.tw/tel
               </a>

@@ -76,7 +76,7 @@ function DatePicker(props) {
     formState: { touchedFields, dirtyFields },
   } = useController({ name, control });
 
-  const [pickDate, setPickDate] = useState(defaultValue ? new Date(defaultValue) : null);
+  const [pickDate, setPickDate] = useState(defaultValue ? new Date(defaultValue) : value);
 
   const handleOnChange = (date, dateStr) => {
     setPickDate(dateStr);
