@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
 import uuid from 'react-uuid';
 
@@ -23,6 +23,7 @@ import { RewardPageWrapper } from './C00700.style';
 const C007002 = () => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const location = useLocation();
   const [rewards, setRewards] = useState();
   const [selectedMonth, setSelectedMonth] = useState(getThisMonth());
 
@@ -76,8 +77,10 @@ const C007002 = () => {
     );
   };
 
+  const goBack = () => history.replace('/C00700', location.state.keepData);
+
   return (
-    <Layout title="每月現金回饋" goBackFunc={() => history.goBack()}>
+    <Layout title="每月現金回饋" goBackFunc={goBack}>
       <Main>
         <RewardPageWrapper>
           <FEIBTabContext value={selectedMonth}>

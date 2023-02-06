@@ -22,21 +22,18 @@ import { InfoPageWrapper } from './C00700.style';
  * C00700_1 信用卡 資訊
  */
 const C007001 = () => {
-  // TODO location.state 參數可以被 refactor
   const history = useHistory();
-  const location = useLocation();
+  const {location} = useLocation();
+  const {keepData, isBankeeCard} = location.state;
   const dispatch = useDispatch();
-  const {startFunc, closeFunc} = useNavigation();
+  const {startFunc } = useNavigation();
   const [cardInfo, setCardInfo] = useState();
   const [terms, setTerms] = useState();
-  const cardNo = location.state?.isBankeeCard ? location.state.cards[0].cardNo : '';
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-
-    const cardInfoRes = await queryCardInfo(cardNo);
+    const cardInfoRes = await queryCardInfo('');
     setCardInfo(cardInfoRes);
-
     dispatch(setWaittingVisible(false));
   }, []);
 
@@ -44,10 +41,10 @@ const C007001 = () => {
     if (!terms) setTerms(await getCreditCardTerms());
   };
 
-  // 如果 location.state 不存在，屬於不正常行為，直接關閉該服務
-  if (!location.state) return closeFunc();
+  const goBack = () => history.replace('/C00700', keepData);
+
   return (
-    <Layout title="信用卡資訊" goBackFunc={() => history.goBack()}>
+    <Layout title="信用卡資訊" goBackFunc={goBack}>
       <Main>
         <InfoPageWrapper>
           {!!cardInfo && (
@@ -55,8 +52,8 @@ const C007001 = () => {
             <div>
               <div>
                 <CreditCard
-                  cardName={location.state.isBankeeCard ? 'Bankee信用卡' : '所有信用卡'}
-                  accountNo={cardNo}
+                  cardName={isBankeeCard ? 'Bankee信用卡' : '所有信用卡'}
+                  accountNo={isBankeeCard ? keepData.cardInfo.cardNo : ''}
                   color="green"
                   annotation="已使用額度"
                   balance={cardInfo?.usedCardLimit}
@@ -78,7 +75,7 @@ const C007001 = () => {
           <Accordion className="mb-4" title="注意事項" onClick={lazyLoadTerms}>
             { terms ? parse(terms) : <Loading space="both" isCentered /> }
           </Accordion>
-          <FEIBButton onClick={() => startFunc(FuncID.R00400, { cardNo })}>繳費</FEIBButton>
+          <FEIBButton onClick={() => startFunc(FuncID.R00400, { cardNo: keepData.cardInfo.cardNo })}>繳費</FEIBButton>
         </InfoPageWrapper>
       </Main>
     </Layout>

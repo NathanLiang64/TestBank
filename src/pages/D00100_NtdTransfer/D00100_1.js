@@ -130,6 +130,8 @@ const TransferConfirm = (props) => {
           bonus: {
             ...account.bonus,
             freeTransferRemain: model.transOut.freeTransferRemain, // 更新 跨轉優惠次數
+            dLimitLeft: result.isCrossBank ? account.bonus.dLimitLeft - model.amount : account.bonus.dLimitLeft, // TODO 待驗證
+            mLimitLeft: result.isCrossBank ? account.bonus.mLimitLeft - model.amount : account.bonus.mLimitLeft, // TODO 待驗證
           },
         });
       });

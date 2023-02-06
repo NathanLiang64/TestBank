@@ -12,22 +12,18 @@ import { AuthCode } from 'utilities/TxnAuthCode';
 import { accountFormatter } from 'utilities/Generator';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import {
-  showDrawer, closeDrawer, showCustomPrompt, showAnimationModal,
+  showDrawer, closeDrawer, showPrompt, showAnimationModal,
 } from 'utilities/MessageModal';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import uuid from 'react-uuid';
-// eslint-disable-next-line no-unused-vars
-import { useNavigation } from 'hooks/useNavigation';
+import { getAccountsList } from 'utilities/CacheData';
 import { CancelAutoBillAlert, AccordionContent } from './utils';
-import {
-  getAutoDebits, setAutoDebit, getAccountsList, getCards,
-} from './api';
+import { getAutoDebits, setAutoDebit } from './api';
 import AutomaticBillPaymentWrapper from './R00500.style';
 import { validationSchema } from './validationSchema';
 
 const AutomaticBillPayment = () => {
-  const { closeFunc } = useNavigation();
   const [appliedAutoBill, setAppliedAutoBill] = useState([]);
   const [accountOptions, setAccountOptions] = useState([]);
   const isFullPayOptions = [{label: '應繳總金額', value: 'Y'}, {label: '最低應繳金額', value: 'N'}];
@@ -45,28 +41,14 @@ const AutomaticBillPayment = () => {
     resolver: yupResolver(validationSchema),
   });
 
-  // 確認有無Bankee信用卡
-  const getCardsData = async () => {
-    const cardRes = await getCards();
-    const bankeeCards = cardRes.cards.filter((card) => card.isBankeeCard === 'Y');
-    if (!bankeeCards.length) {
-      showCustomPrompt({
-        message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
-        onClose: closeFunc,
-      });
-    }
-  };
-
   // 取得帳號清單
-  const getAccountsArray = async () => {
-    // TODO 後續改以 utilities/CacheDataget/AccountsList 去拿
-    const accountsListRes = await getAccountsList();
-    if (!accountsListRes.length) return;
-
-    const options = accountsListRes.map((item) => ({label: item.account, value: item.account}));
-    setAccountOptions(options);
-    // TODO 如何去判斷 options 內哪一個帳戶屬於 bankee 母帳戶
-    reset((formValues) => ({...formValues, account: options[0].value}));
+  const getAccountsArray = () => {
+    getAccountsList('M', (accts) => {
+      if (!accts.length) return;
+      const options = accts.map(({accountNo}) => ({label: accountNo, value: accountNo}));
+      setAccountOptions(options);
+      reset((formValues) => ({...formValues, account: options[0].value}));
+    });
   };
 
   // 查詢自動扣繳資訊
@@ -112,12 +94,8 @@ const AutomaticBillPayment = () => {
   };
 
   const handleApplyAutoBill = () => {
-    if (active) {
-      showCustomPrompt({
-        message: <CancelAutoBillAlert />,
-        onOk: () => {},
-      });
-    } else showDrawer('新增自動扣繳', <AddForm />);
+    if (active) showPrompt(<CancelAutoBillAlert />);
+    else showDrawer('新增自動扣繳', <AddForm />);
   };
 
   const AddForm = () => (
@@ -153,9 +131,8 @@ const AutomaticBillPayment = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    await getCardsData();
     await getAutoDebitData();
-    await getAccountsArray();
+    getAccountsArray();
     dispatch(setWaittingVisible(false));
   }, []);
 

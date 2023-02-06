@@ -3,7 +3,6 @@ import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import Barcode from 'react-barcode';
 import { useForm } from 'react-hook-form';
-import parse from 'html-react-parser';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import Theme from 'themes/theme';
@@ -13,7 +12,6 @@ import { loadFuncParams, transactionAuth } from 'utilities/AppScriptProxy';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import Badge from 'components/Badge';
 import Main from 'components/Layout';
-import Loading from 'components/Loading';
 import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
 import BankCodeInputField from 'pages/R00400_CCPayment/fields/BankCodeInputField';
@@ -25,15 +23,15 @@ import { AuthCode } from 'utilities/TxnAuthCode';
 import { getAccountsList } from 'utilities/CacheData';
 import { useNavigation } from 'hooks/useNavigation';
 import {
-  getBankeeCard,
-  getCreditCardTerms, payCardFee, queryCardInfo, queryPayBarcode,
+  getBankeeCardNo,
+  payCardFee, queryCardInfo, queryPayBarcode,
 } from './api';
 import PageWrapper, { PopUpWrapper } from './R00400.style';
 import { generateAmountOptions, generateAccountNoOptions } from './utils';
 import { TabField } from './fields/TabField/tabField';
 import { generateValidationSchema } from './validationSchema';
 import {
-  AMOUNT_OPTION, paymentMethodOptions, PAYMENT_OPTION, defaultValues,
+  AMOUNT_OPTION, paymentMethodOptions, PAYMENT_OPTION, defaultValues, ExternalContent, CStoreContent,
 } from './constants';
 
 /**
@@ -46,7 +44,6 @@ const Page = () => {
   const [cardInfo, setCardInfo] = useState();
   const [cardNo, setCardNo] = useState();
   const [internalAccounts, setInternalAccounts] = useState([]);
-  const [terms, setTerms] = useState();
 
   const {
     control, watch, handleSubmit, reset,
@@ -62,28 +59,14 @@ const Page = () => {
     let defaultCardNo = null;
 
     const funcParams = await loadFuncParams(); // Function 啟動參數
-    if (funcParams) {
-      defaultCardNo = funcParams.cardNo;
-    } else {
-      // 若從更多 (B00600) 頁面進入，查詢的交易明細就會預設以 bankee 信用卡為主
-      const bankeeCardInfo = await getBankeeCard();
-      console.log('bankeeCardInfo', bankeeCardInfo);
-      if (bankeeCardInfo) defaultCardNo = bankeeCardInfo.cards[0].cardNo;
-      else {
-        await showCustomPrompt({
-          message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
-          onClose: closeFunc,
-        });
-      }
-    }
+    if (funcParams) defaultCardNo = funcParams.cardNo;
+    else defaultCardNo = await getBankeeCardNo();
 
     getAccountsList('M', setInternalAccounts); // 拿取本行母帳號列表
-    const cardInfoResponse = await queryCardInfo(defaultCardNo); // 拿取應繳金額資訊
-    const termsResponse = await getCreditCardTerms(); // 目前是 mockData...
+    const cardInfoResponse = await queryCardInfo(''); // 拿取應繳金額資訊
 
     setCardNo(defaultCardNo);
     setCardInfo(cardInfoResponse);
-    setTerms(termsResponse);
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -94,7 +77,6 @@ const Page = () => {
   }, [watchedValues.amountOptions]);
 
   // 包在 Modal 裡的元件無法取得 terms 必數（不同scope），所以 arrow function call:
-  const getTermsFromOutsideModal = () => (terms ? parse(terms) : <Loading space="both" isCentered />);
 
   const renderBalance = () => {
     if (!internalAccounts.length || !watchedValues.accountNo) return null;
@@ -128,7 +110,7 @@ const Page = () => {
             ))}
 
             <Accordion title="注意事項">
-              { getTermsFromOutsideModal() }
+              <CStoreContent />
             </Accordion>
           </PopUpWrapper>
         ),
@@ -246,7 +228,7 @@ const Page = () => {
 
             { watchedValues.paymentMethod !== PAYMENT_OPTION.INTERNAL && (
               <Accordion title="注意事項">
-                {getTermsFromOutsideModal()}
+                {watchedValues.paymentMethod === PAYMENT_OPTION.EXTERNAL ? <ExternalContent /> : <CStoreContent />}
               </Accordion>
             )}
 
