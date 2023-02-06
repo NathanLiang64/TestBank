@@ -62,7 +62,7 @@ export const useNavigation = () => {
    * 檢查是否可以進入目標頁面
    */
   const isEnterFunc = async (funcKeyName) => {
-    let isEnter = false;
+    let isEnter;
     const requiredList = Func[funcKeyName].required;
 
     const accountListLength = (type) => getAccountsList(type, async (items) => items.length);
@@ -76,14 +76,18 @@ export const useNavigation = () => {
         case 'S':
         case 'F':
           if (await accountListLength(type) > 0) isEnter = true;
+          isEnter = false;
           break;
         case 'CC':
           if (deptAccounts.data.credit_cardno !== '') isEnter = true;
+          isEnter = false;
           break;
         case 'L':
           if (deptAccounts.data.loan_account !== '') isEnter = true;
+          isEnter = false;
           break;
         default:
+          isEnter = false;
           break;
       }
     });
@@ -119,7 +123,7 @@ export const useNavigation = () => {
       // 檢查是否可以進入頁面
       const funcKeyName = Object.keys(Func).find((key) => Func[key].id === funcID);
       const isEnter = await isEnterFunc(funcKeyName);
-      if (!isEnter) return;
+      if (isEnter === false) return;
 
       const appJsRs = await callAppJavaScript('startFunc', data, true, () => {
         // 只要是 Fxxxxx 以 F 開頭的功能代碼，就是外開功能，不需納入 Function Controller 管理。
