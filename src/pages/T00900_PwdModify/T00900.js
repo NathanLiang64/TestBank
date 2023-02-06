@@ -3,6 +3,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { changePwd } from 'pages/T00900_PwdModify/api';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { showAnimationModal } from 'utilities/MessageModal';
+import { Func } from 'utilities/FuncID';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -10,7 +11,6 @@ import { FEIBButton } from 'components/elements';
 import e2ee from 'utilities/E2ee';
 
 import { PasswordInputField } from 'components/Fields';
-import { AuthCode } from 'utilities/TxnAuthCode';
 import { useNavigation } from 'hooks/useNavigation';
 import PwdModifyWrapper from './T00900.style';
 import { validationSchema } from './validationSchema';
@@ -25,7 +25,7 @@ const PwdModify = () => {
 
   // 點擊儲存變更按鈕，表單驗證
   const onSubmit = async ({ password, newPassword }) => {
-    const jsRs = await transactionAuth(AuthCode.T00900);
+    const jsRs = await transactionAuth(Func.T00900.authCode);
     if (jsRs.result) {
       const param = {
         password: e2ee(password),

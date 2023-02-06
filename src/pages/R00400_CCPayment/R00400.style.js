@@ -11,9 +11,9 @@ const PageWrapper = styled.div`
   }
 
   .flex {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    display: grid;
+    align-content: flex-start;
+    grid-gap: 0.5rem;
   }
 
   .ml-4 {

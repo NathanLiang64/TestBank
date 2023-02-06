@@ -9,7 +9,7 @@ import BottomAction from 'components/BottomAction';
 import CreditCard from 'components/CreditCard';
 
 import { funcStack, loadFuncParams } from 'utilities/AppScriptProxy';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import CreditCardTxsList from 'components/CreditCardTxsList';
 import { useNavigation } from 'hooks/useNavigation';
 import PageWrapper from './R00100.style';
@@ -24,7 +24,7 @@ const R00100 = () => {
   const {startFunc, closeFunc} = useNavigation();
   const [transactions, setTransactions] = useState();
   const [index, setIndex] = useState();
-  const go2Instalment = () => startFunc(FuncID.R00200, {cardNo: cardInfo.cardNo});
+  const go2Instalment = () => startFunc(Func.R00200.id, {cardNo: cardInfo.cardNo});
 
   const getTransactions = async (cards) => {
     const transactionsArray = await Promise.all(
@@ -73,7 +73,7 @@ const R00100 = () => {
   }, []);
 
   const goBackFunc = () => {
-    const param = funcStack.peek();
+    const param = funcStack.peek(); // TODO closeFunc就有此機制，為何還要自行處理？
     const keepData = JSON.parse(param.keepData);
     if (keepData) {
       keepData.transactionObj[index] = transactions;

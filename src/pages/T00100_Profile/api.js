@@ -24,6 +24,7 @@ export const getNickname = async () => {
    *   bonusInfo: { 社群圈回饋
    *     amount: 優惠存款額度
    *     profit: 信用卡分潤
+   *     rate: 優惠存款利率
    *   }
    * }
    */

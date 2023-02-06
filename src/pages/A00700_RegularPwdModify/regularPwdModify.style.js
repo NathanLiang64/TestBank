@@ -4,7 +4,9 @@ import Layout from 'components/Layout';
 
 const RegularPwdModifyWrapper = styled(Layout)`
   form {
-    gap: 2rem;
+    display: grid;
+    align-content: flex-start;
+    grid-gap: 2rem;
   }
   z-index: 1001;
   height: 100%;

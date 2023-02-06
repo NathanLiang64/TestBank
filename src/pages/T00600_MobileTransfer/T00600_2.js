@@ -9,7 +9,7 @@ import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
 import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
-import { AuthCode } from 'utilities/TxnAuthCode';
+import { Func } from 'utilities/FuncID';
 /* Styles */
 import { useNavigation } from 'hooks/useNavigation';
 import { useDispatch } from 'react-redux';
@@ -68,7 +68,7 @@ const T006002 = ({ location }) => {
   const modifyMobileTransferData = async (event) => {
     event.preventDefault();
     // 透過 APP 發送及驗證 OTP，並傳回結果。
-    const result = await transactionAuth(AuthCode.T00600, confirmData.mobile);
+    const result = await transactionAuth(Func.T00600.authCode, confirmData.mobile);
     if (result?.result) {
       dispatch(setWaittingVisible(true));
       const { account, isDefault } = confirmData;

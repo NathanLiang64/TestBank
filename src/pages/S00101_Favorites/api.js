@@ -8,13 +8,6 @@ import { callAPI } from 'utilities/axios';
  *   items: [{
  *     funcCode: String, // 功能代碼
  *     name: String, // 功能名稱
- *     url: String, // 連結
- *     icon: String, // 圖示
- *     alterMsg: String, // 顯示用訊息
- *     isFavorItem: Boolean, // 表示此功能是我的最愛中的選項。
- *     isFavorite: Number, // xxx 是否已經設為我的最愛 (刪除; 因為目前只傳回 0/1 沒太大幫助)
- *     position: Number, // 用戶在我的最愛清單中的排列順序(0~11)
- *     locked: Boolean, // 表示是不可異動的功能 (推薦碼分享、優惠)
  *   }] // 單元功能清單
  * }>}
  */
@@ -28,11 +21,6 @@ export const getAllFunc = async () => {
  * @returns {Promise<[{
  *   funcCode: String, // 功能代碼
  *   name: String, // 功能名稱
- *   url: String, // 連結
- *   icon: String, // 圖示
- *   alterMsg: String, // 顯示用訊息
- *   isFavorItem: Boolean, // 表示此功能是我的最愛中的選項。
- *   isFavorite: Number, // xxx 是否已經設為我的最愛 (刪除; 因為目前只傳回 0/1 沒太大幫助)
  *   position: Number, // 用戶在我的最愛清單中的排列順序(0~11)
  *   locked: Boolean, // 表示是不可異動的功能 (推薦碼分享、優惠)
  * }]>}

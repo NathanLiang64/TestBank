@@ -10,12 +10,12 @@ const AccountDetailsWrapper = styled(MainScrollWrapper)`
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    height: calc(100% - 18.5rem);
+    height: calc(100% - 21.3rem);
   }
 
   .debitCardWrapper {
     margin-top: 4.4rem;
-    padding: 0.8rem 1.6rem 0 1.6rem;
+    padding: 1.6rem 1rem 2.6rem 1rem;
   }
 
   .debitCard {

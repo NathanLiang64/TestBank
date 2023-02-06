@@ -3,7 +3,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import e2ee from 'utilities/E2ee';
 import { transactionAuth } from 'utilities/AppScriptProxy';
-import { AuthCode } from 'utilities/TxnAuthCode';
+import { Func } from 'utilities/FuncID';
 import { PasswordInputField } from 'components/Fields';
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
@@ -27,7 +27,7 @@ const ChangeUserName = () => {
 
   // 點擊儲存變更按鈕，表單驗證 呼叫變更使用者代號 API
   const onSubmit = async ({ userName, newUserName }) => {
-    const jsRs = await transactionAuth(AuthCode.T00800);
+    const jsRs = await transactionAuth(Func.T00800.authCode);
 
     if (jsRs.result) {
       const param = {

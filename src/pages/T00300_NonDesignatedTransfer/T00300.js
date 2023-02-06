@@ -8,7 +8,7 @@ import Accordion from 'components/Accordion';
 import {
   closeDrawer, showAnimationModal, showDrawer,
 } from 'utilities/MessageModal';
-import { AuthCode } from 'utilities/TxnAuthCode';
+import { Func } from 'utilities/FuncID';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { useQLStatus } from 'hooks/useQLStatus';
@@ -58,10 +58,10 @@ const T00300 = () => {
     let isSuccess;
     if (isUnlock && model.status !== 4) {
       if (newMobile !== model.mobile) {
-        isSuccess = await authAndChangeStatus(AuthCode.T00300.EDIT, newMobile); // status = 3, 不變
+        isSuccess = await authAndChangeStatus(Func.T00300.authCode.EDIT, newMobile); // status = 3, 不變
       }
     } else {
-      isSuccess = await authAndChangeStatus(AuthCode.T00300.APPLY, newMobile); // status 由 1 變為 3
+      isSuccess = await authAndChangeStatus(Func.T00300.authCode.APPLY, newMobile); // status 由 1 變為 3
     }
 
     if (isSuccess) {
@@ -103,7 +103,7 @@ const T00300 = () => {
         showSettingDrawer(isUnlock); // status 由 1,4 變為 3.開通
       } else {
         /* 取消綁定(即：4.註銷) */
-        await authAndChangeStatus(AuthCode.T00300.CLOSE); // status 由 3 變為 4.註銷
+        await authAndChangeStatus(Func.T00300.authCode.CLOSE); // status 由 3 變為 4.註銷
       }
       setModel({...model}); // 更新畫面。
     } else showUnbondedMsg();

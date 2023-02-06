@@ -8,6 +8,10 @@ const PageWrapper = styled(Layout)`
   height: 100%;
   padding-left: 0;
   padding-right: 0; 
+
+  .panel {
+    margin-bottom: 1.6rem;
+  }
 `;
 
 export default PageWrapper;

@@ -11,7 +11,7 @@ import { showCustomPrompt } from 'utilities/MessageModal';
 import Accordion from 'components/Accordion';
 import { RadioGroupField } from 'components/Fields/radioGroupField';
 import { TextInputField } from 'components/Fields';
-import { AuthCode } from 'utilities/TxnAuthCode';
+import { Func } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
@@ -79,7 +79,7 @@ const A00800 = () => {
   /* submit動作處理 */
   const onSubmit = async (data) => {
     dispatch(setWaittingVisible(true));
-    const authResult = await transactionAuth(AuthCode.A00800, data.mobileNum);
+    const authResult = await transactionAuth(Func.A00800.authCode, data.mobileNum);
     const regData = {
       name: data.name,
       email: data.email,

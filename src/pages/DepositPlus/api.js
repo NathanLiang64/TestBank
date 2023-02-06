@@ -47,10 +47,11 @@ export const getDepositPlusLevelList = async (yearly) => {
  *    promotionName: 活動名稱,
  *    memo: 活動說明,
  *    brief: 各項活動說明之說明,
+ *    briefLink: 各項活動說明連結及文字,
  *  }]
  * }>} response.data
  */
-export const getDepositPlus = async (period) => {
+export const getEligibleItems = async (period) => {
   const response = await callAPI('/community/bonus/v1/getEligibleItems', period);
   return response.data;
 };

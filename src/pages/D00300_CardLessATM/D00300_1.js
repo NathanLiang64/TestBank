@@ -12,7 +12,7 @@ import Accordion from 'components/Accordion';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import { getAccountBonus, getAccountsList } from 'utilities/CacheData';
-import { AuthCode } from 'utilities/TxnAuthCode';
+import { Func } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import { cardLessWithdrawApply } from './api';
 
@@ -43,7 +43,7 @@ const CardLessATM1 = () => {
   // 無卡提款交易
   const requestCardlessWithdrawApply = async (param) => {
     dispatch(setWaittingVisible(true));
-    const {result} = await transactionAuth(AuthCode.D00300);
+    const {result} = await transactionAuth(Func.D00300_無卡提款.authCode);
     if (result) {
       const {
         seqNo, startDateTime, endDateTime, message,

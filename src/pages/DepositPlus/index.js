@@ -1,7 +1,6 @@
 import { useHistory } from 'react-router';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { StarRounded } from '@material-ui/icons';
 import { getThisMonth } from 'utilities/MonthGenerator';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
@@ -15,8 +14,9 @@ import {
 import { useCheckLocation, usePageInfo } from 'hooks';
 import { ArrowNextIcon } from 'assets/images/icons';
 import { currencySymbolGenerator } from 'utilities/Generator';
-import { getBonusPeriodList, getDepositPlus, getDepositPlusLevelList } from './api';
+import { getBonusPeriodList, getDepositPlusLevelList } from './api';
 import DepositPlusWrapper from './depositPlus.style';
+import { getDepositPlus } from './utils';
 
 /**
  * DepositPlus 優惠利率額度
@@ -122,9 +122,7 @@ const Deposit = () => {
                 <li className="listBody" key={depositPlusDetailMap[tabId].bonusDetail.indexOf(detail)}>
                   <div>
                     <p>
-                      {/* 藉promotionName字串中有無"*"判斷是否顯示starIcon */}
-                      {detail.promotionName.replace('*', '')}
-                      <span>{detail.promotionName.includes('*') && <StarRounded className="starIcon" />}</span>
+                      {detail.promotionName}
                     </p>
                     <span>{detail.memo}</span>
                   </div>
@@ -135,11 +133,7 @@ const Deposit = () => {
               ))}
             </ul>
 
-            <div className="remarkArea">
-              <span>標示</span>
-              <StarRounded className="starIcon" />
-              <span>活動之優惠利率擇優計算</span>
-            </div>
+            <div className="remarkArea">標示⭐️活動之優惠利率擇優計算</div>
           </section>
         )}
       </DepositPlusWrapper>

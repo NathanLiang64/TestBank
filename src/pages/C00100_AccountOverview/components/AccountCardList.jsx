@@ -4,7 +4,7 @@ import AccountCard from 'components/AccountCard';
 import { accountOverviewCardVarient, getCurrenyInfo } from 'utilities/Generator';
 
 import { showDrawer } from 'utilities/MessageModal';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import AccountCardListWrapper from './AccountCardList.style';
 import AccountCardGrey from './AccountCardGrey';
@@ -224,11 +224,11 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
         switch (account.type) {
           case 'M': // 母帳戶
             cardName = '主帳戶';
-            funcID = FuncID.C00300;
+            funcID = Func.C00300.id;
             break;
           case 'F': // 外幣帳戶 數量為1時不開drawer
             cardName = '外幣帳戶';
-            funcID = FuncID.C00400;
+            funcID = Func.C00400.id;
             onClick = () => (account.isEmpty ? window.open(fApplyUrl, '_newtab') : foreignAccounts.length === 1 ? startFunc(funcID) : showDrawer('選擇帳戶', renderSubAccountDrawer(foreignAccounts, funcID)));
             break;
           case 'S': // 證券戶 數量為1時不開drawer
@@ -238,18 +238,18 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
 
           case 'C': // 子帳戶 數量為1時不開drawer
             cardName = '子帳戶';
-            funcID = FuncID.C00600;
+            funcID = Func.C00600.id;
             onClick = () => (subAccounts.length === 1 ? startFunc(funcID, { focusToAccountNo: subAccounts[0].accountNo }) : showDrawer('選擇計畫', renderSubAccountDrawer(subAccounts, funcID)));
             break;
           case 'CC': // 信用卡
             cardName = '信用卡';
             annotation = '已使用額度';
-            funcID = FuncID.C00700;
+            funcID = Func.C00700.id;
             onClick = () => (account.isEmpty ? window.open(ccApplyUrl, '_newtab') : startFunc(funcID));
             break;
           case 'L': // 貸款 數量為1時不開drawer
             cardName = '貸款';
-            funcID = FuncID.L00100;
+            funcID = Func.L00100.id;
             onClick = () => (account.isEmpty ? window.open(lApplyUrl, '_newtab') : loanAccounts.length === 1 ? startFunc(funcID) : showDrawer('選擇計畫', renderSubAccountDrawer(loanAccounts, funcID)));
             break;
           default:

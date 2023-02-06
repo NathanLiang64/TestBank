@@ -144,8 +144,13 @@ export const getAccountsList = async (acctTypes, onDataLoaded, noFlat = false) =
  *   freeWithdrawRemain: 免費跨提剩餘次數
  *   freeTransfer: 免費跨轉總次數
  *   freeTransferRemain: 免費跨轉剩餘次數
- *   bonusQuota: 優惠利率額度
- *   bonusRate: 優惠利率
+ *   isVIP: 表示此用戶是 VIP 的旗標，只有旗標為 true 時，才會有VIP跨提/跨轉優惠次數資訊。
+ *   dLimitLeft: OTP日剩餘額度
+ *   mLimitLeft: OTP月剩餘額度
+ *   freeWithdrawTimesVIP: VIP跨提本月適用優惠次數
+ *   freeWithdrawRemainVIP: VIP跨提本月優惠剩餘次數
+ *   freeTransferTimesVIP: VIP跨轉本月適用優惠次數
+ *   freeTransferRemainVIP: VIP跨轉本月優惠剩餘次數
  * }>} 優惠資訊
  */
 export const getAccountBonus = async (accountNo, onDataLoaded, foreUpdate) => {
@@ -165,6 +170,14 @@ export const getAccountBonus = async (accountNo, onDataLoaded, foreUpdate) => {
 
       const response = await callAPI('/deposit/account/v1/getBonusLimitInfo', { accountNo });
       bonus = response.data;
+
+      // bonusQuota, bonusRate 由 取得社群圈摘要資訊 api 中取得: bonusInfo.amount, bonusInfo.rate
+      const resSummary = await callAPI('/community/v1/getSummary');
+      bonus = {
+        ...bonus,
+        bonusQuota: resSummary.data.amount,
+        bonusRate: resSummary.data.rate,
+      };
 
       accounts[index].bonus = bonus;
       store.dispatch(setAccounts(accounts));

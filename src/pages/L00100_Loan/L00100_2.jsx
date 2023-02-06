@@ -8,7 +8,6 @@ import uuid from 'react-uuid';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
-import AccountCard from 'components/AccountCard';
 import InformationList from 'components/InformationList';
 import {
   accountFormatter, dateToString, currencySymbolGenerator,
@@ -61,16 +60,6 @@ const Page = () => {
     <Layout title="貸款資訊" goBackFunc={() => history.goBack()}>
       <Main small>
         <DetailPageWrapper>
-          <AccountCard type="L">
-            <div>{details?.type}</div>
-            <div>{`${param?.account} (${param?.subNo})`}</div>
-            <div className="justify-between items-center gap-4">
-              <div className="text-14">貸款餘額</div>
-              <div className="balance">
-                {`${currencySymbolGenerator(details?.currency ?? 'NTD', details?.txAmt ?? 0)}`}
-              </div>
-            </div>
-          </AccountCard>
           <div>
             { details && getListing(details).map((d, i) => (
               <InformationList key={`${uid}-${i}`} {...d} />

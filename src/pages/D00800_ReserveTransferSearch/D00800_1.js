@@ -6,12 +6,11 @@ import { FEIBButton } from 'components/elements';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { cancelReserveTransfer } from 'pages/D00800_ReserveTransferSearch/api';
 
-import { AuthCode } from 'utilities/TxnAuthCode';
 import { useDispatch } from 'react-redux';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { useNavigation } from 'hooks/useNavigation';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import { AddMemberIcon } from 'assets/images/icons';
 import { showDrawer, showInfo } from 'utilities/MessageModal';
 import AccountEditor from 'pages/D00500_FrequentContacts/D00500_AccountEditor';
@@ -31,7 +30,7 @@ const ReserveTransferSearch1 = ({ location }) => {
     if (!cancelResult) {
       // 執行取消預約轉帳
       dispatch(setWaittingVisible(true));
-      const {result} = await transactionAuth(AuthCode.D00800);
+      const {result} = await transactionAuth(Func.D00800.authCode);
       if (result) {
         const {
           reserveData: {
@@ -46,7 +45,7 @@ const ReserveTransferSearch1 = ({ location }) => {
       dispatch(setWaittingVisible(false));
     } else {
       // 已經執行過取消，導向子首頁
-      history.push(FuncID.D00800);
+      history.push('D00800');
     }
   };
   const showExistedInfo = async () => {

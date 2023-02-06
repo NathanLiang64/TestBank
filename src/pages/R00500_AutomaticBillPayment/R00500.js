@@ -8,7 +8,7 @@ import Layout from 'components/Layout/Layout';
 import SettingItem from 'components/SettingItem';
 import { DropdownField } from 'components/Fields';
 import { FEIBButton, FEIBSwitch, FEIBSwitchLabel} from 'components/elements';
-import { AuthCode } from 'utilities/TxnAuthCode';
+import { Func } from 'utilities/FuncID';
 import { accountFormatter } from 'utilities/Generator';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import {
@@ -77,7 +77,7 @@ const AutomaticBillPayment = () => {
 
   const onSubmit = async (values) => {
     dispatch(setWaittingVisible(true));
-    const auth = await transactionAuth(AuthCode.R00500);
+    const auth = await transactionAuth(Func.R00500.authCode);
     if (auth.result) {
       const { result, message } = await setAutoDebit(values);
       showAnimationModal({
@@ -100,7 +100,7 @@ const AutomaticBillPayment = () => {
 
   const AddForm = () => (
     <form onSubmit={handleSubmit(onSubmit)} className="drawerContainer">
-      <div style={{ display: 'grid', gridGap: '2rem'}}>
+      <div style={{ display: 'grid', alignContent: 'flex-start', gridGap: '2rem' }}>
         <DropdownField
           labelName="扣款帳號"
           name="account"

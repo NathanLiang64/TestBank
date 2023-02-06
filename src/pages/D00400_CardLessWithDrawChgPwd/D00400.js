@@ -11,14 +11,13 @@ import {
 } from 'components/elements';
 import Accordion from 'components/Accordion';
 import { PasswordInputField } from 'components/Fields';
-
-/* Styles */
-import { AuthCode } from 'utilities/TxnAuthCode';
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { showAnimationModal, showCustomPrompt } from 'utilities/MessageModal';
+import { Func } from 'utilities/FuncID';
 import { useEffect } from 'react';
 import { useNavigation } from 'hooks/useNavigation';
-import { FuncID } from 'utilities/FuncID';
+
+/* Styles */
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { showAnimationModal, showCustomPrompt } from 'utilities/MessageModal';
 import { validationSchema } from './validationSchema';
 import CardLessWithDrawChgPwdWrapper from './D00400.style';
 
@@ -34,7 +33,7 @@ const CardLessWithDrawChgPwd = () => {
   // 設定無卡提款密碼
   const changePwdHandler = async (param) => {
     dispatch(setWaittingVisible(true));
-    const {result} = await transactionAuth(AuthCode.D00400);
+    const {result} = await transactionAuth(Func.D00400.authCode);
     if (result) {
       const { isSuccess, code, message } = await changeCardlessPwd(param);
       showAnimationModal({
@@ -103,7 +102,7 @@ const CardLessWithDrawChgPwd = () => {
     if (status !== 2) {
       showCustomPrompt({
         message: '請先進行「無卡提款設定」，或致電客服',
-        onOk: () => startFunc(FuncID.T00400),
+        onOk: () => startFunc(Func.T00400.id),
         okContent: '立即設定',
         onCancel: closeFunc,
       });

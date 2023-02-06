@@ -22,10 +22,14 @@ const ContentWrapper = styled.div`
   display: flex;
   display: -webkit-flex;
   flex-direction: column;
-  gap: 2.5rem;
   padding-inline: 1.6rem;
   padding-bottom: 6rem;
   margin-top: 2.5rem;
+
+  .panel {
+    padding-top: .5rem;
+    padding-bottom: 1.6rem;
+  }
 `;
 
 export const RewardPageWrapper = styled.div`

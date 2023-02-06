@@ -5,6 +5,7 @@ import { useHistory } from 'react-router';
 import { exchangeNtoF, exchangeFtoN } from 'pages/E00100_Exchange/api';
 import { toCurrency } from 'utilities/Generator';
 import { transactionAuth } from 'utilities/AppScriptProxy';
+import { Func } from 'utilities/FuncID';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -14,7 +15,6 @@ import InformationList from 'components/InformationList';
 import CountDown from 'components/CountDown';
 
 /* Styles */
-import { AuthCode } from 'utilities/TxnAuthCode';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import ExchangeWrapper from './E00100.style';
@@ -29,7 +29,7 @@ const E001001 = ({ location }) => {
 
   const handleNextStep = async () => {
     // const authCode = 0x30;
-    const jsRs = await transactionAuth(AuthCode.E00100.F_TWD);
+    const jsRs = await transactionAuth(Func.E00100_換匯.authCode.F_TWD);
     if (jsRs.result) {
       // switchLoading(true);
       dispatch(setWaittingVisible(true));

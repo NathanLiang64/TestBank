@@ -5,15 +5,13 @@ import {
   useEffect, useReducer, useRef, useState,
 } from 'react';
 import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
 
 import { showCustomPrompt } from 'utilities/MessageModal';
 import BottomAction from 'components/BottomAction';
 import SnackModal from 'components/SnackModal';
 import FavoriteBlockButtonStyle from 'components/FavoriteBlockButton/favoriteBlockButton.style';
 import { FuncIcons, BlockSelectedIcon } from 'assets/images/icons';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 
 import D00300Wrapper from './D003_Support/D00300.style';
 import { AmountSetting } from './D003_Support/AmountSetting';
@@ -37,6 +35,7 @@ const S00101_1 = ({
   const MAX_FUNC_COUNT = 12; // 預設最多 12 個項目。
   const mainContentRef = useRef();
   const groupRef = useRef([]);
+  const {control, handleSubmit } = useForm();
 
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const [currGroup, setCurrGroup] = useState(funcPool[0].groupKey);
@@ -109,16 +108,6 @@ const S00101_1 = ({
     }
   };
 
-  const {control, handleSubmit } = useForm({
-    resolver: yupResolver(yup.object().shape({
-      wdAmount: yup
-        .number()
-        .max(20000, '提款金額上限為$20,000')
-        .min(1000, '請輸入提款金額')
-        .required('請輸入提款金額'),
-    })),
-  });
-
   /**
    * 設定無卡提款預設金額（即:執行參數)
    * @param {*} model
@@ -156,7 +145,7 @@ const S00101_1 = ({
 
     const handleFuncClick = async () => {
       // 設定無卡提款預設金額（即:執行參數)
-      if (funcCode === FuncID.D00300_無卡提款) {
+      if (funcCode === Func.D00300_無卡提款.id) {
         if (mode === 1 || (mode === 2 && !isSelected)) {
           const amountSet = await setCarlessWDparams(model); // 設定執行參數（即:金額)
           if (!amountSet) return;

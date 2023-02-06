@@ -8,8 +8,7 @@ import { EditIcon } from 'assets/images/icons';
 
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { AuthCode } from 'utilities/TxnAuthCode';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import { showAnimationModal } from 'utilities/MessageModal';
 import { getAccountsList } from 'utilities/CacheData';
 import { useQLStatus } from 'hooks/useQLStatus';
@@ -19,6 +18,9 @@ import CardLessSettingWrapper from './T00400.style';
 
 import { getStatus, activate } from './api';
 
+/**
+ * T00400 無卡提款設定
+ */
 const CardLessSetting = () => {
   const dispatch = useDispatch();
   const { startFunc } = useNavigation();
@@ -53,7 +55,7 @@ const CardLessSetting = () => {
       } else {
         // 已開通狀態
         dispatch(setWaittingVisible(true));
-        const { result } = await transactionAuth(AuthCode.T00400);
+        const { result } = await transactionAuth(Func.T00400.authCode);
         if (result) {
           const activateRes = await activate('');
           showAnimationModal({
@@ -70,7 +72,7 @@ const CardLessSetting = () => {
     } else showUnbondedMsg();
   };
 
-  const handlePwdChange = () => (QLResult ? startFunc(FuncID.D00400) : showUnbondedMsg());
+  const handlePwdChange = () => (QLResult ? startFunc(Func.D00400.id) : showUnbondedMsg());
 
   return (
     <Layout title="無卡提款設定">

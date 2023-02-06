@@ -8,7 +8,7 @@ import { accountFormatter } from 'utilities/Generator';
 import AddNewItem from 'components/AddNewItem';
 import SettingItem from 'components/SettingItem';
 import Layout from 'components/Layout/Layout';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
@@ -73,7 +73,7 @@ const T00600 = () => {
       await customPopup(
         '系統訊息',
         '為符合手機號碼轉帳相關規範，請至設定>指紋辨識/臉部辨識/圖形密碼登入設定，進行快速登入綁定，造成不便，敬請見諒。',
-        () => startFunc(FuncID.T00200),
+        () => startFunc(Func.T00200.id),
         closeFunc,
         '立即設定',
       );
@@ -84,7 +84,7 @@ const T00600 = () => {
       await customPopup(
         '系統訊息',
         '您尚未於本行留存手機號碼，請先前往「基本資料變更」頁留存，再進設定。',
-        () => startFunc(FuncID.T00700),
+        () => startFunc(Func.T00700.id),
         closeFunc,
         '前往留存',
       );

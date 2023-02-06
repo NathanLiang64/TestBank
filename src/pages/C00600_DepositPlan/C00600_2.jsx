@@ -19,7 +19,7 @@ import Loading from 'components/Loading';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigation } from 'hooks/useNavigation';
-import { FuncID } from 'utilities/FuncID';
+import { Func } from 'utilities/FuncID';
 import { RadioGroupField } from 'components/Fields/radioGroupField';
 import { CreatePageWrapper } from './C00600.style';
 import { getDepositPlanProgram, getDepositPlanTerms } from './api';
@@ -74,7 +74,7 @@ const DepositPlanCreatePage = () => {
   };
 
   return (
-    <Layout title="新增存錢計畫" goBackFunc={() => history.replace(FuncID.C00600, {depositPlans})}>
+    <Layout title="新增存錢計畫" goBackFunc={() => history.replace(Func.C00600.id, {depositPlans})}>
       <Main>
         <CreatePageWrapper>
           <form className="flex" onSubmit={handleSubmit(onSubmit)}>
