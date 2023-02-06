@@ -10,7 +10,7 @@ import { useEffect, useRef, useState } from 'react';
 import InformationTape from 'components/InformationTape';
 import { MemoEditForm } from './memoEditForm';
 import { CreditCardTxsListWrapper } from './cardTxsList.style';
-import { creditNumberFormat, stringDateFormat } from './utils';
+import { stringDateFormat } from './utils';
 
 /*
 * ==================== TransactionsList 組件說明 ====================
@@ -65,7 +65,7 @@ const CreditCardTxsList = ({
               <p className="date-card-info">
                 {stringDateFormat(transaction.txDate)}
                 {!card.isBankeeCard
-                && ` | 卡-${creditNumberFormat(transaction.cardNo)}`}
+                && ` | 卡-${transaction.cardNo}`}
               </p>
               )}
             bottomRight={(

@@ -18,6 +18,7 @@ const PageWrapper = styled.div`
 
   .ml-4 {
     margin-inline-start: 3rem;
+    bottom: 2rem;
   }
 
   .mt-4 {

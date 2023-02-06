@@ -57,6 +57,7 @@ const Transfer = (props) => {
   const [model, setModel] = useState();
   const [accounts, setAccounts] = useState();
   const [selectedAccountIdx, setSelectedAccountIdx] = useState();
+  const [balanceErr, setBalanceErr] = useState({});
 
   const transTypes = ['一般轉帳', '常用轉帳', '約定轉帳', '社群轉帳'];
   const cycleWeekly = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
@@ -526,6 +527,10 @@ const Transfer = (props) => {
         };
         forceUpdate();
       });
+    }
+    if (!account.balance && !balanceErr[account.accountNo]) {
+      setBalanceErr((prevObj) => ({ ...prevObj, [account.accountNo]: true }));
+      showPrompt('您的帳戶餘額為0，無法進行轉帳');
     }
   }, [selectedAccountIdx]);
 

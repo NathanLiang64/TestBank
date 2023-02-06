@@ -31,7 +31,7 @@ import { generateAmountOptions, generateAccountNoOptions } from './utils';
 import { TabField } from './fields/TabField/tabField';
 import { generateValidationSchema } from './validationSchema';
 import {
-  AMOUNT_OPTION, paymentMethodOptions, PAYMENT_OPTION, defaultValues, ExternalContent, CStoreContent,
+  AMOUNT_OPTION, paymentMethodOptions, PAYMENT_OPTION, defaultValues, CStoreContent,
 } from './constants';
 
 /**
@@ -91,7 +91,7 @@ const Page = () => {
         title: '超商條碼繳款',
         message: (
           <PopUpWrapper>
-            <Badge label="應繳金額" value={currencySymbolGenerator(cardInfo?.newBalance ?? 'NTD', amount)} />
+            <Badge className="badge" label="應繳金額" value={currencySymbolGenerator('NTD', amount)} />
             <p className="note">
               適用商家：
               <wbr />
@@ -226,9 +226,9 @@ const Page = () => {
               </>
             )}
 
-            { watchedValues.paymentMethod !== PAYMENT_OPTION.INTERNAL && (
+            { watchedValues.paymentMethod === PAYMENT_OPTION.CSTORE && (
               <Accordion title="注意事項">
-                {watchedValues.paymentMethod === PAYMENT_OPTION.EXTERNAL ? <ExternalContent /> : <CStoreContent />}
+                <CStoreContent />
               </Accordion>
             )}
 
