@@ -10,5 +10,5 @@ import { callAPI } from 'utilities/axios';
  */
 export const changePwd = async (request) => {
   const response = await callAPI('/auth/v1/changePassword', request);
-  return response.data;
+  return response;
 };

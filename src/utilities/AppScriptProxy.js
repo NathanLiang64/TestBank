@@ -753,9 +753,16 @@ async function updatePushBind() {
  */
 async function dialTel(param) {
   await callAppJavaScript('actionDial', param, false, () => {
-    // 測試版的分享功能。
+    // 測試版的撥電話功能。
     customPopup('撥電話功能 (測試版)', JSON.stringify(param));
   });
+}
+
+/**
+ * 透過原生進行截圖
+ */
+async function screenShot(param) {
+  await callAppJavaScript('webScreenShot', param, false);
 }
 
 export {
@@ -783,4 +790,5 @@ export {
   restoreData,
   forceLogout,
   dialTel,
+  screenShot,
 };

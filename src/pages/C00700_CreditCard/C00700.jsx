@@ -12,9 +12,9 @@ import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import { Func } from 'utilities/FuncID';
 import { currencySymbolGenerator } from 'utilities/Generator';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
-import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
+import { showCustomDrawer, showCustomPrompt, showError } from 'utilities/MessageModal';
 import { R005, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import { useNavigation } from 'hooks/useNavigation';
 import { getCards, getTransactionPromise, updateTxnNotes } from './api';
@@ -56,16 +56,18 @@ const CreditCardPage = () => {
 
   // 編輯信用卡明細備註的 Handler
   const onTxnNotesEdit = async (payload, isBankeeCard) => {
-    const { isSuccess } = await updateTxnNotes(payload);
-    if (!isSuccess) return;
-    // updateTxNotes API 打成功才更新畫面
-    setTransactionMap((prevMap) => {
-      const key = isBankeeCard ? 0 : 1;
-      const updatedCards = prevMap[key].map((card) => (
-        card.txKey === payload.txKey ? {...card, note: payload.note} : card
-      ));
-      return {...prevMap, [key]: updatedCards};
-    });
+    dispatch(setModalVisible(false));
+    const { isSuccess, message } = await updateTxnNotes(payload);
+    if (isSuccess) {
+      // updateTxNotes API 打成功才更新畫面
+      setTransactionMap((prevMap) => {
+        const key = isBankeeCard ? 0 : 1;
+        const updatedCards = prevMap[key].map((card) => (
+          card.txKey === payload.txKey ? {...card, note: payload.note} : card
+        ));
+        return {...prevMap, [key]: updatedCards};
+      });
+    } else showError(message);
   };
 
   // 信用卡卡面右上角的功能列表
@@ -201,7 +203,9 @@ const CreditCardPage = () => {
 
           <CreditCardTxsList
             card={cardInfo}
-            onMoreFuncClick={() => go2Func(Func.R00100.id, {card: cardInfo, usedCardLimit, transactions: transactionMap[index]})}
+            onMoreFuncClick={() => go2Func(Func.R00100.id, {
+              card: cardInfo, usedCardLimit, transactions: transactionMap[index], index,
+            })}
             transactions={transactionMap[index]}
             onTxnNotesEdit={onTxnNotesEdit}
           />
@@ -213,12 +217,16 @@ const CreditCardPage = () => {
   // 拿取信用卡資訊 & 第一張卡面的交易明細
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    const keepData = await loadFuncParams();
-    if (keepData) {
-      // Bug 若在 R00100 修改備註再回來，這邊的備註不會被更新，是否連交易紀錄也要被快取?
-      setTransactionMap(keepData.transactionMap);
-      setCardsInfo(keepData.cardsInfo);
-      setUsedCardLimit(keepData.usedCardLimit);
+    const params = await loadFuncParams();
+    // TODO 待調整結構
+    if (params?.response) {
+      setTransactionMap(params.response.transactionMap);
+      setCardsInfo(params.response.cardsInfo);
+      setUsedCardLimit(params.response.usedCardLimit);
+    } else if (params) {
+      setTransactionMap(params.transactionMap);
+      setCardsInfo(params.cardsInfo);
+      setUsedCardLimit(params.usedCardLimit);
     } else {
       const {cards, usedCardLimit: limit} = await getCards();
       if (cards.length) {

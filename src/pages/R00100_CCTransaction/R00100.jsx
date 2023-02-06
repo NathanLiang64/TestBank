@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
 import BottomAction from 'components/BottomAction';
 import CreditCard from 'components/CreditCard';
 
-import { loadFuncParams } from 'utilities/AppScriptProxy';
+import { funcStack, loadFuncParams } from 'utilities/AppScriptProxy';
 import { Func } from 'utilities/FuncID';
 import CreditCardTxsList from 'components/CreditCardTxsList';
 import { useNavigation } from 'hooks/useNavigation';
@@ -23,6 +23,7 @@ const R00100 = () => {
   const [cardInfo, setCardInfo] = useState();
   const {startFunc, closeFunc} = useNavigation();
   const [transactions, setTransactions] = useState();
+  const [index, setIndex] = useState();
   const go2Instalment = () => startFunc(Func.R00200.id, {cardNo: cardInfo.cardNo});
 
   const getTransactions = async (cards) => {
@@ -35,8 +36,9 @@ const R00100 = () => {
 
   // 編輯信用卡明細備註的 Handler
   const onTxnNotesEdit = async (payload) => {
-    const { result, message } = await updateTxnNotes(payload);
-    if (result) {
+    dispatch(setModalVisible(false));
+    const { isSuccess, message } = await updateTxnNotes(payload);
+    if (isSuccess) {
       setTransactions((prevTrans) => prevTrans.map((tran) => (
         tran.txKey === payload.txKey ? {...tran, note: payload.note} : tran)));
     } else showError(message);
@@ -50,6 +52,7 @@ const R00100 = () => {
     if (funcParams) {
       fetchedCardInfo = {...funcParams.card, usedCardLimit: funcParams.usedCardLimit};
       fetchedTransactions = funcParams.transactions;
+      setIndex(funcParams.index);
     } else {
       // 若從更多 (B00600) 頁面進入，會先確認有沒有 bankee 信用卡，查詢的交易明細就會預設以 bankee 信用卡為主
       const bankeeCardInfo = await getBankeeCard();
@@ -69,8 +72,17 @@ const R00100 = () => {
     dispatch(setWaittingVisible(false));
   }, []);
 
+  const goBackFunc = () => {
+    const param = funcStack.peek(); // TODO closeFunc就有此機制，為何還要自行處理？
+    const keepData = JSON.parse(param.keepData);
+    if (keepData) {
+      keepData.transactionMap[index] = transactions;
+      closeFunc(keepData);
+    } else closeFunc();
+  };
+
   return (
-    <Layout title="信用卡即時消費明細" goBackFunc={closeFunc}>
+    <Layout title="信用卡即時消費明細" goBackFunc={goBackFunc}>
       <MainScrollWrapper>
         <PageWrapper>
           <div className="bg-gray">

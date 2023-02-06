@@ -16,7 +16,7 @@ import {
 } from 'assets/images/icons';
 import AccountEditor from 'pages/D00500_FrequentContacts/D00500_AccountEditor';
 import { addFrequentAccount } from 'pages/D00500_FrequentContacts/api';
-import { dialTel, shareMessage } from 'utilities/AppScriptProxy';
+import { dialTel, screenShot, shareMessage } from 'utilities/AppScriptProxy';
 
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showDrawer, showInfo } from 'utilities/MessageModal';
@@ -76,17 +76,22 @@ const TransferResult = (props) => {
       <section className="transactionDetailArea">
         <Accordion title="詳細交易" space="bottom">
           {/* model.result.fiscCode 財金序號(跨轉才有) */}
-          <InformationList
-            title="帳戶餘額"
-            content={`$${toCurrency(model.transOut.balance)}`}
-            remark={model.transOut.alias}
-          />
-          {/* 目前需求: 無論是否為跨行轉帳，都顯示手續費 */}
-          <InformationList
-            title="手續費"
-            content={`$${model.result.fee}`}
-            remark={model.result.isCrossBank ? `跨轉優惠:剩餘${model.transOut.freeTransferRemain}次` : ''}
-          />
+          {/* 只有「非預約轉帳」才需要顯示帳戶餘額以及手續費， */}
+          {model.booking.mode !== 1 && (
+          <>
+            <InformationList
+              title="帳戶餘額"
+              content={`$${toCurrency(model.transOut.balance)}`}
+              remark={model.transOut.alias}
+            />
+            {/* 目前需求: 無論是否為跨行轉帳，都顯示手續費 */}
+            <InformationList
+              title="手續費"
+              content={`$${model.result.fee}`}
+              remark={model.result.isCrossBank ? `跨轉優惠:剩餘${model.transOut.freeTransferRemain}次` : ''}
+            />
+          </>
+          )}
           <InformationList title="備註" content={model.memo} />
         </Accordion>
       </section>
@@ -181,6 +186,7 @@ const TransferResult = (props) => {
 
   const handleClickScreenshot = () => {
     // TODO 透過原生 或 ReactJS 功能進行截圖。
+    screenShot();
     setShowSnapshotSuccess(true);
     setTimeout(() => setShowSnapshotSuccess(false), 1000); // 1 秒後自動關閉。
   };

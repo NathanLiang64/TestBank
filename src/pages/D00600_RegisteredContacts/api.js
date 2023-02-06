@@ -21,7 +21,7 @@ import store from 'stores/store';
  */
 export const getAgreedAccount = async (request) => {
   let {agreAccts} = store.getState()?.CacheReducer;
-  if (!agreAccts) agreAccts = [];
+  if (!agreAccts) agreAccts = {};
 
   const {accountNo} = request;
   if (!agreAccts[accountNo]) {

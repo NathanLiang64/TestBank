@@ -1,19 +1,16 @@
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { FEIBButton } from 'components/elements';
 import { TextInputField } from 'components/Fields';
-import { setModalVisible } from 'stores/reducers/ModalReducer';
 
 export const MemoEditForm = ({
   defaultValues,
   isBankeeCard,
   onTxnNotesEdit,
 }) => {
-  const dispatch = useDispatch();
   const { control, handleSubmit, unregister } = useForm({
     defaultValues,
     resolver: yupResolver(
@@ -33,8 +30,7 @@ export const MemoEditForm = ({
       cardNo, txDate, txKey, note,
     };
 
-    await onTxnNotesEdit(payload, isBankeeCard);
-    dispatch(setModalVisible(false));
+    onTxnNotesEdit(payload, isBankeeCard);
   };
 
   useEffect(() => () => unregister('note'), []);

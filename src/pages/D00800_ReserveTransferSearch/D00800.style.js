@@ -26,6 +26,7 @@ export const ReserveTransferSearchWrapper = styled(Layout)`
   .resultDataContainer {
     padding: 2.4rem 0;
     text-align: center;
+    border-bottom: .8rem solid ${({ theme }) => theme.colors.background.lighterBlue};
     .dataLabel {
       font-size: 1.6rem;
       color: ${({ theme }) => theme.colors.text.lightGray};

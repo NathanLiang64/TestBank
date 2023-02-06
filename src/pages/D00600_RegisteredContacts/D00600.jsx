@@ -1,18 +1,19 @@
-import { useState, useEffect, useReducer } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import uuid from 'react-uuid';
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
-import { showDrawer } from 'utilities/MessageModal';
+import { showDrawer, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { useNavigation } from 'hooks/useNavigation';
 import EmptyData from 'components/EmptyData';
-import {
-  getAgreedAccount,
-  updateAgreedAccount,
-} from './api';
+import { getAccountsList } from 'utilities/CacheData';
+import { DropdownField } from 'components/Fields';
+import { useForm } from 'react-hook-form';
+import Loading from 'components/Loading';
+import { getAgreedAccount, updateAgreedAccount } from './api';
 import AccountEditor from './D00600_AccountEditor';
 import PageWrapper from './D00600.style';
 
@@ -22,12 +23,17 @@ import PageWrapper from './D00600.style';
 const Page = () => {
   const dispatch = useDispatch();
   const { closeFunc } = useNavigation();
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
-  const [selectorMode, setSelectorMode] = useState();
-  const [bindAccount, setBindAccount] = useState();
+  const [isFetching, setIsFetching] = useState(false);
   const [accounts, setAccounts] = useState();
-  const [selectedAccount, setSelectedAccount] = useState();
+  const [model, setModel] = useState({
+    selectorMode: false,
+    selectedAccount: '',
+    accountOptions: [],
+  });
+
+  const { control, reset, watch } = useForm({ defaultValues: { account: ''} });
+  const account = watch('account'); // 欲查詢的活存帳號
 
   /**
    *- 初始化
@@ -35,6 +41,11 @@ const Page = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
+    const accountsList = await getAccountsList('MFC', undefined, true);// M=臺幣主帳戶、C=臺幣子帳戶、F=外幣帳戶
+    if (!accountsList.length) {
+      await showPrompt('您還沒有任臺幣、外幣存款帳戶，請在系統關閉此功能後，立即申請。', closeFunc);
+      return;
+    }
     // Function Controller 提供的參數
     // startParams = {
     //   selectorMode: true, 表示選取帳號模式，啟用時要隱藏 Home 圖示。
@@ -42,39 +53,52 @@ const Page = () => {
     //   bindAccount: 只列出此帳號設定的約轉帳號清單。
     // };
     const startParams = await loadFuncParams();
-    const bindAcct = startParams?.bindAccount;
 
-    // 若有指定帳號，則只取單一帳號的約定帳號清單。
-    // TODO 未指定帳號時，應改用頁韱分類。
-    const request = {
-      accountNo: bindAcct,
-      includeSelf: (startParams?.selectorMode ?? false), // 還要加上同ID互轉的帳號, 必需 同幣別。
-    };
-    getAgreedAccount(request).then(async (accts) => {
-      if (startParams) {
-        // NOTE 選取模式時，從轉帳頁面進來時，要排除「非該轉帳頁面幣別」的帳號 (ex: 從臺幣轉帳進來只能選取臺幣類型的常用帳號)
-        const isForeignType = bindAcct.substring(3, 6) === '007'; // '007' 外幣帳戶 , '004' 台幣帳戶
-        const selectedModeAccts = accts.filter((acct) => acct.isForeign === isForeignType); // TOOD 待測試
-        setAccounts(selectedModeAccts);
-        setBindAccount(bindAcct);
-        setSelectorMode(startParams.selectorMode ?? false);
-        setSelectedAccount(startParams?.defaultAccount);
-      } else {
-        // NOTE 非選取模式時，不需要列出同ID互轉的帳號
-        const nonSelectedModeAccts = accts.filter(({isSelf}) => !isSelf);
-        setAccounts(nonSelectedModeAccts);
-      }
+    // 若有指定帳號，則只取單一帳號的約定帳號清單。若無指定帳號，則以 acctOptions 中的第一個項目為預設帳號。
+    const acctOptions = accountsList.map((acct) => ({label: `${acct.accountNo} ${acct.alias}`, value: acct.accountNo}));
+    setModel((prevModel) => ({
+      ...prevModel,
+      selectorMode: startParams?.selectorMode ?? false,
+      selectedAccount: startParams?.defaultAccount ?? {},
+      accountOptions: acctOptions,
+    }));
+    reset({account: startParams?.bindAccount ?? acctOptions[0].value});
 
-      dispatch(setWaittingVisible(false));
-    });
+    dispatch(setWaittingVisible(false));
   }, []);
+
+  const accountsFilter = (accts) => {
+    if (model.selectorMode) {
+      // NOTE 選取模式時，從轉帳頁面進來時，要排除「非同幣別」的帳號 (ex: 從臺幣轉帳進來只能選取臺幣類型的常用帳號)
+      const isForeignType = account.substring(3, 6) === '007'; // '007' 外幣帳戶 , '004' 台幣帳戶
+      return accts.filter((acct) => acct.isForeign === isForeignType);
+    }
+    // NOTE 非選取模式時，不需要列出同ID互轉的帳號
+    return accts.filter((acct) => !acct.isSelf);
+  };
+
+  // 活存帳號選項改變時，查詢活存帳號下的約定轉入帳號清單
+  useEffect(() => {
+    if (model.accountOptions.length && account) {
+      const request = {
+        accountNo: account,
+        includeSelf: true, // 現在一律連同ID底下的帳號也一並取出，透過 CacheReducer 管理，後續再依照選取模式 filter
+      };
+      setIsFetching(true);
+      getAgreedAccount(request).then((accts) => {
+        const filteredAccounts = accountsFilter(accts);
+        setAccounts(filteredAccounts);
+        setIsFetching(false);
+      });
+    }
+  }, [model, account]);
 
   /**
    * 將選取的帳號傳回給叫用的單元功能，已知[轉帳]有使用。
    * @param {*} acct 選取的帳號。
    */
   const onAccountSelected = (acct) => {
-    if (selectorMode) {
+    if (model.selectorMode) {
       const response = {
         memberId: acct.headshot,
         accountName: acct.nickName,
@@ -93,18 +117,17 @@ const Page = () => {
   const editAccount = async (acct) => {
     const onFinished = async (newAcct) => {
       dispatch(setWaittingVisible(true));
-
-      const newAccounts = await updateAgreedAccount(bindAccount, newAcct);
+      const newAccounts = await updateAgreedAccount(account, newAcct);
       dispatch(setWaittingVisible(false));
-      setAccounts(newAccounts);
-      forceUpdate();
+      const filteredAccounts = accountsFilter(newAccounts);
+      setAccounts(filteredAccounts);
     };
 
     await showDrawer('編輯約定帳號', (<AccountEditor initData={acct} onFinished={onFinished} />));
   };
 
   const renderMemberCards = () => {
-    if (!accounts) return null;
+    if (!accounts || isFetching) return <Loading space="both" isCentered />;
     if (!accounts.length) return <EmptyData content="查無約定帳號" height="70vh" />;
     return accounts.map((acct) => (
       <MemberAccountCard
@@ -114,13 +137,12 @@ const Page = () => {
         bankName={acct.bankName}
         account={acct.acctId}
         memberId={acct.headshot}
-        isSelected={(acct.acctId === selectedAccount)}
+        isSelected={(acct.acctId === model.selectedAccount.accountNo && acct.bankId === model.selectedAccount.bankId)}
         onClick={() => onAccountSelected(acct)} // 傳回值：選取的帳號。
         moreActions={acct.isSelf ? null : [ // 不可編輯自己的帳號。（因為是由同ID互轉建立的）
           { lable: '編輯', type: 'edit', onClick: () => editAccount(acct) },
         ]}
       />
-
     ));
   };
 
@@ -131,6 +153,14 @@ const Page = () => {
     <Layout title="約定帳號管理">
       <Main small>
         <PageWrapper>
+          <div className={`dropdownContainer ${model.selectorMode ? 'hide' : ''}`}>
+            <DropdownField
+              name="account"
+              control={control}
+              options={model.accountOptions}
+              labelName="請選擇活存帳號"
+            />
+          </div>
           {renderMemberCards()}
         </PageWrapper>
       </Main>

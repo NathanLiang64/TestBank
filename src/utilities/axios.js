@@ -30,7 +30,10 @@ const processRequest = async (request) => {
   if (request.method === 'get') return request;
 
   const jwtToken = await getJwtToken();
-  if (jwtToken) request.headers.authorization = `Bearer ${jwtToken}`;
+  if (jwtToken) {
+    request.headers.ClientID = 'Web'; // 為了讓 Controller 知道是誰在叫用 API，才知道要用那一組加解密金鑰。
+    request.headers.authorization = `Bearer ${jwtToken}`;
+  }
 
   if (request.headers['Content-Type'] === 'multipart/form-data') return request;
 
