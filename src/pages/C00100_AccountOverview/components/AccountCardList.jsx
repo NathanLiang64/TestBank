@@ -71,7 +71,7 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
   if (stockAccounts.length > 0) {
     mainList.push({
       type: 'S',
-      accountNo: null,
+      accountNo: stockAccounts.length === 1 ? stockAccounts[0].accountNo : null,
       balance: accumulateBalance(stockAccounts),
     });
 
@@ -223,7 +223,7 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
 
         switch (account.type) {
           case 'M': // 母帳戶
-            cardName = '主帳戶';
+            cardName = '臺幣主帳戶';
             funcID = Func.C00300.id;
             break;
           case 'F': // 外幣帳戶 數量為1時不開drawer

@@ -1,5 +1,7 @@
 /* eslint-disable object-curly-newline */
 import { useHistory } from 'react-router';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { useDispatch } from 'react-redux';
 import { callAppJavaScript, funcStack, getOsType, storeData } from 'utilities/AppScriptProxy';
 import { callAPI } from 'utilities/axios';
 import { getAccountsList } from 'utilities/CacheData';
@@ -8,6 +10,7 @@ import { showCustomPrompt, showError } from 'utilities/MessageModal';
 
 export const useNavigation = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
 
   /**
    * 無法進入目標畫面時所顯示之彈窗
@@ -62,32 +65,39 @@ export const useNavigation = () => {
    * 檢查是否可以進入目標頁面
    */
   const isEnterFunc = async (funcKeyName) => {
-    let isEnter;
+    let isEnter = false;
     const requiredList = Func[funcKeyName].required;
 
-    const accountListLength = (type) => getAccountsList(type, async (items) => items.length);
-    const deptAccounts = await callAPI('/personal/v1/assetSummaryValues');
+    // 如不需檢查，直接進入頁面
+    if (requiredList.length === 0) return true;
 
-    if (requiredList.length === 0) isEnter = true;
+    dispatch(setWaittingVisible(true));
+    /* 正資產 */
+    const accountListTotal = await getAccountsList('MSF');
+    const isAccountListLengthNot0 = (type) => {
+      const accountNumber = accountListTotal.filter((account) => account.acctType === type).length;
+      return accountNumber > 0;
+    };
 
+    /* 負資產 */
+    const deptAccounts = await callAPI('/personal/v1/assetSummaryValues'); // TODO: 資料儲存至以避免重複呼叫api
+    dispatch(setWaittingVisible(false));
+
+    // forEach 無法進行非同步處理，儘量不要在其中以非同步取得資料
     requiredList.forEach(async (type) => {
       switch (type) {
         case 'M':
         case 'S':
         case 'F':
-          if (await accountListLength(type) > 0) isEnter = true;
-          isEnter = false;
+          if (isAccountListLengthNot0(type)) isEnter = true;
           break;
         case 'CC':
           if (deptAccounts.data.credit_cardno !== '') isEnter = true;
-          isEnter = false;
           break;
         case 'L':
           if (deptAccounts.data.loan_account !== '') isEnter = true;
-          isEnter = false;
           break;
         default:
-          isEnter = false;
           break;
       }
     });
@@ -123,7 +133,10 @@ export const useNavigation = () => {
       // 檢查是否可以進入頁面
       const funcKeyName = Object.keys(Func).find((key) => Func[key].id === funcID);
       const isEnter = await isEnterFunc(funcKeyName);
-      if (isEnter === false) return;
+      if (isEnter === false) {
+        funcStack.pop(); // 無法進入的頁面不需要被Back
+        return;
+      }
 
       const appJsRs = await callAppJavaScript('startFunc', data, true, () => {
         // 只要是 Fxxxxx 以 F 開頭的功能代碼，就是外開功能，不需納入 Function Controller 管理。
