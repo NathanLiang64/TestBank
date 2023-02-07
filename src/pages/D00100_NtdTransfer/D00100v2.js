@@ -319,7 +319,8 @@ const Transfer = (props) => {
     if (aboveQuota) {
       const formatedQuota = new Intl.NumberFormat('en-US').format(aboveQuota.quota);
       // TODO 待確認文字敘述正確性
-      await showInfo(`您的轉帳金額已超過${aboveQuota.type}轉帳限額(${formatedQuota})上限；若您需要提高轉帳額度，可透過自然人憑證完成帳戶升級成【一類帳戶】。`);
+      if (aboveQuota.isAgree) await showInfo(`${aboveQuota.isSelf ? '本行' : '跨行'}約定帳戶，${aboveQuota.type}轉帳金額上限為${formatedQuota}`);
+      else await showInfo(`您的轉帳金額已超過${aboveQuota.type}轉帳限額(${formatedQuota})上限；若您需要提高轉帳額度，可透過自然人憑證完成帳戶升級成【一類帳戶】。`);
       setFocus(idAmount);
       return;
     }
@@ -349,18 +350,27 @@ const Transfer = (props) => {
   const checkQuota = ({
     transIn, transOut, isAgreedAccount, amount,
   }) => {
-    let quota = transOut.quotaArray[1];
-    // 先檢查當日
-    // TODO 約定轉帳的累計剩餘額度需要透過 API 動態拿取，目前 hardcode
-    if (transIn.type === 2) quota = transIn.regAcct.bankId === '805' ? 5000000 : 2000000;
-    if (isAgreedAccount) quota = isAgreedAccount.bankId === '805' ? 5000000 : 2000000;
-    if (amount > quota) return {quota, type: '當日'};
+    const isAgree = transIn.type === 2 || isAgreedAccount;
+    const isSelf = (transIn.type === 2 && transIn.regAcct?.bankId === '805') || isAgreedAccount.bankId === '805';
+    let [singleQuota, dayQuota] = transOut.quotaArray; // 非約定的[單筆額度,當日額度]
 
-    // 再檢查單筆
-    [quota] = transOut.quotaArray;
-    if (transIn.type === 2) quota = transIn.regAcct.bankId === '805' ? 5000000 : 2000000;
-    if (isAgreedAccount) quota = isAgreedAccount.bankId === '805' ? 5000000 : 2000000;
-    if (amount > quota) return {quota, type: '單筆'};
+    if (isAgree) {
+      dayQuota = isSelf ? transOut.agrdTfrSelfLimitLeft : transOut.agrdTfrInterLimitLeft;
+      singleQuota = isSelf ? 5000000 : 2000000;
+    }
+
+    // 檢查單筆額度
+    if (amount > singleQuota) {
+      return {
+        quota: singleQuota, type: '單筆', isAgree, isSelf,
+      };
+    }
+    // 檢查當日額度
+    if (amount > dayQuota) {
+      return {
+        quota: dayQuota, type: '當日', isAgree, isSelf,
+      };
+    }
     return null;
   };
 
@@ -524,6 +534,9 @@ const Transfer = (props) => {
           freeTransferRemain: account.freeTransferRemain = info.freeTransferRemain,
           // dgType = 帳戶類別('  '.非數存帳號, '11'.臨櫃數存昇級一般, '12'.一之二類, ' 2'.二類, '32'.三之二類)
           quotaArray: [account.dgType === '32' ? 10000 : 50000, info.dLimitLeft, info.mLimitLeft],
+          agrdTfrSelfLimitLeft: info.agrdTfrSelfLimitLeft,
+          agrdTfrInterLimitLeft: info.agrdTfrInterLimitLeft,
+
         };
         forceUpdate();
       });

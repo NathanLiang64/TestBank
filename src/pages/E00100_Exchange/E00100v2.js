@@ -5,6 +5,7 @@ import {
   getCcyList,
   getExchangePropertyList,
   getExchangeRateInfo,
+  getAgreedAccount,
   getAccountsList,
 } from 'pages/E00100_Exchange/api';
 
@@ -22,12 +23,11 @@ import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { RadioGroupField } from 'components/Fields/radioGroupField';
 import { CurrencyInputField, DropdownField, TextInputField } from 'components/Fields';
-import E00100Rules from './E00100_Rules';
-import E00100Notice from './E00100_Notice';
-import E00100Table from './E00100_Table';
+// import { getAccountsList } from 'utilities/CacheData';
+import { E00100Notice, E00100Table } from './E00100_Content';
 
 /* Styles */
-import ExchangeWrapper from './E00100.style';
+import { ExchangeWrapper } from './E00100.style';
 
 /**
  * E00100 外幣換匯首頁
@@ -58,7 +58,7 @@ const E00100 = () => {
     memo: yup.string(),
   });
   const {
-    handleSubmit, control, watch, reset,
+    handleSubmit, control, watch, reset, setValue,
   } = useForm({
     defaultValues: {
       exchangeType: '1',
@@ -75,14 +75,14 @@ const E00100 = () => {
     reValidateMode: 'onBlur',
   });
 
-  const [banker, setBanker] = useState(false);
-  const [accountsList, setAccountsList] = useState([]);
+  const [banker, setBanker] = useState();
   const [currencyTypeList, setCurrencyTypeList] = useState([]);
   const [propertyList, setPropertyList] = useState({});
   const [exchangeRate, setExchangeRate] = useState([]);
+  const [accountsListObj, setAccountsListObj] = useState({});
 
   const {
-    currency, exchangeType, inAccount, outAccount, outType, ntDollorBalance, foreignBalance, property,
+    currency, exchangeType, outAccount, outType, ntDollorBalance, foreignBalance,
   } = watch();
 
   const selectedCurrency = useMemo(() => {
@@ -92,26 +92,32 @@ const E00100 = () => {
 
   // 查詢是否為行員
   const getIsEmployee = async () => {
-    const isBanker = await isEmployee();
-    if (isBanker) setBanker(isBanker);
+    if (banker) {
+      const employee = await isEmployee();
+      setBanker(employee);
+    }
   };
 
   // 取得可交易幣別清單
   const fetchCcyList = async () => {
-    const response = await getCcyList(); // 回傳的資料的 key 不是 camelCase
-    if (response?.length) setCurrencyTypeList(response);
-    return response[0].Currency;
+    if (currencyTypeList.length) return;
+    const currencyList = await getCcyList(); // 回傳的資料的 key 不是 camelCase
+    setCurrencyTypeList(currencyList);
+    setValue('currency', currencyList[0]?.Currency);
   };
 
   // 臺幣/外幣帳戶餘額
   const balance = useMemo(() => {
-    const isTWD2Frgn = exchangeType === '1';
-    const twdAccount = accountsList.find(({account}) => account === (isTWD2Frgn ? outAccount : inAccount));
-    const twdBalance = twdAccount?.details.find((detail) => detail.currency === 'TWD');
-    const frgnAccount = accountsList.find(({account}) => account === (isTWD2Frgn ? inAccount : outAccount));
-    const frgnBalance = frgnAccount?.details.find((detail) => detail.currency === currency);
-    return { twd: twdBalance?.balance ?? 0, frgn: frgnBalance?.balance ?? 0 };
-  }, [currency, accountsList, inAccount, outAccount, exchangeType]);
+    if (accountsListObj[outAccount]) {
+      const {details} = accountsListObj[outAccount];
+      if (exchangeType === '1') {
+        const foundDetail = details.find((detail) => detail.currency === 'TWD' || detail.currency === 'NTD');
+        return foundDetail?.balance ?? 0;
+      }
+      const foundDetail = details.find((detail) => detail.currency === currency);
+      return foundDetail?.balance ?? 0;
+    } return 0;
+  }, [currency, outAccount, exchangeType, accountsListObj]);
 
   // 檢查是否超出餘額
   const checkOverAmt = (data) => {
@@ -121,11 +127,11 @@ const E00100 = () => {
     // 如果是臺幣轉外幣，檢查是否超過臺幣帳戶的餘額
     // TODO 待確認 SpotAskRate 與  SpotBidRate 是否正確
     if (exchangeType === '1') {
-      return frgn2Ntd ? amt > balance.twd : amt > balance.twd / selectedCurrency.SpotAskRate;
+      return frgn2Ntd ? amt > balance : amt > balance / selectedCurrency.SpotAskRate;
     }
     // 如果是外幣轉臺幣，檢查是否超過外幣帳戶的餘額
     if (exchangeType === '2') {
-      return frgn2Ntd ? amt / selectedCurrency.SpotBidRate > balance.frgn : amt > balance.frgn;
+      return frgn2Ntd ? amt / selectedCurrency.SpotBidRate > balance : amt > balance;
     }
     return true;
   };
@@ -151,7 +157,7 @@ const E00100 = () => {
         ccyCd: values.currency,
         trfCcyCd: values.outType === '1' ? values.currency : 'NTD',
         trfAmt, // 目前是帶字串過去，是否應該帶數字?
-        isEmployee: banker, // TODO 由 Conotroller 從 token 中取出。
+        isEmployee: banker.isEmployee, // TODO 由 Conotroller 從 token 中取出。
       };
 
       const confirmData = {
@@ -159,8 +165,8 @@ const E00100 = () => {
         ...response,
         memo: values.memo,
         leglCode: values.property,
-        leglDesc: propertyList.find((item) => item.leglCode === values.property).leglDesc,
-        outAccountAmount: exchangeType === '1' ? balance.twd : balance.frgn,
+        leglDesc: propertyList.find((item) => item.leglCode === values.property).leglDesc, // TODO 還需要給嗎?
+        outAccountAmount: balance, // TODO 待測試
       };
 
       history.push('/E001001', { ...confirmData });
@@ -171,33 +177,17 @@ const E00100 = () => {
 
   const generateAvailibleAmount = () => {
     if (exchangeType === '1') {
-      return toCurrency(Math.round(balance.twd / selectedCurrency.SpotAskRate));
+      return toCurrency(Math.round(balance / selectedCurrency.SpotAskRate));
     }
-    return toCurrency(Math.round(balance.frgn * selectedCurrency.SpotBidRate));
+    return toCurrency(Math.round(balance * selectedCurrency.SpotBidRate));
   };
 
   // 轉出/轉入的帳號選項
-  // Bug 轉入選項需要是轉出帳號的約定帳號
-  const accountOptions = useMemo(() => {
-    const generateOpts = (arr) => arr.map((item) => ({ label: item.account, value: item.account }));
-    // 先判斷目前是 臺幣轉外幣 或是 外幣轉臺幣
-    const isNtd2Frgn = exchangeType === '1';
-    // 若為臺幣轉外幣，轉出帳號必須是臺幣帳戶，反之則為外幣帳戶
-    const outAcctList = accountsList.filter(({ details }) => {
-      if (!details) return false;
-      return details.find((item) => (isNtd2Frgn ? item.currency === 'TWD' : item.currency !== 'TWD'));
-    });
-    // 若為臺幣轉外幣，轉入帳號必須是外幣帳戶，反之則為臺幣帳戶
-    const inAcctList = accountsList.filter(({ details }) => {
-      if (!details) return false;
-      return details.find((item) => (!isNtd2Frgn ? item.currency === 'TWD' : item.currency !== 'TWD'));
-    });
-
-    return {
-      outOptions: generateOpts(outAcctList),
-      inOptions: generateOpts(inAcctList),
-    };
-  }, [accountsList.length, exchangeType]);
+  const outAccountOptions = useMemo(() => {
+    const allowedOutOptions = Object.keys(accountsListObj).filter((accountNo) => (accountsListObj[accountNo].acctType === 'F' ? exchangeType === '2' : exchangeType === '1'));
+    const newOutOptions = allowedOutOptions.map((accountNo) => ({label: accountNo, value: accountNo}));
+    return newOutOptions;
+  }, [exchangeType, accountsListObj]);
 
   // 幣別選項
   const currencyTypeOptions = useMemo(
@@ -219,17 +209,15 @@ const E00100 = () => {
   }, [exchangeType, propertyList]);
 
   // 餘額顯示，type = 要顯示轉出或轉入帳號
-  const renderBalance = (type) => {
-    let isNTD;
-    if (type === 'transOut') isNTD = exchangeType === '1';
-    else if (type === 'transIn') isNTD = exchangeType === '2';
+  const renderBalance = () => {
+    const isNTD = exchangeType === '1';
     return (
       <FEIBHintMessage className="balance">
         可用餘額
         &nbsp;
         {isNTD ? 'NTD' : currency}
         &nbsp;
-        {toCurrency(balance[isNTD ? 'twd' : 'frgn'])}
+        {toCurrency(balance)}
       </FEIBHintMessage>
     );
   };
@@ -249,67 +237,85 @@ const E00100 = () => {
     });
   };
 
+  const fetchPropertyList = async (type) => {
+    let propList;
+    if (!propertyList[type]) {
+      propList = await getExchangePropertyList({ trnsType: type, action: '1' });
+      setPropertyList((prevList) => ({ ...prevList, [type]: propList }));
+    } else propList = propertyList[type];
+    setValue('property', propList[0].leglCode);
+  };
+
   useEffect(async () => {
     // 取得交易性質列表
-    dispatch(setWaittingVisible(true));
-    let propList;
-    if (!propertyList[exchangeType]) {
-      propList = await getExchangePropertyList({ trnsType: exchangeType, action: '1' });
-      setPropertyList((prevList) => ({ ...prevList, [exchangeType]: propList }));
-    } else propList = propertyList[exchangeType];
+    fetchPropertyList(exchangeType);
+    // 確認使用者是否為行員
+    getIsEmployee();
+    // 取得幣別列表
+    fetchCcyList();
 
-    if (!accountsList.length) {
-      // 確認使用者是否為行員
-      getIsEmployee();
-      // 取得幣別列表，並拿取預設幣別
-      const defaultCurrency = await fetchCcyList();
+    if (!Object.keys(accountsListObj).length) {
+      dispatch(setWaittingVisible(true));
       // 取得帳戶列表，並篩選出有約定的帳戶
-      const accountListRes = await getAccountsList('MSF');
-      const transableAccountList = accountListRes.filter(({transable}) => !!transable);
-      setAccountsList(transableAccountList);
+      const accountListRes = await getAccountsList('MSF'); // TODO 後續透過 cacheReducer 拿取
+      const transableAccountList = accountListRes.filter(({transable}) => true || !!transable); // TODO For 測試需求，暫不刪除
+      const obj = transableAccountList.reduce((acc, cur) => {
+        acc[cur.account] = {...cur, inAccountOptions: null};
+        return acc;
+      }, {});
+      setAccountsListObj(obj);
 
-      reset((formValues) => ({
-        ...formValues,
-        property: propList[0].leglCode,
-        currency: defaultCurrency,
-        outAccount: transableAccountList[0]?.account ?? '', // BUG  第一個可能不一定是臺幣帳戶
-      }));
+      // 預設帳號設為非台幣的帳戶
+      const defaultAccount = transableAccountList.find(({acctType}) => acctType !== 'F');
+      reset((formValues) => ({ ...formValues, outAccount: defaultAccount?.account ?? ''}));
+      dispatch(setWaittingVisible(false));
+    } else { // TODO 拿到下一個 useEffect 去做
+      const [defaultAccount] = Object.keys(accountsListObj).filter((accountNo) => (accountsListObj[accountNo].acctType === 'F' ? exchangeType === '2' : exchangeType === '1'));
+      reset((formValues) => ({ ...formValues, outAccount: defaultAccount ?? ''}));
     }
-    dispatch(setWaittingVisible(false));
-    // exchangeType 改變時，轉出/轉入帳號 ＆ 匯款性質欄位需要變更
-    if (property && !propertyOptions.find((opt) => opt.value === property)) {
-      reset((formValues) => ({
-        ...formValues,
-        inAccount: '',
-        property: propList[0].leglCode,
-        outAccount: accountOptions.outOptions[0].value,
-      }));
-    }
+    // else {
+    //   reset((formValues) => ({
+    //     ...formValues,
+    //     inAccount: '',
+    //     outAccount: outAccountOptions[0]?.value ?? '',
+    //   }));
+    // }
+
+    // exchangeType 改變時，轉出帳號需要變更
+    // if (property && !propertyOptions.find((opt) => opt.value === property)) {
+    //   reset((formValues) => ({
+    //     ...formValues,
+    //     inAccount: '',
+    //     // property: propList[0].leglCode, TODO 待確認
+    //     outAccount: outAccountOptions[0]?.value ?? '',
+    //   }));
+    // }
     // outType 改變時，清空 foreignBalance 以及 ntDollorBalance 欄位
     if (outType === '1' && ntDollorBalance) reset((formValues) => ({...formValues, ntDollorBalance: ''}));
     if (outType === '2' && foreignBalance) reset((formValues) => ({ ...formValues, foreignBalance: '' }));
   }, [exchangeType, outType]);
 
-  // TODO 確認轉出帳號是否有可換匯的約定帳號
-  // useEffect(() => {
-  //   if (outAccount) {
-  //     const foundAccount = accountsList.find(({ account }) => account === outAccount);
-  //     // 進入此頁後同一個轉出帳號只要出現過1次提示，則不再出現，重新進入此頁則重新計算。
-  //     if (!(outAccount in transableObj)) {
-  //       setTransableObj((prevObj) => ({ ...prevObj, [outAccount]: foundAccount.transable }));
-  //       // 若選擇的轉出帳號 trasnable ===false，需要提示使用者該帳號沒有可換匯的約定帳號
-  //       if (!foundAccount.transable) {
-  //         showCustomPrompt({
-  //           message: '該帳號目前尚未擁有可進行換匯的約定轉帳帳號，請先進行約定本人轉帳帳號後，再進行換匯。',
-  //           onOk: () => window.open('https://eauth.feib.com.tw/AccountAgreement/sameId/index', '_blank'), // 可能會無法打開，且連結是否應該 hardcode 待確認
-  //           okContent: '立即設定',
-  //           onCancel: () => {},
-  //         });
-  //       }
-  //     }
-  //   }
-  // }, [outAccount, accountsList]);
+  // 轉出帳號改變時，動態拿取對應的約定轉出帳號列表
+  useEffect(() => {
+    if (outAccount && !accountsListObj[outAccount].inAccountOptions) {
+      getAgreedAccount(outAccount).then((accts) => {
+        // TODO，是否只允許顯示特定科目 001活儲/003行員存款/004活存/031支存
+        const allowedAccts = accts.filter((acct) => (acct.isSelf && (exchangeType === '1' ? acct.isForeign : !acct.isForeign)));
+        const options = allowedAccts.map((acct) => ({label: acct.acctId, value: acct.acctId}));
+        if (!options.length) {
+          showCustomPrompt({
+            message: '該帳號目前尚未擁有可進行換匯的約定轉帳帳號，請先進行約定本人轉帳帳號後，再進行換匯。',
+            onOk: () => window.open('https://eauth.feib.com.tw/AccountAgreement/sameId/index', '_blank'), // ??? 連hardcode 待確認，需要透過 API 拿取???
+            okContent: '立即設定',
+            onCancel: () => {},
+          });
+        }
 
+        setAccountsListObj((prevObj) => ({...prevObj, [outAccount]: {...prevObj[outAccount], inAccountOptions: options}}));
+      });
+    }
+  }, [outAccount, exchangeType]);
+  console.log('accountsListObj', accountsListObj);
   return (
     <Layout title="外幣換匯">
       <ExchangeWrapper style={{ padding: '2.4rem 1.6rem 2.4rem 1.6rem' }}>
@@ -325,7 +331,11 @@ const E00100 = () => {
         <form
           autoComplete="off"
           onSubmit={handleSubmit(onSubmit)}
-          style={{ display: 'grid', alignContent: 'flex-start', gridGap: '2rem' }}
+          style={{
+            display: 'grid',
+            alignContent: 'flex-start',
+            gridGap: '2rem',
+          }}
         >
           <section>
             <RadioGroupField
@@ -344,7 +354,7 @@ const E00100 = () => {
               name="outAccount"
               control={control}
               labelName="轉出帳號"
-              options={accountOptions.outOptions}
+              options={outAccountOptions}
             />
             {renderBalance('transOut')}
           </section>
@@ -368,9 +378,8 @@ const E00100 = () => {
               name="inAccount"
               control={control}
               labelName="轉入帳號"
-              options={accountOptions.inOptions}
+              options={accountsListObj[outAccount]?.inAccountOptions ?? []}
             />
-            {renderBalance('transIn')}
           </section>
 
           <section>
@@ -444,12 +453,14 @@ const E00100 = () => {
             />
           </section>
           <Accordion title="外幣換匯規範">
-            <E00100Rules />
+            <p>
+              以本行牌告匯率或網銀優惠匯率為成交匯率(預約交易係依據交易日上午09:30最近一盤牌告/網銀優惠匯率為成交匯率)。營業時間以外辦理外匯交易結匯金額併入次營業日累積結匯金額；為網銀優惠將視市場波動清況，適時暫時取消優惠。
+            </p>
           </Accordion>
           <Accordion>
             <E00100Notice />
           </Accordion>
-          {banker && (
+          {banker?.isEmployee && (
             <InfoArea>換匯匯率將依據本行員工優惠匯率進行交易</InfoArea>
           )}
           <div className="submitBtn">

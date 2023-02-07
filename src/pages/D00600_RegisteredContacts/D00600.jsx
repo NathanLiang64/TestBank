@@ -32,8 +32,8 @@ const Page = () => {
     accountOptions: [],
   });
 
-  const { control, reset, watch } = useForm({ defaultValues: { account: ''} });
-  const account = watch('account'); // 欲查詢的活存帳號
+  const { control, reset, watch } = useForm({ defaultValues: { accountNo: ''} });
+  const accountNo = watch('account'); // 欲查詢的活存帳號
 
   /**
    *- 初始化
@@ -72,7 +72,7 @@ const Page = () => {
       // NOTE 選取模式時
       // 1. 從轉帳頁面進來時，要排除「非同幣別」的帳號 (ex: 從臺幣轉帳進來只能選取臺幣類型的常用帳號)
       // 2. accts 內的項目若是本行帳戶(805)，只允許顯示特定科目 001活儲/003行員存款/004活存/031支存
-      const isForeignType = account.padStart(16, '0').substring(5, 8) === '007'; // '007' 外幣帳戶 , '004' 台幣帳戶
+      const isForeignType = accountNo.padStart(16, '0').substring(5, 8) === '007'; // '007' 外幣帳戶 , '004' 台幣帳戶
       const allowedSubjects = ['001', '003', '004', '031'];
 
       return accts.filter((acct) => {
@@ -87,19 +87,15 @@ const Page = () => {
 
   // 活存帳號選項改變時，查詢活存帳號下的約定轉入帳號清單
   useEffect(() => {
-    if (model.accountOptions.length && account) {
-      const request = {
-        accountNo: account,
-        includeSelf: true, // 現在一律連同ID底下的帳號也一並取出，透過 CacheReducer 管理，後續再依照選取模式 filter
-      };
+    if (model.accountOptions.length && accountNo) {
       setIsFetching(true);
-      getAgreedAccount(request).then((accts) => {
+      getAgreedAccount(accountNo).then((accts) => {
         const filteredAccounts = accountsFilter(accts);
         setAccounts(filteredAccounts);
         setIsFetching(false);
       });
     }
-  }, [model, account]);
+  }, [model, accountNo]);
 
   /**
    * 將選取的帳號傳回給叫用的單元功能，已知[轉帳]有使用。
@@ -125,7 +121,7 @@ const Page = () => {
   const editAccount = async (acct) => {
     const onFinished = async (newAcct) => {
       dispatch(setWaittingVisible(true));
-      const newAccounts = await updateAgreedAccount(account, newAcct);
+      const newAccounts = await updateAgreedAccount(accountNo, newAcct);
       dispatch(setWaittingVisible(false));
       const filteredAccounts = accountsFilter(newAccounts);
       setAccounts(filteredAccounts);

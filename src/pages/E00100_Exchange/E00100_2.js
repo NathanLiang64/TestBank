@@ -1,5 +1,3 @@
-/** @format */
-
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { getCurrenyInfo } from 'utilities/Generator';
@@ -13,7 +11,7 @@ import InformationList from 'components/InformationList';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 
 /* Styles */
-import ExchangeWrapper from './E00100.style';
+import { ExchangeWrapper } from './E00100.style';
 
 const E001002 = ({ location }) => {
   const {state} = location;

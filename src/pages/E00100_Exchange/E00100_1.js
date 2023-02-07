@@ -1,5 +1,3 @@
-/** @format */
-
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { exchangeNtoF, exchangeFtoN } from 'pages/E00100_Exchange/api';
@@ -17,8 +15,8 @@ import CountDown from 'components/CountDown';
 /* Styles */
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import ExchangeWrapper from './E00100.style';
-import E00100Notice from './E00100_Notice';
+import { ExchangeWrapper } from './E00100.style';
+import { E00100Notice } from './E00100_Content';
 
 const E001001 = ({ location }) => {
   const history = useHistory();
