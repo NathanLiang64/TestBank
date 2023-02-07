@@ -6,10 +6,20 @@ import AccountOverviewWrapper from './accountOverview.style';
 /* Swiper modules */
 SwiperCore.use([Pagination]);
 
+/**
+ * 此 Swiper 元件用於:
+ * C00300(臺幣活存), C00400(外幣活存), C00500(證券交割戶)
+ */
 const AccountOverview = ({
-  accounts, onAccountChanged, cardColor,
-  funcList, moreFuncs, onFunctionClick,
-  transferMode, withdrawMode, defaultSlide,
+  accounts,
+  onAccountChanged,
+  cardColor,
+  funcList,
+  moreFuncs,
+  onFunctionClick,
+  transferMode,
+  withdrawMode,
+  defaultSlide,
 }) => {
   const renderDebitCard = (account) => (
     <DebitCard
@@ -27,12 +37,19 @@ const AccountOverview = ({
   const renderSwiper = () => {
     const onSlideChange = (swiper) => onAccountChanged(swiper.activeIndex);
     return (
-      <Swiper slidesPerView={1.14} spaceBetween={8} centeredSlides pagination initialSlide={defaultSlide} onSlideChange={onSlideChange}>
-        { accounts.map((account) => (
+      <Swiper
+        slidesPerView={1.06}
+        spaceBetween={8}
+        centeredSlides
+        pagination
+        initialSlide={defaultSlide}
+        onSlideChange={onSlideChange}
+      >
+        {accounts.map((account) => (
           <SwiperSlide key={`${account.accountNo}-${account.currency}`}>
-            { renderDebitCard(account) }
+            {renderDebitCard(account)}
           </SwiperSlide>
-        )) }
+        ))}
       </Swiper>
     );
   };
@@ -40,12 +57,10 @@ const AccountOverview = ({
   return accounts ? (
     <AccountOverviewWrapper $multipleCardsStyle={accounts?.length > 1}>
       <div className="userCardArea">
-        { accounts.length > 1 ? (
+        {accounts.length > 1 ? (
           renderSwiper()
         ) : (
-          <div className="singleAccount">
-            {renderDebitCard(accounts[0])}
-          </div>
+          <div className="singleAccount">{renderDebitCard(accounts[0])}</div>
         )}
       </div>
     </AccountOverviewWrapper>
