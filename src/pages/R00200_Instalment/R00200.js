@@ -36,6 +36,7 @@ const R00200 = () => {
     resolver: yupResolver(schema),
   });
   const [txns, setTxns] = useState([]);
+  const [flag, setFlag] = useState();
 
   const applTypeOptions = [
     { label: '單筆', value: 'G' },
@@ -64,20 +65,20 @@ const R00200 = () => {
     const totlaUnallowed = applType === 'H' && totalAmount < 3000;
 
     // NOTE 打 queryInstallment API 目的為 1.確認申請的資料已包含總額的項目 2. 是否已經有同意條款的註記
-    const { newInstRestraintFlag, items} = await queryInstallment();
-    const appliedTotalItem = items.find((item) => item.applType === 'H' || item.applType === 2);
+    // const { newInstRestraintFlag, items} = await queryInstallment();
+    // const appliedTotalItem = items.find((item) => item.applType === 'H' || item.applType === 2);
 
     // 當選擇單筆/總額分期時，若單筆/總額的金額低於 3000 元以下的資料 =>提示訊息
     if (totlaUnallowed || singleUnallowed) showError(showInsufficientContent(applType));
 
     // 若已經申請過總額分期，直接導向 R002003 顯示已申請的晚點付資訊
-    else if (appliedTotalItem) history.push('/R002003', {...appliedTotalItem, readOnly: true});
+    // else if (appliedTotalItem) history.push('/R002003', {...appliedTotalItem, readOnly: true});
 
     // 若申請項目為導向 「單筆」，先導向 R002001 勾選要分期的項目
-    else if (applType === 'G') history.push('/R002001', { availableTxns, newInstRestraintFlag });
+    else if (applType === 'G') history.push('/R002001', { availableTxns, newInstRestraintFlag: flag });
 
     // 若申請項目為導向 「總額」，直接導向 R002002 勾選要分期期數
-    else if (applType === 'H')history.push('/R002002', { applType, selectedTxns: txns, newInstRestraintFlag });
+    else if (applType === 'H')history.push('/R002002', { applType, selectedTxns: txns, newInstRestraintFlag: flag });
 
     dispatch(setWaittingVisible(false));
   };
@@ -85,10 +86,15 @@ const R00200 = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    const txnRes = await getTxn();
-    if (!txnRes.length) await showCustomPrompt({ message: '您目前沒有可分期的消費', onOk: closeFunc });
-    else setTxns(txnRes);
-
+    const { newInstRestraintFlag, items } = await queryInstallment();
+    setFlag(newInstRestraintFlag);
+    const appliedTotalItem = items.find((item) => item.applType === 'H' || item.applType === '2');
+    if (appliedTotalItem) history.push('/R002003', {...appliedTotalItem, readOnly: true});
+    else {
+      const txnRes = await getTxn();
+      if (!txnRes.length) await showCustomPrompt({ message: '您目前沒有可分期的消費', onOk: closeFunc });
+      else setTxns(txnRes);
+    }
     dispatch(setWaittingVisible(false));
   }, []);
 

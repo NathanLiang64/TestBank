@@ -113,6 +113,6 @@ export const getAutoDebits = async (request) => {
 
 export const getBankeeCardNo = async (request) => {
   const { data: { cards } } = await callAPI('/creditCard/v1/getCards', request);
-  const bankeeCard = cards.find((card) => card.isBankeeCard === 'Y');
+  const bankeeCard = cards.find((card) => !!card.isBankeeCard);
   return bankeeCard.cardNo;
 };

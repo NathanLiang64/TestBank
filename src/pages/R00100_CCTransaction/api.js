@@ -49,7 +49,7 @@ export const getBankeeCard = async (request) => {
   const {
     data: { cards, usedCardLimit },
   } = await callAPI('/creditCard/v1/getCards', request);
-  const bankeeCard = cards.find((card) => card.isBankeeCard === 'Y');
+  const bankeeCard = cards.find((card) => !!card.isBankeeCard);
   if (!bankeeCard) return null;
   return { cards: [{ cardNo: bankeeCard.cardNo }], usedCardLimit, isBankeeCard: true };
 };

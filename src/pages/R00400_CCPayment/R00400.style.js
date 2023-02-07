@@ -13,7 +13,7 @@ const PageWrapper = styled.div`
   .flex {
     display: grid;
     align-content: flex-start;
-    grid-gap: 0.5rem;
+    grid-gap: 1rem;
   }
 
   .ml-4 {

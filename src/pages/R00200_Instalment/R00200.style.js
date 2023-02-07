@@ -9,7 +9,20 @@ const InstalmentWrapper = styled(Layout)`
     .InstalmentWrapperText {
      font-size: 1.4rem;
      color: ${({ theme }) => theme.colors.text.dark};
-   }
+     padding: 1rem 2rem 0;
+     border-top: .8rem solid ${({ theme }) => theme.colors.background.lighterBlue};
+    }
+  }
+  
+  .InformSection{
+    color: ${({ theme }) => theme.colors.primary.dark};
+    text-align: center;
+    padding:2rem;
+    font-size: 1.8rem;
+  }
+
+  &.ConfirmResultPage{
+    padding:0;
   }
 
   .closeIconButton {
@@ -115,6 +128,14 @@ const InstalmentWrapper = styled(Layout)`
   .note {
     font-size: 1.2rem;
     color: ${({ theme }) => theme.colors.text.light};
+  }
+
+  .ConfirmForm{
+    display: grid;
+    align-content: flex-start;
+    grid-gap: 2rem;
+    padding: 0 2rem;
+          
   }
 `;
 
