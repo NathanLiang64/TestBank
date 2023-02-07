@@ -245,7 +245,14 @@ const Page = () => {
     <Layout title="貸款" inspector={inspector}>
       <MainScrollWrapper>
         <PageWrapper>
-          <SwiperLayout slides={renderSlides(loans)} hasDivider={false} slidesPerView={loans?.length === 1 ? 1.06 : 1.14} spaceBetween={8} centeredSlides onSlideChange={onSlideChange}>
+          <SwiperLayout
+            slides={renderSlides(loans)}
+            hasDivider={false}
+            slidesPerView={1.06}
+            spaceBetween={8}
+            centeredSlides
+            onSlideChange={onSlideChange}
+          >
             {renderContents()}
           </SwiperLayout>
         </PageWrapper>
