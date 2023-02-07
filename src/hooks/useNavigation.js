@@ -2,7 +2,6 @@
 import { useHistory } from 'react-router';
 import { callAppJavaScript, funcStack, getOsType, storeData } from 'utilities/AppScriptProxy';
 import { callAPI } from 'utilities/axios';
-import { getAccountsList } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
 
@@ -55,6 +54,7 @@ export const useNavigation = () => {
       okContent: '立即申請',
       onOk: () => window.open(errMsg.link, '_blank'),
       cancelContent: '我再想想',
+      showCloseButton: false,
     });
   };
 
@@ -62,33 +62,20 @@ export const useNavigation = () => {
    * 檢查是否可以進入目標頁面
    */
   const isEnterFunc = async (funcKeyName) => {
-    let isEnter = false;
+    // 取得擁有的產品代碼清單，例：[M, F, S, C, CC, L]
+    const assetFlags = await callAPI('/personal/v1/getAssetFlags');
+
     const requiredList = Func[funcKeyName].required;
+    if (requiredList.length > 0) {
+      const prodType = requiredList.find((f) => assetFlags.data.includes(f));
 
-    const accountListLength = (type) => getAccountsList(type, async (items) => items.length);
-    const deptAccounts = await callAPI('/personal/v1/assetSummaryValues');
-
-    if (requiredList.length === 0) isEnter = true;
-
-    requiredList.forEach(async (type) => {
-      switch (type) {
-        case 'M':
-        case 'S':
-        case 'F':
-          if (await accountListLength(type) > 0) isEnter = true;
-          break;
-        case 'CC':
-          if (deptAccounts.data.credit_cardno !== '') isEnter = true;
-          break;
-        case 'L':
-          if (deptAccounts.data.loan_account !== '') isEnter = true;
-          break;
-        default:
-          break;
+      // 找不到，就提示詢問申請該產品。
+      if (!prodType) {
+        await handleShowPrompt(requiredList[0]);
+        return false;
       }
-    });
-    if (isEnter === false) await handleShowPrompt(requiredList[0]);
-    return isEnter;
+    }
+    return true;
   };
 
   /**
