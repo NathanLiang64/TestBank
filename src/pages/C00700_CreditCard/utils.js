@@ -80,7 +80,7 @@ export const generateTwoCardsArray = (cardsArr) => {
   ];
   const modifiedCards = cardsArr.reduce((acc, cur) => {
     const { isBankeeCard, cardNo, ...rest } = cur;
-    if (isBankeeCard === 'Y') {
+    if (isBankeeCard) {
       acc[0] = { ...acc[0], cards: [{ cardNo }], ...rest };
     } else acc[1].cards.push({ cardNo });
     return acc;
