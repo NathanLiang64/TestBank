@@ -30,26 +30,24 @@ export const getTransactions = async (request) => {
 
 /**
  * 查詢客戶的 bankee 信用卡資訊
- *
- * @param token
- * @return {
- * usedCardLimit, // 已使用額度
- * isBankeeCard, // 專案代號
- * cards [
- *      {
- *        cardNo, // 卡號
- *      },
- *      ...
- *    ]
- * }
- *
+ * @returns {Promise<{
+ *   usedCardLimit: Number, // 已使用額度
+*   cards: [{
+*     cardNo: String, // 卡號
+*     isBankeeCard: Boolean, // Bankee信用卡旗標
+*     memberLevel: Number, // 會員等級 (Bankee信用卡才有值)
+*     rewardsRateDomestic: Number, // 國內消費 刷卡金回饋比例 (Bankee信用卡才有值)
+*     rewardsRateOverseas: Number, // 國外消費 刷卡金回饋比例 (Bankee信用卡才有值)
+*     rewardsAmount: Number, // 回饋試算 (Bankee信用卡才有值)
+*   }]
+* }>}
  */
 
 export const getBankeeCard = async (request) => {
   const {
     data: { cards, usedCardLimit },
   } = await callAPI('/creditCard/v1/getCards', request);
-  const bankeeCard = cards.find((card) => !!card.isBankeeCard);
+  const bankeeCard = cards.find((card) => card.isBankeeCard);
   if (!bankeeCard) return null;
   return { cards: [{ cardNo: bankeeCard.cardNo }], usedCardLimit, isBankeeCard: true };
 };
