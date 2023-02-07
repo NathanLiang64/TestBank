@@ -47,7 +47,7 @@ const AutomaticBillPayment = () => {
   // 確認有無Bankee信用卡
   const getCardsData = async () => {
     const cardRes = await getCards();
-    const bankeeCards = cardRes.cards.filter((card) => card.isBankeeCard === 'Y');
+    const bankeeCards = cardRes.cards.filter((card) => card.isBankeeCard);
     if (!bankeeCards.length) {
       showCustomPrompt({
         message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
