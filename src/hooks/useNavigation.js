@@ -63,11 +63,18 @@ export const useNavigation = () => {
    */
   const isEnterFunc = async (funcKeyName) => {
     // 取得擁有的產品代碼清單，例：[M, F, S, C, CC, L]
-    const assetFlags = await callAPI('/personal/v1/getAssetFlags');
+    let assetTypes = sessionStorage.getItem('assetTypes');
+    if (assetTypes) {
+      assetTypes = assetTypes.split(',');
+    } else {
+      const apiRs = await callAPI('/personal/v1/getAssetTypes');
+      assetTypes = apiRs.data;
+      sessionStorage.setItem('assetTypes', assetTypes);
+    }
 
     const requiredList = Func[funcKeyName].required;
     if (requiredList.length > 0) {
-      const prodType = requiredList.find((f) => assetFlags.data.includes(f));
+      const prodType = requiredList.find((f) => assetTypes.includes(f));
 
       // 找不到，就提示詢問申請該產品。
       if (!prodType) {
