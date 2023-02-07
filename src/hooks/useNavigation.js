@@ -66,21 +66,23 @@ export const useNavigation = () => {
    */
   const isEnterFunc = async (funcKeyName) => {
     let isEnter = false;
+    let deptAccounts;
+    let accountListTotal;
     const requiredList = Func[funcKeyName].required;
 
-    // 如不需檢查，直接進入頁面
+    /* 如不需檢查，直接進入頁面 */
     if (requiredList.length === 0) return true;
 
     dispatch(setWaittingVisible(true));
-    /* 正資產 */
-    const accountListTotal = await getAccountsList('MSF');
+    /* 正資產 (需檢查才抓資料) */
+    if (requiredList.find((type) => type === 'M' || type === 'F' || type === 'S')) accountListTotal = await getAccountsList('MSF');
     const isAccountListLengthNot0 = (type) => {
       const accountNumber = accountListTotal.filter((account) => account.acctType === type).length;
       return accountNumber > 0;
     };
 
-    /* 負資產 */
-    const deptAccounts = await callAPI('/personal/v1/assetSummaryValues'); // TODO: 資料儲存至以避免重複呼叫api
+    /* 負資產 (需檢查才抓資料) */
+    if (requiredList.find((type) => type === 'CC' || type === 'L')) deptAccounts = await callAPI('/personal/v1/assetSummaryValues'); // TODO: 資料儲存至以避免重複呼叫api
     dispatch(setWaittingVisible(false));
 
     // forEach 無法進行非同步處理，儘量不要在其中以非同步取得資料
