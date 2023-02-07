@@ -236,11 +236,24 @@ const DepositPlanPage = () => {
   const focusToIntentedSlide = async (swiper) => {
     let activeIndex = 1; // 預設中間
 
+    // 重新排序plans陣列
+    const reArrangedPlans = depositPlans?.plans;
+    if (depositPlans?.plans.length) {
+      let masterSlideIndex = null;
+      depositPlans.plans.forEach((p, i) => {
+        if (p.isMaster) masterSlideIndex = i;
+      });
+
+      if (masterSlideIndex !== null) {
+        [reArrangedPlans[masterSlideIndex], reArrangedPlans[1]] = [reArrangedPlans[1], reArrangedPlans[masterSlideIndex]];
+      }
+    }
+
     // startParams = { focusToAccountNo: 預設開啟的存錢計劃子帳號 }
     const startParams = await loadFuncParams(); // Function Controller 提供的參數
     if (startParams && (typeof startParams === 'object')) {
       const accountNo = startParams.focusToAccountNo;
-      depositPlans.plans.forEach((p, i) => {
+      reArrangedPlans.forEach((p, i) => {
         if (p.bindAccountNo === accountNo) activeIndex = i;
       });
     }
