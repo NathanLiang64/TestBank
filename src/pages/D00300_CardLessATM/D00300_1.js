@@ -105,7 +105,7 @@ const CardLessATM1 = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
             <DebitCard
-              cardName="存款卡"
+              cardName="臺幣主帳戶"
               account={accountSummary.account}
               balance={accountSummary.balance}
               withdrawMode
