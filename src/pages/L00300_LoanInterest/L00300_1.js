@@ -6,6 +6,7 @@ import { loadFuncParams } from 'utilities/AppScriptProxy';
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import DebitCard from 'components/DebitCard/DebitCard';
+import { PaymentType } from 'utilities/LoanPaymentType';
 
 /* Styles */
 import LoanInterestWrapper from './L00300.style';
@@ -41,7 +42,7 @@ const L003001 = () => {
             </li>
             <li>
               <span>交易種類</span>
-              <span>{ model.singleHistoryData?.type }</span>
+              <span>{ model.singleHistoryData?.type ? `${PaymentType[model.singleHistoryData.type]}` : model.singleHistoryData?.type }</span>
             </li>
             <li>
               <span>攤還本金</span>
