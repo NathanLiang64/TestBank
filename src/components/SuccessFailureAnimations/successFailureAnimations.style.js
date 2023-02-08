@@ -6,6 +6,12 @@ const SuccessFailureAnimationsWrapper = styled.div`
     justify-content: center;
     width: 12rem;
     margin: 0 auto;
+
+    img {
+      object-fit: contain;
+      width: 12rem;
+      height 10rem; 
+    }
   }
 
   .stateText {
@@ -36,10 +42,10 @@ const SuccessFailureAnimationsWrapper = styled.div`
       color: ${({ theme }) => theme.colors.text.light};
     }
   }
-  
+
   section.errorInfo {
     text-align: center;
-    
+
     &.horizontalSpacing {
       padding: 0 2rem;
     }

@@ -22,7 +22,6 @@ const ConfirmButtons = ({
   mainButtonOnClick,
   subButtonValue,
   subButtonOnClick,
-  mainButtonDisabled,
 }) => (
   <ConfirmButtonsWrapper>
     <FEIBButton
@@ -34,7 +33,6 @@ const ConfirmButtons = ({
       {subButtonValue || '取消'}
     </FEIBButton>
     <FEIBButton
-      disabled={mainButtonDisabled || false}
       onClick={mainButtonOnClick}
     >
       {mainButtonValue || '確定'}

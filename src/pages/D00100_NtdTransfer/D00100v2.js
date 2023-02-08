@@ -34,12 +34,11 @@ import { ChangeMemberIcon } from 'assets/images/icons';
 import { useNavigation } from 'hooks/useNavigation';
 import CurrencyInput from 'react-currency-input-field';
 import { numberToChinese } from 'utilities/Generator';
-import { getSettingInfo } from 'pages/T00300_NonDesignatedTransfer/api';
 import { Func } from 'utilities/FuncID';
 import TransferWrapper from './D00100.style';
 import D00100AccordionContent from './D00100_AccordionContent';
 import { isDifferentAccount } from './util';
-import { checkIsAgreedAccount } from './api';
+import { checkIsAgreedAccount, getSettingInfo } from './api';
 
 /**
  * 轉帳首頁
@@ -290,7 +289,7 @@ const Transfer = (props) => {
       if (!isAgreedAccount) {
         // 檢查流程 1-1. 檢查裝置綁定狀態
         const { QLStatus } = await getQLStatus();
-        if (QLStatus !== 1 || QLStatus !== 2) {
+        if (QLStatus !== 1 && QLStatus !== 2) {
           showCustomPrompt({
             message: '無裝置認證，請先進行「APP裝置認證(快速登入設定)」，或致電客服。',
             okContent: '立即設定',
@@ -351,7 +350,7 @@ const Transfer = (props) => {
     transIn, transOut, isAgreedAccount, amount,
   }) => {
     const isAgree = transIn.type === 2 || isAgreedAccount;
-    const isSelf = (transIn.type === 2 && transIn.regAcct?.bankId === '805') || isAgreedAccount.bankId === '805';
+    const isSelf = (transIn.type === 2 && transIn.regAcct?.bankId === '805') || isAgreedAccount?.bankId === '805';
     let [singleQuota, dayQuota] = transOut.quotaArray; // 非約定的[單筆額度,當日額度]
 
     if (isAgree) {
