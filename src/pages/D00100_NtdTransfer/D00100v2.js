@@ -286,7 +286,7 @@ const Transfer = (props) => {
       if (!isAgreedAccount) {
         // 檢查流程 1-1. 檢查裝置綁定狀態
         const { QLStatus } = await getQLStatus();
-        if (QLStatus !== 1 || QLStatus !== 2) {
+        if (QLStatus !== 1 && QLStatus !== 2) {
           showCustomPrompt({
             message: '無裝置認證，請先進行「APP裝置認證(快速登入設定)」，或致電客服。',
             okContent: '立即設定',
