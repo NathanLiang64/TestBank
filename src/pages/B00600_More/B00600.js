@@ -110,6 +110,7 @@ const More = () => {
               return (
                 <FavoriteBlockButton
                   key={item.funcCode}
+                  disabled={item.hidden}
                   icon={Icon()}
                   label={item.name}
                   onClick={() => doStartFunc(item.funcCode)}

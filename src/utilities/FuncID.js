@@ -1,4 +1,13 @@
 export const Func = {
+  /**
+   * 找出指定功能代碼的功能資訊。
+   * @param {*} funcCode 功能代碼
+   * @returns 功能資訊
+   */
+  find: (funcCode) => Object.entries(Func)
+    .map((f) => f[1])
+    .find((f) => (f.id === funcCode)),
+
   A00300: {
     id: 'A003',
     required: [],
@@ -147,22 +156,27 @@ export const Func = {
   F00100: {
     id: 'F001',
     required: [],
+    hidden: 'M',
   }, // 更多_申請 - 申請臺幣數存
   F00200: {
     id: 'F002',
     required: [],
+    hidden: 'S',
   }, // 更多_申請 - 申請證券交割戶
   F00300: {
     id: 'F003',
     required: [],
+    hidden: 'F',
   }, // 更多_申請 - 申請外幣數存
   F00400: {
     id: 'F004',
     required: [],
+    hidden: 'L',
   }, // 更多_申請 - 申請貸款
   F00500: {
     id: 'F005',
     required: [],
+    hidden: 'CC',
   }, // 更多_申請 - 申請信用卡
   L00100: {
     id: 'L001',
@@ -225,7 +239,7 @@ export const Func = {
     required: [],
   }, // 更多_金融助手 - 我的最愛設定
   S00101_我的最愛v2: {
-    id: 'S00101',
+    id: 'S001',
     required: [],
   }, // 更多_金融助手 - 我的最愛設定
   S00200: {

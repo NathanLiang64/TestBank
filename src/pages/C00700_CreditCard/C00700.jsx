@@ -2,7 +2,7 @@ import { useEffect, useState} from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 
-import Main from 'components/Layout';
+import { MainScrollWrapper } from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import CreditCard from 'components/CreditCard';
 import SwiperLayout from 'components/SwiperLayout';
@@ -21,7 +21,12 @@ import { getCards, getTransactions, updateTxnNotes } from './api';
 import {
   backInfo, levelInfo, renderBody, renderHead,
 } from './utils';
-import {SwiperCreditCard, DetailDialogContentWrapper, TableDialog} from './C00700.style';
+import {
+  SwiperCreditCard,
+  DetailDialogContentWrapper,
+  TableDialog,
+  CreditCardTxsListWrapper,
+} from './C00700.style';
 
 /**
  * C00700 信用卡 首頁
@@ -200,15 +205,16 @@ const CreditCardPage = (props) => {
               </div>
               )}
             </DetailDialogContentWrapper>
-
-            <CreditCardTxsList
-              card={cardInfo}
-              onMoreFuncClick={() => go2Func(Func.R00100.id, {
-                card: cardInfo, usedCardLimit, transactions: transactionObj[swiperIndex], index: swiperIndex,
-              })}
-              transactions={transactionObj[swiperIndex]}
-              onTxnNotesEdit={onTxnNotesEdit}
-            />
+            <CreditCardTxsListWrapper>
+              <CreditCardTxsList
+                card={cardInfo}
+                onMoreFuncClick={() => go2Func(Func.R00100.id, {
+                  card: cardInfo, usedCardLimit, transactions: transactionObj[swiperIndex], index: swiperIndex,
+                })}
+                transactions={transactionObj[swiperIndex]}
+                onTxnNotesEdit={onTxnNotesEdit}
+              />
+            </CreditCardTxsListWrapper>
           </div>
         );
       })
@@ -240,11 +246,18 @@ const CreditCardPage = (props) => {
 
   return (
     <Layout title="信用卡" goBackFunc={closeFunc}>
-      <Main small>
-        <SwiperLayout slides={renderSlides()} onSlideChange={onSlideChange} hasDivider={false} slidesPerView={cardsInfo.lengh === 1 ? 1.14 : 1.06}>
+      <MainScrollWrapper>
+        <SwiperLayout
+          slides={renderSlides()}
+          hasDivider={false}
+          slidesPerView={1.06}
+          spaceBetween={8}
+          centeredSlides
+          onSlideChange={onSlideChange}
+        >
           {renderCreditList()}
         </SwiperLayout>
-      </Main>
+      </MainScrollWrapper>
     </Layout>
   );
 };

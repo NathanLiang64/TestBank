@@ -1,9 +1,7 @@
 import styled from 'styled-components';
 
 export const SwiperCreditCard = styled.div`
-  margin-left: 8px;
-
-  
+  padding-top: 5.4rem;
 `;
 
 export const DetailDialogContentWrapper = styled.div`
@@ -11,6 +9,10 @@ export const DetailDialogContentWrapper = styled.div`
     padding-top: .5rem;
     padding-bottom: 1.6rem;
   }
+`;
+
+export const CreditCardTxsListWrapper = styled.div`
+  padding: 0 1rem;
 `;
 
 export const TableDialog = styled.div`
