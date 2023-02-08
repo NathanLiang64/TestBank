@@ -235,7 +235,6 @@ const E00100 = () => {
     showCustomPrompt({
       title: '匯率',
       message: <E00100Table exchangeRate={rate} />,
-      okContent: '確定',
     });
   };
 
