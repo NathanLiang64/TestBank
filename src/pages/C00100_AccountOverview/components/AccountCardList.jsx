@@ -20,6 +20,7 @@ import AccountCardGrey from './AccountCardGrey';
  */
 const AccountCardList = ({ data, isDebt, necessaryType }) => {
   // const dispatch = useDispatch();
+  const assetTypes = sessionStorage.getItem('assetTypes');
   const {startFunc} = useNavigation();
   const sApplyUrl = `${process.env.REACT_APP_APLFX_URL}prod=S01a`;
   const fApplyUrl = `${process.env.REACT_APP_APLFX_URL}prod=Ta`;
@@ -79,25 +80,25 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
     stockAccounts.sort((a, b) => b.balance - a.balance);
   }
 
-  // 貸款: 金額不為0則顯示彩卡
+  // 貸款: 以 assetTypes 回傳有包含為準顯示彩卡
   const loanAccounts = data.filter((account) => account.type === 'L');
   if (loanAccounts.length > 0) {
     mainList.push({
       type: 'L',
       accountNo: null,
       balance: accumulateBalance(loanAccounts),
-      isEmpty: loanAccounts[0].balance === 0,
+      isEmpty: assetTypes.includes('L'),
     });
 
     // 依金額從大到小排序。
     loanAccounts.sort((a, b) => b.balance - a.balance);
   }
 
-  // 信用卡: 帳號不為0則顯示彩卡
+  // 信用卡: 以 assetTypes 回傳有包含為準顯示彩卡
   const ccAccounts = data.filter((account) => account.type === 'CC');
   if (ccAccounts.length > 0) {
     mainList.push(...ccAccounts.map((account) => ({
-      isEmpty: account.accountNo === '0000000000000000',
+      isEmpty: assetTypes.includes('CC'),
       ...account,
     })));
   }
