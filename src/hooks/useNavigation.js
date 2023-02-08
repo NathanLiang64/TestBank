@@ -1,16 +1,12 @@
 /* eslint-disable object-curly-newline */
 import { useHistory } from 'react-router';
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { useDispatch } from 'react-redux';
 import { callAppJavaScript, funcStack, getOsType, storeData } from 'utilities/AppScriptProxy';
 import { callAPI } from 'utilities/axios';
-import { getAccountsList } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
 
 export const useNavigation = () => {
   const history = useHistory();
-  const dispatch = useDispatch();
 
   /**
    * 無法進入目標畫面時所顯示之彈窗
@@ -58,6 +54,7 @@ export const useNavigation = () => {
       okContent: '立即申請',
       onOk: () => window.open(errMsg.link, '_blank'),
       cancelContent: '我再想想',
+      showCloseButton: false,
     });
   };
 
@@ -65,46 +62,27 @@ export const useNavigation = () => {
    * 檢查是否可以進入目標頁面
    */
   const isEnterFunc = async (funcKeyName) => {
-    let isEnter = false;
-    let deptAccounts;
-    let accountListTotal;
+    // 取得擁有的產品代碼清單，例：[M, F, S, C, CC, L]
+    let assetTypes = sessionStorage.getItem('assetTypes');
+    if (assetTypes) {
+      assetTypes = assetTypes.split(',');
+    } else {
+      const apiRs = await callAPI('/personal/v1/getAssetTypes');
+      assetTypes = apiRs.data;
+      sessionStorage.setItem('assetTypes', assetTypes);
+    }
+
     const requiredList = Func[funcKeyName].required;
+    if (requiredList.length > 0) {
+      const prodType = requiredList.find((f) => assetTypes.includes(f));
 
-    /* 如不需檢查，直接進入頁面 */
-    if (requiredList.length === 0) return true;
-
-    dispatch(setWaittingVisible(true));
-    /* 正資產 (需檢查才抓資料) */
-    if (requiredList.find((type) => type === 'M' || type === 'F' || type === 'S')) accountListTotal = await getAccountsList('MSF');
-    const isAccountListLengthNot0 = (type) => {
-      const accountNumber = accountListTotal.filter((account) => account.acctType === type).length;
-      return accountNumber > 0;
-    };
-
-    /* 負資產 (需檢查才抓資料) */
-    if (requiredList.find((type) => type === 'CC' || type === 'L')) deptAccounts = await callAPI('/personal/v1/assetSummaryValues'); // TODO: 資料儲存至以避免重複呼叫api
-    dispatch(setWaittingVisible(false));
-
-    // forEach 無法進行非同步處理，儘量不要在其中以非同步取得資料
-    requiredList.forEach(async (type) => {
-      switch (type) {
-        case 'M':
-        case 'S':
-        case 'F':
-          if (isAccountListLengthNot0(type)) isEnter = true;
-          break;
-        case 'CC':
-          if (deptAccounts.data.credit_cardno !== '') isEnter = true;
-          break;
-        case 'L':
-          if (deptAccounts.data.loan_account !== '') isEnter = true;
-          break;
-        default:
-          break;
+      // 找不到，就提示詢問申請該產品。
+      if (!prodType) {
+        await handleShowPrompt(requiredList[0]);
+        return false;
       }
-    });
-    if (isEnter === false) await handleShowPrompt(requiredList[0]);
-    return isEnter;
+    }
+    return true;
   };
 
   /**
