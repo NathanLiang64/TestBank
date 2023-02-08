@@ -5,7 +5,7 @@
  */
 
 import Layout from 'components/Layout/Layout';
-import E00100Table from 'pages/E00100_Exchange/E00100_Table';
+import { E00100Table } from 'pages/E00100_Exchange/E00100_Content';
 
 /* Styles */
 import ExchangeRateWrapper from './exchangeRate.style';

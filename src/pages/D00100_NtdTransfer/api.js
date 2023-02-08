@@ -1,6 +1,8 @@
-import { getAgreedAccount } from 'pages/D00600_RegisteredContacts/api';
+import store from 'stores/store';
 import { getCallerFunc } from 'utilities/AppScriptProxy';
+import { getBankCode } from 'utilities/CacheData';
 import { callAPI } from 'utilities/axios';
+import { setAgreAccts } from 'stores/reducers/CacheReducer';
 import { isDifferentAccount } from './util';
 
 /**
@@ -56,6 +58,39 @@ export const executeNtdTransfer = async () => {
   };
 };
 
+/**
+ * 查詢指定轉出帳號約定轉入帳號清單。
+ * @param {{
+ *   accountNo: String, // 要查詢約定轉入帳號清單的帳號。
+ *   includeSelf: Boolean, // 表示傳回清單要包含同ID互轉的帳號。
+ * }} request
+ * @returns {Promise<[{
+ *   bankId: '約定轉入帳戶-銀行代碼'
+ *   acctId: '約定轉入帳戶-帳號'
+ *   bankName: '銀行名稱'
+ *   nickName: '暱稱'
+ *   email: '通知EMAIL'
+ *   isSelf: '是否為本行自己的其他帳戶'
+ *   headshot: '代表圖檔的UUID，用來顯示大頭貼；若為 null 表示還沒有設定頭像。'
+ * }]>} 約定轉入帳號清單。
+ */
+const getAgreedAccount = async (request) => {
+  let {agreAccts} = store.getState()?.CacheReducer;
+  if (!agreAccts) agreAccts = {};
+
+  const {accountNo} = request;
+  if (!agreAccts[accountNo]) {
+    const response = await callAPI('/deposit/transfer/agreedAccount/v1/get', request);
+    const bankList = await getBankCode();
+    agreAccts[accountNo] = response.data?.map((item) => ({
+      ...item,
+      bankName: (bankList?.find((b) => b.bankNo === item.bankId)?.bankName ?? item.bankId),
+    }));
+    store.dispatch(setAgreAccts(agreAccts));
+  }
+  return agreAccts[accountNo];
+};
+
 // 檢查轉入的帳號是否為約定帳號
 export const checkIsAgreedAccount = async (accountNo, transIn) => {
   const request = {
@@ -75,4 +110,18 @@ export const checkIsAgreedAccount = async (accountNo, transIn) => {
               && bankId === freqAcct?.bankId && type === 1),
         );
   return isAgreedAccount;
+};
+
+/**
+ * 查詢非約轉設定狀態與綁定的手機號碼。
+ * @returns {Promise<{
+ *   status: Number,
+ *   mobile: String,
+ * }>}
+ * - status: 非約轉設定狀態：0.未申請, 1.已申請未開通, 2.密碼逾期30日, 3.已開通, 4.已註銷, 5.OTP啟用密碼錯誤鎖定, 6.OTP交易密碼錯誤鎖定, 7.其他
+ * - mobile: 預設為非約轉OTP門號；若尚未設有非約轉OTP門號時，則傳回CIF門號。
+ */
+export const getSettingInfo = async () => {
+  const response = await callAPI('/deposit/transfer/nonAgreed/v1/getSettingInfo');
+  return response.data;
 };

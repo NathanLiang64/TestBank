@@ -1,3 +1,5 @@
+import InformationList from 'components/InformationList';
+
 export const R00200AccordionContent1 = () => (
   <>
     <ol>
@@ -75,3 +77,31 @@ export const interestRateMap = {
   9: {monthlyRate: 0.42, annualRate: 9},
   12: {monthlyRate: 0.55, annualRate: 12},
 };
+
+export const ResultContent = ({totTerm}) => (
+  <>
+    {/* 共用 */}
+    <InformationList title="申請分期期數" content={totTerm} />
+    <InformationList title="年化利率" content={`${interestRateMap[totTerm]?.annualRate}%`} />
+    <InformationList title="每月利率" content={`${interestRateMap[totTerm]?.monthlyRate}%`} />
+    <InformationList title="利息" content="分期本金 * 每月利率" />
+    <InformationList title="每期應繳" content="分期本金 + 利息" />
+  </>
+);
+
+export const SingleConfirmContent = ({ installmentAmount, totTerm}) => (
+  <>
+    <InformationList title="分期總額" content={installmentAmount} />
+    <InformationList title="申請分期期數" content={totTerm} />
+    <InformationList title="分期利率" content="待提供(年利率?)" />
+  </>
+);
+
+export const TotalConfirmContent = ({totTerm}) => (
+  <>
+    <InformationList title="申請分期期數" content={totTerm} />
+    <InformationList title="分期利率" content="待提供 (%)" />
+    <InformationList title="分期利息" content="本金餘額 * (分期利率/12)" />
+    <InformationList title="每期應繳" content="分期本金 + 利息" />
+  </>
+);

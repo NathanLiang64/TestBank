@@ -66,7 +66,7 @@ const D00800 = () => {
     if (detailsRes) {
       const bankCodeList = await getBankCode(); // 若 redux 內沒有資料，會是非同步
       if (!banks) setBanks(bankCodeList);
-
+      // TODO 是否加入 transRange
       // detailsRes 加入 periodic & bankName properties
       const updatedDetailsRes = detailsRes.map((res) => {
         const { bankName } = bankCodeList.find(({ bankNo }) => bankNo === res.receiveBank);

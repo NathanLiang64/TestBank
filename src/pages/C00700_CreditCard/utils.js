@@ -54,37 +54,3 @@ export const renderBody = (bodys) => bodys.map((body) => (
     && <th>{body.percentage}</th>}
   </tr>
 ));
-
-/**
- * 將從 getCards API 拿到的資料作轉換
- *
- * @param {{
- *        cardNo, // 卡號
- *        isBankeeCard, // 專案代號
- *      }[]} cardsArr  // 卡片陣列
- * @return {
- *    isBankeeCard:    true/false
- *    cards: [ {cardNo //卡號 }, ...]
- *    memberLevel,            // 會員等級
- *    rewardsRateDomestic,    // 國內回饋
- *    rewardsRateOverseas,    // 國外回饋
- *    rewardsAmount,          // 回饋試算
- * }
- *
- */
-
-export const generateTwoCardsArray = (cardsArr) => {
-  const base = [
-    { isBankeeCard: true, cards: [] },
-    { isBankeeCard: false, cards: [] },
-  ];
-  const modifiedCards = cardsArr.reduce((acc, cur) => {
-    const { isBankeeCard, cardNo, ...rest } = cur;
-    if (isBankeeCard) {
-      acc[0] = { ...acc[0], cards: [{ cardNo }], ...rest };
-    } else acc[1].cards.push({ cardNo });
-    return acc;
-  }, base);
-  const filterExistedCards = modifiedCards.filter(({ cards }) => cards.length);
-  return filterExistedCards;
-};

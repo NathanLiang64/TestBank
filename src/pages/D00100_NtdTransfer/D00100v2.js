@@ -34,12 +34,11 @@ import { ChangeMemberIcon } from 'assets/images/icons';
 import { useNavigation } from 'hooks/useNavigation';
 import CurrencyInput from 'react-currency-input-field';
 import { numberToChinese } from 'utilities/Generator';
-import { getSettingInfo } from 'pages/T00300_NonDesignatedTransfer/api';
 import { Func } from 'utilities/FuncID';
 import TransferWrapper from './D00100.style';
 import D00100AccordionContent from './D00100_AccordionContent';
 import { isDifferentAccount } from './util';
-import { checkIsAgreedAccount } from './api';
+import { checkIsAgreedAccount, getSettingInfo } from './api';
 
 /**
  * 轉帳首頁
@@ -57,7 +56,7 @@ const Transfer = (props) => {
   const [model, setModel] = useState();
   const [accounts, setAccounts] = useState();
   const [selectedAccountIdx, setSelectedAccountIdx] = useState();
-  const [tranferQuota, setTranferQuota] = useState([10000, 30000, 50000]); // TODO quota 需要依照 API 回傳值決定
+  const [balanceErr, setBalanceErr] = useState({});
 
   const transTypes = ['一般轉帳', '常用轉帳', '約定轉帳', '社群轉帳'];
   const cycleWeekly = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
@@ -263,30 +262,34 @@ const Transfer = (props) => {
       ...values,
       transOut: model.transOut, // NOTE 因為在切換帳戶卡時，會取得餘額等資訊。
     };
-    const { amount, booking } = newModel;
+    const {
+      booking, transIn, transOut,
+    } = newModel;
 
     /**
      * ======== 檢查規則 ========
      * 選擇約定帳號 Tab 時，
-     * 1. 檢查 idCycleTime
+     * 1. 檢查是否超過單筆/當日限額
+     * 2. 檢查 idCycleTime
      *
-     * 選擇一般轉帳/常用帳號 Tab 時，需確認
-     *  1. 轉入帳號是否為「非約定帳號」，若確認非約定帳號則進行下方檢查
+     * 選擇一般轉帳/常用帳號 Tab 時，
+     *  1. 檢查轉入帳號是否為「非約定帳號」，若確認非約定帳號則進行下方檢查
      *      1-1 檢查是否裝置綁定
      *      1-2 檢查是否有非約轉功能
-     *      1-3 檢查是否超過單筆限額
-     *  2. 檢查 idCycleTime
+     *  2. 檢查是否超過單筆/當日限額
+     *  3. 檢查 idCycleTime
      */
+    let isAgreedAccount = null;
 
     // 若選擇非約定轉帳（transIn.type!==2)時
-    if (newModel.transIn.type !== 2) {
+    if (transIn.type !== 2) {
       // 檢查流程 1. 仍需檢查轉入帳號是否屬於約定帳號;
-      const isAgreedAccount = await checkIsAgreedAccount(newModel.transOut.account, newModel.transIn);
+      isAgreedAccount = await checkIsAgreedAccount(transOut.account, transIn);
 
       if (!isAgreedAccount) {
         // 檢查流程 1-1. 檢查裝置綁定狀態
         const { QLStatus } = await getQLStatus();
-        if (QLStatus !== 1 || QLStatus !== 2) {
+        if (QLStatus !== 1 && QLStatus !== 2) {
           showCustomPrompt({
             message: '無裝置認證，請先進行「APP裝置認證(快速登入設定)」，或致電客服。',
             okContent: '立即設定',
@@ -307,17 +310,19 @@ const Transfer = (props) => {
           });
           return;
         }
-        // 檢查流程 1-3. 單筆轉帳限額檢查
-        if (amount > tranferQuota[0]) {
-          const quota = new Intl.NumberFormat('en-US').format(tranferQuota[0]);
-          await showInfo(`您的轉帳金額已超過單筆轉帳限額(${quota})上限；若您需要提高轉帳額度，可透過自然人憑證完成帳戶升級成【一類帳戶】。`);
-          setFocus(idAmount);
-          return;
-        }
       }
     }
 
-    // TODO 轉入約定帳號的限額檢查
+    // 今日限額與單筆限額檢查
+    const aboveQuota = checkQuota({...newModel, isAgreedAccount});
+    if (aboveQuota) {
+      const formatedQuota = new Intl.NumberFormat('en-US').format(aboveQuota.quota);
+      // TODO 待確認文字敘述正確性
+      if (aboveQuota.isAgree) await showInfo(`${aboveQuota.isSelf ? '本行' : '跨行'}約定帳戶，${aboveQuota.type}轉帳金額上限為${formatedQuota}`);
+      else await showInfo(`您的轉帳金額已超過${aboveQuota.type}轉帳限額(${formatedQuota})上限；若您需要提高轉帳額度，可透過自然人憑證完成帳戶升級成【一類帳戶】。`);
+      setFocus(idAmount);
+      return;
+    }
 
     // idCycleTime 防呆，調整起始日期
     const transTimes = checkTransDate(booking);
@@ -339,6 +344,33 @@ const Transfer = (props) => {
 
     // 進行轉帳確認。
     history.push('/D001001', param);
+  };
+
+  const checkQuota = ({
+    transIn, transOut, isAgreedAccount, amount,
+  }) => {
+    const isAgree = transIn.type === 2 || isAgreedAccount;
+    const isSelf = (transIn.type === 2 && transIn.regAcct?.bankId === '805') || isAgreedAccount?.bankId === '805';
+    let [singleQuota, dayQuota] = transOut.quotaArray; // 非約定的[單筆額度,當日額度]
+
+    if (isAgree) {
+      dayQuota = isSelf ? transOut.agrdTfrSelfLimitLeft : transOut.agrdTfrInterLimitLeft;
+      singleQuota = isSelf ? 5000000 : 2000000;
+    }
+
+    // 檢查單筆額度
+    if (amount > singleQuota) {
+      return {
+        quota: singleQuota, type: '單筆', isAgree, isSelf,
+      };
+    }
+    // 檢查當日額度
+    if (amount > dayQuota) {
+      return {
+        quota: dayQuota, type: '當日', isAgree, isSelf,
+      };
+    }
+    return null;
   };
 
   /**
@@ -499,19 +531,19 @@ const Transfer = (props) => {
           ...model.transOut,
           freeTransfer: account.freeTransfer = info.freeTransfer,
           freeTransferRemain: account.freeTransferRemain = info.freeTransferRemain,
-        };
+          // dgType = 帳戶類別('  '.非數存帳號, '11'.臨櫃數存昇級一般, '12'.一之二類, ' 2'.二類, '32'.三之二類)
+          quotaArray: [account.dgType === '32' ? 10000 : 50000, info.dLimitLeft, info.mLimitLeft],
+          agrdTfrSelfLimitLeft: info.agrdTfrSelfLimitLeft,
+          agrdTfrInterLimitLeft: info.agrdTfrInterLimitLeft,
 
+        };
         forceUpdate();
       });
     }
-
-    // 單筆轉帳限額 (用於設置至轉出金額驗證規則)
-    // dgType = 帳戶類別('  '.非數存帳號, '11'.臨櫃數存昇級一般, '12'.一之二類, ' 2'.二類, '32'.三之二類)
-    let quota = [50000, 100000, 200000]; // 適用：一、二 類
-    if (account.dgType === '32') quota = [10000, 30000, 50000];
-    // else if (account.dgType === ' 2') quota = [50000, 100000, 200000];
-    // else if (['11', '12'].indexOf(account.dgType)) quota = [50000, 100000, 200000];
-    setTranferQuota(quota);
+    if (!account.balance && !balanceErr[account.accountNo]) {
+      setBalanceErr((prevObj) => ({ ...prevObj, [account.accountNo]: true }));
+      showPrompt('您的帳戶餘額為0，無法進行轉帳');
+    }
   }, [selectedAccountIdx]);
 
   /**
@@ -519,9 +551,10 @@ const Transfer = (props) => {
    */
   const showTranferQuota = () => {
     const transInType = getValues(idTransType);
-    if (transInType !== 2) {
+    if (transInType !== 2 && model && model.transOut.quotaArray) {
       const formater = new Intl.NumberFormat('en-US');
-      const quota = tranferQuota.map((q) => formater.format(q)).join('/');
+      // const quota = tranferQuota.map((q) => formater.format(q)).join('/');
+      const quota = model.transOut.quotaArray.map((q) => formater.format(q)).join('/');
       return (<p className="notice">{`單筆/當日/當月非約定轉帳剩餘額度: ${quota}`}</p>);
     }
     return null;
@@ -555,7 +588,7 @@ const Transfer = (props) => {
           defaultSlide={selectedAccountIdx}
           onAccountChanged={(index) => {
             setSelectedAccountIdx(index);
-            trigger();
+            if (watch(idTransInAcct)) trigger(idTransInAcct);
           }}
         />
 
