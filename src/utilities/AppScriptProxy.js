@@ -277,7 +277,7 @@ async function loadFuncParams() {
  * 開啟/關閉APP Loading等待畫面
  * @param {Promise<boolean>} visible
  */
-async function switchLoading(visible) {
+async function showWaitting(visible) {
   const data = { open: visible ? 'Y' : 'N' };
   await callAppJavaScript('onLoading', data, false);
 }
@@ -769,7 +769,7 @@ export {
   getCallerFunc,
   getOsType,
   loadFuncParams,
-  switchLoading,
+  showWaitting,
   doOCR,
   showPopup,
   showAlert,
