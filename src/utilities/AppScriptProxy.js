@@ -761,8 +761,8 @@ async function dialTel(param) {
 /**
  * 透過原生進行截圖
  */
-async function screenShot(param) {
-  await callAppJavaScript('webScreenShot', param, false);
+async function screenShot() {
+  await callAppJavaScript('webScreenShot', null, true);
 }
 
 export {
