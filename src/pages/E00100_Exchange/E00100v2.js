@@ -117,7 +117,7 @@ const E00100 = () => {
       }, {});
       setAccountsListObj(obj);
 
-      // 預設帳號設為非台幣的帳戶
+      // 預設帳號設為非臺幣的帳戶
       const defaultAccount = transableAccountList.find(({acctType}) => acctType !== 'F');
       setValue('outAccount', defaultAccount?.account ?? '');
       dispatch(setWaittingVisible(false));

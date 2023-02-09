@@ -72,7 +72,7 @@ const Page = () => {
       // NOTE 選取模式時
       // 1. 從轉帳頁面進來時，要排除「非同幣別」的帳號 (ex: 從臺幣轉帳進來只能選取臺幣類型的常用帳號)
       // 2. accts 內的項目若是本行帳戶(805)，只允許顯示特定科目 001活儲/003行員存款/004活存/031支存
-      const isForeignType = accountNo.padStart(16, '0').substring(5, 8) === '007'; // '007' 外幣帳戶 , '004' 台幣帳戶
+      const isForeignType = accountNo.padStart(16, '0').substring(5, 8) === '007'; // '007' 外幣帳戶 , '004' 臺幣帳戶
       const allowedSubjects = ['001', '003', '004', '031'];
 
       return accts.filter((acct) => {

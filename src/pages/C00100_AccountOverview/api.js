@@ -6,7 +6,7 @@ import { callAPI } from 'utilities/axios';
  {
     // 資產清單
     assets: {
-      totalBalanceF2N, //外幣折算台幣總金額 (外幣會折算「當天」的台幣價值加總)
+      totalBalanceF2N, //外幣折算臺幣總金額 (外幣會折算「當天」的臺幣價值加總)
       assetItems [
         {
           type, // 帳戶類型 M:母帳戶, S:證券戶, F:外幣帳戶, C:子帳戶
