@@ -139,7 +139,7 @@ const T00600 = () => {
       <SettingItem
         key={item.mobile}
         mainLable={item.mobile}
-        subLabel={`${item.isDefault ? '預設收款帳戶' : '非預設收款帳戶'} ${accountFormatter(item.account)}`}
+        subLabel={`${item.isDefault ? '預設收款帳戶' : '非預設收款帳戶'} ${accountFormatter(item.account, true)}`}
         editClick={() => editMobileTransferSetting(item)}
         deleteClick={() => deleteMobileTransferSetting(item)}
       />

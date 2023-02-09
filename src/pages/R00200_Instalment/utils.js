@@ -70,7 +70,7 @@ export const R00200AccordionContent2 = () => (
 //  12期:年化利率12%(每月利率0.55%)
 
 export const interestRateMap = {
-  // { 期數:月利率 }
+  // { 期數:{月利率,年利率} }
   1: {monthlyRate: 0, annualRate: 0},
   3: {monthlyRate: 0, annualRate: 0},
   6: {monthlyRate: 0.29, annualRate: 6},
@@ -80,7 +80,6 @@ export const interestRateMap = {
 
 export const ResultContent = ({totTerm}) => (
   <>
-    {/* 共用 */}
     <InformationList title="申請分期期數" content={totTerm} />
     <InformationList title="年化利率" content={`${interestRateMap[totTerm]?.annualRate}%`} />
     <InformationList title="每月利率" content={`${interestRateMap[totTerm]?.monthlyRate}%`} />

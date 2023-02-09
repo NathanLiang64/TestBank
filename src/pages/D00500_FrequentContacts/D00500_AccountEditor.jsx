@@ -150,7 +150,7 @@ function AccountEditor({
         <Badge>
           <div className="label">帳號</div>
           <div className="text-blue">
-            {`${model.bankName} ${accountFormatter(model.acctId)}`}
+            {`${model.bankName} ${accountFormatter(model.acctId, model.bankId === '805')}`}
             <FEIBIconButton className="editButton" $fontSize={1.6} onClick={() => setConfirmPage(false)}>
               <EditIcon />
             </FEIBIconButton>

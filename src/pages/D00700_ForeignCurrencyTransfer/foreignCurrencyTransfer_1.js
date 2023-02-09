@@ -61,11 +61,12 @@ const ForeignCurrencyTransfer1 = ({ location }) => {
             }
           </div>
           <div className="accountInfo">遠東商銀(805)</div>
+          {/* TODO 確認轉入帳號的 bankId 名稱 */}
           <div className="accountInfo">{ accountFormatter(confirmData?.inAcct) }</div>
         </div>
         <div className="infoListContainer">
           <div>
-            <InformationList title="轉出帳號" content={accountFormatter(confirmData?.outAcct)} />
+            <InformationList title="轉出帳號" content={accountFormatter(confirmData?.outAcct, true)} />
             <InformationList title="帳戶餘額" content={`${currencySymbolGenerator(confirmData?.outCcyCd)}${confirmData?.acctBalance}`} />
             <InformationList title="日期" content={confirmData?.dateStr} />
             <InformationList title="匯款性質分類" content={confirmData?.leglDesc} />

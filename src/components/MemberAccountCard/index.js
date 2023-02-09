@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Avatar from 'components/Avatar';
 import { DeleteIcon, EditIcon } from 'assets/images/icons';
-import { toHalfWidth } from 'utilities/Generator';
+import { accountFormatter, toHalfWidth } from 'utilities/Generator';
 import MemberAccountCardWrapper from './memberAccountCard.style';
 
 /**
@@ -136,7 +136,7 @@ const MemberAccountCard = ({
             {hasNewTag && (<div className="new-tag">New</div>)}
           </div>
           <div className="note">
-            {`${bankName}(${bankNo}) ${account}`}
+            {`${bankName}(${bankNo}) ${accountFormatter(account, bankNo === '805')}`}
           </div>
         </div>
       </div>

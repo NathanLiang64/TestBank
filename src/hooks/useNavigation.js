@@ -2,6 +2,7 @@
 import { useHistory } from 'react-router';
 import { callAppJavaScript, funcStack, getOsType, storeData } from 'utilities/AppScriptProxy';
 import { callAPI } from 'utilities/axios';
+import { cleanupAccount } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
 import { showCustomPrompt, showError } from 'utilities/MessageModal';
 
@@ -194,6 +195,13 @@ export const useNavigation = () => {
   };
 
   const goHome = async () => {
+    // NOTE 若 funcStack 內有 C003/C004/C005 的服務 (取得交易紀錄)，
+    // 需要清除 redux 內 accounts 的 txnDetails，
+    const arr = [Func.C00300.id, Func.C00400.id, Func.C00500.id];
+    const stacks = funcStack.getStack();
+    const isExisted = stacks.find((stack) => arr.includes(stack.funcID));
+    if (isExisted) cleanupAccount();
+
     funcStack.clear();
     await callAppJavaScript('goHome', null, false, () => {
       startFunc('/');

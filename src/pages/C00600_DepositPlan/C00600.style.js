@@ -75,13 +75,6 @@ export const EditPageWrapper = styled.div`
     width: 50%;
   }
 
-  .hint-message {
-    left: 0;
-    bottom: 0;
-    transform: translateY(0%);
-    text-align: left;
-  }
-
   .amount-limit {
     font-size: 1.4rem;
   }

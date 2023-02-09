@@ -89,14 +89,13 @@ const R00200_3 = () => {
       </table>
     );
   };
-  console.log('state', state);
+
   const onClickHandler = async () => {
     // if (state?.readOnly) history.goBack();
     if (state?.readOnly) closeFunc();
     else {
-      dispatch(setWaittingVisible(true));
       const auth = await transactionAuth(Func.R00200.authCode);
-      dispatch(setWaittingVisible(false));
+
       if (auth && auth.result) {
         dispatch(setWaittingVisible(true));
         const updateResult = await updateInstallment(state.param); // 回傳資料待確認
@@ -116,17 +115,16 @@ const R00200_3 = () => {
 
   // 計算單筆分期付款的試算表
   const calculateInstallment = async () => {
-    dispatch(setWaittingVisible(true));
+    // 只有申請單筆分期付款才需要拿取試算表
+    if (state.applType !== 'G') return;
     const calcParam = state.param.map(({ applType, ...rest }) => ({ ...rest }));
+    dispatch(setWaittingVisible(true));
     const calcResult = await getPreCalc(calcParam);
     setPreCalc(calcResult);
     dispatch(setWaittingVisible(false));
   };
 
-  useEffect(() => {
-    // 只有申請單筆分期付款才需要拿取試算表
-    if (state.applType === 'G') calculateInstallment();
-  }, []);
+  useEffect(() => { calculateInstallment(); }, []);
 
   return (
     <Layout title="晚點付 (總額)">

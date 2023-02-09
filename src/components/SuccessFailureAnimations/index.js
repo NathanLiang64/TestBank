@@ -1,13 +1,3 @@
-/* eslint-disable no-unused-vars */
-import Lottie from 'lottie-react';
-
-// import SuccessFlower from 'assets/animations/success1_flower.json';
-// import SuccessLove from 'assets/animations/success2_love.json';
-// import SuccessCheer from 'assets/animations/success3_cheer.json';
-// import SuccessMusic from 'assets/animations/success4_music.json';
-// import Fail from 'assets/animations/test.json';
-
-// svg
 import SuccessCheer from 'assets/animations/successCheer.svg';
 import SuccessFlower from 'assets/animations/successFlower.svg';
 import SuccessLove from 'assets/animations/successLove.svg';
@@ -81,7 +71,6 @@ const SuccessFailureAnimations = ({
   return (
     <SuccessFailureAnimationsWrapper>
       <div className="animContainer">
-        {/* <Lottie animationData={animationData()} loop /> */}
         <img src={animationData()} alt="animation" />
       </div>
       <h3 className={`stateText ${isSuccess ? 'success' : 'error'}`}>

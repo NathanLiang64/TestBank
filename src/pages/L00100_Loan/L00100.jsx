@@ -104,7 +104,7 @@ const Page = () => {
           <div>
             {/* 目前還沒有 loanType 資料，暫時以信用貸款顯示 */}
             <div>{card.loanType ?? '信用貸款'}</div>
-            <div>{`${accountFormatter(card.account)} (${card.subNo})`}</div>
+            <div>{`${accountFormatter(card.account, true)} (${card.subNo})`}</div>
           </div>
           {/* <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.account, card.subNo)}>
             <MoreIcon />

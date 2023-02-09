@@ -124,7 +124,7 @@ const AutomaticBillPayment = () => {
   const renderAppliedAutoBill = () => appliedAutoBill.map((item) => (
     <SettingItem
       key={uuid()}
-      mainLable={accountFormatter(item.account)}
+      mainLable={accountFormatter(item.account, item.bank === '805')}
       subLabel={`扣款方式：${item.isFullPay === '100' ? '應繳總金額' : '最低應繳金額'} | 狀態：${renderStatusText(item.status)}`}
     />
   ));

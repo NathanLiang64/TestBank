@@ -56,6 +56,7 @@ const BillDetails = ({bills}) => {
     },
     {
       title: '自動扣款帳號',
+      // TODO 待確認自動扣款帳號的 bankId 名稱
       content: accountFormatter(d.autoPayAccount),
     },
     {

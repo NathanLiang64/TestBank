@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { FEIBButton, FEIBInputLabel, FEIBInput } from 'components/elements';
 import Badge from 'components/Badge';
@@ -37,12 +37,6 @@ function AccountEditor({
   });
 
   /**
-   *- 初始化
-   */
-  useEffect(async () => {
-  }, []);
-
-  /**
    * 輸入暱稱，編輯完成。
    */
   const Page2 = () => {
@@ -58,7 +52,7 @@ function AccountEditor({
       <form className="flex-col" onSubmit={handleSubmit(onSubmit)}>
         <Badge>
           <div className="label">帳號</div>
-          <div className="text-blue">{`${model.bankName} ${accountFormatter(model.acctId)}`}</div>
+          <div className="text-blue">{`${model.bankName} ${accountFormatter(model.acctId, model.bankId === '805')}`}</div>
         </Badge>
         <div className="flex-col">
           <div className="self-center">

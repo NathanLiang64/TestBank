@@ -47,7 +47,7 @@ const LossReissue = () => {
     const cardInfo = await getStatus();
     if (cardInfo) {
       const model = {
-        accountNo: accountFormatter(cardInfo.account),
+        accountNo: accountFormatter(cardInfo.account, true),
         actionText: '',
         status: cardInfo.status,
         statusDesc: cardInfo.statusDesc,

@@ -1,10 +1,8 @@
-import Lottie from 'lottie-react';
-
-import SuccessFlower from 'assets/animations/success1_flower.json';
-import SuccessLove from 'assets/animations/success2_love.json';
-import SuccessCheer from 'assets/animations/success3_cheer.json';
-import SuccessMusic from 'assets/animations/success4_music.json';
-import Fail from 'assets/animations/fail.json';
+import SuccessCheer from 'assets/animations/successCheer.svg';
+import SuccessFlower from 'assets/animations/successFlower.svg';
+import SuccessLove from 'assets/animations/successLove.svg';
+import SuccessMusic from 'assets/animations/successMusic.svg';
+import Fail from 'assets/animations/fail.svg';
 
 import SuccessFailureAnimationsWrapper from './successFailureAnimations.style';
 
@@ -25,9 +23,9 @@ const ResultAnimation = ({
 }) => {
   const errorSpace = true;
 
-  const getAnimation = () => {
+  const animationData = () => {
     if (isSuccess) {
-      switch (Math.floor(Math.random() * (3))) {
+      switch (Math.floor(Math.random() * 3)) {
         case 0:
           return SuccessMusic;
         case 1:
@@ -45,7 +43,7 @@ const ResultAnimation = ({
   return (
     <SuccessFailureAnimationsWrapper>
       <div className="animContainer">
-        <Lottie animationData={getAnimation()} loop />
+        <img src={animationData()} alt="animation" />
       </div>
       <h3 className={`stateText ${isSuccess ? 'success' : 'error'}`}>
         {subject}

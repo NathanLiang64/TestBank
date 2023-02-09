@@ -61,7 +61,7 @@ const T00100settingList = [
   {
     name: '搖一搖功能設定',
     route: '',
-    funcID: 'Z99997',
+    funcID: Func.Z99997.id,
   },
 ];
 

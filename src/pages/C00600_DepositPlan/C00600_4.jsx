@@ -140,7 +140,7 @@ const DepositPlanDetailPage = () => {
         next: program?.extra.nextDeductionDate,
         extra: () => (mode === 2 && dateToYMD() === program?.startDate ? '扣款成功' : undefined),
       },
-      { label: '存錢帳號', value: program?.bindAccountNo ? accountFormatter(program?.bindAccountNo) : '加開子帳戶' },
+      { label: '存錢帳號', value: program?.bindAccountNo ? accountFormatter(program?.bindAccountNo, true) : '加開子帳戶' },
     ];
     return renderListItem(list);
   };
@@ -148,7 +148,7 @@ const DepositPlanDetailPage = () => {
   const renderPlanDetails = () => {
     const list = [
       { label: '存錢計畫名稱', value: plan?.name },
-      { label: '存錢計畫之帳號', value: accountFormatter(plan?.bindAccountNo) },
+      { label: '存錢計畫之帳號', value: accountFormatter(plan?.bindAccountNo, true) },
       { label: '存錢計畫起始日', value: dateToString(plan?.startDate) },
       { label: '存錢計畫到期日', value: dateToString(plan?.endDate) },
       { label: '存錢週期', value: renderModeTimingString(plan) },

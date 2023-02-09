@@ -6,7 +6,6 @@ import { FEIBButton, FEIBCheckbox } from 'components/elements';
 import { currencySymbolGenerator, dateToString } from 'utilities/Generator';
 import InformationTape from 'components/InformationTape';
 import { CheckboxField } from 'components/Fields';
-import { useNavigation } from 'hooks/useNavigation';
 import { showPrompt } from 'utilities/MessageModal';
 import InstalmentWrapper from './R00200.style';
 
@@ -20,11 +19,8 @@ import InstalmentWrapper from './R00200.style';
 const R00200_1 = () => {
   const history = useHistory();
   const { state } = useLocation();
-  const { goHome } = useNavigation();
 
-  const { control, handleSubmit, watch } = useForm({
-    defaultValues: { installmentItem: {} },
-  });
+  const { control, handleSubmit, watch } = useForm({ defaultValues: { installmentItem: {} } });
   const watchedValue = watch('installmentItem');
 
   const renderInstallmentRadioButton = (detail) => (
@@ -43,14 +39,12 @@ const R00200_1 = () => {
     />
   );
 
-  // const generateOptions = () => mockLists.map((txn) => ({
   const generateOptions = () => state.availableTxns.map((txn) => ({
     label: renderInstallmentRadioButton(txn),
     value: txn.authCode,
   }));
 
   const onSubmit = ({ installmentItem }) => {
-    // const selectedTxns = mockLists.filter((txn) => !!installmentItem[txn.authCode]);
     const selectedTxns = state.availableTxns.filter((txn) => !!installmentItem[txn.authCode]);
     if (!selectedTxns.length) showPrompt('請選擇要分期的項目');
     history.push('/R002002', {
@@ -59,8 +53,6 @@ const R00200_1 = () => {
       newInstRestraintFlag: state.newInstRestraintFlag,
     });
   };
-
-  if (!state) goHome();
 
   return (
     <Layout title="晚點付 (單筆)">

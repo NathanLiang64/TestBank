@@ -63,7 +63,7 @@ const DepositPlanEditPage = () => {
         cycleMode: location.state.plan.cycleMode,
         cycleTiming: location.state.plan.cycleTiming,
         amount: `＄${toCurrency(location.state.plan.amount)}`,
-        bindAccountNo: accountFormatter(location.state.plan.bindAccountNo),
+        bindAccountNo: accountFormatter(location.state.plan.bindAccountNo, true),
       });
     } else {
       // Guard: 此頁面接續上一頁的操作，意指若未在該情況下進入此頁為不正常操作。

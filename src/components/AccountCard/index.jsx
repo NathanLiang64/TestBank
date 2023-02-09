@@ -52,7 +52,7 @@ const AccountCard = ({
             %
           </div>
         </div>
-        <div style={{ visibility: isShowAccoutNo && !!accountNo ? 'visible' : 'hidden' }}>{accountFormatter(accountNo)}</div>
+        <div style={{ visibility: isShowAccoutNo && !!accountNo ? 'visible' : 'hidden' }}>{accountFormatter(accountNo, true)}</div>
         <div className="justify-between items-end">
           <div>{annotation}</div>
           <div className={`balance ${currencySymbolGenerator(dollarSign, Math.abs(balance)).length > 12 && 'small'}`}>

@@ -155,7 +155,7 @@ const ExportBankBook = () => {
                   {
                     accountList.map((item) => (
                       <FEIBOption value={item.accountNo} key={item.accountNo}>
-                        {`${accountFormatter(item.accountNo)}  ${item.alias}`}
+                        {`${accountFormatter(item.accountNo, true)}  ${item.alias}`}
                       </FEIBOption>
                     ))
                   }

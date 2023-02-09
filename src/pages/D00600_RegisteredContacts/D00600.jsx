@@ -4,7 +4,7 @@ import uuid from 'react-uuid';
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
-import { showDrawer, showPrompt } from 'utilities/MessageModal';
+import { showDrawer } from 'utilities/MessageModal';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { useNavigation } from 'hooks/useNavigation';
@@ -13,6 +13,7 @@ import { getAccountsList } from 'utilities/CacheData';
 import { DropdownField } from 'components/Fields';
 import { useForm } from 'react-hook-form';
 import Loading from 'components/Loading';
+import { accountFormatter } from 'utilities/Generator';
 import { getAgreedAccount, updateAgreedAccount } from './api';
 import AccountEditor from './D00600_AccountEditor';
 import PageWrapper from './D00600.style';
@@ -42,10 +43,7 @@ const Page = () => {
     dispatch(setWaittingVisible(true));
 
     const accountsList = await getAccountsList('MFC', undefined, true);// M=臺幣主帳戶、C=臺幣子帳戶、F=外幣帳戶
-    if (!accountsList.length) {
-      await showPrompt('您還沒有任臺幣、外幣存款帳戶，請在系統關閉此功能後，立即申請。', closeFunc);
-      return;
-    }
+
     // Function Controller 提供的參數
     // startParams = {
     //   selectorMode: true, 表示選取帳號模式，啟用時要隱藏 Home 圖示。
@@ -55,7 +53,7 @@ const Page = () => {
     const startParams = await loadFuncParams();
 
     // 若有指定帳號，則只取單一帳號的約定帳號清單。若無指定帳號，則以 acctOptions 中的第一個項目為預設帳號。
-    const acctOptions = accountsList.map((acct) => ({label: `${acct.accountNo} ${acct.alias}`, value: acct.accountNo}));
+    const acctOptions = accountsList.map((acct) => ({label: `${accountFormatter(acct.accountNo, true)} ${acct.alias}`, value: acct.accountNo}));
     setModel((prevModel) => ({
       ...prevModel,
       selectorMode: startParams?.selectorMode ?? false,

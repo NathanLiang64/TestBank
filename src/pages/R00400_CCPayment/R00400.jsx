@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
@@ -16,7 +17,7 @@ import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
 import BankCodeInputField from 'pages/R00400_CCPayment/fields/BankCodeInputField';
 import { DropdownField, TextInputField } from 'components/Fields';
-import { FEIBButton, FEIBErrorMessage } from 'components/elements';
+import { FEIBButton, FEIBErrorMessage, FEIBHintMessage } from 'components/elements';
 import { RadioGroupField } from 'components/Fields/radioGroupField';
 import { Func } from 'utilities/FuncID';
 import { getAccountsList } from 'utilities/CacheData';
@@ -197,17 +198,17 @@ const Page = () => {
             </div>
 
             { watchedValues.paymentMethod === PAYMENT_OPTION.INTERNAL && (
-            <>
+            <section>
               <DropdownField
                 name="accountNo"
                 labelName="轉出帳號"
                 control={control}
                 options={generateAccountNoOptions(internalAccounts)}
               />
-              <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
-                { renderBalance() }
-              </FEIBErrorMessage>
-            </>
+              {watchedValues.accountNo && (
+              <FEIBHintMessage>{ renderBalance() }</FEIBHintMessage>
+              )}
+            </section>
             )}
 
             { watchedValues.paymentMethod === PAYMENT_OPTION.EXTERNAL && (
