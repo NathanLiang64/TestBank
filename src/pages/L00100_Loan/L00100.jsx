@@ -1,5 +1,5 @@
 /* eslint react/no-array-index-key: 0 */
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import uuid from 'react-uuid';
@@ -21,6 +21,7 @@ import {
 
 import { Func } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
+import { getBranchCode } from 'utilities/CacheData';
 import { getSubSummary } from './api';
 import { handleSubPaymentHistory } from './utils';
 import PageWrapper, { ContentWrapper } from './L00100.style';
@@ -31,6 +32,7 @@ const uid = uuid();
  * L00100 貸款 首頁
  */
 const Page = () => {
+  const branchCodeList = useRef([]);// 拿分行代碼
   const detailsRef = useRef();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -39,8 +41,12 @@ const Page = () => {
   const [loans, setLoans] = useState();
   const [detailMap, setDetailMap] = useState({});
 
+  useEffect(async () => {
+    branchCodeList.current = await getBranchCode();
+  }, []);
+
   // 依照currentIndex取得當筆貸款的交易紀錄
-  const fetchDetailMap = async (account, subNo, currentIndex) => {
+  const fetchDetailMap = async (account, subNo, debitAccount, currentIndex) => {
     const currentLoanDetail = await handleSubPaymentHistory(account, subNo);
 
     setDetailMap((prevMap) => ({
@@ -54,7 +60,7 @@ const Page = () => {
     if (detailMap[swiper.activeIndex]) return;
     const currentLoan = loans[swiper.activeIndex];
 
-    fetchDetailMap(currentLoan.account, currentLoan.subNo, swiper.activeIndex);
+    fetchDetailMap(currentLoan.account, currentLoan.subNo, currentLoan.debitAccount, swiper.activeIndex);
   };
 
   /**
@@ -98,26 +104,38 @@ const Page = () => {
   const renderSlides = (cards) => {
     if (!cards || cards?.length === 0) return [];
 
-    return cards.map((card, i) => (
-      <AccountCard type="L" key={`${uid}-c${i}`}>
-        <div className="justify-between items-start">
-          <div>
-            {/* 目前還沒有 loanType 資料，暫時以信用貸款顯示 */}
-            <div>{card.loanType ?? '信用貸款'}</div>
-            <div>{`${accountFormatter(card.account)} (${card.subNo})`}</div>
+    return cards.map((card, i) => {
+      const branchId = card.debitAccount.substring(0, 3);
+
+      return (
+        <AccountCard type="L" key={`${uid}-c${i}`}>
+          <div className="justify-between items-start">
+            <div>
+              {/* 目前還沒有 loanType 資料，暫時以信用貸款顯示 */}
+              <div>
+                {card.loanType ?? '信用貸款'}
+                &nbsp;
+                {`(${card.subNo})`}
+              </div>
+              <div>
+                {branchCodeList.current.find((b) => b.branchNo === branchId)?.branchName ?? branchId}
+                &nbsp;
+                {`${accountFormatter(card.account)}`}
+              </div>
+            </div>
+            {/* <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.account, card.subNo)}>
+              <MoreIcon />
+            </FEIBIconButton> */}
           </div>
-          {/* <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.account, card.subNo)}>
-            <MoreIcon />
-          </FEIBIconButton> */}
-        </div>
-        <div className="justify-end items-baseline gap-4">
-          <div className="balance">{currencySymbolGenerator(card.currency ?? 'NTD', card.balance)}</div>
-        </div>
-        <div className="justify-end gap-6 mt-4 divider">
-          <button type="button" className="text-16" onClick={() => history.push('/L001002', { account: card.account, subNo: card.subNo })}>貸款資訊</button>
-        </div>
-      </AccountCard>
-    ));
+          <div className="justify-end items-baseline gap-4">
+            <div className="balance">{currencySymbolGenerator(card.currency ?? 'NTD', card.balance)}</div>
+          </div>
+          <div className="justify-end gap-6 mt-4 divider">
+            <button type="button" className="text-16" onClick={() => history.push('/L001002', { account: card.account, subNo: card.subNo })}>貸款資訊</button>
+          </div>
+        </AccountCard>
+      );
+    });
   };
 
   /**
@@ -232,7 +250,7 @@ const Page = () => {
     if (subSummaryRes.length !== 0) {
       error = null;
       setLoans(subSummaryRes);
-      fetchDetailMap(subSummaryRes[0].account, subSummaryRes[0].subNo, 0);
+      fetchDetailMap(subSummaryRes[0].account, subSummaryRes[0].subNo, subSummaryRes[0].debitAccount, 0);
     } else {
       error = '您尚未擁有貸款，請在系統關閉此功能後，立即申請。';
     }
@@ -245,14 +263,7 @@ const Page = () => {
     <Layout title="貸款" inspector={inspector}>
       <MainScrollWrapper>
         <PageWrapper>
-          <SwiperLayout
-            slides={renderSlides(loans)}
-            hasDivider={false}
-            slidesPerView={1.06}
-            spaceBetween={8}
-            centeredSlides
-            onSlideChange={onSlideChange}
-          >
+          <SwiperLayout slides={renderSlides(loans)} hasDivider={false} slidesPerView={1.1} spaceBetween={8} centeredSlides onSlideChange={onSlideChange}>
             {renderContents()}
           </SwiperLayout>
         </PageWrapper>
