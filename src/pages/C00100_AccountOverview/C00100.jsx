@@ -34,11 +34,11 @@ const AccountOverviewPage = () => {
   const renderSlides = (data) => {
     const slides = [];
 
-    if (data?.assets && data.assets.length > 0) {
+    if (data?.assets?.assetItems && data?.assets?.assetItems.length > 0) {
       // 正資產陣列移除子帳戶項目
-      const assetList = data.assets.filter((account) => account.type !== 'C');
+      const assetList = data.assets.assetItems.filter((account) => account.type !== 'C');
       // 子帳戶項目篩選只餘『存錢計畫』
-      const subAccounts = data.assets.filter((account) => account.type === 'C' && account.purpose === 2);
+      const subAccounts = data.assets.assetItems.filter((account) => account.type === 'C' && account.purpose === 2);
       // 篩選後子項目加回正資產陣列
       if (subAccounts.length > 0) assetList.push(...subAccounts);
 
@@ -59,8 +59,8 @@ const AccountOverviewPage = () => {
   const renderContents = (data) => {
     const slides = [];
 
-    if (data?.assets && data.assets.length > 0) {
-      slides.push(<AccountCardList key={uuid()} data={data.assets} isDebt={false} necessaryType={['M', 'F', 'S', 'C']} />);
+    if (data?.assets?.assetItems && data?.assets?.assetItems.length > 0) {
+      slides.push(<AccountCardList key={uuid()} data={data.assets.assetItems} isDebt={false} necessaryType={['M', 'F', 'S', 'C']} />);
     }
 
     if (data?.debts && data.debts.length > 0) {

@@ -255,11 +255,11 @@ const C00300 = () => {
         break;
 
       case Func.C00800.id: // 匯出存摺
-        params = { accountNo: selectedAccount.accountNo }; // TODO 直接帶入台幣帳號
+        params = { accountNo: selectedAccount.accountNo }; // TODO 直接帶入臺幣帳號
         break;
 
       case Func.D00800.id: // 匯出存摺
-        params = { selectedAccount }; // TODO 直接帶入台幣帳號
+        params = { selectedAccount }; // TODO 直接帶入臺幣帳號
         break;
 
       case 'Rename': // 帳戶名稱編輯

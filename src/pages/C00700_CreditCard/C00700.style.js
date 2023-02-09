@@ -42,9 +42,10 @@ export const TableDialog = styled.div`
   .remark {
     font-weight: 500;
     color: ${({ theme }) => theme.colors.text.light};
-    font-size: 1.1rem;
+    font-size: 1.4rem;
+    text-align: left;
+    display: flex;
     padding-top: 0.4rem;
-    margin-left: -0.65rem;
   }
 `;
 
