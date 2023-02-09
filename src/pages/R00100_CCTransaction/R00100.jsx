@@ -76,7 +76,7 @@ const R00100 = () => {
     const param = funcStack.peek(); // TODO closeFunc就有此機制，為何還要自行處理？
     const keepData = JSON.parse(param.keepData);
     if (keepData) {
-      keepData.transactionMap[index] = transactions;
+      keepData.transactionObj[index] = transactions;
       closeFunc(keepData);
     } else closeFunc();
   };
@@ -88,7 +88,7 @@ const R00100 = () => {
           <div className="bg-gray">
             <CreditCard
               cardName={cardInfo?.isBankeeCard ? 'Bankee信用卡' : '所有信用卡'}
-              accountNo={cardInfo?.isBankeeCard ? cardInfo.cards[0].cardNo : ''}
+              accountNo={cardInfo?.isBankeeCard ? cardInfo.cardNo : ''}
               balance={cardInfo?.usedCardLimit}
               color="green"
               annotation="已使用額度"

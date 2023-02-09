@@ -11,6 +11,7 @@ export const DropdownField = ({
   labelName,
   $color,
   inputProps,
+  onChange,
   ...controlProps
 }) => {
   const {field, fieldState} = useController(controlProps);
@@ -27,8 +28,9 @@ export const DropdownField = ({
     getContentAnchorEl: null,
   };
 
-  const onChangeHandler = (selectedValue) => {
-    field.onChange(selectedValue);
+  const onChangeHandler = (event) => {
+    if (onChange) onChange(event.target.value);
+    else field.onChange(event);
   };
   return (
     <DropdownFieldWrapper>

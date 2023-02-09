@@ -24,3 +24,19 @@ export const defaultValues = {
   bankId: '',
   extAccountNo: '',
 };
+
+export const CStoreContent = () => (
+  <ol>
+    <li>便利超商單筆繳款金額不得高於新台幣2萬元整。</li>
+    <li>繳款完成後約3個銀行營業日入帳，請您務必保留超商所提供之繳費收據至確認繳款正確入帳。</li>
+    <li>上述應繳金額未含超商APP代收手續費(15元)，各超商手續費收取依超商現場條碼讀取金額為準。</li>
+  </ol>
+);
+
+export const ExternalContent = () => (
+  <ol>
+    <li>待提供</li>
+    <li>待提供</li>
+    <li>待提供</li>
+  </ol>
+);

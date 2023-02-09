@@ -2,7 +2,7 @@ import { useEffect, useState} from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 
-import Main from 'components/Layout';
+import { MainScrollWrapper } from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import CreditCard from 'components/CreditCard';
 import SwiperLayout from 'components/SwiperLayout';
@@ -17,55 +17,56 @@ import { R005, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
 import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import { useNavigation } from 'hooks/useNavigation';
-import { getCards, getTransactionPromise, updateTxnNotes } from './api';
+import { getCards, getTransactions, updateTxnNotes } from './api';
 import {
-  backInfo, generateTwoCardsArray, levelInfo, renderBody, renderHead,
+  backInfo, levelInfo, renderBody, renderHead,
 } from './utils';
-import {SwiperCreditCard, DetailDialogContentWrapper, TableDialog} from './C00700.style';
+import {
+  SwiperCreditCard,
+  DetailDialogContentWrapper,
+  TableDialog,
+  CreditCardTxsListWrapper,
+} from './C00700.style';
 
 /**
  * C00700 信用卡 首頁
  */
-const CreditCardPage = () => {
+const CreditCardPage = (props) => {
   const history = useHistory();
+  const {location: {state}} = props;
   const {startFunc, closeFunc} = useNavigation();
   const [cardsInfo, setCardsInfo] = useState([]);
   const [usedCardLimit, setUsedCardLimit] = useState();
-  const [transactionMap, setTransactionMap] = useState({});
+  const [transactionObj, setTransactionObj] = useState({ 0: null, 1: null }); // {0:bankeeCard 交易明細, 1:所有信用卡(含bankeeCard) 交易明細}
   const dispatch = useDispatch();
 
   const go2Func = (funcId, params) => {
-    startFunc(funcId, params, {transactionMap, cardsInfo, usedCardLimit});
+    startFunc(funcId, params, {transactionObj, cardsInfo, usedCardLimit});
   };
 
-  const fetchTransactions = async (cards, currentIndex) => {
-    const transactionsArray = await Promise.all(
-      cards.map(({ cardNo }) => getTransactionPromise(cardNo)),
-    );
-
-    const flattedTransactions = transactionsArray.flat();
-    setTransactionMap((prevMap) => ({...prevMap, [currentIndex]: flattedTransactions}));
+  const fetchTransactions = async (cardNo, currentIndex) => {
+    if (transactionObj[currentIndex]) return;
+    const txns = await getTransactions(cardNo ?? ''); // 空字串代表拿取所有信用卡的明細
+    setTransactionObj((prevObj) => ({...prevObj, [cardNo ? 0 : 1]: txns}));
   };
 
   // 滑動卡片時，拿取當下信用卡的交易明細
   const onSlideChange = async (swiper) => {
-    if (transactionMap[swiper.activeIndex]) return;
-    const currentCards = cardsInfo[swiper.activeIndex].cards;
-    fetchTransactions(currentCards, swiper.activeIndex);
+    const {cardNo} = cardsInfo[swiper.activeIndex];
+    fetchTransactions(cardNo, swiper.activeIndex);
   };
 
   // 編輯信用卡明細備註的 Handler
   const onTxnNotesEdit = async (payload, isBankeeCard) => {
     dispatch(setModalVisible(false));
     const { isSuccess, message } = await updateTxnNotes(payload);
-    if (isSuccess) {
-      // updateTxNotes API 打成功才更新畫面
-      setTransactionMap((prevMap) => {
+    if (isSuccess) { // updateTxNotes API 打成功才更新畫面
+      setTransactionObj((prevObj) => {
         const key = isBankeeCard ? 0 : 1;
-        const updatedCards = prevMap[key].map((card) => (
+        const updatedCards = prevObj[key].map((card) => (
           card.txKey === payload.txKey ? {...card, note: payload.note} : card
         ));
-        return {...prevMap, [key]: updatedCards};
+        return {...prevObj, [key]: updatedCards};
       });
     } else showError(message);
   };
@@ -74,8 +75,8 @@ const CreditCardPage = () => {
   const functionAllList = (item) => {
     const list = [
       { fid: Func.R00200.id, title: '晚點付' },
-      { fid: Func.R00300.id, title: '帳單', cardNo: item.cards[0].cardNo },
-      { fid: Func.R00400.id, title: '繳費', cardNo: item.isBankeeCard ? item.cards[0].cardNo : '' },
+      { fid: Func.R00300.id, title: '帳單', cardNo: item.isBankeeCard ? item.cardNo : '' },
+      { fid: Func.R00400.id, title: '繳費', cardNo: item.isBankeeCard ? item.cardNo : '' },
     ];
     if (!item.isBankeeCard) list.splice(0, 1);
 
@@ -93,13 +94,15 @@ const CreditCardPage = () => {
   };
 
   // 信用卡更多
-  const handleMoreClick = (card) => {
+  const handleMoreClick = ({isBankeeCard}) => {
     const list = [
       {
-        fid: '/C007001', icon: <CreditCardIcon6 />, title: '信用卡資訊', param: card,
+        fid: '/C007001', icon: <CreditCardIcon6 />, title: '信用卡資訊', param: {keepData: {transactionObj, cardsInfo, usedCardLimit}, isBankeeCard},
       },
       { fid: `${Func.R00500.id}`, icon: <R005 />, title: '自動扣繳' },
-      { fid: '/C007002', icon: <CircleIcon />, title: '每月現金回饋' },
+      {
+        fid: '/C007002', icon: <CircleIcon />, title: '每月現金回饋', param: {keepData: {transactionObj, cardsInfo, usedCardLimit} },
+      },
     ];
     const options = (
       <ul>
@@ -129,9 +132,9 @@ const CreditCardPage = () => {
       cardsInfo.map((cardSet) => (
         <SwiperCreditCard>
           <CreditCard
-            key={cardSet.cards[0].cardNo}
+            key={cardSet.isBankeeCard ? '0' : '1'}
             cardName={cardSet.isBankeeCard ? 'Bankee信用卡' : '所有信用卡'}
-            accountNo={cardSet.isBankeeCard && cardSet.cards[0].cardNo}
+            accountNo={cardSet.isBankeeCard && cardSet.cardNo}
             balance={usedCardLimit}
             color="green"
             annotation="已使用額度"
@@ -191,66 +194,70 @@ const CreditCardPage = () => {
   const renderCreditList = () => {
     if (!cardsInfo.length) return null;
     return (
-      cardsInfo.map((cardInfo, index) => (
-        <div key={cardInfo.cards[0].cardNo}>
-          <DetailDialogContentWrapper>
-            {cardInfo.isBankeeCard && (
-            <div className="panel">
-              <ThreeColumnInfoPanel content={bonusInfo(cardInfo)} />
-            </div>
-            )}
-          </DetailDialogContentWrapper>
-
-          <CreditCardTxsList
-            card={cardInfo}
-            onMoreFuncClick={() => go2Func(Func.R00100.id, {
-              card: cardInfo, usedCardLimit, transactions: transactionMap[index], index,
-            })}
-            transactions={transactionMap[index]}
-            onTxnNotesEdit={onTxnNotesEdit}
-          />
-        </div>
-      ))
+      cardsInfo.map((cardInfo, index) => {
+        const swiperIndex = index;
+        return (
+          <div key={swiperIndex}>
+            <DetailDialogContentWrapper>
+              {cardInfo.isBankeeCard && (
+              <div className="panel">
+                <ThreeColumnInfoPanel content={bonusInfo(cardInfo)} />
+              </div>
+              )}
+            </DetailDialogContentWrapper>
+            <CreditCardTxsListWrapper>
+              <CreditCardTxsList
+                card={cardInfo}
+                onMoreFuncClick={() => go2Func(Func.R00100.id, {
+                  card: cardInfo, usedCardLimit, transactions: transactionObj[swiperIndex], index: swiperIndex,
+                })}
+                transactions={transactionObj[swiperIndex]}
+                onTxnNotesEdit={onTxnNotesEdit}
+              />
+            </CreditCardTxsListWrapper>
+          </div>
+        );
+      })
     );
   };
 
   // 拿取信用卡資訊 & 第一張卡面的交易明細
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
+    let model = {};
     const params = await loadFuncParams();
-    // TODO 待調整結構
-    if (params?.response) {
-      setTransactionMap(params.response.transactionMap);
-      setCardsInfo(params.response.cardsInfo);
-      setUsedCardLimit(params.response.usedCardLimit);
-    } else if (params) {
-      setTransactionMap(params.transactionMap);
-      setCardsInfo(params.cardsInfo);
-      setUsedCardLimit(params.usedCardLimit);
+
+    if (state || params) {
+      model = state || params.response || params; // 從C00700X 傳回 || R00100 傳回(可能已修改過明細備註) || R00200-R00500 傳回
+      setTransactionObj(model.transactionObj);
     } else {
       const {cards, usedCardLimit: limit} = await getCards();
-      if (cards.length) {
-        const transferedCards = generateTwoCardsArray(cards);
-        fetchTransactions(transferedCards[0].cards, 0);
-        setCardsInfo(transferedCards);
-        setUsedCardLimit(limit);
-      } else {
-        await showCustomPrompt({
-          message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
-          onClose: closeFunc,
-        });
-      }
+      const bankeeCard = cards.find(({isBankeeCard}) => !!isBankeeCard); // TODO 後端資料的 isBankeeCard 應該改成 boolean
+      model.cardsInfo = [bankeeCard];
+      if (cards.length >= 2) model.cardsInfo.push({isBankeeCard: false}); // 有第二張以上的卡片都是「非 bankee」信用卡
+      model.usedCardLimit = limit;
+      fetchTransactions(bankeeCard.cardNo);
     }
+
+    setCardsInfo(model.cardsInfo);
+    setUsedCardLimit(model.usedCardLimit);
     dispatch(setWaittingVisible(false));
   }, []);
 
   return (
     <Layout title="信用卡" goBackFunc={closeFunc}>
-      <Main small>
-        <SwiperLayout slides={renderSlides()} onSlideChange={onSlideChange} hasDivider={false} slidesPerView={cardsInfo.lengh === 1 ? 1.14 : 1.06}>
+      <MainScrollWrapper>
+        <SwiperLayout
+          slides={renderSlides()}
+          hasDivider={false}
+          slidesPerView={1.06}
+          spaceBetween={8}
+          centeredSlides
+          onSlideChange={onSlideChange}
+        >
           {renderCreditList()}
         </SwiperLayout>
-      </Main>
+      </MainScrollWrapper>
     </Layout>
   );
 };

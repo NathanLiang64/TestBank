@@ -8,7 +8,7 @@ import store from 'stores/store';
  * @param {{
  *   accountNo: String, // 要查詢約定轉入帳號清單的帳號。
  *   includeSelf: Boolean, // 表示傳回清單要包含同ID互轉的帳號。
- * }} request
+ * }} accountNo
  * @returns {Promise<[{
  *   bankId: '約定轉入帳戶-銀行代碼'
  *   acctId: '約定轉入帳戶-帳號'
@@ -19,11 +19,13 @@ import store from 'stores/store';
  *   headshot: '代表圖檔的UUID，用來顯示大頭貼；若為 null 表示還沒有設定頭像。'
  * }]>} 約定轉入帳號清單。
  */
-export const getAgreedAccount = async (request) => {
+export const getAgreedAccount = async (accountNo) => {
   let {agreAccts} = store.getState()?.CacheReducer;
   if (!agreAccts) agreAccts = {};
-
-  const {accountNo} = request;
+  const request = {
+    accountNo,
+    includeSelf: true, // 現在一律連同ID底下的帳號也一並取出，透過 CacheReducer 管理，後續再依照選取模式 filter
+  };
   if (!agreAccts[accountNo]) {
     const response = await callAPI('/deposit/transfer/agreedAccount/v1/get', request);
     const bankList = await getBankCode();

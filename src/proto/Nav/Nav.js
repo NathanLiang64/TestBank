@@ -48,6 +48,7 @@ const Nav = () => {
           <div onClick={() => startFunc(Func.C00300.id)}>C00300 台幣存款首頁</div>
           <div onClick={() => startFunc(Func.C00400.id)}>C00400 外幣存款首頁</div>
           <div onClick={() => startFunc(Func.C00500.id)}>C00500 交割帳戶首頁</div>
+          <div onClick={() => startFunc(Func.C00700.id)}>C00700 信用卡首頁</div>
           <div onClick={() => startFunc(Func.M00100.id)}>M00100 社群圈首頁</div>
           <div onClick={() => startFunc(Func.D00500.id)}>D00500 常用帳號管理</div>
           <div onClick={() => startFunc(Func.D00600.id)}>D00600 約定帳號管理</div>

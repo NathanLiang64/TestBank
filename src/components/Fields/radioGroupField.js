@@ -14,13 +14,15 @@ export const RadioGroupField = ({
   labelName,
   disabled,
   hideDefaultButton,
+  onChange,
   row = false,
   ...controlProps
 }) => {
   const { field, fieldState } = useController(controlProps);
 
-  const onChangeHandler = (selectedValue) => {
-    field.onChange(selectedValue);
+  const onChangeHandler = (event) => {
+    if (onChange) onChange(event.target.value);
+    else field.onChange(event);
   };
 
   // eslint-disable-next-line no-unused-vars

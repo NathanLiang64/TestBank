@@ -17,12 +17,12 @@ const DrawerContent = ({
     <div className="agreeWording">
       <p>
         本服務係透過臺灣網路認證股份有限公司提供之裝置確認服務(SIM卡認證)，並將與您的電信公司確認您的手機門號與SIM卡門號是否一致，若否則請至本行更新手機號碼，以完成APP裝置認證，點選確認即閱讀並同意
-        <a href="https://drive.google.com/file/d/19EZcLREu79ScFvcoZLSbKSmDDqI1UfP3/view?usp=sharing" target="_blank" rel="noreferrer">利用行動電話號碼辦理身分驗證服務條款</a>
+        <a href="https://bankeesit.feib.com.tw/doc/term/「利用行動電話號碼辦理身分驗證服務」使用者約定條款及隱私權告知條款.pdf" target="_blank" rel="noreferrer">利用行動電話號碼辦理身分驗證服務條款</a>
         。
       </p>
       <p>
         為保障您的交易安全，將為您進行裝置認證，以啟用快速登入，點選確認即閱讀並同意
-        <a href="https://drive.google.com/file/d/1z-x5wk_GZVUX0o81ifVuYWfV_Mn67Mhe/view?usp=sharing" target="_blank" rel="noreferrer">快速登入設定條款</a>
+        <a href="https://bankeesit.feib.com.tw/doc/term/快速登入設定條款.pdf" target="_blank" rel="noreferrer">快速登入設定條款</a>
       </p>
     </div>
     <ConfirmButtons

@@ -88,17 +88,20 @@ export const getTxn = async (request) => {
  * 分期付款試算
  *
  * @param {[{
- *  purchDate,    // 消費日期 yyyyMMdd
- *  purchAmount,  // 消費金額
- *  authCode,     // 授權號碼
- *  totTerm,      // 總期數
+ *  purchDate:String,    // 消費日期 yyyyMMdd
+ *  purchAmount:Number,  // 消費金額
+ *  authCode:String,     // 授權號碼
+ *  totTerm:Number,      // 總期數
  * }]} request  // 序號
+ *
  * @returns {Promise<{
- *   purchDate, // 消費日期
- *   purchAmount, // 消費金額
- *   authCode, // 授權號碼
- *   storeName, // 商店名稱
+ *   amountFirst,
+ *   amountStages,
+ *   interestFirst,
+ *   interestStages,
  * }>}
+ *
+ * amountFirst, amountStages, interestFirst, interestStages,
  */
 export const getPreCalc = async (request) => {
   const response = await callAPI('/creditCard/installment/preCalc', request);

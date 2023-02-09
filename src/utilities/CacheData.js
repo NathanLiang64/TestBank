@@ -59,7 +59,7 @@ export const getBranchCode = async () => {
  *   currency: 幣別代碼,
  *   alias: 帳戶名稱，若有暱稱則會優先用暱稱,
  *   dgType: 帳戶類別('  '.非數存帳號, '11'.臨櫃數存昇級一般, '12'.一之二類, ' 2'.二類, '32'.三之二類)
- *   transable: 已設約轉 或 同ID互轉(true/false)
+ *   transable: 同ID互轉(true/false)
  * }]>} 帳號基本資料。
  */
 const loadAccountsList = async () => {
@@ -68,7 +68,7 @@ const loadAccountsList = async () => {
   //   account: 帳號,
   //   name: 帳戶名稱，若有暱稱則會優先用暱稱,
   //   dgType: 帳戶類別('  '.非數存帳號, '11'.臨櫃數存昇級一般, '12'.一之二類, ' 2'.二類, '32'.三之二類)
-  //   transable: 已設約轉 或 同ID互轉(true/false)
+  //   transable: 同ID互轉(true/false)
   //   details: [{ // 外幣多幣別時有多筆
   //        balance: 帳戶餘額(, // NOTE 餘額「非即時」資訊
   //        currency: 幣別代碼,
@@ -108,7 +108,7 @@ const loadAccountsList = async () => {
  *   currency: 幣別代碼,
  *   alias: 帳戶名稱 // 若有暱稱則會優先用暱稱,
  *   dgType: 帳戶類別 // ('  '.非數存帳號, '11'.臨櫃數存昇級一般, '12'.一之二類, ' 2'.二類, '32'.三之二類)
- *   transable: 已設約轉 或 同ID互轉(true/false)
+ *   transable: 同ID互轉(true/false)
  * }]>} 帳號基本資料。
  */
 export const getAccountsList = async (acctTypes, onDataLoaded, noFlat = false) => {
@@ -145,12 +145,14 @@ export const getAccountsList = async (acctTypes, onDataLoaded, noFlat = false) =
  *   freeTransfer: 免費跨轉總次數
  *   freeTransferRemain: 免費跨轉剩餘次數
  *   isVIP: 表示此用戶是 VIP 的旗標，只有旗標為 true 時，才會有VIP跨提/跨轉優惠次數資訊。
- *   dLimitLeft: OTP日剩餘額度
- *   mLimitLeft: OTP月剩餘額度
  *   freeWithdrawTimesVIP: VIP跨提本月適用優惠次數
  *   freeWithdrawRemainVIP: VIP跨提本月優惠剩餘次數
  *   freeTransferTimesVIP: VIP跨轉本月適用優惠次數
  *   freeTransferRemainVIP: VIP跨轉本月優惠剩餘次數
+ *   dLimitLeft: 非約轉當日剩餘額度
+ *   mLimitLeft: 非約轉當月剩餘額度
+ *   agrdTfrSelfLimitLeft: 約轉自行轉帳剩餘額度
+ *   agrdTfrInterLimitLeft: 約轉跨行轉帳剩餘額度
  * }>} 優惠資訊
  */
 export const getAccountBonus = async (accountNo, onDataLoaded, foreUpdate) => {

@@ -15,6 +15,7 @@ import { AddMemberIcon } from 'assets/images/icons';
 import { showDrawer, showInfo } from 'utilities/MessageModal';
 import AccountEditor from 'pages/D00500_FrequentContacts/D00500_AccountEditor';
 import { addFrequentAccount } from 'pages/D00500_FrequentContacts/api';
+import Accordion from 'components/Accordion';
 import { renderFooter, renderHeader, renderBody} from './utils';
 import { ReserveTransferSearchWrapper } from './D00800.style';
 
@@ -76,7 +77,7 @@ const ReserveTransferSearch1 = ({ location }) => {
 
   if (!location.state) closeFunc();
   const {reserveData, selectedAccount} = location.state;
-  console.log('reserveData', reserveData);
+
   return (
     <Layout title="取消預約轉帳" goBackFunc={goBack}>
       <ReserveTransferSearchWrapper>
@@ -104,7 +105,9 @@ const ReserveTransferSearch1 = ({ location }) => {
               {renderBody(reserveData, selectedAccount)}
             </section>
             <section className="accordionContainer">
-              {renderFooter(reserveData, selectedAccount)}
+              <Accordion title="詳細交易" space="bottom">
+                {renderFooter(reserveData, selectedAccount)}
+              </Accordion>
             </section>
           </>
         )}
