@@ -27,7 +27,7 @@ const ChangeUserName = () => {
 
   // 點擊儲存變更按鈕，表單驗證 呼叫變更使用者代號 API
   const onSubmit = async ({ userName, newUserName }) => {
-    const jsRs = await transactionAuth(Func.T00800.authCode);
+    const jsRs = await transactionAuth(Func.T008.authCode);
 
     if (jsRs.result) {
       const param = {
@@ -51,7 +51,7 @@ const ChangeUserName = () => {
   };
 
   return (
-    <Layout title="使用者代號變更">
+    <Layout fid={Func.T008} title="使用者代號變更">
       <ChangeUserNameWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <PasswordInputField

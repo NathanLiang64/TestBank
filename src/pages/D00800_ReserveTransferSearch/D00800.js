@@ -14,6 +14,7 @@ import FailImage from 'assets/images/failIcon.png';
 import SuccessImage from 'assets/images/successIcon.png';
 import { currencySymbolGenerator, dateToString, dateToYMD } from 'utilities/Generator';
 import { showCustomPrompt } from 'utilities/MessageModal';
+import { Func } from 'utilities/FuncID';
 
 import { getAccountsList, getBankCode } from 'utilities/CacheData';
 import SearchIcon from '@material-ui/icons/Search';
@@ -201,7 +202,7 @@ const D00800 = () => {
   }, [selectedAccount, curTab, curReserveRange, curResultRange]);
 
   return (
-    <Layout title="預約轉帳查詢/取消" inspector={fetchTransferOutAccounts}>
+    <Layout fid={Func.D008} title="預約轉帳查詢/取消" inspector={fetchTransferOutAccounts}>
       <ReserveTransferSearchWrapper className="searchResult">
         <div className="cardArea">
           <Swiper

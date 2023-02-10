@@ -24,7 +24,7 @@ const R00100 = () => {
   const {startFunc, closeFunc} = useNavigation();
   const [transactions, setTransactions] = useState();
   const [index, setIndex] = useState();
-  const go2Instalment = () => startFunc(Func.R00200.id, {cardNo: cardInfo.cardNo});
+  const go2Instalment = () => startFunc(Func.R002.id, {cardNo: cardInfo.cardNo});
 
   const getTransactions = async (cards) => {
     const transactionsArray = await Promise.all(
@@ -82,7 +82,7 @@ const R00100 = () => {
   };
 
   return (
-    <Layout title="信用卡即時消費明細" goBackFunc={goBackFunc}>
+    <Layout fid={Func.R001} title="信用卡即時消費明細" goBackFunc={goBackFunc}>
       <MainScrollWrapper>
         <PageWrapper>
           <div className="bg-gray">

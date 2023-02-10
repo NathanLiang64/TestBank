@@ -79,7 +79,7 @@ const TransferConfirm = (props) => {
       } else transIn.type = (transIn.freqAcct ? 1 : 0);
 
       // 進行交易驗證，要求使用者輸入OTP、密碼、雙因子...等。
-      const authCode = (response.isAgreedTxn) ? Func.D00100_臺幣轉帳.authCode.REG : Func.D00100_臺幣轉帳.authCode.NONREG;
+      const authCode = (response.isAgreedTxn) ? Func.D001.authCode.REG : Func.D001.authCode.NONREG;
       const auth = await transactionAuth(authCode);
       if (auth.result) {
         const result = await executeTransfer();

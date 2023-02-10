@@ -79,7 +79,7 @@ const DepositPlanDetailPage = () => {
     if (!response?.result) return;
 
     // Step 2. 再執行 transactionAuth
-    const auth = await transactionAuth(Func.C00600.authCode); // 需通過 2FA 或 網銀密碼 驗證才能建立計劃。
+    const auth = await transactionAuth(Func.C006.authCode); // 需通過 2FA 或 網銀密碼 驗證才能建立計劃。
     if (!auth.result) return;
 
     // Step 3. 成功後再執行 createConfirm
@@ -107,7 +107,7 @@ const DepositPlanDetailPage = () => {
     if (program.currentBalance > 0) {
       // 如果所選的子帳戶有餘額，要提示用戶自動轉帳。
       // TODO 要求使用者自己將餘額轉出。 onOk: () => handleCreate() 應修正！
-      ConfirmToTransferSubAccountBalance({ onOk: () => startFunc(Func.D00100_臺幣轉帳.id, {transOut: program.bindAccountNo}), onCancel: () => {} });
+      ConfirmToTransferSubAccountBalance({ onOk: () => startFunc(Func.D001.id, {transOut: program.bindAccountNo}), onCancel: () => {} });
     } else {
       handleCreate();
     }

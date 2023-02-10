@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { getThisMonth } from 'utilities/MonthGenerator';
 import { currencySymbolGenerator } from 'utilities/Generator';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { Func } from 'utilities/FuncID';
 
 /* Element */
 import Layout from 'components/Layout/Layout';
@@ -69,7 +70,7 @@ const Page = () => {
   };
 
   return (
-    <Layout title="信用卡帳單" goBackFunc={handleGoBack}>
+    <Layout fid={Func.R003} title="信用卡帳單" goBackFunc={handleGoBack}>
       <Main small>
         <PageWrapper>
           <Badge

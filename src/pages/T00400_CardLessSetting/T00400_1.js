@@ -34,7 +34,7 @@ const CardLessATM = () => {
 
   // 開通無卡提款與設定無卡提款密碼
   const activateWithdrawAndSetPwd = async (param) => {
-    const {result} = await transactionAuth(Func.T00400.authCode);
+    const {result} = await transactionAuth(Func.T004.authCode);
     if (result) {
       dispatch(setWaittingVisible(true));
       const activateRes = await activate(param);

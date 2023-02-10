@@ -23,7 +23,7 @@ const CardLessATM = () => {
     if (status !== 4) {
       await showCustomPrompt({
         message: '請先完成金融卡開卡以啟用無卡提款服務！',
-        onOk: () => startFunc(Func.S00700.id),
+        onOk: () => startFunc(Func.S007.id),
         okContent: '立即開卡',
         onCancel: closeFunc,
         showCloseButton: true,
@@ -35,7 +35,7 @@ const CardLessATM = () => {
       else {
         await showCustomPrompt({
           message: '愛方便的您, 怎能少了無卡提款服務, 快來啟用吧',
-          onOk: () => startFunc(Func.T00400.id),
+          onOk: () => startFunc(Func.T004.id),
           onCancel: closeFunc,
           cancelContent: '下次再啟用',
           showCloseButton: false,
@@ -45,7 +45,7 @@ const CardLessATM = () => {
     dispatch(setWaittingVisible(false));
   }, []);
 
-  return <Layout title="無卡提款" />;
+  return <Layout fid={Func.D003} title="無卡提款" />;
 };
 
 export default CardLessATM;

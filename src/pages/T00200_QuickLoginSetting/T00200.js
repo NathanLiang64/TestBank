@@ -70,7 +70,7 @@ const QuickLoginSetting = () => {
    * @param {*} type 快登所使用驗證方式。(1. 生物辨識, 2.圖形辨識)
    */
   const removeSetting = async () => {
-    const rs = await transactionAuth(Func.T00200.authCode.UNSET);
+    const rs = await transactionAuth(Func.T002.authCode.UNSET);
     if (rs.result) {
       const { result, message } = await removeQuickLogin();
       const isSuccess = result;
@@ -146,7 +146,7 @@ const QuickLoginSetting = () => {
     // 設定綁定資料成功進行交易驗證
     const { result, message } = await createQuickLogin(type);
     if (result) {
-      const rs = await transactionAuth(Func.T00200.authCode.SET, model.midMobile);
+      const rs = await transactionAuth(Func.T002.authCode.SET, model.midMobile);
       if (rs.result) {
         // 交易驗證成功，開啟綁定 drawer，點擊確認進行 MID 驗證
         // NOTE 通過 MID 驗證才算是真正完成快登設定，目前二者是綁在一起的！
@@ -168,7 +168,7 @@ const QuickLoginSetting = () => {
    * 變更圖形辨識
    */
   const handleChangePattern = async () => {
-    const res = await transactionAuth(Func.T00200.authCode.MODIFY);
+    const res = await transactionAuth(Func.T002.authCode.MODIFY);
     if (res.result) {
       // 交易驗證成功
       const {result, message} = await changePattern();
@@ -206,7 +206,7 @@ const QuickLoginSetting = () => {
   }, []);
 
   return (
-    <Layout title="快速登入設定">
+    <Layout fid={Func.T002} title="快速登入設定">
       <QuickLoginSettingWrapper>
         <div className="tip">設定後就能快速登入囉！（僅能擇一）</div>
         <div>

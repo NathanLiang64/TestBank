@@ -78,7 +78,7 @@ const LossReissue = () => {
   // 執行掛失或補發
   const executeAction = async () => {
     dispatch(setWaittingVisible(true));
-    const auth = await transactionAuth(Func.S00800.authCode);
+    const auth = await transactionAuth(Func.S008.authCode);
     dispatch(setWaittingVisible(false));
 
     if (auth && auth.result) {
@@ -107,7 +107,7 @@ const LossReissue = () => {
       const {code} = findCounty(county);
       const {zipCode} = findCity(code, city);
 
-      const auth = await transactionAuth(Func.S00800.authCode);
+      const auth = await transactionAuth(Func.S008.authCode);
       if (auth && auth.result) {
         dispatch(setWaittingVisible(true));
         // 修改地址
@@ -146,7 +146,7 @@ const LossReissue = () => {
   }, []);
 
   return (
-    <Layout title="金融卡掛失/補發">
+    <Layout fid={Func.S008} title="金融卡掛失/補發">
       <LossReissueWrapper small>
         <div className="lossReissueContent">
           <ul className="mainBlock">

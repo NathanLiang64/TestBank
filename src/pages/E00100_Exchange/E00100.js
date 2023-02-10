@@ -32,8 +32,7 @@ import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { numberToChinese, currencySymbolGenerator, toCurrency } from 'utilities/Generator';
-// TODO: 移除
-// import Dialog from 'components/Dialog';
+import { Func } from 'utilities/FuncID';
 import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
 import { showCustomPrompt, showInfo } from 'utilities/MessageModal';
@@ -395,7 +394,7 @@ const E00100 = () => {
   }, [watch('currency')]);
 
   return (
-    <Layout title="外幣換匯">
+    <Layout fid={Func.E001} title="外幣換匯">
       <ExchangeWrapper style={{ padding: '2.4rem 1.6rem 2.4rem 1.6rem' }}>
         <div className="borderBtnContainer">
           <FEIBBorderButton

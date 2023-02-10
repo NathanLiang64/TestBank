@@ -9,6 +9,8 @@ import { numberToChinese, currencySymbolGenerator } from 'utilities/Generator';
 import { transferAmountValidation } from 'utilities/validation';
 import { customPopup } from 'utilities/MessageModal';
 import { getAccountsList, getAgreedAccounts, getExchangePropertyList } from 'pages/D00700_ForeignCurrencyTransfer/api';
+import { Func } from 'utilities/FuncID';
+
 /* Elements */
 import Accordion from 'components/Accordion';
 import DebitCard from 'components/DebitCard/DebitCard';
@@ -20,7 +22,7 @@ import NoteContent from 'pages/D00700_ForeignCurrencyTransfer/noteContent';
 
 /* Styles */
 import { useNavigation } from 'hooks/useNavigation';
-import ForeignCurrencyTransferWrapper from './foreignCurrencyTransfer.style';
+import ForeignCurrencyTransferWrapper from './D00700.style';
 
 /* Swiper modules */
 SwiperCore.use([Pagination]);
@@ -168,7 +170,7 @@ const ForeignCurrencyTransfer = () => {
   }, [currentAccount]);
 
   return (
-    <Layout title="轉帳">
+    <Layout fid={Func.D007} title="轉帳">
       <ForeignCurrencyTransferWrapper>
         <div className="userCardArea">
           <Swiper

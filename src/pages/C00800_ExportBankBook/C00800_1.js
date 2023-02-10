@@ -7,7 +7,7 @@ import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 
 /* Styles */
 import { useNavigation } from 'hooks/useNavigation';
-import ExportBankBookWrapper from './exportBankBook.style';
+import ExportBankBookWrapper from './C00800.style';
 
 const ExportBankBook1 = ({ location }) => {
   const { closeFunc } = useNavigation();

@@ -86,6 +86,15 @@ export const useNavigation = () => {
   };
 
   /**
+   * 跟 Web Function Controller 註冊目前啟動的功能，以避免因原生端直接啟動，而造成 funcStack 不一致的情況。
+   * 註：若是外開則不需要註冊！
+   * @param {String} funcID 目前啟動的功能代碼。
+   */
+  const registFunc = async (funcID) => {
+    console.log(funcID);
+  };
+
+  /**
    * 網頁通知APP跳轉指定功能
    * @param {*} funcID 單元功能代碼。
    * @param {*} funcParams 提共給啟動的單元功能的參數，被啟動的單元功能是透過 loadFuncParams() 取回。
@@ -159,6 +168,7 @@ export const useNavigation = () => {
       storeData('funcResp', response);
     }
 
+    // BUG APP啟動的第一個功能在 stack 中是不存在的，所以 closeItem 會是空值！
     const closeItem = funcStack.peek(); // 因為 funcStack 還沒 pop，所以用 peek 還以取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
     const isFunction = !closeItem || /^[A-Z]\d{3}$/.test(closeItem.funcID); // 表示 funcID 是由 Function Controller 控制的單元功能。
 
@@ -180,7 +190,7 @@ export const useNavigation = () => {
         const appJsRs = await callAppJavaScript('getActiveFuncID', null, true); // 取得 APP 目前的 FuncID
         if (appJsRs) {
           // 例：從首頁卡片啟動[存錢計劃]，當[存錢計劃]選擇返回前一功能時，就會進到這裡。（因為此時的 funcStack 是空的）
-          history.push(`/${appJsRs.funcID}`);
+          history.push(`/${appJsRs.funcID}`); // BUG 因為 funcID 不會是 route 上的網頁代碼！
         } else { history.push('/'); }
       }
     };
@@ -200,5 +210,5 @@ export const useNavigation = () => {
     });
   };
 
-  return {startFunc, closeFunc, goHome};
+  return {registFunc, startFunc, closeFunc, goHome};
 };

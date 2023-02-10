@@ -158,7 +158,7 @@ const Page = () => {
         account: data.accountNo,
         cardNo,
       };
-      const {result} = await transactionAuth(Func.R00400.authCode);
+      const {result} = await transactionAuth(Func.R004.authCode);
       if (result) {
         const payResult = await payCardFee(payload);
         if (payResult) history.push('R004001', { payResult, account: data.accountNo });
@@ -179,7 +179,7 @@ const Page = () => {
   };
 
   return (
-    <Layout title="繳款" goBackFunc={closeFunc}>
+    <Layout fid={Func.R004} title="繳款" goBackFunc={closeFunc}>
       <Main small>
         <PageWrapper>
           <Badge

@@ -2,8 +2,8 @@
 
 import {lazy} from 'react';
 
-const A00400 = lazy(() => import('pages/A00400_Provisioning'));
-const A00600 = lazy(() => import('pages/A00600_RegularBasicInformation'));
+const A00400 = lazy(() => import('pages/A00400_Provisioning/A00400'));
+const A00600 = lazy(() => import('pages/A00600_RegularBasicInformation/A00600'));
 const A00700 = lazy(() => import('pages/A00700_RegularPwdModify/A00700'));
 const A00800 = lazy(() => import('pages/A00800_NonMemberRegister/A00800'));
 const B00300 = lazy(() => import('pages/B00300_Notice/B00300'));
@@ -21,8 +21,8 @@ const C006005 = lazy(() => import('pages/C00600_DepositPlan/C00600_5'));
 const C00700 = lazy(() => import('pages/C00700_CreditCard/C00700'));
 const C007001 = lazy(() => import('pages/C00700_CreditCard/C00700_1'));
 const C007002 = lazy(() => import('pages/C00700_CreditCard/C00700_2'));
-const C00800 = lazy(() => import('pages/C00800_ExportBankBook'));
-const C008001 = lazy(() => import('pages/C00800_ExportBankBook/exportBankBook_1'));
+const C00800 = lazy(() => import('pages/C00800_ExportBankBook/C00800'));
+const C008001 = lazy(() => import('pages/C00800_ExportBankBook/C00800_1'));
 const D00100 = lazy(() => import('pages/D00100_NtdTransfer/D00100v2'));
 const D001001 = lazy(() => import('pages/D00100_NtdTransfer/D00100_1'));
 const D001002 = lazy(() => import('pages/D00100_NtdTransfer/D00100_2'));
@@ -32,14 +32,14 @@ const D003002 = lazy(() => import('pages/D00300_CardLessATM/D00300_2'));
 const D00400 = lazy(() => import('pages/D00400_CardLessWithDrawChgPwd/D00400'));
 const D00500 = lazy(() => import('pages/D00500_FrequentContacts/D00500'));
 const D00600 = lazy(() => import('pages/D00600_RegisteredContacts/D00600'));
-const D00700 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer'));
+const D00700 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer/D00700'));
 const D00800 = lazy(() => import('pages/D00800_ReserveTransferSearch/D00800'));
 const D008001 = lazy(() => import('pages/D00800_ReserveTransferSearch/D00800_1'));
 const E00100 = lazy(() => import('pages/E00100_Exchange/E00100v2'));
 const E001001 = lazy(() => import('pages/E00100_Exchange/E00100_1'));
 const E001002 = lazy(() => import('pages/E00100_Exchange/E00100_2'));
-const E00200 = lazy(() => import('pages/E00200_ExchangeRate'));
-const E00300 = lazy(() => import('pages/E00300_FinancialDepartments'));
+const E00200 = lazy(() => import('pages/E00200_ExchangeRate/E00200'));
+const E00300 = lazy(() => import('pages/E00300_FinancialDepartments/E00300'));
 const F00000 = lazy(() => import('pages/F00000_AplFxProxy/F00000'));
 const L00200 = lazy(() => import('pages/L00200_Principal/L00200'));
 const L00100 = lazy(() => import('pages/L00100_Loan/L00100'));
@@ -61,7 +61,7 @@ const R00500 = lazy(() => import('pages/R00500_AutomaticBillPayment/R00500'));
 const R00600 = lazy(() => import('pages/R00600_Adjustment'));
 const R006001 = lazy(() => import('pages/R00600_Adjustment/adjustment_1'));
 const S00400 = lazy(() => import('pages/S00400_NoticeSetting/S00400'));
-const S00600 = lazy(() => import('pages/S00600_QandA'));
+const S00600 = lazy(() => import('pages/S00600_QandA/S00600'));
 const S00700 = lazy(() => import('pages/S00700_DebitCardActive/S00700'));
 const S007001 = lazy(() => import('pages/S00700_DebitCardActive/S00700_1'));
 const S00800 = lazy(() => import('pages/S00800_LossReissue/S00800'));
@@ -152,8 +152,8 @@ const routes = [
   {path: '/R00500', exact: false, component: R00500},
   {path: '/R00600', exact: false, component: R00600},
   {path: '/R006001', exact: false, component: R006001},
-  {path: '/S00100', exact: true, component: S00100},
-  {path: '/S00101', exact: true, component: S00101},
+  {path: '/S00100J', exact: true, component: S00100}, // Jin 版
+  {path: '/S00100', exact: true, component: S00101},
   {path: '/S00400', exact: true, component: S00400},
   {path: '/S00600', exact: false, component: S00600},
   {path: '/S00700', exact: false, component: S00700},

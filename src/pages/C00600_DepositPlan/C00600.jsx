@@ -96,7 +96,7 @@ const DepositPlanPage = () => {
 
   const handleTerminatePlan = (plan) => {
     const confirmTermination = async () => {
-      const {result, message} = await transactionAuth(Func.C00600.authCode); // 需通過 2FA 或 網銀密碼 驗證才能關閉計劃。
+      const {result, message} = await transactionAuth(Func.C006.authCode); // 需通過 2FA 或 網銀密碼 驗證才能關閉計劃。
       if (!result) {
         await showError(message);
         return;
@@ -127,7 +127,7 @@ const DepositPlanPage = () => {
       { icon: <AccountIcon12 />, title: '結束本計畫', onClick: handleTerminatePlan },
     ];
     if (plan.progInfo.type === 0) {
-      list.push({ icon: <D001 />, title: '轉帳', onClick: () => startFunc(Func.D00100_臺幣轉帳.id) });
+      list.push({ icon: <D001 />, title: '轉帳', onClick: () => startFunc(Func.D001.id) });
     }
     const options = (
       <ul>
@@ -262,7 +262,7 @@ const DepositPlanPage = () => {
    */
   console.log('location.state', location.state);
   return (
-    <Layout title="存錢計畫" hasClearHeader goBackFunc={handleGoBackClick}>
+    <Layout fid={Func.C006} title="存錢計畫" hasClearHeader goBackFunc={handleGoBackClick}>
       <MainScrollWrapper>
         <SwiperLayout
           ref={swiperRef}

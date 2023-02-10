@@ -33,7 +33,7 @@ const CardLessWithDrawChgPwd = () => {
   // 設定無卡提款密碼
   const changePwdHandler = async (param) => {
     dispatch(setWaittingVisible(true));
-    const {result} = await transactionAuth(Func.D00400.authCode);
+    const {result} = await transactionAuth(Func.D004.authCode);
     if (result) {
       const { isSuccess, code, message } = await changeCardlessPwd(param);
       showAnimationModal({
@@ -102,7 +102,7 @@ const CardLessWithDrawChgPwd = () => {
     if (status !== 2) {
       showCustomPrompt({
         message: '請先進行「無卡提款設定」，或致電客服',
-        onOk: () => startFunc(Func.T00400.id),
+        onOk: () => startFunc(Func.T004.id),
         okContent: '立即設定',
         onCancel: closeFunc,
       });
@@ -110,7 +110,7 @@ const CardLessWithDrawChgPwd = () => {
   }, []);
 
   return (
-    <Layout title="變更無卡提款密碼">
+    <Layout fid={Func.D004} title="變更無卡提款密碼">
       <CardLessWithDrawChgPwdWrapper>
         {renderForm()}
       </CardLessWithDrawChgPwdWrapper>

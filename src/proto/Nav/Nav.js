@@ -44,20 +44,20 @@ const Nav = () => {
     <Layout title="測試功能首頁" goBack={false} goHome={false}>
       <NavWrapper>
         <div className="bankee">
-          <div onClick={() => startFunc(Func.D00100_臺幣轉帳.id)}>D00100 轉帳</div>
-          <div onClick={() => startFunc(Func.C00300.id)}>C00300 台幣存款首頁</div>
-          <div onClick={() => startFunc(Func.C00400.id)}>C00400 外幣存款首頁</div>
-          <div onClick={() => startFunc(Func.C00500.id)}>C00500 交割帳戶首頁</div>
-          <div onClick={() => startFunc(Func.M00100.id)}>M00100 社群圈首頁</div>
-          <div onClick={() => startFunc(Func.D00500.id)}>D00500 常用帳號管理</div>
-          <div onClick={() => startFunc(Func.D00600.id)}>D00600 約定帳號管理</div>
-          <div onClick={() => startFunc(Func.B00600.id)}>B00600 更多...</div>
-          <div onClick={() => startFunc(Func.T00100.id)}>T00100 個人化設定</div>
-          <div onClick={() => startFunc(Func.S00100_我的最愛.id)}>S00100 我的最愛</div>
-          <div onClick={() => startFunc(Func.S00101_我的最愛v2.id)}>S00101 我的最愛v2</div>
-          <div onClick={() => startFunc(Func.E00100_換匯.id)}>E00100 換匯 - (施工中)</div>
-          <div onClick={() => startFunc(Func.A00600.id)}>A00600 定期更新個資</div>
-          <div onClick={() => startFunc(Func.A00700.id)}>A00700 定期更新密碼</div>
+          <div onClick={() => startFunc(Func.D001.id)}>D00100 轉帳</div>
+          <div onClick={() => startFunc(Func.C003.id)}>C00300 台幣存款首頁</div>
+          <div onClick={() => startFunc(Func.C004.id)}>C00400 外幣存款首頁</div>
+          <div onClick={() => startFunc(Func.C005.id)}>C00500 交割帳戶首頁</div>
+          <div onClick={() => startFunc(Func.M001.id)}>M00100 社群圈首頁</div>
+          <div onClick={() => startFunc(Func.D005.id)}>D00500 常用帳號管理</div>
+          <div onClick={() => startFunc(Func.D006.id)}>D00600 約定帳號管理</div>
+          <div onClick={() => startFunc(Func.B006.id)}>B00600 更多...</div>
+          <div onClick={() => startFunc(Func.T001.id)}>T00100 個人化設定</div>
+          {/* <div onClick={() => startFunc(Func.S001.id)}>S00100 我的最愛</div> */}
+          <div onClick={() => startFunc(Func.S001.id)}>S00101 我的最愛v2</div>
+          <div onClick={() => startFunc(Func.E001.id)}>E00100 換匯 - (施工中)</div>
+          <div onClick={() => startFunc(Func.A006.id)}>A00600 定期更新個資</div>
+          <div onClick={() => startFunc(Func.A007.id)}>A00700 定期更新密碼</div>
         </div>
 
         <FEIBButton onClick={forceLogout}>登出</FEIBButton>

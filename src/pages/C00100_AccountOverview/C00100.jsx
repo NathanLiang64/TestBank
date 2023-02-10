@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import uuid from 'react-uuid';
+import { Func } from 'utilities/FuncID';
 
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
@@ -75,7 +76,7 @@ const AccountOverviewPage = () => {
    * 只要提供相同數量的 slides 和 content，SwiperLayout會自動切換對應的內容。
    */
   return (
-    <Layout title="帳戶總覽">
+    <Layout fid={Func.C001} title="帳戶總覽">
       <Main>
         <SwiperLayout slides={renderSlides(accounts)} hasDivider={false}>
           { renderContents(accounts) }
