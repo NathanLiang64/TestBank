@@ -191,26 +191,6 @@ const CreditCardPage = (props) => {
   const renderCreditList = () => {
     if (!cardsInfo.length) return null;
     return (
-      cardsInfo.map((cardInfo, index) => (
-        <div key={cardInfo.cards[0].cardNo}>
-          <DetailDialogContentWrapper>
-            {cardInfo.isBankeeCard && (
-            <div className="panel">
-              <ThreeColumnInfoPanel content={bonusInfo(cardInfo)} />
-            </div>
-            )}
-          </DetailDialogContentWrapper>
-
-          <CreditCardTxsList
-            card={cardInfo}
-            onMoreFuncClick={() => go2Func(Func.R00100.id, {
-              card: cardInfo, usedCardLimit, transactions: transactionMap[index], index,
-            })}
-            transactions={transactionMap[index]}
-            onTxnNotesEdit={onTxnNotesEdit}
-          />
-        </div>
-      ))
       cardsInfo.map((cardInfo, index) => {
         const swiperIndex = index;
         return (
