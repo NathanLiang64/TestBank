@@ -153,17 +153,14 @@ const CreditCardPage = (props) => {
         <TableDialog>
           <table>
             <thead>
-              <tr>
-                {renderHead(info.title)}
-              </tr>
+              <tr>{renderHead(info.title)}</tr>
             </thead>
-            <tbody>
-              { renderBody(info.body)}
-            </tbody>
+            <tbody>{renderBody(info.body)}</tbody>
           </table>
-          <span className="remark">
-            ＊依個人Bankee數存月平均存款餘額核定等級
-          </span>
+          <div className="remark">
+            <div>＊</div>
+            <div>依個人Bankee數存月平均存款餘額核定等級</div>
+          </div>
         </TableDialog>
       ),
     });

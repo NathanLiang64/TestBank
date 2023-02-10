@@ -145,12 +145,14 @@ export const getAccountsList = async (acctTypes, onDataLoaded, noFlat = false) =
  *   freeTransfer: 免費跨轉總次數
  *   freeTransferRemain: 免費跨轉剩餘次數
  *   isVIP: 表示此用戶是 VIP 的旗標，只有旗標為 true 時，才會有VIP跨提/跨轉優惠次數資訊。
- *   dLimitLeft: OTP日剩餘額度
- *   mLimitLeft: OTP月剩餘額度
  *   freeWithdrawTimesVIP: VIP跨提本月適用優惠次數
  *   freeWithdrawRemainVIP: VIP跨提本月優惠剩餘次數
  *   freeTransferTimesVIP: VIP跨轉本月適用優惠次數
  *   freeTransferRemainVIP: VIP跨轉本月優惠剩餘次數
+ *   dLimitLeft: 非約轉當日剩餘額度
+ *   mLimitLeft: 非約轉當月剩餘額度
+ *   agrdTfrSelfLimitLeft: 約轉自行轉帳剩餘額度
+ *   agrdTfrInterLimitLeft: 約轉跨行轉帳剩餘額度
  * }>} 優惠資訊
  */
 export const getAccountBonus = async (accountNo, onDataLoaded, foreUpdate) => {
@@ -175,8 +177,8 @@ export const getAccountBonus = async (accountNo, onDataLoaded, foreUpdate) => {
       const resSummary = await callAPI('/community/v1/getSummary');
       bonus = {
         ...bonus,
-        bonusQuota: resSummary.data.amount,
-        bonusRate: resSummary.data.rate,
+        bonusQuota: resSummary.data.bonusInfo.amount,
+        bonusRate: resSummary.data.bonusInfo.rate,
       };
 
       accounts[index].bonus = bonus;

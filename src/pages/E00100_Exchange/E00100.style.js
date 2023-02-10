@@ -160,7 +160,7 @@ export const ExchangeTableWrapper = styled.div`
       tr {
         td {
           text-align: right;
-          font-size: 1.2rem;
+          font-size: 1.4rem;
           line-height: 1.8rem;
           color: ${({ theme }) => theme.colors.primary.light};
           &:first-child {

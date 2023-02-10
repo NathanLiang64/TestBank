@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-nested-ternary */
 import uuid from 'react-uuid';
 import AccountCard from 'components/AccountCard';
@@ -19,11 +20,12 @@ import AccountCardGrey from './AccountCardGrey';
  */
 const AccountCardList = ({ data, isDebt, necessaryType }) => {
   // const dispatch = useDispatch();
+  const assetTypes = sessionStorage.getItem('assetTypes');
   const {startFunc} = useNavigation();
-  const sApplyUrl = 'https://bankeesit.feib.com.tw/aplfx/D2022110211818?utm_source=OSC01';
-  const fApplyUrl = 'https://bankeesit.feib.com.tw/aplfx/D2022110211819';
-  const ccApplyUrl = 'https://appbankee-t.feib.com.tw/bankee_apply/CardApply/CardApply_1';
-  const lApplyUrl = 'https://bankeesit.feib.com.tw/aplfx/D2022110111798';
+  const sApplyUrl = `${process.env.REACT_APP_APLFX_URL}prod=S01a`;
+  const fApplyUrl = `${process.env.REACT_APP_APLFX_URL}prod=Ta`;
+  const ccApplyUrl = `${process.env.REACT_APP_APLFX_URL}prod=Ca`;
+  const lApplyUrl = `${process.env.REACT_APP_APLFX_URL}prod=La`;
 
   // 證券 start function
   const sAccStartFunc = (account, cardColor) => {
@@ -71,32 +73,32 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
   if (stockAccounts.length > 0) {
     mainList.push({
       type: 'S',
-      accountNo: null,
+      accountNo: stockAccounts.length === 1 ? stockAccounts[0].accountNo : null,
       balance: accumulateBalance(stockAccounts),
     });
 
     stockAccounts.sort((a, b) => b.balance - a.balance);
   }
 
-  // 貸款: 金額不為0則顯示彩卡
+  // 貸款: 以 assetTypes 回傳有包含為準顯示彩卡
   const loanAccounts = data.filter((account) => account.type === 'L');
   if (loanAccounts.length > 0) {
     mainList.push({
       type: 'L',
       accountNo: null,
       balance: accumulateBalance(loanAccounts),
-      isEmpty: loanAccounts[0].balance === 0,
+      isEmpty: assetTypes.includes('L'),
     });
 
     // 依金額從大到小排序。
     loanAccounts.sort((a, b) => b.balance - a.balance);
   }
 
-  // 信用卡: 金額不為0則顯示彩卡
+  // 信用卡: 以 assetTypes 回傳有包含為準顯示彩卡
   const ccAccounts = data.filter((account) => account.type === 'CC');
   if (ccAccounts.length > 0) {
     mainList.push(...ccAccounts.map((account) => ({
-      isEmpty: account.balance === 0,
+      isEmpty: assetTypes.includes('CC'),
       ...account,
     })));
   }
@@ -166,10 +168,8 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
               sAccStartFunc(card, cardColor); // 前往證券帳戶明細
               return;
             }
-            if (card.type === 'F') {
-              startFunc(funcId, { defaultCurrency: card.currency }); // 前往外幣帳戶總覽之指定幣別
-            }
-            startFunc(funcId, { focusToAccountNo: card.accountNo }); // TODO 從 存錢計畫 返回時的處理。
+            if (card.type === 'F') startFunc(funcId, { defaultCurrency: card.currency }); // 前往外幣帳戶總覽之指定幣別
+            if (card.type === 'C') startFunc(funcId, { focusToAccountNo: card.accountNo }); // TODO 從 存錢計畫 返回時的處理。
           };
 
           let cardName;
@@ -221,9 +221,16 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
         let onClick = () => startFunc(funcID); // TODO 從 存錢計畫 返回時的處理。
         const cardInfo = accountOverviewCardVarient(account.type);
 
+        const handleCOnClick = () => {
+          if (subAccounts.length === 0) startFunc(funcID);
+          if (subAccounts.length === 1) {
+            startFunc(funcID, { focusToAccountNo: subAccounts[0].accountNo });
+          } else showDrawer('選擇計畫', renderSubAccountDrawer(subAccounts, funcID));
+        };
+
         switch (account.type) {
           case 'M': // 母帳戶
-            cardName = '主帳戶';
+            cardName = '臺幣主帳戶';
             funcID = Func.C00300.id;
             break;
           case 'F': // 外幣帳戶 數量為1時不開drawer
@@ -235,11 +242,10 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
             cardName = '證券交割戶';
             onClick = () => (account.isEmpty ? window.open(sApplyUrl, '_newtab') : stockAccounts.length === 1 ? sAccStartFunc(stockAccounts[0], cardInfo.color) : showDrawer('選擇帳戶', renderSubAccountDrawer(stockAccounts)));
             break;
-
           case 'C': // 子帳戶 數量為1時不開drawer
             cardName = '子帳戶';
             funcID = Func.C00600.id;
-            onClick = () => (subAccounts.length === 1 ? startFunc(funcID, { focusToAccountNo: subAccounts[0].accountNo }) : showDrawer('選擇計畫', renderSubAccountDrawer(subAccounts, funcID)));
+            onClick = () => handleCOnClick();
             break;
           case 'CC': // 信用卡
             cardName = '信用卡';
