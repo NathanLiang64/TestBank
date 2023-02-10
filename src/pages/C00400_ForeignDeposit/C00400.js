@@ -248,7 +248,7 @@ const C00400 = () => {
 
       case 'foreignCurrencyTransfer': // 轉帳
       case Func.E00100_換匯.id: // 換匯
-        params = keepData; // TODO 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。
+        params = { transOut: selectedAccount }; // TODO 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。
         break;
 
       case 'setMainAccount': // 設定為主要外幣帳戶

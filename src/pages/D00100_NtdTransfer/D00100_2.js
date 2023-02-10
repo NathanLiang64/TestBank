@@ -184,9 +184,9 @@ const TransferResult = (props) => {
     </BottomAction>
   );
 
-  const handleClickScreenshot = () => {
+  const handleClickScreenshot = async () => {
     // TODO 透過原生 或 ReactJS 功能進行截圖。
-    screenShot();
+    await screenShot();
     setShowSnapshotSuccess(true);
     setTimeout(() => setShowSnapshotSuccess(false), 1000); // 1 秒後自動關閉。
   };

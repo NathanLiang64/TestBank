@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import uuid from 'react-uuid';
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
@@ -133,7 +132,7 @@ const Page = () => {
     if (!accounts.length) return <EmptyData content="查無約定帳號" height="70vh" />;
     return accounts.map((acct) => (
       <MemberAccountCard
-        key={uuid()} // key值每次編輯後皆改變，以觸發react重新渲染
+        key={`${acct.bankId}_${acct.acctId}`}
         name={acct.nickName}
         bankNo={acct.bankId}
         bankName={acct.bankName}

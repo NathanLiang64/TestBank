@@ -219,13 +219,13 @@ const C00500 = () => {
         break;
 
       case Func.E00100_換匯.id: // 換匯
-        params = { transOut: selectedAccount.accountNo };
+        params = { transOut: selectedAccount };
         break;
       case Func.C00800.id: // 匯出存摺
-        params = { accountNo: selectedAccount.accountNo }; // TODO 直接帶入台幣帳號
+        params = { accountNo: selectedAccount.accountNo };
         break;
-      case Func.D00800.id: // 匯出存摺
-        params = { selectedAccount }; // TODO 直接帶入台幣帳號
+      case Func.D00800.id: // 預約轉帳查詢/取消
+        params = { transOut: selectedAccount };
         break;
 
       case 'Rename': // 帳戶名稱編輯

@@ -5,6 +5,7 @@ import { toHalfWidth } from 'utilities/Generator';
 import { FEIBErrorMessage } from 'components/elements';
 import { CropContainer } from 'components/CropContainer';
 import Dialog from 'components/Dialog';
+import uuid from 'react-uuid';
 import AvatarWrapper from './avatar.style';
 
 /**
@@ -94,7 +95,9 @@ const Avatar = ({
       const imgData = await restoreData(`Avator_${memberId}`);
       if (imgData) setPreview(imgData);
       if (memberId) {
-        const defaultSrc = `${process.env.REACT_APP_AVATAR_URL}/${memberId}.jpg`;
+        // Note 後綴加上 dummy 原因: memberId 是固定的，瀏覽器對圖片的 cache 機制是 By URL
+        // 雖然後端 DB 內的圖片已經更換，但因爲 url 不變，瀏覽器仍呈現原圖給使用者 (發生在使用者變更圖片後重新登入進入大頭貼頁面時)
+        const defaultSrc = `${process.env.REACT_APP_AVATAR_URL}/${memberId}.jpg?dummy=${uuid()}`;
         setSrc(defaultSrc);
       }
     }

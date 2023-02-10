@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import {
+  useEffect, useMemo, useRef, useState,
+} from 'react';
 import { useHistory } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -39,7 +41,7 @@ const D00800 = () => {
   const history = useHistory();
   const [accountsList, setAccountsList] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
-  const [defaultSlide, setDefaultSlide] = useState(0);
+  const swiperRef = useRef();
   const [searchList, setSearchList] = useState({ reserve: {}, result: {}});
   const [banks, setBanks] = useState();
   const {control, handleSubmit, watch } = useForm({ defaultValues });
@@ -89,9 +91,9 @@ const D00800 = () => {
       setAccountsList(accts);
       const params = await loadFuncParams();
       if (params) {
-        setSelectedAccount(params.selectedAccount);
-        const foundIndex = accts.findIndex(({accountNo}) => accountNo === params.selectedAccount.accountNo);
-        setDefaultSlide(foundIndex);
+        setSelectedAccount(params.transOut);
+        const foundIndex = accts.findIndex(({ accountNo }) => accountNo === params.transOut.accountNo);
+        swiperRef.current.swiper.slideTo(foundIndex);
       } else setSelectedAccount(accts[0]);
       setWaittingVisible(false);
     });
@@ -193,7 +195,7 @@ const D00800 = () => {
 
   const handleChangeSlide = ({ activeIndex }) => setSelectedAccount(accountsList[activeIndex]);
 
-  useEffect(() => { fetchTransferOutAccounts(); }, []);
+  useEffect(() => fetchTransferOutAccounts(), []);
 
   // 切換帳號/Tab/日期範圍時 會檢查 searchList 有無特定的 key，若沒有就執行搜尋
   useEffect(() => {
@@ -206,12 +208,12 @@ const D00800 = () => {
       <ReserveTransferSearchWrapper className="searchResult">
         <div className="cardArea">
           <Swiper
+            ref={swiperRef}
             slidesPerView={isSingleCard ? 1.06 : 1.14}
             spaceBetween={8}
             centeredSlides
             pagination
             onSlideChange={handleChangeSlide}
-            initialSlide={defaultSlide}
           >
             {renderCard()}
           </Swiper>

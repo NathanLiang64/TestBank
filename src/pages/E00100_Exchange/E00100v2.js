@@ -6,7 +6,6 @@ import {
   getExchangePropertyList,
   getExchangeRateInfo,
   getAgreedAccount,
-  getAccountsList,
 } from 'pages/E00100_Exchange/api';
 
 /* Elements */
@@ -24,6 +23,8 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { RadioGroupField } from 'components/Fields/radioGroupField';
 import { CurrencyInputField, DropdownField, TextInputField } from 'components/Fields';
 
+import { loadFuncParams } from 'utilities/AppScriptProxy';
+import { getAccountsList } from 'utilities/CacheData';
 import { E00100Notice, E00100Table } from './E00100_Content';
 
 /* Styles */
@@ -76,7 +77,7 @@ const E00100 = () => {
   });
 
   const [banker, setBanker] = useState();
-  const [currencyTypeList, setCurrencyTypeList] = useState([]);
+  const [currencyList, setCurrencyList] = useState([]);
   const [propertyList, setPropertyList] = useState({});
   const [exchangeRate, setExchangeRate] = useState([]);
   const [accountsListObj, setAccountsListObj] = useState({});
@@ -86,9 +87,9 @@ const E00100 = () => {
   } = watch();
 
   const selectedCurrency = useMemo(() => {
-    if (!currencyTypeList.length || !currency) return {};
-    return currencyTypeList.find((item) => item?.Currency === currency);
-  }, [currency, currencyTypeList]);
+    if (!currencyList.length || !currency) return null;
+    return currencyList.find((item) => item?.Currency === currency);
+  }, [currency, currencyList]);
 
   // 查詢是否為行員
   const getIsEmployee = async () => {
@@ -99,27 +100,48 @@ const E00100 = () => {
 
   // 取得可交易幣別清單
   const fetchCcyList = async () => {
-    if (currencyTypeList.length) return;
-    const currencyList = await getCcyList(); // 回傳的資料的 key 不是 camelCase
-    setCurrencyTypeList(currencyList);
-    setValue('currency', currencyList[0]?.Currency);
+    if (currencyList.length) return;
+    const ccyList = await getCcyList(); // 回傳的資料的 key 不是 camelCase
+    setCurrencyList(ccyList);
   };
 
   const fetchAccountList = async () => {
     if (!Object.keys(accountsListObj).length) {
       dispatch(setWaittingVisible(true));
       // 取得帳戶列表，並篩選出有約定的帳戶
-      const accountListRes = await getAccountsList('MSF'); // TODO 後續透過 cacheReducer 拿取
-      const transableAccountList = accountListRes.filter(({transable}) => transable);
-      const obj = transableAccountList.reduce((acc, cur) => {
-        acc[cur.account] = {...cur, inAccountOptions: null};
+      const accountListRes = await getAccountsList('MSF', undefined, true); // TODO 後續透過 cacheReducer 拿取
+      const transableAccts = accountListRes.filter(({transable}) => transable);
+      const obj = transableAccts.reduce((acc, cur) => {
+        acc[cur.accountNo] = {...cur, inAccountOptions: null};
         return acc;
       }, {});
       setAccountsListObj(obj);
 
-      // 預設帳號設為非台幣的帳戶
-      const defaultAccount = transableAccountList.find(({acctType}) => acctType !== 'F');
-      setValue('outAccount', defaultAccount?.account ?? '');
+      // 預設轉入帳號
+      let defaultAccount;
+      let defaultCurrency = '';
+      let defaultExchangeType = '1';
+
+      const foundAccount = transableAccts.find(({acctType}) => acctType !== 'F');
+      if (foundAccount) defaultAccount = foundAccount.accountNo;
+
+      // 從 臺幣/外幣/證券首頁導過來時帶入的參數
+      const params = await loadFuncParams();
+      if (params) {
+        const { transOut } = params;
+        defaultAccount = transOut.accountNo;
+        if (transOut.currency !== 'TWD') {
+          defaultCurrency = transOut.currency;
+          defaultExchangeType = '2';
+        }
+      }
+
+      reset((formValues) => ({
+        ...formValues,
+        outAccount: defaultAccount,
+        currency: defaultCurrency,
+        exchangeType: defaultExchangeType,
+      }));
       dispatch(setWaittingVisible(false));
     }
   };
@@ -206,12 +228,12 @@ const E00100 = () => {
   }, [exchangeType, accountsListObj]);
 
   // 幣別選項
-  const currencyTypeOptions = useMemo(
-    () => currencyTypeList.map((item) => ({
+  const currencyOptions = useMemo(
+    () => currencyList.map((item) => ({
       label: `${item.CurrencyName} ${item.Currency}`,
       value: item.Currency,
     })),
-    [currencyTypeList],
+    [currencyList],
   );
 
   // 匯款性質選項
@@ -248,14 +270,10 @@ const E00100 = () => {
   };
 
   useEffect(() => {
-    // 確認使用者是否為行員
-    getIsEmployee();
-    // 取得幣別列表
-    fetchCcyList();
-    // 取得轉入帳號列表
-    fetchAccountList();
-    // 取得性質列表
-    fetchPropertyList(exchangeType);
+    getIsEmployee(); // 確認使用者是否為行員
+    fetchCcyList(); // 取得幣別列表
+    fetchAccountList(); // 取得轉入帳號列表
+    fetchPropertyList(exchangeType); // 取得性質列表
   }, []);
 
   // 轉出 outAccount 改變時，動態拿取對應的約定轉出帳號列表
@@ -338,15 +356,18 @@ const E00100 = () => {
               name="currency"
               control={control}
               labelName="換匯幣別"
-              options={currencyTypeOptions}
+              options={currencyOptions}
             />
-            <FEIBHintMessage className="balance">
-              預估可換 &nbsp;
-              {exchangeType === '1' ? currency : 'NTD'}
-              &nbsp;
-              {generateAvailibleAmount()}
-              &nbsp;(實際金額以交易結果為準)
-            </FEIBHintMessage>
+
+            {selectedCurrency && (
+              <FEIBHintMessage className="balance">
+                預估可換 &nbsp;
+                {exchangeType === '1' ? currency : 'NTD'}
+                &nbsp;
+                {generateAvailibleAmount()}
+                &nbsp;(實際金額以交易結果為準)
+              </FEIBHintMessage>
+            )}
           </section>
 
           <DropdownField
@@ -361,7 +382,7 @@ const E00100 = () => {
             control={control}
             onChange={(value) => {
               if (value === '1' && ntDollorBalance) reset((formValues) => ({...formValues, outType: value, ntDollorBalance: ''}));
-              if (value === '2' && foreignBalance) reset((formValues) => ({ ...formValues, outType: value, foreignBalance: '' }));
+              if (value === '2' && foreignBalance) reset((formValues) => ({ ...formValues, outType: value, foreignBalance: ''}));
               else setValue('outType', value);
             }}
             options={[

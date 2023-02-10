@@ -90,7 +90,6 @@ const C00300 = () => {
   /**
    * 更新帳戶交易明細清單。
    * @returns 需有傳回明細清單供顯示。
-   * TODO : 在該頁面開啟的情況下接收轉帳，會因為 account.txnDetails 已被 cached，導致無法再次刷新
    */
   const loadTransactions = (account) => {
     const { txnDetails } = account;
@@ -242,20 +241,20 @@ const C00300 = () => {
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case Func.D00300_無卡提款.id: // 無卡提款，只有母帳號才可以使用。 // TODO 帶參數過去
+      case Func.D00300_無卡提款.id: // 無卡提款，只有母帳號才可以使用。
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case Func.E00100_換匯.id: // TODO 帶參數過去
-        params = { transOut: selectedAccount.accountNo };
+      case Func.E00100_換匯.id:
+        params = { transOut: selectedAccount };
         break;
 
       case Func.C00800.id: // 匯出存摺
-        params = { accountNo: selectedAccount.accountNo }; // TODO 直接帶入台幣帳號
+        params = { accountNo: selectedAccount.accountNo };
         break;
 
-      case Func.D00800.id: // 匯出存摺
-        params = { selectedAccount }; // TODO 直接帶入台幣帳號
+      case Func.D00800.id: // 預約轉帳查詢/取消
+        params = { transOut: selectedAccount };
         break;
 
       case 'Rename': // 帳戶名稱編輯
@@ -296,7 +295,7 @@ const C00300 = () => {
                   { fid: Func.D00300_無卡提款.id, title: '無卡提款', hidden: (selectedAccount.acctType !== 'M') },
                 ]}
                 moreFuncs={[
-                  // { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false }, // TODO: 此階段隱藏
+                  // { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false }, // 此階段隱藏
                   { fid: Func.D00800.id, title: '預約轉帳查詢/取消', icon: 'reserve' },
                   { fid: Func.C00800.id, title: '匯出存摺', icon: 'coverDownload' },
                   { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
