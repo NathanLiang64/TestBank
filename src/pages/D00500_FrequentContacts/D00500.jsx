@@ -6,6 +6,7 @@ import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
 import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
+import { Func } from 'utilities/FuncID';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { AddIcon } from 'assets/images/icons';
 import { useNavigation } from 'hooks/useNavigation';
@@ -165,7 +166,7 @@ const Page = () => {
    * 顯示帳戶列表
    */
   return (
-    <Layout title="常用帳號管理" goHome={!selectorMode}>
+    <Layout fid={Func.D005} title="常用帳號管理" goHome={!selectorMode}>
       <Main small>
         <PageWrapper>
           <button type="button" aria-label="新增常用帳號" className="addMemberButtonArea" onClick={addnewAccount}>

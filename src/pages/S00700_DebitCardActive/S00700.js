@@ -34,7 +34,7 @@ const S00700 = () => {
 
   const submitHandler = async ({serial}) => {
     dispatch(setWaittingVisible(true));
-    const auth = await transactionAuth(Func.S00700.authCode);
+    const auth = await transactionAuth(Func.S007.authCode);
     if (auth && auth.result) {
       const activateResult = await activate({serial});
       if (activateResult) {
@@ -66,7 +66,7 @@ const S00700 = () => {
   };
 
   return (
-    <Layout title="金融卡啟用" inspector={inspector}>
+    <Layout fid={Func.S007} title="金融卡啟用" inspector={inspector}>
       <DebitCardActiveWrapper>
         <form style={{ minHeight: 'initial' }} onSubmit={handleSubmit(submitHandler)}>
           <TextInputField

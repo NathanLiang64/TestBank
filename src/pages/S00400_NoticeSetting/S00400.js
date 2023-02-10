@@ -63,7 +63,7 @@ const S00400 = () => {
   // 同意開啟通知設定
   const handlePushBind = async () => {
     // 網銀密碼／雙因子驗證
-    const verifyResult = await transactionAuth(Func.S00400.authCode);
+    const verifyResult = await transactionAuth(Func.S004.authCode);
 
     if (!verifyResult.result) {
       await showError(verifyResult.message);
@@ -109,7 +109,7 @@ const S00400 = () => {
   }, []);
 
   return (
-    <Layout title="訊息通知設定">
+    <Layout fid={Func.S004} title="訊息通知設定">
       <NoticeSettingWrapper>
         <div className="settingItem">
           <div className="settingLabel">

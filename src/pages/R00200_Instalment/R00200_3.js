@@ -95,7 +95,7 @@ const R00200_3 = () => {
     if (state?.readOnly) closeFunc();
     else {
       dispatch(setWaittingVisible(true));
-      const auth = await transactionAuth(Func.R00200.authCode);
+      const auth = await transactionAuth(Func.R002.authCode);
       dispatch(setWaittingVisible(false));
       if (auth && auth.result) {
         dispatch(setWaittingVisible(true));

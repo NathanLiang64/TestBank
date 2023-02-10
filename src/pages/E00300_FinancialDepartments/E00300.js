@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { getFinanceStore } from 'pages/E00300_FinancialDepartments/api';
 
 import Layout from 'components/Layout/Layout';
+import { Func } from 'utilities/FuncID';
 
 /* Styles */
-import FinancialDepartmentsWrapper from './financialDepartments.style';
+import FinancialDepartmentsWrapper from './E00300.style';
 
 const FinancialDepartments = () => {
   const [bankList, setBankList] = useState([]);
@@ -38,7 +39,7 @@ const FinancialDepartments = () => {
   }, []);
 
   return (
-    <Layout title="金融百貨">
+    <Layout fid={Func.E003} title="金融百貨">
       <FinancialDepartmentsWrapper>
         {
           renderCards()

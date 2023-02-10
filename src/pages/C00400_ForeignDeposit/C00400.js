@@ -247,7 +247,7 @@ const C00400 = () => {
         break;
 
       case 'foreignCurrencyTransfer': // 轉帳
-      case Func.E00100_換匯.id: // 換匯
+      case Func.E001.id: // 換匯
         params = keepData; // TODO 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。
         break;
 
@@ -276,7 +276,7 @@ const C00400 = () => {
    * 頁面輸出
    */
   return (
-    <Layout title="外幣活存">
+    <Layout fid={Func.C004} title="外幣活存">
       <PageWrapper small>
         {selectedAccount ? (
           <>
@@ -294,7 +294,7 @@ const C00400 = () => {
                     selectedAccount.transable && selectedAccount.balance > 0,
                 },
                 {
-                  fid: Func.E00100_換匯.id,
+                  fid: Func.E001.id,
                   title: '換匯',
                   enabled: selectedAccount.balance > 0,
                 },

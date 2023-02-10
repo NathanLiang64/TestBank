@@ -10,6 +10,7 @@ import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
 import { FEIBButton } from 'components/elements';
 import { RadioGroupField } from 'components/Fields/radioGroupField';
+import { Func } from 'utilities/FuncID';
 
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
@@ -99,7 +100,7 @@ const R00200 = () => {
   }, []);
 
   return (
-    <Layout title="晚點付">
+    <Layout fid={Func.R002} title="晚點付">
       <InstalmentWrapper className="InstalmentWrapper" small>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>

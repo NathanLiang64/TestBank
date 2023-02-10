@@ -6,6 +6,7 @@ import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
 import { showDrawer, showPrompt } from 'utilities/MessageModal';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
+import { Func } from 'utilities/FuncID';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { useNavigation } from 'hooks/useNavigation';
 import EmptyData from 'components/EmptyData';
@@ -154,7 +155,7 @@ const Page = () => {
    * 顯示帳戶列表
    */
   return (
-    <Layout title="約定帳號管理">
+    <Layout fid={Func.D006} title="約定帳號管理">
       <Main small>
         <PageWrapper>
           <div className={`dropdownContainer ${model.selectorMode ? 'hide' : ''}`}>

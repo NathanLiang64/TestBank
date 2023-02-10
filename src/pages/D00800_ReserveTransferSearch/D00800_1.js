@@ -30,7 +30,7 @@ const ReserveTransferSearch1 = ({ location }) => {
     if (!cancelResult) {
       // 執行取消預約轉帳
       dispatch(setWaittingVisible(true));
-      const {result} = await transactionAuth(Func.D00800.authCode);
+      const {result} = await transactionAuth(Func.D008.authCode);
       if (result) {
         const {
           reserveData: {

@@ -18,7 +18,7 @@ import {
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 /* Styles */
-import ForeignCurrencyTransferWrapper from './foreignCurrencyTransfer.style';
+import ForeignCurrencyTransferWrapper from './D00700.style';
 import { executeTransfer } from './api';
 
 const ForeignCurrencyTransfer2 = ({ location }) => {

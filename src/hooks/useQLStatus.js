@@ -17,7 +17,7 @@ export const useQLStatus = () => {
     showCustomPrompt({
       message: '無裝置認證，請先進行「APP裝置認證(快速登入設定)」，或致電客服。',
       okContent: '立即設定',
-      onOk: () => startFunc(Func.T00200.id),
+      onOk: () => startFunc(Func.T002.id),
       onCancel: () => {},
 
     });

@@ -29,7 +29,7 @@ const Page = () => {
   const renderBottomAction = (isSuccess) => (
     <BottomAction position={0}>
       { isSuccess ? (
-        <button type="button" onClick={() => startFunc(Func.C00700.id)}>
+        <button type="button" onClick={() => startFunc(Func.C007.id)}>
           回信用卡首頁
         </button>
       ) : (

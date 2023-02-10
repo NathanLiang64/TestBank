@@ -17,6 +17,7 @@ import {
 } from 'components/elements';
 import Layout from 'components/Layout/Layout';
 import Accordion from 'components/Accordion';
+import { Func } from 'utilities/FuncID';
 
 /* Styles */
 import theme from 'themes/theme';
@@ -133,7 +134,7 @@ const RegularBasicInformation = () => {
   }, []);
 
   return (
-    <Layout title="六個月基本資料變更" goBack={false} goHome={false}>
+    <Layout fid={Func.A006} title="六個月基本資料變更" goBack={false} goHome={false}>
       <RegularBasicInformationWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>

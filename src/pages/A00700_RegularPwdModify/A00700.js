@@ -53,7 +53,7 @@ const RegularPwdModify = () => {
   // 點擊儲存變更，呼叫更新網銀密碼API
   const onSubmit = async ({ password, newPassword }) => {
     dispatch(setWaittingVisible(true));
-    const jsRs = await transactionAuth(Func.A00700.authCode);
+    const jsRs = await transactionAuth(Func.A007.authCode);
     if (jsRs.result) {
       const param = {
         password: e2ee(password),
@@ -113,7 +113,7 @@ const RegularPwdModify = () => {
   }, []);
 
   return (
-    <Layout title="定期網銀密碼變更" goBack={false} goHome={false}>
+    <Layout fid={Func.A007} title="定期網銀密碼變更" goBack={false} goHome={false}>
       <RegularPwdModifyWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
 

@@ -7,6 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { accountFormatter, dateToYMD } from 'utilities/Generator';
 import { getAccountsList } from 'utilities/CacheData';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { Func } from 'utilities/FuncID';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -29,7 +30,7 @@ import AccordionContent from './accordionContent';
 import { getProfile, sendBankbook } from './api';
 
 /* Styles */
-import ExportBankBookWrapper from './exportBankBook.style';
+import ExportBankBookWrapper from './C00800.style';
 
 const ExportBankBook = () => {
   const dispatch = useDispatch();
@@ -133,7 +134,7 @@ const ExportBankBook = () => {
   }, []);
 
   return (
-    <Layout title="匯出存摺">
+    <Layout fid={Func.C008} title="匯出存摺">
       <ExportBankBookWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>

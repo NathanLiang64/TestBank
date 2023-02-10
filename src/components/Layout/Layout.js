@@ -21,17 +21,19 @@ import HeaderWrapper from './Header.style';
 /**
  * 基本共用的頁面框架。
  * @param {{
-    title: '{*} 頁面上方主標題',
-    children: '{*} 頁面內容',
-    goHome: '{boolean} 表示顯示右上方的 goHome 圖示',
-    goBack: '{boolean} 表示顯示左上方的 goBack 圖示',
-    goBackFunc: '{function} 當 goBack 按下時的自訂處理函數',
-    inspector: '檢查是否符合資格；若不是傳回 true 則立即執行 goBackFunc 或 closeFunc',
-    hasClearHeader: '{boolean} 將標題設為透明的，目前用於存錢計劃',
-  }} props
+ *   fid: { id: string }, // '{String} 此頁面的功能代碼，在各單元功能的首頁都一定要提供。', // NOTE 目前會由原生啟動的功能一定要加。
+ *   title: '{string} 頁面上方主標題',
+ *   children: '{*} 頁面內容',
+ *   goHome: '{boolean} 表示顯示右上方的 goHome 圖示',
+ *   goBack: '{boolean} 表示顯示左上方的 goBack 圖示',
+ *   goBackFunc: '{function} 當 goBack 按下時的自訂處理函數',
+ *   inspector: '檢查是否符合資格；若不是傳回 true 則立即執行 goBackFunc 或 closeFunc',
+ *   hasClearHeader: '{boolean} 將標題設為透明的，目前用於存錢計劃',
+ * }} props
  * @returns
  */
 function Layout({
+  fid,
   title,
   children,
   goHome = true,
@@ -41,7 +43,7 @@ function Layout({
   hasClearHeader,
 }) {
   const dispatch = useDispatch();
-  const { closeFunc, goHome: goHomeFunc } = useNavigation();
+  const { registFunc, closeFunc, goHome: goHomeFunc } = useNavigation();
   //
   // 處理 Popup視窗、 等待中 及 Drawer。
   //
@@ -248,6 +250,8 @@ function Layout({
   //
   const [isPassed, setPassed] = useState();
   useEffect(async () => {
+    if (fid) await registFunc(fid.id);
+
     let pass = true; // 若未設 inspector，則預設為檢查通過。
     if (inspector) {
       const errMesg = await inspector();
@@ -304,6 +308,7 @@ function Layout({
 }
 
 Layout.propTypes = {
+  fid: PropTypes.shape({ id: PropTypes.string }),
   title: PropTypes.string,
   children: PropTypes.element,
   goHome: PropTypes.bool,
@@ -313,6 +318,7 @@ Layout.propTypes = {
 };
 
 Layout.defaultProps = {
+  fid: null,
   title: 'Bankee APP 2.0',
   children: <div />,
   goHome: true,

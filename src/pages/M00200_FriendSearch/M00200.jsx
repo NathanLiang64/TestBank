@@ -6,6 +6,7 @@ import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import Avatar from 'components/Avatar';
 import { dateToString, toHalfWidth } from 'utilities/Generator';
+import { Func } from 'utilities/FuncID';
 
 import EmptyData from 'components/EmptyData';
 import { getFriends } from './api';
@@ -26,7 +27,7 @@ const Page = () => {
   }, []);
 
   return (
-    <Layout title="好友查詢">
+    <Layout fid={Func.M002} title="好友查詢">
       <Main>
         <PageWrapper>
           { friends.length ? (

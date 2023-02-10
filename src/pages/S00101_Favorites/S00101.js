@@ -15,6 +15,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { useNavigation } from 'hooks/useNavigation';
 
+import { Func } from 'utilities/FuncID';
 import { EditIcon, FuncIcons } from 'assets/images/icons';
 import BlockEmpty from 'assets/images/favoriteBlock/blockEmpty.png';
 import { getAllFunc, getMyFuncs, saveMyFuncs } from './api';
@@ -275,7 +276,7 @@ const S00101 = () => {
   };
 
   return (
-    <Layout>
+    <Layout fid={Func.S001}>
       <BottomDrawer
         title="我的最愛"
         isOpen

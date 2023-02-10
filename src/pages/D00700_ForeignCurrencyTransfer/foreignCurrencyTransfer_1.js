@@ -13,7 +13,7 @@ import { FEIBButton } from 'components/elements';
 /* Styles */
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import ForeignCurrencyTransferWrapper from './foreignCurrencyTransfer.style';
+import ForeignCurrencyTransferWrapper from './D00700.style';
 import { createTransfer } from './api';
 
 const ForeignCurrencyTransfer1 = ({ location }) => {
@@ -24,7 +24,7 @@ const ForeignCurrencyTransfer1 = ({ location }) => {
   // 確認進行轉帳
   const applyTransfer = async () => {
     dispatch(setWaittingVisible(true));
-    const rs = await transactionAuth(Func.D00700.authCode);
+    const rs = await transactionAuth(Func.D007.authCode);
     if (rs?.result) {
       const response = await createTransfer(confirmData);
       dispatch(setWaittingVisible(false));

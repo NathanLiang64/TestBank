@@ -176,7 +176,7 @@ const Login = () => {
           </div>
           <div className="signup">
             <span>還沒有帳號？</span>
-            <FEIBLinkButton $color={theme.colors.text.link} onClick={() => startFunc(Func.A00800.id)}>
+            <FEIBLinkButton $color={theme.colors.text.link} onClick={() => startFunc(Func.A008.id)}>
               立即申請
             </FEIBLinkButton>
           </div>

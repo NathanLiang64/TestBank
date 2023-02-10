@@ -96,7 +96,7 @@ const Page = () => {
   // };
 
   // 前往查詢應繳本息頁面
-  const handleSearchClick = (account, subNo) => startFunc(Func.L00200.id, { account, subNo });
+  const handleSearchClick = (account, subNo) => startFunc(Func.L002.id, { account, subNo });
 
   /**
    * 產生上方卡片的 slides
@@ -208,7 +208,7 @@ const Page = () => {
     ));
   };
 
-  const handleMoreTransactionsClick = (loan) => startFunc(Func.L00300.id, { loan });
+  const handleMoreTransactionsClick = (loan) => startFunc(Func.L003.id, { loan });
 
   /**
    * 產生下方交易資訊的 slides
@@ -260,7 +260,7 @@ const Page = () => {
   };
 
   return (
-    <Layout title="貸款" inspector={inspector}>
+    <Layout fid={Func.L001} title="貸款" inspector={inspector}>
       <MainScrollWrapper>
         <PageWrapper>
           <SwiperLayout

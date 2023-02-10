@@ -57,7 +57,7 @@ const Favorite2New = ({
     favoriteList.forEach((obj, index) => {
       alreadyCheckedItemBeforeEdit.push(obj.funcCode);
 
-      if (obj.funcCode === Func.D00300_無卡提款.id) {
+      if (obj.funcCode === Func.D003.id) {
         hasExistedCardLess.current = true;
       }
 
@@ -98,7 +98,7 @@ const Favorite2New = ({
     const rows = await getMyFuncs();
 
     // 在處理好無卡提款跳窗後 把跳窗關掉
-    if (funcCode === Func.D00300_無卡提款.id) {
+    if (funcCode === Func.D003.id) {
       dispatch(setModalVisible(false));
     }
 
@@ -135,7 +135,7 @@ const Favorite2New = ({
     //       isAddCardless = true;
     //     }
     const addItems = usedPostions.map((funcCode, position) => {
-      if (funcCode === Func.D00300_無卡提款.id) isAddCardless = true;
+      if (funcCode === Func.D003.id) isAddCardless = true;
       return {funcCode, position};
     });
     await saveMyFuncs(addItems);
@@ -188,7 +188,7 @@ const Favorite2New = ({
 
   // 編輯完成送出表單
   const onSubmit = ({ editedBlockList }) => {
-    if (usedPostions.indexOf(Func.D00300_無卡提款.id) !== -1 && !hasExistedCardLess.current) {
+    if (usedPostions.indexOf(Func.D003.id) !== -1 && !hasExistedCardLess.current) {
       // TODO 不是在Submit時才要求輸入金額，是在選取當下。
       handleCardlessSubmit(() => {
         patchAndRedirect();
@@ -278,7 +278,7 @@ const Favorite2New = ({
         const funcCode = params;
 
         if (!isEditAction) {
-          if (funcCode === Func.D00300_無卡提款.id) {
+          if (funcCode === Func.D003.id) {
             handleCardlessSubmit(() => {
               preventMultiSubmit(() => {
                 patchOneAndRedirect(funcCode, addPoposition);

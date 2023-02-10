@@ -16,6 +16,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { TextareaField, TextInputField } from 'components/Fields';
 import { useDispatch } from 'react-redux';
 import { switchZhNumber, toCurrency } from 'utilities/Generator';
+import { Func } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import {
   getSummary,
@@ -133,7 +134,7 @@ const CommunityPage = () => {
    */
 
   return (
-    <Layout title="社群圈">
+    <Layout fid={Func.M001} title="社群圈">
       <NetworkWrapper>
         <div className="infoContainer">
           <Avatar
