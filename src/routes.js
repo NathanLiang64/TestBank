@@ -51,6 +51,9 @@ const M00100 = lazy(() => import('pages/M00100_Community/M00100'));
 const M00200 = lazy(() => import('pages/M00200_FriendSearch/M00200'));
 const R00100 = lazy(() => import('pages/R00100_CCTransaction/R00100'));
 const R00200 = lazy(() => import('pages/R00200_Instalment/R00200'));
+const R002001 = lazy(() => import('pages/R00200_Instalment/R00200_1'));
+const R002002 = lazy(() => import('pages/R00200_Instalment/R00200_2'));
+const R002003 = lazy(() => import('pages/R00200_Instalment/R00200_3'));
 const R00300 = lazy(() => import('pages/R00300_CCBill/R00300'));
 const R00400 = lazy(() => import('pages/R00400_CCPayment/R00400'));
 const R00400Result = lazy(() => import('pages/R00400_CCPayment/R00400_1'));
@@ -76,28 +79,13 @@ const T00900 = lazy(() => import('pages/T00900_PwdModify/T00900'));
 const S00100 = lazy(() => import('pages/S00100_Favorite/S00100'));
 const S00101 = lazy(() => import('pages/S00101_Favorites/S00101'));
 
-const AccountMaintenance = lazy(() => import('pages/AccountMaintenance'));
-const BillPay = lazy(() => import('pages/BillPay'));
-const BillPay1 = lazy(() => import('pages/BillPay/billPay_1'));
 const DepositPlus = lazy(() => import('pages/DepositPlus'));
 const DepositPlusDetail = lazy(() => import('pages/DepositPlus/depositPlusDetail'));
-const NicknameSetting = lazy(() => import('pages/NicknameSetting'));
-const PatternLockSetting = lazy(() => import('pages/PatternLockSetting'));
-const FingerPrintLockSetting = lazy(() => import('pages/FingerPrintLockSetting'));
 const SMSOTPactivate = lazy(() => import('pages/SMSOTPactivate'));
 const ProjectJ = lazy(() => import('pages/ProjectJ'));
-const LoanInquiry = lazy(() => import('pages/LoanInquiry'));
-const Deduct = lazy(() => import('pages/Deduct'));
-const Deduct1 = lazy(() => import('pages/Deduct/deduct1'));
-const Deduct2 = lazy(() => import('pages/Deduct/deduct2'));
-const Deduct3 = lazy(() => import('pages/Deduct/deduct3'));
 const MoreTranscations = lazy(() => import('pages/MoreTranscations'));
 const ForeignCurrencyTransfer1 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer/foreignCurrencyTransfer_1'));
 const ForeignCurrencyTransfer2 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer/foreignCurrencyTransfer_2'));
-const ForeignCurrencyPriceSetting = lazy(() => import('pages/ForeignCurrencyPriceSetting'));
-const R002001 = lazy(() => import('pages/R00200_Instalment/R00200_1'));
-const R002002 = lazy(() => import('pages/R00200_Instalment/R00200_2'));
-const R002003 = lazy(() => import('pages/R00200_Instalment/R00200_3'));
 
 // TODO：支援開發及Prototype測試使用
 const Login = lazy(() => import('proto/Login/login'));
@@ -184,27 +172,11 @@ const routes = [
   {path: '/T00900', exact: false, component: T00900},
 
   // 缺 function id
-  {path: '/accountMaintenance', exact: false, component: AccountMaintenance},
-  {path: '/billPay', exact: true, component: BillPay},
-  {path: '/billPay1', exact: false, component: BillPay1},
   {path: '/depositPlus', exact: false, component: DepositPlus},
   {path: '/depositPlusDetail', exact: false, component: DepositPlusDetail},
-  {path: '/nicknameSetting', exact: false, component: NicknameSetting},
-  {path: '/patternLockSetting', exact: false, component: PatternLockSetting},
-  {
-    path: '/fingerPrintLockSetting',
-    exact: false,
-    component: FingerPrintLockSetting,
-  },
   {path: '/smsOTPactivate', exact: false, component: SMSOTPactivate},
   {path: '/projectJ', exact: false, component: ProjectJ},
-  {path: '/loanInquiry', exact: false, component: LoanInquiry},
   {path: '/moreTranscations', exact: false, component: MoreTranscations},
-  {
-    path: '/foreignCurrencyPriceSetting',
-    exact: false,
-    component: ForeignCurrencyPriceSetting,
-  },
   {
     path: '/foreignCurrencyTransfer1',
     exact: false,
@@ -215,10 +187,6 @@ const routes = [
     exact: false,
     component: ForeignCurrencyTransfer2,
   },
-  {path: '/deduct', exact: false, component: Deduct},
-  {path: '/deduct1', exact: false, component: Deduct1},
-  {path: '/deduct2', exact: false, component: Deduct2},
-  {path: '/deduct3', exact: false, component: Deduct3},
 
   // TODO：支援開發及Prototype測試使用
   {path: '/login/:fid', exact: false, component: Login},
