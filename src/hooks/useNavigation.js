@@ -129,7 +129,7 @@ export const useNavigation = () => {
           //      所以在Web端模擬時，用 HardCode URL才能進行測試
           let url;
           switch (funcID) {
-            case Func.F00100.id: url = 'F00000/DEPOSIT'; break; // 申請台幣數存
+            case Func.F00100.id: url = 'F00000/DEPOSIT'; break; // 申請臺幣數存
             case Func.F00200.id: url = 'F00000/S01a'; break; // 申請證券交割戶
             case Func.F00300.id: url = 'F00000/Fa'; break; // 申請外幣數存
             case Func.F00400.id: url = 'F00000/La'; break; // 申請貸款
