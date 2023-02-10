@@ -7,6 +7,7 @@ import {
   getExchangeRateInfo,
   getAgreedAccount,
 } from 'pages/E00100_Exchange/api';
+import { Func } from 'utilities/FuncID';
 
 /* Elements */
 import { FEIBBorderButton, FEIBButton, FEIBHintMessage} from 'components/elements';
@@ -313,7 +314,7 @@ const E00100 = () => {
   };
 
   return (
-    <Layout title="外幣換匯">
+    <Layout fid={Func.E001} title="外幣換匯">
       <ExchangeWrapper style={{ padding: '2.4rem 1.6rem 2.4rem 1.6rem' }}>
         <div className="borderBtnContainer">
           <FEIBBorderButton

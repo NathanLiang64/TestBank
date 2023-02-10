@@ -77,7 +77,7 @@ const AutomaticBillPayment = () => {
 
   const onSubmit = async (values) => {
     dispatch(setWaittingVisible(true));
-    const auth = await transactionAuth(Func.R00500.authCode);
+    const auth = await transactionAuth(Func.R005.authCode);
     if (auth.result) {
       const { result, message } = await setAutoDebit(values);
       showAnimationModal({
@@ -137,7 +137,7 @@ const AutomaticBillPayment = () => {
   }, []);
 
   return (
-    <Layout title="自動扣繳申請/查詢">
+    <Layout fid={Func.R005} title="自動扣繳申請/查詢">
       <AutomaticBillPaymentWrapper>
         <div className="switchContainer">
           <FEIBSwitchLabel

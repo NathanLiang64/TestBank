@@ -145,7 +145,7 @@ const S00101_1 = ({
 
     const handleFuncClick = async () => {
       // 設定無卡提款預設金額（即:執行參數)
-      if (funcCode === Func.D00300_無卡提款.id) {
+      if (funcCode === Func.D003.id) {
         if (mode === 1 || (mode === 2 && !isSelected)) {
           const amountSet = await setCarlessWDparams(model); // 設定執行參數（即:金額)
           if (!amountSet) return;

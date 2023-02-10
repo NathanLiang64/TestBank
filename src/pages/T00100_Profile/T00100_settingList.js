@@ -6,7 +6,7 @@ const T00100settingList = [
   {
     name: '快速登入設定',
     route: '/quickLoginSetting',
-    funcID: Func.T00200.id,
+    funcID: Func.T002.id,
   },
   // {
   //   name: '行動裝置綁定',
@@ -26,12 +26,12 @@ const T00100settingList = [
   {
     name: '非約定轉帳設定',
     route: '/T00300',
-    funcID: Func.T00300.id,
+    funcID: Func.T003.id,
   },
   {
     name: '無卡提款設定',
     route: '/cardLessSetting',
-    funcID: Func.T00400.id,
+    funcID: Func.T004.id,
   },
   // {
   //   name: '行動金融憑證設定',
@@ -41,7 +41,7 @@ const T00100settingList = [
   {
     name: '基本資料變更',
     route: '/basicInformation',
-    funcID: Func.T00700.id,
+    funcID: Func.T007.id,
   },
   // {
   //   name: '手機號碼收款設定',
@@ -51,12 +51,12 @@ const T00100settingList = [
   {
     name: '使用者代號變更',
     route: '/changeUserName',
-    funcID: Func.T00800.id,
+    funcID: Func.T008.id,
   },
   {
     name: '網銀密碼變更',
     route: '/pwdModify',
-    funcID: Func.T00900.id,
+    funcID: Func.T009.id,
   },
   {
     name: '搖一搖功能設定',

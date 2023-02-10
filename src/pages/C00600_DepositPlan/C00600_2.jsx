@@ -74,7 +74,7 @@ const DepositPlanCreatePage = () => {
   };
 
   return (
-    <Layout title="新增存錢計畫" goBackFunc={() => history.replace(Func.C00600.id, {depositPlans})}>
+    <Layout title="新增存錢計畫" goBackFunc={() => history.replace(Func.C006.id, {depositPlans})}>
       <Main>
         <CreatePageWrapper>
           <form className="flex" onSubmit={handleSubmit(onSubmit)}>

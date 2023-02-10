@@ -12,9 +12,10 @@ import {
   FEIBTab,
 } from 'components/elements';
 import Accordion from 'components/Accordion';
+import { Func } from 'utilities/FuncID';
 
 /* Styles */
-import QandAWrapper from './QandA.style';
+import QandAWrapper from './S00600.style';
 
 const QandA = () => {
   const dispatch = useDispatch();
@@ -59,7 +60,7 @@ const QandA = () => {
   );
 
   return (
-    <Layout title="常見問題">
+    <Layout fid={Func.S006} title="常見問題">
       <QandAWrapper>
         <FEIBTabContext value={tabValue}>
           <FEIBTabList onChange={(e, type) => setTabValue(type)} $size="small" $type="fixed">

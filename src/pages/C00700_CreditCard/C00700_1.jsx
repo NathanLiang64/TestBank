@@ -53,7 +53,7 @@ const C007001 = () => {
               <div>
                 <CreditCard
                   cardName={isBankeeCard ? 'Bankee信用卡' : '所有信用卡'}
-                  accountNo={isBankeeCard ? keepData.cardInfo.cardNo : ''}
+                  // accountNo={isBankeeCard ? keepData.cardInfo.cardNo : ''}
                   color="green"
                   annotation="已使用額度"
                   balance={cardInfo?.usedCardLimit}
@@ -80,7 +80,7 @@ const C007001 = () => {
               <li>若針對特定卡片已設定單獨卡片額度，欲查詢卡片可用額度，請洽本行客服中心轉接專人查詢</li>
             </ol>
           </Accordion>
-          <FEIBButton onClick={() => startFunc(Func.R00400.id, { cardNo: keepData.cardInfo.cardNo })}>繳費</FEIBButton>
+          <FEIBButton onClick={() => startFunc(Func.R004.id)}>繳費</FEIBButton>
         </InfoPageWrapper>
       </Main>
     </Layout>

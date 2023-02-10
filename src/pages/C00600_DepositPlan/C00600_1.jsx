@@ -52,7 +52,7 @@ const DepositPlanTransactionPage = () => {
   };
 
   return (
-    <Layout title="存錢歷程" hasClearHeader goBackFunc={() => history.replace(Func.C00600.id, {depositPlans: state.depositPlans})}>
+    <Layout title="存錢歷程" hasClearHeader goBackFunc={() => history.replace(Func.C006.id, {depositPlans: state.depositPlans})}>
       {plan ? (
         <AccountDetails
           selectedAccount={plan}

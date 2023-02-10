@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
+import { Func } from 'utilities/FuncID';
 
 /* Elements */
 import EmptyData from 'components/EmptyData';
@@ -128,7 +129,7 @@ const More = () => {
    * 頁面輸出
    */
   return (
-    <Layout title="更多">
+    <Layout fid={Func.B006} title="更多">
       <MoreWrapper small>
         {funcGroups.length ? (
           <>

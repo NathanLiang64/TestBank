@@ -289,7 +289,7 @@ const Transfer = (props) => {
           showCustomPrompt({
             message: '無裝置認證，請先進行「APP裝置認證(快速登入設定)」，或致電客服。',
             okContent: '立即設定',
-            onOk: () => startFunc(Func.T00200.id),
+            onOk: () => startFunc(Func.T002.id),
             onCancel: () => {},
           });
           return;
@@ -301,7 +301,7 @@ const Transfer = (props) => {
           showCustomPrompt({
             message: '無權限，請先進行「非約定轉帳設定」，或致電客服。',
             okContent: '立即設定',
-            onOk: () => startFunc(Func.T00300.id),
+            onOk: () => startFunc(Func.T003.id),
             onCancel: () => {},
           });
           return;
@@ -424,8 +424,8 @@ const Transfer = (props) => {
     // 尚未指定常用/約定轉入對象時，自動開啟選擇常用/約定轉入對象的功能。
     let funcId = null;
     const { freqAcct, regAcct } = transIn;
-    if (type === 1 && (!freqAcct || !e)) funcId = Func.D00500.id;
-    if (type === 2 && (!regAcct || !e)) funcId = Func.D00600.id;
+    if (type === 1 && (!freqAcct || !e)) funcId = Func.D005.id;
+    if (type === 2 && (!regAcct || !e)) funcId = Func.D006.id;
     if (funcId !== null) {
       const selectAccount = (type === 1) ? freqAcct : regAcct; // 指定預設為已選取狀態的帳號
       const params = {
@@ -576,7 +576,7 @@ const Transfer = (props) => {
    */
 
   return (
-    <Layout title="臺幣轉帳">
+    <Layout fid={Func.D001} title="臺幣轉帳">
       <TransferWrapper $insufficient={!model?.transOut?.balance || model?.transOut?.balance <= 0}>
         <AccountOverview
           transferMode

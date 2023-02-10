@@ -9,6 +9,7 @@ import Avatar from 'components/Avatar';
 import { TextInputField } from 'components/Fields';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import defaultAvatar from 'assets/images/avatarImage.png';
+import { Func } from 'utilities/FuncID';
 
 /* Styles */
 import { useNavigation } from 'hooks/useNavigation';
@@ -76,7 +77,7 @@ const T00100 = () => {
   }, []);
 
   return (
-    <Layout title="個人化設定">
+    <Layout fid={Func.T001} title="個人化設定">
       <ProfileWrapper>
         <Avatar memberId={memberId} name={nickname} onNewPhotoLoaded={uploadAvatar} defaultImage={defaultAvatar} />
         <div className="nickname">

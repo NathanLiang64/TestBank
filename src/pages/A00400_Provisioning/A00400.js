@@ -5,6 +5,7 @@ import { showAnimationModal } from 'utilities/MessageModal';
 import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
 import Accordion from 'components/Accordion';
+import { Func } from 'utilities/FuncID';
 
 /* Styles */
 import { useNavigation } from 'hooks/useNavigation';
@@ -33,7 +34,7 @@ const Provisioning = () => {
   };
 
   return (
-    <Layout title="開通行動銀行服務" goBack={false} goHome={false}>
+    <Layout fid={Func.A004} title="開通行動銀行服務" goBack={false} goHome={false}>
       <ProvisioningWrapper>
         <div className="tip">您尚未開通 Bankee 行動銀行</div>
         <Accordion title="服務條款" space="both" open>

@@ -25,7 +25,7 @@ const PwdModify = () => {
 
   // 點擊儲存變更按鈕，表單驗證
   const onSubmit = async ({ password, newPassword }) => {
-    const jsRs = await transactionAuth(Func.T00900.authCode);
+    const jsRs = await transactionAuth(Func.T009.authCode);
     if (jsRs.result) {
       const param = {
         password: e2ee(password),
@@ -51,7 +51,7 @@ const PwdModify = () => {
   };
 
   return (
-    <Layout title="網銀密碼變更">
+    <Layout fid={Func.T009} title="網銀密碼變更">
       <PwdModifyWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <PasswordInputField

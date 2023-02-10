@@ -73,7 +73,7 @@ const T00600 = () => {
       await customPopup(
         '系統訊息',
         '為符合手機號碼轉帳相關規範，請至設定>指紋辨識/臉部辨識/圖形密碼登入設定，進行快速登入綁定，造成不便，敬請見諒。',
-        () => startFunc(Func.T00200.id),
+        () => startFunc(Func.T002.id),
         closeFunc,
         '立即設定',
       );
@@ -84,7 +84,7 @@ const T00600 = () => {
       await customPopup(
         '系統訊息',
         '您尚未於本行留存手機號碼，請先前往「基本資料變更」頁留存，再進設定。',
-        () => startFunc(Func.T00700.id),
+        () => startFunc(Func.T007.id),
         closeFunc,
         '前往留存',
       );
@@ -153,7 +153,7 @@ const T00600 = () => {
   }, []);
 
   return (
-    <Layout title="手機號碼收款設定">
+    <Layout fid={Func.T006} title="手機號碼收款設定">
       <MobileTransferWrapper className="settingListContainer">
         <AddNewItem onClick={addMobileTransferSetting} addLabel="新增手機號碼收款設定" />
         { renderMobileTransferItems() }

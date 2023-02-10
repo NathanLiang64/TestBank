@@ -27,7 +27,7 @@ const E001001 = ({ location }) => {
 
   const handleNextStep = async () => {
     // const authCode = 0x30;
-    const jsRs = await transactionAuth(Func.E00100_換匯.authCode.F_TWD);
+    const jsRs = await transactionAuth(Func.E001.authCode.F_TWD);
     if (jsRs.result) {
       // switchLoading(true);
       dispatch(setWaittingVisible(true));

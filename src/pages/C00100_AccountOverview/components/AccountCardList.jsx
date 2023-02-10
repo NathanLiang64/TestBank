@@ -231,11 +231,11 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
         switch (account.type) {
           case 'M': // 母帳戶
             cardName = '臺幣主帳戶';
-            funcID = Func.C00300.id;
+            funcID = Func.C003.id;
             break;
           case 'F': // 外幣帳戶 數量為1時不開drawer
             cardName = '外幣帳戶';
-            funcID = Func.C00400.id;
+            funcID = Func.C004.id;
             onClick = () => (account.isEmpty ? window.open(fApplyUrl, '_newtab') : foreignAccounts.length === 1 ? startFunc(funcID) : showDrawer('選擇帳戶', renderSubAccountDrawer(foreignAccounts, funcID)));
             break;
           case 'S': // 證券戶 數量為1時不開drawer
@@ -244,18 +244,18 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
             break;
           case 'C': // 子帳戶 數量為1時不開drawer
             cardName = '子帳戶';
-            funcID = Func.C00600.id;
+            funcID = Func.C006.id;
             onClick = () => handleCOnClick();
             break;
           case 'CC': // 信用卡
             cardName = '信用卡';
             annotation = '已使用額度';
-            funcID = Func.C00700.id;
+            funcID = Func.C007.id;
             onClick = () => (account.isEmpty ? window.open(ccApplyUrl, '_newtab') : startFunc(funcID));
             break;
           case 'L': // 貸款 數量為1時不開drawer
             cardName = '貸款';
-            funcID = Func.L00100.id;
+            funcID = Func.L001.id;
             onClick = () => (account.isEmpty ? window.open(lApplyUrl, '_newtab') : loanAccounts.length === 1 ? startFunc(funcID) : showDrawer('選擇計畫', renderSubAccountDrawer(loanAccounts, funcID)));
             break;
           default:

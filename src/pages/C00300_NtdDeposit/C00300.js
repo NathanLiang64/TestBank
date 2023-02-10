@@ -19,11 +19,7 @@ import { getAccountsList, getAccountBonus, updateAccount, cleanupAccount } from 
 import { Func } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
-import {
-  getInterest,
-  getTransactions,
-  setAccountAlias,
-} from './api';
+import { getInterest, getTransactions, setAccountAlias } from './api';
 import PageWrapper from './C00300.style';
 
 /**
@@ -237,23 +233,23 @@ const C00300 = () => {
         };
         break;
 
-      case Func.D00100_臺幣轉帳.id:
+      case Func.D001.id:
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case Func.D00300_無卡提款.id: // 無卡提款，只有母帳號才可以使用。
+      case Func.D003.id: // 無卡提款，只有母帳號才可以使用。
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case Func.E00100_換匯.id:
+      case Func.E001.id:
         params = { transOut: selectedAccount };
         break;
 
-      case Func.C00800.id: // 匯出存摺
+      case Func.C008.id: // 匯出存摺
         params = { accountNo: selectedAccount.accountNo };
         break;
 
-      case Func.D00800.id: // 預約轉帳查詢/取消
+      case Func.D008.id: // 預約轉帳查詢/取消
         params = { transOut: selectedAccount };
         break;
 
@@ -278,7 +274,7 @@ const C00300 = () => {
    * 頁面輸出
    */
   return (
-    <Layout title="臺幣活存" goBackFunc={goBackFunc}>
+    <Layout fid={Func.C003} title="臺幣活存" goBackFunc={goBackFunc}>
       <PageWrapper small>
         {selectedAccount
           ? (
@@ -290,14 +286,14 @@ const C00300 = () => {
                 onFunctionClick={handleFunctionClick}
                 cardColor="purple"
                 funcList={[
-                  { fid: Func.D00100_臺幣轉帳.id, title: '轉帳' },
-                  { fid: Func.E00100_換匯.id, title: '換匯' },
-                  { fid: Func.D00300_無卡提款.id, title: '無卡提款', hidden: (selectedAccount.acctType !== 'M') },
+                  { fid: Func.D001.id, title: '轉帳' },
+                  { fid: Func.E001.id, title: '換匯' },
+                  { fid: Func.D003.id, title: '無卡提款', hidden: (selectedAccount.acctType !== 'M') },
                 ]}
                 moreFuncs={[
-                  // { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false }, // 此階段隱藏
-                  { fid: Func.D00800.id, title: '預約轉帳查詢/取消', icon: 'reserve' },
-                  { fid: Func.C00800.id, title: '匯出存摺', icon: 'coverDownload' },
+                  // { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false }, // TODO: 此階段隱藏
+                  { fid: Func.D008.id, title: '預約轉帳查詢/取消', icon: 'reserve' },
+                  { fid: Func.C008.id, title: '匯出存摺', icon: 'coverDownload' },
                   { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
                 ]}
               />

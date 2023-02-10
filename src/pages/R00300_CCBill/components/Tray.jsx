@@ -12,7 +12,7 @@ const Tray = ({ deductInfo }) => {
     <TrayWrapper>
       <BottomAction className="badFlex" position={0}>
         { (deductInfo?.autoDeductStatus === '0') && (
-        <button type="button" onClick={() => startFunc(Func.R00400.id)}>
+        <button type="button" onClick={() => startFunc(Func.R004.id)}>
           <R004 />
           繳費
         </button>
