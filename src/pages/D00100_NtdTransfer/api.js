@@ -31,7 +31,9 @@ import { isDifferentAccount } from './util';
 export const createNtdTransfer = async (request) => {
   const response = await callAPI('/deposit/transfer/ntd/v1/create', {
     ...request,
-    callerFunc: getCallerFunc(), // 啟用轉帳功能的 FuncCode, 例: 從臺幣首頁叫轉帳時，應傳入C00300
+    // 啟用轉帳功能的 FuncCode, 例: 從臺幣首頁叫轉帳時，應傳入C003
+    // 此來源功能代碼與交易驗證無關，只是要掌握是那從那個功能發動轉帳功能。
+    callerFunc: getCallerFunc(),
   });
   return response.data;
 };

@@ -1,5 +1,3 @@
-/** @format */
-
 import {lazy} from 'react';
 
 const A00400 = lazy(() => import('pages/A00400_Provisioning/A00400'));
@@ -89,7 +87,8 @@ const ForeignCurrencyTransfer2 = lazy(() => import('pages/D00700_ForeignCurrency
 
 // TODO：支援開發及Prototype測試使用
 const Login = lazy(() => import('proto/Login/login'));
-const Nav = lazy(() => import('proto/Nav/Nav'));
+const B00100 = lazy(() => import('proto/B00100/B00100'));
+
 // --------------------------------
 
 const routes = [
@@ -191,7 +190,8 @@ const routes = [
   // TODO：支援開發及Prototype測試使用
   {path: '/login/:fid', exact: false, component: Login},
   {path: '/login', exact: false, component: Login},
-  {path: '/', exact: true, component: Nav},
+  {path: '/B00100', exact: true, component: B00100},
+  {path: '/', exact: true, component: B00100},
   // --------------------------------
 ];
 

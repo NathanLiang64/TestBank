@@ -15,7 +15,7 @@ import { callAPI } from './axios';
  * @returns {Number} 1.iOS, 2.Android, 3.Web, 4.其他
  */
 function getOsType(allowWebMode) {
-  if (allowWebMode && !window.webkit & !window.jstoapp) return 3;
+  if (allowWebMode && !window.webkit && !window.jstoapp) return 3;
 
   if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) return 1;
   if (/Android/i.test(navigator.userAgent)) return 2;
@@ -133,12 +133,13 @@ export const funcStack = {
    * 從 localStorage 取出功能執行堆疊，並轉為 Array 物件後傳回。
    * @returns {Array} 功能執行堆疊
    */
-  getStack: () => JSON.parse(localStorage.getItem('funcStack') ?? '[]'),
-
-  update: (stack) => localStorage.setItem('funcStack', JSON.stringify(stack)),
+  getStack: () => {
+    if (!window.FuncStack) window.FuncStack = [];
+    return window.FuncStack;
+  },
 
   /** 清空 功能執行堆疊，適用於 goHome 功能。 */
-  clear: () => funcStack.update([]),
+  clear: () => { window.FuncStack = []; },
 
   /**
    * 將指定功能置入 功能執行堆疊 最後一個項目。
@@ -149,15 +150,8 @@ export const funcStack = {
    * }} startItem 要執行的功能。
    */
   push: (startItem) => {
-    console.log('Start Function : ', startItem);
     const stack = funcStack.getStack();
     stack.push(startItem);
-    funcStack.update(stack);
-
-    // 寫入 Function 啟動參數，提供元功能在啟動後，可以透過 loadFuncParams() 取得。
-    // NOTE keepData 必需是 null，才不會在 loadFuncParams() 誤判，因為 keepData 有值時優先當啟動參數。
-    const params = startItem.funcParams ? JSON.stringify({ funcParams: startItem.funcParams, keepData: null }) : null;
-    localStorage.setItem('funcParams', params);
   },
 
   /**
@@ -169,27 +163,8 @@ export const funcStack = {
    * }} 目前正在執行中的功能啟動資訊。
    */
   pop: () => {
-    localStorage.removeItem('funcParams');
-
     const stack = funcStack.getStack();
-    if (stack.length === 0) return null;
-
-    const closedItem = stack[stack.length - 1];
-    stack.pop();
-    funcStack.update(stack);
-
-    // 寫入 Function 啟動參數。
-    const startItem = stack[stack.length - 1];
-    if (closedItem) {
-      const params = {
-        funcParams: startItem?.funcParams,
-        keepData: closedItem.keepData,
-      };
-      localStorage.setItem('funcParams', JSON.stringify(params));
-      console.log('Close Function and Back to (', startItem?.funcID ?? 'Home', ')', params);
-    }
-
-    return startItem;
+    return stack.pop();
   },
 
   /**
@@ -212,7 +187,7 @@ export const funcStack = {
  * @returns {String} 功能代碼。
  */
 function getCallerFunc() {
-  const stack = funcStack.getStack();
+  const {stack} = funcStack;
   if (stack.length <= 1) return null;
 
   return stack[stack.length - 2].funcID;
@@ -221,56 +196,14 @@ function getCallerFunc() {
 /**
  * 取得 APP Function Controller 提供的功能啟動參數。
  * @returns {Promise<{
- *   params: '被啟動時的 funcParams 或是啟動下一個功能時，要求 startFunc 暫存的 keepData。 這裡的 params 並不是一個物件',
+ *   ...params: '被啟動時的 funcParams 或是啟動下一個功能時，要求 startFunc 暫存的 keepData。 這裡的 params 並不是一個物件',
  *   response: '前一功能的傳回的資料',
  * }>} 若參數當時是以 JSON 物件儲存，則同樣會轉成物件傳回。
  */
 async function loadFuncParams() {
-  try {
-    const funcItem = funcStack.peek(); // 因為功能已經啟動，所以用 peek 取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
-
-    // 表示 funcID 不是一般頁面，而是由 Function Controller 控制的單元功能。
-    // NOTE 這種判斷方式，非常容易誤判！只有「一個大寫字母＋5個數字」的功能代碼才算是單元功能。
-    const isFunction = !funcItem || (/^[A-Z]\d{5}$/.test(funcItem.funcID));
-
-    /**
-     * 取得儲存於 localStorage 的啟動參數。此功能是為了提供一般頁面或Web版Function Contoller用。
-     * @returns {{ funcParams, keepData }}
-     */
-    const webGetFuncParams = () => {
-      const params = localStorage.getItem('funcParams');
-      if (!params || params === 'null') return null;
-      if (params.startsWith('{')) return JSON.parse(params);
-      return params;
-    };
-
-    // 一般頁面 則不可向 APP 的 Function Controller 取資料。
-    const data = isFunction ? (await callAppJavaScript('getPagedata', null, true, webGetFuncParams)) : webGetFuncParams();
-    let params = null;
-    if (data && data !== 'undefined') {
-      // 解析由 APP 傳回的資料, 只要有 keepData 就表示是由叫用的功能結束返回
-      // 因此，要以 keepData 為單元功能的啟動參數。
-      // 反之，表示是單元功能被啟動，此時才是以 funcParams 為單元功能的啟動參數。
-      const keepData = (data.keepData && data.keepData !== '') ? data.keepData : null;
-      const dataStr = (keepData ?? data.funcParams);
-      params = (dataStr && dataStr.startsWith('{')) ? JSON.parse(dataStr) : null; // NOTE 只支援APP JS傳回JSON格式資料！
-    }
-
-    // 取得 Function 在 closeFunc 時提供的傳回值。
-    const response = await restoreData('funcResp', true);
-    if (response) {
-      console.log('>> 前一單元功能的 傳回值 : ', response);
-      if (!params) params = {};
-      params.response = response;
-    }
-
-    console.log('>> Function 啟動參數 : ', params);
-    return params;
-  } catch (error) {
-    console.log('>> Function 啟動參數 ** ERROR ** : ', error);
-    await showAlert(JSON.stringify(error));
-    return error;
-  }
+  const params = window.FuncParams; // 由 startFunc 或 closeFunc 存入的資料。
+  console.log('>> Function 啟動參數 : ', params);
+  return params;
 }
 
 /**
@@ -326,8 +259,6 @@ async function shareMessage(message) {
     customPopup('分享功能 (測試版)', message);
   });
 }
-
-// Note setWebLogdata 用不到
 
 // TODO 提供 Exception 資訊給 APP 寫入回報，就有需要了。
 
@@ -391,8 +322,6 @@ async function getJwtToken(force) {
   // console.log(`\x1b[32m[JWT] \x1b[92m${jwtToken}`);
   return jwtToken;
 }
-
-// NOTE onVerification 不符合需求
 
 /**
  * 由 APP 發起交易驗證功能，包含輸入網銀帳密、生物辨識、OTP...。
@@ -569,9 +498,7 @@ async function restoreCache() {
     const appCache = await callAppJavaScript('getCacheData', null, true);
     if (appCache) {
       try {
-        console.log('**** getCacheData : ', appCache);
         const cacheData = JSON.parse(appCache.strCachedata);
-        console.log('**** getCacheData.strCachedata : ', cacheData);
         store.dispatch(setAllCacheData(cacheData));
         return cacheData;
       } catch (ex) {
@@ -643,14 +570,11 @@ async function restoreData(key, remove) {
  *     netbankPwd: 因為之後叫用交易相關 API 時可能會需要用到，所以傳回 E2EE 加密後的密碼。
  *   }
  */
-// eslint-disable-next-line no-unused-vars
 async function appTransactionAuth(request) {
   const { authCode, otpMobile } = request;
 
   // 取得目前執行中的單元功能代碼，要求 Controller 發送或驗出時，皆需提供此參數。
-  // 必以 APP 記錄的執行中單元功能代碼為準。
-  const appJsRs = await callAppJavaScript('getActiveFuncID', null, true);
-  const funcCode = (appJsRs) ? appJsRs.funcID : funcStack.peek()?.funcID;
+  const funcCode = funcStack.peek().funcID;
 
   // 取得需要使用者輸入驗證的項目。
   const authMode = await getTransactionAuthMode(authCode); // 要驗 2FA 還是密碼，要以 create 時的為準。
@@ -730,8 +654,10 @@ async function queryPushBind() {
 async function forceLogout(reasonCode, message, autoStart) {
   await callAppJavaScript('logout', { reason: reasonCode, message }, false, () => {
     if (!(autoStart && window.location.pathname.startsWith('/login'))) {
-      const funcId = funcStack.peek() ? funcStack.peek().funcID : window.location.pathname.substring(1);
-      const search = funcId ? `/${funcId}` : ''; // 登入後立即啟動的功能。
+      // NOTE 原本想做成，登入後直接回到原本 Timeout 時的功能；但因為沒有執行 assetSummary & assetSummaryValues
+      //      而且目前也沒有使用情境，所以先不要用！
+      // const funcId = funcStack.peek() ? funcStack.peek().funcID : window.location.pathname.substring(1);
+      const search = ''; // funcId ? `/${funcId}` : ''; // 登入後立即啟動的功能。
       window.location.href = `${process.env.REACT_APP_ROUTER_BASE}/login${search}`;
     }
   });

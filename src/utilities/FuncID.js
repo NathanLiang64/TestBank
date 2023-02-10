@@ -1,3 +1,7 @@
+/**
+ * 單元功能代表、執行條件、是否外開、是否原生功能...等資訊。
+ * // TODO 應改為從 DB 取得。
+ */
 export const Func = {
   /**
    * 找出指定功能代碼的功能資訊。
@@ -8,12 +12,17 @@ export const Func = {
     .map((f) => f[1])
     .find((f) => (f.id === funcCode)),
 
+  // NOTE 重要關念！
+  //      功能代碼 與 Route所定義的 URL 無直接關係，目前雖然二者看起來是一致的，但URL是在DB中定義
+  //      所以在Web端模擬時，用 HardCode URL才能進行測試
+
   /**
-   * 登入首頁
+   * 登入頁
    */
-  A00300: {
+  A003: {
     id: 'A003',
     required: [],
+    isAppFunc: true, // 表示是原生的功能
   },
 
   /**
@@ -48,14 +57,16 @@ export const Func = {
     id: 'A008',
     authCode: 0x01,
     required: [],
+    isOuterFunc: true, // 表示是在登入前所使用的功能
   },
 
   /**
-   * 優惠Banner
+   * 首頁
    */
-  B00100: {
+  B001: {
     id: 'B001',
     required: [],
+    isAppFunc: true, // 表示是原生的功能
   },
 
   /**
@@ -104,6 +115,7 @@ export const Func = {
   C00200: {
     id: 'C002',
     required: [],
+    isAppFunc: true,
   },
 
   /**
@@ -188,9 +200,10 @@ export const Func = {
   /**
    * QR CODE轉帳
    */
-  D00200: {
+  D002: {
     id: 'D002',
     required: ['M', 'S'],
+    isAppFunc: true, // 表示是原生的功能
   },
 
   /**
@@ -288,6 +301,7 @@ export const Func = {
     id: 'F001',
     required: [],
     hidden: 'M',
+    isOpenExternalBrowser: true,
   },
 
   /**
@@ -297,6 +311,7 @@ export const Func = {
     id: 'F002',
     required: [],
     hidden: 'S',
+    isOpenExternalBrowser: true,
   },
 
   /**
@@ -306,6 +321,7 @@ export const Func = {
     id: 'F003',
     required: [],
     hidden: 'F',
+    isOpenExternalBrowser: true,
   },
 
   /**
@@ -315,6 +331,7 @@ export const Func = {
     id: 'F004',
     required: [],
     hidden: 'L',
+    isOpenExternalBrowser: true,
   },
 
   /**
@@ -324,6 +341,7 @@ export const Func = {
     id: 'F005',
     required: [],
     hidden: 'CC',
+    isOpenExternalBrowser: true,
   },
 
   /**
@@ -606,5 +624,6 @@ export const Func = {
   Z99997: {
     id: 'Z99997',
     required: [],
+    isAppFunc: true, // 表示是原生的功能
   },
 };

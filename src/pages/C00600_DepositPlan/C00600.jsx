@@ -57,7 +57,7 @@ const DepositPlanPage = () => {
         const response = await getDepositPlans();
         setDepositPlans(response);
       }
-    } else AlertNoMainAccount({onOk: () => startFunc('F00100'), closeFunc});
+    } else AlertNoMainAccount({onOk: () => startFunc(Func.F001), closeFunc});
 
     dispatch(setWaittingVisible(false));
   }, []);

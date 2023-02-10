@@ -11,12 +11,10 @@ import CipherUtil from 'utilities/CipherUtil';
 
 import ModalReducer from './reducers/ModalReducer';
 import CacheReducer from './reducers/CacheReducer';
-// import { reducers as patternLockSettingReducer } from 'pages/PatternLockSetting/stores';
 
 const reducer = combineReducers({
   ModalReducer,
   CacheReducer,
-  // patternLockSetting: patternLockSettingReducer, // NOTE 將來可能用的到，先不刪！
 });
 
 /**
