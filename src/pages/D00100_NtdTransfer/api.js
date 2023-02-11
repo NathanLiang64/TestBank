@@ -1,5 +1,5 @@
 import { getAgreedAccount } from 'pages/D00600_RegisteredContacts/api';
-import { getCallerFunc } from 'utilities/AppScriptProxy';
+import { useNavigation } from 'hooks/useNavigation';
 import { callAPI } from 'utilities/axios';
 import { isDifferentAccount } from './util';
 
@@ -23,6 +23,7 @@ import { isDifferentAccount } from './util';
  *   memo: '備註',
  * }} request
  * @returns {Promise<{
+ *   tfrId: '轉帳交易識別碼',
  *   result: '表示是否成功建立臺幣轉帳交易記錄',
  *   message: '紀錄無法成功建立的原因',
  *   isAgreedTxn: '表示約定轉帳的旗標',
@@ -33,13 +34,14 @@ export const createNtdTransfer = async (request) => {
     ...request,
     // 啟用轉帳功能的 FuncCode, 例: 從臺幣首頁叫轉帳時，應傳入C003
     // 此來源功能代碼與交易驗證無關，只是要掌握是那從那個功能發動轉帳功能。
-    callerFunc: getCallerFunc(),
+    callerFunc: useNavigation().getCallerFunc(),
   });
   return response.data;
 };
 
 /**
  * 執行轉帳交易。
+ * @param {String} tfrId 轉帳交易識別碼
  * @returns {Promise<{
  *    isSuccess,
  *    balance: 轉出後餘額,
@@ -50,8 +52,8 @@ export const createNtdTransfer = async (request) => {
  *    message: 錯誤訊息,
  * }>} 轉帳結果。
  */
-export const executeNtdTransfer = async () => {
-  const response = await callAPI('/deposit/transfer/ntd/v1/execute');
+export const executeNtdTransfer = async (tfrId) => {
+  const response = await callAPI('/deposit/transfer/ntd/v1/execute', tfrId);
   return {
     ...response.data,
     isSuccess: (response.isSuccess && !response.data.errorCode),

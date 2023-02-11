@@ -21,7 +21,7 @@ import SearchIcon from '@material-ui/icons/Search';
 
 import DateRangePicker from 'components/DateRangePicker';
 import uuid from 'react-uuid';
-import { loadFuncParams } from 'utilities/AppScriptProxy';
+import { loadFuncParams } from 'hooks/useNavigation';
 import { TabField } from './fields/tabField';
 import DetailContent from './components/detailContent';
 import ResultContent from './components/resultContent';

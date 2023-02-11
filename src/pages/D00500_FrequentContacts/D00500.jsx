@@ -5,11 +5,10 @@ import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
 import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
-import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { Func } from 'utilities/FuncID';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { AddIcon } from 'assets/images/icons';
-import { useNavigation } from 'hooks/useNavigation';
+import { loadFuncParams, useNavigation } from 'hooks/useNavigation';
 import EmptyData from 'components/EmptyData';
 import {
   getFrequentAccount,

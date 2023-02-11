@@ -10,14 +10,14 @@ import { FEIBButton, FEIBIconButton } from 'components/elements';
 /* Reducers & JS functions */
 import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showCustomPrompt } from 'utilities/MessageModal';
-import { loadFuncParams, shareMessage } from 'utilities/AppScriptProxy';
+import { shareMessage } from 'utilities/AppScriptProxy';
 import { ArrowNextIcon, EditIcon } from 'assets/images/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { TextareaField, TextInputField } from 'components/Fields';
 import { useDispatch } from 'react-redux';
 import { switchZhNumber, toCurrency } from 'utilities/Generator';
 import { Func } from 'utilities/FuncID';
-import { useNavigation } from 'hooks/useNavigation';
+import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import {
   getSummary,
   updateAvatar,

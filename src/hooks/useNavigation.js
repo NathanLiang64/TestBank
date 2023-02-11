@@ -1,103 +1,36 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable object-curly-newline */
 import { useHistory } from 'react-router';
-import { callAppJavaScript, forceLogout, funcStack } from 'utilities/AppScriptProxy';
-import { callAPI } from 'utilities/axios';
-import { Func } from 'utilities/FuncID';
-import { showCustomPrompt, showError } from 'utilities/MessageModal';
+import { forceLogout, getOsType } from 'utilities/AppScriptProxy';
+import { Func, isEnterFunc } from 'utilities/FuncID';
 
-export const useNavigation = () => {
+const funcStack = {
+  getStack: () => {
+    if (!window.FuncStack) window.FuncStack = [];
+    return window.FuncStack;
+  },
+
+  clear: () => { window.FuncStack = []; },
+
+  push: (startItem) => {
+    const stack = funcStack.getStack();
+    stack.push(startItem);
+  },
+
+  pop: () => {
+    const stack = funcStack.getStack();
+    return stack.pop();
+  },
+
+  peek: () => {
+    const stack = funcStack.getStack();
+    const lastItem = stack[stack.length - 1];
+    return lastItem;
+  },
+};
+
+const useNavigation = () => {
   const history = useHistory();
-
-  /**
-   * 無法進入目標畫面時所顯示之彈窗
-   */
-  const handleShowPrompt = async (type) => {
-    let errMsg;
-    switch (type) {
-      case 'M':
-        errMsg = {
-          message: 'Bankee臺幣數存',
-          link: `${process.env.REACT_APP_APLFX_URL}prod=Ta`,
-        };
-        break;
-      case 'F':
-        errMsg = {
-          message: 'Bankee外幣數存',
-          link: `${process.env.REACT_APP_APLFX_URL}prod=Ta`,
-        };
-        break;
-      case 'S':
-        errMsg = {
-          message: 'Bankee證券交割帳戶',
-          link: `${process.env.REACT_APP_APLFX_URL}prod=S01a`,
-        };
-        break;
-      case 'CC':
-        errMsg = {
-          message: 'Bankee信用卡',
-          link: `${process.env.REACT_APP_APLFX_URL}prod=Ca`,
-        };
-        break;
-      case 'L':
-        errMsg = {
-          message: 'Bankee貸款',
-          link: `${process.env.REACT_APP_APLFX_URL}prod=La`,
-        };
-        break;
-      default:
-        break;
-    }
-
-    await showCustomPrompt({
-      title: '溫馨提醒',
-      message: `您尚未擁有${errMsg.message}，是否立即申請？`,
-      okContent: '立即申請',
-      onOk: () => window.open(errMsg.link, '_blank'),
-      cancelContent: '我再想想',
-      showCloseButton: false,
-    });
-  };
-
-  /**
-   * 檢查是否可以進入目標頁面
-   * @param {*} funcInfo 要檢查的功能資訊。
-   */
-  const isEnterFunc = async (funcInfo) => {
-    const requiredList = funcInfo.required;
-    if (requiredList.length > 0) {
-      // 取得擁有的產品代碼清單，例：[M, F, S, C, CC, L]
-      let assetTypes = sessionStorage.getItem('assetTypes');
-      if (assetTypes) {
-        assetTypes = assetTypes.split(',');
-      } else {
-        const apiRs = await callAPI('/personal/v1/getAssetTypes');
-        assetTypes = apiRs.data;
-        sessionStorage.setItem('assetTypes', assetTypes);
-      }
-
-      const prodType = requiredList.find((f) => assetTypes.includes(f));
-
-      // 找不到，就提示詢問申請該產品。
-      if (!prodType) {
-        await handleShowPrompt(requiredList[0]);
-        return false;
-      }
-    }
-    return true;
-  };
-
-  /**
-   * 跟 Web Function Controller 註冊目前啟動的功能，以避免因原生端直接啟動，而造成 funcStack 不一致的情況。
-   * 註：若是外開則不需要註冊！
-   * @param {String} funcID 目前啟動的功能代碼。
-   */
-  const registFunc = async (funcID) => {
-    const lastFunc = funcStack.peek();
-    if (lastFunc?.funcID !== funcID) {
-      funcStack.push({ funcID, isFunction: true });
-    }
-  };
 
   /**
    * 網頁通知APP跳轉指定功能
@@ -106,32 +39,22 @@ export const useNavigation = () => {
    * @param {*} keepData 當啟動的單元功能結束後，返回原功能啟動時取回的資料。
    */
   const startFunc = async (funcID, funcParams, keepData) => {
-    console.log('Start Function : ', funcID, funcParams, keepData); // DEBUG
-    if (!funcID) {
-      await showError('此功能尚未完成！');
-      return;
+    funcID = funcID.replace(/^\/*/, '');
+
+    if (funcStack.getStack().length === 0 && funcID !== Func.B001.id) {
+      funcStack.push({ funcID: Func.B001.id, isFunction: true });
     }
 
-    funcID = funcID.replace(/^\/*/, ''); // 移掉前置的 '/' 符號,
-
     let funcInfo;
-    // 只要不是 A001 這種格式的頁面，一律視為 WebPage 而不透過 Function Controller 轉導。
     let isFunction = /^[A-Z]\d{3}$/.test(funcID);
     if (isFunction) {
       funcInfo = Object.values(Func).find((value) => value.id === funcID);
-      if (!funcInfo) isFunction = false; // 若不是 Func 中定義的代碼，也視為 WebPage
+      if (!funcInfo) isFunction = false;
     }
 
     // 只有外開功能，不需納入 funcStack 管理，因為外開的功能沒有 Back 回原功能的需要。
     if (!funcInfo || (!funcInfo.isOpenExternalBrowser && !funcInfo.isAppFunc)) {
-      funcStack.push({
-        funcID,
-        funcParams,
-        keepData,
-        isFunction,
-      });
-
-      // 寫入 Function 啟動參數，提供單元功能在啟動後，可以透過 loadFuncParams() 取得。
+      funcStack.push({ funcID, funcParams, keepData, isFunction });
       window.FuncParams = (funcParams ?? null);
     }
 
@@ -182,7 +105,7 @@ export const useNavigation = () => {
       // 外開瀏覽器，要提示用戶，詢問同意後才可以進行。
       window.open(`http://localhost:3006/F00000/${prodCode}`, '_blank');
     } else {
-      // 暫時用固定版本 '00', 因為目前不是透過 API 取得，所以無法得到真實的URL
+      // TODO 暫時用固定版本 '00', 因為目前不是透過 API 取得，所以無法得到真實的URL
       history.push(`/${funcID}00`);
     }
 
@@ -193,29 +116,26 @@ export const useNavigation = () => {
 
   /**
    * 觸發APP返回上一頁功能，並將指定的資料透過 loadFuncParams() 傳回給啟動目前功能的單元功能。
-   * @param {*} response 傳回值，會暫存在 SessionStorate("funcResp") 中。
+   * @param {*} response 傳回值
    */
   const closeFunc = async (response) => {
-    // 要傳回給前個一功能（啟動這個要被關閉的功能的那個單元功能）的資料
-    // 再由 loadFuncParams() 取出，放在啟動參數的 response 參數中。
-    if (response?.target || response?.type) response = null; // NOTE event物件會被誤判為傳回值，所以必需排除。
+    if (response?.target || response?.type) response = null;
 
-    const closedItem = funcStack.pop(); // 因為 funcStack 還沒 pop，所以用 peek 還以取得正在執行中的 單元功能(例：A001) 或是 頁面(例：moreTransactions)
-    if (!closedItem) return; // 不可能發生，因為這是目前執行中的功能。
+    const closedItem = funcStack.pop();
+    if (!closedItem) return;
 
     console.log(`Close Function (${closedItem.funcID})`); // DEBUG
     delete window.FuncParams;
 
     // 建立要返回功能的啟動參數。
     const startItem = funcStack.peek();
-    if (!startItem) { // 在登入後，啟動首頁前的 A006/B001/A007/A004 就會發生這種情況
+    if (!startItem) {
       await callAppJavaScript('closeFunc', null, false);
-      if (closedItem.funcID === Func.B001.id) forceLogout(); // 只有在首頁呼叫 closeFunc 才要登出
+      if (closedItem.funcID === Func.B001.id) forceLogout();
       return;
     }
     console.log(`Restore Function (${startItem.funcID})`); // DEBUG
 
-    // 取回啟動被關閉的功能當時，提供給 startFunc 保存的資訊。
     const params = closedItem.keepData ?? startItem.funcParams ?? null;
     window.FuncParams = {
       ...params,
@@ -224,11 +144,8 @@ export const useNavigation = () => {
 
     if (startItem.isFunction) {
       const funcInfo = Func[startItem.funcID];
-      // NOTE 原生的功能不會叫 Web 的 closeFunc；所以在啟動時，也不會加入 stack 中。
-      // await callAppJavaScript('closeFunc', null, false, async () => await webStartFunc(funcInfo));
       await webStartFunc(funcInfo);
     } else {
-      // 不是單元功能時，表示關閉的是Web端自行管理的頁面。
       history.push(`/${startItem.funcID}`);
     }
   };
@@ -241,5 +158,144 @@ export const useNavigation = () => {
     });
   };
 
-  return {registFunc, startFunc, closeFunc, goHome};
+  const registFunc = async (funcID) => {
+    const lastFunc = funcStack.peek();
+    if (lastFunc?.funcID !== funcID) {
+      funcStack.push({ funcID, isFunction: true });
+    }
+  };
+
+  /**
+   * 取得目前單元功能啟動資訊。
+   */
+  function getCurrentFunc() {
+    const stack = funcStack;
+    return stack.peek();
+  }
+
+  /**
+   * 取得啟動目前單元功能的功能代碼。
+   * @returns {String} 功能代碼。
+   */
+  function getCallerFunc() {
+    const {stack} = funcStack.getStack();
+    if (stack.length <= 1) return null;
+
+    return stack[stack.length - 2].funcID;
+  }
+
+  return {
+    registFunc,
+    startFunc,
+    closeFunc,
+    goHome,
+    getCurrentFunc,
+    getCallerFunc,
+  };
+};
+
+/**
+ * 篩掉不要顯示的 APP JS Script log
+ * @param {*} appJsName APP提供的JavaScript funciton名稱。
+ */
+function showLog(appJsName) {
+  switch (appJsName) {
+    case 'onLoading':
+    case 'setAuthdata':
+    case 'getAPPAuthdata':
+    case 'getStorageData':
+    case 'setStorageData':
+      return false;
+
+    default: return true;
+  }
+}
+
+/**
+ * 執行 APP 提供的 JavaScript（ jstoapp ）
+ * @returns
+ */
+async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) {
+  const jsToken = `A${Math.floor(Math.random() * 100000000).toString().padStart(8, '0')}`;
+  if (showLog(appJsName)) console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Params = `, jsParams);
+
+  if (!window.AppJavaScriptCallback) {
+    window.AppJavaScriptCallback = {};
+    window.AppJavaScriptCallbackPromiseResolves = {};
+  }
+
+  const CallbackFunc = (token, value) => {
+    const resolve = window.AppJavaScriptCallbackPromiseResolves[token];
+    delete window.AppJavaScriptCallbackPromiseResolves[token];
+    delete window.AppJavaScriptCallback[token];
+
+    let response = value;
+    if (!(value instanceof Object)) {
+      try {
+        response = JSON.parse(value);
+      } catch {
+        response = value;
+      }
+    }
+
+    if (response) {
+      if (response.result === 'true') response.result = true;
+      if (response.result === 'false') response.result = false;
+      if (response.result === 'null') response.result = null;
+      if (response.exception === 'null' || response.exception?.trim() === '') response.exception = null;
+    }
+
+    resolve(response);
+  };
+
+  const promise = new Promise((resolve) => {
+    window.AppJavaScriptCallback[jsToken] = (value) => CallbackFunc(jsToken, value);
+    window.AppJavaScriptCallbackPromiseResolves[jsToken] = resolve;
+
+    const request = {
+      ...jsParams,
+      callback: (needCallback ? `AppJavaScriptCallback['${jsToken}']` : null),
+    };
+
+    switch (getOsType(true)) {
+      case 1: // 1.iOS
+        window.webkit.messageHandlers.jstoapp.postMessage(JSON.stringify({ name: appJsName, data: JSON.stringify(request) }));
+        break;
+      case 2: // 2.Android
+        window.jstoapp[appJsName](JSON.stringify(request));
+        break;
+      default: // 3.其他
+        window.AppJavaScriptCallback[jsToken](webDevTest ? webDevTest() : null);
+        return;
+    }
+
+    if (!needCallback) resolve(null);
+  });
+
+  const response = await promise;
+  if (response?.exception) {
+    throw new Error(response.message);
+  }
+
+  if (showLog(appJsName)) console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Response = `, response);
+  return response;
+}
+
+/**
+ * 取得 APP Function Controller 提供的功能啟動參數。
+ * @returns {Promise<{
+ *   ...params: '被啟動時的 funcParams 或是啟動下一個功能時，要求 startFunc 暫存的 keepData。 這裡的 params 並不是一個物件',
+ *   response: '前一功能的傳回的資料',
+ * }>} 若參數當時是以 JSON 物件儲存，則同樣會轉成物件傳回。
+ */
+async function loadFuncParams() {
+  const params = window.FuncParams;
+  console.log('>> Function 啟動參數 : ', params);
+  return params;
+}
+
+export {
+  useNavigation,
+  callAppJavaScript,
+  loadFuncParams,
 };

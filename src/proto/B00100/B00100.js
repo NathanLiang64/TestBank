@@ -5,6 +5,7 @@ import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { useNavigation } from 'hooks/useNavigation';
+// import { useNavigation } from 'hooks/useNavigation.min';
 import { forceLogout } from 'utilities/AppScriptProxy';
 
 import { assetSummary, getAssetSummaryValues, registerToken } from './api';
@@ -23,9 +24,11 @@ const Nav = () => {
       assetSummary().then(() => {
         // NOTE 只有在登入後的初始化 getAssetSummary 一次，將資料寫回DB及Token中。
         if (sessionStorage.getItem('HomeDataLoaded') === null) {
-          sessionStorage.setItem('HomeDataLoaded', 'Y');
+          sessionStorage.setItem('HomeDataLoaded', 'N');
           // 用非同步取得 getAssetSummary 的初始值。
           getAssetSummaryValues().then(() => {
+            sessionStorage.setItem('HomeDataLoaded', 'Y');
+            dispatch(setWaittingVisible(false));
             // pushToken 可透過 GET https://bankeesit.feib.com.tw/ords/db1/app/bankee2app/DeviceBindingByCustId?custId=A120000000 取得
             registerToken({ pushToken: '878161cad9c7f9b9aa246a2672bd0af545e49849703e6ed23899847c01ca2503' });
             // getBanner()

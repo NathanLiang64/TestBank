@@ -25,7 +25,7 @@ import { RadioGroup } from '@material-ui/core';
 import DateRangePicker from 'components/DateRangePicker';
 import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
-import { loadFuncParams } from 'utilities/AppScriptProxy';
+import { loadFuncParams } from 'hooks/useNavigation';
 import AccordionContent from './accordionContent';
 import { getProfile, sendBankbook } from './api';
 

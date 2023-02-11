@@ -8,7 +8,7 @@ import AccountDetails from 'components/AccountDetails/accountDetails';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { loadFuncParams } from 'utilities/AppScriptProxy';
+import { loadFuncParams } from 'hooks/useNavigation';
 import { getTransactions } from './api';
 
 const MoreTranscations = () => {

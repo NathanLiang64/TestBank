@@ -82,7 +82,7 @@ const TransferConfirm = (props) => {
       const authCode = (response.isAgreedTxn) ? Func.D001.authCode.REG : Func.D001.authCode.NONREG;
       const auth = await transactionAuth(authCode);
       if (auth.result) {
-        const result = await executeTransfer();
+        const result = await executeTransfer(response.tfrId);
         // 顯示轉帳結果（含加入常用帳號）
         const param = {...model, result};
         history.push('/D001002', param);
@@ -96,6 +96,7 @@ const TransferConfirm = (props) => {
 
   /**
    * 執行轉帳交易。
+ * @param {String} tfrId 轉帳交易識別碼
    * @returns {Promise<{
    *    isSuccess,
    *    balance: 轉出後餘額,
@@ -106,9 +107,9 @@ const TransferConfirm = (props) => {
    *    message: 錯誤訊息,
    * }>} 轉帳結果。
    */
-  const executeTransfer = async () => {
+  const executeTransfer = async (tfrId) => {
     // TODO 顯示交易授權中，請稍候...
-    const executeRs = await executeNtdTransfer();
+    const executeRs = await executeNtdTransfer(tfrId);
     console.log('==> 轉帳執行結果：', executeRs);
 
     const result = {

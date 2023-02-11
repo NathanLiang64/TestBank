@@ -1,3 +1,6 @@
+import { callAPI } from './axios';
+import { showCustomPrompt } from './MessageModal';
+
 /**
  * 單元功能代表、執行條件、是否外開、是否原生功能...等資訊。
  * // TODO 應改為從 DB 取得。
@@ -626,4 +629,82 @@ export const Func = {
     required: [],
     isAppFunc: true, // 表示是原生的功能
   },
+};
+
+/**
+ * 無法進入目標畫面時所顯示之彈窗
+ */
+const handleShowPrompt = async (type) => {
+  let errMsg;
+  switch (type) {
+    case 'M':
+      errMsg = {
+        message: 'Bankee臺幣數存',
+        link: `${process.env.REACT_APP_APLFX_URL}prod=Ta`,
+      };
+      break;
+    case 'F':
+      errMsg = {
+        message: 'Bankee外幣數存',
+        link: `${process.env.REACT_APP_APLFX_URL}prod=Ta`,
+      };
+      break;
+    case 'S':
+      errMsg = {
+        message: 'Bankee證券交割帳戶',
+        link: `${process.env.REACT_APP_APLFX_URL}prod=S01a`,
+      };
+      break;
+    case 'CC':
+      errMsg = {
+        message: 'Bankee信用卡',
+        link: `${process.env.REACT_APP_APLFX_URL}prod=Ca`,
+      };
+      break;
+    case 'L':
+      errMsg = {
+        message: 'Bankee貸款',
+        link: `${process.env.REACT_APP_APLFX_URL}prod=La`,
+      };
+      break;
+    default:
+      break;
+  }
+
+  await showCustomPrompt({
+    title: '溫馨提醒',
+    message: `您尚未擁有${errMsg.message}，是否立即申請？`,
+    okContent: '立即申請',
+    onOk: () => window.open(errMsg.link, '_blank'),
+    cancelContent: '我再想想',
+    showCloseButton: false,
+  });
+};
+
+/**
+ * 檢查是否可以進入目標頁面
+ * @param {*} funcInfo 要檢查的功能資訊。
+ */
+export const isEnterFunc = async (funcInfo) => {
+  const requiredList = funcInfo.required;
+  if (requiredList.length > 0) {
+    // 取得擁有的產品代碼清單，例：[M, F, S, C, CC, L]
+    let assetTypes = sessionStorage.getItem('assetTypes');
+    if (assetTypes) {
+      assetTypes = assetTypes.split(',');
+    } else {
+      const apiRs = await callAPI('/personal/v1/getAssetTypes');
+      assetTypes = apiRs.data;
+      sessionStorage.setItem('assetTypes', assetTypes);
+    }
+
+    const prodType = requiredList.find((f) => assetTypes.includes(f));
+
+    // 找不到，就提示詢問申請該產品。
+    if (!prodType) {
+      await handleShowPrompt(requiredList[0]);
+      return false;
+    }
+  }
+  return true;
 };

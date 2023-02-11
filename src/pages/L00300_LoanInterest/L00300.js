@@ -11,10 +11,9 @@ import DebitCard from 'components/DebitCard/DebitCard';
 import InformationTape from 'components/InformationTape';
 import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
 import DownloadIcon from 'assets/images/icons/downloadIcon.svg';
-import { loadFuncParams } from 'utilities/AppScriptProxy';
 import EmptyData from 'components/EmptyData';
 import Loading from 'components/Loading';
-import { useNavigation } from 'hooks/useNavigation';
+import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import { downloadPaymentHistory, getSubPaymentHistory } from './api';
 
 /* Styles */

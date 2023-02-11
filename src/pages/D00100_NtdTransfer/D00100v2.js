@@ -28,10 +28,10 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import {
   showCustomPrompt, showError, showInfo, showPrompt,
 } from 'utilities/MessageModal';
-import { loadFuncParams, getQLStatus } from 'utilities/AppScriptProxy';
+import { getQLStatus } from 'utilities/AppScriptProxy';
 import { getAccountBonus, getAccountsList } from 'utilities/CacheData';
 import { ChangeMemberIcon } from 'assets/images/icons';
-import { useNavigation } from 'hooks/useNavigation';
+import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import CurrencyInput from 'react-currency-input-field';
 import { numberToChinese } from 'utilities/Generator';
 import { getSettingInfo } from 'pages/T00300_NonDesignatedTransfer/api';

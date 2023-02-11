@@ -12,10 +12,10 @@ import {
 import {
   AccountIcon11, AccountIcon12, CircleIcon, D001,
 } from 'assets/images/icons';
-import { loadFuncParams, transactionAuth } from 'utilities/AppScriptProxy';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 import { Func } from 'utilities/FuncID';
 import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
-import { useNavigation } from 'hooks/useNavigation';
+import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import { useDispatch } from 'react-redux';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';

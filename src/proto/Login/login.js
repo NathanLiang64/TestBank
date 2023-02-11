@@ -14,7 +14,7 @@ import {
   ArrowBackIcon, ArrowNextIcon, CheckboxCheckedIcon, CheckboxUncheckedIcon, FaceIdIcon, VisibilityIcon, VisibilityOffIcon,
 } from 'assets/images/icons';
 import { Func } from 'utilities/FuncID';
-import { funcStack } from 'utilities/AppScriptProxy';
+// import { funcStack } from 'utilities/AppScriptProxy';
 import { accountValidation, identityValidation, passwordValidation } from 'utilities/validation';
 import theme from 'themes/theme';
 import Logo from 'assets/images/logoTransparent.png';
@@ -86,7 +86,7 @@ const Login = () => {
       //   startFunc(fid);
       // } else {
           if (rsData.nextFuncCode) {
-            funcStack.push({ funcID: Func.B001.id, isFunction: true });
+            // funcStack.push({ funcID: Func.B001.id, isFunction: true });
             await startFunc(rsData.nextFuncCode);
           } else {
             await goHome();

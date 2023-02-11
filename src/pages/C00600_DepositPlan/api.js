@@ -150,6 +150,7 @@ export const createDepositPlan = async (request) => {
 
 /**
  * 執行轉存錢計劃建立。
+ * @param {String} planId 計劃代碼（UUID 型式）不可為空值。
  * @returns {Promise<{
  *   result: Boolean,
  *   message: String
@@ -157,8 +158,8 @@ export const createDepositPlan = async (request) => {
  *- result: 驗證結果(true/false)
  *- message: 驗證失敗狀況描述。
  */
-export const createConfirm = async () => {
-  const response = await callAPI('/fintech/depositPlan/v1/createConfirm');
+export const createConfirm = async (planId) => {
+  const response = await callAPI('/fintech/depositPlan/v1/createConfirm', planId);
   return response.data;
 };
 

@@ -3,9 +3,8 @@
 import forge from 'node-forge';
 import store from 'stores/store';
 import { setAllCacheData } from 'stores/reducers/CacheReducer';
-import PasswordDrawer from 'components/PasswordDrawer';
-import { getTransactionAuthMode, createTransactionAuth, transactionAuthVerify } from 'components/PasswordDrawer/api';
-import { customPopup, showDrawer } from './MessageModal';
+import { callAppJavaScript } from 'hooks/useNavigation';
+import { customPopup, showTxnAuth } from './MessageModal';
 // eslint-disable-next-line import/no-cycle
 import { callAPI } from './axios';
 
@@ -22,188 +21,6 @@ function getOsType(allowWebMode) {
 
   // 未知的平台
   return 4;
-}
-
-/**
- * 篩掉不要顯示的 APP JS Script log
- * @param {*} appJsName APP提供的JavaScript funciton名稱。
- */
-function showLog(appJsName) {
-  switch (appJsName) {
-    case 'onLoading':
-    case 'setAuthdata':
-    case 'getAPPAuthdata':
-    case 'getStorageData':
-    case 'setStorageData':
-      return false;
-
-    default: return true;
-  }
-}
-
-/**
- * 執行 APP 提供的 JavaScript（ jstoapp ）
- * @param {*} appJsName APP提供的JavaScript funciton名稱。
- * @param {*} jsParams JavaScript的執行參數。
- * @param {*} needCallback 表示需要從 APP 取得傳回值，所以需要等待 Callback
- * @param {*} webDevTest Web開發測試時的執行方法。(Option)
- * @returns
- */
-export // NOTE 為了提供 useNavigation 使用
-async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) {
-  const jsToken = `A${Math.floor(Math.random() * 100000000).toString().padStart(8, '0')}`; // 有千萬分之一的機率重覆。
-  if (showLog(appJsName)) console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Params = `, jsParams);
-
-  if (!window.AppJavaScriptCallback) {
-    window.AppJavaScriptCallback = {};
-    window.AppJavaScriptCallbackPromiseResolves = {};
-  }
-
-  /**
-   * 負責接收 APP JavaScript API callback 的共用方法。
-   * @param {*} value APP JavaScript API的傳回值。
-   */
-  const CallbackFunc = (token, value) => {
-    const resolve = window.AppJavaScriptCallbackPromiseResolves[token];
-    delete window.AppJavaScriptCallbackPromiseResolves[token];
-    delete window.AppJavaScriptCallback[token];
-
-    let response = value;
-    if (!(value instanceof Object)) {
-      try {
-        response = JSON.parse(value);
-      } catch {
-        response = value;
-      }
-    }
-
-    // NOTE 以下奇怪作法是為了配合 APP-JS
-    if (response) {
-      if (response.result === 'true') response.result = true;
-      if (response.result === 'false') response.result = false;
-      if (response.result === 'null') response.result = null;
-      if (response.exception === 'null' || response.exception?.trim() === '') response.exception = null;
-    }
-
-    resolve(response);
-  };
-
-  const promise = new Promise((resolve) => {
-    window.AppJavaScriptCallback[jsToken] = (value) => CallbackFunc(jsToken, value);
-    window.AppJavaScriptCallbackPromiseResolves[jsToken] = resolve;
-
-    const request = {
-      ...jsParams,
-      callback: (needCallback ? `AppJavaScriptCallback['${jsToken}']` : null), // 此方法可提供所有WebView共用。
-    };
-
-    switch (getOsType(true)) {
-      case 1: // 1.iOS
-        window.webkit.messageHandlers.jstoapp.postMessage(JSON.stringify({ name: appJsName, data: JSON.stringify(request) }));
-        break;
-      case 2: // 2.Android
-        window.jstoapp[appJsName](JSON.stringify(request));
-        break;
-      default: // 3.其他
-        window.AppJavaScriptCallback[jsToken](webDevTest ? webDevTest() : null);
-        return;
-        // else throw new Error('使用 Web 版未支援的 APP JavaScript 模擬方法(' + appJsName + ')');
-    }
-
-    // 若不需要從 APP 取得傳回值，就直接結束。
-    if (!needCallback) resolve(null);
-  });
-
-  // response 是由 AppJavaScriptCallback 接收，並嘗試用 JSON Parse 轉為物件，轉不成功則以原資料內容傳回。
-  const response = await promise;
-
-  if (response?.exception) {
-    throw new Error(response.message);
-  }
-
-  if (showLog(appJsName)) console.log(`\x1b[33mAPP-JS://${appJsName}[${jsToken}] \x1b[37m - Response = `, response);
-  return response;
-}
-
-/**
- * Web版 Function Controller
- */
-export const funcStack = {
-  /**
-   * 從 localStorage 取出功能執行堆疊，並轉為 Array 物件後傳回。
-   * @returns {Array} 功能執行堆疊
-   */
-  getStack: () => {
-    if (!window.FuncStack) window.FuncStack = [];
-    return window.FuncStack;
-  },
-
-  /** 清空 功能執行堆疊，適用於 goHome 功能。 */
-  clear: () => { window.FuncStack = []; },
-
-  /**
-   * 將指定功能置入 功能執行堆疊 最後一個項目。
-   * @param {{
-   *   funcID: '單元功能代碼。',
-   *   funcParams: '提共給啟動的單元功能的參數，被啟動的單元功能是透過 loadFuncParams() 取回。',
-   *   keepData: '當啟動的單元功能結束後，返回原功能啟動時取回的資料。',
-   * }} startItem 要執行的功能。
-   */
-  push: (startItem) => {
-    const stack = funcStack.getStack();
-    stack.push(startItem);
-  },
-
-  /**
-   * 取出 功能執行堆疊 的最後一個項目，並從堆疊中移出。
-   * @returns {{
-   *   funcID: '單元功能代碼。',
-   *   funcParams: '提共給啟動的單元功能的參數，被啟動的單元功能是透過 loadFuncParams() 取回。',
-   *   keepData: '當啟動的單元功能結束後，返回原功能啟動時取回的資料。',
-   * }} 目前正在執行中的功能啟動資訊。
-   */
-  pop: () => {
-    const stack = funcStack.getStack();
-    return stack.pop();
-  },
-
-  /**
-   * 取得 功能執行堆疊 最後一個項目，但不會從堆疊中移出。
-   * @returns {{
-   *   funcID: '單元功能代碼。',
-   *   funcParams: '提共給啟動的單元功能的參數，被啟動的單元功能是透過 loadFuncParams() 取回。',
-   *   keepData: '當啟動的單元功能結束後，返回原功能啟動時取回的資料。',
-   * }} 目前正在執行中的功能啟動資訊。
-   */
-  peek: () => {
-    const stack = funcStack.getStack();
-    const lastItem = stack[stack.length - 1];
-    return lastItem;
-  },
-};
-
-/**
- * 取得啟動目前單元功能的功能代碼。
- * @returns {String} 功能代碼。
- */
-function getCallerFunc() {
-  const {stack} = funcStack;
-  if (stack.length <= 1) return null;
-
-  return stack[stack.length - 2].funcID;
-}
-
-/**
- * 取得 APP Function Controller 提供的功能啟動參數。
- * @returns {Promise<{
- *   ...params: '被啟動時的 funcParams 或是啟動下一個功能時，要求 startFunc 暫存的 keepData。 這裡的 params 並不是一個物件',
- *   response: '前一功能的傳回的資料',
- * }>} 若參數當時是以 JSON 物件儲存，則同樣會轉成物件傳回。
- */
-async function loadFuncParams() {
-  const params = window.FuncParams; // 由 startFunc 或 closeFunc 存入的資料。
-  console.log('>> Function 啟動參數 : ', params);
-  return params;
 }
 
 /**
@@ -334,15 +151,15 @@ async function getJwtToken(force) {
  * }>}
  */
 async function transactionAuth(authCode, otpMobile) {
-  const data = {
-    authCode,
-    otpMobile,
-  };
+  // const data = {
+  //   authCode,
+  //   otpMobile,
+  // };
   // return await callAppJavaScript('transactionAuth', data, true, appTransactionAuth);
 
   // DEBUG 在 APP 還沒完成交易驗證之前，先用 Web版進行測試。
 
-  const result = await appTransactionAuth(data);
+  const result = await showTxnAuth(authCode, otpMobile);
   return result;
 }
 
@@ -559,79 +376,6 @@ async function restoreData(key, remove) {
 }
 
 /**
- * 模擬 APP 要求使用者進行交易授權驗證。
- * @param request {
- *   authCode: 要求進行的驗證模式的代碼。
- *   otpMobile: 簡訊識別碼發送的手機門號。當綁定或變更門號時，因為需要確認手機號碼的正確性，所以要再驗OTP
- * }
- * @returns { 要求進行驗證的來源 JavaScript 提供的 Callback JavaScript
- *     result: 驗證結果(true/false)
- *     message: 驗證失敗狀況描述。
- *     netbankPwd: 因為之後叫用交易相關 API 時可能會需要用到，所以傳回 E2EE 加密後的密碼。
- *   }
- */
-async function appTransactionAuth(request) {
-  const { authCode, otpMobile } = request;
-
-  // 取得目前執行中的單元功能代碼，要求 Controller 發送或驗出時，皆需提供此參數。
-  const funcCode = funcStack.peek().funcID;
-
-  // 取得需要使用者輸入驗證的項目。
-  const authMode = await getTransactionAuthMode(authCode); // 要驗 2FA 還是密碼，要以 create 時的為準。
-  const allowed2FA = (authMode & 0x01) !== 0; // 表示需要通過 生物辨識或圖形鎖 驗證。
-  let allowedPWD = (authMode & 0x02) !== 0; // 表示需要通過 網銀密碼 驗證。
-  const allowedOTP = (authMode & 0x04) !== 0; // 表示需要通過 OTP 驗證。
-
-  const failResult = (message) => ({ result: false, message });
-
-  // NOTE 沒有 boundMID，但又限定只能使用 2FA 時；傳回 false 尚未進行行動裝置綁定，無法使用此功能！
-  if (!authMode || authMode === 0x00) { // 當 authMode 為 null 時，表示有例外發生。
-    return failResult('尚未完成行動裝置綁定，無法使用此功能！');
-  }
-
-  // 建立交易授權驗證。
-  const txnAuth = await createTransactionAuth({ // 傳回值包含發送簡訊的手機門號及簡訊識別碼。
-    funcCode,
-    authCode: authCode + 0x96c1fc6b98e00, // TODO 這個 HashCode 要由 Controller 在 Login 的 Response 傳回。
-    otpMobile,
-  });
-  if (!txnAuth) { // createTransactionAuth 發生異常就結束。
-    return failResult('無法建立交易授權驗證。');
-  }
-
-  // 進行雙因子驗證，呼叫 APP 進行驗證。
-  if (allowed2FA) {
-    // NOTE 由原生處理：若生物辨識三次不通過 或是 使用者取消，才會傳回 false！
-    try {
-      const rs = await verifyBio(txnAuth.key);
-      // 因為已綁MID，所以 密碼 也可以當第二因子；因此改用密碼驗證。
-      // 所以，快登因子驗證失敗可改用密碼，成功就不需要再驗密碼了。
-      allowedPWD = (rs.result !== true);
-    } catch (ex) {
-      return failResult(ex);
-    }
-
-    // NOTE 驗證成功(allowedPWD一定是false)但不用驗OTP，就直接傳回成功。
-    //      若是驗證失敗或是還要驗OTP，就要開 Drawer 進行密碼或OTP驗證。
-    if (!allowedPWD && !allowedOTP) {
-      const verifyRs = await transactionAuthVerify({ authKey: txnAuth.key, funcCode });
-      return verifyRs;
-    }
-  }
-
-  let result = null;
-  const onFinished = (value) => { result = value; };
-
-  const body = (
-    <PasswordDrawer funcCode={funcCode} authData={txnAuth} inputPWD={allowedPWD} onFinished={onFinished} />
-  );
-
-  await showDrawer('交易授權驗證 (Web版)', body, null, () => { result = failResult('使用者取消驗證。'); });
-
-  return result;
-}
-
-/**
  * 查詢訊息通知綁定狀態
  * @returns {{PushBindStatus: boolean}} 狀態布林值
  */
@@ -692,9 +436,7 @@ async function screenShot() {
 }
 
 export {
-  getCallerFunc,
   getOsType,
-  loadFuncParams,
   showWaitting,
   doOCR,
   showPopup,
@@ -703,6 +445,7 @@ export {
   syncJwtToken,
   getJwtToken,
   transactionAuth,
+  verifyBio,
   shareMessage,
   getQLStatus,
   createQuickLogin,
