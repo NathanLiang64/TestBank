@@ -3,7 +3,7 @@ import { callAPI } from 'utilities/axios';
 /**
  * 優惠利率額度 - 取得優惠利率年月
  * @returns {Promise<[
-*  String
+ *   String
  * ]>} 年月字串陣列
  */
 export const getBonusPeriodList = async () => {

@@ -242,7 +242,7 @@ function Layout({
     const onFailed = (message) => { onFinished({ result: false, message }); };
 
     if (authData.showTxnAuth === null) { // 進行初始化
-      authData.showTxnAuth = false; // 資料載入中...
+      authData.showTxnAuth = undefined; // 資料載入中...
 
       const setAuthData = async () => {
         const {authCode, otpMobile} = authData;
@@ -296,7 +296,12 @@ function Layout({
 
     // 密碼及OTP輸入
     return authData.allowedPWD ? (
-      <BottomDrawer title="交易授權驗證 (Web版)" isOpen={authData.showTxnAuth} onBack={null} onClose={() => onFailed('使用者取消驗證。')}>
+      <BottomDrawer
+        title="交易授權驗證 (Web版)"
+        isOpen={authData.showTxnAuth !== false}
+        onBack={null}
+        onClose={() => onFailed('使用者取消驗證。')}
+      >
         <PasswordDrawer funcCode={funcCode} authData={authData.txnAuth} inputPWD={authData.allowedPWD} onFinished={onFinished} />
       </BottomDrawer>
     ) : <div />;

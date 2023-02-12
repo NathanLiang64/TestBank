@@ -111,25 +111,26 @@ const loadAccountsList = async () => {
  *   transable: 已設約轉 或 同ID互轉(true/false)
  * }]>} 帳號基本資料。
  */
-export const getAccountsList = async (acctTypes, onDataLoaded, noFlat = false) => {
+export const getAccountsList = async (acctTypes, onDataLoaded) => { // , noFlat = false) => {
   let {accounts} = await restoreCache();
   if (!accounts) {
     accounts = await loadAccountsList();
     store.dispatch(setAccounts(accounts)); // 保存所有的帳號資料。
   }
   // noFlat 若是 true，則不展開成多個帳戶的形式
-  const result = noFlat ? accounts.filter((account) => acctTypes.indexOf(account.acctType) >= 0)
-    : accounts.filter((account) => acctTypes.indexOf(account.acctType) >= 0)
-    // NOTE 外幣帳號的架構跟臺幣不一樣。
-    // 要把一個帳戶、多個幣別 展開成 多個帳戶 的型式呈現。
-      .map((account) => (!account.details // 若是從 APP-DD 取出的值，就沒有 details，所以直接傳回即可。
-        ? account
-        : account.details.map((detail) => {
-          const acct = { ...account, ...detail};
-          delete acct.details;
-          return acct;
-        })))
-      .flat();
+  const result = accounts.filter((account) => acctTypes.indexOf(account.acctType) >= 0);
+  // NOTE 不可破壞這個物件結構，否則各類型的帳戶資料會錯亂。
+  // : accounts.filter((account) => acctTypes.indexOf(account.acctType) >= 0)
+  // // NOTE 外幣帳號的架構跟臺幣不一樣。
+  // // 要把一個帳戶、多個幣別 展開成 多個帳戶 的型式呈現。
+  //   .map((account) => (!account.details // 若是從 APP-DD 取出的值，就沒有 details，所以直接傳回即可。
+  //     ? account
+  //     : account.details.map((detail) => {
+  //       const acct = { ...account, ...detail};
+  //       delete acct.details;
+  //       return acct;
+  //     })))
+  //   .flat();
   if (onDataLoaded) return onDataLoaded(result);
   return result;
 };

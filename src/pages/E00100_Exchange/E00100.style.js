@@ -2,9 +2,8 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const ExchangeWrapper = styled(Layout)`
-  
   .borderBtnContainer {
-    .customSize {
+    button {
       min-height: unset;
       padding-left: 1.2rem;
       padding-right: 1.2rem;
@@ -15,6 +14,19 @@ const ExchangeWrapper = styled(Layout)`
       margin-right: unset;
     }
   }
+
+  form {
+    section {
+      margin-bottom: 2rem;
+    }
+    .exchangeAmount {
+      display: flex;
+      span {
+        padding: 0px 5px;
+      }
+    }
+  }
+
   &.confirmPage {
     padding: 0.8rem 1.6rem 0rem 1.6rem;
   }

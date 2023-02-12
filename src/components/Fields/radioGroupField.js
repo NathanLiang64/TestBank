@@ -15,11 +15,13 @@ export const RadioGroupField = ({
   disabled,
   hideDefaultButton,
   row = false,
+  onChange,
   ...controlProps
 }) => {
   const { field, fieldState } = useController(controlProps);
 
   const onChangeHandler = (selectedValue) => {
+    if (onChange) onChange(selectedValue);
     field.onChange(selectedValue);
   };
 
@@ -44,7 +46,7 @@ export const RadioGroupField = ({
             key={value}
             control={<FEIBRadio style={radioStyle} disabled={disabled} />}
             label={label}
-            value={value.toString()}
+            value={value} // {value.toString()} // 不應限制必需為字串
           />
         ))}
       </RadioGroup>
