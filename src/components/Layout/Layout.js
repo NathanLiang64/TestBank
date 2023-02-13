@@ -1,15 +1,18 @@
+/* eslint-disable no-bitwise */
 /* eslint-disable react/jsx-wrap-multilines */
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Loading from 'components/Loading';
 import Dialog from 'components/Dialog';
 import BottomDrawer from 'components/BottomDrawer';
 import { FEIBButton, FEIBIconButton } from 'components/elements';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
+import PasswordDrawer from 'components/PasswordDrawer';
+import { getTransactionAuthMode, createTransactionAuth, transactionAuthVerify } from 'components/PasswordDrawer/api';
 import theme from 'themes/theme';
 import { ArrowBackIcon, HomeIcon } from 'assets/images/icons';
-import { forceLogout } from 'utilities/AppScriptProxy';
+import { forceLogout, verifyBio } from 'utilities/AppScriptProxy';
 import { showError } from 'utilities/MessageModal';
 import { useNavigation } from 'hooks/useNavigation';
 import {
@@ -43,6 +46,8 @@ function Layout({
   hasClearHeader,
 }) {
   const dispatch = useDispatch();
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+
   const { registFunc, closeFunc, goHome: goHomeFunc } = useNavigation();
   //
   // 處理 Popup視窗、 等待中 及 Drawer。
@@ -216,11 +221,91 @@ function Layout({
       isOpen={showDrawer}
       onBack={drawerData.goBack ? onDrawerGoBack : null}
       onClose={onDrawerClose}
-      content={drawerData.content}
       noScrollable={drawerData.noScrollable}
       shouldAutoClose={drawerData.shouldAutoClose} // TODO 確認必要性。
-    />
+    >
+      {drawerData.content}
+    </BottomDrawer>
   );
+
+  const authData = useSelector((state) => state.ModalReducer.txnAuthData);
+  /**
+   * 模擬 APP 要求使用者進行交易授權驗證。
+   */
+  const TransactionAuth = ({funcCode}) => {
+    const onFinished = (result) => {
+      setResult(result);
+      authData.showTxnAuth = false;
+      forceUpdate();
+    };
+
+    const onFailed = (message) => { onFinished({ result: false, message }); };
+
+    if (authData.showTxnAuth === null) { // 進行初始化
+      authData.showTxnAuth = undefined; // 資料載入中...
+
+      const setAuthData = async () => {
+        const {authCode, otpMobile} = authData;
+
+        // 取得需要使用者輸入驗證的項目。
+        const authMode = await getTransactionAuthMode(authCode); // 要驗 2FA 還是密碼，要以 create 時的為準。
+        const allowed2FA = (authMode & 0x01) !== 0; // 表示需要通過 生物辨識或圖形鎖 驗證。
+        let allowedPWD = (authMode & 0x02) !== 0; // 表示需要通過 網銀密碼 驗證。
+        const allowedOTP = (authMode & 0x04) !== 0; // 表示需要通過 OTP 驗證。
+        if (!authMode || authMode === 0x00) {
+          onFailed('尚未完成行動裝置綁定，無法使用此功能！');
+          return;
+        }
+
+        // 建立交易授權驗證。
+        const txnAuth = await createTransactionAuth({
+          funcCode,
+          authCode: authCode + 0x96c1fc6b98e00,
+          otpMobile,
+        });
+        if (!txnAuth) { // createTransactionAuth 發生異常就結束。
+          onFailed('無法建立交易授權驗證。');
+          return;
+        }
+
+        // 進行雙因子驗證
+        if (allowed2FA) {
+          try {
+            const rs = await verifyBio(txnAuth.key);
+            allowedPWD = (rs.result !== true);
+          } catch (ex) {
+            onFailed(ex);
+            return;
+          }
+
+          if (!allowedPWD && !allowedOTP) {
+            const verifyRs = await transactionAuthVerify({ authKey: txnAuth.key, funcCode });
+            onFinished(verifyRs);
+          }
+        }
+
+        authData.txnAuth = txnAuth;
+        authData.allowedPWD = allowedPWD;
+      };
+
+      setAuthData().then(() => {
+        authData.showTxnAuth = true;
+        forceUpdate();
+      });
+    }
+
+    // 密碼及OTP輸入
+    return authData.allowedPWD ? (
+      <BottomDrawer
+        title="交易授權驗證 (Web版)"
+        isOpen={authData.showTxnAuth !== false}
+        onBack={null}
+        onClose={() => onFailed('使用者取消驗證。')}
+      >
+        <PasswordDrawer funcCode={funcCode} authData={authData.txnAuth} inputPWD={authData.allowedPWD} onFinished={onFinished} />
+      </BottomDrawer>
+    ) : <div />;
+  };
 
   /**
    * 成功失敗動畫彈窗
@@ -284,7 +369,8 @@ function Layout({
 
         <div>
           {children}
-          <Drawer />
+          {authData && (<TransactionAuth funcCode={fid?.id} />)}
+          {showDrawer && <Drawer />}
           <MessageModal />
           <AnimationModal />
           {overPanel}

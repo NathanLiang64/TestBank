@@ -16,7 +16,7 @@ import AccordionWrapper from './accordion.style';
 * */
 
 const Accordion = ({
-  className, title, space, children, open, onClick,
+  className, title, space, children, open, onClick, style,
 }) => {
   const [show, setShow] = useState(open);
 
@@ -26,7 +26,7 @@ const Accordion = ({
   };
 
   return (
-    <AccordionWrapper className={className} $space={space}>
+    <AccordionWrapper className={className} $space={space} style={style}>
       <button type="button" onClick={handleOpen}>
         <h3>{title || '注意事項'}</h3>
         { show ? <RemoveIcon /> : <AddIcon /> }

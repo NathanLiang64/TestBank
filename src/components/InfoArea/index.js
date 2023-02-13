@@ -21,9 +21,11 @@ const InfoArea = ({
   variant,
   color,
   bgColor,
+  style,
 }) => (
   <InfoAreaWrapper
     className={className ? `infoArea ${className}` : 'infoArea'}
+    style={style}
     $space={space}
     $position={position}
     $variant={variant}

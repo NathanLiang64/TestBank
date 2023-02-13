@@ -15,10 +15,9 @@ import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
-import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { getAccountsList, getAccountBonus, updateAccount } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
-import { useNavigation } from 'hooks/useNavigation';
+import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import {
   getTransactions,
   setAccountAlias,

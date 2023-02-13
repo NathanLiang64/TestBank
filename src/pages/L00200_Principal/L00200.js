@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { dateToString, toCurrency } from 'utilities/Generator';
-import { loadFuncParams } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import { showPrompt } from 'utilities/MessageModal';
 import { Func } from 'utilities/FuncID';
 
-import { useNavigation } from 'hooks/useNavigation';
+import { loadFuncParams, useNavigation } from 'hooks/useNavigation';
 import { getSubSummary, getSubPayment } from './api';
 
 /* Styles */

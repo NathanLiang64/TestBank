@@ -1,3 +1,10 @@
+import { callAPI } from './axios';
+import { showCustomPrompt } from './MessageModal';
+
+/**
+ * 單元功能代表、執行條件、是否外開、是否原生功能...等資訊。
+ * // TODO 應改為從 DB 取得。
+ */
 export const Func = {
   /**
    * 找出指定功能代碼的功能資訊。
@@ -8,12 +15,17 @@ export const Func = {
     .map((f) => f[1])
     .find((f) => (f.id === funcCode)),
 
+  // NOTE 重要關念！
+  //      功能代碼 與 Route所定義的 URL 無直接關係，目前雖然二者看起來是一致的，但URL是在DB中定義
+  //      所以在Web端模擬時，用 HardCode URL才能進行測試
+
   /**
-   * 登入首頁
+   * 登入頁
    */
-  A00300: {
+  A003: {
     id: 'A003',
     required: [],
+    isAppFunc: true, // 表示是原生的功能
   },
 
   /**
@@ -48,14 +60,16 @@ export const Func = {
     id: 'A008',
     authCode: 0x01,
     required: [],
+    isOuterFunc: true, // 表示是在登入前所使用的功能
   },
 
   /**
-   * 優惠Banner
+   * 首頁
    */
-  B00100: {
+  B001: {
     id: 'B001',
     required: [],
+    isAppFunc: true, // 表示是原生的功能
   },
 
   /**
@@ -104,6 +118,7 @@ export const Func = {
   C00200: {
     id: 'C002',
     required: [],
+    isAppFunc: true,
   },
 
   /**
@@ -188,9 +203,10 @@ export const Func = {
   /**
    * QR CODE轉帳
    */
-  D00200: {
+  D002: {
     id: 'D002',
     required: ['M', 'S'],
+    isAppFunc: true, // 表示是原生的功能
   },
 
   /**
@@ -288,6 +304,7 @@ export const Func = {
     id: 'F001',
     required: [],
     hidden: 'M',
+    isOpenExternalBrowser: true,
   },
 
   /**
@@ -297,6 +314,7 @@ export const Func = {
     id: 'F002',
     required: [],
     hidden: 'S',
+    isOpenExternalBrowser: true,
   },
 
   /**
@@ -306,6 +324,7 @@ export const Func = {
     id: 'F003',
     required: [],
     hidden: 'F',
+    isOpenExternalBrowser: true,
   },
 
   /**
@@ -315,6 +334,7 @@ export const Func = {
     id: 'F004',
     required: [],
     hidden: 'L',
+    isOpenExternalBrowser: true,
   },
 
   /**
@@ -324,6 +344,7 @@ export const Func = {
     id: 'F005',
     required: [],
     hidden: 'CC',
+    isOpenExternalBrowser: true,
   },
 
   /**
@@ -606,5 +627,84 @@ export const Func = {
   Z99997: {
     id: 'Z903',
     required: [],
+    isAppFunc: true, // 表示是原生的功能
   },
+};
+
+/**
+ * 無法進入目標畫面時所顯示之彈窗
+ */
+const handleShowPrompt = async (type) => {
+  let errMsg;
+  switch (type) {
+    case 'M':
+      errMsg = {
+        message: 'Bankee臺幣數存',
+        link: `${process.env.REACT_APP_APLFX_URL}prod=Ta`,
+      };
+      break;
+    case 'F':
+      errMsg = {
+        message: 'Bankee外幣數存',
+        link: `${process.env.REACT_APP_APLFX_URL}prod=Ta`,
+      };
+      break;
+    case 'S':
+      errMsg = {
+        message: 'Bankee證券交割帳戶',
+        link: `${process.env.REACT_APP_APLFX_URL}prod=S01a`,
+      };
+      break;
+    case 'CC':
+      errMsg = {
+        message: 'Bankee信用卡',
+        link: `${process.env.REACT_APP_APLFX_URL}prod=Ca`,
+      };
+      break;
+    case 'L':
+      errMsg = {
+        message: 'Bankee貸款',
+        link: `${process.env.REACT_APP_APLFX_URL}prod=La`,
+      };
+      break;
+    default:
+      break;
+  }
+
+  await showCustomPrompt({
+    title: '溫馨提醒',
+    message: `您尚未擁有${errMsg.message}，是否立即申請？`,
+    okContent: '立即申請',
+    onOk: () => window.open(errMsg.link, '_blank'),
+    cancelContent: '我再想想',
+    showCloseButton: false,
+  });
+};
+
+/**
+ * 檢查是否可以進入目標頁面
+ * @param {*} funcInfo 要檢查的功能資訊。
+ */
+export const isEnterFunc = async (funcInfo) => {
+  const requiredList = funcInfo.required;
+  if (requiredList.length > 0) {
+    // 取得擁有的產品代碼清單，例：[M, F, S, C, CC, L]
+    let assetTypes = sessionStorage.getItem('assetTypes');
+    if (assetTypes) {
+      assetTypes = assetTypes.split(',');
+    } else {
+      const apiRs = await callAPI('/personal/v1/getAssetTypes');
+      assetTypes = apiRs.data;
+      sessionStorage.setItem('assetTypes', assetTypes);
+    }
+
+    const prodType = requiredList.find((f) => assetTypes.includes(f));
+
+    // 找不到，就提示詢問申請該產品。
+    if (!prodType) {
+      await handleShowPrompt(requiredList[0]);
+      return false;
+    }
+  }
+  return true;
 };

@@ -83,7 +83,7 @@ const DepositPlanDetailPage = () => {
     if (!auth.result) return;
 
     // Step 3. 成功後再執行 createConfirm
-    const confirm = await createConfirm();
+    const confirm = await createConfirm(response.planId);
 
     if (confirm.result) {
       // 驗證成功之後，若 imageId=0 再上傳自訂的影像。

@@ -16,7 +16,7 @@ export const login = async (data) => {
     const response = loginRs.data;
     const { result, errCode, message } = response;
 
-    if (result === true) return true;
+    if (result === true) return response;
 
     if (errCode === 'E004') {
       if (window.confirm(message)) {

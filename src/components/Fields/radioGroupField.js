@@ -16,13 +16,14 @@ export const RadioGroupField = ({
   hideDefaultButton,
   onChange,
   row = false,
+  onChange,
   ...controlProps
 }) => {
   const { field, fieldState } = useController(controlProps);
 
-  const onChangeHandler = (event) => {
-    if (onChange) onChange(event.target.value);
-    else field.onChange(event);
+  const onChangeHandler = (selectedValue) => {
+    if (onChange) onChange(selectedValue);
+    field.onChange(selectedValue);
   };
 
   // eslint-disable-next-line no-unused-vars
@@ -46,7 +47,7 @@ export const RadioGroupField = ({
             key={value}
             control={<FEIBRadio style={radioStyle} disabled={disabled} />}
             label={label}
-            value={value.toString()}
+            value={value} // {value.toString()} // 不應限制必需為字串
           />
         ))}
       </RadioGroup>

@@ -22,10 +22,10 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
   // const dispatch = useDispatch();
   const assetTypes = sessionStorage.getItem('assetTypes');
   const {startFunc} = useNavigation();
-  const sApplyUrl = `${process.env.REACT_APP_APLFX_URL}prod=S01a`;
-  const fApplyUrl = `${process.env.REACT_APP_APLFX_URL}prod=Ta`;
-  const ccApplyUrl = `${process.env.REACT_APP_APLFX_URL}prod=Ca`;
-  const lApplyUrl = `${process.env.REACT_APP_APLFX_URL}prod=La`;
+  const sApplyUrl = 'https://bankeesit.feib.com.tw/aplfx/D2022110211818?utm_source=OSC01';
+  const fApplyUrl = 'https://bankeesit.feib.com.tw/aplfx/D2022110211819';
+  const ccApplyUrl = 'https://bankeesit.feib.com.tw/bankee_apply/CardApply/CardApply_1';
+  const lApplyUrl = 'https://bankeesit.feib.com.tw/aplfx/D2022110111798';
 
   // 證券 start function
   const sAccStartFunc = (account, cardColor) => {

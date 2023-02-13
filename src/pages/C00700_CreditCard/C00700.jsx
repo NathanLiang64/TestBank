@@ -11,12 +11,11 @@ import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 
 import { Func } from 'utilities/FuncID';
 import { currencySymbolGenerator } from 'utilities/Generator';
-import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { showCustomDrawer, showCustomPrompt, showError } from 'utilities/MessageModal';
 import { R005, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
 import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 
-import { useNavigation } from 'hooks/useNavigation';
+import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import { getCards, getTransactions, updateTxnNotes } from './api';
 import {
   backInfo, levelInfo, renderBody, renderHead,

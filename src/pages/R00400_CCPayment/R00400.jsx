@@ -9,7 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Theme from 'themes/theme';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { currencySymbolGenerator } from 'utilities/Generator';
-import { loadFuncParams, transactionAuth } from 'utilities/AppScriptProxy';
+import { transactionAuth } from 'utilities/AppScriptProxy';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import Badge from 'components/Badge';
 import Main from 'components/Layout';
@@ -21,7 +21,7 @@ import { FEIBButton, FEIBErrorMessage, FEIBHintMessage } from 'components/elemen
 import { RadioGroupField } from 'components/Fields/radioGroupField';
 import { Func } from 'utilities/FuncID';
 import { getAccountsList } from 'utilities/CacheData';
-import { useNavigation } from 'hooks/useNavigation';
+import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import {
   getBankeeCardNo,
   payCardFee, queryCardInfo, queryPayBarcode,

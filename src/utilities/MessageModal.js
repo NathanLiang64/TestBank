@@ -4,6 +4,7 @@ import {
   setModal, setModalVisible,
   setDrawer, setDrawerVisible,
   setAnimationModal, setAnimationModalVisible,
+  setTxnAuthData, // setTxnAuthVisible,
 } from '../stores/reducers/ModalReducer';
 
 const closePopup = () => {
@@ -203,4 +204,13 @@ export const showAnimationModal = async (content) => {
     ...content,
   }));
   store.dispatch(setAnimationModalVisible(true));
+};
+
+export const showTxnAuth = async (authCode, otpMobile) => {
+  const promise = new Promise((resolve) => {
+    store.dispatch(setTxnAuthData({authCode, otpMobile}));
+    store.dispatch(setResult((value) => resolve(value)));
+  });
+  const result = await promise;
+  return result;
 };

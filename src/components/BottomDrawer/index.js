@@ -17,16 +17,17 @@ import DrawerWrapper from './bottomDrawer.style';
 * 7. onBack -> 若需要在 Drawer 中控制上一頁，直接傳入事件即可
 * */
 
-const BottomDrawer = ({
+function BottomDrawer({
   className,
   title,
   content,
+  children,
   noScrollable,
   isOpen,
   onClose,
   onBack,
   shouldAutoClose = false,
-}) => {
+}) {
   const renderBackButton = (clickEvent) => (
     <FEIBIconButton
       className="backButton"
@@ -66,10 +67,10 @@ const BottomDrawer = ({
         )}
       </div>
       <div className="content" onClick={handleClickBubble}>
-        {content}
+        {content || children}
       </div>
     </DrawerWrapper>
   );
-};
+}
 
 export default BottomDrawer;
