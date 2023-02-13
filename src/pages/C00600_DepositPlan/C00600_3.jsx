@@ -165,7 +165,7 @@ const DepositPlanEditPage = () => {
                     inputProps={{disabled: !!program.type}}
                     $color={getInputColor(!!program.type)}
                   />
-                  <FEIBHintMessage className="hint-message">
+                  <FEIBHintMessage>
                     共
                     {cycleDuration * (cycleMode === 1 ? 4 : 1)}
                     次

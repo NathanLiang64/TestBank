@@ -21,7 +21,7 @@ import { dialTel, screenShot, shareMessage } from 'utilities/AppScriptProxy';
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showDrawer, showInfo } from 'utilities/MessageModal';
 import { useNavigation } from 'hooks/useNavigation';
-import { toCurrency } from 'utilities/Generator';
+import { accountFormatter, toCurrency } from 'utilities/Generator';
 import { getTransInData, getDisplayAmount, getTransDate, getCycleDesc } from './util';
 import TransferWrapper from './D00100.style';
 
@@ -50,7 +50,7 @@ const TransferResult = (props) => {
         <p>轉出金額與轉入帳號</p>
         <h3 className="transferAmount">{getDisplayAmount(model.amount)}</h3>
         <h3>{`${transInData.bankName} (${transInData.bank})`}</h3>
-        <h3>{transInData.account}</h3>
+        <h3>{accountFormatter(transInData.account, transInData.bank)}</h3>
         {/* 只有「一般轉帳」才需要加入常用帳號 */}
         {model.transIn.type === 0 && (
           <button type="button">
@@ -184,9 +184,9 @@ const TransferResult = (props) => {
     </BottomAction>
   );
 
-  const handleClickScreenshot = () => {
+  const handleClickScreenshot = async () => {
     // TODO 透過原生 或 ReactJS 功能進行截圖。
-    screenShot();
+    await screenShot();
     setShowSnapshotSuccess(true);
     setTimeout(() => setShowSnapshotSuccess(false), 1000); // 1 秒後自動關閉。
   };

@@ -214,18 +214,18 @@ const C00500 = () => {
         };
         break;
 
-      case Func.D00100_臺幣轉帳.id: // 轉帳
+      case Func.D001.id: // 轉帳
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case Func.E00100_換匯.id: // 換匯
-        params = { transOut: selectedAccount.accountNo };
+      case Func.E001_換匯.id: // 換匯
+        params = { transOut: selectedAccount };
         break;
-      case Func.C00800.id: // 匯出存摺
-        params = { accountNo: selectedAccount.accountNo }; // TODO 直接帶入臺幣帳號
+      case Func.C008.id: // 匯出存摺
+        params = { accountNo: selectedAccount.accountNo };
         break;
-      case Func.D00800.id: // 匯出存摺
-        params = { selectedAccount }; // TODO 直接帶入臺幣帳號
+      case Func.D008.id: // 預約轉帳查詢/取消
+        params = { transOut: selectedAccount };
         break;
 
       case 'Rename': // 帳戶名稱編輯
@@ -243,7 +243,7 @@ const C00500 = () => {
    * 頁面輸出
    */
   return (
-    <Layout title="證券交割戶">
+    <Layout fid={Func.C005} title="證券交割戶">
       <PageWrapper small>
         {selectedAccount ? (
           <>
@@ -254,16 +254,16 @@ const C00500 = () => {
               onFunctionClick={handleFunctionClick}
               cardColor="blue"
               funcList={[
-                { fid: Func.D00100_臺幣轉帳.id, title: '轉帳' },
+                { fid: Func.D001.id, title: '轉帳' },
                 {
-                  fid: Func.E00100_換匯.id,
+                  fid: Func.E001.id,
                   title: '換匯',
                   enabled: selectedAccount.balance > 0,
                 },
               ]}
               moreFuncs={[
-                { fid: Func.D00800.id, title: '預約轉帳查詢/取消', icon: 'reserve' },
-                { fid: Func.C00800.id, title: '匯出存摺', icon: 'coverDownload' },
+                { fid: Func.D008.id, title: '預約轉帳查詢/取消', icon: 'reserve' },
+                { fid: Func.C008.id, title: '匯出存摺', icon: 'coverDownload' },
                 { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
               ]}
             />

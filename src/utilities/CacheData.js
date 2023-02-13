@@ -200,8 +200,26 @@ export const updateAccount = async (newAccount) => {
   }
 
   const index = accounts.findIndex((account) => account.accountNo === newAccount.accountNo);
+
   if (index >= 0) {
-    accounts[index] = newAccount;
+    const foundDetailIndex = accounts[index].details.findIndex((detail) => detail.currency === newAccount.currency);
+    accounts[index].details[foundDetailIndex] = {balance: newAccount.balance, currency: newAccount.currency};
+    accounts[index] = {
+      ...accounts[index],
+      bonus: newAccount.bonus,
+      interest: newAccount.interest,
+      txnDetails: newAccount.txnDetails,
+      alias: newAccount.alias,
+    };
+    // accounts[index] = newAccount;
     store.dispatch(setAccounts(accounts));
   }
+};
+
+// 清除帳戶內的交易明細
+export const cleanupAccount = async () => {
+  const { accounts } = await restoreCache();
+  if (!accounts) return;
+  accounts.forEach((acct) => delete acct.txnDetails);
+  store.dispatch(setAccounts(accounts));
 };

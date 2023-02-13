@@ -68,7 +68,7 @@ const T006002 = ({ location }) => {
   const modifyMobileTransferData = async (event) => {
     event.preventDefault();
     // 透過 APP 發送及驗證 OTP，並傳回結果。
-    const result = await transactionAuth(Func.T00600.authCode, confirmData.mobile);
+    const result = await transactionAuth(Func.T006.authCode, confirmData.mobile);
     if (result?.result) {
       dispatch(setWaittingVisible(true));
       const { account, isDefault } = confirmData;
@@ -104,7 +104,7 @@ const T006002 = ({ location }) => {
               <InformationList title="交易種類" content={getDealTypeContent(type)} />
               <InformationList title="姓名" content={confirmData.custName || ''} />
               <InformationList title="手機號碼" content={confirmData.mobile} />
-              <InformationList title="收款帳號" content={accountFormatter(confirmData.account)} />
+              <InformationList title="收款帳號" content={accountFormatter(confirmData.account, true)} />
               <InformationList title="預設收款帳戶" content={confirmData.isDefault ? '是' : '否'} />
             </div>
             {

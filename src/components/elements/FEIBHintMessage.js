@@ -9,7 +9,12 @@ const FEIBHintMessage = styled(MaterialErrorMessage).attrs({})`
     text-align: right;
     font-size: 1.2rem;
     font-weight: 300;
-    transform: translateY(-100%);
+    // transform: translateY(-100%);
+
+    left: 0;
+    bottom: 0;
+    transform: translateY(0%);
+    text-align: left;
 
     &.Mui-error {
       color: ${({ theme }) => theme.colors.text.lightGray};

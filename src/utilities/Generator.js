@@ -6,8 +6,9 @@ import { PaymentType } from './LoanPaymentType';
 /* ========= 通用函式 ========= */
 
 // 將帳號轉為指定字數間帶有分隔符 (-) 之顯示方式
-export const accountFormatter = (account) => {
-  const acct = account ?? '00000000000000';
+export const accountFormatter = (accountNo, isSelf) => {
+  const acct = accountNo ?? '00000000000000';
+  if (!isSelf) return acct.padStart(16, '0'); // 若銀行代碼不是 '805' (非遠銀) 則直接補到16位數後回傳
   return `${acct.slice(0, 3)}-${acct.slice(3, 6)}-${acct.slice(6)}`;
 };
 

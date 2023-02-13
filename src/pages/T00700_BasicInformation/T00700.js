@@ -96,10 +96,10 @@ const T00700 = () => {
 
   // 點擊儲存變更按鈕
   const onSubmit = async (values) => {
-    let authCode = Func.T00700.authCode.EMAIL; // 預設：無變更手機號碼
+    let authCode = Func.T007.authCode.EMAIL; // 預設：無變更手機號碼
     if (values.mobile !== originPersonalData.mobile) {
       // eslint-disable-next-line no-bitwise
-      authCode |= Func.T00700.authCode.MOBILE; // 有變更手機號碼時；可使用密碼驗證(+0x10)，並且需要驗新門號(+0x01)
+      authCode |= Func.T007.authCode.MOBILE; // 有變更手機號碼時；可使用密碼驗證(+0x10)，並且需要驗新門號(+0x01)
     }
 
     dispatch(setWaittingVisible(true));
@@ -132,7 +132,7 @@ const T00700 = () => {
   }, [watchedCounty]);
 
   return (
-    <Layout title="基本資料變更">
+    <Layout fid={Func.T007} title="基本資料變更">
       <BasicInformationWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
 

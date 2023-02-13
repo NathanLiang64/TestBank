@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import parse from 'html-react-parser';
 
-import Main from 'components/Layout';
+// import Main from 'components/Layout';
 import Loading from 'components/Loading';
 import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
@@ -14,7 +14,7 @@ import { Func } from 'utilities/FuncID';
 
 import { useNavigation } from 'hooks/useNavigation';
 import { getAutoDebits, getCreditCardTerms } from './api';
-import PageWrapper from './TransferResult.style';
+import { ResultWrapper } from './R00400.style';
 
 /**
  * R00400 信用卡 付款結果頁
@@ -29,7 +29,7 @@ const Page = () => {
   const renderBottomAction = (isSuccess) => (
     <BottomAction position={0}>
       { isSuccess ? (
-        <button type="button" onClick={() => startFunc(Func.C00700.id)}>
+        <button type="button" onClick={() => startFunc(Func.C007.id)}>
           回信用卡首頁
         </button>
       ) : (
@@ -51,10 +51,9 @@ const Page = () => {
   const renderAutoDebitInfo = (isSuccess) => {
     if (!isSuccess) return null;
 
-    // TODO 改成 switch模式
     if (!autoDebitInfo || autoDebitInfo.status !== '2') {
       return (
-        <>
+        <div className="bluelineBottom">
           <div>
             <div className="mb-2 text-gray">您尚未申請自動扣繳</div>
             <div className="deduct">
@@ -65,7 +64,7 @@ const Page = () => {
           <Accordion title="注意事項">
             { terms ? parse(terms) : <Loading space="both" isCentered /> }
           </Accordion>
-        </>
+        </div>
       );
     }
 
@@ -94,12 +93,12 @@ const Page = () => {
 
   // ===== Guard，若沒有 location.state 屬於不正常操作，直接結束本服務 =====
   if (!location.state || !('payResult' in location.state)) return closeFunc();
-  const { payResult: {code, message} } = location.state;
-  const isSuccess = code === '0000';
+  const { payResult: {isSuccess, message, code} } = location.state;
+
   return (
-    <Layout title="轉帳結果" goBackFunc={() => history.goBack()}>
-      <Main>
-        <PageWrapper>
+    <Layout title="轉帳結果">
+      <ResultWrapper>
+        <div className="resultContainer">
           <SuccessFailureAnimations
             isSuccess={isSuccess}
             successTitle="繳款成功"
@@ -110,8 +109,8 @@ const Page = () => {
           />
           {renderAutoDebitInfo(isSuccess)}
           { renderBottomAction(isSuccess) }
-        </PageWrapper>
-      </Main>
+        </div>
+      </ResultWrapper>
     </Layout>
   );
 };

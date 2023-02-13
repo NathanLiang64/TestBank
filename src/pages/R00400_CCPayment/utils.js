@@ -23,7 +23,7 @@ export const generateAccountNoOptions = (accounts) => {
   if (!accounts || !accounts.length) return [];
 
   return accounts.map((v) => ({
-    label: accountFormatter(v.accountNo),
+    label: accountFormatter(v.accountNo, true),
     value: v.accountNo,
   }));
 };

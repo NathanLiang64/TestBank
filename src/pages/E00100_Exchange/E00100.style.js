@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 export const ExchangeWrapper = styled(Layout)`
-  
   .borderBtnContainer {
     .customSize {
       min-height: unset;
@@ -141,6 +140,11 @@ export const ExchangeWrapper = styled(Layout)`
     padding-bottom: 0.8rem;
   }
 
+  form {
+    display: grid;
+    align-content: flex-start;
+    grid-gap: 2rem;
+  }
 `;
 
 export const ExchangeTableWrapper = styled.div`

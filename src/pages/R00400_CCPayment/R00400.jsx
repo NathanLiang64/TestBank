@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
@@ -16,7 +17,7 @@ import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
 import BankCodeInputField from 'pages/R00400_CCPayment/fields/BankCodeInputField';
 import { DropdownField, TextInputField } from 'components/Fields';
-import { FEIBButton, FEIBErrorMessage } from 'components/elements';
+import { FEIBButton, FEIBErrorMessage, FEIBHintMessage } from 'components/elements';
 import { RadioGroupField } from 'components/Fields/radioGroupField';
 import { Func } from 'utilities/FuncID';
 import { getAccountsList } from 'utilities/CacheData';
@@ -140,7 +141,7 @@ const Page = () => {
         account: data.accountNo,
         cardNo,
       };
-      const {result} = await transactionAuth(Func.R00400.authCode);
+      const {result} = await transactionAuth(Func.R004.authCode);
       if (result) {
         const payResult = await payCardFee(payload);
         if (payResult) history.push('R004001', { payResult, account: data.accountNo });
@@ -161,7 +162,7 @@ const Page = () => {
   };
 
   return (
-    <Layout title="繳款" goBackFunc={closeFunc}>
+    <Layout fid={Func.R004} title="繳款" goBackFunc={closeFunc}>
       <Main small>
         <PageWrapper>
           <Badge
@@ -197,17 +198,17 @@ const Page = () => {
             </div>
 
             { watchedValues.paymentMethod === PAYMENT_OPTION.INTERNAL && (
-            <>
+            <section>
               <DropdownField
                 name="accountNo"
                 labelName="轉出帳號"
                 control={control}
                 options={generateAccountNoOptions(internalAccounts)}
               />
-              <FEIBErrorMessage $color={Theme.colors.text.lightGray}>
-                { renderBalance() }
-              </FEIBErrorMessage>
-            </>
+              {watchedValues.accountNo && (
+              <FEIBHintMessage>{ renderBalance() }</FEIBHintMessage>
+              )}
+            </section>
             )}
 
             { watchedValues.paymentMethod === PAYMENT_OPTION.EXTERNAL && (

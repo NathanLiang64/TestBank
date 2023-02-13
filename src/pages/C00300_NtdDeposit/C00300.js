@@ -12,18 +12,14 @@ import { FEIBInputLabel, FEIBInput } from 'components/elements';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { customPopup, showPrompt } from 'utilities/MessageModal';
+import { customPopup } from 'utilities/MessageModal';
 import { loadFuncParams } from 'utilities/AppScriptProxy';
 import { switchZhNumber, currencySymbolGenerator } from 'utilities/Generator';
-import { getAccountsList, getAccountBonus, updateAccount } from 'utilities/CacheData';
+import { getAccountsList, getAccountBonus, updateAccount, cleanupAccount } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
-import {
-  getInterest,
-  getTransactions,
-  setAccountAlias,
-} from './api';
+import { getInterest, getTransactions, setAccountAlias } from './api';
 import PageWrapper from './C00300.style';
 
 /**
@@ -31,7 +27,7 @@ import PageWrapper from './C00300.style';
  */
 const C00300 = () => {
   const dispatch = useDispatch();
-  const {startFunc, closeFunc} = useNavigation();
+  const { startFunc, closeFunc } = useNavigation();
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const { register, unregister, handleSubmit } = useForm();
@@ -53,13 +49,9 @@ const C00300 = () => {
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
     getAccountsList('MC', async (items) => { // M=臺幣主帳戶、C=臺幣子帳戶
-      if (items.length === 0) {
-        await showPrompt('您還沒有任臺幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
-      } else {
-        setAccounts(items);
-        await processStartParams(items);
-        dispatch(setWaittingVisible(false));
-      }
+      setAccounts(items);
+      await processStartParams(items);
+      dispatch(setWaittingVisible(false));
     });
     return () => setAccounts(null);
   }, []);
@@ -94,7 +86,6 @@ const C00300 = () => {
   /**
    * 更新帳戶交易明細清單。
    * @returns 需有傳回明細清單供顯示。
-   * TODO : 在該頁面開啟的情況下接收轉帳，會因為 account.txnDetails 已被 cached，導致無法再次刷新
    */
   const loadTransactions = (account) => {
     const { txnDetails } = account;
@@ -242,24 +233,24 @@ const C00300 = () => {
         };
         break;
 
-      case Func.D00100_臺幣轉帳.id:
+      case Func.D001.id:
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case Func.D00300_無卡提款.id: // 無卡提款，只有母帳號才可以使用。 // TODO 帶參數過去
+      case Func.D003.id: // 無卡提款，只有母帳號才可以使用。
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case Func.E00100_換匯.id: // TODO 帶參數過去
-        params = { transOut: selectedAccount.accountNo };
+      case Func.E001.id:
+        params = { transOut: selectedAccount };
         break;
 
-      case Func.C00800.id: // 匯出存摺
-        params = { accountNo: selectedAccount.accountNo }; // TODO 直接帶入臺幣帳號
+      case Func.C008.id: // 匯出存摺
+        params = { accountNo: selectedAccount.accountNo };
         break;
 
-      case Func.D00800.id: // 匯出存摺
-        params = { selectedAccount }; // TODO 直接帶入臺幣帳號
+      case Func.D008.id: // 預約轉帳查詢/取消
+        params = { transOut: selectedAccount };
         break;
 
       case 'Rename': // 帳戶名稱編輯
@@ -274,11 +265,16 @@ const C00300 = () => {
     startFunc(funcCode, params, keepData);
   };
 
+  const goBackFunc = () => {
+    cleanupAccount();
+    closeFunc();
+  };
+
   /**
    * 頁面輸出
    */
   return (
-    <Layout title="臺幣活存">
+    <Layout fid={Func.C003} title="臺幣活存" goBackFunc={goBackFunc}>
       <PageWrapper small>
         {selectedAccount
           ? (
@@ -290,14 +286,14 @@ const C00300 = () => {
                 onFunctionClick={handleFunctionClick}
                 cardColor="purple"
                 funcList={[
-                  { fid: Func.D00100_臺幣轉帳.id, title: '轉帳' },
-                  { fid: Func.E00100_換匯.id, title: '換匯' },
-                  { fid: Func.D00300_無卡提款.id, title: '無卡提款', hidden: (selectedAccount.acctType !== 'M') },
+                  { fid: Func.D001.id, title: '轉帳' },
+                  { fid: Func.E001.id, title: '換匯' },
+                  { fid: Func.D003.id, title: '無卡提款', hidden: (selectedAccount.acctType !== 'M') },
                 ]}
                 moreFuncs={[
                   // { fid: null, title: '定存', icon: 'fixedDeposit', enabled: false }, // TODO: 此階段隱藏
-                  { fid: Func.D00800.id, title: '預約轉帳查詢/取消', icon: 'reserve' },
-                  { fid: Func.C00800.id, title: '匯出存摺', icon: 'coverDownload' },
+                  { fid: Func.D008.id, title: '預約轉帳查詢/取消', icon: 'reserve' },
+                  { fid: Func.C008.id, title: '匯出存摺', icon: 'coverDownload' },
                   { fid: 'Rename', title: '帳戶名稱編輯', icon: 'edit' },
                 ]}
               />

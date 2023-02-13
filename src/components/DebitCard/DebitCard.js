@@ -152,13 +152,13 @@ const DebitCard = ({
   const renderAccountNo = () => (
     <div className="accountInfo">
       {transferMode ? (
-        <p className="account">{accountFormatter(model.accountNo)}</p>
+        <p className="account">{accountFormatter(model.accountNo, true)}</p>
       ) : (
         <>
           {/* 將分行代碼轉為分行名稱 */}
           <p>
             <span className={model.branchName ? 'branch' : 'noDisplay'}>{model.branchName}</span>
-            <span className="account">{accountFormatter(model.accountNo)}</span>
+            <span className="account">{accountFormatter(model.accountNo, true)}</span>
           </p>
           {!hideCopyIcon && <CopyTextIconButton copyText={model.accountNo} />}
         </>

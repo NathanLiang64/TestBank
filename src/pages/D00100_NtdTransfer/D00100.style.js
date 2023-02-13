@@ -77,7 +77,7 @@ const TransferWrapper = styled(Layout)`
     .MuiFormHelperText-root {
       margin-bottom: 0;
       &.hint{
-      text-align:left;
+      transform: translateY(-100%);
       }
     }
 

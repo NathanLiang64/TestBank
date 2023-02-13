@@ -43,7 +43,7 @@ const CardLessATM1 = () => {
   // 無卡提款交易
   const requestCardlessWithdrawApply = async (param) => {
     dispatch(setWaittingVisible(true));
-    const {result} = await transactionAuth(Func.D00300_無卡提款.authCode);
+    const {result} = await transactionAuth(Func.D003.authCode);
     if (result) {
       const {
         seqNo, startDateTime, endDateTime, message,

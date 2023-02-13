@@ -74,9 +74,9 @@ const CreditCardPage = (props) => {
   // 信用卡卡面右上角的功能列表
   const functionAllList = (item) => {
     const list = [
-      { fid: Func.R00200.id, title: '晚點付' },
-      { fid: Func.R00300.id, title: '帳單', cardNo: item.isBankeeCard ? item.cardNo : '' },
-      { fid: Func.R00400.id, title: '繳費', cardNo: item.isBankeeCard ? item.cardNo : '' },
+      { fid: Func.R002.id, title: '晚點付' },
+      { fid: Func.R003.id, title: '帳單', cardNo: item.cardNo },
+      { fid: Func.R004.id, title: '繳費', cardNo: item.isBankeeCard ? item.cardNo : '' },
     ];
     if (!item.isBankeeCard) list.splice(0, 1);
 
@@ -99,7 +99,7 @@ const CreditCardPage = (props) => {
       {
         fid: '/C007001', icon: <CreditCardIcon6 />, title: '信用卡資訊', param: {keepData: {transactionObj, cardsInfo, usedCardLimit}, isBankeeCard},
       },
-      { fid: `${Func.R00500.id}`, icon: <R005 />, title: '自動扣繳' },
+      { fid: `${Func.R005.id}`, icon: <R005 />, title: '自動扣繳' },
       {
         fid: '/C007002', icon: <CircleIcon />, title: '每月現金回饋', param: {keepData: {transactionObj, cardsInfo, usedCardLimit} },
       },
@@ -111,7 +111,7 @@ const CreditCardPage = (props) => {
             <button
               type="button"
               onClick={() => {
-                if (item.fid.includes(Func.R00500.id)) go2Func(item.fid, null);
+                if (item.fid.includes(Func.R005.id)) go2Func(item.fid, null);
                 else history.push(item.fid, item?.param);
               }}
             >
@@ -205,7 +205,7 @@ const CreditCardPage = (props) => {
             <CreditCardTxsListWrapper>
               <CreditCardTxsList
                 card={cardInfo}
-                onMoreFuncClick={() => go2Func(Func.R00100.id, {
+                onMoreFuncClick={() => go2Func(Func.R001.id, {
                   card: cardInfo, usedCardLimit, transactions: transactionObj[swiperIndex], index: swiperIndex,
                 })}
                 transactions={transactionObj[swiperIndex]}
@@ -242,7 +242,7 @@ const CreditCardPage = (props) => {
   }, []);
 
   return (
-    <Layout title="信用卡" goBackFunc={closeFunc}>
+    <Layout fid={Func.C007} title="信用卡" goBackFunc={closeFunc}>
       <MainScrollWrapper>
         <SwiperLayout
           slides={renderSlides()}

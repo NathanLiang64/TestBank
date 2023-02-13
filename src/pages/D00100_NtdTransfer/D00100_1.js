@@ -79,10 +79,10 @@ const TransferConfirm = (props) => {
       } else transIn.type = (transIn.freqAcct ? 1 : 0);
 
       // 進行交易驗證，要求使用者輸入OTP、密碼、雙因子...等。
-      const authCode = (response.isAgreedTxn) ? Func.D00100_臺幣轉帳.authCode.REG : Func.D00100_臺幣轉帳.authCode.NONREG;
+      const authCode = (response.isAgreedTxn) ? Func.D001.authCode.REG : Func.D001.authCode.NONREG;
       const auth = await transactionAuth(authCode);
       if (auth.result) {
-        const result = await executeTransfer();
+        const result = await executeTransfer(response.isAgreedTxn);
         // 顯示轉帳結果（含加入常用帳號）
         const param = {...model, result};
         history.push('/D001002', param);
@@ -106,7 +106,7 @@ const TransferConfirm = (props) => {
    *    message: 錯誤訊息,
    * }>} 轉帳結果。
    */
-  const executeTransfer = async () => {
+  const executeTransfer = async (isAgreedTxn) => {
     // TODO 顯示交易授權中，請稍候...
     const executeRs = await executeNtdTransfer();
     console.log('==> 轉帳執行結果：', executeRs);
@@ -130,8 +130,10 @@ const TransferConfirm = (props) => {
           bonus: {
             ...account.bonus,
             freeTransferRemain: model.transOut.freeTransferRemain, // 更新 跨轉優惠次數
-            dLimitLeft: result.isCrossBank ? account.bonus.dLimitLeft - model.amount : account.bonus.dLimitLeft, // TODO 待驗證
-            mLimitLeft: result.isCrossBank ? account.bonus.mLimitLeft - model.amount : account.bonus.mLimitLeft, // TODO 待驗證
+            dLimitLeft: !isAgreedTxn ? account.bonus.dLimitLeft - model.amount : account.bonus.dLimitLeft, // TODO 待驗證
+            mLimitLeft: !isAgreedTxn ? account.bonus.mLimitLeft - model.amount : account.bonus.mLimitLeft, // TODO 待驗證
+            agrdTfrSelfLimitLeft: isAgreedTxn && transInData.bank === '805' ? account.bonus.agrdTfrSelfLimitLeft - model.amount : account.bonus.agrdTfrSelfLimitLeft, // TODO 待驗證
+            agrdTfrInterLimitLeft: isAgreedTxn && transInData.bank !== '805' ? account.bonus.agrdTfrInterLimitLeft - model.amount : account.bonus.agrdTfrInterLimitLeft, // TODO 待驗證
           },
         });
       });

@@ -18,7 +18,7 @@ import {
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 /* Styles */
-import ForeignCurrencyTransferWrapper from './foreignCurrencyTransfer.style';
+import ForeignCurrencyTransferWrapper from './D00700.style';
 import { executeTransfer } from './api';
 
 const ForeignCurrencyTransfer2 = ({ location }) => {
@@ -91,12 +91,13 @@ const ForeignCurrencyTransfer2 = ({ location }) => {
                   }
                 </div>
                 <div className="accountInfo">遠東商銀(805)</div>
+                {/* 待確認轉入帳號的 bankId 名稱 */}
                 <div className="accountInfo">{ accountFormatter(model?.inAcct) }</div>
               </div>
               <div className="line" />
               <div className="infoListContainer">
                 <div>
-                  <InformationList title="轉出帳號" content={accountFormatter(model?.outAcct)} />
+                  <InformationList title="轉出帳號" content={accountFormatter(model?.outAcct, true)} />
                   <InformationList title="時間" content={model?.dateStr} />
                 </div>
                 <div style={{ marginBottom: '8rem' }}>

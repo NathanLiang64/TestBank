@@ -15,7 +15,7 @@ import { callAPI } from './axios';
  * @returns {Number} 1.iOS, 2.Android, 3.Web, 4.其他
  */
 function getOsType(allowWebMode) {
-  if (allowWebMode && !window.webkit & !window.jstoapp) return 3;
+  if (allowWebMode && !window.webkit && !window.jstoapp) return 3;
 
   if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) return 1;
   if (/Android/i.test(navigator.userAgent)) return 2;

@@ -64,7 +64,7 @@ const DepositPlanHeroSlide = ({
         { isSimple && (
         <div className="overlay">
           <div>{ name }</div>
-          <div>{ accountFormatter(accountNo) }</div>
+          <div>{ accountFormatter(accountNo, true) }</div>
           <div className="balance">{ currencySymbolGenerator(dollarSign, balance) }</div>
         </div>
         ) }
@@ -84,7 +84,7 @@ const DepositPlanHeroSlide = ({
       <>
         <div className="title">{name}</div>
         <div className="account">
-          { accountFormatter(accountNo) }
+          { accountFormatter(accountNo, true) }
           <CopyTextIconButton copyText={accountNo} isInline />
         </div>
 

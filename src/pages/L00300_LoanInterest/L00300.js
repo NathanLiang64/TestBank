@@ -3,6 +3,7 @@ import { showDrawer, closeDrawer } from 'utilities/MessageModal';
 import {
   toCurrency, dateToYMD, dateToString, handleLoanTypeToTitle,
 } from 'utilities/Generator';
+import { Func } from 'utilities/FuncID';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -131,7 +132,7 @@ const LoanInterest = () => {
   }, [cardData]);
 
   return (
-    <Layout title="繳款紀錄查詢">
+    <Layout fid={Func.L003} title="繳款紀錄查詢">
       <LoanInterestWrapper>
         <div className="cardArea">
           <DebitCard

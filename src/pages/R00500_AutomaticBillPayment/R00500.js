@@ -77,7 +77,7 @@ const AutomaticBillPayment = () => {
 
   const onSubmit = async (values) => {
     dispatch(setWaittingVisible(true));
-    const auth = await transactionAuth(Func.R00500.authCode);
+    const auth = await transactionAuth(Func.R005.authCode);
     if (auth.result) {
       const { result, message } = await setAutoDebit(values);
       showAnimationModal({
@@ -124,7 +124,7 @@ const AutomaticBillPayment = () => {
   const renderAppliedAutoBill = () => appliedAutoBill.map((item) => (
     <SettingItem
       key={uuid()}
-      mainLable={accountFormatter(item.account)}
+      mainLable={accountFormatter(item.account, item.bank === '805')}
       subLabel={`扣款方式：${item.isFullPay === '100' ? '應繳總金額' : '最低應繳金額'} | 狀態：${renderStatusText(item.status)}`}
     />
   ));
@@ -137,7 +137,7 @@ const AutomaticBillPayment = () => {
   }, []);
 
   return (
-    <Layout title="自動扣繳申請/查詢">
+    <Layout fid={Func.R005} title="自動扣繳申請/查詢">
       <AutomaticBillPaymentWrapper>
         <div className="switchContainer">
           <FEIBSwitchLabel

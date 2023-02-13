@@ -5,6 +5,7 @@ import { loadFuncParams } from 'utilities/AppScriptProxy';
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import { showPrompt } from 'utilities/MessageModal';
+import { Func } from 'utilities/FuncID';
 
 import { useNavigation } from 'hooks/useNavigation';
 import { getSubSummary, getSubPayment } from './api';
@@ -51,7 +52,7 @@ const L00200 = () => {
   }, []);
 
   return (
-    <Layout title="應繳本息查詢">
+    <Layout fid={Func.L002} title="應繳本息查詢">
       <PrincipalWrapper>
         {
           detaillist.map((item) => (

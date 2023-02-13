@@ -13,7 +13,7 @@ import { FEIBButton } from 'components/elements';
 /* Styles */
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import ForeignCurrencyTransferWrapper from './foreignCurrencyTransfer.style';
+import ForeignCurrencyTransferWrapper from './D00700.style';
 import { createTransfer } from './api';
 
 const ForeignCurrencyTransfer1 = ({ location }) => {
@@ -24,7 +24,7 @@ const ForeignCurrencyTransfer1 = ({ location }) => {
   // 確認進行轉帳
   const applyTransfer = async () => {
     dispatch(setWaittingVisible(true));
-    const rs = await transactionAuth(Func.D00700.authCode);
+    const rs = await transactionAuth(Func.D007.authCode);
     if (rs?.result) {
       const response = await createTransfer(confirmData);
       dispatch(setWaittingVisible(false));
@@ -61,11 +61,12 @@ const ForeignCurrencyTransfer1 = ({ location }) => {
             }
           </div>
           <div className="accountInfo">遠東商銀(805)</div>
+          {/* TODO 確認轉入帳號的 bankId 名稱 */}
           <div className="accountInfo">{ accountFormatter(confirmData?.inAcct) }</div>
         </div>
         <div className="infoListContainer">
           <div>
-            <InformationList title="轉出帳號" content={accountFormatter(confirmData?.outAcct)} />
+            <InformationList title="轉出帳號" content={accountFormatter(confirmData?.outAcct, true)} />
             <InformationList title="帳戶餘額" content={`${currencySymbolGenerator(confirmData?.outCcyCd)}${confirmData?.acctBalance}`} />
             <InformationList title="日期" content={confirmData?.dateStr} />
             <InformationList title="匯款性質分類" content={confirmData?.leglDesc} />

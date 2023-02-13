@@ -175,22 +175,18 @@ const Transfer = (props) => {
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
     getAccountsList('MSC', async (items) => { // M=臺幣主帳戶、C=臺幣子帳戶
-      if (items.length === 0) { // TODO 後續不需要此項檢查，因為在 startFunc 之前就會先檢查
-        await showPrompt('您還沒有任何臺幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
-      } else {
-        const accts = items; // TODO .filter((acct) => acct.transable); // 排除 transable = false 的帳戶。
-        setAccounts(accts);
-        // 從 D00100_1 返回時會以 state 傳回原 model
-        const mData = (state || await processStartParams(accts));
-        setModel(mData);
-        setSelectedAccountIdx(mData.selectedAccountIdx ?? 0); // Swiper 切回原本的 Slide
+      const accts = items; // TODO .filter((acct) => acct.transable); // 排除 transable = false 的帳戶。
+      setAccounts(accts);
+      // 從 D00100_1 返回時會以 state 傳回原 model
+      const mData = (state || await processStartParams(accts));
+      setModel(mData);
+      setSelectedAccountIdx(mData.selectedAccountIdx ?? 0); // Swiper 切回原本的 Slide
 
-        // 將 Model 資料填入 UI Form 的對應欄位。
-        // reset(mData);
-        // 使用前值 formValues 避免所有 defaultValues 都被 mData 覆蓋掉
-        reset((formValues) => ({...formValues, ...mData}));
-        dispatch(setWaittingVisible(false));
-      }
+      // 將 Model 資料填入 UI Form 的對應欄位。
+      // reset(mData);
+      // 使用前值 formValues 避免所有 defaultValues 都被 mData 覆蓋掉
+      reset((formValues) => ({...formValues, ...mData}));
+      dispatch(setWaittingVisible(false));
     });
   }, []);
 
@@ -293,7 +289,7 @@ const Transfer = (props) => {
           showCustomPrompt({
             message: '無裝置認證，請先進行「APP裝置認證(快速登入設定)」，或致電客服。',
             okContent: '立即設定',
-            onOk: () => startFunc(Func.T00200.id), // BUG 待修正成 Func.T00200.id
+            onOk: () => startFunc(Func.T002.id),
             onCancel: () => {},
           });
           return;
@@ -305,7 +301,7 @@ const Transfer = (props) => {
           showCustomPrompt({
             message: '無權限，請先進行「非約定轉帳設定」，或致電客服。',
             okContent: '立即設定',
-            onOk: () => startFunc(Func.T00300.id),
+            onOk: () => startFunc(Func.T003.id),
             onCancel: () => {},
           });
           return;
@@ -428,8 +424,8 @@ const Transfer = (props) => {
     // 尚未指定常用/約定轉入對象時，自動開啟選擇常用/約定轉入對象的功能。
     let funcId = null;
     const { freqAcct, regAcct } = transIn;
-    if (type === 1 && (!freqAcct || !e)) funcId = Func.D00500.id;
-    if (type === 2 && (!regAcct || !e)) funcId = Func.D00600.id;
+    if (type === 1 && (!freqAcct || !e)) funcId = Func.D005.id;
+    if (type === 2 && (!regAcct || !e)) funcId = Func.D006.id;
     if (funcId !== null) {
       const selectAccount = (type === 1) ? freqAcct : regAcct; // 指定預設為已選取狀態的帳號
       const params = {
@@ -580,7 +576,7 @@ const Transfer = (props) => {
    */
 
   return (
-    <Layout title="臺幣轉帳">
+    <Layout fid={Func.D001} title="臺幣轉帳">
       <TransferWrapper $insufficient={!model?.transOut?.balance || model?.transOut?.balance <= 0}>
         <AccountOverview
           transferMode

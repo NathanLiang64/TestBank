@@ -66,7 +66,7 @@ const Notice = () => {
   ];
 
   // 跳轉通知設定頁
-  const toSettingPage = () => startFunc(Func.S00400.id);
+  const toSettingPage = () => startFunc(Func.S004.id);
 
   // 取得通知列表
   const getNotices = async () => {
@@ -179,12 +179,12 @@ const Notice = () => {
       await getNotices();
     } else {
       // 未綁定直接轉至訊息通知設定頁面
-      startFunc(Func.S00400.id);
+      startFunc(Func.S004.id);
     }
   }, []);
 
   return (
-    <Layout title="訊息通知">
+    <Layout fid={Func.B003} title="訊息通知">
       <NoticeWrapper>
         <div className="lighterBlueLine" />
         <div className="noticeContainer">

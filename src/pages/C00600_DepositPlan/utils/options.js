@@ -28,7 +28,7 @@ export const generatebindAccountNoOptions = (
   hasReachedMaxSubAccounts,
 ) => {
   const options = subAccounts.map(({ accountNo }) => ({
-    label: accountFormatter(accountNo),
+    label: accountFormatter(accountNo, true),
     value: accountNo,
   }));
   if (!hasReachedMaxSubAccounts) { options.push({ label: '加開子帳戶', value: 'new' }); }

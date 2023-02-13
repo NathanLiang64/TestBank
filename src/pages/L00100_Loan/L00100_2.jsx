@@ -44,7 +44,7 @@ const Page = () => {
   }, []);
 
   const getListing = (d) => ([
-    { title: '貸款帳號', content: accountFormatter(param.account) },
+    { title: '貸款帳號', content: accountFormatter(param.account, true) },
     { title: '貸款分號', content: param.subNo },
     // { title: '貸款類別', content: d.loanType }, TODO: 主機未有資料，暫隱藏
     { title: '貸款期限', content: `${dateToString(d.startDate)}~${dateToString(d.endDate)}` },

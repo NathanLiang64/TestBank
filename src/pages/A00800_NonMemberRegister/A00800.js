@@ -79,7 +79,7 @@ const A00800 = () => {
   /* submit動作處理 */
   const onSubmit = async (data) => {
     dispatch(setWaittingVisible(true));
-    const authResult = await transactionAuth(Func.A00800.authCode, data.mobileNum);
+    const authResult = await transactionAuth(Func.A008.authCode, data.mobileNum);
     const regData = {
       name: data.name,
       email: data.email,
@@ -111,7 +111,7 @@ const A00800 = () => {
   }, []);
 
   return (
-    <Layout title="訪客註冊" goHome={false} goBackFunc={closeFunc}>
+    <Layout fid={Func.A008} title="訪客註冊" goHome={false} goBackFunc={closeFunc}>
       <A00800Wrapper className="NonmemberWrapper">
         <form className="basic_data_form" onSubmit={handleSubmit((data) => onSubmit(data))}>
           <TextInputField labelName="手機號碼" type="tel" name="mobileNum" control={control} />

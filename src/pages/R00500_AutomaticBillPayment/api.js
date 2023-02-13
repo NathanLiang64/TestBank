@@ -13,6 +13,7 @@ import { callAPI } from 'utilities/axios';
  * }
  *
  * TODO: 尚未有完整的測資，accountId 先固定帶 A123014281
+ * TODO: 目前測資尚未提供銀行別
  */
 export const getAutoDebits = async (request) => {
   const response = await callAPI('/creditCard/v1/getAutoDebits', request);

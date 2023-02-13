@@ -55,7 +55,7 @@ const CardLessSetting = () => {
       } else {
         // 已開通狀態
         dispatch(setWaittingVisible(true));
-        const { result } = await transactionAuth(Func.T00400.authCode);
+        const { result } = await transactionAuth(Func.T004.authCode);
         if (result) {
           const activateRes = await activate('');
           showAnimationModal({
@@ -72,16 +72,16 @@ const CardLessSetting = () => {
     } else showUnbondedMsg();
   };
 
-  const handlePwdChange = () => (QLResult ? startFunc(Func.D00400.id) : showUnbondedMsg());
+  const handlePwdChange = () => (QLResult ? startFunc(Func.D004.id) : showUnbondedMsg());
 
   return (
-    <Layout title="無卡提款設定">
+    <Layout fid={Func.T004} title="無卡提款設定">
       <CardLessSettingWrapper>
         <div className="controlContainer">
           <div className="switchContainer">
             <div className="labelContainer">
               <p className="labelTxt">無卡提款</p>
-              {isEnable && <p className="phoneNum">{accountFormatter(account?.accountNo)}</p>}
+              {isEnable && <p className="phoneNum">{accountFormatter(account?.accountNo, true)}</p>}
             </div>
             <FEIBSwitch checked={isEnable} onClick={handleSwitchClick} />
           </div>

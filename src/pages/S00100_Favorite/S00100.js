@@ -457,7 +457,7 @@ const Favorite = () => {
       }) => {
         let cardLessLabel = '';
 
-        if (funcCode === Func.D00300_無卡提款.id) { // 用來顯示無卡存摺 的 設定金額
+        if (funcCode === Func.D003.id) { // 用來顯示無卡存摺 的 設定金額
           cardLessLabel = (
             <span>
               <br />
@@ -510,7 +510,7 @@ const Favorite = () => {
             imgIndex={fixedIndex}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
-            handleClick={() => startFunc(fixedItem.funcCode === 'B002' ? Func.M00100.id : fixedItem.funcCode)}
+            handleClick={() => startFunc(fixedItem.funcCode === 'B002' ? Func.M001.id : fixedItem.funcCode)}
           />);
         });
 
@@ -526,7 +526,7 @@ const Favorite = () => {
               imgIndex={i + 2}
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
-              handleClick={() => startFunc(block.funcCode === 'B002' ? Func.M00100.id : block.funcCode)}
+              handleClick={() => startFunc(block.funcCode === 'B002' ? Func.M001.id : block.funcCode)}
             />);
           } else { // 未加入最愛的項目區塊
             list.push(<BlockComponent
@@ -729,7 +729,7 @@ const Favorite = () => {
   }, [shareEvent]);
 
   return (
-    <Layout>
+    <Layout fid={Func.S001}>
       <BottomDrawer
         noScrollable
         title={viewTitle}
