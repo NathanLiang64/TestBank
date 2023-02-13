@@ -114,7 +114,15 @@ const More = () => {
                   disabled={item.hidden}
                   icon={Icon()}
                   label={item.name}
-                  onClick={() => doStartFunc(item.funcCode)}
+                  onClick={() => {
+                    if (item.funcCode === 'N001') {
+                      // 會員專區
+                      window.location.href = 'https://www.bankee.com.tw/event/Coupon/index.html';
+                      return;
+                    }
+
+                    doStartFunc(item.funcCode);
+                  }}
                   noBorder
                 />
               );
