@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable indent */
 /* eslint-disable object-curly-newline */
 /* eslint-disable radix,no-restricted-globals */
 import { useEffect, useState } from 'react';
@@ -12,6 +14,7 @@ import {
   ArrowBackIcon, ArrowNextIcon, CheckboxCheckedIcon, CheckboxUncheckedIcon, FaceIdIcon, VisibilityIcon, VisibilityOffIcon,
 } from 'assets/images/icons';
 import { Func } from 'utilities/FuncID';
+// import { funcStack } from 'utilities/AppScriptProxy';
 import { accountValidation, identityValidation, passwordValidation } from 'utilities/validation';
 import theme from 'themes/theme';
 import Logo from 'assets/images/logoTransparent.png';
@@ -73,12 +76,22 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     setInitDataLoaded(false);
-    const isSuccess = await login(data);
-    if (isSuccess) { // 登入成功
+    const rsData = await login(data);
+    // console.log(rsData, fid);
+    if (rsData) { // 登入成功
       sessionStorage.setItem('isLogin', '1');
-      if (fid) {
-        startFunc(fid);
-      } else await goHome();
+      // 測試直接登入某個功能
+      // if (fid) {
+      //   funcStack.push({ funcID: Func.B001.id });
+      //   startFunc(fid);
+      // } else {
+          if (rsData.nextFuncCode) {
+            // funcStack.push({ funcID: Func.B001.id, isFunction: true });
+            await startFunc(rsData.nextFuncCode);
+          } else {
+            await goHome();
+          }
+      // }
     }
     setInitDataLoaded(true);
   };

@@ -1,5 +1,6 @@
 import React from 'react';
-import { useLocation, useHistory } from 'react-router';
+import { useHistory } from 'react-router';
+import uuid from 'react-uuid';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -14,9 +15,14 @@ import { DepositPlusDetailWrapper, LevelDialogContentWrapper } from './depositPl
 /**
  * DepositPlusDetail 各項活動說明
  */
-const DepositPlusDetail = () => {
-  const location = useLocation();
+const DepositPlusDetail = (props) => {
+  const { location } = props;
+  const { state } = location;
+
   const history = useHistory();
+
+  const model = state;
+  const current = model.monthList[model.selectedMonth];
 
   // 調整優惠列表中的數字顯示
   const handleLevelList = (list) => list.map((item, index) => {
@@ -79,10 +85,17 @@ const DepositPlusDetail = () => {
   );
 
   const handleDetailOnClick = async (detailText, url) => {
-    if (detailText === '優惠額度等級表') {
-      const { year } = location.state;
-      const levelList = await getDepositPlusLevelList(year);
-      const adjustedLevelList = handleLevelList(levelList);
+    if (detailText === '優惠額度等級表') { // TODO 不可用名稱，改用 promotionCode
+      const {yearly} = current;
+      // 優惠利率額度等級表，點開彈窗再撈取資料
+      // 如果已有資料則不再重複撈取資料
+      if (!model.levelList[yearly]) {
+        const response = await getDepositPlusLevelList(yearly);
+        model.levelList[yearly] = response ?? [];
+      }
+
+      const adjustedLevelList = handleLevelList(model.levelList[yearly]);
+
       showCustomPrompt({
         title: '存款優惠利率額度等級表',
         message: renderLevelDialogContent(adjustedLevelList),
@@ -117,10 +130,10 @@ const DepositPlusDetail = () => {
 
   return (
     <DepositPlusDetailWrapper>
-      <Layout title="各項活動說明" goBackFunc={() => history.goBack()}>
+      <Layout title="各項活動說明" goBackFunc={() => history.replace('/depositPlus', model)}>
         <div>
-          {location.state.bonusDetail.map((detail) => (
-            <ActivityCard key={location.state.bonusDetail.indexOf(detail)} detail={detail} />
+          {current.data.bonusDetail.map((detail) => (
+            <ActivityCard key={uuid()} detail={detail} />
           ))}
         </div>
       </Layout>

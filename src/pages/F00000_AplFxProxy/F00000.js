@@ -19,7 +19,6 @@ const AplFxProxy = () => {
     const url = `${process.env.REACT_APP_APLFX_URL}prod=${prod}&sse=${sse}`;
     // NOTE 直接開啟申請平台即可，因為這個頁面是原生端獨立另開WebView載入的
     //      所以，不需要再外開一個瀏覽器。
-    //      TODO 衍生問題：B00600更多在開 F00000 的功能時，不應納入 FuncStack；因為原本的頁面並未改變。
     window.location.replace(url);
     setTargetURL(url);
   }, []);

@@ -8,10 +8,9 @@ import { MainScrollWrapper } from 'components/Layout';
 import BottomAction from 'components/BottomAction';
 import CreditCard from 'components/CreditCard';
 
-import { funcStack, loadFuncParams } from 'utilities/AppScriptProxy';
 import { Func } from 'utilities/FuncID';
 import CreditCardTxsList from 'components/CreditCardTxsList';
-import { useNavigation } from 'hooks/useNavigation';
+import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import PageWrapper from './R00100.style';
 import { getBankeeCard, getTransactionPromise, updateTxnNotes } from './api';
 
@@ -21,7 +20,7 @@ import { getBankeeCard, getTransactionPromise, updateTxnNotes } from './api';
 const R00100 = () => {
   const dispatch = useDispatch();
   const [cardInfo, setCardInfo] = useState();
-  const {startFunc, closeFunc} = useNavigation();
+  const {startFunc, closeFunc, getCurrentFunc} = useNavigation();
   const [transactions, setTransactions] = useState();
   const [index, setIndex] = useState();
   const go2Instalment = () => startFunc(Func.R002.id, {cardNo: cardInfo.cardNo});
@@ -73,7 +72,7 @@ const R00100 = () => {
   }, []);
 
   const goBackFunc = () => {
-    const param = funcStack.peek(); // TODO closeFunc就有此機制，為何還要自行處理？
+    const param = getCurrentFunc(); // TODO closeFunc就有此機制，為何還要自行處理？
     const keepData = JSON.parse(param.keepData);
     if (keepData) {
       keepData.transactionObj[index] = transactions;

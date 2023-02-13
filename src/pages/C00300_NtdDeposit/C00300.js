@@ -12,12 +12,11 @@ import { FEIBInputLabel, FEIBInput } from 'components/elements';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { customPopup } from 'utilities/MessageModal';
-import { loadFuncParams } from 'utilities/AppScriptProxy';
+import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { switchZhNumber, currencySymbolGenerator } from 'utilities/Generator';
 import { getAccountsList, getAccountBonus, updateAccount, cleanupAccount } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
-import { useNavigation } from 'hooks/useNavigation';
+import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import { getInterest, getTransactions, setAccountAlias } from './api';
 import PageWrapper from './C00300.style';
@@ -49,9 +48,13 @@ const C00300 = () => {
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
     getAccountsList('MC', async (items) => { // M=臺幣主帳戶、C=臺幣子帳戶
-      setAccounts(items);
-      await processStartParams(items);
-      dispatch(setWaittingVisible(false));
+      if (items.length === 0) {
+        await showPrompt('您還沒有任臺幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
+      } else {
+        setAccounts(items);
+        await processStartParams(items);
+        dispatch(setWaittingVisible(false));
+      }
     });
     return () => setAccounts(null);
   }, []);
@@ -86,6 +89,7 @@ const C00300 = () => {
   /**
    * 更新帳戶交易明細清單。
    * @returns 需有傳回明細清單供顯示。
+   * TODO : 在該頁面開啟的情況下接收轉帳，會因為 account.txnDetails 已被 cached，導致無法再次刷新
    */
   const loadTransactions = (account) => {
     const { txnDetails } = account;
@@ -237,20 +241,20 @@ const C00300 = () => {
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case Func.D003.id: // 無卡提款，只有母帳號才可以使用。
+      case Func.D003.id: // 無卡提款，只有母帳號才可以使用。 // TODO 帶參數過去
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case Func.E001.id:
-        params = { transOut: selectedAccount };
+      case Func.E001.id: // TODO 帶參數過去
+        params = { transOut: selectedAccount.accountNo };
         break;
 
       case Func.C008.id: // 匯出存摺
-        params = { accountNo: selectedAccount.accountNo };
+        params = { accountNo: selectedAccount.accountNo }; // TODO 直接帶入台幣帳號
         break;
 
-      case Func.D008.id: // 預約轉帳查詢/取消
-        params = { transOut: selectedAccount };
+      case Func.D008.id: // 匯出存摺
+        params = { selectedAccount }; // TODO 直接帶入台幣帳號
         break;
 
       case 'Rename': // 帳戶名稱編輯

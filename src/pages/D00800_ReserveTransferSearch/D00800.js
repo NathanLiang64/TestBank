@@ -1,6 +1,4 @@
-import {
-  useEffect, useMemo, useRef, useState,
-} from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -23,8 +21,7 @@ import SearchIcon from '@material-ui/icons/Search';
 
 import DateRangePicker from 'components/DateRangePicker';
 import uuid from 'react-uuid';
-import { loadFuncParams } from 'utilities/AppScriptProxy';
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { loadFuncParams } from 'hooks/useNavigation';
 import { TabField } from './fields/tabField';
 import DetailContent from './components/detailContent';
 import ResultContent from './components/resultContent';
@@ -42,7 +39,7 @@ const D00800 = () => {
   const history = useHistory();
   const [accountsList, setAccountsList] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
-  const swiperRef = useRef();
+  const [defaultSlide, setDefaultSlide] = useState(0);
   const [searchList, setSearchList] = useState({ reserve: {}, result: {}});
   const [banks, setBanks] = useState();
   const {control, handleSubmit, watch } = useForm({ defaultValues });
@@ -70,7 +67,7 @@ const D00800 = () => {
     if (detailsRes) {
       const bankCodeList = await getBankCode(); // 若 redux 內沒有資料，會是非同步
       if (!banks) setBanks(bankCodeList);
-      // TODO 是否加入 transRange
+
       // detailsRes 加入 periodic & bankName properties
       const updatedDetailsRes = detailsRes.map((res) => {
         const { bankName } = bankCodeList.find(({ bankNo }) => bankNo === res.receiveBank);
@@ -87,17 +84,19 @@ const D00800 = () => {
 
   // 取得帳號清單
   const fetchTransferOutAccounts = async () => {
-    setWaittingVisible(true);
+    let accountsListRes;
     await getAccountsList('MSC', async (accts) => {
       setAccountsList(accts);
+      accountsListRes = accts;
       const params = await loadFuncParams();
       if (params) {
-        setSelectedAccount(params.transOut);
-        const foundIndex = accts.findIndex(({ accountNo }) => accountNo === params.transOut.accountNo);
-        swiperRef.current.swiper.slideTo(foundIndex);
+        setSelectedAccount(params.selectedAccount);
+        const foundIndex = accts.findIndex(({accountNo}) => accountNo === params.selectedAccount.accountNo);
+        setDefaultSlide(foundIndex);
       } else setSelectedAccount(accts[0]);
-      setWaittingVisible(false);
     });
+    // TODO 若無 MSC 類別的帳戶，要給什麼提示訊息給使用者
+    return accountsListRes.length ? null : '您還沒有任何臺幣存款帳戶。';
   };
 
   const toConfirmPage = (data) => {
@@ -196,8 +195,6 @@ const D00800 = () => {
 
   const handleChangeSlide = ({ activeIndex }) => setSelectedAccount(accountsList[activeIndex]);
 
-  useEffect(() => fetchTransferOutAccounts(), []);
-
   // 切換帳號/Tab/日期範圍時 會檢查 searchList 有無特定的 key，若沒有就執行搜尋
   useEffect(() => {
     if (!selectedAccount) return;
@@ -205,16 +202,16 @@ const D00800 = () => {
   }, [selectedAccount, curTab, curReserveRange, curResultRange]);
 
   return (
-    <Layout fid={Func.D008} title="預約轉帳查詢/取消">
+    <Layout fid={Func.D008} title="預約轉帳查詢/取消" inspector={fetchTransferOutAccounts}>
       <ReserveTransferSearchWrapper className="searchResult">
         <div className="cardArea">
           <Swiper
-            ref={swiperRef}
             slidesPerView={isSingleCard ? 1.06 : 1.14}
             spaceBetween={8}
             centeredSlides
             pagination
             onSlideChange={handleChangeSlide}
+            initialSlide={defaultSlide}
           >
             {renderCard()}
           </Swiper>

@@ -47,6 +47,7 @@ const initialState = {
   },
   overPanel: null,
   buttonDisabled: false,
+  txnAuthData: null,
 };
 
 export default function ModalReducer(state = initialState, action) {
@@ -83,6 +84,9 @@ export default function ModalReducer(state = initialState, action) {
       return { ...state, animationModal: data };
     case SET_BUTTON_DISABLED:
       return { ...state, buttonDisabled: data };
+
+    case 'setTxnAuthData':
+      return { ...state, txnAuthData: data };
     default:
       return state;
   }
@@ -164,3 +168,5 @@ export function setButtonDisabled(data) {
     data,
   };
 }
+
+export function setTxnAuthData(data) { return { type: 'setTxnAuthData', data: {...data, showTxnAuth: null} }; }

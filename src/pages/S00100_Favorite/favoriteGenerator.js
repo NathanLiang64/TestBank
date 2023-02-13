@@ -59,7 +59,7 @@ export const iconGenerator = (funcCode) => {
     case Func.F00400.id: return <F004 />;
     case Func.D001.id: return <D001 />;
     case Func.D007.id: return <D007 />;
-    case Func.D00200.id: return <D002 />;
+    case Func.D002.id: return <D002 />;
     case Func.D003.id: return <D003 />;
     case Func.D004.id: return <D004 />;
     case Func.D00900.id: return <D009 />;
