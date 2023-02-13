@@ -6,9 +6,9 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { getExchangeRateInfo } from 'pages/E00100_Exchange/api';
+import { getExchangeRateInfo } from 'pages/E00200_ExchangeRate/api';
 import Layout from 'components/Layout/Layout';
-import { E00100Table } from 'pages/E00100_Exchange/E00100_Content';
+import { E00200Table } from 'pages/E00200_ExchangeRate/E00200_Content';
 import { Func } from 'utilities/FuncID';
 
 /* Styles */
@@ -33,7 +33,7 @@ const ExchangeRate = () => {
   return (
     <Layout fid={Func.E002} title="匯率">
       <ExchangeRateWrapper>
-        <E00100Table exchangeRate={exchangeRate} />
+        <E00200Table exchangeRate={exchangeRate} />
       </ExchangeRateWrapper>
     </Layout>
   );
