@@ -117,7 +117,8 @@ const More = () => {
                   onClick={() => {
                     if (item.funcCode === 'N001') {
                       // 會員專區
-                      window.location.href = 'https://www.bankee.com.tw/event/Coupon/index.html';
+                      const url = `${process.env.REACT_APP_COUPON_URL}`;
+                      window.location.href = url;
                       return;
                     }
 

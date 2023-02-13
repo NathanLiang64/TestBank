@@ -15,7 +15,7 @@ import {
   R001, R003, R004, R006, R005,
   L001, L002,
   T001, S002, T006, S009, S003, D008, S004, S005, S006, S007, S008, S001,
-  M001, M002, M003, N002,
+  M001, M002, M003, N001,
 } from 'assets/images/icons';
 
 export const getFuncButtonBackground = (index) => {
@@ -41,7 +41,7 @@ export const iconGenerator = (funcCode) => {
   switch (funcCode) {
     case 'share': return <B002 />;
     case Func.B00500.id: return <B005 />;
-    case Func.N00200.id: return <N002 />;
+    case Func.N001.id: return <N001 />;
     case Func.C001.id: return <C001 />;
     case Func.C003.id: return <C003 />;
     case Func.C004.id: return <C004 />;
