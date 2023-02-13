@@ -3,7 +3,10 @@
  *
  * @format
  */
-
+import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { getExchangeRateInfo } from 'pages/E00100_Exchange/api';
 import Layout from 'components/Layout/Layout';
 import { E00100Table } from 'pages/E00100_Exchange/E00100_Content';
 import { Func } from 'utilities/FuncID';
@@ -11,12 +14,29 @@ import { Func } from 'utilities/FuncID';
 /* Styles */
 import ExchangeRateWrapper from './E00200.style';
 
-const ExchangeRate = () => (
-  <Layout fid={Func.E002} title="匯率">
-    <ExchangeRateWrapper>
-      <E00100Table />
-    </ExchangeRateWrapper>
-  </Layout>
-);
+const ExchangeRate = () => {
+  const [exchangeRate, setExchangeRate] = useState([]);
+  const dispatch = useDispatch();
+
+  // 取得匯率資訊
+  const fetchExchangeRateInfo = async () => {
+    dispatch(setWaittingVisible(true));
+    const res = await getExchangeRateInfo({});
+    setExchangeRate(res);
+    dispatch(setWaittingVisible(false));
+  };
+
+  useEffect(() => {
+    fetchExchangeRateInfo();
+  }, []);
+
+  return (
+    <Layout fid={Func.E002} title="匯率">
+      <ExchangeRateWrapper>
+        <E00100Table exchangeRate={exchangeRate} />
+      </ExchangeRateWrapper>
+    </Layout>
+  );
+};
 
 export default ExchangeRate;
