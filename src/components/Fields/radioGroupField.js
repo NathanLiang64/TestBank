@@ -14,7 +14,6 @@ export const RadioGroupField = ({
   labelName,
   disabled,
   hideDefaultButton,
-  onChange,
   row = false,
   onChange,
   ...controlProps

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Layout from 'components/Layout';
 
-const ExchangeWrapper = styled(Layout)`
+export const ExchangeWrapper = styled(Layout)`
   .borderBtnContainer {
     button {
       min-height: unset;
@@ -159,7 +159,6 @@ const ExchangeWrapper = styled(Layout)`
     grid-gap: 2rem;
   }
 `;
-
 export default ExchangeWrapper;
 export const ExchangeTableWrapper = styled.div`
   .describe {

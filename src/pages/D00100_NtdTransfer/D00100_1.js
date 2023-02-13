@@ -131,10 +131,6 @@ const TransferConfirm = (props) => {
           bonus: {
             ...account.bonus,
             freeTransferRemain: model.transOut.freeTransferRemain, // 更新 跨轉優惠次數
-            dLimitLeft: !isAgreedTxn ? account.bonus.dLimitLeft - model.amount : account.bonus.dLimitLeft, // TODO 待驗證
-            mLimitLeft: !isAgreedTxn ? account.bonus.mLimitLeft - model.amount : account.bonus.mLimitLeft, // TODO 待驗證
-            agrdTfrSelfLimitLeft: isAgreedTxn && transInData.bank === '805' ? account.bonus.agrdTfrSelfLimitLeft - model.amount : account.bonus.agrdTfrSelfLimitLeft, // TODO 待驗證
-            agrdTfrInterLimitLeft: isAgreedTxn && transInData.bank !== '805' ? account.bonus.agrdTfrInterLimitLeft - model.amount : account.bonus.agrdTfrInterLimitLeft, // TODO 待驗證
           },
         });
       });

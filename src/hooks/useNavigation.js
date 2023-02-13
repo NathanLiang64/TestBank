@@ -151,13 +151,6 @@ const useNavigation = () => {
   };
 
   const goHome = async () => {
-    // NOTE 若 funcStack 內有 C003/C004/C005 的服務 (取得交易紀錄)，
-    // 需要清除 redux 內 accounts 的 txnDetails，
-    const arr = [Func.C003.id, Func.C004.id, Func.C005.id];
-    const stacks = funcStack.getStack();
-    const isExisted = stacks.find((stack) => arr.includes(stack.funcID));
-    if (isExisted) cleanupAccount();
-
     funcStack.clear();
     await callAppJavaScript('goHome', null, false, () => {
       startFunc(Func.B001.id);

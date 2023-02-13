@@ -32,7 +32,6 @@ import { RadioGroupField } from 'components/Fields/radioGroupField';
 import { CurrencyInputField, DropdownField, TextInputField } from 'components/Fields';
 
 import { loadFuncParams } from 'utilities/AppScriptProxy';
-import { getAccountsList } from 'utilities/CacheData';
 import { E00100Notice, E00100Table } from './E00100_Content';
 
 /* Styles */

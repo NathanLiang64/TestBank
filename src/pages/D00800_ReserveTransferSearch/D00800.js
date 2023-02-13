@@ -1,6 +1,4 @@
-import {
-  useEffect, useMemo, useRef, useState,
-} from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -24,7 +22,6 @@ import SearchIcon from '@material-ui/icons/Search';
 import DateRangePicker from 'components/DateRangePicker';
 import uuid from 'react-uuid';
 import { loadFuncParams } from 'hooks/useNavigation';
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { TabField } from './fields/tabField';
 import DetailContent from './components/detailContent';
 import ResultContent from './components/resultContent';
@@ -42,7 +39,7 @@ const D00800 = () => {
   const history = useHistory();
   const [accountsList, setAccountsList] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
-  const swiperRef = useRef();
+  const [defaultSlide, setDefaultSlide] = useState(0);
   const [searchList, setSearchList] = useState({ reserve: {}, result: {}});
   const [banks, setBanks] = useState();
   const {control, handleSubmit, watch } = useForm({ defaultValues });
@@ -70,7 +67,7 @@ const D00800 = () => {
     if (detailsRes) {
       const bankCodeList = await getBankCode(); // 若 redux 內沒有資料，會是非同步
       if (!banks) setBanks(bankCodeList);
-      // TODO 是否加入 transRange
+
       // detailsRes 加入 periodic & bankName properties
       const updatedDetailsRes = detailsRes.map((res) => {
         const { bankName } = bankCodeList.find(({ bankNo }) => bankNo === res.receiveBank);
@@ -209,12 +206,12 @@ const D00800 = () => {
       <ReserveTransferSearchWrapper className="searchResult">
         <div className="cardArea">
           <Swiper
-            ref={swiperRef}
             slidesPerView={isSingleCard ? 1.06 : 1.14}
             spaceBetween={8}
             centeredSlides
             pagination
             onSlideChange={handleChangeSlide}
+            initialSlide={defaultSlide}
           >
             {renderCard()}
           </Swiper>
