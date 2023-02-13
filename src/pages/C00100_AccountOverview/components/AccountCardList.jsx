@@ -131,7 +131,7 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
     }
 
     return mainList;
-  }).at(-1);
+  }).slice(-1)[0];
   // 排列補齊type後的list
   checkType().sort((a, b) => {
     if (a.balance === b.balance) {
