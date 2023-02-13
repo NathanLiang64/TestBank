@@ -228,7 +228,7 @@ const CreditCardPage = (props) => {
       setTransactionObj(model.transactionObj);
     } else {
       const {cards, usedCardLimit: limit} = await getCards();
-      const bankeeCard = cards.find(({isBankeeCard}) => !!isBankeeCard); // TODO 後端資料的 isBankeeCard 應該改成 boolean
+      const bankeeCard = cards.find(({isBankeeCard}) => !!isBankeeCard);
       model.cardsInfo = [bankeeCard];
       if (cards.length >= 2) model.cardsInfo.push({isBankeeCard: false}); // 有第二張以上的卡片都是「非 bankee」信用卡
       model.usedCardLimit = limit;

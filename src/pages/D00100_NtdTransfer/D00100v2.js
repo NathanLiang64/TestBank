@@ -176,6 +176,7 @@ const Transfer = (props) => {
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
     getAccountsList('MSC', async (items) => { // M=臺幣主帳戶、C=臺幣子帳戶
       const accts = items; // TODO .filter((acct) => acct.transable); // 排除 transable = false 的帳戶。
+      accts.forEach((acct) => { acct.balance = acct.details[0].balance; });
       setAccounts(accts);
       // 從 D00100_1 返回時會以 state 傳回原 model
       const mData = (state || await processStartParams(accts));

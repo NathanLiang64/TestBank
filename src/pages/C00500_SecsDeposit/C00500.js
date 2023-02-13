@@ -15,7 +15,7 @@ import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
-import { getAccountsList, getAccountBonus, updateAccount } from 'utilities/CacheData';
+import { getAccountsList, getAccountBonus, updateAccount, cleanupAccount } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import { getTransactions, setAccountAlias } from './api';
@@ -45,13 +45,13 @@ const C00500 = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    const accts = await getAccountsList('S');
-    if (accts.length) {
-      setAccounts(accts);
-      await processStartParams(accts);
-    } else showPrompt('您還沒有任何證券交割的存款帳戶，請在系統關閉此功能後，立即申請。', closeFunc);
-
-    dispatch(setWaittingVisible(false));
+    getAccountsList('S', async (items) => {
+      items.forEach((item) => { item.balance = item.details[0].balance; });
+      setAccounts(items);
+      await processStartParams(items);
+      dispatch(setWaittingVisible(false));
+    });
+    return () => setAccounts(null);
   }, []);
 
   /**
@@ -147,17 +147,18 @@ const C00500 = () => {
   const loadTransactions = (account) => {
     const { txnDetails } = account;
     if (!account.isLoadingTxn) {
-      account.isLoadingTxn = true; // 避免因為非同步執行造成的重覆下載
       if (!txnDetails) {
+        account.isLoadingTxn = true; // 避免因為非同步執行造成的重覆下載
         // 取得帳戶交易明細（三年內的前25筆即可）
         getTransactions(account.accountNo).then((transData) => {
           const details = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
           account.txnDetails = details;
 
           // 更新餘額。
-          if (transData.length > 0) account.balance = details[0].balance;
+          if (transData.acctTxDtls.length > 0) account.balance = details[0].balance;
 
           delete account.isLoadingTxn; // 載入完成才能清掉旗標！
+          updateAccount(account);
           forceUpdate();
         });
       }
@@ -217,14 +218,14 @@ const C00500 = () => {
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case Func.E001_換匯.id: // 換匯
+      case Func.E001.id: // 換匯
         params = { transOut: selectedAccount };
         break;
       case Func.C008.id: // 匯出存摺
         params = { accountNo: selectedAccount.accountNo };
         break;
       case Func.D008.id: // 預約轉帳查詢/取消
-        params = { transOut: selectedAccount };
+        params = { selectedAccount };
         break;
 
       case 'Rename': // 帳戶名稱編輯
@@ -238,11 +239,16 @@ const C00500 = () => {
     startFunc(funcCode, params, keepData);
   };
 
+  const goBackFunc = () => {
+    cleanupAccount();
+    closeFunc();
+  };
+
   /**
    * 頁面輸出
    */
   return (
-    <Layout fid={Func.C005} title="證券交割戶">
+    <Layout fid={Func.C005} title="證券交割戶" goBackFunc={goBackFunc}>
       <PageWrapper small>
         {selectedAccount ? (
           <>

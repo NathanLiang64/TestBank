@@ -15,7 +15,7 @@ import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
-import { getAccountsList, getAccountBonus, updateAccount } from 'utilities/CacheData';
+import { getAccountsList, getAccountBonus, updateAccount, cleanupAccount } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import {
@@ -52,14 +52,16 @@ const C00400 = () => {
 
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
-    getAccountsList('F', async (items) => { // M=臺幣主帳戶、C=臺幣子帳戶
-      if (items.length === 0) {
-        await showPrompt('您還沒有任何外幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
-      } else {
-        setAccounts(items);
-        await processStartParams(items);
-        dispatch(setWaittingVisible(false));
-      }
+    getAccountsList('F', async (accts) => { // M=臺幣主帳戶、C=臺幣子帳戶
+      const flattenAccts = accts.map((account) => (account.details.map((detail) => {
+        const acct = { ...account, ...detail};
+        delete acct.details;
+        return acct;
+      }))).flat();
+
+      setAccounts(flattenAccts);
+      await processStartParams(flattenAccts);
+      dispatch(setWaittingVisible(false));
     });
   }, []);
 
@@ -171,15 +173,15 @@ const C00400 = () => {
   const loadTransactions = (account) => {
     const { txnDetails } = account;
     if (!account.isLoadingTxn) {
-      account.isLoadingTxn = true; // 避免因為非同步執行造成的重覆下載
       if (!txnDetails) {
+        account.isLoadingTxn = true; // 避免因為非同步執行造成的重覆下載
         // 取得帳戶交易明細（三年內的前25筆即可）
         getTransactions(account.accountNo, account.currency).then((transData) => {
           const details = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
           account.txnDetails = details;
 
           // 更新餘額。
-          if (transData.length > 0) account.balance = details[0].balance;
+          if (transData.acctTxDtls.length > 0) account.balance = details[0].balance;
 
           delete account.isLoadingTxn; // 載入完成才能清掉旗標！
           forceUpdate();
@@ -271,11 +273,16 @@ const C00400 = () => {
     startFunc(funcCode, params, keepData);
   };
 
+  const goBackFunc = () => {
+    cleanupAccount();
+    closeFunc();
+  };
+
   /**
    * 頁面輸出
    */
   return (
-    <Layout fid={Func.C004} title="外幣活存">
+    <Layout fid={Func.C004} title="外幣活存" goBackFunc={goBackFunc}>
       <PageWrapper small>
         {selectedAccount ? (
           <>

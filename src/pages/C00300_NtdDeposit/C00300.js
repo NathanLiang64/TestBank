@@ -12,7 +12,7 @@ import { FEIBInputLabel, FEIBInput } from 'components/elements';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { customPopup, showPrompt } from 'utilities/MessageModal';
+import { customPopup } from 'utilities/MessageModal';
 import { switchZhNumber, currencySymbolGenerator } from 'utilities/Generator';
 import { getAccountsList, getAccountBonus, updateAccount, cleanupAccount } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
@@ -48,13 +48,10 @@ const C00300 = () => {
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
     getAccountsList('MC', async (items) => { // M=臺幣主帳戶、C=臺幣子帳戶
-      if (items.length === 0) {
-        await showPrompt('您還沒有任臺幣存款帳戶，請在系統關閉此功能後，立即申請。', () => closeFunc());
-      } else {
-        setAccounts(items);
-        await processStartParams(items);
-        dispatch(setWaittingVisible(false));
-      }
+      items.forEach((item) => { item.balance = item.details[0].balance; });
+      setAccounts(items);
+      await processStartParams(items);
+      dispatch(setWaittingVisible(false));
     });
     return () => setAccounts(null);
   }, []);
@@ -89,7 +86,6 @@ const C00300 = () => {
   /**
    * 更新帳戶交易明細清單。
    * @returns 需有傳回明細清單供顯示。
-   * TODO : 在該頁面開啟的情況下接收轉帳，會因為 account.txnDetails 已被 cached，導致無法再次刷新
    */
   const loadTransactions = (account) => {
     const { txnDetails } = account;
@@ -250,11 +246,11 @@ const C00300 = () => {
         break;
 
       case Func.C008.id: // 匯出存摺
-        params = { accountNo: selectedAccount.accountNo }; // TODO 直接帶入台幣帳號
+        params = { accountNo: selectedAccount.accountNo };
         break;
 
-      case Func.D008.id: // 匯出存摺
-        params = { selectedAccount }; // TODO 直接帶入台幣帳號
+      case Func.D008.id: // 預約轉帳查詢/取消
+        params = { selectedAccount };
         break;
 
       case 'Rename': // 帳戶名稱編輯

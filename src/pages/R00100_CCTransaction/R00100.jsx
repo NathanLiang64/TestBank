@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { showCustomPrompt, showError } from 'utilities/MessageModal';
+import { showError } from 'utilities/MessageModal';
 import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
@@ -55,14 +55,7 @@ const R00100 = () => {
     } else {
       // 若從更多 (B00600) 頁面進入，會先確認有沒有 bankee 信用卡，查詢的交易明細就會預設以 bankee 信用卡為主
       const bankeeCardInfo = await getBankeeCard();
-      if (bankeeCardInfo) fetchedCardInfo = bankeeCardInfo;
-      if (!fetchedCardInfo) {
-        await showCustomPrompt({
-          message: '您尚未持有Bankee信用卡，請在系統關閉此功能後，立即申請。',
-          onOk: closeFunc,
-          onClose: closeFunc,
-        });
-      }
+      fetchedCardInfo = bankeeCardInfo;
       fetchedTransactions = await getTransactions(fetchedCardInfo.cards);
     }
 
