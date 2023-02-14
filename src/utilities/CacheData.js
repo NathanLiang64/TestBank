@@ -117,8 +117,9 @@ export const getAccountsList = async (acctTypes, onDataLoaded) => { // , noFlat 
     accounts = await loadAccountsList();
     store.dispatch(setAccounts(accounts)); // 保存所有的帳號資料。
   }
-  // noFlat 若是 true，則不展開成多個帳戶的形式
-  const result = accounts.filter((account) => acctTypes.indexOf(account.acctType) >= 0);
+
+  // 做 deepClone 避免資料結構被破壞
+  const result = JSON.parse(JSON.stringify(accounts)).filter((account) => acctTypes.indexOf(account.acctType) >= 0);
   // NOTE 不可破壞這個物件結構，否則各類型的帳戶資料會錯亂。
   // : accounts.filter((account) => acctTypes.indexOf(account.acctType) >= 0)
   // // NOTE 外幣帳號的架構跟臺幣不一樣。
