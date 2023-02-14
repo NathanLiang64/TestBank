@@ -50,7 +50,13 @@ export const DetailPageWrapper = styled.div`
   padding-bottom: 6rem;
 
   hr {
-    border: none;
+    margin: 0;
+    border: 0;
+    width: 130%;
+    left: -20%;
+    overflow-y: hidden;
+    border-top: 0.8rem solid
+      ${({ theme }) => theme.colors.background.lighterBlue};
   }
 
   .text-14 {

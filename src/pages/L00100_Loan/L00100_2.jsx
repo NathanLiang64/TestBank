@@ -60,12 +60,13 @@ const Page = () => {
     <Layout title="貸款資訊" goBackFunc={() => history.goBack()}>
       <Main small>
         <DetailPageWrapper>
+          <hr />
           <div>
             { details && getListing(details).map((d, i) => (
               <InformationList key={`${uid}-${i}`} {...d} />
             ))}
-            <hr />
           </div>
+          <hr />
           <p className="remark">提早結清：12個月內結清，收取3%提前還款手續費；超過第12個月起提前還款收取0%手續費。</p>
         </DetailPageWrapper>
       </Main>
