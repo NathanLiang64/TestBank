@@ -22,7 +22,7 @@ const PrincipalWrapper = styled(Layout)`
       }
       span {
         &:first-child {
-          font-size: 1.2rem;
+          font-size: 1.4rem;
           color: ${({ theme }) => theme.colors.primary.light};
         }
         &:last-child {
