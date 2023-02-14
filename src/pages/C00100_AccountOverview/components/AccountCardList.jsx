@@ -20,12 +20,7 @@ import AccountCardGrey from './AccountCardGrey';
  */
 const AccountCardList = ({ data, isDebt, necessaryType }) => {
   // const dispatch = useDispatch();
-  const assetTypes = sessionStorage.getItem('assetTypes');
   const {startFunc} = useNavigation();
-  const sApplyUrl = 'https://bankeesit.feib.com.tw/aplfx/D2022110211818?utm_source=OSC01';
-  const fApplyUrl = 'https://bankeesit.feib.com.tw/aplfx/D2022110211819';
-  const ccApplyUrl = 'https://bankeesit.feib.com.tw/bankee_apply/CardApply/CardApply_1';
-  const lApplyUrl = 'https://bankeesit.feib.com.tw/aplfx/D2022110111798';
 
   // 證券 start function
   const sAccStartFunc = (account, cardColor) => {
@@ -87,7 +82,6 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
       type: 'L',
       accountNo: null,
       balance: accumulateBalance(loanAccounts),
-      isEmpty: assetTypes.includes('L'),
     });
 
     // 依金額從大到小排序。
@@ -98,7 +92,6 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
   const ccAccounts = data.filter((account) => account.type === 'CC');
   if (ccAccounts.length > 0) {
     mainList.push(...ccAccounts.map((account) => ({
-      isEmpty: assetTypes.includes('CC'),
       ...account,
     })));
   }
@@ -236,11 +229,11 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
           case 'F': // 外幣帳戶 數量為1時不開drawer
             cardName = '外幣帳戶';
             funcID = Func.C004.id;
-            onClick = () => (account.isEmpty ? window.open(fApplyUrl, '_newtab') : foreignAccounts.length === 1 ? startFunc(funcID) : showDrawer('選擇帳戶', renderSubAccountDrawer(foreignAccounts, funcID)));
+            onClick = () => (account.isEmpty || foreignAccounts.length === 1 ? startFunc(funcID) : showDrawer('選擇帳戶', renderSubAccountDrawer(foreignAccounts, funcID)));
             break;
           case 'S': // 證券戶 數量為1時不開drawer
             cardName = '證券交割戶';
-            onClick = () => (account.isEmpty ? window.open(sApplyUrl, '_newtab') : stockAccounts.length === 1 ? sAccStartFunc(stockAccounts[0], cardInfo.color) : showDrawer('選擇帳戶', renderSubAccountDrawer(stockAccounts)));
+            onClick = () => (account.isEmpty || stockAccounts.length === 1 ? sAccStartFunc(stockAccounts[0], cardInfo.color) : showDrawer('選擇帳戶', renderSubAccountDrawer(stockAccounts)));
             break;
           case 'C': // 子帳戶 數量為1時不開drawer
             cardName = '子帳戶';
@@ -251,12 +244,12 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
             cardName = '信用卡';
             annotation = '已使用額度';
             funcID = Func.C007.id;
-            onClick = () => (account.isEmpty ? window.open(ccApplyUrl, '_newtab') : startFunc(funcID));
+            onClick = () => (startFunc(funcID));
             break;
           case 'L': // 貸款 數量為1時不開drawer
             cardName = '貸款';
             funcID = Func.L001.id;
-            onClick = () => (account.isEmpty ? window.open(lApplyUrl, '_newtab') : loanAccounts.length === 1 ? startFunc(funcID) : showDrawer('選擇計畫', renderSubAccountDrawer(loanAccounts, funcID)));
+            onClick = () => (account.isEmpty || loanAccounts.length === 1 ? startFunc(funcID) : showDrawer('選擇計畫', renderSubAccountDrawer(loanAccounts, funcID)));
             break;
           default:
             cardName = '';
