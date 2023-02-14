@@ -435,6 +435,13 @@ async function screenShot() {
   await callAppJavaScript('webScreenShot', null, true);
 }
 
+/**
+ * 透過原生進行截圖
+ */
+async function reloadHeadshot() {
+  await callAppJavaScript('reloadHeadshot', null, true);
+}
+
 export {
   getOsType,
   showWaitting,
@@ -460,4 +467,5 @@ export {
   forceLogout,
   dialTel,
   screenShot,
+  reloadHeadshot,
 };

@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-use-before-define */
 /* eslint-disable object-curly-newline */
@@ -87,8 +88,8 @@ const C00500 = () => {
       account.bonus = { loading: true };
       getAccountBonus(account.accountNo, (info) => {
         account.bonus = info;
-        forceUpdate();
         delete account.bonus.loading;
+        forceUpdate();
       });
     }
   };
@@ -97,7 +98,7 @@ const C00500 = () => {
    */
   const renderBonusInfoPanel = () => {
     if (!selectedAccount) return null;
-    const { accountNo, bonus } = selectedAccount;
+    const { bonus } = selectedAccount;
     if (!bonus) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
 
     // 取得 免費跨提、免費跨轉、目前利率、優惠利率額度(暫時固定顯示0)
@@ -105,32 +106,14 @@ const C00500 = () => {
       freeWithdrawRemain: null, freeTransferRemain: null, bonusQuota: null, bonusRate: null, // 預設值
     };
 
-    /* column 2 標題/數值 */
-    let col2Title;
-    let col2Value;
-    if (showRate) {
-      col2Title = '目前利率';
-      col2Value = bonusRate ? `${bonusRate * 100}%` : '-';
-    } else {
-      col2Title = '累積利息';
-      col2Value = 'sumRate'; // TODO: 自api取累積利率
-    }
-
     const panelContent = [
-      {
-        label: '免費跨提/轉',
-        value: `${freeWithdrawRemain ?? '-'}/${freeTransferRemain ?? '-'}`,
-      },
-      {
-        label: col2Title,
-        value: col2Value,
+      { label: '免費跨提/轉', value: `${freeWithdrawRemain ?? '-'}/${freeTransferRemain ?? '-'}` },
+      { label: showRate ? '目前利率' : '累積利息',
+        value: showRate ? (bonusRate ? `${bonusRate * 100}%` : '-') : 'sumRate',
         iconType: 'switch',
         onClick: () => setShowRate(!showRate),
       },
-      {
-        label: '優惠利率額度',
-        value: '0', // TODO 暫時固定顯示0
-      },
+      { label: '優惠利率額度', value: '0' }, // TODO 暫時固定顯示0
     ];
 
     return (

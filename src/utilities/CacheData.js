@@ -176,6 +176,7 @@ export const getAccountBonus = async (accountNo, onDataLoaded, foreUpdate) => {
       bonus = response.data;
 
       // bonusQuota, bonusRate 由 取得社群圈摘要資訊 api 中取得: bonusInfo.amount, bonusInfo.rate
+      // TODO 不同產品利率是否不同，是否不應該透過 getSummary 拿取
       const resSummary = await callAPI('/community/v1/getSummary');
       bonus = {
         ...bonus,

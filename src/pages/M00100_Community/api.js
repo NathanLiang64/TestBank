@@ -46,7 +46,7 @@ export const getFriends = async () => {
  */
 export const updateAvatar = async (newImg) => {
   const response = await callAPI('/personal/v1/uploadAvatar', newImg);
-  return response.data;
+  return response;
 };
 
 /**

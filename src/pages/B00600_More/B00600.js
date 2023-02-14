@@ -112,7 +112,7 @@ const More = () => {
                 <FavoriteBlockButton
                   key={item.funcCode}
                   disabled={item.hidden}
-                  icon={Icon()}
+                  icon={Icon ? Icon() : ''}
                   label={item.name}
                   onClick={() => {
                     if (item.funcCode === 'N001') {

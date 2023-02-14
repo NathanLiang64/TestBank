@@ -20,8 +20,8 @@ const TransferWrapper = styled(Layout)`
     border-top-left-radius: 3rem;
     border-top-right-radius: 3rem;
     width: 100vw;
-    background: ${({ theme, $insufficient }) => ($insufficient ? theme.colors.background.light : theme.colors.basic.white)};
-    pointer-events: ${({ $insufficient }) => ($insufficient ? 'none' : 'auto')};
+    background: ${({ theme, $isDisabled }) => ($isDisabled ? theme.colors.background.light : theme.colors.basic.white)};
+    pointer-events: ${({ $isDisabled }) => ($isDisabled ? 'none' : 'auto')};
   }
 
   form {

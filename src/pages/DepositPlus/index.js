@@ -33,12 +33,12 @@ const Deposit = (props) => {
 
   const [model] = useState(state ?? {
     monthList: {},
-    selectedMonth: null,
+    selectedMonth: '', // 初始值若為 null/undeinfed 時，console 會報錯，故改為 空字串
     levelList: {}, // 用來保存各年度優惠利率額度等級表資訊。
   });
   const current = model.monthList[model.selectedMonth];
 
-  useEffect(async () => {
+  useEffect(() => {
     if (state) return; // 從 Detail 返回，已經有資料了，不用再重載。
 
     dispatch(setWaittingVisible(true));
@@ -68,7 +68,7 @@ const Deposit = (props) => {
         model.monthList[month].data = data;
         forceUpdate();
       });
-    }
+    } else forceUpdate();
   };
 
   const renderTabArea = (monthList) => (

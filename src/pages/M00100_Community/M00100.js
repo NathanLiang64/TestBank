@@ -10,7 +10,7 @@ import { FEIBButton, FEIBIconButton } from 'components/elements';
 /* Reducers & JS functions */
 import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showCustomPrompt } from 'utilities/MessageModal';
-import { shareMessage } from 'utilities/AppScriptProxy';
+import { reloadHeadshot, shareMessage } from 'utilities/AppScriptProxy';
 import { ArrowNextIcon, EditIcon } from 'assets/images/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { TextareaField, TextInputField } from 'components/Fields';
@@ -133,6 +133,11 @@ const CommunityPage = () => {
    * 頁面輸出
    */
 
+  const onNewPhotoLoaded = async (newImg) => {
+    const { isSuccess } = await updateAvatar(newImg);
+    if (isSuccess) reloadHeadshot();
+  };
+
   return (
     <Layout fid={Func.M001} title="社群圈">
       <NetworkWrapper>
@@ -141,7 +146,7 @@ const CommunityPage = () => {
             memberId={summary?.uuid}
             name={summary?.nickname}
             editable
-            onNewPhotoLoaded={(newImg) => updateAvatar(newImg)}
+            onNewPhotoLoaded={onNewPhotoLoaded}
           />
           <div className="nickname">
             <span className="name">{renderText(summary?.nickname)}</span>

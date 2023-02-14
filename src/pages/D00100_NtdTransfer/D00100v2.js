@@ -56,7 +56,7 @@ const Transfer = (props) => {
   const [model, setModel] = useState();
   const [accounts, setAccounts] = useState();
   const [selectedAccountIdx, setSelectedAccountIdx] = useState();
-  const [balanceErr, setBalanceErr] = useState({});
+  const [notified, setNotified] = useState({});
 
   const transTypes = ['一般轉帳', '常用轉帳', '約定轉帳', '社群轉帳'];
   const cycleWeekly = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
@@ -174,8 +174,7 @@ const Transfer = (props) => {
 
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
-    getAccountsList('MSC', async (items) => { // M=臺幣主帳戶、C=臺幣子帳戶
-      const accts = items; // TODO .filter((acct) => acct.transable); // 排除 transable = false 的帳戶。
+    getAccountsList('MSC', async (accts) => { // M=臺幣主帳戶、C=臺幣子帳戶
       accts.forEach((acct) => { acct.balance = acct.details[0].balance; });
       setAccounts(accts);
       // 從 D00100_1 返回時會以 state 傳回原 model
@@ -537,9 +536,12 @@ const Transfer = (props) => {
         forceUpdate();
       });
     }
-    if (!account.balance && !balanceErr[account.accountNo]) {
-      setBalanceErr((prevObj) => ({ ...prevObj, [account.accountNo]: true }));
+    if (!account.balance && !notified[account.accountNo]) {
+      setNotified((prevObj) => ({ ...prevObj, [account.accountNo]: true }));
       showPrompt('您的帳戶餘額為0，無法進行轉帳');
+    } else if (!account.transable && !notified[account.accountNo]) {
+      setNotified((prevObj) => ({ ...prevObj, [account.accountNo]: true }));
+      showPrompt('該帳戶目前沒有轉出權限');
     }
   }, [selectedAccountIdx]);
 
@@ -575,10 +577,15 @@ const Transfer = (props) => {
   /**
    * 輸出頁面
    */
+  const checkDisabled = () => {
+    if (!model?.transOut?.balance || model?.transOut?.balance <= 0) return true;
+    if (!accounts || (selectedAccountIdx === undefined)) return true;
+    return !accounts[selectedAccountIdx].transable;
+  };
 
   return (
     <Layout fid={Func.D001} title="臺幣轉帳">
-      <TransferWrapper $insufficient={!model?.transOut?.balance || model?.transOut?.balance <= 0}>
+      <TransferWrapper $isDisabled={checkDisabled()}>
         <AccountOverview
           transferMode
           accounts={accounts}

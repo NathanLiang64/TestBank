@@ -15,6 +15,7 @@ import { Func } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import { useDispatch } from 'react-redux';
 import { setModalVisible } from 'stores/reducers/ModalReducer';
+import { reloadHeadshot } from 'utilities/AppScriptProxy';
 import SettingList from './T00100_settingList';
 import ProfileWrapper from './T00100.style';
 import { validationSchema } from './validationSchema';
@@ -76,10 +77,15 @@ const T00100 = () => {
     setMemberId(data.uuid);
   }, []);
 
+  const onNewPhotoLoaded = async (newImg) => {
+    const {isSuccess } = await uploadAvatar(newImg);
+    if (isSuccess) reloadHeadshot();
+  };
+
   return (
     <Layout fid={Func.T001} title="個人化設定">
       <ProfileWrapper>
-        <Avatar memberId={memberId} name={nickname} onNewPhotoLoaded={uploadAvatar} defaultImage={defaultAvatar} />
+        <Avatar memberId={memberId} name={nickname} onNewPhotoLoaded={onNewPhotoLoaded} defaultImage={defaultAvatar} />
         <div className="nickname">
           <span>{nickname}</span>
           <CreateRounded onClick={showEditNickNameDialog} />

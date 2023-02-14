@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
-import { showDrawer } from 'utilities/MessageModal';
+import { showDrawer, showPrompt } from 'utilities/MessageModal';
 import { Func } from 'utilities/FuncID';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { loadFuncParams, useNavigation } from 'hooks/useNavigation';
@@ -26,6 +26,7 @@ const Page = () => {
 
   const [isFetching, setIsFetching] = useState(false);
   const [accounts, setAccounts] = useState();
+  const [notified, setNotified] = useState({});
   const [model, setModel] = useState({
     selectorMode: false,
     selectedAccount: '',
@@ -52,7 +53,12 @@ const Page = () => {
     const startParams = await loadFuncParams();
 
     // 若有指定帳號，則只取單一帳號的約定帳號清單。若無指定帳號，則以 acctOptions 中的第一個項目為預設帳號。
-    const acctOptions = accountsList.map((acct) => ({label: `${accountFormatter(acct.accountNo, true)} ${acct.alias}`, value: acct.accountNo}));
+    const acctOptions = accountsList.map((acct) => ({
+      label: `${accountFormatter(acct.accountNo, true)} ${acct.alias}`,
+      value: acct.accountNo,
+      transable: acct.transable,
+    }));
+
     setModel((prevModel) => ({
       ...prevModel,
       selectorMode: startParams?.selectorMode ?? false,
@@ -91,6 +97,12 @@ const Page = () => {
         setAccounts(filteredAccounts);
         setIsFetching(false);
       });
+
+      const foundAcct = model.accountOptions.find(({value}) => value === accountNo);
+      if (!foundAcct.transable && !notified[accountNo]) {
+        showPrompt('該帳戶尚未擁有轉帳權限!');
+        setNotified((prevNotified) => ({...prevNotified, [accountNo]: true}));
+      }
     }
   }, [model, accountNo]);
 

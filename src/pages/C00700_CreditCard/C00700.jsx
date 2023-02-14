@@ -93,14 +93,16 @@ const CreditCardPage = (props) => {
   };
 
   // 信用卡更多
-  const handleMoreClick = ({isBankeeCard}) => {
+  const handleMoreClick = ({isBankeeCard, cardNo}) => {
+    const keepData = {transactionObj, cardsInfo, usedCardLimit};
+
     const list = [
       {
-        fid: '/C007001', icon: <CreditCardIcon6 />, title: '信用卡資訊', param: {keepData: {transactionObj, cardsInfo, usedCardLimit}, isBankeeCard},
+        fid: '/C007001', icon: <CreditCardIcon6 />, title: '信用卡資訊', param: {keepData, isBankeeCard, cardNo},
       },
       { fid: `${Func.R005.id}`, icon: <R005 />, title: '自動扣繳' },
       {
-        fid: '/C007002', icon: <CircleIcon />, title: '每月現金回饋', param: {keepData: {transactionObj, cardsInfo, usedCardLimit} },
+        fid: '/C007002', icon: <CircleIcon />, title: '每月現金回饋', param: { keepData },
       },
     ];
     const options = (
