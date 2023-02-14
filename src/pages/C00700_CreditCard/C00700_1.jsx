@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
-// import parse from 'html-react-parser';
 
 import Main from 'components/Layout';
-// import Loading from 'components/Loading';
 import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
 import CreditCard from 'components/CreditCard';
@@ -24,7 +22,7 @@ import { InfoPageWrapper } from './C00700.style';
 const C007001 = () => {
   const history = useHistory();
   const {state} = useLocation();
-  const {keepData, isBankeeCard} = state;
+  const {keepData, isBankeeCard, cardNo} = state;
   const dispatch = useDispatch();
   const {startFunc } = useNavigation();
   const [cardInfo, setCardInfo] = useState();
@@ -53,7 +51,7 @@ const C007001 = () => {
               <div>
                 <CreditCard
                   cardName={isBankeeCard ? 'Bankee信用卡' : '所有信用卡'}
-                  // accountNo={isBankeeCard ? keepData.cardInfo.cardNo : ''}
+                  accountNo={isBankeeCard ? cardNo : ''}
                   color="green"
                   annotation="已使用額度"
                   balance={cardInfo?.usedCardLimit}
@@ -73,7 +71,6 @@ const C007001 = () => {
           )}
 
           <Accordion className="mb-4" title="注意事項" onClick={lazyLoadTerms}>
-            {/* { terms ? parse(terms) : <Loading space="both" isCentered /> } */}
             <ol>
               <li>本額度僅供線上參考，本行保留交易授權與否之權利，正確消費金額請依月結帳單為準</li>
               <li>臨時額度調高不可用預借現金等交易</li>

@@ -131,7 +131,7 @@ const C00300 = () => {
   const renderBonusInfoPanel = () => {
     if (!selectedAccount) return null;
 
-    const { accountNo, bonus } = selectedAccount;
+    const { accountNo, bonus, acctType } = selectedAccount;
     // NOTE bonus.freeTransferRemain === 0 時會觸發 loadExtraInfo function
     // if (!bonus || !bonus.freeTransferRemain) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
     if (!bonus) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
@@ -172,8 +172,8 @@ const C00300 = () => {
       {
         label: '優惠利率額度',
         value: `${switchZhNumber(bonusQuota, false)}`,
-        iconType: 'Arrow',
-        onClick: () => handleFunctionClick('depositPlus'),
+        iconType: acctType === 'M' ? 'Arrow' : undefined,
+        onClick: acctType === 'M' ? () => handleFunctionClick('depositPlus') : undefined,
       },
     ];
 

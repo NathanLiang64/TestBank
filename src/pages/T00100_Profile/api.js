@@ -50,5 +50,5 @@ export const updateNickname = async (nickname) => {
  */
 export const uploadAvatar = async (newImg) => {
   const response = await callAPI('/personal/v1/uploadAvatar', newImg);
-  return response.data;
+  return response;
 };

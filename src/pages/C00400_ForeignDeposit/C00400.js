@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-use-before-define */
 /* eslint-disable object-curly-newline */
@@ -109,54 +110,27 @@ const C00400 = () => {
    */
   const renderBonusInfoPanel = () => {
     if (!selectedAccount) return null;
-    const { accountNo, bonus } = selectedAccount;
+    const { bonus } = selectedAccount;
 
     if (!bonus) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
 
-    // 取得 參考買價、參考賣價、優惠利率、優惠利率額度(暫時固定顯示0) TODO 缺：參考買價、參考賣價
-    const { bonusRate, bonusQuota } = bonus ?? { bonusRate: null, // 預設值
-    };
-
-    /* column 1 標題/數值 */
-    let col1Title;
-    let col1Value;
-    if (showBuyPrice) {
-      col1Title = '參考買價';
-      col1Value = 'buyPrice';
-    } else {
-      col1Title = '參考賣價';
-      col1Value = 'sellPrice';
-    }
-
-    /* column 2 標題/數值 */
-    let col2Title;
-    let col2Value;
-    if (showRate) {
-      col2Title = '目前利率';
-      // col2Value = 'cRate';
-      col2Value = bonusRate ? `${bonusRate * 100}%` : '-';
-    } else {
-      col2Title = '累積利息';
-      col2Value = 'sumRate'; // TODO: 自api取累積利率
-    }
+    // TODO 取得 參考買價、參考賣價、優惠利率、優惠利率額度(暫時固定顯示0) TODO 缺：參考買價、參考賣價
+    const { bonusRate, bonusQuota } = bonus ?? { bonusRate: null }; // 若尚未有 bonus，先以預設值替代
 
     const panelContent = [
       {
-        label: col1Title,
-        value: col1Value,
+        label: showBuyPrice ? '參考買價' : '參考賣價',
+        value: showBuyPrice ? 'buyPrice' : 'sellPrice',
         iconType: 'switch',
         onClick: () => setShowBuyPrice(!showBuyPrice),
       },
       {
-        label: col2Title,
-        value: col2Value,
+        label: showRate ? '目前利率' : '累積利息',
+        value: showRate ? (bonusRate ? `${bonusRate * 100}%` : '-') : 'sumRate',
         iconType: 'switch',
         onClick: () => setShowRate(!showRate),
       },
-      {
-        label: '優惠利率額度',
-        value: '0', // TODO 暫時固定顯示0
-      },
+      { label: '優惠利率額度', value: '0' }, // TODO 暫時固定顯示0
     ];
 
     return (
