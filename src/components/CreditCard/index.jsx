@@ -55,7 +55,7 @@ const AccountCard = ({
             onMoreClicked && (<div className="moreIconButton"><FEIBIconButton aria-label="展開下拉式選單" onClick={onMoreClicked}><MoreIcon /></FEIBIconButton></div>)
           }
         </div>
-        <p>{accountNo ? creditFormatter(accountNo) : '\u00A0' }</p>
+        <p className="accountNo">{accountNo ? creditFormatter(accountNo) : '\u00A0' }</p>
         <div className="justify-between items-center">
           <div>{annotation}</div>
           <div className="balance">
