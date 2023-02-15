@@ -41,7 +41,7 @@ export const isEmployee = async () => {
 
 // 取得可交易幣別
 export const getCcyList = async (param) => {
-  const response = await callAPI('/deposit/foreign/v1/queryRealUniRate', param);
+  const response = await callAPI('/deposit/foreign/v1/getCcyList', param);
   return response.data;
 };
 

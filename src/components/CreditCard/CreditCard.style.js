@@ -19,7 +19,7 @@ const getWatermark = (color) => {
 
 const AccountCardWrapper = styled.div`
   display: flex;
-  justify-content: flex-begen;
+  justify-content: space-between;
   flex-direction: column;
   // gap: 0.7rem;
   background-color: ${({ theme, $cardColor }) => theme.colors.card[$cardColor]};
@@ -29,11 +29,16 @@ const AccountCardWrapper = styled.div`
   background-repeat: no-repeat;
   border-radius: 8px;
   width: 100%;
-  min-height: 117px;
-  padding: 1.2rem 1.2rem 0.8rem;
+  min-height: 151.66px;
+  padding: 1.2rem;
   text-align: left;
   font-size: 1.6rem;
   color: ${({ theme }) => theme.colors.text.lightGray};
+
+  .accountNo {
+    font-size: 1.5rem;
+    color: #666;
+  }
 
   .justify-between {
     display: flex;
@@ -104,6 +109,8 @@ const AccountCardWrapper = styled.div`
       
       button {
         font-size: 1.6rem;
+        color: #042C5C;
+        font-weight: 300;
       }
     }
     
