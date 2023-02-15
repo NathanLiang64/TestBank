@@ -30,7 +30,7 @@ function AccountEditor({
   const schema = yup.object().shape({
     currency: yup.string().required('請選擇幣別'),
     type: yup.string().required('請選擇換匯種類'),
-    criteria: yup.string().required('請選擇通知標準'),
+    criteria: yup.string().required('請選擇通知門檻'),
     rate: yup.string().required('請輸入匯率').matches(/^\d+(\.\d+)?$/, '請輸入數字'),
   });
 
@@ -75,7 +75,7 @@ function AccountEditor({
             labelName="通知匯率"
             name="criteria"
             control={control}
-            options={[{label: '低於 (含)', value: 'lower'}, {label: '高於 (不含)', value: 'higher'}]}
+            options={[{label: '低於 (含)', value: 'lower'}, {label: '高於', value: 'higher'}]}
           />
 
           <TextInputField

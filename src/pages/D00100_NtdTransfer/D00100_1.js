@@ -13,6 +13,7 @@ import { showError } from 'utilities/MessageModal';
 import { Func } from 'utilities/FuncID';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { useNavigation } from 'hooks/useNavigation';
 import { createNtdTransfer, executeNtdTransfer } from './api';
 import { getTransInData, getDisplayAmount, getTransDate, getCycleDesc } from './util';
 import TransferWrapper from './D00100.style';
@@ -28,6 +29,7 @@ const TransferConfirm = (props) => {
   const history = useHistory();
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const dispatch = useDispatch();
+  const { getCallerFunc } = useNavigation();
 
   const model = state;
   const transInData = getTransInData(model.transIn);
@@ -64,7 +66,7 @@ const TransferConfirm = (props) => {
 
     // 建立轉帳交易紀錄。
 
-    const response = await createNtdTransfer(request);
+    const response = await createNtdTransfer(request, getCallerFunc);
     if (response.result) {
       // 以 Server端傳回的約轉帳號旗標為準。
       if (response.isAgreedTxn) {

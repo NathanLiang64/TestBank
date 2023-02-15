@@ -178,7 +178,7 @@ const useNavigation = () => {
    * @returns {String} 功能代碼。
    */
   function getCallerFunc() {
-    const {stack} = funcStack.getStack();
+    const stack = funcStack.getStack();
     if (stack.length <= 1) return null;
 
     return stack[stack.length - 2].funcID;

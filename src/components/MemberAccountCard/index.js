@@ -24,7 +24,7 @@ import MemberAccountCardWrapper from './memberAccountCard.style';
  */
 const MemberAccountCard = ({
   hasNewTag, memberId, name, subTitle, noBorder,
-  isSelected, onClick, moreActions,
+  isSelected, onClick, moreActions, showAvatar = true,
 }) => {
   const wrapperRef = useRef(null);
   const [model, setModel] = useState({
@@ -126,7 +126,7 @@ const MemberAccountCard = ({
       onTouchEnd={handleTouchEnd}
       onClick={model.showMorePanel ? null : onClick}
     >
-      <Avatar small memberId={memberId} name={name} />
+      {showAvatar && <Avatar small memberId={memberId} name={name} />}
       <div className="memberInfo">
         <div className="flex-auto">
           <div className="title">

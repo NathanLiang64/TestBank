@@ -456,7 +456,6 @@ const Transfer = (props) => {
    */
   const TransInAccountSelector = () => {
     const { freqAcct, regAcct } = getValues(idTransIn);
-    const subTitle = `${freqAcct?.bankName}(${freqAcct?.bankNo}) ${accountFormatter(freqAcct?.account, freqAcct?.bankNo === '805')}`;
     return (
       <>
         {/* 1.常用轉帳頁籤 */}
@@ -467,7 +466,7 @@ const Transfer = (props) => {
               <MemberAccountCard
                 memberId={freqAcct.memberId}
                 name={freqAcct.accountName}
-                subTitle={subTitle}
+                subTitle={`${freqAcct?.bankName}(${freqAcct?.bankId}) ${accountFormatter(freqAcct?.accountNo, freqAcct?.bankId === '805')}`}
                 noBorder
               />
             )}
@@ -486,7 +485,7 @@ const Transfer = (props) => {
               <MemberAccountCard
                 memberId={regAcct.memberId}
                 name={regAcct.accountName}
-                subTitle={subTitle}
+                subTitle={`${regAcct?.bankName}(${regAcct?.bankId}) ${accountFormatter(regAcct?.accountNo, regAcct?.bankId === '805')}`}
                 noBorder
               />
             )}

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect, useReducer } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import Main from 'components/Layout';
 import Layout from 'components/Layout/Layout';
@@ -14,34 +14,34 @@ import uuid from 'react-uuid';
 // import {  updateFrequentAccount,  deleteFrequentAccount,} from './api';
 import AccountEditor from './E00400_PriceEditor';
 import PageWrapper from './E00400.style';
+import { getExchangeRateInfo } from './api';
 
 /**
- * D00500 常用帳號管理頁
+ * E00400 外幣到價通知設定
  */
 const Page = () => {
   const dispatch = useDispatch();
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
-
-  const [notiLists, setNotiLists] = useState([]);
-
-  /**
-   *- 初始化
-   */
+  const [notiLists, setNotiLists] = useState();
+  const [exRateList, setExRateList] = useState([]);
+  // const currencyOptions = useMemo(()=>{
+  //   if(!exRateList.length) return [];
+  //   return exRateList.map(item=>{
+  //     findCurren
+  //     return {label:}
+  //   })
+  // },[exRateList.length])
   useEffect(async () => {
+    // TODO 取得已設定的通知列表
     console.log('取得已設定的通知列表');
+    getExchangeRateInfo().then((res) => setExRateList(res));
   }, []);
 
   /**
    * 處理UI流程：新增通知
    */
   const addnewAccount = async () => {
-    const onFinished = async () => {
-
-      // TODO 新增通知 API
-      // if (newNoti) {
-      //   setNotiLists(newNoti);
-      //   forceUpdate();
-      // }
+    const onFinished = () => {
+      console.log('hi');
     };
 
     await showCustomDrawer({
@@ -51,10 +51,6 @@ const Page = () => {
     });
   };
 
-  /**
-   * 處理UI流程：編輯帳戶
-   * @param {*} acct 變更前資料。
-   */
   const editAccount = async (noti) => {
     const onFinished = async (newNoti) => {
       dispatch(setWaittingVisible(true));
@@ -81,7 +77,7 @@ const Page = () => {
     const onRemoveConfirm = () => {
       // TODO 刪除到價設定 API deleteNoti(noti)
       // setNotiLists(newNotiLists);
-      forceUpdate();
+      console.log('hi');
     };
 
     await showCustomPrompt({
@@ -97,15 +93,13 @@ const Page = () => {
   const renderMemberCards = () => {
     if (!notiLists) return null;
     if (!notiLists.length) return <EmptyData content="尚無已設定的通知" height="70vh" />;
-    //  TODO name 整合成 title
-    //  TODO bankNo/bankName/account 整合成 subTitle
     return notiLists.map((noti) => (
       <MemberAccountCard
         key={uuid()}
         name={noti.nickName} // TODO
         subTitle="匯率低於 (含) : 27.34 (mock)"
         hasNewTag={noti.isNew}
-        // disabledAvatar
+        disabledAvatar={false}
         moreActions={[
           { lable: '編輯', type: 'edit', onClick: () => editAccount(noti) },
           { lable: '刪除', type: 'delete', onClick: () => removeAccount(noti) },
