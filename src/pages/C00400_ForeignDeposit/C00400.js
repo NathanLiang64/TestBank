@@ -20,6 +20,8 @@ import { getAccountsList, getAccountBonus, updateAccount, cleanupAccount } from 
 import { Func } from 'utilities/FuncID';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import {
+  getExchangeRateInfo,
+  getInterest,
   getTransactions,
   setAccountAlias,
   setMainCurrency,
@@ -42,6 +44,8 @@ const C00400 = () => {
   const [showBuyPrice, setShowBuyPrice] = useState(true);
   // 利率顯示模式 (true.目前利率, false.累積利息)
   const [showRate, setShowRate] = useState(true);
+  const [exRateList, setExRateList] = useState();
+  // 匯率列表
 
   const selectedAccount = accounts ? accounts[selectedAccountIdx ?? 0] : null;
 
@@ -63,6 +67,10 @@ const C00400 = () => {
       setAccounts(flattenAccts);
       await processStartParams(flattenAccts);
       dispatch(setWaittingVisible(false));
+    });
+
+    getExchangeRateInfo().then((lists) => {
+      setExRateList(lists);
     });
   }, []);
 
@@ -110,17 +118,27 @@ const C00400 = () => {
    */
   const renderBonusInfoPanel = () => {
     if (!selectedAccount) return null;
-    const { bonus } = selectedAccount;
+    const { bonus, accountNo, currency, interest } = selectedAccount;
 
     if (!bonus) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
 
+    const exRateItem = exRateList?.find(({ccycd}) => currency === ccycd);
+    const brate = exRateItem?.brate ?? '-';
+    const srate = exRateItem?.srate ?? '-';
+    // if (selectedAccount.interest === undefined) {
+    //   getInterest(accountNo, currency).then((apiRs) => {
+    //     selectedAccount.interest = apiRs.interest;
+    //     forceUpdate();
+    //   });
+    // }
+    // console.log('selectedAccount', selectedAccount);
     // TODO 取得 參考買價、參考賣價、優惠利率、優惠利率額度(暫時固定顯示0) TODO 缺：參考買價、參考賣價
     const { bonusRate, bonusQuota } = bonus ?? { bonusRate: null }; // 若尚未有 bonus，先以預設值替代
 
     const panelContent = [
       {
         label: showBuyPrice ? '參考買價' : '參考賣價',
-        value: showBuyPrice ? 'buyPrice' : 'sellPrice',
+        value: showBuyPrice ? brate : srate,
         iconType: 'switch',
         onClick: () => setShowBuyPrice(!showBuyPrice),
       },
@@ -130,7 +148,7 @@ const C00400 = () => {
         iconType: 'switch',
         onClick: () => setShowRate(!showRate),
       },
-      { label: '優惠利率額度', value: '0' }, // TODO 暫時固定顯示0
+      { label: '優惠利率額度', value: '0' }, // 依目前需求先暫時 hardcode 顯示為 0
     ];
 
     return (
@@ -287,7 +305,7 @@ const C00400 = () => {
                   icon: 'temp',
                 },
                 {
-                  fid: 'foreignCurrencyPriceSetting',
+                  fid: Func.E004.id,
                   title: '外幣到價通知設定',
                   icon: 'foreignCurrencyPriceSetting',
                 },

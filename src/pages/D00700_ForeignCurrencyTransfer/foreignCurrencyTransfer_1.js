@@ -23,9 +23,9 @@ const ForeignCurrencyTransfer1 = ({ location }) => {
 
   // 確認進行轉帳
   const applyTransfer = async () => {
-    dispatch(setWaittingVisible(true));
     const rs = await transactionAuth(Func.D007.authCode);
     if (rs?.result) {
+      dispatch(setWaittingVisible(true));
       const response = await createTransfer(confirmData);
       dispatch(setWaittingVisible(false));
       history.push('/foreignCurrencyTransfer2', confirmData);

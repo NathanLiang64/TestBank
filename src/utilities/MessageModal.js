@@ -208,8 +208,9 @@ export const showAnimationModal = async (content) => {
 
 export const showTxnAuth = async (authCode, otpMobile) => {
   const promise = new Promise((resolve) => {
-    store.dispatch(setTxnAuthData({authCode, otpMobile}));
+    // NOTE 需要先進行 dispatch(setResult) 再進行 dispatch(setTxnAuthData)，避免在 Promise 沒有被 resolve 的情況發生
     store.dispatch(setResult((value) => resolve(value)));
+    store.dispatch(setTxnAuthData({ authCode, otpMobile }));
   });
   const result = await promise;
   return result;

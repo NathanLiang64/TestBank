@@ -42,12 +42,13 @@ const CardLessATM1 = () => {
 
   // 無卡提款交易
   const requestCardlessWithdrawApply = async (param) => {
-    dispatch(setWaittingVisible(true));
     const {result} = await transactionAuth(Func.D003.authCode);
     if (result) {
+      dispatch(setWaittingVisible(true));
       const {
         seqNo, startDateTime, endDateTime, message,
       } = await cardLessWithdrawApply(param);
+      dispatch(setWaittingVisible(false));
 
       const { account, withdrawAmount } = param;
       const data = {
@@ -57,7 +58,6 @@ const CardLessATM1 = () => {
         withdrawAmount,
         account,
       };
-      dispatch(setWaittingVisible(false));
       if (seqNo) history.push('/D003002', { data });
       else showCustomPrompt({ message, onOk: closeFunc, onClose: closeFunc });
     }

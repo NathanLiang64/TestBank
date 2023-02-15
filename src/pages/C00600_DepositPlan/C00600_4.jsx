@@ -68,7 +68,6 @@ const DepositPlanDetailPage = () => {
   };
 
   const handleCreate = async () => {
-    dispatch(setWaittingVisible(true));
     const {extra, goalAmount, ...payload} = program;
 
     // 11.30 目前後端設定是 transactionAuth 之後才可以進行 createDepositPlan
@@ -83,7 +82,9 @@ const DepositPlanDetailPage = () => {
     if (!auth.result) return;
 
     // Step 3. 成功後再執行 createConfirm
+    dispatch(setWaittingVisible(true));
     const confirm = await createConfirm(response.planId);
+    dispatch(setWaittingVisible(false));
 
     if (confirm.result) {
       // 驗證成功之後，若 imageId=0 再上傳自訂的影像。
@@ -99,8 +100,6 @@ const DepositPlanDetailPage = () => {
         onClose: () => closeFunc(),
       });
     }
-
-    dispatch(setWaittingVisible(false));
   };
 
   const handleConfirm = async () => {

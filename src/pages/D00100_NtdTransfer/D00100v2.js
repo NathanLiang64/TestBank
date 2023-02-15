@@ -33,7 +33,7 @@ import { getAccountBonus, getAccountsList } from 'utilities/CacheData';
 import { ChangeMemberIcon } from 'assets/images/icons';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import CurrencyInput from 'react-currency-input-field';
-import { numberToChinese } from 'utilities/Generator';
+import { accountFormatter, numberToChinese } from 'utilities/Generator';
 import { Func } from 'utilities/FuncID';
 import TransferWrapper from './D00100.style';
 import D00100AccordionContent from './D00100_AccordionContent';
@@ -456,6 +456,7 @@ const Transfer = (props) => {
    */
   const TransInAccountSelector = () => {
     const { freqAcct, regAcct } = getValues(idTransIn);
+    const subTitle = `${freqAcct?.bankName}(${freqAcct?.bankNo}) ${accountFormatter(freqAcct?.account, freqAcct?.bankNo === '805')}`;
     return (
       <>
         {/* 1.常用轉帳頁籤 */}
@@ -466,9 +467,7 @@ const Transfer = (props) => {
               <MemberAccountCard
                 memberId={freqAcct.memberId}
                 name={freqAcct.accountName}
-                bankName={freqAcct.bankName}
-                bankNo={freqAcct.bankId}
-                account={freqAcct.accountNo}
+                subTitle={subTitle}
                 noBorder
               />
             )}
@@ -487,9 +486,7 @@ const Transfer = (props) => {
               <MemberAccountCard
                 memberId={regAcct.memberId}
                 name={regAcct.accountName}
-                bankName={regAcct.bankName}
-                bankNo={regAcct.bankId}
-                account={regAcct.accountNo}
+                subTitle={subTitle}
                 noBorder
               />
             )}

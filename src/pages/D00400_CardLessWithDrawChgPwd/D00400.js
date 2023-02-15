@@ -32,10 +32,11 @@ const CardLessWithDrawChgPwd = () => {
 
   // 設定無卡提款密碼
   const changePwdHandler = async (param) => {
-    dispatch(setWaittingVisible(true));
     const {result} = await transactionAuth(Func.D004.authCode);
     if (result) {
+      dispatch(setWaittingVisible(true));
       const { isSuccess, code, message } = await changeCardlessPwd(param);
+      dispatch(setWaittingVisible(false));
       showAnimationModal({
         isSuccess,
         successTitle: '設定成功',
@@ -46,7 +47,6 @@ const CardLessWithDrawChgPwd = () => {
       });
       if (isSuccess) reset(defaultValues);
     }
-    dispatch(setWaittingVisible(false));
   };
 
   const onSubmit = async (data) => {

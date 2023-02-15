@@ -23,7 +23,7 @@ import MemberAccountCardWrapper from './memberAccountCard.style';
   }, ...]
  */
 const MemberAccountCard = ({
-  hasNewTag, memberId, name, bankNo, bankName, account, noBorder,
+  hasNewTag, memberId, name, subTitle, noBorder,
   isSelected, onClick, moreActions,
 }) => {
   const wrapperRef = useRef(null);
@@ -135,8 +135,9 @@ const MemberAccountCard = ({
             {toHalfWidth(name) || '(未命名)'}
             {hasNewTag && (<div className="new-tag">New</div>)}
           </div>
-          <div className="note">
-            {`${bankName}(${bankNo}) ${accountFormatter(account, bankNo === '805')}`}
+          <div className="subTitle">
+            {/* {`${bankName}(${bankNo}) ${accountFormatter(account, bankNo === '805')}`} */}
+            {subTitle}
           </div>
         </div>
       </div>
