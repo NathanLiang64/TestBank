@@ -159,7 +159,7 @@ export const Func = {
    */
   C007: {
     id: 'C007',
-    required: [],
+    required: ['CC'],
   },
 
   /**

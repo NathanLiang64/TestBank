@@ -48,7 +48,10 @@ const C00300 = () => {
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
     getAccountsList('MC', async (items) => { // M=臺幣主帳戶、C=臺幣子帳戶
-      items.forEach((item) => { item.balance = item.details[0].balance; });
+      items.forEach((item) => {
+        item.balance = item.details[0].balance;
+        item.currency = item.details[0].currency;
+      });
       setAccounts(items);
       await processStartParams(items);
       dispatch(setWaittingVisible(false));
@@ -98,9 +101,7 @@ const C00300 = () => {
           account.txnDetails = details;
 
           // 更新餘額。
-          if (transData.acctTxDtls.length > 0) {
-            account.balance = details[0].balance;
-          }
+          if (transData.acctTxDtls.length > 0) account.balance = details[0].balance;
 
           delete account.isLoadingTxn; // 載入完成才能清掉旗標！
           updateAccount(account);

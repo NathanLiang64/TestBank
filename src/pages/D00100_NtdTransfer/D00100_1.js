@@ -73,9 +73,9 @@ const TransferConfirm = (props) => {
         model.transIn.type = 2;
         // 找出目前轉出帳號的所有約定轉入帳號中，與目前轉出帳號相符者；存入 model.transIn.regAcct 使畫面正確顯示。
         model.transIn.regAcct = {
-          bankId: transIn.bank,
-          bankName: transIn.bankName,
-          accountNo: transIn.account,
+          bankId: transInData.bank,
+          bankName: transInData.bankName,
+          accountNo: transInData.account,
         };
       } else transIn.type = (transIn.freqAcct ? 1 : 0);
 
@@ -84,7 +84,7 @@ const TransferConfirm = (props) => {
       const auth = await transactionAuth(authCode);
       if (auth.result) {
         dispatch(setWaittingVisible(true));
-        const result = await executeTransfer(response.tfrId);
+        const result = await executeTransfer(response.tfrId, response.isAgreedTxn);
         dispatch(setWaittingVisible(false));
         // 顯示轉帳結果（含加入常用帳號）
         const param = {...model, result};
@@ -109,7 +109,7 @@ const TransferConfirm = (props) => {
    *    message: 錯誤訊息,
    * }>} 轉帳結果。
    */
-  const executeTransfer = async (tfrId) => {
+  const executeTransfer = async (tfrId, isAgreedTxn) => {
     // TODO 顯示交易授權中，請稍候...
     const executeRs = await executeNtdTransfer(tfrId);
     console.log('==> 轉帳執行結果：', executeRs);
@@ -129,10 +129,15 @@ const TransferConfirm = (props) => {
         const account = accounts.find((acc) => acc.accountNo === model.transOut.account);
         updateAccount({
           ...account,
+          currency: 'TWD',
           balance: executeRs.balance, // 更新 餘額
           bonus: {
             ...account.bonus,
             freeTransferRemain: model.transOut.freeTransferRemain, // 更新 跨轉優惠次數
+            dLimitLeft: account.bonus.dLimitLeft -= isAgreedTxn ? 0 : model.amount, // 更新 非約轉當日額度
+            mLimitLeft: account.bonus.dLimitLeft -= isAgreedTxn ? 0 : model.amount, // 更新 非約轉當月額度
+            agrdTfrSelfLimitLeft: account.bonus.agrdTfrSelfLimitLeft -= (isAgreedTxn && transInData.bank === '805') ? model.amount : 0, // 更新 約轉自行當日額度
+            agrdTfrInterLimitLeft: account.bonus.agrdTfrInterLimitLeft -= isAgreedTxn && transInData.bank !== '805' ? model.amount : 0, // 更新 約轉跨行當日額度
           },
         });
       });
@@ -152,7 +157,7 @@ const TransferConfirm = (props) => {
    * 頁面輸出。
    */
   return (
-    <Layout title="轉帳確認" goBackFunc={goBack}>
+    <Layout title="轉帳確認" fid={Func.D001} goBackFunc={goBack}>
       <TransferWrapper className="transferConfirmPage">
         <hr />
         <section className="transferMainInfo">

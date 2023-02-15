@@ -47,7 +47,10 @@ const C00500 = () => {
     dispatch(setWaittingVisible(true));
 
     getAccountsList('S', async (items) => {
-      items.forEach((item) => { item.balance = item.details[0].balance; });
+      items.forEach((item) => {
+        item.balance = item.details[0].balance;
+        item.currency = item.details[0].currency;
+      });
       setAccounts(items);
       await processStartParams(items);
       dispatch(setWaittingVisible(false));

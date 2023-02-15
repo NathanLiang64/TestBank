@@ -205,8 +205,8 @@ export const updateAccount = async (newAccount) => {
   const index = accounts.findIndex((account) => account.accountNo === newAccount.accountNo);
 
   if (index >= 0) {
-    const foundDetailIndex = accounts[index].details.findIndex((detail) => detail.currency === newAccount.currency);
-    accounts[index].details[foundDetailIndex] = {balance: newAccount.balance, currency: newAccount.currency};
+    const detailIndex = accounts[index].details.findIndex((detail) => detail.currency === newAccount.currency);
+    accounts[index].details[detailIndex] = {balance: newAccount.balance, currency: newAccount.currency};
     accounts[index] = {
       ...accounts[index],
       bonus: newAccount.bonus,

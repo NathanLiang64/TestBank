@@ -63,7 +63,7 @@ const C00400 = () => {
         delete acct.details;
         return acct;
       }))).flat();
-
+      console.log('flattenAccts', flattenAccts);
       setAccounts(flattenAccts);
       await processStartParams(flattenAccts);
       dispatch(setWaittingVisible(false));
@@ -138,7 +138,7 @@ const C00400 = () => {
     const panelContent = [
       {
         label: showBuyPrice ? '參考買價' : '參考賣價',
-        value: showBuyPrice ? brate : srate,
+        value: showBuyPrice ? srate : brate,
         iconType: 'switch',
         onClick: () => setShowBuyPrice(!showBuyPrice),
       },
