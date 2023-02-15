@@ -63,7 +63,6 @@ const TransferConfirm = (props) => {
     };
 
     // 建立轉帳交易紀錄。
-    dispatch(setWaittingVisible(true));
 
     const response = await createNtdTransfer(request);
     if (response.result) {
@@ -82,7 +81,9 @@ const TransferConfirm = (props) => {
       const authCode = (response.isAgreedTxn) ? Func.D001.authCode.REG : Func.D001.authCode.NONREG;
       const auth = await transactionAuth(authCode);
       if (auth.result) {
+        dispatch(setWaittingVisible(true));
         const result = await executeTransfer(response.tfrId);
+        dispatch(setWaittingVisible(false));
         // 顯示轉帳結果（含加入常用帳號）
         const param = {...model, result};
         history.push('/D001002', param);
@@ -91,7 +92,6 @@ const TransferConfirm = (props) => {
       // 顯示失敗原因，並回到前一頁；若是嚴重錯誤，會在 axios 就處理掉了。
       await showError(response.message, goBack);
     }
-    dispatch(setWaittingVisible(false));
   };
 
   /**

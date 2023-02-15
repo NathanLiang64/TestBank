@@ -77,9 +77,9 @@ const LossReissue = () => {
 
   // 執行掛失或補發
   const executeAction = async () => {
-    dispatch(setWaittingVisible(true));
+    // dispatch(setWaittingVisible(true));
     const auth = await transactionAuth(Func.S008.authCode);
-    dispatch(setWaittingVisible(false));
+    // dispatch(setWaittingVisible(false));
 
     if (auth && auth.result) {
       dispatch(setWaittingVisible(true));
@@ -112,10 +112,10 @@ const LossReissue = () => {
         dispatch(setWaittingVisible(true));
         // 修改地址
         const response = await updateProfile({...values, zipCode: `${zipCode}00` });
+        dispatch(setWaittingVisible(false));
         if (response.isSuccess) {
           setAddressValue({...values});
         }
-        dispatch(setWaittingVisible(false));
       }
 
       dispatch(setDrawerVisible(false));

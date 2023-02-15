@@ -33,15 +33,15 @@ const S00700 = () => {
   });
 
   const submitHandler = async ({serial}) => {
-    dispatch(setWaittingVisible(true));
     const auth = await transactionAuth(Func.S007.authCode);
     if (auth && auth.result) {
+      dispatch(setWaittingVisible(true));
       const activateResult = await activate({serial});
+      dispatch(setWaittingVisible(false));
       if (activateResult) {
         history.push('/S007001', activateResult);
       }
     }
-    dispatch(setWaittingVisible(false));
   };
 
   useEffect(() => {

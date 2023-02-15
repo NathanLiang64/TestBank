@@ -76,10 +76,11 @@ const AutomaticBillPayment = () => {
   };
 
   const onSubmit = async (values) => {
-    dispatch(setWaittingVisible(true));
     const auth = await transactionAuth(Func.R005.authCode);
     if (auth.result) {
+      dispatch(setWaittingVisible(true));
       const { result, message } = await setAutoDebit(values);
+      dispatch(setWaittingVisible(false));
       showAnimationModal({
         isSuccess: result,
         successTitle: '設定成功',
@@ -90,7 +91,6 @@ const AutomaticBillPayment = () => {
       getAutoDebitData(); // TODO 可改為直接變動 appliedAutoBill 不再打一次 API
       closeDrawer();
     }
-    dispatch(setWaittingVisible(false));
   };
 
   const handleApplyAutoBill = () => {

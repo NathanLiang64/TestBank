@@ -29,7 +29,6 @@ const ReserveTransferSearch1 = ({ location }) => {
   const onConfirmHandler = async () => {
     if (!cancelResult) {
       // 執行取消預約轉帳
-      dispatch(setWaittingVisible(true));
       const {result} = await transactionAuth(Func.D008.authCode);
       if (result) {
         const {
@@ -38,11 +37,11 @@ const ReserveTransferSearch1 = ({ location }) => {
             txCd, bankName, dscpt1, periodic, ...param
           },
         } = location.state;
+        dispatch(setWaittingVisible(true));
         const res = await cancelReserveTransfer(param);
-        // 基本上若 code!=='0000' 的情況下，底層就會跳出錯誤
+        dispatch(setWaittingVisible(false));
         setCancelResult(res);
       }
-      dispatch(setWaittingVisible(false));
     } else {
       // 已經執行過取消，導向子首頁
       history.push('D00800');

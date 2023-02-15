@@ -142,21 +142,22 @@ const Page = () => {
   const renderMemberCards = () => {
     if (!accounts || isFetching) return <Loading space="both" isCentered />;
     if (!accounts.length) return <EmptyData content="查無約定帳號" height="70vh" />;
-    return accounts.map((acct) => (
-      <MemberAccountCard
-        key={`${acct.bankId}_${acct.acctId}`}
-        name={acct.nickName}
-        bankNo={acct.bankId}
-        bankName={acct.bankName}
-        account={acct.acctId}
-        memberId={acct.headshot}
-        isSelected={(acct.acctId === model.selectedAccount.accountNo && acct.bankId === model.selectedAccount.bankId)}
-        onClick={() => onAccountSelected(acct)} // 傳回值：選取的帳號。
-        moreActions={acct.isSelf ? null : [ // 不可編輯自己的帳號。（因為是由同ID互轉建立的）
-          { lable: '編輯', type: 'edit', onClick: () => editAccount(acct) },
-        ]}
-      />
-    ));
+    return accounts.map((acct) => {
+      const subTitle = `${acct.bankName}(${acct.bankId}) ${accountFormatter(acct.acctId, acct.bankId === '805')}`;
+      return (
+        <MemberAccountCard
+          key={`${acct.bankId}_${acct.acctId}`}
+          name={acct.nickName}
+          subTitle={subTitle}
+          memberId={acct.headshot}
+          isSelected={(acct.acctId === model.selectedAccount.accountNo && acct.bankId === model.selectedAccount.bankId)}
+          onClick={() => onAccountSelected(acct)} // 傳回值：選取的帳號。
+          moreActions={acct.isSelf ? null : [ // 不可編輯自己的帳號。（因為是由同ID互轉建立的）
+            { lable: '編輯', type: 'edit', onClick: () => editAccount(acct) },
+          ]}
+        />
+      );
+    });
   };
 
   /**

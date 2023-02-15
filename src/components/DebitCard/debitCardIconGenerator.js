@@ -4,8 +4,8 @@ import {
   CoverDownloadIcon,
   RadioUncheckedIcon,
   EditAccountIcon,
-  AccountIcon15,
   D008,
+  E004,
 } from 'assets/images/icons';
 
 export const iconGenerator = (name) => {
@@ -23,7 +23,7 @@ export const iconGenerator = (name) => {
     case 'reserve':
       return <D008 />;
     case 'foreignCurrencyPriceSetting':
-      return <AccountIcon15 />;
+      return <E004 />;
     default:
       return null;
   }

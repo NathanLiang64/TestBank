@@ -40,7 +40,7 @@ const MemberAccountCardWrapper = styled.div`
       color: ${({ theme }) => theme.colors.basic.white};
     }
 
-    .note {
+    .subTitle {
       font-size: 1.2rem;
       line-height: 1.8rem;
       color: ${({ $selected, theme }) => ($selected ? theme.colors.text.white : theme.colors.text.light)};

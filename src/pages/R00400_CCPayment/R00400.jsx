@@ -132,8 +132,6 @@ const Page = () => {
   };
 
   const onSubmit = async (data) => {
-    dispatch(setWaittingVisible(true));
-
     // ===== 本行帳戶繳費 =====
     if (data.paymentMethod === PAYMENT_OPTION.INTERNAL) {
       const payload = {
@@ -143,22 +141,24 @@ const Page = () => {
       };
       const {result} = await transactionAuth(Func.R004.authCode);
       if (result) {
+        dispatch(setWaittingVisible(true));
         const payResult = await payCardFee(payload);
+        dispatch(setWaittingVisible(false));
         if (payResult) history.push('R004001', { payResult, account: data.accountNo });
       }
     }
 
     // ===== 他行帳戶繳費 =====
     if (data.paymentMethod === PAYMENT_OPTION.EXTERNAL) {
+      dispatch(setWaittingVisible(true));
       showCustomPrompt({message: 'TODO 他行帳戶繳費API'});
+      dispatch(setWaittingVisible(false));
     }
 
     // ===== 超商條碼繳費 =====
     if (data.paymentMethod === PAYMENT_OPTION.CSTORE) {
       renderBarCode(getAmount(data));
     }
-
-    dispatch(setWaittingVisible(false));
   };
 
   return (

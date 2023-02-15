@@ -102,9 +102,8 @@ const T00700 = () => {
       authCode |= Func.T007.authCode.MOBILE; // 有變更手機號碼時；可使用密碼驗證(+0x10)，並且需要驗新門號(+0x01)
     }
 
-    dispatch(setWaittingVisible(true));
     const jsRs = await transactionAuth(authCode, values.mobile);
-    dispatch(setWaittingVisible(false));
+
     if (jsRs.result) {
       const county = findCounty(values.county);
       const {zipCode} = findCity(county.code, values.city);

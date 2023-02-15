@@ -286,6 +286,7 @@ function Layout({
 
         authData.txnAuth = txnAuth;
         authData.allowedPWD = allowedPWD;
+        authData.allowedOTP = allowedOTP;
       };
 
       setAuthData().then(() => {
@@ -295,7 +296,7 @@ function Layout({
     }
 
     // 密碼及OTP輸入
-    return authData.allowedPWD ? (
+    return (authData.allowedPWD || authData.allowedOTP) ? (
       <BottomDrawer
         title="交易授權驗證 (Web版)"
         isOpen={authData.showTxnAuth !== false}

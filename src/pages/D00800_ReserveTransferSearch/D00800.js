@@ -86,6 +86,7 @@ const D00800 = () => {
   const fetchTransferOutAccounts = async () => {
     let accountsListRes;
     await getAccountsList('MSC', async (accts) => {
+      accts.forEach((acct) => { acct.balance = acct.details[0].balance; });
       setAccountsList(accts);
       accountsListRes = accts;
       const params = await loadFuncParams();
@@ -104,21 +105,11 @@ const D00800 = () => {
   };
 
   // 轉出帳號卡片 swiper，卡片顏色由acctType決定
-  const renderCard = () => accountsList.map((item) => {
-    const accountObj = {
-      branchName: item.branchName,
-      alias: item.alias || '--',
-      accountNo: item.accountNo,
-      balance: item.balance,
-      currency: item.currency,
-      acctType: item.acctType,
-    };
-    return (
-      <SwiperSlide key={item.accountNo}>
-        <DebitCard accountObj={accountObj} />
-      </SwiperSlide>
-    );
-  });
+  const renderCard = () => accountsList.map((item) => (
+    <SwiperSlide key={item.accountNo}>
+      <DebitCard accountObj={item} />
+    </SwiperSlide>
+  ));
 
   const openReserveDialog = async (data) => {
     showCustomPrompt({

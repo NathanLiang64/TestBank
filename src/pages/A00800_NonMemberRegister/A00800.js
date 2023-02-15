@@ -78,7 +78,6 @@ const A00800 = () => {
 
   /* submit動作處理 */
   const onSubmit = async (data) => {
-    dispatch(setWaittingVisible(true));
     const authResult = await transactionAuth(Func.A008.authCode, data.mobileNum);
     const regData = {
       name: data.name,
@@ -91,7 +90,9 @@ const A00800 = () => {
 
     if (authResult.result === true) {
       /* 驗證成功：呼叫註冊 */
+      dispatch(setWaittingVisible(true));
       const result = await memberRegister(regData);
+      dispatch(setWaittingVisible(false));
       console.log(result); // accessToken 或 memberId 可能可以用來跳轉至邀請卡
 
       /* 註冊成功：進入首頁 */
@@ -103,7 +104,6 @@ const A00800 = () => {
         });
       }
     }
-    dispatch(setWaittingVisible(false));
   };
 
   useEffect(async () => {

@@ -54,10 +54,11 @@ const CardLessSetting = () => {
         history.push('/T004001');
       } else {
         // 已開通狀態
-        dispatch(setWaittingVisible(true));
         const { result } = await transactionAuth(Func.T004.authCode);
         if (result) {
+          dispatch(setWaittingVisible(true));
           const activateRes = await activate('');
+          dispatch(setWaittingVisible(false));
           showAnimationModal({
             isSuccess: !!activateRes,
             successTitle: '設定成功',
@@ -67,7 +68,6 @@ const CardLessSetting = () => {
           setCardLessStatus(3); // 註銷成功後狀態代碼為 3-已註銷
           setEnable(false);
         }
-        dispatch(setWaittingVisible(false));
       }
     } else showUnbondedMsg();
   };

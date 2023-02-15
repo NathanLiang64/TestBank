@@ -181,7 +181,7 @@ export const getAccountBonus = async (accountNo, onDataLoaded, foreUpdate) => {
       bonus = {
         ...bonus,
         bonusQuota: resSummary.data.bonusInfo.amount,
-        bonusRate: resSummary.data.bonusInfo.rate,
+        // bonusRate: resSummary.data.bonusInfo.rate,
       };
 
       accounts[index].bonus = bonus;

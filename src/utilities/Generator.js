@@ -7,9 +7,9 @@ import { PaymentType } from './LoanPaymentType';
 
 // 將帳號轉為指定字數間帶有分隔符 (-) 之顯示方式
 export const accountFormatter = (accountNo, isSelf) => {
-  const acct = accountNo ?? '00000000000000';
-  if (!isSelf) return acct.padStart(16, '0'); // 若銀行代碼不是 '805' (非遠銀) 則直接補到16位數後回傳
-  return `${acct.slice(0, 3)}-${acct.slice(3, 6)}-${acct.slice(6)}`;
+  const acct = accountNo?.padStart(16, '0') ?? '00000000000000';
+  if (!isSelf) return acct; // 若銀行代碼不是 '805' (非遠銀) 則直接補到16位數後回傳
+  return `${acct.slice(2, 5)}-${acct.slice(5, 8)}-${acct.slice(8, 15)}-${acct.slice(15, 16)}`;
 };
 
 const dateRule = /^((?<yTW>1\d\d|[789]\d)|(?<yyyy>19\d\d|20\d\d))(?<mm>[1-9]|0[1-9]|1[012])(?<dd>[1-9]|0[1-9]|[12]\d|3[01])$/;

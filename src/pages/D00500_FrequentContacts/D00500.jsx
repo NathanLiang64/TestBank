@@ -9,6 +9,7 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { AddIcon } from 'assets/images/icons';
 import { loadFuncParams, useNavigation } from 'hooks/useNavigation';
 import EmptyData from 'components/EmptyData';
+import { accountFormatter } from 'utilities/Generator';
 import {
   getFrequentAccount,
   addFrequentAccount,
@@ -141,23 +142,24 @@ const Page = () => {
   const renderMemberCards = () => {
     if (!accounts) return null;
     if (!accounts.length) return <EmptyData content="查無常用帳號" height="70vh" />;
-    return accounts.map((acct) => (
-      <MemberAccountCard
-        key={`${acct.bankId}_${acct.acctId}`}
-        name={acct.nickName}
-        bankNo={acct.bankId}
-        bankName={acct.bankName}
-        account={acct.acctId}
-        memberId={acct.headshot}
-        hasNewTag={acct.isNew}
-        isSelected={(acct.acctId === selectedAccount?.accountNo && acct.bankId === selectedAccount?.bankId)}
-        onClick={() => onAccountSelected(acct)} // 傳回值：選取的帳號。
-        moreActions={[
-          { lable: '編輯', type: 'edit', onClick: () => editAccount(acct) },
-          { lable: '刪除', type: 'delete', onClick: () => removeAccount(acct) },
-        ]}
-      />
-    ));
+    return accounts.map((acct) => {
+      const subTitle = `${acct.bankName}(${acct.bankId}) ${accountFormatter(acct.acctId, acct.bankId === '805')}`;
+      return (
+        <MemberAccountCard
+          key={`${acct.bankId}_${acct.acctId}`}
+          name={acct.nickName}
+          subTitle={subTitle}
+          memberId={acct.headshot}
+          hasNewTag={acct.isNew}
+          isSelected={(acct.acctId === selectedAccount?.accountNo && acct.bankId === selectedAccount?.bankId)}
+          onClick={() => onAccountSelected(acct)} // 傳回值：選取的帳號。
+          moreActions={[
+            { lable: '編輯', type: 'edit', onClick: () => editAccount(acct) },
+            { lable: '刪除', type: 'delete', onClick: () => removeAccount(acct) },
+          ]}
+        />
+      );
+    });
   };
 
   /**

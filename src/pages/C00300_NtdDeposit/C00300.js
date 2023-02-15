@@ -132,12 +132,11 @@ const C00300 = () => {
     if (!selectedAccount) return null;
 
     const { accountNo, bonus, acctType } = selectedAccount;
-    // NOTE bonus.freeTransferRemain === 0 時會觸發 loadExtraInfo function
-    // if (!bonus || !bonus.freeTransferRemain) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
+
     if (!bonus) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
 
-    const { freeWithdrawRemain, freeTransferRemain, bonusQuota, bonusRate } = bonus ?? {
-      freeWithdrawRemain: null, freeTransferRemain: null, bonusQuota: null, bonusRate: null, // 預設值
+    const { freeWithdrawRemain, freeTransferRemain, bonusQuota, rate, interest } = bonus ?? {
+      freeWithdrawRemain: null, freeTransferRemain: null, bonusQuota: null, rate: null, interest: null, // 預設值
     };
 
     // 優存(利率/利息)資訊
@@ -145,16 +144,17 @@ const C00300 = () => {
     let col2Value;
     if (showRate) {
       col2Title = '目前利率';
-      col2Value = bonusRate ? `${bonusRate * 100}%` : '-';
+      col2Value = rate ? `${rate * 100}%` : '-';
     } else {
       col2Title = '累積利息';
-      if (selectedAccount.interest === undefined) {
+      if (interest === undefined) {
         getInterest(accountNo).then((apiRs) => {
-          selectedAccount.interest = apiRs.interest;
+          selectedAccount.bonus.interest = apiRs.interest;
+          selectedAccount.bonus.rate = apiRs.rate;
           forceUpdate();
         });
       }
-      col2Value = (selectedAccount.interest > 0) ? `${currencySymbolGenerator('NTD', selectedAccount.interest)}` : '0';
+      col2Value = (interest > 0) ? `${currencySymbolGenerator('NTD', interest)}` : '0';
     }
 
     const panelContent = [
@@ -223,7 +223,6 @@ const C00300 = () => {
    */
   const handleFunctionClick = async (funcCode) => {
     let params = null;
-
     const keepData = { defaultAccount: selectedAccount.accountNo, showRate };
     switch (funcCode) {
       case 'moreTranscations': // 更多明細
