@@ -1,6 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
 import { useState, useEffect } from 'react';
-import { toCurrency, dateToString, handleLoanTypeToTitle } from 'utilities/Generator';
+import { toCurrency, dateToString } from 'utilities/Generator';
 import { loadFuncParams } from 'hooks/useNavigation';
 
 /* Elements */
@@ -26,7 +26,7 @@ const L003001 = () => {
         <div className="cardArea">
           <DebitCard
             branch=""
-            cardName={handleLoanTypeToTitle(model.singleHistoryData?.type)}
+            cardName={model.cardData?.loanType || '信用貸款'}
             account={`${model.cardData?.account || ''} ${model.cardData?.subNo || ''}`}
             balance={toCurrency(model.cardData?.balance || '')}
             dollarSign={model.cardData?.currency || ''}

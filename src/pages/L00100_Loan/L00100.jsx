@@ -175,7 +175,7 @@ const Page = () => {
     if (!detail.length) return <EmptyData height="30vh" />;
 
     // transactions 依照日期排序（大 -> 小）
-    const sortedTransactions = detail.sort((a, b) => parseInt(b.txnDate, 10) - parseInt(a.txnDate, 10));
+    const sortedTransactions = detail.sort((a, b) => parseInt(b.date, 10) - parseInt(a.date, 10));
 
     // TODO: 計算顯示明細數量方法寫成公用方法
 
@@ -194,13 +194,13 @@ const Page = () => {
       <button
         key={`${uid}-t${i}`}
         type="button"
-        aria-label={`點擊查詢此筆紀錄，還款日:${dateToString(t.txnDate)}，金額：${currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}`}
+        aria-label={`點擊查詢此筆紀錄，還款日:${dateToString(t.date)}，金額：${currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}`}
         onClick={() => handleSingleTransaction(i, detail, loan)}
         style={{ width: '100%' }}
       >
         <InformationTape
           topLeft={handleLoanTypeToTitle(t.type)}
-          bottomLeft={dateToString(t.txnDate)}
+          bottomLeft={dateToString(t.date)}
           topRight={currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}
           bottomRight={`貸款餘額 ${currencySymbolGenerator(t.currency ?? 'NTD', t.balance)}`}
         />
