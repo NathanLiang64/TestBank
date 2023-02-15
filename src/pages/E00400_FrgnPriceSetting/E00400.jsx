@@ -12,6 +12,7 @@ import { AddIcon } from 'assets/images/icons';
 import EmptyData from 'components/EmptyData';
 import uuid from 'react-uuid';
 // import {  updateFrequentAccount,  deleteFrequentAccount,} from './api';
+import { getCurrenyInfo } from 'utilities/Generator';
 import AccountEditor from './E00400_PriceEditor';
 import PageWrapper from './E00400.style';
 import { getExchangeRateInfo } from './api';
@@ -23,16 +24,16 @@ const Page = () => {
   const dispatch = useDispatch();
   const [notiLists, setNotiLists] = useState();
   const [exRateList, setExRateList] = useState([]);
-  // const currencyOptions = useMemo(()=>{
-  //   if(!exRateList.length) return [];
-  //   return exRateList.map(item=>{
-  //     findCurren
-  //     return {label:}
-  //   })
-  // },[exRateList.length])
+  const currencyOptions = useMemo(() => {
+    if (!exRateList.length) return [];
+    return exRateList.map((item) => {
+      const {code, name} = getCurrenyInfo(item.ccycd);
+      return {label: `${name} ${code}`, value: code};
+    });
+  }, [exRateList.length]);
+
   useEffect(async () => {
-    // TODO 取得已設定的通知列表
-    console.log('取得已設定的通知列表');
+    console.log('TODO 取得已設定的通知列表');// TODO 取得已設定的通知列表
     getExchangeRateInfo().then((res) => setExRateList(res));
   }, []);
 
@@ -41,31 +42,27 @@ const Page = () => {
    */
   const addnewAccount = async () => {
     const onFinished = () => {
-      console.log('hi');
+      console.log('TODO 新增到價通知 API'); // TODO 新增到價通知 API
     };
 
     await showCustomDrawer({
       title: '新增外幣到價通知',
-      content: <AccountEditor onFinished={onFinished} />,
+      content: <AccountEditor onFinished={onFinished} currencyOptions={currencyOptions} />,
       noScrollable: true,
     });
   };
 
   const editAccount = async (noti) => {
     const onFinished = async (newNoti) => {
-      dispatch(setWaittingVisible(true));
-      console.log('newNoti', newNoti);
-      // TODO 更新到價設定 API updateNoti(newNoti)
-      dispatch(setWaittingVisible(false));
-      // if (newAccounts) {
-      //   setNotiLists(newAccounts);
-      //   forceUpdate();
-      // }
+      // dispatch(setWaittingVisible(true));
+      // TODO 更新到價設定
+      // dispatch(setWaittingVisible(false));
+
     };
 
     await showCustomDrawer({
       title: '編輯外幣到價通知',
-      content: <AccountEditor initData={noti} onFinished={onFinished} />,
+      content: <AccountEditor initData={noti} onFinished={onFinished} currencyOptions={currencyOptions} />,
       noScrollable: true,
     });
   };
@@ -75,9 +72,7 @@ const Page = () => {
    */
   const removeAccount = async (noti) => {
     const onRemoveConfirm = () => {
-      // TODO 刪除到價設定 API deleteNoti(noti)
-      // setNotiLists(newNotiLists);
-      console.log('hi');
+      console.log('TODO 刪除到價設定 API'); // TODO 刪除到價設定 API
     };
 
     await showCustomPrompt({

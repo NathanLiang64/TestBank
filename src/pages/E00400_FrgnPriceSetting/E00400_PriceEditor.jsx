@@ -22,6 +22,7 @@ import { DrawerWrapper } from './E00400.style';
  */
 function AccountEditor({
   initData, // 有預設 acctId 時，會直接開在第二頁，而且不能回到第一頁！
+  currencyOptions,
   onFinished,
 }) {
   /**
@@ -59,7 +60,7 @@ function AccountEditor({
           labelName="幣別"
           name="currency"
           control={control}
-          options={[]}
+          options={currencyOptions}
         />
 
         <RadioGroupField
