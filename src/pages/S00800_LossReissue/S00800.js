@@ -77,9 +77,7 @@ const LossReissue = () => {
 
   // 執行掛失或補發
   const executeAction = async () => {
-    // dispatch(setWaittingVisible(true));
     const auth = await transactionAuth(Func.S008.authCode);
-    // dispatch(setWaittingVisible(false));
 
     if (auth && auth.result) {
       dispatch(setWaittingVisible(true));

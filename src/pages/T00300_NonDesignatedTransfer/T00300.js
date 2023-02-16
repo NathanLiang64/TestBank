@@ -33,7 +33,7 @@ const T00300 = () => {
 
   const authAndChangeStatus = async (authCode, newMobile) => {
     const transRes = await transactionAuth(authCode, newMobile);
-    if (transRes.result === true) {
+    if (transRes.result) {
       const newStatus = await changeStatus(newMobile);
       if (newStatus) {
         model.status = newStatus;
@@ -91,10 +91,6 @@ const T00300 = () => {
    * 切換綁定狀態。
    */
   const handleSwitchOnTrigger = async () => {
-    // ??? For UX 因素，使用者可能會想要看到 switch 切換的過程
-    // 後續可改為 disabling switch 避免 double click，待討論
-    // 這邊先暫時以 loading 方式來避免 double click
-    dispatch(setWaittingVisible(true));
     if (QLResult) { // 點擊switch時檢查裝置綁定
       if (!isBound) {
         // 開通 or 申請+開通流程
@@ -107,7 +103,6 @@ const T00300 = () => {
       }
       setModel({...model}); // 更新畫面。
     } else showUnbondedMsg();
-    dispatch(setWaittingVisible(false));
   };
 
   /**

@@ -78,7 +78,7 @@ const ReserveTransferSearch1 = ({ location }) => {
   const {reserveData, selectedAccount} = location.state;
 
   return (
-    <Layout title="取消預約轉帳" goBackFunc={goBack}>
+    <Layout title="取消預約轉帳" fid={Func.D008} goBackFunc={goBack}>
       <ReserveTransferSearchWrapper>
         {!!cancelResult && (
           <SuccessFailureAnimations

@@ -69,7 +69,7 @@ const T006002 = ({ location }) => {
     event.preventDefault();
     // 透過 APP 發送及驗證 OTP，並傳回結果。
     const result = await transactionAuth(Func.T006.authCode, confirmData.mobile);
-    if (result?.result) {
+    if (result.result) {
       dispatch(setWaittingVisible(true));
       const { account, isDefault } = confirmData;
       // 新增設定
@@ -96,7 +96,7 @@ const T006002 = ({ location }) => {
   const goBack = () => history.goBack();
 
   return (
-    <Layout title="資料確認" goBackFunc={goBack}>
+    <Layout title="資料確認" fid={Func.T006} goBackFunc={goBack}>
       <MobileTransferWrapper>
         <form>
           <div className={`confirmDataContainer lighterBlueLine ${isModifyConfirmPage && 'modifyConfirmPage'}`}>

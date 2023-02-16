@@ -173,7 +173,7 @@ const DepositPlanDetailPage = () => {
   };
 
   return (
-    <Layout title={renderTitle()} goBackFunc={() => history.goBack()}>
+    <Layout title={renderTitle()} fid={Func.C006} goBackFunc={() => history.goBack()}>
       <MainScrollWrapper ref={mainRef}>
         <DetailPageWrapper>
           { mode > 0 && (

@@ -172,7 +172,7 @@ const C00300 = () => {
       },
       {
         label: '優惠利率額度',
-        value: `${switchZhNumber(bonusQuota, false)}`,
+        value: acctType === 'M' ? `${switchZhNumber(bonusQuota, false)}` : 0,
         iconType: acctType === 'M' ? 'Arrow' : undefined,
         onClick: acctType === 'M' ? () => handleFunctionClick('depositPlus') : undefined,
       },

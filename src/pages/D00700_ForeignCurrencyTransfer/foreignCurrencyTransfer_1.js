@@ -24,7 +24,7 @@ const ForeignCurrencyTransfer1 = ({ location }) => {
   // 確認進行轉帳
   const applyTransfer = async () => {
     const rs = await transactionAuth(Func.D007.authCode);
-    if (rs?.result) {
+    if (rs.result) {
       dispatch(setWaittingVisible(true));
       const response = await createTransfer(confirmData);
       dispatch(setWaittingVisible(false));
@@ -48,7 +48,7 @@ const ForeignCurrencyTransfer1 = ({ location }) => {
   }, []);
 
   return (
-    <Layout title="外幣轉帳確認" goBackFunc={() => history.goBack()}>
+    <Layout title="外幣轉帳確認" fid={Func.D007} goBackFunc={() => history.goBack()}>
       <ForeignCurrencyTransferWrapper className="confirmAndResult">
         <div className="confrimDataContainer lighterBlueLine">
           <div className="dataLabel">轉出金額與轉入帳號</div>

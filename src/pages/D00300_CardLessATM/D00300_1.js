@@ -81,17 +81,16 @@ const CardLessATM1 = () => {
       setAccountSummary({
         ...accountSummary,
         account: acct.accountNo,
-        balance: acct.balance,
+        balance: acct.details[0].balance,
       });
 
       // 跨轉優惠資訊取回後再更新。
       getAccountBonus(acct.accountNo, (extraInfo) => {
-        setAccountSummary({
-          account: acct.accountNo,
-          balance: acct.balance,
+        setAccountSummary((prevSummary) => ({
+          ...prevSummary,
           wdTimes: extraInfo.freeWithdraw,
           wdRemain: extraInfo.freeWithdrawRemain,
-        });
+        }));
       });
 
       reset((formValues) => ({...formValues, account: acct.accountNo}));
@@ -100,7 +99,7 @@ const CardLessATM1 = () => {
   }, []);
 
   return (
-    <Layout title="無卡提款">
+    <Layout fid={Func.D003} title="無卡提款">
       <CardLessATMWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>

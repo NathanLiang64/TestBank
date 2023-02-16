@@ -52,7 +52,7 @@ const TransferConfirm = (props) => {
    * 執行轉帳程序，包含進行交易驗證。
    */
   const onConfirm = async () => {
-    const { transOut, transIn } = model;
+    const { transOut } = model;
     const request = {
       transOut: transOut.account,
       transIn: { // 不需要額外指出是否為約定轉號，由 Controller 判斷，並傳回。
@@ -77,7 +77,8 @@ const TransferConfirm = (props) => {
           bankName: transInData.bankName,
           accountNo: transInData.account,
         };
-      } else transIn.type = (transIn.freqAcct ? 1 : 0);
+      }
+      // else transIn.type = (transIn.freqAcct ? 1 : 0); // Bug 原 code ，會造成顯示異常，待觀察
 
       // 進行交易驗證，要求使用者輸入OTP、密碼、雙因子...等。
       const authCode = (response.isAgreedTxn) ? Func.D001.authCode.REG : Func.D001.authCode.NONREG;

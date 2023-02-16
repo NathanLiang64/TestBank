@@ -38,6 +38,7 @@ const CardLessATM = () => {
     if (result) {
       dispatch(setWaittingVisible(true));
       const activateRes = await activate(param);
+      dispatch(setWaittingVisible(false));
 
       // 開通狀態顯示
       showAnimationModal({
@@ -47,7 +48,6 @@ const CardLessATM = () => {
         errorDesc: '設定失敗',
         onClose: () => history.goBack(),
       });
-      dispatch(setWaittingVisible(false));
     }
   };
 
@@ -96,7 +96,7 @@ const CardLessATM = () => {
   );
 
   return (
-    <Layout title="無卡提款設定" goBackFunc={() => history.goBack()}>
+    <Layout fid={Func.T004} title="無卡提款設定" goBackFunc={() => history.goBack()}>
       <CardLessSettingWrapper>{renderPage()}</CardLessSettingWrapper>
     </Layout>
   );

@@ -46,7 +46,7 @@ export const RadioGroupField = ({
             key={value}
             control={<FEIBRadio style={radioStyle} disabled={disabled} />}
             label={label}
-            value={value} // {value.toString()} // 不應限制必需為字串
+            value={value} // {value.toString()} // 不應限制必需為字串 (value 若是數字，選項會無法被選取)
           />
         ))}
       </RadioGroup>

@@ -94,9 +94,9 @@ const R00200_3 = () => {
     // if (state?.readOnly) history.goBack();
     if (state?.readOnly) closeFunc();
     else {
-      const auth = await transactionAuth(Func.R00200.authCode);
+      const {result} = await transactionAuth(Func.R00200.authCode);
 
-      if (auth && auth.result) {
+      if (result) {
         dispatch(setWaittingVisible(true));
         const updateResult = await updateInstallment(state.param); // 回傳資料待確認
         dispatch(setWaittingVisible(false));
@@ -127,7 +127,7 @@ const R00200_3 = () => {
   useEffect(() => { calculateInstallment(); }, []);
 
   return (
-    <Layout title="晚點付 (總額)">
+    <Layout title="晚點付 (總額)" fid={Func.R002}>
       <InstalmentWrapper className="InstalmentWrapper ConfirmResultPage" small>
         {!state.readOnly || !isConfirmed ? (
           <div className="InstalmentWrapperText">

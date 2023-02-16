@@ -96,15 +96,10 @@ const DepositPlanPage = () => {
 
   const handleTerminatePlan = (plan) => {
     const confirmTermination = async () => {
-      const {result, message} = await transactionAuth(Func.C006.authCode); // 需通過 2FA 或 網銀密碼 驗證才能關閉計劃。
-      if (!result) {
-        await showError(message);
-        return;
-      }
+      const {result} = await transactionAuth(Func.C006.authCode); // 需通過 2FA 或 網銀密碼 驗證才能關閉計劃。
+      if (!result) return;
 
-      const response = await closeDepositPlan({
-        planId: plan.planId,
-      });
+      const response = await closeDepositPlan({ planId: plan.planId });
       if ('email' in response) {
         ConfirmDepositPlanHasBeenClosed({ email: response.email, onOk: () => goHome() });
       } else {
