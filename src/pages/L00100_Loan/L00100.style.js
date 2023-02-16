@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const PageWrapper = styled.div`
-  padding-top: 5.4rem;
+  padding-top: 5.2rem;
 
   .toolbar {
     width: fit-content;
@@ -16,6 +16,31 @@ const PageWrapper = styled.div`
     font-size: 1.4rem;
     width: fit-content;
   }
+
+  // 卡片外層
+  & div.swiper-slide > div:first-child {
+    min-height: 151.66px;
+    padding: 1.2rem;
+    margin-bottom: .2rem;
+  }
+
+  // 卡號
+  & div.swiper-slide > div > div.justify-between.items-start > div > div:nth-child(2) {
+    font-size: 1.5rem;
+    color: #666;
+  }
+
+  // 右下快捷列
+  & div.swiper-slide > div > div.justify-end.gap-6.mt-4.divider {
+    margin-top: auto;
+    margin-bottom: 2px;
+  }
+  
+  // 右下快捷按鈕
+  & div.swiper-slide > div > div.justify-end.gap-6.mt-4.divider > button {
+    color: #042C5C;
+    font-weight: 300;
+  }
 `;
 
 const ContentWrapper = styled.div`
@@ -24,10 +49,9 @@ const ContentWrapper = styled.div`
   flex-direction: column;
   padding-inline: 1.6rem;
   padding-bottom: 6rem;
-  margin-top: 2.5rem;
 
   .panel {
-    padding-top: .5rem;
+    padding-top: .8rem;
     padding-bottom: 1.6rem;
   }
 `;
