@@ -103,13 +103,13 @@ const LoanInterest = () => {
 
     const renderEditList = (
       <ul className="noticeEditList downloadItemList">
-        <li onClick={() => handleDownloadDetails(1)}>
+        <li onClick={() => handleDownloadDetails(0)}>
           <span>
             下載 PDF
           </span>
           <img className="downloadImg" src={DownloadIcon} alt="" />
         </li>
-        <li onClick={() => handleDownloadDetails(2)}>
+        <li onClick={() => handleDownloadDetails(1)}>
           <span>
             下載 EXCEL
           </span>

@@ -49,14 +49,7 @@ export const getSubPaymentHistory = async (param) => {
  * "下載繳款紀錄Excel": /loan/v1/downloadPaymentHistory.xlsx
 */
 export const downloadPaymentHistory = async ({ param, fileType }) => {
-  const downloadUrl = '/loan/v1/downloadPaymentHistory';
-
-  const FILE_TYPE_CONFIG = {
-    1: 'pdf',
-    2: 'excel',
-  };
-
-  param = { ...param, fileType: FILE_TYPE_CONFIG[fileType] };
-
+  const downloadUrl = '/loan/v1/getPaymentHistory';
+  param = { ...param, fileType };
   await download(downloadUrl, param);
 };

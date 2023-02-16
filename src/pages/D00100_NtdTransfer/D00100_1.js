@@ -136,7 +136,7 @@ const TransferConfirm = (props) => {
             ...account.bonus,
             freeTransferRemain: model.transOut.freeTransferRemain, // 更新 跨轉優惠次數
             dLimitLeft: account.bonus.dLimitLeft -= isAgreedTxn ? 0 : model.amount, // 更新 非約轉當日額度
-            mLimitLeft: account.bonus.dLimitLeft -= isAgreedTxn ? 0 : model.amount, // 更新 非約轉當月額度
+            mLimitLeft: account.bonus.mLimitLeft -= isAgreedTxn ? 0 : model.amount, // 更新 非約轉當月額度
             agrdTfrSelfLimitLeft: account.bonus.agrdTfrSelfLimitLeft -= (isAgreedTxn && transInData.bank === '805') ? model.amount : 0, // 更新 約轉自行當日額度
             agrdTfrInterLimitLeft: account.bonus.agrdTfrInterLimitLeft -= isAgreedTxn && transInData.bank !== '805' ? model.amount : 0, // 更新 約轉跨行當日額度
           },
