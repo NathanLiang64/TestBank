@@ -24,6 +24,7 @@ const ContentWrapper = styled.div`
   flex-direction: column;
   padding-inline: 1.6rem;
   padding-bottom: 6rem;
+  margin-top: 2.5rem;
 
   .panel {
     padding-top: .5rem;
