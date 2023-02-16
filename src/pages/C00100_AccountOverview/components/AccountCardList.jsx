@@ -38,7 +38,8 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
   const mainList = data.filter((account) => account.type === 'M');
 
   // 子帳戶，且 只有『存錢計畫』
-  const subAccounts = data.filter((account) => account.type === 'C' && account.purpose === 2);
+  // const subAccounts = data.filter((account) => account.type === 'C' && account.purpose === 2);
+  const subAccounts = [];
   if (subAccounts.length > 0) {
     mainList.push({
       type: 'C',
@@ -104,7 +105,7 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
 
   /**
    * 主陣列依金額從大到小排序，若金額相同且非同種卡片，排序依照：
-   * 正：臺幣>外幣>證券>子帳號
+   * 正：臺幣>證券>外幣
    * 負：信用卡>貸款
    */
   // 檢查mainList中有無所有需要的type，無則加入
@@ -138,7 +139,10 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
       return necessaryType.indexOf(a.type) - necessaryType.indexOf(b.type);
     }
     // 依照大小排序
-    return b.balance - a.balance;
+    // return b.balance - a.balance;
+    // 依照設定排序
+    const sortConfig = ['M', 'S', 'F', 'CC', 'L'];
+    return sortConfig.indexOf(a.type) - sortConfig.indexOf(b.type);
   });
 
   // 產生下拉選單(子帳戶／外幣帳戶／貸款 / 證券)
@@ -223,13 +227,13 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
 
         switch (account.type) {
           case 'M': // 母帳戶
-            cardName = '臺幣主帳戶';
+            cardName = '臺幣帳戶';
             funcID = Func.C003.id;
             break;
           case 'F': // 外幣帳戶 數量為1時不開drawer
             cardName = '外幣帳戶';
             funcID = Func.C004.id;
-            onClick = () => (account.isEmpty || foreignAccounts.length === 1 ? startFunc(funcID) : showDrawer('選擇帳戶', renderSubAccountDrawer(foreignAccounts, funcID)));
+            onClick = () => (startFunc(funcID));
             break;
           case 'S': // 證券戶 數量為1時不開drawer
             cardName = '證券交割戶';
