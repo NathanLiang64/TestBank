@@ -1,12 +1,36 @@
 import styled from 'styled-components';
 
 export const SwiperCreditCard = styled.div`
-  padding-top: 5.4rem;
+  padding-top: 5.2rem;
+
+  // 卡片外層
+  & > div {
+    min-height: 151.66px;
+    padding: 1.2rem;
+    margin-bottom: .2rem;
+  }
+
+  // 卡號
+  & > div > p {
+    font-size: 1.5rem;
+    color: #666;
+  }
+
+  // 右下快捷列
+  & > div > div.w-full {
+    margin-top: auto;
+  }
+
+  // 右下快捷按鈕
+  & > div > div.w-full > ul > li > button {
+    color: #042C5C;
+    font-weight: 300;
+  }
 `;
 
 export const DetailDialogContentWrapper = styled.div`
   .panel {
-    padding-top: .5rem;
+    padding-top: .8rem;
     padding-bottom: 1.6rem;
   }
 `;

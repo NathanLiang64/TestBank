@@ -61,7 +61,7 @@ const AccountOverviewPage = () => {
     const slides = [];
 
     if (data?.assets?.assetItems && data?.assets?.assetItems.length > 0) {
-      slides.push(<AccountCardList key={uuid()} data={data.assets.assetItems} isDebt={false} necessaryType={['M', 'F', 'S', 'C']} />);
+      slides.push(<AccountCardList key={uuid()} data={data.assets.assetItems} isDebt={false} necessaryType={['M', 'S', 'F']} />);
     }
 
     if (data?.debts && data.debts.length > 0) {
