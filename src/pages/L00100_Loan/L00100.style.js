@@ -24,10 +24,23 @@ const PageWrapper = styled.div`
     margin-bottom: .2rem;
   }
 
+  // 卡片名稱
+  & div.swiper-slide > div > div.justify-between.items-start > div > div:nth-child(1) {
+    height: 24px;
+  }
+
   // 卡號
   & div.swiper-slide > div > div.justify-between.items-start > div > div:nth-child(2) {
     font-size: 1.5rem;
     color: #666;
+    height: 24px;
+    line-height: 30px;
+  }
+
+  // 餘額
+  & div.swiper-slide .balance {
+    height: 42px;
+    line-height: 46px;
   }
 
   // 右下快捷列

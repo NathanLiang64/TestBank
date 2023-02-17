@@ -10,10 +10,28 @@ export const SwiperCreditCard = styled.div`
     margin-bottom: .2rem;
   }
 
+  // 卡片名稱
+  & > div > div:first-child {
+    height: 24px;
+  }
+
+  // 卡片更多
+  & div.moreIconButton {
+    top: -5px;
+  }
+
   // 卡號
   & > div > p {
     font-size: 1.5rem;
     color: #666;
+    height: 24px;
+    line-height: 30px;
+  }
+
+  // 卡片餘額
+  & > div > div.justify-between.items-center {
+    height: 42px;
+    line-height: 46px;
   }
 
   // 右下快捷列
