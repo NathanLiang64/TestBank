@@ -1,7 +1,8 @@
 import store from 'stores/store';
 import { getBankCode } from 'utilities/CacheData';
 import { callAPI } from 'utilities/axios';
-import { setAgreAccts } from 'stores/reducers/CacheReducer';
+import { setAgreAccts, setFreqAccts } from 'stores/reducers/CacheReducer';
+import { showPrompt } from 'utilities/MessageModal';
 import { isDifferentAccount } from './util';
 
 /**
@@ -127,4 +128,74 @@ export const checkIsAgreedAccount = async (accountNo, transIn) => {
 export const getSettingInfo = async () => {
   const response = await callAPI('/deposit/transfer/nonAgreed/v1/getSettingInfo');
   return response.data;
+};
+
+/**
+ * 查詢用戶自設的常用轉入帳號清單。
+ * @returns {Promise<[{
+ *   bankId: '常用轉入帳戶-銀行代碼'
+ *   acctId: '常用轉入帳戶-帳號'
+ *   bankName: '銀行名稱'
+ *   nickName: '暱稱'
+ *   email: '通知EMAIL'
+ *   headshot: '代表圖檔的UUID，用來顯示大頭貼；若為 null 表示還沒有設定頭像。'
+ * }]>} 常用轉入帳號清單。
+ */
+export const getFrequentAccount = async () => {
+  let {freqAccts} = store.getState()?.CacheReducer;
+  if (!freqAccts) {
+    const response = await callAPI('/deposit/transfer/frequentAccount/v1/getAll');
+    freqAccts = response.data;
+    store.dispatch(setFreqAccts(freqAccts));
+  }
+  return freqAccts;
+};
+
+/**
+ * 新增常用轉入帳號。
+ * @param {{
+ *   bankId: '常用轉入帳戶-銀行代碼'
+ *   acctId: '常用轉入帳戶-帳號'
+ *   nickName: '新暱稱；可為空值'
+ *   email: '新通知EMAIL；可為空值'
+ *   headshot: '代表圖檔的內容，使用 Base64 格式；若為 null 表示還沒有設定頭像。'
+ * }} account
+ * @returns {Promise<[{
+ *   bankId: '常用轉入帳戶-銀行代碼'
+ *   acctId: '常用轉入帳戶-帳號'
+ *   bankName: '銀行名稱'
+ *   nickName: '暱稱'
+ *   email: '通知EMAIL'
+ *   headshot: '代表圖檔的UUID，用來顯示大頭貼；若為 null 表示還沒有設定頭像。'
+ * }]} 傳回刪除指定項目後的清單。
+ */
+export const addFrequentAccount = async (account) => {
+  /**
+   * NOTE : 改透過 getFrequentAccount 取得常用帳號清單 (若已經拿過清單，資料會從 redux 取得，若無則打 API 並回傳)
+   * 若直接透過 CacheReducer 拿取清單的話，在轉帳完成要新增常用帳號的情境下(D00100_2)，freqAccts 可能會是空值
+   */
+  // const {freqAccts} = store.getState()?.CacheReducer;
+  const freqAccts = await getFrequentAccount();
+  // 先檢查要加入的帳號是否已經存在於 freqAccts 內
+
+  const existedAcct = freqAccts.find(({ bankId, acctId }) => bankId === account.bankId && (acctId.padStart(16, '0') === account.acctId.padStart(16, '0')));
+  if (existedAcct) {
+    await showPrompt('此帳號資料已存在');
+    return null;
+  }
+  const response = await callAPI('/deposit/transfer/frequentAccount/v1/add', account);
+  // 如果新增失敗，則回傳原來的 freqAccts
+  if (!response.isSuccess) return freqAccts;
+  const headshotId = response.data;
+
+  // 將新帳號加入快取。
+  const newAccount = {
+    ...account,
+    headshot: headshotId,
+    isNew: true,
+  };
+  freqAccts.splice(0, 0, newAccount); // 插入到第一筆。
+  store.dispatch(setFreqAccts(freqAccts));
+
+  return freqAccts;
 };

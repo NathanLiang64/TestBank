@@ -50,8 +50,9 @@ export const addFrequentAccount = async (account) => {
   // const {freqAccts} = store.getState()?.CacheReducer;
   const freqAccts = await getFrequentAccount();
   // 先檢查要加入的帳號是否已經存在於 freqAccts 內
+
   const existedAcct = freqAccts.find(
-    ({ bankId, acctId }) => bankId === account.bankId && acctId === account.acctId,
+    ({ bankId, acctId }) => bankId === account.bankId && (acctId.padStart(16, '0') === account.acctId.padStart(16, '0')),
   );
   if (existedAcct) {
     await showPrompt('此帳號資料已存在');

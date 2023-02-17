@@ -38,10 +38,10 @@ export const PromptShouldCloseDepositPlanOrNot = ({ endDate, onOk, type }) => {
     message: (
       <p style={{ textAlign: 'left' }}>
         您確定要
-        {isAheadOfTime && '提早'}
+        {!!isAheadOfTime && '提早'}
         結束本計畫?
         <br />
-        {isAheadOfTime && type && '提前結束計畫將無法獲加碼獎勵'}
+        {!!isAheadOfTime && !!type && '提前結束計畫將無法獲得加碼獎勵'}
         <br />
         本計畫帳上餘額將撥入主帳戶
       </p>

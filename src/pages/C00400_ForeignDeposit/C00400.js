@@ -1,5 +1,5 @@
-/* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-vars */
+/* eslint-disable no-nested-ternary */
 /* eslint-disable no-use-before-define */
 /* eslint-disable object-curly-newline */
 import { useEffect, useState, useReducer } from 'react';
@@ -15,13 +15,12 @@ import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { customPopup, showPrompt } from 'utilities/MessageModal';
-import { getAccountsList, getAccountBonus, updateAccount, cleanupAccount } from 'utilities/CacheData';
+import { customPopup } from 'utilities/MessageModal';
+import { getAccountsList, updateAccount, cleanupAccount, getAccountInterest } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import {
   getExchangeRateInfo,
-  getInterest,
   getTransactions,
   setAccountAlias,
   setMainCurrency,
@@ -58,11 +57,7 @@ const C00400 = () => {
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
     getAccountsList('F', async (accts) => { // M=臺幣主帳戶、C=臺幣子帳戶
-      const flattenAccts = accts.map((account) => (account.details.map((detail) => {
-        const acct = { ...account, ...detail};
-        delete acct.details;
-        return acct;
-      }))).flat();
+      const flattenAccts = accts.map((account) => (account.details.map((detail) => ({ ...account, ...detail})))).flat();
       console.log('flattenAccts', flattenAccts);
       setAccounts(flattenAccts);
       await processStartParams(flattenAccts);
@@ -93,7 +88,7 @@ const C00400 = () => {
 
       // 只要是重新登入，而不是從呼叫的功能返回（例：轉帳），就清掉交易明細快取。
       accts.forEach((acc) => {
-        delete acc.isLoadingTxn; // 可能因為在載入中就關閉功能，而導致此旗標未被清除。
+        // delete acc.isLoadingTxn; // 可能因為在載入中就關閉功能，而導致此旗標未被清除。但會有 Bug (race condition)，導致重複拿取交易紀錄
         delete acc.txnDetails;
       });
       forceUpdate(); // 因為在執行此方法前，已經先 setAccounts 輸出到畫面上了，所以需要再刷一次畫面。
@@ -101,39 +96,35 @@ const C00400 = () => {
   };
 
   /**
-     * 下載 優存(利率/利息)資訊
-     */
-  const loadExtraInfo = async (account) => {
-    if (!account.bonus || !account.bonus.loading) {
-      account.bonus = { loading: true };
-      getAccountBonus(account.accountNo, (info) => {
-        account.bonus = info;
-        forceUpdate();
-        delete account.bonus.loading;
-      });
-    }
-  };
+   * 下載利率/利息資訊
+   */
+  // const loadInterest = async (account, index) => {
+  //   if (!account.details[index].loading) {
+  //     const { accountNo, currency} = account;
+  //     account.details[index].loading = true;
+  //     getAccountInterest({accountNo, currency}, (newDetail) => {
+  //       account.details[index] = newDetail;
+  //       forceUpdate();
+  //     });
+  //   }
+  // };
+
   /**
    * 顯示 優存(利率/利息)資訊
    */
   const renderBonusInfoPanel = () => {
     if (!selectedAccount) return null;
-    const { bonus, accountNo, currency, interest } = selectedAccount;
-
-    if (!bonus) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
+    const { currency, details } = selectedAccount;
 
     const exRateItem = exRateList?.find(({ccycd}) => currency === ccycd);
     const brate = exRateItem?.brate ?? '-';
     const srate = exRateItem?.srate ?? '-';
-    // if (selectedAccount.interest === undefined) {
-    //   getInterest(accountNo, currency).then((apiRs) => {
-    //     selectedAccount.interest = apiRs.interest;
-    //     forceUpdate();
-    //   });
-    // }
-    // console.log('selectedAccount', selectedAccount);
-    // TODO 取得 參考買價、參考賣價、優惠利率、優惠利率額度(暫時固定顯示0) TODO 缺：參考買價、參考賣價
-    const { bonusRate, bonusQuota } = bonus ?? { bonusRate: null }; // 若尚未有 bonus，先以預設值替代
+
+    const dtlIndex = details.findIndex((dtl) => dtl.currency === currency);
+
+    // TODO API 尚未可接受外幣幣別，待修復
+    // if (details[dtlIndex] && !('interest' in details[dtlIndex])) loadInterest(selectedAccount, dtlIndex); // 下載 利率/利息資訊
+    const { interest = '-', rate = '-' } = details[dtlIndex] ?? {};
 
     const panelContent = [
       {
@@ -144,7 +135,7 @@ const C00400 = () => {
       },
       {
         label: showRate ? '目前利率' : '累積利息',
-        value: showRate ? (bonusRate ? `${bonusRate * 100}%` : '-') : 'sumRate',
+        value: showRate ? rate : interest,
         iconType: 'switch',
         onClick: () => setShowRate(!showRate),
       },
@@ -164,21 +155,19 @@ const C00400 = () => {
    */
   const loadTransactions = (account) => {
     const { txnDetails } = account;
-    if (!account.isLoadingTxn) {
-      if (!txnDetails) {
-        account.isLoadingTxn = true; // 避免因為非同步執行造成的重覆下載
-        // 取得帳戶交易明細（三年內的前25筆即可）
-        getTransactions(account.accountNo, account.currency).then((transData) => {
-          const details = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
-          account.txnDetails = details;
+    if (!account.isLoadingTxn && !txnDetails) {
+      account.isLoadingTxn = true; // 避免因為非同步執行造成的重覆下載
+      // 取得帳戶交易明細（三年內的前25筆即可）
+      getTransactions(account.accountNo, account.currency).then((transData) => {
+        const details = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
+        account.txnDetails = details;
 
-          // 更新餘額。
-          if (transData.acctTxDtls.length > 0) account.balance = details[0].balance;
+        // 更新餘額。
+        if (transData.acctTxDtls.length > 0) account.balance = details[0].balance;
 
-          delete account.isLoadingTxn; // 載入完成才能清掉旗標！
-          forceUpdate();
-        });
-      }
+        delete account.isLoadingTxn; // 載入完成才能清掉旗標！
+        forceUpdate();
+      });
     }
     return txnDetails;
   };

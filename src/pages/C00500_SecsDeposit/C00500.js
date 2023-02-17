@@ -16,7 +16,7 @@ import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup, showPrompt } from 'utilities/MessageModal';
-import { getAccountsList, getAccountBonus, updateAccount, cleanupAccount } from 'utilities/CacheData';
+import { getAccountsList, getAccountBonus, updateAccount, cleanupAccount, getAccountInterest } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import { getTransactions, setAccountAlias } from './api';
@@ -76,7 +76,7 @@ const C00500 = () => {
 
       // 只要是重新登入，而不是從呼叫的功能返回（例：轉帳），就清掉交易明細快取。
       accts.forEach((acc) => {
-        delete acc.isLoadingTxn; // 可能因為在載入中就關閉功能，而導致此旗標未被清除。
+        // delete acc.isLoadingTxn; // 可能因為在載入中就關閉功能，而導致此旗標未被清除。但會有 Bug (race condition)，導致重複拿取交易紀錄
         delete acc.txnDetails;
       });
       forceUpdate(); // 因為在執行此方法前，已經先 setAccounts 輸出到畫面上了，所以需要再刷一次畫面。
@@ -96,23 +96,43 @@ const C00500 = () => {
       });
     }
   };
+
+  /**
+   * 下載利率/利息資訊
+   */
+  const loadInterest = async (account, index) => {
+    if (!account.details[index].loading) {
+      const { accountNo, currency } = account;
+      account.details[index].loading = true;
+      getAccountInterest({ accountNo, currency }, (newDetail) => {
+        account.details[index] = newDetail;
+        forceUpdate();
+      });
+    }
+  };
+
   /**
    * 顯示 優存資訊
    */
   const renderBonusInfoPanel = () => {
     if (!selectedAccount) return null;
-    const { bonus } = selectedAccount;
-    if (!bonus) loadExtraInfo(selectedAccount); // 下載 優存(利率/利息)資訊
+    const { bonus, currency, details } = selectedAccount;
+    const dtlIndex = details.findIndex((dtl) => dtl.currency === currency);
 
-    // 取得 免費跨提、免費跨轉、目前利率、優惠利率額度(暫時固定顯示0)
-    const { freeWithdrawRemain, freeTransferRemain, bonusRate, bonusQuota } = bonus ?? {
-      freeWithdrawRemain: null, freeTransferRemain: null, bonusQuota: null, bonusRate: null, // 預設值
-    };
+    if (!bonus) loadExtraInfo(selectedAccount); // 下載 優存資訊
+    const { freeWithdrawRemain = '-', freeTransferRemain = '-' } = bonus ?? {};
+
+    if (details[dtlIndex] && !('interest' in details[dtlIndex])) loadInterest(selectedAccount, dtlIndex); // 下載 利率/利息資訊
+    const { interest = '-', rate = '-' } = details[dtlIndex] ?? {};
 
     const panelContent = [
-      { label: '免費跨提/轉', value: `${freeWithdrawRemain ?? '-'}/${freeTransferRemain ?? '-'}` },
-      { label: showRate ? '目前利率' : '累積利息',
-        value: showRate ? (bonusRate ? `${bonusRate * 100}%` : '-') : 'sumRate',
+      {
+        label: '免費跨提/轉',
+        value: `${freeWithdrawRemain ?? '-'}/${freeTransferRemain ?? '-'}`,
+      },
+      {
+        label: showRate ? '目前利率' : '累積利息',
+        value: showRate ? rate : interest,
         iconType: 'switch',
         onClick: () => setShowRate(!showRate),
       },
@@ -132,22 +152,20 @@ const C00500 = () => {
    */
   const loadTransactions = (account) => {
     const { txnDetails } = account;
-    if (!account.isLoadingTxn) {
-      if (!txnDetails) {
-        account.isLoadingTxn = true; // 避免因為非同步執行造成的重覆下載
-        // 取得帳戶交易明細（三年內的前25筆即可）
-        getTransactions(account.accountNo).then((transData) => {
-          const details = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
-          account.txnDetails = details;
+    if (!account.isLoadingTxn && !txnDetails) {
+      account.isLoadingTxn = true; // 避免因為非同步執行造成的重覆下載
+      // 取得帳戶交易明細（三年內的前25筆即可）
+      getTransactions(account.accountNo).then((transData) => {
+        const details = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
+        account.txnDetails = details;
 
-          // 更新餘額。
-          if (transData.acctTxDtls.length > 0) account.balance = details[0].balance;
+        // 更新餘額。
+        if (transData.acctTxDtls.length > 0) account.balance = details[0].balance;
 
-          delete account.isLoadingTxn; // 載入完成才能清掉旗標！
-          updateAccount(account);
-          forceUpdate();
-        });
-      }
+        delete account.isLoadingTxn; // 載入完成才能清掉旗標！
+        updateAccount(account);
+        forceUpdate();
+      });
     }
     return txnDetails;
   };
@@ -177,7 +195,7 @@ const C00500 = () => {
       forceUpdate();
 
       // NOTE 明細資料不需要存入Cache，下次進入C00500時才會更新。
-      const newAccount = {...selectedAccount};
+      const newAccount = { ...selectedAccount };
       delete newAccount.isLoadingTxn;
       delete newAccount.txnDetails;
       updateAccount(newAccount);

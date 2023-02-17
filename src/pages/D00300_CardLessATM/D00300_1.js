@@ -116,7 +116,7 @@ const CardLessATM1 = () => {
               control={control}
               name="withdrawAmount"
               placeholder="請輸入金額"
-              labelName="您想提領多少錢呢？"
+              labelName="請選擇提領金額？"
             />
 
             <Accordion space="both">
