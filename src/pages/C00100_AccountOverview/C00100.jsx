@@ -37,7 +37,11 @@ const AccountOverviewPage = () => {
 
     if (data?.assets?.assetItems && data?.assets?.assetItems.length > 0) {
       // 正資產陣列移除子帳戶項目
-      const assetList = data.assets.assetItems.filter((account) => account.type !== 'C');
+      let assetList = data.assets.assetItems.filter((account) => account.type !== 'C' && account.type !== 'F');
+      // 正資產先過濾掉外幣帳戶 再加入一組由後端換算加總好餘額的外幣帳戶 (目前外幣帳戶幣別都不是新台幣 所以不能直接加總)
+      // TODO：可要求API直接將assetItems回傳餘額換算好的外幣帳戶 這樣就可以將原始陣列直接帶入圓餅圖
+      assetList = assetList.filter((account) => account.type !== 'F');
+      assetList.push({ type: 'F', balance: data.assets?.totalBalanceF2N });
       // 子帳戶項目篩選只餘『存錢計畫』
       const subAccounts = data.assets.assetItems.filter((account) => account.type === 'C' && account.purpose === 2);
       // 篩選後子項目加回正資產陣列
@@ -61,7 +65,15 @@ const AccountOverviewPage = () => {
     const slides = [];
 
     if (data?.assets?.assetItems && data?.assets?.assetItems.length > 0) {
-      slides.push(<AccountCardList key={uuid()} data={data.assets.assetItems} isDebt={false} necessaryType={['M', 'S', 'F']} />);
+      slides.push(
+        <AccountCardList
+          key={uuid()}
+          data={data.assets.assetItems}
+          isDebt={false}
+          necessaryType={['M', 'S', 'F']}
+          totalBalanceF2N={data.assets.totalBalanceF2N}
+        />,
+      );
     }
 
     if (data?.debts && data.debts.length > 0) {

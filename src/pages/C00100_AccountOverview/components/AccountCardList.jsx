@@ -18,7 +18,9 @@ import AccountCardGrey from './AccountCardGrey';
  *   2. 依照spec，帳戶總覽不呈現社群帳本。
  * 最後，再依金額排序。
  */
-const AccountCardList = ({ data, isDebt, necessaryType }) => {
+const AccountCardList = ({
+  data, isDebt, necessaryType, totalBalanceF2N,
+}) => {
   // const dispatch = useDispatch();
   const {startFunc} = useNavigation();
 
@@ -57,7 +59,7 @@ const AccountCardList = ({ data, isDebt, necessaryType }) => {
     mainList.push({
       type: 'F',
       accountNo: foreignAccounts[0].accountNo,
-      balance: accumulateBalance(foreignAccounts), // TODO: 金額為“轉換為臺幣後”的加總，目前為數字直接加總
+      balance: totalBalanceF2N, // 金額由後端直接加總
     });
 
     // 依金額從大到小排序。
