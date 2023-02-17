@@ -278,7 +278,7 @@ export const Func = {
       TWD_F: 0x30, // 換匯-台換外
       F_TWD: 0x30, // 換匯-外換台
     },
-    required: ['M', 'F'],
+    required: ['M,F', 'S,F'], // NOTE 表示需要同時具有(M 及 F)或(S 及 F)
   },
 
   /**
@@ -649,6 +649,12 @@ const handleShowPrompt = async (type) => {
         link: `${process.env.REACT_APP_APLFX_URL}prod=Ta`,
       };
       break;
+    case 'MF':
+      errMsg = {
+        message: 'Bankee臺幣及外幣數存',
+        link: `${process.env.REACT_APP_APLFX_URL}prod=Ta`,
+      };
+      break;
     case 'S':
       errMsg = {
         message: 'Bankee證券交割帳戶',
@@ -697,12 +703,22 @@ export const isEnterFunc = async (funcInfo) => {
       assetTypes = apiRs.data;
       sessionStorage.setItem('assetTypes', assetTypes);
     }
+    console.log(assetTypes);
 
-    const prodType = requiredList.find((f) => assetTypes.includes(f));
+    // requiredList = ['M, 'CC'] 或 ['M,F', 'S,F']
+    // item = 'M' 或 'M,F'
+    const omitTypes = requiredList.map((item) => { // 找出缺少的項目。
+      const omitType = item.split(',').filter((t) => !assetTypes.includes(t));
+      console.log(requiredList, omitType, omitType.join(''));
+      return (omitType && omitType.length) ? omitType.join('') : null; // 沒有缺，就是符合的項目。
+    });
 
-    // 找不到，就提示詢問申請該產品。
-    if (!prodType) {
-      await handleShowPrompt(requiredList[0]);
+    // 只要有任何一個項目，就可以進入單元功能；否則就詢問是否申請缺少的項目。
+    const isAnyMatch = omitTypes.includes(null) && omitTypes.length >= 0;
+    console.log(isAnyMatch, omitTypes, omitTypes.includes(null), omitTypes.length >= 0);
+    if (!isAnyMatch) {
+      console.log(omitTypes[0]);
+      await handleShowPrompt(omitTypes[0]);
       return false;
     }
   }
