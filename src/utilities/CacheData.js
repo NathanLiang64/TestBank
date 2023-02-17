@@ -139,7 +139,7 @@ export const getAccountsList = async (acctTypes, onDataLoaded) => { // , noFlat 
 /**
  * 取得取得免費跨提/跨轉次數、數存優惠利率及資訊
  * @param {String} accountNo 存款帳號
- * @param {Function} foreUpdate
+ * @param {Function} onDataLoaded
  * @param {Boolean} foreUpdate
  * @returns {Promise<{
  *   freeWithdraw: 免費跨提總次數
@@ -172,23 +172,51 @@ export const getAccountBonus = async (accountNo, onDataLoaded, foreUpdate) => {
       accounts[index].bonus = { isLoading: true };
       store.dispatch(setAccounts(accounts));
 
-      const response = await callAPI('/deposit/account/v1/getBonusLimitInfo', { accountNo });
-      bonus = response.data;
+      // 拿取額度相關資訊 (約轉與非約轉額度/是否為VIP/免費跨轉提次數)
+      const {data: resLimitInfo} = await callAPI('/deposit/account/v1/getBonusLimitInfo', { accountNo });
+      bonus = resLimitInfo;
 
-      // bonusQuota, bonusRate 由 取得社群圈摘要資訊 api 中取得: bonusInfo.amount, bonusInfo.rate
-      // TODO 不同產品利率是否不同，是否不應該透過 getSummary 拿取
-      const resSummary = await callAPI('/community/v1/getSummary');
-      bonus = {
-        ...bonus,
-        bonusQuota: resSummary.data.bonusInfo.amount,
-        // bonusRate: resSummary.data.bonusInfo.rate,
-      };
+      // 拿取優惠利率額度資訊
+      const {data: resSummary} = await callAPI('/community/v1/getSummary');
+      bonus.bonusQuota = resSummary.bonusInfo.amount;
 
       accounts[index].bonus = bonus;
       store.dispatch(setAccounts(accounts));
     }
   }
   if (onDataLoaded) onDataLoaded(bonus);
+};
+
+/**
+ * 取得取得免費跨提/跨轉次數、數存優惠利率及資訊
+ * @param {String} accountNo 存款帳號
+ * @param {Function} onDataLoaded
+ * @param {Boolean} foreUpdate
+ * @returns {Promise<{
+ *   balance: number // 帳戶餘額
+ *   interest: number // 累積利息
+ *   rate: number //目前利率
+ * }>} 優惠資訊
+ */
+export const getAccountInterest = async ({accountNo, currency}, onDataLoaded) => {
+  let {accounts} = await restoreCache();
+  if (!accounts) {
+    accounts = await loadAccountsList();
+    store.dispatch(setAccounts(accounts)); // 保存所有的帳號資料。
+  }
+  let detail;
+  const index = accounts.findIndex((account) => account.accountNo === accountNo);
+  if (index >= 0) {
+    const {details} = accounts[index];
+    const dtlIndex = details.findIndex((dtl) => dtl.currency === currency);
+    if (!('interest' in details)) {
+      const {data: {rate, interest}} = await callAPI('/deposit/account/v1/getInterest', {accountNo, currency});
+      detail = { ...details[dtlIndex], rate, interest };
+      details[dtlIndex] = detail;
+      store.dispatch(setAccounts(accounts));
+    }
+  }
+  if (onDataLoaded) onDataLoaded(detail);
 };
 
 /**
@@ -206,15 +234,11 @@ export const updateAccount = async (newAccount) => {
 
   if (index >= 0) {
     const detailIndex = accounts[index].details.findIndex((detail) => detail.currency === newAccount.currency);
-    accounts[index].details[detailIndex] = {balance: newAccount.balance, currency: newAccount.currency};
-    accounts[index] = {
-      ...accounts[index],
-      bonus: newAccount.bonus,
-      interest: newAccount.interest,
-      txnDetails: newAccount.txnDetails,
-      alias: newAccount.alias,
-    };
-    // accounts[index] = newAccount;
+    accounts[index].details[detailIndex].balance = newAccount.balance;
+    accounts[index].bonus = newAccount.bonus;
+    accounts[index].txnDetails = newAccount.txnDetails;
+    accounts[index].alias = newAccount.alias;
+
     store.dispatch(setAccounts(accounts));
   }
 };

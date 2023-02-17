@@ -6,6 +6,7 @@ import Layout from 'components/Layout/Layout';
 import Avatar from 'components/Avatar';
 import CopyTextIconButton from 'components/CopyTextIconButton';
 import { FEIBButton, FEIBIconButton } from 'components/elements';
+import defaultAvatar from 'assets/images/BankeeHead.png';
 
 /* Reducers & JS functions */
 import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
@@ -147,6 +148,7 @@ const CommunityPage = () => {
             name={summary?.nickname}
             editable
             onNewPhotoLoaded={onNewPhotoLoaded}
+            defaultImage={defaultAvatar}
           />
           <div className="nickname">
             <span className="name">{renderText(summary?.nickname)}</span>

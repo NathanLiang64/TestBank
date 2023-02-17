@@ -1,20 +1,6 @@
 import { callAPI, download } from 'utilities/axios';
 
 /**
- * 取得帳戶餘額及未出帳利息。
- * @param {String} accountNo 存款帳號
- * @returns {Promise<{
- *   balance: number //目前的帳戶的餘額
- *   interest: number //結算後的利息
- *   rate : number // 目前的利率
- * }>}
- */
-export const getInterest = async (accountNo) => {
-  const response = await callAPI('/deposit/account/v1/getInterest', { accountNo, currency: 'TWD' });
-  return response.data;
-};
-
-/**
  * 取得當前所選帳號之交易明細
  * @param {*} accountNo 存款帳號, ex: 00100100063106
  * @returns 帳戶往來明細清單
