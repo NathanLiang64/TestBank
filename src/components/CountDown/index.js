@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { countdownTimerFormatter } from 'utilities/Generator';
 import CountDownWrapper from './countDown.style';
 
-const CountDown = ({ minute = 5, onEnd, replay }) => {
-  const [countSec, setCountSec] = useState(minute * 60);
+const CountDown = ({ seconds, onEnd, replay }) => {
+  const [countSec, setCountSec] = useState(seconds);
   const [triggerCountDown, setTriggerCountDown] = useState(true);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const CountDown = ({ minute = 5, onEnd, replay }) => {
 
   useEffect(() => {
     if (replay) {
-      setCountSec(minute * 60);
+      setCountSec(seconds);
       setTriggerCountDown(true);
     }
   }, [replay]);

@@ -300,6 +300,7 @@ export const CurrencyInfo = [
  */
 export const getCurrenyInfo = (ccyCode) => {
   const ccyInfo = CurrencyInfo.find((ccy) => ccy.code === ccyCode);
+  if (ccyInfo.code === 'TWD') ccyInfo.code = 'NTD';
   return ccyInfo;
 };
 

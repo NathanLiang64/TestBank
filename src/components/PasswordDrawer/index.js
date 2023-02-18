@@ -105,7 +105,8 @@ const PasswordDrawer = ({
         <div className="countDown">
           <p>時間倒數</p>
           {/* TODO 結束時，詢問重送或取消驗證 */}
-          <CountDown onEnd={() => setResendDisabled(false)} replay={replayCountDown} />
+          {/* TODO 交易驗證OTP的秒數是固定值嗎？ */}
+          <CountDown seconds={300} onEnd={() => setResendDisabled(false)} replay={replayCountDown} />
         </div>
         <FEIBButton
           className="resendButton"
