@@ -168,9 +168,10 @@ export const getAccountBonus = async (accountNo, onDataLoaded, foreUpdate) => {
   const index = accounts.findIndex((account) => account.accountNo === accountNo);
   if (index >= 0) {
     bonus = accounts[index].bonus;
-    if ((!bonus || foreUpdate) && !bonus?.isLoading) {
-      accounts[index].bonus = { isLoading: true };
-      store.dispatch(setAccounts(accounts));
+    if (!bonus || foreUpdate) {
+      // NOTE 在呼叫前已定義 loading 旗標，不會再進來此 function
+      // if ((!bonus || foreUpdate) && !bonus?.isLoading) {
+      // accounts[index].bonus = { isLoading: true };
 
       // 拿取額度相關資訊 (約轉與非約轉額度/是否為VIP/免費跨轉提次數)
       const {data: resLimitInfo} = await callAPI('/deposit/account/v1/getBonusLimitInfo', { accountNo });

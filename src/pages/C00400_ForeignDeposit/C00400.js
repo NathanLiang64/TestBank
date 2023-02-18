@@ -32,7 +32,7 @@ import PageWrapper from './C00400.style';
  */
 const C00400 = () => {
   const dispatch = useDispatch();
-  const {startFunc, closeFunc} = useNavigation();
+  const { startFunc, closeFunc } = useNavigation();
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const { register, unregister, handleSubmit } = useForm();
@@ -56,9 +56,9 @@ const C00400 = () => {
 
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
-    getAccountsList('F', async (accts) => { // M=臺幣主帳戶、C=臺幣子帳戶
-      const flattenAccts = accts.map((account) => (account.details.map((detail) => ({ ...account, ...detail})))).flat();
-      console.log('flattenAccts', flattenAccts);
+    getAccountsList('F', async (accts) => {
+      // M=臺幣主帳戶、C=臺幣子帳戶
+      const flattenAccts = accts.map((account) => account.details.map((detail) => ({ ...account, ...detail }))).flat();
       setAccounts(flattenAccts);
       await processStartParams(flattenAccts);
       dispatch(setWaittingVisible(false));
@@ -80,18 +80,18 @@ const C00400 = () => {
     // }
     const startParams = await loadFuncParams();
     // 取得 Function Controller 提供的 keepData(model)
-    if (startParams && (startParams instanceof Object)) {
+    if (startParams && startParams instanceof Object) {
       const index = accts.findIndex((acc) => acc.currency === startParams.defaultCurrency);
       setSelectedAccountIdx(index);
     } else {
       setSelectedAccountIdx(0);
 
-      // 只要是重新登入，而不是從呼叫的功能返回（例：轉帳），就清掉交易明細快取。
-      accts.forEach((acc) => {
-        // delete acc.isLoadingTxn; // 可能因為在載入中就關閉功能，而導致此旗標未被清除。但會有 Bug (race condition)，導致重複拿取交易紀錄
-        delete acc.txnDetails;
-      });
-      forceUpdate(); // 因為在執行此方法前，已經先 setAccounts 輸出到畫面上了，所以需要再刷一次畫面。
+      // // 只要是重新登入，而不是從呼叫的功能返回（例：轉帳），就清掉交易明細快取。
+      // accts.forEach((acc) => {
+      //   // delete acc.isLoadingTxn; // 可能因為在載入中就關閉功能，而導致此旗標未被清除。但會有 Bug (race condition)，導致重複拿取交易紀錄
+      //   delete acc.txnDetails;
+      // });
+      // forceUpdate(); // 因為在執行此方法前，已經先 setAccounts 輸出到畫面上了，所以需要再刷一次畫面。
     }
   };
 
@@ -103,7 +103,7 @@ const C00400 = () => {
   //     const { accountNo, currency} = account;
   //     account.details[index].loading = true;
   //     getAccountInterest({accountNo, currency}, (newDetail) => {
-  //       account.details[index] = newDetail;
+  //       account.details[index] = newDetail; // newDetail 已經不包含 loading 旗標
   //       forceUpdate();
   //     });
   //   }
@@ -116,7 +116,7 @@ const C00400 = () => {
     if (!selectedAccount) return null;
     const { currency, details } = selectedAccount;
 
-    const exRateItem = exRateList?.find(({ccycd}) => currency === ccycd);
+    const exRateItem = exRateList?.find(({ ccycd }) => currency === ccycd);
     const brate = exRateItem?.brate ?? '-';
     const srate = exRateItem?.srate ?? '-';
 
@@ -163,7 +163,7 @@ const C00400 = () => {
         account.txnDetails = details;
 
         // 更新餘額。
-        if (transData.acctTxDtls.length > 0) account.balance = details[0].balance;
+        if (transData.acctTxDtls.length > 0) { account.balance = details[0].balance; }
 
         delete account.isLoadingTxn; // 載入完成才能清掉旗標！
         forceUpdate();
@@ -197,8 +197,7 @@ const C00400 = () => {
       forceUpdate();
 
       // NOTE 明細資料不需要存入Cache，下次進入C00400時才會更新。
-      const newAccount = {...selectedAccount};
-      delete newAccount.isLoadingTxn;
+      const newAccount = { ...selectedAccount };
       delete newAccount.txnDetails;
       updateAccount(newAccount);
 

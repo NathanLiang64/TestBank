@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useCheckLocation, usePageInfo } from 'hooks';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -114,9 +113,6 @@ const SMSOTPactivate = () => {
       )}
     />
   );
-
-  useCheckLocation();
-  usePageInfo('/api/smsOTPactivate');
 
   useEffect(() => {
     setIsActive(initActive);

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useCheckLocation, usePageInfo } from 'hooks';
 
 /* Elements */
 import { FEIBCheckboxLabel, FEIBCheckbox, FEIBButton } from 'components/elements';
@@ -100,9 +99,6 @@ const ProjectJ = () => {
       )}
     />
   );
-
-  useCheckLocation();
-  usePageInfo('/api/projectJ');
 
   return (
     <ProjectJWrapper>
