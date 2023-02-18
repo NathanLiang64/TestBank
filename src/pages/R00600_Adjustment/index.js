@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useCheckLocation, usePageInfo } from 'hooks';
 import { useHistory } from 'react-router';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
@@ -79,9 +78,6 @@ const Adjustment = () => {
     console.log(data);
     applyAdjustment();
   };
-
-  useCheckLocation();
-  usePageInfo('/api/adjustment');
 
   return (
     <AdjustmentWrapper>

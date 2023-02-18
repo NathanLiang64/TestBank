@@ -22,8 +22,7 @@ export const ReserveTransferSearchWrapper = styled(Layout)`
     height: 0.8rem;
     background: ${({ theme }) => theme.colors.background.lighterBlue};
   }
-  .confrimDataContainer,
-  .resultDataContainer {
+  .confrimDataContainer {
     padding: 2.4rem 0;
     text-align: center;
     border-bottom: .8rem solid ${({ theme }) => theme.colors.background.lighterBlue};
@@ -80,7 +79,7 @@ export const ReserveTransferSearchWrapper = styled(Layout)`
       display: flex;
       align-items: center;
       margin-bottom: 1rem;
-      svg {
+      .searchIcon{
         width: 2.745rem;
         height: 2.745rem;
         margin-right: 0.8rem;
@@ -89,13 +88,12 @@ export const ReserveTransferSearchWrapper = styled(Layout)`
       label {
         display: none;
       }
-      > div {
-        // width: 100%;
-        flex: 1;
+      .rangePickerContainer {
+        width: 65%;
+        
         .MuiInputBase-root {
           .MuiInput-input {
             color: ${({ theme }) => theme.colors.primary.light};
-            // font-size: 1.4rem;
           }
         }
         .MuiInput-underline {
@@ -103,59 +101,10 @@ export const ReserveTransferSearchWrapper = styled(Layout)`
             border: none;
           }
         }
-      }
-      .MuiIconButton-root {
-        display: none;
-      }
-      .clearImg {
-        position: absolute;
-        width: 1.6rem;
-        height: 1.6rem;
-        left: 20rem;
-        top: 50%;
-        transform: translateY(-50%);
-      }
-    }
-  }
-  .resultDataContainer {
-    padding: 1.5rem 3.2rem 2.4rem;
-    text-align: center;
-    .stateContainer {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      margin-bottom: 2.4rem;
-      .stateImage {
-        width: 14.4rem;
-      }
-      .stateContent {
-        font-size: 2.4rem;
-        font-weight: 400;
-        line-height: 3.6rem;
-        &.success {
-          color: ${({ theme }) => theme.colors.secondary.brand};
+        .MuiIconButton-root {
+          display: none;
         }
-        &.fail {
-          color: ${({ theme }) => theme.colors.state.error};
-        }
-      }
-    }
-    .balance {
-      font-weight: 500;
-    }
-    .addPerson {
-      display: flex;
-      justify-content: center;
-      color: ${({ theme }) => theme.colors.text.dark};
-      font-size: 1.4rem;
-      line-height: 2.1rem;
-      font-weight: 400;
-      margin-top: 0.8rem;
-      img {
-        width: 1.6rem;
-        margin-right: 0.4rem;
-      }
+      } 
     }
   }
 `;

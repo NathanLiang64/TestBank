@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import {
+  useEffect, useMemo, useState, useRef,
+} from 'react';
 import { useHistory } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -9,7 +11,7 @@ import EmptyData from 'components/EmptyData';
 import Layout from 'components/Layout/Layout';
 import DebitCard from 'components/DebitCard/DebitCard';
 import InformationTape from 'components/InformationTape';
-import { FEIBTabContext, FEIBTabPanel } from 'components/elements';
+import { FEIBIconButton, FEIBTabContext, FEIBTabPanel } from 'components/elements';
 import FailImage from 'assets/images/failIcon.png';
 import SuccessImage from 'assets/images/successIcon.png';
 import { currencySymbolGenerator, dateToString, dateToYMD } from 'utilities/Generator';
@@ -22,6 +24,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import DateRangePicker from 'components/DateRangePicker';
 import uuid from 'react-uuid';
 import { loadFuncParams } from 'hooks/useNavigation';
+import { CrossCircleIcon } from 'assets/images/icons';
 import { TabField } from './fields/tabField';
 import DetailContent from './components/detailContent';
 import ResultContent from './components/resultContent';
@@ -39,10 +42,12 @@ const D00800 = () => {
   const history = useHistory();
   const [accountsList, setAccountsList] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
-  const [defaultSlide, setDefaultSlide] = useState(0);
+  const swiperRef = useRef();
   const [searchList, setSearchList] = useState({ reserve: {}, result: {}});
   const [banks, setBanks] = useState();
-  const {control, handleSubmit, watch } = useForm({ defaultValues });
+  const {
+    control, handleSubmit, watch, reset,
+  } = useForm({ defaultValues });
   const [curTab, curReserveRange, curResultRange] = watch([TAB, RESERVE_DATE_RANGE, RESULT_DATE_RANGE]);
   const isSingleCard = accountsList.length === 1; // 單張卡時卡片寬度需與首頁卡片寬度相同
 
@@ -80,24 +85,6 @@ const D00800 = () => {
         [type]: { ...prevSearchList[type], [`${accountNo}_${startDay}_${endDay}`]: updatedDetailsRes },
       }));
     }
-  };
-
-  // 取得帳號清單
-  const fetchTransferOutAccounts = async () => {
-    let accountsListRes;
-    await getAccountsList('MSC', async (accts) => {
-      accts.forEach((acct) => { acct.balance = acct.details[0].balance; });
-      setAccountsList(accts);
-      accountsListRes = accts;
-      const params = await loadFuncParams();
-      if (params) {
-        setSelectedAccount(params.selectedAccount);
-        const foundIndex = accts.findIndex(({accountNo}) => accountNo === params.selectedAccount.accountNo);
-        setDefaultSlide(foundIndex);
-      } else setSelectedAccount(accts[0]);
-    });
-    // TODO 若無 MSC 類別的帳戶，要給什麼提示訊息給使用者
-    return accountsListRes.length ? null : '您還沒有任何臺幣存款帳戶。';
   };
 
   const toConfirmPage = (data) => {
@@ -166,11 +153,17 @@ const D00800 = () => {
     ));
   };
 
+  const resetDateByTab = () => {
+    const { reserveDateRange, resultDateRange } = defaultValues;
+    const resetDateRange = curTab === '1' ? { reserveDateRange } : { resultDateRange };
+    reset((prevValues) => ({ ...prevValues, ...resetDateRange }));
+  };
+
   const renderTabPanels = () => panelOptions.map((panel) => (
     <FEIBTabPanel key={panel.tabValue} value={panel.tabValue}>
       <div className="searchDateRange">
-        <SearchIcon />
-        <div>
+        <SearchIcon className="searchIcon" />
+        <div className="rangePickerContainer">
           <DateRangePicker // 本身也可以是 Field
             {...panel.datePickerLimit}
             control={control}
@@ -179,6 +172,9 @@ const D00800 = () => {
             value={watch(panel.formName)}
           />
         </div>
+        <FEIBIconButton onClick={resetDateByTab}>
+          <CrossCircleIcon />
+        </FEIBIconButton>
       </div>
       {renderSearchList(panel.tabValue)}
     </FEIBTabPanel>
@@ -186,23 +182,38 @@ const D00800 = () => {
 
   const handleChangeSlide = ({ activeIndex }) => setSelectedAccount(accountsList[activeIndex]);
 
+  // 拿取帳號列表，若有從其他頁面帶資料過來，則預設帶過來的帳號
+  useEffect(() => {
+    getAccountsList('MSC', async (accts) => {
+      accts.forEach((acct) => { acct.balance = acct.details[0].balance; });
+      setAccountsList(accts);
+
+      const params = await loadFuncParams();
+      if (params) {
+        const foundIndex = accts.findIndex(({accountNo}) => accountNo === params.accountNo);
+        if (swiperRef) swiperRef.current.swiper.slideTo(foundIndex);
+        setSelectedAccount(accts[foundIndex]);
+      } else setSelectedAccount(accts[0]);
+    });
+  }, []);
+
   // 切換帳號/Tab/日期範圍時 會檢查 searchList 有無特定的 key，若沒有就執行搜尋
   useEffect(() => {
     if (!selectedAccount) return;
     if (!currentList) handleSubmit(onSearch)();
-  }, [selectedAccount, curTab, curReserveRange, curResultRange]);
+  }, [selectedAccount?.accountNo, curTab, curReserveRange, curResultRange]);
 
   return (
-    <Layout fid={Func.D008} title="預約轉帳查詢/取消" inspector={fetchTransferOutAccounts}>
+    <Layout fid={Func.D008} title="預約轉帳查詢/取消">
       <ReserveTransferSearchWrapper className="searchResult">
         <div className="cardArea">
           <Swiper
+            ref={swiperRef}
             slidesPerView={isSingleCard ? 1.06 : 1.14}
             spaceBetween={8}
             centeredSlides
             pagination
             onSlideChange={handleChangeSlide}
-            initialSlide={defaultSlide}
           >
             {renderCard()}
           </Swiper>

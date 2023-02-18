@@ -75,20 +75,27 @@ const C00300 = () => {
       setSelectedAccountIdx(index);
       setShowRate(startParams.showRate);
     } else {
-      setSelectedAccountIdx(0);
+      setSelectedAccountIdx(0); // setSelectedAccountIdx 內傳入的值若於前值不同，會觸發再刷一次畫面
+
+      /**
+       * NOTE 清除交易明細的工作交給 Layout 的兩個功能 1. 回上頁 2. 回首頁
+       * 1. 回上頁 => 觸發下方定義的 goBackFunc
+       * 2. 返回首頁，會導向彩頁，WebView 被關閉 => redux 資料清空，不需要額外去清除交易明細 (除非 webview 沒被關閉，就需要特別處理)
+       */
+
       // 只要是重新登入，而不是從呼叫的功能返回（例：轉帳），就清掉交易明細快取。
-      accts.forEach((acc) => {
-        // delete acc.isLoadingTxn; // 可能因為在載入中就關閉功能，而導致此旗標未被清除。但會有 Bug (race condition)，導致重複拿取交易紀錄
-        delete acc.txnDetails;
-      });
-      forceUpdate(); // 因為在執行此方法前，已經先 setAccounts 輸出到畫面上了，所以需要再刷一次畫面。
+      // accts.forEach((acc) => {
+      //   delete acc.isLoadingTxn; // 可能因為在載入中就關閉功能，而導致此旗標未被清除。但會有 Bug (race condition)，導致重複拿取交易紀錄
+      //   delete acc.txnDetails;
+      // });
+      // forceUpdate(); // 因為在執行此方法前，已經先 setAccounts 輸出到畫面上了，所以需要再刷一次畫面。
     }
   };
 
   /**
    * 更新帳戶交易明細清單。
    * @returns 需有傳回明細清單供顯示。
-   */
+  */
   const loadTransactions = (account) => {
     const { txnDetails } = account;
     if (!account.isLoadingTxn && !txnDetails) {
@@ -116,8 +123,7 @@ const C00300 = () => {
     if (!account.bonus || !account.bonus.loading) {
       account.bonus = { loading: true };
       getAccountBonus(account.accountNo, (info) => {
-        account.bonus = info;
-        delete account.bonus.loading;
+        account.bonus = info; // info 已經不包含 loading 旗標
         forceUpdate();
       });
     }
@@ -131,7 +137,7 @@ const C00300 = () => {
       const { accountNo, currency} = account;
       account.details[index].loading = true;
       getAccountInterest({accountNo, currency}, (newDetail) => {
-        account.details[index] = newDetail;
+        account.details[index] = newDetail; // newDetail 已經不包含 loading 旗標
         forceUpdate();
       });
     }
@@ -205,7 +211,6 @@ const C00300 = () => {
 
       // NOTE 明細資料不需要存入Cache，下次進入C00300時才會更新。
       const newAccount = {...selectedAccount};
-      delete newAccount.isLoadingTxn;
       delete newAccount.txnDetails;
       updateAccount(newAccount);
     };
@@ -244,7 +249,7 @@ const C00300 = () => {
         break;
 
       case Func.D008.id: // 預約轉帳查詢/取消
-        params = { selectedAccount };
+        params = { accountNo: selectedAccount.accountNo };
         break;
 
       case 'Rename': // 帳戶名稱編輯
