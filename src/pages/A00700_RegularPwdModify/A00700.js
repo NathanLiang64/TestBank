@@ -9,7 +9,7 @@ import { showCustomPrompt, showAnimationModal } from 'utilities/MessageModal';
 import Layout from 'components/Layout/Layout';
 import ConfirmButtons from 'components/ConfirmButtons';
 import InfoArea from 'components/InfoArea';
-import e2ee from 'utilities/E2ee';
+import CipherUtil from 'utilities/CipherUtil';
 import { Func } from 'utilities/FuncID';
 
 /* Styles */
@@ -55,8 +55,8 @@ const RegularPwdModify = () => {
     const jsRs = await transactionAuth(Func.A007.authCode);
     if (jsRs.result) {
       const param = {
-        password: e2ee(password),
-        newPassword: e2ee(newPassword),
+        password: CipherUtil.e2ee(password),
+        newPassword: CipherUtil.e2ee(newPassword),
         // newPasswordCheck: e2ee(newPasswordCheck),
         // actionCode: 1,
       };

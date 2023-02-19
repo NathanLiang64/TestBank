@@ -11,7 +11,7 @@ import PasswordInput from 'components/PasswordInput';
 import CountDown from 'components/CountDown';
 import { otpCodeValidation, passwordValidation } from 'utilities/validation';
 import { showAlert } from 'utilities/AppScriptProxy';
-import e2ee from 'utilities/E2ee';
+import CipherUtil from 'utilities/CipherUtil';
 import { setDrawerVisible } from 'stores/reducers/ModalReducer';
 import { transactionAuthVerify } from './api';
 import PasswordDrawerWrapper from './passwordDrawer.style';
@@ -67,7 +67,7 @@ const PasswordDrawer = ({
   const handleClickSubmit = async (data) => {
     // 驗證 OTP驗證碼 & 網銀密碼
     const {otpCode} = data; // 使用者輸入的「驗證碼」。
-    const netbankPwd = e2ee(data.password); // 使用者輸入的「網銀密碼」，還要再做 E2EE。
+    const netbankPwd = CipherUtil.e2ee(data.password); // 使用者輸入的「網銀密碼」，還要再做 E2EE。
     const verifyRs = await transactionAuthVerify({ authKey: authData.key, funcCode, netbankPwd, otpCode });
     // console.log(verifyRs);
     const {code, result, message} = verifyRs;

@@ -1,13 +1,13 @@
 import uuid from 'react-uuid';
 import { callAPI } from 'utilities/axios';
-import e2ee from 'utilities/E2ee';
+import CipherUtil from 'utilities/CipherUtil';
 
 export const login = async (data) => {
   const payload = {
     txnId: `WVIEW_${uuid()}`,
     custId: data.identity.toUpperCase(),
-    username: e2ee(data.account),
-    password: e2ee(data.password),
+    username: CipherUtil.e2ee(data.account),
+    password: CipherUtil.e2ee(data.password),
     rsaPubK: sessionStorage.getItem('publicKey'),
     isRepeat: !!data.isRepeat,
   };

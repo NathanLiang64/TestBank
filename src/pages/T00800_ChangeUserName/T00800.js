@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import e2ee from 'utilities/E2ee';
+import CipherUtil from 'utilities/CipherUtil';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { Func } from 'utilities/FuncID';
 import { PasswordInputField } from 'components/Fields';
@@ -31,8 +31,8 @@ const ChangeUserName = () => {
 
     if (jsRs.result) {
       const param = {
-        userName: e2ee(userName),
-        newUserName: e2ee(newUserName),
+        userName: CipherUtil.e2ee(userName),
+        newUserName: CipherUtil.e2ee(newUserName),
         // newUserNameCheck: e2ee(newUserNameCheck),
       };
 

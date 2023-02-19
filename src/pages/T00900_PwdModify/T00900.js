@@ -8,7 +8,7 @@ import { Func } from 'utilities/FuncID';
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import { FEIBButton } from 'components/elements';
-import e2ee from 'utilities/E2ee';
+import CipherUtil from 'utilities/CipherUtil';
 
 import { PasswordInputField } from 'components/Fields';
 import { useNavigation } from 'hooks/useNavigation';
@@ -28,8 +28,8 @@ const PwdModify = () => {
     const jsRs = await transactionAuth(Func.T009.authCode);
     if (jsRs.result) {
       const param = {
-        password: e2ee(password),
-        newPassword: e2ee(newPassword),
+        password: CipherUtil.e2ee(password),
+        newPassword: CipherUtil.e2ee(newPassword),
       };
       const { isSuccess, code, message } = await changePwd(param);
 
