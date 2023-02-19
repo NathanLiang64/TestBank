@@ -299,8 +299,8 @@ export const CurrencyInfo = [
  * }} 指定幣別資訊；若未指定則傳回所有幣別資訊。
  */
 export const getCurrenyInfo = (ccyCode) => {
-  const ccyInfo = CurrencyInfo.find((ccy) => ccy.code === ccyCode);
-  if (ccyInfo.code === 'TWD') ccyInfo.code = 'NTD';
+  if (ccyCode?.trim() === 'TWD') ccyCode = 'NTD';
+  const ccyInfo = CurrencyInfo.find((ccy) => ccy.code === ccyCode?.trim());
   return ccyInfo;
 };
 
