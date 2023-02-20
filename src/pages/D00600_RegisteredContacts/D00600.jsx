@@ -42,7 +42,7 @@ const Page = () => {
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
 
-    const accountsList = await getAccountsList('MFC', undefined, true);// M=臺幣主帳戶、C=臺幣子帳戶、F=外幣帳戶
+    const accountsList = await getAccountsList('MSFC', undefined, true);// M=臺幣主帳戶、C=臺幣子帳戶、F=外幣帳戶
 
     // Function Controller 提供的參數
     // startParams = {

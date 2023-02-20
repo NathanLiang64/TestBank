@@ -20,8 +20,8 @@ import { dialTel, screenShot, shareMessage } from 'utilities/AppScriptProxy';
 
 import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showDrawer, showInfo } from 'utilities/MessageModal';
-import { useNavigation } from 'hooks/useNavigation';
 import { accountFormatter, toCurrency } from 'utilities/Generator';
+import { Func } from 'utilities/FuncID';
 import { getTransInData, getDisplayAmount, getTransDate, getCycleDesc } from './util';
 import TransferWrapper from './D00100.style';
 
@@ -35,7 +35,6 @@ const TransferResult = (props) => {
 
   const history = useHistory();
   const dispatch = useDispatch();
-  const { closeFunc } = useNavigation();
 
   const model = state;
   const transInData = getTransInData(model.transIn);
@@ -191,11 +190,15 @@ const TransferResult = (props) => {
     setTimeout(() => setShowSnapshotSuccess(false), 1000); // 1 秒後自動關閉。
   };
 
+  const goBackFunc = () => {
+    history.replace(`${Func.D001.id}00`); // 回到轉帳頁面
+  };
+
   /**
    * 頁面輸出。
    */
   return (
-    <Layout title="轉帳結果" goBackFunc={closeFunc}>
+    <Layout title="轉帳結果" goBackFunc={goBackFunc}>
       <TransferWrapper className="transferResultPage">
         <ResultAnimation
           isSuccess={model.result.isSuccess}

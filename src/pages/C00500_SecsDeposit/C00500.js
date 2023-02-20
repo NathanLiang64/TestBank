@@ -19,6 +19,7 @@ import { customPopup, showPrompt } from 'utilities/MessageModal';
 import { getAccountsList, getAccountBonus, updateAccount, cleanupAccount, getAccountInterest } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
+import { toCurrency } from 'utilities/Generator';
 import { getTransactions, setAccountAlias } from './api';
 import PageWrapper from './C00500.style';
 
@@ -131,7 +132,7 @@ const C00500 = () => {
       },
       {
         label: showRate ? '目前利率' : '累積利息',
-        value: showRate ? rate : interest,
+        value: showRate ? `${rate}%` : toCurrency(interest),
         iconType: 'switch',
         onClick: () => setShowRate(!showRate),
       },

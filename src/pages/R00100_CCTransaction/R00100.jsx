@@ -66,8 +66,10 @@ const R00100 = () => {
 
   const goBackFunc = () => {
     const param = getCurrentFunc(); // TODO closeFunc就有此機制，為何還要自行處理？
-    const keepData = JSON.parse(param.keepData);
+    const {keepData} = param;
     if (keepData) {
+      // TODO 若使用者在此頁進行背著修改，回到 C00700 的時候，cache 也要被覆蓋成修改後的資料
+      // 或者是重新打 API 拿最新資料?
       keepData.transactionObj[index] = transactions;
       closeFunc(keepData);
     } else closeFunc();

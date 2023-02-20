@@ -46,7 +46,7 @@ const D00800 = () => {
   const [searchList, setSearchList] = useState({ reserve: {}, result: {}});
   const [banks, setBanks] = useState();
   const {
-    control, handleSubmit, watch, reset,
+    control, handleSubmit, watch, resetField, formState: {dirtyFields},
   } = useForm({ defaultValues });
   const [curTab, curReserveRange, curResultRange] = watch([TAB, RESERVE_DATE_RANGE, RESULT_DATE_RANGE]);
   const isSingleCard = accountsList.length === 1; // 單張卡時卡片寬度需與首頁卡片寬度相同
@@ -153,32 +153,33 @@ const D00800 = () => {
     ));
   };
 
-  const resetDateByTab = () => {
-    const { reserveDateRange, resultDateRange } = defaultValues;
-    const resetDateRange = curTab === '1' ? { reserveDateRange } : { resultDateRange };
-    reset((prevValues) => ({ ...prevValues, ...resetDateRange }));
-  };
+  const renderTabPanels = () => {
+    const dateInputName = curTab === '1' ? RESERVE_DATE_RANGE : RESULT_DATE_RANGE;
 
-  const renderTabPanels = () => panelOptions.map((panel) => (
-    <FEIBTabPanel key={panel.tabValue} value={panel.tabValue}>
-      <div className="searchDateRange">
-        <SearchIcon className="searchIcon" />
-        <div className="rangePickerContainer">
-          <DateRangePicker // 本身也可以是 Field
-            {...panel.datePickerLimit}
-            control={control}
-            name={panel.formName}
-            label=" "
-            value={watch(panel.formName)}
-          />
+    return panelOptions.map((panel) => (
+      <FEIBTabPanel key={panel.tabValue} value={panel.tabValue}>
+        <div className="searchDateRange">
+          <SearchIcon className="searchIcon" />
+          <div className="rangePickerContainer">
+            <DateRangePicker // 本身也可以是 Field
+              {...panel.datePickerLimit}
+              control={control}
+              name={panel.formName}
+              label=" "
+              value={watch(panel.formName)}
+            />
+          </div>
+          {/* 若日期範圍是預設值，則不顯示清除按鈕 */}
+          {!!dirtyFields[dateInputName] && (
+            <FEIBIconButton onClick={() => resetField(dateInputName)}>
+              <CrossCircleIcon />
+            </FEIBIconButton>
+          )}
         </div>
-        <FEIBIconButton onClick={resetDateByTab}>
-          <CrossCircleIcon />
-        </FEIBIconButton>
-      </div>
-      {renderSearchList(panel.tabValue)}
-    </FEIBTabPanel>
-  ));
+        {renderSearchList(panel.tabValue)}
+      </FEIBTabPanel>
+    ));
+  };
 
   const handleChangeSlide = ({ activeIndex }) => setSelectedAccount(accountsList[activeIndex]);
 

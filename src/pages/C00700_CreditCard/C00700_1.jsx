@@ -22,7 +22,7 @@ import { InfoPageWrapper } from './C00700.style';
 const C007001 = () => {
   const history = useHistory();
   const {state} = useLocation();
-  const {keepData, isBankeeCard, cardNo} = state;
+  const {keepData, isBankeeCard, cardNo } = state;
   const dispatch = useDispatch();
   const {startFunc } = useNavigation();
   const [cardInfo, setCardInfo] = useState();
