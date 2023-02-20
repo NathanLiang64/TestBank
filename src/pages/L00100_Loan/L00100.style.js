@@ -27,6 +27,7 @@ const PageWrapper = styled.div`
   // 卡片名稱
   & div.swiper-slide > div > div.justify-between.items-start > div > div:nth-child(1) {
     height: 24px;
+    line-height: 24px;
   }
 
   // 卡號
@@ -34,19 +35,19 @@ const PageWrapper = styled.div`
     font-size: 1.5rem;
     color: #666;
     height: 24px;
-    line-height: 30px;
+    line-height: 28px;
   }
 
   // 餘額
   & div.swiper-slide .balance {
     height: 42px;
-    line-height: 46px;
+    line-height: 45px;
   }
 
   // 右下快捷列
   & div.swiper-slide > div > div.justify-end.gap-6.mt-4.divider {
     margin-top: auto;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
   }
   
   // 右下快捷按鈕

@@ -13,6 +13,7 @@ export const SwiperCreditCard = styled.div`
   // 卡片名稱
   & > div > div:first-child {
     height: 24px;
+    line-height: 24px;
   }
 
   // 卡片更多
@@ -25,13 +26,13 @@ export const SwiperCreditCard = styled.div`
     font-size: 1.5rem;
     color: #666;
     height: 24px;
-    line-height: 30px;
+    line-height: 28px;
   }
 
   // 卡片餘額
-  & > div > div.justify-between.items-center {
+  & > div > div.justify-between.items-center div.balance {
     height: 42px;
-    line-height: 46px;
+    line-height: 45px;
   }
 
   // 右下快捷列
