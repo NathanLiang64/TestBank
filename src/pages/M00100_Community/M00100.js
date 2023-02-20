@@ -7,6 +7,7 @@ import Avatar from 'components/Avatar';
 import CopyTextIconButton from 'components/CopyTextIconButton';
 import { FEIBButton, FEIBIconButton } from 'components/elements';
 import defaultAvatar from 'assets/images/BankeeHead.png';
+import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 
 /* Reducers & JS functions */
 import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
@@ -139,6 +140,27 @@ const CommunityPage = () => {
     if (isSuccess) reloadHeadshot();
   };
 
+  // 社群圈概況 Panel 設定
+  const overviewPanelConfig = [
+    {
+      label: '點擊人數',
+      value: renderText(summary?.community.hitTimes),
+      iconType: 'Arrow',
+    },
+    {
+      label: '申請中人數',
+      value: renderText(summary?.community.applying),
+      iconType: 'Arrow',
+      onClick: () => {},
+    },
+    {
+      label: '已核可人數',
+      value: renderText(summary?.community.approved),
+      iconType: 'Arrow',
+      onClick: () => startFunc('M002', null, { summary }),
+    },
+  ];
+
   return (
     <Layout fid={Func.M001} title="社群圈">
       <NetworkWrapper>
@@ -189,35 +211,13 @@ const CommunityPage = () => {
           <div className="title">
             社群圈概況
           </div>
-          <div className="overviewContent">
-            <div className="overviewItem">
-              <div className="subTitle">點擊人數</div>
-              <div className="num">
-                {renderText(summary?.community.hitTimes)}
-              </div>
-            </div>
-            <div className="overviewItem">
-              <div className="subTitle" onClick={() => {}}>
-                申請中人數
-                <ArrowNextIcon />
-              </div>
-              <div className="num">
-                {renderText(summary?.community.applying)}
-              </div>
-            </div>
-            <div className="overviewItem">
-              <div className="subTitle" onClick={() => startFunc('M002', null, { summary })}>
-                已核可人數
-                <ArrowNextIcon />
-              </div>
-              <div className="num">
-                {renderText(summary?.community.approved)}
-              </div>
-            </div>
+          <div className="panel">
+            <ThreeColumnInfoPanel content={overviewPanelConfig} />
           </div>
         </div>
         <div className="contentCard">
           <div className="title">社群圈回饋</div>
+          {/* TODO: 使用 Panel 元件 */}
           <div className="overviewContent twoColumn">
             <div
               className="overviewItem"
