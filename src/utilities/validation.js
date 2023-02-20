@@ -398,7 +398,7 @@ export const addressValidation = () => (
 export const cardlessWithdrawPasswordValidation = () => (
   yup.string()
     .required(errorMessage.withdrawPasswordRequired)
-    .min(4, errorMessage.withdrawPasswordLength)
+    .min(6, errorMessage.withdrawPasswordLength)
     .max(12, errorMessage.withdrawPasswordLength)
     .matches(/^[0-9]*$/, errorMessage.withdrawPasswordNumberOnly)
 );

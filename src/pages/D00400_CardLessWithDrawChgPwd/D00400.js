@@ -63,7 +63,7 @@ const CardLessWithDrawChgPwd = () => {
         labelName="舊提款密碼"
         name="oldPassword"
         inputProps={{
-          maxLength: 12, placeholder: '請輸入舊提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off',
+          maxLength: 12, placeholder: '請輸入舊提款密碼(6-12位數字)', inputMode: 'numeric', autoComplete: 'off',
         }}
         control={control}
       />
@@ -71,7 +71,7 @@ const CardLessWithDrawChgPwd = () => {
         labelName="新提款密碼"
         name="newPassword"
         inputProps={{
-          maxLength: 12, placeholder: '請輸入新提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off',
+          maxLength: 12, placeholder: '請輸入新提款密碼(6-12位數字)', inputMode: 'numeric', autoComplete: 'off',
         }}
         control={control}
       />
@@ -79,7 +79,7 @@ const CardLessWithDrawChgPwd = () => {
         labelName="確認新提款密碼"
         name="newPasswordConfirm"
         inputProps={{
-          maxLength: 12, placeholder: '請確認新提款密碼(4-12位數字)', inputMode: 'numeric', autoComplete: 'off',
+          maxLength: 12, placeholder: '請確認新提款密碼(6-12位數字)', inputMode: 'numeric', autoComplete: 'off',
         }}
         control={control}
       />
