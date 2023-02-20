@@ -1,7 +1,7 @@
 import SuccessCheer from 'assets/animations/successCheer.svg';
 import SuccessFlower from 'assets/animations/successFlower.svg';
-import SuccessLove from 'assets/animations/successLove.svg';
-import SuccessMusic from 'assets/animations/successMusic.svg';
+import SuccessLove from 'assets/animations/success_love_new_230217.gif';
+import SuccessMusic from 'assets/animations/success_music_new_230217.gif';
 import Fail from 'assets/animations/fail.svg';
 
 import SuccessFailureAnimationsWrapper from './successFailureAnimations.style';
@@ -25,7 +25,7 @@ const ResultAnimation = ({
 
   const animationData = () => {
     if (isSuccess) {
-      switch (Math.floor(Math.random() * 3)) {
+      switch (Math.floor(Math.random() * 4)) {
         case 0:
           return SuccessMusic;
         case 1:

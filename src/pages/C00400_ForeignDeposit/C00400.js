@@ -19,6 +19,7 @@ import { customPopup } from 'utilities/MessageModal';
 import { getAccountsList, updateAccount, cleanupAccount, getAccountInterest } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
+import { toCurrency } from 'utilities/Generator';
 import {
   getExchangeRateInfo,
   getTransactions,
@@ -98,16 +99,16 @@ const C00400 = () => {
   /**
    * 下載利率/利息資訊
    */
-  // const loadInterest = async (account, index) => {
-  //   if (!account.details[index].loading) {
-  //     const { accountNo, currency} = account;
-  //     account.details[index].loading = true;
-  //     getAccountInterest({accountNo, currency}, (newDetail) => {
-  //       account.details[index] = newDetail; // newDetail 已經不包含 loading 旗標
-  //       forceUpdate();
-  //     });
-  //   }
-  // };
+  const loadInterest = async (account, index) => {
+    if (!account.details[index].loading) {
+      const { accountNo, currency} = account;
+      account.details[index].loading = true;
+      getAccountInterest({accountNo, currency}, (newDetail) => {
+        account.details[index] = newDetail; // newDetail 已經不包含 loading 旗標
+        forceUpdate();
+      });
+    }
+  };
 
   /**
    * 顯示 優存(利率/利息)資訊
@@ -122,8 +123,7 @@ const C00400 = () => {
 
     const dtlIndex = details.findIndex((dtl) => dtl.currency === currency);
 
-    // TODO API 尚未可接受外幣幣別，待修復
-    // if (details[dtlIndex] && !('interest' in details[dtlIndex])) loadInterest(selectedAccount, dtlIndex); // 下載 利率/利息資訊
+    if (details[dtlIndex] && !('interest' in details[dtlIndex])) loadInterest(selectedAccount, dtlIndex); // 下載 利率/利息資訊
     const { interest = '-', rate = '-' } = details[dtlIndex] ?? {};
 
     const panelContent = [
@@ -135,7 +135,7 @@ const C00400 = () => {
       },
       {
         label: showRate ? '目前利率' : '累積利息',
-        value: showRate ? rate : interest,
+        value: showRate ? `${rate}%` : toCurrency(interest),
         iconType: 'switch',
         onClick: () => setShowRate(!showRate),
       },

@@ -37,10 +37,14 @@ const CreditCardPage = (props) => {
   const [cardsInfo, setCardsInfo] = useState([]);
   const [usedCardLimit, setUsedCardLimit] = useState();
   const [transactionObj, setTransactionObj] = useState({ 0: null, 1: null }); // {0:bankeeCard 交易明細, 1:所有信用卡(含bankeeCard) 交易明細}
+  const [defaultSlide, setDefaultSlide] = useState(0);
   const dispatch = useDispatch();
 
-  const go2Func = (funcId, params) => {
-    startFunc(funcId, params, {transactionObj, cardsInfo, usedCardLimit});
+  const go2Func = (funcId, params, index) => {
+    const keepData = {
+      transactionObj, cardsInfo, usedCardLimit, index,
+    };
+    startFunc(funcId, params, keepData);
   };
 
   const fetchTransactions = async (cardNo, currentIndex) => {
@@ -71,7 +75,7 @@ const CreditCardPage = (props) => {
   };
 
   // 信用卡卡面右上角的功能列表
-  const functionAllList = (item) => {
+  const functionAllList = (item, index) => {
     const list = [
       { fid: Func.R002.id, title: '晚點付' },
       { fid: Func.R003.id, title: '帳單', cardNo: item.cardNo },
@@ -83,7 +87,7 @@ const CreditCardPage = (props) => {
       <ul className="functionList">
         { list.map(({fid, title, cardNo}) => (
           <li key={fid}>
-            <button type="button" onClick={() => go2Func(fid, cardNo !== undefined ? {cardNo} : null)}>
+            <button type="button" onClick={() => go2Func(fid, !!cardNo && {cardNo}, index)}>
               {title}
             </button>
           </li>
@@ -93,8 +97,10 @@ const CreditCardPage = (props) => {
   };
 
   // 信用卡更多
-  const handleMoreClick = ({isBankeeCard, cardNo}) => {
-    const keepData = {transactionObj, cardsInfo, usedCardLimit};
+  const handleMoreClick = ({isBankeeCard, cardNo}, index) => {
+    const keepData = {
+      transactionObj, cardsInfo, usedCardLimit, index,
+    };
 
     const list = [
       {
@@ -112,8 +118,8 @@ const CreditCardPage = (props) => {
             <button
               type="button"
               onClick={() => {
-                if (item.fid.includes(Func.R005.id)) go2Func(item.fid, null);
-                else history.push(item.fid, item?.param);
+                if (item.fid.includes(Func.R005.id)) go2Func(item.fid, null, index);
+                else history.push(item.fid, item.param);
               }}
             >
               {item.icon}
@@ -130,7 +136,7 @@ const CreditCardPage = (props) => {
   const renderSlides = () => {
     if (!cardsInfo.length) return null;
     return (
-      cardsInfo.map((cardSet) => (
+      cardsInfo.map((cardSet, index) => (
         <SwiperCreditCard>
           <CreditCard
             key={cardSet.isBankeeCard ? '0' : '1'}
@@ -139,8 +145,8 @@ const CreditCardPage = (props) => {
             balance={usedCardLimit}
             color="green"
             annotation="已使用額度"
-            onMoreClicked={() => handleMoreClick(cardSet)}
-            functionList={functionAllList(cardSet)}
+            onMoreClicked={() => handleMoreClick(cardSet, index)}
+            functionList={functionAllList(cardSet, index)}
           />
         </SwiperCreditCard>
       ))
@@ -167,7 +173,7 @@ const CreditCardPage = (props) => {
     });
   };
 
-  const bonusInfo = (bankeeCard) => [
+  const bonusInfo = (bankeeCard, index) => [
     {
       label: '會員等級',
       value: `${bankeeCard.memberLevel}`,
@@ -184,7 +190,12 @@ const CreditCardPage = (props) => {
       label: '回饋試算',
       value: currencySymbolGenerator('NTD', bankeeCard.rewardsAmount),
       iconType: 'Arrow',
-      onClick: () => history.push('/C007002', { accountNo: bankeeCard.cardNo }),
+      onClick: () => {
+        const keepData = {
+          transactionObj, cardsInfo, usedCardLimit, index,
+        };
+        history.push('/C007002', { accountNo: bankeeCard.cardNo, keepData });
+      },
     },
   ];
 
@@ -199,7 +210,7 @@ const CreditCardPage = (props) => {
             <DetailDialogContentWrapper>
               {cardInfo.isBankeeCard && (
               <div className="panel">
-                <ThreeColumnInfoPanel content={bonusInfo(cardInfo)} />
+                <ThreeColumnInfoPanel content={bonusInfo(cardInfo, index)} />
               </div>
               )}
             </DetailDialogContentWrapper>
@@ -208,7 +219,7 @@ const CreditCardPage = (props) => {
                 card={cardInfo}
                 onMoreFuncClick={() => go2Func(Func.R001.id, {
                   card: cardInfo, usedCardLimit, transactions: transactionObj[swiperIndex], index: swiperIndex,
-                })}
+                }, index)}
                 transactions={transactionObj[swiperIndex]}
                 onTxnNotesEdit={onTxnNotesEdit}
               />
@@ -227,6 +238,7 @@ const CreditCardPage = (props) => {
 
     if (state || params) {
       model = state || params.response || params; // 從C00700X 傳回 || R00100 傳回(可能已修改過明細備註) || R00200-R00500 傳回
+      setDefaultSlide(model.index);
       setTransactionObj(model.transactionObj);
     } else {
       const {cards, usedCardLimit: limit} = await getCards();
@@ -252,6 +264,7 @@ const CreditCardPage = (props) => {
           spaceBetween={8}
           centeredSlides
           onSlideChange={onSlideChange}
+          initialSlide={defaultSlide}
         >
           {renderCreditList()}
         </SwiperLayout>

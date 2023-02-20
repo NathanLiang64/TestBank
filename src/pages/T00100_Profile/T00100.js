@@ -8,7 +8,7 @@ import Layout from 'components/Layout/Layout';
 import Avatar from 'components/Avatar';
 import { TextInputField } from 'components/Fields';
 import { showCustomPrompt } from 'utilities/MessageModal';
-import defaultAvatar from 'assets/images/avatarImage.png';
+import defaultAvatar from 'assets/images/BankeeHead.png';
 import { Func } from 'utilities/FuncID';
 
 /* Styles */
