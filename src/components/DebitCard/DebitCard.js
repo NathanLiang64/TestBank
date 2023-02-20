@@ -182,7 +182,7 @@ const DebitCard = ({
       <div className={`cardBalance ${!isSmallCard ? 'grow' : ''}`}>
         { !hideIcon && renderEyeIconButton() }
         <h3 className="balance">
-          {`${currencySymbolGenerator(model.currency ?? 'NTD', (showBalance ? (model.balance ?? '---') : '*'), true)}`}
+          {`${currencySymbolGenerator(model.currency ?? 'NTD', (showBalance ? (model.balance ?? '---') : '*'), false)}`}
         </h3>
       </div>
       { renderFreeTransferInfo() }
