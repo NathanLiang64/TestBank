@@ -187,13 +187,6 @@ const CommunityPage = () => {
         </div>
         <div className="contentCard">
           <div className="title">
-            <div
-              className="search"
-              onClick={() => startFunc('M00200', null, { summary })}
-            >
-              <span>查詢</span>
-              <ArrowNextIcon />
-            </div>
             社群圈概況
           </div>
           <div className="overviewContent">
@@ -204,13 +197,19 @@ const CommunityPage = () => {
               </div>
             </div>
             <div className="overviewItem">
-              <div className="subTitle">申請中人數</div>
+              <div className="subTitle" onClick={() => {}}>
+                申請中人數
+                <ArrowNextIcon />
+              </div>
               <div className="num">
                 {renderText(summary?.community.applying)}
               </div>
             </div>
             <div className="overviewItem">
-              <div className="subTitle">已核可人數</div>
+              <div className="subTitle" onClick={() => startFunc('M002', null, { summary })}>
+                已核可人數
+                <ArrowNextIcon />
+              </div>
               <div className="num">
                 {renderText(summary?.community.approved)}
               </div>
