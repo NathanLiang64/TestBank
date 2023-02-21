@@ -62,7 +62,7 @@ const CardLessATM = () => {
         labelName="提款密碼"
         inputProps={{
           maxLength: 12,
-          placeholder: '請輸入提款密碼(4-12位數字)',
+          placeholder: '請輸入提款密碼(6-12位數字)',
           inputMode: 'numeric',
           autoComplete: 'off',
         }}
@@ -73,7 +73,7 @@ const CardLessATM = () => {
         labelName="確認提款密碼"
         inputProps={{
           maxLength: 12,
-          placeholder: '請再輸入一次提款密碼(4-12位數字)',
+          placeholder: '請再輸入一次提款密碼(6-12位數字)',
           inputMode: 'numeric',
           autoComplete: 'off',
         }}
