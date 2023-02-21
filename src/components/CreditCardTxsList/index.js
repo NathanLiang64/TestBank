@@ -65,7 +65,7 @@ const CreditCardTxsList = ({
               <p className="date-card-info">
                 {stringDateFormat(transaction.txDate)}
                 {!card.isBankeeCard
-                && ` | 卡-${transaction.cardNo}`}
+                && ` | 卡-${transaction.cardNo.slice(-4)}`}
               </p>
               )}
             bottomRight={(

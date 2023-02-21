@@ -32,8 +32,7 @@ export const CustomInputSelectorField = ({
       <FEIBInputLabel htmlFor={name}>{labelName}</FEIBInputLabel>
       <FEIBInput
         className="withdrawAmount"
-        value={value || ''}
-        type="number"
+        value={`＄${toCurrency(value)}`}
         id={name}
         error={!!fieldState.error}
         placeholder={placeholder || ''}
@@ -59,7 +58,7 @@ export const CustomInputSelectorField = ({
               className="withdrawal-btn customSize"
               onClick={() => onChange(item)}
             >
-              {toCurrency(item)}
+              {`＄${toCurrency(item)}`}
             </FEIBBorderButton>
           </div>
         ))}

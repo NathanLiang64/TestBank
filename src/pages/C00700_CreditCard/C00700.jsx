@@ -64,13 +64,16 @@ const CreditCardPage = (props) => {
     dispatch(setModalVisible(false));
     const { isSuccess, message } = await updateTxnNotes(payload);
     if (isSuccess) { // updateTxNotes API 打成功才更新畫面
-      setTransactionObj((prevObj) => {
-        const key = isBankeeCard ? 0 : 1;
-        const updatedCards = prevObj[key].map((card) => (
-          card.txKey === payload.txKey ? {...card, note: payload.note} : card
-        ));
-        return {...prevObj, [key]: updatedCards};
-      });
+      const {txKey, note, cardNo} = payload;
+      const [key, otherKey] = isBankeeCard ? [0, 1] : [1, 0];
+      transactionObj[key].find((txn) => txn.txKey === txKey).note = note;
+
+      // 若改變的是 bankee 信用卡的明細，且另一個卡面已拿過資料，也需連動改變
+      const isBankeeTxn = cardsInfo.find((cardInfo) => cardInfo.isBankeeCard).cardNo === cardNo;
+      if (transactionObj[otherKey] && isBankeeTxn) {
+        transactionObj[otherKey].find((txn) => txn.txKey === txKey).note = note;
+      }
+      setTransactionObj({...transactionObj});
     } else showError(message);
   };
 
@@ -218,9 +221,9 @@ const CreditCardPage = (props) => {
               <CreditCardTxsList
                 card={cardInfo}
                 onMoreFuncClick={() => go2Func(Func.R001.id, {
-                  card: cardInfo, usedCardLimit, transactions: transactionObj[swiperIndex], index: swiperIndex,
+                  card: cardInfo, usedCardLimit, transactions: transactionObj[index],
                 }, index)}
-                transactions={transactionObj[swiperIndex]}
+                transactions={transactionObj[index]}
                 onTxnNotesEdit={onTxnNotesEdit}
               />
             </CreditCardTxsListWrapper>

@@ -12,7 +12,7 @@ import { Func } from 'utilities/FuncID';
 import CreditCardTxsList from 'components/CreditCardTxsList';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import PageWrapper from './R00100.style';
-import { getBankeeCard, getTransactionPromise, updateTxnNotes } from './api';
+import { getBankeeCard, getTransactions, updateTxnNotes } from './api';
 
 /**
  * R00100 信用卡 即時消費明細
@@ -20,26 +20,31 @@ import { getBankeeCard, getTransactionPromise, updateTxnNotes } from './api';
 const R00100 = () => {
   const dispatch = useDispatch();
   const [cardInfo, setCardInfo] = useState();
-  const {startFunc, closeFunc, getCurrentFunc} = useNavigation();
+  const {startFunc, getCurrentFunc} = useNavigation();
   const [transactions, setTransactions] = useState();
-  const [index, setIndex] = useState();
   const go2Instalment = () => startFunc(Func.R002.id, {cardNo: cardInfo.cardNo});
-
-  const getTransactions = async (cards) => {
-    const transactionsArray = await Promise.all(
-      cards.map(({ cardNo }) => getTransactionPromise(cardNo)),
-    );
-    const flattedTransactions = transactionsArray.flat();
-    return flattedTransactions;
-  };
 
   // 編輯信用卡明細備註的 Handler
   const onTxnNotesEdit = async (payload) => {
     dispatch(setModalVisible(false));
     const { isSuccess, message } = await updateTxnNotes(payload);
     if (isSuccess) {
-      setTransactions((prevTrans) => prevTrans.map((tran) => (
-        tran.txKey === payload.txKey ? {...tran, note: payload.note} : tran)));
+      const {txKey, note, cardNo} = payload;
+      const txnIndex = transactions.findIndex((txn) => txn.txKey === txKey);
+      transactions[txnIndex].note = note;
+      setTransactions([...transactions]);
+
+      // 若是從 C00700 頁面進入，則也要連同 keepData 的一起改變
+      const {keepData} = getCurrentFunc();
+      if (keepData) {
+        const {transactionObj, index, cardsInfo} = keepData;
+        transactionObj[index] = transactions; // 改變本身卡面的交易明細
+        const bankeeCardNo = cardsInfo.find(({isBankeeCard}) => isBankeeCard).cardNo;
+        const otherIndex = index === 0 ? 1 : 0; // 另一個卡面的 index
+        if (cardNo !== bankeeCardNo || !transactionObj[otherIndex]) return;
+        // 若改變的是 bankee 信用卡備註，則另一個卡面的交易明細也要一起變動
+        transactionObj[otherIndex].find((txn) => txn.txKey === txKey).note = note;
+      }
     } else showError(message);
   };
 
@@ -48,35 +53,21 @@ const R00100 = () => {
     let fetchedCardInfo = null;
     let fetchedTransactions = null;
     const funcParams = await loadFuncParams();
-    if (funcParams) {
+    if (funcParams) { // 從信用卡首頁 C00700 進入
       fetchedCardInfo = {...funcParams.card, usedCardLimit: funcParams.usedCardLimit};
       fetchedTransactions = funcParams.transactions;
-      setIndex(funcParams.index);
-    } else {
-      // 若從更多 (B00600) 頁面進入，會先確認有沒有 bankee 信用卡，查詢的交易明細就會預設以 bankee 信用卡為主
-      const bankeeCardInfo = await getBankeeCard();
-      fetchedCardInfo = bankeeCardInfo;
-      fetchedTransactions = await getTransactions(fetchedCardInfo.cards);
+    } else { // 從更多 B00600 進入 (一定要擁有 bankee 信用卡才進得來)，預設的交易明細以 bankee 信用卡為主
+      fetchedCardInfo = await getBankeeCard();
+      fetchedTransactions = await getTransactions(fetchedCardInfo.cardNo);
     }
+    dispatch(setWaittingVisible(false));
 
     setCardInfo(fetchedCardInfo);
     setTransactions(fetchedTransactions);
-    dispatch(setWaittingVisible(false));
   }, []);
 
-  const goBackFunc = () => {
-    const param = getCurrentFunc(); // TODO closeFunc就有此機制，為何還要自行處理？
-    const {keepData} = param;
-    if (keepData) {
-      // TODO 若使用者在此頁進行背著修改，回到 C00700 的時候，cache 也要被覆蓋成修改後的資料
-      // 或者是重新打 API 拿最新資料?
-      keepData.transactionObj[index] = transactions;
-      closeFunc(keepData);
-    } else closeFunc();
-  };
-
   return (
-    <Layout fid={Func.R001} title="信用卡即時消費明細" goBackFunc={goBackFunc}>
+    <Layout fid={Func.R001} title="信用卡即時消費明細">
       <MainScrollWrapper>
         <PageWrapper>
           <div className="bg-gray">

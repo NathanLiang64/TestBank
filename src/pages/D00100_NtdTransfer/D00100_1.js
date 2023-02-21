@@ -121,7 +121,8 @@ const TransferConfirm = (props) => {
     };
 
     if (result.isSuccess) {
-      if (result.balance !== (model.transOut.balance - model.amount - executeRs.fee)) alert(`餘額不一致：${model.transOut.balance - model.amount - executeRs.fee}`); // DEBUG
+      // NOTE 若是預約轉帳，executeRs 不會包含 balance/fee
+      if (!Number.isNaN(result.balance) && result.balance !== (model.transOut.balance - model.amount - executeRs.fee)) alert(`餘額不一致：${model.transOut.balance - model.amount - executeRs.fee}`); // DEBUG
       model.transOut.balance = executeRs.balance;
       if (result.isCrossBank) model.transOut.freeTransferRemain -= 1; // 跨轉優惠次數
 
