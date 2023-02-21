@@ -38,12 +38,14 @@ const AccountCardList = ({
 
   // 帳戶列表
   const mainList = [];
-  // 主帳戶：每個帳號必有唯一主帳戶
-  const mainAccount = data.find((account) => account.type === 'M');
-  if (mainAccount) {
+
+  // 主帳戶：台幣主帳戶包含所有子帳戶
+  const mainAccount = data.filter((account) => ['M', 'C'].includes(account.type));
+  if (mainAccount.length > 0) {
     mainList.push({
-      ...mainAccount,
+      type: 'M',
       accountNo: null,
+      balance: accumulateBalance(mainAccount),
     });
   }
 
