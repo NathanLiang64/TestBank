@@ -36,8 +36,16 @@ const AccountCardList = ({
   // 累加帳戶金額
   const accumulateBalance = (list) => list.reduce((accumulate, item) => accumulate + Math.abs(item.balance), 0);
 
+  // 帳戶列表
+  const mainList = [];
   // 主帳戶：每個帳號必有唯一主帳戶
-  const mainList = data.filter((account) => account.type === 'M');
+  const mainAccount = data.find((account) => account.type === 'M');
+  if (mainAccount) {
+    mainList.push({
+      ...mainAccount,
+      accountNo: null,
+    });
+  }
 
   // 子帳戶，且 只有『存錢計畫』
   // const subAccounts = data.filter((account) => account.type === 'C' && account.purpose === 2);
@@ -58,7 +66,7 @@ const AccountCardList = ({
   if (foreignAccounts.length > 0) {
     mainList.push({
       type: 'F',
-      accountNo: foreignAccounts[0].accountNo,
+      accountNo: null,
       balance: totalBalanceF2N, // 金額由後端直接加總
     });
 
@@ -71,7 +79,7 @@ const AccountCardList = ({
   if (stockAccounts.length > 0) {
     mainList.push({
       type: 'S',
-      accountNo: stockAccounts.length === 1 ? stockAccounts[0].accountNo : null,
+      accountNo: null,
       balance: accumulateBalance(stockAccounts),
     });
 
