@@ -34,6 +34,7 @@ const DepositPlanWrapper = styled.div`
     border-color: ${({ theme }) => theme.colors.border.lightest};
     margin-block: 2rem;
     width: 100%;
+    border-width: 0.5px;
   }
 `;
 
