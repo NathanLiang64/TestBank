@@ -13,7 +13,7 @@ import { FEIBInputLabel, FEIBInput } from 'components/elements';
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup } from 'utilities/MessageModal';
-import { switchZhNumber, toCurrency } from 'utilities/Generator';
+import { currencySymbolGenerator, switchZhNumber } from 'utilities/Generator';
 import { getAccountsList, getAccountBonus, updateAccount, cleanupAccount, getAccountInterest } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
@@ -166,7 +166,8 @@ const C00300 = () => {
       },
       {
         label: showRate ? '目前利率' : '累積利息',
-        value: showRate ? `${rate}%` : toCurrency(interest),
+        // value: showRate ? `${rate}%` : toCurrency(interest),
+        value: showRate ? `${rate}%` : currencySymbolGenerator(currency, interest),
         iconType: 'switch',
         onClick: () => setShowRate(!showRate),
       },

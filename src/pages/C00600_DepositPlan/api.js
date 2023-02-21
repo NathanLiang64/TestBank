@@ -177,7 +177,7 @@ export const createConfirm = async (planId) => {
  */
 export const updateDepositPlan = async (request) => {
   const response = await callAPI('/fintech/depositPlan/v1/update', request);
-  return response.data;
+  return response;
 };
 
 /**

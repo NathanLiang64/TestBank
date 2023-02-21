@@ -27,7 +27,6 @@ import DepositPlan from './components/DepositPlan';
 import {getDepositPlans, updateDepositPlan, closeDepositPlan } from './api';
 import {
   AlertUpdateFail,
-  AlertNoMainAccount,
   AlertMainDepositPlanHasBeenSetAlready,
   AlertUnavailableSubAccount,
   PromptShouldCloseDepositPlanOrNot,
@@ -41,25 +40,21 @@ import {
 const DepositPlanPage = () => {
   const history = useHistory(); // TODO 應該改用 startFunc
   const dispatch = useDispatch();
-  const location = useLocation();
+  const {state} = useLocation();
   const {startFunc, closeFunc, goHome} = useNavigation();
   const [depositPlans, setDepositPlans] = useState();
   const swiperRef = useRef();
 
-  // 查無主帳戶的情況下，需要跳出 popup 詢問使用者是否要導向申請頁面，
-  // 若有主帳戶再查詢是否有存錢計畫
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    const accounts = await getAccountsList('M');
-    if (accounts.length) {
-      if (location.state?.depositPlans) setDepositPlans(location.state?.depositPlans);
-      else {
-        const response = await getDepositPlans();
-        setDepositPlans(response);
-      }
-    } else AlertNoMainAccount({onOk: () => startFunc(Func.F001), closeFunc});
+
+    let plans;
+    if (state?.depositPlans) plans = state.depositPlans;
+    else plans = await getDepositPlans();
 
     dispatch(setWaittingVisible(false));
+
+    setDepositPlans(plans);
   }, []);
 
   /**
@@ -118,7 +113,7 @@ const DepositPlanPage = () => {
   const handleMoreClick = (plan) => {
     const list = [
       { icon: <CircleIcon />, title: '設定為主要存錢計畫', onClick: handleSetMasterPlan },
-      { icon: <AccountIcon11 />, title: '存錢計畫資訊', onClick: () => history.push('/C006004', { isConfirmMode: false, plan }) },
+      { icon: <AccountIcon11 />, title: '存錢計畫資訊', onClick: () => history.push('/C006004', { isConfirmMode: false, plan, depositPlans }) },
       { icon: <AccountIcon12 />, title: '結束本計畫', onClick: handleTerminatePlan },
     ];
     if (plan.progInfo.type === 0) {
@@ -141,7 +136,7 @@ const DepositPlanPage = () => {
   };
 
   const handleEditClick = (plan) => {
-    history.push('/C006005', { plan });
+    history.push('/C006005', { plan, depositPlans });
   };
 
   /**
@@ -232,7 +227,7 @@ const DepositPlanPage = () => {
     let activeIndex = 1; // 預設中間
 
     // 重新排序plans陣列
-    const reArrangedPlans = depositPlans?.plans;
+    const reArrangedPlans = depositPlans?.plans.slice(0) ?? [];
     if (depositPlans?.plans.length) {
       let masterSlideIndex = null;
       depositPlans.plans.forEach((p, i) => {
@@ -248,10 +243,15 @@ const DepositPlanPage = () => {
     const startParams = await loadFuncParams(); // Function Controller 提供的參數
     if (startParams && (typeof startParams === 'object')) {
       const accountNo = startParams.focusToAccountNo;
-      reArrangedPlans.forEach((p, i) => {
-        if (p.bindAccountNo === accountNo) activeIndex = i;
-      });
+      activeIndex = reArrangedPlans.findIndex((plan) => plan?.bindAccountNo === accountNo);
     }
+
+    // state 的優先度高於 startParams
+    if (state && state.plan) {
+      const accountNo = state.plan.bindAccountNo;
+      activeIndex = reArrangedPlans.findIndex((plan) => plan?.bindAccountNo === accountNo);
+    }
+
     swiper.slideTo(activeIndex, 0);
   };
 
@@ -268,7 +268,7 @@ const DepositPlanPage = () => {
    * 產生頁面
    * 只要提供相同數量的 slides 和 content，SwiperLayout會自動切換對應的內容。
    */
-  console.log('location.state', location.state);
+
   return (
     <Layout fid={Func.C006} title="存錢計畫" hasClearHeader goBackFunc={handleGoBackClick}>
       <MainScrollWrapper>

@@ -31,7 +31,7 @@ import { DetailPageWrapper } from './C00600.style';
 const DepositPlanDetailPage = () => {
   const history = useHistory();
   const {startFunc, closeFunc, goHome} = useNavigation();
-  const location = useLocation();
+  const {state} = useLocation();
   const dispatch = useDispatch();
   const mainRef = useRef();
   const [mode, setMode] = useState(0);
@@ -39,16 +39,16 @@ const DepositPlanDetailPage = () => {
   const [program, setProgram] = useState();
 
   useEffect(() => {
-    if (location.state && ('isConfirmMode' in location.state)) {
+    if (state && ('isConfirmMode' in state)) {
       // 資訊頁有二種使用情境：確認新增存錢計畫、閱覽存錢計畫資訊。
-      if (location.state.isConfirmMode) {
+      if (state.isConfirmMode) {
         // 設定成 (新增) 確認模式
         setMode(1);
-        setProgram(location.state.payload);
+        setProgram(state.payload);
       } else {
         // 設定成 (已建立) 資訊模式
         setMode(0);
-        setPlan(location.state.plan);
+        setPlan(state.plan);
       }
     } else {
       // Guard: 此頁面接續上一頁的操作，意指若未在該情況下進入此頁為不正常操作。
@@ -173,7 +173,7 @@ const DepositPlanDetailPage = () => {
   };
 
   return (
-    <Layout title={renderTitle()} fid={Func.C006} goBackFunc={() => history.goBack()}>
+    <Layout title={renderTitle()} fid={Func.C006} goBackFunc={() => history.replace(`${Func.C006.id}00`, state)}>
       <MainScrollWrapper ref={mainRef}>
         <DetailPageWrapper>
           { mode > 0 && (

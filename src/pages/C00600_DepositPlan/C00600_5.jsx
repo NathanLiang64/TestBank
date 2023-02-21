@@ -26,7 +26,7 @@ import { generateRestirctedEditSchema } from './validationSchema';
 const DepositPlanEditPage = () => {
   const history = useHistory();
   const { goHome } = useNavigation();
-  const location = useLocation();
+  const {state} = useLocation();
   const {control, handleSubmit, reset } = useForm(
     {
       defaultValues: {
@@ -37,7 +37,7 @@ const DepositPlanEditPage = () => {
         amount: '',
         bindAccountNo: '',
       },
-      resolver: yupResolver(generateRestirctedEditSchema(location.state?.plan)),
+      resolver: yupResolver(generateRestirctedEditSchema(state?.plan)),
     },
   );
 
@@ -52,18 +52,18 @@ const DepositPlanEditPage = () => {
   };
 
   useEffect(() => {
-    if (location.state && ('plan' in location.state)) {
-      setPlan(location.state.plan);
-      setIsRestrictedPromotion(location.state.plan.progInfo.type !== 0);
+    if (state && ('plan' in state)) {
+      setPlan(state.plan);
+      setIsRestrictedPromotion(state.plan.progInfo.type !== 0);
 
       // 重置表單各欄位 value
       reset({
-        name: location.state.plan.name,
-        cycleDuration: getDuration(location.state.plan.startDate, location.state.plan.endDate),
-        cycleMode: location.state.plan.cycleMode,
-        cycleTiming: location.state.plan.cycleTiming,
-        amount: `＄${toCurrency(location.state.plan.amount)}`,
-        bindAccountNo: accountFormatter(location.state.plan.bindAccountNo, true),
+        name: state.plan.name,
+        cycleDuration: getDuration(state.plan.startDate, state.plan.endDate),
+        cycleMode: state.plan.cycleMode,
+        cycleTiming: state.plan.cycleTiming,
+        amount: `＄${toCurrency(state.plan.amount)}`,
+        bindAccountNo: accountFormatter(state.plan.bindAccountNo, true),
       });
     } else {
       // Guard: 此頁面接續上一頁的操作，意指若未在該情況下進入此頁為不正常操作。
@@ -77,15 +77,21 @@ const DepositPlanEditPage = () => {
       name: data.name,
       image: newImageId > 0 ? newImageId : sessionStorage.getItem('C00600-hero'),
     };
-    // TODO: updateDepositPlan API 尚無法處理帶有 base64 的 image (會回傳錯誤訊息)，僅能先以預設圖片進行測試
-    const response = await updateDepositPlan(payload);
-    if (response.result) history.push('/C00600');
-    else AlertUpdateFail();
+    const {isSuccess} = await updateDepositPlan(payload);
+    if (isSuccess) {
+      // cache 的資料也要一起變更
+      const {depositPlans: {plans}} = state;
+      const updatedIndex = plans.findIndex(({planId}) => plan.planId === planId);
+      plans[updatedIndex].name = data.name;
+      plans[updatedIndex].imageId = newImageId;
+
+      history.push('/C00600', state);
+    } else AlertUpdateFail();
     sessionStorage.removeItem('C00600-hero'); // 清除暫存背景圖。
   };
 
   return (
-    <Layout title="編輯存錢計畫" hasClearHeader goBackFunc={() => history.goBack()}>
+    <Layout title="編輯存錢計畫" hasClearHeader goBackFunc={() => history.replace('C00600', state)}>
       <MainScrollWrapper>
         <EditPageWrapper>
           <form onSubmit={handleSubmit(onSubmit)}>

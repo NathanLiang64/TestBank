@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-use-before-define */
 /* eslint-disable object-curly-newline */
@@ -19,7 +18,7 @@ import { customPopup } from 'utilities/MessageModal';
 import { getAccountsList, updateAccount, cleanupAccount, getAccountInterest } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
-import { toCurrency } from 'utilities/Generator';
+import { currencySymbolGenerator } from 'utilities/Generator';
 import {
   getExchangeRateInfo,
   getTransactions,
@@ -135,7 +134,7 @@ const C00400 = () => {
       },
       {
         label: showRate ? '目前利率' : '累積利息',
-        value: showRate ? `${rate}%` : toCurrency(interest),
+        value: showRate ? `${rate}%` : currencySymbolGenerator(currency, interest),
         iconType: 'switch',
         onClick: () => setShowRate(!showRate),
       },

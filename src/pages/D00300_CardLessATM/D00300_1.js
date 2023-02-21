@@ -115,8 +115,8 @@ const CardLessATM1 = () => {
             <CustomInputSelectorField
               control={control}
               name="withdrawAmount"
-              placeholder="請輸入金額"
-              labelName="請選擇提領金額？"
+              placeholder="請選擇提領金額"
+              labelName="您想提領多少錢呢?"
             />
 
             <Accordion space="both">

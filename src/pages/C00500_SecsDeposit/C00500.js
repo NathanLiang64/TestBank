@@ -1,5 +1,4 @@
 /* eslint-disable no-nested-ternary */
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-use-before-define */
 /* eslint-disable object-curly-newline */
 import { useEffect, useReducer, useState } from 'react';
@@ -15,11 +14,11 @@ import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { customPopup, showPrompt } from 'utilities/MessageModal';
+import { customPopup } from 'utilities/MessageModal';
 import { getAccountsList, getAccountBonus, updateAccount, cleanupAccount, getAccountInterest } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
-import { toCurrency } from 'utilities/Generator';
+import { currencySymbolGenerator } from 'utilities/Generator';
 import { getTransactions, setAccountAlias } from './api';
 import PageWrapper from './C00500.style';
 
@@ -132,7 +131,7 @@ const C00500 = () => {
       },
       {
         label: showRate ? '目前利率' : '累積利息',
-        value: showRate ? `${rate}%` : toCurrency(interest),
+        value: showRate ? `${rate}%` : currencySymbolGenerator(currency, interest),
         iconType: 'switch',
         onClick: () => setShowRate(!showRate),
       },

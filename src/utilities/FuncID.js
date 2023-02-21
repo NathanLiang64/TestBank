@@ -13,7 +13,7 @@ export const Func = {
    */
   find: (funcCode) => Object.entries(Func)
     .map((f) => f[1])
-    .find((f) => (f.id === funcCode)),
+    .find((f) => f.id === funcCode),
 
   // NOTE 重要關念！
   //      功能代碼 與 Route所定義的 URL 無直接關係，目前雖然二者看起來是一致的，但URL是在DB中定義
@@ -469,6 +469,7 @@ export const Func = {
   S00200: {
     id: 'S002',
     required: [],
+    isOpenExternalBrowser: true,
   },
 
   /**
@@ -477,6 +478,7 @@ export const Func = {
   S00300: {
     id: 'S003',
     required: [],
+    isOpenExternalBrowser: true,
   },
 
   /**
@@ -494,6 +496,7 @@ export const Func = {
   S00500: {
     id: 'S005',
     required: [],
+    isOpenExternalBrowser: true,
   },
 
   /**
@@ -528,6 +531,7 @@ export const Func = {
   S00900: {
     id: 'S009',
     required: [],
+    isOpenExternalBrowser: true,
   },
 
   /**

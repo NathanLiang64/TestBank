@@ -289,7 +289,7 @@ const Transfer = (props) => {
           showCustomPrompt({
             message: '無裝置認證，請先進行「APP裝置認證(快速登入設定)」，或致電客服。',
             okContent: '立即設定',
-            onOk: () => startFunc(Func.T002.id),
+            onOk: () => startFunc(Func.T002.id, null, model),
             onCancel: () => {},
           });
           return;
@@ -301,7 +301,7 @@ const Transfer = (props) => {
           showCustomPrompt({
             message: '無權限，請先進行「非約定轉帳設定」，或致電客服。',
             okContent: '立即設定',
-            onOk: () => startFunc(Func.T003.id),
+            onOk: () => startFunc(Func.T003.id, null, model),
             onCancel: () => {},
           });
           return;
