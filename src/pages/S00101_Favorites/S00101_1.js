@@ -165,7 +165,8 @@ const S00101_1 = ({
       }
     };
 
-    const className = isSelected ? 'selected' : ''; // 會有反紫的效果
+    const selectedClassType = (mode === 1) ? 'disabled' : 'selected'; // 1.單選模式:反白 2.多選模式:反紫
+    const className = isSelected ? selectedClassType : '';
     // 當已選滿了，或是固定項目；或是在單選模式中，已選取的項目，也都不可以再選。
     const disabled = (getSelectedCount() > MAX_FUNC_COUNT || model.locked || (mode === 1 && isSelected));
     return (
