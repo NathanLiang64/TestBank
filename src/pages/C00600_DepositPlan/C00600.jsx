@@ -117,7 +117,7 @@ const DepositPlanPage = () => {
       { icon: <AccountIcon12 />, title: '結束本計畫', onClick: handleTerminatePlan },
     ];
     if (plan.progInfo.type === 0) {
-      list.push({ icon: <D001 />, title: '轉帳', onClick: () => startFunc(Func.D001.id) });
+      list.push({ icon: <D001 />, title: '轉帳', onClick: () => startFunc(Func.D001.id, {transOut: plan.bindAccountNo}) }); // TODO 待測
     }
     const options = (
       <ul>
@@ -229,12 +229,9 @@ const DepositPlanPage = () => {
     // 重新排序plans陣列
     const reArrangedPlans = depositPlans?.plans.slice(0) ?? [];
     if (depositPlans?.plans.length) {
-      let masterSlideIndex = null;
-      depositPlans.plans.forEach((p, i) => {
-        if (p.isMaster) masterSlideIndex = i;
-      });
+      const masterSlideIndex = depositPlans.plans.findIndex((p) => !!p?.isMaster);
 
-      if (masterSlideIndex !== null) {
+      if (masterSlideIndex >= 0) {
         [reArrangedPlans[masterSlideIndex], reArrangedPlans[1]] = [reArrangedPlans[1], reArrangedPlans[masterSlideIndex]];
       }
     }

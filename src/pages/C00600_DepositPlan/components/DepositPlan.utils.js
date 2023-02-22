@@ -29,9 +29,8 @@ const getStage = (isPlanFailed, progressPercentage) => {
     };
   }
 
-  switch (Math.ceil(progressPercentage / 25)) {
+  switch (Math.floor(progressPercentage / 25)) {
     case 0:
-    case 1:
       return {
         animation: saving25,
         infoAreaStyles: {
@@ -40,7 +39,7 @@ const getStage = (isPlanFailed, progressPercentage) => {
         },
         text: '累積才能成長',
       };
-    case 2:
+    case 1:
       return {
         animation: saving50,
         infoAreaStyles: {
@@ -49,7 +48,7 @@ const getStage = (isPlanFailed, progressPercentage) => {
         },
         text: '開始就不要停止了!',
       };
-    case 3:
+    case 2:
       return {
         animation: saving75,
         infoAreaStyles: {
@@ -58,7 +57,7 @@ const getStage = (isPlanFailed, progressPercentage) => {
         },
         text: '堅持很難，但你可以的!',
       };
-    case 4:
+    case 3:
     default:
       return {
         animation: saving99,
@@ -68,6 +67,7 @@ const getStage = (isPlanFailed, progressPercentage) => {
         },
         text: '美好的錢途，就在不遠處',
       };
+    // case 4:
   }
 };
 
