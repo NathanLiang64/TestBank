@@ -49,6 +49,7 @@ export const AmountSetting = ({
               type="button"
               className="withdrawal-btn customSize"
               onClick={() => onChange(item)}
+              isSelected={value === item}
             >
               {toCurrency(item)}
             </FEIBBorderButton>

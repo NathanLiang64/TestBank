@@ -80,6 +80,7 @@ const AccountDetails = ({
     setIsLoading(true);
 
     const dateRange = getDateRange(cond);
+    if (!cond) return null; // 避免進入畫面打兩次 API
     const response = await onSearch({
       ...cond,
       startDate: dateToString(dateRange.startDate, ''),

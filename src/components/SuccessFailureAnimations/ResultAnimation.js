@@ -1,8 +1,8 @@
-import SuccessCheer from 'assets/animations/successCheer.svg';
-import SuccessFlower from 'assets/animations/successFlower.svg';
-import SuccessLove from 'assets/animations/success_love_new_230217.gif';
-import SuccessMusic from 'assets/animations/success_music_new_230217.gif';
-import Fail from 'assets/animations/fail.svg';
+import SuccessCheer from 'assets/animations/successCheer.gif';
+import SuccessFlower from 'assets/animations/successFlower.gif';
+import SuccessLove from 'assets/animations/successLove.gif';
+import SuccessMusic from 'assets/animations/successMusic.gif';
+import Fail from 'assets/animations/fail.gif';
 
 import SuccessFailureAnimationsWrapper from './successFailureAnimations.style';
 

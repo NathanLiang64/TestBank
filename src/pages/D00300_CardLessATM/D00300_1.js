@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDispatch } from 'react-redux';
@@ -21,11 +21,9 @@ import { CustomInputSelectorField } from './fields/CustomInputSelectorField';
 import { validationSchema } from './validationSchema';
 
 const CardLessATM1 = () => {
-  const defaultValues = {
-    withdrawAmount: 0,
-  };
+  const {state} = useLocation();
   const {handleSubmit, control, reset } = useForm({
-    defaultValues,
+    defaultValues: { withdrawAmount: parseInt(state ?? 0, 10) }, // 若 state 無值，預設帶 0
     resolver: yupResolver(validationSchema),
   });
 

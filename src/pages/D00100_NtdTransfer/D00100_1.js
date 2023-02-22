@@ -122,8 +122,13 @@ const TransferConfirm = (props) => {
 
     if (result.isSuccess) {
       // NOTE 若是預約轉帳，executeRs 不會包含 balance/fee
-      if (!Number.isNaN(result.balance) && result.balance !== (model.transOut.balance - model.amount - executeRs.fee)) alert(`餘額不一致：${model.transOut.balance - model.amount - executeRs.fee}`); // DEBUG
-      model.transOut.balance = executeRs.balance;
+      if (result.balance !== undefined) {
+        if (result.balance !== (model.transOut.balance - model.amount - executeRs.fee)) {
+          alert(`餘額不一致：${model.transOut.balance - model.amount - executeRs.fee}`); // DEBUG
+        }
+        model.transOut.balance = executeRs.balance;
+      }
+
       if (result.isCrossBank) model.transOut.freeTransferRemain -= 1; // 跨轉優惠次數
 
       // 更新快取（跨轉優惠次數、餘額）
@@ -132,7 +137,7 @@ const TransferConfirm = (props) => {
         updateAccount({
           ...account,
           currency: 'TWD',
-          balance: executeRs.balance, // 更新 餘額
+          balance: model.transOut.balance, // 更新 餘額
           bonus: {
             ...account.bonus,
             freeTransferRemain: model.transOut.freeTransferRemain, // 更新 跨轉優惠次數

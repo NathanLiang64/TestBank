@@ -18,8 +18,16 @@ import FEIBdefaultButton from './_defaultElements/FEIBdefaultButton';
 const FEIBBorderButton = styled(FEIBdefaultButton)`
   border: .1rem solid ${({ theme, $borderColor }) => $borderColor || theme.colors.primary.light};
   color: ${({ theme, $color }) => $color || theme.colors.primary.light};
-  background: transparent;
   
+  ${({ isSelected, theme, $borderColor }) => (isSelected
+    ? `
+    background: ${$borderColor || theme.colors.primary.light};
+    color: ${theme.colors.basic.white};
+    &:before {
+      opacity: .16;
+    }
+    ` : 'background: transparent')}
+
   &:before {
     content: '';
     display: block;
@@ -38,7 +46,6 @@ const FEIBBorderButton = styled(FEIBdefaultButton)`
   &:hover {
     background: ${({ theme, $borderColor }) => $borderColor || theme.colors.primary.light};
     color: ${({ theme }) => theme.colors.basic.white};
-    // color: ${({ theme, $color }) => $color || theme.colors.basic.white};
     &:before {
       opacity: .16;
     }
