@@ -31,11 +31,10 @@ export const CustomInputSelectorField = ({
     <>
       <FEIBInputLabel htmlFor={name}>{labelName}</FEIBInputLabel>
       <FEIBInput
-        className="withdrawAmount"
         value={`＄${toCurrency(value)}`}
         id={name}
         error={!!fieldState.error}
-        placeholder={placeholder || ''}
+        inputProps={{ placeholder: placeholder || '', disabled: true}} // 只做顯示，不具輸入功能
         $color={$color}
       />
       <div className="addMinusIcons">
@@ -57,6 +56,7 @@ export const CustomInputSelectorField = ({
               type="button"
               className="withdrawal-btn customSize"
               onClick={() => onChange(item)}
+              isSelected={value === item}
             >
               {`＄${toCurrency(item)}`}
             </FEIBBorderButton>

@@ -6,7 +6,7 @@ import { showCustomPrompt } from 'utilities/MessageModal';
 import Layout from 'components/Layout/Layout';
 import { Func } from 'utilities/FuncID';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { useNavigation } from 'hooks/useNavigation';
+import { loadFuncParams, useNavigation } from 'hooks/useNavigation';
 import { getStatus, getCardlessWdStatus } from './api';
 
 const CardLessATM = () => {
@@ -31,8 +31,10 @@ const CardLessATM = () => {
     } else {
     // 檢查無卡提款狀態; 0=未申請, 1=已申請未開通, 2=已開通, 3=已註銷, 4=已失效, 5=其他
       const cwdStatus = await getCardlessWdStatus();
-      if (cwdStatus === 2) history.push('/D003001');
-      else {
+      if (cwdStatus === 2) {
+        const params = await loadFuncParams(); // 若由其他頁面導過來，將預設提款金額帶入
+        history.push('/D003001', params);
+      } else {
         await showCustomPrompt({
           message: '愛方便的您, 怎能少了無卡提款服務, 快來啟用吧',
           onOk: () => startFunc(Func.T004.id),
