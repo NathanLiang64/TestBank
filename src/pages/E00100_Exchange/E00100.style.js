@@ -170,6 +170,8 @@ export const ExchangeTableWrapper = styled.div`
   }
   table {
     thead {
+      border-bottom: 1px solid ${({ theme }) => theme.colors.border.lightest};
+
       tr {
         td {
           text-align: right;
@@ -188,7 +190,7 @@ export const ExchangeTableWrapper = styled.div`
           text-align: right;
           font-size: 1.4rem;
           line-height: 2.1rem;
-          color: ${({ theme }) => theme.colors.text.lightGray};
+          color: ${({ theme }) => theme.colors.text.dark};
           &:first-child {
             text-align: left;
           }
