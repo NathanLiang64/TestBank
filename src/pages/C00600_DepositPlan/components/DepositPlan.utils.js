@@ -1,9 +1,9 @@
-import fail from 'assets/animations/fail.svg';
-import saving25 from 'assets/animations/saving25.svg';
-import saving50 from 'assets/animations/saving50.svg';
-import saving75 from 'assets/animations/saving75.svg';
-import saving99 from 'assets/animations/saving99.svg';
-import successFlower from 'assets/animations/successFlower.svg';
+import fail from 'assets/animations/fail.gif';
+import saving25 from 'assets/animations/saving25.gif';
+import saving50 from 'assets/animations/saving50.gif';
+import saving75 from 'assets/animations/saving75.gif';
+import saving99 from 'assets/animations/saving99.gif';
+import successFlower from 'assets/animations/successFlower.gif';
 import Theme from 'themes/theme';
 
 const getStage = (isPlanFailed, progressPercentage) => {

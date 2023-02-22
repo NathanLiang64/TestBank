@@ -67,9 +67,7 @@ const DepositPlan = ({
         <div>
           目前金額
           {' '}
-          {/* TODO 若存入的錢不是以萬元為單位時，格式會跑掉，需要確認後續的呈現方式 */}
-          {/* <em>{switchZhNumber(currentBalance)}</em> */}
-          <em>{toCurrency(currentBalance)}</em>
+          <em>{`＄${toCurrency(currentBalance)}`}</em>
           /
           {switchZhNumber(goalAmount)}
         </div>
