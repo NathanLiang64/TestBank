@@ -11,10 +11,12 @@ import CipherUtil from 'utilities/CipherUtil';
 
 import ModalReducer from './reducers/ModalReducer';
 import CacheReducer from './reducers/CacheReducer';
+import MiddlewareReducer from './reducers/MiddlewareReducer';
 
 const reducer = combineReducers({
   ModalReducer,
   CacheReducer,
+  MiddlewareReducer,
 });
 
 /**
