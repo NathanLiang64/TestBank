@@ -4,7 +4,7 @@ import forge from 'node-forge';
 import store from 'stores/store';
 import { setAllCacheData } from 'stores/reducers/CacheReducer';
 import { setFuncJumpHandler } from 'stores/reducers/MiddlewareReducer';
-import { callAppJavaScript, registJumpListener } from 'hooks/useNavigation';
+import { callAppJavaScript, useNavigation } from 'hooks/useNavigation';
 import { customPopup, showTxnAuth } from './MessageModal';
 // eslint-disable-next-line import/no-cycle
 import { callAPI } from './axios';
@@ -444,16 +444,33 @@ async function reloadHeadshot() {
 }
 
 /**
+ * 用這Func的原因是 基於HOOK的使用規則, 不允許HOOK直接放到監聽事件中 否則會報錯
+ */
+const aliasStartFunc = (funcID, funcParams, keepData) => {
+  useNavigation().startFunc(funcID, funcParams, keepData);
+};
+
+/**
  * 註冊webview換頁監聽事件給原生使用
  */
 async function registFuncJumpHandler() {
   const { needSetFuncJumpHandler } = store.getState()?.MiddlewareReducer;
   const unsubscribe = store.subscribe(() => {
     if (needSetFuncJumpHandler) {
-      registJumpListener();
+      console.log('window.startFunc is registed!!!!!!!!!!!!');
+      window.startFunc = ({keepData = '', funcParams = '', url}) => {
+        // 還原json跳脫字元
+        const funcID = url.replace("\"", "\\\"")  // eslint-disable-line
+          .split('/').pop().substring(0, 4); // 取url最後一段的前4碼
+        console.log(`window.startFunc is called : ${funcID}`);
+        // 調用useNavigation 內的 startFunc
+        aliasStartFunc(funcID, funcParams, keepData);
+      };
 
       unsubscribe(); // 用來判斷只註冊一次監聽事件, 避免重複註冊
-      // store.dispatch(stopSetFuncJump()); //這行暫時先拿掉, 觀察是否用 unsubscribe 可以取代
+
+      // TODO 這行暫時先拿掉, 觀察是否用 unsubscribe 可以取代, 如經測試可以正常就可刪除
+      // store.dispatch(stopSetFuncJump());
     }
   });
 
