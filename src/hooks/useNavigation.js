@@ -29,6 +29,23 @@ const funcStack = {
   },
 };
 
+/**
+ * 註冊webview換頁監聽事件給原生調用
+ */
+const registJumpListener = () => {
+  console.log('window.startFunc is registed!!!!!!!!!!!!');
+  const {startFunc} = useNavigation();
+
+  window.startFunc = ({keepData = '', funcParams = '', url}) => {
+    // 還原json跳脫字元
+    const funcID = url.replace("\"", "\\\"")  // eslint-disable-line
+      .split('/').pop().substring(0, 4); // 取url最後一段的前4碼
+    console.log(`window.startFunc is called : ${funcID}`);
+    // 調用useNavigation 內的 startFunc
+    startFunc(funcID, funcParams, keepData);
+  };
+};
+
 const useNavigation = () => {
   const history = useHistory();
 
@@ -298,4 +315,5 @@ export {
   useNavigation,
   callAppJavaScript,
   loadFuncParams,
+  registJumpListener,
 };

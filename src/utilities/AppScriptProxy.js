@@ -3,7 +3,8 @@
 import forge from 'node-forge';
 import store from 'stores/store';
 import { setAllCacheData } from 'stores/reducers/CacheReducer';
-import { callAppJavaScript } from 'hooks/useNavigation';
+import { setFuncJumpHandler, stopSetFuncJump } from 'stores/reducers/MiddlewareReducer';
+import { callAppJavaScript, registJumpListener } from 'hooks/useNavigation';
 import { customPopup, showTxnAuth } from './MessageModal';
 // eslint-disable-next-line import/no-cycle
 import { callAPI } from './axios';
@@ -442,6 +443,23 @@ async function reloadHeadshot() {
   await callAppJavaScript('reloadHeadshot', null, true);
 }
 
+/**
+ * 註冊webview換頁監聽事件給原生使用
+ */
+async function registFuncJumpHandler() {
+  store.subscribe(() => {
+    const { needSetFuncJumpHandler } = store.getState()?.MiddlewareReducer;
+
+    if (needSetFuncJumpHandler) {
+      registJumpListener();
+
+      store.dispatch(stopSetFuncJump());// 用來判斷只註冊一次監聽事件, 避免重複註冊
+    }
+  });
+
+  store.dispatch(setFuncJumpHandler());
+}
+
 export {
   getOsType,
   showWaitting,
@@ -468,4 +486,5 @@ export {
   dialTel,
   screenShot,
   reloadHeadshot,
+  registFuncJumpHandler,
 };
