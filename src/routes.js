@@ -86,7 +86,6 @@ const MoreTranscations = lazy(() => import('pages/MoreTranscations'));
 const ForeignCurrencyTransfer1 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer/foreignCurrencyTransfer_1'));
 const ForeignCurrencyTransfer2 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer/foreignCurrencyTransfer_2'));
 // 社群帳本
-const LedgerTransferSetting = lazy(() => import('pages/C00200_Ledger/transfer/transferSetting'));
 const AbortLedgerConfirm = lazy(() => import('pages/C00200_Ledger/AbortLedgerConfirm/AbortLedgerConfirm'));
 const AbortLedgerSuccess = lazy(() => import('pages/C00200_Ledger/AbortLedgerSuccess/AbortLedgerSuccess'));
 const ClubLedgersList = lazy(() => import('pages/C00200_Ledger/ClubLedgersList/ClubLedgersList'));
@@ -104,7 +103,9 @@ const PaymentRequest = lazy(() => import('pages/C00200_Ledger/PaymentRequest/Pay
 const RecordDetail = lazy(() => import('pages/C00200_Ledger/RecordDetail/RecordDetail'));
 const ShareLedgerDetail = lazy(() => import('pages/C00200_Ledger/ShareLedgerDetail/ShareLedgerDetail'));
 const Terms = lazy(() => import('pages/C00200_Ledger/Terms/Terms'));
+const LedgerTransferSetting = lazy(() => import('pages/C00200_Ledger/transfer/transferSetting'));
 const LedgerTransferConfirm = lazy(() => import('pages/C00200_Ledger/transfer/transferConfirm'));
+const LedgertTransferFinish = lazy(() => import('pages/C00200_Ledger/transfer/transferFinish'));
 
 // TODO：支援開發及Prototype測試使用
 const Login = lazy(() => import('proto/Login/login'));
@@ -209,7 +210,6 @@ const routes = [
     component: ForeignCurrencyTransfer2,
   },
   // 社群帳本
-  {path: '/transferSetting', exact: false, component: LedgerTransferSetting},
   {path: '/abortLedgerConfirm', exact: false, component: AbortLedgerConfirm},
   {path: '/abortLedgerSuccess', exact: false, component: AbortLedgerSuccess},
   {path: '/clubLedgersList', exact: false, component: ClubLedgersList},
@@ -227,7 +227,9 @@ const routes = [
   {path: '/recordDetail', exact: false, component: RecordDetail},
   {path: '/shareLedgerDetail', exact: false, component: ShareLedgerDetail},
   {path: '/terms', exact: false, component: Terms},
+  {path: '/transferSetting', exact: false, component: LedgerTransferSetting},
   {path: '/transferConfirm', exact: false, component: LedgerTransferConfirm},
+  {path: '/transferFinish', exact: false, component: LedgertTransferFinish},
 
   // TODO：支援開發及Prototype測試使用
   {path: '/login/:fid', exact: false, component: Login},
