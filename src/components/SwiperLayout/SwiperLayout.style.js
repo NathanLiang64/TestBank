@@ -4,11 +4,11 @@ const SwiperLayoutWrapper = styled.div`
   .swiper-container {
     padding-bottom: 2.5rem;
 
-    & canvas {
+    & .swiper-slide > div > canvas {
       margin: auto;
     }
 
-    & .group {
+    & .swiper-slide > div > .group {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
