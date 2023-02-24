@@ -64,6 +64,7 @@ const Nav = () => {
           <div onClick={() => ledgerApiTest()}>社群帳本API測試</div>
           <hr />
           <div onClick={() => startFunc('transferSetting')}>社群轉帳 | TransferSetting</div>
+          <div onClick={() => startFunc('transferConfirm')}>社群轉帳 | TransferConfirm</div>
           <div onClick={() => startFunc('abortLedgerConfirm')}>終止帳本 - 確認 | AbortLedgerConfirm</div>
           <div onClick={() => startFunc('abortLedgerSuccess')}>終止帳本 - 成功 | AbortLedgerSuccess</div>
           <div onClick={() => startFunc('clubLedgersList')}>社群帳本(首頁) | ClubLedgersList</div>

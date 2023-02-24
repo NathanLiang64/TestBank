@@ -104,6 +104,7 @@ const PaymentRequest = lazy(() => import('pages/C00200_Ledger/PaymentRequest/Pay
 const RecordDetail = lazy(() => import('pages/C00200_Ledger/RecordDetail/RecordDetail'));
 const ShareLedgerDetail = lazy(() => import('pages/C00200_Ledger/ShareLedgerDetail/ShareLedgerDetail'));
 const Terms = lazy(() => import('pages/C00200_Ledger/Terms/Terms'));
+const LedgerTransferConfirm = lazy(() => import('pages/C00200_Ledger/transfer/transferConfirm'));
 
 // TODO：支援開發及Prototype測試使用
 const Login = lazy(() => import('proto/Login/login'));
@@ -226,6 +227,7 @@ const routes = [
   {path: '/recordDetail', exact: false, component: RecordDetail},
   {path: '/shareLedgerDetail', exact: false, component: ShareLedgerDetail},
   {path: '/terms', exact: false, component: Terms},
+  {path: '/transferConfirm', exact: false, component: LedgerTransferConfirm},
 
   // TODO：支援開發及Prototype測試使用
   {path: '/login/:fid', exact: false, component: Login},
