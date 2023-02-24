@@ -32,8 +32,9 @@ const DepositPlanHeroSlideWrapper = styled.div`
 
     .group {
       position: absolute;
-      right: 1rem;
-      bottom: 1rem;
+      left: 95%;
+      top: 95%;
+      transform: translate(-95%, -95%);
       display: flex;
       flex-direction: column;
       gap: 1.2rem;

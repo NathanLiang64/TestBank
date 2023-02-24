@@ -45,6 +45,10 @@ const FEIBSelect = styled(MaterialSelect).attrs({
     display: block; 
     line-height: 1;
     color: ${({ theme, $color }) => $color || theme.colors.primary.dark};
+    
+    &.Mui-disabled{
+      color: ${({ theme }) => theme.colors.text.lightGray};
+    }
   }
   
   .MuiInputBase-input {
