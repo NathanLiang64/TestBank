@@ -2,7 +2,7 @@
 import styled from 'styled-components';
 import Layout from 'components/Layout';
 
-const TransferPageWrapper = styled(Layout)`
+export const TransferPageWrapper = styled(Layout)`
   // background: ${({ theme }) => theme.colors.background.lighterBlue};
   min-height: fit-content;
 
@@ -25,4 +25,18 @@ const TransferPageWrapper = styled(Layout)`
   }
 `;
 
-export default TransferPageWrapper;
+export const TransferConfirmWrapper = styled(Layout)`
+  background: ${({ theme }) => theme.colors.background.lighterBlue};
+  min-height: fit-content;
+
+  .banner {
+    background: ${({ theme }) => theme.colors.basic.white};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-left: -1.6rem;
+    height: 4rem;
+    width: 100vw;
+  }
+`;

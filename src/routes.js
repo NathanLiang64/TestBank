@@ -86,6 +86,7 @@ const MoreTranscations = lazy(() => import('pages/MoreTranscations'));
 const ForeignCurrencyTransfer1 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer/foreignCurrencyTransfer_1'));
 const ForeignCurrencyTransfer2 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer/foreignCurrencyTransfer_2'));
 const LedgerTransferSetting = lazy(() => import('pages/C00200_Ledger/transfer/transferSetting'));
+const LedgerTransferConfirm = lazy(() => import('pages/C00200_Ledger/transfer/transferConfirm'));
 
 // TODO：支援開發及Prototype測試使用
 const Login = lazy(() => import('proto/Login/login'));
@@ -190,6 +191,7 @@ const routes = [
     component: ForeignCurrencyTransfer2,
   },
   {path: '/transferSetting', exact: false, component: LedgerTransferSetting},
+  {path: '/transferConfirm', exact: false, component: LedgerTransferConfirm},
 
   // TODO：支援開發及Prototype測試使用
   {path: '/login/:fid', exact: false, component: Login},
