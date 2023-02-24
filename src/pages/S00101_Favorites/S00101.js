@@ -208,7 +208,7 @@ const S00101 = () => {
                 )}
                 <img src={getFuncButtonBackground(index)} alt="block" />
                 {FuncIcons[func.funcCode.substring(0, 4)]()}
-                {`${func.name} (${index})`}
+                {`${func.name}`}
                 {func.params && (<br />)}
                 {func.params && (`${func.params}`)}
               </>

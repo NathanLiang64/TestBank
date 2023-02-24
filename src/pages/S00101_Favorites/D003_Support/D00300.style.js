@@ -31,7 +31,7 @@ const D00300Wrapper = styled.div`
 }
 
 .amountButtonsContainer {
-  margin: 0 0 1rem;
+  margin: 1.8rem 0 1rem;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
