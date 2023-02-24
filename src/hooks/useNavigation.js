@@ -3,6 +3,8 @@
 import { useHistory } from 'react-router';
 import { forceLogout, getOsType } from 'utilities/AppScriptProxy';
 import { Func, isEnterFunc } from 'utilities/FuncID';
+import { setFuncJump } from 'stores/reducers/FuncJumpReducer';
+import store from 'stores/store';
 
 const funcStack = {
   getStack: () => {
@@ -27,6 +29,20 @@ const funcStack = {
     const lastItem = stack[stack.length - 1];
     return lastItem;
   },
+};
+
+/**
+ * 註冊webview換頁監聽事件給原生使用
+ */
+const registFuncJumpHandler = () => {
+  window.startFunc = ({keepData = '', funcParams = '', url}) => {
+    // 還原json跳脫字元
+    const funcID = url.replace("\"", "\\\"")  // eslint-disable-line
+      .split('/').pop().substring(0, 4); // 取url最後一段的前4碼
+    console.log(`window.startFunc is called : ${funcID}`);
+    // 調用useNavigation 內的 startFunc
+    store.dispatch(setFuncJump({isNeedJump: true, jumpParam: {funcID, funcParams, keepData}}));
+  };
 };
 
 const useNavigation = () => {
@@ -80,6 +96,20 @@ const useNavigation = () => {
       history.push(`/${funcID}`);
     }
   };
+
+  /**
+   * 監聽原生換頁事件
+   */
+  store.subscribe(() => {
+    const {isNeedJump, jumpParam} = store.getState()?.FuncJumpReducer;
+    if (isNeedJump === true) {
+      const {funcID, funcParams, keepData} = jumpParam;
+
+      startFunc(funcID, funcParams, keepData);
+      // store.dispatch({ type: 'setFuncJump', data: {isNeedJump:false, jumpParam:{}} });
+      store.dispatch(setFuncJump({isNeedJump: false, jumpParam: {}}));
+    }
+  });
 
   /**
    * 啟動 Web 單元功能。
@@ -298,5 +328,5 @@ export {
   useNavigation,
   callAppJavaScript,
   loadFuncParams,
-  // registJumpListener,
+  registFuncJumpHandler,
 };

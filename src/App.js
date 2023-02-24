@@ -3,7 +3,8 @@ import { Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import routes from 'routes';
 import Loading from 'components/Loading';
-import { registFuncJumpHandler } from 'utilities/AppScriptProxy';
+// NOTE useNavigation 必須要在此先引用, 以註冊registFuncJumpHandler相關事件監聽
+import { useNavigation, registFuncJumpHandler } from 'hooks/useNavigation'; // eslint-disable-line
 
 /* Store */
 import { PersistGate } from 'redux-persist/integration/react';
