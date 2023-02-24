@@ -56,6 +56,13 @@ const S00101_1 = ({
       const selectedItem = selections.find((btn) => btn.func?.funcCode === item.funcCode);
       item.isSelected = !!selectedItem;
     }));
+
+    funcPool.forEach((group) => group.items.forEach((item) => {
+      // 從目前選集中，找出指定功能代碼的項目；並在 FuncPool 中註記為已lock。
+      const lockedItem = selections.find((btn) => btn.func?.funcCode === item.funcCode && btn.func?.locked === true);
+      item.isLocked = !!lockedItem;
+    }));
+
     forceUpdate();
 
     return () => {
@@ -141,8 +148,9 @@ const S00101_1 = ({
    * @param {{model}} param0 功能按鈕的資料。
    */
   const FuncButton = ({model}) => {
-    const {funcCode, name, isSelected} = model;
-
+    const {
+      funcCode, name, isSelected, isLocked,
+    } = model;
     const handleFuncClick = async () => {
       // 設定無卡提款預設金額（即:執行參數)
       if (funcCode === Func.D003.id) {
@@ -166,9 +174,10 @@ const S00101_1 = ({
     };
 
     const selectedClassType = (mode === 1) ? 'disabled' : 'selected'; // 1.單選模式:反白 2.多選模式:反紫
-    const className = isSelected ? selectedClassType : '';
+    let className = isSelected ? selectedClassType : '';
+    if (mode === 2 && isLocked) className = 'disabled';
     // 當已選滿了，或是固定項目；或是在單選模式中，已選取的項目，也都不可以再選。
-    const disabled = (getSelectedCount() > MAX_FUNC_COUNT || model.locked || (mode === 1 && isSelected));
+    const disabled = (getSelectedCount() > MAX_FUNC_COUNT || model.locked || (mode === 1 && isSelected) || (mode === 2 && isLocked));
     return (
       <FavoriteBlockButtonStyle className={className} disabled={disabled}
         onClick={handleFuncClick}
