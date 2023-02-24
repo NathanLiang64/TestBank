@@ -244,11 +244,3 @@ export const updateAccount = async (newAccount) => {
     store.dispatch(setAccounts(accounts));
   }
 };
-
-// 清除帳戶內的交易明細
-export const cleanupAccount = async () => {
-  const { accounts } = await restoreCache();
-  if (!accounts) return;
-  accounts.forEach((acct) => delete acct.txnDetails);
-  store.dispatch(setAccounts(accounts));
-};

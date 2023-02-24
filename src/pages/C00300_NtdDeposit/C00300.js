@@ -14,7 +14,7 @@ import { FEIBInputLabel, FEIBInput } from 'components/elements';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup } from 'utilities/MessageModal';
 import { currencySymbolGenerator, switchZhNumber } from 'utilities/Generator';
-import { getAccountsList, getAccountBonus, updateAccount, cleanupAccount, getAccountInterest } from 'utilities/CacheData';
+import { getAccountsList, getAccountBonus, updateAccount, getAccountInterest } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
@@ -26,7 +26,7 @@ import PageWrapper from './C00300.style';
  */
 const C00300 = () => {
   const dispatch = useDispatch();
-  const { startFunc, closeFunc } = useNavigation();
+  const { startFunc } = useNavigation();
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const { register, unregister, handleSubmit } = useForm();
@@ -68,27 +68,17 @@ const C00300 = () => {
     //   defaultAccount: 預設帳號
     //   showRate: 優存(利率/利息)資訊 顯示模式
     // }
-    const startParams = await loadFuncParams();
+    const startParams = await loadFuncParams(); // 目前是同步
     // 取得 Function Controller 提供的 keepData(model)
     if (startParams && (startParams instanceof Object)) {
       const index = accts.findIndex((acc) => acc.accountNo === startParams.defaultAccount);
+      accts.forEach((acct) => {
+        if (startParams.txnDetailsObj[acct.accountNo]) acct.txnDetails = startParams.txnDetailsObj[acct.accountNo];
+      });
       setSelectedAccountIdx(index);
       setShowRate(startParams.showRate);
     } else {
       setSelectedAccountIdx(0); // setSelectedAccountIdx 內傳入的值若於前值不同，會觸發再刷一次畫面
-
-      /**
-       * NOTE 清除交易明細的工作交給 Layout 的兩個功能 1. 回上頁 2. 回首頁
-       * 1. 回上頁 => 觸發下方定義的 goBackFunc
-       * 2. 返回首頁，會導向彩頁，WebView 被關閉 => redux 資料清空，不需要額外去清除交易明細 (除非 webview 沒被關閉，就需要特別處理)
-       */
-
-      // 只要是重新登入，而不是從呼叫的功能返回（例：轉帳），就清掉交易明細快取。
-      // accts.forEach((acc) => {
-      //   delete acc.isLoadingTxn; // 可能因為在載入中就關閉功能，而導致此旗標未被清除。但會有 Bug (race condition)，導致重複拿取交易紀錄
-      //   delete acc.txnDetails;
-      // });
-      // forceUpdate(); // 因為在執行此方法前，已經先 setAccounts 輸出到畫面上了，所以需要再刷一次畫面。
     }
   };
 
@@ -166,7 +156,6 @@ const C00300 = () => {
       },
       {
         label: showRate ? '目前利率' : '累積利息',
-        // value: showRate ? `${rate}%` : toCurrency(interest),
         value: showRate ? `${rate}%` : currencySymbolGenerator(currency, interest),
         iconType: 'switch',
         onClick: () => setShowRate(!showRate),
@@ -212,7 +201,6 @@ const C00300 = () => {
 
       // NOTE 明細資料不需要存入Cache，下次進入C00300時才會更新。
       const newAccount = {...selectedAccount};
-      delete newAccount.txnDetails;
       updateAccount(newAccount);
     };
     await customPopup('帳戶名稱編輯', body, handleSubmit(onOk));
@@ -224,7 +212,12 @@ const C00300 = () => {
    */
   const handleFunctionClick = async (funcCode) => {
     let params = null;
-    const keepData = { defaultAccount: selectedAccount.accountNo, showRate };
+    const txnDetailsObj = accounts.reduce((acc, cur) => {
+      if (cur.txnDetails) acc[cur.accountNo] = cur.txnDetails;
+      return acc;
+    }, {});
+
+    const keepData = { defaultAccount: selectedAccount.accountNo, showRate, txnDetailsObj };
     switch (funcCode) {
       case 'moreTranscations': // 更多明細
         params = {
@@ -265,16 +258,11 @@ const C00300 = () => {
     startFunc(funcCode, params, keepData);
   };
 
-  const goBackFunc = () => {
-    cleanupAccount();
-    closeFunc();
-  };
-
   /**
    * 頁面輸出
    */
   return (
-    <Layout fid={Func.C003} title="臺幣活存" goBackFunc={goBackFunc}>
+    <Layout fid={Func.C003} title="臺幣活存">
       <PageWrapper small>
         {selectedAccount
           ? (
