@@ -9,6 +9,7 @@ import { useNavigation } from 'hooks/useNavigation';
 import { forceLogout } from 'utilities/AppScriptProxy';
 
 import { assetSummary, getAssetSummaryValues, registerToken } from './api';
+import { ledgerApiTest } from './ledgerApi';
 import NavWrapper from './B00100.style';
 
 const Nav = () => {
@@ -60,6 +61,7 @@ const Nav = () => {
           <div onClick={() => startFunc(Func.E001.id)}>E00100 換匯 - (施工中)</div>
           <div onClick={() => startFunc(Func.A006.id)}>A00600 定期更新個資</div>
           <div onClick={() => startFunc(Func.A007.id)}>A00700 定期更新密碼</div>
+          <div onClick={() => ledgerApiTest()}>社群帳本API測試</div>
         </div>
 
         <FEIBButton onClick={forceLogout}>登出</FEIBButton>
