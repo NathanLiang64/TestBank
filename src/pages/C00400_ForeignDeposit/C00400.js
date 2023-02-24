@@ -15,7 +15,7 @@ import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { customPopup } from 'utilities/MessageModal';
-import { getAccountsList, updateAccount, cleanupAccount, getAccountInterest } from 'utilities/CacheData';
+import { getAccountsList, updateAccount, getAccountInterest } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import { currencySymbolGenerator } from 'utilities/Generator';
@@ -32,7 +32,7 @@ import PageWrapper from './C00400.style';
  */
 const C00400 = () => {
   const dispatch = useDispatch();
-  const { startFunc, closeFunc } = useNavigation();
+  const { startFunc } = useNavigation();
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const { register, unregister, handleSubmit } = useForm();
@@ -82,16 +82,12 @@ const C00400 = () => {
     // 取得 Function Controller 提供的 keepData(model)
     if (startParams && startParams instanceof Object) {
       const index = accts.findIndex((acc) => acc.currency === startParams.defaultCurrency);
+      accts.forEach((acct) => {
+        if (startParams.txnDetailsObj[acct.accountNo]) acct.txnDetails = startParams.txnDetailsObj[acct.accountNo];
+      });
       setSelectedAccountIdx(index);
     } else {
       setSelectedAccountIdx(0);
-
-      // // 只要是重新登入，而不是從呼叫的功能返回（例：轉帳），就清掉交易明細快取。
-      // accts.forEach((acc) => {
-      //   // delete acc.isLoadingTxn; // 可能因為在載入中就關閉功能，而導致此旗標未被清除。但會有 Bug (race condition)，導致重複拿取交易紀錄
-      //   delete acc.txnDetails;
-      // });
-      // forceUpdate(); // 因為在執行此方法前，已經先 setAccounts 輸出到畫面上了，所以需要再刷一次畫面。
     }
   };
 
@@ -195,9 +191,7 @@ const C00400 = () => {
       setAccountAlias(selectedAccount.accountNo, selectedAccount.alias);
       forceUpdate();
 
-      // NOTE 明細資料不需要存入Cache，下次進入C00400時才會更新。
       const newAccount = { ...selectedAccount };
-      delete newAccount.txnDetails;
       updateAccount(newAccount);
 
       // 其他同帳號、不同幣別的帳戶名稱也要一併修改
@@ -217,7 +211,13 @@ const C00400 = () => {
    */
   const handleFunctionClick = async (funcCode) => {
     let params = null;
-    const keepData = { defaultAccount: selectedAccount.accountNo };
+
+    const txnDetailsObj = accounts.reduce((acc, cur) => {
+      if (cur.txnDetails) acc[cur.accountNo] = cur.txnDetails;
+      return acc;
+    }, {});
+
+    const keepData = { defaultAccount: selectedAccount.accountNo, txnDetailsObj };
     switch (funcCode) {
       case 'moreTranscations': // 更多明細
         params = {
@@ -252,16 +252,11 @@ const C00400 = () => {
     startFunc(funcCode, params, keepData);
   };
 
-  const goBackFunc = () => {
-    cleanupAccount();
-    closeFunc();
-  };
-
   /**
    * 頁面輸出
    */
   return (
-    <Layout fid={Func.C004} title="外幣活存" goBackFunc={goBackFunc}>
+    <Layout fid={Func.C004} title="外幣活存">
       <PageWrapper small>
         {selectedAccount ? (
           <>

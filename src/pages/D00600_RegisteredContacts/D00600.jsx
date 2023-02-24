@@ -84,8 +84,8 @@ const Page = () => {
         return isForeign === isForeignType && (bankId !== '805' || allowedSubjects.includes(subject));
       });
     }
-    // NOTE 非選取模式時，不需要列出同ID互轉的帳號
-    return accts.filter((acct) => !acct.isSelf);
+
+    return accts;
   };
 
   // 活存帳號選項改變時，查詢活存帳號下的約定轉入帳號清單
@@ -167,12 +167,13 @@ const Page = () => {
     <Layout fid={Func.D006} title="約定帳號管理">
       <Main small>
         <PageWrapper>
-          <div className={`dropdownContainer ${model.selectorMode ? 'hide' : ''}`}>
+          <div className="dropdownContainer">
             <DropdownField
               name="account"
               control={control}
               options={model.accountOptions}
               labelName="請選擇活存帳號"
+              inputProps={{disabled: !!model.selectorMode}}
             />
           </div>
           {renderMemberCards()}

@@ -13,7 +13,7 @@ import { Func } from 'utilities/FuncID';
 import { currencySymbolGenerator } from 'utilities/Generator';
 import { showCustomDrawer, showCustomPrompt, showError } from 'utilities/MessageModal';
 import { R005, CreditCardIcon6, CircleIcon } from 'assets/images/icons';
-import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import { getCards, getTransactions, updateTxnNotes } from './api';
@@ -61,7 +61,6 @@ const CreditCardPage = (props) => {
 
   // 編輯信用卡明細備註的 Handler
   const onTxnNotesEdit = async (payload, isBankeeCard) => {
-    dispatch(setModalVisible(false));
     const { isSuccess, message } = await updateTxnNotes(payload);
     if (isSuccess) { // updateTxNotes API 打成功才更新畫面
       const {txKey, note, cardNo} = payload;

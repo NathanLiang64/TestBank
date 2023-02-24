@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import uuid from 'react-uuid';
 import {
-  MoreIcon, VisibilityIcon, VisibilityOffIcon,
+  MoreIcon, PaperClipIcon, VisibilityIcon, VisibilityOffIcon,
 } from 'assets/images/icons';
 import CopyTextIconButton from 'components/CopyTextIconButton';
 import { FEIBIconButton } from 'components/elements';
@@ -11,7 +11,7 @@ import {
   accountFormatter, accountTypeColorGenerator, currencySymbolGenerator, getCurrenyName,
 } from 'utilities/Generator';
 import DebitCardBackground from 'assets/images/debitCardBackground.png';
-import { showDrawer } from 'utilities/MessageModal';
+import { showDrawer, showPrompt } from 'utilities/MessageModal';
 import { setDrawerVisible } from 'stores/reducers/ModalReducer';
 import { iconGenerator } from './debitCardIconGenerator';
 import DebitCardWrapper from './debitCard.style';
@@ -89,6 +89,24 @@ const DebitCard = ({
         : <VisibilityOffIcon size={16} color={theme.colors.text.lightGray} /> }
     </FEIBIconButton>
   );
+  // 若顯示的卡片是子帳號，且已綁定社群帳本或存錢計畫時，顯示icon及提醒文字
+  const renderPaperClipButton = () => {
+    const typeName = model.bindType === 1 ? '社群帳本' : '存錢計畫';
+
+    const BindingMessage = () => (
+      <div>
+        <p>{`該帳號已綁定${typeName}:`}</p>
+        <p>{model.showName}</p>
+      </div>
+    );
+    const onIconClick = () => showPrompt(<BindingMessage />);
+
+    return (
+      <FEIBIconButton $fontSize={1.6} style={{padding: '0 .5rem'}} onClick={onIconClick}>
+        <PaperClipIcon size={25} color={theme.colors.text.lightGray} />
+      </FEIBIconButton>
+    );
+  };
 
   /**
    * 顯示功能清單。
@@ -176,6 +194,8 @@ const DebitCard = ({
         <h2 className="cardName">
           {model.alias ?? '(未命名)'}
           {model.currency && (['NTD', 'NTD'].indexOf(model.currency) < 0) ? ` (${getCurrenyName(model.currency)})` : ''}
+          {/* bindType 0:未綁定 1:社群帳本 2:存錢計畫 */}
+          {model.acctType === 'C' && !!model.bindType && renderPaperClipButton()}
         </h2>
         {renderAccountNo()}
       </div>

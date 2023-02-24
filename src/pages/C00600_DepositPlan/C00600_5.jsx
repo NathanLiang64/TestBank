@@ -3,7 +3,6 @@ import { useHistory, useLocation } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import Theme from 'themes/theme';
 import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
 import { FEIBButton} from 'components/elements';
@@ -110,7 +109,6 @@ const DepositPlanEditPage = () => {
                   control={control}
                   labelName="為你的計畫命名吧"
                   inputProps={{ maxLength: 7, placeholder: '請輸入7個以內的中英文字、數字或符號', disabled: isRestrictedPromotion }}
-                  $color={isRestrictedPromotion ? Theme.colors.text.lightGray : Theme.colors.primary.brand}
                 />
               </div>
 
@@ -119,7 +117,6 @@ const DepositPlanEditPage = () => {
                   name="cycleDuration"
                   control={control}
                   labelName="預計存錢區間"
-                  $color={Theme.colors.text.lightGray}
                   inputProps={{disabled: true}}
                 />
               </div>
@@ -132,7 +129,6 @@ const DepositPlanEditPage = () => {
                     control={control}
                     labelName="存錢頻率"
                     inputProps={{disabled: true}}
-                    $color={Theme.colors.text.lightGray}
                   />
                 </div>
 
@@ -143,7 +139,6 @@ const DepositPlanEditPage = () => {
                     control={control}
                     labelName="週期"
                     inputProps={{disabled: true}}
-                    $color={Theme.colors.text.lightGray}
                   />
                 </div>
               </div>
@@ -153,7 +148,6 @@ const DepositPlanEditPage = () => {
                   name="amount"
                   control={control}
                   labelName="預計每期存錢金額"
-                  $color={Theme.colors.text.lightGray}
                   inputProps={{disabled: true}}
                 />
               </div>
@@ -163,7 +157,6 @@ const DepositPlanEditPage = () => {
                   name="bindAccountNo"
                   control={control}
                   labelName="選擇陪你存錢的帳號"
-                  $color={Theme.colors.text.lightGray}
                   inputProps={{disabled: true}}
                 />
               </div>

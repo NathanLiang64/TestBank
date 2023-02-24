@@ -59,6 +59,10 @@ const FEIBInput = styled(MaterialInput).attrs(({
     font-size: ${({ $fontSize }) => ($fontSize && `${$fontSize}rem`) || '1.6rem'};
     color: ${({ theme, $color }) => $color || theme.colors.primary.dark};
     
+    &:disabled{
+      color: ${({ theme }) => theme.colors.text.lightGray};
+    }
+
     &::placeholder {
       color: ${({ theme }) => theme.colors.text.placeholder};
       opacity: 1;
