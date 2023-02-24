@@ -91,6 +91,8 @@ const loadAccountsList = async () => {
         alias: acct.name,
         dgType: acct.dgType,
         transable: acct.transable,
+        bindType: acct.bindType,
+        showName: acct.showName,
       };
     });
   });
@@ -235,9 +237,8 @@ export const updateAccount = async (newAccount) => {
 
   if (index >= 0) {
     const detailIndex = accounts[index].details.findIndex((detail) => detail.currency === newAccount.currency);
-    accounts[index].details[detailIndex].balance = newAccount.balance;
+    if (detailIndex >= 0) accounts[index].details[detailIndex].balance = newAccount.balance;
     accounts[index].bonus = newAccount.bonus;
-    accounts[index].txnDetails = newAccount.txnDetails;
     accounts[index].alias = newAccount.alias;
 
     store.dispatch(setAccounts(accounts));

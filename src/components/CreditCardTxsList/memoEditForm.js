@@ -5,13 +5,18 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { FEIBButton } from 'components/elements';
 import { TextInputField } from 'components/Fields';
+import { useDispatch } from 'react-redux';
+import { setModalVisible } from 'stores/reducers/ModalReducer';
 
 export const MemoEditForm = ({
   defaultValues,
   isBankeeCard,
   onTxnNotesEdit,
 }) => {
-  const { control, handleSubmit, unregister } = useForm({
+  const dispatch = useDispatch();
+  const {
+    control, handleSubmit, unregister, formState: {isDirty},
+  } = useForm({
     defaultValues,
     resolver: yupResolver(
       yup.object().shape({
@@ -29,7 +34,9 @@ export const MemoEditForm = ({
       cardNo, txDate, txKey, note,
     };
 
-    onTxnNotesEdit(payload, isBankeeCard);
+    if (isDirty) onTxnNotesEdit(payload, isBankeeCard);
+
+    dispatch(setModalVisible(false));
   };
 
   useEffect(() => () => unregister('note'), []);

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { showError } from 'utilities/MessageModal';
-import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
 import BottomAction from 'components/BottomAction';
@@ -26,7 +26,6 @@ const R00100 = () => {
 
   // 編輯信用卡明細備註的 Handler
   const onTxnNotesEdit = async (payload) => {
-    dispatch(setModalVisible(false));
     const { isSuccess, message } = await updateTxnNotes(payload);
     if (isSuccess) {
       const {txKey, note, cardNo} = payload;
