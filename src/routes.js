@@ -73,6 +73,7 @@ const T00600 = lazy(() => import('pages/T00600_MobileTransfer/T00600'));
 const T006001 = lazy(() => import('pages/T00600_MobileTransfer/T00600_1'));
 const T006002 = lazy(() => import('pages/T00600_MobileTransfer/T00600_2'));
 const T00700 = lazy(() => import('pages/T00700_BasicInformation/T00700'));
+const T007001 = lazy(() => import('pages/T00700_BasicInformation/T00700_1'));
 const T00800 = lazy(() => import('pages/T00800_ChangeUserName/T00800'));
 const T00900 = lazy(() => import('pages/T00900_PwdModify/T00900'));
 const S00100 = lazy(() => import('pages/S00100_Favorite/S00100'));
@@ -170,6 +171,7 @@ const routes = [
   {path: '/T00400', exact: false, component: T00400},
   {path: '/T004001', exact: false, component: T004001},
   {path: '/T00700', exact: false, component: T00700},
+  {path: '/T007001', exact: false, component: T007001},
   {path: '/T00800', exact: false, component: T00800},
   {path: '/T00900', exact: false, component: T00900},
 
