@@ -152,9 +152,7 @@ const Page = () => {
           memberId={acct.headshot}
           isSelected={(acct.acctId === model.selectedAccount.accountNo && acct.bankId === model.selectedAccount.bankId)}
           onClick={() => onAccountSelected(acct)} // 傳回值：選取的帳號。
-          moreActions={acct.isSelf ? null : [ // 不可編輯自己的帳號。（因為是由同ID互轉建立的）
-            { lable: '編輯', type: 'edit', onClick: () => editAccount(acct) },
-          ]}
+          moreActions={[{ lable: '編輯', type: 'edit', onClick: () => editAccount(acct) }]}
         />
       );
     });
