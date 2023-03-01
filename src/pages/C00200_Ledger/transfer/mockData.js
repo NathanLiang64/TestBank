@@ -1,6 +1,6 @@
 export const transferSettingInitialData = {
   transOut: '01234567890000',
-  amount: 10,
+  amount: 1000,
   transIn: {
     bank: '822',
     account: '11233455667788',
@@ -13,4 +13,16 @@ export const transferSettingInitialData = {
 export const bonusInfo = {
   remainAmount: 10000,
   freeTransOutTimes: 2,
+};
+
+export const transferConfirm = {
+  transOutAcct: '01234567890000',
+  amount: 1000,
+  target: '某A',
+  transInBank: '822',
+  transInAcct: '11233455667788',
+  transFee: 15,
+  type: '1',
+  memo: 'Test',
+  remainAmount: '9990',
 };
