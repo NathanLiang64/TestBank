@@ -600,9 +600,10 @@ export const Func = {
   T007: {
     id: 'T007',
     authCode: {
-      MOBILE: 0x31, // 基本資料變更-通訊門號
-      EMAIL: 0x28, // 基本資料變更-電子郵件
-      ADDRESS: 0x28, // 基本資料變更-通訊地址
+      /** 除了通訊地址及電子郵件之外，甲包含通訊門號 */
+      MOBILE: 0x31,
+      /** 除了通訊地址及電子郵件之外，甲包含通訊門號 */
+      EMAIL_ADDRESS: 0x28,
     },
     required: [],
   },
