@@ -37,6 +37,10 @@ const AccountDetails = ({
   const [inviewFlag, setInviewFlag] = useState();
   const txnDetailsRef = useRef();
 
+  // 用來處理取得明細時, 同時更新上方card顯示的餘額
+  const isCardBalanceUpdated = useRef(false);
+  const [selectedAccountHook, setSelectedAccountHook] = useState(selectedAccount);
+
   // Note：要看懂這個程式的邏輯，一定要把 range 的用法弄懂！
   //       因為內容的變更會有即時性的需要，因此透過直接改 range 的值才能達成目的。
   const setEmptyRange = () => ({ min: Number.MAX_VALUE, max: -1 });
@@ -381,6 +385,19 @@ const AccountDetails = ({
   };
 
   /**
+   * 用查詢結果的明細清單的最新一筆資料來, 更新頁面上方的顯示餘額。
+   * 使總金額與歷程一致更新
+   * @param {*} details 查詢結果的明細資料。
+   */
+  const setCardShowBalance = (details) => {
+    selectedAccount.balance = details[0].balance;
+
+    setSelectedAccountHook(selectedAccount);
+
+    isCardBalanceUpdated.current = true;
+  };
+
+  /**
    * 顯示 查詢結果的明細清單。
    * @param {*} items 查詢結果的明細資料。
    */
@@ -388,6 +405,10 @@ const AccountDetails = ({
     if (isLoading && !items) return <Loading space="both" isCentered />;
     if (!items) return null;
     if (!items.length) return <EmptyData />;
+
+    if (isCardBalanceUpdated.current === false) {
+      setCardShowBalance(items);
+    }
 
     return (
       <>
@@ -418,8 +439,8 @@ const AccountDetails = ({
    */
   return (
     <AccountDetailsWrapper>
-      { (mode === 0) && renderCardArea(selectedAccount) }
-      { (mode === 1) && renderDepositPlanHero(selectedAccount) }
+      { (mode === 0) && renderCardArea(selectedAccountHook) }
+      { (mode === 1) && renderDepositPlanHero(selectedAccountHook) }
       <div className="inquiryArea measuredHeight">
 
         <div className="searchBar">
