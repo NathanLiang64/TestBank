@@ -90,10 +90,17 @@ const S00101 = () => {
       if (startIdx !== targetIdx && !target?.locked) {
         const dir = Math.sign(targetIdx - startIdx);
         for (let index = startIdx; index !== targetIdx; index += dir) {
-          model.myFuncs[index].func = model.myFuncs[index + dir].func;
+          model.myFuncs[index].func = {...model.myFuncs[index + dir].func, position: index};
         }
-        model.myFuncs[targetIdx].func = source;
+        model.myFuncs[targetIdx].func = {...source, position: targetIdx};
       }
+
+      const request = model.myFuncs.filter((item) => !!item.func).map(({func}) => ({
+        position: func.position - model.lockedFuncs,
+        funcCode: func.funcCode,
+        params: func.params,
+      }));
+      saveMyFuncs(request);
     };
 
     return (
@@ -148,8 +155,16 @@ const S00101 = () => {
       }
     };
 
-    const removeFunc = () => {
+    const removeFunc = (key) => {
       isClickRemoveNow.current = 1;
+
+      const remainFuncs = model.myFuncs.filter((item) => item.key !== key && !!item.func);
+      const request = remainFuncs.map((remain) => ({
+        position: remain.func.position - model.lockedFuncs,
+        funcCode: remain.func.funcCode,
+        params: func.params,
+      }));
+      saveMyFuncs(request);
 
       btnModel.func = null;
       forceUpdate();
@@ -202,7 +217,7 @@ const S00101 = () => {
               <>
                 {/* 只有在拖曳模式時，才需要顯示移除按鈕 */}
                 {dragMode && !isFixed && (
-                  <span className="removeButton" onClick={removeFunc}>
+                  <span className="removeButton" onClick={() => removeFunc(btnModel.key)}>
                     <RemoveRounded />
                   </span>
                 )}
@@ -251,6 +266,11 @@ const S00101 = () => {
           if (newItem) item.func = {...newItem};
         });
       }
+
+      // 編輯模式下回傳的 position 會是 undefined，依照 index 補上 position
+      myFuncs.forEach(({func}, index) => {
+        if (func && func.position === undefined) func.position = index;
+      });
 
       // 將 myFuncs 調整後的結果寫回DB
       const request = myFuncs.filter(({func}) => func).map(({func}) => ({

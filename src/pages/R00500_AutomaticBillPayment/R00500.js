@@ -76,6 +76,7 @@ const AutomaticBillPayment = () => {
   };
 
   const onSubmit = async (values) => {
+    closeDrawer(); // NOTE: 需要先關閉 drawer，否則 交易驗證的 drawer 會被覆蓋掉
     const auth = await transactionAuth(Func.R005.authCode);
     if (auth.result) {
       dispatch(setWaittingVisible(true));
@@ -89,7 +90,6 @@ const AutomaticBillPayment = () => {
         errorDesc: message,
       });
       getAutoDebitData(); // TODO 可改為直接變動 appliedAutoBill 不再打一次 API
-      closeDrawer();
     }
   };
 

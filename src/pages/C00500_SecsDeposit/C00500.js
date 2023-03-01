@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 /* eslint-disable no-use-before-define */
 /* eslint-disable object-curly-newline */
 import { useEffect, useReducer, useState } from 'react';
@@ -14,7 +13,7 @@ import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 
 /* Reducers & JS functions */
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { customPopup } from 'utilities/MessageModal';
+import { showCustomPrompt } from 'utilities/MessageModal';
 import { getAccountsList, getAccountBonus, updateAccount, getAccountInterest } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
@@ -124,6 +123,12 @@ const C00500 = () => {
       {
         label: '免費跨提/轉',
         value: `${freeWithdrawRemain ?? '-'}/${freeTransferRemain ?? '-'}`,
+        onClick: () => showCustomPrompt({
+          title: '免費跨提轉',
+          message:
+              '跨行提款/跨行轉帳手續費優惠次數計算基準:於當月月初第二個日曆日凌晨 00:00:00 起重新計算,並 於次月第一個日曆日下午 23:59:59 失效。',
+          onOk: null,
+        }),
       },
       {
         label: showRate ? '目前利率' : '累積利息',
@@ -192,7 +197,11 @@ const C00500 = () => {
       const newAccount = { ...selectedAccount };
       updateAccount(newAccount);
     };
-    await customPopup('帳戶名稱編輯', body, handleSubmit(onOk));
+    await showCustomPrompt({
+      title: '帳戶名稱編輯',
+      message: body,
+      onOk: handleSubmit(onOk),
+    });
   };
 
   /**

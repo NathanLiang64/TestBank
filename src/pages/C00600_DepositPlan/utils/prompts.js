@@ -57,13 +57,13 @@ export const ConfirmNotToCloseDepositPlan = (goHome) => {
   showCustomPrompt({
     title: '暫不結束計畫',
     message: (
-      <p style={{ textAlign: 'left' }}>
+      <p style={{width: 'fit-content', margin: '0 auto'}}>
         本計畫會持續保留至主動結束
         <br />
-        本計畫帳上餘額將於結束當日轉回主帳戶
+        如計畫已到期，將不繼續扣款
       </p>
     ),
-    okContent: '回首頁',
+    okContent: '確認',
     onOk: goHome,
     showCloseButton: false,
   });
