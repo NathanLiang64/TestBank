@@ -62,6 +62,25 @@ const Nav = () => {
           <div onClick={() => startFunc(Func.A006.id)}>A00600 定期更新個資</div>
           <div onClick={() => startFunc(Func.A007.id)}>A00700 定期更新密碼</div>
           <div onClick={() => ledgerApiTest()}>社群帳本API測試</div>
+          <hr />
+          <div onClick={() => startFunc('transferSetting')}>社群轉帳 | TransferSetting</div>
+          <div onClick={() => startFunc('abortLedgerConfirm')}>終止帳本 - 確認 | AbortLedgerConfirm</div>
+          <div onClick={() => startFunc('abortLedgerSuccess')}>終止帳本 - 成功 | AbortLedgerSuccess</div>
+          <div onClick={() => startFunc('clubLedgersList')}>社群帳本(首頁) | ClubLedgersList</div>
+          <div onClick={() => startFunc('createLedgerForm')}>建立帳本 | CreateLedgerForm</div>
+          <div onClick={() => startFunc('createLedgerSuccess')}>建立帳本 - 成功 | createLedgerSuccess</div>
+          <div onClick={() => startFunc('invitationCard')}>邀請卡 | InvitationCard</div>
+          <div onClick={() => startFunc('invitationContainer')}>要錢 | InvitationContainer</div>
+          <div onClick={() => startFunc('invoiceSending')}>要錢 | InvoiceSending</div>
+          <div onClick={() => startFunc('joinSetting')}>加入帳本 | JoinSetting</div>
+          <div onClick={() => startFunc('ledgerDetail')}>終止帳本 | LedgerDetail</div>
+          <div onClick={() => startFunc('ledgerManagement')}>帳本管理 | LedgerManagement</div>
+          <div onClick={() => startFunc('memberInvitation')}>邀請好友 | MemberInvitation</div>
+          <div onClick={() => startFunc('memberManagement')}>成員管理 | MemberManagement</div>
+          <div onClick={() => startFunc('paymentRequest')}>要錢 | PaymentRequest</div>
+          <div onClick={() => startFunc('recordDetail')}>編輯交易明細 | RecordDetail</div>
+          <div onClick={() => startFunc('shareLedgerDetail')}>分享明細 | ShareLedgerDetail</div>
+          <div onClick={() => startFunc('terms')}>條款 | Terms</div>
         </div>
 
         <FEIBButton onClick={forceLogout}>登出</FEIBButton>
