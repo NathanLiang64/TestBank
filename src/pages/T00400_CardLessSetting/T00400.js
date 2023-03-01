@@ -57,10 +57,10 @@ const CardLessSetting = () => {
         const { result } = await transactionAuth(Func.T004.authCode);
         if (result) {
           dispatch(setWaittingVisible(true));
-          const activateRes = await activate('');
+          const apiRs = await activate('');
           dispatch(setWaittingVisible(false));
           showAnimationModal({
-            isSuccess: !!activateRes,
+            isSuccess: apiRs.isSuccess,
             successTitle: '設定成功',
             errorTitle: '設定失敗',
             errorDesc: '設定失敗',

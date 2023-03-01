@@ -14,7 +14,7 @@ import { showCustomPrompt, showError } from 'utilities/MessageModal';
 import { getAccountBonus, getAccountsList } from 'utilities/CacheData';
 import { Func } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
-import { cardLessWithdrawApply } from './api';
+import { createCardlessWD } from './api';
 
 import CardLessATMWrapper from './D00300.style';
 import { CustomInputSelectorField } from './fields/CustomInputSelectorField';
@@ -38,34 +38,23 @@ const CardLessATM1 = () => {
     wdRemain: 0,
   });
 
-  // 無卡提款交易
-  const requestCardlessWithdrawApply = async (param) => {
-    const {result} = await transactionAuth(Func.D003.authCode);
-    if (result) {
-      dispatch(setWaittingVisible(true));
-      const {
-        seqNo, startDateTime, endDateTime, message,
-      } = await cardLessWithdrawApply(param);
-      dispatch(setWaittingVisible(false));
-
-      const { account, withdrawAmount } = param;
-      const data = {
-        seqNo,
-        startDateTime,
-        endDateTime,
-        withdrawAmount,
-        account,
-      };
-      if (seqNo) history.push('/D003002', { data });
-      else showCustomPrompt({ message, onOk: closeFunc, onClose: closeFunc });
-    }
-  };
-
-  const onSubmit = (values) => {
-    if (values.withdrawAmount > accountSummary.balance) {
-      showError('提款金額不得大於帳戶餘額');
+  const onSubmit = async (values) => {
+    const { withdrawAmount } = values;
+    if (withdrawAmount <= accountSummary.balance) {
+      const {result} = await transactionAuth(Func.D003.authCode);
+      if (result) {
+        const apiRs = await createCardlessWD(accountSummary.account, withdrawAmount);
+        if (apiRs.isSuccess) {
+          history.push('/D003002', {
+            isSuccess: apiRs.isSuccess,
+            account: accountSummary.account,
+            withdrawAmount,
+            ...apiRs.data, // withdrawNo, startTime, endTime
+          });
+        } else showCustomPrompt({ message: apiRs.message, onOk: closeFunc, onClose: closeFunc });
+      }
     } else {
-      requestCardlessWithdrawApply(values);
+      showError('提款金額不得大於帳戶餘額');
     }
   };
 
@@ -92,8 +81,7 @@ const CardLessATM1 = () => {
       });
 
       reset((formValues) => ({...formValues, account: acct.accountNo}));
-      dispatch(setWaittingVisible(false));
-    });
+    }).finally(() => dispatch(setWaittingVisible(false)));
   }, []);
 
   return (

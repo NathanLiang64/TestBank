@@ -1,8 +1,15 @@
 import { callAPI } from 'utilities/axios';
 
-// 變更無卡提款密碼 done
-export const changeCardlessPwd = async (param) => {
-  const response = await callAPI('/deposit/withdraw/changePwd', param);
+/**
+ * 變更無卡提款密碼
+ * @param {{
+      oldPassword: String,
+      newPassword: String,
+    }} request
+ * @returns {Promise<Boolean>} 表示執行結果的旗標。
+ */
+export const setPinCode = async (request) => {
+  const response = await callAPI('/deposit/cardless/setPinCode', request);
   return response;
 };
 

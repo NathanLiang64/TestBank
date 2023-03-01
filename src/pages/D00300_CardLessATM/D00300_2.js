@@ -21,8 +21,13 @@ const CardLessATM2 = ({ location }) => {
   if (!location.state?.data) return closeFunc();
 
   const {
-    seqNo, startDateTime, endDateTime, withdrawAmount, account,
-  } = location.state.data;
+    isSuccess,
+    account,
+    withdrawAmount,
+    withdrawNo,
+    startTime, // 產生序號時間, 格式：'YYYYMMDD hhmmss'
+    endTime, // 序號失效時間, 格式：'YYYYMMDD hhmmss'
+  } = location.state;
 
   // 將 'YYYYMMDD hhmmss' 字串轉為 'YYYY/MM/DD hh:mm:ss' 格式
   const dateTimeFormat = (dateTimeString) => {
@@ -37,7 +42,7 @@ const CardLessATM2 = ({ location }) => {
       <CardLessATMWrapper className="result-wrapper">
         <div className="section1">
           <SuccessFailureAnimations
-            isSuccess={!!seqNo}
+            isSuccess={isSuccess}
             successTitle="設定成功"
             errorTitle="設定失敗"
           />
@@ -45,7 +50,7 @@ const CardLessATM2 = ({ location }) => {
             <div>銀行代號：805</div>
             <div className="withdrawNo">
               提款序號：
-              {seqNo}
+              {withdrawNo}
             </div>
             <div>
               提款金額：
@@ -54,12 +59,12 @@ const CardLessATM2 = ({ location }) => {
           </div>
           <div className="withdrawalInfo">
             請您於
-            <span>{dateTimeFormat(endDateTime)}</span>
+            <span>{dateTimeFormat(endTime)}</span>
             前至本行或他行有提供無卡提款功能之 ATM 完成提款！
           </div>
         </div>
         <div className="section2">
-          <InformationList title="申請時間" content={dateTimeFormat(startDateTime)} />
+          <InformationList title="申請時間" content={dateTimeFormat(startTime)} />
           <InformationList title="交易類型" content="無卡提款" />
           <InformationList title="提款帳號" content={accountFormatter(account, true)} />
           <Accordion space="both">
