@@ -36,10 +36,15 @@ const funcStack = {
  */
 const registFuncJumpHandler = () => {
   window.startFunc = ({keepData = '', funcParams = '', url}) => {
+    // 原生傳入的參數是JSON字串格式
+    keepData = (keepData === '') ? '' : JSON.parse(keepData);
+    funcParams = (funcParams === '') ? '' : JSON.parse(funcParams);
+
     // 還原json跳脫字元
     const funcID = url.replace("\"", "\\\"")  // eslint-disable-line
       .split('/').pop().substring(0, 4); // 取url最後一段的前4碼
     console.log(`window.startFunc is called : ${funcID}`);
+
     // 調用useNavigation 內的 startFunc
     store.dispatch(setFuncJump({isNeedJump: true, jumpParam: {funcID, funcParams, keepData}}));
   };
@@ -98,15 +103,19 @@ const useNavigation = () => {
   };
 
   /**
-   * 監聽原生換頁事件
+   * 監聽原生所觸發的 window.startFunc 換頁事件
+   * 用這種作法是因為 useNavigation 基於REACT HOOK限制, 不能引入在function component 以外的地方 及 其他監聽事件內
    */
   store.subscribe(() => {
     const {isNeedJump, jumpParam} = store.getState()?.FuncJumpReducer;
+
     if (isNeedJump === true) {
       const {funcID, funcParams, keepData} = jumpParam;
 
+      // 調用useNavigation 內的 startFunc
       startFunc(funcID, funcParams, keepData);
-      // store.dispatch({ type: 'setFuncJump', data: {isNeedJump:false, jumpParam:{}} });
+
+      // 調用完畢, 重設調用設定
       store.dispatch(setFuncJump({isNeedJump: false, jumpParam: {}}));
     }
   });
