@@ -5,6 +5,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 
+import { toCurrency } from 'utilities/Generator';
 import { TextInputField, DropdownField } from 'components/Fields';
 import Layout from 'components/Layout/Layout';
 import Accordion from 'components/Accordion';
@@ -91,8 +92,12 @@ const TransferSetting = () => {
 
   const onSubmit = (data) => {
     console.log('Transfer onSubmit', {data});
-    // TODO: to confirm page with data
-    history.push('/transferConfirm', data);
+    const dataToConfirm = {
+      ...data,
+      amount: parseInt(data.amount.replace(/[^0-9]/g, ''), 10),
+      remainAmount: bonusInfo.remainAmount,
+    };
+    history.push('/transferConfirm', dataToConfirm);
   };
 
   /**
@@ -107,7 +112,7 @@ const TransferSetting = () => {
     reset((formValues) => ({
       ...formValues,
       transOutAcct: initialData.transOut,
-      amount: initialData.amount,
+      amount: `NTD${toCurrency(initialData.amount)}`,
       target: initialData.target,
       transInBank: initialData.transIn.bank,
       transInAcct: initialData.transIn.account,
@@ -146,7 +151,8 @@ const TransferSetting = () => {
           {warningText('轉出帳號不能跟轉入帳號一樣呦～')}
           <TextInputField labelName="金額" type="text" control={control} name="amount" inputProps={{placeholder: '金額', inputMode: 'numeric', disabled: !!transData.amount}} />
           <TextInputField labelName="對象" type="text" control={control} name="target" inputProps={{placeholder: '對象', disabled: !!transData.target}} />
-          <BankCodeInput control={control} name="transInBank" readonly={!!transData.transInBank} setValue={setValue} value={getValues('transInBank')} trigger={trigger} />
+          {/* <BankCodeInput control={control} name="transInBank" readonly={!!transData.transInBank} setValue={setValue} value={getValues('transInBank')} trigger={trigger} /> */}
+          <TextInputField labelName="銀行代碼" type="text" control={control} name="transInBank" inputProps={{placeholder: '銀行代碼', inputMode: 'numeric', disabled: !!transData.transInBank}} />
           <TextInputField labelName="轉入帳號" type="text" control={control} name="transInAcct" inputProps={{placeholder: '轉入帳號', inputMode: 'numeric', disabled: !!transData.transInAccount}} />
           <DropdownField labelName="性質" options={typeOptions} name="type" control={control} inputProps={{disabled: !!transData.usageType}} />
           <TextInputField labelName="備註" type="text" control={control} name="memo" inputProps={{placeholder: '備註', disabled: !!transData.memo}} />

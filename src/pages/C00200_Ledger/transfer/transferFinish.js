@@ -1,33 +1,20 @@
 /* eslint-disable no-unused-vars */
-import { TextInputField } from 'components/Fields';
 import Layout from 'components/Layout/Layout';
-import { useHistory, useLocation } from 'react-router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useHistory, useLocation } from 'react-router';
 
 import { toCurrency } from 'utilities/Generator';
-import Accordion from 'components/Accordion';
-import { FEIBButton } from 'components/elements';
 import CiecleCheckPurple from 'assets/images/icon_circle_check_purple.png';
-import C002TransferAccordionContent from './accordionContent';
-import { TransferConfirmWrapper } from './transfer.style';
-import { transfer } from './api';
+import { TextInputField } from 'components/Fields';
+import { FEIBButton } from 'components/elements';
+import { TransferFinishWrapper } from './transfer.style';
 
-const TransferConfirm = () => {
-  const history = useHistory();
+const TransferFinish = () => {
   const {state} = useLocation();
+  const history = useHistory();
 
-  const {control, handleSubmit, reset} = useForm({
-    defaultValues: {
-      transOutAcct: undefined,
-      amount: '0',
-      target: undefined,
-      transInBank: undefined,
-      transInAcct: undefined,
-      type: '1',
-      memo: undefined,
-    },
-  });
+  const {control, reset} = useForm({});
 
   const renderViewDataSection = (name) => {
     const handleLabelName = () => {
@@ -46,6 +33,8 @@ const TransferConfirm = () => {
           return '性質';
         case 'memo':
           return '備註';
+        case 'transFee':
+          return '轉帳手續費';
         default:
           return '';
       }
@@ -62,41 +51,36 @@ const TransferConfirm = () => {
     );
   };
 
-  const onSubmit = (data) => {
-    const dataToSend = {
-      ...data,
-      amount: parseInt(data.amount.replace(/[^0-9]/g, ''), 10),
-    };
-    console.log('TransferConfirm', {dataToSend});
-    // TODO send transfer req
-    const result = transfer(dataToSend);
-    history.push('/transferFinish', result);
+  const goBack = () => {
+    // 返回進入轉帳之前的頁面
+    console.log('TransferFinish goBack');
+    history.go(-2); // TODO 串進流程後改為-3
   };
 
-  const goBack = () => history.goBack();
-
   useEffect(() => {
-    reset((formValues) => ({
-      ...formValues,
+    reset((formValue) => ({
+      ...formValue,
       transOutAcct: state.transOutAcct,
       amount: `NTD${toCurrency(state.amount)}`,
       target: state.target,
       transInBank: state.transInBank,
       transInAcct: state.transInAcct,
+      transFee: `NTD${state.transFee}`,
       type: state.type,
       memo: state.memo,
     }));
   }, []);
   return (
-    <Layout title="轉帳" goBackFunc={goBack}>
-      <TransferConfirmWrapper>
+    <Layout title="轉帳" goBack={false}>
+      <TransferFinishWrapper>
         <div className="banner">
-          資料確認
+          恭喜完成
           <div className="banner_image">
             <img src={CiecleCheckPurple} alt="" />
           </div>
         </div>
-        <form className="transfer_form" onSubmit={handleSubmit((data) => onSubmit(data))}>
+
+        <form className="transfer_form">
           <div>
             {renderViewDataSection('transOutAcct')}
             <div className="transout_info_wrapper">
@@ -110,16 +94,14 @@ const TransferConfirm = () => {
           {renderViewDataSection('target')}
           {renderViewDataSection('transInBank')}
           {renderViewDataSection('transInAcct')}
+          {renderViewDataSection('transFee')}
           {renderViewDataSection('type')}
           {renderViewDataSection('memo')}
-          <Accordion space="both">
-            <C002TransferAccordionContent />
-          </Accordion>
-          <FEIBButton type="submit">確認</FEIBButton>
         </form>
-      </TransferConfirmWrapper>
+        <FEIBButton onClick={goBack}>返回</FEIBButton>
+      </TransferFinishWrapper>
     </Layout>
   );
 };
 
-export default TransferConfirm;
+export default TransferFinish;
