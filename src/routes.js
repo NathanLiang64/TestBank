@@ -86,9 +86,27 @@ const ProjectJ = lazy(() => import('pages/ProjectJ'));
 const MoreTranscations = lazy(() => import('pages/MoreTranscations'));
 const ForeignCurrencyTransfer1 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer/foreignCurrencyTransfer_1'));
 const ForeignCurrencyTransfer2 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer/foreignCurrencyTransfer_2'));
+// 社群帳本
+const AbortLedgerConfirm = lazy(() => import('pages/C00200_Ledger/AbortLedgerConfirm/AbortLedgerConfirm'));
+const AbortLedgerSuccess = lazy(() => import('pages/C00200_Ledger/AbortLedgerSuccess/AbortLedgerSuccess'));
+const ClubLedgersList = lazy(() => import('pages/C00200_Ledger/ClubLedgersList/ClubLedgersList'));
+const CreateLedgerForm = lazy(() => import('pages/C00200_Ledger/CreateLedgerForm/CreateLedgerForm'));
+const CreateLedgerSuccess = lazy(() => import('pages/C00200_Ledger/CreateLedgerSuccess/CreateLedgerSuccess'));
+const InvitationCard = lazy(() => import('pages/C00200_Ledger/InvitationCard/InvitationCard'));
+const InvitationContainer = lazy(() => import('pages/C00200_Ledger/InvitationContainer/InvitationContainer'));
+const InvoiceSending = lazy(() => import('pages/C00200_Ledger/InvoiceSending/InvoiceSending'));
+const JoinSetting = lazy(() => import('pages/C00200_Ledger/JoinSetting/JoinSetting'));
+const LedgerDetail = lazy(() => import('pages/C00200_Ledger/LedgerDetail/LedgerDetail'));
+const LedgerManagement = lazy(() => import('pages/C00200_Ledger/LedgerManagement/LedgerManagement'));
+const MemberInvitation = lazy(() => import('pages/C00200_Ledger/MemberInvitation/MemberInvitation'));
+const MemberManagement = lazy(() => import('pages/C00200_Ledger/MemberManagement/MemberManagement'));
+const PaymentRequest = lazy(() => import('pages/C00200_Ledger/PaymentRequest/PaymentRequest'));
+const RecordDetail = lazy(() => import('pages/C00200_Ledger/RecordDetail/RecordDetail'));
+const ShareLedgerDetail = lazy(() => import('pages/C00200_Ledger/ShareLedgerDetail/ShareLedgerDetail'));
+const Terms = lazy(() => import('pages/C00200_Ledger/Terms/Terms'));
 const LedgerTransferSetting = lazy(() => import('pages/C00200_Ledger/Transfer/transferSetting'));
 const LedgerTransferConfirm = lazy(() => import('pages/C00200_Ledger/Transfer/transferConfirm'));
-const LedgerTransferFinish = lazy(() => import('pages/C00200_Ledger/Transfer/transferFinish'));
+const LedgertTransferFinish = lazy(() => import('pages/C00200_Ledger/Transfer/transferFinish'));
 
 // TODO：支援開發及Prototype測試使用
 const Login = lazy(() => import('proto/Login/login'));
@@ -193,9 +211,27 @@ const routes = [
     exact: false,
     component: ForeignCurrencyTransfer2,
   },
+  // 社群帳本
+  {path: '/abortLedgerConfirm', exact: false, component: AbortLedgerConfirm},
+  {path: '/abortLedgerSuccess', exact: false, component: AbortLedgerSuccess},
+  {path: '/clubLedgersList', exact: false, component: ClubLedgersList},
+  {path: '/createLedgerForm', exact: false, component: CreateLedgerForm},
+  {path: '/createLedgerSuccess', exact: false, component: CreateLedgerSuccess},
+  {path: '/invitationCard', exact: false, component: InvitationCard},
+  {path: '/invitationContainer', exact: false, component: InvitationContainer},
+  {path: '/invoiceSending', exact: false, component: InvoiceSending},
+  {path: '/joinSetting', exact: false, component: JoinSetting},
+  {path: '/ledgerDetail', exact: false, component: LedgerDetail},
+  {path: '/ledgerManagement', exact: false, component: LedgerManagement},
+  {path: '/memberInvitation', exact: false, component: MemberInvitation},
+  {path: '/memberManagement', exact: false, component: MemberManagement},
+  {path: '/paymentRequest', exact: false, component: PaymentRequest},
+  {path: '/recordDetail', exact: false, component: RecordDetail},
+  {path: '/shareLedgerDetail', exact: false, component: ShareLedgerDetail},
+  {path: '/terms', exact: false, component: Terms},
   {path: '/transferSetting', exact: false, component: LedgerTransferSetting},
   {path: '/transferConfirm', exact: false, component: LedgerTransferConfirm},
-  {path: '/transferFinish', exact: false, component: LedgerTransferFinish},
+  {path: '/transferFinish', exact: false, component: LedgertTransferFinish},
 
   // TODO：支援開發及Prototype測試使用
   {path: '/login/:fid', exact: false, component: Login},
