@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable object-curly-newline */
 import { useEffect, useState, useReducer } from 'react';
 import { useHistory } from 'react-router';
@@ -76,6 +77,7 @@ const T00700 = (props) => {
       const verifyRs = await verifyMail(email);
 
       // // DEBUG
+      // const verifyRs = {};
       // verifyRs.status = 2;
       // verifyRs.relations = [{ name: 'OO男', id: '11AA' }, { name: 'XX女', id: '22BB' }];
 
@@ -116,15 +118,13 @@ const T00700 = (props) => {
 
   // 取得初始資料
   useEffect(() => {
-    dispatch(setWaittingVisible(true));
-
     // 從確認頁返回。
     if (state && state.viewModel) {
       setViewModel(state.viewModel);
       reset(state.model);
-      dispatch(setWaittingVisible(false));
     } else {
       // 取得個人資料，並匯入表單
+      dispatch(setWaittingVisible(true));
       getProfile().then((personalData) => {
         viewModel.originData = personalData;
         viewModel.selectedCounty = personalData.county;
