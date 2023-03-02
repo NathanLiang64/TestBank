@@ -10,6 +10,10 @@ const PageWrapper = styled(Layout)`
   // 使畫面可上下捲動
   height: 100vh;
   overflow: auto;
+
+  .announcement {
+    background: ${({ theme }) => theme.colors.background.lightest};
+  }
 `;
 
 export default PageWrapper;
