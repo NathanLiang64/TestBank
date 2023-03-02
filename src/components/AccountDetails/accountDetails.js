@@ -385,12 +385,13 @@ const AccountDetails = ({
   };
 
   /**
-   * 用查詢結果的明細清單的最新一筆資料來, 更新頁面上方的顯示餘額。
+   * 用查詢結果的明細清單的最新一筆資料, 來更新頁面上方的顯示餘額。
    * 使總金額與歷程一致更新
    * @param {*} details 查詢結果的明細資料。
    */
   const setCardShowBalance = (details) => {
     selectedAccount.balance = details[0].balance;
+    selectedAccount.currentBalance = details[0].balance;
 
     setSelectedAccountHook(selectedAccount);
 

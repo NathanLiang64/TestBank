@@ -1,4 +1,5 @@
 import { useHistory, useLocation } from 'react-router';
+import { useEffect } from 'react';
 
 import Layout from 'components/Layout/Layout';
 import AccountDetails from 'components/AccountDetails/accountDetails';
@@ -37,6 +38,17 @@ const DepositPlanTransactionPage = () => {
     const transData = await getTransactionDetails(request);
     return transData;
   };
+
+  /**
+   * 此HOOK目的是將在AccountDetails組件內所取得的最新一筆明細, 更新資料回state
+   */
+  useEffect(() => {
+    state.depositPlans.plans.forEach((p, index) => {
+      if (plan.planId === p.planId) state.depositPlans.plans[index] = plan;
+    });
+
+    state.plan = plan;
+  }, []);
 
   return (
     <Layout title="存錢歷程" hasClearHeader goBackFunc={() => history.replace(`${Func.C006.id}00`, state)}>
