@@ -15,7 +15,7 @@ import { accountFormatter } from 'utilities/Generator';
 import { findCounty, findCity } from 'utilities/locationOptions';
 import { updateProfile, getStatus, reissueOrLost } from './api';
 import LossReissueWrapper from './S00800.style';
-import { AddressEditor } from './S00800_addressEditor';
+import { AddressEditor } from './S00800_AddressEditor';
 
 /**
  * 金融卡掛失/補發

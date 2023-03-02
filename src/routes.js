@@ -103,9 +103,9 @@ const PaymentRequest = lazy(() => import('pages/C00200_Ledger/PaymentRequest/Pay
 const RecordDetail = lazy(() => import('pages/C00200_Ledger/RecordDetail/RecordDetail'));
 const ShareLedgerDetail = lazy(() => import('pages/C00200_Ledger/ShareLedgerDetail/ShareLedgerDetail'));
 const Terms = lazy(() => import('pages/C00200_Ledger/Terms/Terms'));
-const LedgerTransferSetting = lazy(() => import('pages/C00200_Ledger/transfer/transferSetting'));
-const LedgerTransferConfirm = lazy(() => import('pages/C00200_Ledger/transfer/transferConfirm'));
-const LedgertTransferFinish = lazy(() => import('pages/C00200_Ledger/transfer/transferFinish'));
+const LedgerTransferSetting = lazy(() => import('pages/C00200_Ledger/Transfer/transferSetting'));
+const LedgerTransferConfirm = lazy(() => import('pages/C00200_Ledger/Transfer/transferConfirm'));
+const LedgertTransferFinish = lazy(() => import('pages/C00200_Ledger/Transfer/transferFinish'));
 
 // TODO：支援開發及Prototype測試使用
 const Login = lazy(() => import('proto/Login/login'));

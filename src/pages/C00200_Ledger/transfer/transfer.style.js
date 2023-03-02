@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 export const TransferPageWrapper = styled(Layout)`
-  // background: ${({ theme }) => theme.colors.background.lighterBlue};
+  background: ${({ theme }) => theme.colors.background.light};
   min-height: fit-content;
 
   .transfer_form {
@@ -26,7 +26,7 @@ export const TransferPageWrapper = styled(Layout)`
 `;
 
 export const TransferConfirmWrapper = styled(Layout)`
-  background: ${({ theme }) => theme.colors.background.lighterBlue};
+  background: ${({ theme }) => theme.colors.background.light};
   min-height: fit-content;
 
   .banner {
@@ -62,7 +62,7 @@ export const TransferConfirmWrapper = styled(Layout)`
 `;
 
 export const TransferFinishWrapper = styled(Layout)`
-  background: ${({ theme }) => theme.colors.background.lighterBlue};
+  background: ${({ theme }) => theme.colors.background.light};
   min-height: fit-content;
 
   .banner {
