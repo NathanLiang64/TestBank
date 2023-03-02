@@ -66,10 +66,6 @@ export const queryCardInfo = async (request) => {
  *    account: 轉出帳號
  *    cardNo:  Bankee 信用卡卡號 (後端API用來繳費歸戶用)
  * }
- * @return {
- *    code:     0000 表示成功
- *    message:  Success!!
- * }
  */
 export const payCardFee = async (request) => {
   const response = await callAPI('/creditCard/v1/payCardFee', request);

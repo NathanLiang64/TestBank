@@ -1,8 +1,6 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 
 import Layout from 'components/Layout/Layout';
-import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import { useHistory, useLocation } from 'react-router';
 import { FEIBButton } from 'components/elements';
 import ResultAnimation from 'components/SuccessFailureAnimations/ResultAnimation';
@@ -32,7 +30,7 @@ const S007001 = () => {
     </SuccessDescWrapper>
   );
 
-  if (!state) return history.goBack();
+  if (!state.isSuccess) return history.goBack();
 
   return (
     <Layout title="金融卡啟用結果" goBackFunc={() => startFunc(Func.B006.id)}>

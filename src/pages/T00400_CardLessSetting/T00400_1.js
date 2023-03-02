@@ -33,26 +33,22 @@ const CardLessATM = () => {
   const dispatch = useDispatch();
 
   // 開通無卡提款與設定無卡提款密碼
-  const activateWithdrawAndSetPwd = async (param) => {
+  const onSubmit = async ({ withdrawPwd }) => {
     const {result} = await transactionAuth(Func.T004.authCode);
     if (result) {
       dispatch(setWaittingVisible(true));
-      const activateRes = await activate(param);
+      const apiRs = await activate(withdrawPwd);
       dispatch(setWaittingVisible(false));
 
       // 開通狀態顯示
       showAnimationModal({
-        isSuccess: !!activateRes,
+        isSuccess: apiRs.isSuccess,
         successTitle: '設定成功',
         errorTitle: '設定失敗',
         errorDesc: '設定失敗',
         onClose: () => history.goBack(),
       });
     }
-  };
-
-  const onSubmit = async ({ withdrawPwd }) => {
-    activateWithdrawAndSetPwd(withdrawPwd);
   };
 
   const renderPage = () => (

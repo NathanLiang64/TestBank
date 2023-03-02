@@ -76,11 +76,6 @@ export const getTransactions = async (cardNo) => {
  *    txKey:    消費明細唯一Key值
  *    note:     備註內容
  * }
- * @return {
- *    result:   true/false
- *    message:  回傳結果
- * }
- *
  */
 export const updateTxnNotes = async (param) => {
   const response = await callAPI('/creditCard/v1/updateTxnNotes', param);

@@ -36,10 +36,10 @@ const S00700 = () => {
     const auth = await transactionAuth(Func.S007.authCode);
     if (auth && auth.result) {
       dispatch(setWaittingVisible(true));
-      const activateResult = await activate({serial});
+      const apiRs = await activate({serial});
       dispatch(setWaittingVisible(false));
-      if (activateResult) {
-        history.push('/S007001', activateResult);
+      if (apiRs.isSuccess) {
+        history.push('/S007001', apiRs);
       }
     }
   };

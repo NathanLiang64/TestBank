@@ -81,16 +81,16 @@ const LossReissue = () => {
 
     if (auth && auth.result) {
       dispatch(setWaittingVisible(true));
-      const res = await reissueOrLost();
+      const apiRs = await reissueOrLost();
       dispatch(setWaittingVisible(false));
       await showCustomPrompt({
         message: (
           <SuccessFailureAnimations
-            isSuccess={res && res.result}
+            isSuccess={apiRs?.isSuccess}
             successTitle={`${debitCardInfo.actionText}設定成功`}
             errorTitle={`${debitCardInfo.actionText}設定失敗`}
             successDesc=""
-            errorDesc={`原因： ${res.message}`}
+            errorDesc={`原因： ${apiRs?.message}`}
           />
         ),
         onOk: () => updateDebitCardStatus(),

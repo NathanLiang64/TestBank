@@ -38,14 +38,8 @@ export const getStatus = async (params) => {
 /**
  * 金融卡掛失
  * 條件: 卡況 需要 2製卡 4已啟用 8臨時掛失中 這三種時，才可以掛失
- *
- * @param token
- * @return {
- *      result:   true/false
- *      message:  訊息
- * }
  */
-export const reissueOrLost = async (params) => {
-  const response = await callAPI('/deposit/withdraw/card/v1/reIssueOrLost', params);
-  return response.data;
+export const reissueOrLost = async () => {
+  const response = await callAPI('/deposit/withdraw/card/v1/reissueOrLost');
+  return response;
 };

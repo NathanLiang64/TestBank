@@ -142,9 +142,9 @@ const Page = () => {
       const {result} = await transactionAuth(Func.R004.authCode);
       if (result) {
         dispatch(setWaittingVisible(true));
-        const payResult = await payCardFee(payload);
+        const apiRs = await payCardFee(payload);
         dispatch(setWaittingVisible(false));
-        if (payResult) history.push('R004001', { payResult, account: data.accountNo });
+        if (apiRs.isSuccess) history.push('R004001', { payResult: apiRs, account: data.accountNo });
       }
     }
 

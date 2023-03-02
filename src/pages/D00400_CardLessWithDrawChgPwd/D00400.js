@@ -2,7 +2,7 @@ import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { transactionAuth } from 'utilities/AppScriptProxy';
-import { changeCardlessPwd, getCardlessWdStatus } from 'pages/D00400_CardLessWithDrawChgPwd/api';
+import { setPinCode, getCardlessWdStatus } from 'pages/D00400_CardLessWithDrawChgPwd/api';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -35,7 +35,7 @@ const CardLessWithDrawChgPwd = () => {
     const {result} = await transactionAuth(Func.D004.authCode);
     if (result) {
       dispatch(setWaittingVisible(true));
-      const { isSuccess, code, message } = await changeCardlessPwd(param);
+      const { isSuccess, code, message } = await setPinCode(param);
       dispatch(setWaittingVisible(false));
       showAnimationModal({
         isSuccess,
