@@ -68,13 +68,13 @@ const Nav = () => {
           <div onClick={() => startFunc('abortLedgerConfirm')}>終止帳本 - 確認 | AbortLedgerConfirm</div>
           <div onClick={() => startFunc('abortLedgerSuccess')}>終止帳本 - 成功 | AbortLedgerSuccess</div>
           <div onClick={() => startFunc('clubLedgersList')}>社群帳本(首頁) | ClubLedgersList</div>
+          <div onClick={() => startFunc('ledgerDetail')}>帳本明細 | LedgerDetail</div>
           <div onClick={() => startFunc('createLedgerForm')}>建立帳本 | CreateLedgerForm</div>
           <div onClick={() => startFunc('createLedgerSuccess')}>建立帳本 - 成功 | createLedgerSuccess</div>
           <div onClick={() => startFunc('invitationCard')}>邀請卡 | InvitationCard</div>
           <div onClick={() => startFunc('invitationContainer')}>要錢 | InvitationContainer</div>
           <div onClick={() => startFunc('invoiceSending')}>要錢 | InvoiceSending</div>
           <div onClick={() => startFunc('joinSetting')}>加入帳本 | JoinSetting</div>
-          <div onClick={() => startFunc('ledgerDetail')}>終止帳本 | LedgerDetail</div>
           <div onClick={() => startFunc('ledgerManagement')}>帳本管理 | LedgerManagement</div>
           <div onClick={() => startFunc('memberInvitation')}>邀請好友 | MemberInvitation</div>
           <div onClick={() => startFunc('memberManagement')}>成員管理 | MemberManagement</div>
