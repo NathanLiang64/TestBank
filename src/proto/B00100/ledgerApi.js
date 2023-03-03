@@ -34,20 +34,30 @@ export const ledgerApiTest = async () => {
   // }).data;
   // }
 
-  /*
-  // 帳本首頁
-  const initListRs = await callAPI('/ledger/getListItems');
-  // // 銀行代碼清單
-  // const bankListRs = await callAPI('/ledger/bankList');
-  // 我的帳本清單(可取得 ledgerId)
-  const getLedgerList = await callAPI('/ledger/getLedgerList');
-  // 我的帳本清單
-  const openLedger = await callAPI('/ledger/openLedger', { ledgerid: '470' });
-  */
+  // // 帳本首頁
+  // const initListRs = await callAPI('/ledger/getListItems');
 
-  // 確認是否可再新增帳本
-  const checkAdd = await callAPI('/ledger/checkAdd');
+  // // 我的帳本清單(可取得 ledgerId)
+  // const getLedgerList = await callAPI('/ledger/getLedgerList');
 
-  // 取得可連結帳號清單、使用條款與加開子帳號權限
-  const accountList = await callAPI('/ledger/accountList', { filterbind: true });
+  // // 確認是否可再新增帳本
+  // const checkAdd = await callAPI('/ledger/checkAdd');
+
+  // // 取得可連結帳號清單、使用條款與加開子帳號權限
+  // const accountList = await callAPI('/ledger/accountList', { filterbind: true });
+
+  // // 我的帳本清單
+  // const openLedger = await callAPI('/ledger/openLedger', { ledgerId: '453' });
+
+  // // 修改帳本名稱(Owner才有效)
+  // const setLedgerName = await callAPI('/ledger/setLedgerName', { name: 'A177-ID453' });
+
+  // // 變更在帳本中所使用的暱稱。
+  // const setNickname = await callAPI('/ledger/setNickname', { name: 'ID923' });
+
+  // // 修改公告內容
+  // const setAnnouncement = await callAPI('/ledger/setAnnouncement', { message: 'A177-Announcement' });
+
+  // // 取得帳本交易明細清單
+  // const getLedgerTxn = await callAPI('/ledger/getLedgerTxn', { sync: true });
 };

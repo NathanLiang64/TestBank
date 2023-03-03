@@ -92,13 +92,11 @@ const processResponse = async (response) => {
       resultData = JWTUtil.decryptJWTMessage(aes.aesKey, aes.iv, encData, mac);
     }
 
-    if (resultData) {
-      response.data = {
-        code,
-        data: resultData,
-        message: response.data.message,
-      };
-    }
+    response.data = {
+      code,
+      data: resultData,
+      message: response.data.message,
+    };
   }
 
   response.data = {
