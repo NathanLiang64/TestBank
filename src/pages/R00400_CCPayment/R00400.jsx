@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
@@ -17,7 +16,7 @@ import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
 import BankCodeInputField from 'pages/R00400_CCPayment/fields/BankCodeInputField';
 import { DropdownField, TextInputField } from 'components/Fields';
-import { FEIBButton, FEIBErrorMessage, FEIBHintMessage } from 'components/elements';
+import { FEIBButton, FEIBHintMessage } from 'components/elements';
 import { RadioGroupField } from 'components/Fields/radioGroupField';
 import { Func } from 'utilities/FuncID';
 import { getAccountsList } from 'utilities/CacheData';
@@ -42,7 +41,7 @@ const Page = () => {
   const dispatch = useDispatch();
   const { closeFunc } = useNavigation();
   const [cardInfo, setCardInfo] = useState();
-  const [cardNo, setCardNo] = useState();
+  const [bankeeCardNo, setBankeeCardNo] = useState();
   const [internalAccounts, setInternalAccounts] = useState([]);
 
   const {
@@ -56,16 +55,16 @@ const Page = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-    let defaultCardNo = null;
+    let cardNo = null;
 
     const funcParams = await loadFuncParams(); // Function 啟動參數
-    if (funcParams) defaultCardNo = funcParams.cardNo;
-    else defaultCardNo = await getBankeeCardNo();
+    if (funcParams) cardNo = funcParams.bankeeCardNo;
+    else cardNo = await getBankeeCardNo();
 
     getAccountsList('M', setInternalAccounts); // 拿取本行母帳號列表
     const cardInfoResponse = await queryCardInfo(''); // 拿取應繳金額資訊
 
-    setCardNo(defaultCardNo);
+    setBankeeCardNo(cardNo);
     setCardInfo(cardInfoResponse);
 
     dispatch(setWaittingVisible(false));
@@ -137,7 +136,7 @@ const Page = () => {
       const payload = {
         amount: getAmount(data),
         account: data.accountNo,
-        cardNo,
+        cardNo: bankeeCardNo,
       };
       const {result} = await transactionAuth(Func.R004.authCode);
       if (result) {

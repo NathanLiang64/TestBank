@@ -126,7 +126,7 @@ export const queryCardInfo = async (request) => {
  */
 export const getRewards = async (request) => {
   const response = await callAPI('/creditCard/v1/getRewards', request);
-  return response;
+  return response.data;
 };
 
 /**

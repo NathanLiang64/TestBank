@@ -58,6 +58,7 @@ const FavoriteDrawerWrapper = styled.div`
         ${() => blockStyle}
         color: ${({ theme }) => theme.colors.text.lightGray};
         margin-bottom: 1.6rem;
+        text-align:center;
         // user-select: none;
         
         img {
