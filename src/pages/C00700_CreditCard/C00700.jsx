@@ -32,31 +32,29 @@ import {
  */
 const CreditCardPage = (props) => {
   const history = useHistory();
+  const dispatch = useDispatch();
   const {location: {state}} = props;
   const {startFunc, closeFunc} = useNavigation();
-  const [cardsInfo, setCardsInfo] = useState([]);
-  const [usedCardLimit, setUsedCardLimit] = useState();
-  const [transactionObj, setTransactionObj] = useState({ 0: null, 1: null }); // {0:bankeeCard 交易明細, 1:所有信用卡(含bankeeCard) 交易明細}
-  const [defaultSlide, setDefaultSlide] = useState(0);
-  const dispatch = useDispatch();
+  const [viewModel, setViewModel] = useState({
+    cardsInfo: [], usedCardLimit: '', defaultSlide: 0, bankeeCardNo: '',
+  });
 
-  const go2Func = (funcId, params, index) => {
-    const keepData = {
-      transactionObj, cardsInfo, usedCardLimit, index,
-    };
-    startFunc(funcId, params, keepData);
-  };
+  const go2Func = (funcId, params) => startFunc(funcId, params, viewModel);
 
   const fetchTransactions = async (cardNo, currentIndex) => {
-    if (transactionObj[currentIndex]) return;
-    const txns = await getTransactions(cardNo ?? ''); // 空字串代表拿取所有信用卡的明細
-    setTransactionObj((prevObj) => ({...prevObj, [cardNo ? 0 : 1]: txns}));
+    if (viewModel.cardsInfo[currentIndex]?.txnDetails) return;
+    const txns = await getTransactions(cardNo);
+    setViewModel((vm) => {
+      vm.cardsInfo[currentIndex].txnDetails = txns;
+      return {...vm};
+    });
   };
 
   // 滑動卡片時，拿取當下信用卡的交易明細
   const onSlideChange = async (swiper) => {
-    const {cardNo} = cardsInfo[swiper.activeIndex];
-    fetchTransactions(cardNo, swiper.activeIndex);
+    const {cardNo} = viewModel.cardsInfo[swiper.activeIndex];
+    viewModel.defaultSlide = swiper.activeIndex;
+    fetchTransactions(cardNo ?? '', swiper.activeIndex); // cardNo 無值，則傳空字串代表拿取所有信用卡的明細
   };
 
   // 編輯信用卡明細備註的 Handler
@@ -65,31 +63,30 @@ const CreditCardPage = (props) => {
     if (isSuccess) { // updateTxNotes API 打成功才更新畫面
       const {txKey, note, cardNo} = payload;
       const [key, otherKey] = isBankeeCard ? [0, 1] : [1, 0];
-      transactionObj[key].find((txn) => txn.txKey === txKey).note = note;
-
+      viewModel.cardsInfo[key].txnDetails.find((txn) => txn.txKey === txKey).note = note; // 直接 mutate
       // 若改變的是 bankee 信用卡的明細，且另一個卡面已拿過資料，也需連動改變
-      const isBankeeTxn = cardsInfo.find((cardInfo) => cardInfo.isBankeeCard).cardNo === cardNo;
-      if (transactionObj[otherKey] && isBankeeTxn) {
-        transactionObj[otherKey].find((txn) => txn.txKey === txKey).note = note;
+      const isBankeeTxn = viewModel.bankeeCardNo === cardNo;
+      if (viewModel.cardsInfo[otherKey]?.txnDetails && isBankeeTxn) {
+        viewModel.cardsInfo[otherKey].txnDetails.find((txn) => txn.txKey === txKey).note = note; // 直接 mutate
       }
-      setTransactionObj({...transactionObj});
+      setViewModel((vm) => ({...vm}));
     } else showError(message);
   };
 
-  // 信用卡卡面右上角的功能列表
-  const functionAllList = (item, index) => {
+  // 信用卡卡面的功能列表
+  const functionAllList = (item) => {
     const list = [
-      { fid: Func.R002.id, title: '晚點付' },
-      { fid: Func.R003.id, title: '帳單', cardNo: item.cardNo },
-      { fid: Func.R004.id, title: '繳費', cardNo: item.isBankeeCard ? item.cardNo : '' },
+      { fid: Func.R002.id, title: '晚點付'},
+      { fid: Func.R003.id, title: '帳單'},
+      { fid: Func.R004.id, title: '繳費', bankeeCardNo: viewModel.bankeeCardNo},
     ];
     if (!item.isBankeeCard) list.splice(0, 1);
 
     return (
       <ul className="functionList">
-        { list.map(({fid, title, cardNo}) => (
+        { list.map(({fid, title, bankeeCardNo}) => (
           <li key={fid}>
-            <button type="button" onClick={() => go2Func(fid, !!cardNo && {cardNo}, index)}>
+            <button type="button" onClick={() => go2Func(fid, {bankeeCardNo})}>
               {title}
             </button>
           </li>
@@ -99,18 +96,14 @@ const CreditCardPage = (props) => {
   };
 
   // 信用卡更多
-  const handleMoreClick = ({isBankeeCard, cardNo}, index) => {
-    const keepData = {
-      transactionObj, cardsInfo, usedCardLimit, index,
-    };
-
+  const handleMoreClick = (isBankeeCard) => {
     const list = [
       {
-        fid: '/C007001', icon: <CreditCardIcon6 />, title: '信用卡資訊', param: {keepData, isBankeeCard, cardNo},
+        fid: '/C007001', icon: <CreditCardIcon6 />, title: '信用卡資訊', param: {viewModel, isBankeeCard},
       },
       { fid: `${Func.R005.id}`, icon: <R005 />, title: '自動扣繳' },
       {
-        fid: '/C007002', icon: <CircleIcon />, title: '每月現金回饋', param: { keepData },
+        fid: '/C007002', icon: <CircleIcon />, title: '每月現金回饋', param: { viewModel },
       },
     ];
     const options = (
@@ -120,7 +113,7 @@ const CreditCardPage = (props) => {
             <button
               type="button"
               onClick={() => {
-                if (item.fid.includes(Func.R005.id)) go2Func(item.fid, null, index);
+                if (item.fid.includes(Func.R005.id)) go2Func(item.fid, null);
                 else history.push(item.fid, item.param);
               }}
             >
@@ -136,19 +129,19 @@ const CreditCardPage = (props) => {
 
   // 信用卡卡號(產生上方內容的 slides)
   const renderSlides = () => {
-    if (!cardsInfo.length) return null;
+    if (!viewModel.cardsInfo.length) return null;
     return (
-      cardsInfo.map((cardSet, index) => (
+      viewModel.cardsInfo.map((cardSet) => (
         <SwiperCreditCard>
           <CreditCard
             key={cardSet.isBankeeCard ? '0' : '1'}
             cardName={cardSet.isBankeeCard ? 'Bankee信用卡' : '所有信用卡'}
             accountNo={cardSet.isBankeeCard && cardSet.cardNo}
-            balance={usedCardLimit}
+            balance={viewModel.usedCardLimit}
             color="green"
             annotation="已使用額度"
-            onMoreClicked={() => handleMoreClick(cardSet, index)}
-            functionList={functionAllList(cardSet, index)}
+            onMoreClicked={() => handleMoreClick(cardSet.isBankeeCard)}
+            functionList={functionAllList(cardSet)}
           />
         </SwiperCreditCard>
       ))
@@ -175,7 +168,7 @@ const CreditCardPage = (props) => {
     });
   };
 
-  const bonusInfo = (bankeeCard, index) => [
+  const bonusInfo = (bankeeCard) => [
     {
       label: '會員等級',
       value: `${bankeeCard.memberLevel}`,
@@ -192,43 +185,37 @@ const CreditCardPage = (props) => {
       label: '回饋試算',
       value: currencySymbolGenerator('NTD', bankeeCard.rewardsAmount),
       iconType: 'Arrow',
-      onClick: () => {
-        const keepData = {
-          transactionObj, cardsInfo, usedCardLimit, index,
-        };
-        history.push('/C007002', { accountNo: bankeeCard.cardNo, keepData });
-      },
+      onClick: () => history.push('/C007002', { viewModel }),
     },
   ];
 
   // 信用卡明細總覽
   const renderCreditList = () => {
-    if (!cardsInfo.length) return null;
+    if (!viewModel.cardsInfo.length) return null;
     return (
-      cardsInfo.map((cardInfo, index) => {
-        const swiperIndex = index;
-        return (
-          <div key={swiperIndex}>
-            <DetailDialogContentWrapper>
-              {cardInfo.isBankeeCard && (
+      viewModel.cardsInfo.map((cardInfo, index) => (
+        // eslint-disable-next-line react/no-array-index-key
+        <div key={index}>
+          <DetailDialogContentWrapper>
+            {cardInfo.isBankeeCard && (
               <div className="panel">
-                <ThreeColumnInfoPanel content={bonusInfo(cardInfo, index)} />
+                <ThreeColumnInfoPanel content={bonusInfo(cardInfo)} />
               </div>
-              )}
-            </DetailDialogContentWrapper>
-            <CreditCardTxsListWrapper>
-              <CreditCardTxsList
-                card={cardInfo}
-                onMoreFuncClick={() => go2Func(Func.R001.id, {
-                  card: cardInfo, usedCardLimit, transactions: transactionObj[index],
-                }, index)}
-                transactions={transactionObj[index]}
-                onTxnNotesEdit={onTxnNotesEdit}
-              />
-            </CreditCardTxsListWrapper>
-          </div>
-        );
-      })
+            )}
+          </DetailDialogContentWrapper>
+          <CreditCardTxsListWrapper>
+            <CreditCardTxsList
+              cardInfo={cardInfo}
+              onMoreFuncClick={() => go2Func(Func.R001.id, {
+                cardInfo: {...cardInfo, usedCardLimit: viewModel.usedCardLimit},
+                transactions: viewModel.cardsInfo[index].txnDetails,
+              })}
+              transactions={viewModel.cardsInfo[index].txnDetails}
+              onTxnNotesEdit={onTxnNotesEdit}
+            />
+          </CreditCardTxsListWrapper>
+        </div>
+      ))
     );
   };
 
@@ -238,21 +225,16 @@ const CreditCardPage = (props) => {
     let model = {};
     const params = await loadFuncParams();
 
-    if (state || params) {
-      model = state || params.response || params; // 從C00700X 傳回 || R00100 傳回(可能已修改過明細備註) || R00200-R00500 傳回
-      setDefaultSlide(model.index);
-      setTransactionObj(model.transactionObj);
-    } else {
-      const {cards, usedCardLimit: limit} = await getCards();
+    if (state || params) model = state || params; // 從C00700X 傳回  || R00100-R00500 傳回
+    else { // 若是第一次進來此畫面
+      const {cards, usedCardLimit} = await getCards();
       const bankeeCard = cards.find(({isBankeeCard}) => !!isBankeeCard);
-      model.cardsInfo = [bankeeCard];
+      model = { cardsInfo: [bankeeCard], usedCardLimit, bankeeCardNo: bankeeCard.cardNo };
       if (cards.length >= 2) model.cardsInfo.push({isBankeeCard: false}); // 有第二張以上的卡片都是「非 bankee」信用卡
-      model.usedCardLimit = limit;
-      fetchTransactions(bankeeCard.cardNo);
+      fetchTransactions(bankeeCard.cardNo, 0);
     }
 
-    setCardsInfo(model.cardsInfo);
-    setUsedCardLimit(model.usedCardLimit);
+    setViewModel((vm) => ({ ...vm, ...model }));
     dispatch(setWaittingVisible(false));
   }, []);
 
@@ -266,7 +248,7 @@ const CreditCardPage = (props) => {
           spaceBetween={8}
           centeredSlides
           onSlideChange={onSlideChange}
-          initialSlide={defaultSlide}
+          initialSlide={viewModel.defaultSlide}
         >
           {renderCreditList()}
         </SwiperLayout>
