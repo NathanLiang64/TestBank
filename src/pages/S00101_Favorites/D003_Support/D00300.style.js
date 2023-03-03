@@ -7,6 +7,9 @@ const D00300Wrapper = styled.div`
   }
   margin-left: 2.5rem;
   width: calc(100% - 5rem);
+  #wdAmount{
+    text-align:center;
+  }
 }
 
 #withdrawAmount {
