@@ -187,7 +187,7 @@ const AccountDetails = ({
   const showDownloadDrawer = () => {
     /**
      * 下載交易明細清單
-     * @param {*} fileType 下載檔案類型, 0:PDF, 1:EXCEL(CSV)
+     * @param {*} fileType 下載檔案類型, 1:PDF, 2:EXCEL(CSV)
      */
     const handleDownloadDetails = (fileType) => {
       // dispatch(setWaittingVisible(true)); // BUG : 打開、再關閉後，查詢條件會被清掉。
@@ -203,11 +203,11 @@ const AccountDetails = ({
 
     const content = (
       <DownloadDrawerWrapper>
-        <li onClick={() => handleDownloadDetails(0)}>
+        <li onClick={() => handleDownloadDetails(1)}>
           <p>下載 PDF</p>
           <DownloadIcon className="downloadIcon" />
         </li>
-        <li onClick={() => handleDownloadDetails(1)}>
+        <li onClick={() => handleDownloadDetails(2)}>
           <p>下載 EXCEL</p>
           <DownloadIcon className="downloadIcon" />
         </li>
