@@ -26,12 +26,13 @@ const DepositPlanTransactionPage = () => {
    * @param {*} conditions 查詢條件。
    */
   const updateTransactions = async (conditions) => {
+    const {startDate, endDate, ...restConditions} = conditions;
     const request = {
-      ...conditions,
       accountNo: plan?.bindAccountNo,
       // TODO plan 內的 createDate 格式為 '2022-11-28T05:49:11Z'，應該請後端修改成與 endDate 相同格式(YYYYMMDD)
-      startDate: dateToYMD(new Date(plan.createDate)), // 查詢起始日為計畫建立的當天
-      endDate: plan?.endDate,
+      startDate: startDate ?? dateToYMD(new Date(plan.createDate)), // 查詢起始日為計畫建立的當天
+      endDate: endDate ?? plan?.endDate,
+      ...restConditions,
     };
 
     // 取得帳戶交易明細（三年內）

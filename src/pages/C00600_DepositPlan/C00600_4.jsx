@@ -192,7 +192,7 @@ const DepositPlanDetailPage = () => {
             { mode > 0 ? renderProgramDetails() : renderPlanDetails() }
           </div>
           <div className="px-4">
-            { mode === 0 && <FEIBButton onClick={() => history.push('/C006005', { plan })}>編輯</FEIBButton> }
+            { mode === 0 && <FEIBButton onClick={() => history.push('/C006005', state)}>編輯</FEIBButton> }
             { mode === 1 && <FEIBButton onClick={handleConfirm}>確認</FEIBButton> }
             { mode === 2 && <FEIBButton onClick={() => history.push('/C00600')}>回存錢計畫首頁</FEIBButton> }
           </div>
