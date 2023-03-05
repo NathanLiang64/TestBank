@@ -16,7 +16,7 @@ import { stringDateFormat } from './utils';
 * ==================== TransactionsList 組件說明 ====================
 * 信用卡交易明細組件
 * ==================== TransactionsList 可傳參數 ====================
-* 1. card -> 卡片資料
+* 1. cardInfo -> 卡片資料
 * 2. onMoreFuncClick -> 更多明細
 * 3. showAll -> true:顯示所有交易明細, false: 只顯示前三筆
 * 4. transactions -> 交易明細列表
@@ -24,7 +24,7 @@ import { stringDateFormat } from './utils';
 * */
 
 const CreditCardTxsList = ({
-  card,
+  cardInfo,
   onMoreFuncClick,
   transactions,
   onTxnNotesEdit,
@@ -40,7 +40,7 @@ const CreditCardTxsList = ({
       message: (
         <MemoEditForm
           defaultValues={transaction}
-          isBankeeCard={card.isBankeeCard}
+          isBankeeCard={cardInfo.isBankeeCard}
           onTxnNotesEdit={onTxnNotesEdit}
         />
       ),
@@ -64,7 +64,7 @@ const CreditCardTxsList = ({
             bottomLeft={(
               <p className="date-card-info">
                 {stringDateFormat(transaction.txDate)}
-                {!card.isBankeeCard
+                {!cardInfo.isBankeeCard
                 && ` | 卡-${transaction.cardNo.slice(-4)}`}
               </p>
               )}

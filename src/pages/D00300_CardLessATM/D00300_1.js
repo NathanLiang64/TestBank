@@ -23,7 +23,7 @@ import { validationSchema } from './validationSchema';
 const CardLessATM1 = () => {
   const {state} = useLocation();
   const {handleSubmit, control, reset } = useForm({
-    defaultValues: { withdrawAmount: parseInt(state ?? 0, 10) }, // 若 state 無值，預設帶 0
+    defaultValues: { withdrawAmount: parseInt(state ?? 1000, 10) }, // 若 state 無值，預設帶 1000
     resolver: yupResolver(validationSchema),
   });
 

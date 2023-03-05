@@ -16,6 +16,7 @@ import {TransferPageWrapper} from './transfer.style';
 import C002TransferAccordionContent from './accordionContent';
 import { transferSettingInitialData } from './mockData';
 import { getBonusInfo } from './api';
+import { typeOptions } from '../utils/usgeType';
 
 /**
  * C002 社群帳本 - 轉帳
@@ -58,37 +59,6 @@ const TransferSetting = () => {
       {text}
     </div>
   );
-
-  const typeOptions = [
-    {
-      label: '食',
-      value: '1',
-    },
-    {
-      label: '衣',
-      value: '2',
-    },
-    {
-      label: '住',
-      value: '3',
-    },
-    {
-      label: '行',
-      value: '4',
-    },
-    {
-      label: '育',
-      value: '5',
-    },
-    {
-      label: '樂',
-      value: '6',
-    },
-    {
-      label: '其他',
-      value: '7',
-    },
-  ];
 
   const onSubmit = (data) => {
     console.log('Transfer onSubmit', {data});

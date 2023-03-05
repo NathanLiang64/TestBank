@@ -9,6 +9,7 @@ import {
 } from 'components/elements';
 import { AddCircleRounded, RemoveCircleRounded } from '@material-ui/icons';
 import { toCurrency } from 'utilities/Generator';
+import theme from 'themes/theme';
 
 export const CustomInputSelectorField = ({
   labelName,
@@ -34,8 +35,8 @@ export const CustomInputSelectorField = ({
         value={`＄${toCurrency(value)}`}
         id={name}
         error={!!fieldState.error}
-        inputProps={{ placeholder: placeholder || '', disabled: true}} // 只做顯示，不具輸入功能
-        $color={$color}
+        inputProps={{ placeholder: placeholder || '', disabled: true }} // 只做顯示，不具輸入功能
+        $color={theme.colors.primary.dark}
       />
       <div className="addMinusIcons">
         <RemoveCircleRounded onClick={() => changeAmount(false)} />

@@ -22,7 +22,7 @@ import { InfoPageWrapper } from './C00700.style';
 const C007001 = () => {
   const history = useHistory();
   const {state} = useLocation();
-  const {keepData, isBankeeCard, cardNo } = state;
+  const {viewModel, isBankeeCard } = state;
   const dispatch = useDispatch();
   const {startFunc } = useNavigation();
   const [cardInfo, setCardInfo] = useState();
@@ -39,7 +39,7 @@ const C007001 = () => {
     if (!terms) setTerms(await getCreditCardTerms());
   };
 
-  const goBack = () => history.replace('/C00700', keepData);
+  const goBack = () => history.replace('/C00700', viewModel);
 
   return (
     <Layout title="信用卡資訊" goBackFunc={goBack}>
@@ -51,7 +51,7 @@ const C007001 = () => {
               <div>
                 <CreditCard
                   cardName={isBankeeCard ? 'Bankee信用卡' : '所有信用卡'}
-                  accountNo={isBankeeCard ? cardNo : ''}
+                  accountNo={isBankeeCard ? viewModel.bankeeCardNo : ''}
                   color="green"
                   annotation="已使用額度"
                   balance={cardInfo?.usedCardLimit}

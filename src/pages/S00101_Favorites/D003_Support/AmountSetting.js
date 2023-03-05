@@ -3,11 +3,11 @@ import { useController } from 'react-hook-form';
 import { FEIBInputLabel, FEIBInput, FEIBBorderButton } from 'components/elements';
 import { AddCircleRounded, RemoveCircleRounded } from '@material-ui/icons';
 import { toCurrency } from 'utilities/Generator';
+import theme from 'themes/theme';
 
 export const AmountSetting = ({
   labelName,
   placeholder,
-  $color,
   ...controlProps
 }) => {
   const amountArr = [1000, 2000, 3000, 5000, 10000, 20000];
@@ -29,8 +29,8 @@ export const AmountSetting = ({
         type="number"
         id={name}
         error={!!fieldState.error}
-        placeholder={placeholder || ''}
-        $color={$color}
+        inputProps={{ placeholder: placeholder || '', disabled: true }} // 只做顯示，不具輸入功能
+        $color={theme.colors.primary.dark}
       />
 
       <div className="addMinusIcons">

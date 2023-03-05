@@ -15,3 +15,27 @@ export const PageWrapper = styled(Layout)`
     margin-bottom: 2rem;
   }
 `;
+
+export const EditRecordFormWrapper = styled(Layout)`
+  background: ${({ theme }) => theme.colors.background.light};
+  display: flex;
+  flex-direction: column;
+  padding: 0 20;
+  min-height: fit-content;
+
+  overflow: auto;
+
+  .edit_form {
+    display: grid;
+    align-content: flex-start;
+    grid-gap: 2rem;
+
+    min-height: fit-content;
+
+    margin: 2rem 0;
+  }
+
+  .record_target_list {
+    margin: 2.4rem 2rem;
+  }
+`;

@@ -102,6 +102,7 @@ const MemberInvitation = lazy(() => import('pages/C00200_Ledger/MemberInvitation
 const MemberManagement = lazy(() => import('pages/C00200_Ledger/MemberManagement/MemberManagement'));
 const PaymentRequest = lazy(() => import('pages/C00200_Ledger/PaymentRequest/PaymentRequest'));
 const RecordDetail = lazy(() => import('pages/C00200_Ledger/RecordDetail/RecordDetail'));
+const EditRecordForm = lazy(() => import('pages/C00200_Ledger/RecordDetail/EditRecordForm'));
 const ShareLedgerDetail = lazy(() => import('pages/C00200_Ledger/ShareLedgerDetail/ShareLedgerDetail'));
 const Terms = lazy(() => import('pages/C00200_Ledger/Terms/Terms'));
 const LedgerTransferSetting = lazy(() => import('pages/C00200_Ledger/Transfer/transferSetting'));
@@ -227,6 +228,7 @@ const routes = [
   {path: '/memberManagement', exact: false, component: MemberManagement},
   {path: '/paymentRequest', exact: false, component: PaymentRequest},
   {path: '/recordDetail', exact: false, component: RecordDetail},
+  {path: '/editRecordForm', exact: false, component: EditRecordForm},
   {path: '/shareLedgerDetail', exact: false, component: ShareLedgerDetail},
   {path: '/terms', exact: false, component: Terms},
   {path: '/transferSetting', exact: false, component: LedgerTransferSetting},
