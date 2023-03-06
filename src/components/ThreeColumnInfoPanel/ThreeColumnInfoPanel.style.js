@@ -20,11 +20,14 @@ const ThreeColumnInfoPanelWrapper = styled.div`
     justify-content: center;
     align-items: center;
     white-space: nowrap;
-    gap: 0.5rem;
     height: 1.6rem;
-    margin-block-end: 0.3rem;
+    margin-bottom: 0.3rem;
     font-size: 1.4rem;
     color: ${({ theme }) => theme.colors.text.lightGray};
+
+    .Icon {
+      margin-left: 0.5rem;
+    }
   }
 
   .value {

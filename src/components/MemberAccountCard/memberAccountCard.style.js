@@ -31,8 +31,8 @@ const MemberAccountCardWrapper = styled.div`
 
     .new-tag {
       display: inline-block;
-      margin-inline-start: 0.5rem;
-      padding-inline: 0.5rem;
+      margin-left: 0.5rem;
+      padding: 0 0.5rem;
       font-size: 1.2rem;
       font-weight: 400;
       vertical-align: text-bottom;

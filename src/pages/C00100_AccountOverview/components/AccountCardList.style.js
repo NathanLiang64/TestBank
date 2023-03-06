@@ -5,7 +5,7 @@ const AccountCardWrapper = styled.div`
   // flex-direction: column;
   display: grid;
   grid-auto-flow: row;
-  gap: 1.2rem;
+  grid-gap: 1.2rem;
   padding: 1.6rem;
 
   .warning_text {

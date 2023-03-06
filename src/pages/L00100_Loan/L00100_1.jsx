@@ -42,8 +42,8 @@ const Page = () => {
     <li key={`${uid}-${i}`}>
       <InformationList
         title={dateToString(t.txnDate)}
-        content={t.isSuccess ? `利息金額 ${currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}` : '當日扣款失敗'}
-        remark={t.isSuccess ? `${t.rate}%利息 ${currencySymbolGenerator(t.currency ?? 'NTD', Math.round(t.amount * (t.rate / 100)))}` : <span className="text-red">挑戰失敗</span>}
+        content={t.isSuccess ? `利息金額 ${currencySymbolGenerator(t.currency ?? 'NTD', t.amount, true)}` : '當日扣款失敗'}
+        remark={t.isSuccess ? `${t.rate}%利息 ${currencySymbolGenerator(t.currency ?? 'NTD', Math.round(t.amount * (t.rate / 100)), true)}` : <span className="text-red">挑戰失敗</span>}
       />
     </li>
   ));
@@ -54,7 +54,7 @@ const Page = () => {
         <RewardPageWrapper>
           <Badge
             label={rewards?.isJoinedRewardProgram ? '回饋累計' : '您尚未參加挑戰'}
-            value={rewards?.isJoinedRewardProgram ? currencySymbolGenerator(rewards?.currency ?? 'NTD', rewards?.rewards ?? 0) : '-'}
+            value={rewards?.isJoinedRewardProgram ? currencySymbolGenerator(rewards?.currency ?? 'NTD', rewards?.rewards ?? 0, true) : '-'}
           />
           { rewards?.transactions?.length > 0 ? (
             <div>

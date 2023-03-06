@@ -96,6 +96,10 @@ const DepositPlanPage = () => {
 
       const response = await closeDepositPlan({ planId: plan.planId });
       if ('email' in response) {
+        setDepositPlans((prevDepositPlans) => {
+          const filteredPlans = prevDepositPlans.plans.filter((dp) => dp.planId !== plan.planId);
+          return {...prevDepositPlans, plans: filteredPlans};
+        });
         ConfirmDepositPlanHasBeenClosed({ email: response.email, onOk: () => goHome() });
       } else {
         showAnimationModal({

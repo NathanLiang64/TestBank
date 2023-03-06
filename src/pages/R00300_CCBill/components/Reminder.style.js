@@ -5,9 +5,9 @@ const ReminderWrapper = styled.div`
   display: grid;
   justify-content: center;
   grid-auto-flow: column;
-  margin-inline: auto;
-  padding-inline: 4rem;
-  gap: 2rem;
+  margin: 0 auto;
+  padding: 0 4rem;
+  grid-gap: 2rem;
   min-height: 4.6rem;
   max-width: 100%;
 

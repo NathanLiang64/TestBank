@@ -40,7 +40,7 @@ const InformationListWrapper = styled.div`
 
   .text-green {
     color: ${({ theme }) => theme.colors.state.success} !important;
-    margin-inline-start: 1rem;
+    margin-left: 1rem;
   }
 
   .text-primary {

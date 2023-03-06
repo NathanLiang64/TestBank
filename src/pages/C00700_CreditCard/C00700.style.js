@@ -93,9 +93,10 @@ export const TableDialog = styled.div`
 `;
 
 export const InfoPageWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.6rem;
+  display: grid;
+  align-content: flex-start;
+  grid-gap: 1.6rem;
+  
   padding-bottom: 6rem;
 
   .heading {
@@ -108,14 +109,15 @@ export const InfoPageWrapper = styled.div`
   }
 
   .mb-4 {
-    margin-block: 1.6rem 3.2rem;
+    margin-top: 1.6rem;
+    margin-bottom: 3.2rem;
   }
 `;
 
 export const RewardPageWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.6rem;
+  display: grid;
+  align-content: flex-start;
+  grid-gap: 1.6rem;
   padding-bottom: 6rem;
 
   .table {

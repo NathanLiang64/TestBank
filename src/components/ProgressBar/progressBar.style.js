@@ -6,14 +6,13 @@ const ProgressBarWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem;
   width: 100%;
   height: 2.4rem;
 
   .progress {
     position: relative;
     background-color: ${({ theme }) => theme.colors.background.cancel};
-    width: 100%;
+    flex: 1; 
     height: 0.4rem;
     border-radius: 0.4rem;
 
@@ -45,6 +44,7 @@ const ProgressBarWrapper = styled.div`
   .percent {
     font-size: 1.35rem;
     color: ${({ theme }) => theme.colors.primary.brand};
+    margin-left: 0.5rem;
   }
 `;
 

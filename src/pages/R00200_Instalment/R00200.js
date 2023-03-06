@@ -47,7 +47,7 @@ const R00200 = () => {
   ];
 
   const showInsufficientContent = (type) => (
-    <div style={{ textAlign: 'center' }}>
+    <div className="txtCenter">
       <p>您目前沒有可分期的消費</p>
       <p>{ `${type === 'H' ? '消費全額' : '單筆消費限額'}需達3,000元以上)`}</p>
     </div>
