@@ -7,9 +7,13 @@ const PageWrapper = styled(Layout)`
   flex-direction: column;
   padding: 0 20;
 
-  // 使畫面可上下捲動
-  height: 100vh;
-  overflow: auto;
+  .form{
+    display: grid;
+    align-content: flex-start;
+    grid-gap: 2rem;
+
+    margin-top: 2rem;
+  }
 `;
 
 export default PageWrapper;
