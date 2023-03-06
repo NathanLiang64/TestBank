@@ -76,6 +76,7 @@ const DebitCard = ({
   const accountType = model.accountNo?.substring(3, 6) ?? '004';
   const isSmallCard = (type !== 'original');
   const [showBalance, setShowBalance] = useState(true);
+  const showFloat = model.currency === 'NTD' || model.currency === 'TWD'; // 若是台幣且非整數情況下，顯示小數點
 
   const handleClickShowBalance = () => {
     setShowBalance(!showBalance);
@@ -202,7 +203,7 @@ const DebitCard = ({
       <div className={`cardBalance ${!isSmallCard ? 'grow' : ''}`}>
         { !hideIcon && renderEyeIconButton() }
         <h3 className="balance">
-          {`${currencySymbolGenerator(model.currency ?? 'NTD', (showBalance ? (model.balance ?? '---') : '*'), false)}`}
+          {`${currencySymbolGenerator(model.currency ?? 'NTD', (showBalance ? (model.balance ?? '---') : '*'), showFloat)}`}
         </h3>
       </div>
       { renderFreeTransferInfo() }

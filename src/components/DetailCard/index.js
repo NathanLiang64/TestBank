@@ -51,6 +51,8 @@ const DetailCard = ({
   balance,
   invert,
 }) => {
+  const showFloat = currency === 'NTD' || currency === 'TWD'; // 若是台幣且非整數情況下，顯示小數點
+
   /**
    * 取得大頭貼。
    * @returns 會員大頭貼；非會員則傳回 null。
@@ -148,9 +150,9 @@ const DetailCard = ({
         <div className="amount">
           <h4>
             {cdType === 'c' && '- '}
-            {currencySymbolGenerator(currency, amount)}
+            {currencySymbolGenerator(currency, amount, showFloat)}
           </h4>
-          <p>{currencySymbolGenerator(currency, balance)}</p>
+          <p>{currencySymbolGenerator(currency, balance, showFloat)}</p>
         </div>
       </DetailCardWrapper>
     </>

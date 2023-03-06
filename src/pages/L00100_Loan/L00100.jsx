@@ -128,7 +128,7 @@ const Page = () => {
             </FEIBIconButton> */}
           </div>
           <div className="justify-end items-baseline gap-4">
-            <div className="balance">{currencySymbolGenerator(card.currency ?? 'NTD', card.balance)}</div>
+            <div className="balance">{currencySymbolGenerator(card.currency ?? 'NTD', card.balance, true)}</div>
           </div>
           <div className="justify-end gap-6 mt-4 divider">
             <button type="button" className="text-16" onClick={() => history.push('/L001002', { account: card.account, subNo: card.subNo })}>貸款資訊</button>
@@ -148,7 +148,7 @@ const Page = () => {
     },
     {
       label: '應繳本息',
-      value: currencySymbolGenerator(loan.currency ?? 'NTD', loan.payAmount),
+      value: currencySymbolGenerator(loan.currency ?? 'NTD', loan.payAmount, true),
       onClick: () => handleSearchClick(loan.account, loan.subNo),
     },
     {
@@ -194,15 +194,15 @@ const Page = () => {
       <button
         key={`${uid}-t${i}`}
         type="button"
-        aria-label={`點擊查詢此筆紀錄，還款日:${dateToString(t.date)}，金額：${currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}`}
+        aria-label={`點擊查詢此筆紀錄，還款日:${dateToString(t.date)}，金額：${currencySymbolGenerator(t.currency ?? 'NTD', t.amount, true)}`}
         onClick={() => handleSingleTransaction(i, detail, loan)}
         style={{ width: '100%' }}
       >
         <InformationTape
           topLeft={handleLoanTypeToTitle(t.type)}
           bottomLeft={dateToString(t.date)}
-          topRight={currencySymbolGenerator(t.currency ?? 'NTD', t.amount)}
-          bottomRight={`貸款餘額 ${currencySymbolGenerator(t.currency ?? 'NTD', t.balance)}`}
+          topRight={currencySymbolGenerator(t.currency ?? 'NTD', t.amount, true)}
+          bottomRight={`貸款餘額 ${currencySymbolGenerator(t.currency ?? 'NTD', t.balance, true)}`}
         />
       </button>
     ));
