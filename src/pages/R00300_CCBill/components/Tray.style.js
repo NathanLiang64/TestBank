@@ -5,7 +5,7 @@ const TrayWrapper = styled.div`
     display: grid;
     grid-auto-columns: 1fr;
     grid-auto-flow: column;
-    padding-block: 1.6rem;
+    padding: 1.6rem 0;
 
     & > * {
       border-left: 1px solid ${({ theme }) => theme.colors.basic.white};

@@ -29,7 +29,7 @@ export const AccordionContent = () => (
 );
 
 export const CancelAutoBillAlert = () => (
-  <div style={{ textAlign: 'center' }}>
+  <div className="txtCenter">
     您如欲取消自動扣繳
     <br />
     請洽客戶服務專線

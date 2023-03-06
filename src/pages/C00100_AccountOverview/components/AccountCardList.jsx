@@ -163,10 +163,9 @@ const AccountCardList = ({
     return (
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '2.4rem',
-          paddingInline: '1.6rem',
+          display: 'grid',
+          gridGap: '2.4rem',
+          padding: '0 1.6rem',
           marginBottom: '4rem',
         }}
       >

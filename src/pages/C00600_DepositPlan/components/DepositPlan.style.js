@@ -1,15 +1,15 @@
 import styled from 'styled-components';
 
 const DepositPlanWrapper = styled.div`
-  margin-block-end: 3.3rem;
+  margin-bottom: 3.3rem;
 
   .pad {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
+    display: grid;
+    align-content: flex-start;
+    justify-items: center;
+    grid-gap: 1.2rem;
     width: 100%;
-    padding-inline: 1.6rem;
-    padding-block-end: 1.7rem;
+    padding: 0 1.6rem 1.7rem;
   }
 
   .flex {
@@ -27,12 +27,12 @@ const DepositPlanWrapper = styled.div`
   }
 
   .mt-3 {
-    margin-block-start: 3.3rem;
+    margin-top: 3.3rem;
   }
 
   hr {
     border-color: ${({ theme }) => theme.colors.border.lightest};
-    margin-block: 2rem;
+    margin: 2rem 0;
     width: 100%;
     border-width: 0.5px;
   }

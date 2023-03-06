@@ -61,8 +61,7 @@ const ContentWrapper = styled.div`
   display: flex;
   display: -webkit-flex;
   flex-direction: column;
-  padding-inline: 1.6rem;
-  padding-bottom: 6rem;
+  padding: 0 1.6rem 6rem;
 
   .panel {
     padding-top: .8rem;
@@ -71,9 +70,9 @@ const ContentWrapper = styled.div`
 `;
 
 export const RewardPageWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2.4rem;
+  display: grid;
+  align-content: flex-start;
+  grid-gap: 2.4rem;
   padding-bottom: 6rem;
 
   .text-red {
@@ -82,9 +81,9 @@ export const RewardPageWrapper = styled.div`
 `;
 
 export const DetailPageWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2.4rem;
+  display: grid;
+  align-content: flex-start;
+  grid-gap: 2.4rem;
   padding-bottom: 6rem;
 
   hr {

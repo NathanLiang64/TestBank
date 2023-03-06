@@ -2,13 +2,13 @@ import Layout from 'components/Layout';
 import styled from 'styled-components';
 
 const PageWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.6rem;
+  display: grid;
+  align-content: flex-start;
+  grid-gap: 1.6rem;
   padding-bottom: 6rem;
 
   .badMargin {
-    margin-block-end: -2.4rem;
+    margin-bottom: -2.4rem;
   }
 
   .flex {
@@ -18,21 +18,20 @@ const PageWrapper = styled.div`
   }
 
   .ml-4 {
-    margin-inline-start: 3rem;
+    margin-left: 3rem;
     bottom: 2rem;
   }
 
   .mt-4 {
-    margin-block-start: 3rem;
+    margin-top: 3rem;
   }
 `;
 
 const PopUpWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items:center;
-  gap: 1rem;
+  display: grid;
+  align-content: flex-start;
+  justify-items: center;
+  grid-gap: 1rem;
 
   .note {
     text-align: center;
@@ -45,12 +44,12 @@ export const ResultWrapper = styled(Layout)`
   padding: 2.4rem 0;
 
   .resultContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
+    display: grid;
+    align-content: flex-start;
+    grid-gap: 3rem;
 
     .mb-2 {
-      margin-block-end: 1rem;
+      margin-bottom: 1rem;
     }
 
     .deduct {
@@ -70,12 +69,12 @@ export const ResultWrapper = styled(Layout)`
     }
 
     .auto {
-      margin-block-start: 3rem;
+      margin-top: 3rem;
       text-align: center;
 
       button {
         color: ${({ theme }) => theme.colors.text.dark};
-        margin-block-start: 0.8rem;
+        margin-top: 0.8rem;
       }
 
       .circle {

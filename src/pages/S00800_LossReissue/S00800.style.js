@@ -98,11 +98,9 @@ export const LossReissueDialogWrapper = styled.div`
   }
 
   .formElementGroup {
-    display: flex;
-    gap: 1.8rem; // TODO 確認改動不會影響版面後再更改為grid
-    div {
-      flex-grow: 1;
-    }
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1rem;
   }
 `;
 

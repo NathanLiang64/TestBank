@@ -58,7 +58,7 @@ const DrawerWrapper = styled.div`
 
   .text-blue {
     color: ${({ theme }) => theme.colors.text.darker};
-    margin-block-start: 1rem;
+    margin-top: 1rem;
     text-align: center;
   }
 `;

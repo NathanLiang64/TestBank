@@ -341,7 +341,7 @@ export const Func = {
   F00400: {
     id: 'F004',
     required: [],
-    hidden: 'L',
+    // hidden: 'L', 貸款可重複申請
     isOpenExternalBrowser: true,
   },
 

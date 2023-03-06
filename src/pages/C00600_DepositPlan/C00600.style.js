@@ -23,7 +23,7 @@ export const CreatePageWrapper = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-block: 2rem;
+    padding: 2rem 0;
     border-top: 2px solid ${({ theme }) => theme.colors.border.lighter};
 
     &:first-child {
@@ -38,9 +38,9 @@ export const CreatePageWrapper = styled.div`
   }
 
   .terms .collapseContent {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
+    display: grid;
+    align-content:flex-start;
+    grid-gap: 1.2rem;
     width: 100%;
     font-size: 1.4rem;
     color: ${({ theme }) => theme.colors.text.light};
@@ -58,21 +58,16 @@ export const CreatePageWrapper = styled.div`
 
 export const EditPageWrapper = styled.div`
   .flex {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+    display: grid;
+    align-content: flex-start;
+    grid-gap: 2rem;
     margin: 2.4rem 1.6rem 1rem;
   }
 
   .col-2 {
-    display: flex;
-    gap: 1.8rem;
-    width: 100%;
-  }
-
-  .w-50 {
-    flex: 1 1 auto;
-    width: 50%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 1.8rem;
   }
 
   .amount-limit {
@@ -81,20 +76,20 @@ export const EditPageWrapper = styled.div`
 `;
 
 export const DetailPageWrapper = styled.div`
-  padding-block: 4.4rem;
+  padding: 4.4rem 0;
 
   .px-4 {
-    padding-inline: 1.6rem;
+    padding: 0 1.6rem;
   }
 
   .info {
-    padding-block: 2.4rem;
+    padding: 2.4rem 0;
     text-align: center;
     color: ${({ theme }) => theme.colors.text.lightGray};
   }
 
   .balance {
-    margin-block: 1.2rem;
+    margin: 1.2rem 0;
     font-weight: 600;
   }
 
