@@ -36,7 +36,7 @@ const EditRecordForm = () => {
   // form: Recorded, notRecorded.1
   const schema = yup.object().shape({
     type: yup.string().required(),
-    memo: yup.string(),
+    memo: yup.string(), // TODO 字數上限
   });
   const {control} = useForm({
     defaultValues: {

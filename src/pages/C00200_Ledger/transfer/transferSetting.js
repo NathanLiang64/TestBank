@@ -36,7 +36,7 @@ const TransferSetting = () => {
     transInBank: yup.string().required(),
     transInAcct: yup.string().required(),
     type: yup.string().required(),
-    memo: yup.string(),
+    memo: yup.string(), // TODO 字數上限
   });
   const {
     control, handleSubmit, reset, setValue, getValues, trigger,
