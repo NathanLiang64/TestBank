@@ -94,7 +94,7 @@ const processResponse = async (response) => {
 
     response.data = {
       code,
-      data: resultData,
+      data: resultData ?? encData, // 當 resultData 無值，表示沒有加密，所以使用原本的payload
       message: response.data.message,
     };
   }

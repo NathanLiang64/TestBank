@@ -20,7 +20,12 @@ export const ledgerApiTest = async () => {
 
   // *** 一定要執行 ***
   // Bankee會員在登入後，進入帳本的登入
-  const bankeeLoginRs = await callAPI('/ledger/login');
+  const bankeeLoginRs = await callAPI('/ledger/start');
+  if (bankeeLoginRs) {
+    // navigator.clipboard.writeText(sessionStorage.getItem('jwtToken')); // 複製出來，利於 HttpClient 測試
+    // alert('JWT Token已複製到剪貼簿');
+    console.log('已登入帳本的 JWT Token', sessionStorage.getItem('jwtToken'));
+  }
 
   // // 登入（訪客？）
   // const response = await callAPI('/ledger/memberLogin', {
@@ -60,4 +65,10 @@ export const ledgerApiTest = async () => {
 
   // // 取得帳本交易明細清單
   // const getLedgerTxn = await callAPI('/ledger/getLedgerTxn', { sync: true });
+
+  // // TODO 建立新帳本
+  // const create = await callAPI('/ledger/create', { account, nickname, ... });
+
+  // // TODO 終止帳本
+  // const close = await callAPI('/ledger/close', { verifyCode: '123456' });
 };
