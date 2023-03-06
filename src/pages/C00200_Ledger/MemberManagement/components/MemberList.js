@@ -36,10 +36,15 @@ export default ({ title = '標題', list = [] }) => {
                 </Avatar>
               </ListItemAvatar>
               {item.label}
-              <ListItemSecondaryAction onClick={item.callback}>
-                <IconButton edge="end" aria-label="delete">
-                  <DeleteIcon />
-                </IconButton>
+              <ListItemSecondaryAction>
+                <Box
+                  display={item.showDeleteIcon ? 'block' : 'none'}
+                  onClick={item.callback}
+                >
+                  <IconButton edge="end" aria-label="delete">
+                    <DeleteIcon />
+                  </IconButton>
+                </Box>
               </ListItemSecondaryAction>
             </ListItem>
             <Divider />

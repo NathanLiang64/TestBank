@@ -3,9 +3,10 @@ import Layout from 'components/Layout/Layout';
 import MemberList from './components/MemberList';
 import PageWrapper from './MemberManagement.style';
 
-const CREATE_MOCK_DATA = (size = 3) => Array.from(Array(size), (i, id) => ({
+const CREATE_MOCK_DATA = (size = 3, showDeleteIcon = true) => Array.from(Array(size), (i, id) => ({
   label: `好友名稱${id}`,
   callback: () => console.log(id),
+  showDeleteIcon,
 }));
 
 export default () => {
@@ -26,7 +27,7 @@ export default () => {
             <MemberList title="邀請中" list={CREATE_MOCK_DATA()} />
           </>
         ) : (
-          <MemberList title="所有成員" list={CREATE_MOCK_DATA()} />
+          <MemberList title="所有成員" list={CREATE_MOCK_DATA(undefined, false)} />
         )}
       </PageWrapper>
     </Layout>
