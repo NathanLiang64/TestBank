@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useHistory } from 'react-router';
 import { Box } from '@material-ui/core';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -11,6 +12,7 @@ import Accordion from 'components/Accordion';
 import PageWrapper from './AbortLedgerConfirm.style';
 
 export default () => {
+  const history = useHistory();
   const schema = yup.object().shape({
     verifyCode: yup.string().required('必填'),
   });
@@ -37,10 +39,11 @@ export default () => {
   // 點擊 - 確認
   const onSubmitClick = (data) => {
     console.log(data);
+    history.push('/AbortLedgerSuccess');
   };
 
   return (
-    <Layout title="終止帳本" goBackFunc={() => {}}>
+    <Layout title="終止帳本" goBackFunc={() => history.goBack()}>
       <PageWrapper>
         <Box className="pageTitle">確認資料</Box>
         {CONFIG.map((item) => (

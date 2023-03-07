@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useHistory } from 'react-router';
 import Box from '@material-ui/core/Box';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -18,6 +19,7 @@ import ColorBall from './components/ColorBall';
 import PageWrapper from './CreateLedgerForm.style';
 
 export default () => {
+  const history = useHistory();
   const theme = useTheme();
   const schema = yup.object().shape({
     ledgerName: yup.string().required('必填'),
@@ -50,10 +52,11 @@ export default () => {
   // 點擊 - 確認送出表單
   const onSubmitClick = (data) => {
     console.log(data);
+    history.push('/CreateLedgerSuccess');
   };
 
   return (
-    <Layout title="建立帳本" goBackFunc={() => {}}>
+    <Layout title="建立帳本" goBackFunc={() => history.goBack()}>
       <PageWrapper>
         <Box className="formFileds">
           <TextInputField

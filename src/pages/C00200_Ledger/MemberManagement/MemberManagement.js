@@ -20,8 +20,9 @@ export default () => {
     history.goBack();
   };
 
+  // 點擊 - 新增成員
   const onAddMemberClick = () => {
-    console.log('新增成員');
+    history.push('/MemberInvitation');
   };
 
   return (

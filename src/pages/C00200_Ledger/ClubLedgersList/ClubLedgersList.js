@@ -1,3 +1,4 @@
+import { useHistory } from 'react-router';
 import { Box } from '@material-ui/core';
 import { useTheme } from 'styled-components';
 import Layout from 'components/Layout/Layout';
@@ -12,16 +13,22 @@ import AccountCardGrey from './components/AccountCardGrey';
 import LEDGER_IMG from './images/ledger.png';
 
 export default () => {
+  const history = useHistory();
   const dispatch = useDispatch();
   const theme = useTheme();
   // 設定 - 開發測試用
   const DEV_TEST_CONFIG = {
-    hasLedgerData: false,
+    hasLedgerData: true,
   };
   const { hasLedgerData } = DEV_TEST_CONFIG;
   // 點擊 - 新增帳本
   const onAddLedgerClick = () => {
-    console.log('新增帳本');
+    history.push('CreateLedgerForm');
+  };
+  // 點擊 - 帳本
+  const onLedgerClick = (obj) => {
+    console.log(obj);
+    history.push('/LedgerDetail');
   };
   // 初始化
   const init = async () => {
@@ -33,7 +40,7 @@ export default () => {
   }, []);
 
   return (
-    <Layout title="社群帳本" goBackFunc={() => {}}>
+    <Layout title="社群帳本" goBackFunc={() => history.goBack()}>
       <PageWrapper>
         {hasLedgerData || (
           <Box mb={3} textAlign="center">
@@ -48,7 +55,7 @@ export default () => {
         </Box>
         {hasLedgerData
           && generateMockData(10).map((item) => (
-            <Box key={item.id} mb={1}>
+            <Box key={item.id} mb={1} onClick={() => onLedgerClick(item)}>
               <CreditCard
                 cardName={(
                   <Box component="span">
