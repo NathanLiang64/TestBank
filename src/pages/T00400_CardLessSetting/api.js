@@ -2,7 +2,7 @@ import { callAPI } from 'utilities/axios';
 
 /**
  * 取得無卡提款狀態
- * @returns {Promise<String>} 無卡提款狀態。 0-未申請 1-已申請未開通 2-已開通 3-已註銷 4-已失效 5-其他
+ * @returns {Promise<Number>} 無卡提款狀態。 0-未申請 1-已申請未開通 2-已開通 3-已註銷 4-已失效 5-其他
  */
 export const getStatus = async () => {
   const response = await callAPI('/deposit/withdraw/getStatus');
