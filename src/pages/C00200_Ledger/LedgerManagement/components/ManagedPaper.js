@@ -9,14 +9,19 @@ import usePopupForm from '../customHooks/usePopupForm';
 export default () => {
   const history = useHistory();
 
-  const { showPopupForm: showNameForm } = usePopupForm({
+  const { showPopupForm: showNameForm } = usePopupForm(1, {
     title: '編輯帳本名稱',
   });
-  const { showPopupForm: showNickNameForm } = usePopupForm({
+  const { showPopupForm: showNickNameForm } = usePopupForm(1, {
     title: '編輯暱稱',
   });
-  const { showPopupForm: showAccountForm } = usePopupForm({
+  const { showPopupForm: showAccountForm } = usePopupForm(2, {
     title: '編輯我的綁定帳號',
+    labelName: '綁定賬號',
+    options: [
+      { label: '805 - 遠東銀行', value: '805' },
+      { label: 'XXX - XX銀行', value: 'XXX' },
+    ],
   });
 
   //   列表 - 欄位設定
