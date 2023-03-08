@@ -180,7 +180,7 @@ const DepositPlanEditPage = () => {
                   inputProps={{inputMode: 'numeric'}}
                 />
                 <FEIBHintMessage className="hint-message">
-                  {(amount > 0) && `存款目標為 ${toCurrency(getGoalAmount(amount, cycleDuration, cycleMode))}元`}
+                  {(amount > 0) && `存款目標為 ＄${toCurrency(getGoalAmount(amount, cycleDuration, cycleMode))}元`}
                 </FEIBHintMessage>
               </div>
 

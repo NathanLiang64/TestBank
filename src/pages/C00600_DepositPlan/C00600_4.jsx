@@ -83,6 +83,7 @@ const DepositPlanDetailPage = () => {
 
     // Step 3. 成功後再執行 createConfirm
     dispatch(setWaittingVisible(true));
+    // TODO 需要提供扣款成功或失敗的 flag
     const confirm = await createConfirm(response.planId);
     dispatch(setWaittingVisible(false));
 
@@ -129,7 +130,7 @@ const DepositPlanDetailPage = () => {
     const list = [
       { label: '存錢計畫名稱', value: program?.name },
       { label: '適用利率', value: `${program?.extra.rate}%` },
-      { label: '存錢目標', value: currencySymbolGenerator('NTD', program?.goalAmount) },
+      { label: '存錢目標', value: currencySymbolGenerator('NTD', program?.goalAmount, true) },
       { label: '計畫期間', value: program?.extra.period },
       {
         type: 'extra',
@@ -137,6 +138,7 @@ const DepositPlanDetailPage = () => {
         value: dateToString(program?.startDate),
         caption: '下一筆扣款日',
         next: program?.extra.nextDeductionDate,
+        // TODO 需要有扣款成功失敗的旗標
         extra: () => (mode === 2 && dateToYMD() === program?.startDate ? '扣款成功' : undefined),
       },
       { label: '存錢帳號', value: program?.bindAccountNo ? accountFormatter(program?.bindAccountNo, true) : '加開子帳戶' },
@@ -152,10 +154,10 @@ const DepositPlanDetailPage = () => {
       { label: '存錢計畫到期日', value: dateToString(plan?.endDate) },
       { label: '存錢週期', value: renderModeTimingString(plan) },
       { label: '第一筆扣款日', value: dateToString(plan?.startDate) },
-      { label: '目標金額', value: currencySymbolGenerator('NTD', plan?.goalAmount) },
-      { label: '每期存款金額', value: currencySymbolGenerator('NTD', plan?.amount) },
+      { label: '目標金額', value: currencySymbolGenerator('NTD', plan?.goalAmount, true) },
+      { label: '每期存款金額', value: currencySymbolGenerator('NTD', plan?.amount, true) },
       { label: '利率', value: `${plan?.progInfo.rate}% (牌告+計畫加碼利率)` },
-      { label: '累積存款金額', value: currencySymbolGenerator('NTD', plan?.currentBalance) },
+      { label: '累積存款金額', value: currencySymbolGenerator('NTD', plan?.currentBalance, true) },
     ];
     return renderListItem(list);
   };
@@ -181,7 +183,7 @@ const DepositPlanDetailPage = () => {
               { mode === 2 && <SuccessFailureAnimations isSuccess successTitle="設定成功" /> }
               <div className="info">
                 <div>存錢金額與週期</div>
-                <div className="text-primary text-lg balance">{currencySymbolGenerator('NTD', program?.amount)}</div>
+                <div className="text-primary text-lg balance">{currencySymbolGenerator('NTD', program?.amount, true)}</div>
                 <div className="text-primary text-lg">{renderModeTimingString(program)}</div>
                 <div className="text-primary">從主帳戶自動扣款</div>
               </div>

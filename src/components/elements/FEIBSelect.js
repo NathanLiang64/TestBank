@@ -33,7 +33,7 @@ const handleSpaceType = (position) => {
 * */
 
 const FEIBSelect = styled(MaterialSelect).attrs({
-  IconComponent: () => <ArrowDownIcon />,
+  IconComponent: ({className}) => (className.includes('Mui-disabled') ? null : <ArrowDownIcon />),
 })`
   height: 4rem;
   margin: ${({ $space }) => handleSpaceType($space)};
@@ -41,7 +41,6 @@ const FEIBSelect = styled(MaterialSelect).attrs({
   
   .MuiSelect-select {
     // display: inline-flex; // inline-flex 會造成 text-overflow: ellipsis 無效
-    // align-items: center;
     display: block; 
     line-height: 1;
     color: ${({ theme, $color }) => $color || theme.colors.primary.dark};
@@ -73,7 +72,6 @@ const FEIBSelect = styled(MaterialSelect).attrs({
     &:before,
     &:hover:not(.Mui-disabled):before {
       border-color: ${({ theme, $borderColor }) => $borderColor || theme.colors.border.light};
-      //opacity: .6;
     }
     &:after {
       border-width: .1rem;
