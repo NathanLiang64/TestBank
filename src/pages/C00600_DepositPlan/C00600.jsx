@@ -94,8 +94,8 @@ const DepositPlanPage = () => {
       const {result} = await transactionAuth(Func.C006.authCode); // 需通過 2FA 或 網銀密碼 驗證才能關閉計劃。
       if (!result) return;
 
-      const response = await closeDepositPlan({ planId: plan.planId });
-      if ('email' in response) {
+      const response = await closeDepositPlan(plan.planId);
+      if (response.result) {
         setDepositPlans((prevDepositPlans) => {
           const filteredPlans = prevDepositPlans.plans.filter((dp) => dp.planId !== plan.planId);
           return {...prevDepositPlans, plans: filteredPlans};

@@ -107,7 +107,7 @@ const DepositPlanEditPage = () => {
                 <TextInputField
                   name="name"
                   control={control}
-                  labelName="為你的計畫命名吧"
+                  labelName="計畫名稱"
                   inputProps={{ maxLength: 7, placeholder: '請輸入7個以內的中英文字、數字或符號', disabled: isRestrictedPromotion }}
                 />
               </div>
@@ -137,7 +137,7 @@ const DepositPlanEditPage = () => {
                     options={generateCycleTimingOptions(2)}
                     name="cycleTiming"
                     control={control}
-                    labelName="週期"
+                    labelName="日期"
                     inputProps={{disabled: true}}
                   />
                 </div>

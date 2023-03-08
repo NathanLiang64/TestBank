@@ -14,7 +14,7 @@ import { callAPI } from 'utilities/axios';
  *    startDay: 查詢起始日 // YYYYMMDD
  *    endDay: 查詢截止日 // YYYYMMDD
  * }}param
- * @return {<Promise>{
+ * @return {Promise<{
  * accountNo: 帳號
  * cycle: 週期 // "1":單次 "M":每週 "M":每月
  * cycleNo: 頻率 // 每週星期 {cycleNo} 或是 每月 {cycleNo} 號
@@ -32,7 +32,7 @@ import { callAPI } from 'utilities/axios';
  * seqno: 序號
  * descpt1: 待確認
  * txCd: 待確認
- * }}
+ * }>}
  */
 // 查詢預約轉帳明細
 export const getReservedTransDetails = async (param) => {
@@ -48,12 +48,12 @@ export const getReservedTransDetails = async (param) => {
  *    startDay: 查詢起始日 // YYYYMMDD
  *    endDay: 查詢截止日 // YYYYMMDD
  * }}param
- * @return {<Promise>{
+ * @return {Promise<{
  * receiveBank: 入帳銀行代碼
  * receiveAccountNo: 入帳帳號
  * transferAmount: 交易金額
  * runDay: 交易日
- * }}
+ * }>}
  */
 // 查詢預約轉帳結果明細
 export const getResultTransDetails = async (param) => {
