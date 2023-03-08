@@ -5,7 +5,7 @@ import { useHistory } from 'react-router';
 
 import theme from 'themes/theme';
 import { SearchIcon } from 'assets/images/icons';
-import { FEIBButton } from 'components/elements';
+import { FEIBButton, FEIBBorderButton } from 'components/elements';
 import {
   CheckboxField, DropdownField, RadioGroupField, TextInputField,
 } from 'components/Fields';
@@ -15,34 +15,14 @@ import { typeOptions } from '../utils/usgeType';
 
 import PageWrapper from './PaymentRequest.style';
 
-const mockMemberList = [
-  {
-    isOwner: true,
-    id: '000',
-    name: '主揪',
-  },
-  {
-    isOwner: false,
-    id: '001',
-    name: '被揪1',
-  },
-  {
-    isOwner: false,
-    id: '002',
-    name: '被揪2',
-  },
-];
-
 // TODO renderStep1-3 拆分至其他檔案
 const PaymentRequest = () => {
   const [requestStep, setRequestStep] = useState(1);
-  const [imgIndex, setImgIndex] = useState(0);
   const [model, setModel] = useState();
-  const [memberList, setMemberList] = useState();
-  const [amountMode, setAmountMode] = useState('0');
   const history = useHistory();
 
   /* 第一步 */
+  const [imgIndex, setImgIndex] = useState(0);
   const {control: step1Control, getValues: getStep1Values} = useForm({
     defaultValues: {
       memo: '',
@@ -90,8 +70,27 @@ const PaymentRequest = () => {
       </div>
     );
   };
+  /* 第一步 */
 
   /* 第二步 */
+  const mockMemberList = [
+    {
+      isOwner: true,
+      id: '000',
+      name: '主揪',
+    },
+    {
+      isOwner: false,
+      id: '001',
+      name: '被揪1',
+    },
+    {
+      isOwner: false,
+      id: '002',
+      name: '被揪2',
+    },
+  ];
+  const [memberList, setMemberList] = useState();
   const {control: step2SearchControl, handleSubmit: handleMemberSearchSubmit} = useForm({
     defaultValues: {
       memberName: '',
@@ -117,6 +116,12 @@ const PaymentRequest = () => {
 
     return selectedMemberList;
   };
+
+  // 取帳本成員清單並儲存
+  useEffect(() => {
+    const response = mockMemberList;
+    setMemberList(response);
+  }, []);
   const renderStep2 = () => {
     console.log('renderStep2');
     return (
@@ -156,11 +161,24 @@ const PaymentRequest = () => {
       </div>
     );
   };
+  /* 第二步 */
 
   /* 第三步 */
+  const [amountMode, setAmountMode] = useState('0');
   const {control: step3Control, watch: watchAmountMode} = useForm({
     defaultValues: {
       amountMode: '0',
+    },
+  });
+  const {control: step3AmountControl, getValues: getStep3AmountValues} = useForm({
+    defaultValues: {
+      fixedAmount: '',
+      shareAmount: '',
+    },
+  });
+  const {control: step3EachAmoountControl, reset: resetStep3EachAmoount} = useForm({
+    defaultValues: {
+      memberAmount: {},
     },
   });
   const onAmountModeChange = () => {
@@ -169,7 +187,7 @@ const PaymentRequest = () => {
     return () => watchValue.unsubscribe();
   };
   const renderMemberAmountColumn = (isOwner, name, id) => {
-    console.log('renderMemberAmountColumn');
+    console.log('renderMemberAmountColumn', {amountMode});
     return (
       <div className="member_amount_column" key={id}>
         <div className="member_info">
@@ -177,11 +195,35 @@ const PaymentRequest = () => {
           <p>{name}</p>
         </div>
         <div className="amount">
-          input amount here
+          {/* amountMode !== '2': disable */}
+          <TextInputField
+            labelName=""
+            type="text"
+            name={`memberAmount.${id}`}
+            control={step3AmountControl}
+            inputProps={{disabled: amountMode !== '2'}}
+          />
         </div>
       </div>
     );
   };
+  const onShareClick = () => {
+    /* amountMode '1': 所有成員之金額為 輸入金額/成員數 */
+    const oriValue = parseInt(getStep3AmountValues('shareAmount'), 10);
+    if (amountMode !== '1' || oriValue.isNaN()) return;
+
+    const separatedValue = oriValue / model.selectedMember.length;
+
+    console.log({separatedValue});
+    resetStep3EachAmoount((formValue) => {});
+  };
+  useEffect(() => {
+    /* '0': 所有成員之金額為 輸入金額 */
+    if (amountMode === '0') {
+      const value = getStep3AmountValues('fixedAmount');
+      resetStep3EachAmoount(() => {});
+    }
+  }, [amountMode]);
   const renderStep3 = () => {
     console.log('renderStep3');
     const amountModeList = [
@@ -200,7 +242,7 @@ const PaymentRequest = () => {
     ];
     return (
       <form className="step3_form">
-        <div>
+        <div className="amount_mode_select">
           {/* radiogroupfield */}
           <RadioGroupField
             labelName=""
@@ -209,18 +251,36 @@ const PaymentRequest = () => {
             options={amountModeList}
             onChange={onAmountModeChange}
           />
+          <div>
+            <TextInputField
+              labelName=""
+              type="text"
+              name="fixedAmount"
+              control={step3AmountControl}
+            />
+            <div className="separate_field">
+              <TextInputField
+                labelName=""
+                type="text"
+                name="shareAmount"
+                control={step3AmountControl}
+              />
+              <FEIBBorderButton onClick={onShareClick} style={{ height: '3.2rem', minHeight: '3.2rem' }}>均攤</FEIBBorderButton>
+              {/* TODO FEIBBorderButton (繼承自FEIBdefaultButton) 元件 min-height為4.8, 非3.2 */}
+            </div>
+          </div>
         </div>
         <div className="member_amount_table">
           <div className="title">
             <p>成員</p>
             <p>金額</p>
           </div>
-          {/* map selected members */}
-          {memberList.map((member) => renderMemberAmountColumn(member.isOwner, member.name, member.id))}
+          {model.selectedMember.map((member) => renderMemberAmountColumn(member.isOwner, member.name, member.id))}
         </div>
       </form>
     );
   };
+  /* 第三步 */
 
   const onConfirm = () => {
     /* save model */
@@ -261,12 +321,6 @@ const PaymentRequest = () => {
 
     /* TODO reset form of previous step */
   };
-
-  // 取帳本成員清單
-  useEffect(() => {
-    const response = mockMemberList;
-    setMemberList(response);
-  }, []);
 
   return (
     <Layout title="要錢" goBackFunc={() => goBackFunc()}>
