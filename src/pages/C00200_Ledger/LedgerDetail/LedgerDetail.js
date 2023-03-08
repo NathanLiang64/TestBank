@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useHistory } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box } from '@material-ui/core';
@@ -21,6 +22,7 @@ import { validationSchema } from './constants/validationSchema';
 import PageWrapper from './LedgerDetail.style';
 
 export default () => {
+  const history = useHistory();
   const timer = useRef();
   const [transactionList, setTransactionList] = useState(addDetailCard(20));
   const panelContent = [
@@ -29,6 +31,7 @@ export default () => {
       label: '給錢',
       onClick: () => {
         console.log('給錢');
+        history.push('/transferSetting');
       },
     },
     {
@@ -36,6 +39,7 @@ export default () => {
       label: '要錢',
       onClick: () => {
         console.log('要錢');
+        history.push('/InvoiceSending');
       },
     },
   ];
@@ -64,15 +68,18 @@ export default () => {
   // 點擊 - 帳本管理
   const onCardMoreClick = () => {
     console.log('帳本管理');
+    history.push('/LedgerManagement');
   };
   // 點擊 - 查看成員
   const onCardMemberClick = () => {
     console.log('查看成員');
+    history.push('/MemberManagement');
   };
   // 點擊 - 單筆明細
   const onDetailClick = (e) => {
     e.stopPropagation();
     console.log('查看明細');
+    history.push('/RecordDetail');
   };
   // 滾動 - 明細清單 -> 滾動至視圖底部時 呼叫API新增明細
   const onDetailScroll = (e) => {
@@ -88,7 +95,7 @@ export default () => {
   };
 
   return (
-    <Layout title="帳本明細" goBackFunc={() => {}}>
+    <Layout title="帳本明細" goBackFunc={() => history.goBack()}>
       <PageWrapper>
         <InformationTape
           className="announcement"

@@ -1,3 +1,20 @@
+export const generateMockData = (size = 10) => Array.from(Array(size), (i, id) => ({
+  id,
+  isHost: Math.random() > 0.5,
+  account: `User ${id}`,
+  partySize: Math.floor(Math.random() * 100),
+  amount: Math.random() * 100000,
+  color: [
+    'purple',
+    'pink',
+    'yellow',
+    'blue',
+    'orange',
+    'green',
+    'lightPurple',
+  ][Math.floor(Math.random() * 7)],
+}));
+
 export const MOCK_DATA = [
   {
     id: 1,

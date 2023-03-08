@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
-import { useLocation } from 'react-router';
+import { useLocation, useHistory } from 'react-router';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -12,6 +12,7 @@ import PageWrapper from './ShareLedgerDetail.style';
 import SHARE_LEDGER_IMG from './images/share_ledger_img.png';
 
 export default () => {
+  const history = useHistory();
   const { state = {} } = useLocation();
   const { friendName = '好友名稱' } = state;
   const schema = yup.object().shape({
@@ -37,10 +38,11 @@ export default () => {
   // 點擊 - 確認送出表單
   const onSubmitClick = (data) => {
     console.log(data);
+    history.push('/ClubLedgersList');
   };
 
   return (
-    <Layout title="分享明細" goBackFunc={() => {}}>
+    <Layout title="分享明細" goBackFunc={() => history.goBack()}>
       <PageWrapper>
         <Box m={3}>
           <Box mb={3}>

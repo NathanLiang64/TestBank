@@ -1,3 +1,4 @@
+import { useHistory } from 'react-router';
 import Box from '@material-ui/core/Box';
 import Layout from 'components/Layout/Layout';
 import InformationList from 'components/InformationList';
@@ -6,6 +7,7 @@ import ResultAnimation from 'components/SuccessFailureAnimations/ResultAnimation
 import PageWrapper from './CreateLedgerSuccess.style';
 
 export default () => {
+  const history = useHistory();
   const CONFIG = [
     { id: 1, label: '帳本名稱', value: '' },
     { id: 2, label: '暱稱', value: '' },
@@ -16,16 +18,16 @@ export default () => {
 
   // 點擊 - 邀請好友
   const onInvitationClick = () => {
-    console.log('邀請好友');
+    history.push('/MemberInvitation');
   };
 
   // 點擊 - 進入帳本明細
   const onEnterLedgerDetailClick = () => {
-    console.log('進入帳本明細');
+    history.push('/LedgerDetail');
   };
 
   return (
-    <Layout title="建立帳本" goBackFunc={() => {}}>
+    <Layout title="建立帳本" goBackFunc={() => history.goBack()}>
       <PageWrapper>
         <ResultAnimation isSuccess subject="設定完成" />
         {CONFIG.map((item) => (

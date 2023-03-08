@@ -1,3 +1,4 @@
+import { useHistory } from 'react-router';
 import Layout from 'components/Layout/Layout';
 import InformationList from 'components/InformationList';
 import { FEIBButton } from 'components/elements';
@@ -5,6 +6,7 @@ import ResultAnimation from 'components/SuccessFailureAnimations/ResultAnimation
 import PageWrapper from './AbortLedgerSuccess.style';
 
 export default () => {
+  const history = useHistory();
   const CONFIG = [
     { id: 1, label: '帳本名稱', value: '' },
     { id: 2, label: '連結帳號', value: '' },
@@ -14,8 +16,13 @@ export default () => {
     { id: 6, label: '帳本驗證碼', value: '' },
   ];
 
+  // 點擊 - 確認
+  const onConfirmClick = () => {
+    history.push('/ClubLedgersList');
+  };
+
   return (
-    <Layout title="終止帳本" goBackFunc={() => {}}>
+    <Layout title="終止帳本" goBackFunc={() => history.goBack()}>
       <PageWrapper>
         <ResultAnimation
           isSuccess
@@ -30,7 +37,9 @@ export default () => {
             content={item.value}
           />
         ))}
-        <FEIBButton style={{ marginTop: 20 }}>確認</FEIBButton>
+        <FEIBButton onClick={onConfirmClick} style={{ marginTop: 20 }}>
+          確認
+        </FEIBButton>
       </PageWrapper>
     </Layout>
   );

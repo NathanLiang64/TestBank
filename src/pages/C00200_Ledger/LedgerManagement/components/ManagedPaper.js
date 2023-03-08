@@ -1,3 +1,4 @@
+import { useHistory } from 'react-router';
 import Box from '@material-ui/core/Box';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
@@ -6,6 +7,8 @@ import { TextTwoColumnFiled, ButtonTwoColumnFiled } from './ManagedColumn';
 import usePopupForm from '../customHooks/usePopupForm';
 
 export default () => {
+  const history = useHistory();
+
   const { showPopupForm: showNameForm } = usePopupForm({
     title: '編輯帳本名稱',
   });
@@ -46,6 +49,7 @@ export default () => {
       icon: <EditAccountIcon />,
       callBack: () => {
         console.log('分享明細');
+        history.push('/ShareLedgerDetail');
       },
     },
     {
@@ -53,6 +57,7 @@ export default () => {
       icon: <DeleteIcon />,
       callBack: () => {
         console.log('終止帳本');
+        history.push('/AbortLedgerConfirm');
       },
     },
   ];

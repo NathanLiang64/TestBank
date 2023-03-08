@@ -3,26 +3,9 @@ import Divider from '@material-ui/core/Divider';
 import { ArrowNextIcon } from 'assets/images/icons';
 import LinkIcon from '@material-ui/icons/Link';
 import CropFreeIcon from '@material-ui/icons/CropFree';
+import { customPopup } from 'utilities/MessageModal';
 import { useTheme } from 'styled-components';
-
-const CONFIG = [
-  {
-    label: '發送邀請連結',
-    icon: <LinkIcon />,
-    showDivider: true,
-    callBack: () => {
-      console.log('發送邀請連結');
-    },
-  },
-  {
-    label: '秀QRCode',
-    icon: <CropFreeIcon />,
-    showDivider: false,
-    callBack: () => {
-      console.log('秀QRCode');
-    },
-  },
-];
+import InvitationQrCode from './InvitationQrCode';
 
 // 列表欄位
 export const ListColumn = ({
@@ -56,6 +39,26 @@ export const ListColumn = ({
 
 export const InvitationList = () => {
   const theme = useTheme();
+
+  const CONFIG = [
+    {
+      label: '發送邀請連結',
+      icon: <LinkIcon />,
+      showDivider: true,
+      callBack: () => {
+        console.log('發送邀請連結');
+      },
+    },
+    {
+      label: '秀QRCode',
+      icon: <CropFreeIcon />,
+      showDivider: false,
+      callBack: () => {
+        customPopup('邀請好友QRCode', <InvitationQrCode url="" />);
+      },
+    },
+  ];
+
   return (
     <Box>
       <Box bgcolor={theme.colors.background.lightest} p={1} borderRadius={20}>
