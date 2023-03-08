@@ -71,36 +71,13 @@ export default () => {
             name="ledgerColor"
             control={control}
             row
-            options={[
-              {
-                label: <ColorBall color={theme.colors.card.purple} />,
-                value: 'purple',
-              },
-              {
-                label: <ColorBall color={theme.colors.card.pink} />,
-                value: 'pink',
-              },
-              {
-                label: <ColorBall color={theme.colors.card.yellow} />,
-                value: 'yellow',
-              },
-              {
-                label: <ColorBall color={theme.colors.card.blue} />,
-                value: 'blue',
-              },
-              {
-                label: <ColorBall color={theme.colors.card.orange} />,
-                value: 'orange',
-              },
-              {
-                label: <ColorBall color={theme.colors.card.green} />,
-                value: 'green',
-              },
-              {
-                label: <ColorBall color={theme.colors.card.lightPurple} />,
-                value: 'lightPurple',
-              },
-            ]}
+            // 帳本顏色根據專案 theme 內的 card 設定
+            options={Object.entries(theme.colors.card).map(
+              ([colorLabel, colorCode]) => ({
+                label: <ColorBall color={colorCode} />,
+                value: colorLabel,
+              }),
+            )}
           />
           <TextInputField
             labelName="暱稱"
