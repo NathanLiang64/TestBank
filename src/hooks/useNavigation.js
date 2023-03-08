@@ -106,19 +106,23 @@ const useNavigation = () => {
    * 監聽原生所觸發的 window.startFunc 換頁事件
    * 用這種作法是因為 useNavigation 基於REACT HOOK限制, 不能引入在function component 以外的地方 及 其他監聽事件內
    */
-  store.subscribe(() => {
-    const {isNeedJump, jumpParam} = store.getState()?.FuncJumpReducer;
+  if (!window.setAppFuncJump) { // 避免每次有引入useNavigation時都重複註冊
+    window.setAppFuncJump = true;
 
-    if (isNeedJump === true) {
-      const {funcID, funcParams, keepData} = jumpParam;
+    store.subscribe(() => {
+      const {isNeedJump, jumpParam} = store.getState()?.FuncJumpReducer;
 
-      // 調用useNavigation 內的 startFunc
-      startFunc(funcID, funcParams, keepData);
+      if (isNeedJump === true) {
+        const {funcID, funcParams, keepData} = jumpParam;
 
-      // 調用完畢, 重設調用設定
-      store.dispatch(setFuncJump({isNeedJump: false, jumpParam: {}}));
-    }
-  });
+        // 調用useNavigation 內的 startFunc
+        startFunc(funcID, funcParams, keepData);
+
+        // 調用完畢, 重設調用設定
+        store.dispatch(setFuncJump({isNeedJump: false, jumpParam: {}}));
+      }
+    });
+  }
 
   /**
    * 啟動 Web 單元功能。
