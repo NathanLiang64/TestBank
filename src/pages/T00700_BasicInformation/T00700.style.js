@@ -9,11 +9,9 @@ const BasicInformationWrapper = styled(Layout)`
   }
 
   .selectContainer {
-    display: flex;
-    gap: 1.8rem;
-    div {
-      flex-grow: 1;
-    }
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1rem;
   }
 `;
 

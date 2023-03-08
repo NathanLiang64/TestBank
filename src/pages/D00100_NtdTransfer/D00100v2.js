@@ -546,7 +546,7 @@ const Transfer = (props) => {
    */
   const showTranferQuota = () => {
     const transInType = getValues(idTransType);
-    if (transInType !== 2 && model && model.transOut.quotaArray) {
+    if (transInType !== 2 && model && model.transOut?.quotaArray) {
       const formater = new Intl.NumberFormat('en-US');
       // const quota = tranferQuota.map((q) => formater.format(q)).join('/');
       const quota = model.transOut.quotaArray.map((q) => formater.format(q)).join('/');

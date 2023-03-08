@@ -2,10 +2,9 @@ import styled from 'styled-components';
 import grey from 'assets/images/cardWatermarks/grey.svg';
 
 const AccountCardGreyWrapper = styled.div`
-  display: flex;
-  justify-content: flex-begen;
-  flex-direction: column;
-  gap: 0.7rem;
+  display: grid;
+  align-content: flex-start;
+  grid-gap: 0.7rem;
   padding: 1.2rem;
 
   background-color: ${({ theme }) => theme.colors.basic.white};

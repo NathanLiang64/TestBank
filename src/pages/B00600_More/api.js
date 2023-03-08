@@ -19,7 +19,13 @@ export const getMoreList = async () => {
   const groups = response.data;
 
   // 取得擁有的產品代碼清單，例：[M, F, S, C, CC, L]
-  const assetTypes = sessionStorage.getItem('assetTypes')?.split(',');
+  let assetTypes = sessionStorage.getItem('assetTypes')?.split(',');
+
+  if (!assetTypes) {
+    const apiRs = await callAPI('/personal/v1/getAssetTypes');
+    assetTypes = apiRs.data;
+    sessionStorage.setItem('assetTypes', assetTypes);
+  }
 
   // 設定所有功能的 hidden 旗標。
   groups.forEach((grp) => {

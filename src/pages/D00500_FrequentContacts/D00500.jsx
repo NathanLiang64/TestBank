@@ -131,7 +131,7 @@ const Page = () => {
 
     await showCustomPrompt({
       title: '系統訊息',
-      message: (<div style={{ textAlign: 'center' }}>您確定要刪除此帳號?</div>),
+      message: (<div className="txtCenter">您確定要刪除此帳號?</div>),
       okContent: '確定刪除',
       onOk: onRemoveConfirm,
       cancelContent: '我再想想',

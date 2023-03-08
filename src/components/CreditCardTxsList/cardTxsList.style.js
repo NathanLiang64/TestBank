@@ -6,11 +6,9 @@ export const CreditCardTxsListWrapper = styled.div`
   .transactionList {
     margin-top: 0.5rem;
     .remark {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
       button {
         padding: 0;
+        margin-left: 0.5rem;
       }
     }
 

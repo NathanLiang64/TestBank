@@ -20,10 +20,8 @@ const getWatermark = (color) => {
 };
 
 const AccountCardWrapper = styled.div`
-  display: flex;
-  justify-content: flex-begen;
-  flex-direction: column;
-  // gap: 0.7rem;
+  display: grid;
+  align-content: flex-start;
   background-color: ${({ theme, $cardColor }) => theme.colors.card[$cardColor]};
   background-image: url(${({ $cardColor }) => getWatermark($cardColor)});
   background-position: right top;
@@ -81,9 +79,6 @@ const AccountCardWrapper = styled.div`
   .small {
     font-size: 2.5rem;
   }
-
-  .gap-4 { gap: 1rem; }
-  .gap-6 { gap: 1.6rem; }
   .mt-4 { margin-top: 1rem; }
   .-mt-5 { margin-top: -12px; }
   .-mr-5 { margin-right: -12px; }
@@ -91,8 +86,8 @@ const AccountCardWrapper = styled.div`
 
   .divider > *:not(:first-child) {
     border-inline-start: 1px solid ${({ theme }) => theme.colors.border.light};
-    padding-inline-start: 0.8rem;
-    margin-inline-start: -0.8rem;
+    padding-left: 0.8rem;
+    margin-left: -0.8rem;
   }
 `;
 

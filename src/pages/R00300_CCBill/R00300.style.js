@@ -10,8 +10,9 @@ const PageWrapper = styled.div`
   }
   .fixed-bottom {
     position: fixed;
-    bottom: 0rem;
-    inset-inline: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     text-align: center;
     background-color: ${({ theme }) => theme.colors.basic.white};
     color: ${({ theme }) => theme.colors.text.light};
