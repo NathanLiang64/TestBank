@@ -3,9 +3,9 @@ import { callAPI } from 'utilities/axios';
 /**
  * 變更無卡提款密碼
  * @param {{
-      oldPassword: String,
-      newPassword: String,
-    }} request
+ *  oldPassword: String,
+ *  newPassword: String,
+ * }} request
  * @returns {Promise<Boolean>} 表示執行結果的旗標。
  */
 export const setPinCode = async (request) => {

@@ -82,7 +82,10 @@ const useNavigation = () => {
     if (isFunction) {
       // 檢查是否可以進入頁面
       const isEnter = await isEnterFunc(funcInfo);
-      if (!isEnter) return;
+      if (!isEnter) {
+        funcStack.pop(); // 不允許進入需將 funcStack 還原
+        return;
+      }
 
       // 只有原生及外開功能需透過APP啟動，其他功能都由 Web 自行控制。
       if (funcInfo.isAppFunc || funcInfo.isOpenExternalBrowser) {

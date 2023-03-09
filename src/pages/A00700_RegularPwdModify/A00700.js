@@ -121,19 +121,19 @@ const RegularPwdModify = () => {
             labelName="您的網銀密碼"
             name="password"
             control={control}
-            inputProps={{autoComplete: 'off'}}
+            inputProps={{autoComplete: 'off', placeHolder: '請輸入網銀密碼(8-20位英數字)'}}
           />
           <PasswordInputField
             labelName="新的網銀密碼"
             name="newPassword"
             control={control}
-            inputProps={{autoComplete: 'off'}}
+            inputProps={{autoComplete: 'off', placeHolder: '請輸入網銀密碼(8-20位英數字)'}}
           />
           <PasswordInputField
             labelName="請確認新的網銀密碼"
             name="newPasswordCheck"
             control={control}
-            inputProps={{autoComplete: 'off'}}
+            inputProps={{autoComplete: 'off', placeHolder: '請輸入網銀密碼(8-20位英數字)'}}
           />
 
           <div>
