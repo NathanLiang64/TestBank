@@ -16,7 +16,7 @@ const AccountCardGrey = ({ type = 'M' }) => {
       case 'L':
         return {title: '貸款', content: '社群變現、借錢省利'};
       default:
-        return {title: '臺幣主帳戶', content: ''};
+        return { title: '臺幣主帳戶', content: '開戶享活存最高2.6%' };
     }
   };
 
