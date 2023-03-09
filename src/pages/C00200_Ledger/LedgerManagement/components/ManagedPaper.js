@@ -3,26 +3,16 @@ import Box from '@material-ui/core/Box';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
 import { EditAccountIcon, DeleteIcon } from 'assets/images/icons';
+import { showCustomPrompt } from 'utilities/MessageModal';
 import { TextTwoColumnFiled, ButtonTwoColumnFiled } from './ManagedColumn';
-import usePopupForm from '../customHooks/usePopupForm';
+import {
+  EditLedgerNameForm,
+  EditNickNameForm,
+  EditAccountForm,
+} from './EditForm';
 
 export default () => {
   const history = useHistory();
-
-  const { showPopupForm: showNameForm } = usePopupForm(1, {
-    title: '編輯帳本名稱',
-  });
-  const { showPopupForm: showNickNameForm } = usePopupForm(1, {
-    title: '編輯暱稱',
-  });
-  const { showPopupForm: showAccountForm } = usePopupForm(2, {
-    title: '編輯我的綁定帳號',
-    labelName: '綁定賬號',
-    options: [
-      { label: '805 - 遠東銀行', value: '805' },
-      { label: 'XXX - XX銀行', value: 'XXX' },
-    ],
-  });
 
   //   列表 - 欄位設定
   const TEXT_CINFIG = [
@@ -35,7 +25,10 @@ export default () => {
       value: '',
       isEdited: true,
       onEditClick: () => {
-        showNickNameForm((data) => console.log(data));
+        showCustomPrompt({
+          title: '編輯暱稱',
+          message: <EditNickNameForm callback={(data) => console.log(data)} />,
+        });
       },
     },
     {
@@ -43,7 +36,10 @@ export default () => {
       value: '',
       isEdited: true,
       onEditClick: () => {
-        showAccountForm((data) => console.log(data));
+        showCustomPrompt({
+          title: '編輯綁定帳號',
+          message: <EditAccountForm callback={(data) => console.log(data)} />,
+        });
       },
     },
   ];
@@ -69,7 +65,10 @@ export default () => {
 
   //   點擊 - 編輯帳本名稱
   const onLedgerNameEditClick = () => {
-    showNameForm((data) => console.log(data));
+    showCustomPrompt({
+      title: '編輯帳本名稱',
+      message: <EditLedgerNameForm callback={(data) => console.log(data)} />,
+    });
   };
 
   return (
