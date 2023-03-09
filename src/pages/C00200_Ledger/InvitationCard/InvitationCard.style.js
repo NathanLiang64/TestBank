@@ -1,15 +1,37 @@
 import styled from 'styled-components';
-import Layout from 'components/Layout';
 
-const PageWrapper = styled(Layout)`
-  background: ${({ theme }) => theme.colors.background.light};
-  display: flex;
-  flex-direction: column;
-  padding: 0 20;
+const PageWrapper = styled('div')`
+  min-height: fit-content;
+  margin: 2rem 1rem;
 
-  // 使畫面可上下捲動
-  height: 100vh;
-  overflow: auto;
+  .ledger_name_container {
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .image_container {
+    display: flex;
+    justify-content: center;
+  }
+  .hint_container {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+  }
+
+  .info_container {
+    margin: 3rem;
+    .info_row {
+      display: grid;
+      grid-auto-flow: column;
+      gap: 4rem;
+      justify-content: start;
+    }
+  }
+
+  
 `;
 
 export default PageWrapper;
