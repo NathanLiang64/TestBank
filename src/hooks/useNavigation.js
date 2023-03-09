@@ -43,10 +43,17 @@ const registFuncJumpHandler = () => {
     // 還原json跳脫字元
     const funcID = url.replace("\"", "\\\"")  // eslint-disable-line
       .split('/').pop().substring(0, 4); // 取url最後一段的前4碼
-    console.log(`window.startFunc is called : ${funcID}`);
 
-    // 調用useNavigation 內的 startFunc
-    store.dispatch(setFuncJump({isNeedJump: true, jumpParam: {funcID, funcParams, keepData}}));
+    const isFunction = /^[A-Z]\d{3}$/.test(funcID);
+    if (isFunction) {
+      console.log(`window.startFunc is called : ${funcID}`);
+
+      // 調用useNavigation 內的 startFunc
+      store.dispatch(setFuncJump({isNeedJump: true, jumpParam: {funcID, funcParams, keepData}}));
+    } else {
+      // 外開一般的URL
+      window.open(url, '_blank');
+    }
   };
 };
 
