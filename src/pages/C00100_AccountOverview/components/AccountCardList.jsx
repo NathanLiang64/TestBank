@@ -21,7 +21,6 @@ import AccountCardGrey from './AccountCardGrey';
 const AccountCardList = ({
   data, isDebt, necessaryType, totalBalanceF2N,
 }) => {
-  // const dispatch = useDispatch();
   const {startFunc} = useNavigation();
 
   // 證券 start function
@@ -89,7 +88,7 @@ const AccountCardList = ({
   }
 
   // 貸款: 以 assetTypes 回傳有包含為準顯示彩卡
-  const loanAccounts = data.filter((account) => account.type === 'L');
+  const loanAccounts = data.filter((account) => account.type === 'L' && account.accountNo);
   if (loanAccounts.length > 0) {
     mainList.push({
       type: 'L',
@@ -102,7 +101,7 @@ const AccountCardList = ({
   }
 
   // 信用卡: 以 assetTypes 回傳有包含為準顯示彩卡
-  const ccAccounts = data.filter((account) => account.type === 'CC');
+  const ccAccounts = data.filter((account) => account.type === 'CC' && account.accountNo);
   if (ccAccounts.length > 0) {
     mainList.push(...ccAccounts.map((account) => ({
       ...account,
@@ -248,7 +247,8 @@ const AccountCardList = ({
             break;
           case 'S': // 證券戶 數量為1時不開drawer
             cardName = '證券交割戶';
-            onClick = () => (account.isEmpty || stockAccounts.length === 1 ? sAccStartFunc(stockAccounts[0], cardInfo.color) : showDrawer('選擇帳戶', renderSubAccountDrawer(stockAccounts)));
+            funcID = Func.C005.id;
+            onClick = () => (startFunc(funcID));
             break;
           case 'C': // 子帳戶 數量為1時不開drawer
             cardName = '子帳戶';

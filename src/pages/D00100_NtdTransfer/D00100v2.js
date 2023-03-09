@@ -519,15 +519,17 @@ const Transfer = (props) => {
     if (!model.transOut.freeTransfer) {
       // 下載 優存(利率/利息)資訊
       getAccountBonus(account.accountNo, (info) => {
+        // NOTE dgType = 帳戶類別 (''.非數存帳號, '11'.臨櫃數存昇級一般, '12'.一之二類, ' 2'.二類, '32'.三之二類)
+        let sLimitLeft = account.dgType === '32' ? 10000 : 50000;
+        // NOTE 單筆額度不可比當日大
+        if (sLimitLeft > info.dLimitLeft) sLimitLeft = info.dLimitLeft;
         model.transOut = {
           ...model.transOut,
-          freeTransfer: account.freeTransfer = info.freeTransfer,
-          freeTransferRemain: account.freeTransferRemain = info.freeTransferRemain,
-          // dgType = 帳戶類別('  '.非數存帳號, '11'.臨櫃數存昇級一般, '12'.一之二類, ' 2'.二類, '32'.三之二類)
-          quotaArray: [account.dgType === '32' ? 10000 : 50000, info.dLimitLeft, info.mLimitLeft],
+          freeTransfer: (account.freeTransfer = info.freeTransfer),
+          freeTransferRemain: (account.freeTransferRemain = info.freeTransferRemain),
+          quotaArray: [sLimitLeft, info.dLimitLeft, info.mLimitLeft],
           agrdTfrSelfLimitLeft: info.agrdTfrSelfLimitLeft,
           agrdTfrInterLimitLeft: info.agrdTfrInterLimitLeft,
-
         };
         forceUpdate();
       });

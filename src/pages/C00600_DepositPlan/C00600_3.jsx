@@ -8,18 +8,13 @@ import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
 import { FEIBButton, FEIBHintMessage } from 'components/elements';
 import { CurrencyInputField, DropdownField, TextInputField } from 'components/Fields';
-import {
-  toCurrency,
-  dateToYMD,
-  dateToString,
-} from 'utilities/Generator';
+import { toCurrency, dateToYMD, dateToString } from 'utilities/Generator';
 
 import { useNavigation } from 'hooks/useNavigation';
+import { showPrompt } from 'utilities/MessageModal';
 import { getDurationTuple} from './utils/common';
 import {
-  generatebindAccountNoOptions,
-  generateCycleModeOptions,
-  generateCycleTimingOptions, generateMonthOptions,
+  generatebindAccountNoOptions, generateCycleModeOptions, generateCycleTimingOptions, generateMonthOptions,
 } from './utils/options';
 import HeroWithEdit from './components/HeroWithEdit';
 import { EditPageWrapper } from './C00600.style';
@@ -61,36 +56,35 @@ const DepositPlanEditPage = () => {
   };
 
   const getRemainingBalance = (accountNo) => location.state?.subAccounts?.find((a) => a.accountNo === accountNo)?.balance ?? 0;
-  const getInputColor = (type) => (type ? Theme.colors.text.lightGray : Theme.colors.primary.brand);
 
   const onSubmit = (data) => {
     const date = getDurationTuple(new Date(), data.cycleDuration, data.cycleMode, data.cycleTiming);
     const {code, rate} = location.state.program;
-    // if (newImageId === undefined) showError('請選擇圖片');
-    // else {
-    const payload = {
+    if (newImageId === undefined) showPrompt(<p className="txtCenter">請選擇圖片</p>);
+    else {
+      const payload = {
       // =====建立存錢計畫所需參數=====
-      progCode: code,
-      imageId: newImageId ?? 1, // TODO 應改為提醒使用者尚未選取圖片。
-      name: data.name,
-      startDate: dateToYMD(date.begin),
-      endDate: dateToYMD(date.end),
-      cycleMode: data.cycleMode,
-      cycleTiming: data.cycleTiming,
-      amount: data.amount,
-      bindAccountNo: data.bindAccountNo === 'new' ? null : data.bindAccountNo,
-      currentBalance: getRemainingBalance(data.bindAccountNo),
-      // =====渲染需求參數=====
-      goalAmount: getGoalAmount(data.amount, data.cycleDuration, data.cycleMode),
-      extra: {
-        rate,
-        period: `${dateToString(new Date())} ~ ${dateToString(date.end)}`,
-        nextDeductionDate: dateToString(date.next),
-      },
-    };
-    sessionStorage.setItem('C006003', JSON.stringify({...data, imageId: newImageId}));
-    history.push('/C006004', { isConfirmMode: true, payload });
-    // }
+        progCode: code,
+        imageId: newImageId ?? 1,
+        name: data.name,
+        startDate: dateToYMD(date.begin),
+        endDate: dateToYMD(date.end),
+        cycleMode: data.cycleMode,
+        cycleTiming: data.cycleTiming,
+        amount: data.amount,
+        bindAccountNo: data.bindAccountNo === 'new' ? null : data.bindAccountNo,
+        currentBalance: getRemainingBalance(data.bindAccountNo),
+        // =====渲染需求參數=====
+        goalAmount: getGoalAmount(data.amount, data.cycleDuration, data.cycleMode),
+        extra: {
+          rate,
+          period: `${dateToString(new Date())} ~ ${dateToString(date.end)}`,
+          nextDeductionDate: dateToString(date.next),
+        },
+      };
+      sessionStorage.setItem('C006003', JSON.stringify({...data, imageId: newImageId}));
+      history.push('/C006004', { isConfirmMode: true, payload });
+    }
   };
 
   useEffect(() => {
@@ -131,9 +125,9 @@ const DepositPlanEditPage = () => {
               <TextInputField
                 name="name"
                 control={control}
-                labelName="為你的計畫命名吧"
+                labelName={`${program.type ? '計畫名稱' : '為你的計畫命名吧'}`}
                 inputProps={{ maxLength: 7, placeholder: '請輸入7個以內的中英文字、數字或符號', disabled: !!program.type }}
-                $color={getInputColor(program.type)}
+                $color={Theme.colors.primary.brand}
               />
 
               <DropdownField
@@ -142,7 +136,7 @@ const DepositPlanEditPage = () => {
                 control={control}
                 labelName="預計存錢區間"
                 inputProps={{disabled: !!program.type}}
-                $color={getInputColor(!!program.type)}
+                $color={Theme.colors.primary.brand}
               />
 
               <div className="col-2">
@@ -153,7 +147,7 @@ const DepositPlanEditPage = () => {
                     control={control}
                     labelName="存錢頻率"
                     inputProps={{disabled: !!program.type}}
-                    $color={getInputColor(!!program.type)}
+                    $color={Theme.colors.primary.brand}
                   />
                 </div>
                 <div className="w-50">
@@ -161,9 +155,9 @@ const DepositPlanEditPage = () => {
                     options={generateCycleTimingOptions(cycleMode)}
                     name="cycleTiming"
                     control={control}
-                    labelName="週期"
+                    labelName="日期"
                     inputProps={{disabled: !!program.type}}
-                    $color={getInputColor(!!program.type)}
+                    $color={Theme.colors.primary.brand}
                   />
                   <FEIBHintMessage>
                     共

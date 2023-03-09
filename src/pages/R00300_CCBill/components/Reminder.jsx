@@ -34,7 +34,7 @@ const Reminder = ({ bills, deductInfo }) => {
     reader.onload = () => {
       window.open(reader.result, '_blank');
     };
-    reader.readAsDataUrl(blob);
+    reader.readAsDataURL(blob);
 
     // const link = document.createElement('a');
     // link.href = URL.createObjectURL(blob);
@@ -50,7 +50,12 @@ const Reminder = ({ bills, deductInfo }) => {
 
   const handleCalendarClick = async () => {
     await showCustomPrompt({
-      title: '系統訊息', message: '將帳單繳款提示加入手機行事曆？', okContent: '確認', onOk: () => downloadICS(),
+      title: '系統訊息',
+      message: <p className="txtCenter">將帳單繳款提示加入手機行事曆？</p>,
+      okContent: '確認',
+      onOk: () => downloadICS(),
+      onCancel: () => {},
+      showCloseButton: false,
     });
   };
 

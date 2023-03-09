@@ -152,8 +152,9 @@ export const createDepositPlan = async (request) => {
  * 執行轉存錢計劃建立。
  * @param {String} planId 計劃代碼（UUID 型式）不可為空值。
  * @returns {Promise<{
- *   result: Boolean,
- *   message: String
+ *   result: Boolean, //驗證結果
+ *   tfrResult: Boolean, //款成功或失敗, 若無此欄位表示無執行扣款動作
+ *   message: String, //驗證失敗狀況描述
  * }>}
  *- result: 驗證結果(true/false)
  *- message: 驗證失敗狀況描述。
@@ -182,17 +183,16 @@ export const updateDepositPlan = async (request) => {
 
 /**
  * 結束存錢計劃，並將往來記錄以數位存摺模式寄給用戶。
- * @param {*} {
- *   planId 計劃代碼（UUID 型式）
- * }
- * @returns {
- *   {boolean} result: API執行結果。
- *   email: 存錢計畫、存錢歷程打包成PDF檔(需要加密)的寄送郵箱。
+ * @param {String} planId
+ * @returns {Promise<{
+ * result: boolean // API執行結果
+ * email: string  // 存錢計畫、存錢歷程打包成PDF檔(需要加密)的寄送郵箱。
+ * }>
  * }
  */
 export const closeDepositPlan = async (planId) => {
   // 有沒有達標，前端可判斷，因為有帳戶餘額及目標金額
-  const response = await callAPI('/fintech/depositPlan/v1/close', planId);
+  const response = await callAPI('/fintech/depositPlan/v1/close', {planId});
   return response.data;
 };
 

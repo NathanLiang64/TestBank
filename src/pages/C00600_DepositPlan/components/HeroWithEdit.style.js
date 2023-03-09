@@ -20,7 +20,6 @@ const HeroWithEditWrapper = styled.div`
     position: relative;
     height: 252px;
     width: 100%;
-    margin-bottom: 0.7rem;
 
     .group {
       position: absolute;

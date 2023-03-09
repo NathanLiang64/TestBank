@@ -12,7 +12,6 @@ import {
   accountFormatter,
   dateToString,
   weekNumberToChinese,
-  dateToYMD,
 } from 'utilities/Generator';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 
@@ -34,7 +33,7 @@ const DepositPlanDetailPage = () => {
   const {state} = useLocation();
   const dispatch = useDispatch();
   const mainRef = useRef();
-  const [mode, setMode] = useState(0);
+  const [mode, setMode] = useState(0); // 0=確認模式（未建立) 1=資訊模式(已建立) 2=已建立成功(剛建立完成)
   const [plan, setPlan] = useState();
   const [program, setProgram] = useState();
 
@@ -83,21 +82,21 @@ const DepositPlanDetailPage = () => {
 
     // Step 3. 成功後再執行 createConfirm
     dispatch(setWaittingVisible(true));
-    // TODO 需要提供扣款成功或失敗的 flag
-    const confirm = await createConfirm(response.planId);
+    const {result, tfrResult, message} = await createConfirm(response.planId);
     dispatch(setWaittingVisible(false));
 
-    if (confirm.result) {
+    if (result) {
       // 驗證成功之後，若 imageId=0 再上傳自訂的影像。
       if (payload.imageId === 0) await handleImageUpload(response.planId);
       setMode(2);// 設定成 成功建立模式
+      setProgram((prevProgram) => ({...prevProgram, tfrResult}));
       sessionStorage.removeItem('C006003'); // 清除暫存表單資料。
       mainRef.current.scrollTo({ top: 0, behavior: 'smooth'});// 建立成功後，將頁面滑至上方。
     } else {
       showAnimationModal({
         isSuccess: false,
         errorTitle: '設定失敗',
-        errorDesc: confirm.message,
+        errorDesc: message,
         onClose: () => closeFunc(),
       });
     }
@@ -106,7 +105,6 @@ const DepositPlanDetailPage = () => {
   const handleConfirm = async () => {
     if (program.currentBalance > 0) {
       // 如果所選的子帳戶有餘額，要提示用戶自動轉帳。
-      // TODO 要求使用者自己將餘額轉出。 onOk: () => handleCreate() 應修正！
       ConfirmToTransferSubAccountBalance({ onOk: () => startFunc(Func.D001.id, {transOut: program.bindAccountNo}), onCancel: () => {} });
     } else {
       handleCreate();
@@ -138,8 +136,10 @@ const DepositPlanDetailPage = () => {
         value: dateToString(program?.startDate),
         caption: '下一筆扣款日',
         next: program?.extra.nextDeductionDate,
-        // TODO 需要有扣款成功失敗的旗標
-        extra: () => (mode === 2 && dateToYMD() === program?.startDate ? '扣款成功' : undefined),
+        // eslint-disable-next-line no-nested-ternary
+        extra: () => (mode === 2 && typeof program.tfrResult === 'boolean'
+          ? program.tfrResult ? '扣款成功' : '扣款失敗'
+          : undefined),
       },
       { label: '存錢帳號', value: program?.bindAccountNo ? accountFormatter(program?.bindAccountNo, true) : '加開子帳戶' },
     ];

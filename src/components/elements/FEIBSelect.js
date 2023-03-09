@@ -46,7 +46,7 @@ const FEIBSelect = styled(MaterialSelect).attrs({
     color: ${({ theme, $color }) => $color || theme.colors.primary.dark};
     
     &.Mui-disabled{
-      color: ${({ theme }) => theme.colors.text.lightGray};
+      color: ${({ theme, $color }) => $color || theme.colors.text.lightGray};
     }
   }
   

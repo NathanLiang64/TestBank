@@ -22,13 +22,13 @@ const ProgressBarWrapper = styled.div`
       height: 0.4rem;
       border-radius: 0.4rem;
       min-width: 1.2rem;
-      max-width: calc(100% - 1.2rem);
     }
 
     .circle {
       position: absolute;
-      top: -1rem;
-      right: -1rem;
+      bottom 100%;
+      right: 0;
+      transform: translateY(50%);
       width: 2.4rem;
       height: 2.4rem;
       background-color: var(--purple-dark);
@@ -36,8 +36,9 @@ const ProgressBarWrapper = styled.div`
       border-radius: 100%;
       font-size: 0.9rem;
       font-weight: 500;
-      text-align: center;
-      line-height: 2.4rem;
+      display:flex;
+      align-items:center;
+      justify-content:center
     }
   }
 
