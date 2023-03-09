@@ -248,11 +248,8 @@ function Layout({
         const {authCode, otpMobile} = authData;
 
         // 取得需要使用者輸入驗證的項目。
-        const authMode = await getTransactionAuthMode(authCode); // 要驗 2FA 還是密碼，要以 create 時的為準。
-        const allowed2FA = (authMode & 0x01) !== 0; // 表示需要通過 生物辨識或圖形鎖 驗證。
-        let allowedPWD = (authMode & 0x02) !== 0; // 表示需要通過 網銀密碼 驗證。
-        const allowedOTP = (authMode & 0x04) !== 0; // 表示需要通過 OTP 驗證。
-        if (!authMode || authMode === 0x00) {
+        const authMode = await getTransactionAuthMode(authCode);
+        if (!authMode || (authMode & 0x0B) === 0x00) {
           onFailed('尚未完成行動裝置綁定，無法使用此功能！');
           return;
         }
@@ -268,25 +265,28 @@ function Layout({
           return;
         }
 
+        let needPWD = (authMode & 0x02) !== 0; // 表示需要通過 網銀密碼 驗證。
         // 進行雙因子驗證
-        if (allowed2FA) {
+        if (authMode & 0x01) {
           try {
             const rs = await verifyBio(txnAuth.key);
-            allowedPWD = (rs.result !== true);
+            needPWD = (rs.result !== true); // 驗證不通過，第二因子改用「網銀密碼」進行驗證。
           } catch (ex) {
             onFailed(ex);
             return;
           }
 
-          if (!allowedPWD && !allowedOTP) {
+          // 沒有其他驗證需求時，就直接傳回結果。
+          if (!needPWD && !((authMode & 0x08) !== 0)) {
             const verifyRs = await transactionAuthVerify({ authKey: txnAuth.key, funcCode });
             onFinished(verifyRs);
+            return;
           }
         }
 
         authData.txnAuth = txnAuth;
-        authData.allowedPWD = allowedPWD;
-        authData.allowedOTP = allowedOTP;
+        authData.allowedPWD = needPWD;
+        authData.allowedOTP = ((authMode & 0x0C) !== 0);
       };
 
       setAuthData().then(() => {
