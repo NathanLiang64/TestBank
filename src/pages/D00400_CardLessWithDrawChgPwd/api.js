@@ -9,7 +9,7 @@ import { callAPI } from 'utilities/axios';
  * @returns {Promise<Boolean>} 表示執行結果的旗標。
  */
 export const setPinCode = async (request) => {
-  const response = await callAPI('/deposit/cardless/setPinCode', request);
+  const response = await callAPI('/deposit/withdraw/cardless/setPinCode', request);
   return response;
 };
 

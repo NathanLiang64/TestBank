@@ -152,8 +152,9 @@ export const createDepositPlan = async (request) => {
  * 執行轉存錢計劃建立。
  * @param {String} planId 計劃代碼（UUID 型式）不可為空值。
  * @returns {Promise<{
- *   result: Boolean,
- *   message: String
+ *   result: Boolean, //驗證結果
+ *   tfrResult: Boolean, //款成功或失敗, 若無此欄位表示無執行扣款動作
+ *   message: String, //驗證失敗狀況描述
  * }>}
  *- result: 驗證結果(true/false)
  *- message: 驗證失敗狀況描述。
