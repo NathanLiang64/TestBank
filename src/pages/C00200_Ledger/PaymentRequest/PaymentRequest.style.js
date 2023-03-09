@@ -46,6 +46,18 @@ const PageWrapper = styled(Layout)`
   }
 
   .step3_form {
+    .amount_mode_select {
+      display: grid;
+      grid-auto-flow: column;
+      gap: 3rem;
+
+      .separate_field {
+        display: grid;
+        grid-auto-flow: column;
+        gap: 1rem;
+        align-items: end;
+      }
+    }
     .member_amount_table {
       display: grid;
       grid-gap: 1rem;
@@ -63,6 +75,7 @@ const PageWrapper = styled(Layout)`
         .member_info {
           display: flex;
           justify-content: space-between;
+          align-items: flex-end;
         }
       }
     }
