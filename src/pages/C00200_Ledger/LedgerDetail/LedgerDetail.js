@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -17,6 +17,7 @@ import {
   HomeIcon,
 } from 'assets/images/icons';
 import { customPopup } from 'utilities/MessageModal';
+import Loading from 'components/Loading';
 import { addDetailCard, MAIN_CARD_CONFIG } from './constants/mockData';
 import { validationSchema } from './constants/validationSchema';
 import PageWrapper from './LedgerDetail.style';
@@ -24,7 +25,8 @@ import PageWrapper from './LedgerDetail.style';
 export default () => {
   const history = useHistory();
   const timer = useRef();
-  const [transactionList, setTransactionList] = useState(addDetailCard(20));
+  const [transactionList, setTransactionList] = useState(addDetailCard(10));
+  const [isLoading, setIsLoading] = useState(false);
   const panelContent = [
     {
       id: 1,
@@ -85,14 +87,17 @@ export default () => {
   const onDetailScroll = (e) => {
     const { clientHeight, scrollHeight, scrollTop } = e.target;
     const isBottom = scrollTop + clientHeight + 60 > scrollHeight;
-    if (isBottom) {
-      // debounce: 去抖動
-      clearTimeout(timer.current);
+    if (isBottom && !isLoading) {
+      setIsLoading(true);
       timer.current = setTimeout(() => {
+        setIsLoading(false);
         setTransactionList((p) => [...p, ...addDetailCard(20)]);
-      }, 300);
+      }, 1e3);
     }
   };
+
+  // Prevent Memory Leak
+  useEffect(() => () => clearTimeout(timer.current), []);
 
   return (
     <Layout title="帳本明細" goBackFunc={() => history.goBack()}>
@@ -155,6 +160,7 @@ export default () => {
                 />
               </Box>
             ))}
+            {isLoading && <Loading isCentered space="both" />}
           </div>
         </AccountDetailsWrapper>
       </PageWrapper>

@@ -3,8 +3,8 @@ import uuid from 'react-uuid';
 // 可用於 DetailCard 元件測試
 export const addDetailCard = (number = 10) => Array.from(Array(number), (item, id) => ({
   id: uuid(),
-  amount: Math.random() * 1000,
-  balance: Math.random() * 60000,
+  amount: Math.floor(Math.random() * 1000),
+  balance: Math.floor(Math.random() * 60000),
   description: `測試標題${id}`,
   txnDate: new Date(),
   cdType: Math.random() > 0.5 ? 'd' : 'c',
