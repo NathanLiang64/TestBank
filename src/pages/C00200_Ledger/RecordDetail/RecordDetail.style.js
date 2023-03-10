@@ -38,4 +38,10 @@ export const EditRecordFormWrapper = styled(Layout)`
   .record_target_list {
     margin: 2.4rem 2rem;
   }
+
+  .meta_info {
+    color: ${({ theme }) => theme.colors.text.point};
+    margin-bottom: 2rem;
+    text-align: center;
+  }
 `;

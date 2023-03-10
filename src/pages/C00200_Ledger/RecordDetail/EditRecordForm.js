@@ -1,11 +1,8 @@
 /* eslint-disable no-use-before-define */
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { toCurrency } from 'utilities/Generator';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
 
 import Layout from 'components/Layout/Layout';
 import InformationList from 'components/InformationList';
@@ -34,27 +31,26 @@ const EditRecordForm = () => {
   ];
 
   // form: Recorded, notRecorded.1
-  const schema = yup.object().shape({
-    type: yup.string().required(),
-    memo: yup.string(), // TODO 字數上限
-  });
-  const {control} = useForm({
+  const {control, getValues: getInfoValues} = useForm({
     defaultValues: {
       type: '1',
       memo: '',
     },
-    resolver: yupResolver(schema),
   });
 
   // form: notRecorded mode
-  const {control: notRecordedControl, getValues, watch} = useForm({
+  const {control: notRecordedControl, watch} = useForm({
     defaultValues: {
       mode: '0',
     },
   });
 
   // from: notRecorded - select record target
-  const {control: recordTargetControl} = useForm();
+  const {control: recordTargetControl, reset, getValues: getTargetValues} = useForm({
+    defaultValues: {
+      target: '',
+    },
+  });
 
   const onNotRecordedModeChange = () => {
     const watchValue = watch((value) => setNotRecordedMode(value.mode));
@@ -70,14 +66,23 @@ const EditRecordForm = () => {
     </form>
   );
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = () => {
+    console.log({
+      txStatus: state.txStatus,
+      notRecordedMode,
+    });
+
+    if (state.txStatus === 1 || (state.txStatus === 2 && notRecordedMode === '1')) {
+      const value = getInfoValues();
+      console.log('info value', {value});
+    } else {
+      const value = getTargetValues();
+      console.log('target value', {value});
+    }
     goBackFunc();
   };
 
-  const goBackFunc = () => {
-    history.goBack();
-  };
+  const goBackFunc = () => history.goBack();
 
   /* 未入帳－銷帳對象清單 */
   useEffect(() => {
@@ -96,7 +101,7 @@ const EditRecordForm = () => {
         amount: '1000',
         memo: 'AA',
       },
-    ]; // DEBUG mock data
+    ]; // DEBUG mock data, api?
 
     const targetList = response.map((item) => ({
       value: item.memberId,
@@ -104,6 +109,10 @@ const EditRecordForm = () => {
     }));
 
     setRecordTargetList(targetList);
+
+    reset(() => ({
+      target: targetList[0].value,
+    }));
   }, []);
 
   return (
@@ -138,14 +147,11 @@ const EditRecordForm = () => {
             </div>
           </div>
         )}
-        <FEIBButton type="submit">確認</FEIBButton>
+        <p className="meta_info">明細只能編輯一次呦！</p>
+        <FEIBButton onClick={onSubmit}>確認</FEIBButton>
       </EditRecordFormWrapper>
     </Layout>
   );
 };
 
 export default EditRecordForm;
-
-/**
- * <TextInputField labelName="金額" type="text" control={control} name="amount" inputProps={{placeholder: '金額', inputMode: 'numeric', disabled: !!transData.amount}} />
- */
