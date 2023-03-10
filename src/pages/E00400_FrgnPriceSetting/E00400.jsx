@@ -5,11 +5,13 @@ import Layout from 'components/Layout/Layout';
 import MemberAccountCard from 'components/MemberAccountCard';
 import { showCustomDrawer, showCustomPrompt, showPrompt } from 'utilities/MessageModal';
 import { Func } from 'utilities/FuncID';
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { setDrawerVisible, setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { AddIcon } from 'assets/images/icons';
 import EmptyData from 'components/EmptyData';
 import uuid from 'react-uuid';
-import { datetimeToString, getCurrenyInfo } from 'utilities/Generator';
+import {
+  datetimeToString, getCurrenyInfo, getCurrenyName, currencySymbolGenerator,
+} from 'utilities/Generator';
 import NoticeEditor from './E00400_NoticeEditor';
 import PageWrapper from './E00400.style';
 import {
@@ -45,7 +47,17 @@ const Page = () => {
     }
 
     const {currencyOptions, currentTime} = await fetchExRateList();
-    const onSubmit = (param) => { addNoticeItem(param); }; // TODO 待測試
+    const onSubmit = async (param) => {
+      dispatch(setDrawerVisible(false));
+      const {isSuccess} = await addNoticeItem(param);
+      if (isSuccess) {
+        setNotiLists((prevLists) => {
+          const updatedLists = [...prevLists];
+          updatedLists.push(param);
+          return updatedLists;
+        });
+      }
+    };
 
     await showCustomDrawer({
       title: '新增外幣到價通知',
@@ -58,8 +70,19 @@ const Page = () => {
   const editAccount = async (noti) => {
     const {currencyOptions, currentTime} = await fetchExRateList();
     const onSubmit = async (newNoti) => {
+      dispatch(setDrawerVisible(false));
       const {isSuccess} = await removeNoticeItem(noti); // 1. 先移除既有的設定
-      if (isSuccess) await addNoticeItem(newNoti); // 2. 再新增更新後的設定
+      if (isSuccess) {
+        const res = await addNoticeItem(newNoti); // 2. 再新增更新後的設定
+        if (res.isSuccess) {
+          setNotiLists((prevList) => {
+            const updatedList = [...prevList];
+            const index = updatedList.findIndex(({currency, direction}) => noti.currency === currency && noti.direction === direction);
+            updatedList[index] = newNoti;
+            return updatedList;
+          });
+        }
+      }
     };
 
     await showCustomDrawer({
@@ -75,7 +98,18 @@ const Page = () => {
       title: '系統訊息',
       message: '您確定要刪除此通知設定',
       okContent: '確定刪除',
-      onOk: () => removeNoticeItem(noti),
+      onOk: async () => {
+        dispatch(setModalVisible(false));
+        const {isSuccess} = await removeNoticeItem(noti);
+        if (isSuccess) {
+          setNotiLists((prevLists) => {
+            const updatedNotiLists = prevLists.filter(({direction, currency}) => (
+              noti.currency !== currency || noti.direction !== direction
+            ));
+            return updatedNotiLists;
+          });
+        }
+      },
       cancelContent: '我再想想',
       onCancel: () => {},
     });
@@ -88,8 +122,8 @@ const Page = () => {
     return notiLists.map((noti) => (
       <MemberAccountCard
         key={uuid()}
-        name="noti name" // TODO
-        subTitle="匯率低於 (含) : 27.34 (mock)" // TODO
+        name={getCurrenyName(noti.currency)}
+        subTitle={`匯率${noti.direction ? '低於' : '高於'} (含) : ${currencySymbolGenerator(noti.currency, noti.price)}`}
         hasNewTag={noti.isNew}
         disabledAvatar={false}
         moreActions={[
