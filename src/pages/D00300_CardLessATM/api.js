@@ -19,8 +19,8 @@ export const getCardlessWdStatus = async () => {
  *   endTime: String, // 序號失效時間, 格式：'YYYYMMDD hhmmss'
  * }>}
  */
-export const createCardlessWD = async (account, amount) => {
-  const response = await callAPI('/deposit/withdraw/cardless/create', { account, withdrawAmount: amount });
+export const createCardlessWD = async (account, withdrawAmount) => {
+  const response = await callAPI('/deposit/withdraw/cardless/create', { account, withdrawAmount });
   return response;
 };
 

@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-use-before-define */
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -27,23 +25,27 @@ function NoticeEditor({
   const schema = yup.object().shape({
     method: yup.string().required('請選擇種類'),
     currency: yup.string().required('請選擇幣別'),
-    direction: yup.string().required('請選擇通知門檻'),
+    direction: yup.number().required('請選擇通知門檻'),
     price: yup.number().required('請輸入匯率').typeError('請輸入數字'),
   });
 
   const { control, handleSubmit, watch} = useForm({
     resolver: yupResolver(schema),
-    defaultValues: initData ?? {
-      method: 'srate', currency: '', direction: '', price: '',
+    defaultValues: {
+      currency: '',
+      direction: '',
+      price: '',
+      ...initData, // 若 initData 有值，會覆蓋掉 currency/direction/price
+      method: initData?.direction ? 'srate' : 'brate',
     },
   });
 
-  const methodOptions = [{label: '買外幣', value: 'srate'}, {label: '賣外幣', value: 'brate'}];
-  const directionOptions = [{label: '高於 (含)', value: '0'}, {label: '低於 (含)', value: '1'}];
+  const methodOptions = [{label: '賣外幣', value: 'brate'}, {label: '買外幣', value: 'srate'}];
+  const directionOptions = [{label: '高於 (含)', value: 0}, {label: '低於 (含)', value: 1}];
 
   const rateInfo = () => {
     const [method, currency] = watch(['method', 'currency']);
-    if (!currency) return null;
+    if (!currency || !method) return null;
     const selectedCurrency = currencyOptions.find(({value}) => value === currency);
     const currentRate = selectedCurrency[method];
     return <FEIBHintMessage>{`目前匯率 ${currentRate} (更新時間 ${currentTime})`}</FEIBHintMessage>;

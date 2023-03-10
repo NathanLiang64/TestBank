@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import Layout from 'components/Layout/Layout';
 import AccountDetails from 'components/AccountDetails/accountDetails';
 import { Func } from 'utilities/FuncID';
-import { dateToYMD } from 'utilities/Generator';
+import { dateToYMD, timeToString } from 'utilities/Generator';
 
 import { getTransactionDetails } from './api';
 
@@ -27,10 +27,14 @@ const DepositPlanTransactionPage = () => {
    */
   const updateTransactions = async (conditions) => {
     const {startDate, endDate, ...restConditions} = conditions;
+    // NOTE: plan.createDate 是 ISO string，需轉成 YYYYMMDD 以及 hhmmss 格式
+    const defaultStartDate = dateToYMD(new Date(plan.createDate));
+    const defaultStartTime = timeToString(new Date(plan.createDate)).replaceAll(':', '');
+
     const request = {
       accountNo: plan?.bindAccountNo,
-      // TODO plan 內的 createDate 格式為 '2022-11-28T05:49:11Z'，應該請後端修改成與 endDate 相同格式(YYYYMMDD)
-      startDate: startDate ?? dateToYMD(new Date(plan.createDate)), // 查詢起始日為計畫建立的當天
+      startDate: startDate ?? defaultStartDate, // 預設起始日為計畫建立的當天
+      startTime: !startDate || startDate === defaultStartDate ? defaultStartTime : null,
       endDate: endDate ?? plan?.endDate,
       ...restConditions,
     };
