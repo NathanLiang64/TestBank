@@ -64,5 +64,5 @@ export const updateAgreedAccount = async (accountNo, request) => {
   if (request.headshot) accounts[index].headshot = headshotId;
   store.dispatch(setAgreAccts(agreAccts));
 
-  return accounts;
+  return [...accounts]; // 需要回傳新的物件 給 setState，以觸發再次渲染
 };

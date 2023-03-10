@@ -7,7 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import Theme from 'themes/theme';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { currencySymbolGenerator } from 'utilities/Generator';
+import { currencySymbolGenerator, stringToDate } from 'utilities/Generator';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import Badge from 'components/Badge';
@@ -75,12 +75,11 @@ const Page = () => {
     if (watchedValues.amountOptions) reset((formValues) => ({...formValues, customAmount: null}));
   }, [watchedValues.amountOptions]);
 
-  // 包在 Modal 裡的元件無法取得 terms 必數（不同scope），所以 arrow function call:
-
   const renderBalance = () => {
     if (!internalAccounts.length || !watchedValues.accountNo) return null;
-    const foundAccount = internalAccounts.find((a) => a.accountNo === watchedValues.accountNo);
-    return `可用餘額 ${currencySymbolGenerator(foundAccount.currency, foundAccount.balance)}元`;
+    const {details} = internalAccounts.find((a) => a.accountNo === watchedValues.accountNo);
+    const {currency, balance} = details[0];
+    return `可用餘額 ${currencySymbolGenerator(currency, balance, true)}元`;
   };
 
   const renderBarCode = async (amount) => {
@@ -164,10 +163,12 @@ const Page = () => {
     <Layout fid={Func.R004} title="繳款" goBackFunc={closeFunc}>
       <Main small>
         <PageWrapper>
+          {cardInfo && (
           <Badge
-            label={`${parseInt(cardInfo?.billClosingDate.slice(5, 7), 10)}月應繳金額`}
-            value={currencySymbolGenerator('NTD', cardInfo?.newBalance)}
+            label={`${stringToDate(cardInfo.billClosingDate).getMonth() + 1}月應繳金額`}
+            value={currencySymbolGenerator('NTD', cardInfo.newBalance)}
           />
+          )}
 
           <div className="badMargin">
             <TabField

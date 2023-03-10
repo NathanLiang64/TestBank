@@ -10,7 +10,7 @@ const ProgressBar = ({ value }) => {
     <ProgressBarWrapper>
       <div className="progress">
         <div className="bar" style={{ width: `${_value}%` }}>
-          <div className="circle">{ value > 100 ? 100 : value }</div>
+          <div className="circle">{ value }</div>
         </div>
       </div>
       <div className="percent">%</div>
