@@ -115,14 +115,6 @@ const More = () => {
                   icon={Icon ? Icon() : ''}
                   label={item.name}
                   onClick={() => {
-                    // TODO 如果確認原生使用window.startFunc可以正確外開一般網頁, 就必須拿掉下方hardcode
-                    if (item.funcCode === 'N001') {
-                      // 會員專區
-                      const url = `${process.env.REACT_APP_COUPON_URL}`;
-                      window.location.href = url;
-                      return;
-                    }
-
                     doStartFunc(item.funcCode);
                   }}
                   noBorder

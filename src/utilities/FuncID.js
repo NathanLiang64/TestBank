@@ -94,6 +94,7 @@ export const Func = {
   B00500: {
     id: 'B005',
     required: [],
+    isAppFunc: true, // 表示是原生的功能
   },
 
   /**
@@ -401,6 +402,15 @@ export const Func = {
   M00300: {
     id: 'M003',
     required: [],
+  },
+
+  /**
+   * 會員專區
+   */
+  N00100: {
+    id: 'N001',
+    required: [],
+    isAppFunc: true, // 表示是原生的功能
   },
 
   /**
