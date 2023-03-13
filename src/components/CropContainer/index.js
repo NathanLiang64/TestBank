@@ -10,7 +10,9 @@ import getCroppedImg from './utils';
  * 若要擴充功能，可詳細參考 https://www.npmjs.com/package/react-easy-crop 的文件
  */
 
-export const CropContainer = ({ url, onUploadHandler, aspect }) => {
+export const CropContainer = ({
+  url, onUploadHandler, aspect, cropShape = 'round',
+}) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [isUploading, setIsUploading] = useState(false);
@@ -40,7 +42,7 @@ export const CropContainer = ({ url, onUploadHandler, aspect }) => {
               crop={crop}
               zoom={zoom}
               aspect={aspect} // crop 的長寬比例
-              cropShape="round" // 圓形的 crop
+              cropShape={cropShape} // 圓形的 crop
               onCropChange={setCrop}
               onCropComplete={onCropComplete}
               onZoomChange={setZoom}

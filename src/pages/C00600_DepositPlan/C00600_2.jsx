@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
 import { Controller, useForm } from 'react-hook-form';
@@ -13,14 +12,13 @@ import Layout from 'components/Layout/Layout';
 import Main from 'components/Layout';
 import Accordion from 'components/Accordion';
 import {
-  FEIBButton, FEIBRadioLabel, FEIBRadio, FEIBErrorMessage, FEIBCheckbox,
+  FEIBButton, FEIBRadioLabel, FEIBRadio, FEIBErrorMessage,
 } from 'components/elements';
 import Loading from 'components/Loading';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigation } from 'hooks/useNavigation';
 import { Func } from 'utilities/FuncID';
-import { RadioGroupField } from 'components/Fields/radioGroupField';
 import { CreatePageWrapper } from './C00600.style';
 import { getDepositPlanProgram, getDepositPlanTerms } from './api';
 import { AlertReachedMaxPlans } from './utils/prompts';
@@ -34,14 +32,12 @@ const DepositPlanCreatePage = () => {
   const history = useHistory();
   const {
     control, handleSubmit, formState: {errors},
-  } = useForm(
-    {
-      defaultValues: {code: ''},
-      resolver: yupResolver(yup.object().shape({
-        code: yup.string().required('請選擇計畫'),
-      })),
-    },
-  );
+  } = useForm({
+    defaultValues: {code: ''},
+    resolver: yupResolver(yup.object().shape({
+      code: yup.string().required('請選擇計畫'),
+    })),
+  });
   const {state} = useLocation();
   const [programs, setPrograms] = useState();
   const [terms, setTerms] = useState();
@@ -62,14 +58,13 @@ const DepositPlanCreatePage = () => {
   };
 
   const onSubmit = ({code}) => {
-    sessionStorage.removeItem('C006003'); // 清除暫存表單資料。
     sessionStorage.removeItem('C00600-hero'); // 清除暫存背景圖。
 
     const program = programs.find((p) => p.code === code);
     const {subAccounts, totalSubAccountCount} = depositPlans;
     const hasReachedMaxSubAccounts = totalSubAccountCount >= 8;
     history.push('/C006003', {
-      program, subAccounts, hasReachedMaxSubAccounts,
+      program, subAccounts, hasReachedMaxSubAccounts, depositPlans,
     });
   };
 

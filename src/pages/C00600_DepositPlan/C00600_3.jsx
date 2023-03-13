@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -9,8 +9,6 @@ import { MainScrollWrapper } from 'components/Layout';
 import { FEIBButton, FEIBHintMessage } from 'components/elements';
 import { CurrencyInputField, DropdownField, TextInputField } from 'components/Fields';
 import { toCurrency, dateToYMD, dateToString } from 'utilities/Generator';
-
-import { useNavigation } from 'hooks/useNavigation';
 import { showPrompt } from 'utilities/MessageModal';
 import { getDurationTuple} from './utils/common';
 import {
@@ -25,11 +23,9 @@ import { generateEditSchema } from './validationSchema';
  */
 const DepositPlanEditPage = () => {
   const history = useHistory();
-  const { closeFunc } = useNavigation();
-  const location = useLocation();
-  const [newImageId, setNewImageId] = useState();
+  const {state} = useLocation();
   const {
-    control, handleSubmit, watch, reset,
+    control, handleSubmit, watch, reset, setValue,
   } = useForm({
     defaultValues: {
       name: '',
@@ -38,11 +34,12 @@ const DepositPlanEditPage = () => {
       cycleTiming: '',
       amount: '',
       bindAccountNo: '',
+      imageId: '',
     },
-    resolver: yupResolver(generateEditSchema(location.state?.program)),
+    resolver: yupResolver(generateEditSchema(state?.program)),
   });
   const {
-    cycleDuration, cycleMode, amount, bindAccountNo,
+    cycleDuration, cycleMode, amount, bindAccountNo, imageId,
   } = watch();
 
   const getDefaultCycleTiming = () => {
@@ -55,70 +52,69 @@ const DepositPlanEditPage = () => {
     return parseInt(cycleAmount, 10) * cycle * duration;
   };
 
-  const getRemainingBalance = (accountNo) => location.state?.subAccounts?.find((a) => a.accountNo === accountNo)?.balance ?? 0;
+  const getRemainingBalance = (accountNo) => state?.subAccounts?.find((a) => a.accountNo === accountNo)?.balance ?? 0;
 
   const onSubmit = (data) => {
     const date = getDurationTuple(new Date(), data.cycleDuration, data.cycleMode, data.cycleTiming);
-    const {code, rate} = location.state.program;
-    if (newImageId === undefined) showPrompt(<p className="txtCenter">請選擇圖片</p>);
-    else {
-      const payload = {
-      // =====建立存錢計畫所需參數=====
-        progCode: code,
-        imageId: newImageId ?? 1,
-        name: data.name,
-        startDate: dateToYMD(date.begin),
-        endDate: dateToYMD(date.end),
-        cycleMode: data.cycleMode,
-        cycleTiming: data.cycleTiming,
-        amount: data.amount,
-        bindAccountNo: data.bindAccountNo === 'new' ? null : data.bindAccountNo,
-        currentBalance: getRemainingBalance(data.bindAccountNo),
-        // =====渲染需求參數=====
-        goalAmount: getGoalAmount(data.amount, data.cycleDuration, data.cycleMode),
-        extra: {
-          rate,
-          period: `${dateToString(new Date())} ~ ${dateToString(date.end)}`,
-          nextDeductionDate: dateToString(date.next),
-        },
-      };
-      sessionStorage.setItem('C006003', JSON.stringify({...data, imageId: newImageId}));
-      history.push('/C006004', { isConfirmMode: true, payload });
+    const {code, rate} = state.program;
+    if (typeof data.imageId !== 'number') {
+      showPrompt(<p className="txtCenter">請選擇圖片</p>);
+      return;
     }
+    const payload = {
+      // =====建立存錢計畫所需參數=====
+      progCode: code,
+      imageId: data.imageId,
+      name: data.name,
+      startDate: dateToYMD(date.begin),
+      endDate: dateToYMD(date.end),
+      cycleMode: data.cycleMode,
+      cycleTiming: data.cycleTiming,
+      amount: data.amount,
+      bindAccountNo: data.bindAccountNo === 'new' ? null : data.bindAccountNo,
+      currentBalance: getRemainingBalance(data.bindAccountNo),
+      // =====渲染需求參數=====
+      goalAmount: getGoalAmount(data.amount, data.cycleDuration, data.cycleMode),
+      extra: {
+        rate,
+        period: `${dateToString(new Date())} ~ ${dateToString(date.end)}`,
+        nextDeductionDate: dateToString(date.next),
+      },
+    };
+    history.push('/C006004', {...state, isConfirmMode: true, payload });
   };
 
   useEffect(() => {
     // 如果是專案型計畫，將資料傳入 form 中
-    if (location.state.program.type) {
-      reset((formValues) => ({
-        ...formValues,
-        name: location.state.program.name,
-        cycleDuration: location.state.program.period ?? 4,
-        cycleMode: 2,
-        cycleTiming: getDefaultCycleTiming(),
-      }));
-    }
-
-    // 當跳回此頁面時，填入先前的資訊
-    let backlog = sessionStorage.getItem('C006003');
-    if (backlog) {
-      backlog = JSON.parse(backlog);
-      setNewImageId(backlog.imageId);
-      reset({...backlog});
-    }
+    const isProjectType = !!state.program.type;
+    // 如果是從 C006004 導向回來，將 payload 帶入
+    const {payload} = state;
+    // eslint-disable-next-line no-nested-ternary
+    const projectName = payload ? payload.name : isProjectType ? state.program.name : '';
+    reset((formValues) => ({
+      ...formValues,
+      name: projectName,
+      cycleDuration: isProjectType ? state.program.period : 4,
+      cycleMode: 2,
+      cycleTiming: getDefaultCycleTiming(),
+      amount: payload ? payload.amount : '',
+      bindAccountNo: payload ? payload.bindAccountNo ?? 'new' : '',
+      imageId: payload ? payload.imageId : '',
+    }));
   }, []);
 
-  // 如果 location.state 不存在，屬於不正常行為，直接關閉該服務
-  if (!location.state || !('program' in location.state)) return closeFunc();
-
-  const {program, subAccounts, hasReachedMaxSubAccounts} = location.state;
+  const {
+    program, subAccounts, hasReachedMaxSubAccounts, depositPlans,
+  } = state;
+  const disabled = !!program.type; // 若是專案型 (!==0)，特定欄位是固定值，不給使用者選擇
+  const disabledColor = disabled ? Theme.colors.text.dark : '';
 
   return (
-    <Layout title="新增存錢計畫" hasClearHeader goBackFunc={() => history.goBack()}>
+    <Layout title="新增存錢計畫" hasClearHeader goBackFunc={() => history.replace('C006002', {depositPlans})}>
       <MainScrollWrapper>
         <EditPageWrapper>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <HeroWithEdit imageId={newImageId} onChange={(id) => setNewImageId(id)} />
+            <HeroWithEdit imageId={imageId} onChange={(id) => setValue('imageId', id)} />
 
             <div className="flex">
 
@@ -126,8 +122,8 @@ const DepositPlanEditPage = () => {
                 name="name"
                 control={control}
                 labelName={`${program.type ? '計畫名稱' : '為你的計畫命名吧'}`}
-                inputProps={{ maxLength: 7, placeholder: '請輸入7個以內的中英文字、數字或符號', disabled: !!program.type }}
-                $color={Theme.colors.primary.brand}
+                inputProps={{ maxLength: 7, placeholder: '請輸入7個以內的中英文字、數字或符號', disabled }}
+                $color={disabledColor}
               />
 
               <DropdownField
@@ -135,8 +131,8 @@ const DepositPlanEditPage = () => {
                 name="cycleDuration"
                 control={control}
                 labelName="預計存錢區間"
-                inputProps={{disabled: !!program.type}}
-                $color={Theme.colors.primary.brand}
+                inputProps={{disabled}}
+                $color={disabledColor}
               />
 
               <div className="col-2">
@@ -146,8 +142,8 @@ const DepositPlanEditPage = () => {
                     name="cycleMode"
                     control={control}
                     labelName="存錢頻率"
-                    inputProps={{disabled: !!program.type}}
-                    $color={Theme.colors.primary.brand}
+                    inputProps={{disabled}}
+                    $color={disabledColor}
                   />
                 </div>
                 <div className="w-50">
@@ -156,8 +152,8 @@ const DepositPlanEditPage = () => {
                     name="cycleTiming"
                     control={control}
                     labelName="日期"
-                    inputProps={{disabled: !!program.type}}
-                    $color={Theme.colors.primary.brand}
+                    inputProps={{disabled}}
+                    $color={disabledColor}
                   />
                   <FEIBHintMessage>
                     共

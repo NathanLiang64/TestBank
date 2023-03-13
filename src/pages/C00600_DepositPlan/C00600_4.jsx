@@ -33,7 +33,7 @@ const DepositPlanDetailPage = () => {
   const {state} = useLocation();
   const dispatch = useDispatch();
   const mainRef = useRef();
-  const [mode, setMode] = useState(0); // 0=確認模式（未建立) 1=資訊模式(已建立) 2=已建立成功(剛建立完成)
+  const [mode, setMode] = useState(0); // 0=資訊模式(已建立) 1=確認模式（未建立) 2=已建立成功(剛建立完成)
   const [plan, setPlan] = useState();
   const [program, setProgram] = useState();
 
@@ -68,10 +68,6 @@ const DepositPlanDetailPage = () => {
 
   const handleCreate = async () => {
     const {extra, goalAmount, ...payload} = program;
-
-    // 11.30 目前後端設定是 transactionAuth 之後才可以進行 createDepositPlan
-    // 否則會被判定惡意行為，這部分還需要等待後端進行調整
-
     // Step 1. 執行 存錢計畫建立
     const response = await createDepositPlan(payload);
     if (!response?.result) return;
@@ -90,7 +86,6 @@ const DepositPlanDetailPage = () => {
       if (payload.imageId === 0) await handleImageUpload(response.planId);
       setMode(2);// 設定成 成功建立模式
       setProgram((prevProgram) => ({...prevProgram, tfrResult}));
-      sessionStorage.removeItem('C006003'); // 清除暫存表單資料。
       mainRef.current.scrollTo({ top: 0, behavior: 'smooth'});// 建立成功後，將頁面滑至上方。
     } else {
       showAnimationModal({
@@ -174,8 +169,9 @@ const DepositPlanDetailPage = () => {
     }
   };
 
+  const goBack = () => history.replace(mode === 1 ? 'C006003' : 'C00600', state);
   return (
-    <Layout title={renderTitle()} fid={Func.C006} goBackFunc={() => history.replace(`${Func.C006.id}00`, state)}>
+    <Layout title={renderTitle()} fid={Func.C006} goBackFunc={goBack}>
       <MainScrollWrapper ref={mainRef}>
         <DetailPageWrapper>
           { mode > 0 && (
