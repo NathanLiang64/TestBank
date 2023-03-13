@@ -22,8 +22,9 @@ import { validationSchema } from './validationSchema';
 
 const CardLessATM1 = () => {
   const {state} = useLocation();
+  const defaultWithdrawAmount = Number.isNaN(parseInt(state, 10)) ? 1000 : parseInt(state, 10);
   const {handleSubmit, control, reset } = useForm({
-    defaultValues: { withdrawAmount: parseInt(state || 1000, 10) }, // 若 state 無值，預設帶 1000
+    defaultValues: { withdrawAmount: defaultWithdrawAmount }, // 若 state 無值，預設帶 1000
     resolver: yupResolver(validationSchema),
   });
 

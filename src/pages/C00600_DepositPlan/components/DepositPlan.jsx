@@ -36,7 +36,7 @@ const DepositPlan = ({
   onShowDetailClick,
   onTerminatePlanClick,
 }) => {
-  const progressPercentage = Math.trunc((currentBalance / goalAmount) * 100);
+  const progressPercentage = Math.round((currentBalance / goalAmount) * 100);
   const isPlanCompleted = progressPercentage >= 100;
   const isPlanExpired = endDate && (stringToDate(endDate) < new Date());
   const isPlanFailed = progressPercentage < 100 && isPlanExpired;

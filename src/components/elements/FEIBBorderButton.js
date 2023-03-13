@@ -42,14 +42,6 @@ const FEIBBorderButton = styled(FEIBdefaultButton)`
     transition: all .2s;
     opacity: 0;
   }
-  
-  &:hover {
-    background: ${({ theme, $borderColor }) => $borderColor || theme.colors.primary.light};
-    color: ${({ theme }) => theme.colors.basic.white};
-    &:before {
-      opacity: .16;
-    }
-  }
 `;
 
 export default FEIBBorderButton;
