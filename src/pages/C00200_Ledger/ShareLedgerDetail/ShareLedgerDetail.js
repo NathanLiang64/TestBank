@@ -8,6 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Layout from 'components/Layout/Layout';
 import { TextInputField, DropdownField } from 'components/Fields';
 import { FEIBButton } from 'components/elements';
+import { shareMessage } from 'utilities/AppScriptProxy';
 import PageWrapper from './ShareLedgerDetail.style';
 import SHARE_LEDGER_IMG from './images/share_ledger_img.png';
 
@@ -38,7 +39,7 @@ export default () => {
   // 點擊 - 確認送出表單
   const onSubmitClick = (data) => {
     console.log(data);
-    history.push('/ClubLedgersList');
+    shareMessage('分享明細');
   };
 
   return (
