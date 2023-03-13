@@ -7,9 +7,7 @@ import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
 import { FEIBButton} from 'components/elements';
 import { DropdownField, TextInputField } from 'components/Fields';
-import {
-  toCurrency, accountFormatter, dateToString,
-} from 'utilities/Generator';
+import { toCurrency, accountFormatter, dateToString } from 'utilities/Generator';
 
 import { useNavigation } from 'hooks/useNavigation';
 import HeroWithEdit from './components/HeroWithEdit';
@@ -41,8 +39,6 @@ const DepositPlanEditPage = () => {
   );
 
   const [plan, setPlan] = useState();
-  const [newImageId, setNewImageId] = useState();
-  const [isRestrictedPromotion, setIsRestrictedPromotion] = useState(false);
 
   const getDuration = (startDate, endDate) => {
     const begin = dateToString(startDate);
@@ -53,7 +49,6 @@ const DepositPlanEditPage = () => {
   useEffect(() => {
     if (state && ('plan' in state)) {
       setPlan(state.plan);
-      setIsRestrictedPromotion(state.plan.progInfo.type !== 0);
 
       // 重置表單各欄位 value
       reset({
@@ -74,7 +69,7 @@ const DepositPlanEditPage = () => {
     const payload = {
       planId: plan.planId,
       name: data.name,
-      image: newImageId > 0 ? newImageId : sessionStorage.getItem('C00600-hero'),
+      image: plan.imageId > 0 ? plan.imageId : sessionStorage.getItem('C00600-hero'),
     };
     const {isSuccess} = await updateDepositPlan(payload);
     if (isSuccess) {
@@ -82,7 +77,7 @@ const DepositPlanEditPage = () => {
       const {depositPlans: {plans}} = state;
       const updatedIndex = plans.findIndex(({planId}) => plan.planId === planId);
       plans[updatedIndex].name = data.name;
-      plans[updatedIndex].imageId = newImageId;
+      plans[updatedIndex].imageId = plan.imageId;
 
       history.push('/C00600', state);
     } else AlertUpdateFail();
@@ -98,7 +93,7 @@ const DepositPlanEditPage = () => {
             <HeroWithEdit
               planId={plan?.planId}
               imageId={plan?.imageId}
-              onChange={(id) => setNewImageId(id)}
+              onChange={(id) => setPlan((prevPlan) => ({...prevPlan, imageId: id}))}
             />
 
             <div className="flex">
@@ -108,7 +103,7 @@ const DepositPlanEditPage = () => {
                   name="name"
                   control={control}
                   labelName="計畫名稱"
-                  inputProps={{ maxLength: 7, placeholder: '請輸入7個以內的中英文字、數字或符號', disabled: isRestrictedPromotion }}
+                  inputProps={{ maxLength: 7, placeholder: '請輸入7個以內的中英文字、數字或符號', disabled: state.plan.progInfo.type !== 0 }}
                 />
               </div>
 

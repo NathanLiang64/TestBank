@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useRef, useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 
@@ -7,7 +6,7 @@ import { MainScrollWrapper } from 'components/Layout';
 import SwiperLayout from 'components/SwiperLayout';
 
 import {
-  showAnimationModal, showCustomDrawer, showError,
+  showAnimationModal, showCustomDrawer,
 } from 'utilities/MessageModal';
 import {
   AccountIcon11, AccountIcon12, CircleIcon, D001,
@@ -19,7 +18,6 @@ import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import { useDispatch } from 'react-redux';
 
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { getAccountsList } from 'utilities/CacheData';
 import EmptySlide from './components/EmptySlide';
 import EmptyPlan from './components/EmptyPlan';
 import DepositPlan from './components/DepositPlan';
@@ -66,12 +64,9 @@ const DepositPlanPage = () => {
       return;
     }
 
-    const response = await updateDepositPlan({
-      planId: plan.planId,
-      isMaster: true,
-    });
+    const {isSuccess} = await updateDepositPlan({ planId: plan.planId, isMaster: true });
 
-    if (response.result) {
+    if (isSuccess) {
       // 一併更新前端資料
       setDepositPlans((prevState) => ({
         ...prevState,
@@ -84,9 +79,7 @@ const DepositPlanPage = () => {
 
       // 移動畫面顯示主要計畫
       if (swiperRef)swiperRef.current.swiper.slideTo(1);
-    } else {
-      AlertUpdateFail();
-    }
+    } else AlertUpdateFail();
   };
 
   const handleTerminatePlan = (plan) => {

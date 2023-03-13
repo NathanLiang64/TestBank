@@ -61,6 +61,7 @@ const FEIBInput = styled(MaterialInput).attrs(({
     
     &:disabled{
       color: ${({ theme, $color }) => $color || theme.colors.text.lightGray};
+      opacity:1 !important
     }
 
     &::placeholder {

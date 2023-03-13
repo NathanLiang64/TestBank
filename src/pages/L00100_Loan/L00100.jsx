@@ -25,6 +25,8 @@ import { getBranchCode } from 'utilities/CacheData';
 import { getSubSummary } from './api';
 import { handleSubPaymentHistory } from './utils';
 import PageWrapper, { ContentWrapper } from './L00100.style';
+import EmptySlide from './components/EmptySlide';
+import EmptyContent from './components/EmptyContent';
 
 const uid = uuid();
 
@@ -59,7 +61,7 @@ const Page = () => {
   const onSlideChange = async (swiper) => {
     if (detailMap[swiper.activeIndex]) return;
     const currentLoan = loans[swiper.activeIndex];
-
+    if (!currentLoan) return;
     fetchDetailMap(currentLoan.account, currentLoan.subNo, currentLoan.debitAccount, swiper.activeIndex);
   };
 
@@ -104,7 +106,9 @@ const Page = () => {
   const renderSlides = (cards) => {
     if (!cards || cards?.length === 0) return [];
 
-    return cards.map((card, i) => {
+    const cardsWithEmptySlide = [...cards, undefined];
+    return cardsWithEmptySlide.map((card, i) => {
+      if (!card) return <EmptySlide key={`${uid}-c${i}`} />;
       const branchId = card.debitAccount.substring(0, 3);
 
       return (
@@ -124,8 +128,8 @@ const Page = () => {
               </div>
             </div>
             {/* <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.account, card.subNo)}>
-              <MoreIcon />
-            </FEIBIconButton> */}
+                  <MoreIcon />
+                </FEIBIconButton> */}
           </div>
           <div className="justify-end items-baseline gap-4">
             <div className="balance">{currencySymbolGenerator(card.currency ?? 'NTD', card.balance, true)}</div>
@@ -215,25 +219,29 @@ const Page = () => {
    */
   const renderContents = () => {
     if (!loans || loans?.length === 0) return [];
+    const loansWithEmptyContent = [...loans, undefined];
+    return loansWithEmptyContent.map((loan, i) => {
+      if (!loan) return <EmptyContent key={`${uid}-a${i}`} onAddClick={() => { console.log('TODO'); }} />; // TODO  待提供申請連結
 
-    return loans.map((loan, i) => (
-      <ContentWrapper key={`${uid}-a${i}`}>
-        <div className="panel">
-          <ThreeColumnInfoPanel content={renderBonusContents(loan)} />
-        </div>
-        <div ref={detailsRef}>
-          <div>{renderTransactions(detailMap[i], loan)}</div>
-          <div className="toolbar">
-            {detailMap[i] && detailMap[i].length > 0 && (
-            <button className="btn-icon" type="button" onClick={() => handleMoreTransactionsClick(loan)}>
-              更多明細
-              <ArrowNextIcon />
-            </button>
-            )}
+      return (
+        <ContentWrapper key={`${uid}-a${i}`}>
+          <div className="panel">
+            <ThreeColumnInfoPanel content={renderBonusContents(loan)} />
           </div>
-        </div>
-      </ContentWrapper>
-    ));
+          <div ref={detailsRef}>
+            <div>{renderTransactions(detailMap[i], loan)}</div>
+            <div className="toolbar">
+              {detailMap[i] && detailMap[i].length > 0 && (
+              <button className="btn-icon" type="button" onClick={() => handleMoreTransactionsClick(loan)}>
+                更多明細
+                <ArrowNextIcon />
+              </button>
+              )}
+            </div>
+          </div>
+        </ContentWrapper>
+      );
+    });
   };
 
   /**
