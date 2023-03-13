@@ -1,14 +1,14 @@
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Box } from '@material-ui/core';
 import { useTheme } from 'styled-components';
 import Layout from 'components/Layout/Layout';
 import CreditCard from 'components/CreditCard';
-import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { PersonalIcon, HomeIcon } from 'assets/images/icons';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import PageWrapper from './ClubLedgersList.style';
-import { generateMockData } from './constants';
+import { getAllLedgersRs } from './constants/mockData';
 import AccountCardGrey from './components/AccountCardGrey';
 import LEDGER_IMG from './images/ledger.png';
 
@@ -16,11 +16,9 @@ export default () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const theme = useTheme();
-  // 設定 - 開發測試用
-  const DEV_TEST_CONFIG = {
-    hasLedgerData: true,
-  };
-  const { hasLedgerData } = DEV_TEST_CONFIG;
+  // 狀態設定
+  const [ledgerList, setLedgerList] = useState([]);
+  const [hasLedgerData, setHasLedgerData] = useState(false);
   // 點擊 - 新增帳本
   const onAddLedgerClick = () => {
     history.push('CreateLedgerForm');
@@ -28,12 +26,16 @@ export default () => {
   // 點擊 - 帳本
   const onLedgerClick = (obj) => {
     console.log(obj);
-    history.push('/LedgerDetail');
+    history.push('/LedgerDetail', { state: ledgerList });
   };
   // 初始化
   const init = async () => {
     dispatch(setWaittingVisible(true));
-    setTimeout(() => dispatch(setWaittingVisible(false)), 300);
+    const res = await getAllLedgersRs();
+    const { ledger = [] } = res;
+    setLedgerList(ledger);
+    setHasLedgerData(ledger.length !== 0);
+    dispatch(setWaittingVisible(false));
   };
   useEffect(() => {
     init();
@@ -54,42 +56,55 @@ export default () => {
           />
         </Box>
         {hasLedgerData
-          && generateMockData(10).map((item) => (
-            <Box key={item.id} mb={1} onClick={() => onLedgerClick(item)}>
-              <CreditCard
-                cardName={(
-                  <Box component="span">
-                    <Box
-                      component="span"
-                      display={item.isHost ? 'inline-block' : 'none'}
-                    >
-                      <HomeIcon />
+          && ledgerList.map((item) => {
+            const {
+              ledgerAmount,
+              ledgerColor,
+              isOwner,
+              sumOfMembers,
+              ledgerId,
+              ledgerName,
+            } = item;
+            return (
+              <Box key={ledgerId} mb={1} onClick={() => onLedgerClick(item)}>
+                <CreditCard
+                  cardName={(
+                    <Box component="span">
                       <Box
                         component="span"
-                        ml={0.5}
-                        color={theme.colors.text.brand}
+                        display={isOwner ? 'inline-block' : 'none'}
                       >
-                        主揪
+                        <HomeIcon />
+                        <Box
+                          component="span"
+                          ml={0.5}
+                          color={theme.colors.text.brand}
+                        >
+                          主揪
+                        </Box>
+                      </Box>
+                      <Box component="span" ml={1}>
+                        {ledgerName}
                       </Box>
                     </Box>
-                    <Box component="span" ml={1}>
-                      {item.account}
+                  )}
+                  color={
+                    Object.keys(theme.colors.card)[ledgerColor]
+                    || Object.keys(theme.colors.card)[0]
+                  }
+                  annotation={(
+                    <Box component="span">
+                      <PersonalIcon />
+                      <Box component="span" ml={1}>
+                        {sumOfMembers}
+                      </Box>
                     </Box>
-                  </Box>
-                )}
-                color={item.color}
-                annotation={(
-                  <Box component="span">
-                    <PersonalIcon />
-                    <Box component="span" ml={1}>
-                      {item.partySize}
-                    </Box>
-                  </Box>
-                )}
-                balance={item.amount}
-              />
-            </Box>
-          ))}
+                  )}
+                  balance={parseInt(ledgerAmount.replace(/,/g, ''), 10)}
+                />
+              </Box>
+            );
+          })}
       </PageWrapper>
     </Layout>
   );
