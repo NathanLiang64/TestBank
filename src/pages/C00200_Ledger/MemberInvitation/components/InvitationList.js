@@ -4,6 +4,7 @@ import { ArrowNextIcon } from 'assets/images/icons';
 import LinkIcon from '@material-ui/icons/Link';
 import CropFreeIcon from '@material-ui/icons/CropFree';
 import { customPopup } from 'utilities/MessageModal';
+import { shareMessage } from 'utilities/AppScriptProxy';
 import { useTheme } from 'styled-components';
 import InvitationQrCode from './InvitationQrCode';
 
@@ -46,7 +47,7 @@ export const InvitationList = () => {
       icon: <LinkIcon />,
       showDivider: true,
       callBack: () => {
-        console.log('發送邀請連結');
+        shareMessage('發送邀請連結');
       },
     },
     {
