@@ -531,15 +531,15 @@ const Transfer = (props) => {
           agrdTfrSelfLimitLeft: info.agrdTfrSelfLimitLeft,
           agrdTfrInterLimitLeft: info.agrdTfrInterLimitLeft,
         };
+        // NOTE 拿完免費跨轉 & 額度資訊後，再檢查是否有帳戶餘額
+        // (若先檢查帳戶餘額，會因為先跳出 modal 後才拿到免費跨轉 & 額度資訊，導致強迫渲染造成 modal 閃爍，)
+        if (!notified[account.accountNo]) {
+          setNotified((prevObj) => ({ ...prevObj, [account.accountNo]: true }));
+          if (!account.balance)showPrompt('您的帳戶餘額為0，無法進行轉帳');
+          else if (!account.transable)showPrompt('該帳戶目前沒有轉出權限');
+        }
         forceUpdate();
       });
-    }
-    if (!account.balance && !notified[account.accountNo]) {
-      setNotified((prevObj) => ({ ...prevObj, [account.accountNo]: true }));
-      showPrompt('您的帳戶餘額為0，無法進行轉帳');
-    } else if (!account.transable && !notified[account.accountNo]) {
-      setNotified((prevObj) => ({ ...prevObj, [account.accountNo]: true }));
-      showPrompt('該帳戶目前沒有轉出權限');
     }
   }, [selectedAccountIdx]);
 
