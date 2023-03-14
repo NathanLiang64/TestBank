@@ -8,8 +8,8 @@ import { useDispatch } from 'react-redux';
 import { PersonalIcon, HomeIcon } from 'assets/images/icons';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import PageWrapper from './ClubLedgersList.style';
-// import { getAllLedgers } from './api';
-import { getAllLedgers } from './constants/mockData';
+import { getAllLedgers } from './api';
+// import { getAllLedgers } from './constants/mockData';
 import AccountCardGrey from './components/AccountCardGrey';
 import LEDGER_IMG from './images/ledger.png';
 

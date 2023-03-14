@@ -19,8 +19,8 @@ import {
 } from 'assets/images/icons';
 import { customPopup, showError } from 'utilities/MessageModal';
 import Loading from 'components/Loading';
-import { getLedgerTxn } from './constants/mockData';
-// import { getLedgerTxn, openLedger } from './api';
+// import { getLedgerTxn } from './constants/mockData';
+import { getLedgerTxn, openLedger } from './api';
 import { validationSchema } from './constants/validationSchema';
 import PageWrapper from './LedgerDetail.style';
 
@@ -43,7 +43,7 @@ export default () => {
       return null;
     }
     setIsLoading(true);
-    // await openLedger({ ledgerId: state.ledgerId });
+    await openLedger({ ledgerId: state.ledgerId });
     const res = await getLedgerTxn({ sync: false });
     setIsLoading(false);
     const { txnList = [] } = res;
@@ -113,7 +113,9 @@ export default () => {
     history.push('/RecordDetail');
   };
   // 滾動 - 明細清單 -> 滾動至視圖底部時 呼叫API新增明細
+  const isDetectBottom = false;
   const onDetailScroll = (e) => {
+    if (!isDetectBottom) return;
     const { clientHeight, scrollHeight, scrollTop } = e.target;
     const isBottom = scrollTop + clientHeight + 60 > scrollHeight;
     if (isBottom && !isLoading) {
