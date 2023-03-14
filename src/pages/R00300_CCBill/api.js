@@ -1,4 +1,4 @@
-import { callAPI } from 'utilities/axios';
+import { callAPI, download } from 'utilities/axios';
 import { showCustomPrompt } from 'utilities/MessageModal';
 
 /**
@@ -91,4 +91,19 @@ export const getInvoice = async (format) => {
     message: `${format === 1 ? '下載PDF' : '下載EXCEL'}`,
     noDismiss: true,
   });
+};
+
+/**
+ * 下載信用卡截止日行事曆 (only for ios)
+ * @param {{
+ * title: string,
+ * fromDate: string
+ * }} param
+ * @returns {Promise<{
+ * filename: string // filename.ics
+ * }>}
+ */
+
+export const downloadCalendar = async (param) => {
+  await download('/creditCard/linkCalendar', param);
 };
