@@ -1,5 +1,4 @@
 import { callAPI, download } from 'utilities/axios';
-import { showCustomPrompt } from 'utilities/MessageModal';
 
 /**
  * 查詢客戶信用卡帳單資訊
@@ -74,23 +73,14 @@ export const getBillDeducStatus = async (request) => {
 };
 
 /**
- * 下載帳單
-   TODO 不確定是否需要其他query條件，是否回傳檔案網址
-   @param {
-      "fileType": 1 = pdf 或 2 = excel
-   }
-   @returns {
-     "url": 檔案URL。
-   }
+ * 下載信用卡帳單
+ * @param {string } period // '202212'
+ * @returns {Promise<{
+ * filename: string // filename.pdf
+ * }>}
  */
-export const getInvoice = async (format) => {
-  // TODO 下載帳單
-
-  await showCustomPrompt({
-    title: '待串接API',
-    message: `${format === 1 ? '下載PDF' : '下載EXCEL'}`,
-    noDismiss: true,
-  });
+export const getInvoice = (period) => {
+  download('/creditCard/v1/getBillSummaryFile', period);
 };
 
 /**
@@ -104,6 +94,6 @@ export const getInvoice = async (format) => {
  * }>}
  */
 
-export const downloadCalendar = async (param) => {
-  await download('/creditCard/linkCalendar', param);
+export const downloadCalendar = (param) => {
+  download('/creditCard/linkCalendar', param);
 };
