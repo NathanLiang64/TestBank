@@ -1,25 +1,16 @@
-const mockModel = {
-  txDate: '20220222',
-  txAmount: '800',
-  txUsage: '1',
-  bankCode: '812',
-  bankAccount: '0000888899980001',
-  txDesc: '車票',
-  memberNickName: 'AAA',
-  isEditable: true,
-  txStatus: 2, // 0: 不明, 1: 已入帳, 2: 未入帳
-  isOwner: true,
-}; // DEBUG mock data
+/* eslint-disable no-unused-vars */
+import { callAPI } from 'utilities/axios';
+import { mockLedgerTxRt, mockWriteOffListRt } from './mockData';
 
 /**
  * 取得單一帳本明細
  * @param {{
- * txid: string
+ * sync: boolean
  * }} param
  * @returns {{
  * txDate: string
  * txAmount: number
- * txUsage: string
+ * txUsageName: string
  * bankCode: string
  * bankAccount: string
  * txDesc: string
@@ -30,17 +21,35 @@ const mockModel = {
  * }}
  */
 export const getLedgerTx = (param) => {
-  console.log('getLedgerTx', {param}); // {txid: string}
+  /* 取得帳本所有明細 */
+  // const response = callAPI('/ledger/getLedgerTx', {sync: false});
+  console.log('getLedgerTx', {param}); // {sync: boolean}
   const response = {
     code: '0000',
-    data: mockModel,
+    data: mockLedgerTxRt,
   };
 
-  return response.data;
+  /* 依明細id取得帳本單一明細 */
+  const resSingleTx = response.data.txnList.find((txn) => txn.ledgerTxId === param.ledgerTxId);
+
+  return {
+    ledgerTxId: resSingleTx.ledgerTxId,
+    txDate: resSingleTx.txDate,
+    memberNickName: resSingleTx.bankeeMember.memberNickName,
+    txAmount: resSingleTx.txAmount,
+    txUsageName: resSingleTx.txUsageName,
+    bankCode: resSingleTx.bankCode,
+    bankAccount: resSingleTx.bankAccount,
+    txDesc: resSingleTx.txDesc,
+    isEditable: resSingleTx.editable,
+    txStatus: resSingleTx.txStatus,
+    isOwner: resSingleTx.owner,
+    type: resSingleTx.type,
+  };
 };
 
 /**
- * 編輯帳本明細
+ * 編輯帳本明細 (已入帳) *NOTE: API未看到
  * @param {{
  * txid: string
  * type: string
@@ -52,23 +61,52 @@ export const ledgerTxEdit = (param) => {
 };
 
 /**
- * 取得可銷帳清單
+ * 取得目前帳本可銷帳的帳本交易明細清單 (銷帳對象array)
  * @param {{
- * off: string
+ * type: number
+ * amount: number
  * }} param
  * @returns {{
- * ?
+ * isWriteOffList: boolean
+ * ledgertx: [
+ * ledgerTxId: string
+ * txType: string
+ * txUsage: string
+ * txDate: string
+ * txCurrency: string
+ * txAmount: string
+ * txDesc: string
+ * sourceMember: string
+ * ]
  * }}
  */
-export const writeOffList = (param) => {
-  console.log('writeOffList', {param});
-  const response = {};
+export const getWriteOffList = (param) => {
+  // const response = callAPI('/ledger/getLedgerTx', param);
+  console.log('/getWriteOffList', {param});
+  const response = {
+    code: '0000',
+    data: mockWriteOffListRt,
+  };
 
-  return response;
+  const tempLedgerTxList = response.data.ledgertx.map((tx) => ({
+    ledgerTxId: tx.ledgerTxId,
+    txType: tx.txType,
+    txUsage: tx.txUsage,
+    txDate: tx.txDate,
+    txCurrency: tx.txCurrency,
+    txAmount: tx.txAmount,
+    txDesc: tx.txDesc,
+    sourceMember: tx.bankeeMember.memberNickName,
+  }));
+
+  return {
+    isWriteOffList: tempLedgerTxList.length !== 0,
+    ledgertx: tempLedgerTxList,
+  };
 };
 
 /**
- * 未入帳銷帳作業
+ * 未入帳銷帳作業 *NOTE: API rq, rs與/getWriteOffList 相同??
  * @param {{
  * txid: string
  * pretxid: string
@@ -79,21 +117,26 @@ export const writeOffList = (param) => {
  * }}
  */
 export const setWriteOff = (param) => {
-  console.log('ledgerTxEdit', {param});
+  console.log('writeOff', {param});
 };
 
 /**
  * 未入帳銷帳編輯作業
  * @param {{
- * txid: string
- * id: string
+ * depTxnId: string
  * usage: string
  * remark: string
  * }} param
  * @returns {{
- * ?
+ * isSuccess?: boolean
  * }}
  */
 export const editWriteOff = (param) => {
   console.log('editWriteOff', {param});
+  const request = {
+    depTxnId: param.id,
+    usage: param.type,
+    remark: param.memo,
+  };
+  callAPI('/ledger/editWriteOff', request);
 };

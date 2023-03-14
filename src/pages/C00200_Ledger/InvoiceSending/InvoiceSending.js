@@ -14,6 +14,7 @@ import Layout from 'components/Layout/Layout';
 import SwiperLayout from 'components/SwiperLayout';
 import { typeOptions } from '../utils/usgeType';
 import PageWrapper from './InvoiceSending.style';
+import { cardImage } from '../utils/cardImage';
 
 const InvoiceSending = () => {
   const [imgIndex, setImgIndex] = useState(0);
@@ -38,10 +39,10 @@ const InvoiceSending = () => {
     resolver: yupResolver(schema),
   });
 
-  const renderRequestCardPic = () => { // DEBUG mock images
-    const colorLists = ['black', 'blue', 'salmon', 'grey'];
+  const renderRequestCardPic = () => {
+    const imageIdList = [1, 2, 3, 4, 5];
 
-    return colorLists.map((color) => <div style={{height: '16rem', width: '24rem', backgroundColor: `${color}`}}>image</div>);
+    return imageIdList.map((id) => cardImage(id));
   };
 
   const onSlideChange = async (swiper) => {
@@ -54,7 +55,7 @@ const InvoiceSending = () => {
       ...data,
       bank: stateData.bank,
       account: stateData.account,
-      image: imgIndex,
+      image: imgIndex + 1, // imageId
     };
     console.log('onSubmit', requestData);
   };
@@ -73,7 +74,7 @@ const InvoiceSending = () => {
       <PageWrapper>
         <SwiperLayout
           slides={renderRequestCardPic()}
-          slidesPerView={1.3}
+          slidesPerView={1.08}
           spaceBetween={8}
           centeredSlides
           onSlideChange={onSlideChange}
