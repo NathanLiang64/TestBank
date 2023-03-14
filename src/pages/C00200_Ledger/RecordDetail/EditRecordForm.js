@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-use-before-define */
 import { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
@@ -11,12 +12,14 @@ import { FEIBButton } from 'components/elements';
 
 import { EditRecordFormWrapper } from './RecordDetail.style';
 import { typeOptions } from '../utils/usgeType';
+import { editWriteOff, getWriteOffList } from './api';
 
 const EditRecordForm = () => {
   const history = useHistory();
   const { state } = useLocation();
 
   const [notRecordedMode, setNotRecordedMode] = useState('0'); // 0: 選擇銷帳對象, 1: 自行編輯交易明細
+  const [isShowWriteOff, setIsShowWriteOff] = useState(false);
   const [recordTargetList, setRecordTargetList] = useState([]);
 
   const notRecordedModeOptions = [
@@ -39,7 +42,7 @@ const EditRecordForm = () => {
   });
 
   // form: notRecorded mode
-  const {control: notRecordedControl, watch} = useForm({
+  const {control: notRecordedControl, watch, reset: notRecordedReset} = useForm({
     defaultValues: {
       mode: '0',
     },
@@ -75,6 +78,7 @@ const EditRecordForm = () => {
     if (state.txStatus === 1 || (state.txStatus === 2 && notRecordedMode === '1')) {
       const value = getInfoValues();
       console.log('info value', {value});
+      const response = editWriteOff({...value, id: state.ledgerTxId});
     } else {
       const value = getTargetValues();
       console.log('target value', {value});
@@ -86,33 +90,30 @@ const EditRecordForm = () => {
 
   /* 未入帳－銷帳對象清單 */
   useEffect(() => {
-    const response = [
-      {
-        date: '20220101',
-        member: 'AAA',
-        memberId: '001',
-        amount: '1000',
-        memo: 'AA',
-      },
-      {
-        date: '20220101',
-        member: 'BBB',
-        memberId: '002',
-        amount: '1000',
-        memo: 'AA',
-      },
-    ]; // DEBUG mock data, api?
+    const response = getWriteOffList({
+      type: state.type,
+      amount: state.txAmount,
+    });
 
-    const targetList = response.map((item) => ({
-      value: item.memberId,
-      label: `${item.date} ${item.member} ${item.amount} ${item.memo}`,
-    }));
+    if (!response.isWriteOffList) {
+      setNotRecordedMode('1');
+      notRecordedReset(() => ({
+        mode: '1',
+      }));
+      setIsShowWriteOff(false);
+    } else {
+      const targetList = response.ledgertx.map((item) => ({
+        value: item.ledgerTxId,
+        label: `${item.txDate} ${item.sourceMember} ${item.txAmount} ${item.txDesc}`,
+      }));
 
-    setRecordTargetList(targetList);
+      setRecordTargetList(targetList);
 
-    reset(() => ({
-      target: targetList[0].value,
-    }));
+      reset(() => ({
+        target: targetList[0].value,
+      }));
+      setIsShowWriteOff(true);
+    }
   }, []);
 
   return (
@@ -133,16 +134,16 @@ const EditRecordForm = () => {
         {/* 未入帳 */}
         {state.txStatus === 2 && (
           <div>
+            {/* NOTE 若無可銷帳對象，則預設選取自行編輯交易明細 */}
             <RadioGroupField
               labelName=""
               name="mode"
               control={notRecordedControl}
-              options={notRecordedModeOptions}
+              options={isShowWriteOff ? notRecordedModeOptions : notRecordedModeOptions.slice(-1)}
               onChange={onNotRecordedModeChange}
             />
             <div className="record_target_list">
               {console.log({notRecordedMode})}
-              {/* NOTE 若無可銷帳對象，則預設選取自行編輯交易明細 */}
               {(notRecordedMode === '0' && recordTargetList.length !== 0) ? <RadioGroupField labelName="" name="target" control={recordTargetControl} options={recordTargetList} /> : renderFormContent()}
             </div>
           </div>

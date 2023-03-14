@@ -8,6 +8,7 @@ const PageWrapper = styled(Layout)`
   padding: 0 20;
 
   .form{
+    min-height: fit-content;
     display: grid;
     align-content: flex-start;
     grid-gap: 2rem;

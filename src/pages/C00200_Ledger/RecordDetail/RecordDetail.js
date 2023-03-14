@@ -6,7 +6,6 @@ import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
 import Layout from 'components/Layout/Layout';
 
-import { handleTypeText } from '../utils/usgeType';
 import { PageWrapper } from './RecordDetail.style';
 import { getLedgerTx } from './api';
 
@@ -21,7 +20,7 @@ const RecordDetail = () => {
 
   useEffect(() => {
     // get model
-    const response = getLedgerTx();
+    const response = getLedgerTx({ledgerTxId: '001'});
     setModel(response);
   }, []);
 
@@ -35,7 +34,7 @@ const RecordDetail = () => {
           {renderInformationContent('銀行代號', model.bankCode)}
           {renderInformationContent('轉出帳號', model.bankAccount)}
           {renderInformationContent('轉出金額', `NTD${toCurrency(model.txAmount)}`)}
-          {renderInformationContent('性質', handleTypeText(model.txUsage))}
+          {renderInformationContent('性質', model.txUsageName)}
           {renderInformationContent('備註', model.txDesc ?? '--')}
         </div>
         {(model.isEditable && model.isOwner) && <FEIBButton onClick={handleEditOnClick}>編輯</FEIBButton>}
