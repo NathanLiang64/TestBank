@@ -8,7 +8,8 @@ import { useDispatch } from 'react-redux';
 import { PersonalIcon, HomeIcon } from 'assets/images/icons';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import PageWrapper from './ClubLedgersList.style';
-import { getAllLedgersRs } from './constants/mockData';
+// import { getAllLedgers } from './api';
+import { getAllLedgers } from './constants/mockData';
 import AccountCardGrey from './components/AccountCardGrey';
 import LEDGER_IMG from './images/ledger.png';
 
@@ -26,12 +27,12 @@ export default () => {
   // 點擊 - 帳本
   const onLedgerClick = (obj) => {
     console.log(obj);
-    history.push('/LedgerDetail', { state: ledgerList });
+    history.push('/LedgerDetail', obj);
   };
   // 初始化
   const init = async () => {
     dispatch(setWaittingVisible(true));
-    const res = await getAllLedgersRs();
+    const res = await getAllLedgers();
     const { ledger = [] } = res;
     setLedgerList(ledger);
     setHasLedgerData(ledger.length !== 0);

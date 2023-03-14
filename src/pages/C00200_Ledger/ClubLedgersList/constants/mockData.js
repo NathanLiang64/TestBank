@@ -3,7 +3,7 @@
  * 舊版本API名稱: ledgerList
  * 新版本API名稱: getAllLedgersRs
  */
-export const getAllLedgersRs = () => new Promise((resolve) => {
+export const getAllLedgers = () => new Promise((resolve) => {
   const pendingTime = 300;
   const data = {
     ledger: [

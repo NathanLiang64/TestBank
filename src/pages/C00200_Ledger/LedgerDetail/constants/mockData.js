@@ -1,43 +1,41 @@
-import uuid from 'react-uuid';
-
-// 可用於 DetailCard 元件測試
-export const addDetailCard = (number = 10) => Array.from(Array(number), (item, id) => ({
-  id: uuid(),
-  amount: Math.floor(Math.random() * 1000),
-  balance: Math.floor(Math.random() * 60000),
-  description: `測試標題${id}`,
-  txnDate: new Date(),
-  cdType: Math.random() > 0.5 ? 'd' : 'c',
-  memo: `備註${id}`,
-}));
-
-export const MAIN_CARD_CONFIG = {
-  name: '帳本名稱',
-  balance: 6000,
-};
-
-// 可用於 AccordionDetails 元件之 selectedAccount 測試
-export const TRANSACTIONS_LIST = {
-  startIndex: 1,
-  dataDirect: 0,
-  minIndex: 1,
-  maxIndex: 50,
-  monthly: ['202303', '202302', '202301'],
-  acctTxDtls: Array.from(Array(50), () => ({
-    index: uuid(),
-    bizDate: '20230302',
-    txnDate: '20230302',
-    txnTime: '91315',
-    description: '網路連動轉出',
-    memo: '',
-    targetMbrId: null,
-    targetNickName: null,
-    targetBank: '000',
-    targetAcct: '04300497000938',
-    amount: 6,
-    balance: Math.random() * 60000,
-    cdType: Math.random() > 0.5 ? 'd' : 'c',
-    currency: 'NTD',
-    invert: false,
-  })),
-};
+/**
+ * 取得帳本明細列表 (參考開發文件v3 -> p108)
+ * 舊版本API名稱: ledgerTxList
+ * 新版本API名稱: getLedgerTxn
+ */
+export const getLedgerTxn = () => new Promise((resolve) => {
+  const pendingTime = 1e3;
+  const data = {
+    txnList: [
+      {
+        txDate: '2021-02-19', // 交易時間
+        bankeeMember: {
+          memberNickName: 'Little', // 暱稱
+        },
+        bankAccount: '0004300499099463', // 交易帳號
+        txDesc: 'hihi', // 交易敘述
+        txType: '1', // 交易類型
+        ledgerTxId: '811', // 交易 id
+        txCurrency: 'NTD', // 交易貨幣
+        countAmount: '2', // 帳本餘額
+        txnAmount: -2, // 交易金額
+      },
+      {
+        txDate: '2021-02-17',
+        bankeeMember: {
+          memberNickName: '十月二一測試四',
+        },
+        bankAccount: '0004300499099455',
+        txDesc: 'Hihi',
+        txType: '1',
+        ledgerTxId: '810',
+        txCurrency: 'NTD',
+        countAmount: '4',
+        txnAmount: -2,
+      },
+    ],
+  };
+  setTimeout(() => {
+    resolve(data);
+  }, pendingTime);
+});

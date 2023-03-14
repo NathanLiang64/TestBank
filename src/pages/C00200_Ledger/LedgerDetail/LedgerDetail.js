@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { useForm } from 'react-hook-form';
+import { useTheme } from 'styled-components';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box } from '@material-ui/core';
 import Layout from 'components/Layout/Layout';
@@ -16,17 +17,45 @@ import {
   EditIcon,
   HomeIcon,
 } from 'assets/images/icons';
-import { customPopup } from 'utilities/MessageModal';
+import { customPopup, showError } from 'utilities/MessageModal';
 import Loading from 'components/Loading';
-import { addDetailCard, MAIN_CARD_CONFIG } from './constants/mockData';
+import { getLedgerTxn } from './constants/mockData';
+// import { getLedgerTxn, openLedger } from './api';
 import { validationSchema } from './constants/validationSchema';
 import PageWrapper from './LedgerDetail.style';
 
 export default () => {
+  const location = useLocation();
   const history = useHistory();
   const timer = useRef();
-  const [transactionList, setTransactionList] = useState(addDetailCard(10));
+  const theme = useTheme();
+  // 狀態設定
+  const { state } = location;
+  const [cardInfo, setCardInfo] = useState(state || {});
+  const [transactionList, setTransactionList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  // 畫面初始化
+  const init = async () => {
+    // 進入頁面時先判斷是否帶入 state -> 若無則返回上一頁
+    if (!state) {
+      showError('未取得LedgerId', () => history.goBack());
+      return null;
+    }
+    setIsLoading(true);
+    // await openLedger({ ledgerId: state.ledgerId });
+    const res = await getLedgerTxn({ sync: false });
+    setIsLoading(false);
+    const { txnList = [] } = res;
+    setCardInfo((p) => ({ ...p, ledgerAmount: txnList[0]?.countAmount }));
+    setTransactionList(txnList);
+    return null;
+  };
+
+  useEffect(() => {
+    init();
+  }, []);
+
   const panelContent = [
     {
       id: 1,
@@ -91,7 +120,7 @@ export default () => {
       setIsLoading(true);
       timer.current = setTimeout(() => {
         setIsLoading(false);
-        setTransactionList((p) => [...p, ...addDetailCard(20)]);
+        setTransactionList((p) => [...p, ...[]]);
       }, 1e3);
     }
   };
@@ -120,7 +149,7 @@ export default () => {
           )}
         />
         <CreditCard
-          cardName={MAIN_CARD_CONFIG.name}
+          cardName={cardInfo.ledgerName}
           onMoreClicked={onCardMoreClick}
           annotation={(
             <Box display="flex" onClick={onCardMemberClick}>
@@ -132,11 +161,23 @@ export default () => {
               </Box>
             </Box>
           )}
-          balance={MAIN_CARD_CONFIG.balance}
+          balance={parseInt(cardInfo.ledgerAmount?.replace(/,/g, ''), 10)}
+          color={
+            Object.keys(theme.colors.card)[cardInfo.ledgerColor]
+            || Object.keys(theme.colors.card)[0]
+          }
         />
-        <Box display="flex" justifyContent="space-between" my={1}>
-          {panelContent.map((item) => (
-            <Box key={item.id} width="49%">
+        <Box
+          display="flex"
+          justifyContent={cardInfo.isOwner ? 'space-between' : 'center'}
+          my={1}
+        >
+          {panelContent.map((item, index) => (
+            <Box
+              key={item.id}
+              width="49%"
+              display={!cardInfo.isOwner && index === 0 ? 'none' : 'block'}
+            >
               <FEIBButton onClick={item.onClick}>{item.label}</FEIBButton>
             </Box>
           ))}
@@ -148,15 +189,22 @@ export default () => {
             onScroll={(e) => onDetailScroll(e)}
           >
             {transactionList.map((item) => (
-              <Box key={item.id} onClickCapture={(e) => onDetailClick(e)}>
+              <Box
+                key={item.ledgerTxId}
+                onClickCapture={(e) => onDetailClick(e)}
+              >
                 <DetailCard
-                  amount={item.amount}
-                  balance={item.balance}
-                  description={item.description}
-                  txnDate={item.txnDate}
-                  cdType={item.cdType}
-                  memo={item.memo}
-                  currency="NTD"
+                  amount={Math.abs(item.txnAmount)}
+                  balance={item.countAmount}
+                  description={item.txDesc}
+                  txnDate={item.txDate}
+                  cdType={item.txnAmount < 0 && 'c'}
+                  memo={
+                    item.bankeeMember.memberNickName !== ''
+                      ? item.bankeeMember.memberNickName
+                      : item.bankAccount
+                  }
+                  currency={item.txCurrency}
                 />
               </Box>
             ))}

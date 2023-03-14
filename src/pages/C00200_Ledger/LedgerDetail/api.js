@@ -6,7 +6,12 @@ import { callAPI } from 'utilities/axios';
  * @param {Number} ledgerId 帳本識別碼, 是從 /ledger/initList API 取得。
  * @return {ledgerId, ledgerType, ledgerStatus, ledgerName, ...}
  */
-export const openLedger = async (ledgerId) => {
-  const response = await callAPI('/ledger/openLedger', ledgerId);
+export const openLedger = async (payload) => {
+  const response = await callAPI('/ledger/openLedger', payload);
   return response;
+};
+
+export const getLedgerTxn = async (payload = {}) => {
+  const response = await callAPI('/ledger/getLedgerTxn', payload);
+  return response.data;
 };
