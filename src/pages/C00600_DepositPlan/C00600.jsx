@@ -17,7 +17,7 @@ import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import { useDispatch } from 'react-redux';
 
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 import EmptySlide from './components/EmptySlide';
 import EmptyPlan from './components/EmptyPlan';
 import DepositPlan from './components/DepositPlan';
@@ -84,6 +84,7 @@ const DepositPlanPage = () => {
 
   const handleTerminatePlan = (plan) => {
     const confirmTermination = async () => {
+      dispatch(setModalVisible(false)); // 先關掉 modal 避免閃爍
       const {result} = await transactionAuth(Func.C006.authCode); // 需通過 2FA 或 網銀密碼 驗證才能關閉計劃。
       if (!result) return;
 
