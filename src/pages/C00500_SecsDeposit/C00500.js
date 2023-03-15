@@ -125,8 +125,10 @@ const C00500 = () => {
         value: `${freeWithdrawRemain ?? '-'}/${freeTransferRemain ?? '-'}`,
         onClick: () => showCustomPrompt({
           title: '免費跨提轉',
-          message:
-              '跨行提款/跨行轉帳手續費優惠次數計算基準:於當月月初第二個日曆日凌晨 00:00:00 起重新計算,並 於次月第一個日曆日下午 23:59:59 失效。',
+          message: (
+            <p className="txtCenter">
+              跨行提款/跨行轉帳手續費優惠次數計算基準:於當月月初第二個日曆日凌晨 00:00:00 起重新計算,並於次月第一個日曆日下午 23:59:59 失效。
+            </p>),
           onOk: null,
         }),
       },

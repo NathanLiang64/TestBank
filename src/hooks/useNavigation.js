@@ -180,13 +180,15 @@ const useNavigation = () => {
     console.log(`Close Function (${closedItem.funcID})`); // DEBUG
     delete window.FuncParams;
 
+    // 建立要返回功能的啟動參數。
+    let startItem = funcStack.peek();
+
     // 若是非開發模式下，將 B001 從 stack 中移除
     if (process.env.NODE_ENV !== 'development' && startItem.funcID === Func.B001.id) {
       funcStack.pop();
+      startItem = funcStack.peek();
     }
 
-    // 建立要返回功能的啟動參數。
-    const startItem = funcStack.peek();
     if (!startItem) {
       await callAppJavaScript('closeFunc', null, false);
       if (closedItem.funcID === Func.B001.id) forceLogout();
