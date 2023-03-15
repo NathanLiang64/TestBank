@@ -61,7 +61,7 @@ export default () => {
             const {
               ledgerAmount,
               ledgerColor,
-              isOwner,
+              owner,
               sumOfMembers,
               ledgerId,
               ledgerName,
@@ -73,7 +73,7 @@ export default () => {
                     <Box component="span">
                       <Box
                         component="span"
-                        display={isOwner ? 'inline-block' : 'none'}
+                        display={owner ? 'inline-block' : 'none'}
                       >
                         <HomeIcon />
                         <Box
