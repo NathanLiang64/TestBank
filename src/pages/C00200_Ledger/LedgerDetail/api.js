@@ -8,10 +8,17 @@ import { callAPI } from 'utilities/axios';
  */
 export const openLedger = async (payload) => {
   const response = await callAPI('/ledger/openLedger', payload);
-  return response;
+  return response.data;
 };
 
+// 取得帳本明細清單
 export const getLedgerTxn = async (payload = {}) => {
   const response = await callAPI('/ledger/getLedgerTxn', payload);
+  return response.data;
+};
+
+// 修改公告內容
+export const setAnnouncement = async (payload = {}) => {
+  const response = await callAPI('/ledger/setAnnouncement', payload);
   return response.data;
 };

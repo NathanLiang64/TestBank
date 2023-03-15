@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
-import { useForm } from 'react-hook-form';
 import { useTheme } from 'styled-components';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { Box } from '@material-ui/core';
 import Layout from 'components/Layout/Layout';
 import DetailCard from 'components/DetailCard';
@@ -10,18 +8,21 @@ import { FEIBButton } from 'components/elements';
 import CreditCard from 'components/CreditCard';
 import InformationTape from 'components/InformationTape';
 import AccountDetailsWrapper from 'components/AccountDetails/accountDetails.style';
-import { TextareaField } from 'components/Fields';
 import {
   PersonalIcon,
   ArrowNextIcon,
   EditIcon,
   HomeIcon,
 } from 'assets/images/icons';
-import { customPopup, showError } from 'utilities/MessageModal';
+import {
+  showCustomPrompt,
+  showError,
+  showAnimationModal,
+} from 'utilities/MessageModal';
 import Loading from 'components/Loading';
 // import { getLedgerTxn } from './constants/mockData';
-import { getLedgerTxn, openLedger } from './api';
-import { validationSchema } from './constants/validationSchema';
+import { getLedgerTxn, openLedger, setAnnouncement } from './api';
+import { EditNotifyForm } from './components/EditForm';
 import PageWrapper from './LedgerDetail.style';
 
 export default () => {
@@ -29,11 +30,14 @@ export default () => {
   const history = useHistory();
   const timer = useRef();
   const theme = useTheme();
+  const isMounted = useRef(false);
   // 狀態設定
   const { state } = location;
-  const [cardInfo, setCardInfo] = useState(state || {});
+  const [viewModel, setViewModel] = useState(state || {});
+  const [notify, setNotify] = useState('');
   const [transactionList, setTransactionList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isInit, setIsInit] = useState(true);
 
   // 畫面初始化
   const init = async () => {
@@ -43,12 +47,14 @@ export default () => {
       return null;
     }
     setIsLoading(true);
-    await openLedger({ ledgerId: state.ledgerId });
-    const res = await getLedgerTxn({ sync: false });
+    const resFromOpenLedger = await openLedger({ ledgerId: state.ledgerId });
+    setNotify(resFromOpenLedger?.ledgerPublisher?.publishDesc);
+    const resFromLedgerTxn = await getLedgerTxn({ sync: false });
     setIsLoading(false);
-    const { txnList = [] } = res;
-    setCardInfo((p) => ({ ...p, ledgerAmount: txnList[0]?.countAmount }));
+    const { txnList = [] } = resFromLedgerTxn;
+    setViewModel((p) => ({ ...p, ledgerAmount: txnList[0]?.countAmount }));
     setTransactionList(txnList);
+    setIsInit(false);
     return null;
   };
 
@@ -56,61 +62,67 @@ export default () => {
     init();
   }, []);
 
+  useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+    } else {
+      history.push(location.pathname, viewModel);
+    }
+  }, [viewModel]);
+
   const panelContent = [
     {
       id: 1,
       label: '給錢',
       onClick: () => {
-        console.log('給錢');
-        history.push('/transferSetting');
+        console.log('給錢', state);
+        history.push('/transferSetting', state);
       },
     },
     {
       id: 2,
       label: '要錢',
       onClick: () => {
-        console.log('要錢');
-        history.push('/InvoiceSending');
+        console.log('要錢', state);
+        history.push('/InvoiceSending', state);
       },
     },
   ];
-  // 表單 - 編輯公告訊息
-  const { control, handleSubmit } = useForm({
-    defaultValues: { notice: '訊息公告' },
-    resolver: yupResolver(validationSchema),
-    mode: 'onChange',
-  });
   // 點擊 - 編輯公告訊息
   const onAnnouncementClick = () => {
-    customPopup(
-      '編輯公告訊息',
-      <TextareaField
-        control={control}
-        name="notice"
-        rowsMin={3}
-        rowsMax={6}
-        limit={30}
-      />,
-      handleSubmit(({ notice }) => {
-        console.log('API REQUEST', notice);
-      }),
-    );
+    showCustomPrompt({
+      title: '編輯公告訊息',
+      message: (
+        <EditNotifyForm
+          memoDefaultValue={notify}
+          callback={async (data) => {
+            const res = await setAnnouncement({ message: data });
+            if (res) setNotify(data);
+            showAnimationModal({
+              isSuccess: res,
+              successTitle: '設定成功',
+              errorTitle: '設定失敗',
+            });
+          }}
+        />
+      ),
+    });
   };
   // 點擊 - 帳本管理
   const onCardMoreClick = () => {
-    console.log('帳本管理');
-    history.push('/LedgerManagement');
+    console.log('帳本管理', state);
+    history.push('/LedgerManagement', state);
   };
   // 點擊 - 查看成員
   const onCardMemberClick = () => {
-    console.log('查看成員');
-    history.push('/MemberManagement');
+    console.log('查看成員', state);
+    history.push('/MemberManagement', state);
   };
   // 點擊 - 單筆明細
-  const onDetailClick = (e) => {
+  const onDetailClick = (e, item) => {
     e.stopPropagation();
-    console.log('查看明細');
-    history.push('/RecordDetail');
+    console.log('查看明細', item);
+    history.push('/RecordDetail', item);
   };
   // 滾動 - 明細清單 -> 滾動至視圖底部時 呼叫API新增明細
   const isDetectBottom = false;
@@ -131,7 +143,10 @@ export default () => {
   useEffect(() => () => clearTimeout(timer.current), []);
 
   return (
-    <Layout title="帳本明細" goBackFunc={() => history.goBack()}>
+    <Layout
+      title="帳本明細"
+      goBackFunc={() => history.push('/clubLedgersList')}
+    >
       <PageWrapper>
         <InformationTape
           className="announcement"
@@ -140,18 +155,21 @@ export default () => {
             <Box display="flex">
               <HomeIcon />
               <Box ml={1} component="span">
-                公告訊息
+                {!notify && !isInit ? '主揪尚未設定公告' : notify}
               </Box>
             </Box>
           )}
           topRight={(
-            <Box display="flex" onClick={onAnnouncementClick}>
+            <Box
+              display={viewModel?.owner ? 'flex' : 'none'}
+              onClick={onAnnouncementClick}
+            >
               <EditIcon />
             </Box>
           )}
         />
         <CreditCard
-          cardName={cardInfo.ledgerName}
+          cardName={viewModel.ledgerName}
           onMoreClicked={onCardMoreClick}
           annotation={(
             <Box display="flex" onClick={onCardMemberClick}>
@@ -163,22 +181,22 @@ export default () => {
               </Box>
             </Box>
           )}
-          balance={parseInt(cardInfo.ledgerAmount?.replace(/,/g, ''), 10)}
+          balance={parseInt(viewModel.ledgerAmount?.replace(/,/g, ''), 10)}
           color={
-            Object.keys(theme.colors.card)[cardInfo.ledgerColor]
+            Object.keys(theme.colors.card)[viewModel.ledgerColor]
             || Object.keys(theme.colors.card)[0]
           }
         />
         <Box
           display="flex"
-          justifyContent={cardInfo.isOwner ? 'space-between' : 'center'}
+          justifyContent={viewModel.owner ? 'space-between' : 'center'}
           my={1}
         >
           {panelContent.map((item, index) => (
             <Box
               key={item.id}
               width="49%"
-              display={!cardInfo.isOwner && index === 0 ? 'none' : 'block'}
+              display={!viewModel.owner && index === 0 ? 'none' : 'block'}
             >
               <FEIBButton onClick={item.onClick}>{item.label}</FEIBButton>
             </Box>
@@ -193,7 +211,7 @@ export default () => {
             {transactionList.map((item) => (
               <Box
                 key={item.ledgerTxId}
-                onClickCapture={(e) => onDetailClick(e)}
+                onClickCapture={(e) => onDetailClick(e, item)}
               >
                 <DetailCard
                   amount={Math.abs(item.txnAmount)}

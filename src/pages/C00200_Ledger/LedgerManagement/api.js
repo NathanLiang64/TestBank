@@ -36,3 +36,15 @@ export const getLedgerList = async () => {
   const response = await callAPI('/ledger/getLedgerList'); // TODO 可建立Cache 保存
   return response.data;
 };
+
+// 編輯帳本名稱
+export const setLedgerName = async (payload) => {
+  const response = await callAPI('/ledger/setLedgerName', payload);
+  return response.data;
+};
+
+// 編輯暱稱
+export const setNickname = async (payload) => {
+  const response = await callAPI('/ledger/setNickname', payload);
+  return response.data;
+};
