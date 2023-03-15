@@ -1,4 +1,4 @@
-export const typeOptions = [
+export const txUsageOptions = [
   {
     label: '食',
     value: '1',
@@ -29,7 +29,7 @@ export const typeOptions = [
   },
 ];
 
-export const handleTypeText = (typeId) => {
+export const handleTxUsageText = (typeId) => {
   switch (typeId) {
     case '1':
       return '食';

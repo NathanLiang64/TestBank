@@ -11,7 +11,7 @@ import { DropdownField, TextInputField, RadioGroupField } from 'components/Field
 import { FEIBButton } from 'components/elements';
 
 import { EditRecordFormWrapper } from './RecordDetail.style';
-import { typeOptions } from '../utils/usgeType';
+import { txUsageOptions } from '../utils/usgeType';
 import { editWriteOff, getWriteOffList } from './api';
 
 const EditRecordForm = () => {
@@ -64,7 +64,7 @@ const EditRecordForm = () => {
 
   const renderFormContent = () => (
     <form className="edit_form" onSubmit={() => onSubmit()}>
-      <DropdownField labelName="性質" options={typeOptions} name="type" control={control} />
+      <DropdownField labelName="性質" options={txUsageOptions} name="type" control={control} />
       <TextInputField labelName="備註" type="text" control={control} name="memo" inputProps={{placeholder: '備註'}} />
     </form>
   );

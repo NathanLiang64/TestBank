@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { toCurrency } from 'utilities/Generator';
-import { handleTypeText } from '../utils/usgeType';
+import { handleTxUsageText } from '../utils/usgeType';
 import PageWrapper from './InvitationCard.style';
 import JoinCard from '../Assets/joinCard.png';
 import { cardImage } from '../utils/cardImage';
@@ -44,7 +44,7 @@ const InvitationCard = (cardData) => {
               <div className="info_container">
                 {renderInfoRow('金額', `NTD${toCurrency(model.amount)}`)}
                 {renderInfoRow('帳本', model.ledgerName)}
-                {renderInfoRow('性質', handleTypeText(model.type))}
+                {renderInfoRow('性質', handleTxUsageText(model.type))}
                 {renderInfoRow('說明', model.memo)}
               </div>
             </div>
