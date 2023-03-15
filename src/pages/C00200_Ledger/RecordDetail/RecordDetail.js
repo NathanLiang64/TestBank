@@ -1,17 +1,20 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
-import { toCurrency } from 'utilities/Generator';
+import { useHistory, useLocation } from 'react-router';
+import { accountFormatter, toCurrency } from 'utilities/Generator';
 
 import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
 import Layout from 'components/Layout/Layout';
+import { handleTxUsageText } from '../utils/usgeType';
 
 import { PageWrapper } from './RecordDetail.style';
-import { getLedgerTx } from './api';
+import { state } from './mockData';
 
 const RecordDetail = () => {
   const history = useHistory();
   const [model, setModel] = useState();
+  // const { state } = useLocation(); // TODO 解開註解移除mock
 
   const renderInformationContent = (title, info) => <InformationList title={title} content={info} />;
 
@@ -20,8 +23,7 @@ const RecordDetail = () => {
 
   useEffect(() => {
     // get model
-    const response = getLedgerTx({ledgerTxId: '001'});
-    setModel(response);
+    setModel(state);
   }, []);
 
   return (
@@ -30,14 +32,14 @@ const RecordDetail = () => {
       <PageWrapper>
         <div className="info">
           {renderInformationContent('交易日期', model.txDate)}
-          {renderInformationContent('轉出成員', model.memberNickName ?? '--')}
+          {renderInformationContent('轉出成員', model.bankeeMember.memberNickName ?? '--')}
           {renderInformationContent('銀行代號', model.bankCode)}
-          {renderInformationContent('轉出帳號', model.bankAccount)}
-          {renderInformationContent('轉出金額', `NTD${toCurrency(model.txAmount)}`)}
-          {renderInformationContent('性質', model.txUsageName)}
-          {renderInformationContent('備註', model.txDesc ?? '--')}
+          {renderInformationContent('轉出帳號', accountFormatter(model.bankAccount, model.bankCode === '805'))}
+          {renderInformationContent('轉出金額', `NTD${toCurrency(model.txnAmount)}`)}
+          {renderInformationContent('性質', handleTxUsageText(model.txUsage))}
+          {renderInformationContent('說明', model.txDesc ?? '--')}
         </div>
-        {(model.isEditable && model.isOwner) && <FEIBButton onClick={handleEditOnClick}>編輯</FEIBButton>}
+        {(model.editable && model.owner) && <FEIBButton onClick={handleEditOnClick}>編輯</FEIBButton>}
       </PageWrapper>
       )}
     </Layout>

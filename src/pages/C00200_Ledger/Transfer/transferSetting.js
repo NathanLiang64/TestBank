@@ -16,7 +16,7 @@ import {TransferPageWrapper} from './transfer.style';
 import C002TransferAccordionContent from './accordionContent';
 import { transferSettingInitialData } from './mockData';
 import { getBonusInfo } from './api';
-import { typeOptions } from '../utils/usgeType';
+import { txUsageOptions } from '../utils/usgeType';
 
 /**
  * C002 社群帳本 - 轉帳
@@ -124,7 +124,7 @@ const TransferSetting = () => {
           {/* <BankCodeInput control={control} name="transInBank" readonly={!!transData.transInBank} setValue={setValue} value={getValues('transInBank')} trigger={trigger} /> */}
           <TextInputField labelName="銀行代碼" type="text" control={control} name="transInBank" inputProps={{placeholder: '銀行代碼', inputMode: 'numeric', disabled: !!transData.transInBank}} />
           <TextInputField labelName="轉入帳號" type="text" control={control} name="transInAcct" inputProps={{placeholder: '轉入帳號', inputMode: 'numeric', disabled: !!transData.transInAccount}} />
-          <DropdownField labelName="性質" options={typeOptions} name="type" control={control} inputProps={{disabled: !!transData.usageType}} />
+          <DropdownField labelName="性質" options={txUsageOptions} name="type" control={control} inputProps={{disabled: !!transData.usageType}} />
           <TextInputField labelName="備註" type="text" control={control} name="memo" inputProps={{placeholder: '備註', disabled: !!transData.memo}} />
           {warningText('轉帳前請多思考，避免被騙更苦惱')}
 

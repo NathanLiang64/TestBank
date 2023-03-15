@@ -12,7 +12,7 @@ import W05 from '../Assets/message_cards/w05.gif';
  * @returns {{<img>}}
  */
 export const cardImage = (imageId) => {
-  console.log('cardImage', {imageId});
+  // console.log('cardImage', {imageId});
   let imgSrc;
 
   switch (imageId) {

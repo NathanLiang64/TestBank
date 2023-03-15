@@ -11,7 +11,7 @@ import {
 } from 'components/Fields';
 import Layout from 'components/Layout/Layout';
 import SwiperLayout from 'components/SwiperLayout';
-import { typeOptions } from '../utils/usgeType';
+import { txUsageOptions } from '../utils/usgeType';
 
 import PageWrapper from './PaymentRequest.style';
 
@@ -56,7 +56,7 @@ const PaymentRequest = () => {
         <div className="form_input_container">
           <DropdownField
             labelName="性質"
-            options={typeOptions}
+            options={txUsageOptions}
             name="type"
             control={step1Control}
           />
