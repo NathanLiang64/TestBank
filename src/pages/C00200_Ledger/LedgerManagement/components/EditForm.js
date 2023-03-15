@@ -11,23 +11,25 @@ import { FEIBButton } from 'components/elements';
 import { useDispatch } from 'react-redux';
 import { setModalVisible } from 'stores/reducers/ModalReducer';
 
-// 編輯帳本名稱表單元件
-export const EditLedgerNameForm = ({ callback = () => {} }) => {
+// 編輯帳本名稱 - 表單元件
+export const EditLedgerNameForm = ({
+  nameDefaultValue = '',
+  callback = () => {},
+}) => {
   const dispatch = useDispatch();
   // 驗證設定
   const schema = yup.object().shape({
     ledgerName: yup.string().max(20).required('必填'),
   });
   // 表單設定
-  const { control, handleSubmit, unregister } = useForm({
-    defaultValues: { ledgerName: '' },
+  const { control, handleSubmit } = useForm({
+    defaultValues: { ledgerName: nameDefaultValue },
     resolver: yupResolver(schema),
     mode: 'onChange',
   });
   // 點擊 - 表單送出
   const onSubmitClick = ({ ledgerName }) => {
     callback(ledgerName);
-    unregister('ledgerName');
     dispatch(setModalVisible(false));
   };
   return (
@@ -46,23 +48,25 @@ export const EditLedgerNameForm = ({ callback = () => {} }) => {
   );
 };
 
-// 編輯暱稱表單元件
-export const EditNickNameForm = ({ callback = () => {} }) => {
+// 編輯暱稱 - 表單元件
+export const EditNickNameForm = ({
+  nameDefaultValue = '',
+  callback = () => {},
+}) => {
   const dispatch = useDispatch();
   // 驗證設定
   const schema = yup.object().shape({
     nickName: yup.string().max(20).required('必填'),
   });
   // 表單設定
-  const { control, handleSubmit, unregister } = useForm({
-    defaultValues: { nickName: '' },
+  const { control, handleSubmit } = useForm({
+    defaultValues: { nickName: nameDefaultValue },
     resolver: yupResolver(schema),
     mode: 'onChange',
   });
   // 點擊 - 表單送出
   const onSubmitClick = ({ nickName }) => {
     callback(nickName);
-    unregister('nickName');
     dispatch(setModalVisible(false));
   };
   return (
@@ -81,7 +85,7 @@ export const EditNickNameForm = ({ callback = () => {} }) => {
   );
 };
 
-// 編輯綁定帳號表單欄位
+// 編輯綁定帳號 - 表單欄位
 export const EditAccountForm = ({ callback = () => {} }) => {
   const dispatch = useDispatch();
   // 驗證設定
@@ -90,7 +94,7 @@ export const EditAccountForm = ({ callback = () => {} }) => {
     bankAccount: yup.string().max(20).required('必填'),
   });
   // 表單設定
-  const { control, handleSubmit, unregister } = useForm({
+  const { control, handleSubmit } = useForm({
     defaultValues: { bankCode: '', bankAccount: '' },
     resolver: yupResolver(schema),
     mode: 'onChange',
@@ -98,7 +102,6 @@ export const EditAccountForm = ({ callback = () => {} }) => {
   // 點擊 - 表單送出
   const onSubmitClick = ({ bankCode, bankAccount }) => {
     callback({ bankCode, bankAccount });
-    unregister('data');
     dispatch(setModalVisible(false));
   };
   return (

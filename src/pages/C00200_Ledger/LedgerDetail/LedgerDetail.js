@@ -30,10 +30,11 @@ export default () => {
   const history = useHistory();
   const timer = useRef();
   const theme = useTheme();
+  const isMounted = useRef(false);
   // 狀態設定
   const { state } = location;
+  const [viewModel, setViewModel] = useState(state || {});
   const [notify, setNotify] = useState('');
-  const [cardInfo, setCardInfo] = useState(state || {});
   const [transactionList, setTransactionList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isInit, setIsInit] = useState(true);
@@ -51,7 +52,7 @@ export default () => {
     const resFromLedgerTxn = await getLedgerTxn({ sync: false });
     setIsLoading(false);
     const { txnList = [] } = resFromLedgerTxn;
-    setCardInfo((p) => ({ ...p, ledgerAmount: txnList[0]?.countAmount }));
+    setViewModel((p) => ({ ...p, ledgerAmount: txnList[0]?.countAmount }));
     setTransactionList(txnList);
     setIsInit(false);
     return null;
@@ -60,6 +61,14 @@ export default () => {
   useEffect(() => {
     init();
   }, []);
+
+  useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+    } else {
+      history.push(location.pathname, viewModel);
+    }
+  }, [viewModel]);
 
   const panelContent = [
     {
@@ -134,7 +143,10 @@ export default () => {
   useEffect(() => () => clearTimeout(timer.current), []);
 
   return (
-    <Layout title="帳本明細" goBackFunc={() => history.goBack()}>
+    <Layout
+      title="帳本明細"
+      goBackFunc={() => history.push('/clubLedgersList')}
+    >
       <PageWrapper>
         <InformationTape
           className="announcement"
@@ -149,7 +161,7 @@ export default () => {
           )}
           topRight={(
             <Box
-              display={cardInfo?.owner ? 'flex' : 'none'}
+              display={viewModel?.owner ? 'flex' : 'none'}
               onClick={onAnnouncementClick}
             >
               <EditIcon />
@@ -157,7 +169,7 @@ export default () => {
           )}
         />
         <CreditCard
-          cardName={cardInfo.ledgerName}
+          cardName={viewModel.ledgerName}
           onMoreClicked={onCardMoreClick}
           annotation={(
             <Box display="flex" onClick={onCardMemberClick}>
@@ -169,22 +181,22 @@ export default () => {
               </Box>
             </Box>
           )}
-          balance={parseInt(cardInfo.ledgerAmount?.replace(/,/g, ''), 10)}
+          balance={parseInt(viewModel.ledgerAmount?.replace(/,/g, ''), 10)}
           color={
-            Object.keys(theme.colors.card)[cardInfo.ledgerColor]
+            Object.keys(theme.colors.card)[viewModel.ledgerColor]
             || Object.keys(theme.colors.card)[0]
           }
         />
         <Box
           display="flex"
-          justifyContent={cardInfo.owner ? 'space-between' : 'center'}
+          justifyContent={viewModel.owner ? 'space-between' : 'center'}
           my={1}
         >
           {panelContent.map((item, index) => (
             <Box
               key={item.id}
               width="49%"
-              display={!cardInfo.owner && index === 0 ? 'none' : 'block'}
+              display={!viewModel.owner && index === 0 ? 'none' : 'block'}
             >
               <FEIBButton onClick={item.onClick}>{item.label}</FEIBButton>
             </Box>
