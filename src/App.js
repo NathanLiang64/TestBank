@@ -16,6 +16,13 @@ const App = () => {
     registFuncJumpHandler();
   }, []);
 
+  useLayoutEffect(() => {
+    // web版開發用: 當pathname為空, 自動跳轉到B001
+    if (process.env.NODE_ENV === 'development' && window.location.pathname.split('/')[1] === '') {
+      window.location.href = `${process.env.REACT_APP_ROUTER_BASE}/B00100`;
+    }
+  }, []);
+
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
