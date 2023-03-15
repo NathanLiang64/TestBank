@@ -1,8 +1,10 @@
-import uuid from 'react-uuid';
 import { CalendarIcon } from 'assets/images/icons';
 import { FEIBIconButton } from 'components/elements';
 import { showCustomPrompt } from 'utilities/MessageModal';
+import { dateToYMD } from 'utilities/Generator';
+import { getOsType } from 'utilities/AppScriptProxy';
 import ReminderWrapper from './Reminder.style';
+import { downloadCalendar } from '../api';
 
 const Reminder = ({ bills, deductInfo }) => {
   const handleHintText = (text) => {
@@ -14,38 +16,18 @@ const Reminder = ({ bills, deductInfo }) => {
   };
 
   const downloadICS = () => {
-    const context = [
-      'BEGIN:VCALENDAR',
-      'PRODID:-//FEIB//Bankee credit card reminder//TW',
-      'VERSION:2.0',
-      'BEGIN:VEVENT',
-      `UID:${uuid()}`,
-      `DTSTAMP:${new Date().toISOString().replaceAll('-', '').replaceAll(':', '')
-        .split('.')[0]}Z`,
-      `DTSTART;VALUE=DATE:${parseInt(bills.payDueDate.replaceAll('/', ''), 10) + 19110000}`,
-      'RRULE:FREQ=MONTHLY',
-      'SUMMARY:Bankee信用卡繳款截止日',
-      'END:VEVENT',
-      'END:VCALENDAR',
-    ].join('\r\n');
-    const blob = new Blob([context], { type: 'text/calendar;charset=utf-8' });
-    const reader = new FileReader();
+    const title = 'Bankee信用卡繳款截止日';
+    const fromDate = dateToYMD(bills.payDueDate);
 
-    reader.onload = () => {
-      window.open(reader.result, '_blank');
-    };
-    reader.readAsDataURL(blob);
-
-    // const link = document.createElement('a');
-    // link.href = URL.createObjectURL(blob);
-    // link.download = '提醒繳款.ics';
-    // link.setAttribute('download', '提醒繳款.ics');
-    // link.target = '_blank';
-    // document.body.appendChild(link);
-    // link.click();
-    // document.body.removeChild(link);
-
-    // URL.revokeObjectURL(file);
+    const osType = getOsType(true); // 1.iOS, 2.Android,
+    if (osType === 1) { // iOS 平台
+      downloadCalendar({title, fromDate});
+    } else { // Android 或其他平台
+      const googleCalendarUrl = 'https://www.google.com/calendar/render?';
+      const action = 'TEMPLATE';
+      const fromEndDate = `${fromDate}/${fromDate}`;
+      window.open(`${googleCalendarUrl}action=${action}&text=${title}&dates=${fromEndDate}`, '_blank');
+    }
   };
 
   const handleCalendarClick = async () => {

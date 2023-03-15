@@ -7,9 +7,9 @@ const DialogWrapper = styled(MaterialDialog)`
   .MuiPaper-root {
     border-radius: .8rem;
     width: 100%;
-    
+
     &.MuiDialog-paperScrollPaper {
-      max-height: calc(100% - 16rem);
+      max-height: calc(100% - 10rem);
     }
   }
 

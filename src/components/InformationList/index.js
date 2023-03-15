@@ -18,6 +18,7 @@ const InformationList = ({
   caption,
   remark,
   extra,
+  extraClassName = 'text-green',
   textColor = 'text-dark',
 }) => (
   <InformationListWrapper>
@@ -28,7 +29,7 @@ const InformationList = ({
       <div className="text-gray text-nowrap">{title}</div>
       <div className={`${textColor} text-align-end`}>
         {content}
-        {extra && <span className="text-green">{extra}</span>}
+        {extra && <span className={extraClassName}>{extra}</span>}
       </div>
     </div>
     {remark && (

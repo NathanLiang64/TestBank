@@ -115,11 +115,18 @@ const DepositPlanDetailPage = () => {
       content={l.value}
       caption={l.caption}
       remark={l.next}
-      extra={typeof l.extra === 'function' && l.extra()}
+      extra={l.extra}
+      extraClassName={l.extraClassName}
     />
   ));
 
   const renderProgramDetails = () => {
+    const generateDebitInfo = () => { // 扣款資訊
+      const {tfrResult} = program;
+      if (mode !== 2 || typeof tfrResult !== 'boolean') return null;
+      return tfrResult ? '扣款成功' : '扣款失敗';
+    };
+
     const list = [
       { label: '存錢計畫名稱', value: program?.name },
       { label: '適用利率', value: `${program?.extra.rate}%` },
@@ -131,10 +138,8 @@ const DepositPlanDetailPage = () => {
         value: dateToString(program?.startDate),
         caption: '下一筆扣款日',
         next: program?.extra.nextDeductionDate,
-        // eslint-disable-next-line no-nested-ternary
-        extra: () => (mode === 2 && typeof program.tfrResult === 'boolean'
-          ? program.tfrResult ? '扣款成功' : '扣款失敗'
-          : undefined),
+        extra: generateDebitInfo(),
+        extraClassName: program.tfrResult ? 'text-green' : 'text-error',
       },
       { label: '存錢帳號', value: program?.bindAccountNo ? accountFormatter(program?.bindAccountNo, true) : '加開子帳戶' },
     ];

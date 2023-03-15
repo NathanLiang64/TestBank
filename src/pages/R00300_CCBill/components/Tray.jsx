@@ -5,7 +5,7 @@ import { Func } from 'utilities/FuncID';
 import { getInvoice } from '../api';
 import TrayWrapper from './Tray.style';
 
-const Tray = ({ deductInfo }) => {
+const Tray = ({ deductInfo, currentMonth }) => {
   const { startFunc } = useNavigation();
 
   return (
@@ -17,7 +17,7 @@ const Tray = ({ deductInfo }) => {
           繳費
         </button>
         )}
-        <button type="button" onClick={() => getInvoice(1)}>
+        <button type="button" onClick={() => getInvoice(currentMonth)}>
           <DownloadIcon className="download" />
           下載帳單
         </button>

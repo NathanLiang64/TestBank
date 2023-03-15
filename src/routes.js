@@ -239,7 +239,7 @@ const routes = [
   {path: '/login/:fid', exact: false, component: Login},
   {path: '/login', exact: false, component: Login},
   {path: '/B00100', exact: true, component: B00100},
-  {path: '/', exact: true, component: B00100},
+  {path: '/', exact: true, component: null},
   // --------------------------------
 ];
 

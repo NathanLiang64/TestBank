@@ -93,7 +93,7 @@ const Page = () => {
               { isExpanded && (
                 <div className="fixed-bottom">更多帳單資訊請滑至底部查看</div>
               )}
-              <Tray deductInfo={deductInfo} />
+              <Tray deductInfo={deductInfo} currentMonth={currentMonth} />
             </>
           )}
         </PageWrapper>

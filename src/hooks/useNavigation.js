@@ -70,7 +70,9 @@ const useNavigation = () => {
     funcID = funcID.replace(/^\/*/, '');
 
     if (funcStack.getStack().length === 0 && funcID !== Func.B001.id) {
-      funcStack.push({ funcID: Func.B001.id, isFunction: true });
+      if (process.env.NODE_ENV === 'development') {
+        funcStack.push({ funcID: Func.B001.id, isFunction: true });
+      }
     }
 
     let funcInfo;
@@ -182,8 +184,11 @@ const useNavigation = () => {
 
     // 建立要返回功能的啟動參數。
     const startItem = funcStack.peek();
+
     if (!startItem) {
       await callAppJavaScript('closeFunc', null, false);
+      // NOTE 因為回到「原生首頁」時，Webview 內容仍存在，下次開啟 Webview 時會先看到上次的內容，先在前端以此方式解決
+      history.push('/'); // Webview 被隱藏時，將畫面導向空白頁，避免看到前一頁的內容
       if (closedItem.funcID === Func.B001.id) forceLogout();
       return;
     }
@@ -205,6 +210,8 @@ const useNavigation = () => {
 
   const goHome = async () => {
     funcStack.clear();
+    // NOTE 因為回到「原生首頁」時，Webview 內容仍存在，下次開啟 Webview 時會先看到上次的內容，先在前端以此方式解決
+    history.push('/'); // Webview 被隱藏時，將畫面導向空白頁，避免看到前一頁的內容
     await callAppJavaScript('goHome', null, false, () => {
       startFunc(Func.B001.id);
       funcStack.push({ funcID: Func.B001.id, isFunction: true });
@@ -342,7 +349,22 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
  * }>} 若參數當時是以 JSON 物件儲存，則同樣會轉成物件傳回。
  */
 async function loadFuncParams() {
-  const params = window.FuncParams;
+  let params = window.FuncParams;
+  if (params) return params;
+
+  // NOTE: 如果 params 無值，可能是 1. App 沒有透過 startFunc 導向 2. startFunc 本身就沒有帶參數
+  const funcItem = funcStack.peek(); // 因為功能已經啟動，所以用 peek 取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
+  const webGetFuncParams = () => window.FuncParams;
+  const isFunction = !funcItem || /^[A-Z]\d{3}$/.test(funcItem.funcID); // 表示 funcID 不是一般頁面，而是由 Function Controller 控制的單元功能。
+  const data = isFunction ? await callAppJavaScript('getPagedata', null, true, webGetFuncParams) : webGetFuncParams();
+  if (data) {
+    // 解析由 APP 傳回的資料, 只要有 keepData 就表示是由叫用的功能結束返回
+    // 因此，要以 keepData 為單元功能的啟動參數。
+    // 反之，表示是單元功能被啟動，此時才是以 funcParams 為單元功能的啟動參數。
+    const dataStr = data.keepData || data.funcParams;
+    params = dataStr && dataStr.startsWith('{') ? JSON.parse(dataStr) : null; // NOTE 只支援APP JS傳回JSON格式資料！
+  }
+
   console.log('>> Function 啟動參數 : ', params);
   return params;
 }

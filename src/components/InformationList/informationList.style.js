@@ -43,6 +43,11 @@ const InformationListWrapper = styled.div`
     margin-left: 1rem;
   }
 
+  .text-error {
+    color: ${({ theme }) => theme.colors.state.error} !important;
+    margin-left: 1rem;
+  }
+
   .text-primary {
     color: ${({ theme }) => theme.colors.primary.brand} !important;
   }
