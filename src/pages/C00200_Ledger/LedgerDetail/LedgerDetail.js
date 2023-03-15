@@ -107,10 +107,10 @@ export default () => {
     history.push('/MemberManagement');
   };
   // 點擊 - 單筆明細
-  const onDetailClick = (e) => {
+  const onDetailClick = (e, item) => {
     e.stopPropagation();
-    console.log('查看明細');
-    history.push('/RecordDetail');
+    console.log('查看明細', item);
+    history.push('/RecordDetail', item);
   };
   // 滾動 - 明細清單 -> 滾動至視圖底部時 呼叫API新增明細
   const isDetectBottom = false;
@@ -193,7 +193,7 @@ export default () => {
             {transactionList.map((item) => (
               <Box
                 key={item.ledgerTxId}
-                onClickCapture={(e) => onDetailClick(e)}
+                onClickCapture={(e) => onDetailClick(e, item)}
               >
                 <DetailCard
                   amount={Math.abs(item.txnAmount)}
