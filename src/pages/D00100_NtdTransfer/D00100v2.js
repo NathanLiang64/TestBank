@@ -552,7 +552,12 @@ const Transfer = (props) => {
       const formater = new Intl.NumberFormat('en-US');
       // const quota = tranferQuota.map((q) => formater.format(q)).join('/');
       const quota = model.transOut.quotaArray.map((q) => formater.format(q)).join('/');
-      return (<p className="notice">{`單筆/當日/當月非約定轉帳剩餘額度: ${quota}`}</p>);
+      return (
+        <div className="notice">
+          <p>單筆/當日/當月非約定轉帳剩餘額度: </p>
+          <p>{quota}</p>
+        </div>
+      );
     }
     return null;
   };

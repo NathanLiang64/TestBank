@@ -28,10 +28,10 @@ const R00200_3 = () => {
   const { closeFunc } = useNavigation();
   const dispatch = useDispatch();
   const [preCalc, setPreCalc] = useState();
-  const [isConfirmed, setIsConfirmed] = useState(false);
+  const [mode, setMode] = useState(state.readOnly ? 0 : 1); // 0=資訊模式(已建立) 1=確認模式（未建立) 2=已建立成功(剛建立完成)
 
   const InfoTable = () => {
-    if (state.readOnly || isConfirmed) return <ResultContent state={state} />;
+    if (mode !== 1) return <ResultContent state={state} />;
     if (state.applType === '2') return <TotalConfirmContent state={state} />;
     return <SingleConfirmContent state={state} />;
   };
@@ -91,24 +91,24 @@ const R00200_3 = () => {
   };
 
   const onClickHandler = async () => {
-    // if (state?.readOnly) history.goBack();
-    if (state?.readOnly) closeFunc();
+    if (mode !== 1) closeFunc();
     else {
       const {result} = await transactionAuth(Func.R00200.authCode);
 
       if (result) {
         dispatch(setWaittingVisible(true));
-        const updateResult = await updateInstallment(state.param); // 回傳資料待確認
+        const {isSuccess, message} = await updateInstallment(state.param); // 回傳資料待確認
         dispatch(setWaittingVisible(false));
-        if (updateResult) {
-          showAnimationModal({
-            isSuccess: updateResult.isSuccess,
-            successTitle: '設定成功',
-            successDesc: '您已完成Bankee信用卡晚點付申請',
-            errorDesc: updateResult.message,
-            onClose: closeFunc, // TODO 待確認
-          });
-        }
+
+        if (isSuccess) setMode(2);
+
+        showAnimationModal({
+          isSuccess,
+          successTitle: '設定成功',
+          successDesc: '您已完成Bankee信用卡晚點付申請',
+          errorDesc: message,
+          onClose: closeFunc, // TODO 待確認
+        });
       }
     }
   };
@@ -129,7 +129,7 @@ const R00200_3 = () => {
   return (
     <Layout title="晚點付 (總額)" fid={Func.R002}>
       <InstalmentWrapper className="InstalmentWrapper ConfirmResultPage" small>
-        {!state.readOnly || !isConfirmed ? (
+        {mode !== 0 ? (
           <div className="InstalmentWrapperText">
             各期繳款金額試算 (依實際帳單為準)
           </div>
@@ -143,11 +143,11 @@ const R00200_3 = () => {
 
         <form className="ConfirmForm">
           {/* 只有申請單筆分期付款才需要顯示試算表 */}
-          {!isConfirmed && state.applType === 'G' && preCalcTable()}
+          {mode === 1 && state.applType === 'G' && preCalcTable()}
 
           {InfoTable()}
 
-          {!state.readOnly && !isConfirmed && (
+          {mode === 1 && (
             <div className="formula-hint">
               <p>分期利息=本金餘額*(分期利率/12)</p>
               <p>小數點後數字將四捨五入至整數位</p>
@@ -157,7 +157,7 @@ const R00200_3 = () => {
           <div className="note">實際請款金額以帳單為準</div>
 
           <FEIBButton type="submit" onClick={onClickHandler}>
-            {state?.readOnly ? '返回' : '確認'}
+            {mode !== 1 ? '返回' : '確認'}
           </FEIBButton>
         </form>
       </InstalmentWrapper>

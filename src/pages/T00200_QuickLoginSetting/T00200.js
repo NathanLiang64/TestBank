@@ -57,7 +57,6 @@ const QuickLoginSetting = () => {
 
   // 取得綁定資訊
   const fetchLoginBindingInfo = async () => {
-    await getQLStatus(); // 要先查才能驗證？？？
     const apiRs = await getQuickLoginInfo();
     setModel({
       ...model,
@@ -122,11 +121,7 @@ const QuickLoginSetting = () => {
     const { result, message } = await verifyQuickLogin(type, pwd);
     showWaitting(false);
     const isSuccess = result;
-
-    if (isSuccess) {
-      model.status = 1;
-      setModel({ ...model }); // 設定成功後，更新開關
-    }
+    fetchLoginBindingInfo();
 
     // 顯示綁定結果
     await showAnimationModal({
@@ -191,6 +186,7 @@ const QuickLoginSetting = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
+    getQLStatus(); // 要先查才能驗證？？？
     const apiRs = await fetchLoginBindingInfo();
     if (apiRs) {
       if (apiRs.status === 4) {
