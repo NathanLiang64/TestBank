@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { toCurrency } from 'utilities/Generator';
 
 import Layout from 'components/Layout/Layout';
@@ -12,7 +14,7 @@ import { FEIBButton } from 'components/elements';
 
 import { EditRecordFormWrapper } from './RecordDetail.style';
 import { txUsageOptions } from '../utils/usgeType';
-import { editWriteOff, getWriteOffList } from './api';
+import { editWriteOff, getWriteOffList, setWriteOff } from './api';
 
 const EditRecordForm = () => {
   const history = useHistory();
@@ -21,6 +23,7 @@ const EditRecordForm = () => {
   const [notRecordedMode, setNotRecordedMode] = useState('0'); // 0: 選擇銷帳對象, 1: 自行編輯交易明細
   const [isShowWriteOff, setIsShowWriteOff] = useState(false);
   const [recordTargetList, setRecordTargetList] = useState([]);
+  const [recordTargetOptionList, setRecordTargetOptionList] = useState([]);
 
   const notRecordedModeOptions = [
     {
@@ -34,11 +37,16 @@ const EditRecordForm = () => {
   ];
 
   // form: Recorded, notRecorded.1
+  const schema = yup.object().shape({
+    type: yup.string(),
+    memo: yup.string().max(12), // 字數上限: 12
+  });
   const {control, getValues: getInfoValues} = useForm({
     defaultValues: {
       type: '1',
       memo: '',
     },
+    resolver: yupResolver(schema),
   });
 
   // form: notRecorded mode
@@ -65,7 +73,7 @@ const EditRecordForm = () => {
   const renderFormContent = () => (
     <form className="edit_form" onSubmit={() => onSubmit()}>
       <DropdownField labelName="性質" options={txUsageOptions} name="type" control={control} />
-      <TextInputField labelName="備註" type="text" control={control} name="memo" inputProps={{placeholder: '備註'}} />
+      <TextInputField labelName="說明" type="text" control={control} name="memo" inputProps={{placeholder: '說明'}} />
     </form>
   );
 
@@ -78,10 +86,16 @@ const EditRecordForm = () => {
     if (state.txStatus === 1 || (state.txStatus === 2 && notRecordedMode === '1')) {
       const value = getInfoValues();
       console.log('info value', {value});
-      const response = editWriteOff({...value, id: state.ledgerTxId});
+      editWriteOff({...value, id: state.ledgerTxId});
     } else {
       const value = getTargetValues();
-      console.log('target value', {value});
+
+      const recordTargetInfo = recordTargetList.find((target) => target.ledgerTxId === value.target);
+      console.log({state, recordTargetInfo});
+      setWriteOff({
+        depTxnId: state.ledgerTxId,
+        txnId: recordTargetInfo.ledgerTxId,
+      });
     }
     goBackFunc();
   };
@@ -92,8 +106,10 @@ const EditRecordForm = () => {
   useEffect(() => {
     const response = getWriteOffList({
       type: state.type,
-      amount: state.txAmount,
+      amount: state.txnAmount,
     });
+
+    setRecordTargetList(response.ledgertx);
 
     if (!response.isWriteOffList) {
       setNotRecordedMode('1');
@@ -104,10 +120,10 @@ const EditRecordForm = () => {
     } else {
       const targetList = response.ledgertx.map((item) => ({
         value: item.ledgerTxId,
-        label: `${item.txDate} ${item.sourceMember} ${item.txAmount} ${item.txDesc}`,
+        label: `${item.txDate} ${item.sourceMember} ${item.txnAmount} ${item.txDesc}`,
       }));
 
-      setRecordTargetList(targetList);
+      setRecordTargetOptionList(targetList);
 
       reset(() => ({
         target: targetList[0].value,
@@ -122,10 +138,10 @@ const EditRecordForm = () => {
         {console.log(state)}
         <div className="info">
           {renderInformationContent('交易日期', state.txDate)}
-          {renderInformationContent('轉出成員', state.memberNickName ?? '--')}
+          {renderInformationContent('轉出成員', state.bankeeMember.memberNickName ?? '--')}
           {renderInformationContent('銀行代號', state.bankCode)}
           {renderInformationContent('轉出帳號', state.bankAccount)}
-          {renderInformationContent('轉出金額', `NTD${toCurrency(state.txAmount)}`)}
+          {renderInformationContent('轉出金額', `NTD${toCurrency(state.txnAmount)}`)}
         </div>
 
         {/* 已入帳 */}
@@ -144,7 +160,7 @@ const EditRecordForm = () => {
             />
             <div className="record_target_list">
               {console.log({notRecordedMode})}
-              {(notRecordedMode === '0' && recordTargetList.length !== 0) ? <RadioGroupField labelName="" name="target" control={recordTargetControl} options={recordTargetList} /> : renderFormContent()}
+              {(notRecordedMode === '0' && recordTargetOptionList.length !== 0) ? <RadioGroupField labelName="" name="target" control={recordTargetControl} options={recordTargetOptionList} /> : renderFormContent()}
             </div>
           </div>
         )}

@@ -27,7 +27,7 @@ const InvoiceSending = () => {
   const schema = yup.object().shape({
     usage: yup.string(),
     memo: yup.string().max(12), // 字數上限: 12
-    amount: yup.string().required(),
+    amount: yup.string().required('請輸入金額'),
   });
   const {control, handleSubmit, reset} = useForm({
     defaultValues: {
