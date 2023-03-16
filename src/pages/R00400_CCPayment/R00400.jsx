@@ -142,7 +142,7 @@ const Page = () => {
         dispatch(setWaittingVisible(true));
         const apiRs = await payCardFee(payload);
         dispatch(setWaittingVisible(false));
-        if (apiRs.isSuccess) history.push('R004001', { payResult: apiRs, account: data.accountNo });
+        if (apiRs.isSuccess) history.push('R004001', { ...apiRs.data });
       }
     }
 
