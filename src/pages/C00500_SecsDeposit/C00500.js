@@ -160,11 +160,11 @@ const C00500 = () => {
       account.isLoadingTxn = true; // 避免因為非同步執行造成的重覆下載
       // 取得帳戶交易明細（三年內的前25筆即可）
       getTransactions(account.accountNo).then((transData) => {
-        const details = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
+        const details = transData?.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
         account.txnDetails = details;
 
         // 更新餘額。
-        if (transData.acctTxDtls.length > 0) account.balance = details[0].balance;
+        if (transData?.acctTxDtls.length > 0) account.balance = details[0].balance;
 
         delete account.isLoadingTxn; // 載入完成才能清掉旗標！
         updateAccount(account);

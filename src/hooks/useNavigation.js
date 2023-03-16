@@ -64,6 +64,15 @@ const useNavigation = () => {
   const history = useHistory();
 
   /**
+   * 取得目前執行中的單元功能代碼。
+   * @returns {*} 單元功能代碼。
+   */
+  const getActiveFuncID = async () => {
+    const appJsRs = await callAppJavaScript('getActiveFuncID', null, true);
+    return appJsRs.funcID;
+  };
+
+  /**
    * 網頁通知APP跳轉指定功能
    * @param {*} funcID 單元功能代碼。
    * @param {*} funcParams 提共給啟動的單元功能的參數，被啟動的單元功能是透過 loadFuncParams() 取回。
@@ -76,6 +85,10 @@ const useNavigation = () => {
       // 只有在 Web 測試模式 才需要加入首頁(B001);
       if (getOsType(true) === 3) {
         funcStack.push({ funcID: Func.B001.id, isFunction: true });
+      } else {
+        // 由原生直接啟動的第一個功能，因為不是透過 Web 的 startFunc 執行
+        // 所以不會出現在 funcStack 中；需要由 Web端補上。
+        funcStack.push({ funcID: await getActiveFuncID(), isFunction: true });
       }
     }
 
@@ -180,6 +193,13 @@ const useNavigation = () => {
    */
   const closeFunc = async (response) => {
     if (response?.target || response?.type) response = null;
+
+    // 由原生直接啟動的第一個功能，因為不是透過 Web 的 startFunc 執行
+    // 所以不會出現在 funcStack 中；需要由 Web端補上。
+    if (funcStack.getStack().length === 0) {
+      const funcID = await getActiveFuncID();
+      if (funcID) funcStack.push({ funcID, isFunction: true });
+    }
 
     const closedItem = funcStack.pop();
     if (!closedItem) return;
