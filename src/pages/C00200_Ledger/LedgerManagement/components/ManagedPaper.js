@@ -16,6 +16,7 @@ import {
   EditAccountForm,
 } from './EditForm';
 import { setLedgerName, setNickname } from '../api';
+import { getLedgerTypeName } from '../../utils/lookUpTable';
 
 export default () => {
   const location = useLocation();
@@ -71,7 +72,7 @@ export default () => {
       value: `(${viewModel.bankeeAccount.bankCode})${viewModel.bankeeAccount.accountNumber}`,
     },
     { label: '建立日期', value: viewModel.createDate },
-    { label: '類型', value: viewModel.ledgerTypeName },
+    { label: '類型', value: getLedgerTypeName(viewModel.ledgerType) },
     {
       label: '目前帳本金額',
       value: `${viewModel.bankeeAccount.accountCurrency} ${viewModel.ledgerAmount}`,
