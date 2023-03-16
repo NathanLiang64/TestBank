@@ -48,11 +48,11 @@ export default () => {
     }
     setIsLoading(true);
     const resFromOpenLedger = await openLedger({ ledgerId: state.ledgerId });
+    setViewModel((p) => ({ ...p, ...resFromOpenLedger }));
     setNotify(resFromOpenLedger?.ledgerPublisher?.publishDesc);
     const resFromLedgerTxn = await getLedgerTxn({ sync: false });
     setIsLoading(false);
     const { txnList = [] } = resFromLedgerTxn;
-    setViewModel((p) => ({ ...p, ledgerAmount: txnList[0]?.countAmount }));
     setTransactionList(txnList);
     setIsInit(false);
     return null;
@@ -143,10 +143,7 @@ export default () => {
   useEffect(() => () => clearTimeout(timer.current), []);
 
   return (
-    <Layout
-      title="帳本明細"
-      goBackFunc={() => history.push('/C00200')}
-    >
+    <Layout title="帳本明細" goBackFunc={() => history.push('/C00200')}>
       <PageWrapper>
         <InformationTape
           className="announcement"
