@@ -20,13 +20,13 @@ import { EditIcon, FuncIcons } from 'assets/images/icons';
 import BlockEmpty from 'assets/images/favoriteBlock/blockEmpty.png';
 import { getAllFunc, getMyFuncs, saveMyFuncs } from './api';
 import { getFuncButtonBackground } from './utils';
-import FavoriteDrawerWrapper from './S00101.style';
-import S00101_1 from './S00101_1';
+import FavoriteDrawerWrapper from './S00100.style';
+import S00100_1 from './S00100_1';
 
 /**
  * 我的最愛
  */
-const S00101 = () => {
+const S00100 = () => {
   const dispatch = useDispatch();
   const { startFunc, closeFunc } = useNavigation();
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -244,7 +244,7 @@ const S00101 = () => {
     const {myFuncs, selectedIndex} = model;
     const onFinish = (result) => {
       if (mode === 1) {
-        // 將 S00101_1 傳回的選取項目加入目前選集中。
+        // 將 S00100_1 傳回的選取項目加入目前選集中。
         myFuncs[selectedIndex].func = {
           ...result,
           position: selectedIndex,
@@ -289,7 +289,7 @@ const S00101 = () => {
     else {
       dispatch(setWaittingVisible(false));
       return (
-        <S00101_1 mode={mode} funcPool={funcPool} selections={myFuncs} onFinish={onFinish} />
+        <S00100_1 mode={mode} funcPool={funcPool} selections={myFuncs} onFinish={onFinish} />
       );
     }
     return <div />;
@@ -317,4 +317,4 @@ const S00101 = () => {
   );
 };
 
-export default S00101;
+export default S00100;

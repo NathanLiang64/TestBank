@@ -29,7 +29,7 @@ import { AmountSetting } from './D003_Support/AmountSetting';
  * - selections[] : 目前所有選擇項目。
  * - onFinish : 當使用者完成選取後的Callback方法。
  */
-const S00101_1 = ({
+const S00100_1 = ({
   mode, funcPool, selections, onFinish,
 }) => {
   const MAX_FUNC_COUNT = 12; // 預設最多 12 個項目。
@@ -250,4 +250,4 @@ const S00101_1 = ({
   );
 };
 
-export default S00101_1;
+export default S00100_1;
