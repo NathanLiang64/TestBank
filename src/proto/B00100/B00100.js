@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { Func } from 'utilities/FuncID';
@@ -56,8 +57,6 @@ const Nav = () => {
           <div onClick={() => startFunc(Func.D006.id)}>D00600 約定帳號管理</div>
           <div onClick={() => startFunc(Func.B006.id)}>B00600 更多...</div>
           <div onClick={() => startFunc(Func.T001.id)}>T00100 個人化設定</div>
-          {/* <div onClick={() => startFunc(Func.S001.id)}>S00100 我的最愛</div> */}
-          <div onClick={() => startFunc(Func.S001.id)}>S00101 我的最愛v2</div>
           <div onClick={() => startFunc(Func.E001.id)}>E00100 換匯 - (施工中)</div>
           <div onClick={() => startFunc(Func.A006.id)}>A00600 定期更新個資</div>
           <div onClick={() => startFunc(Func.A007.id)}>A00700 定期更新密碼</div>

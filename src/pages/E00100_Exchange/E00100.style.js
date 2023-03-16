@@ -19,7 +19,7 @@ export const ExchangeWrapper = styled(Layout)`
     section {
       margin-bottom: 2rem;
     }
-    .exchangeAmount {
+    .inAmount {
       display: flex;
       span {
         padding: 0px 5px;

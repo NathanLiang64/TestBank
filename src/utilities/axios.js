@@ -104,7 +104,7 @@ const processResponse = async (response) => {
     isSuccess: (code === '0000'), // TODO 錯誤處理，不能讓錯誤發生之後仍繼續執行。
   };
 
-  if (code !== '0000') {
+  if (code !== '0000' && code !== 'WEBCTL2000') { // WEBCTL2000 是商業邏輯錯誤，可以在流程中判斷處理方式。
     const { message } = response.data;
     // TODO: 導向API失敗的例外處理的頁面！
     console.log(`\x1b[31m${response.config.url} - Exception = (\x1b[33m${code}\x1b[31m) ${message}`);
