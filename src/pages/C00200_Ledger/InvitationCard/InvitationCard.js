@@ -4,7 +4,7 @@ import { toCurrency } from 'utilities/Generator';
 import { handleTxUsageText } from '../utils/usgeType';
 import PageWrapper from './InvitationCard.style';
 import JoinCard from '../Assets/joinCard.png';
-import { cardImage } from '../utils/cardImage';
+import { cardImage } from '../utils/images';
 
 /**
  * 要錢卡/邀請卡 卡面

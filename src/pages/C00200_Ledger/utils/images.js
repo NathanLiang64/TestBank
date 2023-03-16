@@ -3,6 +3,8 @@ import W02 from '../Assets/message_cards/w02.gif';
 import W03 from '../Assets/message_cards/w03.gif';
 import W04 from '../Assets/message_cards/w04.gif';
 import W05 from '../Assets/message_cards/w05.gif';
+import Owner from '../Assets/member/icon_headshot.png';
+import Partner from '../Assets/member/icon_headshot_partner.png';
 
 /**
  * 依照編號回傳要錢卡圖片
@@ -35,4 +37,11 @@ export const cardImage = (imageId) => {
       break;
   }
   return <img src={imgSrc} alt="要錢卡" />;
+};
+
+export const memberImage = (isOwner) => {
+  if (isOwner) {
+    return <img src={Owner} alt="" />;
+  }
+  return <img src={Partner} alt="" />;
 };

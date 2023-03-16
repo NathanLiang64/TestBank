@@ -5,19 +5,21 @@ import { useHistory } from 'react-router';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { accountFormatter } from 'utilities/Generator';
-
+import { showAnimationModal } from 'utilities/MessageModal';
 import { FEIBButton } from 'components/elements';
 import { DropdownField, TextInputField } from 'components/Fields';
 import Layout from 'components/Layout/Layout';
 import SwiperLayout from 'components/SwiperLayout';
 import { txUsageOptions } from '../utils/usgeType';
 import PageWrapper from './InvoiceSending.style';
-import { cardImage } from '../utils/cardImage';
+import { cardImage } from '../utils/images';
 import { chargeOwner } from './api';
 
 const InvoiceSending = () => {
   const [imgId, setImgId] = useState(0);
   const history = useHistory();
+  const goBackFunc = () => history.goBack();
+
   const stateData = {
     bank: '805',
     account: '00011122334455',
@@ -66,14 +68,17 @@ const InvoiceSending = () => {
 
     const response = await chargeOwner(requestData);
 
-    if (response) {
-      console.log('onSubmit -> success');
-    } else {
-      console.log('onSubmit -> fail');
-    }
-  };
+    await showAnimationModal({
+      isSuccess: response.data,
+      successTitle: '要錢卡建立成功',
+      successDesc: '',
+      errorTitle: '要錢卡建立失敗',
+      errorCode: '',
+      errorDesc: response.message,
+    });
 
-  const goBackFunc = () => history.goBack();
+    goBackFunc();
+  };
 
   useEffect(() => {
     reset((formValues) => ({
