@@ -9,17 +9,19 @@ import Layout from 'components/Layout/Layout';
 import { handleTxUsageText } from '../utils/usgeType';
 
 import { PageWrapper } from './RecordDetail.style';
-import { state } from './mockData';
+// import { state } from './mockData';
 
 const RecordDetail = () => {
   const history = useHistory();
   const [model, setModel] = useState();
-  // const { state } = useLocation(); // TODO 解開註解移除mock
+  const { state } = useLocation();
 
   const renderInformationContent = (title, info) => <InformationList title={title} content={info} />;
 
   // to Edit
   const handleEditOnClick = () => history.push('/editRecordForm', model);
+
+  const goBackFunc = () => history.goBack();
 
   useEffect(() => {
     // get model
@@ -27,7 +29,7 @@ const RecordDetail = () => {
   }, []);
 
   return (
-    <Layout title="編輯交易明細" goBackFunc={() => {}}>
+    <Layout title="編輯交易明細" goBackFunc={goBackFunc}>
       {model && (
       <PageWrapper>
         <div className="info">

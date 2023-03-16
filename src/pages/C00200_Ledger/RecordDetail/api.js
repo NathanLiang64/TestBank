@@ -22,13 +22,9 @@ import { mockWriteOffListRt } from './mockData';
  * ]
  * }}
  */
-export const getWriteOffList = (param) => {
-  // const response = callAPI('/ledger/getLedgerTx', param); // TODO 解開註解移除下方mock
+export const getWriteOffList = async (param) => {
+  const response = await callAPI('/ledger/getLedgerTx', param);
   console.log('/getWriteOffList', {param});
-  const response = {
-    code: '0000',
-    data: mockWriteOffListRt,
-  };
 
   const tempLedgerTxList = response.data.ledgertx.map((tx) => ({
     ledgerTxId: tx.ledgerTxId,
@@ -57,11 +53,11 @@ export const getWriteOffList = (param) => {
  * boolean
  * }}
  */
-export const setWriteOff = (param) => {
+export const setWriteOff = async (param) => {
   console.log('writeOff', {param});
-  // callAPI('/ledger/writeOff', param); // TODO 解開註解移除下方mock
+  const response = await callAPI('/ledger/writeOff', param);
 
-  return true; // DEBUG mock return
+  return response.data;
 };
 
 /**
@@ -75,14 +71,9 @@ export const setWriteOff = (param) => {
  * boolean
  * }}
  */
-export const editWriteOff = (param) => {
-  const request = {
-    depTxnId: param.id,
-    usage: param.type,
-    remark: param.memo,
-  };
-  console.log('editWriteOff', {request});
-  // callAPI('/ledger/editWriteOff', request); // TODO 解開註解移除下方mock
+export const editWriteOff = async (param) => {
+  console.log('editWriteOff', {param});
+  const response = await callAPI('/ledger/editWriteOff', param);
 
-  return true; // DEBUG mock return
+  return response.data;
 };
