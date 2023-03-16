@@ -7,6 +7,7 @@ import CreditCard from 'components/CreditCard';
 import { useDispatch } from 'react-redux';
 import { PersonalIcon, HomeIcon } from 'assets/images/icons';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { showError } from 'utilities/MessageModal';
 import PageWrapper from './ClubLedgersList.style';
 import { getAllLedgers, start } from './api';
 // import { getAllLedgers } from './constants/mockData';
@@ -22,7 +23,13 @@ export default () => {
   const [hasLedgerData, setHasLedgerData] = useState(false);
   // 點擊 - 新增帳本
   const onAddLedgerClick = () => {
+    const allowCreateNewLedger = ledgerList.filter((i) => i.owner)?.length < 8;
+    if (!allowCreateNewLedger) {
+      showError('帳本建立最多8本', () => {});
+      return null;
+    }
     history.push('CreateLedgerForm');
+    return null;
   };
   // 點擊 - 帳本
   const onLedgerClick = (obj) => {
