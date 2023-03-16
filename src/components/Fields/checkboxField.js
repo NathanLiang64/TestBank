@@ -36,6 +36,7 @@ export const CheckboxField = ({
         style={checkboxLableStyle}
         control={(
           <FEIBCheckbox
+            checked={field.value}
             onChange={field.onChange}
             id={field.name}
             disabled={disabled}

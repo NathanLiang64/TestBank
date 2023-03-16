@@ -1,4 +1,4 @@
-const ledgerTypeList = [
+export const ledgerTypeList = [
   {
     ledgerType: '945',
     typeName: '聚餐',
@@ -53,7 +53,7 @@ const ledgerTypeList = [
   },
 ];
 
-const ledgerUsageList = [
+export const ledgerUsageList = [
   {
     usageType: '1',
     typeName: '食',
