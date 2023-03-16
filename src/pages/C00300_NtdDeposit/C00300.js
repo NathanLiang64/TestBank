@@ -53,9 +53,11 @@ const C00300 = () => {
         item.currency = item.details[0].currency;
       });
       setAccounts(items);
+      return items;
+    }).then(async (items) => {
       await processStartParams(items);
-      dispatch(setWaittingVisible(false));
-    });
+    }).finally(() => dispatch(setWaittingVisible(false)));
+
     return () => setAccounts(null);
   }, []);
 
@@ -221,12 +223,7 @@ const C00300 = () => {
    */
   const handleFunctionClick = async (funcCode) => {
     let params = null;
-    const txnDetailsObj = accounts.reduce((acc, cur) => {
-      if (cur.txnDetails) acc[cur.accountNo] = cur.txnDetails;
-      return acc;
-    }, {});
 
-    const keepData = { defaultAccount: selectedAccount.accountNo, showRate, txnDetailsObj };
     switch (funcCode) {
       case 'moreTranscations': // 更多明細
         params = {
@@ -243,8 +240,12 @@ const C00300 = () => {
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case Func.E001.id: // TODO 帶參數過去
-        params = { transOut: selectedAccount.accountNo };
+      case Func.E001.id: // 換匯，預設為台轉外
+        params = { model: {
+          mode: 1,
+          outAccount: selectedAccount.accountNo,
+          currency: 'USD', // 預設美元
+        }};
         break;
 
       case Func.C008.id: // 匯出存摺
@@ -264,6 +265,16 @@ const C00300 = () => {
         break;
     }
 
+    const txnDetailsObj = accounts.reduce((acc, cur) => {
+      if (cur.txnDetails) acc[cur.accountNo] = cur.txnDetails;
+      return acc;
+    }, {});
+
+    const keepData = {
+      defaultAccount: selectedAccount.accountNo,
+      showRate,
+      txnDetailsObj,
+    };
     startFunc(funcCode, params, keepData);
   };
 

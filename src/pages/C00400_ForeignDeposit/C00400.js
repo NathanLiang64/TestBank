@@ -51,22 +51,25 @@ const C00400 = () => {
   /**
    * 頁面啟動，初始化
    */
-  useEffect(async () => {
+  useEffect(() => {
     dispatch(setWaittingVisible(true));
 
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
-    getAccountsList('F', async (accts) => {
+    const api1 = getAccountsList('F', async (accts) => {
       // M=臺幣主帳戶、C=臺幣子帳戶
       const flattenAccts = accts.map((account) => account.details.map((detail) => ({ ...account, ...detail }))).flat();
       setAccounts(flattenAccts);
-      await processStartParams(flattenAccts);
-      dispatch(setWaittingVisible(false));
+      return flattenAccts;
     });
 
-    getExchangeRateInfo().then((lists) => {
+    const api2 = getExchangeRateInfo().then((lists) => {
       setExRateList(lists);
     });
+
+    Promise.all([api1, api2]).then(async (values) => {
+      await processStartParams(values[0]);
+    }).finally(() => dispatch(setWaittingVisible(false)));
   }, []);
 
   /**
@@ -212,12 +215,6 @@ const C00400 = () => {
   const handleFunctionClick = async (funcCode) => {
     let params = null;
 
-    const txnDetailsObj = accounts.reduce((acc, cur) => {
-      if (cur.txnDetails) acc[cur.accountNo] = cur.txnDetails;
-      return acc;
-    }, {});
-
-    const keepData = { defaultAccount: selectedAccount.accountNo, txnDetailsObj };
     switch (funcCode) {
       case 'moreTranscations': // 更多明細
         params = {
@@ -226,9 +223,15 @@ const C00400 = () => {
         };
         break;
 
-      case 'foreignCurrencyTransfer': // 轉帳
+      case Func.D007.id: // 轉帳
+        break;
+
       case Func.E001.id: // 換匯
-        params = { transOut: selectedAccount }; // TODO 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。
+        params = { model: {
+          mode: 2,
+          outAccount: selectedAccount.accountNo,
+          currency: selectedAccount.currency,
+        }};
         break;
 
       case 'setMainAccount': // 設定為主要外幣帳戶
@@ -236,7 +239,7 @@ const C00400 = () => {
         setMainCurrency(selectedAccount.accountNo, selectedAccount.currency);
         return;
 
-      case 'foreignCurrencyPriceSetting': // 外幣到價通知
+      case Func.E004.id: // 外幣到價通知
         break;
 
       case 'Rename': // 帳戶名稱編輯
@@ -249,6 +252,16 @@ const C00400 = () => {
         return;
     }
 
+    const txnDetailsObj = accounts.reduce((acc, cur) => {
+      if (cur.txnDetails) acc[cur.accountNo] = cur.txnDetails;
+      return acc;
+    }, {});
+
+    const keepData = {
+      defaultAccount: selectedAccount.accountNo,
+      defaultCurrency: selectedAccount.currency,
+      txnDetailsObj,
+    };
     startFunc(funcCode, params, keepData);
   };
 
@@ -268,7 +281,7 @@ const C00400 = () => {
               cardColor="orange"
               funcList={[
                 {
-                  fid: 'foreignCurrencyTransfer',
+                  fid: Func.D007.id,
                   title: '轉帳',
                   enabled:
                     selectedAccount.transable && selectedAccount.balance > 0,

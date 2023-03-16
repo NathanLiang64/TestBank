@@ -3,8 +3,9 @@
 import { useHistory } from 'react-router';
 import { forceLogout, getOsType } from 'utilities/AppScriptProxy';
 import { Func, isEnterFunc } from 'utilities/FuncID';
-import { setFuncJump } from 'stores/reducers/FuncJumpReducer';
+// import { setFuncJump } from 'stores/reducers/FuncJumpReducer';
 import store from 'stores/store';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 const funcStack = {
   getStack: () => {
@@ -31,31 +32,33 @@ const funcStack = {
   },
 };
 
-/**
- * 註冊webview換頁監聽事件給原生使用
- */
-const registFuncJumpHandler = () => {
-  window.startFunc = ({keepData = '', funcParams = '', url}) => {
-    // 原生傳入的參數是JSON字串格式
-    keepData = (keepData === '') ? '' : JSON.parse(keepData);
-    funcParams = (funcParams === '') ? '' : JSON.parse(funcParams);
+// /**
+//  * 註冊webview換頁監聽事件給原生使用
+//  */
+// const registFuncJumpHandler = () => {
+//   window.startFunc = ({keepData = '', funcParams = '', url}) => {
+//     console.log('window.startFunc : ', url, funcParams, keepData);
 
-    // 還原json跳脫字元
-    const funcID = url.replace("\"", "\\\"")  // eslint-disable-line
-      .split('/').pop().substring(0, 4); // 取url最後一段的前4碼
+//     // 原生傳入的參數是JSON字串格式
+//     keepData = (keepData === '') ? '' : JSON.parse(keepData); // BUG keepData = null undefined ' ' ...
+//     funcParams = (funcParams === '') ? '' : JSON.parse(funcParams);
 
-    const isFunction = /^[A-Z]\d{3}$/.test(funcID);
-    if (isFunction) {
-      console.log(`window.startFunc is called : ${funcID}`);
+//     // 還原json跳脫字元
+//     const funcID = url.replace("\"", "\\\"")  // eslint-disable-line
+//       .split('/').pop().substring(0, 4); // 取url最後一段的前4碼
 
-      // 調用useNavigation 內的 startFunc
-      store.dispatch(setFuncJump({isNeedJump: true, jumpParam: {funcID, funcParams, keepData}}));
-    } else {
-      // 外開一般的URL
-      window.open(url, '_blank');
-    }
-  };
-};
+//     const isFunction = /^[A-Z]\d{3}$/.test(funcID);
+//     if (isFunction) {
+//       console.log(`window.startFunc is called : ${funcID}`);
+
+//       // 調用useNavigation 內的 startFunc
+//       store.dispatch(setFuncJump({isNeedJump: true, jumpParam: {funcID, funcParams, keepData}}));
+//     } else {
+//       // 外開一般的URL
+//       window.open(url, '_blank');
+//     }
+//   };
+// };
 
 const useNavigation = () => {
   const history = useHistory();
@@ -70,7 +73,8 @@ const useNavigation = () => {
     funcID = funcID.replace(/^\/*/, '');
 
     if (funcStack.getStack().length === 0 && funcID !== Func.B001.id) {
-      if (process.env.NODE_ENV === 'development') {
+      // 只有在 Web 測試模式 才需要加入首頁(B001);
+      if (getOsType(true) === 3) {
         funcStack.push({ funcID: Func.B001.id, isFunction: true });
       }
     }
@@ -82,10 +86,11 @@ const useNavigation = () => {
       if (!funcInfo) isFunction = false;
     }
 
-    // 只有外開功能，不需納入 funcStack 管理，因為外開的功能沒有 Back 回原功能的需要。
-    if (!funcInfo || (!funcInfo.isOpenExternalBrowser && !funcInfo.isAppFunc)) {
+    delete window.FuncParams;
+    // 外開或原生功能不需納入 funcStack 管理，因為外開的功能沒有 Back 回原功能的需要。
+    if (!isFunction || !(funcInfo.isOpenExternalBrowser || funcInfo.isAppFunc)) {
       funcStack.push({ funcID, funcParams, keepData, isFunction });
-      window.FuncParams = (funcParams ?? null);
+      window.FuncParams = funcParams;
     }
 
     if (isFunction) {
@@ -114,27 +119,27 @@ const useNavigation = () => {
     }
   };
 
-  /**
-   * 監聽原生所觸發的 window.startFunc 換頁事件
-   * 用這種作法是因為 useNavigation 基於REACT HOOK限制, 不能引入在function component 以外的地方 及 其他監聽事件內
-   */
-  if (!window.setAppFuncJump) { // 避免每次有引入useNavigation時都重複註冊
-    window.setAppFuncJump = true;
+  // /**
+  //  * 監聽原生所觸發的 window.startFunc 換頁事件
+  //  * 用這種作法是因為 useNavigation 基於REACT HOOK限制, 不能引入在function component 以外的地方 及 其他監聽事件內
+  //  */
+  // if (!window.setAppFuncJump) { // 避免每次有引入useNavigation時都重複註冊
+  //   window.setAppFuncJump = true;
 
-    store.subscribe(() => {
-      const {isNeedJump, jumpParam} = store.getState()?.FuncJumpReducer;
+  //   store.subscribe(() => {
+  //     const {isNeedJump, jumpParam} = store.getState()?.FuncJumpReducer;
 
-      if (isNeedJump === true) {
-        const {funcID, funcParams, keepData} = jumpParam;
+  //     if (isNeedJump === true) {
+  //       const {funcID, funcParams, keepData} = jumpParam;
 
-        // 調用useNavigation 內的 startFunc
-        startFunc(funcID, funcParams, keepData);
+  //       // 調用useNavigation 內的 startFunc
+  //       startFunc(funcID, funcParams, keepData);
 
-        // 調用完畢, 重設調用設定
-        store.dispatch(setFuncJump({isNeedJump: false, jumpParam: {}}));
-      }
-    });
-  }
+  //       // 調用完畢, 重設調用設定
+  //       store.dispatch(setFuncJump({isNeedJump: false, jumpParam: {}}));
+  //     }
+  //   });
+  // }
 
   /**
    * 啟動 Web 單元功能。
@@ -188,7 +193,8 @@ const useNavigation = () => {
     if (!startItem) {
       await callAppJavaScript('closeFunc', null, false);
       // NOTE 因為回到「原生首頁」時，Webview 內容仍存在，下次開啟 Webview 時會先看到上次的內容，先在前端以此方式解決
-      history.push('/'); // Webview 被隱藏時，將畫面導向空白頁，避免看到前一頁的內容
+      // history.push('/'); // Webview 被隱藏時，將畫面導向空白頁，避免看到前一頁的內容
+      store.dispatch(setWaittingVisible(true));
       if (closedItem.funcID === Func.B001.id) forceLogout();
       return;
     }
@@ -211,7 +217,8 @@ const useNavigation = () => {
   const goHome = async () => {
     funcStack.clear();
     // NOTE 因為回到「原生首頁」時，Webview 內容仍存在，下次開啟 Webview 時會先看到上次的內容，先在前端以此方式解決
-    history.push('/'); // Webview 被隱藏時，將畫面導向空白頁，避免看到前一頁的內容
+    // history.push('/'); // Webview 被隱藏時，將畫面導向空白頁，避免看到前一頁的內容
+    store.dispatch(setWaittingVisible(true));
     await callAppJavaScript('goHome', null, false, () => {
       startFunc(Func.B001.id);
       funcStack.push({ funcID: Func.B001.id, isFunction: true });
@@ -349,20 +356,17 @@ async function callAppJavaScript(appJsName, jsParams, needCallback, webDevTest) 
  * }>} 若參數當時是以 JSON 物件儲存，則同樣會轉成物件傳回。
  */
 async function loadFuncParams() {
-  let params = window.FuncParams;
-  if (params) return params;
-
-  // NOTE: 如果 params 無值，可能是 1. App 沒有透過 startFunc 導向 2. startFunc 本身就沒有帶參數
-  const funcItem = funcStack.peek(); // 因為功能已經啟動，所以用 peek 取得正在執行中的 單元功能(例：A00100) 或是 頁面(例：moreTransactions)
-  const webGetFuncParams = () => window.FuncParams;
-  const isFunction = !funcItem || /^[A-Z]\d{3}$/.test(funcItem.funcID); // 表示 funcID 不是一般頁面，而是由 Function Controller 控制的單元功能。
-  const data = isFunction ? await callAppJavaScript('getPagedata', null, true, webGetFuncParams) : webGetFuncParams();
-  if (data) {
-    // 解析由 APP 傳回的資料, 只要有 keepData 就表示是由叫用的功能結束返回
-    // 因此，要以 keepData 為單元功能的啟動參數。
-    // 反之，表示是單元功能被啟動，此時才是以 funcParams 為單元功能的啟動參數。
-    const dataStr = data.keepData || data.funcParams;
-    params = dataStr && dataStr.startsWith('{') ? JSON.parse(dataStr) : null; // NOTE 只支援APP JS傳回JSON格式資料！
+  let params = window.FuncParams; // 由 startFunc 或 closeFunc 所存入的資料。
+  if (!params) { // 由原生直接開啟單元功能時，window.FuncParams 不會有值。
+    const data = await callAppJavaScript('getPagedata', null, true);
+    console.log('>> getPagedata : ', data);
+    if (data) {
+      // 解析由 APP 傳回的資料, 只要有 keepData 就表示是由叫用的功能結束返回
+      // 因此，要以 keepData 為單元功能的啟動參數。
+      // 反之，表示是單元功能被啟動，此時才是以 funcParams 為單元功能的啟動參數。
+      const dataStr = data.keepData || data.funcParams;
+      params = dataStr?.startsWith('{') ? JSON.parse(dataStr) : null; // NOTE 只支援APP JS傳回JSON格式資料！
+    }
   }
 
   console.log('>> Function 啟動參數 : ', params);
@@ -373,5 +377,5 @@ export {
   useNavigation,
   callAppJavaScript,
   loadFuncParams,
-  registFuncJumpHandler,
+  // registFuncJumpHandler,
 };
