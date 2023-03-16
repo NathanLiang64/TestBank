@@ -156,24 +156,6 @@ export const queryCardBill = async (request) => {
 };
 
 /**
- * 查詢會員自扣狀態，決定帳單提示內容與下方Button種類
- * 透過 queryCardInfo 查詢本期繳款截止日
- *
- * @param token
- * @return {
- *    autoDeductStatus:       0:尚未設定自扣，1:已設定自扣
- *    hintToPay:              繳費提醒
- * }
- * @throws ParseException
- *
- * TODO: 尚未有完整的測資，所以個電文先帶有測資的 id/帳號
- */
-export const checkCardBillStatus = async (request) => {
-  const response = await callAPI('/creditCard/v1/getBillDeducStatus', request);
-  return response;
-};
-
-/**
  * 信用卡帳單交易資訊
  * (信用卡子首頁_帳單_更多)
  *

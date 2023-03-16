@@ -67,8 +67,8 @@ export const getBillDetail = async (request) => {
  *
  * TODO: 尚未有完整的測資，所以個電文先帶有測資的 id/帳號
  */
-export const getBillDeducStatus = async (request) => {
-  const response = await callAPI('/creditCard/v1/getBillDeducStatus', request);
+export const getBillDeductStatus = async (request) => {
+  const response = await callAPI('/creditCard/v1/getBillDeductStatus', request);
   return response.data;
 };
 
