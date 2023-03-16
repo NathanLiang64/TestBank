@@ -54,3 +54,9 @@ export const getBankAccount = async () => {
   const response = await callAPI('/ledger/partner/getBankAccount');
   return response.data;
 };
+
+// 編輯帳本成員的綁定帳號
+export const setBankAccount = async (payload) => {
+  const response = await callAPI('/ledger/partner/setBankAccount', payload);
+  return response.data;
+};

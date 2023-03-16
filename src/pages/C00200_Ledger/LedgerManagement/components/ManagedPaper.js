@@ -16,7 +16,12 @@ import {
   EditNickNameForm,
   EditAccountForm,
 } from './EditForm';
-import { setLedgerName, setNickname, getBankAccount } from '../api';
+import {
+  setLedgerName,
+  setNickname,
+  getBankAccount,
+  setBankAccount,
+} from '../api';
 import { getLedgerTypeName } from '../../utils/lookUpTable';
 
 export default () => {
@@ -134,7 +139,21 @@ export default () => {
             <EditAccountForm
               nameDefaultValue={bindAccount}
               dropOptions={bankCodeOptions}
-              callback={(data) => console.log(data)}
+              callback={async (data) => {
+                const { bankCode, accountNumber } = data;
+                const res = await setBankAccount({
+                  bankCode,
+                  account: accountNumber,
+                });
+                if (res) {
+                  setBindAccount(data);
+                }
+                showAnimationModal({
+                  isSuccess: res,
+                  successTitle: '設定成功',
+                  errorTitle: '設定失敗',
+                });
+              }}
             />
           ),
         });
