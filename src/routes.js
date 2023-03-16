@@ -211,9 +211,9 @@ const routes = [
     component: ForeignCurrencyTransfer2,
   },
   // 社群帳本
+  {path: '/C00200', exact: false, component: ClubLedgersList},
   {path: '/abortLedgerConfirm', exact: false, component: AbortLedgerConfirm},
   {path: '/abortLedgerSuccess', exact: false, component: AbortLedgerSuccess},
-  {path: '/clubLedgersList', exact: false, component: ClubLedgersList},
   {path: '/createLedgerForm', exact: false, component: CreateLedgerForm},
   {path: '/createLedgerSuccess', exact: false, component: CreateLedgerSuccess},
   {path: '/invitationCard', exact: false, component: InvitationCard},

@@ -9,13 +9,20 @@ import {
   showError,
   showAnimationModal,
 } from 'utilities/MessageModal';
+import { getBankCode } from 'utilities/CacheData';
 import { TextTwoColumnFiled, ButtonTwoColumnFiled } from './ManagedColumn';
 import {
   EditLedgerNameForm,
   EditNickNameForm,
   EditAccountForm,
 } from './EditForm';
-import { setLedgerName, setNickname } from '../api';
+import {
+  setLedgerName,
+  setNickname,
+  getBankAccount,
+  setBankAccount,
+} from '../api';
+import { getLedgerTypeName } from '../../utils/lookUpTable';
 
 export default () => {
   const location = useLocation();
@@ -29,9 +36,27 @@ export default () => {
   }, []);
   // 狀態設定
   const [viewModel, setViewModel] = useState(state);
+  const [bankCodeOptions, setBankCodeOptions] = useState([]);
+  const [bindAccount, setBindAccount] = useState({
+    bankCode: '',
+    accountNumber: '',
+  });
+  // 初始設定
+  const init = async () => {
+    const resFromGetBankAccount = await getBankAccount();
+    const { bankCode, accountNumber } = resFromGetBankAccount;
+    setBindAccount({ bankCode, accountNumber });
+    const resFromGetBankCode = await getBankCode();
+    const formatBankCode = resFromGetBankCode.map((item) => ({
+      label: `${item.bankNo} - ${item.bankName}`,
+      value: item.bankNo,
+    }));
+    setBankCodeOptions(formatBankCode);
+  };
   useEffect(() => {
     if (!isMounted.current) {
       isMounted.current = true;
+      init();
     } else {
       history.push(location.pathname, viewModel);
     }
@@ -71,7 +96,7 @@ export default () => {
       value: `(${viewModel.bankeeAccount.bankCode})${viewModel.bankeeAccount.accountNumber}`,
     },
     { label: '建立日期', value: viewModel.createDate },
-    { label: '類型', value: viewModel.ledgerTypeName },
+    { label: '類型', value: getLedgerTypeName(viewModel.ledgerType) },
     {
       label: '目前帳本金額',
       value: `${viewModel.bankeeAccount.accountCurrency} ${viewModel.ledgerAmount}`,
@@ -104,13 +129,33 @@ export default () => {
     },
     {
       label: '我的綁定帳號',
-      value: '',
+      value: `(${bindAccount.bankCode})${bindAccount.accountNumber}`,
       isEdited: true,
       isHide: viewModel.owner,
       onEditClick: () => {
         showCustomPrompt({
           title: '編輯綁定帳號',
-          message: <EditAccountForm callback={(data) => console.log(data)} />,
+          message: (
+            <EditAccountForm
+              nameDefaultValue={bindAccount}
+              dropOptions={bankCodeOptions}
+              callback={async (data) => {
+                const { bankCode, accountNumber } = data;
+                const res = await setBankAccount({
+                  bankCode,
+                  account: accountNumber,
+                });
+                if (res) {
+                  setBindAccount(data);
+                }
+                showAnimationModal({
+                  isSuccess: res,
+                  successTitle: '設定成功',
+                  errorTitle: '設定失敗',
+                });
+              }}
+            />
+          ),
         });
       },
     },
