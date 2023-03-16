@@ -48,3 +48,9 @@ export const setNickname = async (payload) => {
   const response = await callAPI('/ledger/setNickname', payload);
   return response.data;
 };
+
+// 取得帳本成員的綁定帳號
+export const getBankAccount = async () => {
+  const response = await callAPI('/ledger/partner/getBankAccount');
+  return response.data;
+};

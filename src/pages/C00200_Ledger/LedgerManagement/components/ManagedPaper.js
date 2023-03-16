@@ -15,7 +15,7 @@ import {
   EditNickNameForm,
   EditAccountForm,
 } from './EditForm';
-import { setLedgerName, setNickname } from '../api';
+import { setLedgerName, setNickname, getBankAccount } from '../api';
 import { getLedgerTypeName } from '../../utils/lookUpTable';
 
 export default () => {
@@ -30,9 +30,20 @@ export default () => {
   }, []);
   // 狀態設定
   const [viewModel, setViewModel] = useState(state);
+  const [bindAccount, setBindAccount] = useState({
+    bankCode: '',
+    accountNumber: '',
+  });
+  // 初始設定
+  const init = async () => {
+    const resFromGetBankAccount = await getBankAccount();
+    const { bankCode, accountNumber } = resFromGetBankAccount;
+    setBindAccount({ bankCode, accountNumber });
+  };
   useEffect(() => {
     if (!isMounted.current) {
       isMounted.current = true;
+      init();
     } else {
       history.push(location.pathname, viewModel);
     }
@@ -105,7 +116,7 @@ export default () => {
     },
     {
       label: '我的綁定帳號',
-      value: '',
+      value: `(${bindAccount.bankCode})${bindAccount.accountNumber}`,
       isEdited: true,
       isHide: viewModel.owner,
       onEditClick: () => {
