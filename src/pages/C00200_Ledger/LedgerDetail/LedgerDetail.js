@@ -145,7 +145,7 @@ export default () => {
   return (
     <Layout
       title="帳本明細"
-      goBackFunc={() => history.push('/clubLedgersList')}
+      goBackFunc={() => history.push('/C00200')}
     >
       <PageWrapper>
         <InformationTape
