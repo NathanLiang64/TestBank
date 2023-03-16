@@ -1,9 +1,14 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
-import { exchangeNtoF, exchangeFtoN } from 'pages/E00100_Exchange/api';
-import { toCurrency } from 'utilities/Generator';
-import { transactionAuth } from 'utilities/AppScriptProxy';
+
 import { Func } from 'utilities/FuncID';
+import { getCurrenyInfo } from 'utilities/Generator';
+import { transactionAuth } from 'utilities/AppScriptProxy';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { showError } from 'utilities/MessageModal';
+import { create, execute } from 'pages/E00100_Exchange/api';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -13,58 +18,80 @@ import InformationList from 'components/InformationList';
 import CountDown from 'components/CountDown';
 
 /* Styles */
-import { useDispatch } from 'react-redux';
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { ExchangeWrapper } from './E00100.style';
 import { E00100Notice } from './E00100_Content';
 
-const E001001 = ({ location }) => {
+/**
+ * 換匯確認頁
+ * @param {{location: {state: {viewModel, model}}}} props
+ */
+const E001001 = (props) => {
+  const { location } = props;
+  const { state } = location;
+
   const history = useHistory();
   const dispatch = useDispatch();
-  const [confirmData, setConfirmData] = useState({});
+  const [viewData, setViewData] = useState();
 
-  const goBack = () => history.goBack();
+  /**
+   * 建構式，初始化
+   */
+  useEffect(() => {
+    const { viewModel, model } = state;
+    console.log(state);
 
-  const handleNextStep = async () => {
-    // const authCode = 0x30;
-    const jsRs = await transactionAuth(Func.E001.authCode.F_TWD);
-    if (jsRs.result) {
-      // switchLoading(true);
-      dispatch(setWaittingVisible(true));
-      const param = { ...confirmData };
-      delete param.outAccountAmount;
-      let response;
-      // 1: 台轉外
-      if (confirmData?.trnsType === '1') {
-        response = await exchangeNtoF(param);
-      }
-      // 2: 外轉台
-      if (confirmData?.trnsType === '2') {
-        response = await exchangeFtoN(param);
-      }
+    dispatch(setWaittingVisible(true));
+
+    // 取得換匯掛號資訊
+    create(model).then((apiRs) => {
+      // 執行外幣換匯、轉帳時的交易序號
+      model.tfrId = apiRs.tfrId;
+      viewModel.outAmount = apiRs.outAmount; // 估算兌換指定轉入金額所需的轉出金額
+
+      const ccyInfo = getCurrenyInfo(model.currency);
+      const data = {
+        mode: model.mode,
+        isBanker: viewModel.isBanker,
+        inAccount: model.inAccount,
+        outAccount: model.outAccount,
+        transInDesc: `${(model.mode === 1) ? model.currency : 'NTD'}$${model.inAmount}`,
+        transOutDesc: `${(model.mode === 1) ? 'NTD' : model.currency}$${apiRs.outAmount}`,
+        exRate: apiRs.exRate, // (model.mode === 1) ? Number((1.0 / exRate.SpotAskRate).toFixed(4)) : exRate.SpotBidRate, // TODO 買入、賣出
+        currency: `${ccyInfo.name} ${ccyInfo.code}`,
+        leglDesc: viewModel.properties.find((p) => p.leglCdode === model.property).leglDesc,
+        balance: apiRs.balance,
+        memo: model.memo,
+        countdownSec: apiRs.countdown,
+      };
+      setViewData(data);
+    }).finally(() => {
       dispatch(setWaittingVisible(false));
-      // switchLoading(false);
-      history.push('/E001002', {
-        ...response,
-        memo: confirmData?.memo,
-        isEmployee: confirmData?.isEmployee,
+    });
+  }, []);
+
+  /**
+   * 進入轉帳結果頁
+   */
+  const handleNextStep = async () => {
+    const jsRs = await transactionAuth(Func.E001.authCode);
+    if (jsRs.result) {
+      dispatch(setWaittingVisible(true));
+
+      execute(state.model.tfrId).then((apiRs) => {
+        viewData.result = apiRs; // viewData 與結果頁共用。
+        history.push('/E001002', {...state, viewData});
+      }).finally(() => {
+        dispatch(setWaittingVisible(false));
       });
     }
   };
 
-  const generateAccountAmt = () => {
-    const amount = Number(confirmData?.outAccountAmount) - Number(confirmData?.outAmt);
-    const formatAmt = +`${Math.round(`${amount}e+2`)}e-2`;
-    return toCurrency(formatAmt);
-  };
+  const goBack = () => history.replace('/E00100', state);
 
-  useEffect(() => {
-    if (location?.state) {
-      setConfirmData({ ...location?.state });
-    }
-  }, []);
-
-  return (
+  /**
+   * 主頁面輸出
+   */
+  return viewData ? (
     <Layout title="外幣換匯確認" fid={Func.E001} goBackFunc={goBack}>
       <ExchangeWrapper className="confirmPage">
         <div className="infoSection">
@@ -72,78 +99,53 @@ const E001001 = ({ location }) => {
             <div className="countDownTitle">尚餘交易時間</div>
             <div>
               <CountDown
-                // minute={60}
-                minute={location.state.countdownSec / 60}
-                onEnd={goBack}
+                seconds={viewData.countdownSec}
+                onEnd={goBack} // TODO 時間到，是提醒，再重新取匯；Back動作讓使用者主動操作！
               />
             </div>
           </div>
           <div className="infoData">
             <div className="label">
-              轉換
-              {confirmData?.trnsType === '1' ? '外幣' : '臺幣'}
+              {`轉換${(viewData.mode === 1) ? '外幣' : '臺幣'}`}
             </div>
             <div className="foreignCurrency">
-              {`${confirmData?.inCcyCd} $${confirmData?.inAmt}`}
+              {viewData.transInDesc}
             </div>
-            {/* prettier-ignore */}
             <div className="changeNT">
-              折合
-              {confirmData?.trnsType === '1' ? '臺幣' : '外幣'}
-              ：
-              {confirmData?.outCcyCd}
-              $
-              {confirmData?.outAmt}
+              {`折合${(viewData.mode === 1) ? '臺幣' : '外幣'}：${viewData.transOutDesc}`}
             </div>
             <div className="exchangeRate">
-              換匯匯率：
-              {confirmData?.rate}
+              {`換匯匯率：${viewData.exRate}`}
             </div>
-            {confirmData?.isEmployee && (
+            {viewData.isBanker && (
               <div className="employee">員工優惠匯率</div>
             )}
             <div className="label into">轉入帳號</div>
-            {/* <div className="accountData">遠東商銀(805)</div> */}
-            <div className="accountData">{confirmData?.inAcct}</div>
+            <div className="accountData">遠東商銀(805)</div>
+            <div className="accountData">{viewData.inAccount}</div>
           </div>
         </div>
+
         <div className="infoSection">
           <div>
-            <InformationList title="轉出帳號" content={confirmData?.outAcct} />
+            <InformationList title="轉出帳號" content={viewData.outAccount} />
             <InformationList
               title="換匯種類"
-              content={
-                confirmData?.trnsType === '1' ? '臺幣轉外幣' : '外幣轉臺幣'
-              }
+              content={(viewData.mode === 1) ? '臺幣轉外幣' : '外幣轉臺幣'}
             />
-            <InformationList
-              title="轉換外幣幣別"
-              content={
-                confirmData?.trnsType === '1'
-                  ? `${confirmData?.inCcyName} ${confirmData?.inCcyCd}`
-                  : `${confirmData?.outCcyName} ${confirmData?.outCcyCd}`
-              }
-            />
-            <InformationList
-              title="匯款性質分類"
-              content={confirmData?.leglDesc}
-            />
+            <InformationList title="轉換外幣幣別" content={viewData.currency} />
+            <InformationList title="匯款性質分類" content={viewData.leglDesc} />
           </div>
-          <Accordion
-            className="exchangeAccordion"
-            title="詳細交易"
-            space="both"
-            open
-          >
-            <InformationList
-              title="帳戶餘額"
-              content={`$${generateAccountAmt()}`}
-            />
-            <InformationList title="備註" content={confirmData?.memo} />
+
+          <Accordion className="exchangeAccordion" title="詳細交易" space="both" open>
+            <InformationList title="帳戶餘額" content={viewData.balance} />
+            <InformationList title="備註" content={viewData.memo} />
           </Accordion>
+
           <Accordion space="bottom">
             <E00100Notice />
           </Accordion>
+
           <div className="confirmBtns">
             <ConfirmButtons
               mainButtonOnClick={handleNextStep}
@@ -153,7 +155,7 @@ const E001001 = ({ location }) => {
         </div>
       </ExchangeWrapper>
     </Layout>
-  );
+  ) : null;
 };
 
 export default E001001;

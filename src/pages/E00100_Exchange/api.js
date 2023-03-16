@@ -4,6 +4,15 @@ import { callAPI } from 'utilities/axios';
 import { getBankCode } from 'utilities/CacheData';
 
 /**
+ * 查詢是否為行員
+ * @returns {Promise<Boolean>} 是否為本行員工
+ */
+export const isEmployee = async () => {
+  const response = await callAPI('/personal/v1/queryFundGroup');
+  return response.data.isEmployee;
+};
+
+/**
  * 查詢匯率行情
   @returns [
     {
@@ -19,15 +28,6 @@ export const getExchangeRateInfo = async () => {
   return response.data;
 };
 
-/**
- * 查詢是否為行員
- * @returns {Promise<Boolean>} 是否為本行員工
- */
-export const isEmployee = async () => {
-  const response = await callAPI('/personal/v1/queryFundGroup');
-  return response.data;
-};
-
 // Booking: '20.68000';
 // CashAskRate: '0.00000';
 // CashBidRate: '0.00000';
@@ -39,28 +39,59 @@ export const isEmployee = async () => {
 // SpotBidRate: '20.51000'; // 客戶 外轉台
 // UpdateDateTime: '2022-12-29T15:44:11.957';
 
-// 取得可交易幣別
+// 取得可交易幣別(全行共用，可用Cache)
 export const getCcyList = async (param) => {
   const response = await callAPI('/deposit/foreign/v1/getCcyList', param);
   return response.data;
 };
 
-// 取得外幣交易性質列表
+// 取得外幣交易性質列表(全行共用，可用Cache)
 export const getExchangePropertyList = async (param) => {
   const response = await callAPI('/deposit/foreign/v1/getTransactionType', param);
   return response.data;
 };
 
-// 外幣換匯 N2F
-export const exchangeNtoF = async (param) => {
-  const response = await callAPI('/deposit/foreign/exchN2f', param);
+/**
+ * 建立外幣換匯、轉帳交易紀錄
+ * @param {{
+ *   mode: Number, // 0.尚未初始化, 1.新臺幣轉外幣, 2.外幣轉新臺幣
+ *   outAccount: String, // 轉出帳號
+ *   currency: String, // 兌換使用的幣別(mode => 1.轉入幣別, 2.轉出幣別)
+ *   inAccount: String, // 轉入帳號
+ *   inAmount: Number, // 轉入(兌換)金額
+ *   inAmtMode: Number, // 轉入(兌換)金額的幣別模式（1.currency, 2.台幣)
+ *   property: String, // 性質別
+ *   memo: String, // 備註
+ * }} request
+ * @returns {Promise<{
+ *   tfrId: String, // 執行外幣換匯、轉帳時的交易序號
+ *   countdown: Number, // 取匯有效時限（即到數秒數）
+ *   exRate: Number, // 取交易匯率序號所得的匯率
+ *   outAmount: Number, // 以 exRate 計算兌換所需的轉出金額
+ *   balance: Number, // 兌換後的轉出帳戶餘額
+ * }>}
+ */
+export const create = async (request) => {
+  const response = await callAPI('/deposit/foreign/exchange/v1/create', request);
   return response.data;
 };
 
-// 外幣換匯 F2N
-export const exchangeFtoN = async (param) => {
-  const response = await callAPI('/deposit/foreign/exchF2n', param);
-  return response.data;
+/**
+ * 執行外幣換匯、轉帳交易
+ * @param {String} tfrId 執行外幣換匯、轉帳時的交易序號
+ * @returns {
+ *    isSuccess,
+ *    balance: 轉出後餘額,
+ *    errorCode,
+ *    message: 錯誤訊息,
+ * }
+ */
+export const execute = async (tfrId) => {
+  const response = await callAPI('/deposit/foreign/exchange/v1/execute', tfrId);
+  return {
+    ...response.data,
+    isSuccess: (response.isSuccess && !response.data.errorCode),
+  };
 };
 
 /**

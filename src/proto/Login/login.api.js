@@ -10,6 +10,7 @@ export const login = async (data) => {
     password: CipherUtil.e2ee(data.password),
     rsaPubK: sessionStorage.getItem('publicKey'),
     isRepeat: !!data.isRepeat,
+    // deviceBindingKey: '', // NOTE 表示APP安裝的Token，與快登有直接關連，為1對1；因為 Web版 是用帳密登入，所以不需要提供。
   };
   const loginRs = await callAPI('/smJwe/v1/login', payload);
   if (loginRs.code === '0000') {
@@ -35,10 +36,10 @@ export const login = async (data) => {
   return false;
 };
 
-export const personalDataPreload = async (request) => {
-  const response = await callAPI('/auth/preload', request);
-  return response;
-};
+// export const personalDataPreload = async (request) => {
+//   const response = await callAPI('/auth/preload', request);
+//   return response;
+// };
 
 export const getInitData = async () => {
   const response = await callAPI('/smApi/v1/getInitData');
@@ -50,7 +51,7 @@ export const getAnnouncementData = async () => {
   return response;
 };
 
-export const getHomeData = async () => {
-  const response = await callAPI('/smApi/v1/getHomeData');
-  return response;
-};
+// export const getHomeData = async () => {
+//   const response = await callAPI('/smApi/v1/getHomeData');
+//   return response;
+// };
