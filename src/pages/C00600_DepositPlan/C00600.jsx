@@ -1,27 +1,25 @@
 import { useRef, useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
+import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
+import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import Layout from 'components/Layout/Layout';
-import { MainScrollWrapper } from 'components/Layout';
 import SwiperLayout from 'components/SwiperLayout';
+import { MainScrollWrapper } from 'components/Layout';
+import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
 
-import {
-  showAnimationModal, showCustomDrawer,
-} from 'utilities/MessageModal';
 import {
   AccountIcon11, AccountIcon12, CircleIcon, D001,
 } from 'assets/images/icons';
-import { transactionAuth } from 'utilities/AppScriptProxy';
 import { Func } from 'utilities/FuncID';
-import DepositPlanHeroSlide from 'components/DepositPlanHeroSlide';
-import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
-import { useDispatch } from 'react-redux';
+import { getAccountsList } from 'utilities/CacheData';
+import { transactionAuth } from 'utilities/AppScriptProxy';
+import { showAnimationModal, showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
 
-import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
-import EmptySlide from './components/EmptySlide';
 import EmptyPlan from './components/EmptyPlan';
+import EmptySlide from './components/EmptySlide';
 import DepositPlan from './components/DepositPlan';
-
 import {getDepositPlans, updateDepositPlan, closeDepositPlan } from './api';
 import {
   AlertUpdateFail,
@@ -41,6 +39,7 @@ const DepositPlanPage = () => {
   const {state} = useLocation();
   const {startFunc, closeFunc, goHome} = useNavigation();
   const [depositPlans, setDepositPlans] = useState();
+  const [disabled, setDisabled] = useState(false);
   const swiperRef = useRef();
 
   useEffect(async () => {
@@ -53,6 +52,20 @@ const DepositPlanPage = () => {
     dispatch(setWaittingVisible(false));
 
     setDepositPlans(plans);
+
+    // NOTE 若是從 Webview 導向存錢計畫，在此之前就會檢核有無數位帳戶，但是在「原生彩卡首頁」沒有此機制，故仍需要檢查
+    await getAccountsList('M', (accts) => {
+      if (!accts.length) {
+        showCustomPrompt({
+          title: '溫馨提醒',
+          message: '您尚未擁有 Bankee 台幣存款帳戶，是否立即申請？',
+          okContent: '立即申請',
+          onOk: () => window.open(`${process.env.REACT_APP_APLFX_URL}prod=Ta`, '_blank'),
+          cancelContent: '我再想想',
+          showCloseButton: false,
+        });
+      } else setDisabled(false);
+    });
   }, []);
 
   /**
@@ -87,8 +100,9 @@ const DepositPlanPage = () => {
       dispatch(setModalVisible(false)); // 先關掉 modal 避免閃爍
       const {result} = await transactionAuth(Func.C006.authCode); // 需通過 2FA 或 網銀密碼 驗證才能關閉計劃。
       if (!result) return;
-
+      dispatch(setWaittingVisible(true));
       const response = await closeDepositPlan(plan.planId);
+      dispatch(setWaittingVisible(false));
       if (response.result) {
         setDepositPlans((prevDepositPlans) => {
           const filteredPlans = prevDepositPlans.plans.filter((dp) => dp.planId !== plan.planId);
@@ -191,7 +205,7 @@ const DepositPlanPage = () => {
     const slides = Array.from({ length: 3 }, (_, i) => (
       <EmptyPlan
         key={i}
-        onAddClick={handleAddClick}
+        onAddClick={disabled ? null : handleAddClick} // 若 disabled 則不提供 handler，並將按鈕 disabled
         onMount={shouldShowUnavailableSubAccountAlert}
       />
     ));

@@ -10,11 +10,11 @@ import { FEIBButton } from 'components/elements';
 import { TextInputField } from 'components/Fields';
 import { Func } from 'utilities/FuncID';
 import { transactionAuth } from 'utilities/AppScriptProxy';
-import { getStatus } from 'pages/S00800_LossReissue/api';
 
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { activate } from './api';
+import { showPrompt } from 'utilities/MessageModal';
+import { activate, getStatus } from './api';
 import DebitCardActiveWrapper from './S00700.style';
 
 const S00700 = () => {
@@ -44,6 +44,29 @@ const S00700 = () => {
     }
   };
 
+  const checkStatus = (status) => {
+    switch (status) {
+      case (2):
+        showPrompt('您的卡片已寄出，提醒您完成開卡後，妥善保存密碼，並至ATM/WebATM進行密碼變更。');
+        return null;
+      case (1):
+      case (9):
+        return '感謝您申辦Bankee數位存款帳戶，您的帳戶正在審核中，審核完成後本行將以掛號寄出金融卡至您指定的地址。 ';
+      case (4):
+        return '您的卡片已啟用，請妥善保存密碼。';
+      case (5):
+        return '您的金融卡已掛失無法使用，請至金融卡掛失補發功能重新申請金融卡。';
+      case (6):
+        return '您的金融卡已註銷，如需使用，請至金融卡掛失補發功能重新申請金融卡。';
+      case (7):
+        return '您尚無Bankee數位存款帳戶，可點選立即申請辦理開戶。';
+      case (8):
+        return '您的卡片已申請臨時掛失，可至全省任一分行恢復使用，或至金融卡掛失補發功能重新申請金融卡。';
+      default:
+        return 'unexpected status';
+    }
+  };
+
   useEffect(() => {
     if (!QLResult) showUnbondedMsg();
   }, [QLResult]);
@@ -53,10 +76,9 @@ const S00700 = () => {
    * @returns {Promise<String>} 傳回驗證結果的錯誤訊息；若是正確無誤時，需傳回 null
    */
   const inspector = async () => {
-    const {status, statusDesc, account} = await getStatus();
-    if (status !== 2) {
-      return `卡片狀態為(${statusDesc})，不需進行金融卡啟用。`;
-    }
+    const {status, account} = await getStatus();
+    const message = checkStatus(status);
+    if (message) return message;
 
     reset((formValues) => ({
       ...formValues,

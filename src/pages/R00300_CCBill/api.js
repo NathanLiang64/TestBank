@@ -84,16 +84,20 @@ export const getInvoice = (period) => {
 };
 
 /**
- * 下載信用卡截止日行事曆 (only for ios)
+ * 訂閱信用卡截止日行事曆
  * @param {{
  * title: string,
  * fromDate: string
  * }} param
  * @returns {Promise<{
- * filename: string // filename.ics
+ * filename: string // filename.ics (若是 ios，只會回傳 filename)
+ * link: string // https://calendar.google.com/.... (若是 android os，只會回傳 link)
  * }>}
  */
 
-export const downloadCalendar = (param) => {
-  download('/creditCard/linkCalendar', param);
+export const subscribeCalendar = async (param) => {
+  const response = await callAPI('/creditCard/linkCalendar', param);
+  const { filename, link } = response.data;
+  const targetURL = filename ? `${process.env.REACT_APP_ICS_URL}/${filename}` : link;
+  window.open(targetURL, '_blank');
 };
