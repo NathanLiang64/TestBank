@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import { PersonalIcon, HomeIcon } from 'assets/images/icons';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import PageWrapper from './ClubLedgersList.style';
-import { getAllLedgers } from './api';
+import { getAllLedgers, start } from './api';
 // import { getAllLedgers } from './constants/mockData';
 import AccountCardGrey from './components/AccountCardGrey';
 import LEDGER_IMG from './images/ledger.png';
@@ -32,11 +32,17 @@ export default () => {
   // 初始化
   const init = async () => {
     dispatch(setWaittingVisible(true));
-    const res = await getAllLedgers();
-    const { ledger = [] } = res;
+    const resFromStart = await start();
+    if (!resFromStart) {
+      history.goBack();
+      return null;
+    }
+    const resFromGetAllLedgers = await getAllLedgers();
+    const { ledger = [] } = resFromGetAllLedgers;
     setLedgerList(ledger);
     setHasLedgerData(ledger.length !== 0);
     dispatch(setWaittingVisible(false));
+    return null;
   };
   useEffect(() => {
     init();
