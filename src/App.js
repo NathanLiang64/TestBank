@@ -14,7 +14,6 @@ const App = () => {
 
   // const Middleware = (Page) => (() => <Page />); // NOTE 暫時拿掉 因為與某些模組會產生頁面衝突 成白畫面
   useLayoutEffect(() => { // 暫時用 useLayoutEffect 替代 Middleware
-    // registFuncJumpHandler();
     if (window.startFunc) return;
 
     window.startFunc = ({url}) => {

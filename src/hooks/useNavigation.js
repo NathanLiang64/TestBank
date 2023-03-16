@@ -3,7 +3,6 @@
 import { useHistory } from 'react-router';
 import { forceLogout, getOsType } from 'utilities/AppScriptProxy';
 import { Func, isEnterFunc } from 'utilities/FuncID';
-// import { setFuncJump } from 'stores/reducers/FuncJumpReducer';
 import store from 'stores/store';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
@@ -31,34 +30,6 @@ const funcStack = {
     return lastItem;
   },
 };
-
-// /**
-//  * 註冊webview換頁監聽事件給原生使用
-//  */
-// const registFuncJumpHandler = () => {
-//   window.startFunc = ({keepData = '', funcParams = '', url}) => {
-//     console.log('window.startFunc : ', url, funcParams, keepData);
-
-//     // 原生傳入的參數是JSON字串格式
-//     keepData = (keepData === '') ? '' : JSON.parse(keepData); // BUG keepData = null undefined ' ' ...
-//     funcParams = (funcParams === '') ? '' : JSON.parse(funcParams);
-
-//     // 還原json跳脫字元
-//     const funcID = url.replace("\"", "\\\"")  // eslint-disable-line
-//       .split('/').pop().substring(0, 4); // 取url最後一段的前4碼
-
-//     const isFunction = /^[A-Z]\d{3}$/.test(funcID);
-//     if (isFunction) {
-//       console.log(`window.startFunc is called : ${funcID}`);
-
-//       // 調用useNavigation 內的 startFunc
-//       store.dispatch(setFuncJump({isNeedJump: true, jumpParam: {funcID, funcParams, keepData}}));
-//     } else {
-//       // 外開一般的URL
-//       window.open(url, '_blank');
-//     }
-//   };
-// };
 
 const useNavigation = () => {
   const history = useHistory();
@@ -131,28 +102,6 @@ const useNavigation = () => {
       history.push(`/${funcID}`);
     }
   };
-
-  // /**
-  //  * 監聽原生所觸發的 window.startFunc 換頁事件
-  //  * 用這種作法是因為 useNavigation 基於REACT HOOK限制, 不能引入在function component 以外的地方 及 其他監聽事件內
-  //  */
-  // if (!window.setAppFuncJump) { // 避免每次有引入useNavigation時都重複註冊
-  //   window.setAppFuncJump = true;
-
-  //   store.subscribe(() => {
-  //     const {isNeedJump, jumpParam} = store.getState()?.FuncJumpReducer;
-
-  //     if (isNeedJump === true) {
-  //       const {funcID, funcParams, keepData} = jumpParam;
-
-  //       // 調用useNavigation 內的 startFunc
-  //       startFunc(funcID, funcParams, keepData);
-
-  //       // 調用完畢, 重設調用設定
-  //       store.dispatch(setFuncJump({isNeedJump: false, jumpParam: {}}));
-  //     }
-  //   });
-  // }
 
   /**
    * 啟動 Web 單元功能。
@@ -397,5 +346,4 @@ export {
   useNavigation,
   callAppJavaScript,
   loadFuncParams,
-  // registFuncJumpHandler,
 };
