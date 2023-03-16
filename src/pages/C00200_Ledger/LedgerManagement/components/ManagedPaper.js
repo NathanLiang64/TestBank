@@ -9,6 +9,7 @@ import {
   showError,
   showAnimationModal,
 } from 'utilities/MessageModal';
+import { getBankCode } from 'utilities/CacheData';
 import { TextTwoColumnFiled, ButtonTwoColumnFiled } from './ManagedColumn';
 import {
   EditLedgerNameForm,
@@ -30,6 +31,7 @@ export default () => {
   }, []);
   // 狀態設定
   const [viewModel, setViewModel] = useState(state);
+  const [bankCodeOptions, setBankCodeOptions] = useState([]);
   const [bindAccount, setBindAccount] = useState({
     bankCode: '',
     accountNumber: '',
@@ -39,6 +41,12 @@ export default () => {
     const resFromGetBankAccount = await getBankAccount();
     const { bankCode, accountNumber } = resFromGetBankAccount;
     setBindAccount({ bankCode, accountNumber });
+    const resFromGetBankCode = await getBankCode();
+    const formatBankCode = resFromGetBankCode.map((item) => ({
+      label: `${item.bankNo} - ${item.bankName}`,
+      value: item.bankNo,
+    }));
+    setBankCodeOptions(formatBankCode);
   };
   useEffect(() => {
     if (!isMounted.current) {
@@ -122,7 +130,13 @@ export default () => {
       onEditClick: () => {
         showCustomPrompt({
           title: '編輯綁定帳號',
-          message: <EditAccountForm callback={(data) => console.log(data)} />,
+          message: (
+            <EditAccountForm
+              nameDefaultValue={bindAccount}
+              dropOptions={bankCodeOptions}
+              callback={(data) => console.log(data)}
+            />
+          ),
         });
       },
     },

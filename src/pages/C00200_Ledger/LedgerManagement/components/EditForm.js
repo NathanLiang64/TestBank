@@ -86,22 +86,30 @@ export const EditNickNameForm = ({
 };
 
 // 編輯綁定帳號 - 表單欄位
-export const EditAccountForm = ({ callback = () => {} }) => {
+export const EditAccountForm = ({
+  nameDefaultValue = { bankCode: '', accountNumber: '' },
+  dropOptions = [],
+  callback = () => {},
+}) => {
   const dispatch = useDispatch();
   // 驗證設定
   const schema = yup.object().shape({
     bankCode: yup.string().required('必填'),
-    bankAccount: yup.string().max(20).required('必填'),
+    accountNumber: yup
+      .string()
+      .matches(/^[0-9]*$/, '只能輸入數字')
+      .max(14, '銀行帳號最多14碼')
+      .required('必填'),
   });
   // 表單設定
   const { control, handleSubmit } = useForm({
-    defaultValues: { bankCode: '', bankAccount: '' },
+    defaultValues: nameDefaultValue,
     resolver: yupResolver(schema),
     mode: 'onChange',
   });
   // 點擊 - 表單送出
-  const onSubmitClick = ({ bankCode, bankAccount }) => {
-    callback({ bankCode, bankAccount });
+  const onSubmitClick = ({ bankCode, accountNumber }) => {
+    callback({ bankCode, accountNumber });
     dispatch(setModalVisible(false));
   };
   return (
@@ -109,20 +117,17 @@ export const EditAccountForm = ({ callback = () => {} }) => {
       <DropdownField
         name="bankCode"
         control={control}
-        options={[
-          { label: '805 - 遠東銀行', value: '805' },
-          { label: 'XXX - XX銀行', value: 'XXX' },
-        ]}
+        options={dropOptions}
         labelName="綁定賬號"
       />
       <TextInputField
         labelName=""
         type="text"
-        name="bankAccount"
+        name="accountNumber"
         control={control}
         inputProps={{ maxLength: 20 }}
       />
-      <Box mt={1}>
+      <Box mt={3}>
         <FEIBButton onClick={handleSubmit(onSubmitClick)}>確認</FEIBButton>
       </Box>
     </Box>
