@@ -20,6 +20,7 @@ const handshake = async () => {
   const message = {
     txnId: `WVIEW_${uuid()}`,
     deviceId: uuid(),
+    appuseruid: null, // TODO 要先用手機登入後，再請小胖查 App2Session 中的資料。
     // NOTE 用不用的 deviceId 可以進行「已在不同手機做過綁定」的情境。
     osType: getOsType() - 1,
     osVersion: '16.1.1',

@@ -77,7 +77,6 @@ const T007001 = lazy(() => import('pages/T00700_BasicInformation/T00700_1'));
 const T00800 = lazy(() => import('pages/T00800_ChangeUserName/T00800'));
 const T00900 = lazy(() => import('pages/T00900_PwdModify/T00900'));
 const S00100 = lazy(() => import('pages/S00100_Favorite/S00100'));
-const S00101 = lazy(() => import('pages/S00101_Favorites/S00101'));
 
 const DepositPlus = lazy(() => import('pages/DepositPlus'));
 const DepositPlusDetail = lazy(() => import('pages/DepositPlus/depositPlusDetail'));
@@ -176,8 +175,7 @@ const routes = [
   {path: '/R00500', exact: false, component: R00500},
   {path: '/R00600', exact: false, component: R00600},
   {path: '/R006001', exact: false, component: R006001},
-  {path: '/S00100J', exact: true, component: S00100}, // Jin 版
-  {path: '/S00100', exact: true, component: S00101},
+  {path: '/S00100', exact: true, component: S00100},
   {path: '/S00400', exact: true, component: S00400},
   {path: '/S00600', exact: false, component: S00600},
   {path: '/S00700', exact: false, component: S00700},
@@ -213,9 +211,9 @@ const routes = [
     component: ForeignCurrencyTransfer2,
   },
   // 社群帳本
+  {path: '/C00200', exact: false, component: ClubLedgersList},
   {path: '/abortLedgerConfirm', exact: false, component: AbortLedgerConfirm},
   {path: '/abortLedgerSuccess', exact: false, component: AbortLedgerSuccess},
-  {path: '/clubLedgersList', exact: false, component: ClubLedgersList},
   {path: '/createLedgerForm', exact: false, component: CreateLedgerForm},
   {path: '/createLedgerSuccess', exact: false, component: CreateLedgerSuccess},
   {path: '/invitationCard', exact: false, component: InvitationCard},

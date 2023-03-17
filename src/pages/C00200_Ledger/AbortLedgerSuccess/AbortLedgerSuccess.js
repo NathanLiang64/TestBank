@@ -18,7 +18,7 @@ export default () => {
 
   // 點擊 - 確認
   const onConfirmClick = () => {
-    history.push('/ClubLedgersList');
+    history.push('/C00200');
   };
 
   return (

@@ -271,14 +271,11 @@ export const Func = {
   },
 
   /**
-   * 換匯
+   * 換匯(包含 台換外、外換台)
    */
   E001: {
     id: 'E001',
-    authCode: {
-      TWD_F: 0x30, // 換匯-台換外
-      F_TWD: 0x30, // 換匯-外換台
-    },
+    authCode: 0x30,
     required: ['M,F', 'S,F'], // NOTE 表示需要同時具有(M 及 F)或(S 及 F)
   },
 
@@ -718,21 +715,21 @@ export const isEnterFunc = async (funcInfo) => {
       assetTypes = apiRs.data;
       sessionStorage.setItem('assetTypes', assetTypes);
     }
-    console.log(assetTypes);
+    // console.log(assetTypes);
 
     // requiredList = ['M, 'CC'] 或 ['M,F', 'S,F']
     // item = 'M' 或 'M,F'
     const omitTypes = requiredList.map((item) => { // 找出缺少的項目。
       const omitType = item.split(',').filter((t) => !assetTypes.includes(t));
-      console.log(requiredList, omitType, omitType.join(''));
+      // console.log(requiredList, omitType, omitType.join(''));
       return (omitType && omitType.length) ? omitType.join('') : null; // 沒有缺，就是符合的項目。
     });
 
     // 只要有任何一個項目，就可以進入單元功能；否則就詢問是否申請缺少的項目。
     const isAnyMatch = omitTypes.includes(null) && omitTypes.length >= 0;
-    console.log(isAnyMatch, omitTypes, omitTypes.includes(null), omitTypes.length >= 0);
+    // console.log(isAnyMatch, omitTypes, omitTypes.includes(null), omitTypes.length >= 0);
     if (!isAnyMatch) {
-      console.log(omitTypes[0]);
+      // console.log(omitTypes[0]);
       await handleShowPrompt(omitTypes[0]);
       return false;
     }

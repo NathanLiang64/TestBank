@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { getCurrenyInfo } from 'utilities/Generator';
+import { useNavigation } from 'hooks/useNavigation';
+import { Func } from 'utilities/FuncID';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -8,129 +9,130 @@ import { FEIBButton } from 'components/elements';
 import Accordion from 'components/Accordion';
 import ConfirmButtons from 'components/ConfirmButtons';
 import InformationList from 'components/InformationList';
-import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
+import ResultAnimation from 'components/SuccessFailureAnimations/ResultAnimation';
 
 /* Styles */
 import { ExchangeWrapper } from './E00100.style';
 
-const E001002 = ({ location }) => {
-  const {state} = location;
+/**
+ * 換匯確認頁
+ * @param {{location: {state: {viewModel, model}}}} props
+ */
+const E001002 = (props) => {
+  const { location } = props;
+  const { state } = location;
+  const { model, viewModel, viewData } = state;
+
   const history = useHistory();
+  const { startFunc } = useNavigation();
 
-  const [isSuccess, setIsSuccess] = useState(true);
-  const [exchangeResult] = useState(state);
-
-  const toTradeDetailPage = () => {
-    history.push('/taiwanDollarAccountDetails');// TODO: 此頁尚無funcID
-  };
-
-  const toExchangePage = () => {
-    history.push('/E00100');
-  };
-
-  const toPriceSettingPage = () => {
-    history.push('/foreignCurrencyPriceSetting'); // TODO: 此頁尚無funcID
-  };
-
+  /**
+   * 建構式，初始化
+   */
   useEffect(() => {
-    if (location?.state.code) { // ??? 有 Code 就是 失敗？
-      setIsSuccess(false);
-    }
   }, []);
 
+  /**
+   * 依轉出帳號幣別，切換至該幣別首頁。
+   */
+  const toAccountPage = () => {
+    if (model.mode === 1) {
+      // 新臺幣轉外幣 - 切換到台幣首頁。
+      startFunc(Func.C003, { defaultAccount: model.outAccount });
+    } else {
+      // 新臺幣轉外幣 - 切換到外幣首頁，並指定預設的幣別。
+      startFunc(Func.C004, { defaultCurrency: model.currency });
+    }
+  };
+
+  /**
+   * 返回換匯首頁。
+   * @param {Boolean} cleanData 表示只保留部份欄位資料，清除轉入相關資訊。
+   */
+  const nextExchange = (cleanData) => {
+    if (cleanData) {
+      delete viewModel.outAccount;
+      delete viewModel.outAmount;
+
+      // model 只保留 mode, outAccount, currency
+      delete model.inAccount;
+      delete model.inAmount;
+      delete model.inAmtMode;
+      delete model.property;
+      delete model.memo;
+    }
+
+    history.replace('/E00100', { model, viewModel });
+  };
+
+  /**
+   * 主頁面輸出
+   */
   return (
     <Layout title="外幣換匯結果" goBack={false}>
       <ExchangeWrapper className="finishPage">
-        <div className={`infoSection  ${!isSuccess && 'resultFail'}`}>
-          <SuccessFailureAnimations
-            isSuccess={isSuccess}
-            successTitle="外幣換匯成功"
-            errorTitle="外幣換匯失敗"
-          />
-          {isSuccess && exchangeResult && (
+        <ResultAnimation
+          isSuccess={viewData.result.isSuccess}
+          subject={viewData.result.isSuccess ? '外幣換匯成功' : '外幣換匯失敗'}
+          descHeader={viewData.result.errorCode}
+          description={viewData.result.message}
+        />
+        <div className={`infoSection ${!viewData.result.isSuccess && 'resultFail'}`}>
+          {viewData.result.isSuccess ? (
             <div className="infoData">
               <div className="label">
-                轉換
-                {exchangeResult.trnsType === '1' ? '外幣' : '臺幣'}
+                {`轉換${(viewData.mode === 1) ? '外幣' : '臺幣'}`}
               </div>
-              {/* prettier-ignore */}
               <div className="foreignCurrency">
-                {exchangeResult.inCcyCd}
-                $
-                {exchangeResult.inAmt}
+                {viewData.transInDesc}
               </div>
-              {/* prettier-ignore */}
               <div className="changeNT">
-                折合
-                {exchangeResult.trnsType === '1' ? '臺幣' : '外幣'}
-                ：
-                {exchangeResult.outCcyCd}
-                $
-                {exchangeResult.outAmt}
+                {`折合${(viewData.mode === 1) ? '臺幣' : '外幣'}：${viewData.transOutDesc}`}
               </div>
               <div className="exchangeRate">
-                換匯匯率：
-                {exchangeResult.rate}
+                {`換匯匯率：${viewData.exRate}`}
               </div>
-              {exchangeResult.isEmployee && (
+              {viewData.isBanker && (
                 <div className="employee">員工優惠匯率</div>
               )}
               <div className="label into">轉入帳號</div>
-              {/* <div className="accountData">遠東商銀(805)</div> */}
-              <div className="accountData">{exchangeResult.inAcct}</div>
-              <div className="priceNotiSetting" onClick={toPriceSettingPage}>
+              <div className="accountData">遠東商銀(805)</div>
+              <div className="accountData">{viewData.inAccount}</div>
+
+              <div className="priceNotiSetting" onClick={() => startFunc(Func.E004)}>
                 外幣到價通知設定
               </div>
             </div>
+          ) : (
+            <FEIBButton onClick={() => nextExchange(false)}>確認</FEIBButton>
           )}
-          {!isSuccess && <FEIBButton onClick={toExchangePage}>確認</FEIBButton>}
         </div>
-        {isSuccess && exchangeResult && (
-          <div className="infoSection">
-            <div>
-              <InformationList
-                title="轉出帳號"
-                content={exchangeResult.outAcct}
-              />
-              <InformationList
-                title="換匯種類"
-                content={
-                  exchangeResult.trnsType === '1' ? '臺幣轉外幣' : '外幣轉臺幣'
-                }
-              />
-              <InformationList
-                title="轉換外幣幣別"
-                content={`${getCurrenyInfo(exchangeResult.trfCcyCd)?.name} ${
-                  exchangeResult.trfCcyCd
-                }`}
-              />
-              <InformationList
-                title="匯款性質分類"
-                content={exchangeResult.leglDesc}
-              />
-            </div>
-            <Accordion
-              className="exchangeAccordion"
-              title="詳細交易"
-              space="both"
-              open
-            >
-              <InformationList
-                title="帳戶餘額"
-                content={`$${exchangeResult.avBal}`}
-              />
-              <InformationList title="備註" content={exchangeResult.memo} />
-            </Accordion>
-            <div className="confirmBtns">
-              <ConfirmButtons
-                mainButtonValue="查詢交易明細"
-                subButtonValue="繼續換匯"
-                mainButtonOnClick={toTradeDetailPage}
-                subButtonOnClick={toExchangePage}
-              />
-            </div>
+
+        <div className="infoSection">
+          <div>
+            <InformationList title="轉出帳號" content={viewData.outAccount} />
+            <InformationList
+              title="換匯種類"
+              content={(viewData.mode === 1) ? '臺幣轉外幣' : '外幣轉臺幣'}
+            />
+            <InformationList title="轉換外幣幣別" content={viewData.currency} />
+            <InformationList title="匯款性質分類" content={viewData.leglDesc} />
           </div>
-        )}
+
+          <Accordion className="exchangeAccordion" title="詳細交易" space="both" open>
+            <InformationList title="帳戶餘額" content={viewData.balance} />
+            <InformationList title="備註" content={viewData.memo} />
+          </Accordion>
+
+          <div className="confirmBtns">
+            <ConfirmButtons
+              mainButtonValue="查詢交易明細"
+              subButtonValue="繼續換匯"
+              mainButtonOnClick={toAccountPage}
+              subButtonOnClick={() => nextExchange(true)}
+            />
+          </div>
+        </div>
       </ExchangeWrapper>
     </Layout>
   );

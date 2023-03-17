@@ -333,7 +333,10 @@ export const toCurrency = (number, float = 0, showFloat = false) => {
 
   if (float > 0) {
     parts[1] = `${parts[1] ?? ''}000000`.substring(0, float); // 小數位數補齊
-  } else parts.splice(1, 1); // 不要顯示小數時，就把小數的數值刪掉。
+  } else {
+    // eslint-disable-next-line no-lonely-if
+    if (parts[1] && parseInt(parts[1], 10) === 0) parts.splice(1, 1); // 不要顯示小數時，就把小數的數值刪掉。
+  }
 
   return parts.join('.');
 };

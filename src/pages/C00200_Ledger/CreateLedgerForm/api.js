@@ -24,3 +24,9 @@ export const accountList = async () => {
   const response = await callAPI('/ledger/accountList');
   return response.data;
 };
+
+// 建立帳本
+export const create = async (payload) => {
+  const response = await callAPI('/ledger/create', payload);
+  return response.data;
+};

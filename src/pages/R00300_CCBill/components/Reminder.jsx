@@ -2,9 +2,8 @@ import { CalendarIcon } from 'assets/images/icons';
 import { FEIBIconButton } from 'components/elements';
 import { showCustomPrompt } from 'utilities/MessageModal';
 import { dateToYMD } from 'utilities/Generator';
-import { getOsType } from 'utilities/AppScriptProxy';
 import ReminderWrapper from './Reminder.style';
-import { downloadCalendar } from '../api';
+import { subscribeCalendar } from '../api';
 
 const Reminder = ({ bills, deductInfo }) => {
   const handleHintText = (text) => {
@@ -18,16 +17,7 @@ const Reminder = ({ bills, deductInfo }) => {
   const downloadICS = () => {
     const title = 'Bankee信用卡繳款截止日';
     const fromDate = dateToYMD(bills.payDueDate);
-
-    const osType = getOsType(true); // 1.iOS, 2.Android,
-    if (osType === 1) { // iOS 平台
-      downloadCalendar({title, fromDate});
-    } else { // Android 或其他平台
-      const googleCalendarUrl = 'https://www.google.com/calendar/render?';
-      const action = 'TEMPLATE';
-      const fromEndDate = `${fromDate}/${fromDate}`;
-      window.open(`${googleCalendarUrl}action=${action}&text=${title}&dates=${fromEndDate}`, '_blank');
-    }
+    subscribeCalendar({title, fromDate});
   };
 
   const handleCalendarClick = async () => {

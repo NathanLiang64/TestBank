@@ -8,13 +8,6 @@ import { callAPI } from 'utilities/axios';
  *   items: [{
  *     funcCode: String, // 功能代碼
  *     name: String, // 功能名稱
- *     url: String, // 連結
- *     icon: String, // 圖示
- *     alterMsg: String, // 顯示用訊息
- *     isFavorItem: Boolean, // 表示此功能是我的最愛中的選項。
- *     isFavorite: Number, // xxx 是否已經設為我的最愛 (刪除; 因為目前只傳回 0/1 沒太大幫助)
- *     position: Number, // 用戶在我的最愛清單中的排列順序(0~11)
- *     locked: Boolean, // 表示是不可異動的功能 (推薦碼分享、優惠)
  *   }] // 單元功能清單
  * }>}
  */
@@ -25,17 +18,12 @@ export const getAllFunc = async () => {
 
 /**
  * 取得目前用戶設定的所有最愛單元功能清單。
- * @returns {Promise<{
+ * @returns {Promise<[{
  *   funcCode: String, // 功能代碼
  *   name: String, // 功能名稱
- *   url: String, // 連結
- *   icon: String, // 圖示
- *   alterMsg: String, // 顯示用訊息
- *   isFavorItem: Boolean, // 表示此功能是我的最愛中的選項。
- *   isFavorite: Number, // xxx 是否已經設為我的最愛 (刪除; 因為目前只傳回 0/1 沒太大幫助)
  *   position: Number, // 用戶在我的最愛清單中的排列順序(0~11)
  *   locked: Boolean, // 表示是不可異動的功能 (推薦碼分享、優惠)
- * }>}
+ * }]>}
  */
 export const getMyFuncs = async () => {
   const response = await callAPI('/function/favorites/v1/getMyFuncs');
@@ -54,25 +42,3 @@ export const saveMyFuncs = async (settings) => {
   const response = await callAPI('/function/favorites/v1/saveMyFuncs', settings);
   return response.data;
 };
-
-/**
- * 新增/更新已設定的項目清單
- * @param {String} funcCode 功能代碼
- * @param {Number} position 用戶在我的最愛清單中的排列順序(0~11)，若此欄位的值為 null 表示刪除。
- * @param {String} params 執行此功能時的啟動參數
- */
-export const modifyFavoriteItem = async (funcCode, position, params) => saveMyFuncs({
-  funcCode,
-  position,
-  params,
-});
-
-/**
- * 移除清單中的項目
- * @param {String} funcCode 功能代碼
- */
-export const deleteFavoriteItem = async (funcCode) => saveMyFuncs({
-  funcCode,
-  position: null,
-  params: null,
-});

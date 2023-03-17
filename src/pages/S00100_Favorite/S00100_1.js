@@ -1,341 +1,253 @@
-/* eslint-disable no-unused-vars */
-// /* eslint-disable */
-import React, {
-  useEffect, useRef, useState, useMemo, useContext,
+/* eslint-disable react/jsx-first-prop-new-line */
+/* eslint-disable react/jsx-max-props-per-line */
+import { FEIBTab, FEIBTabContext, FEIBTabList } from 'components/elements';
+import {
+  useEffect, useReducer, useRef, useState,
 } from 'react';
 import { useForm } from 'react-hook-form';
+
+import { showCustomPrompt } from 'utilities/MessageModal';
 import BottomAction from 'components/BottomAction';
 import SnackModal from 'components/SnackModal';
-import {
-  FEIBTab, FEIBTabContext, FEIBTabList,
-} from 'components/elements';
-import { showCustomPrompt } from 'utilities/MessageModal';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { useDispatch } from 'react-redux';
-import { DropdownField } from 'components/Fields';
+import FavoriteBlockButtonStyle from 'components/FavoriteBlockButton/favoriteBlockButton.style';
+import { FuncIcons, BlockSelectedIcon } from 'assets/images/icons';
 import { Func } from 'utilities/FuncID';
-import {
-  getMyFuncs, saveMyFuncs, modifyFavoriteItem, deleteFavoriteItem,
-} from './api';
-import { CustomCheckBoxField } from './fields/customCheckboxField';
-import {
-  calcSelectedLength, extractGroupItems, generateReorderList, findExistedValue, generateTrimmedList, cardLessOptions,
-  EventContext,
-} from './utils';
-import { validationSchema } from './validationSchema';
 
-const Favorite2New = ({
-  favoriteList, isEditAction, addPoposition, favoriteSettingList,
+import D00300Wrapper from './D003_Support/D00300.style';
+import { AmountSetting } from './D003_Support/AmountSetting';
+
+/**
+ * 選擇單元功能頁面。
+ * @param {{
+ *   mode: Number, // 1.單選模式, 2.多選模式
+ *   funcPool: [{ groupKey, groupName, items: [{funcCode, name, locked, params}]}],
+ *   selections: [{ key, func}],
+ *   onFinish: Function<T>,
+ * }} param0 參數說明：
+ * - mode : 1.單選模式, 2.多選模式
+ * - funcPool[] : 所有可以提供用戶選擇加入最愛的單元功能
+ * - selections[] : 目前所有選擇項目。
+ * - onFinish : 當使用者完成選取後的Callback方法。
+ */
+const S00100_1 = ({
+  mode, funcPool, selections, onFinish,
 }) => {
-  const [tabId, setTabId] = useState('C');
-  const [showTip, setShowTip] = useState(false);
-  const sectionsRef = useRef([]);
+  const MAX_FUNC_COUNT = 12; // 預設最多 12 個項目。
   const mainContentRef = useRef();
-  const dispatch = useDispatch();
+  const groupRef = useRef([]);
+  const {control, handleSubmit } = useForm();
 
-  // 這個HOOK是專門設計來讓模組內所有子元件共享事件, 用來取代callback function當props傳來傳去的做法
-  // shareEvent: 用來監聽觸發
-  // callShareEvent: 用來觸發
-  const {shareEvent, callShareEvent} = useContext(EventContext);
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [currGroup, setCurrGroup] = useState(funcPool[0].groupKey);
+  const [showOverflowTip, setShowOverflowTip] = useState();
 
-  // 為了在使用者勾選項目變動時, 即時更新下方欄位的編輯完成括號裡的數字
-  const [checkedArrayLength, setcheckedArrayLength] = useState(0);
+  /** 取得在 FuncPool 中已選取的功能清單 */
+  const getSelectedItems = () => funcPool.flatMap((group) => group.items).filter((item) => item?.isSelected);
 
-  // 在進入編輯頁面時, 將使用者先前就已加入最愛的項目先紀錄下來, 用於提交清單時 RESET 這些項目
-  const alreadyCheckedItemBeforeEdit = useMemo(() => ([]), []);
-  const usedPostions = useMemo(() => ([]), []);
-  const hasExistedCardLess = useRef(false);
+  /** 計算在 FuncPool 中已選取的功能數量 */
+  const getSelectedCount = () => getSelectedItems().length;
 
+  /**
+   * 建構式，初始化單元功能。
+   */
   useEffect(() => {
-    // console.log('======== favoriteList========');
-    // console.log(favoriteList);
-    // console.log('=============================');
+    funcPool.forEach((group) => group.items.forEach((item) => {
+      // 從目前選集中，找出指定功能代碼的項目；並在 FuncPool 中註記為已選取。
+      const selectedItem = selections.find((btn) => btn.func?.funcCode === item.funcCode);
+      item.isSelected = !!selectedItem;
+    }));
 
-    hasExistedCardLess.current = false;
+    funcPool.forEach((group) => group.items.forEach((item) => {
+      // 從目前選集中，找出指定功能代碼的項目；並在 FuncPool 中註記為已lock。
+      const lockedItem = selections.find((btn) => btn.func?.funcCode === item.funcCode && btn.func?.locked === true);
+      item.isLocked = !!lockedItem;
+    }));
 
-    favoriteList.forEach((obj, index) => {
-      alreadyCheckedItemBeforeEdit.push(obj.funcCode);
+    forceUpdate();
 
-      if (obj.funcCode === Func.D003.id) {
-        hasExistedCardLess.current = true;
-      }
-
-      if (obj.position !== -1) {
-        usedPostions[obj.position] = obj.funcCode;
-      }
-    });
-
-    // 更新下方欄位的編輯完成括號裡的數字
-    setcheckedArrayLength(alreadyCheckedItemBeforeEdit.length - 2);
-
-    // console.log('======== usedPostions========');
-    // console.log(usedPostions);
-    // console.log('=============================');
-
-    // console.log('======== alreadyCheckedItemBeforeEdit ===========');
-    // console.log(alreadyCheckedItemBeforeEdit);
-    // console.log('=================================================');
+    return () => {
+      funcPool.forEach((group) => group.items.forEach((item) => {
+        delete item.isSelected;
+      }));
+    };
   }, []);
 
-  // 我的最愛表單
-  const {
-    control, watch, reset, handleSubmit,
-  } = useForm();
-  const watchedValues = watch('editedBlockList');
-  const selectedLength = useMemo(() => calcSelectedLength(watchedValues), [watchedValues]);
+  /**
+   * 控制顯示「最愛已選滿」1秒後自動消失。
+   */
+  useEffect(() => {
+    let timer = null;
+    if (showOverflowTip) timer = setTimeout(() => setShowOverflowTip(false), 1000);
+    return () => clearTimeout(timer);
+  }, [showOverflowTip]);
 
-  // 無卡提款表單
-  const {
-    control: cardLessControl,
-    handleSubmit: cardLessHandleSubmit,
-    formState: { errors },
-  } = useForm({ defaultValues: {cardLessCredit: ''}, resolver: yupResolver(validationSchema) });
-
-  const patchOneAndRedirect = async (funcCode, position) => {
-    await modifyFavoriteItem({ funcCode, position });
-
-    const rows = await getMyFuncs();
-
-    // 在處理好無卡提款跳窗後 把跳窗關掉
-    if (funcCode === Func.D003.id) {
-      dispatch(setModalVisible(false));
-    }
-
-    // 將項目更新的結果 傳回S00100頁面 更新list cache
-    callShareEvent(['S00100_updateMemoFavoriteList', rows]);
-
-    // 觸發S00100頁面的數字的back2MyFavorite事件
-    callShareEvent(['S00100_back2MyFavorite']);
-  };
-
-  const patchAndRedirect = async (patchedList = []) => {
-    dispatch(setWaittingVisible(true));
-
-    const itemsSkipFixTwo = JSON.parse(JSON.stringify(alreadyCheckedItemBeforeEdit)).splice(2);
-
-    // 判斷編輯頁的勾選項目如果沒變動就不重新 submit
-    // if( JSON.stringify(trueArray.checkedArray) != JSON.stringify(itemsSkipFixTwo) ){
-
-    const changedItems = [];
-
-    // RESET 使用者在進入編輯頁面時 就已加入最愛的項目, 除了預設寫死的前 2 個項目
-    alreadyCheckedItemBeforeEdit.shift();
-    alreadyCheckedItemBeforeEdit.shift();
-    await Promise.all(
-      alreadyCheckedItemBeforeEdit.map((funcCode, position) => deleteFavoriteItem(funcCode)),
-    );
-
-    let isAddCardless = false;
-
-    // 加入所有勾選的項目
-    // await Promise.all(
-    //   usedPostions.map((funcCode, position) => {
-    //     if (funcCode === FuncID.D00300) {
-    //       isAddCardless = true;
-    //     }
-    const addItems = usedPostions.map((funcCode, position) => {
-      if (funcCode === Func.D003.id) isAddCardless = true;
-      return {funcCode, position};
-    });
-    await saveMyFuncs(addItems);
-    //     return modifyFavoriteItem({ funcCode, position });
-    //   }),
-    // );
-
-    const rows = await getMyFuncs();
-
-    // 將項目更新的結果 傳回S00100頁面 更新list cache
-    callShareEvent(['S00100_updateMemoFavoriteList', rows]);
-    // }
-
-    dispatch(setWaittingVisible(false));
-
-    // 在處理好無卡提款跳窗後 把跳窗關掉
-    if (isAddCardless) {
-      dispatch(setModalVisible(false));
-    }
-
-    // 觸發S00100頁面的數字的back2MyFavorite事件
-    callShareEvent(['S00100_back2MyFavorite']);
-  };
-
-  const handleCardlessSubmit = (okCallback) => {
-    showCustomPrompt({
-      title: '無卡提款',
-      message: (
-        <DropdownField
-          options={cardLessOptions}
-          labelName="快速提領金額"
-          name="cardLessCredit"
-          control={cardLessControl}
-        />
-      ),
-      onOk: cardLessHandleSubmit(async (values) => {
-        console.log('values', values); // 待 無卡提款設定 API 開發完畢
-
-        okCallback();
-      }),
-      onClose: () => {
-        if (isEditAction) return;
-
-        // 觸發S00100頁面的數字的back2MyFavorite事件
-        callShareEvent(['S00100_back2MyFavorite']);// 新增模式情況下，按下 X 按鈕時 回到上一頁
-      },
-      noDismiss: true,
-    });
-  };
-
-  // 編輯完成送出表單
-  const onSubmit = ({ editedBlockList }) => {
-    if (usedPostions.indexOf(Func.D003.id) !== -1 && !hasExistedCardLess.current) {
-      // TODO 不是在Submit時才要求輸入金額，是在選取當下。
-      handleCardlessSubmit(() => {
-        patchAndRedirect();
-      });
-    } else {
-      patchAndRedirect();
-    }
-  };
-
-  // 點擊 tab 時
+  /**
+   * 點擊 功能群組Tab 時，將群組拉進可視範圍。
+   * @param {*} value 選取的功能群組的 groupKey
+   */
   const handleChangeTabs = (_, value) => {
-    const scrollTarget = sectionsRef.current.find((el) => el.className === value);
+    const groupKey = value;
+    const scrollTarget = groupRef.current.find((el) => el.getAttribute('data-group') === groupKey);
     scrollTarget.scrollIntoView();
+
+    // 若是在最下方，因為只能看到群組名稱，所以要再往上拉出來。
     const { scrollHeight, scrollTop, offsetHeight } = mainContentRef.current;
-    if ((scrollHeight - (scrollTop + offsetHeight) <= 1)) {
-      setTabId(value);
+    if ((scrollHeight - (scrollTop + offsetHeight) <= 0)) {
+      setCurrGroup(groupKey);
     }
   };
 
+  /**
+   * 處理在捲動清單時，自動切換上方的 功能群組Tab
+   */
   const handleScrollContent = (event) => {
     const { scrollHeight, scrollTop, offsetHeight } = event.target;
 
-    if (!(scrollHeight - (scrollTop + offsetHeight) <= 1)) {
-      const foundSection = sectionsRef.current.find((el) => {
+    if ((scrollHeight - (scrollTop + offsetHeight) > 0)) {
+      const foundSection = groupRef.current.find((el) => {
         const top = el.offsetTop - 1;
         const bottom = el.offsetTop + el.offsetHeight;
         return (scrollTop >= top && scrollTop < bottom);
       });
-      if (foundSection && foundSection.className !== tabId) setTabId(foundSection.className);
+
+      const groupKey = foundSection?.getAttribute('data-group');
+      if (groupKey && groupKey !== currGroup) setCurrGroup(groupKey);
     }
   };
 
-  const renderBlockGroup = () => favoriteSettingList.map(({groupKey, groupName, items}, index) => (
-    <section
-      ref={(el) => { sectionsRef.current[index] = el; }}
-      key={groupKey}
-      className={groupKey}
-    >
+  /**
+   * 設定無卡提款預設金額（即:執行參數)
+   * @param {*} model
+   * @returns {Promise<Boolean>} 傳回值表示使用者是否按下確認鍵。
+   */
+  const setCarlessWDparams = async (model) => {
+    const result = await showCustomPrompt({
+      title: '設定無卡提款預設金額',
+      message: (
+        <D00300Wrapper>
+          <AmountSetting
+            control={control}
+            name="wdAmount"
+            placeholder="快速提領金額"
+            labelName="您想提領多少錢呢？"
+            defaultValue={model.params ?? 1000}
+            inputProps={{ maxLength: 5, inputMode: 'numeric' }}
+          />
+        </D00300Wrapper>
+      ),
+      onOk: handleSubmit((values) => {
+        model.params = values.wdAmount;
+      }),
+    });
+
+    return !!result;
+  };
+
+  /**
+   * 單元功能按鈕
+   * @param {{model}} param0 功能按鈕的資料。
+   */
+  const FuncButton = ({model}) => {
+    const {
+      funcCode, name, isSelected, isLocked,
+    } = model;
+    const handleFuncClick = async () => {
+      // 設定無卡提款預設金額（即:執行參數)
+      if (funcCode === Func.D003.id) {
+        if (mode === 1 || (mode === 2 && !isSelected)) {
+          const amountSet = await setCarlessWDparams(model); // 設定執行參數（即:金額)
+          if (!amountSet) return;
+        }
+      }
+
+      if (mode === 1) {
+        onFinish(model); // 單選模式：立即傳回
+      } else {
+        model.isSelected = !isSelected;
+        forceUpdate();
+
+        if (getSelectedCount() > MAX_FUNC_COUNT) {
+          model.isSelected = false;
+          setShowOverflowTip(true);
+        }
+      }
+    };
+
+    const selectedClassType = (mode === 1) ? 'disabled' : 'selected'; // 1.單選模式:反白 2.多選模式:反紫
+    let className = isSelected ? selectedClassType : '';
+    if (mode === 2 && isLocked) className = 'disabled';
+    // 當已選滿了，或是固定項目；或是在單選模式中，已選取的項目，也都不可以再選。
+    const disabled = (getSelectedCount() > MAX_FUNC_COUNT || model.locked || (mode === 1 && isSelected) || (mode === 2 && isLocked));
+    return (
+      <FavoriteBlockButtonStyle className={className} disabled={disabled}
+        onClick={handleFuncClick}
+      >
+        <label htmlFor={name}
+          style={{
+            width: '100%', height: '100%', cursor: 'pointer', userSelect: 'none',
+          }}
+        >
+          {FuncIcons[funcCode.substring(0, 4)]()}
+          <p>{name}</p>
+
+          {/* 多選模式：顯示[已選取]的圖示 */}
+          {(mode === 2) && (<BlockSelectedIcon className="selectedIcon" />)}
+        </label>
+      </FavoriteBlockButtonStyle>
+    );
+  };
+
+  /**
+   * 列出所有功能群組及其單元功能。
+   */
+  const renderBlockGroup = () => funcPool.map(({groupKey, groupName, items}, index) => (
+    // 因為 section 沒有其他其屬性可以用來記groupKey，所以用自訂屬性 data-group 記下來提供來判斷
+    <section key={groupKey} className="groupSession" data-group={groupKey} ref={(el) => { groupRef.current[index] = el; }}>
       <h3 className="title">{groupName}</h3>
       <div className="blockGroup">
-        {items.map(({funcCode, name}) => (
-          <CustomCheckBoxField
-            key={funcCode}
-            control={control}
-            name={`editedBlockList.${funcCode}`}
-            defaultValue={false}
-            label={name}
-            isEditAction={isEditAction}
-            setShowTip={setShowTip}
-            usedPostions={usedPostions}
-            funcCode={funcCode}
-          />
+        {items.map((btnModel) => (
+          <FuncButton key={btnModel.funcCode} model={btnModel} />
         ))}
       </div>
     </section>
   ));
 
-  const renderTabList = () => favoriteSettingList.map((group) => (
-    <FEIBTab key={group.groupKey} label={group.groupName} value={group.groupKey} />
-  ));
-
-  // 跳白畫面0.5s 防止多次點擊
-  const preventMultiSubmit = (callback) => {
-    (async () => {
-      callback();
-
-      dispatch(setWaittingVisible(true));
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      dispatch(setWaittingVisible(false));
-    })();
-  };
-
-  //  當 Tip 出現後 1 秒將其取消
-  useEffect(() => {
-    let timer = null;
-    if (showTip) timer = setTimeout(() => setShowTip(false), 1000);
-    return () => clearTimeout(timer);
-  }, [showTip]);
-
-  // 監聽模組內其他頁面的跨頁面事件呼叫
-  useEffect(() => {
-    const [type, params] = shareEvent;
-
-    // eslint-disable-next-line default-case
-    switch (type) {
-      case 'S00100_1_doSubmit': {
-        const funcCode = params;
-
-        if (!isEditAction) {
-          if (funcCode === Func.D003.id) {
-            handleCardlessSubmit(() => {
-              preventMultiSubmit(() => {
-                patchOneAndRedirect(funcCode, addPoposition);
-              });
-            });
-          } else {
-            preventMultiSubmit(() => {
-              patchOneAndRedirect(funcCode, addPoposition);
-            });
-          }
-        }
-        break;
-      }
-
-      case 'S00100_1_setCheckedSize':
-
-        setcheckedArrayLength(params);
-        break;
-    }
-  }, [shareEvent]);
-
   return (
-    <div className="editFavoritePage">
-      <FEIBTabContext value={tabId}>
+    <div className="selectorPage">
+      {/* 功能群組 */}
+      <FEIBTabContext value={currGroup}>
         <FEIBTabList $size="small" onChange={handleChangeTabs}>
-          { renderTabList() }
+          {funcPool.map((group) => (
+            <FEIBTab key={group.groupKey} label={group.groupName} value={group.groupKey} />
+          ))}
         </FEIBTabList>
       </FEIBTabContext>
 
       <div className="tipArea">
-        <p>{`${isEditAction ? '您最多可以選取10項服務' : '請選取1項服務'}加入我的最愛!`}</p>
+        <p>{`${(mode === 2) ? '您最多可以自選10項服務' : '請選取1項服務'}加入我的最愛!`}</p>
       </div>
 
-      <form
-        className="mainContent"
-        ref={mainContentRef}
-        onScroll={handleScrollContent}
-      >
+      <form className="mainContent" ref={mainContentRef} onScroll={handleScrollContent}>
         {renderBlockGroup()}
-        {
-          isEditAction
-          && (
+
+        {/* 多選模式時，在頁面下方顯示完成編輯的按鈕；單選模式則是在功能按鈕按下時即完成選取，立即CB傳回 */}
+        {(mode === 2) && (
           <BottomAction position={0}>
-            <button
-              type="button"
-              style={{ cursor: 'pointer' }}
-              onClick={handleSubmit(onSubmit)}
+            <button type="button" disabled={getSelectedCount() > MAX_FUNC_COUNT}
+              // 多選模式：傳回新的選集。
+              onClick={() => onFinish(getSelectedItems())}
             >
-              {`編輯完成(${checkedArrayLength})`}
+              {`編輯完成 (${getSelectedCount()})`}
             </button>
           </BottomAction>
-          )
-}
+        )}
       </form>
-      { showTip && <SnackModal text="最愛已選滿" /> }
+
+      {(mode === 2 && getSelectedCount() >= MAX_FUNC_COUNT && showOverflowTip) && (
+        <SnackModal text="最愛已選滿" />
+      )}
     </div>
   );
 };
 
-export default Favorite2New;
+export default S00100_1;
