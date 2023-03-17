@@ -11,12 +11,10 @@ import CipherUtil from 'utilities/CipherUtil';
 
 import ModalReducer from './reducers/ModalReducer';
 import CacheReducer from './reducers/CacheReducer';
-import FuncJumpReducer from './reducers/FuncJumpReducer';
 
 const reducer = combineReducers({
   ModalReducer,
   CacheReducer,
-  FuncJumpReducer,
 });
 
 /**
