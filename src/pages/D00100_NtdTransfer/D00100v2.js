@@ -243,7 +243,7 @@ const Transfer = (props) => {
     } else {
       // 從 QRCode/D00500/D00600 返回時，才會進這段邏輯。
       const {transIn} = params;
-      if (!transIn.freqAcct && !transIn.regAcct) transIn.type = 0;
+      if (transIn && !transIn.freqAcct && !transIn.regAcct) transIn.type = 0;
       initModel = params;
     }
     return initModel;
@@ -421,6 +421,8 @@ const Transfer = (props) => {
     setValue(idTransType, type);
 
     const { transIn } = getValues();
+    if (!transIn) return;
+
     // 尚未指定常用/約定轉入對象時，自動開啟選擇常用/約定轉入對象的功能。
     let funcId = null;
     const { freqAcct, regAcct } = transIn;

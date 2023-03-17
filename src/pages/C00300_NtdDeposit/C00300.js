@@ -53,9 +53,11 @@ const C00300 = () => {
         item.currency = item.details[0].currency;
       });
       setAccounts(items);
+      return items;
+    }).then(async (items) => {
       await processStartParams(items);
-      dispatch(setWaittingVisible(false));
-    });
+    }).finally(() => dispatch(setWaittingVisible(false)));
+
     return () => setAccounts(null);
   }, []);
 
@@ -86,10 +88,9 @@ const C00300 = () => {
    * 更新帳戶交易明細清單。
    * @returns 需有傳回明細清單供顯示。
   */
-  const loadTransactions = (account) => {
-    const { txnDetails } = account;
-    if (!account.isLoadingTxn && !txnDetails) {
-      account.isLoadingTxn = true; // 避免因為非同步執行造成的重覆下載
+  useEffect(() => {
+    const account = selectedAccount;
+    if (account && !account.txnDetails) {
       // 取得帳戶交易明細（三年內的前25筆即可）
       getTransactions(account.accountNo).then((transData) => {
         const details = transData.acctTxDtls.slice(0, 10); // 最多只需保留 10筆。
@@ -98,13 +99,11 @@ const C00300 = () => {
         // 更新餘額。
         if (transData.acctTxDtls.length > 0) account.balance = details[0].balance;
 
-        delete account.isLoadingTxn; // 載入完成才能清掉旗標！
         updateAccount(account);
         forceUpdate();
       });
     }
-    return txnDetails;
-  };
+  }, [selectedAccountIdx]);
 
   /**
    * 下載 優存資訊
@@ -221,12 +220,7 @@ const C00300 = () => {
    */
   const handleFunctionClick = async (funcCode) => {
     let params = null;
-    const txnDetailsObj = accounts.reduce((acc, cur) => {
-      if (cur.txnDetails) acc[cur.accountNo] = cur.txnDetails;
-      return acc;
-    }, {});
 
-    const keepData = { defaultAccount: selectedAccount.accountNo, showRate, txnDetailsObj };
     switch (funcCode) {
       case 'moreTranscations': // 更多明細
         params = {
@@ -243,8 +237,12 @@ const C00300 = () => {
         params = { transOut: selectedAccount.accountNo };
         break;
 
-      case Func.E001.id: // TODO 帶參數過去
-        params = { transOut: selectedAccount.accountNo };
+      case Func.E001.id: // 換匯，預設為台轉外
+        params = { model: {
+          mode: 1,
+          outAccount: selectedAccount.accountNo,
+          currency: 'USD', // 預設美元
+        }};
         break;
 
       case Func.C008.id: // 匯出存摺
@@ -264,6 +262,16 @@ const C00300 = () => {
         break;
     }
 
+    const txnDetailsObj = accounts.reduce((acc, cur) => {
+      if (cur.txnDetails) acc[cur.accountNo] = cur.txnDetails;
+      return acc;
+    }, {});
+
+    const keepData = {
+      defaultAccount: selectedAccount.accountNo,
+      showRate,
+      txnDetailsObj,
+    };
     startFunc(funcCode, params, keepData);
   };
 
@@ -299,7 +307,7 @@ const C00300 = () => {
               { renderBonusInfoPanel() }
 
               <DepositDetailPanel
-                details={loadTransactions(selectedAccount)}
+                details={selectedAccount.txnDetails}
                 onMoreFuncClick={() => handleFunctionClick('moreTranscations')}
               />
             </>

@@ -31,7 +31,7 @@ import { CurrencyInputField, DropdownField, TextInputField } from 'components/Fi
 import Accordion from 'components/Accordion';
 import InfoArea from 'components/InfoArea';
 
-import { loadFuncParams } from 'utilities/AppScriptProxy';
+import { loadFuncParams } from 'hooks/useNavigation';
 import { E00100Notice, E00100Table } from './E00100_Content';
 
 /* Styles */
@@ -98,7 +98,7 @@ const E00100 = (props) => {
   /**
    * 初始化
    */
-  useEffect(async () => {
+  useEffect(() => {
     if (viewModel.loaded) return;
 
     dispatch(setWaittingVisible(true));
@@ -122,7 +122,7 @@ const E00100 = (props) => {
             viewModel.frgnAccount.push(acct);
           } else viewModel.ntdAccounts.push(acct);
         });
-    }, true);
+    });
 
     // 取得幣別列表(很慢，所以不等這支)
     getCcyList().then((ccys) => { // 回傳的資料的 key 不是 camelCase
@@ -131,20 +131,24 @@ const E00100 = (props) => {
       dispatch(setWaittingVisible(false));
     });
 
-    Promise.all([api1, api2]).then(() => {
+    let params;
+    const appJs = loadFuncParams().then((appRs) => { params = appRs; });
+
+    Promise.all([api1, api2, appJs]).then(() => {
       viewModel.loaded = true; // 避免重複載入資料
-      onModeChanged(1);
-      reset({
+
+      console.log(params, state);
+      const data = (params ?? state)?.model ?? { // 若有
         mode: 1,
         outAccount: viewModel.outAccount.accountNo,
         inAccount: viewModel.inAccount.accountNo,
-        currency: '', // 沒有預設的必要
-        property: '', // 沒有預設的必要
+        // currency: '', // 沒有預設的必要
+        // property: '', // 沒有預設的必要
         inAmtMode: 1,
-      });
-
-      dispatch(setWaittingVisible(false));
-    });
+      };
+      onModeChanged(data.mode);
+      reset(data);
+    }).finally(() => dispatch(setWaittingVisible(false)));
   }, []);
 
   // TODO 確認轉出帳號是否有可換匯的約定帳號
@@ -207,7 +211,7 @@ const E00100 = (props) => {
    */
   useEffect(() => {
     let maxAmount;
-    if (viewModel.mode !== inAmtMode) {
+    if (viewModel.mode !== inAmtMode) { // NOTE 沒錯！就是用這二個的值比較。
       const {balance} = getBalance(0); // 取出轉出帳戶的餘額。
       maxAmount = balance;
     } else {
@@ -313,7 +317,7 @@ const E00100 = (props) => {
    * @param {Number} mode
    */
   const estimateExchangeInfo = (amount, mode) => {
-    console.log(amount, mode);
+    // console.log(amount, mode);
     const ccyInfo = viewModel.currencies.find((item) => item.Currency === currency);
     if (ccyInfo) {
       let quota;
