@@ -7,8 +7,9 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
-import FolderIcon from '@material-ui/icons/Folder';
 import DeleteIcon from '@material-ui/icons/Delete';
+// import PersonIcon from '@material-ui/icons/Person';
+import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 import { useTheme } from 'styled-components';
 
 export default ({ title = '標題', list = [] }) => {
@@ -32,7 +33,7 @@ export default ({ title = '標題', list = [] }) => {
             <ListItem>
               <ListItemAvatar>
                 <Avatar>
-                  <FolderIcon />
+                  <PersonOutlineIcon fontSize="large" />
                 </Avatar>
               </ListItemAvatar>
               {item.label}

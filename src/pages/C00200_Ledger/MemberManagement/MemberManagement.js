@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import Box from '@material-ui/core/Box';
 import Layout from 'components/Layout/Layout';
@@ -13,8 +14,10 @@ const CREATE_MOCK_DATA = (size = 3, showDeleteIcon = true) => Array.from(Array(s
 
 export default () => {
   const history = useHistory();
-  const { state = {} } = useLocation();
-  const { isHost = true } = state;
+  const location = useLocation();
+  // 狀態設定
+  const { state } = location;
+  const [viewModel] = useState(state || {});
 
   const goBackFunc = () => {
     history.goBack();
@@ -26,9 +29,12 @@ export default () => {
   };
 
   return (
-    <Layout title={isHost ? '成員管理' : '成員'} goBackFunc={goBackFunc}>
+    <Layout
+      title={viewModel.owner ? '成員管理' : '成員'}
+      goBackFunc={goBackFunc}
+    >
       <PageWrapper>
-        {isHost ? (
+        {viewModel.owner ? (
           <>
             <MemberList title="已加入" list={CREATE_MOCK_DATA()} />
             <MemberList title="待審核" list={CREATE_MOCK_DATA()} />
@@ -40,7 +46,7 @@ export default () => {
             list={CREATE_MOCK_DATA(undefined, false)}
           />
         )}
-        <Box display={isHost ? 'block' : 'none'} mx="auto" my={3}>
+        <Box display={viewModel.owner ? 'block' : 'none'} mx="auto" my={3}>
           <AddMemberButton callback={onAddMemberClick} />
         </Box>
       </PageWrapper>
