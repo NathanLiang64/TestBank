@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import Box from '@material-ui/core/Box';
 import Layout from 'components/Layout/Layout';
 import MemberList from './components/MemberList';
 import PageWrapper from './MemberManagement.style';
 import AddMemberButton from './components/AddMemberButton';
+import { getAll } from './api';
 
 const CREATE_MOCK_DATA = (size = 3, showDeleteIcon = true) => Array.from(Array(size), (i, id) => ({
   label: `好友名稱${id}`,
@@ -18,6 +19,14 @@ export default () => {
   // 狀態設定
   const { state } = location;
   const [viewModel] = useState(state || {});
+  // 初始設定
+  const init = async () => {
+    const resFromGetAll = await getAll({ inviting: true });
+    console.log('resFromGetAll', resFromGetAll);
+  };
+  useEffect(() => {
+    init();
+  });
 
   const goBackFunc = () => {
     history.goBack();
