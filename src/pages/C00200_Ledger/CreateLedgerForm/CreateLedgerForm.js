@@ -15,7 +15,6 @@ import {
 import Accordion from 'components/Accordion';
 import { FEIBButton } from 'components/elements';
 import { getAccountsList } from 'utilities/CacheData';
-import { showError } from 'utilities/MessageModal';
 import { LedgerTerms, SubLedgerTerms } from './components/Terms';
 import ColorBall from './components/ColorBall';
 import PageWrapper from './CreateLedgerForm.style';
@@ -70,7 +69,7 @@ export default () => {
       if (allowCreateSubAccts) {
         setAllowBindAccounts([
           ...formatAllowBindAccounts,
-          { label: '加開子帳戶', value: null },
+          { label: '加開子帳戶', value: 'new' },
         ]);
       } else {
         setAllowBindAccounts(formatAllowBindAccounts);
@@ -95,11 +94,9 @@ export default () => {
     delete data.isAgree;
     data.color = parseInt(data.color, 10);
     const resFrom = await create(data);
-    if (!resFrom) {
-      showError('建立失敗', () => {});
-    } else {
-      history.push('/CreateLedgerSuccess', data);
-    }
+    if (!resFrom) return null;
+    history.push('/CreateLedgerSuccess', data);
+    return null;
   };
 
   return (
