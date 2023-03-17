@@ -75,7 +75,12 @@ const PageWrapper = styled(Layout)`
         .member_info {
           display: flex;
           justify-content: space-between;
-          align-items: flex-end;
+          align-items: center;
+
+          .member_image {
+            width: 3.6rem;
+            margin-right: 2rem;
+          }
         }
       }
     }
