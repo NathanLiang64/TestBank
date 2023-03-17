@@ -1,6 +1,7 @@
 import { Suspense, useLayoutEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { getOsType } from 'utilities/AppScriptProxy';
 import routes from 'routes';
 import Loading from 'components/Loading';
 // NOTE useNavigation 必須要在此先引用, 以註冊registFuncJumpHandler相關事件監聽
@@ -18,7 +19,7 @@ const App = () => {
 
   useLayoutEffect(() => {
     // web版開發用: 當pathname為空, 自動跳轉到B001
-    if (process.env.NODE_ENV === 'development' && window.location.pathname.split('/')[1] === '') {
+    if (getOsType(true) === 3 && window.location.pathname.split('/')[1] === '') {
       window.location.href = `${process.env.REACT_APP_ROUTER_BASE}/B00100`;
     }
   }, []);
