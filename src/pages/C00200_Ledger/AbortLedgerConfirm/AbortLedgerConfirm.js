@@ -48,7 +48,7 @@ export default () => {
   // 點擊 - 確認
   const onSubmitClick = (data) => {
     console.log(data);
-    history.push('/AbortLedgerSuccess');
+    history.push('/AbortLedgerSuccess', { ...state, ...data });
   };
 
   return (
