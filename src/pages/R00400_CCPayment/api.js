@@ -61,34 +61,20 @@ export const queryCardInfo = async (request) => {
  * 信用卡繳費(自行帳戶繳卡費)
  *
  * @param token
- * @param {
- *    amount:  金額
- *    account: 轉出帳號
- *    cardNo:  Bankee 信用卡卡號 (後端API用來繳費歸戶用)
- * }
+ * @param {{
+ *    amount:number //  金額
+ *    account: string // 轉出帳號
+ *    cardNo: string // Bankee 信用卡卡號 (後端API用來繳費歸戶用)
+ * }} request
+ *
+ * @return {Promise<{
+ * payResult: Boolean, //付款結果
+ * autoDeductStatus: number, //繳款狀態 0:尚未設定自扣，1:已設定自扣
+ * }>}
  */
 export const payCardFee = async (request) => {
   const response = await callAPI('/creditCard/v1/payCardFee', request);
   return response;
-};
-
-/**
- * 查詢客戶信用卡自動扣繳資訊
- * (畫面_信用卡子首頁_自動扣繳 - 1)
- *
- * @param token
- * @return {
- *    bank      銀行別                                     IVR9019.DEDUCT-BANK
- *    account   扣繳帳號                                   IVR9019.DEDUCT-ACCOUNT-NO
- *    isFullPay 是否指定應繳總額 Y/N                        IVR9019.DEDUCT-AUTOPAY-RATE=100 ? "Y":"N"
- *    status    狀態 1 申請 2 生效 3 取消 4 退件 5 待生效   IVR9019.DEDUCT-STATUS
- * }
- *
- */
-
-export const getAutoDebits = async (request) => {
-  const response = await callAPI('/creditCard/v1/getAutoDebits', request);
-  return response.data;
 };
 
 /**

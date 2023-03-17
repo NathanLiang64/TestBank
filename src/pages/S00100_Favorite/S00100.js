@@ -141,8 +141,9 @@ const S00100 = () => {
    */
   const FuncButton = ({index, btnModel}) => {
     const {func} = btnModel;
-    const isFixed = (!dragMode || func === null || func.locked); // 空格及固定項 均不可移動！
-    const isEmpty = (func === null);
+    // func.funcCode 若無值，代表為空格
+    const isEmpty = (func === null || !func.funcCode);
+    const isFixed = !dragMode || isEmpty || func.locked; // 空格及固定項 均不可移動！
     const isClickRemoveNow = useRef(0);// 用來判斷在點擊移除項目時, 不同時觸發"點擊空白處離開拖曳模式"  0.未點擊移除項目時, 1.點擊移除項目時
 
     const executeFunc = () => {

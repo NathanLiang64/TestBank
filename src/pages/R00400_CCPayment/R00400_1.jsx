@@ -13,7 +13,7 @@ import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import { Func } from 'utilities/FuncID';
 
 import { useNavigation } from 'hooks/useNavigation';
-import { getAutoDebits, getCreditCardTerms } from './api';
+import { getCreditCardTerms } from './api';
 import { ResultWrapper } from './R00400.style';
 
 /**
@@ -23,12 +23,15 @@ const Page = () => {
   const history = useHistory();
   const location = useLocation();
   const {startFunc, closeFunc} = useNavigation();
-  const [autoDebitInfo, setAutoDebitInfo] = useState();
   const [terms, setTerms] = useState();
 
-  const renderBottomAction = (isSuccess) => (
+  // ===== Guard，若沒有 location.state 屬於不正常操作，直接結束本服務 =====
+  if (!location.state) return closeFunc();
+  const { payResult, message, autoDeductStatus} = location.state;
+
+  const renderBottomAction = () => (
     <BottomAction position={0}>
-      { isSuccess ? (
+      { payResult ? (
         <button type="button" onClick={() => startFunc(Func.C007.id)}>
           回信用卡首頁
         </button>
@@ -48,10 +51,10 @@ const Page = () => {
     </BottomAction>
   );
 
-  const renderAutoDebitInfo = (isSuccess) => {
-    if (!isSuccess) return null;
+  const renderAutoDebitInfo = () => {
+    if (!payResult) return null;
 
-    if (!autoDebitInfo || autoDebitInfo.status !== '2') {
+    if (autoDeductStatus !== 2) {
       return (
         <div className="bluelineBottom">
           <div>
@@ -81,34 +84,23 @@ const Page = () => {
 
   // 拿取「信用卡自動扣繳資訊」 以及 「信用卡注意事項」
   useEffect(async () => {
-    const autoDebitsRes = await getAutoDebits();
-    if (autoDebitsRes && autoDebitsRes.length) {
-      const foundAutoDebit = autoDebitsRes.find((debit) => debit.account === location.state.account);
-      setAutoDebitInfo(foundAutoDebit);
-    }
-
     const cardTermsRes = await getCreditCardTerms();
     setTerms(cardTermsRes);
   }, []);
-
-  // ===== Guard，若沒有 location.state 屬於不正常操作，直接結束本服務 =====
-  if (!location.state || !('payResult' in location.state)) return closeFunc();
-  const { payResult: {isSuccess, message, code} } = location.state;
 
   return (
     <Layout title="轉帳結果">
       <ResultWrapper>
         <div className="resultContainer">
           <SuccessFailureAnimations
-            isSuccess={isSuccess}
+            isSuccess={payResult}
             successTitle="繳款成功"
             errorTitle="繳款失敗"
-            errorCode={code}
             errorDesc={message}
             errorSpace
           />
-          {renderAutoDebitInfo(isSuccess)}
-          { renderBottomAction(isSuccess) }
+          {renderAutoDebitInfo()}
+          { renderBottomAction() }
         </div>
       </ResultWrapper>
     </Layout>
