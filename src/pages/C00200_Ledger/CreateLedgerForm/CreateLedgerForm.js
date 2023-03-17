@@ -15,6 +15,7 @@ import {
 import Accordion from 'components/Accordion';
 import { FEIBButton } from 'components/elements';
 import { getAccountsList } from 'utilities/CacheData';
+import { showAnimationModal } from 'utilities/MessageModal';
 import { LedgerTerms, SubLedgerTerms } from './components/Terms';
 import ColorBall from './components/ColorBall';
 import PageWrapper from './CreateLedgerForm.style';
@@ -29,7 +30,7 @@ export default () => {
   const schema = yup.object().shape({
     name: yup.string().max(12, '不能超過12個字').required('必填'),
     color: yup.string().required('必填'),
-    nickname: yup.string().max(12, '不能超過12個字'),
+    nickname: yup.string().max(8, '不能超過8個字').required('必填'),
     type: yup.string().required('必填'),
     account: yup.string().required('必填'),
     isShare: yup.boolean(),
@@ -94,7 +95,13 @@ export default () => {
     delete data.isAgree;
     data.color = parseInt(data.color, 10);
     const resFrom = await create(data);
-    if (!resFrom) return null;
+    if (!resFrom) {
+      showAnimationModal({
+        isSuccess: false,
+        errorTitle: '設定失敗',
+      });
+      return null;
+    }
     history.push('/CreateLedgerSuccess', data);
     return null;
   };
