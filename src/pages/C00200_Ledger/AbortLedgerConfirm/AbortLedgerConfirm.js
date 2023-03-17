@@ -9,8 +9,10 @@ import Layout from 'components/Layout/Layout';
 import InformationList from 'components/InformationList';
 import { FEIBButton } from 'components/elements';
 import Accordion from 'components/Accordion';
+import { showAnimationModal } from 'utilities/MessageModal';
 import PageWrapper from './AbortLedgerConfirm.style';
 import { getLedgerTypeName } from '../utils/lookUpTable';
+import { close } from './api';
 
 export default () => {
   const history = useHistory();
@@ -46,9 +48,17 @@ export default () => {
   ];
 
   // 點擊 - 確認
-  const onSubmitClick = (data) => {
-    console.log(data);
+  const onSubmitClick = async (data) => {
+    const resFromClose = await close(data);
+    if (!resFromClose) {
+      showAnimationModal({
+        isSuccess: false,
+        errorTitle: '設定失敗',
+      });
+      return null;
+    }
     history.push('/AbortLedgerSuccess', { ...state, ...data });
+    return null;
   };
 
   return (
