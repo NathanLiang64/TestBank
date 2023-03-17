@@ -57,6 +57,7 @@ const DebitCard = ({
   freeTransferRemain,
   freeWithdraw,
   freeWithdrawRemain,
+  showFreeTransferInfo = true,
   dollarSign,
   hideIcon,
   hideCopyIcon = false,
@@ -147,6 +148,7 @@ const DebitCard = ({
   );
 
   const renderFreeTransferInfo = () => {
+    if (!showFreeTransferInfo) return null;
     let total;
     let remain;
     if (transferMode) {

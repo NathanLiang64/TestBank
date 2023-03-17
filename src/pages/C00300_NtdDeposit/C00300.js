@@ -292,7 +292,7 @@ const C00300 = () => {
                 cardColor="purple"
                 funcList={[
                   { fid: Func.D001.id, title: '轉帳' },
-                  { fid: Func.E001.id, title: '換匯' },
+                  { fid: Func.E001.id, title: '換匯', hidden: selectedAccount.acctType !== 'M'},
                   { fid: Func.D003.id, title: '無卡提款', hidden: (selectedAccount.acctType !== 'M') },
                 ]}
                 moreFuncs={[

@@ -20,6 +20,7 @@ const AccountOverview = ({
   transferMode,
   withdrawMode,
   defaultSlide,
+  showFreeTransferInfo,
 }) => {
   const renderDebitCard = (account) => (
     <DebitCard
@@ -30,6 +31,7 @@ const AccountOverview = ({
       moreList={moreFuncs}
       functionList={funcList}
       onFunctionClick={onFunctionClick}
+      showFreeTransferInfo={showFreeTransferInfo}
       type="original"
     />
   );
