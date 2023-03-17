@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useHistory } from 'react-router';
+import { useState } from 'react';
+import { useHistory, useLocation } from 'react-router';
 import { Box } from '@material-ui/core';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -9,37 +9,56 @@ import Layout from 'components/Layout/Layout';
 import InformationList from 'components/InformationList';
 import { FEIBButton } from 'components/elements';
 import Accordion from 'components/Accordion';
+import { showAnimationModal } from 'utilities/MessageModal';
 import PageWrapper from './AbortLedgerConfirm.style';
+import { getLedgerTypeName } from '../utils/lookUpTable';
+import { close } from './api';
 
 export default () => {
   const history = useHistory();
+  // 狀態設定
+  const location = useLocation();
+  const { state } = location;
+  const [viewModel] = useState(state || {});
+  // 表單設定
   const schema = yup.object().shape({
-    verifyCode: yup.string().required('必填'),
+    verifyCode: yup
+      .string()
+      .matches(/^[0-9]*$/, '只能輸入數字')
+      .min(4, '請輸入4位數字驗證碼')
+      .max(4, '請輸入4位數字驗證碼')
+      .required('必填'),
   });
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit } = useForm({
     defaultValues: {
       verifyCode: '',
     },
     resolver: yupResolver(schema),
   });
 
-  useEffect(() => {
-    reset((formValues) => ({
-      ...formValues,
-    }));
-  }, []);
-
   const CONFIG = [
-    { id: 1, label: '帳本名稱', value: '' },
-    { id: 2, label: '帳本餘額', value: '' },
-    { id: 3, label: '連結帳號', value: '' },
-    { id: 4, label: '帳本類型', value: '' },
+    { id: 1, label: '帳本名稱', value: viewModel.ledgerName },
+    { id: 2, label: '帳本餘額', value: viewModel.ledgerAmount },
+    { id: 3, label: '連結帳號', value: viewModel.bankeeAccount?.accountNumber },
+    {
+      id: 4,
+      label: '帳本類型',
+      value: getLedgerTypeName(viewModel.ledgerType),
+    },
   ];
 
   // 點擊 - 確認
-  const onSubmitClick = (data) => {
-    console.log(data);
-    history.push('/AbortLedgerSuccess');
+  const onSubmitClick = async (data) => {
+    const resFromClose = await close(data);
+    if (!resFromClose) {
+      showAnimationModal({
+        isSuccess: false,
+        errorTitle: '設定失敗',
+      });
+      return null;
+    }
+    history.push('/AbortLedgerSuccess', { ...state, ...data });
+    return null;
   };
 
   return (

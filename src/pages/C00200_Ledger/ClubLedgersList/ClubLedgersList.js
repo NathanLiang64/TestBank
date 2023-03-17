@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { PersonalIcon, HomeIcon } from 'assets/images/icons';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showError } from 'utilities/MessageModal';
+import { useNavigation } from 'hooks/useNavigation';
 import PageWrapper from './ClubLedgersList.style';
 import { getAllLedgers, start } from './api';
 // import { getAllLedgers } from './constants/mockData';
@@ -18,6 +19,7 @@ export default () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const theme = useTheme();
+  const { goHome } = useNavigation();
   // 狀態設定
   const [ledgerList, setLedgerList] = useState([]);
   const [hasLedgerData, setHasLedgerData] = useState(false);
@@ -41,7 +43,7 @@ export default () => {
     dispatch(setWaittingVisible(true));
     const resFromStart = await start();
     if (!resFromStart) {
-      history.goBack();
+      goHome();
       return null;
     }
     const resFromGetAllLedgers = await getAllLedgers();

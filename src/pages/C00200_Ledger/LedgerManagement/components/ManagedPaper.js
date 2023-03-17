@@ -166,16 +166,16 @@ export default () => {
       label: '分享明細',
       icon: <EditAccountIcon />,
       callBack: () => {
-        console.log('分享明細');
-        history.push('/ShareLedgerDetail');
+        console.log('分享明細', state);
+        history.push('/ShareLedgerDetail', state);
       },
     },
     {
       label: '終止帳本',
       icon: <DeleteIcon />,
       callBack: () => {
-        console.log('終止帳本');
-        history.push('/AbortLedgerConfirm');
+        console.log('終止帳本', state);
+        history.push('/AbortLedgerConfirm', state);
       },
     },
   ];
