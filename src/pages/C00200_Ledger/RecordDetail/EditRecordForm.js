@@ -77,7 +77,7 @@ const EditRecordForm = () => {
     </form>
   );
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     console.log({
       txStatus: state.txStatus,
       notRecordedMode,
@@ -86,13 +86,17 @@ const EditRecordForm = () => {
     if (state.txStatus === 1 || (state.txStatus === 2 && notRecordedMode === '1')) {
       const value = getInfoValues();
       console.log('info value', {value});
-      editWriteOff({...value, id: state.ledgerTxId});
+      await editWriteOff({
+        depTxnId: state.ledgerTxId,
+        usage: value.type,
+        remark: value.memo,
+      });
     } else {
       const value = getTargetValues();
 
       const recordTargetInfo = recordTargetList.find((target) => target.ledgerTxId === value.target);
       console.log({state, recordTargetInfo});
-      setWriteOff({
+      await setWriteOff({
         depTxnId: state.ledgerTxId,
         txnId: recordTargetInfo.ledgerTxId,
       });
@@ -100,7 +104,7 @@ const EditRecordForm = () => {
     goBackFunc();
   };
 
-  const goBackFunc = () => history.goBack();
+  const goBackFunc = () => history.goBack(-2);
 
   /* 未入帳－銷帳對象清單 */
   useEffect(() => {
