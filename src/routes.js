@@ -30,7 +30,9 @@ const D003002 = lazy(() => import('pages/D00300_CardLessATM/D00300_2'));
 const D00400 = lazy(() => import('pages/D00400_CardLessWithDrawChgPwd/D00400'));
 const D00500 = lazy(() => import('pages/D00500_FrequentContacts/D00500'));
 const D00600 = lazy(() => import('pages/D00600_RegisteredContacts/D00600'));
-const D00700 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer/D00700'));
+const D00700 = lazy(() => import('pages/D00700_ForeignTransfer/D00700'));
+const D007001 = lazy(() => import('pages/D00700_ForeignTransfer/D00700_1'));
+const D007002 = lazy(() => import('pages/D00700_ForeignTransfer/D00700_2'));
 const D00800 = lazy(() => import('pages/D00800_ReserveTransferSearch/D00800'));
 const D008001 = lazy(() => import('pages/D00800_ReserveTransferSearch/D00800_1'));
 const E00100 = lazy(() => import('pages/E00100_Exchange/E00100v2'));
@@ -83,8 +85,7 @@ const DepositPlusDetail = lazy(() => import('pages/DepositPlus/depositPlusDetail
 const SMSOTPactivate = lazy(() => import('pages/SMSOTPactivate'));
 const ProjectJ = lazy(() => import('pages/ProjectJ'));
 const MoreTranscations = lazy(() => import('pages/MoreTranscations'));
-const ForeignCurrencyTransfer1 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer/foreignCurrencyTransfer_1'));
-const ForeignCurrencyTransfer2 = lazy(() => import('pages/D00700_ForeignCurrencyTransfer/foreignCurrencyTransfer_2'));
+
 // 社群帳本
 const AbortLedgerConfirm = lazy(() => import('pages/C00200_Ledger/AbortLedgerConfirm/AbortLedgerConfirm'));
 const AbortLedgerSuccess = lazy(() => import('pages/C00200_Ledger/AbortLedgerSuccess/AbortLedgerSuccess'));
@@ -147,6 +148,8 @@ const routes = [
   {path: '/D00500', exact: false, component: D00500},
   {path: '/D00600', exact: false, component: D00600},
   {path: '/D00700', exact: false, component: D00700},
+  {path: '/D007001', exact: false, component: D007001},
+  {path: '/D007002', exact: false, component: D007002},
   {path: '/D00800', exact: false, component: D00800},
   {path: '/D008001', exact: false, component: D008001},
   {path: '/E00100', exact: false, component: E00100},
@@ -200,16 +203,7 @@ const routes = [
   {path: '/smsOTPactivate', exact: false, component: SMSOTPactivate},
   {path: '/projectJ', exact: false, component: ProjectJ},
   {path: '/moreTranscations', exact: false, component: MoreTranscations},
-  {
-    path: '/foreignCurrencyTransfer1',
-    exact: false,
-    component: ForeignCurrencyTransfer1,
-  },
-  {
-    path: '/foreignCurrencyTransfer2',
-    exact: false,
-    component: ForeignCurrencyTransfer2,
-  },
+
   // 社群帳本
   {path: '/C00200', exact: false, component: ClubLedgersList},
   {path: '/abortLedgerConfirm', exact: false, component: AbortLedgerConfirm},

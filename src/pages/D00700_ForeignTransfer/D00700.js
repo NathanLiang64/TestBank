@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable no-unused-vars */
+import { useState, useEffect, useReducer } from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Pagination } from 'swiper/core';
@@ -8,7 +10,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { numberToChinese, currencySymbolGenerator } from 'utilities/Generator';
 import { transferAmountValidation } from 'utilities/validation';
 import { customPopup } from 'utilities/MessageModal';
-import { getAccountsList, getAgreedAccounts, getExchangePropertyList } from 'pages/D00700_ForeignCurrencyTransfer/api';
+import { getAccountsList, getAgreedAccounts, getExchangePropertyList } from 'pages/D00700_ForeignTransfer/api';
 import { Func } from 'utilities/FuncID';
 
 /* Elements */
@@ -18,7 +20,7 @@ import {
   FEIBSelect, FEIBOption, FEIBInput, FEIBInputLabel, FEIBButton, FEIBErrorMessage,
 } from 'components/elements';
 import Layout from 'components/Layout/Layout';
-import NoteContent from 'pages/D00700_ForeignCurrencyTransfer/noteContent';
+import NoteContent from 'pages/D00700_ForeignTransfer/noteContent';
 
 /* Styles */
 import { useNavigation } from 'hooks/useNavigation';
@@ -27,9 +29,29 @@ import ForeignCurrencyTransferWrapper from './D00700.style';
 /* Swiper modules */
 SwiperCore.use([Pagination]);
 
-const ForeignCurrencyTransfer = () => {
+/**
+ * D00700 外幣轉帳首頁
+ * @param {{location: {state: {viewModel, model}}}} props
+ */
+const D00700 = (props) => {
+  const { location } = props;
+  const { state } = location;
+  console.log(state);
+
   const history = useHistory();
-  const { closeFunc } = useNavigation();
+  const dispatch = useDispatch();
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+
+  // ViewModel
+  const [viewModel, setViewModel] = useState({
+    inAccounts: [], // 可轉入的外幣帳號清單
+    properties: [], // 外幣匯款性質清單
+    outAccount: null, // 轉出帳號(詳細資訊)
+    inAccount: null, // 轉入帳號(詳細資訊)
+    currency: null, // 轉帳幣別(詳細資訊)
+    amount: null, // 轉帳金額
+  });
+
   // 交易性質清單
   const [transTypeOptions, setTransTypeOptions] = useState([]);
   // 已選的帳號選單
@@ -40,22 +62,28 @@ const ForeignCurrencyTransfer = () => {
   // 帳戶清單選項
   const [accountListOption, setAccountListOption] = useState();
   const isSingleCard = accountsList.length === 1; // 單張卡時卡片寬度需與首頁卡片寬度相同
+
   /**
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    account: yup
-      .string()
-      .required('請選擇轉入帳號'),
+    account: yup.string().required('請選擇轉入帳號'),
     balance: transferAmountValidation(currentAccount.balance),
-    transferType: yup
-      .string()
-      .required('請選擇匯款性質'),
+    property: yup.string().required('請選擇匯款性質'),
   });
   const {
     handleSubmit, control, formState: { errors }, setValue,
   } = useForm({
     resolver: yupResolver(schema),
+    // Model
+    defaultValues: {
+      outAccount: '', // 轉出帳號
+      inAccount: '', // 轉入帳號
+      currency: '', // 轉帳幣別
+      amount: '', // 轉帳金額
+      property: '', // 性質別
+      memo: '', // 備註
+    },
   });
 
   // 取得帳戶清單
@@ -79,7 +107,7 @@ const ForeignCurrencyTransfer = () => {
         customPopup(
           '系統訊息',
           '您目前沒有任何外幣帳戶',
-          closeFunc,
+          // closeFunc,
         );
       }
     }
@@ -122,7 +150,7 @@ const ForeignCurrencyTransfer = () => {
       acctBalance: currentAccount.balance,
     };
     console.log(confirmData);
-    history.push('/foreignCurrencyTransfer1', confirmData);
+    history.push('/D007001', confirmData);
   };
 
   /**
@@ -293,4 +321,4 @@ const ForeignCurrencyTransfer = () => {
   );
 };
 
-export default ForeignCurrencyTransfer;
+export default D00700;

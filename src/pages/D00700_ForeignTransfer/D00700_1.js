@@ -16,7 +16,7 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import ForeignCurrencyTransferWrapper from './D00700.style';
 import { createTransfer } from './api';
 
-const ForeignCurrencyTransfer1 = ({ location }) => {
+const D00700_1 = ({ location }) => {
   const history = useHistory();
   const dispatch = useDispatch();
   const [confirmData, setConfirmData] = useState({});
@@ -28,7 +28,7 @@ const ForeignCurrencyTransfer1 = ({ location }) => {
       dispatch(setWaittingVisible(true));
       const response = await createTransfer(confirmData);
       dispatch(setWaittingVisible(false));
-      history.push('/foreignCurrencyTransfer2', confirmData);
+      history.push('/D007002', confirmData);
     }
   };
 
@@ -82,4 +82,4 @@ const ForeignCurrencyTransfer1 = ({ location }) => {
   );
 };
 
-export default ForeignCurrencyTransfer1;
+export default D00700_1;

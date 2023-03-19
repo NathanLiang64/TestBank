@@ -49,7 +49,7 @@ const Nav = () => {
       <NavWrapper>
         <div className="bankee">
           <div onClick={() => startFunc(Func.D001.id)}>D00100 轉帳</div>
-          <div onClick={() => startFunc('C00200')}>C00200 社群帳本</div>
+          <div onClick={() => startFunc(Func.C002.id)}>C00200 社群帳本</div>
           <div onClick={() => startFunc(Func.C003.id)}>C00300 台幣存款首頁</div>
           <div onClick={() => startFunc(Func.C004.id)}>C00400 外幣存款首頁</div>
           <div onClick={() => startFunc(Func.C005.id)}>C00500 交割帳戶首頁</div>

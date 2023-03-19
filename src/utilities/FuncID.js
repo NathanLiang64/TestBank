@@ -116,10 +116,9 @@ export const Func = {
   /**
    * 社群帳本
    */
-  C00200: {
+  C002: {
     id: 'C002',
     required: [],
-    isAppFunc: true,
   },
 
   /**

@@ -21,7 +21,7 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import ForeignCurrencyTransferWrapper from './D00700.style';
 import { executeTransfer } from './api';
 
-const ForeignCurrencyTransfer2 = ({ location }) => {
+const D00700_2 = ({ location }) => {
   const dispatch = useDispatch();
 
   const [model, setModel] = useState(location.state);
@@ -130,4 +130,4 @@ const ForeignCurrencyTransfer2 = ({ location }) => {
   );
 };
 
-export default ForeignCurrencyTransfer2;
+export default D00700_2;
