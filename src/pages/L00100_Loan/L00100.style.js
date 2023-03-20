@@ -45,9 +45,8 @@ const PageWrapper = styled.div`
   }
 
   // 右下快捷列
-  & div.swiper-slide > div > div.justify-end.gap-6.mt-4.divider {
-    margin-top: auto;
-    margin-bottom: 4px;
+  & div.justify-end.gap-6.mt-4.divider {
+    margin-top: 0.8rem;
   }
   
   // 右下快捷按鈕
