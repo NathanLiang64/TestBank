@@ -35,14 +35,16 @@ const MemberSelection = (props) => {
   /* 回傳選項 */
   useEffect(() => {
     const value = watch();
-    const selectedMemberList = [];
-    const selectedMemberIdList = Object.keys(value.memberSelected).filter((key) => value.memberSelected[key] === true);
-    const isSelectAll = selectAllWatch().selectAll;
+    const selectedMemberList = []; // 被選擇的成員清單
+    const selectedMemberIdList = Object.keys(value.memberSelected).filter((key) => value.memberSelected[key] === true); // 個別成員被勾選狀態清單
+    const isSelectAll = selectAllWatch().selectAll; // 是否勾選 "全選"
 
-    /* 全選 */
+    /* 將資料加入 "被選擇的成員清單" */
     if (isSelectAll) {
+      /* 全選 */
       memberList.forEach((member) => selectedMemberList.push({memberId: member.memberId}));
     } else {
+      /* 非全選 */
       selectedMemberIdList.forEach((id) => {
         const selectedMember = memberList.find((member) => member.memberId === id);
         selectedMemberList.push({memberId: selectedMember.memberId});
@@ -50,6 +52,11 @@ const MemberSelection = (props) => {
     }
 
     memberSelectionValues(selectedMemberList);
+
+    return () => {
+      value.unsubscribe();
+      isSelectAll.unsubscribe();
+    };
   }, [watch()]);
 
   console.log('renderStep2');

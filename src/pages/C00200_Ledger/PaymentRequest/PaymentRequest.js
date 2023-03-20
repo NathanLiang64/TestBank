@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
 
@@ -13,12 +12,12 @@ import MemberSelection from './MemberSelection';
 import AmountSetting from './AmountSetting';
 
 const PaymentRequest = () => {
-  const [requestStep, setRequestStep] = useState(1); // 1 | 2 | 3
+  const [requestStep, setRequestStep] = useState(1); // 1: PaymentSetting | 2: MemberSelection | 3: AmountSetting
   const [memberList, setMemberList] = useState([]);
   const [model, setModel] = useState();
-  const step1Ref = useRef();
-  const step2Ref = useRef();
-  const step3Ref = useRef();
+  const step1Ref = useRef(); // PaymentSetting 回傳資料
+  const step2Ref = useRef(); // MemberSelection 回傳資料
+  const step3Ref = useRef(); // AmountSetting 回傳資料
   const history = useHistory();
   const { state } = useLocation();
 
@@ -85,20 +84,18 @@ const PaymentRequest = () => {
       history.goBack();
     }
 
-    /* 前往下一步 */
+    /* 若不是最後一步，前往下一步 */
     setRequestStep(requestStep !== 3 ? requestStep + 1 : requestStep);
   };
 
   const goBackFunc = () => {
-    /* on first step */
+    /* 第一步時，回到進入頁 */
     if (requestStep === 1) history.goBack();
-    /* not on first step */
+    /* 非第一步時，回到上一步 */
     setRequestStep(requestStep - 1);
-
-    /* TODO reset form of previous step */
   };
 
-  /* 自 state 取得帳本成員清單 */
+  /* 自 state 取得帳本成員清單（第二步使用） */
   useEffect(() => {
     setMemberList(state.bankeeMember);
   }, []);

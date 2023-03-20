@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { accountFormatter } from 'utilities/Generator';
@@ -20,11 +19,7 @@ const InvoiceSending = () => {
   const history = useHistory();
   const goBackFunc = () => history.goBack();
 
-  const stateData = {
-    bank: '805',
-    account: '00011122334455',
-    type: 'A01',
-  }; // TODO partner 自前頁(明細列表頁)點擊“要錢”按鈕後帶入帳戶資料及txType
+  const { state } = useLocation(); // partner 自前頁(明細列表頁)點擊“要錢”按鈕後帶入帳戶資料及txType
 
   const schema = yup.object().shape({
     usage: yup.string(),
@@ -54,13 +49,13 @@ const InvoiceSending = () => {
 
   const onSubmit = async (data) => {
     const requestData = {
-      txType: stateData.type,
+      txType: state.txType,
       txUsage: data.usage,
       txAmount: data.amount,
       txDesc: data.memo,
       bankAccount: {
-        bankCode: stateData.bank,
-        account: stateData.account,
+        bankCode: state.bankCode,
+        account: state.bankAccount,
       },
       messageCard: `WO${imgId}`,
     };
@@ -81,9 +76,10 @@ const InvoiceSending = () => {
   };
 
   useEffect(() => {
+    /* 自動填入綁定帳號 */
     reset((formValues) => ({
       ...formValues,
-      account: `${stateData.bank}-${accountFormatter(stateData.account, true)}`,
+      account: `${state.bank}-${accountFormatter(state.account, true)}`,
     }));
   }, []);
 

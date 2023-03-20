@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+import { callAPI } from 'utilities/axios';
+
 // 要錢卡/邀請卡 mock data
 const data = {
   imageId: 5, // number, 1 ~ 5
@@ -32,12 +35,30 @@ const data = {
  * memo: string
  * }}
  */
-export const cardMsg = (param) => {
+export const cardMsg = async (param) => {
   console.log('cardMsg', param);
+  // const response = await callAPI('ledger/cardMsg', param);
   const response = {
     code: '0000',
     data,
   };
 
   return response.data;
+};
+
+export const getLedger = (param) => {
+  const response = {
+    code: '0000',
+    data: {
+      ledgerOwner: {
+        memberNickName: 'ownerName',
+      },
+      ledgerName: 'ledgerName',
+    },
+  };
+
+  return {
+    sendMemberName: response.data.ledgerOwner,
+    ledgerName: response.data.ledgerName,
+  };
 };

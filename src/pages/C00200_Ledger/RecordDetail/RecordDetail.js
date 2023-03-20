@@ -9,22 +9,22 @@ import Layout from 'components/Layout/Layout';
 import { handleTxUsageText } from '../utils/usgeType';
 
 import { PageWrapper } from './RecordDetail.style';
-// import { state } from './mockData';
 
 const RecordDetail = () => {
   const history = useHistory();
   const [model, setModel] = useState();
   const { state } = useLocation();
 
+  /* 明細內容 */
   const renderInformationContent = (title, info) => <InformationList title={title} content={info} />;
 
-  // to Edit
+  /* 前往編輯頁 */
   const handleEditOnClick = () => history.push('/editRecordForm', model);
 
   const goBackFunc = () => history.goBack();
 
   useEffect(() => {
-    // get model
+    /* get model */
     setModel(state);
   }, []);
 
@@ -41,6 +41,7 @@ const RecordDetail = () => {
           {renderInformationContent('性質', handleTxUsageText(model.txUsage))}
           {renderInformationContent('說明', model.txDesc ?? '--')}
         </div>
+        {/* 已入帳單筆交易明細暫時不能編輯，進入RecordDetail頁者，若非未入帳交易明細者，不顯示編輯按鈕 */}
         {(model.editable && model.owner) && <FEIBButton onClick={handleEditOnClick}>編輯</FEIBButton>}
       </PageWrapper>
       )}
