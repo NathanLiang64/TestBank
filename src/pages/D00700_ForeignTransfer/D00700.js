@@ -19,6 +19,7 @@ import AccountOverview from 'components/AccountOverview/AccountOverview';
 import { CurrencyInputField, DropdownField, TextInputField } from 'components/Fields';
 
 /* Styles */
+import { showPrompt } from 'utilities/MessageModal';
 import NoteContent from './noteContent';
 import { getAgreedAccount, getExchangePropertyList } from './api';
 import ForeignCurrencyTransferWrapper from './D00700.style';
@@ -71,6 +72,14 @@ const D00700 = (props) => {
     // TODO 如果回傳的列表是空值，提示使用者沒有可轉入的帳號
     // 取得約定轉入帳號列表，並且只篩選出「遠銀」且為「外幣」的帳戶
     const agreedAccounts = await getAgreedAccount(accountNo);
+
+    if (!agreedAccounts.length) {
+      await showPrompt(
+        <p className="txtCenter">
+          您目前尚未擁有外幣約定轉帳帳號，無法進行本行同幣別外幣轉帳
+        </p>,
+      );
+    }
     const foreignAgreedAccts = agreedAccounts.filter((acct) => acct.isForeign && acct.bankId === '805');
     const options = foreignAgreedAccts.map(({ acctId }) => ({ label: acctId, value: acctId }));
     const inAccounts = [...viewModel.inAccounts, ...options];
@@ -98,7 +107,7 @@ const D00700 = (props) => {
       setViewModel((vm) => ({ ...vm, currencyList, ...vModel }));
 
       // 重設 model
-      const model = state?.model || {outAccount};
+      const model = state?.model || {outAccount, currency: vModel.currency};
       reset((formValues) => ({ ...formValues, ...model }));
 
       dispatch(setWaittingVisible(false));
@@ -130,7 +139,7 @@ const D00700 = (props) => {
 
   const { currencyList, currency, inAccounts, properties } = viewModel;
   return (
-    <Layout fid={Func.D007} title="轉帳">
+    <Layout fid={Func.D007} title="外幣轉帳">
       <ForeignCurrencyTransferWrapper>
         <AccountOverview
           transferMode
