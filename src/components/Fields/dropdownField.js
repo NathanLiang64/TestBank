@@ -4,6 +4,7 @@ import {useController} from 'react-hook-form';
 import {
   FEIBOption, FEIBSelect, FEIBInputLabel, FEIBErrorMessage,
 } from 'components/elements';
+import theme from 'themes/theme';
 import { DropdownFieldWrapper } from './fields.style';
 
 export const DropdownField = ({
@@ -17,14 +18,8 @@ export const DropdownField = ({
   const {field, fieldState} = useController(controlProps);
 
   const MenuProps = {
-    anchorOrigin: {
-      vertical: 'bottom',
-      horizontal: 'left',
-    },
-    transformOrigin: {
-      vertical: 'top',
-      horizontal: 'left',
-    },
+    anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
+    transformOrigin: { vertical: 'top', horizontal: 'left' },
     getContentAnchorEl: null,
   };
 
@@ -32,6 +27,13 @@ export const DropdownField = ({
     if (onChange) onChange(event.target.value);
     else field.onChange(event);
   };
+
+  const generateColor = () => {
+    const currentOption = options.find(({value}) => field.value === value);
+    if (currentOption && currentOption.disabledOption) return theme.colors.text.placeholder;
+    return $color;
+  };
+
   return (
     <DropdownFieldWrapper>
       <FEIBInputLabel htmlFor={field.name}>{labelName}</FEIBInputLabel>
@@ -43,7 +45,7 @@ export const DropdownField = ({
         id={field.name}
         name={field.name}
         value={field.value}
-        $color={$color}
+        $color={generateColor()}
       >
         {options.map(({ key, label, value, disabledOption }) => (
           <FEIBOption key={key ?? label} value={value} disabled={disabledOption}>

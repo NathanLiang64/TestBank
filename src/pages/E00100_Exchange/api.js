@@ -98,7 +98,6 @@ export const execute = async (tfrId) => {
  * 查詢指定轉出帳號約定轉入帳號清單。
  * @param {{
  *   accountNo: String, // 要查詢約定轉入帳號清單的帳號。
- *   includeSelf: Boolean, // 表示傳回清單要包含同ID互轉的帳號。
  * }} accountNo
  * @returns {Promise<[{
  *   bankId: '約定轉入帳戶-銀行代碼'
@@ -113,10 +112,7 @@ export const execute = async (tfrId) => {
 export const getAgreedAccount = async (accountNo) => {
   let {agreAccts} = store.getState()?.CacheReducer;
   if (!agreAccts) agreAccts = {};
-  const request = {
-    accountNo,
-    includeSelf: true, // 現在一律連同ID底下的帳號也一並取出，透過 CacheReducer 管理，後續再依照選取模式 filter
-  };
+  const request = { accountNo };
   if (!agreAccts[accountNo]) {
     const response = await callAPI('/deposit/transfer/agreedAccount/v1/get', request);
     const bankList = await getBankCode();

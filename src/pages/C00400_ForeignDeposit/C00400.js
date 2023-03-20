@@ -58,7 +58,14 @@ const C00400 = () => {
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
     const api1 = getAccountsList('F', async (accts) => {
       // M=臺幣主帳戶、C=臺幣子帳戶
-      const flattenAccts = accts.map((account) => account.details.map((detail) => ({ ...account, ...detail }))).flat();
+      const foreignAcct = accts[0];
+      const {details, ...restDetails} = foreignAcct;
+      const flattenAccts = details.map((detail) => ({
+        ...restDetails,
+        balance: detail.balance,
+        currency: detail.currency,
+        details: {...detail} }));
+
       setAccounts(flattenAccts);
       return flattenAccts;
     });
@@ -86,24 +93,24 @@ const C00400 = () => {
     if (startParams && startParams instanceof Object) {
       const index = accts.findIndex((acc) => acc.currency === startParams.defaultCurrency);
       accts.forEach((acct) => {
-        if (startParams.txnDetailsObj[acct.accountNo]) acct.txnDetails = startParams.txnDetailsObj[acct.accountNo];
+        if (startParams.txnDetailsObj[acct.currency]) acct.txnDetails = startParams.txnDetailsObj[acct.currency];
       });
       setSelectedAccountIdx(index);
     } else {
       setSelectedAccountIdx(0);
     }
-    delete selectedAccount.isLoadingTxn; // 避免因載入中中斷，而永遠無法再重載明細。
+    if (selectedAccount) delete selectedAccount.isLoadingTxn; // 避免因載入中中斷，而永遠無法再重載明細。
   };
 
   /**
    * 下載利率/利息資訊
    */
-  const loadInterest = async (account, index) => {
-    if (!account.details[index].loading) {
+  const loadInterest = async (account) => {
+    if (!account.details.loading) {
       const { accountNo, currency} = account;
-      account.details[index].loading = true;
+      account.details.loading = true;
       getAccountInterest({accountNo, currency}, (newDetail) => {
-        account.details[index] = newDetail; // newDetail 已經不包含 loading 旗標
+        account.details = newDetail; // newDetail 已經不包含 loading 旗標
         forceUpdate();
       });
     }
@@ -120,10 +127,8 @@ const C00400 = () => {
     const brate = exRateItem?.brate ?? '-';
     const srate = exRateItem?.srate ?? '-';
 
-    const dtlIndex = details.findIndex((dtl) => dtl.currency === currency);
-
-    if (details[dtlIndex] && !('interest' in details[dtlIndex])) loadInterest(selectedAccount, dtlIndex); // 下載 利率/利息資訊
-    const { interest = '-', rate = '-' } = details[dtlIndex] ?? {};
+    if (!('interest' in details)) loadInterest(selectedAccount); // 下載 利率/利息資訊
+    const { interest = '-', rate = '-' } = details;
 
     const panelContent = [
       {
@@ -222,8 +227,8 @@ const C00400 = () => {
         break;
 
       case Func.D007.id: // 轉帳
+        params = { currency: selectedAccount.currency }; // TODO 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。
         break;
-
       case Func.E001.id: // 換匯
         params = { model: {
           mode: 2,
@@ -251,7 +256,7 @@ const C00400 = () => {
     }
 
     const txnDetailsObj = accounts.reduce((acc, cur) => {
-      if (cur.txnDetails) acc[cur.accountNo] = cur.txnDetails;
+      if (cur.txnDetails) acc[cur.currency] = cur.txnDetails;
       return acc;
     }, {});
 

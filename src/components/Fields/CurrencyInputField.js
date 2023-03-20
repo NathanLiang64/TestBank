@@ -29,7 +29,7 @@ export const CurrencyInputField = ({
         onBlur={onBlur}
       />
     );
-  }, []);
+  }, [symbol]);
 
   return (
     <TextInputFieldWrapper>

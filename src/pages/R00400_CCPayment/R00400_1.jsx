@@ -54,7 +54,7 @@ const Page = () => {
   const renderAutoDebitInfo = () => {
     if (!payResult) return null;
 
-    if (autoDeductStatus !== 2) {
+    if (autoDeductStatus !== 1) {
       return (
         <div className="bluelineBottom">
           <div>

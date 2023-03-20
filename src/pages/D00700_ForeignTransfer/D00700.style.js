@@ -5,6 +5,12 @@ const ForeignCurrencyTransferWrapper = styled(Layout)`
   background: ${({ theme }) => theme.colors.background.lighterBlue};
   padding: 0;
 
+  form {
+    display: grid;
+    align-content: flex-start;
+    grid-gap: 2rem;
+  }
+
   &.confirmAndResult {
     background: ${({ theme }) => theme.colors.basic.white};
     &.fail {
@@ -18,7 +24,7 @@ const ForeignCurrencyTransferWrapper = styled(Layout)`
       }
     }
     .line {
-      height: .8rem;
+      height: 0.8rem;
       background: ${({ theme }) => theme.colors.background.lighterBlue};
     }
     .confrimDataContainer {
@@ -72,13 +78,13 @@ const ForeignCurrencyTransferWrapper = styled(Layout)`
   .userCardArea {
     width: 100vw;
     padding-top: 1.6rem;
-    
+
     .swiper-container {
       padding-bottom: 1.6rem;
     }
-    
+
     .swiper-pagination {
-      left: -.8rem;
+      left: -0.8rem;
     }
   }
   .formContainer {
@@ -93,20 +99,17 @@ const ForeignCurrencyTransferWrapper = styled(Layout)`
       color: ${({ theme }) => theme.colors.primary.dark};
       font-weight: 400;
       border-bottom: 2px solid ${({ theme }) => theme.colors.primary.dark};
-      padding-bottom: .4rem;
+      padding-bottom: 0.4rem;
       margin-bottom: 2.4rem;
     }
   }
-  .btnContainer {
-    margin-top: 3.6rem;
-  }
+
   .warnText {
     font-size: 1.4rem;
     color: ${({ theme }) => theme.colors.text.dark};
-    line-height: 2.1rem;
     text-align: center;
-    margin-top: 1.6rem;
   }
+
   #balance {
     color: transparent;
   }

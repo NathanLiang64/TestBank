@@ -7,6 +7,7 @@ import {
   weekNumberToChinese, dateToString, stringToDate, switchZhNumber, toCurrency,
 } from 'utilities/Generator';
 
+import { showPrompt } from 'utilities/MessageModal';
 import DepositPlanWrapper from './DepositPlan.style';
 import { getStage } from './DepositPlan.utils';
 
@@ -51,7 +52,18 @@ const DepositPlan = ({
     return `${cycleTiming}號`;
   };
   const bonusInfo = [
-    { label: '適用利率', value: `${rate}%`},
+    {
+      label: '適用利率',
+      value: `${rate}%`,
+      onClick: () => {
+        const {type, extraRate, baseRate} = progInfo;
+        const text = type ? `
+        適用利率=${baseRate}%(基本利率)+${extraRate}%(專案加碼利率)，基本利率以官網公告為主，專案加碼利率將於存錢計畫達成指定條件後回饋`
+          : `適用利率=${baseRate}%(基本利率)，基本利率以官網公告為主`;
+
+        showPrompt(<p className="txtCenter">{text}</p>);
+      },
+    },
     { label: `每${cycleMode === 1 ? '周' : '月'}存款日`, value: fancyCycleTimming()},
     { label: '每次存款金額', value: switchZhNumber(amount)},
   ];

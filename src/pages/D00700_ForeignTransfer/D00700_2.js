@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+/* eslint-disable object-curly-newline */
+/* eslint-disable no-unused-vars */
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { accountFormatter, currencySymbolGenerator } from 'utilities/Generator';
+import { accountFormatter, currencySymbolGenerator, dateToString } from 'utilities/Generator';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -15,66 +17,35 @@ import {
   CameraAltOutlined, ShareOutlined,
 } from '@material-ui/icons';
 
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-
 /* Styles */
+import { screenShot } from 'utilities/AppScriptProxy';
+import { useHistory } from 'react-router';
 import ForeignCurrencyTransferWrapper from './D00700.style';
-import { executeTransfer } from './api';
 
-const D00700_2 = ({ location }) => {
+const D00700_2 = (props) => {
   const dispatch = useDispatch();
-
-  const [model, setModel] = useState(location.state);
-  const [transferResult, setTransferResult] = useState({});
+  const history = useHistory();
+  const {location: {state}} = props;
+  const transferResult = state;
   const [showSnapshotSuccess, setShowSnapshotSuccess] = useState();
 
-  /**
-   * 頁面初始化
-   */
-  useEffect(async () => {
-    dispatch(setWaittingVisible(true));
-
-    const result = await executeTransfer();
-    const isSuccess = (result?.code === '0000'); // Debug 假設！
-    await setTransferResult({
-      isSuccess,
-      errorCode: result?.code,
-      message: result?.message, // 錯誤訊息
-    });
-    console.log('==> 轉帳執行結果：', result);
-    console.log('==> transferResult：', transferResult);
-    if (isSuccess) {
-      console.log('==> isSuccess：', isSuccess);
-      setModel((prevModel) => {
-        const updatedBalance = result.acctBalance;
-        return {
-          ...prevModel,
-          transOut: {
-            ...prevModel.transOut,
-            balance: updatedBalance,
-          },
-        };
-      });
-    }
-    console.log('==> model：', model);
-  }, []);
-
-  /**
-   * 初始化完成，關閉等待中狀態。
-   */
-  useEffect(async () => {
-    console.log('==> (66)transferResult：', transferResult);
-    if (transferResult) dispatch(setWaittingVisible(false));
-  }, [transferResult]);
-
-  const handleClickScreenshot = () => {
-    // TODO 透過原生功能進行截圖。
+  const handleClickScreenshot = async () => {
+    await screenShot();
     setShowSnapshotSuccess(true);
     setTimeout(() => setShowSnapshotSuccess(false), 1000); // 1 秒後自動關閉。
   };
 
+  const propertyName = state.viewModel.properties.find(({value}) => value === state.model.property).label;
+
+  const goBack = () => {
+    // TODO 待調整回傳的內容
+    const { model, viewModel } = state;
+    const updatedModel = { ...model, amount: '', memo: '', property: '*' }; // 保留 currency, inAccount
+    history.replace('D00700', { model: updatedModel, viewModel });
+  };
+
   return (
-    <Layout title="外幣轉帳結果">
+    <Layout title="外幣轉帳結果" goBackFunc={goBack}>
       <ForeignCurrencyTransferWrapper className={transferResult.isSuccess ? 'confirmAndResult' : 'confirmAndResult fail'}>
         <SuccessFailureAnimations isSuccess={transferResult.isSuccess} successTitle="轉帳成功" errorTitle="轉帳失敗" />
         {
@@ -84,27 +55,24 @@ const D00700_2 = ({ location }) => {
                 <div className="dataLabel">轉出金額與轉入帳號</div>
                 <div className="balance">
                   {
-                    currencySymbolGenerator(model?.inCcyCd)
-                  }
-                  {
-                    model?.inAmt
+                    currencySymbolGenerator(state.model.currency, state.model.amount)
                   }
                 </div>
                 <div className="accountInfo">遠東商銀(805)</div>
-                {/* 待確認轉入帳號的 bankId 名稱 */}
-                <div className="accountInfo">{ accountFormatter(model?.inAcct) }</div>
+                <div className="accountInfo">{ accountFormatter(state.model.inAccount) }</div>
               </div>
               <div className="line" />
               <div className="infoListContainer">
                 <div>
-                  <InformationList title="轉出帳號" content={accountFormatter(model?.outAcct, true)} />
-                  <InformationList title="時間" content={model?.dateStr} />
+                  <InformationList title="轉出帳號" content={accountFormatter(state.model.outAccount, true)} />
+                  <InformationList title="時間" content={dateToString(new Date())} />
                 </div>
                 <div style={{ marginBottom: '8rem' }}>
                   <Accordion title="詳細交易">
-                    <InformationList title="帳戶餘額" content={`${currencySymbolGenerator(model?.outCcyCd)}${model?.transOut?.balance}`} />
-                    <InformationList title="匯款性質分類" content={model?.leglDesc} />
-                    <InformationList title="備註" content={model?.memo} />
+                    {/* TODO 帳戶餘額是否以交易完成後的回傳資訊為準，待確認回傳的資料結構  */}
+                    {/* <InformationList title="帳戶餘額" content={`${currencySymbolGenerator(model?.outCcyCd)}${model?.transOut?.balance}`} /> */}
+                    <InformationList title="匯款性質分類" content={propertyName} />
+                    <InformationList title="備註" content={state.model.memo} />
                   </Accordion>
                 </div>
               </div>
