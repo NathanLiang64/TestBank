@@ -18,7 +18,7 @@ import BillDetails from './components/BillDetails';
 import Tray from './components/Tray';
 
 /* Data */
-import { getBillDeducStatus, getBillDetail } from './api';
+import { getBillDeductStatus, getBillDetail } from './api';
 
 /* Style */
 import PageWrapper from './R00300.style';
@@ -60,7 +60,7 @@ const Page = () => {
 
   // 繳款期限資訊使用lazy loading
   useEffect(async () => {
-    const deductRt = await getBillDeducStatus();
+    const deductRt = await getBillDeductStatus();
     setDeductInfo(deductRt);
   }, []);
 
