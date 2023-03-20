@@ -21,9 +21,9 @@ const EditRecordForm = () => {
   const { state } = useLocation();
 
   const [notRecordedMode, setNotRecordedMode] = useState('0'); // 0: 選擇銷帳對象, 1: 自行編輯交易明細
-  const [isShowWriteOff, setIsShowWriteOff] = useState(false);
-  const [recordTargetList, setRecordTargetList] = useState([]);
-  const [recordTargetOptionList, setRecordTargetOptionList] = useState([]);
+  const [isShowWriteOff, setIsShowWriteOff] = useState(false); // 是否顯示 "選擇銷帳對象" 選項
+  const [recordTargetList, setRecordTargetList] = useState([]); // "銷帳對象" 所有資訊清單
+  const [recordTargetOptionList, setRecordTargetOptionList] = useState([]); // "銷帳對象" render選項使用資訊清單
 
   const notRecordedModeOptions = [
     {
@@ -36,7 +36,7 @@ const EditRecordForm = () => {
     },
   ];
 
-  // form: Recorded, notRecorded.1
+  // form: 已入帳、未入帳－自行編輯交易明細
   const schema = yup.object().shape({
     type: yup.string(),
     memo: yup.string().max(12), // 字數上限: 12
@@ -49,20 +49,21 @@ const EditRecordForm = () => {
     resolver: yupResolver(schema),
   });
 
-  // form: notRecorded mode
+  // form: 未入帳模式選擇("選擇銷帳對象" | "自行編輯交易明細")
   const {control: notRecordedControl, watch, reset: notRecordedReset} = useForm({
     defaultValues: {
       mode: '0',
     },
   });
 
-  // from: notRecorded - select record target
+  // from: 未入帳－選擇銷帳對象
   const {control: recordTargetControl, reset, getValues: getTargetValues} = useForm({
     defaultValues: {
       target: '',
     },
   });
 
+  /* 未入帳模式選擇 */
   const onNotRecordedModeChange = () => {
     const watchValue = watch((value) => setNotRecordedMode(value.mode));
     return () => watchValue.unsubscribe();
@@ -70,6 +71,7 @@ const EditRecordForm = () => {
 
   const renderInformationContent = (title, info) => <InformationList title={title} content={info} />;
 
+  /* 編輯交易明細表單 */
   const renderFormContent = () => (
     <form className="edit_form" onSubmit={() => onSubmit()}>
       <DropdownField labelName="性質" options={txUsageOptions} name="type" control={control} />
@@ -116,6 +118,7 @@ const EditRecordForm = () => {
     setRecordTargetList(response.ledgertx);
 
     if (!response.isWriteOffList) {
+      /* 若無銷帳對象，預設為自行編輯交易明細，隱藏 "選擇銷帳對象" 選項 */
       setNotRecordedMode('1');
       notRecordedReset(() => ({
         mode: '1',
@@ -154,7 +157,7 @@ const EditRecordForm = () => {
         {/* 未入帳 */}
         {state.txStatus === 2 && (
           <div>
-            {/* NOTE 若無可銷帳對象，則預設選取自行編輯交易明細 */}
+            {/* 若無可銷帳對象，則預設選取自行編輯交易明細 */}
             <RadioGroupField
               labelName=""
               name="mode"

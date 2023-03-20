@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-vars */
 import { callAPI } from 'utilities/axios';
-import { mockWriteOffListRt } from './mockData';
 
 /**
  * 取得目前帳本可銷帳的帳本交易明細清單 (銷帳對象array)

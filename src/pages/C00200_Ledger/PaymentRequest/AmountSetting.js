@@ -24,6 +24,7 @@ const AmountSetting = (param) => {
     },
   ];
 
+  /* 前一步被選擇成員清單 */
   const handleSelectedMember = () => {
     const requestedMemberList = [];
 
@@ -35,14 +36,14 @@ const AmountSetting = (param) => {
     return requestedMemberList;
   };
 
-  /* 金額分攤模式選擇 */
+  /* form: 金額分攤模式選擇 */
   const {control: amountModeControl, watch: amountModeWatch} = useForm({
     defaultValues: {
       amountMode: '0',
     },
   });
 
-  /* 固定金額 或 均分金額 輸入 */
+  /* form: 固定金額 或 均分金額 輸入 */
   const {control: amountControl, getValues: getAmountValues} = useForm({
     defaultValues: {
       fixedAmount: '',
@@ -50,7 +51,7 @@ const AmountSetting = (param) => {
     },
   });
 
-  /* 個別成員金額 顯示／輸入 */
+  /* form: 個別成員金額 顯示／輸入 */
   const {control: eachAmountControl, reset: eachAmountReset, watch: eachAmountWatch} = useForm({
     defaultValues: {
       memberAmount: {},
@@ -81,7 +82,7 @@ const AmountSetting = (param) => {
         memberAmount: {
           [id]: value,
         },
-      })); // TODO 待修正：只更新在最後一欄
+      })); // TODO 待修正：目前只更新在最後一欄，需每一欄都更新
     });
 
     amountSettingValue(memberIdAmountList);
@@ -106,7 +107,7 @@ const AmountSetting = (param) => {
         memberAmount: {
           [id]: shareValue,
         },
-      })); // TODO 待修正：只更新在最後一欄
+      })); // TODO 待修正：目前只更新在最後一欄，需每一欄都更新
     });
 
     amountSettingValue(memberIdAmountList);
@@ -135,6 +136,7 @@ const AmountSetting = (param) => {
     const eachValues = eachAmountWatch().memberAmount;
     console.log({eachValues});
 
+    /* 資料僅需各被選擇成員之memberId, amount */
     Object.keys(eachValues).forEach((memberId) => {
       requestedMemberList.push({
         memberId,
@@ -143,6 +145,8 @@ const AmountSetting = (param) => {
     });
 
     if (amountMode === '2') amountSettingValue(requestedMemberList);
+
+    return () => eachValues.unsubscribe();
   }, [eachAmountWatch()]);
 
   useEffect(() => {

@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { DropdownField, TextInputField } from 'components/Fields';
 import SwiperLayout from 'components/SwiperLayout';
 import { txUsageOptions } from '../utils/usgeType';
@@ -13,14 +15,19 @@ const PaymentSetting = (props) => {
     type: '',
   });
 
+  const schema = yup.object().shape({
+    type: yup.string(),
+    memo: yup.string().max(12), // 字數上限: 12
+  });
   const { control, watch } = useForm({
     defaultValues: {
       memo: '',
       type: '1',
     },
+    resolver: yupResolver(schema),
   });
 
-  const renderRequestCardPic = () => { // DEBUG mock images
+  const renderRequestCardPic = () => {
     const imageIdList = [1, 2, 3, 4, 5];
     return imageIdList.map((id) => cardImage(id));
   };
@@ -30,11 +37,11 @@ const PaymentSetting = (props) => {
     setModel({
       ...model,
       imgIndex: swiper.activeIndex + 1,
-    });
+    }); // 更新此元件model
     paymentSettingValues({
       ...model,
       imgIndex: swiper.activeIndex + 1,
-    });
+    }); // 更新至
   };
 
   useEffect(() => {
