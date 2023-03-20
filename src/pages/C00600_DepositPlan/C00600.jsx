@@ -39,7 +39,7 @@ const DepositPlanPage = () => {
   const {state} = useLocation();
   const {startFunc, closeFunc, goHome} = useNavigation();
   const [depositPlans, setDepositPlans] = useState();
-  const [disabled, setDisabled] = useState(false);
+  const [disabled, setDisabled] = useState(true);
   const swiperRef = useRef();
 
   useEffect(async () => {
