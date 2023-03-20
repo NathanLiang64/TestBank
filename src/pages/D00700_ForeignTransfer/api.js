@@ -1,4 +1,7 @@
+import { setAgreAccts } from 'stores/reducers/CacheReducer';
+import store from 'stores/store';
 import { callAPI } from 'utilities/axios';
+import { getBankCode } from 'utilities/CacheData';
 
 /**
  * 取得帳戶清單
@@ -19,16 +22,38 @@ export const getAccountsList = async (acctTypes) => {
 };
 
 /**
- * 查詢約定轉入帳號清單。
- * @param {*} accountNo 要查詢的帳號。
+ * 查詢指定轉出帳號約定轉入帳號清單。
+ * @param {{
+ *   accountNo: String, // 要查詢約定轉入帳號清單的帳號。
+ * }} accountNo
  * @returns {Promise<[{
- *   bankId: 約定轉入帳戶銀行代碼
- *   acctId: 約定轉入帳戶帳號
- * }]>}
+ *   bankId: '約定轉入帳戶-銀行代碼'
+ *   acctId: '約定轉入帳戶-帳號'
+ *   bankName: '銀行名稱'
+ *   nickName: '暱稱'
+ *   email: '通知EMAIL'
+ *   isSelf: '是否為本行自己的其他帳戶'
+ *   headshot: '代表圖檔的UUID，用來顯示大頭貼；若為 null 表示還沒有設定頭像。'
+ * }]>} 約定轉入帳號清單。
  */
-export const getAgreedAccounts = async (accountNo) => {
-  const response = await callAPI('/deposit/transfer/agreedAccount/v1/get', { accountNo });
-  return response.data;
+export const getAgreedAccount = async (accountNo) => {
+  let { agreAccts } = store.getState()?.CacheReducer;
+  if (!agreAccts) agreAccts = {};
+
+  if (!agreAccts[accountNo]) {
+    const response = await callAPI('/deposit/transfer/agreedAccount/v1/get', {
+      accountNo,
+    });
+    const bankList = await getBankCode();
+    agreAccts[accountNo] = response.data?.map((item) => ({
+      ...item,
+      bankName:
+        bankList?.find((b) => b.bankNo === item.bankId)?.bankName
+        ?? item.bankId,
+    }));
+    store.dispatch(setAgreAccts(agreAccts));
+  }
+  return agreAccts[accountNo];
 };
 
 /**

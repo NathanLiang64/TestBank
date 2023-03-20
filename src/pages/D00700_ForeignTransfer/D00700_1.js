@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
-import { accountFormatter, currencySymbolGenerator } from 'utilities/Generator';
+import { accountFormatter, currencySymbolGenerator, dateToString } from 'utilities/Generator';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { Func } from 'utilities/FuncID';
 
@@ -14,63 +13,57 @@ import { FEIBButton } from 'components/elements';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import ForeignCurrencyTransferWrapper from './D00700.style';
-import { createTransfer } from './api';
+import { createTransfer, executeTransfer } from './api';
 
-const D00700_1 = ({ location }) => {
+const D00700_1 = (props) => {
+  const { location: {state} } = props;
   const history = useHistory();
   const dispatch = useDispatch();
-  const [confirmData, setConfirmData] = useState({});
 
   // 確認進行轉帳
   const applyTransfer = async () => {
-    const rs = await transactionAuth(Func.D007.authCode);
-    if (rs.result) {
-      dispatch(setWaittingVisible(true));
-      const response = await createTransfer(confirmData);
-      dispatch(setWaittingVisible(false));
-      history.push('/D007002', confirmData);
-    }
+    //  1. ======= TODO createTransfer =======
+    const response = await createTransfer(state.model);
+
+    //  2. transactionAuth
+    const auth = await transactionAuth(Func.D007.authCode);
+    if (!auth.result) return;
+
+    //  3. ======= TODO executeTransfer =======
+    // dispatch(setWaittingVisible(true));
+    // const response = await executeTransfer(state.model);
+    // dispatch(setWaittingVisible(false));
+    history.push('/D007002', {});
   };
 
-  // 取得日期
-  const getDateStr = () => {
-    const year = new Date().getFullYear();
-    const month = new Date().getMonth() + 1;
-    const date = new Date().getDate();
-    return `${year}/${month}/${date}`;
+  const goBack = () => {
+    const {viewModel, model} = state;
+    history.replace('D00700', {model, viewModel});
   };
 
-  useEffect(() => {
-    setConfirmData({
-      ...location.state,
-      dateStr: getDateStr(),
-    });
-  }, []);
+  const {viewModel, model} = state;
+  const propertyName = viewModel.properties.find(({value}) => value === model.property).label;
+  const accountBalance = viewModel.currencyList.find((item) => item.currency === model.currency).balance;
 
   return (
-    <Layout title="外幣轉帳確認" fid={Func.D007} goBackFunc={() => history.goBack()}>
+    <Layout title="外幣轉帳確認" fid={Func.D007} goBackFunc={goBack}>
       <ForeignCurrencyTransferWrapper className="confirmAndResult">
         <div className="confrimDataContainer lighterBlueLine">
           <div className="dataLabel">轉出金額與轉入帳號</div>
           <div className="balance">
-            {
-              currencySymbolGenerator(confirmData?.inCcyCd)
-            }
-            {
-              confirmData?.inAmt
-            }
+            { currencySymbolGenerator(model.currency, model.amount) }
+
           </div>
           <div className="accountInfo">遠東商銀(805)</div>
-          {/* TODO 確認轉入帳號的 bankId 名稱 */}
-          <div className="accountInfo">{ accountFormatter(confirmData?.inAcct) }</div>
+          <div className="accountInfo">{ accountFormatter(model.inAccount, true) }</div>
         </div>
         <div className="infoListContainer">
           <div>
-            <InformationList title="轉出帳號" content={accountFormatter(confirmData?.outAcct, true)} />
-            <InformationList title="帳戶餘額" content={`${currencySymbolGenerator(confirmData?.outCcyCd)}${confirmData?.acctBalance}`} />
-            <InformationList title="日期" content={confirmData?.dateStr} />
-            <InformationList title="匯款性質分類" content={confirmData?.leglDesc} />
-            <InformationList title="備註" content={confirmData?.memo} />
+            <InformationList title="轉出帳號" content={accountFormatter(model.outAccount, true)} />
+            <InformationList title="帳戶餘額" content={`${currencySymbolGenerator(model.currency, accountBalance)}`} />
+            <InformationList title="日期" content={dateToString(new Date())} />
+            <InformationList title="匯款性質分類" content={propertyName} />
+            <InformationList title="備註" content={model.memo} />
           </div>
           <div className="btnContainer">
             <FEIBButton onClick={applyTransfer}>確認</FEIBButton>
