@@ -18,3 +18,9 @@ export const getAll = async (payload = {}) => {
   const response = await callAPI('/ledger/partner/getAll', payload);
   return response.data;
 };
+
+// 踢除帳本成員 (partnerId, //取自 /partner/getAll 的 groupMemberId)
+export const kickout = async (payload = {}) => {
+  const response = await callAPI('/ledger/partner/kickout', payload);
+  return response.data;
+};
