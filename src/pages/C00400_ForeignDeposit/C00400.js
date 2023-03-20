@@ -58,7 +58,14 @@ const C00400 = () => {
     // NOTE 使用非同步方式更新畫面，一開始會先顯示帳戶基本資料，待取得跨轉等資訊時再更新一次畫面。
     const api1 = getAccountsList('F', async (accts) => {
       // M=臺幣主帳戶、C=臺幣子帳戶
-      const flattenAccts = accts.map(({details, ...rest}) => details.map((detail) => ({ ...rest, ...detail, details: {} }))).flat();
+      const foreignAcct = accts[0];
+      const {details, ...restDetails} = foreignAcct;
+      const flattenAccts = details.map((detail) => ({
+        ...restDetails,
+        balance: detail.balance,
+        currency: detail.currency,
+        details: {...detail} }));
+
       setAccounts(flattenAccts);
       return flattenAccts;
     });
@@ -86,13 +93,13 @@ const C00400 = () => {
     if (startParams && startParams instanceof Object) {
       const index = accts.findIndex((acc) => acc.currency === startParams.defaultCurrency);
       accts.forEach((acct) => {
-        if (startParams.txnDetailsObj[acct.accountNo]) acct.txnDetails = startParams.txnDetailsObj[acct.accountNo];
+        if (startParams.txnDetailsObj[acct.currency]) acct.txnDetails = startParams.txnDetailsObj[acct.currency];
       });
       setSelectedAccountIdx(index);
     } else {
       setSelectedAccountIdx(0);
     }
-    delete selectedAccount.isLoadingTxn; // 避免因載入中中斷，而永遠無法再重載明細。
+    if (selectedAccount) delete selectedAccount.isLoadingTxn; // 避免因載入中中斷，而永遠無法再重載明細。
   };
 
   /**
@@ -220,7 +227,7 @@ const C00400 = () => {
         break;
 
       case Func.D007.id: // 轉帳
-        params = { transOut: selectedAccount, currency: selectedAccount.currency }; // TODO 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。
+        params = { currency: selectedAccount.currency }; // TODO 直接提供帳戶摘要資訊，可以減少Call API；但也可以傳 null 要求重載。
         break;
       case Func.E001.id: // 換匯
         params = { model: {
@@ -249,7 +256,7 @@ const C00400 = () => {
     }
 
     const txnDetailsObj = accounts.reduce((acc, cur) => {
-      if (cur.txnDetails) acc[cur.accountNo] = cur.txnDetails;
+      if (cur.txnDetails) acc[cur.currency] = cur.txnDetails;
       return acc;
     }, {});
 

@@ -66,7 +66,6 @@ export const executeNtdTransfer = async (tfrId) => {
  * 查詢指定轉出帳號約定轉入帳號清單。
  * @param {{
  *   accountNo: String, // 要查詢約定轉入帳號清單的帳號。
- *   includeSelf: Boolean, // 表示傳回清單要包含同ID互轉的帳號。
  * }} request
  * @returns {Promise<[{
  *   bankId: '約定轉入帳戶-銀行代碼'
@@ -97,10 +96,7 @@ const getAgreedAccount = async (request) => {
 
 // 檢查轉入的帳號是否為約定帳號
 export const checkIsAgreedAccount = async (accountNo, transIn) => {
-  const request = {
-    accountNo,
-    includeSelf: true,
-  };
+  const request = { accountNo };
 
   const agreedAccounts = await getAgreedAccount(request);
   const {

@@ -78,7 +78,7 @@ const C00500 = () => {
     } else {
       setSelectedAccountIdx(0);
     }
-    delete selectedAccount.isLoadingTxn; // 避免因載入中中斷，而永遠無法再重載明細。
+    if (selectedAccount) delete selectedAccount.isLoadingTxn; // 避免因載入中中斷，而永遠無法再重載明細。
   };
 
   /**
