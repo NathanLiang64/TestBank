@@ -1,12 +1,14 @@
+import { useEffect, useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Divider from '@material-ui/core/Divider';
 import { ArrowNextIcon } from 'assets/images/icons';
 import LinkIcon from '@material-ui/icons/Link';
 import CropFreeIcon from '@material-ui/icons/CropFree';
-import { customPopup } from 'utilities/MessageModal';
+import { customPopup, showAnimationModal } from 'utilities/MessageModal';
 import { shareMessage } from 'utilities/AppScriptProxy';
 import { useTheme } from 'styled-components';
 import InvitationQrCode from './InvitationQrCode';
+import { inviteSend } from '../api';
 
 // 列表欄位
 export const ListColumn = ({
@@ -40,14 +42,34 @@ export const ListColumn = ({
 
 export const InvitationList = () => {
   const theme = useTheme();
-
+  // 狀態設定
+  const [invitationUrl, setInvitationUrl] = useState(null);
+  // 取得邀請好友url
+  const fetchInvitationUrl = async () => {
+    const resFromInviteSend = await inviteSend({ type: 'S' });
+    setInvitationUrl(resFromInviteSend);
+  };
+  // 初始設定
+  useEffect(() => {
+    fetchInvitationUrl();
+  }, []);
+  // 列表設定
   const CONFIG = [
     {
       label: '發送邀請連結',
       icon: <LinkIcon />,
       showDivider: true,
       callBack: () => {
-        shareMessage('發送邀請連結');
+        if (!invitationUrl) {
+          showAnimationModal({
+            isSuccess: false,
+            errorTitle: '設定失敗',
+            errorDesc: '未取得邀請連結',
+          });
+          return null;
+        }
+        shareMessage(invitationUrl);
+        return null;
       },
     },
     {
@@ -55,7 +77,16 @@ export const InvitationList = () => {
       icon: <CropFreeIcon />,
       showDivider: false,
       callBack: () => {
-        customPopup('邀請好友QRCode', <InvitationQrCode url="" />);
+        if (!invitationUrl) {
+          showAnimationModal({
+            isSuccess: false,
+            errorTitle: '設定失敗',
+            errorDesc: '未取得邀請連結',
+          });
+          return null;
+        }
+        customPopup('邀請好友QRCode', <InvitationQrCode url={invitationUrl} />);
+        return null;
       },
     },
   ];

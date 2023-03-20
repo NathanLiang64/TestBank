@@ -102,7 +102,7 @@ export default () => {
       });
       return null;
     }
-    history.push('/CreateLedgerSuccess', data);
+    history.push('/CreateLedgerSuccess', resFrom);
     return null;
   };
 
