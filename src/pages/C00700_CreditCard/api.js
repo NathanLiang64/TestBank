@@ -1,18 +1,6 @@
 import { callAPI } from 'utilities/axios';
 import { dateToYMD } from 'utilities/Generator';
 
-import mockCreditCardTerms from './mockData/mockCreditCardTerms';
-
-/**
- * 取得信用卡注意事項
- * @returns
- */
-export const getCreditCardTerms = async () => {
-  // Assume backend store Terms as escaped HTML...
-  const response = await new Promise((resolve) => resolve({ data: decodeURI(mockCreditCardTerms) }));
-  return response.data;
-};
-
 /**
  * 查詢客戶的信用卡清單
  * @returns {Promise<{
@@ -57,6 +45,7 @@ export const getCards = async () => {
 export const getTransactions = async (cardNo) => {
   // const today = new Date();
   // const dateBeg = dateToYMD(new Date(today.setMonth(today.getMonth() - 2))); // 查詢當天至60天前的資料
+  // NOTE ************** 測試需求，hardcode 起始日 **************
   const dateBeg = '20210101'; // hard code for testing
   const dateEnd = dateToYMD();
   const payload = { cardNo, dateBeg, dateEnd };
@@ -127,97 +116,4 @@ export const queryCardInfo = async (request) => {
 export const getRewards = async (request) => {
   const response = await callAPI('/creditCard/v1/getRewards', request);
   return response.data;
-};
-
-/**
- * 查詢客戶信用卡帳單資訊
- *
- * @author danny
- * @Date 2022/09/27
- * @param token
- * @param period 期別 (ex: 202212)
- * }
- * @return {
- *    NewBalance,
- *    Details [
- *      {
- *        txDate,   交易日期時間 (yyyymmddhhmmss)
- *        cardNo,   卡號
- *        desc,     消費項目說明
- *        amount,   消費金額
- *      },
- *      ...
- *    ]
- * }
- */
-export const queryCardBill = async (request) => {
-  const response = await callAPI('/creditCard/v1/getBillSummary', request);
-  return response;
-};
-
-/**
- * 信用卡帳單交易資訊
- * (信用卡子首頁_帳單_更多)
- *
- * @param token
- * @param period 期別 (ex: 202212)
- * }
- * @return {
- *    newBalance              本期應繳總額      ORDS.stmt_amt
- *    minDueAmount            最低應繳總額      ORDS.min_amt
- *    billClosingDate         帳單結帳日        ORDS.stmt_date
- *    payDueDate              繳款截止日        ORDS.pymt_due_date
- *    prevBalance             上期應繳金額      ORDS.pre_pymt_due_amt
- *    paidRefundAmount        已繳款/退款金額    ORDS.paid_amt
- *    newPurchaseAmount       本期新增款項      ORDS.new_stmt_amt
- *    interestFee             利息              ORDS.interest
- *    cardPenalty             違約金            ORDS.fine
- *    revCreditLimit          循環信用額度       ORDS.cycle_credit_limit
- *    revgCreditPrinBalance   循環信用本金餘額    ORDS.revolving_principal
- *    autoPayAccount          自動扣繳帳號       ORDS.autopay_account
- *    paidAmountOnDueDate     繳款截止日扣繳金額  ORDS.autopay_amt
- * }
- */
-export const getBillDetail = async (request) => {
-  const response = await callAPI('/creditCard/v1/getBillDetail', request);
-  return response;
-};
-
-/**
- * 查詢客戶信用卡自動扣繳資訊
- * (畫面_信用卡子首頁_自動扣繳 - 1)
- *
- * @param token
- * @return {
- *    bank      銀行別                                     IVR9019.DEDUCT-BANK
- *    account   扣繳帳號                                   IVR9019.DEDUCT-ACCOUNT-NO
- *    isFullPay 是否指定應繳總額 Y/N                        IVR9019.DEDUCT-AUTOPAY-RATE=100 ? "Y":"N"
- *    status    狀態 1 申請 2 生效 3 取消 4 退件 5 待生效   IVR9019.DEDUCT-STATUS
- * }
- *
- * TODO: 尚未有完整的測資，accountId 先固定帶 A123014281
- */
-export const getAutoDebits = async (request) => {
-  const response = await callAPI('/creditCard/v1/getAutoDebits', request);
-  return response;
-};
-
-/**
- * 申請信用卡自動扣繳
- *
- * @param token
- * @param {
- *    bank:       指定銀行代碼
- *    account:    扣繳帳號
- *    isFullPay:  是否指定應繳總額 Y/N
- * }
- * @return {
- *    result:     true/false
- *    message:    回傳結果
- * }
- *
- */
-export const setAutoDebit = async (request) => {
-  const response = await callAPI('/creditCard/v1/setAutoDebit', request);
-  return response;
 };

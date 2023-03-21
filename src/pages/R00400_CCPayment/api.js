@@ -1,15 +1,4 @@
 import { callAPI } from 'utilities/axios';
-import mockCreditCardTerms from './mockData/mockCreditCardTerms';
-
-/**
- * 取得信用卡注意事項
- * @returns
- */
-export const getCreditCardTerms = async () => {
-  // Assume backend store Terms as escaped HTML...
-  const response = await new Promise((resolve) => resolve({ data: decodeURI(mockCreditCardTerms) }));
-  return response.data;
-};
 
 /**
  * 取得超商繳費Barcode資料

@@ -1,9 +1,4 @@
-import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
-import parse from 'html-react-parser';
-
-// import Main from 'components/Layout';
-import Loading from 'components/Loading';
 import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
 import { FEIBSwitch } from 'components/elements';
@@ -13,8 +8,9 @@ import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import { Func } from 'utilities/FuncID';
 
 import { useNavigation } from 'hooks/useNavigation';
-import { getCreditCardTerms } from './api';
+
 import { ResultWrapper } from './R00400.style';
+import { CreditCardTerm } from './constants';
 
 /**
  * R00400 信用卡 付款結果頁
@@ -23,7 +19,6 @@ const Page = () => {
   const history = useHistory();
   const location = useLocation();
   const {startFunc, closeFunc} = useNavigation();
-  const [terms, setTerms] = useState();
 
   // ===== Guard，若沒有 location.state 屬於不正常操作，直接結束本服務 =====
   if (!location.state) return closeFunc();
@@ -65,7 +60,7 @@ const Page = () => {
             </div>
           </div>
           <Accordion title="注意事項">
-            { terms ? parse(terms) : <Loading space="both" isCentered /> }
+            <CreditCardTerm />
           </Accordion>
         </div>
       );
@@ -81,12 +76,6 @@ const Page = () => {
       </div>
     );
   };
-
-  // 拿取「信用卡自動扣繳資訊」 以及 「信用卡注意事項」
-  useEffect(async () => {
-    const cardTermsRes = await getCreditCardTerms();
-    setTerms(cardTermsRes);
-  }, []);
 
   return (
     <Layout title="轉帳結果">

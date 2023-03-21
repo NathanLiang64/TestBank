@@ -26,7 +26,8 @@ import { dateToYMD } from 'utilities/Generator';
 export const getTransactions = async (cardNo) => {
   // const today = new Date();
   // const dateBeg = dateToYMD(new Date(today.setMonth(today.getMonth() - 2))); // 查詢當天至60天前的資料
-  const dateBeg = '20210101'; // hard code for testing
+  // NOTE ************** 測試需求，hardcode 起始日 **************
+  const dateBeg = '20210101';
   const dateEnd = dateToYMD();
   const payload = { cardNo, dateBeg, dateEnd };
   const response = await callAPI('/creditCard/v1/getTransactions', payload);

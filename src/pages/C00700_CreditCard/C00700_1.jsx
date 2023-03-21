@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 
 import Main from 'components/Layout';
@@ -12,21 +12,21 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { Func } from 'utilities/FuncID';
 
 import { useNavigation } from 'hooks/useNavigation';
-import { getCreditCardTerms, queryCardInfo } from './api';
+import { queryCardInfo } from './api';
 import { getCardListing, getCreditListing } from './utils';
 import { InfoPageWrapper } from './C00700.style';
 
 /**
  * C00700_1 信用卡 資訊
  */
-const C007001 = () => {
+const C007001 = (props) => {
   const history = useHistory();
-  const {state} = useLocation();
-  const {viewModel, isBankeeCard } = state;
+  const {location: {state}} = props;
+  const {viewModel, isBankeeCard} = state;
+
   const dispatch = useDispatch();
   const {startFunc } = useNavigation();
   const [cardInfo, setCardInfo] = useState();
-  const [terms, setTerms] = useState();
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
@@ -34,10 +34,6 @@ const C007001 = () => {
     setCardInfo(cardInfoRes);
     dispatch(setWaittingVisible(false));
   }, []);
-
-  const lazyLoadTerms = async () => {
-    if (!terms) setTerms(await getCreditCardTerms());
-  };
 
   const goBack = () => history.replace('/C00700', viewModel);
 
@@ -70,7 +66,7 @@ const C007001 = () => {
           </>
           )}
 
-          <Accordion className="mb-4" title="注意事項" onClick={lazyLoadTerms}>
+          <Accordion className="mb-4" title="注意事項">
             <ol>
               <li>本額度僅供線上參考，本行保留交易授權與否之權利，正確消費金額請依月結帳單為準</li>
               <li>臨時額度調高不可用預借現金等交易</li>

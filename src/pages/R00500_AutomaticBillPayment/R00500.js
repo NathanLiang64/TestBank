@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
@@ -21,7 +22,6 @@ import { getAccountsList } from 'utilities/CacheData';
 import { CancelAutoBillAlert, AccordionContent } from './utils';
 import { getAutoDebits, setAutoDebit } from './api';
 import AutomaticBillPaymentWrapper from './R00500.style';
-import { validationSchema } from './validationSchema';
 
 const AutomaticBillPayment = () => {
   const [appliedAutoBill, setAppliedAutoBill] = useState([]);
@@ -30,15 +30,15 @@ const AutomaticBillPayment = () => {
   const active = !!appliedAutoBill.length;
   const dispatch = useDispatch();
 
-  const {
-    handleSubmit, control, reset,
-  } = useForm({
-    defaultValues: {
-      account: '',
-      isFullPay: '',
-      bank: '805',
-    },
-    resolver: yupResolver(validationSchema),
+  const schema = yup.object().shape({
+    account: yup.string().required('請選擇扣款帳號'),
+    isFullPay: yup.string().required('請選擇扣款方式'),
+    bank: yup.string().required('無指定銀行代碼'),
+  });
+
+  const { handleSubmit, control, reset } = useForm({
+    defaultValues: { account: '', isFullPay: '', bank: '805' },
+    resolver: yupResolver(schema),
   });
 
   // 取得帳號清單
