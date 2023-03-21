@@ -131,7 +131,8 @@ const Page = () => {
                   <MoreIcon />
                 </FEIBIconButton> */}
           </div>
-          <div className="justify-end items-baseline gap-4">
+          <div className="justify-between items-center">
+            <div>貸款餘額</div>
             <div className="balance">{currencySymbolGenerator(card.currency ?? 'NTD', card.balance, true)}</div>
           </div>
           <div className="justify-end gap-6 mt-4 divider">
