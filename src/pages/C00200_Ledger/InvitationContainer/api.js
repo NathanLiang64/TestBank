@@ -33,11 +33,13 @@ const data = {
  * amount: number
  * type: string
  * memo: string
+ * transInbank: string
+ * transInaccount: string
  * }}
  */
 export const cardMsg = async (param) => {
   console.log('cardMsg', param);
-  // const response = await callAPI('ledger/cardMsg', param);
+  // const response = await callAPI('ledger/cardMsg', param); // TODO api connect
   const response = {
     code: '0000',
     data,

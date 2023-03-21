@@ -39,9 +39,9 @@ export const cardImage = (imageId) => {
   return <img src={imgSrc} alt="要錢卡" />;
 };
 
-export const memberImage = (isOwner) => {
+export const memberImage = ({isOwner, ...props}) => {
   if (isOwner) {
-    return <img src={Owner} alt="" />;
+    return <img src={Owner} alt="" {...props} />;
   }
-  return <img src={Partner} alt="" />;
+  return <img src={Partner} alt="" {...props} />;
 };

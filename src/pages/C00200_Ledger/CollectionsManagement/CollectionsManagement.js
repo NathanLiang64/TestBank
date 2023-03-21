@@ -7,6 +7,7 @@ import { currencySymbolGenerator, dateToString } from 'utilities/Generator';
 import { FEIBButton } from 'components/elements';
 import { CrossCircleIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
+import { handleTxUsageText } from '../utils/usgeType';
 import PageWrapper from './CollectionsManagement.style';
 // import { mockInvoiceCollections } from './mockData';
 import { getInvoice, ownerCancelCharge, partnerCancelCharge } from './api';
@@ -31,6 +32,13 @@ export default () => {
 
   const handleBodyButtonOnClick = (detail) => {
     console.log('handleBodyButtonOnClick', {type});
+    const requestCardParam = {
+      sendid: detail.sendid,
+      receiveid: detail.receiveid,
+      txid: detail.txid,
+      isOwner: detail.isOwner,
+      isSelf: detail.isSelf,
+    };
     switch (type) {
       // type === 2 || 4 => 取消收款
       case 2:
@@ -40,8 +48,8 @@ export default () => {
         partnerCancelCharge({chargeId: detail.ledgerTxId});
         break;
       default:
-        //  => 前往轉帳頁 TODO: param
-        history.push('transferSetting');
+        //  => 前往要錢卡
+        history.push('/invitationContainer', requestCardParam);
         break;
     }
   };
@@ -66,7 +74,7 @@ export default () => {
         <div>{dateToString(detail.invoiceDate)}</div>
         {(type === 2 || type === 4) ? null : <div>{detail.owner}</div>}
         <div>{currencySymbolGenerator('NTD', detail.invoiceAmount, true)}</div>
-        <div>{detail.property}</div>
+        <div>{handleTxUsageText(detail.property)}</div>
         <div>{detail.memo}</div>
         <div>
           {showTransferBtn ? (

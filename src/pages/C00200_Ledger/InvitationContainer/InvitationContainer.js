@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import Layout from 'components/Layout/Layout';
 import { FEIBBorderButton } from 'components/elements';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import InvitationCard from '../InvitationCard/InvitationCard';
 import PageWrapper from './InvitationContainer.style';
 import { cardMsg, getLedger } from './api';
@@ -16,6 +16,7 @@ const InvitationContainer = (props) => {
   const [isInviteCard, setIsInviteCard] = useState();
   const [model, setModel] = useState();
   const history = useHistory();
+  const { state } = useLocation();
 
   const onClick = () => {
     console.log('onClick');
@@ -24,8 +25,18 @@ const InvitationContainer = (props) => {
       console.log('to /joinSetting', {param: model.inviteToken});
       history.push('/joinSetting', model.inviteToken);
     } else {
-      // TODO 跳轉至 Transfer
-      const param = 'transferData';
+      // 跳轉至 Transfer
+      const param = {
+        transOut: 'myBindedAccount',
+        amount: model.amount,
+        transIn: {
+          bank: model.transInBank,
+          account: model.transInAccount,
+        },
+        target: model.ledgerName,
+        usageType: model.type,
+        memo: model.memo,
+      };
       console.log('to /transferSetting', {param});
       history.push('/transferSetting', param);
     }
@@ -42,18 +53,19 @@ const InvitationContainer = (props) => {
 
   /* 判斷是否為邀請卡，取得頁面資料 */
   useEffect(async () => {
-    const isInvite = handleInvitationType(); // 自 "pathname" 判斷是否為邀請卡
+    const isInvite = handleInvitationType(); // TODO 自startFunc進入且帶參數則為自邀請卡進入
     setIsInviteCard(isInvite);
     if (isInvite === true) {
-      // 邀情卡：自 path 取得 token
+      /* app open -> startFunc(C002, param: invite_token) -> 邀請卡被開啟 */
+      // 邀情卡：自 startFunc 取得 token
       console.log('邀情卡');
       const inviteToken = match.params.invite_token;
-      const response = await getLedger(); // TODO 確認param: ledgerId? inviteToken?
+      const response = await getLedger(inviteToken); // TODO 另一隻api (param: inviteToken): 取邀請卡內容
       setModel({inviteToken, ...response});
     } else {
       // 要錢卡
       console.log('要錢卡');
-      const response = await cardMsg();
+      const response = await cardMsg(state);
       setModel(response);
     }
   }, []);

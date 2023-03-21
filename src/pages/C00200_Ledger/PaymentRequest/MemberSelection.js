@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import theme from 'themes/theme';
 import { SearchIcon } from 'assets/images/icons';
 import { CheckboxField, TextInputField } from 'components/Fields';
+import { memberImage } from '../utils/images';
 
 const MemberSelection = (props) => {
   const { memberSelectionValues, memberList } = props;
@@ -90,7 +91,7 @@ const MemberSelection = (props) => {
             key={member.memberId}
             control={control}
             name={`memberSelected.${member.memberId}`}
-            labelName={`${(member.owner) ? '👤' : '👥'} - ${member.memberNickName}`}
+            labelName={`${memberImage(member.owner)} - ${member.memberNickName}`}
           />
         ))}
       </form>
