@@ -186,6 +186,7 @@ const useNavigation = () => {
 
   const goHome = async () => {
     funcStack.clear();
+    delete window.FuncParams;
     // NOTE 因為回到「原生首頁」時，Webview 內容仍存在，下次開啟 Webview 時會先看到上次的內容，先在前端以此方式解決
     // history.push('/'); // Webview 被隱藏時，將畫面導向空白頁，避免看到前一頁的內容
     store.dispatch(setWaittingVisible(true));
