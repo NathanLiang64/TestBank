@@ -64,7 +64,8 @@ export const getTransactionDetails = async (request) => {
         code: 代碼，應跟優利的代碼一致。
         type: 類型：0.基本方案, 1.行銷活動方案.
         name: 名稱
-        rate: 計息利率，例: 0.6；僅供顯示用，不會拿來計息。
+        baseRate: 基本利率
+        extraRate: 專案加碼利率
         description: 詳細說明。
       },
       imageId, // Title圖片（預設代碼: 0,1~6），若是由用戶上傳的Base64影像資料，則在建立成功後再透過 updateDepositPlan 上傳

@@ -83,8 +83,8 @@ const ReserveTransferSearch1 = ({ location }) => {
         {!!cancelResult && (
           <SuccessFailureAnimations
             isSuccess={cancelResult.isSuccess}
-            successTitle="設定成功"
-            errorTitle="設定失敗"
+            successTitle="取消成功"
+            errorTitle="取消失敗"
             errorDesc={cancelResult.message}
           />
         )}
