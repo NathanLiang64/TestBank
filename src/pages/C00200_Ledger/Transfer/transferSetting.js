@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
@@ -22,6 +22,7 @@ import { txUsageOptions } from '../utils/usgeType';
  * C002 社群帳本 - 轉帳
  */
 const TransferSetting = () => {
+  const { state } = useLocation();
   const history = useHistory();
   const [transData, setTransData] = useState();
   const [bonusInfo, setBonusInfo] = useState();
@@ -76,6 +77,8 @@ const TransferSetting = () => {
    * 有帶入參數者皆不可修改
    */
   useEffect(() => {
+    // 從 ledgerDetail 進入 (給錢): 帶整個state，欄位預設皆為空
+    // 從要錢卡、owner請款管理、partner付款管理、進入: 帶要錢資訊，欄位預設皆非空
     const initialData = transferSettingInitialData; // TODO: 從前一頁面帶入
     setTransData(initialData);
 

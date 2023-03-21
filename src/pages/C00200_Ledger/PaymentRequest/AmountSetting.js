@@ -116,7 +116,7 @@ const AmountSetting = (param) => {
   const renderMemberAmountColumn = (isOwner, name, id) => (
     <div className="member_amount_column" key={id}>
       <div className="member_info">
-        <div className="member_image">{memberImage(isOwner)}</div>
+        <div className="member_image">{memberImage({isOwner})}</div>
         <p>{name}</p>
       </div>
       <div className="amount">

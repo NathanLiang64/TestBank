@@ -1,5 +1,4 @@
 import { callAPI } from 'utilities/axios';
-import { handleTxUsageText } from '../utils/usgeType';
 
 /**
  * 取得帳本收款管理交易清單
@@ -11,7 +10,14 @@ import { handleTxUsageText } from '../utils/usgeType';
  * property: string
  * memo: string
  * ledgerTxId: string
- * }}
+ * ledgerName: string
+ * bank: string
+ * account: string
+ * sendId: string
+ * receiveid: string
+ * isOwner: boolean
+ * isSelf: boolean
+* }[]}
  */
 export const getInvoice = async (type) => {
   console.log('getInvoice', type);
@@ -35,14 +41,21 @@ export const getInvoice = async (type) => {
   }
 
   /* 轉換為頁面資料 */
-  const pageModel = {
-    invoiceDate: response.txDate,
-    owner: response.memberNickName,
-    invoiceAmount: response.txnAmount,
-    property: handleTxUsageText(response.txUsage),
-    memo: response.txDesc,
-    ledgerTxId: response.ledgerTxId,
-  };
+  const pageModel = response.map((res) => ({
+    invoiceDate: res.txDate,
+    owner: res.memberNickName,
+    invoiceAmount: res.txnAmount,
+    property: res.txUsage,
+    memo: res.txDesc,
+    ledgerTxId: res.ledgerTxId,
+    ledgerName: res.ledgerName, // TODO 確認回傳中是否有這一項？
+    bank: res.bankCode,
+    account: res.bankAccount,
+    sendId: res.accountTxId, // TODO 確認是否是這一項
+    receiveid: res.bankeeMember.memberId,
+    isOwner: res.owner,
+    isSelf: res.accountTxId === res.bankeeMember.memberId,
+  }));
   return pageModel;
 };
 
