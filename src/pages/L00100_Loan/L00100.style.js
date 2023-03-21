@@ -21,17 +21,27 @@ const PageWrapper = styled.div`
   & div.swiper-slide > div:first-child {
     min-height: 151.66px;
     padding: 1.2rem;
-    margin-bottom: .2rem;
+    margin-bottom: 0.2rem;
   }
 
   // 卡片名稱
-  & div.swiper-slide > div > div.justify-between.items-start > div > div:nth-child(1) {
+  &
+    div.swiper-slide
+    > div
+    > div.justify-between.items-start
+    > div
+    > div:nth-child(1) {
     height: 24px;
     line-height: 24px;
   }
 
   // 卡號
-  & div.swiper-slide > div > div.justify-between.items-start > div > div:nth-child(2) {
+  &
+    div.swiper-slide
+    > div
+    > div.justify-between.items-start
+    > div
+    > div:nth-child(2) {
     font-size: 1.5rem;
     color: #666;
     height: 24px;
@@ -48,15 +58,23 @@ const PageWrapper = styled.div`
   & div.justify-end.gap-6.mt-4.divider {
     margin-top: 0.8rem;
   }
-  
+
   // 右下快捷按鈕
   & div.swiper-slide > div > div.justify-end.gap-6.mt-4.divider > button {
-    color: #042C5C;
+    color: #042c5c;
     font-weight: 300;
+  }
+
+  .remark {
+    margin: 1rem;
+    text-align: left;
+    color: ${({ theme }) => theme.colors.text.light};
+    font-size: 1.4rem;
+    line-height: 2.1rem;
   }
 `;
 
-const ContentWrapper = styled.div`
+export const ContentWrapper = styled.div`
   display: flex;
   display: -webkit-flex;
   flex-direction: column;
@@ -79,32 +97,4 @@ export const RewardPageWrapper = styled.div`
   }
 `;
 
-export const DetailPageWrapper = styled.div`
-  display: grid;
-  align-content: flex-start;
-  grid-gap: 2.4rem;
-  padding-bottom: 6rem;
-
-  hr {
-    margin: 0;
-    border: 0;
-    width: 130%;
-    left: -20%;
-    overflow-y: hidden;
-    border-top: 0.8rem solid
-      ${({ theme }) => theme.colors.background.lighterBlue};
-  }
-
-  .text-14 {
-    font-size: 1.4rem;
-  }
-
-  .remark {
-    color: ${({ theme }) => theme.colors.text.light};
-    font-size: 1.4rem;
-    line-height: 2.1rem;
-  }
-`;
-
 export default PageWrapper;
-export { ContentWrapper };

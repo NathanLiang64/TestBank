@@ -1,10 +1,7 @@
 /* eslint react/no-array-index-key: 0 */
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useHistory } from 'react-router';
-import { useDispatch } from 'react-redux';
 import uuid from 'react-uuid';
-
-import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import { ArrowNextIcon } from 'assets/images/icons';
 import { MainScrollWrapper } from 'components/Layout';
@@ -20,8 +17,9 @@ import {
 } from 'utilities/Generator';
 
 import { Func } from 'utilities/FuncID';
-import { useNavigation } from 'hooks/useNavigation';
+import { loadFuncParams, useNavigation } from 'hooks/useNavigation';
 import { getBranchCode } from 'utilities/CacheData';
+import CopyTextIconButton from 'components/CopyTextIconButton';
 import { getSubSummary } from './api';
 import { handleSubPaymentHistory } from './utils';
 import PageWrapper, { ContentWrapper } from './L00100.style';
@@ -33,36 +31,30 @@ const uid = uuid();
 /**
  * L00100 貸款 首頁
  */
-const Page = () => {
-  const branchCodeList = useRef([]);// 拿分行代碼
+const Page = (props) => {
+  const {location: {state}} = props;
   const detailsRef = useRef();
   const history = useHistory();
-  const dispatch = useDispatch();
   const {startFunc} = useNavigation();
-
-  const [loans, setLoans] = useState();
-  const [detailMap, setDetailMap] = useState({});
-
-  useEffect(async () => {
-    branchCodeList.current = await getBranchCode();
-  }, []);
-
-  // 依照currentIndex取得當筆貸款的交易紀錄
-  const fetchDetailMap = async (account, subNo, debitAccount, currentIndex) => {
-    const currentLoanDetail = await handleSubPaymentHistory(account, subNo);
-
-    setDetailMap((prevMap) => ({
-      ...prevMap,
-      [currentIndex]: currentLoanDetail,
-    }));
-  };
+  const [viewModel, setViewModel] = useState({
+    detailMap: {}, loans: null, defaultSlide: 0, branchCodeList: [],
+  });
 
   // 滑動卡片時，拿取當下貸款的交易紀錄
   const onSlideChange = async (swiper) => {
-    if (detailMap[swiper.activeIndex]) return;
-    const currentLoan = loans[swiper.activeIndex];
-    if (!currentLoan) return;
-    fetchDetailMap(currentLoan.account, currentLoan.subNo, currentLoan.debitAccount, swiper.activeIndex);
+    if (viewModel.detailMap[swiper.activeIndex]) {
+      setViewModel((vm) => ({...vm, defaultSlide: swiper.activeIndex}));
+      return;
+    }
+    const currentLoan = viewModel.loans[swiper.activeIndex];
+
+    if (currentLoan) {
+      const detail = await handleSubPaymentHistory(currentLoan.account, currentLoan.subNo);
+      setViewModel((vm) => {
+        const newDetailMap = {...vm.detailMap, [swiper.activeIndex]: detail};
+        return {...vm, detailMap: newDetailMap, defaultSlide: swiper.activeIndex};
+      });
+    }
   };
 
   /**
@@ -98,7 +90,7 @@ const Page = () => {
   // };
 
   // 前往查詢應繳本息頁面
-  const handleSearchClick = (account, subNo) => startFunc(Func.L002.id, { account, subNo });
+  const handleSearchClick = (account, subNo) => startFunc(Func.L002.id, { account, subNo }, viewModel);
 
   /**
    * 產生上方卡片的 slides
@@ -121,10 +113,13 @@ const Page = () => {
                 &nbsp;
                 {`(${card.subNo})`}
               </div>
-              <div>
-                {branchCodeList.current.find((b) => b.branchNo === branchId)?.branchName ?? branchId}
+              <div className="justify-between items-center">
+                <div>
+                  {viewModel.branchCodeList.find((b) => b.branchNo === branchId)?.branchName ?? branchId}
                 &nbsp;
-                {`${accountFormatter(card.account, true)}`}
+                  {`${accountFormatter(card.account, true)}`}
+                </div>
+                <CopyTextIconButton copyText={card.account} />
               </div>
             </div>
             {/* <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.account, card.subNo)}>
@@ -136,7 +131,7 @@ const Page = () => {
             <div className="balance">{currencySymbolGenerator(card.currency ?? 'NTD', card.balance, true)}</div>
           </div>
           <div className="justify-end gap-6 mt-4 divider">
-            <button type="button" className="text-16" onClick={() => history.push('/L001002', { account: card.account, subNo: card.subNo })}>貸款資訊</button>
+            <button type="button" className="text-16" onClick={() => history.push('/L001002', { viewModel })}>貸款資訊</button>
           </div>
         </AccountCard>
       );
@@ -219,8 +214,8 @@ const Page = () => {
    * 產生下方交易資訊的 slides
    */
   const renderContents = () => {
-    if (!loans || loans?.length === 0) return [];
-    const loansWithEmptyContent = [...loans, undefined];
+    if (!viewModel.loans || viewModel.loans?.length === 0) return [];
+    const loansWithEmptyContent = [...viewModel.loans, undefined];
     return loansWithEmptyContent.map((loan, i) => {
       if (!loan) return <EmptyContent key={`${uid}-a${i}`} onAddClick={() => { console.log('TODO'); }} />; // TODO  待提供申請連結
 
@@ -230,9 +225,9 @@ const Page = () => {
             <ThreeColumnInfoPanel content={renderBonusContents(loan)} />
           </div>
           <div ref={detailsRef}>
-            <div>{renderTransactions(detailMap[i], loan)}</div>
+            <div>{renderTransactions(viewModel.detailMap[i], loan)}</div>
             <div className="toolbar">
-              {detailMap[i] && detailMap[i].length > 0 && (
+              {viewModel.detailMap[i] && viewModel.detailMap[i].length > 0 && (
               <button className="btn-icon" type="button" onClick={() => handleMoreTransactionsClick(loan)}>
                 更多明細
                 <ArrowNextIcon />
@@ -245,26 +240,27 @@ const Page = () => {
     });
   };
 
+  const fetchSummaryAndHistory = async () => {
+    const loans = await getSubSummary();
+    const branchCodeList = await getBranchCode();
+    let detail = {};
+    if (loans.length) detail = await handleSubPaymentHistory(loans[0].account, loans[0].subNo);
+    return {
+      ...viewModel, loans, detailMap: {0: detail}, branchCodeList,
+    };
+  };
+
   /**
    * 檢查是否可以開啟這個頁面。
    * @returns {Promise<String>} 傳回驗證結果的錯誤訊息；若是正確無誤時，需傳回 null
    */
   const inspector = async () => {
-    dispatch(setWaittingVisible(true));
-    let error;
-
+    let error = null;
     // 分帳應繳摘要資訊
-    const subSummaryRes = await getSubSummary();
-
-    if (subSummaryRes.length !== 0) {
-      error = null;
-      setLoans(subSummaryRes);
-      fetchDetailMap(subSummaryRes[0].account, subSummaryRes[0].subNo, subSummaryRes[0].debitAccount, 0);
-    } else {
-      error = '您尚未擁有貸款，請在系統關閉此功能後，立即申請。';
-    }
-
-    dispatch(setWaittingVisible(false));
+    const params = await loadFuncParams();
+    const vModel = state?.viewModel || params || await fetchSummaryAndHistory();
+    if (vModel.loans.length !== 0) setViewModel((vm) => ({...vm, ...vModel}));
+    else error = '您尚未擁有貸款，請在系統關閉此功能後，立即申請。';
     return error;
   };
 
@@ -273,12 +269,13 @@ const Page = () => {
       <MainScrollWrapper>
         <PageWrapper>
           <SwiperLayout
-            slides={renderSlides(loans)}
+            slides={renderSlides(viewModel.loans)}
             hasDivider={false}
             slidesPerView={1.06}
             spaceBetween={8}
             centeredSlides
             onSlideChange={onSlideChange}
+            initialSlide={viewModel.defaultSlide}
           >
             {renderContents()}
           </SwiperLayout>

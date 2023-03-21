@@ -143,7 +143,7 @@ export const getSubPayment = async (param) => {
  * account: 放款帳號
  * subNo: 分號
  * }} param
- * @returns {{
+ * @returns {Promise<{
  * startDate: 貸款起日
  * endDate: 貸款迄日
  * dayToPay: 每期還款(日期)
@@ -153,7 +153,7 @@ export const getSubPayment = async (param) => {
  * periodPaid: 已繳期數
  * periodRemaining: 剩餘期數
  * type: 貸款類別 //TODO 主機尚未提供
- * }}
+ * }>}
  */
 export const getInfo = async (param) => {
   const response = await callAPI('/loan/v1/getInfo', param);
