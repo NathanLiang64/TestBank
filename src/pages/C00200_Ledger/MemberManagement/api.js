@@ -20,7 +20,25 @@ export const getAll = async (payload = {}) => {
 };
 
 // 踢除帳本成員 (partnerId, //取自 /partner/getAll 的 groupMemberId)
-export const kickout = async (payload = {}) => {
+export const kickout = async (payload = { partnerId: '' }) => {
   const response = await callAPI('/ledger/partner/kickout', payload);
+  return response.data;
+};
+
+// 取消邀請
+export const cancel = async (payload = { token: '' }) => {
+  const response = await callAPI('/ledger/partner/cancel', payload);
+  return response.data;
+};
+
+// 重新邀請
+export const resend = async (payload = { token: '' }) => {
+  const response = await callAPI('/ledger/partner/resend', payload);
+  return response.data;
+};
+
+// 同意成員加入帳本
+export const confirm = async (payload = { accept: false, partnerId: '' }) => {
+  const response = await callAPI('/ledger/partner/confirm', payload);
   return response.data;
 };

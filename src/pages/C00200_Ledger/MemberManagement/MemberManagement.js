@@ -6,6 +6,7 @@ import MemberList from './components/MemberList';
 import PageWrapper from './MemberManagement.style';
 import AddMemberButton from './components/AddMemberButton';
 import { getAll } from './api';
+// import { getAll } from './constants/mockData';
 
 export default () => {
   const history = useHistory();
@@ -18,7 +19,6 @@ export default () => {
   const init = async () => {
     const resFromGetAll = await getAll({ inviting: viewModel.owner }); // itviting: true 包含邀請中的成員
     setMemberListViewModel(resFromGetAll || []);
-    console.log('resFromGetAll', resFromGetAll);
   };
   useEffect(() => {
     init();
@@ -43,33 +43,33 @@ export default () => {
           <>
             <MemberList
               title="已加入"
+              listType={3}
               isLedgerOwner
-              list={memberListViewModel.filter(
-                (member) => member.memberInviteStatus === 3,
-              )}
+              list={memberListViewModel}
+              setList={setMemberListViewModel}
             />
             <MemberList
               title="待審核"
+              listType={2}
               isLedgerOwner
-              list={memberListViewModel.filter(
-                (member) => member.memberInviteStatus === 2,
-              )}
+              list={memberListViewModel}
+              setList={setMemberListViewModel}
             />
             <MemberList
               title="邀請中"
+              listType={1}
               isLedgerOwner
-              list={memberListViewModel.filter(
-                (member) => member.memberInviteStatus === 1,
-              )}
+              list={memberListViewModel}
+              setList={setMemberListViewModel}
             />
           </>
         ) : (
           <MemberList
             title="所有成員"
+            listType={3}
             isLedgerOwner={false}
-            list={memberListViewModel.filter(
-              (member) => member.memberInviteStatus === 3,
-            )}
+            list={memberListViewModel}
+            setList={setMemberListViewModel}
           />
         )}
         <Box display={viewModel.owner ? 'block' : 'none'} mx="auto" my={3}>
