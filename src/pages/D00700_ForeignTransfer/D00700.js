@@ -68,10 +68,10 @@ const D00700 = (props) => {
     },
   });
 
-  const processStartParams = async (accountNo, currencyList) => {
-    // TODO 如果回傳的列表是空值，提示使用者沒有可轉入的帳號
+  const processStartParams = async (accts) => {
     // 取得約定轉入帳號列表，並且只篩選出「遠銀」且為「外幣」的帳戶
-    const agreedAccounts = await getAgreedAccount(accountNo);
+    const { details, ...restDetails } = accts[0];
+    const agreedAccounts = await getAgreedAccount(accts[0].accountNo);
 
     if (!agreedAccounts.length) {
       await showPrompt(
@@ -85,11 +85,12 @@ const D00700 = (props) => {
     const inAccounts = [...viewModel.inAccounts, ...options];
 
     // 預設的幣別
-    let {currency} = currencyList[0];
+    const currencyList = details.map((detail) => ({ ...restDetails, ...detail })); // By 幣別的卡片列表
+    let { currency } = currencyList[0];
     const params = await loadFuncParams();
     if (params) currency = currencyList.find((acct) => acct.currency === params.currency).currency;
 
-    return { currency, inAccounts };
+    return { currency, inAccounts, currencyList };
   };
 
   // 取得帳戶清單
@@ -98,15 +99,13 @@ const D00700 = (props) => {
 
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     getAccountsList('F', async (accts) => {
-      const { details, ...restDetails } = accts[0];
       const outAccount = accts[0].accountNo;
-      const currencyList = details.map((detail) => ({ ...restDetails, ...detail })); // By 幣別的卡片列表
 
-      // 重設 viewModel
-      const vModel = state?.viewModel || await processStartParams(outAccount, currencyList);
-      setViewModel((vm) => ({ ...vm, currencyList, ...vModel }));
+      // 更新 viewModel
+      const vModel = state?.viewModel || await processStartParams(accts);
+      setViewModel((vm) => ({ ...vm, ...vModel }));
 
-      // 重設 model
+      // 更新 model
       const model = state?.model || {outAccount, currency: vModel.currency};
       reset((formValues) => ({ ...formValues, ...model }));
 
