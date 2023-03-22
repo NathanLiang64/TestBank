@@ -163,9 +163,11 @@ export default () => {
             control={control}
             name="isAgree"
           />
-          <FEIBButton onClick={handleSubmit((data) => onSubmitClick(data))}>
-            確認
-          </FEIBButton>
+          <Box mb={3}>
+            <FEIBButton onClick={handleSubmit((data) => onSubmitClick(data))}>
+              確認
+            </FEIBButton>
+          </Box>
         </Box>
       </PageWrapper>
     </Layout>
