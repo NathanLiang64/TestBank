@@ -4,17 +4,13 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import IconButton from '@material-ui/core/IconButton';
-import PersonAddDisabledIcon from '@material-ui/icons/PersonAddDisabled';
-import CloseIcon from '@material-ui/icons/Close';
-import CheckIcon from '@material-ui/icons/Check';
-import MailIcon from '@material-ui/icons/Mail';
 import { useTheme } from 'styled-components';
 import { showAnimationModal } from 'utilities/MessageModal';
 import { memberImage } from '../../utils/images';
 import {
   kickout, confirm, resend, cancel,
 } from '../api';
+import FuncButton from './FuncButton';
 
 export default ({
   title = '',
@@ -25,7 +21,7 @@ export default ({
 }) => {
   const theme = useTheme();
   // 分類成員邀請狀態
-  const sortMemberList = (memberList) => memberList.filter((i) => i.memberInviteStatus === listType);
+  const sortMemberList = (memberList) => memberList.filter((i) => i?.memberInviteStatus === listType);
   // 刪除成員
   const onDeleteClick = async (id) => {
     const resFromKickout = await kickout({ partnerId: id });
@@ -120,54 +116,37 @@ export default ({
               <ListItemSecondaryAction>
                 <Box display="flex">
                   {/* 同意成員加入 */}
-                  <Box
-                    display={[2].includes(listType) ? 'block' : 'none'}
-                    onClick={() => onIsAgreeClick(item.groupMemberId, true)}
-                  >
-                    <IconButton edge="end" aria-label="delete">
-                      <CheckIcon fontSize="large" />
-                    </IconButton>
-                  </Box>
+                  <FuncButton
+                    type="agree"
+                    isDisaply={[2].includes(listType)}
+                    callback={() => onIsAgreeClick(item.groupMemberId, true)}
+                  />
                   {/* 不同意成員加入 */}
-                  <Box
-                    display={[2].includes(listType) ? 'block' : 'none'}
-                    onClick={() => onIsAgreeClick(item.groupMemberId, false)}
-                  >
-                    <IconButton edge="end" aria-label="delete">
-                      <CloseIcon fontSize="large" />
-                    </IconButton>
-                  </Box>
+                  <FuncButton
+                    type="disagree"
+                    isDisaply={[2].includes(listType)}
+                    callback={() => onIsAgreeClick(item.groupMemberId, false)}
+                  />
                   {/* 重新邀請 */}
-                  <Box
-                    display={[1].includes(listType) ? 'block' : 'none'}
-                    onClick={() => onResendClick(item.inviteToken)}
-                  >
-                    <IconButton edge="end" aria-label="delete">
-                      <MailIcon fontSize="large" />
-                    </IconButton>
-                  </Box>
+                  <FuncButton
+                    type="resend"
+                    isDisaply={[1].includes(listType)}
+                    callback={() => onResendClick(item.inviteToken)}
+                  />
                   {/* 取消邀請 */}
-                  <Box
-                    display={[1].includes(listType) ? 'block' : 'none'}
-                    onClick={() => onCancelClick(item.inviteToken)}
-                  >
-                    <IconButton edge="end" aria-label="delete">
-                      <PersonAddDisabledIcon fontSize="large" />
-                    </IconButton>
-                  </Box>
+                  <FuncButton
+                    type="cancel"
+                    isDisaply={[1].includes(listType)}
+                    callback={() => onCancelClick(item.inviteToken)}
+                  />
                   {/* 刪除成員 */}
-                  <Box
-                    display={
+                  <FuncButton
+                    type="delete"
+                    isDisaply={
                       isLedgerOwner && !item.isOwner && [3].includes(listType)
-                        ? 'block'
-                        : 'none'
                     }
-                    onClick={() => onDeleteClick(item.groupMemberId)}
-                  >
-                    <IconButton edge="end" aria-label="delete">
-                      <CloseIcon fontSize="large" />
-                    </IconButton>
-                  </Box>
+                    callback={() => onDeleteClick(item.groupMemberId)}
+                  />
                 </Box>
               </ListItemSecondaryAction>
             </ListItem>
