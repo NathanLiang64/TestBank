@@ -11,6 +11,87 @@ import PaymentSetting from './PaymentSetting';
 import MemberSelection from './MemberSelection';
 import AmountSetting from './AmountSetting';
 
+// const mockBankeeMemberList = [
+//   {
+//     memberId: 'memberId000',
+//     memberNickName: 'NickName000',
+//     imagePath: '',
+//     memberType: '',
+//     resetType: '',
+//     memberInviteStatus: '',
+//     groupMemberId: '',
+//     loginType: '',
+//     inviteToken: 'inviteToken',
+//     memberAccount: {
+//       rid: '',
+//       memberId: '',
+//       memberName: '',
+//       accountCurrency: '',
+//       accountType: '',
+//       bankCode: '',
+//       accountNumber: '',
+//       totalAmount: '',
+//       transferTimes: '',
+//       bankeeAccountTxList: '',
+//       used: '',
+//     },
+//     isOwner: true,
+//     memberOfP: '',
+//   },
+//   {
+//     memberId: 'memberId001',
+//     memberNickName: 'memberNickName001',
+//     imagePath: '',
+//     memberType: '',
+//     resetType: '',
+//     memberInviteStatus: '',
+//     groupMemberId: '',
+//     loginType: '',
+//     inviteToken: 'inviteToken',
+//     memberAccount: {
+//       rid: '',
+//       memberId: '',
+//       memberName: '',
+//       accountCurrency: '',
+//       accountType: '',
+//       bankCode: '',
+//       accountNumber: '',
+//       totalAmount: '',
+//       transferTimes: '',
+//       bankeeAccountTxList: '',
+//       used: '',
+//     },
+//     isOwner: false,
+//     memberOfP: '',
+//   },
+//   {
+//     memberId: 'memberId002',
+//     memberNickName: 'memberNickName002',
+//     imagePath: '',
+//     memberType: '',
+//     resetType: '',
+//     memberInviteStatus: '',
+//     groupMemberId: '',
+//     loginType: '',
+//     inviteToken: 'inviteToken',
+//     memberAccount: {
+//       rid: '',
+//       memberId: '',
+//       memberName: '',
+//       accountCurrency: '',
+//       accountType: '',
+//       bankCode: '',
+//       accountNumber: '',
+//       totalAmount: '',
+//       transferTimes: '',
+//       bankeeAccountTxList: '',
+//       used: '',
+//     },
+//     isOwner: false,
+//     memberOfP: '',
+//   },
+// ];
+
 const PaymentRequest = () => {
   const [requestStep, setRequestStep] = useState(1); // 1: PaymentSetting | 2: MemberSelection | 3: AmountSetting
   const [memberList, setMemberList] = useState([]);
@@ -21,25 +102,27 @@ const PaymentRequest = () => {
   const history = useHistory();
   const { state } = useLocation();
 
+  /* 以ref暫存個元件回傳之資料 */
   const paymentSettingValues = (data) => {
     step1Ref.current = data;
   };
-
   const memberSelectionValues = (data) => {
     step2Ref.current = data;
   };
-
   const amountSettingValue = (data) => {
     step3Ref.current = data;
   };
 
+  /* 下方確認按鈕 */
   const onConfirm = async () => {
+    /* 第二步之回傳: 供第三步使用 */
     if (requestStep === 2) {
       setModel({
         partners: step2Ref.current,
       });
     }
 
+    /* 第三步之回傳: 準備呼叫api */
     if (requestStep === 3) {
       const handleTxAmount = () => {
         let totalAmount = 0;
@@ -69,7 +152,7 @@ const PaymentRequest = () => {
       });
 
       /* 呼叫api */
-      const response = chargePartner(data);
+      const response = await chargePartner(data);
 
       await showAnimationModal({
         isSuccess: response.data,
@@ -97,6 +180,7 @@ const PaymentRequest = () => {
 
   /* 自 state 取得帳本成員清單（第二步使用） */
   useEffect(() => {
+    // setMemberList(mockBankeeMemberList); // mock data
     setMemberList(state.bankeeMember);
   }, []);
 

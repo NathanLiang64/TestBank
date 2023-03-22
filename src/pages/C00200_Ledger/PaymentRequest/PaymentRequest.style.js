@@ -23,7 +23,7 @@ const PageWrapper = styled(Layout)`
   }
 
   .step2_form {
-    margin: 2rem 0;
+    // margin: 2rem 0;
     min-height: fit-content;
 
     .search_form {
@@ -42,10 +42,19 @@ const PageWrapper = styled(Layout)`
     .select_form {
       margin: 2rem 0;
 
+      .checkbox_label {
+        display: grid;
+        align-items: center;
+        grid-auto-flow: column;
+        gap: 1rem;
+      }
     }
   }
 
   .step3_form {
+    input {
+      text-align: end;
+    }
     .amount_mode_select {
       display: grid;
       grid-auto-flow: column;
@@ -69,12 +78,14 @@ const PageWrapper = styled(Layout)`
       }
       .member_amount_column {
         margin-bottom: 1rem;
-        display: flex;
-        justify-content: space-between;
+        display: grid;
+        grid-auto-flow: column;
+        gap: 1rem;
+        grid-template-columns: auto 5rem;
 
         .member_info {
           display: flex;
-          justify-content: space-between;
+          justify-content: flex-start;
           align-items: center;
 
           .member_image {
