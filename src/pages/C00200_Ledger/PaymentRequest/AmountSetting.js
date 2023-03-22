@@ -52,7 +52,9 @@ const AmountSetting = (param) => {
   });
 
   /* form: 個別成員金額 顯示／輸入 */
-  const {control: eachAmountControl, reset: eachAmountReset, watch: eachAmountWatch} = useForm({
+  const {
+    control: eachAmountControl, reset: eachAmountReset, watch: eachAmountWatch, setValue: setEachAmountValue,
+  } = useForm({
     defaultValues: {
       memberAmount: {},
     },
@@ -66,7 +68,6 @@ const AmountSetting = (param) => {
 
   /* amountMode '0': 所有成員之金額為 輸入金額 */
   const onFixedAmountBlur = () => {
-    console.log('onBlur');
     const value = getAmountValues('fixedAmount');
     const memberIdAmountList = [];
 
@@ -76,13 +77,7 @@ const AmountSetting = (param) => {
         memberId: id,
         amount: value,
       });
-
-      eachAmountReset((formValue) => ({
-        ...formValue.memberAmount,
-        memberAmount: {
-          [id]: value,
-        },
-      })); // TODO 待修正：目前只更新在最後一欄，需每一欄都更新
+      setEachAmountValue(`memberAmount.${id}`, value);
     });
 
     amountSettingValue(memberIdAmountList);
@@ -101,13 +96,7 @@ const AmountSetting = (param) => {
         memberId: id,
         amount: shareValue,
       });
-
-      eachAmountReset((formValue) => ({
-        ...formValue.memberAmount,
-        memberAmount: {
-          [id]: shareValue,
-        },
-      })); // TODO 待修正：目前只更新在最後一欄，需每一欄都更新
+      setEachAmountValue(`memberAmount.${id}`, shareValue);
     });
 
     amountSettingValue(memberIdAmountList);
@@ -131,6 +120,7 @@ const AmountSetting = (param) => {
     </div>
   );
 
+  /* 回傳data */
   useEffect(() => {
     const requestedMemberList = [];
     const eachValues = eachAmountWatch().memberAmount;
@@ -145,8 +135,6 @@ const AmountSetting = (param) => {
     });
 
     if (amountMode === '2') amountSettingValue(requestedMemberList);
-
-    return () => eachValues.unsubscribe();
   }, [eachAmountWatch()]);
 
   useEffect(() => {
@@ -191,7 +179,7 @@ const AmountSetting = (param) => {
           <p>成員</p>
           <p>金額</p>
         </div>
-        {selectedMemberList && selectedMemberList.map((member) => renderMemberAmountColumn(member.owner, member.memberNickName, member.memberId))}
+        {selectedMemberList && selectedMemberList.map((member) => renderMemberAmountColumn(member.isOwner, member.memberNickName, member.memberId))}
       </div>
     </form>
   );

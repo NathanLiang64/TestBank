@@ -33,7 +33,6 @@ const PaymentSetting = (props) => {
   };
 
   const onSlideChange = async (swiper) => {
-    console.log('onSlideChange', swiper.activeIndex);
     setModel({
       ...model,
       imgIndex: swiper.activeIndex + 1,

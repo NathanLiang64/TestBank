@@ -3,24 +3,13 @@ import styled from 'styled-components';
 import Layout from 'components/Layout';
 
 const A00800Wrapper = styled(Layout)`
-    .phone_input {
-        position: relative;
+    min-height: max-content;
 
-        .phone_input_send {
-            position: absolute;
-
-            right: 0;
-            top: -0.2rem;
-        }
-
-        form {
-            padding-bottom: 0;
-        }
-    }
     .basic_data_form {
         display: grid;
         align-content: flex-start;
         grid-gap: 2rem;
+        margin-bottom: 2rem;
     }
     .form_item {
         margin: 1rem 0;
