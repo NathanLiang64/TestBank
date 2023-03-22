@@ -6,15 +6,13 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
-import PersonIcon from '@material-ui/icons/Person';
-import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 import PersonAddDisabledIcon from '@material-ui/icons/PersonAddDisabled';
-import RemoveIcon from '@material-ui/icons/Remove';
 import CloseIcon from '@material-ui/icons/Close';
 import CheckIcon from '@material-ui/icons/Check';
 import MailIcon from '@material-ui/icons/Mail';
 import { useTheme } from 'styled-components';
 import { showAnimationModal } from 'utilities/MessageModal';
+import { memberImage } from '../../utils/images';
 import {
   kickout, confirm, resend, cancel,
 } from '../api';
@@ -115,13 +113,7 @@ export default ({
           <Box key={item.memberId}>
             <ListItem>
               <ListItemAvatar>
-                <Avatar>
-                  {item.isOwner ? (
-                    <PersonOutlineIcon fontSize="large" />
-                  ) : (
-                    <PersonIcon fontSize="large" />
-                  )}
-                </Avatar>
+                <Avatar>{memberImage({ isOwner: item.isOwner })}</Avatar>
               </ListItemAvatar>
               {item.memberNickName}
               <ListItemSecondaryAction>
@@ -172,7 +164,7 @@ export default ({
                     onClick={() => onDeleteClick(item.groupMemberId)}
                   >
                     <IconButton edge="end" aria-label="delete">
-                      <RemoveIcon fontSize="large" />
+                      <CloseIcon fontSize="large" />
                     </IconButton>
                   </Box>
                 </Box>
