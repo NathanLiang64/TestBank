@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
+import { useQLStatus } from 'hooks/useQLStatus';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 
@@ -34,9 +35,10 @@ import {
  * C00600 存錢計畫 首頁
  */
 const DepositPlanPage = () => {
-  const history = useHistory(); // TODO 應該改用 startFunc
+  const history = useHistory();
   const dispatch = useDispatch();
   const {state} = useLocation();
+  const {QLResult, showUnbondedMsg} = useQLStatus();
   const {startFunc, closeFunc, goHome} = useNavigation();
   const [depositPlans, setDepositPlans] = useState();
   const [disabled, setDisabled] = useState(true);
@@ -44,13 +46,8 @@ const DepositPlanPage = () => {
 
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-
-    let plans;
-    if (state?.depositPlans) plans = state.depositPlans;
-    else plans = await getDepositPlans();
-
+    const plans = state?.depositPlans || await getDepositPlans();
     dispatch(setWaittingVisible(false));
-
     setDepositPlans(plans);
 
     // NOTE 若是從 Webview 導向存錢計畫，在此之前就會檢核有無數位帳戶，但是在「原生彩卡首頁」沒有此機制，故仍需要檢查
@@ -185,7 +182,8 @@ const DepositPlanPage = () => {
    * 產生下方內容時會用的
    */
   const handleAddClick = () => {
-    history.push('/C006002', {depositPlans });
+    if (!QLResult) showUnbondedMsg(); // 若未綁定，跳出通知
+    else history.push('/C006002', {depositPlans });
   };
 
   const handleShowDetailClick = (plan) => {

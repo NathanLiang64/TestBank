@@ -45,12 +45,12 @@ const DepositPlanCreatePage = () => {
   const {depositPlans} = state;
 
   useEffect(async () => {
-    dispatch(setWaittingVisible(true));
     // Guard: 存錢計畫首頁最多就三個計畫，意指若未在該情況下進入此頁為不正常操作。
     if (depositPlans.plans.length >= 3) AlertReachedMaxPlans({ goBack: closeFunc, goHome });
-    const programResponse = await getDepositPlanProgram();
-    setPrograms(programResponse);
+    dispatch(setWaittingVisible(true));
+    const programResponse = state?.programs || await getDepositPlanProgram();
     dispatch(setWaittingVisible(false));
+    setPrograms(programResponse);
   }, []);
 
   const lazyLoadTerms = async () => {
@@ -64,7 +64,7 @@ const DepositPlanCreatePage = () => {
     const {subAccounts, totalSubAccountCount} = depositPlans;
     const hasReachedMaxSubAccounts = totalSubAccountCount >= 8;
     history.push('/C006003', {
-      program, subAccounts, hasReachedMaxSubAccounts, depositPlans,
+      program, subAccounts, hasReachedMaxSubAccounts, depositPlans, programs,
     });
   };
 

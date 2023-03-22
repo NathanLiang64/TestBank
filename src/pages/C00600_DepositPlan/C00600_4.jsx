@@ -174,7 +174,12 @@ const DepositPlanDetailPage = () => {
     }
   };
 
-  const goBack = () => history.replace(mode === 1 ? 'C006003' : 'C00600', state);
+  const goBack = () => {
+    if (mode === 0) history.replace('C00600', state);
+    if (mode === 1) history.replace('C006003', state);
+    if (mode === 2) history.push('C00600');
+  };
+
   return (
     <Layout title={renderTitle()} fid={Func.C006} goBackFunc={goBack}>
       <MainScrollWrapper ref={mainRef}>
