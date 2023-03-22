@@ -16,6 +16,8 @@ import Accordion from 'components/Accordion';
 import { FEIBButton } from 'components/elements';
 import { getAccountsList } from 'utilities/CacheData';
 import { showAnimationModal } from 'utilities/MessageModal';
+import { transactionAuth } from 'utilities/AppScriptProxy';
+import { Func } from 'utilities/FuncID';
 import { LedgerTerms, SubLedgerTerms } from './components/Terms';
 import ColorBall from './components/ColorBall';
 import PageWrapper from './CreateLedgerForm.style';
@@ -92,17 +94,21 @@ export default () => {
 
   // 點擊 - 確認送出表單
   const onSubmitClick = async (data) => {
-    delete data.isAgree;
-    data.color = parseInt(data.color, 10);
-    const resFrom = await create(data);
-    if (!resFrom) {
-      showAnimationModal({
-        isSuccess: false,
-        errorTitle: '設定失敗',
-      });
+    const jsRs = await transactionAuth(Func.C002.authCode);
+    if (jsRs.result) {
+      delete data.isAgree;
+      data.color = parseInt(data.color, 10);
+      const resFrom = await create(data);
+      if (!resFrom) {
+        showAnimationModal({
+          isSuccess: false,
+          errorTitle: '設定失敗',
+        });
+        return null;
+      }
+      history.push('/CreateLedgerSuccess', resFrom);
       return null;
     }
-    history.push('/CreateLedgerSuccess', resFrom);
     return null;
   };
 

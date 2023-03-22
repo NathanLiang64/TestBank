@@ -118,6 +118,7 @@ export const Func = {
    */
   C002: {
     id: 'C002',
+    authCode: 0x20,
     required: [],
   },
 
