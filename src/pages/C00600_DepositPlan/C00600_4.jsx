@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef} from 'react';
+import { useState, useRef} from 'react';
 import { useHistory, useLocation } from 'react-router';
 import uuid from 'react-uuid';
 
@@ -21,7 +21,7 @@ import { useNavigation } from 'hooks/useNavigation';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { createConfirm, createDepositPlan, updateDepositPlan } from './api';
-import { AlertInvalidEntry, ConfirmToTransferSubAccountBalance } from './utils/prompts';
+import { ConfirmToTransferSubAccountBalance } from './utils/prompts';
 import { DetailPageWrapper } from './C00600.style';
 
 /**
@@ -29,47 +29,23 @@ import { DetailPageWrapper } from './C00600.style';
  */
 const DepositPlanDetailPage = () => {
   const history = useHistory();
-  const {startFunc, closeFunc, goHome} = useNavigation();
-  const {state} = useLocation();
   const dispatch = useDispatch();
+  const {startFunc, closeFunc} = useNavigation();
   const mainRef = useRef();
-  const [mode, setMode] = useState(0); // 0=資訊模式(已建立) 1=確認模式（未建立) 2=已建立成功(剛建立完成)
-  const [plan, setPlan] = useState();
-  const [program, setProgram] = useState();
-
-  useEffect(() => {
-    if (state && ('isConfirmMode' in state)) {
-      // 資訊頁有二種使用情境：確認新增存錢計畫、閱覽存錢計畫資訊。
-      if (state.isConfirmMode) {
-        // 設定成 (新增) 確認模式
-        setMode(1);
-        setProgram(state.payload);
-      } else {
-        // 設定成 (已建立) 資訊模式
-        setMode(0);
-        setPlan(state.plan);
-      }
-    } else {
-      // Guard: 此頁面接續上一頁的操作，意指若未在該情況下進入此頁為不正常操作。
-      AlertInvalidEntry({ goBack: () => history.goBack(), goHome });
-    }
-  }, []);
+  const {state} = useLocation();
+  const {payload, plan, viewModel} = state;
+  const [mode, setMode] = useState(plan ? 0 : 1); // 0=資訊模式(已建立) 1=確認模式（未建立) 2=已建立成功(剛建立完成)
 
   const handleImageUpload = async (planId) => {
-    const payload = {
-      planId,
-      image: sessionStorage.getItem('C00600-hero'),
-    };
-
-    await updateDepositPlan(payload);
-
+    const request = { planId, image: sessionStorage.getItem('C00600-hero') };
+    await updateDepositPlan(request);
     sessionStorage.removeItem('C00600-hero'); // 清除暫存背景圖。
   };
 
   const handleCreate = async () => {
-    const {extra, goalAmount, ...payload} = program;
+    const {extra, goalAmount, ...request} = payload;
     // Step 1. 執行 存錢計畫建立
-    const response = await createDepositPlan(payload);
+    const response = await createDepositPlan(request);
     if (!response?.result) return;
 
     // Step 2. 再執行 transactionAuth
@@ -83,9 +59,9 @@ const DepositPlanDetailPage = () => {
 
     if (result) {
       // 驗證成功之後，若 imageId=0 再上傳自訂的影像。
-      if (payload.imageId === 0) await handleImageUpload(response.planId);
+      if (request.imageId === 0) await handleImageUpload(response.planId);
+      state.payload = {...state.payload, tfrResult};
       setMode(2);// 設定成 成功建立模式
-      setProgram((prevProgram) => ({...prevProgram, tfrResult}));
       mainRef.current.scrollTo({ top: 0, behavior: 'smooth'});// 建立成功後，將頁面滑至上方。
     } else {
       showAnimationModal({
@@ -98,12 +74,10 @@ const DepositPlanDetailPage = () => {
   };
 
   const handleConfirm = async () => {
-    if (program.currentBalance > 0) {
+    if (payload.currentBalance > 0) {
       // 如果所選的子帳戶有餘額，要提示用戶自動轉帳。
-      ConfirmToTransferSubAccountBalance({ onOk: () => startFunc(Func.D001.id, {transOut: program.bindAccountNo}), onCancel: () => {} });
-    } else {
-      handleCreate();
-    }
+      ConfirmToTransferSubAccountBalance({ onOk: () => startFunc(Func.D001.id, {transOut: payload.bindAccountNo}), onCancel: () => {} });
+    } else handleCreate();
   };
 
   const renderModeTimingString = (p) => p && (p.cycleMode === 1 ? `每週${weekNumberToChinese(p.cycleTiming === 0 ? 7 : p.cycleTiming)}` : `每月${p.cycleTiming}號`);
@@ -122,26 +96,26 @@ const DepositPlanDetailPage = () => {
 
   const renderProgramDetails = () => {
     const generateDebitInfo = () => { // 扣款資訊
-      const {tfrResult} = program;
+      const {tfrResult} = payload;
       if (mode !== 2 || typeof tfrResult !== 'boolean') return null;
       return tfrResult ? '扣款成功' : '扣款失敗';
     };
 
     const list = [
-      { label: '存錢計畫名稱', value: program?.name },
-      { label: '適用利率', value: `${program?.extra.rate}%` },
-      { label: '存錢目標', value: currencySymbolGenerator('NTD', program?.goalAmount, true) },
-      { label: '計畫期間', value: program?.extra.period },
+      { label: '存錢計畫名稱', value: payload.name },
+      { label: '適用利率', value: `${payload.extra.rate}%` },
+      { label: '存錢目標', value: currencySymbolGenerator('NTD', payload.goalAmount, true) },
+      { label: '計畫期間', value: payload.extra.period },
       {
         type: 'extra',
         label: '第一筆扣款日',
-        value: dateToString(program?.startDate),
+        value: dateToString(payload.startDate),
         caption: '下一筆扣款日',
-        next: program?.extra.nextDeductionDate,
+        next: payload.extra.nextDeductionDate,
         extra: generateDebitInfo(),
-        extraClassName: program.tfrResult ? 'text-green' : 'text-error',
+        extraClassName: payload.tfrResult ? 'text-green' : 'text-error',
       },
-      { label: '存錢帳號', value: program?.bindAccountNo ? accountFormatter(program?.bindAccountNo, true) : '加開子帳戶' },
+      { label: '存錢帳號', value: payload.bindAccountNo ? accountFormatter(payload.bindAccountNo, true) : '加開子帳戶' },
     ];
     return renderListItem(list);
   };
@@ -149,32 +123,35 @@ const DepositPlanDetailPage = () => {
   const renderPlanDetails = () => {
     const list = [
       { label: '存錢計畫名稱', value: plan?.name },
-      { label: '存錢計畫之帳號', value: accountFormatter(plan?.bindAccountNo, true) },
-      { label: '存錢計畫起始日', value: dateToString(plan?.startDate) },
-      { label: '存錢計畫到期日', value: dateToString(plan?.endDate) },
+      { label: '存錢計畫之帳號', value: accountFormatter(plan.bindAccountNo, true) },
+      { label: '存錢計畫起始日', value: dateToString(plan.startDate) },
+      { label: '存錢計畫到期日', value: dateToString(plan.endDate) },
       { label: '存錢週期', value: renderModeTimingString(plan) },
-      { label: '第一筆扣款日', value: dateToString(plan?.startDate) },
-      { label: '目標金額', value: currencySymbolGenerator('NTD', plan?.goalAmount, true) },
-      { label: '每期存款金額', value: currencySymbolGenerator('NTD', plan?.amount, true) },
-      { label: '利率', value: `${plan?.progInfo.rate}% (牌告+計畫加碼利率)` },
-      { label: '累積存款金額', value: currencySymbolGenerator('NTD', plan?.currentBalance, true) },
+      { label: '第一筆扣款日', value: dateToString(plan.startDate) },
+      { label: '目標金額', value: currencySymbolGenerator('NTD', plan.goalAmount, true) },
+      { label: '每期存款金額', value: currencySymbolGenerator('NTD', plan.amount, true) },
+      // 利率可能會到小數點第五位，因此暫時不透過 toFixed 顯示
+      { label: '利率', value: `${(plan.progInfo.baseRate * 100000 + plan.progInfo.extraRate * 100000) / 100000}% (牌告+計畫加碼利率)` },
+      { label: '累積存款金額', value: currencySymbolGenerator('NTD', plan.currentBalance, true) },
     ];
     return renderListItem(list);
   };
 
   const renderTitle = () => {
     switch (mode) {
-      case 0:
-        return '存款計劃資訊';
-      case 1:
-        return '存款計劃確認';
+      case 0: return '存款計劃資訊';
+      case 1: return '存款計劃確認';
       case 2:
-      default:
-        return '存款計劃設定結果';
+      default: return '存款計劃設定結果';
     }
   };
 
-  const goBack = () => history.replace(mode === 1 ? 'C006003' : 'C00600', state);
+  const goBack = () => {
+    if (mode === 0) history.replace('C00600', {viewModel});
+    if (mode === 1) history.replace('C006003', state);
+    if (mode === 2) history.push('C00600');
+  };
+
   return (
     <Layout title={renderTitle()} fid={Func.C006} goBackFunc={goBack}>
       <MainScrollWrapper ref={mainRef}>
@@ -184,8 +161,8 @@ const DepositPlanDetailPage = () => {
               { mode === 2 && <SuccessFailureAnimations isSuccess successTitle="設定成功" /> }
               <div className="info">
                 <div>存錢金額與週期</div>
-                <div className="text-primary text-lg balance">{currencySymbolGenerator('NTD', program?.amount, true)}</div>
-                <div className="text-primary text-lg">{renderModeTimingString(program)}</div>
+                <div className="text-primary text-lg balance">{currencySymbolGenerator('NTD', payload.amount, true)}</div>
+                <div className="text-primary text-lg">{renderModeTimingString(payload)}</div>
                 <div className="text-primary">從主帳戶自動扣款</div>
               </div>
             </div>

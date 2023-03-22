@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
+import { useQLStatus } from 'hooks/useQLStatus';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 
@@ -34,24 +35,25 @@ import {
  * C00600 存錢計畫 首頁
  */
 const DepositPlanPage = () => {
-  const history = useHistory(); // TODO 應該改用 startFunc
+  const history = useHistory();
   const dispatch = useDispatch();
   const {state} = useLocation();
+  const {QLResult, showUnbondedMsg} = useQLStatus();
   const {startFunc, closeFunc, goHome} = useNavigation();
-  const [depositPlans, setDepositPlans] = useState();
+  const [viewModel, setViewModel] = useState({ depositPlans: null, programs: null });
   const [disabled, setDisabled] = useState(true);
   const swiperRef = useRef();
 
+  const fetchDepositPlans = async () => {
+    const depositPlans = await getDepositPlans();
+    return {depositPlans};
+  };
+
   useEffect(async () => {
     dispatch(setWaittingVisible(true));
-
-    let plans;
-    if (state?.depositPlans) plans = state.depositPlans;
-    else plans = await getDepositPlans();
-
+    const vModel = state?.viewModel || await fetchDepositPlans();
     dispatch(setWaittingVisible(false));
-
-    setDepositPlans(plans);
+    setViewModel((vm) => ({...vm, ...vModel}));
 
     // NOTE 若是從 Webview 導向存錢計畫，在此之前就會檢核有無數位帳戶，但是在「原生彩卡首頁」沒有此機制，故仍需要檢查
     await getAccountsList('M', (accts) => {
@@ -81,15 +83,10 @@ const DepositPlanPage = () => {
 
     if (isSuccess) {
       // 一併更新前端資料
-      setDepositPlans((prevState) => ({
-        ...prevState,
-        plans: prevState.plans.map((p) => {
-          p.isMaster = false;
-          if (p.planId === plan.planId) p.isMaster = true;
-          return p;
-        }),
-      }));
-
+      setViewModel((vm) => {
+        const plans = vm.depositPlans.plans.map((p) => ({...p, isMaster: p.planId === plan.planId}));
+        return { ...vm, depositPlans: {...vm.depositPlans, plans}};
+      });
       // 移動畫面顯示主要計畫
       if (swiperRef)swiperRef.current.swiper.slideTo(1);
     } else AlertUpdateFail();
@@ -104,10 +101,11 @@ const DepositPlanPage = () => {
       const response = await closeDepositPlan(plan.planId);
       dispatch(setWaittingVisible(false));
       if (response.result) {
-        setDepositPlans((prevDepositPlans) => {
-          const filteredPlans = prevDepositPlans.plans.filter((dp) => dp.planId !== plan.planId);
-          return {...prevDepositPlans, plans: filteredPlans};
+        setViewModel((vm) => {
+          const plans = vm.depositPlans.plans.filter(({planId}) => planId !== plan.planId);
+          return {...vm, depositPlans: {...vm.depositPlans, plans}};
         });
+
         ConfirmDepositPlanHasBeenClosed({ email: response.email, onOk: () => goHome() });
       } else {
         showAnimationModal({
@@ -125,7 +123,7 @@ const DepositPlanPage = () => {
   const handleMoreClick = (plan) => {
     const list = [
       { icon: <CircleIcon />, title: '設定為主要存錢計畫', onClick: handleSetMasterPlan },
-      { icon: <AccountIcon11 />, title: '存錢計畫資訊', onClick: () => history.push('/C006004', { isConfirmMode: false, plan, depositPlans }) },
+      { icon: <AccountIcon11 />, title: '存錢計畫資訊', onClick: () => history.push('/C006004', { plan, viewModel }) },
       { icon: <AccountIcon12 />, title: '結束本計畫', onClick: handleTerminatePlan },
     ];
     if (plan.progInfo.type === 0) {
@@ -148,7 +146,7 @@ const DepositPlanPage = () => {
   };
 
   const handleEditClick = (plan) => {
-    history.push('/C006005', { plan, depositPlans });
+    history.push('/C006005', { plan, viewModel });
   };
 
   /**
@@ -157,10 +155,10 @@ const DepositPlanPage = () => {
    */
   const renderSlides = () => {
     const slides = Array.from({ length: 3 }, (_, i) => <EmptySlide key={i} />);
-    // depositPlans
-    if (depositPlans?.plans.length) {
+
+    if (viewModel.depositPlans?.plans.length) {
       let masterSlideIndex = null;
-      depositPlans.plans.forEach((p, i) => {
+      viewModel.depositPlans.plans.forEach((p, i) => {
         if (p.isMaster) { masterSlideIndex = i; }
         slides[i] = (
           <DepositPlanHeroSlide
@@ -185,16 +183,17 @@ const DepositPlanPage = () => {
    * 產生下方內容時會用的
    */
   const handleAddClick = () => {
-    history.push('/C006002', {depositPlans });
+    if (!QLResult) showUnbondedMsg(); // 若未綁定，跳出通知
+    else history.push('/C006002', {viewModel });
   };
 
   const handleShowDetailClick = (plan) => {
-    history.push('/C006001', {plan, depositPlans});
+    history.push('/C006001', {plan, viewModel});
   };
 
   const shouldShowUnavailableSubAccountAlert = () => {
     // totalSubAccount 若多於8組，且無可用的子帳戶時，
-    if ((depositPlans?.totalSubAccountCount >= 8) && !(depositPlans?.subAccounts.length)) AlertUnavailableSubAccount();
+    if ((viewModel.depositPlans?.totalSubAccountCount >= 8) && !(viewModel.depositPlans?.subAccounts.length)) AlertUnavailableSubAccount();
   };
 
   /**
@@ -210,9 +209,9 @@ const DepositPlanPage = () => {
       />
     ));
 
-    if (depositPlans?.plans.length) {
+    if (viewModel.depositPlans?.plans.length) {
       let masterSlideIndex = null;
-      depositPlans.plans.forEach((p, i) => {
+      viewModel.depositPlans.plans.forEach((p, i) => {
         if (p.isMaster) { masterSlideIndex = i; }
         slides[i] = (
           <DepositPlan
@@ -239,9 +238,9 @@ const DepositPlanPage = () => {
     let activeIndex = 1; // 預設中間
 
     // 重新排序plans陣列
-    const reArrangedPlans = depositPlans?.plans.slice(0) ?? [];
-    if (depositPlans?.plans.length) {
-      const masterSlideIndex = depositPlans.plans.findIndex((p) => !!p?.isMaster);
+    const reArrangedPlans = viewModel.depositPlans?.plans.slice(0) ?? [];
+    if (viewModel.depositPlans?.plans.length) {
+      const masterSlideIndex = viewModel.depositPlans.plans.findIndex((p) => !!p?.isMaster);
 
       if (masterSlideIndex >= 0) {
         [reArrangedPlans[masterSlideIndex], reArrangedPlans[1]] = [reArrangedPlans[1], reArrangedPlans[masterSlideIndex]];

@@ -10,6 +10,7 @@ import { FEIBButton, FEIBHintMessage } from 'components/elements';
 import { CurrencyInputField, DropdownField, TextInputField } from 'components/Fields';
 import { toCurrency, dateToYMD, dateToString } from 'utilities/Generator';
 import { showPrompt } from 'utilities/MessageModal';
+import { getAccountsList } from 'utilities/CacheData';
 import { getDurationTuple} from './utils/common';
 import {
   generatebindAccountNoOptions, generateCycleModeOptions, generateCycleTimingOptions, generateMonthOptions,
@@ -25,6 +26,10 @@ const DepositPlanEditPage = () => {
   const history = useHistory();
   const {state} = useLocation();
   const {
+    program, subAccounts, hasReachedMaxSubAccounts, viewModel,
+  } = state;
+
+  const {
     control, handleSubmit, watch, reset, setValue,
   } = useForm({
     defaultValues: {
@@ -35,8 +40,9 @@ const DepositPlanEditPage = () => {
       amount: '',
       bindAccountNo: '',
       imageId: '',
+      progCode: program.code,
     },
-    resolver: yupResolver(generateEditSchema(state?.program)),
+    resolver: yupResolver(generateEditSchema(program)),
   });
   const {
     cycleDuration, cycleMode, amount, bindAccountNo, imageId,
@@ -52,18 +58,27 @@ const DepositPlanEditPage = () => {
     return parseInt(cycleAmount, 10) * cycle * duration;
   };
 
-  const getRemainingBalance = (accountNo) => state?.subAccounts?.find((a) => a.accountNo === accountNo)?.balance ?? 0;
+  const getRemainingBalance = (accountNo) => subAccounts?.find((a) => a.accountNo === accountNo)?.balance ?? 0;
 
-  const onSubmit = (data) => {
-    const date = getDurationTuple(new Date(), data.cycleDuration, data.cycleMode, data.cycleTiming);
-    const {code, rate} = state.program;
+  const onSubmit = async (data) => {
     if (typeof data.imageId !== 'number') {
       showPrompt(<p className="txtCenter">請選擇圖片</p>);
       return;
     }
+
+    // 若存錢計畫屬於專案型，需要檢查「母帳戶+子帳戶的金額」是否低於「每期存錢金額」
+    if (program.type) {
+      const [mainAccount] = await getAccountsList('M');
+      if (mainAccount.details[0].balance + getRemainingBalance(bindAccountNo) < data.amount) {
+        showPrompt(<p className="txtCenter">您的帳戶餘額不足，無法建立專案型存錢計畫，請存入足夠金額，或選擇基本型存錢計畫</p>);
+        return;
+      }
+    }
+
+    const date = getDurationTuple(new Date(), data.cycleDuration, data.cycleMode, data.cycleTiming);
     const payload = {
       // =====建立存錢計畫所需參數=====
-      progCode: code,
+      progCode: data.progCode,
       imageId: data.imageId,
       name: data.name,
       startDate: dateToYMD(date.begin),
@@ -76,12 +91,12 @@ const DepositPlanEditPage = () => {
       // =====渲染需求參數=====
       goalAmount: getGoalAmount(data.amount, data.cycleDuration, data.cycleMode),
       extra: {
-        rate,
+        rate: program.rate,
         period: `${dateToString(new Date())} ~ ${dateToString(date.end)}`,
         nextDeductionDate: dateToString(date.next),
       },
     };
-    history.push('/C006004', {...state, isConfirmMode: true, payload });
+    history.push('/C006004', {...state, payload });
   };
 
   useEffect(() => {
@@ -103,14 +118,11 @@ const DepositPlanEditPage = () => {
     }));
   }, []);
 
-  const {
-    program, subAccounts, hasReachedMaxSubAccounts, depositPlans,
-  } = state;
   const disabled = !!program.type; // 若是專案型 (!==0)，特定欄位是固定值，不給使用者選擇
   const disabledColor = disabled ? Theme.colors.text.dark : '';
 
   return (
-    <Layout title="新增存錢計畫" hasClearHeader goBackFunc={() => history.replace('C006002', {depositPlans})}>
+    <Layout title="新增存錢計畫" hasClearHeader goBackFunc={() => history.replace('C006002', {viewModel})}>
       <MainScrollWrapper>
         <EditPageWrapper>
           <form onSubmit={handleSubmit(onSubmit)}>

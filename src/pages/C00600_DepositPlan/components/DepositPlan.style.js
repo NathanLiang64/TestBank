@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 
 const DepositPlanWrapper = styled.div`
-  margin-bottom: 3.3rem;
-
+  
   .pad {
     display: grid;
     align-content: flex-start;

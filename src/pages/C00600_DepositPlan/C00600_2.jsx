@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
@@ -39,17 +40,20 @@ const DepositPlanCreatePage = () => {
     })),
   });
   const {state} = useLocation();
-  const [programs, setPrograms] = useState();
+
   const [terms, setTerms] = useState();
-  if (!state || !state.depositPlans) closeFunc();// GURARD 如果 state/state.depositPlans 不存在，在這一行就結束了
-  const {depositPlans} = state;
+  // Guard
+  if (!state) {
+    history.goBack();
+    return null;
+  }
+  const {viewModel} = state;
 
   useEffect(async () => {
-    dispatch(setWaittingVisible(true));
     // Guard: 存錢計畫首頁最多就三個計畫，意指若未在該情況下進入此頁為不正常操作。
-    if (depositPlans.plans.length >= 3) AlertReachedMaxPlans({ goBack: closeFunc, goHome });
-    const programResponse = await getDepositPlanProgram();
-    setPrograms(programResponse);
+    if (viewModel.depositPlans.plans.length >= 3) AlertReachedMaxPlans({ goBack: closeFunc, goHome });
+    dispatch(setWaittingVisible(true));
+    viewModel.programs = viewModel.programs || await getDepositPlanProgram();
     dispatch(setWaittingVisible(false));
   }, []);
 
@@ -60,16 +64,16 @@ const DepositPlanCreatePage = () => {
   const onSubmit = ({code}) => {
     sessionStorage.removeItem('C00600-hero'); // 清除暫存背景圖。
 
-    const program = programs.find((p) => p.code === code);
-    const {subAccounts, totalSubAccountCount} = depositPlans;
+    const program = viewModel.programs.find((p) => p.code === code);
+    const {subAccounts, totalSubAccountCount} = viewModel.depositPlans;
     const hasReachedMaxSubAccounts = totalSubAccountCount >= 8;
     history.push('/C006003', {
-      program, subAccounts, hasReachedMaxSubAccounts, depositPlans,
+      program, subAccounts, hasReachedMaxSubAccounts, viewModel,
     });
   };
 
   return (
-    <Layout title="新增存錢計畫" goBackFunc={() => history.replace(`${Func.C006.id}00`, {depositPlans})}>
+    <Layout title="新增存錢計畫" goBackFunc={() => history.replace(`${Func.C006.id}00`, {viewModel})}>
       <Main>
         <CreatePageWrapper>
           <form className="flex" onSubmit={handleSubmit(onSubmit)}>
@@ -81,7 +85,7 @@ const DepositPlanCreatePage = () => {
                 render={({ field }) => (
                   <RadioGroup {...field}>
                     <ul className="list-group">
-                      { programs && programs.map((p) => (
+                      { viewModel.programs && viewModel.programs.map((p) => (
                         <li key={uuid()} className="list">
                           <FEIBRadioLabel control={<FEIBRadio />} label={p.name} value={`${p.code}`} />
                           <div className="rate">{`${p.rate}%`}</div>
