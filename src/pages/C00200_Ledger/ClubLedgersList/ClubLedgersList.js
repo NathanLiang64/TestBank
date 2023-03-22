@@ -66,12 +66,6 @@ export default () => {
             <Box width="80%" component="img" src={LEDGER_IMG} alt="帳本首圖" />
           </Box>
         )}
-        <Box mb={1}>
-          <AccountCardGrey
-            title={hasLedgerData ? '' : '擁有自己的第一本帳本'}
-            callback={onAddLedgerClick}
-          />
-        </Box>
         {hasLedgerData
           && ledgerList.map((item) => {
             const {
@@ -91,7 +85,10 @@ export default () => {
                         component="span"
                         display={owner ? 'inline-block' : 'none'}
                       >
-                        {memberImage({ isOwner: true, width: 30, height: 30 })}
+                        {memberImage({
+                          isOwner: true,
+                          style: { width: '30px', height: '30px' },
+                        })}
                       </Box>
                       <Box component="span" ml={1}>
                         {ledgerName}
@@ -115,6 +112,12 @@ export default () => {
               </Box>
             );
           })}
+        <Box mb={1}>
+          <AccountCardGrey
+            title={hasLedgerData ? '' : '擁有自己的第一本帳本'}
+            callback={onAddLedgerClick}
+          />
+        </Box>
       </PageWrapper>
     </Layout>
   );
