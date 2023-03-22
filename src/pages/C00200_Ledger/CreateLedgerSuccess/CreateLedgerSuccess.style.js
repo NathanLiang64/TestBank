@@ -8,7 +8,6 @@ const PageWrapper = styled(Layout)`
   padding: 0 20;
 
   // 使畫面可上下捲動
-  height: 100vh;
   overflow: auto;
 `;
 
