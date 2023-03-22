@@ -32,7 +32,7 @@ export default ({
     });
     if (resFromKickout) {
       setList((p) => {
-        const newList = p.filter((item) => item.groupMemberId !== id);
+        const newList = p.filter((item) => item?.groupMemberId !== id);
         return newList;
       });
     }
@@ -47,7 +47,7 @@ export default ({
     });
     if (resFromCancel) {
       setList((p) => {
-        const newList = p.filter((item) => item.inviteToken !== token);
+        const newList = p.filter((item) => item?.inviteToken !== token);
         return newList;
       });
     }
@@ -74,7 +74,7 @@ export default ({
         // 同意
         setList((p) => {
           const newList = p.map((item) => {
-            if (item.groupMemberId === id) {
+            if (item?.groupMemberId === id) {
               item.memberInviteStatus = 3;
             }
             return item;
@@ -84,7 +84,7 @@ export default ({
       } else {
         // 不同意
         setList((p) => {
-          const newList = p.filter((item) => item.groupMemberId !== id);
+          const newList = p.filter((item) => item?.groupMemberId !== id);
           return newList;
         });
       }
