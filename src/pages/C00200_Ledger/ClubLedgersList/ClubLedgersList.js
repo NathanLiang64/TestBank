@@ -5,7 +5,7 @@ import { useTheme } from 'styled-components';
 import Layout from 'components/Layout/Layout';
 import CreditCard from 'components/CreditCard';
 import { useDispatch } from 'react-redux';
-import { PersonalIcon, HomeIcon } from 'assets/images/icons';
+import { PersonalIcon } from 'assets/images/icons';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showError } from 'utilities/MessageModal';
 import { useNavigation } from 'hooks/useNavigation';
@@ -14,6 +14,7 @@ import { getAllLedgers, start } from './api';
 // import { getAllLedgers } from './constants/mockData';
 import AccountCardGrey from './components/AccountCardGrey';
 import LEDGER_IMG from './images/ledger.png';
+import { memberImage } from '../utils/images';
 
 export default () => {
   const history = useHistory();
@@ -85,19 +86,12 @@ export default () => {
               <Box key={ledgerId} mb={1} onClick={() => onLedgerClick(item)}>
                 <CreditCard
                   cardName={(
-                    <Box component="span">
+                    <Box display="flex" alignItems="center">
                       <Box
                         component="span"
                         display={owner ? 'inline-block' : 'none'}
                       >
-                        <HomeIcon />
-                        <Box
-                          component="span"
-                          ml={0.5}
-                          color={theme.colors.text.brand}
-                        >
-                          主揪
-                        </Box>
+                        {memberImage({ isOwner: true, width: 30, height: 30 })}
                       </Box>
                       <Box component="span" ml={1}>
                         {ledgerName}

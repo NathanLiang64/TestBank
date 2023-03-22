@@ -10,7 +10,7 @@ export const getAllLedgers = () => new Promise((resolve) => {
       {
         ledgerAmount: '10,000', // 帳本餘額
         ledgerColor: 7, // 帳本顏色
-        isOwner: true, // 是否為主揪
+        owner: true, // 是否為主揪
         sumOfMembers: 10, // 成員人數
         ledgerId: '001', // 帳本 ID
         ledgerName: '春季旅遊', // 帳本名稱
@@ -18,7 +18,7 @@ export const getAllLedgers = () => new Promise((resolve) => {
       {
         ledgerAmount: '15,000', // 帳本餘額
         ledgerColor: 2, // 帳本顏色
-        isOwner: false, // 是否為主揪
+        owner: false, // 是否為主揪
         sumOfMembers: 15, // 成員人數
         ledgerId: '002', // 帳本 ID
         ledgerName: '秋季旅遊', // 帳本名稱
