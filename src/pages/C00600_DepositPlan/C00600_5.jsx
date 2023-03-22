@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useHistory, useLocation } from 'react-router';
+/* eslint-disable object-curly-newline */
+import { useHistory } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -9,10 +9,9 @@ import { FEIBButton} from 'components/elements';
 import { DropdownField, TextInputField } from 'components/Fields';
 import { toCurrency, accountFormatter, dateToString } from 'utilities/Generator';
 
-import { useNavigation } from 'hooks/useNavigation';
 import HeroWithEdit from './components/HeroWithEdit';
 import { EditPageWrapper } from './C00600.style';
-import { AlertInvalidEntry, AlertUpdateFail } from './utils/prompts';
+import { AlertUpdateFail } from './utils/prompts';
 import { generateCycleModeOptions, generateCycleTimingOptions } from './utils/options';
 import { updateDepositPlan } from './api';
 import { generateRestirctedEditSchema } from './validationSchema';
@@ -20,25 +19,16 @@ import { generateRestirctedEditSchema } from './validationSchema';
 /**
  * C00600 存錢計畫 (已建立) 編輯頁
  */
-const DepositPlanEditPage = () => {
+const DepositPlanEditPage = (props) => {
   const history = useHistory();
-  const { goHome } = useNavigation();
-  const {state} = useLocation();
-  const {control, handleSubmit, reset } = useForm(
-    {
-      defaultValues: {
-        name: '',
-        cycleDuration: '',
-        cycleMode: '',
-        cycleTiming: '',
-        amount: '',
-        bindAccountNo: '',
-      },
-      resolver: yupResolver(generateRestirctedEditSchema(state?.plan)),
-    },
-  );
+  const {location: {state}} = props;
 
-  const [plan, setPlan] = useState();
+  // Guard
+  if (!state) {
+    history.goBack();
+    return null;
+  }
+  const {viewModel, plan } = state;
 
   const getDuration = (startDate, endDate) => {
     const begin = dateToString(startDate);
@@ -46,54 +36,47 @@ const DepositPlanEditPage = () => {
     return `${begin} ~ ${end}`;
   };
 
-  useEffect(() => {
-    if (state && ('plan' in state)) {
-      setPlan(state.plan);
+  const { control, handleSubmit, setValue, watch } = useForm(
+    {
+      defaultValues: {
+        planId: plan.planId,
+        imageId: plan.imageId,
+        name: plan.name,
+        cycleMode: plan.cycleMode,
+        cycleTiming: plan.cycleTiming,
+        cycleDuration: getDuration(plan.startDate, plan.endDate),
+        amount: `＄${toCurrency(plan.amount)}`,
+        bindAccountNo: accountFormatter(plan.bindAccountNo, true),
+      },
+      resolver: yupResolver(generateRestirctedEditSchema(plan)),
+    },
+  );
 
-      // 重置表單各欄位 value
-      reset({
-        name: state.plan.name,
-        cycleDuration: getDuration(state.plan.startDate, state.plan.endDate),
-        cycleMode: state.plan.cycleMode,
-        cycleTiming: state.plan.cycleTiming,
-        amount: `＄${toCurrency(state.plan.amount)}`,
-        bindAccountNo: accountFormatter(state.plan.bindAccountNo, true),
-      });
-    } else {
-      // Guard: 此頁面接續上一頁的操作，意指若未在該情況下進入此頁為不正常操作。
-      AlertInvalidEntry({ goBack: () => history.goBack(), goHome });
-    }
-  }, []);
+  const onSubmit = async ({planId, name, imageId}) => {
+    const image = imageId > 0 ? imageId : sessionStorage.getItem('C00600-hero');
+    const payload = { planId, name, image };
 
-  const onSubmit = async (data) => {
-    const payload = {
-      planId: plan.planId,
-      name: data.name,
-      image: plan.imageId > 0 ? plan.imageId : sessionStorage.getItem('C00600-hero'),
-    };
     const {isSuccess} = await updateDepositPlan(payload);
     if (isSuccess) {
       // cache 的資料也要一起變更
-      const {depositPlans: {plans}} = state;
-      const updatedIndex = plans.findIndex(({planId}) => plan.planId === planId);
-      plans[updatedIndex].name = data.name;
-      plans[updatedIndex].imageId = plan.imageId;
-
-      history.push('/C00600', state);
+      const {depositPlans: {plans}} = viewModel;
+      const updatedIndex = plans.findIndex((p) => plan.planId === p.planId);
+      plans[updatedIndex] = {...plans[updatedIndex], name, imageId};
+      history.push('/C00600', {viewModel});
+      sessionStorage.removeItem('C00600-hero'); // 清除暫存背景圖。
     } else AlertUpdateFail();
-    sessionStorage.removeItem('C00600-hero'); // 清除暫存背景圖。
   };
 
   return (
-    <Layout title="編輯存錢計畫" hasClearHeader goBackFunc={() => history.replace('C00600', state)}>
+    <Layout title="編輯存錢計畫" hasClearHeader goBackFunc={() => history.replace('C00600', {viewModel})}>
       <MainScrollWrapper>
         <EditPageWrapper>
           <form onSubmit={handleSubmit(onSubmit)}>
 
             <HeroWithEdit
-              planId={plan?.planId}
-              imageId={plan?.imageId}
-              onChange={(id) => setPlan((prevPlan) => ({...prevPlan, imageId: id}))}
+              planId={watch('planId')}
+              imageId={watch('imageId')}
+              onChange={(id) => setValue('imageId', id)}
             />
 
             <div className="flex">
@@ -103,7 +86,7 @@ const DepositPlanEditPage = () => {
                   name="name"
                   control={control}
                   labelName="計畫名稱"
-                  inputProps={{ maxLength: 7, placeholder: '請輸入7個以內的中英文字、數字或符號', disabled: state.plan.progInfo.type !== 0 }}
+                  inputProps={{ maxLength: 7, placeholder: '請輸入7個以內的中英文字、數字或符號', disabled: plan.progInfo.type !== 0 }}
                 />
               </div>
 

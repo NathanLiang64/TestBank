@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 
 import Layout from 'components/Layout/Layout';
 import AccountDetails from 'components/AccountDetails/accountDetails';
-import { Func } from 'utilities/FuncID';
 import { dateToYMD, timeToString } from 'utilities/Generator';
 
 import { getTransactionDetails } from './api';
@@ -12,7 +11,6 @@ import { getTransactionDetails } from './api';
  * C00600 存錢計畫 歷程頁
  */
 const DepositPlanTransactionPage = () => {
-  // const [plan, setPlan] = useState(null);
   const history = useHistory();
   const {state} = useLocation();
   const plan = {
@@ -48,15 +46,15 @@ const DepositPlanTransactionPage = () => {
    * 此HOOK目的是將在AccountDetails組件內所取得的最新一筆明細, 更新資料回state
    */
   useEffect(() => {
-    state.depositPlans.plans.forEach((p, index) => {
-      if (plan.planId === p.planId) state.depositPlans.plans[index] = plan;
+    state.viewModel.depositPlans.plans.forEach((p, index) => {
+      if (plan.planId === p.planId) state.viewModel.depositPlans.plans[index] = plan;
     });
 
     state.plan = plan;
   }, []);
 
   return (
-    <Layout title="存錢歷程" hasClearHeader goBackFunc={() => history.replace(`${Func.C006.id}00`, state)}>
+    <Layout title="存錢歷程" hasClearHeader goBackFunc={() => history.replace('C00600', {viewModel: state.viewModel})}>
       {plan ? (
         <AccountDetails
           selectedAccount={plan}

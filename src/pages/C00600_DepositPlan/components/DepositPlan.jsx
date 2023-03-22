@@ -54,7 +54,8 @@ const DepositPlan = ({
   const bonusInfo = [
     {
       label: '適用利率',
-      value: `${type ? Number(baseRate) + Number(extraRate) : Number(baseRate)}%`,
+      // 利率可能會到小數點第五位，因此暫時不透過 toFixed 顯示
+      value: `${type ? (baseRate * 100000 + extraRate * 100000) / 100000 : Number(baseRate)}%`,
       onClick: () => {
         const text = type ? `
         適用利率=${baseRate}%(基本利率)+${extraRate}%(專案加碼利率)，基本利率以官網公告為主，專案加碼利率將於存錢計畫達成指定條件後回饋`
