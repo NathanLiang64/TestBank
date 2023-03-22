@@ -4,7 +4,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import PersonAddDisabledIcon from '@material-ui/icons/PersonAddDisabled';
 import CloseIcon from '@material-ui/icons/Close';
@@ -113,7 +112,9 @@ export default ({
           <Box key={item.memberId}>
             <ListItem>
               <ListItemAvatar>
-                <Avatar>{memberImage({ isOwner: item.isOwner })}</Avatar>
+                <Box width={45} height={45}>
+                  {memberImage({ isOwner: item.isOwner })}
+                </Box>
               </ListItemAvatar>
               {item.memberNickName}
               <ListItemSecondaryAction>
