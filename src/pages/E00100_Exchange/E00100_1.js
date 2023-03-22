@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -31,7 +32,7 @@ const E001001 = (props) => {
 
   const history = useHistory();
   const dispatch = useDispatch();
-  const [viewData, setViewData] = useState();
+  const [viewData, setViewData] = useState({});
 
   /**
    * 建構式，初始化
@@ -44,6 +45,11 @@ const E001001 = (props) => {
 
     // 取得換匯掛號資訊
     create(model).then((apiRs) => {
+      if (!apiRs) {
+        goBack(); // ISG0313-2 [目前時段未提供此幣別的報價]
+        return;
+      }
+
       // 執行外幣換匯、轉帳時的交易序號
       model.tfrId = apiRs.tfrId;
       viewModel.outAmount = apiRs.outAmount; // 估算兌換指定轉入金額所需的轉出金額
@@ -91,8 +97,8 @@ const E001001 = (props) => {
   /**
    * 主頁面輸出
    */
-  return viewData ? (
-    <Layout title="外幣換匯確認" fid={Func.E001} goBackFunc={goBack}>
+  return (
+    <Layout title="外幣換匯確認" fid={Func.E001} goBackFunc={goBack} watting={!viewData}>
       <ExchangeWrapper className="confirmPage">
         <div className="infoSection">
           <div className="mainBlock">
@@ -155,7 +161,7 @@ const E001001 = (props) => {
         </div>
       </ExchangeWrapper>
     </Layout>
-  ) : null;
+  );
 };
 
 export default E001001;

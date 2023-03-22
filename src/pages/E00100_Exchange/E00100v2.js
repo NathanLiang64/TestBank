@@ -44,7 +44,6 @@ import { ExchangeWrapper } from './E00100.style';
 const E00100 = (props) => {
   const { location } = props;
   const { state } = location;
-  console.log(state);
 
   const history = useHistory();
   const dispatch = useDispatch();
@@ -70,7 +69,7 @@ const E00100 = (props) => {
   const schema = yup.object().shape({
     // outAccount: yup.string().required('請選擇轉出帳號'),
     currency: yup.string().required('請選擇換匯幣別'),
-    // inAccount: yup.string().required('請選擇轉入帳號'),
+    inAccount: yup.string().required('請選擇轉入帳號'),
     property: yup.string().required('請選擇匯款性質'),
     inAmount: yup.number().required('請輸入金額'),
   });
@@ -402,7 +401,6 @@ const E00100 = (props) => {
     });
   };
 
-  console.log('Render', getValues(), viewModel);
   /**
    * 主頁面輸出
    */

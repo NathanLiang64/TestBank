@@ -150,12 +150,11 @@ const useNavigation = () => {
       if (funcID) funcStack.push({ funcID, isFunction: true });
     }
 
-    const closedItem = funcStack.pop();
-
-    console.log(`Close Function (${closedItem.funcID})`); // DEBUG
     delete window.FuncParams;
 
+    const closedItem = funcStack.pop();
     if (!closedItem) return;
+    console.log(`Close Function (${closedItem.funcID})`); // DEBUG
 
     // 建立要返回功能的啟動參數。
     const startItem = funcStack.peek();

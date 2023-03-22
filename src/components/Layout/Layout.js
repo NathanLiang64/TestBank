@@ -32,6 +32,7 @@ import HeaderWrapper from './Header.style';
  *   goBackFunc: '{function} 當 goBack 按下時的自訂處理函數',
  *   inspector: '檢查是否符合資格；若不是傳回 true 則立即執行 goBackFunc 或 closeFunc',
  *   hasClearHeader: '{boolean} 將標題設為透明的，目前用於存錢計劃',
+ *   waitting: {boolean} 顯示等待畫面，直到變為 true 為止。
  * }} props
  * @returns
  */
@@ -44,6 +45,7 @@ function Layout({
   goBackFunc,
   inspector,
   hasClearHeader,
+  waitting,
 }) {
   const dispatch = useDispatch();
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -57,7 +59,7 @@ function Layout({
   const showModal = useSelector((state) => state.ModalReducer.showModal);
   const drawerData = useSelector((state) => state.ModalReducer.drawer);
   const showDrawer = useSelector((state) => state.ModalReducer.showDrawer);
-  const waitting = useSelector((state) => state.ModalReducer.waitting);
+  const forceWaitting = useSelector((state) => state.ModalReducer.waitting);
   const showAnimationModal = useSelector((state) => state.ModalReducer.showAnimationModal);
   const animationModalData = useSelector((state) => state.ModalReducer.animationModal);
 
@@ -179,13 +181,13 @@ function Layout({
    * 監控 ModalReducer.waitting，當開啟時立即關閉 Drawer 及 Popup視窗。
    */
   useEffect(async () => {
-    // console.log('showWaitting -> ', waitting);
-    // switchLoading(waitting); // 關掉的情況下還是會有loading畫面，不確定這一行用意為何
-    if (waitting) {
+    // console.log('showWaitting -> ', forceWaitting);
+    // switchLoading(forceWaitting); // 關掉的情況下還是會有loading畫面，不確定這一行用意為何
+    if (forceWaitting) {
       dispatch(setDrawerVisible(false));
       dispatch(setModalVisible(false));
     }
-  }, [waitting]);
+  }, [forceWaitting]);
 
   /**
    * Drawer GoBack
@@ -355,7 +357,7 @@ function Layout({
   //
   // 頁面外框
   //
-  if (!waitting && isPassed === true) { // 在 isPassed 還沒有值之前，永遠顯不等待中的畫面。
+  if (!(waitting || forceWaitting) && isPassed === true) { // 在 isPassed 還沒有值之前，永遠顯不等待中的畫面。
     return (
       <div>
         <HeaderWrapper $isTransparent={hasClearHeader}>
@@ -384,7 +386,7 @@ function Layout({
     <div>
       {/* watting 在 true 的情況下, 會因為沒有傳入 inspector 時，isPassed 變成 true，導致無法進到 Loading */}
       {/* 因此在這邊額外加入 waitting 進行判定 */}
-      {isPassed === null || isPassed === undefined || waitting ? (
+      {isPassed === null || isPassed === undefined || waitting || forceWaitting ? (
         // TODO 美化成原生等待畫面的背景！
         <Loading isFullscreen />
       ) : (
