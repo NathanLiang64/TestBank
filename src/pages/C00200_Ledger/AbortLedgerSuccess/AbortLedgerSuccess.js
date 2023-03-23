@@ -12,7 +12,7 @@ export default () => {
   const location = useLocation();
   // 狀態設定
   const { state } = location;
-  const [viewModel] = useState(state);
+  const [viewModel] = useState(state || {});
 
   // 欄位設定
   const CONFIG = [
@@ -49,7 +49,7 @@ export default () => {
             content={item.value}
           />
         ))}
-        <FEIBButton onClick={onConfirmClick} style={{ marginTop: 20 }}>
+        <FEIBButton onClick={onConfirmClick} style={{ margin: '20px auto' }}>
           確認
         </FEIBButton>
       </PageWrapper>

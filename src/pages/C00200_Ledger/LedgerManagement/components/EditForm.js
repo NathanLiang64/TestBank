@@ -19,7 +19,7 @@ export const EditLedgerNameForm = ({
   const dispatch = useDispatch();
   // 驗證設定
   const schema = yup.object().shape({
-    ledgerName: yup.string().max(20).required('必填'),
+    ledgerName: yup.string().max(12, '不能超過12個字').required('必填'),
   });
   // 表單設定
   const { control, handleSubmit } = useForm({
@@ -39,7 +39,7 @@ export const EditLedgerNameForm = ({
         name="ledgerName"
         rowsMin={3}
         rowsMax={6}
-        limit={20}
+        limit={12}
       />
       <Box mt={1}>
         <FEIBButton onClick={handleSubmit(onSubmitClick)}>確認</FEIBButton>
@@ -56,7 +56,7 @@ export const EditNickNameForm = ({
   const dispatch = useDispatch();
   // 驗證設定
   const schema = yup.object().shape({
-    nickName: yup.string().max(20).required('必填'),
+    nickName: yup.string().max(5, '限5個中英文').required('必填'),
   });
   // 表單設定
   const { control, handleSubmit } = useForm({
@@ -76,7 +76,7 @@ export const EditNickNameForm = ({
         name="nickName"
         rowsMin={3}
         rowsMax={6}
-        limit={20}
+        limit={5}
       />
       <Box mt={1}>
         <FEIBButton onClick={handleSubmit(onSubmitClick)}>確認</FEIBButton>

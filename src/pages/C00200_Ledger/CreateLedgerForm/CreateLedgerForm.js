@@ -32,7 +32,7 @@ export default () => {
   const schema = yup.object().shape({
     name: yup.string().max(12, '不能超過12個字').required('必填'),
     color: yup.string().required('必填'),
-    nickname: yup.string().max(8, '不能超過8個字').required('必填'),
+    nickname: yup.string().max(5, '限5個中英文').required('必填'),
     type: yup.string().required('必填'),
     account: yup.string().required('必填'),
     isShare: yup.boolean(),
