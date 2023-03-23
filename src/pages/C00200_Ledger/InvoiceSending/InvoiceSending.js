@@ -112,7 +112,7 @@ const InvoiceSending = () => {
             type="text"
             name="amount"
             control={control}
-            inputProps={{placeholder: 'NTD'}}
+            inputProps={{ placeholder: 'NTD', inputMode: 'numeric' }}
           />
           <TextInputField
             labelName="請款帳號"

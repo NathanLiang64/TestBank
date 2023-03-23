@@ -48,7 +48,17 @@ export const cardMsg = async (param) => {
   return response.data;
 };
 
+/**
+ * 取得邀請卡資訊
+ * @param {{inviteToken: string}} param inviteToken
+ * @returns {
+ * ledgerName: string
+ * sendMemberName: string
+ * }
+ */
 export const getLedger = (param) => {
+  console.log('getLedger', param);
+
   const response = {
     code: '0000',
     data: {
