@@ -15,7 +15,7 @@ export const EditNotifyForm = ({
   const dispatch = useDispatch();
   // 驗證設定
   const schema = yup.object().shape({
-    memo: yup.string().max(20, '限制字數為20個字元').required('請輸入文字'),
+    memo: yup.string().max(12, '限制字數為12個字元').required('請輸入文字'),
   });
   // 表單設定
   const { control, handleSubmit } = useForm({
@@ -35,7 +35,7 @@ export const EditNotifyForm = ({
         name="memo"
         rowsMin={3}
         rowsMax={6}
-        limit={20}
+        limit={12}
       />
       <Box mt={1}>
         <FEIBButton onClick={handleSubmit(onSubmitClick)}>確認</FEIBButton>
