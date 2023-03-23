@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useHistory } from 'react-router';
 import { Box } from '@material-ui/core';
 import { useTheme } from 'styled-components';
@@ -17,6 +17,7 @@ import LEDGER_IMG from './images/ledger.png';
 import { memberImage } from '../utils/images';
 
 export default () => {
+  const isMounted = useRef(false);
   const history = useHistory();
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -24,6 +25,7 @@ export default () => {
   // 狀態設定
   const [ledgerList, setLedgerList] = useState([]);
   const [hasLedgerData, setHasLedgerData] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
   // 點擊 - 新增帳本
   const onAddLedgerClick = () => {
     const allowCreateNewLedger = ledgerList.filter((i) => i.owner)?.length < 8;
@@ -51,12 +53,17 @@ export default () => {
     const { ledger = [] } = resFromGetAllLedgers;
     setLedgerList(ledger);
     setHasLedgerData(ledger.length !== 0);
-    dispatch(setWaittingVisible(false));
+    setIsInitializing(false);
     return null;
   };
   useEffect(() => {
-    init();
-  }, []);
+    if (!isMounted.current) {
+      isMounted.current = true;
+      init();
+    } else {
+      dispatch(setWaittingVisible(false));
+    }
+  }, [isInitializing]);
 
   return (
     <Layout title="社群帳本" goBackFunc={() => history.goBack()}>
