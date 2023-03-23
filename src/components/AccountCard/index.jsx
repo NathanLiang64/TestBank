@@ -36,9 +36,11 @@ const AccountCard = ({
   annotation,
   ariaLabel,
   children,
+  fixHeight,
   isShowAccoutNo = true,
 }) => (
   <AccountCardWrapper
+    fixHeight={fixHeight}
     title={ariaLabel || cardName}
     $cardColor={color || accountOverviewCardVarient(type).color}
     $hasShadow={hasShadow}
