@@ -30,7 +30,7 @@ import { DetailPageWrapper } from './C00600.style';
 const DepositPlanDetailPage = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const {startFunc, closeFunc} = useNavigation();
+  const { closeFunc } = useNavigation();
   const mainRef = useRef();
   const {state} = useLocation();
   const {payload, plan, viewModel} = state;
@@ -74,9 +74,11 @@ const DepositPlanDetailPage = () => {
   };
 
   const handleConfirm = async () => {
+    // 如果所選的子帳戶有餘額，要提示用戶自動轉帳。
     if (payload.currentBalance > 0) {
-      // 如果所選的子帳戶有餘額，要提示用戶自動轉帳。
-      ConfirmToTransferSubAccountBalance({ onOk: () => startFunc(Func.D001.id, {transOut: payload.bindAccountNo}), onCancel: () => {} });
+      const outAccount = viewModel.depositPlans.subAccounts.find(({accountNo}) => accountNo === payload.bindAccountNo);
+      const inAccount = viewModel.mainAccount;
+      ConfirmToTransferSubAccountBalance({ onOk: () => handleCreate(), inAccount, outAccount });
     } else handleCreate();
   };
 
@@ -130,8 +132,7 @@ const DepositPlanDetailPage = () => {
       { label: '第一筆扣款日', value: dateToString(plan.startDate) },
       { label: '目標金額', value: currencySymbolGenerator('NTD', plan.goalAmount, true) },
       { label: '每期存款金額', value: currencySymbolGenerator('NTD', plan.amount, true) },
-      // 利率可能會到小數點第五位，因此暫時不透過 toFixed 顯示
-      { label: '利率', value: `${(plan.progInfo.baseRate * 100000 + plan.progInfo.extraRate * 100000) / 100000}% (牌告+計畫加碼利率)` },
+      { label: '利率', value: `${plan.progInfo.rate}% (牌告+計畫加碼利率)` },
       { label: '累積存款金額', value: currencySymbolGenerator('NTD', plan.currentBalance, true) },
     ];
     return renderListItem(list);

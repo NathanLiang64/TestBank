@@ -17,29 +17,42 @@ export const CreatePageWrapper = styled.div`
 
   .list-group {
     padding: 1.6rem;
-  }
 
-  .list {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 2rem 0;
-    border-top: 2px solid ${({ theme }) => theme.colors.border.lighter};
+    .list {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 1.5rem 0;
+      border-top: 2px solid ${({ theme }) => theme.colors.border.lighter};
 
-    &:first-child {
-      border-top: none;
+      &:first-child {
+        border-top: none;
+      }
+
+      .rate {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        font-size: 2.4rem;
+        font-weight: 500;
+        color: ${({ theme }) => theme.colors.primary.brand};
+
+        div:last-of-type {
+          font-size: 1rem;
+          color: ${({ theme }) => theme.colors.text.mediumGray};
+        }
+      }
     }
   }
 
-  .rate {
-    font-size: 2.4rem;
-    font-weight: 500;
-    color: ${({ theme }) => theme.colors.primary.brand};
+  .announcement {
+    font-size: 1rem;
+    color: ${({ theme }) => theme.colors.text.light};
   }
 
   .terms .collapseContent {
     display: grid;
-    align-content:flex-start;
+    align-content: flex-start;
     grid-gap: 1.2rem;
     width: 100%;
     font-size: 1.4rem;

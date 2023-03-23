@@ -88,7 +88,11 @@ const DepositPlanCreatePage = () => {
                       { viewModel.programs && viewModel.programs.map((p) => (
                         <li key={uuid()} className="list">
                           <FEIBRadioLabel control={<FEIBRadio />} label={p.name} value={`${p.code}`} />
-                          <div className="rate">{`${p.rate}%`}</div>
+                          <div className="rate">
+                            <div>{`${p.rate}%`}</div>
+                            <div className="">{`基本利率${p.type ? `＋${p.extraRate}%` : ''}`}</div>
+                          </div>
+
                         </li>
                       )) }
                     </ul>
@@ -102,6 +106,8 @@ const DepositPlanCreatePage = () => {
 
               )}
             </fieldset>
+
+            <div className="announcement">基本利率請以官網公告為主</div>
 
             <Accordion title="服務條款" className="terms" onClick={lazyLoadTerms}>
               { terms ? parse(terms) : <Loading space="both" isCentered /> }

@@ -44,7 +44,9 @@ const DepositPlan = ({
   const shouldShowButton = isPlanExpired || isPlanCompleted;
   const stage = getStage(isPlanFailed, progressPercentage);
 
-  const { type, extraRate, baseRate } = progInfo;
+  const {
+    type, extraRate, baseRate, rate,
+  } = progInfo;
   const fancyCycleTimming = () => {
     if (cycleMode === 1) {
       return `周${weekNumberToChinese(cycleTiming === 0 ? 7 : cycleTiming)}`;
@@ -54,8 +56,7 @@ const DepositPlan = ({
   const bonusInfo = [
     {
       label: '適用利率',
-      // 利率可能會到小數點第五位，因此暫時不透過 toFixed 顯示
-      value: `${type ? (baseRate * 100000 + extraRate * 100000) / 100000 : Number(baseRate)}%`,
+      value: `${rate}%`,
       onClick: () => {
         const text = type ? `
         適用利率=${baseRate}%(基本利率)+${extraRate}%(專案加碼利率)，基本利率以官網公告為主，專案加碼利率將於存錢計畫達成指定條件後回饋`

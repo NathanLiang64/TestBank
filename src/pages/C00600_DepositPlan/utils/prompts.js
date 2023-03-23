@@ -1,5 +1,6 @@
 import { showCustomPrompt } from 'utilities/MessageModal';
-import { stringToDate } from 'utilities/Generator';
+import { currencySymbolGenerator, stringToDate } from 'utilities/Generator';
+import InformationList from 'components/InformationList';
 
 export const AlertMainDepositPlanHasBeenSetAlready = () => {
   showCustomPrompt({
@@ -69,15 +70,21 @@ export const ConfirmNotToCloseDepositPlan = (goHome) => {
   });
 };
 
-export const ConfirmToTransferSubAccountBalance = ({ onOk, onCancel }) => {
+export const ConfirmToTransferSubAccountBalance = ({ onOk, inAccount, outAccount }) => {
   showCustomPrompt({
     title: '新增存錢計畫',
-    // message: '欲作為存錢計畫之子帳戶餘額須為0，是否立即將您子帳戶之餘額轉入Bankee主帳戶。',
-    message: '欲作為存錢計畫之子帳戶餘額須為0，請先將您子帳戶之餘額轉入Bankee主帳戶。',
-    okContent: '立即轉帳',
+    message: (
+      <>
+        欲作為存錢計畫之子帳戶餘額須為0，是否立即將您子帳戶之餘額撥入Bankee主帳戶。
+        <InformationList title="轉出帳號" content={outAccount.accountNo} remark={outAccount.alias} />
+        <InformationList title="轉入帳號" content={inAccount.accountNo} remark={inAccount.alias} />
+        <InformationList title="轉帳金額" content={currencySymbolGenerator('NTD', outAccount.balance)} />
+      </>
+    ),
+    okContent: '立即撥款',
     cancelContent: '我再想想',
     onOk,
-    onCancel,
+    onCancel: () => {},
   });
 };
 

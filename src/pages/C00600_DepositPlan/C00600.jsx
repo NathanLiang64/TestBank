@@ -44,30 +44,29 @@ const DepositPlanPage = () => {
   const [disabled, setDisabled] = useState(true);
   const swiperRef = useRef();
 
-  const fetchDepositPlans = async () => {
-    const depositPlans = await getDepositPlans();
-    return {depositPlans};
+  const fetchViewModel = async () => {
+    dispatch(setWaittingVisible(true));
+    const depositPlans = await getDepositPlans(); // 拿取存錢計劃清單/子帳戶清單/子賬戶數量
+    const [mainAccount] = await getAccountsList('M'); // 拿取母帳號資訊
+    dispatch(setWaittingVisible(false));
+    return {depositPlans, mainAccount};
   };
 
   useEffect(async () => {
-    dispatch(setWaittingVisible(true));
-    const vModel = state?.viewModel || await fetchDepositPlans();
-    dispatch(setWaittingVisible(false));
+    const vModel = state?.viewModel || await fetchViewModel();
     setViewModel((vm) => ({...vm, ...vModel}));
 
-    // NOTE 若是從 Webview 導向存錢計畫，在此之前就會檢核有無數位帳戶，但是在「原生彩卡首頁」沒有此機制，故仍需要檢查
-    await getAccountsList('M', (accts) => {
-      if (!accts.length) {
-        showCustomPrompt({
-          title: '溫馨提醒',
-          message: '您尚未擁有 Bankee 台幣存款帳戶，是否立即申請？',
-          okContent: '立即申請',
-          onOk: () => window.open(`${process.env.REACT_APP_APLFX_URL}prod=Ta`, '_blank'),
-          cancelContent: '我再想想',
-          showCloseButton: false,
-        });
-      } else setDisabled(false);
-    });
+    // NOTE 若是從 Webview 導向存錢計畫，會檢核有無數位帳戶，但在「原生彩卡首頁」沒有此機制，仍需檢查
+    if (!vModel.mainAccount) {
+      showCustomPrompt({
+        title: '溫馨提醒',
+        message: '您尚未擁有 Bankee 台幣存款帳戶，是否立即申請？',
+        okContent: '立即申請',
+        onOk: () => window.open(`${process.env.REACT_APP_APLFX_URL}prod=Ta`, '_blank'),
+        cancelContent: '我再想想',
+        showCloseButton: false,
+      });
+    } else setDisabled(false);
   }, []);
 
   /**
@@ -110,9 +109,8 @@ const DepositPlanPage = () => {
       } else {
         showAnimationModal({
           isSuccess: false,
-          errorTitle: '設定失敗',
-          errorCode: 'E341', // TODO
-          errorDesc: '親愛的客戶，因關閉計畫失敗，請重新執行交易，如有疑問，請與本行客戶服務中心聯繫。',
+          errorTitle: '結束計畫失敗',
+          errorDesc: response.message,
         });
       }
     };
