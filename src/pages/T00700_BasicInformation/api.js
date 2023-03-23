@@ -25,8 +25,8 @@ export const getProfile = async () => {
  *    email:    email
  *    emailVerifyToken: E-Mail驗證紀錄的Token (理專21誡)
  *    zipCode:  郵遞區號
- *    county:   縣市
- *    city:     鄉鎮市區
+ *    city:   縣市
+ *    counuty:     鄉鎮市區
  *    addr:     地址
  * }} cifData
 * @returns {Promise<{ isSuccess, code, message }>} 更新成功與否的旗標。

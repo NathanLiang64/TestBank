@@ -7,7 +7,7 @@ import { FEIBButton, FEIBInputLabel } from 'components/elements';
 import { DropdownField, TextInputField } from 'components/Fields';
 
 import {
-  findCounty, localCities, localCounties,
+  findCity, localCities, localCounties,
 } from 'utilities/locationOptions';
 import { addressValidation } from 'utilities/validation';
 import { LossReissueDialogWrapper } from './S00800.style';
@@ -27,12 +27,12 @@ export const AddressEditor = ({addressValue, onSubmit}) => {
   });
 
   const [watchedCounty, watchedCity] = watch(['county', 'city']);
-  const countyOptions = localCounties.map(({ name }) => ({ label: name, value: name }));
-  const cityOptions = useMemo(() => {
-    if (!watchedCounty) return [];
-    const foundCounty = findCounty(watchedCounty);
-    if (foundCounty) {
-      return localCities[foundCounty.code].map(({ name }) => ({
+  const cityOptions = localCities.map(({ name }) => ({ label: name, value: name }));
+  const countyOptions = useMemo(() => {
+    if (!watchedCity) return [];
+    const foundCity = findCity(watchedCity);
+    if (foundCity) {
+      return localCounties[foundCity.code].map(({ name }) => ({
         label: name,
         value: name,
       }));
@@ -42,13 +42,13 @@ export const AddressEditor = ({addressValue, onSubmit}) => {
     // 因此把 county 以及 city 兩個欄位清空，要求使用者再選一次
     reset((formValues) => ({ ...formValues, county: '', city: '' }));
     return [];
-  }, [watchedCounty]);
+  }, [watchedCity]);
 
   useEffect(() => {
     // 如果 county 被更換後，原 city 值不存在於 districtOptions 內部，就 reset city
-    const isExisted = cityOptions.find(({value}) => value === watchedCity);
-    if (watchedCity && !isExisted) reset((formValues) => ({ ...formValues, city: '' }));
-  }, [watchedCounty]);
+    const isExisted = countyOptions.find(({value}) => value === watchedCounty);
+    if (watchedCounty && !isExisted) reset((formValues) => ({ ...formValues, county: '' }));
+  }, [watchedCity]);
 
   return (
     <LossReissueDialogWrapper>
@@ -58,15 +58,15 @@ export const AddressEditor = ({addressValue, onSubmit}) => {
           <div className="formElementGroup">
             <div>
               <DropdownField
-                options={countyOptions}
-                name="county"
+                options={cityOptions}
+                name="city"
                 control={control}
               />
             </div>
             <div>
               <DropdownField
-                options={cityOptions}
-                name="city"
+                options={countyOptions}
+                name="county"
                 control={control}
               />
             </div>

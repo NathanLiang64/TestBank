@@ -10,11 +10,11 @@ import { accountFormatter, dateToString, currencySymbolGenerator } from 'utiliti
 
 import SwiperLayout from 'components/SwiperLayout';
 import CopyTextIconButton from 'components/CopyTextIconButton';
-import AccountCard from 'components/AccountCard';
 import Loading from 'components/Loading';
 import { MainScrollWrapper } from 'components/Layout';
+import AccountCard from 'components/AccountCard';
 import { getInfo } from './api';
-import PageWrapper from './L00100.style';
+import PageWrapper, { ContentWrapper } from './L00100.style';
 
 /**
  * L00100_2 貸款 資訊頁 (有機會與 L00100 整合再一起，目前先分開)
@@ -58,18 +58,18 @@ const Page = (props) => {
       const branchId = card.debitAccount.substring(0, 3);
 
       return (
-        <AccountCard type="L" key={uuid()}>
+        <AccountCard type="L" key={uuid()} fixHeight>
           <div className="justify-between items-start">
             <div>
               <div>
                 {card.loanType ?? '信用貸款'}
-                &nbsp;
+            &nbsp;
                 {`(${card.subNo})`}
               </div>
               <div className="justify-between items-center">
                 <div>
                   {viewModel.branchCodeList.find((b) => b.branchNo === branchId)?.branchName ?? branchId}
-                &nbsp;
+            &nbsp;
                   {`${accountFormatter(card.account, true)}`}
                 </div>
                 <CopyTextIconButton copyText={card.account} />
@@ -87,13 +87,12 @@ const Page = (props) => {
 
   const renderContents = () => {
     if (!viewModel.loans || viewModel.loans?.length === 0) return [];
-
     return viewModel.loans.map((loan) => (
-      <div key={uuid()}>
+      <ContentWrapper>
         { loan.info ? getListing(loan.info).map((d) => (<InformationList key={uuid()} {...d} />))
           : <Loading isCentered space="top" />}
         <p className="remark">提早結清：12個月內結清，收取3%提前還款手續費；超過第12個月起提前還款收取0%手續費。</p>
-      </div>
+      </ContentWrapper>
     ));
   };
 

@@ -4,8 +4,8 @@ import { callAPI } from 'utilities/axios';
  * 個人基本資料變更
  * @param {{
  *    zipCode:  郵遞區號
- *    county:   縣市
- *    city:     鄉鎮市區
+ *    city:   縣市
+ *    county:     鄉鎮市區
  *    addr:     地址
  * }} cifData
 * @returns {Promise<{ isSuccess, code, message }>} 更新成功與否的旗標。

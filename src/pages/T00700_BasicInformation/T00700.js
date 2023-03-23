@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable object-curly-newline */
 import { useEffect, useState, useReducer } from 'react';
 import { useHistory } from 'react-router';
@@ -35,8 +34,8 @@ const T00700 = (props) => {
 
   const [viewModel, setViewModel] = useState({
     originData: null, // 變更前的原值
-    countyOptions: localCounties.map(({name}) => ({label: name, value: name})), // 縣市清單
-    cityOptions: [], // 鄉鎮市區清單
+    cityOptions: localCities.map(({name}) => ({label: name, value: name})), // 縣市清單
+    countyOptions: [], // 鄉鎮市區清單
     selectedCounty: null,
     selectedCity: null,
   });
@@ -101,8 +100,8 @@ const T00700 = (props) => {
     const authRs = await transactionAuth(authCode, values.mobile);
 
     if (authRs.result) {
-      const countyData = findCounty(values.county);
-      const {zipCode} = findCity(countyData.code, values.city);
+      const cityData = findCity(values.city);
+      const {zipCode} = findCounty(cityData.code, values.county);
 
       // 更新個人資料
       dispatch(setWaittingVisible(true));
@@ -140,18 +139,18 @@ const T00700 = (props) => {
     }
   }, []);
 
-  // 當 county 改變時，city 要被清空
+  // 當 city 改變時，county 要被清空
   useEffect(() => {
-    const foundCounty = findCounty(county);
-    if (foundCounty) {
-      viewModel.cityOptions = localCities[foundCounty.code].map((data) => ({
+    const foundCity = findCity(city);
+    if (foundCity) {
+      viewModel.countyOptions = localCounties[foundCity.code].map((data) => ({
         label: data.name,
         value: data.name,
       }));
 
-      if (!findCity(foundCounty.code, city)) {
-        viewModel.selectedCity = null;
-        setValue('city', '');
+      if (!findCounty(foundCity.code, county)) {
+        viewModel.selectedCounty = null;
+        setValue('county', '');
       }
       forceUpdate(); // 因為鄉鎮市區下拉清單已經換了！
     }
@@ -164,15 +163,15 @@ const T00700 = (props) => {
     //   county: '',
     //   city: '',
     // });
-  }, [county]);
+  }, [city]);
 
   useEffect(() => {
-    if (city === '' && viewModel.selectedCity) { // 這個情境只有在 county 變更時才會發生。
-      setValue('city', viewModel.selectedCity);
+    if (county === '' && viewModel.selectedCounty) { // 這個情境只有在 county 變更時才會發生。
+      setValue('county', viewModel.selectedCounty);
     } else {
-      viewModel.selectedCity = city;
+      viewModel.selectedCounty = county;
     }
-  }, [city]);
+  }, [county]);
 
   return (
     <Layout fid={Func.T007} title="基本資料變更">
@@ -199,16 +198,16 @@ const T00700 = (props) => {
             <FEIBInputLabel>通訊地址</FEIBInputLabel>
             <div className="selectContainer">
               <DropdownField
-                name="county"
+                name="city"
                 inputProps={{ placeholder: '請選擇縣市' }}
                 control={control}
-                options={viewModel.countyOptions}
+                options={viewModel.cityOptions}
               />
               <DropdownField
-                name="city"
+                name="county"
                 inputProps={{ placeholder: '請選擇鄉鎮市區' }}
                 control={control}
-                options={viewModel.cityOptions}
+                options={viewModel.countyOptions}
               />
             </div>
           </div>

@@ -30,7 +30,7 @@ const AccountCardWrapper = styled.div`
   ${({ $hasShadow }) => $hasShadow && 'box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);'}
   border-radius: 8px;
   width: 100%;
-  min-height: 117px;
+  min-height: ${({fixHeight}) => (fixHeight ? '117px !important' : '117px')};
   padding: 1.2rem;
   text-align: left;
   font-size: 1.6rem;
