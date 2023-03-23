@@ -1,21 +1,16 @@
 import { useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
-import { setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-import {
-  FEIBButton,
-  FEIBSwitch,
-} from 'components/elements';
+import { FEIBButton, FEIBSwitch} from 'components/elements';
 import Accordion from 'components/Accordion';
 
 /* API */
-import {
-  queryPushBind, transactionAuth, updatePushBind,
-} from 'utilities/AppScriptProxy';
-import { showCustomPrompt, showError } from 'utilities/MessageModal';
-import store from 'stores/store';
+import { queryPushBind, transactionAuth, updatePushBind } from 'utilities/AppScriptProxy';
+import { showCustomPrompt } from 'utilities/MessageModal';
+
 import { Func } from 'utilities/FuncID';
 import { queryPushSetting, bindPushSetting } from './api';
 
@@ -28,89 +23,72 @@ import S00400AccordionContent from './S00400_accordionContent';
  */
 const S00400 = () => {
   const dispatch = useDispatch();
-
   const [isPushBind, setIsPushBind] = useState(false);
   const [model, setModel] = useState({
-    communityNotice: false,
-    boardNotice: false,
-    securityNotice: false,
-    nightMuteNotice: false,
+    communityNotice: true,
+    boardNotice: true,
+    securityNotice: true,
+    nightMuteNotice: true,
   });
 
-  // 更新通知設定
-  const updateNotiSetting = async (modelParam) => {
-    dispatch(setWaittingVisible(true));
-    const param = {
-      communityNotice: modelParam.communityNotice ? 'Y' : 'N',
-      boardNotice: modelParam.boardNotice ? 'Y' : 'N',
-      securityNotice: modelParam.securityNotice ? 'Y' : 'N',
-      nightMuteNotice: modelParam.nightMuteNotice ? 'Y' : 'N',
-    };
-
-    if (isPushBind) {
-      const bindResponse = await bindPushSetting(param);
-      if (bindResponse) {
-        setModel({ ...modelParam });
-      }
-
-      return;
-    }
-
-    setModel({ ...modelParam });
-    dispatch(setWaittingVisible(false));
-  };
-
-  // 同意開啟通知設定
-  const handlePushBind = async () => {
-    // 網銀密碼／雙因子驗證
-    const verifyResult = await transactionAuth(Func.S004.authCode);
-
-    if (!verifyResult.result) {
-      await showError(verifyResult.message);
-      return;
-    }
-
-    await updatePushBind();
-
-    setIsPushBind(true);
-  };
-
   useEffect(async () => {
-    dispatch(setWaittingVisible(true));
+    // 檢查有無同意過推播
+    const { PushBindStatus } = await queryPushBind();
+    setIsPushBind(PushBindStatus);
 
-    /* 檢查有無同意過推播 */
-    const queryIsOnResponse = await queryPushBind();
-    if (queryIsOnResponse.PushBindStatus === false) {
-      showCustomPrompt({
-        message: '您尚未同意「訊息通知使用條款」，請於設定完成後點選「同意」，立即開啟訊息通知功能。',
-        onOk: () => store.dispatch(setModalVisible(false)),
+    if (!PushBindStatus) {
+      await showCustomPrompt({
+        message:
+          '您尚未同意「訊息通知使用條款」，請於設定完成後點選「同意」，立即開啟訊息通知功能。',
         okContent: '確認',
         showCloseButton: false,
       });
-
-      setModel({
-        communityNotice: true,
-        boardNotice: true,
-        securityNotice: true,
-        nightMuteNotice: true,
-      });
     } else {
-      const response = await queryPushSetting();
-      setModel({
-        communityNotice: response.communityNotice === 'Y',
-        boardNotice: response.boardNotice === 'Y',
-        securityNotice: response.securityNotice === 'Y',
-        nightMuteNotice: response.nightMuteNotice === 'Y',
-      });
+      dispatch(setWaittingVisible(true));
+      const settingResponse = await queryPushSetting();
+      dispatch(setWaittingVisible(false));
+      setModel(settingResponse);
     }
-
-    setIsPushBind(queryIsOnResponse.PushBindStatus);
-    dispatch(setWaittingVisible(false));
   }, []);
+
+  // 同意開啟通知設定
+  const handlePushBind = async () => {
+    const { result } = await transactionAuth(Func.S004.authCode); // 網銀密碼／雙因子驗證
+    if (!result) return;
+
+    dispatch(setWaittingVisible(true));
+    await updatePushBind();
+    const { isSuccess, setting } = await bindPushSetting({
+      communityNotice: 'Y',
+      boardNotice: 'Y',
+      securityNotice: 'Y',
+      nightMuteNotice: 'Y',
+    });
+    dispatch(setWaittingVisible(false));
+
+    if (!isSuccess) return;
+    setModel(setting);
+    setIsPushBind(true);
+  };
+
+  // 更新推播設定
+  const onSwitchChange = (propertyName) => async (_, checked) => {
+    if (!isPushBind) return;
+    const modelParam = { ...model, [propertyName]: checked };
+    const param = Object.keys(modelParam).reduce((acc, cur) => {
+      acc[cur] = modelParam[cur] ? 'Y' : 'N';
+      return acc;
+    }, {});
+
+    dispatch(setWaittingVisible(true));
+    const { isSuccess, setting } = await bindPushSetting(param);
+    dispatch(setWaittingVisible(false));
+    if (isSuccess) setModel(setting);
+  };
 
   return (
     <Layout fid={Func.S004} title="訊息通知設定">
-      <NoticeSettingWrapper>
+      <NoticeSettingWrapper isPushBind={isPushBind}>
         <div className="settingItem">
           <div className="settingLabel">
             <span className="main">社群通知</span>
@@ -119,13 +97,7 @@ const S00400 = () => {
           <div className="switchItem">
             <FEIBSwitch
               checked={model.communityNotice}
-              onChange={(e, checked) => {
-                const modelParam = {
-                  ...model,
-                  communityNotice: checked,
-                };
-                updateNotiSetting(modelParam);
-              }}
+              onChange={onSwitchChange('communityNotice')}
             />
           </div>
         </div>
@@ -137,13 +109,7 @@ const S00400 = () => {
           <div className="switchItem">
             <FEIBSwitch
               checked={model.boardNotice}
-              onChange={(e, checked) => {
-                const modelParam = {
-                  ...model,
-                  boardNotice: checked,
-                };
-                updateNotiSetting(modelParam);
-              }}
+              onChange={onSwitchChange('boardNotice')}
             />
           </div>
         </div>
@@ -155,13 +121,7 @@ const S00400 = () => {
           <div className="switchItem">
             <FEIBSwitch
               checked={model.securityNotice}
-              onChange={(e, checked) => {
-                const modelParam = {
-                  ...model,
-                  securityNotice: checked,
-                };
-                updateNotiSetting(modelParam);
-              }}
+              onChange={onSwitchChange('securityNotice')}
             />
           </div>
         </div>
@@ -177,27 +137,22 @@ const S00400 = () => {
           <div className="switchItem">
             <FEIBSwitch
               checked={model.nightMuteNotice}
-              onChange={(e, checked) => {
-                const modelParam = {
-                  ...model,
-                  nightMuteNotice: checked,
-                };
-                updateNotiSetting(modelParam);
-              }}
+              onChange={onSwitchChange('nightMuteNotice')}
             />
           </div>
         </div>
         {!isPushBind && (
-        <div className="term_container">
-          <Accordion className="accordion" space="both">
-            <S00400AccordionContent className="accordion_content" />
-          </Accordion>
-          <FEIBButton onClick={() => handlePushBind()}>
-            同意條款並送出
-          </FEIBButton>
-        </div>
+          <div className="term_container">
+            <Accordion
+              className="accordion"
+              space="both"
+              title="訊息通知使用條款"
+            >
+              <S00400AccordionContent className="accordion_content" />
+            </Accordion>
+            <FEIBButton onClick={handlePushBind}>同意條款並送出</FEIBButton>
+          </div>
         )}
-
       </NoticeSettingWrapper>
     </Layout>
   );
