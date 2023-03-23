@@ -21,6 +21,7 @@ export const ExchangeWrapper = styled(Layout)`
     }
     .inAmount {
       display: flex;
+      flex-direction:column;
       span {
         padding: 0px 5px;
       }
@@ -125,16 +126,16 @@ export const ExchangeWrapper = styled(Layout)`
       color: ${({ theme }) => theme.colors.text.point};
     }
   }
-  .MuiFormHelperText-root {
-    &.balance {
-      margin: 0;
-      left: 0;
-      bottom: 0;
-      transform: translateY(0%);
-      text-align: left;
-      color: ${({ theme }) => theme.colors.text.mediumGray};
-    }
-  }
+  // .MuiFormHelperText-root {
+  //   &.balance {
+  //     margin: 0;
+  //     left: 0;
+  //     bottom: 0;
+  //     transform: translateY(0%);
+  //     text-align: left;
+  //     color: ${({ theme }) => theme.colors.text.mediumGray};
+  //   }
+  // }
   .exchangeTypeLabel {
     display: flex;
     justify-content: space-between;
@@ -156,7 +157,7 @@ export const ExchangeWrapper = styled(Layout)`
   form {
     display: grid;
     align-content: flex-start;
-    grid-gap: 2rem;
+    grid-gap: 1rem;
   }
 `;
 export default ExchangeWrapper;

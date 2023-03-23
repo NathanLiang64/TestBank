@@ -25,7 +25,7 @@ import {
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import {
-  FEIBBorderButton, FEIBButton, FEIBHintMessage, FEIBRadio, FEIBRadioLabel,
+  FEIBBorderButton, FEIBButton, FEIBHintMessage, FEIBInputLabel, FEIBRadio, FEIBRadioLabel,
 } from 'components/elements';
 import { CurrencyInputField, DropdownField, TextInputField } from 'components/Fields';
 import Accordion from 'components/Accordion';
@@ -67,11 +67,11 @@ const E00100 = (props) => {
    *- 資料驗證
    */
   const schema = yup.object().shape({
-    // outAccount: yup.string().required('請選擇轉出帳號'),
+    outAccount: yup.string().required('請選擇轉出帳號'),
     currency: yup.string().required('請選擇換匯幣別'),
     inAccount: yup.string().required('請選擇轉入帳號'),
     property: yup.string().required('請選擇匯款性質'),
-    inAmount: yup.number().required('請輸入金額'),
+    inAmount: yup.number().required('請輸入金額').typeError('請輸入金額'),
   });
   const {
     handleSubmit, control, watch, reset, getValues, setValue, setError, clearErrors, // formState: { errors },
@@ -139,14 +139,14 @@ const E00100 = (props) => {
       console.log(params, state);
       const data = (params ?? state)?.model ?? { // 若有
         mode: 1,
-        outAccount: viewModel.outAccount.accountNo,
-        inAccount: viewModel.inAccount.accountNo,
+        // outAccount: viewModel.outAccount.accountNo,
+        // inAccount: viewModel.inAccount.accountNo,
         // currency: '', // 沒有預設的必要
         // property: '', // 沒有預設的必要
         inAmtMode: 1,
       };
       onModeChanged(data.mode);
-      reset(data);
+      reset((formValues) => ({...formValues, ...data}));
     }).finally(() => dispatch(setWaittingVisible(false)));
   }, []);
 
@@ -175,16 +175,18 @@ const E00100 = (props) => {
    * @param {*} newMode 新的換匯模式
    */
   const onModeChanged = (newMode) => {
-    const values = getValues();
+    // const values = getValues();
     viewModel.mode = newMode;
     viewModel.outAccount = (getAccountList(0).length > 0) ? getAccountList(0)[0].data : '';
     viewModel.inAccount = (getAccountList(1).length > 0) ? getAccountList(1)[0].data : '';
-    reset({
-      ...values,
+
+    reset((formValues) => ({
+      ...formValues,
       mode: newMode,
-      outAccount: '', // 避免輸出找不到option item的錯誤
-      inAccount: '', // 避免輸出找不到option item的錯誤
-    });
+      outAccount: '',
+      inAccount: '',
+      property: '',
+    }));
   };
 
   useEffect(() => {
@@ -193,7 +195,7 @@ const E00100 = (props) => {
     } else {
       viewModel.outAccount = getAccountList(0).find((item) => item.data.accountNo === outAccount)?.data;
     }
-  }, [outAccount]);
+  }, [outAccount, viewModel.outAccount]);
 
   useEffect(() => {
     // TODO 轉入帳號必需是轉出帳號的約定帳號
@@ -304,7 +306,7 @@ const E00100 = (props) => {
   const renderBalance = (type) => {
     const {ccy, balance} = getBalance(type);
     return (
-      <FEIBHintMessage className="balance">
+      <FEIBHintMessage>
         {`可用餘額 ${ccy} ${toCurrency(balance)}`}
       </FEIBHintMessage>
     );
@@ -347,7 +349,7 @@ const E00100 = (props) => {
         prompt = `預估可換回 新台幣 ${toCurrency(viewModel.maxExchange)}元`;
       }
       return (
-        <FEIBHintMessage className="balance">
+        <FEIBHintMessage>
           {prompt}
           <br />
           <div style={{ textAlign: 'right' }}>(實際金額以交易結果為準)</div>
@@ -377,7 +379,7 @@ const E00100 = (props) => {
         prompt = `預估需 新台幣 ${toCurrency(quota)}元`;
       }
       return (
-        <FEIBHintMessage className="balance">
+        <FEIBHintMessage>
           {prompt}
           <br />
           <div style={{ textAlign: 'right' }}>(實際金額以交易結果為準)</div>
@@ -443,24 +445,22 @@ const E00100 = (props) => {
           {viewModel.currency && (
           <section>
             <div className="inAmount">
+              <Controller control={control} name="inAmtMode"
+                render={({ field }) => (
+                  <>
+                    <FEIBInputLabel>兌換金額</FEIBInputLabel>
+                    <RadioGroup {...field} style={{alignItems: 'center'}} row name="inAmtMode" onChange={(e) => setValue('inAmtMode', parseInt(e.target.value, 10))}>
+                      <FEIBRadioLabel value={1} control={<FEIBRadio />} label={viewModel.currency.CurrencyName} />
+                      <FEIBRadioLabel value={2} control={<FEIBRadio />} label="新臺幣" />
+                    </RadioGroup>
+                  </>
+                )}
+              />
               <CurrencyInputField
-                labelName="兌換金額"
                 placeholder="請輸入兌換金額"
                 name="inAmount"
                 control={control}
                 inputProps={{ inputMode: 'numeric' }}
-              />
-              <Controller control={control} name="inAmtMode"
-                render={({ field }) => (
-                  <RadioGroup {...field} row name="inAmtMode" onChange={(e) => setValue('inAmtMode', parseInt(e.target.value, 10))}>
-                    <FEIBRadioLabel value={1} control={<FEIBRadio />} className="customWidth"
-                      label={viewModel.currency.CurrencyName}
-                    />
-                    <FEIBRadioLabel value={2} control={<FEIBRadio />}
-                      label="新臺幣"
-                    />
-                  </RadioGroup>
-                )}
               />
             </div>
             {renderEstimateNeed(inAmount, (inAmtMode === 2))}

@@ -98,7 +98,7 @@ const E001001 = (props) => {
    * 主頁面輸出
    */
   return (
-    <Layout title="外幣換匯確認" fid={Func.E001} goBackFunc={goBack} watting={!viewData}>
+    <Layout title="外幣換匯確認" fid={Func.E001} goBackFunc={goBack} waitting={!viewData}>
       <ExchangeWrapper className="confirmPage">
         <div className="infoSection">
           <div className="mainBlock">
