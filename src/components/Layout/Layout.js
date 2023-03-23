@@ -249,7 +249,7 @@ function Layout({
 
         // 取得需要使用者輸入驗證的項目。
         const authMode = await getTransactionAuthMode(authCode);
-        if (!authMode || (authMode & 0x0B) === 0x00) {
+        if (!authMode) {
           onFailed('尚未完成行動裝置綁定，無法使用此功能！');
           return;
         }
