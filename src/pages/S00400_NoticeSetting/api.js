@@ -11,8 +11,16 @@ import { callAPI } from 'utilities/axios';
  * @returns
  */
 export const bindPushSetting = async (request) => {
-  const response = await callAPI('/client/v1/bindPushSetting', request);
-  return response.data;
+  const {isSuccess, data} = await callAPI('/client/v1/bindPushSetting', request);
+  return {
+    isSuccess,
+    setting: {
+      communityNotice: data.communityNotice === 'Y',
+      boardNotice: data.boardNotice === 'Y',
+      securityNotice: data.securityNotice === 'Y',
+      nightMuteNotice: data.nightMuteNotice === 'Y',
+    },
+  };
 };
 
 /**
@@ -25,6 +33,12 @@ export const bindPushSetting = async (request) => {
  * }
  */
 export const queryPushSetting = async () => {
-  const response = await callAPI('/client/v1/queryPushSetting');
-  return response.data;
+  const {data} = await callAPI('/client/v1/queryPushSetting');
+
+  return {
+    communityNotice: data.communityNotice === 'Y',
+    boardNotice: data.boardNotice === 'Y',
+    securityNotice: data.securityNotice === 'Y',
+    nightMuteNotice: data.nightMuteNotice === 'Y',
+  };
 };

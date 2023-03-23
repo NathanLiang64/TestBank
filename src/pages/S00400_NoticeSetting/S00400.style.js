@@ -27,6 +27,8 @@ const NoticeSettingWrapper = styled(Layout)`
           color: ${({ theme }) => theme.colors.text.light};
         }
       }
+
+      opacity:${({ isPushBind }) => (isPushBind ? 1 : 0.5)}
     }
   .term_container {
     padding: 0 0 2rem 0;

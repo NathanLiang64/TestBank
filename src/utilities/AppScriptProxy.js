@@ -376,7 +376,7 @@ async function restoreData(key, remove) {
 
 /**
  * 查詢訊息通知綁定狀態
- * @returns {{PushBindStatus: boolean}} 狀態布林值
+ * @returns {Promiase<{PushBindStatus: boolean}>} 狀態布林值
  */
 async function queryPushBind() {
   return await callAppJavaScript('queryPushBind', null, true, () => {
