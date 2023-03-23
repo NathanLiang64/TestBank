@@ -1,4 +1,4 @@
-export const localCounties = [
+export const localCities = [
   { code: 'A', name: '臺北市', id: '63000000' },
   { code: 'B', name: '臺中市', id: '66000000' },
   { code: 'C', name: '基隆市', id: '10017000' },
@@ -32,10 +32,10 @@ export const localCounties = [
  *   id: String,
  * }}
  */
-export const findCounty = (searchKey) => {
+export const findCity = (searchKey) => {
   const targetName = searchKey.trim().replace('台', '臺');
   const code = searchKey.match(/[A-Z]/)?.[0];
-  const result = localCounties.find((county) => (code && code === county.code) || (targetName === county.name));
+  const result = localCities.find((city) => (code && code === city.code) || (targetName === city.name));
   if (!result) {
     return null; // {code: '', name: '', id: ''};
   }
@@ -51,17 +51,17 @@ export const findCounty = (searchKey) => {
 *   id: String,
 * }}
 */
-export const findCity = (countyCode, searchKey) => {
+export const findCounty = (cityCode, searchKey) => {
   const targetName = searchKey.trim();
   const code = searchKey.match(/[A-Z]\d{2}/)?.[0];
   // eslint-disable-next-line no-use-before-define
-  const result = localCities[countyCode]?.find((city) => (code && code === city.code) || (targetName === city.name));
+  const result = localCounties[cityCode]?.find((county) => (code && code === county.code) || (targetName === county.name));
   if (result) return result;
 
   return null; // {code: '', name: '', id: ''};
 };
 
-export const localCities = {
+export const localCounties = {
   A: [
     {
       code: 'A01', name: '松山區', id: '63000010', zipCode: '105',

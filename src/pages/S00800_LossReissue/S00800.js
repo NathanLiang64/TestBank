@@ -8,7 +8,7 @@ import { FEIBButton } from 'components/elements';
 import { EditIcon } from 'assets/images/icons';
 import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
 import { transactionAuth } from 'utilities/AppScriptProxy';
-import { setDrawerVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { setDrawerVisible, setModalVisible, setWaittingVisible } from 'stores/reducers/ModalReducer';
 
 import { Func } from 'utilities/FuncID';
 import { accountFormatter } from 'utilities/Generator';
@@ -38,13 +38,13 @@ const LossReissue = () => {
   const addressText = useMemo(() => {
     if (!addressValue) return '';
     const {county, city, addr} = addressValue;
-    return `${county}${city}${addr}`;
+    return `${city} ${county} ${addr}`;
   }, [addressValue]);
 
   const updateDebitCardStatus = async () => {
     dispatch(setWaittingVisible(true));
-
     const cardInfo = await getStatus();
+    dispatch(setWaittingVisible(false));
     if (cardInfo) {
       const model = {
         accountNo: accountFormatter(cardInfo.account, true),
@@ -60,8 +60,8 @@ const LossReissue = () => {
 
       if (model.reissue) {
         // 只有 5.掛失 或 6.註銷 才需要用到地址。
-        const county = findCounty(cardInfo.addrCity.trim());
-        const city = findCity(county.code, cardInfo.addrDistrict.trim());
+        const city = findCity(cardInfo.addrCity.trim());
+        const county = findCounty(city.code, cardInfo.addrDistrict.trim());
         setAddressValue({
           county: county?.name ?? '',
           city: city?.name ?? '',
@@ -71,12 +71,11 @@ const LossReissue = () => {
 
       setDebitCardInfo(model);
     }
-
-    dispatch(setWaittingVisible(false));
   };
 
   // 執行掛失或補發
   const executeAction = async () => {
+    dispatch(setModalVisible(false));
     const auth = await transactionAuth(Func.S008.authCode);
 
     if (auth && auth.result) {
@@ -101,9 +100,10 @@ const LossReissue = () => {
 
   const handleClickEditAddress = async () => {
     const onSubmit = async (values) => {
+      dispatch(setDrawerVisible(false));
       const { county, city } = values;
-      const {code} = findCounty(county);
-      const {zipCode} = findCity(code, city);
+      const {code} = findCity(city);
+      const {zipCode} = findCounty(code, county);
 
       const auth = await transactionAuth(Func.S008.authCode);
       if (auth && auth.result) {
