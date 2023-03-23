@@ -114,7 +114,7 @@ const AmountSetting = (param) => {
           type="text"
           name={`memberAmount.${id}`}
           control={eachAmountControl}
-          inputProps={{ disabled: amountMode !== '2' }}
+          inputProps={{ disabled: amountMode !== '2', inputMode: 'numeric' }}
         />
       </div>
     </div>
@@ -158,7 +158,7 @@ const AmountSetting = (param) => {
             type="text"
             name="fixedAmount"
             control={amountControl}
-            inputProps={{ disabled: amountMode !== '0', onBlur: () => onFixedAmountBlur() }}
+            inputProps={{ inputMode: 'numeric', disabled: amountMode !== '0', onBlur: () => onFixedAmountBlur() }}
           />
           <div className="separate_field">
             <TextInputField
@@ -166,7 +166,7 @@ const AmountSetting = (param) => {
               type="text"
               name="shareAmount"
               control={amountControl}
-              inputProps={{ disabled: amountMode !== '1' }}
+              inputProps={{ inputMode: 'numeric', disabled: amountMode !== '1' }}
             />
             <div onClick={() => onShareClick()} style={{ height: '3.2rem', minHeight: '3.2rem' }}>
               均攤
