@@ -86,7 +86,7 @@ export default () => {
         </Accordion>
         <FEIBButton
           onClick={handleSubmit((data) => onSubmitClick(data))}
-          style={{ marginTop: 20 }}
+          style={{ margin: '20px auto' }}
         >
           確認
         </FEIBButton>
