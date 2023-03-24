@@ -205,7 +205,7 @@ const E00100 = (props) => {
     } else {
       viewModel.inAccount = getAccountList(1).find((item) => item.data.accountNo === inAccount)?.data;
     }
-  }, [inAccount]);
+  }, [inAccount, viewModel.inAccount]);
 
   /**
    * 檢查是否超出餘額
@@ -262,14 +262,15 @@ const E00100 = (props) => {
    * 取得目前換匯類型的交易性質清單
    */
   const getPropertyList = () => {
-    let properties = viewModel.properties[viewModel.mode];
+    const properties = viewModel.properties[viewModel.mode];
     if (!properties) {
       viewModel.properties[viewModel.mode] = [];
       const api = getExchangePropertyList({ trnsType: viewModel.mode, action: '1' }).then((items) => items);
+
       Promise.all([api]).then((values) => {
         const [items] = values;
         viewModel.properties[viewModel.mode] = items;
-        properties = items;
+        forceUpdate();
       });
     }
     return properties?.map((prop) => ({ label: prop.leglDesc, value: prop.leglCode })) ?? []; // TODO key: item.leglCode,
@@ -460,6 +461,7 @@ const E00100 = (props) => {
                 placeholder="請輸入兌換金額"
                 name="inAmount"
                 control={control}
+                currency={inAmtMode === 2 ? 'NTD' : currency}
                 inputProps={{ inputMode: 'numeric' }}
               />
             </div>

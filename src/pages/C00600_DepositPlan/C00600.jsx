@@ -16,7 +16,7 @@ import {
 import { Func } from 'utilities/FuncID';
 import { getAccountsList } from 'utilities/CacheData';
 import { transactionAuth } from 'utilities/AppScriptProxy';
-import { showAnimationModal, showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
+import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
 
 import EmptyPlan from './components/EmptyPlan';
 import EmptySlide from './components/EmptySlide';
@@ -96,23 +96,17 @@ const DepositPlanPage = () => {
       dispatch(setModalVisible(false)); // 先關掉 modal 避免閃爍
       const {result} = await transactionAuth(Func.C006.authCode); // 需通過 2FA 或 網銀密碼 驗證才能關閉計劃。
       if (!result) return;
-      dispatch(setWaittingVisible(true));
-      const response = await closeDepositPlan(plan.planId);
-      dispatch(setWaittingVisible(false));
-      if (response.result) {
-        setViewModel((vm) => {
-          const plans = vm.depositPlans.plans.filter(({planId}) => planId !== plan.planId);
-          return {...vm, depositPlans: {...vm.depositPlans, plans}};
-        });
 
-        ConfirmDepositPlanHasBeenClosed({ email: response.email, onOk: () => goHome() });
-      } else {
-        showAnimationModal({
-          isSuccess: false,
-          errorTitle: '結束計畫失敗',
-          errorDesc: response.message,
-        });
-      }
+      dispatch(setWaittingVisible(true));
+      const {isSuccess, email} = await closeDepositPlan(plan.planId);
+      dispatch(setWaittingVisible(false));
+      if (!isSuccess) return;
+
+      setViewModel((vm) => {
+        const plans = vm.depositPlans.plans.filter(({planId}) => planId !== plan.planId);
+        return {...vm, depositPlans: {...vm.depositPlans, plans}};
+      });
+      ConfirmDepositPlanHasBeenClosed({ email, onOk: goHome });
     };
 
     PromptShouldCloseDepositPlanOrNot({ endDate: plan.endDate, onOk: confirmTermination, type: plan.progInfo.type});

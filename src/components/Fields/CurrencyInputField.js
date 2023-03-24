@@ -2,13 +2,14 @@ import React, { useCallback } from 'react';
 import { useController } from 'react-hook-form';
 import { FEIBInputLabel, FEIBInput, FEIBErrorMessage } from 'components/elements';
 import CurrencyInput from 'react-currency-input-field';
+import { getCurrenyInfo } from 'utilities/Generator';
 import { TextInputFieldWrapper } from './fields.style';
 
 export const CurrencyInputField = ({
   labelName,
   $color,
   fontSize = 1.6,
-  symbol,
+  currency = 'NTD',
   inputProps,
   ...controlProps
 }) => {
@@ -24,12 +25,12 @@ export const CurrencyInputField = ({
       <CurrencyInput
         {...other}
         ref={(ref) => inputRef(ref ? ref.inputElement : null)}
-        prefix={symbol ?? '$'}
+        prefix={getCurrenyInfo(currency)?.symbol ?? '$'}
         onValueChange={(e) => onChange(e ?? '')}
         onBlur={onBlur}
       />
     );
-  }, [symbol]);
+  }, [currency]);
 
   return (
     <TextInputFieldWrapper>

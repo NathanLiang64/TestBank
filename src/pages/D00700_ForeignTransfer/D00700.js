@@ -8,7 +8,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { loadFuncParams } from 'hooks/useNavigation';
 import { Func } from 'utilities/FuncID';
-import { getCurrenyInfo } from 'utilities/Generator';
 import { getAccountsList } from 'utilities/CacheData';
 
 /* Elements */
@@ -157,7 +156,7 @@ const D00700 = (props) => {
             <div>
               <CurrencyInputField
                 name="amount"
-                symbol={currency ? getCurrenyInfo(currency).symbol : '$'}
+                currency={currency}
                 control={control}
                 labelName="金額"
                 inputProps={{ inputMode: 'numeric', placeholder: '請輸入金額' }}

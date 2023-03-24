@@ -193,8 +193,8 @@ export const updateDepositPlan = async (request) => {
  */
 export const closeDepositPlan = async (planId) => {
   // 有沒有達標，前端可判斷，因為有帳戶餘額及目標金額
-  const response = await callAPI('/fintech/depositPlan/v1/close', {planId});
-  return response.data;
+  const {isSuccess, data: {email}} = await callAPI('/fintech/depositPlan/v1/close', {planId});
+  return {isSuccess, email};
 };
 
 /**
