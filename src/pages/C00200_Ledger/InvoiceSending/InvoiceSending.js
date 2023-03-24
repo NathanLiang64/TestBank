@@ -76,10 +76,11 @@ const InvoiceSending = () => {
   };
 
   useEffect(() => {
+    console.log({state});
     /* 自動填入綁定帳號 */
     reset((formValues) => ({
       ...formValues,
-      account: `${state.bank}-${accountFormatter(state.account, true)}`,
+      account: `${state.bankeeAccount.bankCode}-${accountFormatter(state.bankeeAccount.accountNumber, true)}`,
     }));
   }, []);
 

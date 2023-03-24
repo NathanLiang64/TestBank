@@ -5,11 +5,8 @@ export const PageWrapper = styled(Layout)`
   background: ${({ theme }) => theme.colors.background.light};
   display: flex;
   flex-direction: column;
-  padding: 0 20;
-
-  // 使畫面可上下捲動
-  height: 100vh;
-  overflow: auto;
+  overflow-y: scroll;
+  padding-bottom: 2rem;
 
   .info {
     margin-bottom: 2rem;
@@ -22,8 +19,8 @@ export const EditRecordFormWrapper = styled(Layout)`
   flex-direction: column;
   padding: 0 20;
   min-height: fit-content;
-
-  overflow: auto;
+  overflow-y: scroll;
+  padding-bottom: 2rem;
 
   .edit_form {
     display: grid;

@@ -5,6 +5,13 @@ export const getBonusInfo = () => {
   return bonusInfo;
 };
 
+export const preTransfer = (param) => {
+  console.log('api /preTransfer', {param});
+  const response = '';
+
+  return response;
+};
+
 export const transfer = (data) => {
   console.log('api /transfer', {data});
   return transferConfirm;

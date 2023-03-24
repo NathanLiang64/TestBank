@@ -22,7 +22,7 @@ import { txUsageOptions } from '../utils/usgeType';
  * C002 社群帳本 - 轉帳
  */
 const TransferSetting = () => {
-  const { state } = useLocation();
+  const { state } = useLocation(); // TODO Guard
   const history = useHistory();
   const [transData, setTransData] = useState();
   const [bonusInfo, setBonusInfo] = useState();
@@ -36,11 +36,11 @@ const TransferSetting = () => {
     target: yup.string().required('請輸入轉出對象'),
     transInBank: yup.string().required('請輸入轉入銀行代碼'),
     transInAcct: yup.string().required('請輸入轉入帳號'),
-    type: yup.string().required('請選擇性質'),
-    memo: yup.string(), // TODO 字數上限
+    type: yup.string(),
+    memo: yup.string().max(12), // 字數上限: 12
   });
   const {
-    control, handleSubmit, reset, setValue, getValues, trigger,
+    control, handleSubmit, reset, setValue, getValues, trigger, watch,
   } = useForm({
     defaultValues: {
       transOutAcct: '',
@@ -53,6 +53,7 @@ const TransferSetting = () => {
     },
     resolver: yupResolver(schema),
   });
+  watch('transInBank'); // NOTE 使BankCodeInput顯示所選擇的項目
 
   const warningText = (text) => (
     <div className="warning_text">
@@ -85,9 +86,7 @@ const TransferSetting = () => {
    * 有帶入參數者皆不可修改
    */
   useEffect(() => {
-    // 從 ledgerDetail 進入 (給錢): 帶整個state，欄位預設皆為空
-    // 從要錢卡、owner請款管理、partner付款管理、進入: 帶要錢資訊，欄位預設皆非空
-    const initialData = transferSettingInitialData; // TODO: 從前一頁面帶入
+    const initialData = transferSettingInitialData; // TODO 從前一頁面帶入
     // const initialData = state; // 從前一頁面帶入
     setTransData(initialData);
 
@@ -104,7 +103,7 @@ const TransferSetting = () => {
 
   // 取得可用餘額＆跨轉優惠
   useEffect(() => {
-    const result = getBonusInfo();
+    const result = getBonusInfo(); // TODO cannect api
     setBonusInfo(result);
   }, []);
 
@@ -132,10 +131,10 @@ const TransferSetting = () => {
             <TextInputField labelName="金額" type="text" control={control} name="amount" inputProps={{placeholder: '金額', inputMode: 'numeric', disabled: transData.amount !== 0}} />
           </div>
           <TextInputField labelName="對象" type="text" control={control} name="target" inputProps={{placeholder: '對象', disabled: transData.target !== ''}} />
-          <BankCodeInput control={control} name="transInBank" value={getValues('transInBank')} setValue={setValue} trigger={trigger} readonly={transData.transInBank !== ''} />
-          {/* TODO getValues('transInBank') 取到 default value */}
-          {console.log('TransferSetting', {getBankCode: getValues('transInBank')})}
-          <TextInputField labelName="轉入帳號" type="text" control={control} name="transInAcct" inputProps={{placeholder: '轉入帳號', inputMode: 'numeric', disabled: transData.transInAccount !== ''}} />
+          <div>
+            <BankCodeInput control={control} name="transInBank" value={getValues('transInBank')} setValue={setValue} trigger={trigger} readonly={transData.transIn.bank !== ''} />
+            <TextInputField labelName="轉入帳號" type="text" control={control} name="transInAcct" inputProps={{placeholder: '轉入帳號', inputMode: 'numeric', disabled: transData.transIn.account !== ''}} />
+          </div>
           <DropdownField labelName="性質" options={txUsageOptions} name="type" control={control} inputProps={{disabled: transData.usageType !== ''}} />
           <TextInputField labelName="備註" type="text" control={control} name="memo" inputProps={{placeholder: '備註', disabled: transData.memo !== ''}} />
           {warningText('轉帳前請多思考，避免被騙更苦惱')}
