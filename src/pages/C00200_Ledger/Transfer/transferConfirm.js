@@ -9,9 +9,10 @@ import { toCurrency } from 'utilities/Generator';
 import Accordion from 'components/Accordion';
 import { FEIBButton } from 'components/elements';
 import CiecleCheckPurple from 'assets/images/icon_circle_check_purple.png';
+import CountDown from 'components/CountDown';
 import C002TransferAccordionContent from './accordionContent';
 import { TransferConfirmWrapper } from './transfer.style';
-import { transfer } from './api';
+import { preTransfer, transfer } from './api';
 
 const TransferConfirm = () => {
   const history = useHistory();
@@ -19,13 +20,14 @@ const TransferConfirm = () => {
 
   const {control, handleSubmit, reset} = useForm({
     defaultValues: {
-      transOutAcct: undefined,
+      transOutAcct: '',
       amount: '0',
-      target: undefined,
-      transInBank: undefined,
-      transInAcct: undefined,
+      target: '',
+      transInBank: '',
+      transInAcct: '',
       type: '1',
-      memo: undefined,
+      memo: '',
+      otpInput: '',
     },
   });
 
@@ -62,6 +64,18 @@ const TransferConfirm = () => {
     );
   };
 
+  const apiPreTransfer = async () => {
+    const response = await preTransfer();
+
+    console.log('apiPreTransfer', {response});
+    // TODO set response (countdown seconds and more?) to useState
+  };
+
+  const onOtpExpire = () => {
+    // TODO 確認otp過期後行為
+    apiPreTransfer();
+  };
+
   const onSubmit = (data) => {
     const dataToSend = {
       ...data,
@@ -76,16 +90,14 @@ const TransferConfirm = () => {
   const goBack = () => history.goBack();
 
   useEffect(() => {
-    reset((formValues) => ({
-      ...formValues,
-      transOutAcct: state.transOutAcct,
+    reset((formValue) => ({
+      ...formValue,
+      ...state,
       amount: `NTD${toCurrency(state.amount)}`,
-      target: state.target,
-      transInBank: state.transInBank,
-      transInAcct: state.transInAcct,
-      type: state.type,
-      memo: state.memo,
     }));
+
+    // TODO api preTransfer: get otp countdown time and code?
+    apiPreTransfer();
   }, []);
   return (
     <Layout title="轉帳" goBackFunc={goBack}>
@@ -115,6 +127,24 @@ const TransferConfirm = () => {
           <Accordion space="both">
             <C002TransferAccordionContent />
           </Accordion>
+
+          {/* OTP 倒數、輸入 */}
+          <div className="otp_container">
+            <TextInputField
+              type="text"
+              control={control}
+              name="otpInput"
+              labelName="OTP驗證碼"
+            />
+            <div className="timer_wrapper">
+              <div className="timer_text">剩餘時間</div>
+              <CountDown
+                seconds={300}
+                onEnd={onOtpExpire}
+                replay
+              />
+            </div>
+          </div>
           <FEIBButton type="submit">確認</FEIBButton>
         </form>
       </TransferConfirmWrapper>

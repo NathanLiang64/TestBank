@@ -84,7 +84,11 @@ export default () => {
       label: '要錢',
       onClick: () => {
         console.log('要錢', state);
-        history.push('/InvoiceSending', state);
+        if (state.owner) {
+          history.push('/paymentRequest', state);
+        } else {
+          history.push('/InvoiceSending', state);
+        }
       },
     },
   ];

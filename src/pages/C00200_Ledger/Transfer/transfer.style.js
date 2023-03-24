@@ -5,6 +5,8 @@ import Layout from 'components/Layout';
 export const TransferPageWrapper = styled(Layout)`
   background: ${({ theme }) => theme.colors.background.light};
   min-height: fit-content;
+  overflow-y: scroll;
+  padding-bottom: 2rem;
 
   .transfer_form {
     display: grid;
@@ -28,6 +30,8 @@ export const TransferPageWrapper = styled(Layout)`
 export const TransferConfirmWrapper = styled(Layout)`
   background: ${({ theme }) => theme.colors.background.light};
   min-height: fit-content;
+  overflow-y: scroll;
+  padding-bottom: 2rem;
 
   .banner {
     background: ${({ theme }) => theme.colors.basic.white};
@@ -58,12 +62,29 @@ export const TransferConfirmWrapper = styled(Layout)`
       color: ${({ theme }) => theme.colors.text.lightGray};
       font-size: 1.4rem;
     }
+
+    .otp_container {
+      display: grid;
+      grid-auto-flow: column;
+      grid-template-columns: 50% 30%;
+      justify-content: space-between;
+      margin: 1rem;
+
+      .timer_wrapper {
+        .timer_text {
+          font-size: 1.4rem;
+          line-height: 1;
+        }
+      }
+    }
   }
 `;
 
 export const TransferFinishWrapper = styled(Layout)`
   background: ${({ theme }) => theme.colors.background.light};
   min-height: fit-content;
+  overflow-y: scroll;
+  padding-bottom: 2rem;
 
   .banner {
     background: ${({ theme }) => theme.colors.basic.white};

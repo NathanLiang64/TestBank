@@ -5,7 +5,8 @@ const PageWrapper = styled(Layout)`
   background: ${({ theme }) => theme.colors.background.light};
   display: flex;
   flex-direction: column;
-  padding: 0 20;
+  overflow-y: scroll;
+  padding-bottom: 2rem;
 
   .content_wrapper {
     margin: 2rem 0;
