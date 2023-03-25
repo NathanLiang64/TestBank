@@ -49,13 +49,13 @@ const InvoiceSending = () => {
 
   const onSubmit = async (data) => {
     const requestData = {
-      txType: state.txType,
+      txType: data.usage, // TODO 確認txType應為哪項參數
       txUsage: data.usage,
       txAmount: data.amount,
       txDesc: data.memo,
       bankAccount: {
-        bankCode: state.bankCode,
-        account: state.bankAccount,
+        bankCode: state.bankeeAccount.bankCode,
+        account: state.bankeeAccount.accountNumber,
       },
       messageCard: `WO${imgId}`,
     };

@@ -181,7 +181,7 @@ const PaymentRequest = () => {
   /* 自 state 取得帳本成員清單（第二步使用） */
   useEffect(() => {
     // setMemberList(mockBankeeMemberList); // mock data
-    setMemberList(state.bankeeMember);
+    setMemberList(state.memberList);
   }, []);
 
   return (

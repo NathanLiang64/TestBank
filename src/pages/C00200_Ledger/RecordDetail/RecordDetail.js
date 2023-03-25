@@ -42,7 +42,7 @@ const RecordDetail = () => {
           {renderInformationContent('說明', model.txDesc ?? '--')}
         </div>
         {/* 已入帳單筆交易明細暫時不能編輯，進入RecordDetail頁者，若非未入帳交易明細者，不顯示編輯按鈕 */}
-        {(model.editable && model.owner) && <FEIBButton onClick={handleEditOnClick}>編輯</FEIBButton>}
+        {(model.editable && model.owner && model.txStatus !== 1) && <FEIBButton onClick={handleEditOnClick}>編輯</FEIBButton>}
       </PageWrapper>
       )}
     </Layout>
