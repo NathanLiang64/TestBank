@@ -1,20 +1,17 @@
-/* eslint react/no-array-index-key: 0 */
-
 import { useEffect, useReducer } from 'react';
 import { useHistory } from 'react-router';
 import uuid from 'react-uuid';
 
+import Loading from 'components/Loading';
+import LoanCard from 'components/CreditCard';
 import Layout from 'components/Layout/Layout';
+import SwiperLayout from 'components/SwiperLayout';
+import { MainScrollWrapper } from 'components/Layout';
 import InformationList from 'components/InformationList';
 import { accountFormatter, dateToString, currencySymbolGenerator } from 'utilities/Generator';
 
-import SwiperLayout from 'components/SwiperLayout';
-import CopyTextIconButton from 'components/CopyTextIconButton';
-import Loading from 'components/Loading';
-import { MainScrollWrapper } from 'components/Layout';
-import AccountCard from 'components/AccountCard';
 import { getInfo } from './api';
-import PageWrapper, { ContentWrapper } from './L00100.style';
+import { ContentWrapper } from './L00100.style';
 
 /**
  * L00100_2 貸款 資訊頁 (有機會與 L00100 整合再一起，目前先分開)
@@ -56,31 +53,20 @@ const Page = (props) => {
     const cardsWithEmptySlide = [...cards];
     return cardsWithEmptySlide.map((card) => {
       const branchId = card.debitAccount.substring(0, 3);
+      const branchName = viewModel.branchCodeList.find((b) => b.branchNo === branchId)?.branchName ?? branchId;
+      const accountNo = accountFormatter(card.account, true);
 
       return (
-        <AccountCard type="L" key={uuid()} fixHeight>
-          <div className="justify-between items-start">
-            <div>
-              <div>
-                {card.loanType ?? '信用貸款'}
-            &nbsp;
-                {`(${card.subNo})`}
-              </div>
-              <div className="justify-between items-center">
-                <div>
-                  {viewModel.branchCodeList.find((b) => b.branchNo === branchId)?.branchName ?? branchId}
-            &nbsp;
-                  {`${accountFormatter(card.account, true)}`}
-                </div>
-                <CopyTextIconButton copyText={card.account} />
-              </div>
-            </div>
-          </div>
-          <div className="justify-between items-center">
-            <div>貸款餘額</div>
-            <div className="balance">{currencySymbolGenerator(card.currency ?? 'NTD', card.balance, true)}</div>
-          </div>
-        </AccountCard>
+        <div style={{paddingTop: '5.2rem'}}>
+          <LoanCard
+            cardName={`${card.loanType ?? '信用貸款'} ${card.subNo}`}
+            accountNo={`${branchName} ${accountNo}`}
+            color="lightPurple"
+            annotation="貸款餘額"
+            balance={card.balance}
+            fixHeight
+          />
+        </div>
       );
     });
   };
@@ -103,19 +89,19 @@ const Page = (props) => {
   return (
     <Layout title="貸款資訊" goBackFunc={() => history.replace('L00100', {viewModel})}>
       <MainScrollWrapper>
-        <PageWrapper>
-          <SwiperLayout
-            slides={renderSlides(viewModel.loans)}
-            hasDivider={false}
-            slidesPerView={1.06}
-            spaceBetween={8}
-            centeredSlides
-            onSlideChange={(swiper) => fetchInfo(swiper.activeIndex)}
-            initialSlide={viewModel.defaultSlide}
-          >
-            {renderContents()}
-          </SwiperLayout>
-        </PageWrapper>
+
+        <SwiperLayout
+          slides={renderSlides(viewModel.loans)}
+          hasDivider={false}
+          slidesPerView={1.06}
+          spaceBetween={8}
+          centeredSlides
+          onSlideChange={(swiper) => fetchInfo(swiper.activeIndex)}
+          initialSlide={viewModel.defaultSlide}
+        >
+          {renderContents()}
+        </SwiperLayout>
+
       </MainScrollWrapper>
     </Layout>
   );

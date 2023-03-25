@@ -1,7 +1,10 @@
 import styled from 'styled-components';
 
 const CopyTextIconButtonWrapper = styled.div`
-  ${({ $isInline }) => $isInline && `
+  display: flex;
+  align-items: center;
+  ${({ $isInline }) => $isInline
+    && `
     display: inline;
     vertical-align: 2px;
 
@@ -10,7 +13,8 @@ const CopyTextIconButtonWrapper = styled.div`
     }
   `}
 
-  .copiedTextMessage {}
+  .copiedTextMessage {
+  }
 `;
 
 export default CopyTextIconButtonWrapper;

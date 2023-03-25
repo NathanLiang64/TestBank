@@ -24,10 +24,6 @@ import AccountCardWrapper from './CreditCard.style';
 * 13. functionList -> 卡片功能清單，型別為陣列，組件 type 為 original 的卡片 (完整內容) 才需要傳入
 * */
 
-const creditFormatter = (account) => (
-  account ? `${account.slice(0, 4)}-****-****-${account.slice(12, 16)}` : '-'
-);
-
 const AccountCard = ({
   type = 'M',
   cardName,
@@ -41,21 +37,23 @@ const AccountCard = ({
   children,
   onMoreClicked,
   functionList,
+  fixHeight,
 }) => (
   <AccountCardWrapper
     title={ariaLabel || cardName}
     $cardColor={color || accountOverviewCardVarient(type).color}
     onClick={onClick}
+    fixHeight={fixHeight}
   >
     { children ?? (
       <>
         <div className="justify-between">
-          <div>{cardName}</div>
+          <div className="cardName">{cardName}</div>
           {
             onMoreClicked && (<div className="moreIconButton"><FEIBIconButton aria-label="展開下拉式選單" onClick={onMoreClicked}><MoreIcon /></FEIBIconButton></div>)
           }
         </div>
-        <p>{accountNo ? creditFormatter(accountNo) : '\u00A0' }</p>
+        <div className="accountNo">{accountNo}</div>
         <div className="justify-between items-center">
           <div>{annotation}</div>
           <div className="balance">

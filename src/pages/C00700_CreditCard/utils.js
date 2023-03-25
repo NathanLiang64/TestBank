@@ -54,3 +54,5 @@ export const renderBody = (bodys) => bodys.map((body) => (
     && <th>{body.percentage}</th>}
   </tr>
 ));
+
+export const creditFormatter = (account) => (account ? `${account.slice(0, 4)}-****-****-${account.slice(12, 16)}` : '-');

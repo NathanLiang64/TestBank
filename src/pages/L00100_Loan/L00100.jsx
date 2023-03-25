@@ -1,32 +1,28 @@
-/* eslint react/no-array-index-key: 0 */
 import { useState, useRef } from 'react';
 import { useHistory } from 'react-router';
 import uuid from 'react-uuid';
+import { loadFuncParams, useNavigation } from 'hooks/useNavigation';
 
 import { ArrowNextIcon } from 'assets/images/icons';
-import { MainScrollWrapper } from 'components/Layout';
+import Loading from 'components/Loading';
+import EmptyData from 'components/EmptyData';
+import LoanCard from 'components/CreditCard';
 import Layout from 'components/Layout/Layout';
 import SwiperLayout from 'components/SwiperLayout';
-import AccountCard from 'components/AccountCard';
-import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
+import { MainScrollWrapper } from 'components/Layout';
 import InformationTape from 'components/InformationTape';
-import EmptyData from 'components/EmptyData';
-import Loading from 'components/Loading';
+import ThreeColumnInfoPanel from 'components/ThreeColumnInfoPanel';
 import {
   accountFormatter, dateToString, currencySymbolGenerator, handleLoanTypeToTitle,
 } from 'utilities/Generator';
-
 import { Func } from 'utilities/FuncID';
-import { loadFuncParams, useNavigation } from 'hooks/useNavigation';
 import { getBranchCode } from 'utilities/CacheData';
 import CopyTextIconButton from 'components/CopyTextIconButton';
 import { getSubSummary } from './api';
 import { handleSubPaymentHistory } from './utils';
-import PageWrapper, { ContentWrapper } from './L00100.style';
+import { ContentWrapper } from './L00100.style';
 import EmptySlide from './components/EmptySlide';
 import EmptyContent from './components/EmptyContent';
-
-const uid = uuid();
 
 /**
  * L00100 貸款 首頁
@@ -92,6 +88,23 @@ const Page = (props) => {
   // 前往查詢應繳本息頁面
   const handleSearchClick = (account, subNo) => startFunc(Func.L002.id, { account, subNo }, viewModel);
 
+  // 信用卡卡面的功能列表
+  const functionAllList = () => {
+    const list = [{ fid: 'L001002', title: '貸款資訊'}];
+
+    return (
+      <ul className="functionList">
+        { list.map(({fid, title}) => (
+          <li key={fid}>
+            <button type="button" onClick={() => history.push(fid, {viewModel})}>
+              {title}
+            </button>
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
   /**
    * 產生上方卡片的 slides
    */
@@ -99,41 +112,28 @@ const Page = (props) => {
     if (!cards || cards?.length === 0) return [];
 
     const cardsWithEmptySlide = [...cards, undefined];
-    return cardsWithEmptySlide.map((card, i) => {
-      if (!card) return <EmptySlide key={`${uid}-c${i}`} />;
+    return cardsWithEmptySlide.map((card) => {
+      if (!card) return <div style={{paddingTop: '5.2rem'}}><EmptySlide key={uuid()} /></div>;
       const branchId = card.debitAccount.substring(0, 3);
+      const branchName = viewModel.branchCodeList.find((b) => b.branchNo === branchId)?.branchName ?? branchId;
+      const accountNo = accountFormatter(card.account, true);
 
       return (
-        <AccountCard type="L" key={`${uid}-c${i}`}>
-          <div className="justify-between items-start">
-            <div>
-              {/* 目前還沒有 loanType 資料，暫時以信用貸款顯示 */}
-              <div>
-                {card.loanType ?? '信用貸款'}
-                &nbsp;
-                {`(${card.subNo})`}
-              </div>
-              <div className="justify-between items-center">
-                <div>
-                  {viewModel.branchCodeList.find((b) => b.branchNo === branchId)?.branchName ?? branchId}
-                &nbsp;
-                  {`${accountFormatter(card.account, true)}`}
-                </div>
+        <div style={{paddingTop: '5.2rem'}}>
+          <LoanCard
+            cardName={`${card.loanType ?? '信用貸款'} ${card.subNo}`}
+            accountNo={(
+              <>
+                {`${branchName} ${accountNo}`}
                 <CopyTextIconButton copyText={card.account} />
-              </div>
-            </div>
-            {/* <FEIBIconButton className="-mt-5 -mr-5" aria-label="展開下拉式選單" onClick={() => handleMoreClick(card.account, card.subNo)}>
-                  <MoreIcon />
-                </FEIBIconButton> */}
-          </div>
-          <div className="justify-between items-center">
-            <div>貸款餘額</div>
-            <div className="balance">{currencySymbolGenerator(card.currency ?? 'NTD', card.balance, true)}</div>
-          </div>
-          <div className="justify-end gap-6 mt-4 divider">
-            <button type="button" className="text-16" onClick={() => history.push('/L001002', { viewModel })}>貸款資訊</button>
-          </div>
-        </AccountCard>
+              </>
+            )}
+            color="lightPurple"
+            annotation="貸款餘額"
+            balance={card.balance}
+            functionList={functionAllList()}
+          />
+        </div>
       );
     });
   };
@@ -192,7 +192,7 @@ const Page = (props) => {
 
     return list.map((t, i) => (
       <button
-        key={`${uid}-t${i}`}
+        key={uuid()}
         type="button"
         aria-label={`點擊查詢此筆紀錄，還款日:${dateToString(t.date)}，金額：${currencySymbolGenerator(t.currency ?? 'NTD', t.amount, true)}`}
         onClick={() => handleSingleTransaction(i, detail, loan)}
@@ -217,10 +217,10 @@ const Page = (props) => {
     if (!viewModel.loans || viewModel.loans?.length === 0) return [];
     const loansWithEmptyContent = [...viewModel.loans, undefined];
     return loansWithEmptyContent.map((loan, i) => {
-      if (!loan) return <EmptyContent key={`${uid}-a${i}`} onAddClick={() => { console.log('TODO'); }} />; // TODO  待提供申請連結
+      if (!loan) return <EmptyContent key={uuid()} onAddClick={() => { console.log('TODO'); }} />; // TODO  待提供申請連結
 
       return (
-        <ContentWrapper key={`${uid}-a${i}`}>
+        <ContentWrapper key={uuid()}>
           <div className="panel">
             <ThreeColumnInfoPanel content={renderBonusContents(loan)} />
           </div>
@@ -267,19 +267,17 @@ const Page = (props) => {
   return (
     <Layout fid={Func.L001} title="貸款" inspector={inspector}>
       <MainScrollWrapper>
-        <PageWrapper>
-          <SwiperLayout
-            slides={renderSlides(viewModel.loans)}
-            hasDivider={false}
-            slidesPerView={1.06}
-            spaceBetween={8}
-            centeredSlides
-            onSlideChange={onSlideChange}
-            initialSlide={viewModel.defaultSlide}
-          >
-            {renderContents()}
-          </SwiperLayout>
-        </PageWrapper>
+        <SwiperLayout
+          slides={renderSlides(viewModel.loans)}
+          hasDivider={false}
+          slidesPerView={1.06}
+          spaceBetween={8}
+          centeredSlides
+          onSlideChange={onSlideChange}
+          initialSlide={viewModel.defaultSlide}
+        >
+          {renderContents()}
+        </SwiperLayout>
       </MainScrollWrapper>
     </Layout>
   );

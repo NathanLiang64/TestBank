@@ -18,14 +18,9 @@ import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
 import { getCards, getTransactions, updateTxnNotes } from './api';
 import {
-  backInfo, levelInfo, renderBody, renderHead,
+  backInfo, creditFormatter, levelInfo, renderBody, renderHead,
 } from './utils';
-import {
-  SwiperCreditCard,
-  DetailDialogContentWrapper,
-  TableDialog,
-  CreditCardTxsListWrapper,
-} from './C00700.style';
+import { DetailDialogContentWrapper, TableDialog, CreditCardTxsListWrapper } from './C00700.style';
 
 /**
  * C00700 信用卡 首頁
@@ -132,18 +127,18 @@ const CreditCardPage = (props) => {
     if (!viewModel.cardsInfo.length) return null;
     return (
       viewModel.cardsInfo.map((cardSet) => (
-        <SwiperCreditCard>
+        <div style={{paddingTop: '5.2rem'}}>
           <CreditCard
             key={cardSet.isBankeeCard ? '0' : '1'}
             cardName={cardSet.isBankeeCard ? 'Bankee信用卡' : '所有信用卡'}
-            accountNo={cardSet.isBankeeCard && cardSet.cardNo}
+            accountNo={creditFormatter(cardSet.isBankeeCard ? cardSet.cardNo : '')}
             balance={viewModel.usedCardLimit}
             color="green"
             annotation="已使用額度"
             onMoreClicked={() => handleMoreClick(cardSet.isBankeeCard)}
             functionList={functionAllList(cardSet)}
           />
-        </SwiperCreditCard>
+        </div>
       ))
     );
   };

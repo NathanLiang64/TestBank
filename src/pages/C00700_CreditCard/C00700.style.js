@@ -1,52 +1,5 @@
 import styled from 'styled-components';
 
-export const SwiperCreditCard = styled.div`
-  padding-top: 5.2rem;
-
-  // 卡片外層
-  & > div {
-    min-height: 151.66px;
-    padding: 1.2rem;
-    margin-bottom: .2rem;
-  }
-
-  // 卡片名稱
-  & > div > div:first-child {
-    height: 24px;
-    line-height: 24px;
-  }
-
-  // 卡片更多
-  & div.moreIconButton {
-    top: -5px;
-  }
-
-  // 卡號
-  & > div > p {
-    font-size: 1.5rem;
-    color: #666;
-    height: 24px;
-    line-height: 28px;
-  }
-
-  // 卡片餘額
-  & > div > div.justify-between.items-center div.balance {
-    height: 42px;
-    line-height: 45px;
-  }
-
-  // 右下快捷列
-  & > div > div.w-full {
-    margin-top: auto;
-  }
-
-  // 右下快捷按鈕
-  & > div > div.w-full > ul > li > button {
-    color: #042C5C;
-    font-weight: 300;
-  }
-`;
-
 export const DetailDialogContentWrapper = styled.div`
   .panel {
     padding-top: .8rem;
@@ -93,11 +46,7 @@ export const TableDialog = styled.div`
 `;
 
 export const InfoPageWrapper = styled.div`
-  display: grid;
-  align-content: flex-start;
-  grid-gap: 1.6rem;
-  
-  padding-bottom: 6rem;
+  padding-top: 5.2rem;
 
   .heading {
     font-size: 1.8rem;
@@ -111,7 +60,13 @@ export const InfoPageWrapper = styled.div`
   .mb-4 {
     margin-top: 1.6rem;
     margin-bottom: 3.2rem;
-  }
+  }  
+`;
+
+export const ContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 0 1.6rem ;
 `;
 
 export const RewardPageWrapper = styled.div`

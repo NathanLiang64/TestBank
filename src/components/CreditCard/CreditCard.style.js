@@ -11,9 +11,9 @@ const getWatermark = (color) => {
     case 'blue': return blue;
     case 'yellow': return yellow;
     case 'green': return green;
-    case 'lightPurple': return lightPurple;
-    default:
     case 'purple': return purple;
+    default:
+    case 'lightPurple': return lightPurple;
   }
 };
 
@@ -28,11 +28,27 @@ const AccountCardWrapper = styled.div`
   background-repeat: no-repeat;
   border-radius: 8px;
   width: 100%;
-  min-height: 117px;
-  padding: 1.2rem 1.2rem 0.8rem;
+  min-height: ${({ fixHeight }) => (fixHeight ? '117px !important' : '151.66px;')};
+  padding: 1.2rem;
   text-align: left;
   font-size: 1.6rem;
-  color: ${({ theme }) => theme.colors.text.lightGray};
+
+  & * {
+    color: ${({ theme }) => theme.colors.text.lightGray};
+  }
+
+  .cardName {
+    height: 24px;
+    line-height: 24px;
+  }
+
+  .accountNo {
+    display: flex;
+    font-size: 1.5rem;
+    color: #666;
+    height: 24px;
+    line-height: 28px;
+  }
 
   .justify-between {
     display: flex;
@@ -49,63 +65,72 @@ const AccountCardWrapper = styled.div`
     font-size: 2.8rem;
     font-weight: 500;
     color: ${({ theme }) => theme.colors.text.darkGray};
+    height: 42px;
+    line-height: 45px;
   }
-  
+
   .moreIconButton {
     position: absolute;
     top: 0;
     right: 0;
+    top: -5px;
   }
 
-  .MuiIconButton-root{
-    padding:0;
+  .MuiIconButton-root {
+    padding: 0;
   }
 
-  .w-full{
+  .w-full {
     width: 100%;
+    margin-top: auto;
+
+    & ul li button {
+      color: #042c5c;
+      font-weight: 300;
+    }
   }
 
-  .functionList{
+  .functionList {
     display: flex;
     justify-content: flex-end;
     button {
       padding: 0;
     }
-    
+
     li {
-      padding: .4rem 1.2rem;
+      padding: 0.4rem 1.2rem;
       font-weight: 300;
-      letter-spacing: .1rem;
-      
+      letter-spacing: 0.1rem;
+
       &:after {
         content: '';
         position: absolute;
         top: 50%;
         right: 0;
-        width: .1rem;
+        width: 0.1rem;
         height: 1.6rem;
         background: ${({ theme }) => theme.colors.text.lightGray};
         transform: translateY(-50%);
-        opacity: .3;
+        opacity: 0.3;
       }
-      
+
       &:last-child {
-        padding-right: .2rem;
-        
+        padding-right: 0.2rem;
+
         :after {
           width: 0;
         }
       }
-      
+
       a {
         color: ${({ theme }) => theme.colors.text.lightGray};
       }
-      
+
       button {
         font-size: 1.6rem;
       }
     }
-    
+  }
 `;
 
 export default AccountCardWrapper;

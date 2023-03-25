@@ -59,6 +59,7 @@ const theme = {
       blue: '#D7EAF5',
       orange: '#FFE8DE',
       green: '#EDFFDD',
+      empty: '#F3F5FC',
       lightPurple: '#FCEDFF',
     },
   },

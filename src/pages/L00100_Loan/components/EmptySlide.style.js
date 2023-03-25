@@ -1,25 +1,11 @@
 import styled from 'styled-components';
 
-const EmptySlideWrapper = styled.div`
-  color: ${({ theme }) => theme.colors.text.light};
+const EmptySlideContainer = styled.div`
   text-align: center;
-  border-radius: 8px;
-  background-color: ${({ theme }) => theme.colors.background.lightBlue};
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  .Icon {
-    width: fit-content;
-    height: fit-content;
-  }
-
-  .title {
-    color: ${({ theme }) => theme.colors.text.light};
-    font-size: 2rem;
-    line-height: 3rem;
-  }
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
 
-export default EmptySlideWrapper;
+export default EmptySlideContainer;
