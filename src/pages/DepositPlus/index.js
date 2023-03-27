@@ -44,7 +44,7 @@ const Deposit = (props) => {
     dispatch(setWaittingVisible(true));
     getBonusPeriodList().then((response) => {
       if (!response.length) response = [getThisMonth()]; // 如果沒有回傳資料，顯示系統年月
-      let nearestMonth = response.at(0);
+      let [nearestMonth] = response;
       response.forEach((month) => {
         model.monthList[month] = {
           yearly: month.substring(0, 4),
