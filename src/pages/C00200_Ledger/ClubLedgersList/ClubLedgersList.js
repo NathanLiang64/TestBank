@@ -88,18 +88,13 @@ export default () => {
                 <CreditCard
                   cardName={(
                     <Box display="flex" alignItems="center">
-                      <Box
-                        component="span"
-                        display={owner ? 'inline-block' : 'none'}
-                      >
+                      <Box display={owner ? 'block' : 'none'} mr={1}>
                         {memberImage({
                           isOwner: true,
                           style: { width: '30px', height: '30px' },
                         })}
                       </Box>
-                      <Box component="span" ml={1}>
-                        {ledgerName}
-                      </Box>
+                      <Box>{ledgerName}</Box>
                     </Box>
                   )}
                   color={
@@ -107,14 +102,13 @@ export default () => {
                     || Object.keys(theme.colors.card)[0]
                   }
                   annotation={(
-                    <Box component="span">
+                    <Box display="flex" alignItems="center">
                       <PersonalIcon />
-                      <Box component="span" ml={1}>
-                        {sumOfMembers}
-                      </Box>
+                      <Box ml={1}>{sumOfMembers}</Box>
                     </Box>
                   )}
                   balance={parseInt(ledgerAmount.replace(/,/g, ''), 10)}
+                  fixHeight
                 />
               </Box>
             );

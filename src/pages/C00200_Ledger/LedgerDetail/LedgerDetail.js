@@ -174,10 +174,10 @@ export default () => {
           onMoreClicked={onCardMoreClick}
           annotation={(
             <Box display="flex" onClick={onCardMemberClick}>
-              <Box>
+              <Box mr={1}>
                 <PersonalIcon />
               </Box>
-              <Box ml={1}>
+              <Box>
                 <ArrowNextIcon />
               </Box>
             </Box>
@@ -187,6 +187,7 @@ export default () => {
             Object.keys(theme.colors.card)[viewModel.ledgerColor]
             || Object.keys(theme.colors.card)[0]
           }
+          fixHeight
         />
         <Box
           display="flex"
