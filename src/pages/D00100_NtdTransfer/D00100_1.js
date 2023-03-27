@@ -147,6 +147,13 @@ const TransferConfirm = (props) => {
             agrdTfrInterLimitLeft: account.bonus.agrdTfrInterLimitLeft -= isAgreedTxn && transInData.bank !== '805' ? model.amount : 0, // 更新 約轉跨行當日額度
           },
         });
+
+        // 確認轉入帳號是否存在於「台幣帳戶列表」中，如存在，連同轉入帳號的快取一同更新，避免使用者回到轉帳列表發現餘額沒更新
+        const existedInAccount = accounts.find(({accountNo}) => accountNo === transInData.account);
+        if (existedInAccount) {
+          const newBalance = existedInAccount.details[0].balance + model.amount;
+          updateAccount({ ...existedInAccount, balance: newBalance });
+        }
       });
     }
 
