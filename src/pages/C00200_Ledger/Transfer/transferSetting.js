@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -12,6 +12,7 @@ import Accordion from 'components/Accordion';
 import BankCodeInput from 'components/BankCodeInput';
 import { FEIBButton } from 'components/elements';
 
+import { getAccountBonus, getAccountInterest } from 'utilities/CacheData';
 import {TransferPageWrapper} from './transfer.style';
 import C002TransferAccordionContent from './accordionContent';
 import { transferSettingInitialData } from './mockData';
@@ -26,6 +27,7 @@ const TransferSetting = () => {
   const history = useHistory();
   const [transData, setTransData] = useState();
   const [bonusInfo, setBonusInfo] = useState();
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   /**
    * 資料驗證
@@ -103,8 +105,20 @@ const TransferSetting = () => {
 
   // 取得可用餘額＆跨轉優惠
   useEffect(() => {
-    const result = getBonusInfo(); // TODO cannect api
-    setBonusInfo(result);
+    const account = transData.transOut;
+    getAccountBonus(account, (acctBonusInfo) => {
+      setBonusInfo((prev) => ({
+        ...prev,
+        ...acctBonusInfo,
+      }));
+      forceUpdate();
+    });
+    getAccountInterest({accountNo: account, currency: 'NTD'}, (accountInterest) => {
+      setBonusInfo((prev) => ({
+        ...prev,
+        ...accountInterest,
+      }));
+    });
   }, []);
 
   const goBack = () => history.goBack();
@@ -118,11 +132,11 @@ const TransferSetting = () => {
           <div className="transout_info_wrapper">
             <div>
               可用餘額 NTD
-              {bonusInfo.remainAmount}
+              {bonusInfo.balance ?? '-'}
             </div>
             <div>
               跨轉優惠
-              {bonusInfo.freeTransOutTimes}
+              {bonusInfo.freeTransferRemain ?? '-'}
               次
             </div>
           </div>

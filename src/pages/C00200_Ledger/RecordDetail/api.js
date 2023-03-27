@@ -21,19 +21,21 @@ import { callAPI } from 'utilities/axios';
  * }}
  */
 export const getWriteOffList = async (param) => {
-  const response = await callAPI('/ledger/getLedgerTx', param);
-  console.log('/getWriteOffList', {param});
+  const response = await callAPI('/ledger/getWriteOffList', param);
+  let tempLedgerTxList = [];
 
-  const tempLedgerTxList = response.data.ledgertx.map((tx) => ({
-    ledgerTxId: tx.ledgerTxId,
-    txType: tx.txType,
-    txUsage: tx.txUsage,
-    txDate: tx.txDate,
-    txCurrency: tx.txCurrency,
-    txAmount: tx.txAmount,
-    txDesc: tx.txDesc,
-    sourceMember: tx.bankeeMember.memberNickName,
-  }));
+  if (response.data.length > 0) {
+    tempLedgerTxList = response.data.ledgertx.map((tx) => ({
+      ledgerTxId: tx.ledgerTxId,
+      txType: tx.txType,
+      txUsage: tx.txUsage,
+      txDate: tx.txDate,
+      txCurrency: tx.txCurrency,
+      txAmount: tx.txAmount,
+      txDesc: tx.txDesc,
+      sourceMember: tx.bankeeMember.memberNickName,
+    }));
+  }
 
   return {
     isWriteOffList: tempLedgerTxList.length !== 0,
@@ -52,7 +54,6 @@ export const getWriteOffList = async (param) => {
  * }}
  */
 export const setWriteOff = async (param) => {
-  console.log('writeOff', {param});
   const response = await callAPI('/ledger/writeOff', param);
 
   return response.data;
@@ -70,7 +71,6 @@ export const setWriteOff = async (param) => {
  * }}
  */
 export const editWriteOff = async (param) => {
-  console.log('editWriteOff', {param});
   const response = await callAPI('/ledger/editWriteOff', param);
 
   return response.data;

@@ -20,7 +20,6 @@ import { callAPI } from 'utilities/axios';
 * }[]}
  */
 export const getInvoice = async (type) => {
-  console.log('getInvoice', type);
   let response;
 
   switch (type) {
