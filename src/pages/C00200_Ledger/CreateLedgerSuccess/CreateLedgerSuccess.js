@@ -8,6 +8,7 @@ import { FEIBButton } from 'components/elements';
 import ResultAnimation from 'components/SuccessFailureAnimations/ResultAnimation';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showError } from 'utilities/MessageModal';
+import { Func } from 'utilities/FuncID';
 import PageWrapper from './CreateLedgerSuccess.style';
 import { getLedgerTypeName } from '../utils/lookUpTable';
 import { openLedger } from './api';
@@ -64,7 +65,7 @@ export default () => {
   };
 
   return (
-    <Layout title="建立帳本" goBackFunc={() => history.push('/C00200')}>
+    <Layout title="建立帳本" fid={Func.C002} goBackFunc={() => history.push('/C00200')}>
       <PageWrapper>
         <ResultAnimation isSuccess subject="設定完成" />
         {CONFIG.map((item) => (

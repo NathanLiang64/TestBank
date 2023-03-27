@@ -21,6 +21,7 @@ import {
 } from 'utilities/MessageModal';
 import Loading from 'components/Loading';
 // import { getLedgerTxn } from './constants/mockData';
+import { Func } from 'utilities/FuncID';
 import { getLedgerTxn, openLedger, setAnnouncement } from './api';
 import { EditNotifyForm } from './components/EditForm';
 import PageWrapper from './LedgerDetail.style';
@@ -147,7 +148,7 @@ export default () => {
   useEffect(() => () => clearTimeout(timer.current), []);
 
   return (
-    <Layout title="帳本明細" goBackFunc={() => history.push('/C00200')}>
+    <Layout title="帳本明細" fid={Func.C002} goBackFunc={() => history.push('/C00200')}>
       <PageWrapper>
         <InformationTape
           className="announcement"

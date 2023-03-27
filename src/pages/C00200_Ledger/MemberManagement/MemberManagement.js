@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import Box from '@material-ui/core/Box';
 import Layout from 'components/Layout/Layout';
+import { Func } from 'utilities/FuncID';
 import MemberList from './components/MemberList';
 import PageWrapper from './MemberManagement.style';
 import AddMemberButton from './components/AddMemberButton';
@@ -34,10 +35,7 @@ export default () => {
   };
 
   return (
-    <Layout
-      title={viewModel.owner ? '成員管理' : '成員'}
-      goBackFunc={goBackFunc}
-    >
+    <Layout title={viewModel.owner ? '成員管理' : '成員'} fid={Func.C002} goBackFunc={goBackFunc}>
       <PageWrapper>
         {viewModel.owner ? (
           <>

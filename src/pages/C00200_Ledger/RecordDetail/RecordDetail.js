@@ -6,6 +6,7 @@ import { accountFormatter, toCurrency } from 'utilities/Generator';
 import { FEIBButton } from 'components/elements';
 import InformationList from 'components/InformationList';
 import Layout from 'components/Layout/Layout';
+import { Func } from 'utilities/FuncID';
 import { handleTxUsageText } from '../utils/usgeType';
 
 import { PageWrapper } from './RecordDetail.style';
@@ -29,7 +30,7 @@ const RecordDetail = () => {
   }, []);
 
   return (
-    <Layout title="編輯交易明細" goBackFunc={goBackFunc}>
+    <Layout title="編輯交易明細" fid={Func.C002} goBackFunc={goBackFunc}>
       {model && (
       <PageWrapper>
         <div className="info">

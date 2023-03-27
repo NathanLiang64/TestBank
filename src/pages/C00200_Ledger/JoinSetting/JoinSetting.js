@@ -9,6 +9,7 @@ import { TextInputField, DropdownField } from 'components/Fields';
 import { FEIBButton } from 'components/elements';
 import { getBankCode } from 'utilities/CacheData';
 import { showAnimationModal } from 'utilities/MessageModal';
+import { Func } from 'utilities/FuncID';
 import PageWrapper from './JoinSetting.style';
 import { inviteJoin } from './api';
 
@@ -62,7 +63,7 @@ export default () => {
   };
 
   return (
-    <Layout title="加入帳本" goBackFunc={() => history.goBack()}>
+    <Layout title="加入帳本" fid={Func.C002} goBackFunc={() => history.goBack()}>
       <PageWrapper>
         <Box mb={3}>
           <Box>請設定您在帳本所顯示的暱稱</Box>

@@ -7,6 +7,7 @@ import { currencySymbolGenerator, dateToString } from 'utilities/Generator';
 import { FEIBButton } from 'components/elements';
 import { CrossCircleIcon } from 'assets/images/icons';
 import theme from 'themes/theme';
+import { Func } from 'utilities/FuncID';
 import { handleTxUsageText } from '../utils/usgeType';
 import PageWrapper from './CollectionsManagement.style';
 // import { mockInvoiceCollections } from './mockData';
@@ -125,7 +126,8 @@ export default () => {
   }, []);
 
   return (
-    <Layout title="帳本 Owner 請款管理" goBackFunc={() => history.goBack()}>
+    // TODO title 動態調整
+    <Layout title="帳本 Owner 請款管理" fid={Func.C002} goBackFunc={() => history.goBack()}>
       <PageWrapper>
         <div className="drawer">
           <ul>{renderInvoiceList()}</ul>

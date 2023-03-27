@@ -8,6 +8,7 @@ import { toCurrency } from 'utilities/Generator';
 import CiecleCheckPurple from 'assets/images/icon_circle_check_purple.png';
 import { TextInputField } from 'components/Fields';
 import { FEIBButton } from 'components/elements';
+import { Func } from 'utilities/FuncID';
 import { TransferFinishWrapper } from './transfer.style';
 
 const TransferFinish = () => {
@@ -71,7 +72,7 @@ const TransferFinish = () => {
     }));
   }, []);
   return (
-    <Layout title="轉帳" goBack={false}>
+    <Layout title="轉帳" fid={Func.C002} goBack={false}>
       <TransferFinishWrapper>
         <div className="banner">
           恭喜完成

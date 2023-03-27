@@ -10,6 +10,7 @@ import InformationList from 'components/InformationList';
 import { FEIBButton } from 'components/elements';
 import Accordion from 'components/Accordion';
 import { showAnimationModal } from 'utilities/MessageModal';
+import { Func } from 'utilities/FuncID';
 import PageWrapper from './AbortLedgerConfirm.style';
 import { getLedgerTypeName } from '../utils/lookUpTable';
 import { close } from './api';
@@ -62,7 +63,7 @@ export default () => {
   };
 
   return (
-    <Layout title="終止帳本" goBackFunc={() => history.goBack()}>
+    <Layout title="終止帳本" fid={Func.C002} goBackFunc={() => history.goBack()}>
       <PageWrapper>
         <Box className="pageTitle">確認資料</Box>
         {CONFIG.map((item) => (
