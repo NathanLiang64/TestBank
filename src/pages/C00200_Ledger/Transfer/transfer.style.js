@@ -4,8 +4,7 @@ import Layout from 'components/Layout';
 
 export const TransferPageWrapper = styled(Layout)`
   background: ${({ theme }) => theme.colors.background.light};
-  min-height: fit-content;
-  overflow-y: scroll;
+  overflow: auto;
   padding-bottom: 2rem;
 
   .transfer_form {
@@ -29,8 +28,7 @@ export const TransferPageWrapper = styled(Layout)`
 
 export const TransferConfirmWrapper = styled(Layout)`
   background: ${({ theme }) => theme.colors.background.light};
-  min-height: fit-content;
-  overflow-y: scroll;
+  overflow: auto;
   padding-bottom: 2rem;
 
   .banner {
@@ -82,8 +80,7 @@ export const TransferConfirmWrapper = styled(Layout)`
 
 export const TransferFinishWrapper = styled(Layout)`
   background: ${({ theme }) => theme.colors.background.light};
-  min-height: fit-content;
-  overflow-y: scroll;
+  overflow: auto;
   padding-bottom: 2rem;
 
   .banner {

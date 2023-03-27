@@ -5,7 +5,7 @@ export const PageWrapper = styled(Layout)`
   background: ${({ theme }) => theme.colors.background.light};
   display: flex;
   flex-direction: column;
-  overflow-y: scroll;
+  overflow: auto;
   padding-bottom: 2rem;
 
   .info {
@@ -18,8 +18,7 @@ export const EditRecordFormWrapper = styled(Layout)`
   display: flex;
   flex-direction: column;
   padding: 0 20;
-  min-height: fit-content;
-  overflow-y: scroll;
+  overflow: auto;
   padding-bottom: 2rem;
 
   .edit_form {
