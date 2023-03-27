@@ -61,8 +61,15 @@ export default () => {
     }));
     setLedgerTypes(ledgerTypeOptions);
     getAccountsList('C', (accounts) => {
+      /**
+       * bindType
+       * 0: 未綁定
+       * 1: 綁定社群帳本
+       * 2: 綁定存錢計畫
+       * 可綁定帳號選項只秀還未綁定的帳號
+       */
       const allowBindAccountList = accounts.filter(
-        (item) => item.bindType !== 1,
+        (item) => item.bindType === 0,
       );
       const formatAllowBindAccounts = allowBindAccountList.map((item) => ({
         label: item.accountNo,
