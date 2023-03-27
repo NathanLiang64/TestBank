@@ -10,6 +10,7 @@ import { TextInputField, DropdownField } from 'components/Fields';
 import { FEIBButton } from 'components/elements';
 import { shareMessage } from 'utilities/AppScriptProxy';
 import { showAnimationModal } from 'utilities/MessageModal';
+import { Func } from 'utilities/FuncID';
 import PageWrapper from './ShareLedgerDetail.style';
 import SHARE_LEDGER_IMG from './images/share_ledger_img.png';
 import { toShare } from './api';
@@ -68,7 +69,7 @@ export default () => {
   };
 
   return (
-    <Layout title="分享明細" goBackFunc={() => history.goBack()}>
+    <Layout title="分享明細" fid={Func.C002} goBackFunc={() => history.goBack()}>
       <PageWrapper>
         <Box m={3}>
           <Box mb={3}>

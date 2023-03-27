@@ -12,6 +12,7 @@ import InformationList from 'components/InformationList';
 import { DropdownField, TextInputField, RadioGroupField } from 'components/Fields';
 import { FEIBButton } from 'components/elements';
 
+import { Func } from 'utilities/FuncID';
 import { EditRecordFormWrapper } from './RecordDetail.style';
 import { txUsageOptions } from '../utils/usgeType';
 import { editWriteOff, getWriteOffList, setWriteOff } from './api';
@@ -140,15 +141,21 @@ const EditRecordForm = () => {
   }, []);
 
   return (
-    <Layout title="編輯交易明細" goBackFunc={goBackFunc}>
+    <Layout title="編輯交易明細" fid={Func.C002} goBackFunc={goBackFunc}>
       <EditRecordFormWrapper>
         {console.log(state)}
         <div className="info">
           {renderInformationContent('交易日期', state.txDate)}
-          {renderInformationContent('轉出成員', state.bankeeMember.memberNickName ?? '--')}
+          {renderInformationContent(
+            '轉出成員',
+            state.bankeeMember.memberNickName ?? '--',
+          )}
           {renderInformationContent('銀行代號', state.bankCode)}
           {renderInformationContent('轉出帳號', state.bankAccount)}
-          {renderInformationContent('轉出金額', `NTD${toCurrency(state.txnAmount)}`)}
+          {renderInformationContent(
+            '轉出金額',
+            `NTD${toCurrency(state.txnAmount)}`,
+          )}
         </div>
 
         {/* 已入帳 */}
@@ -162,12 +169,26 @@ const EditRecordForm = () => {
               labelName=""
               name="mode"
               control={notRecordedControl}
-              options={isShowWriteOff ? notRecordedModeOptions : notRecordedModeOptions.slice(-1)}
+              options={
+                isShowWriteOff
+                  ? notRecordedModeOptions
+                  : notRecordedModeOptions.slice(-1)
+              }
               onChange={onNotRecordedModeChange}
             />
             <div className="record_target_list">
-              {console.log({notRecordedMode})}
-              {(notRecordedMode === '0' && recordTargetOptionList.length !== 0) ? <RadioGroupField labelName="" name="target" control={recordTargetControl} options={recordTargetOptionList} /> : renderFormContent()}
+              {console.log({ notRecordedMode })}
+              {notRecordedMode === '0'
+              && recordTargetOptionList.length !== 0 ? (
+                <RadioGroupField
+                  labelName=""
+                  name="target"
+                  control={recordTargetControl}
+                  options={recordTargetOptionList}
+                />
+                ) : (
+                  renderFormContent()
+                )}
             </div>
           </div>
         )}

@@ -4,6 +4,7 @@ import Layout from 'components/Layout/Layout';
 import InformationList from 'components/InformationList';
 import { FEIBButton } from 'components/elements';
 import ResultAnimation from 'components/SuccessFailureAnimations/ResultAnimation';
+import { Func } from 'utilities/FuncID';
 import PageWrapper from './AbortLedgerSuccess.style';
 import { getLedgerTypeName } from '../utils/lookUpTable';
 
@@ -34,7 +35,7 @@ export default () => {
   };
 
   return (
-    <Layout title="終止帳本" goBackFunc={() => history.push('/C00200')}>
+    <Layout title="終止帳本" fid={Func.C002} goBackFunc={() => history.push('/C00200')}>
       <PageWrapper>
         <ResultAnimation
           isSuccess

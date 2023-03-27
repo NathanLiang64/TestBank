@@ -5,6 +5,7 @@ import Layout from 'components/Layout/Layout';
 import { FEIBBorderButton } from 'components/elements';
 import { useHistory, useLocation } from 'react-router';
 import { loadFuncParams } from 'hooks/useNavigation';
+import { Func } from 'utilities/FuncID';
 import InvitationCard from '../InvitationCard/InvitationCard';
 import PageWrapper from './InvitationContainer.style';
 import { cardMsg, getLedger } from './api';
@@ -63,7 +64,7 @@ const InvitationContainer = (props) => {
   }, []);
   return (
     model ? (
-      <Layout title={isInviteCard === true ? '加入帳本' : '你的成員來要錢嚕'} goBackFunc={() => {}}>
+      <Layout title={isInviteCard === true ? '加入帳本' : '你的成員來要錢嚕'} fid={Func.C002} goBackFunc={() => {}}>
         <PageWrapper>
           <InvitationCard data={{model, isInviteCard}} />
           {isInviteCard ? <FEIBBorderButton onClick={onClick}>加入帳本</FEIBBorderButton> : <FEIBBorderButton onClick={onClick}>立即轉帳</FEIBBorderButton>}

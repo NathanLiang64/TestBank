@@ -9,6 +9,7 @@ import { PersonalIcon } from 'assets/images/icons';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import { showError } from 'utilities/MessageModal';
 import { useNavigation } from 'hooks/useNavigation';
+import { Func } from 'utilities/FuncID';
 import PageWrapper from './ClubLedgersList.style';
 import { getAllLedgers, start } from './api';
 // import { getAllLedgers } from './constants/mockData';
@@ -66,7 +67,7 @@ export default () => {
   }, [isInitializing]);
 
   return (
-    <Layout title="社群帳本" goBackFunc={() => history.goBack()}>
+    <Layout title="社群帳本" fid={Func.C002} goBackFunc={() => history.goBack()}>
       <PageWrapper>
         {hasLedgerData || (
           <Box mb={3} textAlign="center">

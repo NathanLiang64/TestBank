@@ -12,6 +12,7 @@ import Accordion from 'components/Accordion';
 import BankCodeInput from 'components/BankCodeInput';
 import { FEIBButton } from 'components/elements';
 
+import { Func } from 'utilities/FuncID';
 import {TransferPageWrapper} from './transfer.style';
 import C002TransferAccordionContent from './accordionContent';
 import { transferSettingInitialData } from './mockData';
@@ -110,7 +111,7 @@ const TransferSetting = () => {
   const goBack = () => history.goBack();
 
   return (
-    <Layout title="轉帳" goBackFunc={goBack}>
+    <Layout title="轉帳" fid={Func.C002} goBackFunc={goBack}>
       <TransferPageWrapper>
         {transData && (
         <form className="transfer_form" onSubmit={handleSubmit((data) => onSubmit(data))}>

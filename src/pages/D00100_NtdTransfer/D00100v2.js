@@ -617,8 +617,6 @@ const Transfer = (props) => {
               <FEIBTabPanel value="0">
                 {/* 當 startFuncParams 有預設轉入帳號 或 帳戶餘額為零時，不允許變更 */}
                 <BankCodeInput control={control} name={idTransInBank} value={getValues(idTransInBank)} setValue={setValue} trigger={trigger}
-                  // 測試把 array.at 語法改成 accounts[selectedAccountIdx]
-                  // readonly={startFuncParams?.transIn?.bank || !accounts?.at(selectedAccountIdx)?.balance}
                   readonly={startFuncParams?.transIn?.bank || !accounts || !accounts[selectedAccountIdx]?.balance}
                   errorMessage={errors?.transIn?.bank?.message}
                 />

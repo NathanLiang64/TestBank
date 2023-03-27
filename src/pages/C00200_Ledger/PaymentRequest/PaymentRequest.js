@@ -5,6 +5,7 @@ import { FEIBButton } from 'components/elements';
 import Layout from 'components/Layout/Layout';
 
 import { showAnimationModal } from 'utilities/MessageModal';
+import { Func } from 'utilities/FuncID';
 import PageWrapper from './PaymentRequest.style';
 import { chargePartner } from './api';
 import PaymentSetting from './PaymentSetting';
@@ -185,7 +186,7 @@ const PaymentRequest = () => {
   }, []);
 
   return (
-    <Layout title="要錢" goBackFunc={() => goBackFunc()}>
+    <Layout title="要錢" fid={Func.C002} goBackFunc={() => goBackFunc()}>
       <PageWrapper>
         <div className="content_wrapper">
           {requestStep === 1 && <PaymentSetting paymentSettingValues={paymentSettingValues} />}

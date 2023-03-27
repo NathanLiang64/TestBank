@@ -9,6 +9,7 @@ import { FEIBButton } from 'components/elements';
 import { DropdownField, TextInputField } from 'components/Fields';
 import Layout from 'components/Layout/Layout';
 import SwiperLayout from 'components/SwiperLayout';
+import { Func } from 'utilities/FuncID';
 import { txUsageOptions } from '../utils/usgeType';
 import PageWrapper from './InvoiceSending.style';
 import { cardImage } from '../utils/images';
@@ -85,7 +86,7 @@ const InvoiceSending = () => {
   }, []);
 
   return (
-    <Layout title="要錢" goBackFunc={() => goBackFunc()}>
+    <Layout title="要錢" fid={Func.C002} goBackFunc={() => goBackFunc()}>
       <PageWrapper>
         <SwiperLayout
           slides={renderRequestCardPic()}
@@ -95,7 +96,10 @@ const InvoiceSending = () => {
           onSlideChange={onSlideChange}
           hasDivider={false}
         />
-        <form onSubmit={handleSubmit((data) => onSubmit(data))} className="form">
+        <form
+          onSubmit={handleSubmit((data) => onSubmit(data))}
+          className="form"
+        >
           <DropdownField
             labelName="性質"
             options={txUsageOptions}
@@ -120,7 +124,7 @@ const InvoiceSending = () => {
             type="text"
             name="account"
             control={control}
-            inputProps={{disabled: true}}
+            inputProps={{ disabled: true }}
           />
           <FEIBButton type="submit">確認</FEIBButton>
         </form>

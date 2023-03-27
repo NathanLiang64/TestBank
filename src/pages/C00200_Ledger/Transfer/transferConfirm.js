@@ -10,6 +10,7 @@ import Accordion from 'components/Accordion';
 import { FEIBButton } from 'components/elements';
 import CiecleCheckPurple from 'assets/images/icon_circle_check_purple.png';
 import CountDown from 'components/CountDown';
+import { Func } from 'utilities/FuncID';
 import C002TransferAccordionContent from './accordionContent';
 import { TransferConfirmWrapper } from './transfer.style';
 import { preTransfer, transfer } from './api';
@@ -102,7 +103,7 @@ const TransferConfirm = () => {
     apiPreTransfer();
   }, []);
   return (
-    <Layout title="轉帳" goBackFunc={goBack}>
+    <Layout title="轉帳" fid={Func.C002} goBackFunc={goBack}>
       <TransferConfirmWrapper>
         <div className="banner">
           資料確認

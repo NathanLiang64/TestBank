@@ -120,7 +120,7 @@ export default () => {
   };
 
   return (
-    <Layout title="建立帳本" goBackFunc={() => history.goBack()}>
+    <Layout title="建立帳本" fid={Func.C002} goBackFunc={() => history.goBack()}>
       <PageWrapper>
         <Box className="formFileds">
           <TextInputField

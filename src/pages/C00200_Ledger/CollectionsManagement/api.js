@@ -3,7 +3,7 @@ import { callAPI } from 'utilities/axios';
 /**
  * 取得帳本收款管理交易清單
  * @param {{type: number}} type 表 Owner/Partner 請/收/付 款管理 -- 1: Owner 請款管理 | 2: Owner 收款管理 | 3: Partner 付款管理 | 4: Partner 請款管理
- * @returns {{
+ * @returns {Promise<{
  * invoiceDate: string
  * owner: string
  * invoiceAmount: string
@@ -17,7 +17,7 @@ import { callAPI } from 'utilities/axios';
  * receiveid: string
  * isOwner: boolean
  * isSelf: boolean
-* }[]}
+* }[]>}
  */
 export const getInvoice = async (type) => {
   console.log('getInvoice', type);

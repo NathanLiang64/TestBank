@@ -157,7 +157,6 @@ export const ExchangeWrapper = styled(Layout)`
   form {
     display: grid;
     align-content: flex-start;
-    grid-gap: 1rem;
   }
 `;
 export default ExchangeWrapper;
