@@ -17,6 +17,7 @@ import { preTransfer, transfer } from './api';
 const TransferConfirm = () => {
   const history = useHistory();
   const {state} = useLocation();
+  const [countDownTimer, setCountDownTimer] = useState(300);
 
   const {control, handleSubmit, reset} = useForm({
     defaultValues: {
@@ -69,6 +70,7 @@ const TransferConfirm = () => {
 
     console.log('apiPreTransfer', {response});
     // TODO set response (countdown seconds and more?) to useState
+    // setCountDownTimer(response.otpCountDown); // TODO 確認key name
   };
 
   const onOtpExpire = () => {
@@ -139,7 +141,7 @@ const TransferConfirm = () => {
             <div className="timer_wrapper">
               <div className="timer_text">剩餘時間</div>
               <CountDown
-                seconds={300}
+                seconds={countDownTimer}
                 onEnd={onOtpExpire}
                 replay
               />
