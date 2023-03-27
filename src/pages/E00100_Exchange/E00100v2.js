@@ -54,11 +54,12 @@ const E00100 = (props) => {
     isBanker: false,
     ntdAccounts: [], // 台幣帳戶清單
     frgnAccount: [], // 外幣帳戶
-    currencies: [], //
+    currencies: [], // BUG {1: [台幣可兌換的外幣]}, {2: [餘額非零的外幣帳戶幣別]}
     properties: {}, // {1: [台幣匯款性質]}, {2: [外幣匯款性質]}
     inAccount: null,
+    // inAmount: null, // 估算兌換指定轉入金額所需的轉入金額, 由確認頁 create API 計算後傳回。
     outAccount: null,
-    outAmount: null, // 估算兌換指定轉入金額所需的轉出金額, 由確認頁 create API 計算後傳回。
+    // outAmount: null, // 估算兌換指定轉入金額所需的轉出金額, 由確認頁 create API 計算後傳回。
     currency: null,
     exRateBoard: null, // 匯率看版
   });
@@ -71,7 +72,7 @@ const E00100 = (props) => {
     currency: yup.string().required('請選擇換匯幣別'),
     inAccount: yup.string().required('請選擇轉入帳號'),
     property: yup.string().required('請選擇匯款性質'),
-    inAmount: yup.number().required('請輸入金額').typeError('請輸入金額'),
+    amount: yup.number().required('請輸入金額').typeError('請輸入金額'),
   });
   const {
     handleSubmit, control, watch, reset, getValues, setValue, setError, clearErrors, // formState: { errors },
@@ -81,8 +82,8 @@ const E00100 = (props) => {
       outAccount: '', // 轉出帳號
       currency: '', // 兌換使用的幣別(mode => 1.轉入幣別, 2.轉出幣別)
       inAccount: '', // 轉入帳號
-      inAmount: '', // 兌換金額
-      inAmtMode: 1, // 兌換金額的幣別（1.currency, 2.台幣)
+      amount: '', // 兌換金額
+      amountType: 1, // 兌換金額的幣別模式(1.依轉出幣別, 2.依轉入幣別)
       property: '', // 性質別
       memo: '', // 備註
     },
@@ -91,7 +92,7 @@ const E00100 = (props) => {
   });
 
   const {
-    inAccount, outAccount, currency, inAmount, inAmtMode,
+    inAccount, outAccount, currency, amount, amountType,
   } = watch();
 
   /**
@@ -143,7 +144,7 @@ const E00100 = (props) => {
         // inAccount: viewModel.inAccount.accountNo,
         // currency: '', // 沒有預設的必要
         // property: '', // 沒有預設的必要
-        inAmtMode: 1,
+        amountType: 1,
       };
       onModeChanged(data.mode);
       reset((formValues) => ({...formValues, ...data}));
@@ -180,6 +181,16 @@ const E00100 = (props) => {
     viewModel.outAccount = (getAccountList(0).length > 0) ? getAccountList(0)[0].data : '';
     viewModel.inAccount = (getAccountList(1).length > 0) ? getAccountList(1)[0].data : '';
 
+    // 載入交易性質清單
+    const properties = viewModel.properties[newMode];
+    if (!properties || !properties.length) {
+      getExchangePropertyList({ trnsType: viewModel.mode, action: '1' }).then((items) => {
+        viewModel.properties[viewModel.mode] = items;
+        setValue('property', '*');
+      });
+    }
+
+    //
     reset((formValues) => ({
       ...formValues,
       mode: newMode,
@@ -212,16 +223,16 @@ const E00100 = (props) => {
    */
   useEffect(() => {
     let maxAmount;
-    if (viewModel.mode !== inAmtMode) { // NOTE 沒錯！就是用這二個的值比較。
-      const {balance} = getBalance(0); // 取出轉出帳戶的餘額。
+    if (amountType === 1) { // 兌換金額的幣別模式(1.依轉出幣別, 2.依轉入幣別)
+      const {balance} = getBalance(1); // 取出轉出帳戶的餘額。
       maxAmount = balance;
     } else {
       maxAmount = viewModel.maxExchange;
     }
-    if (inAmount > maxAmount) {
-      setError('inAmount', { type: 'custom', message: '金額已超過轉出帳號的餘額' });
-    } else clearErrors('inAmount');
-  }, [inAmount, inAmtMode]);
+    if (amount > maxAmount) {
+      setError('amount', { type: 'custom', message: '金額已超過轉出帳號的餘額' });
+    } else clearErrors('amount');
+  }, [amount, amountType]);
 
   /**
    * 進入換匯確認頁。
@@ -263,27 +274,21 @@ const E00100 = (props) => {
    */
   const getPropertyList = () => {
     const properties = viewModel.properties[viewModel.mode];
-    if (!properties) {
-      viewModel.properties[viewModel.mode] = [];
-      const api = getExchangePropertyList({ trnsType: viewModel.mode, action: '1' }).then((items) => items);
-
-      Promise.all([api]).then((values) => {
-        const [items] = values;
-        viewModel.properties[viewModel.mode] = items;
-        forceUpdate();
-      });
-    }
-    return properties?.map((prop) => ({ label: prop.leglDesc, value: prop.leglCode })) ?? []; // TODO key: item.leglCode,
+    const items = properties?.map((prop) => ({ label: prop.leglDesc, value: prop.leglCode })) ?? []; // TODO key: item.leglCode,
+    return [
+      { label: '請選擇匯款性質', value: '*', disabledOption: true },
+      ...items,
+    ];
   };
 
   /**
    * 取得指定轉帳類型的帳戶餘額。
-   * @param {*} type 轉帳類型：0.轉出清單, 1.轉入清單
+   * @param {*} type 轉帳類型：1.轉出帳號, 2.轉入帳號
    */
   const getBalance = (type) => {
     let balance = '-';
     let ccy = '';
-    const acct = (type === 0) ? viewModel.outAccount : viewModel.inAccount;
+    const acct = (type === 1) ? viewModel.outAccount : viewModel.inAccount;
     if (acct) {
       if (acct.acctType === 'F') {
         ccy = currency;
@@ -302,7 +307,7 @@ const E00100 = (props) => {
 
   /**
    * 顯示指定轉帳類型的帳戶餘額。
-   * @param {*} type 轉帳類型：0.轉出清單, 1.轉入清單
+   * @param {*} type 轉帳類型：1.轉出帳號, 2.轉入帳號
    */
   const renderBalance = (type) => {
     const {ccy, balance} = getBalance(type);
@@ -315,18 +320,22 @@ const E00100 = (props) => {
 
   /**
    * 預估可兌換的轉入幣別及金額。
-   * @param {Number} amount 要估算的兌換金額。
-   * @param {Number} mode
+   * @param {Number} amt 要估算的兌換金額。
+   * @param {Number} mode amt的幣別類型：1.台幣金額, 2.外幣金額
+   * @returns {{ quota: Number, ccyInfo: { Currency: String, CurrencyName: String } }} {
+   *   quota: ,
+   *   ccyInfo: ,
+   * }
    */
-  const estimateExchangeInfo = (amount, mode) => {
-    // console.log(amount, mode);
+  const estimateExchangeInfo = (amt, mode) => {
+    // console.log(amt, mode);
     const ccyInfo = viewModel.currencies.find((item) => item.Currency === currency);
     if (ccyInfo) {
       let quota;
       if (mode === 1) {
-        quota = Number((amount / ccyInfo.SpotAskRate).toFixed(2));
+        quota = Number((amt / ccyInfo.SpotAskRate).toFixed(2));
       } else {
-        quota = Number((amount * ccyInfo.SpotBidRate).toFixed(2));
+        quota = Number((amt * ccyInfo.SpotBidRate).toFixed(2));
       }
       return { quota, ccyInfo };
     }
@@ -337,40 +346,41 @@ const E00100 = (props) => {
    * 顯示預估可兌換的轉入幣別及金額。
    */
   const renderEstimate = () => {
-    const {balance} = getBalance(0);
+    const {balance} = getBalance(1);
     const excnageInfo = estimateExchangeInfo(balance, viewModel.mode);
     if (excnageInfo) {
       const { quota, ccyInfo } = excnageInfo;
       viewModel.currency = ccyInfo; // 順便記下目前選取幣別的詳細資訊。
       viewModel.maxExchange = quota;
-      let prompt;
-      if (viewModel.mode === 1) {
-        prompt = `預估可兌換 ${toCurrency(viewModel.maxExchange)}${ccyInfo.CurrencyName}`;
-      } else {
-        prompt = `預估可換回 新台幣 ${toCurrency(viewModel.maxExchange)}元`;
-      }
-      return (
-        <FEIBHintMessage>
-          {prompt}
-          <br />
-          <div style={{ textAlign: 'right' }}>(實際金額以交易結果為準)</div>
-        </FEIBHintMessage>
-      );
+      // NOTE 保留日後可從優利取得剩餘額度資料時，再顯示。
+      // let prompt;
+      // if (viewModel.mode === 1) {
+      //   prompt = `預估可兌換 ${toCurrency(viewModel.maxExchange)}${ccyInfo.CurrencyName}`;
+      // } else {
+      //   prompt = `預估可換回 新台幣 ${toCurrency(viewModel.maxExchange)}元`;
+      // }
+      // return (
+      //   <FEIBHintMessage>
+      //     {prompt}
+      //     <br />
+      //     <div style={{ textAlign: 'right' }}>(實際金額以交易結果為準)</div>
+      //   </FEIBHintMessage>
+      // );
     }
     return <div />;
   };
 
   /**
    *
-   * @param {Number} amount 要估算的兌換金額；未指定金額時，以轉出帳戶的餘額計算。
+   * @param {Number} amt 要估算的兌換金額；未指定金額時，以轉出帳戶的餘額計算。
    * @param {Number} isNTD 兌換計算幣別。
    */
-  const renderEstimateNeed = (amount, isNTD) => {
-    if (!amount) return null;
+  const renderEstimateNeed = (amt, isNTD) => {
+    if (!amt) return null;
 
     const mode = (isNTD ? 1 : 2);
 
-    const excnageInfo = estimateExchangeInfo(amount, mode);
+    const excnageInfo = estimateExchangeInfo(amt, mode);
     if (excnageInfo) {
       const { quota, ccyInfo } = excnageInfo;
       let prompt;
@@ -394,9 +404,8 @@ const E00100 = (props) => {
    * 顯示匯率看版
    */
   const onExchangeRateButtonClick = async () => {
-    if (!viewModel.exRateBoard) {
-      viewModel.exRateBoard = await getExchangeRateInfo({});
-    }
+    // 匯率需為即時資訊。
+    viewModel.exRateBoard = await getExchangeRateInfo({});
 
     showCustomPrompt({
       title: '匯率',
@@ -430,7 +439,7 @@ const E00100 = (props) => {
 
           <section>
             <DropdownField name="outAccount" control={control} labelName="轉出帳號" options={getAccountList(0)} />
-            {renderBalance(0)}
+            {renderBalance(1)}
           </section>
 
           <section>
@@ -440,17 +449,17 @@ const E00100 = (props) => {
 
           <section>
             <DropdownField name="inAccount" control={control} labelName="轉入帳號" options={getAccountList(1)} />
-            {renderBalance(1)}
+            {renderBalance(2)}
           </section>
 
           {viewModel.currency && (
           <section>
-            <div className="inAmount">
-              <Controller control={control} name="inAmtMode"
+            <div className="amount">
+              <Controller control={control} name="amountType"
                 render={({ field }) => (
                   <>
                     <FEIBInputLabel>兌換金額</FEIBInputLabel>
-                    <RadioGroup {...field} style={{alignItems: 'center'}} row name="inAmtMode" onChange={(e) => setValue('inAmtMode', parseInt(e.target.value, 10))}>
+                    <RadioGroup {...field} style={{alignItems: 'center'}} row name="amountType" onChange={(e) => setValue('amountType', parseInt(e.target.value, 10))}>
                       <FEIBRadioLabel value={1} control={<FEIBRadio />} label={viewModel.currency.CurrencyName} />
                       <FEIBRadioLabel value={2} control={<FEIBRadio />} label="新臺幣" />
                     </RadioGroup>
@@ -459,13 +468,13 @@ const E00100 = (props) => {
               />
               <CurrencyInputField
                 placeholder="請輸入兌換金額"
-                name="inAmount"
+                name="amount"
                 control={control}
-                currency={inAmtMode === 2 ? 'NTD' : currency}
+                currency={amountType === 2 ? 'NTD' : currency}
                 inputProps={{ inputMode: 'numeric' }}
               />
             </div>
-            {renderEstimateNeed(inAmount, (inAmtMode === 2))}
+            {renderEstimateNeed(amount, (amountType === viewModel.mode))}
           </section>
           )}
 

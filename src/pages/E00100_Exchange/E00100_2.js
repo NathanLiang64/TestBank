@@ -15,8 +15,8 @@ import ResultAnimation from 'components/SuccessFailureAnimations/ResultAnimation
 import { ExchangeWrapper } from './E00100.style';
 
 /**
- * 換匯確認頁
- * @param {{location: {state: {viewModel, model}}}} props
+ * 換匯結果頁
+ * @param {{location: {state: {model, viewModel, viewData}}}} props
  */
 const E001002 = (props) => {
   const { location } = props;
@@ -56,8 +56,8 @@ const E001002 = (props) => {
 
       // model 只保留 mode, outAccount, currency
       delete model.inAccount;
-      delete model.inAmount;
-      delete model.inAmtMode;
+      delete model.amount;
+      delete model.amountType;
       delete model.property;
       delete model.memo;
     }

@@ -19,7 +19,7 @@ export const ExchangeWrapper = styled(Layout)`
     section {
       margin-bottom: 2rem;
     }
-    .inAmount {
+    .amount {
       display: flex;
       flex-direction:column;
       span {

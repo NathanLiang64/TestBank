@@ -58,8 +58,8 @@ export const getExchangePropertyList = async (param) => {
  *   outAccount: String, // 轉出帳號
  *   currency: String, // 兌換使用的幣別(mode => 1.轉入幣別, 2.轉出幣別)
  *   inAccount: String, // 轉入帳號
- *   inAmount: Number, // 轉入(兌換)金額
- *   inAmtMode: Number, // 轉入(兌換)金額的幣別模式（1.currency, 2.台幣)
+ *   amount: Number, // 兌換金額
+ *   amountType: Number, // 兌換金額的幣別模式(1.依轉出幣別, 2.依轉入幣別)
  *   property: String, // 性質別
  *   memo: String, // 備註
  * }} request

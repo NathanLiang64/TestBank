@@ -1,5 +1,4 @@
 /* eslint-disable no-use-before-define */
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
@@ -8,7 +7,6 @@ import { Func } from 'utilities/FuncID';
 import { getCurrenyInfo } from 'utilities/Generator';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { showError } from 'utilities/MessageModal';
 import { create, execute } from 'pages/E00100_Exchange/api';
 
 /* Elements */
@@ -52,7 +50,8 @@ const E001001 = (props) => {
 
       // 執行外幣換匯、轉帳時的交易序號
       model.tfrId = apiRs.tfrId;
-      viewModel.outAmount = apiRs.outAmount; // 估算兌換指定轉入金額所需的轉出金額
+      viewModel.inAmount = apiRs.inAmount; // 估算兌換可得的轉入金額
+      viewModel.outAmount = apiRs.outAmount; // 估算兌換所需的轉出金額
 
       const ccyInfo = getCurrenyInfo(model.currency);
       const data = {
@@ -60,11 +59,11 @@ const E001001 = (props) => {
         isBanker: viewModel.isBanker,
         inAccount: model.inAccount,
         outAccount: model.outAccount,
-        transInDesc: `${(model.mode === 1) ? model.currency : 'NTD'}$${model.inAmount}`,
+        transInDesc: `${(model.mode === 1) ? model.currency : 'NTD'}$${apiRs.inAmount}`,
         transOutDesc: `${(model.mode === 1) ? 'NTD' : model.currency}$${apiRs.outAmount}`,
         exRate: apiRs.exRate, // (model.mode === 1) ? Number((1.0 / exRate.SpotAskRate).toFixed(4)) : exRate.SpotBidRate, // TODO 買入、賣出
         currency: `${ccyInfo.name} ${ccyInfo.code}`,
-        leglDesc: viewModel.properties.find((p) => p.leglCdode === model.property).leglDesc,
+        leglDesc: viewModel.properties[model.mode].find((p) => p.leglCode === model.property).leglDesc,
         balance: apiRs.balance,
         memo: model.memo,
         countdownSec: apiRs.countdown,
