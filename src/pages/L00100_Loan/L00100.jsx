@@ -166,7 +166,7 @@ const Page = (props) => {
 
   const handleSingleTransaction = async (i, detail, loan) => {
     if (detail) {
-      startFunc('L003001', { singleHistoryData: detail[i], cardData: loan });
+      startFunc('L003001', { singleHistoryData: detail[i], cardData: loan }, viewModel);
     }
   };
 
@@ -191,24 +191,18 @@ const Page = (props) => {
     }
 
     return list.map((t, i) => (
-      <button
+      <InformationTape
         key={uuid()}
-        type="button"
-        aria-label={`點擊查詢此筆紀錄，還款日:${dateToString(t.date)}，金額：${currencySymbolGenerator(t.currency ?? 'NTD', t.amount, true)}`}
         onClick={() => handleSingleTransaction(i, detail, loan)}
-        style={{ width: '100%' }}
-      >
-        <InformationTape
-          topLeft={handleLoanTypeToTitle(t.type)}
-          bottomLeft={dateToString(t.date)}
-          topRight={currencySymbolGenerator(t.currency ?? 'NTD', t.amount, true)}
-          bottomRight={`貸款餘額 ${currencySymbolGenerator(t.currency ?? 'NTD', t.balance, true)}`}
-        />
-      </button>
+        topLeft={handleLoanTypeToTitle(t.type)}
+        bottomLeft={dateToString(t.date)}
+        topRight={currencySymbolGenerator(t.currency ?? 'NTD', t.amount, true)}
+        bottomRight={`貸款餘額 ${currencySymbolGenerator(t.currency ?? 'NTD', t.balance, true)}`}
+      />
     ));
   };
 
-  const handleMoreTransactionsClick = (loan) => startFunc(Func.L003.id, { loan });
+  const handleMoreTransactionsClick = (loan) => startFunc(Func.L003.id, { loan }, viewModel);
 
   /**
    * 產生下方交易資訊的 slides
@@ -225,7 +219,7 @@ const Page = (props) => {
             <ThreeColumnInfoPanel content={renderBonusContents(loan)} />
           </div>
           <div ref={detailsRef}>
-            <div>{renderTransactions(viewModel.detailMap[i], loan)}</div>
+            {renderTransactions(viewModel.detailMap[i], loan)}
             <div className="toolbar">
               {viewModel.detailMap[i] && viewModel.detailMap[i].length > 0 && (
               <button className="btn-icon" type="button" onClick={() => handleMoreTransactionsClick(loan)}>

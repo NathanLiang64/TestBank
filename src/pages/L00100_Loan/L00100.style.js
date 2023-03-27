@@ -4,7 +4,7 @@ export const ContentWrapper = styled.div`
   display: flex;
   display: -webkit-flex;
   flex-direction: column;
-  padding: 0 1.6rem 6rem;
+  padding: 0 1rem;
 
   .panel {
     padding-top: 0.8rem;
