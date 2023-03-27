@@ -38,31 +38,11 @@ const Notice = () => {
 
   // 通知類別及代碼
   const msgTypeList = [
-    {
-      label: '帳務',
-      value: 'A',
-      list: aMessagesList,
-    },
-    {
-      label: '社群',
-      value: 'C',
-      list: cMessagesList,
-    },
-    {
-      label: '公告',
-      value: 'P',
-      list: pMessagesList,
-    },
-    {
-      label: '安全',
-      value: 'S',
-      list: sMessagesList,
-    },
-    {
-      label: '全部',
-      value: '0',
-      list: allMessagesList,
-    },
+    { label: '帳務', value: 'A', list: aMessagesList },
+    { label: '社群', value: 'C', list: cMessagesList },
+    { label: '公告', value: 'P', list: pMessagesList },
+    { label: '安全', value: 'S', list: sMessagesList },
+    { label: '全部', value: '0', list: allMessagesList },
   ];
 
   // 跳轉通知設定頁
@@ -132,6 +112,7 @@ const Notice = () => {
       msgType: tabValue !== '0' ? tabValue : '',
     };
     await deleteAllPush(param);
+    getNotices();
     closeDrawer();
   };
 
@@ -162,10 +143,7 @@ const Notice = () => {
 
   // 開啟編輯選單
   const handleOpenDrawer = () => {
-    showDrawer(
-      '',
-      renderEditList(),
-    );
+    showDrawer('', renderEditList());
   };
 
   /**
