@@ -9,7 +9,7 @@ import {
   showError,
   showAnimationModal,
 } from 'utilities/MessageModal';
-import { getBankCode } from 'utilities/CacheData';
+import { getBankCode, updateAccount } from 'utilities/CacheData';
 import { TextTwoColumnFiled, ButtonTwoColumnFiled } from './ManagedColumn';
 import {
   EditLedgerNameForm,
@@ -72,6 +72,7 @@ export default () => {
             const res = await setLedgerName({ name: data });
             if (res) {
               setViewModel((p) => ({ ...p, ledgerName: data }));
+              updateAccount();
             }
             showAnimationModal({
               isSuccess: res,
