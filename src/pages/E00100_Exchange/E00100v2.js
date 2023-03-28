@@ -71,10 +71,18 @@ const E00100 = (props) => {
     currency: yup.string().required('請選擇換匯幣別'),
     inAccount: yup.string().required('請選擇轉入帳號'),
     property: yup.string().required('請選擇匯款性質'),
-    inAmount: yup.number().required('請輸入金額').typeError('請輸入金額'),
+    inAmount: yup.number().when('inAmtMode', (amtmode, s) => {
+      let maxAmount;
+      if (viewModel.mode !== amtmode) { // NOTE 沒錯！就是用這二個的值比較。
+        const {balance} = getBalance(0); // 取出轉出帳戶的餘額。
+        maxAmount = balance;
+      } else maxAmount = viewModel.maxExchange;
+      return s.max(maxAmount, '金額已超過轉出帳號的餘額');
+    }).required('請輸入金額').typeError('請輸入金額'),
   });
+
   const {
-    handleSubmit, control, watch, reset, getValues, setValue, setError, clearErrors, // formState: { errors },
+    handleSubmit, control, watch, reset, setValue, trigger,
   } = useForm({
     defaultValues: {
       mode: 0, // 0.尚未初始化, 1.新臺幣轉外幣, 2.外幣轉新臺幣
@@ -87,7 +95,7 @@ const E00100 = (props) => {
       memo: '', // 備註
     },
     resolver: yupResolver(schema),
-    reValidateMode: 'onBlur',
+    mode: 'onChange',
   });
 
   const {
@@ -175,18 +183,22 @@ const E00100 = (props) => {
    * @param {*} newMode 新的換匯模式
    */
   const onModeChanged = (newMode) => {
-    // const values = getValues();
     viewModel.mode = newMode;
     viewModel.outAccount = (getAccountList(0).length > 0) ? getAccountList(0)[0].data : '';
     viewModel.inAccount = (getAccountList(1).length > 0) ? getAccountList(1)[0].data : '';
-
-    reset((formValues) => ({
-      ...formValues,
-      mode: newMode,
-      outAccount: '',
-      inAccount: '',
-      property: '',
-    }));
+    reset((formValues) => {
+      // NOTE 在切換 mode 時， getCurrencyList 也會改變，因此預設的 currency 也要變更
+      const currencyOptions = getCurrencyList();
+      const isCurrencyExisted = currencyOptions.find((opt) => opt?.value === formValues.currency);
+      return {
+        ...formValues,
+        mode: newMode,
+        currency: isCurrencyExisted ? formValues.currency : currencyOptions[0]?.value ?? '',
+        outAccount: '',
+        inAccount: '',
+        property: '',
+      };
+    });
   };
 
   useEffect(() => {
@@ -210,18 +222,20 @@ const E00100 = (props) => {
   /**
    * 檢查是否超出餘額
    */
-  useEffect(() => {
-    let maxAmount;
-    if (viewModel.mode !== inAmtMode) { // NOTE 沒錯！就是用這二個的值比較。
-      const {balance} = getBalance(0); // 取出轉出帳戶的餘額。
-      maxAmount = balance;
-    } else {
-      maxAmount = viewModel.maxExchange;
-    }
-    if (inAmount > maxAmount) {
-      setError('inAmount', { type: 'custom', message: '金額已超過轉出帳號的餘額' });
-    } else clearErrors('inAmount');
-  }, [inAmount, inAmtMode]);
+
+  // NOTE 這邊的判定移動到 schema 上處理
+  // useEffect(() => {
+  //   let maxAmount;
+  //   if (viewModel.mode !== inAmtMode) { // NOTE 沒錯！就是用這二個的值比較。
+  //     const {balance} = getBalance(0); // 取出轉出帳戶的餘額。
+  //     maxAmount = balance;
+  //   } else {
+  //     maxAmount = viewModel.maxExchange;
+  //   }
+  //   if (inAmount > maxAmount) {
+  //     setError('inAmount', { type: 'custom', message: '金額已超過轉出帳號的餘額' });
+  //   } else clearErrors('inAmount');
+  // }, [inAmount, inAmtMode]);
 
   /**
    * 進入換匯確認頁。
@@ -350,11 +364,14 @@ const E00100 = (props) => {
         prompt = `預估可換回 新台幣 ${toCurrency(viewModel.maxExchange)}元`;
       }
       return (
-        <FEIBHintMessage>
-          {prompt}
-          <br />
-          <div style={{ textAlign: 'right' }}>(實際金額以交易結果為準)</div>
-        </FEIBHintMessage>
+        <div className="estimateMessage">
+          <FEIBHintMessage>
+            {prompt}
+          </FEIBHintMessage>
+          <FEIBHintMessage>
+            (實際金額以交易結果為準)
+          </FEIBHintMessage>
+        </div>
       );
     }
     return <div />;
@@ -380,11 +397,14 @@ const E00100 = (props) => {
         prompt = `預估需 新台幣 ${toCurrency(quota)}元`;
       }
       return (
-        <FEIBHintMessage>
-          {prompt}
-          <br />
-          <div style={{ textAlign: 'right' }}>(實際金額以交易結果為準)</div>
-        </FEIBHintMessage>
+        <div className="estimateMessage">
+          <FEIBHintMessage>
+            {prompt}
+          </FEIBHintMessage>
+          <FEIBHintMessage>
+            (實際金額以交易結果為準)
+          </FEIBHintMessage>
+        </div>
       );
     }
     return <div />;
@@ -446,23 +466,25 @@ const E00100 = (props) => {
           {viewModel.currency && (
           <section>
             <div className="inAmount">
-              <Controller control={control} name="inAmtMode"
-                render={({ field }) => (
-                  <>
-                    <FEIBInputLabel>兌換金額</FEIBInputLabel>
-                    <RadioGroup {...field} style={{alignItems: 'center'}} row name="inAmtMode" onChange={(e) => setValue('inAmtMode', parseInt(e.target.value, 10))}>
-                      <FEIBRadioLabel value={1} control={<FEIBRadio />} label={viewModel.currency.CurrencyName} />
-                      <FEIBRadioLabel value={2} control={<FEIBRadio />} label="新臺幣" />
-                    </RadioGroup>
-                  </>
-                )}
-              />
               <CurrencyInputField
                 placeholder="請輸入兌換金額"
+                labelName="兌換金額"
                 name="inAmount"
                 control={control}
                 currency={inAmtMode === 2 ? 'NTD' : currency}
                 inputProps={{ inputMode: 'numeric' }}
+              />
+              <Controller control={control} name="inAmtMode"
+                render={({ field }) => (
+                  <RadioGroup {...field} name="inAmtMode" onChange={(e) => {
+                    setValue('inAmtMode', parseInt(e.target.value, 10));
+                    trigger('inAmount');
+                  }}
+                  >
+                    <FEIBRadioLabel value={1} control={<FEIBRadio />} label={viewModel.currency.CurrencyName} />
+                    <FEIBRadioLabel value={2} control={<FEIBRadio />} label="新臺幣" />
+                  </RadioGroup>
+                )}
               />
             </div>
             {renderEstimateNeed(inAmount, (inAmtMode === 2))}
