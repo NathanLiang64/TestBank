@@ -11,11 +11,17 @@ import { FEIBButton } from 'components/elements';
 import { Func } from 'utilities/FuncID';
 import { TransferFinishWrapper } from './transfer.style';
 
+// TODO 轉帳失敗處理
 const TransferFinish = () => {
   const {state} = useLocation();
   const history = useHistory();
 
-  const {control, reset} = useForm({});
+  const {control} = useForm({
+    defaultValues: {
+      ...state,
+      amount: `NTD${toCurrency(state.amount)}`,
+    },
+  });
 
   const renderViewDataSection = (name) => {
     const handleLabelName = () => {
@@ -58,19 +64,6 @@ const TransferFinish = () => {
     history.go(-2); // TODO 串進流程後改為-3
   };
 
-  useEffect(() => {
-    reset((formValue) => ({
-      ...formValue,
-      transOutAcct: state.transOutAcct,
-      amount: `NTD${toCurrency(state.amount)}`,
-      target: state.target,
-      transInBank: state.transInBank,
-      transInAcct: state.transInAcct,
-      transFee: `NTD${state.transFee}`,
-      type: state.type,
-      memo: state.memo,
-    }));
-  }, []);
   return (
     <Layout title="轉帳" fid={Func.C002} goBack={false}>
       <TransferFinishWrapper>

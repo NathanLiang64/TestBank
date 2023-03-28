@@ -16,8 +16,6 @@ import { Func } from 'utilities/FuncID';
 import { getAccountBonus, getAccountInterest } from 'utilities/CacheData';
 import {TransferPageWrapper} from './transfer.style';
 import C002TransferAccordionContent from './accordionContent';
-import { transferSettingInitialData } from './mockData';
-import { getBonusInfo } from './api';
 import { txUsageOptions } from '../utils/usgeType';
 
 /**
@@ -83,15 +81,38 @@ const TransferSetting = () => {
     history.push('/transferConfirm', dataToConfirm);
   };
 
+  // 取得可用餘額＆跨轉優惠
+  const handleBonusInfo = (account) => {
+    // const account = transData.transOut;
+    getAccountBonus(account, (acctBonusInfo) => {
+      console.log({acctBonusInfo});
+      setBonusInfo((prev) => ({
+        ...prev,
+        freeTransferRemain: acctBonusInfo.freeTransferRemain ?? '-',
+      }));
+      forceUpdate();
+    });
+    getAccountInterest({accountNo: account, currency: 'NTD'}, (accountInterest) => {
+      console.log({accountInterest});
+      setBonusInfo((prev) => ({
+        ...prev,
+        balance: accountInterest.interest ?? '-',
+      }));
+      forceUpdate();
+    });
+  };
+
   /**
    * owner, member透過要錢卡進轉帳：帶入 '轉出帳號、金額、對象、銀行代號、轉入帳號、性質、備註'
    * owner 點擊'給錢'進轉帳：帶入 '轉出帳號'
    * 有帶入參數者皆不可修改
    */
   useEffect(() => {
-    const initialData = transferSettingInitialData; // TODO 從前一頁面帶入
-    // const initialData = state; // 從前一頁面帶入
+    // const initialData = transferSettingInitialData; // DEBUG mock data
+    const initialData = state; // 從前一頁面(要錢卡/帳本明細列表)帶入初始資料
+    console.log({initialData});
     setTransData(initialData);
+    handleBonusInfo(initialData.transOut);
 
     reset(() => ({
       transOutAcct: initialData.transOut,
@@ -104,24 +125,6 @@ const TransferSetting = () => {
     }));
   }, []);
 
-  // 取得可用餘額＆跨轉優惠
-  useEffect(() => {
-    const account = transData.transOut;
-    getAccountBonus(account, (acctBonusInfo) => {
-      setBonusInfo((prev) => ({
-        ...prev,
-        ...acctBonusInfo,
-      }));
-      forceUpdate();
-    });
-    getAccountInterest({accountNo: account, currency: 'NTD'}, (accountInterest) => {
-      setBonusInfo((prev) => ({
-        ...prev,
-        ...accountInterest,
-      }));
-    });
-  }, []);
-
   const goBack = () => history.goBack();
 
   return (
@@ -130,17 +133,20 @@ const TransferSetting = () => {
         {transData && (
         <form className="transfer_form" onSubmit={handleSubmit((data) => onSubmit(data))}>
           <TextInputField labelName="轉出帳號" type="text" control={control} name="transOutAcct" inputProps={{placeholder: '轉出帳號', inputMode: 'numeric', disabled: transData.transOut !== ''}} />
+          {bonusInfo && (
           <div className="transout_info_wrapper">
+            {console.log({bonusInfo})}
             <div>
               可用餘額 NTD
-              {bonusInfo.balance ?? '-'}
+              {bonusInfo.balance}
             </div>
             <div>
               跨轉優惠
-              {bonusInfo.freeTransferRemain ?? '-'}
+              {bonusInfo.freeTransferRemain}
               次
             </div>
           </div>
+          )}
           {warningText('轉出帳號不能跟轉入帳號一樣呦～')}
           <div onBlur={handleFormatAmount}>
             <TextInputField labelName="金額" type="text" control={control} name="amount" inputProps={{placeholder: '金額', inputMode: 'numeric', disabled: transData.amount !== 0}} />

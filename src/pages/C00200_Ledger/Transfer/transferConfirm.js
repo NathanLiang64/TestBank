@@ -20,16 +20,10 @@ const TransferConfirm = () => {
   const {state} = useLocation();
   const [countDownTimer, setCountDownTimer] = useState(300);
 
-  const {control, handleSubmit, reset} = useForm({
+  const {control, handleSubmit} = useForm({
     defaultValues: {
-      transOutAcct: '',
-      amount: '0',
-      target: '',
-      transInBank: '',
-      transInAcct: '',
-      type: '1',
-      memo: '',
-      otpInput: '',
+      ...state,
+      amount: `NTD${toCurrency(state.amount)}`,
     },
   });
 
@@ -66,24 +60,25 @@ const TransferConfirm = () => {
     );
   };
 
-  const apiPreTransfer = async () => {
+  const handlePreTransfer = async () => {
     const response = await preTransfer();
 
     console.log('apiPreTransfer', {response});
     // TODO set response (countdown seconds and more?) to useState
+    setCountDownTimer(300);
     // setCountDownTimer(response.otpCountDown); // TODO 確認key name
   };
 
   const onOtpExpire = () => {
     // TODO 確認otp過期後行為
-    apiPreTransfer();
+    handlePreTransfer();
   };
 
   const onSubmit = (data) => {
     const dataToSend = {
       ...data,
       amount: parseInt(data.amount.replace(/[^0-9]/g, ''), 10),
-    };
+    }; // TODO confirm req param format
     console.log('TransferConfirm', {dataToSend});
     // TODO send transfer req
     const result = transfer(dataToSend);
@@ -92,16 +87,11 @@ const TransferConfirm = () => {
 
   const goBack = () => history.goBack();
 
-  useEffect(() => {
-    reset((formValue) => ({
-      ...formValue,
-      ...state,
-      amount: `NTD${toCurrency(state.amount)}`,
-    }));
-
+  useEffect(async () => {
     // TODO api preTransfer: get otp countdown time and code?
-    apiPreTransfer();
+    await handlePreTransfer();
   }, []);
+
   return (
     <Layout title="轉帳" fid={Func.C002} goBackFunc={goBack}>
       <TransferConfirmWrapper>
