@@ -3,14 +3,14 @@ import Layout from 'components/Layout';
 
 const LoanInterestWrapper = styled(Layout)`
   background: ${({ theme }) => theme.colors.background.lighterBlue};
-  // background: ${({ theme }) => theme.colors.basic.white};
   padding: 0 1.6rem;
 
   .cardArea {
     width: 100vw;
-    height: 14.1rem;
+
     transform: translateX(-1.6rem);
-    padding: 1.2rem 1.6rem;
+    padding: 1.6rem 1rem 2.6rem 1rem;
+    margin-bottom: 0.8rem;
 
     .debitCard {
       margin-bottom: 0;
@@ -18,7 +18,7 @@ const LoanInterestWrapper = styled(Layout)`
     }
   }
   
-
+  
   .contentArea {
     background: ${({ theme }) => theme.colors.basic.white};
     width: 100vw;
@@ -32,9 +32,6 @@ const LoanInterestWrapper = styled(Layout)`
 
     .tools {
       background: ${({ theme }) => theme.colors.basic.white};
-      position: sticky;
-      top: -1.6rem;
-      padding-top: 1.6rem;
       z-index: 1;
     }
 

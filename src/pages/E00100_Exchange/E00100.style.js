@@ -21,10 +21,32 @@ export const ExchangeWrapper = styled(Layout)`
     }
     .amount {
       display: flex;
-      flex-direction:column;
       span {
         padding: 0px 5px;
       }
+
+      & div:first-of-type {
+        flex: 1;
+      }
+
+      .MuiFormGroup-root {
+        & .MuiFormControlLabel-root:first-of-type {
+          margin-bottom: 0.5rem;
+        }
+      }
+
+      .MuiFormHelperText-root.Mui-error {
+        transform: translate(70%, 100%);
+      }
+    }
+  }
+
+  .estimateMessage {
+    display: flex;
+    flex-direction: column;
+
+    & .MuiFormHelperText-root:last-of-type {
+      align-self: flex-end;
     }
   }
 
@@ -126,16 +148,6 @@ export const ExchangeWrapper = styled(Layout)`
       color: ${({ theme }) => theme.colors.text.point};
     }
   }
-  // .MuiFormHelperText-root {
-  //   &.balance {
-  //     margin: 0;
-  //     left: 0;
-  //     bottom: 0;
-  //     transform: translateY(0%);
-  //     text-align: left;
-  //     color: ${({ theme }) => theme.colors.text.mediumGray};
-  //   }
-  // }
   .exchangeTypeLabel {
     display: flex;
     justify-content: space-between;

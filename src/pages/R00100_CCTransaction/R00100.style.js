@@ -3,16 +3,16 @@ import styled from 'styled-components';
 const PageWrapper = styled.div`
   padding: 4.4rem 0;
   height: 100%;
+  background-color: ${({ theme }) => theme.colors.background.lighterBlue};
+
   .bg-gray {
     background-color: ${({ theme }) => theme.colors.background.lighterBlue};
-    padding: 1.6rem;
-    padding-bottom: 4.6rem;
+    padding: 1.6rem 1rem 3.4rem;
   }
 
   .txn-wrapper {
     background-color: ${({ theme }) => theme.colors.basic.white};
-    padding: 0 1.6rem 8rem;
-    margin-top: -3rem;
+    padding: 1.2rem 1.6rem 8rem;
     border-top-left-radius: 3rem;
     border-top-right-radius: 3rem;
   }
