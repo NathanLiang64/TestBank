@@ -14,7 +14,7 @@ import {
 } from 'components/Fields';
 import Accordion from 'components/Accordion';
 import { FEIBButton } from 'components/elements';
-import { getAccountsList } from 'utilities/CacheData';
+import { getAccountsList, updateAccount } from 'utilities/CacheData';
 import { showAnimationModal } from 'utilities/MessageModal';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { Func } from 'utilities/FuncID';
@@ -93,8 +93,8 @@ export default () => {
     } else {
       reset((p) => ({
         ...p,
-        account: allowBindAccounts[0]?.value,
-        type: ledgerTypes[0]?.value,
+        account: allowBindAccounts[0]?.value || '',
+        type: ledgerTypes[0]?.value || '',
       }));
     }
   }, [allowBindAccounts, ledgerTypes]);
@@ -113,6 +113,7 @@ export default () => {
         });
         return null;
       }
+      updateAccount();
       history.push('/CreateLedgerSuccess', resFrom);
       return null;
     }
@@ -120,7 +121,11 @@ export default () => {
   };
 
   return (
-    <Layout title="建立帳本" fid={Func.C002} goBackFunc={() => history.goBack()}>
+    <Layout
+      title="建立帳本"
+      fid={Func.C002}
+      goBackFunc={() => history.goBack()}
+    >
       <PageWrapper>
         <Box className="formFileds">
           <TextInputField

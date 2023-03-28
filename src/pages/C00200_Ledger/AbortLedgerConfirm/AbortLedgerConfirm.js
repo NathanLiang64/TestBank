@@ -11,8 +11,10 @@ import { FEIBButton } from 'components/elements';
 import Accordion from 'components/Accordion';
 import { showAnimationModal } from 'utilities/MessageModal';
 import { Func } from 'utilities/FuncID';
+import { updateAccount } from 'utilities/CacheData';
 import PageWrapper from './AbortLedgerConfirm.style';
 import { getLedgerTypeName } from '../utils/lookUpTable';
+
 import { close } from './api';
 
 export default () => {
@@ -58,12 +60,17 @@ export default () => {
       });
       return null;
     }
+    updateAccount();
     history.push('/AbortLedgerSuccess', { ...state, ...data });
     return null;
   };
 
   return (
-    <Layout title="終止帳本" fid={Func.C002} goBackFunc={() => history.goBack()}>
+    <Layout
+      title="終止帳本"
+      fid={Func.C002}
+      goBackFunc={() => history.goBack()}
+    >
       <PageWrapper>
         <Box className="pageTitle">確認資料</Box>
         {CONFIG.map((item) => (
