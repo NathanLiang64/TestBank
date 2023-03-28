@@ -75,7 +75,7 @@ export default () => {
             content={item.value}
           />
         ))}
-        <Box display="flex" justifyContent="space-between" mt={3}>
+        <Box display="flex" justifyContent="space-between" my={3}>
           <Box width="49%" onClick={onInvitationClick}>
             <FEIBButton>邀請好友</FEIBButton>
           </Box>
