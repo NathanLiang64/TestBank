@@ -14,7 +14,7 @@ import {
 } from 'components/Fields';
 import Accordion from 'components/Accordion';
 import { FEIBButton } from 'components/elements';
-import { getAccountsList } from 'utilities/CacheData';
+import { getAccountsList, updateAccount } from 'utilities/CacheData';
 import { showAnimationModal } from 'utilities/MessageModal';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { Func } from 'utilities/FuncID';
@@ -113,6 +113,7 @@ export default () => {
         });
         return null;
       }
+      updateAccount();
       history.push('/CreateLedgerSuccess', resFrom);
       return null;
     }
