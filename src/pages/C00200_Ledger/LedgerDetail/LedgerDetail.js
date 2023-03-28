@@ -76,8 +76,19 @@ export default () => {
       id: 1,
       label: '給錢',
       onClick: () => {
-        console.log('給錢', state);
-        history.push('/transferSetting', state);
+        const transOutData = {
+          transOut: state.bankeeAccount.accountNumber,
+          amount: 0,
+          transIn: {
+            bank: '',
+            account: '',
+          },
+          target: '',
+          usageType: '',
+          memo: '',
+        };
+        console.log('給錢', transOutData);
+        history.push('/transferSetting', transOutData);
       },
     },
     {
