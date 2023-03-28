@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { showDrawer, closeDrawer } from 'utilities/MessageModal';
 import {
-  toCurrency, dateToYMD, dateToString, handleLoanTypeToTitle,
+  toCurrency, dateToYMD, dateToString, handleLoanTypeToTitle, accountFormatter,
 } from 'utilities/Generator';
 import { Func } from 'utilities/FuncID';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
-import DebitCard from 'components/DebitCard/DebitCard';
+import LoanCard from 'components/CreditCard';
 import InformationTape from 'components/InformationTape';
 import { FEIBTabContext, FEIBTabList, FEIBTab } from 'components/elements';
 import DownloadIcon from 'assets/images/icons/downloadIcon.svg';
@@ -134,17 +134,13 @@ const LoanInterest = () => {
     <Layout fid={Func.L003} title="繳款紀錄查詢">
       <LoanInterestWrapper>
         <div className="cardArea">
-          <DebitCard
-            branch=""
-            cardName={cardData?.loanType || '信貸'}
-            account={`${cardData?.account || ''} ${
-              cardData.subNo
-            }`}
-            balance={toCurrency(cardData?.balance || '')}
-            dollarSign={cardData?.currency || ''}
-            transferTitle=""
+          <LoanCard
+            cardName={`${cardData.loanType ?? '信用貸款'} ${cardData.subNo}`}
+            accountNo={accountFormatter(cardData.account, true)}
             color="lightPurple"
-            hideCopyIcon
+            annotation="貸款餘額"
+            balance={cardData.balance}
+            fixHeight
           />
         </div>
         <div className="contentArea">

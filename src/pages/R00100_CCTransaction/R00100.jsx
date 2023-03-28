@@ -11,6 +11,7 @@ import CreditCard from 'components/CreditCard';
 import { Func } from 'utilities/FuncID';
 import CreditCardTxsList from 'components/CreditCardTxsList';
 import { useNavigation, loadFuncParams } from 'hooks/useNavigation';
+import { creditFormatter } from 'pages/C00700_CreditCard/utils';
 import PageWrapper from './R00100.style';
 import { getBankeeCard, getTransactions, updateTxnNotes } from './api';
 
@@ -69,10 +70,11 @@ const R00100 = () => {
             <div className="bg-gray">
               <CreditCard
                 cardName={viewModel.cardInfo.isBankeeCard ? 'Bankee信用卡' : '所有信用卡'}
-                accountNo={viewModel.cardInfo.isBankeeCard ? viewModel.cardInfo.cardNo : ''}
+                accountNo={creditFormatter(viewModel.cardInfo.isBankeeCard ? viewModel.cardInfo.cardNo : '')}
                 balance={viewModel.cardInfo.usedCardLimit}
                 color="green"
                 annotation="已使用額度"
+                fixHeight
               />
             </div>
             <div className="txn-wrapper">

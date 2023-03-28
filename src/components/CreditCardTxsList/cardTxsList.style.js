@@ -1,10 +1,8 @@
 import styled from 'styled-components';
 
 export const CreditCardTxsListWrapper = styled.div`
-  minheight: 20rem;
 
   .transactionList {
-    margin-top: 0.5rem;
     .remark {
       button {
         padding: 0;

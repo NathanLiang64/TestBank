@@ -28,7 +28,7 @@ const AccountCardWrapper = styled.div`
   background-repeat: no-repeat;
   border-radius: 8px;
   width: 100%;
-  min-height: ${({ fixHeight }) => (fixHeight ? '117px !important' : '151.66px;')};
+  min-height: ${({ fixHeight }) => (fixHeight ? '114px !important' : '150px;')};
   padding: 1.2rem;
   text-align: left;
   font-size: 1.6rem;

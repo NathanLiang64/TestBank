@@ -55,4 +55,4 @@ export const renderBody = (bodys) => bodys.map((body) => (
   </tr>
 ));
 
-export const creditFormatter = (account) => (account ? `${account.slice(0, 4)}-****-****-${account.slice(12, 16)}` : '-');
+export const creditFormatter = (account) => (account ? `${account.slice(0, 4)}-****-****-${account.slice(12, 16)}` : '');
