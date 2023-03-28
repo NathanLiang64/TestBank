@@ -224,15 +224,17 @@ export const getAccountInterest = async ({accountNo, currency}, onDataLoaded) =>
 
 /**
  * 將更新後的存款帳號物件存入 Redux
- * @param {*} newAccount
+ * @param {string|null} newAccount
+ * 若 newAccount 為空值，代表從 API 拿取帳號列表，再次更新 cache
  */
 export const updateAccount = async (newAccount) => {
   let {accounts} = await restoreCache();
-  if (!accounts) {
+  if (!accounts || !newAccount) {
     accounts = await loadAccountsList();
     store.dispatch(setAccounts(accounts)); // 保存所有的帳號資料。
   }
 
+  if (!newAccount) return;
   const index = accounts.findIndex((account) => account.accountNo === newAccount.accountNo);
 
   if (index >= 0) {
