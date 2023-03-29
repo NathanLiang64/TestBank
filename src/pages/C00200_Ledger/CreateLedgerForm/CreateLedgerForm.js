@@ -79,7 +79,7 @@ export default () => {
       if (allowCreateSubAccts) {
         setAllowBindAccounts([
           ...formatAllowBindAccounts,
-          { label: '加開子帳戶', value: 'new' },
+          { label: '加開子帳戶', value: '' },
         ]);
       } else {
         setAllowBindAccounts(formatAllowBindAccounts);
