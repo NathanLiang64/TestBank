@@ -196,7 +196,7 @@ export default () => {
           )}
           balance={parseInt(viewModel.ledgerAmount?.replace(/,/g, ''), 10)}
           color={
-            Object.keys(theme.colors.card)[viewModel.ledgerColor]
+            Object.keys(theme.colors.card)[viewModel.ledgerColor - 1]
             || Object.keys(theme.colors.card)[0]
           }
           fixHeight
