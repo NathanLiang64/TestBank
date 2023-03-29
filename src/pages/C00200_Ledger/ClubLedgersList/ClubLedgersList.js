@@ -99,7 +99,7 @@ export default () => {
                     </Box>
                   )}
                   color={
-                    Object.keys(theme.colors.card)[ledgerColor]
+                    Object.keys(theme.colors.card)[ledgerColor - 1]
                     || Object.keys(theme.colors.card)[0]
                   }
                   annotation={(
