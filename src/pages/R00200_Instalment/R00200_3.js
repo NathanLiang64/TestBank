@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /** @format */
 import { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
@@ -8,7 +7,6 @@ import { useDispatch } from 'react-redux';
 /* Elements */
 import Layout from 'components/Layout/Layout';
 import { FEIBButton } from 'components/elements';
-import InformationList from 'components/InformationList';
 import { Func } from 'utilities/FuncID';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { toCurrency } from 'utilities/Generator';
@@ -25,15 +23,16 @@ import { ResultContent, SingleConfirmContent, TotalConfirmContent } from './util
  */
 const R00200_3 = () => {
   const { state } = useLocation();
+  const history = useHistory();
   const { closeFunc } = useNavigation();
   const dispatch = useDispatch();
   const [preCalc, setPreCalc] = useState();
   const [mode, setMode] = useState(state.readOnly ? 0 : 1); // 0=資訊模式(已建立) 1=確認模式（未建立) 2=已建立成功(剛建立完成)
 
   const InfoTable = () => {
-    if (mode !== 1) return <ResultContent state={state} />;
-    if (state.applType === '2') return <TotalConfirmContent state={state} />;
-    return <SingleConfirmContent state={state} />;
+    if (mode !== 1) return <ResultContent totTerm={state.totTerm} />;
+    if (state.applType === 'H') return <TotalConfirmContent totTerm={state.totTerm} />;
+    return <SingleConfirmContent totTerm={state.totTerm} installmentAmount={state.installmentAmount} />;
   };
 
   const renderPreCalc = () => {
@@ -64,11 +63,11 @@ const R00200_3 = () => {
       <tr key={item.term}>
         <td>{item.term}</td>
         <td>
-          <p>{item.principal}</p>
+          <p>{`$${item.principal}`}</p>
           <p className="principalText">{item.principalText}</p>
         </td>
-        <td>{item.interest}</td>
-        <td>{item.amountDue}</td>
+        <td>{`$${item.interest}`}</td>
+        <td>{`$${item.amountDue}`}</td>
       </tr>
     ));
   };
@@ -117,7 +116,7 @@ const R00200_3 = () => {
   const calculateInstallment = async () => {
     // 只有申請單筆分期付款才需要拿取試算表
     if (state.applType !== 'G') return;
-    const calcParam = state.param.map(({ applType, ...rest }) => ({ ...rest }));
+    const calcParam = state.param.map(({ applType, ...rest }) => ({ ...rest, totTerm: parseInt(rest.totTerm, 10) }));
     dispatch(setWaittingVisible(true));
     const calcResult = await getPreCalc(calcParam);
     setPreCalc(calcResult);
@@ -127,7 +126,8 @@ const R00200_3 = () => {
   useEffect(() => { calculateInstallment(); }, []);
 
   return (
-    <Layout title="晚點付 (總額)" fid={Func.R002}>
+    // TODO  goBackFunc 改成回傳 cache
+    <Layout title="晚點付 (總額)" fid={Func.R002} goBackFunc={history.goBack}>
       <InstalmentWrapper className="InstalmentWrapper ConfirmResultPage" small>
         {mode !== 0 ? (
           <div className="InstalmentWrapperText">

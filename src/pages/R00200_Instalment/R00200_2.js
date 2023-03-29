@@ -33,7 +33,7 @@ const R00200_2 = () => {
     totTerm: yup.string().required('請選擇欲申請之晚點付期數'),
   });
 
-  const { handleSubmit, control } = useForm({
+  const { handleSubmit, control, watch } = useForm({
     defaultValues: { totTerm: '1' },
     resolver: yupResolver(schema),
   });
@@ -43,11 +43,12 @@ const R00200_2 = () => {
     {label: '3期', value: '3'},
     {label: '6期', value: '6'},
     {label: '9期', value: '9'},
-    {label: '12期', value: '12'}];
+    {label: '12期', value: '12'},
+  ];
 
   const onSubmit = async ({totTerm}) => {
-    const {applType, selectedTransactions} = state;
-    const param = selectedTransactions.map(({purchDate, purchAmount, authCode}) => ({
+    const { applType, selectedTxns } = state;
+    const param = selectedTxns.map(({ purchDate, purchAmount, authCode }) => ({
       purchDate,
       purchAmount,
       authCode,
@@ -60,22 +61,26 @@ const R00200_2 = () => {
     dispatch(setWaittingVisible(false));
 
     // eslint-disable-next-line no-return-assign
-    const installmentAmount = selectedTransactions.reduce((acc, cur) => acc += cur, 0);
+    const installmentAmount = selectedTxns.reduce((acc, cur) => acc += cur.purchAmount, 0);
+
     history.push('R002003', {
       applType, installmentAmount, totTerm, param,
     });
   };
 
+  const totTerm = watch('totTerm');
+
   if (!state) return goHome();
   return (
-    <Layout title={`晚點付 (${state.applType === 'H' ? '總額' : '單筆'})`}>
+    // TODO  goBackFunc 改成回傳 cache
+    <Layout title={`晚點付 (${state.applType === 'H' ? '總額' : '單筆'})`} goBackFunc={history.goBack}>
       <InstalmentWrapper className="InstalmentWrapper" small>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
             <div className="messageBox2">
               <p>分期利率</p>
               <h2 className="titleText">
-                {`${interestRateMap[state.totTerm].annualRate}%`}
+                {`${totTerm ? `${interestRateMap[totTerm].annualRate}%` : ''}`}
               </h2>
             </div>
             <RadioGroupField
@@ -88,7 +93,6 @@ const R00200_2 = () => {
               options={options}
               name="totTerm"
             />
-            {/* TODO: 晚點付約定條款 與 注意事項 之內容 */}
             <Accordion title="晚點付約定條款" space="both">
               <R00200AccordionContent1 />
             </Accordion>

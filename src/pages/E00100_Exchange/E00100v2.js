@@ -13,7 +13,7 @@ import { RadioGroup } from '@material-ui/core';
 import { Func } from 'utilities/FuncID';
 import { getAccountsList } from 'utilities/CacheData';
 import { toCurrency } from 'utilities/Generator';
-import { showCustomPrompt } from 'utilities/MessageModal';
+import { showCustomPrompt, showPrompt } from 'utilities/MessageModal';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
 import {
   isEmployee,
@@ -197,6 +197,7 @@ const E00100 = (props) => {
       });
     }
 
+    if (amount)trigger('amount');
     //
     reset((formValues) => {
       // NOTE 在切換 mode 時， getCurrencyList 也會改變，因此預設的 currency 也要變更
@@ -254,6 +255,30 @@ const E00100 = (props) => {
    * @param {*} values 使用者輸入的資料。
    */
   const onSubmit = async (values) => {
+    // NOTE 下方的檢查項目也可以放在 schema 做，但考慮提示訊息太長會跑版，所以改 prompt 方式呈現
+    const isNtdAspect = (values.mode === values.amountType); // 是否以台幣角度進行兌換
+    let errorMessage = null;
+
+    // ====== 檢查項目 1.新台幣/日圓之最小交易單位須為整數 ======
+    if (values.currency === 'JPY' || isNtdAspect) {
+      if (!Number.isInteger(values.amount)) errorMessage = '新台幣/日圓之最小交易單位須為整數';
+    }
+
+    // ====== 檢查項目 2.檢查單筆交易最低金額 ======
+    let ntd = values.amount;
+    // 若幣別非台幣，需轉為台幣
+    if (!isNtdAspect) ntd = estimateExchangeInfo(values.amount, 2).quota;
+    if (ntd < 300) errorMessage = '單筆交易最低金額為等值新台幣300(含)元。';
+
+    // ====== 檢查項目 3.檢查單筆交易最高金額 ======
+    const usd = transferToUSD(ntd, isNtdAspect);
+    if (usd > 490000) errorMessage = '單筆交易最高金額為等值美金49萬(含)元，每人單一營業日累計限額為等值美金49萬(含)元(結/結售分開計算)。';
+
+    if (errorMessage) {
+      showPrompt(errorMessage);
+      return;
+    }
+
     history.push('/E001001', {
       model: values,
       viewModel, // NOTE 會由 create API 估算兌換指定轉入金額所需的轉出金額 寫入 outAmount
@@ -272,6 +297,7 @@ const E00100 = (props) => {
 
   /**
    * 取得幣別清單。
+   * TODO 若產出列表清單為空陣列，需提示使用者? 或是直接產出列表，透過 schema 檢查
    */
   const getCurrencyList = () => (viewModel.currencies ?? [])
     .filter((item) => {
@@ -370,6 +396,14 @@ const E00100 = (props) => {
     return null;
   };
 
+  const transferToUSD = (amt, isNtdAspect) => {
+    const ccyInfo = viewModel.currencies.find((item) => item.Currency === 'USD');
+    let quota;
+    if (isNtdAspect) quota = Number((amt / ccyInfo.SpotAskRate).toFixed(2));
+    else quota = Number((amt / ccyInfo.SpotBidRate).toFixed(2));
+    return quota;
+  };
+
   /**
    * 顯示預估可兌換的轉入幣別及金額。
    */
@@ -401,6 +435,17 @@ const E00100 = (props) => {
     return <div />;
   };
 
+  // TODO 有點難理解，待優化
+  const generatePhrase = () => {
+    let phrase = null;
+    if (viewModel.mode === amountType) {
+      if (viewModel.mode === 1) phrase = '可兌換';
+      else phrase = '需';
+    } else if (viewModel.mode === 1) phrase = '需';
+    else phrase = '可兌換';
+    return phrase;
+  };
+
   /**
    *
    * @param {Number} amt 要估算的兌換金額；未指定金額時，以轉出帳戶的餘額計算。
@@ -416,9 +461,11 @@ const E00100 = (props) => {
       const { quota, ccyInfo } = excnageInfo;
       let prompt;
       if (mode === 1) {
-        prompt = `預估可兌換 ${toCurrency(quota, 2, true)}${ccyInfo.CurrencyName}`;
+        // prompt = `預估可兌換 ${toCurrency(quota, 2, true)}${ccyInfo.CurrencyName}`;
+        prompt = `預估${generatePhrase()} ${toCurrency(quota, 2, true)}${ccyInfo.CurrencyName}`;
       } else {
-        prompt = `預估需 新台幣 ${toCurrency(quota)}元`;
+        // prompt = `預估需 新台幣 ${toCurrency(quota)}元`;
+        prompt = `預估${generatePhrase()} 新台幣 ${toCurrency(quota)}元`;
       }
       return (
         <div className="estimateMessage">
@@ -494,14 +541,15 @@ const E00100 = (props) => {
                 labelName="兌換金額"
                 name="amount"
                 control={control}
-                currency={amountType === 2 ? 'NTD' : currency}
+                currency={viewModel.mode === amountType ? 'NTD' : currency}
                 inputProps={{ inputMode: 'numeric' }}
               />
               <Controller control={control} name="amountType"
                 render={({ field }) => (
                   <RadioGroup {...field} name="amountType" onChange={(e) => {
                     setValue('amountType', parseInt(e.target.value, 10));
-                    trigger('amountType');
+                    // trigger('amountType');
+                    trigger('amount'); // amountType 改變時，需再次驗證金額是否超過帳戶餘額
                   }}
                   >
                     <FEIBRadioLabel value={viewModel.mode === 1 ? 2 : 1} control={<FEIBRadio />} label={viewModel.currency.CurrencyName} />

@@ -2,10 +2,11 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import theme from 'themes/theme';
 
 import { FEIBButton, FEIBHintMessage} from 'components/elements';
-
 import { DropdownField, RadioGroupField, TextInputField } from 'components/Fields';
+
 import { DrawerWrapper } from './E00400.style';
 /**
  * 編輯/新增到價通知。
@@ -23,47 +24,74 @@ function NoticeEditor({
   onSubmit,
 }) {
   const schema = yup.object().shape({
-    method: yup.string().required('請選擇種類'),
     currency: yup.string().required('請選擇幣別'),
-    direction: yup.number().required('請選擇通知門檻'),
+    direction: yup.number().required('').typeError(''),
     price: yup.number().required('請輸入匯率').typeError('請輸入數字'),
+    bidAsk: yup.number().required('請輸入設定類型'),
   });
 
-  const { control, handleSubmit, watch} = useForm({
+  const {
+    control, handleSubmit, watch, reset,
+  } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       currency: '',
-      direction: '',
+      direction: '1',
       price: '',
+      bidAsk: (!initData || initData.direction) ? '1' : '2',
       ...initData, // 若 initData 有值，會覆蓋掉 currency/direction/price
-      method: initData?.direction ? 'srate' : 'brate',
     },
   });
 
-  const methodOptions = [{label: '賣外幣', value: 'brate'}, {label: '買外幣', value: 'srate'}];
-  const directionOptions = [{label: '高於 (含)', value: 0}, {label: '低於 (含)', value: 1}];
-
   const rateInfo = () => {
-    const [method, currency] = watch(['method', 'currency']);
-    if (!currency || !method) return null;
+    const [bidAsk, currency] = watch(['bidAsk', 'currency']);
+    if (!currency || !bidAsk) return null;
     const selectedCurrency = currencyOptions.find(({value}) => value === currency);
-    const currentRate = selectedCurrency[method];
+    const currentRate = selectedCurrency[bidAsk === '1' ? 'srate' : 'brate']; // TODO
     return <FEIBHintMessage>{`目前匯率 ${currentRate} (更新時間 ${currentTime})`}</FEIBHintMessage>;
+  };
+
+  const onBidAskChange = (e) => {
+    const dir = e.target.value === '1' ? 1 : 0;
+    reset((formValues) => ({...formValues, bidAsk: e.target.value, direction: dir}));
   };
 
   return (
     <DrawerWrapper>
       <form className="flex-col" onSubmit={handleSubmit(onSubmit)}>
-        <RadioGroupField name="method" control={control} options={methodOptions} row />
+        <RadioGroupField
+          name="bidAsk"
+          control={control}
+          options={[{label: '買外幣', value: '1'}, {label: '賣外幣', value: '2'}]}
+          onChange={onBidAskChange}
+          row
+        />
 
         <div>
-          <DropdownField labelName="幣別" name="currency" control={control} options={currencyOptions} />
+          <DropdownField
+            labelName="幣別"
+            name="currency"
+            control={control}
+            options={currencyOptions}
+          />
           {rateInfo()}
         </div>
 
         <div className="rate-input">
-          <DropdownField labelName="通知匯率" name="direction" control={control} options={directionOptions} />
-          <TextInputField name="price" control={control} inputProps={{ placeholder: '請輸入價格'}} />
+          <DropdownField
+            labelName="通知匯率"
+            name="direction"
+            control={control}
+            options={[{label: '高於 (含)', value: 0}, {label: '低於 (含)', value: 1}]}
+            $color={theme.colors.primary.brand}
+            inputProps={{disabled: true}}
+          />
+
+          <TextInputField
+            name="price"
+            control={control}
+            inputProps={{ placeholder: '請輸入價格'}}
+          />
         </div>
         <FEIBButton type="submit">確認</FEIBButton>
       </form>
