@@ -34,16 +34,17 @@ export const getAllNotices = async () => {
 /**
  * 建立到價通知設定
  * @param {{
+ * custid: string //身份證ID
  * currenty: string // 幣別
  * price: number // 價格
- * exchange_type: number // 換匯種類: 0.現金 1.即期
+ * bid_ask: number //買賣別 1:即期買 2: 即期賣
  * direction: number // 方向性 0:大於等於 1:小於等於
  * }} request
  * @returns {Promise<{ isSuccess, code, message }>} 更新成功與否的旗標。
  */
 
 export const addNoticeItem = async (request) => {
-  const response = await callAPI('/deposit/foreign/v1/addNoticeItem', {...request, exchange_type: 1});
+  const response = await callAPI('/deposit/foreign/v1/addNoticeItem', request);
   return response;
 };
 
