@@ -10,11 +10,6 @@ export const transferSettingInitialData = {
   memo: 'Test',
 };
 
-export const bonusInfo = {
-  remainAmount: 10000,
-  freeTransOutTimes: 2,
-};
-
 export const transferConfirm = {
   transOutAcct: '01234567890000',
   amount: 1000,
@@ -24,5 +19,4 @@ export const transferConfirm = {
   transFee: 15,
   type: '1',
   memo: 'Test',
-  remainAmount: '9990',
 };

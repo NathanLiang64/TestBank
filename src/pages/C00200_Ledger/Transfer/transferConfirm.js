@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { TextInputField } from 'components/Fields';
 import Layout from 'components/Layout/Layout';
 import { useHistory, useLocation } from 'react-router';
@@ -18,12 +17,18 @@ import { preTransfer, transfer } from './api';
 const TransferConfirm = () => {
   const history = useHistory();
   const {state} = useLocation();
-  const [countDownTimer, setCountDownTimer] = useState(300);
+  const [countDownTimer, setCountDownTimer] = useState(300); // 預設5分鐘
 
   const {control, handleSubmit} = useForm({
     defaultValues: {
-      ...state,
+      transOutAcct: state.transOutAcct,
       amount: `NTD${toCurrency(state.amount)}`,
+      target: state.target,
+      transInBank: state.transInBank,
+      transInAcct: state.transInAcct,
+      type: state.type,
+      memo: state.memo,
+      otpInput: '',
     },
   });
 
@@ -79,9 +84,8 @@ const TransferConfirm = () => {
       ...data,
       amount: parseInt(data.amount.replace(/[^0-9]/g, ''), 10),
     }; // TODO confirm req param format
-    console.log('TransferConfirm', {dataToSend});
-    // TODO send transfer req
     const result = transfer(dataToSend);
+    // TODO: 成功：
     history.push('/transferFinish', result);
   };
 

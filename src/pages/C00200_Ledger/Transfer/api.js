@@ -1,18 +1,13 @@
-import { bonusInfo, transferConfirm } from './mockData';
-
-export const getBonusInfo = () => {
-  console.log('api /getBonusInfo', {bonusInfo});
-  return bonusInfo;
-};
+import { transferConfirm } from './mockData';
 
 export const preTransfer = (param) => {
   console.log('api /preTransfer', {param});
   const response = '';
 
-  return response;
+  return response; // DEBUG mock data
 };
 
 export const transfer = (data) => {
   console.log('api /transfer', {data});
-  return transferConfirm;
+  return transferConfirm; // DEBUG mock data
 };
