@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
-import { loadFuncParams } from 'hooks/useNavigation';
+import { loadFuncParams, useNavigation } from 'hooks/useNavigation';
 import { Func } from 'utilities/FuncID';
 import { getAccountsList } from 'utilities/CacheData';
 
@@ -31,6 +31,7 @@ const D00700 = (props) => {
   const { location: {state} } = props;
   const history = useHistory();
   const dispatch = useDispatch();
+  const { closeFunc } = useNavigation();
 
   // ViewModel
   const [viewModel, setViewModel] = useState({
@@ -39,7 +40,7 @@ const D00700 = (props) => {
     outAccount: null, // 轉出帳號(詳細資訊)
     inAccount: null, // 轉入帳號(詳細資訊)
     currency: null, // 轉帳幣別(詳細資訊)
-    amount: null, // 轉帳金額
+    // amount: null, // 轉帳金額
     currencyList: [],
   });
 
@@ -54,7 +55,7 @@ const D00700 = (props) => {
     property: yup.string().required('請選擇匯款性質').test('emptyType', '請選擇匯款性質', (type) => type !== '*'),
   });
 
-  const { handleSubmit, control, reset, setValue } = useForm({
+  const { watch, handleSubmit, control, reset, setValue } = useForm({
     resolver: yupResolver(schema),
     // Model
     defaultValues: {
@@ -67,48 +68,50 @@ const D00700 = (props) => {
     },
   });
 
+  const { inAccount } = watch();
+
   const processStartParams = async (accts) => {
     // 取得約定轉入帳號列表，並且只篩選出「遠銀」且為「外幣」的帳戶
-    const { details, ...restDetails } = accts[0];
-    const agreedAccounts = await getAgreedAccount(accts[0].accountNo);
+    const { details, ...restDetails } = accts;
+    const agreedAccounts = await getAgreedAccount(accts.accountNo);
+    if (agreedAccounts.length) {
+      const foreignAgreedAccts = agreedAccounts.filter((acct) => acct.isForeign && acct.bankId === '805');
+      const options = foreignAgreedAccts.map(({ acctId }) => ({ label: acctId, value: acctId }));
+      const inAccounts = [...viewModel.inAccounts, ...options];
 
-    if (!agreedAccounts.length) {
-      await showPrompt(
-        <p className="txtCenter">
-          您目前尚未擁有外幣約定轉帳帳號，無法進行本行同幣別外幣轉帳
-        </p>,
-      );
+      // 預設的幣別
+      const currencyList = details.map((detail) => ({ ...restDetails, ...detail })); // By 幣別的卡片列表
+      let outAccount = currencyList[0];
+      const params = await loadFuncParams();
+      if (params) outAccount = currencyList.find((acct) => acct.currency === params.currency);
+
+      return { currency: outAccount.currency, inAccounts, currencyList, outAccount };
     }
-    const foreignAgreedAccts = agreedAccounts.filter((acct) => acct.isForeign && acct.bankId === '805');
-    const options = foreignAgreedAccts.map(({ acctId }) => ({ label: acctId, value: acctId }));
-    const inAccounts = [...viewModel.inAccounts, ...options];
 
-    // 預設的幣別
-    const currencyList = details.map((detail) => ({ ...restDetails, ...detail })); // By 幣別的卡片列表
-    let { currency } = currencyList[0];
-    const params = await loadFuncParams();
-    if (params) currency = currencyList.find((acct) => acct.currency === params.currency).currency;
-
-    return { currency, inAccounts, currencyList };
+    await showPrompt(
+      <p className="txtCenter">
+        您目前尚未擁有外幣約定轉帳帳號，無法進行本行同幣別外幣轉帳
+      </p>,
+      closeFunc,
+    );
+    return null;
   };
 
   // 取得帳戶清單
   const getForeignCurrencyAccounts = async () => {
-    dispatch(setWaittingVisible(true));
-
     // 取得帳號基本資料，不含跨轉優惠次數，且餘額「非即時」。
     getAccountsList('F', async (accts) => {
       const outAccount = accts[0].accountNo;
 
       // 更新 viewModel
-      const vModel = state?.viewModel || await processStartParams(accts);
-      setViewModel((vm) => ({ ...vm, ...vModel }));
+      const vModel = state?.viewModel || await processStartParams(accts[0]);
+      if (vModel) {
+        setViewModel((vm) => ({ ...vm, ...vModel }));
 
-      // 更新 model
-      const model = state?.model || {outAccount, currency: vModel.currency};
-      reset((formValues) => ({ ...formValues, ...model }));
-
-      dispatch(setWaittingVisible(false));
+        // 更新 model
+        const model = state?.model || {outAccount, currency: vModel.currency};
+        reset((formValues) => ({ ...formValues, ...model }));
+      }
     });
   };
 
@@ -121,21 +124,47 @@ const D00700 = (props) => {
   };
 
   const onSubmit = (values) => {
-    // {outAccount, inAccount, currency, amount, property, memo} = values;
     history.push('/D007001', {model: values, viewModel});
   };
 
   const onAccountChanged = (index) => {
-    setViewModel((vm) => ({ ...vm, currency: viewModel.currencyList[index].currency }));
+    setViewModel((vm) => ({
+      ...vm,
+      currency: viewModel.currencyList[index].currency,
+      outAccount: viewModel.currencyList[index],
+    }));
     setValue('currency', viewModel.currencyList[index].currency);
   };
 
+  /**
+   * 初始化
+   */
   useEffect(() => {
-    getForeignCurrencyAccounts();
-    getTransTypeOptions();
+    dispatch(setWaittingVisible(true));
+
+    if (state && state.viewModel) {
+      // 從確認頁返回。
+      setViewModel(state.viewModel);
+      reset(state.model);
+    } else {
+      getForeignCurrencyAccounts();
+      getTransTypeOptions();
+    }
+
+    dispatch(setWaittingVisible(false));
   }, []);
 
+  /**
+   *
+   */
+  useEffect(() => {
+    viewModel.inAccount = viewModel.inAccounts.find((item) => item.data?.accountNo === inAccount)?.data;
+  }, [inAccount]);
+
   const { currencyList, currency, inAccounts, properties } = viewModel;
+  /**
+   * 主頁面輸出
+   */
   return (
     <Layout fid={Func.D007} title="外幣轉帳">
       <ForeignCurrencyTransferWrapper>

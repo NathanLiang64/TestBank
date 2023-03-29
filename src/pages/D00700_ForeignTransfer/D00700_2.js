@@ -1,8 +1,8 @@
-/* eslint-disable object-curly-newline */
-/* eslint-disable no-unused-vars */
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { accountFormatter, currencySymbolGenerator, dateToString } from 'utilities/Generator';
+import { useHistory } from 'react-router';
+import { useNavigation } from 'hooks/useNavigation';
+import { Func } from 'utilities/FuncID';
+import { screenShot } from 'utilities/AppScriptProxy';
 
 /* Elements */
 import Layout from 'components/Layout/Layout';
@@ -10,23 +10,25 @@ import Accordion from 'components/Accordion';
 import BottomAction from 'components/BottomAction';
 import InformationList from 'components/InformationList';
 import SnackModal from 'components/SnackModal';
-import theme from 'themes/theme';
 import SuccessFailureAnimations from 'components/SuccessFailureAnimations';
 import { CameraIcon } from 'assets/images/icons';
-import {
-  CameraAltOutlined, ShareOutlined,
-} from '@material-ui/icons';
+import { CameraAltOutlined, ShareOutlined } from '@material-ui/icons';
 
 /* Styles */
-import { screenShot } from 'utilities/AppScriptProxy';
-import { useHistory } from 'react-router';
+import theme from 'themes/theme';
 import ForeignCurrencyTransferWrapper from './D00700.style';
 
+/**
+ * 外幣轉帳 結果頁
+ * @param {{location: {state: {model, viewModel, viewData}}}} props
+ */
 const D00700_2 = (props) => {
-  const dispatch = useDispatch();
+  const { location: {state} } = props;
+  const { model, viewModel, viewData } = state;
+
   const history = useHistory();
-  const {location: {state}} = props;
-  const transferResult = state;
+  const { startFunc } = useNavigation();
+
   const [showSnapshotSuccess, setShowSnapshotSuccess] = useState();
 
   const handleClickScreenshot = async () => {
@@ -35,44 +37,43 @@ const D00700_2 = (props) => {
     setTimeout(() => setShowSnapshotSuccess(false), 1000); // 1 秒後自動關閉。
   };
 
-  const propertyName = state.viewModel.properties.find(({value}) => value === state.model.property).label;
-
+  /**
+   * 返回外幣轉帳首頁
+   */
   const goBack = () => {
-    // TODO 待調整回傳的內容
-    const { model, viewModel } = state;
-    const updatedModel = { ...model, amount: '', memo: '', property: '*' }; // 保留 currency, inAccount
-    history.replace('D00700', { model: updatedModel, viewModel });
+    delete viewModel.inAccount;
+    delete viewModel.currency;
+    // delete viewModel.amount;
+    history.replace('D00700', { model: null, viewModel });
   };
 
+  /**
+   * 主頁面輸出
+   */
   return (
     <Layout title="外幣轉帳結果" goBackFunc={goBack}>
-      <ForeignCurrencyTransferWrapper className={transferResult.isSuccess ? 'confirmAndResult' : 'confirmAndResult fail'}>
-        <SuccessFailureAnimations isSuccess={transferResult.isSuccess} successTitle="轉帳成功" errorTitle="轉帳失敗" />
+      <ForeignCurrencyTransferWrapper className={viewData.isSuccess ? 'confirmAndResult' : 'confirmAndResult fail'}>
+        <SuccessFailureAnimations isSuccess={viewData.isSuccess} successTitle="轉帳成功" errorTitle="轉帳失敗" />
         {
-          transferResult.isSuccess && (
+          viewData.isSuccess && (
             <>
               <div className="confrimDataContainer">
                 <div className="dataLabel">轉出金額與轉入帳號</div>
-                <div className="balance">
-                  {
-                    currencySymbolGenerator(state.model.currency, state.model.amount)
-                  }
-                </div>
+                <div className="balance">{viewData.amount}</div>
                 <div className="accountInfo">遠東商銀(805)</div>
-                <div className="accountInfo">{ accountFormatter(state.model.inAccount) }</div>
+                <div className="accountInfo">{viewData.outAccount}</div>
               </div>
               <div className="line" />
               <div className="infoListContainer">
                 <div>
-                  <InformationList title="轉出帳號" content={accountFormatter(state.model.outAccount, true)} />
-                  <InformationList title="時間" content={dateToString(new Date())} />
+                  <InformationList title="轉出帳號" content={viewData.inAccount} />
+                  <InformationList title="時間" content={viewData.transData} />
                 </div>
                 <div style={{ marginBottom: '8rem' }}>
                   <Accordion title="詳細交易">
-                    {/* TODO 帳戶餘額是否以交易完成後的回傳資訊為準，待確認回傳的資料結構  */}
-                    {/* <InformationList title="帳戶餘額" content={`${currencySymbolGenerator(model?.outCcyCd)}${model?.transOut?.balance}`} /> */}
-                    <InformationList title="匯款性質分類" content={propertyName} />
-                    <InformationList title="備註" content={state.model.memo} />
+                    <InformationList title="帳戶餘額" content={viewData.balance} />
+                    <InformationList title="匯款性質分類" content={viewData.property} />
+                    <InformationList title="備註" content={viewData.memo} />
                   </Accordion>
                 </div>
               </div>
@@ -82,7 +83,7 @@ const D00700_2 = (props) => {
                   畫面截圖
                 </button>
                 <div className="divider" />
-                <button type="button" onClick={() => console.log('跳轉查詢明細')}>
+                <button type="button" onClick={() => startFunc(Func.C004, { defaultCurrency: model.currency })}>
                   <ShareOutlined />
                   查詢明細
                 </button>

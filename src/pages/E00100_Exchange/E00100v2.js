@@ -187,14 +187,15 @@ const E00100 = (props) => {
     viewModel.mode = newMode;
     viewModel.outAccount = (getAccountList(0).length > 0) ? getAccountList(0)[0].data : '';
     viewModel.inAccount = (getAccountList(1).length > 0) ? getAccountList(1)[0].data : '';
-    // // 載入交易性質清單
-    // const properties = viewModel.properties[newMode];
-    // if (!properties || !properties.length) {
-    //   getExchangePropertyList({ trnsType: viewModel.mode, action: '1' }).then((items) => {
-    //     viewModel.properties[viewModel.mode] = items;
-    //     setValue('property', '*');
-    //   });
-    // }
+
+    // 載入交易性質清單
+    const properties = viewModel.properties[newMode];
+    if (!properties || !properties.length) {
+      getExchangePropertyList({ trnsType: viewModel.mode, action: '1' }).then((items) => {
+        viewModel.properties[viewModel.mode] = items;
+        setValue('property', '*');
+      });
+    }
 
     //
     reset((formValues) => {
@@ -207,7 +208,7 @@ const E00100 = (props) => {
         currency: isCurrencyExisted ? formValues.currency : currencyOptions[0]?.value ?? '',
         outAccount: '',
         inAccount: '',
-        property: '',
+        property: '*',
       };
     });
   };
@@ -289,23 +290,23 @@ const E00100 = (props) => {
   const getPropertyList = () => {
     const properties = viewModel.properties[viewModel.mode];
 
-    if (!properties) {
-      viewModel.properties[viewModel.mode] = [];
-      const api = getExchangePropertyList({ trnsType: viewModel.mode, action: '1' }).then((items) => items);
+    // if (!properties) {
+    //   viewModel.properties[viewModel.mode] = [];
+    //   const api = getExchangePropertyList({ trnsType: viewModel.mode, action: '1' }).then((items) => items);
 
-      Promise.all([api]).then((values) => {
-        const [items] = values;
-        viewModel.properties[viewModel.mode] = items;
-        forceUpdate();
-      });
-    }
-    return properties?.map((prop) => ({ label: prop.leglDesc, value: prop.leglCode })) ?? []; // TODO key: item.leglCode,
+    //   Promise.all([api]).then((values) => {
+    //     const [items] = values;
+    //     viewModel.properties[viewModel.mode] = items;
+    //     forceUpdate();
+    //   });
+    // }
+    // return properties?.map((prop) => ({ label: prop.leglDesc, value: prop.leglCode })) ?? []; // TODO key: item.leglCode,
 
-    // const items = properties?.map((prop) => ({ label: prop.leglDesc, value: prop.leglCode })) ?? []; // TODO key: item.leglCode,
-    // return [
-    //   { label: '請選擇匯款性質', value: '*', disabledOption: true },
-    //   ...items,
-    // ];
+    const items = properties?.map((prop) => ({ label: prop.leglDesc, value: prop.leglCode })) ?? []; // TODO key: item.leglCode,
+    return [
+      { label: '請選擇匯款性質', value: '*', disabledOption: true },
+      ...items,
+    ];
   };
 
   /**
@@ -488,17 +489,6 @@ const E00100 = (props) => {
           {viewModel.currency && (
           <section>
             <div className="amount">
-              {/* <Controller control={control} name="amountType"
-                render={({ field }) => (
-                  <>
-                    <FEIBInputLabel>兌換金額</FEIBInputLabel>
-                    <RadioGroup {...field} style={{alignItems: 'center'}} row name="amountType" onChange={(e) => setValue('amountType', parseInt(e.target.value, 10))}>
-                      <FEIBRadioLabel value={1} control={<FEIBRadio />} label={viewModel.currency.CurrencyName} />
-                      <FEIBRadioLabel value={2} control={<FEIBRadio />} label="新臺幣" />
-                    </RadioGroup>
-                  </>
-                )}
-              /> */}
               <CurrencyInputField
                 placeholder="請輸入兌換金額"
                 labelName="兌換金額"
@@ -514,8 +504,8 @@ const E00100 = (props) => {
                     trigger('amountType');
                   }}
                   >
-                    <FEIBRadioLabel value={1} control={<FEIBRadio />} label={viewModel.currency.CurrencyName} />
-                    <FEIBRadioLabel value={2} control={<FEIBRadio />} label="新臺幣" />
+                    <FEIBRadioLabel value={viewModel.mode === 1 ? 2 : 1} control={<FEIBRadio />} label={viewModel.currency.CurrencyName} />
+                    <FEIBRadioLabel value={viewModel.mode === 1 ? 1 : 2} control={<FEIBRadio />} label="新臺幣" />
                   </RadioGroup>
                 )}
               />

@@ -58,7 +58,6 @@ export const getAgreedAccount = async (accountNo) => {
 
 /**
  * 取得外幣交易性質別清單。
- * WebView：E00100換匯
  * @param request {
  *   trnsType, // 交易類別 - 空白:全查 1:不區分 2:台外互轉 3:同幣別互轉
  * }
@@ -73,27 +72,20 @@ export const getExchangePropertyList = async (param) => {
 };
 
 /**
- * 外幣轉帳。（限定約轉，未設有約定轉入帳號者，將無法使用）
- * @param {*} param {
- *   ...(很多)
- * }
- * @returns {
- *   ...(很多)
- * }
- */
-export const transferFtoF = async (param) => {
-  const response = await callAPI('/deposit/foreign/v1/transfer', param);
-  return response.data;
-};
-
-/**
  * 建立外幣轉帳。（限定約轉，未設有約定轉入帳號者，將無法使用）
- * @param {*} param {
- *   ...(很多)
- * }
- * @returns {
- *   ...(很多)
- * }
+ * @param {{
+ *   outAccount: 轉出帳號,
+ *   transIn: 轉入帳號,
+ *   currency: 轉帳幣別,
+ *   amount: 交易金額,
+ *   property: 換匯性質,
+ *   memo: 備註,
+ * }} param
+ * @returns {Promise<{
+ *   result: 表示是否成功建立外轉外交易記錄,
+ *   tfrId: 轉帳交易識別碼,
+ *   message: 無法成功建立的原因,
+ * }>}
  */
 export const createTransfer = async (param) => {
   const response = await callAPI('/deposit/foreign/transfer/v1/create', param);
@@ -102,14 +94,15 @@ export const createTransfer = async (param) => {
 
 /**
  * 執行外幣轉帳。（限定約轉，未設有約定轉入帳號者，將無法使用）
- * @param {*} param {
- *   ...(很多)
- * }
- * @returns {
- *   ...(很多)
- * }
+ * @param {String} tfrId 轉帳交易識別碼，用來更新交易紀錄
+ * @returns {Promise<{
+ *   result: 表示是否成功完成外轉外交易,
+ *   balance: 轉帳交易完成後的帳戶餘額,
+ *   errorCode: 表示交易失敗的錯誤代碼,
+ *   message: 交易失敗的原因,
+ * }>}
  */
-export const executeTransfer = async (param) => {
-  const response = await callAPI('/deposit/foreign/transfer/v1/execute', param);
+export const executeTransfer = async (tfrId) => {
+  const response = await callAPI('/deposit/foreign/transfer/v1/execute', tfrId);
   return response.data;
 };
