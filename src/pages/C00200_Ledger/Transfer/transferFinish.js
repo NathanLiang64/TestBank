@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
 import Layout from 'components/Layout/Layout';
-import { useEffect } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory, useLocation } from 'react-router';
 
@@ -9,17 +8,26 @@ import CiecleCheckPurple from 'assets/images/icon_circle_check_purple.png';
 import { TextInputField } from 'components/Fields';
 import { FEIBButton } from 'components/elements';
 import { Func } from 'utilities/FuncID';
+import { getAccountInterest } from 'utilities/CacheData';
 import { TransferFinishWrapper } from './transfer.style';
 
 // TODO 轉帳失敗處理
 const TransferFinish = () => {
   const {state} = useLocation();
   const history = useHistory();
+  const [bonusInfo, setBonusInfo] = useState();
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const {control} = useForm({
     defaultValues: {
-      ...state,
+      transOutAcct: state.transOutAcct,
       amount: `NTD${toCurrency(state.amount)}`,
+      target: state.target,
+      transInBank: state.transInBank,
+      transInAcct: state.transInAcct,
+      type: state.type,
+      memo: state.memo,
+      transFee: state.transFee,
     },
   });
 
@@ -58,11 +66,15 @@ const TransferFinish = () => {
     );
   };
 
-  const goBack = () => {
-    // 返回進入轉帳之前的頁面
-    console.log('TransferFinish goBack');
-    history.go(-2); // TODO 串進流程後改為-3
-  };
+  useEffect(() => {
+    getAccountInterest({accountNo: state.transOutAcct, currency: 'NTD'}, (accountInterest) => {
+      console.log({accountInterest});
+      setBonusInfo({balance: accountInterest.interest ?? '-'});
+      forceUpdate();
+    });
+  }, []);
+
+  const goBack = () => history.push('/LedgerDetail'); // 轉帳完成後皆回到帳本明細頁
 
   return (
     <Layout title="轉帳" fid={Func.C002} goBack={false}>
@@ -80,7 +92,7 @@ const TransferFinish = () => {
             <div className="transout_info_wrapper">
               <div>
                 可用餘額 NTD
-                {state.remainAmount}
+                {bonusInfo.balance}
               </div>
             </div>
           </div>

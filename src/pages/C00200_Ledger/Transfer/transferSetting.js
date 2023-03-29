@@ -83,7 +83,6 @@ const TransferSetting = () => {
 
   // 取得可用餘額＆跨轉優惠
   const handleBonusInfo = (account) => {
-    // const account = transData.transOut;
     getAccountBonus(account, (acctBonusInfo) => {
       console.log({acctBonusInfo});
       setBonusInfo((prev) => ({
