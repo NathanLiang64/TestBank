@@ -59,7 +59,7 @@ const CreditCardTxsList = ({
         {transArr.map((transaction) => (
           <InformationTape
             key={transaction.txKey}
-            topLeft="刷卡消費" // 原 transaction.txName
+            topLeft={transaction.txName}
             topRight={currencySymbolGenerator('NTD', transaction.amount)}
             bottomLeft={(
               <p className="date-card-info">

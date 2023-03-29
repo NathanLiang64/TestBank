@@ -46,7 +46,10 @@ const R00200_1 = () => {
 
   const onSubmit = ({ installmentItem }) => {
     const selectedTxns = state.availableTxns.filter((txn) => !!installmentItem[txn.authCode]);
-    if (!selectedTxns.length) showPrompt('請選擇要分期的項目');
+    if (!selectedTxns.length) {
+      showPrompt('請選擇要分期的項目');
+      return;
+    }
     history.push('/R002002', {
       applType: 'G',
       selectedTxns,
@@ -55,7 +58,8 @@ const R00200_1 = () => {
   };
 
   return (
-    <Layout title="晚點付 (單筆)">
+    // TODO  goBackFunc 改成回傳 cache
+    <Layout title="晚點付 (單筆)" goBackFunc={history.goBack}>
       <InstalmentWrapper className="InstalmentWrapper" small>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
@@ -69,6 +73,7 @@ const R00200_1 = () => {
                 control={control}
                 name={`installmentItem.${value}`}
                 labelName={label}
+                defaultValue={false}
                 hideDefaultCheckbox
               />
             ))}

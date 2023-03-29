@@ -91,15 +91,15 @@ export const ResultContent = ({totTerm}) => (
 export const SingleConfirmContent = ({ installmentAmount, totTerm}) => (
   <>
     <InformationList title="分期總額" content={installmentAmount} />
-    <InformationList title="申請分期期數" content={totTerm} />
-    <InformationList title="分期利率" content="待提供(年利率?)" />
+    <InformationList title="申請分期期數" content={`${totTerm}期`} />
+    <InformationList title="分期利率" content={`${interestRateMap[totTerm].annualRate}%`} />
   </>
 );
 
-export const TotalConfirmContent = ({totTerm}) => (
+export const TotalConfirmContent = ({ totTerm }) => (
   <>
-    <InformationList title="申請分期期數" content={totTerm} />
-    <InformationList title="分期利率" content="待提供 (%)" />
+    <InformationList title="申請分期期數" content={`${totTerm}期`} />
+    <InformationList title="分期利率" content={`${interestRateMap[totTerm].annualRate}%`} />
     <InformationList title="分期利息" content="本金餘額 * (分期利率/12)" />
     <InformationList title="每期應繳" content="分期本金 + 利息" />
   </>
