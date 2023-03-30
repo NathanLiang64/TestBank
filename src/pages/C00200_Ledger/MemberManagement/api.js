@@ -27,18 +27,18 @@ export const kickout = async (payload = { partnerId: '' }) => {
 
 // 取消邀請
 export const cancel = async (payload = { token: '' }) => {
-  const response = await callAPI('/ledger/partner/cancel', payload);
+  const response = await callAPI('/ledger/partner/invite/cancel', payload);
   return response.data;
 };
 
 // 重新邀請
 export const resend = async (payload = { token: '' }) => {
-  const response = await callAPI('/ledger/partner/resend', payload);
+  const response = await callAPI('/ledger/partner/invite/resend', payload);
   return response.data;
 };
 
 // 同意成員加入帳本
 export const confirm = async (payload = { accept: false, partnerId: '' }) => {
-  const response = await callAPI('/ledger/partner/confirm', payload);
+  const response = await callAPI('/ledger/partner/invite/confirm', payload);
   return response.data;
 };
