@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useRef, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
@@ -14,7 +15,7 @@ import {
   AccountIcon11, AccountIcon12, CircleIcon, D001,
 } from 'assets/images/icons';
 import { Func } from 'utilities/FuncID';
-import { getAccountsList } from 'utilities/CacheData';
+import { getAccountsList, updateAccount } from 'utilities/CacheData';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
 
@@ -102,6 +103,7 @@ const DepositPlanPage = () => {
       dispatch(setWaittingVisible(false));
       if (!isSuccess) return;
 
+      updateAccount();
       setViewModel((vm) => {
         const plans = vm.depositPlans.plans.filter(({planId}) => planId !== plan.planId);
         return {...vm, depositPlans: {...vm.depositPlans, plans}};
@@ -175,8 +177,9 @@ const DepositPlanPage = () => {
    * 產生下方內容時會用的
    */
   const handleAddClick = () => {
-    if (!QLResult) showUnbondedMsg(); // 若未綁定，跳出通知
-    else history.push('/C006002', {viewModel });
+    // if (!QLResult) showUnbondedMsg(); // 若未綁定，跳出通知
+    // else history.push('/C006002', {viewModel });
+    history.push('/C006002', {viewModel });
   };
 
   const handleShowDetailClick = (plan) => {

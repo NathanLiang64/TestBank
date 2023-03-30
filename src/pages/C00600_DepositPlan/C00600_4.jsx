@@ -20,6 +20,7 @@ import { Func } from 'utilities/FuncID';
 import { useNavigation } from 'hooks/useNavigation';
 import { useDispatch } from 'react-redux';
 import { setWaittingVisible } from 'stores/reducers/ModalReducer';
+import { updateAccount } from 'utilities/CacheData';
 import { createConfirm, createDepositPlan, updateDepositPlan } from './api';
 import { ConfirmToTransferSubAccountBalance } from './utils/prompts';
 import { DetailPageWrapper } from './C00600.style';
@@ -63,6 +64,7 @@ const DepositPlanDetailPage = () => {
       state.payload = {...state.payload, tfrResult};
       setMode(2);// 設定成 成功建立模式
       mainRef.current.scrollTo({ top: 0, behavior: 'smooth'});// 建立成功後，將頁面滑至上方。
+      updateAccount();
     } else {
       showAnimationModal({
         isSuccess: false,

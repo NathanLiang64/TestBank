@@ -9,6 +9,7 @@ import { FEIBButton} from 'components/elements';
 import { DropdownField, TextInputField } from 'components/Fields';
 import { toCurrency, accountFormatter, dateToString } from 'utilities/Generator';
 
+import { updateAccount } from 'utilities/CacheData';
 import HeroWithEdit from './components/HeroWithEdit';
 import { EditPageWrapper } from './C00600.style';
 import { AlertUpdateFail } from './utils/prompts';
@@ -62,6 +63,7 @@ const DepositPlanEditPage = (props) => {
       const {depositPlans: {plans}} = viewModel;
       const updatedIndex = plans.findIndex((p) => plan.planId === p.planId);
       plans[updatedIndex] = {...plans[updatedIndex], name, imageId};
+      updateAccount();
       history.push('/C00600', {viewModel});
       sessionStorage.removeItem('C00600-hero'); // 清除暫存背景圖。
     } else AlertUpdateFail();

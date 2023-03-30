@@ -120,6 +120,14 @@ function Layout({
     if (setResult) setResult(false); // 傳回視窗結束狀態。
   };
 
+  // Note 如果進到此頁面時 forceWaitting 已是 true ，需將其關閉
+  // 會發生的情境在於使用 goHome 或是 closeFunc 時，會預先 call setWaittingVisible(true)
+  useEffect(() => {
+    if (forceWaitting) {
+      dispatch(setWaittingVisible(false));
+    }
+  }, []);
+
   /**
    *  監控 ModalReducer.showModal, .showAnimationModal，當開啟時立即關閉 等待中 及 Drawer
    */
