@@ -365,11 +365,7 @@ const E00100 = (props) => {
    */
   const renderBalance = (type) => {
     const {ccy, balance} = getBalance(type);
-    return (
-      <FEIBHintMessage>
-        {`可用餘額 ${ccy} ${toCurrency(balance)}`}
-      </FEIBHintMessage>
-    );
+    return `可用餘額 ${ccy} ${toCurrency(balance)}`;
   };
 
   /**
@@ -467,18 +463,10 @@ const E00100 = (props) => {
         // prompt = `預估需 新台幣 ${toCurrency(quota)}元`;
         prompt = `預估${generatePhrase()} 新台幣 ${toCurrency(quota)}元`;
       }
-      return (
-        <div className="estimateMessage">
-          <FEIBHintMessage>
-            {prompt}
-          </FEIBHintMessage>
-          <FEIBHintMessage>
-            (實際金額以交易結果為準)
-          </FEIBHintMessage>
-        </div>
-      );
+      return `${prompt} (實際金額以交易結果為準)`;
     }
-    return <div />;
+    // return <div />;
+    return null;
   };
 
   /**
@@ -519,8 +507,13 @@ const E00100 = (props) => {
           </section>
 
           <section>
-            <DropdownField name="outAccount" control={control} labelName="轉出帳號" options={getAccountList(0)} />
-            {renderBalance(1)}
+            <DropdownField
+              name="outAccount"
+              control={control}
+              labelName="轉出帳號"
+              options={getAccountList(0)}
+              annotation={renderBalance(1)}
+            />
           </section>
 
           <section>
@@ -529,8 +522,7 @@ const E00100 = (props) => {
           </section>
 
           <section>
-            <DropdownField name="inAccount" control={control} labelName="轉入帳號" options={getAccountList(1)} />
-            {renderBalance(2)}
+            <DropdownField name="inAccount" control={control} labelName="轉入帳號" options={getAccountList(1)} annotation={renderBalance(2)} />
           </section>
 
           {viewModel.currency && (
@@ -543,6 +535,7 @@ const E00100 = (props) => {
                 control={control}
                 currency={viewModel.mode === amountType ? 'NTD' : currency}
                 inputProps={{ inputMode: 'numeric' }}
+                annotation={renderEstimateNeed(amount, (amountType === viewModel.mode))}
               />
               <Controller control={control} name="amountType"
                 render={({ field }) => (
@@ -558,7 +551,6 @@ const E00100 = (props) => {
                 )}
               />
             </div>
-            {renderEstimateNeed(amount, (amountType === viewModel.mode))}
           </section>
           )}
 

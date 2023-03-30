@@ -86,11 +86,11 @@ const R00200 = () => {
   return (
     <Layout fid={Func.R002} title="晚點付">
       <InstalmentWrapper className="InstalmentWrapper" small>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} style={{marginTop: '2rem'}}>
           <div>
-            <div className="InstalmentWrapperText">點選申請晚點付項目</div>
             <RadioGroupField
               name="applType"
+              labelName="點選申請晚點付項目"
               control={control}
               options={applTypeOptions}
             />

@@ -1,9 +1,11 @@
 import React, { useCallback } from 'react';
 import { useController } from 'react-hook-form';
-import { FEIBInputLabel, FEIBInput, FEIBErrorMessage } from 'components/elements';
+import {
+  FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBHintMessage,
+} from 'components/elements';
 import CurrencyInput from 'react-currency-input-field';
 import { getCurrenyInfo } from 'utilities/Generator';
-import { TextInputFieldWrapper } from './fields.style';
+import { CommonFieldWrapper } from './fields.style';
 
 export const CurrencyInputField = ({
   labelName,
@@ -11,6 +13,7 @@ export const CurrencyInputField = ({
   fontSize = 1.6,
   currency = 'NTD',
   inputProps,
+  annotation,
   ...controlProps
 }) => {
   const { field, fieldState } = useController(controlProps);
@@ -33,7 +36,7 @@ export const CurrencyInputField = ({
   }, [currency]);
 
   return (
-    <TextInputFieldWrapper>
+    <CommonFieldWrapper>
       <FEIBInputLabel htmlFor={name}>{labelName}</FEIBInputLabel>
       <FEIBInput
         inputProps={inputProps}
@@ -45,9 +48,8 @@ export const CurrencyInputField = ({
         inputComponent={CurrencyInputCustom}
       />
 
-      {!!fieldState.error && (
-        <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>
-      )}
-    </TextInputFieldWrapper>
+      {!!fieldState.error && <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>}
+      {!!annotation && <FEIBHintMessage>{annotation}</FEIBHintMessage>}
+    </CommonFieldWrapper>
   );
 };

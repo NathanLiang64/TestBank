@@ -10,6 +10,7 @@ import { TextareaAutosize } from '@material-ui/core';
 * */
 
 const FEIBTextarea = styled(TextareaAutosize)`
+  margin-top: 0.8rem;
   color: ${({ $color, theme }) => $color || theme.colors.primary.dark};
   width: 100%;
   border-radius: .6rem;

@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import theme from 'themes/theme';
 
-import { FEIBButton, FEIBHintMessage} from 'components/elements';
+import { FEIBButton } from 'components/elements';
 import { DropdownField, RadioGroupField, TextInputField } from 'components/Fields';
 
 import { DrawerWrapper } from './E00400.style';
@@ -26,7 +26,7 @@ function NoticeEditor({
   const schema = yup.object().shape({
     currency: yup.string().required('請選擇幣別'),
     direction: yup.number().required('').typeError(''),
-    price: yup.number().required('請輸入匯率').typeError('請輸入數字'),
+    price: yup.number().required('請輸入價格').typeError('請輸入數字'),
     bidAsk: yup.number().required('請輸入設定類型'),
   });
 
@@ -38,8 +38,9 @@ function NoticeEditor({
       currency: '',
       direction: '1',
       price: '',
-      bidAsk: (!initData || initData.direction) ? '1' : '2',
       ...initData, // 若 initData 有值，會覆蓋掉 currency/direction/price
+      // NOTE initData 的 bidAsk 可能會是 number，但是傳入 radioGroup 的值必須數 string，因此要覆蓋掉原本的值
+      bidAsk: (!initData || initData.direction) ? '1' : '2',
     },
   });
 
@@ -48,7 +49,7 @@ function NoticeEditor({
     if (!currency || !bidAsk) return null;
     const selectedCurrency = currencyOptions.find(({value}) => value === currency);
     const currentRate = selectedCurrency[bidAsk === '1' ? 'srate' : 'brate']; // TODO
-    return <FEIBHintMessage>{`目前匯率 ${currentRate} (更新時間 ${currentTime})`}</FEIBHintMessage>;
+    return `目前匯率 ${currentRate} (更新時間 ${currentTime})`;
   };
 
   const onBidAskChange = (e) => {
@@ -67,15 +68,13 @@ function NoticeEditor({
           row
         />
 
-        <div>
-          <DropdownField
-            labelName="幣別"
-            name="currency"
-            control={control}
-            options={currencyOptions}
-          />
-          {rateInfo()}
-        </div>
+        <DropdownField
+          labelName="幣別"
+          name="currency"
+          control={control}
+          options={currencyOptions}
+          annotation={rateInfo()}
+        />
 
         <div className="rate-input">
           <DropdownField

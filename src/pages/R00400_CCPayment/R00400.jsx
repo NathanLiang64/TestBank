@@ -15,8 +15,8 @@ import Main from 'components/Layout';
 import Accordion from 'components/Accordion';
 import Layout from 'components/Layout/Layout';
 import BankCodeInputField from 'pages/R00400_CCPayment/fields/BankCodeInputField';
-import { DropdownField, TextInputField } from 'components/Fields';
-import { FEIBButton, FEIBHintMessage } from 'components/elements';
+import { CurrencyInputField, DropdownField, TextInputField } from 'components/Fields';
+import { FEIBButton } from 'components/elements';
 import { RadioGroupField } from 'components/Fields/radioGroupField';
 import { Func } from 'utilities/FuncID';
 import { getAccountsList } from 'utilities/CacheData';
@@ -170,45 +170,40 @@ const Page = () => {
           />
           )}
 
-          <div className="badMargin">
-            <TabField
-              name="paymentMethod"
-              control={control}
-              options={paymentMethodOptions}
-            />
-          </div>
+          <TabField
+            name="paymentMethod"
+            control={control}
+            options={paymentMethodOptions}
+          />
 
           <form className="flex" style={{ minHeight: 'initial' }} onSubmit={handleSubmit(onSubmit)}>
 
-            <RadioGroupField
-              name="amountOptions"
-              labelName="請選擇繳款金額"
-              control={control}
-              options={generateAmountOptions(cardInfo)}
-            />
-
-            <div className="ml-4">
-              <TextInputField
-                type="number"
+            <section>
+              <RadioGroupField
+                name="amountOptions"
                 control={control}
-                name="customAmount"
-                inputProps={{inputMode: 'numeric', placeholder: '請輸入金額', disabled: watch('amountOptions') !== AMOUNT_OPTION.CUSTOM}}
-                $color={watchedValues.amountOptions !== AMOUNT_OPTION.CUSTOM ? Theme.colors.text.placeholder : Theme.colors.primary.brand}
+                options={generateAmountOptions(cardInfo)}
               />
-            </div>
+
+              <div className="ml-4">
+                <CurrencyInputField
+                  control={control}
+                  name="customAmount"
+                  inputProps={{inputMode: 'numeric', placeholder: '請輸入金額', disabled: watch('amountOptions') !== AMOUNT_OPTION.CUSTOM}}
+                  currency="NTD"
+                  $color={watchedValues.amountOptions !== AMOUNT_OPTION.CUSTOM ? Theme.colors.text.placeholder : Theme.colors.primary.brand}
+                />
+              </div>
+            </section>
 
             { watchedValues.paymentMethod === PAYMENT_OPTION.INTERNAL && (
-            <section>
               <DropdownField
                 name="accountNo"
                 labelName="轉出帳號"
                 control={control}
                 options={generateAccountNoOptions(internalAccounts)}
+                annotation={watchedValues.accountNo && renderBalance()}
               />
-              {watchedValues.accountNo && (
-              <FEIBHintMessage>{ renderBalance() }</FEIBHintMessage>
-              )}
-            </section>
             )}
 
             { watchedValues.paymentMethod === PAYMENT_OPTION.EXTERNAL && (
@@ -232,11 +227,7 @@ const Page = () => {
               </Accordion>
             )}
 
-            <FEIBButton
-              className="mt-4"
-              type="submit"
-              disabled={cardInfo?.newBalance <= 0}
-            >
+            <FEIBButton type="submit" disabled={cardInfo?.newBalance <= 0}>
               {watchedValues.paymentMethod === PAYMENT_OPTION.EXTERNAL ? '同意並送出' : '確認送出'}
             </FEIBButton>
           </form>

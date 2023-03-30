@@ -84,11 +84,7 @@ const R00200_2 = () => {
               </h2>
             </div>
             <RadioGroupField
-              labelName={(
-                <div style={{ fontSize: '1.6rem', margin: '1rem' }}>
-                  選擇晚點付期數
-                </div>
-              )}
+              labelName="選擇晚點付期數"
               control={control}
               options={options}
               name="totTerm"

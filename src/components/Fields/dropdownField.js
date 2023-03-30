@@ -2,10 +2,10 @@
 import React from 'react';
 import {useController} from 'react-hook-form';
 import {
-  FEIBOption, FEIBSelect, FEIBInputLabel, FEIBErrorMessage,
+  FEIBOption, FEIBSelect, FEIBInputLabel, FEIBErrorMessage, FEIBHintMessage,
 } from 'components/elements';
 import theme from 'themes/theme';
-import { DropdownFieldWrapper } from './fields.style';
+import { CommonFieldWrapper } from './fields.style';
 
 export const DropdownField = ({
   options,
@@ -13,6 +13,7 @@ export const DropdownField = ({
   $color,
   inputProps,
   onChange,
+  annotation,
   ...controlProps
 }) => {
   const {field, fieldState} = useController(controlProps);
@@ -35,7 +36,7 @@ export const DropdownField = ({
   };
 
   return (
-    <DropdownFieldWrapper>
+    <CommonFieldWrapper>
       <FEIBInputLabel htmlFor={field.name}>{labelName}</FEIBInputLabel>
       <FEIBSelect
         MenuProps={MenuProps}
@@ -54,18 +55,8 @@ export const DropdownField = ({
         ))}
       </FEIBSelect>
 
-      {!!fieldState.error && (
-        <FEIBErrorMessage
-          style={{
-            margin: 0,
-            position: 'absolute',
-            right: 0,
-            bottom: 0,
-          }}
-        >
-          {fieldState.error.message}
-        </FEIBErrorMessage>
-      )}
-    </DropdownFieldWrapper>
+      {!!fieldState.error && <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>}
+      {!!annotation && <FEIBHintMessage>{annotation}</FEIBHintMessage>}
+    </CommonFieldWrapper>
   );
 };

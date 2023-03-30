@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Theme from 'themes/theme';
 import Layout from 'components/Layout/Layout';
 import { MainScrollWrapper } from 'components/Layout';
-import { FEIBButton, FEIBHintMessage } from 'components/elements';
+import { FEIBButton } from 'components/elements';
 import { CurrencyInputField, DropdownField, TextInputField } from 'components/Fields';
 import { toCurrency, dateToYMD, dateToString } from 'utilities/Generator';
 import { showPrompt } from 'utilities/MessageModal';
@@ -166,12 +166,8 @@ const DepositPlanEditPage = () => {
                     labelName="日期"
                     inputProps={{disabled}}
                     $color={disabledColor}
+                    annotation={`共${cycleDuration * (cycleMode === 1 ? 4 : 1)}次`}
                   />
-                  <FEIBHintMessage>
-                    共
-                    {cycleDuration * (cycleMode === 1 ? 4 : 1)}
-                    次
-                  </FEIBHintMessage>
                 </div>
               </div>
               <div>
@@ -180,10 +176,8 @@ const DepositPlanEditPage = () => {
                   control={control}
                   labelName="預計每期存錢金額"
                   inputProps={{inputMode: 'numeric'}}
+                  annotation={(amount > 0) && `存款目標為 ＄${toCurrency(getGoalAmount(amount, cycleDuration, cycleMode))}元`}
                 />
-                <FEIBHintMessage className="hint-message">
-                  {(amount > 0) && `存款目標為 ＄${toCurrency(getGoalAmount(amount, cycleDuration, cycleMode))}元`}
-                </FEIBHintMessage>
               </div>
 
               <div className="amount-limit">{`金額最低＄${toCurrency(program.amountRange.month.min)} 元，最高＄${toCurrency(program.amountRange.month.max)} 元，以萬元為單位`}</div>
@@ -194,10 +188,8 @@ const DepositPlanEditPage = () => {
                   name="bindAccountNo"
                   control={control}
                   labelName="選擇陪你存錢的帳號"
+                  annotation={((bindAccountNo !== '*') && (bindAccountNo !== 'new') && !!bindAccountNo) && `存款餘額為 ${toCurrency(getRemainingBalance(bindAccountNo))}元`}
                 />
-                <FEIBHintMessage className="hint-message">
-                  { ((bindAccountNo !== '*') && (bindAccountNo !== 'new') && !!bindAccountNo) && `存款餘額為 ${toCurrency(getRemainingBalance(bindAccountNo))}元` }
-                </FEIBHintMessage>
               </div>
 
               <FEIBButton type="submit">確認</FEIBButton>

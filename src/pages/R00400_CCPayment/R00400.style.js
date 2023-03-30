@@ -2,29 +2,22 @@ import Layout from 'components/Layout';
 import styled from 'styled-components';
 
 const PageWrapper = styled.div`
-  display: grid;
-  align-content: flex-start;
-  grid-gap: 1.6rem;
-  padding-bottom: 6rem;
-
-  .badMargin {
-    margin-bottom: -2.4rem;
-  }
-
+  
   .flex {
     display: grid;
     align-content: flex-start;
-    grid-gap: 1rem;
+    grid-gap: 2rem;
+  }
+
+  .MuiTabs-root{
+    margin: 1rem 0;
   }
 
   .ml-4 {
     margin-left: 3rem;
-    bottom: 2rem;
+    bottom: .5rem;
   }
 
-  .mt-4 {
-    margin-top: 3rem;
-  }
 `;
 
 const PopUpWrapper = styled.div`

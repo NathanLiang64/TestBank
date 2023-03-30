@@ -1,7 +1,9 @@
 import React from 'react';
 import {useController} from 'react-hook-form';
-import { FEIBInputLabel, FEIBInput, FEIBErrorMessage} from 'components/elements';
-import { TextInputFieldWrapper } from './fields.style';
+import {
+  FEIBInputLabel, FEIBInput, FEIBErrorMessage, FEIBHintMessage,
+} from 'components/elements';
+import { CommonFieldWrapper } from './fields.style';
 
 export const TextInputField = ({
   labelName,
@@ -9,6 +11,7 @@ export const TextInputField = ({
   $color,
   fontSize = 1.6,
   inputProps,
+  annotation,
   ...controlProps
 }) => {
   const {field, fieldState } = useController(controlProps);
@@ -17,7 +20,7 @@ export const TextInputField = ({
   } = field;
 
   return (
-    <TextInputFieldWrapper>
+    <CommonFieldWrapper>
       <FEIBInputLabel htmlFor={name}>{labelName}</FEIBInputLabel>
       <FEIBInput
         inputProps={inputProps}
@@ -31,10 +34,8 @@ export const TextInputField = ({
         $fontSize={fontSize}
       />
 
-      {!!fieldState.error && (
-        <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>
-      )}
-
-    </TextInputFieldWrapper>
+      {!!fieldState.error && <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>}
+      {!!annotation && <FEIBHintMessage>{annotation}</FEIBHintMessage>}
+    </CommonFieldWrapper>
   );
 };

@@ -20,23 +20,25 @@ export const ExchangeWrapper = styled(Layout)`
       margin-bottom: 2rem;
     }
     .amount {
-      display: flex;
       span {
         padding: 0px 5px;
       }
 
-      & div:first-of-type {
-        flex: 1;
-      }
+      & > div:first-of-type {
+        width: 65%;
 
-      .MuiFormGroup-root {
-        & .MuiFormControlLabel-root:first-of-type {
-          margin-bottom: 0.5rem;
+        .MuiFormHelperText-root {
+          white-space: nowrap;
         }
       }
 
-      .MuiFormHelperText-root.Mui-error {
-        transform: translate(70%, 100%);
+      .MuiFormGroup-root {
+        position: absolute;
+        right: 0;
+        top: 0;
+        & .MuiFormControlLabel-root:first-of-type {
+          margin-bottom: 0.5rem;
+        }
       }
     }
   }

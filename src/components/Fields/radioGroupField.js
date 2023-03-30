@@ -5,9 +5,10 @@ import {
   FEIBErrorMessage,
   FEIBRadio,
   FEIBRadioLabel,
+  FEIBHintMessage,
 } from 'components/elements';
 import { RadioGroup } from '@material-ui/core';
-import { RadioGroupFieldWrapper } from './fields.style';
+import { CommonFieldWrapper } from './fields.style';
 
 export const RadioGroupField = ({
   options,
@@ -16,6 +17,7 @@ export const RadioGroupField = ({
   hideDefaultButton,
   row = false,
   onChange,
+  annotation,
   ...controlProps
 }) => {
   const { field, fieldState } = useController(controlProps);
@@ -29,7 +31,7 @@ export const RadioGroupField = ({
   const radioStyle = { display: hideDefaultButton ? 'none' : 'inline-flex' };
 
   return (
-    <RadioGroupFieldWrapper row={row}>
+    <CommonFieldWrapper row={row}>
       {labelName && (
         <FEIBInputLabel htmlFor={field.name}>{labelName}</FEIBInputLabel>
       )}
@@ -51,9 +53,8 @@ export const RadioGroupField = ({
         ))}
       </RadioGroup>
 
-      {!!fieldState.error && (
-        <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>
-      )}
-    </RadioGroupFieldWrapper>
+      {!!fieldState.error && <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>}
+      {!!annotation && <FEIBHintMessage>{annotation}</FEIBHintMessage>}
+    </CommonFieldWrapper>
   );
 };
