@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useRef, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
@@ -177,9 +176,8 @@ const DepositPlanPage = () => {
    * 產生下方內容時會用的
    */
   const handleAddClick = () => {
-    // if (!QLResult) showUnbondedMsg(); // 若未綁定，跳出通知
-    // else history.push('/C006002', {viewModel });
-    history.push('/C006002', {viewModel });
+    if (!QLResult) showUnbondedMsg(); // 若未綁定，跳出通知
+    else history.push('/C006002', {viewModel });
   };
 
   const handleShowDetailClick = (plan) => {
