@@ -105,14 +105,14 @@ export default ({
           <Divider />
         </Box>
         {sortMemberList(list).map((item) => (
-          <Box key={item.memberId}>
+          <Box key={item.memberId || item.inviteToken}>
             <ListItem>
               <ListItemAvatar>
                 <Box width={45} height={45}>
                   {memberImage({ isOwner: item.isOwner })}
                 </Box>
               </ListItemAvatar>
-              {item.memberNickName}
+              {item.memberNickName || item.memberMobile}
               <ListItemSecondaryAction>
                 <Box display="flex">
                   {/* 同意成員加入 */}
