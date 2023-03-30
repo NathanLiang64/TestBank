@@ -79,7 +79,7 @@ export default () => {
       if (allowCreateSubAccts) {
         setAllowBindAccounts([
           ...formatAllowBindAccounts,
-          { label: '加開子帳戶', value: '' },
+          { label: '加開子帳戶', value: 'new' },
         ]);
       } else {
         setAllowBindAccounts(formatAllowBindAccounts);
@@ -105,6 +105,7 @@ export default () => {
     if (jsRs.result) {
       delete data.isAgree;
       data.color = parseInt(data.color, 10);
+      if (data.account === 'new') data.account = '';
       const resFrom = await create(data);
       if (!resFrom) {
         showAnimationModal({
