@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useController } from 'react-hook-form';
 import { VisibilityIcon, VisibilityOffIcon } from 'assets/images/icons';
-import { FEIBInput, FEIBInputLabel, FEIBErrorMessage } from 'components/elements';
-import { TextInputFieldWrapper } from './fields.style';
+import {
+  FEIBInput, FEIBInputLabel, FEIBErrorMessage, FEIBHintMessage,
+} from 'components/elements';
+import { CommonFieldWrapper } from './fields.style';
 
 /*
 * ==================== PasswordInput 組件說明 ====================
@@ -22,6 +24,7 @@ export const PasswordInputField = ({
   color,
   borderColor,
   inputProps,
+  annotation,
   ...formProps
 }) => {
   const {field, fieldState} = useController(formProps);
@@ -35,7 +38,7 @@ export const PasswordInputField = ({
   };
 
   return (
-    <TextInputFieldWrapper>
+    <CommonFieldWrapper>
       <FEIBInputLabel htmlFor={name} $color={color}>
         {labelName || '網銀密碼'}
       </FEIBInputLabel>
@@ -55,9 +58,8 @@ export const PasswordInputField = ({
         $iconOnClick={handleClickShowPassword}
       />
 
-      {!!fieldState.error && (
-        <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>
-      )}
-    </TextInputFieldWrapper>
+      {!!fieldState.error && <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>}
+      {!!annotation && <FEIBHintMessage>{annotation}</FEIBHintMessage>}
+    </CommonFieldWrapper>
   );
 };

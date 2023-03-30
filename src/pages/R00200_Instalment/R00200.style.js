@@ -4,15 +4,6 @@ import Layout from 'components/Layout';
 /** background: ${({ theme }) => theme.colors.background.lighterBlue}; */
 const InstalmentWrapper = styled(Layout)`
   background: ${({ theme }) => theme.colors.background.white};
-
-  &.InstalmentWrapper{
-    .InstalmentWrapperText {
-     font-size: 1.4rem;
-     color: ${({ theme }) => theme.colors.text.dark};
-     padding: 1rem 2rem 0;
-     border-top: .8rem solid ${({ theme }) => theme.colors.background.lighterBlue};
-    }
-  }
   
   .InformSection{
     color: ${({ theme }) => theme.colors.primary.dark};
@@ -29,24 +20,6 @@ const InstalmentWrapper = styled(Layout)`
     position: absolute;
     top: 0.8rem;
     right: 0.8rem;
-  }
-
-  .MuiFormGroup-root {
-    label {
-      margin: 0;
-
-      .left-section {
-        flex: 1;
-
-        .name {
-          font-size: 1.8rem;
-        }
-        .date {
-          font-size: 1.4rem;
-          color: ${({ theme }) => theme.colors.text.light};
-        }
-      }
-    }
   }
 
   .InformationTape {
@@ -82,7 +55,7 @@ const InstalmentWrapper = styled(Layout)`
     background: ${({ theme }) => theme.colors.background.lighterBlue};
     border-radius: 0.8rem;
     padding: 2rem;
-    margin: 1rem;
+    margin: 1rem 0 2rem;
 
     p {
       width: 100%;

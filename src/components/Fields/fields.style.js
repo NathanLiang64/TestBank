@@ -1,56 +1,19 @@
 import styled from 'styled-components';
 
-export const TextInputFieldWrapper = styled.div`
-  .balanceLayout {
-    top: auto;
-    bottom: 0;
-  }
+export const CommonFieldWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
 
-  .MuiFormHelperText-root.Mui-error {
-    margin: 0;
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    transform: translateY(100%);
-  }
-`;
-
-export const DropdownFieldWrapper = styled.div`
-  .MuiFormHelperText-root.Mui-error {
-    margin: 0;
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    transform: translateY(100%);
-  }
-`;
-
-export const TextareaFieldWrapper = styled.div`
-  textarea {
-    margin-top: 0.8rem;
-  }
-  .limitText {
-    display: block;
-    text-align: right;
-    font-size: 1.2rem;
-    line-height: 1.6;
-    color: ${({ showError, theme }) => (showError ? theme.colors.state.danger : theme.colors.text.dark)};
-  }
-`;
-
-export const RadioGroupFieldWrapper = styled.div`
+  // 如果使用在 RadioGroupField 時
   .MuiFormGroup-root {
     flex-direction: ${({ row }) => (row ? 'row' : 'column')};
-    .MuiFormControlLabel-root {
-      margin-bottom: ${({ row }) => (row ? '0' : '1rem')};
-    }
   }
+`;
 
-  .MuiFormHelperText-root.Mui-error {
-    margin: 0;
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    transform: translateY(100%);
-  }
+export const LimitedTextWrapper = styled.span`
+  display: block;
+  text-align: right;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: ${({ showError, theme }) => (showError ? theme.colors.state.danger : theme.colors.text.dark)};
 `;

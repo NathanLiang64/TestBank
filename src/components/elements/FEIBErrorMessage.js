@@ -11,8 +11,7 @@ const FEIBErrorMessage = styled(MaterialErrorMessage).attrs({
   error: true,
 })`
   &.MuiFormHelperText-root {
-    margin-top: .2rem;
-    margin-bottom: ${({ $noSpacing }) => ($noSpacing ? '0' : '1.4rem')};
+    margin:0;
     height: 1.8rem;
     text-align: right;
     font-size: 1.2rem;

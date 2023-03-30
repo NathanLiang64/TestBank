@@ -55,7 +55,7 @@ export const updateAvatar = async (newImg) => {
  */
 export const updateNickname = async (nickname) => {
   const response = await callAPI('/personal/v1/setNickname', nickname);
-  return response.data;
+  return response;
 };
 
 /**
@@ -64,5 +64,5 @@ export const updateNickname = async (nickname) => {
  */
 export const updateEssay = async (content) => {
   const response = await callAPI('/community/v1/updateEssay', content);
-  return response.data;
+  return response;
 };

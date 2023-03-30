@@ -6,6 +6,7 @@ import {
   FEIBCheckbox,
   FEIBCheckboxLabel,
 } from 'components/elements';
+import { CommonFieldWrapper } from './fields.style';
 
 // 若有特殊樣式的 checkbox 要取代原本的 checkbox，可以將 hideFaultCheckbox = true ，並以
 export const CheckboxField = ({
@@ -25,7 +26,7 @@ export const CheckboxField = ({
   const checkboxLableStyle = { display: hideDefaultCheckbox ? 'none' : 'inline-flex' };
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', marginLeft: '1rem' }}>
+    <CommonFieldWrapper>
       {labelName && (
         <FEIBInputLabel style={inputLabelStyle} checked htmlFor={field.name}>
           {labelName}
@@ -44,9 +45,7 @@ export const CheckboxField = ({
         )}
       />
 
-      {!!fieldState.error && (
-        <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>
-      )}
-    </div>
+      {!!fieldState.error && <FEIBErrorMessage>{fieldState.error.message}</FEIBErrorMessage>}
+    </CommonFieldWrapper>
   );
 };

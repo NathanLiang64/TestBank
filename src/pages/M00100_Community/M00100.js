@@ -64,9 +64,9 @@ const CommunityPage = () => {
     if (!model.summary) {
       model.summary = await getSummary();
     }
-    setSummary(model.summary);
     const {nickname, essay} = model.summary;
-    reset({nickname, essay: essay ?? defaultEssay}); // 點選社群圈"編輯"分享內容時，應該顯示預設文字
+    setSummary({...model.summary, essay: essay ?? defaultEssay });
+    reset({ nickname, essay: essay ?? defaultEssay }); // 點選社群圈"編輯"分享內容時，應該顯示預設文字
 
     dispatch(setWaittingVisible(false));
   }, []);
@@ -87,16 +87,18 @@ const CommunityPage = () => {
     );
     const onOk = async ({ nickname }) => {
       dispatch(setModalVisible(false));
-      await updateNickname(nickname);
-      setSummary({ ...summary, nickname }); // 變更暱稱(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
-      reset({ nickname, essay: summary.essay });
+      const {isSuccess} = await updateNickname(nickname);
+      if (isSuccess) {
+        setSummary({ ...summary, nickname }); // 變更暱稱(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
+        reset((values) => ({...values, nickname}));
+      }
     };
 
     await showCustomPrompt({
       titile: '暱稱',
       message: body,
       onOk: handleSubmit(onOk),
-      onClose: () => reset({ nickname: summary.nickname, essay: summary.essay }),
+      onClose: () => reset((values) => ({...values, nickname: summary.nickname})),
       noDismiss: true,
     });
   };
@@ -117,16 +119,17 @@ const CommunityPage = () => {
     );
     const onOk = async ({ essay }) => {
       dispatch(setModalVisible(false));
-      const renewEssay = essay !== '' ? essay : defaultEssay;
-      setSummary({ ...summary, essay: renewEssay }); // 變更分享文案(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
-      await updateEssay(renewEssay);
-      reset({nickname: summary.nickname, essay: renewEssay}); // 重設預設文字為所輸入之文字，若user清空文字則顯示defaultEssay
+      const {isSuccess} = await updateEssay(essay);
+      if (isSuccess) {
+        setSummary({ ...summary, essay }); // 變更分享文案(Note:一定要換新物件，否則不會觸發更新，造成畫面不會重刷！)
+        reset((values) => ({...values, essay}));
+      }
     };
     await showCustomPrompt({
       title: '分享內容',
       message: body,
       onOk: handleSubmit(onOk),
-      onClose: () => reset({nickname: summary.nickname, essay: summary.essay ?? defaultEssay}),
+      onClose: () => reset((values) => ({...values, essay: summary.essay})),
       noDismiss: true,
     });
   };
@@ -137,7 +140,7 @@ const CommunityPage = () => {
 
   const onNewPhotoLoaded = async (newImg) => {
     const { isSuccess } = await updateAvatar(newImg);
-    if (isSuccess) reloadHeadshot();
+    if (isSuccess) reloadHeadshot(); // 用途跟 Webview 畫面無關，主要是呼叫原生同步更新大頭貼照片
   };
 
   // 社群圈概況 Panel 設定

@@ -95,11 +95,11 @@ const NoticeWrapper = styled(Layout)`
         font-size: 1.4rem;
         line-height: 1.9rem;
         min-height: 3.8rem;
-        max-height: 7.6rem;
+        // max-height: 7.6rem;
         color: ${({ theme }) => theme.colors.text.lightGray};
         overflow: hidden;
         display: -webkit-box;
-        -webkit-line-clamp: 4;   /*省略第n行後的文字*/
+        // -webkit-line-clamp: 4;   /*省略第n行後的文字*/ 目前的需求是全部顯示
         -webkit-box-orient: vertical;  /*設定元素是垂直布局*/
       }
       .deleteBtn {

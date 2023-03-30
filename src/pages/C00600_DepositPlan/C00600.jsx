@@ -14,7 +14,7 @@ import {
   AccountIcon11, AccountIcon12, CircleIcon, D001,
 } from 'assets/images/icons';
 import { Func } from 'utilities/FuncID';
-import { getAccountsList } from 'utilities/CacheData';
+import { getAccountsList, updateAccount } from 'utilities/CacheData';
 import { transactionAuth } from 'utilities/AppScriptProxy';
 import { showCustomDrawer, showCustomPrompt } from 'utilities/MessageModal';
 
@@ -102,6 +102,7 @@ const DepositPlanPage = () => {
       dispatch(setWaittingVisible(false));
       if (!isSuccess) return;
 
+      updateAccount();
       setViewModel((vm) => {
         const plans = vm.depositPlans.plans.filter(({planId}) => planId !== plan.planId);
         return {...vm, depositPlans: {...vm.depositPlans, plans}};
