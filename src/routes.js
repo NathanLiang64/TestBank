@@ -108,6 +108,7 @@ const Terms = lazy(() => import('pages/C00200_Ledger/Terms/Terms'));
 const LedgerTransferSetting = lazy(() => import('pages/C00200_Ledger/Transfer/transferSetting'));
 const LedgerTransferConfirm = lazy(() => import('pages/C00200_Ledger/Transfer/transferConfirm'));
 const LedgertTransferFinish = lazy(() => import('pages/C00200_Ledger/Transfer/transferFinish'));
+const NonMemberForgotPassword = lazy(() => import('pages/A00800_NonMemberRegister/nonMemberForgotPassword/nonMemberForgotPassword'));
 
 // TODO：支援開發及Prototype測試使用
 const Login = lazy(() => import('proto/Login/login'));
@@ -226,6 +227,7 @@ const routes = [
   {path: '/transferSetting', exact: false, component: LedgerTransferSetting},
   {path: '/transferConfirm', exact: false, component: LedgerTransferConfirm},
   {path: '/transferFinish', exact: false, component: LedgertTransferFinish},
+  {path: '/nonMemberForgetPassword', exact: false, component: NonMemberForgotPassword},
 
   // TODO：支援開發及Prototype測試使用
   {path: '/login/:fid', exact: false, component: Login},
