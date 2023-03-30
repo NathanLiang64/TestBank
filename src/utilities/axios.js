@@ -128,7 +128,7 @@ const processResponse = async (response) => {
 
       case 'WEBCTL1006': // 尚未通過交易授權驗證，無法執行此項服務。
       default:
-        await showError((<p>*** {code} ***<br />{message}</p>));
+        await showError((<p>訊息代碼：{code}<br />{message}</p>));
         break;
     }
   }

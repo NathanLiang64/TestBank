@@ -36,7 +36,7 @@ const useNavigation = () => {
 
   /**
    * 取得目前執行中的單元功能代碼。
-   * @returns {*} 單元功能代碼。
+   * @returns {String} 單元功能代碼。
    */
   const getActiveFuncID = async () => {
     const appJsRs = await callAppJavaScript('getActiveFuncID', null, true);
@@ -45,7 +45,7 @@ const useNavigation = () => {
 
   /**
    * 網頁通知APP跳轉指定功能
-   * @param {*} funcID 單元功能代碼。
+   * @param {String} funcID 單元功能代碼。
    * @param {*} funcParams 提共給啟動的單元功能的參數，被啟動的單元功能是透過 loadFuncParams() 取回。
    * @param {*} keepData 當啟動的單元功能結束後，返回原功能啟動時取回的資料。
    */

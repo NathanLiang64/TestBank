@@ -38,10 +38,10 @@ const E001002 = (props) => {
   const toAccountPage = () => {
     if (model.mode === 1) {
       // 新臺幣轉外幣 - 切換到台幣首頁。
-      startFunc(Func.C003, { defaultAccount: model.outAccount });
+      startFunc(Func.C003.id, { defaultAccount: model.outAccount });
     } else {
       // 新臺幣轉外幣 - 切換到外幣首頁，並指定預設的幣別。
-      startFunc(Func.C004, { defaultCurrency: model.currency });
+      startFunc(Func.C004.id, { defaultCurrency: model.currency });
     }
   };
 

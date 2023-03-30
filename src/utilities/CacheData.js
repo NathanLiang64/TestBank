@@ -60,6 +60,7 @@ export const getBranchCode = async () => {
  *   alias: 帳戶名稱，若有暱稱則會優先用暱稱,
  *   dgType: 帳戶類別('  '.非數存帳號, '11'.臨櫃數存昇級一般, '12'.一之二類, ' 2'.二類, '32'.三之二類)
  *   transable: 同ID互轉(true/false)
+ *   bindType: 綁定類別 0.未綁定, 1.社群帳本, 2.存錢計畫
  * }]>} 帳號基本資料。
  */
 const loadAccountsList = async () => {

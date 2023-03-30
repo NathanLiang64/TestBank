@@ -338,7 +338,7 @@ function Layout({
   //
   const [isPassed, setPassed] = useState();
   useEffect(async () => {
-    if (fid) await registFunc(fid.id);
+    if (fid) await registFunc(fid.id); // TODO 要求所有 Layout 引用都要提供 fid 參數。
 
     let pass = true; // 若未設 inspector，則預設為檢查通過。
     if (inspector) {

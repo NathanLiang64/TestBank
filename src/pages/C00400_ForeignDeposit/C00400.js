@@ -93,7 +93,8 @@ const C00400 = () => {
     if (startParams && startParams instanceof Object) {
       const index = accts.findIndex((acc) => acc.currency === startParams.defaultCurrency);
       accts.forEach((acct) => {
-        if (startParams.txnDetailsObj[acct.currency]) acct.txnDetails = startParams.txnDetailsObj[acct.currency];
+        const details = startParams.txnDetailsObj;
+        if (details && details[acct.currency]) acct.txnDetails = details[acct.currency];
       });
       setSelectedAccountIdx(index);
     } else {
